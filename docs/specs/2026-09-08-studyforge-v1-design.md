@@ -1652,8 +1652,17 @@ And what the *compose* side gets right, which stays per-project:
 - **The container runs as the repository owner's uid:gid**, so files it creates
   are not root-owned on the host.
 - **A bind source must exist on the host before the container starts**, or
-  docker creates it root-owned; the backend creates it and the container waits
-  on the backend's health check.
+  docker creates it root-owned and the writer can never write it. ⭐ **The
+  general form: every bind source exists before the start — where another
+  service in the project creates one, the editor is gated on that service's
+  health check; where the project creates it itself, it is created before the
+  containers come up.** ⚠️ **`TC-05/5`, corrected 2026-09-19 (`W400`): this
+  bullet used to say *"the backend creates it and the container waits on the
+  backend's health check"*, which describes a two-service project — and a
+  corpus served by this framework has no backend service in the editor's own
+  compose file.** ⭐ **The per-mount and ordering keys that carry the general
+  form live in `code-server-toolchain`'s consuming contract, which `TC-05`
+  owns; this section states the ruling, not the shape of one project.**
 
 #### ⛔ AMENDED PO round 74 — the browser editor comes after the framework milestone (user direction, 2026-09-12)
 

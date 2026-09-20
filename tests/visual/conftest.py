@@ -134,10 +134,31 @@ def damaged_sites(tmp_path_factory: pytest.TempPathFactory) -> dict[str, site.Si
     return {name: site.build(root / name, damage=name) for name in site.DAMAGE}
 
 
-@pytest.fixture
-def open_page(browser: Browser) -> Iterator[OpenPage]:
-    """A fresh tab per test, closed with the browser at the end of the session."""
-    yield OpenPage(browser)
+def one_tab_per_check(browser: Browser) -> Iterator[OpenPage]:
+    """Open one tab, hand it to a check, and close it when the check ends.
+
+    ⛔ **`W397`, and the closing is the point.** This yielded a tab and closed
+    nothing, so a session's tabs accumulated as operating-system processes —
+    ⚠️ **MEASURED in the pinned image: 190 processes, dozens of them Chrome
+    renderers, at 0.1% CPU, and the whole directory hung.**
+
+    ⭐ **It is a NAMED generator and the fixture below is one line over it**, so
+    `test_page_lifetime.py` can drive the teardown and assert the tab is gone.
+    ⛔ A fixture body reachable only through pytest is a teardown asserted by
+    reading it, which is how this one came to close nothing.
+
+    ⚠️ `finally` and not a plain call after the `yield`: a check that fails
+    raises through here, and that is precisely the run whose tab must not leak.
+    """
+    page = OpenPage(browser)
+    try:
+        yield page
+    finally:
+        page.close()
+
+
+#: A fresh tab per test, closed when that test ends.
+open_page = pytest.fixture(name="open_page")(one_tab_per_check)
 
 
 @pytest.fixture(scope="session")
