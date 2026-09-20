@@ -71,6 +71,13 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
+| `W402` | Developer 1 | `fix/W402-verify-refuses-a-dirty-component` @ `wt/dev1` | 0 @ `778e618` | in-progress |
+| `W403` | Developer 2 | `fix/W403-a-cross-repo-task-declares-both-halves` @ `wt/dev2` | 0 @ `778e618` | in-progress |
+| `W404` | Developer 3 | `fix/W404-a-siblings-contract-is-read-at-the-pin` @ `wt/dev3` | 0 @ `778e618` | in-progress |
+| `SK-09` | Developer 4 | `feat/SK-09-execution-onboarding` @ `wt/dev4` | 0 @ `778e618` | in-progress |
+| `SF-24` | Developer 5 | `feat/SF-24-practice-panel` @ `wt/dev5` | 0 @ `778e618` | in-progress |
+| `W407` | Developer 6 | `fix/W407-a-unit-page-states-its-title-once` @ `wt/dev6` | 0 @ `778e618` | in-progress |
+| `W405` | Developer 7 | `fix/W405-the-office-rules-name-the-voting-gate` @ `wt/dev7` | 0 @ `778e618` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
