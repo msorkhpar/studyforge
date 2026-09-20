@@ -274,8 +274,8 @@ span[data-kind="read-state"] {
 /* ⛔ THE USER'S WORDS: a left bar, flush to the window's edge, fixed while the
    page scrolls. ⭐ Three rules of CSS over the same bytes, asked for by the
    page that HAS the region (`:has()`), so the root index gets no empty track.
-   The reading column is what is left of the viewport (`1fr`), bounded by
-   `--page-max`; the prose inside it keeps `--measure` (`reading.css`).
+   The reading column is what is left of the viewport (`1fr`), and the prose
+   inside it keeps `--measure` (`reading.css`).
 
    ⛔ The rail spans ten rows because `page.html` declares ten top-level
    positions inside `<body>`: a negative line would count from the end of the
@@ -293,16 +293,42 @@ span[data-kind="read-state"] {
    second threshold: at `72rem` the prose column is a little narrower than
    `--measure` and reaches it as the window widens, and below `72rem` the block
    is back in the one column above the content. The block is the page's own
-   aside: it is sticky and scrolls itself, as the rail does. */
+   aside: it is sticky and scrolls itself, as the rail does.
+
+   ⛔ THE PAGE SPANS THE WINDOW (`W388` STAGE 3, the user's third reading:
+   *"Still the paragraph texts are not using the full width for some reason."*).
+   ⚠️ The grid carried `max-width: var(--page-max)` with `margin-left: 0`, so
+   past 1760px the three tracks stopped growing and stayed packed against the
+   left edge — on the user's own window the whole strip right of the outline was
+   empty. ⭐ `max-width: none` releases `body` here: the rail keeps the left
+   edge, the aside keeps the RIGHT edge one gutter in, and the reading column —
+   the `1fr` — takes every pixel of the slack between them. ⛔ The ceiling did
+   not grow, it MOVED: a bigger number on `body` would put the same dead strip
+   on a wider display, so `--page-max` now bounds the reading surface, which is
+   the table, the figure and the code block it was written to protect.
+
+   ⚠️ `none` IS WRITTEN OUT AND IS NOT A REDUNDANT DECLARATION — measured: with
+   the line deleted, the NARROW shape's own bound at the top of this file
+   (`calc(var(--measure) + 4 * var(--gutter))`) still applied, and the "spanning"
+   page laid out at that constant on a 3840px window — narrower than the defect
+   this stage set out to cure. A bound is released here, never omitted. */
 
 @media (min-width: 72rem) {
   body:has(nav[aria-label="Containers"]) {
     display: grid;
     grid-template-columns: var(--rail) minmax(0, 1fr);
     column-gap: var(--gutter);
-    max-width: var(--page-max);
+    max-width: none;
     margin-left: 0;
     padding-left: 0;
+  }
+
+  /* ⛔ The one bound left in the wide shape, and it is on the READING SURFACE.
+     The prose inside it keeps `--measure` (`reading.css`); this is what stops a
+     block that is scanned rather than read — a wide table, a long line of code
+     — running the full width of a display nobody here has. */
+  body:has(nav[aria-label="Containers"]) > main {
+    max-width: var(--page-max);
   }
 
   body:has(nav[aria-label="Containers"]):has(> nav[aria-label="Outline"], > section[aria-label="About this site"]) {

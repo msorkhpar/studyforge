@@ -273,16 +273,21 @@ def test_the_crossing_still_resolves_at_the_narrow_width(
     assert str(crossing["text"]).endswith(str(landed)), (crossing["text"], landed)
 
 
-def test_the_two_column_page_stays_inside_the_ceiling_the_palette_declares(
+def test_the_reading_surface_stays_inside_the_ceiling_the_palette_declares(
     open_page: OpenPage, built_corpus: BuiltCorpus, here: str
 ) -> None:
     """⛔ `--page-max` is painted for this layout, and this is what it buys.
 
-    ⚠️ **It does not bite under the face this image pins** — stated in
-    `chrome.css` beside the declaration and recorded as `W325/2`. ⭐ What this
-    asserts is the property either term gives: at a viewport far wider than any
-    reader has, the page is bounded rather than full-bleed, and it is bounded no
-    wider than the ceiling the palette names.
+    ⭐ What this asserts is the property the token gives: at a viewport far wider
+    than any reader has, the surface a table and a code block fill is bounded
+    rather than full-bleed, and bounded no wider than the ceiling the palette
+    names.
+
+    ⚠️ **The subject is the SURFACE and not the page, since `W388` stage 3.** The
+    bound sat on `body`, and a bounded, left-aligned page is the row's own
+    defect — the user read it on a 2000px window as *"the paragraph texts are
+    not using the full width"*. ⛔ So the page spans the window here and the
+    ceiling is asserted where it now lives.
     """
     open_page.resize(4 * WIDE[0], WIDE[1])
     open_page.open(built_corpus.url(here), scripts=False)
@@ -294,13 +299,20 @@ def test_the_two_column_page_stays_inside_the_ceiling_the_palette_declares(
         " probe.remove(); return width; })()"
     )
     page = box(open_page, "body")
+    surface = box(open_page, "main#content")
 
     assert float(ceiling) > 0, "the palette declares no --page-max, so nothing is ceiled"
-    assert page["width"] <= float(ceiling) + TOUCHING, (
-        f"the page is {page['width']:.2f}px against a declared ceiling of {float(ceiling):.2f}px"
+    assert float(ceiling) < 4 * WIDE[0], (
+        f"the ceiling of {float(ceiling):.2f}px is wider than the {4 * WIDE[0]}px window "
+        "this reading is taken in, so it says nothing"
     )
-    assert page["width"] < 4 * WIDE[0], (
-        f"at {4 * WIDE[0]}px the page took the whole viewport, so nothing bounds it at all"
+    assert surface["width"] <= float(ceiling) + TOUCHING, (
+        f"the reading surface is {surface['width']:.2f}px against a declared ceiling of "
+        f"{float(ceiling):.2f}px, so nothing bounds it at all"
+    )
+    assert page["width"] >= 4 * WIDE[0] - TOUCHING, (
+        f"at {4 * WIDE[0]}px the page is {page['width']:.2f}px wide, so it stops short of "
+        "the window and leaves the dead strip this row exists to remove"
     )
 
 

@@ -80,7 +80,10 @@ SHIPPED = (
         "grid-template-columns: var(--rail) minmax(0, calc(var(--measure) + 2 * var(--gutter)));",
     ),
     (
-        "max-width: var(--page-max);\n    margin-left: 0;\n    padding-left: 0;",
+        # ⚠️ Since `W388` stage 3 the wide page RELEASES its bound rather than
+        # carrying `--page-max` on `body`, so the text rewritten here reads
+        # `none`; the shape it is rewritten back to is still `W326`'s.
+        "max-width: none;\n    margin-left: 0;\n    padding-left: 0;",
         "max-width: min(var(--page-max), calc(var(--rail) + var(--measure) + 5 * var(--gutter)));",
     ),
     (
@@ -449,6 +452,13 @@ def test_the_dynamic_column_is_still_bounded_on_a_screen_nobody_has(
     the column section was written against. ⭐ The ceiling is read off the page —
     a probe element given `width: var(--page-max)` — rather than written here, so
     a palette that moves it moves this clause with it.
+
+    ⛔ **`W388` stage 3 moved WHICH ELEMENT the ceiling is on, and this clause
+    moved with it.** The bound sat on `body`, which reproduced the row's own
+    defect one display along: the page stopped growing and stayed packed against
+    the left edge with a dead strip to its right. ⭐ So the PAGE spans the window
+    at any width and the READING SURFACE is what the ceiling holds — the element
+    the wide table and the long line of code are actually in.
     """
     open_page.resize(4 * WIDE[0], WIDE[1])
     open_page.open(tall.url, scripts=False)
@@ -462,13 +472,18 @@ def test_the_dynamic_column_is_still_bounded_on_a_screen_nobody_has(
     )
 
     assert float(ceiling) > 0, "the palette declares no --page-max, so nothing is ceiled"
-    assert read["body border box"]["width"] <= float(ceiling) + TOUCHING, (
-        f"the body's border box is {read['body border box']['width']:.2f}px against a "
-        f"declared ceiling of {float(ceiling):.2f}px"
+    assert float(ceiling) < read["window inner width"], (
+        f"the ceiling of {float(ceiling):.2f}px is wider than the "
+        f"{read['window inner width']:.2f}px window, so this reading is vacuous"
     )
-    assert read["main#content border box"]["width"] < read["window inner width"] / 2, (
-        "the reading surface took a share of a 4K screen rather than stopping at the "
-        "ceiling, so the bound is not biting"
+    assert read["main#content border box"]["width"] <= float(ceiling) + TOUCHING, (
+        f"the reading surface is {read['main#content border box']['width']:.2f}px against a "
+        f"declared ceiling of {float(ceiling):.2f}px, so the bound is not biting"
+    )
+    assert read["body border box"]["width"] >= read["window inner width"] - TOUCHING, (
+        f"the page is {read['body border box']['width']:.2f}px in a "
+        f"{read['window inner width']:.2f}px window, so the ceiling is back on the page "
+        "and the dead strip with it"
     )
 
 

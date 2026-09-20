@@ -48,6 +48,10 @@ RAIL = 'body > nav[aria-label="Containers"]'
 #: The page in its two-column shape, spelled as `chrome.css` spells it.
 WIDE_PAGE = 'body:has(nav[aria-label="Containers"])'
 
+#: The reading surface inside that shape — the one element the wide shape still
+#: ceilings, since `W388` stage 3 moved the bound off the page and onto it.
+SURFACE = 'body:has(nav[aria-label="Containers"]) > main'
+
 
 def wide_part() -> str:
     """Everything `chrome.css` declares inside its one width threshold.
@@ -220,19 +224,46 @@ def test_the_reading_columns_track_is_a_share_of_the_viewport_and_not_a_constant
     )
 
 
-def test_the_dynamic_column_is_bounded_and_the_bound_is_the_palettes_own_ceiling():
-    # ⛔ **An unbounded column is its own defect** — a table or a code block
-    # across a whole 4K display is the full-bleed shape the column section above
-    # was written against, one viewport along. ⭐ The ceiling is the one the
-    # palette ALREADY declares, so this row mints no token: the bound is
-    # `--page-max` and nothing else, which is why a reader changes one number in
-    # one file to move it.
+def test_the_wide_page_releases_its_bound_rather_than_leaving_it_unsaid():
+    # ⛔ **`W388` stage 3, and the user's third reading:** *"Still the paragraph
+    # texts are not using the full width for some reason."* The wide page
+    # carried `max-width: var(--page-max)` — 1760px — with `margin-left: 0`, so
+    # past that width the three tracks stopped growing and stayed packed
+    # against the left edge. ⭐ The page spans the window now.
+    #
+    # ⚠️ **`none` IS ASSERTED, not the ABSENCE of a `max-width`**, and that is
+    # the defect this check exists for: the narrow shape bounds the same element
+    # at `calc(var(--measure) + 4 * var(--gutter))`, so deleting the line leaves
+    # the wide page laying out at that constant on any window. ⛔ A bound is
+    # RELEASED here, never omitted.
     declarations = wide_rule_for(WIDE_PAGE)
     found = re.search(r"max-width:\s*([^;]+);", declarations)
-    assert found, f"the wide page is unbounded, so it takes the whole screen: {declarations}"
+    assert found, (
+        "the wide page states no max-width at all, so the narrow shape's own "
+        f"bound still holds it in: {declarations}"
+    )
+    bound = found.group(1).strip()
+    assert bound == "none", (
+        f"the wide page is still ceilinged, so a wide window keeps a dead strip: {bound!r}"
+    )
+
+
+def test_the_ceiling_moved_to_the_reading_surface_and_is_the_palettes_own():
+    # ⛔ **An unbounded surface is still its own defect** — a table or a code
+    # block across a whole 4K display is the full-bleed shape the column section
+    # was written against, one viewport along. ⭐ So the ceiling did not go away
+    # with the page's bound, it MOVED onto the thing it was written to protect:
+    # a bigger number on `body` would only put the dead strip on a wider
+    # display, while a bound on the surface leaves the rail on the left edge and
+    # the aside on the right one at every width. ⚠️ Still the token the palette
+    # ALREADY declares, so this row mints none: a reader moves the ceiling by
+    # changing one number in one file.
+    declarations = wide_rule_for(SURFACE)
+    found = re.search(r"max-width:\s*([^;]+);", declarations)
+    assert found, f"the reading surface is unbounded, so it takes the whole screen: {declarations}"
     bound = found.group(1).strip()
     assert bound == "var(--page-max)", (
-        f"the wide page's ceiling is not the palette's own, unmixed: {bound!r}"
+        f"the reading surface's ceiling is not the palette's own, unmixed: {bound!r}"
     )
 
 

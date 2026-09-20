@@ -56,16 +56,49 @@
   --font-ui: "Andika", Verdana, sans-serif;
   --font-mono: "JetBrains Mono", "DejaVu Sans Mono", monospace;
 
-  /* ⭐ `76ch` since `W388`. Charis's `ch` is its zero, which is wider than an
-     average letter of running prose, so `68ch` set about 80 characters to a
-     line and this sets about 90 — the long end of a comfortable line, carried
-     by the 1.65 leading. The visual suite counts characters on a real line. */
+  /* ⛔ `76ch`, AND SINCE `W388` STAGE 3 THAT NUMBER IS MEASURED RATHER THAN
+     INHERITED — the stage set out to widen it and the measurement said no.
+     ⚠️ Charis's `ch` is its zero, which is wider than an average letter of
+     running prose, so what a cap buys has to be COUNTED on a laid-out line and
+     never reasoned from the token. ⛔ Counted on the fixture unit page, in the
+     PINNED image's browser, at four window widths — the longest line of running
+     prose, in characters:
+
+       cap    1280   1440   1920   2560
+       72ch     84     96     96     96
+       76ch     84    100    100    100
+       77ch     84    102    102    102
+
+     ⭐ `76ch` is the WIDEST CAP WHOSE LONGEST LAID-OUT LINE STAYS AT OR UNDER
+     100 CHARACTERS — the ceiling `tests/visual/test_reading_room.py` declares,
+     and the long end of a line the eye can still track back from at this 1.65
+     leading. ⚠️ At 1280 the cap does not bite at all: the column is narrower
+     than it, and the line runs to 84 characters.
+
+     ⛔ THE ENVIRONMENT IS PART OF THE READING. The same four widths on an
+     unpinned host browser lay out 96 at `76ch` and 100 at `78ch` — one step
+     narrower per cap — so a cap chosen on a host reading would ship a 102
+     character line in the image that decides. ⭐ The figures above are the
+     pinned image's, and the band in the visual suite is the bound. ⚠️ So the
+     width the user was missing was never the paragraph's: it was the dead strip
+     right of the aside, which `--page-max` below is about. */
   --measure: 76ch;
   --rail: 17rem;
   /* The column beside the reading surface for a page's secondary block — a
      unit's outline, the index's explanation — where the window has room. */
   --aside: 16rem;
-  --page-max: 110rem;
+  /* ⛔ THE CEILING ON THE READING SURFACE — NOT ON THE PAGE, AND THAT MOVE IS
+     `W388` STAGE 3. ⚠️ It shipped at `110rem` (1760px) bounding `body` itself,
+     with the page left aligned: on the user's own ~2000px window everything
+     right of the outline was empty, and on a 2560px one a third of the screen
+     was — *"the paragraph texts are not using the full width"*. ⛔ A BIGGER
+     NUMBER IN THE SAME PLACE ONLY MOVES THAT DEFECT ONE WINDOW ALONG, so the
+     page now spans the window at every width and the bound sits on the thing it
+     was protecting: the surface a table, a figure or a code block fills.
+     ⭐ `180rem` is 2880px — past the widest window this row measures (2560), so
+     the reading column takes all the slack on every one of them, and a display
+     wider than that still cannot stretch one line of code across it. */
+  --page-max: 180rem;
   --gutter: 1.25rem;
   --player-height: 3.5rem;
 

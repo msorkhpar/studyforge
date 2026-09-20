@@ -140,4 +140,13 @@ ACCEPTANCE = {
     #: a press and surviving a reload, which no other row here does.
     "lets the reader choose light, dark or their system's setting on every page "
     "kind, and remembers it across a reload (W388)": "test_theme_choice",
+    #: ⭐ `W388` stage 3's clause, the user's third reading: *"Still the paragraph
+    #: texts are not using the full width for some reason."* ⛔ A row of its own
+    #: rather than a widening of the reading-room row above, for the reason that
+    #: module could not have caught it: every clause there is taken at ONE wide
+    #: viewport, and the packed-left page it read was correct at 1280 and 1440
+    #: and wrong at 1920 and 2560. ⚠️ What is read here is the page against the
+    #: WINDOW at four widths, and the cap on a line of prose at each of them.
+    "spans the window with its three columns at every width, with the aside at "
+    "the right edge and the reading column taking the slack (W388)": "test_reading_width",
 }
