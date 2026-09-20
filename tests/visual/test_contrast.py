@@ -54,18 +54,22 @@ def readings(browser, built_site: site.Site) -> dict:
     function-scoped: a module-scoped fixture that asks for a narrower one is a
     `ScopeMismatch`, and the shape that hides the error is to widen `open_page`
     — which would then leak one test's navigation into the next.
+
+    ⛔ **Opening its own tab means CLOSING its own tab** (`W397`), which is what
+    the `with` is for: a tab left open here outlives this module and costs the
+    session a renderer process for the rest of the run.
     """
-    page = OpenPage(browser)
     built = built_site
     taken: dict = {}
-    for scheme in SCHEMES:
-        resolved: dict[str, str] = {}
-        elements: list[dict] = []
-        for case in site.pages():
-            page.open(built.url(case), scheme=scheme)
-            resolved = theme.resolve(page)
-            elements += [dict(each, case=case) for each in theme.text_elements(page)]
-        taken[scheme] = {"resolved": resolved, "elements": elements}
+    with OpenPage(browser) as page:
+        for scheme in SCHEMES:
+            resolved: dict[str, str] = {}
+            elements: list[dict] = []
+            for case in site.pages():
+                page.open(built.url(case), scheme=scheme)
+                resolved = theme.resolve(page)
+                elements += [dict(each, case=case) for each in theme.text_elements(page)]
+            taken[scheme] = {"resolved": resolved, "elements": elements}
     return taken
 
 
