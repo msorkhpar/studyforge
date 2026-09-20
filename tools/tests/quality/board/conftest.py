@@ -35,6 +35,7 @@ from pathlib import Path
 import pytest
 
 from tests.support import git as git_binary
+from tools.quality.board.crossrepo import CROSSREPO, CROSSREPO_CLOSE, CROSSREPO_OPEN
 from tools.quality.board.observation import INFLIGHT_CLOSE, INFLIGHT_OPEN
 from tools.quality.board.register import BOARD
 from tools.workspace import git
@@ -46,6 +47,11 @@ RELEASE = "release/m0-foundations"
 AUTHOR = ("-c", "user.name=Example Author", "-c", "user.email=author@example.invalid")
 
 HEADER = "| Row | Owner | Checkout | Commits ahead | State |\n|---|---|---|---|---|\n"
+
+#: ⛔ `W403`'s declaring header — the FOUR roles, written out rather than generated, for the
+#: reason `support.HEADER` is: the header is the DECLARATION the reader locates, and a
+#: paraphrase would test a shape no board authors.
+CROSSREPO_HEADER = "| Task | Component | Framework half | Sibling half |\n|---|---|---|---|\n"
 
 #: ⛔ A well-formed sha that NO OBJECT CARRIES. ⭐ `git update-ref` REFUSES to write one
 #: ("trying to write non-commit object"), so the plant below writes the ref FILE — which
@@ -95,11 +101,23 @@ def _branch_then_merge(root: Path, branch: str, subject: str | None) -> None:
     assert git(root, *AUTHOR, "merge", "--no-ff", "-q", branch, "-m", subject).returncode == 0
 
 
-def write_board(root: Path, rows: str, register: str = "", delimited: bool = True) -> None:
+def write_board(
+    root: Path,
+    rows: str,
+    register: str = "",
+    delimited: bool = True,
+    crossrepo: str | None = "",
+) -> None:
     """Write a board whose observation table is DELIMITED, as the contract requires.
 
     ⚠️ **`delimited=False` writes the Ruling 196(b) RAMP**, which `W111` made a
     `NOT_AUTHORITATIVE` reading rather than a silent fallback.
+
+    ⛔ **`crossrepo` writes `W403`'s DECLARATION FILE beside the board, and the DEFAULT IS
+    DECLARED AND EMPTY** — ⭐ *this repository has no cross-repo task*, which is a real
+    answer. ⚠️ **`crossrepo=None` writes NO file**, which `W403` made `NOT_AUTHORITATIVE` for
+    the reason `W111` gave one table over: a board that declared nothing has not said that
+    nothing is there.
     """
     table = HEADER + rows
     if delimited:
@@ -111,6 +129,20 @@ def write_board(root: Path, rows: str, register: str = "", delimited: bool = Tru
         + "\n<!-- register -->\n| # | Row | Owner | State | Detail |\n|---|---|---|---|---|\n"
         + register
         + "<!-- /register -->\n",
+        encoding="utf-8",
+    )
+    write_crossrepo(root, crossrepo)
+
+
+def write_crossrepo(root: Path, rows: str | None = "") -> None:
+    """Write `W403`'s declaration file, or remove it when `rows` is `None`."""
+    path = root / CROSSREPO
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if rows is None:
+        path.unlink(missing_ok=True)
+        return
+    path.write_text(
+        f"# Cross-repo halves\n\n{CROSSREPO_OPEN}\n{CROSSREPO_HEADER}{rows}{CROSSREPO_CLOSE}\n",
         encoding="utf-8",
     )
 
