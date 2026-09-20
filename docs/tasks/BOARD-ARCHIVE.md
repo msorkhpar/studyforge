@@ -28698,3 +28698,162 @@ HIGH-LEVEL design only; merged branches may be pruned; the rubric and the Python
 | `wt/dev5` | `W388` + `W369` | ⛔ **the USER's direction** after reading the regenerated site — jumps every older row; `W376` waits |
 | `wt/dev7` | `W389` | ⛔ **the USER's direction**: exercises for every corpus — a proposal first |
 | `wt/dev6` | `W378` | ⭐ idle carrier; a gate that must not lie under the parallel suite |
+
+## PO round 126
+
+⛔ **Only what is MEASURED is written here.** ⭐ **`M7` step 7.2 CLOSES; five rows close, each verified by a plant; the pin
+moves; the USER's four answers close `M10`'s open questions; seven rows are minted; six carriers are named before they run.**
+
+### ⭐ `M7` STEP 7.2 CLOSES AT `04ce050`
+
+| task | reading |
+|---|---|
+| `TC-02` | the editor is built from a DECLARED runtime set; a java+maven image is measurably smaller and an unpinned name is refused before Docker starts (round 125) |
+| `TC-03` | a consumer's own prime is warmed into the image and PROVED offline before tagging — a first `gradle build --offline` and `mvn -o test` succeed under `--network none` and fail against empty caches — merged `d1abe73` |
+| `TC-04` | this repository packs its own practice-focus extension and INSTALLS it in every set; an image whose lockdown did not load is refused — merged `04ce050` |
+
+⭐ **Each was planted by this register before its merge.** ⛔ **Step 7.3 — `TC-05`, then `TC-06` — opens here: both write the
+same contract files, so they run SERIALLY**, as 7.2's three did.
+
+### ⭐ THE PIN MOVES — `code-server-toolchain` to `3d2c9c8`
+
+⭐ From `196306e`: `W387`, `TC-03` and `TC-04` are on the sibling's `main`. ⚠️ **`TC-04/2`: every editor tag moved once;
+no runner tag did.**
+
+### ⭐ CLOSES — verified by this register, NOT received
+
+### W378 — A build-and-serve pipe test missed its timeout once under the parallel pinned suite
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W378.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `85b6340`. Merged, every gate GREEN on the merged tree.
+
+⛔ **`W367/4`: `tests/studyforge/skills/buildserve/test_main.py::test_a_child_that_fills_its_stderr_pipe_before_it_listens_does_not_block_the_reading` missed its output timeout once under the parallel pinned suite** and passed on both retakes. ⚠️ **With the suite parallel, a timing test that flakes under load is a gate that lies.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The test's bound is argued from what it measures**, not from an idle machine's speed — or it joins the serial group with its reason.
+2. ⛔ **Measured under the parallel suite, repeatedly, before the row closes.**
+
+⭐ **Surface:** that test module.
+
+[the mint](#po-round-123)
+
+### W381 — The build-and-serve skill does not say where a run executes, so a site that runs a reader's code on the host reports no state for it
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W381.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `780b4bb`. Merged, every gate GREEN on the merged tree.
+
+⛔ **`W371/3`: the build-and-serve skill's states say nothing about WHERE a run executes.** With no runner container up, a served site runs a reader's code on the HOST, and the skill reports no partial state for that. ⚠️ `NO_TOOLCHAIN`'s remedy (*"execution arrives with a toolchain container"*) describes a state the skill no longer produces.
+
+⭐ **RULED at round 125 by the register:** (a) **running a reader's code on the HOST is a partial state of its own** — the skill reports it whenever the served instance offers execution and `execute`'s own mode probe (ONE definition, never a copy) finds no runner container: *Run and Submit execute on this host, without the runner's isolation*; what works: everything; remedy: start the runner container as `code-server-toolchain`'s README documents, then serve again. (b) **`NO_TOOLCHAIN` keeps only a cause that can still occur** — if no served form can now lack the `run` namespace, the state and its test go; otherwise its remedy names that real cause, never *a toolchain container*.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A RULING first**: whether host-mode execution is a state of its own the skill reports, and what its remedy says.
+2. ⛔ **Then the skill's states say what was ruled**, asserted both ways (R12).
+
+⭐ **Surface:** `src/studyforge/skills/buildserve/states.py`, its skill document and tests — ⛔ **argued before code.**
+
+[the mint](#po-round-124)
+
+### W385 — A served corpus scans for pages where its record lives, so a site built elsewhere needs a subclass to be found
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W385.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `af4ed70`. Merged, every gate GREEN on the merged tree.
+
+⛔ **`W380/2`: `ServedCorpus` in `serve/discovery.py` uses ONE path both for where the record lives and where pages are scanned.** `W380` worked around it with `SiteCorpus` in `serve/instance.py`, whose `rescan` scans the site.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`ServedCorpus` carries a scan root that defaults to its root**, and `SiteCorpus` goes.
+2. ⛔ **A site built elsewhere with `--out` is still scanned where its pages are**, asserted both ways (R12).
+
+⭐ **Surface:** `src/studyforge/serve/discovery.py`, `src/studyforge/serve/instance.py`, their tests.
+
+[the mint](#po-round-125)
+
+### W386 — The build-and-serve skill's test plants through a private function of the serve verb, so that function cannot be renamed
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W386.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `af4ed70`. Merged, every gate GREEN on the merged tree.
+
+⛔ **`W380/1`: `tests/studyforge/skills/buildserve/test_run.py` monkeypatches the private `cli.serve._execution`**, so the function kept a name that no longer says what it returns (it returns `state` too).
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The test plants through a named seam**, and the function is renamed to say what it returns.
+2. ⛔ **The test still fails when execution is absent**, both ways (R12).
+
+⭐ **Surface:** `tests/studyforge/skills/buildserve/test_run.py`, `src/studyforge/cli/serve.py`.
+
+[the mint](#po-round-125)
+
+### W387 — The runner's build refuses an unpinned runtime without naming it, while the editor's names it
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W387.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `c1a0898`. Merged, every gate GREEN on the merged tree.
+
+⛔ **`TC-02/2`: `docker/minimal/plan.py` refuses an unpinned runtime echoing nothing it was given**, so `docker/minimal/build.py --runtimes java,cobol` does not name `cobol`, while the editor's `build.py` names a well-formed id. ⭐ The two components answer one mistake differently.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The runner names a well-formed unpinned id and lists the pinned ones**, as the editor does, and never echoes a malformed name.
+2. ⛔ **Asserted both ways (R12).**
+
+⭐ **Surface:** the sibling `code-server-toolchain`'s `docker/minimal/plan.py` and `tests/test_plan.py`. ⛔ **Not** `docker/editor/` (`TC-03`'s).
+
+[the mint](#po-round-125)
+
+### ⭐ `M10`'s OPEN QUESTIONS ARE CLOSED BY THE USER
+
+⭐ **THE USER'S FOUR ANSWERS, 2026-09-19 — `M10`'s open questions are CLOSED:**
+
+| question | the user's answer |
+|---|---|
+| a corpus whose subject is not code | ⭐ **a quiz shape is IN `M10`**, not deferred to v2 |
+| is the reference solution shown | ⭐ **always available** |
+| is an authored grader labelled | ⭐ **yes, worded for a learner** |
+| the three-page ISO pilot | ⭐ **the user reviews it once**, then the other pages run on the gates |
+
+⭐ **`W389`'s stage 1 is merged at `410d8f9`** — the amendment, the gates, epic `E14` (`AX-00`–`AX-11`) and `M10`'s five steps,
+measured. ⭐ **Stage 2 is dispatched here** and lands them, with the four answers above folded in: the quiz shape joins the
+epic, the reference solution is reachable from the page, every authored exercise carries a learner-worded label, and the ISO
+pilot is three pages the user sees before the rest are authored.
+
+### ⭐ FINDINGS RULED
+
+| finding | ruling |
+|---|---|
+| `TC-03/2` + `W389/2` | minted `W390` — the runner needs the warm a graded run cannot download |
+| `TC-03/1`, `/3`, `/4` | ⭐ local — recorded in its handoff |
+| `TC-04/2` | ⭐ recorded — every editor tag moved once, intended |
+| `TC-04/3` | minted `W391` |
+| `W381/1` | ⭐ closed in its own stage 2 |
+| `W381/2` | minted `W395` |
+| `W385/1`, `W386/1` | ⭐ local |
+| `W387/1` | ⭐ **answered inside `TC-03`** — the editor's docstring now says both components refuse alike |
+| `W387/2` | ⭐ done here — the pin moves |
+| `W388/4` | minted `W392` — ⛔ **the convention had already rejected what stage 1 shipped, and nothing read it** |
+| `W388/5` | minted `W393` |
+| `W388/6`, `/7` | ⭐ **accepted** — the no-flash boot makes a page carry two scripts; `E03`'s substantive acceptance is untouched and still asserted |
+| `W388/8` | ⭐ recorded — Overpass measured, pinned and NOT adopted; a later row has the reading |
+| `W388/9` | minted `W394`, a ruling |
+| `W378/1`, `/2` | ⭐ local |
+| the register's own | minted `W396` — an office's MERGE commit carried the register's identity |
+
+### ⭐ NAMED BEFORE THEY RUN
+
+| carrier | task | why now |
+|---|---|---|
+| `wt/dev1` | `TC-05` | ⭐ step 7.3's first task; `TC-06` waits on the same files |
+| `wt/dev2` | `W393` | ⛔ **a gate that cannot be read by the office it guards** |
+| `wt/dev3` | `W392` + `W395` + `W396` | ⭐ one owner for `docs/conventions/` |
+| `wt/dev4` | `W390` | ⭐ before `M10`: a graded run has no network |
+| `wt/dev6` | `W391` | ⭐ the sibling's test helper, disjoint from `docker/` |
+| `wt/dev7` | `W389` stage 2 | ⭐ the user's answers land in the spec, the epic and the milestone |
+| `wt/dev5` | `W388` | ⚠️ **still in flight** — stage 3, the user's third reading (the page must use the window) |
