@@ -43,6 +43,14 @@ h4, h5, h6 { font-size: 1.05rem; }
 
 p { margin: 0 0 1.1rem; }
 
+/* ⛔ The reading's first block has no space of its own above it: the distance
+   below the masthead is the masthead's to set, once. ⚠️ Without this the two
+   shapes disagree by the first heading's own margin — in the wide shape `main`
+   is a grid item, so that margin stays inside it, and in the narrow shape it
+   collapses out through `main` and starts the reading lower (`W388`). */
+main > :first-child,
+main > :first-child > :first-child { margin-top: 0; }
+
 /* Running text alone keeps a measure the eye can track back from. A figure,
    a table or a code block is scanned rather than read and takes the full
    column. */

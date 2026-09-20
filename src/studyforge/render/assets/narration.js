@@ -359,8 +359,10 @@
      three buttons that do nothing. */
   showFace(PAUSED);
   if (anyPlayable()) {
+    /* ⛔ `W369`: the first passage is where narration WILL start, and the
+       transport's own line says so; nothing on the page is lit until the
+       reader starts it. `load` lights a passage, and only a press reaches it. */
     at = firstPlayable();
-    highlight();
     label();
     progress();
     say(null);

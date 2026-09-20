@@ -104,6 +104,15 @@ THE_COLUMN_ITSELF = "body"
 #: be a member of the population, for `THE_COLUMN_ITSELF`'s reason.
 THE_RAIL_BESIDE_THE_COLUMN = 'nav[aria-label="Containers"]'
 
+#: The regions a wide window puts in the ASIDE, on the far side of the column
+#: (`W388`, folding `W369`): a unit's outline and the index's explanation. ⛔
+#: Excluded at `WIDE` for the rail's reason and re-admitted at `NARROW` by the
+#: same check, where both are back in the one column above the content.
+THE_ASIDE_BESIDE_THE_COLUMN = (
+    'nav[aria-label="Outline"]',
+    'section[aria-label="About this site"]',
+)
+
 #: How far two columns may differ and still be the same column, in CSS pixels.
 #: ⛔ **Not a font threshold**, which is why Ruling 236 permits it: both sides of
 #: the comparison are measured in the same run under the same font, so a font
@@ -172,6 +181,11 @@ def test_the_region_population_is_inhabited_and_is_the_disposition_tables() -> N
         f"region that exists; it is not in {regions}, so the exclusion hides nothing — and "
         f"the narrow check below would then be asserting an equality over one region fewer"
     )
+    for aside in THE_ASIDE_BESIDE_THE_COLUMN:
+        assert aside in regions, (
+            f"{aside!r} is excluded from the WIDE column comparison as a region that exists; "
+            f"it is not in {regions}, so the exclusion hides nothing"
+        )
 
 
 def test_the_harness_writes_every_page_kind_the_framework_renders() -> None:
@@ -298,6 +312,7 @@ def test_every_chrome_region_resolves_the_same_column_as_the_reading_surface(
         region
         for region in site.chrome_regions()
         if region not in (THE_COLUMN_ITSELF, THE_RAIL_BESIDE_THE_COLUMN)
+        and region not in THE_ASIDE_BESIDE_THE_COLUMN
     )
     adrift = _adrift(open_page, compared, case)
     assert not adrift, (
@@ -324,6 +339,7 @@ def test_at_a_narrow_viewport_every_chrome_region_including_the_rail_is_the_colu
     open_page.open(built_site.url(case))
     compared = tuple(region for region in site.chrome_regions() if region != THE_COLUMN_ITSELF)
     assert THE_RAIL_BESIDE_THE_COLUMN in compared, compared
+    assert set(THE_ASIDE_BESIDE_THE_COLUMN) <= set(compared), compared
     adrift = _adrift(open_page, compared, case)
     assert not adrift, (
         f"{case} at {NARROW[0]}px: {len(adrift)} chrome region(s) resolving a column of "
@@ -345,6 +361,7 @@ def test_the_column_check_notices_a_region_given_a_measure_of_its_own(
         region
         for region in site.chrome_regions()
         if region not in (THE_COLUMN_ITSELF, THE_RAIL_BESIDE_THE_COLUMN)
+        and region not in THE_ASIDE_BESIDE_THE_COLUMN
     )
     caught = {}
     open_page.resize(*WIDE)

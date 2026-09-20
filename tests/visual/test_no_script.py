@@ -31,7 +31,17 @@ PROSE = {
 #: The masthead's own words — region 1, and the one region every page kind emits.
 #: ⛔ Read from the page rather than listed per fixture: it is a corpus's text, so
 #: a sentence typed here would be a third copy of two fixtures' titles.
-MASTHEAD = "document.querySelector('header').innerText.replace(/\\s+/g, ' ').trim()"
+#:
+#: ⚠️ The theme control is inside the masthead and is NOT the masthead's words:
+#: it ships `hidden` and the page script reveals it, so reading it here would
+#: make this check say "the masthead is script-dependent" about the one region
+#: that is supposed to appear only when a script can back it. ⛔ Excluded by the
+#: hook it carries, not by its words, so renaming a label cannot re-admit it.
+MASTHEAD = (
+    "Array.from(document.querySelector('header').children)"
+    ".filter(el => !el.matches('[data-section=\"theme\"]'))"
+    ".map(el => el.innerText).join(' ').replace(/\\s+/g, ' ').trim()"
+)
 
 #: Every `nav` region that is NOT the outline, as a selector. ⛔ Derived from the
 #: disposition table so the two halves of Ruling 164's fork are one population

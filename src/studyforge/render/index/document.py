@@ -22,7 +22,7 @@ this task adds no template file and no asset. ⚠️ A second skeleton would be 
 second `<head>`, a second masthead and a second place a `<meta viewport>` has to
 be remembered — and the day one gains a region the other silently would not.
 
-⛔ **Nine of the skeleton's slots are empty here, and they are empty
+⛔ **Seven of the skeleton's slots are empty here, and they are empty
 explicitly.** `templates.fill` refuses a placeholder with no value **and** a
 value with no placeholder, so each one is passed `""` by name rather than
 omitted — which means the day the skeleton drops a slot this module fails by
@@ -41,17 +41,27 @@ a corpus, and there is no corpus datum for it that the tree does not already
 say (R1) |
 | `nav` | the between-pages bar points at neighbours in reading order, and the
 index has none: it is where that order begins |
-| `outline` | a unit page's outline is its own headings; this page's body *is* an outline |
 | `mark` | ⛔ a read mark is a UNIT's, and the control belongs on the page
 whose reading it records (`SF-30`). ⭐ The marks themselves DO reach this page —
 as a state on the rows this tree already keys by unit key — but that is the
 shared script's work at read time, not a region this module fills |
 | `pending` | practices belong to a unit |
-| `rail` | ⛔ the rail exists to reach the OTHER containers from inside one
-(`W324`), and this page is inside none of them: its body already lists every
-container there is, so a rail here would be the same tree rendered twice on one
-page |
 | `player` | narration belongs to a unit (`SF-18`) |
+
+## ⭐ Two slots it fills that a first reading would leave empty (`W388`)
+
+⛔ **`rail`: the user, 2026-09-19 — *"keep left menu even in the first page."***
+The argument that stood here was that the body already lists every container, so
+a rail would be the same tree twice. ⚠️ It was right about the tree and wrong
+about the reader: the rail is the site's one constant place, and a first page
+without it is the one page where the reader has to learn a second way round.
+⭐ It arrives from the caller as plain values, exactly as a unit page's does, and
+below `rail.RAIL_MINIMUM` containers it is still nothing.
+
+⭐ **`outline`: the slot for the page's secondary block, and this page's is its
+explanation** — how to use the site and how it is ordered. It sits in the
+skeleton's aside position, so a wide window puts it beside the list rather than
+above it (`W369`), and a narrow one keeps it above, where it always was.
 
 ## ⛔ The root index carries NO identity block, and that is not an omission
 
@@ -77,13 +87,16 @@ one newline — never a conditional newline somewhere else.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 from studyforge.render import templates
 from studyforge.render.container import progress
 from studyforge.render.index import disclosure
 from studyforge.render.index.entries import Document, Section
 from studyforge.render.index.placement import Placement
 from studyforge.render.markup import escape, escape_attribute
-from studyforge.render.page import PageError
+from studyforge.render.page import PageError, RailContainer
+from studyforge.render.page import rail as render_rail
 
 #: The skeleton every page of this site is filled from — the unit page's own.
 SKELETON = "page.html"
@@ -101,18 +114,20 @@ EMPTY_SLOTS = (
     "mark",
     "meta",
     "nav",
-    "outline",
     "pending",
     "player",
-    "rail",
 )
 
 
-def compose(document: Document, placement: Placement) -> str:
+def compose(
+    document: Document,
+    placement: Placement,
+    rail: Sequence[RailContainer] | None = None,
+) -> str:
     """Return the root index's exact text.
 
-    ⛔ Pure: the same document and the same placement give byte-identical
-    output, every run, on every machine (R10).
+    ⛔ Pure: the same document, placement and rail give byte-identical output,
+    every run, on every machine (R10). `rail=None` is the page with no rail.
     """
     try:
         return (
@@ -122,6 +137,8 @@ def compose(document: Document, placement: Placement) -> str:
                 heading=escape(document.title),
                 stylesheet=escape_attribute(placement.stylesheet()),
                 script=escape_attribute(placement.script()),
+                rail=render_rail(rail),
+                outline=f"{ABOUT}\n",
                 body=head(document) + disclosure.render(document),
                 **dict.fromkeys(EMPTY_SLOTS, ""),
             )
@@ -174,7 +191,11 @@ def leaves(sections: tuple[Section, ...]) -> list[Section]:
 
 
 def head(document: Document) -> str:
-    """Return what comes above the tree: the lede, the about columns, progress, Up next."""
+    """Return what comes above the tree: progress, Up next and the filter.
+
+    ⭐ The explanation is not here since `W388`: it is the page's aside, in the
+    skeleton's `outline` slot — see this module's docstring.
+    """
     everything = [
         item for section in document.sections for item in disclosure.readable_items(section)
     ]
@@ -185,7 +206,6 @@ def head(document: Document) -> str:
     segments = [segment for segment in segments if segment[2]]
     first = everything[0] if everything else None
     parts = (
-        ABOUT,
         progress.line(len(everything), progress.strip(segments)),
         progress.up_next(first.title, first.href) if first else "",
         progress.finder(),

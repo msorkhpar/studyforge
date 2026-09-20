@@ -273,16 +273,21 @@ def test_the_crossing_still_resolves_at_the_narrow_width(
     assert str(crossing["text"]).endswith(str(landed)), (crossing["text"], landed)
 
 
-def test_the_two_column_page_stays_inside_the_ceiling_the_palette_declares(
+def test_the_reading_surface_stays_inside_the_ceiling_the_palette_declares(
     open_page: OpenPage, built_corpus: BuiltCorpus, here: str
 ) -> None:
     """⛔ `--page-max` is painted for this layout, and this is what it buys.
 
-    ⚠️ **It does not bite under the face this image pins** — stated in
-    `chrome.css` beside the declaration and recorded as `W325/2`. ⭐ What this
-    asserts is the property either term gives: at a viewport far wider than any
-    reader has, the page is bounded rather than full-bleed, and it is bounded no
-    wider than the ceiling the palette names.
+    ⭐ What this asserts is the property the token gives: at a viewport far wider
+    than any reader has, the SHELL — the rail, the reading column and the aside
+    together — stops growing at the ceiling the palette names, so a table or a
+    line of code is never stretched across a display nobody has.
+
+    ⚠️ **And it CENTRES in what is left, which is `W388` stage 4.** A shell that
+    stops growing and stays against the left edge is the row's own first defect:
+    the user read it on a 2000px window as *"the paragraph texts are not using
+    the full width"*, because every spare pixel was on one side. ⛔ So both
+    halves are read here — bounded, and equally inset either side.
     """
     open_page.resize(4 * WIDE[0], WIDE[1])
     open_page.open(built_corpus.url(here), scripts=False)
@@ -294,13 +299,25 @@ def test_the_two_column_page_stays_inside_the_ceiling_the_palette_declares(
         " probe.remove(); return width; })()"
     )
     page = box(open_page, "body")
+    surface = box(open_page, "main#content")
 
     assert float(ceiling) > 0, "the palette declares no --page-max, so nothing is ceiled"
-    assert page["width"] <= float(ceiling) + TOUCHING, (
-        f"the page is {page['width']:.2f}px against a declared ceiling of {float(ceiling):.2f}px"
+    assert float(ceiling) < 4 * WIDE[0], (
+        f"the ceiling of {float(ceiling):.2f}px is wider than the {4 * WIDE[0]}px window "
+        "this reading is taken in, so it says nothing"
     )
-    assert page["width"] < 4 * WIDE[0], (
-        f"at {4 * WIDE[0]}px the page took the whole viewport, so nothing bounds it at all"
+    assert page["width"] <= float(ceiling) + TOUCHING, (
+        f"the shell is {page['width']:.2f}px against a declared ceiling of "
+        f"{float(ceiling):.2f}px, so nothing bounds it at all"
+    )
+    assert surface["width"] < page["width"], (
+        f"the reading surface is {surface['width']:.2f}px inside a {page['width']:.2f}px "
+        "shell, so the rail and the aside are not in the shell with it"
+    )
+    assert page["left"] == pytest.approx(4 * WIDE[0] - page["right"], abs=TOUCHING), (
+        f"at {4 * WIDE[0]}px the shell has {page['left']:.2f}px of room on its left and "
+        f"{4 * WIDE[0] - page['right']:.2f}px on its right, so what it does not use is a "
+        "dead band on one side rather than a margin"
     )
 
 

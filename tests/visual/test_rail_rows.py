@@ -67,6 +67,12 @@ RAIL = 'nav[aria-label="Containers"]'
 #: `test_rail.py` strips with, because it is the same control one clause along.
 RAIL_REGION = re.compile(r'<nav aria-label="Containers">.*?</nav>\n?', re.DOTALL)
 
+#: The page's aside, cut out by the same control. ⛔ Since `W388` the outline is
+#: laid out BESIDE the reading column at this width, so a control that removed
+#: the rail alone would leave the compared page with a region in its column that
+#: the page under test has beside it — two different columns, compared as one.
+OUTLINE_REGION = re.compile(r'<nav aria-label="Outline">.*?</nav>\n?', re.DOTALL)
+
 #: The repaired placement, and the one that shipped. ⛔ The regressed control
 #: rewrites the FIRST into the SECOND in a built tree's own stylesheet, so the
 #: control is this row's actual defect rather than an impression of it.
@@ -77,21 +83,29 @@ REGRESSED = "grid-row: 1;"
 #: — the same subpixel allowance `test_rail.TOUCHING` makes.
 TOUCHING = 0.5
 
-#: Every laid-out top-level element of the page except the rail, as
+#: The regions that are laid out BESIDE the reading column rather than in it:
+#: the rail on the left, and since `W388` the aside on the right — a unit's
+#: outline, the index's explanation. ⛔ Dropped from the population below for one
+#: reason: this module is about the ROWS of the reading column, and a region in
+#: another column occupies none of them.
+BESIDE_THE_COLUMN = ("Containers", "Outline", "About this site")
+
+#: Every laid-out top-level element of the page except those, as
 #: `[name, top, height]`. ⛔ `display: none` children are dropped because they
 #: are not grid items and occupy no row — the read control ships `hidden`, and a
 #: population that counted it would be counting a row that does not exist.
 COLUMN = """
 (() => {
   const label = el => el.tagName + '[' + (el.getAttribute('aria-label') || el.id || '') + ']';
+  const beside = <beside>;
   return Array.from(document.body.children)
     .filter(el => getComputedStyle(el).display !== 'none')
     .filter(el => getComputedStyle(el).position !== 'absolute')
-    .filter(el => el.getAttribute('aria-label') !== 'Containers')
+    .filter(el => !beside.includes(el.getAttribute('aria-label')))
     .map(el => { const box = el.getBoundingClientRect();
       return [label(el), box.top, box.height]; });
 })()
-"""
+""".replace("<beside>", json.dumps(list(BESIDE_THE_COLUMN)))
 
 
 @dataclass(frozen=True)
@@ -174,9 +188,14 @@ def _build(root: Path) -> WideCorpus:
 
 
 def _strip_rail(built: WideCorpus) -> None:
-    """Cut the rail region out of every page of a built tree, in place."""
+    """Cut the two regions laid out beside the column out of every page, in place.
+
+    ⭐ What is left is the reading column alone, which is what every clause here
+    compares the page beside a rail against.
+    """
     for page in sorted(built.root.rglob("*.html")):
-        page.write_text(RAIL_REGION.sub("", page.read_text(encoding="utf-8")), encoding="utf-8")
+        body = page.read_text(encoding="utf-8")
+        page.write_text(OUTLINE_REGION.sub("", RAIL_REGION.sub("", body)), encoding="utf-8")
 
 
 def _regress(built: WideCorpus) -> None:

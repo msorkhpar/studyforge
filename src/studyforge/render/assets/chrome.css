@@ -11,8 +11,9 @@
      progress, strip and filter.
    - `onward.css`: WHERE THE READER GOES NEXT — the between-pages bar and the
      Up next slip, the one bold element.
-   - `notes.css`: WHAT THE PAGE TELLS THE READER — the index's explanation, the
-     practices note and the read control.
+   - `notes.css`: WHAT THE PAGE TELLS THE READER AND WHAT IT OFFERS THEM — the
+     index's explanation, the practices note, the read control and the theme
+     control.
 
    ⛔ NOT ONE COLOUR AND NOT ONE CLASS in any of the four. Every value is a
    `palette.css` token and every region is reached by element, `aria-label` or
@@ -31,12 +32,13 @@
    the narrow shape; the wide shape at the foot of this file bounds the same
    element.
 
-   ⭐ THE MARGIN RULE (`W362`, the plan's §3 and §7). An exercise book prints a
-   pale line down every page: left of it is the reader's (the course, their
-   ticks, where the narration is), right of it is the work. It is drawn once,
-   by one pseudo-element on `body`, with no markup. ⚠️ It is structure, never a
+   ⭐ THE MARGIN RULE (`W362`, the plan's §3 and §7). A pale line down every
+   page: left of it is the reader's (the course, their ticks, where the
+   narration is), right of it is the work. It is drawn once, by one
+   pseudo-element on `body`, with no markup. ⚠️ It is structure, never a
    signal — `--margin` sits below 3:1 on purpose, because nothing is told apart
-   by it alone. The left padding gives the text room to its right. */
+   by it alone, and since `W388` it is a neutral hairline, not a red one. The
+   left padding gives the text room to its right. */
 
 body {
   max-width: calc(var(--measure) + 4 * var(--gutter));
@@ -272,8 +274,8 @@ span[data-kind="read-state"] {
 /* ⛔ THE USER'S WORDS: a left bar, flush to the window's edge, fixed while the
    page scrolls. ⭐ Three rules of CSS over the same bytes, asked for by the
    page that HAS the region (`:has()`), so the root index gets no empty track.
-   The reading column is what is left of the viewport (`1fr`), bounded by
-   `--page-max`; the prose inside it keeps `--measure` (`reading.css`).
+   The reading column is what is left of the viewport (`1fr`), and the prose
+   inside it keeps `--measure` (`reading.css`).
 
    ⛔ The rail spans ten rows because `page.html` declares ten top-level
    positions inside `<body>`: a negative line would count from the end of the
@@ -282,7 +284,53 @@ span[data-kind="read-state"] {
    `overflow-y: auto` as one decision: a long course list scrolls itself.
 
    ⭐ The margin rule moves to the rail's right edge, between the reader's
-   column and the work. `72rem` is the one threshold in these parts. */
+   column and the work. `72rem` is the one threshold in these parts.
+
+   ⭐ THE ASIDE (`W388` clause 4, folding `W369` clause 1): a page with a
+   secondary block — a unit's outline, the index's explanation — gives it a
+   third column, `--aside`, on the far side of the reading column, so a wide
+   window's room holds it and the list or the prose starts at the top. ⛔ No
+   second threshold: at `72rem` the prose column is a little narrower than
+   `--measure` and reaches it as the window widens, and below `72rem` the block
+   is back in the one column above the content. The block is the page's own
+   aside: it is sticky and scrolls itself, as the rail does.
+
+   ⛔ ONE SHAPE THAT WORKS ON EVERY DISPLAY (`W388` STAGE 4). ⚠️ The user has
+   now read three of them. A shell ceilinged at `110rem` WITH `margin-left: 0`
+   was pinned left and left a dead band down the right of their window —
+   *"the paragraph texts are not using the full width"*. Releasing the ceiling
+   answered that and opened the other failure: the three tracks grew with the
+   screen and the reading column ran away from the prose inside it —
+   *"the width is too wide. Find a common ground for different displays. maybe
+   if the display is too big having the menu and content in the middle by
+   forcing a max width or something."*
+
+   ⭐ SO THE SHELL IS BOUNDED AND CENTRED, WHICH IS ONE SHAPE AND NOT TWO.
+   `max-width: var(--page-max)` with `margin-inline: auto`: below the ceiling
+   the margins resolve to nothing and the page fills the window exactly as the
+   released shape did, and above it the same declaration holds the shell at the
+   ceiling with EQUAL margins either side. ⛔ There is no width at which one
+   side has room the other does not — which is what a dead band IS — and the
+   rail, the reading column and the outline are all inside the shell, so the
+   reader's menu centres with the reading rather than clinging to the glass.
+
+   ⛔ THE CEILING IS BACK ON THE SHELL AND THE BOUND ON `> main` IS GONE, which
+   is a removal rather than an oversight: with the shell held at `--page-max`
+   the surface can never reach it, so a second declaration of the same token
+   would be a ceiling that never bites and a reader would have two places to
+   look. ⭐ The token's argument — why `110rem` and not `100` or `120` — is in
+   `palette.css` beside the declaration, measured from the first corpus's own
+   code blocks.
+
+   ⚠️ THE INSET IS WRITTEN OUT RATHER THAN LEFT TO `auto`, AND `W333` IS WHY.
+   `margin-inline: auto` would centre the shell and say nothing a second rule
+   could agree with — and the page with NO rail is bounded by the measure, not
+   by the ceiling, so centring that one puts it somewhere else entirely and the
+   layout jumps when a reader clicks between the two kinds. ⭐ Both shapes take
+   the SAME left inset instead: half of whatever the window has past the
+   ceiling, and nothing at all below it. ⛔ The two declarations are asserted
+   EQUAL to each other in `test_chrome_page_start.py`, never against a value
+   typed there, so they cannot drift apart. */
 
 @media (min-width: 72rem) {
   body:has(nav[aria-label="Containers"]) {
@@ -290,18 +338,24 @@ span[data-kind="read-state"] {
     grid-template-columns: var(--rail) minmax(0, 1fr);
     column-gap: var(--gutter);
     max-width: var(--page-max);
-    margin-left: 0;
+    margin-left: max(0px, (100% - var(--page-max)) / 2);
     padding-left: 0;
+  }
+
+  body:has(nav[aria-label="Containers"]):has(> nav[aria-label="Outline"], > section[aria-label="About this site"]) {
+    grid-template-columns: var(--rail) minmax(0, 1fr) var(--aside);
   }
 
   body:has(nav[aria-label="Containers"])::before {
     left: calc(var(--rail) + var(--gutter) / 2 - 1px);
   }
 
-  /* ⛔ The page without a rail starts where the page with one starts (`W333`):
-     flush left, keeping its own gutter. */
+  /* ⛔ The page without a rail starts where the page with one starts (`W333`),
+     keeping its own gutter. ⚠️ Since `W388` stage 4 that place is the shell's
+     left edge rather than the window's, so this is the same expression the
+     shape above takes and the right margin is still left to `auto`. */
   body:not(:has(nav[aria-label="Containers"])) {
-    margin-left: 0;
+    margin-left: max(0px, (100% - var(--page-max)) / 2);
   }
 
   body:has(nav[aria-label="Containers"]) > * {
@@ -321,6 +375,19 @@ span[data-kind="read-state"] {
     border-left: 0;
     border-start-start-radius: 0;
     border-end-start-radius: 0;
+  }
+
+  body:has(nav[aria-label="Containers"]) > nav[aria-label="Outline"],
+  body:has(nav[aria-label="Containers"]) > section[aria-label="About this site"] {
+    grid-column: 3;
+    grid-row: 1 / span 10;
+    align-self: start;
+    position: sticky;
+    top: 0;
+    max-height: 100vh;
+    overflow-y: auto;
+    margin: 0;
+    padding: 2rem 0 2rem;
   }
 
   /* The fold is a narrow-width device: beside the column the list is always

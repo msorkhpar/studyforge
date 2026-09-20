@@ -3,18 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f1f5f2">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#26322c">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f1f5f9">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f172a">
+<script>try{var t=sessionStorage.getItem("studyforge.boot.theme.v1");if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t);}}catch(e){}</script>
 <title>Depth Two Demo</title>
 <link rel="stylesheet" href=".studyforge/assets/page.css">
 </head>
 <body>
 <a href="#content">Skip to the content</a>
 <header>
+<div role="group" aria-label="Theme" data-section="theme" hidden>
+<button type="button" data-theme-choice="system" aria-pressed="true">System</button>
+<button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+<button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+</div>
 <h1>Depth Two Demo</h1>
 </header>
-<main id="content">
 <section aria-label="About this site"><p>A study site made from the material below. Read each unit in order, and tick it off when you finish it.</p><section><h2>How to use it</h2><ol><li>Open the unit named under Up next.</li><li>At the foot of the unit, press Mark as read. The next unit takes its place here.</li><li>Your marks are kept in this browser on this machine, not in the repository. Clearing its site data clears them.</li></ol></section><section><h2>How it is ordered</h2><p>In the order the author arranged the material: each group from top to bottom, and the groups in the order they are listed.</p></section></section>
+<main id="content">
 <section aria-label="Progress" hidden><p><strong>0</strong> of 5 units read <span><b>5</b> to go</span></p><ol aria-label="Progress by group"><li style="--units: 2"><a href="#advanced/02-going-further">Going Further</a></li><li style="--units: 1"><a href="#advanced/03-putting-it-together">Putting It Together</a></li><li style="--units: 2"><a href="#basics/01-getting-started">Getting Started</a></li></ol></section>
 <nav aria-label="Up next"><a href="advanced/02-going-further/study/advanced.02-going-further.unit-01-composition-over-inheritance.unit.html"><span>Up next</span> Composition over inheritance</a><p hidden><span>Up next</span> You have read every unit</p></nav>
 <form role="search" aria-label="Filter units" hidden><input type="search" name="filter" placeholder="Filter units…" aria-label="Filter units" autocomplete="off" spellcheck="false"><button type="button" value="expand">Expand all</button><button type="button" value="collapse">Collapse all</button><p role="status" aria-live="polite" hidden><b>0</b> matching units</p></form>

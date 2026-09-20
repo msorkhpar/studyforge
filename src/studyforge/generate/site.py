@@ -65,9 +65,10 @@ from pathlib import Path, PurePosixPath
 
 from studyforge.contents import status
 from studyforge.generate.clips import for_output, unit_clips
-from studyforge.generate.containers import container_pages
+from studyforge.generate.containers import container_pages, page_paths
 from studyforge.generate.declarations import Corpus, read_corpus
 from studyforge.generate.media import unit_media
+from studyforge.generate.navigation import rail
 from studyforge.generate.units import unit_pages
 from studyforge.generate.writing import Written, place
 from studyforge.render.index import Placement as IndexPlacement
@@ -104,7 +105,17 @@ def root_index(corpus: Corpus, into: Path | str) -> Written:
     place(
         Path(into),
         where.shared.root_index,
-        render_index(from_contents(corpus.contents, local, where), where),
+        render_index(
+            from_contents(corpus.contents, local, where),
+            where,
+            # ⭐ The first page carries the rail too (`W388`, the user's words).
+            rail(
+                corpus.contents,
+                where.shared.root_index,
+                page_paths(corpus),
+                absent=corpus.absent,
+            ),
+        ),
         written,
         refused,
         replaced,

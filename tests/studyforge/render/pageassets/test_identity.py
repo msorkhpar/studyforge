@@ -219,6 +219,231 @@ def test_every_pair_the_design_paints_clears_its_floor(theme, foreground, backgr
     )
 
 
+# --- `W388` stage 2: the palette against the user's own two pages -------------
+
+#: The band each ink that carries running text sits in, as ratios, `token ->
+#: (floor, ceiling)`. ⛔ NOT WCAG AA AND NOT A MAXIMUM — the bounds are taken
+#: from the user's own route-planner page, which is the page they said this one
+#: is worse than: its body ink measures 12.14:1, its quieter ink 8.33:1 and its
+#: faintest 5.59:1, and all three sit inside the bands below. ⚠️ Stage 1 set one
+#: band of 4.5–9.0 for all three and the user read the result as "too dim"; the
+#: FLOOR is what that got wrong, and the ceiling stays because near-white chalk
+#: on a dark board is what the row was opened over.
+BANDS = {"--fg": (10.0, 14.0), "--fg-soft": (6.5, 10.0), "--muted": (4.5, 7.0)}
+
+#: The inks that carry running text, against the ground they are read on.
+BODY_TEXT = (("--fg", "--bg"), ("--fg-soft", "--bg"), ("--muted", "--bg"))
+
+#: How far from neutral a ground or an ink may be, as `(red - blue) / 255`. ⛔ A
+#: SIGNED bound and not a spread: the user's word was "too warm", and warm means
+#: red above blue. Both reference pages are at or below zero; stage 1's
+#: parchment ground and its ink are above it.
+WARMTH = 0.015
+
+#: The grounds and inks the warmth bound applies to — everything a reader looks
+#: at for an hour. ⛔ The accent is not among them: it is a mark, and warm is
+#: exactly what it is for.
+NEUTRALS = (
+    "--bg",
+    "--surface",
+    "--surface-2",
+    "--panel",
+    "--fg",
+    "--fg-soft",
+    "--muted",
+    "--rule",
+    "--rule-strong",
+    "--margin",
+)
+
+#: What the palette may paint a LINE with at rest, as chroma — the spread
+#: between the strongest and weakest sRGB channel, scaled to 0–1. ⛔ Structure
+#: stays on the neutral scale: nothing on the page is told apart by a hairline's
+#: hue. ⚠️ `0.12` was stage 1's figure and it was measured against a warm grey;
+#: the slate scale both reference pages use is a TINTED neutral (its blue
+#: channel leads by about a seventh), so the bound is the scale's own spread
+#: plus room, and the rules are held to the warmth bound above as well — a red
+#: hairline is caught by that one whatever its spread.
+RULE_CHROMA = 0.20
+
+#: ⛔ THE ACCENT'S BOUND IS A FLOOR, AND THAT IS THE STAGE-1 REVERSAL. Stage 1
+#: capped it at 0.30 and shipped a washed ink blue the user called "boring"; a
+#: live accent that is nearly grey is not an accent. The user's own route
+#: planner sets its accent at 0.80.
+ACCENT_CHROMA = 0.45
+
+#: `token -> the chroma it may not exceed`. Lines only.
+AT_REST = {"--rule": RULE_CHROMA, "--rule-strong": RULE_CHROMA, "--margin": RULE_CHROMA}
+
+#: The tokens that must be LOUD, each against `ACCENT_CHROMA` as a floor.
+LIVE = ("--accent", "--sign", "--focus", "--hl-bar")
+
+#: The hue arc a colour is called green over, in degrees, and the chroma below
+#: which a hue is not worth naming. ⛔ THE USER, 2026-09-19: *"I am not a fan of
+#: green"*. Both reference pages use one — the route planner's guide-sign green
+#: and the documentation site's emerald — and it is the one thing taken from
+#: neither. ⚠️ Read over every colour token in both themes, not only the accent.
+GREEN = (70.0, 170.0)
+NAMEABLE = 0.15
+
+
+def chroma(colour: str) -> float:
+    """How far from neutral a hex colour is, as the spread of its sRGB channels."""
+    body = colour.lstrip("#")
+    channels = [int(body[at : at + 2], 16) for at in (0, 2, 4)]
+    return (max(channels) - min(channels)) / 255
+
+
+def warmth(colour: str) -> float:
+    """How far a hex colour leans red over blue, scaled to -1..1."""
+    body = colour.lstrip("#")
+    red, _, blue = (int(body[at : at + 2], 16) for at in (0, 2, 4))
+    return (red - blue) / 255
+
+
+def hue(colour: str) -> float:
+    """The hue of a hex colour in degrees, 0 at red, going through green at 120."""
+    body = colour.lstrip("#")
+    red, green, blue = (int(body[at : at + 2], 16) / 255 for at in (0, 2, 4))
+    high, low = max(red, green, blue), min(red, green, blue)
+    if high == low:
+        return 0.0
+    spread = high - low
+    if high == red:
+        return (60 * ((green - blue) / spread)) % 360
+    if high == green:
+        return 60 * (2 + (blue - red) / spread)
+    return 60 * (4 + (red - green) / spread)
+
+
+def greens(values: dict[str, str]) -> list[str]:
+    """Every token in `values` painted a green anybody would call green."""
+    return sorted(
+        token
+        for token, colour in values.items()
+        if colour.startswith("#")
+        and chroma(colour) >= NAMEABLE
+        and GREEN[0] <= hue(colour) <= GREEN[1]
+    )
+
+
+@pytest.mark.parametrize("theme", ["light", "dark"])
+@pytest.mark.parametrize(("ink", "ground"), BODY_TEXT)
+def test_body_text_is_inside_the_band_the_users_own_page_sets(theme, ink, ground):
+    light, dark, _ = blocks()
+    values = dict(light, **dark) if theme == "dark" else light
+    floor, ceiling = BANDS[ink]
+    ratio = contrast(values[ink], values[ground])
+    assert floor <= ratio <= ceiling, (
+        f"{theme}: {ink} on {ground} is {ratio:.2f}:1, outside {floor}:1–{ceiling}:1"
+    )
+
+
+def test_the_reference_page_the_user_gave_us_sits_inside_the_same_bands():
+    # ⭐ The bands are not invented here: these are the route planner's own three
+    # inks on its own ground, and each lands inside the band named after it.
+    for ink, measured in (("--fg", ("#f1f2ee", "#2b2e31")), ("--fg-soft", ("#c8cbc6", "#2b2e31"))):
+        floor, ceiling = BANDS[ink]
+        assert floor <= contrast(*measured) <= ceiling, ink
+    floor, ceiling = BANDS["--muted"]
+    assert floor <= contrast("#a2a7a3", "#2b2e31") <= ceiling
+
+
+def test_both_palettes_this_row_replaced_are_caught_by_the_same_bands():
+    # ⭐ Both ways, and both bounds, against the two palettes that actually
+    # shipped: `W362`'s near-black ink on its cool paper broke the CEILING, and
+    # stage 1's warm-grey ink on warm paper broke the FLOOR in both themes.
+    # ⚠️ `W362`'s DARK pair reads 11.6:1 from the file and is inside these
+    # bands — the "15:1" in stage 1's handoff was a browser reading of the
+    # highlighted passage, not of this pair, and it is not evidence here.
+    assert contrast("#1b2236", "#f1f5f2") > BANDS["--fg"][1]
+    assert contrast("#534e46", "#f6f1e7") < BANDS["--fg"][0]
+    assert contrast("#bdb6a8", "#2a2825") < BANDS["--fg"][0]
+
+
+@pytest.mark.parametrize("theme", ["light", "dark"])
+def test_no_ground_or_ink_is_warm(theme):
+    light, dark, _ = blocks()
+    values = dict(light, **dark) if theme == "dark" else light
+    warm = {
+        token: round(warmth(values[token]), 3)
+        for token in NEUTRALS
+        if warmth(values[token]) > WARMTH
+    }
+    assert warm == {}, f"{theme}: {warm}"
+
+
+def test_the_warm_paper_that_shipped_is_caught_and_the_reference_is_not():
+    # ⭐ Both ways: stage 1's four warm values, and the two reference grounds.
+    assert [warmth(colour) > WARMTH for colour in ("#f6f1e7", "#534e46", "#2a2825", "#bdb6a8")] == [
+        True,
+        True,
+        True,
+        True,
+    ]
+    assert warmth("#2b2e31") <= WARMTH and warmth("#f1f2ee") <= WARMTH
+    assert warmth("#0f172a") <= WARMTH and warmth("#f1f5f9") <= WARMTH
+
+
+@pytest.mark.parametrize("theme", ["light", "dark"])
+def test_no_line_is_saturated_at_rest(theme):
+    light, dark, _ = blocks()
+    values = dict(light, **dark) if theme == "dark" else light
+    loud = {
+        token: f"{chroma(values[token]):.3f} > {bound}"
+        for token, bound in AT_REST.items()
+        if chroma(values[token]) > bound
+    }
+    assert loud == {}, f"{theme}: {loud}"
+
+
+@pytest.mark.parametrize("theme", ["light", "dark"])
+def test_the_live_accent_is_not_a_grey(theme):
+    # ⛔ The stage-1 reversal, asserted: the bound is a floor and not a cap.
+    light, dark, _ = blocks()
+    values = dict(light, **dark) if theme == "dark" else light
+    washed = {
+        token: round(chroma(values[token]), 3)
+        for token in LIVE
+        if chroma(values[token]) < ACCENT_CHROMA
+    }
+    assert washed == {}, f"{theme}: {washed}"
+
+
+def test_the_saturated_rule_and_the_washed_accent_that_shipped_are_both_caught():
+    # ⭐ The red margin rule `W362` shipped breaks the line bound and the warmth
+    # bound; a saturated blue breaks the line bound; the two ink blues stage 1
+    # shipped are below the accent floor; a slate hairline is inside every one.
+    assert chroma("#cf8f98") > RULE_CHROMA
+    assert warmth("#cf8f98") > WARMTH and warmth("#8a5257") > WARMTH
+    assert chroma("#23449a") > RULE_CHROMA
+    assert chroma("#46618c") < ACCENT_CHROMA
+    assert chroma("#9fb2d2") < ACCENT_CHROMA
+    assert chroma("#dbe3ec") <= RULE_CHROMA
+
+
+@pytest.mark.parametrize("theme", ["light", "dark"])
+def test_nothing_in_the_palette_is_green(theme):
+    light, dark, _ = blocks()
+    values = dict(light, **dark) if theme == "dark" else light
+    assert greens(values) == []
+
+
+def test_every_green_the_two_reference_pages_use_is_caught_by_name():
+    # ⭐ The other way, over the greens this palette had to give up: the route
+    # planner's guide sign and its bash ink, the documentation site's emerald,
+    # and stage 1's own olive string ink in both themes.
+    planted = {
+        "--sign": "#0b5a3a",
+        "--bash": "#cde688",
+        "--brand": "#10b981",
+        "--tok-string-light": "#4f6a35",
+        "--tok-string-dark": "#a3bf8a",
+    }
+    assert greens(planted) == sorted(planted)
+    assert greens({"--accent": "#ffc933", "--focus": "#38bdf8", "--fg": "#d2dbe6"}) == []
+
+
 def test_a_planted_pair_below_its_floor_is_caught():
     # ⭐ The same arithmetic on a pair that fails: pencil grey on the chrome
     # ground at the old warm-grey value.

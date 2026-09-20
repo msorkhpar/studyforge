@@ -55,6 +55,13 @@ footer#player {
   color: var(--fg);
 }
 
+/* ⭐ THE WHOLE WIDTH OF THE CONTENT (`W388`): beside the rail the transport
+   spans every column right of it — the reading column and the aside — so the
+   bar is as wide as the page's content. ⚠️ Only its ground widens: the controls
+   below are flex items at their own size and never grow with it. Below the
+   width threshold `body` is not a grid, so this line says nothing there. */
+body:has(nav[aria-label="Containers"]) > footer#player { grid-column: 2 / -1; }
+
 /* ⭐ ONE ROW (`W362`, N1): the transport was 140px tall on a laptop and 188px
    on a phone, a fifth of the screen held over the text for the whole visit. */
 footer#player > div:last-of-type {
@@ -231,8 +238,10 @@ section[data-section="narration-gap"] p {
 /* --- the highlight ------------------------------------------------------- */
 
 /* ⛔ Speech-unit granularity: the lit passage is the passage whose clip is
-   loaded. ⭐ AT REST it is a short highlighter mark in the margin beside the
-   passage, not a wash (`W362`, C3): a resting page must not look as though
+   loaded. ⛔ NOTHING IS LIT BEFORE THE READER STARTS NARRATION (`W369`):
+   `narration.js` sets `data-speaking` only once a passage is loaded by a
+   press. ⭐ PAUSED it is a short highlighter mark in the margin beside the
+   passage, not a wash (`W362`, C3): a paused page must not look as though
    something is selected. The wash — the highlighter swiped across the line —
    appears only while narration is playing, which the play button's own face
    says. Both are drawn with `box-shadow` so lighting a passage never moves it. */

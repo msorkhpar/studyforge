@@ -337,6 +337,23 @@ def test_the_transport_does_not_answer_the_page_column_a_second_time():
     # ⛔ `chrome.css` bounds the column ONCE, on `body` (`PO-22/6`). A fixed
     # footer would have to be paid for with a `padding-bottom` on `body` here,
     # which is the two-rules-for-one-question defect; sticky costs nothing.
+    # ⭐ `W388` places the footer in the grid with `body:has(…) > footer#player`,
+    # a rule whose subject is the FOOTER; what is refused is a rule on `body`.
     body = uncommented(STYLE)
-    assert re.search(r"^body\b", body, re.MULTILINE) is None
+    assert on_body(body) == []
     assert "position: sticky" in body
+
+
+def on_body(css: str) -> list[str]:
+    """Every rule whose subject is `body` itself rather than something inside it."""
+    return [
+        selector.strip()
+        for selector in re.findall(r"(?m)^([^{}@/*][^{}]*)\{", css)
+        if re.fullmatch(r"body(?::[\w-]+(?:\([^)]*\))?)*", selector.strip().split(",")[-1].strip())
+    ]
+
+
+def test_a_planted_rule_on_body_is_caught_and_a_rule_on_the_footer_is_not():
+    assert on_body("body { padding-bottom: 4rem; }") == ["body"]
+    assert on_body("body:has(nav) { padding-bottom: 4rem; }") == ["body:has(nav)"]
+    assert on_body("body:has(nav) > footer#player { grid-column: 2 / -1; }") == []

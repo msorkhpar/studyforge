@@ -48,6 +48,11 @@ RAIL = 'body > nav[aria-label="Containers"]'
 #: The page in its two-column shape, spelled as `chrome.css` spells it.
 WIDE_PAGE = 'body:has(nav[aria-label="Containers"])'
 
+#: The reading surface inside that shape. ⚠️ Stage 3 ceilinged this element and
+#: `W388` stage 4 took that bound away again — the shell carries the one ceiling
+#: — so the selector is kept here to assert the wide shape does NOT rule it.
+SURFACE = 'body:has(nav[aria-label="Containers"]) > main'
+
 
 def wide_part() -> str:
     """Everything `chrome.css` declares inside its one width threshold.
@@ -82,20 +87,30 @@ def wide_rule_for(selector: str) -> str:
 # --- clause 1: flush against the viewport's left edge -----------------------
 
 
-def test_the_wide_page_gives_up_the_left_margin_that_floated_the_rail_in():
-    # ⛔ **The rail never floated itself in.** `body` carries `margin-left: auto`
-    # and `margin-right: auto` in the column section, so a page narrower than the
-    # screen sits in the middle of it and the rail — the first grid track —
-    # starts wherever that put it. ⭐ Flush left is therefore a claim about the
-    # PAGE's left margin, and this is the declaration that makes it.
+def test_the_wide_page_centres_its_shell_instead_of_pinning_it_to_one_edge():
+    # ⛔ **`W388` STAGE 4 REVERSES THIS CLAUSE, and the reversal is the row.**
+    # `W326` zeroed the left margin so the rail would sit on the window's left
+    # edge; with a ceiling above it that is a page pinned LEFT, and the user read
+    # the result on their own window as *"the paragraph texts are not using the
+    # full width"* — every spare pixel was on one side. ⭐ The shell is centred
+    # now: the inset is HALF of whatever the window has past the ceiling, and the
+    # `max(0px, …)` floor is what keeps the rail on the window's own edge at
+    # every width below it. ⚠️ Written out rather than left to `margin-inline:
+    # auto` because the page with NO rail has to take the same inset and is
+    # bounded by something else — `test_chrome_page_start.py` holds the two
+    # equal. ⛔ Where the rail sits INSIDE the shell is the gutter clause below
+    # and `test_reading_width.py`'s geometry, not this one.
     declarations = wide_rule_for(WIDE_PAGE)
-    assert re.search(r"margin-left:\s*0\s*;", declarations), (
-        "the wide page keeps the auto left margin, so it is centred and the rail "
-        f"starts wherever centring put it: {declarations}"
+    found = re.search(r"margin-left:\s*([^;]+);", declarations)
+    assert found, f"the wide page sets no left margin at all: {declarations}"
+    inset = found.group(1).strip()
+    assert inset != "0", (
+        "the wide page still pins itself to the left edge, which is the shape "
+        f"the user read as a dead band down the right: {declarations}"
     )
-    assert not re.search(r"margin-right:\s*0\s*;", declarations), (
-        "the right margin is zeroed too, so the page is not left-aligned — it is "
-        "pinned to both edges and the ceiling below never bites"
+    assert inset.startswith("max(0px,") and "var(--page-max)" in inset and "/ 2" in inset, (
+        "the shell's left inset is not half of what the window has past the "
+        f"palette's own ceiling, floored at nothing: {inset!r}"
     )
 
 
@@ -220,26 +235,52 @@ def test_the_reading_columns_track_is_a_share_of_the_viewport_and_not_a_constant
     )
 
 
-def test_the_dynamic_column_is_bounded_and_the_bound_is_the_palettes_own_ceiling():
-    # ⛔ **An unbounded column is its own defect** — a table or a code block
-    # across a whole 4K display is the full-bleed shape the column section above
-    # was written against, one viewport along. ⭐ The ceiling is the one the
-    # palette ALREADY declares, so this row mints no token: the bound is
-    # `--page-max` and nothing else, which is why a reader changes one number in
-    # one file to move it.
+def test_the_wide_page_is_ceilinged_at_the_palettes_own_token():
+    # ⛔ **`W388` stage 4: the ceiling is back on the shell**, because a shell
+    # that centres has to have something to centre at. Stage 3 released it
+    # (`none`) and bounded `> main` instead, which cured the pin and opened the
+    # other failure — the three tracks grew with the screen without limit and
+    # the user read *"the width is too wide"*.
+    #
+    # ⚠️ **The TOKEN is asserted, not a number.** A literal here would be a
+    # second place to change the ceiling and the argument for its value —
+    # measured from the first corpus's own code blocks — lives beside the
+    # declaration in `palette.css`.
     declarations = wide_rule_for(WIDE_PAGE)
     found = re.search(r"max-width:\s*([^;]+);", declarations)
-    assert found, f"the wide page is unbounded, so it takes the whole screen: {declarations}"
+    assert found, (
+        "the wide page states no max-width at all, so it grows with any screen "
+        f"and only the narrow shape's own bound is left to disagree: {declarations}"
+    )
     bound = found.group(1).strip()
     assert bound == "var(--page-max)", (
-        f"the wide page's ceiling is not the palette's own, unmixed: {bound!r}"
+        f"the shell's ceiling is not the palette's own token, unmixed: {bound!r}"
+    )
+
+
+def test_the_reading_surface_declares_no_second_ceiling_of_its_own():
+    # ⛔ **ONE CEILING, IN ONE PLACE.** Stage 3's bound on
+    # `body:has(…) > main` was the whole ceiling while the shell was released;
+    # with the shell held at `--page-max` the surface is always the shell less
+    # the rail, the aside and three gutters, so the same token repeated there
+    # could never bite. ⚠️ A declaration that cannot bite is worse than none: it
+    # is a second place a reader would go to move the ceiling, and moving it
+    # there would do nothing.
+    ruled = [selector.strip() for selector, _ in re.findall(r"([^{}]+)\{([^{}]*)\}", wide_part())]
+    assert SURFACE not in ruled, (
+        f"the wide shape still rules {SURFACE}, so there are two ceilings to find"
+    )
+    assert len(re.findall(r"max-width:", wide_part())) == 1, (
+        "the wide shape declares more than one max-width, so the page's ceiling "
+        f"is not the only one a reader has to reason about: {wide_part()}"
     )
 
 
 def test_the_running_measure_is_still_the_only_thing_bounding_prose():
-    # ⚠️ **"Use more of the page" is NOT "remove the measure from prose."** An
-    # 80-character line is at the top of the legible range already; widening it
-    # makes the page worse and the scroll barely shorter. ⭐ What widened is the
+    # ⚠️ **"Use more of the page" is NOT "remove the measure from prose."** The
+    # measure is a COUNTED number with a bound above it (`palette.css`, and
+    # since `W388` stage 4 it is `80ch` laying about 105 characters); a column
+    # with no cap at all lays 230 on a wide screen. ⭐ What widened is the
     # half `reading.css` calls *"scanned rather than read"* — the figure, the
     # table and the code block — and that is a consequence of the track, not a
     # rule written here. ⛔ So the wide shape must not mention the measure at all.

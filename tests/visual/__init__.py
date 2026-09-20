@@ -123,4 +123,33 @@ ACCEPTANCE = {
     #: same press: the mark is SAID, not only drawn, in the rail and both lists.
     "tells a screen reader which units are read, in the rail and in both lists, "
     "and moves nothing on the screen (W383)": "test_rail_marks",
+    #: ⭐ `W388`'s clause, and `W369`'s with it: *"a palette somebody can read
+    #: for hours, the rail on the first page too, a transport that spans the
+    #: content without growing its buttons, and a reading column with its
+    #: secondary block beside it"*. ⛔ It is a row of its own because every one
+    #: of the claims is a LIVE reading of a laid-out page under a stated width
+    #: and a stated theme — the contrast row above reads a floor and never a
+    #: ceiling, and not one row above reads a line of prose in characters.
+    "keeps the reading inside a contrast band in both themes, the rail on every "
+    "page, the transport the width of the content with its controls unchanged, "
+    "and the page's secondary block beside the reading (W388, W369)": "test_reading_room",
+    #: ⭐ `W388` stage 2's second clause, the user's own: *"have the both dark
+    #: and light themes in studyforge as well"*. ⛔ A module of its own for the
+    #: reason `test_rail_marks` is one — it needs a store cleared before and
+    #: after every reading — and because what it reads is a page CHANGING under
+    #: a press and surviving a reload, which no other row here does.
+    "lets the reader choose light, dark or their system's setting on every page "
+    "kind, and remembers it across a reload (W388)": "test_theme_choice",
+    #: ⭐ `W388`'s width clause, and the user read three shapes before it
+    #: settled: *"Still the paragraph texts are not using the full width"* of a
+    #: shell pinned left under a ceiling, then *"the width is too wide… maybe if
+    #: the display is too big having the menu and content in the middle by
+    #: forcing a max width"* of a shell with no ceiling at all. ⛔ A row of its
+    #: own rather than a widening of the reading-room row above, for the reason
+    #: that module could not have caught either: every clause there is taken at
+    #: ONE wide viewport, and both rejected shapes are correct at 1280 and 1440.
+    #: ⚠️ What is read here is the shell against the WINDOW at five widths, and
+    #: the cap on a line of prose at each of them.
+    "fills the window up to its ceiling and centres at it above, with equal "
+    "margins, the rail on its left edge and the aside on its right (W388)": "test_reading_width",
 }

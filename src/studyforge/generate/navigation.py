@@ -55,6 +55,14 @@ not one of them is spelled here. ⛔ **An intermediate level has no container
 page**, because a container map is written at the address a corpus declares
 units under and nowhere above it; that crumb is therefore listed rather than
 linked, which is `SF-14/3` made visible on the page instead of invisible.
+
+## ⛔ The trail names each level once (`W388`)
+
+⚠️ **A corpus may call its outermost group what it calls itself** — the ISO
+corpus's first group carries the corpus's own title — and the trail then read
+the same long title twice in a row. ⭐ A group crumb whose title is the crumb
+before it is not printed a second time: the first one stays, because it is the
+root every trail starts from, and the rail still reaches that group's page.
 """
 
 from __future__ import annotations
@@ -103,16 +111,17 @@ def trail(
     to_index: str,
     above: Mapping[str, str] | None = None,
 ) -> tuple[Crumb, ...]:
-    """Return the crumbs for one unit: the corpus, its containers, then itself."""
+    """Return the crumbs for one unit: the corpus, its containers, then itself.
+
+    ⛔ A crumb that repeats the title of the crumb before it is dropped — see
+    this module's docstring on naming each level once.
+    """
     linked = above or {}
-    return (
-        Crumb("", contents.title, to_index),
-        *(
-            Crumb(group.level, group.title, linked.get(group.key))
-            for group in ancestors(contents, key)
-        ),
-        Crumb("", _entry(contents, key).title),
-    )
+    crumbs = [Crumb("", contents.title, to_index)]
+    for group in ancestors(contents, key):
+        if group.title != crumbs[-1].title:
+            crumbs.append(Crumb(group.level, group.title, linked.get(group.key)))
+    return (*crumbs, Crumb("", _entry(contents, key).title))
 
 
 def ancestors(contents: Contents, key: str) -> tuple[Group, ...]:
