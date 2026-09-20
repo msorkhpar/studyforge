@@ -184,7 +184,7 @@ def read_directory(directory: Path, path: str) -> Reading:
 
 
 def _pinned_component(name: str, repository_root: Path):
-    """The present component the pin file records under `name`, or `None`."""
+    """Return the present component the pin file records under `name`, or `None`."""
     for component in read(repository_root):
         if component.name == name and component.present:
             return component
@@ -192,7 +192,7 @@ def _pinned_component(name: str, repository_root: Path):
 
 
 def _working_text(path: Path) -> str | None:
-    """The file's text, or `None` when it is not a readable text file.
+    """Return the file's text, or `None` when it is not a readable text file.
 
     ⚠️ Unreadable and undecodable collapse into *absent* on purpose: a contract
     this reader cannot decode is one no caller can parse, and the alternative is
@@ -202,7 +202,7 @@ def _working_text(path: Path) -> str | None:
         return None
     try:
         return path.read_text(encoding="utf-8")
-    except (OSError, UnicodeDecodeError):
+    except OSError, UnicodeDecodeError:
         return None
 
 

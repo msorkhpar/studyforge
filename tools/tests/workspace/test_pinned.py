@@ -72,8 +72,7 @@ def repin(here: Path, commit: str) -> None:
     """Point the sibling's row at `commit`, leaving every other row alone."""
     document = json.loads((here / "workspace.json").read_text(encoding="utf-8"))
     rows = [
-        {**row, "commit": commit} if row["name"] == NAME else row
-        for row in document["components"]
+        {**row, "commit": commit} if row["name"] == NAME else row for row in document["components"]
     ]
     support.write_pin(here, rows)
 
@@ -154,9 +153,7 @@ def test_no_checkout_beside_this_repository_is_absent_and_not_a_crash(tmp_path):
 
 def test_a_component_the_pin_file_does_not_name_is_absent(tmp_path):
     root, here, _ = workspace(tmp_path)
-    reading = pinned.read_sibling(
-        "Nowhere", CONTRACT, repository_root=here, workspace_root=root
-    )
+    reading = pinned.read_sibling("Nowhere", CONTRACT, repository_root=here, workspace_root=root)
     assert reading.absent and "Nowhere" in reading.source
 
 
