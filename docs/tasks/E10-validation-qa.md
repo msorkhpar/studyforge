@@ -329,6 +329,15 @@ graders. ⛔ **A source that yields zero exercises is a pass**, not a shortfall
 (§7's three states, C5). This is written down here so it is not re-litigated
 under deadline.
 
+⛔ **DATED 2026-09-19 (`W389`, user direction) — that sentence stands for `M8`, which closed
+under it, and it does not carry past `M9`.** ⭐ **From `M10` a source with no graders is
+authored ones** ([spec
+§7](../specs/2026-09-08-studyforge-v1-design.md#exercises-authored-for-every-corpus-w389)),
+so what a later exercise is judged on is the coverage report: every planned exercise
+shipped, or named with the gate that refused it. ⚠️ **The clause's original purpose is
+untouched** — nothing here is measured against a corpus that happens to ship 168 test
+classes, and a shortfall is still never closed by loosening a gate.
+
 ⛔ **RE-SCOPED PO round 74 — user direction, 2026-09-12: the second source is `ISO-8583-jPOS-tutorial`, and it goes FIRST.** *"we were supposed to run it against ISO 8583 project first and if it worked and we are sure we are a framework … and then apply it to java-senior project to revalidate being a framework."* ⭐ **The user named it, so the anonymity above no longer holds for this row (spec §12, amended).** ⛔ **The edge on `QA-01` is REMOVED: `QA-01` reads the Java corpus at `M9`, after this row.** ⭐ **This row is the ISO track's second finish line (Q18); `M6`'s close is its first.** ⛔ **The no-patch rule binds for the whole of `M8`, unchanged.**
 
 **Acceptance.** The corpus reaches the Java corpus's floor — readable over

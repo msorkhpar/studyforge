@@ -152,9 +152,32 @@ answer?**
 - **It teaches and sets no work.** `"exercises": false`, no practice documents,
   and you are finished at the reading floor.
 
-**Do not invent assertions to fill the third case.** A grader nobody wrote,
+~~**Do not invent assertions to fill the third case.** A grader nobody wrote,
 checking an answer nobody specified, is theatre — and a corpus that refuses to
-put on that show is behaving correctly, not failing.
+put on that show is behaving correctly, not failing.~~
+
+⛔ **STRUCK 2026-09-19 (`W389`, user direction), and replaced by *author, then prove*.**
+
+⭐ **The three cases above still describe your corpus as its source ships it, and they are
+still how you answer the manifest question today.** ⚠️ **What they no longer decide is
+whether your reader gets to practise.** An exercise can be **authored** from a page's own
+material — its examples, its practice code, its prose — and what keeps that honest is not a
+refusal to write one, but **gates it must clear before it ships**: its tests pass on a
+reference solution, every test fails on the starter, each edge-case test catches the one
+omission it names, and a record of those readings ships beside the exercise for
+`studyforge validate` to re-check. An exercise that cannot clear a gate does not ship, and
+the coverage report names the gate that refused it.
+
+⛔ **The old sentence's point survives, sharpened:** a grader nobody proved is still
+theatre. ⭐ **The remedy changed from *do not write one* to *write one and prove it*.**
+
+⚠️ **THIS IS A STANCE, NOT YET A PROCEDURE.** ⛔ **No skill in this repository authors
+exercises today, and nothing here should be read as describing shipped behaviour.** ⭐ **The
+authoring skill, its gates and the quiz shape for material with no coding task are
+milestone `M10`** ([the plan](../tasks/README.md#m10-every-corpus-has-practices), epic
+[`E14`](../tasks/E14-authored-exercises.md)), and this page is rewritten from the code when
+they land. ⭐ **The design, whole, is [spec
+§7](../specs/2026-09-08-studyforge-v1-design.md#exercises-authored-for-every-corpus-w389).**
 
 ---
 

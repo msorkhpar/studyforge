@@ -6,9 +6,9 @@
 
 ⛔ **Derived from the epic documents, never transcribed from them.** A hand-edit here is a finding against the delivery skill (R19), not a fix — it is reverted by the next regeneration.
 
-**100 capabilities · 14 epic documents · 12 milestones, 3 with no capability · 1 cancelled row carried and not counted.**
+**112 capabilities · 15 epic documents · 12 milestones, 2 with no capability · 1 cancelled row carried and not counted.**
 
-**Of those capabilities, 56 are this framework's to deliver, 27 are delivered inside a component pinned somewhere else, and 17 declare no path at all.**
+**Of those capabilities, 67 are this framework's to deliver, 27 are delivered inside a component pinned somewhere else, and 18 declare no path at all.**
 
 ⛔ **Milestones run in the order `README.md` declares, not the order their ids sort to:** `M0` → `M1` → `M2` → `M3` → `M4` → `M6` → `M8` → `M5` → `M7` → `M10` → `M11` → `M9`.
 
@@ -136,9 +136,22 @@
 | `TC-05` | Compose and mount contract | Toolchain image (shared repository) | ⭐ not this framework | `TC-02`, `TC-03` |
 | `TC-06` | Versioning and consumer pinning | Toolchain image (shared repository) | ⭐ not this framework | `TC-02` |
 
-## M10 — 0 capabilities
+## M10 — 12 capabilities
 
-⭐ **No epic document declares a capability at this milestone.** It is a gate in the declared order all the same, and a plan that waits on it waits here.
+| capability | what it is | area | delivered in | waits on |
+|---|---|---|---|---|
+| `AX-00` | Cases, kinds and origin in the exercise record | Authored exercises | this framework | `SF-23` |
+| `AX-01` | The case report | Authored exercises | this framework | `AX-00` |
+| `AX-02` | Submit records the breakdown | Authored exercises | this framework | `AX-01`, `SF-22` |
+| `AX-03` | The authoring gates and the gate record | Authored exercises | this framework | `AX-00`, `AX-01`, `TC-00` |
+| `AX-04` | The exercise bundle | Authored exercises | this framework | `AX-00`, `AX-03`, `SF-25` |
+| `AX-05` | The quiz shape | Authored exercises | this framework | `AX-00`, `FND-04` |
+| `AX-06` | The quiz authoring gates | Authored exercises | this framework | `AX-03`, `AX-05` |
+| `AX-07` | The source ledger and the page plan | Authored exercises | this framework | `AX-04`, `SF-36` |
+| `AX-08` | The authoring skill | Authored exercises | this framework | `AX-03`, `AX-04`, `AX-06`, `AX-07` |
+| `AX-09` | The practice panel: the breakdown, the reference and the label | Authored exercises | this framework | `SF-24`, `AX-02`, `AX-05` |
+| `AX-10` | The authoring guide catches up | Authored exercises | this framework | `AX-08` |
+| `AX-11` | `M10`'s acceptance, read on ISO and on the prose fixture | Authored exercises | ⚠️ undeclared | `AX-09`, `AX-10` |
 
 ## M11 — 0 capabilities
 
