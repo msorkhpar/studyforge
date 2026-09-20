@@ -22,7 +22,7 @@ from studyforge.generate import write_site
 from studyforge.generate.declarations import read_corpus
 from studyforge.serve.app import DEFAULT_PORT, ServingServer
 from studyforge.serve.response import API_ROOT
-from studyforge.serve.routes.run import CLIENT, CLIENT_FILE, NAMESPACE
+from studyforge.serve.routes.run import CLIENT, CLIENT_FILE, CLIENT_PATH, NAMESPACE
 from studyforge.validate.report import OK
 from tests.fixture_checks import FIXTURES
 
@@ -59,6 +59,28 @@ RUN_CLIENT = re.compile(
 )
 
 REFERENCE = re.compile(r"""(?:src|href)\s*=\s*["']([^"']*)["']""")
+
+#: ⛔ `W370`: what a SERVING PROCESS adds to the page it answers, and the ONE way
+#: a page ever gets the execution client (`SF-24`, `E05` § how a served page
+#: loads the run client). ⚠️ A built text that names it is a floor defect above;
+#: a SERVED page that does not carry it is an instance offering Run and Submit
+#: the page cannot reach. ⭐ Both directions, one constant.
+CLIENT_TAG = f'<script src="{CLIENT_PATH}" defer></script>'.encode()
+
+
+def served_page(on_disk: bytes) -> bytes:
+    """Return the bytes an instance that registers `run` answers this built page with.
+
+    ⛔ **A served page is no longer byte-identical to its file, and that is a
+    RULING rather than a regression** (`W370`): only the server knows it is a
+    server, so it inserts the client into what it answers and the file on disk
+    stays a page that names no API at all (R8). ⭐ Derived here rather than
+    imported from `routes.assets`, so a test comparing against it is comparing
+    against the RULE and not against the implementation of the rule.
+    """
+    head = on_disk.index(b"</head>")
+    return on_disk[:head] + CLIENT_TAG + on_disk[head:]
+
 
 #: Every file a browser parses for references, and so every file a server URL could hide in.
 TEXT_SUFFIXES = (".html", ".js", ".css")

@@ -71,7 +71,11 @@ REACH = {
     # ⚠️ `SF-22`: the run route's parse of a practice key is the first site naming
     # `progress.RAISES`, and a subject with NO floor here fails the deleted-outright
     # plant below, whatever the note above says of a new caller (`SF-22/5`).
-    "studyforge.progress": 1,
+    # ⚠️ `SF-24` RAISED it to 2 and had to: the practice panel mints the same key on
+    # the page, and with a floor of 1 the deleted-outright plant found 1 site left,
+    # read it as not short, and DID NOT RAISE. ⛔ So the floor moves with the second
+    # site — which is the other half of `SF-22/5` and not a new rule.
+    "studyforge.progress": 2,
     "studyforge.serve": 1,
 }
 

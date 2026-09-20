@@ -59,6 +59,13 @@ from studyforge.render.pageassets.source import text
 #: the four are one part split at named seams for R11 (`W362`; `chrome.css`
 #: names them), and they share its position's argument.
 #:
+#: ⭐ `practice.css` (`SF-24`) follows those four directly and for their reason:
+#: the practice panel is a region this framework emits, reached by an attribute
+#: and painted in palette tokens, so it belongs with the other authored region
+#: parts and before anything that refines the inside of a code block. ⛔ It comes
+#: after `notes.css` because the panel sits under a section the reading surface
+#: has already set, and at equal specificity the last rule wins.
+#:
 #: ⛔ `narration.css` sits after `code-highlight.css` and before the vendored
 #: parts, and both halves of that are meaning too. It comes *after* the
 #: highlight because the narration highlight washes over the inside of a code
@@ -75,6 +82,7 @@ STYLE_PARTS = (
     "lists.css",
     "onward.css",
     "notes.css",
+    "practice.css",
     "code-highlight.css",
     "narration.css",
     "plyr.css",
@@ -105,6 +113,13 @@ STYLE_PARTS = (
 #: `read-mark.js` because that part's LAST-ness is the property being kept, and
 #: after `video-player.js` so the two media parts read together.
 #:
+#: ⭐ `practice.js` (`SF-24`) needs no library and no store: it draws the panel
+#: and reaches the API only through `window.studyforge.run`, which the SERVING
+#: PROCESS adds to the page it answers — so a built page names no client and no
+#: origin (R8, `W370`). ⛔ It is before `read-mark.js` because that part's
+#: LAST-ness is the property being kept, and after `narration.js` so the parts
+#: that draw a region of their own read together.
+#:
 #: ⭐ `theme.js` (`W388` stage 2) reads and writes the store's DISPLAY record,
 #: so it follows `study-progress.js` for the same reason `progress-view.js`
 #: does; it sits before `read-mark.js` because that part's LAST-ness is the
@@ -118,6 +133,7 @@ SCRIPT_PARTS = (
     "copy-code.js",
     "video-player.js",
     "narration.js",
+    "practice.js",
     "progress-view.js",
     "read-mark.js",
 )

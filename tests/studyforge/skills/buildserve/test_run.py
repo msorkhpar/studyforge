@@ -19,7 +19,7 @@ from studyforge.validate.cli import UNUSABLE
 from studyforge.validate.report import INVALID, OK
 from tests.fixture_checks import FIXTURES, VALID
 from tests.studyforge.cli.narrate.service import VOICE
-from tests.studyforge.cli.serving import floor, missing_media, pages_of
+from tests.studyforge.cli.serving import floor, missing_media, pages_of, served_page
 from tests.studyforge.execute.runnable import fixture_copy
 from tests.studyforge.serve.routes.running import post, start_path
 from tests.studyforge.serve.serving import fetch
@@ -78,7 +78,7 @@ def test_each_fixture_is_validated_built_and_served_and_real_requests_are_answer
     said = running.said()
     assert running.code == [OK], said
     assert steps(said) == SERVED
-    assert (index[0], index[2]) == (200, (out / "index.html").read_bytes())
+    assert (index[0], index[2]) == (200, served_page((out / "index.html").read_bytes()))
     assert toc[0] == 200
     assert pages and set(pages.values()) == {200}, pages
     # ⛔ Contract 4's runtime arm: the site is exactly what the build said it wrote.

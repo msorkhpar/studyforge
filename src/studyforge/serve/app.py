@@ -26,6 +26,13 @@ and the Docker socket is never reachable from here (spec §8.3).
 - **`writers=`** — the registered namespaces that also answer `POST` (`SF-22`'s
   `run`: starting a process is an act, and a `GET` that acted would run a grader
   on a prefetch). ⛔ Content, assets and the static mount never do.
+- **`client=`** — where the run namespace serves the page's execution client
+  (`SF-24`, `W370`). ⭐ Handed to `routes.assets`, which inserts one script tag
+  into an HTML page's BYTES as it answers it, so a BUILT page names no API, no
+  origin and no client file (R8). ⛔ This module holds no spelling of that path
+  and imports nothing from `routes.run` to learn one: `serve.instance` registers
+  the namespace and passes the path, and importing the run route here would put
+  `execute` — and a process library — into every import of `serve.app`.
 - `GET` and `HEAD` are answered everywhere; `POST` only under a writer; every other
   method, and a `POST` anywhere else, is `405` after the gate. ⛔ A `POST`'s body
   is read and DISCARDED, never handed on: a `Request` has no field for it.
@@ -93,6 +100,7 @@ class ServingServer(ThreadingHTTPServer):
         private: assets.Private = assets.nothing_private,
         log: Callable[[str], None] | None = None,
         writers: Collection[str] = (),
+        client: str | None = None,
     ) -> None:
         """Validate everything, then bind; a refused argument never leaves a socket open."""
         require_loopback(address[0])
@@ -108,10 +116,11 @@ class ServingServer(ThreadingHTTPServer):
             raise ValueError(f"only a registered namespace may answer POST: {', '.join(stray)}")
         self.site_root = root
         self.private = private
+        self.client = client
         self.allowed_hosts = ALLOWED_HOSTS
         self.namespaces: dict[str, Route] = {
             "content": partial(content.route, source),
-            "assets": partial(assets.route, root, private),
+            "assets": partial(assets.route, root, private, client=client),
             **extra,
         }
         self.writers = frozenset(writers)
@@ -149,7 +158,7 @@ class ServingServer(ThreadingHTTPServer):
             return error(404, "no such endpoint") if found is None else found(request, rest)
         if path.startswith(API_ROOT + "/"):
             return error(404, "no such endpoint")
-        return assets.serve(self.site_root, request, path, self.private)
+        return assets.serve(self.site_root, request, path, self.private, self.client)
 
 
 def make_server(
@@ -160,6 +169,7 @@ def make_server(
     private: assets.Private = assets.nothing_private,
     log: Callable[[str], None] | None = None,
     writers: Collection[str] = (),
+    client: str | None = None,
 ) -> ServingServer:
     """Build a bound, not-yet-serving server on `127.0.0.1`; `port=0` picks a free one."""
     return ServingServer(
@@ -170,6 +180,7 @@ def make_server(
         private=private,
         log=log,
         writers=writers,
+        client=client,
     )
 
 

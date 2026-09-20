@@ -36,6 +36,30 @@ that was satisfiable. Text too large to gate is refused, never served ungated.
 ⭐ **`private` is the seam for a file that sits under the root and is not content**
 — the reader's own record is the first. It answers `404`, as does every refusal,
 so a prober never learns which guess was interesting.
+
+## ⛔ The run client reaches a page ONE way, and this is it (`W370`, `SF-24`)
+
+⭐ **The serving process adds the client to the page it answers; a built page
+never loads it.** When an instance registers the run namespace it hands this
+route the client's path, and an HTML page leaves here with exactly one
+`<script src="…" defer></script>` inserted before its first `</head>`. ⛔ **The
+file on disk is untouched** — nothing is written, and the same bytes are served
+again the next time with no client when the namespace is not registered.
+
+⚠️ **Why this way and no other** (`E05` § *How a served page loads the run
+client*): every alternative puts the client's address into the BUILD. A
+`<script src="/api/…">` is a rooted reference that names the API; a relative
+`api/v1/…` resolved against `location.origin` names no origin and still loads
+it; a copy of the client in the site names the API on every line. ⭐ Only the
+server knows it is a server, so only the server says so — and R8's floor
+(`tests/studyforge/cli/serving.py`) reads a built text that names the client as
+a defect.
+
+⛔ **A served page carries a DIFFERENT validator from the same file on disk.**
+The weak ETag is taken from the file's size and mtime, which do not move when
+the client is inserted — so a page cached from a served origin and one cached
+from a plain file mount would collide under one ETag. `client_etag` marks the
+served form, and the mark is part of the opaque tag rather than a second header.
 """
 
 from __future__ import annotations
@@ -59,6 +83,24 @@ MAX_PATH = 1024
 
 #: The file a directory request resolves to.
 INDEX_FILENAME = "index.html"
+
+#: The one tag a served page gains, and where it goes. ⛔ Before the FIRST
+#: `</head>`, and exactly once: a deferred script in the head runs before the
+#: deferred page script at the end of the body, so the panel finds
+#: `window.studyforge.run` already published when it looks.
+CLIENT_TAG = '<script src="{path}" defer></script>'
+HEAD_CLOSE = b"</head>"
+
+#: What marks the validator of a page the client was added to. ⚠️ Inside the
+#: opaque tag, so `If-None-Match`'s weak comparison still matches it against
+#: itself and never against the plain file's.
+CLIENT_ETAG_MARK = "+client"
+
+#: What a client path may be: one rooted URL path, and nothing that could close
+#: the attribute it is written into. ⛔ Checked rather than escaped, because the
+#: only caller passes `serve.routes.run.CLIENT_PATH` — a value that needed
+#: escaping here would be a value this route should not have been given.
+CLIENT_PATH_FORBIDDEN = "\"'<>& \t\r\n"
 
 #: The one dot-prefixed name served: first, or where a corpus manifest sits beside it.
 EXPOSED_DOT_DIRECTORY = GENERATED_ROOT
@@ -115,6 +157,37 @@ PROGRESS_PREFIX = store_dir(".").parts
 def nothing_private(path: Path) -> bool:
     """Treat no file under the root as private: the default until a store names one."""
     return False
+
+
+def client_tag(client: str) -> bytes:
+    """Return the one script tag a served page gains, or raise on an unusable path."""
+    if not client.startswith("/") or any(char in client for char in CLIENT_PATH_FORBIDDEN):
+        raise ValueError(
+            "the run client is served at one rooted URL path carrying no attribute "
+            "delimiter; the value is not reproduced here (R7)"
+        )
+    return CLIENT_TAG.format(path=client).encode("utf-8")
+
+
+def with_client(body: bytes, client: str | None) -> bytes:
+    """Return `body` with exactly one client tag before its first `</head>`.
+
+    ⛔ **Exactly one, and only where there is a head to close.** A page already
+    carrying the tag is left alone, and a text with no `</head>` — anything a
+    corpus happens to ship as `.html` that is not a built page — is served
+    unchanged rather than having a script pushed into the middle of it.
+    """
+    if not client:
+        return body
+    tag = client_tag(client)
+    if tag in body or HEAD_CLOSE not in body:
+        return body
+    return body.replace(HEAD_CLOSE, tag + HEAD_CLOSE, 1)
+
+
+def client_etag(etag: str) -> str:
+    """Return the validator for the served form of a page, told apart from the file's."""
+    return f'{etag[:-1]}{CLIENT_ETAG_MARK}"' if etag.endswith('"') else etag + CLIENT_ETAG_MARK
 
 
 def resolve(root: Path, url_path: str) -> Path | None:
@@ -174,15 +247,26 @@ def content_type_for(path: Path) -> str:
     return CONTENT_TYPES.get(path.suffix.lower(), DEFAULT_CONTENT_TYPE)
 
 
-def route(root: Path, private: Private, request: Request, rest: str) -> Response:
+def route(
+    root: Path, private: Private, request: Request, rest: str, *, client: str | None = None
+) -> Response:
     """Answer one request under `/api/v1/assets/`; `rest` is the path after it."""
-    return serve(root, request, "/" + rest, private)
+    return serve(root, request, "/" + rest, private, client)
 
 
 def serve(
-    root: Path, request: Request, url_path: str, private: Private = nothing_private
+    root: Path,
+    request: Request,
+    url_path: str,
+    private: Private = nothing_private,
+    client: str | None = None,
 ) -> Response:
-    """Answer one file: `200`, `206`, `304`, `404` or `416`."""
+    """Answer one file: `200`, `206`, `304`, `404` or `416`.
+
+    ⭐ `client` is where the run namespace serves the page's execution client,
+    and `None` is an instance that registers no such namespace. ⛔ It reaches an
+    HTML page's BYTES and never the file on disk — see this module's docstring.
+    """
     target = resolve(root, url_path)
     if target is None or private(target):
         return _not_found()
@@ -190,13 +274,14 @@ def serve(
         stat = target.stat()
     except OSError:
         return _not_found()
-    etag = weak_etag(stat)
+    ctype = content_type_for(target)
+    added = client if client and ctype == CONTENT_TYPES[".html"] else None
+    etag = client_etag(weak_etag(stat)) if added else weak_etag(stat)
     validators = (("ETag", etag), ("Cache-Control", ASSET_CACHE))
     if not_modified(request.headers.get("If-None-Match"), etag):
         return Response(304, validators)
-    ctype = content_type_for(target)
     if ctype.startswith(GATED_TYPES):
-        return _text(target, stat.st_size, ctype, validators)
+        return _text(target, stat.st_size, ctype, validators, added)
     ranges = request.headers.get("Range") if request.headers.get("If-Range") is None else None
     span = parse_range(ranges, stat.st_size)
     if span == UNSATISFIABLE:
@@ -211,12 +296,19 @@ def serve(
     return Response(206, ranged, file=target, span=span)
 
 
-def _text(target: Path, size: int, ctype: str, validators: tuple) -> Response:
-    """Read a text file whole, gate it, and answer it whole."""
+def _text(
+    target: Path, size: int, ctype: str, validators: tuple, client: str | None = None
+) -> Response:
+    """Read a text file whole, add the client where one is named, gate it, answer it whole.
+
+    ⛔ **The gate runs over what LEAVES this process**, so the insertion happens
+    before it rather than after: a page gated and then edited is a page whose
+    served bytes nothing checked.
+    """
     if size > GATE_MAX_BYTES:
         return Response(500, (("Content-Type", TEXT_TYPE),), b"text too large to gate\n")
     try:
-        body = target.read_bytes()
+        body = with_client(target.read_bytes(), client)
     except OSError:
         return _not_found()
     try:

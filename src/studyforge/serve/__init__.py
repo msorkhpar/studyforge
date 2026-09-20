@@ -48,18 +48,23 @@ a corpus's declarations (`SF-19a/1`), which is why `generate` is named above.
 from __future__ import annotations
 
 from studyforge.serve.discovery import RAISES, Discovered, ServedCorpus
-from studyforge.serve.instance import WRITERS, namespaces_of, site_discovery
+from studyforge.serve.instance import CLIENT, WRITERS, client_for, namespaces_of, site_discovery
 
 #: ⛔ What `discovery.discover` and `instance.make_instance` let out (`W208`).
 #: ⭐ `Discovered` and `ServedCorpus` are shared with `cli.serve`, whose `--site` form
 #: serves one corpus with Run and Submit (`W371`, Ruling 101's one-line remedy).
 #: ⭐ `WRITERS`, `namespaces_of` and `site_discovery` are shared with it too: both forms
 #: take their namespaces from the one constructor (`W380`, the same remedy).
+#: ⭐ `CLIENT` and `client_for` are shared for the same reason (`SF-24`): both forms hand the static
+#: mount the one path the execution client is served at, so a served page gets it
+#: and a built page still names nothing (R8, `W370`).
 __all__ = [
+    "CLIENT",
     "RAISES",
     "WRITERS",
     "Discovered",
     "ServedCorpus",
+    "client_for",
     "namespaces_of",
     "site_discovery",
 ]

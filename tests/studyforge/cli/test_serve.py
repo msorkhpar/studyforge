@@ -25,7 +25,14 @@ from studyforge.serve.app import DEFAULT_PORT
 from studyforge.validate.cli import UNUSABLE
 from studyforge.validate.report import INVALID, OK
 from tests.fixture_checks import FIXTURES
-from tests.studyforge.cli.serving import NAMES, build, pages_of, verb_running
+from tests.studyforge.cli.serving import (
+    CLIENT_TAG,
+    NAMES,
+    build,
+    pages_of,
+    served_page,
+    verb_running,
+)
 from tests.studyforge.serve.serving import fetch
 from tests.studyforge.serve.test_init import reaches_docker, spawns
 from tests.support import repository_root, run
@@ -191,9 +198,12 @@ def test_the_verb_serves_each_fixture_from_its_built_root_over_loopback(name, tm
         index = fetch(serving.server, "/index.html")
         toc = fetch(serving.server, "/api/v1/content/toc")
         page = fetch(serving.server, "/" + quote(unit))
-    assert (index[0], index[2]) == (200, (site / "index.html").read_bytes())
+    # ⛔ `W370`: the SERVED page is the built file plus the one execution client
+    # the serving process adds, and the file on disk still names none of it.
+    assert (index[0], index[2]) == (200, served_page((site / "index.html").read_bytes()))
     assert toc[0] == 200 and json.loads(toc[2])
-    assert (page[0], page[2]) == (200, (site / unit).read_bytes())
+    assert (page[0], page[2]) == (200, served_page((site / unit).read_bytes()))
+    assert CLIENT_TAG not in (site / unit).read_bytes()
     assert serving.code == [OK]
     lines = serving.out.getvalue().splitlines()
     assert lines[0].startswith("serve http://127.0.0.1:")

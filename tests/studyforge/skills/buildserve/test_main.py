@@ -23,7 +23,7 @@ import pytest
 
 from studyforge.validate.report import OK
 from tests.fixture_checks import FIXTURES
-from tests.studyforge.cli.serving import LISTENING, Address
+from tests.studyforge.cli.serving import LISTENING, Address, served_page
 from tests.studyforge.serve.serving import fetch
 from tests.support import ProcessOutput, repository_root
 
@@ -108,7 +108,7 @@ def test_the_module_builds_serves_reports_and_stops_on_interrupt(tmp_path):
     argv = [sys.executable, "-m", "studyforge.skills.buildserve", str(FIXTURES / "depth1")]
     with served([*argv, "--out", str(out), "--port", "0"]) as session:
         status, _, body = fetch(Address(session.port), "/index.html")
-    assert (status, body) == (200, (out / "index.html").read_bytes())
+    assert (status, body) == (200, served_page((out / "index.html").read_bytes()))
     assert session.code == OK, session.errors[-400:]
     assert "partial exercises  missing:" in session.said
     assert session.said.splitlines()[-2:] == ["stopped", "step serve exit 0"]

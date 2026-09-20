@@ -30,7 +30,14 @@ from studyforge.cli.serve import STOPPED
 from studyforge.generate.declarations import read_corpus
 from studyforge.validate.report import OK
 from tests.fixture_checks import FIXTURES
-from tests.studyforge.cli.serving import LISTENING, NAMES, Address, build, pages_of
+from tests.studyforge.cli.serving import (
+    LISTENING,
+    NAMES,
+    Address,
+    build,
+    pages_of,
+    served_page,
+)
 from tests.studyforge.serve.built import source_of
 from tests.studyforge.serve.serving import fetch
 from tests.support import ProcessOutput, repository_root, tracked_files
@@ -109,7 +116,7 @@ def test_the_installed_command_serves_each_fixture_and_stops_on_interrupt(name, 
         index = fetch(running.server, "/index.html")
         toc = fetch(running.server, "/api/v1/content/toc")
         code, stdout, stderr = running.stopped()
-    assert (index[0], index[2]) == (200, (site / "index.html").read_bytes())
+    assert (index[0], index[2]) == (200, served_page((site / "index.html").read_bytes()))
     assert toc[0] == 200
     assert code == OK, stderr[-400:]
     printed(running, stdout, ["/index.html", "/api/v1/content/toc"])

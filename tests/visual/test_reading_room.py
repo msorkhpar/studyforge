@@ -127,6 +127,13 @@ LONGEST_PROSE_LINE = """
   const range = document.createRange();
   let longest = 0;
   for (const p of document.querySelectorAll('main p')) {
+    /* ⛔ A paragraph with no boxes is not a line anybody reads, and it cannot be
+       measured either: every range inside a `hidden` element reports the same
+       zero rectangle, so the loop below never sees a line break and counts the
+       WHOLE paragraph as one line. ⚠️ MEASURED when `SF-24`'s practice panel put
+       the first hidden `<p>` inside `main`: a 269-character reading, from a
+       sentence no reader had been shown (`SF-24/3`). */
+    if (!p.getClientRects().length) continue;
     const node = p.firstChild;
     if (!node || node.nodeType !== 3) continue;
     const text = node.textContent;

@@ -117,6 +117,8 @@ REGIONS: dict[str, tuple[str, str]] = {
         "region 11, the Up next slip on the root index and a container page — "
         "`W362`. ⭐ The one filled area of `--sign` on the page",
     ),
+    # ⚠️ `data-practice`, never `data-section`: that one carries a CORPUS's key (R1).
+    "section[data-practice]": (DEFERRED, "region 15, `SF-24`'s panel — `practice.css`'s"),
     'section[data-section="read-mark"]': (
         CHROME_RULED,
         "region 7, the reader's own mark-as-read control — `SF-30`. ⚠️ It ships "
@@ -153,6 +155,7 @@ REGION_MARKERS = {
     'section[data-section="practices-pending"]': r'<section data-section="practices-pending"',
     'section[data-section="read-mark"]': r'<section data-section="read-mark"',
     'section[data-section="narration-gap"]': r'<section data-section="narration-gap"',
+    "section[data-practice]": r"<section data-practice",
     'section[aria-label="About this site"]': r'<section aria-label="About this site"',
     'section[aria-label="Progress"]': r'<section aria-label="Progress"',
     'form[role="search"]': r'<form role="search"',

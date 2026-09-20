@@ -68,6 +68,7 @@ from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute
 from studyforge.render.page import anchors, navigation
 from studyforge.render.page import mark as mark_region
+from studyforge.render.page import practice as practice_region
 from studyforge.render.page import rail as rail_region
 from studyforge.render.page import section as section_module
 from studyforge.render.page.assets import AUDIO_ATTRIBUTE, Placement
@@ -130,7 +131,7 @@ def compose(
     """
     title = _title(document)
     body = JOIN.join(
-        section_module.render(section, placement, narration) for section in _sections(document)
+        _part(section, placement, narration, document) for section in _sections(document)
     )
     return (
         templates.fill(
@@ -152,6 +153,26 @@ def compose(
         )
         + TRAILING_NEWLINE
     )
+
+
+def _part(section: dict, placement: Placement, narration: Narration, document: dict) -> str:
+    """Return one section and, where it sets work, the panel the reader acts in.
+
+    ⛔ **The panel sits AFTER the section rather than inside it**, which is the
+    shape `section`'s own attachments region already has: the statement, the
+    hint and the starting code are the material's blocks and belong to the
+    material; the editor slot, Run, Submit and the result are this framework's
+    controls and belong beside it. ⭐ Keeping it outside `<section>` also keeps
+    it out of the outline, exactly as the narrated deck above the section is.
+
+    ⚠️ **Joined here rather than given a slot of its own**, because a unit may
+    carry SEVERAL practices and a slot is one region per page: a panel has to
+    follow the practice it is about, or a reader reads two statements and then
+    two sets of controls with nothing saying which is which.
+    """
+    rendered = section_module.render(section, placement, narration)
+    panel = practice_region.render(section, document, placement)
+    return f"{rendered}{JOIN}{panel}" if panel else rendered
 
 
 def identity(document: dict, placement: Placement) -> str:
