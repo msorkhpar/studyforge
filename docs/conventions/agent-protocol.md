@@ -102,6 +102,39 @@ carrying one, for a defect no office could clear from its own tree. ⚠️ **Wha
 gate still REFUSES is unchanged: two distinct OFFICE identities among the
 commits one merge introduces.**
 
+### ⛔ `W398` — a cleanup NEVER reaches a live run, and the age test was never the guard
+
+⛔ **Clearing stale pytest temp directories is ONE command, and it is this one:**
+
+```bash
+python3 -m tools.pytesttemp            # --dry-run prints the same verdicts and removes nothing
+```
+
+⚠️ **Measured by the register, 2026-09-19:** a guarded merge was REFUSED because a
+worker's temp directory vanished under a live run — an office had cleared *stale*
+pytest temp directories by age while a gate was using one. ⭐ The rule already said
+*never one in use*, ⛔ **and the office did not disobey it**: an age test cannot see a
+live run, so a forty-minute suite owns a directory that has looked stale for
+twenty-five of them. ⭐ **A rule that the instrument it is given cannot express is a
+defect in the instrument, not in the office that read it.**
+
+⭐ **What the command has that an eye does not.** pytest writes `.lock` into every
+numbered run directory and removes it when the process exits, and that file holds the
+owning **pid**. The sweep asks liveness FIRST — a lock whose pid is alive is a run in
+flight, whatever the directory's age says — and consults an age grace only for a
+directory no live process holds, where it covers the case with no lock to read.
+
+⛔ **`find … -mmin +15 -delete`, and every hand-rolled variant of it, is OUT.** ⚠️ It is
+not a smaller version of this check; it is the check the refused merge was taken with.
+
+⛔ **Do not run a suite with `tmp_path_retention_policy=none`**: it writes no lock at
+all, so neither this command nor anything else can tell that run from a dead one.
+
+⭐ **A private `--basetemp` per run was the other candidate and is REFUSED.** `W375/3`
+measured three serve-CLI tests going RED under one: they bind a Unix socket inside the
+temp root, and the longer path exceeded what `sun_path` can hold. ⛔ A liveness test
+costs nothing and moves no path.
+
 ### ⛔ Ruling 268 (CTO round 58) — a grant of a decision ON A READING is decided BY THE READING, never by the row's menu of remedies
 
 ⭐ **A row that offers two remedies and says the choice is the taker's has granted a DECISION,
