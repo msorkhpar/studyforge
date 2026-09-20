@@ -32,6 +32,7 @@ from tests.studyforge.cli.serving import (
     floor,
     missing_media,
     pages_of,
+    served_page,
     verb_running,
 )
 from tests.studyforge.serve.built import record, source_of, unit_keys
@@ -85,7 +86,8 @@ def test_the_verb_given_only_a_root_serves_every_corpus_under_it(tmp_path):
             assert body(server, f"/api/v1/state/{source}/units/{key}")["present"] is True
             for page in pages_of(root):
                 answer = fetch(server, "/" + quote(f"{name}/{page}"))
-                assert (answer[0], answer[2]) == (200, (root / page).read_bytes()), page
+                on_disk = (root / page).read_bytes()
+                assert (answer[0], answer[2]) == (200, served_page(on_disk)), page
     assert serving.code == [OK]
     lines = serving.out.getvalue().splitlines()
     for name in NAMES:
@@ -116,7 +118,9 @@ def test_every_href_a_nested_corpus_page_emits_resolves_on_the_static_mount(name
                 status, _, raw = fetch(serving.server, urljoin(url, head))
                 assert status == 200, f"{page.relative_to(workspace)} -> {reference}"
                 if target.is_file():
-                    assert raw == target.read_bytes(), reference
+                    on_disk = target.read_bytes()
+                    wanted = served_page(on_disk) if target.suffix == ".html" else on_disk
+                    assert raw == wanted, reference
                 fetched[target.suffix] = fetched.get(target.suffix, 0) + 1
     # ⭐ Inhabitation: every page the corpus declares was read, and pages AND assets were hit.
     assert len(pages) == len(pages_of(root))

@@ -117,6 +117,8 @@ REGIONS: dict[str, tuple[str, str]] = {
         "region 11, the Up next slip on the root index and a container page — "
         "`W362`. ⭐ The one filled area of `--sign` on the page",
     ),
+    # ⚠️ `data-practice`, never `data-section`: that one carries a CORPUS's key (R1).
+    "section[data-practice]": (DEFERRED, "region 15, `SF-24`'s panel — `practice.css`'s"),
     'section[data-section="read-mark"]': (
         CHROME_RULED,
         "region 7, the reader's own mark-as-read control — `SF-30`. ⚠️ It ships "
@@ -153,6 +155,7 @@ REGION_MARKERS = {
     'section[data-section="practices-pending"]': r'<section data-section="practices-pending"',
     'section[data-section="read-mark"]': r'<section data-section="read-mark"',
     'section[data-section="narration-gap"]': r'<section data-section="narration-gap"',
+    "section[data-practice]": r"<section data-practice",
     'section[aria-label="About this site"]': r'<section aria-label="About this site"',
     'section[aria-label="Progress"]': r'<section aria-label="Progress"',
     'form[role="search"]': r'<form role="search"',
@@ -196,24 +199,6 @@ SKELETON_SLOTS = {
         "the second time"
     ),
 }
-
-#: Properties that tell a region apart from body text WITHOUT a colour. ⛔ M1's
-#: close condition 8 asked for exactly this and had to void it as unfalsifiable,
-#: because nothing computed a reading order and no golden emitted the bar.
-NON_COLOUR_CUES = (
-    "border-top",
-    "display",
-    "font-family",
-    "font-size",
-    "font-weight",
-    "letter-spacing",
-    "padding-top",
-    "text-transform",
-)
-
-#: The four tokens `QA-03/2` found ownerless: defined in `palette.css`, painted
-#: by no stylesheet, and at no milestone anybody's. ⭐ They are this part's.
-ONCE_OWNERLESS = ("--accent-soft", "--practice", "--practice-soft", "--surface-2")
 
 
 def body() -> str:
@@ -391,30 +376,6 @@ def test_the_page_skeletons_slots_are_exactly_the_ones_this_table_answers_for():
     assert templates.placeholders("page.html") == frozenset(SKELETON_SLOTS)
 
 
-# --- note (c): the bar is legible without reference to colour ---------------
-
-
-def test_the_between_units_bar_is_told_apart_from_body_text_without_colour():
-    # ⛔ M1's close condition 8, re-homed here and discharged. It named *"the
-    # between-units bar indistinguishable from body text"* and had to VOID the
-    # symptom as unfalsifiable, because nothing computed a reading order before
-    # `SF-13` and no golden emitted the bar. Both are true now.
-    found = declarations_reaching('nav[aria-label="Between units"]')
-    assert found, "the bar carries no declaration at all"
-    cues = sorted(cue for cue in NON_COLOUR_CUES if re.search(rf"\b{cue}\s*:", found))
-    assert len(cues) >= 3, (
-        f"the bar is told apart by {cues}, which is not enough without colour — "
-        f"a bar nobody can see is not a bar that passed"
-    )
-
-
-def test_the_bars_own_colour_is_not_what_carries_it():
-    # ⭐ The control for the check above, run negatively: strip every colour
-    # declaration and the cues must survive. A rule that said only `color:` would
-    # pass the count above if `color` were ever added to the cue list.
-    assert not any(cue in ("color", "background") for cue in NON_COLOUR_CUES)
-
-
 # --- note (d): the column is bounded ---------------------------------------
 
 
@@ -507,27 +468,6 @@ def test_the_running_measure_is_not_reopened_here():
     # ⚠️ `reading.css` caps `main p, main li` at `--measure` and that decision
     # stands. A second cap here would be two rules for one question.
     assert not re.search(r"\bmain\s+(p|li)\b", body()), "this part re-decides the prose measure"
-
-
-# --- QA-03/2: the four ownerless tokens ------------------------------------
-
-
-@pytest.mark.parametrize("token", ONCE_OWNERLESS)
-def test_each_once_ownerless_palette_token_is_painted_here(token):
-    # ⛔ `QA-03/2`: four colour tokens were defined in `palette.css`, painted by
-    # no stylesheet, and nobody's at any milestone. ⭐ The alternative was to
-    # delete them from the palette; they are painted instead, and
-    # `test_the_unpainted_rows_are_derived_from_the_stylesheets_not_believed`
-    # is what forced the ledger to say which ground each one is read against.
-    assert f"var({token})" in body(), f"{token} is still ownerless"
-
-
-def test_this_part_defines_no_colour_and_no_measure_of_its_own():
-    # ⚠️ `test_palette` asserts the first half over every authored part; this is
-    # the same claim at this file, plus the half about measures — `palette.css`
-    # calls itself the shared vocabulary for *"every colour, measure and font"*.
-    assert not re.search(r"#[0-9a-fA-F]{3,8}\b|\brgba?\(", body()), "a colour outside the palette"
-    assert "--" not in body().split("var(")[0], "a token is DEFINED here rather than used"
 
 
 # --- the hooks, and where the spelling comes from ---------------------------

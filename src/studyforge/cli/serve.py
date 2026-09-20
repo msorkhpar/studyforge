@@ -93,7 +93,7 @@ from studyforge.generate import RAISES
 from studyforge.generate.declarations import read_corpus
 from studyforge.progress import store_dir
 from studyforge.serve import RAISES as REFUSED
-from studyforge.serve import WRITERS, Discovered, namespaces_of, site_discovery
+from studyforge.serve import WRITERS, Discovered, client_for, namespaces_of, site_discovery
 from studyforge.serve.app import DEFAULT_PORT, ServingServer, make_server
 from studyforge.serve.discovery import discover
 from studyforge.serve.instance import instance_of
@@ -186,6 +186,7 @@ def main(
             private=_inside(store_dir(root)),
             log=say,
             writers=tuple(name for name in WRITERS if name in namespaces),
+            client=client_for(namespaces),
         )
     except OSError as refusal:
         return _could_not_listen(arguments.port, refusal, say)

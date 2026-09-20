@@ -84,6 +84,7 @@ from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute, inline
 from studyforge.render.page import anchors, navigation
 from studyforge.render.page import mark as mark_region
+from studyforge.render.page import practice as practice_region
 from studyforge.render.page import rail as rail_region
 from studyforge.render.page import section as section_module
 from studyforge.render.page.anchors import TITLE_POSITION
@@ -147,12 +148,10 @@ def compose(
     """
     title = _title(document)
     sections = _sections(document)
-    promoted = anchors.title_heading(document)
+    heads = anchors.title_heading(document) is not None
     attributes = heading_attributes(document, narration)
     body = JOIN.join(
-        section_module.render(
-            section, placement, narration, heads_page=promoted is not None and index == 0
-        )
+        _part(section, placement, narration, document, heads_page=heads and index == 0)
         for index, section in enumerate(sections)
     )
     return (
@@ -180,6 +179,31 @@ def compose(
         )
         + TRAILING_NEWLINE
     )
+
+
+def _part(
+    section: dict, placement: Placement, narration: Narration, document: dict, *, heads_page: bool
+) -> str:
+    """Return one section and, where it sets work, the panel the reader acts in.
+
+    ⛔ **The panel sits AFTER the section rather than inside it**, which is the
+    shape `section`'s own attachments region already has: the statement, the
+    hint and the starting code are the material's blocks and belong to the
+    material; the editor slot, Run, Submit and the result are this framework's
+    controls and belong beside it. ⭐ Keeping it outside `<section>` also keeps
+    it out of the outline, exactly as the narrated deck above the section is.
+
+    ⚠️ **Joined here rather than given a slot of its own**, because a unit may
+    carry SEVERAL practices and a slot is one region per page: a panel has to
+    follow the practice it is about, or a reader reads two statements and then
+    two sets of controls with nothing saying which is which.
+
+    ⚠️ `heads_page` is `section.render`'s own word, passed STRAIGHT through
+    and REQUIRED: `compose` is its only caller and the only holder of the page.
+    """
+    rendered = section_module.render(section, placement, narration, heads_page=heads_page)
+    panel = practice_region.render(section, document, placement)
+    return f"{rendered}{JOIN}{panel}" if panel else rendered
 
 
 def identity(document: dict, placement: Placement) -> str:

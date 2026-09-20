@@ -57,7 +57,7 @@ one only binds them together.
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from functools import partial
 from pathlib import Path, PurePosixPath
 
@@ -73,6 +73,14 @@ from studyforge.serve.routes.content import CorpusContent
 
 #: The namespaces that also answer `POST`: `run`, the one writer (`SF-22`).
 WRITERS = (run.NAMESPACE,)
+
+#: ⭐ Where a served page's execution client is fetched from (`SF-24`, `W370`) —
+#: `serve.routes.run`'s own spelling, taken and never re-composed. ⛔ Handed to
+#: `make_server` by both forms, so the static mount adds ONE script tag to each
+#: HTML page it answers and a BUILT page still names no API and no origin (R8).
+#: ⚠️ It is passed only where the run namespace is actually registered: a page
+#: told to fetch a client from a namespace that is not there would fetch a `404`.
+CLIENT = run.CLIENT_PATH
 
 
 def make_instance(
@@ -95,13 +103,15 @@ def instance_of(
 ) -> ServingServer:
     """Return a server wired to serve every corpus one discovery found, from its root."""
     sources = {served.source: CorpusContent(served.corpus) for served in discovered.corpora}
+    namespaces = namespaces_of(discovered, sources)
     return make_server(
         discovered.root,
         CorporaContent(sources, discovered.depths),
         port=port,
-        namespaces=namespaces_of(discovered, sources),
+        namespaces=namespaces,
         log=log,
         writers=WRITERS,
+        client=client_for(namespaces),
     )
 
 
@@ -116,6 +126,18 @@ def namespaces_of(discovered: Discovered, sources: dict[str, CorpusContent]) -> 
         state.NAMESPACE: partial(state.route, discovered),
         run.NAMESPACE: partial(run.route, live),
     }
+
+
+def client_for(namespaces: Mapping[str, object]) -> str | None:
+    """Return where a served page fetches the execution client, or `None`.
+
+    ⛔ **`None` where the run namespace is not registered**, and that is not
+    defensiveness: the `--site` form's namespaces are a named seam a caller may
+    replace to serve a site with NO execution (`W386`), and a page told to fetch
+    a client from a namespace that is not there would fetch a `404` on every
+    load and offer Run and Submit that answer nothing.
+    """
+    return CLIENT if run.NAMESPACE in namespaces else None
 
 
 def site_discovery(corpus: Corpus, root: Path, site: Path) -> Discovered:

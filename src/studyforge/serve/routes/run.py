@@ -104,6 +104,12 @@ CLIENT = "client.js"
 CLIENT_FILE = Path(__file__).resolve().parent.parent / "assets" / "run-client.js"
 SCRIPT_TYPE = "text/javascript; charset=utf-8"
 
+#: ⭐ Where a page asks for the client — the framework's ONE spelling of it, so
+#: the namespace that serves it and the static route that adds it to a served
+#: page (`SF-24`, `W370`) cannot come apart. ⛔ `index()` reads it rather than
+#: composing a second copy.
+CLIENT_PATH = f"{API_PREFIX}/{NAMESPACE}/{CLIENT}"
+
 #: The section kind a workspace belongs to.
 PRACTICE = "practice"
 
@@ -147,7 +153,7 @@ def index(runs: Runs) -> dict:
         "modes": list(MODES),
         "start": f"{API_PREFIX}/{NAMESPACE}/{{corpus}}/{{mode}}/{{practice}}",
         "stop": f"{API_PREFIX}/{NAMESPACE}/{STOP}",
-        "client": f"{API_PREFIX}/{NAMESPACE}/{CLIENT}",
+        "client": CLIENT_PATH,
         "live": None
         if live is None
         else {"corpus": live.corpus, "practice": live.practice, "mode": live.mode},

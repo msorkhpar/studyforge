@@ -29,6 +29,10 @@ ONE_LINE = (
     "link-next.html",
     "link-previous.html",
     "outline.html",
+    "practice-grader-generated.html",
+    "practice-grader-shipped.html",
+    "practice-run.html",
+    "practice-submit.html",
     "rail.html",
     "read-state.html",
     "video.html",
@@ -45,6 +49,7 @@ MULTI_LINE = (
     "pending-practices.html",
     "player.html",
     "narration-gap.html",
+    "practice-panel.html",
     "read-mark.html",
 )
 
