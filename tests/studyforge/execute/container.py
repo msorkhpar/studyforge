@@ -32,6 +32,27 @@ Dockerfile, not its `consuming/` modules, not its README.
 ⛔ **Every invocation that reaches this module must hold the shared container
 lock** (the office rules): it is taken around the pytest run, not in here, so
 one gate is one lock.
+
+## ⛔ THE CONTRACT IS READ AT THE SIBLING'S PIN, NEVER OFF ITS WORKING TREE (`W404`)
+
+⚠️ **Measured:** while the sibling's checkout was mid-merge, its
+`consuming.json` read as **present** from a **staged** file that existed on no
+ref — so a green reading here was **not reproducible from `workspace.json` on
+any other host**, and nothing in the reading said so. ⭐ `tools.workspace.pinned`
+is the one reader now, and it distinguishes the **three** outcomes this module
+acts on:
+
+| the reading | what this module does |
+|---|---|
+| **at the pin** | uses it — ⭐ the only case another host reproduces |
+| **working tree only** | ⛔ **refuses**, naming the pin; every container case SKIPS |
+| **absent** | refuses the same way — ⭐ the pinned image's case, never a crash |
+
+⛔ **A directory a CALLER names is a fourth thing and is not one of the three.**
+No pin covers it, so `declaration_reason(root)` reads it and does not demand a
+pin. ⚠️ That is what keeps a synthetic fixture usable while the real sibling is
+held to its pin, and the policy is stated **once**, as `must_be_pinned` on
+`reason_for`, rather than implied in two places.
 """
 
 from __future__ import annotations
@@ -44,6 +65,7 @@ import uuid
 from pathlib import Path
 
 from tests.support import repository_root, tool_on_path
+from tools.workspace import PIN_FILENAME, pinned
 
 IMAGE_VARIABLE = "STUDYFORGE_RUNNER_IMAGE"
 SIBLING = "code-server-toolchain"
@@ -71,11 +93,40 @@ def skip_reason() -> str | None:
     return declaration_reason()
 
 
-def declaration_reason(root: Path | None = None) -> str | None:
-    """Why the sibling's runner declaration cannot be used, or `None` when it can."""
-    contract = _contract(root)
+def contract_reading(root: Path | None = None) -> pinned.Reading:
+    """The sibling's whole contract **and what it was read from**.
+
+    ⭐ With no `root` the sibling is resolved through the pin file and read at
+    its pinned commit. With one, that directory is read as given — no pin covers
+    a directory a caller named, and the reading says so.
+    """
+    if root is not None:
+        return pinned.read_directory(Path(root), CONTRACT)
+    return pinned.read_sibling(SIBLING, CONTRACT, repository_root=repository_root())
+
+
+def reason_for(reading: pinned.Reading, *, must_be_pinned: bool) -> str | None:
+    """Why this reading cannot be used, or `None` when it can.
+
+    ⛔ **The whole policy, in one place.** `must_be_pinned` is the caller saying
+    *"I resolved this sibling myself, so it has to be at its pin"* — the `W404`
+    refusal. A caller that named a directory passes `False`, because there is no
+    pin for that reading to fail to be at.
+    """
+    contract = _loaded(reading)
     if contract is None:
-        return f"the sibling {SIBLING}'s {CONTRACT} is not reachable from this checkout"
+        return (
+            f"the sibling {SIBLING}'s {CONTRACT} is not reachable from this "
+            f"checkout: {reading.source}"
+        )
+    if must_be_pinned and reading.working_tree:
+        # ⛔ `W404`: a staged or uncommitted contract is a green reading that
+        # exists on no ref, so it reproduces on no other host. Refused, and the
+        # refusal names the pin rather than the file it found.
+        return (
+            f"{SIBLING}'s {CONTRACT} was not read at the commit {PIN_FILENAME} "
+            f"pins, so a reading from it is LOCAL: {reading.source}"
+        )
     if contract.get("consuming_api") != CONSUMING_API:
         return (
             f"{SIBLING}'s {CONTRACT} is schema {contract.get('consuming_api')!r}; "
@@ -91,11 +142,17 @@ def declaration_reason(root: Path | None = None) -> str | None:
     return None
 
 
+def declaration_reason(root: Path | None = None) -> str | None:
+    """Why the sibling's runner declaration cannot be used, or `None` when it can."""
+    return reason_for(contract_reading(root), must_be_pinned=root is None)
+
+
 def declaration(root: Path | None = None) -> dict | None:
     """The sibling's `runner` block, or `None` when `declaration_reason` says why not."""
-    if declaration_reason(root) is not None:
+    reading = contract_reading(root)
+    if reason_for(reading, must_be_pinned=root is None) is not None:
         return None
-    return _contract(root)[BLOCK]
+    return _loaded(reading)[BLOCK]
 
 
 def run_argv(
@@ -188,13 +245,17 @@ def alive_in(name: str):
     return alive
 
 
-def _contract(root: Path | None = None) -> dict | None:
-    """The sibling's whole contract, or `None` when it is not reachable or not JSON."""
-    path = (Path(root) if root is not None else _workspace() / SIBLING) / CONTRACT
-    if not path.is_file():
+def _loaded(reading: pinned.Reading) -> dict | None:
+    """The reading parsed as a contract, or `None` when there is none to parse.
+
+    ⚠️ Unreadable and unparseable collapse into the same answer deliberately:
+    both mean *"this checkout has no contract this module can act on"*, and the
+    `source` sentence is what distinguishes them for a person.
+    """
+    if reading.text is None:
         return None
     try:
-        loaded = json.loads(path.read_text(encoding="utf-8"))
+        loaded = json.loads(reading.text)
     except json.JSONDecodeError:
         return None
     return loaded if isinstance(loaded, dict) else None
@@ -208,10 +269,3 @@ def _docker(*arguments: str) -> subprocess.CompletedProcess[str]:
         text=True,
         check=False,
     )
-
-
-def _workspace() -> Path:
-    """Where the siblings are: the parent of the MAIN checkout, from any worktree."""
-    from tools.workspace.__main__ import workspace_root
-
-    return workspace_root(repository_root())
