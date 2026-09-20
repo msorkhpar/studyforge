@@ -1,0 +1,212 @@
+"""The reader of the sibling's runner declaration — `container.py`, with no Docker and no sibling.
+
+⭐ **Why this exists.** `container.py` is test support, but it is also the
+framework's only reader of how the runner image is RUN, and until `W401` it got
+that by parsing the sibling's README prose. A reader of data needs its own
+reading asserted both ways — a declaration it accepts, and each way one can be
+wrong — or the skip that hides a broken sibling looks exactly like the skip that
+means "no Docker here".
+
+⛔ **Every case below builds its own contract in a temp directory.** The real
+sibling is read in ONE case, which skips when it is not reachable, so this
+module is green in the pinned image and on a host with no sibling checked out.
+"""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import pytest
+
+from tests.studyforge.execute import container
+
+MODULE = Path(container.__file__)
+
+
+def a_declaration() -> dict:
+    """A minimal, valid runner block — the shape the sibling's contract carries."""
+    return {
+        "image": {"repository": "code-server-toolchain/runner", "run_value": "<tag>"},
+        "runs_as": {"run_flag": "--user", "run_value": "$(id -u):$(id -g)", "required": True},
+        "workspace": {"container_path": "/work", "kind": "bind"},
+        "mounts": [
+            {
+                "container_path": "/work",
+                "kind": "bind",
+                "host_path": "<source root>",
+                "read_only": False,
+                "must_exist_before_start": True,
+            }
+        ],
+        "network": {"mode": "none", "run_flag": "--network"},
+        "ports": [],
+        "init": {"enabled": True, "run_flag": "--init"},
+        "command": [],
+        "command_notes": {
+            "exec_template": ["docker", "exec", "-w", "/work/<directory>", "<name>", "<command...>"]
+        },
+        "run": {
+            "detached": True,
+            "detach_flag": "-d",
+            "name_flag": "--name",
+            "name_template": "studyforge-runner-<source>",
+        },
+        "docker_socket": False,
+    }
+
+
+def a_contract(tmp_path: Path, **changes) -> Path:
+    """Write a whole contract to `tmp_path`, with top-level keys replaced."""
+    contract = {
+        "consuming_api": container.CONSUMING_API,
+        "provides": container.PROMISE,
+        "component": container.SIBLING,
+        container.BLOCK: a_declaration(),
+    }
+    contract.update(changes)
+    (tmp_path / container.CONTRACT).write_text(json.dumps(contract), encoding="utf-8")
+    return tmp_path
+
+
+# --- what it accepts, and each way it can be refused ---------------------------------
+
+
+def test_a_contract_that_promises_what_this_was_built_against_is_read(tmp_path):
+    root = a_contract(tmp_path)
+    assert container.declaration_reason(root) is None
+    assert container.declaration(root) == a_declaration()
+
+
+def test_a_sibling_that_is_not_there_is_named_rather_than_crashed_on(tmp_path):
+    assert "not reachable" in container.declaration_reason(tmp_path)
+    assert container.declaration(tmp_path) is None
+
+
+def test_a_contract_that_is_not_json_is_refused_like_a_missing_one(tmp_path):
+    (tmp_path / container.CONTRACT).write_text("{ not json", encoding="utf-8")
+    assert "not reachable" in container.declaration_reason(tmp_path)
+
+
+def test_another_schema_is_refused_by_number(tmp_path):
+    root = a_contract(tmp_path, consuming_api=container.CONSUMING_API + 1)
+    reason = container.declaration_reason(root)
+    assert "schema" in reason and str(container.CONSUMING_API) in reason
+
+
+def test_a_sibling_that_promises_less_is_refused_rather_than_migrated(tmp_path):
+    """R9: the record is the point — a mismatch stops here, it is not worked around."""
+    root = a_contract(tmp_path, provides=container.PROMISE - 1)
+    reason = container.declaration_reason(root)
+    assert "promises" in reason and "R9" in reason
+
+
+def test_a_sibling_that_promises_more_is_accepted(tmp_path):
+    root = a_contract(tmp_path, provides=container.PROMISE + 1)
+    assert container.declaration_reason(root) is None
+
+
+def test_a_contract_with_no_runner_block_says_the_shape_is_not_data(tmp_path):
+    root = a_contract(tmp_path, **{container.BLOCK: {}})
+    assert "not data" in container.declaration_reason(root)
+
+
+# --- the run it renders --------------------------------------------------------------
+
+
+def test_every_placeholder_is_filled_and_none_survives_into_the_argv():
+    argv = container.run_argv(
+        a_declaration(), name="sf20-1", source_root="/sources", tag="an-image"
+    )
+    assert argv[:9] == [
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        "sf20-1",
+        "--init",
+        "--network",
+        "none",
+        "--user",
+    ]
+    assert argv[-3:] == ["-v", "/sources:/work", "an-image"]
+    for placeholder in ("<tag>", "<source root>", "<source>", "$(id -u):$(id -g)"):
+        assert placeholder not in argv
+
+
+def test_it_runs_as_a_real_uid_gid_and_never_ships_the_shells_substitution():
+    """The declaration's value is what a PERSON types; a subprocess has no shell to expand it."""
+    argv = container.run_argv(
+        a_declaration(), name="n", source_root="/s", tag="t", user="4242:4243"
+    )
+    assert argv[argv.index("--user") + 1] == "4242:4243"
+    assert not any("$" in part for part in argv)
+
+
+def test_it_publishes_no_port_and_mounts_no_socket():
+    argv = container.run_argv(a_declaration(), name="n", source_root="/s", tag="t")
+    assert "-p" not in argv and "--publish" not in argv
+    assert not any("docker.sock" in part for part in argv)
+
+
+def test_a_declaration_that_moves_the_workspace_moves_the_mount_with_it():
+    """The proof that this reads the data rather than carrying its own copy of /work."""
+    moved = a_declaration()
+    moved["workspace"]["container_path"] = "/elsewhere"
+    moved["mounts"][0]["container_path"] = "/elsewhere"
+    argv = container.run_argv(moved, name="n", source_root="/s", tag="t")
+    assert "/s:/elsewhere" in argv
+    assert "/s:/work" not in argv
+    assert container.workspace_path(moved) == "/elsewhere"
+
+
+def test_a_read_only_bind_is_rendered_read_only():
+    declared = a_declaration()
+    declared["mounts"][0]["read_only"] = True
+    assert "/s:/work:ro" in container.run_argv(declared, name="n", source_root="/s", tag="t")
+
+
+def test_a_volume_in_the_declaration_is_not_a_bind_and_is_not_mounted():
+    declared = a_declaration()
+    declared["mounts"].append({"container_path": "/cache", "kind": "volume", "volume": "c"})
+    argv = container.run_argv(declared, name="n", source_root="/s", tag="t")
+    assert argv.count("-v") == 1
+
+
+def test_an_undetached_or_uninitialised_declaration_renders_without_those_flags():
+    declared = a_declaration()
+    declared["run"]["detached"] = False
+    declared["init"]["enabled"] = False
+    argv = container.run_argv(declared, name="n", source_root="/s", tag="t")
+    assert "-d" not in argv and "--init" not in argv
+
+
+def test_the_exec_template_is_filled_from_the_declaration():
+    argv = container.exec_argv(
+        a_declaration(), name="sf20-1", directory="unit-3", command=["mvn", "-q", "test"]
+    )
+    assert argv == ["docker", "exec", "-w", "/work/unit-3", "sf20-1", "mvn", "-q", "test"]
+    assert "<command...>" not in argv
+
+
+# --- it reads data, and the real sibling satisfies it --------------------------------
+
+
+def test_this_module_reads_the_contract_and_parses_no_prose():
+    """`W401`: the README is documentation again, not an interface."""
+    source = MODULE.read_text(encoding="utf-8")
+    body = source.split('"""', 2)[2]
+    assert "README" not in body, "the run shape is read from the declaration, never from prose"
+    assert container.CONTRACT == "consuming.json"
+
+
+def test_the_real_sibling_declares_a_shape_this_can_render():
+    reason = container.declaration_reason()
+    if reason is not None:
+        pytest.skip(reason)
+    runner = container.declaration()
+    argv = container.run_argv(runner, name="sf20-probe", source_root="/sources", tag="an-image")
+    assert argv[:2] == ["docker", "run"]
+    assert "--network" in argv and argv[argv.index("--network") + 1] == "none"
+    assert f"/sources:{container.workspace_path(runner)}" in argv
+    assert runner["docker_socket"] is False
