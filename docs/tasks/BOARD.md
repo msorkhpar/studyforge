@@ -153,7 +153,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 82 | `W397`–`W401` | ⛔ **`W397` and `W399` JUMP every older `todo` row (Ruling 75): a stylesheet change cannot pass its own gate until they land** | [127](BOARD-ARCHIVE.md#po-round-127) |
 | 83 | `W402`–`W411` | ⛔ **`W402`–`W404` JUMP every older `todo` row (Ruling 75): a seam that no instrument reads is how `TC-05` closed on a reading nobody could take** | [128](BOARD-ARCHIVE.md#po-round-128) |
 | 84 | `W412`–`W421` | ⛔ **`W415` and `W419` JUMP every older `todo` row (Ruling 75): both make a GATE lie, and a lying gate spends every office after it** | [130](BOARD-ARCHIVE.md#po-round-130) |
-| 85 | `W422`–`W424` | ⛔ **`W422` JUMPS every older `todo` row (Ruling 75): a module at its ceiling fails the NEXT office, whatever its row** | [131](BOARD-ARCHIVE.md#po-round-131) |
+| 85 | `W422`–`W425` | ⛔ **`W422` and `W425` JUMP every older `todo` row (Ruling 75): one fails the NEXT office whatever its row, the other reds a gate for serving a site** | [131](BOARD-ARCHIVE.md#po-round-131) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -598,10 +598,11 @@ else.**
 | W418 | `ports[0].per_project` carries no `env_var`, so two corpora on one host collide on the published port | framework agent | `todo` — `SK-09/4` | [`rows/W418.md`](rows/W418.md) |
 | W419 | A visual test monkeypatches `tempfile.tempdir` process-wide, so it can refuse any row under `-n auto` | framework agent | `todo` — `W404/6` | [`rows/W419.md`](rows/W419.md) |
 | W420 | The rubric types the DISK form of `ruff` while the arm that votes runs over `git ls-files` | framework agent | `todo` — `W405/5` | [`rows/W420.md`](rows/W420.md) |
-| W421 | `CodeSignal` carries two untracked files on no ref, in the repository R20 keeps untouched | the user | `todo` — `W402/1` — USER | [`rows/W421.md`](rows/W421.md) |
+| W421 | `CodeSignal` carries two untracked files on no ref, in the repository R20 keeps untouched | the user | ✅ done — RULED deleted | [`rows/W421.md`](rows/W421.md) |
 | W422 | `render/page/document.py` stands at 400 of R11's 400, so the NEXT line added fails the build | framework agent | `todo` — `SF-24/11` | [`rows/W422.md`](rows/W422.md) |
 | W423 | No golden carries a promoted `<h1>` AND a practice panel, so the resolved line has no witness | framework agent | `todo` — `SF-24/12` | [`rows/W423.md`](rows/W423.md) |
 | W424 | The office rules never say an office is the WORKTREE, so a fresh agent invents a second office | framework agent | `todo` — the register, 2026-09-20 | [`rows/W424.md`](rows/W424.md) |
+| W425 | Serving a corpus writes a discovery CACHE nothing ignores, so every served corpus goes dirty | framework agent | `todo` — the register, 2026-09-20 | [`rows/W425.md`](rows/W425.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
