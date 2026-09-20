@@ -29332,3 +29332,225 @@ is the reading `W402`'s own acceptance requires to stay GREEN.
 ⭐ `W406`, `W408`, `W409`, `W410`, `W411` stay `todo`: seven worktrees, seven carriers. ⛔ **`W406` is named in `W407`'s
 and `SF-24`'s briefs as the reason a corpus-visible defect survived every gate**, so a finding either office produces
 about a corpus-reading gate lands against it rather than in an unaddressed handoff.
+
+---
+
+## PO round 130
+
+⛔ **Only what is MEASURED is written here.** ⭐ **Six of the wave's seven land; five rows CLOSE and `SK-09` with them; ten
+rows are minted, four of them from defects the wave inflicted on ITSELF; one finding is REFUTED and one is CLOSED rather
+than carried; and `M7` step 7.4 stays OPEN on an acceptance clause that was reported rather than rewritten.**
+
+### ⭐ THE SIX, IN MERGE ORDER, EACH PLANTED BY THIS REGISTER BEFORE IT LANDED
+
+| Row | Ref | The register's OWN plant, at a seam the office did not use |
+|---|---|---|
+| `W405` | `fbb6ca48` | one unused import after the module docstring — floor GREEN, `ruff format --check` GREEN, the repository gate RED; and a broken anchor in the new section — floor RED |
+| `W407` | `0ccda3f0` | `omit` made a NO-OP, which is the user-visible defect itself — RED |
+| `W403` | `07d98525` | the DATA, not the code: a framework half the release branch does not reach — RED, named; a sibling half the component does not hold — RED, named |
+| `W402` | `5e5a0d56` | every in-progress marker's message folded into ONE generic phrase, which clause 2 forbids — RED |
+| `SK-09` | `25ee5ec2` | §8.3's socket check made blind — RED; and the non-runnable early return removed — RED |
+| `W404` | `f961d7fe` | `WORKING_TREE` collapsed into `PINNED`, so a local reading stops saying it is local — RED |
+
+⛔ **Every one of those plants attacked a DIFFERENT seam from the office's own**, deliberately: a plant that repeats the
+office's plant re-measures the office's confidence rather than the row.
+
+### ⛔ `W407`'s CORPUS CLAUSE, READ BOTH WAYS, AND THE REGISTER'S FIRST INSTRUMENT WAS WRONG
+
+⭐ **Built twice to a directory outside every checkout; the sibling corpus stayed clean at its pin and nothing was written
+into it.** ⛔ **Measured over all 38 unit pages, where the count IS the subject:**
+
+| build | pages restating the page title in their opening body heading |
+|---|---|
+| at the release tip, WITHOUT the row | **38 of 38** |
+| WITH the row | **0 of 38** |
+
+⚠️ **The register's first instrument read `0` on BOTH builds and was wrong, not the row:** it compared the title and the
+body heading for EXACT equality, and the restatement is in different words — *"Data Elements Handling"* against
+*"6. Data Elements Handling in jPOS Server"*. ⭐ **Discarded and retaken.** ⛔ **A negative control that reads the same as
+the experiment has not controlled anything, and that is the only reason it was caught.**
+
+### ⛔ `TC-05`'s CLOSE IS NOW REFUTABLE BY A GATE, AND THE REGISTER CONFIRMED THE COUNTERFACTUAL ITSELF
+
+⭐ Read against the component, read-only, clean at its pin: **the ref round 127 pinned carries NO `consuming.json` at all**;
+the ref that does carry it is **not reached by that pin** and **is reached by the current one**. ⛔ **`W403`'s arm would have
+refused `TC-05` at BOTH refs the task was closed on** — round 127's record and step 7.3's close. ⚠️ **That is `W403/7`
+confirmed, and the round-127 record's naming of `3d2c9c8` is ANNOTATED, never edited.**
+
+### ⛔ FOUR OF THE TEN MINTS ARE DEFECTS THIS WAVE INFLICTED ON ITSELF
+
+⭐ **`W415`** — the shared 13G tmpfs filled to 100% and four offices lost readings to it. ⛔ **The readings were not merely
+RED, they were INCOHERENT**: a suite reaching 100% with no failures still exited `1`; a repository gate produced an EMPTY
+log and exited `1`. ⚠️ **A gate that exits non-zero with nothing failing lies toward RED, and costs the office a search in
+its own diff.**
+
+⭐ **`W414`** — an office ran a PATTERN kill and it matched another office's certification run in another worktree.
+⛔ **The victim had to be told its RED was a killed run and not a reading.**
+
+⭐ **`W419`** — a visual test monkeypatches `tempfile.tempdir` PROCESS-WIDE and asserts a glob over it is empty, so
+anything tearing down in the same `xdist` worker falls inside its assertion window. ⛔ **It can refuse ANY row.**
+
+⭐ **`W413`** — delete `W405`'s whole new section and the floor still reads GREEN. ⚠️ **The rule telling an office which
+gate can refuse it is held by nothing**, which is `W398/1` one level up.
+
+### ⛔ ONE FINDING REFUTED, ONE CLOSED — NEITHER CARRIED
+
+⛔ **`SK-09/8` is REFUTED by measurement.** It reports that `E12` and `E11` still credit `SK-07` with the compose
+demonstration. ⭐ **At this ref `E12`'s acceptance reads *"demonstrated by `SK-09` doing exactly that"***, and the `SK-07`
+sentence beneath it is `W400`'s ANNOTATION of its own correction. ⚠️ **The office read a retained history line as live
+text — which is a cost of Ruling 106 worth knowing about, not a reason to abandon it.** No row.
+
+⭐ **`W403/5` and `W404/5` are THE SAME finding from two offices, and the register CLOSES it rather than minting it.**
+`workspace_root` and `DEV_CONTAINER` stay in `tools/workspace/__main__.py`. ⛔ **Three offices held that package this wave
+and all three independently declined to move them**, each with its own reason; `W404`'s reader imports `workspace_root`
+lazily so `__main__` stays the one definition, and reads `DEV_CONTAINER` not at all because `ABSENT` already answers the
+image's case. ⭐ **Nobody needs the move, so it is not made.**
+
+### ⛔ `W405/2` — THE REGISTER WAS REPEATING A WRONG MECHANISM IN ITS OWN BRIEFS
+
+⛔ **`W398/4` said *a refusal names ONE finding because the gate stops at the first*. MEASURED: `ruff check` does not stop
+at the first finding and neither does the test.** ⭐ **What is singular is the failing TEST**, whose message carries every
+finding and whose summary line elides it with `- ...`; **what stops at the first is `tools.mergegate`, at the first red
+GATE.** ⚠️ **The instruction was right and its reason was wrong** — the convention now carries the measured mechanism, and
+[`rows/W405.md`](rows/W405.md) is ANNOTATED rather than edited.
+
+### ⛔ `M7` STEP 7.4 DOES NOT CLOSE, AND THE REASON IS A CLAUSE REPORTED RATHER THAN REWRITTEN
+
+⭐ **`SK-09` is merged; `SF-24` is not.** ⛔ **And `SF-24` would not close the step even when it merges:** its acceptance
+says *editing, running and submitting work end to end*, and **the embedded editor is not delivered**, because nothing in
+the framework knows where a running editor is (`W416`). ⭐ **The office REPORTED that rather than editing its own
+acceptance**, which is exactly what `agent-protocol.md` asks for. ⚠️ **`SF-24`'s end-to-end reading is HOST mode and no
+container reading is claimed** (`SF-24/8`).
+
+⭐ **`SF-24` is RETAKING at the release tip** in a FRESH office. ⛔ **Its one collision was PREDICTED by the office that
+built it** — `render/page/document.py`'s body loop, where this row's `_part(...)` meets `W407`'s head-promotion argument —
+**and the resolution it argued is BOTH, then regenerate the page fixtures once.**
+
+### ⛔ `W402` WORKS, AND THE FIRST THING IT DID WAS REFUSE THIS WORKSPACE
+
+⚠️ **`python3 -m tools.workspace verify` now exits 1 and names `CodeSignal` (2 untracked paths) and `narrate-service` (1).**
+⭐ **That is the row doing its job on real dirt that every round before it was blind to**, and it does NOT red the suite —
+the workspace tests read fixtures, and this wave's own host arms are the reading that says so.
+
+⛔ **`W421` is the USER's row and the register will not decide it.** R20 keeps `CodeSignal` untouched in v1, the files are
+untracked so deleting them is unrecoverable, and their provenance cannot be established from here. ⚠️ **It is NOT hidden
+behind a local exclude: hiding it would answer the gate and lose the question**, which is `W415`'s defect committed on
+purpose. ⭐ **`narrate-service`'s `.idea/` is not part of it** — an IDE artifact, cleared by a local exclude that moves no
+ref, and NOT done while another office's host suite was reading the siblings (`W398/3`).
+
+### ⛔ GATES, THIS ROUND
+
+| gate | reading |
+|---|---|
+| `python3 -m tools.quality.board.corroborate` | see the merge body |
+| `python3 -m tools.workspace verify` | ⛔ **RED, exit 1, with a NAMED population** — `W421` and the `narrate-service` exclude are its whole cause |
+
+⚠️ **A RED gate with a named and minted population is disclosed, never worked around.**
+
+### ⛔ THE FIVE CLOSED ROWS' ARGUMENTS, MOVED WHOLE (Ruling 270)
+
+⭐ **Each file below is now a REDIRECT STUB whose whole content is one pointer back here.**
+
+### W405 — The office rules name no VOTING lint gate, so an office is green on arms that cannot fail
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W405.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `fbb6ca48`. Merged, every declared gate GREEN on the merged tree.
+
+⛔ **`W398/4`, and it refused a merge in this wave.** An office took `python3 -m tools.quality` and `ruff format --check` and read both GREEN — ⚠️ but the floor's `lint:` line is a NOTICE that Rulings 77 and 78 forbid from failing a build, and the format check reads formatting alone. ⭐ **The gate that VOTES is `tests/test_repository.py::test_ruff_lint_is_clean_where_ruff_exists`.** ⛔ **`W398/3` is the second half:** a pinned reading taken against a checkout another run is mutating is not a reading.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The office rules NAME the voting gate** and say the floor's lint line cannot fail a build.
+2. ⛔ **They say a refusal names ONE finding** because the gate stops at the first, so the file is read whole.
+3. ⛔ **They say a reading is taken against a tree nothing else is writing.**
+
+⭐ **Surface:** `docs/conventions/agent-protocol.md`, and the rubric only if the row argues it.
+
+### ⚠️ ANNOTATED by the register, round 130 — clause 2's MECHANISM was wrong, and the clause was right
+
+⛔ **The sentence above says *a refusal names ONE finding because the gate stops at the first*, and the
+office that took this row MEASURED otherwise: `ruff check` does not stop at the first finding, and
+neither does the test.** ⭐ **What is singular is the failing TEST** — three findings planted across
+two tracked files produce ONE failing test whose message names all three — ⚠️ **and pytest's summary
+line elides that message with `- ...`, which is where the belief came from.** ⛔ **What DOES stop at
+the first is `tools.mergegate`, at the first red GATE.**
+
+⭐ **The instruction is unchanged and now rests on a true mechanism: read the message WHOLE, and read
+every file the row touched.** ⛔ **This row is ANNOTATED rather than edited (Ruling 106): the text
+above is what was believed when the row was minted, and `agent-protocol.md` carries the measured
+mechanism.** ⚠️ **The register had been repeating the wrong mechanism in its office briefs, and this
+annotation is where that stops.**
+
+[the mint](#po-round-128)
+
+### W407 — Every unit page prints the corpus's own top heading, so the title reads twice
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W407.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `0ccda3f0`. Merged, every declared gate GREEN on the merged tree.
+
+⛔ **`W388/17`, seen on the rebuilt site and the most visible thing on the page.** Every unit page prints the corpus's own top-level heading immediately under the page title, so the title reads twice. ⭐ **Corpus markup reaching the page, not a framework decision**, and it predates the appearance work. ⚠️ **It is a FRAMEWORK row and the corpus is regenerated** — a corpus-visible defect is never fixed in the corpus.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A unit page states its title ONCE**, whatever the source document's own heading structure is.
+2. ⛔ **Asserted both ways (R12)**, and on a source that carries the duplicate.
+3. ⭐ **The ISO corpus is REGENERATED** and read.
+
+⭐ **Surface:** the unit document builder and the page renderer, with their tests.
+
+[the mint](#po-round-128)
+
+### W403 — A cross-repo task is recorded MERGED on its framework half, its sibling half unread
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W403.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `07d98525`. Merged, every declared gate GREEN on the merged tree.
+
+⛔ **Measured by the register, 2026-09-20.** `TC-05`'s framework half merged in round 127 and its handoff landed here, while ⭐ **its sibling half was on NO committed ref of the component** — so the task was recorded MERGED, and step 7.3 recorded it, on a reading nobody could have taken. ⚠️ A cross-repo task has two halves and the register reads one.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A task naming a sibling declares BOTH halves**, and the register cannot record it merged while either is unlanded.
+2. ⛔ **The instrument reads the PINNED REF**, never a working tree.
+3. ⛔ **Asserted both ways (R12).**
+
+⭐ **Surface:** the register's own instruments under `tools/quality/board/`, and `docs/conventions/agent-protocol.md` if the row argues the declaration's form.
+
+[the mint](#po-round-128)
+
+### W402 — `workspace verify` reads HEAD against the pin and is blind to a DIRTY checkout
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W402.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `5e5a0d56`. Merged, every declared gate GREEN on the merged tree.
+
+⛔ **Measured by the register, 2026-09-20, and `TC-06/6` names it from the other side.** `code-server-toolchain`'s `main` CHECKOUT sat in an abandoned conflicted merge — `MERGE_HEAD` present, `README.md` left `UU`, every file of `TC-05` staged and none committed — and ⭐ **`python3 -m tools.workspace verify` read GREEN, exit 0, throughout.** ⚠️ It compares each component's HEAD to the pin and says NOTHING about the working tree, so a component satisfies R18 while carrying work that exists on no ref.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A component whose checkout is DIRTY fails `verify`**, naming the component and what is uncommitted.
+2. ⛔ **A component mid-merge fails it** — `MERGE_HEAD`, a rebase or a conflicted path are each named rather than folded into one word.
+3. ⛔ **Asserted both ways (R12)**: a clean checkout at its pin still reads GREEN.
+
+⭐ **Surface:** `tools/workspace/` and its tests.
+
+[the mint](#po-round-128)
+
+### W404 — The framework reads the sibling's WORKING TREE, not the pinned ref, so a reading is local
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W404.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `f961d7fe`. Merged, every declared gate GREEN on the merged tree.
+
+⛔ **Measured by the register, 2026-09-20.** The framework resolves a sibling by path and reads the files it finds on DISK. ⚠️ While the component's checkout was mid-merge, `consuming.json` READ AS PRESENT from a staged file that existed on no ref — so a green reading here was not reproducible from `workspace.json` on any other host. ⭐ The pin exists precisely so that it is.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A sibling's contract is read at the PINNED REF**, or the reading says plainly that it read a working tree and is therefore local.
+2. ⛔ **Asserted both ways (R12).**
+
+⭐ **Surface:** `tools/workspace/`, the sibling readers under `tests/studyforge/execute/`, and their tests.
+
+[the mint](#po-round-128)
