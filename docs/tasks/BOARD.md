@@ -52,10 +52,11 @@ one does.**
 | **M5** — it runs code | ✅ CLOSED — round 123, on a runner image holding only what it declares (`W374`) | `12b1abb` | [the close](BOARD-ARCHIVE.md#po-round-123) |
 | **M5 step 5.2** | ✅ CLOSED — `SF-29`, `SF-22`, `SF-44` | `12b1abb` | [record](BOARD-ARCHIVE.md#po-round-123) |
 | **M5 step 5.1** | ✅ CLOSED — `TC-00` + `SF-20` | `b9aef83` | [record](BOARD-ARCHIVE.md#po-round-117) |
-| **M7** — it has practices | ⏳ **OPEN — round 121.** ⭐ Step 7.1 CLOSED (124); step 7.2 OPEN and SERIAL — `TC-02` → `TC-03` → `TC-04`, one set of build files | — | [the open](BOARD-ARCHIVE.md#po-round-121) |
+| **M7** — it has practices | ⏳ **OPEN — round 121.** ⭐ Steps 7.1–7.4 CLOSED; ⛔ **7.5 (`QA-02`) is last, and `M7` CANNOT CLOSE until [`W416`](rows/W416.md) lands** — 7.4's gap is `M7`'s own promise | — | [the open](BOARD-ARCHIVE.md#po-round-121) |
 | **M7 step 7.1** | ✅ CLOSED — `TC-01` | `9bc688f` | [record](BOARD-ARCHIVE.md#po-round-124) |
 | **M7 step 7.2** | ✅ CLOSED — `TC-02`, `TC-03`, `TC-04` | `04ce050` | [record](BOARD-ARCHIVE.md#po-round-126) |
 | **M7 step 7.3** | ✅ CLOSED — `TC-05` + `TC-06` | `4c8490b4` | [record](BOARD-ARCHIVE.md#po-round-128) |
+| **M7 step 7.4** | ✅ CLOSED — `SK-09` + `SF-24`, ⛔ **ONE NAMED GAP: the embedded editor ([`W416`](rows/W416.md))**, REPORTED not rewritten | `04b3e65e` | [record](BOARD-ARCHIVE.md#po-round-131) |
 | **M10** — every corpus has practices | ⛔ **NOT STARTED — after `M7`.** ⭐ **A CORE IDEA of the project (user, 2026-09-19)**; planned by [`W389`](rows/W389.md) | — | [the plan](README.md) |
 | **M11** — it is release-ready | ⛔ **NOT STARTED — after `M10`** (user, 2026-09-18; ruled 2026-09-19) | — | [the plan](README.md) |
 | **M9** — the Java corpus re-validates | ⛔ **NOT STARTED, and it holds 21 of the 35 undelivered capabilities.** `Claude-senior-java-engineer` converted under §12's rules, with gate-clearing exercises, and the findings written down | — | [the plan](README.md) |
@@ -71,7 +72,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `SF-24` | Developer 5 | `feat/SF-24-practice-panel` @ `wt/dev5` | 0 @ `3a48a44` | in-progress — RETAKE at the release tip |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -153,6 +153,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 82 | `W397`–`W401` | ⛔ **`W397` and `W399` JUMP every older `todo` row (Ruling 75): a stylesheet change cannot pass its own gate until they land** | [127](BOARD-ARCHIVE.md#po-round-127) |
 | 83 | `W402`–`W411` | ⛔ **`W402`–`W404` JUMP every older `todo` row (Ruling 75): a seam that no instrument reads is how `TC-05` closed on a reading nobody could take** | [128](BOARD-ARCHIVE.md#po-round-128) |
 | 84 | `W412`–`W421` | ⛔ **`W415` and `W419` JUMP every older `todo` row (Ruling 75): both make a GATE lie, and a lying gate spends every office after it** | [130](BOARD-ARCHIVE.md#po-round-130) |
+| 85 | `W422`–`W424` | ⛔ **`W422` JUMPS every older `todo` row (Ruling 75): a module at its ceiling fails the NEXT office, whatever its row** | [131](BOARD-ARCHIVE.md#po-round-131) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -598,6 +599,9 @@ else.**
 | W419 | A visual test monkeypatches `tempfile.tempdir` process-wide, so it can refuse any row under `-n auto` | framework agent | `todo` — `W404/6` | [`rows/W419.md`](rows/W419.md) |
 | W420 | The rubric types the DISK form of `ruff` while the arm that votes runs over `git ls-files` | framework agent | `todo` — `W405/5` | [`rows/W420.md`](rows/W420.md) |
 | W421 | `CodeSignal` carries two untracked files on no ref, in the repository R20 keeps untouched | the user | `todo` — `W402/1` — USER | [`rows/W421.md`](rows/W421.md) |
+| W422 | `render/page/document.py` stands at 400 of R11's 400, so the NEXT line added fails the build | framework agent | `todo` — `SF-24/11` | [`rows/W422.md`](rows/W422.md) |
+| W423 | No golden carries a promoted `<h1>` AND a practice panel, so the resolved line has no witness | framework agent | `todo` — `SF-24/12` | [`rows/W423.md`](rows/W423.md) |
+| W424 | The office rules never say an office is the WORKTREE, so a fresh agent invents a second office | framework agent | `todo` — the register, 2026-09-20 | [`rows/W424.md`](rows/W424.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the

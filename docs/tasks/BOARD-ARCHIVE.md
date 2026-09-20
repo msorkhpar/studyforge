@@ -29554,3 +29554,91 @@ annotation is where that stops.**
 ⭐ **Surface:** `tools/workspace/`, the sibling readers under `tests/studyforge/execute/`, and their tests.
 
 [the mint](#po-round-128)
+
+---
+
+## PO round 131
+
+⛔ **Only what is MEASURED is written here.** ⭐ **`SF-24` lands and `M7` step 7.4 CLOSES WITH ONE NAMED GAP; the ISO
+corpus is regenerated and its pin advances; three rows are minted, two of them the cost of a refusal that was right;
+and the register corrects two of its own errors, one of which refused a merge.**
+
+### ⭐ `M7` STEP 7.4 CLOSES AT `04b3e65e`, AND THE GAP IS NAMED RATHER THAN ABSENT
+
+| task | reading |
+|---|---|
+| `SK-09` | a runnable corpus's compose file, toolchain and prime rendered from manifest data alone; a corpus declaring no runtimes gets nothing and NO ERROR — merged `25ee5ec2` |
+| `SF-24` | the practice panel on a unit page, and the run client inserted by the SERVING process alone, so a built page names no API, no origin and no client file — merged `04b3e65e` |
+
+⛔ **THE GAP, AND IT IS `M7`'s OWN PROMISE: the embedded editor is NOT delivered** ([`W416`](rows/W416.md)). ⭐ **The
+office REPORTED that rather than editing its own acceptance**, which is what the working agreement asks for. ⚠️ **The
+register's earlier statement that the step would stay open is SUPERSEDED here, and the reasoning is written down rather
+than quietly reversed:** this project's established form is *closed with the gap NAMED* (`M2`'s close, and `W90` at
+`M4`'s), and holding a step open costs the milestone while `7.5` is untouched anyway. ⛔ **What the gap binds instead is
+`M7` ITSELF, which cannot close until `W416` lands** — recorded on `M7`'s own row, where it bites.
+
+⚠️ **`SF-24`'s end-to-end reading is HOST mode and NO container reading is claimed** (`SF-24/8`).
+
+### ⛔ THE REGISTER'S OWN IDENTITY ERROR, WHICH REFUSED A MERGE — `W424`
+
+⛔ **The register briefed the retaking agent to sign as `dev5b`, inventing a SECOND OFFICE.** `tools/authorship.py`
+refuses two distinct office identities among the commits one merge introduces. ⭐ **AN OFFICE IS THE WORKTREE, and a
+fresh AGENT occupying one signs with the OFFICE's name.** ⚠️ **Measured across the last twelve first-parent merges on the
+release branch: every one carries exactly ONE distinct office**, so that branch would have been the first with two.
+
+⭐ **Repaired by re-authoring in place, metadata only: the diff against the pre-re-author tip was EMPTY and the `--no-ff`
+merge kept both parents.** ⛔ **The office recorded the correction in its handoff rather than hiding it**, and this is
+minted as `W424` because *a fresh agent for every stage* is a standing user constraint, so retakes are normal.
+
+### ⛔ `SF-24/13` CORRECTS THIS REGISTER, AND THE CORRECTION IS ADOPTED
+
+⛔ **`W402/6` classified a REAL finding as a void full-`/tmp` reading.** ⭐ **A void window voids a reading in BOTH
+directions, so a finding seen inside one is not DISPROVED either** — and that one reproduced deterministically at 16%
+disk. ⚠️ **The register had been using *void* as though it meant *ignore*.** ⛔ **It means UNREAD, and unread is never
+green** (Ruling 191), which is the same sentence `W405`'s section already carries about a gate `mergegate` never took.
+
+### ⭐ THE ISO CORPUS IS REGENERATED, AND THE PIN ADVANCES TO `d86a6cb`
+
+⛔ **R19's rule executed rather than recorded: a corpus-visible defect is fixed in the FRAMEWORK and the corpus is
+REGENERATED, never hand-edited.** ⭐ **Run once, after BOTH `W407` and `SF-24` landed** — deliberately not twice, because
+a stale intermediate is worse than a generated artifact briefly lagging its generator.
+
+| reading | measured on the regenerated corpus |
+|---|---|
+| unit pages | **38** |
+| pages whose opening body heading restates the page title | **0**, against **38 of 38** before `W407` |
+| files the rebuild touched | **44 modified, 0 added, 0 deleted** — it replaced only its own declared output |
+
+⚠️ **Done BETWEEN gates with nothing running**, which is round 127's defect not repeated.
+
+### ⛔ TWO OF THE THREE MINTS ARE THE COST OF A REFUSAL THAT WAS RIGHT
+
+⭐ **`W422`** — `render/page/document.py` stands at **400 of R11's 400, zero headroom**, so the next line added to it
+fails the build for whoever adds it. ⛔ **It got there by the SUM of two rows, neither breaching it alone**, and the
+retaking office wrote the resolution to FIT rather than trimming either row's prose to buy lines. ⭐ **That refusal was
+right and this row is its price.** It JUMPS every older row, because a module at its ceiling fails the NEXT office
+whatever that office's row is.
+
+⭐ **`W423`** — no golden carries a promoted `<h1>` **and** a practice panel, so the line where the two rows meet has no
+byte-level witness. ⚠️ **Two plants stood in for it; a plant proves an assertion bites and leaves no fixture to diff.**
+
+⭐ **A third R11 ceiling was breached and CLOSED on the branch**: `tests/.../test_chrome.py` read 603/600 and was SPLIT at
+a named subject seam into `test_chrome_paint.py`, which is Ruling 261's own move. ⚠️ **`SF-24/14` notes that seam has now
+been used three times and the next split has no obvious one left** — recorded here, not minted.
+
+### ⛔ GATES, THIS ROUND
+
+| gate | reading |
+|---|---|
+| `python3 -m tools.workspace verify` | ⛔ **RED, exit 1, ONE named component** — `CodeSignal`, which is [`W421`](rows/W421.md) and the USER's |
+| `python3 -m tools.quality.board.corroborate` | see the merge body |
+
+⭐ **`narrate-service` is GONE from that refusal.** Its untracked `.idea/` was cleared by a LOCAL exclude in that
+component's `.git/info/exclude` — ⛔ **which moves no ref and changes no tracked file, so the component still matches its
+pin** — and it was done with nothing running. ⚠️ **`CodeSignal`'s two files are NOT cleared the same way, deliberately:
+hiding them would answer the gate and lose the question.**
+
+⚠️ **A SECOND local exclude was needed and it was not foreseen: committing the regenerated corpus fired a `post-commit`
+hook installed on this machine (`graphify`), which wrote `graphify-out/` into that component and made `verify` name it.**
+⭐ **Same class as the IDE directory and cleared the same way** — ⛔ **and worth the user knowing, because that hook will
+write there on every future commit to that repository.**
