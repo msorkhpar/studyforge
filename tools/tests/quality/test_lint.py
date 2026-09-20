@@ -278,6 +278,77 @@ def test_a_process_that_will_not_start_is_the_fourth_state(monkeypatch, tmp_path
     assert "the process could not be started (PermissionError)" in line
 
 
+# --- `W393`: the line the floor prints BELOW its verdict --------------------
+
+
+def test_the_scope_line_says_there_is_no_signal_when_the_tool_is_absent(monkeypatch):
+    # ⛔ The row's subject. `W388/5` measured an office reading `quality floor:
+    # clean` on a host with no linter and handing back GREEN with the format
+    # check unclean — twice in one wave, with the absence notice printing above
+    # the verdict the whole time.
+    monkeypatch.setattr(lint, "_which", lambda name: None)
+    line = lint.lint_scope()
+    assert "NO LINT SIGNAL" in line
+    assert lint.CHECK_SHOWN in line
+    assert lint.FORMAT_SHOWN in line
+
+
+def test_the_absent_scope_names_the_ONE_command_that_gives_the_signal(monkeypatch):
+    # ⭐ Settling clause 1: an office that learns it has no signal and is not
+    # told where to get one learns half of something. ⛔ The wrapper alone is
+    # not that command — `docker/dev/check` with nothing after it runs nothing.
+    monkeypatch.setattr(lint, "_which", lambda name: None)
+    line = lint.lint_scope()
+    assert f"`{lint.FLOOR_IN_IMAGE}`" in line
+    assert lint.FLOOR_IN_IMAGE.startswith(f"{lint.IMAGE} ")
+    assert lint.FLOOR_IN_IMAGE != lint.IMAGE
+
+
+def test_the_scope_line_says_there_IS_a_signal_when_the_tool_is_present(monkeypatch):
+    # ⛔ Both ways (R12). A line that appeared only on absence would be
+    # indistinguishable from a line that failed to print, which is the defect
+    # Ruling 48 names and the one this whole module exists to avoid.
+    monkeypatch.setattr(lint, "_which", lambda name: "/path/to/bin/ruff")
+    line = lint.lint_scope()
+    assert "NO LINT SIGNAL" not in line
+    assert f"{lint.TOOL} is installed here" in line
+    assert "`lint:` line above" in line
+
+
+def test_the_present_scope_claims_no_VERDICT_so_the_fourth_state_keeps_it_true(monkeypatch):
+    # ⚠️ The subtle one. With the tool installed and unable to answer, the
+    # notice above reports the fourth state — so this line may say the tool is
+    # here and point at that line, and may NEVER say the run was lint-clean.
+    monkeypatch.setattr(lint, "_which", lambda name: "/path/to/bin/ruff")
+    line = lint.lint_scope()
+    assert "clean" not in line
+    assert "did not run" not in line
+    assert "never this verdict" in line
+
+
+def test_the_scope_line_asks_nothing_of_the_tool_in_either_state(monkeypatch):
+    # ⛔ The cheapest true instrument (the row's clause 2): `shutil.which` and
+    # no invocation. ⚠️ The notice above has already run the tool once; a tail
+    # line that ran it again would double the floor's lint cost to learn
+    # something the probe already settles.
+    recorded: list = []
+    monkeypatch.setattr(lint, "_run", runner(recorded))
+    for planted in (None, "/path/to/bin/ruff"):
+        monkeypatch.setattr(lint, "_which", lambda name, found=planted: found)
+        assert lint.lint_scope().startswith("lint scope: ")
+    assert recorded == []
+
+
+def test_the_scope_line_is_one_line_and_carries_no_absolute_path(monkeypatch):
+    # ⛔ R7 on the line an office pastes into a hand-back: the planted path is
+    # the one absolute string in reach here, and it may not be echoed.
+    for planted in (None, "/path/to/bin/ruff"):
+        monkeypatch.setattr(lint, "_which", lambda name, found=planted: found)
+        line = lint.lint_scope()
+        assert "\n" not in line
+        assert "/path/to/bin" not in line
+
+
 # --- the invocation itself -------------------------------------------------
 
 
