@@ -590,17 +590,32 @@ state is reported with what is missing and what still works.
 graders**: pair implementation with grader, create the hole, run both gates,
 ship only what clears them.
 
-⛔ **It refuses sources that ship no grader.** For those, the honest answer is
+⛔ ~~**It refuses sources that ship no grader.** For those, the honest answer is
 zero exercises (spec §7) — and inventing assertions is precisely the theatre R5
 forbids. That refusal is a feature of this skill and must be stated plainly to
-the user, with the reason, not presented as a failure.
+the user, with the reason, not presented as a failure.~~
+
+⛔ **STRUCK 2026-09-19 (`W389`, user direction), and the strike is the whole point of that
+row.** ⭐ **A source that ships no grader gets exercises AUTHORED for it** — from its own
+examples and practice code where it has them, and from the page's material where it has
+neither ([spec
+§7](../specs/2026-09-08-studyforge-v1-design.md#exercises-authored-for-every-corpus-w389)).
+⭐ **The honesty the struck clause protected survives as GATES, not as a refusal:** an
+authored grader is `generated`/`advisory` and ships only with a gate record. ⭐ **This skill
+becomes the derivation case of [`AX-08`](E14-authored-exercises.md#ax-08-the-authoring-skill)'s
+authoring skill** — case (a), code with tests — and it keeps its scope, its milestone and
+its Java corpus. ⚠️ **What it may no longer do is tell a user that zero is the honest
+answer**, because it is not one any more.
 
 Language-specific pieces — how to blank a body, how to invoke a build — are
 pluggable; the two gates are not.
 
-**Acceptance.** Reproduces E08's result on the Java corpus. Refuses a
-grader-less source with a clear explanation. The gates cannot be disabled or
-bypassed by configuration.
+**Acceptance.** Reproduces E08's result on the Java corpus. ⛔ **The gate-clearing
+derivation is unchanged and a derived exercise is still `bundled`/`authoritative`.** The
+gates cannot be disabled or bypassed by configuration. ⚠️ **AMENDED by `W389`: the
+acceptance line *"refuses a grader-less source with a clear explanation"* is withdrawn.**
+⭐ **What replaces it is asserted in `AX-08`, not here** — running the authoring skill on a
+grader-less source and getting gate-cleared exercises.
 
 ---
 

@@ -3,6 +3,22 @@
 Turning 168 existing test classes into real practices, with **no human in the
 loop and no LLM-authored assertions**.
 
+⛔ **SCOPED 2026-09-19 (`W389`, user direction) — that sentence is about THIS EPIC, and it
+was read for a while as a rule about the framework.** ⭐ **It stays true of everything here:
+a `bundled` exercise is blanked from a grader the corpus already ships, cleared by the two
+gates below, and labelled `authoritative` — and it is exactly that property that earns the
+stronger label.** ⭐ **Exercises whose assertions ARE authored exist now, are
+`generated`/`advisory`, clear a different set of gates, and live in
+[`E14`](E14-authored-exercises.md)** ([spec
+§7](../specs/2026-09-08-studyforge-v1-design.md#exercises-authored-for-every-corpus-w389)).
+⛔ **The two never trade labels, and nothing in `E14` re-opens this epic's mechanism.**
+⚠️ **Two seams `E14` takes over rather than duplicating:** `EX-04` emits through the
+[bundle](E14-authored-exercises.md#ax-04-the-exercise-bundle) instead of its own emission,
+and `EX-05`'s coverage report takes the
+[ledger's](E14-authored-exercises.md#ax-07-the-source-ledger-and-the-page-plan) format so
+one report covers every case. ⭐ **Both are edges to declare when `E14` lands, not work
+inside this epic.**
+
 **Shared context for this epic — read this before any task.**
 
 ⛔ **`EX-00` BLOCKS ALL OF E08, INCLUDING THE TASK YOU WERE SENT HERE FOR.** It

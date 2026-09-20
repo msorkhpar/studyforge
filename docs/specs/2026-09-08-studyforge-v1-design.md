@@ -77,6 +77,16 @@ rather than left to a later reader: `tests/test_spec_corpus_table.py` reads the
 a row claiming graders for a corpus whose manifest says `exercises: false` is
 refused.
 
+⛔ **DATED 2026-09-19 (`W389`) — the *Graders* column records what a source SHIPS, and
+that is no longer what a reader gets.** ⭐ **From `M10`, a corpus's exercises are
+authored at ingestion from its own examples, its code, its tests and its pages**
+([*Exercises authored for every corpus*](#exercises-authored-for-every-corpus-w389),
+below). ⚠️ **The column is NOT rewritten here, and the restraint is the point:** it
+reads a pinned manifest, ISO's still says `exercises: false`, and a cell claiming
+graders the corpus does not yet carry would be the untruth the instrument above exists
+to refuse. ⭐ **A cell moves when its corpus is re-onboarded with `exercises: true`,
+and not before** — a row of `M10`'s last step, never an edit made ahead of the corpus.
+
 ### What the two tutorials taught us
 
 Neither behaved as first described, and each surfaced a constraint the design
@@ -146,6 +156,15 @@ discarded real teaching content. The exercise contract must distinguish three
 states, not two: **no exercise**; an **ungraded** exercise (a prompt the reader
 works, with nothing to check it); and a **graded** exercise, whose trust is then
 `authoritative` or `advisory` under R5. Only the third can complete a practice.
+
+⛔ **AMENDED 2026-09-19 (`W389`, the user's direction) — the three states STAND, and
+what changes is which one a source lands in.** ⭐ **A source with no grader is no
+longer a source with no exercises:** [*Exercises authored for every
+corpus*](#exercises-authored-for-every-corpus-w389) authors graded ones for it, at
+ingestion, from the material it does have. ⚠️ **Ungraded stays a first-class state** —
+it is where a prompt goes when the authoring gates cannot back it, and it is still how
+a prompt the material sets but nothing can check is presented. ⛔ **The 19 SPARQL
+prompts are not deleted by any of this; they are kept and joined by authored work.**
 
 ---
 
@@ -221,6 +240,19 @@ Inherited from CodeSignal's R10. A grader written by us against a hidden
 upstream grader is `advisory`. A grader that shipped with the material and is
 proven by the gates in §7 is `authoritative`. The framework refuses to render
 the first as the second.
+
+⭐ **EXTENDED 2026-09-19 (`W389`) — R5 keeps every word above and gains one case.** A
+grader **authored at ingestion** — tests written by a model from the page, or from the
+source's own example code — is `generated`, and therefore `advisory`. It ships only
+when it clears §7's [authoring gates](#exercises-authored-for-every-corpus-w389), whose
+record ships beside it and which `studyforge validate` re-reads; an exercise that
+cannot clear a gate does not ship, and the coverage report names the gate that refused
+it and why. ⛔ **The vocabulary does not grow.** No third trust level is minted:
+`generated` still can never be `authoritative`, and a gate record is evidence for a
+claim, never a promotion of it. ⭐ **What the READER is shown is a sentence, not the
+vocabulary** (the user's ruling, 2026-09-19): `provenance` and `trust` are the
+framework's internal words, and §7 fixes the learner-facing wording each one renders
+as. ⛔ **A label is never omitted because it is unflattering.**
 
 **R6 — Fail loud, never silently short.** A unit with no content, a broken
 curriculum link, an unmatched class, a declared practice that is absent — each
@@ -1211,6 +1243,11 @@ Four reasons, and the third is the one that decided it:
   writes no practice document at all; SPARQL is `ungraded` for all 19 and writes
   a prompt with no workspace. ⛔ A design in which every corpus must declare its
   emptiness is a design fitted to the Java repo, which is the exception (§11.0).
+  ⚠️ **DATED 2026-09-19 (`W389`): the STRUCTURE above is unchanged and the reading
+  of it is now history.** ⭐ Those two readings are of the corpora *as their sources
+  ship them*; from `M10` both are re-ingested with exercises authored for them
+  ([above](#exercises-authored-for-every-corpus-w389)), so `none` stops being the
+  common case and stays the honest one wherever the gates refuse everything.
 - **R5 gets one place to enforce.** `provenance` and `trust` sit on the same
   document, so `studyforge validate` refuses `trust: "authoritative"` alongside
   `provenance: "generated"` — one rule, one file, exit 1.
@@ -1296,6 +1333,14 @@ Gate 2 proves the grader itself works. **No human reads anything, and no
 assertion is authored by an LLM.** A hole that clears both is provably solvable
 — git holds the reference solution — and provably non-trivial.
 
+⛔ **SCOPED, NOT STRUCK, 2026-09-19 (`W389`).** ⭐ **That sentence stays true of every
+exercise this section derives** — `bundled`, `authoritative`, blanked from a grader the
+source already ships — ⚠️ **and it is exactly why those keep the stronger label.** ⛔ **It
+was never a rule about the whole framework, and reading it as one is what left most
+sources with nothing to practise.** ⭐ **An exercise whose assertions ARE authored is
+`generated`/`advisory` and clears a different set of gates**
+([below](#exercises-authored-for-every-corpus-w389)); the two never trade labels.
+
 ### Selection and size
 
 A gate says whether a hole is *valid*. It says nothing about whether the
@@ -1346,6 +1391,188 @@ Reader-facing practice material co-locates beside the `.md` (§5). The
 They go in an additive `practice/` module mirroring addresses, joined to the
 build by one line in the root `pom.xml` — the single existing-file change R3
 permits, asserted by `OPS-05`.
+
+### Exercises authored for every corpus (`W389`)
+
+⛔ **ADDED 2026-09-19 — the user's direction, and one of this project's core ideas.**
+
+> *"Bottom line we are building CodeSignal or LeetCode with the idea of LLM extracting
+> the content from a given source and make it an enjoyable interactive easy to read and
+> navigate website."*
+
+⛔ **Everything above this heading described what a source SHIPS. This subsection is what
+a READER gets, and the two stopped being the same thing here.** ⭐ **Delivered as
+milestone `M10`** ([the plan](../tasks/README.md#m10-every-corpus-has-practices), epic
+[`E14`](../tasks/E14-authored-exercises.md)).
+
+#### 1. Three source cases, one pipeline
+
+| the source has | where the exercise comes from | provenance · trust |
+|---|---|---|
+| **code and tests** | derived by blanking, through the two gates above — **unchanged** | `bundled` · `authoritative` |
+| **code, no tests** | the source's own example is the reference solution; the ask, the starter and the tests are authored from the page | `generated` · `advisory` |
+| **neither** | the ask, a reference solution, the starter and the tests are all authored from the page | `generated` · `advisory` |
+
+⭐ **The first row may ALSO gain authored exercises** beyond what blanking yields; those
+are `generated`, and they never borrow the derived ones' label. ⛔ **The three rows are
+not three pipelines**: one authoring pass, one set of gates per exercise kind, one
+bundle shape, one coverage report.
+
+#### 2. Authoring happens once, at ingestion
+
+⭐ **A skill the converting agent runs writes the exercises and commits them into the
+CORPUS repository** as source-side material — the *exercise bundle*. The adapter reads
+the bundle and writes `practice-M.json` from it, so R2's on-disk seam is untouched and
+the framework still knows nothing about any source (R1).
+
+⛔ **No model runs at build time and no model runs at serve time.** The site stays
+offline over `file://` (R8) and the build stays byte-reproducible from the committed
+bundles (R10). ⭐ **The non-determinism lives in authoring, exactly where a human author's
+does** — and, like a human author's, it is reviewed once and then fixed in the tree.
+
+#### 3. Nothing the source already has is lost
+
+⛔ **The reading floor is untouched.** Every example the source ships still renders on the
+page, verbatim, whether or not an exercise was built from it.
+
+⭐ **The proof is a *source ledger*.** Every fenced example and every test file the source
+carries is an entry, and each entry is either the basis of at least one exercise — named
+by that exercise's `origin`, using `SF-36`'s sub-file origins — or carried with a written
+reason it is not. ⛔ **An entry with neither is refused** (R6): a silent drop is how
+"nothing is lost" becomes a sentence nobody can check.
+
+#### 4. How many exercises a page gets follows the page
+
+⭐ **The skill writes a per-page *plan* before it authors anything:** a count inside a
+band set by the page's length, moved by the page's distinct checkable skills and by a
+difficulty tier, with every reason written down. ⛔ **The plan is a CEILING, never a
+quota.** What ships is what clears the gates, and every shortfall is named with the gate
+that refused it. ⛔ **A count is never met by lowering a bar.**
+
+#### 5. What an exercise says
+
+⭐ **Every authored exercise states a real-life ask**: a scenario, the ask itself, and an
+input/output contract the reader can code against. ⭐ **It is graded by tests of the main
+ask and by a test of every edge case it names**, so a Submit can report *main ask ✓,
+edge cases n/m* rather than one undivided pass or fail.
+
+#### 6. The authoring gates for a code exercise
+
+⭐ **Run by the framework, in the pinned runner image, on every authored bundle. A bundle
+ships only if every gate holds.**
+
+| gate | what must hold | what it proves |
+|---|---|---|
+| **G1 reference** | every test passes on the reference solution, on two runs, with the same outcome each time | the exercise is solvable, and its tests are not flaky |
+| **G2 starter** | **every** test fails on the starter, not merely one | no test is vacuous; the reader starts with the work undone |
+| **G3 edge, per case** | for each edge case *e* there is a planted solution that solves the main ask and ignores *e*; on it every main-ask test passes and *e*'s test fails | each edge-case test catches the one omission it names |
+| **G4 map** | every test the report names maps to exactly one case, and every case is backed by at least one test | the Submit breakdown is total |
+| **G5 origin** | where the source supplied code, the `origin` resolves to a ledger entry whose digest matches the source | the exercise is built from what the source has |
+
+⚠️ **G3 is per-case for the same reason the derivation gate above is per-method.** A gate
+coarser than the claim it backs is theatre, and it was expensive to learn that once.
+
+⛔ **G1–G3 are MECHANICAL and re-runnable**: the bundle carries the reference, the starter
+and each plant, so anyone holding it can take the reading again.
+
+#### 7. A corpus whose subject is not code — the quiz shape
+
+⛔ **RULED by the user, 2026-09-19: the quiz shape is IN `M10`.** ⚠️ **It was proposed for a
+v2 backlog and the user said no** — a history book, a standards walkthrough or a prose
+tutorial must be able to activate its reader too, and deferring that left most material
+at the reading floor indefinitely.
+
+⭐ **The form.** A quiz is an exercise whose `kind` is `quiz` rather than `code`. In place
+of a workspace it carries **questions**: a stem, an ordered set of options, exactly one
+keyed as correct, one sentence per option saying why it is right or wrong, and an
+`origin` naming the passage of the page it came from.
+
+⭐ **How it is authored from the page.** The same pass that plans code exercises plans
+quiz ones, from the same ledger: each question is written from one passage, and the
+passage is recorded by address, not paraphrased into the question's provenance.
+
+⭐ **How it is graded without a compiler.** The key and the per-option sentences ship
+inside the practice document, and the page grades the reader's answers itself — no
+container, no network, no model, and identical over `file://` and over a served origin.
+⛔ **A quiz practice completes only when every question is answered correctly**, and that
+completion is recorded through the reader's own state, never through a run verdict:
+`is_pass`'s rule for a RUN is untouched and a quiz produces no run.
+
+⚠️ **The key is in the material, and the site does not pretend otherwise.** An offline
+page cannot hide the answer it is about to grade with, exactly as an offline workspace
+cannot hide its test file. ⛔ **Claiming to hide either would be the theatre R5 exists to
+prevent**; the honest design shows the reader the answer after they answer.
+
+⭐ **The honesty gates for a quiz.** A compiler cannot back these, so the gates are
+different and their difference is stated rather than smoothed over:
+
+| gate | what must hold | what it proves |
+|---|---|---|
+| **Q1 answerable** | an independent pass given the page and the question — and nothing else — picks the key, twice, with the same outcome | the page actually contains the answer |
+| **Q2 not free** | the same pass given the question and its options but NOT the page does not pick the key | the question tests what this page taught, not general knowledge |
+| **Q3 discriminating** | every wrong option is refuted by a named passage of the page | a distractor nobody can rule out is a trick, not a check |
+| **Q4 key total and single** | exactly one option is keyed, the options are distinct after normalisation, and every option carries its one sentence | the reader is told why, for whichever option they chose |
+| **Q5 origin** | every question's `origin` resolves to a ledger entry whose digest matches the page as ingested | the question is built from the page it is attached to |
+
+⛔ **Q1–Q3 are MODEL JUDGEMENTS taken once at authoring and shipped as a record; Q4 and
+Q5 are mechanical and `studyforge validate` re-runs them.** ⭐ **So a quiz grader is
+`generated`/`advisory` ALWAYS, and there is no path by which one becomes
+`authoritative`** — that is the difference between a proof you can re-take and a reading
+somebody took for you, and R5 turns on exactly that distinction.
+
+#### 8. The reference solution is always available
+
+⛔ **RULED by the user, 2026-09-19: always available, never gated behind a passing
+Submit.** ⚠️ **It was proposed as a reward for a first pass and the user said no.**
+
+⭐ **Every authored code exercise ships its reference solution as reader-facing
+material**, and the page offers it at any time. ⛔ **It is never revealed
+automatically** — the reader asks — and asking is never recorded as a failure, because a
+reader who reads the answer has still read the material and this is not an exam.
+⚠️ **The gates already require the reference to exist** (G1), so shipping it costs
+nothing and withholding it would have been a pretence: the bundle is on the reader's
+disk either way.
+
+#### 9. What the reader is told, in a learner's words
+
+⛔ **RULED by the user, 2026-09-19: an authored grader is labelled, and the label is
+worded for a learner.** ⭐ **R5's vocabulary stays INTERNAL** — `provenance` and `trust`
+are the framework's words, in the record and in `validate`, and a reader never sees
+either token. ⭐ **The framework fixes the sentence each case renders as, and it is the
+framework's constant, not a corpus's string** (R1):
+
+| the record says | the page says |
+|---|---|
+| `bundled` · `authoritative` | **Checked by the tests that ship with this material.** |
+| `generated` · `advisory`, kind `code` | **Written for this site. Its tests were proven against a worked solution before it shipped.** |
+| `generated` · `advisory`, kind `quiz` | **Written for this site from this page.** |
+| no grader (ungraded) | **Nothing here checks your answer.** |
+
+⛔ **The label is never omitted because it is unflattering**, and it is never softened
+into a sentence that implies more than the gate record supports.
+
+#### 10. What is recorded, and what `validate` refuses
+
+- ⭐ **The exercise record gains `cases`** — an `id` as the test report spells it, a `kind`
+  (`main` or `edge`), and `says`, the one sentence the reader sees — plus the `report`
+  (its format and its path) and the `origin`.
+- ⭐ **A gate record ships beside every authored bundle.** It holds the digest of every
+  input — statement, starter, reference, tests, each plant, each cited passage — and each
+  gate's outcome. ⛔ **`studyforge validate` refuses a `generated` exercise whose gate
+  record is absent, or whose digests no longer match the files beside it.**
+- ⭐ **Submit reports the breakdown from the test run's machine-readable report**, folded
+  through `cases` into *main ask* plus *edge cases n/m*, naming each failed case by its
+  `says`. ⛔ **The pass rule does not change**: a practice completes only when every case
+  passes, and the breakdown is a report, never a second definition of a pass.
+
+#### 11. When a gate refuses
+
+⛔ **The exercise does not ship.** The skill may re-author that one bundle within a fixed
+attempt budget, and ⛔ **never by loosening a gate, dropping a case or deleting a
+question**. When the budget runs out, the coverage report names the page, the exercise,
+the gate, the case and the run's last output, and a page left with nothing shipped is
+named as such (R6). ⭐ **That is the low-yield rule above, applied to authored work: a
+shortfall is reported, not engineered away.**
 
 ---
 
@@ -1818,6 +2045,16 @@ graders skipping this entire track is a pass**, not a shortfall (C5) — and it 
 the *common* case, not the exception. The Java tutorial, with 168 test classes
 paired 1:1, is extraordinary; most material is not like it.
 
+⛔ **AMENDED 2026-09-19 (`W389`, user direction) — the gate is the MATERIAL, no longer
+what the source packaged.** ⭐ **A corpus enters the execution track when its subject
+admits a checkable coding task**, whether or not the source ships a grader: from `M10`
+the exercises are [authored at ingestion](#exercises-authored-for-every-corpus-w389).
+⭐ **A corpus whose subject admits no checkable coding task still gets *checked*
+practice — the quiz shape** — and a quiz needs no container, no network and no server,
+so it sits **on the reading floor**, not in the execution track. ⛔ **Skipping the track
+remains a PASS**; what stops being a pass is a reader with nothing to practise.
+⭐ **The reading floor is still a complete product on its own, and still offline.**
+
 ⚠️ **The order follows from that.** The reading floor comes first and completely,
 because it is what every consumer gets and the only thing some consumers want.
 The execution track is built when a corpus needs it — which is a real decision
@@ -1868,6 +2105,11 @@ about a real source, not a milestone everyone waits behind.
 14. ⛔ **It reaches the reading floor in full**, and reaches whatever of the
     execution track its material actually supports — with the coverage report
     stating honestly which units are reading-only.
+    ⭐ **EXTENDED 2026-09-19 (`W389`), and binding from `M10`:** every page whose
+    material admits a checkable task carries its planned exercises, or the coverage
+    report names that page with the gate that refused each one
+    ([§7](#exercises-authored-for-every-corpus-w389)). ⛔ **"Reading-only" is a
+    reading the gates produced, never a default nobody tried to move.**
 
 ### 11.3 The Java corpus, when it is built
 
@@ -1920,6 +2162,13 @@ is R1's whole subject. The anonymity is the control.
 2. ⚠️ **A source with no graders yielding zero exercises is a pass**, not a
    shortfall (§7, C5). This is written down here so the exercise is not judged
    against a corpus that happens to ship 168 test classes.
+   ⛔ **DATED 2026-09-19 (`W389`, user direction) — true up to and including `M9`,
+   and superseded from `M10`.** ⭐ **Zero is a pass only for material that admits no
+   checkable task**; a source with no graders is authored ones
+   ([§7](#exercises-authored-for-every-corpus-w389)), and what is then judged is the
+   coverage report — every planned exercise shipped, or named with the gate that
+   refused it. ⚠️ **The sentence's original purpose survives intact**: nothing here
+   is measured against a corpus that happens to ship 168 test classes.
 3. The framework pin did not move, or every commit it moved across is accounted
    for.
 4. ⛔ **Everything the integrator did by hand is a defect in the onboarding
@@ -1938,6 +2187,6 @@ already uses correctly: a negative result is a successful experiment.
 > *"M6 M8 M5 M7 is the order I want also we were supposed to run it against ISO 8583 project first and if it worked and we are sure we are a framework ( now if it worked M5 and M7 should be finished then) and then apply it to java-senior project to revalidate being a framework."*
 
 1. ⭐ **The second source is `ISO-8583-jPOS-tutorial`, and the exercise is `M8`** (`QA-04`). ⛔ **The anonymity clause above is withdrawn for it by the user's own words; the control it bought is the cost.** ⚠️ Q18 had already named it as the track's second finish line.
-2. ⭐ **It runs BEFORE the execution track, not after v1 is otherwise accepted.** ⛔ **ISO never enters that track (zero build files, graders and exercises; Q18), so at `M5` and `M7` it passes with zero exercises (§7, C5), and those milestones are proved on the framework's own fixtures.**
+2. ⭐ **It runs BEFORE the execution track, not after v1 is otherwise accepted.** ⛔ **ISO never enters that track (zero build files, graders and exercises; Q18), so at `M5` and `M7` it passes with zero exercises (§7, C5), and those milestones are proved on the framework's own fixtures.** ⚠️ **DATED 2026-09-19 (`W389`, user direction): that clause is RECORD, and it stands for `M5` and `M7`, which closed under it.** ⛔ **"Never" is now wrong and `M10` is why** — ISO enters the track there, with a practice module and exercises [authored from its pages](#exercises-authored-for-every-corpus-w389), and it is the corpus `M10` is proved on. ⭐ **Its two earlier finish lines are not reopened; `M10` is a third.**
 3. ⭐ **`Claude-senior-java-engineer` then re-validates the framework at `M9`** (`QA-05`), ⛔ **under every rule in this section.**
 4. ⛔ **The no-patch rule holds for the integrator of `M8` and of `M9`.** ⭐ **Between them, `M5` and `M7` are framework work, and every commit the framework pin moves across is listed (bullet 1 above).**
