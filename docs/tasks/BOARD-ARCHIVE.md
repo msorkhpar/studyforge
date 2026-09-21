@@ -30212,3 +30212,135 @@ never runs.
 activates). `AX-02` → Developer 4, `AX-04` → Developer 5, `AX-06` → Developer 6
 — ⭐ **step 10.2's remaining three, dispatched from this round.**
 `W433` → queued behind `W432`.
+
+## PO round 141
+
+⭐ **`M10` STEP 10.2 IS CLOSED.** All four of its rows are ancestors of the
+release tip: `AX-02` `a6c03ecd`, `AX-03` `9ed320c9`, `AX-04` `638ec209`,
+`AX-06` `32391172`. ⭐ **`W431` closes too, at `fe104365`.**
+
+⭐ **Every one of the four user-facing rows this session is now in front of the
+reader**: practices on their topic pages, the two-frame editor, a frame policy
+that does not expire, a workbench that is actually locked down, and a Maximise
+control. ⭐ **Corpus pin advances `27fd8a1` → `06df27f`.**
+
+### ⛔ THE MERGE GATE REFUSED THREE TIMES THIS ROUND AND WAS RIGHT EVERY TIME
+
+⭐ **`W431` alone was refused twice.** The first was a real defect — a clamped
+scroll losing the reader 306px. ⛔ **The second refusal exposed a REGISTER
+error: the register diagnosed "the fixture is not tall enough on the host", and
+the office REFUTED IT BY MEASURING** — the host had MORE spare scroll than the
+pinned image, 1576px against a 298px panel. ⚠️ **Had the office built on the
+register's reading, the check would have gone GREEN over a cause that was never
+there.** ⭐ **The real cause was `scroll-behavior: smooth` animating the check's
+own SETUP scroll** — this row's mechanism, inside the test of the fix for it.
+
+⛔ **That makes THREE register misreadings this session, every one caught by
+somebody else:** the frame policy measured inside its own TTL, the lockdown
+called fixed on PRESENCE rather than effect, and this. ⭐ **The shape is
+identical each time — read what is easy to read and report it as the thing that
+was asked about.**
+
+### ⭐ Four plants the register set, each at a seam its office did not use
+
+`AX-02` — the writer folding the breakdown into `passed`, so a failed edge
+would flip a pass. `AX-06` — `require_advisory`'s whole-pair comparison cut to
+a DENY-LIST, and the effect is exact: `generated`/`bundled` and
+`bundled`/`advisory` were **ACCEPTED** where they must be refused.
+`AX-04` — the bundle's closed file set made to name nothing, which is what
+keeps a JUnit report's HOSTNAME out of a corpus repository (R7).
+`W431` — the restore's WRITE moved above the panel's return to flow.
+⭐ **All four RED; all four trees restored.**
+
+### ⚠️ In flight
+
+`W433` → Developer 1, ⛔ **unblocked now that `W432` has landed**.
+`AX-07` → Developer 5 and `AX-09` → Developer 2 — ⭐ **step 10.3 opens.**
+
+### W431 — The practice panel cannot be maximised, so a reader writes code through a letterbox
+
+⛔ **USER DIRECTION, 2026-09-21, in their own words:** *"there should be a button that user could maximize this window to have more control over the code and tests + run and summit buttons"*.
+
+### ⛔ WHAT A READER HAS TODAY
+
+⭐ **The panel works** — two frames of one code-server, the reader's file and the read-only test, with Run and Submit ([`W429`](rows/W429.md), [`W430`](rows/W430.md)). ⛔ **But it is a PANEL INSIDE A READING PAGE**, sized for prose, and a reader writing code is working through a letterbox: the editor, the test they must satisfy, and the output of a run all compete for a few hundred pixels beneath a chapter of teaching material.
+
+⚠️ **This is not a styling complaint.** ⛔ **The practice is the point of the page** — `M10`'s own goal is *to ACTIVATE the reader* — and the surface the activity happens on is the smallest thing on the screen.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **A control that expands the practice to the full viewport, and restores it.** ⛔ **Both directions, and the restored state is the one the reader left** — scroll position in the page, the selected tab, and a live run's output must all survive the transition in both directions.
+2. ⛔ **Expanded, the reader keeps EVERYTHING the panel has:** both tabs (their file, and the read-only test), **Run**, **Submit**, **Stop**, and the run output. ⚠️ **A maximise that drops a control has made the feature worse for the case it exists to serve.**
+3. ⛔ **A LIVE RUN MUST NOT BE INTERRUPTED BY THE TRANSITION.** ⭐ **Measured ground: the frames are `iframe`s, and moving an `iframe` in the DOM RELOADS it** — a naive reparent throws the reader's unsaved editor state away and restarts the code-server session. ⚠️ **Expand by CHANGING THE PANEL'S OWN GEOMETRY, never by moving the frames to another parent.**
+4. ⭐ **It must be reachable and escapable without a mouse** (`QA-02`'s ground): the control is a real `button`, focus moves into the expanded practice and back to the control on restore, and **Escape** restores. ⛔ **A full-viewport surface with no keyboard exit is a trap.**
+5. ⛔ **R8 holds: the built page names no origin and no port.** ⭐ This is layout and it is built into the page; nothing here learns where an editor is.
+
+⚠️ **A quiz renders no panel at all** ([`W429`](rows/W429.md)), so this control must not appear on one.
+
+⭐ **The proof is a reader expanding a practice on the first corpus, running and submitting from the expanded surface, and restoring to the page they left** — with the run that was live still live.
+
+⭐ **Surface:** `render/assets/practice.js`, `render/assets/practice.css`, the practice templates, and `render/page/practice.py`.
+
+[the mint](#po-round-138)
+
+### W432 — The workbench lockdown is installed in the editor image and the extension host never activates it
+
+⛔ **USER REPORT, 2026-09-21, SECOND TIME ON THE SAME SYMPTOM:** *"the chat and explore panels are there and clickable"* — with a screenshot showing the EXPLORER tree and a CHAT pane ("Build with Agent") inside the practice panel, both usable.
+
+### ⛔ THE REGISTER'S FIRST ANSWER WAS WRONG, AND HOW IT WAS WRONG MATTERS
+
+⭐ **The first diagnosis was that the running image predated the lockdown, which was TRUE** — measured: image built `15:06:23`, `TC-04` landed `18:42:30`, and every editor image on the host predated it. ⛔ **The image was rebuilt, the extension was confirmed PRESENT, and the register reported the symptom fixed.** ⚠️ **PRESENCE IS NOT EFFECT, and the register checked presence.** ⭐ **The reader checked effect, and the panels were still there.**
+
+### ⛔ WHAT IS MEASURED NOW — the extension is installed and NEVER RUNS
+
+On the rebuilt image `code-server-toolchain/editor:java-maven-amd64-bbff48bce721`, container live, reader connected:
+
+| the question | the reading |
+|---|---|
+| is it in the extensions dir | ⭐ **yes** — `studyforge.practice-focus-1.0.0/` with `extension.js`, `package.json`, `.vsixmanifest` |
+| is it in `extensions.json` | ⭐ **yes** |
+| does `code-server --list-extensions` see it | ⭐ **yes** — `studyforge.practice-focus@1.0.0` |
+| does `extension.js` parse | ⭐ **yes**, under the image's own `node` |
+| does the engine range admit the build | ⭐ **yes** — `^1.70.0` against VS Code **1.117.0** |
+| ⛔ **does the extension host ACTIVATE it** | ⛔ **NO. It appears in NO log line, in any session.** |
+| do OTHER `onStartupFinished` extensions activate | ⭐ **yes** — `vscode.debug-auto-launch` and `vscode.merge-conflict` both do |
+| is any error logged about it | ⛔ **NONE. It fails SILENTLY.** |
+
+⭐ **So the workbench settings half WORKS and is not suspect** — tabs, minimap, status bar and the activity bar are all suppressed in the reader's own screenshot. ⛔ **It is exactly the EXTENSION half that never runs**, and the extension is the only half that can close the Explorer: ⚠️ **the primary side bar's visibility is workbench UI STATE, not a setting**, which is why `TC-04` wrote an extension rather than more settings.
+
+### ⭐ THE CAUSE, MEASURED BY `dev1` — the workbench's RESTRICTED MODE
+
+⛔ **The table above is extended, not re-derived.** Every reading below was taken on a container this office started on its own port from `code-server-toolchain/editor:java-maven-amd64-bbff48bce721` — the same image the register rebuilt — with the ISO corpus's `practice/` tree bind-mounted, which is the shape the reader is served.
+
+| the question | the reading |
+|---|---|
+| ⛔ **why does the host activate it in no session** | ⛔ **WORKSPACE TRUST.** A corpus's sources arrive as a **bind mount**, which the workbench has never been told to trust, and a workbench in **Restricted Mode disables every extension that does not declare support for one** — with no error and no log line |
+| what else was disabled in those same sessions | ⛔ `vscjava.vscode-java-debug`, `vscjava.vscode-java-test` and `vscode.git` — ⚠️ **the reader's Java tooling was crippled by the same cause and nobody had noticed** |
+| why the built-ins still activated | ⭐ `vscode.debug-auto-launch` and `vscode.merge-conflict` **declare** untrusted-workspace support; `redhat.java` declares `limited`. ⛔ **The comparison in the table above was never like for like** |
+| the one-line discriminator | ⭐ `security.workspace.trust.enabled: false` in the user settings → the extension activates in the very next session, at `ExtensionService#_doActivateExtension studyforge.practice-focus` |
+| ⛔ **where the flag was already written** | ⛔ **`consuming.json`'s `editor.command` and `docs/compose.reference.yaml` BOTH carried `--disable-workspace-trust`; the editor image's own `CMD` DID NOT** |
+| how the reader's container was started | ⛔ **not by compose** — it carries no compose labels, so it ran the image's `CMD`, which is the one place the flag was missing. ⭐ **That gap IS the defect** |
+| the candidates the mint named | ⭐ `extensionKind`: not the cause (measured — a build that declares it is still disabled in Restricted Mode), but it was undeclared and is now stated. ⭐ The `.vsix`: not the cause. ⭐ `vscode.lock` `EEXIST`: logged, resolved as stale, acquired — **not the cause**, exactly as `W429` says |
+| ⭐ **each half of the fix, alone** | ⭐ **Either suffices**: the image's `--disable-workspace-trust` with no manifest declaration, and the manifest declaration with no flag, each activate the extension. **The plant has to take both away** |
+
+⭐ **The done condition, met.** On `code-server-toolchain/editor:java-maven-amd64-26eda7f6f804` — built through the new gate — in a real browser, at the practice URL a study page builds: **no Explorer, no Chat, one file**. ⭐ **And the container's own logs carry both facts:**
+
+```
+[info] ExtensionService#_doActivateExtension studyforge.practice-focus, startup: false, activationEvent: 'onStartupFinished'
+studyforge.practice-focus: confined workbench.action.closeOtherEditors workbench.action.closeSidebar workbench.action.closePanel workbench.action.closeAuxiliaryBar
+```
+
+⛔ **The second line is the one the old check could never have read**, and it is what the image is now tagged on.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Find why the extension host never activates it** — ⚠️ **and do NOT stop at a theory.** ⭐ **The done condition is a log line showing `studyforge.practice-focus` activating in a reader-connected session, and the Explorer and Chat CLOSED in a real browser.**
+2. ⛔ **The image must not be taggable while this is true.** ⭐ `TC-04`'s stated guarantee is that *"an image whose lockdown did not load is not tagged"* — ⚠️ **that guarantee did not hold here, and an INSTALLED-list check is what let it pass: the extension IS installed.** ⛔ **A check that reads installation cannot see activation, and this row is the proof.**
+3. ⚠️ **Candidate causes the office should test rather than assume**, none of them confirmed: the extension's inferred `extensionKind` in a remote/web workbench (it declares none); whether a `.vsix` built by `lockdown.py` differs from a marketplace one in a way 1.117 rejects silently; the `vscode.lock` `EEXIST` seen when TWO frames open the SAME workspace, which is this product's normal shape ([`W429`](rows/W429.md)).
+4. ⭐ **A settings-level fallback for the SECONDARY side bar should be taken whatever the cause** — the chat pane is the secondary side bar and, unlike the Explorer, recent builds do expose a default-visibility setting. ⛔ **It is a belt, not the fix**, and it does not discharge clause 1.
+
+⭐ **The proof is a reader opening a practice and seeing the file, the tests and nothing else** — no Explorer, no Chat, on a freshly created container from a freshly tagged image.
+
+⭐ **Surface:** the sibling `code-server-toolchain` — `lockdown/`, `docker/editor/`, and whatever tags an image; plus `execute/workbench.py` for clause 4.
+
+[the mint](#po-round-139)
