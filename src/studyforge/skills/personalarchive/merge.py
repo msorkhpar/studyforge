@@ -12,9 +12,18 @@ reach that entry.
         store.record_run(address, ordinal, section, **run.arguments())
     assert store.entry(address, ordinal, section) == plan.entry
 
-**Depends on.** `studyforge.progress` for `MODE_TEST`, the one spelling of a test run,
-and `datetime`. ⛔ It reads and writes nothing. `record` is the only caller that
-touches a store.
+**Depends on.** `studyforge.progress` for `MODE_TEST` and `CASES_KEY`, the one
+spelling of a test run and of a Submit's breakdown, and `datetime`. ⛔ It reads and
+writes nothing. `record` is the only caller that touches a store.
+
+## ⛔ A reconstructed run carries whatever `last` carries (`AX-02`)
+
+⭐ **`_run_of(last)` means *a run that leaves `last` as the entry's last run***, and
+that contract is what decides this: once `last` may carry a breakdown, the run
+rebuilt from it must carry the same one, or `record_run` writes a `last` the merge
+rule did not predict and `record`'s own assertion stops the import. ⚠️ **A run
+SYNTHESISED rather than rebuilt carries none** — `_pass_at` invents the first pass a
+believed entry implies, and no breakdown of it was ever recorded anywhere.
 
 ## ⛔ The rule is `SKILL.md`'s, and the two cannot drift apart
 
@@ -36,7 +45,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 
-from studyforge.progress import MODE_TEST
+from studyforge.progress import CASES_KEY, MODE_TEST
 
 #: What an import did to one practice. ⛔ `SKILL.md`'s table uses these words.
 RESTORED = "restored"
@@ -60,6 +69,7 @@ class Run:
     exit_code: int | str
     commands: tuple[str, ...]
     when: str
+    cases: dict | None = None
 
     def arguments(self) -> dict:
         """Return the keyword arguments `record_run` takes for this run."""
@@ -68,6 +78,7 @@ class Run:
             "exit_code": self.exit_code,
             "commands": list(self.commands),
             "when": self.when,
+            CASES_KEY: self.cases,
         }
 
 
@@ -158,5 +169,5 @@ def _pass_at(when: str, last: dict) -> Run:
 
 
 def _run_of(last: dict) -> Run:
-    """Return a run that leaves `last` as the entry's last run."""
-    return Run(last["mode"], last["exit"], tuple(last["commands"]), last["at"])
+    """Return a run that leaves `last` as the entry's last run — breakdown included."""
+    return Run(last["mode"], last["exit"], tuple(last["commands"]), last["at"], last.get(CASES_KEY))

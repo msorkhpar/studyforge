@@ -6,6 +6,7 @@ sweep is not asked to except this file. Nothing here came from a real machine.
 
 from __future__ import annotations
 
+import json
 import os
 import resource
 import signal
@@ -22,6 +23,7 @@ from studyforge.corpus.placement import GENERATED_ROOT
 from studyforge.progress import store as store_module
 from studyforge.progress.document import PROGRESS_FILENAME, next_entry, render
 from studyforge.progress.errors import ProgressError, ProgressFormatError
+from studyforge.progress.keys import practice_key
 from studyforge.progress.store import IGNORE_FILENAME, WRITING_SUFFIX, Progress
 from tests.support import ProcessOutput, repository_root
 
@@ -38,10 +40,25 @@ BLOCKED_FOR = 1.5
 
 
 def record(
-    store, *, mode="test", exit_code=0, when=T1, section=SECTION, ordinal=1, commands=COMMANDS
+    store,
+    *,
+    mode="test",
+    exit_code=0,
+    when=T1,
+    section=SECTION,
+    ordinal=1,
+    commands=COMMANDS,
+    cases=None,
 ):
     return store.record_run(
-        ADDRESS, ordinal, section, mode=mode, exit_code=exit_code, commands=commands, when=when
+        ADDRESS,
+        ordinal,
+        section,
+        mode=mode,
+        exit_code=exit_code,
+        commands=commands,
+        when=when,
+        cases=cases,
     )
 
 
@@ -362,3 +379,36 @@ def test_a_hand_edited_record_carrying_personal_data_is_refused_on_read(tmp_path
     with pytest.raises(PersonalDataLeak) as refused:
         store.read()
     assert "jane" not in str(refused.value)
+
+
+# --------------------------------------------------------------------------
+# `AX-02` — the breakdown the store keeps beside a Submit's verdict
+# --------------------------------------------------------------------------
+
+VERDICTS = {"test_the_ask": True, "test_an_edge": False}
+
+
+def test_a_submit_s_breakdown_is_written_and_read_back_through_the_store(tmp_path):
+    store = Progress(tmp_path, depth=2)
+    written = record(store, cases=VERDICTS)
+    assert written["last"]["cases"] == VERDICTS
+    assert store.entry(ADDRESS, 1, SECTION)["last"]["cases"] == VERDICTS
+    assert json.loads(store.path.read_text(encoding="utf-8"))["practices"][
+        practice_key(ADDRESS, 1, SECTION)
+    ]["last"]["cases"] == VERDICTS
+
+
+def test_a_run_with_no_breakdown_writes_a_record_a_previous_build_would_read(tmp_path):
+    store = Progress(tmp_path, depth=2)
+    record(store)
+    assert "cases" not in store.entry(ADDRESS, 1, SECTION)["last"]
+
+
+def test_a_bad_breakdown_is_refused_before_the_file_is_touched(tmp_path):
+    store = Progress(tmp_path, depth=2)
+    with pytest.raises(ProgressError):
+        record(store, cases={"test_x": "yes"})
+    assert not store.path.exists()
+    with pytest.raises(ProgressError):
+        record(store, mode="run", cases=VERDICTS)
+    assert not store.path.exists()

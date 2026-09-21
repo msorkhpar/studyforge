@@ -6,8 +6,9 @@ staged beside the file and renamed over it.
 
 **How you use it.** `Progress(root, depth)` with the corpus root and the
 manifest's `len(levels)`; `record_run(address, ordinal, section, mode=...,
-exit_code=..., commands=..., when=...)` after a run; `read()`, `entry(...)` and
-`unit_entries(...)` to report.
+exit_code=..., commands=..., when=..., cases=...)` after a run; `read()`,
+`entry(...)` and `unit_entries(...)` to report. ⭐ `cases` is one Submit's
+breakdown and is omitted by every caller that has none (`AX-02`).
 
 **Depends on.** `studyforge.corpus.placement` for `GENERATED_ROOT`,
 `studyforge.archive.scrub` for R7, `studyforge.address`, and this package's
@@ -134,16 +135,28 @@ class Progress:
         exit_code: int | str,
         commands: list[str],
         when: str,
+        cases: dict | None = None,
     ) -> dict:
         """Record one finished run of a practice and return its entry.
 
         ⛔ Only `mode="test"` with exit `0` passes. Commands are scrubbed on the
         way in and the rendered document is gated before it is written (R7).
+
+        ⭐ `cases` is this run's breakdown — one verdict per declared case — or
+        `None` for every run that produced none. ⛔ **It is a report and never
+        a pass rule** (`AX-02`): `is_pass` is untouched by it, and the
+        rendered document is gated for R7 with it in, like everything else.
         """
         key = practice_key(self._at_depth(address), ordinal, section)
         strings = isinstance(commands, list) and all(isinstance(c, str) for c in commands)
         clean = [scrub(c) for c in commands] if strings else commands
-        arguments = {"mode": mode, "exit_code": exit_code, "commands": clean, "when": when}
+        arguments = {
+            "mode": mode,
+            "exit_code": exit_code,
+            "commands": clean,
+            "when": when,
+            "cases": cases,
+        }
         next_entry(None, **arguments)  # refuse a bad call before the file is touched
 
         def change(document: dict) -> dict:
