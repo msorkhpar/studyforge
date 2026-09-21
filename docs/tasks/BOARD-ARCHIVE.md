@@ -29761,3 +29761,47 @@ write there on every future commit to that repository.**
 4. ⛔ **A relative sibling path resolved wrong from the register's own worktree** and wrote an EMPTY commit into `workspace.json`. ⭐ **Caught by reading back what was written**, and repaired with the sha validated before it was stored.
 
 ⚠️ **VERIFIED FINDING, carried and NOT minted:** with an editor up the panel holds a TABBABLE `iframe` inserted ASYNCHRONOUSLY, which no check reads. It sharpens `W416/5`, blocks no acceptance, and **whether it becomes a row is the USER's call.**
+
+## PO round 134
+
+⛔ **Only what is MEASURED is written here.** ⭐ **`M10` — every corpus has practices — IS OPEN**, its first capability landed, and `W425` closed by proving itself on the real corpus rather than on a fixture.
+
+### ⭐ `M10` OPENED — and it is a CORE IDEA of this project, in the user's words
+
+⭐ **`M7` closed in round 133 and `M10` follows it** (the user's order: `M7` → `M10` → `M11` → `M9`). ⭐ **Step 10.1 is `AX-00`, `AX-01`, `AX-05`**, with an in-step edge `AX-00` → `AX-05`. ⛔ **`M10`'s PILOT is the USER's ONE REVIEW** — three pages, one per container, the densest — and that is step 10.4, not now.
+
+### ⭐ `AX-00` CLOSED — `1f0b3786`, `M10`'s first capability and the contract the rest inherits
+
+⭐ **A NEW module (`exercise/cases.py`), not a wider `record.py`**, which was already near R11's bound — the remedy for that being a split at a named seam, never a trim. ⛔ **Structural: no flag, no version bump, `raw_api` stays `1`** (`W357`'s shape).
+
+⭐ **The Acceptance clause with teeth was taken as a READING.** *"A document carrying the new keys is refused by the previous reader"* is two-directional and cannot be settled by argument: the office read `record.py` OUT OF GIT at `9806710e`, imported it beside today's, and asked both the same questions in one run — with the instrument checked first and a negative control. ⭐ **Each new key, all four together, and through `of`: REFUSED by the previous reader naming the key; ACCEPTED by today's; and every previously committed record writes back BYTE FOR BYTE, key order included.** ⭐ **Also measured read-only on the first corpus at `bc08aaa`**: its three live practice records round-trip byte for byte.
+
+⭐ **The register planted at the seam the OFFICE'S OWN DECISION rests on.** ⛔ **`kind: code` is the default and is deliberately NOT written out** — the one departure from `trust`'s ruling — because writing that token would re-render every archive document in existence, the cost `W357` refused. ⭐ **So `_written_keys` was made to add `kind` unconditionally**, the effect OBSERVED first (the written key tuple printed, `kind` confirmed present for a default record), and then the gate read: **RED, exit 1, fifteen failures, the decisive one `test_build_reproduces_every_committed_document_byte_for_byte`.** ⭐ **The departure is safe because a test pins its consequence.**
+
+### ⭐ `W425` CLOSED — `5ecbf244`, and it proved itself on the CORPUS, not a fixture
+
+⭐ **Both writers, from ONE composer**: onboarding writes the rule so a corpus is BORN with it, and `discovery.cache` ensures it the moment it writes the cache, so **a corpus onboarded BEFORE the change is covered the first time it is served.**
+
+⭐ **The register served the first corpus once and the process reported** *".gitignore was written beside the discovery cache, so neither it nor site.json ever enters a commit"*. ⛔ **`python3 -m tools.workspace verify` then read GREEN, exit 0** — *"every recorded component is checked out at its pinned commit"* — after reading RED on that one path every round since it was minted. ⭐ **ONE act cleared it, not a per-corpus edit, which is what the row existed to prove.**
+
+⭐ **The rule NAMES the cache and is not `*`**: `progress/` is a directory the framework owns whole, but `.studyforge/` is TRACKED and carries the asset bundle a clone must read. ⭐ **The file SELF-IGNORES, but only when it carries nothing else** — without that clause the first serve of an already-onboarded corpus merely trades one untracked path for another; and the opposite holds when the same file carries the media rules, which a clone must read. **Both directions asserted.**
+
+⭐ **The register planted a DRIFT between the two writers** — the serving one made to inline its own rule list, dropping the self-ignore, while onboarding kept composing the shared one — **effect OBSERVED before any gate** (emitted text printed and compared against the composer's tuple). **RED, exit 1, and the two failures are exactly the right two.**
+
+### ⛔ THE REGISTER RULED ON A SPEC AMENDMENT, AND IT STANDS — it is a REPAIR
+
+⛔ **`W425` moved `site.json` out of `§5`'s list of committed build output** (`W242/1`), dating the sentence in place with its ground. ⭐ **RULED CORRECT, on a stronger basis than the office claimed: `§5` CONTRADICTED ITSELF twenty-four lines apart.** Line 982 already calls `site.json` *"a cache of that scan, **never the authority**"*, while the list below justified committing build output by *"a clone that ignores its pages has no reading floor"* — ⛔ **an argument that cannot reach an artifact that is never the authority.** ⭐ **The premise was verified IN THE CODE at the BASE ref**: `corpus.discovery.assemble`'s own contract says the scan runs on every call and no branch hands back a cached `Site`. ⭐ **So this is not a rule bent to fit a fix; it is two sentences of one section made to agree, and the one that moved is the one the code had already contradicted.**
+
+### ⛔ A SAFETY BOUNDARY DOES NOT HOLD WHAT ITS DOCSTRING CLAIMS — put to the USER, not minted
+
+⛔ **`AX-00/1`, RE-MEASURED INDEPENDENTLY BY THE REGISTER** at `1f0b3786`. `exercise/safety.py`'s `SAFE_SEGMENT` and `SAFE_ARGUMENT` are anchored `^…$` and applied with `.match` — and **in Python `$` matches before a trailing newline.** ⭐ **Measured:** `require_path("practice/a.py\n", …)` **returns its input unchanged** and `require_command(["mvn", "test\n"], …)` **returns `('mvn', 'test\n')`**, against a permitted set whose own docstring says it holds no whitespace. ⭐ **The CONTROL HOLDS**, so the instrument is real: `"practice/a.py\r\n"`, `"../escape.py"` and `"a b.py"` are each still refused. ⚠️ **These values reach a RUNNER'S ARGV and an editor task file.** ⭐ One character each fixes it — `\A…\Z`, or `fullmatch`.
+
+⛔ **NOT MINTED and NOT patched.** It is outside `AX-00`'s surface and the office was right to report rather than take it. ⚠️ **It is put to the USER as a recommended row**, because a safety boundary is their call and not the register's to make silently — the standing rule that a non-blocking finding is offered in one line rather than added to the pile.
+
+### ⚠️ A THIRD INSTRUMENT TRAP, caught this time rather than paid for
+
+⛔ **A `TypeError` from a wrong call signature LOOKS EXACTLY LIKE A REFUSAL.** The register's first run of the `AX-00/1` check passed two arguments where three were wanted and printed *"refused"* for every case. ⭐ **It was caught only by printing the EXCEPTION TYPE.** ⭐ **The rule: print what the refusal WAS, and run a positive control that must be ACCEPTED** — otherwise a broken probe reads as a clean bill of health. ⚠️ **Same family as round 133's three no-op plants: the instrument itself was never measured.**
+
+### ⭐ In flight
+
+`AX-01` (the case report) → Developer 1; `AX-05` (the quiz shape) → Developer 2. ⛔ **Disjoint surfaces — `exercise/report.py` and `exercise/quiz/`** — and both consume `AX-00`'s contract. ⛔ **Nothing minted this round.**
