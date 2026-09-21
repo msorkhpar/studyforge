@@ -162,4 +162,14 @@ ACCEPTANCE = {
     #: which `served.py` binds over the same built bytes.
     "reads the practice panel's tab order, focus handoff and live region on a "
     "SERVED origin, where its controls exist (W417)": "test_practice_panel",
+    #: ⭐ `W431`'s clause, and it is a row of its own rather than a widening of
+    #: the one above, for a reason that module could not have covered: every
+    #: clause there reads the panel AT REST, and this one reads it across a
+    #: TRANSITION. ⛔ *"A live run must not be interrupted"* and *"an `iframe`
+    #: moved to another parent reloads"* are claims about objects that exist
+    #: only while a page is running — a text can read the script and cannot read
+    #: either. ⚠️ It needs what no other clause here needs: an origin that
+    #: answers the practice-editor route, so there is a frame to not move.
+    "maximises the practice to the viewport and restores it, keeping every "
+    "control, a live run and both editor windows unreloaded (W431)": "test_practice_maximise",
 }
