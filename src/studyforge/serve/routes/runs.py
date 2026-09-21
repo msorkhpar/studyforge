@@ -2,9 +2,10 @@ r"""The instance's runs: the one live slot, a run's streamed body, and its recor
 
 **What it does.** `Runs` holds what a run is read from (every corpus discovered and its
 content), the one run in flight, and one `EditorProbe` per corpus — `editors()`
-is where a running editor is, for the index to publish (`W416`); `Stream` is a
-run's response body — each line gated, the verdict recorded just before the exit
-line, which is last; `Outcome` records it.
+is where a running editor is, for the index to publish (`W416`), and
+`practice_editor()` is ONE practice's two windows and the settings they are
+read under (`W429`); `Stream` is a run's response body — each line gated, the
+verdict recorded just before the exit line, which is last; `Outcome` records it.
 
 **How you use it.** `serve.routes.run` claims the slot with `Runs.claim`, and answers
 with `Response(200, headers, stream=Stream(runs, live, Outcome(...)))`.
@@ -50,6 +51,8 @@ from studyforge.execute import (
     container_for,
     editor_container_for,
     exit_line,
+    open_url,
+    write_settings,
 )
 from studyforge.progress import RAISES as PROGRESS_RAISES
 from studyforge.serve.discovery import Discovered, ServedCorpus
@@ -120,6 +123,37 @@ class Runs:
             if where is not None:
                 found[corpus.source] = {"origin": where.origin, "folder": where.folder}
         return found
+
+    def practice_editor(self, corpus: ServedCorpus, main: str, test: str | None) -> dict | None:
+        """Prepare one practice's workspace and say where its two windows are, or `None`.
+
+        ⭐ **`None` is the ordinary answer** — no editor up, or an editor that
+        does not hold this practice's file. ⛔ A path the editor does not hold
+        is never answered as a URL: a code-server URL naming an unmounted file
+        opens an empty, dirty buffer titled with the file's own name, which
+        looks exactly like a corrupted file and is not one.
+
+        ⚠️ **The settings are written on every ask, not once.** The read-only
+        exclusion names THIS practice's own source, so the file has to be
+        rewritten when the reader moves to another practice — and that rewrite
+        is also the one signal inside the editor that the practice moved.
+        Raises `WorkbenchRefused` when it cannot be written.
+        """
+        where = self._probe(corpus).editor()
+        if where is None:
+            return None
+        inside_main = where.inside(main)
+        if inside_main is None:
+            return None
+        inside_test = where.inside(test) if test else None
+        write_settings(corpus.root / where.base, inside_main, inside_test)
+        return {
+            "origin": where.origin,
+            "main": {"path": inside_main, "url": open_url(where, main)},
+            "test": None
+            if inside_test is None or test is None
+            else {"path": inside_test, "url": open_url(where, test)},
+        }
 
     def _probe(self, corpus: ServedCorpus) -> EditorProbe:
         """Return the one probe held for `corpus`, made on first ask."""

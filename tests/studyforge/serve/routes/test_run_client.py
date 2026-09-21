@@ -77,13 +77,34 @@ def test_its_endpoint_modes_and_stop_are_the_run_routes_own():
 
 def test_a_start_is_a_post_with_no_body_and_nothing_else_is_sent():
     body = uncommented()
-    # ⭐ Three requests in the whole client and no fourth: the two acts, each a
-    # POST that SELECTS, and the index — a GET, because asking what this
-    # instance offers is a read (`W416`).
-    assert body.count("fetch(") == 3
-    assert body.count("method: 'POST'") == 2
+    # ⭐ Four requests in the whole client and no fifth: the two acts, each a
+    # POST that SELECTS; the index — a GET, because asking what this instance
+    # offers is a read (`W416`); and one practice's editor windows, a POST
+    # because preparing that practice's workspace settings WRITES (`W429`).
+    assert body.count("fetch(") == 4
+    assert body.count("method: 'POST'") == 3
     assert "body:" not in body and "JSON.stringify" not in body
     assert "XMLHttpRequest" not in body and "sendBeacon" not in body
+
+
+def test_the_editor_word_is_the_run_routes_own_and_is_not_a_mode():
+    # ⛔ `W429`: `editor` stands where a mode stands in the path and STARTS
+    # NOTHING, so it must not drift into `MODES` and must not be retyped here.
+    assert constant("EDITOR") == f"'{run.EDITOR}'"
+    assert run.EDITOR not in run.MODES
+
+
+def test_one_practices_windows_are_asked_for_by_corpus_and_key_and_nothing_else():
+    # ⭐ The whole reason this endpoint exists: a FOLDER cannot say which of two
+    # windows shows which file, so the ask names ONE practice. ⚠️ The key is the
+    # same verbatim string a start carries; nothing here composes or splits one.
+    body = uncommented()
+    asking = body[body.index("function practice(corpus, key)") :]
+    assert "BASE + corpus + '/' + EDITOR + '/' + key" in asking
+    # ⛔ Anything but an answer is `null`, never an error a reader sees: the page
+    # then shows the sentence it already ships.
+    assert "response.ok ? response.json() : null" in asking
+    assert "answer && answer.main && answer.main.url ? answer : null" in asking
 
 
 def test_the_practice_key_is_used_verbatim_never_composed_split_or_encoded():
@@ -129,10 +150,11 @@ def test_it_draws_nothing_and_types_no_word_a_reader_sees():
 
 def test_over_a_file_it_is_not_available_and_sends_nothing():
     # ⛔ R8: `file://` has no origin. EVERY entry point asks `available()` first
-    # — the two acts and, since `W416`, where a running editor is.
+    # — the two acts, where a running editor is (`W416`), and one practice's
+    # two editor windows (`W429`).
     body = uncommented()
     assert "location.protocol === 'http:'" in body
-    assert body.count("if (!available())") == 3
+    assert body.count("if (!available())") == 4
 
 
 def test_a_refusal_is_a_rejection_naming_what_was_refused_before_any_request():

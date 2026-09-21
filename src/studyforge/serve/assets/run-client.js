@@ -7,7 +7,7 @@
    an origin that can answer it.
 
    ⭐ **A client and nothing else.** It publishes `studyforge.run` — `available`,
-   `start`, `stop`, `editor` — and draws nothing: the practice panel that puts Run and
+   `start`, `stop`, `editor`, `practice` — and draws nothing: the practice panel that puts Run and
    Submit in front of a reader is `SF-24`'s, at `M7`. ⛔ A control this file
    drew before that panel existed would be a dead button, and a dead button is
    a promise the page cannot keep.
@@ -41,6 +41,7 @@
   var BASE = '/api/v1/run/';
   var MODES = ['run', 'test'];
   var STOP = 'stop';
+  var EDITOR = 'editor';
   var KEY = /^[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)+$/;
   var CORPUS = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
   var EXIT = /^--- exit (.+) ---$/;
@@ -129,6 +130,38 @@
     });
   }
 
+  /* One practice's two editor windows: where each is, and the workspace
+     settings they are read under, prepared by the server on the way.
+
+     ⭐ **Two windows of ONE editor, and each is addressed by its own URL** —
+     which is the only thing that can tell them apart: an extension cannot read
+     its own window's query string, and both windows share one workspace
+     settings file, so anything an extension opened it would open in BOTH.
+
+     ⛔ **The URLs are the SERVER's, never built here.** The `vscode-remote`
+     authority is the editor's own host and port, which only the origin the
+     reader is reading at can say (R8), and a path the editor does not hold is
+     answered as nothing rather than as a URL that would open an empty, dirty
+     buffer titled with the file's own name.
+
+     ⛔ **`editor` stands where a mode stands and is not one of `MODES`**: it
+     starts nothing. ⚠️ Anything but an answer — no editor, no such practice, a
+     workspace that could not be prepared — is `null`, never an error a reader
+     sees, and the page then shows the sentence it already ships. */
+  function practice(corpus, key) {
+    if (!available()) { return refused('no-origin'); }
+    if (!CORPUS.test(corpus) || !KEY.test(key)) { return refused('practice'); }
+    return fetch(BASE + corpus + '/' + EDITOR + '/' + key, {
+      method: 'POST',
+      cache: 'no-store',
+      credentials: 'same-origin'
+    }).then(function (response) {
+      return response.ok ? response.json() : null;
+    }).then(function (answer) {
+      return answer && answer.main && answer.main.url ? answer : null;
+    }, function () { return null; });
+  }
+
   function stop() {
     if (!available()) { return refused('no-origin'); }
     return fetch(BASE + STOP, { method: 'POST', cache: 'no-store', credentials: 'same-origin' })
@@ -142,6 +175,7 @@
     start: start,
     stop: stop,
     editor: editor,
+    practice: practice,
     modes: MODES.slice()
   };
 })();

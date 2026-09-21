@@ -1,8 +1,9 @@
 r"""The practice panel: the reader-facing surface of one graded or ungraded exercise.
 
 **What it does.** Renders the controls that sit under a practice section's
-statement — where the reader's file is, the editor slot, Run and Submit, the
-streamed result, and the label saying what a pass here is worth.
+statement — where the reader's file is, the editor slot and its two tabs, Run
+and Submit, the streamed result, and the label saying what a pass here is
+worth.
 
 **How you use it.** `practice.render(section, document, placement)` returns the
 panel's markup, or `''` for a section that sets no work; `page.document` joins
@@ -35,7 +36,11 @@ statement differently needs no change here.
 2. ⛔ **An advisory grader is labelled** (R5). A reader must be able to tell
    *"the tests that ship with this material passed"* from *"something generated
    locally passed"*, and the two sentences are two template files.
-3. ⛔ **A reading-only unit shows NO practice control — not a disabled one.**
+3. ⛔ **A QUIZ renders no panel at all** (`AX-05`, `W429`). It carries questions
+   in place of a workspace: no file, no editor window, no Run and no Submit.
+   ⚠️ The two shapes share this one surface, and one of them renders with **no
+   frame at all** — as an absence, never as controls a reader may not use.
+4. ⛔ **A reading-only unit shows NO practice control — not a disabled one.**
    A dead button is a promise the page cannot keep. A section with no
    `workspace` gets no panel at all, and Submit is emitted only where the
    record names a test command (`W357`).
@@ -101,6 +106,13 @@ PRACTICE = "practice"
 #: output region — a whole element with attributes, so a file (R13).
 PANEL_TEMPLATE = "practice-panel.html"
 
+#: The two windows, and the tab that reaches each. ⭐ The Tests tab is emitted
+#: only where the record NAMES a test — the same honesty Submit already gets
+#: (`W357`): a tab over a file the material does not have is a dead control.
+#: ⛔ The tablist ships hidden; it is shown only where a running editor answered.
+TABS_TEMPLATE = "practice-tabs.html"
+TESTS_TAB_TEMPLATE = "practice-tab-tests.html"
+
 #: The two acts, one template each. ⭐ The LABEL is markup and the MODE is
 #: `exercise`'s own word, substituted in — so the vocabulary the client posts
 #: under is spelled once, in the package that owns it.
@@ -133,12 +145,22 @@ def render(section: dict, document: dict, placement: Placement) -> str:
     if not isinstance(workspace, dict):
         return ""
     exercise = _exercise(workspace)
+    if exercise.is_quiz:
+        # ⛔ **A quiz is not work at a file** (`AX-05`): it carries questions in
+        # place of a workspace, so there is no file to name, nothing to open in
+        # an editor, no command to Run and no grader to Submit to. ⭐ The two
+        # shapes share this one surface and this one renders with no frame at
+        # all — and with no dead control either, which is the same rule a
+        # reading-only unit gets two lines above. ⚠️ A quiz's OWN surface, the
+        # questions and how they are answered, is `AX-06`'s and `AX-09`'s.
+        return ""
     return templates.fill(
         PANEL_TEMPLATE,
         key=escape_attribute(key_of(document, section)),
         corpus=escape_attribute(placement.corpus),
         main=escape(exercise.main_path),
         grader=_region(grader(exercise)),
+        tabs=_region(tabs(exercise)),
         controls=controls(exercise),
     )
 
@@ -187,6 +209,22 @@ def controls(exercise: Exercise) -> str:
     """
     acts = [RUN] if exercise.test_command is None else [RUN, TEST]
     return "".join(templates.fill(ACT_TEMPLATES[act], mode=act) for act in acts)
+
+
+def tabs(exercise: Exercise) -> str:
+    """Return the tablist over this practice's two editor windows.
+
+    ⭐ **Two windows of ONE editor, never a split pane** (`W429`): the file a
+    reader may type in and the file that judges it are two different acts of
+    reading, and standing them side by side halves the width of both.
+
+    ⛔ **The second tab is emitted only where a test is named.** ⚠️ This module
+    names neither file and builds no URL: which file a window shows is decided
+    by that window's own URL, which only a served origin can say (R8) — the
+    tabs are the surface, and `practice.js` asks for the two addresses.
+    """
+    tests = templates.fill(TESTS_TAB_TEMPLATE) if exercise.test_path is not None else ""
+    return templates.fill(TABS_TEMPLATE, tests=tests)
 
 
 def grader(exercise: Exercise) -> str:

@@ -34,6 +34,23 @@ SHIPPED = {
 #: advisory grader looks like on disk.
 GENERATED = {**SHIPPED, "provenance": "generated", "trust": "advisory"}
 
+#: `AX-05`'s shape: questions in place of a workspace. ⛔ Every workspace key is
+#: refused on it, which is why it carries none of them.
+QUIZ = {
+    "kind": "quiz",
+    "questions": [
+        {
+            "id": "q-1",
+            "stem": "What does a class declaration open?",
+            "options": [
+                {"id": "a", "text": "A type", "correct": True, "says": "The page says so."},
+                {"id": "b", "text": "A file", "correct": False, "says": "A file holds one."},
+            ],
+            "origin": {"path": "basics/01.md", "section": "What a class is"},
+        }
+    ],
+}
+
 #: `W357`'s other shape: a file nothing checks. ⛔ The grader half is written
 #: whole or not at all, so an ungraded record is exactly these two keys.
 UNGRADED = {"main_path": "kata/greet.py", "run_command": ["python3", "kata/greet.py"]}
@@ -185,8 +202,13 @@ def test_every_control_is_a_real_button_and_the_output_is_reachable_by_keyboard(
     # scrolled without a mouse.
     markup = panel()
     acts = re.findall(r"<(\w+)[^>]*data-practice-act=", markup)
+    tabs = re.findall(r"<(\w+)[^>]*data-practice-tab=", markup)
     assert acts and set(acts) == {"button"}
-    assert markup.count('type="button"') == len(acts)
+    # ⭐ `W429`: the two window tabs are controls too, and they are held to the
+    # same rule rather than exempted from it — a tab that was a styled `div`
+    # would be announced as nothing in a `role="tablist"` that promises tabs.
+    assert tabs and set(tabs) == {"button"}
+    assert markup.count('type="button"') == len(acts) + len(tabs)
     assert re.search(r'<pre[^>]*data-practice-part="output"[^>]*tabindex="0"', markup)
     assert 'role="status"' in markup and 'aria-live="polite"' in markup
 
@@ -199,6 +221,40 @@ def test_the_controls_and_the_editor_ship_hidden_and_the_offline_note_does_not()
     assert re.search(r'<p data-practice-part="controls" hidden', markup)
     assert re.search(r'<div data-practice-part="editor" hidden', markup)
     assert re.search(r'<p data-practice-part="offline">', markup)
+
+
+def test_the_two_tabs_ship_hidden_and_name_the_two_windows():
+    # ⭐ `W429`: the reader's own file and the test that judges it, as two tabs
+    # over two frames of ONE editor — never a split pane, which halves the
+    # width of both. ⛔ Hidden in the built page: there is no editor to show
+    # until a served origin says there is one.
+    markup = panel()
+    assert re.search(r'<div data-practice-part="tabs" role="tablist"[^>]*hidden', markup)
+    assert re.search(r'<button[^>]*data-practice-tab="main"[^>]*aria-selected="true"', markup)
+    assert re.search(r'<button[^>]*data-practice-tab="test"[^>]*aria-selected="false"', markup)
+    assert re.search(r'<div data-practice-frame="main" hidden></div>', markup)
+    assert re.search(r'<div data-practice-frame="test" hidden></div>', markup)
+
+
+def test_the_tests_tab_is_emitted_only_where_the_record_names_a_test():
+    # ⛔ Both directions, because each is a silence: a tab over a test that does
+    # not exist opens an empty buffer, and a missing tab hides the statement of
+    # what *done* means. ⚠️ The FRAME slot stays either way — it is the panel's
+    # markup, and `practice.js` shows it only for a window it was given.
+    assert 'data-practice-tab="test"' in panel()
+    assert 'data-practice-tab="test"' not in panel(sections=[section(workspace=UNGRADED)])
+    assert 'data-practice-tab="main"' in panel(sections=[section(workspace=UNGRADED)])
+
+
+def test_a_quiz_renders_no_panel_at_all_no_frame_no_run_and_no_submit():
+    # ⛔ `AX-05` and `W429`, clause 4. A quiz carries QUESTIONS in place of a
+    # workspace: no file to name, nothing to open in an editor, no command to
+    # Run and no grader to Submit to. ⭐ The two shapes share this one surface
+    # and one of them renders with NO FRAME AT ALL — as an absence, never as
+    # controls a reader may not use. ⚠️ Asserted both ways against the very
+    # same section, so it cannot pass by rendering nothing for everything.
+    assert panel(sections=[section(workspace=QUIZ)]) == ""
+    assert panel(sections=[section(workspace=SHIPPED)]) != ""
 
 
 def test_the_editor_slot_says_it_is_not_running_and_how_to_start_it():
@@ -224,11 +280,13 @@ def behaviour() -> str:
 
 
 def test_the_editor_slot_is_filled_from_the_served_client_and_from_nowhere_else():
-    # ⭐ `W416`'s seam, and the ONE change this panel took for it: the panel
-    # reads `studyforge.run.editor(corpus)` — the same object it already runs
-    # and stops through — and fills the slot the panel already ships.
+    # ⭐ The seam `W416` drew and `W429` kept: the panel reads
+    # `studyforge.run` — the same object it already runs and stops through —
+    # and fills the slot the panel already ships. ⛔ It asks for ONE PRACTICE's
+    # windows, not for the corpus's folder: a folder cannot say which of two
+    # windows shows which file.
     body = behaviour()
-    assert "run.editor(corpus)" in body
+    assert "run.practice(corpus, key)" in body
     assert body.count("window.studyforge.run") == 1
 
 
@@ -237,30 +295,90 @@ def test_an_older_client_that_publishes_no_editor_leaves_run_and_submit_working(
     # the serving process's — so the panel asks whether the function is there
     # rather than assuming it, and Run and Submit survive an older one.
     body = behaviour()
-    assert "if (run.editor) {" in body
-    assert body.index("if (run.editor) {") < body.index("run.editor(corpus)")
+    assert "if (run.practice) {" in body
+    assert body.index("if (run.practice) {") < body.index("run.practice(corpus, key)")
 
 
 def test_a_frame_is_added_only_for_an_editor_the_server_says_is_up():
     body = behaviour()
-    filling = body[body.index("run.editor(corpus)") :]
-    assert "if (!where || !slot) { return; }" in filling
-    assert filling.index("if (!where") < filling.index("createElement('iframe')")
+    filling = body[body.index("run.practice(corpus, key)") :]
+    assert "if (where && where.main && where.main.url) { windows(panel, where); }" in filling
+    assert filling.index("where.main.url") < filling.index("windows(panel, where)")
 
 
-def test_the_frame_is_built_from_the_served_origin_and_the_served_folder():
-    # ⛔ R8: a built page names no origin and no port. Every part of the URL
-    # below arrives at serve time, and the folder is encoded rather than pasted.
+def test_the_two_frames_are_built_from_urls_the_server_answered_and_from_nothing_else():
+    # ⛔ R8: a built page names no origin, no port and no path inside anybody's
+    # container. ⭐ **The whole URL arrives at serve time** — this file composes
+    # no part of it, which is stronger than `W416`'s encoded folder was.
     body = behaviour()
-    assert "where.origin + '/?folder=' + encodeURIComponent(where.folder)" in body
+    assert "built.src = url;" in body
+    for word in ("?folder=", "payload=", "openFile", "vscode-remote", "encodeURIComponent"):
+        assert word not in body, word
     assert "127.0.0.1" not in body and "localhost" not in body and "http://" not in body
+
+
+def test_the_two_frames_take_two_different_urls_and_neither_is_the_other_s():
+    # ⛔ **THE property the whole URL design exists for.** One window shows the
+    # reader's file and the other shows the test, and the ONLY thing that can
+    # tell two windows of one code-server apart is each window's own URL — an
+    # extension cannot read its own window's query string, and both windows
+    # share one workspace settings file. ⚠️ So a panel that built both frames
+    # from ONE url would look entirely correct and show the same file twice.
+    body = behaviour()
+    built = re.findall(r"frame\(slots\.(\w+), (where\.\w+\.url), TITLES\.(\w+)\)", body)
+    assert sorted(built) == [
+        ("main", "where.main.url", "main"),
+        ("test", "where.test.url", "test"),
+    ], built
+
+
+def test_the_tests_frame_is_built_lazily_on_the_first_click_of_its_tab():
+    # ⭐ A second workbench is a second language server. A reader who never
+    # opens the tests never pays for one — so the test frame is built inside
+    # `select`, behind the once-only latch, and never beside the main one.
+    #
+    # ⛔ **The COUNT is the half that measures anything, and it is here because
+    # the first version of this case did not have it.** Asserting only that the
+    # lazy call is inside `select` is satisfied by a build that ALSO builds the
+    # frame eagerly beside the main one — measured: that exact plant left this
+    # case GREEN, which is a plant that observed nothing.
+    body = behaviour()
+    region = body[body.index("function windows(panel, where)") : body.index("function wire(")]
+    assert region.count("frame(slots.test") == 1
+    assert region.count("frame(slots.main") == 1
+    selecting = region[region.index("function select(name)") : region.index("frame(slots.main")]
+    assert "if (name === 'test' && !lazy && tested)" in selecting
+    assert "lazy = true;" in selecting
+    assert "frame(slots.test" in selecting
+    # ⛔ And the main frame is built OUTSIDE `select`, at once: the reader's own
+    # file is what the panel is for.
+    assert "frame(slots.main" not in selecting
 
 
 def test_the_sentence_stands_until_a_frame_replaces_it():
     body = behaviour()
-    filling = body[body.index("run.editor(corpus)") :]
+    filling = body[body.index("function windows(panel, where)") :]
     assert "show(part(panel, 'no-editor'), false)" in filling
-    assert filling.index("createElement('iframe')") < filling.index("'no-editor'")
+    assert filling.index("frame(slots.main") < filling.index("'no-editor'")
+
+
+def test_the_tablist_is_shown_only_where_there_are_two_windows_to_choose_between():
+    # ⚠️ `W357`'s shape: a record may name a file and no test. One tab is no
+    # choice, and a tab over a file the material does not have is a dead
+    # control — the same honesty that offers no Submit there.
+    body = behaviour()
+    assert "show(part(panel, 'tabs'), tested);" in body
+    assert "var tested = !!(where.test && where.test.url);" in body
+
+
+def test_the_panel_never_claims_or_enforces_read_only():
+    # ⛔ Read-only is the EDITOR's, out of the workspace settings the server
+    # writes. A guard here would be a second, weaker copy of a rule the editor
+    # already keeps — and a *claim* here would be a promise this file cannot
+    # keep, since nothing in the page can stop a keystroke in an iframe.
+    body = behaviour()
+    for word in ("readonly", "readOnly", "read-only"):
+        assert word not in body, word
 
 
 def test_the_panel_starts_no_editor_and_names_no_container():

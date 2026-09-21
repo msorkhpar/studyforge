@@ -33,7 +33,8 @@ web-facing process ends up holding the socket that spec §8.3 forbids it.
 | `runner` | `Runner`, the two modes' launchers, and the run's environment |
 | `handle` | `RunHandle`: the sequence, the stream, the exit line, stop and timeout |
 | `mode` | `ModeProbe`: is the runner container up over this root, cached briefly |
-| `editor` | `EditorProbe`: where a running editor is — an origin and a folder — or nothing |
+| `editor` | `EditorProbe`: where a running editor is, what it opens and what it holds |
+| `workbench` | one practice's window URLs and the workspace settings it is read under |
 | `output` | `LineGate`: every line relative to the source root, then scrubbed |
 | `quiet` | the output filter: the declared build tool's own lines go, a failure never |
 | `commands` | what the runner will start, checked before any process exists |
@@ -85,6 +86,16 @@ from studyforge.execute.mode import CONTAINER, HOST, MODES, WORKDIR_IN_CONTAINER
 from studyforge.execute.output import LineGate
 from studyforge.execute.quiet import TOOLCHAINS, Quiet, Toolchain, filter_lines, select
 from studyforge.execute.runner import RUN_ENVIRONMENT, Runner
+from studyforge.execute.workbench import (
+    MAIN_KEY,
+    SETTINGS_DIR,
+    SETTINGS_FILE,
+    TEST_KEY,
+    WorkbenchRefused,
+    open_url,
+    settings,
+    write_settings,
+)
 
 __all__ = [
     "CONTAINER",
@@ -94,9 +105,13 @@ __all__ = [
     "EXIT_STOPPED",
     "EXIT_TIMEOUT",
     "HOST",
+    "MAIN_KEY",
     "MODES",
     "ROOT_DIR",
     "RUN_ENVIRONMENT",
+    "SETTINGS_DIR",
+    "SETTINGS_FILE",
+    "TEST_KEY",
     "TOOLCHAINS",
     "WORKDIR_IN_CONTAINER",
     "Editor",
@@ -108,12 +123,16 @@ __all__ = [
     "RunRefused",
     "Runner",
     "Toolchain",
+    "WorkbenchRefused",
     "container_for",
     "editor_container_for",
     "exit_line",
     "filter_lines",
+    "open_url",
     "require_commands",
     "require_container",
     "require_workdir",
     "select",
+    "settings",
+    "write_settings",
 ]

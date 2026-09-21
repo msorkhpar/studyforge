@@ -14,11 +14,12 @@ import dataclasses
 import json
 import threading
 import time
+from pathlib import Path
 
 import pytest
 
 from studyforge.archive.scrub import scrub
-from studyforge.execute import Editor, EditorProbe, editor_container_for
+from studyforge.execute import Editor, EditorProbe, editor_container_for, workbench
 from studyforge.progress import IGNORE_FILENAME, store_dir
 from studyforge.serve.instance import instance_of
 from studyforge.serve.response import Request
@@ -394,7 +395,7 @@ def test_the_index_names_the_modes_and_the_endpoints_and_a_post_to_it_is_405(roo
 
 #: An editor that is up. ⚠️ The folder is a made-up container path: the probe
 #: reads the real one back out of the container and never composes one.
-UP = Editor(origin="http://127.0.0.1:8443", folder="/w/sources")
+UP = Editor(origin="http://127.0.0.1:8443", folder="/w/sources", base="practice")
 
 
 def index_of(root, editor=None) -> dict:
@@ -434,6 +435,108 @@ def test_the_probe_an_instance_makes_asks_docker_about_the_compose_container(roo
     assert isinstance(probe, EditorProbe)
     assert probe.container == editor_container_for(SOURCE)
     assert probe.source_root == corpus.root
+
+
+# --- one practice's two windows (`W429`) ------------------------------------
+
+#: Where the editor's own settings land for `UP`: inside the part of the source
+#: root it mounts. ⭐ The HOST side of its bind, which the index never carries.
+def settings_in(root) -> Path:
+    return root / UP.base / workbench.SETTINGS_DIR / workbench.SETTINGS_FILE
+
+
+def ask_editor(root, unit=1, editor=None, path=None):
+    live, discovered = runs_over(root, editor=editor or StubEditors(UP))
+    with serving(live, discovered) as server:
+        return post(server, path or f"/api/v1/run/{SOURCE}/{run.EDITOR}/{key(unit)}")
+
+
+def test_the_index_says_how_to_address_one_practices_files_and_not_only_a_folder(root):
+    # ⭐ `W416` published `{origin, folder}` and a folder cannot say which of two
+    # windows shows which file. ⛔ The template is the route's own spelling,
+    # composed from the namespace and the word — never retyped.
+    published = index_of(root)["practice_editor"]
+    assert published == f"/api/v1/run/{{corpus}}/{run.EDITOR}/{{practice}}"
+    assert run.EDITOR not in run.MODES
+
+
+def test_a_practice_answers_a_url_for_each_of_its_two_windows(root):
+    status, _, body = ask_editor(root)
+    answered = json.loads(body)
+    assert status == 200 and answered["resource"] == "run-editor"
+    assert answered["origin"] == UP.origin
+    # ⛔ **THE property the whole URL design exists for**: two windows of ONE
+    # editor showing two DIFFERENT files, told apart by nothing but their own
+    # URLs. ⚠️ Asserted as a difference between the two answers, so a composer
+    # that ignored its argument cannot pass.
+    assert answered["main"]["url"] != answered["test"]["url"]
+    assert answered["main"]["path"] == "passes/greet.py"
+    assert answered["test"]["path"] == "passes/check_greet.py"
+    assert answered["main"]["path"] in answered["main"]["url"].replace("%2F", "/")
+    assert answered["test"]["path"] in answered["test"]["url"].replace("%2F", "/")
+
+
+def test_asking_for_a_practices_windows_writes_that_practices_workspace_settings(root):
+    assert not settings_in(root).exists()
+    ask_editor(root)
+    held = json.loads(settings_in(root).read_text(encoding="utf-8"))
+    # ⭐ Everything read-only, the practice's own source excluded back out — and
+    # the TEST left read-only on purpose: it is the statement of what *done*
+    # means, and a reader who can edit it can make it say anything.
+    assert held[workbench.READONLY_INCLUDE] == {workbench.EVERYTHING: True}
+    assert held[workbench.READONLY_EXCLUDE] == {"passes/greet.py": True}
+    assert "passes/check_greet.py" not in held[workbench.READONLY_EXCLUDE]
+    assert held["files.hotExit"] == "off"
+
+
+def test_no_editor_up_is_a_404_and_writes_nothing_at_all(root):
+    # ⛔ Both halves matter: a page told an editor is there would frame a dead
+    # origin, and a settings file written for an editor nobody started would be
+    # this framework leaving a file in a corpus for no reason.
+    status, _, _ = ask_editor(root, editor=StubEditors(None))
+    assert status == 404
+    assert not settings_in(root).exists()
+
+
+def test_an_editor_that_does_not_hold_this_practices_file_is_a_404_not_a_url(root):
+    # ⚠️ Naming an unmounted path opens an empty, dirty buffer titled with the
+    # file's own name — it looks exactly like a corrupted file and is not one.
+    elsewhere = Editor(origin=UP.origin, folder=UP.folder, base="docs")
+    assert ask_editor(root, editor=StubEditors(elsewhere))[0] == 404
+
+
+def test_a_settings_file_this_framework_did_not_write_is_a_409_and_is_left_alone(root):
+    mine = '{"editor.fontSize": 18}\n'
+    settings_in(root).parent.mkdir(parents=True)
+    settings_in(root).write_text(mine, encoding="utf-8")
+    status, _, body = ask_editor(root)
+    assert status == 409
+    assert settings_in(root).read_text(encoding="utf-8") == mine
+    # ⛔ The refusal's own sentence names a file and an errno; the wire gets the
+    # route's constant, which carries neither (R7).
+    assert json.loads(body)["error"] == run.WORKSPACE_REFUSED
+    assert str(root) not in body
+
+
+def test_a_practice_with_no_file_to_open_is_a_409_and_no_window(root):
+    # ⛔ A quiz carries questions in place of a workspace: no file, no window,
+    # no Run and no Submit (`AX-05`). ⭐ Read here as the shape it is — a
+    # workspace naming no `main_path` — because that is what the route sees.
+    live, discovered = runs_over(root, editor=StubEditors(UP))
+    answered = run.editor(live, discovered.corpora[0], {"run_command": ["true"]})
+    assert answered.status == 409
+    assert run.NO_FILE.encode() in answered.body
+
+
+def test_addressing_the_editor_is_a_post_and_a_page_opened_from_a_file_cannot(root):
+    # ⭐ A POST because it WRITES: it prepares that practice's workspace. ⛔ And
+    # `Origin: null` — a page opened from a file — is refused like every other
+    # act in this namespace.
+    live, discovered = runs_over(root, editor=StubEditors(UP))
+    path = f"/api/v1/run/{SOURCE}/{run.EDITOR}/{key(1)}"
+    with serving(live, discovered) as server:
+        assert fetch(server, path)[0] == 405
+        assert post(server, path, headers={"Origin": "null"})[0] == 403
 
 
 def test_an_outcome_the_store_refuses_is_said_and_the_exit_line_stays_last(root):
