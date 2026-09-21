@@ -58,6 +58,7 @@ reading floor, which is a whole product for prose material.
 | `cases` | the case vocabulary: `kind`, `cases`, `report` and `origin` (`AX-00`) |
 | `report` | folding a run's JUnit report through those cases into a breakdown (`AX-01`) |
 | `quiz` | the quiz: its questions, its key, and the rule that grades them (`AX-05`) |
+| `gates` | the authoring gates and the gate record they write (`AX-03`) |
 | `safety` | what a path and a command may be, checked before either reaches a file |
 | `errors` | `ExerciseError`, the only exception any of it raises |
 
@@ -73,6 +74,15 @@ completes when every case passes, exactly as before.
 malformed or names a test the map does not, and answers *main ask* plus *edge
 cases n/m*. ⛔ The breakdown is a **report and never a second definition of a
 pass**, which is the sentence above said from the other end.
+
+⭐ **And what an authored exercise CLEARED before it shipped is
+`gates`** (`AX-03`, spec §7 §6): `G1`–`G5` read over the runs a caller takes in
+the pinned runner image, and one `GateRecord` carrying the digest of every
+input beside each gate's verdict. ⛔ **No gate can be disabled, skipped or
+weakened by configuration**, and a second family of gates (`AX-06`) writes into
+that same record without the package being edited. ⚠️ The gates are not part of
+reading a record: nothing in this module calls them, and a reader's machine
+never runs one.
 
 ⛔ **Structural, with no flag and no version bump.** A record written before
 `AX-00` reads unchanged and round-trips to the same bytes; a document carrying
