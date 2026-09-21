@@ -122,7 +122,7 @@ class Runs:
         return found
 
     def _probe(self, corpus: ServedCorpus) -> EditorProbe:
-        """The one probe held for `corpus`, made on first ask."""
+        """Return the one probe held for `corpus`, made on first ask."""
         with self._probes_lock:
             probe = self._probes.get(corpus.source)
             if probe is None:

@@ -97,9 +97,7 @@ def test_a_differently_spelled_path_to_these_sources_is_still_these_sources(tmp_
     ],
 )
 def test_a_binding_is_reported_at_an_address_a_browser_can_reach(tmp_path, root, host, reached):
-    answer = probe(
-        tmp_path, root, inspected("true", port(host), mount(root / "sources"))
-    ).editor()
+    answer = probe(tmp_path, root, inspected("true", port(host), mount(root / "sources"))).editor()
     assert answer is not None and answer.origin == f"http://{reached}:8443"
 
 

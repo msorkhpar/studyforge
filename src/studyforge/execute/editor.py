@@ -178,7 +178,7 @@ class EditorProbe:
                 timeout=self._inspect_timeout,
                 check=False,
             )
-        except (OSError, ValueError, subprocess.SubprocessError):
+        except OSError, ValueError, subprocess.SubprocessError:
             return None
         if answer.returncode != 0:
             return None
@@ -218,7 +218,7 @@ def _within(mounted: str, source_root: Path) -> bool:
 
 
 def _reachable(host: str) -> str:
-    """The address a browser is sent to for a binding on `host`."""
+    """Return the address a browser is sent to for a binding on `host`."""
     if host.strip() in UNSPECIFIED:
         return LOOPBACK
     if ":" in host and not host.startswith("["):

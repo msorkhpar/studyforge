@@ -14,9 +14,9 @@ import pytest
 
 from studyforge.progress import practice_key
 from studyforge.render import templates
-from studyforge.render.pageassets import ASSET_DIR
 from studyforge.render.page import anchors, practice, render
 from studyforge.render.page.errors import PageError
+from studyforge.render.pageassets import ASSET_DIR
 from tests.studyforge.render.page.pages import depth2_unit_01, sample_placement
 
 #: A graded record: a file, how it runs, and the material's own grader.
