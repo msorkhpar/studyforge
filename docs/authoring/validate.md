@@ -54,7 +54,7 @@ pretend to be.
 
 ---
 
-## The fifteen checks
+## The nineteen checks
 
 **One list, in the order a report reads best.** The answer to *what does the
 checker check* is this table and nothing else.
@@ -76,18 +76,30 @@ checker check* is this table and nothing else.
 | 13 | `check_declared_files` | does the archive hold every `assets` and `attachments` entry where that entry says it does? |
 | 14 | `check_unclassified` | does every file in your repository match one of the three `content` states? |
 | 15 | `check_completeness` | did the reader actually read each source file, or stop short of it? |
+| 16 | `check_gate_records` | does every authored (`generated`) grader ship the gate record of the gates it cleared, and did every gate hold? |
+| 17 | `check_bundle_digests` | does every file an exercise's gate record was taken over still digest to what the record says? |
+| 18 | `check_bundle_contents` | is the exercise's bundle holding a file its shape does not permit — a run's report, most of all? |
+| 19 | `check_practice_ordinals` | are a page's practices numbered `1..n`, with no gap? |
 
 **Checks 1–9 are about the archive alone**, 10 and 11 about placement, 12 and
 13 about the archive root's own files — what sits there unaccounted for, and
-what the archive accounts for and does not hold — and 14 and 15 about your
-source repository. **The last two are the ones that cannot be
+what the archive accounts for and does not hold — 14 and 15 about your
+source repository, and 16–19 about the authored exercises a corpus commits.
+**Checks 14 and 15 are the ones that cannot be
 made by recounting the parser's own output** — a completeness check that
 recounted what the parser produced would agree with itself by construction and
 catch nothing.
 
+**Checks 16–19 fire only on a `generated` grader.** A grader that shipped with
+your material is `bundled`, and nothing here is asked of it. An authored one is
+advisory, and it ships only with the record of the gates it cleared — so a
+corpus that authors exercises declares `exercises/**` and `practice/**` under
+`content.not_material` (which needs `corpus_api` 2), or check 14 refuses every
+file in both.
+
 ---
 
-## The thirty-four rule ids
+## The thirty-nine rule ids
 
 **Every finding carries one**, so a script can filter a report by rule rather
 than by matching on message text. ⚠️ **The last six are not emitted by
@@ -130,6 +142,11 @@ the same shape.
 | `moved` | after a build: a file that already existed is gone and its exact bytes appear at a new path |
 | `not-additive` | after a build: a declared edit is not exactly its declared line inserted after its anchor, with every other line kept |
 | `forbidden-edit` | after a build: the root ignore file, version-control configuration, or a file your `content` includes changed or was created — however declared |
+| `gate-record` | an authored (`generated`) grader ships no gate record, or one nothing can read |
+| `gate-shortfall` | a gate record is there and not every gate in it held |
+| `bundle-digest` | a file the gate record was taken over has changed since, or is gone |
+| `bundle-contents` | the exercise's bundle holds a file its shape does not permit — a run's report in a bundle is the one to watch, because it carries the machine's hostname |
+| `practice-ordinals` | a page's practices are not numbered `1..n` |
 | `nothing-compared` | after a build (unchecked, not a finding): the before-snapshot held no file, so nothing was compared |
 
 ---

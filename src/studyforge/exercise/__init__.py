@@ -59,6 +59,7 @@ reading floor, which is a whole product for prose material.
 | `report` | folding a run's JUnit report through those cases into a breakdown (`AX-01`) |
 | `quiz` | the quiz: its questions, its key, and the rule that grades them (`AX-05`) |
 | `gates` | the authoring gates and the gate record they write (`AX-03`) |
+| `bundle` | what an authored exercise is on disk, and what it emits (`AX-04`) |
 | `safety` | what a path and a command may be, checked before either reaches a file |
 | `errors` | `ExerciseError`, the only exception any of it raises |
 
@@ -83,6 +84,15 @@ weakened by configuration**, and a second family of gates (`AX-06`) writes into
 that same record without the package being edited. ⚠️ The gates are not part of
 reading a record: nothing in this module calls them, and a reader's machine
 never runs one.
+
+⭐ **And where an authored exercise LIVES is `bundle`** (`AX-04`, spec §7):
+the directory a corpus repository commits for one — its statement, its
+starter, its reference solution, its tests, its plants, its `cases` and the
+gate record beside them — plus the emission an adapter calls to turn it into a
+practice document and the reader's own workspace. ⛔ **The framework never
+authors and never reaches into a corpus**: every source-specific fact arrives
+as the bundle's own data (R1), and `studyforge validate` re-reads the gate
+record through `validate.exercises`.
 
 ⛔ **Structural, with no flag and no version bump.** A record written before
 `AX-00` reads unchanged and round-trips to the same bytes; a document carrying

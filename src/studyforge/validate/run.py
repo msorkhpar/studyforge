@@ -21,13 +21,15 @@ from __future__ import annotations
 from collections.abc import Iterator
 from pathlib import Path
 
-from studyforge.validate import paths, source, structure
+from studyforge.validate import exercises, paths, source, structure
 from studyforge.validate.corpus import Walk, read
 from studyforge.validate.report import Finding, Report, Unchecked
 
 #: Every check, in the order a report reads best. ⛔ One list, so the answer to
-#: "what does validate check" is not spread across four modules.
-CHECKS = (*structure.CHECKS, *paths.CHECKS, *source.CHECKS)
+#: "what does validate check" is not spread across five modules. ⚠️ The
+#: authored-exercise arm is last because it reads what the first three have
+#: already judged to be a document (`AX-04`).
+CHECKS = (*structure.CHECKS, *paths.CHECKS, *source.CHECKS, *exercises.CHECKS)
 
 
 def validate(root: Path | str) -> Report:

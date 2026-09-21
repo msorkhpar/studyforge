@@ -108,6 +108,19 @@ DECLARED: dict[str, tuple[str, str]] = {
         WRITER,
         "a deliberate leak fixture",
     ),
+    "src/studyforge/exercise/bundle/document.py::bundle_document": (
+        WRITER,
+        "serialises a bundle; it READS through cases.origin_in, which hands to the one reader",
+    ),
+    "src/studyforge/exercise/bundle/emit.py::_record": (
+        WRITER,
+        "serialises the exercise record a bundle emits, both origin shapes",
+    ),
+    "tests/studyforge/exercise/bundle/test_document.py::"
+    "test_a_missing_required_key_is_refused_by_name": (
+        WRITER,
+        "deletes each required key in turn, origin among them, to plant a refusal",
+    ),
 }
 
 
