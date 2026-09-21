@@ -29697,3 +29697,67 @@ write there on every future commit to that repository.**
 ⚠️ **`narrate-service`'s untracked `.idea/` is NOT part of this row**: it is an IDE artifact with no provenance question, and the register clears it with a LOCAL exclude that moves no ref and changes no tracked file.
 
 [the mint](#po-round-130)
+
+## PO round 133
+
+⛔ **Only what is MEASURED is written here.** ⭐ **`M7` — it has practices — IS CLOSED at `d9cce6bc`, its one named gap FILLED rather than waived**, and the first corpus gained three sample practices on the user's own direction.
+
+### ⭐ `M7` CLOSED — every step re-taken at ONE ref, each derived by ANCESTRY
+
+⛔ **A first-parent SUBJECT GREP is the WRONG instrument here and was discarded after it read every step as missing**: `SF-24`'s merge is titled *"Carry the practice panel on a unit page…"* and names no row id at all. ⭐ **Ancestry is the property that matters, and it answers:**
+
+| step | its ref | reached at `d9cce6bc` |
+|---|---|---|
+| 7.1 `TC-01` | `9bc688f` | ✅ |
+| 7.2 `TC-02`, `TC-03`, `TC-04` | `04ce050` | ✅ |
+| 7.3 `TC-05`, `TC-06` | `4c8490b4` | ✅ |
+| 7.4 `SK-09`, `SF-24` | `04b3e65e` | ✅ |
+| 7.4's named gap, `W416` | `7ce4fddd` | ✅ |
+| 7.5 `QA-02` | `d9cce6bc` | ✅ |
+
+⭐ **THE GAP WAS FILLED, NOT WAIVED.** Step 7.4 closed carrying ONE named gap — the embedded editor — REPORTED rather than rewritten. ⛔ **A milestone that closed by dropping its own promise would have been a lie.**
+
+### ⭐ `W416` CLOSED — `7ce4fddd`, and the panel took ONE change
+
+⭐ **The row's own measure of whether the seam was drawn right**: `practice.js` asks `run.editor(corpus)`, builds the frame and fills the slot the panel already shipped. ⛔ `render/page/document.py` untouched, so `W422`'s zero-headroom ceiling was not met; no region added, so `SF-24/6`'s was not met either. ⛔ **The probe's only argv is `docker inspect`** — the Docker socket never reaches the serving process (spec §8.3, rule 2), re-read on the branch rather than taken from the handoff.
+
+⭐ **`W416/2` ANSWERED BY MEASUREMENT, and it was the feature's real risk.** The office named it and could not measure it: nothing declares whether the editor may be FRAMED, and if code-server refused, the panel would show an empty box — the exact thing `SF-24` refused to ship. ⛔ **Measured against a throwaway editor from the already-built image: NO `X-Frame-Options`, NO CSP `frame-ancestors`, NO meta CSP**, on `/` and on `/login`. Container removed BY NAME.
+
+⚠️ **`W416/3` stands as a UX fact for the user:** `--auth=password` is the contract's deliberate refusal to start an unauthenticated IDE with a shell, so **the first thing inside the frame is a login box, not the reader's code.** ⛔ Nothing in the framework can or should pre-authenticate it.
+
+### ⭐ `QA-02` CLOSED — `d9cce6bc`, step 7.5, and it closed `W417` and `W419` with it
+
+⛔ **Neither was a new mint** — `W417`'s own row said it was `QA-02`'s, and it is a PRECONDITION of that acceptance rather than a neighbour.
+
+⭐ **The first browser reading of the panel found a REAL defect and fixed it**: pressing Stop returned a keyboard reader to the top of the page, because the button was disabled before the run settled. ⛔ **No structural assertion would ever have found it** — which is exactly what `W417` was minted to make possible.
+
+⛔ **`W406` NOT taken, and its question is ANSWERED rather than deferred:** the served harness did NOT make it nearly free — it serves a tree of page fixtures, not a corpus, with no archive and no manifest.
+
+### ⛔ `W416` AND `QA-02` BOTH EDIT `practice.js`, AND THE AUTO-MERGE WAS VERIFIED RATHER THAN TRUSTED
+
+⭐ **The merged file carries BOTH** `W416`'s `run.editor(corpus)` frame fill AND `QA-02`'s `handedBack` hand-back. ⛔ **A resolution taking either side whole would have silently lost the other**, and the absence of a conflict is not evidence that both survived.
+
+### ⛔ `W426` CLOSED — `638e233e`, corpus `bc08aaa`, and it is the USER's row
+
+⛔ **Minted on USER DIRECTION and on nothing else**, and the user chose Java/jPOS over Python deliberately so the sample proves the toolchain container end to end.
+
+⭐ **Three practices, three shapes, and the register RE-RAN ALL THREE** in the pinned JDK runner, `--network none`, corpus read-only: the MTI reader grades **exit 0**; the primary bitmap ships wrong and grades **exit 1**, four checks failed; the field walker is **UNGRADED** — a file and no test (`W357`'s shape) — and runs **exit 0**.
+
+⭐ **AND THE FAILING ONE IS SOLVABLE, which is the half that matters.** ⛔ **A practice that fails and cannot be fixed is worse than no practice**, so it was not taken on trust: the defect is one bit position — a byte index of `(field - 1) / 8` paired with a shift of `field % 8` — and in a COPY, never in the tree, correcting the shift turns the grader **GREEN, exit 0**.
+
+⭐ **READ END TO END OVER HTTP on the rebuilt, served corpus**, after the pin advanced and a JDK runner came up: Submit on the wrong practice streamed its four `FAIL` lines and `--- exit 1 ---`; Submit on the passing one streamed `every check passed` and `--- exit 0 ---`; Submit on the ungraded one was REFUSED with *"names no command for this mode"* rather than faking a pass; Run on the ungraded one printed the unpacked message. ⛔ **There is no `java` on this host**, so none of it could have come from host mode.
+
+⭐ **The pin HAD to advance, measured rather than inferred:** at `aa4e2569`, `corpus/manifest/runtimes.py` does not exist and `KNOWN_CORPUS_API` does not hold `4`, so a build there refuses this manifest by name.
+
+⭐ **The deliverable is the FINDINGS LOG, and finding 1 is `M10`'s whole subject:** ⛔ **NO SKILL AUTHORS PRACTICES.** `skills.adapter` scaffolds a PROSE reader; nothing it generates knows `exercise`, the lesson/practice split, the practices count or the provenance pair — **all of it was hand-typed.** ⭐ **That is R19's hole, whole, and it is a YIELD rather than a shortfall.** Three more sharpen it: a corpus cannot declare a workspace as data; the rule deciding WHERE a practice may live is written down nowhere; and **`runtimes` is read by nothing at serve time.**
+
+### ⚠️ FOUR OF THE REGISTER'S OWN INSTRUMENTS READ NOTHING THIS ROUND, AND ALL FOUR ARE WRITTEN DOWN
+
+⛔ **A GREEN reading from an instrument that did not run is indistinguishable from success, and it cost this round a REFUSED merge.**
+
+1. ⛔ **`python3 -m tools.quality.board.bounds` HAS NO ENTRY POINT.** It imports the module and exits `0`. **Two "bounds GREEN exit 0" readings this round were meaningless**, and the real floor then refused the round on `board-size`, `board-orphan` ×3 and `board-unobserved`. ⭐ **The floor is the instrument; that module is a library.**
+2. ⛔ **A gate run behind a pipe reports the PIPE's exit code.** `python3 -m X | grep -v ...; echo $?` read GREP's status and made a GREEN gate read RED. ⭐ **Run a gate BARE, or capture and read `$?` immediately.**
+3. ⛔ **TWO plants were NO-OPS and the suite was GREEN under both**: one keyed an editor by the wrong corpus, one read the DOM before an ASYNCHRONOUS insertion. ⭐ **THE RULE: a plant is not a plant until its EFFECT IS OBSERVED** — assert the planted state exists, then read the gate.
+4. ⛔ **A relative sibling path resolved wrong from the register's own worktree** and wrote an EMPTY commit into `workspace.json`. ⭐ **Caught by reading back what was written**, and repaired with the sha validated before it was stored.
+
+⚠️ **VERIFIED FINDING, carried and NOT minted:** with an editor up the panel holds a TABBABLE `iframe` inserted ASYNCHRONOUSLY, which no check reads. It sharpens `W416/5`, blocks no acceptance, and **whether it becomes a row is the USER's call.**
