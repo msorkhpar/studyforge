@@ -18,16 +18,18 @@ import time
 import pytest
 
 from studyforge.archive.scrub import scrub
+from studyforge.execute import Editor, EditorProbe, editor_container_for
 from studyforge.progress import IGNORE_FILENAME, store_dir
 from studyforge.serve.instance import instance_of
 from studyforge.serve.response import Request
 from studyforge.serve.routes import run
-from studyforge.serve.routes.runs import NOT_RECORDED
+from studyforge.serve.routes.runs import NOT_RECORDED, editor_for
 from studyforge.serve.routes.state import corpus_state
 from tests.studyforge.execute.runnable import FOREIGN_HOME
 from tests.studyforge.serve.routes.running import (
     SOURCE,
     Spy,
+    StubEditors,
     StubHandle,
     entry,
     key,
@@ -386,6 +388,52 @@ def test_the_index_names_the_modes_and_the_endpoints_and_a_post_to_it_is_405(roo
     assert status == 200 and document["modes"] == ["run", "test"]
     assert document["live"] is None and document["stop"] == "/api/v1/run/stop"
     assert posted[0] == 405
+
+
+# --- where a running editor is (`W416`) -------------------------------------
+
+#: An editor that is up. ⚠️ The folder is a made-up container path: the probe
+#: reads the real one back out of the container and never composes one.
+UP = Editor(origin="http://127.0.0.1:8443", folder="/w/sources")
+
+
+def index_of(root, editor=None) -> dict:
+    runs, discovered = runs_over(root, editor=editor)
+    with serving(runs, discovered) as server:
+        return json.loads(fetch(server, "/api/v1/run/")[2])
+
+
+def test_an_editor_that_is_not_up_is_absent_rather_than_a_frame_pointing_nowhere(root):
+    assert index_of(root)[run.EDITOR] == {}
+
+
+def test_the_index_says_where_a_running_editor_is_under_the_corpus_it_belongs_to(root):
+    where = index_of(root, StubEditors(UP))[run.EDITOR]
+    assert where == {SOURCE: {"origin": UP.origin, "folder": UP.folder}}
+
+
+def test_the_index_names_an_origin_and_a_port_that_no_built_page_could_have(root):
+    # ⛔ R8's floor is why this is on a SERVED answer at all: the editor's host
+    # port is per-project, so the one place it can be true is the origin the
+    # reader is reading at.
+    assert ":8443" in json.dumps(index_of(root, StubEditors(UP)))
+
+
+def test_one_probe_is_kept_per_corpus_so_a_page_does_not_fork_docker_per_fetch(root):
+    editors = StubEditors(UP)
+    runs, discovered = runs_over(root, editor=editors)
+    with serving(runs, discovered) as server:
+        fetch(server, "/api/v1/run/")
+        fetch(server, "/api/v1/run/")
+    assert len(editors.made) == 1 and editors.made[0].asked == 2
+
+
+def test_the_probe_an_instance_makes_asks_docker_about_the_compose_container(root):
+    corpus = runs_over(root)[1].corpora[0]
+    probe = editor_for(corpus)
+    assert isinstance(probe, EditorProbe)
+    assert probe.container == editor_container_for(SOURCE)
+    assert probe.source_root == corpus.root
 
 
 def test_an_outcome_the_store_refuses_is_said_and_the_exit_line_stays_last(root):

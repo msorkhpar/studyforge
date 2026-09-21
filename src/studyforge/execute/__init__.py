@@ -33,6 +33,7 @@ web-facing process ends up holding the socket that spec §8.3 forbids it.
 | `runner` | `Runner`, the two modes' launchers, and the run's environment |
 | `handle` | `RunHandle`: the sequence, the stream, the exit line, stop and timeout |
 | `mode` | `ModeProbe`: is the runner container up over this root, cached briefly |
+| `editor` | `EditorProbe`: where a running editor is — an origin and a folder — or nothing |
 | `output` | `LineGate`: every line relative to the source root, then scrubbed |
 | `quiet` | the output filter: the declared build tool's own lines go, a failure never |
 | `commands` | what the runner will start, checked before any process exists |
@@ -69,12 +70,15 @@ from __future__ import annotations
 
 from studyforge.execute.commands import (
     CONTAINER_PREFIX,
+    EDITOR_CONTAINER_TEMPLATE,
     ROOT_DIR,
     container_for,
+    editor_container_for,
     require_commands,
     require_container,
     require_workdir,
 )
+from studyforge.execute.editor import EDITOR_TTL, Editor, EditorProbe
 from studyforge.execute.errors import RunRefused
 from studyforge.execute.handle import EXIT_STOPPED, EXIT_TIMEOUT, RunHandle, exit_line
 from studyforge.execute.mode import CONTAINER, HOST, MODES, WORKDIR_IN_CONTAINER, ModeProbe
@@ -85,6 +89,8 @@ from studyforge.execute.runner import RUN_ENVIRONMENT, Runner
 __all__ = [
     "CONTAINER",
     "CONTAINER_PREFIX",
+    "EDITOR_CONTAINER_TEMPLATE",
+    "EDITOR_TTL",
     "EXIT_STOPPED",
     "EXIT_TIMEOUT",
     "HOST",
@@ -93,6 +99,8 @@ __all__ = [
     "RUN_ENVIRONMENT",
     "TOOLCHAINS",
     "WORKDIR_IN_CONTAINER",
+    "Editor",
+    "EditorProbe",
     "LineGate",
     "ModeProbe",
     "Quiet",
@@ -101,6 +109,7 @@ __all__ = [
     "Runner",
     "Toolchain",
     "container_for",
+    "editor_container_for",
     "exit_line",
     "filter_lines",
     "require_commands",
