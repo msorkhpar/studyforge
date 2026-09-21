@@ -76,7 +76,9 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 |---|---|---|---|---|
 | `W431` | Developer 2 | `feat/W431-the-practice-maximises` @ `wt/dev2` | 0 @ `963db7b2` | `in-progress` — ⛔ **USER DIRECTION** |
 | `W432` | Developer 1 | `fix/W432-the-lockdown-actually-runs` @ `wt/dev1` | 0 @ `8a04dcc8` | `in-progress` — ⛔ **USER REPORTED TWICE** |
-| `AX-03` | Developer 3 | `feat/AX-03-the-authoring-gates` @ `wt/dev3` | 0 @ `b959dd4f` | `in-progress` — ⛔ **handed back, NOT verified** |
+| `AX-02` | Developer 4 | `feat/AX-02-submit-records-the-breakdown` @ `wt/dev4` | 0 @ `9ed320c9` | `in-progress` — `M10` step 10.2 |
+| `AX-04` | Developer 5 | `feat/AX-04-the-exercise-bundle` @ `wt/dev5` | 0 @ `9ed320c9` | `in-progress` — `M10` step 10.2 |
+| `AX-06` | Developer 6 | `feat/AX-06-the-quiz-authoring-gates` @ `wt/dev6` | 0 @ `9ed320c9` | `in-progress` — `M10` step 10.2 |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -615,6 +617,7 @@ else.**
 | W430 | `frame-src` is correct for `EDITOR_TTL` seconds and `'none'` after, so the panel almost never frames | framework agent | ✅ done — `963db7b2`, corpus `27fd8a1` | [`rows/W430.md`](rows/W430.md) |
 | W431 | The practice panel cannot be maximised, so a reader writes code through a letterbox | framework agent | `in-progress` — ⛔ **USER DIRECTION 2026-09-21** | [`rows/W431.md`](rows/W431.md) |
 | W432 | The workbench lockdown is installed in the editor image and the extension host never activates it | framework agent | `in-progress` — ⛔ **USER REPORTED TWICE** | [`rows/W432.md`](rows/W432.md) |
+| W433 | A reader can open settings and the command palette inside a practice frame, and the read-only lock is workspace-scoped | framework agent | `todo` — ⛔ **USER DIRECTION 2026-09-21**; after `W432` | [`rows/W433.md`](rows/W433.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the

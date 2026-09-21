@@ -30164,3 +30164,51 @@ that reads installation cannot see activation.**
 `W431` → Developer 2 (the reader's maximise control, dispatched round 138).
 `W432` → Developer 1. `AX-03` → Developer 3, ⛔ **handed back at `ac38e1cf` and
 NOT YET VERIFIED BY THE REGISTER.**
+
+## PO round 140
+
+⭐ **`AX-03` merged `9ed320c9`** — the five authoring gates and one record a
+second family writes into. ⭐ **It GATES the rest of step 10.2**, so `AX-04` and
+`AX-06` are dispatchable from this round.
+
+⭐ **The register planted it at the INTEGRITY seam**, and deliberately at the
+defect the office reported catching in its own code: `clears` returned to plain
+`all(...)`, restoring the `all(()) is True` hole, so deleting the gates that
+refused a bundle would be the cheapest way to make it read green. ⛔ **The
+planted tree is RED on both arms** — the in-memory one and the document one.
+
+⚠️ **The register's FIRST observation of that plant raised a `TypeError`**,
+because it called `clears` as a method and it is a property. ⛔ **A `TypeError`
+LOOKS EXACTLY LIKE A REFUSAL.** ⭐ **Re-taken against the property: planted
+reads `True` for a record with no verdicts at all, restored reads `False`.**
+
+### ⭐ What is minted
+
+[`W433`](rows/W433.md) — ⛔ **the reader's own words:** *"The client should not
+be able to change the settings there"*, and, with the command palette open
+inside a practice frame, *"also this search and other things panel"*.
+
+⛔ **IT IS NOT COSMETIC AND THAT IS THE ROW'S ARGUMENT.** ⭐ **The read-only
+lock is what makes a Submit mean anything** ([`W429`](rows/W429.md)) — ⛔ **but
+it is written as WORKSPACE settings and `files.readonlyExclude` is an OBJECT
+setting, which VS Code MERGES across scopes.** ⚠️ **So a reader who reaches the
+settings editor may be able to re-open the test at user scope, defeating from
+inside the product the exact plant the register set against `W429`.**
+⛔ **The row orders that MEASURED FIRST and assumed in neither direction.**
+
+⭐ **Measured for the row: `grep -rn keybinding src/studyforge/` returns
+NOTHING.** The framework writes settings and never a keybinding, so `Ctrl+P`,
+`Ctrl+Shift+P` and `Ctrl+,` are all live inside the frame. ⛔ **Hiding a
+SURFACE does not disable a COMMAND** — `W432` closes panels, and a closed
+Explorer is still one `Ctrl+P` from being irrelevant.
+
+⚠️ **`W433` DEPENDS ON `W432`** — same surface, same office — so it is minted
+here and dispatched when `W432` lands, rather than built on a lockdown that
+never runs.
+
+### ⚠️ In flight
+
+`W431` → Developer 2 (maximise). `W432` → Developer 1 (the lockdown that never
+activates). `AX-02` → Developer 4, `AX-04` → Developer 5, `AX-06` → Developer 6
+— ⭐ **step 10.2's remaining three, dispatched from this round.**
+`W433` → queued behind `W432`.
