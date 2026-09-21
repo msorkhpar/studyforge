@@ -8,7 +8,13 @@ from __future__ import annotations
 
 import pytest
 
-from studyforge.exercise import EXERCISE_KEYS, ExerciseError, from_document, to_document
+from studyforge.exercise import (
+    EXERCISE_KEYS,
+    ExerciseError,
+    Origin,
+    from_document,
+    to_document,
+)
 from studyforge.exercise.quiz import (
     QUESTIONS,
     QUIZ_KEYS,
@@ -63,8 +69,16 @@ def test_a_quiz_that_omits_its_provenance_is_written_back_carrying_it():
 
 
 def test_a_records_own_origin_is_the_one_key_a_quiz_may_omit():
-    assert "origin" not in to_document(from_document(record(), WHERE))
-    assert to_document(from_document(record(origin=PAGE), WHERE))["origin"] == PAGE
+    # ⛔ Read through the RECORD and through whole-document comparison, never by
+    # subscripting that key: `W109` holds `origin` to ONE reader across `src/`
+    # and `tests/`, and a test that reached for it would be a second one.
+    bare = record(provenance=QUIZ_PROVENANCE, trust=QUIZ_TRUST)
+    assert from_document(bare, WHERE).origin is None
+    assert to_document(from_document(bare, WHERE)) == bare, "a key nobody wrote was written"
+    carried = {**bare, "origin": PAGE}
+    exercise = from_document(carried, WHERE)
+    assert exercise.origin == Origin(PAGE, None)
+    assert to_document(exercise) == carried, "the record's own origin did not survive"
 
 
 # --------------------------------------------------------------------------
