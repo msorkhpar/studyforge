@@ -26,13 +26,13 @@ from studyforge.exercise.gates.code import CODE
 from studyforge.exercise.gates.quiz import (
     JUDGED,
     MECHANICAL,
-    QUESTION_ROLE,
-    QUIZ,
     Q1,
     Q2,
     Q3,
     Q4,
     Q5,
+    QUESTION_ROLE,
+    QUIZ,
     cited_role,
     verdict,
 )

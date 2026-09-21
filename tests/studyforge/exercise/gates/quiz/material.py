@@ -37,11 +37,11 @@ import dataclasses
 from studyforge.exercise import Exercise, of, origin_in
 from studyforge.exercise.gates import digest_of_bytes
 from studyforge.exercise.gates.quiz import (
-    Judgement,
     Q1,
     Q2,
     Q3,
     WHOLE_QUESTION,
+    Judgement,
     question_digest,
 )
 from studyforge.exercise.quiz import Option, Question
@@ -93,8 +93,7 @@ def questions_document() -> list[dict]:
                     "id": "b",
                     "text": "What the body means, field by field",
                     "correct": False,
-                    "says": "The page says the header states nothing about what the "
-                    "body means.",
+                    "says": "The page says the header states nothing about what the body means.",
                 },
                 {
                     "id": "c",
@@ -120,8 +119,7 @@ def questions_document() -> list[dict]:
                     "id": "b",
                     "text": "It parses an older writer's message wrongly",
                     "correct": True,
-                    "says": "The page says exactly this: it still parses, and parses "
-                    "wrongly.",
+                    "says": "The page says exactly this: it still parses, and parses wrongly.",
                 },
             ],
             "origin": {"path": PAGE_PATH, "section": PAGE_SECTION},

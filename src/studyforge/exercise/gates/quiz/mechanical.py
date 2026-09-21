@@ -68,7 +68,7 @@ from collections.abc import Mapping
 from studyforge.describe import describe
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.gates.digests import Cited
-from studyforge.exercise.gates.quiz.family import QUESTION_ROLE, Q4, Q5, cited_role, verdict
+from studyforge.exercise.gates.quiz.family import Q4, Q5, QUESTION_ROLE, cited_role, verdict
 from studyforge.exercise.gates.record import Verdict
 from studyforge.exercise.quiz import (
     KEYED_OPTIONS,
@@ -131,8 +131,7 @@ def origin_still_resolves(
             Q5,
             held=False,
             says=f"{len(findings)} of this quiz's {len(questions)} questions no longer "
-            f"resolve to the passage of the source they were written from: "
-            + "; ".join(findings),
+            f"resolve to the passage of the source they were written from: " + "; ".join(findings),
         )
     return verdict(
         Q5,
@@ -180,7 +179,7 @@ def cited_for(
 
 
 def _q4_findings(question: Question) -> list[str]:
-    """What is wrong with this question's options — nothing, or one sentence per defect."""
+    """Return what is wrong with this question's options — nothing, or one sentence per defect."""
     named = f"the question {question.stem!r}"
     findings: list[str] = []
     if len(question.options) < MINIMUM_OPTIONS:

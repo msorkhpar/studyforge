@@ -183,9 +183,7 @@ def test_a_hand_built_exercise_claiming_authoritative_is_refused_by_the_suite():
     # ⛔ Height 2 — the dataclass, which is frozen and NOT validated. This is
     # the path a gate suite is actually reached by at authoring time, and it
     # is the one `of` cannot close.
-    claimed = dataclasses.replace(
-        material.exercise(), provenance="bundled", trust="authoritative"
-    )
+    claimed = dataclasses.replace(material.exercise(), provenance="bundled", trust="authoritative")
     # ⭐ THE PLANT, OBSERVED: the value really is on the exercise handed over.
     print("claimed:", claimed.provenance, claimed.trust, claimed.authoritative)
     assert claimed.authoritative is True
@@ -215,9 +213,7 @@ def test_every_widening_of_the_pair_is_refused_and_not_only_authoritative():
         for trust in (*TRUST, None):
             if (provenance, trust) == (QUIZ_PROVENANCE, QUIZ_TRUST):
                 continue
-            claimed = dataclasses.replace(
-                material.exercise(), provenance=provenance, trust=trust
-            )
+            claimed = dataclasses.replace(material.exercise(), provenance=provenance, trust=trust)
             with pytest.raises(ExerciseError, match="source's own grader"):
                 require_advisory(claimed, WHERE)
 

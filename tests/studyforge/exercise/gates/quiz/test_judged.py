@@ -20,12 +20,12 @@ import pytest
 from studyforge.exercise import ExerciseError
 from studyforge.exercise.gates.quiz import (
     JUDGED_FIELDS,
-    Judgement,
     Q1,
     Q2,
     Q3,
     Q4,
     WHOLE_QUESTION,
+    Judgement,
     judged_gate,
     question_digest,
     require_judgements,

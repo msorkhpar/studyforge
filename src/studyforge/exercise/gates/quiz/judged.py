@@ -201,7 +201,7 @@ def judged_gate(
 
 
 def _owed(gate: str, questions: tuple[Question, ...]) -> tuple[tuple[Question, Option | None], ...]:
-    """What this gate owes a judgement for — ⛔ per wrong option for `Q3`, per question else."""
+    """Return what this gate owes: one judgement per wrong option for `Q3`, else per question."""
     if gate == Q3:
         return tuple(
             (question, option)
@@ -213,7 +213,7 @@ def _owed(gate: str, questions: tuple[Question, ...]) -> tuple[tuple[Question, O
 
 
 def _key(pair: tuple[Question, Option | None]) -> tuple[str, str]:
-    """The `(question, option)` key a judgement for this pair is filed under."""
+    """Return the `(question, option)` key a judgement for this pair is filed under."""
     question, option = pair
     return (question.id, WHOLE_QUESTION if option is None else option.id)
 
@@ -223,7 +223,7 @@ def _findings(
     pair: tuple[Question, Option | None],
     found: dict[tuple[str, str], Judgement],
 ) -> list[str]:
-    """What is wrong with this pair's judgement — nothing, or exactly one sentence."""
+    """Return what is wrong with this pair's judgement — nothing, or exactly one sentence."""
     question, option = pair
     named = _names(question, option)
     entry = found.get(_key(pair))
