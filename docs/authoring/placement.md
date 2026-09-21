@@ -121,7 +121,10 @@ Four things follow, all of them intended:
 - **A moved page still identifies itself correctly** — it still appears in the
   contents and still resolves as the unit it is.
 - **A stale cache is detectable** rather than silently wrong. `site.json` is a
-  cache of the scan, never the authority.
+  cache of the scan, never the authority — which is also why it is the one
+  generated file your corpus does **not** commit: nothing reads it back, so a
+  clone gains nothing by carrying it, and the ignore rule covering it is
+  written for you inside `.studyforge/`, never in your root ignore file.
 - **Two corpora with different profiles are served by one server.**
 
 **One thing does not survive a move, and it is not a defect.** A page's
@@ -147,9 +150,11 @@ It reads the manifest alone — nothing is generated — and prints:
 
 - every path that will be **created**, with what it is;
 - every existing file that will be **edited**, and the declared reason;
-- the **ignore lines** the media policy requires, each with the file inside the
-  generated root that holds it — none while media is committed, because pages
-  and media are what a clone reads;
+- the **ignore lines** your corpus requires, each with the file inside the
+  generated root that holds it. With media committed the only rules are the
+  ones covering **this framework's own discovery cache**, which `studyforge
+  serve` writes into your repository and nothing ever reads back — you do not
+  add those by hand, and a corpus that is served stays clean;
 - the **media policy** in force and the limits it will stop at;
 - a final `plan:` line, which counts each kind of line above it.
 

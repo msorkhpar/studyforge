@@ -15,7 +15,11 @@ import pytest
 from studyforge.address import Address
 from studyforge.corpus.manifest import PLACEMENT_PROFILES
 from studyforge.corpus.placement import (
+    CACHE_IGNORE_LINES,
+    GENERATED_IGNORE_HOME,
     GENERATED_ROOT,
+    SELF_IGNORE_LINE,
+    SITE_CACHE_FILENAME,
     ContainerLocations,
     PlacementError,
     Profile,
@@ -220,18 +224,29 @@ def test_an_origin_that_escapes_the_source_root_is_refused_without_being_quoted(
 # --- the ignore file and the committed output (Ruling 91, W242) -------------
 
 #: Paths no generated rule may ignore, at the root and below it: pages, the root
-#: index, the bundle, the discovery cache, a JSON document and the archive.
+#: index, the bundle, a JSON document and the archive.
 #: ⛔ ISO-05's clause and §5's reading floor, as data a git answer is asked about.
+#: ⚠️ **The discovery cache was on this list until `W425` and is now on
+#: `ALWAYS_IGNORED` instead**, because nothing reads it: `assemble` scans on
+#: every call and returns the scan, so a clone carrying the cache gains
+#: nothing, while every reader who serves the corpus gets a modified file.
 NEVER_IGNORED = (
     "index.html",
     "a.unit.html",
     "d/e/a.unit.html",
     "d/a.section.html",
-    f"{GENERATED_ROOT}/site.json",
     f"{GENERATED_ROOT}/assets/page.css",
     f"{GENERATED_ROOT}/d/units/unit-01/a.unit.html",
     "d/x.json",
     "archive/d/container.json",
+)
+
+#: ⛔ `W425`: what every generated ignore file covers, whatever the media
+#: policy says — the cache this framework writes into a corpus by serving it,
+#: and the name it is staged under.
+ALWAYS_IGNORED = (
+    f"{GENERATED_ROOT}/{SITE_CACHE_FILENAME}",
+    f"{GENERATED_ROOT}/{SITE_CACHE_FILENAME}.writing",
 )
 
 
@@ -255,11 +270,44 @@ def test_the_base_profile_refuses_to_guess(question):
 
 
 @pytest.mark.parametrize("name", registered())
-def test_with_media_committed_no_profile_ignores_anything(name):
-    # ⛔ W242: pages, the root index, the bundle and the cache are what a clone
-    # reads, so the only generated rules are the media policy's.
+def test_with_media_committed_the_only_rules_are_the_frameworks_own_caches(name):
+    # ⛔ W242 still: pages, the root index and the bundle are what a clone
+    # reads, so no rule about the CORPUS is written when media is committed.
+    # ⭐ W425: the framework's own cache is the exception, and the file that
+    # carries nothing else hides itself, because it is this machine's own.
     assert profile_for(name).ignore_lines(media=False) == ()
-    assert profile_for(name).ignore_file(media=False) is None
+    wanted = profile_for(name).ignore_file(media=False)
+    assert wanted.home == GENERATED_IGNORE_HOME
+    assert wanted.lines == (*CACHE_IGNORE_LINES, SELF_IGNORE_LINE)
+
+
+@pytest.mark.parametrize("name", registered())
+def test_a_file_that_also_carries_the_media_policy_does_not_hide_itself(name):
+    # ⛔ W425's second half, and it is the half that is easy to get wrong: a
+    # clone has to READ the media rules, so that file is committed — while a
+    # file holding only machine-local rules must never be. Asked of every
+    # profile that has a home for media rules at all.
+    if profile_for(name).ignore_home() is None:
+        pytest.skip(f"{name} has no home for media rules, which its own test covers")
+    wanted = profile_for(name).ignore_file(media=True)
+    assert wanted.lines[: len(CACHE_IGNORE_LINES)] == CACHE_IGNORE_LINES
+    assert SELF_IGNORE_LINE not in wanted.lines
+
+
+@pytest.mark.parametrize("name", registered())
+def test_every_profiles_ignore_file_covers_the_cache_this_framework_writes(name, tmp_path):
+    # ⭐ W425, asked of git rather than of a reviewer, and in both media
+    # policies: a reader who serves a corpus must not have to add a line.
+    for media in (False, True):
+        if media and profile_for(name).ignore_home() is None:
+            continue
+        wanted = profile_for(name).ignore_file(media=media)
+        repository = init_repository(tmp_path / f"{name}-{media}")
+        home = repository / wanted.home
+        home.parent.mkdir(parents=True, exist_ok=True)
+        home.write_text(wanted.text(), encoding="utf-8")
+        missed = [path for path in ALWAYS_IGNORED if not is_ignored(path, cwd=repository)]
+        assert missed == [], f"{name} with media={media} leaves {missed} unignored"
 
 
 def test_an_ignore_home_is_inside_the_generated_root_and_never_the_repository_root():

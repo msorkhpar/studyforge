@@ -351,19 +351,21 @@ def _carried(draft: object, kept: Sequence[Mapping[str, str]]) -> object:
 
 
 def _ignore_file(manifest: Manifest) -> list[Written]:
-    """Return the media policy's ignore file, inside the generated root, or nothing.
+    """Return the ignore file inside the generated root: the framework's caches, and the policy's.
 
-    ⛔ **Asked of placement, never the root ignore file** (R3, `W242`). With
-    media committed there is no file at all. A placement with no home for the
-    rules the policy requires is refused here, before anything is written.
+    ⛔ **Asked of placement, never the root ignore file** (R3, `W242`). ⭐ There
+    is always one now (`W425`): with media committed it carries only the rules
+    covering the discovery cache this framework writes into every corpus it
+    serves, which is the one thing a second source would otherwise have to
+    retype (R19). A placement with no home for the rules the media policy
+    requires is refused here, before anything is written.
     """
     try:
         wanted = profile_for(manifest.placement).ignore_file(media=not manifest.media.commits)
     except PlacementError as error:
         raise OnboardingRefused(str(error)) from None
-    if wanted is None:
-        return []
-    return [_own(wanted.home.as_posix(), wanted.text(), "the media policy's ignore rules (R3)")]
+    why = "the framework's own caches, and the media policy's rules (R3)"
+    return [_own(wanted.home.as_posix(), wanted.text(), why)]
 
 
 def _pin_files(commit: str, skills: Sequence[str], framework: str) -> list[Written]:

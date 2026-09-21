@@ -26,6 +26,7 @@ from pathlib import Path, PurePosixPath
 
 import pytest
 
+from studyforge.corpus.placement import GENERATED_IGNORE_HOME, SITE_CACHE_FILENAME
 from studyforge.skills.adapter.scaffold import IGNORE_FILE, bytecode_ignore
 from studyforge.skills.onboarding import record
 from studyforge.skills.onboarding.nondestructive import EDITS_TEST
@@ -62,7 +63,16 @@ def _bytecode(paths: list[str]) -> list[str]:
 
 
 def _ignores(made) -> list[str]:
-    return [where for where in made.paths if PurePosixPath(where).name == IGNORE_FILE]
+    """Every ignore file THIS row is about. ⛔ Not the generated root's.
+
+    ⚠️ `W425` put a second ignore file in a corpus, at `GENERATED_IGNORE_HOME`,
+    written for a different reason by a different writer — it covers the
+    discovery cache `studyforge serve` leaves behind. Counting it here would
+    make this row's population wrong in both directions.
+    """
+    home = GENERATED_IGNORE_HOME.as_posix()
+    named = [where for where in made.paths if PurePosixPath(where).name == IGNORE_FILE]
+    return [where for where in named if where != home]
 
 
 # --------------------------------------------------------------------------
@@ -88,8 +98,13 @@ def test_it_is_a_new_file_and_never_the_root_ignore_file(tmp_path):
 
     assert not (root / IGNORE_FILE).exists()
     assert IGNORE_FILE not in made.paths
-    assert not (root / ".studyforge" / IGNORE_FILE).exists()
     assert not (root / "src" / IGNORE_FILE).exists()
+    # ⚠️ The generated root DOES carry one since `W425`, for the discovery
+    # cache and not for bytecode — so it is checked by what it says, not by
+    # being absent, and this row's text is not in it.
+    generated = (root / GENERATED_IGNORE_HOME).read_text(encoding="utf-8")
+    assert SITE_CACHE_FILENAME in generated.splitlines()
+    assert generated != bytecode_ignore()
 
 
 # --------------------------------------------------------------------------
@@ -137,16 +152,23 @@ def test_the_ignore_files_ignore_nothing_a_person_wrote(tmp_path):
     root, made = _first_run(tmp_path)
     (root / "tests/helper.py").write_text("HELPER = 1\n", encoding="utf-8")
     (root / "ingest/NOTES.md").write_text("# notes\n", encoding="utf-8")
+    # ⛔ `W425`'s file is left out and asked about separately below: it is the
+    # framework's own, it hides itself on purpose, and nobody wrote it.
     written = [
         p.relative_to(root).as_posix()
         for p in root.rglob("*")
         if p.is_file() and not {".git", ".pytest_cache", "__pycache__"} & set(p.parts)
     ]
+    written = [where for where in written if where != GENERATED_IGNORE_HOME.as_posix()]
     assert made.hand_written[0] in written and "src/01.md" in written
 
     asked = _git(root, "check-ignore", "--stdin", stdin="\n".join(written))
 
     assert asked.returncode == 1, f"ignored: {asked.stdout.split()}"
+    # ⭐ The control, and the other direction: the one file left out above IS
+    # ignored, so the clean answer is a measurement and not an empty question.
+    covered = _git(root, "check-ignore", "-q", GENERATED_IGNORE_HOME.as_posix())
+    assert covered.returncode == 0
 
 
 # --------------------------------------------------------------------------

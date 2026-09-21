@@ -258,10 +258,20 @@ def test_the_pin_is_refused_before_anything_is_planned():
 
 
 @pytest.mark.parametrize("placement", ["tree", "sibling"])
-def test_with_media_committed_onboarding_writes_no_ignore_file(placement):
+def test_with_media_committed_the_one_ignore_file_is_the_frameworks_own(placement, tmp_path):
+    # ⛔ `W242` still holds for the CORPUS: no page, no clip and no index is
+    # ignored when media is committed. ⭐ `W425` is the exception and it is not
+    # the corpus's — the discovery cache `studyforge serve` writes, and the
+    # file hides itself because a clone has no use for either.
     made = _made(placement=placement)
+    root = corpora.material(init_repository(tmp_path / "corpus"))
+    made.write(root)
 
-    assert _media_ignores(made) == []
+    assert _media_ignores(made) == [".studyforge/.gitignore"]
+    assert not (root / ".gitignore").exists()
+    assert is_ignored(".studyforge/site.json", cwd=root)
+    assert is_ignored(".studyforge/.gitignore", cwd=root)
+    assert not is_ignored(".studyforge/course/units/unit-01/audio/c.mp3", cwd=root)
 
 
 def test_media_that_is_not_committed_is_ignored_from_inside_the_generated_root(tmp_path):
@@ -272,8 +282,11 @@ def test_media_that_is_not_committed_is_ignored_from_inside_the_generated_root(t
     assert _media_ignores(made) == [".studyforge/.gitignore"]
     assert not (root / ".gitignore").exists()
     assert is_ignored(".studyforge/course/units/unit-01/audio/c.mp3", cwd=root)
-    for kept in (".studyforge/course/units/unit-01/a.unit.html", ".studyforge/site.json"):
-        assert not is_ignored(kept, cwd=root), kept
+    # ⭐ `W425`: the cache is covered here too, and this file does NOT hide
+    # itself — a clone has to read the media rules it also carries.
+    assert is_ignored(".studyforge/site.json", cwd=root)
+    assert not is_ignored(".studyforge/.gitignore", cwd=root)
+    assert not is_ignored(".studyforge/course/units/unit-01/a.unit.html", cwd=root)
 
 
 def test_media_that_is_not_committed_under_sibling_is_refused_before_anything_is_written():

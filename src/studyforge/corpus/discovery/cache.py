@@ -65,7 +65,15 @@ from pathlib import Path
 from studyforge.archive.scrub import assert_clean
 from studyforge.corpus.discovery.freshness import scan_sha256
 from studyforge.corpus.discovery.site import Site
-from studyforge.corpus.placement import Profile
+from studyforge.corpus.placement import (
+    GENERATED_IGNORE_HOME,
+    IGNORE_FILENAME,
+    SITE_CACHE_FILENAME,
+    STAGING_SUFFIX,
+    IgnoreFile,
+    Profile,
+    cache_ignore_lines,
+)
 from studyforge.describe import describe
 from studyforge.version import is_supported
 
@@ -82,7 +90,9 @@ SITE_KEYS = ("site_api", "scan_sha256", "artifacts", "unidentified")
 #: What is appended to a cache path while it is being written. ⚠️ A torn cache
 #: is a cache that reads as absent, which is a rebuild; a cache half-overwritten
 #: in place is a cache that reads as *present and wrong*.
-WRITING_SUFFIX = ".writing"
+#: ⛔ `placement`'s, never a second literal: the ignore rule written beside the
+#: cache has to cover exactly this name (`W425`).
+WRITING_SUFFIX = STAGING_SUFFIX
 
 
 @dataclass(frozen=True, slots=True)
@@ -146,22 +156,115 @@ def render(site: Site) -> str:
     return json.dumps(document(site), indent=2, ensure_ascii=False, sort_keys=False) + "\n"
 
 
-def write(path: Path | str, site: Site) -> None:
+def write(path: Path | str, site: Site) -> tuple[str, ...]:
     """Write the cache, creating its directory. ⛔ The one writer of `site.json`.
 
     ⚠️ **Staged beside the target and moved into place**, the discipline §6
     states for a generator. A cache half-overwritten in place reads as present
     and wrong, which is precisely the state this whole contract exists to make
     impossible; a torn `*.writing` file reads as absent, which is a rebuild.
+
+    ⭐ **Returns what the ignore file beside the cache had to say** — the lines
+    R6 asks a caller to report (`W425`). The ignore file is ensured *here*,
+    where the cache is written, because that is the one moment that cannot be
+    skipped: a corpus onboarded before this rule existed is covered the first
+    time somebody serves it, without anything being regenerated.
     """
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
+    said = ensure_ignored(path)
     staged = path.with_name(path.name + WRITING_SUFFIX)
     try:
         staged.write_text(render(site), encoding="utf-8")
         os.replace(staged, path)
     finally:
         staged.unlink(missing_ok=True)
+    return said
+
+
+def ensure_ignored(path: Path | str) -> tuple[str, ...]:
+    """Make sure the cache at `path` is ignored where it sits, and say what was found.
+
+    ⭐ **The same judgement `progress.store` makes one directory over**: a
+    record this machine keeps for itself never enters a commit, and the
+    mechanism R3 leaves is an ignore file *inside* the generated directory,
+    never the repository's root one.
+
+    ⛔ **The shapes differ, and so does the text.** `progress/` is a directory
+    this framework owns whole, so `*` is right there. `.studyforge/` is
+    **tracked** and carries the asset bundle a clone must read, so the rules
+    here name the cache and its staging file — and the file, when it carries
+    nothing else, names itself, because a file holding only machine-local
+    rules is itself machine-local.
+
+    ⛔ **An ignore file already there is never rewritten.** It is not this
+    writer's to change: it may carry the corpus's own media policy, which a
+    clone has to read. One that does not cover the cache is **reported** and
+    left exactly as it is — a corpus generated before this rule is not
+    silently repaired, it is regenerated.
+
+    ⚠️ **Written in one call rather than staged and renamed.** A staged
+    `.gitignore.writing` is a file nothing ignores until the rename lands, so
+    the discipline that protects the cache would dirty the corpus it is
+    protecting; the file is ~150 bytes and a torn one is reported on the next
+    serve rather than rewritten.
+    """
+    ignore = Path(path).parent / IGNORE_FILENAME
+    try:
+        existing = ignore.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        return _write_ignore(ignore)
+    except OSError, UnicodeDecodeError:
+        return (
+            f"{IGNORE_FILENAME} beside the discovery cache cannot be read, so whether "
+            f"{SITE_CACHE_FILENAME} is ignored could not be judged; it was not rewritten",
+        )
+    if _covers_cache(existing):
+        return ()
+    return (
+        f"{IGNORE_FILENAME} beside the discovery cache does not ignore "
+        f"{SITE_CACHE_FILENAME}, and it is not this writer's to rewrite; regenerate the "
+        f"corpus so its generated ignore file carries the rule (R19)",
+    )
+
+
+def ignore_text() -> str:
+    """Return the file `ensure_ignored` writes when there is none. ⛔ One spelling.
+
+    ⭐ Composed from `placement`'s own `IgnoreFile`, so the file this writer
+    leaves behind and the file a corpus is generated with are the same bytes
+    for a corpus whose media is committed — and a later regeneration writes
+    over it with a superset rather than fighting it.
+    """
+    return IgnoreFile(home=GENERATED_IGNORE_HOME, lines=cache_ignore_lines()).text()
+
+
+def _write_ignore(ignore: Path) -> tuple[str, ...]:
+    """Write the ignore file, reporting either what was written or why it was not."""
+    try:
+        ignore.write_text(ignore_text(), encoding="utf-8")
+    except OSError as fault:
+        # ⛔ `strerror`, never the exception: it renders with the absolute path (R7).
+        return (f"{IGNORE_FILENAME} could not be written beside the cache: {fault.strerror}",)
+    return (
+        f"{IGNORE_FILENAME} was written beside the discovery cache, so neither it nor "
+        f"{SITE_CACHE_FILENAME} ever enters a commit",
+    )
+
+
+def _covers_cache(text: str) -> bool:
+    """Whether an ignore file's text already ignores the cache where it sits.
+
+    ⚠️ **Read as git reads it, and no further.** A bare `site.json` line and an
+    anchored `/site.json` both ignore the file beside them; `*` ignores the
+    whole directory, which a caller may not want here but which does cover the
+    cache. ⛔ A negation anywhere means the file is making a decision this
+    writer cannot read, so it is treated as not covering.
+    """
+    lines = [line.strip() for line in text.splitlines()]
+    if any(line.startswith("!") for line in lines):
+        return False
+    return any(line in {SITE_CACHE_FILENAME, f"/{SITE_CACHE_FILENAME}", "*"} for line in lines)
 
 
 def read(path: Path | str, where: str | None = None) -> Cached | None:

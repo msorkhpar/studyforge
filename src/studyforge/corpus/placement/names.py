@@ -67,6 +67,14 @@ SITE_CACHE_FILENAME = "site.json"
 #: directory this framework generates, never at the repository root (R3).
 IGNORE_FILENAME = ".gitignore"
 
+#: ⛔ **What a file in the generated root is called while it is being written,
+#: and its ONE spelling (`W425`).** ⚠️ It is not decoration: `discovery.cache`
+#: stages the cache under this name and the ignore rules written beside the
+#: cache have to cover the same name, or a crash mid-write leaves a corpus
+#: dirty on a file nothing ignores. Minted here so the writer and the rule
+#: cannot drift.
+STAGING_SUFFIX = ".writing"
+
 #: Directory names that appear in generated hrefs, in the reader's own tree and
 #: in a scan. ⛔ Named constants because those three must agree, and because
 #: eight modules each carrying their own `"audio"` is how the extraction source

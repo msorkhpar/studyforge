@@ -48,9 +48,12 @@ edit pom.xml  insert-line after '<modules>'
 edit pom.xml  adds '  <module>practice</module>'
 edit pom.xml  why Maven compiles only what sits on a source root (spec §7).
 edit pom.xml  undo remove-line '  <module>practice</module>' from pom.xml
+ignore site.json  in .studyforge/.gitignore
+ignore site.json.writing  in .studyforge/.gitignore
+ignore .gitignore  in .studyforge/.gitignore
 media commit 'auto'  generated media is committed under this policy
 media units 6  each may get one directory per kind, made only when a build copies a file into it: audio, images, video, practice, attachments
 media limit max_total_bytes 5000000000
 media limit max_file_bytes 104857600
 media footprint  measured — 0 byte(s) in 0 file(s) on disk under the declared units' media directories and wherever the narration record locates a clip; nothing is there yet — `studyforge narrate` writes the clips there, and --bytes-per-unit projects a footprint before it does
-plan: 11 path(s) to create, 0 to replace, 1 to keep, 30 claimed, 1 expected from another command, 0 superseded clip(s) no build copies, 1 file(s) to edit, 0 ignore line(s), 0 refusal(s)
+plan: 11 path(s) to create, 0 to replace, 1 to keep, 30 claimed, 1 expected from another command, 0 superseded clip(s) no build copies, 1 file(s) to edit, 3 ignore line(s), 0 refusal(s)
