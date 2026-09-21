@@ -81,6 +81,21 @@ ORIGIN = {"path": "docs/02-parsing.md", "section": "Parsing the MTI"}
 #: The whole `AX-00` record: graded, authored, with a breakdown and an origin.
 AUTHORED = {**UNGRADED, **GRADER, "cases": CASES, "report": REPORT, "origin": ORIGIN}
 
+#: ⭐ The least a quiz may carry (`AX-05`). Named here so the seam test below
+#: reads one shape rather than re-deriving it; the questions' own Acceptance is
+#: in `tests/studyforge/exercise/quiz/`.
+QUESTIONS = [
+    {
+        "id": "q-1",
+        "stem": "What does the MTI name?",
+        "options": [
+            {"id": "a", "text": "The message type", "correct": True, "says": "The page says so."},
+            {"id": "b", "text": "The bitmap", "correct": False, "says": "That is the next field."},
+        ],
+        "origin": ORIGIN,
+    }
+]
+
 
 def record(**changes):
     """The authored record with `changes` applied; a `None` value removes a key."""
@@ -120,20 +135,27 @@ def test_the_four_keys_round_trip_through_the_record():
     assert exercise.origin == Origin(ORIGIN["path"], ORIGIN["section"])
     again = to_document(exercise)
     assert again == AUTHORED, "a written record is not the one that was read"
-    # ⚠️ Every key but `kind`, which this record does not carry: it is `code`,
-    # and the default is not written out. The other three are in the record's
-    # own order, appended after the six `W357` left.
-    written = tuple(key for key in EXERCISE_KEYS if key != "kind")
+    # ⚠️ Every key but `kind`, which this record does not carry — it is `code`,
+    # and the default is not written out — and `questions`, which only a QUIZ
+    # carries (`AX-05`). The rest are in the record's own order, appended after
+    # the six `W357` left.
+    written = tuple(key for key in EXERCISE_KEYS if key not in ("kind", "questions"))
     assert tuple(again) == written, "the authored keys are not in the record's order"
     assert from_document(again, WHERE) == exercise
 
 
-def test_a_quiz_record_round_trips_carrying_its_kind():
-    # ⭐ The token is `AX-00`'s and the shape is `AX-05`'s. What lands here is
-    # that a record may SAY it is a quiz and be read back saying it.
-    exercise = from_document(record(kind=QUIZ), WHERE)
-    assert exercise.kind == QUIZ
-    assert to_document(exercise)["kind"] == QUIZ
+def test_the_quiz_token_now_selects_a_shape_and_not_a_label():
+    # ⭐ RESTATED by `AX-05`, and strictly stronger. `AX-00` asserted here that
+    # a record may SAY it is a quiz; a quiz now has a shape, so the same
+    # document — a workspace wearing the token — is refused, and the token
+    # reads back off the record `AX-05` gave it.
+    # ⚠️ The quiz's own round trip lives in `tests/studyforge/exercise/quiz/`,
+    # with the rest of its Acceptance; what is asserted here is the seam.
+    message = refuse(from_document, record(kind=QUIZ), WHERE)
+    assert "main_path" in message, "a workspace on a quiz was not named"
+    quiz = from_document({"kind": QUIZ, "questions": QUESTIONS}, WHERE)
+    assert quiz.kind == QUIZ
+    assert to_document(quiz)["kind"] == QUIZ
 
 
 def test_an_origin_may_be_a_whole_file_and_keeps_the_shape_it_was_written_in():
@@ -161,7 +183,9 @@ def test_the_authored_keys_are_appended_never_inserted():
     # ⛔ R10: a record that gains a `kind` must not reorder what was already on
     # disk, so the four keys sit after the six `W357` left, in this order.
     assert EXERCISE_KEYS[-len(AUTHORED_KEYS) :] == AUTHORED_KEYS
-    assert AUTHORED_KEYS == ("kind", *BREAKDOWN_KEYS, "origin")
+    # ⭐ Restated by `AX-05`, which appended its own key after the four rather
+    # than inserting one among them.
+    assert AUTHORED_KEYS == ("kind", *BREAKDOWN_KEYS, "origin", "questions")
 
 
 # --------------------------------------------------------------------------

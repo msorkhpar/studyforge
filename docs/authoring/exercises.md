@@ -71,8 +71,15 @@ the adapter writes it — because the adapter is the only thing that knows what
 your build command is or where a grader came from.
 
 **Every key the record defines is below, in the order it is written.** Most
-records carry the first six and nothing else; the last four arrive with an
+records carry the first six and nothing else; the last five arrive with an
 exercise somebody authored for this site.
+
+**This fence is the key list and not a record to copy.** Two of the keys in it
+are never written together with the rest: `"kind": "code"` is what a record
+with no `kind` already means, so the build leaves it out again, and `questions`
+belongs to a **quiz**, which carries none of the workspace keys above it and
+is shown here empty only so the list is complete. A quiz is written whole
+further down.
 
 ```json
 {
@@ -90,7 +97,8 @@ exercise somebody authored for this site.
        "says": "An empty name is refused."}
     ],
     "report": {"format": "junit", "path": "practice/basics-01/target/surefire-reports"},
-    "origin": {"path": "docs/01-getting-started.md", "section": "Greeting a caller"}
+    "origin": {"path": "docs/01-getting-started.md", "section": "Greeting a caller"},
+    "questions": []
   }
 }
 ```
@@ -108,7 +116,7 @@ came from — `bundled`, `generated` or `user` — and `trust` is either
 the other four are the grader**, and the grader is written whole or not at all
 (`trust` alone may be left out, and is then defaulted from `provenance`).
 
-### The last four: what an authored exercise says
+### The last five: what an authored exercise says
 
 **`kind` is `code` or `quiz`**, and `code` is what a record with no `kind`
 means. **Write it only where it is not `code`**: every record ever written is a
@@ -128,12 +136,74 @@ n/m*, so a map that names no ask describes a run nothing reports.
 **`origin` is the material the exercise was built from** — a path inside your
 source, or a region of one written `{"path": …, "section": …}`, where `section`
 is the exact text of a heading. **It is a fact about the material and not about
-a grader**, so it is the one of these four an *ungraded* record may carry.
+a grader**, so it is the one of these an *ungraded* record may carry.
+
+**`questions` is a quiz's, and only a quiz's.** Writing it on any other record
+is a refusal; see *A practice for material that is not code* below.
 
 **The breakdown is a report, never a second definition of a pass.** A practice
 completes when every case passes, exactly as before. The rules are §7's, in
 [*Exercises authored for every corpus*](../specs/2026-09-08-studyforge-v1-design.md#exercises-authored-for-every-corpus-w389),
 and this page does not restate them.
+
+### A practice for material that is not code
+
+**When your material admits no coding task, write a quiz.** Most material does
+not admit one — a history, a standard, a prose tutorial — and a quiz is how a
+page checks its reader anyway. **It carries `questions` in place of a
+workspace**, so it writes no `main_path`, no `run_command`, no `test_path` and
+no `test_command`, and those keys are refused on it:
+
+```json
+{
+  "exercise": {
+    "provenance": "generated",
+    "trust": "advisory",
+    "kind": "quiz",
+    "origin": "docs/01-getting-started.md",
+    "questions": [
+      {
+        "id": "q-1",
+        "stem": "What does a greeter return when it is given a name?",
+        "options": [
+          {"id": "a", "text": "A greeting addressed to that name", "correct": true,
+           "says": "The page's first example returns exactly that."},
+          {"id": "b", "text": "The name, unchanged", "correct": false,
+           "says": "That is the input; the page's example wraps it in a greeting."}
+        ],
+        "origin": {"path": "docs/01-getting-started.md", "section": "Greeting a caller"}
+      }
+    ]
+  }
+}
+```
+
+**A question is four fields.** `id`, a plain token the reader's own state is
+filed under; `stem`, what is asked; `options`, an ordered set of at least two;
+and `origin`, the passage of the page the question was written from — required
+here, unlike the record's own.
+
+**An option is four fields**, and the shape of the whole thing is the honesty
+rule: `id`, `text`, `correct`, and `says`, the one sentence the reader is shown
+for choosing it. **Exactly one option is keyed `correct`** — none is refused and
+two are refused — **the options are distinct once case and spacing are
+normalised**, and **every option carries its sentence**, so the reader is told
+why whichever way they went.
+
+**The key is in the document, and the site does not pretend otherwise.** An
+offline page cannot hide the answer it grades with, exactly as an offline
+workspace cannot hide its test file. The page shows the reader the answer once
+they have answered, and `correct` is written for every option, always.
+
+**A quiz is graded by the framework with no compiler, no container, no network
+and no model**, so the reading is the same over `file://` as it is from a
+server. **It completes only when every question is answered correctly**, and it
+produces no run: there is nothing to Run and nothing to Submit.
+
+**A quiz is always `generated` and `advisory`, and both may be left out.** Its
+honesty gates are judgements taken once when it was authored and cannot be
+re-run by whoever holds the corpus, so no quiz may claim to be your material's
+own grader — `bundled` and `authoritative` are refused on one.
 
 ### A file with no test
 

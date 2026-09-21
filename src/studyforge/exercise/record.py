@@ -73,6 +73,12 @@ carry it — `kind` included, because every record ever written is `code` and
 writing that token would re-render every archive document in existence. The
 argument is `cases`'s docstring, which owns it.
 
+## ⛔ A quiz carries `questions` in place of a workspace
+
+⭐ **`AX-05` adds the key and `exercise.quiz` owns every rule about it**, the
+same seam `cases` sits on. ⚠️ A quiz names no `test_path`, so no RUN completes
+it — spec §7 §7's requirement, which `quiz`'s own contract argues.
+
 ## ⛔ Unknown keys are refused
 
 ⭐ **Measured, 2026-09-09: before this, an archive document carrying an unknown
@@ -89,9 +95,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from studyforge.describe import describe_keys
+from studyforge.exercise import quiz
 from studyforge.exercise.cases import (
     BREAKDOWN_KEYS,
     DEFAULT_KIND,
+    QUIZ,
     Case,
     Origin,
     Report,
@@ -123,6 +131,7 @@ EXERCISE_KEYS = (
     "cases",
     "report",
     "origin",
+    quiz.QUESTIONS,
 )
 
 #: The keys every record carries: the reader's file, and how it runs. ⭐ Also
@@ -137,11 +146,11 @@ GRADER_KEYS = (GRADER_KEY, "test_command", "provenance", "trust")
 #: reason.
 DEFAULTED_KEYS = ("trust",)
 
-#: ⭐ The keys `AX-00` adds, in `EXERCISE_KEYS` order. ⛔ **Written only where
-#: the record carries them**, which is what keeps every document written before
-#: `M10` byte-identical through a round trip (R10). `BREAKDOWN_KEYS` — the two
-#: of these that are facts about a grader — is `cases`'s, and so is the reason.
-AUTHORED_KEYS = ("kind", *BREAKDOWN_KEYS, "origin")
+#: ⭐ The keys `AX-00` and `AX-05` add, in `EXERCISE_KEYS` order. ⛔ **Written
+#: only where the record carries them**, which is what keeps every document
+#: written before `M10` byte-identical through a round trip (R10).
+#: `BREAKDOWN_KEYS` is `cases`'s and `QUESTIONS` is `quiz`'s, with their reasons.
+AUTHORED_KEYS = ("kind", *BREAKDOWN_KEYS, "origin", quiz.QUESTIONS)
 
 
 @dataclass(frozen=True, slots=True)
@@ -153,14 +162,18 @@ class Exercise:
     it is frozen, not validated, so a caller that constructs one asks
     `from_document(to_document(...))` before believing it.
 
-    ⭐ **The four `AX-00` fields carry their defaults**, so every caller written
-    before `M10` constructs today's exercise by saying nothing: `kind` is
-    `code`, and a record built from no authored material carries none.
+    ⭐ **The `AX-00` and `AX-05` fields carry their defaults**, so every caller
+    written before `M10` constructs today's exercise by saying nothing: `kind`
+    is `code`, and a record built from no authored material carries none.
+
+    ⛔ **`main_path` and `run_command` are `None` for a QUIZ and nothing else**,
+    which carries `questions` in place of a workspace. ⚠️ A consumer reaching
+    for either asks `is_quiz`, as it asks `graded` before the grader four.
     """
 
-    main_path: str
+    main_path: str | None
     test_path: str | None
-    run_command: tuple[str, ...]
+    run_command: tuple[str, ...] | None
     test_command: tuple[str, ...] | None
     provenance: str | None
     trust: str | None
@@ -168,6 +181,7 @@ class Exercise:
     cases: tuple[Case, ...] | None = None
     report: Report | None = None
     origin: Origin | None = None
+    questions: tuple[quiz.Question, ...] | None = None
 
     @property
     def graded(self) -> bool:
@@ -183,6 +197,11 @@ class Exercise:
         — there is no run whose report could be folded.
         """
         return self.graded and self.cases is not None and self.report is not None
+
+    @property
+    def is_quiz(self) -> bool:
+        """Is this graded by its own key rather than by running anything? ⭐ Spec §7 §7."""
+        return self.kind == QUIZ
 
     @property
     def authoritative(self) -> bool:
@@ -218,8 +237,15 @@ def from_document(value: object, where: str) -> Exercise:
             f"{where}: 'exercise' must be a JSON object; the value is not reproduced here (R7)"
         )
     _require_known_keys(value, where)
+    kind = kind_of(value["kind"], where) if "kind" in value else DEFAULT_KIND
+    if kind == QUIZ:
+        # ⛔ Every rule a quiz obeys is `exercise.quiz`'s, R5's narrowing
+        # included; this branch chooses the shape and nothing else.
+        provenance, trust = quiz.require_quiz_shape(value, where)
+        return Exercise(None, None, None, None, provenance, trust, **_authored(value, QUIZ, where))
+    quiz.require_no_questions(value, where)
     _require_present(value, where)
-    authored = _authored(value, where)
+    authored = _authored(value, kind, where)
     main_path = require_path(value.get("main_path"), "main_path", where)
     run_command = require_command(value.get("run_command"), "run_command", where)
     if GRADER_KEY not in value:
@@ -256,7 +282,7 @@ def to_document(exercise: Exercise) -> dict:
     values = {
         "main_path": exercise.main_path,
         "test_path": exercise.test_path,
-        "run_command": list(exercise.run_command),
+        "run_command": list(exercise.run_command or ()),
         "test_command": list(exercise.test_command or ()),
         "provenance": exercise.provenance,
         "trust": exercise.trust,
@@ -264,12 +290,16 @@ def to_document(exercise: Exercise) -> dict:
         "cases": cases_document(exercise.cases or ()),
         "report": report_document(exercise.report) if exercise.report else None,
         "origin": origin_document(exercise.origin) if exercise.origin else None,
+        quiz.QUESTIONS: quiz.questions_document(exercise.questions or ()),
     }
     return {key: values[key] for key in _written_keys(exercise)}
 
 
 def _written_keys(exercise: Exercise) -> tuple[str, ...]:
     """Which keys this record writes — chosen by its shape, never by which values are `None`."""
+    if exercise.is_quiz:
+        carried = set(quiz.QUIZ_KEYS) - (set() if exercise.origin else {"origin"})
+        return tuple(key for key in EXERCISE_KEYS if key in carried)
     carried = set()
     if exercise.kind != DEFAULT_KIND:
         carried.add("kind")
@@ -336,16 +366,17 @@ def _require_whole_breakdown(value: dict, where: str) -> None:
         )
 
 
-def _authored(value: dict, where: str) -> dict:
-    """Read the four keys `AX-00` added, each only where the record writes it."""
+def _authored(value: dict, kind: str, where: str) -> dict:
+    """Read the keys appended after `W357`, each only where the record writes it."""
     # ⚠️ One display, and `origin_in` takes the whole record: `origin` is read
     # only where it is handed to its one reader (`W109`), so no site here reads
     # that key and decides something.
     return {
-        "kind": kind_of(value["kind"], where) if "kind" in value else DEFAULT_KIND,
+        "kind": kind,
         "cases": cases_of(value["cases"], where) if "cases" in value else None,
         "report": report_of(value["report"], where) if "report" in value else None,
         "origin": origin_in(value, where),
+        quiz.QUESTIONS: quiz.questions_in(value, where),
     }
 
 
