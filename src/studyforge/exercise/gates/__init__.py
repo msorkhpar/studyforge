@@ -43,6 +43,7 @@ container exists.
 | `runs` | what one run of the tests reported, and the `Attempt` seam |
 | `evidence` | every run a suite needs, derived from the exercise's own cases |
 | `code` | `G1`–`G5`, and the `code` family |
+| `quiz` | ⭐ a SUB-PACKAGE (`AX-06`): `Q1`–`Q5`, the `quiz` family, and its own contract |
 
 ## ⭐ THE SEAM — a second gate family shares this record and edits nothing here
 
@@ -141,6 +142,7 @@ from studyforge.exercise.gates.families import (
     register,
     registered,
 )
+from studyforge.exercise.gates.quiz import QUIZ
 from studyforge.exercise.gates.record import (
     RECORD_KEYS,
     VERDICT_KEYS,
@@ -188,6 +190,7 @@ __all__ = [
     "Input",
     "ORIGIN_ROLE",
     "PLANT",
+    "QUIZ",
     "RECORD_KEYS",
     "REFERENCE",
     "ROLE_PERMITTED",
