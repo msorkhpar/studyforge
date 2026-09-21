@@ -58,8 +58,9 @@ one does.**
 | **M7 step 7.3** | ✅ CLOSED — `TC-05` + `TC-06` | `4c8490b4` | [record](BOARD-ARCHIVE.md#po-round-128) |
 | **M7 step 7.4** | ✅ CLOSED — `SK-09` + `SF-24`, ⭐ **its one named gap ([`W416`](rows/W416.md)) FILLED at `7ce4fddd`** | `04b3e65e` | [record](BOARD-ARCHIVE.md#po-round-131) |
 | **M7 step 7.5** | ✅ CLOSED — `QA-02`, ⭐ **closing `W417` and `W419` too** | `d9cce6bc` | [record](BOARD-ARCHIVE.md#po-round-133) |
-| **M10** — every corpus has practices | ⏳ **OPEN — round 134.** ⭐ **A CORE IDEA of the project (user, 2026-09-19)**; step 10.2 next | — | [the open](BOARD-ARCHIVE.md#po-round-134) |
+| **M10** — every corpus has practices | ⏳ **OPEN — round 134.** ⭐ **A CORE IDEA of the project (user, 2026-09-19)**; step 10.3 building | — | [the open](BOARD-ARCHIVE.md#po-round-134) |
 | **M10 step 10.1** | ✅ CLOSED — `AX-00`, `AX-01`, `AX-05` | `9cd37ccd` | [record](BOARD-ARCHIVE.md#po-round-136) |
+| **M10 step 10.2** | ✅ CLOSED — `AX-02`, `AX-03`, `AX-04`, `AX-06` | `638ec209` | [record](BOARD-ARCHIVE.md#po-round-141) |
 | **M11** — it is release-ready | ⛔ **NOT STARTED — after `M10`** (user, 2026-09-18; ruled 2026-09-19) | — | [the plan](README.md) |
 | **M9** — the Java corpus re-validates | ⛔ **NOT STARTED, and it holds 21 of the 35 undelivered capabilities.** `Claude-senior-java-engineer` converted under §12's rules, with gate-clearing exercises, and the findings written down | — | [the plan](README.md) |
 
@@ -74,11 +75,9 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W431` | Developer 2 | `feat/W431-the-practice-maximises` @ `wt/dev2` | 0 @ `963db7b2` | `in-progress` — ⛔ **USER DIRECTION** |
-| `W432` | Developer 1 | `fix/W432-the-lockdown-actually-runs` @ `wt/dev1` | 0 @ `8a04dcc8` | `in-progress` — ⛔ **USER REPORTED TWICE** |
-| `AX-02` | Developer 4 | `feat/AX-02-submit-records-the-breakdown` @ `wt/dev4` | 0 @ `9ed320c9` | `in-progress` — `M10` step 10.2 |
-| `AX-04` | Developer 5 | `feat/AX-04-the-exercise-bundle` @ `wt/dev5` | 0 @ `9ed320c9` | `in-progress` — `M10` step 10.2 |
-| `AX-06` | Developer 6 | `feat/AX-06-the-quiz-authoring-gates` @ `wt/dev6` | 0 @ `9ed320c9` | `in-progress` — `M10` step 10.2 |
+| `W433` | Developer 1 | `fix/W433-the-practice-frame-is-confined` @ `wt/dev1` | 0 @ `638ec209` | `in-progress` — ⛔ **USER DIRECTION** |
+| `AX-07` | Developer 5 | `feat/AX-07-the-source-ledger` @ `wt/dev5` | 0 @ `638ec209` | `in-progress` — `M10` step 10.3 |
+| `AX-09` | Developer 2 | `feat/AX-09-the-panel-reads-the-breakdown` @ `wt/dev2` | 0 @ `638ec209` | `in-progress` — `M10` step 10.3 |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -615,9 +614,9 @@ else.**
 | W428 | Practices sit in their own container, so a reader leaves the topic page to practise it | framework agent | ✅ done — `cdaa71ea`, corpus `48aa3eb` | [`rows/W428.md`](rows/W428.md) |
 | W429 | The editor shows a folder, not the practice's file, and the workbench is wide open | framework agent | ✅ done — `1fc8af42` | [`rows/W429.md`](rows/W429.md) |
 | W430 | `frame-src` is correct for `EDITOR_TTL` seconds and `'none'` after, so the panel almost never frames | framework agent | ✅ done — `963db7b2`, corpus `27fd8a1` | [`rows/W430.md`](rows/W430.md) |
-| W431 | The practice panel cannot be maximised, so a reader writes code through a letterbox | framework agent | `in-progress` — ⛔ **USER DIRECTION 2026-09-21** | [`rows/W431.md`](rows/W431.md) |
-| W432 | The workbench lockdown is installed in the editor image and the extension host never activates it | framework agent | `in-progress` — ⛔ **USER REPORTED TWICE** | [`rows/W432.md`](rows/W432.md) |
-| W433 | A reader can open settings and the command palette inside a practice frame, and the read-only lock is workspace-scoped | framework agent | `todo` — ⛔ **USER DIRECTION 2026-09-21**; after `W432` | [`rows/W433.md`](rows/W433.md) |
+| W431 | The practice panel cannot be maximised, so a reader writes code through a letterbox | framework agent | ✅ done — `fe104365`, corpus `06df27f` | [`rows/W431.md`](rows/W431.md) |
+| W432 | The workbench lockdown is installed in the editor image and the extension host never activates it | framework agent | ✅ done — `5f62423b`, toolchain `be9b428` | [`rows/W432.md`](rows/W432.md) |
+| W433 | A reader can open settings and the command palette inside a practice frame, and the read-only lock is workspace-scoped | framework agent | `in-progress` — ⛔ **USER DIRECTION 2026-09-21** | [`rows/W433.md`](rows/W433.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
