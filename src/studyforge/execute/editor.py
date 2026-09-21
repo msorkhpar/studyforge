@@ -173,7 +173,7 @@ class Editor:
 class EditorProbe:
     """Answer where the editor is for one source root and one container name, or `None`.
 
-    ⭐ **Two readers, and only one of them may ask** (`W428`): `editor()` asks
+    ⭐ **Two readers, and only one of them may ask** (`W427`): `editor()` asks
     `docker` when its answer has expired, and `known()` reads what the last ask
     left without ever forking. ⛔ Anything on the path of an ordinary response
     uses `known()` — the serving process does not reach the Docker socket to
@@ -217,7 +217,7 @@ class EditorProbe:
     def known(self) -> Editor | None:
         """Where this editor is if it has ALREADY been asked about — asking nothing.
 
-        ⛔ **This never forks, and that is the whole point** (spec §8.3, `W428`):
+        ⛔ **This never forks, and that is the whole point** (spec §8.3, `W427`):
         a caller on the path of an ordinary response may read what a previous
         `editor()` left behind, and a COLD cache is `None` rather than a reason
         to reach the Docker socket while serving a page.

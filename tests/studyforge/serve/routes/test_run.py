@@ -428,7 +428,7 @@ def test_one_probe_is_kept_per_corpus_so_a_page_does_not_fork_docker_per_fetch(r
         fetch(server, "/api/v1/run/")
     # ⭐ ONE probe, KEPT — that is the whole economy, because a fork happens
     # inside a probe and its TTL bounds how often. ⛔ **Still two after `W427`**:
-    # the frame policy READS this probe and never asks it (`W428`), so composing
+    # the frame policy READS this probe and never asks it (`W427`), so composing
     # a policy on every response adds no fork at all.
     assert len(editors.made) == 1 and editors.made[0].asked == 2
 
@@ -440,7 +440,7 @@ def test_the_response_that_publishes_an_editor_also_admits_framing_it(root):
     live, discovered = runs_over(root, editor=StubEditors(UP))
     with serving(live, discovered) as server:
         # ⭐ The index ASKS, so this one response both learns the editor and is
-        # served under the policy that ask composed (`W428`).
+        # served under the policy that ask composed (`W427`).
         _, headers, raw = fetch(server, "/api/v1/run/")
     published = json.loads(raw)[run.EDITOR]
     policy = dict(item.split(" ", 1) for item in headers["content-security-policy"].split("; "))
@@ -451,7 +451,7 @@ def test_the_response_that_publishes_an_editor_also_admits_framing_it(root):
 
 
 def test_composing_a_frame_policy_reads_the_probe_and_never_asks_it(root):
-    # ⛔ **Spec §8.3** (`W428`): `origins()` is on the path of EVERY response, so a
+    # ⛔ **Spec §8.3** (`W427`): `origins()` is on the path of EVERY response, so a
     # version that asked would fork `docker` to render a static page. The host arm
     # in `tests/studyforge/cli/test_serve_process.py` is what measures this on a
     # real process against a decoy socket; this is its unit-level twin.

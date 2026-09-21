@@ -191,7 +191,7 @@ def test_a_negative_is_cached_too_so_a_page_never_forks_docker_per_tick(tmp_path
     assert asks(tmp_path) == 1
 
 
-# --- `known()`: the reader that may not fork (`W428`, spec §8.3) -------------
+# --- `known()`: the reader that may not fork (`W427`, spec §8.3) -------------
 
 
 def test_a_cold_probe_knows_nothing_and_asks_nobody_to_find_out(tmp_path, root):

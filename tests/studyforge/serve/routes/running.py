@@ -117,7 +117,7 @@ class StubEditor:
     ask (§8.3, and `W416`'s handoff carries the host reading).
 
     ⛔ **`known()` MODELS THE REAL PROBE'S CACHE and must not shortcut it**
-    (`W428`): it answers only once `editor()` has been asked, because a stub that
+    (`W427`): it answers only once `editor()` has been asked, because a stub that
     answered cold would hide the very thing the frame policy depends on — that
     composing a policy asks NOTHING, so a cold instance frames nothing.
     """

@@ -196,7 +196,7 @@ UP = Editor(origin="http://127.0.0.1:8443", folder="/w/sources")
 class StubEditors:
     """A probe factory and its probe in one: answers `UP`, forks nothing.
 
-    ⛔ **`known()` answers only after `editor()` has been asked** (`W428`), because
+    ⛔ **`known()` answers only after `editor()` has been asked** (`W427`), because
     that is what a real probe's cache does and it is the property the frame policy
     rests on: composing a policy asks nothing, so a cold instance frames nothing.
     """
@@ -262,7 +262,7 @@ def test_a_served_page_may_frame_exactly_the_editor_the_run_index_publishes(tmp_
 
 
 def test_a_page_served_before_anything_asked_frames_nothing_and_forks_nothing(tmp_path):
-    # ⛔ **Spec §8.3, and it is the whole shape of `W428`.** `frame-src` is composed
+    # ⛔ **Spec §8.3, and it is the whole shape of `W427`.** `frame-src` is composed
     # on EVERY response, so composing it may not ASK: a version that did would fork
     # `docker` to render a static page, putting a subprocess on the critical path
     # of every request. ⭐ A cold instance frames nothing; the run index warms it.
@@ -309,7 +309,7 @@ def test_a_page_reached_by_another_host_is_not_given_the_editor_and_is_told_why(
     server = instance_of(discover(a_workspace(tmp_path)), port=0, log=lines.append)
     server.namespaces[run.NAMESPACE].live.editor = StubEditors(UP)
     with instance_serving(server):
-        fetch(server, f"/api/v1/{run.NAMESPACE}/")  # the one reader that may ask (`W428`)
+        fetch(server, f"/api/v1/{run.NAMESPACE}/")  # the one reader that may ask (`W427`)
         matched = fetch(server, "/depth1/index.html")[1]
         crossed = fetch(server, "/depth1/index.html", host="localhost")[1]
         again = fetch(server, "/depth1/index.html", host="localhost")[1]

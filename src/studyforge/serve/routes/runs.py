@@ -127,7 +127,7 @@ class Runs:
         """Return each origin a served page may frame, from what is ALREADY known.
 
         ⛔ **This asks nothing, and that is a rule rather than an optimisation**
-        (spec §8.3, `W428`): `serve.app` composes `frame-src` from it on EVERY
+        (spec §8.3, `W427`): `serve.app` composes `frame-src` from it on EVERY
         response, so a version that asked would fork `docker` to render a static
         page — the widest possible reading of *"only asks"*, and a subprocess on
         the critical path of every request.
