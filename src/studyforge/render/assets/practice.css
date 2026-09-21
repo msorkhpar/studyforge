@@ -134,11 +134,33 @@ section[data-practice] div[data-practice-part="editor"] iframe {
    `tests/studyforge/render/page/test_practice.py` reads the bundle for it
    rather than leaving the property to a comment.
 
-   ⭐ **Nothing is done to `body`.** A scroll lock is the usual companion to a
-   full-viewport surface and it is refused here: the reader's place in the page
-   is one of the things the restore has to give back, and the cheapest way to
-   keep it is to touch nothing that holds it. The panel covers the viewport and
-   scrolls inside itself. */
+   ⛔ **AND THE RULE BELOW MOVES THE READER'S PAGE, WHICH IS WHY `practice.js`
+   REMEMBERS WHERE IT WAS** (`W431/1` — a merge gate found it, and it was then
+   measured deterministically here rather than guessed at twice more).
+
+   ⛔ **Two causes, one symptom, and the second is the one that hid.**
+   ⚠️ **First:** `position: fixed` takes the panel OUT OF FLOW, so the document
+   loses exactly the panel's own height — **MEASURED on the fixture unit page:
+   2390px becomes 2084px and the furthest a reader can scroll drops from 1490 to
+   1184** — the browser CLAMPS a scroll that no longer fits, and restoring the
+   height does not undo a clamp. ⚠️ **Second:** `reset.css` sets
+   `scroll-behavior: smooth` on `html`, so EVERY scroll animates, including the
+   one a `focus()` starts by bringing its target into view. ⛔ **A reading taken
+   during that glide sees somewhere the reader is only passing through** — which
+   is why the merge gate reported a drift of **2px** and this office, measuring
+   the same mechanism deterministically, saw **306px**.
+
+   ⭐ **So the restore both `preventScroll`s the focus and sets the position
+   `behavior: 'instant'`**: exactly one thing decides where the page is, and it
+   decides it in one frame. ⭐ **And the check for it is taken at the END of the
+   page** — at the top of a page this defect is invisible, and the first reading
+   of it was taken there and passed.
+
+   ⭐ **Nothing is done to `body`, and no scroll lock is taken.** The usual
+   companion to a full-viewport surface is `overflow: hidden` on `body`; it is
+   refused because it is a SECOND thing deciding where the page is, and the
+   restore already decides it. The panel covers the viewport and scrolls inside
+   itself. */
 section[data-practice][data-practice-expanded] {
   position: fixed;
   inset: 0;

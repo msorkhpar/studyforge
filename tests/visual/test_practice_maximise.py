@@ -144,6 +144,14 @@ def test_the_practice_maximises_to_the_whole_viewport_and_escape_restores_it(
     )
 
     _tab_to(open_page, at_rest["maximise"]["label"])
+    # ⛔ **The page the reader LEFT is read here, after the traversal that
+    # reaches the control and before the press — never at the top of the
+    # document.** ⚠️ The first version of this check compared against `at_rest`,
+    # which is taken before a single Tab: any scroll caused by REACHING the
+    # control was charged to the restore, and the merge gate read it as a 2px
+    # drift this office could not reproduce. ⛔ It is still EXACT equality and
+    # not a tolerance — what changed is which two readings are compared.
+    left = _state(open_page)
     open_page.press("Enter")
     wide = _until(open_page, lambda reading: reading["expanded"], "expanded")
     assert wide["box"]["w"] == pytest.approx(wide["viewport"]["w"], abs=TOUCHING)
@@ -169,7 +177,7 @@ def test_the_practice_maximises_to_the_whole_viewport_and_escape_restores_it(
         f"restoring left focus at {back['focus']!r} rather than on the control"
     )
     # ⭐ The place in the page the reader left is the place they come back to.
-    assert back["viewport"]["scrolled"] == at_rest["viewport"]["scrolled"]
+    assert back["viewport"]["scrolled"] == left["viewport"]["scrolled"]
 
 
 def test_neither_editor_window_is_reloaded_by_maximising_or_restoring(
@@ -246,3 +254,49 @@ def test_a_live_run_and_everything_it_has_written_survive_both_transitions(
         open_page, lambda reading: reading["status"]["text"] == FINISHED, f"settled on {FINISHED!r}"
     )
     assert done["output"]["text"].startswith(written), "the run's own output was rewritten"
+
+
+def test_restoring_gives_back_the_place_in_the_page_the_reader_left(
+    open_page: OpenPage, origin: served.Served
+) -> None:
+    """⛔ **Clause 1's scroll half, taken at the ONE place it can fail.**
+
+    ⚠️ **This is a repair, and the defect was real** (`W431/1`). The expansion
+    is `position: fixed`, which takes the panel OUT OF FLOW — so the document
+    loses exactly the panel's own height, the furthest a reader can scroll drops
+    with it, and the browser CLAMPS a scroll that no longer fits. ⛔ Restoring
+    the height does not undo a clamp.
+
+    ⭐ **MEASURED before the repair, on this fixture page:** a reader at the foot
+    of the page came back **306px** from where they left; a reader at the top
+    came back exactly where they were. ⛔ **So a reading taken at the top of the
+    page asserts nothing about this**, and the first one was — which is how it
+    reached a merge gate.
+    """
+    open_page.open(origin.url(_case()))
+    label = _state(open_page)["maximise"]["label"]
+    _tab_to(open_page, label)
+    # ⭐ The reader is put at the END of the page, which is where the document
+    # losing the panel's height leaves a scroll that no longer fits.
+    open_page.evaluate("window.scrollTo(0, document.documentElement.scrollHeight)")
+    left = _state(open_page)["viewport"]["scrolled"]
+    assert left > 0, "the page did not scroll at all, so this reading says nothing"
+
+    open_page.press("Enter")
+    wide = _until(open_page, lambda reading: reading["expanded"], "expanded")
+    # ⚠️ The clamp WHILE EXPANDED is expected and is not the defect: the panel
+    # covers the viewport, so nothing of the page behind it is on screen. ⛔ It
+    # is asserted so the check is known to be reading the state it is about —
+    # without it, a build that never shortened the document would pass here.
+    assert wide["viewport"]["scrolled"] < left, (
+        f"the document did not shorten under the expansion ({wide['viewport']['scrolled']} "
+        f"against {left}), so this check never reaches the clamp it exists for"
+    )
+
+    open_page.press("Escape")
+    back = _until(open_page, lambda reading: not reading["expanded"], "restored")
+    assert back["viewport"]["scrolled"] == left, (
+        f"the reader left the page at {left} and came back at "
+        f"{back['viewport']['scrolled']} — the restore moved their page by "
+        f"{left - back['viewport']['scrolled']}px"
+    )

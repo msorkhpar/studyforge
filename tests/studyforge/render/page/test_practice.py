@@ -563,6 +563,29 @@ def test_the_panel_expands_by_its_own_attribute_and_moves_no_frame():
     assert "slot.appendChild(built)" in body
 
 
+def test_the_restore_puts_the_page_back_where_it_was_rather_than_leaving_it():
+    # ⛔ `W431/1`, the defect a merge gate found and this office then measured.
+    # Two causes: `position: fixed` shortens the document so the browser CLAMPS
+    # a scroll that no longer fits, and `reset.css`'s `scroll-behavior: smooth`
+    # makes every scroll — including the one `focus()` starts — an ANIMATION
+    # that is still running when the next reader of the page looks. ⭐ So the
+    # position is read BEFORE the panel leaves flow, written back AFTER it is
+    # returned to it, `instant` so nothing is mid-glide, and `preventScroll` so
+    # focus is not a second thing deciding where the page is.
+    body = behaviour()
+    region = body[body.index("function maximise(panel)") : body.index("function wire(")]
+    assert "if (open) { was = window.pageYOffset || 0; }" in region
+    assert "window.scrollTo({ top: was, left: 0, behavior: 'instant' })" in region
+    assert region.count("window.scrollTo") == 1
+    assert "focus({ preventScroll: true })" in region
+    # ⛔ Read BEFORE the panel is taken out of flow, or the reading is already
+    # the clamped one — the whole defect in one ordering.
+    assert region.index("was = window.pageYOffset") < region.index("panel.setAttribute(EXPANDED")
+    # ⛔ And written back AFTER it is put back in flow, or the page cannot hold
+    # a position the document is still too short for.
+    assert region.index("panel.removeAttribute(EXPANDED)") < region.index("window.scrollTo")
+
+
 def test_the_expanded_practice_is_escapable_and_focus_goes_both_ways():
     # ⛔ `QA-02`'s ground, and this row's clause 4: a real button, focus into
     # the expanded practice and back to the control on restore, and Escape
@@ -573,4 +596,4 @@ def test_the_expanded_practice_is_escapable_and_focus_goes_both_ways():
     assert "var ESCAPE = 'Escape';" in body
     assert "document.addEventListener('keydown'" in body
     assert "if (wide && event.key === ESCAPE) { set(false); }" in body
-    assert "if (open) { panel.focus(); } else { button.focus(); }" in body
+    assert "(open ? panel : button).focus({ preventScroll: true });" in body
