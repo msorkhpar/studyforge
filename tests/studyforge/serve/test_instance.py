@@ -194,16 +194,26 @@ UP = Editor(origin="http://127.0.0.1:8443", folder="/w/sources")
 
 
 class StubEditors:
-    """A probe factory and its probe in one: answers `UP`, forks nothing."""
+    """A probe factory and its probe in one: answers `UP`, forks nothing.
+
+    ⛔ **`known()` answers only after `editor()` has been asked** (`W428`), because
+    that is what a real probe's cache does and it is the property the frame policy
+    rests on: composing a policy asks nothing, so a cold instance frames nothing.
+    """
 
     def __init__(self, where: Editor | None) -> None:
         self.where = where
+        self.asked = 0
 
     def __call__(self, corpus: ServedCorpus) -> StubEditors:
         return self
 
     def editor(self) -> Editor | None:
+        self.asked += 1
         return self.where
+
+    def known(self) -> Editor | None:
+        return self.where if self.asked else None
 
 
 def policy_sent(headers) -> dict[str, str]:
@@ -237,17 +247,38 @@ def test_a_served_page_may_frame_exactly_the_editor_the_run_index_publishes(tmp_
     # ⛔ **The two halves, read off ONE instance** — `W416/2`'s lesson: measuring
     # one side of framing proved nothing. Here the index says where the editor
     # is and the served header says the page may embed it, or the frame is dead.
+    # ⭐ The index is asked FIRST, because the index is the reader that may ask.
     server = instance_of(discover(a_workspace(tmp_path)), port=0)
     server.namespaces[run.NAMESPACE].live.editor = StubEditors(UP)
     with instance_serving(server):
-        headers = fetch(server, "/depth1/index.html")[1]
         published = body(server, f"/api/v1/{run.NAMESPACE}/")[run.EDITOR]
+        headers = fetch(server, "/depth1/index.html")[1]
     assert published and all(
         where == {"origin": UP.origin, "folder": UP.folder} for where in published.values()
     )
     assert policy_sent(headers)["frame-src"] == UP.origin
     assert policy_sent(headers)["frame-ancestors"] == "'none'"
     assert headers["x-frame-options"] == "DENY"
+
+
+def test_a_page_served_before_anything_asked_frames_nothing_and_forks_nothing(tmp_path):
+    # ⛔ **Spec §8.3, and it is the whole shape of `W428`.** `frame-src` is composed
+    # on EVERY response, so composing it may not ASK: a version that did would fork
+    # `docker` to render a static page, putting a subprocess on the critical path
+    # of every request. ⭐ A cold instance frames nothing; the run index warms it.
+    editors = StubEditors(UP)
+    server = instance_of(discover(a_workspace(tmp_path)), port=0)
+    server.namespaces[run.NAMESPACE].live.editor = editors
+    with instance_serving(server):
+        page = fetch(server, "/depth1/index.html")[1]
+        toc = fetch(server, "/api/v1/content/toc")[1]
+        asset = fetch(server, "/depth1/.studyforge/assets/page.css")[1]
+        cold = editors.asked
+        warmed = body(server, f"/api/v1/{run.NAMESPACE}/")[run.EDITOR]
+        after = fetch(server, "/depth1/index.html")[1]
+    assert cold == 0, "serving pages asked the probe, and asking forks `docker`"
+    assert [policy_sent(each)["frame-src"] for each in (page, toc, asset)] == ["'none'"] * 3
+    assert warmed and policy_sent(after)["frame-src"] == UP.origin
 
 
 def test_the_policy_and_the_index_are_read_off_the_one_runs_and_one_probe(tmp_path):
@@ -278,6 +309,7 @@ def test_a_page_reached_by_another_host_is_not_given_the_editor_and_is_told_why(
     server = instance_of(discover(a_workspace(tmp_path)), port=0, log=lines.append)
     server.namespaces[run.NAMESPACE].live.editor = StubEditors(UP)
     with instance_serving(server):
+        fetch(server, f"/api/v1/{run.NAMESPACE}/")  # the one reader that may ask (`W428`)
         matched = fetch(server, "/depth1/index.html")[1]
         crossed = fetch(server, "/depth1/index.html", host="localhost")[1]
         again = fetch(server, "/depth1/index.html", host="localhost")[1]
@@ -297,6 +329,7 @@ def test_the_site_itself_is_still_served_to_a_host_the_editor_is_withheld_from(t
     server = instance_of(discover(a_workspace(tmp_path)), port=0)
     server.namespaces[run.NAMESPACE].live.editor = StubEditors(UP)
     with instance_serving(server):
+        fetch(server, f"/api/v1/{run.NAMESPACE}/")
         page = fetch(server, "/depth1/index.html", host="localhost")
         api = fetch(server, "/api/v1/state/", host="localhost")
     assert page[0] == 200 and api[0] == 200

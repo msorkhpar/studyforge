@@ -3,10 +3,11 @@ r"""The instance's runs: the one live slot, a run's streamed body, and its recor
 **What it does.** `Runs` holds what a run is read from (every corpus discovered and its
 content), the one run in flight, and one `EditorProbe` per corpus — `editors()`
 is where a running editor is, for the index to publish (`W416`), `origins()`
-is the same reading for the frame policy (`W427`), and `practice_editor()` is
-ONE practice's two windows and the settings they are read under (`W429`);
-`Stream` is a run's response body — each line gated, the verdict recorded just
-before the exit line, which is last; `Outcome` records it.
+is the frame policy's reading of what that ask ALREADY left behind (`W427` — it
+never forks, spec §8.3), and `practice_editor()` is ONE practice's two windows
+and the settings they are read under (`W429`); `Stream` is a run's response
+body — each line gated, the verdict recorded just before the exit line, which
+is last; `Outcome` records it.
 
 **How you use it.** `serve.routes.run` claims the slot with `Runs.claim`, and answers
 with `Response(200, headers, stream=Stream(runs, live, Outcome(...)))`.
@@ -123,23 +124,27 @@ class Runs:
         }
 
     def origins(self) -> tuple[str, ...]:
-        """Return each distinct origin a served page may frame, for every editor that is up.
+        """Return each origin a served page may frame, from what is ALREADY known.
 
-        ⭐ **The frame policy's half of `editors()`** (`W427`). `serve.app` asks
-        this per response and `serve.security` composes `frame-src` from it, so
-        the page may embed exactly the editors the index published — and nothing,
-        `frame-src 'none'`, while there is none. ⛔ Read off the same `found()` the
-        index is read off, so one probe and one cache answer both.
+        ⛔ **This asks nothing, and that is a rule rather than an optimisation**
+        (spec §8.3, `W428`): `serve.app` composes `frame-src` from it on EVERY
+        response, so a version that asked would fork `docker` to render a static
+        page — the widest possible reading of *"only asks"*, and a subprocess on
+        the critical path of every request.
+        ⚠️ **So a cold instance frames nothing**, and the index — which may ask —
+        is what warms it. ⭐ Same probes, same cache, so once the index has
+        published an editor, every page served after it may frame exactly that.
         """
-        return tuple(sorted({found.origin for found in self.found().values()}))
+        return tuple(sorted({found.origin for found in self.found(ask=False).values()}))
 
-    def found(self) -> dict[str, Editor]:
-        """Return the editor that is up for each served corpus, and nothing for the rest."""
+    def found(self, ask: bool = True) -> dict[str, Editor]:
+        """Return the editor up for each served corpus; `ask=False` reads, never forks."""
         up: dict[str, Editor] = {}
         for corpus in self.discovered.corpora:
             if corpus.source not in self.sources:
                 continue
-            where = self._probe(corpus).editor()
+            probe = self._probe(corpus)
+            where = probe.editor() if ask else probe.known()
             if where is not None:
                 up[corpus.source] = where
         return up
