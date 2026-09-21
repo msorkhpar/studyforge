@@ -68,6 +68,10 @@ KEYS = {
     "Enter": ("Enter", 13, "\r"),
     " ": ("Space", 32, " "),
     "Escape": ("Escape", 27, None),
+    #: ⭐ How a TABLIST is traversed, and the only way to reach its second tab:
+    #: a roving `tabindex` puts exactly one tab in the focus ring, so Tab
+    #: reaches the selected one and an arrow moves between them (`W429`).
+    "ArrowRight": ("ArrowRight", 39, None),
 }
 
 #: How long a page may take to reach `readyState === "complete"`.

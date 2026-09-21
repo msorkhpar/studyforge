@@ -13,6 +13,7 @@ from studyforge.render.pageassets import (
     SPRITE_PLACEHOLDER,
     STYLE_PARTS,
     STYLESHEET_NAME,
+    is_vendored,
     licence_names,
     names,
     script,
@@ -133,3 +134,35 @@ def test_no_licence_is_concatenated_into_a_bundle():
     # script would be 1 KB on every page saying nothing to the reader.
     for licence in licence_names():
         assert text(licence) not in script()
+
+
+#: The properties that make an element a containing block for a `position: fixed`
+#: descendant, in the spellings a stylesheet writes them in.
+PINNING = re.compile(r"^\s*(?:-\w+-)?(transform|filter|will-change|perspective|contain)\s*:", re.M)
+
+
+def test_no_authored_stylesheet_makes_a_containing_block_for_a_fixed_descendant():
+    # ⛔ **A PROPERTY the maximised practice panel depends on** (`W431`).
+    # `practice.css` expands the panel with `position: fixed`, which answers to
+    # the VIEWPORT only while nothing above it makes a containing block: one
+    # `transform`, `filter`, `will-change`, `perspective` or `contain` anywhere
+    # on an ancestor pins the panel to that box instead — and the practice then
+    # expands to the width of the reading column with nothing failing anywhere.
+    #
+    # ⚠️ **VENDORED parts are excluded and the reason is stated.** Plyr's
+    # transport and the classes Prism writes inside a `<code>` style their own
+    # widget, and no practice panel is ever inside either — so a transform there
+    # cannot reach this one. ⭐ Declarations only: comments are stripped first,
+    # because `reading.css` says the word in prose.
+    authored = [name for name in STYLE_PARTS if not is_vendored(name)]
+    assert authored, "no authored stylesheet was read, so this asserts nothing"
+    guilty = {}
+    for name in authored:
+        declarations = re.sub(r"/\*.*?\*/", "", text(name), flags=re.DOTALL)
+        found = sorted(set(PINNING.findall(declarations)))
+        if found:
+            guilty[name] = found
+    assert not guilty, (
+        f"a stylesheet over the practice panel creates a containing block: {guilty} — "
+        "the maximised panel would size to that box instead of the viewport"
+    )

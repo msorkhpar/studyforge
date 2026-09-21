@@ -102,7 +102,30 @@ PANEL_STATE = """
       label: active ? active.textContent.trim().slice(0, 40) : '',
       inPanel: !!active && panel.contains(active),
       isStatus: !!active && active === status
-    }
+    },
+    expanded: panel.hasAttribute('data-practice-expanded'),
+    box: (() => {
+      const box = panel.getBoundingClientRect();
+      return { w: box.width, h: box.height, top: box.top, left: box.left };
+    })(),
+    viewport: { w: window.innerWidth, h: window.innerHeight, scrolled: window.scrollY },
+    maximise: (() => {
+      const control = part('expand');
+      if (!control) return null;
+      return {
+        label: control.textContent.trim(),
+        says: control.getAttribute('aria-expanded'),
+        visible: control.checkVisibility()
+      };
+    })(),
+    frames: Array.from(panel.querySelectorAll('iframe')).map((frame) => ({
+      slot: frame.parentElement ? frame.parentElement.getAttribute('data-practice-frame') : null,
+      ready: !!frame.contentDocument && frame.contentDocument.readyState === 'complete',
+      element: frame.dataset.stamp || null,
+      inside: (() => {
+        try { return frame.contentWindow.studyforgeStamp || null; } catch (e) { return 'gone'; }
+      })()
+    }))
   };
 })()
 """.replace("<panel>", PANEL_SELECTOR)

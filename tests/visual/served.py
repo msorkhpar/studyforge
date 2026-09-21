@@ -10,7 +10,8 @@ the panel's controls.
 **How you use it.** `with served.serving(built_site) as origin:` then
 `page.open(origin.url("depth2-unit-01"))`. `origin.runs` is the scripted far
 side of the API: `runs.started` says a run is live, `runs.release` ends it, and
-`runs.stopped` says whether Stop was pressed.
+`runs.stopped` says whether Stop was pressed. `serving(..., windows=True)` also
+answers the practice-editor route, so the panel builds real frames.
 
 **Depends on.** `studyforge.serve.app`, `studyforge.serve.response` and
 `studyforge.serve.routes.run` for the one spelling of the client's path, plus
@@ -75,6 +76,7 @@ from studyforge.serve.routes.run import (
     CLIENT,
     CLIENT_FILE,
     CLIENT_PATH,
+    EDITOR,
     NAMESPACE,
     SCRIPT_TYPE,
     STOP,
@@ -100,6 +102,29 @@ STOPPED = "stopped"
 #: whose unit page carries a practice panel. ⛔ Derived from the built tree, not
 #: typed: a page that moved corpora would red here rather than 404 quietly.
 DEFAULT_CORPUS = site.corpus_of("depth2-unit-01")
+
+#: What `serving(windows=True)` hands the panel as its two editor windows.
+#:
+#: ⛔ **`about:blank`, and the reason is this framework's own security posture
+#: rather than convenience.** Every page this server answers carries
+#: `frame-ancestors 'none'` and `X-Frame-Options: DENY` — correctly, and `W427`
+#: is not being reopened — so no page of the built tree can be framed by
+#: anything, including itself. ⭐ A blank document is SAME-ORIGIN with the page
+#: that frames it, which is what lets a check mark the document INSIDE a frame
+#: and read the mark back; a second real origin would be more lifelike and would
+#: make that mark unreadable.
+#:
+#: ⭐ **Two DIFFERENT URLs**, because the whole of the two-window design is that
+#: each window is told apart by its own URL and by nothing else (`W429`).
+#: ⚠️ **A stand-in for WHERE an editor is, and nothing more** — `ScriptedRuns`
+#: starts no container, exactly as it starts no process. What a frame here can
+#: establish is that it SURVIVES a transition, never what is inside one.
+WINDOW_URLS = ("about:blank#main", "about:blank#test")
+
+#: What this harness answers where a caller asked for no windows. ⛔ The real
+#: route's own shape for *no editor over this practice*, so a panel reads the
+#: absence the way it would on a machine with no editor running.
+NO_WINDOWS = "no editor is running over this practice's own file"
 
 
 class _NoContent:
@@ -141,6 +166,9 @@ class ScriptedRuns:
         self.stopped = False
         #: Every path this namespace was asked for, in order.
         self.asked: list[str] = []
+        #: Where this practice's two editor windows are, or `None` for no
+        #: editor at all — which is what an ordinary origin here answers.
+        self.windows: dict[str, dict[str, str]] | None = None
 
     def route(self, request: Request, rest: str) -> Response:
         """Answer one request under `/api/v1/run/`, the way the real route's shape does."""
@@ -158,6 +186,13 @@ class ScriptedRuns:
             self.stopped = True
             self.release.set()
             return json_response(200, {"resource": "run-stop", "stopped": True})
+        if rest.split("/")[1:2] == [EDITOR]:
+            # ⛔ `<corpus>/editor/<practice>`, and the practice key carries its
+            # own slashes — so the MODE is read at its fixed position rather
+            # than by splitting the whole path into two.
+            if self.windows is None:
+                return error(404, NO_WINDOWS)
+            return json_response(200, {"resource": "run-editor", **self.windows})
         headers = (("Content-Type", TEXT_TYPE), ("Cache-Control", NO_STORE))
         return Response(200, headers, stream=self._stream())
 
@@ -211,7 +246,9 @@ class Served:
 
 
 @contextlib.contextmanager
-def serving(built: site.Site, corpus: str = DEFAULT_CORPUS) -> Iterator[Served]:
+def serving(
+    built: site.Site, corpus: str = DEFAULT_CORPUS, *, windows: bool = False
+) -> Iterator[Served]:
     """Serve one corpus's subtree of `built` on a free loopback port, then stop.
 
     ⛔ **The served root is ONE corpus's subtree, and that is the framework's
@@ -227,6 +264,12 @@ def serving(built: site.Site, corpus: str = DEFAULT_CORPUS) -> Iterator[Served]:
     static mount inserts and the path this namespace answers cannot come apart
     here any more than they can in a real instance.
 
+    ⭐ **`windows=True` answers the practice-editor route with two real frames**
+    and admits this origin to the `frame-src` the framework composes, so a panel
+    that must not move an `iframe` has an `iframe` to not move (`W431`). ⛔ Off
+    by default: a frame is a focus scope of its own, and every traversal in this
+    package counts stops.
+
     ⛔ **The run is released on the way out, before `shutdown()`.** A stream
     still waiting inside `RELEASE_BOUND` would hold `serve_forever`'s thread,
     and a harness that hung on teardown is the failure `W397` was minted for
@@ -234,6 +277,10 @@ def serving(built: site.Site, corpus: str = DEFAULT_CORPUS) -> Iterator[Served]:
     """
     runs = ScriptedRuns()
     log: list[str] = []
+    #: The origins this instance's `frame-src` admits, filled after the bind and
+    #: read by the framework at RESPONSE time — which is the only order
+    #: available, because the port is the kernel's answer to `port=0`.
+    admitted: list[str] = []
     server = make_server(
         built.root / corpus,
         _NoContent(),
@@ -242,8 +289,17 @@ def serving(built: site.Site, corpus: str = DEFAULT_CORPUS) -> Iterator[Served]:
         writers=(NAMESPACE,),
         client=CLIENT_PATH,
         log=log.append,
+        frames=lambda: tuple(admitted),
     )
     held = Served(server=server, built=built, corpus=corpus, runs=runs, log=log)
+    if windows:
+        # ⛔ **The real `frame-src` composer, not a header written by hand.**
+        # `serve.security` is what decides whether this document may embed
+        # anything at all, and a harness that bypassed it would be reading a
+        # policy no instance sends.
+        admitted.append(held.origin)
+        main, test = WINDOW_URLS
+        runs.windows = {"main": {"url": main}, "test": {"url": test}}
     thread = threading.Thread(target=held.server.serve_forever, daemon=True)
     thread.start()
     try:
