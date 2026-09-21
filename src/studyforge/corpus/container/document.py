@@ -28,8 +28,9 @@ from studyforge.version import check as check_version
 #: The document format version, and what a generator writes today. ⚠️ Bumped
 #: when a reader of the old shape would be *wrong* rather than merely
 #: incomplete — ⭐ **2 is Ruling 92's**, the version at which a unit's `origin`
-#: may name a region of a file rather than a whole one.
-CONTAINER_API = 2
+#: may name a region of a file rather than a whole one; ⭐ **3 is `W428`'s**,
+#: at which a unit's practice may be read from a file of its own.
+CONTAINER_API = 3
 
 #: The versions this build reads. ⛔ The membership test is
 #: `studyforge.version`'s (SF-33); what lives here is the set. ⭐ **Spelled as
@@ -41,14 +42,20 @@ CONTAINER_API = 2
 #: region, so every claim it makes is one this build understands unchanged;
 #: R9 refuses the *unknown*, and 1 is known. ⛔ What R9 does require is the
 #: other direction, and `Container.__post_init__` enforces it: a map that uses
-#: the v2 shape may not call itself v1.
-KNOWN_CONTAINER_API = frozenset({1, 2})
+#: the v2 shape may not call itself v1, and a v3 shape may not call itself v2.
+KNOWN_CONTAINER_API = frozenset({1, 2, 3})
 
 #: ⛔ The version at which a unit's `origin` may be an object naming a region
 #: (Ruling 92). A build that does not speak this version must be **unable** to
 #: read a map that uses the shape — otherwise the version is decorative and
 #: an old reader silently takes seventeen regions for seventeen whole files.
 REGION_ORIGIN_API = 2
+
+#: ⛔ The version at which a unit may declare `practice_origin` — a **second**
+#: source file holding its `practice` documents (`W428`). ⚠️ Guarded for the
+#: reason a region is: a build that cannot see the key counts both files'
+#: headings against one of them and reports a short read on a complete corpus.
+PRACTICE_ORIGIN_API = 3
 
 CONTAINER_FILENAME = "container.json"
 
@@ -79,7 +86,11 @@ CONTAINER_KEYS = (
 #: web source has instead — it has no file. A corpus normally carries one or
 #: the other. ⚠️ `depth2`'s second container carries both because it is the
 #: fixture that exercises both.
-UNIT_KEYS = ("n", "title", "practices", "origin", "url_slug", "label", "note")
+#: ⭐ **`practice_origin` is `origin`'s twin and carries the same two shapes.**
+#: It names where this unit's `practice` documents were read from when that is
+#: **not** the file its prose came from — the one way a practice joins a topic
+#: page whose source file may not be rewritten (R3). ⛔ It places nothing.
+UNIT_KEYS = ("n", "title", "practices", "origin", "practice_origin", "url_slug", "label", "note")
 
 #: ⭐ **The whole content of "hand-authorable"** (Q3). These are the fields a
 #: person may amend and a generator must round-trip rather than overwrite;
@@ -107,6 +118,12 @@ class Unit:
     #: because every other consumer of it wants a path — `origin_directory`
     #: takes `.parent` of one, and media placement is unaffected (Ruling 92).
     origin_section: str | None = None
+    #: ⭐ **Where this unit's `practice` documents came from, when that is a
+    #: file of its own** (`W428`). `None` means they came from `origin`, which
+    #: is the common case and every map written before `container_api` 3.
+    practice_origin: str | None = None
+    #: The region half of `practice_origin`, as `origin_section` is `origin`'s.
+    practice_origin_section: str | None = None
     url_slug: str | None = None
     label: str | None = None
     note: str | None = None
@@ -151,17 +168,37 @@ class Container:
         render path cannot mint one either — the two directions are one rule
         and it has one home.
         """
-        if self.container_api >= REGION_ORIGIN_API:
-            return
         for unit in self.units:
-            if unit.origin_section is not None:
+            if unit.origin_section is not None and self.container_api < REGION_ORIGIN_API:
+                raise ContainerError(self._too_old(unit.n, "origin as a region", REGION_ORIGIN_API))
+            if unit.practice_origin is None:
+                continue
+            if self.container_api < PRACTICE_ORIGIN_API:
                 raise ContainerError(
-                    f"{self.address.key} declares unit {unit.n} origin as a region at "
-                    f"container_api {self.container_api}; a region needs "
-                    f"container_api {REGION_ORIGIN_API}. It is refused rather than read: "
-                    f"a build that does not speak the shape must be unable to read the "
-                    f"map, or the version says nothing (R9)."
+                    self._too_old(unit.n, "a practice_origin", PRACTICE_ORIGIN_API)
                 )
+            if unit.origin is None:
+                raise ContainerError(
+                    f"{self.address.key} declares unit {unit.n} practice_origin and no "
+                    f"origin. ⛔ The key exists to say that the practice came from a "
+                    f"file OTHER than the prose did; with no origin there is no other "
+                    f"file, and the one path belongs in origin where everything that "
+                    f"places a page can see it."
+                )
+
+    def _too_old(self, n: int, what: str, needs: int) -> str:
+        """Say that unit `n` uses a shape the version it declares does not have.
+
+        ⛔ **R9's other direction, spelled once for both shapes.** It is
+        refused rather than read: a build that does not speak the shape must be
+        unable to read the map, or the version says nothing.
+        """
+        return (
+            f"{self.address.key} declares unit {n} {what} at container_api "
+            f"{self.container_api}; it needs container_api {needs}. It is refused "
+            f"rather than read: a build that does not speak the shape must be unable "
+            f"to read the map, or the version says nothing (R9)."
+        )
 
     @property
     def ordinals(self) -> tuple[int, ...]:
@@ -280,14 +317,16 @@ def render(container: Container) -> str:
 
 def _unit_document(unit: Unit) -> dict:
     entry: dict[str, object] = {"n": unit.n, "title": unit.title, "practices": unit.practices}
-    for key in ("origin", "url_slug", "label", "note"):
+    for key in ("origin", "practice_origin", "url_slug", "label", "note"):
         value = getattr(unit, key)
         if value is not None:
             entry[key] = value
-    if unit.origin_section is not None:
-        # ⭐ The object replaces the string **in place**, so a region keeps
-        # `origin`'s position in `UNIT_KEYS` and the round trip is byte-exact.
-        entry["origin"] = {"path": unit.origin, "section": unit.origin_section}
+    sections = (("origin", unit.origin_section), ("practice_origin", unit.practice_origin_section))
+    for key, section in sections:
+        if section is not None:
+            # ⭐ The object replaces the string **in place**, so a region keeps
+            # its key's position in `UNIT_KEYS` and the round trip is byte-exact.
+            entry[key] = {"path": entry[key], "section": section}
     return entry
 
 
@@ -340,12 +379,17 @@ def _unit(entry: object, where: str) -> Unit:
             f"never corrected here."
         )
     origin, section = fields.optional_origin(entry.get("origin"), f"unit {n} origin", where)
+    practice, practice_section = fields.optional_origin(
+        entry.get("practice_origin"), f"unit {n} practice_origin", where
+    )
     return Unit(
         n=n,
         title=fields.required_text(entry.get("title"), f"unit {n} title", where),
         practices=practices,
         origin=origin,
         origin_section=section,
+        practice_origin=practice,
+        practice_origin_section=practice_section,
         url_slug=fields.optional_slug(entry.get("url_slug"), f"unit {n} url_slug", where),
         label=fields.optional_label(entry.get("label"), f"unit {n} label", where),
         note=fields.optional_text(entry.get("note"), f"unit {n} note", where),

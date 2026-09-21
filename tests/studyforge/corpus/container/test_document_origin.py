@@ -77,23 +77,27 @@ def refusal(**overrides):
 # --------------------------------------------------------------------------
 
 
-def test_this_build_writes_version_two():
-    assert CONTAINER_API == 2
+def test_a_region_is_read_by_the_version_this_build_writes():
+    # ⚠️ **Corrected in place when `W428` minted 3**, exactly as this module's
+    # own docstring records the previous correction: the assertion is that a
+    # region is still read, and the version it is read at is a literal.
+    assert CONTAINER_API == 3
+    assert 2 in KNOWN_CONTAINER_API
 
 
-def test_this_build_reads_one_and_two_and_nothing_else():
-    assert KNOWN_CONTAINER_API == frozenset({1, 2})
+def test_this_build_reads_one_two_and_three_and_nothing_else():
+    assert KNOWN_CONTAINER_API == frozenset({1, 2, 3})
 
 
 def test_a_region_is_a_version_two_shape():
     assert REGION_ORIGIN_API == 2
 
 
-def test_version_three_is_refused_and_not_migrated():
+def test_the_version_above_this_build_s_is_refused_and_not_migrated():
     # ⛔ R9. The refusal for the version above this one must be as sharp as
     # the acceptance of this one, or the set is decorative.
-    message = refusal(container_api=3)
-    assert "container_api 3" in message
+    message = refusal(container_api=4)
+    assert "container_api 4" in message
     assert "never migrated in place" in message
 
 

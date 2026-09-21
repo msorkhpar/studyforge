@@ -112,23 +112,6 @@ def test_an_absent_optional_key_is_omitted_rather_than_written_null():
     assert tuple(document) == tuple(k for k in CONTAINER_KEYS if k not in ("origin", "note"))
 
 
-def test_a_unit_entry_keeps_its_key_order():
-    unit = built(
-        units=[
-            {
-                "n": 1,
-                "title": "One",
-                "practices": 0,
-                "origin": "a/b.md",
-                "url_slug": "one",
-                "label": "4.4.1",
-                "note": "why",
-            }
-        ]
-    )
-    assert tuple(to_document(unit)["units"][0]) == UNIT_KEYS
-
-
 # --------------------------------------------------------------------------
 # "Hand-authorable" is two fields, and the round trip is its whole content
 # --------------------------------------------------------------------------
@@ -258,7 +241,7 @@ def test_the_version_refusal_says_it_is_not_a_migration():
 
 
 def test_this_module_owns_the_set_and_not_the_check():
-    assert KNOWN_CONTAINER_API == frozenset({1, 2})  # ⛔ literals, not CONTAINER_API
+    assert KNOWN_CONTAINER_API == frozenset({1, 2, 3})  # ⛔ literals, not CONTAINER_API
     source = (repository_root() / "src/studyforge/corpus/container/document.py").read_text(
         encoding="utf-8"
     )

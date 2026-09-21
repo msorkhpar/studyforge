@@ -223,6 +223,14 @@ def _container_origins(walk: Walk, held: Held) -> Iterator[tuple[str, str, objec
                 f"unit {declared.n}",
                 walk.root / _relative(declared.origin),
             )
+        # ⭐ `W428`: a unit's practice may name a file of its own, and it is a
+        # file for exactly the same reason its prose origin is.
+        if declared.practice_origin is not None:
+            yield (
+                held.where,
+                f"unit {declared.n} practice",
+                walk.root / _relative(declared.practice_origin),
+            )
 
 
 def _relative(origin: str) -> str:

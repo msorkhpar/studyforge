@@ -63,14 +63,19 @@ detectable failure rather than a silently shorter site.
 
 | Key | | |
 |---|---|---|
-| `container_api` | the version of this document format | this build reads `1` and `2` |
+| `container_api` | the version of this document format | this build reads `1`, `2` and `3` |
 | `address` | exactly `len(levels)` segments | and it must match the directory holding the file |
 | `titles` | one per segment, in the same order | what the reader sees |
 | `variant` | **one** variant per container | which removed an entire failure class: *the map promised one thing and the archive has none* |
 | `ingested` | the date it was read | |
 | `origin` | the file in **your** repository this map was read from | optional; see below |
 | `note` | free text a person added | preserved across regeneration, never overwritten |
-| `units` | what this container holds | each `{ n, title, practices, origin, url_slug, label, note }` |
+| `units` | what this container holds | each `{ n, title, practices, origin, practice_origin, url_slug, label, note }` |
+
+**`practice_origin` is the second source file a unit may have**, and it is how
+a practice joins the topic page it practises without rewriting that page's
+source. It needs `container_api: 3`, and the rule for when to use it is in
+[Exercises](exercises.md#where-a-practice-may-live).
 
 **A generator owns this file, and a generator that would discard somebody's
 judgement stops.** `title`, `titles` and `note` are the fields a person may

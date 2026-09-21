@@ -26,6 +26,7 @@ def test_the_public_surface_is_declared_and_complete():
         "EDITORIAL_KEYS",
         "KNOWN_CONTAINER_API",
         "ORIGIN_KEYS",
+        "PRACTICE_ORIGIN_API",
         "RAISES",
         "REGION_ORIGIN_API",
         "UNIT_KEYS",

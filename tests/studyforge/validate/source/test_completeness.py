@@ -396,3 +396,102 @@ def test_a_fragment_origin_is_refused_where_the_map_is_read(tmp_path):
     with pytest.raises(ContainerError) as raised:
         shared_file(tmp_path / "c", first_origin="src/shared.md#1. One")
     assert "fragment" in str(raised.value)
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W428` — a practice from a file of its own, counted against THAT file
+# --------------------------------------------------------------------------
+
+
+def test_a_practice_from_its_own_file_is_clean(tmp_path):
+    # ⭐ The whole of the feature: one unit, two source files, two documents,
+    # and every heading on both sides accounted for by exactly one file.
+    report = validate(corpora.practised(tmp_path / "c"))
+    assert report.findings == ()
+    assert "short-read" not in {u.rule for u in report.unchecked}
+
+
+def test_without_the_declaration_the_same_archive_is_a_short_read(tmp_path):
+    # ⛔ **The negative control that proves the check was not weakened.** The
+    # archive is byte-identical; only the declaration is gone. The practice's
+    # headings then have no file of their own, are summed against the prose
+    # file, and the check fires — which is what it did before `W428` and what
+    # it must still do for every corpus that declares nothing new.
+    root = corpora.practised(tmp_path / "c", declare_practice_origin=False)
+    assert "short-read" in validate(root).rules
+
+
+def test_a_heading_added_to_the_practice_source_is_still_a_short_read(tmp_path):
+    # ⛔ **The plant, on the new side of the new comparison.** A heading in the
+    # practice file that no block records is material dropped between source
+    # and archive, and it is exactly what this check exists for.
+    root = corpora.practised(
+        tmp_path / "c", practice_source=corpora.PRACTICE_SOURCE + "\n## Hint\n\nDropped.\n"
+    )
+    report = validate(root)
+    assert report.rules == ("short-read",)
+    assert "its practice source carries 3 heading line(s)" in report.findings[0].message
+    assert "2 heading block(s)" in report.findings[0].message
+
+
+def test_a_heading_added_to_the_lesson_source_is_still_a_short_read(tmp_path):
+    # ⛔ **The plant, on the OLD side.** A unit that gained a practice must not
+    # have bought that with a quieter check over its prose.
+    root = corpora.practised(tmp_path / "c", source=corpora.SOURCE + "\n### Three\n\nDropped.\n")
+    report = validate(root)
+    assert report.rules == ("short-read",)
+    assert "its source carries 3 heading line(s)" in report.findings[0].message
+
+
+def test_both_sides_short_are_two_findings_and_not_one(tmp_path):
+    # ⚠️ R6: one run reports every problem. Two files read short is two files
+    # to fix, and collapsing them would hide one of them behind the other.
+    root = corpora.practised(
+        tmp_path / "c",
+        source=corpora.SOURCE + "\n### Three\n",
+        practice_source=corpora.PRACTICE_SOURCE + "\n## Hint\n",
+    )
+    findings = [f for f in validate(root).findings if f.rule == "short-read"]
+    assert len(findings) == 2
+
+
+def test_a_practice_origin_no_document_reads_is_a_short_read(tmp_path):
+    # ⛔ **The hole this would otherwise have opened.** A declared practice
+    # origin whose unit holds no practice document would be a file counted by
+    # nobody — the exact silence the check exists to break. Its bucket is
+    # opened regardless, so its headings are compared against zero.
+    root = corpora.practised(tmp_path / "c", write_practice_document=False)
+    report = validate(root)
+    assert "short-read" in report.rules
+    message = next(f.message for f in report.findings if f.rule == "short-read")
+    assert "its practice source carries 2 heading line(s)" in message
+    assert "0 heading block(s)" in message
+
+
+def test_a_practice_origin_that_is_not_on_disk_is_named_as_one(tmp_path):
+    root = corpora.practised(tmp_path / "c", practice_origin="src/missing.md")
+    (root / "src/missing.md").unlink()
+    report = validate(root)
+    assert "origin-missing" in report.rules
+    assert "names a practice origin" in next(
+        f.message for f in report.findings if f.rule == "origin-missing"
+    )
+
+
+def test_a_practice_origin_may_name_a_region(tmp_path):
+    # ⭐ `practice_origin` is `origin`'s twin: the same two shapes, the same
+    # region bound, and no second spelling of either.
+    root = corpora.practised(
+        tmp_path / "c",
+        practice_source="# Aside\n\nNot this unit's.\n\n# The work\n\n" + corpora.PRACTICE_SOURCE,
+        practice_blocks=[{"type": "heading", "level": 1, "text": "The work"}]
+        + corpora.PRACTICE_BLOCKS,
+    )
+    text = (root / "archive/demo/container.json").read_text(encoding="utf-8")
+    text = text.replace(
+        '"practice_origin": "src/one-practice.md"',
+        '"practice_origin": {\n        "path": "src/one-practice.md",\n'
+        '        "section": "The work"\n      }',
+    )
+    (root / "archive/demo/container.json").write_text(text, encoding="utf-8")
+    assert validate(root).findings == ()

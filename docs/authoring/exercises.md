@@ -63,6 +63,70 @@ repository that is full.
 
 ---
 
+## Where a practice may live
+
+**A practice belongs in the unit whose material it practises.** It is a
+`practice` document in that unit's directory, so it renders on that unit's
+page, under the prose it is practising. **Not in a container of its own.** The
+user's words, on the first corpus that tried it: *"the practices should be as
+part of each topic page not a separate UI after the entire chapter"*
+(2026-09-21). A reader who finishes a chapter and then navigates somewhere else
+to practise has left the material behind.
+
+**Its prose comes from one of exactly two files, and you choose by asking one
+question: does the unit's own source file already carry the practice?**
+
+| Your source | What the container map declares | What is compared against what |
+|---|---|---|
+| one file holds the lesson **and** the practice | `origin` only | that file's headings against **all** the unit's documents |
+| the practice is new material you are adding | `origin` **and** `practice_origin` | `origin` against the `lesson` documents, `practice_origin` against the `practice` documents |
+
+```json
+{
+  "n": 4,
+  "title": "Message Type Indicators (MTIs)",
+  "practices": 1,
+  "origin": "src/4.md",
+  "practice_origin": "src/p1.md"
+}
+```
+
+**`practice_origin` needs `container_api: 3`.** It carries the same two shapes
+`origin` does: a path, or `{"path": …, "section": …}` for a region.
+
+### ⛔ You may not add the practice to the unit's existing source file
+
+**Not by hand, and not through `permitted_edits`.** Generation is
+non-destructive (R3), and the manifest's edit policy refuses an edit to any
+file the corpus's own `content` rules classify as **included** — however that
+edit is declared. Every prose unit's source file is included by definition,
+because that is what makes it a unit. So the practice's material arrives as a
+**new file beside the material**, and `practice_origin` names it.
+
+**This is not a workaround; it is the point.** The new file is yours, nothing
+you shipped before is touched, and the corpus stays regenerable from a clean
+checkout.
+
+### ⛔ And the completeness check is not relaxed to let this through
+
+`studyforge validate` compares a heading count taken from your raw source
+against the count the archive records — the one check that can catch material
+silently dropped between the two. A unit with a `practice_origin` is compared
+**twice**, once per file, and every heading on both sides is still accounted
+for by exactly one of them.
+
+**A `practice_origin` that no practice document reads is a short read**, not a
+file that goes uncounted: the bucket is opened whether or not a document lands
+in it, so its headings are compared against zero and `validate` says so.
+
+### `practice_origin` places nothing
+
+`origin` is what decides where a unit's page is written. `practice_origin` is
+read by `validate` and by nothing else. A practice never moves the page it
+joins.
+
+---
+
 ## The `exercise` key
 
 **It lives inside the practice document**, not in a file of its own and not in

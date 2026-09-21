@@ -110,6 +110,62 @@ repositories.
 still a plain path in both shapes, so `origin_directory`'s `.parent` and every
 other consumer that wants a location are untouched.
 
+## ⭐ A unit's PRACTICE may come from a file of its own — `container_api: 3`
+
+⛔ **Ruled by the user, on the first corpus:** *"the practices should be as part
+of each topic page not a separate UI after the entire chapter"* (2026-09-21,
+`W428`). A practice belongs on the page it practises, which makes it a
+`practice` document of that unit.
+
+⚠️ **The obstacle was never the renderer** — a unit page already renders every
+document in its directory, practice panel and all. It was the **accounting**.
+`validate.source.completeness` compared a unit's whole heading total against the
+one file its `origin` named, so a practice added to a prose unit read as a short
+read — ⭐ correctly, because the practice's prose is not in that file. ⛔ And
+putting it there is refused: R3 forbids rewriting a source file, and
+`corpus.manifest.edits` refuses an edit to any file the corpus's own `content`
+policy classifies as INCLUDED **however it is declared**, so `permitted_edits`
+cannot legalise it either.
+
+```json
+{
+  "n": 4,
+  "title": "Message Type Indicators (MTIs)",
+  "practices": 1,
+  "origin": "src/4.md",
+  "practice_origin": "src/p1.md"
+}
+```
+
+⭐ **THE PLACEMENT RULE, and it is the whole of it:**
+
+- A practice lives in the unit whose material it practises. ⛔ **Not in a
+  container of its own**, which is a reader who finished a chapter and then
+  navigated away from it.
+- A practice's prose comes from `origin` **when the source file already carries
+  it**, and the two documents split that one file between them — the runnable
+  fixture's shape, and nothing changes for it.
+- ⛔ **Otherwise it comes from a NEW file, named by `practice_origin`.** Purely
+  additive, beside the material, so R3 holds with **nothing** in
+  `permitted_edits`. ⚠️ An existing source file is never edited to make room
+  for a practice; that is the refusal above, not a rule of thumb.
+- ⛔ **`practice_origin` holds ALL of the unit's `practice` documents and none
+  of its `lesson` documents.** The split is the archive's `kind`, so the
+  additive file's headings are the practice's headings and nothing else's.
+- ⚠️ **`practice_origin` requires `origin`.** The key means *not the file the
+  prose came from*; with no prose file there is no other file, and the one path
+  belongs in `origin`, where placement can see it.
+- ⛔ **It places nothing.** `origin` is what `placement.profile.origin_directory`
+  and the contents tree read, and a practice that changed where its unit's page
+  went would move the page a reader is already reading.
+
+⭐ **The check is run twice, never relaxed** (`W428`, and it is the clause the
+row was given): a unit declaring `practice_origin` is compared **per origin** —
+its lessons against `origin`, its practices against `practice_origin` — and
+**both buckets exist whether or not a document landed in them**, so a
+`practice_origin` no practice document reads is a short read rather than a file
+nobody counted.
+
 ## `label` is presentation carried as data
 
 ⚠️ **Optional, per unit, and never identity.** Real material carries its own
@@ -140,6 +196,7 @@ from studyforge.corpus.container.document import (
     CONTAINER_KEYS,
     EDITORIAL_KEYS,
     KNOWN_CONTAINER_API,
+    PRACTICE_ORIGIN_API,
     REGION_ORIGIN_API,
     UNIT_KEYS,
     Container,
@@ -179,6 +236,7 @@ __all__ = [
     "EDITORIAL_KEYS",
     "KNOWN_CONTAINER_API",
     "ORIGIN_KEYS",
+    "PRACTICE_ORIGIN_API",
     "RAISES",
     "REGION_ORIGIN_API",
     "UNIT_KEYS",
