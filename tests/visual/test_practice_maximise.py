@@ -83,6 +83,43 @@ TOUCHING = 1.0
 #: template is the single source for both of its words.
 MAXIMISE = "Maximise"
 
+#: The viewport the scroll case pins, so its reading stops depending on which
+#: browser ran it. ⛔ **MEASURED, and the two arms really do differ**: the window
+#: this harness launches leaves **900px** of viewport in the pinned image and
+#: **813px** on this host's own browser — the same page, two different amounts
+#: of room, because a browser's own chrome is not part of what `--window-size`
+#: promises. ⭐ An explicit height makes the document's spare scroll the same
+#: number in both. ⚠️ **1280 wide is deliberately the harness's own wide
+#: width**: narrowing it folds the rail and changes the page this row is about.
+SCROLL_CASE_VIEWPORT = (1280, 600)
+
+#: How much room the page has, and how much of it the panel is — the three
+#: numbers the scroll case's precondition is stated in.
+ROOM = """
+(() => {
+  const panel = document.querySelector('<panel>');
+  return {
+    viewport: window.innerHeight,
+    document: document.documentElement.scrollHeight,
+    panel: panel.offsetHeight,
+    spare: document.documentElement.scrollHeight - window.innerHeight
+  };
+})()
+""".replace("<panel>", PANEL_SELECTOR)
+
+#: Put the reader at the end of the page — and make sure they ARRIVE.
+#:
+#: ⛔ **`behavior: 'instant'`, for the very reason this row exists.** `reset.css`
+#: sets `scroll-behavior: smooth` on `html`, so a plain `scrollTo` ANIMATES and
+#: a reading taken straight after it is a reading of a page still in motion.
+#: ⚠️ **MEASURED: this one setup line read `0` on this host's browser while
+#: reading the real position in the pinned image** — the same defect this row
+#: repairs, living in the check that repairs it, and it is what refused the
+#: second merge. ⛔ A check's SETUP is as subject to the mechanism as the code.
+TO_THE_END = """
+window.scrollTo({ top: document.documentElement.scrollHeight, left: 0, behavior: 'instant' });
+"""
+
 
 @pytest.fixture
 def origin(built_site: site.Site) -> Iterator[served.Served]:
@@ -272,15 +309,47 @@ def test_restoring_gives_back_the_place_in_the_page_the_reader_left(
     came back exactly where they were. ⛔ **So a reading taken at the top of the
     page asserts nothing about this**, and the first one was — which is how it
     reached a merge gate.
+
+    ⛔ **This case pins its own viewport and states its precondition in numbers**
+    (`W431/2`). ⚠️ Its first version depended on whatever room the browser
+    happened to give the page, and on a `scrollTo` that — like everything else
+    on these pages — ANIMATES: it read `0` on this host's browser and the real
+    position in the pinned image, and a guard refusing a meaningless reading is
+    the only reason that was ever seen.
     """
+    # ⛔ **The viewport is PINNED for this case**, so what it reads is the same
+    # in both arms of the harness rather than a property of whichever browser
+    # ran it — and it is set before `open`, which is the only order that works.
+    open_page.resize(*SCROLL_CASE_VIEWPORT)
     open_page.open(origin.url(_case()))
+
+    # ⛔ **The precondition, stated in numbers rather than assumed.** This case
+    # needs a document taller than the viewport by MORE than the panel's own
+    # height: that surplus is the whole of what the clamp can take away, and
+    # without it there is no clamp to read.
+    room = open_page.evaluate(ROOM)
+    assert room["spare"] > room["panel"], (
+        f"this page is {room['document']}px tall in a {room['viewport']}px viewport, so it "
+        f"has {room['spare']}px of spare scroll — and the panel is {room['panel']}px of it. "
+        "Taking the panel out of flow cannot leave a scroll that no longer fits, so this "
+        "check would read nothing"
+    )
+
     label = _state(open_page)["maximise"]["label"]
     _tab_to(open_page, label)
     # ⭐ The reader is put at the END of the page, which is where the document
     # losing the panel's height leaves a scroll that no longer fits.
-    open_page.evaluate("window.scrollTo(0, document.documentElement.scrollHeight)")
+    open_page.evaluate(TO_THE_END)
     left = _state(open_page)["viewport"]["scrolled"]
     assert left > 0, "the page did not scroll at all, so this reading says nothing"
+    # ⛔ **And FAR ENOUGH: past where the shortened document will end.** A reader
+    # scrolled less than that is inside what still fits, nothing is clamped, and
+    # the check would pass over the defect rather than through it.
+    assert left > room["spare"] - room["panel"], (
+        f"the reader is at {left} and the shortened document still reaches "
+        f"{room['spare'] - room['panel']}, so nothing will be clamped and this check would "
+        "pass without ever reaching the defect"
+    )
 
     open_page.press("Enter")
     wide = _until(open_page, lambda reading: reading["expanded"], "expanded")
