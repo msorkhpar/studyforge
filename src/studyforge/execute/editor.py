@@ -222,8 +222,16 @@ class EditorProbe:
         `editor()` left behind, and a COLD cache is `None` rather than a reason
         to reach the Docker socket while serving a page.
         ⚠️ **An expired reading is cold**, not stale-but-usable: a reading older
-        than the TTL is not a reading, and returning one would let a policy
-        outlive the editor it was composed from.
+        than the TTL is not a reading, and a caller deciding whether to act
+        against a container must not act on one.
+        ⛔ **So this is the wrong reader to compose a LASTING policy from, and
+        `W430` is the reading that says so**: a `frame-src` read straight off
+        this named the editor for `EDITOR_TTL` seconds after an ask and `'none'`
+        from then on, which a reader is essentially never inside. ⭐ The remedy
+        is a record kept by the policy's own caller —
+        `serve.routes.runs.Runs.origins()` — and never a softer TTL here: the
+        TTL's ground is *do not act on a stale answer*, and that ground does not
+        transfer to NAMING an origin a page may embed.
         """
         if self.container is None:
             return None

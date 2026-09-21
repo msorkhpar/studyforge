@@ -8,19 +8,24 @@ from __future__ import annotations
 
 import pytest
 
+from studyforge.execute import EDITOR_TTL, Editor, EditorProbe, editor_container_for
 from studyforge.serve.response import Request
 from studyforge.serve.routes import run
 from studyforge.serve.routes.runs import verdict
+from tests.studyforge.execute.test_mode import fake_docker
 from tests.studyforge.serve.routes.running import (
     SOURCE,
+    StubEditors,
     StubHandle,
     entry,
     key,
     plant_command,
     runs_over,
     served_copy,
+    serving,
     stub_runner,
 )
+from tests.studyforge.serve.serving import fetch
 
 POST = Request("POST", "/api/v1/run/", {})
 CLOCK = "2026-09-18T10:00:00+00:00"
@@ -96,3 +101,88 @@ def test_a_stopped_or_timed_out_run_is_recorded_by_its_word(word):
     handle = StubHandle([], -15)
     handle.returncode = -15
     assert verdict(handle, f"--- exit {word} ---") == word
+
+
+# --- ⛔ `W430`: the record the frame policy composes from does NOT expire -----
+#
+# ⛔ **Every reading below CROSSES `EDITOR_TTL`, and that is the point of the
+# row.** A `frame-src` read straight through `EditorProbe.known()` named the
+# editor for ten seconds after anything asked and `'none'` from then on, which a
+# reader is essentially never inside — and the reading that missed it was taken
+# inside the TTL and never crossed its boundary. ⭐ So each case here AGES the
+# probe's own cache and ASSERTS that it went cold before reading the policy.
+
+#: The origin a probe discovers below. ⚠️ Loopback and a port, which is all a
+#: `frame-src` may ever name; nothing here is a path inside anybody's container.
+EDITOR_ORIGIN = "http://127.0.0.1:8443"
+
+#: An editor up over this corpus's `practice/` directory, as a probe answers it.
+UP = Editor(origin=EDITOR_ORIGIN, folder="/w/sources", base="practice")
+
+
+def framed(headers) -> str:
+    """The `frame-src` a real response carried, read back as a browser reads it."""
+    policy = dict(item.split(" ", 1) for item in headers["content-security-policy"].split("; "))
+    return policy["frame-src"]
+
+
+def real_probes(docker, now, ttl: float = EDITOR_TTL):
+    """One REAL `EditorProbe` per corpus, over a fake `docker` and a clock a test moves."""
+
+    def made(corpus):
+        return EditorProbe(
+            corpus.root,
+            editor_container_for(corpus.source),
+            docker=str(docker),
+            clock=lambda: now[0],
+            ttl=ttl,
+        )
+
+    return made
+
+
+def test_an_origin_outlives_the_real_probes_own_cache_going_cold_under_it(root, tmp_path):
+    # ⛔ **THE reading of this row, against the REAL probe.** What expires here
+    # is the cache the policy used to read through, not a stub's imitation of
+    # one — so the boundary crossed is `EDITOR_TTL`'s own.
+    now = [100.0]
+    answer = "\n".join(("true", "port\t127.0.0.1\t8443", f"mount\t{root}\t/w/sources"))
+    live, _ = runs_over(root, editor=real_probes(fake_docker(tmp_path, answer), now))
+    assert live.origins() == (), "a cold instance frames nothing, and that is still true"
+    assert set(live.editors()) == {SOURCE}
+    assert live.origins() == (EDITOR_ORIGIN,)
+    now[0] += EDITOR_TTL * 10
+    # ⭐ The aged state is ASSERTED and not assumed: a probe that had not gone
+    # cold here would make the line below pass while measuring nothing.
+    assert live.found(ask=False) == {}, "the probe's cache is still warm, so nothing was crossed"
+    assert live.origins() == (EDITOR_ORIGIN,)
+
+
+def test_a_page_served_long_after_the_ask_still_names_the_editor_on_the_wire(root):
+    # ⛔ **The reader's own defect, on a real socket.** The index is the reader
+    # that may ask; the page afterwards is served with the probe's cache aged
+    # past the TTL, and it is what the browser reads.
+    editors = StubEditors(UP)
+    live, discovered = runs_over(root, editor=editors)
+    with serving(live, discovered) as server:
+        warm = fetch(server, "/api/v1/run/")[1]
+        aged = editors.expire()
+        cold = [probe.known() for probe in aged]
+        page = fetch(server, f"/{root.name}/index.html")
+    assert aged and cold == [None] * len(aged), "no reading expired, so none was crossed"
+    assert framed(warm) == EDITOR_ORIGIN
+    assert (page[0], framed(page[1])) == (200, EDITOR_ORIGIN)
+
+
+def test_the_practice_editor_route_fills_the_record_the_policy_composes_from(root):
+    # ⭐ A panel asks for its OWN practice's windows, which is an explicitly
+    # requested route and may fork (`W427`, `W429`). ⛔ So a reader who never
+    # loaded the index still gets a policy that admits the editor they were just
+    # handed — and it is still admitted once that ask has aged out.
+    editors = StubEditors(UP)
+    live, discovered = runs_over(root, editor=editors)
+    assert live.origins() == ()
+    assert live.practice_editor(discovered.corpora[0], "practice/passes/greet.py", None)
+    aged = editors.expire()
+    assert aged and [probe.known() for probe in aged] == [None] * len(aged)
+    assert live.origins() == (EDITOR_ORIGIN,)

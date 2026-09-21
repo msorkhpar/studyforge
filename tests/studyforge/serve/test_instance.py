@@ -199,21 +199,31 @@ class StubEditors:
     ⛔ **`known()` answers only after `editor()` has been asked** (`W427`), because
     that is what a real probe's cache does and it is the property the frame policy
     rests on: composing a policy asks nothing, so a cold instance frames nothing.
+
+    ⛔ **And it EXPIRES** (`W430`, `expire()`): the real cache goes cold again
+    `EDITOR_TTL` seconds after the ask, and a stub that modelled only *cold
+    until asked* could not tell a policy that LASTS from one that lapses.
     """
 
     def __init__(self, where: Editor | None) -> None:
         self.where = where
         self.asked = 0
+        self.expired = False
 
     def __call__(self, corpus: ServedCorpus) -> StubEditors:
         return self
 
     def editor(self) -> Editor | None:
         self.asked += 1
+        self.expired = False
         return self.where
 
     def known(self) -> Editor | None:
-        return self.where if self.asked else None
+        return None if self.expired or not self.asked else self.where
+
+    def expire(self) -> None:
+        """Age the reading past the TTL, as `EditorProbe.known()` does by itself."""
+        self.expired = True
 
 
 def policy_sent(headers) -> dict[str, str]:
@@ -279,6 +289,30 @@ def test_a_page_served_before_anything_asked_frames_nothing_and_forks_nothing(tm
     assert cold == 0, "serving pages asked the probe, and asking forks `docker`"
     assert [policy_sent(each)["frame-src"] for each in (page, toc, asset)] == ["'none'"] * 3
     assert warmed and policy_sent(after)["frame-src"] == UP.origin
+
+
+def test_a_page_served_after_the_reading_expires_still_frames_the_editor(tmp_path):
+    # ⛔ **`W430`, on the real instance wiring, ACROSS the TTL boundary.** The
+    # policy used to be read through `EditorProbe.known()`, which goes cold
+    # `EDITOR_TTL` seconds after the ask — so a served `frame-src` named the
+    # editor for ten seconds and `'none'` from then on, and a reader was
+    # essentially never inside that window. ⚠️ **A reading that does not cross
+    # the boundary is not a reading of this**, which is how it shipped.
+    editors = StubEditors(UP)
+    server = instance_of(discover(a_workspace(tmp_path)), port=0)
+    server.namespaces[run.NAMESPACE].live.editor = editors
+    with instance_serving(server):
+        body(server, f"/api/v1/{run.NAMESPACE}/")
+        editors.expire()
+        # ⭐ The aged state asserted and PRINTED, so a stub that quietly stayed
+        # warm cannot make the line below pass while measuring nothing.
+        print(f"probe reading after expiry: {editors.known()!r}")
+        assert editors.known() is None, "the reading did not expire, so nothing was crossed"
+        after = fetch(server, "/depth1/index.html")[1]
+        asset = fetch(server, "/depth1/.studyforge/assets/page.css")[1]
+    assert policy_sent(after)["frame-src"] == UP.origin
+    assert policy_sent(asset)["frame-src"] == UP.origin
+    assert policy_sent(after)["frame-ancestors"] == "'none'"
 
 
 def test_the_policy_and_the_index_are_read_off_the_one_runs_and_one_probe(tmp_path):
