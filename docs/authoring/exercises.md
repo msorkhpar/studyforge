@@ -70,6 +70,10 @@ anything a person types. It rides the version that document already has, and
 the adapter writes it — because the adapter is the only thing that knows what
 your build command is or where a grader came from.
 
+**Every key the record defines is below, in the order it is written.** Most
+records carry the first six and nothing else; the last four arrive with an
+exercise somebody authored for this site.
+
 ```json
 {
   "exercise": {
@@ -78,21 +82,58 @@ your build command is or where a grader came from.
     "run_command": ["mvn", "-q", "-pl", "practice/basics-01", "compile"],
     "test_command": ["mvn", "-q", "-pl", "practice/basics-01", "test"],
     "provenance": "bundled",
-    "trust": "authoritative"
+    "trust": "authoritative",
+    "kind": "code",
+    "cases": [
+      {"id": "GreeterTest#greetsByName", "kind": "main", "says": "It greets by name."},
+      {"id": "GreeterTest#refusesAnEmptyName", "kind": "edge",
+       "says": "An empty name is refused."}
+    ],
+    "report": {"format": "junit", "path": "practice/basics-01/target/surefire-reports"},
+    "origin": {"path": "docs/01-getting-started.md", "section": "Greeting a caller"}
   }
 }
 ```
 
 **A complete practice document carrying that key is in this repository**, at
 [`tests/fixtures/depth2/.../practice-1.json`](../../tests/fixtures/depth2/archive/basics/01-getting-started/raw/java/unit-01/practice-1.json)
-— fifteen keys, then `starting_code`, then `exercise`, in that order.
+— fifteen keys, then `starting_code`, then `exercise`. That one carries the
+first six fields only, which is what a record written from material a source
+already ships looks like.
 
-**Six fields, in two halves.** `main_path` and `test_path` are the workspace; `run_command`
+**The first six, in two halves.** `main_path` and `test_path` are the workspace; `run_command`
 and `test_command` are how it is exercised; `provenance` says where the grader
 came from — `bundled`, `generated` or `user` — and `trust` is either
 `authoritative` or `advisory`. **`main_path` and `run_command` are the file;
 the other four are the grader**, and the grader is written whole or not at all
 (`trust` alone may be left out, and is then defaulted from `provenance`).
+
+### The last four: what an authored exercise says
+
+**`kind` is `code` or `quiz`**, and `code` is what a record with no `kind`
+means. **Write it only where it is not `code`**: every record ever written is a
+code exercise, so the framework writes that token back only for a `quiz`, and a
+`"kind": "code"` you write yourself is read, accepted, and then left out of what
+the build writes. It is shown above because this fence lists every key.
+
+**`cases` and `report` are one claim and go together**, and only beside a
+grader. A case is three fields: `id`, exactly as the test report spells it; a
+`kind` of `main` — the ask itself — or `edge`, one named edge of it; and `says`,
+the one sentence the reader is shown when it fails. The `report` names the
+format the grader writes (`junit`) and the path inside the workspace it lands
+at. **At least one case is `main`, the ids are distinct, and every case is
+backed by a test** — what the reader is shown is *main ask* plus *edge cases
+n/m*, so a map that names no ask describes a run nothing reports.
+
+**`origin` is the material the exercise was built from** — a path inside your
+source, or a region of one written `{"path": …, "section": …}`, where `section`
+is the exact text of a heading. **It is a fact about the material and not about
+a grader**, so it is the one of these four an *ungraded* record may carry.
+
+**The breakdown is a report, never a second definition of a pass.** A practice
+completes when every case passes, exactly as before. The rules are §7's, in
+[*Exercises authored for every corpus*](../specs/2026-09-08-studyforge-v1-design.md#exercises-authored-for-every-corpus-w389),
+and this page does not restate them.
 
 ### A file with no test
 

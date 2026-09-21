@@ -17,6 +17,7 @@ import pytest
 from studyforge.archive.document import build, parse, render
 from studyforge.archive.errors import ArchiveError
 from studyforge.exercise import (
+    AUTHORED_KEYS,
     DEFAULTED_KEYS,
     EXERCISE_KEYS,
     GRADER_KEYS,
@@ -43,6 +44,16 @@ RECORD = {
 }
 
 GRADED_DOCUMENT = {"kind": "practice", "blocks": [], "exercise": RECORD}
+
+#: The keys a graded record with no authored material writes — `W357`'s whole
+#: record, which is every key `EXERCISE_KEYS` held before `AX-00` appended four
+#: more. ⭐ Derived, so a fifth authored key cannot make this claim silently
+#: narrower.
+#: ⚠️ The loop variable is `name` and not `key` deliberately: `W109`'s sweep
+#: resolves a subscript's key through every module-level binding of that name,
+#: so a second `for key in …` up here would widen what the reads below are
+#: read as.
+WORKSPACE_KEYS = tuple(name for name in EXERCISE_KEYS if name not in AUTHORED_KEYS)
 
 
 def record(**changes):
@@ -77,7 +88,9 @@ def test_the_record_round_trips_through_a_document():
     # unchanged, in the same key order.
     exercise = from_document(RECORD, WHERE)
     again = to_document(exercise)
-    assert tuple(again) == EXERCISE_KEYS
+    # ⚠️ `WORKSPACE_KEYS`, not `EXERCISE_KEYS`, since `AX-00`: this record
+    # carries no authored material, and a key it does not carry is not written.
+    assert tuple(again) == WORKSPACE_KEYS
     assert from_document(again, WHERE) == exercise
 
 
@@ -381,8 +394,12 @@ def test_the_keys_split_into_the_file_and_the_grader_with_nothing_left_over():
     # ⛔ The ungraded record is written in the graded record's own order, so
     # adding a grader to one never reorders what was already on disk (R10).
     assert tuple(k for k in EXERCISE_KEYS if k in REQUIRED_KEYS) == REQUIRED_KEYS
-    assert set(REQUIRED_KEYS) | set(GRADER_KEYS) == set(EXERCISE_KEYS)
+    # ⭐ Three-way since `AX-00`, and the third part is the reason this claim
+    # is worth restating rather than deleting: the file, the grader and the
+    # authored keys partition the record, and nothing is left over.
+    assert set(REQUIRED_KEYS) | set(GRADER_KEYS) | set(AUTHORED_KEYS) == set(EXERCISE_KEYS)
     assert not set(REQUIRED_KEYS) & set(GRADER_KEYS)
+    assert not set(AUTHORED_KEYS) & (set(REQUIRED_KEYS) | set(GRADER_KEYS))
     assert set(DEFAULTED_KEYS) <= set(GRADER_KEYS)
 
 
