@@ -52,11 +52,12 @@ one does.**
 | **M5** — it runs code | ✅ CLOSED — round 123, on a runner image holding only what it declares (`W374`) | `12b1abb` | [the close](BOARD-ARCHIVE.md#po-round-123) |
 | **M5 step 5.2** | ✅ CLOSED — `SF-29`, `SF-22`, `SF-44` | `12b1abb` | [record](BOARD-ARCHIVE.md#po-round-123) |
 | **M5 step 5.1** | ✅ CLOSED — `TC-00` + `SF-20` | `b9aef83` | [record](BOARD-ARCHIVE.md#po-round-117) |
-| **M7** — it has practices | ⏳ **OPEN — round 121.** ⭐ Steps 7.1–7.4 CLOSED; ⛔ **7.5 (`QA-02`) is last, and `M7` CANNOT CLOSE until [`W416`](rows/W416.md) lands** — 7.4's gap is `M7`'s own promise | — | [the open](BOARD-ARCHIVE.md#po-round-121) |
+| **M7** — it has practices | ✅ **CLOSED — round 133**, its named gap FILLED | `d9cce6bc` | [the close](BOARD-ARCHIVE.md#po-round-133) |
 | **M7 step 7.1** | ✅ CLOSED — `TC-01` | `9bc688f` | [record](BOARD-ARCHIVE.md#po-round-124) |
 | **M7 step 7.2** | ✅ CLOSED — `TC-02`, `TC-03`, `TC-04` | `04ce050` | [record](BOARD-ARCHIVE.md#po-round-126) |
 | **M7 step 7.3** | ✅ CLOSED — `TC-05` + `TC-06` | `4c8490b4` | [record](BOARD-ARCHIVE.md#po-round-128) |
-| **M7 step 7.4** | ✅ CLOSED — `SK-09` + `SF-24`, ⛔ **ONE NAMED GAP: the embedded editor ([`W416`](rows/W416.md))**, REPORTED not rewritten | `04b3e65e` | [record](BOARD-ARCHIVE.md#po-round-131) |
+| **M7 step 7.4** | ✅ CLOSED — `SK-09` + `SF-24`, ⭐ **its one named gap ([`W416`](rows/W416.md)) FILLED at `7ce4fddd`** | `04b3e65e` | [record](BOARD-ARCHIVE.md#po-round-131) |
+| **M7 step 7.5** | ✅ CLOSED — `QA-02`, ⭐ **closing `W417` and `W419` too** | `d9cce6bc` | [record](BOARD-ARCHIVE.md#po-round-133) |
 | **M10** — every corpus has practices | ⛔ **NOT STARTED — after `M7`.** ⭐ **A CORE IDEA of the project (user, 2026-09-19)**; planned by [`W389`](rows/W389.md) | — | [the plan](README.md) |
 | **M11** — it is release-ready | ⛔ **NOT STARTED — after `M10`** (user, 2026-09-18; ruled 2026-09-19) | — | [the plan](README.md) |
 | **M9** — the Java corpus re-validates | ⛔ **NOT STARTED, and it holds 21 of the 35 undelivered capabilities.** `Claude-senior-java-engineer` converted under §12's rules, with gate-clearing exercises, and the findings written down | — | [the plan](README.md) |
@@ -593,16 +594,17 @@ else.**
 | W413 | Nothing in the tree can see whether the office rules name the voting gate; delete the section and the floor stays green | framework agent | `todo` — `W405/3` | [`rows/W413.md`](rows/W413.md) |
 | W414 | An office kills by PATTERN, so a sweep reaches another office's run in another worktree | framework agent | `todo` — `W403/8` | [`rows/W414.md`](rows/W414.md) |
 | W415 | A gate reading taken while the shared tmpfs is near full is untrustworthy in BOTH directions | framework agent | `todo` — `W407/5` | [`rows/W415.md`](rows/W415.md) |
-| W416 | The embedded editor is not delivered: nothing in the framework knows where a running editor is | framework agent | `todo` — `SF-24/1` | [`rows/W416.md`](rows/W416.md) |
-| W417 | The practice panel's keyboard behaviour is read in no browser, because the harness opens `file://` | framework agent | `todo` — `SF-24/5` | [`rows/W417.md`](rows/W417.md) |
+| W416 | The embedded editor is not delivered: nothing in the framework knows where a running editor is | framework agent | ✅ done — `7ce4fddd` | [`rows/W416.md`](rows/W416.md) |
+| W417 | The practice panel's keyboard behaviour is read in no browser, because the harness opens `file://` | framework agent | ✅ done — `d9cce6bc`, by `QA-02` | [`rows/W417.md`](rows/W417.md) |
 | W418 | `ports[0].per_project` carries no `env_var`, so two corpora on one host collide on the published port | framework agent | `todo` — `SK-09/4` | [`rows/W418.md`](rows/W418.md) |
-| W419 | A visual test monkeypatches `tempfile.tempdir` process-wide, so it can refuse any row under `-n auto` | framework agent | `todo` — `W404/6` | [`rows/W419.md`](rows/W419.md) |
+| W419 | A visual test monkeypatches `tempfile.tempdir` process-wide, so it can refuse any row under `-n auto` | framework agent | ✅ done — `d9cce6bc`, by `QA-02` | [`rows/W419.md`](rows/W419.md) |
 | W420 | The rubric types the DISK form of `ruff` while the arm that votes runs over `git ls-files` | framework agent | `todo` — `W405/5` | [`rows/W420.md`](rows/W420.md) |
 | W421 | `CodeSignal` carries two untracked files on no ref, in the repository R20 keeps untouched | the user | ✅ done — RULED deleted | [`rows/W421.md`](rows/W421.md) |
 | W422 | `render/page/document.py` stands at 400 of R11's 400, so the NEXT line added fails the build | framework agent | `todo` — `SF-24/11` | [`rows/W422.md`](rows/W422.md) |
 | W423 | No golden carries a promoted `<h1>` AND a practice panel, so the resolved line has no witness | framework agent | `todo` — `SF-24/12` | [`rows/W423.md`](rows/W423.md) |
 | W424 | The office rules never say an office is the WORKTREE, so a fresh agent invents a second office | framework agent | `todo` — the register, 2026-09-20 | [`rows/W424.md`](rows/W424.md) |
 | W425 | Serving a corpus writes a discovery CACHE nothing ignores, so every served corpus goes dirty | framework agent | `todo` — the register, 2026-09-20 | [`rows/W425.md`](rows/W425.md) |
+| W426 | The first corpus has no practices, so the panel and Run and Submit are read on no corpus | integration agent | ✅ done — `638e233e`, corpus `bc08aaa` | [`rows/W426.md`](rows/W426.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
