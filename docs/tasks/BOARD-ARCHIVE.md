@@ -29974,3 +29974,67 @@ itself** — an office reported the first (`W428/1`).
 ⭐ **Surface:** the run index, the panel, the workspace-settings writer, and their tests.
 
 [the mint](#po-round-136)
+
+## PO round 137
+
+⛔ **THE USER IS STILL BLOCKED, AND `W427` IS NOT THE REASON — THE TTL IS.**
+⭐ **`W427` merged at `908d1826` and closes here.** ⚠️ **Minutes later the user
+reported the SAME browser error against the SAME port**, and they were right.
+
+⛔ **Measured on the running server, one page, one instance, nothing restarted:**
+`frame-src` names the editor origin for **`EDITOR_TTL`** seconds after anything
+asks, and reads `'none'` after. ⭐ **So the policy is CORRECT FOR TEN SECONDS
+and wrong the rest of the time** — a human reading a page is essentially never
+inside that window.
+
+### ⛔ THE REGISTER'S OWN MEASUREMENT ERROR, AND IT IS THE LESSON
+
+⛔ **The register warmed the instance, measured immediately, read the editor
+origin, and reported the row as working.** ⚠️ **That reading never crossed the
+boundary it was about.** ⭐ **A measurement of an expiry that does not outlive
+the expiry has measured nothing** — the same shape as this session's three
+no-op plants and the exact-equality control that read `0` on both sides.
+
+⭐ **The register recorded a one-reload-after-restart nuisance. The truth is a
+ten-second oscillation.** ⛔ **The user found it, twice, and the second report
+came after a merge the register had called a fix.**
+
+### ⭐ What is minted
+
+[`W430`](rows/W430.md) — and ⛔ **it does NOT reopen §8.3.** Asking at startup
+or on the path of a page response stays refused; `W427`'s first hand-back did
+exactly that and had every page load reach the Docker socket. ⭐ **The row's
+argument is that the TTL's ground does not transfer from RUNNING A COMMAND to
+NAMING AN ORIGIN**: a stale entry's whole effect is a policy naming a loopback
+origin where nothing listens, and the frame then fails to load — which is what
+happens today anyway.
+
+### ⚠️ In flight
+
+`W430` → Developer 1, ⛔ **the user is blocked on it**. `AX-03` → Developer 3,
+`M10` step 10.2, handed back and awaiting the register's verification.
+
+### W427 — The serving process sets `frame-src 'none'`, so the panel's editor frame can never load
+
+⛔ **USER-VISIBLE, MEASURED IN A BROWSER BY THE USER 2026-09-21.** The practice panel's editor slot renders an `<iframe>` that **can never load**, and the browser says exactly why:
+
+> Framing 'http://127.0.0.1:8443/' violates the following Content Security Policy directive: **"frame-src 'none'"**. The request has been blocked.
+
+⭐ **The blocking policy is OURS, not the editor's.** [`serve/security.py`](../../src/studyforge/serve/security.py)'s `CONTENT_POLICY` carries `frame-src 'none'`, and `frame-src` governs **what this page may EMBED**. ⛔ **So `W416` shipped an editor slot the serving process forbids filling** — the seam is right, the page is served with a header that refuses it.
+
+### ⛔ THE VERIFICATION THAT MISSED IT, AND WHY — this is the lesson, not the bug
+
+⛔ **`W416/2` asked whether the editor may be FRAMED, and the register answered it by measuring `code-server`'s RESPONSE headers** — no `X-Frame-Options`, no CSP `frame-ancestors`, no meta CSP — **and declared the feature unblocked.** ⚠️ **Framing is a TWO-SIDED property**: the framed origin may refuse (`frame-ancestors`, `X-Frame-Options`) **and the framing page may be forbidden (`frame-src`)**. ⭐ **Only one side was read, and the answer was reported with more confidence than one side can carry.**
+
+⛔ **A negative measured on one half of a two-sided property is not a negative.** It is the same family as this session's no-op instruments: a reading that looked complete and measured half.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`frame-src` must admit the editor origins this instance actually discovered** — and nothing else. ⭐ **The origin is a SERVE-TIME fact** (`W416`: a per-project host port, which R8 forbids a built page from naming), so the policy is **composed at serve time from the discovered editors**, never widened to a wildcard.
+2. ⚠️ **`frame-ancestors 'none'` and `X-Frame-Options: DENY` stay exactly as they are.** They govern this page being framed BY someone, which is a different question and still `no`. ⛔ **Loosening them would be answering the wrong half.**
+3. ⭐ **A test that would have caught this**: a served page whose index publishes an editor must carry a `frame-src` that admits that origin — asserted on the SERVED response, not on a constant.
+4. ⚠️ **An instance with no editor keeps `frame-src 'none'`.** The policy widens only as far as a discovered editor, and narrows again when it goes away.
+
+⭐ **Surface:** `serve/security.py`, whatever composes its headers per instance, and their tests.
+
+[the mint](#po-round-136)
