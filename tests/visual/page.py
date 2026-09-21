@@ -60,6 +60,16 @@ NARROW = (720, VIEWPORT[1])
 #: authored it, because they only ever looked at the theme they use"*.
 SCHEMES = ("light", "dark")
 
+#: The keys `press` knows, as `(code, virtual key code, the text it types)`.
+#: ⛔ A named table rather than a caller passing raw protocol fields: a key
+#: dispatched with the wrong `code` is delivered and ignored, which reads in a
+#: check as the PAGE refusing the keyboard.
+KEYS = {
+    "Enter": ("Enter", 13, "\r"),
+    " ": ("Space", 32, " "),
+    "Escape": ("Escape", 27, None),
+}
+
 #: How long a page may take to reach `readyState === "complete"`.
 LOAD_TIMEOUT = 30.0
 
@@ -113,9 +123,19 @@ class OpenPage:
     def open(self, url: str, *, scheme: str = "light", scripts: bool = True) -> None:
         """Navigate to `url` under `scheme`, with page scripts on or off.
 
-        ⛔ `url` is a `file://` URL. R8's floor is a page opened by
-        double-clicking it, and a harness that served the tree over HTTP would
-        be testing a configuration no reader has.
+        ⭐ **`url` is a `file://` URL for every clause but one, and that is the
+        default rather than a rule this method enforces.** R8's floor is a page
+        opened by double-clicking it, so a harness that only ever served the
+        tree would be testing a configuration no reader has.
+
+        ⛔ **The one exception is `W417`, and it is an ADDITION to that floor and
+        never a retreat from it.** The practice panel's controls exist only
+        where `window.studyforge.run.available()` is true — which
+        `run-client.js` answers from `location.protocol` — so the panel's
+        keyboard behaviour is unreadable over `file://` and was read in no
+        browser anywhere (`SF-24/5`). ⚠️ `served.py` opens the SAME built bytes
+        over a loopback origin for that one reading; every other clause in this
+        package still opens the file.
         """
         if scheme not in SCHEMES:
             raise ValueError(f"unknown colour scheme {scheme!r}; expected one of {SCHEMES}")
@@ -247,6 +267,36 @@ class OpenPage:
             self.browser.call(
                 "Input.dispatchKeyEvent", {**event, "type": kind}, session=self.session
             )
+
+    def press(self, key: str) -> None:
+        """Press and release one named key where focus is, as a reader would.
+
+        ⛔ **A real key event, for the reason `test_keyboard`'s docstring gives
+        about focus**: activating a control by calling `element.click()` proves
+        nothing about whether a keyboard can reach or fire it, and a panel whose
+        buttons were `<div>`s would pass such a check (`W417`).
+
+        ⚠️ **Enter carries `text`, and that is not decoration.** Chromium fires
+        a button's activation from the *character* event for Enter, so a
+        `rawKeyDown` alone lands on the control and does nothing — which reads
+        as *"the keyboard cannot press this button"* and would have been
+        reported as a defect in the page.
+        """
+        if key not in KEYS:
+            raise ValueError(f"unknown key {key!r}; this harness presses {sorted(KEYS)}")
+        code, number, text = KEYS[key]
+        event = {
+            "key": key,
+            "code": code,
+            "windowsVirtualKeyCode": number,
+            "nativeVirtualKeyCode": number,
+            "modifiers": 0,
+        }
+        down = {**event, "type": "keyDown"}
+        if text is not None:
+            down["text"] = text
+        for message in (down, {**event, "type": "keyUp"}):
+            self.browser.call("Input.dispatchKeyEvent", message, session=self.session)
 
     def focus_body(self) -> None:
         """Put focus at the top of the document, so a traversal starts where a reader's does."""

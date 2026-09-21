@@ -208,6 +208,28 @@ def cases() -> tuple[str, ...]:
     return tuple(built.name for built in pages_built() if built.kind == UNIT)
 
 
+def kind_of(case: str) -> str:
+    """Which of the three renderers wrote the named page, asked of the module.
+
+    ⚠️ `Site.kind` answers the same question of one built tree; this is the form
+    a `parametrize` needs, which runs at collection with no tree in hand.
+    """
+    return _one(case).kind
+
+
+def corpus_of(case: str) -> str:
+    """Which fixture corpus's subtree one built page sits in.
+
+    ⛔ **Read off the built path, never split off the name.** A page's name is a
+    corpus's own text and a prefix match on it would be this harness knowing a
+    source (R1's shape one directory down). ⭐ `W417` needs it because a SERVED
+    origin is rooted at one corpus's subtree, the way `studyforge serve --site`
+    is: the generated asset directory is dot-prefixed and the static mount
+    exposes it at the served root or beside a manifest, and nowhere else.
+    """
+    return str(_one(case).page.parts[0])
+
+
 def chrome_regions() -> tuple[str, ...]:
     """Every region `SF-34`'s disposition table says `chrome.css` answers for.
 

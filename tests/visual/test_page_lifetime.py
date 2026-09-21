@@ -65,7 +65,6 @@ from __future__ import annotations
 
 import select
 import stat
-import tempfile
 import time
 from pathlib import Path
 
@@ -111,11 +110,18 @@ def silent_binary(tmp_path: Path) -> str:
 
 
 @pytest.fixture
-def launch_under(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
-    """Put every launch profile made here under `tmp_path`, never the shared root."""
+def launch_under(tmp_path: Path) -> Path:
+    """A directory the launch made here is ASKED to use, never the shared root.
+
+    ⛔ **`W419`, and this fixture carried the same defect `test_browser.py`'s
+    did**: it pointed `tempfile.tempdir` — a PROCESS-WIDE global — at `tmp_path`
+    and then globbed it, so anything else tearing down in the same xdist worker
+    fell inside the assertion window below. ⭐ The launch names its own root now
+    (`Browser(..., profile_root=...)`), so the population globbed here is the
+    one launch this check made.
+    """
     root = tmp_path / "launches"
     root.mkdir()
-    monkeypatch.setattr(tempfile, "tempdir", str(root))
     return root
 
 
@@ -320,9 +326,9 @@ def test_the_open_page_fixture_closes_the_tab_when_the_check_raised(browser: Bro
 # --- clause 3: a browser that stops answering fails, inside a named bound -----
 
 
-def _check_a_silent_browser_fails_inside_the_bound(binary: str) -> float:
+def _check_a_silent_browser_fails_inside_the_bound(binary: str, root: Path) -> float:
     """A browser that is up and never speaks must raise, and must raise quickly."""
-    running = Browser(binary)
+    running = Browser(binary, profile_root=str(root))
     try:
         started = time.monotonic()
         with pytest.raises(BrowserError, match="running and silent") as raised:
@@ -339,7 +345,7 @@ def test_a_browser_that_is_up_and_silent_fails_instead_of_hanging(
     silent_binary: str, launch_under: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(module, "CALL_TIMEOUT", BOUND)
-    spent = _check_a_silent_browser_fails_inside_the_bound(silent_binary)
+    spent = _check_a_silent_browser_fails_inside_the_bound(silent_binary, launch_under)
     assert spent >= BOUND, f"the harness gave up in {spent:.2f}s, before the {BOUND}s it was told"
     left = sorted(launch_under.glob("studyforge-visual-*"))
     assert left == [], f"the silent browser's profile outlived it: {[p.name for p in left]}"

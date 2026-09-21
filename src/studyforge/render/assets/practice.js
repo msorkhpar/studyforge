@@ -110,6 +110,16 @@
        ever when this panel already had it. */
     var pressed = null;
 
+    /* ⛔ **Set when STOP takes focus away from this panel itself**, which is the
+       one hand-back `holdsFocus()` cannot answer for. Pressing Stop disables
+       Stop, a disabled element drops focus to the document AT ONCE, and the
+       run then settles a moment later with focus already on `<body>` — so the
+       question *did the panel have focus?* answers no and the keyboard reader
+       is left at the top of the page. ⚠️ **Measured in a browser by `W417`,
+       the first reading this panel ever had on a served origin**; the ordinary
+       end-of-run path was correct and only this one was not. */
+    var handedBack = false;
+
     /* ⚠️ Asked BEFORE the control is disabled or hidden, never after: a
        disabled element drops focus to the document immediately, so a check
        taken afterwards always answers no and the reader is left at the top of
@@ -124,9 +134,12 @@
     }
 
     function settle(text) {
-      var keyboard = holdsFocus();
+      var keyboard = holdsFocus() || handedBack;
+      handedBack = false;
       status.textContent = text;
       live(false);
+      /* ⛔ AFTER `live(false)`: the button that was pressed is disabled while
+         the run is live, and focusing a disabled control does nothing at all. */
       if (keyboard && pressed) { pressed.focus(); }
     }
 
@@ -149,6 +162,9 @@
 
     if (stop) {
       stop.addEventListener('click', function () {
+        /* ⛔ Asked BEFORE the line below, for the reason `holdsFocus` states:
+           this IS the disable that drops focus to the document. */
+        handedBack = holdsFocus();
         stop.disabled = true;
         run.stop().then(
           function () { stop.disabled = false; },

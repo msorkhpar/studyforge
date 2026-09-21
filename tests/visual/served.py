@@ -1,0 +1,255 @@
+"""A SERVED origin over a built tree, so the practice panel's controls exist to read.
+
+**What it does.** Binds `studyforge.serve`'s own app on loopback over a tree
+`site.build` already wrote, registers the `run` namespace the page's execution
+client talks to, and hands back `http://` URLs into it. The serving process
+inserts the run client into every HTML page it answers, exactly as it does for a
+reader, so `window.studyforge.run.available()` is true and `practice.js` unhides
+the panel's controls.
+
+**How you use it.** `with served.serving(built_site) as origin:` then
+`page.open(origin.url("depth2-unit-01"))`. `origin.runs` is the scripted far
+side of the API: `runs.started` says a run is live, `runs.release` ends it, and
+`runs.stopped` says whether Stop was pressed.
+
+**Depends on.** `studyforge.serve.app`, `studyforge.serve.response` and
+`studyforge.serve.routes.run` for the one spelling of the client's path, plus
+`threading` and `contextlib`. ⛔ Nothing is imitated that the framework already
+spells: the insertion, the headers, the loopback gate and the client file are
+the real ones.
+
+## ⛔ `W417` — why this exists, and it is not a convenience
+
+⛔ **The practice panel's keyboard behaviour was read in no browser anywhere.**
+Its controls ship `hidden` and are unhidden only where
+`window.studyforge.run.available()` is true — which `run-client.js` answers from
+`location.protocol` — and the whole visual harness opened `file://`. ⭐ So the
+gate saw the panel with its controls hidden and its offline note showing, and
+`SF-24` could assert its *structure* and never its *behaviour* (`SF-24/5`).
+⚠️ *Fully keyboard accessible* is in that row's acceptance and *"full keyboard
+traversal of a unit page, including the practice panel"* is in `QA-02`'s.
+
+⛔ **This does not retire `file://`, and nothing here may be read as doing so.**
+R8's floor is a page opened by double-clicking it, every other clause in this
+package is taken over `file://` deliberately, and `test_offline.py` is the check
+that a page asks no origin for anything. ⭐ This is one MORE reading of the same
+built bytes, taken where the reader who started the study server is.
+
+## ⛔ What is real here, and what is a stand-in — said once, plainly
+
+⭐ **Real:** the built page's bytes, `serve.app`'s static mount, the client
+insertion in `serve.routes.assets`, the security gate, and `run-client.js`
+itself — the file the run namespace serves, read from where the framework keeps
+it. ⛔ **A stand-in:** what is BEHIND the API. `ScriptedRuns` answers the two
+endpoints `run-client.js` calls with a scripted stream instead of starting a
+process.
+
+⚠️ **The seam is chosen and not convenient.** What this harness reads is the
+PAGE — tab order, focus handoff, a live region — and the page talks to
+`window.studyforge.run` and to nothing else (`practice.js`'s own first
+paragraph). ⛔ A visual harness that started real processes, or a container,
+would be measuring `execute` in a module whose subject is a keyboard; the real
+route over a real runner is `tests/studyforge/serve/` and
+`tests/studyforge/cli/test_serve_site_run.py`, and this never substitutes for
+either.
+
+## ⚠️ The tree served here is not a corpus, and the content namespace says so
+
+`site.build` writes rendered pages, not an archive, so there is no corpus for
+`routes.content` to read. ⭐ `_NoContent` declares nothing, which is the truth
+about this tree; no page in it asks the content namespace for anything, and a
+request that did would get the same `404` a key outside a real corpus gets.
+"""
+
+from __future__ import annotations
+
+import contextlib
+import threading
+from collections.abc import Iterator
+from dataclasses import dataclass, field
+from pathlib import Path
+
+from studyforge.serve.app import ServingServer, make_server
+from studyforge.serve.response import NO_STORE, TEXT_TYPE, Request, Response, error, json_response
+from studyforge.serve.routes.run import (
+    CLIENT,
+    CLIENT_FILE,
+    CLIENT_PATH,
+    NAMESPACE,
+    SCRIPT_TYPE,
+    STOP,
+)
+from tests.visual import site
+
+#: What the scripted run writes before it waits. ⚠️ More than one line, because
+#: the output region is a scrolling one and a single line never fills it.
+SCRIPTED = ("Compiling the practice…", "Running the grader…", "1 test, 1 passed")
+
+#: Seconds a scripted run waits to be released before it ends itself. ⛔ A bound
+#: rather than a wait forever: a check that forgets to release must fail inside
+#: the suite's own patience rather than hang the directory (`W397`).
+RELEASE_BOUND = 60.0
+
+#: How a run ends, in the words `run-client.js` parses out of the last line.
+EXIT_LINE = "--- exit {verdict} ---"
+
+#: What a stopped run's verdict is, in the client's own vocabulary.
+STOPPED = "stopped"
+
+#: The fixture corpus whose subtree is served when a caller names none — the one
+#: whose unit page carries a practice panel. ⛔ Derived from the built tree, not
+#: typed: a page that moved corpora would red here rather than 404 quietly.
+DEFAULT_CORPUS = site.corpus_of("depth2-unit-01")
+
+
+class _NoContent:
+    """A `ContentSource` over a tree that is not a corpus: it declares nothing."""
+
+    def toc(self) -> str:
+        """Return an empty contents document; nothing in this tree asks for one."""
+        return ""
+
+    def unit(self, key: str) -> str | None:  # noqa: ARG002 - the signature is the protocol
+        """Return no material, because this tree holds an archive for no unit."""
+        return None
+
+    def declares(self, key: str) -> bool:  # noqa: ARG002 - the signature is the protocol
+        """Say that no unit is declared here, which is what a rendered tree holds."""
+        return False
+
+
+class ScriptedRuns:
+    """The far side of `studyforge.run`'s two endpoints, scripted rather than run.
+
+    ⛔ **Nothing here starts a process**, and that is the whole reason a visual
+    harness may register this namespace at all (spec §8.3 is about the serving
+    process; this is the same posture in a test).
+
+    ⭐ **A run is held open until it is released**, so a check can read the page
+    MID-RUN — which is where the focus handoff lives: Stop exists only while a
+    run is live, and a run that ended before the reading was taken would answer
+    the question nobody asked.
+    """
+
+    def __init__(self) -> None:
+        """Arm one scripted run; nothing is live until a page starts it."""
+        #: Set once every scripted line has been flushed to the page.
+        self.started = threading.Event()
+        #: Set by a check, or by Stop, to let the run end.
+        self.release = threading.Event()
+        #: Whether Stop was pressed while the run was live.
+        self.stopped = False
+        #: Every path this namespace was asked for, in order.
+        self.asked: list[str] = []
+
+    def route(self, request: Request, rest: str) -> Response:
+        """Answer one request under `/api/v1/run/`, the way the real route's shape does."""
+        self.asked.append(f"{request.method} {rest}")
+        if rest in ("", CLIENT):
+            if request.method == "POST":
+                return error(405, "the client is fetched, never posted to")
+            if rest == CLIENT:
+                headers = (("Content-Type", SCRIPT_TYPE), ("Cache-Control", NO_STORE))
+                return Response(200, headers, CLIENT_FILE.read_bytes())
+            return json_response(200, {"resource": "run-index", "modes": ["run", "test"]})
+        if request.method != "POST":
+            return error(405, "a run is started by POST")
+        if rest == STOP:
+            self.stopped = True
+            self.release.set()
+            return json_response(200, {"resource": "run-stop", "stopped": True})
+        headers = (("Content-Type", TEXT_TYPE), ("Cache-Control", NO_STORE))
+        return Response(200, headers, stream=self._stream())
+
+    def _stream(self) -> Iterator[bytes]:
+        """Write every scripted line, wait to be released, then end with a verdict.
+
+        ⚠️ `started` is set **between** two yields on purpose: the writer flushes
+        each chunk before it asks for the next, so by the time this resumes the
+        page has every scripted line. ⛔ A flag set before the first yield would
+        be a check racing the socket.
+        """
+        for line in SCRIPTED:
+            yield (line + "\n").encode("utf-8")
+        self.started.set()
+        self.release.wait(RELEASE_BOUND)
+        verdict = STOPPED if self.stopped else "0"
+        yield (EXIT_LINE.format(verdict=verdict) + "\n").encode("utf-8")
+
+
+@dataclass
+class Served:
+    """One bound server over one corpus's subtree, and the URLs into it."""
+
+    server: ServingServer
+    built: site.Site
+    corpus: str
+    runs: ScriptedRuns
+    log: list[str] = field(default_factory=list)
+
+    @property
+    def root(self) -> Path:
+        """The directory this server answers from: one corpus's subtree."""
+        return self.built.root / self.corpus
+
+    @property
+    def origin(self) -> str:
+        """The origin this server is answering on, as a page would name it."""
+        host, port = self.server.server_address[0], self.server.server_address[1]
+        return f"http://{host}:{port}"
+
+    def url(self, case: str) -> str:
+        """The `http://` URL of one built page — the same bytes `site.url` names.
+
+        ⛔ Refuses a page from another corpus's subtree rather than composing a
+        URL that resolves to nothing: this server is rooted at one of them.
+        """
+        where = site.corpus_of(case)
+        if where != self.corpus:
+            raise LookupError(f"{case} is in {where}, and this origin serves {self.corpus}")
+        return f"{self.origin}/{self.built.path(case).relative_to(self.root).as_posix()}"
+
+
+@contextlib.contextmanager
+def serving(built: site.Site, corpus: str = DEFAULT_CORPUS) -> Iterator[Served]:
+    """Serve one corpus's subtree of `built` on a free loopback port, then stop.
+
+    ⛔ **The served root is ONE corpus's subtree, and that is the framework's
+    own shape rather than a convenience.** `studyforge serve --site` serves one
+    built corpus from its root; the static mount exposes the generated
+    dot-directory at the served root or beside a `corpus.json`, and this
+    harness's tree holds one subtree per fixture corpus with no manifest in it.
+    ⚠️ Serving the whole tree answers `404` for every stylesheet and script on
+    the page — ⭐ measured here first, which is why this argument exists.
+
+    ⛔ **The run namespace is registered and `client=` is `run.CLIENT_PATH`**,
+    the framework's one spelling of where the client lives — so the tag the
+    static mount inserts and the path this namespace answers cannot come apart
+    here any more than they can in a real instance.
+
+    ⛔ **The run is released on the way out, before `shutdown()`.** A stream
+    still waiting inside `RELEASE_BOUND` would hold `serve_forever`'s thread,
+    and a harness that hung on teardown is the failure `W397` was minted for
+    wearing a different hat.
+    """
+    runs = ScriptedRuns()
+    log: list[str] = []
+    server = make_server(
+        built.root / corpus,
+        _NoContent(),
+        port=0,
+        namespaces={NAMESPACE: runs.route},
+        writers=(NAMESPACE,),
+        client=CLIENT_PATH,
+        log=log.append,
+    )
+    held = Served(server=server, built=built, corpus=corpus, runs=runs, log=log)
+    thread = threading.Thread(target=held.server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        yield held
+    finally:
+        runs.release.set()
+        held.server.shutdown()
+        held.server.server_close()
+        thread.join(timeout=20)

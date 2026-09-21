@@ -9,6 +9,8 @@ the failure `SF-24` will be judged on.
 
 from __future__ import annotations
 
+import time
+
 import pytest
 
 from tests.visual import site
@@ -170,3 +172,143 @@ def test_every_closed_disclosure_in_the_tree_is_itself_reachable_by_tab(
         "nothing — the rail stopped emitting one, or the index policy opened them all"
     )
     assert not missed, f"closed disclosures no Tab reaches: {missed}"
+
+
+# --- the narration transport, operated without a mouse (`QA-02`) --------------
+
+#: The transport's own region, and the controls it offers, spelled as the
+#: renderer spells them. ⛔ Read from the page rather than listed: a control
+#: added to the transport joins this check on the day it lands.
+TRANSPORT = "footer#player"
+
+#: Seconds the transport's live region may take to say which state it reached.
+ANNOUNCE_TIMEOUT = 15.0
+
+#: What the transport's state reads as, in one evaluation: what is lit, what the
+#: live region says, and what has focus. ⚠️ `textContent` and not `innerText`
+#: for the status region — ⛔ **an element with no layout box answers `innerText`
+#: with its WHOLE text**, hidden children included (`SF-24/3`'s class, measured
+#: by `QA-02` on this very region: the three state sentences came back at once
+#: from a region whose computed `display` was `none`).
+TRANSPORT_STATE = """
+(() => {
+  const player = document.querySelector('footer#player');
+  if (!player) return null;
+  const status = player.querySelector('[role="status"]');
+  const said = Array.from(status ? status.children : [])
+    .filter((s) => s.checkVisibility())
+    .map((s) => s.textContent.trim());
+  const active = document.activeElement;
+  return {
+    visible: player.checkVisibility(),
+    controls: Array.from(player.querySelectorAll('button, select'))
+      .filter((el) => el.checkVisibility())
+      .map((el) => el.id),
+    speaking: document.querySelectorAll('[data-speaking]').length,
+    said: said,
+    focus: active ? active.id : ''
+  };
+})()
+"""
+
+
+#: Where each of the transport's visible controls sits in document order — the
+#: same identity `page.trail` records, so the two readings join on a position
+#: rather than on a word (`W105`).
+TRANSPORT_POSITIONS = """
+(() => {
+  const all = Array.prototype.slice.call(document.querySelectorAll('*'));
+  return Array.from(document.querySelectorAll('footer#player button, footer#player select'))
+    .filter((el) => el.checkVisibility())
+    .map((el) => all.indexOf(el));
+})()
+"""
+
+
+def _transport(page: OpenPage) -> dict:
+    """The transport's state now, or a failure saying the page carries none."""
+    reading = page.evaluate(TRANSPORT_STATE)
+    assert reading is not None, f"this page carries no {TRANSPORT}, so it judges nothing"
+    return dict(reading)  # type: ignore[arg-type]
+
+
+def test_every_narration_control_is_reachable_by_tab_and_in_document_order(
+    open_page: OpenPage, built_site: site.Site
+) -> None:
+    """⛔ `QA-02`'s definition: *keyboard operation of navigation, narration and practice*.
+
+    ⭐ The transport ships `hidden` and `narration.js` reveals it, so this is a
+    reading of the page a reader gets and not of the bytes on disk. ⚠️ The
+    population is asserted inhabited first: a transport that stopped being
+    revealed would otherwise make this pass over an empty list.
+    """
+    open_page.open(built_site.url("depth2-unit-01"))
+    reading = _transport(open_page)
+    assert reading["visible"], "the transport was never revealed, so this traverses nothing"
+    assert reading["controls"], "the transport offers no control, so this judges nothing"
+    # ⛔ Joined on POSITION and never on a label (`W105`, and this module's own
+    # `trail`): two of these controls are a single typographic character and the
+    # speed control's text is its whole option list, so a label join would have
+    # read *"the keyboard reaches one of four"* about a transport it reaches all
+    # of — a defect reported against the page instead of against the join.
+    offered = list(open_page.evaluate(TRANSPORT_POSITIONS))
+    assert offered, "the transport offers no control, so this judges nothing"
+    hit = [step["at"] for step in open_page.trail(PRESSES) if step["at"] in offered]
+    assert hit == offered, (
+        f"tab order reached {len(hit)} of the transport's {len(offered)} controls, "
+        f"at {hit} against {offered}"
+    )
+
+
+def test_the_narration_transport_answers_the_keyboard_and_keeps_focus_where_it_was(
+    open_page: OpenPage, built_site: site.Site
+) -> None:
+    """⛔ Reaching a control is not operating it, and only one of the two is asserted above.
+
+    ⭐ **Both directions in one reading**: before the press nothing is lit and
+    the live region says nothing; after it something is lit and the region says
+    which state the transport reached. ⚠️ This fixture ships no audio on disk,
+    so what it reaches is the *no clip here* state — which is exactly the state
+    a reader meets on a corpus that was never narrated, and it is announced
+    rather than silent.
+
+    ⛔ **Focus must not move.** A transport that re-rendered itself and dropped
+    focus would return a keyboard reader to the top of the page on every press.
+    """
+    open_page.open(built_site.url("depth2-unit-01"))
+    before = _transport(open_page)
+    assert before["speaking"] == 0, "something was already lit before anything was pressed"
+    assert before["said"] == [], f"the transport announced {before['said']} before any press"
+
+    found = None
+    open_page.focus_body()
+    for _press in range(PRESSES):
+        open_page.tab()
+        if open_page.evaluate("document.activeElement.id") == "play":
+            found = open_page.focused()
+            break
+    assert found is not None, f"{PRESSES} Tab presses never reached the play control"
+
+    open_page.press(" ")
+    after = _until_announced(open_page)
+    assert after["speaking"] == 1, "pressing play with the keyboard lit no passage"
+    assert after["focus"] == "play", f"the press moved focus to {after['focus']!r}"
+
+
+def _until_announced(page: OpenPage) -> dict:
+    """Poll the transport until its live region says something, or fail saying so.
+
+    ⚠️ **Polled, because the state is reached asynchronously**: the element asks
+    for a clip, the request fails, and only then does the transport say which
+    state it is in. ⛔ A reading taken on the press itself is a reading taken
+    before the answer and would report *"it announced nothing"* about a
+    transport that announces correctly a moment later.
+    """
+    deadline = time.monotonic() + ANNOUNCE_TIMEOUT
+    reading = _transport(page)
+    while time.monotonic() < deadline:
+        if reading["said"]:
+            return reading
+        time.sleep(0.05)
+        reading = _transport(page)
+    raise AssertionError(f"the transport changed state and told a screen reader nothing: {reading}")

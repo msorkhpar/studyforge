@@ -19,9 +19,22 @@ that a test calls plainly, and a plant test calls again under
 raise `AssertionError`. ⭐ A check that cannot be made red by removing the thing
 it checks is not a check.
 
-⭐ **Every launch here is redirected under `tmp_path`** by pointing
-`tempfile.tempdir` at it, so a plant that leaves a profile behind leaves it where
-this test removes it, never in the shared temp directory `W312` is about.
+## ⛔ `W419` — this module's launch root is ITS OWN, and never the process's
+
+⛔ **The fixture below used to point `tempfile.tempdir` at `tmp_path`, and
+`tempfile.tempdir` is PROCESS-WIDE.** Every launch in this module then landed
+where this module globs — and so did every launch anything ELSE in the same
+xdist worker made, because they all read the same global. ⚠️ **Measured by
+`W404/6`: RED once under `-n auto`, GREEN on an immediate identical re-take at
+the identical ref, and GREEN again after** — a gate that refuses a row with
+nothing wrong with it and sends that office looking in its own diff.
+
+⭐ **`Browser(binary, profile_root=...)` is the remedy**: this module names the
+directory it wants for the launches it makes, one call at a time, and a
+neighbour tearing down in the same worker is outside the glob by construction
+rather than by timing. ⛔ Nothing in this file writes to a module global, and
+`test_a_neighbour_launching_at_the_same_time_is_outside_this_module_s_root`
+settles both directions of that.
 """
 
 from __future__ import annotations
@@ -46,11 +59,16 @@ def _profiles(root: Path) -> list[Path]:
 
 
 @pytest.fixture
-def launch_root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
-    """A temp directory every launch in this test makes its profile under."""
+def launch_root(tmp_path: Path) -> Path:
+    """A directory this test asks each of ITS launches to make its profile under.
+
+    ⛔ **`W419`.** This returns a directory and changes nothing else — no
+    module global, no process global, no environment variable. ⭐ Each check
+    below hands it to `Browser(..., profile_root=...)`, so the population this
+    module globs is exactly the launches this module made.
+    """
     root = tmp_path / "launches"
     root.mkdir()
-    monkeypatch.setattr(tempfile, "tempdir", str(root))
     return root
 
 
@@ -74,7 +92,7 @@ def _sweep(root: Path) -> None:
 
 def _check_a_used_browser_leaves_nothing(binary: str, root: Path) -> None:
     """Ordinary path: launch, drive one call, close — no profile remains."""
-    with Browser(binary) as running:
+    with Browser(binary, profile_root=str(root)) as running:
         assert _profiles(root) == [Path(running._profile)], "the launch made no profile here"
         running.page()
     assert _profiles(root) == [], f"a closed browser left its profile: {_profiles(root)}"
@@ -82,7 +100,10 @@ def _check_a_used_browser_leaves_nothing(binary: str, root: Path) -> None:
 
 def _check_a_failing_test_leaves_nothing(binary: str, root: Path) -> None:
     """A test that raises inside the `with` still removes the profile."""
-    with pytest.raises(RuntimeError, match="the test failed"), Browser(binary):
+    with (
+        pytest.raises(RuntimeError, match="the test failed"),
+        Browser(binary, profile_root=str(root)),
+    ):
         raise RuntimeError("the test failed")
     assert _profiles(root) == [], f"a failed test left its profile: {_profiles(root)}"
 
@@ -91,7 +112,7 @@ def _check_a_browser_that_never_starts_leaves_nothing_and_keeps_its_words(
     binary: str, root: Path
 ) -> None:
     """The browser dies at launch: its words are reported, then kept, then the profile goes."""
-    running = Browser(binary)
+    running = Browser(binary, profile_root=str(root))
     with pytest.raises(BrowserError) as raised:
         running.call("Browser.getVersion")
     assert LAST_WORDS in str(raised.value), "the failure did not report the browser's words"
@@ -103,7 +124,7 @@ def _check_a_browser_that_never_starts_leaves_nothing_and_keeps_its_words(
 def _check_a_launch_failing_after_the_profile_exists_leaves_nothing(root: Path) -> None:
     """`__init__` raising after `mkdtemp` still removes what it made."""
     with pytest.raises(OSError, match="planted launch failure"):
-        Browser("/path/to/any-browser")
+        Browser("/path/to/any-browser", profile_root=str(root))
     assert _profiles(root) == [], f"a failed launch left its profile: {_profiles(root)}"
 
 
@@ -114,7 +135,7 @@ def _check_a_missing_binary_leaves_nothing(root: Path) -> None:
     above the pipe, `subprocess`'s own exec-error pipe included, so the failure
     arrives at the first call as a closed pipe (`W312/1`).
     """
-    running = Browser(str(root / "no-such-browser"))
+    running = Browser(str(root / "no-such-browser"), profile_root=str(root))
     with pytest.raises(BrowserError, match="closed the protocol pipe"):
         running.call("Browser.getVersion")
     running.close()
@@ -232,7 +253,7 @@ def test_PLANT_a_missing_binary_whose_removal_is_skipped_reddens_the_check(
 def test_closing_twice_is_harmless_and_keeps_the_words(
     dying_binary: str, launch_root: Path
 ) -> None:
-    running = Browser(dying_binary)
+    running = Browser(dying_binary, profile_root=str(launch_root))
     running.close()
     words = running.diagnostics()
     running.close()
@@ -255,3 +276,49 @@ def test_a_profile_that_survives_every_removal_is_a_failure_and_not_silence(
     monkeypatch.setattr(module.time, "sleep", lambda _s: None)
     with pytest.raises(BrowserError, match="survived"):
         module._remove_profile(str(stubborn))
+
+
+# --- `W419`: this module's launch root is its own -----------------------------
+
+
+def test_a_neighbour_launching_at_the_same_time_is_outside_this_module_s_root(
+    dying_binary: str, launch_root: Path
+) -> None:
+    """⛔ `W419`, both directions: the defect's own shape, and the control that sees it.
+
+    ⭐ **The green direction.** A launch this module did not make — the shape
+    every other check in the suite makes, with no `profile_root` — lands under
+    the process's temp root and is invisible to the glob here. ⚠️ Under the
+    `tempfile.tempdir` monkeypatch it landed *inside* `launch_root` instead, and
+    every `_profiles(root) == []` in this file then depended on nothing else in
+    the same xdist worker tearing down at that moment.
+
+    ⛔ **The red direction, and it is here because a control that cannot go red
+    proves nothing** (`W397`). The same fake browser, given this root, IS seen —
+    so the glob above is not answering `[]` because it looks in the wrong place
+    or because a fake browser leaves no profile at all.
+    """
+    assert Path(tempfile.gettempdir()).resolve() != launch_root.resolve(), (
+        "this module's launch root IS the process's temp root, so the two "
+        "populations cannot be told apart and neither direction below means anything"
+    )
+
+    neighbour = Browser(dying_binary)
+    try:
+        assert _profiles(launch_root) == [], (
+            "a launch that named no root landed inside this module's launch root: "
+            f"{_profiles(launch_root)}"
+        )
+        assert Path(neighbour._profile).parent.resolve() != launch_root.resolve()
+    finally:
+        neighbour.close()
+
+    inside = Browser(dying_binary, profile_root=str(launch_root))
+    try:
+        assert _profiles(launch_root) == [Path(inside._profile)], (
+            "a launch that DID name this root is not visible here, so the check "
+            "above passes over a glob that can never see anything"
+        )
+    finally:
+        inside.close()
+    assert _profiles(launch_root) == []
