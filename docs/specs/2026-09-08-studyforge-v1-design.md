@@ -1006,11 +1006,23 @@ available*: a clone that carries its own audio speaks with no synthesis service,
 no GPU and no network, and that is what R8 is for. A corpus that ignores its
 media asks every reader to stand up a service before they can hear anything.
 
-⭐ **A build's output is committed too: its pages, the root index, the asset bundle and
-`site.json`** (PO round 78, `W242/1`). The same argument holds: a clone that ignores its pages
-has no reading floor. ⛔ **So the only generated ignore rules are the media policy's, written
+⭐ **A build's output is committed too: its pages, the root index and the asset bundle**
+(PO round 78, `W242/1`). The same argument holds: a clone that ignores its pages has no reading
+floor. ⛔ **So the only generated ignore rules ABOUT THE CORPUS are the media policy's, written
 inside the generated directory they are about and never in the root ignore file (R3).**
 ⚠️ This dates Ruling 91's first half, which declared `sibling` output in `.gitignore`.
+
+⛔ **`site.json` was in that list and is not any more** (`W425`, PO round 132; measured
+2026-09-20 on the first corpus). ⚠️ **The argument does not reach it, and the difference is
+structural rather than a preference:** every other artifact in the list is READ by somebody — a
+reader opens the pages and the index, a page loads the bundle — and **nothing reads the cache**.
+`corpus.discovery.assemble` scans on every call and returns the scan; no branch hands back a
+cached `Site`. ⛔ So a clone carrying the cache gains nothing, while every reader who serves the
+corpus gets a modified file **for doing the one thing the tool is for**: `tools.workspace verify`
+refused the workspace within a minute of a serve, on `.studyforge/site.json` alone. ⭐ **So the
+cache is ignored where it sits**, by the same mechanism the progress store uses one directory
+over — an ignore file INSIDE the generated directory, never the repository's root one — and the
+rule is written by the framework rather than by a hand-added line per corpus (R19).
 
 ⛔ **The default has a ceiling, and crossing it is a decision, not an accident.**
 Narration is the largest thing this framework generates, and a corpus can

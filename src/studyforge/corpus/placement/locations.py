@@ -111,8 +111,11 @@ class CorpusLocations:
         return (self.assets, self.archive)
 
 
-#: The first line of every ignore file a profile answers with.
-IGNORE_HEADER = "# Written by studyforge from corpus.json's media policy. Regenerate, never edit."
+#: The first line of every ignore file a profile answers with. ⚠️ It no longer
+#: names the media policy as the file's only source: since `W425` the file also
+#: carries the rules for this framework's own caches, and a corpus with media
+#: committed has a file that carries nothing else.
+IGNORE_HEADER = "# Written by studyforge. Regenerate, never edit."
 
 
 @dataclass(frozen=True, slots=True)

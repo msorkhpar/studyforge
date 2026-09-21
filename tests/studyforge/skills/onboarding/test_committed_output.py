@@ -114,7 +114,11 @@ def test_a_sibling_build_classifies_every_page_and_media_file_it_commits(tmp_pat
     assert _findings(built, RULE_UNCLASSIFIED, RULE_CONTESTED) == [], population
     assert _findings(built) == _findings(unbuilt), "the build added a finding to its own corpus"
     assert _digest(root / ".gitignore") == ignore_before
-    assert not (root / ".studyforge" / ".gitignore").exists()
+    # ⭐ `W425`: the generated root carries one, and it is about the framework's
+    # own discovery cache — never the corpus's pages or media, which are what a
+    # clone reads. R3's root ignore file is untouched, asserted above.
+    generated = (root / ".studyforge" / ".gitignore").read_text(encoding="utf-8")
+    assert "site.json" in generated.splitlines()
     assert [p for p in beside if is_ignored(p, cwd=root)] == [], "committed output is ignored"
 
 

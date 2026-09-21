@@ -87,27 +87,42 @@ def _homed(plan, repository):
 def test_git_ignores_no_page_no_json_and_no_archive_under_any_media_policy(name, commit, tmp_path):
     """ISO-05's clause, asked of git: no generated rule matches `*.html` or `*.json`.
 
-    ⛔ **Pages and the discovery cache are what a clone reads** (§5, `W242`),
-    so this holds under every policy, not only the default. ⚠️ The archive is
-    the ingested record an adapter wrote (R2); a clone without it rebuilds
-    nothing.
+    ⛔ **Pages are what a clone reads** (§5, `W242`), so this holds under every
+    policy, not only the default. ⚠️ The archive is the ingested record an
+    adapter wrote (R2); a clone without it rebuilds nothing.
+
+    ⚠️ **The discovery cache was in this population and is not any more**
+    (`W425`): nothing reads it back, so it is the one generated file a corpus
+    does not commit — and the other direction is asserted below.
     """
     plan = _with_media(name, commit, tmp_path)
     repository = _homed(plan, init_repository(tmp_path / f"{name}-repo"))
     archive = next(p for p in plan.paths if p.rstrip("/").endswith(ARCHIVE_DIR))
     kept = [p for p in plan.paths if p.endswith((".html", ".json"))]
-    kept += [f"{archive}some/container.json", f"{GENERATED_ROOT}/{SITE_CACHE_FILENAME}"]
+    kept = [p for p in kept if p != f"{GENERATED_ROOT}/{SITE_CACHE_FILENAME}"]
+    kept += [f"{archive}some/container.json"]
     assert [p for p in kept if p.endswith(".unit.html")], "no page was asked about"
     assert [p for p in kept if is_ignored(p, cwd=repository)] == []
+    # ⭐ The control, and `W425`'s own direction: wherever the plan has a file
+    # to put rules in, they DO cover the cache — so the clean answer above is a
+    # measurement and not an empty ignore file. ⚠️ A policy whose media rules
+    # have no home is refused whole (`plan.ignore_home is None`), and then the
+    # corpus is not onboarded at all; `discovery.cache` is what covers a corpus
+    # that reaches a serve anyway.
+    covered = is_ignored(f"{GENERATED_ROOT}/{SITE_CACHE_FILENAME}", cwd=repository)
+    assert covered == (plan.ignore_home is not None)
 
 
 @pytest.mark.parametrize("name", VALID)
-def test_committed_media_is_not_ignored_and_needs_no_ignore_file(name, tmp_path):
+def test_committed_media_is_not_ignored_and_the_only_rules_are_the_frameworks(name, tmp_path):
     # ⭐ Generated media is committed by default (§5), and every fixture takes
     # that default. Ignoring it would produce clones that are silent with no
     # error, which is the outcome the whole media policy refuses.
+    # ⭐ `W425`: what the plan does print is the framework's own cache rules,
+    # which no corpus adds by hand.
     plan = plan_for(FIXTURES / name)
-    assert plan.ignore == () and plan.ignore_home is None
+    assert plan.ignore == (SITE_CACHE_FILENAME, f"{SITE_CACHE_FILENAME}.writing", ".gitignore")
+    assert plan.ignore_home == f"{GENERATED_ROOT}/.gitignore"
     repository = _homed(plan, init_repository(tmp_path / name))
     clips = _clips(plan)
     assert clips
