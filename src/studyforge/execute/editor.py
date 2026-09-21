@@ -283,7 +283,7 @@ def _within(mounted: str, source_root: Path) -> str | None:
         return None
     try:
         relative = Path(mounted).resolve().relative_to(source_root.resolve())
-    except (OSError, ValueError):
+    except OSError, ValueError:
         return None
     return "/".join(relative.parts)
 

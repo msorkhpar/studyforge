@@ -22,7 +22,7 @@ from studyforge.archive.scrub import scrub
 from studyforge.execute import Editor, EditorProbe, editor_container_for, workbench
 from studyforge.progress import IGNORE_FILENAME, store_dir
 from studyforge.serve.instance import instance_of
-from studyforge.serve.response import Request
+from studyforge.serve.response import API_VERSION, Request
 from studyforge.serve.routes import run
 from studyforge.serve.routes.runs import NOT_RECORDED, editor_for
 from studyforge.serve.routes.state import corpus_state
@@ -439,9 +439,11 @@ def test_the_probe_an_instance_makes_asks_docker_about_the_compose_container(roo
 
 # --- one practice's two windows (`W429`) ------------------------------------
 
-#: Where the editor's own settings land for `UP`: inside the part of the source
-#: root it mounts. ⭐ The HOST side of its bind, which the index never carries.
+
 def settings_in(root) -> Path:
+    """Where the editor's own settings land for `UP`: inside the part of the
+    source root it mounts — the HOST side of its bind, which the index never
+    carries, because that path is a home (R7)."""
     return root / UP.base / workbench.SETTINGS_DIR / workbench.SETTINGS_FILE
 
 
@@ -463,17 +465,28 @@ def test_the_index_says_how_to_address_one_practices_files_and_not_only_a_folder
 def test_a_practice_answers_a_url_for_each_of_its_two_windows(root):
     status, _, body = ask_editor(root)
     answered = json.loads(body)
-    assert status == 200 and answered["resource"] == "run-editor"
-    assert answered["origin"] == UP.origin
+    assert status == 200
+    main, test = answered["main"], answered["test"]
+    # ⭐ The WHOLE document, so a key that appeared or vanished is red here.
+    # ⚠️ Compared as a document rather than key by key because `W109` holds
+    # `origin` to one reader across `src/` and `tests/`, and a subscript of it
+    # would be a second one (`AX-05` resolved the same clash the same way).
+    assert answered == {
+        "api": API_VERSION,
+        "resource": "run-editor",
+        "origin": UP.origin,
+        "main": main,
+        "test": test,
+    }
     # ⛔ **THE property the whole URL design exists for**: two windows of ONE
     # editor showing two DIFFERENT files, told apart by nothing but their own
     # URLs. ⚠️ Asserted as a difference between the two answers, so a composer
     # that ignored its argument cannot pass.
-    assert answered["main"]["url"] != answered["test"]["url"]
-    assert answered["main"]["path"] == "passes/greet.py"
-    assert answered["test"]["path"] == "passes/check_greet.py"
-    assert answered["main"]["path"] in answered["main"]["url"].replace("%2F", "/")
-    assert answered["test"]["path"] in answered["test"]["url"].replace("%2F", "/")
+    assert main["url"] != test["url"]
+    assert main["path"] == "passes/greet.py"
+    assert test["path"] == "passes/check_greet.py"
+    assert main["path"] in main["url"].replace("%2F", "/")
+    assert test["path"] in test["url"].replace("%2F", "/")
 
 
 def test_asking_for_a_practices_windows_writes_that_practices_workspace_settings(root):

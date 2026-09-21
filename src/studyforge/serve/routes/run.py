@@ -117,6 +117,7 @@ from studyforge.execute import RunRefused, WorkbenchRefused
 from studyforge.exercise import COMMANDS, RUN, TEST
 from studyforge.progress import RAISES as PROGRESS_RAISES
 from studyforge.progress import parse_practice_key
+from studyforge.serve.discovery import ServedCorpus
 from studyforge.serve.response import (
     API_PREFIX,
     NO_STORE,
@@ -126,7 +127,6 @@ from studyforge.serve.response import (
     error,
     json_response,
 )
-from studyforge.serve.discovery import ServedCorpus
 from studyforge.serve.routes.content import ContentSource
 from studyforge.serve.routes.runs import Live, Outcome, Runs, Stream
 from studyforge.unit import served
