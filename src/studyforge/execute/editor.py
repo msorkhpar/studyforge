@@ -171,7 +171,14 @@ class Editor:
 
 
 class EditorProbe:
-    """Answer where the editor is for one source root and one container name, or `None`."""
+    """Answer where the editor is for one source root and one container name, or `None`.
+
+    ⭐ **Two readers, and only one of them may ask** (`W427`): `editor()` asks
+    `docker` when its answer has expired, and `known()` reads what the last ask
+    left without ever forking. ⛔ Anything on the path of an ordinary response
+    uses `known()` — the serving process does not reach the Docker socket to
+    render a page (spec §8.3).
+    """
 
     def __init__(
         self,
@@ -206,6 +213,25 @@ class EditorProbe:
             found = self._ask()
             self._cached = (found, now)
             return found
+
+    def known(self) -> Editor | None:
+        """Where this editor is if it has ALREADY been asked about — asking nothing.
+
+        ⛔ **This never forks, and that is the whole point** (spec §8.3, `W427`):
+        a caller on the path of an ordinary response may read what a previous
+        `editor()` left behind, and a COLD cache is `None` rather than a reason
+        to reach the Docker socket while serving a page.
+        ⚠️ **An expired reading is cold**, not stale-but-usable: a reading older
+        than the TTL is not a reading, and returning one would let a policy
+        outlive the editor it was composed from.
+        """
+        if self.container is None:
+            return None
+        with self._lock:
+            if self._cached is None:
+                return None
+            found, asked_at = self._cached
+            return found if 0 <= self._clock() - asked_at < self._ttl else None
 
     def _ask(self) -> Editor | None:
         """Ask once. Any failure to get a clear answer is no editor."""

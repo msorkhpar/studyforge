@@ -115,15 +115,25 @@ class StubEditor:
     ⛔ The suite's default is an editor that is NOT up: a real probe would fork
     `docker` per corpus per index fetch, and the pinned gate has no daemon to
     ask (§8.3, and `W416`'s handoff carries the host reading).
+
+    ⛔ **`known()` MODELS THE REAL PROBE'S CACHE and must not shortcut it**
+    (`W427`): it answers only once `editor()` has been asked, because a stub that
+    answered cold would hide the very thing the frame policy depends on — that
+    composing a policy asks NOTHING, so a cold instance frames nothing.
     """
 
     def __init__(self, answer=None) -> None:
         self.answer = answer
         self.asked = 0
+        self.read = 0
 
     def editor(self):
         self.asked += 1
         return self.answer
+
+    def known(self):
+        self.read += 1
+        return self.answer if self.asked else None
 
 
 class StubEditors:
@@ -166,6 +176,7 @@ def serving(live: runs.Runs, discovered: Discovered) -> Iterator[ServingServer]:
         port=0,
         namespaces={run.NAMESPACE: lambda request, rest: run.route(live, request, rest)},
         writers=(run.NAMESPACE,),
+        frames=live.origins,
     )
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()

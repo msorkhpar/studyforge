@@ -33,6 +33,9 @@ and the Docker socket is never reachable from here (spec §8.3).
   and imports nothing from `routes.run` to learn one: `serve.instance` registers
   the namespace and passes the path, and importing the run route here would put
   `execute` — and a process library — into every import of `serve.app`.
+- **`frames=`** — what this instance may EMBED, asked per response and per `Host`
+  (`W427`), because the editor's origin is a per-project host port. ⛔ Never widens
+  `frame-ancestors`.
 - `GET` and `HEAD` are answered everywhere; `POST` only under a writer; every other
   method, and a `POST` anywhere else, is `405` after the gate. ⛔ A `POST`'s body
   is read and DISCARDED, never handed on: a `Request` has no field for it.
@@ -64,7 +67,13 @@ from studyforge.serve.response import (
     json_response,
 )
 from studyforge.serve.routes import assets, content
-from studyforge.serve.security import ALLOWED_HOSTS, SECURITY_HEADERS, refusal, require_loopback
+from studyforge.serve.security import (
+    ALLOWED_HOSTS,
+    SECURITY_HEADERS,
+    refusal,
+    require_loopback,
+    response_headers,
+)
 
 #: What `studyforge serve` binds when it is not told otherwise.
 DEFAULT_PORT = 8765
@@ -84,6 +93,9 @@ OWN_NAMESPACES = ("content", "assets")
 
 Route = Callable[[Request, str], Response]
 
+#: Where this instance's editors are, asked afresh per response (`W427`).
+Frames = Callable[[], Collection[str]]
+
 
 class ServingServer(ThreadingHTTPServer):
     """A threading HTTP server that holds the site root, the namespaces and the log."""
@@ -101,6 +113,7 @@ class ServingServer(ThreadingHTTPServer):
         log: Callable[[str], None] | None = None,
         writers: Collection[str] = (),
         client: str | None = None,
+        frames: Frames | None = None,
     ) -> None:
         """Validate everything, then bind; a refused argument never leaves a socket open."""
         require_loopback(address[0])
@@ -117,6 +130,8 @@ class ServingServer(ThreadingHTTPServer):
         self.site_root = root
         self.private = private
         self.client = client
+        self.frames = frames
+        self._withheld: set[tuple[str, str]] = set()
         self.allowed_hosts = ALLOWED_HOSTS
         self.namespaces: dict[str, Route] = {
             "content": partial(content.route, source),
@@ -126,6 +141,17 @@ class ServingServer(ThreadingHTTPServer):
         self.writers = frozenset(writers)
         self._log = log
         super().__init__(address, _Handler)
+
+    def headers(self, host: str | None = None) -> tuple[tuple[str, str], ...]:
+        """Return this response's security headers, the frame policy composed for `host`.
+
+        ⛔ **Per response AND per host** (`W427`): an editor comes and goes while
+        this process serves, and a page reached as `localhost` may not frame one
+        at `127.0.0.1` — same machine, different site. What is withheld is said.
+        """
+        if self.frames is None:
+            return SECURITY_HEADERS
+        return response_headers(self.frames(), host, self.log, self._withheld)
 
     def log(self, message: str) -> None:
         """Hand one scrubbed line to the caller's log, or drop it when there is none."""
@@ -170,6 +196,7 @@ def make_server(
     log: Callable[[str], None] | None = None,
     writers: Collection[str] = (),
     client: str | None = None,
+    frames: Frames | None = None,
 ) -> ServingServer:
     """Build a bound, not-yet-serving server on `127.0.0.1`; `port=0` picks a free one."""
     return ServingServer(
@@ -181,6 +208,7 @@ def make_server(
         log=log,
         writers=writers,
         client=client,
+        frames=frames,
     )
 
 
@@ -269,7 +297,7 @@ class _Handler(BaseHTTPRequestHandler):
             self._write_stream(response)
             return
         self.send_response(response.status)
-        for name, value in (*response.headers, *SECURITY_HEADERS):
+        for name, value in (*response.headers, *self.server.headers(self.headers.get("Host"))):
             self.send_header(name, value)
         if response.status not in BODILESS:
             self.send_header("Content-Length", str(response.length))
@@ -297,7 +325,7 @@ class _Handler(BaseHTTPRequestHandler):
         watcher: threading.Thread | None = None
         try:
             self.send_response(response.status)
-            for name, value in (*response.headers, *SECURITY_HEADERS):
+            for name, value in (*response.headers, *self.server.headers(self.headers.get("Host"))):
                 self.send_header(name, value)
             self.send_header("Connection", "close")
             self.end_headers()

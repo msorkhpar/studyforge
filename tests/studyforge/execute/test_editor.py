@@ -191,6 +191,50 @@ def test_a_negative_is_cached_too_so_a_page_never_forks_docker_per_tick(tmp_path
     assert asks(tmp_path) == 1
 
 
+# --- `known()`: the reader that may not fork (`W427`, spec §8.3) -------------
+
+
+def test_a_cold_probe_knows_nothing_and_asks_nobody_to_find_out(tmp_path, root):
+    # ⛔ This is the property the frame policy rests on: composing a policy is on
+    # the path of every response, so it reads and NEVER forks.
+    asking = probe(tmp_path, root, inspected("true", port(), mount(root / "sources")))
+    assert asking.known() is None
+    assert asks(tmp_path) == 0
+
+
+def test_what_an_ask_left_behind_is_what_known_answers(tmp_path, root):
+    asking = probe(tmp_path, root, inspected("true", port(), mount(root / "sources")))
+    assert asking.editor() is not None
+    assert asking.known() == asking.editor()
+    assert asks(tmp_path) == 1
+
+
+def test_an_expired_reading_is_cold_rather_than_stale_and_still_asks_nobody(tmp_path, root):
+    # ⚠️ A reading older than the TTL is NOT a reading: returning one would let a
+    # policy outlive the editor it was composed from, and refreshing it here would
+    # fork on a response. So it is `None`, and the next ask is the index's to make.
+    now = [100.0]
+    asking = probe(
+        tmp_path,
+        root,
+        inspected("true", port(), mount(root / "sources")),
+        clock=lambda: now[0],
+        ttl=10.0,
+    )
+    assert asking.editor() is not None
+    now[0] += 9.9
+    assert asking.known() is not None
+    now[0] += 0.2
+    assert asking.known() is None
+    assert asks(tmp_path) == 1
+
+
+def test_no_container_named_is_known_to_be_no_editor(tmp_path, root):
+    docker = fake_docker(tmp_path, inspected("true", port(), mount(root / "sources")))
+    assert EditorProbe(root, None, docker=str(docker)).known() is None
+    assert calls(tmp_path) == []
+
+
 def test_nothing_here_ever_starts_stops_or_enters_a_container(tmp_path, root):
     """§8.3: the probe READS. Every argv it can produce is an inspect."""
     asking = probe(tmp_path, root, inspected("true", port(), mount(root / "sources")))

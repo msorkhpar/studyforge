@@ -43,6 +43,14 @@ corpus root's: `site_discovery` gives its one `ServedCorpus` the corpus root as
 overrides a scan. ⛔ The startup scan judges no cache, so nothing is written
 into the site or the corpus root.
 
+## ⭐ The frame policy is wired here too (`W427`)
+
+⛔ **A page may embed only the editors THIS instance discovered**, and `frame-src`
+is therefore composed at serve time rather than built into a page (R8). The
+origins come off the run namespace's own `Runs` — `frames_for(namespaces)`, beside
+`client_for(namespaces)` and for the same reason — so one probe answers both the
+index and the policy, and a seam registering no run namespace gets `'none'`.
+
 **Depends on.** `serve.app`, `serve.discovery`, `serve.addressing`,
 `serve.routes.content`, `serve.routes.state`, `serve.routes.run` and `.runs`, and
 `archive.scrub` for the report, and `corpus.discovery`'s startup scan for a site
@@ -66,8 +74,9 @@ from studyforge.corpus.discovery import assemble
 from studyforge.corpus.discovery import scan_sha256 as digest_of
 from studyforge.generate import Corpus
 from studyforge.serve.addressing import CorporaContent
-from studyforge.serve.app import DEFAULT_PORT, ServingServer, make_server
+from studyforge.serve.app import DEFAULT_PORT, Frames, ServingServer, make_server
 from studyforge.serve.discovery import Discovered, ServedCorpus, discover
+from studyforge.serve.response import Request, Response
 from studyforge.serve.routes import run, runs, state
 from studyforge.serve.routes.content import CorpusContent
 
@@ -112,7 +121,30 @@ def instance_of(
         log=log,
         writers=WRITERS,
         client=client_for(namespaces),
+        frames=frames_for(namespaces),
     )
+
+
+class RunNamespace:
+    """The run namespace as a route, carrying where this instance's editors are.
+
+    ⭐ **`W427`:** the frame policy's origins must come from the very `Runs` the
+    route answers from — one probe, one cache, and a `frame-src` that admits
+    exactly the editors the run index published. ⛔ Carrying them ON the
+    registered route is what lets `frames_for` read them back out of a mapping a
+    REPLACED seam returned (`cli.serve.site_namespaces`, `W386`), exactly as
+    `client_for` reads the client out of the same mapping: a seam that registers
+    no run namespace gets no frames, and the policy stays `'none'`.
+    """
+
+    def __init__(self, live: runs.Runs) -> None:
+        """Hold the instance's runs, and offer their origins as this route's frames."""
+        self.live = live
+        self.frames: Frames = live.origins
+
+    def __call__(self, request: Request, rest: str) -> Response:
+        """Answer one request under the run namespace."""
+        return run.route(self.live, request, rest)
 
 
 def namespaces_of(discovered: Discovered, sources: dict[str, CorpusContent]) -> dict:
@@ -121,11 +153,21 @@ def namespaces_of(discovered: Discovered, sources: dict[str, CorpusContent]) -> 
     ⭐ `sources` maps each served corpus's `source` to the content its unit
     documents are read from, which is where a run reads its command.
     """
-    live = runs.Runs(discovered, sources)
     return {
         state.NAMESPACE: partial(state.route, discovered),
-        run.NAMESPACE: partial(run.route, live),
+        run.NAMESPACE: RunNamespace(runs.Runs(discovered, sources)),
     }
+
+
+def frames_for(namespaces: Mapping[str, object]) -> Frames | None:
+    """Return where this instance's editors are, for the frame policy, or `None`.
+
+    ⛔ **`None` where nothing registered offers them**, which is `frame-src 'none'`:
+    a `--site` serve whose seam was replaced to serve a site with NO execution
+    (`W386`) has no editor to frame, and a policy that named one anyway would be
+    a widening nobody asked for.
+    """
+    return getattr(namespaces.get(run.NAMESPACE), "frames", None)
 
 
 def client_for(namespaces: Mapping[str, object]) -> str | None:

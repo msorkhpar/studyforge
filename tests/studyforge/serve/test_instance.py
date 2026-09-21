@@ -13,11 +13,13 @@ import threading
 
 import pytest
 
+from studyforge.execute import Editor
 from studyforge.generate import read_corpus, write_site
 from studyforge.progress import store_dir
 from studyforge.serve.discovery import DiscoveryRefused, ServedCorpus, discover
 from studyforge.serve.instance import (
     WRITERS,
+    frames_for,
     instance_of,
     make_instance,
     namespaces_of,
@@ -182,3 +184,152 @@ def test_a_site_discovery_scans_the_site_writes_nothing_and_reports_nothing(tmp_
     for artifact in scanned.units:
         (site / artifact.path).unlink()
     assert not served.rescan().units
+
+
+# --- the frame policy an instance serves (`W427`) ---------------------------
+
+#: An editor that is up. ⚠️ The folder is a made-up container path; the probe
+#: reads the real one out of the container and never composes one.
+UP = Editor(origin="http://127.0.0.1:8443", folder="/w/sources")
+
+
+class StubEditors:
+    """A probe factory and its probe in one: answers `UP`, forks nothing.
+
+    ⛔ **`known()` answers only after `editor()` has been asked** (`W427`), because
+    that is what a real probe's cache does and it is the property the frame policy
+    rests on: composing a policy asks nothing, so a cold instance frames nothing.
+    """
+
+    def __init__(self, where: Editor | None) -> None:
+        self.where = where
+        self.asked = 0
+
+    def __call__(self, corpus: ServedCorpus) -> StubEditors:
+        return self
+
+    def editor(self) -> Editor | None:
+        self.asked += 1
+        return self.where
+
+    def known(self) -> Editor | None:
+        return self.where if self.asked else None
+
+
+def policy_sent(headers) -> dict[str, str]:
+    """The policy a real response carried, read back as a browser reads it."""
+    return dict(item.split(" ", 1) for item in headers["content-security-policy"].split("; "))
+
+
+@contextlib.contextmanager
+def instance_serving(server):
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        yield server
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=5)
+
+
+def test_an_instance_with_no_editor_up_serves_frame_src_none(tmp_path):
+    # ⭐ The real wiring, with the real probe: no editor container is running
+    # for a temp fixture (and the pinned gate has no daemon to ask), so the
+    # policy a reader is sent stays closed.
+    server = instance_of(discover(a_workspace(tmp_path)), port=0)
+    with instance_serving(server):
+        headers = fetch(server, "/depth1/index.html")[1]
+    assert policy_sent(headers)["frame-src"] == "'none'"
+
+
+def test_a_served_page_may_frame_exactly_the_editor_the_run_index_publishes(tmp_path):
+    # ⛔ **The two halves, read off ONE instance** — `W416/2`'s lesson: measuring
+    # one side of framing proved nothing. Here the index says where the editor
+    # is and the served header says the page may embed it, or the frame is dead.
+    # ⭐ The index is asked FIRST, because the index is the reader that may ask.
+    server = instance_of(discover(a_workspace(tmp_path)), port=0)
+    server.namespaces[run.NAMESPACE].live.editor = StubEditors(UP)
+    with instance_serving(server):
+        published = body(server, f"/api/v1/{run.NAMESPACE}/")[run.EDITOR]
+        headers = fetch(server, "/depth1/index.html")[1]
+    assert published and all(
+        where == {"origin": UP.origin, "folder": UP.folder} for where in published.values()
+    )
+    assert policy_sent(headers)["frame-src"] == UP.origin
+    assert policy_sent(headers)["frame-ancestors"] == "'none'"
+    assert headers["x-frame-options"] == "DENY"
+
+
+def test_a_page_served_before_anything_asked_frames_nothing_and_forks_nothing(tmp_path):
+    # ⛔ **Spec §8.3, and it is the whole shape of `W427`.** `frame-src` is composed
+    # on EVERY response, so composing it may not ASK: a version that did would fork
+    # `docker` to render a static page, putting a subprocess on the critical path
+    # of every request. ⭐ A cold instance frames nothing; the run index warms it.
+    editors = StubEditors(UP)
+    server = instance_of(discover(a_workspace(tmp_path)), port=0)
+    server.namespaces[run.NAMESPACE].live.editor = editors
+    with instance_serving(server):
+        page = fetch(server, "/depth1/index.html")[1]
+        toc = fetch(server, "/api/v1/content/toc")[1]
+        asset = fetch(server, "/depth1/.studyforge/assets/page.css")[1]
+        cold = editors.asked
+        warmed = body(server, f"/api/v1/{run.NAMESPACE}/")[run.EDITOR]
+        after = fetch(server, "/depth1/index.html")[1]
+    assert cold == 0, "serving pages asked the probe, and asking forks `docker`"
+    assert [policy_sent(each)["frame-src"] for each in (page, toc, asset)] == ["'none'"] * 3
+    assert warmed and policy_sent(after)["frame-src"] == UP.origin
+
+
+def test_the_policy_and_the_index_are_read_off_the_one_runs_and_one_probe(tmp_path):
+    # ⭐ One `Runs` answers both, so a page load does not fork `docker` twice.
+    discovered = discover(a_workspace(tmp_path))
+    namespaces = namespaces_of(
+        discovered, {served.source: CorpusContent(served.corpus) for served in discovered.corpora}
+    )
+    registered = namespaces[run.NAMESPACE]
+    assert frames_for(namespaces) == registered.live.origins
+    assert frames_for({state.NAMESPACE: namespaces[state.NAMESPACE]}) is None
+
+
+def test_a_site_form_seam_that_registers_no_run_namespace_frames_nothing(tmp_path):
+    # ⛔ `W386`'s replaceable seam: no execution means no editor, and a policy
+    # naming one would be a widening nobody asked for.
+    assert frames_for({}) is None
+
+
+def test_a_page_reached_by_another_host_is_not_given_the_editor_and_is_told_why(tmp_path):
+    # ⛔ **The trap this row was warned about, and it is silent without this.** An
+    # editor authenticates with a `SameSite=Lax` cookie; a PORT is not part of a
+    # site but a HOSTNAME is, so a page at `localhost` framing one at `127.0.0.1`
+    # is cross-site, the cookie is withheld, and the frame shows a login form that
+    # never succeeds with nothing in the browser to explain it. ⭐ So the editor is
+    # withheld from that page and the server SAYS so.
+    lines = []
+    server = instance_of(discover(a_workspace(tmp_path)), port=0, log=lines.append)
+    server.namespaces[run.NAMESPACE].live.editor = StubEditors(UP)
+    with instance_serving(server):
+        fetch(server, f"/api/v1/{run.NAMESPACE}/")  # the one reader that may ask (`W427`)
+        matched = fetch(server, "/depth1/index.html")[1]
+        crossed = fetch(server, "/depth1/index.html", host="localhost")[1]
+        again = fetch(server, "/depth1/index.html", host="localhost")[1]
+    assert policy_sent(matched)["frame-src"] == UP.origin
+    assert policy_sent(crossed)["frame-src"] == "'none'"
+    assert policy_sent(again)["frame-src"] == "'none'"
+    withheld = [line for line in lines if "withheld" in line]
+    assert len(withheld) == 1, withheld
+    assert UP.origin in withheld[0] and "localhost" in withheld[0]
+
+
+def test_the_site_itself_is_still_served_to_a_host_the_editor_is_withheld_from(tmp_path):
+    # ⭐ **The design call, and its reason.** Narrowing the `Host` allow-list while
+    # an editor is up would 403 a reader's whole site because a CONTAINER came up,
+    # which is a refusal that moves under them. ⛔ Only the frame is withheld, and
+    # the log names the host to use.
+    server = instance_of(discover(a_workspace(tmp_path)), port=0)
+    server.namespaces[run.NAMESPACE].live.editor = StubEditors(UP)
+    with instance_serving(server):
+        fetch(server, f"/api/v1/{run.NAMESPACE}/")
+        page = fetch(server, "/depth1/index.html", host="localhost")
+        api = fetch(server, "/api/v1/state/", host="localhost")
+    assert page[0] == 200 and api[0] == 200

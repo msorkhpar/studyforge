@@ -302,3 +302,75 @@ def _post(server, path, body):
         return reply.status
     finally:
         connection.close()
+
+
+# --- what a served page may EMBED, on the wire (`W427`) ---------------------
+
+EDITOR = "http://127.0.0.1:8443"
+
+
+def policy_sent(headers) -> dict[str, str]:
+    """The `Content-Security-Policy` a real response carried, read as a browser reads it."""
+    sent = headers["content-security-policy"]
+    return dict(item.split(" ", 1) for item in sent.split("; "))
+
+
+def test_a_served_page_may_frame_the_editor_this_instance_discovered(site, source):
+    # ⛔ Asserted on the RESPONSE, never on the constant: the constant is what
+    # `W416/2` measured a half of, and the reader's browser reads this.
+    with running(site, source, frames=lambda: [EDITOR]) as server:
+        status, headers, _ = fetch(server, "/index.html")
+    assert status == 200
+    assert policy_sent(headers)["frame-src"] == EDITOR
+
+
+def test_a_served_instance_with_no_editor_still_sends_frame_src_none(site, source):
+    with running(site, source, frames=lambda: []) as server:
+        absent = fetch(server, "/index.html")[1]
+    with running(site, source) as server:
+        never = fetch(server, "/index.html")[1]
+    assert policy_sent(absent)["frame-src"] == "'none'"
+    assert policy_sent(never)["frame-src"] == "'none'"
+
+
+def test_the_policy_widens_and_narrows_with_the_editor_rather_than_being_fixed(site, source):
+    up = []
+    with running(site, source, frames=lambda: list(up)) as server:
+        before = fetch(server, "/index.html")[1]
+        up.append(EDITOR)
+        during = fetch(server, "/index.html")[1]
+        up.clear()
+        after = fetch(server, "/index.html")[1]
+    assert policy_sent(before)["frame-src"] == "'none'"
+    assert policy_sent(during)["frame-src"] == EDITOR
+    assert policy_sent(after)["frame-src"] == "'none'"
+
+
+def test_this_page_is_never_framable_however_wide_frame_src_gets(site, source):
+    # ⛔ The other half of the two-sided property, and its answer is still no.
+    with running(site, source, frames=lambda: [EDITOR]) as server:
+        headers = fetch(server, "/index.html")[1]
+        refused = fetch(server, "/api", headers={"Sec-Fetch-Site": "cross-site"})
+    assert policy_sent(headers)["frame-ancestors"] == "'none'"
+    assert headers["x-frame-options"] == "DENY"
+    assert refused[0] == 403
+    assert policy_sent(refused[1])["frame-ancestors"] == "'none'"
+
+
+def test_an_origin_nobody_discovered_is_not_served_into_the_policy(site, source):
+    hostile = ["https://evil.example", "*", "http://127.0.0.1:8443 'unsafe-inline'"]
+    with running(site, source, frames=lambda: hostile) as server:
+        headers = fetch(server, "/index.html")[1]
+    assert policy_sent(headers)["frame-src"] == "'none'"
+    assert "evil.example" not in headers["content-security-policy"]
+
+
+def test_a_streamed_response_carries_the_same_composed_policy(site, source):
+    # ⭐ `_write_stream` sends its own headers; a fix that reached only `_write`
+    # would leave a streamed answer under the policy that blocked the frame.
+    def stream(request, rest):
+        return Response(200, (("Content-Type", "text/plain"),), stream=iter([b"one\n"]))
+
+    with running(site, source, namespaces={"s": stream}, frames=lambda: [EDITOR]) as server:
+        headers = fetch(server, "/api/v1/s/")[1]
+    assert policy_sent(headers)["frame-src"] == EDITOR

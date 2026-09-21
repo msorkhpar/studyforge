@@ -426,7 +426,41 @@ def test_one_probe_is_kept_per_corpus_so_a_page_does_not_fork_docker_per_fetch(r
     with serving(runs, discovered) as server:
         fetch(server, "/api/v1/run/")
         fetch(server, "/api/v1/run/")
+    # ⭐ ONE probe, KEPT — that is the whole economy, because a fork happens
+    # inside a probe and its TTL bounds how often. ⛔ **Still two after `W427`**:
+    # the frame policy READS this probe and never asks it (`W427`), so composing
+    # a policy on every response adds no fork at all.
     assert len(editors.made) == 1 and editors.made[0].asked == 2
+
+
+def test_the_response_that_publishes_an_editor_also_admits_framing_it(root):
+    # ⛔ **`W427`, and `W416/2` is why it is asserted on ONE response.** Framing is
+    # two-sided: the index may say where the editor is while this server's own
+    # `frame-src` forbids embedding it, which is exactly what shipped.
+    live, discovered = runs_over(root, editor=StubEditors(UP))
+    with serving(live, discovered) as server:
+        # ⭐ The index ASKS, so this one response both learns the editor and is
+        # served under the policy that ask composed (`W427`).
+        _, headers, raw = fetch(server, "/api/v1/run/")
+    published = json.loads(raw)[run.EDITOR]
+    policy = dict(item.split(" ", 1) for item in headers["content-security-policy"].split("; "))
+    assert published == {SOURCE: {"origin": UP.origin, "folder": UP.folder}}
+    assert policy["frame-src"] == UP.origin
+    assert policy["frame-ancestors"] == "'none'"
+    assert headers["x-frame-options"] == "DENY"
+
+
+def test_composing_a_frame_policy_reads_the_probe_and_never_asks_it(root):
+    # ⛔ **Spec §8.3** (`W427`): `origins()` is on the path of EVERY response, so a
+    # version that asked would fork `docker` to render a static page. The host arm
+    # in `tests/studyforge/cli/test_serve_process.py` is what measures this on a
+    # real process against a decoy socket; this is its unit-level twin.
+    editors = StubEditors(UP)
+    live, discovered = runs_over(root, editor=editors)
+    assert live.origins() == ()
+    assert editors.made and editors.made[0].asked == 0
+    assert set(live.editors())
+    assert live.origins() == (UP.origin,)
 
 
 def test_the_probe_an_instance_makes_asks_docker_about_the_compose_container(root):
