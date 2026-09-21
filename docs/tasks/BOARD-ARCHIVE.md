@@ -30038,3 +30038,85 @@ happens today anyway.
 ⭐ **Surface:** `serve/security.py`, whatever composes its headers per instance, and their tests.
 
 [the mint](#po-round-136)
+
+## PO round 138
+
+⭐ **`W430` merged `963db7b2` and CLOSES** — and it was verified the way its own
+predecessor was not: ⛔ **across the TTL boundary, on a fresh instance with
+nothing warming it.** Cold `'none'` → after one ask the editor origin → ⭐ **still
+correct at 1.5 and 4.5 TTLs.**
+
+⭐ **The corpus pin advances `48aa3eb` → `27fd8a1`.** ⚠️ **The regeneration was
+NOT cosmetic**: `W430`'s client half — the one reload that recovers a cold
+instance's first page — is BUILT INTO PAGES, so it reaches a reader only after
+a rebuild.
+
+## ⛔ THE USER'S EDITOR SHOWED CHAT AND AN EXPLORER, AND NO CODE WAS AT FAULT
+
+⛔ **MEASURED: `studyforge.practice-focus` — the workbench lockdown — WAS NOT IN
+THE RUNNING IMAGE AT ALL.** ⭐ **The extension is correct and `TC-04` shipped
+it.** ⚠️ **The image the reader was framing was built at `15:06:23` on
+2026-09-19; the lockdown landed at `18:42:30` the same day.** ⛔ **EVERY editor
+image on this host predates it** — the newest was `17:04`.
+
+⭐ **Fixed by rebuilding from the toolchain tip and recreating the container on
+it**; `studyforge.practice-focus-1.0.0` is now live and the panel still
+resolves both frames.
+
+⛔ **THE FINDING THAT OUTLIVES IT, and it is NOT the stale image:** the
+toolchain's README says *"an image whose lockdown did not load is not tagged"*,
+⚠️ **and that guarantee cannot see an image tagged BEFORE the lockdown
+existed.** ⛔ **Nothing anywhere tells a reader their editor image is older than
+the lockdown it is supposed to carry** — the framework probes only that an
+editor is UP. ⚠️ **Put to the user rather than minted.**
+
+## ⭐ What is minted
+
+[`W431`](rows/W431.md) — ⛔ **the user's own words:** *"there should be a button
+that user could maximize this window to have more control over the code and
+tests + run and summit buttons"*. ⭐ **The row's load-bearing clause is measured
+ground, not taste:** the frames are `iframe`s and moving one in the DOM RELOADS
+it, so the panel must expand by changing its OWN geometry — a naive reparent
+throws away the reader's unsaved editor state and restarts the session.
+
+## ⚠️ In flight
+
+`W431` → Developer 2. `AX-03` → Developer 3, ⛔ **handed back at `ac38e1cf` and
+NOT YET VERIFIED BY THE REGISTER** — it self-certified, which is not the
+register's verification.
+
+### W430 — `frame-src` is correct for `EDITOR_TTL` seconds and `'none'` after, so the panel almost never frames
+
+⛔ **THE USER REPORTED THIS TWICE, the second time AFTER `W427` MERGED**, in their own words: *"Still the same issue … it was not fixed in port 8770 deployment"*, quoting the browser's *`Framing 'http://127.0.0.1:8443/' violates … "frame-src 'none'"`*.
+
+### ⛔ WHAT IS ACTUALLY WRONG — MEASURED, NOT INFERRED
+
+⭐ **`W427` is not broken; it is CORRECT FOR TEN SECONDS.** Measured on the running server at `908d1826`, one page, one instance, nothing restarted between readings:
+
+| when | `frame-src` |
+|---|---|
+| immediately after `/api/v1/run/` is fetched | `http://127.0.0.1:8443` |
+| 5 s later | `http://127.0.0.1:8443` |
+| 12 s later | ⛔ `'none'` |
+
+⛔ **`EDITOR_TTL = 10.0`** ([`execute/editor.py`](../../src/studyforge/execute/editor.py)). `origins()` reads `EditorProbe.known()`, which returns `None` once the reading is older than the TTL — ⭐ **deliberately, and `W427`'s own docstring argues for it**: *"an expired reading is cold, not stale-but-usable"*.
+
+⛔ **So the cold-start window is NOT a start-up window. It RECURS EVERY TEN SECONDS**, and a human reading a page is essentially never inside it. ⚠️ **The register recorded this as a one-reload-after-restart nuisance and was WRONG**: the reading that produced that claim was taken inside the TTL and never crossed its boundary. ⭐ **A measurement that never crosses the boundary it is about has not measured it.**
+
+### ⛔ WHY THE OBVIOUS FIX IS REFUSED
+
+⭐ **Asking at startup, or on the path of a page response, is REFUSED and stays refused** — spec §8.3. ⛔ **`W427`'s first hand-back did exactly that and had every page load reach the Docker socket**; it passed three green pinned-image gates because the pinned image cannot reach that arm. ⚠️ **Dodging that reading is not passing it, and this row does not reopen it.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **`frame-src` must be composed from what this instance has EVER discovered, not from a reading that must still be fresh.** ⛔ **The TTL's ground does not transfer from RUNNING A COMMAND to NAMING AN ORIGIN.** A stale entry's whole effect is that the policy names a loopback origin where nothing is listening — ⭐ **the frame then fails to load, which is exactly what happens today anyway**, and no wider capability is granted. ⛔ **A policy that oscillates between correct and `'none'` every ten seconds is the worse failure, and it is the one the user has.**
+2. ⚠️ **The FIRST page of a genuinely cold instance is still owed an answer.** ⭐ **The remedy is the client's**: when the panel finds it may not frame its editor, it may ask the editor route — which is an explicitly requested route and MAY fork (`W427`, and the run index is the same class) — and then reload **once**. ⛔ **Once, and never again in that instance**, because clause 1 makes the widened policy stick.
+3. ⚠️ **A wildcard loopback `frame-src` (`http://127.0.0.1:*`) would remove the probe from the CSP path entirely and cost no reload.** ⛔ **It also lets a page frame ANY local service, and that is a real widening.** ⭐ **The office decides between 1+2 and 3 and RECORDS the ground** — this row does not pre-empt it, but a widening must be argued, not defaulted into.
+
+⛔ **Whatever is chosen, the §8.3 host arm — `tests/studyforge/cli/test_serve_process.py`, run BARE ON THE HOST — is the gate that decides it**, and a reading that does not cross the TTL boundary does not count as a reading of this row.
+
+⭐ **The proof is a page served MORE THAN `EDITOR_TTL` SECONDS after anything warmed the instance, still naming the editor origin** — and the user framing the panel without reloading.
+
+⭐ **Surface:** `serve/security.py`, `serve/routes/runs.py`, `execute/editor.py`, `render/assets/practice.js`, and the §8.3 host arm.
+
+[the mint](#po-round-137)

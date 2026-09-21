@@ -74,8 +74,8 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W430` | Developer 1 | `fix/W430-the-frame-policy-does-not-expire` @ `wt/dev1` | 0 @ `908d1826` | `in-progress` — ⛔ **the user is blocked on this** |
-| `AX-03` | Developer 3 | `feat/AX-03-the-authoring-gates` @ `wt/dev3` | 0 @ `b959dd4f` | `in-progress` — `M10` step 10.2 |
+| `W431` | Developer 2 | `feat/W431-the-practice-maximises` @ `wt/dev2` | 0 @ `963db7b2` | `in-progress` — ⛔ **USER DIRECTION** |
+| `AX-03` | Developer 3 | `feat/AX-03-the-authoring-gates` @ `wt/dev3` | 0 @ `b959dd4f` | `in-progress` — ⛔ **handed back, NOT verified** |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -611,7 +611,8 @@ else.**
 | W427 | The serving process sets `frame-src 'none'`, so the panel's editor frame can never load | framework agent | ✅ done — `908d1826` | [`rows/W427.md`](rows/W427.md) |
 | W428 | Practices sit in their own container, so a reader leaves the topic page to practise it | framework agent | ✅ done — `cdaa71ea`, corpus `48aa3eb` | [`rows/W428.md`](rows/W428.md) |
 | W429 | The editor shows a folder, not the practice's file, and the workbench is wide open | framework agent | ✅ done — `1fc8af42` | [`rows/W429.md`](rows/W429.md) |
-| W430 | `frame-src` is correct for `EDITOR_TTL` seconds and `'none'` after, so the panel almost never frames | framework agent | `in-progress` — ⛔ **USER REPORTED TWICE** | [`rows/W430.md`](rows/W430.md) |
+| W430 | `frame-src` is correct for `EDITOR_TTL` seconds and `'none'` after, so the panel almost never frames | framework agent | ✅ done — `963db7b2`, corpus `27fd8a1` | [`rows/W430.md`](rows/W430.md) |
+| W431 | The practice panel cannot be maximised, so a reader writes code through a letterbox | framework agent | `in-progress` — ⛔ **USER DIRECTION 2026-09-21** | [`rows/W431.md`](rows/W431.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
