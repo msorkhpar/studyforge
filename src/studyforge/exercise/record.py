@@ -7,8 +7,9 @@ document, refuses every way it can be wrong, and writes it back byte-stably.
 `from_document(value, where)` reads the object itself; `to_document(exercise)`
 is the round trip.
 
-**Depends on.** `safety` for the four workspace values, `states` for the key
-whose presence is the graded state, and **`unit.trust` for R5's rule**.
+**Depends on.** `safety` for the four workspace values, **`cases` for the
+vocabulary the four authored keys are written in** (`AX-00`), `states` for the
+key whose presence is the graded state, and **`unit.trust` for R5's rule**.
 
 ## ⛔ R5's rule is imported, never re-spelled
 
@@ -52,6 +53,26 @@ an author fills in wrongly. ⛔ **With no grader, `provenance` and `trust` are
 refused too**: both are facts about a grader, and a claim of trust in a grader
 that does not exist is the claim R5 exists to stop.
 
+## ⛔ The four authored keys are `cases`'s vocabulary, not a second spelling
+
+⭐ **`AX-00` adds `kind`, `cases`, `report` and `origin`, and every rule about
+what they may *say* lives in `cases`** — the kinds, the case shape, the report
+formats, and what a region of the source is. ⛔ This module keeps the
+**document**: which keys are written, in what order, and which shape each one
+may appear on. ⚠️ The seam is the same one `safety` and `unit.trust` sit on,
+and it is why `record` did not grow four vocabularies.
+
+⭐ **Appended, never inserted** (the archive's `OPTIONAL_KEYS` made the same
+choice): the six keys `W357` left are in their old order and old position, so a
+record that gains a `kind` does not reorder what was already on disk (R10).
+
+⛔ **`cases` and `report` are a GRADER fact and are refused on a record with no
+grader, naming the key.** `origin` is a fact about the material and may appear
+on either shape. ⚠️ And none of the four is written where the record does not
+carry it — `kind` included, because every record ever written is `code` and
+writing that token would re-render every archive document in existence. The
+argument is `cases`'s docstring, which owns it.
+
 ## ⛔ Unknown keys are refused
 
 ⭐ **Measured, 2026-09-09: before this, an archive document carrying an unknown
@@ -68,6 +89,20 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from studyforge.describe import describe_keys
+from studyforge.exercise.cases import (
+    BREAKDOWN_KEYS,
+    DEFAULT_KIND,
+    Case,
+    Origin,
+    Report,
+    cases_document,
+    cases_of,
+    kind_of,
+    origin_document,
+    origin_in,
+    report_document,
+    report_of,
+)
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.safety import require_command, require_path
 from studyforge.exercise.states import EXERCISE_KEY, GRADER_KEY
@@ -84,6 +119,10 @@ EXERCISE_KEYS = (
     "test_command",
     "provenance",
     "trust",
+    "kind",
+    "cases",
+    "report",
+    "origin",
 )
 
 #: The keys every record carries: the reader's file, and how it runs. ⭐ Also
@@ -98,6 +137,12 @@ GRADER_KEYS = (GRADER_KEY, "test_command", "provenance", "trust")
 #: reason.
 DEFAULTED_KEYS = ("trust",)
 
+#: ⭐ The keys `AX-00` adds, in `EXERCISE_KEYS` order. ⛔ **Written only where
+#: the record carries them**, which is what keeps every document written before
+#: `M10` byte-identical through a round trip (R10). `BREAKDOWN_KEYS` — the two
+#: of these that are facts about a grader — is `cases`'s, and so is the reason.
+AUTHORED_KEYS = ("kind", *BREAKDOWN_KEYS, "origin")
+
 
 @dataclass(frozen=True, slots=True)
 class Exercise:
@@ -107,6 +152,10 @@ class Exercise:
     which is what `from_document` guarantees. ⛔ The dataclass itself does not:
     it is frozen, not validated, so a caller that constructs one asks
     `from_document(to_document(...))` before believing it.
+
+    ⭐ **The four `AX-00` fields carry their defaults**, so every caller written
+    before `M10` constructs today's exercise by saying nothing: `kind` is
+    `code`, and a record built from no authored material carries none.
     """
 
     main_path: str
@@ -115,11 +164,25 @@ class Exercise:
     test_command: tuple[str, ...] | None
     provenance: str | None
     trust: str | None
+    kind: str = DEFAULT_KIND
+    cases: tuple[Case, ...] | None = None
+    report: Report | None = None
+    origin: Origin | None = None
 
     @property
     def graded(self) -> bool:
         """Does anything check this file? ⭐ The same question `states.state_of` asks."""
         return self.test_path is not None
+
+    @property
+    def breaks_down(self) -> bool:
+        """Is a Submit reported as *main ask* plus *edge cases n/m* for this exercise.
+
+        ⛔ The two keys are one claim, so this answers for both (`cases`), and
+        it answers `False` for a record with no grader however the two are set
+        — there is no run whose report could be folded.
+        """
+        return self.graded and self.cases is not None and self.report is not None
 
     @property
     def authoritative(self) -> bool:
@@ -156,10 +219,11 @@ def from_document(value: object, where: str) -> Exercise:
         )
     _require_known_keys(value, where)
     _require_present(value, where)
+    authored = _authored(value, where)
     main_path = require_path(value.get("main_path"), "main_path", where)
     run_command = require_command(value.get("run_command"), "run_command", where)
     if GRADER_KEY not in value:
-        return Exercise(main_path, None, run_command, None, None, None)
+        return Exercise(main_path, None, run_command, None, None, None, **authored)
     provenance, trust = _trust(value, where)
     return Exercise(
         main_path=main_path,
@@ -168,6 +232,7 @@ def from_document(value: object, where: str) -> Exercise:
         test_command=require_command(value.get("test_command"), "test_command", where),
         provenance=provenance,
         trust=trust,
+        **authored,
     )
 
 
@@ -181,6 +246,12 @@ def to_document(exercise: Exercise) -> dict:
     decided it means. ⛔ An ungraded one writes `REQUIRED_KEYS` and nothing
     else: the keys are chosen by `graded`, never by which values happen to be
     `None`, so an unvalidated `Exercise` cannot write half a grader.
+
+    ⭐ **An authored key is written only where the record carries it**, and
+    `kind` counts as carried only where it is not `code`. ⛔ So a record written
+    before `AX-00` round-trips to the same bytes it was read from, which is what
+    lets this contract land with no version bump (`cases`, and `W357` before
+    it).
     """
     values = {
         "main_path": exercise.main_path,
@@ -189,9 +260,25 @@ def to_document(exercise: Exercise) -> dict:
         "test_command": list(exercise.test_command or ()),
         "provenance": exercise.provenance,
         "trust": exercise.trust,
+        "kind": exercise.kind,
+        "cases": cases_document(exercise.cases or ()),
+        "report": report_document(exercise.report) if exercise.report else None,
+        "origin": origin_document(exercise.origin) if exercise.origin else None,
     }
-    keys = EXERCISE_KEYS if exercise.graded else REQUIRED_KEYS
-    return {key: values[key] for key in keys}
+    return {key: values[key] for key in _written_keys(exercise)}
+
+
+def _written_keys(exercise: Exercise) -> tuple[str, ...]:
+    """Which keys this record writes — chosen by its shape, never by which values are `None`."""
+    carried = set()
+    if exercise.kind != DEFAULT_KIND:
+        carried.add("kind")
+    if exercise.breaks_down:
+        carried.update(BREAKDOWN_KEYS)
+    if exercise.origin is not None:
+        carried.add("origin")
+    shape = set(EXERCISE_KEYS if exercise.graded else REQUIRED_KEYS) - set(AUTHORED_KEYS)
+    return tuple(key for key in EXERCISE_KEYS if key in shape or key in carried)
 
 
 def _require_known_keys(value: dict, where: str) -> None:
@@ -215,16 +302,51 @@ def _require_present(value: dict, where: str) -> None:
             f"reader's file and how it runs; a practice that names no file "
             f"writes no 'exercise' key at all."
         )
-    if not any(key in value for key in GRADER_KEYS):
+    if any(key in value for key in GRADER_KEYS):
+        missing = [key for key in GRADER_KEYS if key not in DEFAULTED_KEYS and key not in value]
+        if missing:
+            raise ExerciseError(
+                f"{where}: 'exercise' names part of a grader and is missing {missing}. "
+                f"A grader is {list(GRADER_KEYS)}, written whole with only 'trust' "
+                f"defaulted — or none of them, for a file with no test, which is "
+                f"§7's ungraded state."
+            )
+    _require_whole_breakdown(value, where)
+
+
+def _require_whole_breakdown(value: dict, where: str) -> None:
+    """Refuse a breakdown beside no grader, and one written in part — naming the key."""
+    named = [key for key in BREAKDOWN_KEYS if key in value]
+    if not named:
         return
-    missing = [key for key in GRADER_KEYS if key not in DEFAULTED_KEYS and key not in value]
+    if GRADER_KEY not in value:
+        raise ExerciseError(
+            f"{where}: 'exercise' names {named} on a record with no grader. Both "
+            f"are facts about what a grader reports, and a breakdown of a run "
+            f"that cannot happen is one no reader is ever shown. An ungraded "
+            f"record carries 'origin' and neither of these."
+        )
+    missing = [key for key in BREAKDOWN_KEYS if key not in value]
     if missing:
         raise ExerciseError(
-            f"{where}: 'exercise' names part of a grader and is missing {missing}. "
-            f"A grader is {list(GRADER_KEYS)}, written whole with only 'trust' "
-            f"defaulted — or none of them, for a file with no test, which is "
-            f"§7's ungraded state."
+            f"{where}: 'exercise' names part of a breakdown and is missing "
+            f"{missing}. A breakdown is {list(BREAKDOWN_KEYS)}, written whole: "
+            f"'cases' with no 'report' names tests nothing can be read from, and "
+            f"a 'report' with no 'cases' is a file nothing folds through."
         )
+
+
+def _authored(value: dict, where: str) -> dict:
+    """Read the four keys `AX-00` added, each only where the record writes it."""
+    # ⚠️ One display, and `origin_in` takes the whole record: `origin` is read
+    # only where it is handed to its one reader (`W109`), so no site here reads
+    # that key and decides something.
+    return {
+        "kind": kind_of(value["kind"], where) if "kind" in value else DEFAULT_KIND,
+        "cases": cases_of(value["cases"], where) if "cases" in value else None,
+        "report": report_of(value["report"], where) if "report" in value else None,
+        "origin": origin_in(value, where),
+    }
 
 
 def _trust(value: dict, where: str) -> tuple[str, str]:

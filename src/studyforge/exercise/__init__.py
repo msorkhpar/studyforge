@@ -55,16 +55,56 @@ reading floor, which is a whole product for prose material.
 |---|---|
 | `states` | the three states, the two acts, and what may complete a practice |
 | `record` | `Exercise`, and reading one out of a practice document |
+| `cases` | the case vocabulary: `kind`, `cases`, `report` and `origin` (`AX-00`) |
 | `safety` | what a path and a command may be, checked before either reaches a file |
 | `errors` | `ExerciseError`, the only exception any of it raises |
 
-**Skeleton at FND-01.** Filled by SF-23 (E06).
+⭐ **A graded exercise may say what it is checked IN** (`AX-00`, spec §7 §10):
+its `cases` — each one an `id` as the test report spells it, a `kind` of `main`
+or `edge`, and `says`, the sentence a reader is shown — plus the `report` those
+ids are read out of and the `origin` the exercise was built from. ⛔ The
+breakdown is a **report and never a second definition of a pass**: a practice
+completes when every case passes, exactly as before.
+
+⛔ **Structural, with no flag and no version bump.** A record written before
+`AX-00` reads unchanged and round-trips to the same bytes; a document carrying
+these keys is refused by a build that predates them, because the record's key
+set is closed.
+
+**Skeleton at FND-01.** Filled by SF-23 (E06); the case vocabulary by AX-00 (E14).
 """
 
 from __future__ import annotations
 
+from studyforge.exercise.cases import (
+    BREAKDOWN_KEYS,
+    CASE_ID_PERMITTED,
+    CASE_KEYS,
+    CASE_KINDS,
+    CODE,
+    DEFAULT_KIND,
+    EDGE,
+    EXERCISE_KINDS,
+    JUNIT,
+    MAIN,
+    ORIGIN_KEYS,
+    QUIZ,
+    REPORT_FORMATS,
+    REPORT_KEYS,
+    Case,
+    Origin,
+    Report,
+    cases_document,
+    cases_of,
+    kind_of,
+    origin_document,
+    origin_in,
+    report_document,
+    report_of,
+)
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.record import (
+    AUTHORED_KEYS,
     DEFAULTED_KEYS,
     EXERCISE_KEYS,
     GRADER_KEYS,
@@ -102,27 +142,52 @@ from studyforge.exercise.states import (
 #: this is what it says.
 __all__ = [
     "ARGUMENT_PERMITTED",
+    "AUTHORED_KEYS",
+    "BREAKDOWN_KEYS",
+    "CASE_ID_PERMITTED",
+    "CASE_KEYS",
+    "CASE_KINDS",
+    "CODE",
     "COMMANDS",
+    "Case",
     "DEFAULTED_KEYS",
+    "DEFAULT_KIND",
+    "EDGE",
     "EXERCISE_KEY",
     "EXERCISE_KEYS",
+    "EXERCISE_KINDS",
+    "Exercise",
+    "ExerciseError",
     "GRADED",
     "GRADER_KEY",
     "GRADER_KEYS",
+    "JUNIT",
+    "MAIN",
     "NONE",
+    "ORIGIN_KEYS",
+    "Origin",
     "PATH_PERMITTED",
+    "QUIZ",
+    "REPORT_FORMATS",
+    "REPORT_KEYS",
     "REQUIRED_KEYS",
     "RUN",
+    "Report",
     "SAFE_ARGUMENT",
     "SAFE_SEGMENT",
     "STATES",
     "TEST",
     "UNGRADED",
-    "Exercise",
-    "ExerciseError",
+    "cases_document",
+    "cases_of",
     "completes_practice",
     "from_document",
+    "kind_of",
     "of",
+    "origin_document",
+    "origin_in",
+    "report_document",
+    "report_of",
     "require_command",
     "require_path",
     "state_of",
