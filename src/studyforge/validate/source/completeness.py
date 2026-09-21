@@ -50,6 +50,24 @@ regex that produces the count. ⛔ **A section occurring twice, or not at all,
 is a finding with its own rule id**, never resolved by picking one: picking is
 where the silence comes back.
 
+## ⛔ A unit's PRACTICE may come from a file of its OWN, counted against IT
+
+⭐ **`W428`, and it is the reason the accounting is per ORIGIN rather than per
+unit.** A practice belongs on the topic page it practises, so it is a
+`practice` document of that unit — but its prose is not in the unit's source
+file, and a corpus may not rewrite that file to put it there (R3, and
+`corpus.manifest.edits` refuses the edit however it is declared). So the unit
+declares `practice_origin`: a **second, additive** file beside the material.
+
+⛔ **The check is not relaxed by this; it is run twice.** A unit with a
+`practice_origin` gets **two** comparisons — its `lesson` documents against
+`origin`, its `practice` documents against `practice_origin` — and every
+heading on both sides is still accounted for by exactly one file. ⚠️ **Both
+buckets exist whether or not a document landed in them**, which is the half
+that would otherwise be a hole: a `practice_origin` whose unit holds no
+practice document compares its headings against **zero** and reads as the
+short read it is, rather than as a file nobody counted.
+
 ## Where the source is, and what happens when it is not there
 
 ⛔ **All or nothing, and half is a failure.** If **some** origins are on disk,
@@ -80,8 +98,10 @@ from __future__ import annotations
 
 import os
 from collections.abc import Iterator
+from dataclasses import dataclass
 from pathlib import Path
 
+from studyforge.corpus.container import Unit as Declared
 from studyforge.corpus.manifest import Classification
 from studyforge.corpus.placement import ARCHIVE_DIRNAME
 from studyforge.validate.corpus import Walk
@@ -97,6 +117,10 @@ RULE_ORIGIN_MISSING = "origin-missing"
 RULE_SECTION_MISSING = "origin-section-missing"
 RULE_SECTION_AMBIGUOUS = "origin-section-ambiguous"
 
+#: The document kind whose material `practice_origin` names (`W428`). ⛔ The
+#: archive's own word, and this module's only knowledge of what a kind is.
+PRACTICE = "practice"
+
 #: ⭐ What the manifest declares as source prose: read in, withheld, or claimed twice.
 SOURCE_STATES = frozenset(
     {Classification.INCLUDED, Classification.EXCLUDED, Classification.CONTESTED}
@@ -104,6 +128,32 @@ SOURCE_STATES = frozenset(
 
 #: What the presence reading never enters, at the corpus root: the framework's own writing.
 NOT_SOURCE = frozenset({ARCHIVE_DIRNAME, ".git", ".studyforge", "corpus.json"})
+
+
+@dataclass(frozen=True, slots=True)
+class _Origin:
+    """One source file, and the archive headings that must come out of it.
+
+    ⭐ **One of these per (unit, role), not per unit** (`W428`): a unit that
+    declares a `practice_origin` yields two, and each is compared against its
+    own file.
+    """
+
+    where: str
+    path: Path
+    section: str | None
+    recorded: int
+    practice: bool
+
+    @property
+    def what(self) -> str:
+        """`an origin` or `a practice origin` — what a refusal calls this file."""
+        return "a practice origin" if self.practice else "an origin"
+
+    @property
+    def whose(self) -> str:
+        """`its source` or `its practice source` — what a short read calls this file."""
+        return "its practice source" if self.practice else "its source"
 
 
 def check_completeness(walk: Walk) -> Iterator[Finding | Unchecked]:
@@ -116,7 +166,7 @@ def check_completeness(walk: Walk) -> Iterator[Finding | Unchecked]:
     if walk.manifest is None:  # pragma: no cover - the walk stops without one
         return
     origins = _origins(walk)
-    present = [origin for origin in origins if origin[1].exists()]
+    present = [origin for origin in origins if origin.path.exists()]
     if not origins:
         yield Unchecked(
             RULE_SHORT_READ,
@@ -135,29 +185,29 @@ def check_completeness(walk: Walk) -> Iterator[Finding | Unchecked]:
         return
     if not present:
         # ⛔ `W255`: source on disk and every origin missing is not an absent tree.
-        for where, *_ in origins:
+        for origin in origins:
             yield Finding(
                 RULE_ORIGIN_MISSING,
-                where,
-                "names an origin that is not on disk, while files the manifest's 'content' "
-                "declares as source are beside the archive. No declared origin is present, "
-                "so no unit's completeness was checked, and an origin that names no file "
-                "is where a short read hides.",
+                origin.where,
+                f"names {origin.what} that is not on disk, while files the manifest's "
+                f"'content' declares as source are beside the archive. No declared origin "
+                f"is present, so no unit's completeness was checked, and an origin that "
+                f"names no file is where a short read hides.",
             )
         return
-    for where, path, section, recorded in origins:
-        if not path.exists():
+    for origin in origins:
+        if not origin.path.exists():
             # ⛔ Half a source tree is a failure, not a discount: a per-file
             # skip would excuse precisely the file that went missing.
             yield Finding(
                 RULE_ORIGIN_MISSING,
-                where,
-                "names an origin that is not on disk, while other origins in this "
-                "corpus are. Either the whole source tree is beside the archive or "
-                "none of it is; half of it is where a short read hides.",
+                origin.where,
+                f"names {origin.what} that is not on disk, while other origins in this "
+                f"corpus are. Either the whole source tree is beside the archive or "
+                f"none of it is; half of it is where a short read hides.",
             )
             continue
-        yield from _compare(where, path, section, recorded)
+        yield from _compare(origin)
 
 
 def _source_beside(walk: Walk) -> bool:
@@ -189,24 +239,24 @@ def _files_under_root(walk: Walk) -> Iterator[Path]:
                 yield from (Path(directory) / name for name in sorted(files))
 
 
-def _compare(where: str, path: Path, section: str | None, in_archive: int) -> Iterator[Finding]:
-    text = _read(path)
+def _compare(origin: _Origin) -> Iterator[Finding]:
+    text = _read(origin.path)
     if text is None:
         return
-    if section is None:
+    if origin.section is None:
         in_source = count_headings(text)
     else:
-        found = region(text, section)
+        found = region(text, origin.section)
         if found.occurrences != 1:
-            yield _ambiguous(where, found.occurrences)
+            yield _ambiguous(origin.where, found.occurrences)
             return
         in_source = found.headings
-    if in_source != in_archive:
+    if in_source != origin.recorded:
         yield Finding(
             RULE_SHORT_READ,
-            where,
-            f"its source carries {in_source} heading line(s) and the archive records "
-            f"{in_archive} heading block(s). The digest cannot see this: it is taken "
+            origin.where,
+            f"{origin.whose} carries {in_source} heading line(s) and the archive records "
+            f"{origin.recorded} heading block(s). The digest cannot see this: it is taken "
             f"over what the parser produced, so a construct the parser skipped is "
             f"missing from both sides of it.",
         )
@@ -238,30 +288,50 @@ def _ambiguous(where: str, occurrences: int) -> Finding:
     )
 
 
-def _origins(walk: Walk) -> list[tuple[str, Path, str | None, int]]:
-    """Return `(unit key, origin path, section, headings recorded)` per **unit**.
+def _origins(walk: Walk) -> list[_Origin]:
+    """Return one `_Origin` per **(unit, source file)**, keyed and summed.
 
-    ⚠️ **Summed across the unit's documents, deliberately.** One origin file is
-    one unit, and a unit may hold several archive documents — `depth1`'s third
-    unit holds two lessons. Comparing one document against the whole file would
-    report a short read on every multi-document unit in the corpus, which is
-    the shape of a check that gets switched off.
+    ⚠️ **Summed across the documents that share a file, deliberately.** A unit
+    may hold several archive documents — `depth1`'s third unit holds two
+    lessons. Comparing one document against the whole file would report a short
+    read on every multi-document unit in the corpus, which is the shape of a
+    check that gets switched off.
 
     ⭐ **The sum is unchanged by regions, which is the point** (Ruling 92):
     units sharing one `path` have **disjoint** sections and key separately, so
     it is seventeen comparisons against seventeen numbers, not against 361.
+
+    ⛔ **Both of a unit's buckets are opened before a single document is
+    counted** (`W428`). A `practice_origin` whose unit holds no `practice`
+    document then compares that file's headings against **zero**, which is the
+    short read it is; opening a bucket only where a document landed would leave
+    the file counted by nobody and reported by nothing.
     """
-    totals: dict[tuple[str, int], int] = {}
-    origins: dict[tuple[str, int], tuple[Path, str | None]] = {}
+    totals: dict[tuple[str, int, bool], int] = {}
+    declared_by: dict[tuple[str, int, bool], Declared] = {}
     for unit in walk.units:
         n = unit.document.get("unit")
         declared = next((d for d in unit.container.units if d.n == n), None)
         if declared is None or declared.origin is None:
             continue
-        key = (unit.container.address.unit_key(declared.n), declared.n)
-        totals[key] = totals.get(key, 0) + (unit.document.get("counts") or {}).get("headings", 0)
-        origins[key] = (walk.root / declared.origin, declared.origin_section)
-    return [(key[0], *origins[key], totals[key]) for key in sorted(totals)]
+        prefix = (unit.container.address.unit_key(declared.n), declared.n)
+        for role in (False, True) if declared.practice_origin is not None else (False,):
+            totals.setdefault((*prefix, role), 0)
+            declared_by[(*prefix, role)] = declared
+        practice = declared.practice_origin is not None and unit.document.get("kind") == PRACTICE
+        headings = (unit.document.get("counts") or {}).get("headings", 0)
+        totals[(*prefix, practice)] += headings
+    return [_origin(walk, key, declared_by[key], totals[key]) for key in sorted(totals)]
+
+
+def _origin(walk: Walk, key: tuple[str, int, bool], declared: Declared, recorded: int) -> _Origin:
+    """Resolve one bucket's key into the file it is compared against."""
+    if key[2]:
+        path, section = declared.practice_origin, declared.practice_origin_section
+    else:
+        path, section = declared.origin, declared.origin_section
+    assert path is not None
+    return _Origin(key[0], walk.root / path, section, recorded, key[2])
 
 
 def _read(path: Path) -> str | None:

@@ -60,10 +60,14 @@ def container(
     return document
 
 
-def unit_entry(n, *, practices=0, origin=None, title="Unit"):
+def unit_entry(n, *, practices=0, origin=None, title="Unit", practice_origin=None):
     entry = {"n": n, "title": f"{title} {n}", "practices": practices}
     if origin is not None:
         entry["origin"] = origin
+    if practice_origin is not None:
+        # ⚠️ A unit whose practice comes from a file of its own needs
+        # `container_api` 3 (`W428`), exactly as a region needs 2.
+        entry["practice_origin"] = practice_origin
     return entry
 
 
@@ -122,6 +126,71 @@ def one_unit(root: Path, *, blocks=None, source=None, origin="src/one.md", **ove
         containers={"demo": container([unit_entry(1, origin=origin)])},
         documents={"demo/raw/prose/unit-01/lesson-1.json": parts},
         sources=sources,
+    )
+
+
+#: The additive file a practice arrives in, and the blocks an adapter reads out
+#: of it. ⭐ Two headings on each side, so a plant on either side is one line.
+PRACTICE_SOURCE = "## Problem statement\n\nDo the work.\n\n## Starting code\n"
+
+PRACTICE_BLOCKS = [
+    {"type": "heading", "level": 2, "text": "Problem statement"},
+    {"type": "para", "text": "Do the work."},
+    {"type": "heading", "level": 2, "text": "Starting code"},
+]
+
+
+def practised(
+    root: Path,
+    *,
+    source=SOURCE,
+    practice_source=PRACTICE_SOURCE,
+    practice_blocks=None,
+    origin="src/one.md",
+    practice_origin="src/one-practice.md",
+    declare_practice_origin=True,
+    write_practice_document=True,
+) -> Path:
+    """One unit whose lesson and practice come from two files (`W428`).
+
+    ⛔ The four switches are what the negative controls need: a practice whose
+    origin is **not** declared, a practice document that is **not** written,
+    and a plant on either side of either comparison.
+    """
+    common = {
+        "source": "demo",
+        "address": ["demo"],
+        "variant": "prose",
+        "unit": 1,
+        "ingested": "2026-01-05",
+        "title": "Unit 1",
+    }
+    documents = {
+        "demo/raw/prose/unit-01/lesson-1.json": {
+            **common,
+            "kind": "lesson",
+            "ordinal": 1,
+            "blocks": BLOCKS,
+        }
+    }
+    if write_practice_document:
+        documents["demo/raw/prose/unit-01/practice-1.json"] = {
+            **common,
+            "kind": "practice",
+            "ordinal": 1,
+            "blocks": PRACTICE_BLOCKS if practice_blocks is None else practice_blocks,
+        }
+    entry = unit_entry(
+        1,
+        practices=1,
+        origin=origin,
+        practice_origin=practice_origin if declare_practice_origin else None,
+    )
+    return write(
+        root,
+        containers={"demo": container([entry], container_api=3)},
+        documents=documents,
+        sources={origin: source, practice_origin: practice_source},
     )
 
 

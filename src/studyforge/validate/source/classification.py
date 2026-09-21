@@ -181,7 +181,10 @@ def _read_by_origins(walk: Walk) -> frozenset[Path]:
     Empty when no named file is on disk (`origin-missing`'s answer) or a map did not parse.
     """
     maps = [held.container for held in walk.containers]
+    # ⭐ **Both origins** (`W428`): a unit's practice may be read from a file of
+    # its own, and that file is read by that unit exactly as its prose file is.
     named = {walk.root / u.origin for c in maps for u in c.units if u.origin}
+    named |= {walk.root / u.practice_origin for c in maps for u in c.units if u.practice_origin}
     if any(item.container is None for item in walk.refused):
         return frozenset()
     return frozenset(named) if any(path.is_file() for path in named) else frozenset()
