@@ -30120,3 +30120,47 @@ register's verification.
 ⭐ **Surface:** `serve/security.py`, `serve/routes/runs.py`, `execute/editor.py`, `render/assets/practice.js`, and the §8.3 host arm.
 
 [the mint](#po-round-137)
+
+## PO round 139
+
+⛔ **THE READER REPORTED THE SAME SYMPTOM TWICE AND THE REGISTER'S FIRST ANSWER
+WAS WRONG.** ⭐ **The first diagnosis was true** — every editor image on the
+host predated `TC-04`'s lockdown by hours. ⛔ **But the register then confirmed
+the extension was PRESENT in the rebuilt image and reported the symptom
+fixed.** ⚠️ **PRESENCE IS NOT EFFECT.** ⭐ **The reader checked effect.**
+
+⛔ **THIS IS THE SECOND TIME IN ONE SESSION THE REGISTER HAS CALLED SOMETHING
+FIXED FROM THE WRONG READING.** ⭐ **`W430` was the first** — a frame policy
+measured inside its own TTL. ⚠️ **Both were caught by the user, not by the
+register.** ⛔ **The shape is identical: read the thing that is easy to read,
+and report it as the thing that was asked about.**
+
+### ⭐ What is minted
+
+[`W432`](rows/W432.md) — and its table is the value: on the REBUILT image the
+extension is in the extensions dir, in `extensions.json`, listed by
+`code-server --list-extensions`, parses under the image's own `node`, and its
+engine range admits VS Code 1.117.0 — ⛔ **and the extension host ACTIVATES IT
+IN NO LOG LINE, IN ANY SESSION, WITH NO ERROR.** ⭐ **Other `onStartupFinished`
+extensions activate in the same sessions.**
+
+⭐ **The settings half is NOT suspect and is explicitly cleared**: tabs,
+minimap, status bar and activity bar are all suppressed in the reader's own
+screenshot. ⛔ **It is the extension half that never runs** — and it is the only
+half that CAN close the Explorer, because the primary side bar's visibility is
+workbench UI STATE rather than a setting. ⚠️ **That is why `TC-04` wrote an
+extension instead of more settings, and it is why there is no quick settings
+answer here.**
+
+### ⛔ The finding that outlives the row, and it is a CHECK not an image
+
+⭐ `TC-04`'s guarantee is that *"an image whose lockdown did not load is not
+tagged"*. ⛔ **That guarantee did not hold, and the reason is structural: the
+check reads the INSTALLED list, and the extension IS installed.** ⚠️ **A check
+that reads installation cannot see activation.**
+
+### ⚠️ In flight
+
+`W431` → Developer 2 (the reader's maximise control, dispatched round 138).
+`W432` → Developer 1. `AX-03` → Developer 3, ⛔ **handed back at `ac38e1cf` and
+NOT YET VERIFIED BY THE REGISTER.**
