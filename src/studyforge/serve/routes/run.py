@@ -2,9 +2,11 @@ r"""The run namespace: Run and Submit — a practice's own command, streamed and
 
 **What it does.** Answers under `/api/v1/run/`:
 
-- `GET` (empty) → `run-index`: the modes, the two endpoints, and the live run if any;
+- `GET` (empty) → `run-index`: the modes, the two endpoints, where each corpus's
+  editor is if one is up, and the live run if any;
 - `GET client.js` → the page's execution client, `serve/assets/run-client.js`,
-  which publishes `studyforge.run` (`available`, `start`, `stop`) and draws nothing;
+  which publishes `studyforge.run` (`available`, `start`, `stop`, `editor`) and
+  draws nothing;
 - `POST <corpus>/<mode>/<practice key>` → starts the ONE command `mode` names in that
   practice's workspace, streams its output line by line as `text/plain`, and records
   the outcome in the corpus's progress store when the stream ends;
@@ -55,6 +57,22 @@ A second start while one is live answers `409`: a reader has one workspace. How 
 ends is recorded however it ends, and every line is gated on the wire — both are
 `routes.runs`'s, split from this module at that seam (R11).
 
+## ⭐ `editor` is on the index because it can only be true at SERVE time (`W416`)
+
+⭐ **`editor` maps a corpus's `source` to `{origin, folder}`** for every corpus
+whose editor container is up over its own files, and carries nothing for the
+rest. ⛔ **The built page cannot hold this and must not**: the editor's host
+port is per-project (`SK-09/4`) and R8 forbids a built page naming an origin or
+a port, so the one place the answer can be true is a response from the origin
+the reader is actually reading at. ⚠️ **It is a MAP because an instance serves
+every corpus it discovered**, and the panel knows which one it belongs to —
+`editor: {origin, folder}` for a single corpus would have made a
+several-corpus instance answer about the wrong one.
+
+⛔ **Asking is `docker inspect` and nothing else** (`execute.EditorProbe`, spec
+§8.3): this process never holds the Docker socket, never starts an editor, and
+answers an absence rather than failing when it cannot ask.
+
 ## ⭐ The page's execution client is served HERE, never built into a page
 
 A built site opens over `file://` naming no server (R8), and a client names the API on
@@ -98,6 +116,11 @@ COMMAND_OF = {RUN: "run_command", TEST: "test_command"}
 
 #: The path that stops the live run.
 STOP = "stop"
+
+#: The index's key for where each corpus's editor is. ⭐ The framework's ONE
+#: spelling of it: the page's client reads it from here rather than retyping it
+#: (`tests/studyforge/serve/routes/test_run_client.py`).
+EDITOR = "editor"
 
 #: The path the page's execution client is served at, and the file it is.
 CLIENT = "client.js"
@@ -154,6 +177,7 @@ def index(runs: Runs) -> dict:
         "start": f"{API_PREFIX}/{NAMESPACE}/{{corpus}}/{{mode}}/{{practice}}",
         "stop": f"{API_PREFIX}/{NAMESPACE}/{STOP}",
         "client": CLIENT_PATH,
+        EDITOR: runs.editors(),
         "live": None
         if live is None
         else {"corpus": live.corpus, "practice": live.practice, "mode": live.mode},

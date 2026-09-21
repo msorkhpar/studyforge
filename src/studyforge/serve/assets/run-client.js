@@ -7,7 +7,7 @@
    an origin that can answer it.
 
    ⭐ **A client and nothing else.** It publishes `studyforge.run` — `available`,
-   `start`, `stop` — and draws nothing: the practice panel that puts Run and
+   `start`, `stop`, `editor` — and draws nothing: the practice panel that puts Run and
    Submit in front of a reader is `SF-24`'s, at `M7`. ⛔ A control this file
    drew before that panel existed would be a dead button, and a dead button is
    a promise the page cannot keep.
@@ -101,6 +101,34 @@
     });
   }
 
+  /* The run index, asked once per page and remembered. ⭐ Where a running
+     editor is can only be true at SERVE time: its host port is per-project and
+     a built page may name no origin and no port (R8), so the page asks the
+     origin it is being read at. ⛔ An index that cannot be read is no editor,
+     never an error a reader sees. */
+  var index = null;
+
+  function asked() {
+    if (!index) {
+      index = fetch(BASE, { cache: 'no-store', credentials: 'same-origin' })
+        .then(function (response) { return response.ok ? response.json() : {}; })
+        .then(null, function () { return {}; });
+    }
+    return index;
+  }
+
+  /* Where this corpus's editor is — { origin, folder } — or null when there is
+     not one to say. ⛔ Nothing here starts one, and nothing here builds a URL:
+     a caller decides what to do with an origin and a folder. */
+  function editor(corpus) {
+    if (!available()) { return refused('no-origin'); }
+    if (!CORPUS.test(corpus)) { return refused('corpus'); }
+    return asked().then(function (answer) {
+      var found = answer && answer.editor && answer.editor[corpus];
+      return found && found.origin && found.folder ? found : null;
+    });
+  }
+
   function stop() {
     if (!available()) { return refused('no-origin'); }
     return fetch(BASE + STOP, { method: 'POST', cache: 'no-store', credentials: 'same-origin' })
@@ -109,5 +137,11 @@
   }
 
   window.studyforge = window.studyforge || {};
-  window.studyforge.run = { available: available, start: start, stop: stop, modes: MODES.slice() };
+  window.studyforge.run = {
+    available: available,
+    start: start,
+    stop: stop,
+    editor: editor,
+    modes: MODES.slice()
+  };
 })();

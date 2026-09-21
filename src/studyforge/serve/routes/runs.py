@@ -1,8 +1,10 @@
 r"""The instance's runs: the one live slot, a run's streamed body, and its recorded outcome.
 
 **What it does.** `Runs` holds what a run is read from (every corpus discovered and its
-content) and the one run in flight; `Stream` is a run's response body — each line gated,
-the verdict recorded just before the exit line, which is last; `Outcome` records it.
+content), the one run in flight, and one `EditorProbe` per corpus — `editors()`
+is where a running editor is, for the index to publish (`W416`); `Stream` is a
+run's response body — each line gated, the verdict recorded just before the exit
+line, which is last; `Outcome` records it.
 
 **How you use it.** `serve.routes.run` claims the slot with `Runs.claim`, and answers
 with `Response(200, headers, stream=Stream(runs, live, Outcome(...)))`.
@@ -42,9 +44,11 @@ from studyforge.archive.scrub import scrub
 from studyforge.execute import (
     EXIT_STOPPED,
     EXIT_TIMEOUT,
+    EditorProbe,
     RunHandle,
     Runner,
     container_for,
+    editor_container_for,
     exit_line,
 )
 from studyforge.progress import RAISES as PROGRESS_RAISES
@@ -55,11 +59,17 @@ from studyforge.serve.routes.content import ContentSource
 NOT_RECORDED = "--- the outcome could not be recorded ---"
 
 RunnerFor = Callable[[ServedCorpus], Runner]
+EditorFor = Callable[[ServedCorpus], EditorProbe]
 
 
 def runner_for(corpus: ServedCorpus) -> Runner:
     """Return the corpus's runner: its root, and the container its reader may have up."""
     return Runner(corpus.root, container_for(corpus.source))
+
+
+def editor_for(corpus: ServedCorpus) -> EditorProbe:
+    """Return the probe for the corpus's editor: its root, and the name compose gives one."""
+    return EditorProbe(corpus.root, editor_container_for(corpus.source))
 
 
 @dataclass(frozen=True, slots=True)
@@ -81,14 +91,43 @@ class Runs:
         sources: Mapping[str, ContentSource],
         runner: RunnerFor = runner_for,
         clock: Callable[[], str] | None = None,
+        editor: EditorFor = editor_for,
     ) -> None:
-        """Hold the corpora, their content, how a runner is made, and the clock."""
+        """Hold the corpora, their content, how a runner and a probe are made, and the clock."""
         self.discovered = discovered
         self.sources = dict(sources)
         self.runner = runner
+        self.editor = editor
         self.clock = clock or _now
         self._lock = threading.Lock()
+        self._probes_lock = threading.Lock()
+        self._probes: dict[str, EditorProbe] = {}
         self._live: Live | None = None
+
+    def editors(self) -> dict[str, dict[str, str]]:
+        """Where each served corpus's editor is, for every one that is up.
+
+        ⭐ **One probe per corpus, kept**, because a probe's whole economy is its
+        cache: a fresh one per request would fork `docker` on every page load.
+        ⛔ A corpus whose editor is not up, or which cannot be asked about, is
+        simply absent — the page then shows the sentence it already ships.
+        """
+        found: dict[str, dict[str, str]] = {}
+        for corpus in self.discovered.corpora:
+            if corpus.source not in self.sources:
+                continue
+            where = self._probe(corpus).editor()
+            if where is not None:
+                found[corpus.source] = {"origin": where.origin, "folder": where.folder}
+        return found
+
+    def _probe(self, corpus: ServedCorpus) -> EditorProbe:
+        """The one probe held for `corpus`, made on first ask."""
+        with self._probes_lock:
+            probe = self._probes.get(corpus.source)
+            if probe is None:
+                probe = self._probes[corpus.source] = self.editor(corpus)
+            return probe
 
     @property
     def live(self) -> Live | None:

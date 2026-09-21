@@ -43,6 +43,19 @@ ROOT_DIR = "."
 #: name `code-server-toolchain`'s README gives the reader's run line.
 CONTAINER_PREFIX = "studyforge-runner-"
 
+#: The EDITOR container's name, `{source}` filled in. ⭐ The runner's name is a
+#: `docker run --name` the reader types, so that component declares it; the
+#: editor is brought up by the compose file `skills.execution` generates, so its
+#: name is the one Compose derives — `<project>-<service>-<index>`, where the
+#: project is `studyforge-<source>` and the one service is `editor`.
+#: ⛔ **A convention, not a declaration, and that is a finding** (`W416/1`): the
+#: editor block of `consuming.json` carries no `name_template` where the runner
+#: block carries one, and the generated compose service declares no
+#: `container_name`, so nothing fails if the two spellings come apart. ⭐ A
+#: running editor must be FOUND rather than guessed, and this is the one
+#: spelling the framework looks it up by.
+EDITOR_CONTAINER_TEMPLATE = "studyforge-{source}-editor-1"
+
 COMMANDS_PERMITTED = "a non-empty list of commands, each a list of arguments"
 
 
@@ -84,3 +97,8 @@ def require_container(name: object) -> str:
 def container_for(source: str) -> str:
     """Name the runner container the reader starts for corpus `source`."""
     return require_container(CONTAINER_PREFIX + source)
+
+
+def editor_container_for(source: str) -> str:
+    """Name the editor container the reader's compose file brings up for `source`."""
+    return require_container(EDITOR_CONTAINER_TEMPLATE.format(source=source))

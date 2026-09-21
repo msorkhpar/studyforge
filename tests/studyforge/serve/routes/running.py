@@ -109,6 +109,35 @@ class StubHandle:
         return True
 
 
+class StubEditor:
+    """An editor probe that answers what it was given, and forks nothing.
+
+    ⛔ The suite's default is an editor that is NOT up: a real probe would fork
+    `docker` per corpus per index fetch, and the pinned gate has no daemon to
+    ask (§8.3, and `W416`'s handoff carries the host reading).
+    """
+
+    def __init__(self, answer=None) -> None:
+        self.answer = answer
+        self.asked = 0
+
+    def editor(self):
+        self.asked += 1
+        return self.answer
+
+
+class StubEditors:
+    """A probe factory that keeps the one probe it made for each corpus."""
+
+    def __init__(self, answer=None) -> None:
+        self.answer = answer
+        self.made: list[StubEditor] = []
+
+    def __call__(self, corpus: ServedCorpus) -> StubEditor:
+        self.made.append(StubEditor(self.answer))
+        return self.made[-1]
+
+
 def stub_runner(handle: StubHandle):
     class Stub:
         def start(self, commands, cwd="."):
@@ -117,10 +146,15 @@ def stub_runner(handle: StubHandle):
     return lambda corpus: Stub()
 
 
-def runs_over(root: Path, runner=host_runner, clock=None) -> tuple[runs.Runs, Discovered]:
+def runs_over(
+    root: Path, runner=host_runner, clock=None, editor=None
+) -> tuple[runs.Runs, Discovered]:
     discovered = discover(root.parent)
     sources = {served.source: CorpusContent(served.corpus) for served in discovered.corpora}
-    return runs.Runs(discovered, sources, runner=runner, clock=clock), discovered
+    live = runs.Runs(
+        discovered, sources, runner=runner, clock=clock, editor=editor or StubEditors()
+    )
+    return live, discovered
 
 
 @contextlib.contextmanager

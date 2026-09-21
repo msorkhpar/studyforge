@@ -2,16 +2,27 @@
 
 from __future__ import annotations
 
+import json
+import re
+
 import pytest
 
+from studyforge.corpus.manifest import parse
 from studyforge.execute import (
     CONTAINER_PREFIX,
     ROOT_DIR,
     RunRefused,
     container_for,
+    editor_container_for,
     require_commands,
     require_container,
     require_workdir,
+)
+from studyforge.skills.execution import onboard
+from tests.studyforge.skills.execution.contracts import (
+    corpus,
+    editor_text,
+    manifest_document,
 )
 
 PERMITTED = [
@@ -59,6 +70,27 @@ def test_a_directory_outside_the_root_is_refused(cwd):
 def test_the_container_is_named_for_its_corpus_as_the_readers_run_line_names_it():
     assert container_for("runnable-demo") == CONTAINER_PREFIX + "runnable-demo"
     assert container_for("runnable-demo") == "studyforge-runner-runnable-demo"
+
+
+def test_the_editor_container_is_the_one_the_generated_compose_file_brings_up(tmp_path):
+    """⭐ The convention and the file that realises it, read together (`W416`).
+
+    ⚠️ Compose derives a container's name as `<project>-<service>-<index>`, and
+    what this asserts is the two halves this repository owns — the project
+    `skills.execution` names and the one service it renders — against the one
+    name the framework looks a running editor up by. ⛔ **The derivation itself
+    is Compose's and cannot be read in this gate**, which has no Docker: it is a
+    host reading, in `W416`'s handoff, and taken against this same spelling.
+    """
+    document = manifest_document()
+    generated = onboard.generate(
+        parse(json.dumps(document)), editor_text=editor_text(), root=corpus(tmp_path)
+    )
+    text = dict(generated.files)[onboard.COMPOSE_FILE]
+    project = re.search(r"^name: (\S+)$", text, flags=re.MULTILINE)
+    services = re.findall(r"^  (\S+):$", text.split("services:", 1)[1], flags=re.MULTILINE)
+    assert project is not None and services
+    assert editor_container_for(document["source"]) == f"{project.group(1)}-{services[0]}-1"
 
 
 @pytest.mark.parametrize("name", ["two words", "-flag", "a;b", "", None, "a/b"])

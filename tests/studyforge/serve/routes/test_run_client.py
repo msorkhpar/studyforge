@@ -77,7 +77,10 @@ def test_its_endpoint_modes_and_stop_are_the_run_routes_own():
 
 def test_a_start_is_a_post_with_no_body_and_nothing_else_is_sent():
     body = uncommented()
-    assert body.count("fetch(") == 2
+    # ⭐ Three requests in the whole client and no fourth: the two acts, each a
+    # POST that SELECTS, and the index — a GET, because asking what this
+    # instance offers is a read (`W416`).
+    assert body.count("fetch(") == 3
     assert body.count("method: 'POST'") == 2
     assert "body:" not in body and "JSON.stringify" not in body
     assert "XMLHttpRequest" not in body and "sendBeacon" not in body
@@ -125,10 +128,11 @@ def test_it_draws_nothing_and_types_no_word_a_reader_sees():
 
 
 def test_over_a_file_it_is_not_available_and_sends_nothing():
-    # ⛔ R8: `file://` has no origin. Both entry points ask `available()` first.
+    # ⛔ R8: `file://` has no origin. EVERY entry point asks `available()` first
+    # — the two acts and, since `W416`, where a running editor is.
     body = uncommented()
     assert "location.protocol === 'http:'" in body
-    assert body.count("if (!available())") == 2
+    assert body.count("if (!available())") == 3
 
 
 def test_a_refusal_is_a_rejection_naming_what_was_refused_before_any_request():
@@ -139,3 +143,39 @@ def test_a_refusal_is_a_rejection_naming_what_was_refused_before_any_request():
     before_fetch = start[: start.index("fetch(")]
     for reason in ("'no-origin'", "'mode'", "'practice'"):
         assert f"refused({reason})" in before_fetch, reason
+
+
+# --- where a running editor is (`W416`) -------------------------------------
+
+
+def test_it_publishes_where_a_running_editor_is_beside_the_two_acts():
+    assert "editor: editor" in text()
+
+
+def test_the_editor_is_read_off_the_index_under_the_run_routes_own_key():
+    # ⭐ One spelling of the key, read from Python rather than retyped here: a
+    # second spelling would be a page that finds nothing with nothing failing.
+    body = uncommented()
+    assert f"answer.{run.EDITOR}" in body
+    assert f"answer.{run.EDITOR}[corpus]" in body
+    assert "fetch(BASE, {" in body
+
+
+def test_the_index_is_asked_once_per_page_and_the_answer_is_remembered():
+    body = uncommented()
+    assert "if (!index) {" in body
+
+
+def test_an_index_that_cannot_be_read_is_no_editor_and_never_an_error_a_reader_sees():
+    body = uncommented()
+    editor = body[body.index("function asked()") : body.index("function stop()")]
+    assert "return {}" in editor
+    assert "found.origin && found.folder ? found : null" in editor
+
+
+def test_it_neither_builds_an_editor_url_nor_starts_one():
+    # ⛔ A client hands back an origin and a folder; what to do with them is the
+    # panel's, and starting a development environment is nobody's on this page.
+    body = uncommented()
+    for word in ("iframe", "?folder=", "docker", "spawn"):
+        assert word not in body, word

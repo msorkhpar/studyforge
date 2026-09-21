@@ -14,6 +14,7 @@ import pytest
 
 from studyforge.progress import practice_key
 from studyforge.render import templates
+from studyforge.render.pageassets import ASSET_DIR
 from studyforge.render.page import anchors, practice, render
 from studyforge.render.page.errors import PageError
 from tests.studyforge.render.page.pages import depth2_unit_01, sample_placement
@@ -207,6 +208,67 @@ def test_the_editor_slot_says_it_is_not_running_and_how_to_start_it():
     note = panel().split('data-practice-part="no-editor"')[1]
     assert "not running" in note
     assert "code-server-toolchain" in note
+
+
+# --- the panel's script, read as the data it is (`W416`) --------------------
+
+#: ⛔ No JavaScript runs in this suite (`QA-03/1`: the pinned image has no
+#: engine), so what a text can establish about the panel's script is asserted
+#: here and the browser reading is `QA-02`'s (`SF-24/5`).
+SCRIPT = ASSET_DIR / "practice.js"
+
+
+def behaviour() -> str:
+    """`practice.js` with its comments removed, so a claim is about the code."""
+    return re.sub(r"/\*.*?\*/", "", SCRIPT.read_text(encoding="utf-8"), flags=re.DOTALL)
+
+
+def test_the_editor_slot_is_filled_from_the_served_client_and_from_nowhere_else():
+    # ⭐ `W416`'s seam, and the ONE change this panel took for it: the panel
+    # reads `studyforge.run.editor(corpus)` — the same object it already runs
+    # and stops through — and fills the slot the panel already ships.
+    body = behaviour()
+    assert "run.editor(corpus)" in body
+    assert body.count("window.studyforge.run") == 1
+
+
+def test_an_older_client_that_publishes_no_editor_leaves_run_and_submit_working():
+    # ⚠️ A site BUILT by one version may be SERVED by another, and the client is
+    # the serving process's — so the panel asks whether the function is there
+    # rather than assuming it, and Run and Submit survive an older one.
+    body = behaviour()
+    assert "if (run.editor) {" in body
+    assert body.index("if (run.editor) {") < body.index("run.editor(corpus)")
+
+
+def test_a_frame_is_added_only_for_an_editor_the_server_says_is_up():
+    body = behaviour()
+    filling = body[body.index("run.editor(corpus)") :]
+    assert "if (!where || !slot) { return; }" in filling
+    assert filling.index("if (!where") < filling.index("createElement('iframe')")
+
+
+def test_the_frame_is_built_from_the_served_origin_and_the_served_folder():
+    # ⛔ R8: a built page names no origin and no port. Every part of the URL
+    # below arrives at serve time, and the folder is encoded rather than pasted.
+    body = behaviour()
+    assert "where.origin + '/?folder=' + encodeURIComponent(where.folder)" in body
+    assert "127.0.0.1" not in body and "localhost" not in body and "http://" not in body
+
+
+def test_the_sentence_stands_until_a_frame_replaces_it():
+    body = behaviour()
+    filling = body[body.index("run.editor(corpus)") :]
+    assert "show(part(panel, 'no-editor'), false)" in filling
+    assert filling.index("createElement('iframe')") < filling.index("'no-editor'")
+
+
+def test_the_panel_starts_no_editor_and_names_no_container():
+    # ⛔ An IDE with a shell is not started because somebody opened a reading
+    # page (§8.3, and this panel's own honesty rule).
+    body = behaviour()
+    for word in ("docker", "fetch(", "XMLHttpRequest", "studyforge-", "compose"):
+        assert word not in body, word
 
 
 def test_the_panel_follows_the_section_it_belongs_to():
