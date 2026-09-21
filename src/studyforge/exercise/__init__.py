@@ -57,6 +57,7 @@ reading floor, which is a whole product for prose material.
 | `record` | `Exercise`, and reading one out of a practice document |
 | `cases` | the case vocabulary: `kind`, `cases`, `report` and `origin` (`AX-00`) |
 | `report` | folding a run's JUnit report through those cases into a breakdown (`AX-01`) |
+| `quiz` | the quiz: its questions, its key, and the rule that grades them (`AX-05`) |
 | `safety` | what a path and a command may be, checked before either reaches a file |
 | `errors` | `ExerciseError`, the only exception any of it raises |
 
@@ -78,7 +79,18 @@ pass**, which is the sentence above said from the other end.
 these keys is refused by a build that predates them, because the record's key
 set is closed.
 
-**Skeleton at FND-01.** Filled by SF-23 (E06); the case vocabulary by AX-00 (E14).
+⭐ **An exercise whose `kind` is `quiz` carries `questions` in place of a
+workspace** (`AX-05`, spec §7 §7) — a stem, an ordered set of options, exactly
+one keyed correct, and one sentence per option. ⛔ **It is graded with no
+compiler, no container, no network and no model**: the key ships in the
+practice document and the rule is `studyforge.exercise.quiz`'s, so the reading
+is identical over `file://` and over a served origin (R8). ⛔ **A quiz produces
+no run**, so it names no `test_path`, `completes_practice` answers `False` for
+it in every act, and its own completion rule is `quiz.completes` — every
+question answered correctly, recorded through the reader's state.
+
+**Skeleton at FND-01.** Filled by SF-23 (E06); the case vocabulary by AX-00 and
+the quiz by AX-05 (E14).
 """
 
 from __future__ import annotations

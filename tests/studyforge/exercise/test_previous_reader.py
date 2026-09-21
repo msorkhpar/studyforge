@@ -73,7 +73,24 @@ AFTER = {
     "cases": [{"id": "GreeterTest#greets", "kind": "main", "says": "It greets by name."}],
     "report": {"format": "junit", "path": "target/surefire-reports"},
     "origin": "docs/01-getting-started.md",
+    "questions": [
+        {
+            "id": "q-1",
+            "stem": "What does a greeter return?",
+            "options": [
+                {"id": "a", "text": "A greeting", "correct": True, "says": "The page says so."},
+                {"id": "b", "text": "Nothing", "correct": False, "says": "It returns a string."},
+            ],
+            "origin": "docs/01-getting-started.md",
+        }
+    ],
 }
+
+#: ⭐ A whole quiz as `AX-05` shipped it — the shape the previous reader cannot
+#: read at all, since `questions` is not a key it defines and `kind` is not
+#: either. ⚠️ Its own round trip is `tests/studyforge/exercise/quiz/`; what is
+#: taken here is only the two-directional reading.
+QUIZ_RECORD = {"kind": "quiz", "questions": AFTER["questions"]}
 
 #: The rule the one invalid fixture carrying a record is declared to break
 #: (Ruling 46). ⭐ This sweep reads every record through `from_document`, which
@@ -183,10 +200,13 @@ def test_a_new_key_on_a_practice_document_is_refused_by_the_previous_reader(prev
         previous.of(document, WHERE)
 
 
-#: The four keys in the groups today's reader accepts them in. ⚠️ The
-#: breakdown is one group because it is written whole or not at all, so
+#: The keys in the groups today's reader accepts them in ON A CODE RECORD.
+#: ⚠️ The breakdown is one group because it is written whole or not at all, so
 #: `cases` alone is refused by BOTH readers — for different reasons, which is
-#: why it is not the shape this claim is taken on.
+#: why it is not the shape this claim is taken on. ⛔ **`questions` is absent
+#: deliberately and that is not an omission**: `AX-05` made it a key only a
+#: QUIZ may carry, so on `BEFORE`'s shape today's reader refuses it too. Its
+#: arm of this claim is the quiz test below, on a whole quiz record.
 ACCEPTED = [("kind",), BREAKDOWN_KEYS, ("origin",)]
 
 
@@ -198,6 +218,17 @@ def test_and_todays_reader_accepts_each_of_them(previous, keys):
     document = {**BEFORE, **{key: AFTER[key] for key in keys}}
     assert from_document(document, WHERE)
     assert refused_by(previous, document)
+
+
+def test_a_whole_quiz_is_refused_by_the_previous_reader_and_read_by_todays(previous):
+    # ⛔ `AX-05`'s half of the same two-directional claim, taken on the shape
+    # that key exists for rather than on a code record wearing it. ⚠️ The
+    # previous reader refuses it for the key it cannot read; today's reads it
+    # and knows what it is.
+    assert refused_by(previous, QUIZ_RECORD)
+    exercise = from_document(QUIZ_RECORD, WHERE)
+    assert exercise.is_quiz is True
+    assert exercise.main_path is None and exercise.run_command is None
 
 
 # --------------------------------------------------------------------------
