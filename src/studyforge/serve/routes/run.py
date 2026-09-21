@@ -10,6 +10,8 @@ r"""The run namespace: Run and Submit — a practice's own command, streamed and
 - `POST <corpus>/<mode>/<practice key>` → starts the ONE command `mode` names in that
   practice's workspace, streams its output line by line as `text/plain`, and records
   the outcome in the corpus's progress store when the stream ends;
+- `POST <corpus>/editor/<practice key>` → `run-editor`: prepares that practice's
+  workspace settings and answers the URL of each of its two editor windows (`W429`);
 - `POST stop` → stops the live run, which then ends `--- exit stopped ---` and is
   recorded as stopped.
 
@@ -73,6 +75,31 @@ several-corpus instance answer about the wrong one.
 §8.3): this process never holds the Docker socket, never starts an editor, and
 answers an absence rather than failing when it cannot ask.
 
+## ⭐ A FILE is addressed under `editor`, which is where the two windows come from (`W429`)
+
+⭐ **`editor` stands where a mode stands** — `POST <corpus>/editor/<practice>` —
+because it selects exactly what a run selects: one corpus, one practice, one
+act. ⛔ It is not one of `MODES` and starts nothing; it PREPARES: it writes that
+practice's workspace settings (everything read-only, the practice's own source
+excluded back out, the workbench closed) and answers the URL each of the two
+windows opens.
+
+⛔ **Two windows, because the window's own URL is the only thing that can tell
+them apart.** An extension cannot read its own window's query string and both
+windows share ONE workspace settings file, so anything an extension opened it
+would open in BOTH. ⚠️ **The test's window is deliberately left read-only**: it
+is the statement of what *done* means.
+
+⚠️ **A practice the editor does not hold answers `404`, never a URL.** A
+code-server URL naming a file that is not mounted opens an empty, dirty buffer
+titled with the file's own name — it looks exactly like a corrupted file and is
+not one. ⛔ **A quiz has no file at all** and answers `409`: no window, no Run,
+no Submit.
+
+⛔ **This is not a security boundary and must not be read as one.** An iframe of
+an IDE with a shell is exactly as powerful as the process behind it; the
+boundary is the container, the loopback bind and one exact origin.
+
 ## ⭐ The page's execution client is served HERE, never built into a page
 
 A built site opens over `file://` naming no server (R8), and a client names the API on
@@ -86,10 +113,11 @@ from __future__ import annotations
 from pathlib import Path
 
 from studyforge.archive.scrub import PersonalDataLeak
-from studyforge.execute import RunRefused
+from studyforge.execute import RunRefused, WorkbenchRefused
 from studyforge.exercise import COMMANDS, RUN, TEST
 from studyforge.progress import RAISES as PROGRESS_RAISES
 from studyforge.progress import parse_practice_key
+from studyforge.serve.discovery import ServedCorpus
 from studyforge.serve.response import (
     API_PREFIX,
     NO_STORE,
@@ -117,9 +145,11 @@ COMMAND_OF = {RUN: "run_command", TEST: "test_command"}
 #: The path that stops the live run.
 STOP = "stop"
 
-#: The index's key for where each corpus's editor is. ⭐ The framework's ONE
-#: spelling of it: the page's client reads it from here rather than retyping it
-#: (`tests/studyforge/serve/routes/test_run_client.py`).
+#: The index's key for where each corpus's editor is, and — the SAME word — the
+#: path segment that addresses one practice's two windows (`W429`). ⭐ The
+#: framework's ONE spelling of it: the page's client reads it from here rather
+#: than retyping it (`tests/studyforge/serve/routes/test_run_client.py`). ⛔ It
+#: stands where a mode stands and is not one of `MODES`: it starts nothing.
 EDITOR = "editor"
 
 #: The path the page's execution client is served at, and the file it is.
@@ -142,6 +172,9 @@ NO_SUCH_MODE = "no such mode"
 NO_SUCH_PRACTICE = "no such practice"
 UNGRADED = "this practice has no workspace, so there is nothing to run"
 NO_SUCH_COMMAND = "this practice's workspace names no command for this mode"
+NO_FILE = "this practice sets no file to open, so there is no editor window for it"
+NO_EDITOR = "no editor is running over this practice's own file"
+WORKSPACE_REFUSED = "this practice's workspace settings could not be written for the editor"
 UNRECOGNISED = "the unit document failed validation"
 GATED = "the unit document failed the personal-data gate"
 REFUSED = "the unit document's command was refused by the runner"
@@ -176,6 +209,11 @@ def index(runs: Runs) -> dict:
         "modes": list(MODES),
         "start": f"{API_PREFIX}/{NAMESPACE}/{{corpus}}/{{mode}}/{{practice}}",
         "stop": f"{API_PREFIX}/{NAMESPACE}/{STOP}",
+        # ⭐ `W429`: the index can address a FILE and not only a folder. `editor`
+        # below says WHERE an editor is; this says how to ask it for one
+        # practice's two windows, which is the only thing that can open two
+        # different files in two windows of one code-server.
+        "practice_editor": f"{API_PREFIX}/{NAMESPACE}/{{corpus}}/{EDITOR}/{{practice}}",
         "client": CLIENT_PATH,
         EDITOR: runs.editors(),
         "live": None
@@ -185,13 +223,19 @@ def index(runs: Runs) -> dict:
 
 
 def start(runs: Runs, rest: str) -> Response:
-    """Start the practice's own command for the mode `rest` names, and stream it."""
+    """Answer `<corpus>/<mode>/<practice key>`: a run, or that practice's editor.
+
+    ⭐ **One parse, because the three parts are the same three** — a corpus, an
+    act and a practice — and the workspace is read from the unit's own document
+    either way. ⛔ `EDITOR` stands where a mode stands and starts nothing; the
+    two in `MODES` each start the ONE command the document names.
+    """
     name, _, tail = rest.partition("/")
     mode, _, key = tail.partition("/")
     corpus = runs.discovered.by_source.get(name)
     if corpus is None or name not in runs.sources:
         return error(404, NO_SUCH_CORPUS if tail else NO_SUCH_RUN)
-    if mode not in MODES:
+    if mode != EDITOR and mode not in MODES:
         return error(404, NO_SUCH_MODE)
     try:
         address, ordinal, section = parse_practice_key(key, corpus.depth)
@@ -207,6 +251,8 @@ def start(runs: Runs, rest: str) -> Response:
         return error(404, NO_SUCH_PRACTICE)
     if workspace is None:
         return error(409, UNGRADED)
+    if mode == EDITOR:
+        return editor(runs, corpus, workspace)
     argv = workspace.get(COMMAND_OF[mode])
     if argv is None:
         return error(409, NO_SUCH_COMMAND)
@@ -219,6 +265,30 @@ def start(runs: Runs, rest: str) -> Response:
     outcome = Outcome(runs, corpus, (address, ordinal, section), mode, argv)
     headers = (("Content-Type", TEXT_TYPE), ("Cache-Control", NO_STORE))
     return Response(200, headers, stream=Stream(runs, live, outcome))
+
+
+def editor(runs: Runs, corpus: ServedCorpus, workspace: dict) -> Response:
+    """Prepare this practice's workspace and answer where each of its two windows is.
+
+    ⛔ **Two windows of ONE editor, and each is addressed by its own URL** — the
+    only discriminator there is (`W429`). ⚠️ `test` is `None` where the record
+    names no test (`W357`): the page then offers one window and no second tab,
+    which is the same honesty as offering no Submit.
+    """
+    main = workspace.get("main_path")
+    if not isinstance(main, str) or not main:
+        return error(409, NO_FILE)
+    test = workspace.get("test_path")
+    try:
+        where = runs.practice_editor(corpus, main, test if isinstance(test, str) and test else None)
+    except WorkbenchRefused:
+        # ⛔ The refusal's own sentence names a file inside somebody else's
+        # container and a host errno; the wire gets this route's constant
+        # instead, which says the same thing and carries neither (R7).
+        return error(409, WORKSPACE_REFUSED)
+    if where is None:
+        return error(404, NO_EDITOR)
+    return json_response(200, {"resource": "run-editor", **where})
 
 
 def workspace_of(source: ContentSource, unit: str, section: str) -> dict | None:

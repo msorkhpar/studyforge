@@ -33,6 +33,7 @@ ONE_LINE = (
     "practice-grader-shipped.html",
     "practice-run.html",
     "practice-submit.html",
+    "practice-tab-tests.html",
     "rail.html",
     "read-state.html",
     "video.html",
@@ -50,6 +51,7 @@ MULTI_LINE = (
     "player.html",
     "narration-gap.html",
     "practice-panel.html",
+    "practice-tabs.html",
     "read-mark.html",
 )
 

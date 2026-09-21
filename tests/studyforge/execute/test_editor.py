@@ -62,7 +62,7 @@ def probe(tmp_path, root, answer: str, status: int = 0, **kwargs) -> EditorProbe
 
 def test_an_editor_up_over_this_corpus_answers_its_origin_and_its_folder(tmp_path, root):
     answer = probe(tmp_path, root, inspected("true", port(), mount(root / "sources"))).editor()
-    assert answer == Editor(origin="http://127.0.0.1:8443", folder=FOLDER)
+    assert answer == Editor(origin="http://127.0.0.1:8443", folder=FOLDER, base="sources")
     assert argv(tmp_path).startswith("inspect --format ")
     assert argv(tmp_path).endswith(f"-- {NAME}")
 
@@ -77,7 +77,10 @@ def test_the_folder_is_the_container_s_own_destination_and_is_never_composed(tmp
 
 
 def test_the_root_itself_bound_is_this_corpus_too(tmp_path, root):
-    assert probe(tmp_path, root, inspected("true", port(), mount(root))).editor() is not None
+    answer = probe(tmp_path, root, inspected("true", port(), mount(root))).editor()
+    # ⛔ `""` is a REAL answer and not an absence: the editor mounts the root, so
+    # every path in the record is already relative to what the window opened.
+    assert answer is not None and answer.base == ""
 
 
 def test_a_differently_spelled_path_to_these_sources_is_still_these_sources(tmp_path, root):
@@ -195,3 +198,49 @@ def test_nothing_here_ever_starts_stops_or_enters_a_container(tmp_path, root):
     assert asks(tmp_path) == 1
     assert argv(tmp_path).startswith("inspect --format ")
     assert argv(tmp_path).endswith(f"-- {NAME}")
+
+
+# --- `W429`: a FILE, not only a folder --------------------------------------
+
+
+def test_the_mounted_base_is_what_turns_a_records_path_into_a_file(tmp_path, root):
+    # ⭐ A practice's `main_path` is relative to the SOURCE ROOT and the editor
+    # mounts a directory INSIDE it, so the two do not compose without knowing
+    # which directory that is. ⛔ The base is RELATIVE: the host directory is a
+    # home (R7) and this record is published by the serving process.
+    deep = root / "sources" / "practice"
+    deep.mkdir(parents=True)
+    answer = probe(tmp_path, root, inspected("true", port(), mount(deep))).editor()
+    assert answer is not None and answer.base == "sources/practice"
+    assert str(root) not in answer.base and str(deep) not in answer.base
+    assert answer.inside("sources/practice/one/Kata.java") == "one/Kata.java"
+    assert answer.file("sources/practice/one/Kata.java") == f"{FOLDER}/one/Kata.java"
+
+
+@pytest.mark.parametrize(
+    ("path", "why"),
+    [
+        ("docs/reading.md", "it is not under what the editor mounts"),
+        ("sourcesaurus/one.java", "a prefix is not a path segment"),
+        ("sources", "the mounted directory is not a file in it"),
+        ("/etc/passwd", "an absolute path is not relative to anything"),
+        ("sources/../../escape.java", "it climbs out of the workspace"),
+        ("", "there is no path at all"),
+    ],
+)
+def test_a_path_the_editor_does_not_hold_is_answered_as_nothing_never_as_a_url(path, why):
+    # ⛔ **The trap this refusal exists for, and it is not theoretical:** a
+    # code-server URL naming a file that is not mounted opens an EMPTY, DIRTY
+    # BUFFER titled with the file's own name, and the workbench then offers to
+    # save it. It looks exactly like a corrupted file and is not one.
+    held = Editor(origin="http://127.0.0.1:8443", folder=FOLDER, base="sources")
+    assert held.inside(path) is None, why
+    assert held.file(path) is None, why
+
+
+def test_an_editor_bound_beside_this_corpus_is_still_not_this_corpus(tmp_path, root):
+    # ⚠️ The sibling-prefix case, which `str.startswith` on the ROOT would have
+    # accepted: a checkout whose path merely begins with this one's.
+    beside = Path(f"{root}-other")
+    beside.mkdir()
+    assert probe(tmp_path, root, inspected("true", port(), mount(beside))).editor() is None

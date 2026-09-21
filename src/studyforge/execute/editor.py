@@ -40,6 +40,18 @@ own destination, read back out of the container rather than written here. ⛔ No
 path inside anybody's image is spelled in this framework (R1): every value
 below comes from the daemon's answer.
 
+## ⛔ Addressing a FILE needs the mount's own base, and that is why it is kept
+
+⭐ **A practice's `main_path` is relative to the SOURCE ROOT and the editor
+mounts a directory INSIDE it**, so the two do not compose without knowing which
+directory that is. `Editor.base` is that mount's source **relative to the root**
+— ⛔ never the host directory, which is a home (R7) and is published nowhere.
+⭐ `Editor.file(path)` is then the absolute path inside the container, and
+`None` for a path the editor does not hold. ⚠️ **`None` matters more than it
+looks**: a code-server URL naming a path that is not mounted opens an empty,
+dirty buffer titled with the file's own name, which looks exactly like a
+corrupted file and is not one.
+
 ⚠️ **The editor binds a directory INSIDE the source root, where the runner
 mounts the root itself** — §8.1 ruling 2 mounts only the sources, never the
 repository — which is why this probe accepts a descendant and `mode.ModeProbe`
@@ -98,6 +110,12 @@ LOOPBACK = "127.0.0.1"
 #: browser can be sent to.
 UNSPECIFIED = ("", "0.0.0.0", "::", "[::]")
 
+#: Segments that name somewhere other than themselves. ⚠️ Spelled here rather
+#: than imported from `exercise.safety`: `execute` starts processes and knows
+#: nothing about a record, and one import for one tuple would tie the two
+#: packages together for no other reason.
+TRAVERSAL = (".", "..")
+
 #: The two record kinds the inspect format emits, and the field separator. ⚠️ A
 #: path carrying a tab or a newline does not parse and answers no editor, which
 #: is the same discipline every other failure to ask gets.
@@ -122,10 +140,34 @@ _INSPECT_FORMAT = (
 
 @dataclass(frozen=True, slots=True)
 class Editor:
-    """A running editor: the origin a browser reaches it at, and the folder it opens."""
+    """A running editor: where a browser reaches it, what it opens, and what it holds.
+
+    ⭐ `base` is the part of THIS source root the editor actually mounts, as a
+    relative POSIX path — `""` when it mounts the root itself. ⛔ It is
+    relative and never the host directory: the host directory is a home (R7)
+    and this record is read by the serving process, which publishes two of
+    these three fields on its index.
+    """
 
     origin: str
     folder: str
+    base: str = ""
+
+    def inside(self, path: str) -> str | None:
+        """Return `path`'s place in the opened folder, or `None` when it is not there.
+
+        `path` is relative to the SOURCE ROOT, which is what a practice's
+        `main_path` and `test_path` are. ⚠️ A path outside `base` is not
+        mounted, and naming one would open an **empty, dirty buffer titled
+        with the file's own name** — which looks exactly like a corrupted file
+        and is not one. So it answers nothing at all.
+        """
+        return inside_base(self.base, path)
+
+    def file(self, path: str) -> str | None:
+        """Return the absolute path `path` has INSIDE the container, or `None`."""
+        within = self.inside(path)
+        return None if within is None else f"{self.folder.rstrip('/')}/{within}"
 
 
 class EditorProbe:
@@ -191,30 +233,59 @@ def editor_from(inspected: str, source_root: Path) -> Editor | None:
     if not lines or lines[0].strip() != "true":
         return None
     bindings: list[tuple[str, str]] = []
-    folders: list[str] = []
+    mounts: list[tuple[str, str]] = []
     for line in lines[1:]:
         kind, _, rest = line.partition(FIELD)
         value, _, tail = rest.partition(FIELD)
         if kind == PORT and tail:
             bindings.append((value, tail))
-        elif kind == MOUNT and tail and _within(value, source_root):
-            folders.append(tail)
+        elif kind == MOUNT and tail:
+            base = _within(value, source_root)
+            if base is not None:
+                mounts.append((base, tail))
     published = {port for _, port in bindings}
-    if len(published) != 1 or len(folders) != 1:
+    if len(published) != 1 or len(mounts) != 1:
         return None
     port = published.pop()
     host = min(address for address, bound in bindings if bound == port)
-    return Editor(origin=f"{SCHEME}://{_reachable(host)}:{port}", folder=folders[0])
+    base, folder = mounts[0]
+    return Editor(origin=f"{SCHEME}://{_reachable(host)}:{port}", folder=folder, base=base)
 
 
-def _within(mounted: str, source_root: Path) -> bool:
-    """Tell whether a mount's source is this source root or a directory inside it."""
+def inside_base(base: str, path: str) -> str | None:
+    """Return a source-root-relative `path`'s place under `base`, or `None`.
+
+    ⛔ **Pure, and it refuses rather than repairs.** An absolute path, a path
+    climbing out with `..`, and a path that is simply not under `base` all
+    answer `None` — `exercise.safety` has already refused the first two on the
+    way into the record, and a second reading here is belt to that brace
+    because the answer addresses a file in somebody else's container.
+    """
+    if not path or path.startswith("/") or "\\" in path:
+        return None
+    parts = [segment for segment in path.split("/") if segment]
+    if not parts or any(segment in TRAVERSAL for segment in parts):
+        return None
+    prefix = [segment for segment in base.split("/") if segment]
+    if parts[: len(prefix)] != prefix or len(parts) == len(prefix):
+        return None
+    return "/".join(parts[len(prefix) :])
+
+
+def _within(mounted: str, source_root: Path) -> str | None:
+    """Return the mount's source relative to this source root, or `None` when it is outside.
+
+    ⭐ `""` is the root itself — a real answer, and the one `Path.relative_to`
+    spells `.`. ⛔ `None` is *not this corpus*, which is a different thing and
+    is why this does not answer a bool any more (`W416` asked only whether).
+    """
     if not mounted:
-        return False
+        return None
     try:
-        return Path(mounted).resolve().is_relative_to(source_root.resolve())
-    except OSError:
-        return False
+        relative = Path(mounted).resolve().relative_to(source_root.resolve())
+    except OSError, ValueError:
+        return None
+    return "/".join(relative.parts)
 
 
 def _reachable(host: str) -> str:
