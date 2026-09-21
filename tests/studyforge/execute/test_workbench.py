@@ -152,6 +152,21 @@ def test_the_workbench_is_closed_around_the_one_file():
         assert any(surface in key for key in CLOSED), surface
 
 
+def test_the_chat_pane_is_hidden_by_a_setting_and_the_explorer_is_not():
+    # ⛔ W432, and it is the asymmetry that matters rather than the key. The
+    # SECONDARY side bar is the chat pane and a setting names its default
+    # visibility; the PRIMARY side bar is the Explorer and NO setting names its
+    # visibility at all — it is workbench UI state, which is the whole reason
+    # the lockdown extension exists. ⚠️ A future editor that hid the Explorer by
+    # setting would make the second half of this test red, and that is the
+    # intended way to find out.
+    written = settings(INSIDE_MAIN, INSIDE_TEST)
+    assert written["workbench.secondarySideBar.defaultVisibility"] == "hidden"
+    assert not [key for key in CLOSED if "sideBar." in key and "secondary" not in key.lower()], (
+        "a primary side bar visibility setting appeared; W432's belt can stop being only a belt"
+    )
+
+
 def test_nothing_here_claims_to_be_a_security_boundary():
     # ⛔ An iframe of an IDE with a shell is exactly as powerful as the process
     # behind it. The boundary is the container, the loopback bind and one exact

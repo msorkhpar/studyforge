@@ -35,7 +35,7 @@
       "name": "code-server-toolchain",
       "where": "sibling",
       "status": "present",
-      "commit": "a3aee75aa887e7ce620eca9fa636472a2a67a2ab"
+      "commit": "be9b428f8315a89721450091fb8e58a4c7c7269a"
     },
     {
       "name": "narrate-service",

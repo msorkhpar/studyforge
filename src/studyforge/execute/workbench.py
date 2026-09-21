@@ -133,7 +133,19 @@ EVERYTHING = "**/*"
 #: The workbench, closed. ⛔ Every surface that is a way to end up somewhere the
 #: lesson did not send the reader. ⚠️ These are settings and not commands: the
 #: extension closes what is already open, and these stop it opening again.
+#:
+#: ⚠️ `workbench.secondarySideBar.defaultVisibility` is `W432`'s belt and it is
+#: NOT the fix. The secondary side bar is the chat pane, and it is the ONE of
+#: the two surfaces a reader saw that a setting can reach at all — the PRIMARY
+#: side bar's visibility is workbench UI STATE and no setting names it, which
+#: is why the lockdown extension exists. ⛔ So a window whose extension never
+#: activates still shows the Explorer, and this key hides one of the two
+#: symptoms rather than the cause. The cause is the editor image's
+#: `--disable-workspace-trust` and the extension's own
+#: `capabilities.untrustedWorkspaces` (`code-server-toolchain`), and neither
+#: lives here.
 CLOSED: dict[str, object] = {
+    "workbench.secondarySideBar.defaultVisibility": "hidden",
     "workbench.activityBar.location": "hidden",
     "workbench.statusBar.visible": False,
     "workbench.editor.showTabs": "none",
