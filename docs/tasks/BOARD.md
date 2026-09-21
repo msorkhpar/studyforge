@@ -74,7 +74,8 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W427` | Developer 1 | `fix/W427-the-page-may-frame-its-editor` @ `wt/dev1` | 0 @ `1fc8af42` | `in-progress` — ⛔ **rebasing onto `W429`** |
+| `W430` | Developer 1 | `fix/W430-the-frame-policy-does-not-expire` @ `wt/dev1` | 0 @ `908d1826` | `in-progress` — ⛔ **the user is blocked on this** |
+| `AX-03` | Developer 3 | `feat/AX-03-the-authoring-gates` @ `wt/dev3` | 0 @ `b959dd4f` | `in-progress` — `M10` step 10.2 |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -607,9 +608,10 @@ else.**
 | W424 | The office rules never say an office is the WORKTREE, so a fresh agent invents a second office | framework agent | `todo` — the register, 2026-09-20 | [`rows/W424.md`](rows/W424.md) |
 | W425 | Serving a corpus writes a discovery CACHE nothing ignores, so every served corpus goes dirty | framework agent | ✅ done — `5ecbf244` | [`rows/W425.md`](rows/W425.md) |
 | W426 | The first corpus has no practices, so the panel and Run and Submit are read on no corpus | integration agent | ✅ done — `638e233e`, corpus `bc08aaa` | [`rows/W426.md`](rows/W426.md) |
-| W427 | The serving process sets `frame-src 'none'`, so the panel's editor frame can never load | framework agent | `in-progress` — ⛔ **USER-VISIBLE 2026-09-21** | [`rows/W427.md`](rows/W427.md) |
+| W427 | The serving process sets `frame-src 'none'`, so the panel's editor frame can never load | framework agent | ✅ done — `908d1826` | [`rows/W427.md`](rows/W427.md) |
 | W428 | Practices sit in their own container, so a reader leaves the topic page to practise it | framework agent | ✅ done — `cdaa71ea`, corpus `48aa3eb` | [`rows/W428.md`](rows/W428.md) |
 | W429 | The editor shows a folder, not the practice's file, and the workbench is wide open | framework agent | ✅ done — `1fc8af42` | [`rows/W429.md`](rows/W429.md) |
+| W430 | `frame-src` is correct for `EDITOR_TTL` seconds and `'none'` after, so the panel almost never frames | framework agent | `in-progress` — ⛔ **USER REPORTED TWICE** | [`rows/W430.md`](rows/W430.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
