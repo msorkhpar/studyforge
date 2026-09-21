@@ -29805,3 +29805,172 @@ write there on every future commit to that repository.**
 ### ⭐ In flight
 
 `AX-01` (the case report) → Developer 1; `AX-05` (the quiz shape) → Developer 2. ⛔ **Disjoint surfaces — `exercise/report.py` and `exercise/quiz/`** — and both consume `AX-00`'s contract. ⛔ **Nothing minted this round.**
+
+## PO round 136
+
+⭐ **Three merges, and `M10` step 10.1 CLOSES.** ⛔ **Two of the three are the
+user's own directions, given while the wave was running**, and both are now
+visible on the served site rather than only in a diff.
+
+| row | merge | what it settles |
+|---|---|---|
+| `AX-05` | `9cd37ccd` | the quiz shape — a checkable practice for material that admits no coding task |
+| [`W428`](#w428-practices-sit-in-their-own-container-so-a-reader-leaves-the-topic-page-to-practise-it) | `cdaa71ea` | a practice may come from a file of its OWN, and `completeness` counts per ORIGIN |
+| [`W429`](#w429-the-editor-shows-a-folder-not-the-practices-file-and-the-workbench-is-wide-open) | `1fc8af42` | the practice editor — the reader's file and the test that judges it, in two frames |
+
+### ⭐ `M10` step 10.1 is CLOSED — `AX-00`, `AX-01`, `AX-05`
+
+⭐ **All three are ancestors of the release tip.** ⚠️ **Step 10.2 (`AX-02`,
+`AX-03`, `AX-04`, `AX-06`) is next and nothing in it is dispatched.**
+
+### ⛔ THE REGISTER REFUSED TWO OFFICE READINGS AND PLANTED BOTH ROWS ITSELF
+
+⛔ **`W428`'s office handed back THREE green runs with IDENTICAL counts**, which
+is the no-op-plant signature this session has already been burned by three
+times. ⭐ **The register did not accept them.** It planted the seam the row
+turns on — `_origins` reverted to the pre-`W428` per-unit shape, both the
+bucket-opening arm and the role of a practice document — **observed the effect
+before reading any gate**, and the planted tree read **RED** on both arms.
+
+⭐ **`W429` was planted at its INTEGRITY seam, which is the one that matters:**
+the test that judges the reader was made writable via `files.readonlyExclude`.
+⛔ **That would be grading theatre (R5).** The planted tree read **RED**,
+refuted by a test named for exactly it. A second plant put a host path into
+`Editor.base`; **RED** on the R7 seam.
+
+⭐ **Both trees were restored from pre-plant copies and each branch was
+byte-identical to its tip before the merge gate ran.**
+
+### ⛔ `W427` WAS REFUSED ON SPEC §8.3, AND THE REASON GENERALISES
+
+⭐ **Composing the frame policy per response asked a probe that forks
+`docker inspect`** — so every page load had the serving process reaching the
+Docker socket. ⛔ **It passed three GREEN pinned-image gates**, because the
+pinned image cannot reach that host-only arm. ⭐ **The office's fix is right**
+(`EditorProbe.known()` forks nothing; an expired reading is COLD, not
+stale-but-usable) and the register planted a DIFFERENT seam than the office
+did — `frame_origin` opened to admit any host — which read **RED**.
+
+⛔ **The finding that outlives the row:** a row touching `serve/` owes a HOST
+reading of `tests/studyforge/cli/test_serve_process.py`, and the brief must say
+so rather than let a merge discover it.
+
+### ⚠️ `W427`'s cold-start window, recorded because a reader will SEE it
+
+⛔ **A cold instance frames nothing.** The index warms the cache and the client
+fetches it AFTER the document carrying the panel was sent, so on a cold start
+the FIRST panel page is served under `frame-src 'none'` and its frame does not
+load until the reader navigates or reloads. ⭐ **Every page after is correct.**
+⛔ **The available in-row fix was a startup ask, which §8.3 forbids** — dodging
+a reading is not passing it — so it stays a finding.
+
+### ⭐ The corpus, regenerated once and measured
+
+⭐ **The archive moved the three practices into the units they practise; this
+round rebuilds the site on a framework that can carry them there.** Pin advanced
+`bc08aaa` → `48aa3eb`. ⛔ **Done between gates with nothing running.**
+
+⭐ **What a reader sees, verified over HTTP on the running server:** three
+teaching series in the rail, not four, and no separate `Practices` group; the
+three practices render on `iso-fundamentals` units 2, 3 and 4. ⭐ **All three
+were run through the container:** the MTI practice passes; the bitmap practice
+fails with its checks named, which is the deliberately-unsolved one grading
+honestly; and the data-elements practice has no test on disk, so the page
+offers **no Submit button and no test tab** there while unit 4 gets both — the
+framework being honest rather than staging a grade.
+
+### ⚠️ In flight
+
+`W427` → Developer 1, **rebasing**: `W429` landed on `serve/routes/runs.py`
+underneath it and the branch no longer staged. ⛔ **Its fix was verified on its
+merits before the refusal** — the refusal is a collision, not a defect.
+
+### ⛔ A register defect this round repairs
+
+⭐ **Round 135's branch merged but its three row files were never committed**,
+so two merge bodies this round cite rows that did not resolve. ⛔ **They are
+committed here.** ⚠️ **A row is minted AND MERGED before it is dispatched, and
+this round is the second time that clause has been broken by the register
+itself** — an office reported the first (`W428/1`).
+
+### W428 — Practices sit in their own container, so a reader leaves the topic page to practise it
+
+⛔ **USER DIRECTION, 2026-09-21, in their own words:** *"the practices should be as part of each topic page not a separate UI after the entire chapter"*.
+
+### ⛔ WHAT A READER SEES TODAY, AND WHY
+
+⭐ **Measured on the first corpus at `bc08aaa`:** its three practices live in a FOURTH container, `iso-practice`, so the site's rail carries a separate **Practices** group after the three teaching series. ⛔ **A reader finishes a chapter and then goes somewhere else to practise it**, which is the opposite of the milestone's own goal — *to ACTIVATE the reader, to practise what they just learned*.
+
+⭐ **`W426`'s office did not choose this freely; it was cornered, and it said so** (`W426/2`). ⛔ **A unit declares ONE `origin`, and `validate.source.completeness` compares that file's heading count against the unit's whole archive record** — so a practice joining an existing prose unit needs that unit's source file to gain the practice's headings.
+
+### ⛔ AND THAT EDIT IS REFUSED — `permitted_edits` CANNOT MAKE IT LEGAL
+
+⭐ **The third prohibition in [`corpus/manifest/edits.py`](../../src/studyforge/corpus/manifest/edits.py) is exact:** *"a file that the corpus's own `content` policy classifies as INCLUDED is content, and editing it is refused"* — **however declared.** ⛔ **The first corpus's `content.include` is `src/*.md`, so every prose unit file is INCLUDED content and no declaration can permit appending a practice to it.**
+
+⚠️ **So this is not a corpus authoring choice and must not be fixed in a corpus.** ⛔ **It is a FRAMEWORK limit**, and the standing rule applies: a corpus-visible defect becomes a framework row and the corpus is regenerated.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **A unit must be able to carry a practice whose source is a DIFFERENT, NEW file** from the one its prose came from. ⛔ **That is purely additive — a new file beside the material, never an edit to it — so R3 holds with nothing declared in `permitted_edits`.**
+2. ⛔ **`completeness` must account PER ORIGIN, not per unit.** Today it sums a unit's whole record against one file; a unit sourced from two files must compare each against its own, or the check refuses a shape it should admit. ⚠️ **Do not weaken the check to pass** — it exists to catch a short read, and `W426/2` is the report that it also decides placement, which nothing documents.
+3. ⭐ **The placement rule must be WRITTEN DOWN.** `W426/2`'s finding is that the rule deciding where a practice may live *"is written down nowhere"*, so the next corpus re-derives it by hitting a red gate.
+4. ⚠️ **`AX-07` (the source ledger and the page plan) is the neighbour** and may own part of this; ⛔ **the reader-facing outcome is this row's and is not deferred to it.**
+
+⭐ **The proof is the first corpus REGENERATED**: practices on their topic pages, no separate `Practices` group in the rail, and nothing of the existing material lost — which is `M10`'s own *"nothing the source already has is lost"*.
+
+⭐ **Surface:** `validate/source/completeness.py`, the container map's unit shape, the adapter contract, the authoring guide — and then the corpus, regenerated.
+
+[the mint](#po-round-136)
+
+### W429 — The editor shows a folder, not the practice's file, and the workbench is wide open
+
+⛔ **USER DIRECTION, 2026-09-21**: *"the target source mapped to the practice panel, hide the explore and other tabs disabling every other vs code functionality, have the test associated with the source as a second tab in the html in readonly mode that user can see the tests that their code should be able to overcome."*
+
+⭐ **`W416` delivered ONE frame pointed at a FOLDER. This row points frames at FILES, and closes the workbench around them.**
+
+### ⛔ THE DESIGN IS CARRIED HERE, NOT CITED (R20)
+
+⛔ **The extraction source solved this and a consumer's task may never cite a path inside it**, so every fact below is stated here and nothing needs looking up.
+
+⭐ **TWO iframes of ONE code-server**, *Your code* and *Tests*, one visible at a time. ⛔ **Not a split pane** — that was tried and REJECTED: the file a reader may type in and the file that judges it are two different acts of reading, and standing them side by side halves the width of both. ⭐ **The Tests frame is built LAZILY, on the first click of its tab**, because a second workbench is a second language server and a reader who never opens the tests should never pay for one.
+
+⛔ **Which file a window shows is decided by THAT WINDOW'S OWN URL, and nothing else can do it:**
+
+```
+<origin>/?folder=<root>&payload=[["openFile","vscode-remote://<host:port><absolute path>"]]
+```
+
+⭐ **The URL is the SOLE discriminator, and this is a property rather than a preference:** an extension cannot read its own window's query string, and both windows share ONE workspace settings file — ⛔ **so anything an extension opened, it would open in BOTH.**
+
+⚠️ **Name a path that is MOUNTED.** A path that is not opens as an **empty, dirty buffer titled with the file's own name**, and the workbench offers to save it — it looks exactly like a corrupted file and is not one.
+
+### ⛔ READ-ONLY IS THE EDITOR'S JOB, NEVER THE PAGE'S
+
+```json
+"files.readonlyInclude": {"**/*": true},
+"files.readonlyExclude": {"<the practice's own source>": true}
+```
+
+⭐ **Everything read-only, the ONE source file excluded back out.** ⛔ **The test is DELIBERATELY NOT excluded: it is the statement of what "done" means.** ⚠️ **The page neither claims nor attempts to enforce this** — a guard written in the page would be a second, weaker copy of a rule the editor already keeps.
+
+### ⛔ THE LOCKDOWN IS TWO LAYERS, AND ONE OF THEM IS ALREADY BUILT
+
+⭐ **Layer 1 — the workspace settings**, rewritten on every focus: activity bar, status bar, editor tabs, editor actions, layout control, startup editor, menu bar, breadcrumbs, minimap, open-editors and tips all hidden or off.
+
+⛔ **`files.hotExit` MUST be `off`, and this is the subtle one:** editor-restore state is per WORKSPACE, not per window, ⛔ **so with hot exit on each window reopens what the other last had and BOTH end up showing BOTH files.** ⭐ **Which makes `files.autoSave` a CORRECTNESS rule rather than a convenience**: Run and Submit execute against the file ON DISK, so an unsaved edit is one the reader will watch their own tests ignore — and they will believe the tests.
+
+⭐ **Layer 2 — the extension — IS ALREADY DELIVERED by `TC-04`** and sits in `code-server-toolchain`'s `lockdown/`. ⛔ **Do not rebuild it.** It closes the sidebar, panel, auxiliary bar and every editor but the active one, ⭐ **on a DECAYING RETRY SCHEDULE** — because closing once is not enough: other extensions go on opening views after activation and the explorer comes back. ⚠️ **Measured in the source: a single close left the sidebar open; the same close repeated seconds later left it shut.**
+
+⛔ **It is NOT a security boundary and must never be described as one.** An iframe of an IDE with a shell is exactly as powerful as the process behind it. ⭐ **The boundary is the container, the loopback bind and one exact origin.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **The run index can address a FILE**, not only a folder — `W416` publishes `{origin, folder}` and that is not enough to open two different files.
+2. ⭐ **The framework writes the practice's workspace settings**, including the read-only pair computed from that practice's own `main_path` and `test_path`.
+3. ⭐ **The panel renders two tabs over two frames**, the second built lazily.
+4. ⛔ **A quiz has NO editor, NO Run and NO Submit** (`AX-05/3`) — ⚠️ **the panel's two shapes share one surface and one of them must render with no frame at all.**
+5. ⛔ **`W427` is a hard dependency**: until `frame-src` admits the editor origin, none of this renders.
+
+⭐ **Surface:** the run index, the panel, the workspace-settings writer, and their tests.
+
+[the mint](#po-round-136)

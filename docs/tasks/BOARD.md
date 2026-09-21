@@ -58,7 +58,8 @@ one does.**
 | **M7 step 7.3** | ✅ CLOSED — `TC-05` + `TC-06` | `4c8490b4` | [record](BOARD-ARCHIVE.md#po-round-128) |
 | **M7 step 7.4** | ✅ CLOSED — `SK-09` + `SF-24`, ⭐ **its one named gap ([`W416`](rows/W416.md)) FILLED at `7ce4fddd`** | `04b3e65e` | [record](BOARD-ARCHIVE.md#po-round-131) |
 | **M7 step 7.5** | ✅ CLOSED — `QA-02`, ⭐ **closing `W417` and `W419` too** | `d9cce6bc` | [record](BOARD-ARCHIVE.md#po-round-133) |
-| **M10** — every corpus has practices | ⏳ **OPEN — round 134.** ⭐ **A CORE IDEA of the project (user, 2026-09-19)**; step 10.1 building | — | [the open](BOARD-ARCHIVE.md#po-round-134) |
+| **M10** — every corpus has practices | ⏳ **OPEN — round 134.** ⭐ **A CORE IDEA of the project (user, 2026-09-19)**; step 10.2 next | — | [the open](BOARD-ARCHIVE.md#po-round-134) |
+| **M10 step 10.1** | ✅ CLOSED — `AX-00`, `AX-01`, `AX-05` | `9cd37ccd` | [record](BOARD-ARCHIVE.md#po-round-136) |
 | **M11** — it is release-ready | ⛔ **NOT STARTED — after `M10`** (user, 2026-09-18; ruled 2026-09-19) | — | [the plan](README.md) |
 | **M9** — the Java corpus re-validates | ⛔ **NOT STARTED, and it holds 21 of the 35 undelivered capabilities.** `Claude-senior-java-engineer` converted under §12's rules, with gate-clearing exercises, and the findings written down | — | [the plan](README.md) |
 
@@ -73,8 +74,7 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `AX-01` | Developer 1 | `feat/AX-01-the-case-report` @ `wt/dev1` | 0 @ `1f0b3786` | in-progress — `M10` step 10.1 |
-| `AX-05` | Developer 2 | `feat/AX-05-the-quiz-shape` @ `wt/dev2` | 0 @ `1f0b3786` | in-progress — `M10` step 10.1 |
+| `W427` | Developer 1 | `fix/W427-the-page-may-frame-its-editor` @ `wt/dev1` | 0 @ `1fc8af42` | `in-progress` — ⛔ **rebasing onto `W429`** |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -607,6 +607,9 @@ else.**
 | W424 | The office rules never say an office is the WORKTREE, so a fresh agent invents a second office | framework agent | `todo` — the register, 2026-09-20 | [`rows/W424.md`](rows/W424.md) |
 | W425 | Serving a corpus writes a discovery CACHE nothing ignores, so every served corpus goes dirty | framework agent | ✅ done — `5ecbf244` | [`rows/W425.md`](rows/W425.md) |
 | W426 | The first corpus has no practices, so the panel and Run and Submit are read on no corpus | integration agent | ✅ done — `638e233e`, corpus `bc08aaa` | [`rows/W426.md`](rows/W426.md) |
+| W427 | The serving process sets `frame-src 'none'`, so the panel's editor frame can never load | framework agent | `in-progress` — ⛔ **USER-VISIBLE 2026-09-21** | [`rows/W427.md`](rows/W427.md) |
+| W428 | Practices sit in their own container, so a reader leaves the topic page to practise it | framework agent | ✅ done — `cdaa71ea`, corpus `48aa3eb` | [`rows/W428.md`](rows/W428.md) |
+| W429 | The editor shows a folder, not the practice's file, and the workbench is wide open | framework agent | ✅ done — `1fc8af42` | [`rows/W429.md`](rows/W429.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
