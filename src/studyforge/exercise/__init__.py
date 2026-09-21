@@ -56,6 +56,7 @@ reading floor, which is a whole product for prose material.
 | `states` | the three states, the two acts, and what may complete a practice |
 | `record` | `Exercise`, and reading one out of a practice document |
 | `cases` | the case vocabulary: `kind`, `cases`, `report` and `origin` (`AX-00`) |
+| `report` | folding a run's JUnit report through those cases into a breakdown (`AX-01`) |
 | `safety` | what a path and a command may be, checked before either reaches a file |
 | `errors` | `ExerciseError`, the only exception any of it raises |
 
@@ -65,6 +66,12 @@ or `edge`, and `says`, the sentence a reader is shown — plus the `report` thos
 ids are read out of and the `origin` the exercise was built from. ⛔ The
 breakdown is a **report and never a second definition of a pass**: a practice
 completes when every case passes, exactly as before.
+
+⭐ **And what a run then REPORTED is folded back through them** (`AX-01`):
+`breakdown_of` reads the JUnit XML the run wrote, refuses it if it is stale,
+malformed or names a test the map does not, and answers *main ask* plus *edge
+cases n/m*. ⛔ The breakdown is a **report and never a second definition of a
+pass**, which is the sentence above said from the other end.
 
 ⛔ **Structural, with no flag and no version bump.** A record written before
 `AX-00` reads unchanged and round-trips to the same bytes; a document carrying
@@ -114,6 +121,14 @@ from studyforge.exercise.record import (
     of,
     to_document,
 )
+from studyforge.exercise.report import (
+    CLOCK_SLACK,
+    PASSING_CHILDREN,
+    REPORT_ROOTS,
+    REPORT_SUFFIX,
+    Breakdown,
+    breakdown_of,
+)
 from studyforge.exercise.safety import (
     ARGUMENT_PERMITTED,
     PATH_PERMITTED,
@@ -144,9 +159,11 @@ __all__ = [
     "ARGUMENT_PERMITTED",
     "AUTHORED_KEYS",
     "BREAKDOWN_KEYS",
+    "Breakdown",
     "CASE_ID_PERMITTED",
     "CASE_KEYS",
     "CASE_KINDS",
+    "CLOCK_SLACK",
     "CODE",
     "COMMANDS",
     "Case",
@@ -166,10 +183,13 @@ __all__ = [
     "NONE",
     "ORIGIN_KEYS",
     "Origin",
+    "PASSING_CHILDREN",
     "PATH_PERMITTED",
     "QUIZ",
     "REPORT_FORMATS",
     "REPORT_KEYS",
+    "REPORT_ROOTS",
+    "REPORT_SUFFIX",
     "REQUIRED_KEYS",
     "RUN",
     "Report",
@@ -178,6 +198,7 @@ __all__ = [
     "STATES",
     "TEST",
     "UNGRADED",
+    "breakdown_of",
     "cases_document",
     "cases_of",
     "completes_practice",
