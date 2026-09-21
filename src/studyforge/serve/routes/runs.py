@@ -1,10 +1,10 @@
 r"""The instance's runs: the one live slot, a run's streamed body, and its recorded outcome.
 
 **What it does.** `Runs` holds what a run is read from (every corpus discovered and its
-content), the one run in flight, and one `EditorProbe` per corpus — `editors()`
-is where a running editor is, for the index to publish (`W416`), `origins()`
-is the frame policy's reading of what that ask ALREADY left behind (`W427` — it
-never forks, spec §8.3), and `practice_editor()` is ONE practice's two windows
+content), the one run in flight, one `EditorProbe` per corpus, and the editor origins this
+instance has EVER discovered — `editors()` is where a running editor is, for the index to
+publish (`W416`), `origins()` is the frame policy's reading of that record (`W427`,
+`W430` — it never forks, spec §8.3), and `practice_editor()` is ONE practice's two windows
 and the settings they are read under (`W429`); `Stream` is a run's response
 body — each line gated, the verdict recorded just before the exit line, which
 is last; `Outcome` records it.
@@ -26,6 +26,37 @@ ends a stream — the last line, `stop`, a timeout, or a page that hung up (`app
 the stream, which stops the run) — the outcome is recorded: the status, `timeout` or
 `stopped`. ⚠️ A status a signal produced (a negative one) is recorded as `128 + n`, the
 shell's convention, because the record takes statuses of `0` or more.
+
+## ⛔ The frame policy's record of origins does NOT expire (`W430`)
+
+⭐ **`origins()` is composed from every origin this instance has EVER discovered, never
+from a reading that must still be fresh.** ⛔ `EditorProbe`'s TTL is right for deciding
+whether to RUN a command against a container and wrong for deciding which origin a page
+may NAME, and the ground does not transfer between the two: a reading older than
+`EDITOR_TTL` is not a reason to start anything, but it is a perfectly good reason to say
+which loopback port a document may embed.
+
+⚠️ **Measured, and that reading is why this record exists.** With the policy read straight
+through the probe, a served `frame-src` named the editor for `EDITOR_TTL` seconds after
+anything asked and `'none'` from then on — so the cold window was not a start-up window,
+it RECURRED every ten seconds and a reader was essentially never inside it. ⛔ **A policy
+that oscillates between correct and `'none'` is a worse failure than one that names an
+origin a moment too long**, and it is the one a reader actually had.
+
+⭐ **A stale entry grants no capability.** Its whole effect is that the policy names a
+loopback origin where nothing is listening, so the frame fails to load — which is exactly
+what happens when there is no editor at all. ⛔ **A wildcard `frame-src` of
+`http://127.0.0.1:*` was REFUSED** as the alternative: it would cost no reload and take
+the probe off the CSP path entirely, but it lets a page frame ANY local service, on any
+port, forever, including one no editor ever ran on. ⭐ This record is strictly narrower —
+it names only ports an editor for THIS source root was discovered on — and a widening is
+argued rather than defaulted into.
+
+⚠️ **Forgetting is not offered, deliberately.** The record is dropped when the process
+ends, which is the one event that cannot leave a reader holding a document composed under
+the wider policy. ⛔ A cold instance still frames nothing: the record starts empty, and
+the readers a reader's own client asks for — the run index and the practice-editor route
+— are what fill it.
 
 ## ⛔ Output is gated on the wire
 
@@ -108,6 +139,11 @@ class Runs:
         self._lock = threading.Lock()
         self._probes_lock = threading.Lock()
         self._probes: dict[str, EditorProbe] = {}
+        #: ⛔ Every editor origin this instance has EVER discovered, which is what the
+        #: frame policy composes from and which never expires (`W430`, and the module
+        #: docstring carries the ground). Emptied only by the process ending.
+        self._origins_lock = threading.Lock()
+        self._discovered: set[str] = set()
         self._live: Live | None = None
 
     def editors(self) -> dict[str, dict[str, str]]:
@@ -124,18 +160,25 @@ class Runs:
         }
 
     def origins(self) -> tuple[str, ...]:
-        """Return each origin a served page may frame, from what is ALREADY known.
+        """Return each origin a served page may frame: every one EVER discovered.
 
         ⛔ **This asks nothing, and that is a rule rather than an optimisation**
         (spec §8.3, `W427`): `serve.app` composes `frame-src` from it on EVERY
         response, so a version that asked would fork `docker` to render a static
         page — the widest possible reading of *"only asks"*, and a subprocess on
         the critical path of every request.
-        ⚠️ **So a cold instance frames nothing**, and the index — which may ask —
-        is what warms it. ⭐ Same probes, same cache, so once the index has
-        published an editor, every page served after it may frame exactly that.
+        ⛔ **And it does not EXPIRE** (`W430`). Reading the probe's cache alone
+        made the policy name the editor for `EDITOR_TTL` seconds after anything
+        asked and `'none'` from then on, which a reader is essentially never
+        inside; the record this reads instead is kept for the life of the
+        process, and the module docstring carries the whole ground.
+        ⚠️ **A cold instance still frames nothing** — nothing has been
+        discovered — and the index or the practice-editor route, each of which a
+        reader's own client asks for, is what fills the record.
         """
-        return tuple(sorted({found.origin for found in self.found(ask=False).values()}))
+        self.found(ask=False)
+        with self._origins_lock:
+            return tuple(sorted(self._discovered))
 
     def found(self, ask: bool = True) -> dict[str, Editor]:
         """Return the editor up for each served corpus; `ask=False` reads, never forks."""
@@ -146,8 +189,19 @@ class Runs:
             probe = self._probe(corpus)
             where = probe.editor() if ask else probe.known()
             if where is not None:
-                up[corpus.source] = where
+                up[corpus.source] = self._remember(where)
         return up
+
+    def _remember(self, where: Editor) -> Editor:
+        """Record where this editor is among the origins ever discovered; return it.
+
+        ⭐ **Every reader of a probe passes through here**, so an origin the
+        index published, or a practice-editor route prepared, is one the frame
+        policy will still name a minute later (`W430`).
+        """
+        with self._origins_lock:
+            self._discovered.add(where.origin)
+        return where
 
     def practice_editor(self, corpus: ServedCorpus, main: str, test: str | None) -> dict | None:
         """Prepare one practice's workspace and say where its two windows are, or `None`.
@@ -164,9 +218,10 @@ class Runs:
         is also the one signal inside the editor that the practice moved.
         Raises `WorkbenchRefused` when it cannot be written.
         """
-        where = self._probe(corpus).editor()
-        if where is None:
+        asked = self._probe(corpus).editor()
+        if asked is None:
             return None
+        where = self._remember(asked)
         inside_main = where.inside(main)
         if inside_main is None:
             return None

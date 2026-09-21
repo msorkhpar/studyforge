@@ -438,3 +438,60 @@ def test_a_real_fixture_unit_carries_the_panel_its_archive_declares():
     page = case.render().decode("utf-8")
     assert "<section data-practice=" in page
     assert 'data-corpus="depth2-demo"' in page
+
+
+# --- ⛔ `W430`: the ONE reload a genuinely cold instance's first page needs ---
+#
+# ⛔ **No JavaScript runs in this suite** (`QA-03/1`), so what a TEXT can
+# establish about the reload is established here and the browser reading is the
+# visual harness's. ⭐ What a text can establish is exactly the thing that makes
+# an automatic reload safe or catastrophic: that each of its guards is in front
+# of it, and that there is only one `location.reload()` to guard.
+
+
+def test_the_page_reloads_only_when_the_browser_says_the_frame_was_blocked():
+    # ⭐ Asked rather than guessed at: a `securitypolicyviolation` naming
+    # `frame-src` is the browser STATING that the editor's frame was refused,
+    # and a reload without one would be a reload on a hunch.
+    body = behaviour()
+    assert body.count("location.reload()") == 1
+    assert body.count("securitypolicyviolation") == 1
+    assert body.index("securitypolicyviolation") < body.index("location.reload()")
+    assert "indexOf(FRAME_SRC) !== 0" in body
+    assert body.index("indexOf(FRAME_SRC) !== 0") < body.index("location.reload()")
+
+
+def test_every_guard_that_stops_the_reload_repeating_stands_in_front_of_it():
+    # ⛔ **Each of these closes a real loop, and a text can read that they are
+    # all EARLIER than the reload.** The navigation must not itself be a reload,
+    # so the remedy costs at most one; the editor's host must be this page's,
+    # because a policy withholds an editor from another spelling of the same
+    # machine on purpose and no reload would ever change that; and the blocked
+    # URI must be the editor's, so an unrelated violation reloads nothing.
+    body = behaviour()
+    guards = (
+        "timing[0].type === 'reload'",
+        "String(location.hostname || '').toLowerCase()",
+        "hostOf(event.blockedURI) !== editor",
+    )
+    reload_at = body.index("location.reload()")
+    for guard in guards:
+        assert guard in body, guard
+        assert body.index(guard) < reload_at, guard
+
+
+def test_a_browser_with_no_navigation_timing_is_never_reloaded():
+    # ⚠️ **Failing closed is a frame that does not load; failing open is a page
+    # that reloads for ever.** So an empty timing list returns, rather than
+    # being read as *not a reload*.
+    body = behaviour()
+    assert "!timing.length ||" in body
+    assert "getEntriesByType('navigation')" in body
+    assert body.index("!timing.length ||") < body.index("location.reload()")
+
+
+def test_the_listener_is_installed_before_the_frame_that_raises_the_violation():
+    # ⛔ A listener added AFTER the frame would miss the only event it exists
+    # for, and nothing anywhere would fail.
+    body = behaviour()
+    assert body.index("reloadWhenBlocked(where.main.url)") < body.index("frame(slots.main")

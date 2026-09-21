@@ -43,10 +43,17 @@ cannot be a constant**: the editor a practice panel frames is published on a
 per-project host port that R8 forbids a built page from naming, so it is known
 only at serve time. `content_policy(frames)` composes it from the editors an
 instance actually discovered; `frames=()` — no editor, or no instance to ask —
-is `frame-src 'none'`, and the policy narrows again when an editor goes away.
+is `frame-src 'none'`.
+⚠️ **This module composes whatever it is handed and decides nothing about WHEN an
+origin stops being handed to it.** ⛔ That is the caller's, and the caller's answer
+is `W430`'s: `serve.routes.runs.Runs.origins()` keeps every origin the instance has
+ever discovered, because a policy read through a ten-second cache was `'none'` again
+ten seconds after anything asked. ⭐ A `frames` that narrows is still composed
+faithfully here, which is what `serve.app`'s own reading asserts.
 ⛔ **Never a wildcard.** `frame_origin` admits a loopback `http`/`https` origin and
 nothing else, so an origin carrying a space, a quote or a `;` — which is how a
-second directive would be forged into the header — names nothing.
+second directive would be forged into the header — names nothing; `*` is in
+`FORBIDDEN`, so `http://127.0.0.1:*` cannot be smuggled in as an origin either.
 
 ⚠️ **Measured once, on one half, and wrong for it** (`W416/2`): `code-server` was
 asked whether it refuses being framed, it did not, and the feature was called

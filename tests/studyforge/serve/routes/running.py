@@ -120,20 +120,28 @@ class StubEditor:
     (`W427`): it answers only once `editor()` has been asked, because a stub that
     answered cold would hide the very thing the frame policy depends on — that
     composing a policy asks NOTHING, so a cold instance frames nothing.
+
+    ⛔ **And it EXPIRES, which is the half this stub was missing** (`W430`): the
+    real cache goes cold again `EDITOR_TTL` seconds after the ask, so a stub
+    that modelled only *cold until asked* could not tell a policy that LASTS
+    from one that lapses — and a reading that never crosses that boundary is not
+    a reading of it.
     """
 
     def __init__(self, answer=None) -> None:
         self.answer = answer
         self.asked = 0
         self.read = 0
+        self.expired = False
 
     def editor(self):
         self.asked += 1
+        self.expired = False
         return self.answer
 
     def known(self):
         self.read += 1
-        return self.answer if self.asked else None
+        return None if self.expired or not self.asked else self.answer
 
 
 class StubEditors:
@@ -146,6 +154,12 @@ class StubEditors:
     def __call__(self, corpus: ServedCorpus) -> StubEditor:
         self.made.append(StubEditor(self.answer))
         return self.made[-1]
+
+    def expire(self) -> list[StubEditor]:
+        """Age every reading taken so far past the TTL; return the probes aged."""
+        for probe in self.made:
+            probe.expired = True
+        return self.made
 
 
 def stub_runner(handle: StubHandle):
