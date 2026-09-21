@@ -17,6 +17,11 @@ depth, record each finished run, and catch `RAISES` around any call:
 ⛔ Not on `serve` — the store is what the server serves, not the other way
 round, and `SK-06` and `OPS-04` write it from outside any server.
 
+⭐ **A Submit's breakdown rides beside its verdict** as `last.cases`, one
+verdict per case the practice's record declared (`AX-02`). ⛔ **It is a report
+and never a second rule for a pass**: `is_pass` is untouched, and `document`'s
+own docstring carries the whole ground.
+
 ⚠️ **Two records, not one, and this package is one of them.** A pass is earned
 from a grader, so it is written where the run happened; a **read mark** is the
 reader's own assertion and lives in the browser (`SF-30`,
@@ -48,6 +53,7 @@ from __future__ import annotations
 
 from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.progress.document import (
+    CASES_KEY,
     EXIT_STOPPED,
     EXIT_TIMEOUT,
     MODE_RUN,
@@ -68,6 +74,7 @@ from studyforge.progress.store import IGNORE_FILENAME, PROGRESS_DIRNAME, Progres
 RAISES = (ProgressError, PersonalDataLeak)
 
 __all__ = [
+    "CASES_KEY",
     "EXIT_STOPPED",
     "EXIT_TIMEOUT",
     "IGNORE_FILENAME",

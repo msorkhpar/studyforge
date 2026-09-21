@@ -7,13 +7,21 @@ publish (`W416`), `origins()` is the frame policy's reading of that record (`W42
 `W430` — it never forks, spec §8.3), and `practice_editor()` is ONE practice's two windows
 and the settings they are read under (`W429`); `Stream` is a run's response
 body — each line gated, the verdict recorded just before the exit line, which
-is last; `Outcome` records it.
+is last; `Outcome` records it, with a Submit's case breakdown beside it.
 
 **How you use it.** `serve.routes.run` claims the slot with `Runs.claim`, and answers
 with `Response(200, headers, stream=Stream(runs, live, Outcome(...)))`.
 
 **Depends on.** `execute` for the handle and the exit line's words, `progress` for the
-record, `archive.scrub` for the wire, and `serve.discovery` / `serve.routes.content`.
+record, `routes.breakdown` for a Submit's per-case verdicts, `archive.scrub` for the
+wire, and `serve.discovery` / `serve.routes.content`.
+
+## ⭐ A Submit is recorded with its breakdown, which is never a verdict (`AX-02`)
+
+⛔ **`is_pass` is untouched here and must stay untouched**: a practice completes when
+a test-mode run exits zero, and a breakdown is a REPORT about that run. ⭐ **The fold,
+its clock and what a refusal says are [`routes.breakdown`](breakdown.py)'s**, which
+says why it is a module; this one holds the two values and writes what comes back.
 
 ⭐ **Split from `routes.run` at this seam** (R11): that module is the NAMESPACE — what a
 request selects and where the command is read from; this one is what a started run IS
@@ -88,8 +96,10 @@ from studyforge.execute import (
     open_url,
     write_settings,
 )
+from studyforge.progress import CASES_KEY
 from studyforge.progress import RAISES as PROGRESS_RAISES
 from studyforge.serve.discovery import Discovered, ServedCorpus
+from studyforge.serve.routes.breakdown import fold
 from studyforge.serve.routes.content import ContentSource
 
 #: The line said, just before the exit line, when the store refused the outcome.
@@ -271,16 +281,25 @@ class Runs:
 
 @dataclass(frozen=True, slots=True)
 class Outcome:
-    """Where one run's outcome is recorded, and what it ran."""
+    """Where one run's outcome is recorded, what it ran, and what it folds through."""
 
     runs: Runs
     corpus: ServedCorpus
     practice: tuple[Address, int, str]
     mode: str
     argv: list[str]
+    #: The practice's workspace as the unit document holds it, and the wall clock
+    #: read BEFORE the run started — omitted by a caller with no breakdown (`AX-02`).
+    workspace: dict | None = None
+    started: float | None = None
 
-    def record(self, verdict: int | str) -> bool:
-        """Record the run's verdict; `False` if the store refused it."""
+    def record(self, verdict: int | str) -> tuple[str, ...]:
+        """Record the run's verdict and breakdown; return the lines to say, if any.
+
+        ⛔ The breakdown is folded BEFORE the write and never decides it: a
+        report that cannot be read honestly costs the breakdown, not the run.
+        """
+        cases, said = fold(self.mode, self.workspace, self.corpus.root, self.started)
         address, ordinal, section = self.practice
         try:
             self.corpus.progress().record_run(
@@ -291,10 +310,11 @@ class Outcome:
                 exit_code=verdict,
                 commands=[shlex.join(self.argv)],
                 when=self.runs.clock(),
+                **{CASES_KEY: cases},
             )
         except PROGRESS_RAISES:
-            return False
-        return True
+            return (*said, NOT_RECORDED)
+        return said
 
 
 class Stream:
@@ -344,8 +364,8 @@ class Stream:
             for line in self._lines:
                 if handle.returncode is not None and not self._recorded:
                     self._recorded = True
-                    if not self._outcome.record(verdict(handle, line)):
-                        yield (NOT_RECORDED + "\n").encode("utf-8")
+                    for said in self._outcome.record(verdict(handle, line)):
+                        yield (said + "\n").encode("utf-8")
                 yield (scrub(line.rstrip("\n")) + "\n").encode("utf-8")
         finally:
             self._finish()

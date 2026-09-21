@@ -6,12 +6,17 @@ run IS until it ends. The wire-level readings are `test_run.py`'s.
 
 from __future__ import annotations
 
+import json
+import os
+import time
+
 import pytest
 
-from studyforge.execute import EDITOR_TTL, Editor, EditorProbe, editor_container_for
+from studyforge.execute import EDITOR_TTL, Editor, EditorProbe, editor_container_for, exit_line
 from studyforge.serve.response import Request
 from studyforge.serve.routes import run
 from studyforge.serve.routes.runs import verdict
+from tests.studyforge.execute.runnable import RAW
 from tests.studyforge.execute.test_mode import fake_docker
 from tests.studyforge.serve.routes.running import (
     SOURCE,
@@ -186,3 +191,107 @@ def test_the_practice_editor_route_fills_the_record_the_policy_composes_from(roo
     aged = editors.expire()
     assert aged and [probe.known() for probe in aged] == [None] * len(aged)
     assert live.origins() == (EDITOR_ORIGIN,)
+
+
+# --------------------------------------------------------------------------
+# `AX-02` — a Submit is recorded with its breakdown, and a Run never is
+# --------------------------------------------------------------------------
+
+ASK = "test_the_greeting_names_who_it_greets"
+UNNAMED = "test_a_name_with_no_letters_in_it"
+REPORT = "reports/greet.xml"
+
+
+def plant_breakdown(root, unit: int = 1, path: str = REPORT) -> None:
+    """Declare a breakdown on one practice and make its grader write the report.
+
+    ⭐ Planted into the COPY's archive, which the unit document is built from —
+    the same seam `plant_command` uses, so the record the route reads is the
+    record an adapter would have written.
+    """
+    document = json.loads((root / RAW / f"unit-{unit:02d}" / "practice-1.json").read_text())
+    exercise = document["exercise"]
+    exercise["test_command"] = [*exercise["test_command"], f"--junit-xml={path}"]
+    exercise["cases"] = [
+        {"id": ASK, "kind": "main", "says": "it greets whoever it is given"},
+        {"id": UNNAMED, "kind": "edge", "says": "a name with no letters is refused"},
+    ]
+    exercise["report"] = {"format": "junit", "path": path}
+    (root / RAW / f"unit-{unit:02d}" / "practice-1.json").write_text(
+        json.dumps(document, indent=2), encoding="utf-8"
+    )
+
+
+def submitted(root, unit: int = 1):
+    """Submit unit `unit` over a real host run, read to its end; return body and entry."""
+    runs, discovered = runs_over(root, clock=lambda: CLOCK)
+    answer = run.route(runs, POST, f"{SOURCE}/{run.TEST}/{key(unit)}")
+    body = b"".join(answer.stream).decode()
+    return body, entry(discovered.corpora[0], unit)
+
+
+def test_a_submit_records_one_verdict_per_declared_case(root):
+    plant_breakdown(root)
+    body, recorded = submitted(root)
+    # ⛔ The plant is OBSERVED before the record is read: the grader really did
+    # write a report, so a green reading below is a fold and not an absence.
+    assert (root / REPORT).is_file()
+    assert recorded["last"]["cases"] == {ASK: True, UNNAMED: False}
+    assert "could not be read" not in body
+
+
+def test_the_pass_rule_is_untouched_by_a_breakdown_that_is_incomplete(root):
+    # ⛔ AX-02's one clause: the grader exited zero, so the practice passed —
+    # the unnamed edge is a REPORT about the run and never a second verdict.
+    plant_breakdown(root)
+    _, recorded = submitted(root)
+    assert recorded["last"]["passed"] is True and recorded["first_passed_at"] == CLOCK
+    assert recorded["last"]["cases"][UNNAMED] is False
+
+
+def test_a_submit_whose_practice_declares_no_breakdown_records_none(root):
+    _, recorded = submitted(root)
+    assert "cases" not in recorded["last"] and recorded["last"]["passed"] is True
+
+
+def test_a_run_records_no_breakdown_even_after_a_submit_wrote_a_report(root):
+    plant_breakdown(root)
+    submitted(root)
+    assert (root / REPORT).is_file()
+    runs, discovered = runs_over(root, clock=lambda: CLOCK)
+    answer = run.route(runs, POST, f"{SOURCE}/{run.RUN}/{key(1)}")
+    b"".join(answer.stream)
+    assert "cases" not in entry(discovered.corpora[0], 1)["last"]
+
+
+def test_a_submit_that_wrote_no_report_records_no_breakdown_and_says_nothing(root):
+    # ⚠️ The grader is declared to write a report and is then pointed at a
+    # command that writes none — a compile failure's shape, without a compiler.
+    plant_breakdown(root)
+    plant_command(root, 1, "test_command", ["python3", "practice/untested/hello.py"])
+    body, recorded = submitted(root)
+    assert not (root / REPORT).exists()
+    assert "cases" not in recorded["last"] and "could not be read" not in body
+
+
+def test_a_report_the_run_did_not_write_is_refused_on_the_stream_and_not_recorded(root):
+    """⛔ The stale clause, end to end, and the reason this task takes a clock.
+
+    ⚠️ **The previous Submit's report is AGED rather than left at the instant
+    the first run wrote it**, because `report.CLOCK_SLACK` is two seconds wide
+    and two runs in one test are milliseconds apart. ⭐ A real previous run's
+    report is minutes or hours old, which is exactly what is modelled here —
+    and the two seconds it does not catch is `AX-02/1` in the handoff.
+    """
+    plant_breakdown(root)
+    submitted(root)
+    stale = root / REPORT
+    assert stale.is_file()
+    minutes_ago = time.time() - 600
+    os.utime(stale, (minutes_ago, minutes_ago))
+    plant_command(root, 1, "test_command", ["python3", "practice/untested/hello.py"])
+    body, recorded = submitted(root)
+    assert stale.is_file()  # the plant: the previous run's report is still there
+    assert "cases" not in recorded["last"]
+    assert "could not be read" in body and "older than the run" in body
+    assert body.splitlines()[-1] == exit_line(0)

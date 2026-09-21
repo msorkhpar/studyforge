@@ -40,6 +40,11 @@ query string, so a client-sent command has no field to arrive through.
 | `run` (Run) | the workspace's `run_command` | `run` | ⛔ never |
 | `test` (Submit) | the workspace's `test_command` | `test` | only when it exits `0` |
 
+⭐ **A Submit is recorded with its case breakdown** where the practice's record
+declares one (`AX-02`): this module reads the wall clock immediately before the run
+starts and hands it, with the workspace, to `Outcome`. ⛔ **The pass rule is not
+touched** — `progress.is_pass` still decides, and the breakdown is a report.
+
 ⚠️ **A workspace need not name both** (`W357`: a file with no test carries `main_path` and
 `run_command` alone). A mode whose command the workspace does not name answers `409` and
 starts nothing — so Submit is offered exactly where a test is named.
@@ -110,6 +115,7 @@ exactly where an origin can answer it. ⚠️ How a page loads it is `SF-24`'s p
 
 from __future__ import annotations
 
+import time
 from pathlib import Path
 
 from studyforge.archive.scrub import PersonalDataLeak
@@ -256,13 +262,18 @@ def start(runs: Runs, rest: str) -> Response:
     argv = workspace.get(COMMAND_OF[mode])
     if argv is None:
         return error(409, NO_SUCH_COMMAND)
+    # ⛔ `AX-02`: read BEFORE the run and never after it. A report is a file that
+    # outlives the run that wrote it, so the only thing that can tell this run's
+    # report from the previous one is the instant this run started; a clock read
+    # afterwards makes every report look fresh. ⭐ The fold is `routes.breakdown`'s.
+    started = time.time()
     try:
         live = runs.claim(lambda: Live(name, key, mode, runs.runner(corpus).start([argv])))
     except RunRefused:
         return error(422, REFUSED)
     if live is None:
         return error(409, BUSY)
-    outcome = Outcome(runs, corpus, (address, ordinal, section), mode, argv)
+    outcome = Outcome(runs, corpus, (address, ordinal, section), mode, argv, workspace, started)
     headers = (("Content-Type", TEXT_TYPE), ("Cache-Control", NO_STORE))
     return Response(200, headers, stream=Stream(runs, live, outcome))
 

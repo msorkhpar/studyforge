@@ -18,7 +18,8 @@ package's `keys` and `errors`.
         "<address>/unit-NN/<section>": {
           "first_passed_at": "<iso>" | null,
           "last": {"at": "<iso>", "commands": [...], "exit": 0, "mode": "test",
-                   "passed": true},
+                   "passed": true,
+                   "cases": {"<case id>": true, ...}},
           "runs": 3
         }
       },
@@ -36,6 +37,34 @@ not make it newer.
 ⛔ **There is no `read` mode and there will not be one.** A read mark is the
 reader's own assertion and lives in the browser (SF-30, §8.5); a record that
 could hold one could be made to treat it as a pass.
+
+## ⛔ `last.cases` is a REPORT about a run, never a second rule for a pass
+
+⭐ **`cases` is the one OPTIONAL key in `last`** (`AX-02`): a Submit whose
+record declared a breakdown carries one verdict per declared case, and every
+other run carries none. ⛔ **A document written before it reads unchanged** —
+that is what *optional* is for here, and it is checked rather than assumed.
+
+⛔ **Nothing in it is allowed to decide a pass.** `is_pass` stays `mode ==
+"test" and exit == 0`, so a practice still completes only when the grader
+itself exited zero; a reader shown *edge cases 2/3* is being shown an
+incomplete practice. ⚠️ **So `passed` is NOT cross-checked against `cases`**,
+deliberately: a rule that made a false verdict here un-pass a run would be the
+second definition of a pass this record exists to avoid.
+
+⭐ **The per-case verdicts are recorded and every count is derived** — *main
+ask*, *edge cases n/m* and each failed edge's sentence are all read off this
+map joined with the practice's own declared cases. ⛔ Recording the counts too
+would be two spellings of one claim, and the id is the stable key: a `says` is
+reader-facing corpus text, already in the practice document, and it goes stale
+the moment the corpus is regenerated (`AX-01`, *For dependents*).
+
+⛔ **The shape is checked here and the ids are NOT.** This file is read back
+with no corpus in hand — `studyforge archive` reads one on a machine that has
+neither the source nor the case map — so a key is refused for being blank or
+not a string and never for failing `exercise.cases.CASE_ID`. ⚠️ A case map
+that has since changed makes an entry's breakdown unreadable to the panel, not
+the record invalid.
 
 ⭐ **Every key sorts** (`sort_keys=True`), so a valid file written by anyone
 re-renders to one byte sequence and a diff of it says what changed.
@@ -74,6 +103,14 @@ DOCUMENT_KEYS = frozenset({"progress_api", "practices"})
 ENTRY_KEYS = frozenset({"runs", "last", "first_passed_at"})
 LAST_KEYS = frozenset({"at", "mode", "exit", "passed", "commands"})
 
+#: ⭐ The framework's ONE spelling of the breakdown's key, read by the run
+#: route that writes it rather than retyped there (`AX-02`).
+CASES_KEY = "cases"
+
+#: ⛔ The only key in `last` that may be absent, which is how a document
+#: written before `AX-02` reads unchanged.
+LAST_OPTIONAL_KEYS = frozenset({CASES_KEY})
+
 
 def is_pass(mode: object, exit_code: object) -> bool:
     """Return whether a run with this mode and verdict passed. ⛔ The one rule."""
@@ -97,12 +134,18 @@ def next_entry(
     exit_code: int | str,
     commands: list[str],
     when: str,
+    cases: dict | None = None,
 ) -> dict:
     """Return the entry a practice has after one more finished run.
 
     `commands` must already be scrubbed; the store does that and then gates the
     rendered document. ⛔ Every argument is checked before anything is built,
     so a bad call leaves no half-formed entry.
+
+    `cases` is one run's breakdown — `{case id: did it pass}` — or `None`,
+    which is every run that produced none: a Run, a record that declares no
+    breakdown, a run that wrote no report, and every run recorded before
+    `AX-02`. ⛔ It never touches `passed`.
     """
     if mode not in MODES:
         raise ProgressError(f"a run's mode must be one of {list(MODES)}, got {describe(mode)}")
@@ -115,6 +158,17 @@ def next_entry(
         raise ProgressError("a run's commands must be a non-empty list of non-blank str")
     if not _is_timestamp(when):
         raise ProgressError(f"a run's time must be an ISO 8601 str, got {describe(when)}")
+    if cases is not None:
+        if mode != MODE_TEST:
+            raise ProgressError(
+                f"only a {MODE_TEST!r} run carries a breakdown; a {MODE_RUN!r} run "
+                f"produces no grader report to fold"
+            )
+        if not _is_cases(cases):
+            raise ProgressError(
+                f"a run's {CASES_KEY!r} must be a non-empty object of one true or "
+                f"false verdict per case id, got {describe(cases)}"
+            )
     passed = is_pass(mode, exit_code)
     first = previous["first_passed_at"] if previous else None
     if first is None and passed:
@@ -126,6 +180,8 @@ def next_entry(
         "passed": passed,
         "commands": list(commands),
     }
+    if cases is not None:
+        last[CASES_KEY] = dict(cases)
     return {
         "runs": (previous["runs"] if previous else 0) + 1,
         "last": last,
@@ -178,7 +234,7 @@ def _entry(key: object, entry: object, depth: int, where: str) -> None:
     last = entry["last"]
     if not isinstance(last, dict):
         raise ProgressFormatError(f"{where} 'last' is {describe(last)}, not an object")
-    _exact(last, LAST_KEYS, f"{where} 'last'")
+    _exact(last, LAST_KEYS, f"{where} 'last'", optional=LAST_OPTIONAL_KEYS)
     if not _is_timestamp(last["at"]):
         raise ProgressFormatError(f"{where} 'last.at' is not an ISO 8601 timestamp")
     if last["mode"] not in MODES:
@@ -193,15 +249,34 @@ def _entry(key: object, entry: object, depth: int, where: str) -> None:
         )
     if not _is_commands(last["commands"]):
         raise ProgressFormatError(f"{where} 'last.commands' is not a non-empty list of commands")
+    if CASES_KEY in last:
+        # ⛔ Read AFTER `last.mode`, so this refusal is only ever reached by a
+        # run whose mode is one of `MODES` and can be named in the sentence.
+        if last["mode"] != MODE_TEST:
+            raise ProgressFormatError(
+                f"{where} 'last.{CASES_KEY}' is on a run that is not a {MODE_TEST!r} run"
+            )
+        if not _is_cases(last[CASES_KEY]):
+            raise ProgressFormatError(
+                f"{where} 'last.{CASES_KEY}' is not an object of one true or false "
+                f"verdict per case id"
+            )
     first = entry["first_passed_at"]
     if first is not None and not _is_timestamp(first):
         raise ProgressFormatError(f"{where} 'first_passed_at' is not an ISO 8601 timestamp or null")
 
 
-def _exact(value: dict, keys: frozenset[str], where: str) -> None:
-    """Refuse an object whose keys are not exactly `keys`, naming the expected set only."""
-    if set(value) != keys:
-        raise ProgressFormatError(f"{where} must have exactly the keys {sorted(keys)}")
+def _exact(
+    value: dict, keys: frozenset[str], where: str, optional: frozenset[str] = frozenset()
+) -> None:
+    """Refuse an object whose keys are not `keys` plus any of `optional`.
+
+    ⛔ Names the expected sets and never the keys it found, because the file is
+    the reader's and a key in it may hold anything.
+    """
+    if set(value) - optional != keys:
+        also = f", and may also have {sorted(optional)}" if optional else ""
+        raise ProgressFormatError(f"{where} must have exactly the keys {sorted(keys)}{also}")
 
 
 def _is_exit(value: object) -> bool:
@@ -219,6 +294,21 @@ def _is_commands(value: object) -> bool:
         isinstance(value, list)
         and bool(value)
         and all(isinstance(c, str) and c.strip() for c in value)
+    )
+
+
+def _is_cases(value: object) -> bool:
+    """Whether `value` is a non-empty object of one boolean verdict per case id.
+
+    ⛔ The id's own spelling is not checked here; the module docstring says why.
+    """
+    return (
+        isinstance(value, dict)
+        and bool(value)
+        and all(
+            isinstance(case_id, str) and bool(case_id.strip()) and isinstance(passed, bool)
+            for case_id, passed in value.items()
+        )
     )
 
 

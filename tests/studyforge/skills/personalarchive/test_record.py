@@ -166,3 +166,50 @@ def test_the_store_path_and_the_owned_record_are_the_stores_own(tmp_path):
     assert record.owned(root, depth(root)) == {"practices": {}, "progress_api": 1}
     run(root, passed=False, when=TIMES["t1"])
     assert record.owned(root, depth(root)) == store(root).read()
+
+
+# --------------------------------------------------------------------------
+# `AX-02` — a `last` that carries a breakdown survives the round trip
+# --------------------------------------------------------------------------
+
+VERDICTS = {"test_the_ask": True, "test_an_edge": False}
+
+
+def with_breakdown(cell: str) -> dict:
+    """One worked entry whose last run is a Submit that recorded a breakdown."""
+    built = entry_of(cell)
+    built["last"]["cases"] = dict(VERDICTS)
+    return built
+
+
+def test_a_rebuilt_run_carries_the_breakdown_its_last_run_recorded(tmp_path, chain):
+    """⛔ `_run_of` means *a run that leaves `last` as it is*, breakdown included.
+
+    ⚠️ Without that, `record_run` writes a `last` with no `cases`, the entry no
+    longer equals the one the merge rule computed, and the import stops on an
+    entry this machine wrote itself. ⭐ The archive here raises the COUNT and
+    leaves `last` this machine's, so every run appended is a rebuilt one.
+    """
+    root = machine(tmp_path, "a")
+    stage(root, {KEY: with_breakdown("runs 1 · first t1 · last t1 pass")})
+    # ⭐ The plant is observed: this machine's record really does carry one.
+    assert entry(root)["last"]["cases"] == VERDICTS
+    archived = entry_of("runs 5 · first t1 · last t1 pass")
+    record.merge_into(root, depth(root), {KEY: archived}, print)
+    assert chain, "the merge appended no run, so this reading measured nothing"
+    assert entry(root) == {
+        "first_passed_at": TIMES["t1"],
+        "last": with_breakdown("runs 1 · first t1 · last t1 pass")["last"],
+        "runs": 5,
+    }
+
+
+def test_a_first_pass_the_rule_invents_carries_no_breakdown_of_its_own(tmp_path):
+    # ⚠️ `_pass_at` SYNTHESISES the pass a believed entry implies; no breakdown
+    # of that run was ever recorded anywhere, so it claims none.
+    root = machine(tmp_path, "a")
+    stage(root, {KEY: with_breakdown("runs 2 · first — · last t3 fail")})
+    archived = entry_of("runs 2 · first t1 · last t2 fail")
+    record.merge_into(root, depth(root), {KEY: archived}, print)
+    assert entry(root)["first_passed_at"] == TIMES["t1"]
+    assert entry(root)["last"]["cases"] == VERDICTS
