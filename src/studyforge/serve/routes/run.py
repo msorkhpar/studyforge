@@ -223,7 +223,13 @@ def index(runs: Runs) -> dict:
 
 
 def start(runs: Runs, rest: str) -> Response:
-    """Start the practice's own command for the mode `rest` names, and stream it."""
+    """Answer `<corpus>/<mode>/<practice key>`: a run, or that practice's editor.
+
+    ⭐ **One parse, because the three parts are the same three** — a corpus, an
+    act and a practice — and the workspace is read from the unit's own document
+    either way. ⛔ `EDITOR` stands where a mode stands and starts nothing; the
+    two in `MODES` each start the ONE command the document names.
+    """
     name, _, tail = rest.partition("/")
     mode, _, key = tail.partition("/")
     corpus = runs.discovered.by_source.get(name)
