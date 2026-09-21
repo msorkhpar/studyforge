@@ -273,9 +273,7 @@ def start(runs: Runs, rest: str) -> Response:
         return error(422, REFUSED)
     if live is None:
         return error(409, BUSY)
-    outcome = Outcome(
-        runs, corpus, (address, ordinal, section), mode, argv, workspace, started
-    )
+    outcome = Outcome(runs, corpus, (address, ordinal, section), mode, argv, workspace, started)
     headers = (("Content-Type", TEXT_TYPE), ("Cache-Control", NO_STORE))
     return Response(200, headers, stream=Stream(runs, live, outcome))
 

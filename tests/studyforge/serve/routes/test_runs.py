@@ -285,7 +285,7 @@ def test_a_report_the_run_did_not_write_is_refused_on_the_stream_and_not_recorde
     """
     plant_breakdown(root)
     submitted(root)
-    stale = (root / REPORT)
+    stale = root / REPORT
     assert stale.is_file()
     minutes_ago = time.time() - 600
     os.utime(stale, (minutes_ago, minutes_ago))

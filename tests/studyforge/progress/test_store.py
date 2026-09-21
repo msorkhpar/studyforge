@@ -393,9 +393,12 @@ def test_a_submit_s_breakdown_is_written_and_read_back_through_the_store(tmp_pat
     written = record(store, cases=VERDICTS)
     assert written["last"]["cases"] == VERDICTS
     assert store.entry(ADDRESS, 1, SECTION)["last"]["cases"] == VERDICTS
-    assert json.loads(store.path.read_text(encoding="utf-8"))["practices"][
-        practice_key(ADDRESS, 1, SECTION)
-    ]["last"]["cases"] == VERDICTS
+    assert (
+        json.loads(store.path.read_text(encoding="utf-8"))["practices"][
+            practice_key(ADDRESS, 1, SECTION)
+        ]["last"]["cases"]
+        == VERDICTS
+    )
 
 
 def test_a_run_with_no_breakdown_writes_a_record_a_previous_build_would_read(tmp_path):

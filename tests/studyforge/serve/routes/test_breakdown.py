@@ -52,9 +52,9 @@ def write_report(root: Path, body: str, declared: str = DECLARED) -> Path:
 
 
 def both(ask: bool, edge: bool) -> str:
-    return (PASSING if ask else FAILING).format(name=ASK) + (
-        PASSING if edge else FAILING
-    ).format(name=EDGE)
+    return (PASSING if ask else FAILING).format(name=ASK) + (PASSING if edge else FAILING).format(
+        name=EDGE
+    )
 
 
 # --------------------------------------------------------------------------
@@ -114,9 +114,7 @@ def test_a_run_folds_nothing_even_where_a_report_is_sitting_there(tmp_path):
         ("run", "declared", 1.0),
     ],
 )
-def test_a_caller_with_no_breakdown_to_record_says_so_by_omission(
-    tmp_path, mode, space, started
-):
+def test_a_caller_with_no_breakdown_to_record_says_so_by_omission(tmp_path, mode, space, started):
     given = workspace() if space == "declared" else None
     assert fold(mode, given, tmp_path, started) == (None, ())
 
