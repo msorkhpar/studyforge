@@ -238,9 +238,7 @@ def _address(value: object, where: str) -> Address:
 def _ordinal(value: object, field: str, where: str) -> int:
     """Refuse a unit or an ordinal that is not a counting number."""
     if not isinstance(value, int) or isinstance(value, bool):
-        raise ExerciseError(
-            f"{where}: '{field}' counts from one and is {describe(value)}."
-        )
+        raise ExerciseError(f"{where}: '{field}' counts from one and is {describe(value)}.")
     try:
         return require_ordinal(value)
     except ValueError:
@@ -250,14 +248,12 @@ def _ordinal(value: object, field: str, where: str) -> int:
 def _text(value: object, field: str, where: str) -> str:
     """Refuse an empty or non-text value, naming the field and never the value."""
     if not isinstance(value, str) or not value.strip():
-        raise ExerciseError(
-            f"{where}: '{field}' is a non-empty string and is {describe(value)}."
-        )
+        raise ExerciseError(f"{where}: '{field}' is a non-empty string and is {describe(value)}.")
     return value
 
 
 def _optional_text(value: object, field: str, where: str) -> str | None:
-    """The same, for a key a bundle may leave out."""
+    """Read the same, for a key a bundle may leave out."""
     return None if value is None else _text(value, field, where)
 
 

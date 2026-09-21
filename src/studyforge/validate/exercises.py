@@ -49,7 +49,8 @@ import json
 from collections.abc import Iterator
 
 from studyforge.archive.scrub import PersonalDataLeak, assert_clean
-from studyforge.exercise import ExerciseError, of as exercise_of
+from studyforge.exercise import ExerciseError
+from studyforge.exercise import of as exercise_of
 from studyforge.exercise.bundle import Places, unpermitted
 from studyforge.exercise.gates import drifted, record_of
 from studyforge.validate.corpus import Unit, Walk
@@ -154,7 +155,7 @@ def check_bundle_digests(walk: Walk) -> Iterator[Finding]:
 
 
 def check_bundle_contents(walk: Walk) -> Iterator[Finding]:
-    """A bundle holds what its shape permits, and nothing else.
+    """Refuse a bundle holding anything its shape does not permit.
 
     ⛔ **This is where `AX-03/1` is refused.** A JUnit report carries the
     machine's hostname — `pytest --junit-xml` and surefire both write
@@ -208,7 +209,7 @@ def check_practice_ordinals(walk: Walk) -> Iterator[Finding]:
 
 
 def _authored(unit: Unit) -> tuple[Places, str] | None:
-    """The bundle of this document's authored exercise, or `None` if it has none."""
+    """Return the bundle of this document's authored exercise, or `None` if it has none."""
     document = unit.document
     if document.get("kind") != "practice":
         return None
@@ -240,10 +241,10 @@ def _read(path, where: str):
 
 
 def _record(walk: Walk, places: Places):
-    """The gate record, or `None` — ⛔ absent and unreadable are `check_gate_records`'."""
+    """Return the gate record, or `None` — ⛔ absent and unreadable are `check_gate_records`'."""
     try:
         return _read(walk.root / places.gates, places.gates)
-    except (ExerciseError, PersonalDataLeak, ValueError, OSError):
+    except ExerciseError, PersonalDataLeak, ValueError, OSError:
         return None
 
 

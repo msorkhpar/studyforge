@@ -6,7 +6,8 @@ import pytest
 
 from studyforge.archive.blocks import STARTING_CODE_HEADING, STATEMENT_HEADING, read_layout
 from studyforge.archive.document import parse, render
-from studyforge.exercise import ExerciseError, of as exercise_of
+from studyforge.exercise import ExerciseError
+from studyforge.exercise import of as exercise_of
 from studyforge.exercise.bundle import REFERENCE_SUMMARY, bundle_of, emit, emit_page, write
 from tests.studyforge.exercise.bundle import bundles
 
@@ -124,9 +125,7 @@ def test_the_readers_file_starts_as_the_starter_and_never_as_the_reference(tmp_p
 def test_several_exercises_on_one_page_take_the_ordinals_one_to_n(tmp_path):
     first = a_bundle(tmp_path)
     second = a_bundle(tmp_path, ordinal=2)
-    emissions = emit_page(
-        tmp_path, (second, first), source="demo", ingested="2026-01-05"
-    )
+    emissions = emit_page(tmp_path, (second, first), source="demo", ingested="2026-01-05")
     assert [one.document["ordinal"] for one in emissions] == [1, 2]
     # ⛔ Two exercises on one page never share a workspace file.
     assert set(emissions[0].paths).isdisjoint(emissions[1].paths)

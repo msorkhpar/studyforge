@@ -204,12 +204,12 @@ def plant_positions(cases: tuple[Case, ...]) -> dict[str, int]:
 
 
 def edges_of(cases: tuple[Case, ...]) -> tuple[Case, ...]:
-    """The edge cases, in the order the record declares them."""
+    """Return the edge cases, in the order the record declares them."""
     return tuple(case for case in cases if not case.ask)
 
 
 def ordinals(count: int) -> tuple[int, ...]:
-    """The ordinals `1..count` a page's exercises take, in order."""
+    """Return the ordinals `1..count` a page's exercises take, in order."""
     return tuple(range(1, count + 1))
 
 
@@ -254,7 +254,7 @@ def unpermitted(root, places: Places) -> tuple[str, ...]:
 
 
 def _permitted(relative: str) -> bool:
-    """Is this bundle-relative path one the shape allows?"""
+    """Answer whether this bundle-relative path is one the shape allows."""
     head, _, tail = relative.partition("/")
     if not tail:
         return head in BUNDLE_FILENAMES
@@ -262,7 +262,7 @@ def _permitted(relative: str) -> bool:
 
 
 def require_inside(path: object, root: object, where: str) -> str:
-    """Refuse a path that is not inside `root`, reproducing NEITHER of them.
+    """Refuse a path that is not inside `root`, reproducing neither of them.
 
     ⛔ **Both values go through `require_path` BEFORE anything is quoted, and
     then nothing is quoted at all.** ⚠️ **MEASURED**: the first spelling took a

@@ -60,9 +60,7 @@ def a_corpus(root, *, bundles_on_page=1, **overrides):
     corpora.write(
         root,
         manifest=MANIFEST,
-        containers={
-            "demo": corpora.container([corpora.unit_entry(1, practices=bundles_on_page)])
-        },
+        containers={"demo": corpora.container([corpora.unit_entry(1, practices=bundles_on_page)])},
         sources={"src/one.md": corpora.SOURCE},
     )
     for where, document in documents.items():

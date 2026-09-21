@@ -208,7 +208,7 @@ def write(root: Path | str, emission: Emission, where: str) -> tuple[str, ...]:
 
 
 def _record(bundle: Bundle, where: str) -> dict:
-    """The `exercise` record, with every path spelled as the corpus root sees it.
+    """Return the `exercise` record, with every path spelled as the corpus root sees it.
 
     ⛔ **R5 is applied by `archive.document.build`**, which reads this object
     through `exercise.record.from_document` — so a bundle claiming
@@ -259,7 +259,7 @@ def _blocks(
     lesson_title: str | None,
     where: str,
 ) -> list[dict]:
-    """The practice's blocks, laid out the way `archive.blocks` reads one."""
+    """Return the practice's blocks, laid out the way `archive.blocks` reads one."""
     heading = LESSON_HEADING if lesson_title is None else f"{LESSON_HEADING}: {lesson_title}"
     return [
         {"type": "heading", "level": 2, "text": STATEMENT_HEADING},
@@ -278,7 +278,7 @@ def _blocks(
 
 
 def _statement_blocks(bundle: Bundle, statement: str, where: str) -> list[dict]:
-    """The statement's Markdown as blocks, refusing one the archive cannot carry."""
+    """Return the statement's Markdown as blocks, refusing one the archive cannot carry."""
     try:
         return parse_markdown(statement, lang_default=bundle.lang)
     except MarkdownError as error:
@@ -288,7 +288,7 @@ def _statement_blocks(bundle: Bundle, statement: str, where: str) -> list[dict]:
 
 
 def _role_file(bundle: Bundle, role: str) -> str:
-    """The bundle-relative path one role's copy of a workspace file sits at."""
+    """Return the bundle-relative path one role's copy of a workspace file sits at."""
     name = bundle.test_file if role == TESTS else bundle.main_file
     return bundle.places.role_path(role, name)
 
