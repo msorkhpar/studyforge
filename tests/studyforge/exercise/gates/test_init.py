@@ -37,6 +37,7 @@ def test_the_public_surface_is_declared_and_complete():
         "Input",
         "ORIGIN_ROLE",
         "PLANT",
+        "QUIZ",
         "RECORD_KEYS",
         "REFERENCE",
         "ROLE_PERMITTED",
