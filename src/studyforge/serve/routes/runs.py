@@ -2,10 +2,11 @@ r"""The instance's runs: the one live slot, a run's streamed body, and its recor
 
 **What it does.** `Runs` holds what a run is read from (every corpus discovered and its
 content), the one run in flight, and one `EditorProbe` per corpus — `editors()`
-is where a running editor is, for the index to publish (`W416`), and
-`practice_editor()` is ONE practice's two windows and the settings they are
-read under (`W429`); `Stream` is a run's response body — each line gated, the
-verdict recorded just before the exit line, which is last; `Outcome` records it.
+is where a running editor is, for the index to publish (`W416`), `origins()`
+is the same reading for the frame policy (`W427`), and `practice_editor()` is
+ONE practice's two windows and the settings they are read under (`W429`);
+`Stream` is a run's response body — each line gated, the verdict recorded just
+before the exit line, which is last; `Outcome` records it.
 
 **How you use it.** `serve.routes.run` claims the slot with `Runs.claim`, and answers
 with `Response(200, headers, stream=Stream(runs, live, Outcome(...)))`.
@@ -45,6 +46,7 @@ from studyforge.archive.scrub import scrub
 from studyforge.execute import (
     EXIT_STOPPED,
     EXIT_TIMEOUT,
+    Editor,
     EditorProbe,
     RunHandle,
     Runner,
@@ -115,14 +117,32 @@ class Runs:
         ⛔ A corpus whose editor is not up, or which cannot be asked about, is
         simply absent — the page then shows the sentence it already ships.
         """
-        found: dict[str, dict[str, str]] = {}
+        return {
+            source: {"origin": found.origin, "folder": found.folder}
+            for source, found in self.found().items()
+        }
+
+    def origins(self) -> tuple[str, ...]:
+        """Return each distinct origin a served page may frame, for every editor that is up.
+
+        ⭐ **The frame policy's half of `editors()`** (`W427`). `serve.app` asks
+        this per response and `serve.security` composes `frame-src` from it, so
+        the page may embed exactly the editors the index published — and nothing,
+        `frame-src 'none'`, while there is none. ⛔ Read off the same `found()` the
+        index is read off, so one probe and one cache answer both.
+        """
+        return tuple(sorted({found.origin for found in self.found().values()}))
+
+    def found(self) -> dict[str, Editor]:
+        """Return the editor that is up for each served corpus, and nothing for the rest."""
+        up: dict[str, Editor] = {}
         for corpus in self.discovered.corpora:
             if corpus.source not in self.sources:
                 continue
             where = self._probe(corpus).editor()
             if where is not None:
-                found[corpus.source] = {"origin": where.origin, "folder": where.folder}
-        return found
+                up[corpus.source] = where
+        return up
 
     def practice_editor(self, corpus: ServedCorpus, main: str, test: str | None) -> dict | None:
         """Prepare one practice's workspace and say where its two windows are, or `None`.

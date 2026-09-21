@@ -48,7 +48,14 @@ a corpus's declarations (`SF-19a/1`), which is why `generate` is named above.
 from __future__ import annotations
 
 from studyforge.serve.discovery import RAISES, Discovered, ServedCorpus
-from studyforge.serve.instance import CLIENT, WRITERS, client_for, namespaces_of, site_discovery
+from studyforge.serve.instance import (
+    CLIENT,
+    WRITERS,
+    client_for,
+    frames_for,
+    namespaces_of,
+    site_discovery,
+)
 
 #: ⛔ What `discovery.discover` and `instance.make_instance` let out (`W208`).
 #: ⭐ `Discovered` and `ServedCorpus` are shared with `cli.serve`, whose `--site` form
@@ -65,6 +72,7 @@ __all__ = [
     "Discovered",
     "ServedCorpus",
     "client_for",
+    "frames_for",
     "namespaces_of",
     "site_discovery",
 ]

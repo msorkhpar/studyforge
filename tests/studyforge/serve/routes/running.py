@@ -166,6 +166,7 @@ def serving(live: runs.Runs, discovered: Discovered) -> Iterator[ServingServer]:
         port=0,
         namespaces={run.NAMESPACE: lambda request, rest: run.route(live, request, rest)},
         writers=(run.NAMESPACE,),
+        frames=live.origins,
     )
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()

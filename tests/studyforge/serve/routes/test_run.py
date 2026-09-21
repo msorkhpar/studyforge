@@ -426,7 +426,25 @@ def test_one_probe_is_kept_per_corpus_so_a_page_does_not_fork_docker_per_fetch(r
     with serving(runs, discovered) as server:
         fetch(server, "/api/v1/run/")
         fetch(server, "/api/v1/run/")
-    assert len(editors.made) == 1 and editors.made[0].asked == 2
+    # ⭐ ONE probe, KEPT — that is the whole economy, because a fork happens
+    # inside a probe and its TTL bounds how often. ⚠️ `W427` made each response
+    # ask twice: once for the index, once for the `frame-src` it is served under.
+    assert len(editors.made) == 1 and editors.made[0].asked == 4
+
+
+def test_the_response_that_publishes_an_editor_also_admits_framing_it(root):
+    # ⛔ **`W427`, and `W416/2` is why it is asserted on ONE response.** Framing is
+    # two-sided: the index may say where the editor is while this server's own
+    # `frame-src` forbids embedding it, which is exactly what shipped.
+    live, discovered = runs_over(root, editor=StubEditors(UP))
+    with serving(live, discovered) as server:
+        _, headers, raw = fetch(server, "/api/v1/run/")
+    published = json.loads(raw)[run.EDITOR]
+    policy = dict(item.split(" ", 1) for item in headers["content-security-policy"].split("; "))
+    assert published == {SOURCE: {"origin": UP.origin, "folder": UP.folder}}
+    assert policy["frame-src"] == UP.origin
+    assert policy["frame-ancestors"] == "'none'"
+    assert headers["x-frame-options"] == "DENY"
 
 
 def test_the_probe_an_instance_makes_asks_docker_about_the_compose_container(root):

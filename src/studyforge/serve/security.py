@@ -30,13 +30,33 @@ sandboxed frame on another site that also sends it still carries
 
 `'unsafe-inline'` for scripts and styles is the design and not a concession: a page
 that must also work from `file://` cannot rely on a nonce the server mints. What
-could reach off the machine is closed instead — nothing beyond `'self'`, no
-framing in either direction, no forms, no plugins, no base rewriting.
+could reach off the machine is closed instead — nothing beyond `'self'`, no forms,
+no plugins, no base rewriting.
+
+## ⛔ Framing is TWO-SIDED, and the two sides get opposite answers (`W427`)
+
+⭐ **`frame-ancestors 'none'` and `X-Frame-Options: DENY` govern this page being
+framed BY somebody else, and they stay `'none'` forever** — they are in
+`POLICY_TAIL` and `FIXED_HEADERS`, where nothing composes them.
+⭐ **`frame-src` governs what this page may EMBED, and it is the ONE directive that
+cannot be a constant**: the editor a practice panel frames is published on a
+per-project host port that R8 forbids a built page from naming, so it is known
+only at serve time. `content_policy(frames)` composes it from the editors an
+instance actually discovered; `frames=()` — no editor, or no instance to ask —
+is `frame-src 'none'`, and the policy narrows again when an editor goes away.
+⛔ **Never a wildcard.** `frame_origin` admits a loopback `http`/`https` origin and
+nothing else, so an origin carrying a space, a quote or a `;` — which is how a
+second directive would be forged into the header — names nothing.
+
+⚠️ **Measured once, on one half, and wrong for it** (`W416/2`): `code-server` was
+asked whether it refuses being framed, it did not, and the feature was called
+unblocked — while OUR OWN `frame-src 'none'` blocked every load. A negative on one
+side of a two-sided property is not a negative.
 """
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Callable, Collection, Mapping
 from urllib.parse import urlsplit
 
 #: The only address this server binds. ⛔ Never `0.0.0.0`: the process reads the
@@ -52,30 +72,140 @@ ALLOWED_HOSTS = frozenset({"127.0.0.1", "localhost", "::1", "[::1]"})
 #: `Sec-Fetch-Site` values a browser sends for a request that is not cross-site.
 SAME_SITE = frozenset({"same-origin", "same-site", "none"})
 
-CONTENT_POLICY = (
-    "default-src 'self'; "
-    "script-src 'self' 'unsafe-inline'; "
-    "style-src 'self' 'unsafe-inline'; "
-    "img-src 'self' data:; "
-    "media-src 'self'; "
-    "font-src 'self'; "
-    "connect-src 'self'; "
-    "frame-src 'none'; "
-    "object-src 'none'; "
-    "base-uri 'none'; "
-    "form-action 'none'; "
-    "frame-ancestors 'none'"
+#: The directives before `frame-src`, which is the only one composed per instance.
+POLICY_HEAD = (
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline'",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data:",
+    "media-src 'self'",
+    "font-src 'self'",
+    "connect-src 'self'",
 )
 
-#: Sent on every response this server writes.
-SECURITY_HEADERS = (
-    ("Content-Security-Policy", CONTENT_POLICY),
+#: The directives after it. ⛔ `frame-ancestors 'none'` lives HERE, where no
+#: argument reaches it: what this page may embed widens, being embedded never does.
+POLICY_TAIL = (
+    "object-src 'none'",
+    "base-uri 'none'",
+    "form-action 'none'",
+    "frame-ancestors 'none'",
+)
+
+#: The source list that admits nothing at all.
+NOTHING = "'none'"
+
+#: ⛔ Characters an origin this policy names may never carry. A space or a comma
+#: ends one source, a `;` starts the next directive, a quote forges a keyword, `*`
+#: is the wildcard this row forbids outright, and `@` hides a host behind userinfo.
+FORBIDDEN = frozenset(" \t\r\n\f\v;,*'\"\\@")
+
+
+def frame_origin(origin: str, allowed: frozenset[str] = ALLOWED_HOSTS) -> str | None:
+    """Return the origin a `frame-src` may name, or `None` for anything else."""
+    candidate = origin.strip()
+    if not candidate or FORBIDDEN & set(candidate):
+        return None
+    parts = urlsplit(candidate)
+    if parts.scheme not in ("http", "https") or not parts.netloc:
+        return None
+    if parts.path not in ("", "/") or parts.query or parts.fragment:
+        return None
+    return f"{parts.scheme}://{parts.netloc}" if host_allowed(parts.netloc, allowed) else None
+
+
+def frame_source(frames: Collection[str] = (), allowed: frozenset[str] = ALLOWED_HOSTS) -> str:
+    """Return the `frame-src` value for these origins: `'none'` until one is admitted."""
+    named: list[str] = []
+    for origin in frames:
+        one = frame_origin(origin, allowed)
+        if one is not None and one not in named:
+            named.append(one)
+    return " ".join(named) if named else NOTHING
+
+
+def content_policy(frames: Collection[str] = (), allowed: frozenset[str] = ALLOWED_HOSTS) -> str:
+    """Return the policy an instance that discovered these editor origins sends."""
+    embeddable = f"frame-src {frame_source(frames, allowed)}"
+    return "; ".join((*POLICY_HEAD, embeddable, *POLICY_TAIL))
+
+
+#: What an instance with no editor to frame sends, which is also the floor.
+CONTENT_POLICY = content_policy()
+
+#: Every header but the policy. ⛔ `X-Frame-Options: DENY` is the other half of
+#: `frame-ancestors` and is likewise never composed.
+FIXED_HEADERS = (
     ("X-Content-Type-Options", "nosniff"),
     ("X-Frame-Options", "DENY"),
     ("Referrer-Policy", "no-referrer"),
     ("Cross-Origin-Opener-Policy", "same-origin"),
     ("Cross-Origin-Resource-Policy", "same-origin"),
 )
+
+
+def security_headers(frames: Collection[str] = ()) -> tuple[tuple[str, str], ...]:
+    """Return every header a response carries, its policy composed for this instance."""
+    return (("Content-Security-Policy", content_policy(frames)), *FIXED_HEADERS)
+
+
+#: Sent on every response an instance with no editor writes.
+SECURITY_HEADERS = security_headers()
+
+#: ⛔ Said ONCE per host an editor is withheld from. The symptom it replaces is a
+#: login form inside the panel that loops forever with the right password and
+#: NOTHING in the browser to say why, which is the worst failure in this row.
+WITHHELD = (
+    "editor {origin} withheld from a page reached as '{host}': a session cookie is "
+    "same-site by HOST and a port is not part of a site, so open the site at '{editor}'"
+)
+
+
+def framable(frames: Collection[str], host: str | None = None) -> tuple[list[str], list[str]]:
+    """Split these origins into what a page reached at `host` may frame, and what is withheld.
+
+    ⛔ **The HOST must match, not merely the machine** (`W427`). An editor
+    authenticates with a `SameSite=Lax` session cookie; a PORT is not part of a
+    site but a HOSTNAME is, so a page at `localhost` framing an editor at
+    `127.0.0.1` is CROSS-site, the cookie is withheld, and the frame shows a
+    login form that never succeeds. ⭐ Admitting it would be the silent failure;
+    withholding it and SAYING so is why this returns both lists.
+    ⚠️ `host is None` is a hand-rolled client rather than a browser — no cookie,
+    no frame, nothing to protect — so nothing is withheld from one.
+    """
+    admitted: list[str] = []
+    withheld: list[str] = []
+    reader = host_name(host).lower() if host is not None else None
+    for origin in frames:
+        named = frame_origin(origin)
+        if named is None:
+            continue
+        same = reader is None or host_name(urlsplit(named).netloc).lower() == reader
+        where = admitted if same else withheld
+        if named not in where:
+            where.append(named)
+    return admitted, withheld
+
+
+def response_headers(
+    frames: Collection[str],
+    host: str | None = None,
+    log: Callable[[str], None] | None = None,
+    said: set[tuple[str, str]] | None = None,
+) -> tuple[tuple[str, str], ...]:
+    """Return the headers for a page reached at `host`, saying once what was withheld from it."""
+    admitted, withheld = framable(frames, host)
+    reader = host_name(host).lower()
+    for origin in withheld:
+        seen = (reader, origin)
+        if log is None or (said is not None and seen in said):
+            continue
+        if said is not None:
+            said.add(seen)
+        editor = host_name(urlsplit(origin).netloc)
+        log(WITHHELD.format(origin=origin, host=reader, editor=editor))
+    return security_headers(admitted)
+
 
 REFUSED_PEER = "this server answers loopback clients only"
 REFUSED_HOST = "unexpected Host header"
@@ -89,19 +219,20 @@ def require_loopback(host: str) -> None:
         raise ValueError(f"this server binds {LOOPBACK} only")
 
 
-def host_allowed(header: str | None, allowed: frozenset[str] = ALLOWED_HOSTS) -> bool:
-    """Say whether a `Host` value names a loopback host, whatever its port."""
-    if header is None:
-        return True
-    host = header.strip()
+def host_name(header: str | None) -> str:
+    """Return a `Host` value's or an authority's name, with any port removed."""
+    host = (header or "").strip()
     if host.startswith("["):
         close = host.find("]")
-        name = host[: close + 1] if close != -1 else host
-    elif host.count(":") == 1:
-        name = host.rsplit(":", 1)[0]
-    else:
-        name = host
-    return name.lower() in allowed
+        return host[: close + 1] if close != -1 else host
+    if host.count(":") == 1:
+        return host.rsplit(":", 1)[0]
+    return host
+
+
+def host_allowed(header: str | None, allowed: frozenset[str] = ALLOWED_HOSTS) -> bool:
+    """Say whether a `Host` value names a loopback host, whatever its port."""
+    return True if header is None else host_name(header).lower() in allowed
 
 
 def origin_allowed(header: str | None, allowed: frozenset[str] = ALLOWED_HOSTS) -> bool:
