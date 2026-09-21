@@ -176,18 +176,28 @@ def _place_pipe_on_three_and_four(reader: int, writer: int):
 class Browser:
     """One headless browser process and the protocol connection to it."""
 
-    def __init__(self, binary: str) -> None:
+    def __init__(self, binary: str, profile_root: str | None = None) -> None:
         """Launch `binary` headless with a throwaway profile.
 
         ⛔ **A launch that fails part-way leaves nothing behind** (`W312`): the
         profile exists from the first line, so every later step runs under a
         handler that gives what was opened to `close()` and re-raises.
+
+        ⭐ **`profile_root` is `W419`, and it is a parameter rather than a
+        convenience.** `test_browser.py` needs every launch IT makes to land
+        somewhere it can glob, and before this argument the only way to say so
+        was to point `tempfile.tempdir` at a directory — ⛔ **which is
+        PROCESS-WIDE**, so under `-n auto` anything else tearing down in the
+        same xdist worker fell inside that test's assertion window and reddened
+        a row with nothing wrong with it (`W404/6`). ⚠️ A caller naming its own
+        directory cannot reach another caller at all.
         """
         self.binary = binary
-        # ⛔ A fresh profile per launch, under the system temp directory: a
-        # shared profile carries state between runs, which is the failure R10
-        # is about wearing a different hat.
-        self._profile = tempfile.mkdtemp(prefix="studyforge-visual-")
+        # ⛔ A fresh profile per launch, under `profile_root` when one is named
+        # and the system temp directory otherwise: a shared profile carries
+        # state between runs, which is the failure R10 is about wearing a
+        # different hat.
+        self._profile = tempfile.mkdtemp(prefix="studyforge-visual-", dir=profile_root)
         self._reader: int | None = None
         self._writer: int | None = None
         self._log = None

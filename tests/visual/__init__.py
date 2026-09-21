@@ -152,4 +152,14 @@ ACCEPTANCE = {
     #: the cap on a line of prose at each of them.
     "fills the window up to its ceiling and centres at it above, with equal "
     "margins, the rail on its left edge and the aside on its right (W388)": "test_reading_width",
+    #: ⭐ `W417`'s clause, and it is a row of its own for a reason none of the
+    #: rows above share: every one of them opens `file://`. ⛔ *"The panel's tab
+    #: order, focus handoff and live region are read in a browser"* cannot be
+    #: asked there at all — the controls are unhidden only where
+    #: `window.studyforge.run.available()` is true, so the keyboard row above
+    #: has always traversed a page whose panel showed the offline note and no
+    #: buttons (`SF-24/5`). ⚠️ It needs an origin no other clause here needs,
+    #: which `served.py` binds over the same built bytes.
+    "reads the practice panel's tab order, focus handoff and live region on a "
+    "SERVED origin, where its controls exist (W417)": "test_practice_panel",
 }

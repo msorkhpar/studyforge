@@ -208,6 +208,27 @@ def grown(narrow: list[dict], wide: list[dict]) -> list[str]:
     ]
 
 
+def unpainted(controls: list[dict]) -> list[str]:
+    """Which of the transport's controls have no box at all, as sentences.
+
+    ⛔ **`SF-24/3`'s blindness, swept for by `QA-02` and found here.** `grown`
+    compares a control's box at one width against its box at another, and a
+    `hidden` element reports `0 × 0` at EVERY width — so a transport that had
+    stopped being revealed at all would satisfy *"the buttons did not grow"*
+    for every control, at every width, forever. ⚠️ The population check below
+    read `json.dumps(controls)` truthy, which a list of zero boxes is.
+
+    ⭐ Asserted as a box and not as a `hidden` attribute: `content-visibility`,
+    `display: none` on an ancestor and a zero-height clip all read the same to a
+    reader, and only the box is the question this module asks.
+    """
+    return [
+        f"control {index} has no box ({box['width']:.2f} x {box['height']:.2f})"
+        for index, box in enumerate(controls)
+        if box["width"] <= 0 or box["height"] <= 0
+    ]
+
+
 def spans_the_content(reading: dict) -> bool:
     """Whether the transport is as wide as everything right of the rail."""
     player, rail = reading["player"], reading["rail"]
@@ -376,6 +397,11 @@ def test_the_transports_buttons_do_not_grow_with_it(
     narrow = dict(open_page.evaluate(BOXES))["controls"]  # type: ignore[index]
 
     assert narrow, "the page carries no transport controls, so this judges nothing"
+    blind = unpainted(narrow) + unpainted(wide_unit["controls"])
+    assert not blind, (
+        "the transport's controls are not painted at one of these widths, so the "
+        f"comparison below is between two empty boxes (`SF-24/3`): {blind}"
+    )
     bigger = grown(narrow, wide_unit["controls"])
     assert not bigger, "the transport's controls grow with its width: " + ", ".join(bigger)
 
@@ -386,6 +412,12 @@ def test_a_planted_stretched_control_is_caught() -> None:
     stretched = [{"width": 980.0, "height": 34.0}]
     assert grown(small, stretched) == ["control 0 is 980.00px wide against 120.00px"]
     assert grown(small, small) == []
+
+
+def test_a_planted_unpainted_control_is_caught() -> None:
+    """⭐ Both ways: `SF-24/3`'s zero box is named, and a real one is not."""
+    assert unpainted([{"width": 0.0, "height": 0.0}]) == ["control 0 has no box (0.00 x 0.00)"]
+    assert unpainted([{"width": 120.0, "height": 34.0}]) == []
 
 
 def test_a_planted_transport_inside_the_column_is_caught() -> None:
@@ -547,3 +579,7 @@ def test_the_readings_this_module_takes_are_of_regions_that_exist(wide_unit: dic
     missing = [name for name in ("rail", "outline", "surface", "player") if wide_unit[name] is None]
     assert not missing, f"{missing} are not on the unit page this module reads"
     assert json.dumps(wide_unit["controls"]), "the transport carries no controls"
+    assert not unpainted(wide_unit["controls"]), (
+        "the transport's controls are in the document and painted nowhere, so every "
+        f"box this module reads off them is zero: {unpainted(wide_unit['controls'])}"
+    )

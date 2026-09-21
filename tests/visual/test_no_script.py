@@ -209,3 +209,126 @@ def test_a_page_whose_prose_is_written_by_a_script_is_caught(
         "a page whose prose is injected by a script read identically with scripts "
         "disabled — this harness cannot see the failure SF-14 is judged on"
     )
+
+
+# --- `QA-02`'s own clause: the index works with JavaScript disabled -----------
+
+#: How many presses a traversal of an index takes before giving up. ⛔ Spelled
+#: here rather than imported from `test_keyboard`: one test module importing
+#: another's constant joins two populations that have no reason to move together.
+PRESSES = 100
+
+#: The page kinds `site` names, so the index pages are asked for rather than
+#: matched on a name (a fixture's name is a corpus's text, this framework's
+#: kinds are not — `site.UNIT`, `site.INDEX`).
+INDEX_PAGES = tuple(case for case in site.pages() if site.kind_of(case) == site.INDEX)
+
+#: Every entry the root index offers, with the href it carries, read off the
+#: rendered page. ⛔ Only what a reader can SEE: an entry inside a closed
+#: disclosure is reached by opening the disclosure first, and this check's
+#: companion below is the one that asserts a disclosure can be opened at all.
+INDEX_ENTRIES = """
+Array.from(document.querySelectorAll('nav[aria-label] a'))
+  .filter(a => a.checkVisibility())
+  .map(a => a.getAttribute('href'))
+"""
+
+#: Whether a disclosure this reader can see is shut, and where it sits.
+FIRST_SHUT_SUMMARY = """
+(() => {
+  const all = Array.prototype.slice.call(document.querySelectorAll('*'));
+  const summary = Array.from(document.querySelectorAll('details:not([open]) > summary'))
+    .filter(s => s.checkVisibility())[0];
+  if (!summary) return null;
+  return {at: all.indexOf(summary), open: summary.parentElement.open};
+})()
+"""
+
+
+@pytest.mark.parametrize("case", INDEX_PAGES)
+def test_every_entry_the_index_offers_resolves_to_a_page_on_disk_with_scripts_off(
+    open_page: OpenPage, built_site: site.Site, case: str
+) -> None:
+    """⛔ `QA-02`'s acceptance: *the index works with JavaScript disabled*.
+
+    ⭐ **Resolved against the TREE, not against the document.** An index's
+    entries point off the page, so `document.querySelector(href)` — the outline
+    check's instrument — is not a question that can be asked of them; what
+    *works* means for a contents tree is that the file it names is there.
+    ⚠️ Which is a reading only this harness can take: it holds the built tree on
+    disk, and R8's floor is a reader double-clicking into exactly this page.
+
+    ⛔ **Narrowed to the pages this harness WROTE, and the narrowing is stated
+    rather than quiet.** `site` writes one unit page per fixture corpus — the
+    tree exists to exercise the three renderers, not to be a whole corpus — so
+    most of a contents tree points at units nobody built here and "the file is
+    missing" would be a fact about the fixture and not about the index.
+    ⭐ Whole-site resolution IS checked, over a real `studyforge build`, by
+    `tests/studyforge/cli/test_serve_floor.py`; this is the SCRIPTLESS half of
+    the same question and the two do not overlap.
+    """
+    open_page.open(built_site.url(case), scripts=False)
+    hrefs = [str(href) for href in open_page.evaluate(INDEX_ENTRIES)]  # type: ignore[union-attr]
+    assert hrefs, f"{case} offered no entry with scripts off, so this resolves nothing"
+    root = built_site.root.resolve()
+    here = built_site.path(case).parent
+    written = {str(built.page) for built in site.pages_built()}
+    reached, dangling = [], []
+    for href in hrefs:
+        target = (here / href.split("#", 1)[0].split("?", 1)[0]).resolve()
+        if not target.is_relative_to(root):
+            dangling.append(f"{href} (leaves the tree)")
+            continue
+        if target.relative_to(root).as_posix() not in written:
+            continue
+        reached.append(href)
+        if not target.is_file():
+            dangling.append(f"{href} (no such file)")
+    assert reached, (
+        f"{case} names none of the pages this tree wrote, so this check resolves "
+        "nothing — the index's hrefs and the tree's paths stopped agreeing"
+    )
+    assert not dangling, f"{case} with scripts off names files that are not there: {dangling}"
+
+
+def test_a_closed_group_in_the_index_opens_from_the_keyboard_with_scripts_off(
+    open_page: OpenPage, built_site: site.Site
+) -> None:
+    """⭐ The disclosure is `<details>`, so opening it is the browser's, not a script's.
+
+    ⛔ **Both directions in one reading**: shut before the press and open after
+    it. A check that only read the second half would pass on a tree whose
+    groups were open to begin with — which is the state `render.index.policy`
+    puts a small corpus in, and the reason the shut one is asserted first.
+
+    ⛔ **One check over every index rather than one per index** (Ruling 48's
+    shape, and `test_keyboard`'s own precedent one region along): a small corpus
+    has every group open, so a parametrised version would SKIP on it — a named
+    skip in every run of the whole suite, for a population that is inhabited on
+    one page. ⭐ The inhabitation is asserted first, so the press can never pass
+    over nothing.
+    """
+    opened: dict[str, bool] = {}
+    for case in INDEX_PAGES:
+        open_page.open(built_site.url(case), scripts=False)
+        shut = open_page.evaluate(FIRST_SHUT_SUMMARY)
+        if shut is None:
+            continue
+        where = dict(shut)  # type: ignore[arg-type]
+        assert where["open"] is False, f"{case}: the group this check found was already open"
+        open_page.focus_body()
+        for _press in range(PRESSES):
+            open_page.tab()
+            if open_page.focused()["at"] == where["at"]:
+                break
+        else:
+            raise AssertionError(f"{PRESSES} Tab presses never reached the shut group in {case}")
+        open_page.press("Enter")
+        opened[case] = bool(open_page.evaluate("document.activeElement.parentElement.open"))
+    assert opened, (
+        "no index in this tree carries a closed group, so this check asserts nothing "
+        "— the index policy opened them all, or the tree stopped emitting a disclosure"
+    )
+    assert all(opened.values()), (
+        f"a shut group did not open when Enter was pressed on it with scripts off: {opened}"
+    )
