@@ -60,13 +60,25 @@ def record(
     exit_code: int = 0,
     when: str = WHEN,
     section: str = SECTION,
+    cases: dict[str, bool] | None = None,
 ) -> dict:
-    """Record one run through the store, the only writer (`SF-21`)."""
+    """Record one run through the store, the only writer (`SF-21`).
+
+    ⭐ `cases` is `AX-02`'s breakdown and defaults to none, so every caller
+    written before it records exactly what it recorded before.
+    """
     depth = depth_of(root)
     address, ordinal = parse_unit_key(unit_key, depth)
     store = Progress(root, depth)
     return store.record_run(
-        address, ordinal, section, mode=mode, exit_code=exit_code, commands=["make test"], when=when
+        address,
+        ordinal,
+        section,
+        mode=mode,
+        exit_code=exit_code,
+        commands=["make test"],
+        when=when,
+        cases=cases,
     )
 
 

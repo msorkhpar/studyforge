@@ -36,10 +36,11 @@ statement differently needs no change here.
 2. ⛔ **An advisory grader is labelled** (R5). A reader must be able to tell
    *"the tests that ship with this material passed"* from *"something generated
    locally passed"*, and the two sentences are two template files.
-3. ⛔ **A QUIZ renders no panel at all** (`AX-05`, `W429`). It carries questions
-   in place of a workspace: no file, no editor window, no Run and no Submit.
-   ⚠️ The two shapes share this one surface, and one of them renders with **no
-   frame at all** — as an absence, never as controls a reader may not use.
+3. ⛔ **A QUIZ renders its questions and NO run affordance** (`AX-05`,
+   `AX-09`). It carries questions in place of a workspace: no file, no editor
+   window, no Run and no Submit — ⚠️ **and not disabled ones**, which is the
+   same rule a reading-only unit gets below. ⭐ Its surface is
+   `page.quiz`'s; this module chooses between the two and renders the label.
 4. ⛔ **A reading-only unit shows NO practice control — not a disabled one.**
    A dead button is a promise the page cannot keep. A section with no
    `workspace` gets no panel at all, and Submit is emitted only where the
@@ -91,16 +92,29 @@ built text that named the client would be a defect R8's floor reads
 (`tests/studyforge/cli/serving.py`). ⚠️ Over `file://` the object is absent, the
 controls stay hidden, and the panel says why.
 
-## ⭐ Where `AX-09` joins, so it is a seam rather than a rewrite (`E14`, M10)
+## ⭐ THE BREAKDOWN IS DECLARED HERE AND READ BACK BY THE SCRIPT (`AX-09`)
 
-⚠️ Three additions land on this same surface at M10 and none of them reopens
-what is here: the Submit **breakdown** (*main ask ✓*, *edge cases n/m*, each
-failed case named) is a new part inside the panel's output region; the
-**reference solution**, always available, is a new region beside the editor
-slot; and the **learner-worded label** is a rewording of the two grader
-templates and of nothing else. ⛔ A **quiz** renders in this panel with no
-editor, no Run and no Submit — which this module already expresses as *a section
-with no workspace gets no panel* rather than as disabled controls.
+⛔ **The counts are DERIVED and never recorded** (`AX-02`): what a run reports
+is `{case id: did it pass}`, and *main ask*, *edge cases n/m* and each failed
+edge's sentence are all that map joined with the `cases` the record declares.
+⭐ So this module emits every declared case once — its id, its kind and its
+`says`, which is the corpus's own text (R1) — and `practice.js` marks them with
+what the run said. ⚠️ **The panel never fetches anything**: a built page may
+name no API and no origin (R8, `W370`), so the verdicts arrive on the run's own
+stream, said by `serve.routes.breakdown`.
+
+⛔ **A reader shown *edge cases 2/3* is looking at an INCOMPLETE practice, not
+at a failed one.** `progress.is_pass` is untouched and nothing here is a second
+definition of a pass.
+
+## ⭐ THE REFERENCE SOLUTION IS ALREADY IN THE DOCUMENT, AND THAT IS THE DESIGN
+
+⚠️ `exercise.bundle.emit` ships it as a **`disclosure` block** under the
+lesson, so `page.blocks.prose` draws it as a real `<details>`: closed until the
+reader asks, openable with scripting off entirely, and reachable before a first
+Submit because nothing gates it (the user's ruling, spec §7 §8). ⛔ **There is
+nothing for this module to add and adding one would be the second copy** — a
+region here would be a second place the reference could be withheld from.
 """
 
 from __future__ import annotations
@@ -112,7 +126,7 @@ from studyforge.progress import RAISES as PROGRESS_RAISES
 from studyforge.progress import practice_key
 from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute
-from studyforge.render.page import mark
+from studyforge.render.page import mark, quiz
 from studyforge.render.page.assets import Placement
 from studyforge.render.page.errors import PageError
 
@@ -136,10 +150,24 @@ TESTS_TAB_TEMPLATE = "practice-tab-tests.html"
 #: under is spelled once, in the package that owns it.
 ACT_TEMPLATES = {RUN: "practice-run.html", TEST: "practice-submit.html"}
 
-#: `is this the source's own grader? -> the sentence a reader is shown`. ⛔ Keyed
-#: on the record's predicate and never on the `trust` word, so neither R5 key can
-#: reach the page through this mapping.
-GRADER_TEMPLATES = {True: "practice-grader-shipped.html", False: "practice-grader-generated.html"}
+#: `what this record IS -> the sentence a reader is shown` (spec §7 §9, the
+#: user's ruling of 2026-09-19). ⛔ **Four cases and four files** (R13), keyed on
+#: the record's own PREDICATES and never on `provenance` or `trust`, so neither
+#: R5 key can reach the page through this mapping — and no `data-*` attribute
+#: carries one either, which is what stops the words leaking back through a
+#: stylesheet hook.
+GRADER_TEMPLATES = {
+    "shipped": "practice-grader-shipped.html",
+    "generated": "practice-grader-generated.html",
+    "quiz": "practice-grader-quiz.html",
+    "none": "practice-grader-none.html",
+}
+
+#: The breakdown a Submit is reported in, and the one declared case inside it.
+#: ⛔ Emitted only where the record declares both halves (`Exercise.breaks_down`):
+#: a region with nothing to report is the dead control this panel refuses.
+BREAKDOWN_TEMPLATE = "practice-breakdown.html"
+CASE_TEMPLATE = "practice-case.html"
 
 #: What closes an optional region inside the panel. ⚠️ The same shape
 #: `page.document._region` uses, and for the same reason: a region is exactly
@@ -163,23 +191,26 @@ def render(section: dict, document: dict, placement: Placement) -> str:
     if not isinstance(workspace, dict):
         return ""
     exercise = _exercise(workspace)
+    key = key_of(document, section)
     if exercise.is_quiz:
         # ⛔ **A quiz is not work at a file** (`AX-05`): it carries questions in
         # place of a workspace, so there is no file to name, nothing to open in
         # an editor, no command to Run and no grader to Submit to. ⭐ The two
-        # shapes share this one surface and this one renders with no frame at
-        # all — and with no dead control either, which is the same rule a
-        # reading-only unit gets two lines above. ⚠️ A quiz's OWN surface, the
-        # questions and how they are answered, is `AX-06`'s and `AX-09`'s.
-        return ""
+        # shapes share this one surface and this one renders its questions with
+        # no frame and no dead control — which is the same rule a reading-only
+        # unit gets two lines above, applied to the other shape.
+        return quiz.render(
+            exercise, key=key, corpus=placement.corpus, grader=_region(grader(exercise))
+        )
     return templates.fill(
         PANEL_TEMPLATE,
-        key=escape_attribute(key_of(document, section)),
+        key=escape_attribute(key),
         corpus=escape_attribute(placement.corpus),
         main=escape(exercise.main_path),
         grader=_region(grader(exercise)),
         tabs=_region(tabs(exercise)),
         controls=controls(exercise),
+        breakdown=_region(breakdown(exercise)),
     )
 
 
@@ -246,16 +277,53 @@ def tabs(exercise: Exercise) -> str:
 
 
 def grader(exercise: Exercise) -> str:
-    """Return the sentence saying what a pass here is worth, or `''` for no grader.
+    """Return the sentence saying what a pass here is worth, in a learner's words.
 
-    ⭐ **Two sentences, two files, one predicate** (R5, R13). ⚠️ An ungraded
-    exercise carries no line at all rather than a third sentence: the page
-    already offers no Submit, which says the same thing without a claim about a
-    grader that does not exist.
+    ⭐ **Four sentences, four files, three predicates** (spec §7 §9, R13). ⛔ The
+    ungraded case says *nothing here checks your answer* rather than saying
+    nothing at all: the label is never omitted because it is unflattering, and
+    a reader who is told is a reader who can tell this practice from the one
+    above it.
     """
+    return templates.fill(GRADER_TEMPLATES[label_of(exercise)])
+
+
+def label_of(exercise: Exercise) -> str:
+    """Return which of the four labels this record is owed.
+
+    ⛔ **Asked of the record's own predicates.** `is_quiz` comes first because a
+    quiz's `graded` is `False` — `graded` means *a grader runs*, and a quiz's
+    key checks it without one (`AX-05`, *For dependents*).
+    """
+    if exercise.is_quiz:
+        return "quiz"
     if not exercise.graded:
+        return "none"
+    return "shipped" if exercise.authoritative else "generated"
+
+
+def breakdown(exercise: Exercise) -> str:
+    """Return the region a Submit's breakdown is drawn in, or `''` where none can be.
+
+    ⛔ **Every declared case is emitted, passed or not**, because the whole
+    report is *these are the things this checks* and a region that listed only
+    the failures would read as the practice's whole content on a first Submit.
+    ⚠️ The verdicts are not here: they are this run's, and they arrive on this
+    run's stream.
+    """
+    if not exercise.breaks_down or not exercise.cases:
         return ""
-    return templates.fill(GRADER_TEMPLATES[exercise.authoritative])
+    cases = "".join(
+        templates.fill(
+            CASE_TEMPLATE,
+            id=escape_attribute(case.id),
+            kind=escape_attribute(case.kind),
+            says=escape(case.says),
+        )
+        + JOIN
+        for case in exercise.cases
+    )
+    return templates.fill(BREAKDOWN_TEMPLATE, cases=cases)
 
 
 def _exercise(workspace: dict) -> Exercise:

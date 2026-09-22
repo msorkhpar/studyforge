@@ -11,7 +11,14 @@ from pathlib import Path
 
 import pytest
 
-from studyforge.serve.routes.breakdown import NO_BREAKDOWN, fold
+from studyforge.serve.routes.breakdown import (
+    CASE_FAILED,
+    CASE_LINE,
+    CASE_PASSED,
+    NO_BREAKDOWN,
+    fold,
+    said,
+)
 
 ASK = "test_the_greeting_names_who_it_greets"
 EDGE = "test_an_empty_name_is_refused"
@@ -51,6 +58,13 @@ def write_report(root: Path, body: str, declared: str = DECLARED) -> Path:
     return path
 
 
+def said_of(case: str, passed: bool) -> str:
+    """The line this module says for one case. ⛔ Built from the module's OWN
+    constants, so a test that asserted a hand-typed sentence cannot drift from
+    the shape the panel parses."""
+    return CASE_LINE.format(id=case, verdict=CASE_PASSED if passed else CASE_FAILED)
+
+
 def both(ask: bool, edge: bool) -> str:
     return (PASSING if ask else FAILING).format(name=ASK) + (PASSING if edge else FAILING).format(
         name=EDGE
@@ -68,7 +82,10 @@ def test_a_submit_records_one_verdict_per_declared_case(tmp_path, ask, edge):
     write_report(tmp_path, both(ask, edge))
     cases, said = fold("test", workspace(), tmp_path, started)
     assert cases == {ASK: ask, EDGE: edge}
-    assert said == ()
+    # ⭐ And what is RECORDED is also what is SAID, in the record's own order
+    # (`AX-09`): the panel cannot fetch the state namespace — a built page may
+    # name no API (R8) — so this stream is the only channel the breakdown has.
+    assert said == (said_of(ASK, ask), said_of(EDGE, edge))
 
 
 def test_a_declared_case_the_report_never_names_is_recorded_as_not_passed(tmp_path):
@@ -78,7 +95,7 @@ def test_a_declared_case_the_report_never_names_is_recorded_as_not_passed(tmp_pa
     write_report(tmp_path, PASSING.format(name=ASK))
     cases, said = fold("test", workspace(), tmp_path, started)
     assert cases == {ASK: True, EDGE: False}
-    assert said == ()
+    assert said == (said_of(ASK, True), said_of(EDGE, False))
 
 
 def test_the_counts_a_reader_is_shown_are_derivable_from_what_is_recorded(tmp_path):
@@ -186,3 +203,53 @@ def test_every_line_said_is_the_one_template_and_carries_no_absolute_path(tmp_pa
     head, _, tail = NO_BREAKDOWN.partition("{reason}")
     assert line.startswith(head) and line.endswith(tail)
     assert str(tmp_path) not in line and "/home/" not in line
+
+
+# --------------------------------------------------------------------------
+# ⛔ `AX-09`: what the panel reads off the stream, and what it cannot
+# --------------------------------------------------------------------------
+
+
+def test_the_line_a_case_is_said_on_is_framed_like_every_other_line_about_the_run():
+    # ⭐ `--- exit N ---` and `NO_BREAKDOWN` wear the same frame, and the client
+    # already tells such a line from the program's own output by it. ⛔ One line,
+    # so a case id carrying a newline could not smuggle a second one — and the
+    # ids a record may carry are refused for that before they reach here.
+    line = said("test_a_case", passed=True)
+    assert line.startswith("--- ") and line.endswith(" ---")
+    assert "\n" not in line
+    assert said("test_a_case", passed=False) != line
+
+
+def test_the_two_verdict_words_are_the_module_s_and_are_not_the_run_s_verdict():
+    # ⛔ `failed` is a CASE the grader reported against, never a word about the
+    # run: `progress.is_pass` is untouched and a reader shown *edge cases 2/3*
+    # is looking at an incomplete practice (`AX-02`). ⚠️ Asserted so a later
+    # rewording cannot quietly turn the breakdown into a second verdict.
+    assert CASE_PASSED != CASE_FAILED
+    assert CASE_PASSED in said("x", passed=True)
+    assert CASE_FAILED in said("x", passed=False)
+    assert CASE_LINE.format(id="x", verdict=CASE_PASSED) == said("x", passed=True)
+
+
+def test_a_run_and_a_practice_with_no_breakdown_say_nothing_at_all(tmp_path):
+    # ⛔ Only a Submit produces a grader report, so a Run saying case lines
+    # would be a stream no honest writer could have produced. ⭐ Both directions
+    # against the same report, so the silence is the MODE and not the harness.
+    started = time.time()
+    write_report(tmp_path, both(ask=True, edge=True))
+    assert fold("run", workspace(), tmp_path, started) == (None, ())
+    assert fold("test", None, tmp_path, started) == (None, ())
+    assert fold("test", workspace(), tmp_path, started)[1] != ()
+
+
+def test_a_refusal_says_its_own_sentence_and_no_case_line(tmp_path):
+    # ⚠️ The two channels must not be confused: a breakdown that could not be
+    # read honestly is a REFUSAL, and a panel handed a case line for it would
+    # draw a breakdown of nothing.
+    started = time.time()
+    write_report(tmp_path, PASSING.format(name="test_nobody_declared"))
+    _, refused = fold("test", workspace(), tmp_path, started)
+    assert len(refused) == 1
+    assert refused[0].startswith(NO_BREAKDOWN.split("{")[0])
+    assert CASE_LINE.split("{")[0] not in refused[0]

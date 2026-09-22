@@ -1,4 +1,4 @@
-/* The practice panel: Run, Submit, and the result, over the served run client.
+/* The practice panel: Run, Submit, the result, and what the Submit reported.
 
    ⛔ **This file draws; it never talks to the API.** Everything it sends goes
    through `window.studyforge.run` — `available()`, `start(corpus, practice,
@@ -20,52 +20,40 @@
    refuses a malformed key before any request, and a key spelled twice would
    simply never match anything with nothing failing anywhere.
 
-   ⛔ **The editor is NOT started from here, and that is deliberate.** It is a
-   development environment with a shell, and opening a reading page is not
-   consent to run one. The slot carries the sentence saying it is not running
-   and how to start it, so a reader sees a statement rather than a blank frame
-   — ⭐ and when `studyforge.run.practice(corpus, key)` answers where this
-   practice's two windows are, the frames replace that sentence (`W416`,
-   `W429`). ⛔ **Every URL is the SERVER's answer, never a name in this file**:
-   a built page may name no origin and no port (R8), the editor's host port is
-   per-project, and the absolute path a window opens is a path inside somebody
-   else's container.
-
-   ⛔ **This panel does not make anything read-only and never says it is.** The
-   editor enforces that itself, out of the workspace settings the server writes
-   — a guard here would be a second, weaker copy of a rule the editor keeps.
-
    ⛔ **Nothing is written to browser storage.** A run's outcome is the SERVER's
    record (`SF-21`), written where it was established; a page that also
    remembered would be a second answer to *did this pass?*. ⭐ So nothing here
    has to be namespaced against the one storage origin every `file://` page
-   shares. ⚠️ **The reload below keeps that rule** — its whole state is the
-   browser's own navigation type, which is why it needs nowhere to remember.
+   shares.
 
-   ## ⛔ ONE reload, and only a genuinely COLD instance can ever need it (`W430`)
+   ## ⭐ THE TWO EDITOR WINDOWS ARE `practice-editor.js`'s (`AX-09`)
 
-   ⭐ **What a served page may frame is composed from the editor origins the
-   SERVING INSTANCE has discovered**, and a cold instance has discovered none
-   until a reader's own client asks — which this panel does, exactly one
-   document too late: the policy governing THIS document was sent before the
-   ask. ⛔ **The serving process may not ask earlier.** Discovering an editor
-   forks `docker`, and putting that on the path of an ordinary page response is
-   refused outright (spec §8.3), so the remaining move is the client's.
+   ⚠️ **This file stood at `399` of R11's `400`** and the breakdown below had to
+   go somewhere. ⛔ **Neither a size exception nor a trim of four other rows'
+   prose was an honest answer** (`W422`'s second clause), so the split was taken
+   at the seam `W431` named: the frames, their tablist and the one reload a cold
+   instance needs are *the editor*, and this file is *the controls, the run and
+   what the run reported*. ⭐ The two share nothing but the markup.
 
-   ⭐ **The browser is ASKED rather than guessed at.** A
-   `securitypolicyviolation` naming `frame-src` and this editor's own host is
-   the browser stating that the frame was blocked; the reload then gets a
-   document composed from the record that ask has just filled. ⛔ **Nothing is
-   reloaded on a hunch** — no violation, no reload.
+   ## ⛔ THE BREAKDOWN IS READ OFF THIS RUN'S OWN STREAM, NOT FETCHED (`AX-02`)
 
-   ⛔ **Three guards, and each one closes a real loop.** The blocked URI must be
-   the editor's host, so an unrelated violation reloads nothing. The editor's
-   host must be the host THIS page was reached at, because a server withholds an
-   editor from another spelling of the same machine on purpose and no number of
-   reloads would change that. And this navigation must not itself be a reload,
-   which caps the whole remedy at one. ⚠️ **A browser with no navigation timing
-   is not reloaded at all**: failing closed is a frame that does not load, and
-   failing open is a page that reloads for ever. */
+   ⛔ **A built page may name no API and no origin** (R8, `W370`), so there is no
+   asking the state namespace where the recorded breakdown lives. ⭐ **The run's
+   response body is the one thing the server already hands this page**, and the
+   verdicts are said on it — one framed `--- case <id>: passed|failed ---` per
+   declared case, just before the exit line, by `serve.routes.breakdown`.
+
+   ⭐ **The counts are DERIVED here and were never recorded**: Python renders
+   every declared case with its id, its kind and the corpus's own sentence, and
+   this joins the run's verdicts onto them. ⛔ **A population that does not match
+   is shown as NOTHING rather than as a partial count** — a breakdown whose case
+   set differs from the panel's is a breakdown of a different practice, which is
+   what a corpus regenerated under a reader looks like.
+
+   ⛔ **A reader shown *edge cases 2/3* is looking at an INCOMPLETE practice and
+   never at a new kind of verdict.** `progress.is_pass` is untouched, this file
+   never decides what passed, and the status line beside the breakdown is still
+   the run's own word. */
 
 (function () {
   'use strict';
@@ -79,9 +67,8 @@
   var CORPUS = 'data-corpus';
   var PART = 'data-practice-part';
   var ACT = 'data-practice-act';
-  var TAB = 'data-practice-tab';
-  var FRAME = 'data-practice-frame';
   var STOP = 'stop';
+  var TEST = 'test';
 
   /* The maximised panel's own mark, and where the control's OTHER word is kept
      — ⭐ both of its words are the template's, never this file's. */
@@ -89,17 +76,34 @@
   var LABEL = 'data-practice-label';
   var ESCAPE = 'Escape';
 
-  /* The two windows, and what each frame is called to a screen reader. ⚠️ These
-     are the framework's own words for its own controls, not the material's
-     (R1) — the same status the panel's 'Running…' and 'Passed.' already have. */
-  var WINDOWS = ['main', 'test'];
-  var TITLES = { main: 'Your code', test: 'Tests' };
+  /* One declared case, its kind, and the mark a verdict leaves on it. ⚠️ The
+     verdict is an attribute AND a word: a breakdown told apart only by colour
+     is a breakdown a screen reader cannot read. */
+  var CASE = 'data-practice-case';
+  var CASE_KIND = 'data-practice-case-kind';
+  var VERDICT = 'data-practice-verdict';
+  var MAIN = 'main';
+  var EDGE = 'edge';
+  var PASSED = 'passed';
+  var FAILED = 'failed';
 
-  /* The directive a blocked editor frame is refused by, in the browser's own
-     spelling. ⚠️ Compared as a PREFIX rather than for equality, because the
-     older `violatedDirective` reports the whole directive — `frame-src 'none'`
-     — where `effectiveDirective` reports only its name. */
-  var FRAME_SRC = 'frame-src';
+  /* Every word the breakdown says, kept where the markup is. ⭐ The same reason
+     the maximise control's second word lives in its template (`W431`): a label
+     spelled in the script too would be a second place for it to drift. */
+  var SAYS = {
+    done: 'data-practice-ask-done',
+    missed: 'data-practice-ask-missed',
+    edges: 'data-practice-edges',
+    passed: 'data-practice-passed',
+    failed: 'data-practice-failed'
+  };
+
+  /* What one case's verdict looks like on the stream. ⛔ Anchored whole, and the
+     id must be one this panel DECLARES before anything is drawn — so a line of
+     this shape out of a grader's own output reaches a case set that does not
+     match and is shown as nothing. ⚠️ The record is unaffected either way: it is
+     folded from the grader's report on the server, never from this text. */
+  var CASE_LINE = /^--- case (.+): (passed|failed) ---$/;
 
   function part(panel, name) {
     return panel.querySelector('[' + PART + '="' + name + '"]');
@@ -107,6 +111,10 @@
 
   function show(element, visible) {
     if (element) { element.hidden = !visible; }
+  }
+
+  function words(element, name) {
+    return element.getAttribute(SAYS[name]) || '';
   }
 
   /* One line of output, appended as it arrives. ⚠️ `textContent`, never
@@ -134,110 +142,6 @@
     return 'That could not be started.';
   }
 
-  function frame(slot, url, title) {
-    var built = document.createElement('iframe');
-    built.src = url;
-    built.title = title;
-    slot.appendChild(built);
-  }
-
-  /* A URL's host, without its port and without its scheme. ⚠️ An IPv6 literal
-     keeps its brackets, which is the spelling `location.hostname` uses too. */
-  function hostOf(url) {
-    var found = /^[a-z]+:\/\/([^/?#]*)/i.exec(String(url || ''));
-    return found ? found[1].replace(/:\d+$/, '').toLowerCase() : '';
-  }
-
-  /* Reload once if, and only if, the browser says this document's policy
-     blocked the editor's frame. ⛔ The three guards are argued at the top of
-     this file, and each of them closes a loop rather than tidying one. */
-  function reloadWhenBlocked(url) {
-    var editor = hostOf(url);
-    var timing = window.performance && window.performance.getEntriesByType
-      ? window.performance.getEntriesByType('navigation')
-      : [];
-    if (!editor || editor !== String(location.hostname || '').toLowerCase()) { return; }
-    if (!timing.length || timing[0].type === 'reload') { return; }
-    var reloaded = false;
-    document.addEventListener('securitypolicyviolation', function (event) {
-      var directive = event.effectiveDirective || event.violatedDirective || '';
-      if (reloaded || directive.indexOf(FRAME_SRC) !== 0) { return; }
-      if (hostOf(event.blockedURI) !== editor) { return; }
-      reloaded = true;
-      location.reload();
-    });
-  }
-
-  /* ⭐ **Two frames of ONE editor, one visible at a time — never a split pane.**
-     The file a reader may type in and the file that judges it are two different
-     acts of reading, and standing them side by side halves the width of both.
-
-     ⛔ **Each frame's URL is the SERVER's answer and is never built here**: the
-     window's own URL is the only thing that can point two windows of one editor
-     at two different files, because an extension cannot read its own window's
-     query string and both windows share one workspace settings file.
-
-     ⛔ **The TESTS frame is built LAZILY, on the first click of its tab.** A
-     second workbench is a second language server, and a reader who never opens
-     the tests should never pay for one.
-
-     ⛔ **This page neither claims nor enforces read-only.** The editor does, out
-     of the workspace settings the server wrote; a guard here would be a second,
-     weaker copy of a rule the editor already keeps. */
-  function windows(panel, where) {
-    var slots = {};
-    WINDOWS.forEach(function (name) {
-      slots[name] = panel.querySelector('[' + FRAME + '="' + name + '"]');
-    });
-    if (!slots.main) { return; }
-    var tested = !!(where.test && where.test.url);
-    var buttons = [].slice.call(panel.querySelectorAll('[' + TAB + ']')).filter(
-      function (button) {
-        var keep = tested || button.getAttribute(TAB) !== 'test';
-        if (!keep) { button.hidden = true; }
-        return keep;
-      }
-    );
-    var lazy = false;
-
-    function select(name) {
-      buttons.forEach(function (button) {
-        var mine = button.getAttribute(TAB) === name;
-        button.setAttribute('aria-selected', mine ? 'true' : 'false');
-        button.tabIndex = mine ? 0 : -1;
-      });
-      WINDOWS.forEach(function (one) { show(slots[one], one === name && !!slots[one]); });
-      if (name === 'test' && !lazy && tested) {
-        lazy = true;
-        frame(slots.test, where.test.url, TITLES.test);
-      }
-    }
-
-    /* ⛔ BEFORE the frame is added, because the violation it listens for is
-       raised by adding it. */
-    reloadWhenBlocked(where.main.url);
-    frame(slots.main, where.main.url, TITLES.main);
-    buttons.forEach(function (button) {
-      button.addEventListener('click', function () { select(button.getAttribute(TAB)); });
-      /* ⚠️ Arrow keys move between tabs, which is what a tablist is announced
-         as promising. Without them the roles say one thing and the keyboard
-         does another. */
-      button.addEventListener('keydown', function (event) {
-        var step = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
-        var next = buttons.indexOf(button) + step;
-        if (!step || next < 0 || next >= buttons.length) { return; }
-        event.preventDefault();
-        buttons[next].focus();
-        select(buttons[next].getAttribute(TAB));
-      });
-    });
-    select('main');
-    /* ⭐ One tab is no choice, so the tablist stays hidden where the material
-       names no test — the same honesty as offering no Submit. */
-    show(part(panel, 'tabs'), tested);
-    show(part(panel, 'no-editor'), false);
-  }
-
   /* ⭐ **MAXIMISE: the PANEL'S OWN GEOMETRY, never a reparent** (`W431`) — the
      panel already holds all of it, so the move is one attribute on the section.
 
@@ -253,7 +157,7 @@
   function maximise(panel) {
     var button = part(panel, 'expand');
     if (!button) { return; }
-    var words = [button.textContent, button.getAttribute(LABEL) || button.textContent];
+    var both = [button.textContent, button.getAttribute(LABEL) || button.textContent];
     var wide = false;
     var was = 0;
 
@@ -262,7 +166,7 @@
       wide = open;
       if (open) { panel.setAttribute(EXPANDED, ''); } else { panel.removeAttribute(EXPANDED); }
       button.setAttribute('aria-expanded', open ? 'true' : 'false');
-      button.textContent = words[open ? 1 : 0];
+      button.textContent = both[open ? 1 : 0];
       (open ? panel : button).focus({ preventScroll: true });
       /* ⛔ **`'instant'` is the repair, not a flourish**: `reset.css` sets
          `scroll-behavior: smooth`, so a plain `scrollTo` ANIMATES and the page
@@ -278,6 +182,60 @@
     });
   }
 
+  /* ⭐ **Every declared case, marked with what THIS run said about it.** ⛔ Drawn
+     only when the two populations are the same set, and cleared to nothing
+     whenever they are not — the argument is at the top of this file. */
+  function breakdown(panel) {
+    var region = part(panel, 'breakdown');
+    if (!region) { return null; }
+    var rows = [].slice.call(region.querySelectorAll('[' + CASE + ']'));
+    var summary = part(region, 'summary');
+
+    function clear() {
+      show(region, false);
+      rows.forEach(function (row) {
+        row.removeAttribute(VERDICT);
+        var mark = part(row, 'verdict');
+        if (mark) { mark.textContent = ''; }
+      });
+      if (summary) { summary.textContent = ''; }
+    }
+
+    /* ⛔ Both directions, because either alone lets a partial count through: a
+       case the run never named, and a name this panel never declared. */
+    function whole(said) {
+      var known = 0;
+      rows.forEach(function (row) {
+        if (Object.prototype.hasOwnProperty.call(said, row.getAttribute(CASE))) { known += 1; }
+      });
+      return !!rows.length && known === rows.length && known === Object.keys(said).length;
+    }
+
+    function draw(said) {
+      if (!whole(said)) { clear(); return; }
+      var edges = 0;
+      var passed = 0;
+      var ask = true;
+      rows.forEach(function (row) {
+        var right = said[row.getAttribute(CASE)];
+        var edge = row.getAttribute(CASE_KIND) === EDGE;
+        var mark = part(row, 'verdict');
+        row.setAttribute(VERDICT, right ? PASSED : FAILED);
+        if (mark) { mark.textContent = words(region, right ? 'passed' : 'failed'); }
+        if (edge) { edges += 1; }
+        if (edge && right) { passed += 1; }
+        if (row.getAttribute(CASE_KIND) === MAIN && !right) { ask = false; }
+      });
+      if (summary) {
+        summary.textContent = words(region, ask ? 'done' : 'missed') + ' ' +
+          words(region, 'edges').replace('{passed}', passed).replace('{total}', edges);
+      }
+      show(region, true);
+    }
+
+    return { clear: clear, draw: draw };
+  }
+
   function wire(panel, run) {
     var key = panel.getAttribute(KEY);
     var corpus = panel.getAttribute(CORPUS);
@@ -286,32 +244,17 @@
     var output = part(panel, 'output');
     var acts = [].slice.call(panel.querySelectorAll('[' + ACT + ']'));
     if (!key || !corpus || !controls || !status || !output || !acts.length) { return; }
+    var cases = breakdown(panel);
 
     /* ⭐ The editor slot is shown, and what it shows is the sentence saying the
        editor is not running. Hiding it instead would be the blank panel this
-       row exists to refuse. */
+       row exists to refuse. ⚠️ What FILLS it is `practice-editor.js`'s. */
     show(part(panel, 'offline'), false);
     show(part(panel, 'editor'), true);
     show(controls, true);
     /* ⚠️ Offered where there is something to maximise: over `file://` the panel
        is one sentence, and making a sentence full-screen is a dead button. */
     maximise(panel);
-
-    /* ⭐ Fill the editor slot when the server says where THIS PRACTICE's two
-       windows are, and leave the sentence standing when it does not. ⛔ Frames
-       are added only for an editor that is already up over this corpus's own
-       files and that actually holds this practice's file — the server decides
-       both, this asks.
-
-       ⚠️ **Asked for, never assumed.** A site BUILT by one version of this
-       framework may be SERVED by another, and the client is the serving
-       process's; a panel that called a function an older client does not
-       publish would take Run and Submit down with it. */
-    if (run.practice) {
-      run.practice(corpus, key).then(function (where) {
-        if (where && where.main && where.main.url) { windows(panel, where); }
-      }, function () { return null; });
-    }
 
     var stop = null;
     var starters = [];
@@ -350,10 +293,11 @@
       show(stop, running);
     }
 
-    function settle(text) {
+    function settle(text, said) {
       var keyboard = holdsFocus() || handedBack;
       handedBack = false;
       status.textContent = text;
+      if (cases && said) { cases.draw(said); }
       live(false);
       /* ⛔ AFTER `live(false)`: the button that was pressed is disabled while
          the run is live, and focusing a disabled control does nothing at all. */
@@ -364,15 +308,25 @@
       button.addEventListener('click', function () {
         var mode = button.getAttribute(ACT);
         var keyboard = holdsFocus();
+        var said = mode === TEST ? {} : null;
         pressed = button;
         output.textContent = '';
         show(output, true);
         status.textContent = 'Running…';
+        if (cases) { cases.clear(); }
         live(true);
         if (keyboard && stop) { stop.focus(); }
-        run.start(corpus, key, mode, function (line) { append(output, line); }).then(
-          function (answer) { settle(verdict(answer, mode)); },
-          function (answer) { settle(refusal(answer)); }
+        run.start(corpus, key, mode, function (line) {
+          /* ⛔ A case line is the SERVER talking about this run rather than the
+             program's own output, so it is taken OFF the stream instead of
+             standing raw beside the breakdown it feeds — the same way the client
+             already takes the exit line. ⚠️ Every other line, the breakdown's
+             own refusal included, reaches the reader unchanged. */
+          var found = said ? CASE_LINE.exec(line) : null;
+          if (found) { said[found[1]] = found[2] === PASSED; } else { append(output, line); }
+        }).then(
+          function (answer) { settle(verdict(answer, mode), said); },
+          function (answer) { settle(refusal(answer), null); }
         );
       });
     });

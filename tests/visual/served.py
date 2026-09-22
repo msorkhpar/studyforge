@@ -169,6 +169,12 @@ class ScriptedRuns:
         #: Where this practice's two editor windows are, or `None` for no
         #: editor at all — which is what an ordinary origin here answers.
         self.windows: dict[str, dict[str, str]] | None = None
+        #: ⭐ What the SERVER says about the run just before the exit line, which
+        #: is where `routes.runs.Outcome.record`'s own lines go (`AX-02`) and
+        #: the only channel a built page has for a breakdown (`AX-09`, R8).
+        #: ⛔ Empty by default, so every check written before it reads the same
+        #: stream it read before.
+        self.said: tuple[str, ...] = ()
 
     def route(self, request: Request, rest: str) -> Response:
         """Answer one request under `/api/v1/run/`, the way the real route's shape does."""
@@ -208,6 +214,10 @@ class ScriptedRuns:
             yield (line + "\n").encode("utf-8")
         self.started.set()
         self.release.wait(RELEASE_BOUND)
+        # ⛔ BEFORE the exit line and AFTER the program's own output, which is
+        # exactly where the real `Stream` yields what `Outcome.record` returns.
+        for line in self.said:
+            yield (line + "\n").encode("utf-8")
         verdict = STOPPED if self.stopped else "0"
         yield (EXIT_LINE.format(verdict=verdict) + "\n").encode("utf-8")
 

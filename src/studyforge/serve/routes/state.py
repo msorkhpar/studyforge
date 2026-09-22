@@ -36,6 +36,8 @@ reaches this module — a route is given a path and nothing is read from its que
 headers or body — so `status` is built with no read marks and every `read` is false,
 whatever the record holds. A practice's `passed` is its `first_passed_at` being set,
 which `progress` does only for a test run exiting 0; `last.passed` is `is_pass`.
+⭐ `last.cases` is the Submit's per-case breakdown or `null` — a report beside
+that verdict, never a second one (`AX-02`).
 
 ⛔ **A failure answers a fixed message**: `422` for a malformed record (left exactly
 as it is, never reset), `500` for an unreadable one, a scan that failed, or the gate.
@@ -48,8 +50,8 @@ from dataclasses import dataclass
 from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.contents import found, missing, order, status, status_document
 from studyforge.corpus.discovery import DiscoveryError, freshness
+from studyforge.progress import CASES_KEY, ProgressFormatError, is_pass, parse_practice_key
 from studyforge.progress import RAISES as PROGRESS_RAISES
-from studyforge.progress import ProgressFormatError, is_pass, parse_practice_key
 from studyforge.serve.addressing import Located, locate
 from studyforge.serve.discovery import Discovered, ServedCorpus
 from studyforge.serve.response import API_PREFIX, Request, Response, error, json_response
@@ -222,7 +224,15 @@ def _records(
 
 
 def _summary(entry: dict) -> dict:
-    """Return what state reports of one believed practice entry."""
+    """Return what state reports of one believed practice entry.
+
+    ⭐ **`last.cases` is published and `None` where there is none** (`AX-02/3`,
+    closed here on the register's own authorisation): absent and empty are
+    different claims, and the record refuses an empty map. ⛔ **It is a REPORT
+    and not a second `passed`** — the key beside it is `is_pass` and this one
+    never touches it, so a Submit that exited zero with a failed edge is
+    published as exactly that.
+    """
     last = entry["last"]
     return {
         "passed": entry["first_passed_at"] is not None,
@@ -233,6 +243,7 @@ def _summary(entry: dict) -> dict:
             "mode": last["mode"],
             "exit": last["exit"],
             "passed": is_pass(last["mode"], last["exit"]),
+            "cases": last.get(CASES_KEY),
         },
     }
 

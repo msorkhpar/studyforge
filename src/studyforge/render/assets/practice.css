@@ -101,7 +101,7 @@ section[data-practice] button[role="tab"][aria-selected="true"] {
   border-color: var(--practice);
 }
 
-/* ⭐ The frames `practice.js` puts a RUNNING editor's two windows in (`W416`,
+/* ⭐ The frames `practice-editor.js` puts a RUNNING editor's two windows in (`W416`,
    `W429`), and they exist only on a served page: a built one names no origin
    (R8). ⚠️ A box of its own, for the reason the output has one — an editor
    given no height is a 150-pixel-tall development environment. ⛔ No colour of
@@ -253,4 +253,61 @@ section[data-practice] pre[data-practice-part="output"] {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   border-radius: var(--radius-tight);
+}
+
+/* ⭐ **WHAT THE SUBMIT REPORTED** (`AX-09`): every case this practice declares,
+   marked with what the run said about it, under one sentence that counts the
+   edges. ⛔ It sits between the status line and the raw output on purpose — the
+   reader's question after a Submit is *what is still missing*, and the grader's
+   own log is the place they go next rather than first.
+
+   ⛔ **TOLD APART BY A WORD, NEVER BY COLOUR ALONE.** Each row carries *Passed*
+   or *Not yet* as text, put there by `practice.js` out of the markup's own
+   attributes — so the breakdown reads the same to a screen reader, in a
+   high-contrast theme and on a printed page. ⚠️ The ink below is a second
+   signal and never the only one.
+
+   ⛔ **NO NEW TOKEN AND NO NEW COLOUR.** `--done` is the ink a finished thing is
+   already marked in on this site and `--accent` is the one that asks for
+   attention; a green and a red invented here would be two more values nobody
+   checked against either theme. */
+section[data-practice] div[data-practice-part="breakdown"] {
+  margin: .6rem 0 0;
+  padding: .6rem .85rem;
+  background: var(--surface);
+  border-left: 3px solid var(--rule-strong);
+  border-radius: var(--radius-tight);
+}
+
+section[data-practice] div[data-practice-part="breakdown"] p[data-practice-part="summary"] {
+  margin: 0 0 .4rem;
+  font-weight: 700;
+  color: var(--practice);
+}
+
+section[data-practice] ul[data-practice-part="cases"] {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: .9rem;
+  color: var(--fg-soft);
+}
+
+section[data-practice] li[data-practice-case] { margin: 0 0 .25rem; }
+
+/* ⭐ The word, then the sentence the CORPUS wrote (R1). ⚠️ `inline-block` with a
+   measured width so the sentences line up as a column rather than as ragged
+   prose — the one thing that makes a list of verdicts readable at a glance. */
+section[data-practice] li[data-practice-case] span[data-practice-part="verdict"] {
+  display: inline-block;
+  min-width: 5rem;
+  font-weight: 700;
+}
+
+section[data-practice] li[data-practice-case][data-practice-verdict="passed"] span {
+  color: var(--done);
+}
+
+section[data-practice] li[data-practice-case][data-practice-verdict="failed"] span {
+  color: var(--accent);
 }
