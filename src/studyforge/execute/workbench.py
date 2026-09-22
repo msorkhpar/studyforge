@@ -49,6 +49,26 @@ written into the page would be a second, weaker copy of a rule the editor
 already keeps**, so the page has none: it does not claim read-only and does not
 attempt to enforce it.
 
+⛔ **AND THE LOCK IS ONLY AS STRONG AS THE EDITOR'S CONFINEMENT — which is not
+this module's, and is not a detail** (`W433`). ⚠️ `files.readonlyExclude` is an
+**object** setting, and VS Code **merges** object settings across scopes, so a
+USER-scope entry is merged INTO the workspace value written here rather than
+being shadowed by it. ⭐ **Measured, in a real session on code-server 4.137.0:**
+the workspace value `{"Main.java": True}` became
+`{"MainTest.java": True, "Main.java": True}` after one
+`ConfigurationTarget.Global` write, and the editor's own user settings file
+carried it. ⛔ **So a reader who can reach the settings editor can make the test
+that judges them writable, and NO key this module writes can prevent it.**
+
+⭐ **What prevents it is the editor image's workbench lockdown**, which confines
+the command surface so neither the settings editor nor the settings JSON can be
+opened from inside a practice frame — ⛔ **`code-server-toolchain`, named and
+not linked (R20), and the image is tagged only after a headless browser has
+pressed those keys at a real session and seen nothing open.** ⚠️ **A consumer
+serving this framework from an editor image WITHOUT that confinement has a
+read-only lock a reader can lift**, and that is a property of the image rather
+than of these settings.
+
 ## ⛔ `files.hotExit` is `off`, and it is the subtle one
 
 ⚠️ **Editor-restore state is per WORKSPACE, not per window.** With hot exit on,
