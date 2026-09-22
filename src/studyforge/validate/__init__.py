@@ -33,12 +33,18 @@ get.
 
 ## ⛔ What another package takes, it takes from HERE (Ruling 101's producer half)
 
-⭐ **Five names below are on this surface because a package outside `validate`
+⭐ **Seven names below are on this surface because a package outside `validate`
 needs them** — `Held` and `Walk` for a walk a caller already has, and
-`RULE_DUPLICATE_PATH`, `check_placement` and `headings` for the one question
-each answers. ⛔ **They are exported rather than reached for:** a name a second
-package needs is on the first package's `__all__`, or the two packages do not
-share it, and `tests/studyforge/validate/test_init.py` reds when one leaves.
+`RULE_DUPLICATE_PATH`, `check_placement`, `headings`, `HEADING_LINE` and
+`FENCE` for the one question each answers. ⚠️ **The last two landed with
+`AX-07`**, whose source ledger walks a material file asking which headings
+enclose each fenced example — ⛔ an interleaved walk neither `headings` nor
+`region` performs, so the two PATTERNS are shared while the WALK is not, and
+the tree keeps one definition of what a heading and a fence are.
+
+⛔ **They are exported rather than reached for:** a name a second package needs
+is on the first package's `__all__`, or the two packages do not share it, and
+`tests/studyforge/validate/test_init.py` reds when one leaves.
 
 ## ⛔ `headings` is a CALLABLE here, and `validate.headings` is still the MODULE
 
@@ -74,7 +80,7 @@ from __future__ import annotations
 
 from studyforge.validate.cli import UNUSABLE, main
 from studyforge.validate.corpus import Held, Walk
-from studyforge.validate.headings import headings
+from studyforge.validate.headings import FENCE, HEADING_LINE, headings
 from studyforge.validate.nondestructive import Snapshot, check_untouched, snapshot
 from studyforge.validate.paths import RULE_DUPLICATE_PATH, check_placement
 from studyforge.validate.report import INVALID, OK, Finding, Report, Unchecked
@@ -82,6 +88,8 @@ from studyforge.validate.run import CHECKS, validate
 
 __all__ = [
     "CHECKS",
+    "FENCE",
+    "HEADING_LINE",
     "INVALID",
     "OK",
     "RULE_DUPLICATE_PATH",

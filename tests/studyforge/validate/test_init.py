@@ -37,6 +37,8 @@ OFF_SURFACE: set[tuple[str, str]] = set()
 PUBLIC_SURFACE = frozenset(
     {
         "CHECKS",
+        "FENCE",
+        "HEADING_LINE",
         "INVALID",
         "OK",
         "RULE_DUPLICATE_PATH",
