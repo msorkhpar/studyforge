@@ -171,10 +171,19 @@ CLOSED: dict[str, object] = {
     "workbench.editor.showTabs": "none",
     "workbench.editor.editorActionsLocation": "hidden",
     "workbench.layoutControl.enabled": False,
+    # ⛔ The command centre is the "sources" box and the back/forward arrows in
+    # the title bar, and it survived every round of this lockdown because no
+    # other key names it. ⚠️ A reader reported reaching it (2026-09-22) after
+    # the palette had already been confined: it is a SECOND route to Go to File.
+    "window.commandCenter": False,
     "workbench.startupEditor": "none",
     "window.menuBarVisibility": "hidden",
     "breadcrumbs.enabled": False,
     "editor.minimap.enabled": False,
+    # ⭐ A practice file ends where its last line ends. The default scrolls a
+    # whole viewport of empty space past the closing brace, which reads as "the
+    # file continues" in a panel the reader cannot resize (user, 2026-09-22).
+    "editor.scrollBeyondLastLine": False,
     "explorer.openEditors.visible": 0,
     "workbench.tips.enabled": False,
 }

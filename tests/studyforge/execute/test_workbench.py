@@ -168,8 +168,26 @@ def test_the_workbench_is_closed_around_the_one_file():
     # dropped from the set is a red test here and not a silent reopening.
     written = settings(INSIDE_MAIN, INSIDE_TEST)
     assert CLOSED and all(written[key] == value for key, value in CLOSED.items())
-    for surface in ("activityBar", "statusBar", "showTabs", "menuBarVisibility", "minimap"):
+    # ⚠️ `commandCenter` joined this list on a USER REPORT, not on a review:
+    # the title bar's search box stayed reachable through W432 and W433 because
+    # no key in this set named it, and the reader used it (2026-09-22).
+    for surface in (
+        "activityBar",
+        "statusBar",
+        "showTabs",
+        "menuBarVisibility",
+        "minimap",
+        "commandCenter",
+        "layoutControl",
+    ):
         assert any(surface in key for key in CLOSED), surface
+
+
+def test_the_practice_file_does_not_scroll_past_its_last_line():
+    # ⭐ The panel cannot be resized by the reader, so a viewport of blank space
+    # below the closing brace is not a preference: it reads as more file.
+    written = settings(INSIDE_MAIN, INSIDE_TEST)
+    assert written["editor.scrollBeyondLastLine"] is False
 
 
 def test_the_chat_pane_is_hidden_by_a_setting_and_the_explorer_is_not():
