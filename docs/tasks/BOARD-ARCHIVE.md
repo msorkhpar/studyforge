@@ -30344,3 +30344,92 @@ studyforge.practice-focus: confined workbench.action.closeOtherEditors workbench
 ⭐ **Surface:** the sibling `code-server-toolchain` — `lockdown/`, `docker/editor/`, and whatever tags an image; plus `execute/workbench.py` for clause 4.
 
 [the mint](#po-round-139)
+
+## PO round 142
+
+⛔ **`W433`'S FIRST CLAUSE WAS A MEASUREMENT AND IT WENT THE BAD WAY.**
+⭐ **A `files.readonlyExclude` entry written at USER scope is ACCEPTED, and the
+effective value becomes that entry MERGED INTO the workspace lock rather than
+shadowed by it** — measured through the workbench's own configuration API, in a
+real session, on the reader's own pinned image, with the editor's
+`User/settings.json` carrying it afterwards.
+
+⛔ **SO EVERY PLANT THE REGISTER SET AGAINST `W429` WAS DEFEATABLE FROM INSIDE
+THE PRODUCT.** ⚠️ **The read-only lock on the test that judges a reader held
+only while the reader could not reach the settings editor — and `Ctrl+,`,
+`Ctrl+P`, `Ctrl+Shift+P` and `Ctrl+Shift+F` were all live in a practice frame.**
+⭐ **The row was minted as confinement and closes as an integrity fix.**
+
+⭐ **`W433` `e74f15b3`, `AX-07` `d7b80ed2`, `AX-09` `d459fadc` all close.**
+⭐ **The toolchain pin advances `76b19ea` → `4a21021`.** ⚠️ **The office's
+hand-back claimed its branch already pinned the tip; it pinned the branch's
+FIRST commit, and pins move here.**
+
+### ⛔ THREE OFFICES WERE KILLED MID-TASK BY API ERRORS AND NOTHING WAS LOST
+
+⚠️ **One HTTP 529 and two HTTP 500s, within moments of each other, all three at
+the GATE step.** ⭐ **Every one had already committed its work AND its handoff
+and left a clean tree**, so all three were resumed rather than restarted — and
+each was told to re-read its own diff first, because an interrupted agent is
+exactly the case where *"I finished that"* is unreliable.
+
+### ⭐ Four plants the register set, each at a seam its office did not use
+
+`AX-09` — a BUILT asset naming the API root, which the floor refused on nine
+checks, ⭐ **confirming the office's constraint was real** ⚠️ **while correcting
+its reasoning: the floor forbids a BUILT text, not the SERVED client, so both
+available channels were scope extensions and the office chose the one `AX-02`
+had already built.**
+`AX-07` — the ledger re-keyed off the bare path `G5` asks for. ⛔ **RED on the
+ledger's own tests and GREEN on the gates' suite** — ⚠️ **so that contract is
+asserted from ONE SIDE ONLY, which is the same gap `AX-06/1` named from the
+other end, and `AX-08` is where the two meet.**
+`W433` — **the probe's own BLINDNESS**: `press()` made to dispatch nothing.
+⭐ **Refused by the positive half exactly as designed** — *ctrl+f did not open
+the editor's own find widget*. ⛔ **A blind probe cannot pass.**
+
+### ⭐ Verified by EFFECT, in a browser, on the image the reader now runs
+
+`Ctrl+Shift+P` does not open the palette · `Ctrl+,` does not open the settings
+editor · ⭐ **`Ctrl+F` DOES open the editor's own find, so the reader keeps what
+the practice needs.** ⚠️ **`Ctrl+F` was nearly taken from them — the editor's
+find is `actions.find`, matched no family, and was caught by PRESSING THE KEY
+rather than by reading the list.**
+
+### ⚠️ In flight
+
+⛔ **Nothing.** ⭐ **`AX-08` is unblocked by `AX-07` and is step 10.3's next
+dispatch**; `AX-10` follows it and `AX-11` is `M10`'s acceptance.
+
+### W433 — A reader can open settings and the command palette inside a practice frame, and the read-only lock is workspace-scoped
+
+⛔ **USER DIRECTION, 2026-09-21, in their own words:** *"is there a way to disable settings panel in the code-server practice iframes too? The client should not be able to change the settings there"* and, with a screenshot of the command palette open inside the practice panel, *"also this search and other things panel"*.
+
+### ⛔ THIS IS NOT COSMETIC, AND THAT IS THE WHOLE ARGUMENT
+
+⭐ **The read-only lock is what makes a Submit mean anything** ([`W429`](rows/W429.md)): `files.readonlyInclude` is `**/*` and `files.readonlyExclude` names ONLY the reader's own file, so the test that judges them cannot be edited. ⛔ **The register PLANTED exactly that and the tree went RED — making the test writable is grading theatre (R5).**
+
+⛔ **BUT THAT LOCK IS WRITTEN AS WORKSPACE SETTINGS, AND `files.readonlyExclude` IS AN OBJECT SETTING.** ⚠️ **VS Code MERGES object settings across scopes.** ⭐ **So a reader who can reach the settings editor may be able to add a USER-scope entry that re-opens the test** — ⛔ **and if they can, every plant the register set against `W429` is defeated from inside the product.**
+
+⛔ **MEASURE THIS FIRST AND DO NOT ASSUME IT EITHER WAY.** ⭐ **If it holds, say so with the reading and this row is confinement only. If it does not, this row is an INTEGRITY defect and its priority changes.**
+
+### ⛔ WHAT IS REACHABLE TODAY — measured
+
+⭐ **Nothing unbinds anything.** `grep -rn keybinding src/studyforge/` returns **nothing**: the framework writes settings and never a keybinding. ⛔ **So `Ctrl+P`, `Ctrl+Shift+P` and `Ctrl+,` are all live inside the practice frame**, and the reader's own screenshot shows the palette open, offering **Go to File**, **Show and Run Commands**, **Search for Text**, **Open Quick Chat**, **Go to Symbol**, **Start Debugging** and **Run Task**.
+
+⚠️ **Hiding a SURFACE does not disable a COMMAND.** ⛔ **[`W432`](rows/W432.md) closes panels; it does not take a keybinding away, and a closed Explorer is still one `Ctrl+P` from being irrelevant.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **The reader cannot change settings from inside the frame.** ⛔ **Both scopes** — the settings editor AND the JSON — and the measurement above decides whether this is confinement or integrity.
+2. ⭐ **The command surface is confined, by KEYBINDING and by COMMAND, not by hiding.** ⚠️ **At minimum the seven the reader's screenshot names.** ⛔ **An allow-list is the right shape and a deny-list is not**: a deny-list is wrong the next time the workbench gains a command, and nothing would say so.
+3. ⛔ **What the practice NEEDS must keep working** — editing the one file, saving it, and the panel's own Run and Submit. ⚠️ **A confinement that breaks the practice has made the product worse.**
+4. ⭐ **It must be ASSERTED, not configured and hoped.** ⛔ **Plant it: re-enable one command and show the check refuses.** ⚠️ **A check that reads a settings FILE cannot see what the workbench actually allows** — that is precisely the error [`W432`](rows/W432.md) exists because of, where a check that read INSTALLATION could not see ACTIVATION.
+
+⚠️ **DEPENDS ON [`W432`](rows/W432.md)** — same surface, same office, and `W432` must land first so this is not built on a lockdown that never runs.
+
+⭐ **The proof is a reader inside a practice frame who cannot open settings, cannot open the palette, cannot open another file — and can still edit, save, Run and Submit.**
+
+⭐ **Surface:** the sibling `code-server-toolchain` — `lockdown/` and `docker/editor/` — and `execute/workbench.py`.
+
+[the mint](#po-round-140)

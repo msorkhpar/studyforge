@@ -75,9 +75,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W433` | Developer 1 | `fix/W433-the-practice-frame-is-confined` @ `wt/dev1` | 0 @ `638ec209` | `in-progress` — ⛔ **USER DIRECTION** |
-| `AX-07` | Developer 5 | `feat/AX-07-the-source-ledger` @ `wt/dev5` | 0 @ `638ec209` | `in-progress` — `M10` step 10.3 |
-| `AX-09` | Developer 2 | `feat/AX-09-the-panel-reads-the-breakdown` @ `wt/dev2` | 0 @ `638ec209` | `in-progress` — `M10` step 10.3 |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -615,8 +612,8 @@ else.**
 | W429 | The editor shows a folder, not the practice's file, and the workbench is wide open | framework agent | ✅ done — `1fc8af42` | [`rows/W429.md`](rows/W429.md) |
 | W430 | `frame-src` is correct for `EDITOR_TTL` seconds and `'none'` after, so the panel almost never frames | framework agent | ✅ done — `963db7b2`, corpus `27fd8a1` | [`rows/W430.md`](rows/W430.md) |
 | W431 | The practice panel cannot be maximised, so a reader writes code through a letterbox | framework agent | ✅ done — `fe104365`, corpus `06df27f` | [`rows/W431.md`](rows/W431.md) |
-| W432 | The workbench lockdown is installed in the editor image and the extension host never activates it | framework agent | ✅ done — `5f62423b`, toolchain `be9b428` | [`rows/W432.md`](rows/W432.md) |
-| W433 | A reader can open settings and the command palette inside a practice frame, and the read-only lock is workspace-scoped | framework agent | `in-progress` — ⛔ **USER DIRECTION 2026-09-21** | [`rows/W433.md`](rows/W433.md) |
+| W432 | The workbench lockdown is installed in the editor image and the extension host never activates it | framework agent | ✅ done — `5f62423b` | [`rows/W432.md`](rows/W432.md) |
+| W433 | A reader can open settings and the command palette inside a practice frame, and the read-only lock is workspace-scoped | framework agent | ✅ done — `e74f15b3` | [`rows/W433.md`](rows/W433.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
