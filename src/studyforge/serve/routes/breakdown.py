@@ -48,6 +48,24 @@ run makes every report look fresh — the previous run's included, which is the
 one thing the clause exists to catch. ⭐ `routes.run` takes it immediately
 before `Runs.claim` and it arrives here unchanged.
 
+## ⭐ THE BREAKDOWN IS SAID ON THE STREAM, AND THAT IS THE ONLY CHANNEL R8 LEAVES
+
+⛔ **A built page may name no API, no origin and no client file** (R8, `W370`,
+and `tests/studyforge/cli/serving.py` reads every built text for it), so the
+panel that draws *main ask* plus *edge cases n/m* cannot fetch the state
+namespace — the place the recorded breakdown otherwise stops. ⭐ **The run's own
+response body is the one thing the page already receives from the server**, and
+`Outcome.record` already returns *the lines to say* on it, so the verdicts are
+said there: one `CASE_LINE` per declared case, just before the exit line.
+
+⚠️ **What the page draws is therefore a reading of THIS run's stream, and the
+record is still the authority.** A reader's own program can print a line of that
+shape, and the worst it buys them is a wrong sentence on their own screen for one
+run: `progress.is_pass` never reads the stream, `last.cases` is folded from the
+grader's report here, and neither moves. ⛔ **That is the same ground R5's
+theatre clause stands on** — the tests are on the reader's disk — and it is why
+this channel costs nothing that mattered.
+
 ## ⚠️ A refusal is said on the stream, never swallowed
 
 ⛔ **`breakdown_of` raises for a report that is stale, malformed, unreadable,
@@ -81,6 +99,21 @@ NO_BREAKDOWN = "--- the case breakdown could not be read: {reason} ---"
 #: accepted (R7).
 WHERE = "this practice's exercise record"
 
+#: Said, once per declared case, just before the exit line: what THIS run's own
+#: report said about that case. ⛔ Framed exactly like every other line this
+#: stream says about itself — `--- exit N ---` and `NO_BREAKDOWN` — and readable
+#: as a sentence, because it stands in a reader's own run output whether or not
+#: anything parses it. ⭐ **The id travels and the `says` does not**: the page
+#: already renders every declared case's sentence, and a second copy on the wire
+#: would go stale the moment the corpus is regenerated (`AX-01`).
+CASE_LINE = "--- case {id}: {verdict} ---"
+
+#: The two words a case line ends in. ⚠️ `failed` is a case the grader reported
+#: against, never a verdict about the run: `progress.is_pass` is untouched and a
+#: reader shown *edge cases 2/3* is looking at an INCOMPLETE practice (`AX-02`).
+CASE_PASSED = "passed"
+CASE_FAILED = "failed"
+
 
 def fold(
     mode: str, workspace: dict | None, root: Path, started: float | None
@@ -100,4 +133,10 @@ def fold(
         return None, (scrub(NO_BREAKDOWN.format(reason=refusal)),)
     if folded is None:
         return None, ()
-    return {case.id: folded.passed(case) for case in folded.cases}, ()
+    verdicts = {case.id: folded.passed(case) for case in folded.cases}
+    return verdicts, tuple(said(case.id, verdicts[case.id]) for case in folded.cases)
+
+
+def said(case: str, passed: bool) -> str:
+    """Return the one line that says what this run's report made of one case."""
+    return scrub(CASE_LINE.format(id=case, verdict=CASE_PASSED if passed else CASE_FAILED))

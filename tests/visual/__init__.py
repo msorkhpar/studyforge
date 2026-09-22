@@ -172,4 +172,20 @@ ACCEPTANCE = {
     #: answers the practice-editor route, so there is a frame to not move.
     "maximises the practice to the viewport and restores it, keeping every "
     "control, a live run and both editor windows unreloaded (W431)": "test_practice_maximise",
+    #: ⭐ `AX-09`'s clause, and it is a row of its own rather than a widening of
+    #: either above, because its ORIGIN is the subject: the two panel clauses
+    #: need a server, and this one is only a reading if there is none. ⛔ *"A
+    #: quiz page shows questions, grades them, and shows no run affordance"* is
+    #: a claim about a page that grades with no compiler, no container, no
+    #: network and no model (spec §7 §7), so it is read over `file://` — and a
+    #: check that needed an origin would have proved the opposite of it.
+    "shows a quiz's questions over file://, grades them with no server and no "
+    "request, and offers nothing to run (AX-09)": "test_practice_quiz",
+    #: ⭐ `AX-09`'s other clause, and it is a row of its own for the reason the
+    #: one above is: its origin is the opposite one. ⛔ *"A Submit shows the
+    #: breakdown, naming each failed edge case"* is a claim about a page that has
+    #: just finished a run, and the verdicts arrive on that run's own stream —
+    #: which needs a SERVED origin, and needs the server to say the lines.
+    "draws what a Submit reported — main ask, edge cases n/m, each failed case "
+    "named — beside a run verdict it never changes (AX-09)": "test_practice_breakdown",
 }

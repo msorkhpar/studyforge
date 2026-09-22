@@ -66,6 +66,13 @@ from studyforge.render.pageassets.source import text
 #: after `notes.css` because the panel sits under a section the reading surface
 #: has already set, and at equal specificity the last rule wins.
 #:
+#: ⭐ `practice-quiz.css` (`AX-09`) follows `practice.css` directly and for that
+#: part's own reason: the two are one region split at a named seam for R11 — the
+#: panel and the run on one side, the questions on the other — and a quiz wears
+#: `data-practice-quiz` rather than `data-practice`, so neither file's rules can
+#: reach the other's element and the order between them settles nothing but
+#: where a reader of the bundle finds them.
+#:
 #: ⛔ `narration.css` sits after `code-highlight.css` and before the vendored
 #: parts, and both halves of that are meaning too. It comes *after* the
 #: highlight because the narration highlight washes over the inside of a code
@@ -83,6 +90,7 @@ STYLE_PARTS = (
     "onward.css",
     "notes.css",
     "practice.css",
+    "practice-quiz.css",
     "code-highlight.css",
     "narration.css",
     "plyr.css",
@@ -120,6 +128,16 @@ STYLE_PARTS = (
 #: LAST-ness is the property being kept, and after `narration.js` so the parts
 #: that draw a region of their own read together.
 #:
+#: ⭐ `practice-editor.js` and `practice-quiz.js` (`AX-09`) follow `practice.js`
+#: for the same reason `practice-quiz.css` follows `practice.css`: they are that
+#: part split at named seams for R11 — the panel and the run, the two editor
+#: windows, and the quiz. ⛔ **The order between the three settles nothing**, and
+#: that is a property rather than luck: each one selects its own elements, none
+#: defines anything another reads, and `practice-quiz.js` deliberately does NOT
+#: ask `window.studyforge.run` whether an origin exists, because a quiz grades
+#: over `file://` (spec §7 §7, R8). ⚠️ They are before `read-mark.js` because
+#: that part's LAST-ness is the property being kept.
+#:
 #: ⭐ `theme.js` (`W388` stage 2) reads and writes the store's DISPLAY record,
 #: so it follows `study-progress.js` for the same reason `progress-view.js`
 #: does; it sits before `read-mark.js` because that part's LAST-ness is the
@@ -134,6 +152,8 @@ SCRIPT_PARTS = (
     "video-player.js",
     "narration.js",
     "practice.js",
+    "practice-editor.js",
+    "practice-quiz.js",
     "progress-view.js",
     "read-mark.js",
 )

@@ -304,3 +304,27 @@ def test_the_index_names_every_corpus_where_it_sits_and_the_report(workspace):
         f"/api/v1/state/{source_of(workspace / name)}" for name in BOTH
     ]
     assert body["report"] == list(discovered.report) and body["report"]
+
+
+def test_the_submit_breakdown_is_published_beside_the_verdict_and_is_never_one(workspace):
+    # ⛔ `AX-02/3`, closed here: the recorded breakdown reached the progress
+    # document and stopped there, so nothing on the wire carried it. ⭐ Both
+    # directions — a run with a breakdown publishes the map, and one without
+    # publishes `None` rather than `{}`, because absent and empty are different
+    # claims and the record refuses an empty map.
+    discovered = discover(workspace)
+    root = workspace / "depth2"
+    name, key = source_of(root), unit_keys(root)[0]
+
+    def reported():
+        return answer(get(discovered, f"{name}/units/{key}"))["practices"][SECTION]["last"]
+
+    record(root, key, mode="run", exit_code=0)
+    assert reported()["cases"] is None
+    broken = {"test_the_ask": True, "test_an_edge": False}
+    record(root, key, mode="test", exit_code=0, when=LATER, cases=broken)
+    said = reported()
+    assert said["cases"] == broken
+    # ⛔ **And it is a REPORT and never a second verdict**: this Submit exited
+    # zero with a failed edge, and `passed` says so unchanged (`AX-02`).
+    assert said["passed"] is True
