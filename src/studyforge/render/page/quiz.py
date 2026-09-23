@@ -1,11 +1,11 @@
-r"""The quiz panel: the questions, what may be answered, and why each answer is what it is.
+r"""The quiz panel: the questions and what may be answered — and never which answer is right.
 
 **What it does.** Renders the reader-facing surface of an exercise whose `kind`
-is `quiz` — the stem, the options, the sentence behind each one, and the control
-that grades them. ⛔ **No editor, no Run and no Submit, and not disabled ones
-either**: a quiz has no file to open, no command to run and no grader to submit
-to, so every one of those would be a dead control (`SF-24`'s standing rule,
-`W429`, `W431`).
+is `quiz` — the stem, the options, the control that sends the reader's choices
+to be graded, and the sentence saying a page opened as a file cannot have them
+checked. ⛔ **No editor, no Run and no Submit, and not disabled ones either**: a
+quiz has no file to open, no command to run and no grader to submit to, so every
+one of those would be a dead control (`SF-24`'s standing rule, `W429`, `W431`).
 
 **How you use it.** `quiz.render(exercise, key=…, corpus=…, grader=…)` returns
 the section's markup; `page.practice.render` calls it for a quiz and emits its
@@ -13,18 +13,32 @@ own panel for everything else.
 
 **Depends on.** `studyforge.exercise.quiz` for what a question IS — the record's
 own `Question` and `Option`, never a second reading of the shape — plus
-`render.templates` and `render.markup`. ⛔ **Not on `serve`**: a quiz is graded
-with no compiler, no container, no network and no model, so this renders and
-grades identically over `file://` and over a served origin (spec §7 §7, R8).
+`render.templates` and `render.markup`. ⛔ **Not on `serve`**: a page that
+needed a server to RENDER would fail the `file://` floor (R8). The page renders
+there; it simply cannot have its answers checked there, and says so.
 
-## ⛔ THE KEY IS IN THE PAGE, AND PRETENDING OTHERWISE IS THE THEATRE R5 REFUSES
+## ⛔ THE KEY IS NOT IN THE PAGE — THE USER'S RULING, 2026-09-23 (`W451`)
 
-⚠️ Every option carries `data-practice-correct` and its own sentence. ⛔ **That
-is deliberate and it is not a leak**: the site is offline and `file://`-
-addressable, so a page that graded without carrying its key could not grade at
-all — exactly as an offline workspace cannot hide its test file. ⭐ Claiming to
-hide either is the pretence R5 exists to prevent, and `exercise.quiz` says so
-first.
+> *"the quiz itself again should not require an online or agent check for the
+> answer user provided. It will be just a test with the correct answer residing
+> on the server side. When user answers it will get validated and result will be
+> returned to the user with explanation if needed"*
+
+⛔ **An option is emitted as its id and its words, and NOTHING ELSE.** Until
+`W451` each option carried `data-practice-correct` and its own sentence in
+`data-practice-says`, and the page graded itself; ⚠️ that stance — *"an offline
+page cannot hide the answer it grades with"* — is **superseded**, not argued
+with: the page no longer grades. ⭐ The local study server does
+(`serve.routes.quiz`), reading the key from the unit's own document on disk, and
+answers each choice with the chosen option's sentence.
+`tests/studyforge/render/page/test_quiz.py` reads every key and every sentence
+out of the rendered bytes and requires none of them there.
+
+⭐ **Over `file://` the questions and options still show** and a reader can
+still choose; the Check control ships `hidden` and the `offline` sentence ships
+showing — the mechanism the code panel's Run and Submit already use — and
+`practice-quiz.js` swaps the two only where the served client says an origin can
+answer.
 
 ## ⛔ R5's VOCABULARY IS NOT HERE EITHER
 
@@ -35,12 +49,12 @@ so there is no second place a token of that vocabulary could reach the page.
 
 ## ⭐ The words a reader reads are the CORPUS's; the words about them are OURS
 
-⛔ A stem, an option and its sentence come out of the document and are escaped
-as text (R1). ⚠️ *Right.*, *Not this one.* and the counting sentence are this
-framework's own words about its own control, and they live in the **templates**
-— the same two-sided spelling every hook on this page has, because markup and
-script cannot import one another and the Python side is the single source for
-what is emitted (`W431`).
+⛔ A stem and an option come out of the document and are escaped as text (R1).
+⚠️ *Right.*, *Not this one.*, the counting sentence and the offline sentence are
+this framework's own words about its own control, and they live in the
+**templates** — the same two-sided spelling every hook on this page has, because
+markup and script cannot import one another and the Python side is the single
+source for what is emitted (`W431`).
 """
 
 from __future__ import annotations
@@ -62,10 +76,6 @@ OPTION_TEMPLATE = "practice-option.html"
 #: uses: a row is exactly its markup plus one newline, never a conditional
 #: newline somewhere else (R10).
 JOIN = "\n"
-
-#: How a boolean is spelled in an attribute. ⛔ HTML's own words and not
-#: Python's, because the script reads the string back.
-SPELLED = {True: "true", False: "false"}
 
 
 def render(exercise: Exercise, *, key: str, corpus: str, grader: str) -> str:
@@ -115,12 +125,16 @@ def question(asked: Question, key: str) -> str:
 
 
 def option(offered: Option, name: str) -> str:
-    """Return one answer: what it says, whether it is the key, and why it is what it is."""
+    """Return one answer: its id and its words, and nothing that says whether it is right.
+
+    ⛔ **`offered.correct` and `offered.says` are never read here** (`W451`): the
+    first IS the key and the second tells a reader which option it is, so either
+    one in the markup is the key in the page. ⭐ Both reach a reader only from
+    the server's verdict, and only for the option they chose.
+    """
     return templates.fill(
         OPTION_TEMPLATE,
         id=escape_attribute(offered.id),
         name=escape_attribute(name),
-        correct=SPELLED[offered.correct],
-        says=escape_attribute(offered.says),
         text=escape(offered.text),
     )

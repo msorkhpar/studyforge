@@ -20,7 +20,7 @@ import pytest
 
 from studyforge.generate import read_corpus, write_site
 from studyforge.progress import Progress, store_dir
-from studyforge.serve.routes import run
+from studyforge.serve.routes import quiz, run
 from tests.studyforge.cli.serving import digests, verb_running
 from tests.studyforge.execute.runnable import fixture_copy
 from tests.studyforge.serve.routes.running import SOURCE, key, post, start_path
@@ -70,7 +70,8 @@ def test_the_site_form_registers_run_as_the_one_writer(corpus):
         version = fetch(server, "/api/v1")
         index = fetch(server, "/api/v1/run/")
     assert run.NAMESPACE in server.namespaces
-    assert server.writers == frozenset({run.NAMESPACE})
+    # ⭐ `quiz` writes too since `W451`: grading is a POST, never a prefetch.
+    assert server.writers == frozenset({run.NAMESPACE, quiz.NAMESPACE})
     assert version[0] == 200 and run.NAMESPACE.encode() in version[2]
     assert index[0] == 200
 

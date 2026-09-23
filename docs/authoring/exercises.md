@@ -259,15 +259,18 @@ two are refused — **the options are distinct once case and spacing are
 normalised**, and **every option carries its sentence**, so the reader is told
 why whichever way they went.
 
-**The key is in the document, and the site does not pretend otherwise.** An
-offline page cannot hide the answer it grades with, exactly as an offline
-workspace cannot hide its test file. The page shows the reader the answer once
-they have answered, and `correct` is written for every option, always.
+**The key is in the document you write, and never in the page a reader gets.**
+Write `correct` for every option, always. The built page shows each question and
+its options and nothing else; when the reader checks their answers, the local
+study server reads the key from your document and answers each question right or
+wrong with the sentence of the option the reader chose (the user's ruling of
+2026-09-23).
 
 **A quiz is graded by the framework with no compiler, no container, no network
-and no model**, so the reading is the same over `file://` as it is from a
-server. **It completes only when every question is answered correctly**, and it
-produces no run: there is nothing to Run and nothing to Submit.
+and no model** — a fixed comparison on the local study server. Opened as a file,
+the page shows the questions and says checking them needs that server. **It
+completes only when every question is answered correctly**, and it produces no
+run: there is nothing to Run and nothing to Submit.
 
 **A quiz is always `generated` and `advisory`, and both may be left out.** Its
 honesty gates are judgements taken once when it was authored and cannot be

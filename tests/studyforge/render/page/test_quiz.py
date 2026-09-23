@@ -8,14 +8,27 @@ opens by naming, on the other half of this surface.
 
 from __future__ import annotations
 
+import json
 import re
 
 from studyforge.exercise import from_document
 from studyforge.render import templates
+from studyforge.render.markup import escape_attribute
 from studyforge.render.page import practice, quiz
 from studyforge.render.pageassets import ASSET_DIR
 from tests.studyforge.render.page.pages import sample_placement
 from tests.studyforge.render.page.test_practice import QUIZ, SHIPPED, document, panel, section
+from tests.studyforge.serve.routes.quizzing import (
+    KEY_ATTRIBUTE,
+    PRACTICE_DOCUMENT,
+    built_texts,
+    page_of,
+    quiz_corpus,
+    sentences,
+)
+
+#: The key as a JSON island would spell it.
+JSON_KEY = re.compile(r'"correct"\s*:')
 
 #: The practice key the panel would file this quiz's section under. ⛔ Asked for
 #: rather than typed: a key spelled twice and differing by one character simply
@@ -38,28 +51,75 @@ def test_a_quiz_renders_its_questions_and_a_code_exercise_renders_nothing_here()
     assert quiz.render(code, key=KEY, corpus="demo", grader="") == ""
 
 
-def test_every_question_carries_its_stem_and_every_option_its_own_sentence():
-    # ⭐ `AX-05`: one sentence per option, right or wrong, because a page that
-    # explained only the wrong answers would teach half the material and would
-    # tell the reader which half by showing nothing.
+def test_every_question_carries_its_stem_and_every_option_its_words():
+    # ⭐ The reader can read and choose every option, over `file://` too.
     said = markup()
     for question in QUIZ["questions"]:
         assert question["stem"] in said
         for option in question["options"]:
             assert option["text"] in said
-            assert f'data-practice-says="{option["says"]}"' in said
+            assert f'data-practice-option="{option["id"]}"' in said
 
 
-def test_exactly_one_option_per_question_is_keyed_and_the_key_is_in_the_page():
-    # ⛔ **R5's theatre clause, and it is deliberate**: the site is offline and
-    # the bundle is on the reader's disk, so a page that graded without carrying
-    # its key could not grade at all — exactly as an offline workspace cannot
-    # hide its test file. ⚠️ Claiming to hide either is the pretence.
+def test_no_option_carries_the_key_or_its_sentence():
+    # ⛔ `W451`, the user's ruling of 2026-09-23: the correct answer resides on
+    # the SERVER. ⭐ Every sentence and every spelling of the key is read for,
+    # escaped and raw, because either one on the page tells a reader which
+    # option is right before they choose. ⚠️ The positive control — the same
+    # needles FOUND in the record this page was rendered from — is what makes
+    # an absence here a reading rather than a typo in the needle.
     said = markup()
-    assert said.count('data-practice-correct="true"') == len(QUIZ["questions"])
-    assert said.count('data-practice-correct="false"') == sum(
-        len(question["options"]) - 1 for question in QUIZ["questions"]
-    )
+    record = json.dumps(QUIZ)
+    for question in QUIZ["questions"]:
+        for option in question["options"]:
+            assert option["says"] in record
+            assert option["says"] not in said, option["says"]
+            assert escape_attribute(option["says"]) not in said, option["says"]
+    for spelling in ("correct", "data-practice-says"):
+        assert spelling not in said.replace("answered correctly", ""), spelling
+
+
+def test_no_built_page_or_asset_carries_a_key_or_a_sentence(tmp_path):
+    # ⛔ `W451`'s first clause, read on the BUILT prose fixture — every page and
+    # every asset the build wrote, because a key that leaked into a script, a
+    # stylesheet or a JSON island is missed by a reading of one page's markup.
+    # ⭐ Positive control, in the same test: every needle IS in the practice
+    # document on disk, which is where the server reads it — so an absence below
+    # is a reading and not a needle nobody could find.
+    root = quiz_corpus(tmp_path)
+    texts = built_texts(root)
+    page = page_of(root).relative_to(root).as_posix()
+    assert "data-practice-quiz" in texts[page], "the quiz is not on the built page at all"
+    record = (root / PRACTICE_DOCUMENT).read_text(encoding="utf-8")
+    assert '"correct": true' in record
+    for sentence in sentences():
+        assert sentence in record, sentence
+        leaked = [
+            path
+            for path, text in texts.items()
+            if sentence in text or escape_attribute(sentence) in text
+        ]
+        assert leaked == [], f"{sentence!r} is in {leaked}"
+    # ⚠️ `"correct":` and never `"correct"`: the stylesheet's own
+    # `[data-practice-verdict="correct"]` is the SERVER's verdict drawn, not a key.
+    keyed = [
+        path for path, text in texts.items() if KEY_ATTRIBUTE.search(text) or JSON_KEY.search(text)
+    ]
+    assert keyed == [], f"a key is spelled in {keyed}"
+
+
+def test_over_a_file_the_quiz_says_it_needs_the_study_server_and_offers_no_check():
+    # ⭐ `W451`'s register default: the mechanism Run and Submit use — the
+    # `offline` sentence ships showing and the controls ship `hidden`, and only
+    # a served client unhides them. ⛔ The wording is the panel's own, so a
+    # reader is told the same thing about both shapes.
+    said = markup()
+    assert '<p data-practice-part="controls" hidden>' in said
+    offline = re.search(r'<p data-practice-part="offline">([^<]*)</p>', said)
+    assert offline is not None, "the quiz does not say what a file page cannot do"
+    panel_words = templates.template("practice-panel.html").template
+    for shared in ("need", "the local study server. This page was opened as a file"):
+        assert shared in offline.group(1) and shared in panel_words, shared
 
 
 def test_a_quiz_shows_no_run_no_submit_no_editor_and_no_disabled_one_either():
@@ -126,7 +186,6 @@ def test_a_question_that_carries_markup_is_escaped_and_never_rendered_as_markup(
     assert "<script>" not in said
     assert "&lt;script&gt;" in said
     assert "&lt;b&gt;no&lt;/b&gt;" in said
-    assert 'data-practice-says="It &quot;does&quot; not."' in said
 
 
 def test_the_same_quiz_renders_identical_bytes():
@@ -156,14 +215,18 @@ def behaviour() -> str:
     return re.sub(r"/\*.*?\*/", "", SCRIPT.read_text(encoding="utf-8"), flags=re.DOTALL)
 
 
-def test_the_quiz_grades_with_no_server_and_never_asks_whether_one_exists():
-    # ⛔ **THE property of this shape** (spec §7 §7): a quiz is graded with no
-    # compiler, no container, no network and no model, so the reading is
-    # identical over `file://` and over a served origin. ⚠️ A guard on the run
-    # client would make a quiz work only where a server happens to be — which is
-    # exactly what `practice.js` does, correctly, for the other shape.
+def test_the_quiz_is_graded_by_the_served_client_and_never_by_the_page():
+    # ⛔ `W451` (spec §7 §7, amended 2026-09-23): the page holds no key, so it
+    # cannot grade — it asks `window.studyforge.quiz`, which only a SERVING
+    # process adds to a page, and only where that client says an origin can
+    # answer. ⚠️ It names no API and fetches nothing itself: R8's floor reads a
+    # built page that names the API as a defect, and the client is the one file
+    # that may.
     body = behaviour()
-    for word in ("studyforge.run", "available()", "fetch(", "XMLHttpRequest", "/api"):
+    assert "window.studyforge.quiz" in body
+    assert "client.available()" in body
+    assert "client.grade(" in body
+    for word in ("studyforge.run", "fetch(", "XMLHttpRequest", "/api", "-correct", "-says"):
         assert word not in body, word
 
 
@@ -177,29 +240,41 @@ def test_the_quiz_writes_nothing_to_browser_storage():
         assert word not in body, word
 
 
-def test_completion_is_every_question_answered_correctly_and_nothing_less():
-    # ⛔ `exercise.quiz.completes`'s rule, kept on this side of the wire. ⚠️ The
-    # count is said in every other case, so a reader is never told only that
-    # they are not finished.
+def test_completion_is_the_servers_word_and_the_page_never_re_derives_it():
+    # ⛔ `exercise.quiz.completes` is applied ONCE, in Python, by the route; the
+    # page shows `complete` and never adds verdicts up itself — a second
+    # spelling of the rule in a file that cannot import the first. ⚠️ The count
+    # is said in every other case, so a reader is never told only that they are
+    # not finished.
     body = behaviour()
-    assert "right === questions.length && questions.length" in body
+    assert "verdict.complete === true" in body
     assert "words(status, COMPLETE)" in body
     assert "'{right}'" in body and "'{asked}'" in body
+    assert "questions.length" not in body
 
 
-def test_an_unanswered_question_is_not_a_correct_one():
-    # ⛔ **Total**, exactly as the Python rule is: a question nobody answered is
-    # not correct, it is simply not answered.
+def test_an_unanswered_question_shows_nothing_and_only_the_latest_answer_draws():
+    # ⛔ A question the verdict says nobody answered shows no sentence; and a
+    # verdict for answers the reader has since changed never lands on the page.
     body = behaviour()
-    assert "return { answered: false, correct: false };" in body
+    assert "!row || !row.answered" in body
     assert 'input[type="radio"]:checked' in body
+    assert "ticket === asked" in body
 
 
 def test_every_word_the_quiz_says_is_read_off_the_markup():
     # ⭐ The two-sided spelling every hook on this page has (`W431`): a label
     # spelled in the script too would be a second place for it to drift.
     body = behaviour()
-    for said in ("Right.", "Not this one.", "Choose an answer first.", "answered correctly"):
+    for said in (
+        "Right.",
+        "Not this one.",
+        "Choose an answer first.",
+        "answered correctly",
+        "Checking",
+        "did not check",
+        "study server",
+    ):
         assert said not in body, said
     for template in ("practice-question.html", "practice-quiz.html"):
         assert templates.template(template).template != ""
