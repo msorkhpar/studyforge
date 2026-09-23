@@ -353,3 +353,25 @@ def test_a_single_bind_holds_exactly_what_inside_answers(tmp_path, root):
     assert answer is not None
     assert answer.holding("sources/one/K.java") == answer
     assert answer.holding("practice/one/K.java") is None
+
+
+# --- `W446`: a practice opens a folder of its own --------------------------
+
+
+def test_an_editor_opened_on_a_directory_of_its_bind_is_that_folder_of_one_container():
+    bind = Editor(origin="http://127.0.0.1:8443", folder="/w/practice/", base="practice")
+    assert bind.within("practice/bitmap") == Editor(
+        origin=bind.origin, folder="/w/practice/bitmap", base="practice/bitmap"
+    )
+    assert bind.within("practice") == Editor(
+        origin=bind.origin, folder="/w/practice/", base="practice"
+    )
+    assert Editor(origin=bind.origin, folder="/w", base="").within("a/b").folder == "/w/a/b"
+
+
+@pytest.mark.parametrize(
+    "directory", ["sources/one", "practice/../docs", "/practice/x", "pr\\x", ""]
+)
+def test_a_directory_outside_the_bind_is_no_folder_at_all(directory):
+    bind = Editor(origin="http://127.0.0.1:8443", folder="/w/practice", base="practice")
+    assert bind.within(directory) is None

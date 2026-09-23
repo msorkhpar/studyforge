@@ -24,7 +24,7 @@ from studyforge.execute.workbench import (
     IGNORE_TEXT,
     SETTINGS_DIR,
     SETTINGS_FILE,
-    STAGING_FILE,
+    STAGING_DIR,
     WorkbenchRefused,
     write_settings,
 )
@@ -78,7 +78,9 @@ def test_the_ignore_file_names_the_three_files_and_itself_and_is_not_a_star(tmp_
     root = corpus(tmp_path)
     write_settings(root / BASE, INSIDE_MAIN, INSIDE_TEST)
     folder = f"{BASE}/{SETTINGS_DIR}"
-    for name in (SETTINGS_FILE, STAGING_FILE, IGNORE_FILE):
+    # ⭐ `W446`: each write stages under its OWN name inside the staging
+    # directory, so the directory is what is named and whatever is in it is ours.
+    for name in (SETTINGS_FILE, f"{STAGING_DIR}/{SETTINGS_FILE}k3x9_q", IGNORE_FILE):
         assert is_ignored(f"{folder}/{name}", cwd=root), name
     # ⛔ Names, never `*`: anything else in the directory is somebody else's.
     assert not is_ignored(f"{folder}/launch.json", cwd=root)

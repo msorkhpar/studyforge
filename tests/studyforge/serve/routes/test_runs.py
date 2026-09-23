@@ -313,9 +313,11 @@ def test_a_practice_opens_through_the_bind_that_holds_it_when_the_editor_holds_t
     )
     live, discovered = runs_over(root, editor=StubEditors(both))
     answer = live.practice_editor(discovered.corpora[0], "practice/passes/greet.py", None)
-    assert answer is not None and answer["main"]["path"] == "passes/greet.py"
-    assert "folder=%2Fw%2Fpractice" in answer["main"]["url"]
-    assert (root / "practice" / ".vscode" / "settings.json").is_file()
+    assert answer is not None and answer["main"]["path"] == "greet.py"
+    # ⭐ The practice's OWN folder of that bind (`W446`), never the bind's root.
+    assert "folder=%2Fw%2Fpractice%2Fpasses&" in answer["main"]["url"]
+    assert (root / "practice" / "passes" / ".vscode" / "settings.json").is_file()
+    assert not (root / "practice" / ".vscode").exists()
     assert not (root / "sources" / ".vscode").exists()
 
 

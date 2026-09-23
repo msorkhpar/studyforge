@@ -477,8 +477,8 @@ def test_the_probe_an_instance_makes_asks_docker_about_the_compose_container(roo
 def settings_in(root) -> Path:
     """Where the editor's own settings land for `UP`: inside the part of the
     source root it mounts — the HOST side of its bind, which the index never
-    carries, because that path is a home (R7)."""
-    return root / UP.base / workbench.SETTINGS_DIR / workbench.SETTINGS_FILE
+    carries, because that path is a home (R7) — the practice's OWN folder (`W446`)."""
+    return root / UP.base / "passes" / workbench.SETTINGS_DIR / workbench.SETTINGS_FILE
 
 
 def ask_editor(root, unit=1, editor=None, path=None):
@@ -517,8 +517,8 @@ def test_a_practice_answers_a_url_for_each_of_its_two_windows(root):
     # URLs. ⚠️ Asserted as a difference between the two answers, so a composer
     # that ignored its argument cannot pass.
     assert main["url"] != test["url"]
-    assert main["path"] == "passes/greet.py"
-    assert test["path"] == "passes/check_greet.py"
+    assert main["path"] == "greet.py"
+    assert test["path"] == "check_greet.py"
     assert main["path"] in main["url"].replace("%2F", "/")
     assert test["path"] in test["url"].replace("%2F", "/")
 
@@ -531,8 +531,8 @@ def test_asking_for_a_practices_windows_writes_that_practices_workspace_settings
     # the TEST left read-only on purpose: it is the statement of what *done*
     # means, and a reader who can edit it can make it say anything.
     assert held[workbench.READONLY_INCLUDE] == {workbench.EVERYTHING: True}
-    assert held[workbench.READONLY_EXCLUDE] == {"passes/greet.py": True}
-    assert "passes/check_greet.py" not in held[workbench.READONLY_EXCLUDE]
+    assert held[workbench.READONLY_EXCLUDE] == {"greet.py": True}
+    assert "check_greet.py" not in held[workbench.READONLY_EXCLUDE]
     assert held["files.hotExit"] == "off"
 
 

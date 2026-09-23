@@ -93,6 +93,7 @@ from studyforge.execute.workbench import (
     TEST_KEY,
     WorkbenchRefused,
     open_url,
+    practice_folder,
     settings,
     write_settings,
 )
@@ -129,6 +130,7 @@ __all__ = [
     "exit_line",
     "filter_lines",
     "open_url",
+    "practice_folder",
     "require_commands",
     "require_container",
     "require_workdir",

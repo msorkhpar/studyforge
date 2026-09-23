@@ -94,6 +94,7 @@ from studyforge.execute import (
     editor_container_for,
     exit_line,
     open_url,
+    practice_folder,
     write_settings,
 )
 from studyforge.progress import CASES_KEY
@@ -213,7 +214,9 @@ class Runs:
             self._discovered.add(where.origin)
         return where
 
-    def practice_editor(self, corpus: ServedCorpus, main: str, test: str | None) -> dict | None:
+    def practice_editor(
+        self, corpus: ServedCorpus, main: str, test: str | None, named: tuple[str, ...] = ()
+    ) -> dict | None:
         """Prepare one practice's workspace and say where its two windows are, or `None`.
 
         ⭐ **`None` is the ordinary answer** — no editor up, or an editor that
@@ -222,16 +225,15 @@ class Runs:
         opens an empty, dirty buffer titled with the file's own name, which
         looks exactly like a corrupted file and is not one.
 
-        ⚠️ **The settings are written on every ask, not once.** The read-only
-        exclusion names THIS practice's own source, so the file has to be
-        rewritten when the reader moves to another practice — and that rewrite
-        is also the one signal inside the editor that the practice moved.
-        Raises `WorkbenchRefused` when it cannot be written.
+        ⛔ **Each practice opens its OWN folder, and its settings are its own**
+        (`W446`): one shared folder was one lock naming one file, so opening a
+        practice locked every other and two at once refused one. `named` is the
+        files the practice's commands name. Raises `WorkbenchRefused`.
         """
         asked = self._probe(corpus).editor()
         if asked is None:
             return None
-        where = self._remember(asked).holding(main)  # the one bind holding it (`W445`)
+        where = practice_folder(self._remember(asked), main, test, root=corpus.root, named=named)
         inside_main = None if where is None else where.inside(main)
         if where is None or inside_main is None:
             return None
