@@ -30687,3 +30687,92 @@ its fence count and most examples ship as written reasons, not exercises.**
 ⚠️ **That meets *"nothing the source already has is lost"* in the LEDGER's
 sense and may not meet it in the user's.** `ISO-M10/7` — ⚠️ **the pilot rule
 never shows a page with tests**; one such page is a single fence behind.
+
+## PO round 149
+
+⭐ **`W436` dispatched on `wt/dev5` and `W437` on `wt/dev6`, at `e43b7642`**, each
+minted and merged in round 148 before it. ⭐ **`AX-10` is still in flight on
+`wt/dev4`.**
+
+## PO round 150
+
+⭐ **`M10` STEP 10.3 CLOSES** — `AX-07`, `AX-08`, `AX-09` and ⭐ **`AX-10` merged
+`e72b28b7`**: the authoring guide teaches *author, then prove*, and a module binds
+every fence to the shipped code. ⭐ **`W437` merged `ac2a3e9a`.**
+
+### ⭐ Read by effect, each at a seam its office did not use
+
+`AX-10` — the office planted the GUIDE; ⛔ **the register planted the CODE**: a
+`CodeDraft` field renamed in the skill, and the guide's own check refused
+(*fence 1: CodeDraft(...) does not bind*). ⭐ **The contract is asserted from
+both sides.**
+`W437` — ⭐ **read on the REAL corpus's archive**: `iso-fundamentals` unit 2
+carries `(1,)`, unit 5 carries `()` (the control). ⛔ **The register made the
+reader BLIND**; it read unit 2 as carrying nothing and three tests went RED.
+
+### ⚠️ Findings carried, not minted
+
+`AX-10/1` — ⚠️ **on a page with tests, the source's test file ends as a written
+reason rather than an exercise's origin** — spec §7 §3 expects the origin.
+`AX-10/2` — `validate` re-runs neither `Q4` nor `Q5`. `AX-10/3` + `W437/1` — the
+*page moved* refusal names too little to remove. ⭐ **None blocks the pilot;
+`AX-10/1` is read at the pilot review, where it is visible.**
+
+### ⚠️ In flight
+
+⭐ **`W436`** on `wt/dev5` — ⛔ **the pilot waits on it.**
+
+### W437 — The authoring loop numbers from 1, so a unit that already has a practice collides
+
+⛔ **The authoring loop numbers a unit's exercises from 1, and a unit that
+already carries a practice collides with it.** ⭐ **Verified by the register
+in `skills/exercises/loop.py` at `5e0657ba`** — the slots run
+`range(1, plan.count + 1)` and the places take `len(shipped) + 1`. ⭐
+**Measured by the integration office (`ISO-M10/3`): the first corpus's
+`iso-fundamentals` units 2, 3 and 4 each carry a bundled `practice-1`.**
+
+⛔ **Renumbering the existing practice is refused by the loop's own docstring**:
+it moves every reader's recorded progress. ⚠️ **So the authored exercises must
+number AFTER what the unit already has** — and ⛔ **"nothing the source already
+has is lost"** is `M10`'s own *Done when*.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **Authoring a unit that already carries practices numbers its new
+   exercises after them, with no gap and no repeat** — ⛔ **READ from what the
+   unit carries, never declared by hand** (a declared offset is a second copy
+   that goes stale).
+2. ⛔ **The existing practice is byte-unchanged** and its reader progress key
+   is untouched.
+3. ⭐ **R10 holds**: re-running with nothing changed rewrites nothing.
+4. ⚠️ **Planted**: number from 1 again and the collision is REFUSED by name,
+   never silently overwritten.
+
+⭐ **Surface:** `src/studyforge/skills/exercises/` (`loop.py`, `corpus.py`).
+
+[the mint](#po-round-148)
+
+## PO round 151
+
+⭐ **[`W438`](rows/W438.md) minted — `M11` has a *Done when* and NO STEPS.** The
+user's six rulings of 2026-09-19 are its settled scope and are not re-asked.
+⛔ **The row PLANS and moves nothing**; ⭐ **it is minted now so `M11` is
+dispatchable the moment `M10` closes**, and `M10` next waits on the user's pilot
+review.
+
+## PO round 152
+
+⭐ **`W438` dispatched on `wt/dev3` at `a469adc2`.** ⭐ **The corpus took `ISO-18`
+and the `W436`-free half of `ISO-19`** on `int/m10-step-10.4-plan` at `fac256a`:
+re-pinned to `1994b437` by the onboarding skill, nothing by hand, and
+`validate` GREEN exit 0 and the corpus's own suite GREEN exit 0 there.
+⚠️ **Not yet on the framework's `workspace.json` pin** — that moves when step
+10.4 has material to read.
+
+### ⭐ One mint, blocking `M10`'s acceptance, measured by the register first
+
+[`W439`](rows/W439.md) — ⛔ **the guide says to hand-edit `corpus.json`, and an
+onboarded corpus digests it as generated.** ⭐ `hand_edited` read `[]` as
+committed (the control) and `['corpus.json']` after ONE entry typed as the guide
+says. ⚠️ **The path that works is written nowhere**, and `M10`'s *Done when*
+includes *somebody following the guide*.

@@ -137,7 +137,13 @@ from studyforge.skills.exercises.ledger import (
     key_of,
     take,
 )
-from studyforge.skills.exercises.loop import PageOutcome, Shortfall, author_page
+from studyforge.skills.exercises.loop import (
+    PageOutcome,
+    Shortfall,
+    author_page,
+    carried_practices,
+    require_after_carried,
+)
 from studyforge.skills.exercises.plan import (
     ADVANCED,
     BANDS,
@@ -232,6 +238,7 @@ __all__ = [
     "accounts_for",
     "author_corpus",
     "author_page",
+    "carried_practices",
     "band_for",
     "commit",
     "digests",
@@ -243,6 +250,7 @@ __all__ = [
     "page_entries",
     "plan_document",
     "plan_for",
+    "require_after_carried",
     "require_draft",
     "require_no_retreat",
     "require_page",

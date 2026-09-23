@@ -58,9 +58,10 @@ one does.**
 | **M7 step 7.3** | ✅ CLOSED — `TC-05` + `TC-06` | `4c8490b4` | [record](BOARD-ARCHIVE.md#po-round-128) |
 | **M7 step 7.4** | ✅ CLOSED — `SK-09` + `SF-24`, ⭐ **its one named gap ([`W416`](rows/W416.md)) FILLED at `7ce4fddd`** | `04b3e65e` | [record](BOARD-ARCHIVE.md#po-round-131) |
 | **M7 step 7.5** | ✅ CLOSED — `QA-02`, ⭐ **closing `W417` and `W419` too** | `d9cce6bc` | [record](BOARD-ARCHIVE.md#po-round-133) |
-| **M10** — every corpus has practices | ⏳ **OPEN — round 134.** ⭐ **A CORE IDEA of the project (user, 2026-09-19)**; step 10.3 building | — | [the open](BOARD-ARCHIVE.md#po-round-134) |
+| **M10** — every corpus has practices | ⏳ **OPEN — round 134.** ⭐ **A CORE IDEA of the project (user, 2026-09-19)**; step 10.4 (the corpus) planned, its pilot waits on `W436` | — | [the open](BOARD-ARCHIVE.md#po-round-134) |
 | **M10 step 10.1** | ✅ CLOSED — `AX-00`, `AX-01`, `AX-05` | `9cd37ccd` | [record](BOARD-ARCHIVE.md#po-round-136) |
 | **M10 step 10.2** | ✅ CLOSED — `AX-02`, `AX-03`, `AX-04`, `AX-06` | `638ec209` | [record](BOARD-ARCHIVE.md#po-round-141) |
+| **M10 step 10.3** | ✅ CLOSED — `AX-07`, `AX-08`, `AX-09`, `AX-10` | `e72b28b7` | [record](BOARD-ARCHIVE.md#po-round-150) |
 | **M11** — it is release-ready | ⛔ **NOT STARTED — after `M10`** (user, 2026-09-18; ruled 2026-09-19) | — | [the plan](README.md) |
 | **M9** — the Java corpus re-validates | ⛔ **NOT STARTED, and it holds 21 of the 35 undelivered capabilities.** `Claude-senior-java-engineer` converted under §12's rules, with gate-clearing exercises, and the findings written down | — | [the plan](README.md) |
 
@@ -75,7 +76,8 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `AX-10` | Developer 4 | `docs/AX-10-the-authoring-guide-catches-up` @ `wt/dev4` | 0 @ `e01c7243` | `in-progress` — `M10` step 10.3, its last row |
+| `W436` | Developer 5 | `fix/W436-an-exercise-reaches-its-dependencies` @ `wt/dev5` | 0 @ `e43b7642` | `in-progress` — blocks `M10` |
+| `W438` | Developer 3 | `docs/W438-m11-has-steps` @ `wt/dev3` | 0 @ `a469adc2` | `in-progress` — plans `M11` |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -617,8 +619,10 @@ else.**
 | W433 | A reader can open settings and the command palette inside a practice frame, and the read-only lock is workspace-scoped | framework agent | ✅ done — `e74f15b3` | [`rows/W433.md`](rows/W433.md) |
 | W434 | `safety.py`'s permitted sets are anchored `^…$`, so a trailing newline clears the gate | framework agent | ✅ done — `585af3e1` | [`rows/W434.md`](rows/W434.md) |
 | W435 | Serving a practice writes `.vscode/` into the corpus and nothing ignores it, so `workspace verify` is RED | framework agent | ✅ done — `0a5a8f3e` | [`rows/W435.md`](rows/W435.md) |
-| W436 | No shape carries an exercise's third-party dependencies, so a jPOS exercise cannot be graded | framework agent | `todo` — blocks `M10` (`ISO-M10/2`) | [`rows/W436.md`](rows/W436.md) |
-| W437 | The authoring loop numbers from 1, so a unit that already has a practice collides | framework agent | `todo` — blocks `M10` (`ISO-M10/3`) | [`rows/W437.md`](rows/W437.md) |
+| W436 | No shape carries an exercise's third-party dependencies, so a jPOS exercise cannot be graded | framework agent | `in-progress` — blocks `M10` | [`rows/W436.md`](rows/W436.md) |
+| W437 | The authoring loop numbers from 1, so a unit that already has a practice collides | framework agent | ✅ done — `ac2a3e9a` | [`rows/W437.md`](rows/W437.md) |
+| W438 | `M11` has a *Done when* and no steps, so the next milestone cannot be dispatched | framework agent | `in-progress` — plans `M11` | [`rows/W438.md`](rows/W438.md) |
+| W439 | The authoring guide says to hand-edit `corpus.json`, which an onboarded corpus treats as generated | framework agent | `todo` — blocks `M10`'s acceptance | [`rows/W439.md`](rows/W439.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the

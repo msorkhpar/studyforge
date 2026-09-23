@@ -8,12 +8,17 @@ planned exercise, the gate, the gate's own sentence and the run's last output.
 
 **How you use it.**
 
-    outcome = author_page(page, ledger, author, judge, runner, source="demo", where=where)
-    outcome.shipped                     # every Gated that cleared, ordinals 1..n
+    carried = carried_practices(root, page, where)     # (1,) when the unit has one
+    outcome = author_page(page, ledger, author, judge, runner, source="demo",
+                          where=where, carried=carried)
+    outcome.shipped                     # every Gated that cleared, numbered after `carried`
     outcome.shortfalls                  # every planned exercise that did not
 
-**Depends on.** This package's `drafts`, `gating`, `ledger` and `plan`, and
-`exercise.bundle` for `Places`. Standard library only.
+**Depends on.** This package's `drafts`, `gating`, `ledger` and `plan`;
+`exercise.bundle` for `Places` and `require_no_gap`; `skills.adapter` for
+`Layout`, the one place a unit's archive directory is computed; `unit.builder`
+for `read`, the one reader of a unit's archived documents. Standard library
+only.
 
 ## ⛔ THE BUDGET IS FIXED AND THE BAR NEVER MOVES
 
@@ -32,6 +37,19 @@ plan position would leave `1` and `3` on a page whose second exercise was
 refused — the gap `bundle.require_no_gap` and `validate`'s `practice-ordinals`
 both refuse, because renumbering later would move every reader's progress.
 
+## ⛔ A UNIT'S OWN PRACTICES COME FIRST, AND THEY ARE READ, NEVER DECLARED (`W437`)
+
+⚠️ **A unit may already carry practices** — the first corpus's
+`iso-fundamentals` units 2, 3 and 4 each carry a bundled `practice-1` — so an
+authored exercise numbered from 1 would take an ordinal a reader's progress is
+already keyed to. ⛔ **Renumbering the source's practice is refused for the
+reason above**, so authored exercises number AFTER it. ⭐ `carried_practices`
+READS what the unit carries through `unit.builder.read`, the reader a build
+uses, at the directory `Layout` computes — ⛔ never a declared offset, which
+would be a second copy that goes stale. ⛔ And `require_after_carried` refuses
+a page whose authored ordinals repeat or skip past what it carries, naming the
+practice, before anything is committed.
+
 ## ⛔ THE PLAN IS A CEILING, AND `shortfall` IS ASKED EVERY TIME
 
 ⭐ **Shipped plus refused must equal the plan**, and `plan.shortfall` — not a
@@ -42,9 +60,11 @@ is returned.
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+from pathlib import Path
 
-from studyforge.exercise import CODE
-from studyforge.exercise.bundle import Places
+from studyforge.exercise import CODE, ExerciseError
+from studyforge.exercise.bundle import Places, require_no_gap
+from studyforge.skills.adapter import Layout
 from studyforge.skills.exercises.drafts import (
     ATTEMPTS,
     Author,
@@ -62,6 +82,12 @@ from studyforge.skills.exercises.drafts import (
 from studyforge.skills.exercises.gating import Gated, Runner, gate_code, gate_quiz
 from studyforge.skills.exercises.ledger import Ledger
 from studyforge.skills.exercises.plan import Plan, Refusal, plan_for, shortfall
+from studyforge.unit.builder import NoMaterial, read
+from studyforge.unit.errors import ContentError
+
+#: The kind an archive document records for a practice. ⚠️ `archive`'s own
+#: vocabulary, the value `unit.builder.KIND_ORDER` orders last.
+PRACTICE = "practice"
 
 
 @dataclass(frozen=True, slots=True)
@@ -94,15 +120,20 @@ def author_page(
     *,
     source: str,
     where: str,
+    carried: tuple[int, ...],
 ) -> PageOutcome:
-    """Plan, draft, gate and re-draft one page's exercises — ⛔ the plan is a ceiling."""
+    """Plan, draft, gate and re-draft one page's exercises — ⛔ the plan is a ceiling.
+
+    ⛔ `carried` is what `carried_practices` read off the unit's archive, and
+    the first authored exercise takes the ordinal after the last of them.
+    """
     plan = plan_for(page.words, page.skills, page.tier, where)
     case = source_case(page, ledger)
     entries = page_entries(page, ledger)
     shipped: list[Gated] = []
     missed: list[Shortfall] = []
     for slot in range(1, plan.count + 1):
-        places = Places(page.address, page.variant, page.unit, len(shipped) + 1)
+        places = Places(page.address, page.variant, page.unit, len(carried) + len(shipped) + 1)
         first = Brief(page, case, slot, places, 1, entries)
         gated, refused = _one(first, ledger, author, judge, runner, source, f"{where}, {slot}")
         if gated is not None:
@@ -110,7 +141,55 @@ def author_page(
         else:
             missed.append(refused)
     shortfall(plan, len(shipped), tuple(Refusal(m.gate, m.says) for m in missed), where)
+    require_after_carried(carried, tuple(gated.places.ordinal for gated in shipped), where)
     return PageOutcome(page, case, plan, tuple(shipped), tuple(missed))
+
+
+def carried_practices(root: Path | str, page: Page, where: str) -> tuple[int, ...]:
+    """Return the ordinals of the practices the page's unit already carries, `1..n`.
+
+    ⭐ **Read, never declared** (`W437`): the unit's archive directory is
+    `Layout`'s, and its documents are read by `unit.builder.read` — the one
+    reader a build uses, gates and all. A unit nothing has been ingested for
+    carries nothing. ⛔ Ordinals that are not `1..n` are refused: an authored
+    exercise cannot be numbered after a hole.
+    """
+    directory = Layout(Path(root)).unit_dir(page.address, page.variant, page.unit)
+    try:
+        material = read(directory)
+    except NoMaterial:
+        return ()
+    except ContentError as error:
+        raise AuthoringError(
+            f"{where}: the unit's archived documents will not read, so what it already "
+            f"carries cannot be counted. {error}"
+        ) from None
+    found = tuple(document["ordinal"] for document in material.of_kind(PRACTICE))
+    try:
+        return require_no_gap(found, f"{where}: the practices the unit's archive carries")
+    except ExerciseError as error:
+        raise AuthoringError(str(error)) from None
+
+
+def require_after_carried(carried: tuple[int, ...], shipped: tuple[int, ...], where: str) -> None:
+    """Refuse authored ordinals that repeat or skip past what the unit carries, naming one.
+
+    ⛔ **An authored exercise at an ordinal the unit already carries would
+    overwrite the source's practice, and every reader's progress keyed to it**
+    — so it is refused by the practice's name, never renumbered and never
+    silently written over.
+    """
+    repeated = sorted(set(carried) & set(shipped))
+    if repeated:
+        raise AuthoringError(
+            f"{where}: an authored exercise takes 'practice-{repeated[0]}', which the "
+            f"unit already carries. Authored exercises number after the unit's own "
+            f"practices, and the source's practice is never overwritten or renumbered."
+        )
+    try:
+        require_no_gap(tuple(carried) + tuple(shipped), where)
+    except ExerciseError as error:
+        raise AuthoringError(str(error)) from None
 
 
 def _one(

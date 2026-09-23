@@ -93,7 +93,8 @@ rewrite leaves nobody knowing the data was there.
 **The claims a machine can check are checked against the shipped code**, by
 `tests/test_authoring_reference.py` and `tests/test_authoring_geography.py`,
 and the file-only exercise record on [Exercises](exercises.md) by
-`tests/test_fixture_exercise_rule.py` — the key lists, the vocabularies, the check names, the rule ids, the exit codes,
+`tests/test_fixture_exercise_rule.py`, and the authoring procedure on that page by
+`tests/test_authoring_exercises.py` — the key lists, the vocabularies, the check names, the rule ids, the exit codes,
 the two worked examples, which are validated rather than described, and the two
 trees on [Placement](placement.md), which the placement code draws rather than
 this reference describing them. One of those that stops being true fails a test
