@@ -58,9 +58,9 @@ from pathlib import Path
 
 from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.corpus.manifest import MANIFEST_KEYS, RAISES, parse
-from studyforge.skills.onboarding import artifacts
+from studyforge.skills.onboarding import artifacts, library
 from studyforge.skills.onboarding.onboard import Onboarding, onboard
-from studyforge.skills.onboarding.pin import PIN_FILE, PinRefused, check_commit
+from studyforge.skills.onboarding.pin import PIN_FILE, WHERE, PinRefused, check_commit
 from studyforge.skills.onboarding.record import OnboardingRefused
 
 #: The manifest key `settle` never takes, and why is the module's docstring.
@@ -82,10 +82,17 @@ def reonboard(
     recorded answers a person changes on purpose. `framework_commit` re-pins;
     without it the recorded pin is kept, and so are the recorded skills.
     ⛔ Nothing is written: `write(root, regenerate=True)` is the caller's act.
+
+    ⛔ **Kept only while it still describes the library running this** (`REL-05`):
+    a pin naming another version, or one that predates the installed library
+    (it names a sibling checkout), is refused by name without `framework_commit`
+    — the commit it records says nothing about the library installed now.
     """
     root = Path(root)
     text = _read(root / artifacts.MANIFEST)
     pin = _pin(root)
+    if framework_commit is None:
+        _refuse_stale(pin)
     draft = recorded_draft(text, not_material=not_material, settle=settle)
     made = onboard(
         draft,
@@ -165,4 +172,25 @@ def _pin(root: Path) -> dict:
         commit = check_commit(document.get("commit"))
     except PinRefused as error:
         raise OnboardingRefused(str(error)) from None
-    return {"commit": commit, "skills": skills}
+    version = document.get("version") if document.get("where") == WHERE else None
+    return {"commit": commit, "skills": skills, "version": version}
+
+
+def _refuse_stale(pin: dict) -> None:
+    """Refuse to keep a pin that does not name the library running this (`REL-05`)."""
+    try:
+        running = library.version()
+    except library.LibraryRefused as error:
+        raise OnboardingRefused(str(error)) from None
+    if pin["version"] is None:
+        raise OnboardingRefused(
+            f"{PIN_FILE} predates the installed library: it names a framework checkout "
+            f"beside this corpus. Re-pin from the installed library: pass "
+            f"framework_commit=<the commit it was built from>; nothing was written"
+        )
+    if pin["version"] != running:
+        raise OnboardingRefused(
+            f"{PIN_FILE} pins a studyforge version other than the {running} running this; "
+            f"re-pin with framework_commit=<the commit {running} was built from>, or run "
+            f"from the pinned version. Nothing was written"
+        )

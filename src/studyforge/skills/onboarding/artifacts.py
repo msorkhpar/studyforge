@@ -80,11 +80,13 @@ from studyforge.corpus.manifest import MANIFEST_FILENAME, Manifest
 from studyforge.skills.adapter import bytecode_ignores, plan_for
 from studyforge.skills.onboarding.nondestructive import EDITS_TEST, TESTS_DIR
 from studyforge.skills.onboarding.pin import (
+    DOCUMENTS,
+    FRAMEWORK,
     PIN_DIR,
     PIN_FILE,
     RECORD_FILE,
-    SIBLING,
     SKILLS,
+    VERIFY,
     stub_paths,
 )
 
@@ -161,22 +163,21 @@ def reader_document(
     hand_written: Sequence[str] = (),
     *,
     commit: str,
-    framework: str = SIBLING,
+    version: str,
 ) -> str:
     """Return what a reader is told: the declarations, where to read the state, how to run it.
 
     ⚠️ **Composed line by line rather than filled into one markup blob** (R13).
     ⛔ **It states no live figure** (`W332`): where the corpus stands moves after
     this is written and nothing rewrites it, so the document prints the command
-    that reads it. ⭐ **A pure function of the manifest** — no root, no reading,
-    and nothing here that a later `studyforge narrate` can make untrue.
-    ⛔ **Every fenced line runs as written** from a fresh clone beside the
-    framework at `commit` (R18 as amended), and a test executes each one.
-    ⛔ **`framework` is `SIBLING` from `onboard`, always** (`W442`): the address
-    from the corpus's main checkout, so the bytes never depend on the checkout
-    that ran the skill (R10). This module derives no address of its own.
+    that reads it. ⭐ **A pure function of the manifest and the pin** — no root,
+    no reading, and nothing here that a later `studyforge narrate` can make untrue.
+    ⛔ **Every fenced line runs as written** from a fresh clone's root, in a
+    Python with the pinned library installed, and a test executes each one.
+    ⛔ **No line names a path to the framework** (`REL-05`): the library is
+    installed, so a reader reaches it by module name, never through a checkout.
     """
-    run = f"PYTHONPATH={framework}/src python3 -m"
+    run = "python3 -m"
     lines = [
         f"# {manifest.title}",
         "",
@@ -197,7 +198,7 @@ def reader_document(
     return "\n".join(
         [
             *lines,
-            *_running(manifest, commit, framework, run),
+            *_running(manifest, commit, version, run),
             *_stands(run),
             *_products(manifest),
             *_yours(hand_written),
@@ -215,8 +216,8 @@ def _stands(run: str) -> list[str]:
     ⭐ The command below reads the corpus as it is at the moment it is typed.
 
     ⚠️ **Placed AFTER the fresh-clone section**, which is where the reader is
-    told what the framework's address means; before it, this fence would be the
-    first place a `PYTHONPATH` appeared and nothing would have explained it.
+    told the library is installed; before it, this fence would be the first
+    framework command and nothing would have said where it comes from.
     """
     return [
         "## Where it stands",
@@ -234,29 +235,41 @@ def _stands(run: str) -> list[str]:
     ]
 
 
-def _running(manifest: Manifest, commit: str, framework: str, run: str) -> list[str]:
-    """Give the commands that run from a fresh clone beside the framework at `commit`.
+def _running(manifest: Manifest, commit: str, version: str, run: str) -> list[str]:
+    """Give the commands that run from a fresh clone, with the pinned library installed.
 
-    ⛔ **`framework` is said from the main checkout's root** (`W442`), which is
-    where a fresh clone stands and where the pin looks for it (`W286`).
+    ⛔ **Nothing here reaches the framework by path** (`REL-05`): the install is
+    said in prose, because where a reader's wheel sits is theirs, and every
+    fenced line reaches the library by module name.
     """
     return [
         "## Running it from a fresh clone",
         "",
-        "The framework is a checkout beside this repository's main checkout —",
-        "this repository itself unless it is a linked worktree — never a submodule",
-        f"and never installed. Clone it there; it is `{framework}` from the main",
-        "checkout's root, and these run from there. They pin the framework,",
+        f"The framework is the `{FRAMEWORK}` library, installed into the Python that",
+        "runs these commands — never a submodule, and never a checkout this",
+        f"repository reaches by path. This corpus is pinned to `{FRAMEWORK}` version",
+        f"`{version}`, built from commit `{commit}`.",
+        "The library is not published to a package index: build a wheel from the",
+        "framework at that commit and install it, for example with",
+        "`python3 -m pip install --no-index <the wheel>`.",
+        "",
+        "Then, from this repository's root, these check that the installed",
+        "library is the pinned version, list the skill procedures it ships,",
         "ingest with this corpus's adapter, check the archive, and say what a",
         "build would write before building:",
         "",
         "```",
-        f"git -C {framework} checkout --detach {commit}",
+        VERIFY,
+        DOCUMENTS,
         f"{run} {plan_for(manifest).package} .",
         f"{run} studyforge.cli validate .",
         f"{run} studyforge.cli plan .",
         f"{run} studyforge.cli build . --out .",
         "```",
+        "",
+        f"A skill's procedure is printed by naming it — `{DOCUMENTS} onboarding`",
+        f"is this corpus's onboarding procedure — and `{PIN_DIR}/skills/` names each",
+        "skill this corpus was pointed at.",
         "",
         "The adapter stamps today's date as `ingested`; pass a date after `.` to",
         "reproduce an earlier archive byte for byte. Narration needs a running",

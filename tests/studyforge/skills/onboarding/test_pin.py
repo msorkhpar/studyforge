@@ -1,8 +1,9 @@
 """Mirror of `src/studyforge/skills/onboarding/pin.py` (R12).
 
-⭐ **Two rules are load-bearing here and neither is about JSON:** the pin
-records a commit and never a path (R7), and the framework is a sibling checkout
-and never a submodule (R18, amended).
+⭐ **Three rules are load-bearing here and none is about JSON:** the pin records
+the INSTALLED library's version and a commit, never a path (R7, `REL-05`); a
+stub resolves through the installed package, never a checkout; and the
+framework is never a submodule (R18, amended).
 """
 
 from __future__ import annotations
@@ -10,20 +11,32 @@ from __future__ import annotations
 import ast
 import importlib.util
 import json
+import re
 import subprocess
+import sys
 
 import pytest
 
-from studyforge.skills.onboarding import pin
+from studyforge.skills import documents
+from studyforge.skills.onboarding import library, pin
 from tests.studyforge.skills.onboarding import corpora
+from tests.support import repository_root
+
+#: The version of the library this test's Python imports.
+VERSION = library.version()
+
+#: A stub's command line: the module that prints a procedure, and the skill.
+COMMAND = re.compile(r"^    (python3 -m \S+) (\S+)$", re.MULTILINE)
 
 
-def test_the_pin_records_a_commit_and_a_sibling():
-    document = pin.pin_document(corpora.COMMIT)
+def test_the_pin_records_the_installed_library_a_version_and_a_commit():
+    document = pin.pin_document(corpora.COMMIT, VERSION)
 
     assert document["commit"] == corpora.COMMIT
-    assert document["where"] == "sibling"
+    assert document["version"] == VERSION
+    assert document["where"] == "installed"
     assert document["framework"] == "studyforge"
+    assert document["pin_api"] == 2
 
 
 @pytest.mark.parametrize(
@@ -46,48 +59,73 @@ def test_anything_that_is_not_a_commit_is_refused(value):
     # the value most likely to be passed here by mistake, and it is exactly the
     # shape that carries a home directory once somebody resolves it.
     with pytest.raises(pin.PinRefused):
-        pin.pin_document(value)
+        pin.pin_document(value, VERSION)
+
+
+@pytest.mark.parametrize("value", ["../0.1.0", "/somewhere", "0.1.0/x", "", "v0.1", None, 1])
+def test_anything_that_is_not_a_version_is_refused(value):
+    with pytest.raises(pin.PinRefused):
+        pin.pin_document(corpora.COMMIT, value)
 
 
 def test_the_refused_value_is_not_quoted_back():
     # ⚠️ W19's rule: the branch fires *because* the value looks like a path,
     # which is precisely when reproducing it puts one in a log.
     with pytest.raises(pin.PinRefused) as refused:
-        pin.pin_document("/somewhere/studyforge")
+        pin.pin_document("/somewhere/studyforge", VERSION)
+    with pytest.raises(pin.PinRefused) as refused_version:
+        pin.pin_document(corpora.COMMIT, "0.1/somewhere")
 
     assert "/somewhere/studyforge" not in str(refused.value)
+    assert "0.1/somewhere" not in str(refused_version.value)
 
 
-def test_a_stub_carries_the_pin_and_points_at_a_sibling_rather_than_a_path():
-    text = pin.stub("adapter", corpora.COMMIT)
+def test_a_stub_carries_the_pin_and_names_the_installed_command_never_a_path():
+    lines = pin.stub("adapter", corpora.COMMIT, VERSION).splitlines()
 
-    assert f"pin: {corpora.COMMIT}" in text
-    assert "../studyforge/src/studyforge/skills/adapter/SKILL.md" in text
+    assert f"pin: {corpora.COMMIT}" in lines
+    assert f"version: {VERSION}" in lines
+    assert f"    {pin.DOCUMENTS} adapter" in lines
+    assert f"    {pin.VERIFY}" in lines
+    text = "\n".join(lines)
+    assert "SKILL.md" not in text and "../" not in text and "src/" not in text
     assert "/home" not in text and "~" not in text
+
+
+def test_every_stub_names_a_command_that_prints_its_procedure_from_the_package():
+    # ⭐ Follow the pointer the way a reader does — run the command it names —
+    # and get the very document the installed package ships.
+    for name in pin.SKILLS:
+        command = COMMAND.search(pin.stub(name, corpora.COMMIT, VERSION))
+        assert command, name
+        done = subprocess.run(
+            [sys.executable, "-m", command.group(1).removeprefix("python3 -m "), command[2]],
+            capture_output=True,
+            timeout=60,
+            check=False,
+            env={"PYTHONPATH": str(repository_root() / "src"), "PATH": ""},
+        )
+        assert done.returncode == 0, done.stderr
+        assert done.stdout == documents.document(name).read_bytes()
 
 
 def test_no_stub_copies_a_procedure():
     # ⭐ A pointer, not a copy: the whole stub is a handful of lines, so it
     # cannot have quietly become a stale duplicate of the real procedure.
-    assert len(pin.stub("onboarding", corpora.COMMIT).splitlines()) < 15
+    assert len(pin.stub("onboarding", corpora.COMMIT, VERSION).splitlines()) < 20
 
 
 def test_an_unknown_skill_is_refused_rather_than_stubbed():
     with pytest.raises(pin.PinRefused):
-        pin.stub("delivery", corpora.COMMIT)
+        pin.stub("delivery", corpora.COMMIT, VERSION)
     with pytest.raises(pin.PinRefused):
         pin.stub_paths(("adapter", "delivery"))
 
 
-def test_every_declared_skill_has_a_procedure_in_this_repository():
-    # ⭐ Checked here rather than in the corpus: a corpus cannot check a skill
-    # it does not carry, and a stub pointing at a file that does not exist is
-    # the failure a pointer is supposed to make impossible.
-    from tests.support import repository_root
-
-    skills = repository_root() / "src" / "studyforge" / "skills"
-    missing = [name for name in pin.SKILLS if not (skills / name / "SKILL.md").exists()]
-    assert not missing, f"these declared skills have no procedure: {missing}"
+def test_every_declared_skill_ships_a_procedure_in_the_package():
+    # ⭐ Asked of the locator the corpus's pin check asks, not of a tree path.
+    missing = [name for name in pin.SKILLS if name not in documents.names()]
+    assert not missing, f"these declared skills ship no procedure: {missing}"
 
 
 def test_the_generated_check_is_a_module_that_parses():
@@ -116,93 +154,16 @@ def test_the_generated_check_says_it_is_generated():
     assert "R19" in pin.pin_test()
 
 
+def test_the_generated_check_asks_no_checkout_and_starts_no_process():
+    text = pin.pin_test()
+
+    assert "subprocess" not in text and "git" not in text.replace(".gitmodules", "")
+    assert "../" not in text
+
+
 # --------------------------------------------------------------------------
-# ⛔ W270: a pinned commit is one the framework checkout HAS
+# ⛔ The generated check, run the way the corpus's suite runs it
 # --------------------------------------------------------------------------
-
-#: Forty hex characters the synthetic framework does not hold.
-LACKED = "b" * 40
-
-
-def test_a_commit_the_framework_checkout_holds_is_accepted(tmp_path):
-    root = tmp_path / "corpus"
-    corpora.framework_beside(root)
-
-    assert pin.check_held(corpora.COMMIT, pin.framework_of(root)) == corpora.COMMIT
-
-
-def test_a_well_formed_commit_the_checkout_lacks_is_refused_and_quoted_nowhere(tmp_path):
-    root = tmp_path / "corpus"
-    framework = corpora.framework_beside(root)
-
-    with pytest.raises(pin.PinRefused) as refused:
-        pin.check_held(LACKED, pin.framework_of(root))
-
-    assert "does not hold the pinned commit" in str(refused.value)
-    assert LACKED not in str(refused.value) and str(framework) not in str(refused.value)
-
-
-def test_an_absent_framework_checkout_is_refused_by_name(tmp_path):
-    with pytest.raises(pin.PinRefused) as refused:
-        pin.check_held(corpora.COMMIT, pin.framework_of(tmp_path / "corpus"))
-
-    assert "no framework checkout" in str(refused.value)
-    assert str(tmp_path) not in str(refused.value)
-
-
-def test_a_directory_that_is_not_a_git_checkout_is_refused_by_name(tmp_path):
-    (tmp_path / pin.FRAMEWORK).mkdir()
-
-    with pytest.raises(pin.PinRefused) as refused:
-        pin.check_held(corpora.COMMIT, pin.framework_of(tmp_path / "corpus"))
-
-    assert "not a git checkout" in str(refused.value)
-
-
-def test_a_missing_git_is_refused_by_name(tmp_path, monkeypatch):
-    corpora.framework_beside(tmp_path / "corpus")
-    monkeypatch.setattr(pin.shutil, "which", lambda name: None)
-
-    with pytest.raises(pin.PinRefused) as refused:
-        pin.check_held(corpora.COMMIT, pin.framework_of(tmp_path / "corpus"))
-
-    assert "git is not installed" in str(refused.value)
-
-
-def test_a_malformed_commit_never_reaches_git(tmp_path, monkeypatch):
-    # ⛔ R7: the shape is checked first, so a path is never handed to a subprocess.
-    def refuse(*args, **kwargs):
-        raise AssertionError("git was asked about a value that is not a commit")
-
-    monkeypatch.setattr(pin.subprocess, "run", refuse)
-    with pytest.raises(pin.PinRefused):
-        pin.check_held("../studyforge", tmp_path)
-
-
-def test_the_lookup_is_local_and_never_fetches(tmp_path, monkeypatch):
-    corpora.framework_beside(tmp_path / "corpus")
-    asked = []
-    real = subprocess.run
-
-    def spy(command, **kwargs):
-        asked.append((command, kwargs.get("env") or {}))
-        return real(command, **kwargs)
-
-    monkeypatch.setattr(pin.subprocess, "run", spy)
-    pin.check_held(corpora.COMMIT, pin.framework_of(tmp_path / "corpus"))
-
-    assert [command[3] for command, _ in asked] == ["rev-parse", "cat-file"]
-    assert all(env.get("GIT_NO_LAZY_FETCH") == "1" for _, env in asked)
-    assert not any("fetch" in command for command, _ in asked)
-
-
-def test_the_framework_is_looked_for_beside_a_relative_root(tmp_path, monkeypatch):
-    # ⚠️ `Path(".").parent` is `.`: unresolved, the pin would look inside the corpus.
-    root = tmp_path / "corpus"
-    root.mkdir()
-    monkeypatch.chdir(root)
-
-    assert pin.framework_of(".") == tmp_path.resolve() / pin.FRAMEWORK
 
 
 def _generated(root):
@@ -212,7 +173,15 @@ def _generated(root):
     spec = importlib.util.spec_from_file_location("generated_pin", root / artifacts.PIN_TEST)
     loaded = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(loaded)
-    return loaded.test_the_framework_beside_this_corpus_holds_the_pinned_commit
+    return loaded
+
+
+def _every(loaded):
+    """Run every test the generated module defines; return how many ran."""
+    tests = [name for name in sorted(vars(loaded)) if name.startswith("test_")]
+    for name in tests:
+        getattr(loaded, name)()
+    return len(tests)
 
 
 def _onboarded(tmp_path):
@@ -223,175 +192,69 @@ def _onboarded(tmp_path):
     return root
 
 
-def test_the_generated_pin_test_passes_when_the_framework_holds_the_commit(tmp_path):
-    _generated(_onboarded(tmp_path))()
-
-
-def test_the_generated_pin_test_fails_on_a_well_formed_commit_the_framework_lacks(tmp_path):
-    # ⛔ W270 clause 2: not only on a malformed pin.
-    root = _onboarded(tmp_path)
+def _repin(root, **changes):
     pinned = root / pin.PIN_FILE
     document = json.loads(pinned.read_text(encoding="utf-8"))
-    pinned.write_text(json.dumps({**document, "commit": LACKED}), encoding="utf-8")
-
-    with pytest.raises(AssertionError, match="does not hold the pinned"):
-        _generated(root)()
+    pinned.write_text(json.dumps({**document, **changes}), encoding="utf-8")
 
 
-def test_the_generated_pin_test_fails_when_no_framework_is_beside_the_corpus(tmp_path):
-    import shutil
-
+def test_the_generated_pin_test_passes_with_nothing_beside_the_corpus(tmp_path):
     root = _onboarded(tmp_path)
-    shutil.rmtree(tmp_path / pin.FRAMEWORK)
 
-    with pytest.raises(AssertionError, match="no framework checkout"):
-        _generated(root)()
-
-
-# --------------------------------------------------------------------------
-# ⛔ W286: a corpus in a LINKED WORKTREE finds the framework beside its main checkout
-# --------------------------------------------------------------------------
+    assert sorted(path.name for path in tmp_path.iterdir()) == ["corpus"]
+    assert _every(_generated(root)) == 5
 
 
-def _linked_worktree(tmp_path, *, framework=True):
-    """The shared fixture, named here because every test below reads it as one thing."""
-    return corpora.linked_worktree(tmp_path, framework=framework)
+def test_the_generated_pin_test_fails_when_the_installed_library_is_another_version(tmp_path):
+    # ⛔ The pin check verifies the INSTALLED library: a pin naming a version
+    # this Python does not import is caught, whatever the stubs say.
+    root = _onboarded(tmp_path)
+    _repin(root, version="0.0.1")
+
+    with pytest.raises(AssertionError, match="install the pinned version, or re-pin"):
+        _generated(root).test_the_installed_library_is_the_pinned_version()
 
 
-def _no_symlink_anywhere(tmp_path):
-    assert not [path for path in tmp_path.rglob("*") if path.is_symlink()]
+def test_a_stub_naming_another_version_than_the_pin_fails_the_generated_test(tmp_path):
+    # ⛔ `REL-05`'s acceptance, verbatim: a stub naming another version fails.
+    root = _onboarded(tmp_path)
+    stub = root / pin.stub_paths(("adapter",))[0]
+    stub.write_text(
+        stub.read_text(encoding="utf-8").replace(f"version: {VERSION}", "version: 0.0.1"),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(AssertionError, match="name a commit or a version the pin does not"):
+        _generated(root).test_no_stub_has_drifted_from_the_pin()
 
 
-def test_a_linked_worktree_looks_beside_its_main_checkout(tmp_path):
-    worktree = _linked_worktree(tmp_path)
+def test_a_stub_naming_another_commit_than_the_pin_fails_the_generated_test(tmp_path):
+    root = _onboarded(tmp_path)
+    _repin(root, commit="b" * 40)
 
-    assert pin.main_checkout(worktree) == (tmp_path / "corpus").resolve()
-    assert pin.framework_of(worktree) == tmp_path.resolve() / pin.FRAMEWORK
-    assert not (worktree.parent / pin.FRAMEWORK).exists()
-    assert pin.check_held(corpora.COMMIT, pin.framework_of(worktree)) == corpora.COMMIT
-    _no_symlink_anywhere(tmp_path)
+    with pytest.raises(AssertionError, match="name a commit or a version the pin does not"):
+        _generated(root).test_no_stub_has_drifted_from_the_pin()
 
 
-def test_a_main_checkout_still_looks_beside_itself(tmp_path):
-    worktree = _linked_worktree(tmp_path)
-    main = worktree.parent.parent / "corpus"
+def test_a_pin_carrying_a_path_fails_the_generated_test(tmp_path):
+    root = _onboarded(tmp_path)
+    _repin(root, version="../studyforge")
 
-    assert pin.main_checkout(main) == main.resolve()
-
-
-def test_a_directory_inside_a_repository_is_not_taken_for_its_checkout(tmp_path):
-    # ⛔ Only a checkout's TOP LEVEL is asked: an export copied into some other
-    # repository stands beside its own parent, never beside that repository.
-    worktree = _linked_worktree(tmp_path)
-    export = worktree / "export"
-    export.mkdir()
-
-    assert pin.framework_of(export) == worktree.resolve() / pin.FRAMEWORK
+    with pytest.raises(AssertionError, match="a path is not one"):
+        _generated(root).test_the_pin_records_a_version_and_a_commit_and_not_a_path()
 
 
-def test_a_linked_worktree_with_no_framework_beside_its_main_checkout_is_refused(tmp_path):
-    worktree = _linked_worktree(tmp_path, framework=False)
+def test_a_stub_pointed_back_at_a_tree_path_fails_the_generated_test(tmp_path):
+    # ⛔ THE PLANT, kept as a test: a stub rewritten to the sibling scheme's
+    # tree path — the shape the release tip wrote — fails the drift check.
+    root = _onboarded(tmp_path)
+    stub = root / pin.stub_paths(("onboarding",))[0]
+    stub.write_text(
+        "# Skill — onboarding (pinned)\n\n"
+        f"pin: {corpora.COMMIT}\n\n"
+        "The procedure lives at `../studyforge/src/studyforge/skills/onboarding/SKILL.md`.\n",
+        encoding="utf-8",
+    )
 
-    with pytest.raises(pin.PinRefused) as refused:
-        pin.check_held(corpora.COMMIT, pin.framework_of(worktree))
-
-    assert "beside the corpus's main checkout" in str(refused.value)
-    assert str(tmp_path) not in str(refused.value)
-
-
-def test_a_commit_the_framework_lacks_is_still_refused_from_a_linked_worktree(tmp_path):
-    from studyforge.skills.onboarding import onboard
-
-    worktree = corpora.material(_linked_worktree(tmp_path), framework=False)
-
-    with pytest.raises(pin.PinRefused, match="does not hold the pinned commit"):
-        pin.check_held(LACKED, pin.framework_of(worktree))
-    with pytest.raises(pin.PinRefused, match="does not hold the pinned commit"):
-        onboard(corpora.DRAFT, framework_commit=LACKED).write(worktree)
-    assert not (worktree / pin.PIN_FILE).exists()
-
-
-def test_the_worktree_questions_are_local_and_never_fetch(tmp_path, monkeypatch):
-    worktree = _linked_worktree(tmp_path)
-    asked = []
-    real = subprocess.run
-
-    def spy(command, **kwargs):
-        asked.append((command, kwargs.get("env") or {}))
-        return real(command, **kwargs)
-
-    monkeypatch.setattr(pin.subprocess, "run", spy)
-    pin.check_held(corpora.COMMIT, pin.framework_of(worktree))
-
-    assert [command[3] for command, _ in asked] == ["rev-parse"] * 3 + ["cat-file"]
-    assert all(env.get("GIT_NO_LAZY_FETCH") == "1" for _, env in asked)
-
-
-def _onboarded_worktree(tmp_path):
-    from studyforge.skills.onboarding import onboard
-
-    worktree = corpora.material(_linked_worktree(tmp_path), framework=False)
-    onboard(corpora.DRAFT, framework_commit=corpora.COMMIT, root=worktree).write(worktree)
-    return worktree
-
-
-def test_the_generated_pin_test_passes_in_a_linked_worktree_with_no_symlink(tmp_path):
-    worktree = _onboarded_worktree(tmp_path)
-
-    _no_symlink_anywhere(tmp_path)
-    _generated(worktree)()
-
-
-def test_the_generated_pin_test_fails_in_a_linked_worktree_on_a_commit_the_framework_lacks(
-    tmp_path,
-):
-    worktree = _onboarded_worktree(tmp_path)
-    pinned = worktree / pin.PIN_FILE
-    document = json.loads(pinned.read_text(encoding="utf-8"))
-    pinned.write_text(json.dumps({**document, "commit": LACKED}), encoding="utf-8")
-
-    with pytest.raises(AssertionError, match="does not hold the pinned"):
-        _generated(worktree)()
-
-
-def test_the_generated_pin_test_fails_in_a_linked_worktree_with_no_framework(tmp_path):
-    import shutil
-
-    worktree = _onboarded_worktree(tmp_path)
-    shutil.rmtree(tmp_path / pin.FRAMEWORK)
-
-    with pytest.raises(AssertionError, match="beside its main checkout"):
-        _generated(worktree)()
-
-
-def test_the_generated_pin_test_carries_the_very_function_the_pin_uses():
-    # ⭐ One copy of the rule: the emitted check is `main_checkout`'s own source.
-    import inspect
-
-    assert inspect.getsource(pin.main_checkout) in pin.pin_test()
-
-
-# --------------------------------------------------------------------------
-# ⛔ W442: the stubs address the framework as the WORKSPACE lays it out
-# --------------------------------------------------------------------------
-
-
-def test_the_sibling_from_the_main_checkout_is_where_the_pin_looks_from_a_worktree(tmp_path):
-    # ⭐ The check resolves (`W286`) and the address does not: from the main
-    # checkout, `SIBLING` reaches exactly what `framework_of` finds from the
-    # worktree, so the two never name different checkouts.
-    worktree = _linked_worktree(tmp_path)
-
-    assert (pin.main_checkout(worktree) / pin.SIBLING).resolve() == pin.framework_of(worktree)
-    assert pin.SIBLING == "../studyforge"
-    assert not hasattr(pin, "framework_from"), "no per-checkout address is rendered (W442)"
-
-
-def test_a_stub_points_through_the_address_it_is_given_and_defaults_to_the_sibling():
-    default = pin.stub("adapter", corpora.COMMIT)
-    deeper = pin.stub("adapter", corpora.COMMIT, "../../studyforge")
-
-    assert "`../studyforge/src/studyforge/skills/adapter/SKILL.md`" in default
-    assert "`../../studyforge/src/studyforge/skills/adapter/SKILL.md`" in deeper
-    assert "../studyforge/src" not in deeper.replace("../../studyforge/src", "")
-    assert "main checkout" in default and "main checkout" in deeper
+    with pytest.raises(AssertionError, match="name a commit or a version the pin does not"):
+        _generated(root).test_no_stub_has_drifted_from_the_pin()

@@ -2,7 +2,7 @@
 
 **Take a repository of teaching material from nothing to a corpus this
 framework can build, and leave nothing for anybody to retype.** The one manual
-step is: check the framework out beside the repository, and run this.
+step is: install the framework library into the Python you run this with.
 
 ⛔ **This skill does not reason about unfamiliar material and it does not write
 an adapter's reading step.** Reconnaissance answers the first (`SK-01`) and a
@@ -38,29 +38,49 @@ still retyping**, and a second source pays it again. This skill writes them.
 You need three things, and nothing else:
 
 1. the repository of material, on disk;
-2. this framework, **checked out beside that repository's main checkout** —
-   which is the repository itself unless it is a linked worktree (`W286`) —
-   ⛔ **never a submodule** (R18, amended: nothing in this project is pushed to
-   any remote, so a submodule URL has no legal form) and never vendored,
-   never copied;
+2. this framework, **installed as a library** into the Python that runs these
+   steps and the corpus's own checks — ⛔ **never a checkout this repository
+   reaches by path, never a submodule** (R18, amended: nothing in this project
+   is pushed to any remote, so a submodule URL has no legal form), never
+   vendored, never copied. It is not published to a package index: build a
+   wheel from the framework and install it;
 3. reconnaissance's draft (`SK-01`), which is a `dict` and not yet a manifest.
 
-⛔ **The framework is a sibling checkout at a recorded commit.** The commit is
-what this skill writes into the corpus's pin, and a relative sibling name is
-what it writes as the location — ⛔ **never an absolute path, which carries
-somebody's home directory** (R7).
+⛔ **The pin is the INSTALLED library** (`REL-05`). This skill reads the version
+of the `studyforge` this Python imports and writes it into the corpus's pin
+beside the commit you pass as `framework_commit` — the commit that library was
+built from. ⛔ **Never a path**, relative or absolute: a path carries somebody's
+home directory (R7), and a sibling checkout is a development arrangement a
+stranger with the installed library does not have.
 
-⛔ **Every generated document addresses the framework as `../studyforge`, from
-the corpus's main checkout — whichever checkout ran this skill** (`W442`). A
-reader's path is the workspace's sibling layout (R18), so a regenerate from a
-linked worktree and one from the main checkout write byte-identical files
-(R10). ⚠️ **Run the fenced commands from the main checkout's root**; the pin
-check alone resolves a linked worktree to its main checkout (`W286`).
+⭐ **Every skill stub names its skill and the command that prints its procedure
+from the installed package** — the skill-document locator,
+`studyforge.skills.documents`, run as a module with the skill's name — never a
+file in a checkout.
 
-⛔ **The commit must be one that checkout holds** (`W270`). `write` asks the
-sibling named `studyforge` with a local `git cat-file -e`, and refuses by name,
-writing nothing, when the checkout is absent, is not a git checkout, or lacks
-the commit. The generated `test_framework_pin.py` asks the same question.
+⭐ **And one command says whether the library this Python imports is the
+version a corpus is pinned to** — exit 0 when it is, 1 when it is another, and a
+sentence either way. The generated `test_framework_pin.py` asks the same
+question, of the same library, from inside the corpus:
+
+```
+python3 -m studyforge.skills.onboarding.verify .
+```
+
+⚠️ **The version is verified; the commit is recorded.** An installed wheel
+carries no git history, so nothing can be asked whether it holds a commit; the
+commit is your statement of what the library was built from, checked for its
+shape. ⛔ A library whose version cannot be read is refused by name, and
+nothing is written.
+
+⛔ **A corpus onboarded before this — its pin names a framework checkout beside
+it (`"where": "sibling"`) — keeps working until it re-onboards**: its committed
+stubs and pin test do not import this library. ⭐ Its next regenerate must
+re-pin, from the installed library: `reonboard('.', framework_commit=<the
+commit the library was built from>)`. Without `framework_commit` that
+re-onboarding is refused by name, because the commit a sibling was at says
+nothing about the library installed now — and so is one whose pin names a
+version other than the one running.
 
 ---
 
@@ -162,8 +182,9 @@ python3 -c "from studyforge.skills.onboarding import hand_edited, reonboard; \
   when a corpus starts authoring. ⛔ Any answer it does not name that would move is
   still refused by name (`W329`, below); `content` is never settled here, because a
   new content shape is a new onboarding.
-- ⭐ **`framework_commit` re-pins.** Without it the recorded pin and its skills are
-  kept. ⛔ **The pin, every stub and `ONBOARDING.md` move together or not at all**:
+- ⭐ **`framework_commit` re-pins**, to the library running `reonboard`. Without it
+  the recorded pin and its skills are kept — ⛔ only while the pin names the
+  version running, and never for a pin that predates the installed library. ⛔ **The pin, every stub and `ONBOARDING.md` move together or not at all**:
   a pin advanced by hand leaves the stubs behind, which the generated
   `test_framework_pin.py` refuses (`test_no_stub_has_drifted_from_the_pin`) and
   `hand_edited` names as `.studyforge/pin.json`.
@@ -204,8 +225,8 @@ What lands, and why each one exists:
 |---|---|
 | `corpus.json` | the draft promoted, with **every generated file already declared `content.not_material`** |
 | the adapter package and its suite | `SK-02`'s scaffold, wired in — one file that is yours and every other one generated; ⛔ how many is the scaffold's own listing (`scaffold(...).lines()`, the adapter skill's step 1), never a number typed here (`W345`) |
-| `.studyforge/pin.json` and the skill stubs | the framework's commit, and thin pointers that carry it |
-| `tests/` — two checks | R3's assertion, read from what a build declares it writes and from the tree through that same declaration, with this corpus's edits baked in; and the pin-drift check |
+| `.studyforge/pin.json` and the skill stubs | the installed library's version and the commit it was built from, and thin pointers that carry both and name the command that prints each procedure from the installed package |
+| `tests/` — two checks | R3's assertion, read from what a build declares it writes and from the tree through that same declaration, with this corpus's edits baked in; and the pin check — the installed library is the pinned version, ships every stubbed skill, and no stub has drifted |
 | `ONBOARDING.md` | what a reader gets, read off the corpus's own declarations, with commands that run from a fresh clone (`W313`) — and **no live figure**: where the corpus stands is a command it prints, because nothing rewrites a generated document when narrating or re-ingesting moves the answer (`W332`) |
 | `.studyforge/installed.json` | what step 6 undoes, a digest per generated file, and the one module that is yours, marked `hand_written` with no digest |
 

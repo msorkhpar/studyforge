@@ -15,7 +15,7 @@ from types import ModuleType
 
 import pytest
 
-from studyforge.skills import adapter, delivery, onboarding
+from studyforge.skills import adapter, delivery, documents, onboarding
 from studyforge.skills.delivery import (
     ANSWERS,
     LOG,
@@ -242,12 +242,13 @@ def test_the_log_lives_in_a_directory_validate_skips():
 
 def test_the_stub_a_corpus_receives_points_at_a_procedure_that_names_the_log():
     # ⭐ The corpus's copy of the procedure is a GENERATED pointer; follow it to
-    # the document it names, and read the log's place out of that document.
+    # the document it names — through the installed package's locator, the way
+    # its command does (`REL-05`) — and read the log's place out of that document.
     assert "onboarding" in pin.SKILLS
-    pointer = pin.stub("onboarding", COMMIT, "../studyforge")
-    target = re.search(r"`\.\./studyforge/(\S+SKILL\.md)`", pointer)
+    pointer = pin.stub("onboarding", COMMIT, "0.1.0")
+    target = re.search(rf"^    {re.escape(pin.DOCUMENTS)} (\S+)$", pointer, re.MULTILINE)
     assert target, pointer
-    procedure = (repository_root() / target.group(1)).read_text("utf-8")
+    procedure = documents.text(target.group(1))
     assert f"`{LOG}`" in procedure
     assert QUESTION in procedure
 

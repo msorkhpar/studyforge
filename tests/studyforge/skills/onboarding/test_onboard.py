@@ -230,18 +230,44 @@ def test_the_report_names_every_path_and_the_one_that_is_yours():
     assert "studyforge validate" in lines
 
 
-def test_a_write_whose_pin_the_framework_lacks_is_refused_and_writes_nothing(tmp_path):
-    # ⛔ W270: a well-formed sha is not enough; the checkout beside must hold it.
+def test_a_write_from_another_library_than_the_pin_names_is_refused_and_writes_nothing(
+    tmp_path, monkeypatch
+):
+    # ⛔ `REL-05`: the pin names the library it was made by; a write run by
+    # another version would record a pin this Python does not import.
+    from studyforge.skills.onboarding import library
     from studyforge.skills.onboarding.pin import PinRefused
 
     root = corpora.material(tmp_path / "corpus")
     before = sorted(path for path in root.rglob("*"))
-    made = onboard(corpora.DRAFT, framework_commit="b" * 40)
+    made = onboard(corpora.DRAFT, framework_commit=corpora.COMMIT)
+    monkeypatch.setattr(library, "version", lambda: "0.0.1")
 
-    with pytest.raises(PinRefused, match="does not hold the pinned commit"):
+    with pytest.raises(PinRefused, match="the library running it is 0.0.1"):
         made.write(root)
 
     assert sorted(path for path in root.rglob("*")) == before
+
+
+def test_a_library_whose_version_cannot_be_read_is_refused_before_anything_is_planned(
+    monkeypatch,
+):
+    from studyforge.skills.onboarding import library
+    from studyforge.skills.onboarding.pin import PinRefused
+
+    def unreadable():
+        raise library.LibraryRefused("no version here")
+
+    monkeypatch.setattr(library, "version", unreadable)
+
+    with pytest.raises(PinRefused, match="no version here"):
+        onboard(corpora.DRAFT, framework_commit=corpora.COMMIT)
+
+
+def test_the_report_names_the_library_it_pins():
+    from studyforge.skills.onboarding.library import version
+
+    assert f"studyforge {version()}, built from {corpora.COMMIT}" in "\n".join(_made().lines())
 
 
 def test_the_pin_is_refused_before_anything_is_planned():
@@ -417,13 +443,13 @@ def test_a_manifest_that_does_not_parse_is_refused_by_name_rather_than_overwritt
 
 
 def _both_checkouts(tmp_path):
-    """One corpus repository as a main checkout AND a linked worktree, the framework beside.
+    """One corpus repository as a main checkout AND a linked worktree, nothing beside either.
 
     ⭐ The same material in both, so the only difference between them is the
     checkout the skill runs in — which is the one thing that must move no byte.
     """
-    worktree = corpora.material(corpora.linked_worktree(tmp_path), framework=False)
-    main = corpora.material(tmp_path / "corpus", framework=False)
+    worktree = corpora.material(corpora.linked_worktree(tmp_path))
+    main = corpora.material(tmp_path / "corpus")
     return main, worktree
 
 
@@ -451,27 +477,9 @@ def test_a_worktree_and_its_main_checkout_write_byte_identical_files(tmp_path):
     assert RECORD_FILE in written[main][0] and artifacts.READER_DOC in written[main][0]
 
 
-def test_the_rendered_path_is_the_one_a_reader_of_the_main_checkout_needs(tmp_path):
-    # ⛔ Written from the worktree, the address resolves to the framework FROM
-    # THE MAIN CHECKOUT — the workspace's sibling layout (R18) — and the pin
-    # check still found that framework from the worktree (`W286` holds).
-    from studyforge.skills.onboarding import pin
-
-    main, worktree = _both_checkouts(tmp_path)
-
-    onboard(corpora.DRAFT, framework_commit=corpora.COMMIT, root=worktree).write(worktree)
-
-    assert pin.framework_of(worktree) == (main / pin.SIBLING).resolve()
-    for where in (artifacts.READER_DOC, *pin.stub_paths()):
-        text = (worktree / where).read_text(encoding="utf-8")
-        assert f"`{pin.SIBLING}/" in text or f" {pin.SIBLING} " in text, where
-        assert "../../" not in text, where
-        assert str(tmp_path) not in text, where
-
-
 def test_no_root_named_writes_into_a_worktree_rather_than_being_refused(tmp_path):
-    # ⭐ `W321`'s refusal is gone with the address it guarded: there is one
-    # address, so a document composed without `root` cannot disagree with it.
+    # ⭐ There is no address at all, so a document composed without `root`
+    # cannot disagree with one.
     _main, worktree = _both_checkouts(tmp_path)
 
     written = onboard(corpora.DRAFT, framework_commit=corpora.COMMIT).write(worktree)
@@ -479,17 +487,17 @@ def test_no_root_named_writes_into_a_worktree_rather_than_being_refused(tmp_path
     assert artifacts.READER_DOC in written
 
 
-def test_a_worktree_outside_the_frameworks_directory_is_written_and_says_the_sibling(tmp_path):
-    # ⚠️ The shape `W321` could only refuse — no relative ascent reaches the
-    # framework from there. ⭐ The address is the workspace's, so it is written.
+def test_a_worktree_anywhere_is_written_and_names_no_path_to_the_framework(tmp_path):
+    # ⚠️ The shape `W321` could only refuse. ⭐ The library is installed, so
+    # where the checkout sits does not enter what is written.
     main = tmp_path / "here" / "corpus"
     corpora.linked_worktree(tmp_path / "here")
     elsewhere = tmp_path / "there" / "two"
     corpora.git(main, "worktree", "add", "-q", str(elsewhere))
-    corpora.material(elsewhere, framework=False)
+    corpora.material(elsewhere)
 
     onboard(corpora.DRAFT, framework_commit=corpora.COMMIT, root=elsewhere).write(elsewhere)
 
     text = (elsewhere / artifacts.READER_DOC).read_text(encoding="utf-8")
-    assert "git -C ../studyforge checkout --detach" in text
-    assert str(tmp_path) not in text
+    assert "python3 -m studyforge.skills.onboarding.verify ." in text
+    assert "../studyforge" not in text and str(tmp_path) not in text

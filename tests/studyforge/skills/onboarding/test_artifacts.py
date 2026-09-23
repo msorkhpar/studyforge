@@ -28,10 +28,11 @@ from studyforge.narrate.client import NarrateClient
 from studyforge.skills.adapter import plan_for
 from studyforge.skills.adapter.scaffold import BYTECODE_RULES, bytecode_ignore
 from studyforge.skills.onboarding import artifacts, hand_edited
+from studyforge.skills.onboarding.library import version
 from studyforge.skills.onboarding.manifest import promote, render
 from studyforge.skills.onboarding.nondestructive import TESTS_DIR
 from studyforge.skills.onboarding.onboard import onboard
-from studyforge.skills.onboarding.pin import FRAMEWORK
+from studyforge.skills.onboarding.pin import DOCUMENTS, FRAMEWORK, VERIFY
 from studyforge.skills.onboarding.standing import Standing
 from studyforge.skills.onboarding.standing import lines as standing_lines
 from tests.studyforge.cli.narrate.service import BASE, FMT, VOICE, FakeService
@@ -52,7 +53,9 @@ EDIT = {
 
 
 def _document(manifest, hand_written=(), **given):
-    return artifacts.reader_document(manifest, hand_written, commit=corpora.COMMIT, **given)
+    return artifacts.reader_document(
+        manifest, hand_written, commit=corpora.COMMIT, version=version(), **given
+    )
 
 
 def _reader(made):
@@ -196,12 +199,14 @@ def test_the_document_is_the_same_whether_or_not_a_corpus_root_was_read(tmp_path
     assert _reader(with_root) == _reader(without)
 
 
-def test_the_commands_carry_the_pin_the_framework_sibling_and_the_adapter_package():
+def test_the_commands_carry_the_pin_the_installed_library_and_the_adapter_package():
     manifest = _manifest()
     text = _document(manifest)
 
-    assert f"git -C ../{FRAMEWORK} checkout --detach {corpora.COMMIT}" in text
+    assert f"`{version()}`, built from commit `{corpora.COMMIT}`" in text
+    assert VERIFY in _fenced(text) and DOCUMENTS in _fenced(text)
     assert f"python3 -m {plan_for(manifest).package} .\n" in text
+    assert "PYTHONPATH" not in text and f"../{FRAMEWORK}" not in text, "a path to a checkout"
     assert "studyforge validate" not in text, "a command that is not on a fresh clone's path"
     assert "submodule" in text and "git submodule" not in text
 
@@ -218,12 +223,18 @@ def _fenced(text):
 
 
 def _run_as_written(root, text, bin_dir):
-    """Run every fenced line through a shell at `root`, exactly as it is printed."""
+    """Run every fenced line through a shell at `root`, exactly as it is printed.
+
+    ⭐ The library is on the path the way an installed one is — and this tree's
+    `src` is what this test's own Python imports — while NOTHING is beside the
+    corpus (`REL-05`). The wheel-installed reading is `test_installed.py`'s.
+    """
     environment = {
         key: value
         for key, value in os.environ.items()
         if key not in ("PYTHONPATH", "PYTEST_ADDOPTS")
     }
+    environment["PYTHONPATH"] = str(repository_root() / "src")
     environment["PATH"] = os.pathsep.join([str(bin_dir), environment.get("PATH", "")])
     environment.update(corpora.SYNTHETIC_GIT)
     results = []
@@ -242,9 +253,8 @@ def _run_as_written(root, text, bin_dir):
 
 
 def _fresh_clone(tmp_path):
-    """A corpus beside a framework checkout at the pin, whose `src` is this tree's."""
+    """A corpus with nothing beside it: the framework is the library Python imports."""
     root = corpora.material(tmp_path / "corpus")
-    (root.parent / FRAMEWORK / "src").symlink_to(repository_root() / "src")
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
     (bin_dir / "python3").symlink_to(sys.executable)
@@ -357,19 +367,14 @@ def test_regeneration_is_idempotent_clean_and_follows_the_state(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W442` — the document addresses the framework as the WORKSPACE lays it out
+# ⛔ `W442` and `REL-05` — the document names no path to the framework at all
 # --------------------------------------------------------------------------
 
 
 def _both_checkouts(tmp_path):
-    """One corpus repository: its main checkout, a linked worktree deeper, the framework beside.
-
-    ⛔ Nothing beside the worktree itself, so an address said from the worktree
-    (`../../studyforge`) and one said from the main checkout differ.
-    """
-    worktree = corpora.material(corpora.linked_worktree(tmp_path), framework=False)
-    main = corpora.material(tmp_path / "corpus", framework=False)
-    (tmp_path / FRAMEWORK / "src").symlink_to(repository_root() / "src")
+    """One corpus repository: its main checkout and a linked worktree deeper, nothing beside."""
+    worktree = corpora.material(corpora.linked_worktree(tmp_path))
+    main = corpora.material(tmp_path / "corpus")
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
     (bin_dir / "python3").symlink_to(sys.executable)
@@ -384,10 +389,9 @@ def _written(root):
     return made, (root / artifacts.READER_DOC).read_text(encoding="utf-8")
 
 
-def test_what_a_worktree_writes_runs_as_written_from_the_main_checkout(tmp_path):
-    # ⛔ The bar `W313` set, on the shape `W442` fixes: the document a regenerate
-    # in a linked worktree writes is the one a reader of the MAIN checkout runs,
-    # and every fenced line of it is EXECUTED there.
+def test_what_a_worktree_writes_is_what_the_main_checkout_writes_and_runs_there(tmp_path):
+    # ⛔ `W442`'s property survives the move: no address at all, so the bytes
+    # cannot depend on the checkout that ran the skill (R10).
     main, worktree, bin_dir = _both_checkouts(tmp_path)
     _made, from_worktree = _written(worktree)
     _made, from_main = _written(main)
@@ -395,29 +399,35 @@ def test_what_a_worktree_writes_runs_as_written_from_the_main_checkout(tmp_path)
     ran = _run_as_written(main, from_worktree, bin_dir)
 
     assert from_worktree == from_main
-    assert f"git -C ../{FRAMEWORK} checkout --detach {corpora.COMMIT}" in from_worktree
-    assert f"../../{FRAMEWORK}" not in from_worktree
     assert len(ran) == len(_fenced(from_worktree)) > 1
     assert [(line, code) for line, code, _ in ran if code != 0] == [], ran
     assert str(tmp_path) not in from_worktree and "/home/" not in from_worktree
 
 
-def test_a_corpus_that_is_its_own_main_checkout_reads_exactly_as_it_did(tmp_path):
-    # ⭐ Both ways (R12), and `W313`'s clause 2 is not broken by this row: the
-    # fresh clone's document still says `../studyforge` and still runs.
+def test_no_generated_document_reaches_the_framework_by_path(tmp_path):
+    # ⛔ `REL-05`: a stranger has the installed library and no checkout beside
+    # the corpus, so nothing onboarding writes may address one.
+    made = onboard(corpora.SETTLED, framework_commit=corpora.COMMIT)
+    texts = {item.where: item.text for item in made.files}
+
+    assert [where for where, text in texts.items() if f"../{FRAMEWORK}" in text] == []
+    assert [where for where, text in texts.items() if "PYTHONPATH" in text] == []
+    assert [where for where, text in texts.items() if "SKILL.md" in text] == []
+
+
+def test_the_verify_fence_fails_when_the_pin_names_another_version(tmp_path):
+    # ⭐ The fence that checks the installed library is a check, not a banner.
     root, bin_dir = _fresh_clone(tmp_path)
-    _made, text = _written(root)
+    made = onboard(corpora.SETTLED, framework_commit=corpora.COMMIT)
+    made.write(root)
+    pinned = root / ".studyforge" / "pin.json"
+    pinned.write_text(
+        pinned.read_text(encoding="utf-8").replace(f'"{version()}"', '"0.0.1"'), encoding="utf-8"
+    )
+    text = (root / artifacts.READER_DOC).read_text(encoding="utf-8")
 
-    assert f"git -C ../{FRAMEWORK} checkout --detach {corpora.COMMIT}" in text
-    assert all(code == 0 for _, code, _ in _run_as_written(root, text, bin_dir))
+    ran = _run_as_written(root, f"```\n{VERIFY}\n```", bin_dir)
 
-
-def test_the_document_says_where_its_commands_run_from(tmp_path):
-    # ⛔ The address is said from the main checkout's root, and the sentence
-    # beside the fence says so — so a reader in a linked worktree is told where
-    # to stand rather than handed a second address.
-    _main, worktree, _bin = _both_checkouts(tmp_path)
-    _made, text = _written(worktree)
-
-    assert "beside this repository's main checkout" in text
-    assert f"it is `../{FRAMEWORK}` from the main\ncheckout's root" in text
+    assert VERIFY in _fenced(text)
+    assert ran[0][1] == 1, ran
+    assert "NOT the installed version" in ran[0][2]

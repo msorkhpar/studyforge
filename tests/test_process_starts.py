@@ -47,7 +47,7 @@ EPIC = repository_root() / "docs" / "tasks" / "E05-serving-execution.md"
 RUNNER = "execute"
 
 #: ⛔ The named sites outside the runner, relative to the package root.
-EXCEPTIONS = frozenset({"validate/source/enumeration.py", "skills/onboarding/pin.py"})
+EXCEPTIONS = frozenset({"validate/source/enumeration.py"})
 
 #: The name every named site's argv starts with — the resolved `git`.
 GIT = "git"
