@@ -258,5 +258,7 @@ def test_a_path_segment_with_a_trailing_line_ending_is_refused(ending):
 def test_an_argument_with_a_trailing_line_ending_is_refused(ending):
     value = ["mvn", LEGAL_ARGUMENT, "practice"]
     assert require_command(value, "run_command", WHERE) == tuple(value)
-    assert refuse(require_command, ["mvn", LEGAL_ARGUMENT + ending, "practice"], "run_command", WHERE)
+    assert refuse(
+        require_command, ["mvn", LEGAL_ARGUMENT + ending, "practice"], "run_command", WHERE
+    )
     assert refuse(require_command, ["mvn" + ending], "run_command", WHERE)
