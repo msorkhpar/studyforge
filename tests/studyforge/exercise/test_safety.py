@@ -14,6 +14,8 @@ import pytest
 from studyforge.exercise import (
     ARGUMENT_PERMITTED,
     PATH_PERMITTED,
+    SAFE_ARGUMENT,
+    SAFE_SEGMENT,
     ExerciseError,
     require_command,
     require_path,
@@ -210,3 +212,53 @@ def test_the_permitted_set_is_stated_rather_than_a_pasted_regex():
     # the one an adapter author reads when their corpus is refused.
     assert "\\" not in PATH_PERMITTED and "[" not in PATH_PERMITTED
     assert "never one string" in ARGUMENT_PERMITTED
+
+
+# --------------------------------------------------------------------------
+# ⛔ a line ending is outside the permitted set (W434)
+# --------------------------------------------------------------------------
+
+#: ⛔ Python's `$` matches BEFORE a trailing newline, so a pattern anchored
+#: `^…$` admits `ok\n` — a character the permitted set never names. Every
+#: value below is otherwise legal, so the ending is the ONLY reason to refuse.
+ENDINGS = ["\n", "\r\n", "\r"]
+LEGAL_SEGMENT = "Greeter.java"
+LEGAL_ARGUMENT = "-pl"
+
+
+@pytest.mark.parametrize("ending", ENDINGS)
+@pytest.mark.parametrize(
+    ("pattern", "legal"),
+    [(SAFE_SEGMENT, LEGAL_SEGMENT), (SAFE_ARGUMENT, LEGAL_ARGUMENT)],
+    ids=["SAFE_SEGMENT", "SAFE_ARGUMENT"],
+)
+def test_an_exported_pattern_refuses_a_trailing_line_ending(pattern, legal, ending):
+    # ⚠️ The negative control first: the value is legal without its ending.
+    assert pattern.match(legal) is not None
+    # ⛔ Every way a caller might ask — `execute/commands.py` asks with `.match`.
+    assert pattern.match(legal + ending) is None
+    assert pattern.search(legal + ending) is None
+    assert pattern.fullmatch(legal + ending) is None
+
+
+@pytest.mark.parametrize("ending", ENDINGS)
+def test_a_path_with_a_trailing_line_ending_is_refused(ending):
+    value = f"practice/src/{LEGAL_SEGMENT}"
+    assert require_path(value, "main_path", WHERE) == value
+    assert refuse(require_path, value + ending, "main_path", WHERE)
+
+
+@pytest.mark.parametrize("ending", ENDINGS)
+def test_a_path_segment_with_a_trailing_line_ending_is_refused(ending):
+    # ⚠️ Mid-path, where the ending sits at the end of a segment, not the value.
+    assert refuse(require_path, f"practice{ending}/{LEGAL_SEGMENT}", "main_path", WHERE)
+
+
+@pytest.mark.parametrize("ending", ENDINGS)
+def test_an_argument_with_a_trailing_line_ending_is_refused(ending):
+    value = ["mvn", LEGAL_ARGUMENT, "practice"]
+    assert require_command(value, "run_command", WHERE) == tuple(value)
+    assert refuse(
+        require_command, ["mvn", LEGAL_ARGUMENT + ending, "practice"], "run_command", WHERE
+    )
+    assert refuse(require_command, ["mvn" + ending], "run_command", WHERE)

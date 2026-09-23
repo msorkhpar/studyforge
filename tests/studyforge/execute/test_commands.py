@@ -97,3 +97,18 @@ def test_the_editor_container_is_the_one_the_generated_compose_file_brings_up(tm
 def test_a_container_name_that_is_not_one_word_is_refused(name):
     with pytest.raises(RunRefused):
         require_container(name)
+
+
+@pytest.mark.parametrize("ending", ["\n", "\r\n", "\r"])
+def test_a_trailing_line_ending_is_refused_by_every_check_here(ending):
+    # ⛔ W434. `require_container` reads `SAFE_SEGMENT` directly and never
+    # re-checks, so the pattern's anchor is this module's whole defence. Each
+    # value is legal without its ending — the negative control is asserted.
+    assert require_container("runner") == "runner"
+    with pytest.raises(RunRefused):
+        require_container("runner" + ending)
+    assert require_workdir("practice") == "practice"
+    with pytest.raises(RunRefused):
+        require_workdir("practice" + ending)
+    with pytest.raises(RunRefused):
+        require_commands([["python3", "greet.py" + ending]])
