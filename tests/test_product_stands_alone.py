@@ -11,9 +11,9 @@ a scratch export with the tooling and the process documents REMOVED (`E15`'s sec
 This file is the standing guard between those runs — it refuses the one regression a working
 checkout, where the tooling is always present, can never show by running.
 
-⚠️ **One package is not this task's and is named, not excused silently**: the delivery skill's
-tests change with that skill in `REL-06`. `NOT_YET` names it with its reason, and a test below
-fails when the package stops needing the entry, so the entry cannot outlive its reason.
+⚠️ **A file that is another task's is named, not excused silently**: `process.DEFERRED` names
+it with its reason, and a test below fails once it stops needing the entry, so the entry cannot
+outlive its reason.
 """
 
 from __future__ import annotations
@@ -31,11 +31,6 @@ TOOLING = "tools"
 
 #: The run-time importers a literal module name can be handed to.
 IMPORTERS = ("import_module", "__import__")
-
-#: ⚠️ Not `REL-02`'s, and named so: `E15` gives the delivery skill's tests to `REL-06`.
-NOT_YET = {
-    "tests/studyforge/skills/delivery/": "REL-06 re-points the delivery skill's tests with it",
-}
 
 
 def _is_tooling(name: str | None) -> bool:
@@ -67,7 +62,7 @@ def reaches_tooling(relative: str, source: str) -> list[int]:
     ⭐ A declared FILE excuses every line; a declared TEST excuses the lines inside that test's
     own function body and nowhere else in the file.
     """
-    if relative in process.files():
+    if relative in process.uncollected():
         return []
     excused = {
         entry.partition("::")[2].split("[", 1)[0]
@@ -87,11 +82,7 @@ def reaches_tooling(relative: str, source: str) -> list[int]:
 def product_files(root: Path) -> list[str]:
     """Every Python file the sweep reads: all of `tests/`, and the root `conftest.py`."""
     found = [p.relative_to(root).as_posix() for p in (root / "tests").rglob("*.py")]
-    return sorted(
-        name
-        for name in [*found, "conftest.py"]
-        if "__pycache__" not in name and not name.startswith(tuple(NOT_YET))
-    )
+    return sorted(name for name in [*found, "conftest.py"] if "__pycache__" not in name)
 
 
 def test_no_product_test_reaches_the_tooling():
@@ -193,16 +184,18 @@ def test_every_declaration_says_why():
         assert len(reason) > 30, entry
 
 
-def test_the_not_yet_package_still_needs_its_entry():
+@pytest.mark.parametrize("path", sorted(process.DEFERRED))
+def test_each_deferred_file_still_needs_its_entry(path):
     # ⛔ An excuse that outlives its reason excuses the next regression instead.
-    root = repository_root()
-    for prefix in NOT_YET:
-        needing = [
-            p
-            for p in (root / prefix).rglob("*.py")
-            if reaches_tooling(p.relative_to(root).as_posix(), p.read_text(encoding="utf-8"))
-        ]
-        assert needing, f"{prefix} no longer reaches the tooling: remove it from NOT_YET"
+    source = (repository_root() / path).read_text(encoding="utf-8")
+    assert any(_names_tooling(node) for node in ast.walk(ast.parse(source))), (
+        f"{path} no longer reaches the tooling: remove it from process.DEFERRED"
+    )
+
+
+def test_a_deferred_file_is_never_marked_process():
+    assert not set(process.DEFERRED) & process.files()
+    assert all(process.declared(f"{path}::test_x") is None for path in process.DEFERRED)
 
 
 # --- what the declaration means, one nodeid at a time -----------------------------------------

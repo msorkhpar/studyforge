@@ -8,7 +8,9 @@ collected and a declared TEST is skipped with its reason, and the run says how m
 
 **How you use it.** `declared(nodeid)` returns the reason a test is process, or `None`.
 `files()` is the whole-file population. `present(root)` says whether the process is here.
-⭐ This list is what `REL-10` moves to the archive branch, entry for entry.
+⭐ This list is what `REL-10` acts on, entry for entry, and each reason says which act: an entry
+whose reason says it STAYS is edited in the removal commit; every other one MOVES to the archive
+branch. `DEFERRED` is neither — product files another task re-points (`REL-06`).
 
 **Depends on.** Nothing but the standard library. ⛔ It imports no tooling: it is the list of
 what does.
@@ -51,6 +53,16 @@ TWIN = "compares a product-side copy with its tooling original while both exist"
 R7 = "sweeps with the tooling's personal-data shapes; REL-03 re-points it at the product's R7"
 R11 = "pins a shipped ceiling to the tooling's; REL-03 re-points it at the product's R11"
 HOME = "reads docs/conventions/commanded-pages.md, whose home REL-08 decides"
+#: ⭐ The one kind that does NOT move: a product test whose DATA names the tooling as part of
+#: the repository. `REL-10`'s removal commit drops the tooling's row, and the test stays.
+LAYOUT = (
+    "names the tooling as part of the repository's layout; it STAYS, and REL-10's removal "
+    "commit drops the tooling's row from its data"
+)
+ENFORCER = (
+    "names a tooling test as a fixture enforcer; it STAYS, and the entry follows that test "
+    "wherever REL-03 or REL-10 puts it"
+)
 
 #: ⛔ Whole FILES that are process. Never collected when the tooling is absent.
 FILES: dict[str, str] = {
@@ -80,6 +92,23 @@ TESTS: dict[str, str] = {
     "tests/test_authoring_reference.py::test_the_reference_carries_no_personal_data_shape": (R7),
     "tests/studyforge/skills/adapter/test_scaffold.py::"
     "test_the_ceiling_is_the_one_the_quality_floor_owns": R11,
+    "tests/gate_coverage/test_coverage.py::"
+    "test_every_named_tree_is_populated_so_the_bound_is_not_vacuous": LAYOUT,
+    "tests/test_fixture_sweeps.py::test_the_enforcers_are_named_in_the_code_and_state_why": (
+        ENFORCER
+    ),
+    "tests/test_fixture_sweeps.py::test_no_enforcer_imports_the_seam": ENFORCER,
+    "tests/test_fixture_sweeps.py::test_the_enforcers_still_read_the_tree_themselves": ENFORCER,
+}
+
+#: ⚠️ PRODUCT files that still import the tooling and are ANOTHER task's to re-point — never
+#: process, never marked, and not collected without the tooling only so a run from the suite's
+#: root can collect at all. `tests/test_product_stands_alone.py` fails once an entry stops
+#: needing to be here, so none outlives its reason.
+DEFERRED: dict[str, str] = {
+    "tests/studyforge/skills/delivery/test_walkthrough.py": (
+        "the delivery skill's tests are REL-06's (E15), and change with that skill"
+    ),
 }
 
 
@@ -91,6 +120,11 @@ def present(root: Path) -> bool:
 def files() -> frozenset[str]:
     """Return every declared whole-file process test, repository-relative."""
     return frozenset(FILES)
+
+
+def uncollected() -> frozenset[str]:
+    """Return every file a checkout without the tooling does not collect: process, or deferred."""
+    return frozenset(FILES) | frozenset(DEFERRED)
 
 
 def declared(nodeid: str) -> str | None:
@@ -114,7 +148,10 @@ def population_line(present: bool) -> str:
     ⛔ Printed on every run, like the unreachable population: a product suite that went green
     WITHOUT its process tests must say so in the same summary that says green.
     """
-    declared = f"{len(FILES)} declared process file(s) and {len(TESTS)} declared test(s)"
+    declared = (
+        f"{len(FILES)} declared process file(s), {len(TESTS)} declared test(s) and "
+        f"{len(DEFERRED)} deferred product file(s)"
+    )
     if present:
         return f"process population: the tooling is present, so none of the {declared} is held back"
     return (

@@ -215,7 +215,7 @@ ABSENT_REASON = "a process test, not run because the tooling is absent from this
 
 
 def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> bool | None:
-    """Leave a declared process FILE uncollected when the tooling is absent (`REL-02`).
+    """Leave a declared process or deferred FILE uncollected without the tooling (`REL-02`).
 
     ⭐ A whole file, because it imports the tooling at its top and would fail at import. ⛔
     `None`, never `False`, for everything else, so no other plugin's answer is overridden.
@@ -228,7 +228,7 @@ def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> bool 
         relative = collection_path.resolve().relative_to(_root()).as_posix()
     except ValueError:
         return None
-    return True if relative in process.files() else None
+    return True if relative in process.uncollected() else None
 
 
 def pytest_sessionstart(session: pytest.Session) -> None:

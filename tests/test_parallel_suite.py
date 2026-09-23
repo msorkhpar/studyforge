@@ -212,11 +212,16 @@ def test_the_VISUAL_harness_line_is_printed_ONCE_and_IDENTICALLY_in_both_forms(t
     assert lines["parallel"] == lines["serial"], lines
 
 
+#: ⭐ `REL-02`: a PRODUCT test file that reaches no visual test, so the control holds in a
+#: checkout without the tooling (it named one of the tooling's own tests until then).
+NO_VISUAL = "tests/harness/test_skipped.py"
+
+
 @needs_xdist
 def test_the_CONTROL_a_run_that_reaches_NO_visual_test_prints_no_visual_line_in_either_form():
     lines = {}
     for form in FORMS:
-        result = _pytest(repository_root(), form, target=("tools/tests/test_gates.py",))
+        result = _pytest(repository_root(), form, target=(NO_VISUAL,))
         assert result.returncode == 0, result.stdout + result.stderr
         lines[form] = [line for line in result.stdout.splitlines() if "visual harness:" in line]
     assert lines == {"serial": [], "parallel": []}, lines
