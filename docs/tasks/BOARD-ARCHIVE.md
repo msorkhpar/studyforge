@@ -30972,3 +30972,25 @@ the corpus's stubs named a third commit after its `M7` re-pin, which is where
 ⭐ **Surface:** `docs/authoring/exercises.md`, `src/studyforge/skills/onboarding/`.
 
 [the mint](#po-round-152)
+
+## PO round 155
+
+⭐ **The corpus took the re-pin and `ISO-19`** on `int/m10-step-10.4-plan` at
+`4398c0e`: re-pinned to `0e1dfca2` THROUGH `reonboard`, `hand_edited` `[]`
+before and after, and `practice/.gitignore` written from `RUN_OUTPUT_IGNORE` —
+⭐ **checked both ways**: a planted report under `target/` ignored with the
+file and untracked without it. `validate` GREEN exit 0 and the corpus's own
+suite GREEN exit 0.
+
+### ⭐ Two mints, both blocking `M10`
+
+[`W442`](rows/W442.md) — ⛔ **the corpus's generated files say `../../studyforge`**,
+right only from the worktree the skill ran in — ⭐ **read by the register at
+`4398c0e`.** A regenerate is not byte-reproducible (R10).
+[`W443`](rows/W443.md) — ⛔ **the guide's *Before you author*, followed literally,
+fails at steps 2–4** — its own fence refused with advice that cannot be
+followed. ⚠️ **After `W440`**, whose shape its step 5 describes.
+
+⚠️ **The merge gate refused THIS round once on the maximise test — its FOURTH
+drift, on a docs-only round** — ⭐ **the reading `W441` exists for; the re-run
+was taken, never a skip.**
