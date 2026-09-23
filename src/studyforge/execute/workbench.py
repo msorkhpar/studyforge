@@ -101,6 +101,23 @@ parse would raise on an ordinary one.
 
 ⭐ **Replaced whole, atomically**: a temporary file beside it and one `replace`,
 so a reader's workbench never reads half a settings file.
+
+## ⛔ The settings never enter the corpus's commits (`W435`)
+
+⚠️ That folder is inside the CORPUS's own tree, so the file is a machine-local
+artifact written into a source repository — `W425`'s shape exactly, and a
+served corpus used to go dirty the first time a reader opened a practice.
+⭐ **The fix is an ignore file INSIDE the directory written into, never the
+repository's root one and never a local exclude (R3):** `.vscode/.gitignore`,
+naming the settings file, its staging file and itself — ⛔ **NAMES, never
+`*`**, so a `.vscode/` the source or the reader already carries keeps every
+file of its own visible and tracked. ⭐ It self-ignores because it carries
+nothing else: a file holding only machine-local rules is itself machine-local.
+⛔ **An ignore file already there is never rewritten** — it is the source's or
+the reader's, and R3 forbids it. ⚠️ So a `.vscode/` that already carries its own
+ignore file, not naming the settings, still shows them untracked: that is
+somebody else's rule, reported by `git status` rather than overridden here.
+⭐ Written BEFORE the settings, so no moment exists in which they are unignored.
 """
 
 from __future__ import annotations
@@ -116,6 +133,22 @@ from studyforge.execute.editor import Editor
 #: workbench's names, not this framework's, so neither is a choice.
 SETTINGS_DIR = ".vscode"
 SETTINGS_FILE = "settings.json"
+
+#: The staging file a settings write replaces from. ⚠️ Named here because the
+#: ignore file names it too: a torn write must not dirty the corpus either.
+STAGING_FILE = f"{SETTINGS_FILE}.studyforge"
+
+#: The ignore file written beside the settings, and what it holds (`W435`).
+#: ⛔ Anchored NAMES, never `*`: a `.vscode/` somebody else already carries
+#: keeps every file of its own visible.
+IGNORE_FILE = ".gitignore"
+IGNORE_TEXT = (
+    "# Written by studyforge beside a practice's editor settings. These three\n"
+    "# files are this machine's own, and never enter a commit.\n"
+    f"/{SETTINGS_FILE}\n"
+    f"/{STAGING_FILE}\n"
+    f"/{IGNORE_FILE}\n"
+)
 
 #: The scheme a code-server window opens a file over. ⚠️ Not `file:`: the
 #: workbench is remote to the browser and addresses its own disk this way.
@@ -261,9 +294,10 @@ def write_settings(folder: Path, main: str, test: str | None) -> Path:
     target = Path(folder) / SETTINGS_DIR / SETTINGS_FILE
     _require_ours(target)
     body = json.dumps(settings(main, test), indent=2, sort_keys=True) + "\n"
-    temporary = target.with_name(f"{target.name}.studyforge")
+    temporary = target.with_name(STAGING_FILE)
     try:
         target.parent.mkdir(parents=True, exist_ok=True)
+        _ensure_ignored(target.parent / IGNORE_FILE)
         temporary.write_text(body, encoding="utf-8")
         os.replace(temporary, target)
     except OSError as error:
@@ -290,3 +324,17 @@ def _require_ours(target: Path) -> None:
             f"{SETTINGS_DIR}/{SETTINGS_FILE} in the editor's folder was not written by "
             f"this framework — it carries no {MARKER} key — and it is not overwritten"
         )
+
+
+def _ensure_ignored(ignore: Path) -> None:
+    """Write the settings' own ignore file when there is none; never rewrite one.
+
+    ⛔ Exclusive create, so an ignore file the source or the reader already
+    carries — or one appearing between a check and a write — is left exactly as
+    it is. An `OSError` other than that one propagates to the caller's refusal.
+    """
+    try:
+        with ignore.open("x", encoding="utf-8") as out:
+            out.write(IGNORE_TEXT)
+    except FileExistsError:
+        return

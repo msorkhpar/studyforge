@@ -284,8 +284,13 @@ def test_the_marker_is_one_of_the_keys_this_module_itself_writes(tmp_path):
 def test_nothing_is_left_beside_the_settings_file(tmp_path):
     # ⭐ Replaced atomically, so a workbench never reads half a settings file —
     # and the temporary it is replaced from does not survive the write.
+    # ⚠️ The ignore file beside it is `W435`'s and is asserted in
+    # `test_workbench_ignored.py`; what must NOT be here is the staging file.
     write_settings(tmp_path, INSIDE_MAIN, INSIDE_TEST)
-    assert sorted(one.name for one in settings_file(tmp_path).parent.iterdir()) == [SETTINGS_FILE]
+    assert sorted(one.name for one in settings_file(tmp_path).parent.iterdir()) == [
+        ".gitignore",
+        SETTINGS_FILE,
+    ]
 
 
 def test_a_folder_that_cannot_be_written_is_refused_saying_so(tmp_path):
