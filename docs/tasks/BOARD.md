@@ -614,6 +614,8 @@ else.**
 | W431 | The practice panel cannot be maximised, so a reader writes code through a letterbox | framework agent | ✅ done — `fe104365`, corpus `06df27f` | [`rows/W431.md`](rows/W431.md) |
 | W432 | The workbench lockdown is installed in the editor image and the extension host never activates it | framework agent | ✅ done — `5f62423b` | [`rows/W432.md`](rows/W432.md) |
 | W433 | A reader can open settings and the command palette inside a practice frame, and the read-only lock is workspace-scoped | framework agent | ✅ done — `e74f15b3` | [`rows/W433.md`](rows/W433.md) |
+| W434 | `safety.py`'s permitted sets are anchored `^…$`, so a trailing newline clears the gate | framework agent | `todo` — the register, 2026-09-22 | [`rows/W434.md`](rows/W434.md) |
+| W435 | Serving a practice writes `.vscode/` into the corpus and nothing ignores it, so `workspace verify` is RED | framework agent | `todo` — the register, 2026-09-22 | [`rows/W435.md`](rows/W435.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
