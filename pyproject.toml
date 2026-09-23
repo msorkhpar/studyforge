@@ -54,10 +54,17 @@ studyforge = ["**/templates/*.html", "**/assets/*"]
 minversion = "8.0"
 # Two roots, by ruling: the framework's tests mirror `src/` into `tests/`, and
 # the quality tooling's tests sit beside the tooling at `tools/tests/`.
+# ⛔ `REL-02` KEEPS the second root, and it is not an oversight: the merge gate's
+# full-scope suite passes no path and reads THIS list, so dropping it would stop
+# every suite gate running the tooling's own tests while the tooling is still the
+# merge authority. ⭐ It costs a checkout without the tooling nothing: an absent
+# root matches no path, and `pytest` collects `tests` alone (measured in a scratch
+# export with `tools/` removed). `REL-10`'s removal commit drops it with `tools/`.
 testpaths = ["tests", "tools/tests"]
 # `src` puts the package on the path without an install step, so the suite runs
-# from a clean checkout with no network. `.` makes `tests.support` and
-# `tools.quality` importable the way CodeSignal's suite imports `tests.support`.
+# from a clean checkout with no network. `.` makes `tests.support` importable the
+# way CodeSignal's suite imports `tests.support` — and `tools.*` for the tooling's
+# own tests, which the product's tests no longer import (`REL-02`).
 pythonpath = ["src", "."]
 # ⚠️ `importlib` is not decoration. R12's mirror puts a `test_init.py` in every
 # package directory, and under pytest's default `prepend` import mode two files

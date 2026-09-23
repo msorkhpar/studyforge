@@ -19,8 +19,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.harness import pinned
 from tests.studyforge.execute import container
-from tools.workspace import pinned
 
 MODULE = Path(container.__file__)
 

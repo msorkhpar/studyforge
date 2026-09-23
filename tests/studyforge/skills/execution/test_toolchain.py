@@ -18,9 +18,9 @@ import os
 import pytest
 
 from studyforge.skills.execution import contract, toolchain
+from tests.harness.workspace import DEV_CONTAINER
 from tests.studyforge.skills.execution.contracts import editor_contract
 from tests.studyforge.skills.execution.test_contract import declared
-from tools.workspace.__main__ import DEV_CONTAINER
 
 
 def selected(runtimes, **moved):

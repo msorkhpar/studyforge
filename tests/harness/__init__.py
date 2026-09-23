@@ -16,7 +16,7 @@ anything else that wants the same population:
     from tests.harness import goldens, isolation, probe, streams
 
 **Depends on.** The three golden regenerators, the plan CLI, `pageassets`,
-`templates`, `tests.support` and `tools.quality.config`. ⛔ It re-lists none of
+`templates` and `tests.support`. ⛔ It re-lists none of
 them: every population here is derived from the thing that owns it, because a
 second list is a second thing to forget.
 

@@ -15,7 +15,6 @@ from __future__ import annotations
 import ast
 import json
 import os
-import re
 import selectors
 import shutil
 import subprocess
@@ -227,23 +226,24 @@ def imports_module(path: Path, module: str) -> bool:
 
 #: Ruling 47's shared evidence: the one table both personal-data gates are
 #: measured against. ⛔ Shared as **data**, never as code — `tools/quality` may
-#: not import the framework (Ruling 31), so the two sides read this file and
+#: not import the framework (Ruling 31), so the two sides read the table and
 #: each asserts only its own column.
-SHAPE_VOCABULARY = "docs/conventions/personal-data-shapes.md"
+#:
+#: ⭐ `REL-02`: the product reads its OWN copy of the table, so the suite runs with
+#: no process document present. The convention `docs/conventions/personal-data-shapes.md`
+#: still carries it for the tooling, and `tests/test_process_twins.py` refuses the two
+#: tables differing by one row while both exist.
+SHAPE_VOCABULARY = "tests/harness/personal-data-shapes.json"
 
 
 def personal_data_shapes() -> list[dict]:
     """Every row of the shared shape vocabulary, with `spelling` joined.
 
     ⚠️ `spelling` is stored as fragments and joined here: a real personal-data
-    shape written whole into that document would be a finding against it, by
-    the sweep its own last column describes.
+    shape written whole into the table would be a finding against it, by the
+    sweep its own last column describes.
     """
-    text = (repository_root() / SHAPE_VOCABULARY).read_text(encoding="utf-8")
-    match = re.search(r"```json\n(.*?)\n```", text, re.S)
-    if match is None:  # pragma: no cover - the document without its table
-        raise AssertionError(f"{SHAPE_VOCABULARY} carries no ```json table")
-    rows = json.loads(match.group(1))
+    rows = json.loads((repository_root() / SHAPE_VOCABULARY).read_text(encoding="utf-8"))
     for row in rows:
         row["example"] = "".join(row["spelling"])
     return rows

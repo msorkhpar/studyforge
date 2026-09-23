@@ -20,7 +20,6 @@ from studyforge.corpus.manifest import load
 from studyforge.corpus.placement import identity, profile_for, registered
 from tests.fixture_checks import FIXTURES as FIXTURE_ROOT
 from tests.fixture_checks import fixture_paths
-from tests.support import repository_root
 
 # ⛔ **The SHIPPED resolver, imported rather than re-derived** (`W127`, `W138`).
 # This module answered *"where do the sibling components live?"* with its own
@@ -30,7 +29,8 @@ from tests.support import repository_root
 # its explanation live, and where `tools/tests/workspace/test_main.py` already
 # imports it from: a **fourth** home would be this defect again, one directory
 # over.
-from tools.workspace.__main__ import workspace_root as shipped_workspace_root
+from tests.harness.workspace import workspace_root as shipped_workspace_root
+from tests.support import repository_root
 
 #: ⛔ **What this module's sweeps assert, as a rule id** (Ruling 46). Placing a
 #: corpus reads its manifest first, and `corpus-api` is the one rule that
@@ -69,7 +69,7 @@ JAVA_CORPUS = "Claude-senior-java-engineer"
 
 
 def workspace_root() -> Path:
-    """Where sibling repositories live, as `tools.workspace` already computes it.
+    """Where sibling repositories live, as `tests.harness.workspace` already computes it.
 
     ⛔ **The derivation is NOT repeated here** (`W138`). This module answered
     `repository_root().parent`, which is a **worktree's** parent — and agents

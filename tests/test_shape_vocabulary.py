@@ -9,7 +9,8 @@ compared them.
 
 ⚠️ Ruling 31 forbids the tool from importing the framework, so the two sides
 share **evidence, not code**: `docs/conventions/personal-data-shapes.md` holds
-one table, this module asserts the `gate` and `scrub` columns of it, and
+one table — read here through the product's copy of it, `tests/support.py`'s
+`SHAPE_VOCABULARY` (`REL-02`) — this module asserts the `gate` and `scrub` columns of it, and
 `tools/tests/quality/personal_data/test_shapes.py` asserts the `quality`
 column. Neither module imports the other's subject.
 """

@@ -12,7 +12,7 @@ import ast
 from pathlib import Path
 
 from studyforge.skills import buildserve
-from tools.quality.source_names import named_sources
+from tests.harness.sources import named_sources
 
 PACKAGE = Path(buildserve.__file__).parent
 

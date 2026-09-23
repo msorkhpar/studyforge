@@ -23,9 +23,9 @@ from studyforge.corpus.manifest import (
     from_document,
     parse_runtimes,
 )
+from tests.harness.workspace import git, holds, read
 from tests.studyforge.corpus.placement.test_corpora import WORKSPACE_ENV, workspace_root
 from tests.support import repository_root
-from tools.workspace import git, holds, read
 
 #: A manifest that may declare runtimes: it sets exercises, at the version
 #: that added the key.

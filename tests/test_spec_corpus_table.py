@@ -34,9 +34,9 @@ from pathlib import Path
 
 import pytest
 
+from tests.harness.workspace import git, holds, read
 from tests.studyforge.corpus.placement.test_corpora import WORKSPACE_ENV, workspace_root
 from tests.support import repository_root
-from tools.workspace import git, holds, read
 
 #: The document the table lives in.
 SPEC = Path("docs") / "specs" / "2026-09-08-studyforge-v1-design.md"

@@ -32,8 +32,8 @@ from studyforge.validate.nondestructive import (
     check_untouched,
     snapshot,
 )
+from tests.harness.sources import named_sources
 from tests.studyforge.generate.corpora import BOTH, FIXTURES, a_corpus
-from tools.quality.source_names import named_sources
 
 POM = "<project>\n  <modules>\n    <module>core</module>\n  </modules>\n</project>\n"
 

@@ -18,8 +18,8 @@ from __future__ import annotations
 
 import json
 
+from tests.harness.workspace import COMPONENT_KEYS, PIN_FILENAME, PIN_KEYS, STATUS, WHERE, read
 from tests.support import repository_root
-from tools.workspace import COMPONENT_KEYS, PIN_FILENAME, PIN_KEYS, STATUS, WHERE, read
 
 
 def components():
