@@ -31703,3 +31703,12 @@ the spec and `E14`.
 ### ⚠️ In flight
 
 ⭐ **`W452`** on `wt/dev3`; ⭐ **`ISO-26`** on the corpus's integration office.
+
+## PO round 169
+
+⭐ **The pilot is DEPLOYED on `:8770`, and the register read it there, not off a branch.** ⭐ **Re-pinned: `ISO-8583-jPOS-tutorial` → `424e55a` (`ISO-25` + `ISO-26`: the pilot quiz, regenerated on `79797b90`), `code-server-toolchain` → `a34a93e` (`W448`).** `workspace verify` GREEN exit 0.
+- ⭐ **The quiz grades on the live site**: all four right answers `complete`; one wrong answer 3 of 4 with that option's sentence and no key named; ⛔ **the live unit page carries no key attribute.**
+- ⭐ **The reader's editor recreated from `…-5ea0c0861176`**, rebuilt from `a34a93e` because the tag had left the host; the side bar default read hidden INSIDE the running container; both unit-15 editors answer `200`, and a Submit runs the starter and fails as it must.
+- ⭐ **Unit 15's concurrent editor pairs all `200`**; the solution block's cap is gone from the served `page.css`.
+
+⚠️ **Still open with the user:** `W449/1` (remove the Copilot CLI from the editor image) and the pilot review with its five questions. ⭐ **`W452` in flight** — ⚠️ the quiz key is still reachable by URL until it lands.

@@ -23,7 +23,7 @@
       "name": "ISO-8583-jPOS-tutorial",
       "where": "sibling",
       "status": "present",
-      "commit": "acde02108b3ee6115955713570919680f2dfb8ee"
+      "commit": "424e55a26e9fcd07c0174fc7a4085ab04e57ab1f"
     },
     {
       "name": "Claude-SPARQL-tutorial",
@@ -35,7 +35,7 @@
       "name": "code-server-toolchain",
       "where": "sibling",
       "status": "present",
-      "commit": "4b3fcdb988813b51177a8e80f97b1ce2103b187f"
+      "commit": "a34a93e0b7b1d8d9ef6454edceb24f7c7928c84d"
     },
     {
       "name": "narrate-service",
