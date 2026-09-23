@@ -50,8 +50,6 @@ RUBRIC = "reads the review rubric, which REL-08 sorts and REL-10 archives"
 BOARD = "reads a process convention and the board archive, which REL-10 archives"
 TOOLING_RUN = "runs or imports the tooling itself, which REL-10 archives"
 TWIN = "compares a product-side copy with its tooling original while both exist"
-R7 = "sweeps with the tooling's personal-data shapes; REL-03 re-points it at the product's R7"
-R11 = "pins a shipped ceiling to the tooling's; REL-03 re-points it at the product's R11"
 HOME = "reads docs/conventions/commanded-pages.md, whose home REL-08 decides"
 #: ⭐ The one kind that does NOT move: a product test whose DATA names the tooling as part of
 #: the repository. `REL-10`'s removal commit drops the tooling's row, and the test stays.
@@ -73,6 +71,7 @@ FILES: dict[str, str] = {
     "tests/test_quality_floor.py": TOOLING_RUN,
     "tests/test_consumer_side_contract.py": HOME,
     "tests/test_process_twins.py": TWIN,
+    "tests/test_floor_twins.py": TWIN,
 }
 
 #: ⛔ Single TESTS inside an otherwise product file. Skipped, with the reason, when absent.
@@ -89,9 +88,6 @@ TESTS: dict[str, str] = {
     ),
     "tests/studyforge/corpus/manifest/test_media.py::"
     "test_the_epic_says_which_version_its_example_needs": EPIC,
-    "tests/test_authoring_reference.py::test_the_reference_carries_no_personal_data_shape": (R7),
-    "tests/studyforge/skills/adapter/test_scaffold.py::"
-    "test_the_ceiling_is_the_one_the_quality_floor_owns": R11,
     "tests/gate_coverage/test_coverage.py::"
     "test_every_named_tree_is_populated_so_the_bound_is_not_vacuous": LAYOUT,
     "tests/test_fixture_sweeps.py::test_the_enforcers_are_named_in_the_code_and_state_why": (
