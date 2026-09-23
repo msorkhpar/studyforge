@@ -134,6 +134,31 @@ build file, with no source, or with no test. ⚠️ **That refusal is the whole
 point of the step** — it is the difference between an unprimed image and an
 image that says it is primed.
 
+### 4a. When a graded exercise imports a library
+
+⛔ **A graded run is `--network none`, so every dependency an exercise's tests
+import must already be in the runner image.** Two halves carry it, and both are
+the corpus's data (R1):
+
+- ⭐ **The exercise's build role.** An authored bundle lists its build files
+  under `build` in `bundle.json` and ships them under `build/`; `emit` lays
+  each into the reader's workspace, and the exercise's command names it by a
+  workspace-relative path (`mvn -o -q -f practice/…/pom.xml test`). ⛔ No jar,
+  no repository and no absolute path is ever written into the corpus.
+- ⭐ **The runner's prime.** The image is built with `--prime` from a build
+  that declares every dependency the exercises' build roles name, so the
+  image's seed holds them (`W390`) and the tool finds them with no flag.
+
+⚠️ **Nothing checks the two agree except the gates, and that is enough:** the
+authoring skill runs every gate in the pinned runner image, so an exercise
+whose build names something the prime did not warm fails `G1` and never ships.
+
+⭐ **Every run's output lands in `target/` inside the exercise's workspace**
+(`exercise.bundle.RUN_OUTPUT_DIRNAME`), the report included — so the corpus
+ignores every run artifact with the one line `target/`
+(`RUN_OUTPUT_IGNORE`) in an ignore file of its own under `practice/`. ⛔ Never
+an edit to the corpus's root ignore file (R3).
+
 ### 5. Write, and re-run whenever anything moves
 
 `Execution.write(root)` writes every generated file and **re-running changes

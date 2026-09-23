@@ -40,6 +40,15 @@ as that root sees them. ⛔ `emit` refuses any argument naming a path outside
 this exercise's own workspace, which is the property the workspace-relative
 values get for free.
 
+## ⭐ `build` NAMES THE BUILD ROLE'S FILES, AND IS OPTIONAL (`W436`)
+
+⭐ **An exercise whose tests need nothing but the language declares no
+`build`**, and its document is exactly what it was before. One whose tests
+import a library lists the build files it ships under `build/`, each
+workspace-relative, and `emit` lays each into the workspace at that path.
+⛔ A build file may not share a path with the main file or the test file, and
+may not sit in the run-output directory, which a run overwrites.
+
 ## ⛔ THE REPORT'S PATH IS IN THE WORKSPACE, NEVER IN THE BUNDLE
 
 ⚠️ **`AX-03/1`, and it is answered structurally in two places.** A JUnit report
@@ -48,6 +57,10 @@ file is a bundle somebody commits one into. ⭐ Here the path is workspace-
 relative, so it cannot address the bundle at all; in `layout.unpermitted` the
 bundle's file set is closed, so one that arrived by hand is named by
 `studyforge validate`.
+
+⭐ **And it is inside `layout.RUN_OUTPUT_DIRNAME`** (`ISO-M10/4`): one
+convention for every exercise, so the corpus's ignore rule is one line
+written once rather than one per exercise.
 """
 
 from __future__ import annotations
@@ -56,7 +69,12 @@ from dataclasses import dataclass
 
 from studyforge.address import Address, require_ordinal
 from studyforge.describe import describe, describe_keys
-from studyforge.exercise.bundle.layout import Places, plant_positions
+from studyforge.exercise.bundle.layout import (
+    RUN_OUTPUT_DIRNAME,
+    Places,
+    is_run_output,
+    plant_positions,
+)
 from studyforge.exercise.cases import (
     Case,
     Origin,
@@ -88,6 +106,7 @@ BUNDLE_KEYS = (
     "lang",
     "main_file",
     "test_file",
+    "build",
     "run_command",
     "test_command",
     "provenance",
@@ -97,10 +116,11 @@ BUNDLE_KEYS = (
     "origin",
 )
 
-#: The one key a bundle may leave out. ⚠️ Exactly the record's own exception,
-#: for the reason `unit.trust` gives: a field an author fills in to say the
-#: obvious is a field an author fills in wrongly.
-OPTIONAL_KEYS = ("trust",)
+#: The keys a bundle may leave out. ⚠️ `trust` is exactly the record's own
+#: exception, for the reason `unit.trust` gives: a field an author fills in to
+#: say the obvious is a field an author fills in wrongly. ⭐ `build` is absent
+#: for an exercise whose tests need nothing but the language (`W436`).
+OPTIONAL_KEYS = ("trust", "build")
 
 
 @dataclass(frozen=True, slots=True)
@@ -127,6 +147,7 @@ class Bundle:
     cases: tuple[Case, ...]
     report: Report
     origin: Origin
+    build: tuple[str, ...] = ()
 
     @property
     def places(self) -> Places:
@@ -167,9 +188,11 @@ def bundle_of(value: object, where: str) -> Bundle:
         cases=cases_of(document["cases"], where),
         report=report_of(document["report"], where),
         origin=_origin(document, where),
+        build=_build(document.get("build"), where),
     )
     _require_derivable(bundle, where)
     _require_report_in_workspace(bundle, where)
+    _require_build_apart(bundle, where)
     return bundle
 
 
@@ -185,6 +208,10 @@ def bundle_document(bundle: Bundle) -> dict:
         "lang": bundle.lang,
         "main_file": bundle.main_file,
         "test_file": bundle.test_file,
+    }
+    if bundle.build:
+        document["build"] = list(bundle.build)
+    document |= {
         "run_command": list(bundle.run_command),
         "test_command": list(bundle.test_command),
         "provenance": bundle.provenance,
@@ -295,3 +322,41 @@ def _require_report_in_workspace(bundle: Bundle, where: str) -> None:
     repository's personal-data gate never looks.
     """
     require_path(bundle.report.path, "the report's path", where)
+    if not is_run_output(bundle.report.path):
+        raise ExerciseError(
+            f"{where}: the report's path is inside '{RUN_OUTPUT_DIRNAME}/', the one "
+            f"directory every run artifact of an exercise lands in, and this one is "
+            f"not. One convention is what lets a corpus ignore every run's report "
+            f"with one line instead of one per exercise (ISO-M10/4)."
+        )
+
+
+def _build(value: object, where: str) -> tuple[str, ...]:
+    """Read the build role's file list: absent is none, present is non-empty and distinct."""
+    if value is None:
+        return ()
+    if not isinstance(value, list) or not value:
+        raise ExerciseError(
+            f"{where}: 'build' lists the build files this exercise ships under 'build/', "
+            f"as a non-empty array of workspace-relative paths, and it is {describe(value)}. "
+            f"An exercise that needs none leaves the key out."
+        )
+    paths = tuple(require_path(one, "a build file", where) for one in value)
+    if len(set(paths)) != len(paths):
+        raise ExerciseError(f"{where}: 'build' names one file more than once.")
+    return paths
+
+
+def _require_build_apart(bundle: Bundle, where: str) -> None:
+    """Refuse a build file that is the main file, the test file, or a run's output."""
+    for path in bundle.build:
+        if path in (bundle.main_file, bundle.test_file):
+            raise ExerciseError(
+                f"{where}: a build file shares its path with the main file or the test "
+                f"file, so the workspace would hold one file for two roles."
+            )
+        if is_run_output(path):
+            raise ExerciseError(
+                f"{where}: a build file sits in '{RUN_OUTPUT_DIRNAME}/', which every run "
+                f"writes and a corpus ignores, so it would be neither kept nor tracked."
+            )

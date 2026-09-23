@@ -5,7 +5,13 @@ from __future__ import annotations
 import pytest
 
 from studyforge.exercise import ExerciseError
-from studyforge.exercise.bundle import BUNDLE_KEYS, bundle_document, bundle_of
+from studyforge.exercise.bundle import (
+    BUNDLE_KEYS,
+    OPTIONAL_KEYS,
+    RUN_OUTPUT_DIRNAME,
+    bundle_document,
+    bundle_of,
+)
 from tests.studyforge.exercise.bundle import bundles
 
 
@@ -36,7 +42,7 @@ def test_every_edge_case_is_mapped_to_the_position_its_plant_is_filed_under():
     assert read.plants == {"test_empty": 1}
 
 
-@pytest.mark.parametrize("key", [key for key in BUNDLE_KEYS if key != "trust"])
+@pytest.mark.parametrize("key", [key for key in BUNDLE_KEYS if key not in OPTIONAL_KEYS])
 def test_a_missing_required_key_is_refused_by_name(key):
     declared = bundles.document()
     del declared[key]
@@ -117,3 +123,71 @@ def test_a_command_that_is_a_shell_line_is_refused():
     # ⛔ `safety`'s rule, imported rather than re-spelled: a command is argv.
     with pytest.raises(ExerciseError):
         bundle_of(bundles.document(test_command="pytest; rm -rf ~"), "bundle.json")
+
+
+# ⭐ `W436`: the build role, and the one report convention.
+
+
+def test_a_bundle_with_no_build_role_reads_and_writes_exactly_as_before():
+    declared = bundles.document()
+    assert "build" not in declared
+    read = bundle_of(declared, "bundle.json")
+    assert read.build == ()
+    assert "build" not in bundle_document(read)
+
+
+def test_a_declared_build_role_round_trips_in_its_place_in_the_key_order():
+    declared = bundles.document(build=["pom.xml", "lib/versions.properties"])
+    read = bundle_of(declared, "bundle.json")
+    assert read.build == ("pom.xml", "lib/versions.properties")
+    written = bundle_document(read)
+    assert written == declared
+    assert list(written) == [key for key in BUNDLE_KEYS if key in written]
+    assert list(written).index("build") == list(written).index("test_file") + 1
+
+
+@pytest.mark.parametrize(
+    "build",
+    [[], "pom.xml", [""], ["pom.xml", "pom.xml"], ["../pom.xml"], ["-rf"]],
+    ids=["empty", "a-string", "blank", "repeated", "escaping", "a-flag"],
+)
+def test_a_build_role_that_is_not_a_list_of_distinct_workspace_paths_is_refused(build):
+    with pytest.raises(ExerciseError):
+        bundle_of(bundles.document(build=build), "bundle.json")
+
+
+def test_an_escaping_build_path_is_refused_without_quoting_it():
+    home = "/" + "/".join(("home", "someone"))
+    with pytest.raises(ExerciseError) as raised:
+        bundle_of(bundles.document(build=[f"{home}/pom.xml"]), "bundle.json")
+    assert home not in str(raised.value)
+
+
+@pytest.mark.parametrize("path", ["bitmap.py", "test_bitmap.py"])
+def test_a_build_file_that_is_the_main_or_the_test_file_is_refused(path):
+    with pytest.raises(ExerciseError, match="two roles"):
+        bundle_of(bundles.document(build=[path]), "bundle.json")
+
+
+def test_a_build_file_in_the_run_output_directory_is_refused():
+    with pytest.raises(ExerciseError, match=RUN_OUTPUT_DIRNAME):
+        bundle_of(bundles.document(build=[f"{RUN_OUTPUT_DIRNAME}/pom.xml"]), "bundle.json")
+
+
+@pytest.mark.parametrize(
+    "path",
+    ["report.xml", "reports/TEST-x.xml", f"{RUN_OUTPUT_DIRNAME}x/report.xml", "a/target/r.xml"],
+)
+def test_a_report_outside_the_run_output_directory_is_refused_naming_the_convention(path):
+    # ⭐ `ISO-M10/4`: one convention, so a corpus ignores every run's report
+    # with one line. Each of these would need a rule of its own.
+    with pytest.raises(ExerciseError, match="ISO-M10/4"):
+        bundle_of(bundles.document(report={"format": "junit", "path": path}), "bundle.json")
+
+
+@pytest.mark.parametrize(
+    "path", [f"{RUN_OUTPUT_DIRNAME}/report.xml", f"{RUN_OUTPUT_DIRNAME}/surefire-reports"]
+)
+def test_a_report_file_or_directory_inside_the_run_output_directory_is_read(path):
+    read = bundle_of(bundles.document(report={"format": "junit", "path": path}), "bundle.json")
+    assert read.report.path == path

@@ -7,8 +7,13 @@ import pytest
 from studyforge.address import Address
 from studyforge.exercise import ExerciseError
 from studyforge.exercise.bundle import (
+    BUILD,
+    BUNDLE_DIRNAMES,
     BUNDLES_DIRNAME,
+    RUN_OUTPUT_DIRNAME,
+    RUN_OUTPUT_IGNORE,
     Places,
+    is_run_output,
     ordinals,
     plant_dirname,
     plant_positions,
@@ -124,6 +129,47 @@ def test_a_committed_run_report_is_named(tmp_path):
 
 def test_a_file_under_an_unknown_directory_is_named(tmp_path):
     where = bundles.write_bundle(tmp_path)
-    (tmp_path / where.bundle / "target").mkdir()
-    (tmp_path / where.bundle / "target" / "out.xml").write_text("x", encoding="utf-8")
-    assert unpermitted(tmp_path, where) == ("target/out.xml",)
+    (tmp_path / where.bundle / "output").mkdir()
+    (tmp_path / where.bundle / "output" / "out.xml").write_text("x", encoding="utf-8")
+    assert unpermitted(tmp_path, where) == ("output/out.xml",)
+
+
+# ⭐ `W436`: the build role widened the set by one directory, and `AX-03/1`'s
+# reason survives it.
+
+
+def test_a_bundle_with_a_build_role_holds_only_what_the_shape_permits(tmp_path):
+    where = bundles.write_bundle(tmp_path, build=["pom.xml", "gradle/libs.versions.toml"])
+    assert (tmp_path / where.bundle / "build" / "gradle" / "libs.versions.toml").is_file()
+    assert unpermitted(tmp_path, where) == ()
+
+
+@pytest.mark.parametrize("role", ["build", "tests", "starter", "plants/edge-1"])
+def test_a_run_output_directory_is_refused_under_every_role(tmp_path, role):
+    # ⛔ A report a run wrote lands in RUN_OUTPUT_DIRNAME, so a bundle file
+    # anywhere under one is a run's output somebody committed.
+    where = bundles.write_bundle(tmp_path, build=["pom.xml"])
+    planted = tmp_path / where.bundle / role / RUN_OUTPUT_DIRNAME / "TEST-x.xml"
+    planted.parent.mkdir(parents=True, exist_ok=True)
+    planted.write_text("<testsuite hostname='h'/>", encoding="utf-8")
+    assert unpermitted(tmp_path, where) == (f"{role}/{RUN_OUTPUT_DIRNAME}/TEST-x.xml",)
+
+
+def test_a_run_output_path_is_one_under_the_directory_and_nothing_else():
+    assert is_run_output(f"{RUN_OUTPUT_DIRNAME}/r.xml")
+    assert is_run_output(f"{RUN_OUTPUT_DIRNAME}/surefire-reports")
+    assert not is_run_output("r.xml")
+    assert not is_run_output(f"a/{RUN_OUTPUT_DIRNAME}/r.xml")
+    assert not is_run_output(f"{RUN_OUTPUT_DIRNAME}x/r.xml")
+
+
+def test_the_one_ignore_line_names_the_run_output_directory_at_any_depth():
+    # ⭐ `ISO-M10/4`: one git pattern, written once — a trailing slash matches a
+    # directory of that name at any depth below the ignore file.
+    assert RUN_OUTPUT_IGNORE == f"{RUN_OUTPUT_DIRNAME}/"
+    assert "/" not in RUN_OUTPUT_IGNORE[:-1]
+
+
+def test_a_build_file_sits_under_the_build_role_directory():
+    assert spot().build_path("pom.xml") == "build/pom.xml"
+    assert BUILD in BUNDLE_DIRNAMES

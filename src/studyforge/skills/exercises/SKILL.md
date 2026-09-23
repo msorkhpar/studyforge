@@ -30,7 +30,12 @@ and ships only with the gate record that says it cleared.
    skill does not edit `corpus.json`: an existing file is never rewritten (R3).
 3. ⛔ **The corpus ignores a run's report.** A JUnit report carries the
    machine's hostname (R7), and it lands in the reader's workspace, so the
-   corpus's ignore rules keep it out of every commit (`AX-04/3`).
+   corpus's ignore rules keep it out of every commit (`AX-04/3`). ⭐ Every
+   run's output lands in `target/` inside the workspace
+   (`exercise.bundle.RUN_OUTPUT_DIRNAME`), and a bundle's report path is
+   refused anywhere else, so the rule is the one line `target/`
+   (`RUN_OUTPUT_IGNORE`), written once in an ignore file of the corpus's own
+   under `practice/` (`ISO-M10/4`).
 4. **The pinned runner image**, for the gate runs. The gates are only as
    reproducible as the toolchain they ran in (R15).
 
@@ -92,6 +97,15 @@ test-file pattern.
 ⭐ **Commands are spelled from the corpus root**, and every path argument is
 inside the exercise's own workspace (`brief.places.workspace`), or `emit`
 refuses the bundle.
+
+⭐ **An exercise whose tests import a library ships its build role** (`W436`):
+`CodeDraft.build` maps each build file's workspace-relative path to its text —
+a `pom.xml` naming the library, say — and the command names it inside the
+workspace (`-f <workspace>/pom.xml`). Every gate run stages it beside the
+tests, and the gate record digests it. ⛔ The library itself is never a file
+you write: the pinned runner image carries it, primed from the corpus's own
+build (`skills.execution`, step 4a), so a build naming something the prime did
+not warm fails `G1` and does not ship.
 
 ### 3. Run the pass
 

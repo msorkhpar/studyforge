@@ -190,10 +190,10 @@ def _code(brief: Brief, name: str, **parts) -> CodeDraft:
             "-p",
             "no:cacheprovider",
             "--junit-xml",
-            f"{ws}/report.xml",
+            f"{ws}/target/report.xml",
             f"{ws}/test_{name}.py",
         ),
-        report="report.xml",
+        report="target/report.xml",
         starter=f"def {name}(*args):\n    raise NotImplementedError('write me')\n",
         **parts,
     )

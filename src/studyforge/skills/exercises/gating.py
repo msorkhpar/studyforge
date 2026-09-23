@@ -36,6 +36,15 @@ solution, laid out as the corpus root would see it. ⚠️ A run that left a fil
 behind cannot reach the next one, and nothing is ever written into the corpus
 while its gates are being read.
 
+## ⭐ A DRAFT'S BUILD ROLE IS STAGED INTO EVERY RUN (`W436`)
+
+⭐ Each run's fresh root holds the draft's build files beside the tests and
+the solution, exactly where `emit` will put them for a reader, and the gate
+record digests each as `build:<path>`. ⛔ So a build that names a dependency
+the pinned runner image does not carry fails `G1` in the gate run, and the
+exercise never ships — the composition with the runner's prime is proved per
+exercise, not assumed.
+
 ## ⚠️ A RUN'S OUTPUT IS MADE RELATIVE AND SCRUBBED BEFORE IT IS KEPT
 
 ⛔ **It reaches a coverage report that is committed into a corpus repository**,
@@ -57,6 +66,7 @@ from studyforge.archive.scrub import scrub
 from studyforge.exercise import QUIZ, Exercise, Origin, from_document, origin_document, to_document
 from studyforge.exercise import of as exercise_of
 from studyforge.exercise.bundle import (
+    BUILD,
     BUNDLE_API,
     BUNDLE_FILENAME,
     STATEMENT_FILENAME,
@@ -175,6 +185,7 @@ def gate_code(
         f"starter/{main}": draft.starter.encode("utf-8"),
         f"reference/{main}": draft.reference.encode("utf-8"),
         f"tests/{draft.test_file}": draft.tests.encode("utf-8"),
+        **{places.build_path(path): text.encode("utf-8") for path, text in draft.build.items()},
         **{
             f"plants/{plant_dirname(positions[case])}/{main}": text.encode("utf-8")
             for case, text in draft.plants.items()
@@ -259,6 +270,10 @@ class _Runs:
                 {
                     self.places.in_workspace(self.draft.test_file): self.draft.tests.encode(),
                     self.places.in_workspace(self.draft.main_file): self.solutions[role].encode(),
+                    **{
+                        self.places.in_workspace(path): text.encode()
+                        for path, text in self.draft.build.items()
+                    },
                 },
             )
             started = time.time()
@@ -270,7 +285,12 @@ class _Runs:
 
 
 def _bundle_document(draft: CodeDraft, places: Places) -> dict:
-    """Return the bundle document a draft becomes, the skill's provenance filled in (R5)."""
+    """Return the bundle document a draft becomes, the skill's provenance filled in (R5).
+
+    ⭐ `build` is written only when the draft ships a build role (`W436`), so a
+    draft that needs none writes exactly the document it always did.
+    """
+    build = {"build": list(draft.build)} if draft.build else {}
     return {
         "bundle_api": BUNDLE_API,
         "address": list(places.address.segments),
@@ -281,6 +301,7 @@ def _bundle_document(draft: CodeDraft, places: Places) -> dict:
         "lang": draft.lang,
         "main_file": draft.main_file,
         "test_file": draft.test_file,
+        **build,
         "run_command": list(draft.run_command),
         "test_command": list(draft.test_command),
         "provenance": AUTHORED_PROVENANCE,
@@ -308,6 +329,7 @@ def _roles(bundle, positions: dict[str, int]) -> tuple[tuple[str, str], ...]:
             (plant_role(case), f"plants/{plant_dirname(positions[case.id])}/{main}")
             for case in _edges(bundle.cases)
         ),
+        *((f"{BUILD}:{path}", bundle.places.build_path(path)) for path in bundle.build),
     )
 
 
