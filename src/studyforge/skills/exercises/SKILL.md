@@ -151,6 +151,13 @@ read), and the last run's output, made relative to the run and scrubbed (R7).
 | `exercises/<address>/<variant>/unit-NN/coverage.json` | the unit's plan, what shipped, and every shortfall |
 | `exercises/ledger.json` | the source ledger, every entry accounted for |
 
+⛔ **`M` follows the practices the unit already carries** (`W437`). A unit
+whose archive holds `practice-1` from the source gets its first authored
+exercise at `practice-2`. The pass reads what the unit carries from its
+archive, so you declare no offset. The source's practice is never renumbered
+or rewritten, and an authored exercise that would repeat or skip past one is
+refused by the practice's name before anything is written.
+
 ⛔ **Only inside the corpus root, and only additively** (R3). A file that is
 already there with the same bytes is left alone. A file that is there with
 different bytes stops the whole pass, **before anything is written**, and the

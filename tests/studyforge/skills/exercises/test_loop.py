@@ -168,7 +168,7 @@ def test_no_gate_budget_or_option_can_be_handed_to_the_loop(function):
 
 
 def _carry(root, page, ordinals):
-    """Archive a `bundled`-shaped practice for each ordinal on the page's unit, as ingestion would."""
+    """Archive a practice for each ordinal on the page's unit, as ingestion would."""
     written = []
     for ordinal in ordinals:
         document = build(
