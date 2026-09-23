@@ -8,11 +8,12 @@ checks, the reader's documentation and the record that undoes all of it.
 **How you use it.** Through the skill document beside this file (`SKILL.md`),
 which is the procedure. This package is what the skill *calls*:
 
-    from studyforge.skills.onboarding import hand_edited, onboard, uninstall
+    from studyforge.skills.onboarding import hand_edited, onboard, reonboard, uninstall
 
     made = onboard(draft, framework_commit=commit)
     print("\\n".join(made.lines()))     # what it will write, and why
     made.write(corpus_root)             # ⛔ refuses to overwrite anything
+    reonboard(corpus_root).write(corpus_root, regenerate=True)  # its recorded answers (W439)
     uninstall(corpus_root)              # ⛔ refuses if any of it changed
     hand_edited(corpus_root)            # generated files edited by hand, never yours
 
@@ -91,6 +92,7 @@ from studyforge.skills.onboarding.pin import (
 )
 from studyforge.skills.onboarding.record import INSTALLED_API, OnboardingRefused, hand_edited
 from studyforge.skills.onboarding.removal import uninstall
+from studyforge.skills.onboarding.reonboard import recorded_draft, reonboard
 
 #: ⛔ The package's whole public surface.
 __all__ = [
@@ -118,7 +120,9 @@ __all__ = [
     "pin_document",
     "pin_test",
     "promote",
+    "recorded_draft",
     "render",
+    "reonboard",
     "stub",
     "stub_paths",
     "uninstall",

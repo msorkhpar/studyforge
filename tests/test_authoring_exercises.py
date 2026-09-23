@@ -87,6 +87,7 @@ BRIEF = "What a brief carries"
 PLAN = "The plan"
 REFUSES = "When a gate refuses"
 WRITES = "What the pass writes"
+BEFORE = "Before you author"
 
 #: The sentence `W389` struck, which the guide must no longer teach.
 STRUCK = "Do not invent assertions"
@@ -301,19 +302,86 @@ def test_the_paths_table_is_where_the_pass_writes_both_ways():
     assert vocabulary_under(guide(), WRITES) == shown
 
 
-def test_the_not_material_fence_is_one_a_manifest_accepts_and_needs_api_two():
-    declared = [block for block in json_fences(guide()) if "not_material" in block]
-    assert len(declared) == 1, "the guide no longer shows the two not_material entries"
-    entries = declared[0]["not_material"]
-    assert {entry["glob"] for entry in entries} == {
+def manifest_step() -> tuple[str, ast.Call]:
+    """The *Before you author* fence that changes the manifest, and its `reonboard` call.
+
+    ⛔ `W439`: the manifest is generated, so the guide's step is a call to the
+    onboarding skill and never a fragment to paste into `corpus.json`.
+    """
+    for body in fences(section(guide(), BEFORE), "python"):
+        for node in ast.walk(ast.parse(body)):
+            if isinstance(node, ast.Call) and getattr(node.func, "id", None) == "reonboard":
+                return body, node
+    raise AssertionError(f"'{BEFORE}' no longer changes the manifest through reonboard")
+
+
+def test_the_manifest_step_declares_the_two_trees_and_the_answer_as_data():
+    _, call = manifest_step()
+    given = {kw.arg: ast.literal_eval(kw.value) for kw in call.keywords}
+    assert {entry["glob"] for entry in given["not_material"]} == {
         f"{BUNDLES_DIRNAME}/**",
         f"{PRACTICE_DIRNAME}/**",
     }
+    assert given["settle"] == {"exercises": True}
     base = json.loads((repository_root() / "tests/fixtures/depth2/corpus.json").read_text())
-    base["content"]["not_material"] = entries
+    base["content"]["not_material"] = given["not_material"]
     parse_manifest(json.dumps({**base, "corpus_api": 2}))
     with pytest.raises(ManifestError):
         parse_manifest(json.dumps({**base, "corpus_api": 1}))
+
+
+def test_the_guide_hands_the_reader_no_manifest_fragment_to_paste():
+    # ⛔ The struck instruction's shape: a JSON block of `not_material` entries
+    # an author typed into a generated file, which `hand_edited` then named.
+    pasted = [block for block in json_fences(guide()) if "not_material" in json.dumps(block)]
+    assert not pasted, f"{PAGE} shows a manifest fragment to type by hand: {pasted}"
+
+
+def _onboarded(tmp_path):
+    """A fixture corpus onboarded with `exercises: false`, and its control reading."""
+    from studyforge.skills.onboarding import hand_edited, onboard
+    from tests.studyforge.skills.onboarding import corpora
+
+    root = corpora.material(tmp_path / "corpus")
+    onboard(corpora.DRAFT, framework_commit=corpora.COMMIT, root=root).write(root)
+    assert hand_edited(root) == [], "the control: a fresh onboarding is not hand-edited"
+    return root
+
+
+def test_the_guides_manifest_step_run_on_an_onboarded_corpus_leaves_nothing_hand_edited(
+    tmp_path, capsys
+):
+    # ⭐ The fence is RUN, not read: the path it names is the fixture's, and
+    # everything else is the guide's own text.
+    from studyforge.skills.onboarding import hand_edited
+
+    root = _onboarded(tmp_path)
+    body, _ = manifest_step()
+    assert '"path/to/your-corpus"' in body, "the fence no longer names its placeholder path"
+    exec(body.replace('"path/to/your-corpus"', repr(str(root))), {})
+
+    assert hand_edited(root) == []
+    assert capsys.readouterr().out.strip() == "[]"
+    written = json.loads((root / "corpus.json").read_text(encoding="utf-8"))
+    globs = {entry["glob"] for entry in written["content"]["not_material"]}
+    assert {f"{BUNDLES_DIRNAME}/**", f"{PRACTICE_DIRNAME}/**"} <= globs
+    assert written["exercises"] is True
+
+
+def test_the_hand_typed_entries_the_guide_once_prescribed_are_named(tmp_path):
+    # ⛔ The negative: the same entries typed into `corpus.json`, as the struck
+    # sentence said to, are an R19 finding the moment they land.
+    from studyforge.skills.onboarding import hand_edited
+
+    root = _onboarded(tmp_path)
+    _, call = manifest_step()
+    entries = next(ast.literal_eval(kw.value) for kw in call.keywords if kw.arg == "not_material")
+    manifest = root / "corpus.json"
+    document = json.loads(manifest.read_text(encoding="utf-8"))
+    document["content"]["not_material"] += entries
+    manifest.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+
+    assert hand_edited(root) == ["corpus.json"]
 
 
 def test_every_file_the_guide_points_at_exists():
