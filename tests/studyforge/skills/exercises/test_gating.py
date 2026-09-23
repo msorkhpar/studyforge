@@ -169,3 +169,42 @@ def test_a_runs_output_is_made_relative_and_scrubbed_before_it_is_kept(tmp_path)
     assert gated.output.startswith("./practice/"), "the output was not made relative"
     assert HOME not in gated.output, "a home path reached what a report would commit"
     assert not gated.clears, "a run that wrote no report cleared the gates"
+
+
+# ⭐ `W436`: a draft's build role is staged into every run, digested, and shipped.
+
+#: A build file of the draft's own. ⚠️ The framework never reads it, so its
+#: content only has to reach every place it is owed, byte for byte.
+BUILD = {"pyproject.toml": "[tool.pytest.ini_options]\naddopts = '-q'\n"}
+
+
+def test_a_build_role_is_staged_into_every_run_digested_and_shipped(tmp_path):
+    material, graders, pages = write_corpus(tmp_path)
+    ledger = take(tmp_path, material, graders, "the ledger")
+    brief = _brief(pages[BASKET], ledger)
+    real = Running()
+    staged = []
+
+    def watching(root, command):
+        staged.append((root / brief.places.in_workspace("pyproject.toml")).read_text())
+        return real(root, command)
+
+    draft = replace(basket(brief), build=BUILD)
+    gated = gate_code(draft, brief, ledger, watching, source="demo", where="w")
+    assert staged and set(staged) == {BUILD["pyproject.toml"]}, "a run missed the build role"
+    assert gated.clears, [verdict.says for verdict in gated.refused]
+    files = dict(gated.files)
+    assert files[brief.places.in_bundle("build/pyproject.toml")] == BUILD["pyproject.toml"].encode()
+    assert files[brief.places.in_workspace("pyproject.toml")] == BUILD["pyproject.toml"].encode()
+    (build,) = [one for one in gated.record.inputs if one.role.startswith("build:")]
+    assert (build.role, build.path) == ("build:pyproject.toml", "build/pyproject.toml")
+    assert build.digest == digest_of_bytes(BUILD["pyproject.toml"].encode())
+
+
+def test_a_draft_with_no_build_role_ships_no_build_file_and_no_build_input(tmp_path):
+    material, graders, pages = write_corpus(tmp_path)
+    ledger = take(tmp_path, material, graders, "the ledger")
+    brief = _brief(pages[BASKET], ledger)
+    gated = gate_code(basket(brief), brief, ledger, Running(), source="demo", where="w")
+    assert not any("/build/" in path for path, _ in gated.files)
+    assert not any(one.role.startswith("build:") for one in gated.record.inputs)

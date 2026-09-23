@@ -46,6 +46,14 @@ revealed automatically, and asking is not a run and cannot be recorded as a
 failure. ⚠️ **`AX-09` owns how it is drawn and what its summary reads**; this
 module owns only that it is in the document.
 
+## ⭐ THE BUILD ROLE IS LAID INTO THE WORKSPACE, AND NEVER READ (`W436`)
+
+⭐ Each file `bundle.build` names is copied from the bundle's `build/` into the
+workspace at the same relative path, beside the starter and the tests, so the
+command a record carries finds its build declaration where the reader's own
+files are. ⛔ Its bytes are not interpreted here: which tool reads it, and
+what it declares, is the corpus's data (R1).
+
 ## ⛔ WHAT THE EMISSION DOES NOT WRITE
 
 ⛔ **The archive document's own path is `skills.adapter.Layout`'s**, and this
@@ -69,6 +77,7 @@ from studyforge.archive.markdown import MarkdownError
 from studyforge.archive.markdown import parse as parse_markdown
 from studyforge.exercise.bundle.document import Bundle
 from studyforge.exercise.bundle.layout import (
+    BUILD,
     STATEMENT,
     TESTS,
     edges_of,
@@ -88,7 +97,7 @@ REFERENCE_SUMMARY = "Show a worked solution"
 #: The roles the emission digests and ships, in the order a gate record writes
 #: them. ⭐ Derived from the bundle rather than listed by a caller, so there is
 #: no argument by which one is left out.
-SHIPPED_ROLES = (STATEMENT, STARTER, REFERENCE, TESTS)
+SHIPPED_ROLES = (STATEMENT, STARTER, REFERENCE, TESTS, BUILD)
 
 
 @dataclass(frozen=True, slots=True)
@@ -131,6 +140,10 @@ def emit(
     reference = _text_at(base, bundle.places.in_bundle(_role_file(bundle, REFERENCE)), where)
     tests = _text_at(base, bundle.places.in_bundle(_role_file(bundle, TESTS)), where)
     _require_plants(base, bundle, where)
+    built = tuple(
+        (path, _bytes_at(base, bundle.places.in_bundle(bundle.places.build_path(path)), where))
+        for path in bundle.build
+    )
     document = build(
         source=source,
         address=bundle.address,
@@ -147,6 +160,7 @@ def emit(
     files = (
         (bundle.places.in_workspace(bundle.main_file), starter.encode("utf-8")),
         (bundle.places.in_workspace(bundle.test_file), tests.encode("utf-8")),
+        *((bundle.places.in_workspace(path), data) for path, data in built),
     )
     return Emission(document=document, files=files)
 
@@ -321,6 +335,21 @@ def _require_one_page(bundles: tuple[Bundle, ...], where: str) -> None:
             f"would be checked across pages that each number from one. Emit one "
             f"page's exercises at a time."
         )
+
+
+def _bytes_at(base: Path, path: str, where: str) -> bytes:
+    """Read one build file of the bundle as bytes, naming the file rather than the machine (R7).
+
+    ⭐ Bytes, not text: a build file is copied, never interpreted, so it is not
+    required to be anything the archive could carry.
+    """
+    try:
+        return (base / path).read_bytes()
+    except OSError:
+        raise ExerciseError(
+            f"{where}: the bundle declares a build file at '{path}' and holds none. "
+            f"A build file the gate runs never read is one no gate proved."
+        ) from None
 
 
 def _text_at(base: Path, path: str, where: str) -> str:

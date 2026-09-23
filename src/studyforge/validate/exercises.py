@@ -51,7 +51,7 @@ from collections.abc import Iterator
 from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.exercise import ExerciseError
 from studyforge.exercise import of as exercise_of
-from studyforge.exercise.bundle import Places, unpermitted
+from studyforge.exercise.bundle import BUNDLE_DIRNAMES, RUN_OUTPUT_DIRNAME, Places, unpermitted
 from studyforge.exercise.gates import drifted, record_of
 from studyforge.validate.corpus import Unit, Walk
 from studyforge.validate.report import Finding
@@ -174,9 +174,10 @@ def check_bundle_contents(walk: Walk) -> Iterator[Finding]:
                 where,
                 f"its bundle holds '{found}', which a bundle's shape does not permit. "
                 f"A bundle carries its document, its statement, its gate record and "
-                f"the files under 'starter', 'reference', 'tests' and 'plants'. A "
-                f"run's report in particular is a run artifact and never a bundle "
-                f"input: it carries the machine's hostname.",
+                f"the files under {', '.join(repr(one) for one in BUNDLE_DIRNAMES)}, "
+                f"none of them in a '{RUN_OUTPUT_DIRNAME}' directory. A run's report "
+                f"in particular is a run artifact and never a bundle input: it "
+                f"carries the machine's hostname.",
             )
 
 

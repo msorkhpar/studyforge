@@ -170,3 +170,35 @@ def test_a_corpus_with_no_authored_exercise_is_untouched(tmp_path):
     report = validate(root)
     assert report.findings == ()
     assert RULE_GATE_RECORD not in report.rules
+
+
+# ⭐ `W436`: a bundle with a build role is held to the same two questions.
+
+
+def test_a_corpus_whose_exercise_ships_a_build_role_validates(tmp_path):
+    root, places = a_corpus(tmp_path / "c", build=["pom.xml"])
+    assert (root / places[0].workspace / "pom.xml").is_file()
+    assert validate(root).findings == ()
+
+
+def test_a_build_file_changed_after_the_gates_ran_is_refused_naming_it(tmp_path):
+    root, places = a_corpus(tmp_path / "c", build=["pom.xml"])
+    build = root / places[0].bundle / "build" / "pom.xml"
+    before = build.read_text(encoding="utf-8")
+    build.write_text(before + "<!-- a dependency added after the gates -->\n", encoding="utf-8")
+    assert build.read_text(encoding="utf-8") != before  # ⭐ the plant, observed
+    report = validate(root)
+    named = "\n".join(f.message for f in report.findings if f.rule == RULE_BUNDLE_DIGEST)
+    assert "build/pom.xml" in named
+
+
+def test_a_run_report_committed_under_the_build_role_is_refused(tmp_path):
+    # ⛔ `AX-03/1` survives the wider set: the run-output directory is refused
+    # under every role, so the build role cannot carry a run's report either.
+    root, places = a_corpus(tmp_path / "c", build=["pom.xml"])
+    planted = root / places[0].bundle / "build" / "target" / "TEST-x.xml"
+    planted.parent.mkdir(parents=True)
+    planted.write_text('<testsuite name="x" hostname="a-machine"/>\n', encoding="utf-8")
+    assert planted.is_file()
+    named = "\n".join(f.message for f in validate(root).findings if f.rule == RULE_BUNDLE_CONTENTS)
+    assert "build/target/TEST-x.xml" in named and "hostname" in named

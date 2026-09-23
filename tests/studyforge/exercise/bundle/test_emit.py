@@ -39,7 +39,7 @@ def test_the_record_names_the_readers_own_files_and_not_the_bundles(tmp_path):
     assert exercise.main_path == "practice/demo/prose/unit-02/practice-1/bitmap.py"
     assert exercise.test_path == "practice/demo/prose/unit-02/practice-1/test_bitmap.py"
     assert "exercises/" not in exercise.main_path
-    assert exercise.report.path == "practice/demo/prose/unit-02/practice-1/report.xml"
+    assert exercise.report.path == "practice/demo/prose/unit-02/practice-1/target/report.xml"
 
 
 def test_the_record_carries_the_cases_and_the_origin_it_was_built_from(tmp_path):
@@ -194,3 +194,44 @@ def test_the_same_emission_serves_a_second_source_with_no_framework_change(tmp_p
     assert emission.paths[0] == f"{elsewhere_root}/src/Parser.java"
     assert parse(render(emission.document), "practice-1.json")["source"] == "other"
     assert write(tmp_path, emission, "emission") == emission.paths
+
+
+# ⭐ `W436`: the build role reaches the reader's workspace, byte for byte.
+
+
+def test_a_declared_build_file_is_laid_into_the_workspace_beside_the_readers_files(tmp_path):
+    emission = an_emission(tmp_path, build=["pom.xml", "config/deps.toml"])
+    workspace = "practice/demo/prose/unit-02/practice-1"
+    assert emission.paths[2:] == (f"{workspace}/pom.xml", f"{workspace}/config/deps.toml")
+    write(tmp_path, emission, "emission")
+    for path in emission.paths[2:]:
+        assert (tmp_path / path).read_text(encoding="utf-8") == bundles.BUILD_TEXT
+
+
+def test_an_exercise_with_no_build_role_emits_only_the_readers_two_files(tmp_path):
+    # ⭐ The M7 shape, unchanged: nothing is added where nothing was declared.
+    assert len(an_emission(tmp_path).paths) == 2
+
+
+def test_a_build_file_is_copied_as_bytes_and_never_interpreted(tmp_path):
+    bundle = a_bundle(tmp_path, build=["lib.bin"])
+    raw = bytes(range(256))
+    (tmp_path / bundle.places.bundle / "build" / "lib.bin").write_bytes(raw)
+    emission = emit(tmp_path, bundle, source="demo", ingested="2026-01-05")
+    assert dict(emission.files)[bundle.places.in_workspace("lib.bin")] == raw
+
+
+def test_a_declared_build_file_the_bundle_does_not_hold_is_named(tmp_path):
+    bundle = a_bundle(tmp_path, build=["pom.xml"])
+    (tmp_path / bundle.places.bundle / "build" / "pom.xml").unlink()
+    with pytest.raises(ExerciseError, match="build/pom.xml"):
+        emit(tmp_path, bundle, source="demo", ingested="2026-01-05")
+
+
+def test_a_command_may_name_the_build_file_it_laid_into_the_workspace(tmp_path):
+    # ⭐ The whole reach of the channel: a workspace-relative argument, which
+    # `emit` already permits, and no absolute path anywhere (`safety`).
+    workspace = "practice/demo/prose/unit-02/practice-1"
+    command = ["mvn", "-o", "-q", "-f", f"{workspace}/pom.xml", "test"]
+    document = an_emission(tmp_path, build=["pom.xml"], test_command=command).document
+    assert exercise_of(document, "practice-1.json").test_command == tuple(command)
