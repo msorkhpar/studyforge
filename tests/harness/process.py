@@ -58,8 +58,8 @@ LAYOUT = (
     "commit drops the tooling's row from its data"
 )
 ENFORCER = (
-    "names a tooling test as a fixture enforcer; it STAYS, and the entry follows that test "
-    "wherever REL-03 or REL-10 puts it"
+    "names a tooling test as a fixture enforcer; it STAYS, and REL-10 re-points the entry at "
+    "that test's product twin, tests/floor/personal_data/test_registry.py"
 )
 
 #: ⛔ Whole FILES that are process. Never collected when the tooling is absent.

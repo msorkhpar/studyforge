@@ -123,3 +123,14 @@ def test_no_module_under_src_can_be_skipped(tmp_path):
         path.write_text('"""The jPOS tutorial."""\n', encoding="utf-8")
     findings = check_source_names(tmp_path)
     assert sorted(f.path for f in findings) == sorted(names)
+
+
+def test_the_product_suites_own_registry_is_this_registry():
+    # ⛔ Two product copies of R1's registry — this floor's, and the one the product's tests
+    #    read — must stay one rule after the tooling (and its twins test) has gone.
+    from tests.harness import sources
+
+    def shape(registry):
+        return [(corpus, pattern.pattern, pattern.flags, why) for corpus, pattern, why in registry]
+
+    assert shape(sources.KNOWN_SOURCES) == shape(KNOWN_SOURCES)
