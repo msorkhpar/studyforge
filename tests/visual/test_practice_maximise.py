@@ -36,6 +36,7 @@ module is a reading of `code-server`.
 
 from __future__ import annotations
 
+import time
 from collections.abc import Iterator
 
 import pytest
@@ -121,6 +122,48 @@ window.scrollTo({ top: document.documentElement.scrollHeight, left: 0, behavior:
 """
 
 
+#: Where the maximise control sits against the fold, before a single Tab.
+BELOW_THE_FOLD = """
+(() => {
+  const control = document.querySelector('<panel> [data-practice-part="expand"]');
+  const box = control.getBoundingClientRect();
+  return { top: box.top, bottom: box.bottom, viewport: window.innerHeight };
+})()
+""".replace("<panel>", PANEL_SELECTOR)
+
+#: Record every time the PAGE comes to rest, and what had focus when it did.
+#:
+#: ⛔ **`W441`, and this is the whole of its repair.** Reaching the control by
+#: Tab scrolls it into view, and `reset.css`'s `scroll-behavior: smooth` makes
+#: that scroll a GLIDE. ⭐ **MEASURED in the pinned image:** from a reader at the
+#: top, the glide runs `0, 2, 10, 25, 51, 93 … 1121, 1122` over about 560ms —
+#: and the reading of the page the reader left was taken at its first frame.
+#: Alone, the Enter lands before a frame is drawn and both readings say `0`;
+#: under load a frame or two slips between them, the panel remembers the page
+#: where the glide had got to, and the check read `4` against `0`, `4` against
+#: `2`, and `2` against `0` — every one a glide frame, never a restore error.
+#: ⛔ **So the fix is to read a page AT REST, not to forgive a difference**: the
+#: browser's own `scrollend` says when the glide has finished, and it is armed
+#: BEFORE the traversal so a glide that ends early is still seen.
+#: ⚠️ On the DOCUMENT and not captured, so the output region's own scrolling,
+#: which fires at the element and does not bubble, is not mistaken for the page's.
+AT_REST = """
+(() => {
+  window.studyforgeRest = [];
+  document.addEventListener('scrollend', () => {
+    const active = document.activeElement;
+    const box = active.getBoundingClientRect();
+    window.studyforgeRest.push({
+      label: active.textContent.trim(),
+      scrolled: window.scrollY,
+      inView: box.top >= 0 && box.bottom <= window.innerHeight
+    });
+  });
+  return true;
+})()
+"""
+
+
 @pytest.fixture
 def origin(built_site: site.Site) -> Iterator[served.Served]:
     """One loopback origin over the built tree, bound for this check alone."""
@@ -143,6 +186,26 @@ def framed(built_site: site.Site) -> Iterator[served.Served]:
 def _frames(reading: dict, field: str) -> list:
     """One field of every editor frame the panel is showing, in document order."""
     return [frame[field] for frame in reading["frames"]]
+
+
+def _glided_to(page: OpenPage, label: str) -> dict:
+    """Wait until the glide that reaching `label` started has finished, and return where.
+
+    ⛔ Polled and bounded like `_until`, and on the browser's OWN end-of-scroll
+    signal rather than on a guess about how long a glide lasts: a fixed sleep
+    is a check that is slow alone and still wrong under load.
+    """
+    deadline = time.monotonic() + SETTLE
+    rests: list = []
+    while time.monotonic() < deadline:
+        rests = list(page.evaluate("window.studyforgeRest") or [])  # type: ignore[call-overload]
+        for rest in rests:
+            if rest["label"] == label and rest["inView"]:
+                return dict(rest)
+        time.sleep(0.05)
+    raise AssertionError(
+        f"the page never came to rest with {label!r} in view; it came to rest {rests}"
+    )
 
 
 def _survived(reading: dict, what: str) -> None:
@@ -180,15 +243,31 @@ def test_the_practice_maximises_to_the_whole_viewport_and_escape_restores_it(
         "the panel already fills the window at rest, so an expansion proves nothing"
     )
 
+    # ⛔ **The precondition of the wait below, stated rather than assumed**: the
+    # control starts below the fold, so reaching it MUST scroll the page, and
+    # there is a glide to wait for. A control already in view would scroll
+    # nothing, send no `scrollend`, and leave the wait with nothing to see.
+    fold = dict(open_page.evaluate(BELOW_THE_FOLD))  # type: ignore[call-overload]
+    assert fold["bottom"] > fold["viewport"], (
+        f"the control is already in view at rest ({fold}), so reaching it scrolls nothing "
+        "and this check has no glide to wait out"
+    )
+    assert open_page.evaluate(AT_REST), "the end-of-scroll recorder could not be armed"
     _tab_to(open_page, at_rest["maximise"]["label"])
     # ⛔ **The page the reader LEFT is read here, after the traversal that
-    # reaches the control and before the press — never at the top of the
-    # document.** ⚠️ The first version of this check compared against `at_rest`,
-    # which is taken before a single Tab: any scroll caused by REACHING the
-    # control was charged to the restore, and the merge gate read it as a 2px
-    # drift this office could not reproduce. ⛔ It is still EXACT equality and
-    # not a tolerance — what changed is which two readings are compared.
+    # reaches the control, AFTER the glide that traversal starts has finished,
+    # and before the press — never at the top of the document and never in
+    # motion.** ⚠️ The first version compared against `at_rest`, taken before a
+    # single Tab; the second read straight after the traversal, at the glide's
+    # first frame, and failed under load by whatever frames slipped in before
+    # the press (`W441`, measured at `AT_REST`). ⛔ It is still EXACT equality
+    # and not a tolerance — what changed is that both readings are of a page
+    # that has stopped.
+    rest = _glided_to(open_page, at_rest["maximise"]["label"])
     left = _state(open_page)
+    assert left["viewport"]["scrolled"] == rest["scrolled"], (
+        f"the page moved again after the glide ended at {rest['scrolled']}: {left['viewport']}"
+    )
     open_page.press("Enter")
     wide = _until(open_page, lambda reading: reading["expanded"], "expanded")
     assert wide["box"]["w"] == pytest.approx(wide["viewport"]["w"], abs=TOUCHING)
