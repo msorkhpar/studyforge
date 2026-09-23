@@ -83,10 +83,16 @@ def closing_command(text: str) -> str:
 
 def test_the_slot_asks_the_question_the_catalogue_refuses_on():
     # ⚠️ The catalogue states the RULE, not the question: its table refuses
-    # "anything a skill could generate". The question is the sort's own words.
+    # "anything a skill could generate". The question is the sort's own words,
+    # which the next test reads where the sort was written.
     catalogue = (repository_root() / "docs/integration-catalogue.md").read_text("utf-8")
-    sort = (repository_root() / "docs/tasks/handoffs/QA-04.md").read_text("utf-8")
     assert "Anything a skill could generate" in catalogue
+
+
+def test_the_question_is_the_sorts_own_words():
+    # ⚠️ Reads a handoff, which leaves the main line with the process (`REL-10`), so
+    # `tests/harness/process.py` declares this one test and the archive keeps it.
+    sort = (repository_root() / "docs/tasks/handoffs/QA-04.md").read_text("utf-8")
     assert QUESTION in sort
 
 
@@ -252,12 +258,16 @@ def test_the_adapter_hand_over_step_obliges_the_log_rather_than_a_message():
 
 
 def test_the_delivery_sort_starts_from_the_log_and_points_at_the_catalogue():
+    # ⭐ `REL-01/2`: the section's NAME is read out of the procedure, never typed here, so a
+    # rewrite of that prose keeps this green exactly when the procedure and the catalogue
+    # still agree — and a procedure that names no section at all is refused.
     text = skill(delivery)
     assert f"`{LOG}`" in text
-    assert "`QA-04` sort" in text
-    assert "`QA-04` sort" in (repository_root() / "docs/integration-catalogue.md").read_text(
-        "utf-8"
-    )
+    cited = re.search(r"the catalogue's own \*(.+?)\* section", text)
+    assert cited, "the procedure no longer names the catalogue section a finished sort takes"
+    catalogue = (repository_root() / "docs/integration-catalogue.md").read_text("utf-8")
+    headings = [line for line in catalogue.splitlines() if line.startswith("## ")]
+    assert any(cited.group(1) in heading for heading in headings), cited.group(1)
 
 
 def test_both_procedures_close_on_the_same_command():
