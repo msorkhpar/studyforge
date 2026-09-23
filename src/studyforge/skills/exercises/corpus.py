@@ -270,7 +270,9 @@ def _accounts_in(recorded: dict, where: str) -> dict[str, Origin]:
     found: dict[str, Origin] = {}
     for entry in recorded.get("accounts", ()):
         if not isinstance(entry, dict):
-            raise AuthoringError(f"{where}: a committed coverage report's account is not an object.")
+            raise AuthoringError(
+                f"{where}: a committed coverage report's account is not an object."
+            )
         origin = origin_in(entry, where)
         if origin is not None:
             found[entry.get("exercise")] = origin
