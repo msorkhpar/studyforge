@@ -49,10 +49,10 @@ draft). With `PYTHONPATH` unset and the venv first on `PATH`, from the corpus ro
 - `import studyforge` resolves inside the venv; `ls ..` prints `corpus` and nothing else;
 - the settled draft onboards with the installed library and writes; the pin reads
   `"where": "installed"`, `"version": "0.1.0"`, the commit passed;
-- **every fenced line of `ONBOARDING.md` exits 0** — the verify command, the skill-document
+- **every fenced line of the corpus's reader document (`artifacts.READER_DOC`) exits 0** — the verify command, the skill-document
   listing, the adapter's ingest, `validate`, `plan`, `build`, `narrate --help` and the standing;
-- the command the onboarding stub names prints bytes **identical to the wheel's** onboarding
-  `SKILL.md`;
+- the command the onboarding stub names prints bytes **identical to the wheel's** copy of the onboarding
+  skill document;
 - the generated `tests/test_framework_pin.py`, every test in it run as the corpus's suite would,
   passes — against the installed library.
 
@@ -63,7 +63,7 @@ pin naming another version.
 
 ⭐ **The control.** The same script at the release tip `bed97114`: `onboard(...).write('.')` raises
 `PinRefused: there is no framework checkout where the pin looks for one, a sibling named
-'studyforge' beside the corpus's main checkout…`, and nothing is written (no `ONBOARDING.md`, no
+'studyforge' beside the corpus's main checkout…`, and nothing is written (no reader document, no
 `.studyforge/`). Its `pin.stub` addresses the procedure as
 `` `../studyforge/src/studyforge/skills/onboarding/SKILL.md` ``.
 
@@ -108,7 +108,7 @@ a standing negative against the generated drift check.
   framework is the installed library at `version`, built from `commit`; install is said in prose
   (a wheel's location is the reader's); every fence reaches the library by module name, with no
   `PYTHONPATH`.
-- **`SKILL.md`** — *Before you start* says install the library; the stubs, the verify command,
+- **The onboarding skill's [`SKILL.md`](../../../src/studyforge/skills/onboarding/SKILL.md)** — *Before you start* says install the library; the stubs, the verify command,
   what is verified and what is recorded, and how a sibling-pinned corpus migrates.
 - Tests: `test_pin.py`, `test_library.py`, `verify/test_init.py`, `verify/test_main.py` and the
   `wheels.py` helper; `test_artifacts`, `test_onboard`, `test_reonboard` and `corpora` rewritten
@@ -143,8 +143,8 @@ a standing negative against the generated drift check.
 
 - ⚠️ **The commanded-page check cannot see a plain runnable module.** The first full host run went
   RED on `test_every_command_the_reference_gives_names_a_module_that_can_be_run` because
-  `SKILL.md` gave `python3 -m studyforge.skills.documents onboarding` — `REL-04`'s own command —
-  and the check asks `find_spec('<name>.__main__')`. Fixed inside Owns: `SKILL.md` names the
+  the onboarding [`SKILL.md`](../../../src/studyforge/skills/onboarding/SKILL.md) gave `python3 -m studyforge.skills.documents onboarding` — `REL-04`'s own command —
+  and the check asks `find_spec('<name>.__main__')`. Fixed inside Owns: the skill document names the
   locator in prose, and `verify` is a package. See `REL-05/2`.
 - ⚠️ **The ISO corpus's pin check was already RED at its `06df27f`**, before this task
   (`test_no_stub_has_drifted_from_the_pin`: the pin advanced to `638e233e`, the stubs still at
@@ -166,7 +166,7 @@ a standing negative against the generated drift check.
   installed with `python3 -m pip install --no-index <the wheel>`; the two commands to name are
   `python3 -m studyforge.skills.documents [SKILL]` and
   `python3 -m studyforge.skills.onboarding.verify .`. ⚠️ Mind `REL-05/2` if the README is a
-  commanded page. ⛔ The tracked `ONBOARDING.md` is still the user's, and this task did not touch it;
+  commanded page. ⛔ The tracked [`ONBOARDING.md`](../../../ONBOARDING.md) is still the user's, and this task did not touch it;
   the reader document a CORPUS receives is what changed.
 - ⭐ **`REL-14` (the close):** at a corpus onboarded after this merge, the pin check reads the
   INSTALLED library — run the corpus's `tests/test_framework_pin.py` and
@@ -182,7 +182,7 @@ a standing negative against the generated drift check.
   1. `reonboard('.')` alone now REFUSES by name (`predates the installed library`); re-pin:
      `reonboard('.', framework_commit=<the full sha of the framework you run>).write('.', regenerate=True)`,
      then `hand_edited('.')` must print `[]`.
-  2. The pin becomes `"where": "installed"` with a `version`; the three stubs, `ONBOARDING.md`,
+  2. The pin becomes `"where": "installed"` with a `version`; the three stubs, the reader document,
      `tests/test_framework_pin.py` and `installed.json` are rewritten together.
   3. ⚠️ **Your fences no longer carry `PYTHONPATH=../studyforge/src`**, and the new pin check imports
      `studyforge`. Run them in a Python where `studyforge` is importable: a venv with the wheel (or
