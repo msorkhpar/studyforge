@@ -1,7 +1,7 @@
 """Mirror of `src/studyforge/skills/exercises/__init__.py` (R12).
 
 ⭐ **What goes RED, each planted:** a package that stops stating its contract, a
-name that leaves the surface, a surface that stops being the two modules' own
+name that leaves the surface, a surface that stops being the modules' own
 names, and a run-time import appearing in either module — the door
 `tests/harness/test_isolation.py` closes for the framework and `AX-03` lost a
 design to.
@@ -25,53 +25,95 @@ PUBLIC_SURFACE = frozenset(
     {
         "ACCOUNTED_KEYS",
         "ADVANCED",
+        "ATTEMPTS",
+        "AUTHORED_PROVENANCE",
+        "AUTHORED_TRUST",
         "BANDS",
+        "CODE_AND_TESTS",
+        "CODE_NO_TESTS",
         "CORE",
+        "COVERAGE_API",
+        "COVERAGE_FILENAME",
+        "COVERAGE_KEYS",
         "ENTRY_KEYS",
         "ENTRY_KINDS",
         "EXAMPLE",
         "INTRODUCTORY",
         "LEDGER_API",
         "LEDGER_KEYS",
+        "LEDGER_PATH",
+        "NEITHER",
+        "OUTPUT_LINES",
         "PLAN_API",
         "PLAN_KEYS",
+        "QUIZ_API",
+        "QUIZ_DOCUMENT",
+        "QUIZ_KEYS",
         "REASON_DESCRIBED",
         "REASON_KEYS",
         "SHORTFALL_KEYS",
+        "SHORTFALL_REPORT_KEYS",
+        "SOURCE_CASES",
         "SOURCE_KEYS",
         "TESTS",
         "TIERS",
         "TIER_MOVES",
         "Accounted",
+        "Author",
+        "Authored",
+        "AuthoringError",
         "Band",
+        "Brief",
+        "CodeDraft",
+        "Covered",
         "Entry",
         "Fence",
+        "Gated",
+        "Judge",
         "Ledger",
         "LedgerError",
+        "Page",
+        "PageOutcome",
         "Plan",
         "PlanError",
+        "QuizDraft",
+        "Ran",
         "Reason",
         "Refusal",
+        "Runner",
         "Scan",
+        "Shortfall",
         "Source",
         "account",
         "accounts_for",
+        "author_corpus",
+        "author_page",
         "band_for",
+        "commit",
         "digests",
+        "gate_code",
+        "gate_quiz",
+        "json_bytes",
         "key_of",
         "ledger_document",
+        "page_entries",
         "plan_document",
         "plan_for",
+        "require_draft",
+        "require_no_retreat",
+        "require_page",
         "scan",
         "shortfall",
         "shortfall_document",
+        "source_case",
         "take",
+        "words_of",
     }
 )
 
 #: ⛔ The names a run-time import is spelled with. A registry populated by one
 #: is a registry only a run can answer for, and the harness refuses it framework
-#: wide; this asserts the property for the two modules rather than inheriting it.
+#: wide; this asserts the property for every module rather than inheriting it.
 NEVER_IMPORTED = ("importlib", "pkgutil", "subprocess", "shutil", "socket", "urllib")
 
 
