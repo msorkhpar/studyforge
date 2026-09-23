@@ -30759,3 +30759,20 @@ user's six rulings of 2026-09-19 are its settled scope and are not re-asked.
 ⛔ **The row PLANS and moves nothing**; ⭐ **it is minted now so `M11` is
 dispatchable the moment `M10` closes**, and `M10` next waits on the user's pilot
 review.
+
+## PO round 152
+
+⭐ **`W438` dispatched on `wt/dev3` at `a469adc2`.** ⭐ **The corpus took `ISO-18`
+and the `W436`-free half of `ISO-19`** on `int/m10-step-10.4-plan` at `fac256a`:
+re-pinned to `1994b437` by the onboarding skill, nothing by hand, and
+`validate` GREEN exit 0 and the corpus's own suite GREEN exit 0 there.
+⚠️ **Not yet on the framework's `workspace.json` pin** — that moves when step
+10.4 has material to read.
+
+### ⭐ One mint, blocking `M10`'s acceptance, measured by the register first
+
+[`W439`](rows/W439.md) — ⛔ **the guide says to hand-edit `corpus.json`, and an
+onboarded corpus digests it as generated.** ⭐ `hand_edited` read `[]` as
+committed (the control) and `['corpus.json']` after ONE entry typed as the guide
+says. ⚠️ **The path that works is written nowhere**, and `M10`'s *Done when*
+includes *somebody following the guide*.
