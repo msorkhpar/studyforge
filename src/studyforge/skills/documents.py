@@ -1,14 +1,14 @@
 """The one locator for a skill document, read from the INSTALLED package (`REL-04`).
 
 **What it does.** Finds every skill's procedure — the `SKILL.md` beside each
-sub-package of `studyforge.skills` — through `importlib.resources`, so an
-installed `studyforge` hands a reader each skill's text with no checkout
-anywhere on the disk. ⭐ **The skill documents are the product** (R16, R19); a
+sub-package of `studyforge.skills` — in the directory this module was loaded
+from, so an installed `studyforge` hands a reader each skill's text with no
+checkout anywhere on the disk. ⭐ **The skill documents are the product** (R16, R19); a
 wheel that carried the code and not the procedure shipped half of it (`W438/5`).
 
 **How you use it.** From code: `names()` is every skill that ships a document,
-sorted; `document(name)` is that document as an `importlib.resources`
-`Traversable`; `text(name)` is its text. A name that ships no document raises
+sorted; `document(name)` is that document's `Path` inside the installed
+package; `text(name)` is its text. A name that ships no document raises
 `UnknownSkill`, naming the ones that do. From a shell:
 
     python3 -m studyforge.skills.documents              every skill, one per line
@@ -17,7 +17,10 @@ sorted; `document(name)` is that document as an `importlib.resources`
 ⭐ The second form writes the document's BYTES, unchanged, so what a reader sees
 is what the package ships.
 
-**Depends on.** `importlib.resources` and `studyforge.exitcodes`, nothing else.
+**Depends on.** `pathlib` and `studyforge.exitcodes`, nothing else. ⛔ Not
+`importlib` in any form, `importlib.resources` included: a framework module never
+reaches a module by name at run time (R1, `tests/harness/test_isolation.py`).
+The directory is `Path(__file__).parent`, the same rule `render.templates` keeps.
 ⛔ Never on a skill's own modules: listing the procedures must not import the
 code they describe, and a skill whose modules fail to import still has a
 readable procedure.
@@ -30,13 +33,13 @@ a `SKILL.md` in it**, found by walking the installed package — which is also
 why the refusal is the ONE check on a name: `document("../x")` finds no such
 sub-package and is refused, never joined.
 
-## ⛔ Why a document is not a path
+## ⛔ A path is handed to code, never written down
 
-`importlib.resources` promises a `Traversable`, not a file: a package imported
-from a zip has no path to hand out. ⚠️ So nothing here returns one. A caller
-that genuinely needs a file on disk asks `importlib.resources.as_file`, whose
-path is valid only inside its `with` block — and ⛔ a path is never written into
-a generated document (R7): a document that names a skill names it by `name`.
+`document(name)` is a path in THIS installation, valid on this machine at run
+time. ⛔ It is never written into a generated document or a log (R7): a document
+that names a skill names it by `name` and the command above. ⚠️ And a refusal
+never reproduces the name it refused — the name arrives from a caller, and the
+branch that fires because a value is not a skill is the branch a path reaches.
 
 ## What ships the documents
 
@@ -48,13 +51,13 @@ tree `SKILL.md` is absent from it or differs from it by one byte.
 from __future__ import annotations
 
 import sys
-from importlib.resources import files
-from importlib.resources.abc import Traversable
+from pathlib import Path
 
 from studyforge.exitcodes import UNUSABLE
 
-#: The package whose sub-packages are the skills.
-PACKAGE = "studyforge.skills"
+#: The directory whose sub-packages are the skills: this module's own. ⛔ Never
+#: another package's `__file__`, and never a name resolved at run time.
+SKILLS_DIR = Path(__file__).resolve().parent
 
 #: A skill's procedure, by name, inside its own sub-package.
 DOCUMENT = "SKILL.md"
@@ -64,29 +67,29 @@ USAGE = "usage: python3 -m studyforge.skills.documents [SKILL]"
 
 
 class UnknownSkill(LookupError):
-    """A name that ships no skill document — the message names the ones that do."""
+    """A name that ships no skill document — naming the ones that do, never the name (R7)."""
 
 
 def names() -> tuple[str, ...]:
     """Return every skill that ships a document, sorted — walked, never listed."""
-    root = files(PACKAGE)
     return tuple(
         sorted(
             entry.name
-            for entry in root.iterdir()
-            if entry.is_dir() and entry.joinpath(DOCUMENT).is_file()
+            for entry in SKILLS_DIR.iterdir()
+            if entry.is_dir() and (entry / DOCUMENT).is_file()
         )
     )
 
 
-def document(name: str) -> Traversable:
+def document(name: str) -> Path:
     """Return the skill `name`'s document, or raise `UnknownSkill`."""
     shipped = names()
     if name not in shipped:
         raise UnknownSkill(
-            f"no skill named {name!r} ships a {DOCUMENT}; known: {', '.join(shipped)}"
+            f"that name is not a skill that ships a {DOCUMENT}; the skills are "
+            f"{', '.join(shipped)}. The name is not reproduced here (R7)."
         )
-    return files(PACKAGE).joinpath(name, DOCUMENT)
+    return SKILLS_DIR / name / DOCUMENT
 
 
 def text(name: str) -> str:

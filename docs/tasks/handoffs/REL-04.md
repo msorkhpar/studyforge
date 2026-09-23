@@ -63,12 +63,13 @@ before the glob was added, the same three were RED.
   `skills/**/SKILL.md` joins the templates and assets. ⛔ A glob, never a list: a new skill ships
   by existing.
 - **`src/studyforge/skills/documents.py`, the locator.** Standard library only
-  (`importlib.resources`):
+  (`pathlib`; the directory is `Path(__file__).parent`, as `render.templates` does it):
   - `names() -> tuple[str, ...]` — every sub-package of `studyforge.skills` holding a
     skill document, sorted, walked from the installed package;
-  - `document(name) -> Traversable` — raises `UnknownSkill` (a `LookupError`) for a name that
+  - `document(name) -> Path` — raises `UnknownSkill` (a `LookupError`) for a name that
     ships no document; ⭐ that membership test is the ONE check on a name, so `../x` is refused
-    rather than joined;
+    rather than joined, and ⛔ the refusal names the known skills and NEVER the name it refused
+    (R7);
   - `text(name) -> str`;
   - `python3 -m studyforge.skills.documents [SKILL]` — no argument lists the skills one per line;
     a name writes that document's BYTES to stdout unchanged; anything else exits `UNUSABLE`.
@@ -80,10 +81,11 @@ before the glob was added, the same three were RED.
 
 ## Decisions
 
-- ⭐ **No path is handed out.** `importlib.resources` promises a `Traversable`, and a package
-  imported from a zip has no path; a caller that needs a file uses `importlib.resources.as_file`
-  inside its `with` block. ⛔ A generated document names a skill by NAME and the command that
-  prints it, never a path (R7).
+- ⭐ **`Path(__file__).parent`, not `importlib.resources`.** Every `importlib` import is a
+  run-time door the isolation test refuses (see *Surprises*); the framework already locates its
+  templates and assets from its own `__file__`. A path from `document(name)` is for code at run
+  time. ⛔ A generated document names a skill by NAME and the command that prints it, never a
+  path (R7).
 - ⭐ **A module entry point, not a `studyforge` verb.** The verbs are `SF-40`'s table and outside
   this task's Owns; `python3 -m studyforge.skills.documents` needs no dispatcher. A verb that
   delegates to `documents.main` is one line for whoever owns the table, if one is wanted.
@@ -99,6 +101,11 @@ before the glob was added, the same three were RED.
 - ⚠️ **The pinned image uninstalls setuptools** once it has installed the package, so in the image
   the wheel cannot be built. The effect tests skip there with a stated reason (the repository's
   skip disclosure prints it); the declaration test is the always-on proxy. See `REL-04/1`.
+- ⚠️ **The register's merge gate refused the first tip (`58a17112`) on two tree-wide checks a
+  package-scoped run never reached**, both fixed on this branch: `tests/test_emission.py` — the
+  refusal quoted the name it refused (R7); and `tests/harness/test_isolation.py` — the module
+  imported `importlib.resources`, which is a run-time door by that test's rule. ⭐ The lesson for
+  REL-05 and REL-06: run the FULL suite before handing back, not the package's tests.
 
 ## Findings
 
@@ -117,8 +124,9 @@ before the glob was added, the same three were RED.
   catch for a stub naming a skill the installed library does not ship.
 - ⭐ **`REL-06` (the delivery skill reads a packaged capability index):** the index is NOT a
   skill document, so it ships only if you add its pattern to `[tool.setuptools.package-data]` — this
-  task owned that section; append a pattern, keep the existing three. Read it the same way,
-  `importlib.resources.files("studyforge.skills.delivery").joinpath(<file>)`, and reuse
+  task owned that section; append a pattern, keep the existing three. Read it the same way — from
+  the delivery package's own `Path(__file__).parent`, ⛔ never through `importlib` (the
+  isolation test refuses it) — and reuse
   `test_documents.py`'s shape for the proof: the `wheel` fixture builds from an export and the
   installed-package test reads from a directory with no checkout. ⚠️ Run that proof on the host:
   the image has no build backend (`REL-04/1`).

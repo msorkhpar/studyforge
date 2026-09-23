@@ -85,7 +85,10 @@ def test_every_document_reads_back_unchanged() -> None:
 def test_a_name_that_ships_no_document_is_refused(name: str) -> None:
     with pytest.raises(documents.UnknownSkill) as refusal:
         documents.document(name)
-    assert documents.names()[0] in str(refusal.value)
+    message = str(refusal.value)
+    assert documents.names()[0] in message
+    if name:
+        assert name not in message, "a refusal reproduced the value it refused (R7)"
 
 
 def test_main_lists_every_skill(capsys: pytest.CaptureFixture[str]) -> None:
