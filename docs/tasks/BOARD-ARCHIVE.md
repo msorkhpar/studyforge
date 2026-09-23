@@ -30479,3 +30479,21 @@ trailing-newline bypass, and the corpus's untracked `practice/.vscode/` —
 
 ⛔ **Nothing.** ⭐ **`AX-08` is step 10.3's next dispatch**; `AX-10` follows
 and `AX-11` is `M10`'s acceptance.
+
+## PO round 144
+
+⭐ **Two mints, both on the USER's ruling of 2026-09-22**, both findings the
+register had carried unruled since round 142's session.
+
+[`W434`](rows/W434.md) — ⛔ **`SAFE_ARGUMENT.match("ok\n")` is truthy at
+`a35c5de3`.** `^…$` lets a trailing newline through a permitted set whose whole
+contract is that nothing unnamed passes, and `execute/commands.py` imports the
+segment pattern directly.
+
+[`W435`](rows/W435.md) — ⛔ **the SOLE reason `workspace verify` is exit 1**:
+serving a practice writes `.vscode/settings.json` into the corpus's own tree.
+⭐ **`W425`'s shape exactly, and `W425`'s ruling binds: a local exclude hides a
+framework defect and is refused.** ⚠️ **It blocks `M11`.**
+
+⭐ **Both are dispatched after this round merges, beside `AX-08`** — ⛔ **a row
+is minted and merged before it is dispatched.**
