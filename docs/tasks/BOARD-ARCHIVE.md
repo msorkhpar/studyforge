@@ -30797,3 +30797,178 @@ never met, which is what it is for.** Returned to its office.
 toolchain refuses** (`W436/1`). ⚠️ **It blocks the pilot.**
 [`W441`](rows/W441.md) — ⛔ **the maximise test drifted a THIRD time under the
 gate** (`4` against `2`), ⭐ **and round 146 ruled a third drift a row.**
+
+## PO round 154
+
+⭐ **Three rows close, each read by EFFECT and each merged by the gate on the
+merged tree — two of them only on the second try, and both refusals were real.**
+
+| Row | Merge | The register's reading | The register's plant (a seam the office did not use) |
+|---|---|---|---|
+| `W436` | `64172383` | the container proof re-taken on the HOST: GREEN, none skipped, per-case verdicts offline, a named failure without the library, the prime or the build role | the build files dropped from the gate record's digest → RED |
+| `W438` | `103c62f9` | the committed index byte-identical to a fresh regeneration | a REL row hand-edited in the index → ⚠️ **the floor did NOT see it**; the delivery skill's walkthrough suite did → RED |
+| `W439` | `0e1dfca2` | on the REAL corpus: `reonboard` + one glob left `hand_edited` `[]`, where one hand-typed entry named `corpus.json` | the install record's digest for `corpus.json` skewed → RED. ⛔ **The first plant broke the SYNTAX and read exit 2 — a collection error, not a refusal — and was re-taken** |
+
+### ⛔ The two refusals, both genuine
+
+`W436` — ⭐ **`AX-10`'s guide binds `CodeDraft`'s fields both ways, and `W436`
+added `build`**: two rows that never met, caught by the binding built for it.
+`W439` — ⭐ **its new manifest catch site needed the subject's `REACH` floor
+raised with it** (the `SF-24` precedent); the deleted-outright plant could not
+fire otherwise.
+
+### ⭐ `M11` HAS STEPS
+
+`E15`, `REL-01`–`REL-14`, six steps: the decisions file first, the product
+suite and the skills freed from `tools/` and a sibling checkout before anything
+moves, then the archive branch and a light board, and the close from a clean
+clone. ⚠️ **Queued for the USER: `W438/2`** — `ONBOARDING.md`'s fate — **and
+`W438/3`** — confirm that *main* means advancing the local `main` to the cleaned
+release line.
+
+### ⚠️ In flight
+
+⭐ **`W440`** on `wt/dev5` (the pilot waits on it) and **`W441`** on `wt/dev6`, at `0e1dfca2`.
+
+### W436 — No shape carries an exercise's third-party dependencies, so a jPOS exercise cannot be graded
+
+⛔ **No framework shape carries an exercise's THIRD-PARTY dependencies, so an
+exercise whose code imports a library cannot be graded.** ⭐ **Measured on the
+first corpus at `06df27f` by the integration office (`ISO-M10/2`): 141 of its
+188 Java fences import `org.jpos`, and 36 of its 38 units carry at least one.**
+⚠️ **So this row blocks every exercise the pilot can author — it blocks `M10`.**
+
+⭐ **Why no existing channel reaches it, each verified by the register in the
+code at `5e0657ba`:**
+- ⛔ **A bundle's file set is CLOSED** (`exercise/bundle/layout.py`,
+  `BUNDLE_FILENAMES` and `BUNDLE_DIRNAMES`: `bundle.json`, `statement.md`,
+  `gates.json`, `starter/`, `reference/`, `tests/`, `plants/`) — so no build
+  file travels with an exercise. ⭐ **The closure is DELIBERATE** (`AX-03/1`: a
+  JUnit report carries the machine's hostname), ⛔ **so it is not simply
+  widened.**
+- ⛔ **`require_command` refuses an absolute path or one climbing out of the
+  workspace** (`exercise/safety.py`), so a command cannot name a classpath that
+  lives elsewhere.
+- ⚠️ **[`W390`](rows/W390.md) warms a per-corpus cache in the runner**, but
+  nothing says how an exercise's command REACHES it.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **An exercise whose tests import a third-party library runs in the
+   runner, `--network none`, and yields `AX-01`'s per-case verdicts.** ⛔
+   **Proved on a fixture whose dependency is NOT in the JDK** and is resolved
+   only through the new channel — ⚠️ **with the negative: the same exercise in
+   an unprimed runner fails, naming what is missing.**
+2. ⛔ **The channel is DATA the corpus declares, never a framework branch on a
+   language or a library** (R1). Where it lives — a build role in the bundle, a
+   corpus-level build declaration the runner reads, or a launcher the runner
+   image provides — **is the office's call, argued in the handoff against
+   `AX-03/1`, R1, R2 and §8.3**, and ⛔ **the closed set's reason survives: no
+   run report is ever committable.**
+3. ⭐ **The report path has ONE convention** (`ISO-M10/4`), so the corpus's
+   ignore rule is written once and not per exercise.
+4. ⚠️ **The three `M7` practices still Run and Submit exactly as before.**
+5. ⛔ **A `serve/` change CANNOT be measured in the pinned image**: if it
+   touches `serve/`, the handoff owes a HOST reading of
+   `tests/studyforge/cli/test_serve_process.py`.
+
+⭐ **Surface:** `exercise/bundle/`, `exercise/safety.py` only if the argument
+rule must learn a declared root, `execute/`, and the execution skill.
+
+[the mint](#po-round-148)
+
+### W438 — `M11` has a *Done when* and no steps, so the next milestone cannot be dispatched
+
+⛔ **`M11` has a *Done when* and NO STEPS.** ⭐ `docs/tasks/README.md` says its
+steps *"are minted from the register's measured inventory and the user's six
+rulings of 2026-09-19"* — ⚠️ **and no row ever minted them**, so the milestone
+after `M10` cannot be dispatched the moment `M10` closes.
+
+⭐ **The six rulings are SETTLED and are not re-asked** (user, 2026-09-19):
+1. ⭐ **Process history → a separate BRANCH in the same repository**, never a new
+   repository and never deletion.
+2. ⭐ **Handoffs → all to that archive branch**; a distilled decisions file
+   replaces them on the main line.
+3. ⭐ **Epics `E00`–`E14` → kept as HIGH-LEVEL design only**; the detailed task
+   text goes to the archive.
+4. ⭐ **The review rubric → archived**; its product-contract clauses move into
+   the spec (the register's decision, delegated by the user).
+5. ⭐ **Python floor → keep `>=3.14`** until publishing is ruled.
+6. ⭐ **Merged local branches may be deleted**; the history stays reachable from
+   the main line through its merge commits.
+
+⭐ **And the user's direction of 2026-09-18:** the board becomes LIGHT, like a
+real project manager's board and not a channel between agents; code that exists
+only to build the framework (process tooling the skills do not use) moves to the
+separate branch; ⛔ **the next corpus (`M9`) needs only the README and the
+skills**, with the library installable and images built and used LOCALLY by tag.
+⛔ **Registry publishing is NOT in scope** — a future user ruling.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **A new epic, `E15`, carrying `M11`'s tasks** in the epic format the others
+   use (Milestone, Depends on, Owns, Context, Definition, Acceptance), and
+   `README.md`'s `M11` section listing its steps. ⛔ **Every task's Acceptance
+   is checkable** — a command or a reading that can return *no*.
+2. ⭐ **A MEASURED inventory at the current release ref**, quoted with its ref
+   and the commands that took it: product vs process files and lines per
+   repository, the tests that import `tools.*`, the skills' paths outside the
+   package, the branches and worktrees. ⚠️ **The previous draft's figures are
+   STALE and are re-taken, never copied.**
+3. ⛔ **The ORDER is argued**: the background is distilled BEFORE any handoff
+   leaves; product tests are decoupled from the tooling BEFORE the tooling
+   moves; the close run takes a CLEAN checkout of main, installs it, and
+   builds and serves the first corpus with the skills from the INSTALLED
+   package.
+4. ⭐ **`docs/capability-index.md` is REGENERATED by the delivery skill**, never
+   hand-edited.
+5. ⛔ **This row PLANS. It moves, deletes and archives NOTHING.**
+
+⭐ **Surface:** `docs/tasks/E15-*.md` (new), `docs/tasks/README.md` § `M11`,
+`docs/capability-index.md` (generated).
+
+[the mint](#po-round-151)
+
+### W439 — The authoring guide says to hand-edit `corpus.json`, which an onboarded corpus treats as generated
+
+⛔ **The authoring guide sends an author to HAND-EDIT a file the framework
+treats as GENERATED.** `docs/authoring/exercises.md`, *Before you author*: *"the
+pass never edits `corpus.json`, so you add the entries yourself"*. ⚠️ **But an
+onboarded corpus's `.studyforge/installed.json` digests `corpus.json`.**
+
+⭐ **Measured by the register at corpus `fac256a`, framework `a469adc2`, in a
+scratch export:** `skills.onboarding.record.hand_edited` reads `[]` as committed
+(the control), and ⛔ **`['corpus.json']` after ONE `not_material` entry typed
+by hand, exactly as the guide says to.** ⛔ **So following the guide produces an
+R19 hand-edit finding.**
+
+⭐ **The integration office found the path that works, and it is written
+NOWHERE**: re-onboard with the recorded manifest as the draft, its
+`not_material` list emptied of the globs the skill itself generates, the new
+globs entered as the draft's data, then `write(regenerate=True)`. ⚠️ **The
+onboarding skill documents re-onboarding only as *"pass `existing=`"*, and
+`survey('.')` on an onboarded corpus proposes a draft that disagrees with its
+recorded answers** (`ISO-M10` round-2 findings, corpus branch
+`int/m10-step-10.4-plan`).
+
+⚠️ **A pin moved WITHOUT regenerating is refused by nothing at commit time** —
+the corpus's stubs named a third commit after its `M7` re-pin, which is where
+`ISO-M10/1` came from.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **The guide's manifest step names a path that leaves `hand_edited` EMPTY**,
+   and ⛔ **a test takes that path on a fixture onboarded corpus and asserts it**
+   — with the negative: the hand-typed entry the guide used to describe is
+   named by `hand_edited`.
+2. ⭐ **The onboarding skill documents RE-ONBOARDING an already-onboarded corpus**
+   — what the draft is, and that the generated globs are not redeclared. ⛔ **If
+   the skill can take the recorded manifest as its draft itself, that is better
+   than documenting a manual emptying** — the office's call, argued.
+3. ⚠️ **A moved pin with stale stubs is refused** by the corpus-side check the
+   skill already generates, or the handoff says why it cannot be.
+4. ⭐ **`tests/test_authoring_exercises.py` still binds the guide to the code.**
+
+⭐ **Surface:** `docs/authoring/exercises.md`, `src/studyforge/skills/onboarding/`.
+
+[the mint](#po-round-152)
