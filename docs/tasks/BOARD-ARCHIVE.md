@@ -31559,3 +31559,147 @@ template that emits the worked solution.
 ### ⚠️ In flight
 
 ⭐ **`W448` + `W449`** on `wt/dev2`; ⭐ **`W450`** on `wt/dev1`; ⭐ **`W451`** on `wt/dev3`; ⭐ **the pilot quiz** on the corpus's integration office.
+
+### W448 — A practice frame paints the editor's Explorer side bar, then closes it once loaded
+
+⛔ **USER REPORT, 2026-09-23, on the pilot:** *"When page loads the left explore
+panel of the code-server remains open till the page is fully loaded and then it
+get's closed."*
+
+⭐ **The shape:** the practice frame's workbench starts with the Explorer side bar
+open and closes it only after the workbench has finished loading — ⛔ **a
+visible flash of a panel the reader never asked for, in every practice frame, on
+every load.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The Explorer side bar is never painted in a practice frame** — watched in a
+   real browser from the frame's first paint to settled, not read off a settings
+   file: a setting that is written and applied late is exactly this defect.
+2. ⭐ **The positive control:** the same measurement on the current code shows the
+   side bar painted and then closed.
+3. ⭐ **`W429`/`W433`'s lock and `W446`'s per-practice folder hold**; ⛔ **the
+   confinement stays in `execute/workbench.py::CLOSED` or the image's seed, never
+   a reader-facing toggle.**
+4. ⚠️ **Where the fix lives is the office's finding** — the workbench's own
+   startup layout (the image's seed or the frame URL) versus a setting applied
+   after load. ⚠️ **A change to `code-server-toolchain` is a sibling commit, never
+   pushed.**
+
+⭐ **Surface:** `execute/workbench.py`, `execute/editor.py`, and possibly
+`code-server-toolchain`'s editor seed.
+
+[the mint](#po-round-166)
+
+
+### W449 — A practice frame's editor takes focus on load and scrolls the reading page to itself
+
+⛔ **USER REPORT, 2026-09-23, on the pilot:** *"When the code-server runs page
+suddenly scrolls to that UI automatically while it should have never changed the
+focus of the user automatically to another part of the page! When user enters on
+a page they should remain at top and let them to scroll to other components in the
+page as they wish"*.
+
+⭐ **The shape:** when a practice frame's workbench loads, focus moves into it and
+the reading page scrolls the frame into view — ⛔ **the page moves the reader.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A page opened at its top STAYS at its top while every practice frame on it
+   loads to settled**, measured in a real browser on a page with TWO practices
+   (unit 15), with the scroll position and the focused element read after the
+   frames settle.
+2. ⭐ **The positive control:** the same measurement on the current code shows the
+   page scrolled to a frame.
+3. ⛔ **Nothing takes focus the reader did not give** — ⭐ a click into the frame
+   still focuses the editor and typing still works (`W446`'s windows stay
+   writable).
+4. ⭐ **The same holds for a page opened at an anchor**: it stays at the anchor.
+5. ⭐ **The visual harness carries it**, planted back to RED.
+
+⭐ **Surface:** the practice panel's page script and the frame's attributes;
+⚠️ possibly the workbench's own focus-on-start behaviour (`W448`'s neighbour).
+
+[the mint](#po-round-166)
+
+
+### W450 — Every embedded typeface is blocked by the served page's `font-src`, so the served site never shows its faces
+
+⛔ **Found by `W447`'s office on the USER's console report, 2026-09-23:** seven
+`Loading the font '<URL>' violates … "font-src 'self'"` errors on every served page.
+
+⭐ **Measured, and read again by the register:** `render/pageassets/faces.py` embeds
+`W362`'s seven faces in `page.css` as `data:font/woff2;base64` URIs — ⭐ **on purpose**,
+because Firefox refuses a `file://` font file and R8's `file://` floor must carry the
+faces too. ⛔ **`serve/security.py`'s `font-src 'self'` does not admit `data:`**, so
+**over the served origin every face is blocked** and the reader sees fallbacks: the
+`W362`/`W388` typography has NEVER appeared on the served site. ⚠️ **The visual harness
+opens pages over `file://`, which carries no policy, so no test could see it.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **Register ruling (reversible): `font-src 'self' data:`**, mirroring `img-src`.
+   The faces stay embedded, so `file://` and the served origin render the SAME faces
+   (R8); ⛔ **no directive but `font-src` widens.**
+2. ⛔ **Proved over the SERVED origin, in a real browser:** every one of the seven faces
+   reports `loaded`, and no CSP violation is raised — with the current code as the
+   positive control (seven blocked).
+3. ⭐ **A test that serves a page with its real policy and fails when a face does not
+   load** — planted back to `'self'` and RED. ⛔ **A test that reads the header string
+   alone is a proxy and does not settle this.**
+
+⭐ **Surface:** `serve/security.py` and a served-origin browser test.
+
+[the mint](#po-round-167)
+
+
+### W451 — A quiz's key leaves the page: the local study server grades the answer (user ruling)
+
+⛔ **USER RULING, 2026-09-23:** *"the quiz itself again should not require an online or
+agent check for the answer user provided. It will be just a test with the correct answer
+residing on the server side. When user answers it will get validated and result will be
+returned to the user with explanation if needed"*.
+
+⭐ **What it reverses:** spec §7 §7 shipped the key and the per-option sentences INSIDE
+the practice document and graded in the page, identical over `file://` (`AX-05`,
+`AX-06`). ⛔ **The user rules the key OUT of the page.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **No served or built page carries a quiz's key or its per-option sentences** —
+   read by grepping the generated HTML and every asset it loads for each key, with the
+   current build as the positive control.
+2. ⭐ **The local study server grades**: the reader's choice is sent to a `serve` route,
+   which compares it with the key held in the corpus's exercise bundle and answers
+   right or wrong **with the chosen option's sentence** — ⛔ **no model, no network, no
+   container**; a fixed comparison.
+3. ⭐ **Completion is unchanged in meaning**: a quiz completes only when every question
+   is answered correctly, recorded through the reader's own state, never a run verdict.
+4. ⭐ **Register default (reversible): over `file://` a quiz says it needs the local study
+   server**, exactly as Run and Submit do; the questions and options still show.
+5. ⛔ **The route obeys `serve`'s guards** (R8 same-origin, `Origin`, `Sec-Fetch-Site`) and
+   never reaches the Docker socket (§8.3).
+6. ⭐ **Spec §7 §7 and E14's `AX-05`/`AX-06` text are amended IN PLACE with this ruling,
+   dated**; the quiz gates Q1–Q5 and the bundle record are unchanged.
+7. ⭐ **Proved in a real browser over the served origin** on the prose fixture, plus a
+   HOST reading of `tests/studyforge/cli/test_serve_process.py`.
+
+⭐ **Surface:** `render/page/quiz.py`, `render/assets/practice-quiz.js`, a `serve` route,
+the spec and `E14`.
+
+[the mint](#po-round-167)
+
+## PO round 168
+
+⭐ **Four rows CLOSE, each read by the register with a plant at a seam its office did not use:**
+- ⭐ **`W450`** `1d7baa24` — `font-src 'self' data:`; ⭐ **the register read all seven faces `loaded` on the LIVE `:8770` unit 15 after the restart**, none before. Plant: a second policy header restating `'self'` → RED.
+- ⭐ **`W448` + `W449`** `dc53235a` — the page gives focus back and never moves; the side bar starts closed in the editor image, **`code-server-toolchain` merged `a34a93e`** (tag `…-5ea0c0861176`), the register running its real-browser layout test GREEN with the upstream default as its control. Plant: focus refused but the page never put back → RED.
+- ⭐ **`W451`** `79797b90` — the local study server grades a quiz and the page never holds its key (the user's ruling), with the corpus office's `F9` and `F5` folded in. Plant: the route reporting every quiz complete → RED.
+
+⛔ **`W451/1` MINTED as [`W452`](rows/W452.md):** the serving process still hands out the key by URL. ⭐ **Dispatched to dev3.**
+
+⭐ **The pilot quiz (corpus `ISO-25`, `e221026`):** four questions on iso-fundamentals unit 1, Q1–Q5 passed; ⭐ **the corpus is regenerated on `79797b90` as `ISO-26` before the register re-pins and deploys.** ⚠️ **Findings carried, not minted:** `ISO-25` `F1`–`F8` — ⛔ **`F3` is the sharpest: the framework has no emit step for a quiz, so the corpus wrote one (R19) and `M9` would repeat it.** `W449/1` (the Copilot CLI still runs in the editor) **waits on the user**; `W449/2` (closed visits leave language servers running) is carried.
+
+### ⚠️ In flight
+
+⭐ **`W452`** on `wt/dev3`; ⭐ **`ISO-26`** on the corpus's integration office.
