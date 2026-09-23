@@ -76,9 +76,8 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W436` | Developer 5 | `fix/W436-an-exercise-reaches-its-dependencies` @ `wt/dev5` | 0 @ `e43b7642` | `in-progress` — blocks `M10` |
-| `W438` | Developer 3 | `docs/W438-m11-has-steps` @ `wt/dev3` | 0 @ `a469adc2` | `in-progress` — plans `M11` |
-| `W439` | Developer 4 | `fix/W439-the-guide-never-hand-edits-the-manifest` @ `wt/dev4` | 0 @ `d0a8f9b3` | `in-progress` — blocks `M10`'s acceptance |
+| `W440` | Developer 5 | `fix/W440-the-prime-is-the-toolchains-layout` @ `wt/dev5` | 0 @ `0e1dfca2` | `in-progress` — blocks `M10` |
+| `W441` | Developer 6 | `fix/W441-the-maximise-restore-holds-under-load` @ `wt/dev6` | 0 @ `0e1dfca2` | `in-progress` — a gate that lies |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -620,12 +619,12 @@ else.**
 | W433 | A reader can open settings and the command palette inside a practice frame, and the read-only lock is workspace-scoped | framework agent | ✅ done — `e74f15b3` | [`rows/W433.md`](rows/W433.md) |
 | W434 | `safety.py`'s permitted sets are anchored `^…$`, so a trailing newline clears the gate | framework agent | ✅ done — `585af3e1` | [`rows/W434.md`](rows/W434.md) |
 | W435 | Serving a practice writes `.vscode/` into the corpus and nothing ignores it, so `workspace verify` is RED | framework agent | ✅ done — `0a5a8f3e` | [`rows/W435.md`](rows/W435.md) |
-| W436 | No shape carries an exercise's third-party dependencies, so a jPOS exercise cannot be graded | framework agent | `in-progress` — blocks `M10` | [`rows/W436.md`](rows/W436.md) |
+| W436 | No shape carries an exercise's third-party dependencies, so a jPOS exercise cannot be graded | framework agent | ✅ done — `64172383` | [`rows/W436.md`](rows/W436.md) |
 | W437 | The authoring loop numbers from 1, so a unit that already has a practice collides | framework agent | ✅ done — `ac2a3e9a` | [`rows/W437.md`](rows/W437.md) |
-| W438 | `M11` has a *Done when* and no steps, so the next milestone cannot be dispatched | framework agent | `in-progress` — plans `M11` | [`rows/W438.md`](rows/W438.md) |
-| W439 | The authoring guide says to hand-edit `corpus.json`, which an onboarded corpus treats as generated | framework agent | `in-progress` — blocks `M10`'s acceptance | [`rows/W439.md`](rows/W439.md) |
-| W440 | The execution skill writes a prime the toolchain refuses, and would sweep every exercise's build in | framework agent | `todo` — blocks `M10` (`W436/1`) | [`rows/W440.md`](rows/W440.md) |
-| W441 | The maximise test's scroll-restore drifts under the merge gate's load, three readings | framework agent | `todo` — a gate that lies | [`rows/W441.md`](rows/W441.md) |
+| W438 | `M11` has a *Done when* and no steps, so the next milestone cannot be dispatched | framework agent | ✅ done — `103c62f9` | [`rows/W438.md`](rows/W438.md) |
+| W439 | The authoring guide says to hand-edit `corpus.json`, which an onboarded corpus treats as generated | framework agent | ✅ done — `0e1dfca2` | [`rows/W439.md`](rows/W439.md) |
+| W440 | The execution skill writes a prime the toolchain refuses, and would sweep every exercise's build in | framework agent | `in-progress` — blocks `M10` (`W436/1`) | [`rows/W440.md`](rows/W440.md) |
+| W441 | The maximise test's scroll-restore drifts under the merge gate's load, three readings | framework agent | `in-progress` — a gate that lies | [`rows/W441.md`](rows/W441.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
