@@ -20,9 +20,12 @@ from studyforge.serve.routes.content import (
     CorpusContent,
     route,
 )
+from studyforge.serve.withheld import Marks
 from studyforge.unit.builder import build_unit
 from studyforge.unit.builder import render as render_unit
 from tests.studyforge.generate.corpora import BOTH, FIXTURES
+from tests.studyforge.serve.routes.quizzing import PRACTICE_DOCUMENT, quiz_corpus, sentences
+from tests.studyforge.serve.routes.quizzing import UNIT as QUIZ_UNIT
 from tests.studyforge.serve.serving import LEAK, FakeSource, a_unit_text, retitled
 
 
@@ -131,3 +134,33 @@ def test_a_leaking_unit_document_is_refused_and_never_echoed():
 def test_a_unit_document_this_build_does_not_recognise_is_422(broken):
     response = get(FakeSource(units={"k/unit-01": broken}), "units/k/unit-01")
     assert (response.status, answer(response)["error"]) == (422, UNRECOGNISED)
+
+
+def test_a_quiz_is_served_without_its_key_and_the_source_still_holds_it(tmp_path):
+    """⛔ `W452`: the route withholds; `CorpusContent.unit`, which the quiz route grades
+    from, does not — the redaction is on the way out and nowhere else."""
+    content = CorpusContent(read_corpus(quiz_corpus(tmp_path)))
+    served = json.dumps(answer(get(content, f"units/{QUIZ_UNIT}"))["document"])
+    held = content.unit(QUIZ_UNIT) or ""
+    for sentence in sentences():
+        assert sentence not in served
+        assert sentence in held
+    assert '"correct"' not in served
+    assert '"correct": true' in held
+
+
+def test_withheld_names_every_sentence_and_is_re_read_when_a_unit_file_moves(tmp_path):
+    root = quiz_corpus(tmp_path)
+    content = CorpusContent(read_corpus(root))
+    assert content.withheld().sentences == frozenset(sentences())
+    practice = root / PRACTICE_DOCUMENT
+    fresh = "A sentence the quiz gained while the instance was serving."
+    practice.write_text(
+        practice.read_text("utf-8").replace(sentences()[0], fresh), encoding="utf-8"
+    )
+    assert fresh in content.withheld().sentences
+    assert sentences()[0] not in content.withheld().sentences
+
+
+def test_a_corpus_with_no_quiz_withholds_no_sentence():
+    assert CorpusContent(read_corpus(FIXTURES / "depth2")).withheld() == Marks()
