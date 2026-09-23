@@ -30687,3 +30687,9 @@ its fence count and most examples ship as written reasons, not exercises.**
 ⚠️ **That meets *"nothing the source already has is lost"* in the LEDGER's
 sense and may not meet it in the user's.** `ISO-M10/7` — ⚠️ **the pilot rule
 never shows a page with tests**; one such page is a single fence behind.
+
+## PO round 149
+
+⭐ **`W436` dispatched on `wt/dev5` and `W437` on `wt/dev6`, at `e43b7642`**, each
+minted and merged in round 148 before it. ⭐ **`AX-10` is still in flight on
+`wt/dev4`.**
