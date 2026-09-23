@@ -43,15 +43,15 @@ the wheel installed with `pip install --no-index --no-deps`. From an EMPTY direc
 
 - `import studyforge` resolves inside the venv, never the checkout;
 - `python3 -m studyforge.skills.delivery` exits 0, and `cmp` says its output is byte-identical
-  to the committed `src/studyforge/skills/delivery/capability-index.md` AND to the committed
-  `docs/capability-index.md`;
+  to the committed [`src/studyforge/skills/delivery/capability-index.md`](../../../src/studyforge/skills/delivery/capability-index.md) AND to the committed
+  [`docs/capability-index.md`](../../capability-index.md);
 - the directory is still empty afterwards.
 
 ⭐ **The control.** The same build from a `git archive` of the release tip `3758d114`, into its
 own fresh venv, from the same empty directory: `python3 -m studyforge.skills.delivery` exits 1
 (*"is a package and cannot be directly executed"*); and that tip's OWN step-1 command, read out
-of the `SKILL.md` its wheel ships (`python3 -m studyforge.skills.documents delivery`), exits 1
-with `FileNotFoundError` on `docs/tasks/README.md`, printing nothing.
+of the [`SKILL.md`](../../../src/studyforge/skills/delivery/SKILL.md) its wheel ships (`python3 -m studyforge.skills.documents delivery`), exits 1
+with `FileNotFoundError` on [`docs/tasks/README.md`](../README.md), printing nothing.
 
 ⭐ **`E15`'s export reading.** A `git clone` of the branch into scratch, then
 `git rm -r tools docs/tasks docs/conventions`, committed: `python3 -m pytest
@@ -70,16 +70,16 @@ tests skipped with their declared reasons; the whole `tests` root there is GREEN
 
 ## What landed
 
-- **`src/studyforge/skills/delivery/capability-index.md`** — the generated index, the
-  generator's output byte for byte (a copy of `docs/capability-index.md`, which was already
+- **[`src/studyforge/skills/delivery/capability-index.md`](../../../src/studyforge/skills/delivery/capability-index.md)** — the generated index, the
+  generator's output byte for byte (a copy of [`docs/capability-index.md`](../../capability-index.md), which was already
   asserted to be that).
 - **`src/studyforge/skills/delivery/packaged.py`** — `NAME`, `INDEX` (`Path(__file__).resolve()
   .parent / NAME`), `packaged_index() -> str`, and `main(argv)`, which writes the file's BYTES
   and refuses any argument with `UNUSABLE`. `packaged_index` is on the package's surface.
 - **`src/studyforge/skills/delivery/__main__.py`** — four lines on `packaged.main`.
-- **`SKILL.md` step 1** — the command is `python3 -m studyforge.skills.delivery`; the generator
+- **[`SKILL.md`](../../../src/studyforge/skills/delivery/SKILL.md) step 1** — the command is `python3 -m studyforge.skills.delivery`; the generator
   `capability_index` is still named as the product code a plan of one's own calls.
-- **`pyproject.toml`** — one `package-data` pattern, `skills/delivery/capability-index.md`, the
+- **`pyproject.toml`** — one `package-data` pattern, [`skills/delivery/capability-index.md`](../../../src/studyforge/skills/delivery/capability-index.md), the
   array written one pattern per line.
 - **Tests.** `test_packaged.py` (the reader, the one-copy check, the declaration, the wheel and
   the installed package — the wheel built by `test_documents.build_wheel`, split out of that
@@ -95,7 +95,7 @@ tests skipped with their declared reasons; the whole `tests` root there is GREEN
   `tests/test_product_stands_alone.py`'s deferred check loops rather than parametrises, so an
   empty `DEFERRED` prints no skip.
 - **`test_findings_log.py`** (`REL-01/2`) — the handoff half of the slot test is its own test,
-  declared process; the catalogue-section check reads the section's name out of `SKILL.md`
+  declared process; the catalogue-section check reads the section's name out of [`SKILL.md`](../../../src/studyforge/skills/delivery/SKILL.md)
   (*"the catalogue's own \*…\* section"*) and finds it among the catalogue's `## ` headings, so
   a rewrite of that prose stays green exactly while the two agree.
 
@@ -110,7 +110,7 @@ tests skipped with their declared reasons; the whole `tests` root there is GREEN
   there) and `REL-11` decides what replaces them — see *For dependents*.
 - ⭐ **The regeneration test kept its name and its file** (`test_walkthrough.py`), re-pointed at
   the shipped file, so every citation of it still resolves.
-- ⚠️ **`docs/capability-index.md` stays** — `REL-11` owns it. While both exist,
+- ⚠️ **[`docs/capability-index.md`](../../capability-index.md) stays** — `REL-11` owns it. While both exist,
   `test_the_documents_copy_is_the_shipped_one_while_it_exists` holds them to the same bytes,
   and it passes vacuously once the copy is gone, by design.
 
@@ -127,8 +127,8 @@ tests skipped with their declared reasons; the whole `tests` root there is GREEN
 
 | id | marker | where | what |
 |---|---|---|---|
-| `REL-06/1` | `[local]` | `CLAUDE.md`, `README.md` | Both still send a reader to `docs/capability-index.md` for counts. `REL-11` owns both and removes that file; the shipped index is `python3 -m studyforge.skills.delivery` |
-| `REL-06/2` | `[local]` | `tools/quality/board/delivery.py` | The board's delivery reading opens `docs/capability-index.md` by path. It is process tooling and leaves with `REL-10`; if it must outlive `REL-11`'s removal of that file, it reads the shipped one instead |
+| `REL-06/1` | `[local]` | [`CLAUDE.md`](../../../CLAUDE.md), [`README.md`](../../../README.md) | Both still send a reader to [`docs/capability-index.md`](../../capability-index.md) for counts. `REL-11` owns both and removes that file; the shipped index is `python3 -m studyforge.skills.delivery` |
+| `REL-06/2` | `[local]` | `tools/quality/board/delivery.py` | The board's delivery reading opens [`docs/capability-index.md`](../../capability-index.md) by path. It is process tooling and leaves with `REL-10`; if it must outlive `REL-11`'s removal of that file, it reads the shipped one instead |
 
 ## For dependents
 
@@ -141,11 +141,11 @@ tests skipped with their declared reasons; the whole `tests` root there is GREEN
   readings parse, so in the same commit ⭐ **they must be replaced, never left to fail or
   dropped silently**. The shipped index is then frozen, and the regeneration test is the only
   thing that fails a hand-edit — replace it with a pinned `sha256` of
-  `src/studyforge/skills/delivery/capability-index.md` in `test_packaged.py` (zero cost once
+  [`src/studyforge/skills/delivery/capability-index.md`](../../../src/studyforge/skills/delivery/capability-index.md) in `test_packaged.py` (zero cost once
   nothing regenerates it), or regenerate from the archive branch's epics. The other eleven
   readings test the generator on the live population; the small fixtures in `plans.py` already
   cover the generator, so they may move to the archive with the task text. Removing
-  `docs/capability-index.md` is yours; `test_the_documents_copy_is_the_shipped_one_while_it_exists`
+  [`docs/capability-index.md`](../../capability-index.md) is yours; `test_the_documents_copy_is_the_shipped_one_while_it_exists`
   needs no change.
 - ⭐ **Anyone who changes an epic's task block before `REL-11`:** regenerate BOTH copies (the
   generator's output, byte for byte); the failure message of the regeneration test names the
