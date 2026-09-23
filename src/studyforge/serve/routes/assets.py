@@ -10,7 +10,8 @@ gate before it leaves; binary media is streamed.
 function — ⛔ **one resolver, never two**, because two are two traversal surfaces.
 
 **Depends on.** `archive.scrub`, `corpus.placement.profile` for the generated
-directory's name, `serve.caching`, `serve.response`.
+directory's name, `serve.caching`, `serve.response`, and `serve.withheld` for a
+quiz's key.
 
 ## ⛔ `resolve` is the whole traversal control, and its order is the control
 
@@ -36,6 +37,19 @@ that was satisfiable. Text too large to gate is refused, never served ungated.
 ⭐ **`private` is the seam for a file that sits under the root and is not content**
 — the reader's own record is the first. It answers `404`, as does every refusal,
 so a prober never learns which guess was interesting.
+
+## ⛔ A file carrying a quiz's key or sentence is REFUSED (`W452`)
+
+⭐ **The user's ruling (2026-09-23): what the site serves never carries a quiz's
+key.** A corpus built into its own root (`build . --out .`) puts the archive's
+`practice-M.json` and the bundle's `tests/quiz.json` under the served root, so
+`withheld` is asked of every text — and of every file of an unknown type, which
+is where an editor's backup or a `.yaml` copy lands — before anything else is
+answered, a `304` included, and a file it names answers the one `404`.
+⭐ **The default refuses the key's structure** (`serve.withheld.carries` with no
+sentences); `serve.app` hands every route the served quizzes' sentences too.
+⚠️ Media is not read, and an unknown-type file over `GATE_MAX_BYTES` is served
+unread: a compressed archive holding a bundle cannot be read here at all.
 
 ## ⛔ The run client reaches a page ONE way, and this is it (`W370`, `SF-24`)
 
@@ -74,8 +88,10 @@ from studyforge.corpus.placement.profile import GENERATED_ROOT
 from studyforge.progress import store_dir
 from studyforge.serve.caching import UNSATISFIABLE, WHOLE, not_modified, parse_range, weak_etag
 from studyforge.serve.response import TEXT_TYPE, Request, Response
+from studyforge.serve.withheld import carries
 
-#: Assets revalidate every time; a `304` costs one `stat`.
+#: Assets revalidate every time; a `304` costs one `stat`, and one read of a text
+#: or unknown-type file, which `withheld` is asked of first (`W452`).
 ASSET_CACHE = "no-cache"
 
 #: Longest URL path accepted, before decoding.
@@ -140,6 +156,9 @@ DEFAULT_CONTENT_TYPE = "application/octet-stream"
 
 Private = Callable[[Path], bool]
 
+#: Whether a file's bytes carry what a site never serves (`W452`).
+Withheld = Callable[[bytes], bool]
+
 #: ⛔ **The reader's progress record, which is never content** (`SF-21/2`). It sits
 #: at `<generated root>/progress/` beside the pages a `tree` profile writes, so the
 #: static mount would otherwise serve it. Refused BY PATH, on the resolved file, so
@@ -157,6 +176,11 @@ PROGRESS_PREFIX = store_dir(".").parts
 def nothing_private(path: Path) -> bool:
     """Treat no file under the root as private: the default until a store names one."""
     return False
+
+
+def keyed(body: bytes) -> bool:
+    """Say whether `body` carries a quiz's key by its structure: the default `withheld`."""
+    return carries(body, ())
 
 
 def client_tag(client: str) -> bytes:
@@ -248,10 +272,16 @@ def content_type_for(path: Path) -> str:
 
 
 def route(
-    root: Path, private: Private, request: Request, rest: str, *, client: str | None = None
+    root: Path,
+    private: Private,
+    request: Request,
+    rest: str,
+    *,
+    client: str | None = None,
+    withheld: Withheld = keyed,
 ) -> Response:
     """Answer one request under `/api/v1/assets/`; `rest` is the path after it."""
-    return serve(root, request, "/" + rest, private, client)
+    return serve(root, request, "/" + rest, private, client, withheld)
 
 
 def serve(
@@ -260,6 +290,7 @@ def serve(
     url_path: str,
     private: Private = nothing_private,
     client: str | None = None,
+    withheld: Withheld = keyed,
 ) -> Response:
     """Answer one file: `200`, `206`, `304`, `404` or `416`.
 
@@ -275,13 +306,21 @@ def serve(
     except OSError:
         return _not_found()
     ctype = content_type_for(target)
+    body = None
+    if ctype.startswith(GATED_TYPES) or ctype == DEFAULT_CONTENT_TYPE:
+        try:
+            body = target.read_bytes() if stat.st_size <= GATE_MAX_BYTES else None
+        except OSError:
+            return _not_found()
+        if body is not None and withheld(body):
+            return _not_found()
     added = client if client and ctype == CONTENT_TYPES[".html"] else None
     etag = client_etag(weak_etag(stat)) if added else weak_etag(stat)
     validators = (("ETag", etag), ("Cache-Control", ASSET_CACHE))
     if not_modified(request.headers.get("If-None-Match"), etag):
         return Response(304, validators)
     if ctype.startswith(GATED_TYPES):
-        return _text(target, stat.st_size, ctype, validators, added)
+        return _text(body, ctype, validators, added)
     ranges = request.headers.get("Range") if request.headers.get("If-Range") is None else None
     span = parse_range(ranges, stat.st_size)
     if span == UNSATISFIABLE:
@@ -296,21 +335,16 @@ def serve(
     return Response(206, ranged, file=target, span=span)
 
 
-def _text(
-    target: Path, size: int, ctype: str, validators: tuple, client: str | None = None
-) -> Response:
-    """Read a text file whole, add the client where one is named, gate it, answer it whole.
+def _text(body: bytes | None, ctype: str, validators: tuple, client: str | None) -> Response:
+    """Take a text file's bytes whole, add the client where one is named, gate it, answer it.
 
     ⛔ **The gate runs over what LEAVES this process**, so the insertion happens
     before it rather than after: a page gated and then edited is a page whose
     served bytes nothing checked.
     """
-    if size > GATE_MAX_BYTES:
+    if body is None:
         return Response(500, (("Content-Type", TEXT_TYPE),), b"text too large to gate\n")
-    try:
-        body = with_client(target.read_bytes(), client)
-    except OSError:
-        return _not_found()
+    body = with_client(body, client)
     try:
         assert_clean(body.decode("utf-8", errors="replace"), "asset")
     except PersonalDataLeak:

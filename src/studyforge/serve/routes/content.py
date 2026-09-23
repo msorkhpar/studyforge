@@ -10,7 +10,8 @@ answered `304` when `If-None-Match` names the current tag.
 document from a corpus's declarations on request.
 
 **Depends on.** `contents.document`, `unit.builder`, `unit.served`, `archive.scrub`,
-`serve.caching`, `serve.response`. ⛔ Not on `render`: HTML is one renderer over
+`serve.caching`, `serve.response`, and `serve.withheld` for what of a quiz is never
+served. ⛔ Not on `render`: HTML is one renderer over
 this data, and changing a template must not be able to break it.
 
 ## ⛔ `ContentSource` is the seam, and addressing is not this module's
@@ -28,6 +29,15 @@ changed underneath it — and the strong tag is then the thing that lies. Built 
 request, the tag is always over the bytes being served, which is the whole
 guarantee a `304` makes.
 
+## ⛔ A quiz's key and sentences are WITHHELD (`W452`)
+
+⭐ **The user's ruling (2026-09-23) puts a quiz's correct answer on the SERVER
+side**, so a unit document is answered with every quiz option cut down to its id
+and its words (`serve.withheld.redacted`). ⛔ The quiz route reads the key from
+`ContentSource.unit`, which is NOT redacted — the redaction is this route's, on
+the way out. ⭐ `CorpusContent.withheld` names every sentence its quizzes carry,
+which is what the static mount refuses a file for.
+
 ## ⛔ Every document is gated on the way out
 
 A unit passes `unit.served.parse` (version, shape and the personal-data gate — the
@@ -39,12 +49,14 @@ shape this build does not recognise, `500` for personal data.
 from __future__ import annotations
 
 import json
+from pathlib import Path
 from typing import Protocol
 
 from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.contents import document as contents_document
 from studyforge.serve.caching import not_modified, strong_etag
 from studyforge.serve.response import JSON_TYPE, Request, Response, envelope, error
+from studyforge.serve.withheld import redacted, sentences_in
 from studyforge.unit import served
 from studyforge.unit.builder import NoMaterial, build_unit
 from studyforge.unit.builder import render as render_unit
@@ -92,6 +104,7 @@ class CorpusContent:
         self._corpus = corpus
         self._units = {source.key: source for source in corpus.units}
         self._absent = frozenset(corpus.absent)
+        self._withheld: tuple[tuple, frozenset[str]] = ((), frozenset())
 
     def toc(self) -> str:
         """Return the contents document, rendered by its one serialiser."""
@@ -111,6 +124,49 @@ class CorpusContent:
     def declares(self, key: str) -> bool:
         """Say whether `key` is a declared unit of this corpus."""
         return key in self._units or key in self._absent
+
+    def withheld(self) -> frozenset[str]:
+        """Return every option sentence of every quiz in this corpus's unit documents.
+
+        ⭐ **Read through `unit` — the same reader the quiz route grades from** — so
+        what is withheld is what is graded. ⚠️ Cached against the size and mtime of
+        every file in every unit's directory, re-read when one moves: a quiz
+        edited while served is withheld from its next request on.
+        """
+        stamp = tuple(_stamp(source.directory) for source in self._units.values())
+        held, found = self._withheld
+        if held == stamp and held:
+            return found
+        found = frozenset().union(*(self._sentences(key) for key in self._units))
+        self._withheld = (stamp, found)
+        return found
+
+    def _sentences(self, key: str) -> frozenset[str]:
+        """One unit's quiz sentences; none for a unit that has no document or fails to build.
+
+        ⚠️ A unit that cannot be built is skipped rather than failing every file
+        the static mount serves; `serve.withheld`'s structural reading of the key
+        still refuses its quiz's files.
+        """
+        try:
+            text = self.unit(key)
+            return frozenset() if text is None else sentences_in(json.loads(text))
+        except ContentError, OSError, ValueError:
+            return frozenset()
+
+
+def _stamp(directory: Path) -> tuple:
+    """Every file under `directory` with its size and mtime, sorted: what a rebuild reads."""
+    try:
+        found = sorted(path for path in Path(directory).rglob("*") if path.is_file())
+        return tuple((path.as_posix(), *_size_and_time(path)) for path in found)
+    except OSError:
+        return ()
+
+
+def _size_and_time(path: Path) -> tuple[int, int]:
+    stat = path.stat()
+    return stat.st_size, stat.st_mtime_ns
 
 
 def route(source: ContentSource, request: Request, rest: str) -> Response:
@@ -133,8 +189,8 @@ def _toc(text: str) -> object:
 
 
 def _unit(text: str) -> object:
-    """Read a unit document back through its own trust boundary."""
-    return served.parse(text, served.UNIT_FILENAME)
+    """Read a unit document back through its own trust boundary, its quizzes withheld."""
+    return redacted(served.parse(text, served.UNIT_FILENAME))
 
 
 def _document(request: Request, resource: str, extra: dict, text: str, read) -> Response:

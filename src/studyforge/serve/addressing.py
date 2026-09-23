@@ -16,7 +16,8 @@ by one string.
 
 **Depends on.** `address` for the parse and every key, `archive.scrub` for R7's
 gate on each contents document before it is decoded (W7), `contents` for that
-document's name, and `serve.routes.content` for the `ContentSource` seam.
+document's name, `serve.routes.content` for the `ContentSource` seam, and
+`serve.withheld` for every quiz sentence no file may carry (`W452`).
 ⛔ No key is composed here: `Address.unit_key` spells it, and `parse_unit_key`
 reads it.
 
@@ -50,6 +51,7 @@ from studyforge.address import SEPARATOR, Address, AddressError, parse_unit_key
 from studyforge.archive.scrub import assert_clean
 from studyforge.contents import TOC_FILENAME
 from studyforge.serve.routes.content import ContentSource
+from studyforge.serve.withheld import sentences_of
 
 #: The key of the multi-corpus contents document's one list.
 CORPORA = "corpora"
@@ -121,6 +123,10 @@ class CorporaContent:
         """Say whether the corpus the key names declares that unit."""
         located = locate(key, self._depths)
         return located is not None and self._sources[located.corpus].declares(located.key)
+
+    def withheld(self) -> frozenset[str]:
+        """Return every quiz sentence of every corpus served, which no file may carry (`W452`)."""
+        return frozenset().union(*(sentences_of(source) for source in self._sources.values()))
 
 
 def _decoded(text: str) -> object:

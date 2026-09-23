@@ -11,7 +11,7 @@ security headers on all of them, a file streamed span by span.
     server.serve_forever()          # server.server_address is (host, port)
 
 **Depends on.** `http.server`, `serve.security`, `serve.response`, `serve.routes`,
-and `archive.scrub` for the log line. ⛔ **No process-spawning library, anywhere in
+`serve.withheld`, `archive.scrub` for the log. ⛔ **No process-spawning library in
 this package** — `tests/studyforge/serve/test_init.py` asserts that of every module,
 and the Docker socket is never reachable from here (spec §8.3).
 
@@ -22,7 +22,8 @@ and the Docker socket is never reachable from here (spec §8.3).
   that is already taken is refused, so a later namespace cannot quietly replace
   content's caching rule with its own.
 - **`private=`** — a predicate over a resolved path; `SF-21`'s store names the
-  reader's record through it, and it answers `404` on both mounts.
+  reader's record through it, and it answers `404` on both mounts. ⛔ So does a file
+  carrying a quiz's key or sentence (`W452`), read off `source` in every form.
 - **`writers=`** — the registered namespaces that also answer `POST` (`SF-22`'s
   `run`: starting a process is an act, and a `GET` that acted would run a grader
   on a prefetch). ⛔ Content, assets and the static mount never do.
@@ -74,6 +75,7 @@ from studyforge.serve.security import (
     require_loopback,
     response_headers,
 )
+from studyforge.serve.withheld import refused_by
 
 #: What `studyforge serve` binds when it is not told otherwise.
 DEFAULT_PORT = 8765
@@ -128,14 +130,14 @@ class ServingServer(ThreadingHTTPServer):
         if stray:
             raise ValueError(f"only a registered namespace may answer POST: {', '.join(stray)}")
         self.site_root = root
-        self.private = private
-        self.client = client
         self.frames = frames
         self._withheld: set[tuple[str, str]] = set()
         self.allowed_hosts = ALLOWED_HOSTS
+        withheld = refused_by(source)
+        self.static = partial(assets.serve, root, private=private, client=client, withheld=withheld)
         self.namespaces: dict[str, Route] = {
             "content": partial(content.route, source),
-            "assets": partial(assets.route, root, private, client=client),
+            "assets": partial(assets.route, root, private, client=client, withheld=withheld),
             **extra,
         }
         self.writers = frozenset(writers)
@@ -184,7 +186,7 @@ class ServingServer(ThreadingHTTPServer):
             return error(404, "no such endpoint") if found is None else found(request, rest)
         if path.startswith(API_ROOT + "/"):
             return error(404, "no such endpoint")
-        return assets.serve(self.site_root, request, path, self.private, self.client)
+        return self.static(request, path)
 
 
 def make_server(
