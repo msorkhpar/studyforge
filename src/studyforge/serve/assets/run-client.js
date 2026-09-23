@@ -7,7 +7,8 @@
    an origin that can answer it.
 
    ⭐ **A client and nothing else.** It publishes `studyforge.run` — `available`,
-   `start`, `stop`, `editor`, `practice` — and draws nothing: the practice panel that puts Run and
+   `start`, `stop`, `editor`, `practice` — and `studyforge.quiz` — `available`,
+   `grade` (`W451`, below) — and draws nothing: the practice panel that puts Run and
    Submit in front of a reader is `SF-24`'s, at `M7`. ⛔ A control this file
    drew before that panel existed would be a dead button, and a dead button is
    a promise the page cannot keep.
@@ -169,7 +170,41 @@
       .then(function (answer) { return answer.stopped === true; });
   }
 
+  /* ⭐ A QUIZ IS GRADED HERE TOO, AND IT IS NOT A RUN (`W451`, the user's ruling
+     of 2026-09-23). The key never reaches the page: what the reader chose is
+     sent to `/api/v1/quiz/<corpus>/<practice>/<question>=<option>/…` and the
+     server answers the verdict — right or wrong per question, the CHOSEN
+     option's sentence, the count, and whether the quiz is complete. ⛔ It is
+     published as `studyforge.quiz` and not under `run`: it starts nothing,
+     records nothing, and produces no run. ⚠️ It lives in this file because
+     this is the ONE script a serving process adds to a page (`W370`), and a
+     second insertion would be a second place a built page could learn it is
+     being served. ⛔ The answers travel in the PATH because a request body is
+     discarded by the server, unread — so a question or option id that is not
+     `QUIZ_ID`'s shape is refused here, before any request. */
+  var QUIZ_BASE = '/api/v1/quiz/';
+  var CHOSE = '=';
+  var QUIZ_ID = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
+
+  function grade(corpus, practice, answers) {
+    if (!available()) { return refused('no-origin'); }
+    if (!CORPUS.test(corpus) || !KEY.test(practice)) { return refused('practice'); }
+    var segments = [];
+    var ids = Object.keys(answers || {});
+    for (var at = 0; at < ids.length; at += 1) {
+      var option = answers[ids[at]];
+      if (!QUIZ_ID.test(ids[at]) || typeof option !== 'string' || !QUIZ_ID.test(option)) {
+        return refused('answer');
+      }
+      segments.push(ids[at] + CHOSE + option);
+    }
+    var path = QUIZ_BASE + corpus + '/' + practice + (segments.length ? '/' + segments.join('/') : '');
+    return fetch(path, { method: 'POST', cache: 'no-store', credentials: 'same-origin' })
+      .then(function (response) { return response.ok ? response.json() : refused(response.status); });
+  }
+
   window.studyforge = window.studyforge || {};
+  window.studyforge.quiz = { available: available, grade: grade };
   window.studyforge.run = {
     available: available,
     start: start,

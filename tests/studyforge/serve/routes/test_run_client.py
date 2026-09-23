@@ -81,8 +81,10 @@ def test_a_start_is_a_post_with_no_body_and_nothing_else_is_sent():
     # POST that SELECTS; the index — a GET, because asking what this instance
     # offers is a read (`W416`); and one practice's editor windows, a POST
     # because preparing that practice's workspace settings WRITES (`W429`).
-    assert body.count("fetch(") == 4
-    assert body.count("method: 'POST'") == 3
+    # ⭐ And a fifth since `W451`: grading a quiz, a POST that selects a quiz
+    # and carries the reader's choices in its PATH (`test_quiz_client.py`).
+    assert body.count("fetch(") == 5
+    assert body.count("method: 'POST'") == 4
     assert "body:" not in body and "JSON.stringify" not in body
     assert "XMLHttpRequest" not in body and "sendBeacon" not in body
 
@@ -151,10 +153,10 @@ def test_it_draws_nothing_and_types_no_word_a_reader_sees():
 def test_over_a_file_it_is_not_available_and_sends_nothing():
     # ⛔ R8: `file://` has no origin. EVERY entry point asks `available()` first
     # — the two acts, where a running editor is (`W416`), and one practice's
-    # two editor windows (`W429`).
+    # two editor windows (`W429`) — and, since `W451`, grading a quiz.
     body = uncommented()
     assert "location.protocol === 'http:'" in body
-    assert body.count("if (!available())") == 4
+    assert body.count("if (!available())") == 5
 
 
 def test_a_refusal_is_a_rejection_naming_what_was_refused_before_any_request():

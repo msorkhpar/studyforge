@@ -1,36 +1,38 @@
-/* The quiz: what a reader chose, whether it was right, and why it is what it is.
+/* The quiz: what a reader chose, and what the local study server said about it.
 
-   ⛔ **NO SERVER, EVER — and that is the whole point of the shape** (spec §7 §7,
-   `AX-05`). A quiz is graded with no compiler, no container, no network and no
-   model: the key ships in the page and the rule is four lines of arithmetic, so
-   the reading is IDENTICAL over `file://` and over a served origin (R8). ⭐ So
-   this file does NOT ask `window.studyforge.run` whether an origin exists, and
-   it must never be made to — a guard on the run client would make a quiz work
-   only where a server happens to be, which is the one property this shape has
-   that the code exercise does not.
+   ⛔ **THE KEY IS NOT IN THE PAGE, AND THIS FILE DOES NOT GRADE** — the user's
+   ruling of 2026-09-23 (`W451`): *"a test with the correct answer residing on
+   the server side. When user answers it will get validated and result will be
+   returned to the user with explanation if needed"*. ⭐ So this file reads
+   which option the reader chose, hands the choices to `window.studyforge.quiz`
+   — which the SERVING PROCESS adds to a served page and a built page never
+   names (R8, `W370`) — and shows what came back: right or wrong per question,
+   the chosen option's sentence, the count, and whether the quiz is complete.
+   ⛔ **The completion rule is the server's** (`exercise.quiz.completes`, applied
+   once, in Python); this file shows `complete` and never re-derives it.
+
+   ⚠️ **Superseded, and kept readable so it is not re-derived:** until `W451`
+   this file graded in the page from a key every option carried, identically
+   over `file://`, on the stance that an offline page cannot hide the key it grades
+   with. The ruling removes the key from the page instead.
+
+   ⭐ **Over `file://` the questions and the options still show** and a reader
+   may still choose; the Check control stays `hidden` and the `offline`
+   sentence stays showing, exactly as Run and Submit do in the code panel. ⛔
+   Nothing is sent from a file page — there is no origin to send it to.
 
    ⛔ **A quiz has no file, no command and no grader to submit to, so it renders
    no Run and no Submit — and not disabled ones** (`AX-05/3`, `SF-24`'s standing
-   rule about a dead button). ⚠️ There is nothing here that hides such a control
-   either: `render/page/practice.py` never emits one, which is the only place a
-   control can be refused honestly.
+   rule about a dead button).
 
-   ⛔ **The key is IN the page and this file does not pretend otherwise.** The
-   site is offline and the bundle is on the reader's disk, exactly as an offline
-   workspace cannot hide its test file — claiming to hide either is the theatre
-   R5 exists to prevent, and `exercise.quiz` says so first.
-
-   ⛔ **Nothing is written to browser storage.** What a reader answered is the
-   page's for as long as they are on it; a second, weaker record of *did this
-   complete?* is exactly the second answer `practice.js` refuses to keep for a
-   run. ⚠️ **So a reload clears the answers**, and that is a property rather than
-   an oversight: recording a quiz's completion is a decision about the reader's
-   own state and it belongs to the row that takes it, not to the panel.
+   ⛔ **Nothing is written to browser storage, and the server records nothing
+   either.** What a reader answered is the page's for as long as they are on
+   it; ⚠️ **so a reload clears the answers**, and recording a quiz's completion
+   in the reader's own state is a decision for the row that takes it — never a
+   run verdict, which a quiz does not produce.
 
    ⭐ **Every word this file says is read off the markup**, where Python put it —
-   the same two-sided spelling every hook on this page has, because markup and
-   script cannot import one another and the Python side is the single source for
-   what is emitted (`W431`). */
+   the same two-sided spelling every hook on this page has (`W431`). */
 
 (function () {
   'use strict';
@@ -38,9 +40,6 @@
   var QUIZ = 'section[data-practice-quiz]';
   var PART = 'data-practice-part';
   var QUESTION = 'data-practice-question';
-  var OPTION = 'data-practice-option';
-  var CORRECT = 'data-practice-correct';
-  var SAYS = 'data-practice-says';
   var VERDICT = 'data-practice-verdict';
 
   /* Where each of this file's own sentences is kept. ⚠️ `right` is read off two
@@ -51,6 +50,8 @@
   var WRONG = 'data-practice-wrong';
   var COMPLETE = 'data-practice-complete';
   var BLANK = 'data-practice-blank';
+  var CHECKING = 'data-practice-checking';
+  var FAILED = 'data-practice-failed';
 
   function part(root, name) {
     return root.querySelector('[' + PART + '="' + name + '"]');
@@ -60,69 +61,91 @@
     return (element && element.getAttribute(name)) || '';
   }
 
-  /* The option a reader chose, or `null`. ⚠️ Read off the DOM rather than
-     remembered: the radios ARE the state, and a second copy of them would be a
-     second answer to *what did they choose?*. */
-  function chosen(question) {
-    var picked = question.querySelector('input[type="radio"]:checked');
-    return picked ? question.querySelector('[' + OPTION + '="' + picked.value + '"]') : null;
+  /* What the reader chose, as `{question id: option id}`. ⚠️ Read off the DOM
+     rather than remembered: the radios ARE the state, and a second copy of them
+     would be a second answer to *what did they choose?*. */
+  function chosen(quiz) {
+    var answers = {};
+    [].slice.call(quiz.querySelectorAll('[' + QUESTION + ']')).forEach(function (question) {
+      var picked = question.querySelector('input[type="radio"]:checked');
+      if (picked) { answers[question.getAttribute(QUESTION)] = picked.value; }
+    });
+    return answers;
   }
 
-  /* ⛔ **One question's reading, and it is TOTAL.** A question nobody answered
-     is not correct — it is simply not answered, which is the same answer
-     `exercise.quiz.grade` gives for a stored answer it does not recognise. */
-  function read(question) {
-    var picked = chosen(question);
+  /* One question's row of the server's verdict, drawn. ⭐ The sentence is the
+     one for whatever the reader CHOSE, right or wrong — a page that showed one
+     only for a wrong answer would teach half the material. ⛔ A question the
+     verdict says nobody answered shows nothing. */
+  function draw(question, row) {
     var says = part(question, 'says');
-    var right = !!picked && picked.getAttribute(CORRECT) === 'true';
-    if (!picked) {
+    if (!row || !row.answered) {
       question.removeAttribute(VERDICT);
       if (says) { says.textContent = ''; says.hidden = true; }
-      return { answered: false, correct: false };
-    }
-    question.setAttribute(VERDICT, right ? 'correct' : 'wrong');
-    if (says) {
-      /* ⭐ The sentence for whatever the reader chose, RIGHT OR WRONG. A page
-         that showed one only for a wrong answer would teach half the material
-         and would tell the reader which half by showing nothing. */
-      says.textContent = words(says, right ? RIGHT : WRONG) + ' ' + picked.getAttribute(SAYS);
-      says.hidden = false;
-    }
-    return { answered: true, correct: right };
-  }
-
-  function grade(quiz) {
-    var questions = [].slice.call(quiz.querySelectorAll('[' + QUESTION + ']'));
-    var status = part(quiz, 'status');
-    var right = 0;
-    var answered = 0;
-    questions.forEach(function (question) {
-      var reading = read(question);
-      if (reading.answered) { answered += 1; }
-      if (reading.correct) { right += 1; }
-    });
-    if (!status) { return; }
-    if (!answered) {
-      status.textContent = words(status, BLANK);
       return;
     }
-    /* ⛔ **Complete is EVERY question answered correctly and nothing less**
-       (`exercise.quiz.completes`), and the count is said in every other case so
-       a reader is never told only that they are not finished. */
-    status.textContent = right === questions.length && questions.length
+    question.setAttribute(VERDICT, row.correct ? 'correct' : 'wrong');
+    if (says) {
+      says.textContent = words(says, row.correct ? RIGHT : WRONG) + ' ' + (row.says || '');
+      says.hidden = false;
+    }
+  }
+
+  function show(quiz, verdict) {
+    var rows = {};
+    (verdict.questions || []).forEach(function (row) { rows[row.id] = row; });
+    [].slice.call(quiz.querySelectorAll('[' + QUESTION + ']')).forEach(function (question) {
+      draw(question, rows[question.getAttribute(QUESTION)]);
+    });
+    var status = part(quiz, 'status');
+    if (!status) { return; }
+    /* ⛔ **Complete is the SERVER's word** and is EVERY question answered
+       correctly; the count is said in every other case so a reader is never
+       told only that they are not finished. */
+    status.textContent = verdict.complete === true
       ? words(status, COMPLETE)
-      : words(status, RIGHT).replace('{right}', right).replace('{asked}', questions.length);
+      : words(status, RIGHT).replace('{right}', verdict.right).replace('{asked}', verdict.asked);
   }
 
-  /* ⭐ Re-graded as soon as a reader changes an answer, so the sentence under a
-     question can never describe an option that is no longer chosen. */
-  function wire(quiz) {
+  function wire(quiz, client) {
     var check = part(quiz, 'check');
-    if (!check) { return; }
+    var controls = part(quiz, 'controls');
+    var offline = part(quiz, 'offline');
+    var status = part(quiz, 'status');
+    if (!check || !controls) { return; }
+    if (offline) { offline.hidden = true; }
+    controls.hidden = false;
     var graded = false;
-    check.addEventListener('click', function () { graded = true; grade(quiz); });
-    quiz.addEventListener('change', function () { if (graded) { grade(quiz); } });
+    /* ⭐ Only the LATEST request may draw: a reader who changes an answer while
+       the previous one is still being checked must never see the older verdict
+       land on top of the newer choice. */
+    var asked = 0;
+
+    function grade() {
+      var answers = chosen(quiz);
+      var ticket = ++asked;
+      if (!Object.keys(answers).length) {
+        show(quiz, { questions: [], right: 0, asked: 0, complete: false });
+        if (status) { status.textContent = words(status, BLANK); }
+        return;
+      }
+      if (status) { status.textContent = words(status, CHECKING); }
+      client.grade(quiz.getAttribute('data-corpus'), quiz.getAttribute('data-practice-quiz'), answers)
+        .then(function (verdict) {
+          if (ticket === asked) { show(quiz, verdict); }
+        }, function () {
+          if (ticket === asked && status) { status.textContent = words(status, FAILED); }
+        });
+    }
+
+    /* ⭐ Re-graded as soon as a reader changes an answer, once they have asked
+       once, so the sentence under a question can never describe an option that
+       is no longer chosen. */
+    check.addEventListener('click', function () { graded = true; grade(); });
+    quiz.addEventListener('change', function () { if (graded) { grade(); } });
   }
 
-  [].slice.call(document.querySelectorAll(QUIZ)).forEach(wire);
+  var client = window.studyforge && window.studyforge.quiz;
+  if (!client || !client.available()) { return; }
+  [].slice.call(document.querySelectorAll(QUIZ)).forEach(function (quiz) { wire(quiz, client); });
 }());

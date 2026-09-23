@@ -1503,17 +1503,46 @@ keyed as correct, one sentence per option saying why it is right or wrong, and a
 quiz ones, from the same ledger: each question is written from one passage, and the
 passage is recorded by address, not paraphrased into the question's provenance.
 
-⭐ **How it is graded without a compiler.** The key and the per-option sentences ship
-inside the practice document, and the page grades the reader's answers itself — no
-container, no network, no model, and identical over `file://` and over a served origin.
-⛔ **A quiz practice completes only when every question is answered correctly**, and that
-completion is recorded through the reader's own state, never through a run verdict:
-`is_pass`'s rule for a RUN is untouched and a quiz produces no run.
+⛔ **SUPERSEDED 2026-09-23 by the user's ruling below (`W451`). The two paragraphs that
+follow are kept readable so every citation of them still resolves, and they are NOT in
+force where they say the key ships in the page or that the page grades itself.**
 
-⚠️ **The key is in the material, and the site does not pretend otherwise.** An offline
-page cannot hide the answer it is about to grade with, exactly as an offline workspace
-cannot hide its test file. ⛔ **Claiming to hide either would be the theatre R5 exists to
-prevent**; the honest design shows the reader the answer after they answer.
+> ⭐ **How it is graded without a compiler.** The key and the per-option sentences ship
+> inside the practice document, and the page grades the reader's answers itself — no
+> container, no network, no model, and identical over `file://` and over a served origin.
+> ⛔ **A quiz practice completes only when every question is answered correctly**, and that
+> completion is recorded through the reader's own state, never through a run verdict:
+> `is_pass`'s rule for a RUN is untouched and a quiz produces no run.
+>
+> ⚠️ **The key is in the material, and the site does not pretend otherwise.** An offline
+> page cannot hide the answer it is about to grade with, exactly as an offline workspace
+> cannot hide its test file. ⛔ **Claiming to hide either would be the theatre R5 exists to
+> prevent**; the honest design shows the reader the answer after they answer.
+
+⛔ **AMENDED 2026-09-23 (`W451`, USER RULING) — the local study server grades a quiz, and
+the key never reaches the page.** The ruling, verbatim: *"the quiz itself again should not
+require an online or agent check for the answer user provided. It will be just a test with
+the correct answer residing on the server side. When user answers it will get validated
+and result will be returned to the user with explanation if needed"*.
+
+- ⛔ **No built page and no asset a page loads carries a quiz's key or any per-option
+  sentence.** The key stays in the practice document on disk — the bundle's record, as
+  ingested — which is server-side material.
+- ⭐ **The local study server grades.** The page sends what the reader chose to a `serve`
+  route, which reads the key from the unit's generated document and answers, per question,
+  right or wrong **with the CHOSEN option's sentence** — never the keyed option's, so a
+  wrong answer is explained rather than corrected. ⛔ **No model, no network and no
+  container: a fixed comparison**, and the route never reaches the Docker socket (§8.3). It
+  sits behind `serve`'s guards like every other route (R8).
+- ⭐ **Completion keeps its meaning**: a quiz completes only when every question is
+  answered correctly, decided by the framework's one rule on the server and shown in the
+  reader's own page; ⛔ **never a run verdict** — `is_pass`'s rule for a RUN is untouched,
+  a quiz produces no run, and grading records nothing.
+- ⭐ **Over `file://` a quiz shows its questions and options and says checking them needs
+  the local study server**, exactly as Run and Submit already do. ⚠️ This is the register's
+  default and it is reversible.
+- ⭐ **The quiz gates Q1–Q5 and the bundle record are unchanged**; only where the key is
+  read and who grades changed.
 
 ⭐ **The honesty gates for a quiz.** A compiler cannot back these, so the gates are
 different and their difference is stated rather than smoothed over:
@@ -2075,6 +2104,12 @@ practice — the quiz shape** — and a quiz needs no container, no network and 
 so it sits **on the reading floor**, not in the execution track. ⛔ **Skipping the track
 remains a PASS**; what stops being a pass is a reader with nothing to practise.
 ⭐ **The reading floor is still a complete product on its own, and still offline.**
+
+⛔ **AMENDED 2026-09-23 (`W451`, user ruling) — *"no server"* above is SUPERSEDED.** A quiz
+still needs no container, no network and no model, and it still sits on the reading
+floor rather than in the execution track — ⭐ **but its answers are checked by the local
+study server**, which holds the key the page no longer carries (§7 §7's amendment). Over
+`file://` a quiz shows its questions and says checking them needs that server.
 
 ⚠️ **The order follows from that.** The reading floor comes first and completely,
 because it is what every consumer gets and the only thing some consumers want.

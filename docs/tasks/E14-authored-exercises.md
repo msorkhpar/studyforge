@@ -177,17 +177,32 @@ exercise whose `kind` is `quiz`: in place of a workspace it carries **questions*
 an ordered set of options, exactly one keyed correct, one sentence per option saying why it
 is right or wrong, and an `origin` naming the passage it came from.
 
-⛔ **It is graded with no compiler, no container, no network and no model.** The key and the
-sentences ship inside the practice document and the grading rule is the framework's, so the
-reading is identical over `file://` and over a served origin (R8).
+⛔ **SUPERSEDED 2026-09-23 by the user's ruling below (`W451`) — kept readable, and not in
+force where it puts the key in the page or grades there:**
+
+> ⛔ **It is graded with no compiler, no container, no network and no model.** The key and the
+> sentences ship inside the practice document and the grading rule is the framework's, so the
+> reading is identical over `file://` and over a served origin (R8).
+>
+> ⚠️ **The key is in the material and the site does not pretend otherwise.** An offline page
+> cannot hide the answer it grades with, exactly as an offline workspace cannot hide its test
+> file, and claiming to hide either is the theatre R5 exists to prevent.
+
+⛔ **AMENDED 2026-09-23 (`W451`, USER RULING):** *"the quiz itself again should not require an
+online or agent check for the answer user provided. It will be just a test with the correct
+answer residing on the server side. When user answers it will get validated and result will
+be returned to the user with explanation if needed"*. ⭐ **Still no compiler, no container, no
+network and no model — and the grading rule is still the framework's** (`exercise.quiz`),
+⛔ **but it runs on the LOCAL STUDY SERVER, never in the page.** No built page and no asset a
+page loads carries the key or a per-option sentence; a `serve` route reads the key from the
+unit's generated document and answers right or wrong with the chosen option's sentence.
+⭐ Over `file://` the quiz shows its questions and says checking needs the study server, as
+Run and Submit do. [Spec §7 §7](../specs/2026-09-08-studyforge-v1-design.md) carries the
+amendment whole.
 
 ⛔ **A quiz completes only when every question is answered correctly**, and that completion
 is recorded through the reader's own state — ⛔ **never through a run verdict.** A quiz
 produces no run, and `is_pass`'s rule for a run is untouched by this task.
-
-⚠️ **The key is in the material and the site does not pretend otherwise.** An offline page
-cannot hide the answer it grades with, exactly as an offline workspace cannot hide its test
-file, and claiming to hide either is the theatre R5 exists to prevent.
 
 ⭐ **Proved on the prose fixture**, `FND-04`'s `depth1/` — the 1-level, zero-exercise shape
 — because that is the corpus this shape exists for.
@@ -197,6 +212,9 @@ not. A question with no keyed option is refused; one with two is refused; option
 after normalisation are refused; an option with no sentence is refused. Grading is
 byte-identical over `file://` and over a served origin. A quiz record is refused
 `trust: "authoritative"` (R5). A corpus with no quiz is unaffected.
+⛔ **AMENDED 2026-09-23 (`W451`):** *"Grading is byte-identical over `file://` and over a
+served origin"* is SUPERSEDED — grading happens only over a served origin, and over
+`file://` the quiz says so. ⭐ The rest of this Acceptance stands.
 
 ---
 
@@ -220,6 +238,12 @@ with the prompt, the pass and the outcome, and a question whose Q1–Q3 record i
 whose recorded inputs no longer match is refused at `validate`. ⛔ **No gate is
 configurable off.** A quiz that cleared every gate is `generated`/`advisory`, and asserting
 `authoritative` anywhere in the chain fails.
+
+⛔ **AMENDED 2026-09-23 (`W451`, user ruling — the key resides on the server):** ⭐ **Q1–Q5 and
+the gate record are UNCHANGED**, and so is the bundle's quiz record. ⚠️ What moved is only
+where a reader MEETS what they guarantee: Q4's *"every option carries its one sentence"*
+now reaches the reader in the server's verdict, for the option they chose, and never in the
+page.
 
 ---
 

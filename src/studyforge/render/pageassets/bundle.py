@@ -133,9 +133,10 @@ STYLE_PARTS = (
 #: part split at named seams for R11 — the panel and the run, the two editor
 #: windows, and the quiz. ⛔ **The order between the three settles nothing**, and
 #: that is a property rather than luck: each one selects its own elements, none
-#: defines anything another reads, and `practice-quiz.js` deliberately does NOT
-#: ask `window.studyforge.run` whether an origin exists, because a quiz grades
-#: over `file://` (spec §7 §7, R8). ⚠️ They are before `read-mark.js` because
+#: defines anything another reads. ⚠️ `practice-quiz.js` asks
+#: `window.studyforge.quiz` — not `.run` — whether an origin exists, because
+#: since `W451` the local study server grades a quiz and the page holds no key
+#: (spec §7 §7, amended 2026-09-23). ⚠️ They are before `read-mark.js` because
 #: that part's LAST-ness is the property being kept.
 #:
 #: ⭐ `theme.js` (`W388` stage 2) reads and writes the store's DISPLAY record,

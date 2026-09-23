@@ -1,81 +1,63 @@
-"""`AX-09` — a quiz shows its questions, grades them, and offers nothing to run.
+"""`AX-09` and `W451` — a quiz shows its questions, the SERVER grades them, and nothing runs.
 
-⛔ **WHY THIS NEEDS A BROWSER, AND WHY A TEXT COULD NOT ANSWER IT.** *"A quiz
-page shows questions, grades them, and shows no run affordance"* is two claims,
-and only the first is a claim about markup. ⭐ The grading is four lines of
-arithmetic in the page itself, and whether a reader who chooses an answer is
-told the right thing about it is a runtime identity: the radios, the sentence
-that appears under a question, and the line that counts them exist only while a
-page is running.
+⛔ **THE USER'S RULING, 2026-09-23 (`W451`)**: *"a test with the correct answer
+residing on the server side. When user answers it will get validated and result
+will be returned to the user with explanation if needed"*. ⭐ So this module
+takes its readings in TWO places, and the difference between them is the
+subject:
 
-⛔ **AND THE ORIGIN IS THE SUBJECT, NOT THE SETTING.** Spec §7 §7 says a quiz is
-graded with no compiler, no container, no network and no model, so the reading
-is identical over `file://` and over a served origin — ⭐ **so this module opens
-the page as a double-clicked FILE and takes every reading there.** A check that
-needed a server would have proved the opposite of the clause.
+- **over `file://`** — the page a reader double-clicks: the questions and the
+  options show, a reader may choose, the Check control is absent and the page
+  says checking needs the local study server; ⛔ nothing is asked of any origin
+  and no key is anywhere in the DOM;
+- **over a served origin** — `studyforge serve`'s own instance
+  (`serve.instance.instance_of`) over the BUILT prose fixture with a quiz in it:
+  a right answer and a wrong answer each show the SERVER's verdict and the chosen
+  option's sentence, and the network log shows the grading request.
 
-⚠️ **The page this module opens is built by `site.build`'s own writer**, so the
-stylesheet and the script are the real bundle; only the one document is this
-module's, because no fixture corpus ships a quiz yet.
+⚠️ **Superseded, and said so rather than silently rewritten:** until `W451` this
+module opened the page as a FILE and graded there, because the key shipped in the
+page. That reading is now the negative one.
+
+⛔ **WHY THIS NEEDS A BROWSER.** Whether a reader who chooses an answer is told
+the right thing about it is a runtime identity: the radios, the request, the
+sentence that appears under a question and the line that counts them exist only
+while a page is running and a server is answering it.
 """
 
 from __future__ import annotations
 
+import json
+import time
 from pathlib import Path
 
 import pytest
 
-from studyforge.render.page import render
-from tests.studyforge.render.page.sites import FIXTURES as UNIT_CASE_OF
-from tests.visual import site
+from tests.studyforge.serve.routes.quizzing import (
+    KEYED,
+    QUESTIONS,
+    WRONG,
+    page_of,
+    quiz_corpus,
+    says,
+    sentences,
+    served_instance,
+)
 from tests.visual.page import OpenPage
 
-#: The corpus whose unit page this module borrows a placement from. ⛔ Its own
-#: page is left where it is: this module writes a SECOND page beside it, so the
-#: relative asset links the framework wrote resolve unchanged.
-CORPUS = "depth2"
-
-#: What this module's page asks. ⭐ Two questions, because one cannot tell *every
-#: question answered correctly* from *this question answered correctly* — which
-#: is the whole of the completion rule (`exercise.quiz.completes`).
-QUESTIONS = [
-    {
-        "id": "q-1",
-        "stem": "What does a class declaration open?",
-        "options": [
-            {"id": "a", "text": "A type", "correct": True, "says": "The page says exactly this."},
-            {"id": "b", "text": "A file", "correct": False, "says": "A file holds a type."},
-        ],
-        "origin": {"path": "basics/01.md", "section": "What a class is"},
-    },
-    {
-        "id": "q-2",
-        "stem": "Where does a program start?",
-        "options": [
-            {"id": "a", "text": "At main", "correct": True, "says": "The runtime calls it."},
-            {"id": "b", "text": "At the top", "correct": False, "says": "Order is not entry."},
-        ],
-        "origin": {"path": "basics/01.md", "section": "What a class is"},
-    },
-]
-
-#: The record itself. ⛔ No workspace key at all: `exercise.record` refuses a quiz
-#: that carries one, so this is what a quiz IS rather than a code record with
-#: pieces removed.
-QUIZ = {"kind": "quiz", "questions": QUESTIONS}
+#: Seconds a reading waits for the server's verdict to land on the page.
+SETTLE = 15.0
 
 #: What the page is asked for, once it has settled.
 #:
 #: ⛔ **`acts` and `frames` are counted over the WHOLE DOCUMENT and not over the
-#: quiz**, and that is a repair rather than a preference: a plant that emitted a
-#: Run button BESIDE the quiz section left the scoped version of this reading
-#: GREEN — measured, and it is the one plant this module did not catch first
-#: time. ⚠️ This fixture's only practice section IS the quiz, so a run affordance
-#: anywhere on this page is one nobody may use.
+#: quiz**: a plant that emitted a Run button BESIDE the quiz section left a
+#: scoped version of this reading GREEN (measured, `AX-09`).
 STATE = """
 (() => {
   const quiz = document.querySelector('section[data-practice-quiz]');
   if (!quiz) return null;
+  const part = (name) => quiz.querySelector('[data-practice-part="' + name + '"]');
   const questions = Array.from(quiz.querySelectorAll('[data-practice-question]'));
   return {
     questions: questions.length,
@@ -83,19 +65,22 @@ STATE = """
     acts: document.querySelectorAll('[data-practice-act]').length,
     frames: document.querySelectorAll('iframe').length,
     disabled: quiz.querySelectorAll('[disabled], [aria-disabled="true"]').length,
-    status: quiz.querySelector('[data-practice-part="status"]').textContent.trim(),
+    check: !!part('check') && part('check').checkVisibility(),
+    offline: !!part('offline') && part('offline').checkVisibility(),
+    offlineText: part('offline') ? part('offline').textContent.trim() : '',
+    status: part('status').textContent.trim(),
     verdicts: questions.map((one) => one.getAttribute('data-practice-verdict')),
     said: questions.map((one) => {
       const line = one.querySelector('[data-practice-part="says"]');
       return line.hidden ? '' : line.textContent.trim();
-    })
+    }),
+    dom: document.documentElement.outerHTML
   };
 })()
 """
 
 #: Choose one option per question by its id, the way a reader's click does.
-#: ⛔ A real `click()` on the input and a real `change` event, because the page
-#: re-grades on that event and setting `.checked` fires none.
+#: ⛔ A real `click()` on the input and a real `change` event.
 CHOOSE = """
 (() => {
   const quiz = document.querySelector('section[data-practice-quiz]');
@@ -108,131 +93,195 @@ CHOOSE = """
 })()
 """
 
-#: Press the control that grades, as a reader does.
-CHECK = """
-document.querySelector('[data-practice-part="check"]').click()
-"""
+#: Press the control that grades, as a reader's click does.
+CHECK = "document.querySelector('[data-practice-part=\"check\"]').click()"
 
 
-def choose(page: OpenPage, **answers: str) -> None:
-    """Choose one option per question and let the page settle."""
-    page.evaluate(CHOOSE.replace("<answers>", repr(answers).replace("'", '"')))
+def choose(page: OpenPage, answers: dict[str, str]) -> None:
+    page.evaluate(CHOOSE.replace("<answers>", json.dumps(answers)))
+
+
+def settled(page: OpenPage, until) -> dict:
+    """Read the page until `until(state)` holds or `SETTLE` runs out; return the last reading."""
+    deadline = time.monotonic() + SETTLE
+    state = page.evaluate(STATE)
+    while not until(state) and time.monotonic() < deadline:
+        time.sleep(0.05)
+        state = page.evaluate(STATE)
+    return state
+
+
+def graded(state: dict) -> bool:
+    return bool(state) and state["status"] not in ("", "Checking…")
+
+
+def posts(page: OpenPage) -> list[str]:
+    """Every POST the page issued, by URL — the network log's reading of an act."""
+    return [
+        event["params"]["request"]["url"]
+        for event in page.browser.events
+        if event.get("method") == "Network.requestWillBeSent"
+        and event["params"]["request"].get("method") == "POST"
+    ]
 
 
 @pytest.fixture(scope="module")
-def quiz_page(tmp_path_factory: pytest.TempPathFactory) -> str:
-    """A real built tree, with one extra page in it whose practice is a quiz."""
-    root = tmp_path_factory.mktemp("quiz-site")
-    site.build(root)
-    case = UNIT_CASE_OF[CORPUS]()
-    document = dict(case.document)
-    document["sections"] = [
-        dict(part, workspace=QUIZ) if part.get("kind") == "practice" else part
-        for part in document["sections"]
-    ]
-    where = Path(root / CORPUS / str(case.placement.unit.page))
-    page = where.parent / "a-quiz.unit.html"
-    page.write_bytes(render(document, case.placement))
-    return "file://" + str(page)
+def corpus(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """The prose fixture with its quiz, copied and built."""
+    return quiz_corpus(tmp_path_factory.mktemp("quiz-visual"))
+
+
+@pytest.fixture(scope="module")
+def origin(corpus: Path):
+    """`studyforge serve`'s own instance over the corpus, and the page's URL on it."""
+    with served_instance(corpus) as server:
+        host, port = server.server_address[:2]
+        relative = page_of(corpus).relative_to(corpus.parent).as_posix()
+        yield f"http://{host}:{port}/{relative}"
 
 
 @pytest.fixture
-def opened(open_page: OpenPage, quiz_page: str) -> OpenPage:
-    """The harness's own tab, opened on the quiz page as a double-clicked file.
-
-    ⛔ **`open_page` and never a tab of this module's own** (`W397`): that
-    fixture closes what it opened even when a check fails, and it is also what
-    keeps this module out of `test_host_environment`'s ambient sweep — the
-    browser's own verdict is reached in `conftest.py`, which is the one place
-    licensed to reach it.
-    """
-    open_page.open(quiz_page)
+def as_file(open_page: OpenPage, corpus: Path) -> OpenPage:
+    """The harness's own tab, on the quiz page opened as a double-clicked file."""
+    open_page.open("file://" + str(page_of(corpus)))
     return open_page
 
 
-def test_a_quiz_page_shows_its_questions_and_no_run_affordance_at_all(opened: OpenPage):
-    # ⛔ `AX-05/3` and this row's Acceptance, read in the place a reader reads
-    # it. ⚠️ **`disabled` is counted too**: the rule is not *no working control*,
-    # it is *no control at all*, because a dead button is a promise the page
-    # cannot keep (`SF-24`, `W429`, `W431`).
-    state = opened.evaluate(STATE)
+@pytest.fixture
+def served(open_page: OpenPage, origin: str) -> OpenPage:
+    """The harness's own tab, on the SAME built page read through the study server."""
+    open_page.open(origin)
+    return open_page
+
+
+# --- over file:// ------------------------------------------------------------
+
+
+def test_over_a_file_the_questions_show_and_the_page_says_it_needs_the_server(as_file):
+    # ⭐ `W451`'s register default: the questions and options show, a reader
+    # may choose, and the page says why nothing checks them — the mechanism Run
+    # and Submit use. ⛔ And no run affordance, not even a disabled one.
+    state = as_file.evaluate(STATE)
     assert state is not None, "the page carries no quiz"
-    assert (state["questions"], state["radios"]) == (len(QUESTIONS), 4)
+    options = sum(len(one["options"]) for one in QUESTIONS)
+    assert (state["questions"], state["radios"]) == (len(QUESTIONS), options)
     assert (state["acts"], state["frames"], state["disabled"]) == (0, 0, 0)
-    # ⭐ And the panel's own section is not on this page either, so nothing keyed
-    # on `data-practice` — the run, the maximise, the output — can reach it.
-    assert opened.evaluate("!!document.querySelector('section[data-practice]')") is False
+    assert (state["check"], state["offline"]) == (False, True)
+    assert "needs the local study server" in state["offlineText"]
+    choose(as_file, KEYED)
+    assert as_file.evaluate(STATE)["verdicts"] == [None] * len(QUESTIONS)
 
 
-def test_a_quiz_grades_over_file_with_no_server_and_issues_no_request(opened: OpenPage):
-    # ⛔ **THE property of this shape** (spec §7 §7, R8): the key ships in the
-    # page and the rule is the framework's, so the reading is identical over
-    # `file://`. ⭐ Every request this page made is read, because a quiz that
-    # quietly asked an origin for its answers would grade here and nowhere else.
-    choose(opened, **{"q-1": "a", "q-2": "a"})
-    opened.evaluate(CHECK)
-    state = opened.evaluate(STATE)
-    assert state["verdicts"] == ["correct", "correct"]
+def test_over_a_file_no_key_and_no_sentence_is_in_the_dom_and_nothing_is_asked(as_file):
+    # ⛔ The key resides on the SERVER. ⭐ Read in the live DOM — after every
+    # script ran — so a key a script wrote in would be read too.
+    dom = as_file.evaluate(STATE)["dom"]
+    for sentence in sentences():
+        assert sentence not in dom, sentence
+    assert "-correct" not in dom
+    assert [one for one in as_file.requests() if one.startswith(("http://", "https://"))] == []
+
+
+# --- over the served origin --------------------------------------------------
+
+
+def test_served_the_check_control_shows_and_the_offline_sentence_does_not(served):
+    state = served.evaluate(STATE)
+    assert (state["check"], state["offline"]) == (True, False)
+    assert (state["acts"], state["frames"], state["disabled"]) == (0, 0, 0)
+
+
+def test_a_right_answer_shows_the_servers_verdict_and_the_request_is_in_the_network_log(
+    served,
+):
+    choose(served, KEYED)
+    served.evaluate(CHECK)
+    state = settled(served, graded)
+    assert state["verdicts"] == ["correct"] * len(QUESTIONS)
     assert "Every question answered correctly" in state["status"]
-    assert [one for one in opened.requests() if one.startswith(("http://", "https://"))] == []
+    for said, (question, option) in zip(state["said"], KEYED.items(), strict=True):
+        # ⛔ F5: ONE verdict word — the page's own, keyed on the server's
+        # `correct` — then the corpus's sentence verbatim. Never both twice.
+        assert said == f"Right. {says(question, option)}"
+    asked = posts(served)
+    assert len(asked) == 1 and "/api/v1/quiz/" in asked[0], asked
+    assert all(f"/{question}={option}" in asked[0] for question, option in KEYED.items())
 
 
-def test_one_wrong_answer_does_not_complete_and_says_why_that_option_is_wrong(
-    opened: OpenPage,
-):
-    # ⛔ `exercise.quiz.completes`: every question, answered correctly, and
-    # nothing less. ⭐ And the sentence is the one for whatever the reader CHOSE
-    # — a page that explained only the wrong answers would teach half the
-    # material and would tell the reader which half by showing nothing.
-    choose(opened, **{"q-1": "a", "q-2": "b"})
-    opened.evaluate(CHECK)
-    state = opened.evaluate(STATE)
+def test_a_wrong_answer_shows_its_own_sentence_and_never_the_key(served):
+    answers = {**KEYED, "q-2": WRONG["q-2"]}
+    choose(served, answers)
+    served.evaluate(CHECK)
+    state = settled(served, graded)
     assert state["verdicts"] == ["correct", "wrong"]
-    assert "Every question answered correctly" not in state["status"]
     assert "1 of 2" in state["status"]
-    assert QUESTIONS[0]["options"][0]["says"] in state["said"][0]
-    assert QUESTIONS[1]["options"][1]["says"] in state["said"][1]
+    assert state["said"][1] == f"Not this one. {says('q-2', WRONG['q-2'])}"
+    assert says("q-2", KEYED["q-2"]) not in state["dom"]
+    asked = posts(served)
+    assert len(asked) == 1 and asked[0].endswith(f"/q-2={WRONG['q-2']}"), asked
 
 
-def test_a_verdict_is_a_word_and_never_only_a_colour(opened: OpenPage):
-    # ⛔ This row's Acceptance: the reading is announced rather than only
-    # coloured. ⚠️ **Read as TEXT**, so a stylesheet that lost its two rules
-    # would leave this green and a page that said nothing would not.
-    choose(opened, **{"q-1": "b", "q-2": "a"})
-    opened.evaluate(CHECK)
-    state = opened.evaluate(STATE)
-    assert state["said"][0].startswith("Not this one.")
-    assert state["said"][1].startswith("Right.")
-    # ⭐ The negative control: before anything is checked, nothing is said at
-    # all — so the sentences above are the grading and not the markup.
-    assert opened.evaluate("document.querySelectorAll('[data-practice-verdict]').length") == 2
-
-
-def test_an_unanswered_quiz_asks_for_an_answer_rather_than_marking_it_wrong(
-    opened: OpenPage,
-):
-    # ⛔ **Total, exactly as the Python rule is**: a question nobody answered is
-    # not correct — it is simply not answered, and telling a reader they are
-    # wrong for not having started would be a verdict nobody earned.
-    opened.evaluate(CHECK)
-    state = opened.evaluate(STATE)
-    assert state["verdicts"] == [None, None]
-    assert state["said"] == ["", ""]
+def test_an_unanswered_quiz_asks_for_an_answer_and_asks_the_server_nothing(served):
+    # ⛔ A question nobody answered is not wrong, it is not answered — and a
+    # request carrying nothing would be a round trip that could say nothing.
+    served.evaluate(CHECK)
+    state = served.evaluate(STATE)
+    assert state["verdicts"] == [None] * len(QUESTIONS)
     assert "Choose an answer" in state["status"]
+    assert posts(served) == []
 
 
-def test_every_control_on_a_quiz_is_reachable_and_operable_from_the_keyboard(
-    opened: OpenPage,
-):
-    # ⛔ This row's Acceptance: fully keyboard accessible. ⭐ Real radios in a
-    # real `fieldset` and a real `<button>`, so the browser's own behaviour is
-    # what is read — which is the reason none of them is a styled `div`.
-    reached = opened.trail(90)
-    names = [str(step.get("tag") or "").lower() for step in reached]
-    assert "input" in names, reached
-    assert names.index("input") < names.index("button", names.index("input"))
-    # ⭐ And the control grades when a keyboard presses it, not only a mouse.
-    choose(opened, **{"q-1": "a", "q-2": "a"})
-    opened.evaluate("document.querySelector('[data-practice-part=\"check\"]').focus()")
-    opened.press("Enter")
-    assert "Every question answered correctly" in opened.evaluate(STATE)["status"]
+def test_changing_an_answer_after_checking_asks_the_server_again(served):
+    # ⭐ The sentence under a question can never describe an option that is no
+    # longer chosen: a change after the first check is graded afresh.
+    choose(served, WRONG)
+    served.evaluate(CHECK)
+    settled(served, lambda state: state["verdicts"] == ["wrong", "wrong"])
+    choose(served, KEYED)
+    state = settled(served, lambda state: "Every question" in state["status"])
+    assert state["verdicts"] == ["correct", "correct"]
+    assert len(posts(served)) >= 2
+
+
+def test_the_check_control_grades_from_the_keyboard(served):
+    # ⛔ Fully keyboard accessible: a real `<button>` pressed with a real Enter.
+    choose(served, KEYED)
+    served.evaluate("document.querySelector('[data-practice-part=\"check\"]').focus()")
+    served.press("Enter")
+    state = settled(served, graded)
+    assert "Every question answered correctly" in state["status"]
+
+
+#: Where each question's number is drawn, read off the live layout.
+NUMBERING = """
+(() => {
+  const quiz = document.querySelector('section[data-practice-quiz]');
+  return Array.from(quiz.querySelectorAll('[data-practice-question]')).map((one) => {
+    const legend = one.querySelector('legend');
+    const first = one.querySelector('[data-practice-option]');
+    return {
+      marker: getComputedStyle(one).listStyleType,
+      number: getComputedStyle(legend, '::before').content,
+      legendTop: legend.getBoundingClientRect().top,
+      firstOptionTop: first.getBoundingClientRect().top,
+      legendLeft: legend.getBoundingClientRect().left,
+      itemLeft: one.getBoundingClientRect().left
+    };
+  });
+})()
+"""
+
+
+@pytest.mark.parametrize("where", ["as_file", "served"])
+def test_each_questions_number_sits_beside_its_stem_and_not_its_first_option(where, request):
+    # ⛔ The corpus office's finding F9: the list's own MARKER sits on the list
+    # item's first LINE BOX, and a `<legend>` is laid out in its fieldset's
+    # border rather than as a line — so the number landed beside the FIRST
+    # OPTION. ⭐ The number is now the legend's own `::before`, drawn at the
+    # start of the stem's line, and the item draws no marker at all.
+    page = request.getfixturevalue(where)
+    for one in page.evaluate(NUMBERING):
+        assert one["marker"] == "none", one
+        assert "counter(question)" in one["number"], one
+        assert one["legendTop"] < one["firstOptionTop"], one
+        assert abs(one["legendLeft"] - one["itemLeft"]) < 1, one
