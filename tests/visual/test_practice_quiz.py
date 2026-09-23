@@ -200,7 +200,9 @@ def test_a_right_answer_shows_the_servers_verdict_and_the_request_is_in_the_netw
     assert state["verdicts"] == ["correct"] * len(QUESTIONS)
     assert "Every question answered correctly" in state["status"]
     for said, (question, option) in zip(state["said"], KEYED.items(), strict=True):
-        assert said.startswith("Right.") and says(question, option) in said
+        # ⛔ F5: ONE verdict word — the page's own, keyed on the server's
+        # `correct` — then the corpus's sentence verbatim. Never both twice.
+        assert said == f"Right. {says(question, option)}"
     asked = posts(served)
     assert len(asked) == 1 and "/api/v1/quiz/" in asked[0], asked
     assert all(f"/{question}={option}" in asked[0] for question, option in KEYED.items())
@@ -213,8 +215,7 @@ def test_a_wrong_answer_shows_its_own_sentence_and_never_the_key(served):
     state = settled(served, graded)
     assert state["verdicts"] == ["correct", "wrong"]
     assert "1 of 2" in state["status"]
-    assert state["said"][1].startswith("Not this one.")
-    assert says("q-2", WRONG["q-2"]) in state["said"][1]
+    assert state["said"][1] == f"Not this one. {says('q-2', WRONG['q-2'])}"
     assert says("q-2", KEYED["q-2"]) not in state["dom"]
     asked = posts(served)
     assert len(asked) == 1 and asked[0].endswith(f"/q-2={WRONG['q-2']}"), asked
@@ -249,3 +250,38 @@ def test_the_check_control_grades_from_the_keyboard(served):
     served.press("Enter")
     state = settled(served, graded)
     assert "Every question answered correctly" in state["status"]
+
+
+#: Where each question's number is drawn, read off the live layout.
+NUMBERING = """
+(() => {
+  const quiz = document.querySelector('section[data-practice-quiz]');
+  return Array.from(quiz.querySelectorAll('[data-practice-question]')).map((one) => {
+    const legend = one.querySelector('legend');
+    const first = one.querySelector('[data-practice-option]');
+    return {
+      marker: getComputedStyle(one).listStyleType,
+      number: getComputedStyle(legend, '::before').content,
+      legendTop: legend.getBoundingClientRect().top,
+      firstOptionTop: first.getBoundingClientRect().top,
+      legendLeft: legend.getBoundingClientRect().left,
+      itemLeft: one.getBoundingClientRect().left
+    };
+  });
+})()
+"""
+
+
+@pytest.mark.parametrize("where", ["as_file", "served"])
+def test_each_questions_number_sits_beside_its_stem_and_not_its_first_option(where, request):
+    # ⛔ The corpus office's finding F9: the list's own MARKER sits on the list
+    # item's first LINE BOX, and a `<legend>` is laid out in its fieldset's
+    # border rather than as a line — so the number landed beside the FIRST
+    # OPTION. ⭐ The number is now the legend's own `::before`, drawn at the
+    # start of the stem's line, and the item draws no marker at all.
+    page = request.getfixturevalue(where)
+    for one in page.evaluate(NUMBERING):
+        assert one["marker"] == "none", one
+        assert "counter(question)" in one["number"], one
+        assert one["legendTop"] < one["firstOptionTop"], one
+        assert abs(one["legendLeft"] - one["itemLeft"]) < 1, one
