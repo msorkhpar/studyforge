@@ -22,6 +22,8 @@ the remedy is a split at a named seam, never a trim — the precedent is
 that module reads the reference's **record vocabularies** — the keys a document
 carries, the checks `validate` runs — and this one reads the **authoring
 procedure**: what the skill package does, and the worked corpus it does it to.
+⭐ *Before you author* — the corpus's readiness for the pass — is read by
+`tests/test_authoring_before_you_author.py`, split off at that seam (`W443`).
 """
 
 from __future__ import annotations
@@ -29,7 +31,6 @@ from __future__ import annotations
 import ast
 import importlib
 import inspect
-import json
 import re
 from dataclasses import fields
 from types import SimpleNamespace
@@ -37,10 +38,7 @@ from types import SimpleNamespace
 import pytest
 
 from studyforge.address import Address, unit_name
-from studyforge.corpus.manifest import ManifestError
-from studyforge.corpus.manifest import parse as parse_manifest
-from studyforge.corpus.placement import PRACTICE_DIRNAME
-from studyforge.exercise.bundle import BUNDLES_DIRNAME, Places
+from studyforge.exercise.bundle import Places
 from studyforge.exercise.gates import CODE, QUIZ
 from studyforge.skills.exercises import (
     ATTEMPTS,
@@ -68,7 +66,6 @@ from tests.authoring.support import (
     code_spans,
     document,
     fences,
-    json_fences,
     rows_under,
     section,
     vocabulary_under,
@@ -302,86 +299,16 @@ def test_the_paths_table_is_where_the_pass_writes_both_ways():
     assert vocabulary_under(guide(), WRITES) == shown
 
 
-def manifest_step() -> tuple[str, ast.Call]:
-    """The *Before you author* fence that changes the manifest, and its `reonboard` call.
+def test_the_basket_draft_reports_where_every_run_output_lands():
+    # ⚠️ `W436` moved the report into `target/`; the guide's own draft must too.
+    from studyforge.exercise.bundle import is_run_output
 
-    ⛔ `W439`: the manifest is generated, so the guide's step is a call to the
-    onboarding skill and never a fragment to paste into `corpus.json`.
-    """
-    for body in fences(section(guide(), BEFORE), "python"):
-        for node in ast.walk(ast.parse(body)):
-            if isinstance(node, ast.Call) and getattr(node.func, "id", None) == "reonboard":
-                return body, node
-    raise AssertionError(f"'{BEFORE}' no longer changes the manifest through reonboard")
-
-
-def test_the_manifest_step_declares_the_two_trees_and_the_answer_as_data():
-    _, call = manifest_step()
-    given = {kw.arg: ast.literal_eval(kw.value) for kw in call.keywords}
-    assert {entry["glob"] for entry in given["not_material"]} == {
-        f"{BUNDLES_DIRNAME}/**",
-        f"{PRACTICE_DIRNAME}/**",
-    }
-    assert given["settle"] == {"exercises": True}
-    base = json.loads((repository_root() / "tests/fixtures/depth2/corpus.json").read_text())
-    base["content"]["not_material"] = given["not_material"]
-    parse_manifest(json.dumps({**base, "corpus_api": 2}))
-    with pytest.raises(ManifestError):
-        parse_manifest(json.dumps({**base, "corpus_api": 1}))
-
-
-def test_the_guide_hands_the_reader_no_manifest_fragment_to_paste():
-    # ⛔ The struck instruction's shape: a JSON block of `not_material` entries
-    # an author typed into a generated file, which `hand_edited` then named.
-    pasted = [block for block in json_fences(guide()) if "not_material" in json.dumps(block)]
-    assert not pasted, f"{PAGE} shows a manifest fragment to type by hand: {pasted}"
-
-
-def _onboarded(tmp_path):
-    """A fixture corpus onboarded with `exercises: false`, and its control reading."""
-    from studyforge.skills.onboarding import hand_edited, onboard
-    from tests.studyforge.skills.onboarding import corpora
-
-    root = corpora.material(tmp_path / "corpus")
-    onboard(corpora.DRAFT, framework_commit=corpora.COMMIT, root=root).write(root)
-    assert hand_edited(root) == [], "the control: a fresh onboarding is not hand-edited"
-    return root
-
-
-def test_the_guides_manifest_step_run_on_an_onboarded_corpus_leaves_nothing_hand_edited(
-    tmp_path, capsys
-):
-    # ⭐ The fence is RUN, not read: the path it names is the fixture's, and
-    # everything else is the guide's own text.
-    from studyforge.skills.onboarding import hand_edited
-
-    root = _onboarded(tmp_path)
-    body, _ = manifest_step()
-    assert '"path/to/your-corpus"' in body, "the fence no longer names its placeholder path"
-    exec(body.replace('"path/to/your-corpus"', repr(str(root))), {})
-
-    assert hand_edited(root) == []
-    assert capsys.readouterr().out.strip() == "[]"
-    written = json.loads((root / "corpus.json").read_text(encoding="utf-8"))
-    globs = {entry["glob"] for entry in written["content"]["not_material"]}
-    assert {f"{BUNDLES_DIRNAME}/**", f"{PRACTICE_DIRNAME}/**"} <= globs
-    assert written["exercises"] is True
-
-
-def test_the_hand_typed_entries_the_guide_once_prescribed_are_named(tmp_path):
-    # ⛔ The negative: the same entries typed into `corpus.json`, as the struck
-    # sentence said to, are an R19 finding the moment they land.
-    from studyforge.skills.onboarding import hand_edited
-
-    root = _onboarded(tmp_path)
-    _, call = manifest_step()
-    entries = next(ast.literal_eval(kw.value) for kw in call.keywords if kw.arg == "not_material")
-    manifest = root / "corpus.json"
-    document = json.loads(manifest.read_text(encoding="utf-8"))
-    document["content"]["not_material"] += entries
-    manifest.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
-
-    assert hand_edited(root) == ["corpus.json"]
+    (body,) = [b for b in fences(section(guide(), DRAFT), "python") if "def basket" in b]
+    scope = {}
+    exec(body, scope)
+    draft = scope["basket"](SimpleNamespace(places=DRAWN))
+    assert is_run_output(draft.report), draft.report
+    assert f"{DRAWN.workspace}/{draft.report}" in draft.test_command
 
 
 def test_every_file_the_guide_points_at_exists():
