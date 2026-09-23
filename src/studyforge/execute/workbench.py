@@ -9,15 +9,16 @@ them can tell the two windows apart:
   window, or `None` for a path that editor does not hold;
 - `settings(main, test)` and `write_settings(folder, main, test)` — the
   workspace settings a practice gets: everything read-only with the reader's
-  own file excluded back out, the workbench closed, and the two keys the
-  lockdown extension declares.
+  own file excluded back out, the workbench closed, the two keys the
+  lockdown extension declares, and the page's colours (`editor_theme`, `W455`).
 
 **How you use it.** `serve.routes.runs` calls all three when a page asks for a
 practice's editor: the folder is found, the settings are written into it, and
 the two URLs are answered.
 
-**Depends on.** `editor` for where an editor is and what it holds, `json`,
-`os`, `tempfile` and `pathlib`. No `subprocess` — nothing here starts anything.
+**Depends on.** `editor` for where an editor is and what it holds, `editor_theme`
+for its colours, `json`, `os`, `tempfile` and `pathlib`. No `subprocess` —
+nothing here starts anything.
 
 ## ⛔ The window's own URL is the ONLY thing that can tell two windows apart
 
@@ -148,6 +149,7 @@ from pathlib import Path
 from urllib.parse import quote
 
 from studyforge.execute.editor import Editor
+from studyforge.execute.editor_theme import EditorColoursUnread, editor_colours
 
 #: The directory a folder's own settings live in, and the file. ⛔ The
 #: workbench's names, not this framework's, so neither is a choice.
@@ -324,6 +326,7 @@ def settings(main: str, test: str | None) -> dict[str, object]:
         "files.hotExit": HOT_EXIT,
         "files.autoSave": AUTO_SAVE,
         **CLOSED,
+        **editor_colours(),
     }
 
 
@@ -336,9 +339,9 @@ def write_settings(folder: Path, main: str, test: str | None) -> Path:
     """
     target = Path(folder) / SETTINGS_DIR / SETTINGS_FILE
     _require_ours(target)
-    body = json.dumps(settings(main, test), indent=2, sort_keys=True) + "\n"
     temporary = None
     try:
+        body = json.dumps(settings(main, test), indent=2, sort_keys=True) + "\n"
         (target.parent / STAGING_DIR).mkdir(parents=True, exist_ok=True)
         _ensure_ignored(target.parent / IGNORE_FILE)
         # ⛔ This write's OWN name (`W446`): a shared one is moved away by one
@@ -348,6 +351,10 @@ def write_settings(folder: Path, main: str, test: str | None) -> Path:
             out.write(body)
         os.replace(temporary, target)
         temporary = None
+    except EditorColoursUnread as error:
+        raise WorkbenchRefused(
+            f"this practice's editor colours could not be read: {error}"
+        ) from None
     except OSError as error:
         raise WorkbenchRefused(
             f"this practice's workspace settings could not be written to "
