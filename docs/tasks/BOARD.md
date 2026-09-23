@@ -58,13 +58,14 @@ one does.**
 | **M7 step 7.3** | ✅ CLOSED — `TC-05` + `TC-06` | `4c8490b4` | [record](BOARD-ARCHIVE.md#po-round-128) |
 | **M7 step 7.4** | ✅ CLOSED — `SK-09` + `SF-24`, ⭐ **its one named gap ([`W416`](rows/W416.md)) FILLED at `7ce4fddd`** | `04b3e65e` | [record](BOARD-ARCHIVE.md#po-round-131) |
 | **M7 step 7.5** | ✅ CLOSED — `QA-02`, ⭐ **closing `W417` and `W419` too** | `d9cce6bc` | [record](BOARD-ARCHIVE.md#po-round-133) |
-| **M10** — every corpus has practices | ⏳ **OPEN — round 134.** ⭐ **A CORE IDEA of the project (user, 2026-09-19)**; the PILOT is authored (corpus `acde0210`) and awaits the USER's review | — | [the open](BOARD-ARCHIVE.md#po-round-134) |
+| **M10** — every corpus has practices | ⏳ **OPEN — round 134.** ⭐ **A CORE IDEA of the project (user, 2026-09-19)**; the pilot awaits the USER's review | — | [the open](BOARD-ARCHIVE.md#po-round-134) |
 | **M10 step 10.1** | ✅ CLOSED — `AX-00`, `AX-01`, `AX-05` | `9cd37ccd` | [record](BOARD-ARCHIVE.md#po-round-136) |
 | **M10 step 10.2** | ✅ CLOSED — `AX-02`, `AX-03`, `AX-04`, `AX-06` | `638ec209` | [record](BOARD-ARCHIVE.md#po-round-141) |
 | **M10 step 10.3** | ✅ CLOSED — `AX-07`, `AX-08`, `AX-09`, `AX-10` | `e72b28b7` | [record](BOARD-ARCHIVE.md#po-round-150) |
-| **M11** — it is release-ready | ⏳ **OPEN — round 159, beside `M10`**; ⛔ **nothing moves or is deleted before 11.5** | — | [the open](BOARD-ARCHIVE.md#po-round-159) |
+| **M11** — it is release-ready | ⏳ **OPEN — round 159**; ⛔ **nothing moves before 11.5** | — | [the open](BOARD-ARCHIVE.md#po-round-159) |
 | **M11 step 11.1** | ✅ CLOSED — `REL-01` | `af7711b3` | [record](BOARD-ARCHIVE.md#po-round-160) |
 | **M11 step 11.2** | ✅ CLOSED — `REL-02`, `REL-03` | `bed97114` | [record](BOARD-ARCHIVE.md#po-round-161) |
+| **M11 step 11.3** | ✅ CLOSED — `REL-04`, `REL-05`, `REL-06` | `06075ff0` | [record](BOARD-ARCHIVE.md#po-round-163) |
 | **M9** — the Java corpus re-validates | ⛔ **NOT STARTED, and it holds 21 of the 35 undelivered capabilities.** `Claude-senior-java-engineer` converted under §12's rules, with gate-clearing exercises, and the findings written down | — | [the plan](README.md) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
@@ -78,7 +79,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `REL-05` | Developer 3 | `chore/REL-05-onboarding-pins-the-installed-library` @ `wt/dev3` | 0 @ `3758d114` | `in-progress` — `M11` step 11.3 |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
