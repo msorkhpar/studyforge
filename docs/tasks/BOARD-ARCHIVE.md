@@ -30515,3 +30515,118 @@ plant a re-keyed ledger to show it goes RED.
 ⭐ **`editor.scrollBeyondLastLine: false` checked by the USER, 2026-09-22, on a
 file taller than the practice panel: it scrolls correctly.** ⛔ **The register
 did not take this reading; it records the user's.**
+
+## PO round 146
+
+⭐ **`W434` merged `585af3e1` and `W435` merged `0a5a8f3e`; both close.**
+⭐ **`workspace verify` is GREEN, exit 0**, for the first time since the corpus's
+`practice/.vscode/` appeared — ⛔ **read by EFFECT**: the corpus read
+`?? practice/.vscode/` (the control), one practice was served from the MERGED
+framework, and its `git status` read clean. ⭐ **`M11`'s one gate blocker is gone.**
+
+### ⭐ Two register plants, each at a seam its office did not use
+
+`W434` — a `$`-anchored local pattern planted in `execute/commands.py`, where the
+office planted only `safety.py`: ⛔ **RED on the office's trailing-newline test**,
+GREEN restored. Observed first: `ok` accepted (the control), `ok\n` refused.
+`W435` — the SELF-ignore line dropped from `IGNORE_TEXT`, where the office
+planted the call site: ⛔ **four of its tests RED and `.gitignore` untracked**,
+GREEN restored. Observed first in a real repository: clean, and with the ignore
+file removed (the control) `settings.json` untracked.
+
+### ⚠️ A load-dependent visual test REFUSED `W435`'s first merge
+
+⛔ **`tests/visual/test_practice_maximise.py`'s scroll-restore equality read `4`
+against `0` under the merge gate's parallel pinned suite.** ⭐ **Not `W435`'s**:
+alone it passed three of three on the release tip and three of three on the
+`W435`-merged tree, and the whole visual suite under `-n auto` passed on the
+merged tree; the gate re-run was GREEN. ⚠️ **A FINDING, not a mint** — it does
+not block `M10` — ⛔ **but it is the second drift this test has shown under the
+gate** (its own comment names a 2px one), so a third is a row.
+
+### ⭐ Findings carried, not minted
+
+`W434`'s sweep (`docs/tasks/handoffs/W434.md`, `W434/1`–`W434/5`): ⚠️ **the
+manifest's `ingested` date check has the same `$` shape** and is the nearest
+candidate row; `UNIT_DIR` shares it at lower stakes. `W435/1`: a `.vscode/` with
+its OWN ignore file that does not list `settings.json` stays dirty, and R3 says
+that is correct. ⭐ **Neither blocks the milestone in front of us.**
+
+### ⚠️ In flight
+
+⭐ **`AX-08`** on `wt/dev3`.
+
+### W434 — `safety.py`'s permitted sets are anchored `^…$`, so a trailing newline clears the gate
+
+⛔ **`exercise/safety.py`'s two permitted-set patterns are anchored `^…$`, and
+Python's `$` matches BEFORE a trailing newline.** ⭐ **Measured at `a35c5de3`:
+`SAFE_ARGUMENT.match("ok\n")` is truthy**, and `SAFE_SEGMENT` has the same
+shape. ⚠️ **So a path segment or an argv token ending in `\n` clears the gate
+whose whole contract is that nothing outside the permitted set does.**
+
+⭐ **Why it matters although no shell is involved:** the module's own docstring
+says the boundary exists so there is nothing to *inject into*. ⛔ **A permitted
+set that admits a character it never names is not a permitted set** — and
+`execute/commands.py` imports `SAFE_SEGMENT` directly, so the same hole reaches
+a second caller that never re-checks.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **Both patterns refuse a value with a trailing newline** — `\A…\Z` or
+   `fullmatch`, the office's call. ⛔ **Every caller is covered**, including
+   `execute/commands.py`'s direct use of `SAFE_SEGMENT`.
+2. ⛔ **Asserted over EVERY public entry point** (`require_path`,
+   `require_command`, and the exported patterns themselves), with `\n`, `\r\n`
+   and a bare `\r` — and a value that is otherwise legal, so the newline is the
+   ONLY reason for the refusal.
+3. ⚠️ **Plant it back: restore `$` and the new tests go RED.** A test that
+   passes on both is reading nothing.
+4. ⭐ **A sweep, written into the handoff: every other `re` pattern under
+   `src/studyforge/` anchored with `$` and used as a whole-value gate.** ⛔
+   **Findings, not fixes** — one outside this module is a new row's.
+
+⭐ **Surface:** `src/studyforge/exercise/safety.py` and its tests.
+
+[the mint](#po-round-144)
+
+### W435 — Serving a practice writes `.vscode/` into the corpus and nothing ignores it, so `workspace verify` is RED
+
+⛔ **Serving a practice writes `practice/.vscode/settings.json` into the
+CORPUS's own tree, and nothing ignores it.** ⭐ **Measured at `a35c5de3`:
+`python3 -m tools.workspace verify` is exit 1 on exactly one finding —
+`ISO-8583-jPOS-tutorial: 1 path(s) untracked and not ignored:
+practice/.vscode/`.** ⚠️ **It is the SOLE reason that gate is RED, and a RED
+workspace gate blocks `M11`.**
+
+⭐ **The writer is the framework:** `serve/routes/runs.py` calls
+`execute/workbench.py::write_settings` on `corpus.root / where.base`, so every
+served corpus goes dirty the first time a reader opens a practice. ⛔ **This is
+[`W425`](#po-round-134)'s shape exactly** — a serve writes an
+artifact the framework owns into a source repository and ignores nothing — and
+`W425` ruled that **hiding it behind a local exclude hides a framework
+defect.** ⛔ **So `.git/info/exclude` is not a fix and is refused.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **After a practice is served, the corpus's `git status` is clean** and
+   `workspace verify` is exit 0 — ⛔ **read on the REAL corpus, not only a
+   fixture.** Whether the framework's settings directory ignores itself (as
+   `W425`'s cache does), or the settings are written somewhere the corpus does
+   not carry, is the office's call — ⚠️ **argued in the handoff against R3,
+   which forbids moving or rewriting a source's existing file.**
+2. ⛔ **A `.vscode/` the READER or the SOURCE already carries is never
+   rewritten and never ignored by this fix** — `write_settings` already refuses
+   a settings file it did not write; that refusal must survive, and a source's
+   own tracked `.vscode/` must stay tracked.
+3. ⚠️ **Both directions asserted**, and planted: remove the fix and the
+   served corpus goes dirty again.
+4. ⚠️ **A `serve/` change CANNOT be measured in the pinned image** — the
+   handoff owes a HOST reading of
+   `tests/studyforge/cli/test_serve_process.py`, with its exit code.
+5. ⭐ **The corpus is regenerated or cleaned by the REGISTER after the merge**,
+   not by this row — a corpus-visible defect is fixed in the framework.
+
+⭐ **Surface:** `src/studyforge/execute/workbench.py`, and
+`serve/routes/runs.py` only if the write moves.
+
+[the mint](#po-round-144)

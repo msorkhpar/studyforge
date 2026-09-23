@@ -75,8 +75,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W434` | Developer 1 | `fix/W434-the-safety-gate-refuses-a-trailing-newline` @ `wt/dev1` | 0 @ `31991283` | `in-progress` — the user's ruling, 2026-09-22 |
-| `W435` | Developer 2 | `fix/W435-a-served-corpus-stays-clean` @ `wt/dev2` | 0 @ `31991283` | `in-progress` — blocks `M11` |
 | `AX-08` | Developer 3 | `feat/AX-08-the-authoring-skill` @ `wt/dev3` | 0 @ `31991283` | `in-progress` — `M10` step 10.3 |
 <!-- /inflight -->
 
@@ -617,8 +615,8 @@ else.**
 | W431 | The practice panel cannot be maximised, so a reader writes code through a letterbox | framework agent | ✅ done — `fe104365`, corpus `06df27f` | [`rows/W431.md`](rows/W431.md) |
 | W432 | The workbench lockdown is installed in the editor image and the extension host never activates it | framework agent | ✅ done — `5f62423b` | [`rows/W432.md`](rows/W432.md) |
 | W433 | A reader can open settings and the command palette inside a practice frame, and the read-only lock is workspace-scoped | framework agent | ✅ done — `e74f15b3` | [`rows/W433.md`](rows/W433.md) |
-| W434 | `safety.py`'s permitted sets are anchored `^…$`, so a trailing newline clears the gate | framework agent | `in-progress` — the user's ruling 2026-09-22 | [`rows/W434.md`](rows/W434.md) |
-| W435 | Serving a practice writes `.vscode/` into the corpus and nothing ignores it, so `workspace verify` is RED | framework agent | `in-progress` — blocks `M11` | [`rows/W435.md`](rows/W435.md) |
+| W434 | `safety.py`'s permitted sets are anchored `^…$`, so a trailing newline clears the gate | framework agent | ✅ done — `585af3e1` | [`rows/W434.md`](rows/W434.md) |
+| W435 | Serving a practice writes `.vscode/` into the corpus and nothing ignores it, so `workspace verify` is RED | framework agent | ✅ done — `0a5a8f3e` | [`rows/W435.md`](rows/W435.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
