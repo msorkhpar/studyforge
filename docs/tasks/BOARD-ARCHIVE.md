@@ -31772,3 +31772,127 @@ SERVER side**; a reader who types a URL the site itself publishes must not read 
 ### ⚠️ In flight
 
 ⭐ **`W453`** on `wt/dev1`; ⭐ **`W454`** on `wt/dev2`; ⭐ **`W455`** on `wt/dev3`.
+
+### W453 — A page's exercises are planned by the aspects it teaches, not capped by its prose length (user ruling)
+
+⛔ **USER RULING, 2026-09-23, at the pilot review** (on `ISO-M10/6`): *"Depending on the
+context of the page there might be no practice, 2 or more, The target is covering all the
+aspects not just having something minimum we are looking for quality"*.
+
+⭐ **What it replaces:** `skills/exercises/plan.py` caps a page's exercises by a BAND its
+PROSE LENGTH sets (spec §7 §4). On a code-dense corpus that ships most examples as a
+written reason — measured on the first corpus: at most about 72 exercises against 188
+code fences. ⛔ **The user rules the count is set by COVERAGE, not by length.**
+
+⛔ **THE USER REFINED IT, same day:** *"regarding the coverage don't over do it! at the same
+time we are not a university that wants to grade the knowdlge! Sometimes a single practice
+might cover better than 4 unrelated small practices. It's all about quality and the
+importants ofthe text. Like for the first quiz the dates do not matter. The version might
+matter. And for sure 4 questions were a lot"*. ⭐ **So the plan is by the page's IMPORTANT
+ideas, never every checkable fact**; ⭐ **one exercise may cover several related aspects and
+is preferred to several small unrelated ones**; trivia (dates, names, incidental numbers)
+is carried by a short reason; ⭐ **a quiz asks few questions** — about 1–2 on a short
+conceptual page. ⛔ **No ceiling, and no quota either.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **A page's plan names its distinct checkable ASPECTS, read from its prose AND its
+   code**, and plans exercises (or quiz questions) for the aspects that MATTER, one exercise free to cover several —
+   ⛔ **no length ceiling**, and ⭐ **zero stays a legitimate answer** for a page that
+   teaches nothing checkable, with its reason written.
+2. ⛔ **Every aspect is accounted for**: covered by a named exercise, or carried by a
+   written reason — the same honesty the ledger already asks of files, now asked of
+   aspects, so "quality over a minimum" is checkable and a thin plan is visible.
+3. ⭐ **Near-duplicates are refused**: two exercises that check the same aspect are one
+   exercise — coverage, not count.
+4. ⭐ **The gates and the ceiling-is-not-a-quota rule (R6) are unchanged**: what ships is
+   what clears the gates, and a shortfall names its gate.
+5. ⭐ **Spec §7 §4, E14 and the authoring guide amended IN PLACE with this ruling, dated.**
+6. ⭐ **Proved on the framework's fixtures, with the current band as the positive
+   control** (a code-dense fixture page capped by its prose, now planned by its aspects),
+   planted back and RED.
+
+⭐ **Surface:** `skills/exercises/plan.py`, the ledger's accounting, `SKILL.md`, the spec,
+`E14`. ⚠️ **`ISO-23` re-plans on this rule, so it lands first.**
+
+[the mint](#po-round-171)
+
+
+### W454 — The editor image still carries and starts the Copilot CLI (user ruling: remove it)
+
+⛔ **USER RULING, 2026-09-23** (on `W449/1`): remove it. ⭐ **Measured by `W449`'s office:**
+deleting the bundled chat extension left the SERVER side running — on every start the
+editor's server forks an agent host (`--type=agentHost`) that launches the bundled
+Copilot CLI (`node_modules/@github/copilot*`, about 136 MB), with `api.github.com` and
+`api.githubcopilot.com` inside it, on a container whose network reaches the internet. It
+sent nothing in 90 s of socket sampling; ⛔ **it could.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The Copilot CLI is not in the editor image**, and ⭐ **the build fails if it comes
+   back** — the same shape as the chat deletion (toolchain `4b3fcdb`).
+2. ⛔ **No agent-host process runs** in a started editor, read with `ps` inside the
+   container over a fresh start AND a two-practice session — with the current image as
+   the positive control (it runs).
+3. ⭐ **The workbench raises no error a reader sees** and every practice still opens,
+   types into its main file and keeps its test read-only (`W446`), in a real browser.
+4. ⭐ **`W448`'s side bar and `W449`'s focus hold**; the lockdown activates.
+5. ⛔ **Whether the reader's console still shows `AgentHost` lines is READ and reported**,
+   not assumed.
+
+⭐ **Surface:** `code-server-toolchain` (Dockerfile, its tests). ⚠️ **The register rebuilds
+the image and recreates the reader's editor.**
+
+[the mint](#po-round-171)
+
+
+### W455 — The practice editor wears code-server's stock theme, not the site's code colours (user request)
+
+⛔ **USER REQUEST, 2026-09-23, with a screenshot of unit 15:** *"I love how the code
+exmaples look like but the code-server theam is not what I would be a big fan of! Can it
+be closer to the same color set?"* — the page's code blocks are in the site's palette
+(`palette.css`, `code-highlight.css`); the practice frame's editor is in code-server's
+stock dark theme beside them.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **The practice editor reads in the SAME colour set as the page's code blocks**:
+   its background, foreground, gutter, line numbers, selection, cursor and current-line
+   highlight, and the syntax colours of the same token families (`keyword`, `string`,
+   `comment`, `type`, `function`, `number`, `punctuation`, annotation) — ⭐ judged in a
+   real browser with a page code block and the editor side by side, current code as the
+   positive control, and a screenshot in the handoff.
+2. ⛔ **ONE SOURCE**: the editor's colours are DERIVED from the framework's own palette
+   and highlight stylesheets at the time the settings are written, never a second
+   hand-kept copy — so a palette change reaches both, and a test fails when they drift.
+3. ⭐ **Register ruling (reversible): the colours ride on the practice's workspace
+   settings** (`execute/workbench.py`, `workbench.colorCustomizations` /
+   `editor.tokenColorCustomizations`), so `code-server-toolchain` stays generic and no
+   image is rebuilt. ⚠️ If a setting cannot reach a surface the office names it and
+   argues any alternative instead of taking it.
+4. ⛔ **`W429`/`W433`'s lock, `W446`'s per-practice folder, `W448`'s closed side bar and
+   `W449`'s focus all hold**, in the same browser session.
+5. ⭐ **Light and dark**: whatever the page does for the reader's scheme, the editor does
+   the same, or the handoff says why it cannot.
+6. ⭐ Planted back and RED.
+
+⭐ **Surface:** `execute/workbench.py` and whatever reads the palette.
+
+[the mint](#po-round-172)
+
+## PO round 173
+
+⭐ **Three rows CLOSE, each read by the register with a plant at a seam its office did not use:**
+- ⭐ **`W453`** `6d0b8dc6` — a page is planned by its important ideas (the user's ruling and refinement); plan document `plan_api` 2. Plant: a basis the page does not carry accepted → RED.
+- ⭐ **`W454`** — `code-server-toolchain` merged **`65c3851`**: no Copilot module, the server takes the no-agent-host path, the workbench never connects. ⭐ **The register ran `tests.test_editor_agent_host` GREEN and recreated the reader's editor from `…-d961830755e8`**; no agent-host or Copilot process in it. ⚠️ **Finding carried:** the toolchain's image tests REMOVE the tag they test unless `TC_KEEP_IMAGES=1` — twice today they untagged a freshly built image, and run after a deploy they would untag the reader's.
+- ⭐ **`W455`** `b1649f6b` — the practice editor wears the page's code colours in both themes, derived from the framework's stylesheets. ⭐ **Read on the LIVE `:8770`**: the written settings carry the served `page.css`'s own code ground and ink, dark and light. Plant: the semantic token colours dropped → RED.
+
+⭐ **`ISO-23` DONE on the corpus branch `int/m10-iso-23`:** 38 units, 40 code exercises and 2 quizzes shipped under `W453`; ⭐ **register ruling, reversible (`ISO-M10/12`): jpos-client unit 1 re-planned as zero with its reason** rather than carried as a shortfall.
+
+⛔ **USER RULINGS, 2026-09-23:**
+- ⭐ **"fix them"** — the tutorial's own content defects the authors found (classes absent from its jPOS version, a bean that does not compile, undeclared test libraries): **`ISO-27`** on the corpus's integration office, every fix compiled, affected units re-gated.
+- ⭐ **`ISO-M10/11` "should be fixed"** — minted [`W456`](rows/W456.md).
+
+### ⚠️ In flight
+
+⭐ **`W456`** on `wt/dev1`; ⭐ **`ISO-27`** on the corpus's integration office.

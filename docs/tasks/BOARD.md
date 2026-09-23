@@ -79,9 +79,7 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W453` | Developer 1 | `feat/W453-a-page-is-planned-by-its-aspects` @ `wt/dev1` | 0 @ `2dbeede2` | `in-progress` — blocks `M10` |
-| `W454` | Developer 2 | `fix/W454-the-editor-carries-no-copilot` @ `wt/dev2` | 0 @ `2dbeede2` | `in-progress` |
-| `W455` | Developer 3 | `feat/W455-the-editor-wears-the-sites-colours` @ `wt/dev3` | 0 @ `3b10fb3c` | `in-progress` |
+| `W456` | Developer 1 | `fix/W456-a-pass-never-drops-what-it-did-not-read` @ `wt/dev1` | 0 @ `b1649f6b` | `in-progress` — blocks `M9` |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -640,9 +638,10 @@ else.**
 | W450 | Every embedded typeface is blocked by the served page's `font-src`, so the served site never shows its faces | framework agent | ✅ done — `1d7baa24` | [`rows/W450.md`](rows/W450.md) |
 | W451 | A quiz's key leaves the page: the local study server grades the answer (user ruling) | framework agent | ✅ done — `79797b90` | [`rows/W451.md`](rows/W451.md) |
 | W452 | The serving process still hands out a quiz's key by URL, through the content API and the archive's static mount | framework agent | ✅ done — `a394fb5b` | [`rows/W452.md`](rows/W452.md) |
-| W453 | A page's exercises are planned by the aspects it teaches, not capped by its prose length (user ruling) | framework agent | `in-progress` — ⛔ USER RULING, blocks `ISO-23` | [`rows/W453.md`](rows/W453.md) |
-| W454 | The editor image still carries and starts the Copilot CLI (user ruling: remove it) | framework agent | `in-progress` — ⛔ USER RULING | [`rows/W454.md`](rows/W454.md) |
-| W455 | The practice editor wears code-server's stock theme, not the site's code colours (user request) | framework agent | `in-progress` — ⛔ USER REQUEST | [`rows/W455.md`](rows/W455.md) |
+| W453 | A page's exercises are planned by the aspects it teaches, not capped by its prose length (user ruling) | framework agent | ✅ done — `6d0b8dc6` | [`rows/W453.md`](rows/W453.md) |
+| W454 | The editor image still carries and starts the Copilot CLI (user ruling: remove it) | framework agent | ✅ done — `65c3851` toolchain | [`rows/W454.md`](rows/W454.md) |
+| W455 | The practice editor wears code-server's stock theme, not the site's code colours (user request) | framework agent | ✅ done — `b1649f6b` | [`rows/W455.md`](rows/W455.md) |
+| W456 | An authoring pass over one container rewrites the corpus-wide ledger and silently drops every other container's entries | framework agent | `in-progress` — ⛔ USER RULING, blocks `M9` | [`rows/W456.md`](rows/W456.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
