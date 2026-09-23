@@ -77,6 +77,9 @@ MARKER = "**Acceptance.**"
 #: ⭐ `E14` joins the framework side with `W389`: the authoring skill, its gates and
 #: the record they write are this framework's, and only the corpus's own authored
 #: material is the integration agent's (`README.md`, *Working as two agents*).
+#: ⭐ `E15` joins it with `W438`: the release cleanup of this repository and of the
+#: two shared components is this framework's; the corpus's own cleanup is rows in
+#: that repository, never a task in the epic.
 FRAMEWORK_EPICS = (
     "E00",
     "E01",
@@ -90,6 +93,7 @@ FRAMEWORK_EPICS = (
     "E12",
     "E13",
     "E14",
+    "E15",
 )
 INTEGRATION_EPICS = ("E07", "E08", "E09")
 
