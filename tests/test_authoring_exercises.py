@@ -44,21 +44,20 @@ from studyforge.skills.exercises import (
     ATTEMPTS,
     AUTHORED_PROVENANCE,
     AUTHORED_TRUST,
-    BANDS,
     CORE,
     COVERAGE_FILENAME,
     LEDGER_PATH,
     QUIZ_DOCUMENT,
     SHORTFALL_REPORT_KEYS,
     SOURCE_CASES,
-    TIER_MOVES,
-    TIERS,
+    Aspect,
     Brief,
     CodeDraft,
     QuizDraft,
     accounts_for,
     key_of,
     plan_for,
+    plan_page,
     source_case,
     take,
 )
@@ -160,16 +159,16 @@ def worked(tmp_path_factory):
 
 
 def test_the_worked_corpus_table_is_what_the_worked_corpus_reads(worked):
-    # ⭐ Case, band and plan are RE-COMPUTED from the fixture the guide points
-    # at, so a fixture edit that moved a page's case fails here.
+    # ⭐ Case, aspects and plan are RE-COMPUTED from the fixture the guide
+    # points at, so a fixture edit that moved a page's case fails here.
     rows = {row[0]: row[1:] for row in rows_under(guide(), WORKED)}
     assert set(rows) == {f"`{page.path}`" for page in worked.pages}, "the table lists other pages"
     for page in worked.pages:
-        plan = plan_for(page.words, page.skills, page.tier, page.path)
+        plan = plan_page(page, worked.ledger, page.path)
         expected = [
             f"`{page.kind}`",
             f"`{source_case(page, worked.ledger)}`",
-            f"`{plan.band.name}`",
+            str(len(plan.aspects)),
             str(plan.count),
         ]
         assert rows[f"`{page.path}`"] == expected, f"{page.path} is not what the fixture reads"
@@ -244,28 +243,41 @@ def test_each_field_table_is_the_shipped_shape_both_ways(heading, shape):
 # --- the plan --------------------------------------------------------------
 
 
-def test_the_bands_are_the_shipped_bands_in_order():
-    rows = [row for row in rows_under(guide(), PLAN) if len(row) == 4]
-    shipped = [[f"`{b.name}`", str(b.words), str(b.floor), str(b.ceiling)] for b in BANDS]
-    assert rows == shipped
+#: ⛔ `W453`: the user's two sentences, which the guide must quote where the
+#: author reads it. Fragments, so a re-wrapped line still matches.
+RULED = (
+    "The target is covering all the aspects not just having something minimum",
+    "Sometimes a single practice might cover better than 4 unrelated small practices",
+)
 
 
-def test_the_tiers_and_their_moves_are_the_shipped_ones():
-    rows = {row[0]: row[1] for row in rows_under(guide(), PLAN) if len(row) == 2}
-    assert set(rows) == {f"`{tier}`" for tier in TIERS}
-    for tier in TIERS:
-        moves = TIER_MOVES[tier]
-        assert rows[f"`{tier}`"] == (f"{moves:+d}" if moves else "0")
+def test_the_aspect_field_table_is_the_shipped_shape_both_ways():
+    assert vocabulary_under(guide(), PLAN) == {field.name for field in fields(Aspect)}
+
+
+def test_the_guide_quotes_the_ruling_and_its_refinement():
+    text = " ".join(section(guide(), PLAN).replace("> ", " ").split())
+    for fragment in RULED:
+        assert fragment in text, f"'{PLAN}' does not quote the user: {fragment!r}"
+
+
+def test_the_length_band_is_taught_only_under_its_superseded_marker():
+    # ⛔ The band's table survives only blockquoted, under SUPERSEDED: a live
+    # table row naming a band would be read as a rule still in force.
+    text = section(guide(), PLAN)
+    live = [line for line in text.splitlines() if line.startswith("| `short`")]
+    assert not live, f"'{PLAN}' still teaches a band as live: {live}"
+    assert "SUPERSEDED" in text
 
 
 def test_the_two_zeros_the_guide_promises_are_the_plan_s():
-    # ⚠️ A page under the lowest band that permits work, and a page with no
-    # checkable skill, each plan zero — the guide tells an author to look here.
-    opening = next(band for band in BANDS if band.ceiling > 0)
+    # ⭐ Every aspect reasoned plans zero, and a page naming no aspect plans
+    # zero only with its reason — the guide tells an author both.
     text = " ".join(section(guide(), PLAN).split())
-    assert f"`{opening.name}` band's opening count plans zero" in text
-    assert plan_for(opening.words - 1, 1, CORE, "under").count == 0
-    assert plan_for(opening.words, 0, CORE, "no skill").count == 0
+    assert "`nothing_checkable`" in text
+    minor = Aspect("minor", "an incidental detail", ("section:T",), reason="not practised")
+    assert plan_for((minor,), CORE, "reasoned").count == 0
+    assert plan_for((), CORE, "nothing", nothing_checkable="links only").count == 0
 
 
 # --- the budget, the report and the paths ----------------------------------

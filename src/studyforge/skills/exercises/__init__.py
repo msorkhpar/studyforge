@@ -3,8 +3,9 @@ r"""The authoring skill: its two readings, and the loop that plans, authors, gat
 **What it does.** Holds the executable half of the exercise-authoring skill
 whose procedure is `SKILL.md` beside these modules. ⭐ **Two readings are taken
 BEFORE anything is authored** — the **ledger**, which accounts for every fenced
-example and every test file a source carries, and the **plan**, which says how
-many exercises a page gets inside a band its length sets. ⭐ **The loop** then
+example and every test file a source carries, and the **plan**, which says which
+exercises a page gets by the aspects it teaches, each checked or excused
+(`W453`). ⭐ **The loop** then
 drafts each planned exercise through the converting agent's author, gates it,
 re-drafts it inside a fixed budget, and commits what cleared into the corpus
 repository — additively, and once.
@@ -18,7 +19,7 @@ repository — additively, and once.
     authored.shortfalls         # every exercise a gate refused, named (spec §7 §11)
 
     ledger = take(root, sources, tests, where="the ledger")   # the readings, alone
-    plan = plan_for(words=900, skills=3, tier="core", where="the plan for page 3")
+    plan = plan_for(aspects, tier="core", where="the plan for page 3")
 
 **Depends on.** `studyforge.exercise` — its record, `bundle`, `gates` and
 `quiz` — for everything an exercise is; `studyforge.validate.headings` for what
@@ -35,7 +36,8 @@ runner is the caller's.
 | `scan` | what a raw material file carries: its fenced blocks, and the headings over each |
 | `ledger` | one entry per fenced example and per test file, and the digest of every file read |
 | `accounting` | how each entry ends — an `origin`, or a written reason — and the document |
-| `plan` | how many exercises a page gets, the band that bounds it, and the shortfall report |
+| `aspects` | a page's important ideas, and how each ends — an exercise, or a reason |
+| `plan` | which exercises a page gets, read off its aspects, and the shortfall report |
 | `drafts` | the page, the three source cases, the brief, the two draft shapes, and no retreat |
 | `gating` | one draft staged, run through the caller's runner, and answered by every gate |
 | `loop` | one page: planned, drafted, gated, re-drafted inside the budget, reported |
@@ -54,6 +56,9 @@ gate answers → what one page ships → what the corpus commits.
    with a written reason it is not.
 2. ⛔ **The plan is a CEILING, never a quota** (R6, spec §7 §4). `shortfall`
    refuses a page that shipped past its ceiling and a gap not named with a gate.
+   ⭐ **Its count is set by COVERAGE, not by length** (`W453`, user ruling
+   2026-09-23): every aspect a page teaches is checked by a named exercise or
+   carried by a written reason, and an aspect with neither is refused.
 3. ⛔ **A gate failure is re-authored within `ATTEMPTS`, never by loosening a
    gate, dropping a case or deleting a question** (spec §7 §11). No gate takes
    an option, and a retry carrying fewer case or question ids is refused.
@@ -77,6 +82,15 @@ from studyforge.skills.exercises.accounting import (
     account,
     accounts_for,
     ledger_document,
+)
+from studyforge.skills.exercises.aspects import (
+    ASPECT_KEYS,
+    SECTION,
+    Aspect,
+    AspectError,
+    aspect_document,
+    require_aspects,
+    require_read,
 )
 from studyforge.skills.exercises.corpus import (
     COVERAGE_API,
@@ -142,25 +156,22 @@ from studyforge.skills.exercises.loop import (
     Shortfall,
     author_page,
     carried_practices,
+    plan_page,
     require_after_carried,
 )
 from studyforge.skills.exercises.plan import (
     ADVANCED,
-    BANDS,
     CORE,
     INTRODUCTORY,
     PLAN_API,
     PLAN_KEYS,
-    REASON_KEYS,
+    PLANNED_KEYS,
     SHORTFALL_KEYS,
-    TIER_MOVES,
     TIERS,
-    Band,
     Plan,
     PlanError,
-    Reason,
+    Planned,
     Refusal,
-    band_for,
     plan_document,
     plan_for,
     shortfall,
@@ -175,10 +186,10 @@ from studyforge.skills.exercises.scan import Fence, Scan, scan
 __all__ = [
     "ACCOUNTED_KEYS",
     "ADVANCED",
+    "ASPECT_KEYS",
     "ATTEMPTS",
     "AUTHORED_PROVENANCE",
     "AUTHORED_TRUST",
-    "BANDS",
     "CODE_AND_TESTS",
     "CODE_NO_TESTS",
     "CORE",
@@ -194,25 +205,26 @@ __all__ = [
     "LEDGER_PATH",
     "NEITHER",
     "OUTPUT_LINES",
+    "PLANNED_KEYS",
     "PLAN_API",
     "PLAN_KEYS",
     "QUIZ_API",
     "QUIZ_DOCUMENT",
     "QUIZ_KEYS",
     "REASON_DESCRIBED",
-    "REASON_KEYS",
+    "SECTION",
     "SHORTFALL_KEYS",
     "SHORTFALL_REPORT_KEYS",
     "SOURCE_CASES",
     "SOURCE_KEYS",
     "TESTS",
     "TIERS",
-    "TIER_MOVES",
     "Accounted",
+    "Aspect",
+    "AspectError",
     "Author",
     "Authored",
     "AuthoringError",
-    "Band",
     "Brief",
     "CodeDraft",
     "Covered",
@@ -226,9 +238,9 @@ __all__ = [
     "PageOutcome",
     "Plan",
     "PlanError",
+    "Planned",
     "QuizDraft",
     "Ran",
-    "Reason",
     "Refusal",
     "Runner",
     "Scan",
@@ -236,10 +248,10 @@ __all__ = [
     "Source",
     "account",
     "accounts_for",
+    "aspect_document",
     "author_corpus",
     "author_page",
     "carried_practices",
-    "band_for",
     "commit",
     "digests",
     "gate_code",
@@ -250,10 +262,13 @@ __all__ = [
     "page_entries",
     "plan_document",
     "plan_for",
+    "plan_page",
     "require_after_carried",
+    "require_aspects",
     "require_draft",
     "require_no_retreat",
     "require_page",
+    "require_read",
     "scan",
     "shortfall",
     "shortfall_document",

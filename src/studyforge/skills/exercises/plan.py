@@ -1,50 +1,62 @@
-r"""The page plan: how many exercises a page gets, decided before any is written.
+r"""The page plan: which exercises a page gets, decided by its aspects before any is written.
 
-**What it does.** Turns three readings of a page — its length, how many
-distinct checkable skills it teaches, and its difficulty tier — into a count,
-inside a band its length sets, with **every movement recorded as a reason**.
-⛔ **The count is a CEILING and never a quota** (R6, spec §7 §4): what ships is
-what clears the gates, and `shortfall` is where each one that did not is named
-with the gate that refused it.
+**What it does.** Turns a page's **aspects** — the distinct checkable things it
+teaches, read from its prose and its code, each ending in a named exercise or
+a written reason (`aspects`) — and its difficulty tier into the exercises the
+page is authored against: ⭐ **one planned exercise per distinct name the
+aspects give, each carrying the aspects it checks.** ⛔ **The count is a
+CEILING and never a quota** (R6, spec §7 §4): what ships is what clears the
+gates, and `shortfall` is where each one that did not is named with the gate
+that refused it.
 
 **How you use it.**
 
     from studyforge.skills.exercises.plan import plan_for, plan_document, shortfall
 
-    plan = plan_for(words=900, skills=3, tier="core", where="the plan for page 3")
+    plan = plan_for(aspects, tier="core", where="the plan for page 3")
     plan.count                      # the ceiling this page is authored against
+    plan.exercises[0].aspects       # the aspect ids the first planned exercise checks
     plan_document(plan)             # the decoded object the skill writes
     shortfall(plan, shipped=2, refusals=(Refusal("G3", "…"),), where="…")
 
-**Depends on.** `studyforge.describe` for naming a value without reproducing it
-(R7) and `studyforge.exercise.gates` for the one registry of gate ids. Standard
-library only. ⛔ Not on any adapter and not on any source (R1): a page arrives
-as three numbers and a token, and nothing here can be told which corpus it is.
+**Depends on.** `aspects` for what an aspect is and the rules over it,
+`studyforge.describe` for naming a value without reproducing it (R7) and
+`studyforge.exercise.gates` for the one registry of gate ids. Standard library
+only. ⛔ Not on any adapter and not on any source (R1).
 
-## ⛔ WHY A BAND AND NOT A FORMULA
+## ⛔ USER RULING, 2026-09-23 (`W453`) — THE COUNT IS SET BY COVERAGE, NOT BY LENGTH
 
-⚠️ **A formula would make the count look derived when it is a judgement.** The
-three readings are honest inputs and the arithmetic over them is a convention,
-so what this module guarantees is not that the number is *right* — it is that
-the number is **bounded by the page's length**, that **every movement is
-written down**, and that the same three readings always produce the same count
-(R10). ⭐ A reviewer disagreeing with a plan has the reasons in front of them
-and can argue with one of them, which is the whole point of recording them.
+> *"Depending on the context of the page there might be no practice, 2 or more,
+> The target is covering all the aspects not just having something minimum we
+> are looking for quality"*
 
-## ⛔ THE BANDS ARE A FRAMEWORK CONSTANT, NEVER A CORPUS'S STRING (R1)
+⛔ **SUPERSEDED by that ruling: the length BAND.** Until `W453` a page's count
+started at the floor of a band its PROSE word count set, moved by a count of
+skills and a tier, and was clamped to the band's ceiling. ⚠️ **On a code-dense
+corpus that capped most pages at two and shipped most examples as a reason
+nobody weighed** (`ISO-M10/6`). ⭐ **There is now no length ceiling**, and the
+tier no longer moves the count: it is recorded, and handed to the author with
+the page, because it says how hard each exercise is — never how many.
+⚠️ **Refined by the user the same day** (quoted whole in `aspects`): *"don't
+over do it"* — plan by the page's IMPORTANT ideas, one exercise may check
+several, and a minor aspect is carried by a short reason.
 
-⭐ **A corpus cannot widen its own band.** Letting one supply the table would
-make the ceiling a thing an author sets, and a ceiling an author sets is not a
-ceiling. ⚠️ Moving the table is a decision taken here, in one place, for every
-source at once — which is also what keeps two corpora comparable.
+## ⚠️ WHY THE COUNT IS DERIVED FROM NAMES AND NOT FROM A FORMULA
+
+⚠️ **A formula would make the count look derived when it is a judgement**, and
+that stays true. Which aspects a page teaches, and whether one is worth an
+exercise, is the author's call — so what this module guarantees is not that the
+plan is *right*: it is that **every aspect is accounted for** (checked, or
+excused in a sentence), that **no aspect is checked twice**, and that the same
+aspects always produce the same plan (R10). ⭐ A reviewer disagreeing with a
+plan has every aspect and every reason in front of them, including each aspect
+that was NOT checked — which is what makes a thin plan visible.
 
 ## ⛔ A PLAN OF ZERO SAYS WHY, AND IT IS A LEGITIMATE ANSWER
 
-⚠️ **A page too short to carry an exercise, or one that teaches nothing
-checkable, plans none** — and `E14`'s first property still holds over it,
-because the ledger accounts for whatever it carries with a written reason.
-⛔ **Zero is never reached silently**: the band that produced it is recorded,
-so a page with no practices is a page somebody can see the reason for.
+⚠️ **A page that teaches nothing checkable plans none**, with the sentence
+saying so written into its plan; and a page whose every aspect carries a reason
+plans none with a reason per aspect. ⛔ **Zero is never reached silently.**
 
 ## ⛔ A SHORTFALL NAMES A REGISTERED GATE, AND THAT IS MECHANICAL
 
@@ -62,16 +74,19 @@ from dataclasses import dataclass
 
 from studyforge.describe import describe
 from studyforge.exercise.gates import family_of
+from studyforge.skills.exercises.aspects import Aspect, aspect_document, require_aspects
 
 #: The version of the document this module writes. ⛔ Bumped when a reader of
-#: the old shape would be *wrong* rather than merely incomplete.
-PLAN_API = 1
-
-#: The keys of one recorded reason, in write order (R10).
-REASON_KEYS = ("moves", "says")
+#: the old shape would be *wrong* rather than merely incomplete. ⚠️ **2 at
+#: `W453`**: version 1 carried `words`, `skills`, `band` and movement `reasons`,
+#: and a reader of it would take a length-capped count for a covered one.
+PLAN_API = 2
 
 #: The keys of the plan document itself, in write order (R10).
-PLAN_KEYS = ("plan_api", "words", "skills", "tier", "band", "count", "reasons")
+PLAN_KEYS = ("plan_api", "tier", "count", "aspects", "exercises", "nothing_checkable")
+
+#: The keys of one planned exercise, in write order (R10).
+PLANNED_KEYS = ("slot", "name", "aspects")
 
 #: The keys of one named shortfall, in write order (R10).
 SHORTFALL_KEYS = ("gate", "says")
@@ -85,45 +100,13 @@ CORE = "core"
 #: A page whose material a reader meets after the ones it builds on.
 ADVANCED = "advanced"
 
-#: ⛔ Closed, and three rather than a scale: a tier moves the count by one step
-#: in one direction, and a fourth token would be a second way of saying one of
-#: these. A tier this build does not define is refused, never defaulted.
+#: ⛔ Closed, and three rather than a scale. ⚠️ Since `W453` a tier says how
+#: hard each exercise is and never how many: it is recorded and handed to the
+#: author. A tier this build does not define is refused, never defaulted.
 TIERS = (INTRODUCTORY, CORE, ADVANCED)
-
-#: How far each tier moves the count off its band's floor.
-TIER_MOVES = {INTRODUCTORY: -1, CORE: 0, ADVANCED: 1}
 
 #: ⛔ Said in a refusal instead of the value (R7).
 TIER_PERMITTED = "one of " + ", ".join(repr(tier) for tier in TIERS)
-
-
-@dataclass(frozen=True, slots=True)
-class Band:
-    """One length band: the words that open it, and the counts it permits.
-
-    ⛔ **`ceiling` is the hard bound and no page may plan past it.** `floor` is
-    where a page that teaches at least one checkable skill starts, before the
-    movements; ⚠️ **zero is permitted in every band** and is the one value below
-    the floor, because a page that teaches nothing checkable plans nothing —
-    and that is recorded as a reason rather than reached quietly.
-    """
-
-    name: str
-    words: int
-    floor: int
-    ceiling: int
-
-
-#: ⛔ **Closed, ordered by the words that open each band, widest last.** The
-#: numbers are a convention and are stated here so a reviewer can argue with
-#: them in one place; ⚠️ what is NOT a convention is that the count cannot leave
-#: the band, which is the property `AX-11` reads on a real corpus.
-BANDS = (
-    Band("stub", 0, 0, 0),
-    Band("short", 250, 1, 2),
-    Band("standard", 700, 1, 4),
-    Band("long", 1800, 2, 6),
-)
 
 
 class PlanError(ValueError):
@@ -134,11 +117,12 @@ class PlanError(ValueError):
 
 
 @dataclass(frozen=True, slots=True)
-class Reason:
-    """One thing that moved the count, and how far it moved it."""
+class Planned:
+    """One exercise the plan allows for: its slot, its name, and the aspects it checks."""
 
-    moves: int
-    says: str
+    slot: int
+    name: str
+    aspects: tuple[str, ...]
 
 
 @dataclass(frozen=True, slots=True)
@@ -151,71 +135,62 @@ class Refusal:
 
 @dataclass(frozen=True, slots=True)
 class Plan:
-    """What one page is authored against: a ceiling, its band, and every reason."""
+    """What one page is authored against: every aspect, and the exercises that check them."""
 
-    words: int
-    skills: int
     tier: str
-    band: Band
-    count: int
-    reasons: tuple[Reason, ...]
+    aspects: tuple[Aspect, ...]
+    exercises: tuple[Planned, ...]
+    nothing_checkable: str | None
+
+    @property
+    def count(self) -> int:
+        """How many exercises the page is authored against — ⛔ a ceiling, never a quota."""
+        return len(self.exercises)
+
+    @property
+    def reasoned(self) -> tuple[Aspect, ...]:
+        """⭐ Every aspect no exercise checks — the part of a thin plan a reviewer reads."""
+        return tuple(aspect for aspect in self.aspects if aspect.exercise is None)
+
+    def checked_by(self, planned: Planned) -> tuple[Aspect, ...]:
+        """Return the aspects one planned exercise checks, in id order."""
+        return tuple(aspect for aspect in self.aspects if aspect.id in planned.aspects)
 
 
-def band_for(words: int) -> Band:
-    """Return the band a page of this length sits in — ⭐ the widest its words open."""
-    found = BANDS[0]
-    for band in BANDS:
-        if words >= band.words:
-            found = band
-    return found
+def plan_for(aspects: object, tier: object, where: str, nothing_checkable: object = None) -> Plan:
+    """Plan one page from its aspects: one planned exercise per distinct name they give.
 
-
-def plan_for(words: object, skills: object, tier: object, where: str) -> Plan:
-    """Plan one page: a count inside its band, with every movement recorded.
-
-    ⛔ **The count starts at the band's floor and is moved, never invented.**
-    One step per distinct checkable skill beyond the first, one step for the
-    tier, and then the band clamps — and the clamp is itself a recorded reason,
-    because a ceiling that silently ate a movement is a ceiling nobody can see
-    working.
+    ⛔ **The exercises are read off the aspects, never counted separately**, so
+    an exercise that checks no aspect cannot be planned and an aspect cannot
+    be checked twice. ⭐ Aspects are held in id order and exercises in name
+    order, so the listing order an author used cannot move the plan (R10).
     """
-    length = _count(words, "words", where)
-    distinct = _count(skills, "skills", where)
     named = _tier(tier, where)
-    band = band_for(length)
-    reasons = [
-        Reason(
-            0,
-            f"the page is {length} words, which puts it in the {band.name!r} band, "
-            f"whose ceiling is {band.ceiling} and whose floor for a page with work "
-            f"is {band.floor}",
+    held, zero = require_aspects(aspects, nothing_checkable, where)
+    names = sorted({aspect.exercise for aspect in held if aspect.exercise is not None})
+    exercises = tuple(
+        Planned(
+            slot=slot,
+            name=name,
+            aspects=tuple(aspect.id for aspect in held if aspect.exercise == name),
         )
-    ]
-    count = band.floor
-    if band.ceiling == 0:
-        reasons.append(Reason(0, "a page in this band is too short to carry an exercise"))
-        return Plan(length, distinct, named, band, 0, tuple(reasons))
-    if distinct == 0:
-        reasons.append(Reason(-count, "the page names no distinct checkable skill"))
-        return Plan(length, distinct, named, band, 0, tuple(reasons))
-    plural = "" if distinct == 1 else "s"
-    count, reasons = _moved(
-        count, reasons, distinct - 1, f"{distinct} distinct checkable skill{plural}"
+        for slot, name in enumerate(names, start=1)
     )
-    count, reasons = _moved(count, reasons, TIER_MOVES[named], f"the {named!r} tier")
-    return Plan(length, distinct, named, band, *_clamped(count, band, reasons))
+    return Plan(named, held, exercises, zero)
 
 
 def plan_document(plan: Plan) -> dict:
-    """Return the decoded object the authoring skill writes, in one fixed order (R10)."""
+    """Return the decoded object the authoring skill writes, in `PLAN_KEYS` order (R10)."""
     return {
         "plan_api": PLAN_API,
-        "words": plan.words,
-        "skills": plan.skills,
         "tier": plan.tier,
-        "band": plan.band.name,
         "count": plan.count,
-        "reasons": [{"moves": reason.moves, "says": reason.says} for reason in plan.reasons],
+        "aspects": [aspect_document(aspect) for aspect in plan.aspects],
+        "exercises": [
+            {"slot": planned.slot, "name": planned.name, "aspects": list(planned.aspects)}
+            for planned in plan.exercises
+        ],
+        "nothing_checkable": plan.nothing_checkable,
     }
 
 
@@ -234,8 +209,8 @@ def shortfall(
     if count > plan.count:
         raise PlanError(
             f"{where}: {count} exercises shipped against a plan of {plan.count}. The "
-            f"plan is a ceiling, never a quota, so a page cannot ship past it — the "
-            f"reading that produced the ceiling is what would have to move."
+            f"plan is a ceiling, never a quota, so a page cannot ship past it — an "
+            f"aspect the plan did not name is what would have to be added."
         )
     for refusal in refusals:
         _require_gate(refusal, where)
@@ -252,26 +227,6 @@ def shortfall(
 def shortfall_document(refusals: tuple[Refusal, ...]) -> list[dict]:
     """Each named shortfall as a decoded object, in `SHORTFALL_KEYS` order (R10)."""
     return [{"gate": refusal.gate, "says": refusal.says} for refusal in refusals]
-
-
-def _moved(count: int, reasons: list[Reason], moves: int, says: str) -> tuple[int, list[Reason]]:
-    """Apply one movement and record it — ⭐ a movement of zero is recorded too."""
-    reasons.append(Reason(moves, says))
-    return count + moves, reasons
-
-
-def _clamped(count: int, band: Band, reasons: list[Reason]) -> tuple[int, tuple[Reason, ...]]:
-    """Hold the count inside its band, recording the clamp when there was one."""
-    held = max(band.floor, min(band.ceiling, count))
-    if held != count:
-        reasons.append(
-            Reason(
-                held - count,
-                f"the {band.name!r} band permits {band.floor} to {band.ceiling}, and "
-                f"the movements above reached {count}",
-            )
-        )
-    return held, tuple(reasons)
 
 
 def _count(value: object, what: str, where: str) -> int:

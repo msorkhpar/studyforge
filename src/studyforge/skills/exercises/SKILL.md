@@ -66,10 +66,57 @@ judge is a separate function, never the author grading its own work.
 
 For each page you want exercises for, build one `Page`. It gives the material
 file, the unit it becomes (address, variant, unit number), its kind (`code` or
-`quiz`), the test files the corpus declares for it, and your three readings.
-Those are `words` (count them with `words_of`, which counts prose and leaves
-fences out), the number of distinct checkable `skills` it teaches, and a
-`tier` (`introductory`, `core` or `advanced`).
+`quiz`), the test files the corpus declares for it, its `aspects` and a `tier`
+(`introductory`, `core` or `advanced`).
+
+#### ⛔ Plan by the page's important ideas (`W453`, user ruling 2026-09-23)
+
+The user's ruling, in their words:
+
+> *"Depending on the context of the page there might be no practice, 2 or more,
+> The target is covering all the aspects not just having something minimum we
+> are looking for quality"*
+
+And the same day, on how far to take it:
+
+> *"regarding the coverage don't over do it! at the same time we are not a
+> university that wants to grade the knowdlge! Sometimes a single practice might
+> cover better than 4 unrelated small practices. It's all about quality and the
+> importants ofthe text. Like for the first quiz the dates do not matter. The
+> version might matter. And for sure 4 questions were a lot"*
+
+⭐ **Read the page, its prose AND its code, and name its aspects.** An `Aspect`
+is one important idea a reader could be checked on: an `id`, one sentence
+(`says`), what you read it from (`basis`: `example:<path>:<n>` or
+`tests:<path>` for the page's own code, `section:<heading>` for its prose), and
+exactly one ending — the `exercise` that checks it, or the `reason` nothing
+does. The plan is one exercise per distinct `exercise` name.
+
+- **Important ideas, not facts.** A date, a name or an incidental number is
+  not an aspect. The idea it illustrates may be; a version the page depends on
+  may be.
+- **One exercise can check several aspects, and often should.** One exercise
+  practising related ideas together beats several small unrelated ones.
+- **A minor aspect gets a short reason** (*"incidental detail, not
+  practised"*), not an exercise.
+- **A quiz asks few questions**: one or two for a short conceptual page, each
+  about something that matters.
+- ⛔ **No ceiling, and no quota.** Record what you judged important and why.
+  It is not a coverage percentage to maximise.
+
+⛔ **The plan refuses** an aspect with neither ending or with both, two aspects
+with one id or one sentence (merge them: two exercises never check one idea),
+and a basis the page does not carry. ⭐ **Zero is legitimate**: every aspect
+reasoned plans zero, and a page teaching nothing checkable names no aspect
+and says why in `nothing_checkable`. ⚠️ `tier` says how hard each exercise is,
+never how many.
+
+⛔ **SUPERSEDED 2026-09-23 (`W453`)** — kept so a citation of it resolves, and
+not in force:
+
+> *Your three readings. Those are `words` (count them with `words_of`, which
+> counts prose and leaves fences out), the number of distinct checkable
+> `skills` it teaches, and a `tier` (`introductory`, `core` or `advanced`).*
 
 ⛔ **The two populations are the corpus's to declare** (`AX-07`). What is
 material comes from the manifest's `content` policy, and what is a grader
@@ -80,8 +127,8 @@ test-file pattern.
 
 - **`author.draft(brief)`** answers one `Brief` with a `CodeDraft` or a
   `QuizDraft`. The brief carries the page, its case, its ledger entries,
-  which of the planned exercises this is, where its bundle and its workspace
-  will be, and, on a retry, the previous draft, every gate that refused it
+  which of the planned exercises this is, the aspects it must check, where
+  its bundle and its workspace will be, and, on a retry, the previous draft, every gate that refused it
   and the last run's output.
 - **`author.excuse(entry)`** writes the one sentence saying why no exercise
   was built from a ledger entry. It is asked only about entries nothing
@@ -130,8 +177,9 @@ authored.bare  # every page left with nothing shipped (R6)
 
 1. `take` reads the ledger **once**, before any exercise is gated, because
    `G5` and `Q5` ask it about each exercise's origin *during* the gate run.
-2. For each page, `plan_for` sets the ceiling. Each planned exercise is
-   drafted, gated, and re-drafted after a refusal, within the attempt budget.
+2. For each page, `plan_page` reads the plan off its aspects and sets the
+   ceiling. Each planned exercise is drafted, gated, and re-drafted after a
+   refusal, within the attempt budget.
 3. `shortfall` checks that what shipped plus what was refused equals the plan.
 4. Every ledger entry nothing shipped accounts for gets a written reason, and
    `account` refuses an entry with neither.
@@ -162,7 +210,7 @@ read), and the last run's output, made relative to the run and scrubbed (R7).
 | `exercises/<address>/<variant>/unit-NN/practice-M/` | one bundle, in `AX-04`'s shape, with `gates.json` beside it |
 | `…/practice-M/tests/quiz.json` | a quiz's own document: its identity and its record |
 | `practice/<address>/<variant>/unit-NN/practice-M/` | the reader's starter and tests, from `emit` |
-| `exercises/<address>/<variant>/unit-NN/coverage.json` | the unit's plan, what shipped, and every shortfall |
+| `exercises/<address>/<variant>/unit-NN/coverage.json` | the unit's plan (every aspect and how it ended), what shipped, and every shortfall |
 | `exercises/ledger.json` | the source ledger, every entry accounted for |
 
 ⛔ **`M` follows the practices the unit already carries** (`W437`). A unit

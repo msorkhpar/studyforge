@@ -59,3 +59,43 @@ def written(root: Path, name: str, text: str) -> str:
     """Write one file into a temporary corpus and return its relative path."""
     (root / name).write_text(text, encoding="utf-8")
     return name
+
+
+#: ⭐ **`W453`'s positive control**: a code-dense page with little prose. Under
+#: the withdrawn length band its prose alone planned it zero; planned by its
+#: aspects it gets one exercise per important idea, related ideas sharing one.
+DENSE = """# Parsing a record
+
+A record is one line of fields split by a bar.
+
+## Reading a field
+
+```python
+def field(record, n):
+    return record.split("|")[n]
+```
+
+## A missing field
+
+```python
+field("a|b", 5)  # raises IndexError
+```
+
+## A number in a field
+
+```python
+int(field("a|42", 1))
+```
+
+## Trimming
+
+```python
+field(" a |b", 0).strip()
+```
+
+## Setting up
+
+```shell
+python3 -m venv .venv
+```
+"""

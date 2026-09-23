@@ -377,8 +377,9 @@ worked solution.
 **The route, in order:**
 
 1. Get the corpus ready: see *Before you author*.
-2. Describe each page: its words, its skills and its tier. That sets its
-   *plan*.
+2. Describe each page: the important ideas it teaches (its *aspects*),
+   which exercise checks each one or why none does, and its tier. That sets
+   its *plan*.
 3. Write an author, a judge and a runner: see *Running the pass*.
 4. Run the pass once. It takes the *ledger*, plans every page, drafts,
    gates, retries, and commits what passed into your corpus.
@@ -533,12 +534,17 @@ and this pass does not do it.
 
 ### The worked corpus
 
-| page | kind | case | band | plan |
+| page | kind | case | aspects | plan |
 |---|---|---|---|---|
-| `lessons/greeting.md` | `code` | `code-and-tests` | `short` | 1 |
-| `lessons/shout.md` | `code` | `code-no-tests` | `short` | 1 |
-| `lessons/basket.md` | `code` | `neither` | `short` | 1 |
-| `notes/gauge.md` | `quiz` | `neither` | `short` | 1 |
+| `lessons/greeting.md` | `code` | `code-and-tests` | 1 | 1 |
+| `lessons/shout.md` | `code` | `code-no-tests` | 1 | 1 |
+| `lessons/basket.md` | `code` | `neither` | 2 | 1 |
+| `notes/gauge.md` | `quiz` | `neither` | 2 | 1 |
+
+⭐ **The basket's two aspects, *a basket totals its prices* and *a negative
+price is refused*, are one exercise**, and so are the gauge's two: one quiz
+with a question on each. The aspects are in `ASPECTS` in
+`tests/studyforge/skills/exercises/authoring.py`.
 
 - **`code-and-tests`: *Greet somebody by name*.** The page ships `greet(who)`
   and declares `checks/test_greeting.py`. The exercise uses the source's test
@@ -703,39 +709,109 @@ its tests exercise the pass rather than a model.
 
 ## The plan
 
-**Each page gets a plan before anything is written: a ceiling on how many
-exercises it may have.** It comes from three readings you give on the `Page`:
-`words` (count them with `words_of`, which counts the prose and skips fenced
-code), `skills` (how many distinct checkable skills the page teaches) and
-`tier`.
+⛔ **Changed 2026-09-23 by the user's ruling (`W453`).** A page's plan is set by
+the important ideas it teaches, not by how long its prose is. The ruling, in
+the user's words:
 
-**The page's length picks a band.** The count starts at the band's floor, goes
-up one for each distinct skill after the first, and moves by the tier. The
-band then clamps it. The tables below give the amounts. **A page that teaches
-no checkable skill plans zero.**
+> *"Depending on the context of the page there might be no practice, 2 or more,
+> The target is covering all the aspects not just having something minimum we
+> are looking for quality"*
 
-| band | opens at (words) | floor | ceiling |
-|---|---|---|---|
-| `stub` | 0 | 0 | 0 |
-| `short` | 250 | 1 | 2 |
-| `standard` | 700 | 1 | 4 |
-| `long` | 1800 | 2 | 6 |
+And the same day, on how far to take it:
 
-| tier | moves the count |
+> *"regarding the coverage don't over do it! at the same time we are not a
+> university that wants to grade the knowdlge! Sometimes a single practice might
+> cover better than 4 unrelated small practices. It's all about quality and the
+> importants ofthe text. Like for the first quiz the dates do not matter. The
+> version might matter. And for sure 4 questions were a lot"*
+
+**Each page gets a plan before anything is written.** You read the page, its
+prose and its code, and list its *aspects* on the `Page`. An aspect is one
+important idea the page teaches that a reader could be checked on. **Each
+aspect ends one of two ways: a named exercise checks it, or a written reason
+says why nothing does.** The plan has one exercise for each distinct name the
+aspects give, and each exercise's brief lists the aspects it checks.
+
+**What makes a good aspect:**
+
+- **It matters to the page.** Dates, names and incidental numbers are not
+  aspects. The idea they illustrate may be. A version number can matter if the
+  page depends on it.
+- **One exercise can check several aspects, and often should.** One exercise
+  that practises related ideas together is better than several small,
+  unrelated ones.
+- **A minor aspect can be carried by a short reason**, such as *"incidental
+  detail, not practised"*. It does not need an exercise.
+- **A quiz asks few questions.** For a short conceptual page, one or two, each
+  about something that matters.
+- **There is no ceiling and no quota.** The plan records what you judged
+  important and why. It is not a coverage score to push up.
+
+**An aspect carries these fields:**
+
+| field | what you write |
 |---|---|
-| `introductory` | -1 |
-| `core` | 0 |
-| `advanced` | +1 |
+| `id` | a short token naming the aspect, unique on the page |
+| `says` | one sentence: what a reader who has it can do or knows |
+| `basis` | what you read it from: `example:<path>:<n>` or `tests:<path>` for the page's own code, `section:<heading>` for its prose |
+| `exercise` | the name of the planned exercise that checks it |
+| `reason` | instead of `exercise`: why nothing checks it |
 
-⚠️ **These numbers are a convention, and they may change.** Two properties do
-not change: the count never leaves its band, and every move is written down as
-a reason in the plan. **So a page under the `short` band's opening count plans
-zero, and nothing is authored for it.** When a page gets nothing, check its
-words first.
+**The plan refuses:**
+
+- an aspect with neither an `exercise` nor a `reason`, or with both;
+- two aspects with the same `id`, or with the same sentence in `says`. Two
+  exercises checking one idea are one exercise, so merge them;
+- a `basis` the page does not carry: an example or test file that is not the
+  page's own, or a heading the page has none or two of.
+
+**A page can plan zero, and zero says why.** If every aspect carries a reason,
+the plan is zero and each reason is in it. If the page teaches nothing
+checkable at all, name no aspect and write the reason in `nothing_checkable`.
+A page with no aspects and no reason is refused.
+
+**The `tier` does not change the count.** It says how hard each exercise
+should be, and it is handed to the author with the page.
 
 ⛔ **The plan is a ceiling, never a quota.** Only exercises that pass the gates
 ship. A page that ships fewer than its plan names the gate that stopped each
 missing one. Never lower a bar to reach a count.
+
+**Where to read a thin plan:** each unit's `coverage.json` holds the plan, with
+every aspect and how it ended. `authored.reasoned` lists every aspect no
+exercise was planned for, page by page.
+
+### ⛔ SUPERSEDED — the length bands
+
+⛔ **Superseded 2026-09-23 by the ruling above (`W453`).** What this section
+taught until then is kept so every citation of it still resolves. It is not
+in force.
+
+> **Each page gets a plan before anything is written: a ceiling on how many
+> exercises it may have.** It comes from three readings you give on the `Page`:
+> `words` (count them with `words_of`, which counts the prose and skips fenced
+> code), `skills` (how many distinct checkable skills the page teaches) and
+> `tier`.
+>
+> **The page's length picks a band.** The count starts at the band's floor, goes
+> up one for each distinct skill after the first, and moves by the tier. The
+> band then clamps it.
+>
+> | band | opens at (words) | floor | ceiling |
+> |---|---|---|---|
+> | `stub` | 0 | 0 | 0 |
+> | `short` | 250 | 1 | 2 |
+> | `standard` | 700 | 1 | 4 |
+> | `long` | 1800 | 2 | 6 |
+>
+> | tier | moves the count |
+> |---|---|
+> | `introductory` | -1 |
+> | `core` | 0 |
+> | `advanced` | +1 |
+>
+> So a page under the `short` band's opening count planned zero, and nothing
+> was authored for it.
 
 ---
 
@@ -824,24 +900,33 @@ same way over the worked corpus.
 from pathlib import Path
 
 from studyforge.address import Address
-from studyforge.skills.exercises import CORE, Page, author_corpus, words_of
+from studyforge.skills.exercises import CORE, Aspect, Page, author_corpus
 
 root = Path("path/to/your-corpus")
 
 
-def page(path, unit, graders=()):
-    text = (root / path).read_text(encoding="utf-8")
+def page(path, unit, aspects, graders=()):
     return Page(
         path=path,
         address=Address(["kata"]),
         variant="python",
         unit=unit,
         kind="code",
-        words=words_of(text),
-        skills=1,
+        aspects=aspects,
         tier=CORE,
         graders=graders,
     )
+
+
+greets = Aspect(
+    "greets-by-name",
+    "the greeting names who it greets",
+    ("example:lessons/greeting.md:1", "tests:checks/test_greeting.py"),
+    exercise="greet",
+)
+totals = Aspect(
+    "totals", "a basket totals its prices", ("section:A basket of prices",), exercise="total"
+)
 
 
 authored = author_corpus(
@@ -850,8 +935,8 @@ authored = author_corpus(
     material=["lessons/greeting.md", "lessons/basket.md"],
     graders=["checks/test_greeting.py"],
     pages=[
-        page("lessons/greeting.md", 1, ("checks/test_greeting.py",)),
-        page("lessons/basket.md", 3),
+        page("lessons/greeting.md", 1, (greets,), ("checks/test_greeting.py",)),
+        page("lessons/basket.md", 3, (totals,)),
     ],
     author=author,
     judge=judge,
@@ -888,6 +973,7 @@ exercise:**
 | `page` | the `Page` you described |
 | `case` | the page's source case, read from the ledger |
 | `slot` | which of the plan's exercises this is |
+| `aspects` | the aspects the plan gave this exercise to check. Write the exercise so it practises them |
 | `places` | where the exercise will sit if it ships. Its commands go under `places.workspace` |
 | `attempt` | which attempt this is, counted from 1 |
 | `entries` | the page's ledger entries: its fenced examples and its declared test files |
@@ -926,7 +1012,7 @@ left with nothing shipped.
 | `exercises/<address>/<variant>/unit-NN/practice-M/gates.json` | its gate record |
 | `exercises/<address>/<variant>/unit-NN/practice-M/tests/quiz.json` | a quiz's own document, with its record under `exercise` |
 | `practice/<address>/<variant>/unit-NN/practice-M/` | the reader's workspace: the starter and the tests |
-| `exercises/<address>/<variant>/unit-NN/coverage.json` | the unit's plan, what shipped, and every shortfall |
+| `exercises/<address>/<variant>/unit-NN/coverage.json` | the unit's plan (every aspect and how it ended), what shipped, and every shortfall |
 | `exercises/ledger.json` | the ledger, with every entry accounted for |
 
 **Exercises on a page are numbered `1..n` in the order they ship.** An exercise

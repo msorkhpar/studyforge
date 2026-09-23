@@ -1455,11 +1455,41 @@ reason it is not. ⛔ **An entry with neither is refused** (R6): a silent drop i
 
 #### 4. How many exercises a page gets follows the page
 
-⭐ **The skill writes a per-page *plan* before it authors anything:** a count inside a
-band set by the page's length, moved by the page's distinct checkable skills and by a
-difficulty tier, with every reason written down. ⛔ **The plan is a CEILING, never a
-quota.** What ships is what clears the gates, and every shortfall is named with the gate
-that refused it. ⛔ **A count is never met by lowering a bar.**
+⛔ **SUPERSEDED 2026-09-23 by the user's ruling below (`W453`). The paragraph that follows
+is kept readable so every citation of it still resolves, and it is NOT in force where it
+sets the count by a band of the page's length.**
+
+> ⭐ **The skill writes a per-page *plan* before it authors anything:** a count inside a
+> band set by the page's length, moved by the page's distinct checkable skills and by a
+> difficulty tier, with every reason written down. ⛔ **The plan is a CEILING, never a
+> quota.** What ships is what clears the gates, and every shortfall is named with the gate
+> that refused it. ⛔ **A count is never met by lowering a bar.**
+
+⛔ **AMENDED 2026-09-23 (`W453`, USER RULING) — a page is planned by its ASPECTS, not by
+its length.** The ruling, verbatim, at the pilot review (on `ISO-M10/6`): *"Depending on
+the context of the page there might be no practice, 2 or more, The target is covering all
+the aspects not just having something minimum we are looking for quality"*. ⭐ **Refined by
+the user the same day**, verbatim: *"regarding the coverage don't over do it! at the same
+time we are not a university that wants to grade the knowdlge! Sometimes a single practice
+might cover better than 4 unrelated small practices. It's all about quality and the
+importants ofthe text. Like for the first quiz the dates do not matter. The version might
+matter. And for sure 4 questions were a lot"*.
+
+- ⭐ **The skill writes a per-page *plan* before it authors anything**, naming the page's
+  *aspects*: the IMPORTANT ideas it teaches that a reader could be checked on, read from
+  its prose AND its code. ⛔ **Trivia is not an aspect** — a date, a name or an incidental
+  number is not; the idea it illustrates may be.
+- ⛔ **Every aspect is accounted for**: checked by a named exercise (or quiz), or carried by
+  a written reason. **An aspect with neither is refused**, the same honesty §3's ledger asks
+  of files. ⭐ **One exercise may check many aspects, and one exercise practising related
+  ideas is preferred** over several small unrelated ones; a minor aspect is carried by a
+  short reason. ⭐ **A quiz asks few questions.**
+- ⛔ **Near-duplicates are refused**: two exercises never check one aspect.
+- ⛔ **No length ceiling, and no quota.** Zero stays legitimate, with its reason written.
+  The record is what was judged important and why — never a coverage percentage.
+- ⛔ **Unchanged: the plan is a CEILING, never a quota** (R6). What ships is what clears the
+  gates, and every shortfall is named with the gate that refused it. ⛔ **A count is never
+  met by lowering a bar.** ⭐ **The same aspects always produce the same plan** (R10).
 
 #### 5. What an exercise says
 
