@@ -47,8 +47,15 @@ where = ["src"]
 
 # R13: templates and assets are source files, shipped with the package.
 # Declared here so SF-11/SF-12 add files rather than build configuration.
+#
+# ⛔ `REL-04`: every skill's procedure ships too — the skill documents are the
+# product (R16, R19), and until this glob the wheel carried none (`W438/5`). A
+# glob, never a list, so a new skill ships by existing.
+# `studyforge.skills.documents` is how an installed package reads them, and
+# `tests/studyforge/skills/test_documents.py` builds a wheel and fails on any
+# tree `SKILL.md` missing from it.
 [tool.setuptools.package-data]
-studyforge = ["**/templates/*.html", "**/assets/*"]
+studyforge = ["**/templates/*.html", "**/assets/*", "skills/**/SKILL.md"]
 
 [tool.pytest.ini_options]
 minversion = "8.0"
