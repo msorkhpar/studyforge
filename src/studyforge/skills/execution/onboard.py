@@ -64,8 +64,11 @@ COMPOSE_FILE = f"{DIRECTORY}/compose.yaml"
 #: The selection a corpus keeps: the set, what is carried, and the two argv.
 TOOLCHAIN_FILE = f"{DIRECTORY}/toolchain.json"
 
-#: Where the prime's copies land, each under its own corpus-relative path.
+#: The prime the build is handed: `<tool>/` per project (`W440`).
 PRIME_DIR = f"{DIRECTORY}/prime"
+
+#: The slot `runner.prime.declared_by` leaves for the directory.
+DIRECTORY_SLOT = "<directory>"
 
 #: What a reader opens first.
 READER_DOC = "EXECUTION.md"
@@ -173,6 +176,7 @@ def generate(
     seeds = contract.optional(editor, "runner", "prime", "seeds", default={})
     seeded = tuple(seeds) if isinstance(seeds, Mapping) else ()
     primed = _primed(root, selection.carried, seeded)
+    flag = _prime_flag(editor) if primed.projects else None
     compose = composefile.render(
         project=project or f"studyforge-{manifest.source}",
         editor=block,
@@ -189,10 +193,10 @@ def generate(
             (TOOLCHAIN_FILE, selection.render()),
             (
                 READER_DOC,
-                _reader(manifest, selection, primed, block, sources, narration_text, seeds),
+                _reader(manifest, selection, primed, block, sources, narration_text, seeds, flag),
             ),
         ),
-        copies=tuple((f"{PRIME_DIR}/{one}", one) for one in primed.copies()),
+        copies=tuple((f"{PRIME_DIR}/{inside}", origin) for inside, origin in primed.copies()),
         selection=selection,
         primed=primed,
     )
@@ -255,6 +259,14 @@ def _primed(root: Path, runtimes: Sequence[str], seeded: Sequence[str]) -> Prime
         raise ExecutionRefused(str(refusal)) from None
 
 
+def _prime_flag(editor: Mapping[str, object]) -> str:
+    """Return the contract's own prime flag, with this corpus's directory in its slot."""
+    flag = contract.require(editor, "runner", "prime", "declared_by")
+    if not isinstance(flag, str) or DIRECTORY_SLOT not in flag:
+        raise contract.ContractRefused(f"runner.prime.declared_by has no {DIRECTORY_SLOT} slot")
+    return flag.replace(DIRECTORY_SLOT, f"<this corpus>/{PRIME_DIR}")
+
+
 def _from_compose(sources: str) -> str:
     """Return `sources` as the compose file at `COMPOSE_FILE` reaches it."""
     return "/".join([".."] * len(PurePosixPath(DIRECTORY).parts) + [sources])
@@ -293,6 +305,7 @@ def _reader(
     sources: str,
     narration_text: str | None,
     seeds: object,
+    flag: str | None,
 ) -> str:
     """Write the document a reader opens first, from declarations alone."""
     volumes = composefile.volumes_for(
@@ -345,18 +358,19 @@ def _reader(
             *(f"- `{name}` — {why}" for name, why in selection.withheld),
             "",
         ]
-    lines += [
-        "## The prime",
-        "",
-        "⛔ An empty prime primes nothing while appearing to succeed: a `NO-SOURCE`",
-        "compile task never resolves the compiler classpath. These are this corpus's",
-        "own files, copied and never authored:",
-        "",
-        *(f"- `{one}`" for one in primed.copies()),
-        "",
-        f"Pass `--prime {PRIME_DIR}` to the build above.",
-        "",
-    ]
+    lines += ["## The prime", ""]
+    if flag is None:
+        lines += ["No runtime this corpus declares is seeded from a build: no prime.", ""]
+    else:
+        lines += [
+            "⛔ An empty prime primes nothing while appearing to succeed. These are this",
+            "corpus's own files, one project per seeded tool, copied and never authored:",
+            "",
+            *(f"- `{inside}` ← `{origin}`" for inside, origin in primed.copies()),
+            "",
+            f"Pass `{flag}` to the build above.",
+            "",
+        ]
     if narration_text is not None:
         lines += _narration(narration_text)
     return "\n".join(lines)

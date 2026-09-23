@@ -129,10 +129,26 @@ framework.** A version typed in this package is a version that disagrees with
 the corpus the day the corpus moves, and §8.1's version guard would then fail a
 build for a disagreement this skill created.
 
-`prime.prime_for(root, runtimes)` refuses, by name, a declared runtime with no
-build file, with no source, or with no test. ⚠️ **That refusal is the whole
-point of the step** — it is the difference between an unprimed image and an
-image that says it is primed.
+`prime.prime_for(root, runtimes, seeded=…)` refuses, by name, a seeded tool
+with no build file, and a build with no source or no test in it. ⚠️ **That
+refusal is the whole point of the step** — it is the difference between an
+unprimed image and an image that says it is primed.
+
+⛔ **The prime is in the component's layout, and its names are the contract's
+(`W440`).** The component warms **one project directory per seeded tool** and
+refuses anything else at the prime's top. So each tool the corpus declares and
+`runner.prime.seeds` names gets `prime/<tool>/`, holding the corpus's own
+build **re-rooted at its build file's directory**: the shallowest directory
+holding one of that tool's build files, every build file under it, and the
+smallest real source and test inside it. A tool the contract does not seed gets
+no directory, and a corpus that declares none gets no prime at all.
+
+- ⛔ **Two builds for one tool at the same depth are refused**, naming both.
+  The component warms one project per tool: make the rest its modules.
+- ⛔ **An exercise is never part of the prime.** Nothing under `exercises/` is
+  read, nor any workspace under `practice/` that a bundle on disk owns, so no
+  exercise's build role is swept in. ⭐ The prime is the corpus's own declared
+  build, and every dependency an exercise names must be declared there too.
 
 ### 4a. When a graded exercise imports a library
 
@@ -172,8 +188,10 @@ is the finding.
 
 ### 6. Build the image and bring the editor up
 
-Run the `build` argv step 2 printed, with `--prime` pointing at the written
-prime directory. Then run the `tag_from` argv, record the tag, and set the
+Run the `build` argv step 2 printed **from the component's checkout**, with
+the flag `runner.prime.declared_by` names pointing at the written prime
+directory by its full path — `EXECUTION.md` prints the flag with this corpus's
+directory in its slot. Then run the `tag_from` argv, record the tag, and set the
 contract's own image environment variable to it. Bring the compose file up, and
 confirm the editor answers the health path the contract names.
 
@@ -189,7 +207,7 @@ running it runs `docker compose`.
 |---|---|
 | `.studyforge/execution/compose.yaml` | the compose file, rendered from the contracts |
 | `.studyforge/execution/toolchain.json` | the selection: the set, what is carried, what is not and why, and the two argv |
-| `.studyforge/execution/prime/<runtime>/…` | the corpus's own build files, source and test, copied |
+| `.studyforge/execution/prime/<tool>/…` | one project per seeded tool: the corpus's own build, source and test, re-rooted at the build |
 | `EXECUTION.md` | what a reader opens first: what to build, what to run, and what this corpus declared |
 
 ⭐ Every one of them is **generated**, and this skill declares each as

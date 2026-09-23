@@ -110,8 +110,43 @@ def test_the_selection_document_records_no_tag(tmp_path):
 
 def test_the_prime_the_document_names_is_the_prime_that_is_copied(tmp_path):
     result = made(tmp_path)
-    copied = {origin for _, origin in result.copies}
-    assert copied == set(result.primed.copies())
+    assert result.copies == tuple(
+        (f"{skill.PRIME_DIR}/{inside}", origin) for inside, origin in result.primed.copies()
+    )
+
+
+def test_the_written_prime_holds_one_project_per_seeded_tool_and_nothing_else(tmp_path):
+    # ⛔ `W440`: the component refuses anything at the prime's top but a seeded
+    # tool's project, so the top is exactly the seed keys the corpus declares.
+    root = corpus(tmp_path)
+    skill.write(skill.generate(manifest(), editor_text=editor_text(), root=root), root)
+    prime = root / skill.PRIME_DIR
+    assert sorted(one.name for one in prime.iterdir()) == ["maven"]
+    assert (prime / "maven/pom.xml").is_file()
+    assert (prime / "maven/src/main/java/demo/Demo.java").is_file()
+
+
+def test_the_reader_is_told_the_contracts_own_prime_flag(tmp_path):
+    document = dict(made(tmp_path).files)[skill.READER_DOC]
+    assert f"--prime <this corpus>/{skill.PRIME_DIR}" in document
+    assert "`maven/pom.xml` ← `sources/app/pom.xml`" in document
+
+
+def test_a_contract_with_no_prime_flag_is_refused_by_the_key_it_lacks(tmp_path):
+    runner = {"prime": {"seeds": {"maven": "maven-repo"}}}
+    with pytest.raises(skill.contract.ContractRefused) as refused:
+        skill.generate(manifest(), editor_text=editor_text(runner=runner), root=corpus(tmp_path))
+    assert "runner.prime.declared_by" in str(refused.value)
+
+
+def test_a_corpus_with_no_seeded_tool_gets_no_prime_and_says_so(tmp_path):
+    root = corpus(tmp_path)
+    (root / "sources/app/run.py").write_text("def one():\n    return 1\n", encoding="utf-8")
+    (root / "sources/app/test_run.py").write_text("def test_one():\n    pass\n", encoding="utf-8")
+    result = skill.generate(manifest(runtimes=["python"]), editor_text=editor_text(), root=root)
+    assert result.copies == () and result.primed.projects == ()
+    document = dict(result.files)[skill.READER_DOC]
+    assert "no prime" in document and "--prime" not in document
 
 
 def test_write_puts_every_path_on_disk_and_the_copies_are_byte_identical(tmp_path):
