@@ -625,6 +625,8 @@ else.**
 | W439 | The authoring guide says to hand-edit `corpus.json`, which an onboarded corpus treats as generated | framework agent | ✅ done — `0e1dfca2` | [`rows/W439.md`](rows/W439.md) |
 | W440 | The execution skill writes a prime the toolchain refuses, and would sweep every exercise's build in | framework agent | `in-progress` — blocks `M10` (`W436/1`) | [`rows/W440.md`](rows/W440.md) |
 | W441 | The maximise test's scroll-restore drifts under the merge gate's load, three readings | framework agent | `in-progress` — a gate that lies | [`rows/W441.md`](rows/W441.md) |
+| W442 | A corpus's generated files spell the framework's path by the checkout that ran the skill (R10) | framework agent | `todo` — blocks `M10` | [`rows/W442.md`](rows/W442.md) |
+| W443 | The guide's *Before you author* fails a literal first reader on the first corpus | framework agent | `todo` — blocks `M10`'s acceptance; after `W440` | [`rows/W443.md`](rows/W443.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
