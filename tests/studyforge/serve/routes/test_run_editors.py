@@ -115,3 +115,35 @@ def test_opening_one_practice_after_another_leaves_the_first_ones_lock_alone(roo
     assert [status for status, _ in at_once(root, [2])] == [200]
     assert lock(root, "passes") == first == {"greet.py": True}
     assert not (root / "practice" / workbench.SETTINGS_DIR).exists()
+
+
+# --- ⭐ the route passes the files a command names (`W446`, register review) --
+
+#: A Maven practice: its build file beside `src/`, named only by its commands.
+MAVEN = "practice/maven"
+MAVEN_MAIN = f"{MAVEN}/src/main/java/Kata.java"
+MAVEN_TEST = f"{MAVEN}/src/test/java/KataTest.java"
+
+
+@pytest.mark.parametrize("field", ["run_command", "test_command"])
+def test_the_route_opens_the_directory_holding_the_build_file_a_command_names(root, field):
+    # ⛔ Without the command's files the folder is `…/maven/src`, two loose
+    # source trees with no project. Driven through `editor()` itself, so the
+    # route's half of the rule is guarded and not only `practice_folder`'s.
+    for path in (MAVEN_MAIN, MAVEN_TEST, f"{MAVEN}/pom.xml"):
+        (root / path).parent.mkdir(parents=True, exist_ok=True)
+        (root / path).write_text("x\n", encoding="utf-8")
+    workspace = {
+        "main_path": MAVEN_MAIN,
+        "test_path": MAVEN_TEST,
+        field: ["mvn", "-o", "-q", "-f", f"{MAVEN}/pom.xml", "test"],
+    }
+    live, discovered = runs_over(root, editor=StubEditors(UP))
+    answered = run.editor(live, discovered.corpora[0], workspace)
+    assert answered.status == 200
+    body = json.loads(answered.body)
+    assert folder_of(body["main"]["url"]) == folder_of(body["test"]["url"]) == "/w/practice/maven"
+    assert body["main"]["path"] == "src/main/java/Kata.java"
+    settings = root / MAVEN / workbench.SETTINGS_DIR / workbench.SETTINGS_FILE
+    assert settings.is_file()
+    assert not (root / MAVEN / "src" / workbench.SETTINGS_DIR).exists()
