@@ -19,13 +19,17 @@ import json
 
 import pytest
 
+from studyforge.archive.document import build, render
+from studyforge.skills.adapter import Layout
 from studyforge.skills.exercises import (
     ATTEMPTS,
     AuthoringError,
     author_corpus,
     author_page,
+    carried_practices,
     gate_code,
     gate_quiz,
+    require_after_carried,
     take,
 )
 from tests.studyforge.skills.exercises.authoring import (
@@ -78,7 +82,14 @@ def test_a_planted_gate_failure_is_re_authored_inside_the_budget(tmp_path):
     script = {pages[GREETING].path: [greeting_whose_plant_handles_its_edge, greeting]}
     author = Scripted(script)
     outcome = author_page(
-        pages[GREETING], ledger, author, None, Running(), source="demo", where="the page"
+        pages[GREETING],
+        ledger,
+        author,
+        None,
+        Running(),
+        source="demo",
+        where="the page",
+        carried=(),
     )
     assert len(outcome.shipped) == 1 and outcome.shortfalls == ()
     first, second = author.briefs
@@ -135,7 +146,9 @@ def test_a_page_whose_gates_have_nothing_to_run_them_is_refused(tmp_path):
     ledger = take(tmp_path, material, graders, "the ledger")
     author = Scripted({pages[GREETING].path: [greeting]})
     with pytest.raises(AuthoringError, match="no runner"):
-        author_page(pages[GREETING], ledger, author, None, None, source="demo", where="p")
+        author_page(
+            pages[GREETING], ledger, author, None, None, source="demo", where="p", carried=()
+        )
 
 
 @pytest.mark.parametrize("function", [author_corpus, author_page, gate_code, gate_quiz])
@@ -146,3 +159,87 @@ def test_no_gate_budget_or_option_can_be_handed_to_the_loop(function):
     loosening = {"gates", "skip", "budget", "attempts", "options", "strict", "only"}
     assert not named & loosening, f"{function.__name__} takes {sorted(named & loosening)}"
     assert isinstance(ATTEMPTS, int) and ATTEMPTS >= 2, "a budget with no room for a retry"
+
+
+# ⛔ W437: a unit may already carry practices — the first corpus's
+# `iso-fundamentals` units 2, 3 and 4 each carry a bundled `practice-1` — and
+# an authored exercise numbered from 1 would collide with it. ⭐ What a unit
+# carries is READ off its archive, never declared, and authoring numbers after it.
+
+
+def _carry(root, page, ordinals):
+    """Archive a practice for each ordinal on the page's unit, as ingestion would."""
+    written = []
+    for ordinal in ordinals:
+        document = build(
+            source="demo",
+            address=page.address,
+            variant=page.variant,
+            unit=page.unit,
+            kind="practice",
+            ordinal=ordinal,
+            ingested="2026-01-05",
+            title=f"The source's own practice {ordinal}",
+            blocks=[{"type": "para", "text": "A practice the source shipped."}],
+        )
+        path = Layout(root).document(page.address, page.variant, page.unit, "practice", ordinal)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(render(document), encoding="utf-8")
+        written.append(path.relative_to(root).as_posix())
+    return written
+
+
+def test_what_a_unit_carries_is_read_off_its_archive(tmp_path):
+    page = fixture_pages()[GREETING]
+    assert carried_practices(tmp_path, page, "p") == (), "a unit with no archive carries nothing"
+    _carry(tmp_path, page, (1, 2))
+    assert carried_practices(tmp_path, page, "p") == (1, 2)
+    other = fixture_pages()[GREETING + 1]
+    assert carried_practices(tmp_path, other, "p") == (), "another unit's practices were read"
+
+
+def test_a_unit_whose_archived_practices_have_a_gap_is_refused(tmp_path):
+    page = fixture_pages()[GREETING]
+    _carry(tmp_path, page, (1, 3))
+    with pytest.raises(AuthoringError, match="no gap and no repeat"):
+        carried_practices(tmp_path, page, "p")
+
+
+def test_a_unit_that_carries_a_practice_numbers_its_authored_exercises_after_it(tmp_path):
+    material, graders, pages = write_corpus(tmp_path)
+    ledger = take(tmp_path, material, graders, "the ledger")
+    author = Scripted({pages[GREETING].path: [greeting]})
+    outcome = author_page(
+        pages[GREETING], ledger, author, None, Running(), source="demo", where="p", carried=(1,)
+    )
+    assert outcome.shipped, "nothing shipped, so this asserts nothing"
+    ordinals = [gated.places.ordinal for gated in outcome.shipped]
+    assert ordinals == list(range(2, len(ordinals) + 2)), "authored exercises did not follow"
+    assert author.briefs[0].places.ordinal == 2, "the author was briefed at a carried ordinal"
+
+
+def test_the_whole_pass_numbers_after_the_archive_and_leaves_its_practice_untouched(tmp_path):
+    material, graders, pages = write_corpus(tmp_path)
+    (kept,) = _carry(tmp_path, pages[GREETING], (1,))
+    before = snapshot(tmp_path)[kept]
+    _, authored = _again(tmp_path, material, graders, pages[:1], {pages[0].path: [greeting]})
+    (covered,) = authored.pages
+    assert covered.shipped and all(not b.endswith("/practice-1") for b in covered.shipped)
+    assert covered.shipped[0].endswith("/practice-2"), "the first authored one is not next"
+    assert snapshot(tmp_path)[kept] == before, "the source's own practice was rewritten"
+    # ⭐ R10: a re-run with nothing changed reads the same unit and writes nothing.
+    after = snapshot(tmp_path)
+    author, again = _again(tmp_path, material, graders, pages[:1], {pages[0].path: [greeting]})
+    assert again.written == () and author.briefs == [] and snapshot(tmp_path) == after
+
+
+@pytest.mark.parametrize(
+    ("carried", "shipped", "says"),
+    [((1,), (1,), "practice-1"), ((1, 2), (2, 3), "practice-2"), ((1,), (3,), "no gap")],
+)
+def test_an_authored_ordinal_that_collides_or_leaves_a_gap_is_refused_by_name(
+    carried, shipped, says
+):
+    with pytest.raises(AuthoringError, match=says):
+        require_after_carried(carried, shipped, "p")
+    assert require_after_carried(carried, (len(carried) + 1,), "p") is None
