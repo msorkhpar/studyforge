@@ -617,6 +617,8 @@ else.**
 | W433 | A reader can open settings and the command palette inside a practice frame, and the read-only lock is workspace-scoped | framework agent | ✅ done — `e74f15b3` | [`rows/W433.md`](rows/W433.md) |
 | W434 | `safety.py`'s permitted sets are anchored `^…$`, so a trailing newline clears the gate | framework agent | ✅ done — `585af3e1` | [`rows/W434.md`](rows/W434.md) |
 | W435 | Serving a practice writes `.vscode/` into the corpus and nothing ignores it, so `workspace verify` is RED | framework agent | ✅ done — `0a5a8f3e` | [`rows/W435.md`](rows/W435.md) |
+| W436 | No shape carries an exercise's third-party dependencies, so a jPOS exercise cannot be graded | framework agent | `todo` — blocks `M10` (`ISO-M10/2`) | [`rows/W436.md`](rows/W436.md) |
+| W437 | The authoring loop numbers from 1, so a unit that already has a practice collides | framework agent | `todo` — blocks `M10` (`ISO-M10/3`) | [`rows/W437.md`](rows/W437.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
