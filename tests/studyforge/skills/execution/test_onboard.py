@@ -14,10 +14,15 @@ import json
 
 import pytest
 
+from studyforge.address import Address
 from studyforge.corpus.manifest import parse
+from studyforge.execute import container_for, editor_container_for
+from studyforge.exercise.bundle import Places
 from studyforge.skills.execution import onboard as skill
 from tests.studyforge.skills.execution.contracts import (
+    WORKSPACE,
     corpus,
+    editor_contract,
     editor_text,
     manifest_document,
     narration_text,
@@ -275,3 +280,54 @@ def test_every_glob_it_declares_carries_a_reason_the_manifest_would_accept():
 def test_a_path_no_glob_covers_is_reported_rather_than_passed():
     # ⭐ The other direction: the classifier is not vacuous.
     assert not skill.classified("sources/app/Demo.java")
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W445` — one command brings up an editor that sees every practice, and the runner
+# --------------------------------------------------------------------------
+
+
+def compose(tmp_path, **moved: object) -> str:
+    return dict(made(tmp_path, **moved).files)[skill.COMPOSE_FILE]
+
+
+def test_the_editor_binds_the_practice_workspaces_beside_the_sources(tmp_path):
+    # ⭐ Read from where `emit` places a workspace, never a second spelling of it.
+    places = Places(Address(("demo",)), "java", unit=1, ordinal=1)
+    top = places.workspace.split("/")[0]
+    text = compose(tmp_path)
+    assert "../../sources:" in text and f'"../../{top}:{WORKSPACE}/{top}"' in text
+    assert skill.workspaces_bind(editor_block(), "sources") == (top, f"{WORKSPACE}/{top}")
+
+
+def test_sources_that_already_hold_the_practice_workspaces_get_no_second_bind():
+    assert skill.workspaces_bind(editor_block(), "practice") is None
+
+
+def test_a_contract_already_mounting_where_the_workspaces_go_is_refused():
+    block = editor_block()
+    block["mounts"][0]["container_path"] = f"{WORKSPACE}/practice"
+    with pytest.raises(skill.ExecutionRefused, match="shadow"):
+        skill.workspaces_bind(block, "sources")
+
+
+def test_the_runner_comes_up_with_the_editor_under_the_names_execute_looks_for(tmp_path):
+    made_ = made(tmp_path)
+    text = dict(made_.files)[skill.COMPOSE_FILE]
+    assert "\n  runner:\n" in text
+    assert f"container_name: {container_for('demo')}" in text
+    assert made_.runner is not None and made_.runner.name == container_for("demo")
+    # ⭐ The editor's name is compose's own: `<project>-<service>-1`.
+    assert "name: studyforge-demo\n" in text and "\n  editor:\n" in text
+    assert editor_container_for("demo") == "studyforge-demo-editor-1"
+    assert '"../..:/work"' in text
+
+
+def test_the_compose_file_names_no_tag_and_the_env_file_is_the_skills_own(tmp_path):
+    text = compose(tmp_path)
+    assert "${STUDYFORGE_RUNNER_IMAGE:?" in text and "example/runner:" not in text
+    assert skill.classified(skill.RUNNER_ENV)
+
+
+def editor_block() -> dict:
+    return editor_contract()["editor"]

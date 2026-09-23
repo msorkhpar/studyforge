@@ -229,3 +229,40 @@ def test_a_second_components_block_is_checked_even_though_it_is_not_rendered():
 
 def test_no_rendered_file_names_the_docker_socket():
     assert not rulings.names_a_socket(rendered())
+
+
+# --------------------------------------------------------------------------
+# `W445` — the practice workspaces bound beside the sources, and the runner
+# --------------------------------------------------------------------------
+
+#: The practice workspaces, as the compose file reaches them and where they go.
+PRACTICE = ("../../practice", f"{WORKSPACE}/practice")
+
+
+def test_a_further_bind_is_mounted_writable_beside_the_sources():
+    text = rendered(binds=(PRACTICE,))
+    assert f'"{SOURCES}:{WORKSPACE}/sources"' in text
+    assert f'"{PRACTICE[0]}:{PRACTICE[1]}"' in text
+
+
+def test_a_further_bind_is_named_in_ruling_4s_footer_by_its_host_side():
+    footer = rendered(binds=(PRACTICE,)).split("ruling 4", 1)[1]
+    assert f"#   - {SOURCES}" in footer and f"#   - {PRACTICE[0]}" in footer
+    assert PRACTICE[1] not in footer
+    assert composefile.must_exist_first(editor(), (), "src", also=("practice",)) == (
+        "src",
+        "practice",
+    )
+
+
+def test_the_runner_is_placed_beside_the_editor_as_it_was_rendered():
+    service = {"image": "${RUNNER:?why}", "container_name": "studyforge-runner-demo"}
+    text = rendered(runner=("runner", service))
+    assert "\n  runner:\n" in text and "container_name: studyforge-runner-demo" in text
+    assert text.index("  editor:") < text.index("  runner:")
+
+
+def test_a_runner_that_names_the_socket_is_refused_over_the_bytes():
+    service = {"image": "x", "volumes": ["/var/run/docker.sock:/var/run/docker.sock"]}
+    with pytest.raises(composefile.ComposeRefused, match="socket"):
+        rendered(runner=("runner", service))

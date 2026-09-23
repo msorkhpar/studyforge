@@ -36,7 +36,16 @@ did not, so `rulings.findings` runs first and a non-empty answer is a refusal.
 because the two can disagree only if this module has a defect, which is exactly
 when it matters.
 
-## ⚠️ ONE SERVICE, AND THE SECOND COMPONENT'S BLOCK IS CHECKED RATHER THAN RENDERED
+## ⭐ THE EDITOR, THE RUNNER BESIDE IT, AND WHAT THE EDITOR BINDS (`W445`)
+
+⭐ **The runner a Submit execs into is the file's second service**, rendered by
+`runnerservice` from the same component's `runner` block and placed here, so
+one `docker compose up` starts both. ⭐ **The editor binds the practice
+workspaces too** (`binds`), from where `emit` places them, beside the sources
+it already shows: a practice file the editor does not hold is a frame that
+cannot open it.
+
+## ⚠️ THE SECOND COMPONENT'S BLOCK IS CHECKED RATHER THAN RENDERED
 
 ⭐ **The narration component's contract is read and its rulings are asserted**;
 §8.1 names that service as publishing on all interfaces today and says it is to
@@ -81,8 +90,14 @@ def service(
     image: str,
     sources: str,
     volumes: Sequence[str] = (),
+    binds: Sequence[tuple[str, str]] = (),
 ) -> dict[str, object]:
-    """One compose service, every value of it read out of `block`."""
+    """One compose service, every value of it read out of `block`.
+
+    ⭐ `binds` are further `(host, container)` binds of the corpus's own
+    directories — the practice workspaces (`W445`) — each writable and each
+    named in ruling 4's footer beside the sources.
+    """
     broken = rulings.findings(block, name=name)
     if broken:
         raise ComposeRefused(
@@ -106,7 +121,10 @@ def service(
     workspace = _tmpfs(block)
     if workspace:
         built["tmpfs"] = workspace
-    built["volumes"] = [_mounted(entry, sources) for entry in kept(block, volumes)]
+    built["volumes"] = [
+        *(_mounted(entry, sources) for entry in kept(block, volumes)),
+        *(f"{host}:{inside}" for host, inside in binds),
+    ]
     health = _healthcheck(block)
     if health:
         built["healthcheck"] = health
@@ -123,11 +141,14 @@ def render(
     runtimes: Sequence[str] = (),
     seeds: Mapping[str, object] | None = None,
     checked: Sequence[tuple[str, Mapping[str, object]]] = (),
+    binds: Sequence[tuple[str, str]] = (),
+    runner: tuple[str, Mapping[str, object]] | None = None,
 ) -> str:
     """Return the whole compose file, as the bytes a corpus keeps.
 
     ⭐ `checked` is every other component block whose rulings are asserted and
-    whose service is **not** rendered — see the module contract.
+    whose service is **not** rendered — see the module contract. ⭐ `runner` is
+    `(service name, mapping)` as `runnerservice.plan` rendered it (`W445`).
     """
     for other, block in checked:
         broken = rulings.findings(block, name=other)
@@ -138,16 +159,18 @@ def render(
             )
     volumes = volumes_for(seeds, runtimes)
     mounts = kept(editor, volumes)
-    document: dict[str, object] = {
-        "name": project,
-        "services": {
-            "editor": service(editor, name="editor", image=image, sources=sources, volumes=volumes)
-        },
+    services: dict[str, object] = {
+        "editor": service(
+            editor, name="editor", image=image, sources=sources, volumes=volumes, binds=binds
+        )
     }
+    if runner is not None:
+        services[runner[0]] = dict(runner[1])
+    document: dict[str, object] = {"name": project, "services": services}
     named = sorted({str(entry["volume"]) for entry in mounts if entry.get("volume")})
     if named:
         document["volumes"] = {one: {} for one in named}
-    text = emit(document) + _footer(editor, volumes, sources)
+    text = emit(document) + _footer(editor, volumes, sources, [host for host, _ in binds])
     if rulings.names_a_socket(text):
         raise ComposeRefused(
             "the rendered file names the Docker socket; §8.3 mounts none into a serving "
@@ -184,7 +207,11 @@ def kept(
 
 
 def must_exist_first(
-    editor: Mapping[str, object], volumes: Sequence[str] = (), sources: str = ""
+    editor: Mapping[str, object],
+    volumes: Sequence[str] = (),
+    sources: str = "",
+    *,
+    also: Sequence[str] = (),
 ) -> tuple[str, ...]:
     """Every bind source that must exist before the container starts (ruling 4).
 
@@ -192,11 +219,12 @@ def must_exist_first(
     about a directory docker would create on the host, so a reader told to
     create a path inside the image has been told nothing they can act on.
     """
-    return tuple(
+    declared = tuple(
         (sources if entry.get("per_project") is True else str(entry.get("host_path", "")))
         for entry in kept(editor, volumes)
         if entry.get("must_exist_before_start") is True and entry.get("kind") == "bind"
     )
+    return declared + tuple(also)
 
 
 def _published(entry: Mapping[str, object]) -> str:
@@ -264,9 +292,11 @@ def _healthcheck(block: Mapping[str, object]) -> dict[str, object]:
     return built
 
 
-def _footer(editor: Mapping[str, object], volumes: Sequence[str], sources: str) -> str:
+def _footer(
+    editor: Mapping[str, object], volumes: Sequence[str], sources: str, also: Sequence[str]
+) -> str:
     """Ruling 4, said in the file: which bind sources must exist before the start."""
-    first = must_exist_first(editor, volumes, sources)
+    first = must_exist_first(editor, volumes, sources, also=also)
     if not first:
         return ""
     lines = [

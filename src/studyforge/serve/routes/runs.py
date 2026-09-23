@@ -231,9 +231,9 @@ class Runs:
         asked = self._probe(corpus).editor()
         if asked is None:
             return None
-        where = self._remember(asked)
-        inside_main = where.inside(main)
-        if inside_main is None:
+        where = self._remember(asked).holding(main)  # the one bind holding it (`W445`)
+        inside_main = None if where is None else where.inside(main)
+        if where is None or inside_main is None:
             return None
         inside_test = where.inside(test) if test else None
         write_settings(corpus.root / where.base, inside_main, inside_test)
