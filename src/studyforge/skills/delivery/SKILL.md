@@ -31,20 +31,22 @@ It runs **in the target repository**, and its authority is `studyforge`.
 ### 1. Read the capability index — ⛔ never the epic documents
 
 ```
-python3 -c "from pathlib import Path; \
-  from studyforge.skills.delivery import capability_index; \
-  tasks = Path('docs/tasks'); \
-  print(capability_index(((p.name, p.read_text('utf-8')) \
-    for p in sorted(tasks.glob('E*.md'))), \
-    ('README.md', (tasks / 'README.md').read_text('utf-8')), \
-    Path('workspace.json').read_text('utf-8')))"
+python3 -m studyforge.skills.delivery
 ```
 
-⛔ **The caller names the documents, and that is deliberate.** This package
-never goes looking for `docs/tasks/`: a framework module that knew where a
-plan lives would be a module the next repository has to be arranged around.
+⭐ **The index ships in the installed package**, generated, and this command
+prints it byte for byte — from any directory, with no checkout and no plan
+documents anywhere on the disk. It is what a planner reads about the
+framework, and the only thing.
 
-⛔ **The second document declares the ORDER milestones run in**, by the order
+⛔ **The package never goes looking for a plan's documents.** It reads the one
+file it ships, from its own directory. The **generator** is
+`capability_index(documents, order, pins)`, and it stays on the package's
+surface for a plan of your own: the caller names every document it reads,
+because a framework module that knew where a plan lives would be a module the
+next repository has to be arranged around.
+
+⛔ **The generator's second document declares the ORDER milestones run in**, by the order
 its `### M<n> — <name>` sections appear, and the index prints and compares
 milestones in that order — ⚠️ **never the order their ids sort to**, because a
 plan can be reordered without renaming a milestone. ⭐ A declared milestone no

@@ -70,6 +70,24 @@ def test_the_pin_document_is_what_places_a_row_on_the_other_side():
 #: for. `io` is absent deliberately: `export` uses `StringIO` and never a file.
 _FILESYSTEM = frozenset({"pathlib", "os", "os.path", "shutil", "glob", "tempfile"})
 
+#: ⭐ The one excused reach, by module and by name (`REL-06`): `packaged` reads the index this
+#: package SHIPS, from its own directory, and never a path a caller names.
+_OWN_DATA = {"packaged.py": frozenset({"pathlib"})}
+
+
+def test_the_one_excused_reach_is_anchored_to_the_modules_own_file():
+    # ⛔ The excuse above holds only while every `Path` in `packaged` is built from its own
+    # `__file__`: a `Path(...)` of anything else would be a module that goes looking.
+    tree = ast.parse((Path(delivery.__file__).parent / "packaged.py").read_text("utf-8"))
+    built = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "Path"
+    ]
+    assert built, "packaged builds no Path, so this checks nothing"
+    for node in built:
+        assert [ast.unparse(arg) for arg in node.args] == ["__file__"], ast.unparse(node)
+
 
 def test_the_package_reaches_the_filesystem_nowhere():
     # ⛔ Every module here is handed text and gives back text, so the caller
@@ -92,7 +110,7 @@ def test_the_package_reaches_the_filesystem_nowhere():
                 names = {node.module or ""}
             else:
                 continue
-            reached = names & _FILESYSTEM
+            reached = names & _FILESYSTEM - _OWN_DATA.get(module.name, frozenset())
             assert not reached, f"{module.name} imports {', '.join(sorted(reached))}"
 
 

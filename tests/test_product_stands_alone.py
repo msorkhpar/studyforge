@@ -184,13 +184,15 @@ def test_every_declaration_says_why():
         assert len(reason) > 30, entry
 
 
-@pytest.mark.parametrize("path", sorted(process.DEFERRED))
-def test_each_deferred_file_still_needs_its_entry(path):
+def test_each_deferred_file_still_needs_its_entry():
     # ⛔ An excuse that outlives its reason excuses the next regression instead.
-    source = (repository_root() / path).read_text(encoding="utf-8")
-    assert any(_names_tooling(node) for node in ast.walk(ast.parse(source))), (
-        f"{path} no longer reaches the tooling: remove it from process.DEFERRED"
-    )
+    # ⭐ A loop, never a parametrisation: `DEFERRED` is empty since `REL-06`, and an empty
+    # parameter set would print a skip every run for a population that is merely empty.
+    for path in sorted(process.DEFERRED):
+        source = (repository_root() / path).read_text(encoding="utf-8")
+        assert any(_names_tooling(node) for node in ast.walk(ast.parse(source))), (
+            f"{path} no longer reaches the tooling: remove it from process.DEFERRED"
+        )
 
 
 def test_a_deferred_file_is_never_marked_process():
