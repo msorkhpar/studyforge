@@ -20,7 +20,7 @@ nothing was moved or deleted.
 
 ## Gates
 
-⛔ Each gate was run bare from `studyforge-wt/dev1` at the code commit, its output sent to a
+⛔ Each gate was run bare from `studyforge-wt/dev1` at the fix commit `db528769`, its output sent to a
 scratch file and `$?` read on the next line — never through a pipe.
 
 | gate | environment | reading |
@@ -28,12 +28,12 @@ scratch file and `$?` read on the next line — never through a pipe.
 | `./docker/dev/check ruff check .` | pinned image | GREEN, exit 0 |
 | `./docker/dev/check ruff format --check .` | pinned image | GREEN, exit 0 |
 | `python3 -m tools.quality` | host | GREEN, exit 0 |
-| `python3 -m pytest tests/studyforge/skills tests/test_repository.py tests/authoring -q` | host | GREEN, exit 0 |
-| `./docker/dev/check python3 -m pytest tests/studyforge/skills/test_documents.py -q -rs` | pinned image | GREEN, exit 0 — the two wheel tests SKIP there, saying why (`REL-04/1`) |
+| `python3 -m pytest -n auto -q` | host | GREEN, exit 0 |
+| `./docker/dev/check python3 -m pytest -n auto -q` | pinned image | GREEN, exit 0 — the two wheel tests SKIP there, saying why (`REL-04/1`) |
 
 ## ⛔ The reading `E15` asks for, the control, and the plant
 
-⭐ **The reading.** A `git archive` of the code commit into the office's scratch directory; in
+⭐ **The reading**, re-taken at the fix commit `db528769`. A `git archive` of that commit into the office's scratch directory; in
 it, `python3 -m pip wheel . --no-deps --no-build-isolation --no-index -w <scratch>` (the host's
 own setuptools, nothing fetched). A fresh `python3 -m venv` in scratch, the wheel installed into
 it with `pip install --no-index --no-deps`, and from an empty directory outside the checkout,
