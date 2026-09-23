@@ -86,10 +86,151 @@
     if (element) { element.hidden = !visible; }
   }
 
+  /* ⛔ **A FRAME NEVER TAKES FOCUS THE READER DID NOT GIVE IT, AND THE PAGE
+     NEVER MOVES ON ITS OWN** (`W449`, the user's report of 2026-09-23).
+
+     ⚠️ **The mechanism, measured in a real browser and not guessed.** A
+     workbench focuses its editor as it starts — `restoreParts()` calls
+     `activeGroup.focus()`, then the editor that opens the window's file calls
+     `focus()` on its input, neither with `preventScroll` — and the browser lets
+     a frame of another origin on the same site take focus from the page with
+     no user activation at all. ⛔ **Focusing an element scrolls every ancestor
+     frame to it**, so a reader who opened the page at its top was carried to
+     the editor seconds later, and `document.activeElement` became the frame.
+     ⚠️ Nothing on the frame refuses it: `inert` does not reach the framed
+     document, and `allow="focus-without-user-activation 'none'"` is not
+     honoured (both measured). ⛔ Delaying the frame until the reader reaches it
+     was not needed, so it was not done.
+
+     ⭐ **So the page gives focus back, and it can because of an order the
+     browser keeps.** The page's `blur` is dispatched INSIDE the frame's
+     `focus()` call, before the scroll it starts has moved anything; one task
+     later focus goes back to where the reader left it and the page is put back
+     where it was, which also cancels the glide `scroll-behavior: smooth` had
+     queued. ⛔ **The reader never sees the page move** (measured over the
+     two-practice pilot page: the page rests where it was opened, and at most
+     one 3px step is painted before it is put back).
+
+     ⭐ **What counts as GIVEN is the reader's hand, never a timer:** the
+     pointer over THAT frame together with the page's own user activation —
+     which a click inside a frame propagates to every ancestor — or a Tab
+     pressed on the page just before focus arrived. ⚠️ **Two steals raise NO
+     `blur`**: a frame taking focus while the reader types in ANOTHER frame, and
+     any frame taking it while the browser window itself is not focused (the
+     page still scrolls — measured). So the page also reads `activeElement`
+     every `WATCH_EVERY` ms for as long as it carries a frame, and answers
+     those the same way. ⭐ Nothing is installed until the first frame is
+     built, so a page with no editor carries none of it. */
+  var held = (function () {
+    var TAB_GRACE = 500;
+    var WATCH_EVERY = 100;
+    var frames = [];
+    var pointed = null;
+    var tabbed = -Infinity;
+    var trusted = null;
+    var previous = null;
+    var resting = { x: 0, y: 0 };
+
+    function ours(element) {
+      return frames.indexOf(element) >= 0 ? element : null;
+    }
+
+    function here() {
+      return { x: window.scrollX, y: window.scrollY };
+    }
+
+    function given(built) {
+      var state = navigator.userActivation;
+      var active = state ? state.isActive : true;
+      return (pointed === built && active) || Date.now() - tabbed < TAB_GRACE;
+    }
+
+    /* ⚠️ Put the page back, and CANCEL the glide the frame queued. A scroll to
+       where the page already is does nothing, and a glide not yet begun
+       survives it (measured: the page crept 3px and stopped there), so the
+       page is moved one pixel and back — both instant, within one task, so no
+       frame is ever painted between them. ⚠️ A glide already under way can
+       still land one step after that (measured, once in six), so the next two
+       frames look again. */
+    function stay(at, again) {
+      if (window.scrollX !== at.x || window.scrollY !== at.y || again === undefined) {
+        var nudge = at.y > 0 ? at.y - 1 : at.y + 1;
+        window.scrollTo({ left: at.x, top: nudge, behavior: 'instant' });
+        window.scrollTo({ left: at.x, top: at.y, behavior: 'instant' });
+      }
+      var left = again === undefined ? 2 : again;
+      if (left > 0) { requestAnimationFrame(function () { stay(at, left - 1); }); }
+    }
+
+    /* ⚠️ One task later, and not inside the `blur`: a focus moved while the
+       browser is still dispatching the frame's own focus change is ignored,
+       and a MICROTASK is still inside it (both measured — `activeElement`
+       stayed the frame and the page glided to it). ⛔ Whichever frame holds
+       focus by THEN is the one answered: the second practice's workbench can
+       take it from the first in between, and raises no event here. */
+    function refuse(at) {
+      setTimeout(function () {
+        var built = ours(document.activeElement);
+        if (!built || built === trusted) { return; }
+        var back = !!previous && previous !== built && previous !== document.body &&
+          document.contains(previous);
+        if (back) { previous.focus({ preventScroll: true }); } else { built.blur(); }
+        stay(at);
+      }, 0);
+    }
+
+    function arrived(at) {
+      var built = ours(document.activeElement);
+      if (!built || built === trusted) { return; }
+      if (given(built)) {
+        trusted = built;
+        previous = built;
+      } else {
+        refuse(at);
+      }
+    }
+
+    /* The only way to see the two steals that raise no `blur`. ⚠️ `resting` is
+       where the page was one tick ago, which is before a steal it now sees. */
+    function tick() {
+      arrived(resting);
+      resting = here();
+    }
+
+    function install() {
+      setInterval(tick, WATCH_EVERY);
+      document.addEventListener('focusin', function (event) { previous = event.target; }, true);
+      /* Focus back on the page itself, which raises no `focusin` when it lands
+         on the body: the page, not the frame it left, is where it now is. */
+      window.addEventListener('focus', function () {
+        trusted = null;
+        previous = document.activeElement;
+      });
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Tab') { tabbed = Date.now(); }
+      }, true);
+      window.addEventListener('blur', function () {
+        resting = here();
+        arrived(resting);
+      });
+    }
+
+    return function (built) {
+      if (!frames.length) { install(); }
+      frames.push(built);
+      built.addEventListener('pointerenter', function () { pointed = built; });
+      built.addEventListener('pointerleave', function () {
+        if (pointed === built) { pointed = null; }
+      });
+    };
+  }());
+
   function frame(slot, url, title) {
     var built = document.createElement('iframe');
     built.src = url;
     built.title = title;
+    /* ⛔ BEFORE it is added: the workbench may take focus as soon as it loads. */
+    held(built);
     slot.appendChild(built);
   }
 

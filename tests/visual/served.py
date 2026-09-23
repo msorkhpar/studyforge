@@ -257,7 +257,11 @@ class Served:
 
 @contextlib.contextmanager
 def serving(
-    built: site.Site, corpus: str = DEFAULT_CORPUS, *, windows: bool = False
+    built: site.Site,
+    corpus: str = DEFAULT_CORPUS,
+    *,
+    windows: bool = False,
+    editor: str | None = None,
 ) -> Iterator[Served]:
     """Serve one corpus's subtree of `built` on a free loopback port, then stop.
 
@@ -279,6 +283,11 @@ def serving(
     that must not move an `iframe` has an `iframe` to not move (`W431`). ⛔ Off
     by default: a frame is a focus scope of its own, and every traversal in this
     package counts stops.
+
+    ⭐ **`editor=<origin>` answers the same route with that origin's `/main`
+    and `/test`** and admits it to `frame-src` instead (`W449`): a stand-in
+    editor on ANOTHER origin, which is the only kind of frame whose own script
+    can take focus the way a real workbench does.
 
     ⛔ **The run is released on the way out, before `shutdown()`.** A stream
     still waiting inside `RELEASE_BOUND` would hold `serve_forever`'s thread,
@@ -302,13 +311,13 @@ def serving(
         frames=lambda: tuple(admitted),
     )
     held = Served(server=server, built=built, corpus=corpus, runs=runs, log=log)
-    if windows:
+    if windows or editor:
         # ⛔ **The real `frame-src` composer, not a header written by hand.**
         # `serve.security` is what decides whether this document may embed
         # anything at all, and a harness that bypassed it would be reading a
         # policy no instance sends.
-        admitted.append(held.origin)
-        main, test = WINDOW_URLS
+        admitted.append(editor or held.origin)
+        main, test = (f"{editor}/main", f"{editor}/test") if editor else WINDOW_URLS
         runs.windows = {"main": {"url": main}, "test": {"url": test}}
     thread = threading.Thread(target=held.server.serve_forever, daemon=True)
     thread.start()
