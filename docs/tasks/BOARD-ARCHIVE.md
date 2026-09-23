@@ -30776,3 +30776,24 @@ onboarded corpus digests it as generated.** ⭐ `hand_edited` read `[]` as
 committed (the control) and `['corpus.json']` after ONE entry typed as the guide
 says. ⚠️ **The path that works is written nowhere**, and `M10`'s *Done when*
 includes *somebody following the guide*.
+
+## PO round 153
+
+⭐ **`W439` dispatched on `wt/dev4` at `d0a8f9b3`.**
+
+⭐ **`W436` is VERIFIED and NOT merged.** ⭐ **The register re-took its container
+proof on the host** (`STUDYFORGE_RUNNER_BUILDS=1`): GREEN exit 0, none skipped —
+per-case verdicts offline, and a named failure in a runner primed without the
+library, in an unprimed runner, and without the build role. ⛔ **Register plant
+at a seam the office did not use: the build files dropped from the gate
+record's digest — RED.** ⛔ **But the merge gate REFUSED it on the MERGED tree**:
+`AX-10`'s guide tables `CodeDraft`'s fields and binds them both ways, and
+`W436` adds `build` — ⭐ **the binding caught a drift between two rows that
+never met, which is what it is for.** Returned to its office.
+
+### ⭐ Two mints
+
+[`W440`](rows/W440.md) — ⛔ **the execution skill's prime is a layout the
+toolchain refuses** (`W436/1`). ⚠️ **It blocks the pilot.**
+[`W441`](rows/W441.md) — ⛔ **the maximise test drifted a THIRD time under the
+gate** (`4` against `2`), ⭐ **and round 146 ruled a third drift a row.**
