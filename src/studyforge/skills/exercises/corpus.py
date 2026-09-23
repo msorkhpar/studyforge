@@ -56,7 +56,7 @@ from studyforge.skills.exercises.accounting import account, accounts_for, ledger
 from studyforge.skills.exercises.drafts import Author, AuthoringError, Judge, Page, require_page
 from studyforge.skills.exercises.gating import Runner, json_bytes
 from studyforge.skills.exercises.ledger import Entry, Ledger, key_of, take
-from studyforge.skills.exercises.loop import Shortfall, author_page
+from studyforge.skills.exercises.loop import Shortfall, author_page, carried_practices
 from studyforge.skills.exercises.plan import plan_document, plan_for
 
 #: Each unit's coverage report, beside its bundles and never inside one.
@@ -143,7 +143,10 @@ def author_corpus(
             continue
         if (base / unit).exists():
             raise _moved(unit, where, "holds exercises and no coverage report")
-        outcome = author_page(page, ledger, author, judge, runner, source=source, where=where)
+        carried = carried_practices(base, page, where)
+        outcome = author_page(
+            page, ledger, author, judge, runner, source=source, where=where, carried=carried
+        )
         for gated in outcome.shipped:
             files.extend(gated.files)
             accounts |= dict(gated.accounts)
