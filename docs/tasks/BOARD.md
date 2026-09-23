@@ -75,7 +75,7 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `AX-08` | Developer 3 | `feat/AX-08-the-authoring-skill` @ `wt/dev3` | 0 @ `31991283` | `in-progress` — `M10` step 10.3 |
+| `AX-10` | Developer 4 | `docs/AX-10-the-authoring-guide-catches-up` @ `wt/dev4` | 0 @ `e01c7243` | `in-progress` — `M10` step 10.3, its last row |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).

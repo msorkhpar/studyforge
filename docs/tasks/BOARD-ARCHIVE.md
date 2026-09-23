@@ -30630,3 +30630,33 @@ defect.** ⛔ **So `.git/info/exclude` is not a fix and is refused.**
 `serve/routes/runs.py` only if the write moves.
 
 [the mint](#po-round-144)
+
+## PO round 147
+
+⭐ **`AX-08` merged `e01c7243`** — the authoring skill: `SKILL.md` first (§9),
+then the loop over `AX-07`'s ledger and plan and the `AX-03`/`AX-06` gates.
+⭐ **The ledger-to-`G5` contract is now asserted from the GATE's side**: the
+office's plant re-keyed the ledger, and its gate-side tests went RED where the
+gates' own suite stays GREEN — ⛔ **round 142's one-sided gap is closed.**
+
+### ⭐ Read by effect, with a control, before any gate
+
+A sound draft shipped one bundle on its first draft (the control); a draft whose
+main-ask test is vacuous spent the whole budget, shipped nothing and was
+reported under `G2`. ⛔ **Register plant at a seam the office did not use: the
+loop made to ship whatever it drafted.** The vacuous draft SHIPPED and four loop
+tests went RED; GREEN restored.
+
+### ⚠️ Findings carried, not minted (`docs/tasks/handoffs/AX-08.md`)
+
+`AX-08/1` — no framework quiz emission, so a quiz is written as
+`tests/quiz.json` + `gates.json`: ⭐ **`AX-04`'s owner's call.** `AX-08/2` —
+§7 row (a)'s bundled/authoritative blanking is `SK-04`'s (`M9`), so `M10`'s
+reading shows generated labels only. `AX-08/3` — ⛔ **the prose fixture the
+epic names carries no material, so `AX-11` must name which prose corpus it
+reads.** `AX-08/4` — ⛔ **ISO step 10.4 must add the two manifest lines and the
+report ignore rule BEFORE the skill writes**, or `validate` refuses every file.
+
+### ⚠️ In flight
+
+⭐ **`AX-10`** on `wt/dev4` — step 10.3's last row.
