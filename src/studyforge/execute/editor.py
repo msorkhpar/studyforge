@@ -52,11 +52,17 @@ looks**: a code-server URL naming a path that is not mounted opens an empty,
 dirty buffer titled with the file's own name, which looks exactly like a
 corrupted file and is not one.
 
-⚠️ **The editor binds a directory INSIDE the source root, where the runner
+⚠️ **The editor binds directories INSIDE the source root, where the runner
 mounts the root itself** — §8.1 ruling 2 mounts only the sources, never the
 repository — which is why this probe accepts a descendant and `mode.ModeProbe`
-demands equality. Two mounts inside the root, or none, is ambiguity rather than
-an answer, and the answer is then `None`.
+demands equality. No mount inside the root is no editor.
+
+⭐ **Several binds inside the root are several answers, one per path** (`W445`):
+the generated editor binds the sources AND the practice workspaces, which are
+siblings, so a practice file is held by exactly one of them. `Editor.holding`
+answers the editor as seen through the bind that holds a path — its own folder,
+its own base — and `None` for a path no bind holds. ⚠️ The index publishes the
+first bind by base, which a page only asks whether it has.
 
 ⭐ **One published host port, or no editor.** The container publishes the UI and
 nothing else, so a single host port IS the answer; several is a container this
@@ -152,6 +158,25 @@ class Editor:
     origin: str
     folder: str
     base: str = ""
+    #: Every FURTHER bind of this source root, as `(base, folder)` (`W445`).
+    others: tuple[tuple[str, str], ...] = ()
+
+    def holding(self, path: str) -> Editor | None:
+        """Return this editor as seen through the bind that holds `path`, or `None`.
+
+        ⭐ The deepest bind holding it wins, so a bind nested in another is the
+        one a file is opened through. The answer carries no `others`: it is one
+        folder, which is what a window opens and a settings file is written into.
+        """
+        held = [
+            (base, folder)
+            for base, folder in ((self.base, self.folder), *self.others)
+            if inside_base(base, path) is not None
+        ]
+        if not held:
+            return None
+        base, folder = max(held, key=lambda one: len([part for part in one[0].split("/") if part]))
+        return Editor(origin=self.origin, folder=folder, base=base)
 
     def inside(self, path: str) -> str | None:
         """Return `path`'s place in the opened folder, or `None` when it is not there.
@@ -278,12 +303,17 @@ def editor_from(inspected: str, source_root: Path) -> Editor | None:
             if base is not None:
                 mounts.append((base, tail))
     published = {port for _, port in bindings}
-    if len(published) != 1 or len(mounts) != 1:
+    if len(published) != 1 or not mounts:
         return None
     port = published.pop()
     host = min(address for address, bound in bindings if bound == port)
-    base, folder = mounts[0]
-    return Editor(origin=f"{SCHEME}://{_reachable(host)}:{port}", folder=folder, base=base)
+    (base, folder), *others = sorted(mounts)
+    return Editor(
+        origin=f"{SCHEME}://{_reachable(host)}:{port}",
+        folder=folder,
+        base=base,
+        others=tuple(others),
+    )
 
 
 def inside_base(base: str, path: str) -> str | None:

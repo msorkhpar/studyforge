@@ -295,3 +295,31 @@ def test_a_report_the_run_did_not_write_is_refused_on_the_stream_and_not_recorde
     assert "cases" not in recorded["last"]
     assert "could not be read" in body and "older than the run" in body
     assert body.splitlines()[-1] == exit_line(0)
+
+
+# --------------------------------------------------------------------------
+# `W445` — the generated editor binds the sources AND the practice workspaces
+# --------------------------------------------------------------------------
+
+
+def test_a_practice_opens_through_the_bind_that_holds_it_when_the_editor_holds_two(root):
+    # ⛔ The frame opens the PRACTICE bind's folder and the settings land on its
+    # host side, although the editor's first answer is the sources' bind.
+    both = Editor(
+        origin=EDITOR_ORIGIN,
+        folder="/w/sources",
+        base="sources",
+        others=(("practice", "/w/practice"),),
+    )
+    live, discovered = runs_over(root, editor=StubEditors(both))
+    answer = live.practice_editor(discovered.corpora[0], "practice/passes/greet.py", None)
+    assert answer is not None and answer["main"]["path"] == "passes/greet.py"
+    assert "folder=%2Fw%2Fpractice" in answer["main"]["url"]
+    assert (root / "practice" / ".vscode" / "settings.json").is_file()
+    assert not (root / "sources" / ".vscode").exists()
+
+
+def test_a_practice_neither_bind_holds_has_no_editor(root):
+    only = Editor(origin=EDITOR_ORIGIN, folder="/w/sources", base="sources")
+    live, discovered = runs_over(root, editor=StubEditors(only))
+    assert live.practice_editor(discovered.corpora[0], "practice/passes/greet.py", None) is None

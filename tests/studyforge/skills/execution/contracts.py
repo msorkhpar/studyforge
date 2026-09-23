@@ -131,15 +131,51 @@ def editor_contract(**moved: object) -> dict:
             "docker_socket": False,
             "restart": "no",
         },
-        "runner": {
-            "prime": {
-                "seeds": {"gradle": "gradle-home", "maven": "maven-repo"},
-                "declared_by": "--prime <directory>",
-            }
-        },
+        "runner": runner_block(),
     }
     document.update(moved)
     return document
+
+
+def runner_block(**moved: object) -> dict:
+    """A minimal runner block in the component's shape, with `moved` merged into it."""
+    block = {
+        "image": {
+            "repository": "example/runner",
+            "env_var": "STUDYFORGE_RUNNER_IMAGE",
+            "run_value": "<tag>",
+            "built_by": ["python3", "runner.py", "--runtimes", "<the declared set>"],
+            "tag_from": ["python3", "runner.py", "--runtimes", "<the declared set>", "--print-tag"],
+        },
+        "runtimes": {
+            "selectable": ["gradle", "java", "kotlin", "maven", "node", "python", "sqlite"],
+            "read_back_from": "the image label example.runner.runtimes",
+        },
+        "runs_as": {"run_flag": "--user", "run_value": "$(id -u):$(id -g)"},
+        "mounts": [
+            {
+                "container_path": "/work",
+                "kind": "bind",
+                "host_path": "<source root>",
+                "per_project": True,
+                "read_only": False,
+                "required": True,
+                "must_exist_before_start": True,
+            }
+        ],
+        "network": {"mode": "none"},
+        "ports": [],
+        "init": {"enabled": True},
+        "run": {"name_template": "studyforge-runner-<source>"},
+        "prime": {
+            "seeds": {"gradle": "gradle-home", "maven": "maven-repo"},
+            "declared_by": "--prime <directory>",
+        },
+        "docker_socket": False,
+        "restart": "no",
+    }
+    block.update(moved)
+    return block
 
 
 def editor_text(**moved: object) -> str:

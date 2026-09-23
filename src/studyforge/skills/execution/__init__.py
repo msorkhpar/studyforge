@@ -25,6 +25,9 @@ and on nothing inside either component but its `consuming.json` (R18).
 | `rulings` | spec §8.1's four rulings and §8.3's, asserted against a block |
 | `emit` | the smallest deterministic YAML a generated compose file needs |
 | `composefile` | one contract block to one compose service, and the file around it |
+| `runnerservice` | the runner a Submit execs into, as the compose file's second service |
+| `reader` | the reader's document, `EXECUTION.md` |
+| `record` | the primed runner's tag, asked of the component and written for compose |
 | `prime` | the corpus's own build, source and test, as one project per seeded tool |
 | `onboard` | the whole of it, and the empty answer for a corpus that is not runnable |
 
@@ -65,16 +68,20 @@ from studyforge.skills.execution.onboard import (
     NOT_MATERIAL,
     PRIME_DIR,
     READER_DOC,
+    RUNNER_ENV,
     TOOLCHAIN_FILE,
     Execution,
     ExecutionRefused,
     classified,
     generate,
     source_root,
+    workspaces_bind,
     write,
 )
 from studyforge.skills.execution.prime import Prime, PrimeRefused, Project, Specimen, prime_for
+from studyforge.skills.execution.record import record_runner
 from studyforge.skills.execution.rulings import findings
+from studyforge.skills.execution.runnerservice import Runner, RunnerRefused
 from studyforge.skills.execution.toolchain import Selection, select
 
 __all__ = [
@@ -91,6 +98,7 @@ __all__ = [
     "NOT_MATERIAL",
     "PRIME_DIR",
     "READER_DOC",
+    "RUNNER_ENV",
     "TOOLCHAIN_FILE",
     "ComposeRefused",
     "ContractRefused",
@@ -99,6 +107,8 @@ __all__ = [
     "Prime",
     "PrimeRefused",
     "Project",
+    "Runner",
+    "RunnerRefused",
     "Selection",
     "Specimen",
     "classified",
@@ -107,8 +117,10 @@ __all__ = [
     "must_exist_first",
     "prime_for",
     "read",
+    "record_runner",
     "render",
     "select",
     "source_root",
+    "workspaces_bind",
     "write",
 ]

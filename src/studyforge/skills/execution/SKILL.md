@@ -1,8 +1,8 @@
 # Skill — execution onboarding
 
 **Give a corpus whose material is runnable the three things the reading floor
-does not need: a compose file for the browser editor, a toolchain selection,
-and a prime project.** Everything below is derived from the corpus's own
+does not need: a compose file for the browser editor and the runner, a
+toolchain selection, and a prime project** — and the runner's recorded tag. Everything below is derived from the corpus's own
 `corpus.json` and from the pinned component's own `consuming.json`. Nothing is
 typed twice and nothing is typed here.
 
@@ -115,6 +115,23 @@ rendered file is complete with no argument and still adapts to the host it is on
 That is how *"sufficient from the contract alone"* and *"the port and the uid
 differ per host"* are both true at once.
 
+⛔ **The file has TWO services, and the editor binds TWO directories (`W445`):**
+
+- ⭐ **The editor binds the practice workspaces beside the sources.** Every
+  practice workspace — the source's own and every authored one — lives under
+  the directory `emit` places them in (`corpus.placement.PRACTICE_DIRNAME`),
+  which is not under the sources' common root. It is bound at the contract's
+  workspace root under its own name, read from that one spelling
+  (`onboard.workspaces_bind`), and named in ruling 4's list. ⚠️ An editor that
+  binds the sources alone can open no practice file: the frame gets no URL.
+- ⭐ **The runner a Submit execs into is the second service**
+  (`runnerservice`), every value read from the contract's `runner` block: the
+  container name is `runner.run.name_template` with the corpus's `source` in its
+  slot, which is the name `execute.commands.container_for` looks it up by; the
+  corpus's root bound where `runner.mounts` says; its network mode, its init and
+  its restart policy. ⛔ **Its image is `${<runner.image.env_var>:?…}` and never
+  a tag**, which step 5a records.
+
 ### 4. Build the prime project
 
 ⛔ **An empty prime primes nothing while appearing to succeed.** A `NO-SOURCE`
@@ -186,18 +203,40 @@ eats your changes is a tool nobody runs twice. Customisation enters as manifest
 data; if the manifest cannot say it, the manifest is missing a field and *that*
 is the finding.
 
-### 6. Build the image and bring the editor up
+### 5a. Record the runner's tag — the skill does it, never the reader's typing
 
-Run the `build` argv step 2 printed **from the component's checkout**, with
-the flag `runner.prime.declared_by` names pointing at the written prime
-directory by its full path — `EXECUTION.md` prints the flag with this corpus's
-directory in its slot. Then run the `tag_from` argv, record the tag, and set the
-contract's own image environment variable to it. Bring the compose file up, and
-confirm the editor answers the health path the contract names.
+⛔ **A tag is a function of the build's inputs, so the only honest way to hold
+one is to ask the build.** After step 5 — the tag folds in the prime on disk —
+call `record_runner(execution, root, component, ask=…)` with the component's
+pinned checkout. It composes the contract's own `runner.image.tag_from` with
+the prime flag pointing at the written prime, hands that ONE argv to `ask`
+(which runs it and answers `(exit code, stdout)`), refuses anything but one tag
+of `runner.image.repository`, and writes `.studyforge/execution/runner.env`
+holding `<runner.image.env_var>=<tag>`. ⭐ `--print-tag` hashes files and starts
+no Docker; this package itself imports nothing that can start a process, which
+is why the caller hands the one process in.
+
+⛔ **A hand-edit to `runner.env` is a finding against this skill.** Re-run 5a
+when the component's pin, the prime or the host's architecture moves.
+
+### 6. Build the images and bring both up — one command
+
+Run the runner's and the editor's `built_by` argv **from the component's
+checkout**, with the flag `runner.prime.declared_by` names pointing at the
+written prime directory by its full path — `EXECUTION.md` prints both lines
+with this corpus's directory in the slot. Set the editor's image variable to
+the tag its `tag_from` prints. Then, from the corpus root:
+
+    docker compose --env-file .studyforge/execution/runner.env \
+      -f .studyforge/execution/compose.yaml up -d --wait
+
+⭐ That one command starts the editor AND the runner. Confirm the editor answers
+the health path the contract names; a Submit then runs in the runner rather
+than on the host.
 
 ⛔ **The framework never starts a container for you** (§8.3). Not behind a flag,
 not "only locally". This skill writes a compose file and a document; the person
-running it runs `docker compose`.
+running it runs `docker compose`, and the study server never holds the socket.
 
 ---
 
@@ -205,7 +244,8 @@ running it runs `docker compose`.
 
 | path | what it is |
 |---|---|
-| `.studyforge/execution/compose.yaml` | the compose file, rendered from the contracts |
+| `.studyforge/execution/compose.yaml` | the compose file, rendered from the contracts: the editor and the runner |
+| `.studyforge/execution/runner.env` | the primed runner's tag, as the component printed it (step 5a) |
 | `.studyforge/execution/toolchain.json` | the selection: the set, what is carried, what is not and why, and the two argv |
 | `.studyforge/execution/prime/<tool>/…` | one project per seeded tool: the corpus's own build, source and test, re-rooted at the build |
 | `EXECUTION.md` | what a reader opens first: what to build, what to run, and what this corpus declared |
@@ -219,7 +259,9 @@ running it runs `docker compose`.
 
 ## What this skill deliberately does not do
 
-- ⛔ **It starts nothing.** No daemon, no socket, no `docker` invocation.
+- ⛔ **It starts nothing.** No daemon, no socket, no `docker` invocation. The
+  one process step 5a needs — the component's own `tag_from` — is handed in by
+  the caller.
 - ⛔ **It does not name a source.** Not one runtime, path or version in this
   package comes from knowing which corpus is being converted (R1).
 - ⛔ **It does not copy the component's API.** Not a route, not a port number,

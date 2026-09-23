@@ -9,8 +9,9 @@ result and no error.
 `write(execution, root)` puts it on disk; `NOT_MATERIAL` and `classified` are
 what a manifest declares about it.
 
-**Depends on.** `composefile`, `prime`, `toolchain`, `contract`, and the
-manifest's own reader. ⛔ Nothing source-specific (R1).
+**Depends on.** `composefile`, `runnerservice`, `reader`, `prime`, `toolchain`,
+`contract`, the manifest's own reader, and `corpus.placement` for where the
+practice workspaces are. ⛔ Nothing source-specific (R1).
 
 ## ⛔ A CORPUS THAT DECLARES NO RUNTIME GETS NOTHING FROM HERE, AND NO ERROR
 
@@ -35,6 +36,17 @@ there is then no directory to bind that is not the repository. ⚠️ **`SK-09/5
 the remedy is a manifest key, and it is a finding rather than a default written
 in here** (R19).
 
+## ⭐ THE EDITOR SEES EVERY PRACTICE, AND THE RUNNER COMES UP WITH IT (`W445`)
+
+⛔ **Every practice workspace — the source's own and every authored one — lives
+under `PRACTICE_DIRNAME`**, which is not under the sources' common root, so a
+generated editor that bound the sources alone could open no practice file.
+⭐ So the editor binds that directory too, read from the one spelling `emit`
+places workspaces by (`workspaces_bind`), and the sources stay where they were.
+⭐ **The runner a Submit execs into is the file's second service**
+(`runnerservice`), started by the reader's one compose command — never by the
+serving process (§8.3) — from the tag `record` writes into `RUNNER_ENV`.
+
 ## ⛔ RE-RUNNING CHANGES NOTHING
 
 ⭐ The same manifest and the same contracts render the same bytes, and `write`
@@ -50,7 +62,8 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
 from studyforge.corpus.manifest import Manifest
-from studyforge.skills.execution import composefile, contract, toolchain
+from studyforge.corpus.placement import PRACTICE_DIRNAME
+from studyforge.skills.execution import composefile, contract, reader, runnerservice, toolchain
 from studyforge.skills.execution.prime import Prime, PrimeRefused, prime_for
 
 #: Where everything this skill generates lives. ⭐ Under the corpus's own
@@ -66,6 +79,10 @@ TOOLCHAIN_FILE = f"{DIRECTORY}/toolchain.json"
 
 #: The prime the build is handed: `<tool>/` per project (`W440`).
 PRIME_DIR = f"{DIRECTORY}/prime"
+
+#: The file the reader's compose command reads the runner's tag from, which the
+#: skill's record step writes (`record.record`, `W445`).
+RUNNER_ENV = f"{DIRECTORY}/runner.env"
 
 #: The slot `runner.prime.declared_by` leaves for the directory.
 DIRECTORY_SLOT = "<directory>"
@@ -120,6 +137,8 @@ class Execution:
     copies: tuple[tuple[str, str], ...] = ()
     selection: toolchain.Selection | None = None
     primed: Prime | None = None
+    #: The runner's compose service and how its tag is computed (`W445`).
+    runner: runnerservice.Runner | None = None
 
     def paths(self) -> tuple[str, ...]:
         """Every path this skill occupies, in the order it writes them."""
@@ -177,6 +196,14 @@ def generate(
     seeded = tuple(seeds) if isinstance(seeds, Mapping) else ()
     primed = _primed(root, selection.carried, seeded)
     flag = _prime_flag(editor) if primed.projects else None
+    workspaces = workspaces_bind(block, sources)
+    runner = runnerservice.plan(
+        editor,
+        source=manifest.source,
+        root=_from_compose(""),
+        runtimes=manifest.runtimes,
+        runs_as=_runs_as(block),
+    )
     compose = composefile.render(
         project=project or f"studyforge-{manifest.source}",
         editor=block,
@@ -185,21 +212,59 @@ def generate(
         runtimes=manifest.runtimes,
         seeds=seeds if isinstance(seeds, Mapping) else None,
         checked=_checked(narration_text),
+        binds=() if workspaces is None else ((_from_compose(workspaces[0]), workspaces[1]),),
+        runner=(runnerservice.SERVICE, runner.service),
+    )
+    document = reader.document(
+        manifest,
+        generated=GENERATED,
+        compose_file=COMPOSE_FILE,
+        runner_env=RUNNER_ENV,
+        selection=selection,
+        primed=primed,
+        block=block,
+        sources=sources,
+        workspaces=None if workspaces is None else workspaces[0],
+        runner=runner,
+        narration_text=narration_text,
+        seeds=seeds,
+        flag=flag,
     )
     return Execution(
         runnable=True,
         files=(
             (COMPOSE_FILE, compose),
             (TOOLCHAIN_FILE, selection.render()),
-            (
-                READER_DOC,
-                _reader(manifest, selection, primed, block, sources, narration_text, seeds, flag),
-            ),
+            (READER_DOC, document),
         ),
         copies=tuple((f"{PRIME_DIR}/{inside}", origin) for inside, origin in primed.copies()),
         selection=selection,
         primed=primed,
+        runner=runner,
     )
+
+
+def workspaces_bind(block: Mapping[str, object], sources: str) -> tuple[str, str] | None:
+    """Return `(corpus-relative dir, container path)` for the practice workspaces, or `None`.
+
+    ⭐ **Read FROM where `emit` places them** — `PRACTICE_DIRNAME`, the one
+    spelling `exercise.bundle.Places.workspace` and the adapter's own practices
+    share — ⛔ never a second spelling of it (`W445`). It sits inside the
+    contract's workspace root, beside the sources, under its own name.
+    ⭐ `None` when the sources already hold it: a second bind of what the first
+    shows is two windows onto one directory.
+    """
+    if PurePosixPath(PRACTICE_DIRNAME).is_relative_to(PurePosixPath(sources)):
+        return None
+    root = contract.require(block, "workspace", "container_path")
+    inside = f"{str(root).rstrip('/')}/{PRACTICE_DIRNAME}"
+    taken = {str(entry.get("container_path")) for entry in contract.blocks(block, "mounts")}
+    if inside in taken:
+        raise ExecutionRefused(
+            "the contract already mounts something where the practice workspaces would go, "
+            "and this skill will not shadow it"
+        )
+    return PRACTICE_DIRNAME, inside
 
 
 def write(execution: Execution, root: Path) -> tuple[str, ...]:
@@ -259,6 +324,14 @@ def _primed(root: Path, runtimes: Sequence[str], seeded: Sequence[str]) -> Prime
         raise ExecutionRefused(str(refusal)) from None
 
 
+def _runs_as(block: Mapping[str, object]) -> Mapping[str, object]:
+    """Return the editor's `runs_as`, which answers the runner's too (`runnerservice`)."""
+    runs_as = contract.require(block, "runs_as")
+    if not isinstance(runs_as, Mapping):
+        raise contract.ContractRefused("the contract's editor.runs_as must be an object")
+    return runs_as
+
+
 def _prime_flag(editor: Mapping[str, object]) -> str:
     """Return the contract's own prime flag, with this corpus's directory in its slot."""
     flag = contract.require(editor, "runner", "prime", "declared_by")
@@ -268,8 +341,8 @@ def _prime_flag(editor: Mapping[str, object]) -> str:
 
 
 def _from_compose(sources: str) -> str:
-    """Return `sources` as the compose file at `COMPOSE_FILE` reaches it."""
-    return "/".join([".."] * len(PurePosixPath(DIRECTORY).parts) + [sources])
+    """Return `sources` as the compose file at `COMPOSE_FILE` reaches it; `""` is the root."""
+    return "/".join([".."] * len(PurePosixPath(DIRECTORY).parts) + ([sources] if sources else []))
 
 
 def _root_of(pattern: str) -> str:
@@ -295,106 +368,3 @@ def _common(first: PurePosixPath, second: PurePosixPath) -> PurePosixPath:
             break
         shared.append(one)
     return PurePosixPath(*shared)
-
-
-def _reader(
-    manifest: Manifest,
-    selection: toolchain.Selection,
-    primed: Prime,
-    block: Mapping[str, object],
-    sources: str,
-    narration_text: str | None,
-    seeds: object,
-    flag: str | None,
-) -> str:
-    """Write the document a reader opens first, from declarations alone."""
-    volumes = composefile.volumes_for(
-        seeds if isinstance(seeds, Mapping) else None, manifest.runtimes
-    )
-    lines = [
-        f"# Execution — {manifest.title}",
-        "",
-        GENERATED,
-        "",
-        "## What this corpus declared",
-        "",
-        f"- runtimes: `{'`, `'.join(selection.declared)}`",
-        f"- the directory the editor binds: `{sources}` (§8.1 ruling 2)",
-        f"- the image the component builds: `{selection.image_env}`",
-        "",
-        "## Build the image",
-        "",
-        "```",
-        " ".join(selection.build),
-        " ".join(selection.tag_from),
-        "```",
-        "",
-        "⛔ Never pin a tag you did not compute: a tag is a function of the build's",
-        f"inputs. Read the set back from `{selection.read_back_from}`.",
-        "",
-        "## Bring it up",
-        "",
-        "```",
-        f"docker compose -f {COMPOSE_FILE} up -d --wait",
-        "```",
-        "",
-    ]
-    # ⚠️ Corpus-relative here and compose-relative in the file itself: this
-    # document sits at the corpus root and that one two directories down, and a
-    # path a reader cannot act on from where they are reading is not a remedy.
-    first = composefile.must_exist_first(block, volumes, sources)
-    if first:
-        lines += [
-            "⛔ §8.1 ruling 4 — these exist on the host before the start, or docker",
-            "creates them root-owned and the container can never write them:",
-            "",
-            *(f"- `{one}`" for one in first),
-            "",
-        ]
-    if selection.withheld:
-        lines += [
-            "## What this editor does not carry",
-            "",
-            *(f"- `{name}` — {why}" for name, why in selection.withheld),
-            "",
-        ]
-    lines += ["## The prime", ""]
-    if flag is None:
-        lines += ["No runtime this corpus declares is seeded from a build: no prime.", ""]
-    else:
-        lines += [
-            "⛔ An empty prime primes nothing while appearing to succeed. These are this",
-            "corpus's own files, one project per seeded tool, copied and never authored:",
-            "",
-            *(f"- `{inside}` ← `{origin}`" for inside, origin in primed.copies()),
-            "",
-            f"Pass `{flag}` to the build above.",
-            "",
-        ]
-    if narration_text is not None:
-        lines += _narration(narration_text)
-    return "\n".join(lines)
-
-
-def _narration(narration_text: str) -> list[str]:
-    """Where narration comes from — by pointer, never by copying its API."""
-    document = contract.read(
-        narration_text,
-        component=contract.NARRATION_COMPONENT,
-        api=contract.NARRATION_API,
-        promise=contract.NARRATION_PROMISE,
-    )
-    default = contract.require(document, "profiles", "default")
-    files = contract.words(document, "profiles", str(default), "compose_files")
-    return [
-        "## Narration",
-        "",
-        f"⛔ Not rendered into this compose file. `{contract.NARRATION_COMPONENT}` is",
-        "brought up from its own checkout, by its own compose files:",
-        "",
-        *(f"- `{one}`" for one in files),
-        "",
-        "⚠️ Its contract declares no per-project keys, so a consumer cannot render it",
-        "without inventing a host port and a volume name (`SK-09/2`).",
-        "",
-    ]

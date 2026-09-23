@@ -128,11 +128,6 @@ def test_one_port_published_on_two_addresses_is_still_one_editor(tmp_path, root)
             0,
             "two published ports name no one UI",
         ),
-        (
-            "true\nport\t127.0.0.1\t8443\nmount\t{sources}\t/w/one\nmount\t{root}\t/w/two",
-            0,
-            "two mounts of this corpus name no one folder",
-        ),
     ],
 )
 def test_anything_short_of_one_editor_over_this_corpus_is_no_editor(
@@ -288,3 +283,73 @@ def test_an_editor_bound_beside_this_corpus_is_still_not_this_corpus(tmp_path, r
     beside = Path(f"{root}-other")
     beside.mkdir()
     assert probe(tmp_path, root, inspected("true", port(), mount(beside))).editor() is None
+
+
+# --- `W445`: the sources AND the practice workspaces, two binds of one corpus --
+
+
+@pytest.fixture
+def two(root) -> Path:
+    """A corpus whose editor binds its sources and, beside them, its practice workspaces."""
+    (root / "practice" / "one").mkdir(parents=True)
+    return root
+
+
+def both(tmp_path, root) -> Editor | None:
+    answer = inspected(
+        "true",
+        port(),
+        mount(root / "sources", "/w/sources"),
+        mount(root / "practice", "/w/practice"),
+    )
+    return probe(tmp_path, root, answer).editor()
+
+
+def test_two_binds_of_this_corpus_are_one_editor_and_not_an_ambiguity(tmp_path, two):
+    # ⛔ `W445`: the generated editor binds the sources AND the practice
+    # workspaces, which are siblings. Refusing that as "no one folder" was a
+    # frame that could never open a practice file.
+    answer = both(tmp_path, two)
+    assert answer is not None and answer.origin == "http://127.0.0.1:8443"
+    # ⭐ The index's folder is the first bind by base, deterministically.
+    assert (answer.base, answer.folder) == ("practice", "/w/practice")
+
+
+def test_a_path_is_opened_through_the_bind_that_holds_it(tmp_path, two):
+    answer = both(tmp_path, two)
+    assert answer is not None
+    practice = answer.holding("practice/one/src/Kata.java")
+    assert practice == Editor(origin=answer.origin, folder="/w/practice", base="practice")
+    assert practice.file("practice/one/src/Kata.java") == "/w/practice/one/src/Kata.java"
+    sources = answer.holding("sources/one.md")
+    assert sources == Editor(origin=answer.origin, folder="/w/sources", base="sources")
+
+
+@pytest.mark.parametrize(
+    "path", ["docs/reading.md", "practice", "/etc/passwd", "practice/../sources/x", ""]
+)
+def test_a_path_no_bind_holds_is_held_by_none_of_them(tmp_path, two, path):
+    answer = both(tmp_path, two)
+    assert answer is not None and answer.holding(path) is None
+
+
+def test_a_bind_nested_in_another_is_the_one_a_file_is_opened_through(tmp_path, root):
+    deep = root / "sources" / "practice"
+    deep.mkdir(parents=True)
+    answer = probe(
+        tmp_path,
+        root,
+        inspected("true", port(), mount(root / "sources", "/w/a"), mount(deep, "/w/b")),
+    ).editor()
+    assert answer is not None
+    assert answer.holding("sources/practice/K.java") == Editor(
+        origin=answer.origin, folder="/w/b", base="sources/practice"
+    )
+    assert answer.holding("sources/one.md").folder == "/w/a"
+
+
+def test_a_single_bind_holds_exactly_what_inside_answers(tmp_path, root):
+    answer = probe(tmp_path, root, inspected("true", port(), mount(root / "sources"))).editor()
+    assert answer is not None
+    assert answer.holding("sources/one/K.java") == answer
+    assert answer.holding("practice/one/K.java") is None
