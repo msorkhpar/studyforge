@@ -412,56 +412,84 @@ def test_a_manifest_that_does_not_parse_is_refused_by_name_rather_than_overwritt
 
 
 # --------------------------------------------------------------------------
-# ⛔ W321: what is written addresses the framework where the pin resolves it
+# ⛔ W442: what is written never depends on which checkout wrote it (R10)
 # --------------------------------------------------------------------------
 
 
-def test_a_document_composed_for_a_main_checkout_is_refused_by_a_linked_worktree(tmp_path):
-    # ⛔ The hazard itself: `../studyforge` from a worktree is not the framework
-    # the pin checked, and the first fenced command would detach whatever is.
+def _both_checkouts(tmp_path):
+    """One corpus repository as a main checkout AND a linked worktree, the framework beside.
+
+    ⭐ The same material in both, so the only difference between them is the
+    checkout the skill runs in — which is the one thing that must move no byte.
+    """
     worktree = corpora.material(corpora.linked_worktree(tmp_path), framework=False)
-    before = sorted(path for path in worktree.rglob("*"))
-
-    with pytest.raises(OnboardingRefused, match="address the framework as"):
-        onboard(corpora.DRAFT, framework_commit=corpora.COMMIT).write(worktree)
-
-    assert sorted(path for path in worktree.rglob("*")) == before
+    main = corpora.material(tmp_path / "corpus", framework=False)
+    return main, worktree
 
 
-def test_the_same_document_composed_for_that_worktree_is_written(tmp_path):
-    # ⭐ The other way (R12): named its root, the same call writes, and every
-    # generated document carries the deeper ascent.
-    worktree = corpora.material(corpora.linked_worktree(tmp_path), framework=False)
+def _generated_bytes(root, paths):
+    return {where: (root / where).read_bytes() for where in paths}
 
-    written = onboard(corpora.DRAFT, framework_commit=corpora.COMMIT, root=worktree).write(worktree)
+
+def test_a_worktree_and_its_main_checkout_write_byte_identical_files(tmp_path):
+    # ⛔ The row itself: an onboard and a reonboard, each run once from the main
+    # checkout and once from a linked worktree of the SAME repository, write the
+    # same bytes — every stub, the reader's document, and `installed.json`.
+    from studyforge.skills.onboarding import reonboard
+
+    main, worktree = _both_checkouts(tmp_path)
+    written = {}
+    for root in (main, worktree):
+        made = onboard(corpora.DRAFT, framework_commit=corpora.COMMIT, root=root)
+        made.write(root)
+        first = _generated_bytes(root, made.paths)
+        reonboard(root).write(root, regenerate=True)
+        written[root] = (first, _generated_bytes(root, made.paths))
+
+    assert written[main] == written[worktree]
+    assert written[main][0] == written[main][1]
+    assert RECORD_FILE in written[main][0] and artifacts.READER_DOC in written[main][0]
+
+
+def test_the_rendered_path_is_the_one_a_reader_of_the_main_checkout_needs(tmp_path):
+    # ⛔ Written from the worktree, the address resolves to the framework FROM
+    # THE MAIN CHECKOUT — the workspace's sibling layout (R18) — and the pin
+    # check still found that framework from the worktree (`W286` holds).
+    from studyforge.skills.onboarding import pin
+
+    main, worktree = _both_checkouts(tmp_path)
+
+    onboard(corpora.DRAFT, framework_commit=corpora.COMMIT, root=worktree).write(worktree)
+
+    assert pin.framework_of(worktree) == (main / pin.SIBLING).resolve()
+    for where in (artifacts.READER_DOC, *pin.stub_paths()):
+        text = (worktree / where).read_text(encoding="utf-8")
+        assert f"`{pin.SIBLING}/" in text or f" {pin.SIBLING} " in text, where
+        assert "../../" not in text, where
+        assert str(tmp_path) not in text, where
+
+
+def test_no_root_named_writes_into_a_worktree_rather_than_being_refused(tmp_path):
+    # ⭐ `W321`'s refusal is gone with the address it guarded: there is one
+    # address, so a document composed without `root` cannot disagree with it.
+    _main, worktree = _both_checkouts(tmp_path)
+
+    written = onboard(corpora.DRAFT, framework_commit=corpora.COMMIT).write(worktree)
 
     assert artifacts.READER_DOC in written
-    for where in (artifacts.READER_DOC, ".studyforge/skills/adapter.md"):
-        text = (worktree / where).read_text(encoding="utf-8")
-        assert "../../studyforge" in text
-        assert "../studyforge" not in text.replace("../../studyforge", "<framework>")
 
 
-def test_a_main_checkout_is_unrefused_and_its_address_is_unchanged(tmp_path):
-    # ⛔ The control for the refusal above: the guard fires on the disagreement
-    # and not on being asked, and a corpus that is its own main checkout reads
-    # exactly what it read before this row.
-    root = corpora.material(tmp_path / "corpus")
+def test_a_worktree_outside_the_frameworks_directory_is_written_and_says_the_sibling(tmp_path):
+    # ⚠️ The shape `W321` could only refuse — no relative ascent reaches the
+    # framework from there. ⭐ The address is the workspace's, so it is written.
+    main = tmp_path / "here" / "corpus"
+    corpora.linked_worktree(tmp_path / "here")
+    elsewhere = tmp_path / "there" / "two"
+    corpora.git(main, "worktree", "add", "-q", str(elsewhere))
+    corpora.material(elsewhere, framework=False)
 
-    made = onboard(corpora.DRAFT, framework_commit=corpora.COMMIT)
-    made.write(root)
+    onboard(corpora.DRAFT, framework_commit=corpora.COMMIT, root=elsewhere).write(elsewhere)
 
-    assert made.framework == "../studyforge"
-    assert "git -C ../studyforge checkout --detach" in (
-        (root / artifacts.READER_DOC).read_text(encoding="utf-8")
-    )
-
-
-def test_the_refusal_names_both_addresses_and_neither_is_a_path(tmp_path):
-    worktree = corpora.material(corpora.linked_worktree(tmp_path), framework=False)
-
-    with pytest.raises(OnboardingRefused) as refused:
-        onboard(corpora.DRAFT, framework_commit=corpora.COMMIT).write(worktree)
-
-    assert "'../studyforge'" in str(refused.value) and "'../../studyforge'" in str(refused.value)
-    assert str(tmp_path) not in str(refused.value)
+    text = (elsewhere / artifacts.READER_DOC).read_text(encoding="utf-8")
+    assert "git -C ../studyforge checkout --detach" in text
+    assert str(tmp_path) not in text

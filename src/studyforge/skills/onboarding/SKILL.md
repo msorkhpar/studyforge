@@ -50,12 +50,12 @@ what this skill writes into the corpus's pin, and a relative sibling name is
 what it writes as the location — ⛔ **never an absolute path, which carries
 somebody's home directory** (R7).
 
-⛔ **Pass `root=` to `onboard`, and every generated document addresses the
-framework where the pin resolves it** (`W321`): `../studyforge` from a corpus
-that is its own main checkout, one `../` deeper from a linked worktree. ⚠️ **A
-document composed without `root` and written into a worktree is refused by
-name**, because its first fenced command would run `git checkout --detach`
-against whatever stands beside the worktree.
+⛔ **Every generated document addresses the framework as `../studyforge`, from
+the corpus's main checkout — whichever checkout ran this skill** (`W442`). A
+reader's path is the workspace's sibling layout (R18), so a regenerate from a
+linked worktree and one from the main checkout write byte-identical files
+(R10). ⚠️ **Run the fenced commands from the main checkout's root**; the pin
+check alone resolves a linked worktree to its main checkout (`W286`).
 
 ⛔ **The commit must be one that checkout holds** (`W270`). `write` asks the
 sibling named `studyforge` with a local `git cat-file -e`, and refuses by name,
@@ -102,7 +102,7 @@ a time has been given a guessing game.
 
 ```
 python3 -c "from studyforge.skills.onboarding import onboard; \
-  onboard(draft, framework_commit=commit, root='.').write('.')"
+  onboard(draft, framework_commit=commit).write('.')"
 ```
 
 ⛔ **It refuses rather than overwriting, and names every collision at once**
@@ -173,7 +173,7 @@ python3 -c "from studyforge.skills.onboarding import hand_edited, reonboard; \
 ⚠️ **Why not `survey('.')`**: on an onboarded corpus it reads this framework's own
 generated half as material and proposes answers the manifest does not record
 (`W329`), so every regenerate from it is a string of refusals. ⭐ Underneath,
-`reonboard` is `onboard(recorded draft, existing=<its text>, root=...)` —
+`reonboard` is `onboard(recorded draft, existing=<its text>)` —
 `existing=` stays the mechanism for a caller that builds its own draft, and
 `write(..., regenerate=True)` refuses by name, writing nothing, when that draft
 would still drop a declared glob.

@@ -11,7 +11,6 @@ import ast
 import importlib.util
 import json
 import subprocess
-from pathlib import Path
 
 import pytest
 
@@ -373,64 +372,19 @@ def test_the_generated_pin_test_carries_the_very_function_the_pin_uses():
 
 
 # --------------------------------------------------------------------------
-# ⛔ W321: a generated document addresses the framework where the PIN resolves it
+# ⛔ W442: the stubs address the framework as the WORKSPACE lays it out
 # --------------------------------------------------------------------------
 
 
-def _addressed(root):
-    """Where the address a document would carry actually lands, from `root`."""
-    return (Path(root) / pin.framework_from(root)).resolve()
-
-
-def test_a_main_checkout_addresses_the_framework_as_its_own_sibling(tmp_path):
-    root = tmp_path / "corpus"
-    root.mkdir()
-    corpora.framework_beside(root)
-
-    assert pin.framework_from(root) == "../studyforge"
-    assert _addressed(root) == pin.framework_of(root)
-
-
-def test_a_linked_worktree_addresses_it_one_level_further_up(tmp_path):
-    # ⛔ The defect, both ways: `../studyforge` from this root is a DIFFERENT
-    # directory from the one the pin resolves, and the address is not it.
+def test_the_sibling_from_the_main_checkout_is_where_the_pin_looks_from_a_worktree(tmp_path):
+    # ⭐ The check resolves (`W286`) and the address does not: from the main
+    # checkout, `SIBLING` reaches exactly what `framework_of` finds from the
+    # worktree, so the two never name different checkouts.
     worktree = _linked_worktree(tmp_path)
 
-    assert pin.framework_from(worktree) == "../../studyforge"
-    assert _addressed(worktree) == pin.framework_of(worktree)
-    assert (worktree / "../studyforge").resolve() != pin.framework_of(worktree)
-
-
-def test_the_address_is_an_ascent_and_a_name_and_carries_no_directory_off_this_disk(tmp_path):
-    # ⛔ R7: the only segments a document may carry are `..` and the sibling's
-    # own name, whatever the worktree is called or how deep it sits.
-    worktree = corpora.linked_worktree(tmp_path, main="a-corpus-whose-name-is-its-own")
-
-    address = pin.framework_from(worktree)
-
-    assert set(address.split("/")) == {"..", pin.FRAMEWORK}
-    assert str(tmp_path) not in address
-
-
-def test_a_root_the_framework_is_not_above_is_refused_rather_than_addressed(tmp_path):
-    # ⛔ The only shape with no relative answer: a worktree outside the directory
-    # the framework stands in. An absolute address would carry a home directory.
-    main = tmp_path / "here" / "corpus"
-    corpora.linked_worktree(tmp_path / "here")
-    elsewhere = tmp_path / "there" / "two"
-    corpora.git(main, "worktree", "add", "-q", str(elsewhere))
-
-    with pytest.raises(pin.PinRefused) as refused:
-        pin.framework_from(elsewhere)
-
-    assert "not above this corpus root" in str(refused.value)
-    assert str(tmp_path) not in str(refused.value)
-
-
-def test_no_root_named_gets_the_address_a_main_checkout_gets():
-    # ⚠️ A caller who names no root is told what every corpus but a linked
-    # worktree is told, and `Onboarding.write` is what catches the difference.
-    assert pin.framework_from(None) == pin.SIBLING == "../studyforge"
+    assert (pin.main_checkout(worktree) / pin.SIBLING).resolve() == pin.framework_of(worktree)
+    assert pin.SIBLING == "../studyforge"
+    assert not hasattr(pin, "framework_from"), "no per-checkout address is rendered (W442)"
 
 
 def test_a_stub_points_through_the_address_it_is_given_and_defaults_to_the_sibling():
