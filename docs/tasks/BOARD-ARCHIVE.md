@@ -30751,3 +30751,11 @@ has is lost"** is `M10`'s own *Done when*.
 ⭐ **Surface:** `src/studyforge/skills/exercises/` (`loop.py`, `corpus.py`).
 
 [the mint](#po-round-148)
+
+## PO round 151
+
+⭐ **[`W438`](rows/W438.md) minted — `M11` has a *Done when* and NO STEPS.** The
+user's six rulings of 2026-09-19 are its settled scope and are not re-asked.
+⛔ **The row PLANS and moves nothing**; ⭐ **it is minted now so `M11` is
+dispatchable the moment `M10` closes**, and `M10` next waits on the user's pilot
+review.
