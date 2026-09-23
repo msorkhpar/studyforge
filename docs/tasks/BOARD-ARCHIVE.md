@@ -31762,3 +31762,13 @@ SERVER side**; a reader who types a URL the site itself publishes must not read 
 ### ⚠️ In flight
 
 ⭐ **`W453`** on `wt/dev1`; ⭐ **`W454`** on `wt/dev2` (with a `code-server-toolchain` branch).
+
+## PO round 172
+
+⭐ **USER REQUEST:** *"I love how the code exmaples look like but the code-server theam is not what I would be a big fan of! Can it be closer to the same color set?"* ⭐ Minted [`W455`](rows/W455.md): the practice editor wears the site's code colours, derived from the framework's own palette and highlight stylesheets. ⭐ **Register ruling, reversible: the colours ride on the practice's workspace settings**, so the toolchain stays generic and no image is rebuilt.
+
+⛔ **USER REFINEMENT of `W453`, same day:** *"don't over do it! … we are not a university that wants to grade the knowdlge! Sometimes a single practice might cover better than 4 unrelated small practices. It's all about quality and the importants ofthe text. Like for the first quiz the dates do not matter. The version might matter. And for sure 4 questions were a lot"*. ⭐ Written into [`W453`](rows/W453.md) and relayed to its office; ⭐ **the pilot quiz is re-planned under it in `ISO-23`** (fewer questions, no dates).
+
+### ⚠️ In flight
+
+⭐ **`W453`** on `wt/dev1`; ⭐ **`W454`** on `wt/dev2`; ⭐ **`W455`** on `wt/dev3`.

@@ -81,6 +81,7 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 |---|---|---|---|---|
 | `W453` | Developer 1 | `feat/W453-a-page-is-planned-by-its-aspects` @ `wt/dev1` | 0 @ `2dbeede2` | `in-progress` — blocks `M10` |
 | `W454` | Developer 2 | `fix/W454-the-editor-carries-no-copilot` @ `wt/dev2` | 0 @ `2dbeede2` | `in-progress` |
+| `W455` | Developer 3 | `feat/W455-the-editor-wears-the-sites-colours` @ `wt/dev3` | 0 @ `3b10fb3c` | `in-progress` |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -641,6 +642,7 @@ else.**
 | W452 | The serving process still hands out a quiz's key by URL, through the content API and the archive's static mount | framework agent | ✅ done — `a394fb5b` | [`rows/W452.md`](rows/W452.md) |
 | W453 | A page's exercises are planned by the aspects it teaches, not capped by its prose length (user ruling) | framework agent | `in-progress` — ⛔ USER RULING, blocks `ISO-23` | [`rows/W453.md`](rows/W453.md) |
 | W454 | The editor image still carries and starts the Copilot CLI (user ruling: remove it) | framework agent | `in-progress` — ⛔ USER RULING | [`rows/W454.md`](rows/W454.md) |
+| W455 | The practice editor wears code-server's stock theme, not the site's code colours (user request) | framework agent | `in-progress` — ⛔ USER REQUEST | [`rows/W455.md`](rows/W455.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
