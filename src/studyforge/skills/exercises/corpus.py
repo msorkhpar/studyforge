@@ -269,7 +269,9 @@ def _accounts_in(recorded: dict, where: str) -> dict[str, Origin]:
     """Return the `(exercise, origin)` pairs a kept unit's report recorded, for the accounting."""
     found: dict[str, Origin] = {}
     for entry in recorded.get("accounts", ()):
-        origin = origin_in({"origin": entry.get("origin")}, where)
+        if not isinstance(entry, dict):
+            raise AuthoringError(f"{where}: a committed coverage report's account is not an object.")
+        origin = origin_in(entry, where)
         if origin is not None:
             found[entry.get("exercise")] = origin
     return found

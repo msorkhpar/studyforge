@@ -330,7 +330,7 @@ def _cited(named: tuple[tuple[str, Origin], ...], ledger: Ledger) -> tuple[Cited
 def _record_bytes(record: GateRecord, where: str) -> bytes:
     """Encode the gate record as it ships, re-read through `record_of` before it is believed."""
     written = record_document(record)
-    record_of(json.loads(json.dumps(written)), where)
+    record_of(written, where)
     return json_bytes(written)
 
 
