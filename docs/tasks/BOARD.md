@@ -77,7 +77,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
 | `W442` | Developer 1 | `fix/W442-generated-paths-are-the-workspaces` @ `wt/dev1` | 0 @ `a5373c1b` | `in-progress` — blocks `M10` |
-| `W443` | Developer 2 | `fix/W443-a-first-reader-can-follow-the-guide` @ `wt/dev2` | 0 @ `a5373c1b` | `in-progress` — blocks `M10`'s acceptance |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -626,7 +625,8 @@ else.**
 | W440 | The execution skill writes a prime the toolchain refuses, and would sweep every exercise's build in | framework agent | ✅ done — `fb9dcd49` | [`rows/W440.md`](rows/W440.md) |
 | W441 | The maximise test's scroll-restore drifts under the merge gate's load, three readings | framework agent | ✅ done — `f05b3267` | [`rows/W441.md`](rows/W441.md) |
 | W442 | A corpus's generated files spell the framework's path by the checkout that ran the skill (R10) | framework agent | `in-progress` — blocks `M10` | [`rows/W442.md`](rows/W442.md) |
-| W443 | The guide's *Before you author* fails a literal first reader on the first corpus | framework agent | `in-progress` — blocks `M10`'s acceptance | [`rows/W443.md`](rows/W443.md) |
+| W443 | The guide's *Before you author* fails a literal first reader on the first corpus | framework agent | ✅ done — `7afcf99c` | [`rows/W443.md`](rows/W443.md) |
+| W444 | `validate` counts an authored practice's headings against the unit's source, so every authored archive is refused | framework agent | `todo` — blocks `M10`'s pilot (`ISO-21/1`) | [`rows/W444.md`](rows/W444.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the

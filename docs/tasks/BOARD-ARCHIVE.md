@@ -31085,3 +31085,80 @@ the register to ignore a RED.
 `render/assets/practice.*` only if the cause is the product's.
 
 [the mint](#po-round-153)
+
+## PO round 157
+
+⭐ **`W443` merged `7afcf99c` and closes.** ⭐ **Read on the REAL corpus, which
+already declares `exercises/**` — the case that refused:** the guide's own
+fence ran as written and `hand_edited` read `[]`; the control, a declared glob
+passed with another reason, is still refused — ⭐ **now with advice a reader can
+follow.** ⛔ **Plant on the CODE side where the office planted the guide:
+`RUN_OUTPUT_DIRNAME` renamed → RED.**
+
+### ⭐ Step 10.4 on the corpus — `ISO-20` and `ISO-21` taken
+
+Branch `int/m10-step-10.4-plan`: `ISO-20` at `11c635f`, widened at `a79b527` —
+⭐ **the corpus's own Maven build, and a runner BUILT from its prime by the
+contract's argv, never a typed tag**: offline, the whole build passes (Spring
+and Mockito included); an unprimed runner fails; the three `M7` practices are
+unchanged. ⭐ **Register rulings, reversible, corpus data:** JUnit Jupiter 5
+pinned exactly (`ISO-M10/8`); **the build WIDENED to what the material's own
+pom fences name** (*nothing the source already has is lost*); ⛔ **no database
+driver — a fence needing a live database gets a written reason.**
+`ISO-21` at `e8cb702` — the adapter emits committed bundles after the unit's
+own practices and refuses an ungated one — ⛔ **and `validate` refuses the
+result, which is `W444`.**
+
+### ⭐ One mint, blocking the pilot
+
+[`W444`](rows/W444.md) — ⛔ **`validate` counts an authored practice's headings
+against the unit's SOURCE.** Read in the code by the register.
+
+### ⚠️ Findings carried, not minted
+
+The execution skill never removes a copy it stopped making; its warm runs only
+the smallest test; its reader document prints the editor's build, not the
+runner's; nothing generated records the runner tag; no bundle helper for an
+adapter (`ISO-21/2`, an R19 hole every adapter will retype). ⭐ **None blocks
+the pilot.**
+
+### W443 — The guide's *Before you author* fails a literal first reader on the first corpus
+
+⛔ **The authoring guide's *Before you author* fails a literal first reader on
+the first corpus.** ⭐ **Followed step by step by the integration office at
+framework `0e1dfca2`, on a scratch copy of the corpus:**
+
+1. ⚠️ **Step 1** names `studyforge validate`; no such command is installed, and
+   the runnable form appears only near the guide's end.
+2. ⛔ **Steps 2–3**: the guide's own `reonboard` fence, run literally, is
+   REFUSED — *"2 not_material glob(s) the draft gives another reason than
+   corpus.json does … settle one"* — ⛔ **and the advice cannot be followed**:
+   `settle` refuses any `content` key by design. ⭐ **What works — leave the
+   already-declared globs out of the call — is said by neither the guide nor
+   the refusal.**
+3. ⛔ **Step 4 is FALSE since `W436`**: it still says *add an ignore rule* and
+   cites the worked corpus's `report.xml`; the convention is now
+   `practice/.gitignore` holding `RUN_OUTPUT_IGNORE`.
+4. ⚠️ **Step 5 cannot be acted on for a corpus that needs a library** — no
+   pointer to the pinned runner, the `--prime` build, or the bundle's `build`
+   role (`W436`, and [`W440`](rows/W440.md) for the prime).
+
+⛔ **`M10`'s *Done when* includes somebody following the guide**, so this blocks
+it.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **Every step of *Before you author* is runnable as written**, and ⛔
+   **`tests/test_authoring_exercises.py` runs the manifest step's fence on a
+   fixture that ALREADY declares some of its globs** — the case that refused.
+2. ⛔ **A refusal names advice a reader CAN follow** — the reonboard refusal
+   says to leave an already-declared glob out, not to settle it.
+3. ⭐ **Step 4 names the file and the constant; step 5 points at the prime and
+   the build role** — ⚠️ **step 5's prime sentence is written against
+   `W440`'s merged shape**, so this row lands AFTER `W440`.
+4. ⚠️ **Planted**: the old step-4 text back, and the binding goes RED.
+
+⭐ **Surface:** `docs/authoring/exercises.md`, `tests/test_authoring_exercises.py`,
+and the reonboard refusal's wording in `src/studyforge/skills/onboarding/`.
+
+[the mint](#po-round-155)
