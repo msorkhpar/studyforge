@@ -109,6 +109,8 @@ class Onboarding:
     #: the default a caller who named no root gets. `write` refuses a root it
     #: does not resolve for.
     framework: str = SIBLING
+    #: ⭐ `W439`: the recorded answers a person changes on purpose (`reonboard`'s `settle`).
+    settled: tuple[str, ...] = ()
 
     @property
     def paths(self) -> tuple[str, ...]:
@@ -151,7 +153,7 @@ class Onboarding:
             self.files,
             root,
             regenerate=regenerate,
-            refused=lambda blocked: OnboardingRefused(_collision(blocked)),
+            refused=lambda blocked: OnboardingRefused(record.collision(blocked)),
         )
 
     def _refuse_misaddressed(self, root: Path | str) -> None:
@@ -188,7 +190,7 @@ class Onboarding:
             raise OnboardingRefused(
                 f"{len(dropped)} not_material glob(s) {artifacts.MANIFEST} declares would be "
                 f"dropped or given another reason by this regenerate: {dropped}. Nothing was "
-                f"written; pass existing=<its text> to onboard so they are kept as written"
+                f"written; reonboard keeps them as written (onboard's existing=<its text>)"
             )
 
     def _refuse_changing(self, root: Path) -> None:
@@ -204,7 +206,7 @@ class Onboarding:
             return
         before = path.read_text(encoding="utf-8")
         after = next(item.text for item in self.files if item.where == artifacts.MANIFEST)
-        changed = recorded.moved(before, after)
+        changed = tuple(name for name in recorded.moved(before, after) if name not in self.settled)
         if changed:
             raise OnboardingRefused(recorded.refusal(changed, before, after))
 
@@ -382,17 +384,3 @@ def _pin_files(commit: str, skills: Sequence[str], framework: str) -> list[Writt
 def _own(where: str, text: str, why: str) -> Written:
     """One file this skill owns. ⭐ Always generated: none of them is a person's."""
     return Written(where=where, step=STEP, why=why, generated=True, text=text)
-
-
-def _collision(blocked: Sequence[str]) -> str:
-    """Name every path in the way at once, and say which flag would move it.
-
-    ⚠️ An integrator told about one existing file, who moves it, runs again and
-    is told about the next has been given a guessing game — `validate`'s rule,
-    for `validate`'s reason. Only a first write collides.
-    """
-    return (
-        f"{len(blocked)} path(s) already exist and generation is non-destructive "
-        f"(R3): {sorted(blocked)}. Nothing was written; pass regenerate=True to "
-        "rewrite the generated ones and keep the one that is yours"
-    )

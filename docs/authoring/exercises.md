@@ -399,23 +399,38 @@ the worked corpus is re-computed from it by the test suite.
 3. **Your manifest marks the two trees the pass writes as `not_material`.** The
    pass writes into `exercises/` and `practice/`. Without these two entries,
    `studyforge validate` refuses every file in both trees before any exercise
-   check runs. `not_material` needs `corpus_api` 2 or later. The pass never
-   edits `corpus.json`, so you add the entries yourself, inside `content`:
+   check runs. `not_material` needs `corpus_api` 2 or later, and the
+   onboarding skill raises it for you.
 
-```json
-{
-  "not_material": [
-    {
-      "glob": "exercises/**",
-      "why": "authored exercise bundles and their gate records, which the adapter emits as practice documents"
-    },
-    {
-      "glob": "practice/**",
-      "why": "the reader's own workspace files, created from each bundle's starter and tests"
-    }
-  ]
-}
+**Do not edit `corpus.json` by hand, for either step.** Onboarding generated
+it, and `.studyforge/installed.json` records its digest. A hand-typed entry is
+named by `hand_edited`, as a generated file somebody edited (R19). Give both
+changes to the onboarding skill as data, and regenerate:
+
+```python
+from studyforge.skills.onboarding import hand_edited, reonboard
+
+corpus = "path/to/your-corpus"
+made = reonboard(
+    corpus,
+    not_material=[
+        {"glob": "exercises/**", "why": "authored exercise bundles and their gate records"},
+        {"glob": "practice/**", "why": "the reader's workspace, from each bundle's starter"},
+    ],
+    settle={"exercises": True},
+)
+made.write(corpus, regenerate=True)
+print(hand_edited(corpus))  # [] -- nothing generated was edited by hand
 ```
+
+`reonboard` reads your corpus's recorded manifest and pin, and uses them as
+the draft. Every answer you already gave is kept. Each `not_material` entry
+your manifest already declares is kept byte for byte, and each glob the skill
+generates is derived again, so you type only the new ones.
+`settle` names a recorded answer you mean to change. Any other answer that
+would change is refused by name, and nothing is written. If your manifest
+already declares one of the two globs with the same reason, it is kept once.
+A different reason is refused by name.
 
 4. **Your corpus ignores a run's report.** A test run writes its report into
    the reader's workspace, under `practice/`, and a JUnit report records the

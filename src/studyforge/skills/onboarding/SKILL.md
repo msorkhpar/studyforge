@@ -144,11 +144,39 @@ as root documentation are `studyforge.corpus.manifest.edits.ROOT_DOCUMENTATION`,
 all three are refused by `studyforge.corpus.manifest.edits.parse_edits`. ⛔ Read the
 names there: this skill keeps no copy, and a draft declaring one is refused by name.
 
-⛔ **On a corpus already onboarded, pass `existing=` the text of its `corpus.json`**
-(`W283`). A re-survey drafts no glob the manifest already covers (`W269`), so the
-manifest is where those globs come from: each `not_material` glob it declares is kept
-byte for byte, in its order, with its reason. ⭐ `write(..., regenerate=True)` refuses by
-name, and writes nothing, when it would still drop one.
+⛔ **A corpus already onboarded is RE-onboarded from what it records, never
+re-surveyed and never hand-edited** (`W439`). ⭐ Its `corpus.json` and its pin are
+the draft — every answer a person already settled — and a change enters as data:
+
+```
+python3 -c "from studyforge.skills.onboarding import hand_edited, reonboard; \
+  reonboard('.', not_material=[{'glob': 'notes/**', 'why': '<why it is not material>'}]) \
+  .write('.', regenerate=True); print(hand_edited('.'))"
+```
+
+- ⭐ **`not_material` is only the globs you ADD.** Each one the manifest already
+  declares is kept byte for byte, in its order, with its reason (`W283`), and each
+  one a generator owns is derived again — ⛔ **so none is retyped**, and one that
+  is retyped is refused by name as a collision.
+- ⭐ **`settle` names a recorded answer you mean to change** — `{"exercises": True}`
+  when a corpus starts authoring. ⛔ Any answer it does not name that would move is
+  still refused by name (`W329`, below); `content` is never settled here, because a
+  new content shape is a new onboarding.
+- ⭐ **`framework_commit` re-pins.** Without it the recorded pin and its skills are
+  kept. ⛔ **The pin, every stub and `ONBOARDING.md` move together or not at all**:
+  a pin advanced by hand leaves the stubs behind, which the generated
+  `test_framework_pin.py` refuses (`test_no_stub_has_drifted_from_the_pin`) and
+  `hand_edited` names as `.studyforge/pin.json`.
+- ⛔ **`hand_edited('.')` printing `[]` is the proof**, and a `corpus.json` edited in
+  an editor fails it: `.studyforge/installed.json` digests the manifest as generated.
+
+⚠️ **Why not `survey('.')`**: on an onboarded corpus it reads this framework's own
+generated half as material and proposes answers the manifest does not record
+(`W329`), so every regenerate from it is a string of refusals. ⭐ Underneath,
+`reonboard` is `onboard(recorded draft, existing=<its text>, root=...)` —
+`existing=` stays the mechanism for a caller that builds its own draft, and
+`write(..., regenerate=True)` refuses by name, writing nothing, when that draft
+would still drop a declared glob.
 
 ⛔ **And a second run of this whole procedure writes the SAME `corpus.json`, byte
 for byte, or refuses by name** (`W329`). ⚠️ **It did neither**: a re-survey read

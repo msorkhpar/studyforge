@@ -87,7 +87,8 @@ def refusal(names: tuple[str, ...], before: str, after: str) -> str:
         f"{len(names)} answer(s) this corpus already records would be changed by this "
         f"run: {spelled}. A re-survey reads the corpus, so a reading that disagrees "
         f"with a recorded answer is a question, never a rewrite. Nothing was written; "
-        f"settle it in the draft you pass, or uninstall and onboard the corpus afresh"
+        f"settle it in the draft you pass (reonboard's settle= names an answer you mean "
+        f"to change), or uninstall and onboard the corpus afresh"
     )
 
 

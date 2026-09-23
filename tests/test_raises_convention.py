@@ -66,7 +66,9 @@ from tests.raises_sweep import (
 #: floor that pinned them read `W313`'s move as a loss.
 REACH = {
     "studyforge.corpus.container": 3,
-    "studyforge.corpus.manifest": 7,
+    # ⚠️ `W439` RAISED it to 8 with `reonboard.recorded_draft`'s site: at 7 the deleted-outright
+    # plant found 7 left and DID NOT RAISE — the floor moves with the site, as `SF-24`'s did.
+    "studyforge.corpus.manifest": 8,
     "studyforge.generate": 3,
     # ⚠️ `SF-22`: the run route's parse of a practice key is the first site naming
     # `progress.RAISES`, and a subject with NO floor here fails the deleted-outright

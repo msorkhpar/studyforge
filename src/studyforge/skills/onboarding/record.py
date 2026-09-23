@@ -201,3 +201,17 @@ def _entry(item: Written) -> dict:
     if not item.generated:
         return {"where": item.where, HAND_WRITTEN: True}
     return {"where": item.where, "sha256": _digest(item.text)}
+
+
+def collision(blocked: Sequence[str]) -> str:
+    """Name every path in the way at once, and say which flag would move it.
+
+    ⚠️ An integrator told about one existing file, who moves it, runs again and
+    is told about the next has been given a guessing game — `validate`'s rule,
+    for `validate`'s reason. Only a first write collides.
+    """
+    return (
+        f"{len(blocked)} path(s) already exist and generation is non-destructive "
+        f"(R3): {sorted(blocked)}. Nothing was written; pass regenerate=True to "
+        "rewrite the generated ones and keep the one that is yours"
+    )
