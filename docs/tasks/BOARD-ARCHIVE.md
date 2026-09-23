@@ -31746,3 +31746,19 @@ SERVER side**; a reader who types a URL the site itself publishes must not read 
 ⭐ **Read on the LIVE `:8770` after the restart:** the archive's practice document, the bundle's `quiz.json` and the corpus handoff quoting the record each answer `404`; the unit pages and both page assets answer `200`; the content API's unit document carries no key and no sentence; the quiz still grades; an editor still opens.
 
 ⚠️ **Findings carried:** `W452/1` — the editor's bind mount can open a quiz bundle (another process, outside `serve/`); `W452/2`–`W452/4` in the handoff. ⚠️ **Nothing in flight; `M10` waits on the user's pilot review.**
+
+## PO round 171
+
+⭐ **THE USER APPROVED THE PILOT (2026-09-23):** *"I validated the practices and quiz . All look fine for now."* ⭐ **`ISO-22`'s gate is met; `ISO-23` may run** — on the rule below.
+
+⛔ **USER RULINGS, same review:**
+- ⛔ **`ISO-M10/6` — exercises are planned by COVERAGE:** *"Depending on the context of the page there might be no practice, 2 or more, The target is covering all the aspects not just having something minimum we are looking for quality"*. ⭐ Minted [`W453`](rows/W453.md); ⛔ **`ISO-23` waits for it.**
+- ⛔ **`W449/1` — remove the Copilot CLI from the editor image.** Minted [`W454`](rows/W454.md).
+- ⭐ **`W438/2` — `ONBOARDING.md` moves to the archive branch**, for `M11`'s cleanup.
+- ⭐ **`W438/3` — confirmed: local `main` advances to the cleaned release line at `M11`'s end, and `release/m0-foundations` is deleted as merged.** Nothing is pushed.
+
+⭐ **Register rulings, reversible:** `ISO-M10/7` — the pilot is approved, so the density rule stands and case (a) is proved by `ISO-23` on the gates; `AX-10/1` stays carried (a source test file is accounted for by a written reason) until a corpus with real tests meets it.
+
+### ⚠️ In flight
+
+⭐ **`W453`** on `wt/dev1`; ⭐ **`W454`** on `wt/dev2` (with a `code-server-toolchain` branch).
