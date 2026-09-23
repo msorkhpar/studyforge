@@ -86,7 +86,9 @@ POLICY_HEAD = (
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data:",
     "media-src 'self'",
-    "font-src 'self'",
+    # ⭐ `data:` because `render/pageassets/faces.py` embeds every face in `page.css`
+    # so `file://` carries them too (R8); `'self'` alone blocked all seven (`W450`).
+    "font-src 'self' data:",
     "connect-src 'self'",
 )
 

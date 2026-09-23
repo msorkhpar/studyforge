@@ -188,4 +188,10 @@ ACCEPTANCE = {
     #: which needs a SERVED origin, and needs the server to say the lines.
     "draws what a Submit reported — main ask, edge cases n/m, each failed case "
     "named — beside a run verdict it never changes (AX-09)": "test_practice_breakdown",
+    #: ⭐ `W450`'s clause, and it is a row of its own because its ORIGIN and its
+    #: POLICY are the subject: `file://` carries no policy, so every clause above
+    #: loaded the faces while every served page blocked all seven (`W447/1`).
+    #: ⛔ Read over the real `serve` process, never a header written here.
+    "loads every vendored face on a page the serve process answers, under the "
+    "policy it sends, and raises no CSP violation (W450)": "test_served_faces",
 }
