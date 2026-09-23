@@ -40,7 +40,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Protocol
 
 from studyforge.address import Address
@@ -111,7 +111,10 @@ class CodeDraft:
 
     ⭐ Every path but a command's arguments is **workspace-relative**
     (`AX-04`); `plants` maps each edge case's id to the solution that solves
-    the ask and ignores exactly that edge (`G3`).
+    the ask and ignores exactly that edge (`G3`). ⭐ `build` maps each build
+    file's workspace-relative path to its text (`W436`): empty for an exercise
+    whose tests need nothing but the language. ⛔ `report` is inside
+    `exercise.bundle.RUN_OUTPUT_DIRNAME`, or the bundle is refused.
     """
 
     title: str
@@ -128,6 +131,7 @@ class CodeDraft:
     reference: str
     tests: str
     plants: Mapping[str, str]
+    build: Mapping[str, str] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)

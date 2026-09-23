@@ -21,6 +21,7 @@ def test_the_package_states_its_contract():
 
 def test_the_public_surface_is_declared_and_complete():
     assert set(bundle.__all__) == {
+        "BUILD",
         "BUNDLES_DIRNAME",
         "BUNDLE_API",
         "BUNDLE_DIRNAMES",
@@ -36,6 +37,8 @@ def test_the_public_surface_is_declared_and_complete():
         "Places",
         "REFERENCE_SUMMARY",
         "ROLE_DIRNAMES",
+        "RUN_OUTPUT_DIRNAME",
+        "RUN_OUTPUT_IGNORE",
         "SHIPPED_ROLES",
         "STATEMENT",
         "STATEMENT_FILENAME",
@@ -45,6 +48,7 @@ def test_the_public_surface_is_declared_and_complete():
         "edges_of",
         "emit",
         "emit_page",
+        "is_run_output",
         "ordinals",
         "plant_dirname",
         "plant_positions",

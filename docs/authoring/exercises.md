@@ -506,6 +506,7 @@ and this pass does not do it.
 | `reference` | the worked solution. Every test must pass on it, and the reader can open it |
 | `tests` | the tests, one or more per case |
 | `plants` | for each edge case's id, a solution that solves the main ask and ignores exactly that edge |
+| `build` | only when the tests import a library: each build file's path, relative to the workspace, mapped to its text, such as a `pom.xml` naming the library. Leave it out otherwise |
 
 ⛔ **Every path in a command is inside the exercise's own workspace.** The
 brief gives you that directory as `brief.places.workspace`. An argument

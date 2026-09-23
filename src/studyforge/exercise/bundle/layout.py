@@ -12,6 +12,7 @@ reader's own files — and closes the set of files a bundle may hold.
     places.workspace                    # 'practice/demo/prose/unit-02/practice-1'
     places.role_path(STARTER, "Bitmap.java")   # '<bundle>/starter/Bitmap.java'
     places.in_workspace("Bitmap.java")  # '<workspace>/Bitmap.java'
+    places.build_path("pom.xml")        # '<bundle>/build/pom.xml'
     unpermitted(root, places)           # every file in the bundle the shape forbids
 
 **Depends on.** `address` for `Address`, `unit_name` and `require_ordinal`,
@@ -52,6 +53,31 @@ is mechanical here rather than a sentence in a guide:** a bundle may hold
 a run's report committed into a bundle is refused by `studyforge validate`.
 ⭐ **The report is a run artifact**: `document` requires its path to be in the
 workspace, which is not in the bundle at all.
+
+## ⭐ AN EXERCISE'S DEPENDENCIES ARRIVE THROUGH ITS BUILD ROLE (`W436`)
+
+⛔ **An exercise whose tests import a library needs a build declaration, and
+nothing else in the bundle could carry one.** ⭐ So `build/` is the one
+directory the closed set gained: the files a build tool reads — a `pom.xml`,
+a `build.gradle.kts`, a `pyproject.toml` — declared by name in `bundle.json`,
+digested by the gate record like every other input, and laid into the
+reader's workspace beside the starter and the tests. ⛔ **The framework never
+reads one**: it is corpus data a tool reads, so no line here branches on a
+language or a library (R1). The dependencies themselves are never files of
+the corpus — the runner image's prime carries them (`W390`), warmed from the
+same declaration, so a graded run resolves them with no network.
+
+## ⛔ EVERY RUN'S OUTPUT LANDS IN ONE DIRECTORY, AND IT NEVER SITS IN A BUNDLE
+
+⭐ **`RUN_OUTPUT_DIRNAME` is the one convention a report path follows**
+(`ISO-M10/4`): a bundle's report is under it, so the ignore rule a corpus
+writes for its run artifacts is the one line `RUN_OUTPUT_IGNORE`, written once
+and never per exercise. ⚠️ `target` because it is where Maven writes with no
+configuration and already where `skills.execution.prime` refuses to take a
+specimen from; every other tool is told the directory in its own build file or
+command. ⛔ **A bundle file under a directory of that name is refused** by
+`unpermitted`, whichever role's directory it sits in — so the widened set
+still cannot hold a run's report, which is `AX-03/1`'s reason surviving.
 
 ## ⚠️ A PLANT IS FILED BY ORDINAL, NEVER BY CASE ID
 
@@ -99,9 +125,22 @@ STATEMENT = "statement"
 #: `gates.runs`' spellings, taken from that surface rather than re-minted.
 TESTS = "tests"
 
+#: ⭐ The build role (`W436`): the files a build tool reads to resolve the
+#: exercise's dependencies, laid into the workspace at the same relative path.
+BUILD = "build"
+
 #: The sub-directory each role's files sit under, in the order a record writes
 #: them. ⛔ `plants/` is keyed by the edge case's ordinal, never by its id.
 ROLE_DIRNAMES = {STARTER: STARTER, REFERENCE: REFERENCE, TESTS: TESTS}
+
+#: ⛔ **The one directory every run artifact of an exercise lands in**, inside
+#: its workspace — the report included (`ISO-M10/4`). Never a bundle's.
+RUN_OUTPUT_DIRNAME = "target"
+
+#: ⭐ The one ignore line that keeps every run artifact out of every commit, in
+#: git's own pattern syntax: a directory of that name at any depth below the
+#: ignore file that carries it.
+RUN_OUTPUT_IGNORE = f"{RUN_OUTPUT_DIRNAME}/"
 
 #: Where a plant's files sit, one directory per edge case.
 PLANTS_DIRNAME = "plants"
@@ -113,7 +152,7 @@ PLANT_DIRNAME = "edge"
 BUNDLE_FILENAMES = (BUNDLE_FILENAME, STATEMENT_FILENAME, GATES_FILENAME)
 
 #: ⛔ The directories a bundle may hold, and nothing else.
-BUNDLE_DIRNAMES = (STARTER, REFERENCE, TESTS, PLANTS_DIRNAME)
+BUNDLE_DIRNAMES = (STARTER, REFERENCE, TESTS, PLANTS_DIRNAME, BUILD)
 
 
 @dataclass(frozen=True, slots=True)
@@ -184,6 +223,10 @@ class Places:
             )
         return f"{directory}/{path}"
 
+    def build_path(self, path: str) -> str:
+        """Where one build file sits, **inside the bundle**: `build/<path>`."""
+        return f"{BUILD}/{path}"
+
     def plant_path(self, position: int, path: str) -> str:
         """Where the solution planted to fail the `position`-th edge case sits."""
         return f"{PLANTS_DIRNAME}/{plant_dirname(position)}/{path}"
@@ -236,9 +279,10 @@ def unpermitted(root, places: Places) -> tuple[str, ...]:
 
     ⛔ **The closed set is what refuses a committed run report** (`AX-03/1`): a
     JUnit report carries the machine's hostname, so a bundle that may hold
-    anything is a bundle somebody commits one into. ⭐ Empty for a bundle that
-    is not there, because *absent* is `validate.exercises`' finding to make and
-    not this function's.
+    anything is a bundle somebody commits one into. ⛔ A file under a
+    `RUN_OUTPUT_DIRNAME` directory is refused wherever it sits (`W436`).
+    ⭐ Empty for a bundle that is not there, because *absent* is
+    `validate.exercises`' finding to make and not this function's.
     """
     directory = root / places.bundle
     if not directory.is_dir():
@@ -255,10 +299,17 @@ def unpermitted(root, places: Places) -> tuple[str, ...]:
 
 def _permitted(relative: str) -> bool:
     """Answer whether this bundle-relative path is one the shape allows."""
+    if RUN_OUTPUT_DIRNAME in relative.split("/")[:-1]:
+        return False
     head, _, tail = relative.partition("/")
     if not tail:
         return head in BUNDLE_FILENAMES
     return head in BUNDLE_DIRNAMES
+
+
+def is_run_output(path: str) -> bool:
+    """Answer whether a workspace-relative path is inside the run-output directory."""
+    return path.split("/", 1)[0] == RUN_OUTPUT_DIRNAME
 
 
 def require_inside(path: object, root: object, where: str) -> str:

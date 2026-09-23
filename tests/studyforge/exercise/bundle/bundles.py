@@ -34,7 +34,7 @@ DOCUMENT = {
         {"id": "test_builds", "kind": "main", "says": "builds a bitmap"},
         {"id": "test_empty", "kind": "edge", "says": "handles no fields at all"},
     ],
-    "report": {"format": "junit", "path": "report.xml"},
+    "report": {"format": "junit", "path": "target/report.xml"},
     "origin": {"path": "src/one.md", "section": "Bitmaps"},
 }
 
@@ -43,6 +43,10 @@ STARTER = "def build(fields):\n    ...\n"
 REFERENCE = "def build(fields):\n    return sum(1 << (64 - n) for n in fields)\n"
 TESTS = "def test_builds():\n    pass\n\n\ndef test_empty():\n    pass\n"
 PLANT = "def build(fields):\n    return 1\n"
+
+#: What a build file of this fixture holds (`W436`). ⚠️ Not a real tool's file:
+#: the framework never reads one, so its bytes only have to arrive intact.
+BUILD_TEXT = "[build]\nrequires = ['placeholder']\n"
 
 #: The five gates `AX-03` declares for the `code` family, all held.
 HELD = ("G1", "G2", "G3", "G4", "G5")
@@ -90,6 +94,8 @@ def write_bundle(root: Path, **overrides) -> Places:
     _put(where / "reference" / bundle.main_file, REFERENCE)
     _put(where / "tests" / bundle.test_file, TESTS)
     _put(where / "plants" / "edge-1" / bundle.main_file, PLANT)
+    for path in bundle.build:
+        _put(where / "build" / path, BUILD_TEXT)
     return bundle.places
 
 
@@ -110,6 +116,7 @@ def inputs_of(root: Path, spot: Places) -> tuple:
             ("reference", f"reference/{bundle.main_file}"),
             ("tests", f"tests/{bundle.test_file}"),
             (f"plant:{bundle.cases[1].id}", f"plants/edge-1/{bundle.main_file}"),
+            *((f"build:{path}", f"build/{path}") for path in bundle.build),
         ),
         spot.bundle,
     )

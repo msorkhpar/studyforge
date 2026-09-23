@@ -26,7 +26,7 @@ and re-reads the gate record through `exercise.gates`.
 
 | Module | Owns |
 |---|---|
-| `layout` | the two roots, the closed file set, and where each role's copy sits |
+| `layout` | the two roots, the closed file set, where each role's copy sits, where a run writes |
 | `document` | `bundle.json`: what an exercise declares about itself |
 | `emit` | the archive document a bundle becomes, and the workspace it creates |
 
@@ -61,6 +61,21 @@ report is named by `validate.exercises`; and the bundle document's report path
 is **workspace-relative**, so it cannot address the bundle at all. ⭐ **The
 report is a run artifact, never a bundle input**, and that is now a refusal
 instead of a promise.
+
+## ⭐ AN EXERCISE'S DEPENDENCIES ARRIVE THROUGH ITS BUILD ROLE (`W436`)
+
+⛔ **No file a bundle held could carry a third-party dependency**, so an
+exercise whose tests import a library could not be graded. ⭐ `build/` is the
+one directory the closed set gained: the build files `bundle.json` names under
+`build`, digested by the gate record and laid into the workspace by `emit`.
+⛔ The framework never reads one — it is corpus data a build tool reads (R1) —
+and the dependencies are never corpus files: the runner image's prime carries
+them, warmed from the same declaration (`W390`), so a graded run resolves them
+with no network. ⭐ **Every run's output, the report included, lands in
+`RUN_OUTPUT_DIRNAME`** inside the workspace, so the corpus ignores every run
+artifact with the one line `RUN_OUTPUT_IGNORE` (`ISO-M10/4`), and a bundle file
+under that directory is refused wherever it sits — `AX-03/1`'s reason survives
+the wider set.
 
 ## ⭐ THE REFERENCE SOLUTION SHIPS, WITHHELD BUT PRESENT
 
@@ -102,6 +117,7 @@ from studyforge.exercise.bundle.emit import (
     write,
 )
 from studyforge.exercise.bundle.layout import (
+    BUILD,
     BUNDLE_DIRNAMES,
     BUNDLE_FILENAME,
     BUNDLE_FILENAMES,
@@ -110,11 +126,14 @@ from studyforge.exercise.bundle.layout import (
     PLANT_DIRNAME,
     PLANTS_DIRNAME,
     ROLE_DIRNAMES,
+    RUN_OUTPUT_DIRNAME,
+    RUN_OUTPUT_IGNORE,
     STATEMENT,
     STATEMENT_FILENAME,
     TESTS,
     Places,
     edges_of,
+    is_run_output,
     ordinals,
     plant_dirname,
     plant_positions,
@@ -128,6 +147,7 @@ from studyforge.exercise.bundle.layout import (
 #: failed — `docs/conventions/module-structure.md` calls `__init__.py` the
 #: contract, and this is what it says.
 __all__ = [
+    "BUILD",
     "BUNDLES_DIRNAME",
     "BUNDLE_API",
     "BUNDLE_DIRNAMES",
@@ -143,6 +163,8 @@ __all__ = [
     "Places",
     "REFERENCE_SUMMARY",
     "ROLE_DIRNAMES",
+    "RUN_OUTPUT_DIRNAME",
+    "RUN_OUTPUT_IGNORE",
     "SHIPPED_ROLES",
     "STATEMENT",
     "STATEMENT_FILENAME",
@@ -151,6 +173,7 @@ __all__ = [
     "bundle_of",
     "edges_of",
     "emit",
+    "is_run_output",
     "emit_page",
     "ordinals",
     "plant_dirname",
