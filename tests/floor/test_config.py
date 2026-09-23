@@ -64,9 +64,9 @@ def test_python_files_finds_the_tree_and_is_sorted():
     files = config.python_files(repository_root())
     names = [config.relative(path, repository_root()) for path in files]
     assert "src/studyforge/__init__.py" in names
-    assert "tools/quality/config.py" in names
+    assert "tests/floor/config.py" in names
     assert "tests/support.py" in names
-    assert "tools/tests/quality/test_config.py" in names  # it checks itself
+    assert "tests/floor/test_config.py" in names  # it checks itself
     assert names == sorted(names)
     assert not [name for name in names if "__pycache__" in name]
 
@@ -154,7 +154,7 @@ def test_the_git_directory_is_never_a_candidate(tmp_path):
 
 def test_the_real_repository_reads_its_own_documents_and_fixtures():
     swept = sweep(repository_root())
-    assert "docs/conventions/review-rubric.md" in swept
+    assert "README.md" in swept
     assert "tests/fixtures/invalid/personal-data/VIOLATION.md" in swept
     assert "pyproject.toml" in swept
     assert not [name for name in swept if name.startswith(".idea/")]
