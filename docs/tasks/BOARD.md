@@ -58,12 +58,13 @@ one does.**
 | **M7 step 7.3** | ✅ CLOSED — `TC-05` + `TC-06` | `4c8490b4` | [record](BOARD-ARCHIVE.md#po-round-128) |
 | **M7 step 7.4** | ✅ CLOSED — `SK-09` + `SF-24`, ⭐ **its one named gap ([`W416`](rows/W416.md)) FILLED at `7ce4fddd`** | `04b3e65e` | [record](BOARD-ARCHIVE.md#po-round-131) |
 | **M7 step 7.5** | ✅ CLOSED — `QA-02`, ⭐ **closing `W417` and `W419` too** | `d9cce6bc` | [record](BOARD-ARCHIVE.md#po-round-133) |
-| **M10** — every corpus has practices | ⏳ **OPEN — round 134.** ⭐ **A CORE IDEA of the project (user, 2026-09-19)**; step 10.4 on the corpus: `ISO-18`–`ISO-21` taken, the pilot (`ISO-22`) next | — | [the open](BOARD-ARCHIVE.md#po-round-134) |
+| **M10** — every corpus has practices | ⏳ **OPEN — round 134.** ⭐ **A CORE IDEA of the project (user, 2026-09-19)**; the PILOT is authored (corpus `acde0210`) and awaits the USER's review | — | [the open](BOARD-ARCHIVE.md#po-round-134) |
 | **M10 step 10.1** | ✅ CLOSED — `AX-00`, `AX-01`, `AX-05` | `9cd37ccd` | [record](BOARD-ARCHIVE.md#po-round-136) |
 | **M10 step 10.2** | ✅ CLOSED — `AX-02`, `AX-03`, `AX-04`, `AX-06` | `638ec209` | [record](BOARD-ARCHIVE.md#po-round-141) |
 | **M10 step 10.3** | ✅ CLOSED — `AX-07`, `AX-08`, `AX-09`, `AX-10` | `e72b28b7` | [record](BOARD-ARCHIVE.md#po-round-150) |
-| **M11** — it is release-ready | ⏳ **OPEN — round 159, IN PARALLEL with `M10`**, which waits on the user's pilot review; ⭐ **step 11.1 closed; 11.2 and 11.3 building; nothing is moved or deleted before 11.5** | — | [the open](BOARD-ARCHIVE.md#po-round-159) |
+| **M11** — it is release-ready | ⏳ **OPEN — round 159, beside `M10`**; ⛔ **nothing moves or is deleted before 11.5** | — | [the open](BOARD-ARCHIVE.md#po-round-159) |
 | **M11 step 11.1** | ✅ CLOSED — `REL-01` | `af7711b3` | [record](BOARD-ARCHIVE.md#po-round-160) |
+| **M11 step 11.2** | ✅ CLOSED — `REL-02`, `REL-03` | `bed97114` | [record](BOARD-ARCHIVE.md#po-round-161) |
 | **M9** — the Java corpus re-validates | ⛔ **NOT STARTED, and it holds 21 of the 35 undelivered capabilities.** `Claude-senior-java-engineer` converted under §12's rules, with gate-clearing exercises, and the findings written down | — | [the plan](README.md) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
@@ -77,6 +78,8 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
+| `REL-05` | Developer 3 | `chore/REL-05-onboarding-pins-the-installed-library` @ `wt/dev3` | 0 @ `3758d114` | `in-progress` — `M11` step 11.3 |
+| `REL-06` | Developer 4 | `chore/REL-06-the-delivery-skill-reads-the-packaged-index` @ `wt/dev4` | 0 @ `3758d114` | `in-progress` — `M11` step 11.3 |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -627,7 +630,7 @@ else.**
 | W442 | A corpus's generated files spell the framework's path by the checkout that ran the skill (R10) | framework agent | ✅ done — `c79f542e` | [`rows/W442.md`](rows/W442.md) |
 | W443 | The guide's *Before you author* fails a literal first reader on the first corpus | framework agent | ✅ done — `7afcf99c` | [`rows/W443.md`](rows/W443.md) |
 | W444 | `validate` counts an authored practice's headings against the unit's source, so every authored archive is refused | framework agent | ✅ done — `376ebb46` | [`rows/W444.md`](rows/W444.md) |
-| W445 | A reader following the generated `EXECUTION.md` gets an editor blind to `practice/` and no runner for Submit | framework agent | `todo` — blocks the pilot review and `AX-11` | [`rows/W445.md`](rows/W445.md) |
+| W445 | A reader following the generated `EXECUTION.md` gets an editor blind to `practice/` and no runner for Submit | framework agent | ✅ done — `3758d114` | [`rows/W445.md`](rows/W445.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
