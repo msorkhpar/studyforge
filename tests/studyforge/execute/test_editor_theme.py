@@ -118,10 +118,15 @@ def test_weight_and_slant_follow_the_page():
     for scheme in BASES:
         assert rule_for(written, scheme, "keyword")["fontStyle"] == "bold"
         assert rule_for(written, scheme, "comment")["fontStyle"] == "italic"
-        assert "fontStyle" not in rule_for(written, scheme, "string")
+        # ⛔ Stated even when the page declares none, or a less specific rule's
+        # weight leaks in: a Java type reference came out bold.
+        assert rule_for(written, scheme, "string")["fontStyle"] == ""
+        assert rule_for(written, scheme, "entity.name.type")["fontStyle"] == ""
         semantic = written["editor.semanticTokenColorCustomizations"][f"[{BASES[scheme]}]"]
         assert semantic["enabled"] is True
         assert semantic["rules"]["keyword"]["bold"] is True
+        assert semantic["rules"]["class"]["bold"] is False
+        assert semantic["rules"]["comment"]["italic"] is True
         assert (
             semantic["rules"]["class"]["foreground"]
             == rule_for(written, scheme, "entity.name.type")["foreground"]

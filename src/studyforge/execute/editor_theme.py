@@ -46,15 +46,28 @@ nothing, `dark` or `light` when they did). ⭐ So the editor matches the page fo
 all three states without the page telling it anything. Measured on the host's
 Chrome 149: an iframe under `color-scheme: dark` reads dark, and one given
 `color-scheme: light` reads light, whatever the system says. ⚠️ Each theme's
-colours are scoped to its base (`[Light 2026]`, `[Dark 2026]`), so one settings
+colours are scoped to its base (`[Visual Studio Light]`, `[Visual Studio Dark]`), so one settings
 file carries both.
 
-⭐ **The bases are the workbench's own 2026 pair** (`BASES`): its defaults, so
-every surface not named here is the most complete and most tested one it has,
-and their neutrals lean cool with a sky-blue accent, which is the nearest any
-built-in theme comes to this palette's slate and sky. ⚠️ Solarized, Quiet
-Light and Kimbie are warm, and Tomorrow Night Blue and Abyss are saturated
-navy; the palette is none of those.
+⭐ **The bases are the workbench's plainest pair, `Visual Studio Light` and
+`Visual Studio Dark`** (`BASES`), and the reason is MEASURED. ⛔ A customization
+does not beat a theme's own rule of a MORE SPECIFIC scope, and the newer pairs
+(`Dark Modern`, `Dark 2026`) inherit `Dark+`'s per-language rules: under
+`Dark 2026` Java's `int` and `void` (`storage.type.primitive.java`) stayed the
+base's teal beside the page's keyword violet. ⭐ The Visual Studio pair is the
+root the others include and carries the fewest token rules of the four default
+pairs, so the page's mapping decides the tokens a practice file carries; the
+three Java rules it does keep (an
+import's and a package's path, and `*`) are repainted by the language server's
+`namespace` tokens. ⚠️ Its workbench greys are older, and every one a practice
+frame shows is overridden in `SURFACES`. ⛔ Solarized, Quiet Light and Kimbie
+are warm, and Tomorrow Night Blue and Abyss are saturated navy; the palette is
+none of those.
+
+⭐ **Every rule states its weight and slant, even when the page declares
+none**: a style left unset is inherited from a less specific rule, and a type
+reference (`storage.type` in Java's grammar) came out bold beside the page's
+regular one.
 """
 
 from __future__ import annotations
@@ -75,7 +88,7 @@ from studyforge.execute.page_colours import (
 )
 
 #: The built-in base theme for each, by the id the workbench's settings use.
-BASES = {"light": "Light 2026", "dark": "Dark 2026"}
+BASES = {"light": "Visual Studio Light", "dark": "Visual Studio Dark"}
 
 
 @dataclass(frozen=True, slots=True)
@@ -286,14 +299,18 @@ def _theme(theme: dict[str, str], painted: dict, block: dict) -> tuple[dict, dic
     textmate, semantic = [], {}
     for token in (*TOKENS, PLAIN):
         prop, style = _painted(token, painted, block[INK])
-        settings: dict[str, object] = {"foreground": _ink(theme, prop)}
-        if style:
-            settings["fontStyle"] = " ".join(style)
-        textmate.append({"scope": list(token.scopes), "settings": settings})
+        foreground = _ink(theme, prop)
+        textmate.append(
+            {
+                "scope": list(token.scopes),
+                "settings": {"foreground": foreground, "fontStyle": " ".join(style)},
+            }
+        )
         for selector in token.semantic:
             semantic[selector] = {
-                "foreground": settings["foreground"],
-                **{part: True for part in style},
+                "foreground": foreground,
+                "bold": "bold" in style,
+                "italic": "italic" in style,
             }
     return surfaces, {"textMateRules": textmate}, {"enabled": True, "rules": semantic}
 
