@@ -50,12 +50,14 @@ exactly one source**, and reads as a description of that source rather than a
 procedure for the next. `SKILL.md` was written first and this package is what
 it calls.
 
-## ⛔ The framework is a sibling checkout, never a submodule
+## ⛔ The framework is the installed library, never a checkout or a submodule
 
-⚠️ **R18 was amended.** Nothing in this project is pushed to any remote, so a
-submodule URL has no legal form. ⭐ The pin records a **commit** and the
-sibling's *name* — ⛔ never an absolute path, which carries somebody's home
-directory (R7).
+⭐ **The pin records the installed library's version and the commit it was
+built from** (`REL-05`), and each skill stub names its skill and the command
+that prints the procedure from the installed package — ⛔ never a path, which
+would carry somebody's home directory (R7), and never a sibling checkout, which
+a stranger with the installed library does not have. ⚠️ R18 was amended:
+nothing in this project is pushed, so a submodule URL has no legal form.
 
 **Skeleton at FND-01.** Filled by SK-07 (E11).
 """

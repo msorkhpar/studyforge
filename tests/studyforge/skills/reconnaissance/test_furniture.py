@@ -75,7 +75,6 @@ def test_onboarding_takes_the_draft_and_a_resurvey_re_proposes_nothing_it_declar
     root = sources.furnished(tmp_path / "c")
     first = survey(root).proposal
     made = onboard(first, framework_commit=COMMIT, reasons=sources.reasons(first))
-    corpora.framework_beside(root)
     made.write(root)
 
     again = survey(root).proposal

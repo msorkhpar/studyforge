@@ -11,15 +11,19 @@ from __future__ import annotations
 import dataclasses
 import importlib.util
 import json
-import os
-import shutil
-import subprocess
 
 import pytest
 
-from studyforge.skills.onboarding import artifacts, hand_edited, onboard, recorded_draft, reonboard
+from studyforge.skills.onboarding import (
+    artifacts,
+    hand_edited,
+    library,
+    onboard,
+    recorded_draft,
+    reonboard,
+)
 from studyforge.skills.onboarding.manifest import PromotionRefused
-from studyforge.skills.onboarding.pin import FRAMEWORK, PIN_FILE, stub_paths
+from studyforge.skills.onboarding.pin import PIN_FILE, stub_paths
 from studyforge.skills.onboarding.record import OnboardingRefused
 from tests.studyforge.skills.onboarding import corpora
 
@@ -160,18 +164,8 @@ def test_a_corpus_never_onboarded_is_refused_by_name(tmp_path):
 # --- the pin: moved by a regenerate, or refused by the corpus's own check ------
 
 
-def _second_commit(root):
-    """Give the synthetic framework beside `root` a second commit, and return it."""
-    env = {"PATH": os.environ.get("PATH", ""), "HOME": str(root.parent), **corpora.SYNTHETIC_GIT}
-    framework = root.parent / FRAMEWORK
-    done = subprocess.run(
-        [shutil.which("git"), "-C", str(framework), "commit-tree", "-p", corpora.COMMIT]
-        + [f"{corpora.COMMIT}^{{tree}}", "-m", "a second synthetic framework commit"],
-        capture_output=True,
-        env=env,
-        check=True,
-    )
-    return done.stdout.decode().strip()
+#: A second commit, as an operator re-pinning would pass it (checked for shape only).
+SECOND = "b" * 40
 
 
 def _drift_check(root):
@@ -184,12 +178,11 @@ def _drift_check(root):
 
 def test_a_re_pin_through_the_skill_moves_the_pin_and_every_stub_together(tmp_path):
     root = _onboarded(tmp_path)
-    second = _second_commit(root)
 
-    reonboard(root, framework_commit=second).write(root, regenerate=True)
+    reonboard(root, framework_commit=SECOND).write(root, regenerate=True)
 
-    assert json.loads((root / PIN_FILE).read_text(encoding="utf-8"))["commit"] == second
-    assert all(f"pin: {second}" in (root / where).read_text("utf-8") for where in stub_paths())
+    assert json.loads((root / PIN_FILE).read_text(encoding="utf-8"))["commit"] == SECOND
+    assert all(f"pin: {SECOND}" in (root / where).read_text("utf-8") for where in stub_paths())
     _drift_check(root)()
     assert hand_edited(root) == []
 
@@ -199,8 +192,54 @@ def test_a_pin_moved_by_hand_is_refused_by_the_corpus_side_check_and_named(tmp_p
     root = _onboarded(tmp_path)
     pinned = root / PIN_FILE
     document = json.loads(pinned.read_text(encoding="utf-8"))
-    pinned.write_text(json.dumps({**document, "commit": _second_commit(root)}), "utf-8")
+    pinned.write_text(json.dumps({**document, "commit": SECOND}), "utf-8")
 
-    with pytest.raises(AssertionError, match="name a commit the pin does not"):
+    with pytest.raises(AssertionError, match="name a commit or a version the pin does not"):
         _drift_check(root)()
     assert hand_edited(root) == [PIN_FILE]
+
+
+# --- REL-05: a pin that no longer names the library running this ------------
+
+
+#: The pin a corpus onboarded before `REL-05` carries: a sibling checkout at a commit.
+SIBLING_PIN = {
+    "pin_api": 1,
+    "framework": "studyforge",
+    "where": "sibling",
+    "commit": corpora.COMMIT,
+    "skills": ["reconnaissance", "adapter", "onboarding"],
+}
+
+
+def test_a_pin_from_before_the_installed_library_is_refused_without_a_re_pin(tmp_path):
+    root = _onboarded(tmp_path)
+    (root / PIN_FILE).write_text(json.dumps(SIBLING_PIN), encoding="utf-8")
+
+    with pytest.raises(OnboardingRefused, match="predates the installed library"):
+        reonboard(root)
+
+
+def test_a_pin_from_before_the_installed_library_migrates_with_a_re_pin(tmp_path):
+    # ⭐ The one step an already-onboarded corpus runs: re-pin from the library.
+    root = _onboarded(tmp_path)
+    (root / PIN_FILE).write_text(json.dumps(SIBLING_PIN), encoding="utf-8")
+
+    reonboard(root, framework_commit=SECOND).write(root, regenerate=True)
+
+    pinned = json.loads((root / PIN_FILE).read_text(encoding="utf-8"))
+    assert (pinned["where"], pinned["version"], pinned["commit"]) == (
+        "installed",
+        library.version(),
+        SECOND,
+    )
+    _drift_check(root)()
+    assert hand_edited(root) == []
+
+
+def test_a_pin_naming_another_version_is_refused_without_a_re_pin(tmp_path, monkeypatch):
+    root = _onboarded(tmp_path)
+    monkeypatch.setattr(library, "version", lambda: "9.9.9")
+
+    with pytest.raises(OnboardingRefused, match="other than the 9.9.9 running this"):
+        reonboard(root)

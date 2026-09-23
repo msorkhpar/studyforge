@@ -53,11 +53,13 @@ floor as unfinished (C5). ⭐ `recorded.moved` compares the manifest on disk wit
 the one about to be written, over the manifest's own fields, and a regenerate
 that would move one refuses by name and writes nothing.
 
-## ⛔ What is written never depends on which checkout wrote it (`W442`, R10)
+## ⛔ The pin is the library this runs AS, never a checkout beside the corpus (`REL-05`)
 
-⭐ Every generated document addresses the framework as `pin.SIBLING`, from the
-corpus's main checkout; `write(root)` checks the pin against `framework_of(root)`
-and moves no byte. ⚠️ `root=` is still accepted and moves nothing.
+⭐ `onboard` reads the running library's version (`library.version()`) and pins
+it with the commit it is given; no generated document names a path to the
+framework, so nothing written depends on which checkout wrote it (`W442`, R10).
+⛔ A library whose version cannot be read is refused by name before anything is
+planned. ⚠️ `root=` is still accepted and moves nothing.
 """
 
 from __future__ import annotations
@@ -77,14 +79,14 @@ from studyforge.skills.adapter import (
     scaffold,
     write_files,
 )
-from studyforge.skills.onboarding import artifacts, record, recorded
+from studyforge.skills.onboarding import artifacts, library, record, recorded
 from studyforge.skills.onboarding.manifest import promote, render
 from studyforge.skills.onboarding.nondestructive import edits_test
 from studyforge.skills.onboarding.pin import (
     RECORD_FILE,
     SKILLS,
-    check_held,
-    framework_of,
+    PinRefused,
+    check_commit,
     known,
     pin_document,
     pin_test,
@@ -104,8 +106,10 @@ class Onboarding:
     manifest: Manifest
     files: tuple[Written, ...]
     not_material: tuple[dict[str, str], ...]
-    #: The framework commit the pin records, checked against the checkout at `write`.
+    #: The framework commit the pin records: the operator's, shape-checked (`REL-05`).
     commit: str
+    #: ⭐ `REL-05`: the version of the library this onboarding ran as, which the pin records.
+    version: str
     #: ⭐ `W283`: the `not_material` globs a generator declares, re-derived on every run.
     generated: tuple[str, ...] = ()
     #: ⭐ `W439`: the recorded answers a person changes on purpose (`reonboard`'s `settle`).
@@ -133,11 +137,11 @@ class Onboarding:
         rule `Scaffold.write` follows too (`W265`): two copies of it disagreed
         once (`W257/2`), so there is one.
 
-        ⛔ **The pin is checked against the framework beside `root` first**
-        (`W270`): a commit that checkout does not hold is refused by name, and
-        nothing is written. ⭐ The check resolves; the bytes do not (`W442`).
+        ⛔ **The pin is checked against the library running this first**
+        (`REL-05`): a version this Python does not import is refused by name,
+        and nothing is written.
         """
-        check_held(self.commit, framework_of(root))
+        _check_running(self.version)
         if regenerate:
             self._refuse_dropping(Path(root))
             self._refuse_changing(Path(root))
@@ -192,6 +196,7 @@ class Onboarding:
         """Return the report a person reads before anything is written."""
         out = ["onboarding — a repository of material becomes a corpus", ""]
         out += [
+            f"  framework         studyforge {self.version}, built from {self.commit}",
             f"  source            {self.manifest.source}",
             f"  corpus_api        {self.manifest.corpus_api}",
             f"  levels            {self.manifest.depth}: {', '.join(self.manifest.levels)}",
@@ -226,16 +231,18 @@ def onboard(
 ) -> Onboarding:
     """Return everything a repository becomes, from reconnaissance's draft.
 
-    `framework_commit` is the sibling checkout's recorded commit — the pin file
-    is where the workspace's own record of it lands (`FND-05a`). `existing` is
+    `framework_commit` is the commit the running library was built from; the pin
+    records it beside the version read from that library (`REL-05`). `existing` is
     the text of the `corpus.json` a re-onboarding finds on disk (`W283`); a
     first onboarding passes nothing and is unchanged. ⛔ **`root` moves no byte**
-    (`W442`): every document addresses the framework as `pin.SIBLING`, from the
-    corpus's main checkout, so a regenerate from a linked worktree and one from
-    the main checkout write the same files (R10). ⭐ It is accepted so existing
-    callers keep working; the reader's document reads no state either (`W332`).
+    (`W442`): no document names a path to the framework, so a regenerate from a
+    linked worktree and one from the main checkout write the same files (R10).
+    ⭐ It is accepted so existing callers keep working; the reader's document
+    reads no state either (`W332`).
     """
     del root  # ⛔ W442: the checkout that ran the skill never reaches a rendered byte.
+    check_commit(framework_commit)
+    version = _running_version()
     kept = _declared(existing) if existing is not None else ()
     provisional = parse(render(promote(_carried(draft, kept), reasons=reasons)))
     made = scaffold(plan_for(provisional))
@@ -254,7 +261,7 @@ def onboard(
     files = [
         _own(artifacts.MANIFEST, render(document), "the declaration that makes this a source"),
         *made.files,
-        *_pin_files(framework_commit, skills),
+        *_pin_files(framework_commit, version, skills),
         *_ignore_file(manifest),
         *ignore_files(checks),
         *checks,
@@ -264,6 +271,7 @@ def onboard(
                 manifest,
                 made.hand_written,
                 commit=framework_commit,
+                version=version,
             ),
             "what a reader is told, from the declarations, and where to read the state",
         ),
@@ -274,6 +282,7 @@ def onboard(
         files=tuple(files),
         not_material=tuple(dict(entry) for entry in document["content"].get("not_material", ())),
         commit=framework_commit,
+        version=version,
         generated=generated,
     )
 
@@ -350,13 +359,31 @@ def _ignore_file(manifest: Manifest) -> list[Written]:
     return [_own(wanted.home.as_posix(), wanted.text(), why)]
 
 
-def _pin_files(commit: str, skills: Sequence[str]) -> list[Written]:
-    """Return the pin, and one thin pointer per skill, each addressing `pin.SIBLING`."""
-    document = json.dumps(pin_document(commit, skills), indent=2) + "\n"
-    files = [_own(artifacts.PIN_FILE, document, "the framework, as a sibling at a commit")]
+def _pin_files(commit: str, version: str, skills: Sequence[str]) -> list[Written]:
+    """Return the pin, and one thin pointer per skill into the installed library."""
+    document = json.dumps(pin_document(commit, version, skills), indent=2) + "\n"
+    files = [_own(artifacts.PIN_FILE, document, "the installed library, at a version and commit")]
     for where, name in zip(stub_paths(skills), known(skills), strict=True):
-        files.append(_own(where, stub(name, commit), f"a pointer to the {name} procedure"))
+        files.append(_own(where, stub(name, commit, version), f"a pointer to the {name} procedure"))
     return files
+
+
+def _running_version() -> str:
+    """Return the running library's version, or a refusal `onboard`'s callers already catch."""
+    try:
+        return library.version()
+    except library.LibraryRefused as error:
+        raise PinRefused(str(error)) from None
+
+
+def _check_running(version: str) -> None:
+    """Refuse a write whose pin names a version other than the library running it."""
+    running = _running_version()
+    if running != version:
+        raise PinRefused(
+            f"this onboarding pins studyforge {version} and the library running it is "
+            f"{running}; onboard again from the library the corpus will use"
+        )
 
 
 def _own(where: str, text: str, why: str) -> Written:
