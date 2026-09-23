@@ -79,9 +79,7 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W450` | Developer 1 | `fix/W450-the-served-page-admits-its-own-faces` @ `wt/dev1` | 0 @ `4099d630` | `in-progress` — blocks `M10` |
-| `W451` | Developer 3 | `feat/W451-the-server-grades-a-quiz` @ `wt/dev3` | 0 @ `4099d630` | `in-progress` — blocks `M10` |
-| `W448`, `W449` | Developer 2 | `fix/W448-W449-the-frame-neither-flashes-nor-moves-the-page` @ `wt/dev2` | 0 @ `ebbc1bd6` | `in-progress` — blocks `M10` |
+| `W452` | Developer 3 | `fix/W452-the-server-never-hands-out-a-quiz-key` @ `wt/dev3` | 0 @ `79797b90` | `in-progress` — blocks `M10` |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -635,10 +633,11 @@ else.**
 | W445 | A reader following the generated `EXECUTION.md` gets an editor blind to `practice/` and no runner for Submit | framework agent | ✅ done — `3758d114` | [`rows/W445.md`](rows/W445.md) |
 | W446 | Every practice shares one editor settings file, so a two-practice page 409s and only one practice is editable | framework agent | ✅ done — `a03ad248` | [`rows/W446.md`](rows/W446.md) |
 | W447 | A worked solution's code block renders narrower than every other code block on the page | framework agent | ✅ done — `4099d630` | [`rows/W447.md`](rows/W447.md) |
-| W448 | A practice frame paints the editor's Explorer side bar, then closes it once loaded | framework agent | `in-progress` — ⛔ USER REPORT, blocks the pilot review | [`rows/W448.md`](rows/W448.md) |
-| W449 | A practice frame's editor takes focus on load and scrolls the reading page to itself | framework agent | `in-progress` — ⛔ USER REPORT, blocks the pilot review | [`rows/W449.md`](rows/W449.md) |
-| W450 | Every embedded typeface is blocked by the served page's `font-src`, so the served site never shows its faces | framework agent | `in-progress` — blocks the pilot review | [`rows/W450.md`](rows/W450.md) |
-| W451 | A quiz's key leaves the page: the local study server grades the answer (user ruling) | framework agent | `in-progress` — ⛔ USER RULING, blocks the pilot quiz | [`rows/W451.md`](rows/W451.md) |
+| W448 | A practice frame paints the editor's Explorer side bar, then closes it once loaded | framework agent | ✅ done — `dc53235a` | [`rows/W448.md`](rows/W448.md) |
+| W449 | A practice frame's editor takes focus on load and scrolls the reading page to itself | framework agent | ✅ done — `dc53235a` | [`rows/W449.md`](rows/W449.md) |
+| W450 | Every embedded typeface is blocked by the served page's `font-src`, so the served site never shows its faces | framework agent | ✅ done — `1d7baa24` | [`rows/W450.md`](rows/W450.md) |
+| W451 | A quiz's key leaves the page: the local study server grades the answer (user ruling) | framework agent | ✅ done — `79797b90` | [`rows/W451.md`](rows/W451.md) |
+| W452 | The serving process still hands out a quiz's key by URL, through the content API and the archive's static mount | framework agent | `in-progress` — ⛔ the user's quiz ruling | [`rows/W452.md`](rows/W452.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
