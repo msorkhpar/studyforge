@@ -30433,3 +30433,49 @@ dispatch**; `AX-10` follows it and `AX-11` is `M10`'s acceptance.
 ⭐ **Surface:** the sibling `code-server-toolchain` — `lockdown/` and `docker/editor/` — and `execute/workbench.py`.
 
 [the mint](#po-round-140)
+
+## PO round 143
+
+⛔ **THIS ROUND RECORDS THREE COMMITS THE BOARD NEVER SAW.** ⚠️ **Three
+user-reported editor defects were fixed DIRECT-TO-RELEASE, on the user's
+instruction, WITHOUT ROWS** — so from `e06f4103` to `a35c5de3` the register
+read round 142 while the tree had moved. ⭐ **This record is the board catching
+up; it mints nothing and closes nothing, because nothing was minted.**
+
+| Commit | Where | What |
+|---|---|---|
+| `c535074` | `code-server-toolchain` | ⛔ **The editor starts `--auth=none`** (user ruling, 2026-09-22). ⭐ **Safe ONLY because the port is bound to `127.0.0.1`**; `tests/test_consuming.py` asserts the flag and the bind TOGETHER, so neither loosens alone. ⛔ **Widening the bind puts `--auth=password` back in the same edit.** |
+| `4b3fcdb` | `code-server-toolchain` | ⛔ **The bundled chat is DELETED from the image**, not hidden. |
+| `eb55e598` | here | ⭐ **Pin `4a21021` → `c535074`.** |
+| `a35c5de3` | here | ⭐ **`window.commandCenter: false` and `editor.scrollBeyondLastLine: false` in `execute/workbench.py::CLOSED`**, and the pin → `4b3fcdb`. |
+
+### ⛔ THE TRAP — a BUILT-IN is not an extension
+
+⚠️ **The chat was a built-in of the code-server BUILD**, on no
+`--list-extensions` output and in no `EXPECTED_EXTENSIONS` — ⛔ **so the test
+that pins the installed extensions PASSED against every image that shipped
+it.** ⭐ **When a test passes over a live defect, ask what list it is reading.**
+⭐ **The control: the image's built-in count fell by EXACTLY one.**
+
+### ⭐ Settings have two homes, and confinement belongs in `CLOSED`
+
+⚠️ **The image's settings seed is written once and is the READER's afterwards;
+`CLOSED` is workspace scope in a read-only workspace.** ⛔ **The two keys went
+to the seed first, where two of their neighbours already lived in `CLOSED` —
+one clause, two homes.**
+
+### ⚠️ STILL OPEN, and not closed quietly
+
+⛔ **`editor.scrollBeyondLastLine` was measured on a file SHORTER than the
+viewport.** ⭐ **The key is written and same-file keys are in effect; a file
+TALLER than the panel is the one reading not yet taken**, and it is this
+round's to take.
+
+⛔ **Two findings await the user's mint ruling:** `exercise/safety.py`'s
+trailing-newline bypass, and the corpus's untracked `practice/.vscode/` —
+⚠️ **the SOLE reason `workspace verify` is RED.**
+
+### ⚠️ In flight
+
+⛔ **Nothing.** ⭐ **`AX-08` is step 10.3's next dispatch**; `AX-10` follows
+and `AX-11` is `M10`'s acceptance.
