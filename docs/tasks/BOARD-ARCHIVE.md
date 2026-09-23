@@ -31442,3 +31442,19 @@ pages) and `AX-11` wait on the answers.**
 ### ⚠️ In flight
 
 ⭐ **`REL-05`** on `wt/dev3`.
+
+## PO round 163
+
+⭐ **`M11` step 11.3 CLOSES** — `REL-05` merged `06075ff0`: ⭐ **onboarding pins the
+INSTALLED library**; a stub names its commit and version and the commands that
+print its procedure from the package. ⭐ **The register ran the installed-wheel
+module on the host — none skipped — and planted the version comparison (the office
+planted the stub path): a pin naming another version stopped being refused → RED.**
+⚠️ **An onboarded corpus is unaffected until it re-onboards**, and the first corpus
+does not re-onboard before the user's pilot review.
+
+### ⚠️ Nothing in flight, deliberately
+
+⭐ **The user asked for work until morning, and it is morning.** ⛔ **Step 11.4
+(`REL-07`–`REL-09`) is NOT dispatched**; ⭐ **`M10` waits on the user's pilot review
+and nothing else.**
