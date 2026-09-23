@@ -58,7 +58,7 @@ one does.**
 | **M7 step 7.3** | ✅ CLOSED — `TC-05` + `TC-06` | `4c8490b4` | [record](BOARD-ARCHIVE.md#po-round-128) |
 | **M7 step 7.4** | ✅ CLOSED — `SK-09` + `SF-24`, ⭐ **its one named gap ([`W416`](rows/W416.md)) FILLED at `7ce4fddd`** | `04b3e65e` | [record](BOARD-ARCHIVE.md#po-round-131) |
 | **M7 step 7.5** | ✅ CLOSED — `QA-02`, ⭐ **closing `W417` and `W419` too** | `d9cce6bc` | [record](BOARD-ARCHIVE.md#po-round-133) |
-| **M10** — every corpus has practices | ⏳ **OPEN — round 134.** ⭐ **A CORE IDEA of the project (user, 2026-09-19)**; step 10.4 (the corpus) planned, its pilot waits on `W436` | — | [the open](BOARD-ARCHIVE.md#po-round-134) |
+| **M10** — every corpus has practices | ⏳ **OPEN — round 134.** ⭐ **A CORE IDEA of the project (user, 2026-09-19)**; step 10.4 on the corpus: `ISO-18`–`ISO-21` taken, the pilot (`ISO-22`) next | — | [the open](BOARD-ARCHIVE.md#po-round-134) |
 | **M10 step 10.1** | ✅ CLOSED — `AX-00`, `AX-01`, `AX-05` | `9cd37ccd` | [record](BOARD-ARCHIVE.md#po-round-136) |
 | **M10 step 10.2** | ✅ CLOSED — `AX-02`, `AX-03`, `AX-04`, `AX-06` | `638ec209` | [record](BOARD-ARCHIVE.md#po-round-141) |
 | **M10 step 10.3** | ✅ CLOSED — `AX-07`, `AX-08`, `AX-09`, `AX-10` | `e72b28b7` | [record](BOARD-ARCHIVE.md#po-round-150) |
@@ -76,7 +76,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W442` | Developer 1 | `fix/W442-generated-paths-are-the-workspaces` @ `wt/dev1` | 0 @ `a5373c1b` | `in-progress` — blocks `M10` |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -624,9 +623,9 @@ else.**
 | W439 | The authoring guide says to hand-edit `corpus.json`, which an onboarded corpus treats as generated | framework agent | ✅ done — `0e1dfca2` | [`rows/W439.md`](rows/W439.md) |
 | W440 | The execution skill writes a prime the toolchain refuses, and would sweep every exercise's build in | framework agent | ✅ done — `fb9dcd49` | [`rows/W440.md`](rows/W440.md) |
 | W441 | The maximise test's scroll-restore drifts under the merge gate's load, three readings | framework agent | ✅ done — `f05b3267` | [`rows/W441.md`](rows/W441.md) |
-| W442 | A corpus's generated files spell the framework's path by the checkout that ran the skill (R10) | framework agent | `in-progress` — blocks `M10` | [`rows/W442.md`](rows/W442.md) |
+| W442 | A corpus's generated files spell the framework's path by the checkout that ran the skill (R10) | framework agent | ✅ done — `c79f542e` | [`rows/W442.md`](rows/W442.md) |
 | W443 | The guide's *Before you author* fails a literal first reader on the first corpus | framework agent | ✅ done — `7afcf99c` | [`rows/W443.md`](rows/W443.md) |
-| W444 | `validate` counts an authored practice's headings against the unit's source, so every authored archive is refused | framework agent | `todo` — blocks `M10`'s pilot (`ISO-21/1`) | [`rows/W444.md`](rows/W444.md) |
+| W444 | `validate` counts an authored practice's headings against the unit's source, so every authored archive is refused | framework agent | ✅ done — `376ebb46` | [`rows/W444.md`](rows/W444.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
