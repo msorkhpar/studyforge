@@ -25,7 +25,7 @@ and on nothing inside either component but its `consuming.json` (R18).
 | `rulings` | spec §8.1's four rulings and §8.3's, asserted against a block |
 | `emit` | the smallest deterministic YAML a generated compose file needs |
 | `composefile` | one contract block to one compose service, and the file around it |
-| `prime` | the corpus's own build files, source and test, selected |
+| `prime` | the corpus's own build, source and test, as one project per seeded tool |
 | `onboard` | the whole of it, and the empty answer for a corpus that is not runnable |
 
 ## ⛔ SEPARATED FROM ONBOARDING, AND THE SEPARATION IS THE POINT
@@ -73,7 +73,7 @@ from studyforge.skills.execution.onboard import (
     source_root,
     write,
 )
-from studyforge.skills.execution.prime import Prime, PrimeRefused, Specimen, prime_for
+from studyforge.skills.execution.prime import Prime, PrimeRefused, Project, Specimen, prime_for
 from studyforge.skills.execution.rulings import findings
 from studyforge.skills.execution.toolchain import Selection, select
 
@@ -98,6 +98,7 @@ __all__ = [
     "ExecutionRefused",
     "Prime",
     "PrimeRefused",
+    "Project",
     "Selection",
     "Specimen",
     "classified",

@@ -131,7 +131,12 @@ def editor_contract(**moved: object) -> dict:
             "docker_socket": False,
             "restart": "no",
         },
-        "runner": {"prime": {"seeds": {"gradle": "gradle-home", "maven": "maven-repo"}}},
+        "runner": {
+            "prime": {
+                "seeds": {"gradle": "gradle-home", "maven": "maven-repo"},
+                "declared_by": "--prime <directory>",
+            }
+        },
     }
     document.update(moved)
     return document

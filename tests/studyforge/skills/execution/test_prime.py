@@ -11,11 +11,18 @@ from __future__ import annotations
 
 import pytest
 
+from studyforge.exercise.bundle import emit, write
 from studyforge.skills.execution import prime
+from tests.studyforge.exercise.bundle import dependency
 from tests.studyforge.skills.execution.contracts import corpus
 
 #: The runtimes the synthetic component seeds a cache for.
 SEEDED = ("gradle", "maven")
+
+
+def put(path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
 
 
 def test_a_corpus_with_a_build_file_a_source_and_a_test_is_primed(tmp_path):
@@ -29,8 +36,8 @@ def test_a_corpus_with_a_build_file_a_source_and_a_test_is_primed(tmp_path):
 def test_every_selected_path_is_a_file_the_corpus_already_carried(tmp_path):
     root = corpus(tmp_path)
     made = prime.prime_for(root, ("java", "maven"), seeded=SEEDED)
-    for where in made.copies():
-        assert (root / where).is_file(), where
+    for _, origin in made.copies():
+        assert (root / origin).is_file(), origin
 
 
 def test_the_copies_preserve_the_package_directory(tmp_path):
@@ -56,7 +63,9 @@ def test_a_runtime_the_component_does_not_seed_is_not_asked_for_a_build_file(tmp
     (root / "sources/app/run.py").write_text("def one():\n    return 1\n", encoding="utf-8")
     (root / "sources/app/test_run.py").write_text("def test_one():\n    pass\n", encoding="utf-8")
     made = prime.prime_for(root, ("python",), seeded=SEEDED)
-    assert [one.language for one in made.specimens] == ["python"]
+    # ⭐ And it gets no project: the component warms nothing for a runtime it
+    # does not seed, and anything else at the prime's top is refused (`W440`).
+    assert made.projects == () and made.copies() == ()
 
 
 def test_a_declared_language_with_no_source_is_refused(tmp_path):
@@ -75,11 +84,14 @@ def test_a_declared_language_with_no_test_is_refused(tmp_path):
 
 
 def test_every_missing_piece_is_named_at_once_rather_than_one_per_round_trip(tmp_path):
-    root = corpus(tmp_path, java=False)
+    root = corpus(tmp_path)
     (root / "sources/app/pom.xml").unlink()
+    (root / "sources/app/src/test/java/demo/DemoTest.java").unlink()
+    (root / "sources/app/settings.gradle").write_text("", encoding="utf-8")
     with pytest.raises(prime.PrimeRefused) as refused:
-        prime.prime_for(root, ("java", "maven"), seeded=SEEDED)
-    assert str(refused.value).count(";") >= 2
+        prime.prime_for(root, ("gradle", "java", "maven"), seeded=SEEDED)
+    said = str(refused.value)
+    assert "maven is declared" in said and "no test" in said
 
 
 def test_an_empty_file_is_never_selected_as_a_specimen(tmp_path):
@@ -154,10 +166,102 @@ def test_a_root_that_is_not_a_path_is_refused_without_quoting_it(tmp_path):
 
 def test_the_document_names_every_file_the_prime_carries(tmp_path):
     made = prime.prime_for(corpus(tmp_path), ("java", "maven"), seeded=SEEDED)
-    document = made.document()
-    named = (
-        set(document["build_files"])
-        | {one["source"] for one in document["specimens"]}
-        | {one["test"] for one in document["specimens"]}
+    named = set()
+    for project in made.document()["projects"]:
+        named |= set(project["build_files"])
+        named |= {one["source"] for one in project["specimens"]}
+        named |= {one["test"] for one in project["specimens"]}
+    assert named == {origin for _, origin in made.copies()}
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W440`: the component's layout — one project per seeded tool
+# --------------------------------------------------------------------------
+
+
+def test_each_project_is_copied_under_its_seed_key_re_rooted_at_its_build(tmp_path):
+    made = prime.prime_for(corpus(tmp_path), ("java", "maven"), seeded=SEEDED)
+    assert made.copies() == (
+        ("maven/pom.xml", "sources/app/pom.xml"),
+        ("maven/src/main/java/demo/Demo.java", "sources/app/src/main/java/demo/Demo.java"),
+        (
+            "maven/src/test/java/demo/DemoTest.java",
+            "sources/app/src/test/java/demo/DemoTest.java",
+        ),
     )
-    assert named == set(made.copies())
+
+
+def test_the_prime_top_is_only_ever_a_seed_key(tmp_path):
+    # ⭐ The directory names are the contract's (`runner.prime.seeds`), never
+    # this module's: a tool the contract does not seed gets no directory.
+    root = corpus(tmp_path)
+    (root / "sources/app/settings.gradle").write_text("", encoding="utf-8")
+    made = prime.prime_for(root, ("gradle", "java", "maven"), seeded=("maven",))
+    assert {inside.split("/")[0] for inside, _ in made.copies()} == {"maven"}
+
+
+def test_a_build_at_the_corpus_root_is_re_rooted_to_nothing(tmp_path):
+    put(tmp_path / "pom.xml", "<project/>\n")
+    put(tmp_path / "src/main/java/a/A.java", "package a;\nclass A {}\n")
+    put(tmp_path / "src/test/java/a/ATest.java", "package a;\nclass ATest {}\n")
+    made = prime.prime_for(tmp_path, ("java", "maven"), seeded=SEEDED)
+    assert made.projects[0].root == ""
+    assert ("maven/src/main/java/a/A.java", "src/main/java/a/A.java") in made.copies()
+
+
+def test_a_specimen_outside_the_build_is_never_selected(tmp_path):
+    # ⚠️ A source outside the build's directory has no place in its project,
+    # however small it is: it would not compile where the build looks.
+    root = corpus(tmp_path)
+    put(root / "notes/X.java", "class X{}\n")
+    put(root / "notes/XTest.java", "class XTest{}\n")
+    made = prime.prime_for(root, ("java", "maven"), seeded=SEEDED)
+    assert all(origin.startswith("sources/app/") for _, origin in made.copies())
+
+
+def test_two_builds_at_the_same_depth_are_refused_by_name(tmp_path):
+    root = corpus(tmp_path)
+    put(root / "sources/other/pom.xml", "<project/>\n")
+    with pytest.raises(prime.PrimeRefused) as refused:
+        prime.prime_for(root, ("java", "maven"), seeded=SEEDED)
+    said = str(refused.value)
+    assert "sources/app" in said and "sources/other" in said and "one project" in said
+
+
+def test_a_build_with_a_source_and_no_language_of_its_own_is_refused(tmp_path):
+    root = corpus(tmp_path, java=False)
+    with pytest.raises(prime.PrimeRefused) as refused:
+        prime.prime_for(root, ("java", "maven"), seeded=SEEDED)
+    assert "compile nothing" in str(refused.value)
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W440`: the prime is the corpus's own build, never its exercises'
+# --------------------------------------------------------------------------
+
+
+def exercised(root):
+    """A corpus whose own build is at its root, with one emitted exercise under it."""
+    put(root / "pom.xml", "<project/>\n")
+    put(root / "src/main/java/demo/Demo.java", "package demo;\npublic class Demo { }\n")
+    put(root / "src/test/java/demo/DemoTest.java", "package demo;\nclass DemoTest { }\n")
+    bundle = dependency.write_bundle(root)
+    write(root, emit(root, bundle, source="demo", ingested="2026-01-05"), "the exercise")
+    return bundle
+
+
+def test_an_exercise_build_role_is_never_swept_into_the_prime(tmp_path):
+    bundle = exercised(tmp_path)
+    # ⭐ The fixture is real: the build role and its workspace copy both exist.
+    assert (tmp_path / bundle.places.in_bundle(bundle.places.build_path("pom.xml"))).is_file()
+    assert (tmp_path / bundle.places.in_workspace(dependency.BUILD_FILE)).is_file()
+    made = prime.prime_for(tmp_path, ("java", "maven"), seeded=SEEDED)
+    assert made.build_files == ("pom.xml",)
+
+
+def test_no_exercise_file_is_ever_a_specimen(tmp_path):
+    bundle = exercised(tmp_path)
+    made = prime.prime_for(tmp_path, ("java", "maven"), seeded=SEEDED)
+    for _, origin in made.copies():
+        assert not origin.startswith((bundle.places.bundle, bundle.places.workspace)), origin
+    assert made.specimens[0].source == "src/main/java/demo/Demo.java"
