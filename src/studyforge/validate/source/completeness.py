@@ -68,6 +68,19 @@ that would otherwise be a hole: a `practice_origin` whose unit holds no
 practice document compares its headings against **zero** and reads as the
 short read it is, rather than as a file nobody counted.
 
+## ⛔ An AUTHORED practice was never in the source, so it is not counted against it
+
+⭐ **`W444`.** A practice whose exercise is `generated` was emitted from a
+**bundle** (spec §7, `AX-04`): its blocks are the bundle's statement and the
+practice layout's headings, not a reading of any source file. Summing them
+into the unit's buckets reported a short read on every unit that received one.
+⛔ **So it is left out, and it is decided by what the document IS** — the
+`provenance` its own `exercise` record carries, which `validate.corpus` has
+already parsed — **never by its ordinal, its path or its bundle's place on
+disk.** ⭐ It is the same trigger `validate.exercises` holds to a bundle and a
+gate record, so a document this check leaves out is one that arm reads.
+⛔ Every other document, a `bundled` practice included, is still counted.
+
 ## Where the source is, and what happens when it is not there
 
 ⛔ **All or nothing, and half is a failure.** If **some** origins are on disk,
@@ -104,7 +117,10 @@ from pathlib import Path
 from studyforge.corpus.container import Unit as Declared
 from studyforge.corpus.manifest import Classification
 from studyforge.corpus.placement import ARCHIVE_DIRNAME
+from studyforge.exercise import ExerciseError
+from studyforge.exercise import of as exercise_of
 from studyforge.validate.corpus import Walk
+from studyforge.validate.exercises import GENERATED
 from studyforge.validate.headings import count_headings, region
 from studyforge.validate.report import Finding, Unchecked
 
@@ -306,6 +322,9 @@ def _origins(walk: Walk) -> list[_Origin]:
     document then compares that file's headings against **zero**, which is the
     short read it is; opening a bucket only where a document landed would leave
     the file counted by nobody and reported by nothing.
+
+    ⛔ **An authored practice opens its unit's buckets and adds nothing to
+    them** (`W444`): its headings came from a bundle, never from either file.
     """
     totals: dict[tuple[str, int, bool], int] = {}
     declared_by: dict[tuple[str, int, bool], Declared] = {}
@@ -318,10 +337,26 @@ def _origins(walk: Walk) -> list[_Origin]:
         for role in (False, True) if declared.practice_origin is not None else (False,):
             totals.setdefault((*prefix, role), 0)
             declared_by[(*prefix, role)] = declared
+        if _authored(unit.document, unit.where):
+            continue
         practice = declared.practice_origin is not None and unit.document.get("kind") == PRACTICE
         headings = (unit.document.get("counts") or {}).get("headings", 0)
         totals[(*prefix, practice)] += headings
     return [_origin(walk, key, declared_by[key], totals[key]) for key in sorted(totals)]
+
+
+def _authored(document: dict, where: str) -> bool:
+    """Whether this document is an authored practice, read off its own `exercise` record.
+
+    ⛔ **Its provenance, not its place** (`W444`): an ordinal, a path or a bundle
+    on disk says where a document sits, and only the record says where its
+    material came from.
+    """
+    try:
+        exercise = exercise_of(document, where)
+    except ExerciseError:  # pragma: no cover - `validate.corpus` refuses it first
+        return False
+    return exercise is not None and exercise.provenance == GENERATED
 
 
 def _origin(walk: Walk, key: tuple[str, int, bool], declared: Declared, recorded: int) -> _Origin:
