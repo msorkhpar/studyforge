@@ -74,7 +74,7 @@ tooling check has no side, so this table cannot drift from the registry while bo
 | `check_source_names` (`source_names.py`) | ⭐ **product** | R1, framework source names no corpus |
 | `check_producer_half` (`surfaces.py`, `deviations.py`) | ⭐ **product** | a name one package takes from another is on the owner's `__all__` (Ruling 101) |
 | `surface_census`, `identity_notice` | ⭐ **product** | the denominators of the producer half and of R7's identifier arm |
-| `check_rejected_palettes`, `palette_census` (`palettes/`) | ⚠️ **product, DEFERRED to `REL-08`** | the UI identity; it reads `docs/conventions/ui-design.md`'s table, whose product home `REL-08` decides (`REL-03/2`) |
+| `check_rejected_palettes`, `palette_census` (`palettes/`) | ⚠️ **product, DEFERRED to `REL-08`** | the UI identity; it reads [`docs/conventions/ui-design.md`](../../conventions/ui-design.md)'s table, whose product home `REL-08` decides (`REL-03/2`) |
 | `vacuity_notice` | process | the tooling's registry of its own checks — the product floor has its OWN `tests/floor/vacuity.py` |
 | `approach_notice` | process | R11's approach, but read off branches and offices in git history |
 | `lint_notice` | process | what ruff said; the product enforces lint in `tests/test_repository.py` already |
@@ -160,10 +160,10 @@ product checks need them); `tools/reserved_addresses.py` is copied (R7's shapes 
 | id | marker | where | what |
 |---|---|---|---|
 | `REL-03/1` | `[local]` | [`E15` § REL-03](../E15-release-ready.md#rel-03-the-product-floor-is-the-products) | ⚠️ **The Acceptance says *"a public function with no contract"*; R17's floor check reads the MODULE docstring**, and a function's docstring is ruff's `D` rules in `tests/test_repository.py`, which needs the `lint` extra. The plant here is the brief's: a module missing its contract. Neither check was changed |
-| `REL-03/2` | `[local]` | `tools/quality/palettes/` | ⚠️ **`check_rejected_palettes` is a PRODUCT check with no product home yet.** It reads `docs/conventions/ui-design.md`, and `REL-08` decides where that table lives. ⛔ `REL-10` must not remove `tools/quality/palettes/` before `REL-08` has homed its table and the check has been copied under `tests/floor/` and registered in `CHECKS` (one entry; `test_floor_twins.py`'s `DEFERRED` then loses its two entries) |
+| `REL-03/2` | `[local]` | `tools/quality/palettes/` | ⚠️ **`check_rejected_palettes` is a PRODUCT check with no product home yet.** It reads [`docs/conventions/ui-design.md`](../../conventions/ui-design.md), and `REL-08` decides where that table lives. ⛔ `REL-10` must not remove `tools/quality/palettes/` before `REL-08` has homed its table and the check has been copied under `tests/floor/` and registered in `CHECKS` (one entry; `test_floor_twins.py`'s `DEFERRED` then loses its two entries) |
 | `REL-03/3` | `[local]` | [`module-structure.md`](../../conventions/module-structure.md), `pyproject.toml`'s ruff comment | ⚠️ **Both name `tools/quality/` and `tests/test_quality_floor.py` as the floor.** Product prose; `REL-08` (the convention) and whoever owns the comment re-point them at `python3 -m tests.floor` |
 | `REL-03/4` | `[local]` | `tests/harness/sources.py`, `tests/floor/source_names.py` | ⚠️ **R1's registry has two product copies now**: `REL-02`'s, for the product tests, and the floor's. `tests/floor/test_source_names.py` asserts they are the same registry, and that test stays after `REL-10`. One could become an import of the other |
-| `REL-03/5` | `[local]` | `tools/quality/pointers.py`, `collisions.py`, `locations.py` | ⚠️ **Link integrity leaves with the tooling.** It is process here because it walks every document and most of them leave; after `REL-10` a broken link in `README.md`, the spec or `docs/authoring/` has no floor check. For `REL-10` or `REL-14` to decide whether the product needs a narrower one |
+| `REL-03/5` | `[local]` | `tools/quality/pointers.py`, `collisions.py`, `locations.py` | ⚠️ **Link integrity leaves with the tooling.** It is process here because it walks every document and most of them leave; after `REL-10` a broken link in [`README.md`](../../../README.md), the spec or `docs/authoring/` has no floor check. For `REL-10` or `REL-14` to decide whether the product needs a narrower one |
 
 ## For dependents
 
@@ -186,8 +186,8 @@ product checks need them); `tools/reserved_addresses.py` is copied (R7's shapes 
 - ⭐ After the cut, the product floor is `python3 -m tests.floor`, GREEN on the main line. It is
   the reading `REL-10`'s and `REL-14`'s *"the product floor is GREEN with no `tools/` present"* take.
 
-**`REL-08`** — `REL-03/2` (the palettes table) and `REL-03/3` (`module-structure.md` names the
-tooling's floor). ⭐ When `ui-design.md`'s table has a home, the palettes check copies into
+**`REL-08`** — `REL-03/2` (the palettes table) and `REL-03/3` ([`module-structure.md`](../../conventions/module-structure.md) names the
+tooling's floor). ⭐ When [`ui-design.md`](../../conventions/ui-design.md)'s table has a home, the palettes check copies into
 `tests/floor/palettes/` the same way the others did, with its `UI_CONVENTION` path re-pointed.
 
 **`REL-09`** — the copies under `tests/floor/` carry the tooling's docstrings, row and ruling ids
