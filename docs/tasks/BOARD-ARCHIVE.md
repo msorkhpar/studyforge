@@ -31410,3 +31410,35 @@ fails exactly its edge.
 container name must be read from the generated file.
 
 [the mint](#po-round-160)
+
+## PO round 162
+
+### ⭐ THE PILOT IS REVIEWABLE ON THE HOST — read by EFFECT, through the served site
+
+⭐ **The two hand-started containers were replaced by the GENERATED stack** — one
+`docker compose … up -d --wait` from the corpus's `EXECUTION.md`, the editor at the
+tag the toolchain's own `--print-tag` computes and the runner at the tag the skill
+recorded — and `:8770` restarted on the merged framework. ⭐ **Both containers held
+no state**: the editor's repository is `tmpfs` and the practice files are a bind.
+
+⭐ **Through `POST /api/v1/run/iso-8583-jpos-tutorial/…` on a pilot exercise**
+(`jpos-client` unit 8, practice 2): the editor frame answers `200` and the file
+EXISTS inside the editor; ⭐ **a Submit of the starter as shipped grades in the
+primed runner, offline, all three cases FAILED, `--- exit 1 ---`**; ⭐ **the
+positive control — the reference solution placed in the workspace for ONE Submit
+— all three PASSED, `--- exit 0 ---`**, and the starter was restored from git
+(nothing changed after).
+
+`REL-06` merged `0e070f2c` — ⭐ **the delivery skill's first command prints the
+PACKAGED index, byte-identical to the committed one**; the release tip's command
+failed. ⛔ **Plant in the GENERATOR's heading format → the regeneration test RED.**
+
+### ⚠️ `M10` waits on the USER, and nothing else
+
+⭐ **The pilot review is `docs/studyforge/pilot-review.md` in the corpus**, with
+`ISO-M10/6`, `ISO-M10/7` and `AX-10/1` posed verbatim. ⛔ **`ISO-23` (the other 35
+pages) and `AX-11` wait on the answers.**
+
+### ⚠️ In flight
+
+⭐ **`REL-05`** on `wt/dev3`.
