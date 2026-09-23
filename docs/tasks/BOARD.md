@@ -79,7 +79,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W452` | Developer 3 | `fix/W452-the-server-never-hands-out-a-quiz-key` @ `wt/dev3` | 0 @ `79797b90` | `in-progress` — blocks `M10` |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -637,7 +636,7 @@ else.**
 | W449 | A practice frame's editor takes focus on load and scrolls the reading page to itself | framework agent | ✅ done — `dc53235a` | [`rows/W449.md`](rows/W449.md) |
 | W450 | Every embedded typeface is blocked by the served page's `font-src`, so the served site never shows its faces | framework agent | ✅ done — `1d7baa24` | [`rows/W450.md`](rows/W450.md) |
 | W451 | A quiz's key leaves the page: the local study server grades the answer (user ruling) | framework agent | ✅ done — `79797b90` | [`rows/W451.md`](rows/W451.md) |
-| W452 | The serving process still hands out a quiz's key by URL, through the content API and the archive's static mount | framework agent | `in-progress` — ⛔ the user's quiz ruling | [`rows/W452.md`](rows/W452.md) |
+| W452 | The serving process still hands out a quiz's key by URL, through the content API and the archive's static mount | framework agent | ✅ done — `a394fb5b` | [`rows/W452.md`](rows/W452.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the

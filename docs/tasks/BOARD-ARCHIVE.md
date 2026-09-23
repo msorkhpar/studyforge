@@ -31712,3 +31712,37 @@ the spec and `E14`.
 - ⭐ **Unit 15's concurrent editor pairs all `200`**; the solution block's cap is gone from the served `page.css`.
 
 ⚠️ **Still open with the user:** `W449/1` (remove the Copilot CLI from the editor image) and the pilot review with its five questions. ⭐ **`W452` in flight** — ⚠️ the quiz key is still reachable by URL until it lands.
+
+### W452 — The serving process still hands out a quiz's key by URL, through the content API and the archive's static mount
+
+⛔ **Found by `W451`'s office (`W451/1`):** after `W451` no PAGE carries a quiz's key,
+but the serving process still HANDS IT OUT by URL — `GET /api/v1/content/units/<unit>`
+answers the unit document unredacted, and the static mount serves the archive's
+`practice-M.json`. ⛔ **The user's ruling (2026-09-23) puts the correct answer on the
+SERVER side**; a reader who types a URL the site itself publishes must not read it.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **No response of the serving process, to any path, carries a quiz's key or an
+   option's sentence** except the grading route's answer for the option the reader
+   chose — read by requesting every path the served site exposes (the content API, the
+   static mount of the archive, and the built site) for each key and sentence of a
+   quiz fixture, with the current code as the positive control.
+2. ⭐ **Code practices are unaffected**: their documents, starters and worked solutions
+   are served exactly as today (the reference solution is ALWAYS available, spec §7 §8).
+3. ⭐ **The files on disk are unchanged** (R3); ⚠️ **a reader with the corpus checkout
+   can open the bundle, and nothing pretends otherwise** — the ruling is about what the
+   SITE serves.
+4. ⭐ Planted back and RED; a HOST reading of `tests/studyforge/cli/test_serve_process.py`.
+
+⭐ **Surface:** `serve/` — the content route and the static mount.
+
+[the mint](#po-round-168)
+
+## PO round 170
+
+⭐ **`W452` CLOSED — merged `a394fb5b`: the serving process never hands out a quiz's key.** ⭐ **The register sent its first key-structure match back as too broad** (any `"correct"` field anywhere was refused, which would 404 an ordinary asset in the next corpus); ⭐ it now needs a served quiz's question id beside it. ⭐ **Register plant: the HTML-escaped sentence spellings dropped → RED.**
+
+⭐ **Read on the LIVE `:8770` after the restart:** the archive's practice document, the bundle's `quiz.json` and the corpus handoff quoting the record each answer `404`; the unit pages and both page assets answer `200`; the content API's unit document carries no key and no sentence; the quiz still grades; an editor still opens.
+
+⚠️ **Findings carried:** `W452/1` — the editor's bind mount can open a quiz bundle (another process, outside `serve/`); `W452/2`–`W452/4` in the handoff. ⚠️ **Nothing in flight; `M10` waits on the user's pilot review.**
