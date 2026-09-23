@@ -46,18 +46,19 @@ from __future__ import annotations
 
 import json
 from collections.abc import Iterable, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 from studyforge.archive.scrub import assert_clean
+from studyforge.describe import describe
 from studyforge.exercise import Origin, origin_document, origin_in, require_path
 from studyforge.exercise.bundle import BUNDLES_DIRNAME, Places
 from studyforge.skills.exercises.accounting import account, accounts_for, ledger_document
 from studyforge.skills.exercises.drafts import Author, AuthoringError, Judge, Page, require_page
 from studyforge.skills.exercises.gating import Runner, json_bytes
 from studyforge.skills.exercises.ledger import Entry, Ledger, key_of, take
-from studyforge.skills.exercises.loop import Shortfall, author_page, carried_practices
-from studyforge.skills.exercises.plan import plan_document, plan_for
+from studyforge.skills.exercises.loop import Shortfall, author_page, carried_practices, plan_page
+from studyforge.skills.exercises.plan import PLAN_API, plan_document
 
 #: Each unit's coverage report, beside its bundles and never inside one.
 COVERAGE_FILENAME = "coverage.json"
@@ -92,6 +93,7 @@ class Covered:
     shipped: tuple[str, ...]
     shortfalls: tuple[Shortfall, ...]
     authored: bool
+    reasoned: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -111,6 +113,15 @@ class Authored:
     def bare(self) -> tuple[str, ...]:
         """⛔ Every page left with nothing shipped, named as such (R6)."""
         return tuple(page.page for page in self.pages if not page.shipped)
+
+    @property
+    def reasoned(self) -> tuple[tuple[str, str], ...]:
+        """⭐ Every aspect no exercise was planned to check, with its page (`W453`).
+
+        The part of a thin plan a reviewer reads first: each one carries its
+        written reason in the unit's coverage report.
+        """
+        return tuple((page.page, aspect) for page in self.pages for aspect in page.reasoned)
 
 
 def author_corpus(
@@ -134,11 +145,13 @@ def author_corpus(
         where = f"the page '{page.path}'"
         require_page(page, ledger, where)
         unit = _unit_of(page)
-        plan = plan_for(page.words, page.skills, page.tier, where)
+        plan = plan_page(page, ledger, where)
         fingerprint = _fingerprint(page, ledger)
         recorded = _read(base / unit / COVERAGE_FILENAME, where)
+        reasoned = tuple(aspect.id for aspect in plan.reasoned)
         if recorded is not None:
-            covered.append(_reused(recorded, page, unit, fingerprint, plan_document(plan), where))
+            kept = _reused(recorded, page, unit, fingerprint, plan_document(plan), where)
+            covered.append(replace(kept, reasoned=reasoned))
             accounts |= _accounts_in(recorded, where)
             continue
         if (base / unit).exists():
@@ -173,6 +186,7 @@ def author_corpus(
                 tuple(document["shipped"]),
                 outcome.shortfalls,
                 authored=True,
+                reasoned=reasoned,
             )
         )
     reasons = _reasons(ledger, accounts, author, _read(base / LEDGER_PATH, "the ledger"))
@@ -252,7 +266,21 @@ def _fingerprint(page: Page, ledger: Ledger) -> dict[str, str]:
 def _reused(
     recorded: dict, page: Page, unit: str, fingerprint: dict, plan: dict, where: str
 ) -> Covered:
-    """Keep a unit whose recorded report still describes it — ⛔ or refuse it, naming it."""
+    """Keep a unit whose recorded report still describes it — ⛔ or refuse it, naming it.
+
+    ⚠️ **A report planned under an older `plan_api` is refused by name**
+    (`W453`): its count was set by a rule this build no longer applies, so the
+    unit is re-planned by its aspects, never silently kept.
+    """
+    written = recorded.get("plan")
+    api = written.get("plan_api") if isinstance(written, dict) else None
+    if api != PLAN_API:
+        raise _moved(
+            unit,
+            where,
+            f"was planned under plan_api {describe(api)}, and this build plans by a "
+            f"page's aspects under plan_api {PLAN_API} (W453)",
+        )
     same = (
         recorded.get("page") == page.path
         and recorded.get("kind") == page.kind

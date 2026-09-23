@@ -50,6 +50,12 @@ would be a second copy that goes stale. ⛔ And `require_after_carried` refuses
 a page whose authored ordinals repeat or skip past what it carries, naming the
 practice, before anything is committed.
 
+## ⛔ ONE PLANNED EXERCISE PER NAME THE ASPECTS GIVE (`W453`)
+
+⭐ Each planned exercise's brief carries the aspects the plan gave it to check,
+so the author drafts against what the page teaches rather than against a
+count. ⛔ `plan_page` refuses an aspect whose basis the page does not carry.
+
 ## ⛔ THE PLAN IS A CEILING, AND `shortfall` IS ASKED EVERY TIME
 
 ⭐ **Shipped plus refused must equal the plan**, and `plan.shortfall` — not a
@@ -65,6 +71,7 @@ from pathlib import Path
 from studyforge.exercise import CODE, ExerciseError
 from studyforge.exercise.bundle import Places, require_no_gap
 from studyforge.skills.adapter import Layout
+from studyforge.skills.exercises.aspects import AspectError, require_read
 from studyforge.skills.exercises.drafts import (
     ATTEMPTS,
     Author,
@@ -80,7 +87,7 @@ from studyforge.skills.exercises.drafts import (
     source_case,
 )
 from studyforge.skills.exercises.gating import Gated, Runner, gate_code, gate_quiz
-from studyforge.skills.exercises.ledger import Ledger
+from studyforge.skills.exercises.ledger import Ledger, key_of
 from studyforge.skills.exercises.plan import Plan, Refusal, plan_for, shortfall
 from studyforge.unit.builder import NoMaterial, read
 from studyforge.unit.errors import ContentError
@@ -127,14 +134,15 @@ def author_page(
     ⛔ `carried` is what `carried_practices` read off the unit's archive, and
     the first authored exercise takes the ordinal after the last of them.
     """
-    plan = plan_for(page.words, page.skills, page.tier, where)
+    plan = plan_page(page, ledger, where)
     case = source_case(page, ledger)
     entries = page_entries(page, ledger)
     shipped: list[Gated] = []
     missed: list[Shortfall] = []
-    for slot in range(1, plan.count + 1):
+    for planned in plan.exercises:
+        slot = planned.slot
         places = Places(page.address, page.variant, page.unit, len(carried) + len(shipped) + 1)
-        first = Brief(page, case, slot, places, 1, entries)
+        first = Brief(page, case, slot, places, 1, entries, plan.checked_by(planned))
         gated, refused = _one(first, ledger, author, judge, runner, source, f"{where}, {slot}")
         if gated is not None:
             shipped.append(gated)
@@ -143,6 +151,23 @@ def author_page(
     shortfall(plan, len(shipped), tuple(Refusal(m.gate, m.says) for m in missed), where)
     require_after_carried(carried, tuple(gated.places.ordinal for gated in shipped), where)
     return PageOutcome(page, case, plan, tuple(shipped), tuple(missed))
+
+
+def plan_page(page: Page, ledger: Ledger, where: str) -> Plan:
+    """Plan one page from its aspects, and refuse a plan that did not read the page's code.
+
+    ⭐ **The one place a page is planned**, so the pass and a single page's
+    loop cannot plan the same page two ways. ⛔ Every aspect's basis must
+    resolve to the page's own ledger entries or to a heading it carries once
+    (`W453`).
+    """
+    headings = next((s.sections for s in ledger.sources if s.path == page.path), ())
+    try:
+        plan = plan_for(page.aspects, page.tier, where, page.nothing_checkable)
+        require_read(plan.aspects, map(key_of, page_entries(page, ledger)), headings, where)
+    except AspectError as error:
+        raise AuthoringError(str(error)) from None
+    return plan
 
 
 def carried_practices(root: Path | str, page: Page, where: str) -> tuple[int, ...]:

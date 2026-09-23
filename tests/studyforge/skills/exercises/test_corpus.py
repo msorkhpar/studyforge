@@ -14,6 +14,7 @@ processes, and every clause below reads the tree that pass left.
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 
 import pytest
 
@@ -26,10 +27,12 @@ from studyforge.skills.exercises import (
     LEDGER_PATH,
     NEITHER,
     QUIZ_DOCUMENT,
+    Aspect,
     AuthoringError,
     author_corpus,
 )
 from tests.studyforge.skills.exercises.authoring import (
+    ASPECTS,
     CLEAN,
     Judging,
     Running,
@@ -221,3 +224,51 @@ def test_an_existing_file_with_other_bytes_refuses_the_whole_pass_before_any_wri
             runner=Running(),
         )
     assert snapshot(tmp_path) == before, "the pass wrote some files before refusing"
+
+
+#: A minor aspect, carried by the short reason the user's refinement words.
+TONE = Aspect(
+    "tone", "a shout is loud", ("section:How to shout",), reason="incidental detail, not practised"
+)
+
+
+def test_an_aspect_nothing_checks_is_visible_in_the_report_and_on_the_pass(tmp_path):
+    """⭐ `W453`: a thin plan is VISIBLE — each unchecked aspect, with its reason."""
+    material, graders, pages = write_corpus(tmp_path)
+    shout = replace(pages[1], aspects=(*pages[1].aspects, TONE))
+    arguments = dict(material=material, graders=graders, pages=[shout], judge=Judging())
+    authored = author_corpus(
+        tmp_path, source="demo", author=Scripted(CLEAN), runner=Running(), **arguments
+    )
+    assert authored.reasoned == (("lessons/shout.md", "tone"),)
+    plan = _coverage(tmp_path, "lessons/shout.md")["plan"]
+    assert {row["id"]: row["reason"] for row in plan["aspects"]}["tone"] == TONE.reason
+    again = author_corpus(
+        tmp_path, source="demo", author=Scripted(CLEAN), runner=Running(), **arguments
+    )
+    assert again.reasoned == authored.reasoned, "a kept unit lost its reasoned aspects"
+
+
+def test_a_unit_planned_under_the_withdrawn_band_is_refused_by_its_plan_api(tmp_path):
+    """⛔ `W453`: a `plan_api` 1 report is re-planned by aspects, never silently kept."""
+    material, graders, pages = write_corpus(tmp_path)
+    author, judge, runner = Scripted(CLEAN), Judging(), Running()
+    arguments = dict(material=material, graders=graders, pages=pages[1:2], author=author)
+    author_corpus(tmp_path, source="demo", judge=judge, runner=runner, **arguments)
+    report = tmp_path / "exercises/kata/python/unit-02/coverage.json"
+    document = json.loads(report.read_text(encoding="utf-8"))
+    document["plan"] = {"plan_api": 1, "words": 300, "skills": 1, "band": "short", "count": 1}
+    report.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+    before = snapshot(tmp_path)
+    with pytest.raises(AuthoringError, match="unit-02.*plan_api 1"):
+        author_corpus(tmp_path, source="demo", judge=judge, runner=runner, **arguments)
+    assert snapshot(tmp_path) == before, "a refused pass wrote something"
+
+
+def test_each_brief_carries_the_aspects_its_planned_exercise_checks(corpus):
+    """⭐ The author drafts against what the page teaches, never against a count."""
+    briefs = corpus["author"].briefs
+    assert briefs, "no brief was handed out, so this reads nothing"
+    for brief in briefs:
+        expected = sorted(ASPECTS[brief.page.path], key=lambda aspect: aspect.id)
+        assert list(brief.aspects) == expected, brief.page.path

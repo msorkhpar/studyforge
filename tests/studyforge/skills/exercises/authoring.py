@@ -7,14 +7,15 @@ test is the loop, the budget and the reporting — never a model's taste.
 `pytest` process over real files, so a plant's effect is observed rather than
 typed into a verdict (`AX-03`'s workspace makes the same choice).
 
-⚠️ **Why a corpus of its own rather than `tests/fixtures/`.** The plan's lowest
-band that permits an exercise opens at 250 words of prose, and a page's words
-are counted by `words_of`, never asserted: every page of `runnable/` and of
-`shared-origin/` counts below that, so a plan over any of them is zero and
-nothing would be authored at all. `depth1/`, the prose fixture `AX-05` names,
-carries no source material on disk, so no ledger can be taken over it. ⭐ Each
-page here is a real page with the case its section says, and a shared reading
-section that carries it into the plan's `short` band honestly.
+⚠️ **Why a corpus of its own rather than `tests/fixtures/`.** Each page here
+is a real page with the case its section says, and each carries the aspects an
+author would read off it (`W453`): the exercise that checks each one is named
+in `ASPECTS`, so the plan is read, never typed. `depth1/`, the prose fixture
+`AX-05` names, carries no source material on disk, so no ledger can be taken
+over it. ⚠️ **The shared reading section was written to carry each page into
+the length band's `short` range, and `W453` withdrew the band**; it stays as
+the kind of prose that teaches no checkable aspect of its own, so no aspect
+names it.
 
 ⛔ Nothing here asserts: a helper that asserted would be an instrument nobody
 names.
@@ -32,19 +33,19 @@ from studyforge.exercise.gates.quiz import Q1, Q2, Q3, WHOLE_QUESTION, Judgement
 from studyforge.exercise.quiz import Option, Question
 from studyforge.skills.exercises import (
     CORE,
+    Aspect,
     Brief,
     CodeDraft,
     Page,
     QuizDraft,
     Ran,
-    words_of,
 )
 from tests.support import run
 
 #: A written reason, as the stand-in author gives one.
 BECAUSE = "carried by the reading floor; the page's exercise is built from its prose"
 
-#: ⭐ The reading every page shares, so each lands in the `short` band by count.
+#: ⭐ The reading every page shares: prose that teaches no checkable aspect of its own.
 NOTES = """## Reading notes
 
 Practice is what turns a page you have read into a skill you can use. Read the
@@ -158,16 +159,56 @@ def pages() -> tuple[Page, ...]:
     )
 
 
+#: ⭐ The aspects an author reads off each page (`W453`), and the exercise that
+#: checks each. ⚠️ The basket's two aspects are ONE exercise's, and so are the
+#: gauge's two: coverage is counted by aspects, and one exercise may check many.
+ASPECTS = {
+    "lessons/greeting.md": (
+        Aspect(
+            "greets-by-name",
+            "the greeting names who it greets",
+            ("example:lessons/greeting.md:1", "tests:checks/test_greeting.py"),
+            exercise="greet",
+        ),
+    ),
+    "lessons/shout.md": (
+        Aspect(
+            "shouts",
+            "a shouted word is in capitals and ends with a mark",
+            ("example:lessons/shout.md:1",),
+            exercise="shout",
+        ),
+    ),
+    "lessons/basket.md": (
+        Aspect(
+            "totals",
+            "a basket totals the sum of its prices",
+            ("section:A basket of prices",),
+            exercise="total",
+        ),
+        Aspect(
+            "refuses-negative",
+            "a negative price is refused",
+            ("section:A basket of prices",),
+            exercise="total",
+        ),
+    ),
+    "notes/gauge.md": (
+        Aspect("hour", "the gauge is read at one hour", ("section:Taking a reading",), "notes"),
+        Aspect("book", "a reading is copied the same day", ("section:Writing it down",), "notes"),
+    ),
+}
+
+
 def page(path, address, unit, *, kind=CODE, variant="python", graders=()) -> Page:
-    """A page, with its words COUNTED from its text rather than typed in."""
+    """A page, with the aspects an author read off it."""
     return Page(
         path=path,
         address=address,
         variant=variant,
         unit=unit,
         kind=kind,
-        words=words_of(PAGES[path]),
-        skills=1,
+        aspects=ASPECTS[path],
         tier=CORE,
         graders=graders,
     )

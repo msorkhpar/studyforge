@@ -267,6 +267,24 @@ ledger. An entry with no exercise and no reason is refused. A plan's count stays
 page's band, and each reason that moved it is recorded. A page whose plan is zero says why.
 Re-running on an unchanged corpus produces a byte-identical ledger and plan (R10).
 
+⛔ **AMENDED 2026-09-23 (`W453`, USER RULING) — the plan's half of the Definition and the
+Acceptance above is SUPERSEDED where it sets the count by a band of the page's length.** The
+ruling, verbatim: *"Depending on the context of the page there might be no practice, 2 or
+more, The target is covering all the aspects not just having something minimum we are
+looking for quality"*, refined the same day: *"regarding the coverage don't over do it! at
+the same time we are not a university that wants to grade the knowdlge! Sometimes a single
+practice might cover better than 4 unrelated small practices. It's all about quality and
+the importants ofthe text. Like for the first quiz the dates do not matter. The version
+might matter. And for sure 4 questions were a lot"*. ⭐ **Now:** the plan names a page's
+*aspects* — its important ideas, from its prose and its code — and each is checked by a
+named exercise or carried by a written reason; the plan is one exercise per distinct name,
+with no length ceiling (`skills/exercises/aspects.py`, `plan.py`, spec [§7 §4](../specs/2026-09-08-studyforge-v1-design.md#4-how-many-exercises-a-page-gets-follows-the-page)).
+⭐ **The amended Acceptance:** an aspect with neither an exercise nor a reason is refused,
+and so is one with both; two aspects that are one aspect are refused; a basis the page does
+not carry is refused; a page naming no aspect plans zero only with its reason written; the
+same aspects produce a byte-identical plan (R10); and the ledger's clauses are unchanged.
+The plan document is `plan_api` 2.
+
 ---
 
 ### AX-08 — The authoring skill

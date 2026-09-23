@@ -8,8 +8,8 @@ case or deleting a question* structural: a retry may not carry fewer.
 
 **How you use it.**
 
-    page = Page(path, address, "python", unit=1, kind=CODE, words=words_of(text),
-                skills=1, tier=CORE, graders=("checks/test_it.py",))
+    page = Page(path, address, "python", unit=1, kind=CODE, aspects=(greets,),
+                tier=CORE, graders=("checks/test_it.py",))
     source_case(page, ledger)             # 'code-and-tests'
     require_no_retreat(previous, draft, where)
 
@@ -49,6 +49,7 @@ from studyforge.exercise.bundle import Places
 from studyforge.exercise.gates import Verdict
 from studyforge.exercise.gates.quiz import Judgement
 from studyforge.exercise.quiz import Question
+from studyforge.skills.exercises.aspects import Aspect
 from studyforge.skills.exercises.ledger import EXAMPLE, TESTS, Entry, Ledger
 from studyforge.skills.exercises.scan import scan
 
@@ -90,8 +91,11 @@ class AuthoringError(ValueError):
 class Page:
     """One page to author exercises for, as the converting agent read it.
 
-    ⭐ `words`, `skills` and `tier` are the agent's three readings (`AX-07`):
-    the plan is set from them, and nothing here guesses one.
+    ⭐ `aspects` and `tier` are the agent's readings (`W453`, superseding
+    `AX-07`'s `words` and `skills`): the plan is read off the aspects, each
+    checked by a named exercise or carried by a reason, and nothing here
+    guesses one. ⛔ `nothing_checkable` is the sentence a page naming no aspect
+    owes, and only such a page may carry it.
     """
 
     path: str
@@ -99,10 +103,10 @@ class Page:
     variant: str
     unit: int
     kind: str
-    words: int
-    skills: int
+    aspects: tuple[Aspect, ...]
     tier: str
     graders: tuple[str, ...] = ()
+    nothing_checkable: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -147,9 +151,10 @@ class Brief:
     """Everything an author is handed for one attempt at one planned exercise.
 
     ⭐ `slot` is which of the plan's exercises this is; `places` is where it
-    will sit if it ships, numbered after the ones that already have. ⛔ On a
-    retry, `refused` carries every gate that did not hold and `output` the
-    last run's output, so the author re-authors against the finding.
+    will sit if it ships, numbered after the ones that already have.
+    ⭐ `aspects` are the ones the plan gave this exercise to check (`W453`).
+    ⛔ On a retry, `refused` carries every gate that did not hold and `output`
+    the last run's output, so the author re-authors against the finding.
     """
 
     page: Page
@@ -158,6 +163,7 @@ class Brief:
     places: Places
     attempt: int
     entries: tuple[Entry, ...]
+    aspects: tuple[Aspect, ...] = ()
     previous: CodeDraft | QuizDraft | None = None
     refused: tuple[Verdict, ...] = ()
     output: str = ""
@@ -186,6 +192,9 @@ def words_of(text: str) -> int:
     ⚠️ **A decision, and this is its one spelling** (`AX-07` left it to the
     skill): a fence is an example, not reading, so its body and its language
     tag are not counted. The fence grammar is `scan`'s, never a second one.
+    ⛔ **Since `W453` it sets no count**: the plan is read off a page's
+    aspects. It stays as the reading that shows how little prose a code-dense
+    page has, which is what the length band used to cap it by.
     """
     read = scan(text)
     fenced = sum(len(_WORD.findall(fence.body)) for fence in read.fences)
