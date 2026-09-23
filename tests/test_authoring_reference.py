@@ -66,6 +66,7 @@ from tests.authoring.support import (
     section,
     vocabulary_under,
 )
+from tests.floor.personal_data.shapes import shape_matches
 from tests.support import repository_root
 
 #: The two corpora the reference works end to end, and the document that does it.
@@ -101,13 +102,9 @@ def test_the_index_reaches_every_document_and_names_nothing_that_is_absent():
 
 
 def test_the_reference_carries_no_personal_data_shape():
-    # ⭐ R7, asked with the repository's own gate rather than a second copy of
+    # ⭐ R7, asked with the product floor's own gate rather than a second copy of
     # its patterns. An absolute home path in a document a stranger is told to
     # copy from is the exact shape this rule exists for.
-    # ⛔ `REL-02`: imported HERE, so the file collects without the tooling; this one test is
-    # declared process in `tests/harness/process.py` until `REL-03` gives R7 a product home.
-    from tools.quality.personal_data.shapes import shape_matches
-
     for path in document_paths():
         found = shape_matches(path.read_text(encoding="utf-8"))
         assert found == [], f"{AUTHORING}/{path.name} carries a personal-data shape: {found}"

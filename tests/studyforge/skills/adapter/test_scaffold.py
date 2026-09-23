@@ -25,6 +25,7 @@ from studyforge.skills.adapter.scaffold import (
     bytecode_ignore,
     bytecode_ignores,
 )
+from tests.floor.config import SOURCE_LINE_CEILING as OWNED_CEILING
 from tests.studyforge.skills.adapter import corpora
 
 
@@ -34,13 +35,10 @@ def made():
 
 
 def test_the_ceiling_is_the_one_the_quality_floor_owns():
-    # ⛔ The pin for the copy in `scaffold.py`. `tools/` is developer tooling
-    # and shipped code may not import it, so the number is duplicated — and a
-    # duplicate nobody compares is how two rules become two different rules.
-    # ⛔ `REL-02`: imported HERE, so the file collects without the tooling; this one test is
-    # declared process in `tests/harness/process.py` until `REL-03` gives R11 a product home.
-    from tools.quality.config import SOURCE_LINE_CEILING as OWNED_CEILING
-
+    # ⛔ The pin for the copy in `scaffold.py`. The product floor under `tests/floor/`
+    # owns R11's ceiling and shipped code may not import a test package, so the
+    # number is duplicated — and a duplicate nobody compares is how two rules
+    # become two different rules.
     assert SOURCE_LINE_CEILING == OWNED_CEILING
 
 
