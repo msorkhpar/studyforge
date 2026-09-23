@@ -53,6 +53,13 @@ TWIN = "compares a product-side copy with its tooling original while both exist"
 R7 = "sweeps with the tooling's personal-data shapes; REL-03 re-points it at the product's R7"
 R11 = "pins a shipped ceiling to the tooling's; REL-03 re-points it at the product's R11"
 HOME = "reads docs/conventions/commanded-pages.md, whose home REL-08 decides"
+HANDOFF = "reads a handoff under docs/tasks/handoffs/, which REL-10 archives"
+#: ⭐ `REL-06`: the delivery skill's generator read over THIS repository's epics. The shipped
+#: index stands without them; these readings do not, and `REL-11` decides what replaces them.
+LIVE_EPICS = (
+    "regenerates the delivery skill's index from the epics under docs/tasks/, whose task "
+    "blocks REL-11 trims; the shipped index stands without them, this reading does not"
+)
 #: ⭐ The one kind that does NOT move: a product test whose DATA names the tooling as part of
 #: the repository. `REL-10`'s removal commit drops the tooling's row, and the test stays.
 LAYOUT = (
@@ -99,17 +106,41 @@ TESTS: dict[str, str] = {
     ),
     "tests/test_fixture_sweeps.py::test_no_enforcer_imports_the_seam": ENFORCER,
     "tests/test_fixture_sweeps.py::test_the_enforcers_still_read_the_tree_themselves": ENFORCER,
+    "tests/studyforge/skills/delivery/test_walkthrough.py::"
+    "test_the_shipped_index_is_exactly_what_the_generator_produces_today": LIVE_EPICS,
+    "tests/studyforge/skills/delivery/test_walkthrough.py::"
+    "test_every_row_of_the_index_names_a_task_that_is_in_an_epic_document": LIVE_EPICS,
+    "tests/studyforge/skills/delivery/test_walkthrough.py::"
+    "test_the_index_is_the_only_thing_a_planner_has_to_read_about_the_framework": LIVE_EPICS,
+    "tests/studyforge/skills/delivery/test_capability.py::"
+    "test_every_task_in_every_epic_document_reaches_the_index": LIVE_EPICS,
+    "tests/studyforge/skills/delivery/test_capability.py::"
+    "test_the_derivation_the_document_prints_is_computed_and_not_typed": LIVE_EPICS,
+    "tests/studyforge/skills/delivery/test_capability.py::"
+    "test_every_milestone_section_holds_exactly_the_capabilities_at_it": LIVE_EPICS,
+    "tests/studyforge/skills/delivery/test_capability.py::"
+    "test_the_live_sections_print_in_the_order_the_task_index_declares": LIVE_EPICS,
+    "tests/studyforge/skills/delivery/test_capability.py::"
+    "test_no_capability_in_the_live_index_lost_its_area": LIVE_EPICS,
+    "tests/studyforge/skills/delivery/test_capability.py::"
+    "test_no_side_the_index_reports_is_outside_the_closed_vocabulary": LIVE_EPICS,
+    "tests/studyforge/skills/delivery/test_capability.py::"
+    "test_the_three_sides_partition_the_index": LIVE_EPICS,
+    "tests/studyforge/skills/delivery/test_capability.py::"
+    "test_no_component_is_ever_NAMED_in_what_the_index_renders": LIVE_EPICS,
+    "tests/studyforge/skills/delivery/test_capability.py::"
+    "test_the_split_by_side_the_document_prints_is_derived_too": LIVE_EPICS,
+    "tests/studyforge/skills/delivery/test_findings_log.py::"
+    "test_the_question_is_the_sorts_own_words": HANDOFF,
 }
 
 #: ⚠️ PRODUCT files that still import the tooling and are ANOTHER task's to re-point — never
 #: process, never marked, and not collected without the tooling only so a run from the suite's
 #: root can collect at all. `tests/test_product_stands_alone.py` fails once an entry stops
 #: needing to be here, so none outlives its reason.
-DEFERRED: dict[str, str] = {
-    "tests/studyforge/skills/delivery/test_walkthrough.py": (
-        "the delivery skill's tests are REL-06's (E15), and change with that skill"
-    ),
-}
+#: ⭐ Empty since `REL-06` re-pointed the delivery skill's tests; kept so the next file that
+#: needs an excuse is named here rather than excused silently.
+DEFERRED: dict[str, str] = {}
 
 
 def present(root: Path) -> bool:

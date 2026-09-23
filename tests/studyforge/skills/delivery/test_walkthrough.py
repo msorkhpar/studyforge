@@ -1,9 +1,10 @@
 """E11's acceptance for SK-08, asserted end to end rather than described.
 
 ⛔ The subjects here are the two documents this task ships — `SKILL.md` and
-the generated `docs/capability-index.md` — plus one whole plan built through
-the public surface. The per-module refusals are next door; what lives here is
-the claim that the pieces compose into the thing the epic asked for.
+the generated capability index the package ships beside it (`REL-06`) — plus
+one whole plan built through the public surface. The per-module refusals are
+next door; what lives here is the claim that the pieces compose into the thing
+the epic asked for.
 """
 
 from __future__ import annotations
@@ -18,12 +19,9 @@ import pytest
 
 from studyforge.skills import delivery
 from studyforge.skills.delivery import JIRA, Carrier, Index, concentration, export
+from tests.harness.sources import KNOWN_SOURCES, named_sources
 from tests.studyforge.skills.delivery import plans
 from tests.support import repository_root
-from tools.quality.source_names import KNOWN_SOURCES, named_sources
-
-#: Where the generated index lives, relative to the repository root.
-INDEX = "docs/capability-index.md"
 
 
 def skill_document() -> str:
@@ -31,21 +29,21 @@ def skill_document() -> str:
 
 
 def index_document() -> str:
-    return (repository_root() / INDEX).read_text("utf-8")
+    """The index the package ships, read the way an installed package reads it."""
+    return delivery.packaged_index()
 
 
 def live_index() -> Index:
     return plans.live_index()
 
 
-def first_command() -> str:
-    """The procedure's step-1 command, read out of `SKILL.md` and never retyped."""
+def first_command() -> list[str]:
+    """The procedure's step-1 command's arguments, read out of `SKILL.md` and never retyped."""
     step = re.search(r"^### 1\..*?^```\n(.*?)^```", skill_document(), re.S | re.M)
     assert step, "step 1 carries no command"
-    joined = step.group(1).replace("\\\n", "").strip()
-    opening = 'python3 -c "'
-    assert joined.startswith(opening) and joined.endswith('"'), joined
-    return joined[len(opening) : -1]
+    words = step.group(1).replace("\\\n", "").split()
+    assert words[:2] == ["python3", "-m"] and len(words) == 3, words
+    return words[1:]
 
 
 # --- R19: the index is generated, and regenerating it changes no byte -------
@@ -54,8 +52,13 @@ def first_command() -> str:
 def test_the_shipped_index_is_exactly_what_the_generator_produces_today():
     # ⛔ E11's added acceptance condition: a reviewer regenerates it and gets
     # identical bytes. A hand-edit is a FINDING, not a fix — and this is the
-    # instrument that reports one.
-    assert index_document() == live_index().render() + "\n"
+    # instrument that reports one. ⭐ `REL-06`: re-pointed at what the package
+    # ships; it reads the epics, so `tests/harness/process.py` declares it.
+    assert index_document() == live_index().render() + "\n", (
+        "the shipped index is not the generator's output: regenerate "
+        "src/studyforge/skills/delivery/capability-index.md with `capability_index`, "
+        "handed docs/tasks/E*.md, docs/tasks/README.md and workspace.json"
+    )
 
 
 def test_the_index_says_it_is_generated_so_nobody_edits_it_by_accident():
@@ -93,7 +96,7 @@ def test_nothing_this_skill_ships_cites_a_path_inside_the_extraction_source():
     slug = extraction_source().pattern
     citation = re.compile(rf"{slug}[/\\]\S", re.IGNORECASE)
     package = Path(delivery.__file__).parent
-    for path in [*sorted(package.iterdir()), repository_root() / INDEX]:
+    for path in sorted(package.iterdir()):
         if path.is_dir():
             continue
         assert not citation.search(path.read_text("utf-8")), f"{path.name} cites a path inside it"
@@ -117,8 +120,8 @@ def test_the_procedure_names_no_source_at_all():
 
 
 def test_no_module_in_this_package_names_a_source():
-    # ⛔ R1's prose form. `tools.quality.source_names` sweeps `src/**/*.py`
-    # itself; this asserts it here too, so a failure names this package.
+    # ⛔ R1's prose form. The product floor sweeps `src/**/*.py` itself; this
+    # asserts it here too, so a failure names this package.
     package = Path(delivery.__file__).parent
     for module in sorted(package.glob("*.py")):
         assert named_sources(module.read_text("utf-8")) == [], module.name
@@ -128,7 +131,9 @@ def test_no_module_in_this_package_names_a_source():
 
 
 def test_every_module_the_procedure_runs_can_be_imported():
-    named = set(re.findall(r"from ([\w.]+) import", skill_document()))
+    document = skill_document()
+    named = set(re.findall(r"from ([\w.]+) import", document))
+    named |= set(re.findall(r"python3 -m ([\w.]+)", document))
     assert named, "the procedure gives no command at all"
     for name in sorted(named):
         assert importlib.util.find_spec(name) is not None, f"no module {name}"
@@ -155,21 +160,27 @@ def test_the_procedure_offers_no_console_script_that_does_not_exist():
             assert not line.strip().startswith("studyforge "), line
 
 
-def test_the_procedures_first_command_runs_and_prints_the_index():
+def test_the_procedures_first_command_runs_and_prints_the_index(tmp_path):
     # ⛔ Ruling 123's live reading: the command a reader types first, typed.
     # ⭐ W238: read out of `SKILL.md` rather than retyped here, so the procedure
     # and this test cannot drift apart with the test still green.
-    root = repository_root()
+    # ⭐ `REL-06`: run from a directory that holds no plan document at all, and
+    # compared byte for byte — never stripped.
     done = subprocess.run(  # noqa: S603
-        [sys.executable, "-c", first_command()],
-        cwd=root,
+        [sys.executable, *first_command()],
+        cwd=tmp_path,
         capture_output=True,
-        text=True,
-        env={"PYTHONPATH": str(root / "src"), "PATH": "/usr/bin:/bin"},
+        env={"PYTHONPATH": str(repository_root() / "src"), "PATH": "/usr/bin:/bin"},
         check=False,
     )
-    assert done.returncode == 0, done.stderr
-    assert done.stdout.strip() == index_document().strip()
+    assert done.returncode == 0, done.stderr.decode("utf-8", "replace")
+    assert done.stdout == index_document().encode("utf-8")
+
+
+def test_the_procedure_never_sends_a_planner_to_a_plans_documents():
+    # ⛔ `REL-06`'s acceptance: the skill reads the package, and its procedure names
+    # no directory a plan's documents live in.
+    assert "docs/tasks" not in skill_document()
 
 
 # --- the whole plan, through the public surface only ------------------------

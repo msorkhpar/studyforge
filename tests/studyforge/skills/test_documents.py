@@ -124,6 +124,11 @@ def test_every_document_is_declared_package_data() -> None:
 @pytest.fixture(scope="module")
 def wheel(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """A wheel built from an export of the tree — never from the checkout, which it dirties."""
+    return build_wheel(tmp_path_factory)
+
+
+def build_wheel(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """Build the wheel `wheel` hands out; ⭐ shared, so every wheel reading builds it one way."""
     if importlib.util.find_spec("setuptools") is None:
         pytest.skip(
             "no build backend here (the dev image uninstalls setuptools after installing "
