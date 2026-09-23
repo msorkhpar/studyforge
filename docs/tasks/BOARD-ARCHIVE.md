@@ -30497,3 +30497,21 @@ framework defect and is refused.** ⚠️ **It blocks `M11`.**
 
 ⭐ **Both are dispatched after this round merges, beside `AX-08`** — ⛔ **a row
 is minted and merged before it is dispatched.**
+
+## PO round 145
+
+⭐ **Three offices dispatched at `31991283`**, each on a row minted and merged
+before it: [`W434`](rows/W434.md) on `wt/dev1`, [`W435`](rows/W435.md) on
+`wt/dev2`, and `AX-08` on `wt/dev3` — `M10` step 10.3's next row.
+
+⛔ **`AX-08`'s brief carries one requirement the epic does not**: the ledger-to-`G5`
+key contract is asserted from ONE side only (round 142's plant, and `AX-06/1`
+from the other end), so `AX-08` must assert it from the GATE's side — driving
+`gates.check` with the mapping `digests(take(...))` actually returns — and
+plant a re-keyed ledger to show it goes RED.
+
+### ⭐ The one reading round 143 left open is TAKEN — by the user
+
+⭐ **`editor.scrollBeyondLastLine: false` checked by the USER, 2026-09-22, on a
+file taller than the practice panel: it scrolls correctly.** ⛔ **The register
+did not take this reading; it records the user's.**
