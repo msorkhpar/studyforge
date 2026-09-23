@@ -264,7 +264,9 @@ Write `correct` for every option, always. The built page shows each question and
 its options and nothing else; when the reader checks their answers, the local
 study server reads the key from your document and answers each question right or
 wrong with the sentence of the option the reader chose (the user's ruling of
-2026-09-23).
+2026-09-23). The page puts its own *Right.* or *Not this one.* in front of that
+sentence, so do not open a sentence with a verdict of your own: say why, and
+leave the verdict to the page.
 
 **A quiz is graded by the framework with no compiler, no container, no network
 and no model** — a fixed comparison on the local study server. Opened as a file,
