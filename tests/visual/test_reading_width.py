@@ -50,7 +50,7 @@ from __future__ import annotations
 import pytest
 
 from tests.visual import site
-from tests.visual.page import WIDE, OpenPage
+from tests.visual.page import NARROW, WIDE, OpenPage
 from tests.visual.test_reading_room import (
     ABOUT,
     INDEX_PAGE,
@@ -380,3 +380,83 @@ def test_each_way_the_page_can_waste_its_window_is_caught_by_name(what: str, cha
     """⛔ One planted reading per complaint: a check that only ever fired on all
     of them together would pass a page with all but one."""
     assert wasting_the_window(sound(**changes)), what
+
+
+# --- `W447`: a code block in a disclosure is as wide as one in the flow ------
+
+
+#: Every width the code-figure clause is read at: the five above, and the narrow
+#: shape below the rail's threshold. ⛔ **The mismatch is invisible at 720, 1280
+#: and 1440**, where the reading column is no wider than `--measure` — so a
+#: reading taken only at the harness's default viewport would call the capped
+#: disclosure correct, which is how it shipped. ⭐ The control below is read at
+#: the three widths where the column is wider than the measure.
+CODE_WIDTHS = (NARROW[0], *WIDTHS)
+
+#: A worked solution, placed on the fixture page and opened, then both figures'
+#: widths read back. ⛔ **No fixture corpus holds a code figure inside a
+#: disclosure**, so the reading builds the practice template's own shape —
+#: `details.disclosure > figure.code`, which `render/page/practice.py` emits as
+#: *"Show a worked solution"* — out of the page's OWN disclosure and a copy of
+#: the page's OWN flow figure. ⭐ What is under test is the stylesheet laying
+#: that shape out, and every byte of the stylesheet is the built one.
+SOLUTION_AND_FLOW = """
+(() => {
+  const flow = [...document.querySelectorAll('main figure.code')].find(f => !f.closest('details'));
+  const disclosure = document.querySelector('main details.disclosure');
+  if (!flow || !disclosure) return null;
+  const solution = flow.cloneNode(true);
+  disclosure.appendChild(solution);
+  disclosure.open = true;
+  return {solution: solution.getBoundingClientRect().width,
+          flow: flow.getBoundingClientRect().width};
+})()
+"""
+
+#: The rule `W447` removed, planted back as a page style: the disclosure held to
+#: the prose measure, which is what the user read as a narrower solution.
+MEASURED_DISCLOSURE = (
+    "(() => { const s = document.createElement('style');"
+    " s.textContent = 'details.disclosure { max-width: var(--measure); }';"
+    " document.head.appendChild(s); })()"
+)
+
+
+def code_widths(open_page: OpenPage, url: str, width: int, plant: str = "") -> dict:
+    """Open one page at one width, plant a rule on it, and read both figures."""
+    open_page.resize(width, HEIGHT)
+    open_page.open(url)
+    if plant:
+        open_page.evaluate(plant)
+    reading = open_page.evaluate(SOLUTION_AND_FLOW)
+    assert reading is not None, (
+        "the fixture page has no flow code figure or no disclosure, so there is nothing to compare"
+    )
+    return dict(reading)  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize("width", CODE_WIDTHS)
+def test_a_code_block_in_a_disclosure_is_as_wide_as_one_in_the_flow(
+    open_page: OpenPage, built_site: site.Site, width: int
+) -> None:
+    """⛔ The user's report as a reading: *"the size of code block … for the
+    solution does not match with the rest of the code blocks"*."""
+    reading = code_widths(open_page, built_site.url(UNIT_PAGE), width)
+
+    assert abs(reading["solution"] - reading["flow"]) <= TOUCHING, (
+        f"at {width}px a code figure inside a disclosure is {reading['solution']:.2f}px "
+        f"wide and one in the flow is {reading['flow']:.2f}px"
+    )
+
+
+@pytest.mark.parametrize("width", (1920, 2560, 3840))
+def test_a_disclosure_held_to_the_measure_is_caught(
+    open_page: OpenPage, built_site: site.Site, width: int
+) -> None:
+    """⭐ Both ways: the shipped rule, planted back, is a mismatch this reads."""
+    reading = code_widths(open_page, built_site.url(UNIT_PAGE), width, MEASURED_DISCLOSURE)
+
+    assert reading["flow"] - reading["solution"] > TOUCHING, (
+        f"at {width}px the measured disclosure reads {reading['solution']:.2f}px against "
+        f"{reading['flow']:.2f}px, so this reading cannot see the defect the user reported"
+    )
