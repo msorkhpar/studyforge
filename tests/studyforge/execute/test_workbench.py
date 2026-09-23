@@ -28,6 +28,7 @@ from studyforge.execute.workbench import (
     READONLY_INCLUDE,
     SETTINGS_DIR,
     SETTINGS_FILE,
+    STAGING_DIR,
     TEST_KEY,
     WorkbenchRefused,
     authority,
@@ -286,11 +287,15 @@ def test_nothing_is_left_beside_the_settings_file(tmp_path):
     # and the temporary it is replaced from does not survive the write.
     # ⚠️ The ignore file beside it is `W435`'s and is asserted in
     # `test_workbench_ignored.py`; what must NOT be here is the staging file.
+    # ⭐ `W446`: the staging DIRECTORY stays, empty — each write's temporary
+    # inside it is its own and is gone once it has been moved into place.
     write_settings(tmp_path, INSIDE_MAIN, INSIDE_TEST)
     assert sorted(one.name for one in settings_file(tmp_path).parent.iterdir()) == [
         ".gitignore",
         SETTINGS_FILE,
+        STAGING_DIR,
     ]
+    assert list((settings_file(tmp_path).parent / STAGING_DIR).iterdir()) == []
 
 
 def test_a_folder_that_cannot_be_written_is_refused_saying_so(tmp_path):

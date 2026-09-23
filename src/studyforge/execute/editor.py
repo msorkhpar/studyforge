@@ -178,6 +178,23 @@ class Editor:
         base, folder = max(held, key=lambda one: len([part for part in one[0].split("/") if part]))
         return Editor(origin=self.origin, folder=folder, base=base)
 
+    def within(self, directory: str) -> Editor | None:
+        """Return this editor opened on `directory` of its bind, or `None` (`W446`).
+
+        `directory` is relative to the SOURCE ROOT and is `base` or below it.
+        ⭐ The answer is a narrower folder of the SAME container, so a practice
+        can open — and carry the settings of — a folder of its own.
+        """
+        parts = [segment for segment in directory.split("/") if segment]
+        prefix = [segment for segment in self.base.split("/") if segment]
+        if directory.startswith("/") or "\\" in directory or parts[: len(prefix)] != prefix:
+            return None
+        if any(segment in TRAVERSAL for segment in parts):
+            return None
+        tail = "/".join(parts[len(prefix) :])
+        folder = f"{self.folder.rstrip('/')}/{tail}" if tail else self.folder
+        return Editor(origin=self.origin, folder=folder, base="/".join(parts))
+
     def inside(self, path: str) -> str | None:
         """Return `path`'s place in the opened folder, or `None` when it is not there.
 

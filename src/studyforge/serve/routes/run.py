@@ -290,8 +290,18 @@ def editor(runs: Runs, corpus: ServedCorpus, workspace: dict) -> Response:
     if not isinstance(main, str) or not main:
         return error(409, NO_FILE)
     test = workspace.get("test_path")
+    # ⭐ The files a command names weigh in the practice's own folder (`W446`).
+    named = tuple(
+        argument
+        for key in ("run_command", "test_command")
+        if isinstance(workspace.get(key), list)
+        for argument in workspace[key]
+        if isinstance(argument, str)
+    )
     try:
-        where = runs.practice_editor(corpus, main, test if isinstance(test, str) and test else None)
+        where = runs.practice_editor(
+            corpus, main, test if isinstance(test, str) and test else None, named
+        )
     except WorkbenchRefused:
         # ⛔ The refusal's own sentence names a file inside somebody else's
         # container and a host errno; the wire gets this route's constant

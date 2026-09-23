@@ -1,8 +1,10 @@
 r"""The editor's workbench for ONE practice: which file each window opens, and what it may edit.
 
-**What it does.** Two things, and they are two because only one of them can
-tell the two windows apart:
+**What it does.** Three things, and the last two are two because only one of
+them can tell the two windows apart:
 
+- `practice_folder(editor, main, test, root=, named=)` — the practice's OWN
+  folder of the editor's bind, which its windows open and its settings live in;
 - `open_url(editor, path)` — the URL that opens ONE file in a code-server
   window, or `None` for a path that editor does not hold;
 - `settings(main, test)` and `write_settings(folder, main, test)` — the
@@ -10,12 +12,12 @@ tell the two windows apart:
   own file excluded back out, the workbench closed, and the two keys the
   lockdown extension declares.
 
-**How you use it.** `serve.routes.runs` calls both when a page asks for a
-practice's editor: the settings are written into the opened folder, and the two
-URLs are answered.
+**How you use it.** `serve.routes.runs` calls all three when a page asks for a
+practice's editor: the folder is found, the settings are written into it, and
+the two URLs are answered.
 
 **Depends on.** `editor` for where an editor is and what it holds, `json`,
-`os` and `pathlib`. No `subprocess` — nothing here starts anything.
+`os`, `tempfile` and `pathlib`. No `subprocess` — nothing here starts anything.
 
 ## ⛔ The window's own URL is the ONLY thing that can tell two windows apart
 
@@ -87,6 +89,18 @@ it. ⭐ **The boundary is the container, the loopback bind and one exact
 origin.** What is here removes the ways *in* — it does not remove the
 possibility, and nothing below should ever be read as if it did.
 
+## ⛔ Each practice opens its OWN folder, so no practice's lock is another's (`W446`)
+
+⛔ **One folder for every practice was one settings file for every practice**,
+and a lock that names ONE file editable: opening a practice silently locked
+every other, and a page with two practices raced two writes of one file and
+refused one of them (`409`). ⭐ **So a practice's windows open the deepest
+directory holding every file the practice names** — its main, its test, and
+each file a run or test command names (the `pom.xml` a Maven practice builds
+with) — and that directory's `.vscode/` carries this practice's lock alone.
+⚠️ It is DERIVED, because the record has no slot for it; two practices whose
+files share one directory still share one lock, which no corpus has today.
+
 ## ⛔ Written where the editor reads it, and never over somebody else's file
 
 ⭐ The settings of the folder a window opens are `.vscode/settings.json` inside
@@ -100,7 +114,10 @@ TEXT, because a workbench settings file may legally carry comments and a JSON
 parse would raise on an ordinary one.
 
 ⭐ **Replaced whole, atomically**: a temporary file beside it and one `replace`,
-so a reader's workbench never reads half a settings file.
+so a reader's workbench never reads half a settings file. ⛔ **Each write's
+temporary is its OWN** (`W446`), made in a staging directory beside it: two
+writes that shared one staging name moved it out from under each other, and the
+second one was refused.
 
 ## ⛔ The settings never enter the corpus's commits (`W435`)
 
@@ -109,7 +126,7 @@ artifact written into a source repository — `W425`'s shape exactly, and a
 served corpus used to go dirty the first time a reader opened a practice.
 ⭐ **The fix is an ignore file INSIDE the directory written into, never the
 repository's root one and never a local exclude (R3):** `.vscode/.gitignore`,
-naming the settings file, its staging file and itself — ⛔ **NAMES, never
+naming the settings file, its staging directory and itself — ⛔ **NAMES, never
 `*`**, so a `.vscode/` the source or the reader already carries keeps every
 file of its own visible and tracked. ⭐ It self-ignores because it carries
 nothing else: a file holding only machine-local rules is itself machine-local.
@@ -124,6 +141,9 @@ from __future__ import annotations
 
 import json
 import os
+import posixpath
+import tempfile
+from collections.abc import Iterable
 from pathlib import Path
 from urllib.parse import quote
 
@@ -134,9 +154,11 @@ from studyforge.execute.editor import Editor
 SETTINGS_DIR = ".vscode"
 SETTINGS_FILE = "settings.json"
 
-#: The staging file a settings write replaces from. ⚠️ Named here because the
-#: ignore file names it too: a torn write must not dirty the corpus either.
-STAGING_FILE = f"{SETTINGS_FILE}.studyforge"
+#: The directory each settings write stages its OWN temporary in (`W446`). ⚠️
+#: Named here because the ignore file names it too: a torn write must not dirty
+#: the corpus either. ⛔ A directory and not a file name, so the ignore file
+#: still names exactly what it ignores and never carries a `*`.
+STAGING_DIR = "studyforge-staging"
 
 #: The ignore file written beside the settings, and what it holds (`W435`).
 #: ⛔ Anchored NAMES, never `*`: a `.vscode/` somebody else already carries
@@ -144,9 +166,9 @@ STAGING_FILE = f"{SETTINGS_FILE}.studyforge"
 IGNORE_FILE = ".gitignore"
 IGNORE_TEXT = (
     "# Written by studyforge beside a practice's editor settings. These three\n"
-    "# files are this machine's own, and never enter a commit.\n"
+    "# names are this machine's own, and never enter a commit.\n"
     f"/{SETTINGS_FILE}\n"
-    f"/{STAGING_FILE}\n"
+    f"/{STAGING_DIR}/\n"
     f"/{IGNORE_FILE}\n"
 )
 
@@ -233,6 +255,27 @@ class WorkbenchRefused(Exception):
     """The practice's workspace could not be prepared, saying which file and why."""
 
 
+def practice_folder(
+    editor: Editor, main: str, test: str | None, *, root: Path, named: Iterable[str] = ()
+) -> Editor | None:
+    """Return `editor` opened on this practice's OWN folder, or `None` when it does not hold `main`.
+
+    Every path is relative to the source root `root`. ⭐ The folder is the
+    deepest directory holding `main`, `test` and each of `named` that is a FILE
+    under the same bind — a command's other arguments (`-f`, `compile`) are
+    simply not files there and weigh nothing. ⛔ A path that bind does not hold
+    is left out rather than widening the folder past it.
+    """
+    held = editor.holding(main)
+    if held is None or held.inside(main) is None:
+        return None
+    others = [path for path in named if held.inside(path) is not None]
+    files = [main, *([test] if test and held.inside(test) is not None else [])]
+    files += [path for path in others if (Path(root) / path).is_file()]
+    common = posixpath.commonpath([posixpath.dirname(path) for path in files])
+    return held.within(common)
+
+
 def open_url(editor: Editor, path: str) -> str | None:
     """Return the URL that opens `path` in one window, or `None` for a path not held.
 
@@ -294,17 +337,25 @@ def write_settings(folder: Path, main: str, test: str | None) -> Path:
     target = Path(folder) / SETTINGS_DIR / SETTINGS_FILE
     _require_ours(target)
     body = json.dumps(settings(main, test), indent=2, sort_keys=True) + "\n"
-    temporary = target.with_name(STAGING_FILE)
+    temporary = None
     try:
-        target.parent.mkdir(parents=True, exist_ok=True)
+        (target.parent / STAGING_DIR).mkdir(parents=True, exist_ok=True)
         _ensure_ignored(target.parent / IGNORE_FILE)
-        temporary.write_text(body, encoding="utf-8")
+        # ⛔ This write's OWN name (`W446`): a shared one is moved away by one
+        # concurrent write from under the other, and the other is refused.
+        handle, temporary = tempfile.mkstemp(dir=target.parent / STAGING_DIR, prefix=SETTINGS_FILE)
+        with os.fdopen(handle, "w", encoding="utf-8") as out:
+            out.write(body)
         os.replace(temporary, target)
+        temporary = None
     except OSError as error:
         raise WorkbenchRefused(
             f"this practice's workspace settings could not be written to "
             f"{SETTINGS_DIR}/{SETTINGS_FILE}: {error.strerror or error.__class__.__name__}"
         ) from None
+    finally:
+        if temporary is not None:
+            Path(temporary).unlink(missing_ok=True)
     return target
 
 
