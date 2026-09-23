@@ -31519,3 +31519,43 @@ frame's URL (`execute/editor.py`).
 ### ⚠️ In flight
 
 ⭐ **`W447`** on `wt/dev1`; ⭐ **`W448` + `W449`** on `wt/dev2`, one office because both are the frame's load.
+
+### W447 — A worked solution's code block renders narrower than every other code block on the page
+
+⛔ **USER REPORT, 2026-09-23, on the pilot (a screenshot of jpos-client unit 8):**
+*"the size of code block in here for the solution does not match with the rest of
+the code blocks"*.
+
+⭐ **What the register read in the generated page:** the worked solution is a
+`figure.code` inside `details.disclosure` ("Show a worked solution"); every other
+code block on the page is a `figure.code` in the page's flow. ⛔ **The one inside
+the disclosure renders NARROWER than its siblings and scrolls sideways where they
+do not** — the disclosure sizes its content, the flow does not.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **A code block inside an opened disclosure is exactly as wide as a code block
+   in the page's flow**, measured in a real browser at the served page's own
+   widths, with the flow block as the positive control beside it.
+2. ⛔ **The fix is the FRAMEWORK's stylesheet or template** — a corpus-visible
+   defect lands in the framework and the corpus is regenerated; ⛔ **no hand-edit
+   to a generated page.**
+3. ⭐ **The visual harness carries it** — a test that fails when the two widths
+   differ, planted back to RED.
+
+⭐ **Surface:** the site stylesheet's disclosure and code-figure rules, and the
+template that emits the worked solution.
+
+[the mint](#po-round-166)
+
+## PO round 167
+
+⭐ **`W447` CLOSED — merged `4099d630`:** a disclosure no longer carries the prose measure, so a worked solution is as wide as its siblings. ⭐ **The register planted a cap on the FIGURE inside the disclosure, a seam the office did not use → RED at the wide viewports, GREEN on restore.** ⚠️ **It reaches `:8770` only when the corpus is regenerated.**
+
+⛔ **`W447/1` MINTED as [`W450`](rows/W450.md):** the served page's `font-src 'self'` blocks all seven embedded faces, so the served site has never shown its typography. ⭐ **Register ruling, reversible: `font-src 'self' data:`**, keeping `file://` and the served origin on the same faces (R8).
+
+⛔ **USER RULING, 2026-09-23 — a quiz's key lives on the SERVER:** *"just a test with the correct answer residing on the server side. When user answers it will get validated and result will be returned to the user with explanation if needed"*, with no online or agent check. ⭐ It reverses spec §7 §7's in-page key; minted [`W451`](rows/W451.md). ⭐ **Register default, reversible: over `file://` a quiz says it needs the local study server, as Run and Submit do.** ⭐ **The user also asked to SEE a quiz in the pilot**; ⚠️ **no ISO page is `neither`**, so the corpus office declares one conceptual page `quiz` (corpus data).
+
+### ⚠️ In flight
+
+⭐ **`W448` + `W449`** on `wt/dev2`; ⭐ **`W450`** on `wt/dev1`; ⭐ **`W451`** on `wt/dev3`; ⭐ **the pilot quiz** on the corpus's integration office.
