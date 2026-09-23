@@ -63,6 +63,7 @@ checkout can open the bundle, and the ruling is about what the SITE serves.
 
 from __future__ import annotations
 
+import copy
 import html
 import json
 import re
@@ -114,11 +115,11 @@ def redacted(document: object) -> object:
     ⛔ **A copy**: the document handed in is not changed, so a caller reading the
     key from the same document (the quiz route) still grades.
     """
-    copy = json.loads(json.dumps(document))
-    for option in quiz_options(copy):
+    answered = copy.deepcopy(document)
+    for option in quiz_options(answered):
         for field in WITHHELD:
             option.pop(field, None)
-    return copy
+    return answered
 
 
 def spellings(sentence: str) -> set[str]:
