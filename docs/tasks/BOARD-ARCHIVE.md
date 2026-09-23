@@ -30660,3 +30660,30 @@ report ignore rule BEFORE the skill writes**, or `validate` refuses every file.
 ### ⚠️ In flight
 
 ⭐ **`AX-10`** on `wt/dev4` — step 10.3's last row.
+
+## PO round 148
+
+⭐ **The integration office PLANNED `M10`'s step 10.4 on the first corpus**, on
+corpus branch `int/m10-step-10.4-plan` at `942ed42` — ⛔ **a plan, no material
+(§9)** — with a census counted by the framework's own fence walk and bands at
+`5e0657ba`, rows `ISO-18`–`ISO-24`, and the three pilot pages: ⭐ **the densest
+non-stub page of each container by Java fences** — `iso-fundamentals` unit 15,
+`jpos-client` unit 8, `jpos-server` unit 8.
+
+### ⭐ Two mints, each BLOCKING `M10`, each verified in the code first
+
+[`W436`](rows/W436.md) — ⛔ **no shape carries an exercise's third-party
+dependencies.** The bundle's file set is closed, a command cannot name a path
+outside the workspace, and 141 of the corpus's 188 Java fences import `jPOS`.
+⚠️ **It blocks the pilot.**
+
+[`W437`](rows/W437.md) — ⛔ **the loop numbers from 1, and three units already
+carry a `practice-1`.** It blocks the rest of the pages, not the pilot.
+
+### ⚠️ Queued for the USER, at the pilot review — never decided here
+
+`ISO-M10/6` — ⛔ **the bands count PROSE, so the corpus's ceiling is far below
+its fence count and most examples ship as written reasons, not exercises.**
+⚠️ **That meets *"nothing the source already has is lost"* in the LEDGER's
+sense and may not meet it in the user's.** `ISO-M10/7` — ⚠️ **the pilot rule
+never shows a page with tests**; one such page is a single fence behind.
