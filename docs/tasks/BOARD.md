@@ -79,7 +79,8 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W447` | Developer 1 | `fix/W447-a-solution-block-is-as-wide-as-its-siblings` @ `wt/dev1` | 0 @ `ebbc1bd6` | `in-progress` — blocks `M10` |
+| `W450` | Developer 1 | `fix/W450-the-served-page-admits-its-own-faces` @ `wt/dev1` | 0 @ `4099d630` | `in-progress` — blocks `M10` |
+| `W451` | Developer 3 | `feat/W451-the-server-grades-a-quiz` @ `wt/dev3` | 0 @ `4099d630` | `in-progress` — blocks `M10` |
 | `W448`, `W449` | Developer 2 | `fix/W448-W449-the-frame-neither-flashes-nor-moves-the-page` @ `wt/dev2` | 0 @ `ebbc1bd6` | `in-progress` — blocks `M10` |
 <!-- /inflight -->
 
@@ -633,9 +634,11 @@ else.**
 | W444 | `validate` counts an authored practice's headings against the unit's source, so every authored archive is refused | framework agent | ✅ done — `376ebb46` | [`rows/W444.md`](rows/W444.md) |
 | W445 | A reader following the generated `EXECUTION.md` gets an editor blind to `practice/` and no runner for Submit | framework agent | ✅ done — `3758d114` | [`rows/W445.md`](rows/W445.md) |
 | W446 | Every practice shares one editor settings file, so a two-practice page 409s and only one practice is editable | framework agent | ✅ done — `a03ad248` | [`rows/W446.md`](rows/W446.md) |
-| W447 | A worked solution's code block renders narrower than every other code block on the page | framework agent | `in-progress` — ⛔ USER REPORT, blocks the pilot review | [`rows/W447.md`](rows/W447.md) |
+| W447 | A worked solution's code block renders narrower than every other code block on the page | framework agent | ✅ done — `4099d630` | [`rows/W447.md`](rows/W447.md) |
 | W448 | A practice frame paints the editor's Explorer side bar, then closes it once loaded | framework agent | `in-progress` — ⛔ USER REPORT, blocks the pilot review | [`rows/W448.md`](rows/W448.md) |
 | W449 | A practice frame's editor takes focus on load and scrolls the reading page to itself | framework agent | `in-progress` — ⛔ USER REPORT, blocks the pilot review | [`rows/W449.md`](rows/W449.md) |
+| W450 | Every embedded typeface is blocked by the served page's `font-src`, so the served site never shows its faces | framework agent | `in-progress` — blocks the pilot review | [`rows/W450.md`](rows/W450.md) |
+| W451 | A quiz's key leaves the page: the local study server grades the answer (user ruling) | framework agent | `in-progress` — ⛔ USER RULING, blocks the pilot quiz | [`rows/W451.md`](rows/W451.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
