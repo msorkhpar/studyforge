@@ -6,13 +6,13 @@ two ways a document leaves this process:
 
 - `redacted(document)` — a unit document with every quiz option cut down to its
   id and its words, which is what the content namespace answers;
-- `carries(body, sentences)` — whether a file's bytes hold a quiz's key or one of
-  the served quizzes' sentences, which is what the static mount refuses.
+- `carries(body, marks)` — whether a file's bytes hold a served quiz's key or one
+  of its sentences, which is what the static mount refuses.
 
 **How you use it.**
 
     document = redacted(served.parse(text, served.UNIT_FILENAME))   # content namespace
-    found = sentences_in(document)                                  # before redacting
+    found = marks_in(document)                                      # before redacting
     if carries(body, found):                                        # a file's bytes
         return not_found
     withheld = refused_by(source)       # what `serve.app` hands the static mount
@@ -43,10 +43,18 @@ content source every form already hands it.
 
 ## ⛔ What `carries` reads, and what it cannot
 
-1. ⭐ **The key, structurally**: a JSON `"correct": true|false` pair, or a
-   `data-…-correct` attribute (a page from a build before `W451`). ⛔ A key
-   with no structure — prose saying *"the answer is b"* — is not detectable,
-   and nothing here pretends it is.
+1. ⭐ **The key, structurally — and ONLY beside a quiz this instance serves**: a
+   JSON `"correct": true|false` pair, or a `data-…-correct` attribute (a page
+   from a build before `W451`), in a file that ALSO names one of the served
+   quizzes' question ids, quoted (`"q-2003"`). ⛔ **Either half alone withholds
+   nothing** (register review of `W452`): a question id is on every quiz page
+   and is no secret, and a `"correct"` field with no quiz id is some other
+   data's own field — a code practice's test cases (`M9`'s Java corpus) must
+   not answer a silent `404`. ⭐ Both together are a quiz record carrying its
+   key, which is exactly what the archive, the bundle and a quoting document
+   hold. ⚠️ So a key for a quiz this instance does NOT serve is served: it is
+   the key to nothing the site grades. ⛔ A key with no structure — prose
+   saying *"the answer is b"* — is not detectable either.
 2. ⭐ **Every sentence of every quiz the instance serves**, found in the text
    raw, JSON-escaped or HTML-escaped, with every run of whitespace read as one
    space — so a hard-wrapped quotation is still found. ⚠️ **A sentence shorter
@@ -67,7 +75,8 @@ import copy
 import html
 import json
 import re
-from collections.abc import Callable, Collection, Iterator
+from collections.abc import Callable, Iterator
+from dataclasses import dataclass
 
 #: Where a quiz record keeps its questions, and a question its options.
 QUESTIONS = "questions"
@@ -85,8 +94,20 @@ MIN_WORDS = 4
 KEY_PATTERN = re.compile(r'"correct"\s*:\s*(?:true|false)\b|\bdata-[a-z-]*-correct\b')
 
 
-def quiz_options(document: object) -> Iterator[dict]:
-    """Yield every option dict of every quiz a unit document's sections carry.
+@dataclass(frozen=True)
+class Marks:
+    """What identifies the quizzes an instance serves: every sentence and every question id."""
+
+    sentences: frozenset[str] = frozenset()
+    questions: frozenset[str] = frozenset()
+
+    def __or__(self, other: Marks) -> Marks:
+        """Return both sets of marks, as one instance serving both corpora holds them."""
+        return Marks(self.sentences | other.sentences, self.questions | other.questions)
+
+
+def quiz_questions(document: object) -> Iterator[dict]:
+    """Yield every question dict of every quiz a unit document's sections carry.
 
     ⭐ Read RAW, never validated: what is withheld must not depend on the record
     being valid, or an invalid quiz would be served whole.
@@ -96,16 +117,24 @@ def quiz_options(document: object) -> Iterator[dict]:
         workspace = section.get("workspace") if isinstance(section, dict) else None
         questions = workspace.get(QUESTIONS) if isinstance(workspace, dict) else None
         for question in questions if isinstance(questions, list) else ():
-            options = question.get(OPTIONS) if isinstance(question, dict) else None
-            for option in options if isinstance(options, list) else ():
-                if isinstance(option, dict):
-                    yield option
+            if isinstance(question, dict):
+                yield question
 
 
-def sentences_in(document: object) -> frozenset[str]:
-    """Return every option sentence of every quiz in a unit document."""
-    return frozenset(
-        option[SAYS] for option in quiz_options(document) if isinstance(option.get(SAYS), str)
+def quiz_options(document: object) -> Iterator[dict]:
+    """Yield every option dict of every quiz a unit document's sections carry."""
+    for question in quiz_questions(document):
+        options = question.get(OPTIONS)
+        for option in options if isinstance(options, list) else ():
+            if isinstance(option, dict):
+                yield option
+
+
+def marks_in(document: object) -> Marks:
+    """Return every option sentence and every question id of every quiz in a unit document."""
+    return Marks(
+        frozenset(o[SAYS] for o in quiz_options(document) if isinstance(o.get(SAYS), str)),
+        frozenset(q["id"] for q in quiz_questions(document) if isinstance(q.get("id"), str)),
     )
 
 
@@ -139,7 +168,7 @@ def collapsed(text: str) -> str:
     return " ".join(text.split())
 
 
-def searched(sentences: Collection[str]) -> frozenset[str]:
+def searched(sentences: frozenset[str]) -> frozenset[str]:
     """Return every spelling of every sentence long enough to be searched for."""
     return frozenset(
         form
@@ -149,22 +178,22 @@ def searched(sentences: Collection[str]) -> frozenset[str]:
     )
 
 
-def sentences_of(source: object) -> frozenset[str]:
-    """Return what a content source says its quizzes' sentences are; none if it cannot say.
+def marks_of(source: object) -> Marks:
+    """Return what a content source says marks its quizzes; none if it cannot say.
 
     ⚠️ Duck-typed, because a test's stand-in source serves no quiz: both real
     sources (`routes.content.CorpusContent`, `addressing.CorporaContent`) answer.
     """
     found = getattr(source, "withheld", None)
-    return frozenset() if found is None else frozenset(found())
+    return Marks() if found is None else found()
 
 
-def carries(body: bytes, sentences: Collection[str]) -> bool:
-    """Say whether `body` holds a quiz's key, or any of `sentences` in any spelling."""
+def carries(body: bytes, marks: Marks) -> bool:
+    """Say whether `body` holds a served quiz's key, or any of its sentences in any spelling."""
     text = body.decode("utf-8", errors="replace")
-    if KEY_PATTERN.search(text):
+    if KEY_PATTERN.search(text) and any(f'"{one}"' in text for one in marks.questions):
         return True
-    forms = searched(sentences)
+    forms = searched(marks.sentences)
     if not forms:
         return False
     flat = collapsed(text)
@@ -174,7 +203,7 @@ def carries(body: bytes, sentences: Collection[str]) -> bool:
 def refused_by(source: object) -> Callable[[bytes], bool]:
     """Return the static mount's `withheld` for an instance serving `source`'s corpora.
 
-    ⭐ **The sentences are asked for per file, never captured once**, so a quiz
+    ⭐ **The marks are asked for per file, never captured once**, so a quiz
     added or edited while the instance serves is withheld from then on.
     """
-    return lambda body: carries(body, sentences_of(source))
+    return lambda body: carries(body, marks_of(source))

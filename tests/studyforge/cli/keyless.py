@@ -45,8 +45,10 @@ BACKUP = BUNDLE.with_name("quiz.json~")
 #: A corpus document that quotes one sentence, wrapped across two lines.
 NOTES = Path("docs/notes.md")
 
-#: The key, structurally: a JSON pair, or a pre-`W451` page's option attribute.
+#: The key, structurally: a JSON pair, or a pre-`W451` page's option attribute — read as
+#: the key only beside one of the served quiz's question ids (the register's review).
 KEY = re.compile(r'"correct"\s*:\s*(?:true|false)|data-[a-z-]*-correct\b')
+QUESTION_IDS = tuple(f'"{question["id"]}"' for question in QUESTIONS)
 
 
 @dataclass(frozen=True)
@@ -74,7 +76,8 @@ def layout(where: Path) -> Layout:
 def carried(body: bytes) -> list[str]:
     """Every needle `body` holds: the key's structure, and each sentence in any spelling."""
     text = " ".join(body.decode("utf-8", errors="replace").split())
-    found = ["key"] if KEY.search(text) else []
+    keyed = KEY.search(text) and any(one in text for one in QUESTION_IDS)
+    found = ["key"] if keyed else []
     for sentence in sentences():
         forms = {sentence, json.dumps(sentence)[1:-1], html.escape(sentence)}
         if any(" ".join(form.split()) in text for form in forms):

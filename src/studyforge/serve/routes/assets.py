@@ -46,8 +46,8 @@ key.** A corpus built into its own root (`build . --out .`) puts the archive's
 `withheld` is asked of every text — and of every file of an unknown type, which
 is where an editor's backup or a `.yaml` copy lands — before anything else is
 answered, a `304` included, and a file it names answers the one `404`.
-⭐ **The default refuses the key's structure** (`serve.withheld.carries` with no
-sentences); `serve.app` hands every route the served quizzes' sentences too.
+⭐ **The default withholds nothing**: what a file may not carry is decided by the
+quizzes an instance SERVES, and `serve.app` hands both mounts that predicate.
 ⚠️ Media is not read, and an unknown-type file over `GATE_MAX_BYTES` is served
 unread: a compressed archive holding a bundle cannot be read here at all.
 
@@ -88,7 +88,6 @@ from studyforge.corpus.placement.profile import GENERATED_ROOT
 from studyforge.progress import store_dir
 from studyforge.serve.caching import UNSATISFIABLE, WHOLE, not_modified, parse_range, weak_etag
 from studyforge.serve.response import TEXT_TYPE, Request, Response
-from studyforge.serve.withheld import carries
 
 #: Assets revalidate every time; a `304` costs one `stat`, and one read of a text
 #: or unknown-type file, which `withheld` is asked of first (`W452`).
@@ -178,9 +177,9 @@ def nothing_private(path: Path) -> bool:
     return False
 
 
-def keyed(body: bytes) -> bool:
-    """Say whether `body` carries a quiz's key by its structure: the default `withheld`."""
-    return carries(body, ())
+def nothing_withheld(body: bytes) -> bool:
+    """Withhold no file: the default where no instance has named the quizzes it serves."""
+    return False
 
 
 def client_tag(client: str) -> bytes:
@@ -278,7 +277,7 @@ def route(
     rest: str,
     *,
     client: str | None = None,
-    withheld: Withheld = keyed,
+    withheld: Withheld = nothing_withheld,
 ) -> Response:
     """Answer one request under `/api/v1/assets/`; `rest` is the path after it."""
     return serve(root, request, "/" + rest, private, client, withheld)
@@ -290,7 +289,7 @@ def serve(
     url_path: str,
     private: Private = nothing_private,
     client: str | None = None,
-    withheld: Withheld = keyed,
+    withheld: Withheld = nothing_withheld,
 ) -> Response:
     """Answer one file: `200`, `206`, `304`, `404` or `416`.
 

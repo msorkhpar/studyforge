@@ -14,11 +14,12 @@ import pytest
 
 from studyforge.serve.withheld import (
     MIN_WORDS,
+    Marks,
     carries,
+    marks_in,
+    marks_of,
     redacted,
     refused_by,
-    sentences_in,
-    sentences_of,
 )
 from tests.studyforge.serve.routes.quizzing import QUESTIONS, sentences
 
@@ -52,26 +53,53 @@ def test_a_code_practice_document_is_answered_unchanged() -> None:
     """⭐ Spec §7 §8: a workspace with no questions is not a quiz, whatever it holds."""
     document = unit_document(CODE)
     assert redacted(document) == document
-    assert sentences_in(document) == frozenset()
+    assert marks_in(document) == Marks()
 
 
-def test_sentences_in_reads_every_sentence_of_every_quiz_even_an_invalid_one() -> None:
-    assert sentences_in(unit_document(QUIZ)) == frozenset(sentences())
-    broken = {"questions": [{"options": [{"says": "Read although the record is not valid."}]}]}
-    assert sentences_in(unit_document(broken)) == {"Read although the record is not valid."}
-    assert sentences_in({"sections": "not a list"}) == frozenset()
+def test_marks_in_reads_every_sentence_and_question_id_even_of_an_invalid_quiz() -> None:
+    assert marks_in(unit_document(QUIZ)) == Marks(
+        frozenset(sentences()), frozenset(question["id"] for question in QUESTIONS)
+    )
+    broken = {"questions": [{"id": "q-x", "options": [{"says": "Read although it is invalid."}]}]}
+    assert marks_in(unit_document(broken)) == Marks(
+        frozenset({"Read although it is invalid."}), frozenset({"q-x"})
+    )
+    assert marks_in({"sections": "not a list"}) == Marks()
+
+
+#: The served quiz's marks, as an instance serving `QUESTIONS` holds them.
+SERVED = marks_in(unit_document(QUIZ))
 
 
 @pytest.mark.parametrize(
     "text",
     [
-        '{"options": [{"id": "a", "correct": true}]}',
-        '{"correct":false}',
+        '{"questions": [{"id": "q-1", "options": [{"id": "a", "correct": true}]}]}',
+        '{"id":"q-2","options":[{"correct":false}]}',
+        '<fieldset data-practice-question="q-1"><li data-practice-correct="true">a</li>',
+    ],
+)
+def test_the_key_is_carried_by_its_structure_beside_a_served_question_id(text: str) -> None:
+    assert carries(text.encode(), Marks(questions=SERVED.questions))
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        '{"cases": [{"input": [2, 3], "expected": 5, "correct": true}]}',
+        '{"id": "q-9", "options": [{"id": "a", "correct": true}]}',
         '<li data-practice-correct="true">a</li>',
     ],
 )
-def test_the_key_is_carried_by_its_structure_with_no_sentence_known(text: str) -> None:
-    assert carries(text.encode(), ())
+def test_the_key_structure_with_no_served_question_id_is_not_withheld(text: str) -> None:
+    """⛔ Register review: a `"correct"` field that names no quiz this instance serves is
+    that file's own data — `M9`'s Java fixtures may carry one — and is served."""
+    assert not carries(text.encode(), SERVED)
+
+
+def test_a_served_question_id_with_no_key_is_not_withheld() -> None:
+    """⭐ A question id is on every quiz page; it is no secret on its own."""
+    assert not carries(b'<fieldset data-practice-question="q-1">', SERVED)
 
 
 @pytest.mark.parametrize(
@@ -83,36 +111,36 @@ def test_the_key_is_carried_by_its_structure_with_no_sentence_known(text: str) -
     ],
 )
 def test_the_word_correct_alone_is_not_the_key(text: str) -> None:
-    assert not carries(text.encode(), ())
+    assert not carries(text.encode(), SERVED)
 
 
 @pytest.mark.parametrize("spell", [str, lambda s: json.dumps(s), html.escape])
 def test_a_sentence_is_found_in_every_spelling_it_can_be_served_in(spell) -> None:
     for sentence in sentences():
-        assert carries(f"prefix {spell(sentence)} suffix".encode(), sentences()), sentence
+        assert carries(f"prefix {spell(sentence)} suffix".encode(), SERVED), sentence
 
 
 def test_a_hard_wrapped_sentence_is_still_found() -> None:
     sentence = sentences()[1]
     words = sentence.split()
     wrapped = " ".join(words[:3]) + "\n   " + " ".join(words[3:])
-    assert carries(wrapped.encode(), [sentence])
+    assert carries(wrapped.encode(), Marks(frozenset({sentence})))
 
 
 def test_a_sentence_shorter_than_the_floor_is_not_searched_for() -> None:
     short = " ".join(["Right"] * (MIN_WORDS - 1)) + "."
-    assert not carries(f"<p>{short}</p>".encode(), [short])
+    assert not carries(f"<p>{short}</p>".encode(), Marks(frozenset({short})))
     long = " ".join(["Right"] * MIN_WORDS) + "."
-    assert carries(f"<p>{long}</p>".encode(), [long])
+    assert carries(f"<p>{long}</p>".encode(), Marks(frozenset({long})))
 
 
 class Source:
     """A content source whose sentences a test changes between two asks."""
 
     def __init__(self) -> None:
-        self.found: frozenset[str] = frozenset()
+        self.found = Marks()
 
-    def withheld(self) -> frozenset[str]:
+    def withheld(self) -> Marks:
         return self.found
 
 
@@ -121,10 +149,10 @@ def test_refused_by_asks_the_source_on_every_file_and_never_captures_it() -> Non
     refused = refused_by(source)
     body = f"<p>{sentences()[0]}</p>".encode()
     assert not refused(body)
-    source.found = frozenset(sentences())
+    source.found = SERVED
     assert refused(body)
 
 
-def test_a_source_that_cannot_say_withholds_the_key_structure_only() -> None:
-    assert sentences_of(object()) == frozenset()
-    assert refused_by(object())(b'{"correct": true}')
+def test_a_source_that_cannot_say_withholds_nothing() -> None:
+    assert marks_of(object()) == Marks()
+    assert not refused_by(object())(b'{"id": "q-1", "correct": true}')

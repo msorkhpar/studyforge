@@ -20,6 +20,7 @@ from studyforge.serve.routes.content import (
     CorpusContent,
     route,
 )
+from studyforge.serve.withheld import Marks
 from studyforge.unit.builder import build_unit
 from studyforge.unit.builder import render as render_unit
 from tests.studyforge.generate.corpora import BOTH, FIXTURES
@@ -151,15 +152,15 @@ def test_a_quiz_is_served_without_its_key_and_the_source_still_holds_it(tmp_path
 def test_withheld_names_every_sentence_and_is_re_read_when_a_unit_file_moves(tmp_path):
     root = quiz_corpus(tmp_path)
     content = CorpusContent(read_corpus(root))
-    assert content.withheld() == frozenset(sentences())
+    assert content.withheld().sentences == frozenset(sentences())
     practice = root / PRACTICE_DOCUMENT
     fresh = "A sentence the quiz gained while the instance was serving."
     practice.write_text(
         practice.read_text("utf-8").replace(sentences()[0], fresh), encoding="utf-8"
     )
-    assert fresh in content.withheld()
-    assert sentences()[0] not in content.withheld()
+    assert fresh in content.withheld().sentences
+    assert sentences()[0] not in content.withheld().sentences
 
 
 def test_a_corpus_with_no_quiz_withholds_no_sentence():
-    assert CorpusContent(read_corpus(FIXTURES / "depth2")).withheld() == frozenset()
+    assert CorpusContent(read_corpus(FIXTURES / "depth2")).withheld() == Marks()

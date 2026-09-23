@@ -35,7 +35,7 @@ guarantee a `304` makes.
 side**, so a unit document is answered with every quiz option cut down to its id
 and its words (`serve.withheld.redacted`). ⛔ The quiz route reads the key from
 `ContentSource.unit`, which is NOT redacted — the redaction is this route's, on
-the way out. ⭐ `CorpusContent.withheld` names every sentence its quizzes carry,
+the way out. ⭐ `CorpusContent.withheld` names every sentence and question id its quizzes carry,
 which is what the static mount refuses a file for.
 
 ## ⛔ Every document is gated on the way out
@@ -56,7 +56,7 @@ from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.contents import document as contents_document
 from studyforge.serve.caching import not_modified, strong_etag
 from studyforge.serve.response import JSON_TYPE, Request, Response, envelope, error
-from studyforge.serve.withheld import redacted, sentences_in
+from studyforge.serve.withheld import Marks, marks_in, redacted
 from studyforge.unit import served
 from studyforge.unit.builder import NoMaterial, build_unit
 from studyforge.unit.builder import render as render_unit
@@ -104,7 +104,7 @@ class CorpusContent:
         self._corpus = corpus
         self._units = {source.key: source for source in corpus.units}
         self._absent = frozenset(corpus.absent)
-        self._withheld: tuple[tuple, frozenset[str]] = ((), frozenset())
+        self._withheld: tuple[tuple, Marks] = ((), Marks())
 
     def toc(self) -> str:
         """Return the contents document, rendered by its one serialiser."""
@@ -125,8 +125,8 @@ class CorpusContent:
         """Say whether `key` is a declared unit of this corpus."""
         return key in self._units or key in self._absent
 
-    def withheld(self) -> frozenset[str]:
-        """Return every option sentence of every quiz in this corpus's unit documents.
+    def withheld(self) -> Marks:
+        """Return every option sentence and question id of every quiz in this corpus's units.
 
         ⭐ **Read through `unit` — the same reader the quiz route grades from** — so
         what is withheld is what is graded. ⚠️ Cached against the size and mtime of
@@ -137,12 +137,14 @@ class CorpusContent:
         held, found = self._withheld
         if held == stamp and held:
             return found
-        found = frozenset().union(*(self._sentences(key) for key in self._units))
+        found = Marks()
+        for key in self._units:
+            found |= self._marks(key)
         self._withheld = (stamp, found)
         return found
 
-    def _sentences(self, key: str) -> frozenset[str]:
-        """One unit's quiz sentences; none for a unit that has no document or fails to build.
+    def _marks(self, key: str) -> Marks:
+        """One unit's quiz marks; none for a unit that has no document or fails to build.
 
         ⚠️ A unit that cannot be built is skipped rather than failing every file
         the static mount serves; `serve.withheld`'s structural reading of the key
@@ -150,9 +152,9 @@ class CorpusContent:
         """
         try:
             text = self.unit(key)
-            return frozenset() if text is None else sentences_in(json.loads(text))
+            return Marks() if text is None else marks_in(json.loads(text))
         except ContentError, OSError, ValueError:
-            return frozenset()
+            return Marks()
 
 
 def _stamp(directory: Path) -> tuple:

@@ -206,7 +206,31 @@ def test_a_page_built_before_W451_is_refused_whole(tmp_path) -> None:
     all until the corpus is rebuilt — the register rebuilds BEFORE it restarts."""
     shape = layout(tmp_path / "old")
     old = shape.quiz / "old.unit.html"
-    old.write_text('<html><head></head><li data-practice-correct="true">a</li></html>', "utf-8")
+    old.write_text(
+        '<html><head></head><fieldset data-practice-question="q-1">'
+        '<li data-practice-correct="true">a</li></fieldset></html>',
+        "utf-8",
+    )
     with verb_running([str(shape.quiz), "--site", str(shape.quiz), "--port", "0"]) as serving:
         assert fetch(serving.server, "/old.unit.html")[0] == 404
         assert fetch(serving.server, "/index.html")[0] == 200
+
+
+#: A code practice's own data: a `"correct"` field that belongs to no quiz (the review's case).
+CASES = '{"cases": [{"input": [2, 3], "expected": 5, "correct": true}]}\n'
+
+
+def test_a_code_practice_asset_with_a_correct_field_and_no_quiz_id_is_served(tmp_path) -> None:
+    """⛔ Register review of `W452`: the key's structure is withheld only beside a question
+    id of a quiz this instance serves. A code practice's JSON carrying `"correct": true`
+    is that practice's data, and a `404` there would be a broken lesson nobody explains."""
+    shape = layout(tmp_path / "cases")
+    asset = shape.runnable / "practice" / "passes" / "cases.json"
+    asset.write_text(CASES, encoding="utf-8")
+    with verb_running([str(shape.root), "--port", "0"]) as serving:
+        for path in (
+            "/runnable/practice/passes/cases.json",
+            "/api/v1/assets/runnable/practice/passes/cases.json",
+        ):
+            status, _, body = fetch(serving.server, path)
+            assert (status, body) == (200, CASES.encode()), path

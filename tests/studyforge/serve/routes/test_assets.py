@@ -19,6 +19,7 @@ from studyforge.serve.routes.assets import (
     route,
     serve,
 )
+from studyforge.serve.withheld import Marks, carries
 from tests.studyforge.generate.corpora import FIXTURES
 from tests.studyforge.serve.serving import LEAK
 
@@ -253,20 +254,35 @@ def test_a_generated_directory_beside_a_manifest_resolves_and_nowhere_else(site)
         assert get(site, path).status == 404, path
 
 
-QUIZ_FILE = '{"questions": [{"options": [{"id": "a", "correct": true, "says": "Why."}]}]}\n'
+QUIZ_FILE = '{"questions": [{"id": "q-1", "options": [{"id": "a", "correct": true}]}]}\n'
+
+#: What an instance serving that quiz knows of it: its question id.
+SERVED = Marks(questions=frozenset({"q-1"}))
+
+
+def served_quiz(body: bytes) -> bool:
+    return carries(body, SERVED)
 
 
 @pytest.mark.parametrize("name", ["quiz.json", "quiz.json~", "notes.txt"])
-def test_a_file_carrying_a_quiz_key_is_refused_even_with_no_sentence_known(site, name):
-    """⛔ `W452`: the default `withheld` reads the key's STRUCTURE, a text or an unknown type."""
+def test_a_file_carrying_a_served_quizs_key_is_refused_a_text_or_an_unknown_type(site, name):
+    """⛔ `W452`: the key's STRUCTURE beside a served question id, even with no sentence."""
     (site / name).write_text(QUIZ_FILE, encoding="utf-8")
-    assert get(site, f"/{name}").status == 404
+    request = Request("GET", f"/{name}", {})
+    assert serve(site, request, f"/{name}", withheld=served_quiz).status == 404
+
+
+def test_the_default_withholds_nothing(site):
+    """⭐ What a file may not carry is decided by the quizzes an instance serves."""
+    (site / "quiz.json").write_text(QUIZ_FILE, encoding="utf-8")
+    assert get(site, "/quiz.json").status == 200
 
 
 def test_a_withheld_file_is_404_before_any_validator_is_honoured(site):
     (site / "quiz.json").write_text(QUIZ_FILE, encoding="utf-8")
     etag = weak_etag((site / "quiz.json").stat())
-    assert get(site, "/quiz.json", **{"If-None-Match": etag}).status == 404
+    request = Request("GET", "/quiz.json", {"If-None-Match": etag})
+    assert serve(site, request, "/quiz.json", withheld=served_quiz).status == 404
 
 
 def test_withheld_is_asked_of_the_bytes_and_a_sentence_it_names_is_refused(site):
