@@ -194,3 +194,52 @@ def test_the_listener_is_installed_before_the_frame_that_raises_the_violation():
     # for, and nothing anywhere would fail.
     body = behaviour()
     assert body.index("reloadWhenBlocked(where.main.url)") < body.index("frame(slots.main")
+
+
+# ⛔ `W449` — a frame never keeps focus the reader did not give it, and the
+# page never moves on its own. ⭐ The browser reading is
+# `tests/visual/test_practice_focus.py`; what a TEXT can hold is the part of the
+# guard that harness cannot stage (see that module's docstring) and the orders
+# that make the whole of it work.
+
+
+def test_every_frame_is_held_before_it_is_added_to_the_page():
+    # ⛔ The workbench takes focus as soon as it loads; a frame added first and
+    # watched second is one whose first steal nobody answers.
+    body = behaviour()
+    built = body[body.index("function frame(slot, url, title)") :]
+    assert built.index("held(built);") < built.index("slot.appendChild(built);")
+
+
+def test_a_steal_that_raises_no_blur_is_still_seen():
+    # ⛔ **The route the visual harness cannot stage**: a frame taking focus
+    # from another frame, or while the browser window is not focused, raises
+    # no `blur` on the page — measured on the pilot, where the page still
+    # glided to the editor. ⭐ So the page reads `activeElement` on an interval
+    # from the moment its first frame is built, and never stops.
+    body = behaviour()
+    install = body[body.index("function install()") : body.index("return function (built)")]
+    assert "setInterval(tick, WATCH_EVERY);" in install
+    assert "clearInterval" not in body
+    assert "window.addEventListener('blur'" in install
+
+
+def test_focus_is_given_back_one_task_later_and_never_inside_the_blur():
+    # ⚠️ Measured: a focus moved inside the `blur` — or in a microtask, which is
+    # still inside it — is ignored, and the page glided to the editor.
+    body = behaviour()
+    refuse = body[body.index("function refuse(at)") : body.index("function arrived(at)")]
+    assert "setTimeout(function () {" in refuse
+    assert "queueMicrotask" not in body
+    assert "preventScroll: true" in refuse
+
+
+def test_only_the_readers_hand_gives_a_frame_focus():
+    # ⭐ The pointer over THAT frame with the page's user activation, or a Tab
+    # pressed on the page just before — never a timer and never a default.
+    body = behaviour()
+    given = body[body.index("function given(built)") : body.index("function stay(at, again)")]
+    assert "navigator.userActivation" in given
+    assert "(pointed === built && active) || Date.now() - tabbed < TAB_GRACE" in given
+    assert "built.addEventListener('pointerenter'" in body
+    assert "if (event.key === 'Tab') { tabbed = Date.now(); }" in body
