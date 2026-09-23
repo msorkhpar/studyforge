@@ -8,7 +8,7 @@ skill's own documents into one file set, and writes it all or none of it.
 
     from studyforge.skills.onboarding import onboard
 
-    made = onboard(draft, framework_commit=commit, root=corpus_root)
+    made = onboard(draft, framework_commit=commit)
     print("\n".join(made.lines()))   # every path, and the one that is yours
     made.write(corpus_root)          # ⛔ refuses to overwrite anything
 
@@ -52,6 +52,12 @@ this skill wrote with no refusal — presenting a corpus COMPLETE at the reading
 floor as unfinished (C5). ⭐ `recorded.moved` compares the manifest on disk with
 the one about to be written, over the manifest's own fields, and a regenerate
 that would move one refuses by name and writes nothing.
+
+## ⛔ What is written never depends on which checkout wrote it (`W442`, R10)
+
+⭐ Every generated document addresses the framework as `pin.SIBLING`, from the
+corpus's main checkout; `write(root)` checks the pin against `framework_of(root)`
+and moves no byte. ⚠️ `root=` is still accepted and moves nothing.
 """
 
 from __future__ import annotations
@@ -76,10 +82,8 @@ from studyforge.skills.onboarding.manifest import promote, render
 from studyforge.skills.onboarding.nondestructive import edits_test
 from studyforge.skills.onboarding.pin import (
     RECORD_FILE,
-    SIBLING,
     SKILLS,
     check_held,
-    framework_from,
     framework_of,
     known,
     pin_document,
@@ -104,11 +108,6 @@ class Onboarding:
     commit: str
     #: ⭐ `W283`: the `not_material` globs a generator declares, re-derived on every run.
     generated: tuple[str, ...] = ()
-    #: ⭐ `W321`: the framework's address every generated document here was written
-    #: with — `pin.framework_from`'s answer for the root it was composed for, and
-    #: the default a caller who named no root gets. `write` refuses a root it
-    #: does not resolve for.
-    framework: str = SIBLING
     #: ⭐ `W439`: the recorded answers a person changes on purpose (`reonboard`'s `settle`).
     settled: tuple[str, ...] = ()
 
@@ -136,15 +135,9 @@ class Onboarding:
 
         ⛔ **The pin is checked against the framework beside `root` first**
         (`W270`): a commit that checkout does not hold is refused by name, and
-        nothing is written.
-
-        ⛔ **And the documents' framework address is checked against the same
-        root** (`W321`): a document composed for a main checkout, written into a
-        linked worktree, would tell its reader to run `git checkout --detach`
-        against whatever stands beside the worktree.
+        nothing is written. ⭐ The check resolves; the bytes do not (`W442`).
         """
         check_held(self.commit, framework_of(root))
-        self._refuse_misaddressed(root)
         if regenerate:
             self._refuse_dropping(Path(root))
             self._refuse_changing(Path(root))
@@ -155,21 +148,6 @@ class Onboarding:
             regenerate=regenerate,
             refused=lambda blocked: OnboardingRefused(record.collision(blocked)),
         )
-
-    def _refuse_misaddressed(self, root: Path | str) -> None:
-        """Refuse, by name, documents that address the framework elsewhere than the pin (`W321`).
-
-        ⭐ Both values are an ascent and a name, so quoting them carries nothing
-        (R7). ⛔ The remedy is the argument, not an edit: `onboard(root=...)`.
-        """
-        addressed = framework_from(root)
-        if addressed != self.framework:
-            raise OnboardingRefused(
-                f"the generated documents address the framework as {self.framework!r}, but "
-                f"from this corpus root the pin resolves it at {addressed!r} — a linked "
-                f"worktree stands further from it than its main checkout does. Nothing was "
-                f"written; pass root=<this corpus> to onboard so the two agree"
-            )
 
     def _refuse_dropping(self, root: Path) -> None:
         """Refuse, by name, a regenerate dropping or re-reasoning a person's glob (`W283`)."""
@@ -251,14 +229,13 @@ def onboard(
     `framework_commit` is the sibling checkout's recorded commit — the pin file
     is where the workspace's own record of it lands (`FND-05a`). `existing` is
     the text of the `corpus.json` a re-onboarding finds on disk (`W283`); a
-    first onboarding passes nothing and is unchanged. `root` is **the root every
-    generated document addresses the framework from** (`W321`); without it, they
-    address it the way a corpus that is its own main checkout does — which
-    `write` then checks. ⛔ **The reader's document reads no state from it**
-    (`W332`): it states no figure, so there is none for a later `narrate` to
-    make untrue, and it is the same document with `root` and without.
+    first onboarding passes nothing and is unchanged. ⛔ **`root` moves no byte**
+    (`W442`): every document addresses the framework as `pin.SIBLING`, from the
+    corpus's main checkout, so a regenerate from a linked worktree and one from
+    the main checkout write the same files (R10). ⭐ It is accepted so existing
+    callers keep working; the reader's document reads no state either (`W332`).
     """
-    framework = framework_from(root)
+    del root  # ⛔ W442: the checkout that ran the skill never reaches a rendered byte.
     kept = _declared(existing) if existing is not None else ()
     provisional = parse(render(promote(_carried(draft, kept), reasons=reasons)))
     made = scaffold(plan_for(provisional))
@@ -277,7 +254,7 @@ def onboard(
     files = [
         _own(artifacts.MANIFEST, render(document), "the declaration that makes this a source"),
         *made.files,
-        *_pin_files(framework_commit, skills, framework),
+        *_pin_files(framework_commit, skills),
         *_ignore_file(manifest),
         *ignore_files(checks),
         *checks,
@@ -287,7 +264,6 @@ def onboard(
                 manifest,
                 made.hand_written,
                 commit=framework_commit,
-                framework=framework,
             ),
             "what a reader is told, from the declarations, and where to read the state",
         ),
@@ -299,7 +275,6 @@ def onboard(
         not_material=tuple(dict(entry) for entry in document["content"].get("not_material", ())),
         commit=framework_commit,
         generated=generated,
-        framework=framework,
     )
 
 
@@ -375,14 +350,12 @@ def _ignore_file(manifest: Manifest) -> list[Written]:
     return [_own(wanted.home.as_posix(), wanted.text(), why)]
 
 
-def _pin_files(commit: str, skills: Sequence[str], framework: str) -> list[Written]:
-    """Return the pin, and one thin pointer per skill, each addressing `framework`."""
+def _pin_files(commit: str, skills: Sequence[str]) -> list[Written]:
+    """Return the pin, and one thin pointer per skill, each addressing `pin.SIBLING`."""
     document = json.dumps(pin_document(commit, skills), indent=2) + "\n"
     files = [_own(artifacts.PIN_FILE, document, "the framework, as a sibling at a commit")]
     for where, name in zip(stub_paths(skills), known(skills), strict=True):
-        files.append(
-            _own(where, stub(name, commit, framework), f"a pointer to the {name} procedure")
-        )
+        files.append(_own(where, stub(name, commit), f"a pointer to the {name} procedure"))
     return files
 
 

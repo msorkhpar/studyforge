@@ -172,8 +172,9 @@ def reader_document(
     and nothing here that a later `studyforge narrate` can make untrue.
     ⛔ **Every fenced line runs as written** from a fresh clone beside the
     framework at `commit` (R18 as amended), and a test executes each one.
-    ⛔ **`framework` is `pin.framework_from`'s one answer** for the corpus this
-    is written into (`W321`); this module derives no address of its own.
+    ⛔ **`framework` is `SIBLING` from `onboard`, always** (`W442`): the address
+    from the corpus's main checkout, so the bytes never depend on the checkout
+    that ran the skill (R10). This module derives no address of its own.
     """
     run = f"PYTHONPATH={framework}/src python3 -m"
     lines = [
@@ -236,16 +237,16 @@ def _stands(run: str) -> list[str]:
 def _running(manifest: Manifest, commit: str, framework: str, run: str) -> list[str]:
     """Give the commands that run from a fresh clone beside the framework at `commit`.
 
-    ⛔ **`framework` is where the pin resolves it, said from this corpus's root**
-    (`W321`), so the fence is not read from one place and the pin from another.
+    ⛔ **`framework` is said from the main checkout's root** (`W442`), which is
+    where a fresh clone stands and where the pin looks for it (`W286`).
     """
     return [
         "## Running it from a fresh clone",
         "",
         "The framework is a checkout beside this repository's main checkout —",
         "this repository itself unless it is a linked worktree — never a submodule",
-        f"and never installed. Clone it there; it is `{framework}` from this",
-        "repository's root, and these run from there. They pin the framework,",
+        f"and never installed. Clone it there; it is `{framework}` from the main",
+        "checkout's root, and these run from there. They pin the framework,",
         "ingest with this corpus's adapter, check the archive, and say what a",
         "build would write before building:",
         "",

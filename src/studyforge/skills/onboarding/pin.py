@@ -47,16 +47,17 @@ question about the CORPUS's repository, not a workspace resolver (`W127`): it
 names no component, reads no `workspace.json`, and the generated check carries
 the very same function, emitted from its source here, so the two cannot drift.
 
-## ⛔ Every generated document addresses the framework the way the pin does (`W321`)
+## ⛔ Every generated document addresses the framework as the WORKSPACE lays it out (`W442`)
 
-⚠️ **A document said `../studyforge` while the pin resolved the framework beside
-the MAIN checkout**, so in a linked worktree the first fenced command a reader
-was given ran against whatever sat beside the WORKTREE. ⭐ `framework_from(root)`
-is the pin's own answer said from the corpus root — `framework_of(root)`
-expressed as the ascent that reaches it — and `stub`, the reader's document and
-`Onboarding.write`'s guard all take that one string. ⛔ **It is an ascent and a
-name and nothing else**, so no document can carry a directory off this disk
-(R7); a root the framework is not above is refused rather than addressed.
+⚠️ **`W321` rendered the pin's resolution, said from whichever checkout ran the
+skill** — so a regenerate from a linked worktree wrote `../../studyforge`, one
+from the main checkout wrote `../studyforge`, and the two file sets and their
+`installed.json` digests differed (R10). ⭐ **The reader's path is a property of
+the workspace, not of the run**: every component is a sibling on disk (R18,
+`workspace.json`), so from the corpus's own checkout — the one a reader clones
+— the framework is `SIBLING`, always. ⛔ **`framework_of` stays the CHECK's
+resolution and never reaches a rendered byte**: the pin still finds the
+framework from a worktree (`W286`), and what it writes is the same from both.
 
 ## ⭐ A stub is a pointer, and the check is what keeps it one
 
@@ -106,13 +107,14 @@ COMMIT = re.compile(r"[0-9a-f]{40}")
 #: never a path (R7).
 FRAMEWORK = "studyforge"
 
-#: How a corpus that IS its own main checkout addresses the framework, and the
-#: answer a caller who names no root gets. ⛔ An ascent and a name, never a path.
+#: How every generated document addresses the framework: from the corpus's main
+#: checkout, as the workspace lays its siblings out (R18, `W442`). ⛔ An ascent
+#: and a name, never a path, and never a function of the checkout that ran.
 SIBLING = "../" + FRAMEWORK
 
 #: Where a skill's procedure lives INSIDE the framework checkout. ⚠️ Joined to
 #: the framework's address by `stub`, and carrying none of its own: the address
-#: is `framework_from`'s single answer (`W321`).
+#: is `SIBLING`, the workspace's layout (`W442`).
 PROCEDURE = "src/studyforge/skills/{name}/SKILL.md"
 
 #: ⛔ A local object lookup never fetches: no lazy fetch from a promisor remote,
@@ -141,8 +143,8 @@ def pin_document(commit: str, skills: Sequence[str] = SKILLS) -> dict:
 def stub(name: str, commit: str, framework: str = SIBLING) -> str:
     """One thin pointer to a skill's procedure, carrying the pin it was written at.
 
-    ⭐ `framework` is `framework_from`'s answer for the corpus this is written
-    into, so the pointer and the pin name one checkout (`W321`).
+    ⛔ `onboard` never passes `framework`: every stub says `SIBLING`, from the
+    main checkout's root, whichever checkout ran the skill (`W442`, R10).
     """
     if name not in SKILLS:
         # ⛔ Named, never quoted (R7). A caller that reached this branch passed
@@ -157,7 +159,8 @@ def stub(name: str, commit: str, framework: str = SIBLING) -> str:
             "",
             "The procedure lives in the framework checked out beside this",
             "repository's main checkout — this repository itself unless it is a",
-            f"linked worktree — at `{framework}/{PROCEDURE.format(name=name)}`.",
+            f"linked worktree — at `{framework}/{PROCEDURE.format(name=name)}`",
+            "from that main checkout's root.",
             "",
             "This file is a pointer and is regenerated. A hand-edit to it is a",
             "finding against the onboarding skill, not a fix (R19).",
@@ -307,33 +310,6 @@ def main_checkout(root: pathlib.Path | str) -> pathlib.Path:
 def framework_of(root: Path | str) -> Path:
     """Return where the pin looks for the framework: `FRAMEWORK` beside `main_checkout(root)`."""
     return main_checkout(root).parent / FRAMEWORK
-
-
-def framework_from(root: Path | str | None) -> str:
-    """Return how a document written into the corpus at `root` addresses the framework.
-
-    ⭐ **The pin's own answer, said from the corpus root** (`W321`):
-    `framework_of` names the directory and this is the ascent that reaches it,
-    so a command a generated document prints and the commit the pin records can
-    never name two different checkouts. ⛔ **Only an ascent is ever returned** —
-    `../` repeated, then the sibling's name — so nothing a document carries can
-    be a directory name off this disk (R7). ⚠️ **`None` is the caller who named
-    no root**, and its answer is `SIBLING`: what a corpus that is its own main
-    checkout gets, which is every corpus that is not a linked worktree.
-    """
-    if root is None:
-        return SIBLING
-    here = Path(root).resolve()
-    try:
-        inside = here.relative_to(framework_of(here).parent)
-    except ValueError:
-        raise PinRefused(
-            "the framework the pin resolves is not above this corpus root, so no relative "
-            "address reaches it and an absolute one would carry a home directory (R7); "
-            "onboard from the corpus's main checkout, or place its linked worktree under "
-            "the directory the framework stands in"
-        ) from None
-    return "/".join([".."] * len(inside.parts) + [FRAMEWORK])
 
 
 def check_held(commit: object, checkout: Path | str) -> str:
