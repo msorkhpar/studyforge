@@ -62,7 +62,7 @@ one does.**
 | **M10 step 10.1** | ✅ CLOSED — `AX-00`, `AX-01`, `AX-05` | `9cd37ccd` | [record](BOARD-ARCHIVE.md#po-round-136) |
 | **M10 step 10.2** | ✅ CLOSED — `AX-02`, `AX-03`, `AX-04`, `AX-06` | `638ec209` | [record](BOARD-ARCHIVE.md#po-round-141) |
 | **M10 step 10.3** | ✅ CLOSED — `AX-07`, `AX-08`, `AX-09`, `AX-10` | `e72b28b7` | [record](BOARD-ARCHIVE.md#po-round-150) |
-| **M11** — it is release-ready | ⛔ **NOT STARTED — after `M10`** (user, 2026-09-18; ruled 2026-09-19) | — | [the plan](README.md) |
+| **M11** — it is release-ready | ⏳ **OPEN — round 159, IN PARALLEL with `M10`**, which waits on the user's pilot review; ⭐ **steps 11.1 and 11.2 building, and nothing is moved or deleted before 11.5** | — | [the open](BOARD-ARCHIVE.md#po-round-159) |
 | **M9** — the Java corpus re-validates | ⛔ **NOT STARTED, and it holds 21 of the 35 undelivered capabilities.** `Claude-senior-java-engineer` converted under §12's rules, with gate-clearing exercises, and the findings written down | — | [the plan](README.md) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
@@ -76,6 +76,8 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
+| `REL-01` | Developer 4 | `docs/REL-01-the-decisions-file` @ `wt/dev4` | 0 @ `7f68b790` | `in-progress` — `M11` step 11.1 |
+| `REL-02` | Developer 5 | `chore/REL-02-the-product-suite-stands-alone` @ `wt/dev5` | 0 @ `7f68b790` | `in-progress` — `M11` step 11.2 |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).

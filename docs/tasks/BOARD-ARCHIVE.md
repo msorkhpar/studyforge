@@ -31264,3 +31264,16 @@ the pilot — `M10`.**
 [the mint](#po-round-157)
 
 ⚠️ **`W444` was dispatched on `wt/dev3` at `77dda7d9` and never recorded IN FLIGHT** — it merged before a round could record it. ⭐ **Said here so the gap is on the record, not inferred.**
+
+## PO round 159
+
+⭐ **`M11` OPENS, IN PARALLEL WITH `M10`.** ⚠️ **The user's order is `M10` → `M11`
+→ `M9`**, and it holds for CLOSING. ⭐ **`M10` is about to wait on the user's one
+pilot review, and a blocker stops one milestone, not the team** — so `M11`'s two
+steps that depend on nothing and move nothing start now: `REL-01` (the decisions
+file, on `wt/dev4`) and `REL-02` (the product suite without the tooling, on
+`wt/dev5`), at `7f68b790`. ⛔ **Nothing is moved, archived or deleted before step
+11.5, and the step that does it waits for `M10`'s close.**
+
+⭐ **`ISO-22` — the pilot — is with the integration office**, and it stops at the
+user's review.
