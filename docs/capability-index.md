@@ -6,9 +6,9 @@
 
 ⛔ **Derived from the epic documents, never transcribed from them.** A hand-edit here is a finding against the delivery skill (R19), not a fix — it is reverted by the next regeneration.
 
-**112 capabilities · 15 epic documents · 12 milestones, 2 with no capability · 1 cancelled row carried and not counted.**
+**126 capabilities · 16 epic documents · 12 milestones, 1 with no capability · 1 cancelled row carried and not counted.**
 
-**Of those capabilities, 67 are this framework's to deliver, 27 are delivered inside a component pinned somewhere else, and 18 declare no path at all.**
+**Of those capabilities, 78 are this framework's to deliver, 28 are delivered inside a component pinned somewhere else, and 20 declare no path at all.**
 
 ⛔ **Milestones run in the order `README.md` declares, not the order their ids sort to:** `M0` → `M1` → `M2` → `M3` → `M4` → `M6` → `M8` → `M5` → `M7` → `M10` → `M11` → `M9`.
 
@@ -153,9 +153,24 @@
 | `AX-10` | The authoring guide catches up | Authored exercises | this framework | `AX-08` |
 | `AX-11` | `M10`'s acceptance, read on ISO and on the prose fixture | Authored exercises | ⚠️ undeclared | `AX-09`, `AX-10` |
 
-## M11 — 0 capabilities
+## M11 — 14 capabilities
 
-⭐ **No epic document declares a capability at this milestone.** It is a gate in the declared order all the same, and a plan that waits on it waits here.
+| capability | what it is | area | delivered in | waits on |
+|---|---|---|---|---|
+| `REL-01` | The decisions file | Release-ready | this framework | — |
+| `REL-02` | The product suite stands without the tooling | Release-ready | this framework | — |
+| `REL-03` | The product floor is the product's | Release-ready | this framework | — |
+| `REL-04` | The skills ship in the package | Release-ready | this framework | — |
+| `REL-05` | Onboarding pins the installed library, not a sibling checkout | Release-ready | this framework | `REL-04` |
+| `REL-06` | The delivery skill reads a packaged capability index | Release-ready | this framework | `REL-04` |
+| `REL-07` | The README is an author's whole reading list | Release-ready | this framework | `REL-04`, `REL-05`, `REL-06` |
+| `REL-08` | The rubric and the conventions, sorted into product and process | Release-ready | this framework | `REL-01` |
+| `REL-09` | Process ids leave the product's prose | Release-ready | this framework | `REL-01` |
+| `REL-10` | The archive branch, and the main line without the process | Release-ready | this framework | `REL-01`, `REL-02`, `REL-03`, `REL-06`, `REL-07`, `REL-08` |
+| `REL-11` | A light board, and epics as high-level design | Release-ready | this framework | `REL-10` |
+| `REL-12` | Merged branches and idle worktrees are pruned | Release-ready | ⚠️ undeclared | `REL-10`, `REL-11` |
+| `REL-13` | The framework's siblings are release-ready | Release-ready | ⭐ not this framework | `REL-01`, `REL-04`, `TC-00`, `NS-01` |
+| `REL-14` | `M11`'s close, read from a clean checkout | Release-ready | ⚠️ undeclared | `REL-11`, `REL-12`, `REL-13` |
 
 ## M9 — 22 capabilities
 

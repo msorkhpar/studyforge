@@ -455,7 +455,27 @@ and the pilot is reviewed once. ⛔ **The record, with the user's words whole, i
 > archive, rows, handoffs) lives on an archive branch in the same repository; the board is light; the epics are
 > high-level design; and the next corpus needs only the README and the skills.
 
-⚠️ **Its steps are minted from the register's measured inventory and the user's six rulings of 2026-09-19.**
+- **11.1** — REL-01
+- **11.2** — REL-02, REL-03
+- **11.3** — REL-04, REL-05, REL-06
+- **11.4** — REL-07, REL-08, REL-09
+- **11.5** — REL-10, REL-11, REL-12, REL-13; and the corpus rows, owned by the integration agent in the corpus
+  repository: re-onboard it on the installed library (`REL-05`'s output), advance its main to its pin, prune its merged
+  branches and idle worktrees
+- **11.6** — REL-14
+
+⭐ **The tasks are [`E15`](E15-release-ready.md)**, minted by [`W438`](rows/W438.md) from a measured inventory and the
+user's six rulings of 2026-09-19, which are settled and not re-asked. ⛔ **The inventory is a reading and lives in
+[`W438`'s handoff](handoffs/W438.md), never here.**
+
+⭐ **The order is argued in the epic: distil, decouple, package, sort, move, read.** The decisions file (11.1) lands
+before any handoff leaves the main line (11.5); the product suite stands without the tooling (11.2) before the tooling
+moves; the skills stand without a sibling checkout or `docs/tasks/` (11.3) before their targets move; and the close
+(11.6) is read from a CLEAN clone of the main line, installed, with the skills read from the INSTALLED package.
+⚠️ **In-step edges are read off the epic**, and 11.3 and 11.5 each carry some: `REL-04` → `REL-05`, `REL-06`; and
+`REL-10` → `REL-11` → `REL-12`.
+
+⛔ **Registry publishing and the Python floor are NOT in this milestone** — each waits on a future user ruling.
 
 ### M9 — The Java corpus re-validates
 > **Done when:** `Claude-senior-java-engineer` is a narrated study site with
@@ -518,6 +538,7 @@ SF-28 → SF-40 → **SF-42**. ⚠️ **An `M3` task waits on two `M4` tasks, bo
 | E12 | [Toolchain image](E12-toolchain-image.md) | TC-00…06 | the runner image, then the shared code-server repo (§8.1) |
 | E13 | [Narration service](E13-narration-service.md) | NS-01…06 | shared synthesis repo (§8.2) |
 | E14 | [Authored exercises](E14-authored-exercises.md) | AX-00…11 | **exercises for every corpus** — the record's cases, the authoring gates, the bundle, the quiz shape, the skill, the panel |
+| E15 | [Release-ready](E15-release-ready.md) | REL-01…14 | **the release** — the decisions file, the product suite without the tooling, the skills in the package, the archive branch, the light board, the close from a clean checkout |
 
 Future work: [v2-backlog.md](v2-backlog.md).
 
@@ -532,7 +553,7 @@ judgement.
 
 | | Owns | Epics |
 |---|---|---|
-| **Framework agent** | `studyforge`, `code-server-toolchain`, `narrate-service` | E00–E06, E10, E11, E12, E13, **E14** |
+| **Framework agent** | `studyforge`, `code-server-toolchain`, `narrate-service` | E00–E06, E10, E11, E12, E13, **E14**, **E15** |
 | **Integration agent** | a corpus repository | E07, E08, and what survives of E09 |
 
 ⭐ **`E14` is the framework agent's, and the split it implies is the one that already
