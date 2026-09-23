@@ -79,7 +79,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
 | `REL-05` | Developer 3 | `chore/REL-05-onboarding-pins-the-installed-library` @ `wt/dev3` | 0 @ `3758d114` | `in-progress` — `M11` step 11.3 |
-| `REL-06` | Developer 4 | `chore/REL-06-the-delivery-skill-reads-the-packaged-index` @ `wt/dev4` | 0 @ `3758d114` | `in-progress` — `M11` step 11.3 |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
