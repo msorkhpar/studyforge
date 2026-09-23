@@ -31462,3 +31462,52 @@ and nothing else.**
 ## PO round 164
 
 ⛔ **USER REPORT on the pilot: unit 15 answers `409` and its first practice shows no editor.** ⭐ **Measured: one settings file for every practice, whose lock names only the last-opened practice as editable.** [`W446`](rows/W446.md) minted — ⛔ **it blocks the pilot review.**
+
+### W446 — Every practice shares one editor settings file, so a two-practice page 409s and only one practice is editable
+
+⛔ **USER REPORT, 2026-09-23, on the pilot:** *"Unit 15 -> Failed to load resource:
+the server responded with a status of 409 (Conflict) I don't see the first practice
+vs-code but the second one is there"*.
+
+⭐ **Measured by the register on the served first corpus:** every practice opens
+the ONE editor folder `practice/`, so every practice shares ONE
+`practice/.vscode/settings.json` — ⛔ **and its read-only lock names exactly ONE
+practice's file as editable: whichever was asked for LAST.** Two consequences:
+
+1. ⛔ **A page with two practices fires two editor requests at once; both write
+   the same file through the same staging name, and one is refused** →
+   `WORKSPACE_REFUSED`, `409`, no editor in that panel.
+2. ⛔ **Even without the race, only the last-opened practice is editable** —
+   opening a practice anywhere silently locks every other one read-only.
+
+⚠️ **It never showed before because every `M7` page carried ONE practice**; the
+pilot is the first corpus content with two per page. ⭐ **The grading is
+unaffected** — the register graded the same exercises through the served site.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **Every practice on a page opens an editor whose OWN main file is editable
+   and whose test is read-only, whatever order the panels load in** — ⛔ **and
+   opening a practice never changes another practice's lock.**
+2. ⛔ **Two simultaneous requests never refuse each other**, for two practices or
+   for the same one twice.
+3. ⭐ **`W429`'s integrity holds**: the test that judges a reader is never
+   writable, and `W433`'s user-scope defeat stays closed.
+4. ⛔ **Proved on the HOST through `serve`**, two concurrent `POST …/editor/…` for
+   the two practices of one page, both `200`, then each file's writability read
+   INSIDE the editor — with the negative on the old code. ⚠️ **A `serve/` change
+   owes a HOST reading of `tests/studyforge/cli/test_serve_process.py`.**
+5. ⭐ `W435`'s corpus stays clean.
+
+⭐ **Surface:** `execute/workbench.py`, `serve/routes/runs.py`, and the practice
+frame's URL (`execute/editor.py`).
+
+[the mint](#po-round-164)
+
+## PO round 165
+
+⭐ **`W446` CLOSED — merged `a03ad248`: each practice opens its OWN editor folder and owns its lock.** ⭐ **The register read it on the host against the served first corpus: concurrent editor requests for unit 15's two practices all answered `200`, with the old code as the positive control refusing one of a pair; each practice's own `.vscode/settings.json` leaves only its own main file editable, and the corpus stayed clean.** ⭐ **Plants at seams the office did not use: the serve route back to the shared folder → RED; the command-named files dropped → GREEN at first, sent back, RED at the merged tip.** ⭐ **`:8770` restarted on the merged code**; all six pilot practices answer `200`. Findings `W446/1`, `W446/2` stay in [the handoff](handoffs/W446.md).
+
+### ⚠️ Nothing in flight
+
+⭐ **`M10` waits on the user's pilot review and nothing else.**

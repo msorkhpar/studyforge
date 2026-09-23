@@ -630,7 +630,7 @@ else.**
 | W443 | The guide's *Before you author* fails a literal first reader on the first corpus | framework agent | ✅ done — `7afcf99c` | [`rows/W443.md`](rows/W443.md) |
 | W444 | `validate` counts an authored practice's headings against the unit's source, so every authored archive is refused | framework agent | ✅ done — `376ebb46` | [`rows/W444.md`](rows/W444.md) |
 | W445 | A reader following the generated `EXECUTION.md` gets an editor blind to `practice/` and no runner for Submit | framework agent | ✅ done — `3758d114` | [`rows/W445.md`](rows/W445.md) |
-| W446 | Every practice shares one editor settings file, so a two-practice page 409s and only one practice is editable | framework agent | `todo` — ⛔ USER REPORT, blocks the pilot review | [`rows/W446.md`](rows/W446.md) |
+| W446 | Every practice shares one editor settings file, so a two-practice page 409s and only one practice is editable | framework agent | ✅ done — `a03ad248` | [`rows/W446.md`](rows/W446.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
