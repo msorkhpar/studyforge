@@ -18,14 +18,14 @@ import pytest
 from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.skills.buildserve import narration
 from studyforge.skills.execution import contract
+from tests.harness.workspace import DEV_CONTAINER, workspace_root
+from tests.harness.workspace import read as read_workspace
 from tests.studyforge.skills.execution.contracts import (
     CONTAINER_USER,
     HOME,
     editor_text,
 )
 from tests.support import repository_root
-from tools.workspace import read as read_workspace
-from tools.workspace.__main__ import DEV_CONTAINER, workspace_root
 
 #: An account name this contract never declares as its own. ⚠️ Composed rather
 #: than written, for the reason `contracts.py` states.

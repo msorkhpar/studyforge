@@ -13,7 +13,7 @@ from pathlib import Path
 import pytest
 
 from studyforge.skills import execution
-from tools.quality.source_names import named_sources
+from tests.harness.sources import named_sources
 
 #: The package on disk.
 PACKAGE = Path(execution.__file__).parent

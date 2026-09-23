@@ -64,8 +64,9 @@ import subprocess
 import uuid
 from pathlib import Path
 
+from tests.harness import pinned
+from tests.harness.workspace import PIN_FILENAME
 from tests.support import repository_root, tool_on_path
-from tools.workspace import PIN_FILENAME, pinned
 
 IMAGE_VARIABLE = "STUDYFORGE_RUNNER_IMAGE"
 SIBLING = "code-server-toolchain"

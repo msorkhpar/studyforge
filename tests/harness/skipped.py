@@ -1,0 +1,60 @@
+"""What a test run could not reach, printed in every run's summary (`W158`).
+
+⭐ **`REL-02`: the product suite's OWN copy of `unreachable_population` and `skip_reason`** from
+`tools/quality/report.py`, so the disclosure prints in a checkout with no tooling in it. ⛔ The
+functions are that module's byte for byte, and `tests/test_process_twins.py` refuses a drift
+while both exist; `REL-10` leaves this copy as the only one.
+
+**How you use it.** The root `conftest.py` writes `unreachable_population(stats)` under every
+run's summary, where `stats` is pytest's own tally (`terminalreporter.stats`).
+
+**Depends on.** `collections` — the standard library.
+
+⛔ **A disclosure and never a verdict** (Ruling 328): it returns lines and no exit code, because
+what an environment cannot reach is host state no branch controls. ⚠️ Printed on an EMPTY
+population too: `green` with nothing skipped and `green` with a hole are two answers, and only
+a line present in BOTH tells them apart (Ruling 191).
+"""
+
+from __future__ import annotations
+
+from collections import Counter
+
+#: ⛔ **The label every test run prints, reached or not** (`W158`).
+UNREACHABLE = "unreachable population"
+
+#: What pytest prefixes to a skip's own reason, dropped so the reason reads as typed.
+SKIP_PREFIX = "Skipped: "
+
+
+def skip_reason(report: object) -> str:
+    """Return the reason a skipped report gave, as its author wrote it.
+
+    ⭐ Read off pytest's `longrepr` — `(path, line, "Skipped: reason")` for a skip —
+    and never matched against a list: a reason no list anticipated still prints.
+    """
+    longrepr = getattr(report, "longrepr", None)
+    text = longrepr[2] if isinstance(longrepr, tuple) and len(longrepr) == 3 else longrepr
+    reason = str(text or "no reason given")
+    return reason.removeprefix(SKIP_PREFIX)
+
+
+def unreachable_population(stats: dict) -> list[str]:
+    """Return the tests this run did not reach, as a COUNT and each REASON (`W158`).
+
+    ⛔ **Derived from the run's own tally** (`terminalreporter.stats`), never typed:
+    a test count, one per skipped report, as pytest's closing line counts them.
+    ⛔ **A disclosure and never a verdict** (Ruling 328) — it returns lines and
+    no exit code, because what is unreachable is host state no branch controls.
+    """
+    reasons = Counter(skip_reason(report) for report in stats.get("skipped", []))
+    total = sum(reasons.values())
+    if not total:
+        return [f"{UNREACHABLE}: 0 skipped test(s) — this run reached every test it collected"]
+    lines = [
+        f"{UNREACHABLE}: {total} skipped test(s) — this run's green does not cover them "
+        f"(a disclosure, never a failure)"
+    ]
+    for reason, count in sorted(reasons.items(), key=lambda item: (-item[1], item[0])):
+        lines.append(f"  {count} × {reason}")
+    return lines

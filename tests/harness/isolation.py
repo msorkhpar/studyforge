@@ -23,7 +23,7 @@ unusual. It is observed instead — `tests/harness/probes/audit.py`, and
     isolation.foreign_imports(isolation.framework_modules())
     isolation.dynamic_imports(isolation.framework_modules())
 
-**Depends on.** `ast`, `sys` and `tools.quality.config` for the tree walk.
+**Depends on.** `ast` and `sys` — the standard library; the tree walk is its own (`REL-02`).
 ⛔ Nothing from `studyforge`: a check on what the framework imports may not begin
 by importing the framework.
 
@@ -47,7 +47,6 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from tests.support import repository_root
-from tools.quality import config
 
 #: Where the framework lives, and the whole of what these predicates bind.
 FRAMEWORK = "src"
@@ -175,13 +174,31 @@ def outside_roots(opened: tuple[str, ...], allowed: tuple[Path, ...]) -> list[st
     return sorted(found)
 
 
+#: ⭐ `REL-02`: what the walk never reads — build output, tool caches and version control, the
+#: floor's own `TOOL_OUTPUT_DIRS` — so the walk needs no tooling. Every prefix walked here is
+#: under `src/`, where the floor's other exclusion (`tests/fixtures`) cannot occur.
+WALK_SKIPS = frozenset(
+    {
+        "__pycache__",
+        ".git",
+        ".venv",
+        "venv",
+        ".pytest_cache",
+        ".ruff_cache",
+        "build",
+        "dist",
+        "node_modules",
+    }
+)
+
+
 def _modules(root: Path | None, prefix: str) -> tuple[Module, ...]:
     """Every module under `prefix`, read once, sorted by relative name."""
     where = repository_root() if root is None else root
     found = []
-    for path in config.python_files(where):
-        name = config.relative(path, where)
-        if name.startswith(prefix):
+    for path in (where / prefix).rglob("*.py"):
+        name = path.relative_to(where).as_posix()
+        if path.is_file() and not WALK_SKIPS & set(name.split("/")):
             found.append(Module(name=name, text=path.read_text(encoding="utf-8")))
     return tuple(sorted(found, key=lambda module: module.name))
 

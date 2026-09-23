@@ -11,8 +11,8 @@ import ast
 from pathlib import Path
 
 from studyforge.skills import personalarchive
+from tests.harness.sources import named_sources
 from tests.studyforge.skills.personalarchive.archiving import skill_text
-from tools.quality.source_names import named_sources
 
 PACKAGE = Path(personalarchive.__file__).parent
 

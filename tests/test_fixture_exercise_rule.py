@@ -99,12 +99,18 @@ def test_the_section_both_documents_cite_is_in_the_spec():
     assert HEADING in SPEC.read_text(encoding="utf-8").splitlines()
 
 
-@pytest.mark.parametrize(
-    "text",
-    [document("exercises.md"), EPIC.read_text(encoding="utf-8")],
-    ids=["authoring-guide", "e06"],
-)
-def test_each_document_cites_section_7_for_the_file_only_record(text):
+#: ⭐ `REL-02`: each document is READ inside the test, never at collection, so a checkout
+#: without the epic still collects this file; the `e06` case is declared process in
+#: `tests/harness/process.py` and the guide's case is the product's.
+CITING = {
+    "authoring-guide": lambda: document("exercises.md"),
+    "e06": lambda: EPIC.read_text(encoding="utf-8"),
+}
+
+
+@pytest.mark.parametrize("which", list(CITING), ids=list(CITING))
+def test_each_document_cites_section_7_for_the_file_only_record(which):
+    text = CITING[which]()
     assert ANCHOR in text
     assert "`main_path` and `run_command`" in text
 

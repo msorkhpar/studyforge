@@ -52,7 +52,7 @@ def reason_to_skip() -> str | None:
 
 
 def sibling() -> Path:
-    from tools.workspace.__main__ import workspace_root
+    from tests.harness.workspace import workspace_root
 
     return workspace_root(repository_root()) / container.SIBLING
 

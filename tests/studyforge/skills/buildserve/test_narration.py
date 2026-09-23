@@ -17,9 +17,9 @@ import pytest
 
 from studyforge.cli.narrate.cli import DEFAULT_SERVICE
 from studyforge.skills.buildserve import narration
+from tests.harness import pinned
+from tests.harness.workspace import DEV_CONTAINER, read
 from tests.support import repository_root
-from tools.workspace import pinned, read
-from tools.workspace.__main__ import DEV_CONTAINER
 
 #: Every path the component's API publishes. ⛔ Typed HERE and nowhere in `src/`:
 #: this file's whole job is to assert that no skill repeats them.
