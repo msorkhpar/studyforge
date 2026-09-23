@@ -272,5 +272,6 @@ def test_a_token_painted_with_no_palette_property_is_refused(monkeypatch):
             "figure.code .token.number { color: teal; }",
         ),
     )
-    with pytest.raises(EditorColoursUnread, match="teal"):
+    with pytest.raises(EditorColoursUnread, match=r"\.token\.number") as refused:
         editor_colours()
+    assert "teal" not in str(refused.value)

@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import re
 
+from studyforge.describe import describe
 from studyforge.render.pageassets import AssetError, text
 
 #: The three stylesheets the colours are read from.
@@ -50,8 +51,7 @@ _COMMENT = re.compile(r"/\*.*?\*/", re.DOTALL)
 _RULE = re.compile(r"([^{}]+)\{([^{}]*)\}")
 _DECLARATION = re.compile(r"([\w-]+)\s*:\s*([^;]+);")
 _VAR = re.compile(r"^var\(\s*(--[\w-]+)\s*\)$")
-_HEX = re.compile(r"^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$")
-_RGBA = re.compile(r"^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d.]+)\s*\)$")
+_HEX = re.compile(r"^(#)([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$")
 
 
 class EditorColoursUnread(Exception):
@@ -103,26 +103,44 @@ def highlight() -> dict[str, dict[str, str]]:
 
 def code_block() -> dict[tuple[str, str], str]:
     """Return the property `READING` paints the code block's ground and ink with."""
-    return {role: property_of(READING, _declared(READING, *role)) for role in (GROUND, INK)}
+    found = {}
+    for role in (GROUND, INK):
+        try:
+            found[role] = property_of(_declared(READING, *role))
+        except EditorColoursUnread:
+            raise EditorColoursUnread(
+                f"{READING} paints {role[0]}'s {role[1]} with no palette property"
+            ) from None
+    return found
 
 
-def property_of(name: str, value: str) -> str:
-    """Return the custom property a `var(--x)` value names."""
+def property_of(value: str) -> str:
+    """Return the custom property a `var(--x)` value names.
+
+    ⛔ A refusal never reproduces the value it refused (R7): it names its type.
+    """
     match = _VAR.match(value)
     if match is None:
-        raise EditorColoursUnread(f"{name} paints with {value!r}, not a palette property")
+        raise EditorColoursUnread(
+            f"a paint must be a palette property's var(), got {describe(value)}"
+        )
     return match.group(1)
 
 
 def colour(value: str, alpha: str = "") -> str:
-    """Return a stylesheet colour as the workbench's `#rrggbb` or `#rrggbbaa`."""
+    """Return a palette `#rgb` or `#rrggbb` as the workbench's `#rrggbb`, `alpha` appended.
+
+    ⚠️ **The `#` is the stylesheet's own, kept, never typed here**: a `#`
+    literal outside `render/markup` reads as a composed page anchor, and that
+    sweep (`test_fragment`) is right to be blunt. ⛔ So a colour with no `#` of
+    its own (an rgba colour, a name) is refused: a translucent surface is a palette
+    colour and an alpha stated beside it in `editor_theme.SURFACES`.
+    """
     match = _HEX.match(value)
-    if match:
-        digits = match.group(1)
-        digits = "".join(c * 2 for c in digits) if len(digits) == 3 else digits
-        return f"#{digits.lower()}{alpha}"
-    match = _RGBA.match(value)
-    if match and not alpha:
-        red, green, blue = (int(part) for part in match.groups()[:3])
-        return f"#{red:02x}{green:02x}{blue:02x}{round(float(match.group(4)) * 255):02x}"
-    raise EditorColoursUnread(f"{value!r} is not a colour the editor can be given")
+    if match is None:
+        raise EditorColoursUnread(
+            f"the editor takes a palette colour as #rgb or #rrggbb, got {describe(value)}"
+        )
+    digits = match.group(2)
+    digits = "".join(c * 2 for c in digits) if len(digits) == 3 else digits
+    return f"{match.group(1)}{digits.lower()}{alpha}"

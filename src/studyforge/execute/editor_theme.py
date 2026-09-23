@@ -188,11 +188,12 @@ SURFACES: tuple[tuple[str, str | tuple[str, str], str], ...] = (
     ("editor.selectionHighlightBackground", "--focus", "1f"),
     ("editor.wordHighlightBackground", "--focus", "1f"),
     ("editor.wordHighlightStrongBackground", "--focus", "2e"),
-    # ⭐ The page's own highlighted-line ink, and its border in the same colour
-    # so the base theme's grey outline never shows.
-    ("editor.lineHighlightBackground", "--hl-code", ""),
-    ("editor.lineHighlightBorder", "--hl-code", ""),
-    ("editorBracketMatch.background", "--hl-code", ""),
+    # ⭐ The page's highlighted-line tint — the accent, faint (`--hl-code` is
+    # the accent at about this alpha, written as an rgba colour, which `colour`
+    # refuses) — and its border the same, so the base's grey outline never shows.
+    ("editor.lineHighlightBackground", "--accent", "1f"),
+    ("editor.lineHighlightBorder", "--accent", "1f"),
+    ("editorBracketMatch.background", "--accent", "1f"),
     ("editorBracketMatch.border", "--accent", ""),
     ("editor.findMatchBackground", "--accent", "59"),
     ("editor.findMatchHighlightBackground", "--accent", "26"),
@@ -287,7 +288,12 @@ def _painted(token: Token, painted: dict[str, dict[str, str]], ink: str) -> tupl
     declared = painted.get(token.prism)
     if declared is None or "color" not in declared:
         raise EditorColoursUnread(f"{HIGHLIGHT} paints no .token.{token.prism}")
-    return property_of(HIGHLIGHT, declared["color"]), _style(declared)
+    try:
+        return property_of(declared["color"]), _style(declared)
+    except EditorColoursUnread:
+        raise EditorColoursUnread(
+            f"{HIGHLIGHT} paints .token.{token.prism} with no palette property"
+        ) from None
 
 
 def _theme(theme: dict[str, str], painted: dict, block: dict) -> tuple[dict, dict, dict]:

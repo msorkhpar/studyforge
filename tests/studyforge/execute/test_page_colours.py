@@ -46,20 +46,22 @@ def test_the_code_blocks_ground_and_ink_are_named_properties():
     assert code_block() == {GROUND: "--code-bg", INK: "--code-fg"}
 
 
-def test_a_value_that_is_not_a_palette_property_is_refused_by_name():
-    assert property_of("x.css", "var(--tok-type)") == "--tok-type"
-    with pytest.raises(EditorColoursUnread, match="teal"):
-        property_of("x.css", "teal")
+def test_a_value_that_is_not_a_palette_property_is_refused_without_reproducing_it():
+    assert property_of("var(--tok-type)") == "--tok-type"
+    with pytest.raises(EditorColoursUnread, match="got a str") as refused:
+        property_of("teal")
+    assert "teal" not in str(refused.value)
 
 
 def test_colours_are_spelled_the_workbenchs_way():
     assert colour("#ABC") == "#aabbcc"
     assert colour("#0b1120") == "#0b1120"
     assert colour("#0b1120", "40") == "#0b112040"
-    assert colour("rgba(255, 201, 51, .12)") == "#ffc9331f"
-    for refused in ("teal", "var(--x)", "rgb(1, 2, 3)"):
-        with pytest.raises(EditorColoursUnread):
+    # ⛔ No `#` of its own, so refused, and the value is never echoed (R7).
+    for refused in ("teal", "var(--x)", "rgb(1, 2, 3)", "rgba(255, 201, 51, .12)"):
+        with pytest.raises(EditorColoursUnread) as said:
             colour(refused)
+        assert refused not in str(said.value)
 
 
 def test_a_stylesheet_that_cannot_be_read_is_refused(monkeypatch):
