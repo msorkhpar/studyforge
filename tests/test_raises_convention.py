@@ -76,8 +76,9 @@ REACH = {
     # ⚠️ `SF-24` RAISED it to 2 and had to: the practice panel mints the same key on
     # the page, and with a floor of 1 the deleted-outright plant found 1 site left,
     # read it as not short, and DID NOT RAISE. ⛔ So the floor moves with the second
-    # site — which is the other half of `SF-22/5` and not a new rule.
-    "studyforge.progress": 2,
+    # site — which is the other half of `SF-22/5` and not a new rule. ⚠️ `W451` RAISED
+    # it to 3 for the same reason: the quiz route parses the same key.
+    "studyforge.progress": 3,
     "studyforge.serve": 1,
 }
 
