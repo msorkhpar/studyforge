@@ -198,17 +198,24 @@ def planted(monkeypatch, name: str, *pairs: tuple[str, str]) -> None:
 
 def test_a_palette_change_reaches_the_editor(monkeypatch):
     # ⛔ The drift test. A hand-kept copy of today's colours passes every test
-    # above and fails this one.
+    # above and fails this one. ⭐ Today's values are READ, so a palette edit in
+    # another row moves this test's plant with it rather than breaking it.
+    today = oracle_palette(text("palette.css"))
+    keyword, ground = today["light"]["--tok-keyword"], today["dark"]["--code-bg"]
+    moved = {
+        value: "#" + format(int(hex_of(value)[1:], 16) ^ 0x010101, "06x")
+        for value in (keyword, ground)
+    }
     planted(
         monkeypatch,
         "palette.css",
-        ("--tok-keyword: #6d28d9;", "--tok-keyword: #123456;"),
-        ("--code-bg: #0b1120;", "--code-bg: #0a0b0c;"),
+        (f"--tok-keyword: {keyword};", f"--tok-keyword: {moved[keyword]};"),
+        (f"--code-bg: {ground};", f"--code-bg: {moved[ground]};"),
     )
     written = editor_colours()
-    assert rule_for(written, "light", "keyword")["foreground"] == "#123456"
+    assert rule_for(written, "light", "keyword")["foreground"] == moved[keyword]
     dark = written["workbench.colorCustomizations"][f"[{BASES['dark']}]"]
-    assert dark["editor.background"] == "#0a0b0c"
+    assert dark["editor.background"] == moved[ground]
 
 
 def test_a_highlight_change_reaches_the_editor(monkeypatch):
