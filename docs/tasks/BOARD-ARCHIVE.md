@@ -31458,3 +31458,7 @@ does not re-onboard before the user's pilot review.
 ⭐ **The user asked for work until morning, and it is morning.** ⛔ **Step 11.4
 (`REL-07`–`REL-09`) is NOT dispatched**; ⭐ **`M10` waits on the user's pilot review
 and nothing else.**
+
+## PO round 164
+
+⛔ **USER REPORT on the pilot: unit 15 answers `409` and its first practice shows no editor.** ⭐ **Measured: one settings file for every practice, whose lock names only the last-opened practice as editable.** [`W446`](rows/W446.md) minted — ⛔ **it blocks the pilot review.**
