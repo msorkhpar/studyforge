@@ -30994,3 +30994,94 @@ followed. ⚠️ **After `W440`**, whose shape its step 5 describes.
 ⚠️ **The merge gate refused THIS round once on the maximise test — its FOURTH
 drift, on a docs-only round** — ⭐ **the reading `W441` exists for; the re-run
 was taken, never a skip.**
+
+## PO round 156
+
+⭐ **`W440` merged `fb9dcd49` and `W441` merged `f05b3267`; both close.**
+
+`W440` — ⭐ **the register re-took the host image reading** (`STUDYFORGE_RUNNER_BUILDS=1`):
+GREEN, none skipped — the component accepts the skill's prime and folds it into
+its tag, the old layout is refused by name, an exercise's build never reaches
+the prime. ⚠️ **The runner build read fast because the tag folds the prime's
+digest, so an identical prime reuses the office's image** — said, not hidden.
+⛔ **Plant: the same-depth refusal disabled → RED.**
+
+`W441` — ⭐ **the cause was the TEST, measured per frame**: Tab to the control
+starts a smooth-scroll GLIDE, and `left` was read on its first frame; under
+load a frame slipped in and the product restored — correctly — to a later
+point. ⛔ **No tolerance and no retry: the test now waits for the glide's
+`scrollend`.** ⛔ **Plant: a ONE-pixel undershoot → RED** in both maximise tests.
+⭐ **The gate that refused round 155 twice passed this merge's own load.**
+
+### ⭐ `M10`'s pilot is UNBLOCKED on the framework side
+
+`W436` + `W437` + `W440` are in. ⭐ **`ISO-20` is dispatched to the integration
+office** — the corpus's own Maven build, the prime, a primed runner BUILT on the
+host. ⭐ **Register ruling on `ISO-M10/8`, reversible, corpus data: JUnit
+Jupiter 5, a released version pinned exactly.**
+
+### ⚠️ In flight
+
+⭐ **`W442`** on `wt/dev1`, **`W443`** on `wt/dev2`, both at `a5373c1b`; `ISO-20` on the corpus.
+
+### W440 — The execution skill writes a prime the toolchain refuses, and would sweep every exercise's build in
+
+⛔ **The execution skill writes a prime the toolchain REFUSES** (`W436/1`).
+`skills/execution` copies the corpus's build files to
+`.studyforge/execution/prime/<runtime>/…` at their corpus-relative paths;
+⚠️ **the toolchain's primed build accepts only a `DIR/maven/` or `DIR/gradle/`
+PROJECT directory**, and the office measured, on the host at the toolchain's pin,
+a prime with `pom.xml` and `src/` at its top refused with exit 2.
+
+⚠️ **And `prime_for` picks up build files at ANY depth**, so once exercise
+bundles carry `W436`'s build role it would sweep every exercise's own `pom.xml`
+into the prime.
+
+⛔ **So the first corpus cannot be primed with `jPOS` by the skill** — its
+`ISO-20` is blocked, and every jPOS exercise's `G1` needs that prime. ⭐ **It
+blocks the pilot, therefore `M10`.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **`prime_for` produces a prime in the layout the toolchain's contract
+   (`consuming.json` § `prime`) accepts**, read FROM that contract rather than
+   restated — ⛔ **and a runner is BUILT from it on the host**, with the
+   negative: the old layout refused by name.
+2. ⛔ **`prime_for` never sweeps an exercise bundle's build role** — the prime
+   is the corpus's own declared build, not the sum of its exercises'.
+3. ⚠️ **`W436/2`**: the runner contract's `environment` declares only `HOME`,
+   while a graded run now depends on the build tool's cache variables — ⭐
+   **named precisely as a TOOLCHAIN finding**, not changed from here.
+
+⭐ **Surface:** `src/studyforge/skills/execution/`.
+
+[the mint](#po-round-153)
+
+### W441 — The maximise test's scroll-restore drifts under the merge gate's load, three readings
+
+⛔ **`tests/visual/test_practice_maximise.py`'s scroll-restore equality fails
+under the merge gate's parallel pinned suite and passes alone.** ⭐ **Third
+reading:** its own comment records a 2px drift; round 146 read `4` against `0`
+and refused `W435`'s first merge; ⛔ **round 153 read `4` against `2` beside a
+real failure on `W436`'s merge.** ⚠️ **Round 146 ruled a third drift a row.**
+
+⭐ **Why it matters: a gate that lies under load spends every office after
+it** — each refusal costs a re-run, and a re-run that happens to pass teaches
+the register to ignore a RED.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **The cause is MEASURED, not guessed** — what scrolls the page by a few
+   pixels under load (a late layout, a font, focus-scroll on the control) —
+   and the handoff shows the reading.
+2. ⛔ **The fix removes the cause or reads the right quantity; it never adds a
+   tolerance and never retries.** ⚠️ **Exact equality stays the claim** — *the
+   place in the page the reader left is the place they come back to.*
+3. ⭐ **Proved under load**: the visual suite under `-n auto` in the pinned
+   image, several consecutive runs GREEN, beside a PLANT (a real restore that
+   is off by the drifted amount) that is RED.
+
+⭐ **Surface:** `tests/visual/test_practice_maximise.py`, and
+`render/assets/practice.*` only if the cause is the product's.
+
+[the mint](#po-round-153)

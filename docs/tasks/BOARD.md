@@ -76,8 +76,8 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W440` | Developer 5 | `fix/W440-the-prime-is-the-toolchains-layout` @ `wt/dev5` | 0 @ `0e1dfca2` | `in-progress` — blocks `M10` |
-| `W441` | Developer 6 | `fix/W441-the-maximise-restore-holds-under-load` @ `wt/dev6` | 0 @ `0e1dfca2` | `in-progress` — a gate that lies |
+| `W442` | Developer 1 | `fix/W442-generated-paths-are-the-workspaces` @ `wt/dev1` | 0 @ `a5373c1b` | `in-progress` — blocks `M10` |
+| `W443` | Developer 2 | `fix/W443-a-first-reader-can-follow-the-guide` @ `wt/dev2` | 0 @ `a5373c1b` | `in-progress` — blocks `M10`'s acceptance |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -623,10 +623,10 @@ else.**
 | W437 | The authoring loop numbers from 1, so a unit that already has a practice collides | framework agent | ✅ done — `ac2a3e9a` | [`rows/W437.md`](rows/W437.md) |
 | W438 | `M11` has a *Done when* and no steps, so the next milestone cannot be dispatched | framework agent | ✅ done — `103c62f9` | [`rows/W438.md`](rows/W438.md) |
 | W439 | The authoring guide says to hand-edit `corpus.json`, which an onboarded corpus treats as generated | framework agent | ✅ done — `0e1dfca2` | [`rows/W439.md`](rows/W439.md) |
-| W440 | The execution skill writes a prime the toolchain refuses, and would sweep every exercise's build in | framework agent | `in-progress` — blocks `M10` (`W436/1`) | [`rows/W440.md`](rows/W440.md) |
-| W441 | The maximise test's scroll-restore drifts under the merge gate's load, three readings | framework agent | `in-progress` — a gate that lies | [`rows/W441.md`](rows/W441.md) |
-| W442 | A corpus's generated files spell the framework's path by the checkout that ran the skill (R10) | framework agent | `todo` — blocks `M10` | [`rows/W442.md`](rows/W442.md) |
-| W443 | The guide's *Before you author* fails a literal first reader on the first corpus | framework agent | `todo` — blocks `M10`'s acceptance; after `W440` | [`rows/W443.md`](rows/W443.md) |
+| W440 | The execution skill writes a prime the toolchain refuses, and would sweep every exercise's build in | framework agent | ✅ done — `fb9dcd49` | [`rows/W440.md`](rows/W440.md) |
+| W441 | The maximise test's scroll-restore drifts under the merge gate's load, three readings | framework agent | ✅ done — `f05b3267` | [`rows/W441.md`](rows/W441.md) |
+| W442 | A corpus's generated files spell the framework's path by the checkout that ran the skill (R10) | framework agent | `in-progress` — blocks `M10` | [`rows/W442.md`](rows/W442.md) |
+| W443 | The guide's *Before you author* fails a literal first reader on the first corpus | framework agent | `in-progress` — blocks `M10`'s acceptance | [`rows/W443.md`](rows/W443.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
