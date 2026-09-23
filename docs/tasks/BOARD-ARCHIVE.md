@@ -31277,3 +31277,56 @@ file, on `wt/dev4`) and `REL-02` (the product suite without the tooling, on
 
 ⭐ **`ISO-22` — the pilot — is with the integration office**, and it stops at the
 user's review.
+
+## PO round 160
+
+### ⭐ THE PILOT IS AUTHORED — `ISO-22`, corpus `fe6ac31`
+
+⭐ **Six exercises on the three pilot pages, two each, every one clearing
+`G1`–`G5` on its first attempt; no shortfall; the ledger accounts for all
+twenty-eight fences** — fifteen as an exercise's origin, thirteen with a written
+reason. ⭐ **Re-running the pass with nothing changed wrote nothing (R10).**
+`validate` GREEN exit 0 and the corpus's own suite GREEN exit 0 at the pilot's
+pin. ⭐ **`docs/studyforge/pilot-review.md` is written for the USER**, with
+`ISO-M10/6`, `ISO-M10/7` and `AX-10/1` posed verbatim.
+
+⭐ **Read by the REGISTER, offline, in the pinned primed runner, on one pilot
+exercise** (`jpos-client` unit 8, practice 2): ⭐ **the reference PASSES all three
+cases; the starter FAILS all three; the edge-1 plant fails EXACTLY its edge** —
+*the card number is masked to its first six and last four digits*.
+
+⚠️ **The office disclosed two rehearsals in a scratch copy before the real pass**;
+the first stopped on a written reason naming the wrong fence, and it fixed the
+reason, not a draft. ⭐ **Recorded because it was said.**
+
+### ⭐ One mint, blocking the review
+
+[`W445`](rows/W445.md) — ⛔ **the generated `EXECUTION.md` gives an editor bound to
+`src/` while every practice lives under `practice/`, and starts no runner.** The
+office flagged it unmeasured (its finding 4); ⭐ **the register read it in the
+generated file.** ⚠️ **The pilot cannot be REVIEWED until a reader can Run and
+Submit from the page.**
+
+### ⚠️ Carried, not minted
+
+The material's jPOS logging examples log nothing in 2.1.7 (a CONTENT finding, and
+the exercises teach the working form); extending the ledger to new pages needs
+a step the guide does not give; Run only compiles a Maven exercise offline.
+
+### ⭐ `M11` step 11.1 CLOSES, and `REL-02` lands
+
+`REL-01` merged `af7711b3` — ⭐ **`docs/decisions.md`, every product decision with
+the process ids it replaces as aliases.** ⭐ **The register ran the header's
+command itself: every id it prints is an alias or on the handoff's list, none
+uncovered** — ⭐ **and the register's comparison was checked to be able to go
+non-empty: one alias dropped, exactly that id printed.** ⚠️ **Its first merge
+attempt was KILLED by the register's own tool timeout, not refused** — the staged
+merge was confirmed equal to the branch and aborted, then re-run in the
+background.
+
+`REL-02` merged `54bb48b3` — ⭐ **the product suite runs GREEN in a fresh clone
+with `tools/`, `docs/tasks/` and `docs/conventions/` removed**; the control, the
+release tip in the same condition, stops with *No module named 'tools'*. ⛔
+**Plant: an `import tools` inside a FUNCTION body → the guard RED.** ⭐ **`REL-02/1`
+confirmed by the register: `tools/tests` stays in `testpaths` until `REL-10`**,
+or every suite gate silently stops running the tooling's own tests.
