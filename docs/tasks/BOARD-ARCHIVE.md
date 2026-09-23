@@ -31511,3 +31511,11 @@ frame's URL (`execute/editor.py`).
 ### ⚠️ Nothing in flight
 
 ⭐ **`M10` waits on the user's pilot review and nothing else.**
+
+## PO round 166
+
+⛔ **USER REPORT on the pilot, three defects:** a worked solution's code block is narrower than its siblings; the practice frame paints the editor's Explorer side bar and closes it once loaded; ⛔ **and the frame's editor takes focus on load and scrolls the reading page to itself — the page moves the reader.** ⭐ Minted [`W447`](rows/W447.md), [`W448`](rows/W448.md), [`W449`](rows/W449.md) — ⛔ **each blocks the pilot review.**
+
+### ⚠️ In flight
+
+⭐ **`W447`** on `wt/dev1`; ⭐ **`W448` + `W449`** on `wt/dev2`, one office because both are the frame's load.
