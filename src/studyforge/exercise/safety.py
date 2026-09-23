@@ -53,15 +53,20 @@ import re
 
 from studyforge.exercise.errors import ExerciseError
 
+# ⛔ **Anchored `\A…\Z`, never `^…$`** (W434): Python's `$` also matches
+# BEFORE a trailing newline, so `^…$` admitted `ok\n` — a character the set
+# never names. `\Z` is the true end, so `.match` is a whole-value test for
+# every caller, including `execute/commands.py`, which calls it directly.
+
 #: One path segment. ⛔ A permitted set. The negative lookahead is the
 #: leading-hyphen rule: `-rf` is an option wherever a path is passed as an
 #: argument, and no material needs a file named that.
-SAFE_SEGMENT = re.compile(r"^(?!-)[A-Za-z0-9._-]+$")
+SAFE_SEGMENT = re.compile(r"\A(?!-)[A-Za-z0-9._-]+\Z")
 
 #: One argv token. ⚠️ Wider than a segment on purpose — a real command carries
 #: `-q`, `-pl`, `--batch-mode` and `key=value` — and still holds no whitespace
 #: and no shell metacharacter.
-SAFE_ARGUMENT = re.compile(r"^[A-Za-z0-9._:=/@+-]+$")
+SAFE_ARGUMENT = re.compile(r"\A[A-Za-z0-9._:=/@+-]+\Z")
 
 #: Said in a refusal instead of the value, so the message tells an author what
 #: to write. ⛔ Written out rather than derived from the patterns: a regex
