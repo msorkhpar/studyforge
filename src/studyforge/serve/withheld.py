@@ -46,11 +46,11 @@ content source every form already hands it.
 1. ⭐ **The key, structurally — and ONLY beside a quiz this instance serves**: a
    JSON `"correct": true|false` pair, or a `data-…-correct` attribute (a page
    from a build before `W451`), in a file that ALSO names one of the served
-   quizzes' question ids, quoted (`"q-2003"`). ⛔ **Either half alone withholds
+   quizzes' question ids, quoted (`"q-1"`). ⛔ **Either half alone withholds
    nothing** (register review of `W452`): a question id is on every quiz page
    and is no secret, and a `"correct"` field with no quiz id is some other
-   data's own field — a code practice's test cases (`M9`'s Java corpus) must
-   not answer a silent `404`. ⭐ Both together are a quiz record carrying its
+   data's own field — a code practice's test cases must not answer a
+   silent `404`. ⭐ Both together are a quiz record carrying its
    key, which is exactly what the archive, the bundle and a quoting document
    hold. ⚠️ So a key for a quiz this instance does NOT serve is served: it is
    the key to nothing the site grades. ⛔ A key with no structure — prose
