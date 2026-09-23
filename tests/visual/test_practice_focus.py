@@ -151,7 +151,8 @@ def test_a_page_opened_at_an_anchor_stays_at_the_anchor(
     rested = open_page.evaluate(f"({padding}) + ({margin})")
     reading = _after_the_steals(open_page, editor)
     now = open_page.evaluate(f"document.getElementById({anchor!r}).getBoundingClientRect().top")
-    assert abs(float(now) - float(rested)) <= 1, f"the anchor moved from {rested} to {now}"  # type: ignore[arg-type]
+    moved = abs(float(now) - float(rested))  # type: ignore[arg-type]
+    assert moved <= 1, f"the anchor moved from {rested} to {now}"
     assert reading["active"] != "IFRAME", "the editor frame kept focus the reader never gave it"
 
 

@@ -194,4 +194,10 @@ ACCEPTANCE = {
     #: ⛔ Read over the real `serve` process, never a header written here.
     "loads every vendored face on a page the serve process answers, under the "
     "policy it sends, and raises no CSP violation (W450)": "test_served_faces",
+    #: ⭐ `W449`'s clause, the user's own: *"when user enters on a page they
+    #: should remain at top"*. ⛔ A row of its own, because its frame must be a
+    #: document of ANOTHER origin whose own script takes focus: `served.py`'s
+    #: blank windows have no script, and the defect is the framed document's.
+    "keeps the page where the reader opened it, top or anchor, while an editor "
+    "frame takes focus as it starts, and still lets a click focus it (W449)": "test_practice_focus",
 }
