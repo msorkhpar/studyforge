@@ -393,8 +393,24 @@ the worked corpus is re-computed from it by the test suite.
 
 ## Before you author
 
-1. **Your corpus is onboarded.** `corpus.json` exists, and
-   `studyforge validate` is clean.
+**Every command and fence in this section runs as written**, from a shell
+whose `PYTHONPATH` holds the framework's `src/`. `path/to/studyforge` is your
+checkout of the framework, and `path/to/your-corpus` is your corpus:
+
+```
+export PYTHONPATH=path/to/studyforge/src
+```
+
+1. **Your corpus is onboarded.** `corpus.json` exists, and this exits `0`:
+
+```
+python3 -m studyforge.validate path/to/your-corpus
+```
+
+Wherever this page says `studyforge validate`, it means that command. The
+two spellings run the same code; `studyforge validate` is the installed
+command, and a checkout you have not installed has only the form above.
+
 2. **Your manifest says `"exercises": true`.**
 3. **Your manifest marks the two trees the pass writes as `not_material`.** The
    pass writes into `exercises/` and `practice/`. Without these two entries,
@@ -408,15 +424,21 @@ named by `hand_edited`, as a generated file somebody edited (R19). Give both
 changes to the onboarding skill as data, and regenerate:
 
 ```python
+import json
+from pathlib import Path
+
 from studyforge.skills.onboarding import hand_edited, reonboard
 
 corpus = "path/to/your-corpus"
+trees = [
+    {"glob": "exercises/**", "why": "authored exercise bundles and their gate records"},
+    {"glob": "practice/**", "why": "the reader's workspace, from each bundle's starter"},
+]
+recorded = json.loads(Path(corpus, "corpus.json").read_text(encoding="utf-8"))
+declared = {entry["glob"] for entry in recorded["content"].get("not_material", [])}
 made = reonboard(
     corpus,
-    not_material=[
-        {"glob": "exercises/**", "why": "authored exercise bundles and their gate records"},
-        {"glob": "practice/**", "why": "the reader's workspace, from each bundle's starter"},
-    ],
+    not_material=[tree for tree in trees if tree["glob"] not in declared],
     settle={"exercises": True},
 )
 made.write(corpus, regenerate=True)
@@ -426,22 +448,61 @@ print(hand_edited(corpus))  # [] -- nothing generated was edited by hand
 `reonboard` reads your corpus's recorded manifest and pin, and uses them as
 the draft. Every answer you already gave is kept. Each `not_material` entry
 your manifest already declares is kept byte for byte, and each glob the skill
-generates is derived again, so you type only the new ones.
+generates is derived again, so you pass only the new ones.
 `settle` names a recorded answer you mean to change. Any other answer that
-would change is refused by name, and nothing is written. If your manifest
-already declares one of the two globs with the same reason, it is kept once.
-A different reason is refused by name.
+would change is refused by name, and nothing is written.
 
-4. **Your corpus ignores a run's report.** A test run writes its report into
-   the reader's workspace, under `practice/`, and a JUnit report records the
-   machine's hostname. Add an ignore rule for it to your corpus (in the worked
-   corpus the report is `report.xml` in each workspace), so it never gets
-   committed. A report inside a bundle is refused by `studyforge validate`.
-5. **You have the pinned runner image.** Gate runs must happen in the same
-   pinned toolchain the reader's runs use, or the proof applies to a different
-   machine. Take the runs with the network off. An exercise whose tests need a
-   library must then find that library offline, or `G1` fails it for a reason
-   that has nothing to do with the exercise.
+⛔ **Pass only the globs your manifest does not declare yet.** The fence reads
+`corpus.json` to find them, and reading it is not editing it. A glob your
+manifest already declares keeps its own reason, so leaving it out loses
+nothing. Passed again with a different reason, it is refused by name, and the
+refusal tells you to leave it out. `settle` cannot change it either: it takes
+only the manifest's top-level answers, never `content`, and a regenerate never
+gives a recorded glob another reason.
+
+4. **Your corpus ignores every run's output.** A test run writes into the
+   reader's workspace, under `practice/`, and a JUnit report records the
+   machine's hostname. Every run's output, the report included, lands in one
+   directory inside the workspace, `target/` (`RUN_OUTPUT_DIRNAME`). So one
+   line ignores all of it: create `practice/.gitignore` holding the line
+   `RUN_OUTPUT_IGNORE` names, from `studyforge.exercise.bundle`:
+
+```
+target/
+```
+
+It is your corpus's own file, under a tree the manifest declares
+`not_material`. Never add the line to your corpus's root ignore file instead:
+generation never edits a file it did not write. A report path outside
+`target/`, and any bundle file under a `target` directory, is refused.
+
+5. **Your gates run in the pinned runner image, and it holds every library
+   your exercises import.** Gate runs must happen in the same pinned toolchain
+   the reader's runs use, or the proof applies to a different machine, and
+   they run with the network off. An exercise whose tests need only the
+   language needs nothing more. One whose tests import a library needs two
+   things, both your corpus's own data:
+
+- **The exercise's build role.** The draft's `build` field maps each build
+  file, such as a `pom.xml` naming the library, to its text. It ships in the
+  bundle's `build/` directory and is laid into the reader's workspace beside
+  the starter and the tests. The test command names it by its path inside the
+  workspace (`mvn -o -q -f practice/…/pom.xml test`). Never a jar, a
+  repository or an absolute path.
+- **A runner primed with the library.** Declare the runtimes in `corpus.json`,
+  through `reonboard` as above (`runtimes` is an answer `settle` takes). Give
+  your corpus one build of its own that declares every library any exercise's
+  build role names, outside `exercises/` and outside every exercise's
+  workspace: exercise material is never read into the prime. Then run the
+  [execution skill](../../src/studyforge/skills/execution/SKILL.md). It writes
+  that build as `.studyforge/execution/prime/<tool>/`, one project per tool,
+  and `EXECUTION.md` prints the flag the runner's build takes, with your
+  corpus's directory in its slot. Build the runner from the toolchain's
+  checkout with that flag, and have your `runner` run every gate in it.
+
+⚠️ **In an unprimed runner, every draft that imports a library fails `G1`**,
+naming what was never downloaded. That is correct. The remedy is your
+corpus's build and a rebuilt runner, never the exercise.
 
 ---
 
@@ -539,11 +600,11 @@ def basket(brief):
             "-p",
             "no:cacheprovider",
             "--junit-xml",
-            f"{ws}/report.xml",
+            f"{ws}/target/report.xml",
             f"{ws}/test_total.py",
         ),
         cases=(Case("test_totals_a_basket", MAIN, "a basket adds up"), NEGATIVE),
-        report="report.xml",
+        report="target/report.xml",
         origin=Origin("lessons/basket.md", None),
         statement="Write `total(prices)`: the sum of a basket, refusing a negative price.\n",
         starter="def total(*args):\n    raise NotImplementedError('write me')\n",

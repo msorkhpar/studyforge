@@ -333,6 +333,8 @@ def _carried(draft: object, kept: Sequence[Mapping[str, str]]) -> object:
     ⛔ **Never widened, narrowed or re-reasoned**: the entries go in byte for byte,
     in the manifest's order. A drafted entry on a kept glob is dropped when its
     reason is the same or open, and refused by name when it differs (no precedence).
+    ⛔ `W443`: the refusal advises leaving it out, the one step that works: `settle`
+    takes no `content` key, and nothing here re-reasons a recorded glob.
     """
     content = draft.get("content") if isinstance(draft, dict) else None
     drafted = content.get("not_material", []) if isinstance(content, dict) else None
@@ -345,7 +347,10 @@ def _carried(draft: object, kept: Sequence[Mapping[str, str]]) -> object:
     if differing:
         raise OnboardingRefused(
             f"{len(differing)} not_material glob(s) the draft gives another reason than "
-            f"{artifacts.MANIFEST} does: {differing}. Never resolved by precedence: settle one"
+            f"{artifacts.MANIFEST} does: {differing}. Never resolved by precedence, and a "
+            f"regenerate never re-reasons a recorded glob. Nothing was written; leave each out "
+            f"of the globs you pass (reonboard's not_material=), and {artifacts.MANIFEST} "
+            f"keeps its own entry as written"
         )
     fresh = [entry for entry in drafted if not any(entry is seen for seen in on_kept)]
     carried = [dict(entry) for entry in kept] + fresh
