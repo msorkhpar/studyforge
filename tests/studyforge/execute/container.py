@@ -38,7 +38,7 @@ one gate is one lock.
 ⚠️ **Measured:** while the sibling's checkout was mid-merge, its
 `consuming.json` read as **present** from a **staged** file that existed on no
 ref — so a green reading here was **not reproducible from `workspace.json` on
-any other host**, and nothing in the reading said so. ⭐ `tools.workspace.pinned`
+any other host**, and nothing in the reading said so. ⭐ `tests.harness.pinned`
 is the one reader now, and it distinguishes the **three** outcomes this module
 acts on:
 

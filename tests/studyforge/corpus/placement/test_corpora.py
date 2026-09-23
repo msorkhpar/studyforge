@@ -69,7 +69,7 @@ JAVA_CORPUS = "Claude-senior-java-engineer"
 
 
 def workspace_root() -> Path:
-    """Where sibling repositories live, as `tools.workspace` already computes it.
+    """Where sibling repositories live, as `tests.harness.workspace` already computes it.
 
     ⛔ **The derivation is NOT repeated here** (`W138`). This module answered
     `repository_root().parent`, which is a **worktree's** parent — and agents
