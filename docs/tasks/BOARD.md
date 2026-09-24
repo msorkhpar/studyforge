@@ -32,13 +32,14 @@ In the order the work runs, which is not the order the ids sort to.
 | `REL-11` — a light board, and epics as high-level design | Developer 3 | ✅ done |
 | `REL-13` — the framework's siblings are release-ready | Developer 4 | ✅ done |
 | `W463` — every declared runtime set builds an editor (in `code-server-toolchain`) | Developer 7 | ✅ done |
-| The first corpus on the installed library | integration agent | in progress — regenerating once against the release-ready framework and the new toolchain tags |
+| The first corpus on the installed library | integration agent | ✅ done — regenerated on the release line and the new toolchain images, and serving |
+| `W464` — the execution skill's procedure can be followed as printed | Developer 2 | in progress |
 
 ## Next
 
 1. `REL-12` — prune merged branches and idle worktrees. Prepared; waits on the user's go-ahead.
 2. `REL-14` — step 11.6: read `M11`'s close from a clean clone of the main line, installed.
-   Closes `M11`.
+   Starts when `W464` lands; closes `M11` once `REL-12` has run.
 3. **M9** — the Java corpus, converted from the README and the skills alone.
 
 ## Waiting on the user
