@@ -231,10 +231,11 @@ on disk — call both, with the component's pinned checkout:
     record_runner(execution, corpus, component, ask=ask)
     record_editor(execution, corpus, component, ask=ask)
 
-Each composes the contract's own `tag_from` for its image — the runner's with
-the prime flag pointing at the written prime, the editor's as the contract
-spells it, since the contract declares a prime flag for the runner alone —
-hands that ONE argv to `ask` (which runs it and answers `(exit code, stdout)`),
+Each composes the contract's own `tag_from` for its image, with that image's
+own prime flag (`runner.prime.declared_by`, `editor.prime.declared_by`) pointing
+at the written prime — ⭐ one prime warms both images. ⚠️ A contract before
+`provides` 3 declares no `editor.prime`, and its editor is then asked, printed
+and recorded unprimed. Each hands that ONE argv to `ask` (which runs it and answers `(exit code, stdout)`),
 refuses anything but one tag of that image's own `repository`, and writes one
 environment file:
 
@@ -254,10 +255,11 @@ moves.
 ### 6. Build the images and bring both up — one command
 
 Run the runner's and the editor's `built_by` argv **from the component's
-checkout** — the runner's with the flag `runner.prime.declared_by` names
-pointing at the written prime directory by its full path. `EXECUTION.md`
-prints both lines with this corpus's directory in the slot, and each builds
-the tag step 5a recorded for it. Then, from the corpus root:
+checkout** — each with the flag its block declares (`runner.prime.declared_by`,
+`editor.prime.declared_by`) pointing at the written prime directory by its full
+path. `EXECUTION.md` prints both lines with this corpus's directory in the slot,
+says which of them carry the flag, and each builds the tag step 5a recorded for
+it. Then, from the corpus root:
 
     docker compose --env-file .studyforge/execution/runner.env \
       --env-file .studyforge/execution/editor.env \
@@ -280,7 +282,7 @@ running it runs `docker compose`, and the study server never holds the socket.
 |---|---|
 | `.studyforge/execution/compose.yaml` | the compose file, rendered from the contracts: the editor and the runner |
 | `.studyforge/execution/runner.env` | the primed runner's tag, as the component printed it (step 5a) |
-| `.studyforge/execution/editor.env` | the editor's tag, as the component printed it (step 5a) |
+| `.studyforge/execution/editor.env` | the editor's tag, primed as the contract declares, as the component printed it (step 5a) |
 | `.studyforge/execution/toolchain.json` | the selection: the set, what is carried, what is not and why, and the two argv |
 | `.studyforge/execution/prime/<tool>/…` | one project per seeded tool: the corpus's own build, source and test, re-rooted at the build |
 | `EXECUTION.md` | what a reader opens first: what to build, what to run, and what this corpus declared |

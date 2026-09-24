@@ -46,6 +46,7 @@ def document(
     narration_text: str | None,
     seeds: object,
     flag: str | None,
+    editor_flag: str | None = None,
 ) -> str:
     """Write the document a reader opens first, from declarations alone."""
     volumes = composefile.volumes_for(
@@ -73,8 +74,8 @@ def document(
         "",
         "```",
         _with_prime(runner.selection.build, flag),
-        " ".join(selection.build),
-        " ".join(selection.tag_from),
+        _with_prime(selection.build, editor_flag),
+        _with_prime(selection.tag_from, editor_flag),
         "```",
         "",
         "⛔ Never pin a tag you did not compute: a tag is a function of the build's",
@@ -84,7 +85,8 @@ def document(
         "",
         f"⭐ The skill records them: its record step runs `{' '.join(runner.selection.tag_from)}`",
         f"with the prime above, in the pinned checkout, and writes `{runner_env}`;",
-        f"then `{' '.join(selection.tag_from)}`, and writes `{editor_env}`.",
+        f"then `{' '.join(selection.tag_from)}`"
+        f"{' with the same prime' if editor_flag else ''}, and writes `{editor_env}`.",
         "⛔ Never type a tag, and never edit either file: re-run the step when the",
         "component's pin, the prime or the host's architecture moves.",
         "",
@@ -118,19 +120,19 @@ def document(
             *(f"- `{name}` — {why}" for name, why in selection.withheld),
             "",
         ]
-    lines += _prime(primed, flag)
+    lines += _prime(primed, flag, editor_flag)
     if narration_text is not None:
         lines += _narration(narration_text)
     return "\n".join(lines)
 
 
 def _with_prime(build: Sequence[str], flag: str | None) -> str:
-    """Return the runner's build argv as a line, with the prime flag when there is a prime."""
+    """Return one build argv as a line, with its prime flag when it is handed a prime."""
     return " ".join(build) + ("" if flag is None else f" {flag}")
 
 
-def _prime(primed: Prime, flag: str | None) -> list[str]:
-    """Say what the prime copies, and the flag both builds are handed."""
+def _prime(primed: Prime, flag: str | None, editor_flag: str | None) -> list[str]:
+    """Say what the prime copies, and exactly which of the lines above carry its flag."""
     lines = ["## The prime", ""]
     if flag is None:
         return [*lines, "No runtime this corpus declares is seeded from a build: no prime.", ""]
@@ -141,8 +143,26 @@ def _prime(primed: Prime, flag: str | None) -> list[str]:
         "",
         *(f"- `{inside}` ← `{origin}`" for inside, origin in primed.copies()),
         "",
-        f"Pass `{flag}` to the builds above.",
+        *_carried(flag, editor_flag),
         "",
+    ]
+
+
+def _carried(flag: str, editor_flag: str | None) -> list[str]:
+    """Say which printed lines carry the prime, so the sentence matches the block (`W464/2`)."""
+    if editor_flag is None:
+        return [
+            f"The runner's build above carries `{flag}`. The component's contract declares",
+            "no prime for the editor, so the editor is built, and its tag asked, unprimed.",
+        ]
+    if editor_flag == flag:
+        return [
+            f"All three lines above carry `{flag}`: the runner's build, the editor's",
+            "build and the editor's tag command. One prime warms both images.",
+        ]
+    return [
+        f"The runner's build above carries `{flag}`; the editor's build and its tag",
+        f"command carry `{editor_flag}`.",
     ]
 
 

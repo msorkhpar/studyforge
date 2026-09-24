@@ -43,10 +43,11 @@ for every other file it writes.
 
 ## ⭐ THE EDITOR'S TAG IS ASKED EXACTLY AS THE READER'S DOCUMENT BUILDS IT
 
-⛔ **The contract declares a prime flag for the runner and none for the
-editor**, and `EXECUTION.md` prints the editor's build without one. So the
-editor's tag is asked of `editor.image.tag_from` as the contract spells it, and
-the tag recorded is the tag the printed build produces.
+⭐ **From `provides` 3 the contract declares `editor.prime` as it declares the
+runner's** (`W466`), so the editor's tag is asked with the same prime flagged,
+and `EXECUTION.md` prints the editor's build with it: the tag recorded is the
+tag the printed, primed build produces. ⚠️ A contract that declares no editor
+prime is read as it stands: the editor is asked, printed and recorded unprimed.
 
 ## ⚠️ RE-RUN IT WHEN AN INPUT MOVES
 
@@ -101,12 +102,25 @@ Ask = Callable[[Sequence[str], Path], tuple[int, str]]
 
 
 def argv(execution: Execution, root: Path) -> list[str]:
-    """Return the component's own `tag_from`, with the prime this skill wrote flagged."""
+    """Return the runner's own `tag_from`, with the prime this skill wrote flagged."""
     runner = _runner(execution)
-    command = list(runner.selection.tag_from)
-    if execution.primed is not None and execution.primed.projects:
+    return _flagged(execution, root, runner.selection.tag_from, runner.prime_flag)
+
+
+def editor_argv(execution: Execution, root: Path) -> list[str]:
+    """Return the editor's own `tag_from`, with the same prime flagged when it declares one."""
+    editor = _editor(execution)
+    return _flagged(execution, root, editor.tag_from, editor.prime_flag)
+
+
+def _flagged(
+    execution: Execution, root: Path, tag_from: Sequence[str], flag: str | None
+) -> list[str]:
+    """Return `tag_from`, plus `flag` pointing at the written prime when there is one."""
+    command = list(tag_from)
+    if flag is not None and execution.primed is not None and execution.primed.projects:
         prime = str((root / PRIME_DIR).resolve())
-        command += [prime if part == DIRECTORY_SLOT else part for part in runner.prime_flag.split()]
+        command += [prime if part == DIRECTORY_SLOT else part for part in flag.split()]
     return command
 
 
@@ -120,7 +134,7 @@ def record_runner(execution: Execution, root: Path, component: Path, *, ask: Ask
 def record_editor(execution: Execution, root: Path, component: Path, *, ask: Ask) -> str:
     """Ask the component for the editor's tag, write it, and return the path written."""
     editor = _editor(execution)
-    tag = _asked(ask, list(editor.tag_from), component, editor.repository, "editor")
+    tag = _asked(ask, editor_argv(execution, root), component, editor.repository, "editor")
     return _written(root, EDITOR_ENV, text(editor.image_env, tag, image="editor"))
 
 

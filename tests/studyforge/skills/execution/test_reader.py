@@ -59,7 +59,9 @@ def test_both_builds_are_printed_and_the_runner_carries_the_prime(tmp_path):
     flag = f"--prime <this corpus>/{skill.PRIME_DIR}"
     assert f"python3 runner.py --runtimes java,maven {flag}" in text
     assert "python3 build.py --runtimes java,maven\n" in text
-    assert f"Pass `{flag}` to the builds above." in text
+    # ⭐ A contract that declares no editor prime (`provides` 2): the sentence
+    # says the runner's line alone carries it, which is what the block prints.
+    assert f"The runner's build above carries `{flag}`." in text
 
 
 def test_a_corpus_with_no_prime_builds_its_runner_without_one(tmp_path):

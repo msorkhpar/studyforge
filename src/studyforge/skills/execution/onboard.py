@@ -47,12 +47,12 @@ places workspaces by (`workspaces_bind`), and the sources stay where they were.
 (`runnerservice`), started by the reader's one compose command — never by the
 serving process (§8.3) — from the tag `record` writes into `RUNNER_ENV`.
 
-## ⛔ RE-RUNNING CHANGES NOTHING
+## ⛔ RE-RUNNING CHANGES NOTHING, AND A HAND-EDIT IS REPORTED
 
-⭐ The same manifest and the same contracts render the same bytes, and `write`
-is therefore idempotent. ⛔ **A hand-edit to any file this writes is a finding
-against this skill, not a fix**: it is reverted on the next run, and a tool that
-eats your changes is a tool nobody runs twice.
+⭐ The same manifest and contracts render the same bytes, so `write` is
+idempotent (R10). ⛔ **A hand-edit to a file this writes is a finding, not a
+fix** (R19): `written` records each file's digest, and onboarding's
+`hand_edited` names the one whose bytes moved (`W466`).
 """
 
 from __future__ import annotations
@@ -65,6 +65,7 @@ from studyforge.corpus.manifest import Manifest
 from studyforge.corpus.placement import PRACTICE_DIRNAME
 from studyforge.skills.execution import composefile, contract, reader, runnerservice, toolchain
 from studyforge.skills.execution.prime import Prime, PrimeRefused, prime_for
+from studyforge.skills.execution.toolchain import DIRECTORY_SLOT
 
 #: Where everything this skill generates lives. ⭐ Under the corpus's own
 #: bookkeeping directory, never beside its material: every byte here is
@@ -88,9 +89,6 @@ RUNNER_ENV = f"{DIRECTORY}/runner.env"
 #: writes (`record.record_editor`). ⭐ Beside the runner's and in its shape, so
 #: the tag a site's editor runs is the corpus's record and not a person's memory.
 EDITOR_ENV = f"{DIRECTORY}/editor.env"
-
-#: The slot `runner.prime.declared_by` leaves for the directory.
-DIRECTORY_SLOT = "<directory>"
 
 #: What a reader opens first.
 READER_DOC = "EXECUTION.md"
@@ -201,6 +199,7 @@ def generate(
     seeded = tuple(seeds) if isinstance(seeds, Mapping) else ()
     primed = _primed(root, selection.carried, seeded)
     flag = _prime_flag(editor) if primed.projects else None
+    editor_flag = selection.primed_by(f"<this corpus>/{PRIME_DIR}") if flag else None
     workspaces = workspaces_bind(block, sources)
     runner = runnerservice.plan(
         editor,
@@ -235,6 +234,7 @@ def generate(
         narration_text=narration_text,
         seeds=seeds,
         flag=flag,
+        editor_flag=editor_flag,
     )
     return Execution(
         runnable=True,
