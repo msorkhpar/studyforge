@@ -69,7 +69,8 @@ REACH = {
     # ⚠️ `W439` RAISED it to 8 with `reonboard.recorded_draft`'s site: at 7 the deleted-outright
     # plant found 7 left and DID NOT RAISE — the floor moves with the site, as `SF-24`'s did.
     "studyforge.corpus.manifest": 8,
-    "studyforge.generate": 3,
+    # ⚠️ `W457` RAISED it to 4 with `validate.narration`'s site, for the reason `W439` names.
+    "studyforge.generate": 4,
     # ⚠️ The run route's parse of a practice key is the first site naming
     # `progress.RAISES`, and a subject with NO floor here fails the deleted-outright
     # plant below, whatever the note above says of a new caller.
