@@ -221,8 +221,8 @@ def unit_location(corpus: Corpus, source: UnitSource) -> UnitLocations:
 def declared_location(corpus: Corpus, container: Container, unit: Unit) -> UnitLocations:
     """Where one unit its container DECLARES puts its artifacts — material or not.
 
-    ⛔ **The same derivation, asked of a DECLARATION rather than of material**
-   . The container page links every unit it declares and the media
+    ⛔ **The same derivation, asked of a DECLARATION rather than of material**.
+    The container page links every unit it declares and the media
     pass asks about every declared directory; neither has a `UnitSource` for a
     unit this machine has no material for, because `_sources` skips those.
     ⭐ Both arguments are whole objects, so no call site spells a label here

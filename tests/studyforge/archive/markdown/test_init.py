@@ -59,7 +59,7 @@ def test_states_its_contract():
 
 def test_the_public_surface_is_what_consumers_import():
     # ⛔ If a consumer has to import a submodule directly, the surface is wrong
-    # (`module-structure.md`). `parse` and the vocabulary are the whole of it.
+    # (R17). `parse` and the vocabulary are the whole of it.
     assert set(markdown.__all__) == {"BLOCK_TYPES", "CONTAINER_TYPES", "MarkdownError", "parse"}
     for name in markdown.__all__:
         assert hasattr(markdown, name), name

@@ -84,8 +84,8 @@ def write_site(root: Path | str, into: Path | str, *, narration: bool | None = N
     ⛔ `into` is separate from `root` and required, for the reason
     `units.write_pages` gives: where generated output goes is the corpus's
     decision and not the framework's, and no default may take it silently.
-    ⭐ `narration` overrides `corpus.json`'s `narration` for this build
-   ; `None` keeps the corpus's own answer. Off copies no clip and
+    ⭐ `narration` overrides `corpus.json`'s `narration` for this build;
+    `None` keeps the corpus's own answer. Off copies no clip and
     deletes none.
     """
     corpus = for_output(voiced(read_corpus(root), narration), into)

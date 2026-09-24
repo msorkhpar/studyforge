@@ -438,7 +438,7 @@ def test_the_depth1_fixture_declares_the_aggregate_it_withholds():
     assert "twice" in built.content.why_excluded("depth-one/ALL.md")
 
 
-#: ⛔ **The declared divergence, with its `why`** — the `personal-data-shapes.md`
+#: ⛔ **The declared divergence, with its `why`** — the shape table's
 #: precedent, not a fresh mechanism. Exactly one invalid corpus does *not* have
 #: a readable manifest, and it says so here rather than by being absent from a
 #: hand-written list.

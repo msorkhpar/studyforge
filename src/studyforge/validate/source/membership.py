@@ -75,8 +75,8 @@ if TYPE_CHECKING:  # pragma: no cover - the import itself is deferred at runtime
 #: ⛔ A file beneath the archive root that no reader reads.
 RULE_ARCHIVE_STRAY = "archive-stray"
 
-#: ⛔ A file a document declares and the archive does not hold where it says
-#:. ⚠️ One rule id for three shapes of the same defect — absent,
+#: ⛔ A file a document declares and the archive does not hold where it says.
+#: ⚠️ One rule id for three shapes of the same defect — absent,
 #: misplaced, or named by nothing — because they are one question to a reader
 #: and one fix to an adapter: write the file where `Layout.unit_files` puts it.
 RULE_MEDIA_MISSING = "media-missing"

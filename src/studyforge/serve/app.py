@@ -27,15 +27,15 @@ and the Docker socket is never reachable from here (spec §8.3).
 - **`writers=`** — the registered namespaces that also answer `POST` (the
   `run` namespace: starting a process is an act, and a `GET` that acted would run a grader
   on a prefetch). ⛔ Content, assets and the static mount never do.
-- **`client=`** — where the run namespace serves the page's execution client
- . ⭐ Handed to `routes.assets`, which inserts one script tag
+- **`client=`** — where the run namespace serves the page's execution client.
+  ⭐ Handed to `routes.assets`, which inserts one script tag
   into an HTML page's BYTES as it answers it, so a BUILT page names no API, no
   origin and no client file (R8). ⛔ This module holds no spelling of that path
   and imports nothing from `routes.run` to learn one: `serve.instance` registers
   the namespace and passes the path, and importing the run route here would put
   `execute` — and a process library — into every import of `serve.app`.
-- **`frames=`** — what this instance may EMBED, asked per response and per `Host`
- , because the editor's origin is a per-project host port. ⛔ Never widens
+- **`frames=`** — what this instance may EMBED, asked per response and per `Host`,
+  because the editor's origin is a per-project host port. ⛔ Never widens
   `frame-ancestors`.
 - `GET` and `HEAD` are answered everywhere; `POST` only under a writer; every other
   method, and a `POST` anywhere else, is `405` after the gate. ⛔ A `POST`'s body

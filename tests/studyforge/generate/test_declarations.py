@@ -301,7 +301,7 @@ def test_a_leak_travels_through_as_itself_and_never_as_a_BuildError(tmp_path, ta
 # --------------------------------------------------------------------------
 
 #: ⛔ The two derivations, and how many WHOLE objects each takes. A CLOSED set
-#: (`module-structure.md`): a third derivation is refused by this sweep rather
+#: (R6): a third derivation is refused by this sweep rather
 #: than admitted to the tree in silence.
 DERIVATIONS = {"unit_location": 2, "declared_location": 3}
 

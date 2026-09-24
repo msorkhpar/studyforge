@@ -457,7 +457,7 @@ def test_a_committed_ordered_list_with_no_start_keeps_its_documents_digest():
 # --------------------------------------------------------------------------
 
 #: Everything `json.loads` can produce where a block belongs, but an object.
-#: ⛔ Closed on the *domain* rather than on taste (`module-structure.md`): JSON
+#: ⛔ Closed on the *domain* rather than on taste (a closed set, R6): JSON
 #: has six value kinds and five of them are here, so the shape nobody thought
 #: of cannot be the one that gets through.
 NOT_OBJECTS = ("a string", 7, 1.5, True, None, ["nested"])

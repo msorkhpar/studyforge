@@ -47,7 +47,7 @@ from studyforge.archive.document import RAW_API, parse
 from studyforge.archive.errors import ArchiveError
 
 #: Everything `json.loads` can produce where a block belongs, but an object.
-#: ⛔ Closed on the *domain* rather than on taste (`module-structure.md`): JSON has
+#: ⛔ Closed on the *domain* rather than on taste (a closed set, R6): JSON has
 #: six value kinds and five of them are here, so the shape nobody thought of cannot
 #: be the one that gets through. ⚠️ Spelled again rather than imported from
 #: `test_blocks.py`: a test module importing another test module's fixtures couples
@@ -95,7 +95,7 @@ def test_W297_a_non_object_block_is_refused_by_name_through_read_layout(block):
 
 @pytest.mark.parametrize("at", range(FENCE_AT + 1))
 def test_W297_the_guard_runs_before_the_layout_is_read_and_not_only_at_the_fence(at):
-    # ⛔ **The neighbour, asserted rather than assumed** (`module-structure.md`: a
+    # ⛔ **The neighbour, asserted rather than assumed** (a
     # demonstrated guarantee lends its credibility to the undemonstrated thing
     # beside it). `tail[0]` was the read that CRASHED — but `_is_h2` merely returns
     # False for a non-object, so guarding only the fence would leave every other

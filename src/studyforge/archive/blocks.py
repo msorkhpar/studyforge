@@ -309,8 +309,8 @@ def read_layout(document: dict, where: str) -> Layout | None:
     ⭐ **Guarded BEFORE the layout is read, not at the fence.** Only `tail[0]`
     crashed — but `_is_h2` merely returns False for a non-object, so guarding
     the one read that raised would leave every other position silently unread
-    and the document refused for the WRONG reason (`module-structure.md`: a
-    guarantee does not extend to what sits beside it).
+    and the document refused for the WRONG reason (a guarantee does not extend
+    to what sits beside it).
     """
     if document.get("kind") != "practice":
         return None

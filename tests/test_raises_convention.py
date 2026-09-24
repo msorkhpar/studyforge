@@ -30,8 +30,8 @@ and by HOW MANY callers. ⛔ A count would hide which site vanished, so every
 shortfall prints the whole population beside it.
 
 ⛔ **`archive` is exempt, and the exemption is checked rather than asserted.**
-See `test_archive_lets_out_only_exceptions_it_defines_itself` below and the one
-sentence in the convention.
+See `test_archive_lets_out_only_exceptions_it_defines_itself` below, which states
+the exemption's ground and goes red the day it stops holding.
 """
 
 from __future__ import annotations
@@ -446,7 +446,7 @@ def _archive_catch_sites(src: Path, readers: set[str]) -> dict[str, list[tuple[s
 
 
 def test_archive_lets_out_only_exceptions_it_defines_itself():
-    # ⛔ The convention exempts `archive` from exporting a tuple because both
+    # ⛔ `archive` is exempt from exporting a tuple because both
     # exceptions its readers let out are its OWN — `ArchiveError` in
     # `archive.errors`, `PersonalDataLeak` in `archive.scrub` — so a caller
     # imports them from the package it is already calling and has no second

@@ -63,8 +63,8 @@ RULE_CONTESTED = "contested"
 RULE_IGNORE_DECLARATION = "ignore-declaration"
 
 #: ⛔ A repository's store nested inside the corpus — a vendored repository or
-#: a submodule checkout — refused by name, never skipped and never scanned
-#:. Its own rule id, because the fix is not a `content` pattern.
+#: a submodule checkout — refused by name, never skipped and never scanned.
+#: Its own rule id, because the fix is not a `content` pattern.
 RULE_NESTED_REPOSITORY = "nested-repository"
 
 #: ⛔ A file the manifest INCLUDES that no UNIT's `origin` names, so no unit reads it —

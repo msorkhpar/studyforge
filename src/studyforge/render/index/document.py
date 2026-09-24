@@ -154,7 +154,7 @@ def compose(
         # is, and a caller rendering a whole site catches one family for every
         # kind of page. ⛔ **Narrow on purpose** — `PersonalDataLeak` is
         # deliberately outside this branch and travels through as itself
-        #, so a leak is never logged as one more page that did not
+        # (R7), so a leak is never logged as one more page that did not
         # render.
         raise PageError(f"the root index cannot be composed: {error}") from None
 

@@ -175,8 +175,8 @@ def rail(
     ⛔ **The containers are the deepest groups and nothing else**, because a
     container map is written at the address a corpus declares units under and
     nowhere above it: `generate.containers` writes one page per map and none
-    higher, so an intermediate level has no page for a rail to point at
-   . ⭐ Read off the contents document rather than walked off the
+    higher, so an intermediate level has no page for a rail to point at.
+    ⭐ Read off the contents document rather than walked off the
     disk — there is one model of what this corpus holds and this is not a
     second one.
 
