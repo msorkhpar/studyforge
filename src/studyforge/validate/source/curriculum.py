@@ -45,7 +45,7 @@ def check_curriculum(walk: Walk) -> Iterator[Finding]:
     if manifest is None or manifest.curriculum is None or not manifest.curriculum.containers:
         return
     # ⚠️ Deferred: the adapter skill reads this package's `source_files`.
-    from studyforge.skills.adapter.curriculum import CurriculumDisagrees, filed
+    from studyforge.skills.adapter import CurriculumDisagrees, filed
 
     included = {
         where

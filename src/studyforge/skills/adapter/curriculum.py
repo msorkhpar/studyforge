@@ -53,7 +53,6 @@ from pathlib import Path
 from studyforge.address import Address
 from studyforge.corpus.container import Unit
 from studyforge.corpus.manifest import Classification, Manifest, prefix_of
-from studyforge.skills.reconnaissance import read
 
 
 class CurriculumDisagrees(ValueError):
@@ -149,6 +148,9 @@ def _declared(manifest: Manifest):
 
 def _record(root: Path, where: str, included: set[str]):
     """Read the declared record, refusing one that is absent or lists no material."""
+    # ⚠️ Deferred: reconnaissance reaches onboarding, which imports this package.
+    from studyforge.skills.reconnaissance import read
+
     path = root / where
     if not path.is_file():
         raise CurriculumDisagrees(

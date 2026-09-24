@@ -54,6 +54,7 @@ say what it ingests.
 
 from __future__ import annotations
 
+from studyforge.skills.adapter.curriculum import CurriculumDisagrees, Filed, counted, filed
 from studyforge.skills.adapter.layout import (
     ARCHIVE_DIR,
     RAW_DIR,
@@ -92,6 +93,8 @@ __all__ = [
     "SOURCE_LINE_CEILING",
     "TREE_ROOT",
     "UNITS_DIR",
+    "CurriculumDisagrees",
+    "Filed",
     "Layout",
     "LayoutError",
     "Part",
@@ -103,7 +106,9 @@ __all__ = [
     "archive_tree",
     "bytecode_ignore",
     "bytecode_ignores",
+    "counted",
     "document_name",
+    "filed",
     "ignore_files",
     "plan_for",
     "scaffold",
