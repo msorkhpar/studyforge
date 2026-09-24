@@ -98,7 +98,9 @@ Each gate was run bare from `studyforge-wt/dev1` at `5a0ddd09`, the last prose c
 sent to a scratch file and `$?` read on the next line. The only commits after it add this file,
 and `python3 -m tools.quality` and `python3 -m tests.floor` were re-run at that later commit, both GREEN, exit 0.
 
-⚠️ **Re-running the suite at that commit is NOT a reading.** Three attempts were killed with
+⚠️ **The suite re-run after `5a0ddd09` is RED, and the cause is the environment.** At `0b9950d0`
+it exited 1: every failure and error is under `tools/tests/`, which this diff does not touch, and
+the output carries `Errno 122` throughout. Three earlier attempts were killed outright with
 `OSError: [Errno 122] Disk quota exceeded`. `/tmp` is a tmpfs with a per-user quota, shared with
 the other offices' concurrent runs and their `pytest-of-*` base directories. Nothing outside this
 office's scratch was deleted to make room. The `5a0ddd09` reading stands for the tree, because
