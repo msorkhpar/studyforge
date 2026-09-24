@@ -741,7 +741,7 @@ example is not where you learn what a manifest *may* carry. This list is.
 
 | Key | | Notes |
 |---|---|---|
-| `corpus_api` | **required** | R9's version key. An unknown value is refused, never migrated. ⭐ **`2` added `content.not_material`**, **`3` added `media.max_files`**, **`4` added `runtimes`**, **`5` added `narration`** and **`6` added `onboarding_doc`**; this build reads `1` to `6`, and a key used under a version older than the one that added it is refused naming both numbers |
+| `corpus_api` | **required** | R9's version key. An unknown value is refused, never migrated. ⭐ **`2` added `content.not_material`**, **`3` added `media.max_files`**, **`4` added `runtimes`**, **`5` added `narration`**, **`6` added `onboarding_doc`** and **`7` added `curriculum`**; this build reads `1` to `7`, and a key used under a version older than the one that added it is refused naming both numbers |
 | `source` | **required** | ⛔ **A corpus id, not a fetch URL** |
 | `title` | **required** | |
 | `levels` | **required** | Names the *container* levels and fixes the depth |
@@ -826,6 +826,40 @@ actually material** — which is caught per file, against a real tree:
 ⭐ **The reconnaissance skill (§9) drafts this**, and detecting an overlap is what
 C2 asks of it: two files whose content says one contains the other is a finding it
 reports, not something left to be noticed after ingest.
+
+### `curriculum` — where the reading order is recorded, and how its groups are filed
+
+An optional top-level key, added by `corpus_api: 7`, for a corpus whose own
+document records its reading order and grouping:
+
+```json
+"curriculum": {
+  "record": "README.md",
+  "containers": [
+    { "label": "jPOS Server Implementation", "address": "jpos-server", "prefix": "s" }
+  ]
+}
+```
+
+- ⭐ **`record`** is required inside the block: the Markdown document, inside the
+  corpus, that records the reading order and the grouping. `{"record": …}` alone is
+  a complete declaration.
+- ⭐ **`containers`** lists the record's groups in the record's order: each `label`
+  exactly as the record writes it, and the `address` that group is filed at, checked
+  against `levels`. This is what an adapter would otherwise carry as a constant, and
+  a second corpus would retype (R19).
+- ⛔ **`prefix` is a declared cross-check, never what files a unit.** The record
+  files every unit; the prefix — the text before the number in a group's filenames,
+  which may be empty — is a second partition of the same files, and the adapter
+  skill's filing refuses when the two disagree, in either direction. A filename
+  prefix is never a source of grouping on its own (C1, §6: an address is recorded,
+  never derived).
+- ⛔ **Strict by design**: the block and each group are closed key sets, and a
+  repeated label, address or prefix is refused. Reconnaissance drafts the block,
+  proposing addresses for a person to confirm, and writes a prefix only where the
+  filenames partition the units exactly as the record does.
+- ⭐ **Absent means no declared curriculum**, and the adapter files units as it
+  always has.
 
 ### `runtimes` — what a corpus's material needs to run
 
@@ -1165,7 +1199,9 @@ the page that shows it. ⭐ For a repository-shaped source, R3 guarantees the
 original file is never touched, so an `origin` pointing at it is a permanent,
 working link from every generated page back into the reader's own material.
 
-⛔ **An address is recorded, never derived.** Composing an address from a title
+⛔ **An address is recorded, never derived.** It is recorded by the container map,
+and a group's address may also be recorded in the manifest's `curriculum` (§4),
+which is still a record and never a derivation. Composing an address from a title
 is the tempting shortcut and it is wrong: on a real course catalogue, a
 sizeable share of units is served at a slug its title does not produce, so a
 derivation sends those links to pages that are not there. Where two
