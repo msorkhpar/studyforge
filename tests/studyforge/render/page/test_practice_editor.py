@@ -196,7 +196,7 @@ def test_the_listener_is_installed_before_the_frame_that_raises_the_violation():
     assert body.index("reloadWhenBlocked(where.main.url)") < body.index("frame(slots.main")
 
 
-# ⛔ `W449` — a frame never keeps focus the reader did not give it, and the
+# ⛔ A frame never keeps focus the reader did not give it, and the
 # page never moves on its own. ⭐ The browser reading is
 # `tests/visual/test_practice_focus.py`; what a TEXT can hold is the part of the
 # guard that harness cannot stage (see that module's docstring) and the orders

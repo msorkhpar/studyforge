@@ -1,7 +1,7 @@
-"""Mirror of `src/studyforge/skills/exercises/plan.py` (R12) — `W453`'s plan, by aspects.
+"""Mirror of `src/studyforge/skills/exercises/plan.py` (R12) — the plan, by aspects.
 
 **What it asserts.** That a page is planned by its ASPECTS and not by its
-length (`W453`, user ruling 2026-09-23): one planned exercise per distinct name
+length (user ruling 2026-09-23): one planned exercise per distinct name
 the aspects give, each carrying the aspects it checks, with no ceiling; that a
 plan of zero says why; and that the same aspects always produce the same plan
 (R10). ⛔ **And the half R6 turns on:** a page cannot ship past its plan, and a
@@ -189,7 +189,7 @@ def test_a_plan_is_frozen_so_a_recorded_aspect_cannot_be_edited_after_the_fact()
 
 
 def test_a_code_dense_page_the_band_planned_at_zero_is_planned_by_its_aspects(tmp_path):
-    """⭐ `W453`'s positive control: little prose, five fences, three exercises."""
+    """⭐ The positive control: little prose, five fences, three exercises."""
     ledger = take(tmp_path, (written(tmp_path, "dense.md", DENSE),), (), "the ledger")
     plan = plan_page(dense_page(DENSE_ASPECTS), ledger, "the plan")
     assert [(p.name, p.aspects) for p in plan.exercises] == [

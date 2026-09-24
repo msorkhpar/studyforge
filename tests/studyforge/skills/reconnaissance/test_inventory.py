@@ -1,4 +1,4 @@
-"""What is on disk, and what a filename implies (SK-01).
+"""What is on disk, and what a filename implies.
 
 ⛔ `W272`: a nested `.studyforge` or `.git` is what `validate` says it is, asserted
 both ways against `validate`'s own walk, on synthetic trees.

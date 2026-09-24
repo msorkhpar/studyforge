@@ -199,10 +199,10 @@ def test_a_pin_moved_by_hand_is_refused_by_the_corpus_side_check_and_named(tmp_p
     assert hand_edited(root) == [PIN_FILE]
 
 
-# --- REL-05: a pin that no longer names the library running this ------------
+# --- a pin that no longer names the library running this -------------------
 
 
-#: The pin a corpus onboarded before `REL-05` carries: a sibling checkout at a commit.
+#: The pin a corpus onboarded before installed-library pins carries: a sibling checkout at a commit.
 SIBLING_PIN = {
     "pin_api": 1,
     "framework": "studyforge",

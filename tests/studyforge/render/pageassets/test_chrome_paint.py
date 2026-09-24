@@ -9,7 +9,7 @@ define any colour of its own**. ⭐ None of them reads a region table and none o
 them reads a layout; they read the part's paint.
 
 ⚠️ **The ceiling is the other half of the reason and it is stated rather than
-implied.** `SF-24/6` measured `test_chrome.py` at `598` of R11's `600` test
+implied.** A measurement put `test_chrome.py` at `598` of R11's `600` test
 lines and said in as many words that *the next region added to `REGIONS`
 breaches it*. ⛔ Two rows then landed on the same file in one wave — `SF-24`'s
 region 15 and `W407`'s `headingattributes` slot — and the merged module read

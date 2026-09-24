@@ -259,7 +259,7 @@ def regions_emitted() -> set[str]:
 
 
 def test_the_population_read_off_the_tree_is_inhabited():
-    # ⛔ Ruling 48: a derived-set assertion asserts inhabitation first, or it is
+    # ⛔ A derived-set assertion asserts inhabitation first, or it is
     # born vacuous. A glob that matched no golden, or a template directory that
     # moved, would otherwise make every check below pass over nothing.
     assert nav_regions_in_the_goldens(), "no golden page carries a <nav> — did the goldens move?"
@@ -340,7 +340,7 @@ def test_every_region_this_part_owns_has_a_rule_in_it(anchor):
 
 def test_no_rule_reaches_a_region_the_table_does_not_name():
     # ⭐ The other direction, and the one that catches a rule written for markup
-    # nobody emits — which is `SF-11`'s finding 3 one layer along: the palette
+    # nobody emits — the same defect as a palette
     # defining tokens nothing paints with, as a selector instead of a colour.
     anchors = set(REGIONS) | {"body", "span[data-kind="}
     stray = sorted(

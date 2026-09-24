@@ -180,7 +180,7 @@ def _before_w345(tmp_path):
     """A corpus as an onboarding before this row left it, committed: no ignore files.
 
     ⚠️ Its bytecode is deleted before the commit, as the first corpus's office
-    declined to stage it: committed bytecode is `W345/4`'s state, not this one.
+    declined to stage it: committed bytecode is a different state, not this one.
     """
     root, made = _first_run(tmp_path)
     for where in _ignores(made):

@@ -1,4 +1,4 @@
-"""The draft manifest, and every field it had to choose (SK-01)."""
+"""The draft manifest, and every field it had to choose."""
 
 from __future__ import annotations
 
@@ -11,9 +11,9 @@ from studyforge.skills.reconnaissance.proposal import slugify
 from tests.studyforge.skills.reconnaissance import sources
 from tests.support import git, run
 
-#: Shapes whose draft excludes nothing, so the whole draft goes to SF-02 as it
+#: Shapes whose draft excludes nothing, so the whole draft goes to the manifest reader as it
 #: stands. ⚠️ A draft's `exclude` is bare paths awaiting a person's reasons,
-#: which SK-07's `promote` pairs; that half is not this file's.
+#: which onboarding's `promote` pairs; that half is not this file's.
 EXCLUDES_NOTHING = (
     sources.flat_prose,
     sources.prefixed_groups,
@@ -29,7 +29,7 @@ def propose(root):
 
 
 def accepted(proposal):
-    """Parse the draft, its reasons given as a person would, with SF-02's own reader.
+    """Parse the draft, its reasons given as a person would, with the manifest's own reader.
 
     ⛔ Its rules are never restated here, and the reasons are the test's (W240/3).
     """
@@ -79,7 +79,7 @@ def test_the_title_comes_from_the_record_rather_than_a_filename(tmp_path):
 
 def test_one_variant_is_proposed_and_still_asked_about(tmp_path):
     # ⚠️ Three of the four designed shapes have one variant. Proposing two
-    # would be fitting the exception, and proposing none is refused by SF-02.
+    # would be fitting the exception, and proposing none is refused by the manifest reader.
     manifest, asked = propose(sources.flat_prose(tmp_path / "c"))
     assert len(manifest["variants"]) == 1
     assert any("one variant" in q.question for q in asked)
@@ -150,7 +150,7 @@ def test_more_ordinal_levels_than_this_skill_can_name_is_asked_about(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ W240: the draft of `survey('.')` is one SF-02 accepts
+# ⛔ W240: the draft of `survey('.')` is one the manifest reader accepts
 # --------------------------------------------------------------------------
 
 
@@ -188,7 +188,7 @@ def test_the_source_slug_is_asked_about(tmp_path):
 
 def test_no_include_glob_matches_the_curriculum_record(tmp_path):
     # ⛔ A record beside a unit it lists was caught by that unit's wildcard
-    # and read as a unit. SF-02's classifier judges; every listed unit stays in.
+    # and read as a unit. The manifest's classifier judges; every listed unit stays in.
     for build in EXCLUDES_NOTHING:
         root = build(tmp_path / build.__name__)
         manifest, _ = propose(root)

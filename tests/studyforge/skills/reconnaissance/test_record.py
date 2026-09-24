@@ -1,4 +1,4 @@
-"""The document that records the curriculum (SK-01).
+"""The document that records the curriculum.
 
 ⭐ Every shape here reproduces a trap measured in a real repository. The
 countermeasure this module implements is *"find the document that records the

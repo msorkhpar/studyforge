@@ -105,8 +105,8 @@ def uncommented(name: str) -> str:
 def tracked_copies(name: str, root: Path | None = None) -> list[str]:
     """Every file **git tracks** under `root` whose basename is `name`, repo-relative.
 
-    ⛔ **The population is the TREE, not the disk** (`W232`). ⭐ The form is
-    `W148`'s and Ruling 153's, and the query itself is the one in
+    ⛔ **The population is the TREE, not the disk**: git's index, never a walk.
+    ⭐ The query itself is the one in
     `tests/support.py` that `ruff`'s denominator and the coverage gate already
     ask — a fourth walk with its own idea of what this repository contains is
     exactly what that consolidation exists to prevent.
@@ -114,9 +114,9 @@ def tracked_copies(name: str, root: Path | None = None) -> list[str]:
     ⚠️ **What it replaces, and why the replacement is not a bigger exclusion
     list.** The walk here read the disk from the repository root and excluded
     `.git` by name, so a copy of a tree under the git-ignored `.scratch/` —
-    where Ruling 139 sends every office's harness, and where the pinned image
+    where every office's harness copies go, and where the pinned image
     then mounts it — turned this suite RED on a tree with nothing wrong in it
-    (measured three times: `W107/4`, `W151/5`, `W242/9`). ⛔ An exemption for
+    (measured three times). ⛔ An exemption for
     `.scratch` by name would have been the same defect waiting for the next
     ignored directory; the tracked set has no names in it at all.
 
@@ -126,7 +126,7 @@ def tracked_copies(name: str, root: Path | None = None) -> list[str]:
     second copy* — whose answer is about what the repository contains, and which
     becomes true the moment the copy is added.
 
-    ⭐ `root` is a parameter for Ruling 11's reason, exactly as it is on every
+    ⭐ `root` is a parameter so a check can be watched failing, exactly as it is on every
     other caller of the shared query: the two plants below are made in a
     throwaway repository, where a copy can be tracked or ignored on purpose,
     rather than written into the tree this file is measuring.
@@ -157,7 +157,7 @@ def planted_repository(where: Path) -> Path:
 
 
 def test_the_two_parts_exist_and_are_authored_here():
-    # ⛔ Ruling 48: inhabitation before any claim about the set.
+    # ⛔ Inhabitation before any claim about the set.
     assert (ASSET_DIR / STORE).is_file()
     assert (ASSET_DIR / CONSUMER).is_file()
     assert authored_scripts(), "no authored script part at all"
@@ -195,7 +195,7 @@ def test_the_store_is_defined_before_its_first_use_in_the_real_composed_bundle()
 
 
 def test_the_same_assertion_fails_when_the_order_is_deliberately_reversed():
-    # ⛔ Ruling 123's planted row, through the REAL composer: `compose` is what
+    # ⛔ The planted row, through the REAL composer: `compose` is what
     # `script()` calls, handed a reversed `SCRIPT_PARTS`. ⭐ The reading that must
     # DIFFER from the pass, taken rather than described.
     reversed_order = compose(tuple(reversed(SCRIPT_PARTS)))
@@ -323,8 +323,8 @@ def test_the_store_and_its_consumer_are_reachable_from_the_asset_directory_only(
 
 
 def test_a_copy_under_the_ignored_scratch_directory_is_not_in_the_population(tmp_path):
-    # ⭐ `W232`'s first plant, the one the row was opened for: an office copies a
-    # tree under `.scratch/`, exactly as Ruling 139 tells it to, and the check
+    # ⭐ The first plant, the one the check was fixed for: an office copies a
+    # tree under the ignored `.scratch/`, and the check
     # above stays GREEN because the copy is not in the tree.
     repository = planted_repository(tmp_path / "tree")
     harness = repository / ".scratch/src/studyforge/render/assets"

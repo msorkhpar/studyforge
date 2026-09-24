@@ -6,7 +6,7 @@ uses that spelling and no other.** Every mapping below is built by calling
 tuple out — so a renderer that recomputed a numbering of its own would produce
 elements this file cannot find.
 
-⭐ **The emitter half of `SF-18`.** The player is data (`pageassets/test_narration.py`);
+⭐ **The emitter half of narration.** The player is data (`pageassets/test_narration.py`);
 this is the Python that puts the clip on the element the player then reads.
 """
 

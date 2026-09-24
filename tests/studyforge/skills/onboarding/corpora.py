@@ -1,10 +1,10 @@
-"""A repository of material with no manifest, which is what onboarding starts from (SK-07).
+"""A repository of material with no manifest, which is what onboarding starts from.
 
 ⛔ Synthetic on purpose. A fixture that depends on a sibling repository being
 checked out is a fixture that skips, and a skipped check is not evidence.
 
 ⚠️ **There is no `corpus.json` here, and that is the difference from the
-adapter's fixture.** `SK-02` starts from a manifest somebody already wrote;
+adapter's fixture.** The adapter scaffold starts from a manifest somebody already wrote;
 this skill is what writes one, so its fixture has to stop before that.
 """
 
@@ -15,7 +15,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
-#: The commit a pin records (`REL-05`: the operator's statement of what the
+#: The commit a pin records (the operator's statement of what the
 #: installed library was built from, checked for shape only). ⭐ The sha of an
 #: empty tree committed with placeholder identities at a fixed date, so it is
 #: the same on every machine. ⛔ Never a real commit from this one (R7).
@@ -73,7 +73,7 @@ NOTES = {"glob": "notes/**", "why": "the integrator's notes about the material, 
 def material(root: Path) -> Path:
     """Write the material, and nothing else — no manifest, no adapter, no tests.
 
-    ⛔ **And nothing beside it** (`REL-05`): the framework is the library the
+    ⛔ **And nothing beside it**: the framework is the library the
     test's Python imports, never a checkout next to the corpus.
     """
     root.mkdir(parents=True, exist_ok=True)
@@ -99,7 +99,7 @@ def git(where: Path, *arguments: str) -> None:
 def linked_worktree(parent: Path, *, main: str = "corpus") -> Path:
     """A corpus repository under `parent`, and a linked worktree of it one level deeper.
 
-    ⛔ Nothing beside either: the framework is the installed library (`REL-05`).
+    ⛔ Nothing beside either: the framework is the installed library.
     """
     checkout = parent / main
     checkout.mkdir(parents=True)

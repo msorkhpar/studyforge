@@ -119,7 +119,7 @@ def test_a_planted_store_path_outside_the_door_is_caught():
 
 
 def test_no_file_the_skill_ships_names_a_source():
-    # ⛔ R1, and SKILL.md is in the population: the floor's sweep reads `.py` alone (SK-03/6).
+    # ⛔ R1, and SKILL.md is in the population: the floor's sweep reads `.py` alone.
     files = sorted(path for path in PACKAGE.iterdir() if path.suffix in (".py", ".md"))
     assert any(path.name == "SKILL.md" for path in files)
     for path in files:

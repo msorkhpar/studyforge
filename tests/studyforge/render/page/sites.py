@@ -1,6 +1,6 @@
 """The site a build would write, for both `FND-04` fixtures and one planted shape.
 
-⛔ **Imported, never copied.** `SF-15`'s acceptance is about a SITE — *"prev/next
+⛔ **Imported, never copied.** The trail's acceptance is about a SITE — *"prev/next
 traverses every unit"* and *"no dangling links anywhere in the generated
 output"* are false of a function and true only of a directory of pages — so this
 module writes one, and `test_acceptance.py` reads it back.
@@ -25,7 +25,7 @@ where a guessed href would dangle.
 
 ## ⭐ `depth2` crosses a module inside one section, and `crossings` says so apart
 
-⛔ **`W108`**: the fixtures used to cross ONE boundary between them, and it
+⛔ The fixtures used to cross ONE boundary between them, and it
 changed the section and the module at once — so a count of crossings read `1`
 and hid that the module-only case was absent. ⭐ `depth2` now carries
 `advanced/03-putting-it-together`, and `crossings` classes every boundary by the
@@ -253,9 +253,9 @@ def a_site(name: str, root: Path) -> Site:
     return assemble(name, contents, placements(name, contents), FIXTURES[name]().document, root)
 
 
-#: ⭐ **Two modules inside one section, under `tree` placement.** `SF-15`'s local
-#: discharge of `SF-15/6`, written when no fixture had the shape. ⚠️ Kept after
-#: `W108` because `depth2`, which now has it, is `sibling`: the two profiles
+#: ⭐ **Two modules inside one section, under `tree` placement.** Written when
+#: no fixture had the shape. ⚠️ Kept after `depth2` gained it, because `depth2`
+#: is `sibling`: the two profiles
 #: address a neighbouring module with different hrefs.
 PLANTED_SHAPE = (("one", "01-first"), ("one", "02-second"), ("two", "03-third"))
 
@@ -331,7 +331,7 @@ LEVEL_JOIN = "+"
 def crossings(site: Site) -> dict[str, int]:
     """Every boundary, counted under the container levels it changes.
 
-    ⛔ **Counted apart, never summed** (`W108`). A crossing that changes the
+    ⛔ **Counted apart, never summed**. A crossing that changes the
     section and the module is kind `section+module`; one that changes the module
     inside one section is kind `module`. ⚠️ A single total read `1` for a set
     whose only crossing was the compound one, and that is what hid the gap. The

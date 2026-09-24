@@ -298,7 +298,7 @@ def test_the_stylesheet_defines_no_colour_and_no_measure_of_its_own():
 
 def test_the_stylesheet_paints_the_five_tokens_that_were_waiting_for_it():
     # ⭐ `chrome.css` deferred exactly this region and named the tokens: "the
-    # narration player is the only `<footer>` a page carries, it is `SF-18`'s at
+    # narration player is the only `<footer>` a page carries, it is narration's at
     # M3, and `--player-height`, `--panel` and `--shadow` are defined and waiting
     # for it." ⛔ `tests/visual/palette.py`'s ledger called four more UNPAINTED
     # with this task named against each, and painting one forces somebody to say

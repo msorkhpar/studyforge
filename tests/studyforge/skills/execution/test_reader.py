@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/skills/execution/reader.py` (R12) — the reader's `EXECUTION.md`.
 
-⭐ `W445`'s reader-facing half: ONE command brings up the editor and the runner,
+⭐ The reader-facing half: ONE command brings up the editor and the runner,
 reading the tag the skill recorded; both builds are printed with the prime; and
 ruling 4's list names the practice workspaces beside the sources.
 """

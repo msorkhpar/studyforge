@@ -1,4 +1,4 @@
-"""SK-02's acceptance, run end to end on a source this skill has never seen.
+"""The adapter scaffold's acceptance, run end to end on a source this skill has never seen.
 
 ⭐ **Three clauses, and each one is a command here rather than an opinion:**
 

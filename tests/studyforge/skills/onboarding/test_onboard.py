@@ -233,7 +233,7 @@ def test_the_report_names_every_path_and_the_one_that_is_yours():
 def test_a_write_from_another_library_than_the_pin_names_is_refused_and_writes_nothing(
     tmp_path, monkeypatch
 ):
-    # ⛔ `REL-05`: the pin names the library it was made by; a write run by
+    # ⛔ The pin names the library it was made by; a write run by
     # another version would record a pin this Python does not import.
     from studyforge.skills.onboarding import library
     from studyforge.skills.onboarding.pin import PinRefused

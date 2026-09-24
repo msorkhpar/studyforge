@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/skills/execution/generate.py` (R12) — the acceptance.
 
-⛔ `E11`'s `SK-09` acceptance, clause by clause: a runnable corpus gets a
+⛔ `E11`'s execution-skill acceptance, clause by clause: a runnable corpus gets a
 working compose file and a primed image **from manifest data alone**; a corpus
 whose manifest says it is not runnable gets **nothing from this skill and no
 error**; re-running changes nothing; and §8.1's four rulings are honoured, each
@@ -259,7 +259,7 @@ def test_the_narration_contract_is_checked_and_its_service_is_not_rendered(tmp_p
 
 def test_every_path_this_skill_writes_is_classified_by_a_glob_it_declares(tmp_path):
     # ⛔ A path added without a glob fails HERE rather than reporting
-    # `unclassified` in somebody's repository (R19, and SK-07's own guard).
+    # `unclassified` in somebody's repository (R19, and onboarding's own guard).
     unclassified = [one for one in made(tmp_path).paths() if not skill.classified(one)]
     assert unclassified == []
 
@@ -283,7 +283,7 @@ def test_a_path_no_glob_covers_is_reported_rather_than_passed():
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W445` — one command brings up an editor that sees every practice, and the runner
+# ⛔ One command brings up an editor that sees every practice, and the runner
 # --------------------------------------------------------------------------
 
 

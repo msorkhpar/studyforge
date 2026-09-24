@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/skills/execution/record.py` (R12) — the runner's tag, recorded.
 
-⛔ **`W445`'s second clause**: the tag the corpus's primed build produced is
+⛔ **The second clause**: the tag the corpus's primed build produced is
 recorded by the SKILL — asked of the component, never typed and never a
 hand-written file. ⭐ Most cases hand in a fake `ask`, so they need no sibling;
 ⭐ one asks the REAL sibling at its pin, and skips where none is readable.

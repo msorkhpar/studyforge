@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/skills/exercises/merge.py` (R12) — a pass keeps what it did not read.
 
-**What it asserts.** `W456`'s first and third clauses at the merge itself: a
+**What it asserts.** The ledger's keep rule, first and third clauses, at the merge itself: a
 committed row for a file the pass did not read is kept as it was, whatever the
 pass carried; a row leaves only when its file is gone; a fence a re-read page
 no longer carries is `changed`, never `dropped`; and a committed ledger this

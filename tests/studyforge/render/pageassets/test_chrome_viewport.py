@@ -306,7 +306,7 @@ def test_the_whole_of_this_row_lives_under_the_one_threshold_the_file_declares()
 
 
 def test_the_wide_shape_is_still_asked_for_by_the_page_that_carries_the_region():
-    # ⛔ Re-taken rather than assumed (Ruling 214). The root index carries no
+    # ⛔ Re-taken rather than assumed. The root index carries no
     # rail — its own body IS the tree — so a wide shape declared unconditionally
     # would give that page an empty `17rem` column down its left AND, now, strip
     # the left gutter off a page that has nothing to put there.

@@ -70,7 +70,7 @@ def test_the_pin_document_is_what_places_a_row_on_the_other_side():
 #: for. `io` is absent deliberately: `export` uses `StringIO` and never a file.
 _FILESYSTEM = frozenset({"pathlib", "os", "os.path", "shutil", "glob", "tempfile"})
 
-#: ⭐ The one excused reach, by module and by name (`REL-06`): `packaged` reads the index this
+#: ⭐ The one excused reach, by module and by name: `packaged` reads the index this
 #: package SHIPS, from its own directory, and never a path a caller names.
 _OWN_DATA = {"packaged.py": frozenset({"pathlib"})}
 

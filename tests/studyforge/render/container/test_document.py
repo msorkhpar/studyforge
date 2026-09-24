@@ -62,9 +62,9 @@ def test_the_empty_slots_are_the_ones_a_container_page_has_no_answer_for():
     # ⚠️ Named, so their absence is a decision rather than an oversight: a
     # container page's own contents ARE the unit list, it declares no practices,
     # and narration is a unit's.
-    # ⭐ `breadcrumb` joined them when `SF-15` added the slot, and it is the one
+    # ⭐ `breadcrumb` joined them when the trail added the slot, and it is the one
     # of the five that is a GAP rather than an absence — a container page has
-    # ancestors to name. That it is empty here is `SF-27`'s row (`SF-15/2`), and
+    # ancestors to name. That it is empty here is the container page's own gap, and
     # the point of the by-name form is that the skeleton's growth could not be
     # silent: this assertion is what went red.
     # ⭐ **And it went red a second time, as designed**: `SF-30` added `mark`, and

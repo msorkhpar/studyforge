@@ -4,13 +4,13 @@
 composer is one line; what this module holds is the assertion its own docstring
 asks for — *no module outside `render.markup` composes an anchor from a literal,
 defines the name, or publishes it* — and the readings that show each assertion
-can fail (Ruling 123).
+can fail, by planting what each one refuses.
 
 ⚠️ **Resolved, never a grep** (`W105`'s lesson). The sweep reads the AST, so a
 `"\\x23"`, a `"\\N{NUMBER SIGN}"` and a docstring that merely QUOTES `"#" + key`
 are told apart by their values rather than by their spelling.
 
-⛔ **Known survivors, stated rather than discovered** (Ruling 56): a `#` built at
+⛔ **Known survivors, stated rather than discovered**: a `#` built at
 run time from something that is not a `#` literal — `"%c" % 35`,
 `"".join(map(chr, [35]))` — reads as no literal at all. Each is planted below, so
 the limit is a reading and not a belief.
@@ -39,7 +39,7 @@ HOME = "render/markup/"
 NAMES = ("FRAGMENT", "anchor")
 
 #: The modules the two producers are now, which the sweep must have READ — the
-#: population the claim is about, asserted before the claim (Ruling 132).
+#: population the claim is about, asserted before the claim.
 PRODUCERS = ("render/index/disclosure.py", "render/page/anchors.py", "render/page/navigation.py")
 
 #: A `#` that begins a fragment: not after whitespace (no reference carries one)

@@ -1,7 +1,7 @@
 """Mirror of `src/studyforge/skills/onboarding/pin.py` (R12).
 
 ⭐ **Three rules are load-bearing here and none is about JSON:** the pin records
-the INSTALLED library's version and a commit, never a path (R7, `REL-05`); a
+the INSTALLED library's version and a commit, never a path (R7); a
 stub resolves through the installed package, never a checkout; and the
 framework is never a submodule (R18, amended).
 """
@@ -216,7 +216,7 @@ def test_the_generated_pin_test_fails_when_the_installed_library_is_another_vers
 
 
 def test_a_stub_naming_another_version_than_the_pin_fails_the_generated_test(tmp_path):
-    # ⛔ `REL-05`'s acceptance, verbatim: a stub naming another version fails.
+    # ⛔ The acceptance, verbatim: a stub naming another version fails.
     root = _onboarded(tmp_path)
     stub = root / pin.stub_paths(("adapter",))[0]
     stub.write_text(

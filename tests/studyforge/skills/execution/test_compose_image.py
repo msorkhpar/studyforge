@@ -1,4 +1,4 @@
-"""`W445`'s reading: the generated compose file brings up the runner `execute` finds.
+"""The generated compose file brings up the runner `execute` finds.
 
 ⭐ **A HOST reading, opt-in behind `STUDYFORGE_RUNNER_BUILDS=1`**, because it
 builds the sibling's runner (from the skill's own prime, through the contract's

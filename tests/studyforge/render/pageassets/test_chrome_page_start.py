@@ -28,8 +28,9 @@ threshold this file declares. ⭐ **The browser arm is
 
 ## ⛔ `W328`'s and `W326`'s modules are re-taken, never edited
 
-⚠️ Ruling 214. `test_chrome_viewport.py` and `test_chrome_rail_rows.py` are run
-at this tip and not touched; the clauses here are additions beside them.
+⚠️ Re-read against later rules, never rewritten: `test_chrome_viewport.py` and
+`test_chrome_rail_rows.py` are run at this tip and not touched; the clauses here are
+additions beside them.
 """
 
 from __future__ import annotations

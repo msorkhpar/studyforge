@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/skills/onboarding/library.py` (R12, `REL-05`).
+"""Mirror of `src/studyforge/skills/onboarding/library.py` (R12).
 
 ⭐ The version is read from the library this Python imports — a wheel's
 distribution metadata beside the package, or a source tree's `pyproject.toml`

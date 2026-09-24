@@ -22,7 +22,7 @@ Rewrite the goldens after a deliberate change to the page with:
 ⚠️ **`PYTHONPATH` is not optional and the command beside this one omits it.**
 `pyproject.toml` puts `src` and `.` on the path through `[tool.pytest]`, which
 `python3 -m` never reads — measured 2026-09-10: without it the run stops at
-`ModuleNotFoundError: No module named 'studyforge'`. `SF-27/4`.
+`ModuleNotFoundError: No module named 'studyforge'`.
 
 ⚠️ A golden that changes without a deliberate change to the renderer is the R10
 failure the test exists to catch — regenerate only once you know which change

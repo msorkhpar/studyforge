@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/skills/exercises/aspects.py` (R12) — how every aspect ends.
 
-**What it asserts.** `W453`'s accounting, one refusal per rule: an aspect with
+**What it asserts.** The aspect accounting, one refusal per rule: an aspect with
 neither an exercise nor a reason, one with both, one id twice, one sentence
 under two ids (a near-duplicate), a basis that is empty or resolves to nothing
 the page carries, and a zero with no reason — ⭐ each beside the positive

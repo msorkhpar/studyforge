@@ -95,14 +95,14 @@ def test_the_framework_defines_each_primitive_exactly_once():
     # "there is no other home … a second escaper would be Ruling 20's deleted
     # duplicate, arriving again."
     defining = modules_defining(ONE_OF_EACH)
-    # ⭐ The inhabitation assertion, before the claim (Ruling 132): a sweep that
+    # ⭐ The inhabitation assertion, before the claim: a sweep that
     # found nothing at all would pass the line below just as loudly.
     assert defining, f"the sweep found no module at all under {SOURCE_ROOT.name}"
     assert defining == list(MAY_DEFINE), defining
 
 
 def test_the_sweep_above_would_notice(tmp_path):
-    # ⛔ Ruling 123, all three readings. Reading 1 is the test above, live.
+    # ⛔ All three readings of a planted check. Reading 1 is the test above, live.
     for name in MAY_DEFINE:
         (tmp_path / name).parent.mkdir(parents=True, exist_ok=True)
         (tmp_path / name).write_text("def escape(value):\n    return value\n", "utf-8")

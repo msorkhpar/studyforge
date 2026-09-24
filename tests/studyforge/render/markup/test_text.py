@@ -191,7 +191,7 @@ def test_a_permitted_relative_reference_can_never_name_a_host():
     # ⭐ The property the `outside` refusals buy, asserted over the whole
     # permitted population rather than one row: nothing admitted without a
     # scheme can leave the page's own origin, which is what R8's `file://` floor
-    # needs. ⚠️ Ruling 56 — the neighbour NOT asserted is named in the module's
+    # needs. ⚠️ The neighbour NOT asserted is named in the module's
     # docstring: `../` steps past the site root are admitted, because this
     # function is given no page to count them from.
     for href, form in PERMITTED:
@@ -225,7 +225,7 @@ def test_every_branch_escapes_its_body():
 
 
 def test_prose_that_is_tag_shaped_is_escaped_rather_than_emitted():
-    # ⛔ The clause `SF-12` exists to keep, at the lowest level it is decided.
+    # ⛔ The clause the page renderer exists to keep, at the lowest level it is decided.
     assert text.inline("<blink>hello</blink>") == "&lt;blink&gt;hello&lt;/blink&gt;"
 
 

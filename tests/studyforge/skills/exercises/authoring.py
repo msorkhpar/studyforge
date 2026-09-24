@@ -9,11 +9,11 @@ typed into a verdict (`AX-03`'s workspace makes the same choice).
 
 ⚠️ **Why a corpus of its own rather than `tests/fixtures/`.** Each page here
 is a real page with the case its section says, and each carries the aspects an
-author would read off it (`W453`): the exercise that checks each one is named
+author would read off it: the exercise that checks each one is named
 in `ASPECTS`, so the plan is read, never typed. `depth1/`, the prose fixture
 `AX-05` names, carries no source material on disk, so no ledger can be taken
 over it. ⚠️ **The shared reading section was written to carry each page into
-the length band's `short` range, and `W453` withdrew the band**; it stays as
+the length band's `short` range, and planning by aspects withdrew the band**; it stays as
 the kind of prose that teaches no checkable aspect of its own, so no aspect
 names it.
 
@@ -159,7 +159,7 @@ def pages() -> tuple[Page, ...]:
     )
 
 
-#: ⭐ The aspects an author reads off each page (`W453`), and the exercise that
+#: ⭐ The aspects an author reads off each page, and the exercise that
 #: checks each. ⚠️ The basket's two aspects are ONE exercise's, and so are the
 #: gauge's two: coverage is counted by aspects, and one exercise may check many.
 ASPECTS = {

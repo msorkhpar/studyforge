@@ -1,4 +1,4 @@
-"""`SF-15`'s acceptance, asserted rather than described.
+"""The trail's acceptance, asserted rather than described.
 
 ⛔ **Not a mirror of any one module** (R12 is one-way): these are the clauses
 `E03-rendering.md` states for the task as a whole, and each one names the
@@ -119,9 +119,9 @@ def test_the_walk_crosses_a_container_boundary_and_the_fixture_has_one_to_cross(
 
 def test_the_fixtures_cross_each_kind_of_boundary_counted_apart(tmp_path):
     # ⛔ **The inhabitation row for the clause as a whole, one count per kind**
-    # (`W108`). ⚠️ It used to be one total, `{"depth1": 0, "depth2": 1}`, and
+    # ⚠️ It used to be one total, `{"depth1": 0, "depth2": 1}`, and
     # that `1` was the compound crossing alone — so the module-only half was
-    # absent and the total could not say so. ⭐ Measured after `W108`: `depth2`
+    # absent and the total could not say so. ⭐ Measured since: `depth2`
     # changes the module inside one section once and both levels once.
     counted = {name: crossings(a_site(name, tmp_path / name)) for name in sorted(FIXTURES)}
     assert counted == {"depth1": {}, "depth2": {"module": 1, "section+module": 1}}, counted
@@ -272,7 +272,7 @@ def test_the_corpus_crumb_is_the_one_step_of_the_trail_that_is_a_link(site):
 
 
 def test_the_generated_site_is_inhabited_and_so_is_every_pages_reference_list(site):
-    # ⛔ Ruling 48 again, and this is the row that matters: a link check over a
+    # ⛔ Inhabitation again, and this is the row that matters: a link check over a
     # site with no pages, or over pages with no hrefs, is green and means nothing.
     pages = generated(site)
     assert len(pages) > 1, f"{site.name} generated only {sorted(pages)}"
@@ -321,7 +321,7 @@ def test_the_link_check_is_green_over_a_subject_that_cannot_match_and_the_guard_
     # on it has nothing to dangle, so the check returns `[]` exactly as it does
     # on a correct site. ⛔ That is why the inhabitation guard is a separate
     # assertion and not a comment: the guard is what reads differently here, and
-    # without it this green would be the vacuous one Ruling 124 is about.
+    # without it this green would be a vacuous one over an empty population.
     empty = Site(
         name="nothing",
         root=tmp_path,

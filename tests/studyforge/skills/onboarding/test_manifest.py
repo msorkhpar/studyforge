@@ -66,7 +66,7 @@ def test_the_keys_are_written_in_the_order_the_contract_declares_them():
 
 
 def test_no_media_block_is_invented():
-    # ⛔ An absent `media` key is a *stated* default (SF-02), and a generator
+    # ⛔ An absent `media` key is a *stated* default of the manifest, and a generator
     # that wrote one out would freeze the footprint limits' names on every
     # corpus — R9 makes a rename a migration from the first declaration.
     assert "media" not in promote(corpora.DRAFT)

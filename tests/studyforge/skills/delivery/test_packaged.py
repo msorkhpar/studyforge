@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/skills/delivery/packaged.py` (R12) — `REL-06`.
+"""Mirror of `src/studyforge/skills/delivery/packaged.py` (R12).
 
 ⭐ Four readings, from the cheapest to the one that IS the acceptance:
 
@@ -36,7 +36,7 @@ from tests.support import repository_root
 #: The shipped index, as a path inside the `studyforge` package.
 SHIPPED = PurePosixPath("skills/delivery") / packaged.NAME
 
-#: ⚠️ The copy `REL-11` takes off the main line. While it exists it is the same bytes.
+#: ⚠️ The copy the release cleanup takes off the main line. While it exists it is the same bytes.
 DOCS_COPY = "docs/capability-index.md"
 
 
@@ -83,8 +83,9 @@ def test_the_shipped_index_says_it_is_generated() -> None:
 
 
 def test_the_documents_copy_is_the_shipped_one_while_it_exists() -> None:
-    # ⚠️ `REL-11` takes `docs/capability-index.md` off the main line. Until then a reader of
-    # either reads the same bytes, and this test is what keeps the two from diverging.
+    # ⚠️ The release cleanup takes `docs/capability-index.md` off the main line. Until
+    # then a reader of either reads the same bytes, and this test is what keeps the two
+    # from diverging.
     copy = repository_root() / DOCS_COPY
     if copy.exists():
         assert copy.read_bytes() == tree_bytes(), f"{DOCS_COPY} differs from the shipped index"
@@ -106,7 +107,7 @@ def test_the_index_is_declared_package_data() -> None:
 
 @pytest.fixture(scope="module")
 def wheel(tmp_path_factory: pytest.TempPathFactory) -> Path:
-    """`REL-04`'s wheel, built from an export of the tree the one way that module builds it."""
+    """The package's wheel, built from an export of the tree the one way that module builds it."""
     return build_wheel(tmp_path_factory)
 
 

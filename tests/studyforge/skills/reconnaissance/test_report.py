@@ -1,4 +1,4 @@
-"""What reconnaissance found, and what it could not tell (SK-01)."""
+"""What reconnaissance found, and what it could not tell."""
 
 from __future__ import annotations
 

@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/render/container/__init__.py` (R12).
 
-⭐ **`SF-27`'s acceptance, clause by clause.** Everything here is about the
+⭐ **The container page's acceptance, clause by clause.** Everything here is about the
 container page as a whole: the goldens, the `file://` floor, R4's block, R10's
 stability, and the clause nothing else can check — that `SF-04` discovers these
 pages **by identity**. The seams themselves are asserted in the module each one
@@ -163,8 +163,8 @@ def test_a_scan_discovers_every_container_page_by_identity(tmp_path):
 
 
 def test_the_two_fixtures_use_two_different_placement_profiles():
-    # ⚠️ Ruling 56: the goldens above prove the renderer under the profiles the
-    # fixtures happen to declare. This is the assertion that they are two — a
+    # ⚠️ The unasserted neighbour, named: the goldens above prove the renderer
+    # under the profiles the fixtures happen to declare. This is the assertion that they are two — a
     # pair of `tree` corpora would have left `sibling`'s bare-filename href, the
     # shape `W57` was about, untested here.
     declared = {name: fixture_manifest(name).placement for name in ("depth1", "depth2")}

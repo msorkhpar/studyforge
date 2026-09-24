@@ -159,7 +159,7 @@ def test_placeholders_answers_what_a_template_wants():
 
 
 def test_every_template_is_asked_for_by_some_renderer():
-    # ⚠️ `SF-12-survey/4`'s shape: the check names the modules that MAY ask, not
+    # ⚠️ The check names the modules that MAY ask, not
     # the answer today, so a template that stops being used goes red rather than
     # the check quietly narrowing to whatever is left.
     source = "\n".join(
