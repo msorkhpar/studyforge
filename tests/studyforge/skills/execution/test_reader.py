@@ -1,7 +1,7 @@
 """Mirror of `src/studyforge/skills/execution/reader.py` (R12) — the reader's `EXECUTION.md`.
 
 ⭐ The reader-facing half: ONE command brings up the editor and the runner,
-reading the tag the skill recorded; both builds are printed with the prime; and
+reading both tags the skill recorded; both builds are printed with the prime; and
 the list of what must exist before the start (§8.1) names the practice
 workspaces beside the sources.
 """
@@ -31,9 +31,12 @@ def document(tmp_path, *, narration: bool = False, **moved: object) -> str:
     return dict(made.files)[skill.READER_DOC]
 
 
-def test_one_command_brings_up_both_reading_the_recorded_tag(tmp_path):
+def test_one_command_brings_up_both_reading_both_recorded_tags(tmp_path):
     text = document(tmp_path)
-    command = f"docker compose --env-file {skill.RUNNER_ENV} -f {skill.COMPOSE_FILE} up -d --wait"
+    command = (
+        f"docker compose --env-file {skill.RUNNER_ENV} --env-file {skill.EDITOR_ENV} "
+        f"-f {skill.COMPOSE_FILE} up -d --wait"
+    )
     assert command in text
     assert text.count("docker compose") == 1
 
@@ -43,6 +46,12 @@ def test_the_runner_and_where_it_comes_from_are_named(tmp_path):
     assert "`studyforge-runner-demo`, from `STUDYFORGE_RUNNER_IMAGE`" in text
     assert "python3 runner.py --runtimes java,maven --print-tag" in text
     assert f"writes `{skill.RUNNER_ENV}`" in text
+
+
+def test_the_editors_tag_is_recorded_by_the_same_step_and_named_with_its_file(tmp_path):
+    text = document(tmp_path)
+    assert "python3 build.py --runtimes java,maven --print-tag" in text
+    assert f"writes `{skill.EDITOR_ENV}`" in text
 
 
 def test_both_builds_are_printed_and_the_runner_carries_the_prime(tmp_path):

@@ -147,3 +147,11 @@ def test_the_real_contract_is_sufficient_for_a_selection_with_no_other_input():
     selection = toolchain.select(["java", "maven"], document)
     assert selection.carried == ("java", "maven")
     assert selection.build[-1] == "java,maven"
+
+
+def test_the_repository_a_recorded_tag_must_name_is_read_and_never_written_to_the_selection():
+    # ⭐ The record step checks a printed tag against it; ⛔ the kept selection
+    # stays the bytes a corpus already carries, so it is not in the document.
+    selection = selected(["java"])
+    assert selection.repository == "example/editor"
+    assert "example/editor" not in selection.render()

@@ -1,8 +1,8 @@
 r"""The reader's document, `EXECUTION.md`, written from declarations alone.
 
 **What it does.** Says what a corpus declared, how to build both images, how
-the runner's tag is recorded, the ONE compose command that brings the editor
-and the runner up, and where narration comes from.
+both tags are recorded, the ONE compose command that brings the editor and the
+runner up from them, and where narration comes from.
 
 **How you use it.** `onboard.generate` calls `document(…)`; nothing else does.
 
@@ -36,6 +36,7 @@ def document(
     generated: str,
     compose_file: str,
     runner_env: str,
+    editor_env: str,
     selection: toolchain.Selection,
     primed: Prime,
     block: Mapping[str, object],
@@ -79,21 +80,24 @@ def document(
         "⛔ Never pin a tag you did not compute: a tag is a function of the build's",
         f"inputs. Read the set back from `{selection.read_back_from}`.",
         "",
-        "## Record the runner's tag",
+        "## Record both tags",
         "",
-        f"⭐ The skill records it: its record step runs `{' '.join(runner.selection.tag_from)}`",
-        f"with the prime above, in the pinned checkout, and writes `{runner_env}`.",
-        "⛔ Never type it, and never edit that file: re-run the step when the",
+        f"⭐ The skill records them: its record step runs `{' '.join(runner.selection.tag_from)}`",
+        f"with the prime above, in the pinned checkout, and writes `{runner_env}`;",
+        f"then `{' '.join(selection.tag_from)}`, and writes `{editor_env}`.",
+        "⛔ Never type a tag, and never edit either file: re-run the step when the",
         "component's pin, the prime or the host's architecture moves.",
         "",
         "## Bring it up",
         "",
         "```",
-        f"docker compose --env-file {runner_env} -f {compose_file} up -d --wait",
+        f"docker compose --env-file {runner_env} --env-file {editor_env} -f {compose_file} "
+        "up -d --wait",
         "```",
         "",
-        "⛔ That one command starts the editor AND the runner. The study server never",
-        "starts either and never holds the Docker socket (§8.3).",
+        "⛔ That one command starts the editor AND the runner, each from the tag the",
+        "corpus recorded. The study server never starts either and never holds the",
+        "Docker socket (§8.3).",
         "",
     ]
     first = composefile.must_exist_first(

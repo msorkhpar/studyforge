@@ -59,9 +59,12 @@ output**, and the answer to it does not move when a file is staged.
    moving, renaming and rewriting, and says nothing against adding, so `A` and
    `??` are alike here and staging cannot fail the check. What is left — a
    rewrite, a removal, a rename's origin — must be declared by the plan, by the
-   install record (`W329`), by `permitted_edits`, or by sitting inside the
+   install record (`W329`), by `permitted_edits`, by sitting inside the
    framework's own directory at the corpus root, which `validate`'s
-   `source.SKIP_DIRS` already declares is this tool's and not the corpus's.
+   `source.SKIP_DIRS` already declares is this tool's and not the corpus's, or
+   by being the execution skill's own output (`execution.generated_here`) —
+   which puts its reader's document at the corpus ROOT, outside that directory,
+   so a regenerate would otherwise read as a breach until it was committed.
 
 ⚠️ **What the second reading cannot do, said rather than implied:** once a
 change is committed the tree no longer holds it, so an undeclared rewrite that
@@ -127,6 +130,7 @@ def edits_test(manifest: Manifest) -> str:
             "from studyforge.cli.plan import plan_for",
             "from studyforge.corpus.manifest import MANIFEST_FILENAME, parse",
             "from studyforge.corpus.manifest.edits import reads_as_content",
+            "from studyforge.skills.execution import generated_here",
             "from studyforge.skills.reconnaissance.installed import generated",
         ],
         body=[*_declarations(permitted), *_readers(), *_checks()],
@@ -210,7 +214,7 @@ def _readers() -> list[str]:
         "",
         "",
         "def _undeclared(root, plan, touched):",
-        '    """Which of `touched` nothing declares: not the plan, the record, or the manifest."""',
+        '    """Which of `touched` nothing declares: the plan, a record, a skill, the manifest."""',
         "    files = {where for where in plan.paths if not where.endswith('/')}",
         "    files |= generated(root)",
         "    files |= set(PERMITTED)",
@@ -221,6 +225,7 @@ def _readers() -> list[str]:
         "            for where in touched",
         "            if where not in files",
         "            and not [at for at in under if where.startswith(at)]",
+        "            and not generated_here(root, where)",
         "        }",
         "    )",
         "",
@@ -285,6 +290,6 @@ def _checks() -> list[str]:
         "        'generation is additive (R3); these files already existed and were '",
         "        'rewritten, removed or moved, and nothing declares them — not this '",
         "        \"corpus's permitted_edits, not the plan's output, not the install \"",
-        "        'record: ' + repr(undeclared)",
+        '        "record, not the execution skill\'s output: " + repr(undeclared)',
         "    )",
     ]

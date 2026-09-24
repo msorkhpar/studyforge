@@ -27,7 +27,7 @@ and on nothing inside either component but its `consuming.json` (R18).
 | `composefile` | one contract block to one compose service, and the file around it |
 | `runnerservice` | the runner a Submit execs into, as the compose file's second service |
 | `reader` | the reader's document, `EXECUTION.md` |
-| `record` | the primed runner's tag, asked of the component and written for compose |
+| `record` | the runner's and the editor's tags, asked of the component and written for compose |
 | `prime` | the corpus's own build, source and test, as one project per seeded tool |
 | `onboard` | the whole of it, and the empty answer for a corpus that is not runnable |
 
@@ -64,6 +64,7 @@ from studyforge.skills.execution.contract import (
 from studyforge.skills.execution.onboard import (
     COMPOSE_FILE,
     DIRECTORY,
+    EDITOR_ENV,
     GENERATED,
     NOT_MATERIAL,
     PRIME_DIR,
@@ -74,12 +75,13 @@ from studyforge.skills.execution.onboard import (
     ExecutionRefused,
     classified,
     generate,
+    generated_here,
     source_root,
     workspaces_bind,
     write,
 )
 from studyforge.skills.execution.prime import Prime, PrimeRefused, Project, Specimen, prime_for
-from studyforge.skills.execution.record import record_runner
+from studyforge.skills.execution.record import record_editor, record_runner
 from studyforge.skills.execution.rulings import findings
 from studyforge.skills.execution.runnerservice import Runner, RunnerRefused
 from studyforge.skills.execution.toolchain import Selection, select
@@ -89,6 +91,7 @@ __all__ = [
     "CONSUMING",
     "DIRECTORY",
     "EDITOR_API",
+    "EDITOR_ENV",
     "EDITOR_COMPONENT",
     "EDITOR_PROMISE",
     "GENERATED",
@@ -114,9 +117,11 @@ __all__ = [
     "classified",
     "findings",
     "generate",
+    "generated_here",
     "must_exist_first",
     "prime_for",
     "read",
+    "record_editor",
     "record_runner",
     "render",
     "select",

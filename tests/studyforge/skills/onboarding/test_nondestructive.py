@@ -31,11 +31,13 @@ from studyforge.cli.plan import plan_for
 from studyforge.corpus.manifest import parse
 from studyforge.generate import write_site
 from studyforge.narrate.client import NarrateClient
+from studyforge.skills.execution import onboard as execution
 from studyforge.skills.onboarding import EDITS_TEST, artifacts
 from studyforge.skills.onboarding.manifest import promote, render
 from studyforge.skills.onboarding.nondestructive import edits_test
 from studyforge.skills.onboarding.pin import PIN_DIR
 from tests.studyforge.cli.narrate.service import BASE, FMT, VOICE, FakeService
+from tests.studyforge.skills.execution.contracts import editor_text
 from tests.studyforge.skills.onboarding import corpora
 from tests.studyforge.skills.onboarding.test_committed_output import onboarded
 from tests.support import repository_root
@@ -353,3 +355,55 @@ def test_a_check_generated_against_edits_the_corpus_no_longer_declares_refuses(t
 
     assert ran.returncode != 0, ran.stdout
     assert "R19" in ran.stdout, ran.stdout
+
+
+# ---------------------------------------------------------------------------
+# The execution skill's own output, which puts one document at the ROOT.
+# ---------------------------------------------------------------------------
+
+
+def _execution_regenerate(root, title):
+    """Run the execution skill over this corpus, as a regenerate does, with `title` moved.
+
+    ⭐ A real `generate` and `write`: the corpus's own manifest with a runtime
+    declared in memory (one the synthetic editor carries and nothing seeds, so
+    no prime is needed), and the title as the input that moved.
+    """
+    document = json.loads((root / "corpus.json").read_text(encoding="utf-8"))
+    # `runtimes` arrived at corpus_api 4 and needs `exercises`, as the parser enforces.
+    document.update(runtimes=["python"], exercises=True, title=title)
+    document["corpus_api"] = max(document["corpus_api"], 4)
+    made = execution.generate(parse(json.dumps(document)), editor_text=editor_text(), root=root)
+    execution.write(made, root)
+
+
+@pytest.mark.parametrize("state", (UNCOMMITTED, STAGED))
+def test_an_execution_regenerate_leaves_the_check_green_before_any_commit(tmp_path, state):
+    # ⛔ The skill writes its reader's document at the corpus root, outside the
+    # framework's own directory: a regenerate that rewrote it read as an R3
+    # breach until somebody committed it.
+    root = _rebuilt(tmp_path)
+    _execution_regenerate(root, "Before")
+    _settle(root, COMMITTED)
+    _execution_regenerate(root, "After")
+    assert execution.READER_DOC in _replacements(root), "nothing was rewritten: vacuous"
+    _settle(root, state)
+
+    ran = _check(root)
+
+    assert ran.returncode == 0, ran.stdout + ran.stderr
+
+
+def test_a_reader_document_the_skill_did_not_write_is_still_the_corpus_own(tmp_path):
+    # ⛔ The control: the same path, holding a document somebody wrote, is not
+    # the skill's output — its writer refuses to overwrite one — so a rewrite of
+    # it is still caught.
+    root = _rebuilt(tmp_path)
+    (root / execution.READER_DOC).write_text("# Ours\n", encoding="utf-8")
+    _settle(root, COMMITTED)
+    (root / execution.READER_DOC).write_text("# Ours, rewritten\n", encoding="utf-8")
+
+    ran = _check(root)
+
+    assert ran.returncode != 0, ran.stdout
+    assert execution.READER_DOC in ran.stdout, ran.stdout

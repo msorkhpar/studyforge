@@ -611,7 +611,7 @@ What it reads, and the choices in it:
 
 ### The non-destructive check reads the build's declaration, not commit state
 
-**Decision.** The generated R3 check, rendered by `onboarding.nondestructive`, first compares what `studyforge plan` says a build writes with `edits.reads_as_content`. It fails on an undeclared overlap whether the tree is clean, dirty or staged. It then reads the working tree. An addition, staged or untracked, is never a breach. Every rewrite, removal or rename origin must be declared by the plan, the install record, `permitted_edits`, or the tool's own `.studyforge/` directory.
+**Decision.** The generated R3 check, rendered by `onboarding.nondestructive`, first compares what `studyforge plan` says a build writes with `edits.reads_as_content`. It fails on an undeclared overlap whether the tree is clean, dirty or staged. It then reads the working tree. An addition, staged or untracked, is never a breach. Every rewrite, removal or rename origin must be declared by the plan, the install record, `permitted_edits`, the tool's own `.studyforge/` directory, or the execution skill's own output (`execution.generated_here`), which puts its reader's document at the corpus root; a reader's document that skill did not write is still the corpus's own.
 
 **Why.** A check built on git status failed correct runs and passed once work was committed, which measures committing rather than R3.
 
