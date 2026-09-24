@@ -151,8 +151,8 @@ TESTS_TAB_TEMPLATE = "practice-tab-tests.html"
 #: under is spelled once, in the package that owns it.
 ACT_TEMPLATES = {RUN: "practice-run.html", TEST: "practice-submit.html"}
 
-#: `what this record IS -> the sentence a reader is shown` (spec §7 §9). ⛔ **Five cases and five
-#: files** (R13), keyed on
+#: `what this record IS -> the sentence a reader is shown` (spec §7 §9). ⛔ **One file per
+#: case** (R13), keyed on
 #: the record's own PREDICATES and never on `provenance` or `trust`, so neither
 #: R5 key can reach the page through this mapping — and no `data-*` attribute
 #: carries one either, which is what stops the words leaking back through a
@@ -160,6 +160,7 @@ ACT_TEMPLATES = {RUN: "practice-run.html", TEST: "practice-submit.html"}
 GRADER_TEMPLATES = {
     "shipped": "practice-grader-shipped.html",
     "bundled": "practice-grader-bundled.html",
+    "user": "practice-grader-user.html",
     "generated": "practice-grader-generated.html",
     "quiz": "practice-grader-quiz.html",
     "none": "practice-grader-none.html",
@@ -281,7 +282,8 @@ def tabs(exercise: Exercise) -> str:
 def grader(exercise: Exercise) -> str:
     """Return the sentence saying what a pass here is worth, in a learner's words.
 
-    ⭐ **Four sentences, four files, three predicates** (spec §7 §9, R13). ⛔ The
+    ⭐ **One sentence and one file per case in `GRADER_TEMPLATES`** (spec §7 §9,
+    R13). ⛔ The
     ungraded case says *nothing here checks your answer* rather than saying
     nothing at all: the label is never omitted because it is unflattering, and
     a reader who is told is a reader who can tell this practice from the one
@@ -291,7 +293,7 @@ def grader(exercise: Exercise) -> str:
 
 
 def label_of(exercise: Exercise) -> str:
-    """Return which of the five labels this record is owed.
+    """Return which label in `GRADER_TEMPLATES` this record is owed.
 
     ⛔ **Asked of the record's own predicates.** `is_quiz` comes first because a
     quiz's `graded` is `False` — `graded` means *a grader runs*, and a quiz's
@@ -305,7 +307,11 @@ def label_of(exercise: Exercise) -> str:
         return "shipped"
     # ⛔ Shipped with the material and not proven by the derivation's gates:
     # it is neither the proven grader nor one written for this site (R5).
-    return "bundled" if exercise.ships_with_material else "generated"
+    if exercise.ships_with_material:
+        return "bundled"
+    # ⛔ Written by hand: nothing proved it, so it may not borrow the sentence
+    # a generated grader earns through its gates.
+    return "user" if exercise.written_by_hand else "generated"
 
 
 def breakdown(exercise: Exercise) -> str:

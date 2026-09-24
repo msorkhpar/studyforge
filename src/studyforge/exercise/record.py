@@ -209,6 +209,11 @@ class Exercise:
         """Did this grader come with the material, whatever it may claim? ⭐ `bundled`."""
         return self.provenance == "bundled"
 
+    @property
+    def written_by_hand(self) -> bool:
+        """Did somebody write this grader by hand, so that no gate proved it? ⭐ `user`."""
+        return self.provenance == "user"
+
 
 def of(document: object, where: str) -> Exercise | None:
     """Return the exercise a practice document carries, or `None` if it carries none.

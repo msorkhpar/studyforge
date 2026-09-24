@@ -1591,6 +1591,7 @@ not a corpus's string** (R1):
 |---|---|
 | `bundled` · `authoritative` | **Checked by the tests that ship with this material.** |
 | `bundled` · `advisory` | **Checked by tests that ship with this material. They have not been proven to catch a wrong answer.** |
+| `user` · `advisory` | **Checked by tests written by hand for this practice. They have not been proven to catch a wrong answer.** |
 | `generated` · `advisory`, kind `code` | **Written for this site. Its tests were proven against a worked solution before it shipped.** |
 | `generated` · `advisory`, kind `quiz` | **Written for this site from this page.** |
 | no grader (ungraded) | **Nothing here checks your answer.** |
