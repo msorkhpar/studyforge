@@ -28,8 +28,8 @@ from the repository root. Each id it prints is either on an Aliases line below
 or is one that explains nothing without the archive.
 
 ```sh
-git grep -I -ohE '\b(W[0-9]{1,4}[a-z]?|ISO-M[0-9]+|(AX|EX|FND|JS|NS|OPS|QA|REL|SF|SK|TC|INT|ISO|PO|CTO)-[0-9]{1,3}[a-z]?)(/[0-9]+)?\b|\b((PO|CTO) )?[Rr]ound [0-9]+\b|\b[Rr]ulings? [0-9]{1,3}\b(( ?, ?| and | or )[0-9]{1,3}\b)*' -- src tests docs/specs docs/authoring |
-  awk '/^[Rr]uling/ { n = split($0, a, /[^0-9]+/); for (i = 1; i <= n; i++) if (a[i] != "") print "Ruling " a[i]; next }
+git grep -I -ohE '\b(W[0-9]{1,4}[a-z]?|ISO-M[0-9]+|(AX|EX|FND|JS|NS|OPS|QA|REL|SF|SK|TC|INT|ISO|PO|CTO)-[0-9]{1,3}[a-z]?)(/[0-9]+)?\b|\b((PO|CTO) )?[Rr]ound [0-9]+\b|\b[Rr]ulings? [0-9]{1,3}[a-z]?\b(( ?, ?| and | or )[0-9]{1,3}[a-z]?\b)*' -- src tests docs/specs docs/authoring |
+  awk '/^[Rr]uling/ { s = $0; while (match(s, /[0-9]+[a-z]?/)) { print "Ruling " substr(s, RSTART, RLENGTH); s = substr(s, RSTART + RLENGTH) } next }
        /^[Rr]ound/ { sub(/^R/, "r"); print; next }
        { print }' |
   LC_ALL=C sort -u
@@ -40,9 +40,10 @@ What it reads, and the choices in it:
 - **The spellings.** A row or finding
   (`W<n>`, `W<n>/<m>`), a task and its findings (`SF-<nn>`, `SF-<nn>/<m>`,
   `ISO-M<n>`), a review round's findings (`PO-<n>/<m>`), a round
-  (`PO round <n>`, `round <n>`), and a numbered ruling, singular or in a list
-  (`Ruling <n>`, `Rulings <n> and <m>`), each printed one per line as
-  `Ruling <n>`. A spec rule (`R7`) is not a process id and is not read.
+  (`PO round <n>`, `round <n>`), and a numbered ruling, singular or in a list,
+  with or without a letter after its number (`Ruling <n>`, `Ruling <n>a`,
+  `Rulings <n> and <m>`), each printed one per line as `Ruling <n>` or
+  `Ruling <n>a`. A spec rule (`R7`) is not a process id and is not read.
 - **The roots.** `src/`, `tests/`, `docs/specs/` and `docs/authoring/`: the
   product and the documents that ship with it.
 - **`LC_ALL=C` is load-bearing.** Under a natural-language collation `sort -u`
