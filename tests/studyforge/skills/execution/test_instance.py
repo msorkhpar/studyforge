@@ -17,7 +17,7 @@ import pytest
 from studyforge.corpus.manifest import parse
 from studyforge.execute import container_for, editor_container_for
 from studyforge.execute import instance as names
-from studyforge.skills.execution import onboard, record_instance
+from studyforge.skills.execution import onboard, record_instance, written
 from studyforge.skills.execution.onboard import ExecutionRefused
 from tests.studyforge.skills.execution.contracts import (
     corpus,
@@ -124,3 +124,14 @@ def test_each_default_is_read_from_the_contract_whose_field_keeps_its_meaning(tm
     assert 'container_name: "${STUDYFORGE_RUNNER_NAME:-lab-demo}"' in text
     assert dict(made.instance)[names.EDITOR_PORT] == "9999"
     assert dict(made.instance)[names.RUNNER_NAME] == "lab-demo"
+
+
+def test_a_recorded_second_instance_is_no_hand_edit_and_an_edit_to_it_is(tmp_path):
+    """⭐ `W466`'s record: `record_instance` stamps what it writes, as `record_runner` does."""
+    made, root = generated(tmp_path)
+    onboard.write(made, root)
+    record_instance(made, root, project="demo-second", port=18443)
+    assert written.hand_edited(root) == []
+    target = root / onboard.INSTANCE_ENV
+    target.write_text(target.read_text(encoding="utf-8") + "# edited\n", encoding="utf-8")
+    assert [one.split(" ", 1)[0] for one in written.hand_edited(root)] == [onboard.INSTANCE_ENV]
