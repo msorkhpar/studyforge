@@ -229,6 +229,16 @@ eats your changes is a tool nobody runs twice. ⭐ **It is also REPORTED:**
 `.studyforge/execution/written.json`, and onboarding's `hand_edited` names, in
 a sentence, every one whose bytes moved or that is gone. Running the skill
 again over an unchanged corpus rewrites no byte, that record included.
+
+⛔ **A reader's document this skill did not write is refused, and the refusal
+writes nothing.** `write` reaches every refusal before its first byte, so a
+refused run leaves every file it would have written as it was, the compose
+file included. ⭐ **The skill knows its own document** by either of two
+answers: a line opening with `onboard.MARK`, the unchanging first sentence of
+the generated notice, or `written.json` holding the digest of the bytes now
+there. So a document an earlier version of the skill wrote is regenerated,
+whatever the rest of its notice said then.
+
 Customisation enters as manifest data; if the manifest cannot say it, the
 manifest is missing a field and *that* is the finding.
 

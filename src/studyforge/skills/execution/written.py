@@ -8,7 +8,8 @@ that is gone.
 **How you use it.** `stamp(root, paths)` after every write, which `write`,
 `record_runner` and `record_editor` already do; `hand_edited(root)` for the
 report, which onboarding's own `hand_edited` includes, so ONE check answers for
-both skills:
+both skills; `recorded_as_written(root, where)` for whether the bytes at one
+path are exactly the ones the skill wrote there:
 
     from studyforge.skills.onboarding import hand_edited
 
@@ -130,6 +131,14 @@ def entries(root: Path) -> list[dict[str, str]]:
         and isinstance(entry.get("sha256"), str)
         and _inside(entry.get("where"))
     ]
+
+
+def recorded_as_written(root: Path, where: str) -> bool:
+    """Whether the record holds the digest of the bytes now at `where`: this skill wrote them."""
+    digest = _digest(root / where)
+    return digest is not None and any(
+        entry["where"] == where and entry["sha256"] == digest for entry in entries(root)
+    )
 
 
 def _inside(where: object) -> bool:
