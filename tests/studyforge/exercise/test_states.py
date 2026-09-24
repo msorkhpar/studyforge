@@ -1,4 +1,4 @@
-"""The three states, and what may complete a practice (SF-23).
+"""The three states, and what may complete a practice.
 
 ⭐ **Every state is asserted from the structure**, never from a field, because
 that is the design: there is no `state` to set and none to forget.

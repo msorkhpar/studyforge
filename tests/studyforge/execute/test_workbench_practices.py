@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/execute/workbench.py`, `W446`: each practice owns its editor lock.
+"""Mirror of `src/studyforge/execute/workbench.py`: each practice owns its editor lock.
 
 ⛔ **The user's report**: a page with two practices answered one of them `409`,
 and only the last-opened practice was editable. Both had one cause — every
@@ -33,7 +33,7 @@ from studyforge.execute.workbench import (
     write_settings,
 )
 
-#: The generated editor's two binds (`W445`): the sources and the practice
+#: The generated editor's two binds: the sources and the practice
 #: workspaces. ⚠️ Made-up container paths — the real one is a home (R7).
 EDITOR = Editor(
     origin="http://127.0.0.1:8443",

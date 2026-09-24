@@ -1,7 +1,7 @@
 """Mirror of `src/studyforge/corpus/discovery/cache.py` (R12).
 
 ⛔ **Ruling 95's two traps are asserted here**, because a builder copying
-`SF-09`'s `content_api` faithfully would get both wrong: an unsupported
+the unit content's `content_api` faithfully would get both wrong: an unsupported
 `site_api` **does not raise**, and `site_api` is **not** the staleness
 mechanism.
 """

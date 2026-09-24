@@ -3,7 +3,7 @@
 ⭐ **Opt-in, exactly as `SF-20`'s container cases are** (`container.py`):
 `STUDYFORGE_RUNNER_IMAGE=<tag>` names a runner image built with
 `--runtimes java,maven`. Without one, or without Docker, every case SKIPS and
-says why. ⚠️ **This office could not build one** (`SF-29/1`), so these cases
+says why. ⚠️ **No runner image could be built where these were written**, so these cases
 have not yet run. They are the readings `transcripts.py` could not capture:
 a compile error and a failing test's stack trace, from the pinned Maven.
 

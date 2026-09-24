@@ -147,7 +147,7 @@ def test_no_pair_at_all_makes_a_quiz_authoritative(provenance, trust):
 
 
 def test_the_population_above_reaches_the_pair_r5_itself_allows():
-    # ⛔ Ruling 48: the sweep above is a comparison, and a population that had
+    # ⛔ The sweep above is a comparison, and a population that had
     # stopped containing `bundled` + `authoritative` would satisfy it while
     # measuring nothing.
     assert "bundled" in PROVENANCE and "authoritative" in TRUST

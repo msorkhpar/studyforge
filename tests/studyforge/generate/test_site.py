@@ -149,7 +149,7 @@ def test_the_committed_golden_still_matches_what_plan_says_at_this_ref(name):
 
 @pytest.mark.parametrize("name", BOTH)
 def test_no_reference_between_pages_or_to_the_bundle_dangles(tmp_path, name):
-    """⛔ `SF-15`'s acceptance, and it is false of a function and true only of a directory.
+    """⛔ The trail's acceptance, and it is false of a function and true only of a directory.
 
     ⚠️ **Media is excluded HERE and nowhere else now.** This clause is about the
     site holding together — a reader can get from any page to any other and to

@@ -203,7 +203,7 @@ def test_the_package_imports_nothing_that_could_reach_out_of_the_process():
 
 
 def test_the_permitted_set_is_not_wider_than_what_is_imported():
-    # ⚠️ Ruling 48's other half: a permitted set carrying names nothing imports
+    # ⚠️ The denominator's other half: a permitted set carrying names nothing imports
     # is a set that would go on passing after the module that needed them left.
     root = repository_root() / "src/studyforge/exercise/quiz"
     text = "\n".join(path.read_text(encoding="utf-8") for path in sorted(root.glob("*.py")))

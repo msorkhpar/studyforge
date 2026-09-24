@@ -1,4 +1,4 @@
-"""The page's execution client, `serve/assets/run-client.js` (`SF-22`), read as the data it is.
+"""The page's execution client, `serve/assets/run-client.js`, read as the data it is.
 
 Mirrors no source module — like `render/pageassets/test_progress`, it asserts what a text
 can establish about a script, and reads the served bytes over a real socket.
@@ -81,7 +81,7 @@ def test_a_start_is_a_post_with_no_body_and_nothing_else_is_sent():
     # POST that SELECTS; the index — a GET, because asking what this instance
     # offers is a read (`W416`); and one practice's editor windows, a POST
     # because preparing that practice's workspace settings WRITES (`W429`).
-    # ⭐ And a fifth since `W451`: grading a quiz, a POST that selects a quiz
+    # ⭐ And a fifth, since the server grades quizzes: grading a quiz, a POST that selects a quiz
     # and carries the reader's choices in its PATH (`test_quiz_client.py`).
     assert body.count("fetch(") == 5
     assert body.count("method: 'POST'") == 4
@@ -153,7 +153,7 @@ def test_it_draws_nothing_and_types_no_word_a_reader_sees():
 def test_over_a_file_it_is_not_available_and_sends_nothing():
     # ⛔ R8: `file://` has no origin. EVERY entry point asks `available()` first
     # — the two acts, where a running editor is (`W416`), and one practice's
-    # two editor windows (`W429`) — and, since `W451`, grading a quiz.
+    # two editor windows (`W429`) — and grading a quiz.
     body = uncommented()
     assert "location.protocol === 'http:'" in body
     assert body.count("if (!available())") == 5

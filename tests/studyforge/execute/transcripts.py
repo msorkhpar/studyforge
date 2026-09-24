@@ -27,7 +27,7 @@ runner does.
 - `GRADLE_FAILURE`: ported from the extraction source's filter test, where
   it is a reader's own paste. Edit: the report path, as `scrub` rewrites it.
 
-⚠️ **Not captured, and why (`SF-29/1`).** The runner image cannot be built
+⚠️ **Not captured, and why.** The runner image cannot be built
 here (the dispatch allows no pulls), and this host's Maven caches lack jars
 the pinned plugins need (surefire's JUnit provider among them). So **no real
 `mvn test` run with a compile error or a failing test exists in this

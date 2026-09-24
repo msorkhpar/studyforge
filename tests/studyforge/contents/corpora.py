@@ -5,7 +5,7 @@ corpora, and five spellings of "read every container map under this root" is
 five places to forget when a signature changes.
 
 ⚠️ **The walk over container maps lives here, in a test helper, and that is a
-finding rather than a design** — `SF-13/2`. `contents` deliberately reads no
+finding rather than a design**. `contents` deliberately reads no
 files, because where a corpus's archive root sits is still open (spec §6).
 """
 
@@ -26,7 +26,7 @@ FIXTURES = repository_root() / "tests" / "fixtures"
 
 #: The archive's spelling in the fixtures — `validate.corpus.ARCHIVE_DIR`'s
 #: stand-in for `<archive-root>`. ⚠️ Named here rather than imported, because
-#: that constant is on no package's public surface (`SF-31/3`).
+#: that constant is on no package's public surface.
 ARCHIVE_DIR = "archive"
 
 

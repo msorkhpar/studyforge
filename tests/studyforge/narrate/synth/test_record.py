@@ -195,7 +195,7 @@ def test_a_record_that_cannot_say_what_a_clip_was_made_under_is_refused(missing)
 
 def test_conditions_are_read_off_a_probe_and_not_from_a_constant():
     # ⛔ `chunk_chars` is a deployment setting and part of the content address
-    # (`NS-02`), so it is read from health rather than assumed.
+    # the narration service computes, so it is read from health rather than assumed.
     health = Health(reachable=True, detail="up", provides=2, chunk_chars=777, engine_model="m2")
     read = Conditions.of(health, voice=VOICE, fmt=FMT)
     assert (read.chunk_chars, read.provides, read.engine_model) == (777, 2, "m2")

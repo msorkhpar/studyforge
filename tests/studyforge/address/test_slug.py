@@ -128,7 +128,7 @@ def test_slug_fault_names_the_class_and_the_position(value, expected):
 
 
 def test_slug_fault_is_total_over_every_non_slug_it_can_meet():
-    # ⭐ Ruling 11's instruction, applied to a describer rather than a gate:
+    # ⭐ Watch the claim fail without the mechanism, applied to a describer:
     # the three branches are claimed to be exhaustive over non-slugs, so the
     # claim is exercised rather than asserted. Any string of permitted
     # characters that is not a slug must be explained by one of them, and no

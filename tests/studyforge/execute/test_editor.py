@@ -8,7 +8,7 @@ the pinned image the suite runs in has no Docker and must not get one (§8.3).
 ⚠️ **Every container path below is a made-up one.** The probe reads the
 destination back out of the container and never composes one, so a test that
 carried a real image's own workspace path would be asserting nothing extra —
-and that path is a home, which R7's gate reads as a leak (`SK-09/6`).
+and that path is a home, which R7's gate reads as a leak.
 """
 
 from __future__ import annotations
@@ -285,7 +285,7 @@ def test_an_editor_bound_beside_this_corpus_is_still_not_this_corpus(tmp_path, r
     assert probe(tmp_path, root, inspected("true", port(), mount(beside))).editor() is None
 
 
-# --- `W445`: the sources AND the practice workspaces, two binds of one corpus --
+# --- the sources AND the practice workspaces, two binds of one corpus ---------
 
 
 @pytest.fixture
@@ -306,7 +306,7 @@ def both(tmp_path, root) -> Editor | None:
 
 
 def test_two_binds_of_this_corpus_are_one_editor_and_not_an_ambiguity(tmp_path, two):
-    # ⛔ `W445`: the generated editor binds the sources AND the practice
+    # ⛔ The generated editor binds the sources AND the practice
     # workspaces, which are siblings. Refusing that as "no one folder" was a
     # frame that could never open a practice file.
     answer = both(tmp_path, two)
@@ -355,7 +355,7 @@ def test_a_single_bind_holds_exactly_what_inside_answers(tmp_path, root):
     assert answer.holding("practice/one/K.java") is None
 
 
-# --- `W446`: a practice opens a folder of its own --------------------------
+# --- a practice opens a folder of its own ---------------------------------
 
 
 def test_an_editor_opened_on_a_directory_of_its_bind_is_that_folder_of_one_container():

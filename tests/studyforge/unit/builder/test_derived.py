@@ -43,7 +43,7 @@ def test_a_gap_in_the_ordinals_does_not_leave_a_hole_in_the_keys():
 
 
 def test_every_section_is_inhabited_and_carries_its_blocks():
-    # ⚠️ Ruling 48: a build that produced zero sections would satisfy any
+    # ⚠️ The denominator: a build that produced zero sections would satisfy any
     # "every section has …" loop, and zero is the bug.
     built = sections([support.lesson(1), support.practice(1)])
     assert len(built) == 2

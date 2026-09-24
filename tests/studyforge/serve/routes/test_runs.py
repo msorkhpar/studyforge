@@ -281,7 +281,7 @@ def test_a_report_the_run_did_not_write_is_refused_on_the_stream_and_not_recorde
     the first run wrote it**, because `report.CLOCK_SLACK` is two seconds wide
     and two runs in one test are milliseconds apart. ⭐ A real previous run's
     report is minutes or hours old, which is exactly what is modelled here —
-    and the two seconds it does not catch is `AX-02/1` in the handoff.
+    and the two seconds it does not catch is a known residual timing gap.
     """
     plant_breakdown(root)
     submitted(root)
@@ -298,7 +298,7 @@ def test_a_report_the_run_did_not_write_is_refused_on_the_stream_and_not_recorde
 
 
 # --------------------------------------------------------------------------
-# `W445` — the generated editor binds the sources AND the practice workspaces
+# The generated editor binds the sources AND the practice workspaces
 # --------------------------------------------------------------------------
 
 
@@ -314,7 +314,7 @@ def test_a_practice_opens_through_the_bind_that_holds_it_when_the_editor_holds_t
     live, discovered = runs_over(root, editor=StubEditors(both))
     answer = live.practice_editor(discovered.corpora[0], "practice/passes/greet.py", None)
     assert answer is not None and answer["main"]["path"] == "greet.py"
-    # ⭐ The practice's OWN folder of that bind (`W446`), never the bind's root.
+    # ⭐ The practice's OWN folder of that bind, never the bind's root.
     assert "folder=%2Fw%2Fpractice%2Fpasses&" in answer["main"]["url"]
     assert (root / "practice" / "passes" / ".vscode" / "settings.json").is_file()
     assert not (root / "practice" / ".vscode").exists()

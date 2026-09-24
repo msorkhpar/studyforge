@@ -23,7 +23,7 @@ from tests.support import assert_package_contract, repository_root
 PACKAGE = "src/studyforge/validate/source"
 
 
-#: ⭐ `W280`: the survey is the importer the surface guard below was written over.
+#: ⭐ The survey is the importer the surface guard below was written over.
 SURVEY = "src/studyforge/skills/reconnaissance/inventory.py"
 
 
@@ -94,7 +94,7 @@ def test_the_seam_holds_and_neither_half_imports_the_other():
     # ⛔ **The claim the package docstring makes, asserted rather than stated.**
     # If one half ever reaches for the other the seam has moved and the two
     # test modules stop naming what they cover.
-    # ⭐ `W280`: `classification` reads `enumeration`, the walk it judges, and that is the
+    # ⭐ `classification` reads `enumeration`, the walk it judges, and that is the
     # ONE edge inside the package. Nothing reads `classification`; `enumeration` reads none.
     edges = {
         classification: {enumeration},
@@ -169,7 +169,8 @@ def past_the_surface(text: str) -> set[str]:
 
 
 def test_W280_no_module_outside_the_package_imports_past_its_surface():
-    # ⛔ `W280` clause 2: a consumer under `src/` reads `__all__`, never a submodule. ⚠️ Tests
+    # ⛔ The split's second clause: a consumer under `src/` reads `__all__`, never a
+    # submodule. ⚠️ Tests
     # are not swept: they name a submodule to monkeypatch a private, and say so.
     root = repository_root()
     found = {
@@ -195,7 +196,8 @@ def test_W280_no_module_outside_the_package_imports_past_its_surface():
     ],
 )
 def test_W280_a_planted_import_past_all_is_named(planted):
-    # ⛔ `W280` clause 3, run negatively: the same expression that reads the tree clean names these.
+    # ⛔ The split's third clause, run negatively: the same expression that reads the
+    # tree clean names these.
     assert past_the_surface(planted), planted
 
 

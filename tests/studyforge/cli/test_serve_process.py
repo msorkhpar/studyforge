@@ -5,7 +5,7 @@ naming a real, listening socket called `docker.sock` in a harness-minted directo
 a socket the process CAN reach — and afterwards that socket must have accepted
 nothing, and no descriptor the process held may name it.
 
-⛔ **One reader of the process's output** (`W233`): `tests.support.ProcessOutput`,
+⛔ **One reader of the process's output**: `tests.support.ProcessOutput`,
 from launch to exit. So every line the verb printed is asserted, not only the last.
 """
 
@@ -133,7 +133,7 @@ def test_a_terminate_signal_stops_it_cleanly_too(tmp_path):
     assert "Traceback" not in stdout + stderr
 
 
-#: Every test that reads a running child's output (`W237`). `None` holds the whole module;
+#: Every test that reads a running child's output. `None` holds the whole module;
 #: names hold only those tests, because a neighbour shows a THREAD blocked with an `Event`.
 READERS = {
     "tests/studyforge/cli/test_serve_process.py": None,
@@ -146,10 +146,10 @@ READERS = {
     ),
 }
 
-#: A wait on a clock, each spelling `W233/5` and `W237` name, and the second reader.
+#: A wait on a clock, in each spelling a stand-in takes, and the second reader.
 AROUND_THE_READER = frozenset({"sleep", "monotonic", "perf_counter", "Event", "communicate"})
 
-#: The one home of the listening line and the address (`W237`): a copy keeps passing alone.
+#: The one home of the listening line and the address: a copy keeps passing alone.
 HOME = "tests/studyforge/cli/serving.py"
 DEFINED = re.compile(r"^(?:LISTENING\b|class Address\b)", re.M)
 
@@ -173,7 +173,7 @@ def scopes() -> dict[str, ast.AST]:
 
 
 def test_the_reader_waits_on_the_stream_and_never_on_a_clock():
-    # ⛔ `W233`: a sleep standing in for the read passes whenever the machine is fast.
+    # ⛔ A sleep standing in for the read passes whenever the machine is fast.
     assert "sleep" not in called(ast.parse(inspect.getsource(ProcessOutput))), "the reader sleeps"
     found = scopes()
     assert len(found) == 4, f"the population is {sorted(found)}, not the four `W237` names"

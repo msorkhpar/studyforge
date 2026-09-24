@@ -232,7 +232,7 @@ def test_no_module_of_the_sub_package_ever_spells_authoritative_or_bundled():
     print(spelt)
     assert spelt == []
 
-    # ⭐ Inhabitation (Ruling 191): a sweep that read no literal at all would
+    # ⭐ Inhabitation: a sweep that read no literal at all would
     # also report none, and "reported none" is this check's pass reading.
     read = [text for path in quiz_modules() for text in _literals(ast.parse(path.read_text()))]
     assert len(read) > 20, len(read)

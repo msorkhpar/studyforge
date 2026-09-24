@@ -1,4 +1,4 @@
-"""The `exercise` record, and R5's refusal in code (SF-23).
+"""The `exercise` record, and R5's refusal in code.
 
 ⭐ **R5's acceptance is here**: a `bundled` + `authoritative` record is
 accepted, a `generated` + `authoritative` one is refused — in code, at the point
@@ -137,8 +137,8 @@ def test_a_generated_advisory_record_is_accepted():
 
 
 def test_the_rule_is_not_re_spelled_in_this_package(monkeypatch):
-    # ⛔ `unit.trust` owns R5's rule and its own contract says "SF-23 consumes
-    # it". Two spellings of one rule is the defect `placement.names.label_of`
+    # ⛔ `unit.trust` owns R5's rule and its own contract says the exercise
+    # package consumes it. Two spellings of one rule is the defect `placement.names.label_of`
     # records paying for, so this asserts the verdict comes from **there**.
     #
     # ⚠️ Asserted by **delegation**, not by importing that module's `FORBIDDEN`
@@ -276,7 +276,7 @@ def load(relative):
 
 
 def test_the_committed_graded_fixture_reads_back_field_for_field():
-    # ⭐ **SF-23 ships this fixture.** Measured before it existed: nothing under
+    # ⭐ **This package ships this fixture.** Measured before it existed: nothing under
     # `tests/fixtures/` carried an `exercise` key, so the state this task
     # encodes had no committed example.
     exercise = of(load(GRADED_FIXTURE), "depth2 basics unit-01 practice-1")
@@ -304,7 +304,7 @@ def test_no_exercise_appears_anywhere_in_the_depth_one_fixture():
     # ⛔ E06: "The depth-1 fixture (zero exercises) validates." A corpus with
     # no graders is complete, not short.
     #
-    # ⭐ **Named reason for not taking `asserting=`** (`FND-09` acceptance 3):
+    # ⭐ **Named reason for not taking `asserting=`**:
     # `depth1` is this test's **subject**, not an exclusion policy. The claim
     # is about that one corpus by name, so there is nothing for a declaration
     # to widen or narrow. ⛔ Not the same thing as "skip `invalid/`".
@@ -316,12 +316,12 @@ def test_no_exercise_appears_anywhere_in_the_depth_one_fixture():
     assert swept >= 6, swept
 
 
-#: ⛔ **The rule this module's sweeps assert** (Ruling 46). `of()` refuses an
+#: ⛔ **The rule this module's sweeps assert**, as a rule id. `of()` refuses an
 #: exercise the source declared authoritative, which is exactly what
 #: `user-authoritative` is declared to break — so the *valid* set is the one
 #: the declaration leaves, and the refused set is the one it drops.
 #: ⚠️ Both used to be `"/invalid/" in p.as_posix()`, which is the directory
-#: name Ruling 46 forbids and which would have swept in an eighth fixture
+#: name a sweep may not exclude by, and which would have swept in an eighth fixture
 #: declaring something else entirely.
 ASSERTED = {"exercise-trust"}
 
@@ -344,7 +344,7 @@ def test_exactly_one_valid_corpus_document_carries_an_exercise():
     # majority — see `tests/fixtures/README.md`. ⛔ The graded state is the
     # exception in real material, and a set in which it is the majority is a
     # set that will let a design fitted to the exception look correct.
-    # ⭐ `W352`: stated over every corpus but the execution fixture, whose
+    # ⭐ Stated over every corpus but the execution fixture, whose
     # graded units are its subject — `tests/test_fixture_runnable.py` pins
     # which of its units grade, and that it carries an ungraded and a
     # reading-only one beside them.

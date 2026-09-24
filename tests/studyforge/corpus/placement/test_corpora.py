@@ -21,7 +21,7 @@ from studyforge.corpus.placement import identity, profile_for, registered
 from tests.fixture_checks import FIXTURES as FIXTURE_ROOT
 from tests.fixture_checks import fixture_paths
 
-# ⛔ **The SHIPPED resolver, imported rather than re-derived** (`W127`, `W138`).
+# ⛔ **The SHIPPED resolver, imported rather than re-derived**.
 # This module answered *"where do the sibling components live?"* with its own
 # `repository_root().parent` — the **third** copy of a rule this repository
 # ships once, and the only one of the three whose absent branch neither skipped
@@ -32,17 +32,17 @@ from tests.fixture_checks import fixture_paths
 from tests.harness.workspace import workspace_root as shipped_workspace_root
 from tests.support import repository_root
 
-#: ⛔ **What this module's sweeps assert, as a rule id** (Ruling 46). Placing a
+#: ⛔ **What this module's sweeps assert, as a rule id**, never a directory. Placing a
 #: corpus reads its manifest first, and `corpus-api` is the one rule that
 #: refuses before any unit can be placed. ⚠️ Nothing else here is a property an
 #: invalid fixture declares: an address that disagrees with its directory still
 #: places, and so does a container with a gap in its ordinals — which is the
-#: whole reason Ruling 46 excludes by declaration and not by directory.
+#: whole reason a sweep excludes by declaration and not by directory.
 ASSERTED = {"corpus-api"}
 
 #: Every fixture corpus this module is entitled to place. ⛔ It used to read
 #: `("depth1", "depth2")`, which dropped five corpora that place perfectly and
-#: break something this module never asserts (`FND-09`).
+#: break something this module never asserts.
 FIXTURES = tuple(
     path.parent.relative_to(FIXTURE_ROOT).as_posix()
     for _where, path in fixture_paths(asserting=ASSERTED, glob="corpus.json", within=None)
@@ -50,7 +50,7 @@ FIXTURES = tuple(
 
 
 def test_the_fixture_set_is_read_from_the_declaration():
-    # ⛔ Ruling 48: a walk that matched nothing would parametrize zero tests
+    # ⛔ The denominator: a walk that matched nothing would parametrize zero tests
     # and every sweep below would pass by never running.
     assert len(FIXTURES) >= 8, FIXTURES
     assert "depth1" in FIXTURES and "depth2" in FIXTURES
@@ -59,9 +59,8 @@ def test_the_fixture_set_is_read_from_the_declaration():
 
 
 #: Env override for a workspace the shipped resolver cannot reach — a container
-#: mount, or a synthetic tree in a plant. ⛔ **Not for a worktree**: `W127`
-#: measured that the shipped resolver answers correctly from one, and `W138`
-#: re-measured it here.
+#: mount, or a synthetic tree in a plant. ⛔ **Not for a worktree**: the shipped
+#: resolver was measured to answer correctly from one.
 WORKSPACE_ENV = "STUDYFORGE_WORKSPACE"
 
 #: The corpus SF-03's acceptance names by name.
@@ -71,7 +70,7 @@ JAVA_CORPUS = "Claude-senior-java-engineer"
 def workspace_root() -> Path:
     """Where sibling repositories live, as `tests.harness.workspace` already computes it.
 
-    ⛔ **The derivation is NOT repeated here** (`W138`). This module answered
+    ⛔ **The derivation is NOT repeated here.** This module answered
     `repository_root().parent`, which is a **worktree's** parent — and agents
     work in worktrees, so the corpus below was absent on a tree that had it
     sitting right beside it. ⭐ The shipped resolver reads
@@ -168,12 +167,12 @@ def test_every_placed_unit_can_stamp_and_recover_its_own_identity(fixture):
 #: The stand-in's shape, as two numbers rather than two literals buried in a
 #: comprehension. ⚠️ A `48 × 5` grid is exactly the shape that makes a
 #: uniqueness claim easy, which is why the case that places it now says
-#: `synthetic` in its own name (`W138`).
+#: `synthetic` in its own name.
 SYNTHETIC_MODULES = 48
 SYNTHETIC_UNITS_PER_MODULE = 5
 
 #: The floor every placed shape must clear, so a sweep that placed almost
-#: nothing cannot pass by never running (Ruling 48).
+#: nothing cannot pass by never running.
 MINIMUM_PATHS = 200
 
 
@@ -182,7 +181,7 @@ def java_modules():
 
     ⚠️ **Unpinned evidence, and named as such.** It reads a sibling repository
     that may not be checked out. ⛔ **`{}` is the ABSENCE and nothing else** —
-    no caller of this may turn it into a stand-in without saying so (`W138`).
+    no caller of this may turn it into a stand-in without saying so.
     ⛔ R3: read-only, and nothing is written there.
     """
     root = workspace_root() / JAVA_CORPUS
@@ -199,7 +198,7 @@ def java_modules():
 def the_java_corpus_or_skip():
     """The real corpus's shape, or a SKIP THAT SAYS SO.
 
-    ⛔ **`W138`, and it replaces `shape_to_place()`.** That function answered
+    ⛔ **It replaces `shape_to_place()`.** That function answered
     the absence with a synthetic grid of its own and returned a `provenance`
     string read only inside an assertion message, which fires on red — so on
     green a clause naming *the Java corpus* was discharged by a `48 × 5` grid
@@ -221,7 +220,7 @@ def the_java_corpus_or_skip():
 def synthetic_modules():
     """A stand-in of roughly the Java corpus's shape, KEPT and NAMED.
 
-    ⭐ **The stand-in is the right thing to have** and `W138` says so in terms:
+    ⭐ **The stand-in is the right thing to have**:
     what was wrong was a caller that could not tell the reader which shape it
     placed. The grid stays, under a name that reports itself.
     """
@@ -304,7 +303,7 @@ A_MODULE = "01-java-basics"
 
 
 def test_the_collision_check_goes_red_when_two_units_genuinely_collide():
-    """⭐ Ruling 191: the control is seen to FIND and to REFUSE, in one test.
+    """⭐ The control is seen to FIND and to REFUSE, in one test.
 
     ⛔ Without this the clause above is a green with no red behind it, which
     is the failure this row was minted over one level up.
@@ -317,7 +316,7 @@ def test_the_collision_check_goes_red_when_two_units_genuinely_collide():
 
 
 def test_the_sweeps_positional_ordinal_is_what_separates_those_two_and_not_the_corpus():
-    """⚠️ `W138/2`, recorded here rather than discovered later.
+    """⚠️ A limit of this sweep, recorded here rather than discovered later.
 
     ⛔ **This sweep numbers a module's units by POSITION**, so within a module
     every unit gets a distinct ordinal and a collision is unrepresentable

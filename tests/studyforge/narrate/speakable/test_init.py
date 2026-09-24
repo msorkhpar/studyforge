@@ -32,7 +32,7 @@ from tests.support import assert_package_contract, repository_root
 FIXTURES = repository_root() / "tests" / "fixtures"
 
 #: ⛔ The one fixture in which two units declare the same `origin.path` and differ
-#: only in `origin.section` (`W95`). It is the input SF-16's negative is written
+#: only in `origin.section`. It is the input the speech-id negative is written
 #: against, and it ships in `VALID` so the whole contract suite sees it.
 SHARED_ORIGIN = FIXTURES / "shared-origin/archive/field-notes/raw/prose"
 
@@ -43,7 +43,7 @@ SHARED_ORIGIN = FIXTURES / "shared-origin/archive/field-notes/raw/prose"
 #: the id is recovered from the filename through `parse_clip_name` below. ⚠️ This
 #: comment used to be wrong in the other direction and the assertion under it
 #: compared these values to the id set; it never ran, because nothing wrote the
-#: attribute until `SF-18`.
+#: attribute until the narration player landed.
 AUDIO_VALUES = re.compile(re.escape(AUDIO_ATTRIBUTE) + r'="([^"]*)"')
 
 
@@ -93,7 +93,7 @@ def test_states_its_contract():
 
 
 def test_the_population_of_documents_is_inhabited_and_every_one_speaks():
-    # ⛔ Ruling 124: a sweep over a derived population states its inhabitation first.
+    # ⛔ A sweep over a derived population states its inhabitation first.
     assert len(CASES) == 5
     for name, document in CASES:
         assert speakable_of(document).units, f"{name} produced no speech at all"
@@ -177,8 +177,8 @@ def test_every_id_maps_to_exactly_one_clip_and_every_clip_back_to_its_id(name, d
 
 
 def test_every_id_a_rendered_page_addresses_resolves_to_a_clip_and_back():
-    # ⛔ The page half of the clause, and it is ARMED — `SF-18` writes the attribute.
-    # ⭐ CONVERTED rather than deleted (Ruling 209's residual), and converted UPWARDS:
+    # ⛔ The page half of the clause, and it is ARMED — the page writes the attribute.
+    # ⭐ CONVERTED rather than deleted, and converted UPWARDS:
     # the skipped form compared the attribute's values to the set of minted ids, which
     # only made sense while the attribute was believed to hold an id. It holds an HREF,
     # so the id is now RECOVERED from the filename through `parse_clip_name` — the
@@ -234,7 +234,7 @@ def test_the_cardinality_holds_across_every_document_at_once_not_only_inside_one
 
 
 def test_the_cardinality_can_come_out_wrong_so_the_green_is_a_reading():
-    # ⛔ Ruling 123 row 3, shipped: a key space that a collision WOULD shrink. Names
+    # ⛔ A plant, shipped: a key space that a collision WOULD shrink. Names
     # derived from the source path alone collide for the two shared-origin units; the
     # minted names do not. A reading that cannot differ is not a reading.
     units = [unit for ordinal in (1, 2) for unit in speakable_of(shared_origin_unit(ordinal)).units]
@@ -400,7 +400,7 @@ def test_a_unit_key_round_trips_through_the_token_the_ids_carry():
 
 
 def test_the_surface_names_every_disposition_a_consumer_might_branch_on():
-    # ⭐ `SPEECH_OF` is exported so SF-17 and SF-18 read the decision rather than
+    # ⭐ `SPEECH_OF` is exported so synthesis and the player read the decision rather than
     # inferring it from what happened to come back.
     assert set(SPEECH_OF) and "disclosure" in SPEECH_OF
     # ⛔ Every name the contract promises resolves, and nothing is promised twice.

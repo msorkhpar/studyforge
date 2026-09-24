@@ -4,7 +4,7 @@
 one module mints a clip name. That is a property a reader cannot check by reading one
 file, so it is asserted over every module under `src/studyforge/`.
 
-⚠️ **Ruling 208: three arms, three different reaches, and each one says which it has.**
+⚠️ **Three arms, three different reaches, and each one says which it has.**
 A single arm would announce a subject wider than it can see and ship a green over the
 gap, which is worse than an absent assertion because the absence is visible.
 
@@ -66,7 +66,7 @@ def relative(path: Path) -> str:
 def takes_from(path: Path, module: str) -> bool:
     """Does `path` import from `module`, in either the absolute or the relative form?
 
-    ⛔ Ruling 178: an import-shaped sweep that reads only the absolute form
+    ⛔ An import-shaped sweep that reads only the absolute form
     quantifies over half its population. The relative form is resolved against the
     file's own package rather than matched as text.
     """
@@ -100,7 +100,7 @@ def takes_from(path: Path, module: str) -> bool:
 
 
 def test_the_population_of_framework_modules_is_inhabited():
-    # ⛔ Ruling 124/191: a sweep over a derived population states its inhabitation
+    # ⛔ A sweep over a derived population states its inhabitation
     # first, or its green is not a reading.
     modules = source_modules()
     assert len(modules) > 50, f"only {len(modules)} framework modules found; the scan is wrong"
@@ -120,7 +120,7 @@ def test_exactly_one_module_in_the_tree_defines_the_minting_function(function):
 
 
 def test_every_module_that_mentions_the_minter_by_name_goes_through_it():
-    # ⛔ **Ruling 208: the name is the reach, not the ambition.** This was called
+    # ⛔ **The name is the reach, not the ambition.** This was called
     # `..._that_names_a_clip_...` and its reach is the token `clip_name`, which is
     # narrower than that subject — and a plant proved it: a module composing
     # `f"{unit.id}-" + sha256(...).hexdigest()[:8]` by hand carried the token nowhere
@@ -199,7 +199,7 @@ def test_exactly_one_module_in_the_whole_framework_truncates_a_digest():
 
 
 def test_the_truncation_arm_declares_what_its_own_scan_cannot_see():
-    # ⛔ **Ruling 208's third form, where the population is a pattern match: the
+    # ⛔ **The third form, where the population is a pattern match: the
     # instrument declares what the pattern CANNOT see.** ⚠️ `truncates_a_digest` reads
     # `<something>.hexdigest()[:N]` as one expression. It cannot see a module that
     # binds the full digest to a name and slices that name on the next line, nor one

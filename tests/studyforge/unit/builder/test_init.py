@@ -19,7 +19,7 @@ def test_states_its_contract():
 
 
 # --------------------------------------------------------------------------
-# ⭐ SF-10's acceptance, end to end
+# ⭐ The unit builder's acceptance, end to end
 # --------------------------------------------------------------------------
 
 
@@ -67,14 +67,14 @@ def test_regenerating_from_disk_produces_identical_bytes(tmp_path):
 # --------------------------------------------------------------------------
 
 
-#: ⛔ **What this sweep asserts, as rule ids** (Ruling 46). `build_unit` reads
+#: ⛔ **What this sweep asserts, as rule ids**, never directories. `build_unit` reads
 #: every archive document in a unit, so it refuses an R7 leak and a
 #: source-authoritative exercise before it can produce a section — and those
 #: are the only two properties a fixture here is declared to break.
 #:
 #: ⚠️ **Naming them gained five unit directories.** This used to say
 #: `depth1, depth2`, which dropped five corpora that build perfectly and break
-#: something else entirely. ⛔ `by directory name` is not a reason (`FND-09`).
+#: something else entirely. ⛔ `by directory name` is not a reason.
 ASSERTED = {"personal-data", "exercise-trust"}
 
 
@@ -92,7 +92,7 @@ def fixture_units():
 
 
 def test_every_unit_in_every_entitled_fixture_builds():
-    # ⛔ Ruling 48: a glob that matched nothing would satisfy every assertion in
+    # ⛔ The denominator: a glob that matched nothing would satisfy every assertion in
     # the loop, so the containers are counted against the declaration and the
     # units against a pinned floor.
     units = fixture_units()

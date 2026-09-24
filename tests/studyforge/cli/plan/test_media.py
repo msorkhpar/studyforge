@@ -405,7 +405,7 @@ def weighing(*sizes: int) -> MediaFootprint:
 
 
 def test_W287_no_footprint_sentence_names_a_task_as_the_owner_of_the_measurement():
-    # ⛔ `INT-14/4`: the sentence named a closed task as future on a corpus with
+    # ⛔ Found on the first corpus: the sentence named a closed task as future on a corpus with
     # clips on disk. Every form the line can take is read, not only the constant.
     policy = MediaPolicy("auto", 50, 25)
     projections = (

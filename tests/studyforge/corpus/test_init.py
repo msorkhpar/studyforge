@@ -4,7 +4,7 @@
 ⛔ It was never this package's to hold: its population is now DERIVED from every
 package that exports a tuple, so it reaches `generate`, `progress` and `serve`
 as well, and a tree-wide instrument living in one package's mirror is how it
-came to range over `corpus.*` alone (`W219`).
+came to range over `corpus.*` alone.
 """
 
 from __future__ import annotations

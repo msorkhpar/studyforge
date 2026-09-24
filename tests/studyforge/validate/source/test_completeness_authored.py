@@ -134,7 +134,7 @@ def short_reads(report) -> list:
 def test_an_archive_with_authored_practices_beside_the_sources_own_validates_clean(tmp_path):
     # ⭐ WHAT SETTLES IT 1. Before `W444` this archive read two short-reads, one
     # per unit that received an authored practice, each over by the layout's
-    # three headings — `ISO-21/1`'s reading on the first corpus.
+    # three headings — as read on the first corpus.
     root, _ = authored_corpus(tmp_path / "c")
     report = validate(root)
     assert report.findings == (), report.lines()

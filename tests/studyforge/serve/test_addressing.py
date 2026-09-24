@@ -1,7 +1,7 @@
 """Mirror of `src/studyforge/serve/addressing.py` (R12).
 
-⭐ **E05 SF-19b: "N-segment addresses route correctly at depth 1 and depth 2."** Every
-unit of both FND-04 fixtures is located under its own corpus at that corpus's depth,
+⭐ **"N-segment addresses route correctly at depth 1 and depth 2."** Every
+unit of both shared fixtures is located under its own corpus at that corpus's depth,
 and refused under the other corpus, whose depth it does not have.
 """
 

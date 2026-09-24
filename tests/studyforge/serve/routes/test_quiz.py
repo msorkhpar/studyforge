@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/serve/routes/quiz.py` (R12) — the server grades a quiz (`W451`).
+"""Mirror of `src/studyforge/serve/routes/quiz.py` (R12) — the server grades a quiz.
 
 ⭐ **Every reading is taken over a real connection to `studyforge serve`'s own
 instance** (`quizzing.served_instance`), on the prose fixture with a quiz added,

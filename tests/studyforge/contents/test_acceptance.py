@@ -106,7 +106,7 @@ def a_bar(built, key) -> Links:
 
     ⚠️ **This mapping is the seam, and it is one line.** `contents` returns
     plain strings so it need not import `render`; the renderer's caller turns
-    them into its own type. ⛔ Which caller does it is `SF-12`/`SF-14`'s row —
+    them into its own type. ⛔ Which caller does it is the renderer's side —
     see `SF-13/1`.
     """
     return Links(**{field: Link(**slot) for field, slot in links(built, key).items()})
@@ -125,7 +125,7 @@ def test_the_contents_agree_with_the_placement_the_renderer_was_given():
 
 
 def test_a_unit_with_a_neighbour_renders_the_between_units_bar():
-    # ⛔ The clause the PO added at round 22. Until this task there was no
+    # ⛔ The between-units clause. Until this task there was no
     # reading order, so `between_units` returned `''` for every caller in
     # `src/` and the symptom was neither legible nor illegible — it was absent.
     case = depth1_unit_02()
@@ -222,7 +222,7 @@ def test_every_slot_the_contents_compute_reaches_the_page_under_both_profiles(co
     # ⛔ **`W57`'s acceptance clause, and it is watched to fail first**: before
     # the fix `depth2` computed **13** slots and rendered **7**, while `depth1`
     # computed **7** and rendered **7** — which is why the clause was met under
-    # `tree` and the hole sat beside it (Ruling 56).
+    # `tree` and the hole sat beside it.
     #
     # ⭐ Ruling 128 — the population is reported, never reduced to a scalar that
     # agrees with itself: the failure names the page and the slot.
@@ -249,7 +249,7 @@ def test_a_corpus_of_one_unit_still_points_at_its_index():
 
 
 # --------------------------------------------------------------------------
-# W32 — the mixed-form contents fixture, re-routed here at PO round 25
+# W32 — the mixed-form contents fixture
 # --------------------------------------------------------------------------
 
 

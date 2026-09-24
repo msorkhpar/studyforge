@@ -1,7 +1,8 @@
 """Mirror of `src/studyforge/serve/routes/state.py` (R12).
 
-⭐ **E05 SF-19b**: *"State responses never cache"*; *"N-segment addresses route correctly
-at depth 1 and depth 2"*; *"state is derived from the filesystem, never from a record of
+⭐ **The serving task's acceptance**: *"State responses never cache"*; *"N-segment
+addresses route correctly at depth 1 and depth 2"*; *"state is derived from the filesystem, never
+from a record of
 intent — a claim that something exists with nothing on disk shows up as the
 disagreement it is"*. ⭐ **E05 SF-21**: a read mark is never a pass, and a run never
 completes a practice.

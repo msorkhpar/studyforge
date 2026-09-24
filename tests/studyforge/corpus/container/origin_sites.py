@@ -33,7 +33,7 @@ access** — it cannot read a field — so declaring every one would be an exemp
 list that grows with every fixture and stops being believed (the argument
 `tools/quality/mirror.py` makes for its own one-way rule).
 
-⛔ **Stated survivors, each planted in the test** (Ruling 56): a key passed in as
+⛔ **Stated survivors, each planted in the test**: a key passed in as
 a parameter, a whole document unpacked with `**`, a key found by iterating
 `.items()`, `operator.itemgetter`, an f-string key built from a formatted
 constant, and a value transcribed under ANOTHER key and read back from there.

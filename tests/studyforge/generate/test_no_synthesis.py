@@ -3,7 +3,7 @@
 Mirrors no source module: it is about what `src/studyforge/generate/` may reach,
 which is a boundary rather than a function. ⭐ `W202`'s answer 3 settles it —
 *a build never synthesises and never probes the service; the narration record and
-its clips are INPUTS, like the archive* — and `SF-42`'s `studyforge narrate` is
+its clips are INPUTS, like the archive* — and `studyforge narrate` is
 the verb that produces them.
 
 ⛔ **The Acceptance says ASSERTED, and that word is the whole of this file.**
@@ -64,7 +64,7 @@ def uncommented(source: str) -> str:
 
 
 def test_the_population_this_sweep_runs_over_is_inhabited():
-    # ⛔ Ruling 48: a derived-set assertion asserts inhabitation first, or it is
+    # ⛔ A derived-set assertion asserts inhabitation first, or it is
     # born vacuous. A package that moved would otherwise make every check below
     # pass over nothing.
     assert build_modules(), f"no module found under {BUILD_PACKAGE} — did the package move?"

@@ -50,7 +50,7 @@ def test_a_second_process_waits_until_the_lock_is_released(tmp_path):
             stderr=subprocess.PIPE,
             env=child_environment(),
         )
-        # ⛔ One reader, from launch to exit (`W237`): a line handed out here is still in `rest`.
+        # ⛔ One reader, from launch to exit: a line handed out here is still in `rest`.
         output = ProcessOutput(child)
         assert output.line(timeout=30) == "ready\n"
         with pytest.raises(subprocess.TimeoutExpired):

@@ -122,7 +122,7 @@ def test_the_registry_is_sorted_because_a_plan_prints_it():
 
 
 def test_the_registry_and_the_manifests_accepted_names_are_the_same_set():
-    # ⚠️ The seam SF-02 owns the other half of, drawn deliberately: the
+    # ⚠️ The seam the manifest owns the other half of, drawn deliberately: the
     # manifest lists the names a corpus MAY declare, this registry holds what
     # each one does. Different questions — a manifest must be able to refuse
     # an unknown name without importing a placement engine — but they must not

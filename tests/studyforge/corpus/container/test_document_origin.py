@@ -1,7 +1,7 @@
 """`container_api: 2` — an `origin` that names a region (SF-36, Ruling 92).
 
 ⛔ **A sibling of `test_document.py` rather than an addition to it.** That
-module is 598 lines against R11's 600 test ceiling and `W40` splits it; a row
+module is 598 lines against R11's 600 test ceiling and is queued to be split; a row
 that needed one more line there would either break the ceiling or wait for a
 queued task. ⚠️ The two assertions it already carried about the version set
 were **corrected in place**, at the same line count, because they built their

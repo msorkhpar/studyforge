@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/cli/narrate/stage.py` (R12) — `SF-42`'s Acceptance, service-free.
+"""Mirror of `src/studyforge/cli/narrate/stage.py` (R12) — the verb's Acceptance, service-free.
 
 ⛔ **Every clause is asserted over the DISK or the TRANSPORT.** The recording
 transport's `submitted` is the population *"requests nothing"* is about; the

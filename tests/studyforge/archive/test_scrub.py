@@ -339,7 +339,7 @@ def test_the_pattern_set_is_exactly_the_four_environmental_shapes():
     # account ran the build*. ⚠️ This test said **three** and its comment said
     # "a fourth entry needs that argument made for it" — and the argument was
     # made by Ruling 47, from the other side: the repository hygiene check had
-    # swept `<host>.local` since FND-01 and this gate never did. ⛔ A machine
+    # swept `<host>.local` from the start and this gate never did. ⛔ A machine
     # name is personal data in an archive document exactly as much as in a
     # source file, so the omission was drift rather than a decision. A fifth
     # entry still needs the argument made for it.
@@ -523,14 +523,14 @@ def test_every_other_fixture_document_passes_the_gate():
     # the gate refuses rather than rewrites and the refused string looks
     # exactly like one. This sweeps every committed JSON document except the
     # one directory that is *meant* to fail.
-    # ⭐ Ruling 46: `personal-data` is the rule this sweep asserts, named as a
+    # ⭐ `personal-data` is the rule this sweep asserts, named as a
     # rule id rather than as the directory it happens to live in — so the day a
     # second corpus declares R7 it is excluded without anybody editing this.
     swept = 0
     for where, path in fixture_paths(asserting={"personal-data"}, within=None):
         assert_clean(json.loads(path.read_text(encoding="utf-8")), where)
         swept += 1
-    # ⛔ Ruling 48: `swept > 0` passes on a sweep that read one file of forty.
+    # ⛔ The denominator: `swept > 0` passes on a sweep that read one file of forty.
     assert swept == coverage(asserting={"personal-data"}, within=None).swept
 
 

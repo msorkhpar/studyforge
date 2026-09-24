@@ -4,7 +4,7 @@
 from). ⚠️ **Two inputs here are NOT captures, and each says so where it is
 built:** a SPLICE, where a real program's lines are placed where surefire
 prints a test's output, and the compiler plugin's SHAPE, which exists because
-no real Maven compile error could be captured here (`SF-29/1`). The real
+no real Maven compile error could be captured here. The real
 readings of both are `test_quiet_image.py`'s.
 
 ⭐ **Each test pulls one of two ways, because the filter can fail in either
@@ -80,7 +80,7 @@ def spliced() -> list[str]:
     return [*MAVEN_PASS[:at], *JVM_TRACE, *MAVEN_PASS[at:]]
 
 
-#: ⚠️ The compiler plugin's SHAPE, NOT a capture (`SF-29/1`): its `[ERROR]` line
+#: ⚠️ The compiler plugin's SHAPE, NOT a capture: its `[ERROR]` line
 #: and the unprefixed continuation lines it prints beneath it. The rules keep it
 #: whatever the exact wording is. `test_quiet_image.py` reads the real one.
 COMPILER_PLUGIN_SHAPE = (

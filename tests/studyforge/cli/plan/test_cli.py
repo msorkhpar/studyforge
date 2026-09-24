@@ -101,7 +101,7 @@ def test_two_runs_of_one_corpus_agree_byte_for_byte(name):
 
 def test_the_goldens_are_one_per_valid_corpus_and_exactly_what_is_on_disk():
     # ⚠️ The name used to say "two". It is read from `VALID` and has been three
-    # since `W95`, and a test name that states a count states it in the one
+    # since a third valid corpus landed, and a test name that states a count states it in the one
     # place nothing checks.
     on_disk = sorted(p.name for p in GOLDEN.iterdir())
     assert on_disk == sorted(f"{name}.plan.txt" for name in VALID)

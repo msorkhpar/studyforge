@@ -249,7 +249,7 @@ def test_a_second_process_writing_during_an_update_loses_nothing(tmp_path):
             stderr=subprocess.PIPE,
             env=child_environment(),
         )
-        # ⛔ One reader, from launch to exit (`W237`): a line handed out here is still in `rest`.
+        # ⛔ One reader, from launch to exit: a line handed out here is still in `rest`.
         output = ProcessOutput(child)
         assert output.line(timeout=30) == "ready\n"
         try:

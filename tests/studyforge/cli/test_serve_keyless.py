@@ -1,4 +1,4 @@
-"""`W452`: the serving process never hands out a quiz's key, in either form of `serve`.
+"""The serving process never hands out a quiz's key, in either form of `serve`.
 
 ⛔ **The user's ruling (2026-09-23): a quiz's correct answer resides on the SERVER side.**
 What the site serves never carries the key or an option's sentence, except the grading
@@ -221,7 +221,7 @@ CASES = '{"cases": [{"input": [2, 3], "expected": 5, "correct": true}]}\n'
 
 
 def test_a_code_practice_asset_with_a_correct_field_and_no_quiz_id_is_served(tmp_path) -> None:
-    """⛔ Register review of `W452`: the key's structure is withheld only beside a question
+    """⛔ The key's structure is withheld only beside a question
     id of a quiz this instance serves. A code practice's JSON carrying `"correct": true`
     is that practice's data, and a `404` there would be a broken lesson nobody explains."""
     shape = layout(tmp_path / "cases")

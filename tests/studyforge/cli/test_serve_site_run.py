@@ -70,7 +70,7 @@ def test_the_site_form_registers_run_as_the_one_writer(corpus):
         version = fetch(server, "/api/v1")
         index = fetch(server, "/api/v1/run/")
     assert run.NAMESPACE in server.namespaces
-    # ⭐ `quiz` writes too since `W451`: grading is a POST, never a prefetch.
+    # ⭐ `quiz` writes too, since the server grades: grading is a POST, never a prefetch.
     assert server.writers == frozenset({run.NAMESPACE, quiz.NAMESPACE})
     assert version[0] == 200 and run.NAMESPACE.encode() in version[2]
     assert index[0] == 200

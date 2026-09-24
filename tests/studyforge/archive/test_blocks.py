@@ -8,7 +8,7 @@ the check does not need to know that, because the rule is about *deriving from
 one source of truth*, not about *not spelling*.
 
 ⚠️ **The allow-list is empty and should stay that way.** It would have grown
-by one entry the day SF-11 landed a class-name table and by three more later,
+by one entry the day the page assets landed a class-name table and by three more later,
 and a path allow-list is a list of files nobody re-examines.
 """
 
@@ -133,7 +133,7 @@ VOCABULARY_MODULE = "studyforge.archive.blocks"
 #: about being on a list: a module that takes the vocabulary from its owner may
 #: spell as much of it as it likes, because what it spells is checked against
 #: the source of truth. A path allow-list would have grown by one entry the day
-#: SF-11 landed and by three more later — see this module's docstring.
+#: the page assets landed and by three more later — see this module's docstring.
 SPELLERS: tuple[str, ...] = ()
 
 
@@ -277,7 +277,7 @@ def test_walk_keys_off_the_container_list_and_not_off_a_name():
 
 
 def test_the_counts_in_every_fixture_agree_with_this_module():
-    # ⭐ Two properties, so two rule ids (Ruling 46): the counts object's own
+    # ⭐ Two properties, so two rule ids: the counts object's own
     # key tuple is an ordering claim, and its values are a counting claim.
     # ⚠️ No fixture declares `key-order` today; naming it costs nothing and is
     # what makes the day one arrives a decision rather than a surprise.
@@ -286,7 +286,7 @@ def test_the_counts_in_every_fixture_agree_with_this_module():
         assert tuple(document["counts"]) == EXPECTED_COUNT_KEYS, where
         assert document["counts"] == counts_of(document["blocks"]), where
         seen += 1
-    # ⛔ Ruling 48's denominator, not `> 0`: `seen > 0` passes on a sweep that
+    # ⛔ The sweep's denominator, not `> 0`: `seen > 0` passes on a sweep that
     # read one document of twenty, and passes identically the day an exclusion
     # is widened by mistake. `coverage` states what this sweep was entitled to.
     assert seen == coverage(asserting={"counts", "key-order"}).swept

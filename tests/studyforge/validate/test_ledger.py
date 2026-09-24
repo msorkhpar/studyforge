@@ -1,12 +1,13 @@
 """Mirror of `src/studyforge/validate/ledger.py` (R12) — a ledger that lost a page is refused.
 
-**What it asserts.** `W456`'s second clause: a corpus whose committed ledger
-no longer accounts for a page it carries — a unit's page the ledger never read,
+**What it asserts.** An authoring pass never drops what it did not read: a corpus
+whose committed ledger no longer accounts for a page it carries — a unit's page the ledger never
+read,
 a fence on it with no row, a declared grader with no row, or a row with no
 ending — is a finding, naming the page. ⭐ **Its negative control** is the same
 corpus, authored container by container, validating clean.
 
-⛔ **The clobbered ledger is made the way `ISO-M10/11` made it**, never typed:
+⛔ **The clobbered ledger is made the way the first corpus made it**, never typed:
 the ledger is removed — which the pass's own refusal used to instruct — and one
 container is passed alone, so the ledger holds that container's rows and
 nothing else.
@@ -121,7 +122,7 @@ def test_a_corpus_with_no_ledger_is_not_this_check_s(tmp_path):
 
 
 def test_a_ledger_clobbered_by_a_one_container_pass_is_refused_naming_each_lost_page(authored):
-    """⛔ `ISO-M10/11`: the ledger removed, one container passed alone."""
+    """⛔ As on the first corpus: the ledger removed, one container passed alone."""
     root, pages = authored
     (root / LEDGER_PATH).unlink()
     a_pass(root, pages, "notes")

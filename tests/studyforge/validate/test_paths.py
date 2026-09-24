@@ -100,7 +100,7 @@ def test_two_container_pages_may_claim_one_path(tmp_path):
 
 
 def test_titles_that_slugify_alike_produce_one_name(tmp_path):
-    # ⭐ **Round 16, Finding 8 — with its example corrected by measurement.**
+    # ⭐ **A review finding — with its example corrected by measurement.**
     # E10 says `slugify` *deletes* accented characters, so `Café` and `Cafe`
     # are one slug. ⛔ Measured 2026-09-09 in the pinned image, that is **not
     # what it does**: an accent is a non-alphanumeric, so it collapses to a
@@ -346,7 +346,7 @@ def _two_containers_past_the_reader(tmp_path, *, origin: str) -> Walk:
 
 
 def test_a_home_rooted_origin_is_refused_at_the_reader_and_reaches_no_finding(tmp_path):
-    # ⭐ **The composition, end to end** (Ruling 42). `_collision` formats the
+    # ⭐ **The composition, end to end.** `_collision` formats the
     # placed path with `!r`, and under `sibling` the placed path *is* the
     # container's `origin` with a filename on the end. That line is safe only
     # because `corpus.container.fields.optional_path` refused this value two
@@ -392,7 +392,8 @@ def test_and_the_same_origin_past_that_reader_is_refused_by_placement_unquoted(t
 
 
 def test_and_the_collision_line_still_quotes_a_path_it_is_given(tmp_path):
-    # ⭐ **Ruling 11, in the only direction left.** Without this the pair above
+    # ⭐ **Watch it fail without the mechanism, in the one direction left.** Without
+    # this the pair above
     # could both pass on a corpus that never collides at all, or a profile that
     # ignores `origin`, and would be pinning nothing. The same two containers
     # with a *legal* origin do collide, and the message does reproduce the

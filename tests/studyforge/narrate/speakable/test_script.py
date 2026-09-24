@@ -339,7 +339,7 @@ ADMITTED_SHAPES = [row for row in personal_data_shapes() if row["gate"] == "pass
 
 
 def test_both_halves_of_the_shared_shape_vocabulary_are_inhabited():
-    # ⛔ Ruling 124/191: the populations, asserted before either property.
+    # ⛔ The populations, asserted before either property.
     assert len(REFUSED_SHAPES) >= 4, REFUSED_SHAPES
     assert len(ADMITTED_SHAPES) >= 4, ADMITTED_SHAPES
     assert len(CARRIERS) == 10

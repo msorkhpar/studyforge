@@ -18,7 +18,8 @@ def test_the_public_surface_is_what_a_consumer_needs_and_no_more():
 
 
 def test_the_three_consumers_can_reach_what_they_were_promised():
-    # SK-07 renders ignore rules and the edits; OPS-05 asserts against paths;
+    # The buildserve skill renders ignore rules and the edits; the generated check
+    # asserts against paths;
     # a person reads the lines. All three arrive through this module.
     for name in ("plan_for", "Plan", "main"):
         assert name in plan.__all__

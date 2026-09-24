@@ -155,7 +155,7 @@ def test_a_container_page_lands_in_the_declared_subdirectory_beside_its_source_f
 
 def test_the_worked_example_from_the_spec_is_reproduced_exactly():
     # ⭐ §5's own listing, once the corpus records its numbering as data. This
-    # is the answer SF-31's deferred golden was waiting on: the label is the
+    # is the answer the deferred placement golden was waiting on: the label is the
     # seam, and with it the shape matches the spec character for character.
     where = SIBLING.unit(ADDRESS, 7, TITLE, origin=ORIGIN, label="4.4.1")
     stem = "basics.16-streams-api.4.4.1-introduction-to-the-streams-api"

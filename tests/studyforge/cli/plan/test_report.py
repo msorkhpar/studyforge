@@ -107,7 +107,7 @@ def test_the_edit_lines_carry_the_anchor_the_addition_the_reason_and_the_undo():
 def test_the_undo_line_reproduces_the_line_being_removed():
     # ⚠️ Composed from `Reversal`'s fields, because its own `__str__` renders
     # the content as *"a str"* — right for a refusal, useless in a plan.
-    # Finding `SF-31/1`; asserted here so a later fix cannot silently
+    # Asserted here so a later fix cannot silently
     # re-introduce the unreadable form.
     assert "a str" not in edit_lines(EDIT)[3]
 

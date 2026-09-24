@@ -1,12 +1,12 @@
 """`W109`: `origin` has ONE reader, `fields.optional_origin`, as a standing tree property.
 
-⭐ **The row's settlement.** `W95/3` found a test helper that took `origin` raw
-out of a document and handed `sibling` a dict the moment a fixture used Ruling
-92's region shape. The fix went through the one reader; this module makes that a
-property of the tree instead of a reading at one ref.
+⭐ **The settlement.** A test helper once took `origin` raw out of a document and
+handed `sibling` a dict the moment a fixture used Ruling 92's region shape. The fix
+went through the one reader; this module makes that a property of the tree instead of a reading at
+one ref.
 
-⛔ **A guard that cannot fail is `W37`'s class**, so the synthesised plants below
-are the inhabitation reading Ruling 191 asks for: each shape of second reader is
+⛔ **A guard that cannot fail proves nothing**, so the synthesised plants below
+are the inhabitation reading: each shape of second reader is
 planted into a `tmp_path` tree and must be refused, each permitted shape must be
 accepted (the positive row), and each stated survivor must survive, so the
 instrument's limit is a reading and not a belief.
@@ -33,7 +33,7 @@ from tests.studyforge.corpus.container.origin_sites import (
 from tests.support import repository_root
 
 #: The sites the claim is about, which the sweep must have FOUND: the parser's own
-#: hand-off and `W95/3`'s repaired helper (Ruling 132, the population first).
+#: hand-off and the repaired test helper (the population first).
 ONE_READER_REACHED = (
     "src/studyforge/corpus/container/document.py::_unit",
     "tests/studyforge/corpus/placement/test_corpora.py::placed",
@@ -149,7 +149,7 @@ def test_a_parser_declared_outside_the_container_package_is_not_a_parser(tmp_pat
     assert len(findings(found, {"tests/planted.py::parse": (PARSER, "planted")})) == 1
 
 
-# --- the positive row (Ruling 191(c)): what the instrument must ACCEPT -------------
+# --- the positive row: what the instrument must ACCEPT ----------------------------
 
 
 @pytest.mark.parametrize(
@@ -186,7 +186,7 @@ def test_the_parser_may_read_inside_its_own_package(tmp_path):
     assert findings(found, {f"{where}::from_document": (PARSER, "planted")}) == []
 
 
-# --- what is not an access, and the stated survivors (Ruling 56) ---------------------
+# --- what is not an access, and the stated survivors ---------------------------------
 
 NOT_ACCESSES = {
     "a dict display": 'unit = {"n": 1, "origin": "a.md"}\n',

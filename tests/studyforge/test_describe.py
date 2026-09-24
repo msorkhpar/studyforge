@@ -89,7 +89,7 @@ def test_an_empty_string_is_named_rather_than_called_a_str():
 
 
 def test_the_check_is_not_vacuous():
-    # ⭐ Ruling 11: watch the assertion fail without the mechanism. A describer
+    # ⭐ Watch the assertion fail without the mechanism. A describer
     # that returned `repr(value)` would pass every "names the type" test above
     # for `None` and for integers, and fail only here.
     assert repr(POISON) != describe(POISON)
@@ -160,7 +160,7 @@ def test_it_answers_a_different_question_from_describe():
 
 
 def test_no_module_carries_a_second_copy_of_this_rule():
-    # ⛔ **Finding 26, closed against itself.** SF-23 filed "four spellings of
+    # ⛔ **Finding 26, closed against itself.** The exercise package filed "four spellings of
     # one discipline, do not unify mid-flight" and then added a fifth and a
     # sixth — `_named`, verbatim, in two modules of the same commit. W1 landed
     # `describe.py` in the meantime, so the rebase is where it could be fixed,

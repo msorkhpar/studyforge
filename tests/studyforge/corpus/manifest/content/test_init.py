@@ -70,7 +70,7 @@ def test_the_seam_holds_and_the_model_never_reads_the_reader():
 
 
 def test_the_guard_above_would_notice(tmp_path):
-    # ⛔ Ruling 11: watch it pass without the mechanism. Nothing in the real
+    # ⛔ Watch it pass without the mechanism. Nothing in the real
     # package is in the forbidden shape, so the control builds one — and it is
     # built in the spelling the clause did **not** picture, a relative import.
     planted = tmp_path / "policy.py"
@@ -118,7 +118,7 @@ def routes_to_the_escaping_phrase() -> list[str]:
 
 
 def test_the_package_neither_defines_nor_routes_to_the_escaping_phrase():
-    # ⛔ Ruling 135, and it replaces `W40`'s
+    # ⛔ Ruling 135, and it replaces the former
     # `test_the_one_private_name_edits_already_takes_is_still_reachable`.
     # That test pinned a bridge; the bridge is gone, so a test asserting it
     # still stands would be asserting the defect. ⭐ What is worth pinning is
@@ -140,7 +140,7 @@ def test_the_package_neither_defines_nor_routes_to_the_escaping_phrase():
 
 
 def test_the_route_check_above_would_notice(monkeypatch):
-    # ⛔ Ruling 123, three readings, and Ruling 140 on the plant's shape: the
+    # ⛔ Three readings, and the plant takes a shape the clause did not picture: the
     # clause pictured a name `_escape`, so the plant is the SAME function
     # bound under a different one — the redundant-alias bridge, renamed.
     monkeypatch.setattr(content, "_e", errors._escape, raising=False)

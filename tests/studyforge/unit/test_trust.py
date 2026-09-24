@@ -15,7 +15,7 @@ from studyforge.unit import (
 
 
 def test_a_generated_grader_can_never_be_recorded_as_authoritative():
-    # ⛔ SF-09's acceptance, and R5's whole point: presenting a check written
+    # ⛔ The unit content's acceptance, and R5's whole point: presenting a check written
     # here as the source's grader is a claim nobody notices is false until a
     # reader trusts a green tick that was never earned.
     with pytest.raises(ContentError, match="may be marked authoritative"):

@@ -71,7 +71,7 @@ def leak(**overrides) -> str:
 
 
 def test_the_overlay_is_versioned_and_the_key_is_content_api():
-    # ⭐ Minted by SF-09 because R9's enumeration was written from the
+    # ⭐ Minted because R9's enumeration was written from the
     # generating side and this is the one document the framework only reads.
     # ⛔ R21: silence was not an option, so this is a decision.
     assert "content_api" in OVERLAY_KEYS
@@ -184,7 +184,7 @@ def test_an_explicit_key_can_rescue_two_sections_of_one_kind():
 
 
 def test_section_keys_are_unique_within_a_multi_variant_unit():
-    # SF-09's acceptance, at the shape a multi-variant corpus produces.
+    # The unit content's acceptance, at the shape a multi-variant corpus produces.
     sections = [
         {"kind": "shared", "heading": "S", "blocks": [{"type": "para", "text": "a"}]},
         {"kind": "lang", "lang": "java", "heading": "J", "blocks": []},

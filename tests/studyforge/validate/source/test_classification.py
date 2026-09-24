@@ -6,7 +6,7 @@ itself calls generated output — and about the one degradation this check is
 allowed: saying out loud that it could not read the declaration.
 
 ⚠️ The imports come through the package surface, not through the submodule,
-except where a test asserts what the submodule itself carries (`W280`).
+except where a test asserts what the submodule itself carries.
 """
 
 import json
@@ -365,7 +365,7 @@ def test_NO_origin_on_disk_is_origin_missing_s_answer_and_never_unread(tmp_path)
 
 
 def test_W280_every_name_importers_read_from_this_module_still_imports_from_it():
-    # ⛔ `W280` clause 1: the split moved the enumeration out, and an importer that named a
+    # ⛔ The split's first clause: the split moved the enumeration out, and an importer that named a
     # name from `classification` before it still reads the SAME object from there.
     moved = ("IGNORE_TIMEOUT", "REPOSITORY_STORE", "SKIP_DIRS", "Scan", "repository_ignores")
     for name in (*moved, "source_files"):

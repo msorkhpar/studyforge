@@ -108,7 +108,7 @@ def test_an_exclusion_still_wins_over_the_third_state():
 
 
 def test_a_glob_matches_the_whole_path_and_never_only_its_tail():
-    # ⛔ **Found by a mutant surviving, not by reading** (`W40/3`). `classify`
+    # ⛔ **Found by a mutant surviving, not by reading**. `classify`
     # uses `full_match`; `PurePosixPath.match` is anchored at the *right*, so
     # under it `deep/src/1.md` matches `src/*.md` and a file one directory
     # above the declared tree is read in without anybody declaring it.
@@ -135,8 +135,8 @@ def test_the_three_states_spell_themselves_the_way_a_manifest_reads():
     # identity, measured across `src/` and `tools/` at `ddddd05`. ⭐ So this
     # pins a *vocabulary*, not a behaviour: the hyphen in `not-material` is a
     # decision, and `unclassified`/`contested` are the same two strings
-    # `validate.source.classification` keeps as `RULE_*` constants of its own
-    # (`W40/4`). A mutant on any of them survived the whole suite.
+    # `validate.source.classification` keeps as `RULE_*` constants of its own.
+    # A mutant on any of them survived the whole suite.
     assert [state.value for state in Classification] == [
         "included",
         "excluded",

@@ -15,8 +15,8 @@ from tests.support import assert_package_contract, repository_root
 PACKAGE = "studyforge.validate"
 
 #: ⛔ **Names another package takes out of a `validate` MODULE that are NOT on
-#: `studyforge.validate.__all__`** — Ruling 101's producer half. ⭐ **EMPTY since
-#: `W299`, and the emptiness is the claim:** every such name is now exported, so a
+#: `studyforge.validate.__all__`** — Ruling 101's producer half. ⭐ **EMPTY, and
+#: the emptiness is the claim:** every such name is now exported, so a
 #: name that leaves this surface REAPPEARS here and reds.
 #:
 #: ⚠️ **It stays as a declared set rather than being folded into a `== set()`**, so
@@ -33,7 +33,7 @@ OFF_SURFACE: set[tuple[str, str]] = set()
 #: ⛔ **It is the half that does not depend on a CONSUMER.** The sweep below holds a
 #: name on this surface only while some package still takes it from a module here;
 #: fix those spellings to the package form and the sweep goes quiet about them.
-#: ⭐ This pin reds either way, so `W299`'s five cannot leave silently.
+#: ⭐ This pin reds either way, so the five shadowing names cannot leave silently.
 PUBLIC_SURFACE = frozenset(
     {
         "CHECKS",
@@ -97,14 +97,14 @@ def test_states_its_contract():
 
 def test_the_public_surface_is_exactly_what_the_contract_says():
     # ⛔ The pin that does not depend on a consumer's import SPELLING, so the
-    # five names `W299` put here cannot leave while the sweep below stays quiet.
+    # five shadowing names exported here cannot leave while the sweep below stays quiet.
     assert set(validate.__all__) == PUBLIC_SURFACE
     missing = sorted(name for name in PUBLIC_SURFACE if not hasattr(validate, name))
     assert missing == [], "exported but absent: " + ", ".join(missing)
 
 
 def test_the_headings_export_shadows_its_module_without_hiding_it():
-    # ⛔ `W299`'s ruling, ASSERTED rather than argued. The surface exports the
+    # ⛔ The shadowing rule, ASSERTED rather than argued. The surface exports the
     # CALLABLE; the module keeps its name in `sys.modules` and every sibling it
     # had, so shadowing costs a reader nothing they could previously reach.
     assert inspect.isfunction(validate.headings), "the surface must export the callable"
@@ -120,7 +120,7 @@ def test_the_shadowing_binds_the_callable_in_the_as_form_too():
     # a.b.c as x` binds the PACKAGE ATTRIBUTE, which is the function — so the
     # `as` form does NOT hand back the module. ⛔ This mirror's own first draft
     # used it and broke; the assertion is what stops the next reader repeating it.
-    # ⭐ It is not a cost `W299` introduced: every shadowing package in `src/`
+    # ⭐ It is not a cost the export introduced: every shadowing package in `src/`
     # already behaves this way, which is half the ground for the ruling.
     import studyforge.validate.headings as bound
 

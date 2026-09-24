@@ -178,7 +178,7 @@ def missing_origins(root, *, units=(1,), sources=None, manifest=None):
 
 
 def test_a_ONE_unit_archive_whose_origin_is_missing_BESIDE_a_present_source_is_RED(tmp_path):
-    # ⛔ Clause 4, the RED direction: ISO round 9's surviving plant, built for the test.
+    # ⛔ Clause 4, the RED direction: a plant that survived on the first corpus, built for the test.
     root = corpora.one_unit(tmp_path / "c", origin=MISSING)
     (root / "src").mkdir()
     (root / "src" / "one.md").write_text(corpora.SOURCE, encoding="utf-8")
