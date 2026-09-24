@@ -32075,3 +32075,53 @@ clean**, so nothing a reader or an office runs could see it.
 ⭐ **Surface:** `validate`, `narrate/playable.py`, possibly `render/page/narration.py`.
 
 [the mint](#po-round-177)
+
+
+## PO round 180
+
+⭐ **`W460` DONE — narration is optional, the user's ruling of 2026-09-23** — merged `6ca2c94c`. `corpus.json`'s `narration` records the owner's answer (`corpus_api` 5), the onboarding and build-and-serve skills ask it, and build, serve and validate all ask one predicate, `narration_on`, which a run's flag overrides. ⭐ **Register reading on an export of the ISO corpus:** narration on, 38 narrated pages; off by the flag and off by `corpus.json`, **0 players and 0 clips, the two sites identical**. ⭐ **Plant:** a run's override ignored → RED. ⭐ **Deployed:** `:8770` restarted on `6ca2c94c`; ISO records no answer, so it still narrates, and a clip serves 200.
+
+⚠️ **Carried:** `W460/2` (`W350/1`'s version gap for `runtimes` and `media.max_files` in `promote`), `W460/3`, `W460/4` in the handoff; `W457/1` — a bare `build` still builds a stale corpus silently.
+
+⭐ **`REL-10` DISPATCHED on `wt/dev6`** — the process leaves the main line in one commit, onto a local `archive/process` branch. ⛔ **The office delivers the removal commit and the register's commands; the register cuts the branch and lands it**, and the office proves how the register merges once `tools/` has left.
+
+### ⚠️ In flight
+
+⭐ **`REL-10`**, **`REL-13`**; ⭐ **`ISO-32`** on the corpus.
+
+### W460 — Narration is optional: the skills ask at capture and at serve, and generated clips can go unserved (user ruling)
+
+⛔ **USER RULING, 2026-09-23:** *"I need some changes regarding the narrition. First of
+all it should be optional and while serving or even while caputring the matterial skills
+should ask if user is interested in the narrition or not. Somebody might wants to just
+cover the course wihtout voices as mentioned the voice might be cgenerated but still not
+serving them would be an option"*.
+
+⭐ **What already holds:** a corpus with NO narration record is complete at the reading
+floor and shows no player (C5, `render/page/narration.py`'s first state). ⛔ **What does
+not:** no skill ASKS, and a corpus whose clips exist always serves them — there is no way
+to take a course without voices once they were generated.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **At capture, the onboarding skill ASKS** whether the author wants narration, and
+   the answer is **recorded as corpus data** (a manifest field or the skill's committed
+   record — the office argues which), so every later stage reads one decision.
+2. ⭐ **At build and serve, the build-and-serve skill ASKS**, and `studyforge build` /
+   `studyforge serve` take an option that **leaves narration out without deleting a
+   clip** — the site then carries no player, no narration asset and no "missing" notice,
+   exactly the reading floor; ⭐ the option overrides the recorded choice for that run.
+3. ⭐ **Narration off is not a degraded state**: no page, test or `validate` finding calls
+   it short; everything else (practices, quizzes, progress, contents) is unchanged —
+   read in a real browser over a served site with clips on disk and narration off, and
+   with it on as the positive control.
+4. ⛔ **No clip, record or source file is touched** by turning narration off (R3); turning
+   it back on serves them again with no re-synthesis.
+5. ⭐ `SKILL.md` for onboarding and buildserve, the README's skill table and the
+   authoring guide say it, with the user's words; the spec is amended in place, dated.
+6. ⭐ Planted back and RED at each seam.
+
+⭐ **Surface:** the onboarding and buildserve skills, `cli` build/serve, `render`, the
+manifest or its record, the docs.
+
+[the mint](#po-round-177)
