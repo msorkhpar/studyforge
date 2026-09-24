@@ -3,7 +3,7 @@ r"""The install record: what one onboarding wrote, and which of it is a person's
 **What it does.** Renders `.studyforge/installed.json` from a file set, reads
 one back through the personal-data gate, names every generated file whose
 bytes no longer match what was written there, and refuses a regenerate that
-would take a file it does not claim (`W353`).
+would take a file it does not claim.
 
 **How you use it.**
 
@@ -16,7 +16,7 @@ file set, and `pin` for where the record lives. ⛔ Nothing source-specific
 (R1): which file is a person's is the scaffold's own `generated` flag, never a
 name this module knows.
 
-## ⛔ The one hand-written module is MARKED, and carries no digest (INT-09/1)
+## ⛔ The one hand-written module is MARKED, and carries no digest
 
 ⚠️ **Measured at a corpus:** the record filed the adapter's reading step under
 its stub's digest, and a regenerate re-recorded that digest. So the one
@@ -26,14 +26,14 @@ checked by anybody. ⭐ **The entry is now `{"where": …, "hand_written": true}
 a regenerate writes the same entry, which records nothing about the file's
 bytes, and `hand_edited` never names it.
 
-## ⛔ A generated file that is GONE is reported too (`W461`)
+## ⛔ A generated file that is GONE is reported too
 
-⚠️ **Measured at a corpus** (`ISO-32/2`): the reader document was moved to
+⚠️ **Measured at a corpus**: the reader document was moved to
 another directory by hand, and `hand_edited` read `[]`, because an absent file
 has no bytes to differ. ⭐ **Moving or deleting a generated file is an edit to
 it**, so each one missing from where the record puts it is reported as a
 sentence a person reads (R6), after the paths whose bytes differ. ⛔ **Except
-an ignore file that hides itself** (`W425`): it is one machine's own and never
+an ignore file that hides itself**: it is one machine's own and never
 enters a commit, so every fresh clone lacks it and that is not an edit.
 
 ⚠️ **`installed_api` moved to `2` for that reason.** A build that reads `1`
@@ -113,8 +113,8 @@ def is_yours(entry: dict) -> bool:
 def entries(root: Path) -> list[dict]:
     """Read the install record, gating it and refusing a shape this build does not speak.
 
-    ⛔ **The personal-data gate runs over the whole decoded document** (R7, W7),
-    before any field is read — the rule `corpus.json` was missing until W7, and
+    ⛔ **The personal-data gate runs over the whole decoded document** (R7),
+    before any field is read — the rule every decoded document obeys, and
     this document is a *list of paths*, which is the shape a home directory
     arrives in. ⚠️ It is the one document this skill reads back rather than
     writes, so it is the only place the gate can be owed.
@@ -176,7 +176,7 @@ def machine_local(entry: dict) -> bool:
     """Whether a recorded file is an ignore file that hides itself, so no commit carries it.
 
     ⭐ Read off the digest: the bytes placement writes for a file holding only this
-    framework's caches (`cache_ignore_lines`, `W425`). ⛔ One that also carries the
+    framework's caches (`cache_ignore_lines`). ⛔ One that also carries the
     media policy does not hide itself, is committed, and is reported when missing.
     """
     where = PurePosixPath(entry["where"])
@@ -214,7 +214,7 @@ def hand_edited(root: Path | str) -> list[str]:
 def refuse_unrecorded(root: Path, files: Sequence[Written]) -> None:
     """Refuse, by name, a regenerate that would overwrite a file the record does not claim.
 
-    ⛔ **`W353`, generalising `W345`'s ignore-file guard to every generated
+    ⛔ **The ignore-file guard, generalised to every generated
     path.** A regenerate gives an already-onboarded corpus whatever files a
     later framework added. A file already at one of those paths that the
     install record does not list as generated is not known to be the
@@ -222,16 +222,16 @@ def refuse_unrecorded(root: Path, files: Sequence[Written]) -> None:
     generated check could not then see, because the record would claim it
     from that write on.
 
-    ⚠️ **A record that predates a path is refused, never adopted** (`W353`
-    clause 2). The record lists every path its run wrote, so a path it does
+    ⚠️ **A record that predates a path is refused, never adopted** (R3).
+    The record lists every path its run wrote, so a path it does
     not list was put there by something else; adopting it would overwrite
     that file and record it in one silent step. ⭐ Moving one file aside is
     the whole cost of refusing. ⛔ No record at all claims nothing.
 
     ⭐ Not refused: the person's module (`write_files` never rewrites an
     existing one), the record itself (it never lists itself), an absent
-    path (there is nothing to lose), and ⭐ **a generated file MOVED there**
-    (`W461`): its bytes are the digest the record holds for a generated path
+    path (there is nothing to lose), and ⭐ **a generated file MOVED there**:
+    its bytes are the digest the record holds for a generated path
     that is now empty. That is the reader document moved to the place the
     manifest now gives it, and it is the framework's, byte for byte. ⛔ Only a
     MISSING entry's digest counts, so a file of yours that happens to match a

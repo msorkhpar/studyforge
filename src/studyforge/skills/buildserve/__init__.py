@@ -16,7 +16,7 @@ which is the procedure:
 
 **Depends on.** `studyforge.cli` for the verb table, reached only through this
 package's `verbs` module — the ONE seam that spells a verb's arguments, so a verb
-whose interface changes (`W230`) is one edit there — `cli.plan.plan_for` for
+whose interface changes is one edit there — `cli.plan.plan_for` for
 whether a narration record exists, `cli.narrate.report` for the no-service
 sentence, `cli.narrate.cli` for the loopback address the narration component
 publishes on, `corpus.manifest` for whether exercises are declared, and

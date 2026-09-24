@@ -155,8 +155,8 @@ one `narration off  chosen: …` line and none of the four `narration` states: t
 user chose the reading floor, and it is complete.
 
 ⭐ **A corpus that declares exercises is served with Run and Submit**: the
-`studyforge serve --site` this skill runs registers the run namespace (`W371`).
-⚠️ **What the skill reports is WHERE a run executes** (`W381`): it asks the
+`studyforge serve --site` this skill runs registers the run namespace.
+⚠️ **What the skill reports is WHERE a run executes**: it asks the
 framework's own mode probe whether the corpus's runner container is up over the
 corpus root. When it is not, `host` is printed: a reader's code runs on this host,
 without the runner's isolation. Its `remedy` line says what to do: start the runner

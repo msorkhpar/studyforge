@@ -9,7 +9,7 @@
 **Depends on.** this package's `export`, `restore` and `layout`, and `argparse`.
 
 ⛔ **`--for` is required and has no default.** Whether an archive carries progress is
-the exporter's explicit choice, never a default that leaks (E11 § SK-06, R7).
+the exporter's explicit choice, never a default that leaks (R7).
 """
 
 from __future__ import annotations
@@ -20,7 +20,7 @@ from studyforge.skills.personalarchive.export import export
 from studyforge.skills.personalarchive.layout import KINDS
 from studyforge.skills.personalarchive.restore import import_archive
 
-#: How the skill is invoked. ⛔ Not a verb: `SF-40`'s table is the only minter of those.
+#: How the skill is invoked. ⛔ Not a verb: the CLI's verb table is the only minter of those.
 PROG = "python3 -m studyforge.skills.personalarchive"
 
 

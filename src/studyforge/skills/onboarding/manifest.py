@@ -16,7 +16,7 @@ knew what an adapter looks like would have to be edited for the second one.
 
 ## ⛔ The hole this closes, and it was measured rather than predicted
 
-`SK-02/1`: scaffolding an adapter into a clean corpus and running
+Measured: scaffolding an adapter into a clean corpus and running
 `studyforge validate` gives `NOT valid: 8 finding(s)` — one `unclassified` per
 generated file — and `content.exclude` **cannot** say it, because `exclude`
 matches by exact path equality and means *material withheld from the reader*,
@@ -53,10 +53,10 @@ of the manifest schema, so omission is the declared path rather than a workaroun
 `media` block a **person** put in the draft is theirs and survives — the rule
 is that this generator adds nothing, not that it discards declarations.
 
-⛔ **So does a drafted `content.not_material`** (`INT06-1`, measured: it was
+⛔ **So does a drafted `content.not_material`** (measured: it was once
 dropped, and a corpus's own declarations could not be generated). The draft's
 entries come first as written, then the generated globs. ⭐ **An entry whose
-`why` is `None` is one reconnaissance proposed with its reason open** (`W249`):
+`why` is `None` is one reconnaissance proposed with its reason open**:
 it is paired from `reasons`, keyed by its glob, and every glob still open is
 named in one refusal. ⛔ **A glob on both
 sides is refused, never resolved by precedence**: the manifest refuses a
@@ -242,7 +242,7 @@ def _drafted_not_material(
 ) -> list[object]:
     """Return a person's `not_material` entries as written, refusing any glob also generated.
 
-    ⛔ **Never resolved by precedence** (`INT06-1`): keeping either reason would
+    ⛔ **Never resolved by precedence:** keeping either reason would
     be choosing one audit over the other, which is the repeat the manifest
     refuses. ⭐ The glob is quoted because it equals a generated one, so it is
     never a path from somebody's machine (R7); a reason is never quoted.
@@ -334,7 +334,7 @@ def _exclude_of(drafted: object, reasons: Mapping[str, str]) -> list[dict[str, s
 def _not_material_of(entries: Declarations) -> tuple[dict[str, str], ...]:
     """Merge every producer's globs, refusing a glob two of them declare.
 
-    ⛔ **Never resolved by precedence** (`INT06-1/4`, `W242`). The manifest
+    ⛔ **Never resolved by precedence.** The manifest
     refuses a repeated glob as two audits, and keeping the first reason is
     choosing one of them — which `_drafted_not_material` already refuses
     between a draft and a generator. ⭐ Keyed by producer, a refusal names both
@@ -378,6 +378,6 @@ def _refuse_unreadable(document: Mapping[str, object]) -> None:
     try:
         parse(render(document))
     except PersonalDataLeak:
-        raise  # ⛔ R7's refusal is never translated into `PromotionRefused` (Ruling 58).
+        raise  # ⛔ R7's refusal is never translated into `PromotionRefused`.
     except RAISES as exc:
         raise PromotionRefused(f"the promoted manifest would not parse: {exc}") from None

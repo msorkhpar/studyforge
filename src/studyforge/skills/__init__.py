@@ -31,5 +31,5 @@ knowledge must accumulate in one place or it decays once per integration.
 ⭐ **`exercises` is the newest sub-package and is named here because R17 says a
 parent contract is where a reader finds out a sub-package exists.** It holds the
 two readings the exercise-authoring skill takes before it authors anything — the
-source ledger and the page plan (`AX-07`, `E14`) — and `AX-08` adds the loop.
+source ledger and the page plan — and the authoring loop that follows them.
 """

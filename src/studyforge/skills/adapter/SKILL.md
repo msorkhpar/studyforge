@@ -29,9 +29,9 @@ studyforge validate <corpus-root>   # 0, or a named list of what is wrong
 somebody who has never read the framework's internals. **Measured at
 `f816454`:** `validate` runs **12 checks** — 8 about the archive alone, 2 about
 placement, 2 about the source — and can report **23 distinct rule ids**.
-⚠️ **Dated, and stale** (`W257`): both counts have grown since `f816454`. They
+⚠️ **Dated, and stale**: both counts have grown since `f816454`. They
 stand as that reading and are not restated, because a count of files that keep
-moving is only freshly wrong in a document nothing re-measures (Ruling 163).
+moving is only freshly wrong in a document nothing re-measures.
 ⭐ The checks are `studyforge.validate.CHECKS`, and this prints their number at
 the ref you are reading:
 
@@ -39,7 +39,7 @@ the ref you are reading:
 python3 -c "import studyforge.validate as v; print(len(v.CHECKS), 'checks')"
 ```
 
-⚠️ Rule ids have no public registry to count from (`W257/1`). `validate`
+⚠️ Rule ids have no public registry to count from. `validate`
 reports every one of them in a single run, so there is never a reason to fix
 one problem per invocation.
 
@@ -69,7 +69,7 @@ recorded, and disagreeing with it silently.
 Read that listing before you agree to it: it is the whole shape of the work.
 ⛔ **This page types no count of it** — the listing above is the count, at the
 ref you run it at, and a number written here went stale the moment the scaffold
-gained a file (`W345`).
+gained a file.
 
 ### 2. Answer the execution question by reading it, not by deciding it
 
@@ -252,7 +252,7 @@ cannot judge whether the archive is the material. What goes with it:
   signal that the next corpus will need the same hand-edit.
 
 ⛔ **And every one of those is WRITTEN, into the findings log, before the run is
-declared done — never carried only in a hand-back message** (`W346`). ⚠️ Two of
+declared done — never carried only in a hand-back message**. ⚠️ Two of
 the first conversion's seven numbered findings lived only in a message and were
 found in no ref afterwards. ⭐ **The log's place, its form and the command that
 refuses a run without one are the onboarding skill's step 7**; each entry asks
@@ -267,12 +267,12 @@ refuses a run without one are the onboarding skill's step 7**; each entry asks
   (R19). `write(..., regenerate=True)` rewrites every generated file the
   scaffold lists and **keeps the one you wrote, untouched** — so re-scaffolding after the framework
   moves is an ordinary, safe thing to do. ⭐ Onboarding's `write` follows the
-  same rule, `write_files`, so the two paths cannot disagree (`W265`).
+  same rule, `write_files`, so the two paths cannot disagree.
 - ⛔ **Never write into the source repository beyond the archive** (R3), and
   never beyond what `permitted_edits` declares.
 - ⛔ **`permitted_edits` may never name** the repository's root ignore file, any
   version-control configuration, or a file R3 reads as content — **repository-root
-  documentation included, whatever `content` classifies it as** (`W278`). ⭐ The
+  documentation included, whatever `content` classifies it as** (R3). ⭐ The
   one predicate is `studyforge.corpus.manifest.edits.reads_as_content`, the stems
   it reads as root documentation are `studyforge.corpus.manifest.edits.ROOT_DOCUMENTATION`,
   and all three are refused by `studyforge.corpus.manifest.edits.parse_edits`.
@@ -305,7 +305,7 @@ corpus at all.
 | rule ids | **23** | every distinct way one run can say *no* |
 | block types | **11** | the closed vocabulary a document body is made of |
 
-⚠️ **Dated, and stale** (`W257`): the checks and rule-ids rows are the reading
+⚠️ **Dated, and stale**: the checks and rule-ids rows are the reading
 at `f816454` and are not re-taken here. The fence under *The rule that governs
 every judgement below* prints the check count at the ref you are reading.
 
@@ -357,7 +357,7 @@ not.
 
 ⛔ **The whole file set, and how many there are, is the scaffold's own listing
 — step 1's fence — never this table.** ⭐ The table names the modules and what
-each is for; the scaffold also writes files that are not modules (`W345`), and a
+each is for; the scaffold also writes files that are not modules, and a
 count typed here would undercount them.
 
 ```text

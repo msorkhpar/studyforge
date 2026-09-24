@@ -32,8 +32,8 @@ from `content.include`'s own common root, which is the corpus's own statement
 about where its material lives.
 
 ⛔ **A corpus whose material is at the repository root is REFUSED**, because
-there is then no directory to bind that is not the repository. ⚠️ **`SK-09/5`:
-the remedy is a manifest key, and it is a finding rather than a default written
+there is then no directory to bind that is not the repository. ⚠️ **The
+remedy is a manifest key, and it is a finding rather than a default written
 in here** (R19).
 
 ## ⭐ THE EDITOR SEES EVERY PRACTICE, AND THE RUNNER COMES UP WITH IT
@@ -87,7 +87,7 @@ COMPOSE_FILE = f"{DIRECTORY}/compose.yaml"
 #: The selection a corpus keeps: the set, what is carried, and the two argv.
 TOOLCHAIN_FILE = f"{DIRECTORY}/toolchain.json"
 
-#: The prime the build is handed: `<tool>/` per project (`W440`).
+#: The prime the build is handed: `<tool>/` per project.
 PRIME_DIR = f"{DIRECTORY}/prime"
 
 #: The file the reader's compose command reads the runner's tag from, which the

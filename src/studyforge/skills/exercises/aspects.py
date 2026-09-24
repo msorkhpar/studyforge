@@ -254,7 +254,7 @@ def _require_basis(
             return
         raise AspectError(
             f"{where}: the aspect {aspect.id!r} is read from a section the page carries "
-            f"{occurrences} times, and a region is bounded by one heading (Ruling 92). "
+            f"{occurrences} times, and a region is bounded by one heading. "
             f"The section is not reproduced here (R7)."
         )
     if basis not in keys:

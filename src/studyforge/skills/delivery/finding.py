@@ -13,7 +13,7 @@ was measured here or received from somebody else.
         marker="structural",
         says="placement cannot express an interleaved profile's ignore lines",
         claims=(Claim("the profile emits none", measured="python3 -m ..."),
-                Claim("W28 changed source_files", received="BOARD.md")),
+                Claim("source_files changed", received="the plan")),
     )
 
 **Depends on.** `dataclasses`. ⛔ Nothing else.
@@ -134,7 +134,7 @@ class Finding:
         return self.marker == "structural"
 
     def lines(self) -> list[str]:
-        """Render as the block a handoff carries."""
+        """Render as the block a findings log carries."""
         return [
             f"### {self.id} `[{self.marker}]` — {self.says.strip()}",
             "",

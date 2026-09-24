@@ -16,8 +16,8 @@ caller has already made safe to quote and gives one back.
 
 ## ⛔ A refusal names its whole population, never its first witness
 
-⚠️ **Ruling 188.** A gate that stops at the first thing it finds makes the
-number of rounds it takes to fix the input **unknowable**: the reader fixes
+⚠️ **R6.** A gate that stops at the first thing it finds makes the
+number of runs it takes to fix the input **unknowable**: the reader fixes
 what was named, re-runs, and is told about the next one. ⭐ Each round is a
 full run, so the cost is paid in wall-clock time by somebody who cannot size
 the work before starting it.
@@ -50,7 +50,7 @@ SEPARATOR = "; "
 
 #: The preamble the plural form opens with, and it leads with the COUNT so a
 #: reader knows how much work there is before reading any of it — which is the
-#: whole cost a first-witness refusal hides (Ruling 188).
+#: whole cost a first-witness refusal hides (R6).
 PREAMBLE = "{count} refusals, and every one of them is named"
 
 
@@ -59,7 +59,7 @@ def one_or_all(reasons: Sequence[str]) -> str:
 
     ⛔ Refuses an empty sequence rather than rendering `0 refusals`: a caller
     that reached here with nothing to say was about to raise a refusal over an
-    empty population, which is the reading Ruling 128 exists to stop.
+    empty population: zero over nothing prints exactly like zero over everything.
     """
     if not reasons:
         raise ValueError("a refusal over no reasons refuses nothing")

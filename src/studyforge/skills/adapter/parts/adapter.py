@@ -13,7 +13,7 @@ one (R1).
 
 ## ⛔ Why the split from `parts.reading` is here and not somewhere else
 
-⚠️ **Ruling 100:** as one file this was 428 lines, over R11's ceiling, and the
+⚠️ **R11:** as one file this was 428 lines, over R11's ceiling, and the
 split is the default rather than a size exception. ⭐ The seam it took is the
 one that already existed — **generated versus hand-written** — so the module
 boundary and R19's boundary are the same boundary, and a reader asking *which
@@ -29,7 +29,7 @@ moves it only once every file exists.
 
 ## ⛔ One run, one date — applied after the reader, never handed to it
 
-⚠️ **`INT-09/3`:** a container map once took the date `read` recorded while its
+⚠️ **One date per run (R10):** a container map once took the date `read` recorded while its
 documents took the run's, so one emission could disagree with itself. ⭐ The
 run's `ingested` now replaces each container's after `read` returns it, and
 `read`'s signature is unchanged: an adapter written before this keeps reading,

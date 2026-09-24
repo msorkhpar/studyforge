@@ -33,7 +33,7 @@ is worse than none, because it looks like the check was done.
 test.** Naming ten capabilities that exist proves nothing; the claim is about
 the ones that were *not* named.
 
-## ⛔ But the population is NOT everything the index places later (`W92`)
+## ⛔ But the population is NOT everything the index places later
 
 ⚠️ **It was, and that is what forced a false statement.** A capability
 delivered inside a component pinned somewhere else is not this corpus's to
@@ -77,7 +77,7 @@ NOT_OURS = (
 NOT_SAID = (
     "⚠️ **{count} more declare no path in any document**, so nothing says which side "
     "delivers them. ⛔ A `why` here would be a claim the documents do not support "
-    "(`W92`); the remedy is a component in the row's own `Owns` cell."
+    "(R1); the remedy is a component in the row's own `Owns` cell."
 )
 
 
@@ -154,7 +154,7 @@ class Terminal:
         use — or about nothing at all — and either way the table has stopped
         describing the framework.
 
-        ⛔ **Side** (`W92`): a capability the index does not place on this side
+        ⛔ **Side**: a capability the index does not place on this side
         is refused as a `why`, and comes back on the returned statement as a
         row that is rendered instead of explained.
         """
@@ -174,7 +174,7 @@ class Terminal:
                 f"{len(theirs)} capabilit{'y is' if len(theirs) == 1 else 'ies are'} not "
                 f"this framework's to deliver, so saying this corpus never reaches "
                 f"{'it' if len(theirs) == 1 else 'them'} states nothing about this corpus "
-                f"— {', '.join(theirs)}. ⭐ They are rendered by side instead (W92). "
+                f"— {', '.join(theirs)}. ⭐ They are rendered by side instead. "
                 "⚠️ The ids come from the index and are safe to quote; the `why` is "
                 "caller text and is not"
             )

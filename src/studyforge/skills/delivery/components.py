@@ -17,7 +17,7 @@ package, not the filesystem: it is handed text and gives back data, so the
 caller names the documents. ⛔ **And not `json`, deliberately** — see the note
 on the pin document below.
 
-## ⛔ Why there is a column for the side at all (`W92`)
+## ⛔ Why there is a column for the side at all
 
 ⚠️ **The index had four columns and none of them said whose work a row is.**
 A corpus that finishes at the reading floor has to account for every
@@ -56,7 +56,7 @@ nothing to it.
 
 ## ⛔ The pin document is READ, never DECODED
 
-⚠️ **`W7`'s coverage check makes a module that calls `json.loads` a reader of
+⚠️ **The personal-data coverage check makes a module that calls `json.loads` a reader of
 somebody's document, and every such module must call the personal-data gate
 (R7).** ⛔ This package may not: its contract is that it depends on nothing in
 `corpus`, `archive` or `validate`, because a planner reasons about *work* and
@@ -71,7 +71,7 @@ workspace's own pin file is well formed is the workspace check's question.
 ## ⛔ Why this is its own module, and it is NOT a third seam
 
 ⭐ **There is one cut in this package's index half — READING versus BEING THE
-INDEX** — and `W92` and `W94` each made it, naming the halves the other way
+INDEX** — and two changes each made it, naming the halves the other way
 round. ⚠️ **Collapsed, that cut has two readers on its reading side:** `epics`
 reads the epic documents and this module reads the pin document. ⛔ It sits
 here rather than inside `capability` because it is a reader, which is the

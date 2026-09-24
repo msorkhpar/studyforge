@@ -202,7 +202,7 @@ def test_both_writers_refuse_a_first_write_over_the_hand_written_module_by_name(
 
 
 def test_running_it_twice_produces_the_same_bytes():
-    # ⭐ E11's acceptance: re-running changes nothing.
+    # ⭐ The skill's acceptance: re-running changes nothing.
     first = {item.where: item.text for item in _made().files}
     second = {item.where: item.text for item in _made().files}
 

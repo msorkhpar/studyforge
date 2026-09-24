@@ -36,7 +36,7 @@ Every default below is a measurement on real material rather than a taste:
   two would be fitting the exception. ⭐ The word is the one this framework's
   own worked examples use (`docs/authoring/examples.md`), so four corpora do not
   invent four words for it. ⛔ A filing key, never a language.
-- **`source` is the slug of the curriculum record's title** (`W249`). A
+- **`source` is the slug of the curriculum record's title**. A
   worktree, a clone and an archive of one commit carry that title byte for
   byte, and their directories are named anything. ⛔ Never the directory's
   name, never git: a remote URL is off-limits (R7), and an archive has no git.
@@ -45,7 +45,7 @@ Every default below is a measurement on real material rather than a taste:
   leaves unread is proposed as a `not_material` glob with its reason open
   (`furniture`).
 - **`exercises` follows `capability`**, and *false* is a complete answer.
-- **`runtimes` follows what the material evidences** (`W351`), only beside
+- **`runtimes` follows what the material evidences**, only beside
   `exercises: true`, and the draft then declares `corpus_api` 4 so it reads
   back. ⛔ Prose gets no key; `runtimes` holds the evidence and the rule.
 - **`placement` follows whether the material shares its directories with
@@ -206,9 +206,9 @@ def _group_is_in_ordinal(record: Record) -> bool:
 def _source(record: Record | None) -> str:
     """Return a slug of the curriculum record's title, the corpus's own recorded name.
 
-    ⛔ **Not the surveyed directory's name** (`W249`): a worktree named `int` and
+    ⛔ **Not the surveyed directory's name**: a worktree named `int` and
     a clone named after the repository drafted two sources for one corpus. The
-    slug rule is SF-01's (`studyforge.address.slugify`), so what this proposes is
+    slug rule is the address package's (`studyforge.address.slugify`), so what this proposes is
     what the manifest reader calls a slug.
     """
     title = record.title if record is not None else ""
@@ -315,9 +315,9 @@ def _choices(
 
 
 def _unread(furniture: Furniture) -> Iterator[Uncertainty]:
-    """Ask for every reason the proposed `not_material` globs leave open (`W240/3`).
+    """Ask for every reason the proposed `not_material` globs leave open.
 
-    ⛔ `W269`: a proposal that stands down says so by name, even when it proposes nothing.
+    ⛔ A proposal that stands down says so by name, even when it proposes nothing.
     """
     if not furniture.entries:
         if furniture.stands_down:
@@ -353,7 +353,7 @@ def _unread(furniture: Furniture) -> Iterator[Uncertainty]:
 def _collisions(record: Record) -> Iterator[Uncertainty]:
     """Titles that would become one address if anybody derived one.
 
-    ⚠️ **Measured, and the ruling's own example was wrong.** E10 said accents
+    ⚠️ **Measured, and the ruling's own example was wrong.** The task said accents
     collide — `Café` and `Cafe`. They do not: an accent is a non-alphanumeric,
     so it collapses to a **separator**, and those two give `caf` and `cafe`.
     ⭐ The class that actually occurs is **punctuation**: `'Streams: an API'`

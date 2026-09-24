@@ -137,8 +137,8 @@ def test_the_real_contract_still_leaves_the_slot_this_module_substitutes_into():
 
 
 def test_the_real_contract_is_sufficient_for_a_selection_with_no_other_input():
-    # ⭐ `TC-05`'s sufficiency clause, for the selection half: every key this
-    # join needs is one the component publishes. Host reading; see the handoff.
+    # ⭐ §8.1's sufficiency clause, for the selection half: every key this
+    # join needs is one the component publishes. A host reading only.
     if os.environ.get(DEV_CONTAINER):
         pytest.skip("the pinned image mounts one directory, so no sibling can be resolved")
     document = declared()

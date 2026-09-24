@@ -1,7 +1,7 @@
 r"""Whether a file the record links is cut into regions, each of which is a unit.
 
 **What it does.** Reads one linked file's ATX headings and says whether they cut
-it into sub-file units (Ruling 92: a unit's `origin` may be `{path, section}`),
+it into sub-file units (a unit's `origin` may be `{path, section}`),
 and if not, why not, in words a person can check.
 
 **How you use it.** `cut(root, target)` returns a `Regions`. Its `sections` are
@@ -21,7 +21,7 @@ Anything shallower may only be a title above the first region. ⚠️ A shallowe
 heading *after* a region would end it early (a region ends at the next heading
 of the same or shallower depth), leaving text that belongs to no unit, so that
 file is not proposed. ⛔ **Every section must be unique among all the file's
-headings**, or the manifest is refused (Ruling 92) — a duplicate is named here
+headings**, or the manifest is refused — a duplicate is named here
 rather than proposed and refused later.
 
 ⚠️ **The shape alone does not make a container.** A unit with two subsections

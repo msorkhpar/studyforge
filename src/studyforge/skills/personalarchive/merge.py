@@ -16,7 +16,7 @@ reach that entry.
 spelling of a test run and of a Submit's breakdown, and `datetime`. ⛔ It reads and
 writes nothing. `record` is the only caller that touches a store.
 
-## ⛔ A reconstructed run carries whatever `last` carries (`AX-02`)
+## ⛔ A reconstructed run carries whatever `last` carries
 
 ⭐ **`_run_of(last)` means *a run that leaves `last` as the entry's last run***, and
 that contract is what decides this: once `last` may carry a breakdown, the run
@@ -31,7 +31,7 @@ believed entry implies, and no breakdown of it was ever recorded anywhere.
 `SKILL.md` and runs every row through `merged`. A rule changed here and not in the
 document goes RED, and so does the reverse.
 
-## ⚠️ Why the plan is a list of runs, and what that costs (`SK-06/1`)
+## ⚠️ Why the plan is a list of runs, and what that costs
 
 `studyforge.progress` has one public write, `record_run`, and it appends one run.
 So this module has to express a merge as runs appended to this machine's entry. A

@@ -19,7 +19,7 @@ come to depend on what the framework generated into the corpus.
 ⚠️ **The pin used to name a checkout of the framework beside the corpus** —
 the workspace's development arrangement (R18) — and every stub was a tree path
 into it. ⛔ **A stranger converting their own material has no such checkout:
-they install the library** (`E15`), so a stub that resolves only through a
+they install the library**, so a stub that resolves only through a
 sibling resolves for nobody but this project. ⭐ **So the pin records the
 installed library's `version` and the `commit` it was built from**, `where`
 is `"installed"`, and a stub names its skill and the command that prints the
@@ -165,7 +165,7 @@ def pin_test(skills: Sequence[str] = SKILLS, reader: str | None = ONBOARDING_DOC
     answers from its distribution metadata, and a missing library is a
     sentence rather than a collection error.
 
-    ⛔ `W461`: **`reader` is where the reader document is, as the manifest
+    ⛔ **`reader` is where the reader document is, as the manifest
     places it**, and the sentence points there, or says how itself when the
     corpus has none. A fixed name pointed at a file the corpus had moved.
     """

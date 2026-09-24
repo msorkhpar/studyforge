@@ -8,7 +8,7 @@ repository's own tasks.
 
     from studyforge.skills.delivery import Carrier, concentration
 
-    report = concentration(backlog.tasks, outside=(Carrier("SF-28", "the framework", 8),))
+    report = concentration(backlog.tasks, outside=(Carrier("AB-28", "the framework", 8),))
     print("\n".join(report.lines()))
 
 **Depends on.** `dataclasses` and this package's `task`. ⛔ Nothing else.

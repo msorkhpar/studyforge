@@ -30,10 +30,10 @@ only refusal that matters here is the entry nobody said anything about.
 was built from this entry, so a reason beside an exercise is a sentence
 contradicting the row it sits on.
 
-## ⛔ AN ORIGIN NAMES A FILE OR A REGION, AND A REGION IS `SF-36`'s
+## ⛔ AN ORIGIN NAMES A FILE OR A REGION, AND A REGION IS A HEADING'S
 
 ⭐ **An entry carries the whole chain of headings that encloses it**, so an
-origin naming any ancestor section accounts for it — Ruling 92's region ("this
+origin naming any ancestor section accounts for it — a heading-bounded region ("this
 heading, and everything under it until a heading of the same or shallower
 depth") read from the inside. ⛔ **A section the file does not carry is refused,
 and so is one it carries twice**, the two faults `validate.source` already
@@ -98,7 +98,7 @@ def accounts_for(entry: Entry, origin: Origin) -> bool:
 
     ⭐ A whole-file origin accounts for every entry in that file; a region
     accounts for every entry any of whose enclosing headings it names, which is
-    Ruling 92's region read from the inside.
+    a heading-bounded region read from the inside.
     """
     if origin.path != entry.path:
         return False
@@ -203,7 +203,7 @@ def _require_origin(name: str, origin: Origin, carried: Mapping[str, Source], wh
         raise LedgerError(
             f"{where}: the exercise {name!r} cites a section of '{origin.path}' that "
             f"the file carries {occurrences} times, and a region is bounded by a "
-            f"heading (Ruling 92). The section is not reproduced here (R7)."
+            f"heading. The section is not reproduced here (R7)."
         )
 
 

@@ -27,7 +27,7 @@ second implementation of the thing this one is supposed to be a reader of.
 `require` raises and names the key path it wanted. ⛔ **That refusal is the
 finding's evidence, and answering it by writing the value into this package is
 the exact defect R19 forbids** — the component's contract would have stopped
-being sufficient and nothing would say so. ⭐ `TC-05`'s acceptance says
+being sufficient and nothing would say so. ⭐ Spec §8.1 says
 `consuming.json` is sufficient to generate a working compose file with no other
 input; this package is where that is demonstrated rather than asserted, and a
 `require` that fires is the demonstration failing out loud.

@@ -179,8 +179,7 @@ with no build file, and a build with no source or no test in it. ⚠️ **That
 refusal is the whole point of the step** — it is the difference between an
 unprimed image and an image that says it is primed.
 
-⛔ **The prime is in the component's layout, and its names are the contract's
-(`W440`).** The component warms **one project directory per seeded tool** and
+⛔ **The prime is in the component's layout, and its names are the contract's.** The component warms **one project directory per seeded tool** and
 refuses anything else at the prime's top. So each tool the corpus declares and
 `runner.prime.seeds` names gets `prime/<tool>/`, holding the corpus's own
 build **re-rooted at its build file's directory**: the shallowest directory
@@ -208,7 +207,7 @@ the corpus's data (R1):
   no repository and no absolute path is ever written into the corpus.
 - ⭐ **The runner's prime.** The image is built with `--prime` from a build
   that declares every dependency the exercises' build roles name, so the
-  image's seed holds them (`W390`) and the tool finds them with no flag.
+  image's seed holds them and the tool finds them with no flag.
 
 ⚠️ **Nothing checks the two agree except the gates, and that is enough:** the
 authoring skill runs every gate in the pinned runner image, so an exercise

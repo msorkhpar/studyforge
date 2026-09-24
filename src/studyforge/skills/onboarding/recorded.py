@@ -1,4 +1,4 @@
-r"""What a manifest already records, and what a second run would change (`W329`).
+r"""What a manifest already records, and what a second run would change.
 
 **What it does.** Compares the `corpus.json` on disk with the one a regenerate
 is about to write, and names every recorded answer the two spell differently.
@@ -21,13 +21,13 @@ files 0, graders 0"*. ⛔ **Onboarding wrote it, with no refusal, three lines
 below its own report printing `graded practices  no`** — and `buildserve` then
 presents a corpus that is COMPLETE at the reading floor as unfinished (C5).
 
-⭐ **`W269` already protects exactly one field, `not_material`, against this
-class. The rule it states for one field is the rule for all of them**, so the
+⭐ **Reconnaissance already protects exactly one field, `not_material`, against
+this class. The rule it states for one field is the rule for all of them**, so the
 guard here is over the manifest's own fields rather than over a list somebody
 remembered to extend: a field added to the contract is compared the day it
 exists.
 
-## ⚠️ `content.not_material` is the one exclusion, and `W283` owns it
+## ⚠️ `content.not_material` is the one exclusion, and its generators own it
 
 ⛔ **Not an exemption — a finer rule stated elsewhere.** That field is a set of
 declarations that legitimately *grows* (a person sets another directory aside
@@ -80,7 +80,7 @@ def moved(before: str, after: str) -> tuple[str, ...]:
 
 
 def narration(text: str, voiced: bool) -> str:
-    """Say the author's answer to *narration or not?* (`W460`), or that nobody asked.
+    """Say the author's answer to *narration or not?*, or that nobody asked.
 
     ⭐ Read off the manifest's own keys, gated as every decode here is, so a
     draft that carried no answer is said as UNASKED rather than as a `yes`
@@ -124,7 +124,7 @@ def _at(name: str, document: Mapping[str, object]) -> object:
 def _document(text: str) -> dict[str, object]:
     """Return one manifest's fields, or nothing when its text is not an object.
 
-    ⛔ **What this decodes, it gates** (R7, `W7`): the fields are paths and
+    ⛔ **What this decodes, it gates** (R7): the fields are paths and
     globs, and a leak raises as itself rather than being compared. ⚠️ Everything
     else **never raises** — an unreadable manifest is refused, in the manifest's
     own words, by the caller that reads it, and a second reason invented here

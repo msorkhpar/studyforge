@@ -55,7 +55,7 @@ be fixed rather than copied. ⛔ **It is not rendered into this file**, and that
 is measured rather than chosen: its `service` block carries none of the
 per-project keys the editor's does — no host port, no volume name, no compose
 value for its uid — so rendering it would mean inventing all three here.
-⚠️ **`SK-09/2`, a finding against that contract.** ⭐ It is brought up from its
+⚠️ **A finding against that contract (R19).** ⭐ It is brought up from its
 own checkout by its own compose files, which the generated document says by
 pointing at the key that names them.
 """
@@ -205,7 +205,7 @@ def volumes_for(seeds: Mapping[str, object] | None, runtimes: Sequence[str]) -> 
     volume that runtime's cache is seeded into, so *"omit it when that runtime
     is not declared"* is answered from data rather than from the English
     sentence the mount's own `purpose` puts it in. ⚠️ **The mount entries carry
-    no such key**, which is `SK-09/3` — a finding, and the reason this is handed
+    no such key** — a finding against the contract, and the reason this is handed
     the other block's map instead of reading its own.
     """
     declared = frozenset(runtimes)
@@ -232,9 +232,9 @@ def must_exist_first(
     *,
     also: Sequence[str] = (),
 ) -> tuple[str, ...]:
-    """Every bind source that must exist before the container starts (ruling 4).
+    """Every bind source that must exist before the container starts.
 
-    ⚠️ **The HOST side of each bind, never the container side.** Ruling 4 is
+    ⚠️ **The HOST side of each bind, never the container side.** §8.1's rule is
     about a directory docker would create on the host, so a reader told to
     create a path inside the image has been told nothing they can act on.
     """
@@ -351,7 +351,7 @@ def _healthcheck(block: Mapping[str, object]) -> dict[str, object]:
 def _footer(
     editor: Mapping[str, object], volumes: Sequence[str], sources: str, also: Sequence[str]
 ) -> str:
-    """Ruling 4, said in the file: which bind sources must exist before the start."""
+    """§8.1, said in the file: which bind sources must exist before the start."""
     first = must_exist_first(editor, volumes, sources, also=also)
     if not first:
         return ""

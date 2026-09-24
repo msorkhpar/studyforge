@@ -63,7 +63,7 @@ plans none with a reason per aspect. ⛔ **Zero is never reached silently.**
 ⭐ **`exercise.gates.family_of` is the one registry**, so a refusal citing
 `G7` — or citing nothing — is refused here rather than read as an excuse.
 ⚠️ **This is the half of spec §7 §11 a module can hold.** Re-authoring within a
-budget is the skill's (`AX-08`); what this guarantees is that the arithmetic
+budget is the skill's; what this guarantees is that the arithmetic
 adds up: everything the plan allowed for either shipped or was refused by a
 gate that exists.
 """

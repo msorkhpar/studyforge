@@ -107,7 +107,7 @@ class Entry:
     line: int
     group: str | None
     #: The exact heading text opening this unit's region of `target`, or `None`
-    #: for a whole file (Ruling 92). ⚠️ A sectioned entry's `line` is the record
+    #: for a whole file. ⚠️ A sectioned entry's `line` is the record
     #: line of the heading that links `target`.
     section: str | None = None
 
@@ -156,11 +156,11 @@ def find(inventory: Inventory) -> Record | None:
 def read(path: Path, root: Path, targets: set[str]) -> Record | None:
     """Read one candidate document, or return `None` if it records nothing.
 
-    ⛔ **A `path` outside `root` is refused before anything is taken apart**
-    (`W220`). Three expressions below read `path` relative to `root`, and the
+    ⛔ **A `path` outside `root` is refused before anything is taken apart**.
+    Three expressions below read `path` relative to `root`, and the
     standard library's own failure for that writes **both** absolute paths into
     its message — a home directory in a refusal is personal data (R7), and
-    `W217/2` measured this function doing it. ⭐ `errors.inside_root` carries
+    this function was measured doing it. ⭐ `errors.inside_root` carries
     the test and the sentence, so the message lives once.
 
     ⚠️ **Before the read, not after it, and that is a behaviour change on one
@@ -272,7 +272,7 @@ def _split(line: str, title: str) -> tuple[str | None, str]:
     material** — the third in every measured corpus. `SKILL.md`, appendix
     **A2**, holds the counts.
 
-    ⛔ **A heading's hashes stand where a bullet does** (W252): `## 15. [Title](x)`
+    ⛔ **A heading's hashes stand where a bullet does**: `## 15. [Title](x)`
     yields exactly what `- 15. [Title](x)` yields, and a heading with no ordinal
     yields none. ⚠️ Decided by `HEADING`, the test `grouping.shape` names a
     heading-form entry by.
@@ -334,7 +334,7 @@ def observe(record: Record | None, inventory: Inventory) -> Iterator[Observation
 
 
 def _regions(record: Record) -> Iterator[Uncertainty]:
-    """Ask about every file a label's heading links, whether it was cut or not (W250)."""
+    """Ask about every file a label's heading links, whether it was cut or not."""
     where = "a heading where the group labels stand links it and opens no entry"
     for found in record.containers:
         yield Uncertainty(
@@ -342,7 +342,7 @@ def _regions(record: Record) -> Iterator[Uncertainty]:
             why=f"{where}; its depth-{found.depth} headings open {list(found.sections[:3])}",
             settles_it=(
                 "confirm, and each unit's origin is {path, section} with the heading's exact "
-                "text (Ruling 92); if the file is one unit, list it as an entry, not a heading"
+                "text; if the file is one unit, list it as an entry, not a heading"
             ),
         )
     for found in record.uncut:
@@ -351,7 +351,7 @@ def _regions(record: Record) -> Iterator[Uncertainty]:
             why=f"{where}; it is read as one unit and not proposed as a container: {found.why}",
             settles_it=(
                 "confirm it is one unit, or give its units headings that cut the whole "
-                "file, each occurring once (Ruling 92)"
+                "file, each occurring once"
             ),
         )
 

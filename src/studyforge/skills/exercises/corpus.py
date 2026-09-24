@@ -21,7 +21,7 @@ for R7. Standard library only.
 
 ## ⛔ THE LEDGER IS TAKEN ONCE, BEFORE ANY EXERCISE IS GATED
 
-⭐ **`AX-07`'s one ordering constraint.** `G5` and `Q5` ask the ledger about an
+⭐ **The one ordering constraint.** `G5` and `Q5` ask the ledger about an
 origin *during* the gate run, and the accounting closes over the same object at
 the end, so the two cannot disagree about what the source was.
 

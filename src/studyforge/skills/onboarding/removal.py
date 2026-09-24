@@ -10,7 +10,7 @@ is no longer the stub the written manifest scaffolds.
 **Depends on.** `record` for what was written and its digests, `skills.adapter`
 to re-derive the stub, and `corpus.manifest` to read the written manifest.
 
-## ⭐ Split out of `onboard` at the removal seam (`W313`)
+## ⭐ Split out of `onboard` at the removal seam
 
 `onboard` composes and writes; this module takes back out. The two share the
 install record and nothing else, so the seam is where the file set is already
@@ -35,8 +35,8 @@ def uninstall(root: Path | str) -> list[str]:
     ⛔ **A file somebody filled in is never silently destroyed.** The usual
     reason a clean uninstall refuses is the adapter's reading step, which is the
     one file that was a person's — and losing it to a tidy-up is the failure
-    this check exists for. ⭐ The record carries no digest for that file
-    (`INT-09/1`), so it is removed only while it is still the stub the written
+    this check exists for. ⭐ The record carries no digest for that file,
+    so it is removed only while it is still the stub the written
     manifest scaffolds.
     """
     root = Path(root)

@@ -40,7 +40,7 @@ nowhere how a set is written into it.** It declares the separator for the
 different purpose, so it is not an answer.
 
 ⭐ **So this constant is provisional, it is a finding against the component's
-contract (`SK-09/1`), and a test asserts the contract still carries no key that
+contract, and a test asserts the contract still carries no key that
 would settle it.** ⚠️ The day the component declares one, that test goes RED,
 this constant is deleted and the value is read. ⛔ It is not a fix and it must
 not be allowed to become one by being quietly forgotten.
@@ -65,7 +65,7 @@ DIRECTORY_SLOT = "<directory>"
 #: appended to whatever it happened to end with.
 PLACEHOLDER = "<the declared set>"
 
-#: ⚠️ **Provisional. See the module contract above and `SK-09/1`.** How the
+#: ⚠️ **Provisional. See the module contract above.** How the
 #: declared set is written into the one argv slot the contract leaves for it.
 SET_SEPARATOR = ","
 

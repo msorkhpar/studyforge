@@ -14,7 +14,7 @@ this package's `compose`. ⛔ No I/O, nothing source-specific (R1), and nothing
 from `artifacts` — the dependency runs one way, so what a corpus asserts about
 R3 cannot come to depend on what else a corpus is given.
 
-## ⛔ Split out of `artifacts` at a named seam (Ruling 261, `W331`)
+## ⛔ Split out of `artifacts` at a named seam
 
 ⚠️ **`artifacts` renders what a person reads and declares what this skill
 occupies; this renders what a machine checks.** `pin` already keeps its own
@@ -23,7 +23,7 @@ arrangement applied to the second one. ⛔ **Not a trim**: the check grew becaus
 it was answering the wrong question, and `artifacts` was within a few lines of
 R11's bound before it did.
 
-## ⛔ THE CHECK ANSWERS R3, NOT `git status` (`W331`)
+## ⛔ THE CHECK ANSWERS R3, NOT `git status`
 
 ⚠️ **Measured, twice, on a correct run of this framework.** The check read
 `git status --porcelain -z`, kept every entry that did not start with `??`, and
@@ -49,7 +49,7 @@ output**, and the answer to it does not move when a file is staged.
 1. ⛔ **The declaration.** `studyforge plan` enumerates every path a build of
    this corpus writes, from the corpus's own declarations and before anything
    is generated, and `manifest.edits.reads_as_content` is the ONE predicate for
-   *"R3 reads this path as the corpus's content"* (`W278`). A path in both, that
+   *"R3 reads this path as the corpus's content"*. A path in both, that
    the manifest does not declare an edit to, is the breach — **stated by the
    plan, so it is RED whether the tree is clean, dirty or staged.**
 2. ⛔ **The tree.** Both status letters are read, and a rename's origin field is
@@ -59,7 +59,7 @@ output**, and the answer to it does not move when a file is staged.
    moving, renaming and rewriting, and says nothing against adding, so `A` and
    `??` are alike here and staging cannot fail the check. What is left — a
    rewrite, a removal, a rename's origin — must be declared by the plan, by the
-   install record (`W329`), by `permitted_edits`, by sitting inside the
+   install record, by `permitted_edits`, by sitting inside the
    framework's own directory at the corpus root, which `validate`'s
    `source.SKIP_DIRS` already declares is this tool's and not the corpus's, or
    by being the execution skill's own output (`execution.generated_here`) —
@@ -110,7 +110,7 @@ def edits_test(manifest: Manifest) -> str:
 
     ⭐ **Generated, so it is not a hand-written per-corpus test.** What varies
     between two corpora is exactly the declaration, and the declaration is data
-    the manifest already carries — which is why `OPS-05` asks the manifest
+    the manifest already carries — which is why the non-destructive check asks the manifest
     rather than knowing any corpus's exception.
 
     ⛔ **The baked list is checked against the corpus's own declaration** rather

@@ -45,7 +45,7 @@ this module had to go and read:**
 a corpus with nothing to narrate is never sent to start a service it does not
 need.
 
-## ⭐ NARRATION OFF IS A CHOICE, AND A CHOICE IS NOT A PARTIAL STATE (`W460`)
+## ⭐ NARRATION OFF IS A CHOICE, AND A CHOICE IS NOT A PARTIAL STATE
 
 ⭐ The user's ruling, 2026-09-23: *"it should be optional … Somebody might wants
 to just cover the course wihtout voices"*. A run with narration off — the
@@ -54,7 +54,7 @@ of the narration states above: `NARRATION_OFF` is one plain line saying what was
 chosen and what was kept, and it is not a `partial` block. ⛔ **Nothing here
 calls it short**; the reading floor is complete (C5).
 
-## ⛔ WHERE A RUN EXECUTES IS A STATE OF ITS OWN (`W381`, ruled round 125)
+## ⛔ WHERE A RUN EXECUTES IS A STATE OF ITS OWN (R15)
 
 ⭐ Every served form registers the `run` namespace (`serve.instance.namespaces_of`
 builds it for both), so a site that declares exercises always answers Run and
@@ -90,11 +90,11 @@ READING_FLOOR = (
 
 #: The namespace a serving process offers once it can run a reader's code. ⭐ The
 #: framework's own `serve.routes.run.NAMESPACE`, the name `serve.instance.instance_of`
-#: registers and `studyforge serve --site` registers too (`SK-03/3`, `W371`):
+#: registers and `studyforge serve --site` registers too:
 #: this package holds no spelling of its own.
 EXECUTION_NAMESPACE = run.NAMESPACE
 
-#: ⭐ What a run with narration off says once the site is listening (`W460`). ⛔ Not
+#: ⭐ What a run with narration off says once the site is listening. ⛔ Not
 #: a `partial` line: a choice is not a shortfall, and the reading floor is whole.
 NARRATION_OFF = (
     "narration off  chosen: no page carries a player and no clip is served; every "
@@ -136,7 +136,7 @@ NOT_NARRATED = PartialState(
 
 #: ⭐ The other half of the split: a corpus with nothing to say aloud is FINISHED.
 #: ⛔ Read from what happened — a run against a service that placed no clip — and
-#: never from a declaration: `corpus.json`'s `narration` (`W460`) says whether to
+#: never from a declaration: `corpus.json`'s `narration` says whether to
 #: voice a corpus, never whether it has anything to say.
 NOTHING_TO_NARRATE = PartialState(
     "narration-none",

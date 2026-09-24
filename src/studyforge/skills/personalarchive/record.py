@@ -24,7 +24,7 @@ document under a temporary root, so the public reader can read it. `test_record.
 wraps `record_run` and asserts that every change to the corpus's record happened
 inside one of its calls.
 
-⚠️ **A merge is many locked writes, not one** (`SK-06/1`). A crash part-way leaves
+⚠️ **A merge is many locked writes, not one**. A crash part-way leaves
 some practices merged. The merge rule is a join, so running the import again
 finishes it and changes nothing already merged.
 """

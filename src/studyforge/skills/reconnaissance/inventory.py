@@ -12,7 +12,7 @@ answers the filename question on its own.
 own directories are and which nested repository stores `validate` refuses; and
 the standard library.
 
-## ⛔ The framework's own generated half is never this corpus's material (`W329`)
+## ⛔ The framework's own generated half is never this corpus's material
 
 ⚠️ **A corpus that has been onboarded carries `studyforge`'s output inside it**
 — an adapter package, two generated checks, a reader's document. ⛔ Read as
@@ -26,9 +26,9 @@ not write it. ⛔ This walk sets both aside, so every later pass measures the
 corpus rather than the framework. ⚠️ A corpus nobody onboarded has no record and
 no archive, so a first survey is unchanged.
 
-## ⛔ A nested `.studyforge` or `.git` is what `validate` says it is (`W272`)
+## ⛔ A nested `.studyforge` or `.git` is what `validate` says it is
 
-⭐ **The survey mirrors `validate` rather than keeping a second rule** (`W259`).
+⭐ **The survey mirrors `validate` rather than keeping a second rule**.
 Only the corpus root's own `SKIP_DIRS` are skipped. A nested `.studyforge` is a
 source's own directory, walked like any other. A nested repository store is
 never entered, and the stores are `source_files(root).stores`, `validate`'s own
@@ -86,7 +86,7 @@ from studyforge.validate.source import (
 MATERIAL_SUFFIXES = (".md", ".markdown", ".rst", ".txt", ".adoc")
 
 #: Directories that are never material: tooling, state, and generated output.
-#: ⛔ `.git` and `.studyforge` are not here: they are `validate`'s (`W272`).
+#: ⛔ `.git` and `.studyforge` are not here: they are `validate`'s.
 #: ⚠️ Not an "ignore list" in the sense the docstring refuses — these are named
 #: because they are *known infrastructure*, and anything not named here is
 #: still classified rather than skipped.
@@ -116,14 +116,14 @@ class Inventory:
     material: list[Path] = field(default_factory=list)
     directories: list[Path] = field(default_factory=list)
     unrecognised: list[Path] = field(default_factory=list)
-    #: ⛔ `W272`: the nested repository stores `validate` refuses, never entered.
+    #: ⛔ The nested repository stores `validate` refuses, never entered.
     stores: list[Path] = field(default_factory=list)
-    #: ⛔ `W329`: the framework's own output here, from onboarding's record —
+    #: ⛔ The framework's own output here, from onboarding's record —
     #: set aside rather than classified, so no pass reads it as this corpus's.
     generated: frozenset[str] = frozenset()
-    #: ⛔ `W329`: the files `validate` will classify here, `source_files`'s own
+    #: ⛔ The files `validate` will classify here, `source_files`'s own
     #: answer. ⭐ What a build writes — the archive above all — is outside it,
-    #: so this survey stops where `validate` stops (`W259`).
+    #: so this survey stops where `validate` stops.
     enumerated: frozenset[str] = frozenset()
 
     @property
@@ -144,7 +144,7 @@ class Inventory:
 def take(root: Path) -> Inventory:
     """Walk `root` once, classifying every file as material or not.
 
-    ⛔ **A file this framework wrote is set aside, not classified** (`W329`):
+    ⛔ **A file this framework wrote is set aside, not classified**:
     reading it back as the corpus's material is what made a re-survey disagree
     with the first survey about the corpus.
     """
@@ -179,7 +179,7 @@ def take(root: Path) -> Inventory:
 
 
 def _the_corpus_own(inventory: Inventory, path: Path) -> bool:
-    """Whether `path` is the corpus's own file rather than this framework's (`W329`).
+    """Whether `path` is the corpus's own file rather than this framework's.
 
     ⛔ Two instruments, both already in the tree, and neither invented here: the
     install record names what onboarding wrote, and `source_files` names what
@@ -191,7 +191,7 @@ def _the_corpus_own(inventory: Inventory, path: Path) -> bool:
 
 
 def _holding(inventory: Inventory, reached: list[Path], own: list[Path]) -> list[Path]:
-    """Drop a directory holding files, none of which is the corpus's own (`W329`).
+    """Drop a directory holding files, none of which is the corpus's own.
 
     ⚠️ A directory the walk found empty of files stays: it holds nothing of
     anybody's, and a survey that hid it would be reporting a smaller tree than
@@ -204,15 +204,15 @@ def _holding(inventory: Inventory, reached: list[Path], own: list[Path]) -> list
 
 
 def enters(name: str) -> bool:
-    """Whether the walk enters a directory of this name beneath the root (`W272`).
+    """Whether the walk enters a directory of this name beneath the root.
 
-    ⭐ **Public because it is the skill's one walk rule** (`W329`). `capability`
+    ⭐ **Public because it is the skill's one walk rule**. `capability`
     walks the whole tree rather than the material and used to keep a second,
     looser rule of its own: it entered `__pycache__`, `node_modules`, `build`
     and `target`, so a directory this module has always called *never material*
     supplied a corpus's graders. ⛔ Two walk rules over one tree disagree
-    eventually, and the disagreement is silent — `W259`'s argument, for the
-    same reason.
+    eventually, and the disagreement is silent — the scaffolded suite's
+    walk follows `validate` for the same reason.
     """
     if name == REPOSITORY_STORE:
         return False
@@ -243,7 +243,7 @@ def observe(inventory: Inventory) -> Iterator[Observation | Uncertainty]:
     yield Observation("material files", str(len(inventory.material)))
     yield Observation("directories holding material", str(len(inventory.directories)))
     yield Observation("deepest nesting of a material file", str(inventory.depth))
-    # ⭐ `W329`: said out loud, because a reader comparing two surveys of one
+    # ⭐ Said out loud, because a reader comparing two surveys of one
     # corpus needs to know which of them was reading the framework's own output.
     yield Observation(
         f"files set aside as this framework's own ({INSTALL_RECORD})",

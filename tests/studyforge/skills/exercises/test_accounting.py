@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/skills/exercises/accounting.py` (R12) — the *nothing is lost* half.
 
-**What it asserts.** `E14`'s first property, mechanically: each ledger entry
+**What it asserts.** Spec §7's *nothing is lost*, mechanically: each ledger entry
 ends either as the basis of an exercise — named by that exercise's `origin` —
 or with a written reason it is not, and ⛔ **an entry with neither is refused**.
 Plus the region rules an origin resolves through, and the byte stability of the

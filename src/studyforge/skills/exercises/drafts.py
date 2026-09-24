@@ -92,7 +92,7 @@ class Page:
     """One page to author exercises for, as the converting agent read it.
 
     ⭐ `aspects` and `tier` are the agent's readings (the coverage ruling of
-    2026-09-23, superseding `AX-07`'s `words` and `skills`): the plan is read off the aspects, each
+    2026-09-23, superseding `words` and `skills`): the plan is read off the aspects, each
     checked by a named exercise or carried by a reason, and nothing here
     guesses one. ⛔ `nothing_checkable` is the sentence a page naming no aspect
     owes, and only such a page may carry it.
@@ -113,10 +113,10 @@ class Page:
 class CodeDraft:
     """One code exercise as an author wrote it, before any gate has read it.
 
-    ⭐ Every path but a command's arguments is **workspace-relative**
-    (`AX-04`); `plants` maps each edge case's id to the solution that solves
+    ⭐ Every path but a command's arguments is **workspace-relative**;
+    `plants` maps each edge case's id to the solution that solves
     the ask and ignores exactly that edge (`G3`). ⭐ `build` maps each build
-    file's workspace-relative path to its text (`W436`): empty for an exercise
+    file's workspace-relative path to its text: empty for an exercise
     whose tests need nothing but the language. ⛔ `report` is inside
     `exercise.bundle.RUN_OUTPUT_DIRNAME`, or the bundle is refused.
     """
@@ -189,8 +189,8 @@ class Judge(Protocol):
 def words_of(text: str) -> int:
     """Count the words a page teaches with: its prose, with every fenced block left out.
 
-    ⚠️ **A decision, and this is its one spelling** (`AX-07` left it to the
-    skill): a fence is an example, not reading, so its body and its language
+    ⚠️ **A decision, and this is its one spelling** (the ledger's contract
+    leaves it to the skill): a fence is an example, not reading, so its body and its language
     tag are not counted. The fence grammar is `scan`'s, never a second one.
     ⛔ **Since the coverage ruling of 2026-09-23 it sets no count**: the plan is read off a page's
     aspects. It stays as the reading that shows how little prose a code-dense

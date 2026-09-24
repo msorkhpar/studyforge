@@ -11,7 +11,7 @@ empty set when there is no readable record.
 lives and `studyforge.archive.scrub` for R7's gate. ⛔ Nothing source-specific
 (R1): no file name is special here, and every path comes from the record.
 
-## ⛔ One instrument, and it already existed (`W329`)
+## ⛔ One instrument, and it already existed
 
 ⚠️ **A skill that reads a corpus it has already onboarded reads its own output
 back.** Measured on a clean run: a re-survey counted the generated
@@ -30,7 +30,7 @@ invents one — a name, a suffix, a directory — is a defect against this modul
 
 A corpus that was never onboarded has no record, and a first survey is
 unchanged by everything above. ⛔ The record is a list of paths, so it is gated
-by `assert_clean` before a field is read (R7, `W7`), and a leak raises rather
+by `assert_clean` before a field is read (R7), and a leak raises rather
 than being swallowed with the rest.
 """
 

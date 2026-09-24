@@ -50,14 +50,14 @@ typed a second time here, and never retyped by the next repository (R19).
 
 ## ⛔ `of` names every capability it cannot place, never the first one
 
-⚠️ **Ruling 188** (`W94`). A build over thirteen epic documents that refused
-the first id it could not place made the number of rounds it takes to fix the
-epics unknowable, and each round is the whole generation. ⭐ **So the nested
+⚠️ **A refusal names its whole population** (R6). A build over thirteen epic
+documents that refused the first id it could not place made the number of runs
+it takes to fix the epics unknowable, and each round is the whole generation. ⭐ **So the nested
 walk gathers and the refusal is raised once, after it** — and a single
 violation reads exactly as it read before, so nothing that was already right
 moved.
 
-## ⭐ A column that would say the same thing in every row says nothing (`W92`)
+## ⭐ A column that would say the same thing in every row says nothing
 
 ⛔ So the side column is rendered only when at least one row is not `HERE`. A
 plan whose pin document declares nothing beyond itself renders exactly the
@@ -116,7 +116,7 @@ class Capability:
     epic: str
     depends_on: tuple[str, ...]
     #: ⛔ The `Owns` cell VERBATIM, as `epics` read it, and never interpreted
-    #: here: what it says about a row's side is `components`' reading (`W92`).
+    #: here: what it says about a row's side is `components`' reading (R1).
     owns: str = ""
 
     def row(self, delivered: str | None) -> str:
@@ -140,7 +140,7 @@ class Epic:
     capabilities: tuple[Capability, ...]
     cancelled: tuple[str, ...]
     #: Everything before the first task heading, carried so `components` can
-    #: read the component an epic's prose rows are delivered inside (`W92`).
+    #: read the component an epic's prose rows are delivered inside.
     preamble: str = ""
 
 
@@ -167,10 +167,10 @@ class Index:
         ⛔ `sequence` is required: an index with no declared order would fall
         back to id order without saying so, which is the defect it removes.
         ⛔ `components` is required for the same kind of reason: an index that
-        defaulted to *everything is this framework's* would state the thing
-        `W92` was filed about, and state it silently.
+        defaulted to *everything is this framework's* would make the false
+        statement the side column exists to stop, and make it silently.
 
-        ⛔ **Ruling 188:** the walk gathers and refuses once. Epics carrying
+        ⛔ **R6:** the walk gathers and refuses once. Epics carrying
         four misplaced capabilities are refused with four reasons, because
         otherwise the reader learns there were four by running it four times.
         """
@@ -315,7 +315,7 @@ class Index:
             f"names a path here; `{ELSEWHERE}` is one whose `Owns` — or whose epic's "
             f"preamble — reaches a component this workspace pins somewhere else; "
             f"`{UNDECLARED}` is a row that names no path at all, so ⚠️ **nothing in the "
-            "documents says**. ⛔ A corpus states nothing about the last two (`W92`)."
+            "documents says**. ⛔ A corpus states nothing about the last two."
         )
 
     def _derivation(self) -> str:

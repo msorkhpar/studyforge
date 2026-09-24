@@ -29,7 +29,7 @@ what an instance that recorded nothing runs.
 ## ⛔ THE SERVING PROCESS IS NOT HERE, AND NEITHER IS THE SOCKET
 
 ⭐ **The reader's `docker compose` starts this container, never `serve`** (spec
-§8.3, round 112's `TC-00` answer 6): the runner only asks whether it is up and
+§8.3): the runner only asks whether it is up and
 execs into it from the host. ⛔ Nothing rendered here mounts the Docker socket,
 and `composefile.render` checks the whole file's bytes for one besides.
 

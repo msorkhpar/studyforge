@@ -13,7 +13,7 @@ def seen(root):
 
 
 def test_a_prose_only_corpus_reports_no_runnable_code_and_no_graders(tmp_path):
-    # ⭐ E11's named acceptance, and it is a **finished verdict** rather than a
+    # ⭐ The skill's named acceptance, and it is a **finished verdict** rather than a
     # blank section: a corpus with no graders is complete at the reading floor,
     # not short (§11.0, C5).
     verdicts = [

@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/skills/execution/generate.py` (R12) — the acceptance.
 
-⛔ `E11`'s execution-skill acceptance, clause by clause: a runnable corpus gets a
+⛔ The execution skill's acceptance, clause by clause: a runnable corpus gets a
 working compose file and a primed image **from manifest data alone**; a corpus
 whose manifest says it is not runnable gets **nothing from this skill and no
 error**; re-running changes nothing; and §8.1's four rulings are honoured, each
@@ -199,7 +199,7 @@ def test_a_document_this_skill_wrote_is_regenerated_without_complaint(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ Ruling 2 decides which directory is bound, and it is derived
+# ⛔ §8.1's sources-only rule decides which directory is bound, and it is derived
 # --------------------------------------------------------------------------
 
 

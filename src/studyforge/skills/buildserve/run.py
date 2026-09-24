@@ -17,7 +17,7 @@ which is how a test sends a real request and stops it.
 `cli.plan.plan_for`, `corpus.manifest`, `validate.report` and `validate.cli` for
 the exit code of a run that cannot start.
 
-## ⭐ Narration is the user's to choose, and off is not a partial state (`W460`)
+## ⭐ Narration is the user's to choose, and off is not a partial state
 
 ⭐ The user's ruling, 2026-09-23: *"while serving or even while caputring the
 matterial skills should ask if user is interested in the narrition or not"*.
@@ -30,9 +30,9 @@ would synthesise clips this run has been asked not to serve.
 ## ⛔ Thin: no step here re-implements a verb, or spells one's arguments
 
 ⭐ This module opens no file and no socket, and names no verb flag: every argument
-list comes from `verbs`, so a verb whose interface changes (`W230`) is one edit
+list comes from `verbs`, so a verb whose interface changes is one edit
 there. It reads the plan and the manifest only to know which partial state holds, and
-hands `states` the probe that says where a run would execute (`W381`).
+hands `states` the probe that says where a run would execute.
 """
 
 from __future__ import annotations
@@ -71,7 +71,7 @@ def build_and_serve(
 ) -> int:
     """Validate, narrate if asked, build and serve one corpus; return the exit code.
 
-    ⭐ `narration` is the user's answer for this run (`W460`): `False` builds and
+    ⭐ `narration` is the user's answer for this run: `False` builds and
     serves the reading floor with every clip kept on disk, `True` voices a corpus
     whose `corpus.json` says no, and `None` keeps what `corpus.json` says.
     """
@@ -81,9 +81,9 @@ def build_and_serve(
         print(line, file=target, flush=True)
 
     corpus, site = str(root), str(out)
-    # ⛔ `W457`: asked to narrate, the run re-makes every clip whose words moved, so
+    # ⛔ Asked to narrate, the run re-makes every clip whose words moved, so
     # a stale clip is not a reason to stop before that; `narrate` reports what it could not.
-    # ⭐ `W460`: a run the user asked to leave narration out judges no clip either.
+    # ⭐ A run the user asked to leave narration out judges no clip either.
     quiet = voice is not None or narration is False
     code, _ = _step(verbs.validate(corpus, narration=False if quiet else None), say)
     if code != OK:

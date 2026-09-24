@@ -34,17 +34,18 @@ regression suite exists to catch.
 
 ## ⛔ Nor is anything the repository ignores, and the repository says which
 
-⚠️ **`INT-09/7`:** the copy once left out four fixed names, so a git-ignored
-scratch directory was copied whole, and one run took over a minute. ⭐ The copy
-now asks `studyforge.validate.source.repository_ignores` — the one ignore
-reader (`W28`) — once per directory, so an ignored directory is never walked.
+⚠️ **The copy walks the corpus as `validate` does.** It once left out four
+fixed names, so a git-ignored scratch directory was copied whole, and one run
+took over a minute. ⭐ The copy now asks
+`studyforge.validate.source.repository_ignores` — the one ignore reader — once
+per directory, so an ignored directory is never walked.
 ⛔ **No list is kept here.** Beyond the archive and its staging directory, which
 are this suite's own output, and `validate`'s own `SKIP_DIRS` at the corpus root,
 what is left out is git's answer.
 
-## ⛔ A nested repository reaches `validate`, which refuses it (`W271`)
+## ⛔ A nested repository reaches `validate`, which refuses it
 
-⚠️ **`W259/1`:** the copy once left out `.git` at any depth, so `test_emit` read
+⚠️ **Nested stores:** the copy once left out `.git` at any depth, so `test_emit` read
 clean on a corpus `validate` refuses as `nested-repository`. ⭐ `SKIP_DIRS` is now
 asked of the corpus root only, as `validate` asks it, and a nested store — named
 by `source_files(root).stores`, `validate`'s own answer — is copied as it is and

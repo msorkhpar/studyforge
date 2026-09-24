@@ -28,10 +28,12 @@ name and for `pathlib` alone.
 
 ## ⛔ Generated, never hand-authored (R19)
 
-The file is `capability_index(...)`'s output, regenerated whenever the
-documents it is derived from change. ⛔ **A hand-edit to it is a finding
-against the delivery skill, not a fix**, and the tests compare the shipped
-bytes with a regeneration. ⛔ This module never regenerates it: the generator
+The file is `capability_index(...)`'s output over the epics as they stood with
+their task text, which now lives on the branch `archive/process`. ⛔ **A
+hand-edit to it is a finding against the delivery skill, not a fix**, and the
+tests pin the shipped bytes' SHA-256 digest, so any change fails; a deliberate
+regeneration runs on `archive/process` and updates that digest in the same
+commit. ⛔ This module never regenerates it: the generator
 is handed its documents by a caller, and this package does not know where any
 plan lives.
 """

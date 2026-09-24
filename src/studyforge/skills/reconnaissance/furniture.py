@@ -3,13 +3,13 @@ r"""The `content.not_material` globs a draft proposes, with every reason left op
 **What it does.** Reads the files `studyforge validate` will classify in a
 source root and proposes one `not_material` glob for every file the draft
 neither includes nor excludes, so a person types the reasons and never the
-globs (R19, `W249`).
+globs (R19).
 
 **How you use it.** `propose(root, include, exclude)` returns a `Furniture`:
 its `entries` (each `{"glob": ..., "why": None}`), how many files it judged,
 whether git's ignore rules were read, the globs the root's manifest already
 declares, how many files those cover, and `stands_down`: why the proposal
-cannot be read as complete, by name, or `None` (`W269`).
+cannot be read as complete, by name, or `None`.
 
 **Depends on.** `studyforge.validate.source.source_files` for the population,
 `installed` for what onboarding wrote, and `studyforge.corpus.manifest`'s
@@ -39,27 +39,27 @@ excluded or written by onboarding. Otherwise it is the file's exact path.
 
 Paths listed in onboarding's record are declared by onboarding's own generated
 globs. A drafted glob equal to one of those is refused by `promote`, never
-resolved by precedence (`W239`), so a re-survey of an onboarded corpus must
+resolved by precedence, so a re-survey of an onboarded corpus must
 not propose them. ⭐ **The record is `installed.generated`'s answer, the one
-instrument (`W329`)**, and every other pass in this skill now asks it too.
+instrument**, and every other pass in this skill now asks it too.
 ⚠️ An unreadable record reads as no footprint, and any collision that follows
 is refused by `promote` by name.
 
-## ⛔ A file a declared glob covers is never re-proposed (`W269`, `INT-10/2`)
+## ⛔ A file a declared glob covers is never re-proposed
 
 A re-survey reads the root's own manifest. A file one of its `not_material`
 globs covers, by the manifest's own match, is neither proposed nor swept by a
 directory glob: it holds its directory, as a read file does. ⚠️ An unreadable
 manifest reads as no declaration, and it is gated before a field is read (R7).
 
-## ⛔ A proposal that stands down says so (`W269`, `INT-10/1`)
+## ⛔ A proposal that stands down says so
 
 Judging no file, or judging without git's ignore rules, is named in
 `stands_down` whatever was proposed. ⚠️ A root inside another repository's
 ignored directory is answered for by THAT repository, so it judges no file:
 the silence this names.
 
-## ⛔ The reasons are a person's (`W240/3`)
+## ⛔ The reasons are a person's
 
 Every `why` is `None`. The manifest parser refuses it, and `promote` pairs it from the
 reasons a person gives. A generated reason would be an audit nobody performed.
@@ -91,9 +91,9 @@ class Furniture:
     judged: int
     #: False where the root is not a git working tree, so no ignore rule was read.
     consulted: bool
-    #: ⭐ `W269`: the `not_material` globs the root's own manifest already declares.
+    #: ⭐ The `not_material` globs the root's own manifest already declares.
     declared: tuple[str, ...] = ()
-    #: ⭐ `W269`: files a declared glob covers, and so never re-proposed.
+    #: ⭐ Files a declared glob covers, and so never re-proposed.
     covered: int = 0
 
     @property
@@ -103,7 +103,7 @@ class Furniture:
 
     @property
     def stands_down(self) -> str | None:
-        """Name why this proposal cannot be read as complete, or return `None` (`W269`)."""
+        """Name why this proposal cannot be read as complete, or return `None`."""
         if not self.judged and self.consulted:
             return (
                 "it judged no file: git's ignore rules, answered by the working tree that "

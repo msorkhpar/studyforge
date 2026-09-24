@@ -1,4 +1,4 @@
-r"""The runtimes the material evidences — the draft's `runtimes` key (`W351`).
+r"""The runtimes the material evidences — the draft's `runtimes` key.
 
 **What it does.** Reads the build files and source files `capability` found and
 proposes the runtimes a runner must carry for them, beside `exercises`, with the
@@ -11,7 +11,7 @@ declaring them needs, and `questions()` what a person is asked about them.
 
 **Depends on.** `capability` for the evidence, `report`, and
 `studyforge.corpus.manifest` for the vocabulary **and nothing else from it**.
-⛔ **The vocabulary is spelled once, by `W350`, and imported here** — a second
+⛔ **The vocabulary is spelled once, by the manifest reader, and imported here** — a second
 spelling in a skill is the copy that stops agreeing. ⚠️ This is not the reader:
 the draft is still a proposal a person edits (`proposal`'s docstring).
 
@@ -25,7 +25,7 @@ vocabulary names is **asked about by name** rather than mapped to a near miss.
 
 ## ⭐ Only a graded corpus declares any (§7)
 
-`W350`'s reader refuses `runtimes` beside `exercises: false`: a corpus that sets
+The manifest reader refuses `runtimes` beside `exercises: false`: a corpus that sets
 no runnable unit needs no runner. ⛔ So a corpus whose material evidences a
 runtime but ships no grader drafts **no key**, and says so in one question —
 evidence is reported, never silently dropped, and never declared against the
@@ -40,10 +40,10 @@ drafted with it — read from `REQUIRES_JAVA`, never listed here a second time.
 ## ⛔ `runtimes` is `corpus_api` 4's key
 
 `RUNTIMES_API` is re-derived because the owner's key-to-version map is not on
-`studyforge.corpus.manifest.__all__` (Ruling 101), the shape onboarding's
+`studyforge.corpus.manifest.__all__`, the shape onboarding's
 `NOT_MATERIAL_API` took. ⛔ **Pinned behaviourally, never against a literal**:
 the mirror parses a drafted manifest one version lower and asserts the refusal.
-A draft carrying the key below it is refused on read-back (`W350/1`).
+A draft carrying the key below it is refused on read-back.
 """
 
 from __future__ import annotations

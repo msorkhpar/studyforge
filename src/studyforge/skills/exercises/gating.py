@@ -1,7 +1,7 @@
 r"""One draft, gated: staged, run in the caller's runner, and answered by every gate.
 
-**What it does.** Turns one `CodeDraft` into the bundle `AX-04` defines, stages
-it outside the corpus, takes every run `AX-03`'s evidence asks for through the
+**What it does.** Turns one `CodeDraft` into the bundle `exercise.bundle` defines, stages
+it outside the corpus, takes every run a gate record's evidence asks for through the
 caller's runner, and answers all five code gates; or turns one `QuizDraft` into
 its document and answers all five quiz gates. ⭐ Either way the result is a
 `Gated`: the gate record, and every file the exercise would commit.
@@ -21,7 +21,7 @@ without this module knowing a container exists.
 
 ## ⛔ `G5` AND `Q5` ARE HANDED `digests(ledger)` AND NOTHING ELSE
 
-⭐ **The contract `AX-07` and `AX-03` each asserted from one side meets here.**
+⭐ **The contract the ledger and the gates each assert from one side meets here.**
 The digest a record *cites* is read off the ledger's own `Source` rows — what
 the file digested to when it was read — and the mapping a gate *asks* is
 `digests(ledger)`, the ledger's gate-facing face, unmodified. ⚠️ So a ledger
@@ -36,7 +36,7 @@ solution, laid out as the corpus root would see it. ⚠️ A run that left a fil
 behind cannot reach the next one, and nothing is ever written into the corpus
 while its gates are being read.
 
-## ⭐ A DRAFT'S BUILD ROLE IS STAGED INTO EVERY RUN (`W436`)
+## ⭐ A DRAFT'S BUILD ROLE IS STAGED INTO EVERY RUN
 
 ⭐ Each run's fresh root holds the draft's build files beside the tests and
 the solution, exactly where `emit` will put them for a reader, and the gate
@@ -287,7 +287,7 @@ class _Runs:
 def _bundle_document(draft: CodeDraft, places: Places) -> dict:
     """Return the bundle document a draft becomes, the skill's provenance filled in (R5).
 
-    ⭐ `build` is written only when the draft ships a build role (`W436`), so a
+    ⭐ `build` is written only when the draft ships a build role, so a
     draft that needs none writes exactly the document it always did.
     """
     build = {"build": list(draft.build)} if draft.build else {}
@@ -318,7 +318,7 @@ def _edges(cases):
 
 
 def _roles(bundle, positions: dict[str, int]) -> tuple[tuple[str, str], ...]:
-    """Every input a code gate record digests, in `AX-04`'s order, bundle-relative."""
+    """Every input a code gate record digests, in the bundle's order, bundle-relative."""
     main = bundle.main_file
     return (
         ("statement", STATEMENT_FILENAME),

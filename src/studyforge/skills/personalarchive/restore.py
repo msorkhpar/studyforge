@@ -140,7 +140,7 @@ def _same_corpus(root: Path, unpacked: Unpacked) -> int:
     except UnicodeDecodeError:
         raise ArchiveError(f"the archive's {MANIFEST_FILENAME} is not UTF-8 text") from None
     except RAISES:
-        # ⛔ The manifest's own refusal is reported as it is, never wrapped (Ruling 58).
+        # ⛔ The manifest's own refusal is reported as it is, never wrapped.
         raise
     if theirs.source != unpacked.manifest["source"]:
         raise ArchiveError(f"the archive's {MANIFEST_FILENAME} is not the corpus it declares")

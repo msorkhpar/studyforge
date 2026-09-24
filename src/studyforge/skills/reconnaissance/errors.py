@@ -24,7 +24,7 @@ as a question would be a guess with extra steps (R6: loud, named).
 
 ## ⛔ The message is where R7 bites, and it has bitten here once
 
-⚠️ **Measured, `W217/2`:** a refusal that is simply *let* to happen — handing
+⚠️ **Measured:** a refusal that is simply *let* to happen — handing
 two unrelated paths to `Path.relative_to` — carries **both** absolute paths in
 its message, one of them under a home directory. ⭐ So a refusal in this
 package **tests the relationship between its arguments itself** and raises its
@@ -46,16 +46,16 @@ class ReconnaissanceRefused(ValueError):
     """An argument no pass in this package can measure anything from.
 
     ⛔ **The message names the argument, and what was wrong with its
-    *relationship* to the others — never the value** (R7, rubric §1f).
+    *relationship* to the others — never the value** (R7).
     `studyforge.describe` names a type; a path is not quoted, not in part, not
     normalised, and not with the home directory taken off the front.
 
     ⭐ **And it says that it is being silent, and why.** The one recorded way
     this discipline gets undone is the next author reading a refusal that looks
     unhelpfully vague and putting the value back, correctly by the rules as
-    they found them (`W1`, Ruling 14).
+    they found them.
 
-    ⚠️ **`ValueError`, following SF-01's split** and `corpus.manifest`'s
+    ⚠️ **`ValueError`, following the address package's split** and `corpus.manifest`'s
     reading of it: this is a value a caller passed, not a document that could
     not be read, so the base that already-written code handles is the one.
     """

@@ -13,7 +13,7 @@ registered verb in `studyforge.cli.VERBS`.
 
 ## ⛔ A changed verb is an edit HERE and nowhere else in this package
 
-⚠️ `W230` may change `studyforge serve`'s arguments (`SF-19b/3`: `--site` is a
+⚠️ `studyforge serve`'s arguments may change (`--site` is a
 configured path, and `serve.make_instance(root)` needs none). ⭐ So no other module
 in this package spells a verb flag or reaches the table, and
 `tests/studyforge/skills/buildserve/test_thin.py` asserts both. The mirror test
@@ -44,7 +44,7 @@ def narrate(corpus: str, voice: str, service: str | None = None) -> list[str]:
 
 
 def build(corpus: str, site: str, narration: bool | None = None) -> list[str]:
-    """Return the arguments that build one corpus into `site`, voiced as asked (`W460`)."""
+    """Return the arguments that build one corpus into `site`, voiced as asked."""
     return ["build", corpus, "--out", site, *_narration(narration)]
 
 

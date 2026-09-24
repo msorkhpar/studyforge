@@ -45,7 +45,7 @@ unit is **complete**, not short.
 
 ## ⭐ THIS IS WHERE `consuming.json`'s SUFFICIENCY IS DEMONSTRATED
 
-⛔ `E12`'s `TC-05` says a component's consuming contract is **sufficient** to
+⛔ Spec §8.1 and R19 say a component's consuming contract is **sufficient** to
 generate a working compose file with no other input. ⭐ **This package is where
 that is demonstrated rather than asserted** — so a key it needs and the
 contract does not carry is a **finding against that component**, raised by

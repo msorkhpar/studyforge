@@ -1,4 +1,4 @@
-r"""Re-onboarding: an onboarded corpus's recorded answers are its own draft (`W439`).
+r"""Re-onboarding: an onboarded corpus's recorded answers are its own draft.
 
 **What it does.** Reads the `corpus.json` and `.studyforge/pin.json` an
 onboarding wrote, turns them back into the draft and the arguments that
@@ -34,20 +34,20 @@ lost only because `existing=` carries it), so this module does it.
 
 ⚠️ `survey('.')` on an onboarded corpus reads the framework's own generated half
 as the corpus's material, and proposes answers that disagree with the recorded
-ones (`W329`, measured on the first corpus) — so every regenerate from it is a string of
+ones (measured on the first corpus) — so every regenerate from it is a string of
 refusals to settle. ⭐ **The recorded manifest IS the settled draft**: every
 answer a person already gave, byte for byte. A re-survey is for a corpus whose
 MATERIAL changed shape, and that is a new onboarding, not this.
 
 ## ⛔ An answer changes only when it is named (`settle`)
 
-⭐ `W329` refuses a regenerate that moves a recorded answer, because a re-survey
+⭐ `write` refuses a regenerate that moves a recorded answer, because a re-survey
 moved one silently. ⭐ **A key named in `settle` is not silent**: it is the
 person's answer to the question that refusal asks, so `write` lets that one
 field move and still refuses every other. ⛔ `content` is never settled here —
 its one growing field is `not_material`, which has its own argument, and its
 others are the material's shape, which is a new onboarding.
-⭐ A settled answer that needs a newer `corpus_api` — `narration` (`W460`) — moves
+⭐ A settled answer that needs a newer `corpus_api` — `narration` — moves
 the version with it; ⛔ no settle, no rise.
 """
 
@@ -106,7 +106,7 @@ def reonboard(
     )
     settled = tuple(settle or ())
     if settled and made.manifest.corpus_api > parse(text).corpus_api:
-        # ⭐ `W460`: a settled answer that only a newer contract reads carries that
+        # ⭐ A settled answer that only a newer contract reads carries that
         # version with it. The version is `promote`'s choice, never a person's, so
         # refusing its rise would refuse the answer the person just gave.
         settled += ("corpus_api",)

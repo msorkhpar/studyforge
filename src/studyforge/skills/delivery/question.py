@@ -12,7 +12,7 @@ taken at, so that acting on a stale answer is a refusal rather than a habit.
     q = Question(1, "does placement re-read its own output?",
                  routed_at="AB-31", blocks=("C-02",),
                  rerun="python3 -m pytest tests/studyforge/cli/plan")
-    q = q.settled("no, since W28", at="8146bdb")
+    q = q.settled("no, since the source walk asks git", at="8146bdb")
     q.is_current("8146bdb")     # True — safe to act on
 
 **Depends on.** `dataclasses`. ⛔ Nothing else.

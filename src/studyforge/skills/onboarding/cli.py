@@ -21,7 +21,7 @@ skill calls. ⭐ **The one question an ONBOARDED corpus keeps asking is where it
 stands**, and it is asked after onboarding has finished, by whoever opens the
 corpus. ⛔ A generated document cannot answer it, because the answer moves
 whenever `studyforge narrate` or a re-ingest runs and nothing regenerates a
-document (`W332`). ⭐ So the answer is a command, and the document points here.
+document. ⭐ So the answer is a command, and the document points here.
 
 ## ⛔ Two exit codes, and the difference is whether there was a reading
 
