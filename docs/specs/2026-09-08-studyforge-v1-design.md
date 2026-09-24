@@ -2087,64 +2087,51 @@ not when it delivers everything the framework can do.** Two tracks, and the
 manifest decides which apply:
 
 **The reading floor — every corpus, always.** Units readable offline over
-`file://` with no network and no server; narration; a table of contents and a
-root index with working deep links; navigation between units; the reader's own
-read marks. ⭐ **This is a complete product on its own.** A corpus that stops
-here is not a degraded one — for prose, a book, a paper collection or a set of
-notes, it is the whole thing, and R8's floor means it needs nothing running.
+`file://` with no network and no server; narration, unless the corpus or the
+run turns it off; a table of contents and a root index with working deep links;
+navigation between units; the reader's own read marks. ⭐ **This is a complete
+product on its own.** A corpus that stops here is not a degraded one — for prose,
+a book, a paper collection or a set of notes, it is the whole thing, and R8's
+floor means it needs nothing running. ⛔ **A corpus without narration is complete,
+not short** (C5): no player, no clip served, no "missing" notice, and every clip
+kept on disk (§4).
+
+**Checked practice for any subject.** ⭐ **A corpus whose subject admits no
+checkable coding task still gets checked practice — the quiz shape** (§7). A quiz
+needs no container, no network and no model, so it sits **on the reading floor**,
+not in the execution track; its answers are checked by the local study server,
+which holds the key the page never carries, and over `file://` a quiz shows its
+questions and says checking them needs that server.
 
 **The execution track — only where the material is runnable.** A workspace, Run
-and Submit, a pinned toolchain container, graded practices. Gated on the
-manifest's `exercises` (§4) and on §7's three states. ⛔ **A corpus with no
-graders skipping this entire track is a pass**, not a shortfall (C5) — and it is
-the *common* case, not the exception. The Java tutorial, with 168 test classes
-paired 1:1, is extraordinary; most material is not like it.
-
-⛔ **AMENDED 2026-09-19 (`W389`, user direction) — the gate is the MATERIAL, no longer
-what the source packaged.** ⭐ **A corpus enters the execution track when its subject
-admits a checkable coding task**, whether or not the source ships a grader: from `M10`
-the exercises are [authored at ingestion](#exercises-authored-for-every-corpus-w389).
-⭐ **A corpus whose subject admits no checkable coding task still gets *checked*
-practice — the quiz shape** — and a quiz needs no container, no network and no server,
-so it sits **on the reading floor**, not in the execution track. ⛔ **Skipping the track
-remains a PASS**; what stops being a pass is a reader with nothing to practise.
-⭐ **The reading floor is still a complete product on its own, and still offline.**
-
-⛔ **AMENDED 2026-09-23 (`W451`, user ruling) — *"no server"* above is SUPERSEDED.** A quiz
-still needs no container, no network and no model, and it still sits on the reading
-floor rather than in the execution track — ⭐ **but its answers are checked by the local
-study server**, which holds the key the page no longer carries (§7 §7's amendment). Over
-`file://` a quiz shows its questions and says checking them needs that server.
-
-⛔ **AMENDED 2026-09-23 (`W460`, user ruling) — *"narration"* above is OPTIONAL.** ⭐ *"it
-should be optional … Somebody might wants to just cover the course wihtout voices"*: a
-corpus whose `corpus.json` says `narration: false`, or a run given `--no-narration`, is
-the reading floor without its voice, and ⛔ **that is complete, not short** (C5) — no
-player, no clip served, no "missing" notice, and every clip kept on disk (§4, `narration`).
+and Submit, a pinned runner container, graded practices, and optionally the
+browser editor. ⭐ **A corpus enters it when its subject admits a checkable coding
+task**, whether or not the source ships a grader: the exercises are [authored at
+ingestion](#exercises-authored-for-every-corpus). It is gated on the manifest's
+`exercises` and `runtimes` (§4) and on §7's three states. ⛔ **A corpus whose
+material admits no checkable coding task skipping this entire track is a pass**,
+not a shortfall (C5); what is never a pass is a reader with nothing to practise
+where the material supports practice.
 
 ⚠️ **The order follows from that.** The reading floor comes first and completely,
 because it is what every consumer gets and the only thing some consumers want.
-The execution track is built when a corpus needs it — which is a real decision
-about a real source, not a milestone everyone waits behind.
-
-⛔ **AMENDED PO round 74 (user direction, quoted in §8.1's amendment and §12's):** ⭐ **the track's container is the runner image, and the browser editor joins at `M7`.** ⚠️ **The track now runs AFTER the first corpus and the framework proof — `M4` → `M6` → `M8` → `M5` → `M7` — and the Java corpus re-validates at `M9`.**
+The execution track is added when a corpus needs it — a real decision about a
+real source, not a stage everyone waits behind.
 
 ### 11.1 The framework
 
 1. `studyforge validate` passes on a valid archive and fails, naming the
    specific failure, on each invalid fixture — **including a source whose
-   material the adapter silently failed to read in full** (SF-25).
-2. Both `FND-04` fixtures — one **depth-1**, one depth-2 — build, render, and
-   serve with **no corpus-specific code anywhere in the framework** (R1),
-   asserted rather than assumed.
+   material the adapter silently failed to read in full**.
+2. A **depth-1** fixture and a depth-2 fixture both build, render and serve
+   with **no corpus-specific code anywhere in the framework** (R1), asserted
+   rather than assumed.
 3. A corpus's units are readable offline over `file://` — no network, no server
    — with narration, syntax highlighting, working navigation, and read marks
    recorded and surviving a reload (§8.5).
 4. The root index renders a hierarchy of any declared depth with working deep
    links. Its **only inputs** are the two contents documents — asserted; and ⛔
-   **it fetches nothing at runtime**, because `fetch` of a sibling file is
-   refused over `file://`, there being no origin to ask, so contents data is
-   delivered into the page at generation time.
+   **it fetches nothing at runtime** (§8.4).
 5. `studyforge plan` names every path a build will create and every declared
    edit, before anything is generated, and what a build then does matches it.
 6. No source module exceeds 400 lines and no test module exceeds 600, or the
@@ -2152,8 +2139,8 @@ about a real source, not a milestone everyone waits behind.
 7. Every package has tests, and the test tree mirrors the source tree (R12).
 8. Tests, generation and serving all run in a container from a clean checkout,
    with Docker as the only prerequisite (R15).
-9. ⛔ **WITHDRAWN 2026-09-12 with R14.** The number is retained so nothing
-   below it moves; there is no index and no criterion here.
+9. Framework source imports only the standard library and itself, and the
+   package declares no runtime dependency (§3.2).
 
 ### 11.2 Any corpus the framework builds
 
@@ -2168,28 +2155,12 @@ about a real source, not a milestone everyone waits behind.
     asserts it reads the declaration rather than naming the file (R3).
 12. Its ingest audit exits 0, or exits 1 naming exactly the known outliers.
 13. Its media footprint is measured and inside its declared limits, or the build
-    said so and stopped (SF-32).
-14. ⛔ **It reaches the reading floor in full**, and reaches whatever of the
-    execution track its material actually supports — with the coverage report
-    stating honestly which units are reading-only.
-    ⭐ **EXTENDED 2026-09-19 (`W389`), and binding from `M10`:** every page whose
-    material admits a checkable task carries its planned exercises, or the coverage
-    report names that page with the gate that refused each one
-    ([§7](#exercises-authored-for-every-corpus-w389)). ⛔ **"Reading-only" is a
+    said so and stopped (§5).
+14. ⛔ **It reaches the reading floor in full**, and whatever of the execution
+    track its material supports: every page whose material admits a checkable
+    task carries its planned exercises or quizzes, or the coverage report names
+    that page with the gate that refused each one (§7). ⛔ **"Reading-only" is a
     reading the gates produced, never a default nobody tried to move.**
-
-### 11.3 The Java corpus, when it is built
-
-Consumer 1's numbers, kept because they are measured and because they are the
-worked example the catalogue draws on — **not because the framework's acceptance
-depends on them.**
-
-15. All **166** units reach the reading floor, and the root index renders the
-    full 10 → 45 → 166 hierarchy.
-16. Every exercise that ships has cleared both gates; the coverage report names
-    every pair that did not.
-17. Run and Submit work from the page against the dockerised Maven toolchain;
-    only a passing Submit completes a practice.
 
 ---
 
