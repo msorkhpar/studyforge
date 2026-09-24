@@ -47,7 +47,7 @@ import zipfile
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
-from studyforge.checksum import Running, file_sha256
+from studyforge.checksum import Running
 from studyforge.narrate.synth import located, read_state, state_file
 
 #: The most bytes one volume holds: at most 999 MB, inside a 2 GiB asset limit.
@@ -195,11 +195,6 @@ def read_sums(out: Path | str) -> dict[str, str]:
     if not sums:
         raise PackRefused(f"{SUMS} names no volume; pack it again")
     return sums
-
-
-def sha256_of(file: Path) -> str:
-    """Return the hex SHA-256 of one file. ⭐ `checksum.file_sha256`, the one spelling."""
-    return file_sha256(file)
 
 
 def _clear(target: Path) -> None:

@@ -1,17 +1,18 @@
-r"""`--pack` and `--upload`: the narrate verb's two release requests, and what each prints.
+r"""`--pack` and `--publish`: the narrate verb's two release requests, and what each prints.
 
 **What it does.** `pack_command` packs a corpus's recorded clips into release
 volumes, writes the restore scripts into the corpus, and prints what it wrote
-and the upload's dry run to type next. `upload_command` checks a release
-directory and prints the upload it would make (`--dry-run`), or hands that one
-command to `gh`.
+and the dry run to type next. `publish_command` is that dry run: it checks a
+release directory and the corpus's scripts and prints every asset and the one
+`gh release create` command the owner runs to upload them.
 
 **How you use it.** Through `cli.main`: `studyforge narrate <root> --pack
-<dir> --tag <tag>` and `studyforge narrate <root> --upload <dir> --tag <tag>
-[--dry-run]`. Each function returns `(lines, exit code)`.
+<dir> --tag <tag>`, then `studyforge narrate <root> --publish <dir> --tag
+<tag>`. Each function returns `(lines, exit code)`.
 
 **Depends on.** `narrate.release` for the work, and `validate` for the exit
-codes. ⛔ Neither request builds a narration client or reaches the service.
+codes. ⛔ Neither request builds a narration client, reaches the service,
+starts a process or uploads anything.
 
 ## The line format
 
@@ -21,18 +22,16 @@ corpus root, so nothing printed carries a home directory (R7).
 
 ## ⛔ The exit codes
 
-`0` done; `1` refused, with the sentence that says why and nothing written or
-published; for a real upload, `gh`'s own exit code.
+`0` done; `1` refused, with the sentence that says why and nothing written.
 """
 
 from __future__ import annotations
 
 from studyforge.narrate.release import (
     PackRefused,
-    UploadRefused,
+    PublishRefused,
     pack,
-    plan_upload,
-    run_upload,
+    plan_publish,
     valid_tag,
     write_scripts,
 )
@@ -44,14 +43,14 @@ BAD_TAG = (
     "a letter or a digit; nothing was packed"
 )
 
-#: What a dry run says it did not do.
-DRY_RUN = "dry run: nothing was uploaded. Run the same command without --dry-run to publish"
-
-#: What a pack says the owner does next, and that it is the owner's to do.
-NEXT = (
-    "next    commit the restore scripts, then publish with --upload (see --dry-run first); "
-    "nothing is uploaded until you run it"
+#: What the dry run says it did not do, and whose the upload is.
+DRY_RUN = (
+    "dry run: nothing was uploaded. The command above publishes the release with your "
+    "own gh login; run it yourself, from this directory, when you mean to"
 )
+
+#: What a pack says the owner does next.
+NEXT = "next    commit the restore scripts, then read the publish dry run below"
 
 
 def pack_command(root: str, out: str, tag: str) -> tuple[list[str], int]:
@@ -73,16 +72,14 @@ def pack_command(root: str, out: str, tag: str) -> tuple[list[str], int]:
     ]
     lines += [f"wrote   {where}" for where in written]
     lines.append(NEXT)
-    lines.append(f"upload  studyforge narrate {root} --upload {out} --tag {tag} --dry-run")
+    lines.append(f"publish studyforge narrate {root} --publish {out} --tag {tag}")
     return lines, OK
 
 
-def upload_command(root: str, out: str, tag: str, *, dry_run: bool) -> tuple[list[str], int]:
-    """Check the release in `out` and print it (`dry_run`), or publish it through `gh`."""
+def publish_command(root: str, out: str, tag: str) -> tuple[list[str], int]:
+    """Check the release in `out` and print what publishing it takes. ⛔ Uploads nothing."""
     try:
-        upload = plan_upload(root, out, tag)
-        if dry_run:
-            return [*upload.lines(), DRY_RUN], OK
-        return [], run_upload(upload)
-    except UploadRefused as refused:
+        publish = plan_publish(root, out, tag)
+    except PublishRefused as refused:
         return [f"refused {refused}"], INVALID
+    return [*publish.lines(), DRY_RUN], OK

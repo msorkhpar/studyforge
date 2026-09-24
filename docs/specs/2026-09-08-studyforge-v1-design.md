@@ -1124,10 +1124,11 @@ decision without touching a page:
   anything is joined**, extracts each clip to `<corpus root>/<where>/<filename>`
   as the record names it, and deletes the downloads. The token is read from the
   environment and never written or printed. A second run gives the same tree.
-- ⛔ **The upload is the owner's.** `studyforge narrate <root> --upload <dir>
-  --tag <tag> --dry-run` checks every volume against `SHA256SUMS` and prints the
-  one `gh release create` command; without `--dry-run` it runs that command with
-  the owner's own `gh` login. Nothing in the framework publishes on its own.
+- ⛔ **The upload is the owner's.** `studyforge narrate <root> --publish <dir>
+  --tag <tag>` is a dry run: it checks every volume against `SHA256SUMS`, reads
+  the repository from the checkout's git configuration, and prints the one
+  `gh release create` command, which the owner runs with their own `gh` login.
+  ⛔ The framework starts no process for it and uploads nothing (§8.3).
 - ⭐ **Narration stays optional**: a clone that never restores is the reading
   floor, complete, and the onboarding guide says how to get the clips.
 
@@ -1812,7 +1813,7 @@ promise (`provides`). ⭐ **A re-run with
 nothing changed requests nothing**, and a change in any condition re-requests
 every clip it made stale. `studyforge narrate <root> --prune` deletes the clips
 of record entries the corpus no longer produces, over a walk of the whole corpus.
-`--pack` and `--upload` carry a corpus's clips out of git as release volumes
+`--pack` and `--publish` carry a corpus's clips out of git as release volumes
 (§5, *Generated media and pages are committed*); neither reaches the service.
 
 ### A clip's filename carries a digest of the words it says

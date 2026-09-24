@@ -184,14 +184,13 @@ disk and still opens without a server (R8).
 
 For a corpus that does not commit its clips (`media.commit` is `never`), the
 clips reach a reader as volumes attached to a release of the corpus's own
-repository. ⛔ **Nothing is uploaded unless the corpus's owner asks, and then
-it is uploaded with the owner's own login.** Run the first two yourself; the
-third is the owner's:
+repository. ⛔ **Nothing is uploaded unless the corpus's owner asks, and the
+framework never uploads at all**: it prints the command, and the owner runs it
+with their own `gh` login.
 
 ```text
 studyforge narrate <corpus-root> --pack <dir> --tag narration-1.0.0
-studyforge narrate <corpus-root> --upload <dir> --tag narration-1.0.0 --dry-run
-studyforge narrate <corpus-root> --upload <dir> --tag narration-1.0.0
+studyforge narrate <corpus-root> --publish <dir> --tag narration-1.0.0
 ```
 
 - `--pack` reads the narration record, packs every clip it locates into
@@ -200,11 +199,11 @@ studyforge narrate <corpus-root> --upload <dir> --tag narration-1.0.0
   `.studyforge/narration-release/`. The same corpus packs to the same bytes.
   It refuses, naming how many, when a clip the record promises is not on disk.
 - Commit the restore scripts: a reader runs them from a clone.
-- `--upload --dry-run` checks every volume against `SHA256SUMS`, reads the
-  repository from the checkout's `origin`, and prints each asset and the one
-  `gh release create` command it would run. ⛔ It uploads nothing.
-- `--upload` without `--dry-run` runs that command through `gh`, as the owner.
-  ⛔ Never run it for the owner.
+- `--publish` is the dry run. It checks every volume against `SHA256SUMS` and
+  the scripts against the tag, reads the repository from the checkout's
+  `origin`, and prints each asset and, last, the one `gh release create`
+  command that uploads them. ⛔ It uploads nothing. Hand that command to the
+  owner; ⛔ never run it for them.
 
 A reader restores with `sh .studyforge/narration-release/restore.sh`, or
 `restore.ps1` beside it in PowerShell. Each clip lands at the place the

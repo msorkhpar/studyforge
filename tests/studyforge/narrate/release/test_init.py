@@ -23,7 +23,7 @@ def test_every_exported_name_resolves():
 
 def test_the_commands_it_gives_are_flags_the_verb_takes():
     flags = {option for action in build_parser()._actions for option in action.option_strings}
-    for flag in ("--pack", "--upload", "--tag", "--dry-run"):
+    for flag in ("--pack", "--publish", "--tag"):
         assert flag in flags
         assert flag in release.__doc__
 

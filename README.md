@@ -122,11 +122,12 @@ rebuild.
 `corpus.json` sets `media.commit` to `never` keeps its clips out of the
 repository. `studyforge narrate <root> --pack <dir>` packs them into volumes of
 at most 999 MB with a `SHA256SUMS` and writes two restore scripts into the
-corpus; `studyforge narrate <root> --upload <dir> --dry-run` prints the one
-`gh release create` command that publishes them, and only you run it, with
-your own login. A reader who wants the voice runs
-`sh .studyforge/narration-release/restore.sh` (or `restore.ps1`) from a clone;
-one who never does still has a complete site. Step 6's skill walks through it.
+corpus; `studyforge narrate <root> --publish <dir>` checks them and prints the
+one `gh release create` command that publishes them. The framework uploads
+nothing: you run that command, with your own login. A reader who wants the
+voice runs `sh .studyforge/narration-release/restore.sh` (or `restore.ps1`)
+from a clone; one who never does still has a complete site. Step 6's skill
+walks through it.
 
 ## The authoring reference
 

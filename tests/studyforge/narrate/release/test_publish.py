@@ -1,32 +1,32 @@
-"""Mirror of `src/studyforge/narrate/release/upload.py` (R12): the owner's upload and its dry run.
+"""Mirror of `src/studyforge/narrate/release/publish.py` (R12): the dry run and the owner's command.
 
-- the repository is read from the checkout's `origin`, in each spelling git
-  returns, and a checkout with no GitHub origin is refused;
+- the repository is read from the checkout's own git configuration, in each
+  spelling git records and through a worktree's `.git` file, and a checkout
+  with no GitHub origin is refused;
 - the dry run lists every volume with its real size and digest, then the one
-  `gh release create` command, and runs nothing;
+  `gh release create` command, which parses back to exactly its argv;
 - ⛔ a volume that no longer matches `SHA256SUMS`, a missing volume, and
-  restore scripts written for another tag are each refused before `gh` runs;
-- a real upload runs exactly that command, and here the `gh` it runs is a
-  recording stand-in on `PATH`: ⛔ nothing reaches a release host.
+  restore scripts written for another tag or edited by hand are each refused;
+- ⛔ planning a publish starts no process: `subprocess` is made to refuse, and
+  the plan is still made.
 """
 
 from __future__ import annotations
 
 import hashlib
 import shlex
-import stat
+import subprocess
 from pathlib import Path
 
 import pytest
 
 from studyforge.narrate.release import pack, write_scripts
-from studyforge.narrate.release.upload import (
+from studyforge.narrate.release.publish import (
     NOTES,
     TITLE,
-    UploadRefused,
-    plan_upload,
+    PublishRefused,
+    plan_publish,
     repository_of,
-    run_upload,
 )
 from studyforge.narrate.release.volumes import SUMS
 from tests.studyforge.cli.narrate.plant import narrated
@@ -75,24 +75,24 @@ def test_a_checkout_with_no_github_origin_is_refused(tmp_path, url):
     root = init_repository(tmp_path / "corpus")
     if url is not None:
         run([git(), "remote", "add", "origin", url], cwd=root)
-    with pytest.raises(UploadRefused, match="no origin remote on GitHub"):
+    with pytest.raises(PublishRefused, match="no origin remote on GitHub"):
         repository_of(root)
 
 
 def test_the_dry_run_lists_every_volume_and_the_one_command(tmp_path):
     root, out = packed(tmp_path)
 
-    upload = plan_upload(root, out, TAG)
-    lines = upload.lines()
+    publish = plan_publish(root, out, TAG)
+    lines = publish.lines()
 
     volumes = sorted(path for path in out.iterdir() if path.name != SUMS)
     assert len(volumes) > 1
     for path in volumes:
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
         assert f"asset   {path.name}  {path.stat().st_size} byte(s)  sha256 {digest}" in lines
-    assert f"upload  repository {REPO} (read from the checkout's origin)" in lines
+    assert f"publish repository {REPO} (read from the checkout's origin)" in lines
     command = shlex.split(lines[-1].removeprefix("command "))
-    assert command == upload.argv
+    assert command == publish.argv
     assert command[:4] == ["gh", "release", "create", TAG]
     assert command[4:-6] == [str(out / path.name) for path in volumes] + [str(out / SUMS)]
     assert command[-6:] == ["--repo", REPO, "--title", TITLE, "--notes", NOTES]
@@ -102,10 +102,10 @@ def test_the_dry_run_names_the_release_directory_as_it_was_typed(tmp_path, monke
     root, _ = packed(tmp_path)
     monkeypatch.chdir(tmp_path)
 
-    upload = plan_upload(root, "release", TAG)
+    publish = plan_publish(root, "release", TAG)
 
-    assert "release/narration.zip.000" in upload.lines()[-1]
-    assert str(tmp_path) not in "\n".join(upload.lines())
+    assert "release/narration.zip.000" in publish.lines()[-1]
+    assert str(tmp_path) not in "\n".join(publish.lines())
 
 
 def test_a_volume_that_no_longer_matches_its_sum_is_refused(tmp_path):
@@ -113,23 +113,23 @@ def test_a_volume_that_no_longer_matches_its_sum_is_refused(tmp_path):
     volume = out / "narration.zip.001"
     volume.write_bytes(volume.read_bytes()[:-1] + b"\x00")
 
-    with pytest.raises(UploadRefused, match="narration.zip.001 does not match"):
-        plan_upload(root, out, TAG)
+    with pytest.raises(PublishRefused, match="narration.zip.001 does not match"):
+        plan_publish(root, out, TAG)
 
 
 def test_a_missing_volume_is_refused(tmp_path):
     root, out = packed(tmp_path)
     (out / "narration.zip.000").unlink()
 
-    with pytest.raises(UploadRefused, match="lacks it"):
-        plan_upload(root, out, TAG)
+    with pytest.raises(PublishRefused, match="lacks it"):
+        plan_publish(root, out, TAG)
 
 
 def test_restore_scripts_written_for_another_tag_are_refused(tmp_path):
     root, out = packed(tmp_path, tag="narration-0.9.0")
 
-    with pytest.raises(UploadRefused, match=f"not written for tag {TAG}"):
-        plan_upload(root, out, TAG)
+    with pytest.raises(PublishRefused, match=f"not written for tag {TAG}"):
+        plan_publish(root, out, TAG)
 
 
 def test_a_hand_edited_restore_script_is_refused(tmp_path):
@@ -137,30 +137,41 @@ def test_a_hand_edited_restore_script_is_refused(tmp_path):
     script = root / ".studyforge/narration-release/restore.sh"
     script.write_text(script.read_text(encoding="utf-8") + "# edited\n", encoding="utf-8")
 
-    with pytest.raises(UploadRefused, match="restore.sh"):
-        plan_upload(root, out, TAG)
+    with pytest.raises(PublishRefused, match="restore.sh"):
+        plan_publish(root, out, TAG)
 
 
-def test_a_real_upload_runs_exactly_the_command_through_gh(tmp_path, monkeypatch):
+def test_planning_a_publish_starts_no_process(tmp_path, monkeypatch):
     root, out = packed(tmp_path)
-    tools = tmp_path / "bin"
-    tools.mkdir()
-    log = tmp_path / "gh.argv"
-    fake = tools / "gh"
-    fake.write_text(f'#!/bin/sh\nprintf "%s\\n" "$@" > "{log}"\n', encoding="utf-8")
-    fake.chmod(fake.stat().st_mode | stat.S_IXUSR)
-    upload = plan_upload(root, out, TAG)
-    monkeypatch.setenv("PATH", str(tools))
 
-    assert run_upload(upload) == 0
+    def refuse(*_args, **_kwargs):
+        raise AssertionError("planning a publish started a process")
 
-    assert log.read_text(encoding="utf-8").splitlines() == upload.argv[1:]
+    monkeypatch.setattr(subprocess, "Popen", refuse)
+    monkeypatch.setattr(subprocess, "run", refuse)
+
+    assert plan_publish(root, out, TAG).repository == REPO
 
 
-def test_an_upload_with_no_gh_is_refused_and_names_what_to_publish(tmp_path, monkeypatch):
-    root, out = packed(tmp_path)
-    upload = plan_upload(root, out, TAG)
-    monkeypatch.setenv("PATH", str(tmp_path / "nothing-here"))
+def test_a_worktree_is_followed_to_the_origin_of_its_common_repository(tmp_path):
+    main = with_origin(tmp_path / "main")
+    # ⛔ A placeholder identity, passed for this one commit: a worktree needs a commit.
+    made = run(
+        [
+            git(), "-c", "user.name=Example", "-c", "user.email=example@example.invalid",
+            "commit", "-q", "--allow-empty", "-m", "start",
+        ],
+        cwd=main,
+    )  # fmt: skip
+    assert made.returncode == 0, made.stderr
+    added = run([git(), "worktree", "add", "-q", str(tmp_path / "wt")], cwd=main)
+    assert added.returncode == 0, added.stderr
 
-    with pytest.raises(UploadRefused, match="gh is not installed"):
-        run_upload(upload)
+    assert (tmp_path / "wt" / ".git").is_file()
+    assert repository_of(tmp_path / "wt") == REPO
+
+
+def test_a_corpus_in_a_subdirectory_reads_the_checkout_above_it(tmp_path):
+    main = with_origin(tmp_path / "main")
+    (main / "course").mkdir()
+    assert repository_of(main / "course") == REPO

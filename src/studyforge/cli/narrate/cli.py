@@ -6,7 +6,7 @@ the exit code.
 
 **How you use it.** `main(argv) -> int`, and `python3 -m studyforge.cli.narrate`.
 `--prune` in place of `--voice` runs `prune.prune_corpus` instead; `--pack` and
-`--upload` run `release.pack_command` and `release.upload_command`.
+`--publish` run `release.pack_command` and `release.publish_command`.
 ⭐ The dispatcher registers this same callable as the `narrate` verb.
 
 **Depends on.** `cli.narrate.stage`, `cli.narrate.prune`, `cli.narrate.release`,
@@ -30,13 +30,12 @@ synthesises cannot prune and a prune cannot synthesise (R3: narration deletes
 nothing except through an explicit prune). ⛔ **The prune branch builds no
 client**, so it can make no request.
 
-## ⛔ `--pack` and `--upload` are requests of their own, and build no client
+## ⛔ `--pack` and `--publish` are requests of their own, and build no client
 
 ⭐ Four requests, exactly one per run: `--voice`, `--prune`, `--pack`,
-`--upload`. The two release requests read the record and the disk, never the
-service, and `--dry-run` belongs to `--upload` alone. ⛔ `--upload` without
-`--dry-run` runs `gh` as the person who typed it; nothing else in this verb
-publishes anything.
+`--publish`. The two release requests read the record and the disk, never the
+service. ⛔ `--publish` is a dry run and nothing else: it prints the `gh`
+command that uploads, and the owner runs it. This verb publishes nothing.
 
 ⛔ **Order is `narrate` then `build`** (a build only copies clips). A build never
 synthesises; this is the only verb that probes the service or writes clips.
@@ -52,7 +51,7 @@ import argparse
 from pathlib import Path
 
 from studyforge.cli.narrate.prune import prune_corpus
-from studyforge.cli.narrate.release import pack_command, upload_command
+from studyforge.cli.narrate.release import pack_command, publish_command
 from studyforge.cli.narrate.report import exit_code, lines, prune_exit_code, prune_lines
 from studyforge.cli.narrate.stage import narrate_corpus
 from studyforge.narrate.release import DEFAULT_TAG
@@ -104,22 +103,18 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     request.add_argument(
-        "--upload",
+        "--publish",
         metavar="DIR",
         help=(
-            "publish the volumes a pack wrote in DIR as a GitHub release of the checkout's "
-            "origin, through gh and your own login. Try --dry-run first"
+            "a dry run: check the volumes a pack wrote in DIR and print the one gh command "
+            "that publishes them as a GitHub release of the checkout's origin. Uploads "
+            "nothing; you run that command yourself, with your own login"
         ),
     )
     parser.add_argument(
         "--tag",
         default=DEFAULT_TAG,
-        help=f"the release tag, with --pack and --upload (default {DEFAULT_TAG})",
-    )
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="with --upload: print what would be uploaded, and upload nothing",
+        help=f"the release tag, with --pack and --publish (default {DEFAULT_TAG})",
     )
     parser.add_argument(
         "--format",
@@ -141,16 +136,13 @@ def main(argv: list[str] | None = None, out=None) -> int:
     import sys
 
     stream = sys.stdout if out is None else out
-    parser = build_parser()
-    arguments = parser.parse_args(argv)
-    if arguments.dry_run and arguments.upload is None:
-        parser.error("--dry-run goes with --upload")
+    arguments = build_parser().parse_args(argv)
     root = Path(arguments.root)
     if not root.is_dir():
         # ⛔ Names what was asked for, not the absolute path it resolved to (R7).
         print(f"{arguments.root}: not a directory", file=stream)
         return UNUSABLE
-    if arguments.pack is not None or arguments.upload is not None:
+    if arguments.pack is not None or arguments.publish is not None:
         report, code = _release(arguments)
         for line in report:
             print(line, file=stream)
@@ -183,9 +175,7 @@ def main(argv: list[str] | None = None, out=None) -> int:
 
 
 def _release(arguments: argparse.Namespace) -> tuple[list[str], int]:
-    """Run `--pack` or `--upload`. ⛔ Neither builds a client, so neither reaches the service."""
+    """Run `--pack` or `--publish`. ⛔ Neither builds a client, so neither reaches the service."""
     if arguments.pack is not None:
         return pack_command(arguments.root, arguments.pack, arguments.tag)
-    return upload_command(
-        arguments.root, arguments.upload, arguments.tag, dry_run=arguments.dry_run
-    )
+    return publish_command(arguments.root, arguments.publish, arguments.tag)

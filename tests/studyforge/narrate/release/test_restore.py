@@ -36,7 +36,7 @@ from tests.studyforge.narrate.release.restoring import (
     restored,
 )
 from tests.studyforge.narrate.release.stand_in import OWNER_REPO, TAG, TOKEN, StandIn
-from tests.studyforge.narrate.release.test_upload import SSH_USER
+from tests.studyforge.narrate.release.test_publish import SSH_USER
 from tests.support import git, init_repository, run, tool_on_path
 
 

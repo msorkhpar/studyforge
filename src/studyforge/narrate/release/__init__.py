@@ -3,18 +3,19 @@ r"""A corpus's narration as release volumes: packed by its owner, restored by a 
 **What it does.** Carries narration out of git for a corpus that does not
 commit its clips. `volumes` packs the clips the narration record locates into
 split, stored zip volumes with a `SHA256SUMS`; `scripts` renders the two
-restore scripts (`sh` and PowerShell) a packed corpus carries; `upload` builds
-the one `gh release create` command the owner runs, and its dry run.
+restore scripts (`sh` and PowerShell) a packed corpus carries; `publish` checks
+a pack and prints the one `gh release create` command its owner runs.
 
 **How you use it.**
 
     studyforge narrate <root> --pack <dir> --tag narration-1.0.0
-    studyforge narrate <root> --upload <dir> --tag narration-1.0.0 --dry-run
+    studyforge narrate <root> --publish <dir> --tag narration-1.0.0
     sh .studyforge/narration-release/restore.sh        # a reader, in a clone
 
 **Depends on.** `narrate.synth` for the record and `corpus.placement` for the
-generated root; the standard library otherwise. ⛔ Nothing here opens a socket:
-the restore scripts fetch, and `gh` uploads, each on a person's own request.
+generated root, `checksum` for the volumes' digests; the standard library
+otherwise. ⛔ Nothing here opens a socket or starts a process: a reader's
+restore script fetches, and the owner's own `gh` uploads.
 
 ## ⛔ Narration stays optional
 
@@ -32,6 +33,7 @@ corpus root plays it with no rebuild.
 
 from __future__ import annotations
 
+from studyforge.narrate.release.publish import Publish, PublishRefused, plan_publish
 from studyforge.narrate.release.scripts import (
     DEFAULT_TAG,
     RELEASE_DIR,
@@ -41,7 +43,6 @@ from studyforge.narrate.release.scripts import (
     valid_tag,
     write_scripts,
 )
-from studyforge.narrate.release.upload import Upload, UploadRefused, plan_upload, run_upload
 from studyforge.narrate.release.volumes import (
     PART_BYTES,
     SUMS,
@@ -64,14 +65,13 @@ __all__ = [
     "VOLUME",
     "PackRefused",
     "Packed",
-    "Upload",
-    "UploadRefused",
+    "Publish",
+    "PublishRefused",
     "clips_of",
     "pack",
-    "plan_upload",
+    "plan_publish",
     "read_sums",
     "restore_scripts",
-    "run_upload",
     "valid_tag",
     "write_scripts",
 ]

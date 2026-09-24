@@ -4,7 +4,8 @@
 (`file_sha256`), and of bytes fed to it as they are written (`Running`), in the
 form `sha256sum` prints and checks.
 
-**How you use it.** `file_sha256(path)` for a file on disk; `running = Running()`,
+**How you use it.** `file_sha256(path)` for a file on disk, which raises
+`Unreadable` naming why and never which file; `running = Running()`,
 `running.update(block)` per block and `running.hex()` at the end, when the bytes
 pass through anyway and reading them back would cost a second pass.
 
@@ -44,10 +45,17 @@ class Running:
         return self._digest.hexdigest()
 
 
+class Unreadable(ValueError):
+    """A file to checksum could not be read. ⛔ The message never repeats its path (R7)."""
+
+
 def file_sha256(path: Path | str) -> str:
-    """Return the hex SHA-256 of one file, read in chunks."""
+    """Return the hex SHA-256 of one file, read in chunks. ⛔ Raises `Unreadable`."""
     running = Running()
-    with Path(path).open("rb") as stream:
-        while block := stream.read(CHUNK):
-            running.update(block)
+    try:
+        with Path(path).open("rb") as stream:
+            while block := stream.read(CHUNK):
+                running.update(block)
+    except OSError as error:
+        raise Unreadable(f"a file to checksum cannot be read: {error.strerror}") from None
     return running.hex()
