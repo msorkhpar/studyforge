@@ -32144,3 +32144,61 @@ manifest or its record, the docs.
 
 ⭐ **`W461`**, **`W462`**, **`W463`**, **`REL-10`**, **`REL-13`**.
 
+
+## PO round 183
+
+⭐ **Two rows DONE, each re-read by a register plant the office did not use:**
+- ⭐ **`W461`** merged `b02ba0d0` — `corpus.json`'s `onboarding_doc` (`corpus_api` 6) places the reader document or declines it, a regenerate after a hand move writes nothing at the root, and `hand_edited` names a generated file gone from its recorded place. ⭐ **Plant:** the key's version gate lowered → RED.
+- ⭐ **`W462`** merged `c0c390ca` — no text the framework writes into a corpus cites a process id; one test runs every writer through its own entry point. ⭐ **Plant:** an id in the skill stub writer → RED.
+
+⭐ **`REL-13` LANDED on both siblings** — toolchain `de8b915`, narrate-service `00f2405` — and ⭐ **narrate-service is pinned at `00f2405`**. ⭐ **Register readings:** each `consuming.json` has the same paths and types, and only the four prose values ruled in round 182 changed; the process-id grep prints only dated user rulings and `docs/consuming.md`'s own numbered rulings. ⚠️ **The toolchain pin stays at `65c3851`** until `W463` lands, because every toolchain tag moves (`REL-13/5`) and the corpus must re-record its tags in the same act. ⚠️ **`REL-13` closes with `W463`**: the toolchain's Docker suite waits on it alone.
+
+⭐ **`REL-11` DISPATCHED on `wt/dev3`** — the light board, high-level epics, and a `CLAUDE.md` that points — built on `REL-10`'s accepted removal commit, which the register lands once the in-flight rows are through. ⚠️ **The corpus's next row regenerates once**, against `W461`, `W462` and the new toolchain tags together.
+
+### ⚠️ In flight
+
+⭐ **`W463`**, **`REL-10`** (accepted, cut pending), **`REL-11`**, **`REL-13`** (waits on `W463`).
+
+### W461 — Onboarding writes a corpus's ONBOARDING.md back at the root, so the user's archive ruling does not survive a regenerate
+
+⛔ **`ISO-32/1` and `ISO-32/2`:** the user ruled (2026-09-23) that a corpus's `ONBOARDING.md`
+moves to its archive, and `ISO-32` moved it to `docs/archive/` — ⛔ **but onboarding writes
+it at the corpus root by a fixed name (`READER_DOC` in `skills/onboarding/artifacts.py`), so
+the next `reonboard` writes it back**, and the generated pin test still tells a reader
+"ONBOARDING.md says how". ⚠️ **And `hand_edited` read `[]` while a generated file was missing
+from where `installed.json` records it**, so the move went unnoticed by the one check that
+guards generated files.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **Onboarding places its reader document where the corpus says** — manifest data, not a
+   branch on a corpus (R1, R19) — or stops writing one, and every generated text that points
+   at it points where it is. A `reonboard` of a corpus that placed it elsewhere rewrites nothing
+   at the root (R10).
+2. ⛔ **`hand_edited` reports a generated file that is missing** from its recorded place, with
+   a sentence a person reads (R6).
+3. ⭐ **Tests for both**, each read RED under a plant.
+
+⭐ **Surface:** `src/studyforge/skills/onboarding/`, its tests, the manifest key if one is added
+(`docs/authoring/corpus.md`, the spec's §4 key table).
+
+[the mint](#po-round-181)
+
+### W462 — Text the framework generates into a corpus still cites process ids
+
+⛔ **`ISO-32/3`:** text the framework GENERATES into a corpus, which a stranger reads, still
+cites process ids — `SK-09/2` and "§8.1 ruling 4" in the generated `EXECUTION.md` and the
+execution `compose.yaml` (from `skills/execution/reader.py` and `composefile.py`). `W459`
+cleared messages; `REL-09` cleared the framework's own prose; neither reached what the
+framework writes into a corpus.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **No text the framework writes into a corpus cites a row, round or ruling id** that is
+   not an alias in `docs/decisions.md`; each says the thing itself or cites a spec rule.
+   Read over every template and generated-text constant under `src/studyforge/skills/`.
+2. ⭐ **A test asserts it** over what the skills emit, read RED under a plant.
+
+⭐ **Surface:** `src/studyforge/skills/execution/`, any other emitter the reading finds, their tests.
+
+[the mint](#po-round-181)
