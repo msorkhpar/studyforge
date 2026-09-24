@@ -4,9 +4,12 @@
 
 1. **The reader, in the tree.** `packaged_index()` and the module's command hand back the
    file beside the module, byte for byte.
-2. **One copy.** While `docs/capability-index.md` is still on the main line it is the same
-   bytes. ⭐ That the shipped file is the generator's output — the instrument that fails a
-   hand-edit — is `test_walkthrough.py`'s, beside the procedure it serves.
+2. **Frozen, so a hand-edit fails.** The shipped file is the generator's output over the
+   epics as they stood with their task text, and that text now lives on the archive branch,
+   not beside the package. So no test here can regenerate it; instead its digest is pinned,
+   and any change to its bytes turns this reading RED. A deliberate regeneration — run over
+   the archive's epics, task index and pin document, as the delivery skill's `SKILL.md`
+   describes — updates the digest in the same commit.
 3. **The declaration.** The file matches a `[tool.setuptools.package-data]` pattern and no
    `exclude-package-data` one — ⚠️ the proxy for where no build backend is importable.
 4. **The effect.** A wheel built from an export carries the file unchanged, and unpacked
@@ -14,11 +17,12 @@
    `python3 -m studyforge.skills.delivery` prints it byte for byte.
 
 ⭐ Planted, RED: the index's pattern dropped from `package-data` (readings 3 and 4); one byte
-of the shipped file changed (`test_walkthrough.py`'s regeneration).
+of the shipped file changed (reading 2).
 """
 
 from __future__ import annotations
 
+import hashlib
 import os
 import subprocess
 import sys
@@ -36,8 +40,9 @@ from tests.support import repository_root
 #: The shipped index, as a path inside the `studyforge` package.
 SHIPPED = PurePosixPath("skills/delivery") / packaged.NAME
 
-#: ⚠️ The copy the release cleanup takes off the main line. While it exists it is the same bytes.
-DOCS_COPY = "docs/capability-index.md"
+#: The SHA-256 of the shipped index: the generator's output over the epics before their task
+#: text moved to the archive branch, read byte-identical to a regeneration there.
+FROZEN = "4bdf1cf988fca989f0d222d655052595004b3d796455cab508200ce935b7d009"
 
 
 def tree_bytes() -> bytes:
@@ -79,16 +84,27 @@ def test_the_shipped_index_says_it_is_generated() -> None:
     assert delivery.BANNER in packaged_text()
 
 
-# --- 2. one copy ---------------------------------------------------
+# --- 2. frozen, so a hand-edit fails ---------------------------------------------------
 
 
-def test_the_documents_copy_is_the_shipped_one_while_it_exists() -> None:
-    # ⚠️ The release cleanup takes `docs/capability-index.md` off the main line. Until
-    # then a reader of either reads the same bytes, and this test is what keeps the two
-    # from diverging.
-    copy = repository_root() / DOCS_COPY
-    if copy.exists():
-        assert copy.read_bytes() == tree_bytes(), f"{DOCS_COPY} differs from the shipped index"
+def digest(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
+
+
+def test_the_shipped_index_is_the_frozen_generation() -> None:
+    # ⛔ A hand-edit is a finding against the delivery skill (R19), never a fix. The epics it
+    # was generated from no longer carry their task text on this line, so the digest is the
+    # instrument that reports one.
+    assert digest(tree_bytes()) == FROZEN, (
+        "the shipped capability index changed: a hand-edit is a finding, not a fix. "
+        "Regenerate it from the archive branch's epics and update FROZEN in the same commit"
+    )
+
+
+def test_one_changed_byte_is_refused() -> None:
+    planted = bytearray(tree_bytes())
+    planted[-2] ^= 0x01
+    assert digest(bytes(planted)) != FROZEN
 
 
 # --- 3. the declaration -------------------------------------------------------------------
