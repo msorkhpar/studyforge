@@ -54,7 +54,7 @@ pretend to be.
 
 ---
 
-## The twenty-one checks
+## The twenty-two checks
 
 **One list, in the order a report reads best.** The answer to *what does the
 checker check* is this table and nothing else.
@@ -75,26 +75,27 @@ checker check* is this table and nothing else.
 | 12 | `check_archive_members` | is every file beneath `archive/` a member an adapter's layout places there, or a stray nothing reads? |
 | 13 | `check_declared_files` | does the archive hold every `assets` and `attachments` entry where that entry says it does? |
 | 14 | `check_unclassified` | does every file in your repository match one of the three `content` states? |
-| 15 | `check_completeness` | did the reader actually read each source file, or stop short of it? |
-| 16 | `check_gate_records` | does every authored (`generated`) grader ship the gate record of the gates it cleared, and did every gate hold? |
-| 17 | `check_bundle_digests` | does every file an exercise's gate record was taken over still digest to what the record says? |
-| 18 | `check_bundle_contents` | is the exercise's bundle holding a file its shape does not permit — a run's report, most of all? |
-| 19 | `check_practice_ordinals` | are a page's practices numbered `1..n`, with no gap? |
-| 20 | `check_ledger_accounts` | where `exercises/ledger.json` is committed, does it still account for every page the corpus carries — every fence on it and every declared grader, each by an exercise or a written reason? |
-| 21 | `check_narration_current` | where `.studyforge/narration.json` is committed and narration is on, was every clip a page plays made from the words its paragraph says now? |
+| 15 | `check_curriculum` | where `corpus.json` declares `curriculum.containers`, does the record still file every unit where it says, and do the declared file-name prefixes agree with it? |
+| 16 | `check_completeness` | did the reader actually read each source file, or stop short of it? |
+| 17 | `check_gate_records` | does every authored (`generated`) grader ship the gate record of the gates it cleared, and did every gate hold? |
+| 18 | `check_bundle_digests` | does every file an exercise's gate record was taken over still digest to what the record says? |
+| 19 | `check_bundle_contents` | is the exercise's bundle holding a file its shape does not permit — a run's report, most of all? |
+| 20 | `check_practice_ordinals` | are a page's practices numbered `1..n`, with no gap? |
+| 21 | `check_ledger_accounts` | where `exercises/ledger.json` is committed, does it still account for every page the corpus carries — every fence on it and every declared grader, each by an exercise or a written reason? |
+| 22 | `check_narration_current` | where `.studyforge/narration.json` is committed and narration is on, was every clip a page plays made from the words its paragraph says now? |
 
 **Checks 1–9 are about the archive alone**, 10 and 11 about placement, 12 and
 13 about the archive root's own files — what sits there unaccounted for, and
-what the archive accounts for and does not hold — 14 and 15 about your
-source repository, 16–20 about the authored exercises a corpus commits, and 21
+what the archive accounts for and does not hold — 14 to 16 about your
+source repository, 17–21 about the authored exercises a corpus commits, and 22
 about its narration.
-**Checks 14 and 15 are the ones that cannot be
+**Checks 14 and 16 are the ones that cannot be
 made by recounting the parser's own output** — a completeness check that
 recounted what the parser produced would agree with itself by construction and
 catch nothing.
 
-**Checks 16–19 fire only on a `generated` grader, and check 20 only on a
-committed ledger. Check 21 fires only on a committed narration record**, and not
+**Checks 17–20 fire only on a `generated` grader, and check 21 only on a
+committed ledger. Check 22 fires only on a committed narration record**, and not
 at all with `--no-narration`: a corpus with no narration is complete without it.
 A grader that shipped with
 your material is `bundled`, and nothing here is asked of it. An authored one is
@@ -105,7 +106,7 @@ file in both.
 
 ---
 
-## The forty-three rule ids
+## The forty-four rule ids
 
 **Every finding carries one**, so a script can filter a report by rule rather
 than by matching on message text. ⚠️ **Six are not emitted by `studyforge
@@ -138,6 +139,7 @@ before it, `check_untouched` after — which reports in the same shape.
 | `unclassified` | a file matches none of `include`, `exclude` and `not_material` |
 | `contested` | a file matches `include` **and** `not_material` |
 | `included-unread` | a file your `content` includes is named by no unit's `origin`, so no unit reads it — an aggregate left un-excluded, or a stray. A container's `origin` places its page and reads nothing. Judged only while a unit's `origin` is on disk |
+| `curriculum-disagrees` | `corpus.json` declares `curriculum.containers` and the tree says otherwise: the record is missing, its group labels are not the declared ones in the declared order, an ordinal is out of place, or a declared file-name prefix disagrees with where the record files a unit. Every disagreement is named in one finding. A file your repository ignores is not counted |
 | `ignore-declaration` | your repository's own declaration of what is generated output could not be read — it is not a git working tree, or git is absent — so everything beside the archive was scanned as material |
 | `nested-repository` | another repository's store — a `.git` directory or a submodule's `.git` file — sits beneath the corpus root and your repository does not declare it as output. Only the root's own `.git` and `.studyforge` are skipped; a nested `.studyforge` is scanned as material |
 | `short-read` | a source file was read, but not all of it |
