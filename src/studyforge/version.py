@@ -78,6 +78,13 @@ from studyforge.describe import describe
 #: whole and re-deriving it rather than by stopping. ⛔ Nothing is migrated,
 #: which is the part of R9 that is about all of them.
 #:
+#: ⭐ **Every `*_api` key the framework writes is here**, the skills' records
+#: among them (the exercise bundle, its quiz document, the coverage report and
+#: its plan, the source ledger, the onboarding and execution records and the
+#: framework pin), and `tests/studyforge/test_version.py` fails on one that is
+#: written and not registered. A key registered here that nothing reads back
+#: costs nothing; a reader of one compares through `check`.
+#:
 #: ⛔ **Two tasks appending here conflict, and the resolution is always
 #: keep-both**. The explicitness is the mechanism — a tuple that
 #: merges cleanly is one nobody had to look at — so a conflict here is the
@@ -97,6 +104,14 @@ CONTRACT_FIELDS = (
     "progress_api",
     "personal_archive_api",
     "gates_api",
+    "bundle_api",
+    "quiz_api",
+    "coverage_api",
+    "plan_api",
+    "ledger_api",
+    "installed_api",
+    "pin_api",
+    "written_api",
 )
 
 

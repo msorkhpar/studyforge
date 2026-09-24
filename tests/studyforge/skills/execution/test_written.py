@@ -138,6 +138,16 @@ def test_a_record_that_cannot_be_read_is_refused_rather_than_read_as_nothing_edi
         hand_edited(root)
 
 
+@pytest.mark.parametrize("declared", [True, 1.0, 2], ids=repr)
+def test_a_record_version_this_build_does_not_read_is_refused(root, declared):
+    # ⛔ `True == 1` and `1.0 == 1`, so only `version.check` refuses them.
+    path = root / written.RECORD
+    document = json.loads(path.read_text(encoding="utf-8"))
+    path.write_text(json.dumps({**document, "written_api": declared}), encoding="utf-8")
+    with pytest.raises(written.WrittenRefused, match="written_api"):
+        hand_edited(root)
+
+
 def test_a_recorded_path_outside_the_corpus_is_never_read(root):
     document = json.loads((root / written.RECORD).read_text(encoding="utf-8"))
     document["files"].append({"where": "../elsewhere", "sha256": "0" * 64})

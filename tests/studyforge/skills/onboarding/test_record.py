@@ -171,6 +171,17 @@ def test_a_record_this_build_does_not_read_is_refused_by_name(tmp_path):
     assert INSTALLED_API in READS
 
 
+@pytest.mark.parametrize("declared", [True, 1.0, "2"], ids=repr)
+def test_a_version_that_merely_equals_one_this_build_reads_is_refused(tmp_path, declared):
+    # ⛔ `True == 1` and `1.0 == 1`: a membership test reads either as version 1.
+    root, _ = _written(tmp_path)
+    record = _record(root)
+    (root / RECORD_FILE).write_text(json.dumps({**record, "installed_api": declared}), "utf-8")
+
+    with pytest.raises(OnboardingRefused, match="installed_api"):
+        hand_edited(root)
+
+
 def test_uninstall_still_reads_a_record_the_previous_shape_wrote(tmp_path):
     root = corpora.material(tmp_path / "corpus")
     before = sorted(path.relative_to(root).as_posix() for path in root.rglob("*"))

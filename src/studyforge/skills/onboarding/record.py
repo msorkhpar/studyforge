@@ -65,6 +65,7 @@ from studyforge.corpus.placement import IGNORE_FILENAME, IgnoreFile, cache_ignor
 from studyforge.skills.adapter import Written
 from studyforge.skills.execution import written as execution_written
 from studyforge.skills.onboarding.pin import RECORD_FILE
+from studyforge.version import check as check_version
 
 #: The version of the install record's own shape.
 INSTALLED_API = 2
@@ -131,11 +132,15 @@ def entries(root: Path) -> list[dict]:
             f"{RECORD_FILE} is not readable JSON, so nothing is removed"
         ) from None
     assert_clean(document, RECORD_FILE)
-    if not isinstance(document, dict) or document.get("installed_api") not in READS:
-        raise OnboardingRefused(
-            f"{RECORD_FILE} declares an install record this build does not read; "
-            f"this build writes installed_api {INSTALLED_API}"
-        )
+    if not isinstance(document, dict):
+        raise OnboardingRefused(f"{RECORD_FILE} is not an install record, so nothing is removed")
+    check_version(
+        "installed_api",
+        document.get("installed_api"),
+        READS,
+        where=f"{RECORD_FILE} (this build writes installed_api {INSTALLED_API})",
+        error=OnboardingRefused,
+    )
     listed = document.get("files")
     if not isinstance(listed, list):
         raise OnboardingRefused(f"{RECORD_FILE} lists no files, so there is nothing to remove")

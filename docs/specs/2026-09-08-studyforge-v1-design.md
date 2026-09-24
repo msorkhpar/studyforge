@@ -630,9 +630,12 @@ inference from names.
 | personal archive manifest | `personal-archive.json`, a member of the archive file | `personal_archive_api` | the personal-archive skill |
 | component consuming contract | `consuming.json` | `consuming_api` + `provides` | each component |
 
-⭐ **`CONTRACT_FIELDS` is the framework's subset of this register**: the keys the
-framework's own readers check through `studyforge.version`. A key a skill owns and
-reads back through its own reader is registered here and versioned all the same.
+⭐ **`CONTRACT_FIELDS` is the framework's subset of this register**: every version
+key the framework writes, the skills' records among them, and each reader of one
+checks it through `studyforge.version` and never compares it by hand. Two keys
+version a part of a row rather than a row of their own: `plan_api` versions the
+plan inside a coverage report, and `quiz_api` versions a quiz's own document,
+`tests/quiz.json` inside its bundle.
 
 ---
 
