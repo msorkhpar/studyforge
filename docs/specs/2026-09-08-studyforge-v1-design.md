@@ -70,8 +70,16 @@ the overlap rather than leaving it to be noticed.
 **C3 — Real Markdown carries constructs a strict parser must already know.** The
 Markdown reader raises on anything it does not recognise, which is the reason the
 vocabulary has to be right before a new source is attempted. The constructs that
-matter in practice: raw HTML, thematic breaks, blockquotes, and XML **inside a
-fence**. ⭐ **Fence-awareness, not tag counting**: a reader that scans for `<`
+matter in practice, and where the four shapes carry them:
+
+| Construct | Where it occurs | Consequence |
+|---|---|---|
+| raw HTML | the SPARQL tutorial, 6 of 19 lessons — `<details>`/`<summary>` | the `disclosure` block, below |
+| thematic break | the Java tutorial | the `rule` block |
+| blockquote | the Java tutorial | the `quote` block |
+| XML inside a fence | the ISO tutorial — build files and configuration samples | a code block, never markup |
+
+⭐ **Fence-awareness, not tag counting**: a reader that scans for `<`
 without tracking fences reads a `pom.xml` sample as markup, and either raises or
 renders it as HTML.
 
