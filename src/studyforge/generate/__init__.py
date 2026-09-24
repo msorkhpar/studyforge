@@ -90,7 +90,7 @@ from studyforge.generate.declarations import (
 )
 from studyforge.generate.footprint import Footprint, footprint_for
 from studyforge.generate.media import Reference, references, unit_media, write_media
-from studyforge.generate.narration import Renarrated, write_narration
+from studyforge.generate.narration import Renarrated, heard, write_narration
 from studyforge.generate.navigation import ancestors, bar, deepest, index_href, rail, trail
 from studyforge.generate.site import assets, root_index, write_site
 from studyforge.generate.units import unit_pages, write_pages
@@ -124,6 +124,7 @@ __all__ = [
     "deepest",
     "footprint_for",
     "for_output",
+    "heard",
     "index_href",
     "page_paths",
     "rail",

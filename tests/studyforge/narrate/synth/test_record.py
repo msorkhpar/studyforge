@@ -112,6 +112,24 @@ def test_a_record_this_build_does_speak_round_trips(tmp_path):
     assert read_back.clips["u1"] == one_clip()["u1"]
 
 
+def test_the_record_says_which_voice_its_conditions_name(tmp_path):
+    # ⭐ `W457`: what a stale-clip finding tells the author to re-run with.
+    path = state_file(tmp_path)
+    write_state(path, one_clip(), conditions())
+    assert read_state(path).voice == conditions().voice
+    assert read_state(state_file(tmp_path / "absent")).voice is None
+
+
+@pytest.mark.parametrize("said", [None, 7, "", "  "], ids=["absent", "not-a-str", "empty", "blank"])
+def test_a_record_naming_no_voice_reads_as_none(tmp_path, said):
+    path = state_file(tmp_path)
+    write_state(path, one_clip(), conditions())
+    document = json.loads(path.read_text(encoding="utf-8"))
+    document["conditions"]["voice"] = said
+    path.write_text(json.dumps(document), encoding="utf-8")
+    assert read_state(path).voice is None
+
+
 # --------------------------------------------------------------------------
 # R10 and R7
 # --------------------------------------------------------------------------

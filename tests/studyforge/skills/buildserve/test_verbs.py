@@ -21,6 +21,7 @@ CORPUS, SITE = "corpus-root", "site-directory"
 
 LISTS = {
     "validate": validate(CORPUS),
+    "validate+no-narration": validate(CORPUS, narration=False),
     "narrate": narrate(CORPUS, "a-voice"),
     "narrate+service": narrate(CORPUS, "a-voice", "http://127.0.0.1:1"),
     "build": build(CORPUS, SITE),
@@ -50,6 +51,12 @@ def test_the_optional_arguments_reach_the_verb_only_when_given():
     assert "http://127.0.0.1:1" in vars(given).values()
     assert len(serve(CORPUS, SITE)) < len(serve(CORPUS, SITE, 0))
     assert len(narrate(CORPUS, "v")) < len(narrate(CORPUS, "v", "u"))
+    # ⭐ `W457`: only an explicit False turns narration off; None and True say nothing.
+    assert vars(parser_of("validate").parse_args(LISTS["validate+no-narration"][1:])) == {
+        "root": CORPUS,
+        "narration": False,
+    }
+    assert validate(CORPUS) == validate(CORPUS, narration=True) == validate(CORPUS, narration=None)
 
 
 def test_the_call_hands_the_list_to_the_registered_verb(tmp_path):

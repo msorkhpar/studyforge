@@ -71,7 +71,9 @@ with a sentence a person reads.
 ⚠️ **`WORDS_MOVED` is the one state that still plays.** The recorded clip is a
 real file made from older words; withholding it would give the reader silence
 with no reason, and the next synthesis pass replaces it. ⭐ Same answer, and the
-same argument, as `SF-17`'s `Synthesis.unsettled`.
+same argument, as `SF-17`'s `Synthesis.unsettled`. ⛔ **It plays, and it is not
+silent**: `validate.narration` reports every one as a RED finding naming what
+to re-run (`W457`), because a stale clip nobody is told about is the defect.
 """
 
 from __future__ import annotations

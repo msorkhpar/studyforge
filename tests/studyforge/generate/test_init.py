@@ -36,6 +36,7 @@ def test_the_surface_is_what_the_package_exports_and_nothing_reaches_past_it():
         "deepest",
         "footprint_for",
         "for_output",
+        "heard",
         "index_href",
         "page_paths",
         "rail",

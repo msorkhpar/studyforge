@@ -60,7 +60,9 @@ def build_and_serve(
         print(line, file=target, flush=True)
 
     corpus, site = str(root), str(out)
-    code, _ = _step(verbs.validate(corpus), say)
+    # ⛔ `W457`: asked to narrate, the run re-makes every clip whose words moved, so
+    # a stale clip is not a reason to stop before that; `narrate` reports what it could not.
+    code, _ = _step(verbs.validate(corpus, narration=False if voice is not None else None), say)
     if code != OK:
         return code
     narrated = None

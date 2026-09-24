@@ -8,7 +8,8 @@ invalid corpus — an invalid corpus is a *result*, and a caller that had to
 catch an exception to learn the verdict could not report ten problems at once.
 
 **Depends on.** `validate.corpus`, `validate.structure`, `validate.paths`,
-`validate.source`, `validate.report`.
+`validate.source`, `validate.exercises`, `validate.ledger`, `validate.narration`,
+`validate.report`, and `narrate.enabled` for whether the last is run.
 
 ⭐ **The check list is data, so it is assertable.** `tests` asserts that every
 rule id the tool can emit appears in `RULES`, which means a check added without
@@ -21,7 +22,8 @@ from __future__ import annotations
 from collections.abc import Iterator
 from pathlib import Path
 
-from studyforge.validate import exercises, ledger, paths, source, structure
+from studyforge.narrate import narration_on
+from studyforge.validate import exercises, ledger, narration, paths, source, structure
 from studyforge.validate.corpus import Walk, read
 from studyforge.validate.report import Finding, Report, Unchecked
 
@@ -29,15 +31,28 @@ from studyforge.validate.report import Finding, Report, Unchecked
 #: "what does validate check" is not spread across five modules. ⚠️ The
 #: authored-exercise arm is last because it reads what the first three have
 #: already judged to be a document (`AX-04`).
-CHECKS = (*structure.CHECKS, *paths.CHECKS, *source.CHECKS, *exercises.CHECKS, *ledger.CHECKS)
+CHECKS = (
+    *structure.CHECKS,
+    *paths.CHECKS,
+    *source.CHECKS,
+    *exercises.CHECKS,
+    *ledger.CHECKS,
+    *narration.CHECKS,
+)
 
 
-def validate(root: Path | str) -> Report:
-    """Run every check over one corpus root and return what they found."""
-    return Report.of(_run(read(Path(root))))
+def validate(root: Path | str, *, narration: bool | None = None) -> Report:
+    """Run every check over one corpus root and return what they found.
+
+    ⭐ `narration` is this run's answer to *is narration on?* — `None` when the
+    run was not asked — and `narrate.enabled.narration_on` is what decides.
+    ⛔ Off, no clip is judged: a corpus served without voices has no stale one.
+    """
+    walk = read(Path(root))
+    return Report.of(_run(walk, narrating=narration_on(walk.root, asked=narration)))
 
 
-def _run(walk: Walk) -> Iterator[Finding | Unchecked]:
+def _run(walk: Walk, *, narrating: bool = True) -> Iterator[Finding | Unchecked]:
     yield from walk.findings
     if walk.manifest is None:
         # ⛔ Without a manifest nothing else can be judged, and saying so is
@@ -54,4 +69,6 @@ def _run(walk: Walk) -> Iterator[Finding | Unchecked]:
                 "this container map did not parse, so no document beneath it was read",
             )
     for check in CHECKS:
+        if check in narration.CHECKS and not narrating:
+            continue
         yield from check(walk)
