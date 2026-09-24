@@ -10,7 +10,7 @@ coverage report declares as that page's grader. ⛔ Anything else is a finding.
 check's tuple. Each function takes the `Walk` and yields `Finding`s.
 
 **Depends on.** `validate.corpus` for the container maps and the root,
-`validate.report`, `exercise.bundle` for the bundles' directory,
+`validate.report`, `archive.scrub` for R7, `exercise.bundle` for the bundles' directory,
 `studyforge.sourcepath` for what a report's path may be, and — deferred, see
 below — `skills.exercises` for where the ledger is, how its rows are keyed and
 read, and what a page's fences are. Standard library only.
@@ -49,6 +49,7 @@ import json
 from collections.abc import Iterator
 from pathlib import Path
 
+from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.exercise.bundle import BUNDLES_DIRNAME
 from studyforge.sourcepath import is_source_path
 from studyforge.validate.corpus import Walk
@@ -59,6 +60,11 @@ RULE_LEDGER = "ledger"
 
 #: ⛔ A page, a fence or a declared grader the committed ledger does not account for.
 RULE_LEDGER_UNACCOUNTED = "ledger-unaccounted"
+
+#: ⛔ A ledger or coverage report carrying personal data. ⚠️ `validate.corpus`'
+#: own spelling, because it is the same rule and two ids for one fact is two
+#: audits (`W213`).
+RULE_PERSONAL_DATA = "personal-data"
 
 
 def check_ledger_accounts(walk: Walk) -> Iterator[Finding]:
@@ -76,7 +82,8 @@ def check_ledger_accounts(walk: Walk) -> Iterator[Finding]:
     rows = yield from _rows(path, LEDGER_PATH)
     if rows is None:
         return
-    pages, graders = _declared(walk)
+    pages, graders, leaks = _declared(walk)
+    yield from leaks
     read = {row["path"] for row in rows["sources"]}
     entries = _by_key(rows["entries"])
     for page in sorted(pages):
@@ -97,7 +104,12 @@ def _rows(path: Path, where: str):
     from studyforge.skills.exercises import LedgerError, ledger_rows
 
     try:
-        return ledger_rows(json.loads(path.read_text(encoding="utf-8")), where)
+        document = json.loads(path.read_text(encoding="utf-8"))
+        assert_clean(document, where)
+        return ledger_rows(document, where)
+    except PersonalDataLeak as error:
+        # ⛔ FIRST, and its own arm, as `validate.exercises` has it (`W213`).
+        yield Finding(RULE_PERSONAL_DATA, where, str(error))
     except OSError:
         yield Finding(RULE_LEDGER, where, "could not be read.")
     except LedgerError as error:
@@ -109,14 +121,15 @@ def _rows(path: Path, where: str):
     return None
 
 
-def _declared(walk: Walk) -> tuple[set[str], set[str]]:
+def _declared(walk: Walk) -> tuple[set[str], set[str], list[Finding]]:
     """Return every material page and every declared grader the corpus names.
 
     ⭐ **Pages**: each unit's `origin` in each container map, and each page a
     committed coverage report names. **Graders**: each file a coverage report
     fingerprints beside its page — `corpus._fingerprint`'s page plus graders.
     ⛔ A path a report carries is a source path or it is not read: the report is
-    a document somebody could edit, and this check opens what it names.
+    a document somebody could edit, and this check opens what it names. ⛔ And
+    each report is gated for personal data before a string of it is used (R7).
     """
     from studyforge.skills.exercises import COVERAGE_FILENAME
 
@@ -127,14 +140,21 @@ def _declared(walk: Walk) -> tuple[set[str], set[str]]:
         if unit.origin is not None
     }
     graders: set[str] = set()
+    leaks: list[Finding] = []
     for report in sorted(walk.root.glob(f"{BUNDLES_DIRNAME}/**/{COVERAGE_FILENAME}")):
+        where = report.relative_to(walk.root).as_posix()
         document = _report(report)
+        try:
+            assert_clean(document, where)
+        except PersonalDataLeak as error:
+            leaks.append(Finding(RULE_PERSONAL_DATA, where, str(error)))
+            continue
         page = document.get("page")
         digests = document.get("digests")
         if is_source_path(page) and isinstance(digests, dict):
             pages.add(page)
             graders |= {path for path in digests if is_source_path(path) and path != page}
-    return pages, graders
+    return pages, graders, leaks
 
 
 def _report(path: Path) -> dict:

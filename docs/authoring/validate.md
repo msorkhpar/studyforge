@@ -54,7 +54,7 @@ pretend to be.
 
 ---
 
-## The nineteen checks
+## The twenty checks
 
 **One list, in the order a report reads best.** The answer to *what does the
 checker check* is this table and nothing else.
@@ -80,17 +80,19 @@ checker check* is this table and nothing else.
 | 17 | `check_bundle_digests` | does every file an exercise's gate record was taken over still digest to what the record says? |
 | 18 | `check_bundle_contents` | is the exercise's bundle holding a file its shape does not permit — a run's report, most of all? |
 | 19 | `check_practice_ordinals` | are a page's practices numbered `1..n`, with no gap? |
+| 20 | `check_ledger_accounts` | where `exercises/ledger.json` is committed, does it still account for every page the corpus carries — every fence on it and every declared grader, each by an exercise or a written reason? |
 
 **Checks 1–9 are about the archive alone**, 10 and 11 about placement, 12 and
 13 about the archive root's own files — what sits there unaccounted for, and
 what the archive accounts for and does not hold — 14 and 15 about your
-source repository, and 16–19 about the authored exercises a corpus commits.
+source repository, and 16–20 about the authored exercises a corpus commits.
 **Checks 14 and 15 are the ones that cannot be
 made by recounting the parser's own output** — a completeness check that
 recounted what the parser produced would agree with itself by construction and
 catch nothing.
 
-**Checks 16–19 fire only on a `generated` grader.** A grader that shipped with
+**Checks 16–19 fire only on a `generated` grader, and check 20 only on a
+committed ledger.** A grader that shipped with
 your material is `bundled`, and nothing here is asked of it. An authored one is
 advisory, and it ships only with the record of the gates it cleared — so a
 corpus that authors exercises declares `exercises/**` and `practice/**` under
@@ -99,7 +101,7 @@ file in both.
 
 ---
 
-## The thirty-nine rule ids
+## The forty-one rule ids
 
 **Every finding carries one**, so a script can filter a report by rule rather
 than by matching on message text. ⚠️ **The last six are not emitted by

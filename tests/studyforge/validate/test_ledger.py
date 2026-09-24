@@ -21,7 +21,7 @@ import pytest
 from studyforge.archive.markdown import parse
 from studyforge.skills.exercises import LEDGER_PATH, author_corpus
 from studyforge.validate import validate
-from studyforge.validate.ledger import RULE_LEDGER, RULE_LEDGER_UNACCOUNTED
+from studyforge.validate.ledger import RULE_LEDGER, RULE_LEDGER_UNACCOUNTED, RULE_PERSONAL_DATA
 from tests.studyforge.skills.exercises.authoring import (
     CLEAN,
     PAGES,
@@ -176,3 +176,30 @@ def test_a_ledger_that_will_not_read_is_refused(authored, text, says):
     (found,) = _findings(root, RULE_LEDGER)
     assert says in found.message
     assert _findings(root, RULE_LEDGER_UNACCOUNTED) == []
+
+
+#: ⛔ Assembled, never a literal: the floor's personal-data scan reads this file.
+_SEP = "/"
+HOME = f"{_SEP}home{_SEP}janedoe{_SEP}private-corpus"
+
+
+def test_a_ledger_carrying_personal_data_is_refused_by_the_gate_first(authored):
+    """⛔ R7: the ledger is a document a corpus wrote, so it is gated before it is read."""
+    root, _ = authored
+    document = json.loads((root / LEDGER_PATH).read_text("utf-8"))
+    document["entries"][0]["reason"] = f"read from {HOME}"
+    (root / LEDGER_PATH).write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+    (found,) = _findings(root, RULE_PERSONAL_DATA)
+    assert found.where == LEDGER_PATH and "janedoe" not in found.message
+    assert _findings(root, RULE_LEDGER_UNACCOUNTED) == []
+
+
+def test_a_coverage_report_carrying_personal_data_is_refused_and_not_read(authored):
+    root, _ = authored
+    (report,) = [p for p in root.glob("exercises/notes/**/coverage.json")]
+    document = json.loads(report.read_text("utf-8"))
+    document["case"] = f"read from {HOME}"
+    report.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+    (found,) = _findings(root, RULE_PERSONAL_DATA)
+    assert found.where == report.relative_to(root).as_posix()
+    assert "janedoe" not in found.message
