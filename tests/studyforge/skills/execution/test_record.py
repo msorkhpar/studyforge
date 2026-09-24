@@ -239,6 +239,12 @@ def test_an_editor_tag_from_that_fails_is_refused_by_its_own_block(tmp_path):
         record.record_editor(made(tmp_path), tmp_path, tmp_path, ask=Asked(3, ""))
 
 
+def test_an_image_the_step_records_nothing_for_is_refused_without_its_name():
+    with pytest.raises(ExecutionRefused, match="no other image") as refused:
+        record.text("EDITOR_IMAGE", EDITOR_TAG, image="narration-private")
+    assert "narration-private" not in str(refused.value)
+
+
 def test_a_corpus_that_is_not_runnable_has_no_editor_to_record(tmp_path):
     with pytest.raises(ExecutionRefused, match="no editor"):
         record.record_editor(onboard.Execution(runnable=False), tmp_path, tmp_path, ask=Asked())

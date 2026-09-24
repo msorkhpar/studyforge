@@ -152,7 +152,13 @@ def _written(root: Path, where: str, content: str) -> str:
 
 def text(variable: str, tag: str, *, image: str = "runner") -> str:
     """Return one environment file's bytes: the generated sentence and the one variable."""
-    return f"# {GENERATED}\n{WHAT_IT_HOLDS[image]}{variable}={tag}\n"
+    holds = WHAT_IT_HOLDS.get(image)
+    if holds is None:
+        raise ExecutionRefused(
+            f"an environment file is recorded for one of {sorted(WHAT_IT_HOLDS)} and for "
+            f"no other image; the one asked for is not reproduced here (R7)"
+        )
+    return f"# {GENERATED}\n{holds}{variable}={tag}\n"
 
 
 def _one_tag(tag: str, repository: str) -> bool:
