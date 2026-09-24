@@ -692,18 +692,19 @@ them and are never edited**; a change is a re-vendor.
 
 ## 4. The address model
 
-CodeSignal's `CourseRef.key` is already a single joined string precisely so
-its halves cannot be swapped. v1 widens it from *exactly two* segments to
-*exactly `len(levels)`*.
+A unit's address is a single joined key, so its segments cannot be swapped,
+with exactly `len(levels)` segments: the corpus declares how deep it is, and
+every address in it has that depth.
 
 ```json
 // corpus.json — what makes a directory a source
-{ "corpus_api": 2,
+{ "corpus_api": 6,
   "source": "java-senior",
   "title": "Senior Java Engineer",
   "levels": ["section", "module"],
   "variants": ["java"],
   "exercises": true,
+  "runtimes": ["java", "maven"],
   "placement": "sibling",
   "content": {
     "include": ["*/README_*.md"],
@@ -719,77 +720,47 @@ its halves cannot be swapped. v1 widens it from *exactly two* segments to
       "why": "Maven compiles only what sits on a source root (§7)" } ] }
 ```
 
-### The complete key list — ⛔ **the example above is an instance, not the contract**
+### The complete key list — the example above is an instance, not the contract
 
-⚠️ **The example omits optional keys and that is correct.** ⭐ **A canonical
-example is a *realistic* manifest, and a realistic manifest omits the optional
-keys it does not need** — so the example is not where you learn what a manifest
-*may* carry. This list is. ⛔ **Without it `media` was unteachable from this
-document**: the contract owned a key the spec never named, and a reader looking
-for the vocabulary found only one corpus's choices.
+⚠️ **A realistic manifest omits the optional keys it does not need**, so the
+example is not where you learn what a manifest *may* carry. This list is.
 
 | Key | | Notes |
 |---|---|---|
-| `corpus_api` | **required** | R9's version key. An unknown value is refused, never migrated. ⭐ **`2` added `content.not_material`** (ruling 90), ⭐ **`3` added `media.max_files`** (`W207`) and ⭐ **`4` added `runtimes`** (`W350`), ⭐ **`5` added `narration`** (`W460`, amended 2026-09-23) and ⭐ **`6` added `onboarding_doc`** (`W461`); this build reads `1` to `6` |
-| `source` | **required** | ⛔ **A corpus id, not a fetch URL** (ruling 51) |
+| `corpus_api` | **required** | R9's version key. An unknown value is refused, never migrated. ⭐ **`2` added `content.not_material`**, **`3` added `media.max_files`**, **`4` added `runtimes`**, **`5` added `narration`** and **`6` added `onboarding_doc`**; this build reads `1` to `6`, and a key used under a version older than the one that added it is refused naming both numbers |
+| `source` | **required** | ⛔ **A corpus id, not a fetch URL** |
 | `title` | **required** | |
 | `levels` | **required** | Names the *container* levels and fixes the depth |
 | `variants` | **required** | ⛔ Filing and presentation only — never *runnable* |
 | `curriculum` | *optional* | Where the curriculum is recorded (`record`), the address each of its groups is filed at (`containers`), and per group an optional filename `prefix` that is a declared cross-check and never files a unit (`W340`) |
 | `exercises` | **required** | §7's gate onto the execution track |
 | `runtimes` | *optional* | Names, never versions, from a closed vocabulary. ⛔ **Absent means none: no runner, complete at the reading floor** (§7, C5) |
-| `narration` | *optional* | Whether a build and a serve voice the corpus (`W460`). ⭐ **Absent means voiced whenever clips are recorded**; ⛔ **`false` is the reading floor exactly, complete and never short** (C5) |
-| `onboarding_doc` | *optional* | Where onboarding writes its reader document (`W461`): a corpus-relative `.md` path, or `false` for none. ⭐ **Absent means `ONBOARDING.md` at the root**; ⛔ a fixed name was a branch nobody could move (R1, R19) |
-| `placement` | **required** | |
+| `narration` | *optional* | Whether a build and a serve voice the corpus. ⭐ **Absent means voiced whenever clips are recorded**; ⛔ **`false` is the reading floor exactly, complete and never short** (C5) |
+| `onboarding_doc` | *optional* | Where onboarding writes its reader document: a corpus-relative `.md` path, or `false` for none. ⭐ **Absent means `ONBOARDING.md` at the root** |
+| `placement` | **required** | `tree` or `sibling` (§5) |
 | `content` | **required** | `include` is plain globs; every `exclude` and every `not_material` entry carries its `why` |
-| `media` | *optional* | Defaulted. ⛔ **A corpus with no media declares nothing** |
-| `permitted_edits` | *optional* | Defaults to `[]`. ⭐ ISO's is structurally empty and that is a pass |
+| `media` | *optional* | Defaulted (§5). ⛔ **A corpus with no media declares nothing** |
+| `permitted_edits` | *optional* | Defaults to `[]`, which is the normal case (R3) |
 
-⛔ **The contract is `MANIFEST_KEYS` and `REQUIRED_KEYS` in
-`corpus/manifest/document.py`; this table is derived from them and the derivation
-**must be** asserted rather than maintained by hand.**
+⛔ **The contract is `MANIFEST_KEYS`, `REQUIRED_KEYS` and `KEY_VERSIONS` in
+`corpus/manifest/document.py`.** This table names every key the code has and no
+key it lacks. It is not derived from the example, and the example is deliberately
+not exhaustive: onboarding **generates** manifests, and an exhaustive example
+would propagate every optional key into every corpus, where R9 freezes it at
+first declaration.
 
-> ⛔ **CTO, 2026-09-10 — the assertion does NOT exist yet, and this paragraph
-> said it did.** ⚠️ **Measured: no test anywhere reads this document.**
-> `tests/studyforge/corpus/manifest/test_init.py` names `MANIFEST_KEYS` only
-> inside an `__all__` surface check. ⭐ **The table's *content* is correct** — all
-> ten keys match `MANIFEST_KEYS` and all eight *required* match `REQUIRED_KEYS`,
-> verified key by key. ⛔ **It is the claim of coverage that was false, and that
-> is worse than an unasserted table: the next reader trusts the sentence and does
-> not look.** ⚠️ **Ruling 48's shape, landed inside Ruling 30's landing.**
-> ⭐ **Owed as a task on `FND-08`'s seam** — it is a document walk with a
-> code-side comparison, which is exactly what that task builds. **PO to place and
-> number it.**
-
-⚠️ **And the assertion is deliberately
-*two* one-way checks, never an equality** (⭐ **ruling 30, which reversed ruling
-28**):
-
-- **subset** — every key this table names exists in `MANIFEST_KEYS`, so the spec
-  cannot teach a key the code does not have;
-- **coverage** — every key in `MANIFEST_KEYS` appears in this table, so the code
-  cannot own a key the spec never names. ⭐ **That is the half that closes
-  `media`.**
-
-⛔ **Equality was ruling 28's remedy and it was wrong in a way worth recording,
-because it would have been *enforced*.** Equality can only be satisfied by making
-the **example** exhaustive — and `SK-07` **generates** manifests from it, so an
-exhaustive example propagates `media` into every corpus that has none, and R9
-freezes it there at first declaration. ⭐ **The scope this was argued over is a
-canonical example whose consumer is a generator** (ruling 52); a hand-written
-example with no generator downstream would not have carried the same cost.
+### `content` — what is read, what is withheld, and what is not material
 
 `content` is **C2's countermeasure, and it is a schema field because C2 is a
-schema problem.** ISO ships both per-unit files *and* whole-series aggregates
-that are concatenations of them, so a `src/*.md` glob ingests every unit twice
-and nothing complains. Nothing in the manifest could say otherwise.
+schema problem.** A source that ships per-unit files *and* aggregates that
+concatenate them is ingested twice by a plain glob, and nothing complains.
 
 ```json
 "content": {
   "include": ["src/*.md"],
   "exclude": [
-    { "path": "src/ISO.md",
-      "why": "whole-series aggregate: a concatenation of 1.md…16.md (C2)" } ],
+    { "path": "src/All.md",
+      "why": "whole-series aggregate: a concatenation of the per-unit files (C2)" } ],
   "not_material": [
     { "glob": "docs/studyforge/*",
       "why": "this integration's own working notes about the corpus, not the corpus" },
@@ -797,177 +768,131 @@ and nothing complains. Nothing in the manifest could say otherwise.
       "why": "the repository's licence; it teaches nothing and is not withheld from anyone" } ] }
 ```
 
-⭐ **The asymmetry is deliberate: an inclusion needs no justification; an
-exclusion does.** An excluded file is material being withheld from the reader,
-and a withholding nobody has to explain is one nobody audits — the same argument
-`permitted_edits` already makes about an edit. So `include` is plain globs and
-every `exclude` entry carries its `why`.
+The three states are about whether a file's prose is read into the archive:
 
-### `runtimes` — what a corpus's material needs to run (`W350`)
+- `include` — **read in.**
+- `exclude` — **prose that *would* be read, deliberately not read**, one named path
+  per entry, with its `why`. *Withheld* is the honest word here because it is true
+  here.
+- `not_material` — ⛔ **not prose to read at all**: the repository's own
+  scaffolding, content *about* the material rather than the material — a licence,
+  ignore files, an editor workspace, the corpus's own `README.md`.
 
-⭐ **The shape is `TC-00`'s proposal as round 112 accepted it.** An optional
-list of names from a **closed** vocabulary — `gradle`, `java`, `kotlin`,
-`maven`, `node`, `python`, `shell`, `sqlite` — which agrees name for name with
-what `code-server-toolchain`'s pin file pins (§8.1). ⛔ **Names only, never
-versions**: the corpus says *which*, the pin file says *which version*, and a
-version here would be a second place one is chosen.
+⭐ **X1 — an inclusion needs no justification; every declaration that the
+framework will not read a file needs one.** An excluded file is material being
+withheld from the reader, and a withholding nobody has to explain is one nobody
+audits — the same argument `permitted_edits` makes about an edit.
 
-- ⭐ **Order carries no meaning**; `Manifest.runtimes` holds the set sorted, so
-  two equal declarations are one value (R10). A repeated name is refused.
-- ⛔ **`maven`, `gradle` and `kotlin` are refused by name without `java`** in the
-  same list — nothing is inferred, the rule `corpus_api` follows.
-- ⛔ **Refused beside `exercises: false`**: it would declare a runner for a
-  corpus with nothing runnable (§7).
+⭐ **A source `README.md` is `not_material`, and it is not a special case** — it
+is the corpus's own navigation, and navigation is scaffolding. ⚠️ The reader
+loses nothing: the site carries its own contents from the container maps.
+
+⚠️ **`not_material` takes globs where `exclude` takes one named path**, because the
+harms differ. A new member of an exclusion's set is a new withholding and needs its
+own reason; a new member of a `not_material` glob's set is not a harm **unless it is
+actually material** — which is caught per file, against a real tree:
+
+- ⛔ **A file matched by both `include` and `not_material` is `contested`**, a
+  finding of its own that exits 1. **Never a precedence** — one order would drop
+  material the reader was promised and the other would read the scaffolding aloud.
+- ⛔ **A `not_material` entry is either an exact path, or a glob whose wildcard lies
+  inside a directory prefix that is itself entirely not-material.** A pattern whose
+  correctness depends on which files happen *not* to exist is refused, however
+  exactly it matches today: `docs/studyforge/*` is a wildcard under a directory,
+  `LICENSE` and `.gitignore` are exact paths, and `[CLR]*` is refused, because a
+  `why` cannot be true of a `CHANGELOG.md` nobody has written yet.
+- ⛔ **A file under the source root that matches none of the three is
+  `unclassified`**, and `studyforge validate` names it and exits 1 (R6). A file
+  that matches `include` and is then not ingested is also a failure. It follows
+  that a corpus cannot grow a file without someone deciding what it is — the
+  alternative is a second aggregate appearing and being read as a second copy of
+  every unit.
+
+⭐ **The reconnaissance skill (§9) drafts this**, and detecting an overlap is what
+C2 asks of it: two files whose content says one contains the other is a finding it
+reports, not something left to be noticed after ingest.
+
+### `runtimes` — what a corpus's material needs to run
+
+An optional list of names from a **closed** vocabulary — `gradle`, `java`,
+`kotlin`, `maven`, `node`, `python`, `shell`, `sqlite` — which agrees name for
+name with what `code-server-toolchain` pins (§8.1). ⛔ **Names only, never
+versions**: the corpus says *which*, the component's pin file says *which
+version*, and a version here would be a second place one is chosen.
+
+- ⭐ **Order carries no meaning**; the manifest holds the set sorted, so two equal
+  declarations are one value (R10). A repeated name is refused.
+- ⛔ **`maven`, `gradle` and `kotlin` are refused without `java`** in the same
+  list — nothing is inferred.
+- ⛔ **Refused beside `exercises: false`**: it would declare a runner for a corpus
+  with nothing runnable (§7).
 - ⭐ **Absent means none, and none is complete.** The framework neither builds,
   probes nor starts a container for such a corpus; `exercises: true` without
   `runtimes` is an ungraded corpus's honest shape.
-- ⛔ **It is `corpus_api: 4`'s key, and a top-level one** — `KEY_VERSIONS` keys
-  it under no block (`TC-00/2`), so under `1`–`3` it is refused naming both
-  numbers rather than parsed. ⭐ **The vocabulary is spelled once**, in
-  `corpus/manifest/runtimes.py` (`TC-00/3`).
+- ⭐ **The vocabulary is spelled once**, in `corpus/manifest/runtimes.py`.
 
-### `narration` — whether a corpus is voiced (`W460`, AMENDED 2026-09-23, user ruling)
+### `narration` — whether a corpus is voiced
 
-⛔ **USER RULING, 2026-09-23:** *"I need some changes regarding the narrition.
-First of all it should be optional and while serving or even while caputring the
-matterial skills should ask if user is interested in the narrition or not.
-Somebody might wants to just cover the course wihtout voices as mentioned the
-voice might be cgenerated but still not serving them would be an option"*.
+Narration is optional. Somebody may want to read a course without voices, and a
+corpus whose clips were synthesised may still be served silent.
 
-- ⭐ **A top-level bool, `corpus_api: 5`'s key** — `KEY_VERSIONS` keys it under no
-  block, so under `1`–`4` it is refused naming both numbers. The onboarding
-  skill ASKS the author and writes the answer; a draft that carried none writes
-  no key and keeps its version.
-- ⭐ **Absent means voiced**: every corpus before the key keeps the three states
-  of `W202` answer 4 — no record, a record whose clips play, a promise the disk
-  did not keep.
-- ⛔ **`false` is the FIRST of those states exactly, whatever the record says**:
-  a build reads no record, renders every page with no player and no gap notice,
-  and copies no clip — byte for byte the build of a corpus nobody narrated.
-  ⛔ **Nothing is deleted, moved or rewritten** (R3): the record and the clips
-  stay where `narrate` put them, so voicing the corpus again plays them with no
-  re-synthesis.
+- ⭐ **A top-level bool.** The onboarding skill asks the author and writes the
+  answer; a draft that carried none writes no key.
+- ⭐ **Absent means voiced**: a unit's page plays the clips its narration record
+  locates, and a clip the record promises and the disk does not have is reported
+  on the page.
+- ⛔ **`false` is the reading floor exactly, whatever the record says**: a build
+  reads no record, renders every page with no player and no gap notice, and
+  copies no clip. ⛔ **Nothing is deleted, moved or rewritten** (R3): the record and
+  the clips stay where `studyforge narrate` put them, so voicing the corpus again
+  plays them with no re-synthesis.
 - ⭐ **`studyforge build` and `studyforge serve` take `--narration` /
   `--no-narration`**, which override the declaration for that run, and the
-  build-and-serve skill ASKS for it. ⛔ **Narration is in a page's bytes** (R8:
-  the built page is the product), so `serve` never edits a page on the way out:
-  with narration off it refuses a site built with narration, naming each page
-  and the build that fixes it, and it refuses every clip file under the root it
-  serves by path.
+  build-and-serve skill asks for it. ⛔ **Narration is in a page's bytes** (R8: the
+  built page is the product), so `serve` never edits a page on the way out: with
+  narration off it refuses a site built with narration, naming each page and the
+  build that fixes it, and it refuses every clip file under the root it serves.
 - ⛔ **Off is not degraded**: no page, report or `validate` finding calls it
   short, and practices, quizzes, progress and contents are unchanged.
 
-### ⛔ `content` has **three** states, and the third is `not_material` (ruling 90)
-
-⛔ **Two states were not enough, because a real repository is mostly a third.**
-Measured against one, 2026-09-10: of 141 files, **38 included, 3 excluded, 100
-unclassified — and only 3 of that hundred were material withheld from anybody.**
-The rest were a licence, ignore files, an IDE workspace, a graph cache. Filing
-those under `exclude` makes every `why` a small lie and produces an audit nobody
-reads.
-
-⭐ **The three states are about whether a file's prose is read into the archive**,
-never about materiality in the abstract:
-
-- `include` — **read in.**
-- `exclude` — **prose that *would* be read, deliberately not read**, per file,
-  with its `why`. ⭐ *Withheld* is the honest word here because it is true here.
-- `not_material` — ⛔ **not prose to read at all**: the repository's own
-  scaffolding, content *about* the material rather than the material.
-
-⭐ **A source `README.md` is `not_material`, and it is not a special case** — it
-is the corpus's own navigation, and navigation is scaffolding. ⚠️ **The reader
-loses nothing**: the generated site carries its own contents from the manifest's
-container maps, so every address, title and ordinal the README records is already
-declared. ⛔ **`X1` is not weakened; its domain is now stated** — *an inclusion
-needs no justification; **every declaration that the framework will not read a
-file** needs one.*
-
-⚠️ **`not_material` takes globs where `exclude` takes one named path**, and the
-two audits differ because the harms differ. A new member of an exclusion's set is
-a new withholding and needs its own reason; a new member of a `not_material`
-glob's set is not a harm **unless it is actually material** — which is caught per
-file, against a real tree, by the rule below. ⛔ **The category also cannot be
-enumerated**: writing the finding that produced this field took the count from
-100 to 101, because the new entry was the file containing it.
-
-⛔ **A file matched by BOTH `include` and `not_material` is a finding of its own**
-(`contested`), and it exits 1. ⭐ **Never a precedence** — one order would drop
-material the reader was promised and the other would read the scaffolding aloud.
-⚠️ **This is what stops the third state becoming a drain.**
-
-> ⛔ **Rule 1a — a `not_material` entry is either an EXACT PATH, or a glob whose
-> wildcard lies inside a directory prefix that is itself entirely not-material.**
-> ⛔ **A pattern whose correctness depends on which files happen NOT to exist is
-> refused, however exactly it matches today.**
-
-⭐ **The check is one sentence and it is mechanical: reject an entry containing a
-wildcard whose fixed prefix is not a directory.** ⚠️ **It is not redundant with
-`contested`**, which catches a loose glob only when the swept file is *also* in
-`include`; the hole is the file that does not exist yet, classified by a `why`
-that was never about it — ⛔ **and the `unclassified` catch that would have
-surfaced it goes quiet precisely because the file is now classified.** ⭐ Ruling
-90's own examples pass unchanged: `docs/studyforge/*` is a wildcard under a
-directory, `LICENSE` and `.gitignore` are exact paths; `[CLR]*` is refused,
-because it covers three root files only by the accident of which fourth file
-exists, and a `why` cannot be true of a `CHANGELOG.md` nobody has written yet.
-⚠️ **Five honest globs, not three clever ones** — and `SK-07` must **generate**
-entries that satisfy this rule.
-
-⛔ **Silence is the failure C2 describes, so silence is what this removes.** A
-file under the source root that matches none of the three is **unclassified**,
-and `studyforge validate` names it and exits 1 (R6). A file that matches
-`include` and is then not ingested is also a failure. ⚠️ It follows that a corpus
-cannot grow a file without someone deciding what it is — which is the point,
-because the alternative is a second aggregate appearing and being read as
-thirty-eight more units.
-
-⭐ **The reconnaissance skill (§9) drafts this**, and detecting the overlap is
-exactly what C2 asks of it: two files whose digests say one contains the other is
-a finding it reports, not something left to be noticed after ingest.
+### `levels`, `variants` and `permitted_edits`
 
 `levels` names the **container** levels and fixes the depth. A unit is an
-ordinal inside the deepest container. `variants` replaces CodeSignal's closed
-`LANGUAGES` tuple, removing the framework's last dependency on
-`tools/catalog/`.
+ordinal inside the deepest container. `levels` also supplies the **display
+labels** the breadcrumb and index use, so one site says "Section › Module ›
+Lesson" while another says "Path › Course › Unit", from data.
+
+| Shape | `levels` | example address |
+|---|---|---|
+| one course | `["course"]` | `sparql-tutorial` + unit 07 |
+| sections of modules | `["section","module"]` | `concurrency/23-executors` + unit 02 |
+| paths of courses | `["path","course"]` | `kotlin-programming-for-beginners/getting-started-with-kotlin` + unit 03 |
+| groups | `["group"]` | `iso-fundamentals` + unit 02 |
+
+Depth is uniform **within** a source; a ragged source is normalised by its
+adapter. A free node tree would turn every flat contract downstream — progress
+keys, hrefs, editor task files — into a tree walk, for flexibility no known
+source needs.
 
 ⚠️ **`variants` is a filing and presentation key, and nothing more.** It says
 how the archive is partitioned and what a variant selector offers the reader.
 ⛔ It never implies that anything is buildable, runnable or gradable — that is
 declared per exercise (§7) — and it is **not** a code fence's language, which is
-a block's own attribute from the archive. CodeSignal blocked eight SQL courses
-for exactly this reason: one list answered both *"can this be filed here?"* and
-*"can we generate a test for it?"*, so a language with no grader could not be
-filed at all. Three questions, three answers, none of them derived from another.
+a block's own attribute in the archive. One list answering both *"can this be
+filed here?"* and *"can we generate a test for it?"* means a language with no
+grader cannot be filed at all. Three questions, three answers, none derived from
+another.
 
 ⛔ **A single-variant prose corpus declares `variants: ["prose"]`: the word is the
-framework's, not each corpus's** (`Q9`, ruled at PO round 107; landed by `W347`).
-⚠️ Every corpus must name at least one variant, and a word each corpus invents
-for the same case is a different label in the one variant selector. ⭐ The
-reconnaissance skill proposes it — `SINGLE_VARIANT` in
-`skills/reconnaissance/proposal.py` — and a person still confirms it.
+framework's, not each corpus's.** Every corpus names at least one variant, and a
+word each corpus invents for the same case is a different label in the one
+variant selector. ⭐ Reconnaissance proposes it — `SINGLE_VARIANT` in
+`skills/reconnaissance/proposal.py` — and a person confirms it.
 
 `permitted_edits` is R3's declaration: the complete, enumerated set of existing
-files this corpus may have added to, each with its insertion and its reason. An
-empty list is the normal case, and it is the one a purely additive source should
-be able to keep.
-
-| Source | `levels` | example address |
-|---|---|---|
-| SPARQL | `["course"]` | `sparql-tutorial` + unit 07 |
-| Java-senior | `["section","module"]` | `concurrency/23-executors` + unit 02 |
-| CodeSignal | `["path","course"]` | `kotlin-programming-for-beginners/getting-started-with-kotlin` + unit 03 |
-| ISO-8583 | `["group"]` | `iso-fundamentals` + unit 02 |
-
-Depth is uniform **within** a source. A ragged source is normalised by its
-adapter. This is a deliberate YAGNI: a free node tree would turn every flat
-contract downstream — progress keys, hrefs, editor task files, the source-tree
-mirror — into a tree walk, for flexibility no known source needs. Revisited in
-v2 only if a real source demands it.
-
-`levels` also supplies the **display labels** the breadcrumb and index use, so
-the Java site says "Section › Module › Lesson" while CodeSignal says
-"Path › Course › Unit", from data.
+files this corpus may have added to, each with its insertion and its reason.
+The one kind is `insert-line`. An empty list is the normal case, and it is the
+one a purely additive source keeps.
 
 ---
 
