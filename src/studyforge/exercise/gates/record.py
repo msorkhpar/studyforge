@@ -26,12 +26,10 @@ one exception. Standard library only.
 record and `validate` reads it back, so a build that does not speak its version
 refuses it through `studyforge.version.check`, naming what it declares.
 
-⚠️ **Records were written without the key before it existed, and a corpus
-commits them.** ⭐ The rule for those is closed: a record carrying no
-`gates_api` whose keys are exactly `UNVERSIONED_KEYS` — the whole shape every
-such record had — is read as version 1, which is that shape. ⛔ A record with
-no `gates_api` and any other key set is refused, naming the missing key. ⚠️
-Refusing them would force every committed exercise through its gates again.
+⚠️ **A corpus commits records written before the key.** ⭐ One closed rule:
+a record with no `gates_api` whose keys are exactly `UNVERSIONED_KEYS` is read
+as version 1, the shape it had; any other record without the key is refused,
+naming it. Refusing them would force every exercise through its gates again.
 
 ## ⭐ ONE RECORD, AND A SECOND GATE FAMILY WRITES INTO IT
 
