@@ -193,8 +193,10 @@ fi
 #      legitimately take minutes on a cold cache and a slow link; the thing that
 #      hangs is a read inside the suite.
 #
-# ⚠️ **THE FIGURE IS DELIBERATELY LOOSE AND SAYS SO.** The default below is far
-# above a healthy run of the whole suite, because with
+# ⚠️ **THE FIGURE IS DELIBERATELY LOOSE AND SAYS SO.** A healthy run of the
+# whole suite in the pinned image takes about **57.66 s**, and `tests/visual/`
+# alone about **8.44 s**; the default below, **1800 s**, is about **31x** the
+# first. It is that loose because with
 # `STUDYFORGE_DOCKER_TESTS=1` the command itself builds images and runs the
 # suite inside them, and a contributor's hardware is not this hardware. ⭐ A
 # bound that fires on a healthy run is a bound somebody deletes.
