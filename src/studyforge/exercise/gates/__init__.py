@@ -43,6 +43,7 @@ container exists.
 | `runs` | what one run of the tests reported, and the `Attempt` seam |
 | `evidence` | every run a suite needs, derived from the exercise's own cases |
 | `code` | `G1`–`G5`, and the `code` family |
+| `derivation` | `D1`–`D2`, the `derivation` family: what an `authoritative` exercise records |
 | `quiz` | ⭐ a SUB-PACKAGE: `Q1`–`Q5`, the `quiz` family, and its own contract |
 
 ## ⭐ THE SEAM — a second gate family shares this record and edits nothing here
@@ -109,6 +110,7 @@ about it.
 from __future__ import annotations
 
 from studyforge.exercise.gates.code import CODE, G1, G2, G3, G4, G5, check
+from studyforge.exercise.gates.derivation import D1, D2, DERIVATION, TESTS, faults, hole, holes
 from studyforge.exercise.gates.digests import (
     ALGORITHMS,
     CITED_KEYS,
@@ -174,6 +176,9 @@ __all__ = [
     "CITED_KEYS",
     "CODE",
     "Cited",
+    "D1",
+    "D2",
+    "DERIVATION",
     "DIGEST",
     "DIGEST_PERMITTED",
     "DIGEST_WIDTH",
@@ -198,6 +203,7 @@ __all__ = [
     "SECOND",
     "SHA256",
     "STARTER",
+    "TESTS",
     "TOKEN_PERMITTED",
     "VERDICT_KEYS",
     "Verdict",
@@ -209,7 +215,10 @@ __all__ = [
     "drifted",
     "edges",
     "family_of",
+    "faults",
     "folded",
+    "hole",
+    "holes",
     "plant_role",
     "record_document",
     "record_of",

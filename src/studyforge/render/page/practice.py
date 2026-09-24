@@ -69,7 +69,8 @@ it cannot carry this control either — asserted, not assumed.
 ⚠️ `provenance` and `trust` are the framework's vocabulary for how much a
 verdict is worth; neither is a word a reader was ever told the meaning of. ⭐ So
 this module asks the record's own predicates — `Exercise.graded` and
-`Exercise.authoritative` — and chooses between two sentences. **No `data-*`
+`Exercise.authoritative`, `Exercise.ships_with_material` — and chooses the
+sentence. **No `data-*`
 attribute carries either key**, which is what stops the words leaking back onto
 the page through a stylesheet hook.
 
@@ -150,7 +151,7 @@ TESTS_TAB_TEMPLATE = "practice-tab-tests.html"
 #: under is spelled once, in the package that owns it.
 ACT_TEMPLATES = {RUN: "practice-run.html", TEST: "practice-submit.html"}
 
-#: `what this record IS -> the sentence a reader is shown` (spec §7 §9). ⛔ **Four cases and four
+#: `what this record IS -> the sentence a reader is shown` (spec §7 §9). ⛔ **Five cases and five
 #: files** (R13), keyed on
 #: the record's own PREDICATES and never on `provenance` or `trust`, so neither
 #: R5 key can reach the page through this mapping — and no `data-*` attribute
@@ -158,6 +159,7 @@ ACT_TEMPLATES = {RUN: "practice-run.html", TEST: "practice-submit.html"}
 #: stylesheet hook.
 GRADER_TEMPLATES = {
     "shipped": "practice-grader-shipped.html",
+    "bundled": "practice-grader-bundled.html",
     "generated": "practice-grader-generated.html",
     "quiz": "practice-grader-quiz.html",
     "none": "practice-grader-none.html",
@@ -289,7 +291,7 @@ def grader(exercise: Exercise) -> str:
 
 
 def label_of(exercise: Exercise) -> str:
-    """Return which of the four labels this record is owed.
+    """Return which of the five labels this record is owed.
 
     ⛔ **Asked of the record's own predicates.** `is_quiz` comes first because a
     quiz's `graded` is `False` — `graded` means *a grader runs*, and a quiz's
@@ -299,7 +301,11 @@ def label_of(exercise: Exercise) -> str:
         return "quiz"
     if not exercise.graded:
         return "none"
-    return "shipped" if exercise.authoritative else "generated"
+    if exercise.authoritative:
+        return "shipped"
+    # ⛔ Shipped with the material and not proven by the derivation's gates:
+    # it is neither the proven grader nor one written for this site (R5).
+    return "bundled" if exercise.ships_with_material else "generated"
 
 
 def breakdown(exercise: Exercise) -> str:

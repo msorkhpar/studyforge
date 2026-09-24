@@ -34,6 +34,10 @@ SHIPPED = {
 #: advisory grader looks like on disk.
 GENERATED = {**SHIPPED, "provenance": "generated", "trust": "advisory"}
 
+#: A grader that shipped with the material and was never derived through the
+#: two gates: it claims no authority, and it was not written for this site.
+BUNDLED = {**SHIPPED, "trust": "advisory"}
+
 #: A quiz: questions in place of a workspace. ⛔ Every workspace key is
 #: refused on it, which is why it carries none of them.
 QUIZ = {
@@ -137,14 +141,15 @@ def test_the_material_s_own_grader_and_a_generated_one_read_differently():
     assert shipped != generated
 
 
-def test_each_of_the_four_label_cases_renders_its_own_stated_sentence():
-    # ⛔ Spec §7 §9, read as the table it is:
+def test_each_of_the_five_label_cases_renders_its_own_stated_sentence():
+    # ⛔ Spec §7 §9 read as the table it is:
     # four records, four sentences, and every one of them different from every
     # other. ⭐ The ungraded case says *nothing here checks your answer* rather
     # than saying nothing — a label is never omitted because it is unflattering.
     said = {}
     for name, workspace in (
         ("shipped", SHIPPED),
+        ("bundled", BUNDLED),
         ("generated", GENERATED),
         ("quiz", QUIZ),
         ("none", UNGRADED),
@@ -153,11 +158,11 @@ def test_each_of_the_four_label_cases_renders_its_own_stated_sentence():
         wanted = templates.template(f"practice-grader-{name}.html").template
         assert wanted in markup, name
         said[name] = wanted
-    assert len(set(said.values())) == 4, "two of the four labels are the same sentence"
+    assert len(set(said.values())) == 5, "two of the five labels are the same sentence"
     assert 'data-practice-part="grader"' in panel(sections=[section(workspace=UNGRADED)])
 
 
-@pytest.mark.parametrize("workspace", [SHIPPED, GENERATED, UNGRADED])
+@pytest.mark.parametrize("workspace", [SHIPPED, BUNDLED, GENERATED, UNGRADED])
 def test_neither_r5_key_ever_reaches_the_page(workspace):
     # ⛔ `provenance` and `trust` are the framework's vocabulary for how much a
     # verdict is worth, and no reader is told what either word means. ⭐ Both

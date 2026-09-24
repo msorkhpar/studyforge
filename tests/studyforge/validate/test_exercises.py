@@ -163,9 +163,32 @@ def test_a_page_whose_practices_skip_an_ordinal_is_refused(tmp_path):
     assert RULE_PRACTICE_ORDINALS in validate(root).rules
 
 
+def test_a_gate_record_written_before_its_version_key_still_validates(tmp_path):
+    # ⭐ The stated rule for a corpus written before `gates_api`: its whole
+    # earlier shape is read as version 1, so a committed record is not refused.
+    root, places = a_corpus(tmp_path / "c")
+    path = root / places[0].gates
+    document = json.loads(path.read_text(encoding="utf-8"))
+    del document["gates_api"]
+    path.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+    assert "gates_api" not in json.loads(path.read_text(encoding="utf-8"))  # ⭐ the plant
+    assert validate(root).findings == ()
+
+
+def test_a_gate_record_declaring_a_version_this_build_does_not_speak_is_refused(tmp_path):
+    root, places = a_corpus(tmp_path / "c")
+    path = root / places[0].gates
+    document = json.loads(path.read_text(encoding="utf-8")) | {"gates_api": 2}
+    path.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+    report = validate(root)
+    assert "gates_api" in "\n".join(
+        f.message for f in report.findings if f.rule == RULE_GATE_RECORD
+    )
+
+
 def test_a_corpus_with_no_authored_exercise_is_untouched(tmp_path):
-    # ⚠️ A `bundled` grader's derivation gates are its own; nothing here widens
-    # to it, so a corpus that predates this milestone validates as it did.
+    # ⚠️ A grader that is not `generated` is not this arm's: an authoritative
+    # one is `validate.derived`'s, and an advisory shipped one asks nothing.
     root = corpora.one_unit(tmp_path / "c")
     report = validate(root)
     assert report.findings == ()
