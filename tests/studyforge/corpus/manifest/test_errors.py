@@ -120,7 +120,7 @@ def test_a_refusal_over_a_closed_set_says_what_the_set_is():
     # than read from `KNOWN_CORPUS_API`: the point of the assertion is that the
     # refusal *names* the set, and one built from the set would say nothing
     # about what the message contains.
-    assert "[1, 2, 3, 4, 5, 6]" in str(raised.value)
+    assert "[1, 2, 3, 4, 5, 6, 7]" in str(raised.value)
 
 
 def test_it_can_be_caught_as_a_value_error_by_a_caller_that_does_not_import_it():

@@ -15,7 +15,7 @@ import json
 import pytest
 
 from studyforge.archive.scrub import PersonalDataLeak
-from studyforge.corpus.manifest import Classification, ManifestError, parse
+from studyforge.corpus.manifest import KEY_VERSIONS, Classification, ManifestError, parse
 from studyforge.skills.onboarding import RECORD_FILE, onboard
 from studyforge.skills.reconnaissance import survey
 from studyforge.skills.reconnaissance.furniture import propose
@@ -37,7 +37,10 @@ def test_a_furnished_source_drafts_a_glob_for_everything_no_include_reads(tmp_pa
     assert globs(proposal) == sources.FURNISHED_GLOBS
     # ⛔ Only a file an include reads is withheld: the aggregate, and nothing else.
     assert proposal["content"]["exclude"] == ["src/Whole.md"]
-    assert proposal["corpus_api"] == 2
+    # ⭐ `not_material` needs 2; the record this source carries is drafted as
+    # `curriculum` (`W340`), which needs more, and the draft asks for the higher.
+    assert proposal["corpus_api"] == max(2, KEY_VERSIONS[(None, "curriculum")])
+    assert "curriculum" in proposal
 
 
 def test_the_manifest_reader_leaves_nothing_unclassified_once_a_person_gives_the_reasons(tmp_path):

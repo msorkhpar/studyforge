@@ -77,7 +77,7 @@ from studyforge.skills.reconnaissance.duplication import Aggregate, Structural
 from studyforge.skills.reconnaissance.errors import ReconnaissanceRefused
 from studyforge.skills.reconnaissance.inventory import Inventory, prefix_groups, take
 from studyforge.skills.reconnaissance.proposal import draft
-from studyforge.skills.reconnaissance.record import Entry, Record, find
+from studyforge.skills.reconnaissance.record import Entry, Record, find, read
 from studyforge.skills.reconnaissance.report import Observation, Survey, Uncertainty
 from studyforge.skills.reconnaissance.survey import PASSES, survey
 
@@ -98,6 +98,7 @@ __all__ = [
     "draft",
     "find",
     "prefix_groups",
+    "read",
     "survey",
     "take",
 ]

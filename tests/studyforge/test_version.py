@@ -264,4 +264,4 @@ def test_sf_02_imports_the_guard_rather_than_keeping_its_own_copy():
     # ⭐ A literal, not a read of `KNOWN_CORPUS_API`: the number this build
     # writes moves with every new key, and an assertion built from the set it
     # is pinning would move with it without anybody noticing.
-    assert CORPUS_API == 6
+    assert CORPUS_API == 7

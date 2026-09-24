@@ -22,6 +22,7 @@ DRAFTS = {
     (None, "runtimes"): {**corpora.DRAFT, "exercises": True, "runtimes": ["java", "maven"]},
     (None, "narration"): {**corpora.DRAFT, "narration": False},
     (None, "onboarding_doc"): {**corpora.DRAFT, "onboarding_doc": "docs/reader.md"},
+    (None, "curriculum"): {**corpora.DRAFT, "curriculum": {"record": "README.md"}},
 }
 
 

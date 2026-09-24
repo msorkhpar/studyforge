@@ -76,6 +76,9 @@ class Plan:
     exercises: bool
     archive_dir: str
     package: str
+    #: Whether `corpus.json` declares the record's groups (`W340`), so the
+    #: scaffold can write the filing into `read.py` instead of a refusal.
+    filed: bool = False
 
     @property
     def depth(self) -> int:
@@ -113,6 +116,7 @@ class Plan:
             f"  document kinds    {', '.join(self.kinds)}",
             f"  archive           {self.archive_dir}/",
             f"  adapter package   {self.package}/",
+            f"  units filed from  {'corpus.json curriculum' if self.filed else 'read.py'}",
         ]
 
 
@@ -141,6 +145,7 @@ def plan_for(
         exercises=bool(manifest.exercises),
         archive_dir=archive_dir,
         package=package,
+        filed=manifest.curriculum is not None and bool(manifest.curriculum.containers),
     )
 
 

@@ -11,7 +11,7 @@ import json
 
 import pytest
 
-from studyforge.corpus.manifest import RUNTIMES, ManifestError, parse
+from studyforge.corpus.manifest import KEY_VERSIONS, RUNTIMES, ManifestError, parse
 from studyforge.skills.onboarding import promote, render
 from studyforge.skills.reconnaissance import assess, draft, find, survey, take
 from studyforge.skills.reconnaissance.runtimes import (
@@ -144,7 +144,9 @@ def test_the_same_files_unrecorded_ARE_evidence_so_the_clause_above_measures_som
 
 def test_a_draft_carrying_runtimes_declares_the_version_that_reads_it(tmp_path):
     manifest, _ = drafted(sources.runnable(tmp_path / "c"))
-    assert manifest["corpus_api"] == RUNTIMES_API
+    # ⭐ At least the runtimes' version, and exactly what the drafted keys need:
+    # a draft with a record also carries `curriculum` (`W340`).
+    assert manifest["corpus_api"] == max(RUNTIMES_API, _curriculum_api(manifest))
     assert parse(json.dumps(sources.settled(manifest))).runtimes == ("java", "maven")
 
 
@@ -158,7 +160,15 @@ def test_the_version_is_pinned_by_the_reader_refusing_one_lower(tmp_path):
 
 def test_a_draft_with_no_runtimes_does_not_raise_its_version_for_them(tmp_path):
     manifest, _ = drafted(corpus(tmp_path / "c", {"pom.xml": "<project/>\n"}))
-    assert manifest["corpus_api"] < RUNTIMES_API
+    assert "runtimes" not in manifest
+    # ⛔ Nothing the runtimes need: whatever it declares, another key asked for.
+    declared = manifest["corpus_api"]
+    assert declared < RUNTIMES_API or declared == _curriculum_api(manifest)
+
+
+def _curriculum_api(manifest: dict) -> int:
+    """The version the drafted `curriculum` block needs, or `1` when there is none."""
+    return KEY_VERSIONS[(None, "curriculum")] if "curriculum" in manifest else 1
 
 
 def test_promote_reads_the_drafted_runtimes_back(tmp_path):
