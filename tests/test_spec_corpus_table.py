@@ -21,10 +21,12 @@ claiming graders for that corpus is a claim the corpus refutes.
 - ⛔ **Only one direction is asserted**: `exercises: false` ⇒ the cell claims no
   graders. ⚠️ `exercises: true` does not imply graders — an ungraded exercise
   is a real third state (§7, C5) — so the converse would refuse a true row.
-- ⚠️ **A sibling that is not named is not read**, and the sweep SKIPS SAYING
-  SO when it could read no manifest at all — a clean clone, and the pinned
-  image, where only the checkout is mounted. ⭐ The refusal half is held on a
-  synthetic table below, so the image still proves the instrument can go red.
+- ⚠️ **A sibling that is not named is not read**: with `STUDYFORGE_WORKSPACE`
+  unset — a clean clone, and the pinned image, where only the checkout is
+  mounted — the sweep SKIPS SAYING SO. ⛔ With it set, the sweep reads the real
+  table against every corpus there, and a named directory holding no committed
+  manifest FAILS rather than skips. ⭐ The refusal half is held on a synthetic
+  table below, so the image still proves the instrument can go red.
 """
 
 from __future__ import annotations
@@ -176,12 +178,33 @@ def test_a_committed_corpus_the_table_does_not_name_is_refused():
 
 
 def test_the_spec_table_agrees_with_every_committed_corpus_manifest():
-    manifests, unread = committed_manifests()
-    if not manifests:
+    if workspace_root() is None:
         pytest.skip(
-            f"no committed corpus manifest could be read here (unread: {unread}), so the "
-            f"spec's table is proved against no corpus; set {WORKSPACE_ENV} to the "
-            f"directory the corpus checkouts sit in. The refusal is held on the "
-            f"synthetic table above"
+            f"{WORKSPACE_ENV} is not set, so no corpus checkout is named and the spec's "
+            f"table is proved against none; the refusal is held on the synthetic table above"
         )
+    manifests, unread = committed_manifests()
+    # ⛔ A named workspace is a promise that the table is read against it, so one
+    # holding no committed manifest is a failure and never a skip.
+    assert manifests, (
+        f"{WORKSPACE_ENV} names a directory holding no corpus manifest at any checkout's "
+        f"commit (working tree only: {unread}), so the table would be proved against nothing"
+    )
     assert contradictions(spec_rows(), manifests) == []
+
+
+def test_a_named_workspace_holding_no_corpus_fails_and_an_unnamed_one_skips(tmp_path, monkeypatch):
+    monkeypatch.setenv(WORKSPACE_ENV, str(tmp_path))
+    try:
+        test_the_spec_table_agrees_with_every_committed_corpus_manifest()
+    except AssertionError:
+        pass
+    except pytest.skip.Exception:
+        # ⛔ Caught here, because a skip raised through this test would read
+        # as a skip and never as the failure it is.
+        pytest.fail(f"a named {WORKSPACE_ENV} holding no corpus skipped the table")
+    else:
+        pytest.fail(f"a named {WORKSPACE_ENV} holding no corpus passed the table")
+    monkeypatch.delenv(WORKSPACE_ENV)
+    with pytest.raises(pytest.skip.Exception, match=WORKSPACE_ENV):
+        test_the_spec_table_agrees_with_every_committed_corpus_manifest()

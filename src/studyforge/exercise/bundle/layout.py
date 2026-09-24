@@ -96,7 +96,7 @@ from studyforge.address import Address, require_ordinal, unit_name
 from studyforge.corpus.placement import PRACTICE_DIRNAME
 from studyforge.exercise.cases import Case
 from studyforge.exercise.errors import ExerciseError
-from studyforge.exercise.gates import REFERENCE, STARTER
+from studyforge.exercise.gates import REFERENCE, STARTER, TESTS
 from studyforge.exercise.safety import require_path
 
 #: ⛔ **The directory holding every bundle, and its ONE spelling.** At the
@@ -120,9 +120,8 @@ GATES_FILENAME = "gates.json"
 #: The role a bundle's statement takes in the gate record's inputs.
 STATEMENT = "statement"
 
-#: The role the grader's own files take. ⚠️ `STARTER` and `REFERENCE` are
-#: `gates.runs`' spellings, taken from that surface rather than re-minted.
-TESTS = "tests"
+#: ⚠️ `STARTER`, `REFERENCE` and `TESTS` (the role the grader's own files take)
+#: are the gates' spellings, taken from that surface rather than re-minted.
 
 #: ⭐ The build role: the files a build tool reads to resolve the
 #: exercise's dependencies, laid into the workspace at the same relative path.

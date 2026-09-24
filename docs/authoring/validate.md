@@ -54,7 +54,7 @@ pretend to be.
 
 ---
 
-## The twenty-two checks
+## The twenty-three checks
 
 **One list, in the order a report reads best.** The answer to *what does the
 checker check* is this table and nothing else.
@@ -81,24 +81,29 @@ checker check* is this table and nothing else.
 | 18 | `check_bundle_digests` | does every file an exercise's gate record was taken over still digest to what the record says? |
 | 19 | `check_bundle_contents` | is the exercise's bundle holding a file its shape does not permit — a run's report, most of all? |
 | 20 | `check_practice_ordinals` | are a page's practices numbered `1..n`, with no gap? |
-| 21 | `check_ledger_accounts` | where `exercises/ledger.json` is committed, does it still account for every page the corpus carries — every fence on it and every declared grader, each by an exercise or a written reason? |
-| 22 | `check_narration_current` | where `.studyforge/narration.json` is committed and narration is on, was every clip a page plays made from the words its paragraph says now? |
+| 21 | `check_derivations` | does every `authoritative` grader ship the record of the two gates it was derived through, naming its own files, and did both hold? |
+| 22 | `check_ledger_accounts` | where `exercises/ledger.json` is committed, does it still account for every page the corpus carries — every fence on it and every declared grader, each by an exercise or a written reason? |
+| 23 | `check_narration_current` | where `.studyforge/narration.json` is committed and narration is on, was every clip a page plays made from the words its paragraph says now? |
 
 **Checks 1–9 are about the archive alone**, 10 and 11 about placement, 12 and
 13 about the archive root's own files — what sits there unaccounted for, and
 what the archive accounts for and does not hold — 14 to 16 about your
-source repository, 17–21 about the authored exercises a corpus commits, and 22
-about its narration.
+source repository, 17–20 and 22 about the authored exercises a corpus commits,
+21 about the graders that claim to be your material's own, and 23 about its
+narration.
 **Checks 14 and 16 are the ones that cannot be
 made by recounting the parser's own output** — a completeness check that
 recounted what the parser produced would agree with itself by construction and
 catch nothing.
 
-**Checks 17–20 fire only on a `generated` grader, and check 21 only on a
-committed ledger. Check 22 fires only on a committed narration record**, and not
-at all with `--no-narration`: a corpus with no narration is complete without it.
-A grader that shipped with
-your material is `bundled`, and nothing here is asked of it. An authored one is
+**Checks 17–20 fire only on a `generated` grader, check 21 only on an
+`authoritative` one, and check 22 only on a committed ledger. Check 23 fires only
+on a committed narration record**, and not at all with `--no-narration`: a corpus
+with no narration is complete without it.
+A grader that shipped with your material is `bundled`. It is `authoritative` only
+when the exercise was derived from it by blanking what the lesson teaches, and
+the record of that derivation's two gates sits at the exercise's `gates.json`;
+otherwise it declares `advisory`, and nothing here is asked of it. An authored one is
 advisory, and it ships only with the record of the gates it cleared — so a
 corpus that authors exercises declares `exercises/**` and `practice/**` under
 `content.not_material` (which needs `corpus_api` 2), or check 14 refuses every
@@ -106,7 +111,7 @@ file in both.
 
 ---
 
-## The forty-four rule ids
+## The forty-seven rule ids
 
 **Every finding carries one**, so a script can filter a report by rule rather
 than by matching on message text. ⚠️ **Six are not emitted by `studyforge
@@ -156,6 +161,9 @@ before it, `check_untouched` after — which reports in the same shape.
 | `bundle-digest` | a file the gate record was taken over has changed since, or is gone |
 | `bundle-contents` | the exercise's bundle holds a file its shape does not permit — a run's report in a bundle is the one to watch, because it carries the machine's hostname |
 | `practice-ordinals` | a page's practices are not numbered `1..n` |
+| `derivation-record` | an `authoritative` grader ships no record of its derivation's two gates, one nothing can read, or one that does not support the claim: another family's gates, no blanked method named, a starter or test that is not the exercise's own, or a starter identical to the original |
+| `derivation-shortfall` | a derivation record is there and one of its two gates did not hold |
+| `derivation-digest` | a file the derivation record was taken over has changed since, or is gone |
 | `ledger` | `exercises/ledger.json` is there and will not read as a ledger this build wrote |
 | `ledger-unaccounted` | `exercises/ledger.json` is there and does not account for a page your corpus carries: a unit's `origin` (or a page a `coverage.json` names) the ledger never read, a fenced example on it with no row, a declared grader with no row, or a row naming neither an exercise nor a reason (or both). Judged only while a ledger is committed and the page is on disk |
 | `narration-stale` | a narrated paragraph's clip was made from words it no longer says, so the page plays the old words. The finding names the speech unit and the command to run, `studyforge narrate <corpus-root> --voice <the record's voice>`, and quotes no text. Judged only while a narration record is committed and narration is on |

@@ -30,6 +30,7 @@ ONE_LINE = (
     "link-previous.html",
     "outline.html",
     "practice-case.html",
+    "practice-grader-bundled.html",
     "practice-grader-generated.html",
     "practice-grader-none.html",
     "practice-grader-quiz.html",

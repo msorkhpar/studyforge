@@ -28,6 +28,8 @@ from studyforge.exercise.gates import (
     register,
 )
 from studyforge.exercise.gates.code import CODE
+from studyforge.exercise.gates.record import GATES_API, UNVERSIONED_KEYS
+from studyforge.version import CONTRACT_FIELDS
 
 WHERE = "corpus/adding-up/unit-01/practice-1"
 
@@ -217,3 +219,38 @@ def test_a_familys_own_evidence_round_trips_and_decides_nothing():
     document["gates"][0]["recorded"] = {"prompt": 3}
     with pytest.raises(ExerciseError, match="'recorded' value is text"):
         record_of(document, WHERE)
+
+
+# --- the version (R9) --------------------------------------------------------
+
+
+def test_the_record_writes_its_version_first():
+    document = record_document(record())
+    assert next(iter(document)) == "gates_api"
+    assert document["gates_api"] == GATES_API == 1
+    assert "gates_api" in CONTRACT_FIELDS
+
+
+@pytest.mark.parametrize("declared", [2, 0, True, 1.0, "1", None])
+def test_a_version_this_build_does_not_speak_is_refused_naming_the_key(declared):
+    document = record_document(record()) | {"gates_api": declared}
+    with pytest.raises(ExerciseError) as refused:
+        record_of(document, WHERE)
+    assert "gates_api" in str(refused.value)
+
+
+def test_a_record_written_before_the_key_is_read_as_version_one():
+    # ⭐ The stated rule: the whole shape every record had before the key.
+    versioned = record_document(record())
+    earlier = {key: value for key, value in versioned.items() if key != "gates_api"}
+    assert list(earlier) == list(UNVERSIONED_KEYS)
+    assert record_of(earlier, WHERE) == record_of(versioned, WHERE)
+    assert record_document(record_of(earlier, WHERE)) == versioned
+
+
+def test_a_record_with_no_version_and_any_other_shape_is_refused_naming_the_key():
+    earlier = {key: value for key, value in record_document(record()).items() if key != "gates_api"}
+    for planted in (earlier | {"skip": True}, {"inputs": [], "gates": []}):
+        with pytest.raises(ExerciseError) as refused:
+            record_of(planted, WHERE)
+        assert "'gates_api'" in str(refused.value)

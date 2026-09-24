@@ -96,6 +96,7 @@ CONTRACT_FIELDS = (
     "narration_api",
     "progress_api",
     "personal_archive_api",
+    "gates_api",
 )
 
 

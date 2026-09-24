@@ -20,10 +20,6 @@ second spelling of one rule, which is the defect `placement.names.label_of`
 records paying for: two guards, one missing character, and the failure showed
 as the *missing character* rather than as the duplication that caused it.
 
-⚠️ It does mean `exercise` imports `unit`, where the original skeleton predicted
-it would import `unit` and `address`. `address` turned out not to be needed —
-an exercise names paths and commands, not addresses.
-
 ## Where it lives, and what its presence means
 
 ⛔ An `exercise` belongs to a **practice** document (spec §7, CTO on Q2). A
@@ -207,6 +203,11 @@ class Exercise:
     def authoritative(self) -> bool:
         """Is this the source's own grader? ⛔ Never true for a generated one (R5), or none."""
         return self.trust == "authoritative"
+
+    @property
+    def ships_with_material(self) -> bool:
+        """Did this grader come with the material, whatever it may claim? ⭐ `bundled`."""
+        return self.provenance == "bundled"
 
 
 def of(document: object, where: str) -> Exercise | None:

@@ -8,8 +8,8 @@ invalid corpus — an invalid corpus is a *result*, and a caller that had to
 catch an exception to learn the verdict could not report ten problems at once.
 
 **Depends on.** `validate.corpus`, `validate.structure`, `validate.paths`,
-`validate.source`, `validate.exercises`, `validate.ledger`, `validate.narration`,
-`validate.report`, and `narrate.enabled` for whether the last is run.
+`validate.source`, `validate.exercises`, `validate.derived`, `validate.ledger`,
+`validate.narration`, `validate.report`, and `narrate.enabled` for whether the last is run.
 
 ⭐ **The check list is data, so it is assertable.** `tests` asserts that every
 rule id the tool can emit appears in `RULES`, which means a check added without
@@ -23,7 +23,7 @@ from collections.abc import Iterator
 from pathlib import Path
 
 from studyforge.narrate import narration_on
-from studyforge.validate import exercises, ledger, narration, paths, source, structure
+from studyforge.validate import derived, exercises, ledger, narration, paths, source, structure
 from studyforge.validate.corpus import Walk, read
 from studyforge.validate.report import Finding, Report, Unchecked
 
@@ -36,6 +36,7 @@ CHECKS = (
     *paths.CHECKS,
     *source.CHECKS,
     *exercises.CHECKS,
+    *derived.CHECKS,
     *ledger.CHECKS,
     *narration.CHECKS,
 )

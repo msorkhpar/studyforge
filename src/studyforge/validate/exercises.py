@@ -106,7 +106,7 @@ def check_gate_records(walk: Walk) -> Iterator[Finding]:
             continue
         record = None
         try:
-            record = _read(path, places.gates)
+            record = read_record(path, places.gates)
         except PersonalDataLeak as error:
             # ⛔ FIRST, and its own arm: `validate.corpus` sets the shape, and
             # two finding rules must not collapse into one.
@@ -114,12 +114,6 @@ def check_gate_records(walk: Walk) -> Iterator[Finding]:
         except (ExerciseError, ValueError) as error:
             yield Finding(
                 RULE_GATE_RECORD, where, f"ships a gate record that will not read: {error}"
-            )
-        except OSError:
-            yield Finding(
-                RULE_GATE_RECORD,
-                where,
-                f"ships a gate record at '{places.gates}' that could not be read.",
             )
         if record is not None and not record.clears:
             yield Finding(
@@ -228,15 +222,20 @@ def _authored(unit: Unit) -> tuple[Places, str] | None:
     return Places(unit.container.address, unit.container.variant, number, ordinal), unit.where
 
 
-def _read(path, where: str):
+def read_record(path, where: str):
     """Decode one gate record and gate every string in it (R7).
 
     ⛔ **The gate runs before the record is read**, because a gate record is a
     document a corpus wrote and every string in it reaches a report line. ⚠️ It
     RAISES rather than scrubs: a scrubber that quietly rewrote would leave
-    nobody knowing personal data had been there.
+    nobody knowing personal data had been there. ⛔ A file that cannot be read
+    is refused naming `where`, never the path it was handed (R7).
     """
-    document = json.loads(path.read_text(encoding="utf-8"))
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError:
+        raise ExerciseError(f"{where}: the gate record could not be read.") from None
+    document = json.loads(text)
     assert_clean(document, where)
     return record_of(document, where)
 
@@ -244,7 +243,7 @@ def _read(path, where: str):
 def _record(walk: Walk, places: Places):
     """Return the gate record, or `None` — ⛔ absent and unreadable are `check_gate_records`'."""
     try:
-        return _read(walk.root / places.gates, places.gates)
+        return read_record(walk.root / places.gates, places.gates)
     except ExerciseError, PersonalDataLeak, ValueError, OSError:
         return None
 

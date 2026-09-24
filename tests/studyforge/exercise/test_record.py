@@ -281,7 +281,10 @@ def test_the_committed_graded_fixture_reads_back_field_for_field():
     exercise = of(load(GRADED_FIXTURE), "depth2 basics unit-01 practice-1")
     assert exercise is not None
     assert exercise.provenance == "bundled"
-    assert exercise.authoritative is True
+    # ⛔ Shipped with the material and derived by nothing, so it claims no
+    # authority: only the derivation's two gates earn that (R5).
+    assert exercise.authoritative is False
+    assert exercise.ships_with_material is True
     assert exercise.run_command[-1] == "compile"
     assert exercise.test_command[-1] == "test"
 

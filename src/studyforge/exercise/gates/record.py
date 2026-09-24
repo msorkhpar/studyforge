@@ -16,8 +16,20 @@ not define.
     record_of(document, where)          # and back, byte for byte
 
 **Depends on.** `families` for which gates exist, `digests` for what an input
-is, `studyforge.describe` for naming a value without reproducing it (R7), and
-`studyforge.exercise.errors` for the one exception. Standard library only.
+is, `studyforge.version` for the version test, `studyforge.describe` for naming
+a value without reproducing it (R7), and `studyforge.exercise.errors` for the
+one exception. Standard library only.
+
+## ⛔ THE RECORD IS VERSIONED, AND A RECORD WRITTEN BEFORE THE KEY HAS ONE RULE
+
+⭐ **`gates_api` is the record's first key** (R9, R21): a corpus commits the
+record and `validate` reads it back, so a build that does not speak its version
+refuses it through `studyforge.version.check`, naming what it declares.
+
+⚠️ **A corpus commits records written before the key.** ⭐ One closed rule:
+a record with no `gates_api` whose keys are exactly `UNVERSIONED_KEYS` is read
+as version 1, the shape it had; any other record without the key is refused,
+naming it. Refusing them would force every exercise through its gates again.
 
 ## ⭐ ONE RECORD, AND A SECOND GATE FAMILY WRITES INTO IT
 
@@ -83,11 +95,22 @@ from studyforge.exercise.gates.digests import (
 )
 from studyforge.exercise.gates.families import declared_order, family_of, registered
 from studyforge.exercise.safety import require_path
+from studyforge.version import check
+
+#: The record format's version, written as its first key.
+GATES_API = 1
+
+#: The key the version is written under.
+VERSION_KEY = "gates_api"
 
 #: The keys of the record itself, in the order it is written. ⛔ Closed, all
-#: three required: a record with no `origins` writes an empty array, so a
+#: four required: a record with no `origins` writes an empty array, so a
 #: reader never has to tell *no passages cited* from *the key was forgotten*.
-RECORD_KEYS = ("inputs", "origins", "gates")
+RECORD_KEYS = (VERSION_KEY, "inputs", "origins", "gates")
+
+#: ⛔ The whole shape of a record written before `gates_api` existed, which is
+#: read as version 1 and is the only record read without the key.
+UNVERSIONED_KEYS = ("inputs", "origins", "gates")
 
 #: The keys of one verdict, in the order it is written. ⛔ Closed, all five
 #: required — `recorded` is written as an empty object by a family with no
@@ -150,6 +173,7 @@ class GateRecord:
 def record_document(record: GateRecord) -> dict:
     """Return the record as the decoded object that ships beside the bundle (R10)."""
     return {
+        VERSION_KEY: GATES_API,
         "inputs": [
             {"role": entry.role, "path": entry.path, "digest": entry.digest}
             for entry in record.inputs
@@ -178,15 +202,7 @@ def record_document(record: GateRecord) -> dict:
 
 def record_of(document: object, where: str) -> GateRecord:
     """Read a gate record, refusing every way one can be incomplete or invented."""
-    if not isinstance(document, dict) or set(document) != set(RECORD_KEYS):
-        unknown = _unknown(document, RECORD_KEYS)
-        raise ExerciseError(
-            f"{where}: a gate record is {list(RECORD_KEYS)}, all of them required and "
-            f"nothing else. A key this build does not define is refused rather than "
-            f"ignored, because ignoring one is how a gate gets switched off by "
-            f"somebody who was never told no. It carries {describe_keys(unknown)} "
-            f"the record does not define, and the value is {describe(document)}."
-        )
+    _require_version(document, where)
     verdicts = _verdicts(document["gates"], where)
     _require_every_gate(verdicts, where)
     return GateRecord(
@@ -194,6 +210,26 @@ def record_of(document: object, where: str) -> GateRecord:
         origins=_origins(document["origins"], where),
         verdicts=verdicts,
     )
+
+
+def _require_version(document: object, where: str) -> None:
+    """Refuse a record this build does not speak, or one whose key set is not its shape."""
+    unversioned = isinstance(document, dict) and VERSION_KEY not in document
+    shape = UNVERSIONED_KEYS if unversioned else RECORD_KEYS
+    if not isinstance(document, dict) or set(document) != set(shape):
+        present = document if isinstance(document, dict) else {}
+        missing = [key for key in RECORD_KEYS if key not in present]
+        raise ExerciseError(
+            f"{where}: a gate record is {list(RECORD_KEYS)}, all of them required and "
+            f"nothing else. A key this build does not define is refused rather than "
+            f"ignored, because ignoring one is how a gate gets switched off by "
+            f"somebody who was never told no. It is missing {describe_keys(missing)}, "
+            f"carries {describe_keys(_unknown(document, shape))} the record does not "
+            f"define, and the value is {describe(document)}. Only a record with exactly "
+            f"{list(UNVERSIONED_KEYS)} is read without {VERSION_KEY!r}, as version 1."
+        )
+    if not unversioned:
+        check(VERSION_KEY, document[VERSION_KEY], {GATES_API}, where=where, error=ExerciseError)
 
 
 def _inputs(value: object, where: str) -> tuple[Input, ...]:
