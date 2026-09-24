@@ -206,9 +206,9 @@ def test_with_its_clips_absent_a_page_shows_no_control_and_its_console_is_clean(
         after = shown(open_page)
         console = loud(open_page)
         asked = clip_requests(open_page)
+    assert console == [], f"the console is not clean: {console}"
     assert after == {"player": False, "src": ""}, "a press or a click reached the narrator"
     assert asked == [], f"the page requested {len(asked)} clip(s) that are not there"
-    assert console == [], f"the console is not clean: {console}"
 
 
 @pytest.mark.parametrize("scheme", SCHEMES)
