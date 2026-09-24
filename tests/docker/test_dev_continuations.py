@@ -178,9 +178,9 @@ LINE_ANCHORS: dict[str, tuple[str, ...]] = {
 #: The files a `no-continuations` site may read, and the claim that names them.
 CONTINUATION_FREE = ("compose.yaml", "requirements.txt")
 
-#: ⭐ MEASURED at `51dee3b` in the pinned image, the unit being PHYSICAL LINES that
-#: continue the line above them: **89** in `Dockerfile`, **2** in `check`, **0** in
-#: `compose.yaml` and **0** in `requirements.txt`. ⛔ The bound
+#: ⭐ The unit is PHYSICAL LINES that continue the line above them: `Dockerfile`
+#: carries most, `check` a few, and `compose.yaml` and `requirements.txt` none.
+#: ⛔ The bound
 #: is a floor and not the figure, because a package added to the browser's list
 #: moves the number and does not move the property — but a reading of ZERO would
 #: mean this whole module had no population, and that must fail.
@@ -345,7 +345,7 @@ def test_the_dev_files_actually_have_continuation_lines():
     assert len(found) >= CONTINUATION_FLOOR, (
         f"docker/dev/Dockerfile has {len(found)} continuation line(s), under the "
         f"floor of {CONTINUATION_FLOOR} — so every assertion in this module has "
-        f"lost its population and `W131`'s sweep is no longer being checked"
+        f"lost its population and the continuation sweep is no longer being checked"
     )
 
 

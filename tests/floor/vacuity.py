@@ -41,7 +41,7 @@ from tests.floor.surfaces import check_producer_half, surface_census
 Check = Callable[[Path], list[Finding]]
 Notice = Callable[[Path], list[str]]
 
-TAG = "vacuous checks (Ruling 191):"
+TAG = "vacuous checks:"
 
 #: ⭐ Checks whose OWN notice prints the denominator in every state, the empty one included.
 #: ⚠️ `check_personal_data` is here for its identifier arm's VALUES only; that arm's files,
@@ -70,8 +70,7 @@ class Population:
 
 #: ⛔ Every product check (or arm) with no notice of its own. ⭐ Each `members` is the
 #: function its check iterates, never a restatement. ⚠️ `check_sizes` is here and not in
-#: `DISCLOSED_BY`: the tooling pairs it with its approach notice, which reads offices and
-#: branches and stays with the tooling.
+#: `DISCLOSED_BY`: it has no notice of its own.
 POPULATIONS: tuple[Population, ...] = (
     Population(check_sizes, "", "Python files under the scan roots", config.python_files),
     Population(

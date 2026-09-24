@@ -1,19 +1,18 @@
 """The identifier half of R7: derived at run time, kept nowhere.
 
 ⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
-checkout. It began as a copy of the developer tooling's check; that tooling, and its
-records, live on the branch `archive/process`, and nothing here depends on them.
+checkout, and depends on nothing outside it.
 
 **What it does.** Reads this machine's own identifiers — account name,
 hostname, home directory, git author — and reports any tracked file that
 carries one.
 
-⛔ **The git arm reads the GLOBAL and SYSTEM scopes ONLY, never a scope an
-office can write** (the argument is on `IDENTITY_SCOPES` below).
+⛔ **The git arm reads the GLOBAL and SYSTEM scopes ONLY, never a scope a
+checkout can write** (the argument is on `IDENTITY_SCOPES` below).
 ⭐ **The machine's real git identity sits in the user's own global file; a value
 in `.git/config` is a working convention this repository sets for itself** — and
-reading the second made this check's verdict on an unchanged tree a function of
-who happened to be working.
+reading the second would make this check's verdict on an unchanged tree a
+function of who happened to be working.
 
 **How you use it.** `check_identifiers(repo_root)`. `identifiers()` returns
 `{what it is: the value}` for the machine it runs on; `check_identifiers`
@@ -105,18 +104,15 @@ GENERIC_IDENTIFIERS = frozenset(
 #:   firing. ⛔ Emptying this tuple would be the weakening this must never
 #:   become, and `identifiers()` would then be blind to the one scope that holds
 #:   the datum.
-#: - ⛔ **Local and worktree are the REPOSITORY's.** Every office holding a
-#:   linked worktree shares one `.git/config` while `extensions.worktreeConfig`
+#: - ⛔ **Local and worktree are the REPOSITORY's.** Every linked
+#:   worktree shares one `.git/config` while `extensions.worktreeConfig`
 #:   is unset, and a placeholder written there is indistinguishable from a real
-#:   name to this check — four characters against `MIN_IDENTIFIER_CHARS`. So
-#:   reading it reported this repository's own checkout vocabulary as a leak, in
-#:   documents nobody had touched.
+#:   name to this check. Reading it would report this repository's own
+#:   checkout vocabulary as a leak, in documents nobody touched.
 #:
-#: ⭐ **The mirror image of `board/dispatch.py`, which reads `--local` and
-#: refuses the global file for the same reason read the other way round:** a
-#: branch description is the repository's own dispatch, an identity is the
-#: machine's. ⛔ **An office's own author line is therefore passed PER INVOCATION
-#: and set nowhere** — `git -c user.name=… -c user.email=… commit` — which is
+#: ⭐ **An identity is the machine's, never the repository's.** ⛔ **A
+#: checkout's own author line is therefore passed PER INVOCATION and set
+#: nowhere** — `git -c user.name=… -c user.email=… commit` — which is
 #: the only form that never enters a shared slot.
 IDENTITY_SCOPES = ("--global", "--system")
 
@@ -191,12 +187,10 @@ def identifiers() -> dict[str, str]:
     a leak originates on the machine that has those values, not in the
     container. `check_shapes` runs everywhere regardless.
 
-    ⛔ **What that paragraph used to say — *"git has no identity"* in there —
-    was FALSE, and it was measured.** ⚠️ `docker/dev/check`
+    ⛔ **That holds by construction, not by luck.** ⚠️ `docker/dev/check`
     mounts the git common directory into the image so a linked worktree can
-    answer git at all, so a repository-scoped identity was readable from inside
-    the container off that mount. ⭐ **It is true again now, and by
-    construction rather than by luck: `IDENTITY_SCOPES` names no scope that
+    answer git at all, so a repository-scoped identity is readable from inside
+    the container off that mount. ⭐ **`IDENTITY_SCOPES` names no scope that
     mount carries.**
     """
     found: dict[str, str] = {}
@@ -279,7 +273,7 @@ def check_identifiers(root: Path, values: dict[str, str] | None = None) -> list[
 def _census(armed: list[str], unarmed: list[str], known: list[str]) -> str:
     """Build the line carrying which arms armed, which did not, and the denominator."""
     head = (
-        f"personal data (R7, W307): the identifier arm derived {len(armed)} of "
+        f"personal data (R7): the identifier arm derived {len(armed)} of "
         f"{len(known)} identifier(s) on this machine — "
     )
     head += f"ARMED: {', '.join(armed)}." if armed else "ARMED: NONE, so NOTHING was compared."
@@ -287,7 +281,7 @@ def _census(armed: list[str], unarmed: list[str], known: list[str]) -> str:
         return (
             f"{head} NOT ARMED, and nothing was compared for these: "
             f"{', '.join(unarmed)} — a clean floor is NOT a guarantee about any of "
-            f"them (FND-07)."
+            f"them."
         )
     return f"{head} NOT ARMED: none — every arm had a value to compare."
 
@@ -298,7 +292,7 @@ def _standing_clause() -> str:
         f"  ⛔ Labels only, never values (R7) — printing one would be the leak this check "
         f"exists to prevent. ⭐ An UNARMED arm is CORRECT in the pinned image, which has "
         f"no passwd entry and configures no git identity, so this is a NOTICE and never a "
-        f"failure. ⚠️ The git arm reads {' and '.join(IDENTITY_SCOPES)} ONLY (W305), so an "
+        f"failure. ⚠️ The git arm reads {' and '.join(IDENTITY_SCOPES)} ONLY, so an "
         f"identity in a repository's own config arms nothing here. ⭐ check_shapes sweeps "
         f"every tracked file regardless and is unaffected by any of this."
     )

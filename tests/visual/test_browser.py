@@ -1,14 +1,14 @@
-"""`W312` — a launched browser leaves nothing behind, and its last words survive.
+"""A launched browser leaves nothing behind, and its last words survive.
 
-⛔ **The defect this module exists for.** `Browser.__init__` made a fresh profile
-under the system temp directory and `close()` never removed it. Each profile
-carries the browser's own caches, the temp filesystem is quota-limited, and
-when it filled every shell on the host exited `1` with no output.
+⛔ **The property this module exists for.** `Browser.__init__` makes a fresh
+profile under the system temp directory, and `close()` must remove it. Each
+profile carries the browser's own caches, the temp filesystem is quota-limited,
+and a full one makes every shell on the host exit `1` with no output.
 
 ⭐ **Two arms, and the real one is the one that counts.** The REAL-browser arm
 takes its binary from the session `browser` fixture — the one licensed ambient
-reader (`conftest.py`) — so it RUNS in the pinned image, which carries a browser
-(`W36`), and skips loudly where there is none. ⚠️ The FAKE arm is additional,
+reader (`conftest.py`) — so it RUNS in the pinned image, which carries a browser,
+and skips loudly where there is none. ⚠️ The FAKE arm is additional,
 never a substitute: it reaches the failures a real browser will not produce on
 demand — a browser that dies at once, a binary that is not there, and a launch
 that fails after the profile exists.
@@ -19,17 +19,13 @@ that a test calls plainly, and a plant test calls again under
 raise `AssertionError`. ⭐ A check that cannot be made red by removing the thing
 it checks is not a check.
 
-## ⛔ `W419` — this module's launch root is ITS OWN, and never the process's
+## ⛔ This module's launch root is ITS OWN, and never the process's
 
-⛔ **The fixture below used to point `tempfile.tempdir` at `tmp_path`, and
-`tempfile.tempdir` is PROCESS-WIDE.** Every launch in this module then landed
-where this module globs — and so did every launch anything ELSE in the same
-xdist worker made, because they all read the same global. ⚠️ **Measured by
-`W404/6`: RED once under `-n auto`, GREEN on an immediate identical re-take at
-the identical ref, and GREEN again after** — a gate that refuses a row with
-nothing wrong with it and sends that office looking in its own diff.
+⛔ **`tempfile.tempdir` is PROCESS-WIDE.** A fixture that pointed it at
+`tmp_path` would put every launch anything ELSE in the same xdist worker makes
+where this module globs, and the check would go red or green by timing.
 
-⭐ **`Browser(binary, profile_root=...)` is the remedy**: this module names the
+⭐ **`Browser(binary, profile_root=...)` is the answer**: this module names the
 directory it wants for the launches it makes, one call at a time, and a
 neighbour tearing down in the same worker is outside the glob by construction
 rather than by timing. ⛔ Nothing in this file writes to a module global, and
@@ -62,7 +58,7 @@ def _profiles(root: Path) -> list[Path]:
 def launch_root(tmp_path: Path) -> Path:
     """A directory this test asks each of ITS launches to make its profile under.
 
-    ⛔ **`W419`.** This returns a directory and changes nothing else — no
+    ⛔ This returns a directory and changes nothing else — no
     module global, no process global, no environment variable. ⭐ Each check
     below hands it to `Browser(..., profile_root=...)`, so the population this
     module globs is exactly the launches this module made.
@@ -133,7 +129,7 @@ def _check_a_missing_binary_leaves_nothing(root: Path) -> None:
 
     ⚠️ It does NOT raise at launch: the child-side hook closes every descriptor
     above the pipe, `subprocess`'s own exec-error pipe included, so the failure
-    arrives at the first call as a closed pipe (`W312/1`).
+    arrives at the first call as a closed pipe.
     """
     running = Browser(str(root / "no-such-browser"), profile_root=str(root))
     with pytest.raises(BrowserError, match="closed the protocol pipe"):
@@ -278,23 +274,23 @@ def test_a_profile_that_survives_every_removal_is_a_failure_and_not_silence(
         module._remove_profile(str(stubborn))
 
 
-# --- `W419`: this module's launch root is its own -----------------------------
+# --- this module's launch root is its own -------------------------------------
 
 
 def test_a_neighbour_launching_at_the_same_time_is_outside_this_module_s_root(
     dying_binary: str, launch_root: Path
 ) -> None:
-    """⛔ `W419`, both directions: the defect's own shape, and the control that sees it.
+    """⛔ Both directions: the defect's own shape, and the control that sees it.
 
     ⭐ **The green direction.** A launch this module did not make — the shape
     every other check in the suite makes, with no `profile_root` — lands under
-    the process's temp root and is invisible to the glob here. ⚠️ Under the
-    `tempfile.tempdir` monkeypatch it landed *inside* `launch_root` instead, and
-    every `_profiles(root) == []` in this file then depended on nothing else in
-    the same xdist worker tearing down at that moment.
+    the process's temp root and is invisible to the glob here. ⚠️ Under a
+    `tempfile.tempdir` monkeypatch it would land *inside* `launch_root` instead,
+    and every `_profiles(root) == []` in this file would depend on nothing else
+    in the same xdist worker tearing down at that moment.
 
     ⛔ **The red direction, and it is here because a control that cannot go red
-    proves nothing** (`W397`). The same fake browser, given this root, IS seen —
+    proves nothing**. The same fake browser, given this root, IS seen —
     so the glob above is not answering `[]` because it looks in the wrong place
     or because a fake browser leaves no profile at all.
     """

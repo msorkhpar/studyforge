@@ -1,8 +1,7 @@
 """What a test run could not reach, printed in every run's summary.
 
 ⭐ **The product suite's OWN `unreachable_population` and `skip_reason`**, so the disclosure
-prints in any checkout. They began as copies of the developer tooling's, which lives on the
-branch `archive/process`; these are the only ones on the main line.
+prints in any checkout.
 
 **How you use it.** The root `conftest.py` writes `unreachable_population(stats)` under every
 run's summary, where `stats` is pytest's own tally (`terminalreporter.stats`).
@@ -39,11 +38,11 @@ def skip_reason(report: object) -> str:
 
 
 def unreachable_population(stats: dict) -> list[str]:
-    """Return the tests this run did not reach, as a COUNT and each REASON (`W158`).
+    """Return the tests this run did not reach, as a COUNT and each REASON.
 
     ⛔ **Derived from the run's own tally** (`terminalreporter.stats`), never typed:
     a test count, one per skipped report, as pytest's closing line counts them.
-    ⛔ **A disclosure and never a verdict** (Ruling 328) — it returns lines and
+    ⛔ **A disclosure and never a verdict** — it returns lines and
     no exit code, because what is unreachable is host state no branch controls.
     """
     reasons = Counter(skip_reason(report) for report in stats.get("skipped", []))

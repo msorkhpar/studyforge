@@ -13,10 +13,9 @@ their signatures, never by importing them, so a new package needs no entry
 here.
 
 ⛔ **Why per-annotation fillers are a condition of the check and not a polish
-step** (Ruling 13, condition 1). The prototype this replaces passed the string
-`"alpha"` for every parameter. It therefore never reached
-`placement.names.unit_stem(label=…)` at all, because the filler it handed
-`title` raised an unrelated `AttributeError` first — and a check that cannot
+step**. A prober that passes the string `"alpha"` for every parameter never
+reaches `placement.names.unit_stem(label=…)` at all, because the filler it
+hands `title` raises an unrelated `AttributeError` first — and a check that cannot
 reach a branch **reports a lower bound while looking like a measurement**.
 ⭐ The honest delta the prototype published (46 pairs, then 45) was credible
 precisely because its author said which branches it had not reached; this

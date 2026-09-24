@@ -7,9 +7,9 @@ rather than read.*
 ## ⛔ Why the table is worth an instrument
 
 ⚠️ **A planner reads that table's *Graders* column to decide whether a corpus
-enters the execution track** (spec §11.0, C5). It named a file as one corpus's
-graders for rounds after the user ruled that file out (`Q5`), because nothing
-read the table against anything. ⭐ **The manifest is the corpus's own
+enters the execution track** (spec §11.0, C5). A table that nothing reads can
+name a file as a corpus's graders long after that file is ruled out. ⭐ **The manifest is the
+corpus's own
 declaration**, and `exercises: false` says it sets no graded work — so a row
 claiming graders for that corpus is a claim the corpus refutes.
 
@@ -143,7 +143,7 @@ def test_the_table_is_found_and_every_row_has_a_graders_cell():
 
 # --- the refusal, held on a synthetic table -----------------------------------
 
-#: One corpus's row, as the spec carried it before `W339`, and as it reads now.
+#: One corpus's row, once claiming graders and once denying them.
 CLAIMED = "| X | 1 | 3 | no build file | prose scenarios in `Scenarios.md` |"
 DENIED = "| X | 1 | 3 | no build file | **none** — amended below |"
 

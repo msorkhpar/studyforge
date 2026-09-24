@@ -52,19 +52,18 @@ def test_no_source_module_imports_a_third_party_package():
     # The declaration above says what is allowed; this says what is actually
     # imported, which is the half that goes wrong silently.
     #
-    # ⛔ **Asked of `tests.harness.isolation`, not walked here.** The walk this
-    # test used to carry and the one the harness needed for R1's import form are the
-    # same eleven lines against the same closed set, and this file's neighbour
+    # ⛔ **Asked of `tests.harness.isolation`, not walked here.** A walk here and
+    # the one the harness needs for R1's import form would be the same lines
+    # against the same closed set, and this file's neighbour
     # `tests/support.py` states the rule: a block repeated between test modules is
     # extracted and imported, because the copies drift silently while each keeps
-    # passing. ⭐ The claim is unchanged and so is its strength — what moved is
-    # where the predicate lives, and the harness is where it is proved to fail
-    # when deliberately violated, which is the half this test never had.
+    # passing. ⭐ The harness is where the predicate lives and where it is proved
+    # to fail when deliberately violated.
     assert isolation.foreign_imports(isolation.framework_modules()) == []
 
 
 def test_the_quality_tooling_is_excluded_from_packaging():
-    # ⛔ The developer tooling (on `archive/process`) is not shipped API. Packaging looks only
+    # ⛔ Developer tooling is not shipped API. Packaging looks only
     # in `src`, so an installed `studyforge` contains no `tools` package —
     # which is the other half of the rule that keeps the size checker out of
     # `src/studyforge/`.
@@ -102,11 +101,11 @@ def test_the_development_files_check_can_go_red():
 
 # --- ignore rules ----------------------------------------------------------
 
-#: The shapes FND-04's golden fixtures will carry. ⚠️ None of them exists in
-#: the tree yet, and that is the point: the risk is in what is not here to be
+#: The shapes golden fixtures carry. ⚠️ A new one may not exist in the tree yet,
+#: and that is the point: the risk is in what is not here to be
 #: noticed. `site.json`, `*.unit.html` and `*.audio/` are all ignored
 #: repository-wide, so without the `!tests/fixtures/**` negation these files
-#: would be silently untracked — FND-04's suite passing on the machine that
+#: would be silently untracked — a fixture suite passing on the machine that
 #: wrote them and failing on every other checkout.
 FIXTURE_SHAPES = (
     "tests/fixtures/depth1/.studyforge/site.json",
@@ -148,32 +147,31 @@ def test_the_same_shapes_outside_the_fixtures_are_still_ignored():
 #: ⛔ **`--force-exclude`, and it is load-bearing rather than decorative.**
 #: `pyproject.toml` declares `extend-exclude = ["tests/fixtures"]`, and ruff
 #: applies an exclusion to a file NAMED ON THE COMMAND LINE only when asked to.
-#: ⚠️ Measured at `94ad941`: the tree tracks **no** `.py` under `tests/fixtures`,
-#: so the flag changes nothing today — ⭐ which is exactly when a declared
-#: exclusion is cheapest to keep. The first tracked fixture module would
-#: otherwise be linted against a style an invalid fixture exists to violate.
+#: ⚠️ The tree may track no `.py` under `tests/fixtures` at all, and then the
+#: flag changes nothing — ⭐ which is exactly when a declared exclusion is
+#: cheapest to keep. The first tracked fixture module would otherwise be linted against a style an
+#: invalid fixture exists to violate.
 SCOPED = ("--force-exclude", "--")
 
 
-#: ⛔ **`ruff check`'s subject, and ONLY its subject.** ⚠️ MEASURED in the pinned
-#: image: `ruff check` over the whole tracked set yields **9046 errors**, because
-#: it reads a document AS Python. ⭐ Narrowing a committed verdict to what git
+#: ⛔ **`ruff check`'s subject, and ONLY its subject.** ⚠️ `ruff check` over the
+#: whole tracked set yields thousands of errors, because it reads a document AS
+#: Python. ⭐ Narrowing a committed verdict to what git
 #: tracks is right; narrowing it to the wrong tracked THINGS is a second defect
 #: of the same class, so each gate names its own population here.
 LINT_POPULATION = ("*.py",)
 
 #: ⛔ **`ruff format`'s subject is WIDER.**
-#: `pyproject.toml` sets `docstring-code-format = true`, so ruff 0.16.6 formats
-#: the python blocks inside markdown as well as `.py` files — and **29 tracked
-#: `.md` carry a python fence**, so the subject is live rather than theoretical.
+#: `pyproject.toml` sets `docstring-code-format = true`, so ruff formats the
+#: python blocks inside markdown as well as `.py` files — and tracked `.md`
+#: files carry python fences, so the subject is live rather than theoretical.
 #:
-#: ⚠️ **MEASURED at `a04e590`, pinned image, three populations:** the disk form
-#: `ruff format --check .` reports **876 files**; this population reports **876**;
-#: `*.py` alone reports **532**. ⭐ **The disk form and the tracked form name the
-#: SAME subjects** — so there is no trade-off here, and a `*.py`-only format gate
-#: simply DROPS 344 files and goes blind to every python block in every document.
+#: ⚠️ **In the pinned image the disk form `ruff format --check .` and this
+#: population name the SAME subjects**, so there is no trade-off here, and a
+#: `*.py`-only format gate simply DROPS every document and goes blind to every
+#: python block in it.
 #:
-#: ⛔ **Both arms were planted**: a mis-formatted python block in a
+#: ⛔ **Both arms are planted in the tests below**: a mis-formatted python block in a
 #: tracked `.md` makes the disk form and this population exit `1` and the
 #: `*.py`-only form exit `0` — it MISSES; mis-formatting a `.py` as well makes the
 #: `*.py`-only form exit `1`, which is the control proving it is blind to
@@ -184,19 +182,15 @@ FORMAT_POPULATION = ("*.py", "*.md")
 def test_ruff_lint_is_clean_where_ruff_exists():
     # ⚠️ Ruff is not installed in the environment this was built in and no
     # network install is assumed, so this skips with a message that names the
-    # extra rather than passing quietly. Where ruff is present — FND-03's
-    # image is the obvious place — it runs for real.
+    # extra rather than passing quietly. Where ruff is present — the dev image
+    # is the obvious place — it runs for real.
     #
     # ⛔ **Over what git TRACKS, never `.`** — *a floor check's verdict may not
     # depend on untracked state*. `ruff check .`
     # walks the DISK, so an untracked scratch module at the repository root turns
-    # a CORRECT tree red: measured by two offices, and it failed three innocent
-    # branches in one wave under a reviewer who had measured it that same hour.
+    # a CORRECT tree red.
     #
-    # ⚠️ **The working-tree reading was demoted, not deleted**: the developer
-    # tooling (now on the branch `archive/process`) kept a NOTICE that walked the
-    # disk and named a scratch file's findings, and a notice can never fail a
-    # build. ⭐ A dirty scratch file is a notice, never three branches failing.
+    # ⭐ A dirty scratch file is at most a notice, never a failing branch.
     ruff = tool_on_path("ruff")
     if ruff is None:
         pytest.skip("ruff not installed; `pip install -e '.[lint]'` to enable this check")

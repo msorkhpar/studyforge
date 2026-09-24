@@ -12,7 +12,7 @@ from `tests/studyforge/skills/exercises/authoring.py` rather than trusted.
 parsed; every `studyforge` import must resolve, and every call to a name it
 imported must BIND to that callable's real signature — so a renamed function, a
 dropped field or an invented keyword fails here rather than in a reader's
-traceback (`W61` shipped a fence naming a command that did not exist).
+traceback, and a fence naming a command that does not exist fails too.
 
 ## ⚠️ Why this is a module of its own, and not tests next door
 
@@ -23,7 +23,7 @@ that module reads the reference's **record vocabularies** — the keys a documen
 carries, the checks `validate` runs — and this one reads the **authoring
 procedure**: what the skill package does, and the worked corpus it does it to.
 ⭐ *Before you author* — the corpus's readiness for the pass — is read by
-`tests/test_authoring_before_you_author.py`, split off at that seam (`W443`).
+`tests/test_authoring_before_you_author.py`, split off at that seam.
 """
 
 from __future__ import annotations
@@ -85,7 +85,7 @@ REFUSES = "When a gate refuses"
 WRITES = "What the pass writes"
 BEFORE = "Before you author"
 
-#: The sentence `W389` struck, which the guide must no longer teach.
+#: A sentence the guide must not teach: exercises are authored, with assertions.
 STRUCK = "Do not invent assertions"
 
 #: A budget spelled as a number in prose — ⛔ a count in prose goes stale.
@@ -307,7 +307,7 @@ def test_the_paths_table_is_where_the_pass_writes_both_ways():
 
 
 def test_the_basket_draft_reports_where_every_run_output_lands():
-    # ⚠️ `W436` moved the report into `target/`; the guide's own draft must too.
+    # ⚠️ The run report lands under `target/`, and the guide's own draft must say so.
     from studyforge.exercise.bundle import is_run_output
 
     (body,) = [b for b in fences(section(guide(), DRAFT), "python") if "def basket" in b]

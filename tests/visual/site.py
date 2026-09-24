@@ -1,6 +1,6 @@
 """A real site on disk for the browser to open, and the broken ones beside it.
 
-**What it does.** Writes one subtree per `FND-04` fixture corpus exactly as a
+**What it does.** Writes one subtree per framework fixture corpus exactly as a
 build would — a page for every kind the three renderers emit, plus `page.css`
 and `page.js` at `placement.shared.assets` — and returns `file://` URLs into it.
 `damaged()` writes a second tree with one thing deliberately wrong.
@@ -25,14 +25,13 @@ real site, which must pass, and once against a tree broken in exactly the way
 that clause exists to catch, which must fail. ⛔ A control that passes is a
 failure of the harness, reported as one.
 
-## ⛔ Why all three page kinds are written, and what it was blind to (`W98`)
+## ⛔ Why all three page kinds are written
 
-⚠️ **`SF-34` rules six chrome regions and this harness could judge two.** It
-wrote the two unit fixtures and nothing else, rendered with `links=None`, so no
-page it opened carried a between-pages bar, a practice panel, a container's unit
-listing or a root index tree. ⛔ **The class this harness exists to catch lives
-in exactly those regions:** `--measure: 80ch` resolves against *the element's
-own font*, so one correct declaration produced three different columns — and no
+⚠️ **The chrome stylesheet rules six regions, and two unit pages rendered with
+`links=None` carry only two of them**: no between-pages bar, no practice panel,
+no container's unit listing and no root index tree. ⛔ **The class this harness
+exists to catch lives in exactly those regions:** `--measure: 80ch` resolves against *the element's
+own font*, so one correct declaration can produce three different columns — and no
 assertion over a stylesheet can see a resolved value.
 
 ⛔ **Each corpus gets its own subtree, and that is not tidiness.** Both fixtures
@@ -109,7 +108,7 @@ CONTAINER = "container"
 INDEX = "index"
 
 #: The one chrome region whose links resolve **on the page they are on**, as a
-#: CSS selector. ⛔ **Ruling 164's fork arriving in a selector**: an outline is
+#: CSS selector. ⛔ **Content and chrome, told apart in a selector**: an outline is
 #: CONTENT of its own page, so every one of its hrefs is a fragment; every other
 #: region here is CHROME pointing somewhere else, so none of theirs is.
 #: ⚠️ Spelled once, and `test_site` asserts it is a member of `chrome_regions()`
@@ -119,8 +118,8 @@ OUTLINE_REGION = 'nav[aria-label="Outline"]'
 
 #: The fixture corpora, in a stated order, each written into its own subtree.
 #: ⛔ Read from the container fixtures rather than listed here: a third fixture
-#: corpus declared there joins this harness by itself, which is the half of
-#: `SF-34`'s founding defect that was about a list nobody re-measures.
+#: corpus declared there joins this harness by itself, so no list here goes
+#: stale while nobody re-measures it.
 CORPORA = containers.FIXTURES
 
 
@@ -222,7 +221,7 @@ def corpus_of(case: str) -> str:
 
     ⛔ **Read off the built path, never split off the name.** A page's name is a
     corpus's own text and a prefix match on it would be this harness knowing a
-    source (R1's shape one directory down). ⭐ `W417` needs it because a SERVED
+    source (R1's shape one directory down). ⭐ The served checks need it because a SERVED
     origin is rooted at one corpus's subtree, the way `studyforge serve --site`
     is: the generated asset directory is dot-prefixed and the static mount
     exposes it at the served root or beside a manifest, and nowhere else.
@@ -231,13 +230,12 @@ def corpus_of(case: str) -> str:
 
 
 def chrome_regions() -> tuple[str, ...]:
-    """Every region `SF-34`'s disposition table says `chrome.css` answers for.
+    """Every region the disposition table says `chrome.css` answers for.
 
-    ⛔ **DERIVED from that table, never listed again here.** `SF-34`'s founding
-    defect is a scope line that read as complete while the tree had grown two
-    regions past it, and a second list one directory away would be the same
-    defect wearing this package's name. ⭐ A region added there — `SF-30`'s
-    read-mark control already was — joins this harness's census the day it lands,
+    ⛔ **DERIVED from that table, never listed again here.** A scope line that
+    reads as complete while the tree grows regions past it is the defect a
+    second list one directory away would be. ⭐ A region added there — the
+    read-mark control is one — joins this harness's census the day it lands,
     and a region this tree cannot reach is then a red check rather than a silence.
     """
     return tuple(
@@ -291,7 +289,7 @@ def _unit_page(corpus: str) -> Built:
             where,
             _bar(corpus, where),
             _trail(corpus, case.document),
-            # ⭐ `W388`: the transport is on the page, so its width and its
+            # ⭐ The transport is on the page, so its width and its
             # buttons are something this harness can measure.
             narration=case.narration,
             rail=_rail(corpus, where, case.document),
@@ -314,7 +312,7 @@ def _container_pages(corpus: str) -> tuple[Built, ...]:
 
 
 def _index_page(corpus: str) -> Built:
-    """One corpus's root index, with the rail a build hands it (`W388`).
+    """One corpus's root index, with the rail a build hands it.
 
     ⛔ The rail is `generate.navigation.rail`'s, addressed from the index and
     joined to the container pages this tree writes — `_rail`'s argument, from
@@ -361,7 +359,7 @@ def _bar(corpus: str, where: Placement) -> Links:
 
     ⛔ Every href is asked of `relative_href`, never composed: the `tree` and
     `sibling` profiles put a unit page at different depths, and a `../` counted
-    here would be right for one corpus and dangle in the other (`W57`).
+    here would be right for one corpus and dangle in the other.
 
     ⭐ **Both neighbours are declared absences** — `Link(href=None, key=…)` —
     which is the shape `navigation._destination` falls back from, so the bar
@@ -382,7 +380,7 @@ def _bar(corpus: str, where: Placement) -> Links:
 
 
 def _rail(corpus: str, where: Placement, document: dict) -> tuple[RailContainer, ...]:
-    """The rail for one unit page, joined the way a build joins it (`W324`).
+    """The rail for one unit page, joined the way a build joins it.
 
     ⛔ **`generate.navigation.rail` is called rather than imitated**, and the
     container pages it addresses are the ones `containers.fixture_cases` already
@@ -420,7 +418,7 @@ def _unit_key(corpus: str, document: dict) -> str:
 def _trail(corpus: str, document: dict) -> tuple[Crumb, ...]:
     """The trail for one unit page, joined the way a build joins it.
 
-    ⛔ **`W105`.** The disposition table rules `nav[aria-label="Breadcrumb"]`, and
+    ⛔ The disposition table rules `nav[aria-label="Breadcrumb"]`, and
     a harness that passes no trail can never open it — the reach check above
     reds by name. ⭐ `generate.navigation.trail` is called rather than imitated,
     and the index href is asked of `relative_href`, as `_bar`'s is.
@@ -462,9 +460,9 @@ def _flatten_foreground(stylesheet: str) -> str:
 def _own_column(stylesheet: str) -> str:
     """Give one chrome region a column of its own, measured in `ch`.
 
-    ⭐ **`SF-34`'s defect reproduced rather than imagined.** Every declaration in
-    the real stylesheet is identical and correct, and the resolved columns still
-    came out 800 px, 715.7 px and 680.3 px — because `ch` resolves against THE
+    ⭐ **The defect reproduced rather than imagined.** Every declaration in
+    the real stylesheet can be identical and correct, and the resolved columns
+    still come out 800 px, 715.7 px and 680.3 px — because `ch` resolves against THE
     ELEMENT'S OWN FONT and the chrome's font is not the reading surface's.
     ⛔ So this appends a rule and changes nothing else: no class, no colour, no
     markup, nothing any assertion over declarations or goldens can see.

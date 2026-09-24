@@ -36,8 +36,8 @@ come back unchanged**. ⛔ A wrapper that collapsed an overrun and a red into `1
 would make a wedged run indistinguishable from a failing assertion, which is
 strictly worse than the hang it replaces.
 
-⛔ **The statuses are MEASURED, not assumed.** At `af31fd7`, through the real
-`docker/dev/check` in the pinned image:
+⛔ **The statuses are read, not assumed** — through the real `docker/dev/check`
+in the pinned image:
 
 ```text
 command                            bound   status   wall
@@ -118,8 +118,8 @@ def check_line() -> str:
 
 
 def test_the_run_is_bounded_at_all():
-    # ⛔ The whole of the bound: an unbounded hang has no verdict, and Ruling 40
-    # makes this container the only authority for a reading — so a run that
+    # ⛔ The whole of the bound: an unbounded hang has no verdict, and R15 makes
+    # this container the only authority for a reading — so a run that
     # never returns withholds the only reading that counts.
     assert "timeout" in check_line(), (
         "docker/dev/check runs the suite unbounded; a wedged browser read then "
@@ -174,7 +174,7 @@ def test_the_default_bound_is_loose_against_a_measured_run_and_says_so():
     )
     assert "LOOSE" in script and "57.66" in script, (
         "the bound does not state that it is loose, or against what it was "
-        "measured; Ruling 236 requires both in the threshold's own body"
+        "measured; a loose threshold says both in its own body"
     )
 
 
@@ -199,7 +199,7 @@ def test_the_no_argument_case_names_the_image_s_own_command():
 
 
 def test_nothing_between_timeout_and_the_caller_can_rewrite_the_status():
-    # ⛔ **The trap this row exists not to fall into.** A wrapper that collapsed
+    # ⛔ **The trap this check exists not to fall into.** A wrapper that collapsed
     # an overrun and a red into `1` would make a wedged run indistinguishable
     # from a failing assertion — strictly worse than the hang it replaces.
     # ⭐ `exec` is the shape that cannot: the shell is replaced, so there is no

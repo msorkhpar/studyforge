@@ -1,32 +1,32 @@
-"""Two units, one source file — the property `Q23` asked about.
+"""Two units, one source file — a clip's key must still tell them apart.
 
 **What it asserts.** That some valid fixture corpus declares two units whose
 `origin.path` is *the same path*, and that this is therefore a corpus on which a
 path-derived key **collides**, while a key derived from the unit's logical
-address (`SF-01`) does not.
+address does not.
 
-⛔ **Why the fixture had to exist before `SF-16` ships — Ruling 187.** *"Asserted
-in both directions"* proves **surjectivity, not injectivity**. Seventeen clips
+⛔ **Why the fixture has to exist.** *"Asserted in both directions"* proves
+**surjectivity, not injectivity**. Seventeen clips
 colliding onto one filename means every `<audio>` still resolves and every file
 on disk is still named by a page: both stated directions pass, the suite stays
 green, and sixteen units play the wrong audio. ⭐ The form that states injectivity
 is a **cardinality equality** — `|clips| == |spoken units|` — and it cannot be
 written at all against a fixture set in which no two units share a source file.
 
-⭐ **The answer being tested is ruled, not re-decided here** (spec §8.2, *A clip's
+⭐ **The answer being tested is the spec's, not re-decided here** (spec §8.2, *A clip's
 filename carries a digest of the words it says*): a clip is keyed `<speech-id>-<digest>`, the
 speech id from the unit's **logical address** and the digest from the **spoken
 text**. ⛔ Neither half comes from the source path. `origin` is *provenance*, and
 provenance is never identity.
 
-**What this module is not.** ⛔ It does not mint a clip name — `SF-16` owns the
-minter and is M3. What is asserted here is the property the minter will be
-measured against and the *fixture* that makes that measurement possible: the
-positional half of the key is already shipped (`SF-01`'s `unit_key`), so the
-half that must separate two units sharing a file is testable today.
+**What this module is not.** ⛔ It does not mint a clip name — narration owns the
+minter. What is asserted here is the property the minter is measured against
+and the *fixture* that makes that measurement possible: the positional half of
+the key is `studyforge.address`'s `unit_key`, so the half that must separate two
+units sharing a file is testable on its own.
 
 **Depends on.** `tests.fixture_checks` for the declaration, and the framework's
-own readers — the container map's `origin` has two shapes (Ruling 92) and this
+own readers — the container map's `origin` has two shapes and this
 module reads neither of them itself.
 """
 
@@ -45,7 +45,7 @@ from studyforge.corpus.manifest import parse as parse_manifest
 from studyforge.validate.headings import count_headings, region
 from tests.fixture_checks import FIXTURES, VALID, violations
 
-#: The corpus this row added, named once. ⚠️ Its *membership of `VALID`* is what
+#: The shared-origin corpus, named once. ⚠️ Its *membership of `VALID`* is what
 #: makes every contract test in the suite see it, and that is pinned below
 #: rather than assumed: a fixture corpus outside the declaration is a directory
 #: no check opens, and every assertion that iterated it would pass by iterating
@@ -53,7 +53,7 @@ from tests.fixture_checks import FIXTURES, VALID, violations
 SHARED = "shared-origin"
 
 #: The archive's spelling in the fixtures — the stand-in for `<archive-root>`,
-#: which placement owns (SF-03). ⚠️ Named, never assumed to be a constant on
+#: which placement owns. ⚠️ Named, never assumed to be a constant on
 #: some package's surface.
 ARCHIVE_DIR = "archive"
 
@@ -64,7 +64,7 @@ class Unit:
 
     ⭐ **The two are separate fields here on purpose**, because that separation
     is the whole subject. `corpus`, `address`, `variant` and `n` are identity —
-    what `SF-01` calls the logical address. `origin` and `section` are
+    what `studyforge.address` calls the logical address. `origin` and `section` are
     provenance — where the material came from. ⛔ Nothing keys off the second.
     """
 
@@ -173,7 +173,7 @@ IDS = [label(group) for group in GROUPS]
 
 
 # --------------------------------------------------------------------------
-# ⛔ Inhabitation and wiring, first — both of the ways this row could be vacuous
+# ⛔ Inhabitation and wiring, first — both of the ways this could be vacuous
 # --------------------------------------------------------------------------
 
 
@@ -194,7 +194,7 @@ def test_some_valid_fixture_corpus_declares_two_units_on_one_origin_path():
     # assertion that reds instead.
     assert GROUPS, (
         "no valid fixture corpus has two units sharing one 'origin.path', so the "
-        "collision Ruling 187 is about cannot be exhibited and every assertion "
+        "collision this module is about cannot be exhibited and every assertion "
         "below is parametrized over nothing"
     )
     assert sum(len(units) for _name, _path, units in GROUPS) >= 2, GROUPS
@@ -207,11 +207,11 @@ def test_some_valid_fixture_corpus_declares_two_units_on_one_origin_path():
 
 @pytest.mark.parametrize("group", GROUPS, ids=IDS)
 def test_a_key_derived_from_the_source_path_collides_on_this_group(group):
-    """⛔ What `SF-17`'s bidirectional assertion cannot see.
+    """⛔ What a bidirectional assertion over clips cannot see.
 
     ⭐ **This is the fixture's whole value.** A corpus that *cannot* produce the
-    collision is a corpus against which `SF-16`'s negative is untestable, and a
-    negative nobody can test is the vacuous shape this project keeps catching.
+    collision is a corpus against which the minter's negative is untestable, and
+    a negative nobody can test is vacuous.
     So the collision is asserted to exist, here, as a property of the fixture.
     """
     _name, path, units = group
@@ -228,9 +228,9 @@ def test_the_logical_address_separates_the_units_the_path_does_not(group):
     """⭐ `Q23`'s answer, on the fixture that can disagree with it.
 
     The positional half of `<speech-id>-<digest>` is the unit's logical address,
-    and `SF-01` ships it. ⛔ The digest half is `SF-16`'s and is *not* what does
-    the separating here: the cardinality below is already equal without it,
-    which is the point — two units sharing a file key apart **by construction**
+    and `studyforge.address` mints it. ⛔ The digest half is narration's and is
+    *not* what does the separating here: the cardinality below is already
+    equal without it, which is the point — two units sharing a file key apart **by construction**
     rather than by being worded differently.
     """
     _name, _path, units = group
@@ -240,7 +240,7 @@ def test_the_logical_address_separates_the_units_the_path_does_not(group):
 
 @pytest.mark.parametrize("group", GROUPS, ids=IDS)
 def test_no_part_of_the_key_is_read_out_of_the_source_path(group):
-    # ⛔ R1 and Ruling 92 in one line: `origin` is provenance. A key carrying any
+    # ⛔ R1 and R4 in one line: `origin` is provenance. A key carrying any
     # of it would make a corpus's directory layout part of its audio's identity,
     # and a source file renamed upstream would orphan every clip under it.
     _name, path, units = group
@@ -252,7 +252,7 @@ def test_no_part_of_the_key_is_read_out_of_the_source_path(group):
 
 
 # --------------------------------------------------------------------------
-# ⛔ Ruling 187's form: a cardinality equality, over every valid corpus
+# ⛔ The injective form: a cardinality equality, over every valid corpus
 # --------------------------------------------------------------------------
 
 
@@ -260,8 +260,8 @@ def test_no_part_of_the_key_is_read_out_of_the_source_path(group):
 def test_the_key_space_is_exactly_as_large_as_the_unit_space(name):
     """⛔ `|keys| == |units|`, which is the only form that states injectivity.
 
-    ⭐ It is the shape `SF-16` owes for `|clips| == |spoken units|`, asked of
-    what is shipped today: the positional half of the key, over every unit of
+    ⭐ It is the shape `|clips| == |spoken units|` takes, asked of what can be
+    read without narrating: the positional half of the key, over every unit of
     every corpus the declaration names.
     """
     units = units_of(name)
@@ -310,7 +310,7 @@ def test_the_corpora_with_nothing_to_catch_are_a_populated_control():
 
 
 # --------------------------------------------------------------------------
-# ⭐ Ruling 92's other half, which the same fixture makes live
+# ⭐ The region shape's other half, which the same fixture makes live
 # --------------------------------------------------------------------------
 
 

@@ -22,45 +22,29 @@ PNG = b"\x89PNG\r\n\x1a\n"
 #: two, which is why the control below asserts a *size*, not a success.
 #:
 #: ⭐ **Deliberately LOOSE, and said so, so nobody tightens it as a measured bound.**
-#: A capture's size is a text-layout output and text layout
-#: is a font metric. ⭐ **`fonts-liberation` is now pinned by version AND checksum
-#: in `docker/dev/Dockerfile` (`W124` landed), so the font is no longer an
-#: undeclared input** — ⛔ **but the looseness below stays, and stating it is still
-#: required: a pin records which face arrives, and it does not make a threshold
-#: that was chosen loosely into a tight one.** ⚠️ The pin is what a *recorded px*
-#: assertion would have needed; these two figures never did, and the reason is the
-#: margin. ⛔ **The figure is
-#: unchanged and its MARGIN is not, because `W98` widened the population:** the
-#: CTO measured `45k – 112k` over two unit pages and a margin of `5.7x`; over
-#: seven pages of three kinds the same threshold reads **20 296 – 122 397** bytes,
-#: so the nearest margin is **2.54x**. ⭐ The blank control captures **5 293**
-#: bytes, which is 1.51x under this line — a metric-compatible font moves line
-#: heights by percents and cannot carry a reading across either gap.
+#: A capture's size is a text-layout output and text layout is a font metric.
+#: `fonts-liberation` is pinned by version AND checksum in `docker/dev/Dockerfile`,
+#: ⛔ **but a pin records which face arrives, and it does not make a loosely
+#: chosen threshold into a tight one.** ⭐ Over seven pages of three kinds this
+#: threshold reads **20 296 – 122 397** bytes, so the nearest margin is **2.54x**,
+#: and the blank control captures **5 293** bytes, 1.51x under this line — a
+#: metric-compatible font moves line heights by percents and cannot carry a
+#: reading across either gap.
 MINIMUM_BYTES = 8_000
 
 #: The height a real rendering of each page kind clears and a blank one cannot.
 #:
-#: ⛔ **Per kind since `W98`, and the reason is a measurement rather than taste.**
-#: The single `400` this replaces was a unit-page number, and the clause's
-#: population is now every page kind: a container page is a title, a note and a
-#: list of units, and a root index is a disclosure tree — both are legitimately
-#: short, and a threshold that reds on a correct short page is a threshold that
-#: would be "fixed" by narrowing the population back.
+#: ⛔ **Per kind, and the reason is a measurement rather than taste.** A container
+#: page is a title, a note and a list of units, and a root index is a disclosure
+#: tree — both are legitimately short, and a threshold that reds on a correct
+#: short page is a threshold that would be "fixed" by narrowing the population.
 #:
-#: ⛔ **No threshold here is TIGHTER than the one it replaces.** `400` survives
-#: unchanged as the unit floor — the figure whose looseness was examined — and the
-#: two rows beside it are LOOSER floors for two kinds that were never photographed
-#: before. ⚠️ Tightening one of these would be a different act from widening the
-#: harness, and `W98` did not perform it.
-#:
-#: ⭐ **Loose on purpose, and stated as such.** Measured in the
-#: pinned image at `f71c566`, viewport 1280x900, every reading printed:
-#: unit **960 / 2 212 px**, container **387 / 434 / 466 px**, index
-#: **303 / 529 px**. Margins: unit **2.40x** (wider than the 1.87x the CTO
-#: measured, because a populated bar and a practice panel are new height),
-#: container **2.58x**, index **2.02x**. ⛔ The nearest is the index's **2.02x**,
-#: and the blank control renders at **0 px** on every kind — so no font can carry
-#: a blank page over any row here, and none can carry a real one under it.
+#: ⭐ **Loose on purpose, and stated as such.** In the pinned image at viewport
+#: 1280x900: unit **960 / 2 212 px**, container **387 / 434 / 466 px**, index
+#: **303 / 529 px**. Margins: unit **2.40x**, container **2.58x**, index
+#: **2.02x**. ⛔ The nearest is the index's **2.02x**, and the blank control
+#: renders at **0 px** on every kind — so no font can carry a blank page over any
+#: row here, and none can carry a real one under it.
 MINIMUM_HEIGHT = {site.UNIT: 400, site.CONTAINER: 150, site.INDEX: 150}
 
 
@@ -124,7 +108,7 @@ def test_the_capture_notices_a_page_that_renders_nothing(
     the two things that actually separate a rendered page from a photograph of
     the background.
 
-    ⭐ **Run on every page kind, because the floors are now per kind** (`W98`): a
+    ⭐ **Run on every page kind, because the floors are now per kind**: a
     control taken on one kind says nothing about whether the lowest floor still
     separates a rendering from a blank page.
     """

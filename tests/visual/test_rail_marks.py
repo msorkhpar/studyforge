@@ -1,4 +1,4 @@
-"""`W368` in a real browser: the rail shows which units the reader marked read.
+"""The rail shows which units the reader marked read, in a real browser.
 
 ⛔ **A built site, opened over `file://`, and the mark made by pressing the
 page's own control** — never by writing the store's record here, which would
@@ -12,7 +12,7 @@ out shows no mark at all while the store still holds one — so what lights a
 row is the key, and a harness that has only seen marked rows has been shown to
 notice an unmarked one.
 
-⭐ **`W383` adds the words a screen reader is told**: absent on a fresh store,
+⭐ **And the words a screen reader is told**: absent on a fresh store,
 present on exactly the marked unit's rows in the rail and both lists, taking no
 room on the screen, following the control both ways, and never matched by the
 index filter.
@@ -212,7 +212,7 @@ def test_with_the_keys_cut_out_the_same_mark_lights_no_rail_row(
     assert not [row for row in found if row["key"] or row["marked"] or row["tick"] == TICK]
 
 
-# --- `W383`: a screen reader hears what the tick shows -----------------------
+# --- a screen reader hears what the tick shows --------------------------------
 
 #: Every read-words element on the open page: the key of the row it sits in,
 #: the region, whether assistive technology is given it, and the box it takes.

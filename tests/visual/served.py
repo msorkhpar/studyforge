@@ -19,16 +19,15 @@ answers the practice-editor route, so the panel builds real frames.
 spells: the insertion, the headers, the loopback gate and the client file are
 the real ones.
 
-## ⛔ `W417` — why this exists, and it is not a convenience
+## ⛔ Why this exists, and it is not a convenience
 
-⛔ **The practice panel's keyboard behaviour was read in no browser anywhere.**
+⛔ **The practice panel's keyboard behaviour cannot be read over `file://`.**
 Its controls ship `hidden` and are unhidden only where
 `window.studyforge.run.available()` is true — which `run-client.js` answers from
-`location.protocol` — and the whole visual harness opened `file://`. ⭐ So the
-gate saw the panel with its controls hidden and its offline note showing, and
-`SF-24` could assert its *structure* and never its *behaviour* (`SF-24/5`).
-⚠️ *Fully keyboard accessible* is in that row's acceptance and *"full keyboard
-traversal of a unit page, including the practice panel"* is in `QA-02`'s.
+`location.protocol`. ⭐ Over `file://` a check sees the panel with its controls
+hidden and its offline note showing, and can assert its *structure* and never
+its *behaviour*. ⚠️ *Full keyboard traversal of a unit page, including the
+practice panel* needs a served origin.
 
 ⛔ **This does not retire `file://`, and nothing here may be read as doing so.**
 R8's floor is a page opened by double-clicking it, every other clause in this
@@ -89,7 +88,7 @@ SCRIPTED = ("Compiling the practice…", "Running the grader…", "1 test, 1 pas
 
 #: Seconds a scripted run waits to be released before it ends itself. ⛔ A bound
 #: rather than a wait forever: a check that forgets to release must fail inside
-#: the suite's own patience rather than hang the directory (`W397`).
+#: the suite's own patience rather than hang the directory.
 RELEASE_BOUND = 60.0
 
 #: How a run ends, in the words `run-client.js` parses out of the last line.
@@ -107,15 +106,15 @@ DEFAULT_CORPUS = site.corpus_of("depth2-unit-01")
 #:
 #: ⛔ **`about:blank`, and the reason is this framework's own security posture
 #: rather than convenience.** Every page this server answers carries
-#: `frame-ancestors 'none'` and `X-Frame-Options: DENY` — correctly, and `W427`
-#: is not being reopened — so no page of the built tree can be framed by
+#: `frame-ancestors 'none'` and `X-Frame-Options: DENY` — correctly — so no page of the built tree
+#: can be framed by
 #: anything, including itself. ⭐ A blank document is SAME-ORIGIN with the page
 #: that frames it, which is what lets a check mark the document INSIDE a frame
 #: and read the mark back; a second real origin would be more lifelike and would
 #: make that mark unreadable.
 #:
 #: ⭐ **Two DIFFERENT URLs**, because the whole of the two-window design is that
-#: each window is told apart by its own URL and by nothing else (`W429`).
+#: each window is told apart by its own URL and by nothing else.
 #: ⚠️ **A stand-in for WHERE an editor is, and nothing more** — `ScriptedRuns`
 #: starts no container, exactly as it starts no process. What a frame here can
 #: establish is that it SURVIVES a transition, never what is inside one.
@@ -170,8 +169,8 @@ class ScriptedRuns:
         #: editor at all — which is what an ordinary origin here answers.
         self.windows: dict[str, dict[str, str]] | None = None
         #: ⭐ What the SERVER says about the run just before the exit line, which
-        #: is where `routes.runs.Outcome.record`'s own lines go (`AX-02`) and
-        #: the only channel a built page has for a breakdown (`AX-09`, R8).
+        #: is where `routes.runs.Outcome.record`'s own lines go and
+        #: the only channel a built page has for a breakdown (R8).
         #: ⛔ Empty by default, so every check written before it reads the same
         #: stream it read before.
         self.said: tuple[str, ...] = ()
@@ -280,7 +279,7 @@ def serving(
 
     ⭐ **`windows=True` answers the practice-editor route with two real frames**
     and admits this origin to the `frame-src` the framework composes, so a panel
-    that must not move an `iframe` has an `iframe` to not move (`W431`). ⛔ Off
+    that must not move an `iframe` has an `iframe` to not move. ⛔ Off
     by default: a frame is a focus scope of its own, and every traversal in this
     package counts stops.
 
@@ -291,8 +290,8 @@ def serving(
 
     ⛔ **The run is released on the way out, before `shutdown()`.** A stream
     still waiting inside `RELEASE_BOUND` would hold `serve_forever`'s thread,
-    and a harness that hung on teardown is the failure `W397` was minted for
-    wearing a different hat.
+    and a harness that hangs on teardown is the same failure as one that
+    never closes its tabs.
     """
     runs = ScriptedRuns()
     log: list[str] = []

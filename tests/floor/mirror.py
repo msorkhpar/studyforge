@@ -1,8 +1,7 @@
 """R12's mirror, enforced rather than remembered.
 
 ⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
-checkout. It began as a copy of the developer tooling's check; that tooling, and its
-records, live on the branch `archive/process`, and nothing here depends on them.
+checkout, and depends on nothing outside it.
 
 **What it does.** Fails any source module with no test module at the mirrored
 path. `src/studyforge/serve/routes/content.py` requires
@@ -19,7 +18,7 @@ checks — the mapping is on names, so a module too broken to import is still
 one whose missing test gets reported.
 
 ⚠️ Deliberately one-way. A test module with no source module is fine and
-common: `tests/harness/`, `tests/visual/` (QA-03), `tests/support.py`
+common: `tests/harness/`, `tests/visual/`, `tests/support.py`
 and the repository-level tests all exist without a counterpart. Checking the
 reverse direction would turn each of those into an exemption list that grows
 every time somebody adds a legitimate test, which is how a check stops being

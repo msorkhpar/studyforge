@@ -2,10 +2,10 @@
 
 ⛔ **Splitting a gate is riskier than splitting a module.** A module that stops
 being exercised fails when somebody calls it; a *coverage* check that stops
-covering something passes forever, which is the shape W7 itself was opened
-against. ⭐ So the split is asserted rather than trusted: the module set is
-derived and its inhabitation asserted before anything sweeps it; every helper
-module is asserted to be imported by a test module, and every name those
+covering something passes forever. ⭐ So the split is asserted rather than
+trusted: the module set is derived and its inhabitation asserted before
+anything sweeps it; every helper module is asserted to be imported by a test
+module, and every name those
 helpers define is asserted to be read by something.
 """
 

@@ -5,10 +5,9 @@ ways — live in [`test_process_starts.py`](test_process_starts.py), beside the 
 of `src/` that is the detector's main reader. `serve`'s no-spawn test
 ([`studyforge/serve/test_init.py`](studyforge/serve/test_init.py)) imports it too.
 
-⚠️ **Why a module of its own:** the detector used to live in `serve`'s test file, and
-the sweep imported it from there — so a rename in one package's mirror broke a
-tree-wide sweep at import. And it did not know `webbrowser`, whose `open` starts a
-browser process: importing it loads `subprocess`.
+⚠️ **Why a module of its own:** a detector living in one package's test file makes a
+rename in that mirror break a tree-wide sweep at import. ⭐ It knows `webbrowser`, whose
+`open` starts a browser process: importing it loads `subprocess`.
 
 ⭐ **What counts as a way to start a process** — the tables below, and nothing else:
 

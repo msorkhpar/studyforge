@@ -1,4 +1,4 @@
-"""The framework's build environment, asserted rather than described (FND-03, R15).
+"""The framework's build environment, asserted rather than described (R15).
 
 Two kinds of test live here and the split is deliberate.
 
@@ -10,8 +10,8 @@ machine. These are the checks that would otherwise be a reviewer's memory.
 
 **Integration checks — opt-in.** They build the image and run the suite inside
 it. ⛔ They are gated on `STUDYFORGE_DOCKER_TESTS=1` and not on "is Docker
-reachable", because a build on a COLD cache needs the **network** and FND-03's
-own acceptance is that *running* the tests needs none. ⭐ The gate and its
+reachable", because a build on a COLD cache needs the **network** and
+*running* the tests must need none (R15). ⭐ The gate and its
 reason live in `devgate.py`: the reason tells a cold cache from a warm
 one and names the invocation that reaches these checks.
 
@@ -123,7 +123,7 @@ def test_ruff_is_in_the_image_because_that_is_what_unblocks_fnd_01():
 
 
 def test_the_run_has_no_network():
-    # ⛔ FND-03's acceptance, enforced rather than asserted in prose: no
+    # ⛔ R15, enforced rather than asserted in prose: no
     # network access is required to run tests. `none` means no interface at
     # all, so a test that quietly reached for a package index fails here
     # rather than passing on whichever machine had one.
@@ -187,7 +187,8 @@ def test_no_path_from_anybody_s_machine_is_written_down():
 # ⛔ Why these four tests are not one: the image sets
 # `PYTHONDONTWRITEBYTECODE=1` and therefore **cannot create** the taint — but
 # the checkout is bind-mounted, so a container run **read** a stale `.pyc` a
-# HOST run had left behind. ⚠️ Ruling 40 is necessary and **not sufficient**.
+# HOST run had left behind. ⚠️ Running in the container is necessary and
+# **not sufficient**.
 #
 # ⭐ Which side runs which, and why. The first three need no daemon and no
 # network and run **on both sides**: two of them are the redirect proved in
@@ -252,7 +253,7 @@ def test_the_bytecode_cache_is_redirected_out_of_the_workspace():
     dockerfile = instructions("Dockerfile")
     assert "PYTHONPYCACHEPREFIX=" in dockerfile, (
         "the image does not redirect the bytecode cache; a stale `.pyc` from a "
-        "host run is read out of the bind mount (CTO-21/1)"
+        "host run is read out of the bind mount"
     )
     value = dockerfile.split("PYTHONPYCACHEPREFIX=")[1].split()[0].rstrip("\\").strip()
     assert value.startswith("/"), f"the cache prefix is not an absolute path: {value!r}"
@@ -340,7 +341,7 @@ def test_no_bytecode_from_the_bind_mount_is_read_in_here():
     )
 
 
-# --- the JavaScript runtime (W8, Ruling 21) --------------------------------
+# --- the JavaScript runtime --------------------------------
 
 
 def test_a_javascript_runtime_is_installed_and_pinned_by_version():
@@ -425,8 +426,7 @@ def test_the_runtime_is_actually_on_the_path_in_here():
     # ⭐ **The acceptance, asserted from inside.** Every static check above
     # reads a file; this one asks the environment. ⛔ It is the difference
     # between "the Dockerfile says it installs a runtime" and "the runtime is
-    # here", and Ruling 21 exists because 38 tests were skipping on precisely
-    # that gap.
+    # here", and tests that need the runtime skip on precisely that gap.
     if not os.environ.get(MARKER):
         pytest.skip(
             "not inside the dev image, where the runtime is pinned. The static "
@@ -436,19 +436,16 @@ def test_the_runtime_is_actually_on_the_path_in_here():
     assert shutil.which("node"), (
         "no JavaScript runtime on PATH inside the dev image. The pinned "
         "environment is the one that certifies a result, so this is a failure "
-        "here even though it is a skip on a host (Ruling 21)."
+        "here even though it is a skip on a host."
     )
 
 
-# --- the formatter exclusion, which no longer exists ------------------------
+# --- the formatter excludes nothing ----------------------------------------
 
 
 def test_the_formatter_excludes_nothing():
-    # ⛔ Stronger than the assertion it replaces, and that is the point of
-    # replacing it. FND-03's one-file exclusion was an interim: formatting
-    # `tests/test_fixture_consistency.py` took it over R11's 600-line test
-    # ceiling. FND-04's follow-up split the module along its five seams, so the
-    # conflict is gone and the list is **empty rather than short**. An empty
+    # ⛔ The exclusion list is **empty rather than short**: a file too long to
+    # format is split along its seams (R11), never excluded. An empty
     # list cannot become the place difficult files go.
     assert "exclude" not in pyproject()["tool"]["ruff"]["format"]
 

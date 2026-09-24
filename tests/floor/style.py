@@ -1,8 +1,7 @@
 """The standard-library half of lint and format: the checks that always run.
 
 ⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
-checkout. It began as a copy of the developer tooling's check; that tooling, and its
-records, live on the branch `archive/process`, and nothing here depends on them.
+checkout, and depends on nothing outside it.
 
 **What it does.** Fails a Python file with CRLF line endings, a tab used for
 indentation, trailing whitespace, a missing or doubled final newline, or a

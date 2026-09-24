@@ -11,8 +11,8 @@ byte comparison in one place a reader can count.
 green forever: it is compared against nothing, so it is evidence of nothing, and
 it survives the renderer that produced it being deleted. ⛔ And a *collision* —
 two cases naming one golden — satisfies "every case has a golden" **and** "every
-golden has a case" while pinning only the case that writes last (Ruling 187:
-asserted in both directions proves surjectivity, never injectivity).
+golden has a case" while pinning only the case that writes last (asserted in both directions
+proves surjectivity, never injectivity).
 
 **How you use it.**
 
@@ -133,7 +133,7 @@ def orphans() -> list[str]:
 
 
 def collisions() -> list[str]:
-    """Every golden path more than one case claims (Ruling 187's injectivity)."""
+    """Every golden path more than one case claims (the injectivity half)."""
     seen: dict[Path, list[str]] = {}
     for golden in claimed():
         seen.setdefault(golden.path, []).append(f"{golden.writer}:{golden.case}")

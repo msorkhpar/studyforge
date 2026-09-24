@@ -1,9 +1,8 @@
 """The loudness mechanism, tested where it matters — on the machine it is not on.
 
-⛔ **This is the module that stops `QA-03` repeating `SF-01`'s defect.** A
-harness whose absent-browser branch has never been executed is a harness whose
-skips are a guess, and the machine that most needs that branch to work — the
-pinned image, which has no browser — is the one where nobody is watching.
+⛔ **A harness whose absent-browser branch has never been executed is a harness
+whose skips are a guess**, and the machine that most needs that branch to work is
+the one with no browser, where nobody is watching.
 
 ⭐ **Runs everywhere**, browser or not: it fakes the state rather than the
 machine.
@@ -32,19 +31,17 @@ def as_state(monkeypatch: pytest.MonkeyPatch):
 def test_a_missing_browser_skips_with_a_reason_that_names_the_remedy(
     as_state, pinned_environment
 ) -> None:
-    """⛔ `pinned_environment` is LOAD-BEARING and is `W128`'s own live instance.
+    """⛔ `pinned_environment` is LOAD-BEARING.
 
-    ⚠️ **Without it this test read the HOST's `$STUDYFORGE_VISUAL`**: MEASURED at
-    `270296d` in the pinned container, unset it passed inside `5561 passed` and
-    `=required` made it the only failure in `1 failed, 5560 passed` — the same
-    tree, one environment variable (`W124/5`, `W115/4`, and
-    `docker/dev/compose.yaml` records it from the other side).
+    ⚠️ **Without it this test reads the HOST's `$STUDYFORGE_VISUAL`**: unset it
+    passes, and `=required` makes it fail — the same tree, one environment
+    variable.
     """
     as_state(ABSENT)
     with pytest.raises(pytest.skip.Exception) as raised:
         discovery.require_browser()
     assert "no browser" in str(raised.value)
-    assert "QA-03/1" in str(raised.value)
+    assert "pinned dev image has one" in str(raised.value)
 
 
 def test_a_missing_browser_FAILS_when_the_run_demanded_one(
@@ -100,7 +97,7 @@ def test_the_summary_line_counts_what_did_not_run(as_state, pinned_environment) 
     assert "RAN on Some Browser 1.2" in discovery.report_line(0)
 
 
-# --- which evidence state a run may claim (W36) -----------------------------
+# --- which evidence state a run may claim -----------------------------
 
 
 def test_a_run_outside_the_image_may_not_call_its_browser_pinned(

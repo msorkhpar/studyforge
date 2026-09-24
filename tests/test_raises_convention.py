@@ -3,28 +3,25 @@
 `docs/decisions.md` (*Each package publishes the exceptions it lets out as a
 tuple*) says a package whose reader lets another package's exception through
 exports that set as `RAISES`, and a caller catches the tuple rather than
-retyping its members. This is what enforces it, rebuilt because the version it
-replaces was narrow twice.
+retyping its members. This is what enforces it.
 
-⛔ **The population was a typed map of two `corpus.*` packages.** ⭐ It is now
-DERIVED — by [`raises_sweep.py`](raises_sweep.py) — from every module that
-exports a `RAISES` tuple, so the exporters that landed after that map was typed
-are inside the sweep without anybody remembering to add them, and so is the
-next one.
+⛔ **The population is DERIVED, never typed** — by
+[`raises_sweep.py`](raises_sweep.py) — from every module that exports a `RAISES`
+tuple, so the next exporter is inside the sweep without anybody remembering to
+add it.
 
-⛔ **The predicate walked handler NAMES, so `except RAISES[:1]` passed it.** ⚠️
-Four plants did exactly that and survived; each died only on the
-caller's own behavioural test. ⭐ A handler now names the tuple only by naming
-it WHOLE — a bare `RAISES`, `RAISES` starred into a tuple literal, or a
+⛔ **A predicate that walks handler NAMES passes `except RAISES[:1]`.** ⭐ So a
+handler names the tuple only by naming it WHOLE — a bare `RAISES`, `RAISES` starred into a tuple
+literal, or a
 module-level alias built from one of those. A subscript is a narrowed tuple and
 reads as naming nothing, wherever it is written.
 
 ⛔ **THE FLOOR IS KEYED ON THE SUBJECT, BECAUSE A SITE'S NAME IS THE PART THAT
-MOVES.** ⚠️ The floor this replaces pinned each site as `path:function`, and
-`W313`'s declared split moved a reader out of `skills/onboarding/onboard.py`
-into `removal.py`: the sweep found it in its new home and the reach had GROWN,
-and the floor read that growth as a lost site. ⭐ **So the key holds nothing a
-declared split may legitimately change** — not the module, not the function name
+MOVES.** ⚠️ A floor that pinned each site as `path:function` would read a
+declared split — a reader moved out of one module into another — as a lost
+site, while the sweep finds it in its new home and the reach has GROWN. ⭐ **So
+the key holds nothing a declared split may legitimately change** — not the module, not the function
+name
 — and what is left that still measures reach is WHICH package's tuple is caught
 and by HOW MANY callers. ⛔ A count would hide which site vanished, so every
 shortfall prints the whole population beside it.
@@ -63,13 +60,12 @@ from tests.raises_sweep import (
 #: package's tuple. ⛔ A FLOOR, so a NEW caller is expected and needs no edit
 #: here, while a caller that stops being found is the silent narrowing this
 #: exists to catch. ⚠️ **A site's path and function name are absent
-#: on purpose** — a declared split changes both without changing reach, and the
-#: floor that pinned them read `W313`'s move as a loss.
+#: on purpose** — a declared split changes both without changing reach.
 REACH = {
     "studyforge.corpus.container": 3,
-    # ⚠️ `W439` RAISED it to 8 with `reonboard.recorded_draft`'s site: at 7 the deleted-outright
-    # plant found 7 left and DID NOT RAISE — the floor moves with the site, as `SF-24`'s did.
-    # ⚠️ `W460` RAISED it to 9 with `narrate.enabled.declared`'s site, for the same reason.
+    # ⚠️ The floor moves with each new site (`reonboard.recorded_draft`,
+    # `narrate.enabled.declared`): one below the count, the deleted-outright plant
+    # finds that many left and DOES NOT RAISE.
     "studyforge.corpus.manifest": 9,
     # ⚠️ `W457` RAISED it to 4 with `validate.narration`'s site, for the reason `W439` names.
     # ⚠️ `W470/1` RAISED it to 6: `cli/serve.py` and `cli/check.py` import `read_corpus`
@@ -79,11 +75,9 @@ REACH = {
     # ⚠️ The run route's parse of a practice key is the first site naming
     # `progress.RAISES`, and a subject with NO floor here fails the deleted-outright
     # plant below, whatever the note above says of a new caller.
-    # ⚠️ `SF-24` RAISED it to 2 and had to: the practice panel mints the same key on
-    # the page, and with a floor of 1 the deleted-outright plant found 1 site left,
-    # read it as not short, and DID NOT RAISE. ⛔ So the floor moves with the second
-    # site — which is the other half of that plant and not a new rule. ⚠️ It was RAISED
-    # it to 3 for the same reason: the quiz route parses the same key.
+    # ⚠️ The practice panel and the quiz route parse the same key, so the floor
+    # counts all three sites: a floor one short lets the deleted-outright plant
+    # find a site left, read it as not short, and NOT RAISE.
     "studyforge.progress": 3,
     "studyforge.serve": 1,
 }
@@ -126,7 +120,7 @@ def test_the_population_is_derived_from_the_tree_and_is_inhabited():
         f"an exporter contributes no reader, so nothing it raises is swept: {subject.readers}"
     )
     # ⭐ The reach the derivation buys, asserted rather than described: the
-    # population is not the two `corpus.*` packages the typed map held.
+    # population reaches past the `corpus.*` packages.
     assert {name for name in subject.readers if not name.startswith("studyforge.corpus.")}, (
         "the derived population is inside `corpus.*`, which is the narrowness W219 removed"
     )
@@ -245,7 +239,7 @@ def _planted_copy(tmp_path: Path, subject: Population) -> tuple[Path, str]:
 
 
 def _split_out(copy: Path, site: str) -> None:
-    """Move the reader at `site` into a NEW module beside it, renamed — `W313`'s shape.
+    """Move the reader at `site` into a NEW module beside it, renamed — a declared split.
 
     ⭐ The split carries across what the moved function reads — the module's
     imports AND its module-level constants, which is why
@@ -355,10 +349,10 @@ def test_a_narrowed_tuple_fails_the_sweep_at_every_site_whatever_the_import_spel
 
 
 def test_a_reader_split_into_another_module_is_not_a_loss(tmp_path):
-    # ⛔ `W313`'s move, replayed on EVERY site the sweep finds rather than on the
-    # one that actually moved: each reader in turn is moved into a new module
-    # beside its own AND renamed, so both halves of the `path:function` the old
-    # floor pinned change at once. ⭐ The floor must stay GREEN through all of
+    # ⛔ A declared split, replayed on EVERY site the sweep finds rather than on
+    # one: each reader in turn is moved into a new module
+    # beside its own AND renamed, so both halves of its `path:function` change
+    # at once. ⭐ The floor must stay GREEN through all of
     # it, and asserting that the site's NAME changed is what makes that a
     # reading rather than a copy that plants nothing.
     subject = population(source_root())
@@ -450,7 +444,7 @@ def test_archive_lets_out_only_exceptions_it_defines_itself():
     # exceptions its readers let out are its OWN — `ArchiveError` in
     # `archive.errors`, `PersonalDataLeak` in `archive.scrub` — so a caller
     # imports them from the package it is already calling and has no second
-    # package's paragraph to retype, which is the failure `W208` measured.
+    # package's paragraph to retype.
     # ⭐ This is that sentence's ground, and it goes red the day it stops
     # holding: a caller catching another package's exception around an archive
     # reader is the exemption expiring.

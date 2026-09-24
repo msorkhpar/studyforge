@@ -1,4 +1,4 @@
-"""W7's claim and the scan's bound: the assertions this gate exists to make.
+"""The gate claim and the scan's bound: the assertions this gate exists to make.
 
 ⛔ Every reader under `SCAN_ROOT` calls the gate, `GATED_TREES` is total over
 the repository, and both are watched passing without their mechanism.
@@ -85,7 +85,7 @@ def tracked_readers(tree: str = "", root: Path | None = None) -> list[Path]:
 
 
 def test_every_document_reader_calls_the_gate():
-    # ⛔ W7. The assertion that makes an ungated reader unrepresentable rather
+    # ⛔ The assertion that makes an ungated reader unrepresentable rather
     # than merely discouraged — and the reason the fix is not "add a call".
     #
     # ⚠️ **This one keeps the disk walk, and the asymmetry with the two
@@ -100,15 +100,12 @@ def test_every_document_reader_calls_the_gate():
         for path in document_readers(root)
         if GATE not in _calls(path)
     )
-    assert offenders == [], (
-        f"these modules decode a document and never gate it (R7, W7): {offenders}"
-    )
+    assert offenders == [], f"these modules decode a document and never gate it (R7): {offenders}"
 
 
 def test_the_reader_scan_is_not_vacuous():
     # ⭐ Both directions. A scanner that found no readers would pass the test
-    # above forever, so this asserts it really does see the module W7 was
-    # opened against.
+    # above forever, so this asserts it really does see the manifest reader.
     root = repository_root() / SCAN_ROOT
     found = {str(path.relative_to(root)) for path in document_readers(root)}
     assert "corpus/manifest/document.py" in found
@@ -195,7 +192,7 @@ def test_every_named_tree_is_populated_so_the_bound_is_not_vacuous():
     # keeps every assertion above true: the counts stay positive, the
     # decomposition still sums, and no tree becomes homeless because every
     # tracked `.py` in this repository already lives in a named tree.
-    # ⭐ So: the module W7 was opened against is *in* the set, and the set is a
+    # ⭐ So: the manifest reader is *in* the set, and the set is a
     # **strict** subset of what git tracks.
     readers = {str(path.relative_to(root)) for path in tracked_readers()}
     assert "src/studyforge/corpus/manifest/document.py" in readers, sorted(readers)
@@ -302,8 +299,8 @@ def test_the_tracked_population_ignores_a_nested_checkout_and_still_catches_a_pl
 
 
 def test_the_reader_scan_catches_a_reader_that_gates_nothing(tmp_path):
-    # ⛔ Watch it pass without the mechanism. This is `corpus.json`
-    # as it was until W7 — a real reader, correct in every other way.
+    # ⛔ Watch it pass without the mechanism: a real reader, correct in every
+    # other way, that gates nothing.
     ungated = tmp_path / "reader.py"
     ungated.write_text(
         "import json\n\n\ndef parse(text):\n    return json.loads(text)\n",
@@ -340,12 +337,11 @@ def test_the_gate_is_seen_however_the_module_reaches_for_it(tmp_path):
 
 
 def test_the_manifest_front_door_refuses_a_leak_end_to_end():
-    # ⭐ W7's own defect, driven the way `studyforge validate` meets it: a
+    # ⭐ The manifest's own case, driven the way `studyforge validate` meets it: a
     # decoded `corpus.json` whose free authored `title` carries a home path.
     #
-    # ⛔ **Ruling 58, W27: refused as a `PersonalDataLeak` and NOT as a
-    # `ManifestError`.** This test asserted the opposite until W27, and the
-    # assertion it made was the fail-open: `ManifestError` exists so a caller
+    # ⛔ **Refused as a `PersonalDataLeak` and NOT as a `ManifestError` (R7).**
+    # The opposite is the fail-open: `ManifestError` exists so a caller
     # walking a corpus catches one type per file and continues, so an R7
     # refusal inside that family is logged as one more manifest that would not
     # read and the walk finishes green. ⭐ `not isinstance` is the load-bearing

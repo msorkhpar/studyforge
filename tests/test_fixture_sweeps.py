@@ -71,10 +71,10 @@ def test_a_rule_no_fixture_declares_excludes_nothing():
 
 
 def test_nine_declared_documents_are_swept_that_a_directory_exclusion_would_drop():
-    # ⛔ **The regression floor for finding 47's second, finer form.** Excluding
-    # by directory dropped these nine — each invalid in exactly one *named* way
+    # ⛔ **The floor for the finer form of a directory exclusion.** Excluding
+    # by directory would drop these nine — each invalid in exactly one *named* way
     # and correct in every other. ⚠️ If this number falls, a sweep has been
-    # coarsened back; if it rises, a fixture was added, which is fine.
+    # coarsened; if it rises, a fixture was added, which is fine.
     everything = [w for w, _d in archive_documents(asserting=()) if w.startswith("invalid/")]
     assert len(everything) >= 9
 

@@ -3,8 +3,7 @@
 ⛔ **Real key events, not `element.focus()`.** Sequential focus navigation is the
 browser's, not the page's: it decides what is tabbable, in what order, and
 whether a `tabindex` took something out of the ring. A test that called `focus()`
-on each link in turn would pass on a page no keyboard reader can use, which is
-the failure `SF-24` will be judged on.
+on each link in turn would pass on a page no keyboard reader can use.
 """
 
 from __future__ import annotations
@@ -18,22 +17,22 @@ from tests.visual.page import SCHEMES, OpenPage
 
 #: How many presses a traversal takes before giving up. Comfortably more than
 #: the fixture pages need, so a page that grew a control still passes.
-#: ⚠️ Raised from 40 by `W362`: the index gained a skip link, a progress strip,
-#: an Up next slip and a filter with two buttons ahead of its tree, and every
-#: one of them is a Tab stop the walk has to pass before it reaches the rows.
+#: ⚠️ The index carries a skip link, a progress strip, an Up next slip and a
+#: filter with two buttons ahead of its tree, and every one of them is a Tab
+#: stop the walk has to pass before it reaches the rows.
 PRESSES = 80
 
 
 def _links_in_the_chrome(page: OpenPage) -> list[str]:
     """Every anchor any `nav` region offers a keyboard reader, in document order.
 
-    ⭐ **Every region and not only the outline, which is what it used to be.**
-    Since `W98` the tree carries a between-units bar, a container's unit listing
-    and a root index tree, and a keyboard reader has to reach those too — reaching
-    the outline and not the bar is the failure `SF-24` is judged on.
+    ⭐ **Every region and not only the outline.** The tree carries a
+    between-units bar, a container's unit listing and a root index tree, and a
+    keyboard reader has to reach those too — reaching the outline and not the
+    bar is a failure.
 
     ⛔ **An anchor inside a CLOSED `<details>` is not in the focus ring, and that
-    is the browser's rule rather than this page's** (`W324`). ⚠️ It was invisible
+    is the browser's rule rather than this page's**. ⚠️ It was invisible
     here only because no tree this harness opened had ever held a closed
     disclosure: `render.index.policy` opens every level of a corpus small enough,
     and both fixtures are. ⭐ So the population is what a reader can REACH, and
@@ -55,7 +54,7 @@ def _closed_disclosures(page: OpenPage) -> list[str]:
         page.evaluate(
             "Array.from(document.querySelectorAll("
             "'nav[aria-label] details:not([open]) > summary'))"
-            # ⚠️ Only a summary the reader can SEE (`W362`): the index now opens
+            # ⚠️ Only a summary the reader can SEE: the index now opens
             # just the group holding the next unit, so a closed group inside a
             # closed group is reached by opening its parent first, not by Tab.
             ".filter(s => s.checkVisibility())"
@@ -70,7 +69,7 @@ def test_every_chrome_link_is_reachable_by_tab_and_in_document_order(
 ) -> None:
     """A page's navigation is navigation only if a keyboard reader reaches all of it.
 
-    ⭐ **Every page kind since `W98`**, because the regions that carry a corpus's
+    ⭐ **Every page kind**, because the regions that carry a corpus's
     navigation are on the other two: a container's unit listing is the only way
     down from a section page, and the root index tree is the only way in.
     """
@@ -92,9 +91,9 @@ def test_everything_focus_lands_on_shows_a_visible_focus_indicator(
     ⚠️ `outline-style: none` is the failure, and it is what a stylesheet gets
     when somebody removes the default ring and forgets to put one back.
 
-    ⭐ **Every page kind since `W98`** — `focus.css` is shared, but the regions
-    it has to reach through are not: a row in a unit listing and a `<summary>` in
-    the index's disclosure tree are both focusable and neither was ever opened.
+    ⭐ **Every page kind** — `focus.css` is shared, but the regions it has to
+    reach through are not: a row in a unit listing and a `<summary>` in the
+    index's disclosure tree are both focusable.
     """
     open_page.open(built_site.url(case), scheme=scheme)
     invisible = [
@@ -141,7 +140,7 @@ def test_the_traversal_notices_a_page_nothing_can_be_tabbed_to(
 def test_every_closed_disclosure_in_the_tree_is_itself_reachable_by_tab(
     open_page: OpenPage, built_site: site.Site
 ) -> None:
-    """⛔ The other half of the narrowing above (`W324`), or it would be a retreat.
+    """⛔ The other half of the narrowing above, or it would be a retreat.
 
     ⭐ A closed `<details>` takes its links out of the focus ring and puts its own
     `<summary>` in — so the links are still reachable, in two keystrokes instead
@@ -174,7 +173,7 @@ def test_every_closed_disclosure_in_the_tree_is_itself_reachable_by_tab(
     assert not missed, f"closed disclosures no Tab reaches: {missed}"
 
 
-# --- the narration transport, operated without a mouse (`QA-02`) --------------
+# --- the narration transport, operated without a mouse --------------
 
 #: The transport's own region, and the controls it offers, spelled as the
 #: renderer spells them. ⛔ Read from the page rather than listed: a control
@@ -187,9 +186,9 @@ ANNOUNCE_TIMEOUT = 15.0
 #: What the transport's state reads as, in one evaluation: what is lit, what the
 #: live region says, and what has focus. ⚠️ `textContent` and not `innerText`
 #: for the status region — ⛔ **an element with no layout box answers `innerText`
-#: with its WHOLE text**, hidden children included (the zero-box class, measured
-#: by `QA-02` on this very region: the three state sentences came back at once
-#: from a region whose computed `display` was `none`).
+#: with its WHOLE text**, hidden children included (the zero-box class: on this
+#: region the three state sentences come back at once from a region whose
+#: computed `display` is `none`).
 TRANSPORT_STATE = """
 (() => {
   const player = document.querySelector('footer#player');
@@ -214,7 +213,7 @@ TRANSPORT_STATE = """
 
 #: Where each of the transport's visible controls sits in document order — the
 #: same identity `page.trail` records, so the two readings join on a position
-#: rather than on a word (`W105`).
+#: rather than on a word.
 TRANSPORT_POSITIONS = """
 (() => {
   const all = Array.prototype.slice.call(document.querySelectorAll('*'));
@@ -235,7 +234,7 @@ def _transport(page: OpenPage) -> dict:
 def test_every_narration_control_is_reachable_by_tab_and_in_document_order(
     open_page: OpenPage, built_site: site.Site
 ) -> None:
-    """⛔ `QA-02`'s definition: *keyboard operation of navigation, narration and practice*.
+    """⛔ *Keyboard operation of navigation, narration and practice*.
 
     ⭐ The transport ships `hidden` and `narration.js` reveals it, so this is a
     reading of the page a reader gets and not of the bytes on disk. ⚠️ The
@@ -246,8 +245,8 @@ def test_every_narration_control_is_reachable_by_tab_and_in_document_order(
     reading = _transport(open_page)
     assert reading["visible"], "the transport was never revealed, so this traverses nothing"
     assert reading["controls"], "the transport offers no control, so this judges nothing"
-    # ⛔ Joined on POSITION and never on a label (`W105`, and this module's own
-    # `trail`): two of these controls are a single typographic character and the
+    # ⛔ Joined on POSITION and never on a label (this module's own `trail`): two of these controls
+    # are a single typographic character and the
     # speed control's text is its whole option list, so a label join would have
     # read *"the keyboard reaches one of four"* about a transport it reaches all
     # of — a defect reported against the page instead of against the join.

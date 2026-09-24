@@ -2,8 +2,8 @@
 
 ⭐ **Every positive here is paired with the legitimate shape it is one character from.**
 A check that fired on a sub-package importing its own parent, or on a module imported
-from the package that holds it, would be switched off within a day — and then Ruling
-101's producer half would be enforced by nobody, which is the state `W199/3` found.
+from the package that holds it, would be switched off within a day — and then the
+producer half (one exported home, R21) would be enforced by nobody.
 """
 
 from __future__ import annotations
@@ -161,7 +161,7 @@ def test_a_declaration_for_a_package_this_tree_lacks_is_not_read(tmp_path):
 
 
 def test_the_SPELLING_deviation_is_counted_and_never_failed():
-    # ⭐ Ruling 101's FIRST row on the real tree: `Held` IS exported by `validate` and is
+    # ⭐ The spelling deviation on the real tree: `Held` IS exported by `validate` and is
     # taken by the submodule spelling. It is printed, and it is not a finding.
     printed = "\n".join(surface_census(repository_root()))
     assert "Held" in printed
@@ -173,7 +173,7 @@ def test_the_SPELLING_deviation_is_counted_and_never_failed():
 
 def test_the_census_carries_its_denominators_and_says_what_it_is_not():
     lines = surface_census(repository_root())
-    assert lines[0].startswith("producer half (W199/3):")
+    assert lines[0].startswith("producer half:")
     assert "cross-package import(s) read" in lines[0]
     # ⚠️ An instrument that reads a NAME must not be mistaken for a value guard.
     assert "never a VALUE" in lines[0]
@@ -193,14 +193,14 @@ def test_the_census_says_so_on_a_tree_that_is_not_this_framework(tmp_path):
 
 def test_importing_a_MODULE_from_its_own_package_is_not_a_surface_name(tmp_path):
     # ⭐ `from studyforge.serve.routes import assets` is an import of a module, not a
-    # reach past a surface. Measured at `2827409`, this tree writes that form.
+    # reach past a surface. This tree writes that form.
     _tree(tmp_path, owner_all="[]", importer="from studyforge.owner import thing")
     assert check_producer_half(tmp_path) == []
 
 
 def test_a_SUB_PACKAGE_is_its_own_owner(tmp_path):
     # ⛔ `validate.source` states its own `__all__`, so importing from it reaches past
-    # nothing — the rule `W199` set, applied by structure rather than by name.
+    # nothing — the rule applied by structure rather than by name.
     _write(tmp_path, "src/studyforge/__init__.py", DOC)
     _write(tmp_path, "src/studyforge/owner/__init__.py", DOC + "__all__ = []\n")
     _write(
@@ -245,8 +245,8 @@ def test_a_RELATIVE_import_is_not_read(tmp_path):
 
 def test_the_PLAIN_import_form_is_declared_and_is_asserted_SILENT(tmp_path):
     # ⚠️ Declared gap 1 of the contract, asserted rather than described: `import a.b`
-    # binds a module and this reads no attribute expression. Measured at `2827409`,
-    # nothing under `src/studyforge` writes it — so the gap costs this tree nothing.
+    # binds a module and this reads no attribute expression.
+    # Nothing under `src/studyforge` writes it — so the gap costs this tree nothing.
     _tree(tmp_path, owner_all="[]", importer="import studyforge.owner.thing")
     assert check_producer_half(tmp_path) == []
 

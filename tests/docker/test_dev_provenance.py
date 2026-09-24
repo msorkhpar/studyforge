@@ -1,12 +1,12 @@
 """One environment, one identifier: the build exports no provenance.
 
 ⛔ **A fourth module under `tests/docker/` rather than a section of an existing
-one, and R11 is half the reason.** `test_dev_image.py` stands at 586 lines
-against a 600-line ceiling for tests. ⭐ The other half is the seam: these checks
-have one subject — *can two offices holding the same environment quote the same
-thing about it* — which is not the subject of any of the three neighbours.
+one, and R11 is half the reason.** `test_dev_image.py` sits close to the
+600-line ceiling for tests. ⭐ The other half is the seam: these checks have one
+subject — *can two readers holding the same environment quote the same thing
+about it* — which is not the subject of any of the three neighbours.
 
-## ⛔ The defect these exist over
+## ⛔ The failure these guard against
 
 ⚠️ `docker/dev/check` passes `--build` on every invocation, deliberately: a stale
 image is a result attributed to a version of the environment nobody can name.
@@ -15,8 +15,8 @@ build-time provenance, so byte-identical contents produce a fresh attestation
 manifest — and a fresh manifest list indexing it — every single time.
 
 ```text
-MEASURED on this branch, three `docker/dev/check` invocations, `docker/dev/`
-untouched, every build step CACHED, on the HOST in the dev2 worktree:
+Three `docker/dev/check` invocations, `docker/dev/` untouched, every build step
+CACHED, on the host:
 
   with the wrapper's line ABSENT            with it PRESENT
     exporting config       IDENTICAL 3/3      exporting config     IDENTICAL 3/3
@@ -26,17 +26,17 @@ untouched, every build step CACHED, on the HOST in the dev2 worktree:
 ```
 
 ⛔ **And `docker image inspect --format '{{.Id}}'` reports the manifest LIST** —
-the worst of the four and the first one an office reaches for. Two offices then
-read different shas for one identical environment, and a reviewer comparing them
-reads a difference where there is none — a false refutation — and this module
-is its repair, enforced by the build rather than remembered by a reader.
+the worst of the four and the first one a reader reaches for. Two readers would
+then quote different shas for one identical environment, and a reviewer comparing
+them would read a difference where there is none — so the wrapper turns
+provenance off, enforced by the build rather than remembered by a reader.
 
 ## ⭐ THE PINS STILL PIN
 
 ⛔ **An environment is still named by its pins, and that must not change** —
 `Dockerfile`'s `FROM` digest, its two toolchain `ARG`s, every `==`
 in `requirements.txt`. ⭐ What changes is that the exported config digest becomes
-**quotable** across offices instead of dead text; it never becomes authoritative.
+**quotable** across readers instead of dead text; it never becomes authoritative.
 
 ## ⚠️ Why the last check is opt-in and the rest are not
 
@@ -137,7 +137,7 @@ def declares_the_inert_key(compose: str) -> bool:
     ⛔ It is INERT on this Docker — Compose v5.2.0 / buildx v0.35.0, measured
     through `run --build`, plain `build` and `COMPOSE_BAKE=true`, the attestation
     exported and moving every time. ⚠️ So shipping it would be a decoration that
-    READS like the fix, and the next office would compare tag ids believing the
+    READS like the fix, and the next reader would compare tag ids believing the
     problem solved. Compose does not reject the key, so nothing but this stands
     between the tree and that.
 
@@ -178,7 +178,7 @@ def test_the_wrapper_disables_default_build_attestations():
     # identical contents, and the id the tooling surfaces is the list.
     assert assigned_value(instructions("check")) == "1", (
         f"docker/dev/check does not set {VARIABLE}=1, so every invocation "
-        f"re-exports build provenance and two offices holding one identical "
+        f"re-exports build provenance and two readers holding one identical "
         f"environment read different shas for it"
     )
 
@@ -237,9 +237,9 @@ def test_the_unconditional_check_can_say_no():
     #
     # ⚠️ **This control is DERIVED from the real file, so it fails LOUDLY when
     # the assignment is gone rather than passing over an empty doctoring** — and
-    # that is deliberate. MEASURED: with `docker/dev/check` planted back to its
-    # state before the repair, this is the SIXTH red beside the five the plant was
-    # predicted to produce. ⛔ A control that quietly passed there would be a
+    # that is deliberate: with the assignment removed from `docker/dev/check`,
+    # this control goes red beside the checks it controls. ⛔ A control that quietly passed there
+    # would be a
     # control whose subject had vanished: a vacuous pass.
     doctored = instructions("check").replace(f"{VARIABLE}=1", f"{VARIABLE}=${{{VARIABLE}:-1}}")
     assert f"${{{VARIABLE}:-" in doctored, (
@@ -275,7 +275,7 @@ def test_it_does_not_cross_into_the_container():
     # ⭐ It is the docker CLIENT's variable. ⛔ Adding it to the pass-through
     # block would put a build-time setting inside a container that never builds
     # anything, and `compose.yaml` carries three crossing variables, not four
-    # (`W36`, and the run's outer bound draws the same distinction).
+    # (and the run's outer bound draws the same distinction).
     entries = [line.strip() for line in instructions("compose.yaml").splitlines()]
     assert f"- {VARIABLE}" not in entries, (
         f"{VARIABLE} crosses into the container, where nothing builds; it "
@@ -287,13 +287,13 @@ def test_it_does_not_cross_into_the_container():
 
 
 def test_the_inert_provenance_key_is_not_shipped():
-    # ⛔ MEASURED: `build: provenance: false` in `compose.yaml` changes nothing
-    # at Compose v5.2.0 / buildx v0.35.0 — the attestation manifest was still
-    # exported and still moved through `run --build`, through plain `build`, and
+    # ⛔ `build: provenance: false` in `compose.yaml` changes nothing at
+    # Compose v5.2.0 / buildx v0.35.0 — the attestation manifest is still
+    # exported and still moves through `run --build`, through plain `build`, and
     # through `COMPOSE_BAKE=true`; a `.env` beside the file does not carry the
     # variable either. ⚠️ Compose accepts the key silently, so a future reader
     # who "tidies" the wrapper's line into the YAML would leave the tree looking
-    # fixed and measuring identically to the defect.
+    # fixed and measuring identically to a tree that is not.
     assert not declares_the_inert_key(read("compose.yaml")), (
         "compose.yaml declares a provenance build key, which is inert on this "
         "Docker: the fix is the variable docker/dev/check exports, and a key "

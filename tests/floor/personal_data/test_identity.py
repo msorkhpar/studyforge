@@ -67,8 +67,8 @@ def test_a_fabricated_identifier_is_found(tmp_path):
 
 
 def test_an_ignored_file_is_not_gated_for_an_identifier_either(tmp_path):
-    # The merge gate reported this half too: an IDE workspace file names the
-    # account whose IDE it is. Same ruling, same fix, asserted separately
+    # An IDE workspace file names the account whose IDE it is. Same rule,
+    # same exclusion as the shapes half, asserted separately
     # because the two halves enumerate the tree through the same helper and a
     # future edit could give one of them its own.
     init_repository(tmp_path)
@@ -97,9 +97,9 @@ def test_nothing_derivable_means_nothing_reported(tmp_path):
     assert check_identifiers(tmp_path, {}) == []
 
 
-# --- the git arm reads no identity an office can write ---------------------
+# --- the git arm reads no identity a checkout can write -------------------
 
-# ⛔ Fabricated office names. Neither is this machine's, neither is generic, and
+# ⛔ Fabricated author names. Neither is this machine's, neither is generic, and
 # both clear MIN_IDENTIFIER_CHARS — so a reading that finds them found the
 # planted value and nothing else.
 OFFICE = "officefour"
@@ -133,8 +133,8 @@ def global_config(root, name: str):
 
 
 def test_W305_an_office_identity_in_the_repository_config_is_not_read(tmp_path, monkeypatch):
-    # ⛔ The row's mechanism, asserted where it lives: `identifiers()` used to
-    # answer with whatever the checkout it was standing in had configured.
+    # ⛔ The mechanism, asserted where it lives: `identifiers()` must not answer
+    # with whatever the checkout it is standing in has configured.
     checkout = office_repository(tmp_path / "checkout", OFFICE)
     only_the_machine(monkeypatch)
     monkeypatch.chdir(checkout)
@@ -142,7 +142,7 @@ def test_W305_an_office_identity_in_the_repository_config_is_not_read(tmp_path, 
     # ⭐ Inhabitation first: a bare `--get` DOES see the plant, so
     # this control is not passing because the plant failed to take.
     seen = run([git(), "config", "--get", "user.name"], cwd=checkout)
-    assert seen.stdout.strip() == OFFICE, "born vacuous: the office identity did not plant"
+    assert seen.stdout.strip() == OFFICE, "born vacuous: the checkout identity did not plant"
 
     derived = identifiers()
     assert "git author name" not in derived
@@ -163,11 +163,11 @@ def test_W305_an_identity_in_the_global_config_is_still_read(tmp_path, monkeypat
 
 
 def test_W305_one_tree_one_verdict_and_only_the_scope_decides(tmp_path, monkeypatch):
-    # ⛔ The row's control, in one test: ONE tree, ONE string, and the only
+    # ⛔ The control, in one test: ONE tree, ONE string, and the only
     # variable is WHICH SCOPE holds it. The floor's verdict may not move with
     # who is working; it must still move with what the machine is.
     checkout = office_repository(tmp_path / "checkout", OFFICE)
-    write(checkout, "docs/notes.md", f"handed to {OFFICE} in the ninth wave\n")
+    write(checkout, "docs/notes.md", f"handed to {OFFICE} for review\n")
     monkeypatch.chdir(checkout)
 
     only_the_machine(monkeypatch)
@@ -183,7 +183,7 @@ def test_W305_one_tree_one_verdict_and_only_the_scope_decides(tmp_path, monkeypa
 
 def test_W305_the_scopes_this_module_reads_are_named_and_hold_nobodys_office(tmp_path):
     # ⛔ The surface read BY NAME, so re-admitting the repository's own config
-    # fails here rather than at the next office's floor run.
+    # fails here rather than at somebody else's floor run.
     assert IDENTITY_SCOPES == ("--global", "--system")
     assert "--local" not in IDENTITY_SCOPES
     assert "--worktree" not in IDENTITY_SCOPES
@@ -232,12 +232,12 @@ def test_W307_an_UNARMED_arm_is_NAMED_rather_than_left_silent(tmp_path, monkeypa
     assert "derived 0 of" in head
     for label, _ in IDENTIFIER_LABELS:
         assert label in head, label
-    assert "FND-07" in head
+    assert "NOT a guarantee" in head
 
 
 def test_W307_an_ARMED_arm_says_so_and_NEITHER_reading_reads_AS_THE_OTHER(tmp_path, monkeypatch):
-    # ⛔ Clause 2, and the whole defect in one assertion: the two states were
-    # INDISTINGUISHABLE, and only one of them is a guarantee.
+    # ⛔ The two states must be DISTINGUISHABLE, because only one of them is a
+    # guarantee.
     arm_nothing(monkeypatch)
     disarmed = identity_notice(tmp_path)[0]
 
@@ -274,9 +274,9 @@ def test_W307_the_notice_prints_LABELS_and_never_a_VALUE(tmp_path, monkeypatch):
 
 
 def test_W307_a_PARTLY_armed_run_names_BOTH_halves(tmp_path, monkeypatch):
-    # ⚠️ MEASURED in the pinned image: the hostname arms derive there while the
-    # git arms do not, so the state that actually ships is neither all nor none —
-    # and a binary armed/unarmed line would have reported it wrongly.
+    # ⚠️ In the pinned image the hostname arms derive while the git arms do
+    # not, so the real state is neither all nor none — and a binary
+    # armed/unarmed line would report it wrongly.
     arm_nothing(monkeypatch)
     monkeypatch.setattr(identity.socket, "gethostname", lambda: BOX)
     assert set(identifiers()) == {"hostname", "short hostname"}
@@ -290,7 +290,7 @@ def test_W307_a_PARTLY_armed_run_names_BOTH_halves(tmp_path, monkeypatch):
 def test_W307_the_git_arm_reports_UNARMED_when_only_the_REPOSITORY_config_holds_one(
     tmp_path, monkeypatch
 ):
-    # ⛔ The scope rule's tie-in and this test's own condition: an office identity in the
+    # ⛔ The scope rule's tie-in and this test's own condition: an identity in the
     # checkout's own config is not read, so the git arm compared NOTHING — and
     # the floor must say that rather than print the same clean line.
     checkout = office_repository(tmp_path / "checkout", OFFICE)
@@ -310,11 +310,11 @@ def test_W307_the_notice_names_the_scopes_the_git_arm_READS(tmp_path, monkeypatc
     printed = "\n".join(identity_notice(tmp_path))
     for scope in IDENTITY_SCOPES:
         assert scope in printed, scope
-    assert "W305" in printed
+    assert "arms nothing here" in printed
 
 
 def test_W307_it_is_a_NOTICE_and_can_never_redden_the_floor(tmp_path, monkeypatch):
-    # ⛔ What this row must NOT become. An unarmed arm is correct inside the
+    # ⛔ What this notice must NOT become. An unarmed arm is correct inside the
     # image, so it may not fail a build — asserted at both ends: the function is
     # not a check, and a fully disarmed run yields no finding while still SPEAKING.
     assert identity_notice in NOTICES

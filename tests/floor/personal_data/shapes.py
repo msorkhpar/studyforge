@@ -1,8 +1,7 @@
 """The shape half of R7: patterns that hold no value.
 
 ⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
-checkout. It began as a copy of the developer tooling's check; that tooling, and its
-records, live on the branch `archive/process`, and nothing here depends on them.
+checkout, and depends on nothing outside it.
 
 **What it does.** Recognises the four personal-data shapes a tracked file must
 not carry — an absolute home path, an email address, an local hostname, a bearer
@@ -63,9 +62,9 @@ SHAPES = (
         # which is how a document about this rule stays swept AND clean. A
         # comment that spelled out a plausible account name instead would be a
         # finding against this very file — correctly.
-        # ⭐ The tilde branch arrived by Ruling 47: `~<name>/notes` names an
-        # account by the same anchor as `/home/<name>/notes`, and this check
-        # swept only the second while `archive.scrub` swept both. ⚠️ The
+        # ⭐ The tilde branch: `~<name>/notes` names an account by the same
+        # anchor as `/home/<name>/notes`, and `archive.scrub` sweeps both, so
+        # this check sweeps both too. ⚠️ The
         # branch below `~/` is deliberately NOT covered — see the note above,
         # which still holds: a bare tilde is a reference, not a value. A
         # leading letter and a following slash keep `~5/6` out.
@@ -77,17 +76,15 @@ SHAPES = (
     (
         "email address",
         # ⚠️ The local part must be at least TWO characters, and that is not
-        # arbitrary. Measured on this tree, the only email-shaped text outside
-        # the sanctioned fixture was `n@router.get` — prose in two process
-        # documents, now on the branch `archive/process`,
-        # illustrating that `\n@router.get` is address-shaped. It appears both
-        # escaped and bare, so no lookbehind for a backslash can reach both,
-        # and the thing they have in common is a one-character local part.
+        # arbitrary. Prose that discusses serialisation writes `n@router.get`
+        # to show that `\n@router.get` is address-shaped, escaped and bare, so
+        # no lookbehind for a backslash can reach both; what the two spellings
+        # have in common is a one-character local part.
         #
-        # ⭐ Fixed in the pattern rather than by exempting the two documents,
+        # ⭐ Fixed in the pattern rather than by exempting a document,
         # deliberately: exempting a file stops sweeping it for real leaks, and
-        # those two are prose about R7, which is exactly where a real home path
-        # would be pasted by accident. The cost is that `a@b.example` would not
+        # prose about R7 is exactly where a real home path would be pasted by
+        # accident. The cost is that `a@b.example` would not
         # be caught; that is stated rather than hidden.
         re.compile(r"\b[A-Za-z0-9._%+\-]{2,}@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b"),
     ),
@@ -96,28 +93,26 @@ SHAPES = (
         # A machine name. The trailing guard keeps `settings.local.json` — a
         # filename, not a host — out of it.
         #
-        # ⛔ KNOWN FALSE POSITIVE, RULED AND OWED.
+        # ⛔ KNOWN FALSE POSITIVE.
         # The trailing guard covers a `.` after the word, so a filename
         # survives; it does NOT cover a Python ATTRIBUTE ACCESS at the end of
         # an expression, which is the natural shape for every consumer of the
-        # local contents document. Measured 2026-09-10: six
-        # probes, written with placeholders because spelling them here would
-        # be a finding against this file — `<object>.<the word>)`,
-        # `<object>.<the word>,` and `x = <object>.<the word>` all return
-        # True; `settings.<the word>.json` and `self.<the word>_status`
-        # return False. The floor reported 3 such findings in that author's
-        # own test tree before they renamed the field.
+        # local contents document. Six probes, written with placeholders
+        # because spelling them here would be a finding against this file —
+        # `<object>.<the word>)`, `<object>.<the word>,` and
+        # `x = <object>.<the word>` all return True; `settings.<the word>.json`
+        # and `self.<the word>_status` return False.
         #
-        # ⛔ The rename is a WORKAROUND that landed, not the fix. An R7 gate's
+        # ⛔ Renaming such a field is a WORKAROUND, not the fix. An R7 gate's
         # false positive on ordinary source is a defect IN THE GATE, and it is
-        # rowed — never absorbed by renaming the source, because a rename
+        # fixed there — never absorbed by renaming the source, because a rename
         # leaves no trace and the next author pays the cost again without
         # knowing anybody paid it before. ⭐ *A checker people rename fields
         # around is a checker on its way to being switched off.*
         #
-        # ⚠️ WHAT THE REMEDY OWES, so it is not re-derived: narrow this ONE
+        # ⚠️ WHAT THE REMEDY NEEDS, so it is not re-derived: narrow this ONE
         # lookahead while KEEPING the hostname shape — it does not weaken R7,
-        # which has no "minor" verdict — and it owes three readings with
+        # which has no "minor" verdict — and it needs three readings with
         # the real shape planted, so the instrument is seen to move. The vocabulary half is in
         # `tests/harness/personal-data-shapes.json` (one
         # vocabulary, two policies), so narrowing one side alone is not a
@@ -127,7 +122,7 @@ SHAPES = (
     (
         "bearer token",
         # A credential rather than an identity, and refused for the same
-        # reason: it must not reach a tracked file. Shared with FND-04's
+        # reason: it must not reach a tracked file. Shared with the
         # fixture sweep so the two agree on what R7 covers.
         re.compile(r"\bBearer\s+[A-Za-z0-9._\-]{8,}"),
     ),
@@ -161,8 +156,8 @@ def build_allowed_address() -> re.Pattern[str]:
     ⛔ **THE VOCABULARY IS READ THROUGH ITS MODULE, NEVER BOUND BY NAME**, and
     that is not a style: `from … import RESERVED_TLDS` binds the TUPLE OBJECT at
     import time, so this arm would read a SNAPSHOT and stop tracking the list it
-    is supposed to share. ⭐ The plant caught exactly that — it is what a plant
-    is for, and the defect was live in this function before it fired.
+    is supposed to share. ⭐ The plant catches exactly that — it is what a plant
+    is for.
     """
     tlds = reserved_addresses.alternation(reserved_addresses.RESERVED_TLDS)
     domains = reserved_addresses.alternation(reserved_addresses.RESERVED_DOMAINS)

@@ -42,7 +42,7 @@ def test_a_path_merely_containing_tests_is_not_a_test_file():
 
 
 def test_fixtures_are_never_read():
-    # FND-04's fixtures are deliberately shaped wrong — an invalid corpus is
+    # The fixture corpora are deliberately shaped wrong — an invalid corpus is
     # the point of half of them — so holding them to the repository's style
     # would be a category error.
     assert config.is_excluded("tests/fixtures/depth1/corpus.json")

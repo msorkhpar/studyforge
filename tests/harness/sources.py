@@ -1,9 +1,7 @@
 r"""R1's registry of the sources the framework may not name, for the product's own tests.
 
 ⭐ **The product suite's OWN `KNOWN_SOURCES` and `named_sources`**, so a product test that
-asks whether a shipped document names a source needs no tooling. They began as copies of the
-developer tooling's, which lives on the branch `archive/process`; these are the only ones on
-the main line.
+asks whether a shipped document names a source needs no tooling.
 
 **How you use it.** `named_sources(text)` returns `(line, corpus, why)` for every line that
 names a known source, reporting the corpus's ROLE and never the matched text.

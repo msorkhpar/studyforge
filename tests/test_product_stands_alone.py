@@ -2,9 +2,8 @@
 
 **What it asserts.** Every Python file under `tests/`, and the root `conftest.py`, reaches the
 tooling (`tools`, `tools.*`) by no import statement and by no literal handed to a run-time
-importer. ⚠️ That tooling, and the tests that policed the process it ran, left the main line
-for the `archive/process` branch; there is no declaration of excused files any more, because
-nothing on the main line may need one.
+importer. ⚠️ There is no declaration of excused files, because nothing on the main line may
+need one.
 
 ⛔ **The proof that the product stands alone is the product suite running GREEN on the main
 line**, where the tooling is absent. This file is the standing guard beside that run: a

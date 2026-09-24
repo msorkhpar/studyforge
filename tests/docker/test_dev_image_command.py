@@ -1,9 +1,9 @@
 """`studyforge` on the path inside the pinned image, asserted rather than arranged.
 
-⛔ **The defect.** The image installed `requirements.txt` and never this project,
-and carried no build backend to install it with — so `command -v studyforge`
-answered 127 in the one environment Ruling 40 makes authoritative, and every
-reading about the INSTALLED command was host-only.
+⛔ **The property.** The image installs this project, not only
+`requirements.txt`, and carries the build backend to install it with — so
+`command -v studyforge` answers in the one environment R15 makes authoritative,
+and a reading about the INSTALLED command is not host-only.
 
 Two halves, split the way `test_dev_image.py` splits:
 
@@ -164,7 +164,7 @@ def isolated(argv: list[str], cwd: Path) -> subprocess.CompletedProcess[str]:
 def test_the_installed_command_is_on_the_path_and_dispatches(tmp_path):
     require_the_image()
     command = shutil.which(PROGRAM)
-    assert command, f"`{PROGRAM}` is not on PATH inside the dev image (W211)"
+    assert command, f"`{PROGRAM}` is not on PATH inside the dev image"
     helped = isolated([command, "--help"], tmp_path)
     assert helped.returncode == 0, helped.stdout + helped.stderr
     assert helped.stdout.startswith(f"usage: {PROGRAM} "), helped.stdout
@@ -176,7 +176,7 @@ def test_the_installed_command_is_on_the_path_and_dispatches(tmp_path):
 def test_the_installed_command_runs_the_mounted_checkout(tmp_path):
     require_the_image()
     command = shutil.which(PROGRAM)
-    assert command, f"`{PROGRAM}` is not on PATH inside the dev image (W211)"
+    assert command, f"`{PROGRAM}` is not on PATH inside the dev image"
     interpreter = Path(command).read_text("utf-8").partition("\n")[0].removeprefix("#!")
     # ⛔ The SCRIPT's own import line, executed without calling `main`, then asked
     # where the object it would call came from.
@@ -209,5 +209,5 @@ def test_no_build_backend_survives_into_the_image():
     require_the_image()
     assert importlib.util.find_spec("setuptools") is None, (
         "setuptools is importable in the dev image, so an offline `pip install -e .` "
-        "into the mounted checkout would succeed and write into it (W209's class)"
+        "into the mounted checkout would succeed and write into it"
     )

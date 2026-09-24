@@ -1,6 +1,6 @@
-"""`W365`: the file-only exercise record is taught, and its refusals are named right.
+"""The file-only exercise record is taught, and its refusals are named right.
 
-**What it does.** Asserts the two clauses of row `W365`, both ways (R12):
+**What it does.** Asserts two things, both ways (R12):
 
 1. The authoring guide describes the record that names a file and no grader,
    and cites §7 for it rather than restating it.
@@ -100,9 +100,7 @@ def test_the_section_both_documents_cite_is_in_the_spec():
     assert HEADING in SPEC.read_text(encoding="utf-8").splitlines()
 
 
-#: ⭐ Each document is READ inside the test, never at collection. ⚠️ The epic's
-#: case left the main line with the process, for the `archive/process` branch; the
-#: guide's case is the product's.
+#: ⭐ Each document is READ inside the test, never at collection.
 CITING = {
     "authoring-guide": lambda: document("exercises.md"),
 }

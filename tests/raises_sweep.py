@@ -5,7 +5,7 @@ floor and the plants live in
 [`test_raises_convention.py`](test_raises_convention.py), and the seam between
 the two is why this file exists: ⚠️ **the derivation grew past R11's test ceiling
 when the floor learned to survive a move, and the split is at the line
-where reading the tree stops and judging it starts** (Ruling 261).
+where reading the tree stops and judging it starts**.
 
 ⭐ What is derived here, and why each derivation rather than a typed list:
 

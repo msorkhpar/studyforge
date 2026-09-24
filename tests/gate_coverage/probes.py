@@ -101,14 +101,14 @@ def _token_tell(source: str, spellings: tuple[str, ...]) -> bool:
     return any(spelling in called for spelling in spellings)
 
 
-#: W7 as first written. ⛔ Two false positives: it reads delegation as decoding.
+#: The by-name spelling. ⛔ Two false positives: it reads delegation as decoding.
 W7_SPELLING = ("loads", "load")
 #: The later narrowing. ⛔ Two false negatives, and a false negative in a
 #: coverage check is the silent one.
 SF10_SPELLING = ("loads", "json.load")
 
-#: The eight shapes the tell was measured on, by letter. ⚠️ `I`–`K` are this
-#: task's additions and are held out of the two counting assertions below: the
-#: ruling says *two* missed and *two* wrongly flagged, and a control that
-#: quietly widens its own population stops being a check on the ruling.
+#: The eight shapes the tell was measured on, by letter. ⚠️ `I`–`K` are later
+#: additions and are held out of the two counting assertions below: over these
+#: eight, *two* are missed and *two* wrongly flagged, and a control that quietly
+#: widens its own population stops being a check on that reading.
 RULING_57 = "ABCDEFGH"

@@ -5,9 +5,9 @@ and `test_justified_oversized_module_passes`: the ceiling must actually stop a
 file, and the documented opt-out must actually let one through.
 
 The deferral cases are the `--- a deferral ---` block. ⚠️ Its fixtures are
-pairs that differ ONLY in where a line breaks, because that is the whole
-defect: the reader made the visible reason a function of the author's return
-key. A fixture that changed the wording too would have proved nothing.
+pairs that differ ONLY in where a line breaks, because the visible reason must
+not be a function of the author's return key. A fixture that changed the
+wording too would prove nothing.
 
 The authored-file cases are the `--- authored stylesheets, scripts and templates ---`
 block: the ceiling stops an authored non-Python file under `src/`, and lets a
@@ -167,17 +167,17 @@ def test_an_unparseable_module_is_measured_anyway(tmp_path):
 
 # --- a deferral ---------------------------------------------------------------
 
-# ⚠️ The tree's one real deferral, copied here as a literal rather than read
-# off `src/studyforge/validate/source.py`. The row that file's deferral
-# names deletes this paragraph, so a test that read it would fail the moment
-# that row does its job — and a fixture that expires when the defect is fixed
-# elsewhere is not a fixture.
+# ⚠️ A deferral written the way a module writes one, kept here as a literal
+# rather than read off a live module. The row a live deferral names deletes its
+# paragraph, so a test that read one would fail the moment that row does its
+# job — and a fixture that expires when a split lands elsewhere is not a
+# fixture.
 LIVE_DEFERRAL = (
     "The two checks that read the material.\n"
     "\n"
     "Size exception: W44 splits this module into a package, and it is deferred to\n"
     "that row rather than done here because this file crossed the ceiling only when\n"
-    "SF-35 and SF-36 merged — each is under it alone, and neither task may\n"
+    "AB-35 and AB-36 merged — each is under it alone, and neither task may\n"
     "restructure a file the other is concurrently editing.\n"
 )
 
@@ -192,8 +192,8 @@ WRAPPED_DEFERRAL = (
 
 
 def test_the_justification_is_the_whole_paragraph_not_the_marker_line():
-    # ⛔ The defect: the reader stopped at the line break, so
-    # the reason a sweep printed was whatever fitted on one line.
+    # ⛔ A reader that stopped at the line break would print, in a sweep,
+    # whatever reason fitted on one line.
     reason = size_exception(LIVE_DEFERRAL)
     assert reason.startswith("W44 splits this module into a package")
     assert reason.endswith("the other is concurrently editing.")
@@ -216,8 +216,8 @@ def test_the_justification_stops_at_the_next_blank_line():
 
 def test_row_ids_finds_both_shapes_and_nothing_else():
     assert row_ids("W44 splits this module") == ["W44"]
-    assert row_ids("SF-35 and SF-36 merged") == ["SF-35", "SF-36"]
-    assert row_ids("FND-05a is the row") == ["FND-05a"]
+    assert row_ids("AB-35 and AB-36 merged") == ["AB-35", "AB-36"]
+    assert row_ids("ABC-05a is the row") == ["ABC-05a"]
     assert row_ids("W44, and again W44") == ["W44"]  # deduplicated, order kept
     # ⛔ A rule, a milestone, a constraint and an epic are not rows anybody can
     # close. A design claim must stay free to cite them.
@@ -251,9 +251,9 @@ def test_a_deferral_whose_id_wrapped_is_refused(tmp_path):
 
 
 def test_a_long_justification_with_a_short_first_line_is_not_refused_for_length(tmp_path):
-    # ⛔ The false positive in the same function: `MIN_JUSTIFICATION_CHARS` was
-    # measured against the marker line, so a correct multi-line reason whose
-    # first line was short was refused for being short.
+    # ⛔ `MIN_JUSTIFICATION_CHARS` is measured against the whole paragraph, so
+    # a correct multi-line reason whose first line is short is not refused for
+    # being short.
     docstring = (
         "Thing.\n\nSize exception: W44 splits it.\n"
         "The reason it is not done here is that the file crossed the ceiling\n"
@@ -296,9 +296,8 @@ def test_both_forms_names_the_deferral_and_the_design_claim():
 
 
 def test_every_size_remedy_offers_both_forms(tmp_path):
-    # ⛔ The shipped messages named only the design claim — the ONE form the
-    # rubric had just excused — so the tool instructed the reader to write the
-    # inadmissible thing. Each of the three refusals must offer both.
+    # ⛔ A message naming only the design claim would instruct the reader to
+    # write the inadmissible thing. Each of the three refusals must offer both.
     write_module(tmp_path, "src/studyforge/none.py", module_of(config.SOURCE_LINE_CEILING + 1))
     write_module(
         tmp_path,
@@ -420,5 +419,5 @@ def test_no_deferral_in_this_repository_hides_its_row_id():
         if row_ids(size_exception(docstring)):
             assert row_ids(size_exception_marker_line(docstring)), (
                 f"{config.relative(path, root)} defers to a row whose id is not on the "
-                f"marker line, so the wave-open sweep prints it without an id"
+                f"marker line, so a reader of that line sees it without an id"
             )

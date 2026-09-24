@@ -14,20 +14,18 @@ its own.
 
 ## ⚠️ Why this is a module of its own, and not four more tests next door
 
-⭐ `tests/test_authoring_reference.py` sits close to its 600-line ceiling and
-could not hold it, which is the same reason as every split at a ceiling:
-the remedy is a split, never a trim. ⛔ **The seam is named rather than
+⭐ Beside `tests/test_authoring_reference.py`, so both stay inside R11: the
+remedy at a ceiling is a split, never a trim. ⛔ **The seam is named rather than
 convenient:** that module reads the reference's **vocabularies** — the key
 lists, the check names, the rule ids, the exit codes — and imports no profile;
 this one reads its **geography**, and imports nothing else.
 
-## ⛔ What went wrong, and what the shape of the fix has to be
+## ⛔ Why the fences are computed, never corrected
 
-⚠️ **Measured by the integration office on a real run:** every line of the
-`sibling` fence described the pre-`W323` layout — pages and media loose in the
-source directory — and the page had said so for as long as it took somebody to
-build a corpus and look. ⭐ **A corrected literal would go stale the next time
-placement moves, which is exactly what happened.** So the fences are asked for,
+⚠️ A page's drawing of a profile's tree goes stale the moment placement moves —
+pages and media drawn loose in the source directory after they have moved — and
+nothing fails until somebody builds a corpus and looks. ⭐ **A corrected literal
+would go stale again the next time placement moves.** So the fences are asked for,
 the way `skills.adapter.archive_tree()` already asks for the archive's.
 """
 
@@ -187,11 +185,11 @@ def assert_page_draws(drawn: tuple[str, ...], profile: Profile, where: str) -> N
 
 
 class PreW323Sibling(SiblingProfile):
-    """The `sibling` arithmetic as it was before `W323`: loose beside the source file.
+    """An older `sibling` arithmetic: pages and media loose beside the source file.
 
     ⛔ **The plant, and it is never registered** — `register` would put it in the
-    registry every other test reads. It is the real defect this row was minted
-    for, so a check that cannot see it is a check that would not have caught it.
+    registry every other test reads. It is the real stale drawing, so a check
+    that cannot see it is a check that would not catch one.
     """
 
     def study_dir(self, origin, address, what: str = "artifact") -> PurePosixPath:
@@ -240,7 +238,7 @@ def test_a_drawing_shows_no_value_it_was_computed_at():
 
 
 def test_a_planted_change_to_the_geography_turns_the_page_red_by_name():
-    # ⛔ R12, the half that matters: the row's own defect, replanted. The page
+    # ⛔ R12, the half that matters: the defect, planted. The page
     # is correct and the CODE moves under it.
     with pytest.raises(AssertionError, match="placement 'sibling' puts"):
         assert_page_draws(drawn_on_the_page("sibling"), PreW323Sibling(), "the plant")
@@ -261,8 +259,8 @@ def test_a_planted_change_to_the_page_turns_its_own_check_red(name):
 
 def test_the_profile_table_says_what_each_profile_says_of_itself():
     # ⛔ The cell IS `Profile.describes` — the one line `studyforge plan` prints
-    # for a corpus owner choosing between them. ⚠️ `W323` changed that line and
-    # the page kept the old one, which is half of what this row was minted for.
+    # for a corpus owner choosing between them. ⚠️ A page that keeps an old line
+    # after the profile changes it is exactly what this reads.
     rows = {cells[0].strip("`"): cells[1] for cells in rows_under(document(PAGE), PROFILES)}
     assert set(rows) == set(registered()), f"{AUTHORING}/{PAGE}'s table lists {sorted(rows)}"
     for name, said in sorted(rows.items()):
@@ -341,9 +339,9 @@ def test_the_index_names_every_instrument_that_reads_these_pages():
 
 
 def test_the_index_names_no_instrument_that_does_not_read_these_pages():
-    # ⛔ Subset, and it is the half this row exists for: the index promised
-    # coverage by a test that read one sentence of `placement.md`. A named
-    # module that reads no page of the reference is that promise again.
+    # ⛔ Subset, and it is the half that matters: an index that promises
+    # coverage by a module that reads no page of the reference promises
+    # nothing.
     invented = instruments_named() - instruments_that_read_a_page()
     assert invented == set(), f"{AUTHORING}/README.md claims {sorted(invented)} checks these pages"
 

@@ -25,13 +25,13 @@ and a different origin — exactly the relation between a study page and the
 editor on a reader's machine — so the browser treats its `focus()` the way it
 treats the workbench's.
 
-## ⛔ `W458` — a report is ordered by its NUMBER, never by when it arrived
+## ⛔ A report is ordered by its NUMBER, never by when it arrived
 
 ⚠️ **Each report is a separate `fetch`, and this server answers each on its own
 thread**, so under load the reports of four keystrokes can land in any order.
-⛔ **Measured, not supposed:** with the last arrival winning, `typed` settled on
-`'w44'` and on `'w4'` after `'w449'` had been typed, and a check waiting for
-`'w449'` timed out on a frame that had done everything right. ⭐ So the page
+⛔ With the last arrival winning, `typed` could settle on `'w44'` after `'w449'`
+had been typed, and a check waiting for `'w449'` would time out on a frame that
+had done everything right. ⭐ So the page
 numbers every report and `typed` is the value of the HIGHEST number seen,
 which is the value the textarea holds last whatever order the reports took.
 
@@ -54,7 +54,7 @@ FOCUS_AT_MS = (300, 900)
 
 #: The window's document. ⛔ `focus()` with no options, which is what scrolls
 #: every ancestor frame; the reports are fire-and-forget to this same origin,
-#: and each value typed carries its number (`W458`, above).
+#: and each value typed carries its number (above).
 PAGE = """<!doctype html>
 <html><head><meta charset="utf-8"><title>stand-in editor</title></head>
 <body style="margin:0"><textarea id="input" style="width:95%;height:180px"></textarea>

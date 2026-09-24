@@ -1,8 +1,7 @@
 """The RESERVED-ADDRESS vocabulary — ONE list, read by two policies that never meet.
 
 ⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
-checkout. It began as a copy of the developer tooling's check; that tooling, and its
-records, live on the branch `archive/process`, and nothing here depends on them.
+checkout, and depends on nothing outside it.
 
 **What it does.** Names the addresses that are unreachable BY CONSTRUCTION and therefore
 identify nobody: RFC 6761's reserved TLDs and RFC 2606's documentation domains. ⛔ It holds
@@ -26,9 +25,8 @@ address MEANS is the reader's policy:
 
 - ⛔ `tests.floor.personal_data.shapes` refuses personal data in a tracked file. To it,
   a reserved address means *this leaks nobody*, so the address is EXEMPT.
-- ⭐ The developer tooling's authorship check (on the branch `archive/process`) read the
-  same list with the opposite policy: to it a reserved address marked a line as an
-  agent's, so the line was COUNTED.
+- ⭐ An authorship check can read the same list with the opposite policy: to it a
+  reserved address marks a line as an agent's, so the line is COUNTED.
 
 ⚠️ A change that made one policy accept what the other accepts would be this module built
 wrong. ⭐ The floor also exempts this project's own attribution trailer, which is at a
@@ -64,7 +62,7 @@ RESERVED_DOMAINS = ("example.com", "example.net", "example.org")
 def is_reserved(domain: str) -> bool:
     """Report whether `domain` is reserved — unreachable by construction, so nobody's.
 
-    ⛔ **A property of the ADDRESS, never a roster.** It knows no office's name, no
+    ⛔ **A property of the ADDRESS, never a roster.** It knows no checkout's name, no
     person's and no machine's: it asks only whether the domain IS one of the reserved
     names, or sits UNDER one. ⚠️ Case and surrounding space are the caller's sloppiness
     rather than the caller's meaning, so both are absorbed here.

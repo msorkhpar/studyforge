@@ -1,4 +1,4 @@
-"""Rubric §1f, made behavioural: no refusal reproduces what it refused.
+"""A refusal never echoes the value (R7), made behavioural: no refusal reproduces what it refused.
 
 **What it does.** Poisons a synthetic absolute path into every string-shaped
 parameter of every public callable in `studyforge`, and reports each one whose
@@ -12,11 +12,10 @@ real absolute path and asserts no refusal reproduces a directory from it.
 **Depends on.** `fillers`, `probe`, and the standard library. It imports the
 package under test by name and knows nothing else about it.
 
-## ⛔ Why this replaces a reviewer reading raise-lines (Ruling 13)
+## ⛔ Why a sweep and not a reviewer reading raise-lines
 
-§1f asks a reviewer to read every message a diff adds and ask whether the value
-being formatted *could* be a path. ⚠️ **That rule has now missed a site twice**
-— once in round 15, two lines from the defect it did catch. ⭐ A rule a machine
+A reviewer reading every message a diff adds, asking whether the value being
+formatted *could* be a path, misses sites. ⭐ A rule a machine
 can check should not be a rule a person checks: this has no AST, no heuristic
 and **no false positives by construction**, because it fails only when a
 refusal really does reproduce what it was handed.

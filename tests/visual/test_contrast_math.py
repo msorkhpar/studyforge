@@ -1,8 +1,7 @@
-"""The arithmetic and the ledger — the part of this harness the pinned image runs.
+"""The arithmetic and the ledger — the part of this harness that needs no browser.
 
 ⭐ **Everything here is standard library and a file read**, so these assertions
-carry the same weight in the image as anywhere else. The browser-driven modules
-cannot say that, and `QA-03/1` is where that is filed rather than glossed.
+run and carry the same weight on any machine, with or without a browser.
 """
 
 from __future__ import annotations

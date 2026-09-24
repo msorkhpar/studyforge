@@ -18,14 +18,13 @@ from pathlib import Path
 #: spelling: `loads`, `json.loads`, `j.loads` and a locally defined `loads` are
 #: four names, and only the module's own imports say which of them is this.
 #:
-#: ⭐ **The origin walk, and it is the second amendment to this constant.** W7
-#: said `("loads", "load")`, which read `archive.document.load` as a decode and
-#: flagged `unit/builder/material.py`, a module that only *delegates*; the next
-#: spelling said `("loads", "json.load")`, which stopped flagging it and stopped
-#: seeing `from json import load` and `import json as j` — **two genuine ungated
+#: ⭐ **The origin walk.** By name, `("loads", "load")` reads `archive.document.load`
+#: as a decode and flags `unit/builder/material.py`, a module that only
+#: *delegates*; `("loads", "json.load")` stops flagging it and stops seeing
+#: `from json import load` and `import json as j` — **two genuine ungated
 #: readers, silently**. ⛔ In a *coverage* check those two errors are not
-#: symmetric: the false positive was argued about and produced this ruling, the
-#: false negative is the shape W7 itself was opened against.
+#: symmetric: a false positive is argued about, and a false negative is an
+#: ungated reader nobody sees.
 DECODERS = ("json.load", "json.loads")
 
 #: The gate every such module must call. One name, so no call site can reach
@@ -84,8 +83,8 @@ def resolved_calls(tree: ast.Module) -> set[str]:
 
     ⚠️ **A call whose head is shadowed by a later `def` or assignment keeps the
     imported origin, deliberately.** The name is then ambiguous, and this is a
-    *coverage* check: an ambiguous name that could be `json.loads` is one W7
-    should ask about. ⛔ The safe direction here is the noisy one.
+    *coverage* check: an ambiguous name that could be `json.loads` is one this
+    check should ask about. ⛔ The safe direction here is the noisy one.
     """
     origins = import_origins(tree)
     resolved: set[str] = set()
@@ -107,7 +106,7 @@ def _calls(path: Path) -> set[str]:
     ⚠️ **Names, because the gate is one name.** `GATE` is the only consumer
     left: `assert_clean` and `scrub.assert_clean` are the same reach, and a
     separate check already asserts there is only one `assert_clean` to reach
-    for. ⛔ The decode side no longer asks this function anything — see `DECODERS`.
+    for. ⛔ The decode side asks this function nothing — see `DECODERS`.
     """
     called: set[str] = set()
     for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):

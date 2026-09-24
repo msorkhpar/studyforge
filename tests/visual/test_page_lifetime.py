@@ -1,26 +1,18 @@
-"""`W397` — the visual harness closes what it opens, and never waits forever.
+"""The visual harness closes what it opens, and never waits forever.
 
-⛔ **The defect this module exists for.** The `browser` fixture is session-scoped
-and `open_page` is per check, and nothing ever closed a tab. A tab is a set of
-operating-system processes, so a session's tabs accumulated until the image
-could start no more renderers. ⚠️ **MEASURED by the register on the merged tree
-in the pinned image: the whole `tests/visual/` directory hung — 190 processes,
-dozens of them Chrome renderers, at 0.1% CPU — while the same modules passed
-ALONE in that image in seconds.**
-
-⛔ **The second half is why it HUNG rather than failed.** `Browser.call`
-computed a deadline and looped on it, but the loop body blocked in `os.read` on
-a live pipe — so a browser that was *up and silent* was waited on forever and
-the harness's own `"no answer in 30s"` was unreachable code. ⭐ `docker/dev/check`
-named this defect in its own header and routed the deadlined read here, because
-`select`-ing on the fd changes the I/O path every reading in this package is
-taken against.
+⛔ **The two properties this module exists for.** The `browser` fixture is
+session-scoped and `open_page` is per check, so a check whose tab is never closed
+leaves a set of operating-system processes behind, and a session's worth of them
+leaves the image unable to start another renderer. ⭐ And a browser that is *up
+and silent* must FAIL inside a bound rather than hang: `Browser.call` reads the
+protocol pipe with a deadline (`select` on the fd), so a read never blocks past
+the harness's own `"no answer in 30s"`.
 
 ## ⛔ What is asserted, and how each clause is made red
 
 ⭐ **Clause 1 — a check's tab is closed when the check ends** — is asserted by a
 COUNT OF LIVE TARGETS taken from the browser across many opens, never from this
-package's own bookkeeping: the row is about processes. ⛔ Its plant is the
+package's own bookkeeping: the subject is processes. ⛔ Its plant is the
 leaking form itself, a `close` that closes nothing, and it must go red.
 
 ⭐ **Clause 3 — a browser that stops answering FAILS rather than hangs** — is
@@ -28,37 +20,25 @@ asserted BOTH WAYS on one instrument: a live browser's call returns, a silent
 browser's call raises inside a bound this test names, and the raise is timed so
 the claim is about the BOUND and not merely about the error.
 
-⚠️ **The leaking form of clause 3 cannot be planted, and that is the defect
-rather than a gap:** a read with no deadline does not fail slowly, it does not
-return at all, so a plant of it would hang this module the way it hung the
-directory. ⭐ **So the deadline is asserted DIRECTLY instead** — `select` is
-wrapped in a recorder and the bounds it was handed are read back — and THAT
-check has a plant: the old blocking `_receive`, against a browser that answers
-at once, reaches the recorder never.
+⚠️ **The leaking form of clause 3 cannot be planted as it is:** a read with no
+deadline does not fail slowly, it does not return at all, so a plant of it would
+hang this module. ⭐ **So the deadline is asserted DIRECTLY instead** — `select`
+is wrapped in a recorder and the bounds it was handed are read back — and THAT
+check has a plant: a blocking `_receive`, against a browser that answers at
+once, never reaches the recorder.
 
-## ⛔ `W397/3` — a count nobody could decide, and why it was LOAD-dependent
+## ⛔ Every count is read once and believed
 
-⛔ **The first version of this module polled every count through a five-second
-settling window, and that window was a GUESS about the machine rather than a
-fact about the browser.** ⚠️ **MEASURED, pinned image, this module beside
-`test_offline.py` under 24 competing processes: 2 of 6 runs RED**, always
-`assert 1 == 5` — the launch tab plus the FOUR tabs the leak plant had just
-closed and which the browser had not yet destroyed. ⛔ **It refused another
-office's merge on a full-suite run whose own surface was nowhere near this one.**
+⭐ **`Target.closeTarget` is answered when the browser has ACCEPTED the close and
+not when the tab is gone**, and the gap grows with load. ⛔ A count read in that
+gap depends on how busy the machine is, and a settling window around it is a
+guess about the machine rather than a fact about the browser.
 
-⭐ **The mechanism is `Target.closeTarget`, which is answered when the browser
-has ACCEPTED the close and not when the tab is gone** — MEASURED at 10-13 ms
-idle and 26-100 ms under load. ⛔ **So the baseline `before` was read while the
-previous check's tabs were still dying, and the number it got depended on how
-busy the machine was.** ⚠️ **It was never the deadline**: no bound was
-approached and no `BrowserError` was raised, so the reading kills that
-hypothesis rather than confirming it.
-
-⭐ **The repair is a READINESS CONDITION in the harness, not a retry here:**
-`close_page` now waits for the browser's own `Target.targetDestroyed`, so every
-count taken afterwards is correct by construction. ⛔ **Every settling window in
-this module is therefore GONE**, and `_live` reads once and believes it — a
-check that needed a window would be a check nobody can decide.
+⭐ **So readiness is a condition in the harness, not a retry here:** `close_page`
+waits for the browser's own `Target.targetDestroyed`, so every count taken
+afterwards is correct by construction. ⛔ **No check in this module has a
+settling window**, and `_live` reads once and believes it — a check that needed
+a window would be a check nobody can decide.
 """
 
 from __future__ import annotations
@@ -76,7 +56,7 @@ from tests.visual.browser import Browser, BrowserError
 from tests.visual.page import OpenPage
 
 #: How many tabs the counting check opens and closes. ⭐ More than one, because
-#: a leak of exactly one tab per check is what this row is about and a single
+#: a leak of exactly one tab per check is what this module is about and a single
 #: open cannot tell "closed" from "never opened a second".
 OPENS = 4
 
@@ -93,9 +73,8 @@ PATIENCE = 10.0
 def _live(browser: Browser) -> int:
     """How many page targets the browser holds open, read once and believed.
 
-    ⛔ **No polling and no settling window, and that is the POINT of `W397/3`**
-    — see this module's docstring. A count that had to be waited for would be a
-    count nobody can decide, which is what refused another office's merge.
+    ⛔ **No polling and no settling window** — see this module's docstring. A
+    count that had to be waited for would be a count nobody can decide.
     """
     return len(browser.live_pages())
 
@@ -113,10 +92,9 @@ def silent_binary(tmp_path: Path) -> str:
 def launch_under(tmp_path: Path) -> Path:
     """A directory the launch made here is ASKED to use, never the shared root.
 
-    ⛔ **`W419`, and this fixture carried the same defect `test_browser.py`'s
-    did**: it pointed `tempfile.tempdir` — a PROCESS-WIDE global — at `tmp_path`
-    and then globbed it, so anything else tearing down in the same xdist worker
-    fell inside the assertion window below. ⭐ The launch names its own root now
+    ⛔ **Never `tempfile.tempdir`**, which is a PROCESS-WIDE global: globbing
+    it would put anything else tearing down in the same xdist worker inside the
+    assertion window below. ⭐ The launch names its own root
     (`Browser(..., profile_root=...)`), so the population globbed here is the
     one launch this check made.
     """
@@ -147,7 +125,7 @@ def test_a_tab_opened_and_closed_leaves_no_target_behind(browser: Browser) -> No
 def test_PLANT_a_close_that_closes_nothing_reddens_the_check(
     browser: Browser, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """⛔ The leaking form — the shape this row found in the tree — must go red."""
+    """⛔ The leaking form — a close that closes nothing — must go red."""
     opened: list[str] = []
 
     def _leak(page: OpenPage) -> None:
@@ -158,10 +136,9 @@ def test_PLANT_a_close_that_closes_nothing_reddens_the_check(
         with pytest.raises(AssertionError, match="outlived the checks"):
             _check_opening_and_closing_many_tabs_leaves_the_count_where_it_started(browser)
     finally:
-        # ⛔ `close_page` WAITS (`W397/3`), so this hands the next check a count
-        # it can decide. ⚠️ Before that wait existed, these four closes were
-        # still in flight when the next check read its baseline — MEASURED as
-        # `assert 1 == 5`, and it is what refused another office's merge.
+        # ⛔ `close_page` WAITS, so this hands the next check a count
+        # it can decide. ⚠️ Without that wait these four closes could still be
+        # in flight when the next check reads its baseline.
         monkeypatch.undo()
         for session in opened:
             browser.close_page(session)
@@ -183,16 +160,15 @@ def test_closing_a_tab_twice_is_harmless(browser: Browser) -> None:
     assert _live(browser) == before, "closing twice left the count wrong"
 
 
-# --- clause 3 of W397/3: close() returns only once the tab is really gone -----
+# --- close() returns only once the tab is really gone ------------------------
 
 
 def _check_a_closed_tab_is_gone_the_instant_close_returns(browser: Browser) -> None:
     """Read the count with NO settling window — it must already be right.
 
-    ⛔ **This is the check the flake was hiding.** `Target.closeTarget` is
-    answered when the browser has ACCEPTED the close, so before `W397/3` the
-    tabs were still listed here and the count depended on how busy the machine
-    was.
+    ⛔ `Target.closeTarget` is answered when the browser has ACCEPTED the close,
+    so without the harness waiting for the destruction the tabs would still be
+    listed here and the count would depend on how busy the machine is.
     """
     before = _live(browser)
     pages = [OpenPage(browser) for _each in range(OPENS)]
@@ -228,18 +204,16 @@ SCRIPTED_TARGET = "scripted-target"
 class _ScriptedBrowser(Browser):
     """A browser whose destruction timing is DECIDED here, never raced.
 
-    ⛔ **Why the plant for this clause may not use the real browser, and this
-    is a correction of my own first attempt.** The racing form's tell is that
-    a closed tab is *briefly* still listed — so a plant against the real
-    browser asks whether the harness's read wins a race with Chrome's
-    teardown. ⚠️ **MEASURED: it does not always.** Under 24 competing
-    processes the read slows down too, so BOTH sides of that margin scale with
-    load and the plant went green — `DID NOT RAISE` — in 1 of 10 runs. ⛔ **A
+    ⛔ **Why the plant for this clause may not use the real browser.** The
+    racing form's tell is that a closed tab is *briefly* still listed — so a
+    plant against the real browser asks whether the harness's read wins a race
+    with Chrome's teardown, and under load it does not always: BOTH sides of
+    that margin scale with load, so such a plant can go green. ⛔ **A
     plant that is itself a race is the same defect as the one being repaired,
     pointing the other way.**
 
-    ⭐ **Scripted instead**, modelling what the real browser was measured to
-    do: `closeTarget` is answered at once and queues the destruction, and the
+    ⭐ **Scripted instead**, modelling what the real browser does: `closeTarget` is answered at once
+    and queues the destruction, and the
     target leaves the listing only when that event is delivered. ⚠️ It is the
     FAKE arm in `test_browser.py`'s sense — additional, never a substitute:
     the two checks above are the real browser's.
@@ -285,7 +259,7 @@ def test_a_scripted_close_that_waits_leaves_nothing_listed() -> None:
 def test_PLANT_a_scripted_close_that_does_not_wait_leaves_the_target_listed(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """⛔ The racing form — the one that refused another office's merge — goes red.
+    """⛔ The racing form goes red.
 
     ⭐ **Deterministic in both directions**, because the destruction is
     delivered by this test and not by a machine under load.
@@ -398,7 +372,7 @@ def test_the_protocol_read_waits_on_the_callers_deadline(
 def test_PLANT_a_read_with_no_deadline_reddens_the_check(
     browser: Browser, recorded_waits: list[float | None], monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """⛔ The form this row replaced, against a browser that answers at once.
+    """⛔ A read with no deadline, against a browser that answers at once.
 
     ⚠️ Safe to plant only because the browser here is live and prompt: the same
     code against a SILENT browser is the hang, which is the whole defect.

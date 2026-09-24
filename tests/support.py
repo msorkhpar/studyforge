@@ -73,7 +73,7 @@ def git() -> str:
     """The absolute path to git, or a failed assertion saying why it matters.
 
     ⛔ Asserted rather than skipped. The checks that use it — the ignore rules
-    that keep FND-04's golden fixtures trackable, and the index rules —
+    that keep the golden fixtures trackable, and the index rules —
     guard states whose failure is *silent* on a fresh clone. A skip there would
     look green and guard nothing.
     """
@@ -158,7 +158,7 @@ def tracked_files(patterns: tuple[str, ...], root: Path | None = None) -> list[s
 
     ⚠️ **Two guards, in the body and before any caller counts anything.** An
     instrument that cannot find its subject must raise rather than report the
-    subject clean (`W61`'s reading 3, Ruling 128); and a tracked file missing
+    subject clean; and a tracked file missing
     from the working tree is refused rather than skipped, because an unstaged
     deletion would otherwise narrow the population in silence.
 

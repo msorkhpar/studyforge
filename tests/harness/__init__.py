@@ -8,7 +8,7 @@ and none of which implies another:
 | `goldens` | is every golden still what the tree produces, and claimed by exactly one case? | R10 |
 | `streams` | does anything the tree emits carry a control character? | the tofu-box failure |
 | `isolation` | can it spawn, reach outside the standard library, import by name? | §8.3, R1 |
-| `probe` | what does a piece of the framework actually read, observed rather than argued? | SF-14 |
+| `probe` | what does a piece of the framework actually read, observed rather than argued? | R12 |
 
 **How you use it.** Each module is imported by the `test_*.py` beside it, and by
 anything else that wants the same population:
@@ -27,7 +27,7 @@ the one worth keeping in view: a control byte went into a generated stylesheet, 
 reproduced perfectly on every machine, every disclosure widget drew a tofu box for
 days, and the suite was green throughout. ⛔ So `streams` sits beside `goldens`
 rather than inside it, and neither is mistaken for the visual checks
-(`tests/visual/`, QA-02, QA-03) that answer the question *"is it right"*.
+(`tests/visual/`) that answer the question *"is it right"*.
 
 ## ⛔ Every instrument here owes three readings, and the third is the point
 

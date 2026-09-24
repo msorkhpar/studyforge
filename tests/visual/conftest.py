@@ -1,18 +1,17 @@
 """Fixtures for the visual harness, and the line it prints whether it ran or not.
 
-⛔ **`pytest_terminal_summary` is the loud half of this task** and is not
-decoration. `SF-01` was approved on a host run whose two skips nobody read, and
-this wave the container's eight skips and the host's eight were measured to be
-disjoint sets. A skip behind `-rs` is a skip nobody reads, so this harness says
+⛔ **`pytest_terminal_summary` is the loud half of this harness** and is not
+decoration. A host and the container can skip disjoint sets, and a skip behind
+`-rs` is a skip nobody reads, so this harness says
 what it did — or did not do, and how many checks that was — in the summary of
 **every** run of the whole suite, in `-q` as well.
 
-## ⛔ `W128` — this module is the ONE ambient reader, and the licence is stated
+## ⛔ This module is the ONE ambient reader, and the licence is stated
 
 ⛔ **`browser` hands the HOST's environment to a verdict function**
 (`discovery.require_browser`), and that is LICENSED rather than overlooked.
 ⭐ **Why it is admissible:** the verdict it can reach is a SKIP or a FAILURE that
-NAMES ITSELF and its remedy (Ruling 204), the number of checks it silenced is
+NAMES ITSELF and its remedy, the number of checks it silenced is
 counted and printed by `pytest_terminal_summary`, and the environment in force
 is printed beside it by `discovery.environment_declaration()`. ⛔ **Nothing here
 can turn a silent non-run into a green reading.**
@@ -47,18 +46,12 @@ CAPTURE_VARIABLE = "STUDYFORGE_VISUAL_CAPTURES"
 def pinned_environment(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
     """Pin the three verdict-reaching variables OFF, so this test reads no host.
 
-    ⛔ **`W128`, and it is the fixture arm of the remedy.** ⭐ A test that
+    ⛔ **The fixture arm.** ⭐ A test that
     asserts what `require_browser`, `state`, `evidence_state`, `report_line` or
     `environment_declaration` ANSWERS must decide the environment itself; one
     that inherits the host's is a committed verdict depending on the host
-    (Ruling 225's environment half).
-
-    ⚠️ **This is not a hypothetical.** At `270296d`, MEASURED in the pinned
-    container, `STUDYFORGE_VISUAL=required docker/dev/check` read
-    `1 failed, 5560 passed` against `5561 passed` with it unset, and the one
-    failure was `test_a_missing_browser_skips_with_a_reason_that_names_the_remedy`
-    — a test that fakes the browser's absence and then let the HOST decide
-    whether absence skips or fails (`W124/5`, `W115/4`).
+    (R15): a test that fakes the browser's absence and then lets the HOST decide
+    whether absence skips or fails passes or fails by the host's setting.
 
     ⭐ **The `@cache` on `state()` is cleared on the way in and on the way out**,
     so a test may exercise the discovery path under a faked `PATH` without
@@ -80,14 +73,10 @@ def pinned_environment(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
 
 
 #: ⛔ The outcomes that mean *this check reached no verdict on its subject*.
-#: ⚠️ **`error` is here because of `W128/4`**, and it is the SAME defect this row
-#: exists to close arriving in the COUNT rather than in a test: with
-#: `$STUDYFORGE_VISUAL` unset, 123 browser checks SKIP and the line said *"123
-#: visual check(s) DID NOT RUN"*; with `=required` the same 123 become fixture
-#: ERRORS, and the line said **`0`**. ⛔ **MEASURED at `270296d` in the pinned
-#: container: `50 passed, 123 errors` beside `visual harness: NO BROWSER — 0
-#: visual check(s) DID NOT RUN`.** ⭐ A count that reads `0` when nothing ran is
-#: the loudness mechanism reporting the opposite of the truth.
+#: ⚠️ **`error` is here** because with `$STUDYFORGE_VISUAL` unset the browser
+#: checks SKIP, and with `=required` the same checks become fixture ERRORS. ⭐ A
+#: count of skips alone would then read `0` when nothing ran, which is the
+#: loudness mechanism reporting the opposite of the truth.
 DID_NOT_RUN = ("skipped", "error")
 
 
@@ -137,15 +126,13 @@ def damaged_sites(tmp_path_factory: pytest.TempPathFactory) -> dict[str, site.Si
 def one_tab_per_check(browser: Browser) -> Iterator[OpenPage]:
     """Open one tab, hand it to a check, and close it when the check ends.
 
-    ⛔ **`W397`, and the closing is the point.** This yielded a tab and closed
-    nothing, so a session's tabs accumulated as operating-system processes —
-    ⚠️ **MEASURED in the pinned image: 190 processes, dozens of them Chrome
-    renderers, at 0.1% CPU, and the whole directory hung.**
+    ⛔ **The closing is the point.** A tab left open is an operating-system
+    process, and a session's worth of them hangs the whole directory.
 
     ⭐ **It is a NAMED generator and the fixture below is one line over it**, so
     `test_page_lifetime.py` can drive the teardown and assert the tab is gone.
     ⛔ A fixture body reachable only through pytest is a teardown asserted by
-    reading it, which is how this one came to close nothing.
+    reading it.
 
     ⚠️ `finally` and not a plain call after the `yield`: a check that fails
     raises through here, and that is precisely the run whose tab must not leak.

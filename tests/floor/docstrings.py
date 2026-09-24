@@ -1,8 +1,7 @@
 """R17's contract, checked for presence rather than for shape.
 
 ⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
-checkout. It began as a copy of the developer tooling's check; that tooling, and its
-records, live on the branch `archive/process`, and nothing here depends on them.
+checkout, and depends on nothing outside it.
 
 **What it does.** Fails a non-test module under `src/` that has no module
 docstring, or one too short to be a contract.

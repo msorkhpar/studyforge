@@ -1,8 +1,8 @@
 """Mirror of `tests/floor/palettes/__init__.py` (R12).
 
-⛔ **Asserted in BOTH directions** (`W392`'s second clause): every rejected
-identity the live table names is PLANTED and found by name, and the identity the
-user ACCEPTED — cool slate with one loud accent — is read CLEAN by the same
+⛔ **Asserted in BOTH directions**: every rejected identity the live table
+names is PLANTED and found by name, and the ACCEPTED identity — cool slate with one loud accent —
+is read CLEAN by the same
 table in the same run.
 
 ⭐ **The conjunction is asserted as a conjunction**: one part of a row, the parts
@@ -97,7 +97,7 @@ def test_a_gradient_painted_with_TOKENS_is_resolved_in_that_theme(tmp_path):
 
 
 def test_the_identity_the_user_ACCEPTED_is_read_clean(tmp_path):
-    # ⭐ `W392`'s heart: cool slate is what was accepted, and the rejected row is
+    # ⭐ The heart of it: cool slate is what was accepted, and the rejected row is
     # the TRIPLE. A check that refused this would have refused the remedy.
     root = tree(tmp_path, ACCEPTED)
     assert check_rejected_palettes(root) == []

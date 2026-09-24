@@ -24,21 +24,21 @@ already happened, in the framework, by the time it is asked.
 
 ## ⚠️ Why the trust rule needs a rule id of its own
 
-`tests/fixtures/invalid/user-authoritative/` is the negative control for W18.
-⛔ Before Ruling 35 landed, `user` + `authoritative` was **accepted** — the
-rule was a list of forbidden pairs naming only `generated`, so a grader the
-reader wrote could declare itself the source's own and nothing raised. ⭐ A
-fixture whose corpus violates *no* rule reds `test_invalid_corpus_violates_
-exactly_its_one_rule`, which is why this is the failing-test form of the
-ruling rather than a line in a review.
+`tests/fixtures/invalid/user-authoritative/` is the negative control for R5's
+legal pairs. ⛔ A rule written as a list of forbidden pairs naming only
+`generated` would accept `user` + `authoritative`, so a grader the reader wrote
+could declare itself the source's own and nothing would raise. ⭐ A fixture
+whose corpus violates *no* rule reds `test_invalid_corpus_violates_
+exactly_its_one_rule`, which is why this is the failing-test form of the rule
+rather than a line in a review.
 
-## ⛔ A record with no whole grader is refused for its shape (`W365`)
+## ⛔ A record with no whole grader is refused for its shape
 
-⚠️ **Since `W357` a record may name a file and no grader**, so a record without
-`provenance` is no longer a record with a bad trust claim — it is either the
-ungraded shape or half a grader. ⛔ **Before `W365` any refusal of it was filed
-under `exercise-trust`**, because `unit.trust` refuses a missing provenance, so
-a file-only record refused for its shape was named under R5. ⭐ **R5 is asked
+⚠️ **A record may name a file and no grader**, so a record without `provenance`
+is not a record with a bad trust claim — it is either the ungraded shape or half
+a grader. ⛔ **Filed under `exercise-trust`**, because `unit.trust` refuses a
+missing provenance, a file-only record refused for its shape would be named
+under R5. ⭐ **R5 is asked
 only about a whole grader** — every one of `GRADER_KEYS` bar `DEFAULTED_KEYS`
 present — which is the only record `exercise.from_document` asks R5 about. The
 keys are the framework's, imported, never re-spelled here.

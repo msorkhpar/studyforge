@@ -10,13 +10,12 @@ then any of `page.evaluate(...)`, `page.capture(path)`, `page.tab()`,
 `page.requests()`. One `OpenPage` per test; the fixtures in `conftest.py` build
 it, and close it.
 
-## ⛔ `W397` — the object that opened the tab closes it
+## ⛔ The object that opened the tab closes it
 
-⛔ **This had no `close`, and the tab outlived the check that opened it.** A tab
-is a set of operating-system processes; the `browser` fixture is session-scoped
-and this one is per check, so a session's tabs accumulated until the pinned
-image could start no more renderers and the whole directory hung — ⚠️ **190
-processes, dozens of them Chrome renderers, at 0.1% CPU**. ⭐ **`close()` closes
+⛔ **A tab is a set of operating-system processes**; the `browser` fixture is
+session-scoped and this one is per check, so a tab that outlived its check would
+accumulate until the pinned image could start no more renderers and the whole
+directory hung. ⭐ **`close()` closes
 the target, `__exit__` calls it, and `conftest.py`'s fixture is the wrapper that
 makes every check pay it.** ⛔ A caller that builds one outside the fixture —
 `test_contrast.py`'s module-scoped reading does — owns the same closing.
@@ -47,7 +46,7 @@ from tests.visual.browser import VIEWPORT, Browser, BrowserError
 #: window opened at"**: a reading about a breakpoint, taken at a width nobody
 #: named, is not a reading about a breakpoint. ⭐ `WIDE` is the launch viewport,
 #: so a check that sets no width runs at the wide one and this harness's default
-#: population is the two-column page (`W325`). ⚠️ Which side of `chrome.css`'s
+#: population is the two-column page. ⚠️ Which side of `chrome.css`'s
 #: own threshold each falls on is asserted in `test_rail.py`, against the
 #: stylesheet, so a breakpoint moved there is a red check rather than two
 #: readings of one layout.
@@ -70,7 +69,7 @@ KEYS = {
     "Escape": ("Escape", 27, None),
     #: ⭐ How a TABLIST is traversed, and the only way to reach its second tab:
     #: a roving `tabindex` puts exactly one tab in the focus ring, so Tab
-    #: reaches the selected one and an arrow moves between them (`W429`).
+    #: reaches the selected one and an arrow moves between them.
     "ArrowRight": ("ArrowRight", 39, None),
 }
 
@@ -95,7 +94,7 @@ class OpenPage:
             for domain in ("Page", "Runtime", "Network", "DOM"):
                 browser.call(f"{domain}.enable", session=self.session)
         except BaseException:
-            # ⛔ A tab that fails half-way through setup is still a tab (`W397`).
+            # ⛔ A tab that fails half-way through setup is still a tab.
             self.close()
             raise
         self._scripts = True
@@ -105,7 +104,7 @@ class OpenPage:
     def close(self) -> None:
         """Close this tab. Safe twice, and safe once the browser itself has gone.
 
-        ⛔ **`W397`.** Closing the TARGET and not merely detaching the session:
+        ⛔ Closing the TARGET and not merely detaching the session:
         a detached tab keeps its renderer, so a harness that only detached would
         accumulate exactly what this closes.
         """
@@ -132,12 +131,12 @@ class OpenPage:
         opened by double-clicking it, so a harness that only ever served the
         tree would be testing a configuration no reader has.
 
-        ⛔ **The one exception is `W417`, and it is an ADDITION to that floor and
-        never a retreat from it.** The practice panel's controls exist only
+        ⛔ **The one exception is the served practice panel, and it is an
+        ADDITION to that floor and never a retreat from it.** The practice panel's controls exist
+        only
         where `window.studyforge.run.available()` is true — which
         `run-client.js` answers from `location.protocol` — so the panel's
-        keyboard behaviour is unreadable over `file://` and was read in no
-        browser anywhere (`SF-24/5`). ⚠️ `served.py` opens the SAME built bytes
+        keyboard behaviour is unreadable over `file://`. ⚠️ `served.py` opens the SAME built bytes
         over a loopback origin for that one reading; every other clause in this
         package still opens the file.
         """
@@ -182,12 +181,11 @@ class OpenPage:
     def _settle(self) -> None:
         """Wait for the document to finish and for one frame to have been painted.
 
-        ⛔ **Not a wait for any particular element.** The first version of this
-        polled for a copy button or a syntax token — and `depth1-unit-02` has no
-        code block, so every open of the prose page spent the full ceiling
-        waiting for something that was never coming, and passed. ⚠️ **A timeout
-        that expires and lets the test proceed is a slow check that still says
-        yes**; it cost 10 seconds per page and nothing noticed.
+        ⛔ **Not a wait for any particular element.** A wait for a copy button or
+        a syntax token spends the full ceiling on a prose page with no code
+        block, waiting for something that never comes, and then passes. ⚠️ **A
+        timeout that expires and lets the test proceed is a slow check that
+        still says yes.**
 
         ⭐ The correct wait is shorter and does not need a list: `page.js` is
         `defer`red, so it has already run by `load`, and two animation frames
@@ -278,7 +276,7 @@ class OpenPage:
         ⛔ **A real key event, for the reason `test_keyboard`'s docstring gives
         about focus**: activating a control by calling `element.click()` proves
         nothing about whether a keyboard can reach or fire it, and a panel whose
-        buttons were `<div>`s would pass such a check (`W417`).
+        buttons were `<div>`s would pass such a check.
 
         ⚠️ **Enter carries `text`, and that is not decoration.** Chromium fires
         a button's activation from the *character* event for Enter, so a
@@ -310,7 +308,7 @@ class OpenPage:
         """What has focus now: its tag, its href or class, its focus outline, and where it is.
 
         ⚠️ `at` is the element's position in document order, because a label is
-        not an identity: two links to one page carry one href (`W105`).
+        not an identity: two links to one page carry one href.
         """
         return dict(
             self.evaluate(
@@ -336,9 +334,9 @@ class OpenPage:
         that has been traversed twice fails for a reason that has nothing to do
         with the order.
 
-        ⛔ **The wrap is the SAME ELEMENT coming round, never the same href**
-        (`W105`): a unit page's trail and its between-units bar both link the
-        index, and a mark of tag and href ended the walk at the second one.
+        ⛔ **The wrap is the SAME ELEMENT coming round, never the same href**:
+        a unit page's trail and its between-units bar both link the index, and
+        a mark of tag and href would end the walk at the second one.
         """
         self.focus_body()
         seen: list[dict] = []

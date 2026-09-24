@@ -92,7 +92,7 @@ def test_a_file_that_appeared_during_the_run_is_the_finding(tmp_path):
 
 
 def test_a_nested_stray_is_reported_by_its_file_and_not_its_directory(tmp_path):
-    # ⭐ `SF-28/2`'s shape: `alpha/alpha`. ⚠️ git names the *directory* for an
+    # ⭐ The nested shape: `alpha/alpha`. ⚠️ git names the *directory* for an
     # untracked tree unless `-uall` is passed, which is why it is passed.
     repository = init_repository(tmp_path)
     before = treestate.snapshot(repository)

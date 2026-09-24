@@ -1,11 +1,10 @@
 """The framework gate's column of the shared personal-data shape table (R7).
 
 ⛔ **One shape vocabulary, two policies.** `archive.scrub` and
-the floor's `tests.floor.personal_data` are ruled to have different *subjects* and
-therefore different *policies* — one may know this machine, the other may know
-nothing — ⛔ and that never justified differing in what they **recognise**.
-They had drifted, and nobody noticed for a long time because nothing
-compared them.
+the floor's `tests.floor.personal_data` have different *subjects* and therefore
+different *policies* — one may know this machine, the other may know nothing —
+⛔ and that never justifies differing in what they **recognise**. Two copies
+drift when nothing compares them, so this compares them.
 
 ⚠️ The floor may not import the framework, so the two sides
 share **evidence, not code**: one table, `tests/support.py`'s

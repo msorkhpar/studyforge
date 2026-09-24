@@ -1,4 +1,4 @@
-"""Who in `src/` may start a process — a sweep of the whole tree (`W361`, `SF-20/4`, `SF-22/6`).
+"""Who in `src/` may start a process — a sweep of the whole tree.
 
 ⛔ **Spec §8.3's settled sentence:** `execute` is the only package that runs a corpus's
 commands and the only package permitted to start a process, save two named sites
@@ -41,7 +41,7 @@ from tests.support import repository_root, run
 
 SOURCE = repository_root() / "src" / "studyforge"
 
-#: The package that runs a corpus's commands (`SF-20`).
+#: The package that runs a corpus's commands.
 RUNNER = "execute"
 
 #: ⛔ The named sites outside the runner, relative to the package root.

@@ -1,8 +1,7 @@
 """What a check says, what a notice counts, and how either is printed.
 
 ⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
-checkout. It began as a copy of the developer tooling's check; that tooling, and its
-records, live on the branch `archive/process`, and nothing here depends on them.
+checkout, and depends on nothing outside it.
 
 **What it does.** Gives the floor's two channels one shape of answer each — a
 `Finding` for a violation, and a `DocumentPopulation` for the denominator a
@@ -70,7 +69,7 @@ def unread_caveat(population: DocumentPopulation) -> str:
     """Return the sentence a TRACKED figure owes about what its walk did NOT read.
 
     ⛔ **Printed whether or not it fired**: `0 documents unindexed`
-    is the reading an office needs before it believes a green over its own
+    is the reading a developer needs before they believe a green over their own
     work, and it is exactly the reading a fired-only sentence would never give.
     ⚠️ **Empty on `DISK_WALK`**, where `WALK_CAVEAT` already says the
     population carries untracked files and where a `0` here would claim git
@@ -80,7 +79,7 @@ def unread_caveat(population: DocumentPopulation) -> str:
         return ""
     return (
         f" ⚠️ {population.unread} markdown documents in this working tree are absent from "
-        f"git's INDEX and were NOT read here (`W232/5`): a document written and not "
+        f"git's INDEX and were NOT read here: a document written and not "
         f"`git add`ed gets a reading the merge will not repeat."
     )
 

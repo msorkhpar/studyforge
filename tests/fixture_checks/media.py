@@ -9,13 +9,11 @@ entry against the file it names.
 **Depends on.** `digests` for the byte digest, and `addresses` for the one
 question this module asks about geography: where a unit's own files sit.
 
-⚠️ **`W214` first, then `W322`.** This module composed the directory from a
-literal and a format string, which made it a second spelling of the one
-`skills.adapter.Layout.unit_files` computes — and a fixture check that agreed
-with itself about where media lives is the reading `validate` could not
-contradict. `W214` replaced the literal with the two constants that own the
-segments. ⛔ **It was still a join, and a join is a producer**: two of them
-agree only for as long as nobody changes one. ⭐ `addresses.unit_files_in`
+⚠️ **The directory is never composed here.** A literal and a format string would
+be a second spelling of the one `skills.adapter.Layout.unit_files` computes — and
+a fixture check that agreed with itself about where media lives is a reading
+`validate` could not contradict. ⛔ **Even a join of the owning constants is a
+producer**: two of them agree only for as long as nobody changes one. ⭐ `addresses.unit_files_in`
 asks the layout for the shape, and this module asks `addresses` — so the
 directory has one producer and this file is not it.
 ⭐ `studyforge validate` now asks the same question of any corpus

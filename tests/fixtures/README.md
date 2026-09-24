@@ -1,15 +1,14 @@
-# Shared contract fixtures (FND-04)
+# Shared contract fixtures
 
 The synthetic corpora `tests/fixture_checks`' `VALID` names, and the
-deliberately invalid ones its `INVALID_CORPORA` registers. **Every downstream
-epic tests against these**, so that twelve epics are not each inventing their
-own idea of valid input — which is how parallel work drifts into twelve
-incompatible mental models.
+deliberately invalid ones its `INVALID_CORPORA` registers. **Every test that
+needs a corpus tests against these**, so that no suite invents its own idea of
+valid input — which is how parallel work drifts into incompatible mental
+models.
 
-⚠️ **This file states no count of them, deliberately.** It said *"two synthetic
-corpora and five deliberately invalid ones"* while the declaration carried
-three and seven — a count in prose is a fact nothing checks, and a pointer
-resolves at read time where a number cannot.
+⚠️ **This file states no count of them, deliberately.** A count in prose is a
+fact nothing checks, and a pointer resolves at read time where a number
+cannot.
 
 They are synthetic on purpose. A fixture that depends on 166 real files is a
 fixture nobody can debug.
@@ -30,7 +29,7 @@ cardinality — see `shared-origin/` below.
 
 ⭐ **`depth1/` is the common case, not the exotic one.** Two of the four
 designed source shapes are depth 1 — SPARQL (`["course"]`) and ISO-8583
-(`["group"]`; spec §1 is right and §4's table row is stale). It is given at
+(`["group"]`). It is given at
 least the care `depth2/` gets, and it exercises two things `depth2/` does not:
 a unit with **two** archive documents, and real media on disk with real
 digests.
@@ -39,7 +38,7 @@ digests.
 |---|---|---|---|
 | Shape it stands for | SPARQL, ISO-8583 — **2 of the 4** | Java-senior, CodeSignal | **two units, one source file** |
 | `levels` | `["course"]` — **1** | `["section","module"]` — **2** | `["guide"]` — **1** |
-| `container_api` | 1 — a whole-file `origin` | 1 — a whole-file `origin` | **2** — a **region** `origin` (Ruling 92) |
+| `container_api` | 1 — a whole-file `origin` | 1 — a whole-file `origin` | **2** — a **region** `origin` |
 | Containers | 1 | 3 — two of them in one section | 1 |
 | Units | 3 (4 archive documents) | 6 (3 + 2 + 1) | 2 (2 archive documents) |
 | Variants | 1 (`prose`) | 1 (`java`) | 1 (`prose`) |
@@ -51,8 +50,8 @@ digests.
 | Source material on disk | no | no | ⭐ **yes** |
 | Block types exercised | 10 of 11 (no `video`) | **11 of 11** | 3 — it is not a coverage corpus |
 
-`depth1` exists to keep the 1-level and no-exercise paths first-class from
-wave 0 rather than discovered late. ⛔ **A corpus with no graders is complete,
+`depth1` exists to keep the 1-level and no-exercise paths first-class rather
+than discovered late. ⛔ **A corpus with no graders is complete,
 not short** (spec §7, C5) — nothing here should be read as a degraded corpus.
 
 `depth2` carries, deliberately, one unit **with** an authored overlay
@@ -62,13 +61,13 @@ not short** (spec §7, C5) — nothing here should be read as a degraded corpus.
 ## ⛔ `shared-origin/` exists for one property, and it is not coverage
 
 ⭐ **Two units declare the same `origin.path` and differ only in
-`origin.section`.** Nothing else in this set does, and until it did, *how is a
+`origin.section`.** Nothing else in this set does, and without it, *how is a
 clip keyed when several units share one source file?* could not be tested in
 this repository at all. ⛔ **It is the smallest corpus that can exhibit the
 collision** — two is all the pigeonhole needs — and a larger one would be a
 reading taken inside a consumer repository rather than here.
 
-⛔ **Why it cannot be left until the minter exists (Ruling 187).** *"Asserted in
+⛔ **Why the property needs a fixture of its own.** *"Asserted in
 both directions"* proves **surjectivity, not injectivity**. Clips colliding onto
 one filename means every `<audio>` still resolves **and** every file on disk is
 still named by a page: both stated directions pass, the suite stays green, and
@@ -77,7 +76,7 @@ a **cardinality equality** — `|clips| == |spoken units|` — and it is
 unwritable against a set in which no two units share a file.
 `tests/test_fixture_shared_origin.py` asserts both halves: that a path-derived
 key **does** collide here, and that one derived from the unit's logical address
-(`SF-01`) does not. ⚠️ A fixture asserted to be shared-origin without the first
+ does not. ⚠️ A fixture asserted to be shared-origin without the first
 half is the vacuous shape the second half would hide.
 
 ⭐ **It also gives each `origin` shape an input**, which is `depth2`'s own
@@ -93,18 +92,16 @@ on purpose: a fence-blind count reads **6** headings in that file where there
 are 4 and **4** in unit 1's region where there are 2, so it short-reads. Make
 those comment lines `#` instead of `###` and they become depth-1 headings that
 *terminate* the region rather than inflating it — the count stays 2 and nothing
-reds. ⛔ Measured, not reasoned: that is what the first version of this fixture
-did.
+reds.
 
 ⛔ **Nothing in this corpus names any real source.** The shape is the subject —
-two units, one file — and the corpus that provoked the question is named only
-in the project's process records (on the branch `archive/process`), which is
-where a source-specific measurement belongs (R1).
+two units, one file — and a source-specific measurement belongs to that
+source, never to the framework (R1).
 
 ## ⛔ `runnable/` is the one corpus whose units RUN
 
-⭐ **It exists because `SF-20` (the runner) and `SF-44` (the terminal command)
-need something to execute**, and every other corpus here is JSON and Markdown:
+⭐ **It exists because the runner and the terminal command need something to
+execute**, and every other corpus here is JSON and Markdown:
 `depth2` declares practices, and nothing in it can run. ⛔ **It is an execution
 fixture, not a coverage corpus**, so it is required to exercise three block
 types and no more, exactly as `shared-origin/` is.
@@ -124,8 +121,8 @@ parser accepts.** A missing colon would be a parse error, and several walkers in
 this suite `ast.parse` every `.py` under `tests/`; `tests/test_fixture_runnable.py`
 pins both halves.
 
-⭐ *A file with no test is not a failure* (`M5`'s *Done when*) — unit 3. ⭐ *The
-first failure ends the run* (`SF-20`) — unit 4's run command fails, so a runner
+⭐ *A file with no test is not a failure* (spec §7) — unit 3. ⭐ *The
+first failure ends the run* — unit 4's run command fails, so a runner
 that honours it never reaches a grader that could only have errored.
 
 ⛔ **Its graders are `check_*.py`, never `test_*.py`, and that is load-bearing.**
@@ -140,9 +137,8 @@ pytest's cache), so a run from the corpus root collects them.
 Copy the corpus somewhere a run may write, as `tests/test_fixture_runnable.py`
 does.
 
-⚠️ **It declares no `runtimes`**: that manifest key is `W350`'s and has not
-landed. The day it does, `tests/test_fixture_runnable.py` reds until the
-manifest declares `python`.
+⚠️ **It declares `runtimes: ["python"]`**, and `tests/test_fixture_runnable.py`
+holds the manifest to exactly that.
 
 ### What each unit is for
 
@@ -162,7 +158,7 @@ manifest declares `python`.
 | `basics/01-getting-started` 1 | a lesson, a practice, the authored overlay, and the **only `exercise` record outside `runnable/`** | the authored shape, a practice's three-section layout, and §7's **graded** state |
 | `basics/01-getting-started` 2 | `table`, `rule`, no overlay | the derived shape |
 | `basics/01-getting-started` 3 | a `video` block, a `video` record, `media_skipped` | media named and deliberately not fetched |
-| `advanced/02-going-further` 1 | a lesson, a practice with **no `exercise` key**, `url_slug` | a second container, SF-05's carried field, and §7's **ungraded** state |
+| `advanced/02-going-further` 1 | a lesson, a practice with **no `exercise` key**, `url_slug` | a second container, a carried field, and §7's **ungraded** state |
 | `advanced/02-going-further` 2 | a closing lesson, plus a fenced Maven POM | a container whose last unit has no exercise; fence awareness at depth 2 |
 | `advanced/03-putting-it-together` 1 | a heading and a para, in a second module of `advanced` | ⛔ **the set's only module change inside one section** — the walk's other crossing changes section and module at once, and a renderer can get that one right and this one wrong |
 
@@ -202,7 +198,7 @@ one exercise that validates, outside `runnable/`"*.
 ⚠️ **One sanctioned second copy, and its licence is that it must fail.**
 `invalid/user-authoritative/` carries an `exercise` that records
 `provenance: user` with `trust: authoritative`. ⛔ It is not coverage — it is
-W18's **negative control**: restore the forbidden-pair spelling of R5 and that
+R5's **negative control**: spell R5 as a list of forbidden pairs and that
 corpus violates no rule at all, which reds the fixture-consistency suite. The
 rule the tests state is therefore *"exactly one exercise that **validates**"*,
 not *"exactly one exercise"*.
@@ -210,10 +206,9 @@ not *"exactly one exercise"*.
 ## Fence awareness — the highest-value thing in this set
 
 ⛔ **A parser that scans for `<` without tracking fences is wrong, and it fails
-silently.** The spec's C3 says 18 ISO files contain raw HTML. A recount with
-code fences stripped found **0 of 38**: all 26 `<tag>`-shaped matches were XML
-*inside fenced code blocks* — Maven POM, Spring beans, jPOS config. The "18"
-was counting angle brackets.
+silently.** In real material, `<tag>`-shaped text is mostly XML *inside
+fenced code blocks* — Maven POM, Spring beans, jPOS config — and a count of
+angle brackets reads it as raw HTML.
 
 So `depth1` unit 3 `lesson-2.json` carries three fenced blocks of XML and HTML
 — one of them a fence *about* a `<details>` — **and** a raw `html` block, in one
@@ -222,14 +217,13 @@ them apart; only material where the two are the same text can.
 `test_the_same_tags_appear_fenced_and_raw_in_one_corpus` asserts that overlap
 still exists, so it cannot be edited away by accident.
 
-⚠️ **The overlap is now exactly `<p>` and `</p>`, and that is load-bearing.**
-Once real disclosures became `disclosure` blocks, the only raw `html` left in
-`depth1` is the callout — so the callout **must** contain a `<p>`, or the test
-goes red for a reason that has nothing to do with fences. It is the one thing
-in this change that bites if forgotten.
+⚠️ **The overlap is exactly `<p>` and `</p>`, and that is load-bearing.**
+Disclosures are `disclosure` blocks, so the only raw `html` in `depth1` is the
+callout — and the callout **must** contain a `<p>`, or the test goes red for a
+reason that has nothing to do with fences.
 
-⚠️ **The recount does not weaken the vocabulary requirement — it relocates
-it.** `rule`, `quote`, `html` and `disclosure` are all needed at **M1**: the
+⚠️ **Fence awareness does not weaken the vocabulary requirement.** `rule`,
+`quote`, `html` and `disclosure` are all needed: the
 disclosure is a *SPARQL* requirement (6 of 19 lessons, every one of them hiding
 an exercise answer), and thematic breaks (10 lessons) and blockquotes (1) are
 the *Java corpus's*. All four appear in both corpora here.
@@ -238,7 +232,7 @@ the *Java corpus's*. All four appear in both corpora here.
 
 `invalid/<name>/` is a complete, tiny corpus that is valid in **every respect
 but one**. Each carries a `VIOLATION.md` naming the rule it breaks, the file
-that breaks it, and what `studyforge validate` (SF-25) is expected to say.
+that breaks it, and what `studyforge validate` is expected to say.
 
 | Fixture | The one rule broken |
 |---|---|
@@ -248,24 +242,23 @@ that breaks it, and what `studyforge validate` (SF-25) is expected to say.
 | `ordinal-gap/` | §6 — unit ordinals contiguous from 1 |
 | `personal-data/` | R7 — `assert_clean` must refuse, never rewrite |
 | `count-mismatch/` | §6 — a document's `counts` must agree with its blocks |
-| `user-authoritative/` | **R5** — `authoritative` implies `bundled` (Ruling 35) |
+| `user-authoritative/` | **R5** — `authoritative` implies `bundled` |
 
 ⭐ **`count-mismatch/` is the one an inspection cannot find.** Its digest is
 correct, so the corpus is byte-exact and still lies about itself — and `counts`
 is the field every consumer reads *instead of* walking the blocks.
 
-⛔ **`user-authoritative/` is a negative control, not coverage.** It was a
-**valid** corpus until W18 landed: R5 was spelled as a list of forbidden pairs
-naming `generated` only, so a grader the reader wrote could declare itself the
-source's own and nothing raised. Restore that spelling and this corpus violates
-no rule at all — which reds `test_invalid_corpus_violates_exactly_its_one_rule`
+⛔ **`user-authoritative/` is a negative control, not coverage.** Spelled as a
+list of forbidden pairs naming `generated` only, R5 would let a grader the
+reader wrote declare itself the source's own and nothing would raise. Spell it
+that way and this corpus violates no rule at all — which reds `test_invalid_corpus_violates_exactly_its_one_rule`
 rather than waiting for a reviewer.
 
 ⚠️ **`invalid/personal-data/` deliberately contains personal-data shapes.**
 Both values in it are fabricated — an obviously-placeholder absolute home path
 and an address under the RFC 2606 reserved `.invalid` TLD, which can never be
 delivered. Nothing in it came from any real machine, account or person, and
-its own `VIOLATION.md` says so. **A repository-wide R7 sweep (SF-08) must
+its own `VIOLATION.md` says so. **A repository-wide R7 sweep must
 exclude that one directory and only that one** — and this is not a matter of
 trust: `test_only_the_personal_data_fixture_carries_personal_data` sweeps the
 whole fixture tree and enforces exactly that boundary, in both directions.
@@ -316,12 +309,9 @@ third state, which is C5's lesson landing in the vocabulary. The archive records
 the semantics and the label; that the markup is `<details><summary>` is the
 renderer's decision (R13), and narration speaks the `summary` and stops.
 
-`rule`, `quote`, `html` and `disclosure` are SF-07's additions and are not
-speculative: 10
-Java lessons use `---` and one uses a blockquote, and 6 of 19 SPARQL lessons
-end in a `<details>` disclosure. ⚠️ Spec §1's "18 ISO files contain raw
-HTML" does **not** survive a recount and is not the reason — see *Fence
-awareness*. `video` is in the archive vocabulary but is not something the
+`rule`, `quote`, `html` and `disclosure` are not speculative: 10 Java lessons
+use `---` and one uses a blockquote, and 6 of 19 SPARQL lessons end in a
+`<details>` disclosure. `video` is in the archive vocabulary but is not something the
 Markdown reader produces.
 
 ## Where the files sit
@@ -348,8 +338,7 @@ is a first-class state (R2 — an archive ships on its own) and reads as
 
 ⭐ **`archive/` is the archive root under every profile** — `ARCHIVE_DIRNAME`,
 spelled once in `corpus.placement.names` and read by `validate`, `plan`, a build
-and the adapter layout (`INT-06/6`). ⚠️ This paragraph once called it a
-placeholder for `.studyforge/archive/`: the root `plan` printed and nothing read.
+and the adapter layout.
 
 ## Golden files
 
@@ -366,6 +355,5 @@ and a golden sitting in that root is a file the plan would have to explain.
 
 ⛔ **Nothing else has a golden file, and that is still deliberate.** The unit page's and
 the page assets' outputs are designed but not pinned here, and a golden for output
-nobody has designed is a fixture that will be wrong and will be trusted.
-The placement goldens closed the largest of the deferred ones; the rest are
-owed by the task that designs each output.
+nobody has designed is a fixture that will be wrong and will be trusted. A
+golden lands with the design of the output it pins.

@@ -1,7 +1,7 @@
 """Clause 4 — the page is run with JavaScript disabled, and still reads.
 
-⛔ **`SF-14`'s acceptance, made runnable before `SF-14` needs it.** The reading
-floor is a page opened from a file with no server; a reader who has scripts off,
+⛔ **The reading floor, made runnable.** The reading floor is a page opened from a file with no
+server; a reader who has scripts off,
 or whose browser blocked a `file://` script, must still get the words. What they
 may lose is decoration — the copy button, the syntax colours — and the point of
 this module is that the line between the two is asserted rather than assumed.
@@ -22,7 +22,7 @@ from tests.visual.page import OpenPage
 #: holds it total over them.** A container page and a root index carry no prose
 #: of their own — their words are the corpus's titles and notes — so the check
 #: that reaches every page kind is the derived one below: `MASTHEAD`, which every
-#: kind emits and every kind fills from the material (`W98`).
+#: kind emits and every kind fills from the material.
 PROSE = {
     "depth2-unit-01": "A class is a name plus the state and behaviour filed under it.",
     "depth1-unit-02": None,
@@ -44,7 +44,7 @@ MASTHEAD = (
 )
 
 #: Every `nav` region that is NOT the outline, as a selector. ⛔ Derived from the
-#: disposition table so the two halves of Ruling 164's fork are one population
+#: disposition table so the two halves — content and chrome — are one population
 #: split in one place — see `site.OUTLINE_REGION`.
 CHROME_NAVS = tuple(
     region
@@ -69,7 +69,7 @@ def test_every_unit_page_carries_a_row_in_this_census() -> None:
     """⛔ `PROSE` is total over the unit pages, or a new fixture is silently unchecked.
 
     ⚠️ Needed because the check below reads `PROSE.get(case)`: every page kind is
-    in its population now (`W98`), and a `.get` over a hand-written mapping is a
+    in its population now, and a `.get` over a hand-written mapping is a
     sentence that stops being asserted the moment a third unit fixture arrives.
     """
     assert sorted(PROSE) == sorted(site.cases()), (
@@ -83,7 +83,7 @@ def test_the_words_survive_with_scripts_disabled(
 ) -> None:
     """Every visible character of the page's own text is there without a script.
 
-    ⭐ **Every page kind, since `W98`** — a container's unit listing and the root
+    ⭐ **Every page kind** — a container's unit listing and the root
     index's disclosure tree are the two regions where *"it still reads with
     scripts off"* is least obvious, because both are built out of elements a
     script could have been tempted to mint.
@@ -119,11 +119,10 @@ def test_the_page_still_navigates_itself_with_scripts_disabled(
     exists — an in-page link to an anchor no script has minted is a link that
     goes nowhere, and it looks identical in the markup.
 
-    ⛔ **Scoped to the outline, and `W98` is why it had to be.** It read
-    `nav[aria-label] a` and was true only while this harness opened no page
-    carrying chrome: `document.querySelector('../../index.html')` is not a
-    selector at all, so the moment a between-units bar, a unit listing or a
-    contents tree entered the tree the expression threw. ⭐ The narrowing is a
+    ⛔ **Scoped to the outline.** Over `nav[aria-label] a` it would ask
+    `document.querySelector('../../index.html')`, which is not a selector at all,
+    so any page carrying a between-units bar, a unit listing or a contents tree
+    would throw. ⭐ The narrowing is a
     statement rather than a retreat — the companion check below asserts the other
     regions point OFF the page, so neither half can be satisfied by emitting
     nothing.
@@ -146,7 +145,7 @@ def test_the_page_still_navigates_itself_with_scripts_disabled(
 def test_every_other_nav_region_points_off_the_page_rather_than_into_it(
     open_page: OpenPage, built_site: site.Site, case: str
 ) -> None:
-    """⛔ The other half of Ruling 164's fork, asserted so the narrowing above holds.
+    """⛔ The chrome half, asserted so the narrowing above holds.
 
     ⭐ An outline is **content** of the page it is on and every href it writes is
     a fragment; a bar, a unit listing and a contents tree are **chrome** pointing
@@ -207,11 +206,11 @@ def test_a_page_whose_prose_is_written_by_a_script_is_caught(
     assert with_scripts, "the control page is empty even with scripts on, so it proves nothing"
     assert without != with_scripts, (
         "a page whose prose is injected by a script read identically with scripts "
-        "disabled — this harness cannot see the failure SF-14 is judged on"
+        "disabled — this harness cannot see a page that needs a script to read"
     )
 
 
-# --- `QA-02`'s own clause: the index works with JavaScript disabled -----------
+# --- the index works with JavaScript disabled ----------------------------------
 
 #: How many presses a traversal of an index takes before giving up. ⛔ Spelled
 #: here rather than imported from `test_keyboard`: one test module importing
@@ -249,7 +248,7 @@ FIRST_SHUT_SUMMARY = """
 def test_every_entry_the_index_offers_resolves_to_a_page_on_disk_with_scripts_off(
     open_page: OpenPage, built_site: site.Site, case: str
 ) -> None:
-    """⛔ `QA-02`'s acceptance: *the index works with JavaScript disabled*.
+    """⛔ *The index works with JavaScript disabled*.
 
     ⭐ **Resolved against the TREE, not against the document.** An index's
     entries point off the page, so `document.querySelector(href)` — the outline

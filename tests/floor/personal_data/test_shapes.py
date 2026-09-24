@@ -89,10 +89,9 @@ def test_a_real_looking_domain_is_still_a_finding():
 
 
 def test_the_one_character_local_part_false_positive_does_not_fire():
-    # ⚠️ The measured case, and the reason the local part must be two
-    # characters. Two process documents (now on the branch `archive/process`)
-    # discuss `\n@router.get` being address-shaped, and one writes it BOTH
-    # escaped and bare — so no
+    # ⚠️ The reason the local part must be two characters. Prose about
+    # serialisation discusses `\n@router.get` being address-shaped, and writes
+    # it BOTH escaped and bare — so no
     # lookbehind for a backslash reaches both. What they have in common is a
     # one-character local part.
     assert shape_matches(r"serialised as `...\n@router.get(...)`") == []
@@ -218,7 +217,7 @@ DOCUMENTS_ABOUT_THE_SHAPES = (
 
 
 def test_the_documents_that_quote_the_shapes_are_swept_and_clean():
-    # ⭐ The ruling, pinned. `docs/` is swept **in full** and no file is
+    # ⭐ The rule, pinned. `docs/` is swept **in full** and no file is
     # exempt: exempting one stops sweeping it for real leaks, and prose about
     # R7 is exactly where a real home path gets pasted by accident. What makes
     # that survivable is the placeholder convention — a shape written as
@@ -231,7 +230,7 @@ def test_the_documents_that_quote_the_shapes_are_swept_and_clean():
     offenders = []
     for name in DOCUMENTS_ABOUT_THE_SHAPES:
         text = config.read_text(root / name)
-        assert text is not None, f"{name} is missing; the ruling has moved"
+        assert text is not None, f"{name} is missing; the rule has moved"
         offenders += [f"{name}:{line}: {shape}" for line, shape in shape_matches(text)]
     assert offenders == []
 
@@ -259,7 +258,7 @@ BY_SHAPE = [pytest.param(row, id=row["shape"]) for row in VOCABULARY]
 @pytest.mark.parametrize("row", BY_SHAPE)
 def test_this_sweep_does_what_the_shared_table_says(row):
     # ⛔ **One shape vocabulary, two policies.** This check and
-    # `archive.scrub` are ruled to have different subjects — this one may
+    # `archive.scrub` have different subjects — this one may
     # derive the machine's identity and keeps an allow-list, that one may know
     # nothing — ⛔ and that never justified differing in what they
     # *recognise*. ⚠️ This floor may not import the framework, so the two

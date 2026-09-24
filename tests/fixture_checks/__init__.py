@@ -1,4 +1,4 @@
-"""FND-04's fixtures check themselves, so twelve epics can trust them.
+"""The framework fixtures check themselves, so every package that reads them can trust them.
 
 **What it does.** Answers one question about one corpus root: `violations(root)`
 returns every rule it breaks, as `(rule_id, message)`. An empty list means the
@@ -14,8 +14,8 @@ corpus is valid.
 `studyforge` module on purpose.** `src/studyforge/` was empty when these
 fixtures were written; a fixture check that needed the framework could not run
 until the framework did, which is the wrong way round. The canonicalisation
-rules restated here are the *fixtures'* own contract — SF-06 owns the
-framework's, and when it lands the duplication is resolved in its favour.
+rules restated here are the *fixtures'* own contract — `archive.blocks` owns
+the framework's, and a duplication is resolved in its favour.
 
 ## Why a fixture checks itself
 
@@ -29,8 +29,8 @@ Two things it proves, and the second is the point of the invalid corpora:
 
 * the two valid corpora violate **nothing**;
 * each invalid corpus violates **exactly the one rule its directory names**,
-  and no other — a fixture that broke two rules would make SF-25's acceptance
-  unable to tell which check it was exercising.
+  and no other — a fixture that broke two rules would leave `validate`'s tests
+  unable to tell which check they were exercising.
 
 ⚠️ `tests/fixtures/invalid/personal-data/` deliberately contains
 personal-data-shaped strings, every one of them fabricated (see its

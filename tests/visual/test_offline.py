@@ -18,8 +18,8 @@ from tests.visual.page import SCHEMES, OpenPage
 #: The one scheme a request is allowed to use.
 LOCAL = "file:"
 
-#: ⭐ `W362`: the faces arrive inside the stylesheet as `data:` URIs (the
-#: register's D3), and a `data:` URI is bytes the page already holds — the
+#: ⭐ The faces arrive inside the stylesheet as `data:` URIs, and a `data:` URI is bytes the page
+#: already holds — the
 #: browser reports it as a request, but nothing leaves the machine.
 EMBEDDED = "data:"
 
@@ -31,9 +31,9 @@ def test_a_page_opened_from_a_file_asks_for_nothing_but_files(
 ) -> None:
     """Every request the browser made while loading, and every one is local.
 
-    ⭐ **Every page kind since `W98`.** R8's floor is a property of the generated
-    *site*, and a container page or a root index reaches for the same two shared
-    assets from a different depth — which is the arithmetic `W57` was about.
+    ⭐ **Every page kind.** R8's floor is a property of the generated *site*, and
+    a container page or a root index reaches for the same two shared assets from
+    a different depth, so each depth's relative path is read.
     """
     open_page.open(built_site.url(case), scheme=scheme)
     requests = open_page.requests()
@@ -63,21 +63,18 @@ def test_the_stylesheet_was_not_merely_requested_but_applied(
 ) -> None:
     """⛔ A `file://` stylesheet can be fetched and still not apply.
 
-    ⚠️ The failure has a name in this repository already: *"a page that renders,
-    carries every word, and is unstyled, with no error anywhere"*. A request log
+    ⚠️ The failure is *a page that renders, carries every word, and is unstyled,
+    with no error anywhere*. A request log
     cannot see it; a computed style can.
 
-    ⛔ **All three probes this check made were ROTTEN, and `W388` stage 3 is what
-    exposed it.** It read `fontFamily.includes('Iowan')` — a face this repository
-    has not shipped since `W362` — or `body`'s `max-width` not being `none`,
-    which this stage sets to exactly `none` on the wide page, or a border on
-    `figure.code`, which `reading.css` says in as many words it does not draw.
-    ⭐ Two of the three were already dead and the check stayed green on the third
-    alone; it went red the moment that one moved. ⚠️ So the probes here are the
-    declarations a stylesheet-less page cannot possibly have: the prose face this
+    ⛔ **A probe can go stale while the check stays green on another.** A face
+    the repository no longer ships, a `max-width` the wide page sets to `none`,
+    or a border `reading.css` does not draw would each read nothing. ⚠️ So the
+    probes here are the declarations a stylesheet-less page cannot possibly
+    have: the prose face this
     package vendors, and a painted ground on `body` — a page with no stylesheet
     leaves that transparent. ⭐ Each is named separately, so a failure says which
-    one, and no single stale probe can carry the check on its own again.
+    one, and no single stale probe can carry the check on its own.
     """
     open_page.open(built_site.url("depth2-unit-01"))
     applied = dict(

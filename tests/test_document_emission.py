@@ -1,4 +1,4 @@
-"""§1f for document readers: one poisoned field in an otherwise valid document.
+"""No echo (R7) for document readers: one poisoned field in an otherwise valid document.
 
 ⛔ **The half `tests/test_emission.py` cannot see, and said so.** That check
 poisons an argument at a public boundary, which reaches the refusals raised
@@ -35,9 +35,9 @@ from tests.support import repository_root
 
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
 
-#: ⛔ A floor on **coverage**, not on defects — the same shape as W2's. It can
-#: only break by the probe reaching less of the tree than it does today.
-#: ⚠️ Measured 2026-09-09: 229 fields across 458 probes.
+#: ⛔ A floor on **coverage**, not on defects — the same shape as the emission
+#: sweep's. It can only break by the probe reaching less of the tree than it does
+#: today (229 fields across 458 probes).
 LEAST_FIELDS_POISONED = 180
 
 
@@ -56,7 +56,7 @@ def readers() -> list[Reader]:
     manifest = manifest_document.from_document(load(FIXTURES / "depth1/corpus.json"))
     depth1 = FIXTURES / "depth1/archive/depth-one"
     depth2 = FIXTURES / "depth2/archive/basics/01-getting-started"
-    # ⭐ `SF-13`'s pair, built from the same fixture the container reader uses,
+    # ⭐ The contents pair, built from the same fixture the container reader uses,
     # so the poisoned document is one this build would really have written.
     built = toc.build(manifest, [container_document.load(depth1 / "container.json", manifest)])
     identity = placement_identity.Identity(
@@ -103,8 +103,8 @@ def readers() -> list[Reader]:
         # ⭐ Added because the derived guard below found it, exactly as it
         # found `exercise/record.py`: `unit/served.py` reads the one document
         # every consumer reads, and it is the last boundary before a browser.
-        # ⭐ Added by `SF-13` in the commit that mints `toc_api`. Two documents
-        # share that version key, and both are readers — ⚠️ the derived guard
+        # ⭐ Two documents share the `toc_api` version key, and both are readers — ⚠️ the derived
+        # guard
         # below found only the first of them, because it looks for
         # `from_document` by name and the local half's reader is
         # `from_status_document`.
@@ -139,10 +139,9 @@ def found(readers):
 
 
 def test_no_reader_reproduces_a_field_it_refused(found):
-    # ⛔ Rubric §1f, one layer deeper than W2 could reach. Measured on the tree
-    # this branch started from: **58 leaks**, 54 of them one class — every
-    # reader listed its unknown keys verbatim, and `describe_keys` existed for
-    # exactly that and was used at none of them.
+    # ⛔ A refusal never echoes the value (R7), one layer deeper than the
+    # emission sweep reaches: a reader that lists its unknown keys verbatim is
+    # the common case, and `describe_keys` exists for exactly that.
     assert found.leaks == [], "\n" + found.report()
 
 
@@ -175,8 +174,8 @@ def modules_with_a_reader(root: Path) -> set[str]:
     """Every module under `root` defining a public `from_document` or `parse`.
 
     ⛔ Derived, so a package added next milestone is an obligation rather than
-    an omission — the W7 shape, which found an ungated reader nobody had
-    reported.
+    an omission — the gate-coverage shape, which finds an ungated reader nobody
+    has reported.
     """
     found: set[str] = set()
     for path in sorted(root.rglob("*.py")):
@@ -274,17 +273,16 @@ def test_the_two_poisons_are_synthetic_and_different():
 
 
 def test_the_gate_protects_some_fields_and_the_probe_says_which(readers):
-    # ⭐ Ruling 17's finding, made visible rather than assumed: a field that
+    # ⭐ Protection by shape list, made visible rather than assumed: a field that
     # refuses the home path only because `assert_clean` fired first is safe by
     # a shape list, not by construction. Poisoning with both is how the two
     # cases are told apart, and this asserts the distinction is real — the gate
     # really does refuse one and pass the other.
     #
-    # ⛔ **Ruling 58 made the distinction a TYPE, not a phrase.** This asserted
-    # `"personal data" in str(...)`, which only ever matched the wrapper text
-    # of the translation W27 removed; the gate's own message names the shape.
-    # ⭐ The type is the stronger assertion, and it is the one the ruling is
-    # about: the gate's refusal is not in any package's family.
+    # ⛔ **The distinction is a TYPE, not a phrase** (R7): the gate's own message
+    # names the shape, and a phrase would match only a wrapper's text.
+    # ⭐ The type is the stronger assertion, and it is the one that matters: the gate's refusal is
+    # not in any package's family.
     manifest = [reader for reader in readers if reader.name == "corpus.json"][0]
     with pytest.raises(PersonalDataLeak) as home:
         manifest.call({**manifest.document, "title": POISON})

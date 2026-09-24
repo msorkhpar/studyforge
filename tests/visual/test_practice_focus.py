@@ -1,13 +1,11 @@
 """An editor frame that takes focus as it starts never moves the page or keeps the focus.
 
-⛔ **The user's report, 2026-09-23:** *"When the code-server runs page suddenly
-scrolls to that UI automatically while it should have never changed the focus
-of the user automatically to another part of the page!"* ⚠️ **The mechanism,
-measured on the pilot:** the workbench calls `focus()` on its editor as it
-starts, the browser lets a same-site frame take focus from the page with no
+⛔ **A reader's page must never scroll to the editor, or lose its focus to it, on
+its own.** ⚠️ **The mechanism:** the workbench calls `focus()` on its editor as
+it starts, the browser lets a same-site frame take focus from the page with no
 user activation, and a focus scrolls every ancestor frame to the element — so
-the page glided to the editor and `document.activeElement` became the frame.
-⭐ `practice-editor.js` now gives that focus back and puts the page back where
+the page would glide to the editor and `document.activeElement` become the
+frame. ⭐ `practice-editor.js` gives that focus back and puts the page back where
 the reader left it; this module reads the page the way the reader sees it.
 
 ⭐ **The frame here is `editor_standin`'s**, on a second loopback origin: a
@@ -21,21 +19,18 @@ raises a `blur` on it, which is the reader's case and this module's. ⛔ The
 other route — a steal that raises NO `blur` (an unfocused window, or a frame
 taking focus from another frame) — cannot be staged by this harness: every tab
 it opens reports `document.hasFocus()` true, and a backgrounded one stops
-painting. ⭐ That route was read on the host against the pilot instead, and its
-watch is held by `tests/studyforge/render/page/test_practice_editor.py`.
+painting. ⭐ That route's watch is held by `tests/studyforge/render/page/test_practice_editor.py`.
 
 ⭐ **And the reader's own hand still works**: a click into the frame focuses it
 and what is typed reaches it.
 
-## ⛔ `W458` — every wait here is on an EVENT, and none is a sleep
+## ⛔ Every wait here is on an EVENT, and none is a sleep
 
-⚠️ **This module failed at random under parallel load**, and the cause was
-measured: the stand-in's reports of four keystrokes are four `fetch`es its
-server answers on four threads, and the LAST TO ARRIVE won — so `'w449'` was
-typed and `'w44'` was read. ⭐ That is fixed in `editor_standin` (a report
-carries its number). ⛔ **And the sleeps that remained are gone too**, because a
-fixed pause is a guess at how long the machine takes, and a loaded machine is
-exactly where the guess is wrong:
+⚠️ The stand-in's reports of four keystrokes are four `fetch`es its server
+answers on four threads, so they can arrive in any order; `editor_standin`
+numbers each report so the last one TYPED wins, not the last to arrive. ⛔ **And
+no wait is a sleep**, because a fixed pause is a guess at how long the machine
+takes, and a loaded machine is exactly where the guess is wrong:
 
 - ⭐ the frame's arrival is a `MutationObserver` in the page (`BUILT`);
 - ⭐ the stand-in's focus calls and keystrokes are its own reports (`wait_for`);
@@ -91,7 +86,7 @@ new Promise((done, fail) => {
 """.replace("__CEILING__", str(CEILING_MS))
 
 #: Resolves once the page's scroll position and `activeElement` have held still
-#: for `REST_FRAMES` consecutive animation frames (`W458`, the module docstring).
+#: for `REST_FRAMES` consecutive animation frames (the module docstring).
 AT_REST = """
 new Promise((done, fail) => {
   let last = null;

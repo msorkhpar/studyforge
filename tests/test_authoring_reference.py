@@ -2,7 +2,7 @@
 
 The reference is written for somebody converting their own material who has
 never read the spec and does not intend to. That reader has no way to notice a
-sentence that used to be true, so every vocabulary, key list, check name, rule
+sentence that stopped being true, so every vocabulary, key list, check name, rule
 id, exit code and worked example on those pages is derived from the code here
 and compared, rather than maintained by hand.
 
@@ -419,15 +419,10 @@ def test_the_shape_table_agrees_with_the_two_corpora_it_describes():
 
 
 def test_no_fence_anywhere_offers_a_console_script_that_does_not_exist():
-    # ⛔ SF-40 registered `[project.scripts]`, and this check was CONVERTED
-    # rather than deleted: a check with a scheduled expiry is converted, not
-    # dropped. The blanket refusal — no fenced line may begin `studyforge ` —
-    # became a derivation: a fenced line may give the
+    # ⛔ `[project.scripts]` registers the installed command, so this is a
+    # derivation rather than a blanket refusal: a fenced line may give the
     # installed command with a verb the tree registers, and may not give one it
     # does not.
-    #
-    # ⚠️ The NAME is kept although the predicate changed: frozen records cite
-    # it, and a record is annotated, never edited.
     pages = commanded_pages()
     assert_both_halves_reached(pages)
     assert_fenced_commands_are_registered(pages)
@@ -487,7 +482,7 @@ def test_every_command_the_reference_gives_names_a_module_that_can_be_run():
 
 @pytest.mark.parametrize("token", sorted(t for t in commanded_modules() if PLACEHOLDER.search(t)))
 def test_the_placeholder_exemption_swallows_only_a_complete_substitution(token):
-    """⛔ Ruling 156 clause 2 — the placeholder skip is ASSERTED INHABITED.
+    """⛔ The placeholder skip is ASSERTED INHABITED (R16: the code is the authority).
 
     Parametrized over the derivation, so an empty
     placeholder class SKIPS and lands in the skip census a reviewer reads out
@@ -495,7 +490,7 @@ def test_the_placeholder_exemption_swallows_only_a_complete_substitution(token):
     exemption that swallows a real module name print the same green.
 
     ⭐ **And the exemption is narrow:** a stray bracket — `studyforge.<mod`,
-    `tools.workspace>` — is a typo in a fence, not a substitution, and is
+    `studyforge.cli>` — is a typo in a fence, not a substitution, and is
     refused here rather than silently skipped by the check above.
     """
     assert re.fullmatch(r"<[\w.-]+>", token), (
@@ -506,9 +501,9 @@ def test_the_placeholder_exemption_swallows_only_a_complete_substitution(token):
 
 @pytest.mark.parametrize("token", sorted(consumer_side()))
 def test_every_consumer_side_declaration_is_earned_and_still_bites(token):
-    """⛔ Ruling 156 clause 2 — the consumer-side exemption is the DOCUMENT's.
+    """⛔ The consumer-side exemption is the DOCUMENT's.
 
-    Form B again: no page declares one and this row SKIPS rather than passing.
+    Form B again: no page declares one and this test SKIPS rather than passing.
     Two ways a live declaration rots, and both are refused: the page stops
     commanding the module it exempts, and the module turns out to resolve here
     after all — which would quietly lift a FRAMEWORK module out of the check
@@ -534,10 +529,10 @@ def test_every_consumer_side_declaration_is_earned_and_still_bites(token):
 
 @pytest.mark.parametrize("name", sorted(must_run()))
 def test_every_commanded_module_runs_in_a_real_interpreter(name):
-    """⛔ Ruling 156 clause 3 — one row is a real subprocess.
+    """⛔ One reading is a real subprocess.
 
     ⚠️ **It runs under the path `pyproject.toml` declares, and that is NOT the
-    reader's bare shell.** The bare-shell reading is the row below, which says
+    reader's bare shell.** The bare-shell reading is the test below, which says
     why this one cannot use it yet.
     """
     said = run_bare(name, declared_pythonpath())
@@ -551,19 +546,18 @@ def test_every_commanded_module_runs_in_a_real_interpreter(name):
 def test_the_reader_s_bare_shell_cannot_run_the_framework_and_that_gap_is_w75_s():
     """⛔ The divergence `find_spec` cannot see, PINNED — and it has an expiry.
 
-    ⭐ **This is the row the Acceptance asks for: red for a module `find_spec`
-    resolves and a bare shell does not.** `studyforge` lives under `src/`, no
+    ⭐ **Red for a module `find_spec` resolves and a bare shell does not.** `studyforge` lives under
+    `src/`, no
     shipped page tells a reader how it gets on the path, and `python3 -m
     studyforge.validate` from the repository root therefore exits on a module
-    it cannot find — while `find_spec` under pytest, and the row above, read it
+    it cannot find — while `find_spec` under pytest, and the test above, read it
     green off `pythonpath = ["src", "."]`.
 
     ⛔ **So the set asserted here is non-empty, every member resolves under the
     declared path, and that is the defect rather than the design.** ⚠️ **The gap
-    is the install's to close, not this row's to assert away.** ⭐ **When a bare
-    shell can run them, this row goes RED and is CONVERTED — the bare-shell reading becomes the
-    assertion and the row above folds into it** (a check with a scheduled
-    expiry is an acceptance condition on the task that expires it).
+    is the install's to close, not this test's to assert away.** ⭐ **When a bare
+    shell can run them, this test goes RED and is CONVERTED — the bare-shell reading becomes the
+    assertion and the test above folds into it**.
 
     ⭐ **CONVERTED WHERE THE GAP IS CLOSED, and not deleted.** Where the
     bare interpreter has `studyforge` INSTALLED — the pinned image, since its
@@ -583,11 +577,11 @@ def test_the_reader_s_bare_shell_cannot_run_the_framework_and_that_gap_is_w75_s(
         )
         return
     assert unreachable, (
-        "every commanded module now runs from a bare shell. ⭐ If W75 landed, "
-        "CONVERT this row — assert the bare-shell reading — and do not delete it"
+        "every commanded module now runs from a bare shell. ⭐ If that is now true, "
+        "CONVERT this check — assert the bare-shell reading — and do not delete it"
     )
     for name in sorted(unreachable):
         assert resolves(name), (
             f"python3 -m {name} fails from a bare shell AND does not resolve "
-            f"under the declared path — that is a typo, not W75's gap"
+            f"under the declared path — that is a typo, not the bare-shell gap"
         )

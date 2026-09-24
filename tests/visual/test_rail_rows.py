@@ -1,17 +1,17 @@
-"""`W326` in a real browser: the rail sizes no row of the reading column.
+"""The rail sizes no row of the reading column, in a real browser.
 
 ⛔ **A MANY-UNIT container, and that is the whole reason this module exists
-beside `test_rail.py`.** `W325` placed the rail at `grid-row: 1` — the masthead's
-row — and a grid row is as tall as its tallest item, so the masthead's row became
-as tall as the entire course list and every later element of the reading column
-began at the rail's bottom edge. ⭐ **A reader opened a unit, saw the title, and
-then the height of the rail in blank page.**
+beside `test_rail.py`.** A rail placed at `grid-row: 1` — the masthead's row —
+makes that row as tall as the entire course list, because a grid row is as tall
+as its tallest item, and every later element of the reading column then begins
+at the rail's bottom edge. ⭐ **A reader opens a unit, sees the title, and then
+the height of the rail in blank page.**
 
-⚠️ **It shipped because every fixture was too small to show it.** The gap is
-exactly the rail's overhang past the masthead, so it scales with the number of
-units the open container declares — and the largest container in any committed
-fixture corpus declares three. ⚠️ At that size the overhang reads as spacing in a
-capture rather than as a defect, and no clause was taking the reading anyway.
+⚠️ **Every committed fixture is too small to show it.** The gap is exactly the
+rail's overhang past the masthead, so it scales with the number of units the
+open container declares — and the largest container in any committed fixture
+corpus declares three. ⚠️ At that size the overhang reads as spacing in a
+capture rather than as a defect.
 ⛔ **So this module WIDENS a fixture corpus** — one container carried out to
 `UNITS` units — and takes its readings on a page inside that container, which is
 the one page whose disclosure is open and whose rail is therefore at full height.
@@ -22,11 +22,11 @@ the one page whose disclosure is open and whose rail is therefore at full height
 Each clause below opens the SAME built page twice — once as built, once with the
 rail region cut out of it — and asserts the reading column is laid out the same
 in both. ⭐ That is what *"the masthead's row is sized by the masthead"* means
-operationally, and on the tree this row was opened over the two readings differ
-by the rail's whole overhang — reported by the failure, never written down here.
+operationally, and on a tree with the defect the two readings differ by the
+rail's whole overhang — reported by the failure, never written down here.
 
 ⛔ **And it is asserted the other way too**: a third tree is built
-with the repaired declaration put back to the one that shipped, and the two
+with the correct declaration rewritten to the single-row one, and the two
 clauses above are asserted to FAIL on it. A control that only ever sees the fixed
 stylesheet has not been shown to notice the defect it exists for.
 """
@@ -67,15 +67,15 @@ RAIL = 'nav[aria-label="Containers"]'
 #: `test_rail.py` strips with, because it is the same control one clause along.
 RAIL_REGION = re.compile(r'<nav aria-label="Containers">.*?</nav>\n?', re.DOTALL)
 
-#: The page's aside, cut out by the same control. ⛔ Since `W388` the outline is
+#: The page's aside, cut out by the same control. ⛔ The outline is
 #: laid out BESIDE the reading column at this width, so a control that removed
 #: the rail alone would leave the compared page with a region in its column that
 #: the page under test has beside it — two different columns, compared as one.
 OUTLINE_REGION = re.compile(r'<nav aria-label="Outline">.*?</nav>\n?', re.DOTALL)
 
-#: The repaired placement, and the one that shipped. ⛔ The regressed control
+#: The correct placement, and the single-row one. ⛔ The regressed control
 #: rewrites the FIRST into the SECOND in a built tree's own stylesheet, so the
-#: control is this row's actual defect rather than an impression of it.
+#: control is the actual defect rather than an impression of it.
 REPAIRED = re.compile(r"grid-row:\s*1\s*/\s*span\s+\d+\s*;")
 REGRESSED = "grid-row: 1;"
 
@@ -84,7 +84,7 @@ REGRESSED = "grid-row: 1;"
 TOUCHING = 0.5
 
 #: The regions that are laid out BESIDE the reading column rather than in it:
-#: the rail on the left, and since `W388` the aside on the right — a unit's
+#: the rail on the left, and the aside on the right — a unit's
 #: outline, the index's explanation. ⛔ Dropped from the population below for one
 #: reason: this module is about the ROWS of the reading column, and a region in
 #: another column occupies none of them.
@@ -199,7 +199,7 @@ def _strip_rail(built: WideCorpus) -> None:
 
 
 def _regress(built: WideCorpus) -> None:
-    """Put the placement `W325` shipped back into a built tree's own stylesheet."""
+    """Put the single-row placement into a built tree's own stylesheet."""
     sheets = [
         sheet for sheet in sorted(built.root.rglob("*.css")) if REPAIRED.search(sheet.read_text())
     ]
@@ -223,7 +223,7 @@ def railless(tmp_path_factory: pytest.TempPathFactory) -> WideCorpus:
 
 @pytest.fixture(scope="session")
 def regressed(tmp_path_factory: pytest.TempPathFactory) -> WideCorpus:
-    """The same tree with `W325`'s placement put back — the defect itself."""
+    """The same tree with the single-row placement — the defect itself."""
     built = _build(tmp_path_factory.mktemp("visual-rail-rows-regressed"))
     _regress(built)
     return built
@@ -245,11 +245,11 @@ def column(open_page: OpenPage) -> Iterator[object]:
 def test_the_mastheads_row_is_sized_by_the_masthead_and_not_by_the_rail(
     column, widened: WideCorpus, railless: WideCorpus
 ) -> None:
-    """⛔ `W326`'s first clause, taken as a comparison and not against a figure.
+    """⛔ The masthead's row, taken as a comparison and not against a figure.
 
     ⭐ The masthead is a grid item and stretches to its row, so its own laid-out
-    height IS that row's height. ⚠️ On the tree this row was opened over it read
-    as the whole course list; the page it is compared against is the same page
+    height IS that row's height. ⚠️ On a tree with the defect it reads as the
+    whole course list; the page it is compared against is the same page
     with the region cut out, which is the reading column laid out alone.
     """
     railed = column(widened, WIDE)
@@ -265,16 +265,16 @@ def test_the_mastheads_row_is_sized_by_the_masthead_and_not_by_the_rail(
 def test_the_reading_column_begins_where_it_does_with_no_rail_at_all(
     column, widened: WideCorpus, railless: WideCorpus
 ) -> None:
-    """⛔ `W326`'s second clause: the element after the masthead has not moved.
+    """⛔ The element after the masthead has not moved.
 
     ⚠️ **The element AFTER the masthead**, because the masthead itself starts at
     the top of the page whether the row beneath it is right or wrong — it is the
-    thing that follows which the defect pushed down the page.
+    thing that follows which the defect pushes down the page.
 
     ⭐ **Only the first two are compared, and the reason is worth keeping.** A
     grid item stretches to its row and margins between grid items do not collapse,
     so further down the page the two layouts differ for reasons that are grid's
-    and not this row's. The defect is about where the reading starts.
+    and not the rail's. The defect is about where the reading starts.
     """
     railed = column(widened, WIDE)
     alone = column(railless, WIDE)
@@ -323,8 +323,7 @@ def test_the_rail_spans_at_least_as_many_rows_as_the_reading_column_has(
 ) -> None:
     """⭐ The general statement behind the two comparisons, read off the live layout.
 
-    ⛔ **`1 / -1` does not say this**, which is the measurement that sent this row
-    past the repair it was opened with: a negative row line counts back from the
+    ⛔ **`1 / -1` does not say this**: a negative row line counts back from the
     end of the EXPLICIT grid, and this grid declares columns only. ⚠️ A span
     shorter than the column is the same defect further down the page, and the two
     comparisons above would not see it on a page whose masthead row survived.
@@ -351,7 +350,7 @@ def test_the_rail_spans_at_least_as_many_rows_as_the_reading_column_has(
 def test_at_the_narrow_width_the_rail_is_still_the_card_above_the_reading_surface(
     open_page: OpenPage, column, widened: WideCorpus, railless: WideCorpus
 ) -> None:
-    """⛔ `W325`'s degradation, re-taken over a container this large.
+    """⛔ The narrow degradation, re-taken over a container this large.
 
     ⚠️ **The comparison the wide clauses make is NOT made here, and saying why is
     the point.** At this width the rail is back in the one column, above the
@@ -392,9 +391,9 @@ def test_both_wide_clauses_fail_on_a_tree_whose_placement_is_the_one_that_shippe
     """⛔ The negative control, and the answer to *why did the arms already here not catch it*.
 
     ⭐ **The tree is the real one and the defect is the real one**: the same build,
-    with the rail's placement rewritten in its own stylesheet back to the single
-    row `W325` merged. ⚠️ Both clauses are asserted to go RED on it — not one —
-    because either alone has a passing shape that is not the repair.
+    with the rail's placement rewritten in its own stylesheet to a single row.
+    ⚠️ Both clauses are asserted to go RED on it — not one — because either alone
+    has a passing shape that is not the right one.
     """
     broken = column(regressed, WIDE)
     alone = column(railless, WIDE)

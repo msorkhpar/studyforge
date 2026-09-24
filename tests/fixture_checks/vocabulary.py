@@ -8,7 +8,7 @@ one definition rather than restating it.
 **How you use it.** `from tests.fixture_checks import vocabulary`, or take the
 names re-exported from the package.
 
-**Depends on.** `re`, `pathlib`, and — since SF-06 landed — the framework's
+**Depends on.** `re`, `pathlib`, and the framework's
 own vocabulary. ⭐ **The duplication is resolved in the framework's favour, as
 this file said it would be.** `src/studyforge/` was empty when these fixtures
 were written, so the contract was restated here on purpose and with a note
@@ -93,13 +93,12 @@ RUNNABLE = "runnable"
 #: Every block type each corpus is required to exercise. `depth1` carries no
 #: video; every other type appears in both of the two coverage corpora.
 #:
-#: ⚠️ `rule`, `quote`, `html` and `disclosure` are required at **M1**, not
-#: deferred. The spec's C3 says 18 ISO files contain raw HTML; a recount with
-#: code fences stripped found **0 of 38** — the matches were XML inside fenced
-#: blocks. The real drivers are elsewhere and are no weaker: the disclosure is
+#: ⚠️ `rule`, `quote`, `html` and `disclosure` are required, not deferred.
+#: `<tag>`-shaped text in real material is mostly XML inside fenced blocks, so
+#: raw HTML is not what drives them; the real drivers are no weaker: the disclosure is
 #: a SPARQL requirement (6 of 19 lessons, every one of them hiding an exercise
-#: answer), thematic breaks and blockquotes are the Java corpus's. SF-07 needs
-#: all of them either way.
+#: answer), thematic breaks and blockquotes are the Java corpus's. The block
+#: vocabulary needs all of them either way.
 #:
 #: ⛔ **`shared-origin` is required to exercise three types and no more, and
 #: that is a decision rather than a gap.** It exists for one property — two
@@ -131,15 +130,14 @@ INVALID_CORPORA = {
 }
 
 #: ⛔ **The manifest versions a fixture may declare — a set, imported**, for
-#: `CONTAINER_APIS`'s reason below. ⭐ `W261`: six FND-04 invalid fixtures declare
+#: `CONTAINER_APIS`'s reason below. ⭐ Six invalid fixtures declare
 #: `corpus_api` 2, because only `content.not_material` (which 2 added) keeps their
 #: own `VIOLATION.md` out of both the source and `unclassified`.
 CORPUS_APIS = KNOWN_CORPUS_API
 
 #: ⛔ **The container-map versions a fixture may declare — a set, imported.**
-#: It was `CONTAINER_API = 1` while the framework's own constant moved to 2, so
-#: a fixture that used Ruling 92's region `origin` was refused by this checker
-#: for declaring the version that shape requires. ⭐ The set is the framework's
+#: A single `CONTAINER_API` constant here would refuse a fixture that uses the
+#: region `origin` for declaring the version that shape requires. ⭐ The set is the framework's
 #: (`KNOWN_CONTAINER_API`), read rather than restated: the fixtures deliberately
 #: carry **both** versions now, so the question this check asks is *is this a
 #: version this build reads*, not *is this the newest one*.

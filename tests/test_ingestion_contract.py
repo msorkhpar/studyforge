@@ -1,4 +1,4 @@
-r"""`W214`: the ingestion contract has one shape, and three pages must not spell it three ways.
+r"""The ingestion contract has one shape, and three pages must not spell it three ways.
 
 **What it asserts.** `skills/adapter/SKILL.md` draws the tree an adapter writes.
 That drawing is `archive_tree()`, byte for byte, so the page is the layout
@@ -17,8 +17,8 @@ every `assets` and `attachments` entry's `local` resolves, and where §5's
 contract table already places `<address>/units/unit-NN/content.json` — are in
 the tree the build reads and in no line of §6.
 
-⛔ **A `docs/specs/` edit needs the register's agreement**, so this asserts the
-half that holds today: **the spec names nothing the skill omits**, and the
+⛔ **The spec is not generated from the code**, so this asserts the half that
+holds either way: **the spec names nothing the skill omits**, and the
 skill may exceed it only by the drawn root and by segments `corpus.placement`
 owns. ⚠️ It keeps holding the day §6 gains the row, so nothing here has to be
 touched to accept the amendment.
@@ -105,7 +105,7 @@ def segments(fence: str) -> set[str]:
 
 def test_the_skill_draws_the_tree_the_layout_computes():
     # ⛔ Byte for byte. A page that drew it a line at a time would be a second
-    # spelling, and `W214` is what a second spelling costs: media written where
+    # spelling, and a second spelling costs media written where
     # no build looks, every media-bearing page a broken glyph, nothing failing.
     assert drawn_fence() == archive_tree()
 
@@ -124,7 +124,7 @@ def test_the_skill_names_the_directory_the_placement_package_owns():
 
 
 def test_the_step_that_draws_the_tree_writes_no_archive_path_in_prose():
-    """⛔ The row's *must not become*: a prose path is a retype waiting to diverge.
+    """⛔ The *must not become*: a prose path is a retype waiting to diverge.
 
     ⭐ The fence is computed and asserted; a sentence beside it is neither. So
     the step may NAME the two directories `corpus.placement` owns — it has to,
@@ -141,7 +141,7 @@ def test_the_step_that_draws_the_tree_writes_no_archive_path_in_prose():
         assert through not in outside, (
             f"step 3's prose spells a path through {through!r}; the fence is the only drawing"
         )
-    # ⛔ And the reader would see one: the sentence this row deleted, restored.
+    # ⛔ And the reader would see one: a prose path, planted.
     planted = outside + f"\n`<address>/{UNITS_DIRNAME}/unit-02/media/diagram.svg`\n"
     assert f"/{UNITS_DIRNAME}/" in planted
 
@@ -157,10 +157,10 @@ def test_the_contract_names_no_part_of_the_tree_the_skill_omits():
 
 
 def test_the_skill_exceeds_the_contract_only_where_the_framework_owns_the_name():
-    """⚠️ The gap `W214` found, held closed rather than described.
+    """⚠️ The gap between the skill's drawing and §6, held closed rather than described.
 
-    ⭐ Today the difference is the drawn root and `units/` — the row §6 does
-    not carry. ⛔ It may never be a segment neither `corpus.placement` nor the
+    ⭐ The difference is the drawn root and `units/` — the line §6 does not
+    carry. ⛔ It may never be a segment neither `corpus.placement` nor the
     reader supplies, because that would be a page inventing a location.
     """
     extra = segments(drawn_fence()) - segments(contract_fence())

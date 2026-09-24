@@ -5,7 +5,7 @@ module stood at 583 lines against R11's 600-line test ceiling, so the readers ev
 check in this directory shares could not be documented without breaking the build —
 and `commands()` is the one function in here whose whole value IS its documentation:
 it records two plants' worth of reasons for cutting the text exactly where it does.
-⭐ R11 is a ceiling rather than a budget (Ruling 261), and the answer to a module at
+⭐ R11 is a ceiling rather than a budget, and the answer to a module at
 its ceiling is a split, not a shorter comment.
 
 ⚠️ Imported as `from tests.docker.devfiles import ...`; `pythonpath = ["src", "."]`

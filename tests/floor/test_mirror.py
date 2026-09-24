@@ -47,8 +47,8 @@ def test_a_source_module_with_its_mirror_passes(tmp_path):
 
 
 def test_a_test_with_no_source_is_not_a_finding(tmp_path):
-    # ⚠️ One-way on purpose. `tests/harness/`, `tests/visual/`
-    # (QA-03), `tests/support.py` and the repository-level tests all exist
+    # ⚠️ One-way on purpose. `tests/harness/`, `tests/visual/`,
+    # `tests/support.py` and the repository-level tests all exist
     # without a source counterpart; checking the reverse direction would turn
     # each of them into an exemption, and an exemption list that grows is how
     # a check stops being believed.

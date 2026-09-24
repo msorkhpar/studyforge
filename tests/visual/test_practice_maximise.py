@@ -1,15 +1,15 @@
-"""`W431` — the practice maximises, restores, and throws nothing away, in a browser.
+"""The practice maximises, restores, and throws nothing away, in a browser.
 
-⛔ **THE USER ASKED FOR THIS DIRECTLY:** *"there should be a button that user
-could maximize this window to have more control over the code and tests + run
-and summit buttons"*. ⭐ The panel is a region of a reading page sized for prose,
+⛔ **The practice panel has a control that maximises it**, so a reader writing
+code gets the whole window for the code, the tests and the Run and Submit
+buttons. ⭐ The panel is a region of a reading page sized for prose,
 and a reader writing code works through a letterbox: the editor, the test they
 must satisfy and a run's output all compete for a few hundred pixels under a
 chapter of teaching material.
 
 ## ⛔ Why this needs a BROWSER, and why a text could not answer it
 
-⭐ **Two of the row's clauses are runtime identities and nothing else.** *"A live
+⭐ **Two of the clauses are runtime identities and nothing else.** *"A live
 run must not be interrupted by the transition"* and *"the two windows are
 `iframe`s, and an `iframe` MOVED TO ANOTHER PARENT RELOADS"* are claims about
 objects that exist only while a page is running. ⛔ A text can establish that the
@@ -20,7 +20,7 @@ reader was typing in is still the document that is there afterwards.
 ⭐ **So the frames are MARKED TWICE, and the two marks fail differently.** The
 element carries one and the document inside it carries the other: a reparent
 keeps the *element* and replaces the *window*, so an element mark alone would
-survive the very move this row forbids. ⚠️ `_survived` reads both.
+survive the very move that is forbidden. ⚠️ `_survived` reads both.
 
 ## ⛔ What is real here and what is a stand-in
 
@@ -58,7 +58,7 @@ from tests.visual.test_practice_panel import (
 #: Mark every editor frame, on the ELEMENT and inside the DOCUMENT it is
 #: showing. ⛔ **Two marks, because they fail differently and only both together
 #: read the clause.** A frame moved to another parent is the SAME element — so an
-#: element mark alone would survive the very reparent this row forbids — but the
+#: element mark alone would survive the very reparent that is forbidden — but the
 #: move reloads it, and the window the document lived in is replaced, so the mark
 #: INSIDE is gone. ⚠️ Written only once every frame has finished loading: a mark
 #: put on a window that is still committing a document goes with it.
@@ -85,13 +85,13 @@ TOUCHING = 1.0
 MAXIMISE = "Maximise"
 
 #: The viewport the scroll case pins, so its reading stops depending on which
-#: browser ran it. ⛔ **MEASURED, and the two arms really do differ**: the window
-#: this harness launches leaves **900px** of viewport in the pinned image and
-#: **813px** on this host's own browser — the same page, two different amounts
-#: of room, because a browser's own chrome is not part of what `--window-size`
+#: browser ran it. ⛔ **The two arms really do differ**: the window this harness
+#: launches can leave a different viewport height in the pinned image and on a
+#: host's own browser — the same page, two different amounts of room, because a browser's own
+#: chrome is not part of what `--window-size`
 #: promises. ⭐ An explicit height makes the document's spare scroll the same
 #: number in both. ⚠️ **1280 wide is deliberately the harness's own wide
-#: width**: narrowing it folds the rail and changes the page this row is about.
+#: width**: narrowing it folds the rail and changes the page this case is about.
 SCROLL_CASE_VIEWPORT = (1280, 600)
 
 #: How much room the page has, and how much of it the panel is — the three
@@ -110,13 +110,10 @@ ROOM = """
 
 #: Put the reader at the end of the page — and make sure they ARRIVE.
 #:
-#: ⛔ **`behavior: 'instant'`, for the very reason this row exists.** `reset.css`
-#: sets `scroll-behavior: smooth` on `html`, so a plain `scrollTo` ANIMATES and
-#: a reading taken straight after it is a reading of a page still in motion.
-#: ⚠️ **MEASURED: this one setup line read `0` on this host's browser while
-#: reading the real position in the pinned image** — the same defect this row
-#: repairs, living in the check that repairs it, and it is what refused the
-#: second merge. ⛔ A check's SETUP is as subject to the mechanism as the code.
+#: ⛔ **`behavior: 'instant'`.** `reset.css` sets `scroll-behavior: smooth` on
+#: `html`, so a plain `scrollTo` ANIMATES and a reading taken straight after it
+#: is a reading of a page still in motion — on one browser `0`, on another the
+#: real position. ⛔ A check's SETUP is as subject to the mechanism as the code.
 TO_THE_END = """
 window.scrollTo({ top: document.documentElement.scrollHeight, left: 0, behavior: 'instant' });
 """
@@ -133,16 +130,13 @@ BELOW_THE_FOLD = """
 
 #: Record every time the PAGE comes to rest, and what had focus when it did.
 #:
-#: ⛔ **The smooth-scroll repair, and this is the whole of it.** Reaching the control by
-#: Tab scrolls it into view, and `reset.css`'s `scroll-behavior: smooth` makes
-#: that scroll a GLIDE. ⭐ **MEASURED in the pinned image:** from a reader at the
-#: top, the glide runs `0, 2, 10, 25, 51, 93 … 1121, 1122` over about 560ms —
-#: and the reading of the page the reader left was taken at its first frame.
-#: Alone, the Enter lands before a frame is drawn and both readings say `0`;
-#: under load a frame or two slips between them, the panel remembers the page
-#: where the glide had got to, and the check read `4` against `0`, `4` against
-#: `2`, and `2` against `0` — every one a glide frame, never a restore error.
-#: ⛔ **So the fix is to read a page AT REST, not to forgive a difference**: the
+#: ⛔ **Smooth scrolling, and this is the whole of the care it needs.** Reaching
+#: the control by Tab scrolls it into view, and `reset.css`'s
+#: `scroll-behavior: smooth` makes that scroll a GLIDE: in the pinned image, from
+#: a reader at the top, it runs `0, 2, 10, 25, 51, 93 … 1121, 1122` over about
+#: 560ms. A reading taken during it catches a glide frame, and under load a frame
+#: or two slips between two readings that should agree. ⛔ **So the page is read
+#: AT REST, never forgiven a difference**: the
 #: browser's own `scrollend` says when the glide has finished, and it is armed
 #: BEFORE the traversal so a glide that ends early is still seen.
 #: ⚠️ On the DOCUMENT and not captured, so the output region's own scrolling,
@@ -275,12 +269,10 @@ def test_the_practice_maximises_to_the_whole_viewport_and_escape_restores_it(
     # ⛔ **The page the reader LEFT is read here, after the traversal that
     # reaches the control, AFTER the glide that traversal starts has finished,
     # and before the press — never at the top of the document and never in
-    # motion.** ⚠️ The first version compared against `at_rest`, taken before a
-    # single Tab; the second read straight after the traversal, at the glide's
-    # first frame, and failed under load by whatever frames slipped in before
-    # the press (measured at `AT_REST`). ⛔ It is still EXACT equality
-    # and not a tolerance — what changed is that both readings are of a page
-    # that has stopped.
+    # motion.** ⚠️ A reading taken before a single Tab, or straight after the
+    # traversal at the glide's first frame, differs from the rest position by
+    # whatever frames slip in before the press. ⛔ It is EXACT equality and not
+    # a tolerance, because both readings are of a page that has stopped.
     rest = _glided_to(open_page, at_rest["maximise"]["label"])
     left = _state(open_page)
     assert left["viewport"]["scrolled"] == rest["scrolled"], (
@@ -317,7 +309,7 @@ def test_the_practice_maximises_to_the_whole_viewport_and_escape_restores_it(
 def test_neither_editor_window_is_reloaded_by_maximising_or_restoring(
     open_page: OpenPage, framed: served.Served
 ) -> None:
-    """⛔ **THE clause this row is measured by, and it is measured ground.**
+    """⛔ **THE clause this module is measured by, and it is measured ground.**
 
     ⭐ The two windows are `iframe`s, and an `iframe` MOVED TO ANOTHER PARENT
     RELOADS — so a maximise built by reparenting the frames into a full-screen
@@ -332,8 +324,8 @@ def test_neither_editor_window_is_reloaded_by_maximising_or_restoring(
         lambda reading: len(reading["frames"]) == 1 and reading["frames"][0]["ready"],
         "loaded the editor window it was given",
     )
-    # ⭐ The second window is built on the first press of its tab (`W429`), and
-    # this row must carry BOTH of them across the transition. ⚠️ **Reached with
+    # ⭐ The second window is built on the first press of its tab, and
+    # this case must carry BOTH of them across the transition. ⚠️ **Reached with
     # an ARROW and not with Tab**: a tablist uses a roving `tabindex`, so exactly
     # one tab is in the focus ring and the other is an arrow away from it.
     _tab_to(open_page, "Your code")
@@ -395,24 +387,19 @@ def test_restoring_gives_back_the_place_in_the_page_the_reader_left(
 ) -> None:
     """⛔ **Clause 1's scroll half, taken at the ONE place it can fail.**
 
-    ⚠️ **This is a repair, and the defect was real** (`W431/1`). The expansion
-    is `position: fixed`, which takes the panel OUT OF FLOW — so the document
+    ⚠️ **The expansion is `position: fixed`**, which takes the panel OUT OF FLOW — so the document
     loses exactly the panel's own height, the furthest a reader can scroll drops
     with it, and the browser CLAMPS a scroll that no longer fits. ⛔ Restoring
     the height does not undo a clamp.
 
-    ⭐ **MEASURED before the repair, on this fixture page:** a reader at the foot
-    of the page came back **306px** from where they left; a reader at the top
-    came back exactly where they were. ⛔ **So a reading taken at the top of the
-    page asserts nothing about this**, and the first one was — which is how it
-    reached a merge gate.
+    ⭐ **On this fixture page, without the restore's own care**, a reader at the
+    foot of the page comes back hundreds of pixels from where they left, and a
+    reader at the top comes back exactly where they were. ⛔ **So a reading taken
+    at the top of the page asserts nothing about this.**
 
-    ⛔ **This case pins its own viewport and states its precondition in numbers**.
-    ⚠️ Its first version depended on whatever room the browser
-    happened to give the page, and on a `scrollTo` that — like everything else
-    on these pages — ANIMATES: it read `0` on this host's browser and the real
-    position in the pinned image, and a guard refusing a meaningless reading is
-    the only reason that was ever seen.
+    ⛔ **This case pins its own viewport and states its precondition in numbers**,
+    so it depends neither on whatever room the browser gives the page nor on a
+    `scrollTo` that — like everything else on these pages — ANIMATES.
     """
     # ⛔ **The viewport is PINNED for this case**, so what it reads is the same
     # in both arms of the harness rather than a property of whichever browser

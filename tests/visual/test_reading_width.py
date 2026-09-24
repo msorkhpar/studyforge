@@ -1,48 +1,37 @@
-"""`W388`: one shape that works on every display, read at five widths.
+"""One shape that works on every display, read at five widths.
 
-⛔ **SPLIT OUT OF `test_reading_room.py` AT A SEAM, AND THE SEAM IS THE SUBJECT**
-(Ruling 261). That module answers *is this a page somebody can read for hours* —
-the palette's contrast bands, the theme control, the rail on the first page, the
-transport across the content, the length of a line. ⭐ **Every clause here
-answers one different question instead: does the page use the WINDOW**, read at
-five widths rather than at the one wide viewport that module opens. ⚠️ The other
-half of the reason is stated rather than implied: `test_reading_room.py` was
-measured at 531 lines against R11's 600 before this stage, and R11's remedy is a
-split at a named seam, never a trim.
+⛔ **A MODULE OF ITS OWN BESIDE `test_reading_room.py`, AT A SEAM, AND THE SEAM
+IS THE SUBJECT**. That module answers *is this a page somebody can read for
+hours* — the palette's contrast bands, the theme control, the rail on the first
+page, the transport across the content, the length of a line. ⭐ **Every clause
+here answers one different question instead: does the page use the WINDOW**,
+read at five widths rather than at the one wide viewport that module opens, and
+keeping them apart keeps both modules inside R11.
 
-## ⛔ Three shapes, two of them read and rejected BY THE USER
+## ⛔ The shape, and the two it must not be
 
-> Still the paragraph texts are not using the full width for some reason.
+⛔ **One shape rather than a rule per display:** the shell is bounded at
+`--page-max` AND centred. Below the ceiling the margins resolve to nothing and
+the page fills the window; above it the shell holds that width with EQUAL
+margins either side. ⚠️ **Equal is the whole clause** — a dead band is spare
+room that is all on one side, so a shape whose margins are equal at every width
+cannot have one.
 
-⭐ **Stage 2's shape, measured:** the shell was ceilinged at `110rem` and PINNED
-LEFT (`margin-left: 0`), so at 2560px the rail, the reading column and the aside
-were packed into the left two thirds and the last 820px of the screen was empty.
-
-> right now the width is too wide. Find a common ground for different displays.
-> maybe if the display is too big having the menu and content in the middle by
-> forcing a max width or something.
-
-⭐ **Stage 3's shape:** the ceiling came off the shell entirely. That cured the
-dead band and opened the opposite failure — the three tracks grew with the screen
-with nothing to stop them, and the open room between a capped paragraph and the
-outline grew with them.
-
-⛔ **Stage 4's shape, and it is ONE shape rather than a rule per display:** the
-shell is bounded at `--page-max` AND centred. Below the ceiling the margins
-resolve to nothing and the page fills the window as stage 3's did; above it the
-shell holds that width with EQUAL margins either side. ⚠️ **Equal is the whole
-clause** — a dead band is spare room that is all on one side, so a shape whose
-margins are equal at every width cannot have one.
+⭐ **The two shapes it must not be.** A shell ceilinged and PINNED LEFT
+(`margin-left: 0`) packs the rail, the reading column and the aside into the
+left of a wide screen and leaves the rest empty, so the paragraphs do not use
+the width. A shell with no ceiling at all lets the three tracks grow with the
+screen with nothing to stop them, and the open room between a capped paragraph
+and the outline grows with them.
 
 ## ⚠️ Why five widths and why the ceiling is read off the page
 
 ⛔ **A clause taken at one viewport settles nothing here**: the packed-left shape
-was correct at 1280 and 1440 and wrong at 1920 and 2560, and the unbounded shape
-is correct at every width below the ceiling and wrong above it. ⭐ 3840 joins the
-four stage 3 used, because it is the width where an unbounded shell is most
-obviously unbounded. ⛔ **The ceiling itself is read back through a probe on
-`--page-max`**, never typed here: a palette that moves the ceiling moves every
-clause in this module with it.
+is correct at 1280 and 1440 and wrong at 1920 and 2560, and the unbounded shape
+is correct at every width below the ceiling and wrong above it. ⭐ 3840 is the
+width where an unbounded shell is most obviously unbounded. ⛔ **The ceiling
+itself is read back through a probe on `--page-max`**, never typed here: a
+palette that moves the ceiling moves every clause in this module with it.
 """
 
 from __future__ import annotations
@@ -64,18 +53,17 @@ from tests.visual.test_reading_room import (
     UNIT_PAGE,
 )
 
-#: The five window widths this row is settled at, in CSS pixels. ⛔ **1280 and
-#: 1440 are here because the pinned shape PASSED at both** — its ceiling was
-#: 1760px, so a reading taken at either one would have called it correct. ⭐ 1920
-#: and 2560 are the two the user's own screen sits between, and 3840 is where an
-#: unbounded shell is most obviously unbounded.
+#: The five window widths this module reads, in CSS pixels. ⛔ **1280 and 1440
+#: are here because the pinned-left shape PASSES at both**, so a reading taken at
+#: either one alone would call it correct. ⭐ 1920 and 2560 are common wide
+#: screens, and 3840 is where an unbounded shell is most obviously unbounded.
 WIDTHS = (1280, 1440, 1920, 2560, 3840)
 
 #: The page's height, taken from the harness's wide viewport so this module
 #: cannot disagree with the rest of the suite about how tall a window is.
 HEIGHT = WIDE[1]
 
-#: The two shapes the user read and rejected, as inline declarations on `body`.
+#: The two rejected shapes, as inline declarations on `body`.
 #: ⛔ **Planted inline rather than on a damaged tree**, because what is under
 #: test is the laid-out page and not the stylesheet — and inline is the one place
 #: that beats the wide shape's own rule.
@@ -113,11 +101,11 @@ BOXES = (
 
 
 def wasting_the_window(reading: dict) -> list[str]:
-    """Every way this reading fails the stage's shape, named one by one.
+    """Every way this reading fails the shape, named one by one.
 
-    ⛔ **The user's two sentences as arithmetic.** Five things have to hold
-    together and any one of them alone has a passing shape that is not the
-    repair: a shell that centres but keeps growing, a shell that stops growing
+    ⛔ **The shape as arithmetic.** Five things have to hold together and any
+    one of them alone has a passing shape that is not the right one: a shell that centres but keeps
+    growing, a shell that stops growing
     but keeps all its spare room on one side, a centred shell with its rail
     floating inside it, or one whose reading column stops short of the outline.
 
@@ -184,7 +172,7 @@ def read(open_page: OpenPage, url: str, width: int, plant: str = "") -> dict:
 def test_the_shell_fills_the_window_or_centres_at_its_ceiling(
     open_page: OpenPage, built_site: site.Site, case: str, width: int
 ) -> None:
-    """⛔ The stage in one reading: no dead band, at any of the five widths."""
+    """⛔ The shape in one reading: no dead band, at any of the five widths."""
     complaints = wasting_the_window(read(open_page, built_site.url(case), width))
 
     assert not complaints, f"at {width}px the {case} page: " + "; ".join(complaints)
@@ -194,16 +182,16 @@ def test_the_shell_fills_the_window_or_centres_at_its_ceiling(
 def test_the_shape_the_user_read_as_a_dead_band_is_caught(
     open_page: OpenPage, built_site: site.Site, width: int
 ) -> None:
-    """⭐ Both ways, with stage 2's pin put back on top of stage 4's ceiling.
+    """⭐ Both ways, with the left pin planted on top of the ceiling.
 
-    ⚠️ The ceiling alone was never the defect — the PIN was — so the control
-    plants the pin and leaves the ceiling where this stage put it.
+    ⚠️ The ceiling alone is not the defect — the PIN is — so the control plants
+    the pin and leaves the ceiling where it is.
     """
     complaints = wasting_the_window(read(open_page, built_site.url(UNIT_PAGE), width, PINNED_LEFT))
 
     assert complaints, (
         f"at {width}px the left-pinned shell leaves this reading with nothing to say, "
-        "so it cannot tell the shape the user rejected from the repaired one"
+        "so it cannot tell the rejected shape from the right one"
     )
 
 
@@ -213,16 +201,15 @@ def test_the_shape_the_user_read_as_too_wide_is_caught(
 ) -> None:
     """⭐ Both ways, the other rejected shape: the shell with its ceiling released.
 
-    ⛔ **This is what stage 3 shipped**, and it passed every clause that stage
-    wrote, because those clauses asked only whether the page spanned the window.
-    ⚠️ A reading that cannot tell *centred at a ceiling* from *as wide as the
-    glass* would let this stage ship the shape it was opened to replace.
+    ⛔ **It passes every clause that asks only whether the page spans the
+    window.** ⚠️ A reading that cannot tell *centred at a ceiling* from *as wide
+    as the glass* cannot refuse it.
     """
     complaints = wasting_the_window(read(open_page, built_site.url(UNIT_PAGE), width, UNBOUNDED))
 
     assert complaints, (
         f"at {width}px the unbounded shell leaves this reading with nothing to say, "
-        "so this stage's shape and the one before it are the same clause"
+        "so the right shape and the unbounded one are the same clause"
     )
 
 
@@ -233,12 +220,12 @@ def test_neither_rejected_shape_is_caught_at_a_window_it_happens_to_fit(
     """⛔ The other half of the control: BOTH rejected shapes pass at 1280.
 
     ⚠️ This is why `WIDTHS` has five entries and not one. Below the ceiling the
-    pinned shell, the unbounded shell and this stage's shell are the SAME
-    LAYOUT — which is exactly how each shipped shape got its green readings.
+    pinned shell, the unbounded shell and the right shell are the SAME LAYOUT —
+    so a reading taken only there is green for all three.
     """
     assert not wasting_the_window(read(open_page, built_site.url(UNIT_PAGE), 1280, plant)), (
         "a rejected shape is already caught at 1280px, so the wide widths above "
-        "are not what makes this stage's reading work"
+        "are not what makes this reading work"
     )
 
 
@@ -247,8 +234,8 @@ def test_neither_rejected_shape_is_caught_at_a_window_it_happens_to_fit(
 
 #: A column with no cap left on it at all. ⛔ **Far past the bound on purpose.**
 #: ⚠️ Neighbouring caps differ by one or two characters, and the SAME cap lays
-#: out a different count on this host and in the pinned image (`W388` stage 3,
-#: measured) — so a control a couple of characters over the bound would be red in
+#: out a different count on this host and in the pinned image — so a control a couple of characters
+#: over the bound would be red in
 #: one environment and green in the other. ⭐ `200ch` is wider than the reading
 #: column at every width here, so what it lays out is the column itself: about
 #: 140 characters, in both.
@@ -304,7 +291,7 @@ def test_a_column_with_no_cap_on_it_is_caught_by_the_same_count(
 
 
 def sound(**changes: object) -> dict:
-    """A reading of this stage's shape at 2560, with `changes` applied to it.
+    """A reading of the right shape at 2560, with `changes` applied to it.
 
     ⛔ The shell is 1760px — the ceiling — centred in a 2560px window, so there
     are 400px either side; the rail is on the shell's left edge and the aside one
@@ -389,7 +376,7 @@ def test_each_way_the_page_can_waste_its_window_is_caught_by_name(what: str, cha
 #: shape below the rail's threshold. ⛔ **The mismatch is invisible at 720, 1280
 #: and 1440**, where the reading column is no wider than `--measure` — so a
 #: reading taken only at the harness's default viewport would call the capped
-#: disclosure correct, which is how it shipped. ⭐ The control below is read at
+#: disclosure correct. ⭐ The control below is read at
 #: the three widths where the column is wider than the measure.
 CODE_WIDTHS = (NARROW[0], *WIDTHS)
 
@@ -413,8 +400,8 @@ SOLUTION_AND_FLOW = """
 })()
 """
 
-#: The rule the repair removed, planted back as a page style: the disclosure held to
-#: the prose measure, which is what the user read as a narrower solution.
+#: A disclosure held to the prose measure, planted as a page style: it reads as a
+#: solution narrower than the page's other code blocks.
 MEASURED_DISCLOSURE = (
     "(() => { const s = document.createElement('style');"
     " s.textContent = 'details.disclosure { max-width: var(--measure); }';"
@@ -439,8 +426,7 @@ def code_widths(open_page: OpenPage, url: str, width: int, plant: str = "") -> d
 def test_a_code_block_in_a_disclosure_is_as_wide_as_one_in_the_flow(
     open_page: OpenPage, built_site: site.Site, width: int
 ) -> None:
-    """⛔ The user's report as a reading: *"the size of code block … for the
-    solution does not match with the rest of the code blocks"*."""
+    """⛔ A code block in a solution is as wide as the rest of the page's code blocks."""
     reading = code_widths(open_page, built_site.url(UNIT_PAGE), width)
 
     assert abs(reading["solution"] - reading["flow"]) <= TOUCHING, (
@@ -453,10 +439,10 @@ def test_a_code_block_in_a_disclosure_is_as_wide_as_one_in_the_flow(
 def test_a_disclosure_held_to_the_measure_is_caught(
     open_page: OpenPage, built_site: site.Site, width: int
 ) -> None:
-    """⭐ Both ways: the shipped rule, planted back, is a mismatch this reads."""
+    """⭐ Both ways: the measured disclosure, planted, is a mismatch this reads."""
     reading = code_widths(open_page, built_site.url(UNIT_PAGE), width, MEASURED_DISCLOSURE)
 
     assert reading["flow"] - reading["solution"] > TOUCHING, (
         f"at {width}px the measured disclosure reads {reading['solution']:.2f}px against "
-        f"{reading['flow']:.2f}px, so this reading cannot see the defect the user reported"
+        f"{reading['flow']:.2f}px, so this reading cannot see a narrower solution"
     )
