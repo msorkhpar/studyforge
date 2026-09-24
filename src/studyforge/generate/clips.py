@@ -40,6 +40,10 @@ no page addresses is not copied. ⛔ A clip the record promised and the disk
 lacks (`NOT_ON_DISK`) is not copied and goes into `Written.missing`; the page
 already names the gap. `NOT_RECORDED` is never missing. ⚠️ A copy a later
 record no longer names is left where it is (answer 2; `W193` answer 1).
+⭐ `W467`: it is not left silently. A build with narration off into another root
+names each clip an earlier narrated build copied there (`Written.unlinked`,
+`W460/4`), and a voiced build names each clip it plays that says words its
+paragraph no longer says (`Written.stale`, `W457/1`). Neither is acted on.
 
 ## ⚠️ What `studyforge plan` names and this does not copy
 
