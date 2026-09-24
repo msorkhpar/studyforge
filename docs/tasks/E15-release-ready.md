@@ -8,12 +8,12 @@ product, the board becomes light, and the next corpus needs only the README and 
 
 ⛔ **The authority is the user: the release-ready direction of 2026-09-18 and the six
 rulings of 2026-09-19.** ⭐ **They are SETTLED, and a row here that re-asks one of them is
-re-deriving a settled thing.** The argument that minted this epic is [`W438`](rows/W438.md).
+re-deriving a settled thing.** The argument that minted this epic is `W438`.
 
 ⛔ **This document carries no measured figure, deliberately.** How many files, lines,
 branches, worktrees and `tools.*` importers there are is a reading, and a reading in an epic
 is stale the round after it is written. ⭐ **The inventory was measured at `a469adc2` and
-lives in [`W438`'s handoff](handoffs/W438.md), with the command that took each figure.**
+lives in `W438`'s handoff, with the command that took each figure.**
 ⛔ **Every task below re-takes its own population at its own ref**, with the same command,
 before it acts.
 
