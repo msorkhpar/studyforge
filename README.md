@@ -51,12 +51,10 @@ python3 -m studyforge.skills.onboarding.verify
 ```
 
 The first lists the verbs; the second prints the version of the library this
-Python imports. Onboarding records that version, and the commit the wheel was
-built from, in your corpus. Keep that commit to hand:
-
-```sh
-git -C studyforge rev-parse HEAD
-```
+Python imports and the commit the wheel was built from, which the wheel carries.
+Onboarding records both in your corpus, and your corpus's checks compare them
+with the library installed. Build the wheel from a clone, as above: a tree that
+is not a git checkout cannot say its commit, so no wheel is built from one.
 
 ## A first run, on an example that ships with the framework
 

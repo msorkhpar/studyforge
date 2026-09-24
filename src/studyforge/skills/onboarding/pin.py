@@ -26,11 +26,12 @@ is `"installed"`, and a stub names its skill and the command that prints the
 procedure from the installed package (`studyforge.skills.documents`).
 ⛔ **A stub carries no path at all**, relative or absolute (R7).
 
-⭐ **The version is verified; the commit is recorded.** An installed wheel
-carries no git history, so there is nothing to ask whether it holds a commit
-(`W270`'s check needed a checkout, and retired with it); the version is read
-from the library the corpus's Python imports, both when onboarding writes and
-when the generated `test_framework_pin.py` runs. ⛔ Both values are checked by
+⭐ **Both are verified** (`W467`). The version is read from the library the
+corpus's Python imports, and so is the commit: a built wheel carries the one it
+was built from (`library.commit()`, stamped by the repository's `setup.py`),
+both when onboarding writes and when the generated `test_framework_pin.py` runs.
+⚠️ A source tree carries none, and the generated check says so and skips that
+one assertion rather than passing it. ⛔ Both values are checked by
 SHAPE here and never quoted back: the value that fails that test is almost
 always a path, and a refusal is read in a log and pasted into a bug report.
 
@@ -221,6 +222,23 @@ def pin_test(skills: Sequence[str] = SKILLS, reader: str | None = ONBOARDING_DOC
             "    assert installed == pin['version'], (",
             "        'the installed ' + FRAMEWORK + ' is ' + installed + ' and the pin names ' +",
             "        pin['version'] + '; install the pinned version, or re-pin (R19)'",
+            "    )",
+            "",
+            "",
+            "def test_the_installed_library_was_built_from_the_pinned_commit():",
+            '    """A pin naming another commit than the library\'s own names another library."""',
+            "    library, _documents = _installed()",
+            "    built = library.commit()",
+            "    if built is None:",
+            "        skip(",
+            "            'the ' + FRAMEWORK + ' this Python imports is a source tree, '",
+            "            'not a built wheel, so it cannot say which commit it is; '",
+            "            'the version is checked'",
+            "        )",
+            "    pin = _pin()",
+            "    assert built == pin['commit'], (",
+            "        'the installed ' + FRAMEWORK + ' was built from ' + built + ' and the pin '",
+            "        'names ' + pin['commit'] + '; install the pinned build, or re-pin (R19)'",
             "    )",
             "",
             "",

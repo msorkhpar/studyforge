@@ -8,7 +8,7 @@ skill's own documents into one file set, and writes it all or none of it.
 
     from studyforge.skills.onboarding import onboard
 
-    made = onboard(draft, framework_commit=commit)
+    made = onboard(draft)
     print("\n".join(made.lines()))   # every path, and the one that is yours
     made.write(corpus_root)          # ⛔ refuses to overwrite anything
 
@@ -86,7 +86,6 @@ from studyforge.skills.onboarding.pin import (
     RECORD_FILE,
     SKILLS,
     PinRefused,
-    check_commit,
     known,
     pin_document,
     pin_test,
@@ -106,7 +105,7 @@ class Onboarding:
     manifest: Manifest
     files: tuple[Written, ...]
     not_material: tuple[dict[str, str], ...]
-    #: The framework commit the pin records: the operator's, shape-checked.
+    #: The framework commit the pin records: the wheel's own, or the caller's for a tree.
     commit: str
     #: ⭐ The version of the library this onboarding ran as, which the pin records.
     version: str
@@ -229,7 +228,7 @@ class Onboarding:
 def onboard(
     draft: object,
     *,
-    framework_commit: str,
+    framework_commit: str | None = None,
     reasons: Mapping[str, str] | None = None,
     skills: Sequence[str] = SKILLS,
     existing: str | None = None,
@@ -238,7 +237,9 @@ def onboard(
     """Return everything a repository becomes, from reconnaissance's draft.
 
     `framework_commit` is the commit the running library was built from; the pin
-    records it beside the version read from that library. `existing` is
+    records it beside the version read from that library. ⭐ A built wheel knows
+    its own (`W467`), so it may be left out, and one naming another is refused;
+    a source tree does not, so there it is required. `existing` is
     the text of the `corpus.json` a re-onboarding finds on disk (`W283`); a
     first onboarding passes nothing and is unchanged. ⛔ **`root` moves no byte**
     (`W442`): no document names a path to the framework, so a regenerate from a
@@ -247,8 +248,8 @@ def onboard(
     reads no state either (`W332`).
     """
     del root  # ⛔ W442: the checkout that ran the skill never reaches a rendered byte.
-    check_commit(framework_commit)
-    version = _running_version()
+    framework_commit = _running(library.built_from, framework_commit)
+    version = _running(library.version)
     kept = _declared(existing) if existing is not None else ()
     provisional = parse(render(promote(_carried(draft, kept), reasons=reasons)))
     made = scaffold(plan_for(provisional))
@@ -372,17 +373,17 @@ def _pin_files(commit: str, version: str, skills: Sequence[str]) -> list[Written
     return files
 
 
-def _running_version() -> str:
-    """Return the running library's version, or a refusal `onboard`'s callers already catch."""
+def _running(ask, *arguments) -> str:
+    """Ask the running library, turning its refusal into one `onboard`'s callers catch."""
     try:
-        return library.version()
+        return ask(*arguments)
     except library.LibraryRefused as error:
         raise PinRefused(str(error)) from None
 
 
 def _check_running(version: str) -> None:
     """Refuse a write whose pin names a version other than the library running it."""
-    running = _running_version()
+    running = _running(library.version)
     if running != version:
         raise PinRefused(
             f"this onboarding pins studyforge {version} and the library running it is "

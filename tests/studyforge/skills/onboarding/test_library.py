@@ -119,3 +119,45 @@ def test_a_pin_carrying_a_path_is_refused_and_not_quoted(tmp_path):
     with pytest.raises(library.LibraryRefused) as refused:
         library.pinned(root)
     assert "elsewhere" not in str(refused.value)
+
+
+# --------------------------------------------------------------------------
+# ⭐ `W467`: the commit a built wheel carries
+# --------------------------------------------------------------------------
+
+
+def test_the_source_tree_this_test_imports_cannot_say_its_commit():
+    assert library.commit() is None
+    assert not (library.PACKAGE / library.STAMP).exists(), "a stamp was written into the tree"
+
+
+def test_a_stamped_package_reads_its_commit(tmp_path):
+    (tmp_path / library.STAMP).write_text(corpora.COMMIT + "\n", encoding="utf-8")
+
+    assert library.commit(tmp_path) == corpora.COMMIT
+
+
+@pytest.mark.parametrize("stamp", ["../studyforge\n", "", "b" * 39])
+def test_a_stamp_that_is_not_a_commit_is_refused_and_not_quoted(tmp_path, stamp):
+    (tmp_path / library.STAMP).write_text(stamp, encoding="utf-8")
+
+    with pytest.raises(library.LibraryRefused) as refused:
+        library.commit(tmp_path)
+    assert "../" not in str(refused.value)
+
+
+def test_a_built_library_pins_its_own_commit_and_refuses_another(monkeypatch):
+    monkeypatch.setattr(library, "commit", lambda: corpora.COMMIT)
+
+    assert library.built_from(None) == corpora.COMMIT
+    assert library.built_from(corpora.COMMIT) == corpora.COMMIT
+    with pytest.raises(library.LibraryRefused, match="another commit"):
+        library.built_from("b" * 40)
+
+
+def test_a_source_tree_takes_the_commit_it_is_told_and_refuses_to_guess():
+    assert library.built_from(corpora.COMMIT) == corpora.COMMIT
+    with pytest.raises(library.LibraryRefused, match="pass framework_commit"):
+        library.built_from(None)
+    with pytest.raises(pin.PinRefused):
+        library.built_from("../studyforge")

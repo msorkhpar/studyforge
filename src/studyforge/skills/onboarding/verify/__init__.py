@@ -1,14 +1,16 @@
 r"""`python3 -m studyforge.skills.onboarding.verify` — whether the pin is what is installed.
 
-**What it does.** Prints the version of the `studyforge` this Python imports
-and, given a corpus root, whether that corpus's pin names it.
+**What it does.** Prints the version of the `studyforge` this Python imports,
+and the commit a built wheel says it was built from (`W467`), and, given a
+corpus root, whether that corpus's pin names both.
 
 **How you use it.** From a corpus root:
 
     python3 -m studyforge.skills.onboarding.verify        the version this Python imports
     python3 -m studyforge.skills.onboarding.verify .      and whether the pin here names it
 
-⭐ Exit `0` when the pin names the installed version, `1` when it names another,
+⭐ Exit `0` when the pin names the installed version (and, from a built wheel,
+its commit), `1` when it names another,
 `UNUSABLE` when there is no pin to read or no version to read it against — and
 every refusal is PRINTED, because an exit code with no sentence helps nobody.
 
@@ -30,7 +32,7 @@ import sys
 
 from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.exitcodes import UNUSABLE
-from studyforge.skills.onboarding.library import LibraryRefused, pinned, version
+from studyforge.skills.onboarding.library import LibraryRefused, commit, pinned, version
 from studyforge.skills.onboarding.pin import FRAMEWORK, PIN_FILE
 
 #: How the command is used, printed when it is used wrongly.
@@ -47,7 +49,8 @@ def main(argv: list[str]) -> int:
         return UNUSABLE
     try:
         running = version()
-        print(f"{FRAMEWORK} {running} is the library this Python imports")
+        built = commit()
+        print(f"{FRAMEWORK} {running} is the library this Python imports, {_built(built)}")
         if not argv:
             return 0
         pin = pinned(argv[0])
@@ -58,5 +61,15 @@ def main(argv: list[str]) -> int:
     if pin["version"] != running:
         print(f"{said}: NOT the installed version; install {pin['version']} or re-pin")
         return MISMATCH
+    if built is not None and pin["commit"] != built:
+        print(f"{said}: NOT the installed build; install the pinned build or re-pin")
+        return MISMATCH
     print(f"{said}: the installed version")
     return 0
+
+
+def _built(built: str | None) -> str:
+    """Say which commit the library was built from, or that a source tree cannot say."""
+    if built is None:
+        return "a source tree that cannot say which commit it is"
+    return f"built from {built}"

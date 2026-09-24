@@ -48,8 +48,8 @@ You need three things, and nothing else:
 
 ⛔ **The pin is the INSTALLED library**. This skill reads the version
 of the `studyforge` this Python imports and writes it into the corpus's pin
-beside the commit you pass as `framework_commit` — the commit that library was
-built from. ⛔ **Never a path**, relative or absolute: a path carries somebody's
+beside the commit that library was built from, which a wheel carries and says
+itself (`W467`). ⛔ **Never a path**, relative or absolute: a path carries somebody's
 home directory (R7), and a sibling checkout is a development arrangement a
 stranger with the installed library does not have.
 
@@ -59,19 +59,21 @@ from the installed package** — the skill-document locator,
 file in a checkout.
 
 ⭐ **And one command says whether the library this Python imports is the
-version a corpus is pinned to** — exit 0 when it is, 1 when it is another, and a
-sentence either way. The generated `test_framework_pin.py` asks the same
+version and build a corpus is pinned to** — exit 0 when it is, 1 when it is
+another, and a sentence either way. The generated `test_framework_pin.py` asks the same
 question, of the same library, from inside the corpus:
 
 ```
 python3 -m studyforge.skills.onboarding.verify .
 ```
 
-⚠️ **The version is verified; the commit is recorded.** An installed wheel
-carries no git history, so nothing can be asked whether it holds a commit; the
-commit is your statement of what the library was built from, checked for its
-shape. ⛔ A library whose version cannot be read is refused by name, and
-nothing is written.
+⭐ **The version and the commit are both verified** (`W467`). A wheel built
+from a clone carries the commit it was built from, so `onboard(draft)` pins it
+without being told, and a `framework_commit` naming another is refused by name.
+⚠️ **A source tree or an editable install carries none**: there, pass
+`framework_commit=<the checkout's commit>`, and the generated check skips its
+commit assertion, saying why, rather than passing it. ⛔ A library whose version
+cannot be read is refused by name, and nothing is written.
 
 ⛔ **A corpus onboarded before this — its pin names a framework checkout beside
 it (`"where": "sibling"`) — keeps working until it re-onboards**: its committed
@@ -138,7 +140,7 @@ draft["narration"] = False  # "without voices"; True for "narrated"
 
 ```
 python3 -c "from studyforge.skills.onboarding import onboard; \
-  made = onboard(draft, framework_commit=commit); print('\n'.join(made.lines()))"
+  made = onboard(draft); print('\n'.join(made.lines()))"
 ```
 
 ⭐ Every path, its length, which step produced it, and **the one file that is
@@ -150,7 +152,7 @@ a time has been given a guessing game.
 
 ```
 python3 -c "from studyforge.skills.onboarding import onboard; \
-  onboard(draft, framework_commit=commit).write('.')"
+  onboard(draft).write('.')"
 ```
 
 ⛔ **It refuses rather than overwriting, and names every collision at once**
@@ -269,7 +271,7 @@ What lands, and why each one exists:
 | `corpus.json` | the draft promoted, with **every generated file already declared `content.not_material`** |
 | the adapter package and its suite | the adapter skill's scaffold, wired in — one file that is yours and every other one generated; ⛔ how many is the scaffold's own listing (`scaffold(...).lines()`, the adapter skill's step 1), never a number typed here (`W345`) |
 | `.studyforge/pin.json` and the skill stubs | the installed library's version and the commit it was built from, and thin pointers that carry both and name the command that prints each procedure from the installed package |
-| `tests/` — two checks | R3's assertion, read from what a build declares it writes and from the tree through that same declaration, with this corpus's edits baked in; and the pin check — the installed library is the pinned version, ships every stubbed skill, and no stub has drifted |
+| `tests/` — two checks | R3's assertion, read from what a build declares it writes and from the tree through that same declaration, with this corpus's edits baked in; and the pin check — the installed library is the pinned version and build, ships every stubbed skill, and no stub has drifted. ⭐ Each runs with no test runner, `python3 tests/<its name>.py`, as well as under pytest (`W467`) |
 | the reader document, `ONBOARDING.md` unless `onboarding_doc` places it elsewhere or turns it off | what a reader gets, read off the corpus's own declarations, with commands that run from a fresh clone (`W313`) — and **no live figure**: where the corpus stands is a command it prints, because nothing rewrites a generated document when narrating or re-ingesting moves the answer (`W332`) |
 | `.studyforge/installed.json` | what step 6 undoes, a digest per generated file, and the one module that is yours, marked `hand_written` with no digest |
 

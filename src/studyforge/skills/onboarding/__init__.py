@@ -10,7 +10,7 @@ which is the procedure. This package is what the skill *calls*:
 
     from studyforge.skills.onboarding import hand_edited, onboard, reonboard, uninstall
 
-    made = onboard(draft, framework_commit=commit)
+    made = onboard(draft)
     print("\\n".join(made.lines()))     # what it will write, and why
     made.write(corpus_root)             # ⛔ refuses to overwrite anything
     reonboard(corpus_root).write(corpus_root, regenerate=True)  # its recorded answers (W439)

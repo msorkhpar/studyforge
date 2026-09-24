@@ -19,9 +19,7 @@
 
 from __future__ import annotations
 
-import importlib.util
 import os
-import shutil
 import subprocess
 import sys
 import tomllib
@@ -36,14 +34,6 @@ from tests.support import repository_root
 
 #: The package directory, relative to the repository root.
 SOURCE = PurePosixPath("src/studyforge")
-
-#: What an export needs to build a wheel: the build configuration, the file it names as
-#: its readme, and the source tree.
-EXPORT = ("pyproject.toml", "README.md")
-
-#: Builds a wheel with the in-process backend and prints its file name. ⛔ No pip and no
-#: isolation: nothing is fetched, and the backend is whatever the environment already has.
-BUILD = "import sys; from setuptools import build_meta; print(build_meta.build_wheel(sys.argv[1]))"
 
 
 def tree_documents() -> dict[str, bytes]:
@@ -129,29 +119,9 @@ def wheel(tmp_path_factory: pytest.TempPathFactory) -> Path:
 
 def build_wheel(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """Build the wheel `wheel` hands out; ⭐ shared, so every wheel reading builds it one way."""
-    if importlib.util.find_spec("setuptools") is None:
-        pytest.skip(
-            "no build backend here (the dev image uninstalls setuptools after installing "
-            "the package); the declaration test still ran — build on the host to read this"
-        )
-    root = repository_root()
-    export = tmp_path_factory.mktemp("export")
-    for name in EXPORT:
-        shutil.copy2(root / name, export / name)
-    shutil.copytree(
-        root / "src", export / "src", ignore=shutil.ignore_patterns("__pycache__", "*.egg-info")
-    )
-    out = tmp_path_factory.mktemp("wheel")
-    built = subprocess.run(
-        [sys.executable, "-c", BUILD, str(out)],
-        cwd=export,
-        capture_output=True,
-        text=True,
-        timeout=300,
-        check=False,
-    )
-    assert built.returncode == 0, built.stderr[-2000:]
-    return out / built.stdout.strip().splitlines()[-1]
+    from tests.studyforge.skills.onboarding import wheels
+
+    return wheels.build(tmp_path_factory.mktemp("build"))
 
 
 def test_the_wheel_carries_every_document_unchanged(wheel: Path) -> None:
