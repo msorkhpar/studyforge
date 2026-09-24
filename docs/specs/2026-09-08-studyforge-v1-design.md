@@ -652,10 +652,12 @@ narrate-service/            the synthesis service (§8.2)
 A corpus installs the framework as a library into the Python that runs its
 checks, and records the version it installed in `.studyforge/pin.json` (R18).
 It reaches the images and the service only through what their `consuming.json`
-promises. ⭐ **A change to a component is released by that component**, and a
-consumer moves to it by re-pinning: the pin is what captures which combination
-of components a working configuration used, which is what makes R9's
-per-contract versioning hold *across* repositories rather than only inside them.
+promises: it builds each component's image from that component and records the
+tag the build prints, and it records the `provides` it was built against. ⭐ **A
+change to a component is released by that component**, and a consumer moves to
+it by rebuilding and recording the new tag. ⛔ The framework locates no sibling
+checkout at run time; only its own test suite may be pointed at sibling
+checkouts, through the `STUDYFORGE_WORKSPACE` environment variable.
 
 ### 3.2 Inside the framework
 
