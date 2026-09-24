@@ -35,7 +35,7 @@ neither links nor relies on it, and [`ONBOARDING.md`](../../../ONBOARDING.md) is
 ⛔ Each gate run bare from `studyforge-wt/dev2` at the tip carrying this handoff, output to a scratch
 file and `$?` read on the next line — never through a pipe. ⚠️ A first floor run over this handoff
 was RED on bare citations of tracked documents (Ruling 285(b)); written as pointers, then every gate
-re-run.
+re-run: the lint, format, floor and quality gates GREEN at the tip.
 
 | gate | environment | reading |
 |---|---|---|
@@ -43,7 +43,7 @@ re-run.
 | `./docker/dev/check ruff format --check .` | pinned image | GREEN, exit 0 |
 | `python3 -m tools.quality` | host | GREEN, exit 0 |
 | `python3 -m tests.floor` | host | GREEN, exit 0 |
-| `python3 -m pytest -n auto -q` | host | GREEN, exit 0 |
+| `python3 -m pytest -n auto -q` | host | GREEN, exit 0 at `d8632412` (the README and the test). ⚠️ At the handoff tip, RED on `Errno 122` (disk quota), three runs: the shared `/tmp` is filled by concurrent offices, and the failures sit in the modules that write temp files, not in this diff. The commits after `d8632412` touch this handoff only |
 
 ## ⛔ The acceptance, read mechanically
 
