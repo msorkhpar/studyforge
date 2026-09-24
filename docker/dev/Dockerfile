@@ -8,7 +8,7 @@
 # run, so that a contributor needs Docker and nothing else, and a result never
 # depends on whose machine produced it.
 #
-# ⚠️ What it is NOT: the reader's IDE. E12's `code-server-toolchain` is a
+# ⚠️ What it is NOT: the reader's IDE. The `code-server-toolchain` image is a
 # different image with a different job — it carries a consuming project's
 # toolchain (a JDK, a build tool, their caches) so a reader can work an
 # exercise. This one carries pytest and ruff so a contributor can prove a
@@ -190,8 +190,7 @@ RUN set -eu; \
 # different font does not.
 #
 # ⭐ **Why a version constraint plus a checksum over the installed files, and
-# not either remedy `rows/W124.md` offered.** Both of those were weighed against
-# a build and the readings are in `../../docs/tasks/handoffs/W124.md`:
+# not either of the two other remedies.** Both were weighed against a build:
 #
 #   * a `.deb` from `snapshot.debian.org` pins the **package file** and adds a
 #     fourth build-time host — and the least reliable one in the set — to buy
@@ -252,7 +251,7 @@ RUN set -eu; \
     if [ "${installed}" != "${FONTS_LIBERATION_VERSION}" ]; then \
         echo "fonts-liberation is '${installed}' and this image pins" \
              "'${FONTS_LIBERATION_VERSION}'; a font metric is an input to" \
-             "tests/visual/ (W124, Ruling 236) — record the new version and" \
+             "tests/visual/ — record the new version and" \
              "its checksums in docker/dev/Dockerfile rather than letting the" \
              "face move under the readings" >&2; exit 1; \
     fi; \
@@ -275,7 +274,7 @@ RUN set -eu; \
     if [ "${present}" -ne 12 ]; then \
         echo "this image carries ${present} font file(s) and 12 are pinned;" \
              "an unrecorded face is an undeclared input to every text-metric" \
-             "reading in tests/visual/ (W124)" >&2; exit 1; \
+             "reading in tests/visual/" >&2; exit 1; \
     fi; \
     cd /; \
     curl -fsSLO \
