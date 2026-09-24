@@ -1034,7 +1034,7 @@ from studyforge.skills.exercises import QUIZ_DOCUMENT, quiz_of
 root = Path("path/to/your-corpus")
 where = "exercises/kata/python/unit-03/practice-2"
 quiz = quiz_of(json.loads((root / where / QUIZ_DOCUMENT).read_text(encoding="utf-8")), where)
-quiz.places, quiz.title, quiz.record   # the record goes under the document's `exercise`
+quiz.places, quiz.title, quiz.record  # the record goes under the document's `exercise`
 ```
 
 Then run the checker, and fix what it names:

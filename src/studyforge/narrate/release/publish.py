@@ -44,9 +44,9 @@ the narration record no longer matches.
 
 ⭐ A publish refuses a corpus whose policy commits its clips, as the pack does
 (`volumes.require_released_policy`). The pack writes `released` into the clip
-signal (`scripts.SIGNAL`) and a build never undoes it. ⛔ A publish refuses any other answer: a corpus whose
-clips are a download must not commit a signal that tells a fresh checkout they
-are present.
+signal (`scripts.SIGNAL`) and a build never undoes it. ⛔ A publish refuses
+any other answer: a corpus whose clips are a download must not commit a signal
+that tells a fresh checkout they are present.
 
 ## ⛔ The scripts and the release agree on the tag
 

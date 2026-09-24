@@ -27,6 +27,7 @@ from studyforge.narrate.release import (
     SIGNAL,
     VOLUME_SUMS,
     pack,
+    scripts,
     write_release_record,
     write_scripts,
     write_signal,
@@ -38,7 +39,6 @@ from studyforge.narrate.release.publish import (
     plan_publish,
     repository_of,
 )
-from studyforge.narrate.release import scripts
 from studyforge.narrate.release.volumes import SUMS
 from studyforge.render.pageassets import ABSENT, PRESENT
 from tests.studyforge.cli.narrate.plant import released_corpus
