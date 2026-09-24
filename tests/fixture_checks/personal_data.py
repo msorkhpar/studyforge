@@ -9,7 +9,7 @@ framework so a caller never needs a pattern.
 
 **Depends on.** `studyforge.archive.scrub`, and nothing else.
 
-## ⛔ This module holds no patterns, and that is the whole of it (W13)
+## ⛔ This module holds no patterns, and that is the whole of it
 
 ⚠️ **It used to hold three, and they were the weaker of two copies — in the one
 place where personal-data-shaped content is *permitted*.** Measured against

@@ -65,15 +65,15 @@ FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
 #: `depth2` — it is the reading floor (spec §11.0) in its complete form.
 #:
 #: ⭐ **`shared-origin` is the third, and it is here for one property the other
-#: two cannot carry: two units declaring the same `origin.path`** (`W95`, and
-#: `Q23`'s answer in `docs/tasks/E04-narration.md`). ⛔ It is **not** a coverage
+#: two cannot carry: two units declaring the same `origin.path`** (`Q23`'s
+#: answer in `docs/tasks/E04-narration.md`). ⛔ It is **not** a coverage
 #: corpus — see `REQUIRED_TYPES` — and the README says what it is for. ⚠️ It is
 #: also the set's only `container_api: 2` map, which is why the version check
 #: below reads a set: a whole-file `origin` and a region `origin` are two code
-#: paths and each needs an input, exactly as SF-10's two overlay shapes do.
+#: paths and each needs an input, exactly as the overlay's two shapes do.
 #:
-#: ⭐ **`runnable` is the fourth, and it is the only corpus whose units RUN**
-#: (`W352`): a test that passes, one that fails, a file with no test and a file
+#: ⭐ **`runnable` is the fourth, and it is the only corpus whose units RUN**:
+#: a test that passes, one that fails, a file with no test and a file
 #: that does not compile, each committed beside the archive. ⛔ It is an
 #: execution fixture, not a coverage corpus, and it is the one corpus in which
 #: graded practice is the majority — see `RUNNABLE`.

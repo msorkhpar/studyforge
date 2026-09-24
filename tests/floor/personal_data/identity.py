@@ -9,7 +9,7 @@ hostname, home directory, git author — and reports any tracked file that
 carries one.
 
 ⛔ **The git arm reads the GLOBAL and SYSTEM scopes ONLY, never a scope an
-office can write** (`W305`; the argument is on `IDENTITY_SCOPES` below).
+office can write** (the argument is on `IDENTITY_SCOPES` below).
 ⭐ **The machine's real git identity sits in the user's own global file; a value
 in `.git/config` is a working convention this repository sets for itself** — and
 reading the second made this check's verdict on an unchanged tree a function of
@@ -21,11 +21,11 @@ accepts an override so the mechanism can be tested with fabricated values.
 ⭐ `identity_notice(repo_root)` is registered in `tests.floor.NOTICES` and
 prints WHICH arms had a value to compare — **labels only, never values**.
 
-⛔ **The arm DISCLOSES whether it was armed, and that is `W307`.** ⚠️ An arm
+⛔ **The arm DISCLOSES whether it was armed.** ⚠️ An arm
 that derives nothing compares against nothing, and the floor printed the same
 clean line it prints when a real identifier WAS derived and found in no tracked
 file. ⛔ **Those two readings are indistinguishable and only one of them is a
-guarantee** — `FND-07`: *nothing printed* and *there was nothing to say* must
+guarantee** — *nothing printed* and *there was nothing to say* must
 not be the same line. ⭐ **It is a NOTICE and never a failure:** an unarmed arm
 is CORRECT inside the pinned image, which has no passwd entry and configures no
 git identity by design.
@@ -96,8 +96,8 @@ GENERIC_IDENTIFIERS = frozenset(
 )
 
 
-#: ⛔ **The git scopes this module reads, in precedence order, and the only ones**
-#: (`W305`). ⚠️ **`--local` and `--worktree` are deliberately absent**, and the
+#: ⛔ **The git scopes this module reads, in precedence order, and the only ones**.
+#: ⚠️ **`--local` and `--worktree` are deliberately absent**, and the
 #: argument is whose datum each scope holds:
 #:
 #: - ⭐ **Global and system are the MACHINE's.** `~/.gitconfig` is where a real
@@ -110,21 +110,21 @@ GENERIC_IDENTIFIERS = frozenset(
 #:   is unset, and a placeholder written there is indistinguishable from a real
 #:   name to this check — four characters against `MIN_IDENTIFIER_CHARS`. So
 #:   reading it reported this repository's own checkout vocabulary as a leak, in
-#:   documents nobody had touched (Ruling 345).
+#:   documents nobody had touched.
 #:
 #: ⭐ **The mirror image of `board/dispatch.py`, which reads `--local` and
 #: refuses the global file for the same reason read the other way round:** a
 #: branch description is the repository's own dispatch, an identity is the
 #: machine's. ⛔ **An office's own author line is therefore passed PER INVOCATION
 #: and set nowhere** — `git -c user.name=… -c user.email=… commit` — which is
-#: Ruling 345's clause and the only form that never enters a shared slot.
+#: the only form that never enters a shared slot.
 IDENTITY_SCOPES = ("--global", "--system")
 
 
-#: ⛔ **Every arm `identifiers()` can return, and what each derives FROM**
-#: (`W307`). ⭐ **This is the DENOMINATOR the floor prints**, and Ruling 48's
-#: reason: an arm that derived nothing was never compared, so a tree clean of it
-#: is not a guarantee about it. ⚠️ **A census, never a second derivation** —
+#: ⛔ **Every arm `identifiers()` can return, and what each derives FROM**.
+#: ⭐ **This is the DENOMINATOR the floor prints**, for this reason: an arm that
+#: derived nothing was never compared, so a tree clean of it is not a guarantee
+#: about it. ⚠️ **A census, never a second derivation** —
 #: `identity_notice` reports the keys `identifiers()` actually returned and
 #: re-reads no scope of its own, so the two cannot disagree. ⛔ A label derived
 #: and missing from here is PRINTED as drift rather than dropped.
@@ -192,7 +192,7 @@ def identifiers() -> dict[str, str]:
     container. `check_shapes` runs everywhere regardless.
 
     ⛔ **What that paragraph used to say — *"git has no identity"* in there —
-    was FALSE, and `W305` is the row that measured it.** ⚠️ `docker/dev/check`
+    was FALSE, and it was measured.** ⚠️ `docker/dev/check`
     mounts the git common directory into the image so a linked worktree can
     answer git at all, so a repository-scoped identity was readable from inside
     the container off that mount. ⭐ **It is true again now, and by
@@ -307,7 +307,7 @@ def _standing_clause() -> str:
 def identity_notice(root: Path) -> list[str]:
     """Report which identifier arms had a value to compare, by label and never by value.
 
-    ⛔ **A NOTICE, never a check** (`W307`). An arm that derives nothing is
+    ⛔ **A NOTICE, never a check**. An arm that derives nothing is
     CORRECT inside the pinned image — no passwd entry, and no git identity at
     either scope `IDENTITY_SCOPES` names — so this may not fail a build, and it
     is registered in `NOTICES` alone.

@@ -4,7 +4,7 @@
 floor and the plants live in
 [`test_raises_convention.py`](test_raises_convention.py), and the seam between
 the two is why this file exists: ⚠️ **the derivation grew past R11's test ceiling
-when the floor learned to survive a move (`W219`), and the split is at the line
+when the floor learned to survive a move, and the split is at the line
 where reading the tree stops and judging it starts** (Ruling 261).
 
 ⭐ What is derived here, and why each derivation rather than a typed list:
@@ -189,7 +189,7 @@ def population(src: Path) -> Population:
 def names_the_tuple(held: ast.expr, bound: dict[str, frozenset[str]]) -> set[str]:
     """The tuples an expression names WHOLE, by the local names in `bound`.
 
-    ⛔ The `W219` predicate, and the point of the whole row. A bare `RAISES`
+    ⛔ The predicate, and the point of the whole sweep. A bare `RAISES`
     counts, and so does `*RAISES` inside a tuple literal — the two forms the
     tree uses. ⚠️ `RAISES[:1]` is an `ast.Subscript` and counts as naming
     NOTHING: a narrowed tuple is the defect, so it may not read as the tuple.
@@ -295,7 +295,7 @@ def reach(sites: dict[str, CatchSite]) -> dict[str, int]:
     """How many catch sites the sweep reaches for each subject package.
 
     ⛔ **The floor's key, and everything a legitimate move changes is absent from
-    it** (`W219`). A declared split moves a reader between modules and may rename
+    it**. A declared split moves a reader between modules and may rename
     it, so neither the path nor the function name can identify a site across one;
     what survives is WHICH package's tuple is being caught, and how many callers
     the sweep still finds catching it.

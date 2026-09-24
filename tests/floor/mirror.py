@@ -19,7 +19,7 @@ checks — the mapping is on names, so a module too broken to import is still
 one whose missing test gets reported.
 
 ⚠️ Deliberately one-way. A test module with no source module is fine and
-common: `tests/harness/` (SF-26), `tests/visual/` (QA-03), `tests/support.py`
+common: `tests/harness/`, `tests/visual/` (QA-03), `tests/support.py`
 and the repository-level tests all exist without a counterpart. Checking the
 reverse direction would turn each of those into an exemption list that grows
 every time somebody adds a legitimate test, which is how a check stops being
@@ -72,7 +72,7 @@ def mirror_for(relative_path: str) -> str | None:
 def mirrored(root: Path) -> list[tuple[str, str]]:
     """Return `(module, the test it owes)` for every module R12 binds — this check's population.
 
-    ⛔ One definition read by the check AND by `vacuity`'s disclosure (`W309`), so
+    ⛔ One definition read by the check AND by `vacuity`'s disclosure, so
     the two can never describe different walks.
     """
     found: list[tuple[str, str]] = []

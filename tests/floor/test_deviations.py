@@ -12,7 +12,7 @@ from tests.floor.deviations import DECLARED, NO_SURFACE, REACHED_PAST, Declarati
 
 
 def test_the_declaration_is_inhabited():
-    # ⛔ Ruling 48: an empty table satisfies every comparison below vacuously, and it
+    # ⛔ An empty table satisfies every comparison below vacuously, and it
     # would also make the check's "closed" claim true by holding nothing.
     assert DECLARED
 

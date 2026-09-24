@@ -56,7 +56,7 @@ def test_this_trees_deviations_are_exactly_what_is_declared():
 
 
 def test_and_the_walk_that_says_so_read_a_real_population():
-    # ⛔ **Ruling 48, and Ruling 191 one level up.** The assertion above is an empty
+    # ⛔ **A denominator, and inhabitation one level up.** The assertion above is an empty
     # list, which is also what a walk that read nothing returns. This pins the
     # population the clean bill was taken over, so "clean" cannot mean "never ran".
     found = reaches(repository_root())
@@ -75,7 +75,7 @@ def test_every_declared_package_is_a_package_this_tree_actually_has():
 
 
 def test_the_pin_holds_a_name_whichever_spelling_a_consumer_uses():
-    # ⭐ `W299/1`: the property that makes a later spelling fix safe. `Held` is on
+    # ⭐ The property that makes a later spelling fix safe. `Held` is on
     # `studyforge.validate.__all__` and is taken by the MODULE spelling today; were that
     # corrected to the package spelling, this arm would still require it on the surface.
     surface = packages(repository_root())["studyforge.validate"]
@@ -162,7 +162,7 @@ def test_a_declaration_for_a_package_this_tree_lacks_is_not_read(tmp_path):
 
 def test_the_SPELLING_deviation_is_counted_and_never_failed():
     # ⭐ Ruling 101's FIRST row on the real tree: `Held` IS exported by `validate` and is
-    # taken by the submodule spelling (`W299/3`). It is printed, and it is not a finding.
+    # taken by the submodule spelling. It is printed, and it is not a finding.
     printed = "\n".join(surface_census(repository_root()))
     assert "Held" in printed
     assert not [f for f in check_producer_half(repository_root()) if "Held" in f.message]
@@ -175,7 +175,7 @@ def test_the_census_carries_its_denominators_and_says_what_it_is_not():
     lines = surface_census(repository_root())
     assert lines[0].startswith("producer half (W199/3):")
     assert "cross-package import(s) read" in lines[0]
-    # ⚠️ `W298/3`: an instrument that reads a NAME must not be mistaken for a value guard.
+    # ⚠️ An instrument that reads a NAME must not be mistaken for a value guard.
     assert "never a VALUE" in lines[0]
     printed = "\n".join(lines)
     for owner in DECLARED:

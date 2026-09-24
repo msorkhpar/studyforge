@@ -1,15 +1,15 @@
 """Mirror of `tools/quality/size.py` (R12).
 
-The two acceptance cases for FND-01 are `test_oversized_source_module_fails`
+The two acceptance cases for the ceiling are `test_oversized_source_module_fails`
 and `test_justified_oversized_module_passes`: the ceiling must actually stop a
 file, and the documented opt-out must actually let one through.
 
-Ruling 114's cases are the `--- a deferral ---` block. ⚠️ Its fixtures are
+The deferral cases are the `--- a deferral ---` block. ⚠️ Its fixtures are
 pairs that differ ONLY in where a line breaks, because that is the whole
 defect: the reader made the visible reason a function of the author's return
 key. A fixture that changed the wording too would have proved nothing.
 
-`W367`'s cases are the `--- authored stylesheets, scripts and templates ---`
+The authored-file cases are the `--- authored stylesheets, scripts and templates ---`
 block: the ceiling stops an authored non-Python file under `src/`, and lets a
 vendored one through only by its exact path.
 """
@@ -165,12 +165,12 @@ def test_an_unparseable_module_is_measured_anyway(tmp_path):
     assert [finding.rule for finding in check_sizes(tmp_path)] == ["size"]
 
 
-# --- a deferral (Ruling 114) ------------------------------------------------
+# --- a deferral ---------------------------------------------------------------
 
 # ⚠️ The tree's one real deferral, copied here as a literal rather than read
-# off `src/studyforge/validate/source.py`. That file is `W44`'s and `W44`
-# deletes this paragraph, so a test that read it would fail the moment the row
-# it names does its job — and a fixture that expires when the defect is fixed
+# off `src/studyforge/validate/source.py`. The row that file's deferral
+# names deletes this paragraph, so a test that read it would fail the moment
+# that row does its job — and a fixture that expires when the defect is fixed
 # elsewhere is not a fixture.
 LIVE_DEFERRAL = (
     "The two checks that read the material.\n"
@@ -192,7 +192,7 @@ WRAPPED_DEFERRAL = (
 
 
 def test_the_justification_is_the_whole_paragraph_not_the_marker_line():
-    # ⛔ The defect Ruling 114 names: the reader stopped at the line break, so
+    # ⛔ The defect: the reader stopped at the line break, so
     # the reason a sweep printed was whatever fitted on one line.
     reason = size_exception(LIVE_DEFERRAL)
     assert reason.startswith("W44 splits this module into a package")
@@ -286,7 +286,7 @@ def test_a_design_claim_naming_no_row_is_still_a_design_claim(tmp_path):
     assert check_sizes(tmp_path) == []
 
 
-# --- the remedy names both forms (Ruling 114, half two) ---------------------
+# --- the remedy names both forms --------------------------------------------
 
 
 def test_both_forms_names_the_deferral_and_the_design_claim():
@@ -320,7 +320,7 @@ def test_every_size_remedy_offers_both_forms(tmp_path):
         assert BOTH_FORMS in finding.message
 
 
-# --- authored stylesheets, scripts and templates (W367) ---------------------
+# --- authored stylesheets, scripts and templates ----------------------------
 
 
 def lines_of(count: int) -> str:
@@ -408,7 +408,7 @@ def test_the_authored_walk_reads_every_shipped_non_vendored_file():
 def test_no_deferral_in_this_repository_hides_its_row_id():
     # ⭐ The in-the-wild check, and it is written to outlive its one subject:
     # it asserts the invariant over whatever exceptions the tree holds, so it
-    # stays true (vacuously) once `W44` deletes the only one there is.
+    # stays true (vacuously) once the only one there is is deleted.
     root = Path(__file__).resolve().parents[2]
     for path in config.python_files(root):
         text = path.read_text(encoding="utf-8")

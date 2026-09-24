@@ -1,6 +1,6 @@
 """Mirror of `tools/quality/report.py` (R12).
 
-⭐ **`W158`'s end-to-end arms run a CHILD pytest** through the repository's own root
+⭐ **The skip census's end-to-end arms run a CHILD pytest** through the repository's own root
 `conftest.py`, because the disclosure is a line in a run's summary and a line nobody
 printed cannot be asserted over a pure function alone.
 """
@@ -54,7 +54,7 @@ def test_the_count_is_pluralised_honestly():
     assert format_findings([one, two]).endswith("quality floor: 2 findings")
 
 
-# --- W148: what a NOTICE's denominator says about itself --------------------
+# --- what a NOTICE's denominator says about itself -------------------------
 
 
 def test_the_two_walks_are_the_only_two_and_each_has_a_caveat_entry():
@@ -64,7 +64,7 @@ def test_the_two_walks_are_the_only_two_and_each_has_a_caveat_entry():
 
 
 def test_only_the_disk_walk_carries_a_caveat():
-    # ⭐ Ruling 216's third answer wearing a sentence: git failing to answer
+    # ⭐ `tracked_paths`' third answer wearing a sentence: git failing to answer
     # neither falls through in silence nor fails the build — it SAYS so.
     assert WALK_CAVEAT[TRACKED_WALK] == ""
     caveat = WALK_CAVEAT[DISK_WALK]
@@ -79,11 +79,11 @@ def test_a_population_carries_its_paths_and_the_walk_that_found_them():
     assert population.unread == 0
 
 
-# --- W315, for W232/5: what the walk did NOT read ---------------------------
+# --- what the walk did NOT read --------------------------------------------
 
 
 def test_a_tracked_figure_says_what_its_walk_did_not_read_whether_or_not_it_fired():
-    # ⛔ Ruling 48, and the reason the sentence is not fired-only: an office
+    # ⛔ A figure states its denominator, and that is why the sentence is not fired-only: an office
     # believing a green over its own unstaged handoff needs to read `0`, and a
     # sentence that appears only when something was missed never gives it one.
     quiet = unread_caveat(DocumentPopulation((Path("a.md"),), TRACKED_WALK))
@@ -94,13 +94,13 @@ def test_a_tracked_figure_says_what_its_walk_did_not_read_whether_or_not_it_fire
 
 
 def test_the_disk_walk_claims_NOTHING_about_an_index_git_never_answered_for():
-    # ⚠️ Ruling 216's third answer: a `0` here would say git had answered, and
+    # ⚠️ `tracked_paths`' third answer: a `0` here would say git had answered, and
     # `WALK_CAVEAT[DISK_WALK]` already says what that population costs a reader.
     assert unread_caveat(DocumentPopulation((Path("a.md"),), DISK_WALK)) == ""
     assert WALK_CAVEAT[DISK_WALK] != ""
 
 
-# --- W158: the population a run could not reach -----------------------------
+# --- the population a run could not reach ----------------------------------
 
 #: A bound on each child run. ⚠️ A bound rather than a hope: a hang is no verdict.
 TIMEOUT = 180
@@ -188,7 +188,7 @@ def test_a_run_with_skips_prints_a_NON_EMPTY_population_and_its_exit_does_not_mo
     reason = f"a sibling {uuid.uuid4().hex} is not checked out"
     body = f"def test_one():\n    pytest.skip({reason!r})\n\ndef test_two():\n    pass\n"
     result = _child_suite(tmp_path, body)
-    # ⛔ Ruling 328: a disclosure, never a failure — the skip-only run is still `0`.
+    # ⛔ Host state is a disclosure, never a failure — the skip-only run is still `0`.
     assert result.returncode == 0, result.stdout + result.stderr
     lines = _disclosure(result.stdout)
     assert lines[0].startswith(f"{UNREACHABLE}: 1 skipped test(s) — ")

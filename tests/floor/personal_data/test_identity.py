@@ -97,7 +97,7 @@ def test_nothing_derivable_means_nothing_reported(tmp_path):
     assert check_identifiers(tmp_path, {}) == []
 
 
-# --- W305: the git arm reads no identity an office can write ----------------
+# --- the git arm reads no identity an office can write ---------------------
 
 # ⛔ Fabricated office names. Neither is this machine's, neither is generic, and
 # both clear MIN_IDENTIFIER_CHARS — so a reading that finds them found the
@@ -110,7 +110,7 @@ def office_repository(root, name: str):
     """A throwaway repository whose OWN config carries `name` as the author.
 
     ⛔ Never this repository: a linked worktree's `--local` IS the shared common
-    config (Ruling 345), so the plant that proves the point would be the defect.
+    config, so the plant that proves the point would be the defect.
     """
     init_repository(root)
     for key, value in (("user.name", name), ("user.email", f"{name}@example.invalid")):
@@ -139,7 +139,7 @@ def test_W305_an_office_identity_in_the_repository_config_is_not_read(tmp_path, 
     only_the_machine(monkeypatch)
     monkeypatch.chdir(checkout)
 
-    # ⭐ Inhabitation first (Ruling 191): a bare `--get` DOES see the plant, so
+    # ⭐ Inhabitation first: a bare `--get` DOES see the plant, so
     # this control is not passing because the plant failed to take.
     seen = run([git(), "config", "--get", "user.name"], cwd=checkout)
     assert seen.stdout.strip() == OFFICE, "born vacuous: the office identity did not plant"
@@ -189,7 +189,7 @@ def test_W305_the_scopes_this_module_reads_are_named_and_hold_nobodys_office(tmp
     assert "--worktree" not in IDENTITY_SCOPES
 
 
-# --- W307: the floor DISCLOSES whether the arm was armed --------------------
+# --- the floor DISCLOSES whether the arm was armed -------------------------
 
 # ⛔ Fabricated throughout, and the home path is ASSEMBLED rather than written:
 # a literal one is the personal-data shape this very package reports, exactly as
@@ -290,7 +290,7 @@ def test_W307_a_PARTLY_armed_run_names_BOTH_halves(tmp_path, monkeypatch):
 def test_W307_the_git_arm_reports_UNARMED_when_only_the_REPOSITORY_config_holds_one(
     tmp_path, monkeypatch
 ):
-    # ⛔ The `W305` tie-in and this row's own condition: an office identity in the
+    # ⛔ The scope rule's tie-in and this test's own condition: an office identity in the
     # checkout's own config is not read, so the git arm compared NOTHING — and
     # the floor must say that rather than print the same clean line.
     checkout = office_repository(tmp_path / "checkout", OFFICE)
@@ -305,7 +305,7 @@ def test_W307_the_git_arm_reports_UNARMED_when_only_the_REPOSITORY_config_holds_
 
 def test_W307_the_notice_names_the_scopes_the_git_arm_READS(tmp_path, monkeypatch):
     # ⭐ So a reader can tell WHY the git arm is unarmed without opening the
-    # module, and so widening the scopes `W305` narrowed is visible in the output.
+    # module, and so widening the narrowed scopes is visible in the output.
     arm_nothing(monkeypatch)
     printed = "\n".join(identity_notice(tmp_path))
     for scope in IDENTITY_SCOPES:

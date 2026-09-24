@@ -27,7 +27,7 @@ the moment a module can be exempted, the exemption is where source-specific
 knowledge accumulates.
 
 ⭐ **So a module that needs a corpus's measured fact points at the document
-that holds it.** That is SK-01's precedent for `SKILL.md` — the far end of a
+that holds it.** That is the reconnaissance skill's precedent for `SKILL.md` — the far end of a
 pointer is exempt *for a reason* rather than by name — and it is why the
 migration this check shipped with is a set of citations rather than a set of
 deletions. The evidence is not lost; it stops being in the wrong file.
@@ -118,10 +118,10 @@ def named_sources(text: str) -> list[tuple[int, str, str]]:
 
 
 def framework_modules(root: Path) -> list[Path]:
-    """Every module under `FRAMEWORK_ROOT` — this check's population (`W309`).
+    """Every module under `FRAMEWORK_ROOT` — this check's population.
 
     ⚠️ Narrower than `SCAN_ROOTS` by design, so it is the one a tree can leave
-    EMPTY while every other Python check is inhabited (`W307/3`).
+    EMPTY while every other Python check is inhabited.
     """
     prefix = FRAMEWORK_ROOT + "/"
     return [

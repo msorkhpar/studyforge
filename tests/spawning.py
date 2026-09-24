@@ -1,4 +1,4 @@
-"""The one process-start detector (`W375`): every standard-library way to start a process.
+"""The one process-start detector: every standard-library way to start a process.
 
 ⛔ **This module DETECTS; it asserts nothing.** ⭐ Its plants — each spelling, both
 ways — live in [`test_process_starts.py`](test_process_starts.py), beside the sweep
@@ -7,8 +7,8 @@ of `src/` that is the detector's main reader. `serve`'s no-spawn test
 
 ⚠️ **Why a module of its own:** the detector used to live in `serve`'s test file, and
 the sweep imported it from there — so a rename in one package's mirror broke a
-tree-wide sweep at import (`W361/2`). And it did not know `webbrowser` (`W361/3`),
-whose `open` starts a browser process: importing it loads `subprocess`.
+tree-wide sweep at import. And it did not know `webbrowser`, whose `open` starts a
+browser process: importing it loads `subprocess`.
 
 ⭐ **What counts as a way to start a process** — the tables below, and nothing else:
 

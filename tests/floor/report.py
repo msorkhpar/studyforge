@@ -13,15 +13,14 @@ by name).
 **How you use it.** A check returns `list[Finding]`; a caller renders them
 with `format_findings`. A walk that a figure will be quoted over returns a
 `DocumentPopulation`, and the notice quoting that figure names its `walk` and
-appends `WALK_CAVEAT[walk]` (`W148`) and `unread_caveat(population)` (`W315`,
-for `W232/5`) — ⛔ **the first says how the population was found, the second
-says what it did not find**, and a reader believing a green over an unstaged
-document needs the second. A test run's summary prints
+appends `WALK_CAVEAT[walk]` and `unread_caveat(population)` — ⛔ **the first says how
+the population was found, the second says what it did not find**, and a reader
+believing a green over an unstaged document needs the second. A test run's summary prints
 `unreachable_population(stats)` — the tests it skipped, counted and grouped by
-the reason each skip gave (`W158`).
+the reason each skip gave.
 
 **Depends on.** `collections`, `dataclasses` and `pathlib` — standard library. ⚠️ This line
-read *"`dataclasses` only"* until `W148` gave a population a type.
+once read *"`dataclasses` only"*, before a population had a type.
 """
 
 from __future__ import annotations
@@ -31,14 +30,14 @@ from dataclasses import dataclass
 from pathlib import Path
 
 #: ⛔ **How a document population was derived, NAMED in every figure taken over
-#: it** (`W148`). Two named walks and never a boolean: `W148`'s whole cost was
-#: two offices at ONE ref printing different figures with nothing in either
+#: it**. Two named walks and never a boolean: the defect this prevents was
+#: two checkouts at ONE ref printing different figures with nothing in either
 #: reading naming the cause.
 TRACKED_WALK = "tracked"
 DISK_WALK = "disk"
 
 #: ⚠️ Appended to a figure taken over `DISK_WALK`, and EMPTY for the other one.
-#: Ruling 216's third answer wearing a sentence: git failing to answer may
+#: `tracked_paths`' third answer (`None`) wearing a sentence: git failing to answer may
 #: neither fall through to the disk in silence nor fail the build, so the
 #: figure says which walk produced it and what that costs the reader.
 WALK_CAVEAT = {
@@ -57,7 +56,7 @@ class DocumentPopulation:
     ⛔ **`unread` is the count of markdown documents on the disk that the walk
     did NOT read**, and it is `0` by construction on `DISK_WALK`, where git
     named no tracked set and nothing was narrowed away. ⭐ **It exists because
-    a narrowed population is silent about what it narrowed off** (`W232/5`):
+    a narrowed population is silent about what it narrowed off**:
     an office running the floor over a handoff it has written but not staged
     gets a green that the merge will not repeat, and no figure said so.
     """
@@ -70,7 +69,7 @@ class DocumentPopulation:
 def unread_caveat(population: DocumentPopulation) -> str:
     """Return the sentence a TRACKED figure owes about what its walk did NOT read.
 
-    ⛔ **Printed whether or not it fired** (Ruling 48): `0 documents unindexed`
+    ⛔ **Printed whether or not it fired**: `0 documents unindexed`
     is the reading an office needs before it believes a green over its own
     work, and it is exactly the reading a fired-only sentence would never give.
     ⚠️ **Empty on `DISK_WALK`**, where `WALK_CAVEAT` already says the
@@ -121,9 +120,9 @@ def format_findings(findings: list[Finding]) -> str:
     return "\n".join(lines)
 
 
-#: ⛔ **The label every test run prints, reached or not** (`W158`). ⚠️ Printed on
+#: ⛔ **The label every test run prints, reached or not**. ⚠️ Printed on
 #: an EMPTY population too: `green` with nothing skipped and `green` with a hole
-#: are two answers, and only a line present in BOTH tells them apart (Ruling 191).
+#: are two answers, and only a line present in BOTH tells them apart.
 UNREACHABLE = "unreachable population"
 
 #: What pytest prefixes to a skip's own reason, dropped so the reason reads as typed.
@@ -143,11 +142,11 @@ def skip_reason(report: object) -> str:
 
 
 def unreachable_population(stats: dict) -> list[str]:
-    """Return the tests this run did not reach, as a COUNT and each REASON (`W158`).
+    """Return the tests this run did not reach, as a COUNT and each REASON.
 
     ⛔ **Derived from the run's own tally** (`terminalreporter.stats`), never typed:
     a test count, one per skipped report, as pytest's closing line counts them.
-    ⛔ **A disclosure and never a verdict** (Ruling 328) — it returns lines and
+    ⛔ **A disclosure and never a verdict** — it returns lines and
     no exit code, because what is unreachable is host state no branch controls.
     """
     reasons = Counter(skip_reason(report) for report in stats.get("skipped", []))

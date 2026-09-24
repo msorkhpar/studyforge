@@ -1,4 +1,4 @@
-"""Which fixture files a sweep is entitled to look at, and what a red means (Ruling 46).
+"""Which fixture files a sweep is entitled to look at, and what a red means.
 
 **What it does.** Walks `tests/fixtures/` once and hands back only the files a
 sweep is entitled to assert against — excluding exactly the corpora *declared*
@@ -29,7 +29,7 @@ declaration this whole module reads from. ⛔ Never the directory name.
 The declaration is `INVALID_CORPORA`, and this reads it; a helper that lived
 beside one of its callers would be read from the directory instead by the next
 person who needed one. ⭐ It moved out of `tests/studyforge/archive/test_blocks.py`
-under `FND-09` unchanged in behaviour — the module that defined it was at
+unchanged in behaviour — the module that defined it was at
 567 of its 600 lines, so the seam could not grow where it lived.
 
 ## ⛔ Two modules must never consume this — see `ENFORCERS`
@@ -64,14 +64,14 @@ __all__ = [
 RAW = "/raw/"
 
 #: ⛔ **The two modules that must NOT consume this seam, and why — named in the
-#: code rather than left to be rediscovered** (`FND-09` acceptance 4).
+#: code rather than left to be rediscovered**.
 #:
 #: Both are the enforcers of the very declaration this module reads. Routing
 #: them through `excluded_by()` would have them assert `INVALID_CORPORA`
 #: against itself: the on-disk pin would agree with the dict because it *was*
 #: the dict, and the R7 registry would sanction whatever the dict sanctioned.
 #: ⭐ A check that reads its own answer for its question cannot fail, which is
-#: Ruling 48's defect arriving by the door marked "consistency".
+#: the vacuous sweep arriving by the door marked "consistency".
 ENFORCERS = {
     "tests/test_fixture_consistency.py": (
         "pins the invalid set on disk to INVALID_CORPORA; consuming a helper "
@@ -88,7 +88,7 @@ ENFORCERS = {
 class Coverage(NamedTuple):
     """How many files a sweep saw, and how many its declaration dropped.
 
-    ⛔ **The denominator Ruling 48 asks for.** A sweep that excluded everything
+    ⛔ **The denominator a sweep owes.** A sweep that excluded everything
     reports `0` findings and looks identical to a clean one; `swept` beside
     `excluded` is what tells the two apart.
     """
@@ -108,7 +108,7 @@ class Coverage(NamedTuple):
 def excluded_by(asserting: Collection[str]) -> set[str]:
     """The corpora declared to violate one of the rules `asserting` names.
 
-    ⭐ **Ruling 46, in four lines** — the whole of the exclusion policy, read
+    ⭐ **The exclusion rule, in four lines** — the whole of the exclusion policy, read
     from the declaration and never from a directory name.
 
     ⛔ **A set of rule ids, not a name.** Both coarser forms were tried and both
@@ -178,7 +178,7 @@ def fixture_paths(
 def archive_documents(*, asserting: Collection[str]) -> Iterator[tuple[str, dict]]:
     """Every archive document a sweep asserting `asserting` is entitled to look at.
 
-    ⭐ **Ruling 46.** A sweep names, as a set of rule ids, every property it
+    ⭐ **The exclusion rule.** A sweep names, as a set of rule ids, every property it
     asserts; this excludes exactly the fixtures *declared* to violate one of
     them — see `excluded_by`.
 
@@ -207,7 +207,7 @@ def coverage(
     ⛔ **A sweep asserts this rather than `> 0`.** `assert seen > 0` passes on
     a walk that matched one file out of forty, and passes identically on the
     day an exclusion is widened by mistake; `assert seen == coverage(...).swept`
-    names the denominator the sweep was supposed to have (Ruling 48).
+    names the denominator the sweep was supposed to have.
 
     ⚠️ Defaults to the archive documents, because that is what most sweeps
     walk; pass `within=None` for the whole tree.

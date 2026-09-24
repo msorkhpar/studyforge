@@ -45,9 +45,9 @@ _NOT_RESERVED = (
 #: ⚠️ A domain somebody really owns, carrying a reserved name that is NOT where it ENDS.
 #: ⛔ **The two sides DISAGREE here, and the disagreement is in their GRAMMARS and not in
 #: the vocabulary**: the floor looks for a reserved name INSIDE free text and stops at a
-#: word boundary, while `tools.authorship` parses the domain and tests its SUFFIX. ⭐ This
-#: row shares the LIST and rewrites neither grammar, so the divergence is asserted below as
-#: the state of the tree rather than smoothed away — it is filed as `W310/1`.
+#: word boundary, while `tools.authorship` parses the domain and tests its SUFFIX. ⭐ The
+#: LIST is shared and neither grammar is rewritten, so the divergence is asserted below as
+#: the state of the tree rather than smoothed away.
 _GRAMMARS_DISAGREE = "example.com" + ".elsewhere.co.uk"
 
 
@@ -64,7 +64,7 @@ def test_states_its_contract():
 
 
 def test_the_vocabulary_is_INHABITED_and_the_probes_hold_BOTH_verdicts():
-    # ⛔ Ruling 191: an empty vocabulary, or a probe list of one verdict, would satisfy
+    # ⛔ Inhabitation: an empty vocabulary, or a probe list of one verdict, would satisfy
     #    every comparison below for free — green where red was required.
     assert reserved.RESERVED_TLDS, "the reserved TLDs are empty"
     assert reserved.RESERVED_DOMAINS, "the reserved domains are empty"
@@ -123,10 +123,10 @@ def test_the_floor_exempts_exactly_what_is_RESERVED(domain):
 
 
 def test_the_two_GRAMMARS_differ_where_a_reserved_name_is_not_where_the_domain_ENDS():
-    # ⛔ DISCLOSED, never smoothed (`W310/1`). The VOCABULARY is one list and both sides
+    # ⛔ DISCLOSED, never smoothed. The VOCABULARY is one list and both sides
     #    read it; what differs is how each LOOKS FOR a name in it, and that is each side's
-    #    own policy. ⚠️ `W310` shares the list and rewrites neither grammar — an earlier
-    #    form of this row DID anchor the floor's, and it reddened the floor on another
+    #    own policy. ⚠️ The list is shared and neither grammar is rewritten — an earlier
+    #    form of this change DID anchor the floor's, and it reddened the floor on another
     #    office's negative fixture, which is how the divergence was measured at all.
     assert reserved.is_reserved(_GRAMMARS_DISAGREE) is False
     assert _floor_exempts(_GRAMMARS_DISAGREE) is True
@@ -141,7 +141,7 @@ def test_they_share_a_VOCABULARY_and_NOT_a_VERDICT():
     assert reserved.is_reserved("anthropic" + ".com") is False
 
 
-# --- THE PLANT (Ruling 123): a change to the vocabulary moves BOTH readings ------------------
+# --- THE PLANT: a change to the vocabulary moves BOTH readings -------------------------------
 
 
 def test_PLANTING_the_vocabulary_moves_the_FLOOR(monkeypatch):
@@ -167,7 +167,7 @@ def test_PLANTING_the_vocabulary_moves_the_FLOOR(monkeypatch):
 
 
 def test_the_PLANT_is_restored_and_the_shipped_vocabulary_is_unchanged():
-    # ⭐ Ruling 202's spirit for an in-process plant: the next reader must not inherit it.
+    # ⭐ An in-process plant is restored: the next reader must not inherit it.
     assert _PLANTED not in reserved.RESERVED_TLDS
     assert _PLANTED not in reserved.RESERVED_DOMAINS
 
