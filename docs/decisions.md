@@ -1171,11 +1171,19 @@ What it reads, and the choices in it:
 
 ### Narration deletes nothing, and stale clips go only through an explicit prune
 
-**Decision.** `studyforge narrate` (`cli.narrate.cli`) requires either `--voice` or `--prune` and refuses both together. A narration run merges into the record, deletes no file and no entry, and reports on every run how many record entries the corpus no longer produces. `--prune` (`cli.narrate.prune`) builds no service client, refuses by name when the walk skipped a declared unit, and deletes only the one clip file a dead entry names, holding any entry it cannot place by rule. The record names each superseded clip with the directory it was written into, because placement can change with a unit's declarations and a filename alone could not locate it.
+**Decision.** `studyforge narrate` (`cli.narrate.cli`) requires exactly one of `--voice`, `--prune`, `--pack` and `--publish`, so a run that synthesises never prunes. A narration run merges into the record, deletes no file and no entry, and reports on every run how many record entries the corpus no longer produces. `--prune` (`cli.narrate.prune`) builds no service client, refuses by name when the walk skipped a declared unit, and deletes only the one clip file a dead entry names, holding any entry it cannot place by rule. The record names each superseded clip with the directory it was written into, because placement can change with a unit's declarations and a filename alone could not locate it.
 
 **Why.** A deletion that rides along with synthesis, or that trusts a partial walk, would remove a unit's clips because its material was momentarily absent.
 
 **Serves.** `R3`, `R6`
+
+### Clips leave git as release volumes, and only the owner uploads them
+
+**Decision.** `studyforge narrate <root> --pack <dir>` (`narrate.release.volumes`) packs every clip the narration record locates, at its recorded path relative to the corpus root, into one stored zip split into volumes of at most `PART_BYTES` with a `SHA256SUMS`, in a directory outside the corpus; members are sorted and carry one timestamp and fixed permissions, and a clip the record promises and the disk lacks is refused before anything is written. The pack writes `.studyforge/narration-release/restore.sh` and its PowerShell twin (`narrate.release.scripts`) with only the tag and the clip signal filled in, and sets the clip signal `.studyforge/assets/narration-clips.js` to `released` (`write_signal`): each script reads the repository from the checkout's `origin`, fetches over the public address or, for a private repository, the API by asset id with `GITHUB_TOKEN` or `gh`, checks every volume against the digests the pack committed beside the scripts (`VOLUME_SUMS`), refuses a zip whose members are not exactly the committed clips (`CLIP_SUMS`), extracts into staging, checks each clip's committed digest, moves each where the record places it, deletes the downloads, and writes `present` into the clip signal as its last step. `studyforge narrate <root> --publish <dir>` (`narrate.release.publish`) is a dry run: it checks the volumes against the committed `SHA256SUMS`, the scripts, the committed clip list against the record, and that the clip signal says `released`, reads the repository from the checkout's git configuration, starts no process, and prints the one `gh release create` command, which only the owner runs.
+
+**Why.** A corpus too large to commit its clips still owes a reader the voice, and a committed script that named an account, or an upload the framework made on its own, would publish what is the owner's to publish; spec §8.3 keeps every process start in `execute`, so the framework's part ends at a checked, printed command.
+
+**Serves.** `R7`, `R8`, `R10`
 
 ## The test suite
 

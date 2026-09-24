@@ -74,6 +74,12 @@ estimate does not degrade the product, it stops the build. Clips are
 content-addressed, so a second narration run with no changed text writes
 nothing, and the cost is paid once per text, not once per build.
 
+A projection past the limits does not mean giving up the voice. With
+`media.commit` set to `never`, the clips stay out of git and reach a reader as
+release volumes: `studyforge narrate <root> --pack <dir>` packs them and writes
+the restore scripts the reader runs from a clone. Decide it before the first
+clip is committed, because a clip committed once stays in the history.
+
 ### A regeneration is a diff, and its reach is decided by layer, not size
 
 A framework change reaches a corpus only by regenerating the consuming half and

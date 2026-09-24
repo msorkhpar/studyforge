@@ -9,6 +9,7 @@ file set can be read back before anything is on disk.
 
 **Depends on.** `studyforge.corpus.manifest` for what a manifest says,
 `skills.adapter` for the adapter's package name, plus this package's `pin`,
+`listening` (the narration section),
 `nondestructive` (for where R3's generated check lands) and `record` (for the
 refusal a misplaced reader document gets). ⛔ No I/O, and nothing
 source-specific (R1).
@@ -83,6 +84,7 @@ from pathlib import PurePosixPath
 
 from studyforge.corpus.manifest import MANIFEST_FILENAME, ONBOARDING_DOC, Manifest
 from studyforge.skills.adapter import bytecode_ignores, plan_for
+from studyforge.skills.onboarding.listening import narration_section
 from studyforge.skills.onboarding.nondestructive import EDITS_TEST, TESTS_DIR
 from studyforge.skills.onboarding.pin import (
     DOCUMENTS,
@@ -242,6 +244,7 @@ def reader_document(
             *_running(manifest, commit, version, run),
             *_stands(run),
             *_products(manifest),
+            *narration_section(manifest),
             *_yours(hand_written),
             *_touches(manifest),
         ]
