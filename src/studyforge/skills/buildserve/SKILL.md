@@ -160,7 +160,10 @@ user chose the reading floor, and it is complete.
 framework's own mode probe whether the corpus's runner container is up over the
 corpus root. When it is not, `host` is printed: a reader's code runs on this host,
 without the runner's isolation. Its `remedy` line says what to do: start the runner
-container as `code-server-toolchain`'s README documents, then serve again. The probe's
+and the editor with the one command under "Bring it up" in the corpus's own
+`EXECUTION.md`, run from the corpus's root, then serve again. ⭐ That command reads
+both tags the execution skill recorded, so it starts exactly the images the corpus
+names. The probe's
 answer is taken once, when the site starts listening. A run's command is read from
 the corpus's own unit documents, and its outcome is recorded in the corpus's
 progress store, never in the site.

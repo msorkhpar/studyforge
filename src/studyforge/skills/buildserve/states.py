@@ -165,13 +165,23 @@ NO_EXERCISES = PartialState(
     "none needed",
 )
 
-#: ⭐ `W381`: the ruled wording. ⛔ Not finished in the C5 sense — it has a remedy.
+#: Where a reader starts the containers: the corpus's own document, and the
+#: section of it that holds the one command. ⭐ That command reads both tags
+#: the execution skill recorded, so a remedy that pointed anywhere else would
+#: start images the corpus never recorded (`W464/1`, `W466`).
+START_DOCUMENT = "EXECUTION.md"
+START_SECTION = "Bring it up"
+
+#: ⭐ `W381`: the ruled wording, its remedy pointed at the corpus's own command
+#: (`W466`, the user's ruling of 2026-09-24). ⛔ Not finished in the C5 sense —
+#: it has a remedy.
 HOST_EXECUTION = PartialState(
     "host",
     "no runner container is up over this corpus, so Run and Submit execute on this "
     "host, without the runner's isolation",
     f"everything: Run and Submit answer on this host; {READING_FLOOR}",
-    "start the runner container as code-server-toolchain's README documents, then serve again",
+    f'start the runner and the editor with the one command under "{START_SECTION}" in '
+    f"this corpus's {START_DOCUMENT}, run from the corpus's root, then serve again",
 )
 
 #: ⭐ Every state, in the order the skill prints them.

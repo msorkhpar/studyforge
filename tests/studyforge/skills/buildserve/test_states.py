@@ -158,13 +158,17 @@ def test_the_probe_is_asked_only_when_a_run_could_happen():
 
 def test_the_host_state_says_what_the_ruling_says():
     # ⭐ Round 125's wording: where it runs, what it lacks, that everything works,
-    # and the remedy names the runner container and the component's README.
+    # and (`W466`) the remedy names the corpus's own EXECUTION.md command, which
+    # reads both recorded tags, never the component's README.
     assert HOST_EXECUTION.name == "host"
     assert "execute on this host, without the runner's isolation" in HOST_EXECUTION.missing
     assert HOST_EXECUTION.works.startswith("everything:")
     assert "(C5)" not in HOST_EXECUTION.works, "host mode is not a finished state"
-    remedy = "start the runner container as code-server-toolchain's README documents"
-    assert HOST_EXECUTION.remedy == f"{remedy}, then serve again"
+    remedy = 'start the runner and the editor with the one command under "Bring it up"'
+    assert HOST_EXECUTION.remedy.startswith(remedy)
+    assert "this corpus's EXECUTION.md" in HOST_EXECUTION.remedy
+    assert HOST_EXECUTION.remedy.endswith(", then serve again")
+    assert "README" not in HOST_EXECUTION.remedy
     assert HOST_EXECUTION in KNOWN
 
 

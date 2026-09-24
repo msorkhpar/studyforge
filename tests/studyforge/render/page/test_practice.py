@@ -291,7 +291,9 @@ def test_the_editor_slot_says_it_is_not_running_and_how_to_start_it():
     # broken instead of saying so.
     note = panel().split('data-practice-part="no-editor"')[1]
     assert "not running" in note
-    assert "code-server-toolchain" in note
+    # ⭐ `W466`: how to start it is the corpus's own command, never a README.
+    assert 'the one command under "Bring it up" in this corpus\'s EXECUTION.md' in note
+    assert "README" not in note.split("</p>")[0]
 
 
 # --- the panel's script, read as the data it is (`W416`) --------------------
