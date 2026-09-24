@@ -12,9 +12,9 @@ what `python3 -m ingest` and pytest print to an integrator.
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
+from studyforge.corpus.container import CONTAINER_FILENAME, load
 from studyforge.corpus.manifest import parse
 from studyforge.skills.adapter import plan_for, scaffold
 from studyforge.validate import validate
@@ -127,15 +127,16 @@ def test_a_declared_corpus_reaches_a_validate_clean_archive_from_its_manifest(tm
     report = validate(root)
     assert report.ok, "\n".join(report.lines())
 
+    manifest = parse((root / "corpus.json").read_text(encoding="utf-8"))
     maps = {
-        where: json.loads((root / "archive" / where / "container.json").read_text("utf-8"))
+        where: load(root / "archive" / where / CONTAINER_FILENAME, manifest)
         for where in ("start", "further")
     }
-    assert [unit["origin"] for unit in maps["start"]["units"]] == [
+    assert [unit.origin for unit in maps["start"].units] == [
         "lessons/intro-1.md",
         "lessons/intro-2.md",
     ]
-    assert [unit["origin"] for unit in maps["further"]["units"]] == ["lessons/more_1.md"]
+    assert [unit.origin for unit in maps["further"].units] == ["lessons/more_1.md"]
 
     suite = _pytest(root)
     assert suite.returncode == 0, suite.stdout + suite.stderr
