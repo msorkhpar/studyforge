@@ -9,7 +9,7 @@
 
    ⛔ **This file draws; it never talks to the API.** Everything it asks goes
    through `window.studyforge.run.practice(corpus, key)`, which the SERVING
-   PROCESS adds to the page it answers (`E05`). ⭐ A built text that named the
+   PROCESS adds to the page it answers. ⭐ A built text that named the
    API, the serving origin or the client file is a defect R8's floor reads
    (`tests/studyforge/cli/serving.py`), and there is no such name below.
 

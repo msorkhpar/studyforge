@@ -11,7 +11,7 @@ from studyforge.render.markup import text
 #: repository's own personal-data sweep refuses that literal in any file and it
 #: is right to: the value under test is a shape, and committing an instance of
 #: the shape to prove it is refused would be the defect the rule prevents.
-#: ⭐ Measured 2026-09-10: written as one literal, `python3 -m tools.quality`
+#: ⭐ Measured 2026-09-10: written as one literal, the quality floor
 #: reported `[personal-data] carries a home path (R7)` on this very line.
 A_ROOTED_HOME_PATH = "/" + "home/example/notes.html"
 

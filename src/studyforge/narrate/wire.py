@@ -12,16 +12,16 @@ raises `UnreadableAnswer` for one it cannot read.
 **Depends on.** `urllib`, `dataclasses`, `collections.abc` (standard library
 only), plus `archive.scrub` for the absence sentence and `narrate.answers` for
 the error family. ⛔ **Nothing on the build's side imports this module**,
-asserted over `sys.modules` in a fresh interpreter (`W223`).
+asserted over `sys.modules` in a fresh interpreter.
 
-## ⛔ THE DECODE ERROR IS THE WIRE'S (`W212/3`)
+## ⛔ THE DECODE ERROR IS THE WIRE'S
 
 ⭐ **Reading bytes as JSON is the same act for `/healthz` and for a job**, so the
 refusal is one class, and it is defined here. ⚠️ `probe` used to catch a
 `ManifestError` around a health answer, which is not a manifest, and the name was
 another package's error family. ⛔ **Every arm around a service answer now names
 this module's classes.** ⭐ The JSON readers themselves are `narrate.client`'s:
-the module that decodes an answer is the one that calls the R7 gate (`W7`).
+the module that decodes an answer is the one that calls the R7 gate.
 """
 
 from __future__ import annotations

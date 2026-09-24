@@ -18,15 +18,15 @@ index. ⛔ Not on `contents`: a trail and a bar arrive as **plain values a calle
 built**, so this module imports nothing from the package that computes a reading
 order and nothing from a peer renderer. ⛔ Not on `render.index` either, which
 imports this package — hence `render.markup.anchor` rather than `index.anchor`
-(`W107`).
+(R17).
 
-## ⭐ Split from `page.anchors` at a seam that already existed (`W107`)
+## ⭐ Split from `page.anchors` at a seam that already existed
 
 ⚠️ One module answered four questions — anchors, the outline, the trail, the bar
 — at eight lines under its ceiling. ⭐ *Where this page points* is this module;
 *what may be linked to* is `page.anchors`.
 
-## ⛔ Ruling 164 here: every region is CHROME, so a refused href DROPS
+## ⛔ Every region is CHROME, so a refused href DROPS
 
 ⭐ **The bar drops the whole slot** — a bar with a dead `next` is worse than one
 with no `next`, and the reader still has the trail, the outline and the page.
@@ -45,9 +45,9 @@ corpus, which is worse than an unlinked word.
 ⚠️ **`Link(href=None)` is §7's third state**, spelled as
 `render.index.Item(href=None)` spells it: *no page on this machine*. ⛔ A
 renderer that cannot tell that from a **bad** href always picks the wrong one of
-drop-or-raise, so the type is what makes Ruling 164 applicable rather than a coin
+drop-or-raise, so the type is what makes drop-in-chrome applicable rather than a coin
 toss. ⭐ And it degrades instead of dangling: that unit still has a row on the
-root index anchored by its own key (`SF-14`), so the slot points at `<the
+root index anchored by its own key, so the slot points at `<the
 index>#<the key>`, where the reader can see it is not built yet. ⛔ With no key,
 or no index to hang the fragment on, nothing useful is left and the slot drops.
 """
@@ -62,7 +62,7 @@ from studyforge.render.markup import anchor, escape, escape_attribute, inline, s
 from studyforge.render.pageassets import SURFACE_HOOKS
 
 #: The markup of the two chrome regions this module renders. ⛔ **Files, not
-#: f-strings** (R13, and `SF-34`): each wrapper carries a product string — the
+#: f-strings** (R13): each wrapper carries a product string — the
 #: `aria-label`s — and a product string typed in Python
 #: is a sentence every corpus has to live with, in the one language nobody
 #: thinks to look in when the page's wording is wrong. ⭐ The row bodies stay in
@@ -74,7 +74,7 @@ BREADCRUMB_TEMPLATE = "breadcrumb.html"
 
 #: What stands between two crumbs. ⛔ **A file for one glyph, which is R13 read
 #: exactly as written**: `›` is a character a reader sees, chosen by this
-#: framework, and a glyph in a loop body is the finding `SF-34` handed over.
+#: framework, and a glyph in a loop body is a product string typed in Python.
 #: ⚠️ Markup rather than a `::before` rule because the `file://` floor is the
 #: baseline (R8) — a page opened with no stylesheet still reads as a trail.
 SEPARATOR_TEMPLATE = "crumb-separator.html"
@@ -83,8 +83,8 @@ SEPARATOR_TEMPLATE = "crumb-separator.html"
 #: and the template its row is authored in. ⛔ A tuple, so the order is stated
 #: rather than depending on iteration (R10).
 #:
-#: ⛔ **The `rel` and the arrows left Python here — `SF-34`'s handed finding
-#: discharged** (R13). They were `("previous", "prev", "← ")` and a `" →"`
+#: ⛔ **The `rel` and the arrows left Python here**
+#: (R13). They were `("previous", "prev", "← ")` and a `" →"`
 #: decided by an `== "next"` test inside `_link`. ⭐ Three files rather than one
 #: with a `${lead}` slot: a template whose glyph arrives as a substitution has
 #: not moved the glyph out of Python, only the markup around it.
@@ -95,8 +95,8 @@ LINK_SLOTS = (
 )
 
 #: The attribute the trail's level word is reached by, and the value saying it is
-#: one. ⛔ Taken from the published surface, never typed: `SF-34` made these the
-#: one spelling after two renderers had each invented their own (`SF-14/1`).
+#: one. ⛔ Taken from the published surface, never typed: the surface made these the
+#: one spelling after two renderers had each invented their own.
 KIND_ATTRIBUTE = SURFACE_HOOKS["kind"]
 LEVEL_KIND = SURFACE_HOOKS["level"]
 
@@ -114,7 +114,7 @@ class Link:
     """One destination outside this page: a relative href and what to call it.
 
     ⛔ `href` is relative and is emitted verbatim after a scheme check, because
-    only the study order knows the path arithmetic (`SF-13`, `SF-14`) and this
+    only the study order knows the path arithmetic and this
     module must not invent it.
 
     ⭐ **`href=None` is a DECLARED absence** — *no page on this machine* — and
@@ -133,7 +133,7 @@ class Links:
     """Where a unit page points when the reader has finished it.
 
     ⭐ Every field optional, and all three absent is the normal state at M1:
-    nothing computes a reading order before `SF-13`, and a page with no bar is a
+    nothing computes a reading order before the study order does, and a page with no bar is a
     page that renders exactly as it will once one does — minus the bar.
     """
 
@@ -187,7 +187,7 @@ def _crumb(crumb: Crumb, *, lead: str, current: bool) -> str:
     """Return one step of the trail, linked where there is something to link to.
 
     ⛔ The crumb survives a refused or absent href and the **anchor** is what
-    drops — see this module's reading of Ruling 164. ⚠️ Both branches emit the
+    drops — see this module's reading of drop-in-chrome. ⚠️ Both branches emit the
     same words, so a trail is never short by a step and never silently renumbers
     the hierarchy.
     """
@@ -247,7 +247,7 @@ def _destination(link: Link, index: Link | None) -> str | None:
 
     ⛔ **The fallback is gated as ONE string, after composing.** A key is a
     corpus's own text; gating only the index's half would let a key no href can
-    be spelled with reach the page, which is the half of `W57`'s lesson that was
+    be spelled with reach the page, which is the half of the dropped-href lesson that was
     about the *set* rather than about the prefixes in it.
     """
     if link.href is not None:

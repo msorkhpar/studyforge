@@ -35,12 +35,12 @@ pass and never moves**: a later failure does not un-pass, and a later pass does
 not make it newer.
 
 ⛔ **There is no `read` mode and there will not be one.** A read mark is the
-reader's own assertion and lives in the browser (SF-30, §8.5); a record that
+reader's own assertion and lives in the browser (§8.5); a record that
 could hold one could be made to treat it as a pass.
 
 ## ⛔ `last.cases` is a REPORT about a run, never a second rule for a pass
 
-⭐ **`cases` is the one OPTIONAL key in `last`** (`AX-02`): a Submit whose
+⭐ **`cases` is the one OPTIONAL key in `last`**: a Submit whose
 record declared a breakdown carries one verdict per declared case, and every
 other run carries none. ⛔ **A document written before it reads unchanged** —
 that is what *optional* is for here, and it is checked rather than assumed.
@@ -57,7 +57,7 @@ ask*, *edge cases n/m* and each failed edge's sentence are all read off this
 map joined with the practice's own declared cases. ⛔ Recording the counts too
 would be two spellings of one claim, and the id is the stable key: a `says` is
 reader-facing corpus text, already in the practice document, and it goes stale
-the moment the corpus is regenerated (`AX-01`, *For dependents*).
+the moment the corpus is regenerated.
 
 ⛔ **The shape is checked here and the ids are NOT.** This file is read back
 with no corpus in hand — `studyforge archive` reads one on a machine that has
@@ -104,11 +104,11 @@ ENTRY_KEYS = frozenset({"runs", "last", "first_passed_at"})
 LAST_KEYS = frozenset({"at", "mode", "exit", "passed", "commands"})
 
 #: ⭐ The framework's ONE spelling of the breakdown's key, read by the run
-#: route that writes it rather than retyped there (`AX-02`).
+#: route that writes it rather than retyped there.
 CASES_KEY = "cases"
 
 #: ⛔ The only key in `last` that may be absent, which is how a document
-#: written before `AX-02` reads unchanged.
+#: written before the breakdown existed reads unchanged.
 LAST_OPTIONAL_KEYS = frozenset({CASES_KEY})
 
 
@@ -145,7 +145,7 @@ def next_entry(
     `cases` is one run's breakdown — `{case id: did it pass}` — or `None`,
     which is every run that produced none: a Run, a record that declares no
     breakdown, a run that wrote no report, and every run recorded before
-    `AX-02`. ⛔ It never touches `passed`.
+    the breakdown existed. ⛔ It never touches `passed`.
     """
     if mode not in MODES:
         raise ProgressError(f"a run's mode must be one of {list(MODES)}, got {describe(mode)}")

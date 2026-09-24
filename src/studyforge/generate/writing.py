@@ -51,7 +51,7 @@ hand"* is not a question it can ask. A hand-edited copy of a page the build
 wrote is INSIDE the footprint and IS overwritten. ⭐ That is the decision and
 not an oversight, and R19 already ruled it the right one: a hand-edit to a
 generated artifact is *a finding, not a fix* — customisation enters as manifest
-data, and the page is regenerated and committed again (`W242`), so the diff of
+data, and the page is regenerated and committed again, so the diff of
 the next build is where the lost edit shows.
 
 ⛔ **It follows that a file somebody put at a named path before any build ever
@@ -124,7 +124,7 @@ class Written:
     ⛔ **`replaced` is a CROSS-CUTTING record, exactly like `refused`, and not a
     fourth category of output.** A replaced page is still one of `pages`, so
     `paths` stays the path-for-path diff against `studyforge plan` that
-    Ruling 99 asks for whether the run was a first build or a rebuild. ⭐ It is
+    R3 asks for whether the run was a first build or a rebuild. ⭐ It is
     reported separately because *"which of my files did this run overwrite"* is
     the question the rebuild policy owes an auditable answer to, and a report
     that said `wrote` for both would not be one.
@@ -234,7 +234,7 @@ def copy(
 
 
 def _written_twice(at: PurePosixPath) -> BuildError:
-    """Refuse a second write to one path in one run (`W254`, clause 3).
+    """Refuse a second write to one path in one run (clause 3).
 
     ⛔ **A file this run already wrote is never replaced by this run.** The
     footprint allows replacing the build's own output from an EARLIER run.
@@ -279,7 +279,7 @@ def mint(out: Path, at: PurePosixPath, refused: list[PurePosixPath]) -> None:
 def stand(out: Path, at: PurePosixPath, refused: list[PurePosixPath]) -> bool:
     """Name a file standing where the directory `at` belongs, and create nothing.
 
-    ⭐ **`W268`: a directory nothing will be copied into is never minted**, since
+    ⭐ **A directory nothing will be copied into is never minted**, since
     git cannot track an empty one and a built checkout would differ from its
     clone. ⛔ The R3 refusal is still owed there, so it is asked here. Returns
     whether the way is clear. ⚠️ A directory already on disk is never removed.

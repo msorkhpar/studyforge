@@ -35,11 +35,11 @@ them) and the **regions themselves**, each of which is *optional and gated on
 something*. When this file crosses R11's 400 it divides into `document.py` and
 `regions.py` along that line, and not elsewhere.
 
-## ⛔ The page's heading is the MATERIAL's when the material has one (`W407`)
+## ⛔ The page's heading is the MATERIAL's when the material has one
 
 ⚠️ **A source document states what it is in its first heading**, and this page
 states what it is in its `<h1>` — and printing both is the title read twice,
-which `W388/17` measured on **every** page of a rebuilt corpus. ⭐ So the two are
+which was measured on **every** page of a rebuilt corpus. ⭐ So the two are
 one statement: `page.anchors.title_heading` names the block, this module prints
 it as the page's heading, and `page.section` withholds it from the body.
 
@@ -137,7 +137,7 @@ def compose(
     exactly as it will once a build does — minus the region.
 
     ⚠️ `rail` is optional for exactly that reason too, and it is the region that
-    reaches the OTHER containers (`W324`): only a caller holding the whole
+    reaches the OTHER containers: only a caller holding the whole
     contents document can name them, and a corpus with one container renders
     without it by design rather than by omission.
 
@@ -227,7 +227,7 @@ def identity(document: dict, placement: Placement) -> str:
         # rule. The name is this package's so a caller catches one family.
         #
         # ⛔ **Narrow on purpose.** `PersonalDataLeak` is deliberately outside
-        # this pair and travels through as itself (Ruling 58): a caller
+        # this pair and travels through as itself: a caller
         # rendering a site catches `PageError` per unit and carries on, and an
         # R7 refusal folded into that family would be logged as one more page
         # that did not render, with the leak the thing nobody looked at.
@@ -274,9 +274,9 @@ def heading_attributes(document: dict, narration: Narration = SILENT) -> str:
 def meta(document: dict) -> str:
     """Return the masthead's quieter second line — which a unit page no longer has.
 
-    ⛔ **The address slugs went first** (`W362`, M2 and M3): builder identifiers
+    ⛔ **The address slugs went first** (M2 and M3): builder identifiers
     joined by middle dots, while the trail above the title already names every
-    container by its title. ⛔ **The variant went next** (`W388`): shown alone
+    container by its title. ⛔ **The variant went next**: shown alone
     under the title it was a bare kind word (`prose`, `java`) that tells a
     reader nothing the page does not, which is the brief's label that stops
     being true. ⭐ It is still the page's, in R4's identity block and the served
@@ -313,7 +313,7 @@ def pending(document: dict) -> str:
 
 
 def _practices(number: int) -> str:
-    """`1 practice is` or `3 practices are`, in the reader's words (`W362`, P2).
+    """`1 practice is` or `3 practices are`, in the reader's words (P2).
 
     ⛔ Not `archived`: that is the builder's word for how the material reached
     this page, and a reader was never told what it meant.
@@ -327,7 +327,7 @@ def player(body: str, narration: Narration = SILENT) -> str:
     ⛔ **Derived from the body, never from a document field** — see this
     module's docstring for why the gate is here rather than in a key this module
     would have had to invent one milestone early. ⭐ **The derivation survived
-    `W202`'s Q4 unchanged**, and that is the payoff for writing it as one: a
+    the three narration states unchanged**, and that is the payoff for writing it as one: a
     promised clip that is not on disk emits an *empty* `AUDIO_ATTRIBUTE`, so the
     body carries the attribute and the transport arrives with no new gate.
 
@@ -344,7 +344,7 @@ def narration_gap(narration: Narration) -> str:
     """Return the panel naming this page's unkept narration promises, or `''`.
 
     ⛔ **Empty is the ordinary answer and it is the whole product decision**
-    (`W202` Q4): a corpus that was never narrated is COMPLETE, not short (§7's
+    (R3, R8): a corpus that was never narrated is COMPLETE, not short (§7's
     C5, §11.0), so it carries no notice — while a corpus whose audio broke says
     so. ⚠️ Before this the two rendered identically.
 

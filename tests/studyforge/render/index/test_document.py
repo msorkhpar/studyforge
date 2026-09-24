@@ -20,7 +20,7 @@ FILLED_SLOTS = ("body", "heading", "outline", "rail", "script", "stylesheet", "t
 
 
 def test_the_skeleton_is_the_unit_pages_own_and_no_template_was_added():
-    # ⭐ E03 asks this page to share the unit page's palette and type stack by
+    # ⭐ The rendering design asks this page to share the unit page's palette and type stack by
     # importing them rather than restating them; sharing the skeleton is that
     # ruling taken as far as it goes.
     assert SKELETON == "page.html"

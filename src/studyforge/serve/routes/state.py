@@ -31,13 +31,13 @@ claims and what the disk says, and no `passed` is reported for it.
 
 ## ⛔ A read mark is never a pass, and a run never completes anything
 
-Read marks live in the browser (`SF-30`, spec §8.5), and nothing a request carries
+Read marks live in the browser (spec §8.5), and nothing a request carries
 reaches this module — a route is given a path and nothing is read from its query,
 headers or body — so `status` is built with no read marks and every `read` is false,
 whatever the record holds. A practice's `passed` is its `first_passed_at` being set,
 which `progress` does only for a test run exiting 0; `last.passed` is `is_pass`.
 ⭐ `last.cases` is the Submit's per-case breakdown or `null` — a report beside
-that verdict, never a second one (`AX-02`).
+that verdict, never a second one.
 
 ⛔ **A failure answers a fixed message**: `422` for a malformed record (left exactly
 as it is, never reset), `500` for an unreadable one, a scan that failed, or the gate.
@@ -226,8 +226,8 @@ def _records(
 def _summary(entry: dict) -> dict:
     """Return what state reports of one believed practice entry.
 
-    ⭐ **`last.cases` is published and `None` where there is none** (`AX-02/3`,
-    closed here on the register's own authorisation): absent and empty are
+    ⭐ **`last.cases` is published and `None` where there is none**:
+    absent and empty are
     different claims, and the record refuses an empty map. ⛔ **It is a REPORT
     and not a second `passed`** — the key beside it is `is_pass` and this one
     never touches it, so a Submit that exited zero with a failed edge is

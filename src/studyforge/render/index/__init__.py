@@ -30,7 +30,7 @@ on `corpus.container`, not on `corpus.discovery`, and not on the filesystem.
 
 ## ⛔ Its only corpus input is the two contents documents, and that is the point
 
-⚠️ **E03: *"if this page can be built, the contract carries everything a renderer
+⚠️ **The rendering design: *"if this page can be built, the contract carries everything a renderer
 needs; if it cannot, the contract is missing something."*** ⭐ So `from_contents`
 lives **here** rather than in every caller, and the isolation is a property of
 this package that `test_assemble` asserts over the source — ⛔ not a claim about
@@ -49,7 +49,7 @@ contents are read at **generation** time and the tree is baked into the bytes;
 the page carries no script of its own at all, so the failure is unrepresentable
 rather than merely avoided (R8).
 
-## ⛔ Ruling 164 — this page's list is CONTENT, so a refused href RAISES
+## ⛔ This page's list is CONTENT, so a refused href RAISES
 
 ⭐ **The question is not *"is it a link"*: it is *if this element vanishes, has
 the reader lost a WAY TO GET SOMEWHERE, or has the page lost THE THING IT EXISTS
@@ -135,7 +135,7 @@ def render(
     placement: Placement,
     rail: Sequence[RailContainer] | None = None,
 ) -> bytes:
-    """Render the root index, with the rail across containers when one is handed in (`W388`).
+    """Render the root index, with the rail across containers when one is handed in.
 
     ⭐ **Bytes, not text, and that is the contract.** What is compared against a
     golden file, written to disk and served is a byte string; handing back text

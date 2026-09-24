@@ -112,7 +112,7 @@ def _list_element(block: dict, items: str) -> str:
     """Wrap rendered items in the list's own tag and the published class."""
     tag = "ol" if block.get("ordered") else "ul"
     klass = escape_attribute(class_for("list"))
-    # ⛔ W264: the number the author started at, and nothing when it is one.
+    # ⛔ The number the author started at, and nothing when it is one.
     start = list_start(block) if tag == "ol" else 1
     first = f' start="{start}"' if start != 1 else ""
     return f'<{tag} class="{klass}"{first}>{items}</{tag}>'
@@ -121,7 +121,7 @@ def _list_element(block: dict, items: str) -> str:
 def _item(item: object) -> str:
     """One item's parts in reading order: text as inline prose, a nested list as a list.
 
-    ⛔ **A nested list is rendered as a nested list (`W258`)**, never as its
+    ⛔ **A nested list is rendered as a nested list**, never as its
     parent's text. ⚠️ Its items carry **no audio attribute**: a nested item is
     spoken inside its parent item's clip (`narrate.speakable.script`), so the
     highlight sits on the parent `<li>`, which holds the nested list.

@@ -33,7 +33,7 @@ that must also work from `file://` cannot rely on a nonce the server mints. What
 could reach off the machine is closed instead — nothing beyond `'self'`, no forms,
 no plugins, no base rewriting.
 
-## ⛔ Framing is TWO-SIDED, and the two sides get opposite answers (`W427`)
+## ⛔ Framing is TWO-SIDED, and the two sides get opposite answers
 
 ⭐ **`frame-ancestors 'none'` and `X-Frame-Options: DENY` govern this page being
 framed BY somebody else, and they stay `'none'` forever** — they are in
@@ -46,7 +46,7 @@ instance actually discovered; `frames=()` — no editor, or no instance to ask �
 is `frame-src 'none'`.
 ⚠️ **This module composes whatever it is handed and decides nothing about WHEN an
 origin stops being handed to it.** ⛔ That is the caller's, and the caller's answer
-is `W430`'s: `serve.routes.runs.Runs.origins()` keeps every origin the instance has
+is this: `serve.routes.runs.Runs.origins()` keeps every origin the instance has
 ever discovered, because a policy read through a ten-second cache was `'none'` again
 ten seconds after anything asked. ⭐ A `frames` that narrows is still composed
 faithfully here, which is what `serve.app`'s own reading asserts.
@@ -55,7 +55,7 @@ nothing else, so an origin carrying a space, a quote or a `;` — which is how a
 second directive would be forged into the header — names nothing; `*` is in
 `FORBIDDEN`, so `http://127.0.0.1:*` cannot be smuggled in as an origin either.
 
-⚠️ **Measured once, on one half, and wrong for it** (`W416/2`): `code-server` was
+⚠️ **Measured once, on one half, and wrong for it**: `code-server` was
 asked whether it refuses being framed, it did not, and the feature was called
 unblocked — while OUR OWN `frame-src 'none'` blocked every load. A negative on one
 side of a two-sided property is not a negative.
@@ -173,7 +173,7 @@ WITHHELD = (
 def framable(frames: Collection[str], host: str | None = None) -> tuple[list[str], list[str]]:
     """Split these origins into what a page reached at `host` may frame, and what is withheld.
 
-    ⛔ **The HOST must match, not merely the machine** (`W427`). An editor
+    ⛔ **The HOST must match, not merely the machine**. An editor
     authenticates with a `SameSite=Lax` session cookie; a PORT is not part of a
     site but a HOSTNAME is, so a page at `localhost` framing an editor at
     `127.0.0.1` is CROSS-site, the cookie is withheld, and the frame shows a

@@ -1,6 +1,6 @@
 r"""Which clip each narrated element plays — ⛔ joined on the SPEECH ID, never the position.
 
-**What it does.** Joins `SF-16`'s speech units to `SF-17`'s regeneration record
+**What it does.** Joins `speakable`'s speech units to `synth`'s regeneration record
 and returns the one mapping a page needs: `SpeechUnit.position -> filename`,
 plus a **named state** for every unit that has no clip to play.
 
@@ -71,9 +71,9 @@ with a sentence a person reads.
 ⚠️ **`WORDS_MOVED` is the one state that still plays.** The recorded clip is a
 real file made from older words; withholding it would give the reader silence
 with no reason, and the next synthesis pass replaces it. ⭐ Same answer, and the
-same argument, as `SF-17`'s `Synthesis.unsettled`. ⛔ **It plays, and it is not
+same argument, as `synth`'s `Synthesis.unsettled`. ⛔ **It plays, and it is not
 silent**: `validate.narration` reports every one as a RED finding naming what
-to re-run (`W457`), because a stale clip nobody is told about is the defect.
+to re-run, because a stale clip nobody is told about is the defect.
 """
 
 from __future__ import annotations
@@ -185,7 +185,7 @@ def playable_of_units(
     callers want `playable_of` above.
 
     ⛔ `audio` is the directory those clips were placed in — the unit's placement
-    rooted by `synth.incremental.audio_dir` (`W222`), never composed. When it
+    rooted by `synth.incremental.audio_dir`, never composed. When it
     is `None` the disk is not consulted at all and a recorded clip is taken at
     its word, which keeps the pure path pure (R10).
 

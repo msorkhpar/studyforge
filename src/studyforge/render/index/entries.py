@@ -37,7 +37,7 @@ a tree that dropped it would be short by a container with no way to find out.
 A unit whose page has not been generated on this machine is a real, expected
 state, and it is listed **without** a link so the reader sees the material's
 full shape and which of it is readable today. ⛔ An href that is present and
-unusable is something else, and `disclosure` **raises** on it (Ruling 164).
+unusable is something else, and `disclosure` **raises** on it.
 
 ## ⛔ Every key is the one the rest of the framework joins on
 

@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/narrate/speakable/__init__.py` (R12), and SF-16's acceptance.
 
-⛔ **Every clause of `E04`'s `SF-16` Acceptance has a test in this module, named for
+⛔ **Every clause of the speech units' Acceptance has a test in this module, named for
 the clause**, and the two clauses that cannot be discharged here say so in their own
 reason rather than being quietly asserted over something weaker.
 """

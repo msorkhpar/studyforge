@@ -53,7 +53,7 @@ addresses a file at all. ⛔ That is deliberate: `blocks/prose.py` states *"Not 
 builds the placed name from a format the **synthesis service** answered with, so
 a renderer that assumed `mp3` would be a second authority on it — and the symptom
 is a page linking files that are not on disk, with the suite green. ⭐ The record
-that settles it is `.studyforge/narration.json` (`SF-17`), whose
+that settles it is `.studyforge/narration.json`, whose
 `clips.<speech id>.filename` is what was actually placed. ⛔ **This module takes
 what a build read out of that record and resolves it; it computes no name and
 guesses no suffix.**
@@ -61,7 +61,7 @@ guesses no suffix.**
 ## ⛔ THREE STATES, AND A BROKEN PROMISE IS THE ONE THIS PAGE COMPLAINS ABOUT
 
 ⚠️ **A corpus that was NEVER NARRATED used to render identically to one whose
-audio FAILED**, and that is the defect `W202`'s Q4 answers. ⭐ The three states,
+audio FAILED**, and that is the defect the three states answer. ⭐ The three states,
 and they are the user's own decision rather than this module's:
 
 | what the record says | what the page shows |

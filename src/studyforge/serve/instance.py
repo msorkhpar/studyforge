@@ -7,7 +7,7 @@ every corpus found and the state and run namespaces registered, whose static
 mount is the served root itself.
 
 ⭐ **Both forms of the verb register their namespaces HERE, in `namespaces_of`,
-and nowhere else** (`W380`, closing `W371/1` and `/2`): `instance_of` calls it over
+and nowhere else**: `instance_of` calls it over
 every corpus a discovery found, and `cli/serve.py`'s `--site` form calls it over
 the one corpus it serves, so a served site answers `state`, `run` and `quiz` as a
 served root does. `site_discovery` is the one-corpus discovery the `--site` form
@@ -30,7 +30,7 @@ so a namespace registered only in `make_instance` would never be served.
     namespaces = namespaces_of(discovered, sources)              # the namespaces alone
     server = make_server(site, content, namespaces=namespaces, writers=WRITERS)
 
-## ⛔ A site built elsewhere is SCANNED where it is built (`W380`)
+## ⛔ A site built elsewhere is SCANNED where it is built
 
 ⭐ **`state` reads the pages a scan finds, and the record's claims are believed
 only for a unit whose page is present.** A corpus served from its root is
@@ -40,11 +40,11 @@ run is believed, and its pages are named, exactly as the root form names them.
 ⛔ Scanning the corpus root instead would report every page absent and every
 record a disagreement. The progress store and the unit documents stay the
 corpus root's: `site_discovery` gives its one `ServedCorpus` the corpus root as
-`root` and the site as `scan_root` (`W385`, closing `W380/2`), so no subclass
+`root` and the site as `scan_root`, so no subclass
 overrides a scan. ⛔ The startup scan judges no cache, so nothing is written
 into the site or the corpus root.
 
-## ⭐ The frame policy is wired here too (`W427`)
+## ⭐ The frame policy is wired here too
 
 ⛔ **A page may embed only the editors THIS instance discovered**, and `frame-src`
 is therefore composed at serve time rather than built into a page (R8). The
@@ -57,7 +57,7 @@ index and the policy, and a seam registering no run namespace gets `'none'`.
 `archive.scrub` for the report, and `corpus.discovery`'s startup scan for a site
 built elsewhere.
 
-⭐ **This is the seam `studyforge serve` (`W230`) calls**: a root and a
+⭐ **This is the seam `studyforge serve` calls**: a root and a
 port, and nothing else — no configured paths, no corpus named. ⚠️ The verb takes
 the two halves, so it can refuse a corpus that declares pages nobody built before
 any socket exists. ⛔ What a namespace answers is decided in its own module; this
@@ -85,7 +85,7 @@ from studyforge.serve.routes.content import CorpusContent
 #: an act a prefetch must never take.
 WRITERS = (run.NAMESPACE, quiz.NAMESPACE)
 
-#: ⭐ Where a served page's execution client is fetched from (`SF-24`, `W370`) —
+#: ⭐ Where a served page's execution client is fetched from —
 #: `serve.routes.run`'s own spelling, taken and never re-composed. ⛔ Handed to
 #: `make_server` by both forms, so the static mount adds ONE script tag to each
 #: HTML page it answers and a BUILT page still names no API and no origin (R8).
@@ -116,7 +116,7 @@ def instance_of(
     """Return a server wired to serve every corpus one discovery found, from its root.
 
     ⭐ `private` is the static mount's refusal by path, for what the verb decided is
-    not served — narration clips a run left out (`W460`); `None` refuses nothing
+    not served — narration clips a run left out; `None` refuses nothing
     beyond what the mount already refuses.
     """
     sources = {served.source: CorpusContent(served.corpus) for served in discovered.corpora}
@@ -137,11 +137,11 @@ def instance_of(
 class RunNamespace:
     """The run namespace as a route, carrying where this instance's editors are.
 
-    ⭐ **`W427`:** the frame policy's origins must come from the very `Runs` the
+    ⭐ **The frame policy:** its origins must come from the very `Runs` the
     route answers from — one probe, one cache, and a `frame-src` that admits
     exactly the editors the run index published. ⛔ Carrying them ON the
     registered route is what lets `frames_for` read them back out of a mapping a
-    REPLACED seam returned (`cli.serve.site_namespaces`, `W386`), exactly as
+    REPLACED seam returned (`cli.serve.site_namespaces`), exactly as
     `client_for` reads the client out of the same mapping: a seam that registers
     no run namespace gets no frames, and the policy stays `'none'`.
     """
@@ -175,7 +175,7 @@ def frames_for(namespaces: Mapping[str, object]) -> Frames | None:
 
     ⛔ **`None` where nothing registered offers them**, which is `frame-src 'none'`:
     a `--site` serve whose seam was replaced to serve a site with NO execution
-    (`W386`) has no editor to frame, and a policy that named one anyway would be
+    has no editor to frame, and a policy that named one anyway would be
     a widening nobody asked for.
     """
     return getattr(namespaces.get(run.NAMESPACE), "frames", None)
@@ -186,7 +186,7 @@ def client_for(namespaces: Mapping[str, object]) -> str | None:
 
     ⛔ **`None` where the run namespace is not registered**, and that is not
     defensiveness: the `--site` form's namespaces are a named seam a caller may
-    replace to serve a site with NO execution (`W386`), and a page told to fetch
+    replace to serve a site with NO execution, and a page told to fetch
     a client from a namespace that is not there would fetch a `404` on every
     load and offer Run and Submit that answer nothing.
     """

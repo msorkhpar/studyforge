@@ -15,7 +15,7 @@ anything here runs.
 
 ## ⛔ The skeleton is `page.html`, the unit page's own, and that is the design
 
-⭐ **The three documents are one product.** E03 asks this page to share the unit
+⭐ **The three documents are one product.** The design asks this page to share the unit
 page's palette and type stack *by importing them rather than restating them*;
 sharing the **skeleton** is that ruling taken as far as it goes, and it is why
 this task adds no template file and no asset. ⚠️ A second skeleton would be a
@@ -42,13 +42,13 @@ say (R1) |
 | `nav` | the between-pages bar points at neighbours in reading order, and the
 index has none: it is where that order begins |
 | `mark` | ⛔ a read mark is a UNIT's, and the control belongs on the page
-whose reading it records (`SF-30`). ⭐ The marks themselves DO reach this page —
+whose reading it records. ⭐ The marks themselves DO reach this page —
 as a state on the rows this tree already keys by unit key — but that is the
 shared script's work at read time, not a region this module fills |
 | `pending` | practices belong to a unit |
 | `player` | narration belongs to a unit |
 
-## ⭐ Two slots it fills that a first reading would leave empty (`W388`)
+## ⭐ Two slots it fills that a first reading would leave empty
 
 ⛔ **`rail`: the user, 2026-09-19 — *"keep left menu even in the first page."***
 The argument that stood here was that the body already lists every container, so
@@ -61,7 +61,7 @@ below `rail.RAIL_MINIMUM` containers it is still nothing.
 ⭐ **`outline`: the slot for the page's secondary block, and this page's is its
 explanation** — how to use the site and how it is ordered. It sits in the
 skeleton's aside position, so a wide window puts it beside the list rather than
-above it (`W369`), and a narrow one keeps it above, where it always was.
+above it, and a narrow one keeps it above, where it always was.
 
 ## ⛔ The root index carries NO identity block, and that is not an omission
 
@@ -110,7 +110,7 @@ TRAILING_NEWLINE = "\n"
 #: rather than omitted — see this module's docstring for what each absence is.
 #:
 #: ⚠️ `headingattributes` is one of them: the unit page promotes its material's own
-#: opening heading into the `<h1>` and anchors it there (`W407`), and a page
+#: opening heading into the `<h1>` and anchors it there, and a page
 #: whose heading is a name rather than a block has no anchor to carry.
 EMPTY_SLOTS = (
     "breadcrumb",
@@ -154,16 +154,16 @@ def compose(
         # is, and a caller rendering a whole site catches one family for every
         # kind of page. ⛔ **Narrow on purpose** — `PersonalDataLeak` is
         # deliberately outside this branch and travels through as itself
-        # (Ruling 58), so a leak is never logged as one more page that did not
+        #, so a leak is never logged as one more page that did not
         # render.
         raise PageError(f"the root index cannot be composed: {error}") from None
 
 
-#: What the index says about the site, before any of the material (`W362`,
-#: the plan's §6). ⛔ **About the SITE, never the material** (R1): how to use
+#: What the index says about the site, before any of the material
+#: (R1). ⛔ **About the SITE, never the material** (R1): how to use
 #: it and how it is ordered are this framework's facts. ⚠️ Where the material
-#: comes from is the corpus's, so that column waits for `W363`'s manifest data
-#: rather than being guessed (the register's D5).
+#: comes from is the corpus's, so that column waits for manifest data
+#: rather than being guessed.
 LEDE = (
     "<p>A study site made from the material below. Read each unit in order, "
     "and tick it off when you finish it.</p>"
@@ -198,7 +198,7 @@ def leaves(sections: tuple[Section, ...]) -> list[Section]:
 def head(document: Document) -> str:
     """Return what comes above the tree: progress, Up next and the filter.
 
-    ⭐ The explanation is not here since `W388`: it is the page's aside, in the
+    ⭐ The explanation is not here: it is the page's aside, in the
     skeleton's `outline` slot — see this module's docstring.
     """
     everything = [

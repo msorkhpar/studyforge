@@ -73,7 +73,7 @@ GOLDEN_SUFFIX = ".index.html"
 #: refusal to prove it does not echo what it refused. ⛔ Written as FRAGMENTS and
 #: joined, because a real home path written whole into a tracked file is a
 #: finding against that file — by the very sweep this constant is here to
-#: exercise. `docs/conventions/personal-data-shapes.md` uses the same technique
+#: exercise. The personal-data shape table uses the same technique
 #: for the same reason, and `jane` is nobody.
 A_HOME_PATH = "".join(("/", "home/jane/material/one.unit.html"))
 

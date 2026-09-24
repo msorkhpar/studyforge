@@ -1,7 +1,7 @@
 """The trail's acceptance, asserted rather than described.
 
 ⛔ **Not a mirror of any one module** (R12 is one-way): these are the clauses
-`E03-rendering.md` states for the task as a whole, and each one names the
+the rendering design states for the task as a whole, and each one names the
 instrument that would fail it.
 
 | Clause | Instrument |

@@ -28,12 +28,12 @@ navigation join were finished and reachable only from tests.
 ⛔ **No synthesis.** Each page's narration is `generate.narration`'s answer
 over the record `studyforge narrate` wrote; a corpus with no record renders
 `SILENT`, byte for byte the pre-narration page. A build never invokes synthesis
-(`W202` answer 3).
+(R8).
 
 ⛔ **No authored overlay.** A unit that has one is built without it: this
 module hands `build_unit` a unit's archive documents and nothing else.
 
-⚠️ **What changed under this sentence, and what did not** (`W198`). It used to
+⚠️ **What changed under this sentence, and what did not**. It used to
 say nothing in `src/` declared *where* an overlay sits, so this module could
 not have applied one even had it wanted to. ⭐ **That half is closed:
 `skills.adapter.Layout.content(address, unit)` is the address now**, so a

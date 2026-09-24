@@ -40,8 +40,8 @@ exists to prevent"*. ⛔ **So something has to render them, and if nothing does,
 the reading floor shows a reader literal backticks and `[label](href)`.** That
 is this module.
 
-⛔ **`SEGMENT_KINDS` and `segments()` are published for `SF-16`** (narration,
-M3), which needs the same split for the *spoken* half and must take it from here
+⛔ **`SEGMENT_KINDS` and `segments()` are published for narration's
+speech units**, which needs the same split for the *spoken* half and must take it from here
 rather than write a second one. ⚠️ The extraction source made the same argument
 in the opposite direction — its renderer imported the split from its speech
 module — and the argument is the ordering, not the direction: **display and
@@ -59,7 +59,7 @@ the branch list below is checked against `SEGMENT_KINDS` by this module's test.
 live anchor. The corpus is trusted-ish; a page the reader opens in their own
 browser is not the place to find out that it was not.
 
-## ⛔ TWO permitted forms, and the second one used to be missing (`W57`)
+## ⛔ TWO permitted forms, and the second one used to be missing
 
 ⛔ **A permitted href is an *absolute* one whose scheme is in `SAFE_SCHEMES`, or
 a *relative reference* that stays inside the site. Nothing else.**
@@ -127,7 +127,7 @@ _ESCAPES = (("&", "&amp;"), ("<", "&lt;"), (">", "&gt;"), ('"', "&quot;"))
 #:
 #: ⚠️ **These are schemes and only schemes.** `#`, `/`, `./` and `../` used to
 #: sit in this tuple; none of them is a scheme, and their presence is what made
-#: the set read as complete while a bare `page.html` had no entry (`W57`).
+#: the set read as complete while a bare `page.html` had no entry.
 SAFE_SCHEMES = ("http", "https", "mailto")
 
 #: Every character an href may be spelled with: RFC 3986's whole repertoire —

@@ -80,8 +80,7 @@ def test_every_block_type_the_vocabulary_gives_a_file_has_a_directory_to_go_in()
     be discovered by a reader meeting a broken image.
 
     ⚠️ **It does not distinguish the derivation from a hardcoded pair today**,
-    because the two agree at this ref — see the survivor recorded in this row's
-    handoff.
+    because the two agree at this ref — a known surviving plant.
     """
     for name in MEDIA_BLOCKS:
         found = list(references({"sections": [{"blocks": [{"type": name, "src": FIGURE}]}]}))

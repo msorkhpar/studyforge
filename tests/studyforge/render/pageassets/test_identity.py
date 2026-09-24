@@ -5,7 +5,7 @@ page templates and the palette, which are data. ⭐ Every tell is asserted BOTH
 WAYS (R12, the row's clause 7): the shipped files pass, and a planted instance
 of the same tell is caught by the same check, by name.
 
-The brief is `docs/conventions/ui-design.md`, §2 and §3.
+The brief is the UI design convention's §2 and §3, kept on the branch `archive/process`.
 """
 
 from __future__ import annotations
@@ -354,7 +354,7 @@ def test_both_palettes_this_row_replaced_are_caught_by_the_same_bands():
     # shipped: `W362`'s near-black ink on its cool paper broke the CEILING, and
     # stage 1's warm-grey ink on warm paper broke the FLOOR in both themes.
     # ⚠️ `W362`'s DARK pair reads 11.6:1 from the file and is inside these
-    # bands — the "15:1" in stage 1's handoff was a browser reading of the
+    # bands — the "15:1" once quoted for stage 1 was a browser reading of the
     # highlighted passage, not of this pair, and it is not evidence here.
     assert contrast("#1b2236", "#f1f5f2") > BANDS["--fg"][1]
     assert contrast("#534e46", "#f6f1e7") < BANDS["--fg"][0]

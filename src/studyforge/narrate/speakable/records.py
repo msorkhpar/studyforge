@@ -41,7 +41,7 @@ the point of this paragraph.** An `image`, a `video`, a `rule` and an `html`
 block each yield no speech unit by their own type, and an empty paragraph yields
 none by emptiness; none of those is counted here. ⚠️ A coverage report that reads
 this field as *"blocks the listener does not hear"* would under-report a unit
-that is mostly raw HTML — `docs/conventions/module-structure.md`'s rule that a
+that is mostly raw HTML — R17's rule that a
 guarantee does not extend to what sits beside it, stated here rather than
 discovered downstream.
 """
@@ -55,7 +55,7 @@ class SpeakableError(Exception):
     """A document cannot be turned into a script, or a name cannot be minted.
 
     ⛔ **`PersonalDataLeak` is deliberately outside this family and is never
-    translated into it** (Ruling 58). A caller looping over a corpus catches this
+    translated into it**. A caller looping over a corpus catches this
     per unit and reports the rest; an R7 refusal must stop the run rather than be
     logged as one more unit that did not narrate.
     """

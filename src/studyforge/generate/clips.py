@@ -15,9 +15,9 @@ uses — at the corpus root it owns no clip.
 were probed, `generate.declarations`, `generate.writing` for R3,
 `corpus.placement` for the destination, `narrate.playable` for the state a
 clip absent from disk is in, and `unit.builder`. ⛔ Not `narrate.client` and
-not `synthesise` (`W202` answer 3): a build copies what narrate wrote.
+not `synthesise`: a build copies what narrate wrote.
 
-## ⛔ Why a build copies — `E09` § SF-38/8, carried out by `W224`
+## ⛔ Why a build copies (R8)
 
 ⚠️ A page's audio href is relative to the page, so under an output root other
 than the corpus root it resolves under that root, where narrate wrote nothing:
@@ -49,7 +49,7 @@ paragraph no longer says (`Written.stale`, `W457/1`). Neither is acted on.
 
 ⛔ The plan reads the record without opening a unit document, so an entry whose
 speech id no page produces any more is named there and copied by nothing here.
-`narrate` discloses those entries and `--prune` removes them (`W218`).
+`narrate` discloses those entries and `--prune` removes them.
 """
 
 from __future__ import annotations

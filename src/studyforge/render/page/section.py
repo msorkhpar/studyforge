@@ -19,7 +19,7 @@ the markup, and `page.errors`.
 ⚠️ **A section's `heading` is usually the archive document's title, and the
 document's own first block is usually a heading saying the same words.**
 Emitting both puts the sentence on the page twice. ⚠️ **The third copy that used
-to sit above them both is gone** (`W407`): the page's `<h1>` is now that same
+to sit above them both is gone**: the page's `<h1>` is now that same
 opening heading, moved, so the count this paragraph is about is two and not
 three. ⛔ **But a section whose material has no heading at all —
 an authored `shared` section, typically — would otherwise reach the reader as an
@@ -39,7 +39,7 @@ it is deliberately an instruction rather than a question this module re-answers.
 A document states what it is in its first heading and the page states what it is
 in its `<h1>`; `page.anchors.title_heading` rules whether those are one
 statement, `page.document` prints it — and this module withholds it, or the
-title reads twice, which is `W388/17` on every page of a rebuilt corpus. ⛔ Two
+title reads twice, as it once did on every page of a rebuilt corpus. ⛔ Two
 modules deciding it independently is two chances to disagree, and the page that
 results either says its title twice or does not say it at all.
 
@@ -58,7 +58,7 @@ from the section above it.
 page carries that key verbatim, so the player at M3, progress at M5 and an
 in-page link all address the same thing, and none of them has to read a heading.
 
-## ⛔ The attachments are LINKS and sit after the section (`W215`, spec C4)
+## ⛔ The attachments are LINKS and sit after the section (spec C4)
 
 ⚠️ **A dataset a lesson loads, a notebook, a sample document** — files a unit
 references that are neither prose nor inline media. ⭐ Spec C4: *"the page links

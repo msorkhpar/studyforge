@@ -19,8 +19,8 @@ reverses `SCRIPT_PARTS` and puts it through **the same composer**.
 ⛔ **No JavaScript runs in this suite.** The pinned image has no browser
 (`QA-03/1`) and the framework takes no dependency that would bring a second
 engine — so whether a mark actually survives a reload over `file://` is a
-**browser** reading, and `SF-30`'s handoff carries it with the browser and
-version it was taken in. ⭐ What is pinned here is everything a text can
+**browser** reading, taken in a named browser and version, not a text
+assertion. ⭐ What is pinned here is everything a text can
 establish: the order, the two keys, the absence of a clock, the absence of a
 second writer, and the fact that nothing on the Python side can read the store at
 all.

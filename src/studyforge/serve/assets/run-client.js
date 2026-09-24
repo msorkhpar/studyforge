@@ -9,8 +9,8 @@
    ⭐ **A client and nothing else.** It publishes `studyforge.run` — `available`,
    `start`, `stop`, `editor`, `practice` — and `studyforge.quiz` — `available`,
    `grade` (below) — and draws nothing: the practice panel that puts Run and
-   Submit in front of a reader is `SF-24`'s, at `M7`. ⛔ A control this file
-   drew before that panel existed would be a dead button, and a dead button is
+   Submit in front of a reader is the page's own. ⛔ A control this file
+   drew where no panel exists would be a dead button, and a dead button is
    a promise the page cannot keep.
 
    ⛔ **Nothing this sends becomes a command** (spec §8.3, rule 3). A start is
@@ -19,7 +19,7 @@
    from the unit's generated document. There is no argument here that could
    carry a command, and none is sent.
 
-   ⛔ **The practice is named by its key, verbatim** (`SF-21/4`): the string
+   ⛔ **The practice is named by its key, verbatim**: the string
    `progress.practice_key` minted in Python, which the page carries. Nothing
    here composes a key, splits one or encodes one; a key that is not segments
    of lowercase letters, digits and hyphens is refused before any request —
@@ -177,7 +177,7 @@
      option's sentence, the count, and whether the quiz is complete. ⛔ It is
      published as `studyforge.quiz` and not under `run`: it starts nothing,
      records nothing, and produces no run. ⚠️ It lives in this file because
-     this is the ONE script a serving process adds to a page (`W370`), and a
+     this is the ONE script a serving process adds to a page, and a
      second insertion would be a second place a built page could learn it is
      being served. ⛔ The answers travel in the PATH because a request body is
      discarded by the server, unread — so a question or option id that is not

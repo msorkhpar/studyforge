@@ -10,7 +10,7 @@ licence beside a face.
 
 **Depends on.** `base64`, `hashlib`, and `source` for the bytes.
 
-## ⭐ Why these three (`W362`, the plan's §5)
+## ⭐ Why these three (the plan's §5)
 
 Charis and Andika come from SIL's literacy work, faces drawn for people
 learning to read, and learning is the one subject every studyforge site shares.

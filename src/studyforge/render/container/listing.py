@@ -12,7 +12,7 @@ for escaping and the href gate, `entries`, and `render.page` for `PageError`.
 ⛔ Nothing that knows where a file is: an `Item` arrives with its href already
 answered.
 
-## ⛔ A row carries the unit key, and that is what a read mark joins on (SF-30)
+## ⛔ A row carries the unit key, and that is what a read mark joins on
 
 ⭐ **`Address.unit_key` is the one composer**, and its own docstring says why:
 *"the page writes a read mark under it, the index reads the mark back … a second
@@ -42,10 +42,10 @@ bar is chrome and this list is the page. ⛔ A silently dropped anchor here turn
 a module's contents into unclickable text — the reader sees every title, every
 row is present, `validate` passes, nothing logs, and not one unit can be opened.
 
-⚠️ **`SF-13/1` is why this is spelled out rather than assumed.** The bar lost 6
+⚠️ **A measured loss is why this is spelled out rather than assumed.** The bar lost 6
 of the `depth2` corpus's 13 slots under `sibling` placement and the acceptance
 clause beside it still passed. ⭐ The lesson taken here is not *"widen the
-gate"* — `W57` did that, correctly — it is that **the emitter and the gate must
+gate"* — that was done, correctly — it is that **the emitter and the gate must
 agree about what a refusal means**, and a page whose whole content is links
 cannot answer *"drop it"*.
 
@@ -59,12 +59,12 @@ this shape — a `<nav>`, an `<ol>`, a row per entry — the same way.
 ## ⭐ Not one class name is typed here either
 
 ⚠️ Every hook is an element, an `aria-label` or a `data-*` attribute, which is
-what let `SF-34` be scheduled a milestone after the markup it styles. ⛔ A class
+what let the stylesheet be written a milestone after the markup it styles. ⛔ A class
 would cost an entry in `SURFACE_HOOKS` and one in `chrome.css`, in two packages
 this task does not own — and a class name with no rule is not styling.
 
 ⭐ **And the hooks themselves are now TAKEN from `pageassets.SURFACE_HOOKS`
-rather than spelled here** (`SF-14/1`, ruled CTO round 45 §12). ⚠️ The spelling
+rather than spelled here** (R13). ⚠️ The spelling
 was identical in this module and in `render.index.disclosure` and meant the same
 thing in both — which is agreement by coincidence, and the day one page gains a
 third state the two part company with nothing to notice.
@@ -86,9 +86,9 @@ LIST_LABEL = "Units"
 
 #: The attribute that says whether a row could be linked. ⚠️ `data-*` rather
 #: than a class, so this page needs no entry in a published class set — see the
-#: module docstring. ⛔ **Taken from the contract, never typed** (`SF-14/1`):
+#: module docstring. ⛔ **Taken from the contract, never typed**:
 #: `render.index.disclosure` says the same thing about the same rows, and
-#: `SF-34` writes one rule for both.
+#: the stylesheet writes one rule for both.
 READABLE_ATTRIBUTE = SURFACE_HOOKS["readable"]
 
 #: The attribute a reader-facing label's kind is carried in. ⚠️ Overloaded on
@@ -101,7 +101,7 @@ KIND_ATTRIBUTE = SURFACE_HOOKS["kind"]
 NUMBERING_KIND = SURFACE_HOOKS["numbering"]
 
 #: The words a read row says to assistive technology, and the kind that wraps
-#: them (`W383`). ⛔ One file for the rail and both lists (R13): emitted hidden,
+#: them. ⛔ One file for the rail and both lists (R13): emitted hidden,
 #: shown by `progress-view.js` on a row the store holds, never drawn on screen.
 READ_STATE_TEMPLATE = "read-state.html"
 READ_STATE_KIND = SURFACE_HOOKS["read_state"]
@@ -113,7 +113,7 @@ def render(address: Address, items: tuple[Item, ...]) -> str:
     ⛔ **The declared order is used, never re-derived.** The container reader
     has already refused any map whose ordinals are not contiguous from 1, so the
     declared order *is* the ordinal order; a renderer that sorted would be the
-    second orderer `contents` was written to prevent (`SF-13`).
+    second orderer `contents` was written to prevent.
 
     ⭐ **Which is also what makes each row's key derivable here**: the position a
     unit is listed at is its ordinal, and `address.unit_key` turns the pair into

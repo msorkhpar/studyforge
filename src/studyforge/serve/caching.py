@@ -27,7 +27,7 @@ is weak and says so. ⛔ A weak validator never satisfies `If-Range` (RFC 9110
 - **A malformed `bytes=` spec is refused** as `UNSATISFIABLE`, which §14.2 permits.
 - ⭐ **Any range over an empty file is unsatisfiable**, `bytes=-N` included, and so
   is `bytes=-0` (§14.1.2). The extraction source served the whole file there; this
-  is the RFC's answer instead, and the difference is recorded in the row's handoff.
+  is the RFC's answer instead, a deliberate difference from the extraction source.
 """
 
 from __future__ import annotations

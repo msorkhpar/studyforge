@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/serve/__init__.py` (R12) — and the package's no-spawn property.
 
-⛔ **E05: "The package does not import a process-spawning library — asserted."**
+⛔ **"The package does not import a process-spawning library — asserted."**
 Three arms: the source of every module is read (`spawns`), a fresh interpreter
 imports the package and reports which process libraries it loaded, and no module
 names the Docker socket or a Docker client (spec §8.3). ⭐ The first two arms read

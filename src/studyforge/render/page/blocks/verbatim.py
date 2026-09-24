@@ -37,7 +37,7 @@ no class), so a class name cannot tell them apart either.
 ⚠️ **The specific way this arrives** is by deciding escaping from the *text*
 rather than from the declared *type* — `if text.lstrip().startswith("<")` inside
 a generic block renderer, written by somebody reasonably trying to be helpful.
-⛔ **That is exactly the promise `SF-07` declined CommonMark's type-7 raw-HTML
+⛔ **That is exactly the promise the archive parser declined CommonMark's type-7 raw-HTML
 rule to keep** — *an unknown tag on its own line stays a paragraph, because a
 lesson teaching HTML must keep it* — and the page renderer is its only enforcer.
 

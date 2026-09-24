@@ -2,11 +2,11 @@ r"""`.studyforge/narration.json` — what a clip was synthesised UNDER (R9).
 
 | | |
 |---|---|
-| **File** | `.studyforge/narration.json` — ⭐ located by Ruling 351 |
+| **File** | `.studyforge/narration.json` — ⭐ one located file |
 | **Version key** | `narration_api` — ⭐ **minted here**, registered in `version.CONTRACT_FIELDS` |
-| **Written by** | `SF-17` — ⛔ **the one writer** (Ruling 330, unchanged) |
+| **Written by** | `narrate.synth` — ⛔ **the one writer** (unchanged) |
 
-⛔ **Ruling 351 deliberately left the FIELDS to this module**: the
+⛔ **Locating the file deliberately left the FIELDS to this module**: the
 property it fixed is *for each speech unit, whether the clip on disk was
 synthesised under the conditions in force now*. The argument for which facts are
 conditions and which are provenance is in the package docstring next door.
@@ -19,7 +19,7 @@ in the corpus** — hours, a service, and no message — so R9's refusal is spen
 **stopping**. That is the whole difference between derived state and a record of
 what happened.
 
-## ⛔ VERSION 2 LOCATES EVERY CLIP IT WROTE (`W226`)
+## ⛔ VERSION 2 LOCATES EVERY CLIP IT WROTE
 
 ⭐ An entry records `where`, the directory its clip was written into relative to
 the corpus root, and `superseded`, every clip an earlier wording or directory
@@ -27,7 +27,7 @@ wrote that no prune has removed yet. ⛔ **A version-1 record still reads**: its
 entries carry no directory until a run finds their clip, and an entry nobody
 can place stays in the record and is held by name, never dropped.
 
-## ⛔ THE CONDITIONS GAINED `engine_model`, AND AN OLDER RECORD STILL READS (`W223`)
+## ⛔ THE CONDITIONS GAINED `engine_model`, AND AN OLDER RECORD STILL READS
 
 ⭐ **No version bump: every entry's keys are unchanged**, and the top-level
 `conditions` object gained one key, which `_conditions_of` reads as absent. ⛔ **A
@@ -61,10 +61,10 @@ from studyforge.version import check
 
 ENCODING = "utf-8"
 
-#: R9's key for this contract. ⭐ Minted by `SF-17` (Ruling 351) and registered
+#: R9's key for this contract. ⭐ Minted here and registered
 #: in `version.CONTRACT_FIELDS` in the same commit, per that tuple's convention.
 NARRATION_API = 2
-#: ⛔ Version 1 still reads (`W226`): its entries are merely unlocated.
+#: ⛔ Version 1 still reads: its entries are merely unlocated.
 KNOWN_NARRATION_API = frozenset({1, NARRATION_API})
 
 #: The record's own name. ⚠️ Its **directory** is the placement policy's
@@ -104,7 +104,7 @@ class Conditions:
     fmt: str
     provides: int | None = None
     chunk_chars: int | None = None
-    #: ⛔ `W223`: the deployment's model as `/healthz` reports it, never a guess.
+    #: ⛔ The deployment's model as `/healthz` reports it, never a guess.
     engine_model: str | None = None
 
     def __post_init__(self) -> None:
@@ -159,7 +159,7 @@ class Clip:
     engine_model: str = ""
     #: The directory the clip was written into, relative to the corpus root.
     where: str | None = None
-    #: Clips this entry wrote before, still on disk until a prune (`W226`).
+    #: Clips this entry wrote before, still on disk until a prune.
     superseded: tuple[Superseded, ...] = ()
 
     def document(self) -> dict[str, object]:
@@ -185,7 +185,7 @@ class State:
 
     clips: Mapping[str, Clip]
     present: bool = True
-    #: The voice the record's top-level conditions name, or `None` (`W457`: what to re-run).
+    #: The voice the record's top-level conditions name, or `None` (it says what to re-run).
     voice: str | None = None
 
 
@@ -197,7 +197,7 @@ def state_file(root: Path | str) -> Path:
 def the_one_file(path: Path | str) -> Path:
     """Return `path`, refusing anything that is not this contract's one filename.
 
-    ⛔ **R9 and Ruling 330 say one file and one writer; this is that, enforced.**
+    ⛔ **R9 and R21 say one file and one writer; this is that, enforced.**
     A writer that would put the record anywhere it was pointed is a writer whose
     contract is a convention, and the record is then discoverable only by
     whoever wrote it. ⭐ `state_file(root)` is how a caller obtains the path.
@@ -311,10 +311,10 @@ def render_state(clips: Mapping[str, Clip], conditions: Conditions) -> str:
 def forget(path: Path | str, speech_ids: Iterable[str]) -> tuple[str, ...]:
     """Remove the named entries from the record, keeping everything else; return those removed.
 
-    ⛔ **`W218`'s removal, and the smallest one**: it deletes no file, decides
+    ⛔ **The smallest removal**: it deletes no file, decides
     nothing about which entries are dead, and keeps the record's top-level
     conditions as they were — the prune in `cli/narrate/` is the caller that
-    decides. ⭐ Here so the record keeps ONE writer (Ruling 330). An id the
+    decides. ⭐ Here so the record keeps ONE writer. An id the
     record does not hold is passed over, and nothing removed writes nothing.
     """
     file = the_one_file(path)
@@ -333,7 +333,7 @@ def forget_superseded(
 ) -> tuple[tuple[str, Superseded], ...]:
     """Remove the named superseded clips from their entries; return those removed.
 
-    ⛔ **`W226`'s removal, as small as `forget`**: it deletes no file and decides
+    ⛔ **The prune's removal, as small as `forget`**: it deletes no file and decides
     nothing — the prune decides. ⭐ Here so the record keeps ONE writer. A clip
     the record does not name is passed over, and nothing removed writes nothing.
     """

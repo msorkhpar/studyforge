@@ -102,7 +102,7 @@ def _code(block: dict, placement: Placement | None, audio: str) -> str:
     button written into the markup would sit there doing nothing with scripting
     off, and a control that does nothing is worse than no control.
 
-    ⚠️ **The clip is one CAPTION and not the listing read aloud** (Ruling 93):
+    ⚠️ **The clip is one CAPTION and not the listing read aloud**:
     `SPEECH_OF` reduces a fence to a sentence, whatever its language. The
     attribute goes on the whole `<figure>` because that is what the reader sees
     lit while that sentence is spoken.

@@ -114,7 +114,7 @@ class StubEditor:
 
     ⛔ The suite's default is an editor that is NOT up: a real probe would fork
     `docker` per corpus per index fetch, and the pinned gate has no daemon to
-    ask (§8.3, and `W416`'s handoff carries the host reading).
+    ask (§8.3; the host reading is a live one).
 
     ⛔ **`known()` MODELS THE REAL PROBE'S CACHE and must not shortcut it**
     (`W427`): it answers only once `editor()` has been asked, because a stub that

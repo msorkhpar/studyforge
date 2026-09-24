@@ -19,7 +19,7 @@ stylesheet and its script.
 
 **Depends on.** `corpus.placement` for what a location is and for the one
 relative-href computation, and `render.pageassets` for the two shared
-filenames. ⛔ No filesystem: whether anything is there is `SF-04`'s question.
+filenames. ⛔ No filesystem: whether anything is there is discovery's question.
 
 ## ⛔ Three fields and no profile, exactly as the unit page holds it
 

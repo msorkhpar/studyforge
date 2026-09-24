@@ -100,7 +100,7 @@ def test_no_template_ends_in_a_newline_once_loaded(name):
 
 
 def test_an_unfilled_placeholder_raises_and_never_reaches_the_page():
-    # ⛔ E03's acceptance clause, at the mechanism that keeps it.
+    # ⛔ The rendering acceptance clause, at the mechanism that keeps it.
     with pytest.raises(templates.TemplateError) as raised:
         templates.fill("section.html", id="a", key="b", kind="c", label="d")
     assert "body" in str(raised.value)

@@ -24,13 +24,13 @@ default: a clone that carries its own audio speaks with no synthesis service,
 no GPU and no network, which is what R8 is for. The default has a ceiling, and
 crossing it is a corpus's declared decision rather than an accident.
 
-`speakable/` is SF-16's and landed as a **package**: the
-extraction source's one module is 626 lines, R11's ceiling is 400, and
-`docs/conventions/module-structure.md` pays that during extraction rather than
-after. Synthesis is SF-17's; the service it talks to is E13.
+`speakable/` is a **package**: the
+extraction source's one module is 626 lines, R11's ceiling is 400, and a
+port pays that during extraction rather than
+after. Synthesis is `synth/`'s; the service it talks to is narrate-service (§8.2).
 """
 
 from studyforge.narrate.enabled import narration_on
 
-#: ⭐ `W457`: the one "narration is on" predicate, exported so no stage reaches past it.
+#: ⭐ The one "narration is on" predicate, exported so no stage reaches past it.
 __all__ = ["narration_on"]

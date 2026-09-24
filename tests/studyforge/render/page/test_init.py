@@ -62,7 +62,7 @@ def test_render_returns_bytes():
 
 
 def test_both_fixtures_render_against_their_golden_files(case):
-    # ⛔ E03's acceptance. A golden that moved without a deliberate change to the
+    # ⛔ The rendering acceptance. A golden that moved without a deliberate change to the
     # renderer is the R10 failure; regenerate with
     # `python3 -m tests.studyforge.render.page.pages` once you know which change
     # you made.

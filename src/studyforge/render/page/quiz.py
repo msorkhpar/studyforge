@@ -5,7 +5,7 @@ is `quiz` — the stem, the options, the control that sends the reader's choices
 to be graded, and the sentence saying a page opened as a file cannot have them
 checked. ⛔ **No editor, no Run and no Submit, and not disabled ones either**: a
 quiz has no file to open, no command to run and no grader to submit to, so every
-one of those would be a dead control (`SF-24`'s standing rule, `W429`, `W431`).
+one of those would be a dead control (the page never shows a control it cannot honour).
 
 **How you use it.** `quiz.render(exercise, key=…, corpus=…, grader=…)` returns
 the section's markup; `page.practice.render` calls it for a quiz and emits its
@@ -54,7 +54,7 @@ so there is no second place a token of that vocabulary could reach the page.
 this framework's own words about its own control, and they live in the
 **templates** — the same two-sided spelling every hook on this page has, because
 markup and script cannot import one another and the Python side is the single
-source for what is emitted (`W431`).
+source for what is emitted.
 """
 
 from __future__ import annotations

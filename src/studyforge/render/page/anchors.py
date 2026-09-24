@@ -16,9 +16,9 @@ wrapper, `render.markup` for escaping and for the one fragment composer, and
 `page.errors`. ⛔ Not on `contents`: the outline is derived from the one document
 being rendered, never from `toc.json`. ⛔ Not on `render.index` either, which
 imports this package — which is why an href here is `render.markup.anchor` of an
-id rather than a `"#"` spelled locally (`W107`).
+id rather than a `"#"` spelled locally.
 
-## ⭐ Split from `page.navigation` at a seam that already existed (`W107`)
+## ⭐ Split from `page.navigation` at a seam that already existed
 
 ⚠️ One module answered four questions — anchors, the outline, the trail, the bar
 — at eight lines under its ceiling. ⭐ *What may be linked to* is this module;
@@ -37,7 +37,7 @@ section key is already required to be a slug by the module that mints it.
 
 ## ⛔ These are anchors. The page renderer mints no speech id (R21)
 
-⚠️ **`SF-16` owns speech ids at M3** and the extraction source's own docstring
+⚠️ **Narration owns speech ids** and the extraction source's own docstring
 says why the two must not be one scheme: *"two numbering schemes that agree
 today are exactly the coupling that breaks silently tomorrow."* ⭐ So this
 module answers the question a page has at M1 — *what may be linked to?* — and
@@ -46,14 +46,14 @@ cross-page link actually address.
 
 ⛔ **Deliberately not one id per block.** Minting an anchor for every paragraph
 would be the speech-id scheme under another name, arriving one milestone before
-the task that owns it, and its agreement with `SF-16` would be a coincidence
+the task that owns it, and its agreement with narration's would be a coincidence
 nothing checks.
 
 ## ⛔ The page is headed by the material's own title when the material states one
 
 ⚠️ **A source document states what it is in its first line**, and a unit page
 states what it is in its `<h1>` — so a page that emits both prints the title
-twice, which is what a reader sees first and `W388/17` reported on every page of
+twice, which is what a reader sees first, and it showed on every page of
 a rebuilt corpus. ⭐ **The resolution is that the two are ONE statement**: when
 the page's opening section begins with a heading that is that material's own
 title, that block **is** the page's heading, and the body does not print it a
@@ -130,8 +130,8 @@ OUTLINE_MAX_LEVEL = 3
 #: under it cannot be addressed by three different numbers.
 TITLE_POSITION = 0
 
-#: The markup of the outline's region. ⛔ **A file, not an f-string** (R13, and
-#: `SF-34`): the wrapper carries a product string — the word `Contents` and an
+#: The markup of the outline's region. ⛔ **A file, not an f-string** (R13):
+#: the wrapper carries a product string — the word `Contents` and an
 #: `aria-label` — and a product string typed in Python is a sentence every corpus
 #: has to live with. ⭐ The row bodies stay in code, which is the line
 #: `render/page/__init__.py` draws.

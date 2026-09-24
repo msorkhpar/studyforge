@@ -39,7 +39,7 @@ discipline and survives a stage being run on its own.
 ## ⛔ `Q23`: neither half of the name comes from the source path
 
 ⚠️ **Seventeen units can share one `origin.path`.** ⭐ The id comes from the unit's
-**logical address** (`SF-01`) and the digest from the **spoken text**, so those
+**logical address** and the digest from the **spoken text**, so those
 seventeen units key to seventeen distinct clips by construction, with no corpus
 knowledge anywhere (R1). ⛔ `origin` is provenance, and provenance is never
 identity.

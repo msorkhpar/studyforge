@@ -23,13 +23,13 @@ an edge back into any of them would be a cycle waiting for the next renderer.
 
 ⚠️ **`escape`, `escape_attribute`, `inline` and `safe_href` lived on
 `render.page`'s private surface and were imported past it by `render.container`
-anyway** (`SF-27/1`) — ⛔ **against `render/page/__init__.py`'s own sentence**,
+anyway** — ⛔ **against `render/page/__init__.py`'s own sentence**,
 which says a consumer that has to import a submodule directly is a consumer that
 contract failed.
 
 ⭐ **Publishing them from `render.page` was the other candidate and it was
 refused on a count:** `render.page` is *the unit page*, `render.container` is a
-peer, and `render/index/` (`SF-14`) is a third peer that shares the unit page's
+peer, and `render/index/` is a third peer that shares the unit page's
 **palette** with it and nothing else. ⛔ Three peers reaching into one of
 themselves for the escaping gate makes the unit page the base of a layer it is
 not the base of. ⭐ **The repository already answers this question once —
@@ -53,12 +53,11 @@ than promising it.
 | `text` | how does a string become safe page text — escaped, gated, inlined? |
 | `fragment` | how does a renderer address a place inside a page? |
 
-⭐ **`fragment` is here for the reason `text` is** (`W107`, `SF-15/1`):
+⭐ **`fragment` is here for the reason `text` is**:
 `render.index` and `render.page` both compose anchors, `render.index` imports
 `render.page`, and a composer on either one is a composer the other cannot reach
-without a cycle. ⛔ `__init__.py` is the contract a consumer reads (R17,
-`module-structure.md`), and a declared `__all__` is what Ruling 101's table asks
-a cross-package import about.
+without a cycle. ⛔ `__init__.py` is the contract a consumer reads (R17), and a
+declared `__all__` is what one exported home (R21) asks a cross-package import about.
 """
 
 from __future__ import annotations

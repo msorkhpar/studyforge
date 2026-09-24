@@ -20,7 +20,7 @@ source (R1).
 ## ⛔ THE ENUMERATION IS `studyforge plan`'S, AND THERE IS NO SECOND ONE
 
 ⭐ **`plan_for(root).paths` already answers *"what does a build create"***, it
-is goldened under `tests/fixtures/golden/*.plan.txt`, and Ruling 99's clause is
+is goldened under `tests/fixtures/golden/*.plan.txt`, and R3's clause is
 that the plan and the build agree path for path. ⛔ **So this module asks that
 question rather than answering it.** A list of *"files a build writes"* spelled
 out here would be a second declaration of the one thing this repository has
@@ -48,7 +48,7 @@ where an archive sits, never spelled.
 the material, so it is NOT a prefix here** — owning it would make narrate's
 clips "the build's own" at `--out` = the corpus root. ⛔ **The files a build
 copies into it are `clips`, enumerated one by one by the plan from the
-narration record** (`E09` § SF-38/8, `W224`), and `without_clips()` is the
+narration record** (R8), and `without_clips()` is the
 footprint a build into the corpus root uses, where nothing is copied. ⚠️ Which
 plan lines are narration is the plan's own `Creation.narration`, never a name
 read back off a path.
@@ -129,7 +129,7 @@ def footprint_for(root: Path | str, profile: Profile) -> Footprint:
     dispatcher, which registers every verb including `build`, which imports
     `studyforge.generate` — so a module-level import here fails at interpreter
     start with a partially initialised package. ⚠️ Deferring it is the smallest
-    repair available inside this package; the real one is `W202` item 5, where
+    repair available inside this package; the real one is a change where
     the enumeration a library needs stops living inside a command. Recorded as
     a finding rather than patched from here.
     """

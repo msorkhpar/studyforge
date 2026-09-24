@@ -41,11 +41,10 @@ addressed, so it renders whether or not a contents document has ever been built.
 
 ## ⛔ Why this task exists at all
 
-⚠️ **The spec named `*.section.html`, `SF-04`'s discovery scans for it, and no
-task owned it** — a page missing per container in the first corpus to be
-integrated, and a failing `SF-04` acceptance; the count is measured in
-`docs/tasks/E03-rendering.md`, which may name a corpus where a module may not
-(R1). ⭐ It is the one page a reader lands on when navigating downward, so its
+⚠️ **The spec named `*.section.html`, discovery scans for it, and nothing
+rendered it** — a page missing per container in the first corpus to be
+integrated, and a discovery that could not find what it scans for (a module
+names no corpus, R1). ⭐ It is the one page a reader lands on when navigating downward, so its
 absence is not cosmetic.
 
 ## ⭐ One renderer at every depth
@@ -82,7 +81,7 @@ a level's word, not a sentence of one site's wording.
 
 ⚠️ **That a linked unit page exists.** `Item.href` is checked for *shape* — it
 is a permitted relative reference — and never for *presence*, because this
-package touches no filesystem. ⭐ Whether the file is there is `SF-04`'s
+package touches no filesystem. ⭐ Whether the file is there is discovery's
 question, and `Item(href=None)` is how a caller says it already knows it is not.
 """
 

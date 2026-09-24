@@ -10,8 +10,8 @@ own sentence.
 
 **Depends on.** Nothing.
 
-⛔ **No message in this package reproduces a value it refused** (R7, rubric
-§1f). A practice key, a command or a path is exactly where a home directory
+⛔ **No message in this package reproduces a value it refused** (R7,
+R6). A practice key, a command or a path is exactly where a home directory
 arrives, so a refusal names the field and describes the value by type.
 """
 

@@ -19,7 +19,7 @@ addresses every container from whichever page is asking.
 records, and `corpus.placement.relative_href` for *how does the page at A
 address B*. ⛔ Nothing here touches a filesystem and nothing here **composes** a
 path: every path shape is answered by `corpus.placement`, and the arithmetic is
-asked of it rather than counted here (`W57`).
+asked of it rather than counted here.
 
 ## ⛔ Why the rail is built here and not beside the renderer
 
@@ -27,23 +27,23 @@ asked of it rather than counted here (`W57`).
 knows no order; the contents document knows the order and no markup. ⚠️ A rail
 assembled inside `render.page` would be that package reaching for `contents`,
 which the direction of this project forbids — and a rail assembled at each call
-site would be the `W57` defect again, computed on one side and dropped on the
+site would be the dropped-value defect again, computed on one side and dropped on the
 other.
 
 ## ⛔ Why this join is a module rather than three lines in the writer
 
 ⚠️ **It did not exist in `src/` until this one.** `contents` computes a slot and
-`render.page` renders one, and nothing joined them — `W57`'s lesson exactly: a
+`render.page` renders one, and nothing joined them — and the lesson is exact: a
 value computed on one side and dropped on the other satisfies both sides' tests.
 ⭐ The join lived in `tests/studyforge/render/page/sites.py`, whose own docstring
-says it stands in for the caller `SF-28` would write.
+says it stands in for the caller the build would write.
 
 ## ⛔ A neighbour with no page is a DECLARED absence, never a guessed href
 
 ⚠️ The contents document computes an href for **every** declared unit, because
 it is a function of the address and knows nothing about what this machine has.
 ⭐ Handing that href to the bar for a unit nobody generated is the one failure
-neither of Ruling 164's two policies catches: the anchor is present, the shape
+neither href policy (chrome drops, content raises) catches: the anchor is present, the shape
 is legal, and the file is not there. ⛔ So an absent neighbour is
 `Link(href=None, key=…)`, and the bar degrades to that unit's index row.
 
@@ -54,9 +54,9 @@ is legal, and the file is not there. ⛔ So an absent neighbour is
 not one of them is spelled here. ⛔ **An intermediate level has no container
 page**, because a container map is written at the address a corpus declares
 units under and nowhere above it; that crumb is therefore listed rather than
-linked, which is `SF-14/3` made visible on the page instead of invisible.
+linked, which is the unlinked intermediate crumb made visible on the page instead of invisible.
 
-## ⛔ The trail names each level once (`W388`)
+## ⛔ The trail names each level once
 
 ⚠️ **A corpus may call its outermost group what it calls itself** — the ISO
 corpus's first group carries the corpus's own title — and the trail then read
@@ -176,7 +176,7 @@ def rail(
     container map is written at the address a corpus declares units under and
     nowhere above it: `generate.containers` writes one page per map and none
     higher, so an intermediate level has no page for a rail to point at
-    (`SF-14/3`). ⭐ Read off the contents document rather than walked off the
+   . ⭐ Read off the contents document rather than walked off the
     disk — there is one model of what this corpus holds and this is not a
     second one.
 

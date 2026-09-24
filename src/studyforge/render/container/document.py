@@ -11,14 +11,14 @@ text; `container.render` is the public entry point and turns it into bytes.
 `render.markup` for the escaping, `corpus.placement.identity` for R4's block,
 and `render.page` for `PageError`, `Links` and `between_units` — the bar itself,
 taken from the page package's published surface rather than from inside it
-(`W76`).
+(R17).
 
 ## ⛔ The skeleton is `page.html`, the unit page's own, and that is the design
 
 ⭐ **The two documents are one product.** A container page with its own skeleton
 would be a second masthead, a second head, a second place a `<meta viewport>`
 has to be remembered — and the day one gains a region the other silently would
-not. ⚠️ **The epic asks the root index to share the unit page's palette and type
+not. ⚠️ **The design asks the root index to share the unit page's palette and type
 stack *by importing them rather than restating them*; this is the same ruling
 one page earlier**, and it is why this task adds no template file.
 
@@ -35,7 +35,7 @@ control, and each absence is a fact rather than an oversight:** its own contents
 *are* the unit list, it declares no practices of its own, the narration player is
 a unit's — and a read mark is a unit's too. A container is read by reading what
 is under it, so the page that offers the control is the one whose reading it
-records (`SF-30`). ⭐ **The marks themselves DO reach this page**, as a state on
+records. ⭐ **The marks themselves DO reach this page**, as a state on
 the rows below, which is why each row carries the unit key a mark is filed under.
 ⚠️ **The trail is the one of the five that is a GAP rather than an absence**: a
 container page sits in the hierarchy and has ancestors to name, and that its
@@ -51,7 +51,7 @@ one newline — never a conditional newline somewhere else.
 
 ## ⛔ The identity block says `kind="container"`, and nothing infers it (R4)
 
-⚠️ **`SF-04` discovers these pages by identity, not by filename.** The suffix
+⚠️ **Discovery finds these pages by identity, not by filename.** The suffix
 `.section.html` is what makes a scan *open* the file; what the file **is** comes
 out of the block `corpus.placement.identity` renders and parses, so the two
 halves cannot drift. ⭐ A container page moved or renamed is still exactly the
@@ -93,7 +93,7 @@ TRAILING_NEWLINE = "\n"
 #: passed rather than omitted — see this module's docstring.
 #:
 #: ⚠️ `headingattributes` is one of them: the unit page promotes its material's own
-#: opening heading into the `<h1>` and anchors it there (`W407`), and a page
+#: opening heading into the `<h1>` and anchors it there, and a page
 #: whose heading is a name rather than a block has no anchor to carry.
 EMPTY_SLOTS = ("breadcrumb", "headingattributes", "mark", "outline", "pending", "player")
 
@@ -109,7 +109,7 @@ def compose(
     ⛔ Pure: the same document and the same placement give byte-identical
     output, every run, on every machine (R10).
 
-    ⚠️ `rail` is the region that reaches the OTHER containers (`W324`), and it
+    ⚠️ `rail` is the region that reaches the OTHER containers, and it
     is optional for the reason `links` is: only a caller holding the whole
     contents document can name them. ⭐ It is taken from `render.page`'s
     published surface, exactly as the bar is.
@@ -156,7 +156,7 @@ def identity(document: Document, placement: Placement) -> str:
     except (PlacementError, AddressError) as error:
         # ⛔ Re-typed, not re-worded: `placement` owns what an identity may say.
         # ⛔ **Narrow on purpose** — `PersonalDataLeak` is deliberately outside
-        # this pair and travels through as itself (Ruling 58), so a caller
+        # this pair and travels through as itself, so a caller
         # rendering a whole site cannot log a leak as one more page that did
         # not render.
         raise PageError(f"this container cannot identify itself: {error}") from None
@@ -166,8 +166,8 @@ def identity(document: Document, placement: Placement) -> str:
 def meta(document: Document) -> str:
     """Return the masthead's quieter second line: `11 units in this module`.
 
-    ⛔ **Not the address slugs and the variant joined by middle dots** (`W362`,
-    M1–M3, CP1): those were the builder's identifiers. ⭐ The count is a fact
+    ⛔ **Not the address slugs and the variant joined by middle dots**
+    (R1): those were the builder's identifiers. ⭐ The count is a fact
     about the site, and the depth is named in the corpus's OWN word for it —
     `level`, `manifest.levels[-1]` — never this framework's (R1). A corpus that
     names its levels with nothing gets the count alone.

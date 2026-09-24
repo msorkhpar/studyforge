@@ -15,7 +15,7 @@ by one string.
     source = CorporaContent({"depth2-demo": CorpusContent(corpus)}, depths)
 
 **Depends on.** `address` for the parse and every key, `archive.scrub` for R7's
-gate on each contents document before it is decoded (W7), `contents` for that
+gate on each contents document before it is decoded, `contents` for that
 document's name, `serve.routes.content` for the `ContentSource` seam, and
 `serve.withheld` for what marks every quiz no file may carry.
 ⛔ No key is composed here: `Address.unit_key` spells it, and `parse_unit_key`
@@ -133,6 +133,6 @@ class CorporaContent:
 
 
 def _decoded(text: str) -> object:
-    """Gate one corpus's contents document, then decode it. ⛔ Never the other order (W7)."""
+    """Gate one corpus's contents document, then decode it. ⛔ Never the other order."""
     assert_clean(text, TOC_FILENAME)
     return json.loads(text)

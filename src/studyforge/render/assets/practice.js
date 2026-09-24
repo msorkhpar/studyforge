@@ -3,7 +3,7 @@
    ⛔ **This file draws; it never talks to the API.** Everything it sends goes
    through `window.studyforge.run` — `available()`, `start(corpus, practice,
    mode, onLine)`, `stop()` — which the SERVING PROCESS adds to the page it
-   answers (`E05` § how a served page loads the run client). ⭐ That is the whole
+   answers (`serve.routes.assets` says how). ⭐ That is the whole
    reason this part can live in a built site at all: a built text that named the
    API, the serving origin or the client file is a defect R8's floor reads
    (`tests/studyforge/cli/serving.py`), and there is no such name below.

@@ -30,7 +30,7 @@ did exactly that.
 
 ## ⛔ The three assertions this package owes, and why the third is not a restatement
 
-⭐ **Ruling 187.** *Every id in a page resolves to a clip* and *every clip is named
+⭐ **Clip names are distinct.** *Every id in a page resolves to a clip* and *every clip is named
 by a page* are **both** satisfied by a collision: seventeen clips landing on one
 filename still resolve in both directions, the suite stays green, and sixteen units
 play the wrong audio. ⛔ **So the owed assertion is a cardinality —
@@ -150,7 +150,7 @@ def clip_names(units: tuple[SpeechUnit, ...]) -> tuple[str, ...]:
     """Return one clip name per unit, in order — ⛔ through `clip_name`, never beside it.
 
     ⚠️ Published so a caller that wants the whole set does not loop and compose:
-    `|set(clip_names(units))| == len(units)` is Ruling 187's cardinality, asked of
+    `|set(clip_names(units))| == len(units)` is that cardinality, asked of
     the names this package actually mints.
     """
     return tuple(clip_name(unit) for unit in units)

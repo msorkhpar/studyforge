@@ -21,11 +21,11 @@ records is the one that calls it.
 `378` of R11's `400`.** ⭐ The seam is the subject: that module is *what a
 started run IS until it ends* — the slot, the stream, the write — and this one
 is *what a grader's own report says about it*. ⛔ **Written here rather than
-bought as a size exception or paid for by trimming four other rows' prose out
-of a file three of them touched in one day** (`W422`'s second clause: a split
-is its own act, never a passenger).
+bought as a size exception or paid for by trimming other prose out of a file
+several changes touched at once** (R11: a split is its own act, never a
+passenger).
 
-## ⛔ A breakdown is a REPORT, never a second definition of a pass (`AX-02`)
+## ⛔ A breakdown is a REPORT, never a second definition of a pass
 
 ⭐ **`progress.is_pass` stays exactly what it is** — a test-mode run that
 exited zero — so a practice still completes only when the grader itself
@@ -38,7 +38,7 @@ at a new kind of verdict.
 this map joined with the practice's declared `cases`. ⛔ Recording the counts
 as well would be two spellings of one claim, and the `says` is reader-facing
 corpus text that goes stale the moment the corpus is regenerated — the id is
-the stable key (`AX-01`, *For dependents*).
+the stable key (*For dependents*).
 
 ## ⛔ `started` is read BEFORE the run, and this module never reads a clock
 
@@ -50,7 +50,7 @@ before `Runs.claim` and it arrives here unchanged.
 
 ## ⭐ THE BREAKDOWN IS SAID ON THE STREAM, AND THAT IS THE ONLY CHANNEL R8 LEAVES
 
-⛔ **A built page may name no API, no origin and no client file** (R8, `W370`,
+⛔ **A built page may name no API, no origin and no client file** (R8,
 and `tests/studyforge/cli/serving.py` reads every built text for it), so the
 panel that draws *main ask* plus *edge cases n/m* cannot fetch the state
 namespace — the place the recorded breakdown otherwise stops. ⭐ **The run's own
@@ -105,12 +105,12 @@ WHERE = "this practice's exercise record"
 #: as a sentence, because it stands in a reader's own run output whether or not
 #: anything parses it. ⭐ **The id travels and the `says` does not**: the page
 #: already renders every declared case's sentence, and a second copy on the wire
-#: would go stale the moment the corpus is regenerated (`AX-01`).
+#: would go stale the moment the corpus is regenerated.
 CASE_LINE = "--- case {id}: {verdict} ---"
 
 #: The two words a case line ends in. ⚠️ `failed` is a case the grader reported
 #: against, never a verdict about the run: `progress.is_pass` is untouched and a
-#: reader shown *edge cases 2/3* is looking at an INCOMPLETE practice (`AX-02`).
+#: reader shown *edge cases 2/3* is looking at an INCOMPLETE practice.
 CASE_PASSED = "passed"
 CASE_FAILED = "failed"
 

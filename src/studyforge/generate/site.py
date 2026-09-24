@@ -25,7 +25,7 @@ command: this is the library a command would call.
 
 ## ⭐ What this writes is exactly the HTML `studyforge plan` declares
 
-⛔ **Ruling 99's clause is that the plan and the build agree PATH FOR PATH**, and
+⛔ **R3's clause is that the plan and the build agree PATH FOR PATH**, and
 the goldens under `tests/fixtures/golden/` are what `plan` says. Every `.html`
 line in them is written here — one root index, one page per container map, one
 page per unit with material — and nothing else is; every `…/<unit>/<kind>/` line
@@ -85,7 +85,7 @@ def write_site(root: Path | str, into: Path | str, *, narration: bool | None = N
     `units.write_pages` gives: where generated output goes is the corpus's
     decision and not the framework's, and no default may take it silently.
     ⭐ `narration` overrides `corpus.json`'s `narration` for this build
-    (`W460`); `None` keeps the corpus's own answer. Off copies no clip and
+   ; `None` keeps the corpus's own answer. Off copies no clip and
     deletes none.
     """
     corpus = for_output(voiced(read_corpus(root), narration), into)
@@ -112,7 +112,7 @@ def root_index(corpus: Corpus, into: Path | str) -> Written:
         render_index(
             from_contents(corpus.contents, local, where),
             where,
-            # ⭐ The first page carries the rail too (`W388`, the user's words).
+            # ⭐ The first page carries the rail too (the user's words).
             rail(
                 corpus.contents,
                 where.shared.root_index,

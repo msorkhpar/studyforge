@@ -281,7 +281,7 @@ def test_a_build_writes_no_clip_beside_the_material_and_none_under_its_output_no
     """CONVERTED from `test_a_build_places_no_clip_under_its_output_root` (`W224` clause 6).
 
     That test cited `W193` answer 1, which is a DELETION rule about the originals;
-    `E09` § SF-38/8 has a build copy each clip a page addresses into its output.
+    the build copies each clip a page addresses into its output.
     """
     root = a_corpus(tmp_path, "depth1")
     placed = narrate(root)

@@ -23,7 +23,7 @@ promising it.
 
 ## ⛔ This function is the acceptance clause, not a convenience
 
-⚠️ **E03: *"It reads only the two contents documents — never the filesystem,
+⚠️ **The rendering design: *"It reads only the two contents documents — never the filesystem,
 never a catalog. That isolation is the point: if this page can be built, the
 contract carries everything a renderer needs."*** ⭐ Left to the caller, the
 clause would be a claim about a caller, and every consumer would retype the same

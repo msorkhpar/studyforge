@@ -58,7 +58,7 @@ def test_render_returns_bytes():
 
 
 def test_every_container_renders_against_its_golden_file(case):
-    # ⛔ E03's acceptance. A golden that moved without a deliberate change to the
+    # ⛔ The rendering acceptance. A golden that moved without a deliberate change to the
     # renderer is the R10 failure; regenerate with
     # `python3 -m tests.studyforge.render.container.containers` once you know
     # which change you made.
@@ -89,7 +89,7 @@ def test_the_identity_block_reads_back_as_this_container(case):
 
 
 def test_the_depth_one_fixture_renders_exactly_one_container_page():
-    # ⭐ E03's acceptance: "a depth-1 fixture renders one container page", and
+    # ⭐ The rendering acceptance: "a depth-1 fixture renders one container page", and
     # the count is derived from the fixture rather than asserted against a
     # literal this test would own.
     depth1 = fixture_cases("depth1")
@@ -143,7 +143,7 @@ def test_every_unit_the_page_links_is_addressed_from_this_page(case):
 
 
 def test_a_scan_discovers_every_container_page_by_identity(tmp_path):
-    # ⛔ E03's acceptance: "SF-04 discovers them by identity." The pages are
+    # ⛔ The rendering acceptance: "SF-04 discovers them by identity." The pages are
     # written where placement says, the real scan walks the tree, and what comes
     # back is compared against the addresses the maps declare.
     depths = {}
