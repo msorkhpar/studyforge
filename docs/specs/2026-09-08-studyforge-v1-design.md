@@ -1010,6 +1010,7 @@ for the vocabulary found only one corpus's choices.
 | `title` | **required** | |
 | `levels` | **required** | Names the *container* levels and fixes the depth |
 | `variants` | **required** | ⛔ Filing and presentation only — never *runnable* |
+| `curriculum` | *optional* | Where the curriculum is recorded (`record`), the address each of its groups is filed at (`containers`), and per group an optional filename `prefix` that is a declared cross-check and never files a unit (`W340`) |
 | `exercises` | **required** | §7's gate onto the execution track |
 | `runtimes` | *optional* | Names, never versions, from a closed vocabulary. ⛔ **Absent means none: no runner, complete at the reading floor** (§7, C5) |
 | `narration` | *optional* | Whether a build and a serve voice the corpus (`W460`). ⭐ **Absent means voiced whenever clips are recorded**; ⛔ **`false` is the reading floor exactly, complete and never short** (C5) |
