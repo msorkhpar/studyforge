@@ -35,6 +35,7 @@ ONE_LINE = (
     "practice-grader-none.html",
     "practice-grader-quiz.html",
     "practice-grader-shipped.html",
+    "practice-grader-user.html",
     "practice-option.html",
     "practice-run.html",
     "practice-submit.html",
