@@ -218,9 +218,13 @@ nothing**: the same manifest and the same contract render the same bytes.
 
 ⛔ **A hand-edit to any of these files is a finding against this skill, not a
 fix** (R19). It is reverted the next time somebody runs step 5, and a tool that
-eats your changes is a tool nobody runs twice. Customisation enters as manifest
-data; if the manifest cannot say it, the manifest is missing a field and *that*
-is the finding.
+eats your changes is a tool nobody runs twice. ⭐ **It is also REPORTED:**
+`write` and step 5a record each file's digest in
+`.studyforge/execution/written.json`, and onboarding's `hand_edited` names, in
+a sentence, every one whose bytes moved or that is gone. Running the skill
+again over an unchanged corpus rewrites no byte, that record included.
+Customisation enters as manifest data; if the manifest cannot say it, the
+manifest is missing a field and *that* is the finding.
 
 ### 5a. Record both tags — the skill does it, never the reader's typing
 
@@ -283,6 +287,7 @@ running it runs `docker compose`, and the study server never holds the socket.
 | `.studyforge/execution/compose.yaml` | the compose file, rendered from the contracts: the editor and the runner |
 | `.studyforge/execution/runner.env` | the primed runner's tag, as the component printed it (step 5a) |
 | `.studyforge/execution/editor.env` | the editor's tag, primed as the contract declares, as the component printed it (step 5a) |
+| `.studyforge/execution/written.json` | every file above and its digest, so a hand-edit to one is reported (step 5) |
 | `.studyforge/execution/toolchain.json` | the selection: the set, what is carried, what is not and why, and the two argv |
 | `.studyforge/execution/prime/<tool>/…` | one project per seeded tool: the corpus's own build, source and test, re-rooted at the build |
 | `EXECUTION.md` | what a reader opens first: what to build, what to run, and what this corpus declared |

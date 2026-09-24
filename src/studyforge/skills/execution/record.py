@@ -66,6 +66,7 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from pathlib import Path
 
+from studyforge.skills.execution import written
 from studyforge.skills.execution.onboard import (
     DIRECTORY_SLOT,
     EDITOR_ENV,
@@ -161,6 +162,7 @@ def _written(root: Path, where: str, content: str) -> str:
     target = root / where
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(content, encoding="utf-8")
+    written.stamp(root, [where])
     return where
 
 

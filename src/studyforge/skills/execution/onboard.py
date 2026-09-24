@@ -64,6 +64,7 @@ from pathlib import Path, PurePosixPath
 from studyforge.corpus.manifest import Manifest
 from studyforge.corpus.placement import PRACTICE_DIRNAME
 from studyforge.skills.execution import composefile, contract, reader, runnerservice, toolchain
+from studyforge.skills.execution import written as record_of
 from studyforge.skills.execution.prime import Prime, PrimeRefused, prime_for
 from studyforge.skills.execution.toolchain import DIRECTORY_SLOT
 
@@ -292,6 +293,8 @@ def write(execution: Execution, root: Path) -> tuple[str, ...]:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((root / origin).read_bytes())
         written.append(where)
+    if written:
+        record_of.stamp(root, written)
     return tuple(written)
 
 

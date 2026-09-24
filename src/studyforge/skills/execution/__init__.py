@@ -28,6 +28,7 @@ and on nothing inside either component but its `consuming.json` (R18).
 | `runnerservice` | the runner a Submit execs into, as the compose file's second service |
 | `reader` | the reader's document, `EXECUTION.md` |
 | `record` | the runner's and the editor's tags, asked of the component and written for compose |
+| `written` | every file this skill wrote and its digest, so a hand-edit to one is reported |
 | `prime` | the corpus's own build, source and test, as one project per seeded tool |
 | `onboard` | the whole of it, and the empty answer for a corpus that is not runnable |
 
