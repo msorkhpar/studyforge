@@ -1102,10 +1102,34 @@ number and the limit, and the build exits `1`. ⛔ It never silently switches to
 ignoring media, which would produce clones that are silent with no error, and it
 never silently keeps committing.
 
-⚠️ **Packing media out of git and restoring it is not built.** What the framework
-builds is the **awareness**: the policy, the measurement, and the honest refusal.
-Because delivery is orthogonal to placement, a mechanism can plug in behind the
-same decision without touching a single page.
+⭐ **A corpus that does not commit its clips publishes them as release volumes.**
+Delivery is orthogonal to placement, so the mechanism plugs in behind the same
+decision without touching a page:
+
+- **`studyforge narrate <root> --pack <dir>`** packs every clip the narration
+  record locates, at the path the record names relative to the corpus root,
+  into one **stored** zip split into volumes of **at most 999 MB**, with a
+  `SHA256SUMS` over the volumes, in a directory outside the corpus. Clips are
+  already compressed, so the split is what matters, not the compression. ⛔ A
+  pack is **deterministic** (sorted members, one timestamp, fixed permissions,
+  no attributes of the machine), and a clip the record promises and the disk
+  lacks is refused before anything is written.
+- **The pack writes two restore scripts into the corpus**,
+  `.studyforge/narration-release/restore.sh` and `restore.ps1`, with the tag
+  filled in and nothing else. ⛔ **No account name is in either**: the
+  repository is read from the checkout's `origin` when the script runs, and a
+  placeholder is the default. A restore downloads the volumes (the public
+  download address, or for a private repository the API by asset id with
+  `GITHUB_TOKEN` or an authenticated `gh`), **checks every volume before
+  anything is joined**, extracts each clip to `<corpus root>/<where>/<filename>`
+  as the record names it, and deletes the downloads. The token is read from the
+  environment and never written or printed. A second run gives the same tree.
+- ⛔ **The upload is the owner's.** `studyforge narrate <root> --upload <dir>
+  --tag <tag> --dry-run` checks every volume against `SHA256SUMS` and prints the
+  one `gh release create` command; without `--dry-run` it runs that command with
+  the owner's own `gh` login. Nothing in the framework publishes on its own.
+- ⭐ **Narration stays optional**: a clone that never restores is the reading
+  floor, complete, and the onboarding guide says how to get the clips.
 
 ### The placement dry-run
 
@@ -1788,6 +1812,8 @@ promise (`provides`). ⭐ **A re-run with
 nothing changed requests nothing**, and a change in any condition re-requests
 every clip it made stale. `studyforge narrate <root> --prune` deletes the clips
 of record entries the corpus no longer produces, over a walk of the whole corpus.
+`--pack` and `--upload` carry a corpus's clips out of git as release volumes
+(§5, *Generated media and pages are committed*); neither reaches the service.
 
 ### A clip's filename carries a digest of the words it says
 
@@ -2205,7 +2231,8 @@ Named explicitly so nobody builds them by accident.
 - Search across corpora.
 - Ragged-depth hierarchies (§4).
 - Transliterating non-ASCII titles into slugs (R9's stated limitation).
-- Packing generated media out of git and restoring it (§5).
+- Packing generated media other than narration out of git: only clips have
+  release volumes (§5).
 - A per-corpus visual theme: every site wears the one framework identity (§8.4).
 - A model at build time or at serve time (§7).
 - Mounting the Docker socket into the serving process, in any form (§8.3).

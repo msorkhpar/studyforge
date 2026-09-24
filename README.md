@@ -118,6 +118,16 @@ separate download, shows no narration control and keeps the browser's console
 clean. Once the clips are restored, the next page load plays them with no
 rebuild.
 
+**Clips too large for git travel as release volumes.** A corpus whose
+`corpus.json` sets `media.commit` to `never` keeps its clips out of the
+repository. `studyforge narrate <root> --pack <dir>` packs them into volumes of
+at most 999 MB with a `SHA256SUMS` and writes two restore scripts into the
+corpus; `studyforge narrate <root> --upload <dir> --dry-run` prints the one
+`gh release create` command that publishes them, and only you run it, with
+your own login. A reader who wants the voice runs
+`sh .studyforge/narration-release/restore.sh` (or `restore.ps1`) from a clone;
+one who never does still has a complete site. Step 6's skill walks through it.
+
 ## The authoring reference
 
 [`docs/authoring/`](docs/authoring/README.md) is the reference the skills point

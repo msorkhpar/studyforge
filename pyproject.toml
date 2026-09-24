@@ -58,6 +58,9 @@ studyforge = [
     "**/templates/*.html",
     "**/assets/*",
     "skills/**/SKILL.md",
+    # The restore scripts a packed corpus carries, rendered from these two.
+    "narrate/release/scripts/restore.sh",
+    "narrate/release/scripts/restore.ps1",
 ]
 
 [tool.pytest.ini_options]

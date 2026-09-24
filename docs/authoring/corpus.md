@@ -200,6 +200,20 @@ sit under the limits git hosting commonly imposes, about 5 GB for a repository
 and 100 MiB for a single file, so a corpus finds out at build time rather than
 when a push is refused.
 
+**A corpus that does not commit its clips publishes them as release volumes.**
+With `commit` set to `never`, `studyforge narrate <root> --pack <dir>` packs
+every clip the narration record locates into stored zip volumes of at most
+999 MB, with a `SHA256SUMS`, in a directory outside the corpus, and writes two
+restore scripts into `.studyforge/narration-release/`. Commit the scripts.
+`studyforge narrate <root> --upload <dir> --dry-run` prints the one
+`gh release create` command that attaches the volumes to a release of the
+checkout's `origin`, under the tag (`--tag`, default `narration-1.0.0`); the
+same command without `--dry-run` runs it with your own `gh` login. A reader
+runs `sh .studyforge/narration-release/restore.sh` (or `restore.ps1`) from a
+clone: each clip lands where the narration record says, the volumes are
+checked before anything is extracted, and the downloads are deleted.
+Narration stays optional: a clone that never restores has a complete site.
+
 ---
 
 ## `runtimes` — what your material needs to run

@@ -5,10 +5,12 @@ one `NarrateClient`, runs `stage.narrate_corpus`, prints the report and returns
 the exit code.
 
 **How you use it.** `main(argv) -> int`, and `python3 -m studyforge.cli.narrate`.
-`--prune` in place of `--voice` runs `prune.prune_corpus` instead.
+`--prune` in place of `--voice` runs `prune.prune_corpus` instead; `--pack` and
+`--upload` run `release.pack_command` and `release.upload_command`.
 ⭐ The dispatcher registers this same callable as the `narrate` verb.
 
-**Depends on.** `cli.narrate.stage`, `cli.narrate.prune`, `cli.narrate.report`, `narrate.client` for
+**Depends on.** `cli.narrate.stage`, `cli.narrate.prune`, `cli.narrate.release`,
+`cli.narrate.report`, `narrate.client` for
 the client, `narrate.wire` for its one socket-opening transport, `validate.cli` for `UNUSABLE`,
 and `argparse`.
 
@@ -28,6 +30,14 @@ synthesises cannot prune and a prune cannot synthesise (R3: narration deletes
 nothing except through an explicit prune). ⛔ **The prune branch builds no
 client**, so it can make no request.
 
+## ⛔ `--pack` and `--upload` are requests of their own, and build no client
+
+⭐ Four requests, exactly one per run: `--voice`, `--prune`, `--pack`,
+`--upload`. The two release requests read the record and the disk, never the
+service, and `--dry-run` belongs to `--upload` alone. ⛔ `--upload` without
+`--dry-run` runs `gh` as the person who typed it; nothing else in this verb
+publishes anything.
+
 ⛔ **Order is `narrate` then `build`** (a build only copies clips). A build never
 synthesises; this is the only verb that probes the service or writes clips.
 
@@ -42,8 +52,10 @@ import argparse
 from pathlib import Path
 
 from studyforge.cli.narrate.prune import prune_corpus
+from studyforge.cli.narrate.release import pack_command, upload_command
 from studyforge.cli.narrate.report import exit_code, lines, prune_exit_code, prune_lines
 from studyforge.cli.narrate.stage import narrate_corpus
+from studyforge.narrate.release import DEFAULT_TAG
 from studyforge.narrate.speakable import SpeakableError
 from studyforge.narrate.synth import StateError
 from studyforge.validate.cli import UNUSABLE
@@ -82,6 +94,33 @@ def build_parser() -> argparse.ArgumentParser:
             "produces, over a walk of the whole corpus. Requests nothing from any service"
         ),
     )
+    request.add_argument(
+        "--pack",
+        metavar="DIR",
+        help=(
+            "narrate nothing: pack the clips the record locates into release volumes and a "
+            "SHA256SUMS in DIR, outside the corpus, and write the restore scripts into "
+            "the corpus"
+        ),
+    )
+    request.add_argument(
+        "--upload",
+        metavar="DIR",
+        help=(
+            "publish the volumes a pack wrote in DIR as a GitHub release of the checkout's "
+            "origin, through gh and your own login. Try --dry-run first"
+        ),
+    )
+    parser.add_argument(
+        "--tag",
+        default=DEFAULT_TAG,
+        help=f"the release tag, with --pack and --upload (default {DEFAULT_TAG})",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="with --upload: print what would be uploaded, and upload nothing",
+    )
     parser.add_argument(
         "--format",
         dest="fmt",
@@ -102,12 +141,20 @@ def main(argv: list[str] | None = None, out=None) -> int:
     import sys
 
     stream = sys.stdout if out is None else out
-    arguments = build_parser().parse_args(argv)
+    parser = build_parser()
+    arguments = parser.parse_args(argv)
+    if arguments.dry_run and arguments.upload is None:
+        parser.error("--dry-run goes with --upload")
     root = Path(arguments.root)
     if not root.is_dir():
         # ⛔ Names what was asked for, not the absolute path it resolved to (R7).
         print(f"{arguments.root}: not a directory", file=stream)
         return UNUSABLE
+    if arguments.pack is not None or arguments.upload is not None:
+        report, code = _release(arguments)
+        for line in report:
+            print(line, file=stream)
+        return code
     try:
         if arguments.prune:
             # ⛔ No client on this branch: a prune makes no request.
@@ -133,3 +180,12 @@ def main(argv: list[str] | None = None, out=None) -> int:
     for line in report:
         print(line, file=stream)
     return code
+
+
+def _release(arguments: argparse.Namespace) -> tuple[list[str], int]:
+    """Run `--pack` or `--upload`. ⛔ Neither builds a client, so neither reaches the service."""
+    if arguments.pack is not None:
+        return pack_command(arguments.root, arguments.pack, arguments.tag)
+    return upload_command(
+        arguments.root, arguments.upload, arguments.tag, dry_run=arguments.dry_run
+    )
