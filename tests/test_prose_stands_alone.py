@@ -9,6 +9,9 @@ things:
   alias exemption, prints nothing over `src/` (every file, comments included) or
   over the docstrings and comments of every module under `tests/` and the root
   `conftest.py`.
+- **No rule id in what the product prints.** A message, a refusal or a line a
+  generated file carries says its reason; a reader of the output cannot resolve
+  a spec rule id such as `R7`. Docstrings and comments may still cite one.
 - **No pointer to a process record.** No file under `src/`, `tests/` or
   `docker/`, nor `.gitignore`, `pyproject.toml` or `conftest.py`, names the
   tooling (`tools/`, a `tools.` module), a handoff, a row file, a convention
@@ -264,3 +267,56 @@ def test_what_merely_looks_like_a_pointer_is_not(tmp_path):
         "docs/d.md": "The readings are in the task's handoff.\n",
     }
     assert pointers(scratch_repository(tmp_path, harmless)) == {}
+
+
+# --- no rule id in output -----------------------------------------------------------------
+
+#: A spec rule id as the spec numbers them, `R1` to `R21`.
+RULE_ID = re.compile(r"\bR(?:[1-9]|1[0-9]|2[01])\b")
+
+
+def output_literals(source: str) -> list[str]:
+    """Every string constant of a module that is not a docstring: what the product prints."""
+    tree = ast.parse(source)
+    documented = (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)
+    skipped = {
+        id(node.body[0].value)
+        for node in ast.walk(tree)
+        if isinstance(node, documented)
+        and node.body
+        and isinstance(node.body[0], ast.Expr)
+        and isinstance(node.body[0].value, ast.Constant)
+    }
+    return [
+        node.value
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Constant)
+        and isinstance(node.value, str)
+        and id(node) not in skipped
+    ]
+
+
+def rule_ids(root: Path) -> dict[str, list[str]]:
+    """Each module under `src/` whose output literals cite a spec rule id, with the literals."""
+    found: dict[str, list[str]] = {}
+    for name in tracked(root):
+        if name.startswith("src/") and name.endswith(".py"):
+            source = _text(root / name) or ""
+            hits = [text[:120] for text in output_literals(source) if RULE_ID.search(text)]
+            if hits:
+                found[name] = hits
+    return found
+
+
+def test_nothing_the_product_prints_cites_a_rule_id():
+    assert rule_ids(repository_root()) == {}, "say the reason; a reader cannot resolve a rule id"
+
+
+def test_a_rule_id_in_a_message_is_caught_and_one_in_a_docstring_is_not(tmp_path):
+    rule = "R" + "19"
+    planted = {
+        "src/pkg/says.py": f'"""A module ({rule})."""\nraise ValueError("hand-edited ({rule})")\n',
+        "src/pkg/quiet.py": f'"""A module ({rule})."""\n# a comment ({rule})\n',
+    }
+    found = rule_ids(scratch_repository(tmp_path, planted))
+    assert found == {"src/pkg/says.py": [f"hand-edited ({rule})"]}
