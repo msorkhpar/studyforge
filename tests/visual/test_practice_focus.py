@@ -26,11 +26,29 @@ watch is held by `tests/studyforge/render/page/test_practice_editor.py`.
 
 ⭐ **And the reader's own hand still works**: a click into the frame focuses it
 and what is typed reaches it.
+
+## ⛔ `W458` — every wait here is on an EVENT, and none is a sleep
+
+⚠️ **This module failed at random under parallel load**, and the cause was
+measured: the stand-in's reports of four keystrokes are four `fetch`es its
+server answers on four threads, and the LAST TO ARRIVE won — so `'w449'` was
+typed and `'w44'` was read. ⭐ That is fixed in `editor_standin` (a report
+carries its number). ⛔ **And the sleeps that remained are gone too**, because a
+fixed pause is a guess at how long the machine takes, and a loaded machine is
+exactly where the guess is wrong:
+
+- ⭐ the frame's arrival is a `MutationObserver` in the page (`BUILT`);
+- ⭐ the stand-in's focus calls and keystrokes are its own reports (`wait_for`);
+- ⭐ **"the page has finished answering"** is `AT_REST`: the page's scroll
+  position and its `activeElement` unchanged across `REST_FRAMES` consecutive
+  painted frames. ⛔ A glide moves the page on every frame it paints, so a page
+  that is gliding is never at rest, and a page whose focus is taken back is not
+  at rest until it has been — the reading is taken after the behaviour under
+  test has had its whole say, however slowly the machine paints.
 """
 
 from __future__ import annotations
 
-import time
 from collections.abc import Iterator
 
 import pytest
@@ -46,9 +64,52 @@ CASE = "depth2-unit-01"
 #: view scrolls nothing and a still page would then prove nothing.
 SHORT = (1280, 360)
 
-#: How long a check waits after the stand-in's last focus call for a glide to
-#: finish. ⚠️ Longer than a smooth scroll across this page takes.
-GLIDE = 1.5
+#: How many consecutive painted frames the page must hold still to be at rest.
+#: ⭐ Frames, not milliseconds: a loaded machine paints fewer of them and the
+#: wait grows with it. ⚠️ Enough to span the page's `activeElement` watch
+#: (`WATCH_EVERY`, 100 ms) twice at 60 frames a second.
+REST_FRAMES = 20
+
+#: The ceiling on any one in-page wait, in ms. ⛔ A ceiling only: a wait that
+#: reaches it REJECTS, naming what it waited for, and never lets a check go on.
+CEILING_MS = 20000
+
+#: Resolves once the panel has built its editor frame. ⭐ A `MutationObserver`,
+#: so it wakes on the frame's insertion rather than on a polling tick.
+BUILT = """
+new Promise((done, fail) => {
+  const wanted = '[data-practice-frame="main"] iframe';
+  if (document.querySelector(wanted)) { done(true); return; }
+  const watch = new MutationObserver(() => {
+    if (document.querySelector(wanted)) { watch.disconnect(); clearTimeout(ceiling); done(true); }
+  });
+  const ceiling = setTimeout(() => {
+    watch.disconnect(); fail(new Error('the panel never built its editor frame'));
+  }, __CEILING__);
+  watch.observe(document.documentElement, { childList: true, subtree: true });
+})
+""".replace("__CEILING__", str(CEILING_MS))
+
+#: Resolves once the page's scroll position and `activeElement` have held still
+#: for `REST_FRAMES` consecutive animation frames (`W458`, the module docstring).
+AT_REST = """
+new Promise((done, fail) => {
+  let last = null;
+  let still = 0;
+  const ceiling = setTimeout(() => fail(new Error(
+    'the page never came to rest: it was still moving or changing focus')), __CEILING__);
+  function look() {
+    const active = document.activeElement;
+    const now = [window.scrollX, window.scrollY, active ? active.tagName : ''].join(' ');
+    still = now === last ? still + 1 : 0;
+    last = now;
+    if (still < __FRAMES__) { requestAnimationFrame(look); return; }
+    clearTimeout(ceiling);
+    done(true);
+  }
+  requestAnimationFrame(look);
+})
+""".replace("__CEILING__", str(CEILING_MS)).replace("__FRAMES__", str(REST_FRAMES))
 
 #: The page's own reading: where it is, what holds focus, where the frame is.
 STATE = """
@@ -92,15 +153,17 @@ def _state(page: OpenPage) -> dict:
     return dict(page.evaluate(STATE))  # type: ignore[call-overload]
 
 
-def _after_the_steals(page: OpenPage, editor: editor_standin.StandIn) -> dict:
-    """Wait for the frame to exist and for the stand-in's every focus call, then a glide."""
-    deadline = time.monotonic() + 20.0
-    while not _state(page)["frame"]:
-        assert time.monotonic() < deadline, "the panel never built its editor frame"
-        time.sleep(0.05)
-    editor.wait_for(lambda s: s.focused >= len(editor_standin.FOCUS_AT_MS))
-    time.sleep(GLIDE)
+def _at_rest(page: OpenPage) -> dict:
+    """The page's reading once it has held still, so nothing it is doing is still under way."""
+    page.evaluate(AT_REST)
     return _state(page)
+
+
+def _after_the_steals(page: OpenPage, editor: editor_standin.StandIn) -> dict:
+    """Wait for the frame, for the stand-in's every focus call, and for the page to come to rest."""
+    page.evaluate(BUILT)
+    editor.wait_for(lambda s: s.focused >= len(editor_standin.FOCUS_AT_MS))
+    return _at_rest(page)
 
 
 def _below_the_fold(reading: dict) -> None:
@@ -178,8 +241,7 @@ def test_a_readers_click_into_the_frame_focuses_it_and_what_they_type_arrives(
             {"type": kind, "x": target["x"], "y": target["y"], "button": "left", "clickCount": 1},
             session=open_page.session,
         )
-    time.sleep(0.5)
-    assert _state(open_page)["active"] == "IFRAME", "a reader's click into the editor was refused"
+    assert _at_rest(open_page)["active"] == "IFRAME", "a reader's click into the editor was refused"
     for letter in "w449":
         for kind in ("keyDown", "keyUp"):
             message = {"type": kind, "key": letter}
@@ -187,5 +249,4 @@ def test_a_readers_click_into_the_frame_focuses_it_and_what_they_type_arrives(
                 message["text"] = letter
             call("Input.dispatchKeyEvent", message, session=open_page.session)
     editor.wait_for(lambda s: s.typed == "w449")
-    time.sleep(0.5)
-    assert _state(open_page)["active"] == "IFRAME", "focus the reader gave was taken back"
+    assert _at_rest(open_page)["active"] == "IFRAME", "focus the reader gave was taken back"
