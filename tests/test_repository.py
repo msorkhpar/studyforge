@@ -72,6 +72,34 @@ def test_the_quality_tooling_is_excluded_from_packaging():
     assert not (repository_root() / "src" / "tools").exists()
 
 
+#: ⛔ What developing this framework uses and a client never does (`W472`): the task
+#: records, the agent instructions and the pin file of the development workspace. They
+#: live on the process branch. A directory is written with its slash.
+DEVELOPMENT_ONLY = ("docs/tasks/", "CLAUDE.md", ".claude/", "workspace.json")
+
+
+def development_files(paths: list[str]) -> list[str]:
+    """Every path in `paths` that is one of `DEVELOPMENT_ONLY` or sits beneath one, sorted."""
+    return sorted(
+        path
+        for path in paths
+        if any(
+            path == gone or (gone.endswith("/") and path.startswith(gone))
+            for gone in DEVELOPMENT_ONLY
+        )
+    )
+
+
+def test_the_development_files_stay_off_the_main_line():
+    assert development_files(tracked_files(("*",))) == []
+
+
+def test_the_development_files_check_can_go_red():
+    planted = ["docs/tasks/BOARD.md", "CLAUDE.md", ".claude/settings.json", "workspace.json"]
+    kept = ["docs/decisions.md", "docs/specs/x.md", "tests/fixtures/CLAUDE.md", "README.md"]
+    assert development_files(planted + kept) == sorted(planted)
+
+
 # --- ignore rules ----------------------------------------------------------
 
 #: The shapes FND-04's golden fixtures will carry. ⚠️ None of them exists in
