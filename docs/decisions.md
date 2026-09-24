@@ -469,7 +469,7 @@ What it reads, and the choices in it:
 
 ### The framework pin records the installed library's version and commit, never a path
 
-**Decision.** `.studyforge/pin.json`, rendered by `studyforge.skills.onboarding.pin` (`pin_api` 2), records `framework: "studyforge"`, `where: "installed"`, the installed library's `version`, the forty-hex `commit` it was built from, and the stubbed skills. Both values are checked by shape and never quoted back in a refusal. Each skill stub under `.studyforge/skills/` names the pinned commit and version and points at `python3 -m studyforge.skills.documents <skill>` and `python3 -m studyforge.skills.onboarding.verify .`, never at a path. The generated `test_framework_pin.py` fails when a stub and the pin disagree, when the library the corpus's Python imports is not the pinned version or build, or when the framework is a submodule. `reonboard` refuses to keep a pin whose version or commit differs from the running library's, or a pin that predates the installed form, until it is re-pinned with `framework_commit`. Because nothing generated carries a path, a regenerate from a linked worktree writes the same bytes as one from the main checkout.
+**Decision.** `.studyforge/pin.json`, rendered by `studyforge.skills.onboarding.pin` (`pin_api` 2), records `framework` as `studyforge`, `where` as `installed`, the installed library's `version`, the forty-hex `commit` it was built from, and the stubbed skills. Both values are checked by shape and never quoted back in a refusal. Each skill stub under `.studyforge/skills/` names the pinned commit and version and points at `python3 -m studyforge.skills.documents <skill>` and `python3 -m studyforge.skills.onboarding.verify .`, never at a path. The generated `test_framework_pin.py` fails when a stub and the pin disagree, when the library the corpus's Python imports is not the pinned version or build, or when the framework is a submodule. `reonboard` refuses to keep a pin whose version or commit differs from the running library's, or a pin that predates the installed form, until it is re-pinned with `framework_commit`. Because nothing generated carries a path, a regenerate from a linked worktree writes the same bytes as one from the main checkout.
 
 **Why.** A person converting their own material installs the library rather than keeping a framework checkout beside the corpus, so a pin must name the library and verify its version. A copied procedure ages silently, which the pointer and its drift check prevent, and output that depends on which checkout ran the skill breaks reproducibility.
 
@@ -921,7 +921,7 @@ What it reads, and the choices in it:
 
 ### A run leaves the reader's tree as it found it
 
-**Decision.** `execute.runner.RUN_ENVIRONMENT` sets `PYTHONDONTWRITEBYTECODE=1` (and `PYTHONUNBUFFERED=1`) for every run, in the host environment and via `docker exec -e` in the container, so Python writes no bytecode cache beside the file under test.
+**Decision.** `execute.runner.RUN_ENVIRONMENT` sets `PYTHONDONTWRITEBYTECODE=1` (and `PYTHONUNBUFFERED=1`) for every run, in the host environment and as `-e` arguments to the container run, so Python writes no bytecode cache beside the file under test.
 
 **Why.** A grader imports the reader's file, and otherwise Python would leave `__pycache__` directories in the source tree.
 

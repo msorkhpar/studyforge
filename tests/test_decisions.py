@@ -11,6 +11,8 @@ make the file useful to a reader of the product as it is:
   itself or cites a spec rule;
 - each entry states a decision, names where it lives, gives a reason and the
   spec rule it serves, or says why it serves none;
+- every code span a Decision part or the catalogue's prose carries resolves
+  against the source, by the rules stated above `NOT_CODE` below;
 - the file cites nothing that leaves the main line with the process records.
 
 Standard library only, plus `git`, `bash`, `awk` and `sort`, which the command
@@ -209,3 +211,248 @@ def test_no_message_a_user_reads_cites_a_process_id(tmp_path):
     )
     repo = scratch_repository(tmp_path, {"src/literals.txt": text})
     assert population(repo) == [], "a message cites a process id; say its reason instead"
+
+
+# --- every code span resolves against the source ---------------------------------
+#
+# ⭐ A decision names where it lives, and the name has to be TRUE today: a span
+# that no longer resolves is a decision that drifted from the source. Each span
+# in an entry's Decision part, and each span in the catalogue's prose (its
+# fenced examples are not read), is classified by its shape and resolved by the
+# first rule that fits:
+#
+# 1. `python3 -m <module> …`: the module imports.
+# 2. `studyforge <verb> …`: the verb is in `studyforge.cli.dispatch.VERBS`, and
+#    each `--flag` it carries is spelled somewhere in the searched tree.
+# 3. A path (it holds a `/` or ends in a file suffix), read before anything is
+#    imported: it exists under the repository root or `src/studyforge/`, or it
+#    is the tail of a tracked path (`templates/page.html`, `chrome.css`).
+#    Otherwise it is a path the framework writes into a corpus, and the searched
+#    tree must spell it verbatim, a `<placeholder>` read as any text.
+# 4. A dotted name opening with `studyforge` or `tests`: it must import, with a
+#    trailing argument list dropped: the longest importable prefix is imported
+#    and every remaining segment is an attribute of it. Nothing else resolves it.
+#    A standard-library name (`os.path.lexists`) resolves the same way, and no
+#    other module is ever imported.
+# 5. Any other dotted name: it resolves under a `studyforge` module whose dotted
+#    name ends with its leading segments (`serve.discovery`); or it is a class
+#    defined in the searched tree followed by a member defined there
+#    (`Offer.installed()`); or every segment is a definition or string constant
+#    there (a key path such as `runner.prime.seeds`); or it is spelled verbatim.
+# 6. An identifier: a builtin, a module or package name, a definition or a
+#    parameter in the searched tree, or a string constant there (a key, a value,
+#    a variable).
+# 7. Anything else (a rule id, a CSS or HTML token): spelled verbatim in the
+#    searched tree.
+#
+# The searched tree is every tracked file under `src/`, `tests/` and `docker/`,
+# plus `setup.py` and `pyproject.toml`, but never this module, which spells the
+# misspellings its own tests plant. A span that no rule resolves fails the
+# test by name. A span that names no code by design is listed in `NOT_CODE` with
+# its reason, and a listing whose span has left its document fails too.
+
+#: Spans that name no code in this repository, by document, each with its reason.
+NOT_CODE = {
+    (
+        DECISIONS,
+        "docker/editor/Dockerfile",
+    ): "the code-server-toolchain repository's file, so named",
+    (DECISIONS, "tests/test_editor_agent_host.py"): "the code-server-toolchain repository's test",
+    (CATALOGUE, "$$…$$"): "material syntax an integrator meets, not code",
+    (CATALOGUE, "[CLR]*"): "an example of a glob the manifest refuses",
+    (CATALOGUE, "CONTRIBUTING.md"): "a file of an example corpus",
+    (CATALOGUE, "LICENSE"): "a file of an example corpus",
+    (CATALOGUE, "print(n)"): "an illustration of a reconnaissance script",
+    (CATALOGUE, "assert n == expected"): "an illustration of a reconnaissance script",
+}
+
+#: Where the resolver looks: directories, then single files.
+SEARCHED = ("src/", "tests/", "docker/")
+SEARCHED_FILES = ("setup.py", "pyproject.toml")
+
+#: This module, which spells its own misspellings and is never searched.
+THIS = "tests/test_decisions.py"
+
+#: What makes a span a path.
+FILE_SUFFIX = re.compile(r"\.(py|html|md|json|css|js|svg|env|yaml|toml|txt)$")
+
+#: A `<placeholder>` or `{placeholder}` inside a written path or literal.
+PLACEHOLDER = re.compile(r"<[^>]+>|\{[^}]+\}")
+
+#: A dotted name, and an identifier.
+DOTTED = re.compile(r"^[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)+$")
+IDENTIFIER = re.compile(r"^[A-Za-z_]\w*$")
+
+
+class Tree:
+    """What the searched tree defines and spells, read once."""
+
+    def __init__(self) -> None:
+        import builtins
+
+        root = repository_root()
+        listed = run([git(), "ls-files"], cwd=root)
+        assert listed.returncode == 0, listed.stderr
+        self.tracked = listed.stdout.split()
+        names = [
+            p for p in self.tracked if (p.startswith(SEARCHED) or p in SEARCHED_FILES) and p != THIS
+        ]
+        texts = {p: (root / p).read_text("utf-8", errors="replace") for p in names}
+        self.text = "\n".join(texts.values())
+        self.defined: set[str] = set(dir(builtins))
+        self.strings: set[str] = set()
+        self.modules: list[str] = []
+        for name, text in texts.items():
+            if not name.endswith(".py"):
+                continue
+            dotted = name.removeprefix("src/").removesuffix(".py").replace("/", ".")
+            self.modules.append(dotted.removesuffix(".__init__"))
+            self.defined.update(dotted.split("."))
+            for node in ast.walk(ast.parse(text)):
+                self._read(node)
+
+    def _read(self, node: ast.AST) -> None:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            self.defined.add(node.name)
+        elif isinstance(node, (ast.Assign, ast.AnnAssign)):
+            targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+            for target in targets:
+                for part in ast.walk(target):
+                    if isinstance(part, ast.Name):
+                        self.defined.add(part.id)
+                    elif isinstance(part, ast.Attribute):
+                        self.defined.add(part.attr)
+        elif isinstance(node, ast.arg):
+            self.defined.add(node.arg)
+        elif isinstance(node, ast.Constant) and isinstance(node.value, str):
+            self.strings.add(node.value)
+
+    def spells(self, literal: str) -> bool:
+        """True when the searched tree carries `literal`, a placeholder read as any text."""
+        pieces = [re.escape(piece) for piece in PLACEHOLDER.split(literal)]
+        return re.search(".+?".join(pieces), self.text) is not None
+
+
+def importable(name: str) -> bool:
+    """True when `name`'s longest importable prefix imports and the rest are its attributes."""
+    import importlib
+    import sys
+
+    parts = name.split(".")
+    if parts[0] not in ("studyforge", "tests") and parts[0] not in sys.stdlib_module_names:
+        return False
+    for cut in range(len(parts), 0, -1):
+        try:
+            found = importlib.import_module(".".join(parts[:cut]))
+        except ImportError:
+            continue
+        for attribute in parts[cut:]:
+            if not hasattr(found, attribute):
+                return False
+            found = getattr(found, attribute)
+        return True
+    return False
+
+
+def resolves(span: str, tree: Tree) -> bool:
+    """True when `span` names something the source has, by the first rule that fits."""
+    from studyforge.cli.dispatch import VERBS
+
+    words = span.split()
+    if span.startswith("python3 -m ") and len(words) > 2:
+        return importable(words[2])
+    if words[0] == "studyforge" and len(words) > 1:
+        flags = [word.split("=")[0] for word in words[2:] if word.startswith("--")]
+        return words[1] in VERBS and all(tree.spells(flag) for flag in flags)
+    bare = re.sub(r"\([^()]*\)$", "", span).replace("[]", "")
+    if "/" in bare or FILE_SUFFIX.search(bare):
+        return path_resolves(bare, tree)
+    if DOTTED.match(bare) and bare.split(".")[0] in ("studyforge", "tests"):
+        return importable(bare)
+    if DOTTED.match(bare) and importable(bare):
+        return True
+    if DOTTED.match(bare):
+        return dotted_resolves(bare, tree)
+    if IDENTIFIER.match(bare):
+        return bare in tree.defined or bare in tree.strings
+    return tree.spells(span)
+
+
+def path_resolves(path: str, tree: Tree) -> bool:
+    """Rule 4: a tracked path, the tail of one, or a path the framework spells."""
+    root = repository_root()
+    trimmed = path.lstrip("./") if not path.startswith(".studyforge") else path
+    if (root / path).exists() or (root / "src" / "studyforge" / path).exists():
+        return True
+    if any(name.endswith("/" + trimmed.rstrip("/")) for name in tree.tracked):
+        return True
+    return tree.spells(path.rstrip("/"))
+
+
+def dotted_resolves(name: str, tree: Tree) -> bool:
+    """Rule 5: relative to a module, a class and its member, a key path, or verbatim."""
+    parts = name.split(".")
+    for cut in range(len(parts), 0, -1):
+        tail = "." + ".".join(parts[:cut])
+        for module in tree.modules:
+            if ("." + module).endswith(tail) and importable(".".join([module, *parts[cut:]])):
+                return True
+    if parts[0] in tree.defined and parts[0][0].isupper() and parts[-1] in tree.defined:
+        return True
+    if all(part in tree.defined or part in tree.strings for part in parts):
+        return True
+    return tree.spells(name)
+
+
+def spans(name: Path) -> list[str]:
+    """The code spans a document names code with: Decision parts, or the catalogue's prose."""
+    text = (repository_root() / name).read_text("utf-8")
+    if name == DECISIONS:
+        text = "".join(body[body.find(PARTS[0]) : body.find(PARTS[1])] for _, body in entries())
+    else:
+        text = re.sub(r"^```.*?^```", "", text, flags=re.MULTILINE | re.DOTALL)
+    return re.findall(r"`([^`\n]+)`", text)
+
+
+@pytest.fixture(scope="module")
+def tree() -> Tree:
+    return Tree()
+
+
+@pytest.mark.parametrize("name", [DECISIONS, CATALOGUE], ids=str)
+def test_every_code_span_resolves_against_the_source(tree, name):
+    unresolved = sorted(
+        {span for span in spans(name) if (name, span) not in NOT_CODE and not resolves(span, tree)}
+    )
+    assert unresolved == [], f"{name} names what the source does not have: {unresolved}"
+
+
+def test_every_listed_exemption_is_still_in_its_document():
+    stale = [span for (name, span) in NOT_CODE if span not in spans(name)]
+    assert stale == [], f"NOT_CODE lists spans no document names: {stale}"
+
+
+@pytest.mark.parametrize(
+    "span",
+    [
+        "studyforge.validate.derivedd",
+        "Offer.installd()",
+        "derivation-recrd",
+        "templates/nopage.html",
+    ],
+)
+def test_a_misspelled_name_does_not_resolve(tree, span):
+    assert not resolves(span, tree)
+
+
+@pytest.mark.parametrize(
+    "span",
+    [
+        "studyforge.validate.derived",
+        "Offer.installed()",
+        "derivation-record",
+        "templates/page.html",
+    ],
+)
+def test_the_same_names_spelled_right_resolve(tree, span):
+    assert resolves(span, tree)
