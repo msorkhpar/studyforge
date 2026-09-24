@@ -1,31 +1,28 @@
 # Decisions
 
-The decisions that still shape the product, each with the reason in a sentence
-and the spec rule it serves. It exists so that a reader of the product never
-needs the process records that produced it: those records live on an archive
-branch, and the ids they were filed under (a numbered ruling, a row, a round, a
-task) mean nothing on the main line.
+The decisions that shape the product as it is, each with the reason behind it,
+the spec rule it serves, and where it lives in the code. The
+[spec](specs/2026-09-08-studyforge-v1-design.md) states the design and its
+governing rules; this file records the decisions the code makes under those
+rules, so a reader of a module can find why it behaves as it does.
 
 ## How to read it
 
-- **Met an old id in a docstring or comment?** Search this file for it, exactly
-  as written. Each entry's **Aliases** line lists the process ids it replaces.
-  An id that is on no Aliases line carried no decision the product still
-  depends on, and the prose citing it is due to be rewritten to carry its own
-  reason.
-- **The spec comes first.** A decision the [spec](specs/2026-09-08-studyforge-v1-design.md)
-  already states is an entry here that points at the section, never a second
-  copy of it. `R1`–`R21` in this file are the spec's governing rules (spec §2).
-- **An entry is one decision.** It names the modules or files that carry it, so
-  the code is the place to look for how.
-- **Process is not here.** How the project's agents worked, reviewed, counted
-  and recorded is not a product decision, and none of it is carried.
+- **An entry is one decision.** Its heading states the decision; **Decision**
+  says what the code does and names the modules or files that carry it, so the
+  code is the place to look for how; **Why** gives the reason; **Serves** names
+  the spec rule, or says why none applies.
+- **The spec comes first.** What the spec already states is not repeated here.
+  `R1`–`R21` in this file are the spec's governing rules (spec §2).
+- **Only what the source does today.** A decision whose behaviour leaves the
+  source leaves this file in the same change.
 
-## The population
+## Process ids in the product's prose
 
-Every process id cited in the product's prose is printed by this command, run
-from the repository root. Each id it prints is either on an Aliases line below
-or is one that explains nothing without the archive.
+The product's prose says the thing itself or cites a spec rule; it never cites
+a process id (a row, a finding, a round, a ruling or a task). This command,
+run from the repository root, prints every such id it finds, and prints
+nothing on a clean tree.
 
 ```sh
 git grep -I -ohE '\b(W[0-9]{1,4}[a-z]?|ISO-M[0-9]+|(AX|EX|FND|JS|NS|OPS|QA|REL|SF|SK|TC|INT|ISO|PO|CTO)-[0-9]{1,3}[a-z]?)(/[0-9]+)?\b|\b((PO|CTO) )?[Rr]ound [0-9]+\b|\b[Rr]ulings? [0-9]{1,3}[a-z]?\b(( ?, ?| and | or )[0-9]{1,3}[a-z]?\b)*' -- src tests docs/specs docs/authoring |
@@ -50,1602 +47,1167 @@ What it reads, and the choices in it:
   ignores the `/`, so a row and a finding of a neighbouring row compare equal and
   one of them silently disappears from the population.
 
+## Every conversion
+
+### An open question blocks what it names until it is answered
+
+**Decision.** A question a conversion cannot settle for itself is a first-class output of the delivery skill (`studyforge.skills.delivery.question`): it is numbered, routed at whoever can answer it, names what it blocks, and says how to re-run it, and a question that lacks any of these is refused. Until an answer is attached it stays open and keeps blocking: `Backlog.open_questions` lists it, the rendered backlog counts it, and `Question.act_on` refuses to hand back an answer for an open question or for one answered at a ref other than the current one. The milestone a question blocks does not close while the question is open; the question is answered by the person it is routed at, or the milestone waits. Reconnaissance holds its uncertainties to the same shape (`skills.reconnaissance`, `Uncertainty.settles_it`).
+
+**Why.** A question skipped is a guess made one layer down, where nobody sees it, and an answer taken at another ref is an answer about a framework that no longer exists.
+
+**Serves.** `R6`, `R19`
+
+### A defect a corpus shows is fixed in the framework, and the corpus is regenerated
+
+**Decision.** When a built corpus shows a defect in anything the framework generates (a page, a stylesheet, a skill stub, the manifest, a generated check), the fix lands in the framework or its skills and reaches the corpus by regeneration: `reonboard` rewrites the consuming half from the corpus's recorded answers at the new pin, and a build rewrites the site. A generated file is never patched in place: `hand_edited` (`skills.onboarding.record`) names every generated file whose bytes differ from what was written, and a regenerate replaces it. Customisation enters as manifest data. The test of a fix is the next corpus, not the one that showed it.
+
+**Why.** A patch in one corpus is a fix the next source has to rediscover, and a hand-edited generated file is overwritten, silently, by the next regeneration.
+
+**Serves.** `R19`, `R3`
+
 ## Refusals, errors and personal data
 
 ### A refusal names the fault and never echoes the value
 
-**Decision.** A refusal message describes what is wrong with a value (its type, the fault, the field) and never reproduces it; a path that escapes the source root is described by the single helper `_escape` in `corpus.manifest.errors`, which quotes no part of it. Cleanliness is the raising module's guarantee: `validate` forwards upstream refusals unscrubbed, and `validate`'s end-to-end run is where the composition is measured. `describe` decides what may be named by what a string can structurally hold, never by a list of known shapes. The one describer is `studyforge.describe`, which other packages import or re-export: it names a rejected value by its type, quotes an integer (it cannot carry an identifier and a refusal that will not say which unit is useless), and names plain keys while counting the rest.
+**Decision.** A refusal message describes what is wrong with a value (its type, the fault, the field) and never reproduces it. The one describer is `studyforge.describe`, which every package imports: `describe` names a rejected value by its type, says `nothing` for an absent value and `an empty string` for a blank one, and quotes only an integer; `describe_keys` names the keys that are plain lowercase identifiers and counts the rest. What may be named is decided by what a string can structurally hold, never by a list of known shapes. A path that escapes the source root is described by `_escape` in `studyforge.corpus.manifest.errors`, which says how it escapes (a leading slash, a leading tilde, a climb with `..`) and quotes no part of it. Cleanliness is the raising module's guarantee: `studyforge.validate.corpus` forwards upstream refusals unscrubbed, and `tests/studyforge/validate/test_run.py` checks the composition end to end.
 
-**Why.** A scrub at the report would hide the same echo in every traceback and other caller, and a check that fires on a bad path is exactly when the value carries a home directory.
+**Why.** A check that fires on a bad path fires exactly when the value carries a home directory, so quoting it would copy personal data into a log. A scrub applied only at the report would leave the same echo in every traceback and every other caller. An integer is quoted because it cannot carry an identifier and a refusal that will not say which unit is wrong cannot be acted on.
 
-**Serves.** `R7, R6`
-
-**Aliases.** `Ruling 10`, `Ruling 13`, `Ruling 14`, `Ruling 17`, `Ruling 37`, `Ruling 135`, `W1`, `W17`, `W19`, `W40/1`
+**Serves.** `R7`, `R6`
 
 ### Refusals gather every failure and name them in one message
 
-**Decision.** A walk over many items (epic documents and their rows in `delivery.epics`, capabilities in `delivery.capability`, a backlog's milestones and dependency cycles in `delivery.backlog`, scaffold collisions) collects every failure first and raises once. `delivery.refusal.one_or_all` is the single plural form and leads with the count. Cycles are refused as a set before the critical-path walk, so that walk needs no guard of its own.
+**Decision.** A walk over many items collects every failure first and raises once: a backlog's dependencies and cycles in `studyforge.skills.delivery.backlog`, the terminal statement's coverage of the offer in `skills.delivery.terminal`, duplicate capabilities in `skills.delivery.offer`, the findings log in `skills.delivery.findings_log`, and file collisions in `skills.adapter.scaffold`. Within the delivery package, `skills.delivery.refusal.one_or_all` is the single plural form: one reason reads unchanged, several are joined behind a preamble that leads with the count. Cycles are refused as a set before the critical-path walk, so that walk needs no guard of its own.
 
 **Why.** A refusal that stops at the first failure hides how much is wrong and turns every fix into another full run.
 
 **Serves.** `R6`
 
-**Aliases.** `Ruling 188`, `W94`
-
 ### A count is reported with the population it was taken over
 
-**Decision.** When a result comes down to a number, the population it was counted over is stated with it, and an empty population is never read as a clean result. `one_or_all` refuses to render a refusal over no reasons, and the reconnaissance proposal reports how many files it judged next to what it proposes.
+**Decision.** When a result comes down to a number, the population it was counted over is stated with it, and an empty population is never read as a clean result. `skills.delivery.refusal.one_or_all` refuses to render a refusal over no reasons, and the reconnaissance furniture proposal (`skills.reconnaissance.furniture`, reported by `skills.reconnaissance.proposal`) states how many files it judged next to what it proposes and flags a survey that judged none.
 
 **Why.** Zero over nothing prints exactly like zero over everything.
 
 **Serves.** `R6`
 
-**Aliases.** `Ruling 128`
-
 ### Names and identifiers are validated against a permitted set
 
-**Decision.** Wherever a legal set can be written down (filename components, slugs, case, gate, family and question ids, digests, report states), it is enforced by enumerating what is permitted, through one predicate such as `container.fields.is_filename_component`, never by a list of forbidden characters. A permitted class such as `address.slug.SLUG_PERMITTED` is computed by asking the predicate about each character, never typed out as a second list, and `corpus.container.fields` derives its filename class from that constant.
+**Decision.** Wherever a legal set can be written down (filename components, slugs, case ids, gate and family names, quiz and question ids, digests), it is enforced by enumerating what is permitted, never by a list of forbidden characters. Filename components pass the one predicate `studyforge.corpus.container.fields.is_filename_component`. A permitted character class is computed from its predicate, never typed out as a second list: `studyforge.address.slug.SLUG_PERMITTED` is the set of characters `is_slug` accepts, and `corpus.container.fields.FILENAME_PERMITTED` is derived from that constant.
 
-**Why.** A forbidden list is an open set that cannot be finished, and missing shapes had already leaked characters that break the offline floor.
+**Why.** A forbidden list is an open set that cannot be finished, so any character nobody thought of passes it, including ones that break a filename or a URL on the offline floor. A class derived from its predicate cannot drift from it.
 
-**Serves.** `R8, R7`
-
-**Aliases.** `Ruling 8`, `Ruling 12`
+**Serves.** `R8`, `R7`
 
 ### Identifier patterns are anchored at both ends
 
-**Decision.** Every pattern that validates a whole value, such as a quiz or question id or a safe path segment in `exercise.safety`, is anchored with the true start and true end of the string, so a value with a trailing newline is refused. Callers, including `execute.commands`, rely on a match being a whole-value test.
+**Decision.** Every pattern that validates a whole identifier is anchored with `\A` and `\Z`, never `^` and `$`, so a value with a trailing newline is refused. This covers the quiz and question id `exercise.quiz.questions.QUIZ_ID`, the case id `exercise.cases.CASE_ID`, the digest pattern in `exercise.gates.digests`, and `SAFE_SEGMENT` and `SAFE_ARGUMENT` in `studyforge.exercise.safety`. Callers, including `studyforge.execute.commands`, rely on a match being a whole-value test.
 
-**Why.** An end-of-line anchor also matches before a trailing newline, which admitted a character the permitted set never names.
+**Why.** In Python, `$` also matches just before a trailing newline, so a `^...$` pattern admits a character its permitted set never names.
 
 **Serves.** `R6`
 
-**Aliases.** `AX-00/1`, `W434`
-
 ### Legal combinations are stated positively
 
-**Decision.** Where only some pairings of values are valid, such as authoritative trust only with bundled provenance in `unit.trust`, or the keys a quiz record may carry in `exercise.quiz.shape`, the code enumerates the legal set and refuses everything outside it. In `unit.trust` the provenances allowed to claim `authoritative` are listed as data, so a grader the reader wrote, or any new provenance, is refused that claim.
+**Decision.** Where only some pairings of values are valid, the code enumerates the legal set and refuses everything outside it. In `studyforge.unit.trust`, the provenances allowed to claim `authoritative` are the data tuple `MAY_BE_AUTHORITATIVE`, which holds only `bundled`, so a grader the reader wrote, or any provenance added later, is refused that claim. A `bundled` grader earns `authoritative` only through its derivation, which `studyforge validate` checks (see the entry on shipped graders). In `studyforge.exercise.quiz.shape`, the keys a quiz record may carry are the tuple `QUIZ_KEYS`.
 
-**Why.** A list of forbidden pairs failed open when a new value was added.
+**Why.** A list of forbidden pairs fails open: a value added later is accepted in every pairing nobody thought to forbid. A legal set refuses a new value until somebody decides about it.
 
 **Serves.** `R5`, `R6`
 
-**Aliases.** `Ruling 35`, `W18`
-
 ### A source path is checked against a permitted set before any text gate
 
-**Decision.** Every field a reader types as a path passes `studyforge.sourcepath`, which admits only relative in-source paths and refuses home-directory forms of every platform. The archive's personal-data gate is one of three independently asserted layers and is never the only thing protecting a path; the residual it cannot close in source-authored free text is stated.
+**Decision.** `studyforge.sourcepath` states what a path inside the source may be as a list of requirements (at least one segment, not absolute, no leading `~`, no `..`, no `\`, `:` or `#` in any segment), and it refuses home-directory forms of every platform, including drive-letter and UNC paths. The container map's path and origin fields, the placement profile, exercise cases, the exercises ledger, media and page assets check paths through it. The corpus manifest's content patterns and permitted-edit paths use the manifest's own escape check in `corpus.manifest.content.parse` and `corpus.manifest.edits` (no leading slash, no `..`, and for content patterns no leading tilde). The archive's personal-data gate in `studyforge.archive.scrub` is one of three independently asserted layers (the path rule, `assert_clean` on source text, `scrub` on text the framework writes), and is never the only thing protecting a path. `tests/test_gate_layers.py` asserts each layer on its own and names the residual: a home directory under a longer prefix, in free text a source wrote, reaches disk.
 
-**Why.** Some home paths cannot be told from benign paths by shape, so a shape-list gate alone is known-incomplete by construction.
+**Why.** Some home paths cannot be told from benign paths by shape, so a shape-list gate alone is incomplete by construction. A path field has a legal set that can be written down, so it is checked against that set first.
 
 **Serves.** `R7`
-
-**Aliases.** `Ruling 44`
 
 ### Both personal-data gates recognise the same shapes
 
-**Decision.** The archive gate in `archive.scrub` and the repository hygiene check may differ in what they do with a match but not in which shapes they recognise, local hostnames included. The shared shape table is data both sides assert against, and any divergence carries a stated reason.
+**Decision.** The archive gate in `studyforge.archive.scrub` and the repository hygiene check may differ in what they do with a match but not in which shapes they recognise, local hostnames included. The shared shape table is data, `tests/harness/personal-data-shapes.json`, with one column per gate; `tests/test_shape_vocabulary.py` asserts the gate and scrub columns against it and refuses any row whose columns disagree without a stated reason.
 
-**Why.** A machine name is personal data in an archive document exactly as in a source file, and silent drift had left one gate blind to it.
+**Why.** A machine name is personal data in an archive document exactly as in a source file. Two gates that keep their own shape lists drift apart without any test failing.
 
 **Serves.** `R7`
-
-**Aliases.** `Ruling 47`
 
 ### Every module that decodes a document calls the personal-data gate
 
-**Decision.** Any module in `src/studyforge` that decodes a document, whether the manifest, a container map, a cache, or an answer from the narration service, runs `archive.scrub.assert_clean` over the whole decoded document before reading any field. The set of readers is derived from the tree by a test, never kept as a list.
+**Decision.** Any module in `src/studyforge` that decodes a document, whether the manifest, a container map, a cache, a progress store or an answer from the narration service, runs `studyforge.archive.scrub.assert_clean` over the decoded document. The set of readers is derived from the tree by `tests/gate_coverage/test_coverage.py`, never kept as a list, and that test also checks that its scan finds readers at all.
 
-**Why.** A hand-kept list is how the corpus manifest went ungated and a home path in its title validated green.
+**Why.** A hand-kept list of readers misses the reader nobody added to it, and an ungated reader lets a home path in a document validate green.
 
 **Serves.** `R7`
 
-**Aliases.** `W7`
-
 ### Every trust boundary gates, and one read path never re-asks
 
-**Decision.** Reading a document off disk is a trust boundary, so the serve-time reader in `unit.served` and the builder's `unit.builder.material` both version-check and run the personal-data gate there, and do not repeat it further in. The builder checks through `archive.document.load`. The gate on the way into the archive and the gate on the way out of the build both exist and are not duplicates.
+**Decision.** Reading a document off disk is a trust boundary, so the reader at that boundary version-checks the document and runs the personal-data gate there, and nothing further in repeats it. The builder reads archive documents through `studyforge.archive.document.load` (called from `unit.builder.material`), and the serve-time reader of a built unit in `studyforge.unit.served` gates the `unit.json` it reads. The gate on reading the archive and the gate on reading the built unit are separate boundaries, not duplicates.
 
-**Why.** `studyforge validate` is optional, so a reader that assumed it had run would be trusting a promise nobody made.
+**Why.** `studyforge validate` is optional, so a reader that assumed it had run would be trusting a check that may never have happened.
 
 **Serves.** `R7`, `R9`
 
-**Aliases.** `Ruling 50`
-
 ### A personal-data refusal travels through every caller as itself
 
-**Decision.** `PersonalDataLeak` is never caught, wrapped or translated into a package's own error family; readers, builders and command-line entry points let it propagate unchanged, while their other refusals are converted. `validate` files it under `personal-data`.
+**Decision.** `PersonalDataLeak` is never wrapped or translated into a package's own error family. Readers, builders and skills that convert their other refusals re-raise it unchanged (for example `generate.declarations`, `narrate.enabled`, `serve.discovery`, `skills.onboarding`). Where it has to stop, it is handled as its own case: `studyforge validate` files it under the `personal-data` rule, an HTTP route in `studyforge.serve.routes` answers 500 with a fixed message that the content failed the personal-data gate, and the onboarding verify command prints it and exits as unusable.
 
 **Why.** Folded into an ordinary format error, a leak would be logged as one more corpus that failed to build and nobody would look at it.
 
-**Serves.** `R7, R6`
-
-**Aliases.** `Ruling 58`, `W27`
+**Serves.** `R7`, `R6`
 
 ### Each package publishes the exceptions it lets out as a tuple
 
-**Decision.** A reader or builder package exports a `RAISES` tuple naming every exception its public calls can let out, and a caller catches that tuple rather than retyping the members. A build converts every member except the personal-data refusal into its own `BuildError`, so a malformed container map is a refusal and never a traceback.
+**Decision.** A reader or builder package exports a `RAISES` tuple naming every exception its public calls can let out (`corpus.manifest`, `corpus.container`, `generate`, `progress`, `serve.discovery`), and a caller catches that tuple rather than retyping the members. The build in `studyforge.generate.declarations` converts every member except `PersonalDataLeak` into its own `BuildError`, so a malformed container map is a refusal and never a traceback. `tests/test_raises_convention.py` checks the convention.
 
-**Why.** A caller that retyped a prose list caught two of three and crashed a command whose contract is that nothing raises.
+**Why.** A caller that retypes a list of exceptions misses the one added later and crashes a command whose contract is that nothing raises. A tuple imported from the owner gains new members automatically.
 
-**Serves.** `R6, R17`
-
-**Aliases.** `SF-28/1`, `W208`, `W208/1`, `W212`, `W213`
+**Serves.** `R6`, `R17`
 
 ### Reconnaissance checks path containment itself so no absolute path leaks
 
-**Decision.** Before any relative-path computation, reconnaissance checks that a path is inside the root with `errors.inside_root` and raises its own message. It never lets the standard library's error surface and never chains from it.
+**Decision.** Before any relative-path computation, reconnaissance calls `studyforge.skills.reconnaissance.errors.inside_root`, which checks that a document's parent directory is inside the root and otherwise raises `ReconnaissanceRefused` naming neither path. It never lets the standard library's `relative_to` error surface and never chains from it.
 
-**Why.** The standard library's message carries both absolute paths, one of them under a home directory.
+**Why.** The standard library's message carries both absolute paths, and one of them is usually under a home directory.
 
 **Serves.** `R7`, `R6`
-
-**Aliases.** `W217/2`, `W220`
 
 ## One home for each rule
 
 ### The address package owns the slug rule and address arity
 
-**Decision.** `studyforge.address` alone defines what a slug and an ordinal are and compares an address against the corpus's declared depth; the manifest only declares the depth. Other readers convert a slug fault into their own error but let the arity `AddressError` through. Its errors subclass `ValueError` because they mean a bad value was handed in, while a reader of a bad file raises a plain `Exception`, and every package follows that split.
+**Decision.** `studyforge.address` alone defines what a slug and an ordinal are and compares an address against the corpus's declared depth; the manifest only declares the depth. Other readers convert a slug fault into their own error but let the arity `AddressError` through (it is a member of `corpus.container.RAISES`, and a caller of the manifest's `parse_key` catches it directly). `AddressError` subclasses `ValueError`, because every failure it reports is a bad value handed in.
 
 **Why.** One rule with one home cannot drift, and callers that already handle bad input handle these without importing the framework.
 
-**Serves.** `R4, R6`
-
-**Aliases.** `SF-01`
+**Serves.** `R4`, `R6`
 
 ### A value a second package needs has one exported home
 
-**Decision.** A constant another package needs is exported by its owner and imported, never retyped. The archive segments come from `corpus.placement` (`ARCHIVE_DIRNAME`, `RAW_DIRNAME`, `UNITS_DIRNAME`) and the adapter `Layout` only re-exports them. The run namespace is `serve.routes.run.NAMESPACE`. Scans fail on a second minted literal.
+**Decision.** A constant another package needs is exported by its owner and imported, never retyped. The archive directory names come from `studyforge.corpus.placement` (`ARCHIVE_DIRNAME`, `RAW_DIRNAME`, `UNITS_DIRNAME`) and the adapter `Layout` in `skills.adapter.layout` only re-exports them. The run namespace is `studyforge.serve.routes.run.NAMESPACE`, which `serve.instance` and `skills.buildserve.states` import. `tests/studyforge/corpus/placement/test_names.py` fails on a second literal of each directory name in `src`.
 
 **Why.** Two spellings of one value can disagree with nothing failing.
 
 **Serves.** `R21`
 
-**Aliases.** `Ruling 101`, `SK-03/3`, `W199/1`, `W298`
-
 ### Primitives several renderers need live once, in a sibling package
 
-**Decision.** Escaping, the href gate and the fragment composer live in `render.markup`, and class names and shared asset names in `render.pageassets`; `render.page`, `render.container` and `render.index` import them through each package's `__all__` and none reaches into another's submodules. A renderer that links to a place on a page asks `render.markup.anchor` rather than spelling a number sign itself, and each primitive is defined exactly once.
+**Decision.** Escaping, the href gate, the inline-segment parser and the fragment composer live in `studyforge.render.markup`, and class names and shared asset names in `studyforge.render.pageassets`. `render.page`, `render.container` and `render.index` import them through each package's `__all__`, and none reaches into another's submodules. A renderer that links to a place on a page asks `render.markup.anchor` rather than spelling a number sign itself, and each primitive is defined exactly once.
 
-**Why.** Two copies of a primitive agree only until one of them changes, and a composer placed on one renderer cannot be reached by its peer without an import cycle.
+**Why.** Two copies of a primitive agree only until one of them changes, and a primitive placed in one renderer cannot be reached by its peer without an import cycle.
 
 **Serves.** `R17`
 
-**Aliases.** `Ruling 20`, `SF-15/1`, `SF-27/1`, `W76`, `W107`
-
 ### The origin key has one reader
 
-**Decision.** A document's `origin` is read only by `fields.optional_origin`; other code hands it the record rather than the raw value, and a tree-wide test refuses any second site in source or tests that accesses the key.
+**Decision.** A document's `origin` (a path string, or a `{path, section}` region) is interpreted only by `studyforge.corpus.container.fields.optional_origin`. Other code passes the raw value straight to it and does nothing else with it. `tests/studyforge/corpus/container/test_origin_sites.py` scans source and tests and refuses any other site that reads the key.
 
-**Why.** A second reader took the key raw and broke the moment a new origin shape was used.
+**Why.** A second reader interprets the key by its own idea of the shape and breaks as soon as a new origin shape is used.
 
 **Serves.** No spec rule: one reader keeps one interpretation of a shape.
 
-**Aliases.** `W109`
-
 ### The build package is the one reader of a corpus's declarations
 
-**Decision.** The server imports `read_corpus` from the build package to read a corpus's manifest, container maps and contents rather than re-deriving them.
+**Decision.** `studyforge.generate.read_corpus` reads a corpus's manifest, placement profile, container maps, contents and units once. The server (`serve.discovery` and `cli.serve`) and the other command-line entry points import it rather than re-deriving any of them.
 
 **Why.** A second reader would be a second opinion about what a corpus declares.
 
 **Serves.** No spec rule: one reader per contract.
 
-**Aliases.** `SF-19a/1`
-
 ### Display and speech share one inline-markup interpreter
 
-**Decision.** Narration consumes `render.markup.segments` to find inline markers rather than parsing them itself, even though that parser lives under `render`.
+**Decision.** Narration (`studyforge.narrate.speakable.voice`) consumes `render.markup.segments` to find inline markers rather than parsing them itself, even though that parser lives under `render`.
 
 **Why.** Display and speech must never disagree about where a marker begins.
 
 **Serves.** No spec rule: one parser for one syntax.
 
-**Aliases.** `SF-12/7`
-
 ### A practice is named by its progress key verbatim
 
-**Decision.** The page, the run client and the run route pass the practice's `progress.practice_key` string unchanged; the route parses it at the corpus's depth and records the outcome under what it parsed, and nothing composes a key.
+**Decision.** `studyforge.progress.practice_key` is the only composer of a practice key. The page (`render.page.practice`) writes it into the markup, the page scripts and run client pass the string unchanged, and the run and quiz routes in `studyforge.serve.routes` parse it with `progress.parse_practice_key` at the corpus's depth and record the outcome under what they parsed.
 
-**Why.** A composed key could drift from the one the state namespace reads back.
+**Why.** A key composed a second time could drift from the one the state namespace reads back.
 
 **Serves.** No spec rule: one spelling from the data to the record.
 
-**Aliases.** `SF-21/4`
-
 ### Served provenance is called built_from and source stays a corpus id
 
-**Decision.** In the manifest, `source` means a corpus id, never a fetch address. The served unit's provenance array is named `built_from` and may not be called `sources`, `source` or `origin`. Its entries name variant, kind and ordinal, never a path.
+**Decision.** In the manifest (`studyforge.corpus.manifest.document`), `source` is a corpus id, validated as a slug, never a fetch address. The served unit's provenance array, written by `studyforge.unit.builder.document` and checked by `unit.served`, is named `built_from` and may not be called `sources`, `source` or `origin`. Its entries carry `variant`, `kind`, `ordinal`, `ingested` and `content_sha256`, never a path.
 
-**Why.** The extraction source used `source` for a fetched address, and one word with two meanings confuses the two levels exactly where they meet.
+**Why.** Another common meaning of `source` is a fetched address, and one word with two meanings confuses the two levels exactly where they meet. A location is a fact about a disk, while an entry identifies a document within the corpus.
 
 **Serves.** `R4`
-
-**Aliases.** `Ruling 51`
 
 ## The corpus: manifest, archive, placement and validation
 
 ### The discovery cache is disposable and its freshness is a content digest
 
-**Decision.** `.studyforge/site.json` is versioned by `site_api`, but an unknown or absent version is not an error: the cache is discarded, the scan re-run and the cache rewritten. Whether it is stale is answered by a digest of content, never by `site_api`, a clock or a file's modification time.
+**Decision.** `studyforge.corpus.discovery.cache` writes and reads `.studyforge/site.json`, versioned by `site_api`. An unknown or absent version is not an error: the cache is not read, the scan runs, and the cache is rewritten at the current version, which the discovery report says. Whether a cache is stale is answered by `studyforge.corpus.discovery.freshness`, which compares the `scan_sha256` digest of the scan's findings, never `site_api`, a clock or a file's modification time. The scan runs on every call and its result is what is returned, so a cache is never believed over the tree.
 
-**Why.** The cache is derived from a scan that can always be repeated, and mixing the schema signal with the content signal, or trusting filesystem times, gives wrong answers.
+**Why.** Every field in the cache is derived from a scan that can always be repeated, so discarding it loses nothing. A schema version answers only whether the file has a shape this build speaks; making it carry content change as well would turn a contract version into mutable data. Filesystem times change when nothing in the tree has, for example on a fresh checkout, so only a digest of content can say whether the scan's findings moved.
 
-**Serves.** `R9, R10, R21`
-
-**Aliases.** `Ruling 18`, `Ruling 95`
+**Serves.** `R9`, `R10`, `R21`
 
 ### A placement profile answers which ignore lines a corpus needs
 
-**Decision.** The profile, not its caller, supplies the ignore lines a build requires (`ignore_file`) and the globs of what is committed instead (`output_globs`). Under `sibling` the media lines are unanchored but carry the profile's own `study/` segment, so they match only inside directories the framework writes, and no source file such as a `README` is rewritten.
+**Decision.** `studyforge.corpus.placement.Profile.ignore_file(media=...)` returns an `IgnoreFile`, the one file that holds the rules and its lines; the caller passes whether generated media is ignored (the media policy inverted) and never asks which profile it has. The file is always `.studyforge/.gitignore` inside the generated root and always carries the discovery cache's machine-local lines; the media lines from the profile's `media_ignore_lines` are added only when the policy does not commit media. Under `tree` those lines are scoped by living below `.studyforge/`. Under `sibling` they are `study/<kind>/`, unanchored but carrying the profile's own `study/` segment so they could match only inside directories the framework writes; because there is one `study/` directory per source directory and no single file can hold them, `ignore_file` raises `PlacementError` instead of returning them, and the repository's root ignore file is never used.
 
-**Why.** A caller asking which profile it has would be branching on placement, and generated names under `sibling` cannot be enumerated in advance.
+**Why.** A caller that asked which profile it has would be branching on placement, and only the profile knows where its media lands. A rule with no file inside a generated directory would end up in the repository's own root ignore file, which non-destructive generation forbids.
 
-**Serves.** `R1, R3, R19`
-
-**Aliases.** `Ruling 91`
+**Serves.** `R1`, `R3`, `R19`
 
 ### The media byte-limit field names are frozen
 
-**Decision.** The manifest's `max_total_bytes` and `max_file_bytes` keep those names permanently; the later file-count limit `max_files` is versioned by the manifest version instead of frozen.
+**Decision.** The manifest's `media.max_total_bytes` and `media.max_file_bytes` (`studyforge.corpus.manifest.media`) keep those names permanently. The file-count limit `media.max_files`, which has no default, is instead gated by the manifest version: `KEY_VERSIONS` in `studyforge.corpus.manifest.document` requires `corpus_api` 3 for it.
 
-**Why.** Fixtures write them and a shipped command's committed output reports against them, so a rename would be a migration.
+**Why.** Manifests and fixtures write the byte-limit names and `studyforge plan` prints its report against them, so a rename would be a migration of every corpus, which R9 does not allow. A key added later is readable only by a build that knows it, so the version says which builds may read it.
 
 **Serves.** `R9`
 
-**Aliases.** `Ruling 104`
-
 ### A container origin may name a heading-bounded region of a file
 
-**Decision.** A unit's `origin` in `container.json` is either a string naming a whole file or an object with `path` and `section`, where `section` is the exact text of the heading that opens the region; the version that introduced the object form is required to read it, and placement uses only the path.
+**Decision.** A unit's `origin` in `container.json` is either a string naming a whole file or an object with `path` and `section`, where `section` is the exact text of the heading that opens the region. The region ends at the next heading of the same or shallower depth, and the heading must occur exactly once in the file. The object form requires `container_api` 2 (`REGION_ORIGIN_API` in `studyforge.corpus.container.document`), and `Unit.origin` stays a plain path in both forms, so placement uses only the path.
 
-**Why.** Many units can be regions of one file, and a heading is the only bound the completeness check can find without the Markdown reader, unlike a line range or a renderer's anchor.
+**Why.** Many units can be regions of one file. A heading is a bound the completeness check can find with its own heading pattern, independent of the Markdown reader it exists to disagree with; a renderer's anchor would come from that reader, and a line range breaks when the upstream file grows a paragraph.
 
-**Serves.** `R9, R6, R3`
-
-**Aliases.** `Ruling 92`
+**Serves.** `R9`, `R6`, `R3`
 
 ### A unit's practice may be read from a file of its own
 
-**Decision.** A unit may declare `practice_origin`, an additive file beside its material holding its practice documents, under a newer `container_api`. Completeness is then checked per origin: lesson documents against `origin`, practice documents against `practice_origin`, both buckets always opened.
+**Decision.** A unit may declare `practice_origin`, an additive file beside its material holding all of its practice documents and none of its lessons, under `container_api` 3 (`PRACTICE_ORIGIN_API` in `studyforge.corpus.container.document`). It requires `origin` and places nothing. `studyforge.validate.source.completeness` then checks completeness per origin: lesson documents against `origin`, practice documents against `practice_origin`, with both buckets always opened so an unread `practice_origin` is a short read.
 
-**Why.** A practice belongs on the page it practises, but the unit's source file may not be rewritten to hold its prose.
+**Why.** A practice belongs on the page it practises, but the unit's source file may not be rewritten to hold the practice's prose, and a check that counted both files against one would report a complete unit as short.
 
-**Serves.** `R3, R6`
-
-**Aliases.** `W428`
+**Serves.** `R3`, `R6`
 
 ### An authored practice is left out of the source completeness check
 
-**Decision.** A practice whose exercise record says it was generated from a bundle opens its unit's completeness buckets but adds no headings to them. The decision is read from the document's own provenance, never from its ordinal, path or bundle location.
+**Decision.** In `studyforge.validate.source.completeness`, a practice whose `exercise` record has provenance `generated` (authored from a bundle) opens its unit's completeness buckets but adds no headings to them. The decision is read from the document's own provenance, never from its ordinal, path or bundle location; every other document, a bundled practice included, is still counted.
 
-**Why.** Its headings came from a bundle and never from the source, so counting them reported a false short read on every unit that received one.
+**Why.** An authored practice's headings come from its bundle and never from the source, so counting them against the source would report a false short read on every unit that has one.
 
-**Serves.** `R5, R6`
-
-**Aliases.** `W444`
+**Serves.** `R5`, `R6`
 
 ### Source absence is read from the disk, never inferred from origins
 
-**Decision.** When no unit origin is on disk, `validate` walks the whole corpus root and asks the manifest's `content` declaration about each file; any declared source file means the source is present and every unit is refused as missing its origin. Only when none is found are source-dependent checks reported as unchecked, loudly and counted. A partly present source is a failure.
+**Decision.** In `studyforge.validate.source.completeness`, when no unit origin is on disk, `validate` walks the whole corpus root (skipping only the framework's own directories at the root) and asks the manifest's `content` declaration about each file. Any file declared as source means the source is present, and every unit is refused as `origin-missing`. Only when none is found are the source-dependent checks reported as unchecked, loudly and counted. When some origins are on disk and others are not, each missing one is a failure.
 
-**Why.** Origins written against the wrong root say nothing about where the source is, and inferring absence from them let a whole archive validate clean beside its source.
+**Why.** Origins written against the wrong root say nothing about where the source is, so inferring absence from them would let an archive validate clean beside its source. An archive is a shippable artifact on its own, so a missing source is reported as unchecked rather than failed, and half a source is where a short read hides.
 
 **Serves.** `R6`
-
-**Aliases.** `W255`, `W255/3`, `W261`
 
 ### Framework directories are skipped only at the corpus root
 
-**Decision.** The source scan skips `.studyforge`, `.git` and the archive root only at the corpus root; beneath it a `.studyforge` or `archive/` directory is the source's own material, and a nested repository store is refused by name as `nested-repository`. Reconnaissance reuses the scan's answer rather than keeping its own rule.
+**Decision.** `studyforge.validate.source.enumeration` skips `.git` and `.studyforge` (`SKIP_DIRS`) and the archive root only at the corpus root. Beneath it a `.studyforge` or `archive/` directory is the source's own material, and a nested repository store is refused by name as `nested-repository`. Reconnaissance (`skills.reconnaissance.inventory` and `capability`) imports the same `SKIP_DIRS` rather than keeping its own rule.
 
-**Why.** Below the root those names belong to the source, and skipping them anywhere silently hid material.
+**Why.** Below the root those names belong to the source, and skipping them anywhere would silently hide material.
 
-**Serves.** `R1, R6`
-
-**Aliases.** `W241/2`, `W259`
+**Serves.** `R1`, `R6`
 
 ### The source scan recognises build output from the plan
 
-**Decision.** `validate.source.enumeration` asks `studyforge plan` which files a build writes and recognises them by exact path or planned directory, never by glob or by a framework list. A planned path the manifest includes as material is contested, and a refused plan recognises nothing and says so.
+**Decision.** `studyforge.validate.source.enumeration` asks `studyforge plan` which files a build writes and recognises them by exact path or by planned directory, never by glob or by a framework list. A planned path the manifest includes as material is `contested`, and a refused plan recognises nothing and the report says so. Other generated output is recognised from the repository's own git ignore declaration.
 
-**Why.** Build output is committed, so git no longer marks it, and the plan is the only enumeration that moves with the corpus.
+**Why.** Build output is committed, so git does not mark it as output, and the plan is the only enumeration of it that moves with the corpus.
 
-**Serves.** `R3, R1, R6`
-
-**Aliases.** `INT-06/7`
+**Serves.** `R3`, `R1`, `R6`
 
 ### An included file that no unit reads is refused
 
-**Decision.** A file the manifest's `content` includes but that no unit's `origin` names is reported by name as `included-unread`; a container's origin only places its page and does not count as a reader.
+**Decision.** In `studyforge.validate.source.classification`, a file the manifest's `content` includes but that no unit's `origin` or `practice_origin` names is reported by name as `included-unread`. A container's origin only places its page and does not count as a reader. The check runs only while some unit origin is on disk.
 
-**Why.** An aggregate left un-excluded, or a stray, would otherwise sit as material that no page shows.
+**Why.** An aggregate document left un-excluded, or a stray file, would otherwise sit as material that no page shows.
 
 **Serves.** `R6`
 
-**Aliases.** `W266`
-
 ### Validate refuses a corpus with no archive
 
-**Decision.** `studyforge validate` fails with `no-archive` when the archive root is absent or holds no container map.
+**Decision.** `studyforge validate` (`studyforge.validate.corpus`) fails with `no-archive` when the archive root is absent or holds no container map. This is a finding, not an unchecked claim.
 
-**Why.** An empty archive is not a valid one, and it had passed with exit zero.
+**Why.** The archive is what `validate` judges, so a verdict of valid over no archive has no subject.
 
-**Serves.** `R6, R2`
-
-**Aliases.** `INT-06/5`
+**Serves.** `R6`, `R2`
 
 ### The archive layout is spelled once and checked from both ends
 
-**Decision.** The archive's directory segments, including `raw/<variant>/`, and a unit's own files directory are derived by `corpus.placement` and its layout type, never composed from literals by readers, skills or tests. `validate` checks that every file under the archive root is a member and that every file an archive document declares is where that layout puts it.
+**Decision.** The archive's directory segments (`ARCHIVE_DIRNAME`, `RAW_DIRNAME`, `UNITS_DIRNAME`) are spelled once in `studyforge.corpus.placement.names`, and the paths an adapter writes, including `raw/<variant>/` and a unit's own files directory, are composed by `studyforge.skills.adapter.Layout`, never from literals by readers, skills or tests; `tests/studyforge/corpus/placement/test_names.py` fails on a second literal. `studyforge.validate.source.membership` checks both directions: every file under the archive root is a member (`archive-stray` otherwise), and every file an archive document declares is where `Layout.unit_files` puts it (`media-missing` otherwise).
 
-**Why.** Each re-spelling of the layout had produced archives that validated clean while pages met broken media.
+**Why.** A second spelling of a segment lets a writer and a reader disagree with nothing failing, and the disagreement surfaces only as broken media on a page.
 
-**Serves.** `R2, R6, R19`
-
-**Aliases.** `W199`, `W214`, `W322`
+**Serves.** `R2`, `R6`, `R19`
 
 ### A malformed block is refused by name through one reader per direction
 
-**Decision.** `validate.blocks.block_problems` checks every block's type, fields, optional keys and list items at every depth and is shared with the fixture checks. In the archive package, a block that is not an object is refused by index through one generator used on both the build path and the read path, never reaching attribute access.
+**Decision.** `studyforge.validate.blocks.block_problems` checks every block's type, fields, optional keys, and list items and `start` at every depth, and the fixture checks under `tests/fixture_checks` call the same function. In `studyforge.archive.blocks`, a block that is not an object is refused by index through one generator, `_objects`, used both on the build path (`counts_of`) and on the read path (`read_layout`), so it never reaches attribute access.
 
-**Why.** A second copy of either check had let a non-object block escape as a Python error that named a type instead of the block.
+**Why.** One reader per direction means the build and the validator give the same sentence for the same shape, and a refusal that names the block's index tells the reader which block is wrong, where a Python error would name only a type.
 
-**Serves.** `R6, R2`
-
-**Aliases.** `W263`, `W282`, `W282/1`, `W289`, `W297`
+**Serves.** `R6`, `R2`
 
 ### Assets and attachments share one entry shape
 
-**Decision.** Every entry in a unit's `assets` or `attachments` list uses the same keys: `local`, the path inside the unit's archive directory that is the only half a page may address, and `remote`, provenance that is kept but never rendered. The two lists differ only in purpose.
+**Decision.** Every entry in a unit document's `assets` or `attachments` list uses the same keys, `MEDIA_ENTRY_KEYS` in `studyforge.archive.document`: `remote`, `local`, `sha256`, `bytes`, `content_type` and `kind`. `local` is the path inside the unit's archive directory and is the only half a page may address; `remote` is provenance that is kept but never rendered. The two lists differ only in purpose: an asset is a file some block shows, and an attachment is a companion file no block names, which the page links for download.
 
 **Why.** Two vocabularies for the same record would drift, and a remote address rendered would break the offline page.
 
-**Serves.** `R8, R2`
-
-**Aliases.** `FND-04/4`
+**Serves.** `R8`, `R2`
 
 ### A build copies each file a page addresses and mints media directories only for copies
 
-**Decision.** `generate.media` copies every file a rendered page shows or links to the placed media directory the page's href resolves to, asking placement for the destination. A unit gets a media directory for a kind only when a file is copied into it, and the plan says the same.
+**Decision.** `studyforge.generate.media` copies every file a rendered page shows or links to the placed media directory the page's href resolves to, asking placement (`UnitLocations.media_dir`) for the destination. A unit gets a media directory for a kind only when a file is copied into it, and `studyforge plan` prints those directories as `claim` lines that a build creates only when it copies a file into them. A referenced file the corpus never fetched is recorded as missing and the build continues.
 
-**Why.** The renderer places no files, so without the copy figures rendered broken, and an empty directory cannot be tracked by git, so a built checkout would differ from its clone.
+**Why.** The renderer places no files, so without the copy figures and attachments would render broken, and git cannot track an empty directory, so minting empty ones would make a built checkout differ from its clone.
 
-**Serves.** `R8, R10, R3`
-
-**Aliases.** `SF-37`, `W268`
+**Serves.** `R8`, `R10`, `R3`
 
 ### A unit's output locations are derived once, from the whole unit
 
-**Decision.** Where a unit's page, media and audio go is answered by one placement derivation that takes the unit or its declaration whole, including its label; `narrate` writes clips through it, and a build probes and links through the same answer.
+**Decision.** Where a unit's page, media and audio go is answered by `studyforge.generate.declarations`: `unit_location` takes a unit with material whole and `declared_location` takes a container and its declared unit whole, and both call one private derivation that passes address, ordinal, title, origin and label to the profile. `studyforge narrate` places clips through `unit_location`, and a build probes and links through the same answer.
 
-**Why.** Callers that spelled the arguments themselves could drop the label, so the writer and the page looked in different places.
+**Why.** When callers spell the arguments themselves, one of them can drop the label, and then the writer and the page look in different places with nothing raising.
 
-**Serves.** `R4, R8`
-
-**Aliases.** `SF-42/1`, `W222`, `W290`
+**Serves.** `R4`, `R8`
 
 ### An intermediate container level has no page and its crumb is unlinked
 
-**Decision.** A container page is written only at the addresses where a corpus declares units, so navigation lists a higher level by its title without a link, reading the levels from the contents document.
+**Decision.** A container page is written only at the addresses where a corpus declares units, so `studyforge.generate.navigation` lists a higher level in the breadcrumb trail by its title without a link, reading the levels and titles from the contents document.
 
 **Why.** Linking an intermediate level would point the reader at a page nobody wrote.
 
-**Serves.** `R6, R8`
-
-**Aliases.** `SF-14/3`
+**Serves.** `R6`, `R8`
 
 ### A build never creates its own output root
 
-**Decision.** Every writer in `generate.writing` refuses when the output root does not already exist; the caller creates it, and a build only creates what lies beneath it.
+**Decision.** Every writer in `studyforge.generate.writing` refuses when the output root is not an existing directory; the caller creates it, and a build creates only what lies beneath it.
 
-**Why.** A relative root resolves against whatever the working directory is, which once made a build write output into the repository silently.
+**Why.** A relative root resolves against whatever the process's working directory happens to be, so a writer that created its own root could silently write output into the wrong place, such as the repository itself.
 
 **Serves.** `R3`
-
-**Aliases.** `SF-28/2`
 
 ## The command line and the plan
 
 ### A contents document mixing lists and headings is read in full
 
-**Decision.** Reconnaissance's contents reader (`skills.reconnaissance.record.read`) reads every entry form a contents document uses, list items and headings alike, and returns the full count in reading order. The contents builder counts what the corpus declares, so a short read upstream shows up as a shortfall against the container map.
+**Decision.** Reconnaissance's contents reader (`studyforge.skills.reconnaissance.record.read`) reads every link entry a contents document holds, whether written as a list item or a heading and with its ordinal inside or outside the link, and returns them in reading order; the forms it saw are reported, because a disagreement between forms marks a hand-maintained document that has drifted. `studyforge.contents` builds the contents from what container maps declare, never from a scan, so a unit missing upstream shows up as a named shortfall.
 
-**Why.** A reader that saw only the list form would silently drop entries and raise nothing.
+**Why.** A reader that handled only the majority form would silently drop entries and raise nothing.
 
 **Serves.** `R6`
 
-**Aliases.** `W32`
-
 ### The installed command loads a verb only when that verb is dispatched
 
-**Decision.** `studyforge.cli.dispatch` registers each verb with a loader that imports the verb's module only when it runs, so importing the command, or one verb, loads no other verb. The could-not-run exit code `2` lives in `studyforge.exitcodes`, a module that belongs to no stage and imports nothing, and `validate` re-exports the same object.
+**Decision.** `studyforge.cli.dispatch` registers each verb with a loader that imports the verb's module only when it runs, so importing the command, or one verb, loads no other verb; `tests/harness/test_isolation.py` holds this. The could-not-run exit code, `UNUSABLE = 2`, lives in `studyforge.exitcodes`, a module that belongs to no stage and imports nothing, and `studyforge.validate` re-exports the same object.
 
-**Why.** A shared constant or a module-level import in the dispatcher otherwise drags every stage, and `--help`, through the whole validator.
+**Why.** A shared constant defined in one stage, or a module-level import in the dispatcher, would drag every stage, and `--help`, through the whole validator.
 
 **Serves.** No spec rule: an import-boundary decision about the command line's own shape.
 
-**Aliases.** `W223/1`, `W293`, `W293/3`, `W320`
-
 ### Every ignore rule the plan prints names the file that holds it
 
-**Decision.** `studyforge plan` asks the placement profile for the ignore file the media policy requires and prints that file's path with every rule, refusing when no placement can hold the rules. There is no rule without a named home.
+**Decision.** `studyforge plan` (`studyforge.cli.plan.derive`) asks the placement profile for the ignore file the media policy requires and prints that file's path with its rules, turning the profile's refusal into a plan refusal when no placement can hold the rules. There is no rule without a named home.
 
 **Why.** A rule with no named file gets pasted into the repository's root ignore file, which non-destructive generation forbids.
 
-**Serves.** `R3, R19`
-
-**Aliases.** `INT-06/8`
+**Serves.** `R3`, `R19`
 
 ### A plan says who writes each path and whether it is already there
 
-**Decision.** Each path in a plan is printed with a verb chosen by who writes it (a build, an adapter, `studyforge serve`, `studyforge narrate`) and by whether it already exists at the corpus root, checked with `os.path.lexists` and never by opening it. A path already on disk is never printed as a creation, and the plan is tested against what a build actually writes, not against its own golden output.
+**Decision.** `studyforge.cli.plan` prints each path with a verb (`create`, `replace`, `keep`, `claim` or `expect`) chosen by who writes it (a build, an adapter, `studyforge serve`, `studyforge narrate`) and by whether it already exists at the corpus root, checked with `os.path.lexists` and never by opening it. A path already on disk is never printed as `create`. `tests/studyforge/cli/plan/test_agreement.py` compares the plan with what a build actually writes, under both placement profiles.
 
 **Why.** A plan is the go signal a person reads before letting a build near their repository, so it must agree with what the build will really do.
 
 **Serves.** `R3`
 
-**Aliases.** `W267`, `W268/1`
-
 ### Only the measured media footprint can refuse a plan or stop a build
 
-**Decision.** For a policy that weighs its media, `studyforge plan` measures the bytes on disk under the declared units' media directories and wherever the narration record locates a clip, using `corpus.media.measure`, and asks `corpus.media.verdict_for` for the verdict that both the plan's refusal and the build's stop read. A projection at `--bytes-per-unit` may print that it exceeds a limit but refuses nothing, and with neither a reading nor a rate the footprint is stated as unknown rather than guessed. The measured line says what the reading covered and names every clip it could not weigh.
+**Decision.** For a policy that weighs its media (`auto`), `studyforge plan` measures the bytes on disk under the declared units' media directories and wherever the narration record locates a clip, using `studyforge.corpus.media.measure`, and asks `corpus.media.verdict_for` for the verdict. The plan's refusal and the build's stop (`studyforge.cli.site.cli`, through `require_committable`, before writing and again after) read that one verdict. A projection at `--bytes-per-unit` may print that it exceeds a limit but refuses nothing, and with neither a reading nor a rate the footprint is stated as unknown rather than guessed. The measured line says what the reading covered, and every clip it could not weigh is named on its own line.
 
-**Why.** A commit decision must rest on one real measurement, and a fitting total must never be mistaken for the whole corpus.
+**Why.** A commit decision must rest on one real measurement, and a total that fits must never be mistaken for the whole corpus.
 
 **Serves.** `R6`
 
-**Aliases.** `W287`, `W311/1`, `W311/2`, `W314`
-
 ### The terminal check runs a file's test, or its program when nothing grades it
 
-**Decision.** `studyforge check <file>` selects the practice whose `main_path` is that file and runs the command the generated unit document names, never anything the reader typed. A graded file runs its test, exits with the test's verdict and records the run in the progress store as a practice pass or fail, the same fact the page's Submit records. An ungraded file runs its program, says no test checks it, exits `0` and records nothing.
+**Decision.** `studyforge check <file>` (`studyforge.cli.check`) selects the practice whose `main_path` is that file and runs the command the generated unit document names, never anything the reader typed; a path no practice names is refused and nothing runs. A graded file runs its test, exits with the test's verdict and records the run in the progress store as a practice pass or fail, the same fact the page's Submit records. An ungraded file runs its program, says no test checks it, exits `0` and records nothing. Exit `2` means nothing ran.
 
 **Why.** A reader editing in their own terminal must get the same verdict and the same progress as the page, and a file with no test is not a failure.
 
 **Serves.** `R5`
 
-**Aliases.** `SF-44`
-
 ### A served site answers state, Run and Submit as a served root does
 
-**Decision.** `studyforge serve --site` takes its namespaces from the one constructor `serve.instance.namespaces_of`, as the root form does, so a site built elsewhere answers `state` and `run`. That site is scanned where it was built, while the progress store and unit documents stay the corpus root's, and nothing is written into either. `site_namespaces` in `cli/serve.py` is the one seam a caller replaces to serve a site without execution.
+**Decision.** `studyforge serve --site` takes its namespaces from the one constructor `studyforge.serve.instance.namespaces_of`, as the root form does, so a site built elsewhere answers `state`, `run` and `quiz`. That site is scanned where it was built (`serve.instance.site_discovery`), while the progress store and unit documents stay the corpus root's, and nothing is written into the site and no discovery cache into the corpus root. `site_namespaces` in `studyforge.cli.serve` is the one seam a caller replaces to serve a site without execution.
 
-**Why.** A site that registered Run but not state recorded progress it could not read back.
+**Why.** A site that registers Run but not state records progress it cannot read back, so both forms must register the same namespaces from one place.
 
 **Serves.** `R8`
 
-**Aliases.** `SF-22/2`, `W371`, `W371/1`, `W371/2`, `W380`, `W380/1`, `W386`
-
 ## The skills: onboarding, reconnaissance, adapter, delivery, execution, personal archive
 
-### Milestone order is declared, and milestone ids are read at any width
+### A plan is checked against what the installed framework offers, and a missing capability is a finding
 
-**Decision.** The delivery skill reads the order milestones run in from the `### M<n>` sections of the order document the caller names. It never sorts ids, and it prints a declared milestone that has no capability. A milestone id is `M` followed by any number of digits. Only a dash in the milestone cell cancels a task, and any other shape is refused.
+**Decision.** The delivery skill plans against the framework as it is installed. `studyforge.skills.delivery.offer.Offer.installed()` reads the offer from two registries the package already keeps, the command table (`studyforge.cli.dispatch.VERBS`) and the skill tree (`studyforge.skills.documents`), leaving out the delivery skill itself, and `python3 -m studyforge.skills.delivery` prints it. `Backlog.checked(offer)` (`skills.delivery.backlog`) accepts a task's dependency only when it names a task of the plan in the same or an earlier milestone, an offered capability, or a finding the plan files; anything else is refused, all reasons at once, saying that a capability the framework lacks is filed as a finding and the task waits on it. The terminal statement (`skills.delivery.terminal`) must account for every offered capability no task uses, and may not name one a task uses or one the framework does not offer. The backlog's header counts the tasks waiting on a finding against the framework. A plan's milestones are its own and carry no framework gate.
 
-**Why.** An id names a gate but says nothing about when the gate comes, and a one-digit pattern once read a two-digit milestone as cancelled.
-
-**Serves.** `R6`, `R19`
-
-**Aliases.** `W238`, `W247`
-
-### The capability index says which side delivers each capability
-
-**Decision.** `capability_index` requires the workspace pin document and reads it through `delivery.components`, so each capability is marked as delivered here, elsewhere, or undeclared. The side column is rendered only when some row is not delivered here, no component is named in the output, and a checked backlog carries back the capabilities another side delivers.
-
-**Why.** A plan must neither claim work another component delivers nor silently drop it.
-
-**Serves.** `R1`, `R19`
-
-**Aliases.** `W92`
-
-### A conversion is not done until its findings log is written
-
-**Decision.** Every conversion writes `.studyforge/findings.md` (`findings_log.LOG`), one entry per finding. Each entry has a disposition slot that asks whether a skill could have generated it, answered yes, no or open. `closing` refuses a run whose log is missing, empty or has an entry without a slot, and it reports how many entries are still open.
-
-**Why.** Findings carried only in messages were lost, and the disposition is the sort that sends each finding to a skill or to the integration catalogue.
+**Why.** A capability exists for a plan exactly when a reader could run it, and a list typed by hand is the copy that is wrong the day a command or skill is added. A wait on something nobody offers is a slip nobody wrote down, so it is written as a finding and counted where a reader agreeing to the plan sees it.
 
 **Serves.** `R19`, `R6`
 
-**Aliases.** `QA-04`, `W346`
+### A conversion is not done until its findings log is written
+
+**Decision.** Every conversion writes `.studyforge/findings.md` (`studyforge.skills.delivery.findings_log.LOG`), one entry per finding, and a run that found nothing writes one `none` finding. Each entry has a disposition slot that asks whether a skill could have generated it, answered `yes`, `no` or `open`. `closing` refuses a run whose log is missing, empty, not a log, or has an entry without a slot, and it reports how many entries are still `open`. The onboarding and delivery skill procedures end on `closing`.
+
+**Why.** A finding written into the corpus at a named place survives the message that announced it, and the disposition is the sort that sends each finding to a skill or to the integration catalogue. The log sits in the tool's own directory, which the validator skips, so writing it never makes the corpus invalid.
+
+**Serves.** `R19`, `R6`
 
 ### Generated documents point at a command instead of carrying live figures
 
-**Decision.** The reader's onboarding document, rendered by `onboarding.artifacts`, states no figure that moves after it is generated, such as unit count, narrated units or container need. It prints `python3 -m studyforge.skills.onboarding`, which reads the corpus's standing when it runs, and `standing.lines` is the only place those figures become prose. Skill documents follow the same rule. A count such as the validator's number of checks or the scaffold's file count is printed by a command or read from the scaffold's own listing, and never typed in.
+**Decision.** The reader's onboarding document, rendered by `studyforge.skills.onboarding.artifacts`, states no figure that moves after it is generated, such as unit count, narrated units or container need. It prints `python3 -m studyforge.skills.onboarding`, which reads the corpus's standing when it runs (`onboarding.cli`), and `onboarding.standing.lines` is the only place those figures become prose. Skill documents follow the same rule: the validator's number of checks is printed by a command the adapter skill gives, and the scaffold's file count is read from the scaffold's own listing, never typed in.
 
 **Why.** Nothing regenerates a document when narrating or re-ingesting moves the answer, so a stored figure can only go stale.
 
 **Serves.** `R19`
 
-**Aliases.** `Ruling 161`, `Ruling 163`, `W248/3`, `W257/1`, `W313`, `W332`, `W345/1`
+### The framework pin records the installed library's version and commit, never a path
 
-### The framework pin is a held commit addressed as a workspace sibling
+**Decision.** `.studyforge/pin.json`, rendered by `studyforge.skills.onboarding.pin` (`pin_api` 2), records `framework` as `studyforge`, `where` as `installed`, the installed library's `version`, the forty-hex `commit` it was built from, and the stubbed skills. Both values are checked by shape and never quoted back in a refusal. Each skill stub under `.studyforge/skills/` names the pinned commit and version and points at `python3 -m studyforge.skills.documents <skill>` and `python3 -m studyforge.skills.onboarding.verify .`, never at a path. The generated `test_framework_pin.py` fails when a stub and the pin disagree, when the library the corpus's Python imports is not the pinned version or build, or when the framework is a submodule. `reonboard` refuses to keep a pin whose version or commit differs from the running library's, or a pin that predates the installed form, until it is re-pinned with `framework_commit`. Because nothing generated carries a path, a regenerate from a linked worktree writes the same bytes as one from the main checkout.
 
-**Decision.** `.studyforge/pin.json` records a forty-hex commit and the sibling checkout's name, never a path. The pin is checked with a local `git cat-file -e` against the framework checkout next to the corpus's main checkout, which is found through `--git-common-dir`. An absent checkout, a non-git directory or a missing commit is refused by name. Every generated document addresses the framework as `pin.SIBLING`, so a regenerate from a linked worktree writes the same bytes as one from the main checkout. Each skill stub names the pinned commit, and the generated drift check fails when a stub and the pin disagree.
-
-**Why.** A well-formed sha can still point at nothing, a worktree's parent has no framework beside it, and output that depends on which checkout ran the skill breaks reproducibility.
+**Why.** A person converting their own material installs the library rather than keeping a framework checkout beside the corpus, so a pin must name the library and verify its version. A copied procedure ages silently, which the pointer and its drift check prevent, and output that depends on which checkout ran the skill breaks reproducibility.
 
 **Serves.** `R10`, `R18`, `R7`
 
-**Aliases.** `INT-14/1`, `ISO-M10/1`, `W270`, `W286`, `W321`, `W442`
+### The pin names the installed wheel's own commit, and it is verified
+
+**Decision.** A wheel built from the framework carries a `COMMIT` stamp: `setup.py` writes `studyforge/COMMIT` at build time, holding the forty-hex commit of the git checkout the wheel is built from, and refuses to build from anything that is not the top of a git checkout. `studyforge.skills.onboarding.library.commit()` reads it back, and answers `None` for an editable or source-tree install, which cannot say its commit. `onboard` pins that commit without being told (`library.built_from`); a `framework_commit` a caller names is accepted only when the library has no stamp, and refused when it differs from the stamp. `python3 -m studyforge.skills.onboarding.verify` and `reonboard` (`skills.onboarding.reonboard`) refuse a pin that names another commit than the one the running library was built from, and the generated `test_framework_pin.py` asserts the same.
+
+**Why.** Every build of one version shares its version number, so the commit is what tells two libraries apart, and a commit typed by an operator is a claim the library can check for itself.
+
+**Serves.** `R18`, `R10`, `R19`
 
 ### Re-onboarding keeps every answer the corpus already records
 
-**Decision.** An onboarded corpus is re-onboarded from its recorded `corpus.json` and pin through `reonboard`, and is never re-surveyed or hand-edited. Before writing, a regenerate compares the manifest on disk with the new one across every manifest field. If a field would move, it refuses by name, unless the person named that key in `settle`. The `not_material` globs a person declared are kept byte for byte, in order and with their reasons, and dropping one or changing its reason is refused. A drafted entry on a kept glob with a different reason is refused rather than settled by precedence, and the refusal tells the person to leave that glob out of what they pass.
+**Decision.** An onboarded corpus is re-onboarded from its recorded `corpus.json` and pin through `studyforge.skills.onboarding.reonboard`, and is never re-surveyed or hand-edited. Before writing, a regenerate compares the manifest on disk with the new one across every manifest field except `content.not_material` (`onboarding.recorded.moved`). If a field would move, it refuses by name, unless the person named that key in `settle`; `content` is never settled, and a settled answer that needs a newer `corpus_api` raises the version with it. The `not_material` globs a person declared are kept byte for byte, in order and with their reasons, and dropping one or changing its reason is refused. A drafted entry on a kept glob with a different reason is refused rather than settled by precedence, and the refusal tells the person to leave that glob out of what they pass.
 
-**Why.** A re-survey reads the framework's own generated files as material, and it once silently turned a corpus that was complete at the reading floor into one reported as unfinished.
+**Why.** A re-survey reads the framework's own generated files as material and can silently turn a corpus that is complete at the reading floor into one reported as unfinished. The recorded manifest is already the settled draft.
 
 **Serves.** `R19`, `R6`
 
-**Aliases.** `W283`, `W329`, `W439`, `W443`
-
 ### The install record marks the person's module and guards every generated path
 
-**Decision.** `.studyforge/installed.json` (`installed_api` 2) lists each generated file with a digest. It marks the adapter's reading step `hand_written` and keeps no digest for it, so `hand_edited` names only generated files that changed. A regenerate refuses by name any file at a newly generated path that the record does not list, even if its bytes match, and never adopts it. `uninstall` removes only what was written, and it removes the reading step only while that file is still the stub.
+**Decision.** `.studyforge/installed.json` (`studyforge.skills.onboarding.record`, `installed_api` 2, and it still reads 1) lists each generated file with a digest. It marks the adapter's reading step `hand_written` and keeps no digest for it, so `hand_edited` names only generated files whose bytes changed, followed by generated files that are missing, except a self-hiding ignore file. `refuse_unrecorded` refuses by name any file at a newly generated path that the record does not list, and never adopts it; the one exception is a file whose bytes match the recorded digest of a generated path that is now empty, which is a generated file moved. `onboarding.removal.uninstall` removes only what was written, refuses when any generated file changed, and removes the reading step only while that file is still the stub.
 
-**Why.** The one legitimate edit must not look like a hand-edit, and a person's file must never be overwritten or silently claimed.
+**Why.** The one legitimate edit must not look like a hand-edit, moving or deleting a generated file is an edit to it, and a person's file must never be overwritten or silently claimed.
 
 **Serves.** `R3`, `R19`
 
-**Aliases.** `INT-09/1`, `W256`, `W353`
-
 ### Every writer of a generated file set keeps the person's module
 
-**Decision.** `write_files` is the single rule that `Scaffold.write` and onboarding's `write` both follow. A regenerate rewrites every generated file and leaves an existing hand-written module untouched. Which file is kept comes from the scaffold's `generated` flag, never from a name.
+**Decision.** `studyforge.skills.adapter.scaffold.write_files` is the single rule that `Scaffold.write` and onboarding's `Onboarding.write` both follow. A first write refuses, naming every path in the way. A regenerate rewrites every generated file and leaves an existing hand-written module untouched. Which file is kept comes from each file's `generated` flag, never from a name.
 
-**Why.** Two copies of this rule once disagreed on the same input.
+**Why.** Two copies of one rule drift apart on the same input, so there is one.
 
 **Serves.** `R19`, `R3`
 
-**Aliases.** `W257/2`, `W265`
-
 ### Generated Python directories carry their own bytecode ignore file
 
-**Decision.** Every directory where the adapter scaffold or onboarding writes a `.py` file gets a `.gitignore` inside it that names interpreter output. These files are derived from the generated paths, never placed at the corpus root, and never written into the root ignore file. A corpus onboarded earlier gains them when it is regenerated.
+**Decision.** Every directory where the adapter scaffold or onboarding writes a `.py` file gets a `.gitignore` inside it naming interpreter output (`studyforge.skills.adapter.scaffold.bytecode_ignores`, `ignore_files`, `BYTECODE_RULES`). These files are derived from the generated paths, never placed at the corpus root, and never written into the root ignore file. A corpus onboarded earlier gains them when it is regenerated.
 
-**Why.** Bytecode can embed absolute paths, and the root ignore file is source material that tooling has already edited once without being asked.
+**Why.** Bytecode can embed absolute paths, and the root ignore file is source material that R3 forbids editing.
 
 **Serves.** `R3`, `R7`
 
-**Aliases.** `W15`, `W345`
-
 ### The non-destructive check reads the build's declaration, not commit state
 
-**Decision.** The generated R3 check, rendered by `onboarding.nondestructive`, first compares what `studyforge plan` says a build writes with `edits.reads_as_content`. It fails on an undeclared overlap whether the tree is clean, dirty or staged. It then reads the working tree. An addition, staged or untracked, is never a breach. Every rewrite, removal or rename origin must be declared by the plan, the install record, `permitted_edits`, the tool's own `.studyforge/` directory, or the execution skill's own output (`execution.generated_here`), which puts its reader's document at the corpus root; a reader's document that skill did not write is still the corpus's own.
+**Decision.** The generated R3 check, `tests/test_non_destructive.py`, rendered by `studyforge.skills.onboarding.nondestructive`, first compares what `studyforge plan` says a build writes with `edits.reads_as_content`. It fails on an undeclared overlap whether the tree is clean, dirty or staged. It then reads the working tree. An addition, staged or untracked, is never a breach. Every rewrite, removal or rename origin must be declared by the plan, the install record, `permitted_edits`, the tool's own `.studyforge/` directory, or the execution skill's own output (`studyforge.skills.execution.generated_here`), which puts its reader's document at the corpus root; a reader's document that skill did not write is still the corpus's own.
 
-**Why.** A check built on git status failed correct runs and passed once work was committed, which measures committing rather than R3.
+**Why.** R3 asks whether generation moved, renamed or rewrote a file that is not its declared output, and that answer does not change when a file is staged or committed. A check built on git status measures committing instead.
 
 **Serves.** `R3`
 
-**Aliases.** `W331`, `W331/2`
+### Execution-generated files are guarded as onboarding's are
 
-### The execution skill keeps its own record of what it wrote
+**Decision.** `.studyforge/execution/written.json` (`studyforge.skills.execution.written`, `written_api` 1) records the digest of every file the execution skill writes: `write` and the two record steps (`record_runner`, `record_editor`) stamp what they put on disk. Entries are sorted by path and carry no clock, a stamp merges into the record rather than replacing it, and the record does not list itself. Onboarding's `hand_edited` includes the execution record's report, so one check names every generated file of either skill that was edited or is missing. The record sits under the skill's own directory, which the corpus already declares not material, so no manifest changes.
 
-**Decision.** `execution.write` and both record steps stamp each file they write, with its digest, in `.studyforge/execution/written.json`. Onboarding's `hand_edited` reads that record beside its own install record and names, in a sentence, each execution file whose bytes moved or that is gone. The stamp merges, sorts and carries no clock, so running the skill again over an unchanged corpus rewrites no byte. Onboarding's install record is not extended: a re-onboard rewrites it and `uninstall` undoes it, and neither is the execution skill's to trigger.
+**Why.** A hand-edit to a generated file is a finding (R19), and a file no record lists cannot be found edited. Each writer keeps its own record because onboarding's is rewritten by every re-onboard and undone by `uninstall`, neither of which is the execution skill's to trigger.
 
-**Why.** A wrong tag planted in `editor.env` was caught by nothing, because the execution skill's outputs were outside the only record the hand-edit check read.
-
-**Serves.** `R19`
-
-**Aliases.** `W466`, `PO-188/1`
+**Serves.** `R19`, `R10`
 
 ### Skills point at the never-editable vocabularies instead of listing them
 
-**Decision.** The adapter and onboarding skills each carry one statement of what `permitted_edits` may never name. The statement points at `edits.reads_as_content`, `ROOT_DOCUMENTATION` and `parse_edits` and never retypes a file name. A test reads the four vocabularies from their single definitions each time it runs, and it fails when a skill types any name they hold.
+**Decision.** The adapter and onboarding skills each carry one statement of what `permitted_edits` may never name. The statement points at `studyforge.corpus.manifest.edits.reads_as_content`, `ROOT_DOCUMENTATION` and `parse_edits` and never retypes a file name. `tests/studyforge/skills/test_never_editable.py` reads the four vocabularies (`ROOT_DOCUMENTATION`, `IGNORE_NAMES`, `VCS_NAMES`, `VCS_DIRECTORIES`) from their single definitions each time it runs, and it fails when a skill types any name they hold.
 
 **Why.** An integrator should learn the rule from the skill before meeting the refusal, and a list copied into a skill drifts from the code.
 
 **Serves.** `R3`, `R19`
 
-**Aliases.** `W281`, `W281/1`, `W292`, `W310/2`
-
 ### Reconnaissance proposes not-material globs and leaves the reasons to a person
 
-**Decision.** `reconnaissance.furniture` proposes a `not_material` glob for every file the validator would call unclassified, taken from `validate.source.source_files`, and every proposed glob has a null `why`. Only a person supplies reasons, through `promote`. A re-survey never proposes a file that a declared glob already covers, or anything onboarding recorded writing. A proposal that judged no file, or ran without git's ignore rules, says why in `stands_down`.
+**Decision.** `studyforge.skills.reconnaissance.furniture.propose` proposes a `not_material` glob for every file the validator would call unclassified, taken from `validate.source.source_files`, and every proposed glob has a null `why`. Only a person supplies reasons, through onboarding's `promote`. A re-survey never proposes a file that a declared glob already covers, or anything onboarding recorded writing. A proposal that judged no file, or ran without git's ignore rules, says why in `stands_down`.
 
 **Why.** A generated reason would be an audit nobody performed, and a silent empty proposal reads as complete.
 
 **Serves.** `R19`, `R6`
 
-**Aliases.** `INT-07/2`, `INT-10/1`, `INT-10/2`, `W240/3`, `W269`
-
 ### A drafted source name comes from the curriculum title, never the directory
 
-**Decision.** The draft's `source` is the slug of the curriculum record's title, or `corpus` when there is no record. It is never the surveyed directory's name and never read from git or a remote. A survey of `.` resolves the directory's real name for its report and still drafts a manifest the reader accepts.
+**Decision.** In `studyforge.skills.reconnaissance.proposal`, the draft's `source` is the slug (`studyforge.address.slugify`) of the curriculum record's title, or `corpus` when there is no record or the title has no slug. It is never the surveyed directory's name and never read from git or a remote. Only the drafted `title`, when there is no record, falls back to the directory's resolved name, so a survey of `.` still drafts a manifest the reader accepts.
 
-**Why.** A clone, a worktree and an export of one commit must draft the same source.
+**Why.** A clone, a worktree and an export of one commit carry the same title and must draft the same source, and a remote URL is personal data.
 
 **Serves.** `R10`, `R7`
 
-**Aliases.** `INT-07/1`, `W240`, `W249`
-
 ### A heading that links a file is a group label when that file is cut into regions
 
-**Decision.** In a curriculum record, a heading that links a file is not a unit just because of the link. When it sits where the group labels sit, opens no entry, and its linked file is split by headings, it is a group label, and each region becomes a unit whose origin is a path plus section. A linked file that is one unit stays an entry.
+**Decision.** In a curriculum record (`studyforge.skills.reconnaissance.grouping`), a heading that links a file is not a unit just because of the link. When it sits where the group labels sit, opens no entry, and its linked file is split by headings (`reconnaissance.regions`), it is a group label, and each region becomes a unit whose origin is a path plus section. A linked file that is one unit stays an entry, and the survey asks the person to confirm either reading.
 
-**Why.** Reading such a heading as one entry lost most of a measured corpus's units.
+**Why.** A link records where something is, not what role it has; reading such a heading as one whole-file unit erases every unit inside the file.
 
 **Serves.** `R6`
-
-**Aliases.** `INT-07/3`, `W250`
 
 ### A heading-form curriculum entry reads the ordinal its bullet form reads
 
-**Decision.** In `reconnaissance.record`, the hashes of a heading stand where a bullet would, so a heading entry yields the same ordinal and title as the same entry written as a bullet. A heading with no ordinal yields none.
+**Decision.** In `studyforge.skills.reconnaissance.record`, the hashes of a heading stand where a bullet would, so a heading entry yields the same ordinal and title as the same entry written as a bullet. A heading with no ordinal yields none.
 
-**Why.** A reader written for one form silently dropped ordinals written in the other.
+**Why.** A reader written for one form would silently drop ordinals written in the other.
 
 **Serves.** `R6`
 
-**Aliases.** `W250/2`, `W252`
+### The reading order is the one the curriculum record states, and nothing derives it
+
+**Decision.** Reconnaissance finds the document that records the curriculum by how much of the material it links, never by its name (`studyforge.skills.reconnaissance.record.find`), and takes each unit's position from the order that document states (`Record.order`), never from a filename or directory sort. A corpus with no such record gets no sorted guess: the survey asks the reading order as an open question, and material the record does not name is a question too. The adapter skill forbids its reading step to derive an address, an ordinal or a reading order. When the manifest declares the record and its groups (`curriculum`), `studyforge validate` holds the archive's filing to that record, an ordinal out of place included (`curriculum-disagrees`); a corpus that declares no `curriculum` carries the order as data from the record into the archive, and its adapter asserts it in its own tests against that record, since only the record knows it.
+
+**Why.** A filename sort misplaces units while the count is right, every page renders and the first unit of each group stays first, so a count assertion and a spot-check both pass. An ordering claim needs an oracle, and the oracle is whatever records the order.
+
+**Serves.** `R1`, `R6`
+
+### A curriculum line is a group label by its position, never by its heading level
+
+**Decision.** In a curriculum record, whether a line is a container label is decided by where it sits, not by its Markdown syntax (`studyforge.skills.reconnaissance.grouping`). A heading and a bare numbered line are both candidate labels; a candidate that heads no entry is dropped, so headings belonging to another document's outline below the curriculum never become containers; a set of labels is kept only when one line shape partitions the entries, and otherwise no grouping is proposed at all. A small, stated share of entries above the first label (`UNLABELLED_ALLOWANCE`) does not cost the hierarchy, and a leading label that opens almost nothing is dropped rather than kept. A line carrying a link is never read as a label by syntax; whether a linked heading is one is decided by its position (see the entry on files cut into regions).
+
+**Why.** Real curricula set this trap in both directions: one records its groups as headings beside many headings that are not groups, another records them as numbered lines with no heading at all. A grouping invented from syntax becomes a container tree in the built site, and the reader never learns it was invented.
+
+**Serves.** `R1`, `R6`
+
+### A corpus's curriculum record and its group addresses are manifest data
+
+**Decision.** The manifest's optional `curriculum` block (`studyforge.corpus.manifest.curriculum`, read from `corpus_api` 7) names the document that records the reading order and grouping (`record`, a Markdown path inside the corpus) and, optionally, the record's groups in the record's order (`containers`: each group's `label` exactly as the record writes it, the `address` it is filed at, checked against `levels`, and an optional filename `prefix`). The block and each group are closed key sets, and a repeated label, address or prefix is refused. The adapter skill files every unit from the declared record at its group's declared address (`studyforge.skills.adapter.curriculum.filed`), reading the record with the reader reconnaissance proposed the declaration from, and the scaffolded reading step takes its containers from the declaration, leaving only the documents to a person. A declared prefix never files a unit: it is a second partition of the same files, and the filing refuses with every disagreement named (`CurriculumDisagrees`) when a unit's name lacks its group's prefix, carries another group's, or an included file carries a group's prefix and the record never files it there. Reconnaissance drafts the block (`skills.reconnaissance.curriculum.declare`), proposing a prefix only where the names partition the units exactly as the record does. `studyforge validate` runs the same filing over the tree (`studyforge.validate.source.curriculum.check_curriculum`) and reports any disagreement, a missing record or labels that are not the record's own as `curriculum-disagrees`, so a stale declaration is refused whoever wrote the reading step. A manifest without the block reads as before.
+
+**Why.** Where a curriculum lives and which address each group is filed at are facts a second corpus would otherwise retype in adapter code (R19). The record files units because a record is the author's own statement of order and grouping; a prefix is derivation, which is kept only as a check that must agree.
+
+**Serves.** `R19`, `R6`, `R9`
 
 ### The survey and the scaffolded suite walk the corpus exactly as validate does
 
-**Decision.** Reconnaissance's inventory and the adapter's generated emission test take their answers from the validator. They skip `SKIP_DIRS` only at the corpus root and get nested repository stores from `source_files(root).stores`. The survey never enters such a store, and the suite copies it unchanged so the validator refuses it. Both take git's ignore rules from `repository_ignores`, the one ignore reader, asked once per directory. Neither keeps a list of names of its own.
+**Decision.** Reconnaissance's inventory (`studyforge.skills.reconnaissance.inventory.take`) and the adapter's generated emission test (`studyforge.skills.adapter.parts.suite`) take their answers from the validator. They skip `SKIP_DIRS` only at the corpus root and get nested repository stores from `source_files(root).stores`. The survey never enters such a store and counts as the corpus's own only files `source_files` enumerates; the suite copies a store unchanged so the validator refuses it. The suite takes git's ignore rules from `repository_ignores`, the one ignore reader, asked once per directory, and keeps no list of names beyond its own output directories; outside a git working tree it copies everything but the archive and warns.
 
-**Why.** A second rule once passed locally what the validator refuses, and once walked a large ignored directory.
+**Why.** A second walk rule passes locally what the validator refuses, or walks a large ignored directory.
 
 **Serves.** `R2`, `R6`
 
-**Aliases.** `INT-09/7`, `W28`, `W257`, `W259/1`, `W271`, `W272`
-
 ### The generated emit stages the archive and applies one ingestion date
 
-**Decision.** The adapter's generated `emit` builds the whole archive beside its destination and moves it into place only once every file exists. After `read` returns, it replaces every container's `ingested` with the run's date, and the reading step's signature stays unchanged.
+**Decision.** The adapter's generated `emit` (rendered by `studyforge.skills.adapter.parts.adapter`) builds the whole archive in a staging directory beside its destination and moves it into place only once every file exists. After `read` returns, it replaces every container's `ingested` with the run's date and builds every document with that date, and the reading step's signature stays unchanged.
 
-**Why.** One emission once carried two dates, and a half-written map at the validator's path stops every reader of the tree.
+**Why.** One emission must carry one date, and a half-written map at the validator's path stops every reader of the tree.
 
 **Serves.** `R10`, `R6`
 
-**Aliases.** `INT-09/3`
-
 ### The adapter layout is the one address of a unit's authored overlay
 
-**Decision.** `Layout.content(address, unit)` is the only place the per-unit overlay path is computed. It joins placement's units segment with `unit.content.CONTENT_FILENAME` and mints nothing itself. Declaring where an overlay sits does not apply one: v1 still builds each unit from its archive documents alone.
+**Decision.** `studyforge.skills.adapter.layout.Layout.content(address, unit)` is the only place the per-unit overlay path is computed. It joins placement's units directory with `studyforge.unit.content.CONTENT_FILENAME` and mints nothing itself. Declaring where an overlay sits does not apply one: v1 still builds each unit from its archive documents alone.
 
-**Why.** With no stated location, every build that wanted an overlay would have invented its own.
+**Why.** With no stated location, every build that wanted an overlay would invent its own.
 
 **Serves.** `R21`, `R4`
 
-**Aliases.** `SF-37/3`, `W198`
-
 ### Missing contract or manifest keys are findings, never typed-in defaults
 
-**Decision.** When a component's `consuming.json` or the corpus manifest lacks a key that the execution skill needs, the skill refuses or keeps a marked stopgap, and a test goes red once the key appears. The runtime-set separator (`toolchain.SET_SEPARATOR`) is provisional. The narration service is not rendered into the compose file, because its block has no per-project keys. Cache volumes are joined through the prime's seeds map. A corpus whose material sits at the repository root is refused, since the editor would have nothing to bind but the repository.
+**Decision.** When a component's `consuming.json` or the corpus manifest lacks a key that the execution skill (`studyforge.skills.execution`) needs, the skill refuses through `contract.require` or keeps a marked stopgap, and a test goes red once the key appears. The runtime-set separator (`toolchain.SET_SEPARATOR`) is provisional, and `tests/studyforge/skills/execution/test_toolchain.py` asserts the contract still lacks `SEPARATOR_KEY`. The narration service's contract is read and its rulings asserted, but it is not rendered into the compose file, because its block has no per-project keys. Cache volumes are joined through the contract's `runner.prime.seeds` map (`composefile.volumes_for`). A corpus whose material sits at the repository root is refused, since the editor would have nothing to bind but the repository.
 
 **Why.** A value written into the skill would hide that the contract is not sufficient to generate a working setup.
 
 **Serves.** `R19`
 
-**Aliases.** `SK-09/1`, `SK-09/2`, `SK-09/3`, `SK-09/5`, `TC-05/2`
-
 ### The prime is one project per seeded tool, taken from the corpus's own build
 
-**Decision.** `execution.prime` copies the corpus's own build for each tool that both the component seeds and the corpus declares into `prime/<tool>/`. Each copy is re-rooted at the tool's shallowest build-file directory and holds every build file under it plus the smallest real source and test. The tool names come from the contract's seeds map. Exercise bundles and reader workspaces are never read from.
+**Decision.** `studyforge.skills.execution.prime` copies the corpus's own build into `prime/<tool>/` for each tool that both the component seeds and the corpus declares. Each copy is re-rooted at the tool's shallowest build-file directory and holds every build file under it plus the smallest real source and test. The tool names come from the contract's `runner.prime.seeds` map. Exercise bundles and reader workspaces are never read from. A seeded tool with no build file, or a build with no source or no test, is refused by name; a corpus that declares no seeded tool gets an empty prime.
 
 **Why.** The runner's build refuses anything else at the prime's top level, and an empty or foreign prime warms nothing while appearing to succeed.
 
 **Serves.** `R15`, `R19`
 
-**Aliases.** `W436/1`, `W440`
-
 ### Build and serve reports where a run executes
 
-**Decision.** When a corpus declares exercises, every served form registers the run namespace. When the site starts listening, the build-and-serve skill asks `execute`'s mode probe once whether a runner container is up. If none is, it reports the `host` state: Run and Submit execute on this host without the runner's isolation. That state is not finished, and it names starting the runner container as the remedy.
+**Decision.** Every served form registers the `run` namespace (`studyforge.serve.instance.namespaces_of`). When the corpus declares exercises and the site starts listening, the build-and-serve skill (`studyforge.skills.buildserve.run`, `buildserve.states`) asks `execute`'s mode probe once whether a runner container is up. If none is, it reports the `host` state: Run and Submit execute on this host without the runner's isolation. That state is not finished, and it names starting the runner container as the remedy.
 
 **Why.** A reader must know when their code is running outside the pinned, isolated toolchain.
 
 **Serves.** `R15`, `R6`
 
-**Aliases.** `W381`, `round 125`
-
 ### Skills reach commands only through the CLI's verb table
 
-**Decision.** `studyforge.cli.VERBS` is the only place a verb is minted. Skills run as `python3 -m` modules and are not verbs. The build-and-serve skill builds every argument list in its `verbs` module from that table and parses each list with the verb's own parser. A skill's documented command is derived from `cli.PROGRAM` and `VERBS` rather than pinned as a literal.
+**Decision.** `studyforge.cli.VERBS` is the only place a verb is minted. Skills run as `python3 -m` modules and are not verbs. The build-and-serve skill builds every argument list in `studyforge.skills.buildserve.verbs` and hands it to its verb through that table, and a test parses each list with the verb's own parser. `tests/test_authoring_reference.py` checks every fenced command in the skills and authoring pages against the console scripts `pyproject.toml` registers and each one's `VERBS`, rather than against a list.
 
-**Why.** If a verb's interface changes, one edit and one failing test should catch it before a reader's shell does.
+**Why.** If a verb's interface changes, one edit and one failing test catch it before a reader's shell does.
 
 **Serves.** `R19`
 
-**Aliases.** `Ruling 138`, `SF-40`
-
 ### Serving a root with no site flag discovers every corpus under it
 
-**Decision.** `studyforge serve` given only a root serves every corpus discovered under that root and needs no configured path. `--site` is the separate form for one built site. Stylesheets are looked up beside a manifest, not at any depth.
+**Decision.** `studyforge serve` (`studyforge.cli.serve`) given only a root serves every corpus discovered under that root (`studyforge.serve.discovery`) from where it sits, and needs no configured path. `--site` is the separate form for one corpus built elsewhere. Stylesheets are looked up beside a manifest, not at any depth (`studyforge.serve.routes.assets`).
 
-**Why.** A reader should be able to serve a directory of corpora without writing configuration.
+**Why.** A reader should be able to serve a directory of corpora without writing configuration; the manifests on disk are the list.
 
 **Serves.** `R4`
 
-**Aliases.** `SF-19b/3`, `W230`
-
 ### A personal archive's audience is chosen at export, and sharing judges every file
 
-**Decision.** `personalarchive.export` requires the archive's kind, owner or sharing, and has no default. A sharing archive never reads progress. Every file whose contents are not read as text is passed to `layout.judge_bytes`, which scans runs of at least 16 printable characters, single-byte and UTF-16, for personal-data shapes and counts every file judged that way. A root holding a virtual environment or build output is usually refused by name. An owner archive carries such files unread.
+**Decision.** `studyforge.skills.personalarchive.export.export` requires the archive's kind, owner or sharing (`--for` on the command line), and has no default. A sharing archive never reads progress. Every file name and every UTF-8 text file is gated for personal data. In a sharing archive, every file whose contents are not read as text is passed to `personalarchive.layout.judge_bytes`, which scans runs of at least 16 printable characters (`TEXT_RUN`), single-byte and UTF-16, for personal-data shapes, and the report counts every file judged that way. A root holding a virtual environment or build output is therefore usually refused, naming the file. An owner archive carries such files unread.
 
-**Why.** An archive meant for someone else must not leak its owner's identity by default or through binary files, and a run length of 16 is what lets real audio pass.
+**Why.** An archive meant for someone else must not leak its owner's identity by default or through binary files, and a run length of 16 lets real audio pass.
 
 **Serves.** `R7`
 
-**Aliases.** `SK-06`, `SK-06/3`, `SK-06/4`, `W235`
-
 ### Imported progress merges as a join through the store's public write
 
-**Decision.** Progress is imported only from an owner archive. It merges practice by practice, and only through `Progress.record_run`, the store's single public locked write, so a merge is many writes. Because the rule is a join, an interrupted import is completed by running it again. A run count may rise by up to two, and an imported pass is believed as recorded, because the record keeps no history.
+**Decision.** Progress is imported only from an owner archive, and a sharing archive carrying progress is refused. It merges practice by practice (`studyforge.skills.personalarchive.merge`, applied by `personalarchive.record`), and only through `Progress.record_run`, the store's single public locked write, so a merge is many writes. Because the rule is a join, an interrupted import is completed by running it again. A run count may rise by up to two, and an imported pass is believed as recorded, because the record keeps no history. A test runs every row of the skill document's worked table through `merged`.
 
 **Why.** Reimplementing the store's writes would bypass its validation and locking, and no rule can tell an earned pass from a written one.
 
 **Serves.** `R16`
 
-**Aliases.** `SF-19b/5`, `SK-06/1`
-
 ### Authored exercise trees are declared not material and run output is ignored
 
-**Decision.** Before the exercises skill runs, the corpus must already declare `exercises/**` and `practice/**` under `content.not_material`, and the skill never edits `corpus.json`. Every run's output lands in `target/` inside the reader's workspace, a report path anywhere else is refused, and one ignore file under `practice/` keeps `target/` out of commits.
+**Decision.** Before the exercises skill (`studyforge.skills.exercises`) runs, the corpus must already declare `exercises/**` and `practice/**` under `content.not_material`, and the skill never edits `corpus.json`. Every run's output lands in `target/` inside the reader's workspace (`studyforge.exercise.bundle.RUN_OUTPUT_DIRNAME`); a bundle report path anywhere else is refused, and so is a bundle file under that directory. One ignore file of the corpus's own under `practice/`, holding the one line `RUN_OUTPUT_IGNORE`, keeps `target/` out of commits.
 
 **Why.** Without the declaration the validator refuses every authored file, and a test report carries the machine's hostname.
 
 **Serves.** `R3`, `R7`
 
-**Aliases.** `AX-04/2`, `AX-04/3`
-
 ### Authored practices are numbered after those a unit already carries
 
-**Decision.** The authoring loop reads which practices a unit's archive already holds and numbers the first authored exercise after them, with no declared offset. The source's own practices are never renumbered or rewritten. An authored number that would repeat or skip past an existing one is refused by name before anything is written.
+**Decision.** The authoring loop (`studyforge.skills.exercises.loop`) reads which practices a unit's archive already holds (`carried_practices`, through `unit.builder.read` at the directory `Layout` computes) and numbers the first authored exercise after them, with no declared offset. Ordinals are handed out as exercises ship, so a refused exercise leaves no gap. The source's own practices are never renumbered or rewritten. `require_after_carried` refuses by name an authored number that would repeat or skip past an existing one before anything is written.
 
-**Why.** A source's own practice must survive authoring unchanged.
+**Why.** A reader's progress is keyed to a practice's ordinal, so a source's own practice must survive authoring unchanged and a page must never have a gap.
 
 **Serves.** `R3`
 
-**Aliases.** `W437`
-
 ### An origin names a source file or one heading region of it
 
-**Decision.** An exercise's origin, or a ledger entry, is a path or a path plus section. A region is a heading and everything under it up to the next heading of the same or shallower depth, and a section that is missing or appears twice is refused. A source path carrying a fragment is refused, so ledger keys use `:` as their separator. The ledger scan reads the source Markdown itself rather than through the archive's Markdown parser.
+**Decision.** An exercise's origin, or a ledger entry, is a path or a path plus section (`studyforge.skills.exercises.accounting`, `exercises.ledger`). A region is a heading and everything under it up to the next heading of the same or shallower depth, and a section that is missing or appears twice is refused. A source path carrying a fragment is refused, so ledger keys (`ledger.key_of`) use `:` as their separator. The ledger scan (`exercises.scan`) reads the source Markdown bytes itself, borrowing only the heading and fence patterns of `validate.headings`, rather than going through the archive's Markdown parser.
 
-**Why.** The ledger has to report what the source carries, including anything the parser dropped.
+**Why.** The ledger has to report what the source carries, including anything the parser drops.
 
 **Serves.** `R6`
 
-**Aliases.** `SF-36`
-
 ### Reconnaissance drafts runtimes only from what the material evidences
 
-**Decision.** `reconnaissance.runtimes` drafts the `runtimes` key only for a graded corpus, from build files and source suffixes matched against a closed map. It adds `java` beside anything that runs on a JVM. A draft carrying the key declares `corpus_api` 4 so it reads back cleanly, and every drafted runtime is put to the person as a question.
+**Decision.** `studyforge.skills.reconnaissance.runtimes` drafts the `runtimes` key only for a graded corpus, from build files and source suffixes matched against closed maps (`BUILD_EVIDENCE`, `SOURCE_EVIDENCE`). It adds `java` beside any runtime in the manifest's `REQUIRES_JAVA`. A draft carrying the key declares `corpus_api` 4 so it reads back cleanly, and every drafted runtime is put to the person as a question; evidence in a corpus with no grader drafts no key and is asked about.
 
-**Why.** A runtime nothing evidences would make the framework build and start containers a corpus never needed.
+**Why.** A runtime nothing evidences would make the framework build and start containers a corpus never needs.
 
 **Serves.** `R1`, `R19`
 
-**Aliases.** `W350/1`, `W351`
-
 ### A not-material glob declared by two producers is refused
 
-**Decision.** When the draft or a generator declares a `not_material` glob that another producer also declares, the onboarding manifest refuses it and names both sides. It never keeps the first declaration by precedence. A person's declaration of the root ignore file in the draft is carried through unchanged.
+**Decision.** When the draft or a generator declares a `not_material` glob that another producer also declares, `studyforge.skills.onboarding.manifest.promote` refuses it and names both sides. It never keeps the first declaration by precedence. A person's own declarations in the draft, such as the root ignore file, are carried through unchanged.
 
 **Why.** Keeping one reason over another is silently choosing between two audits.
 
 **Serves.** `R6`
 
-**Aliases.** `W239`
-
 ### Onboarding declares every generated file in the manifest it writes
 
-**Decision.** Onboarding promotes a provisional manifest, scaffolds from it, collects the generated files' `not_material` globs, and promotes again, so the written `corpus.json` already classifies every generated file. A test re-scaffolds from the written manifest and asserts the files are byte-identical.
+**Decision.** `studyforge.skills.onboarding.onboard` promotes a provisional manifest, scaffolds from it, collects the generated files' `not_material` globs, and promotes again, so the written `corpus.json` already classifies every generated file. A test re-scaffolds from the written manifest and asserts the files are byte-identical.
 
-**Why.** A person once had to copy lines out of a validation report to make a freshly scaffolded corpus valid, and a second source would pay that again.
+**Why.** A freshly scaffolded corpus must validate without a person copying lines out of a validation report, which a second source would otherwise pay again.
 
 **Serves.** `R19`
-
-**Aliases.** `SK-02/1`
 
 ## Rendering and the reading room
 
 ### A refused href drops in chrome and raises in content
 
-**Decision.** An href is permitted in exactly two forms: an absolute one whose scheme is in `SAFE_SCHEMES`, or a relative reference that stays inside the site (`render.markup.text.safe_href`). What happens to a refused one depends on the region: chrome such as the bar between units, the trail and the rail drops the link (the bar drops the whole slot, the trail and the rail keep the label), while a list that is the page's content, such as a container's unit listing or the root index tree, raises. A unit with no page on this machine is a declared state (`href=None`), not a bad href.
+**Decision.** `studyforge.render.markup.text.safe_href` permits an href in exactly two forms: an absolute one whose scheme is in `SAFE_SCHEMES` (`http`, `https`, `mailto`), or a relative reference that stays inside the site (neither rooted nor protocol-relative). What happens to a refused one depends on the region. In chrome, the bar between units (`render.page.navigation`) drops the whole slot, and the trail and the rail (`render.page.rail`) keep the row's words and drop only the anchor. In a list that is the page's content, the container's unit listing (`render.container.listing`) and the root index tree (`render.index.disclosure`), a refused href raises `PageError`, describing the row by its position rather than quoting the href. A unit with no page on this machine is a declared state (`href=None`), rendered as a plain, unlinked row, not a bad href.
 
-**Why.** A silently dropped anchor in a page whose whole job is its links leaves every title visible and nothing openable, and the emitter and the gate must agree on what a refusal means.
+**Why.** A page whose whole job is its links cannot drop one silently: every title would stay visible and nothing would be openable. In chrome, a row without an anchor is visibly not openable and costs the reader only a trip through the index. The emitter and the gate must agree on what a refusal means.
 
 **Serves.** `R6, R8`
 
-**Aliases.** `Ruling 164`, `SF-13/1`, `W57`
-
 ### Markup is styled only through the published surface
 
-**Decision.** No renderer types a class name or a styling hook: every class comes from `pageassets.SURFACE_CLASSES`, keyed by the archive's block vocabulary, and every region is reached by element, `aria-label` or a `data-*` hook taken from `pageassets.SURFACE_HOOKS`. Product strings and glyphs sit in template files, not in Python.
+**Decision.** Renderers do not type class names or styling hooks. Each block class comes from `pageassets.class_for`, which reads `SURFACE_CLASSES` (keyed by the archive's block vocabulary). Each other hook is an element, an `aria-label`, or a class or `data-*` name taken from `pageassets.SURFACE_HOOKS` (`src/studyforge/render/pageassets/surface.py`). Product strings and glyphs sit in the template files under `src/studyforge/render/templates/`, not in Python.
 
-**Why.** A class the stylesheet does not target renders a complete, unstyled page with no error, and two independently spelled hooks drift apart the day one page gains a state.
+**Why.** If the stylesheet does not target a class, the page renders complete and unstyled with no error. Two independently spelled hooks drift apart as soon as one page gains a state. With one published surface, both ends read the same name.
 
 **Serves.** `R13, R1`
 
-**Aliases.** `CTO round 12`, `CTO round 45`, `SF-14/1`, `SF-34`, `W9`, `round 45`
-
 ### The rail reaches every container and sits beside a bounded column
 
-**Decision.** The page column is bounded once, on `body`, in the prose measure. Every page with a rail lists the other containers; below `72rem` the rail folds into one disclosure above the content, and above it the rail sits in its own grid column on the left, sticky, spanning every top-level row and scrolling itself when it is taller than the window. A page without a rail starts at the same left inset as a page with one, so the layout does not jump when the reader moves between them.
+**Decision.** `render.page.rail` lists every container of the corpus with its units, as real `<details>` elements that work with scripting off. It is omitted when the corpus has fewer than two containers (`RAIL_MINIMUM`). In `chrome.css`, the page column is bounded once, on `body`, by the prose measure. Below `72rem` the rail folds into one disclosure above the content. From `72rem` up, the rail sits in its own grid column on the left, is sticky, spans every top-level row, and scrolls itself when it is taller than the window. A page without a rail starts at the same left inset as a page with one, so the layout does not jump when the reader moves between them.
 
-**Why.** Per-region bounds gave each region a different column, and a layout that moves when the reader clicks reads as broken.
+**Why.** Without the rail, the only route from one container to another is back through the root index. One bound on the column gives every region the same edge. A layout that moves when the reader clicks reads as broken.
 
-**Serves.** No spec rule: a UI layout decision taken from the user's own reading of the site.
-
-**Aliases.** `PO-22/6`, `W324`, `W325`, `W325/3`, `W326`, `W328`, `W328/7`, `W333`
+**Serves.** No spec rule: a UI layout decision.
 
 ### The reading room is calm, themed and bounded on any display
 
-**Decision.** The palette is a cool, low-glare pair for light and dark, chosen by the reader through a theme control and remembered per browser. On a wide window the whole shell is held at one ceiling and centred, the prose measure and that ceiling move together, a page's secondary block (the outline, the index's explanation) becomes a third column, the narration bar spans the content width, the first page carries the rail too, and the trail names each level once.
+**Decision.** `palette.css` defines every colour token once, on a cool slate scale with one accent, for both a light and a dark theme. No other stylesheet defines a colour. The page follows the system scheme until the reader picks light, dark or system with the theme control (`theme.js`). That choice is kept in the reader's display record in browser storage, and a boot in `page.html` applies it before first paint. On a wide window (`chrome.css`), the whole shell is held at one ceiling (`--page-max`) and centred. The page's secondary block (a unit's outline, the index's explanation) becomes a third column (`--aside`), and the narration bar spans every column right of the rail. The root index carries the rail too. The trail and the rail do not print the corpus's level word, because indentation already shows depth.
 
-**Why.** The user reads the site for hours and found the earlier palette tiring and the width either wasted or runaway.
+**Why.** The site is read for hours at a time, so the palette must not tire the eye, and the reader must be able to choose a theme. Width must be neither wasted on a large display nor allowed to grow without limit.
 
-**Serves.** No spec rule: a UI decision taken from the user's own feedback.
-
-**Aliases.** `W388`, `W388/13`
+**Serves.** No spec rule: a UI decision for long reading sessions.
 
 ### The site has one framework identity, worded for a reader
 
-**Decision.** Every corpus's site shares the framework's own look: vendored, pinned faces, a margin rule drawn once down every page, the trail above the title, a one-row narration transport, and chrome split into four parts by job (`chrome.css`, `lists.css`, `onward.css`, `notes.css`) with no colour or class in any of them. What the reader reads uses the reader's words (titles, counts in sentences) and never builder slugs or variant identifiers.
+**Decision.** Every corpus's site shares the framework's own look. Its faces are vendored, pinned by sha256 and embedded in the stylesheet (`render.pageassets.faces`: Charis, Andika, JetBrains Mono). A margin rule is drawn once down every page (`body::before`), the trail sits above the title, and the narration transport is one row. Chrome styling is split by job into `chrome.css`, `lists.css`, `onward.css` and `notes.css`, none of which defines a colour or targets a class. Words shown to the reader use the reader's vocabulary (titles, counts in sentences), never builder slugs or variant identifiers.
 
-**Why.** A design brief's tells and builder vocabulary on the page make the site look generated rather than written for a learner.
+**Why.** Builder vocabulary on the page makes the site look generated rather than written for a learner, and a single identity keeps every corpus's site recognisably the same product.
 
 **Serves.** `R1, R13`
 
-**Aliases.** `W362`
-
 ### A unit page is headed by its material's own opening heading
 
-**Decision.** When the material opens with a heading, that heading becomes the page's `<h1>` and is withheld from the body (`page.anchors.title_heading`, `page.section`); the unit's own title still names the unit in the `<title>`, the trail, the contents and the bar. A unit whose material states no title is headed by the unit title, and narration treats the promoted heading as passage one.
+**Decision.** `render.page.anchors.title_heading` can promote the first block of the opening section when that block is a heading. It promotes it when nothing else in the section stands at its declared level, or when its text matches the unit's title. A promoted heading becomes the page's `<h1>` (`render.page.document`). It keeps its anchor and narration clip, and `render.page.section` withholds it from the body and from the outline. The unit's own title still names the unit in the `<title>`, the trail, the contents and the bar. When the material states no title, the page is headed by the unit title.
 
-**Why.** Printing both the unit title and the material's first heading made every page read its title twice.
+**Why.** A page that prints both the unit title and the material's first heading shows its title twice. Promoting the heading instead of deleting it keeps every bookmark and audio passage addressed as before.
 
 **Serves.** `R1`
 
-**Aliases.** `W388/17`, `W407`
-
 ### A read mark shows on the rail and is spoken to assistive technology
 
-**Decision.** Each rail unit row carries the unit key as `data-unit` (never an `id`, which the container listing already uses), and `progress-view.js` sets `data-marked` on rows the store holds so they end in a tick. Every read row in the rail and both lists carries hidden words saying it is read, kept in the accessibility tree and off the screen.
+**Decision.** In `render.page.rail`, each unit row carries the unit key as `data-unit`, never as an `id`, because the container listing already uses the key as an id. At read time, `progress-view.js` sets `data-marked` on the rows the store holds, and CSS ends those rows in a tick. Every keyed row in the rail and in both lists carries the words from `templates/read-state.html`. They are emitted `hidden`, shown on read rows, and kept visually hidden but in the accessibility tree by `chrome.css`.
 
-**Why.** A mark the reader set must be visible wherever the unit is listed, and a tick alone tells a screen reader nothing.
+**Why.** A mark the reader set must be visible wherever the unit is listed, and a tick alone tells a screen reader nothing. Setting the mark at read time keeps a built page byte-identical whoever opens it.
 
 **Serves.** `R8, R10`
 
-**Aliases.** `W368`, `W383`
-
 ### A built page names no API and no origin
 
-**Decision.** The practice panel reads only `window.studyforge.run`; the execution client is inserted by the serving process (`serve.routes.assets`), never written into built HTML, and the run's verdicts arrive on the run's own stream. Over `file://` the object is absent, the controls stay hidden and the panel says why.
+**Decision.** The practice scripts (`practice.js`, `practice-editor.js`) reach the server only through `window.studyforge.run`. The execution client that defines it (`src/studyforge/serve/assets/run-client.js`) is inserted by the serving process (`serve.routes.assets`) into the pages it serves and is never written into built HTML. A run's per-case verdicts arrive on the run's own response stream. Over `file://` the object is absent, so the controls stay hidden and the panel says why.
 
-**Why.** Only a server knows it is a server, and a built page that named an endpoint would break the offline floor.
+**Why.** Only a server knows it is a server. A built page that named an endpoint, an origin or the client file would break the offline floor.
 
 **Serves.** `R8`
 
-**Aliases.** `W370`
-
 ### Maximising the practice panel changes geometry only
 
-**Decision.** The maximise control is one real button emitted with both of its labels in the template; `practice.js` sets the state attribute and `practice.css` gives the panel the viewport, without moving the panel in the document. The scroll position is remembered on maximise and restored instantly on return.
+**Decision.** The maximise control is one real button in `templates/practice-panel.html`. It carries both of its labels and is emitted hidden. `practice.js` shows it where the panel is live and toggles the panel's state attribute (Escape also restores). `practice.css` then gives the panel the viewport without moving it in the document. The scroll position is remembered on maximise and restored instantly on return.
 
-**Why.** Reparenting the panel would disturb the editor frames, and a reader who restores the panel must land where they were.
+**Why.** Moving the panel elsewhere in the document would disturb the editor frames, and a reader who restores the panel must land where they were.
 
 **Serves.** No spec rule: a practice-panel UI decision.
 
-**Aliases.** `W431`, `W431/1`
-
 ### The page never shows a control it cannot honour
 
-**Decision.** A practice renders only the controls it can serve: a quiz has no file, command or grader, so it gets no Run and no Submit rather than disabled ones, and the refusal lives in `render/page/practice.py`, where the markup is emitted, not in a script that hides controls.
+**Decision.** `src/studyforge/render/page/practice.py`, where the markup is emitted, renders only the controls a practice can serve. A quiz has no file, command or grader, so it renders through `render.page.quiz` with no Run and no Submit, not with disabled ones. Run is emitted for other practices, and Submit is emitted only where the record names a test command. No script hides controls after the fact.
 
 **Why.** A dead or disabled button is a promise the page cannot keep.
 
 **Serves.** `R5`
 
-**Aliases.** `AX-05/3`, `SF-24`
-
 ### After a Submit the panel shows every declared case with its result
 
-**Decision.** `render/page/practice.py` emits each case the practice declares (its id, kind and the corpus's own sentence), and `practice.js` marks each with what the run reported, under a sentence counting the main ask and the edge cases; the counts are derived, never recorded, and an incomplete practice is not shown as a failed one. The two editor windows are drawn by `practice-editor.js`, separate from the controls and the run, and the reference solution ships in the page as a withheld disclosure.
+**Decision.** For a practice that breaks down its Submit, `render.page.practice.breakdown` emits every declared case with its id, its kind and the corpus's own sentence. `practice.js` marks each case with the verdict this run reported, under a sentence giving the main ask and the edge cases passed. The counts are derived and never recorded. A breakdown whose case set differs from the panel's shows nothing. An incomplete practice is not shown as a failed one. The two editor windows are drawn by `practice-editor.js`, separate from the controls and the run. The reference solution is emitted by `exercise.bundle.emit` as a closed `disclosure` block in the page, openable at any time.
 
-**Why.** After a Submit the reader's question is what is still missing, and the grader's raw log is where they go next, not first.
+**Why.** After a Submit, the reader wants to know what is still missing. The grader's raw log comes second.
 
 **Serves.** `R1, R5, R8`
 
-**Aliases.** `AX-09`
-
 ### A block whose type is not a name is refused by name
 
-**Decision.** The block dispatcher in `render/page/blocks/__init__.py` checks that a block's `type` is a string before using it as a lookup key, and refuses otherwise with a description of what arrived rather than a quote of it. Individual renderers do not repeat the guard.
+**Decision.** `render_one` in `src/studyforge/render/page/blocks/__init__.py` checks that a block's `type` is a string before using it as a lookup key. Otherwise it raises `PageError` with a description of what arrived, not a quote of it. Individual renderers do not repeat the guard.
 
-**Why.** An array or object type is reachable from a served archive and would otherwise escape as a bare `TypeError`.
+**Why.** A served archive can reach the dispatcher with an array or object as a block type, and an unhashable key would otherwise escape as a bare `TypeError` instead of a page's refusal.
 
 **Serves.** `R6, R7`
 
-**Aliases.** `W303`
-
 ### Syntax highlighting uses a vendored bundle with a declared language set
 
-**Decision.** Fences are highlighted by a vendored Prism bundle whose header declares its languages on one line; `grammars.py` reads that line, a fence in an undeclared language falls back to plain text and says so, and a test runs the bundle to check the declared set both ways, including that XML and markup fences are tokenised. The header is read within a bounded character window wide enough for the declared line.
+**Decision.** Fences are highlighted by a vendored Prism bundle (`src/studyforge/render/assets/prism.js`) whose header declares its languages on exactly one `Languages:` line. `render.pageassets.grammars` reads that line from the header, which is read within the bounded window `HEADER_CHARS` in `render.pageassets.vendored`. The line must declare the `plain` fallback. A fence in an undeclared language falls back to plain text, and the figure says so. `tests/studyforge/render/pageassets/test_highlight_grammars.py` runs the bundle under a JS runtime and checks the declared set against the bundled grammars both ways, including that XML and markup fences are tokenised.
 
-**Why.** A language list nobody checks drifts the day a grammar is re-vendored, and material such as the ISO corpus depends on highlighted XML.
+**Why.** A language list nobody checks drifts as soon as a grammar is re-vendored. The framework knows no corpus's languages, so what is highlightable is what the bundle declares and the test proves.
 
 **Serves.** `R8, R10`
 
-**Aliases.** `ISO-06`, `W243/1`, `W295`
-
 ### The root index opens levels by a row budget, not by corpus
 
-**Decision.** `render.index.policy` opens each level of the index tree only while the rows shown at once stay inside `VISIBLE_ROW_BUDGET`, a constant about a reader (roughly two screenfuls), so a small corpus renders fully open and a large one folds its long tail.
+**Decision.** `render.index.policy` opens each level of the index tree only while the rows shown at once stay within `VISIBLE_ROW_BUDGET` (60). This is a constant about a reader, not about any corpus, so a small corpus renders fully open and a large one folds its long tail.
 
-**Why.** A one-level and a four-level corpus want opposite defaults, and neither may be a branch on which corpus it is.
+**Why.** A one-level corpus and a four-level corpus want opposite defaults, and neither may be chosen by branching on which corpus it is.
 
 **Serves.** `R1`
-
-**Aliases.** `Ruling 165`
 
 ## Serving, execution and exercises
 
 ### A Submit's breakdown is keyed by case id and read only from the run's own report
 
-**Decision.** The per-case verdicts are recorded by case id, and every count and failed-case sentence is derived from them joined with the practice's declared cases. A report older than the instant the run started is refused rather than folded, and the fold in `exercise.report` never reads a clock itself.
+**Decision.** `serve.routes.breakdown` records a Submit's per-case verdicts as `{case id: passed}`. Every count and failed-case sentence is derived from those verdicts joined with the practice's declared cases. `exercise.report.breakdown_of` takes `started`, the wall-clock time the caller read before starting the run. It refuses a report file whose modification time is older than that, allowing `CLOCK_SLACK` for coarse filesystem timestamps, rather than folding it. The fold never reads a clock itself.
 
-**Why.** The reader-facing sentence goes stale when a corpus is regenerated while the id does not, and a report left by an earlier run would otherwise be credited to this one.
+**Why.** A case id stays stable when a corpus is regenerated, while the reader-facing sentence can change. A report left by an earlier run must not be credited to this one.
 
 **Serves.** `R6`, `R10`
 
-**Aliases.** `AX-01`
-
 ### The bundle holds the pristine material and the workspace holds the reader's copy
 
-**Decision.** An authored exercise has two roots: the bundle keeps the starter, reference, tests and plants untouched, and `emit` writes the reader's working copy into a separate workspace that the record's `main_path` names. Every file the gate record digests is one no reader edits.
+**Decision.** An authored exercise has two roots. The bundle keeps the starter, reference, tests, plants and build files untouched. `exercise.bundle.emit` writes the reader's working copy (the starter, the tests and the build files) into a separate workspace, and the record's `main_path` and `test_path` name that workspace. The gate record digests only bundle files, which no reader edits.
 
-**Why.** With one root, doing the exercise would change the digested starter and every worked corpus would fail validation.
+**Why.** With one root, doing the exercise would change the digested starter, and every worked corpus would fail validation.
 
 **Serves.** `R5`
-
-**Aliases.** `AX-11`
 
 ### A bundle's file set is closed
 
-**Decision.** A bundle may hold only its document, statement, gate record and the files under its starter, reference, tests, plants and build directories; `bundle.layout.unpermitted` names anything else and `studyforge validate` refuses it. The report path in a bundle document must lie in the workspace, so it cannot address the bundle at all.
+**Decision.** A bundle may hold only `bundle.json`, `statement.md` and `gates.json`, plus files under its `starter`, `reference`, `tests`, `plants` and `build` directories. `exercise.bundle.layout.unpermitted` names anything else, and `studyforge validate` (`validate.exercises`) refuses it. The report path in a bundle document is workspace-relative (`exercise.bundle.document`), so it cannot address the bundle at all.
 
-**Why.** A test report carries the machine's hostname, and a corpus repository is outside this repository's own personal-data sweep.
+**Why.** A test report carries the machine's hostname. A bundle that may hold anything is a bundle someone commits a report into, and a corpus repository is outside this repository's own personal-data sweep.
 
 **Serves.** `R7`
 
-**Aliases.** `AX-03/1`
-
 ### Every run's output lands in one ignored directory
 
-**Decision.** All of a run's artifacts, the test report included, are written under one fixed directory inside the workspace (`RUN_OUTPUT_DIRNAME`), so a corpus ignores every run artifact with a single line (`RUN_OUTPUT_IGNORE`). A bundle file under a directory of that name is refused wherever it sits.
+**Decision.** `exercise.bundle.layout` fixes one run-output directory inside the workspace, `RUN_OUTPUT_DIRNAME` (`target`). A bundle's report path must lie inside it, so a corpus ignores every run artifact with the single line `RUN_OUTPUT_IGNORE` (`target/`). A bundle file under a directory of that name is refused wherever it sits, and so is a build file declared there.
 
-**Why.** One convention keeps run artifacts out of every commit without a per-exercise ignore rule.
+**Why.** One convention for every exercise keeps run artifacts out of every commit without a per-exercise ignore rule.
 
 **Serves.** `R3`, `R7`
 
-**Aliases.** `ISO-M10/4`
-
 ### A plant is filed by its position, never by its case id
 
-**Decision.** A planted solution lives in a directory named for the edge case's ordinal in the record's cases; the case id reaches only the gate record's role field, where it is bounded, and never a path segment.
+**Decision.** A planted solution lives under `plants/edge-N`, where N is the edge case's ordinal among the record's edge cases (`exercise.bundle.layout.plant_dirname`). The case id reaches only the gate record's role field, where it is bounded, and is never a path segment.
 
-**Why.** A valid case id may contain slashes and colons and could spell a path outside the bundle.
+**Why.** A valid case id may contain slashes and colons, so it could spell a path outside the bundle.
 
 **Serves.** No spec rule: path safety against corpus data that can look like a path.
 
-**Aliases.** `AX-03/4`
-
 ### An exercise's dependencies arrive through its build role and the runner image's prime
 
-**Decision.** A bundle may carry build files, declared by name in `bundle.json`, digested by the gate record and laid into the workspace; the framework never reads them. The libraries themselves are never corpus files: the runner image's prime is warmed from the same declaration, and a prime must compile a real source and pass a real test to be accepted, so a graded run resolves dependencies with no network.
+**Decision.** A bundle may carry build files. They are declared by name under `build` in `bundle.json`, digested by the gate record and copied into the workspace by `exercise.bundle.emit`, and the framework never reads their contents. The libraries themselves are never corpus files. The runner image's prime is warmed from the same declaration (`studyforge.skills.execution.prime`). A prime is accepted only if the build compiles a real source and a real test for each declared language. So a graded run resolves its dependencies with no network.
 
-**Why.** Without a build declaration an exercise whose tests import a library could not be graded, and branching on a language would break source-agnosticism.
+**Why.** Without a build declaration, an exercise whose tests import a library cannot be graded, and branching on a language would break source-agnosticism.
 
 **Serves.** `R1`, `R8`, `R15`
 
-**Aliases.** `TC-03`, `W390`, `W436`
-
 ### A second gate family extends the gate record by registering
 
-**Decision.** The quiz gates live in their own sub-package and join the shared gate record by declaring a family and calling `register`, using only the names `exercise.gates` exports. The families, record and digest modules are not edited to add one.
+**Decision.** A gate family joins the shared gate record by declaring a `Family` and calling `register` from `exercise.gates.families`, using only names `exercise.gates` exports: the quiz gates in their own sub-package, `studyforge.exercise.gates.quiz`, and the derivation's two gates (`D1`, `D2`) in `exercise.gates.derivation`. The `families`, `record`, `digests` and `runs` modules take no edit for a new family; the one line added outside it is its import in `exercise/gates/__init__.py`. Every family's record is one file, `gates.json`, versioned by `gates_api` as its first key (`exercise.gates.record.GATES_API`) and read through `version.check`; a record with no `gates_api` is read as version 1 only when its keys are exactly the earlier shape (`UNVERSIONED_KEYS`), and any other record without the key is refused naming it.
 
-**Why.** Gate families must be addable without reaching inside the package that verifies them all.
+**Why.** It must be possible to add a gate family without reaching inside the package that verifies them all, and completeness rules apply to a family as soon as it registers. A record committed before the version key is read rather than refused, because re-running its gates would re-run judgements made once at authoring.
 
-**Serves.** `R5`, `R17`
+**Serves.** `R5`, `R9`, `R17`, `R21`
 
-**Aliases.** `AX-06`, `W199/3`
+### A shipped grader is authoritative only through its derivation, and one that was not derived says so
+
+**Decision.** `studyforge validate` checks every exercise whose grader is `authoritative`, declared or defaulted from `bundled` (`studyforge.validate.derived`). It requires the record of the derivation's two gates at the practice's `gates.json`: `D1`, one `hole:<method>` key for each blanked method with the failure it caused, and `D2`, the shipped test passing on the original, over a `starter`, `reference` and `tests` spelled from the corpus root that are the exercise's own `main_path` and `test_path`. A missing, unreadable or unsupporting record is `derivation-record`, a gate that did not hold is `derivation-shortfall`, and a named file that changed since the gates ran is `derivation-digest`. A grader that ships with the material and was not derived declares `advisory`, and its page says so in its own sentence (`templates/practice-grader-bundled.html`, chosen by `Exercise.ships_with_material` in `render.page.practice`): the tests ship with the material and have not been proven to catch a wrong answer.
+
+**Why.** Blanking each taught method and watching the shipped test fail is what shows the test catches a wrong answer, so a claim of `authoritative` without that proof is refused rather than believed, and a reader is never told a shipped test was written for the site.
+
+**Serves.** `R5`, `R6`
 
 ### The reader starts the runner container and the framework only probes it
 
-**Decision.** The reader brings up the runner container with the toolchain component's documented run line; `execute` only inspects that it is up over this root and reaches in with the command's argv verbatim, falling back to host mode with the same argv. It never starts, stops or builds a container, and the runtimes a corpus may declare are a closed set of names.
+**Decision.** The reader starts the runner container (named `studyforge-runner-<source>`, `execute.commands.CONTAINER_PREFIX`) with the toolchain component's documented run line. `execute.mode.ModeProbe` only inspects it with `docker inspect`. It counts as up only when it is running and mounts this source root at `/work`, and the answer is cached for `MODE_TTL`. The run reaches in with `docker exec` and the command's argv verbatim. Any failure to probe falls back to host mode with the same argv. The framework never starts, stops or builds a container. The runtimes a corpus may declare are the closed set `corpus.manifest.runtimes.RUNTIMES`.
 
-**Why.** Starting containers would put daemon access in the framework's hands, which the serving process must never hold.
+**Why.** Starting containers would put daemon access in the framework's hands, and the serving process must never hold it. A container that mounts a different checkout would grade files the reader is not editing.
 
 **Serves.** `R15`
 
-**Aliases.** `round 112`
-
 ### Run output is written relative to the source root in both modes
 
-**Decision.** `execute.output.LineGate` rewrites each mode's own absolute root to a relative path, then scrubs the line, so the container and the host print the same text.
+**Decision.** `execute.output.LineGate` rewrites every spelling of the run's root, whether the container's `/work` or the host path, to a relative path, then scrubs the line. The container and the host therefore print the same text.
 
-**Why.** Absolute paths differ between modes and the host spelling contains a home directory.
+**Why.** Absolute paths differ between modes, and the host spelling contains a home directory.
 
 **Serves.** `R7`, `R15`
 
-**Aliases.** `TC-00/6`
-
 ### A run leaves the reader's tree as it found it
 
-**Decision.** The runner sets an environment that stops Python writing bytecode caches beside the file under test, identically in both modes.
+**Decision.** `execute.runner.RUN_ENVIRONMENT` sets `PYTHONDONTWRITEBYTECODE=1` (and `PYTHONUNBUFFERED=1`) for every run, in the host environment and as `-e` arguments to the container run, so Python writes no bytecode cache beside the file under test.
 
-**Why.** A grader imports the reader's file and would otherwise litter the source tree.
+**Why.** A grader imports the reader's file, and otherwise Python would leave `__pycache__` directories in the source tree.
 
 **Serves.** `R3`
-
-**Aliases.** `W352/3`
-
-### The page filters build noise and the terminal does not
-
-**Decision.** Output streamed to a page passes `execute.quiet`, which drops only the declared build tool's banners, timings and footers and keeps every error, stack frame and exit line; an unknown or ambiguous toolchain passes unfiltered. The terminal command shows raw output.
-
-**Why.** Readers need the program's output, not the build tool's chatter, but a filter must never hide a failure.
-
-**Serves.** `R6`
-
-**Aliases.** `SF-29`
 
 ### The editor's location is published only by the served index
 
-**Decision.** Where a corpus's editor runs is answered at serve time by the run namespace's index as a map from source to origin and folder, never built into a page. The editor container is found by one fixed naming convention, because its contract does not declare a name.
+**Decision.** Where a corpus's editor runs is answered at serve time by the run namespace's index (`serve.routes.run.index`, from `serve.routes.runs.Runs.editors`) as a map from corpus source to origin and folder, and it is never built into a page. The editor container is found by one fixed naming convention, `execute.commands.EDITOR_CONTAINER_TEMPLATE` (`studyforge-{source}-editor-1`, the name Compose derives), because the editor's consuming contract declares no name.
 
-**Why.** The editor's host port is chosen per project and a built page may name no origin or port.
+**Why.** The editor's host port is chosen per project, and a built page may name no origin or port.
 
 **Serves.** `R8`
-
-**Aliases.** `SK-09/4`, `W416`, `W416/1`
 
 ### A practice opens as two windows of one editor
 
-**Decision.** A code practice shows the file to edit and its test as two tabs, each a window of the same editor opened at a server-provided URL, never a split pane. The test tab appears only when a test is named, and preparing the windows writes the workspace settings and starts nothing.
+**Decision.** A code practice shows the file to edit and its test as two tabs, each a frame of the same editor opened at a URL the server provides (`execute.workbench.open_url`, answered by `serve.routes.runs.Runs.practice_editor`), one visible at a time and never a split pane (`render/assets/practice-editor.js`). The tablist is shown only when the practice names a test. Preparing the windows writes the practice's workspace settings and starts nothing: `execute.workbench` imports no process module.
 
-**Why.** Side-by-side halves the width of both files, and only a window's own URL can tell the two apart.
+**Why.** Side by side halves the width of both files, and a window's own URL is the only thing that can tell two windows of one editor apart, because both share one workspace settings file.
 
 **Serves.** `R8`
-
-**Aliases.** `W429`
 
 ### The frame policy is composed per response from every editor the instance has discovered
 
-**Decision.** `frame-src` is built for each response and host from the origins the instance's run record has ever discovered, read without forking a probe; that record does not expire, and with no editor the policy is `'none'`. Only loopback origins are admitted and a wildcard never is.
+**Decision.** `frame-src` is composed for each response and `Host` by `serve.security.content_policy` from `serve.routes.runs.Runs.origins`, which returns every editor origin the instance has discovered, read without forking a probe. That record lasts for the life of the process and does not expire; with no editor discovered the directive is `'none'`. `serve.security.frame_origin` admits only loopback `http` or `https` origins and never a wildcard. Being framed is refused separately and permanently by `frame-ancestors 'none'` and `X-Frame-Options: DENY`.
 
-**Why.** A policy tied to a short probe cache went back to blocking the editor seconds after it was found, and a framing check must be taken on both sides of the embed.
+**Why.** A policy tied to a short-lived probe cache would block the editor again seconds after it was found, while a stale entry grants nothing beyond a frame that fails to load. Framing is two-sided: what a page may embed and what may embed the page are separate directives with opposite answers.
 
 **Serves.** `R8`
 
-**Aliases.** `W416/2`, `W427`, `W430`
-
 ### The editor enforces read-only and the page never claims it
 
-**Decision.** Everything but the practice's own file is made read-only through workspace settings the server writes, and the workbench's side surfaces are closed by settings and a lockdown extension. The page carries no guard of its own and says nothing about read-only.
+**Decision.** `execute.workbench.settings` makes every file read-only through `files.readonlyInclude` and excludes only the practice's own file through `files.readonlyExclude`; the test stays read-only. The workbench's side surfaces are closed by the settings in `execute.workbench.CLOSED` and by the lockdown extension in the editor image. The page carries no guard of its own and says nothing about read-only.
 
-**Why.** A page-side guard would be a weaker copy of a rule the editor keeps, and the lock is only as strong as the editor's own confinement.
+**Why.** A page-side guard would be a weaker copy of a rule the editor keeps, and the lock is only as strong as the editor image's own confinement of its settings surfaces.
 
 **Serves.** `R5`
 
-**Aliases.** `W432`, `W433`
-
 ### Workbench settings never enter the corpus's commits
 
-**Decision.** The settings written into a corpus's editor folder are kept out of version control by an ignore file inside that folder that names the settings file, its staging file and itself, never a wildcard and never the repository's root ignore file.
+**Decision.** `execute.workbench.write_settings` first writes `.vscode/.gitignore` inside the practice's editor folder, naming the settings file, its staging directory and the ignore file itself, never a wildcard and never the repository's root ignore file. An ignore file already there is left as it is, and a settings file this framework did not write is refused rather than overwritten.
 
-**Why.** A served corpus went dirty the first time a reader opened a practice.
+**Why.** The editor folder is inside the corpus's own tree, so the settings are machine-local files written into a source repository, and generation must leave that repository's tracked state and existing files alone.
 
 **Serves.** `R3`
-
-**Aliases.** `W435`
 
 ### Each practice opens its own editor folder and owns its lock
 
 **Decision.** A practice's editor windows open the deepest directory holding every file the practice names (its main file, its test, and each file its run or test command names), found by `execute.workbench.practice_folder`, and the read-only lock is written into that folder's own `.vscode/settings.json`. Opening one practice never changes another's lock, and each settings write stages its own temporary file, so two practices on one page can be opened at once. `serve.routes.runs` asks for the folder before it writes the settings.
 
-**Why.** With one folder for every practice, the one settings file named only the practice opened last as editable, and two practices on one page raced for that file and one was refused.
+**Why.** One settings file shared by every practice could name only one practice as editable, and two practices opened together would race for it.
 
 **Serves.** `R5`
-
-**Aliases.** `W446`
 
 ### The practice editor wears the page's code colours
 
 **Decision.** A practice's editor is painted in the same colours as the page's code blocks, in the light and the dark theme. `execute.editor_theme` builds the workspace colour settings and `execute.page_colours` reads each colour, when it is asked for, from `palette.css`, `code-highlight.css` and `reading.css`. Neither module holds a colour of its own, and the colours travel in the practice's workspace settings, so the editor image stays generic.
 
-**Why.** A second, hand-kept copy of the palette would drift from the page, and the editor had worn code-server's stock theme beside the page's code.
+**Why.** A second, hand-kept copy of the palette would drift from the page, and a practice file should look like the code beside it.
 
 **Serves.** `R13`
 
-**Aliases.** `W455`
-
 ### The editor image carries no AI assistant
 
-**Decision.** The editor image carries neither the bundled chat extension nor the Copilot CLI, and no editor session starts an agent host. This rule is kept in the `code-server-toolchain` repository, in its editor image (`docker/editor/Dockerfile`) and its tests (`tests/test_editor_agent_host.py`), and the image build fails if the Copilot CLI returns. It was the user's ruling.
+**Decision.** The editor image carries neither the bundled chat extension nor the Copilot CLI, and no editor session starts an agent host. This rule is kept in the `code-server-toolchain` repository, in its editor image (`docker/editor/Dockerfile`) and its tests (`tests/test_editor_agent_host.py`), and the image build fails if the Copilot CLI returns.
 
-**Why.** On a container that can reach the internet, the agent host started a program that could send a reader's code off the machine, and studying offline needs no such program.
+**Why.** An agent host on a container that can reach the internet can send a reader's code off the machine, and studying offline needs no such program.
 
 **Serves.** `R7`
-
-**Aliases.** `W454`
 
 ### A component is read through what it declares
 
-**Decision.** How the runner image is run comes from the run shape declared in its consuming contract, not from parsing its README, and an image is judged by the runtimes its label declares rather than by what it happens to contain.
+**Decision.** How the runner image is run comes from the `runner` block of its `consuming.json`, never from its README (`tests/studyforge/execute/container.py`), and an image is judged by the runtimes its `org.studyforge.runner.runtimes` label declares rather than by what it happens to contain (`tests/studyforge/execute/test_quiet_image.py`): an image whose label does not declare the runtime a case needs makes that case skip by name.
 
-**Why.** Prose and incidental contents are not interfaces, and reading them made a rewording or a bad build a silent break or a false pass.
+**Why.** Prose and incidental contents are not interfaces: reading them turns a rewording into a silent break and a mis-built image into a false pass.
 
 **Serves.** `R18`, `R21`
 
-**Aliases.** `TC-05/3`, `W374`, `W401`
-
 ### The progress record is never served as content
 
-**Decision.** `serve.routes.assets` refuses the reader's progress store by matching it anywhere in the resolved path, derived from `progress.store_dir`, so symlinks and any serving root depth are covered; the record reaches a browser only through the state namespace.
+**Decision.** `serve.routes.assets.resolve` refuses the reader's progress store by matching `PROGRESS_PREFIX`, derived from `progress.store_dir`, anywhere in the resolved path, so symlinks and any serving root depth are covered. The record reaches a browser only through the state namespace.
 
-**Why.** The store sits beside generated pages and the static mount would otherwise hand it out.
+**Why.** The store sits beside generated pages, and the static mount would otherwise hand it out.
 
 **Serves.** `R7`
 
-**Aliases.** `SF-19a/2`, `SF-21/2`, `SF-39/4`
-
 ### The generated directory is the one dot-directory served, and only beside a manifest
 
-**Decision.** Path resolution refuses every dot-prefixed segment except the build's generated directory, when it is the first segment or sits beside a `corpus.json`; no mount list is configured.
+**Decision.** `serve.routes.assets.resolve` refuses every dot-prefixed path segment except the build's generated directory, when it is the first segment or sits beside a `corpus.json`; no mount list is configured.
 
 **Why.** Pages link into that directory, and the manifest on disk is what says a corpus is there.
 
 **Serves.** `R4`, `R8`
 
-**Aliases.** `SF-19b/2`
-
 ### A corpus's record root and its page scan root are two paths
 
-**Decision.** A served corpus keeps its manifest, unit documents and progress at `root` and scans pages at `scan_root`, which defaults to `root`; a site built elsewhere is scanned where it was written.
+**Decision.** A served corpus (`serve.discovery.ServedCorpus`) keeps its manifest, unit documents and progress at `root` and scans pages at `scan_root`, which defaults to `root`; a site built elsewhere with `build --out` is scanned where it was written (`serve.instance.site_discovery`).
 
-**Why.** Scanning the corpus root for an out-of-tree site would report every page absent.
+**Why.** The corpus root holds no page of an out-of-tree site, so scanning it would report every page absent.
 
 **Serves.** `R4`
 
-**Aliases.** `W380/2`, `W385`
-
 ### A quiz's key never leaves the local study server
 
-**Decision.** No built page, no page asset and no other response of the serving process carries which option of a quiz is correct or any option's sentence. The key stays in the practice document on disk. The page sends the reader's choices to `serve.routes.quiz`, which grades them with the framework's one rule, `exercise.quiz.grading.grade`, and returns only the sentence for the option the reader chose. `serve.withheld` redacts quiz options from the content namespace's unit documents and makes the static mount refuse a file that carries a served quiz's key. Over `file://` a quiz shows its questions and says it needs the local study server to check them. It was the user's ruling, and spec §7 §7 states it.
+**Decision.** No built page, no page asset and no other response of the serving process carries which option of a quiz is correct or any option's sentence. The key stays in the practice document on disk. The page (`render/assets/practice-quiz.js`) sends the reader's choices to `serve.routes.quiz`, which grades them with the framework's one rule, `exercise.quiz.grading.grade`, and returns only the sentence for the option the reader chose. `serve.withheld` redacts quiz options from the content namespace's unit documents and makes the static mount refuse a file that carries a served quiz's key. Over `file://` a quiz shows its questions and says it needs the local study server to check them. Spec §7 (part 7) states the rule.
 
 **Why.** A key that the page or a published URL delivers can simply be read, so the quiz would check nothing.
 
 **Serves.** `R5`
 
-**Aliases.** `W451`, `W452`
-
 ### A page's exercises are planned by the important ideas it teaches
 
-**Decision.** A page's plan lists its aspects, the important ideas it teaches that a reader could be checked on, read from its prose and its code. Each aspect is checked by a named exercise or quiz question, or carries a written reason. One exercise may check several related aspects and is preferred over several small unrelated ones. Trivia such as dates is carried by a reason, a quiz asks few questions, and zero exercises is a valid plan for a page with nothing checkable. The count is neither a ceiling set by prose length nor a quota. `skills.exercises.aspects` refuses an aspect with no outcome or with two, `skills.exercises.plan` turns aspects into the plan, and a report planned under an older `plan_api` is refused so the unit is planned again. It was the user's ruling and refinement, and spec §7 §4 states it.
+**Decision.** A page's plan lists its aspects, the important ideas it teaches that a reader could be checked on, read from its prose and its code. Each aspect is checked by a named exercise or quiz question, or carries a written reason. One exercise may check several related aspects and is preferred over several small unrelated ones. Trivia such as dates is carried by a reason, a quiz asks few questions, and zero exercises is a valid plan for a page with nothing checkable. The count is neither a ceiling set by prose length nor a quota. `skills.exercises.aspects` refuses an aspect with no outcome or with two, and two aspects that state one idea; `skills.exercises.plan` turns aspects into the plan (`PLAN_API`); and `skills.exercises.corpus` refuses a report planned under an older `plan_api`, so the unit is planned again. Spec §7 (part 4) states the rule.
 
-**Why.** A cap set by prose length left most of a code-heavy corpus's examples unpractised, and an aspect that nobody accounted for is how a thin plan hides.
+**Why.** A count set by prose length leaves most of a code-heavy page's examples unpractised, and an aspect nobody accounted for is how a thin plan hides; writing each aspect's outcome down makes the judgement reviewable.
 
 **Serves.** `R6`
-
-**Aliases.** `W453`
 
 ### An authoring pass never drops a ledger row it did not read
 
-**Decision.** The corpus's one exercise ledger is merged, not rewritten: `skills.exercises.merge` keeps every committed row for a page the pass did not read while that page is still on disk, and reports what was kept, added, changed and dropped, where a dropped row is always one whose page is gone. `validate.ledger` refuses a committed ledger that stops accounting for a material page, meaning a fenced example or declared grader that is neither the basis of an exercise nor given a written reason.
+**Decision.** The corpus's one exercise ledger is merged, not rewritten: `skills.exercises.merge` keeps every committed row for a page the pass did not read while that page is still on disk, and reports what was kept, added, changed and dropped, where a dropped row is always one whose page is gone. `validate.ledger` refuses a committed ledger that stops accounting for a material page, meaning a fenced example or declared grader that is neither the basis of an exercise nor given a written reason; it re-scans the page on disk rather than trusting the ledger.
 
-**Why.** A pass over one container had rewritten the ledger with that container's rows alone, and validate still reported nothing wrong.
+**Why.** The ledger is one file for the whole corpus, so a pass over part of the corpus must not own all of it, and the proof that nothing is lost cannot live only in the writer.
 
 **Serves.** `R6`
 
-**Aliases.** `W456`
-
 ### The served page admits its embedded typefaces
 
-**Decision.** The served page's content security policy in `serve.security` allows `data:` for fonts, as it already did for images, and no other directive is widened for them. The faces stay embedded in `page.css` by `render/pageassets/faces.py`.
+**Decision.** The served page's content security policy in `serve.security` allows `data:` for fonts (`font-src 'self' data:`), as it does for images, and no other directive is widened for them. The faces stay embedded in `page.css` by `render/pageassets/faces.py`.
 
-**Why.** Embedding is what lets `file://` carry the faces, and a `'self'`-only font policy blocked every one of them on the served site, so the served site had never shown its typography.
+**Why.** Embedding is what lets `file://` carry the faces, and a `'self'`-only font policy would block every embedded face on the served site.
 
 **Serves.** `R8`
-
-**Aliases.** `W450`
 
 ## Narration
 
 ### Narration lights nothing until the reader starts it, and a missing clip says so once
 
-**Decision.** On load the transport names where narration will start but no passage is lit; `data-speaking` is set only when a press loads a passage. A clip that is not on disk is reported as one status sentence whichever of the audio `error` event and the rejected `play()` arrives first.
+**Decision.** In `render/assets/narration.js`, on load the transport names where narration will start but no passage is lit; `data-speaking` is set only when a press loads a passage. A clip that is not on disk is reported as one status sentence whichever of the audio `error` event and the rejected `play()` arrives first.
 
 **Why.** A lit passage on an untouched page looks like a selection, and a missing clip must fail loudly without the two signals overwriting each other.
 
 **Serves.** `R6`
 
-**Aliases.** `W276`, `W369`
-
 ### The media footprint weighs every clip the narration record locates
 
-**Decision.** `corpus.media.footprint` adds to its walk of the declared units' media directories every clip the narration record places anywhere, counting a clip both reach once; a recorded clip it cannot find is named as unweighed rather than dropped. It reads placement from the record and never re-derives it.
+**Decision.** `corpus.media.footprint` adds to its walk of the declared units' media directories every clip the narration record places anywhere (read by `corpus.media.recorded`), counting a clip both reach once; a recorded clip it cannot locate is named in `MediaFootprint.unweighed` rather than dropped. It reads placement from the record and never re-derives it.
 
-**Why.** Clips left in a removed or relabelled unit's directory are still committed, so a walk of declared directories alone could read under a limit the bytes had crossed.
+**Why.** Clips left in a removed or relabelled unit's directory are still committed, so a walk of declared directories alone could read under a limit the bytes have crossed.
 
 **Serves.** `R6`
 
-**Aliases.** `W287/3`, `W311`
-
 ### Narration is recorded by narrate and a build only copies it
 
-**Decision.** `studyforge narrate` runs before `studyforge build`; a build never synthesises audio. It reads the narration record and the disk to put each page in one of three states (silent with no record, playable, or naming its gaps) and copies each addressed clip into an output root other than the corpus root. The record is a plan input, so the plan names every clip copy, located from the record's own placement. The plan reads the record through `cli.plan.recorded`, names one copy line per clip at the directory the record locates it in, and lists a superseded clip on its own, beside the paths and never among them.
+**Decision.** `studyforge narrate` runs before `studyforge build`; a build never synthesises audio. A build reads the narration record and the disk to put each page in one of three states (silent with no record, playable, or naming its gaps), and `generate.clips` copies each clip a page addresses into any output root other than the corpus root. The record is a plan input: the plan reads it through `cli.plan.recorded`, names one copy line per clip only where the record locates it in the declared unit's audio directory, and lists a superseded clip on its own, never among the paths.
 
 **Why.** Clips are a build input like the archive, and an href relative to the page resolves under the output root, where nothing would otherwise be.
 
-**Serves.** `R8, R10, R3`
-
-**Aliases.** `SF-38`, `SF-38/8`, `W202`, `W224`, `W226/2`, `W288`
+**Serves.** `R8`, `R10`, `R3`
 
 ### Clips are written atomically
 
-**Decision.** `narrate.answers.place` writes each clip to a temporary sibling and renames it over the target, into the directory the placement policy named.
+**Decision.** `narrate.answers.place` writes each clip to a temporary sibling (`PARTIAL_SUFFIX`) and renames it over the target, into the directory the placement policy named.
 
 **Why.** An interrupted run must leave no truncated clip that looks finished.
 
 **Serves.** `R6`
 
-**Aliases.** `NS-01`
-
 ### A corpus probes the narration service once and hands the answer in
 
-**Decision.** The synthesis pass never probes the service itself; the caller probes once per corpus and passes the answer, and batches are sized under the service's body cap because the client does not split them.
+**Decision.** The synthesis pass never probes the service itself: `cli.narrate.stage` probes once per corpus and passes the conditions that answer produced, and `narrate.synth.incremental.batches` sizes batches under the service's body cap because the client does not split them.
 
-**Why.** Handing the answer in lets an unchanged re-run make no requests at all.
+**Why.** Handing the answer in lets an unchanged re-run make no synthesis request at all.
 
 **Serves.** `R6`
 
-**Aliases.** `NS-05`
-
 ### The narration record names the conditions clips were made under
 
-**Decision.** `.studyforge/narration.json` records the conditions of synthesis, including the voice, format, the service's promise, the chunk size and the deployment's engine model as reported by the service's health answer, and a change to any of them makes clips stale. A clip's own engine fields are provenance and are not compared.
+**Decision.** `.studyforge/narration.json` records the conditions of synthesis (`narrate.synth.record.Conditions`): the voice, the format, the service's promise, the chunk size and the deployment's engine model as reported by the service's health answer, and a change to any of them makes clips stale. A clip's own engine fields are provenance and are not compared.
 
 **Why.** A content-addressed filename captures the words but not the deployment settings that produced the audio.
 
 **Serves.** `R9`, `R21`
 
-**Aliases.** `NS-04/4`, `Ruling 351`, `SF-42/2`
-
 ### Building and planning never load the narration transport
 
-**Decision.** The values a build needs sit in `narrate.answers`, which imports neither `narrate.client` nor `narrate.wire`; the narrate verb imports the client only when it runs, and a fresh-interpreter test asserts a build and a plan load no wire.
+**Decision.** The values a build needs sit in `narrate.answers`, which imports neither `narrate.client` nor `narrate.wire`; the narrate verb (`cli.narrate.cli`) imports the client only when it synthesises, and a fresh-interpreter test (`tests/studyforge/narrate/test_wire.py`) asserts a build and a plan load no wire.
 
-**Why.** Importing one verb pulled the HTTP client into every build.
+**Why.** Building and planning make no network request, so they should not load network code.
 
 **Serves.** No spec rule: an import boundary that keeps building free of network code.
 
-**Aliases.** `SF-38/9`, `W223`, `W224/4`
-
 ### Every service answer fails with the wire's one decode error
 
-**Decision.** Decoding a narration service answer as JSON raises one error class defined in `narrate.wire`, for health answers and jobs alike.
+**Decision.** Decoding a narration service answer as JSON raises one error class, `narrate.wire.UnreadableAnswer`, for health answers and jobs alike.
 
-**Why.** A health answer was once caught under another package's manifest error.
+**Why.** Reading bytes as JSON is the same act for every answer, so its refusal is one class of the narration error family.
 
 **Serves.** `R6`
 
-**Aliases.** `W212/3`
-
 ### A fence is captioned, never read aloud
 
-**Decision.** A code fence is narrated as one short caption at any length and in any language, and there is no configuration listing languages that narrate.
+**Decision.** `narrate.speakable.script.code_caption` narrates a code fence as one short caption at any length and in any language, and there is no configuration listing languages that narrate.
 
 **Why.** Code read aloud is noise, while a caption keeps the voice from falling silent.
 
 **Serves.** No spec rule: a narration presentation choice.
 
-**Aliases.** `Ruling 93`
-
 ### Spoken text is gated before and after its transform
 
 **Decision.** `narrate.speakable.script` passes the source string and the derived spoken string through the personal-data gate, and refuses rather than scrubs.
 
-**Why.** The spoken transform respaced a hostname so the gate no longer recognised it, and a scrubbed clip would say something the material does not.
+**Why.** The spoken transform can respace a shape the gate recognises, such as a hostname, into words it no longer recognises, and a scrubbed clip would say something the material does not.
 
 **Serves.** `R7`
 
-**Aliases.** `Ruling 144`
-
 ### Clip names are one-to-one with spoken units
 
-**Decision.** The speakable contract asserts the number of distinct clip names equals the number of spoken units, and units differing only in their section mint different names; test goldens apply the same one-to-one rule.
+**Decision.** The speakable package's tests (`tests/studyforge/narrate/speakable/test_init.py`) assert that the number of distinct clip names equals the number of spoken units, and that units differing only in their section mint different names; `tests/harness/goldens.py` applies the same one-to-one rule to test goldens.
 
 **Why.** Checking only that every id resolves and every clip is named passes even when many units collide on one file.
 
 **Serves.** `R6`
 
-**Aliases.** `Ruling 187`
-
 ### Narration deletes nothing, and stale clips go only through an explicit prune
 
-**Decision.** `studyforge narrate` requires either `--voice` or `--prune` and refuses both together. A narration run merges into the record, deletes no file and no entry, and reports on every run how many record entries the corpus no longer produces. `--prune` builds no service client, refuses by name when the walk skipped a declared unit, and deletes only the one clip file a dead entry names, holding any entry it cannot place by rule. The record names each superseded clip with the directory it was written into, because placement can change with a unit's declarations and a filename alone could not locate it.
+**Decision.** `studyforge narrate` (`cli.narrate.cli`) requires either `--voice` or `--prune` and refuses both together. A narration run merges into the record, deletes no file and no entry, and reports on every run how many record entries the corpus no longer produces. `--prune` (`cli.narrate.prune`) builds no service client, refuses by name when the walk skipped a declared unit, and deletes only the one clip file a dead entry names, holding any entry it cannot place by rule. The record names each superseded clip with the directory it was written into, because placement can change with a unit's declarations and a filename alone could not locate it.
 
 **Why.** A deletion that rides along with synthesis, or that trusts a partial walk, would remove a unit's clips because its material was momentarily absent.
 
-**Serves.** `R3, R6`
-
-**Aliases.** `W193`, `W218`, `W218/1`, `W218/2`, `W226`
+**Serves.** `R3`, `R6`
 
 ## The test suite
 
-### Every chrome region, hook and palette token has a part that paints it
+### Every chrome region and published hook has a part that paints it
 
-**Decision.** A census in the chrome tests maps each region the markup can author, each published hook and each palette token to the stylesheet part that paints it, and fails on anything defined but painted by nothing. The census covers what the tree can author, not only what current pages happen to emit, and it resolves labels from the source's syntax tree rather than matching literals.
+**Decision.** The chrome tests (`tests/studyforge/render/pageassets/test_chrome.py`, `test_chrome_paint.py`) keep a table naming, for each region the markup can author, the part that owns it (the chrome part, the reading surface, or deferred), and fail on a region the tree can author that the table does not name, on an owned region with no rule, and on a rule for a region the table does not name. The authorable regions are read by `tests/studyforge/render/pageassets/authoring.py`, which resolves each label from the emitter's syntax tree rather than matching literals. `tests/studyforge/render/pageassets/test_surface.py` fails on a published class that nothing styles, and the chrome tests fail on a published attribute or kind hook no rule reaches. Named palette tokens that belong to the chrome part (`--rail`, `--page-max`, `--accent-soft`, `--practice`, `--practice-soft`, `--surface-2`) are asserted painted there.
 
 **Why.** A hook or token with no rule is styling nobody sees, and a census over emitted pages alone is blind to what a new page could produce.
 
 **Serves.** `R13`
 
-**Aliases.** `QA-03/2`, `Ruling 192`, `SF-15/3`, `SF-27/2`, `W105`, `W324/1`
-
 ### The pinned dev image carries a JavaScript runtime, a browser and a font
 
-**Decision.** The development image pins a JavaScript runtime, a headless browser and the font text metrics are read in, so the script and browser checks run there rather than skipping. The unit suite still executes no JavaScript; what scripts do is checked by the visual harness.
+**Decision.** The development image (`docker/dev/Dockerfile`) pins Node.js, a headless Chrome build and the font text metrics are read in, each by version and checksum, so the script and browser checks run there rather than skipping. In the unit suite, a script's own logic runs under Node against a small DOM stub (for example `tests/studyforge/render/pageassets/test_narration_runtime.py`); what scripts do in a real page is checked by the visual harness.
 
 **Why.** A check that skips in the pinned environment certifies nothing, however honestly the skip is labelled.
 
-**Serves.** `R15, R10`
-
-**Aliases.** `QA-03/1`, `Ruling 21`, `W8`, `W36`, `W124`
+**Serves.** `R15`, `R10`
 
 ### Browser behaviour is verified in a real browser over built and served pages
 
-**Decision.** `tests/visual/` builds every fixture corpus, opens all three page kinds (index, container, unit) and, for the practice panel, a served origin, and checks what only a browser can show: keyboard operation of navigation, narration and practice, contrast for every token in both themes, layout and offline behaviour. Structure is asserted in the unit suite and behaviour here.
+**Decision.** `tests/visual/` builds every fixture corpus (`tests/visual/site.py`), opens all three page kinds (index, container, unit) and, for the practice panel, a served origin (`tests/visual/served.py`), and checks what only a browser can show: keyboard operation of navigation, narration and practice, contrast for every token in both themes, layout and offline behaviour. Each clause is also run against a deliberately damaged tree, which must fail. Structure is asserted in the unit suite and behaviour here.
 
-**Why.** Assertions over markup or a stylesheet cannot see what a reader sees, and a harness that opened only unit pages was blind to the others.
+**Why.** Assertions over markup or a stylesheet cannot see what a reader sees, and a harness that opens only some page kinds is blind to the regions the others carry.
 
-**Serves.** `R12, R8`
-
-**Aliases.** `QA-02`, `QA-03`, `SF-24/5`, `W98`, `W417`
+**Serves.** `R12`, `R8`
 
 ### The visual harness never reaches a verdict from the host silently
 
-**Decision.** One module, `tests/visual/conftest.py`, reads the environment, and the `STUDYFORGE_*` variables that can reach a verdict are declared by name in `tests/visual/discovery.py`; when checks do not run, the run names itself, its remedy and the count of checks it silenced. No test in the package reads git or environment state from the host outside that declaration.
+**Decision.** The three `STUDYFORGE_*` variables that can reach a verdict (`STUDYFORGE_VISUAL`, `STUDYFORGE_VISUAL_BROWSER`, `STUDYFORGE_DEV_CONTAINER`) are declared by name in `tests/visual/discovery.py`, and `tests/visual/test_host_environment.py` asserts that every `STUDYFORGE_*` name the package reads is in that declaration with the function that reads it. Every run of the suite prints, through `tests/visual/conftest.py`, a line that names the browser or its absence, the remedy, the count of visual checks that did not run, and the variables in force; `STUDYFORGE_VISUAL=required` turns a missing browser into a failure.
 
 **Why.** A verdict that depends on the host's environment is not a test of the commit, and an undeclared skip reads as a pass.
 
-**Serves.** `R15, R6`
-
-**Aliases.** `Ruling 204`, `Ruling 225`, `Ruling 263`, `Ruling 269`, `W115/4`, `W119`, `W124/5`, `W128`, `W128/1`, `W128/2`, `W128/4`
+**Serves.** `R15`, `R6`
 
 ### A browser launch and every tab leave nothing behind
 
-**Decision.** In `tests/visual/browser.py` a launch that fails part-way removes its profile, the browser is stopped before its profile is removed and its last output is kept, each launch takes its own profile root rather than a process-wide temporary directory, and a tab is closed by whoever opened it, with `close_page` waiting until the tab is really gone and every read bounded.
+**Decision.** In `tests/visual/browser.py` a launch that fails part-way removes its profile, the browser is stopped before its profile is removed and its last output is kept, each launch makes a fresh profile under a root its caller can name rather than through the process-wide temporary directory, and `close_page` returns only once the browser reports the tab destroyed, with every read bounded by a deadline.
 
-**Why.** Leaked profiles and tabs made the harness hang and made counts depend on load and on parallel workers.
+**Why.** Leaked profiles and tabs make the harness hang, and counts taken before a tab is really gone depend on machine load and on parallel workers.
 
 **Serves.** `R10`
-
-**Aliases.** `W312`, `W312/1`, `W397`, `W397/3`, `W404/6`, `W419`
 
 ### Authoring pages are checked against the shipped code, which is the authority
 
-**Decision.** Every command and import the pages under `docs/authoring/` and the skills give is checked against the installed code. Commands are derived from the entry points that run them, and the module list is taken from one shared set of commanded pages by a glob, never a hand-kept list. A page exempts a module it does not own by declaring so itself. At least one module is run in a real interpreter rather than looked up. When the written spelling and the shipped reader disagree, the document is the one that is wrong.
+**Decision.** `tests/test_authoring_reference.py`, reading through `tests/authoring/support.py`, checks every command and key the pages under `docs/authoring/` and the skills' `SKILL.md` pages give against the installed code. Commands are derived from the registered verbs and console scripts that run them, and the pages are found by walking both directories, never from a hand-kept list. A page exempts a module it does not own by declaring so itself, and that exemption covers only that page. At least one commanded module is run in a real interpreter rather than looked up. When the written spelling and the shipped reader disagree, the document is the one that is wrong.
 
-**Why.** A hand-kept list or a looked-up module let a page ship a command that did not exist, and nothing caught it.
+**Why.** A hand-kept list or a looked-up module lets a page ship a command that does not exist with nothing to catch it.
 
 **Serves.** `R16`
 
-**Aliases.** `Ruling 103`, `Ruling 156`, `W61`, `W74`
+### A sibling's contract is read at the commit its checkout has checked out
 
-### A sibling's contract is read at its pin
+**Decision.** A test that reads another component, such as a `consuming.json` or a real corpus, finds that checkout only through the `STUDYFORGE_WORKSPACE` variable (`tests/harness/workspace.py`) and reads the file at the commit the checkout has checked out (`tests/harness/sibling.py`, `read_sibling`). Every reading says which of three things it is: read at a commit, read from a working tree, or absent; a caller that needs a reproducible reading asks for the committed one. With the variable unset every sibling is absent, and a test that needs one skips, naming the component and the variable. No pin file is read and no parent directory is searched.
 
-**Decision.** A component's contract is read from the commit the workspace pin file names, never from the sibling's working tree, and a reading that cannot be taken at the pin skips by name.
+**Why.** A file present only in a working tree, or staged on no ref, gives a reading no other host can reproduce, and a clean clone of this repository holds only the framework and its tests.
 
-**Why.** A staged file on no ref once produced a green reading no other host could reproduce.
+**Serves.** `R18`, `R7`
 
-**Serves.** `R18`
-
-**Aliases.** `W404`
-
-## Decisions the spec states
-
-### Spec §1: What this is
-
-**Decision.** The spec states this in §1. It is not restated here.
-
-**Why.** A decision written in two places drifts, and the spec is where this one lives.
-
-**Serves.** No spec rule: it describes the product and the corpora it was shaped against, not a rule.
-
-**Aliases.** `PO round 105`, `W339`
-
-### Spec R1: the framework knows nothing about any source
-
-**Decision.** The spec states this as its governing rule R1 (§2), including the amendments and the register of located contracts written under it where the rule is R1. It is not restated here.
-
-**Why.** A decision written in two places drifts, and the spec is where this one lives.
-
-**Serves.** `R1`
-
-**Aliases.** `W363`
-
-### Spec R3: generation is non-destructive
-
-**Decision.** The spec states this as its governing rule R3 (§2), including the amendments and the register of located contracts written under it where the rule is R3. It is not restated here.
-
-**Why.** A decision written in two places drifts, and the spec is where this one lives.
-
-**Serves.** `R3`
-
-**Aliases.** `INT-13/1`, `OPS-05`, `Ruling 99`, `SF-43`, `W278`
-
-### Spec R7: no personal data reaches disk or the wire
-
-**Decision.** The spec states this as its governing rule R7 (§2), including the amendments and the register of located contracts written under it where the rule is R7. It is not restated here.
-
-**Why.** A decision written in two places drifts, and the spec is where this one lives.
-
-**Serves.** `R7`
-
-**Aliases.** `SF-08`
-
-### Spec R9: contracts are versioned
-
-**Decision.** The spec states this as its governing rule R9 (§2), including the amendments and the register of located contracts written under it where the rule is R9. It is not restated here.
-
-**Why.** A decision written in two places drifts, and the spec is where this one lives.
-
-**Serves.** `R9`
-
-**Aliases.** `SF-33`, `W2`, `round 15`
-
-### Spec R11: no file grows past the size a person can hold in their head
-
-**Decision.** The spec states this as its governing rule R11 (§2), including the amendments and the register of located contracts written under it where the rule is R11. It is not restated here.
-
-**Why.** A decision written in two places drifts, and the spec is where this one lives.
-
-**Serves.** `R11`
-
-**Aliases.** `Ruling 100`, `Ruling 261`, `W422`
-
-### Spec R15: every tooling-dependent step runs in a container
-
-**Decision.** The spec states this as its governing rule R15 (§2), including the amendments and the register of located contracts written under it where the rule is R15. It is not restated here.
-
-**Why.** A decision written in two places drifts, and the spec is where this one lives.
-
-**Serves.** `R15`
-
-**Aliases.** `FND-03`, `Ruling 40`
-
-### Spec R18: components are separate repositories pinned by one workspace
-
-**Decision.** The spec states this as its governing rule R18 (§2), including the amendments and the register of located contracts written under it where the rule is R18. It is not restated here.
-
-**Why.** A decision written in two places drifts, and the spec is where this one lives.
-
-**Serves.** `R18`
-
-**Aliases.** `FND-05a`, `round 4`
-
-### Spec R19: the consuming half of a corpus is generated
-
-**Decision.** The spec states this as its governing rule R19 (§2), including the amendments and the register of located contracts written under it where the rule is R19. It is not restated here.
-
-**Why.** A decision written in two places drifts, and the spec is where this one lives.
-
-**Serves.** `R19`
-
-**Aliases.** `SF-28`
-
-### Spec R21: a contract is located before it is described
-
-**Decision.** The spec states this as its governing rule R21 (§2), including the amendments and the register of located contracts written under it where the rule is R21. It is not restated here.
-
-**Why.** A decision written in two places drifts, and the spec is where this one lives.
-
-**Serves.** `R21`
-
-**Aliases.** `CTO round 67`, `Ruling 330`, `SF-13`, `SF-14`, `SF-17`
-
-### Spec §4: The address model
-
-**Decision.** The spec states this in §4. It is not restated here.
-
-**Why.** A decision written in two places drifts, and the spec is where this one lives.
-
-**Serves.** `R6`, `R9`, `R21`
-
-**Aliases.** `Ruling 30`, `Ruling 52`, `Ruling 90`, `TC-00/2`, `W207`, `W350`
-
-### Spec §5: Placement and discovery
-
-**Decision.** The spec states this in §5. It is not restated here.
-
-**Why.** A decision written in two places drifts, and the spec is where this one lives.
-
-**Serves.** `R2`, `R3`, `R4`, `R6`, `R8`
-
-**Aliases.** `INT-06/6`, `ISO-05`, `PO round 76`, `PO round 78`, `PO round 132`, `SF-03`, `SF-04`, `SF-32`, `W241`, `W242`, `W242/1`, `W254`, `W323`, `W425`
-
-### Spec §6: The ingestion contract
-
-**Decision.** The spec states this in §6. It is not restated here.
-
-**Why.** A decision written in two places drifts, and the spec is where this one lives.
-
-**Serves.** `R2`, `R6`, `R8`
-
-**Aliases.** `INT-09/6`, `PO round 79`, `PO round 107`, `SF-05`, `SF-06`, `SF-07`, `SF-25`, `W215`, `W248`, `W258`, `W258/3`, `W264`, `W347`
-
-### Spec §7: Exercises
-
-**Decision.** The spec states this in §7, in the parts *10. What is recorded, and what validate refuses*; *2. Authoring happens once, at ingestion*; *6. The authoring gates for a code exercise*; *7. A corpus whose subject is not code — the quiz shape*; *A file with no test*; *Exercises authored for every corpus*. It is not restated here.
-
-**Why.** A decision written in two places drifts, and the spec is where this one lives.
-
-**Serves.** `R2`, `R5`, `R6`
-
-**Aliases.** `AX-00`, `AX-02`, `AX-02/3`, `AX-03`, `AX-04`, `AX-05`, `AX-07`, `AX-08`, `W357`, `W357/1`, `W365`, `W389`
-
-### Spec §8.1: The code-server toolchain image
-
-**Decision.** The spec states this in §8.1, in the parts *its own repository*. It is not restated here.
-
-**Why.** A decision written in two places drifts, and the spec is where this one lives.
-
-**Serves.** `R15`, `R19`
-
-**Aliases.** `Ruling 1`, `Ruling 2`, `Ruling 3`, `Ruling 4`, `TC-00`, `TC-05`, `TC-05/5`, `W400`
-
-### Spec §8.2: The narration service
-
-**Decision.** The spec states this in §8.2, in the parts *A clip's filename carries a digest of the words it says*. It is not restated here.
-
-**Why.** A decision written in two places drifts, and the spec is where this one lives.
-
-**Serves.** `R10`
-
-**Aliases.** `SF-16`
-
-### Spec §8.3: Where execution runs
-
-**Decision.** The spec states this in §8.3, in the parts *the resolved question*. It is not restated here.
-
-**Why.** A decision written in two places drifts, and the spec is where this one lives.
-
-**Serves.** `R15`
-
-**Aliases.** `SF-19a`, `SF-20`, `SF-20/4`, `SF-22/6`, `W361`
-
-### Spec §8.5: Progress is two records
-
-**Decision.** The spec states this in §8.5. It is not restated here.
-
-**Why.** A decision written in two places drifts, and the spec is where this one lives.
-
-**Serves.** `R8`
-
-**Aliases.** `SF-21`, `SF-30`
-
-### Spec §11.1: The framework
-
-**Decision.** The spec states this in §11.1. It is not restated here.
-
-**Why.** A decision written in two places drifts, and the spec is where this one lives.
-
-**Serves.** `R1`
-
-**Aliases.** `FND-04`
-
-### Spec §12: Validating that the framework is a framework
-
-**Decision.** The spec states this in §12. It is not restated here.
-
-**Why.** A decision written in two places drifts, and the spec is where this one lives.
-
-**Serves.** No spec rule: it states how the framework is proved to be a framework, which is the acceptance of the whole rule set rather than one rule.
-
-**Aliases.** `PO round 74`
