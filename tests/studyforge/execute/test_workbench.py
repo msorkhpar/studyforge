@@ -123,7 +123,7 @@ def test_the_test_is_deliberately_left_read_only():
 
 
 def test_the_module_says_which_scope_can_lift_the_lock_it_writes():
-    # ⛔ W433, and it is a MEASUREMENT rather than a caution. `files.readonlyExclude`
+    # ⛔ This is a MEASUREMENT rather than a caution. `files.readonlyExclude`
     # is an object setting and VS Code MERGES object settings across scopes, so a
     # USER-scope entry naming the test file is merged into the workspace value this
     # module writes and the test becomes writable. Measured in a real session:
@@ -135,7 +135,7 @@ def test_the_module_says_which_scope_can_lift_the_lock_it_writes():
 
     said = workbench.__doc__
     assert "merge" in said.lower() and "ConfigurationTarget.Global" in said
-    assert "W433" in said
+    assert "CONFINEMENT" in said
     # ⛔ Named, never linked, and never imported: the toolchain is another
     # repository and this framework knows no path inside it (R1, R20).
     assert "code-server-toolchain" in said

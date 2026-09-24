@@ -23,8 +23,8 @@ runner and it is what an author would be told to write down.
 
 ⛔ **MEASURED**: `pytest`'s report writes `hostname="…"` on every `testsuite`.
 ⭐ Every report here is written under `tmp_path`, outside the repository, and
-nothing reads or prints that attribute. ⚠️ It is a finding for whoever commits
-a report into a corpus, and it is in `AX-03`'s handoff.
+nothing reads or prints that attribute. ⚠️ It is a hazard for whoever commits
+a report into a corpus, which is why a bundle's file set is closed.
 """
 
 from __future__ import annotations

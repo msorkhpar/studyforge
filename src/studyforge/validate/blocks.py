@@ -1,4 +1,4 @@
-r"""Every block's shape, read once for `validate` and for the fixture check (`W263`, `W282`).
+r"""Every block's shape, read once for `validate` and for the fixture check.
 
 **What it does.** Walks every block, into container blocks and into list items, and names
 where one breaks spec §6: a block that is not an object, a type not in `BLOCK_TYPES`, keys
@@ -85,7 +85,7 @@ def _item(item: object, at: str) -> Iterator[tuple[str, str]]:
 
 
 def check_block_shapes(walk: Walk) -> Iterator[Finding]:
-    """Refuse, by where it sits, every block spec §6 does not admit (`W263`, `W282`)."""
+    """Refuse, by where it sits, every block spec §6 does not admit."""
     for unit in walk.units:
         for at, what in block_problems(unit.document.get("blocks")):
             yield Finding(RULE_DOCUMENT, unit.where, f"{at} {what} (spec §6)")

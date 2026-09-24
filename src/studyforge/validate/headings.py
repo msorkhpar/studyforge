@@ -14,7 +14,7 @@ not, and a scan that borrowed the parser's would agree with it by
 construction. `tests/studyforge/validate/test_headings.py` asserts the import
 is absent rather than trusting this sentence.
 
-## ⛔ Why the region is bounded by a heading (Ruling 92)
+## ⛔ Why the region is bounded by a heading
 
 ⭐ **`check_completeness` exists to disagree with the parser**, so the bound
 may not come from it. An *anchor* — `TestCases.md#card-issuance` — would: a

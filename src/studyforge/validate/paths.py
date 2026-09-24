@@ -23,8 +23,8 @@ compute the same page path, and neither call had any way to know.
 
 ⛔ **So the check is the whole path set, not the addresses.** Two distinct
 titles can be one name, and that is invisible in the source and in the address.
-⚠️ **E10 names the mechanism wrongly and measuring it is how that was found:**
-it says `slugify` *deletes* an accented character, so `café` and `cafe` are one
+⚠️ **The mechanism was first named wrongly, and measuring it found that:**
+it was said `slugify` *deletes* an accented character, so `café` and `cafe` are one
 slug. Measured 2026-09-09 in the pinned image, `slugify('café') == 'caf'` and
 `slugify('cafe') == 'cafe'` — an accent is a non-alphanumeric, so it collapses
 to a **separator**, and those two do not collide at all. ⭐ The real class is
@@ -34,7 +34,7 @@ give `streams-an-api`. ⛔ Which is the argument for checking the *set* rather
 than any one cause — the set catches every cause, including the one the ruling
 described wrongly.
 
-⚠️ SF-03's corpus-wide test places units only;
+⚠️ The placement package's corpus-wide test places units only;
 container pages are the half it does not cover, and two containers whose
 origins share a directory and whose deepest titles slugify alike collide the
 same way.
@@ -51,7 +51,7 @@ duplicates, and the check costs nothing on it.
 
 ## `origin` is a file, and this is the only place that is checkable
 
-⛔ SF-05's contract says an `origin` names a **file**. `origin_directory` takes
+⛔ The unit contract says an `origin` names a **file**. `origin_directory` takes
 its parent and does no I/O, so a container that recorded its *directory* places
 its page one level up — at the repository root, for a top-level container — and
 nothing raises. ⭐ This module has the filesystem in front of it.
@@ -223,7 +223,7 @@ def _container_origins(walk: Walk, held: Held) -> Iterator[tuple[str, str, objec
                 f"unit {declared.n}",
                 walk.root / _relative(declared.origin),
             )
-        # ⭐ `W428`: a unit's practice may name a file of its own, and it is a
+        # ⭐ A unit's practice may name a file of its own, and it is a
         # file for exactly the same reason its prose origin is.
         if declared.practice_origin is not None:
             yield (

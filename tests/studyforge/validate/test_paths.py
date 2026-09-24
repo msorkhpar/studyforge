@@ -101,11 +101,11 @@ def test_two_container_pages_may_claim_one_path(tmp_path):
 
 def test_titles_that_slugify_alike_produce_one_name(tmp_path):
     # ⭐ **A review finding — with its example corrected by measurement.**
-    # E10 says `slugify` *deletes* accented characters, so `Café` and `Cafe`
+    # It was said `slugify` *deletes* accented characters, so `Café` and `Cafe`
     # are one slug. ⛔ Measured 2026-09-09 in the pinned image, that is **not
     # what it does**: an accent is a non-alphanumeric, so it collapses to a
     # *separator* — `slugify('Café') == 'caf'` and `slugify('Cafe') == 'cafe'`,
-    # which do **not** collide. See the handoff's finding 15.
+    # which do **not** collide.
     #
     # ⚠️ The collision class is real and **wider** than accents: any two titles
     # whose non-alphanumerics collapse to the same separator run are one name.

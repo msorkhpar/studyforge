@@ -50,7 +50,7 @@ question is the finest grain the claim is made at, and anything coarser would
 let one drifted page hide behind the pages that had not moved.
 
 ⭐ **The ledger is asked exactly one question** — `ledger.get(path)`, the digest
-that source path has now (`AX-07`) — and this module knows nothing else about
+that source path has now — and this module knows nothing else about
 it, so the ledger may be any `Mapping[str, str]` at the call.
 
 ## ⛔ A QUESTION IS NAMED BY ITS STEM, NEVER BY ITS ID
@@ -147,7 +147,7 @@ def cited_for(
     """Return one cited passage per question, read from the ledger at authoring time.
 
     ⛔ **Refuses a question whose passage the ledger does not account for**,
-    which is `E14`'s first property firing where it is cheapest: at authoring,
+    which is spec §7's *nothing the source has is lost* firing where it is cheapest: at authoring,
     before a record exists to carry the omission. ⚠️ `Q5` refuses the same
     thing later, because the ledger a bundle is validated against is not the
     one it was authored against.

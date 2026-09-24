@@ -53,7 +53,7 @@ already keeps**, so the page has none: it does not claim read-only and does not
 attempt to enforce it.
 
 ⛔ **AND THE LOCK IS ONLY AS STRONG AS THE EDITOR'S CONFINEMENT — which is not
-this module's, and is not a detail** (`W433`). ⚠️ `files.readonlyExclude` is an
+this module's, and is not a detail**. ⚠️ `files.readonlyExclude` is an
 **object** setting, and VS Code **merges** object settings across scopes, so a
 USER-scope entry is merged INTO the workspace value written here rather than
 being shadowed by it. ⭐ **Measured, in a real session on code-server 4.137.0:**
@@ -120,10 +120,10 @@ temporary is its OWN**, made in a staging directory beside it: two
 writes that shared one staging name moved it out from under each other, and the
 second one was refused.
 
-## ⛔ The settings never enter the corpus's commits (`W435`)
+## ⛔ The settings never enter the corpus's commits
 
 ⚠️ That folder is inside the CORPUS's own tree, so the file is a machine-local
-artifact written into a source repository — `W425`'s shape exactly, and a
+artifact written into a source repository — a non-destructive breach (R3), and a
 served corpus used to go dirty the first time a reader opened a practice.
 ⭐ **The fix is an ignore file INSIDE the directory written into, never the
 repository's root one and never a local exclude (R3):** `.vscode/.gitignore`,
@@ -162,7 +162,7 @@ SETTINGS_FILE = "settings.json"
 #: still names exactly what it ignores and never carries a `*`.
 STAGING_DIR = "studyforge-staging"
 
-#: The ignore file written beside the settings, and what it holds (`W435`).
+#: The ignore file written beside the settings, and what it holds.
 #: ⛔ Anchored NAMES, never `*`: a `.vscode/` somebody else already carries
 #: keeps every file of its own visible.
 IGNORE_FILE = ".gitignore"
@@ -197,7 +197,7 @@ TEST_KEY = f"{SECTION}.test"
 #: legally carry `//` comments — the editor image's own seed does — so a JSON
 #: parse would raise on a perfectly ordinary one and this framework would then
 #: refuse a file it might as well have read. ⭐ And a module that decodes a
-#: document owes the personal-data gate a call (R7, W7); this one reads nothing
+#: document owes the personal-data gate a call (R7); this one reads nothing
 #: OUT of that file, so not decoding it is the honest shape as well as the
 #: robust one.
 MARKER = f'"{MAIN_KEY}"'
@@ -211,7 +211,7 @@ EVERYTHING = "**/*"
 #: lesson did not send the reader. ⚠️ These are settings and not commands: the
 #: extension closes what is already open, and these stop it opening again.
 #:
-#: ⚠️ `workbench.secondarySideBar.defaultVisibility` is `W432`'s belt and it is
+#: ⚠️ `workbench.secondarySideBar.defaultVisibility` is a belt only, and it is
 #: NOT the fix. The secondary side bar is the chat pane, and it is the ONE of
 #: the two surfaces a reader saw that a setting can reach at all — the PRIMARY
 #: side bar's visibility is workbench UI STATE and no setting names it, which

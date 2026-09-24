@@ -44,7 +44,7 @@ failed loudly is not a check.
 
 ⚠️ **Seventeen units sharing one `origin` were seventeen comparisons against
 one number** — a real corpus holds 17 regions of a 361-heading file, so sixteen
-short-read by construction. ⭐ **Ruling 92 gives `origin` a second shape**
+short-read by construction. ⭐ **So `origin` has a second shape**
 (`{path, section}`), bounded by `validate.headings` from the same fence-aware
 regex that produces the count. ⛔ **A section occurring twice, or not at all,
 is a finding with its own rule id**, never resolved by picking one: picking is
@@ -52,8 +52,8 @@ where the silence comes back.
 
 ## ⛔ A unit's PRACTICE may come from a file of its OWN, counted against IT
 
-⭐ **`W428`, and it is the reason the accounting is per ORIGIN rather than per
-unit.** A practice belongs on the topic page it practises, so it is a
+⭐ **A practice may live in a file of its own, which is why the accounting is
+per ORIGIN rather than per unit.** A practice belongs on the topic page it practises, so it is a
 `practice` document of that unit — but its prose is not in the unit's source
 file, and a corpus may not rewrite that file to put it there (R3, and
 `corpus.manifest.edits` refuses the edit however it is declared). So the unit
@@ -70,8 +70,8 @@ short read it is, rather than as a file nobody counted.
 
 ## ⛔ An AUTHORED practice was never in the source, so it is not counted against it
 
-⭐ **`W444`.** A practice whose exercise is `generated` was emitted from a
-**bundle** (spec §7, `AX-04`): its blocks are the bundle's statement and the
+⭐ **An authored practice is left out.** A practice whose exercise is `generated` was emitted from a
+**bundle** (spec §7): its blocks are the bundle's statement and the
 practice layout's headings, not a reading of any source file. Summing them
 into the unit's buckets reported a short read on every unit that received one.
 ⛔ **So it is left out, and it is decided by what the document IS** — the
@@ -87,8 +87,8 @@ gate record, so a document this check leaves out is one that arm reads.
 all must be: a half-present source is exactly where a short read hides, and a
 per-file skip would discount precisely the file that went missing.
 
-⛔ **"The source tree is absent" is CHECKED, never inferred from the origins
-(`W255`, `W261`).** When **no** origin is on disk, `_source_beside` reads the
+⛔ **"The source tree is absent" is CHECKED, never inferred from the origins.**
+When **no** origin is on disk, `_source_beside` reads the
 WHOLE corpus root, skipping only the framework's own writing at the root
 (`NOT_SOURCE`). A file anywhere under it that the manifest's own `content`
 declares as source (included, excluded or contested) means the source IS
@@ -133,7 +133,7 @@ RULE_ORIGIN_MISSING = "origin-missing"
 RULE_SECTION_MISSING = "origin-section-missing"
 RULE_SECTION_AMBIGUOUS = "origin-section-ambiguous"
 
-#: The document kind whose material `practice_origin` names (`W428`). ⛔ The
+#: The document kind whose material `practice_origin` names. ⛔ The
 #: archive's own word, and this module's only knowledge of what a kind is.
 PRACTICE = "practice"
 
@@ -150,7 +150,7 @@ NOT_SOURCE = frozenset({ARCHIVE_DIRNAME, ".git", ".studyforge", "corpus.json"})
 class _Origin:
     """One source file, and the archive headings that must come out of it.
 
-    ⭐ **One of these per (unit, role), not per unit** (`W428`): a unit that
+    ⭐ **One of these per (unit, role), not per unit**: a unit that
     declares a `practice_origin` yields two, and each is compared against its
     own file.
     """
@@ -200,7 +200,7 @@ def check_completeness(walk: Walk) -> Iterator[Finding | Unchecked]:
         )
         return
     if not present:
-        # ⛔ `W255`: source on disk and every origin missing is not an absent tree.
+        # ⛔ Source on disk and every origin missing is not an absent tree.
         for origin in origins:
             yield Finding(
                 RULE_ORIGIN_MISSING,
@@ -229,8 +229,8 @@ def check_completeness(walk: Walk) -> Iterator[Finding | Unchecked]:
 def _source_beside(walk: Walk) -> bool:
     """Whether any file under the corpus root is source that the manifest's `content` declares.
 
-    ⛔ **Read from the disk, never inferred from the origins** (`W255`), ⭐ **and over the
-    WHOLE root** (`W261`): an origin that is not on disk says nothing about where the
+    ⛔ **Read from the disk, never inferred from the origins**, ⭐ **and over the
+    WHOLE root**: an origin that is not on disk says nothing about where the
     source is. Each file is asked of the manifest's own declaration, and never of git or
     of the plan. It stops at the first file declared.
     """
@@ -281,8 +281,8 @@ def _compare(origin: _Origin) -> Iterator[Finding]:
 def _ambiguous(where: str, occurrences: int) -> Finding:
     """Refuse a `section` that does not name exactly one region.
 
-    ⛔ **Never resolved by picking one** — that is Ruling 92's *sixteen silent
-    short reads*. ⚠️ The section is **not** reproduced: it is read out of a
+    ⛔ **Never resolved by picking one** — that is the *sixteen silent
+    short reads* above. ⚠️ The section is **not** reproduced: it is read out of a
     file somebody else wrote, and a refusal names the field (R7).
     """
     if occurrences == 0:
@@ -313,18 +313,18 @@ def _origins(walk: Walk) -> list[_Origin]:
     read on every multi-document unit in the corpus, which is the shape of a
     check that gets switched off.
 
-    ⭐ **The sum is unchanged by regions, which is the point** (Ruling 92):
+    ⭐ **The sum is unchanged by regions, which is the point**:
     units sharing one `path` have **disjoint** sections and key separately, so
     it is seventeen comparisons against seventeen numbers, not against 361.
 
     ⛔ **Both of a unit's buckets are opened before a single document is
-    counted** (`W428`). A `practice_origin` whose unit holds no `practice`
+    counted**. A `practice_origin` whose unit holds no `practice`
     document then compares that file's headings against **zero**, which is the
     short read it is; opening a bucket only where a document landed would leave
     the file counted by nobody and reported by nothing.
 
     ⛔ **An authored practice opens its unit's buckets and adds nothing to
-    them** (`W444`): its headings came from a bundle, never from either file.
+    them**: its headings came from a bundle, never from either file.
     """
     totals: dict[tuple[str, int, bool], int] = {}
     declared_by: dict[tuple[str, int, bool], Declared] = {}
@@ -348,7 +348,7 @@ def _origins(walk: Walk) -> list[_Origin]:
 def _authored(document: dict, where: str) -> bool:
     """Whether this document is an authored practice, read off its own `exercise` record.
 
-    ⛔ **Its provenance, not its place** (`W444`): an ordinal, a path or a bundle
+    ⛔ **Its provenance, not its place**: an ordinal, a path or a bundle
     on disk says where a document sits, and only the record says where its
     material came from.
     """

@@ -97,9 +97,9 @@ sub-package to have there. ⚠️ **Do not make that automatic**: there is no le
 discovery mechanism in `src/` — `tests/harness/test_isolation.py`'s
 run-time-import arm refuses one for the whole framework.
 
-**Delivered by AX-06** (`M10` step 10.2). The bundle on disk and `validate`'s
-arm over this record are `AX-04`'s; the ledger is `AX-07`'s; wiring an authoring
-pass to take the `Q1`–`Q3` judgements is `AX-08`'s.
+**Scope.** The bundle on disk and `validate`'s arm over this record are
+`exercise.bundle`'s; the ledger and wiring an authoring pass to take the
+`Q1`–`Q3` judgements are the exercises skill's.
 """
 
 from __future__ import annotations
@@ -134,7 +134,7 @@ from studyforge.exercise.gates.quiz.mechanical import (
 
 #: ⛔ The sub-package's whole public surface. A consumer that has to import
 #: `studyforge.exercise.gates.quiz.judged` directly is a consumer this contract
-#: failed — `docs/conventions/module-structure.md` calls `__init__.py` the
+#: failed — R17 makes the package's `__init__.py` its
 #: contract, and this is what it says.
 __all__ = [
     "JUDGED",

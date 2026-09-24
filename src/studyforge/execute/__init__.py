@@ -40,7 +40,7 @@ web-facing process ends up holding the socket that spec §8.3 forbids it.
 | `commands` | what the runner will start, checked before any process exists |
 | `errors` | `RunRefused`, the one exception |
 
-## The ruled seam (round 112, on `TC-00`'s answer 6)
+## The seam: the reader starts the runner
 
 ⭐ **The READER starts the runner container** with `code-server-toolchain`'s
 documented run line — the source root alone at `/work`, `--network none`, no
@@ -52,19 +52,19 @@ behind a flag, not "only locally".
 
 ⭐ **Both modes are one contract** — the same argv, the same directory relative
 to the source root, the same environment, output relative to the source root in
-both — so a run from a page and a run from the reader's own terminal (`SF-44`)
+both — so a run from a page and a run from the reader's own terminal
 agree. `runner`'s docstring is the table.
 
 ⚠️ **Reproducibility comes from the image, not the host** (R15). Host mode is
 the honest fallback, not an equal: it runs whatever toolchain the host has.
 
 ⚠️ **Raw build output is not reader output.** `quiet` filters it down to what
-the reader asked for, on top of this stream and after `LineGate` (`SF-29`): the
+the reader asked for, on top of this stream and after `LineGate`: the
 one build tool a corpus declares in `runtimes` loses its banners, timings and
 help footers, and every other line survives unedited, including every error,
 every stack frame and the exit line. An undeclared, unknown or ambiguous
 toolchain passes through unfiltered. ⛔ The page filters; a reader's own
-terminal (`SF-44`) does not.
+terminal does not.
 """
 
 from __future__ import annotations

@@ -55,7 +55,7 @@ obviously wrong — which is the trick question this gate exists to catch.
 
 ## ⛔ WHAT A JUDGEMENT RECORDS, AND WHY NOTHING HERE READS IT TO DECIDE
 
-⭐ **The prompt, the pass and the outcome** (`E14` § `AX-06`'s Acceptance),
+⭐ **The prompt, the pass and the outcome** (what a judged gate must keep),
 written into `Verdict.recorded` so a reader of the record can see what was
 asked, who answered and what they said. ⛔ **`held` is the verdict**, exactly as
 `record.py` says: nothing in this module parses an outcome sentence to decide
@@ -64,7 +64,7 @@ rule nobody can state.
 
 ⚠️ **A judgement with nothing recorded is refused.** A shipped judgement whose
 prompt was blank is one nobody can audit, and an unauditable judgement is the
-thing `E14`'s third property is written against.
+thing R5's gates are written against.
 """
 
 from __future__ import annotations

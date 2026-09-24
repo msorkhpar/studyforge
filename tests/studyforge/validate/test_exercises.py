@@ -164,7 +164,7 @@ def test_a_page_whose_practices_skip_an_ordinal_is_refused(tmp_path):
 
 
 def test_a_corpus_with_no_authored_exercise_is_untouched(tmp_path):
-    # ⚠️ A `bundled` grader's derivation gates are `E08`'s; nothing here widens
+    # ⚠️ A `bundled` grader's derivation gates are its own; nothing here widens
     # to it, so a corpus that predates this milestone validates as it did.
     root = corpora.one_unit(tmp_path / "c")
     report = validate(root)

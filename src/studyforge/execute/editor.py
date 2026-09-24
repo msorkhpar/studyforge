@@ -14,7 +14,7 @@ where the framework's execution starts them — `time` and `pathlib`.
 
 ## ⛔ Why this is asked at SERVE time and can never be built into a page
 
-The editor's host port is **per-project** (`SK-09/4`): the contract declares
+The editor's host port is **per-project**: the contract declares
 one and says two corpora on one host would collide on it, so the port a reader
 actually has is a fact about their machine. ⛔ **R8 forbids a built page naming
 an origin or a port**, and a built site opens over `file://` where there is no
@@ -23,7 +23,7 @@ exists exactly where an origin can answer it, and the page reads it there.
 
 ## ⛔ The runner never starts, stops or builds a container, and neither does this
 
-⭐ Round 112's ruled seam and spec §8.3 hold here unchanged: a probe is
+⭐ The reader-starts-it seam and spec §8.3 hold here unchanged: a probe is
 `docker inspect`, which READS. ⛔ **The Docker socket is never mounted into the
 serving process** — not behind a flag, not "only locally". The host's CLI is
 the only thing that talks to the daemon, and it runs on the host. ⛔ **Nothing
@@ -53,7 +53,7 @@ dirty buffer titled with the file's own name, which looks exactly like a
 corrupted file and is not one.
 
 ⚠️ **The editor binds directories INSIDE the source root, where the runner
-mounts the root itself** — §8.1 ruling 2 mounts only the sources, never the
+mounts the root itself** — §8.1 mounts only the sources, never the
 repository — which is why this probe accepts a descendant and `mode.ModeProbe`
 demands equality. No mount inside the root is no editor.
 
@@ -109,7 +109,7 @@ INSPECT_TIMEOUT = 3.0
 SCHEME = "http"
 
 #: Where an unspecified binding is reported — the address the reader's browser
-#: has, and the only one §8.1 ruling 3 permits the editor to publish on.
+#: has, and the only one §8.1 lets the editor publish on.
 LOOPBACK = "127.0.0.1"
 
 #: The host addresses that mean "every interface", which is not an address a
@@ -215,7 +215,7 @@ class Editor:
 class EditorProbe:
     """Answer where the editor is for one source root and one container name, or `None`.
 
-    ⭐ **Two readers, and only one of them may ask** (`W427`): `editor()` asks
+    ⭐ **Two readers, and only one of them may ask**: `editor()` asks
     `docker` when its answer has expired, and `known()` reads what the last ask
     left without ever forking. ⛔ Anything on the path of an ordinary response
     uses `known()` — the serving process does not reach the Docker socket to
@@ -259,7 +259,7 @@ class EditorProbe:
     def known(self) -> Editor | None:
         """Where this editor is if it has ALREADY been asked about — asking nothing.
 
-        ⛔ **This never forks, and that is the whole point** (spec §8.3, `W427`):
+        ⛔ **This never forks, and that is the whole point** (spec §8.3):
         a caller on the path of an ordinary response may read what a previous
         `editor()` left behind, and a COLD cache is `None` rather than a reason
         to reach the Docker socket while serving a page.
@@ -267,7 +267,7 @@ class EditorProbe:
         than the TTL is not a reading, and a caller deciding whether to act
         against a container must not act on one.
         ⛔ **So this is the wrong reader to compose a LASTING policy from, and
-        `W430` is the reading that says so**: a `frame-src` read straight off
+        a live reading says so**: a `frame-src` read straight off
         this named the editor for `EDITOR_TTL` seconds after an ask and `'none'`
         from then on, which a reader is essentially never inside. ⭐ The remedy
         is a record kept by the policy's own caller —
@@ -358,7 +358,7 @@ def _within(mounted: str, source_root: Path) -> str | None:
 
     ⭐ `""` is the root itself — a real answer, and the one `Path.relative_to`
     spells `.`. ⛔ `None` is *not this corpus*, which is a different thing and
-    is why this does not answer a bool any more (`W416` asked only whether).
+    is why this does not answer a bool any more (it once said only whether).
     """
     if not mounted:
         return None

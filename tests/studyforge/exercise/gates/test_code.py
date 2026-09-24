@@ -172,7 +172,7 @@ def test_an_exercise_with_no_cases_is_refused_rather_than_gated(tmp_path):
 
 def test_a_gate_with_nothing_to_read_does_not_hold(tmp_path):
     # ⛔ Never "held vacuously": a gate that passes for want of evidence is the
-    # defect `E14`'s third property is written against. Every run is absent
+    # defect R5's gates are written against. Every run is absent
     # here, and every gate but the vacuous-origin arm refuses.
     bundle = Bundle(tmp_path)
     verdicts = check(bundle.exercise, Evidence(runs=()), bundle.origins, bundle.ledger, WHERE)

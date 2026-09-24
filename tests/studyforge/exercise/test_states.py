@@ -103,7 +103,7 @@ def test_a_passing_grader_run_on_a_graded_exercise_completes_it():
 
 
 def test_an_ungraded_exercise_cannot_complete_a_practice():
-    # ⛔ E06's named acceptance. An ungraded exercise has nothing that could
+    # ⛔ A named acceptance. An ungraded exercise has nothing that could
     # pass; a reader works it and it completes nothing.
     assert completes_practice(UNGRADED, TEST, passed=True) is False
     # ⭐ `W357`: including one that names its file.

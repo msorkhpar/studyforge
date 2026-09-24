@@ -9,7 +9,7 @@ exists.
 **How you use it.** `studyforge validate <archive>`. It exits non-zero and
 names what is wrong — by address, by file, by rule. For a build:
 `check_untouched(snapshot(root, m), snapshot(root, m), m, footprint)` around it
-returns the same `Report` (`validate.nondestructive`, OPS-05).
+returns the same `Report` (`validate.nondestructive`).
 
 **Depends on.** `archive`, `corpus`, `address`. ⛔ Not on `render` or `serve`:
 validity is a property of the input, and a validator that needed the renderer
@@ -29,13 +29,13 @@ hardcodes any corpus's exception. It is framework code for the same reason: a
 guarantee that lives in one consumer is a guarantee the next consumer does not
 get.
 
-## ⛔ What another package takes, it takes from HERE (Ruling 101's producer half)
+## ⛔ What another package takes, it takes from HERE (R21's producer half)
 
 ⭐ **Seven names below are on this surface because a package outside `validate`
 needs them** — `Held` and `Walk` for a walk a caller already has, and
 `RULE_DUPLICATE_PATH`, `check_placement`, `headings`, `HEADING_LINE` and
-`FENCE` for the one question each answers. ⚠️ **The last two landed with
-`AX-07`**, whose source ledger walks a material file asking which headings
+`FENCE` for the one question each answers. ⚠️ **The last two serve the
+exercises skill**, whose source ledger walks a material file asking which headings
 enclose each fenced example — ⛔ an interleaved walk neither `headings` nor
 `region` performs, so the two PATTERNS are shared while the WALK is not, and
 the tree keeps one definition of what a heading and a fence are.
@@ -53,7 +53,7 @@ already export a callable whose name is one of that package's own modules —
 `address.identifier`, `contents.order` and `skills.reconnaissance.survey`
 among them. ⛔ **Refusing it here would make this package the exception and
 would leave `skills.reconnaissance` reaching past this surface permanently**,
-which is the defect Ruling 101 names.
+which is the defect one exported home prevents.
 
 ⭐ **Nothing is hidden by it.** `from studyforge.validate.headings import
 count_headings, region` still resolves: the binding rebinds this PACKAGE's

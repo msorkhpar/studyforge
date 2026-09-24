@@ -48,7 +48,7 @@ CONTAINER_PREFIX = "studyforge-runner-"
 #: editor is brought up by the compose file `skills.execution` generates, so its
 #: name is the one Compose derives — `<project>-<service>-<index>`, where the
 #: project is `studyforge-<source>` and the one service is `editor`.
-#: ⛔ **A convention, not a declaration, and that is a finding** (`W416/1`): the
+#: ⛔ **A convention, not a declaration, and that is a known gap**: the
 #: editor block of `consuming.json` carries no `name_template` where the runner
 #: block carries one, and the generated compose service declares no
 #: `container_name`, so nothing fails if the two spellings come apart. ⭐ A

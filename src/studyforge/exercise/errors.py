@@ -10,7 +10,7 @@ a caller catches one type rather than four.
 raise it, and putting it in either would make the other import a module it has
 no business knowing.
 
-⚠️ **`ValueError`, following SF-01's split and the two contracts either side of
+⚠️ **`ValueError`, following the package error split and the two contracts either side of
 this one.** An exercise is a *value read from a document*, so it fails the way
 a manifest and an overlay fail.
 

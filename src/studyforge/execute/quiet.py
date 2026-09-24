@@ -23,7 +23,7 @@ root and scrubbed (`output`), so it rewrites nothing.
 
 ## ⭐ Per toolchain, DECLARED, and never guessed
 
-A corpus declares its `runtimes` (`corpus.manifest.runtimes`, `W350`). ⭐
+A corpus declares its `runtimes` (`corpus.manifest.runtimes`). ⭐
 **`TOOLCHAINS` maps a runtime name to its rules, and the rules are data.** A
 Gradle corpus and a Maven corpus each get their own, and adding a third is one
 entry. ⛔ **Nothing here looks at the command or the output to work out which

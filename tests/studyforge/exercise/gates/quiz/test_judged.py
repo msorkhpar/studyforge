@@ -1,6 +1,6 @@
 """`Q1`–`Q3`: a shipped judgement is checkable because its INPUTS are, and that is read here.
 
-⛔ **The clause this file exists for** (`E14` § `AX-06`): *`Q1`–`Q3` are
+⛔ **The clause this file exists for**: *`Q1`–`Q3` are
 recorded with the prompt, the pass and the outcome, and a question whose
 `Q1`–`Q3` record is absent or whose recorded inputs no longer match is
 refused.* ⭐ Each half is taken by doing it: the record is read back out of a

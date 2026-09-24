@@ -23,7 +23,7 @@ raises. Standard library only.
 ## ⭐ THE SEAM: a family declares its own gates, and nothing here is edited
 
 ⛔ **A second gate family adds NO line to this module, to `record`, or to
-`digests`** (`AX-06`): it declares a `Family`, calls `register` at its own
+`digests`**: it declares a `Family`, calls `register` at its own
 import, and every completeness rule, every refusal and the whole write order
 reach it from that moment. ⭐ **What this module owns is the rules; what a
 family owns is its gates**, and the two never have to be edited together.
@@ -65,7 +65,7 @@ from dataclasses import dataclass
 from studyforge.describe import describe
 from studyforge.exercise.errors import ExerciseError
 
-#: What a family name and a gate id may be. ⛔ A permitted set (Ruling 8), and
+#: What a family name and a gate id may be. ⛔ A permitted set, and
 #: narrow: these are written into a record, printed in a refusal and compared
 #: byte for byte, so they carry no whitespace and nothing a path could hide in.
 TOKEN_PERMITTED = "ASCII letters, digits, '.', '_' and '-', with no whitespace"

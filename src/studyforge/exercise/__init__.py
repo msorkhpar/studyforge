@@ -29,7 +29,7 @@ real teaching content: one surveyed corpus has an exercise in every one of its
 ⭐ **The three states are read off the structure and there is no `state` field**
 — none to set, none to forget. **none** is no practice document at all;
 **ungraded** is a practice document with no grader in it; **graded** is a
-record that names one. ⭐ **An ungraded unit may still name its file** (`W357`):
+record that names one. ⭐ **An ungraded unit may still name its file**:
 its record carries `main_path` and `run_command` and no grader half, so a
 reader's file resolves to its unit whether or not anything checks it.
 ⛔ A corpus that must declare its own emptiness is a contract fitted to the one
@@ -55,37 +55,37 @@ reading floor, which is a whole product for prose material.
 |---|---|
 | `states` | the three states, the two acts, and what may complete a practice |
 | `record` | `Exercise`, and reading one out of a practice document |
-| `cases` | the case vocabulary: `kind`, `cases`, `report` and `origin` (`AX-00`) |
-| `report` | folding a run's JUnit report through those cases into a breakdown (`AX-01`) |
-| `quiz` | the quiz: its questions, its key, and the rule that grades them (`AX-05`) |
-| `gates` | the authoring gates and the gate record they write (`AX-03`) |
-| `bundle` | what an authored exercise is on disk, and what it emits (`AX-04`) |
+| `cases` | the case vocabulary: `kind`, `cases`, `report` and `origin` |
+| `report` | folding a run's JUnit report through those cases into a breakdown |
+| `quiz` | the quiz: its questions, its key, and the rule that grades them |
+| `gates` | the authoring gates and the gate record they write |
+| `bundle` | what an authored exercise is on disk, and what it emits |
 | `safety` | what a path and a command may be, checked before either reaches a file |
 | `errors` | `ExerciseError`, the only exception any of it raises |
 
-⭐ **A graded exercise may say what it is checked IN** (`AX-00`, spec §7 §10):
+⭐ **A graded exercise may say what it is checked IN** (spec §7 §10):
 its `cases` — each one an `id` as the test report spells it, a `kind` of `main`
 or `edge`, and `says`, the sentence a reader is shown — plus the `report` those
 ids are read out of and the `origin` the exercise was built from. ⛔ The
 breakdown is a **report and never a second definition of a pass**: a practice
 completes when every case passes, exactly as before.
 
-⭐ **And what a run then REPORTED is folded back through them** (`AX-01`):
+⭐ **And what a run then REPORTED is folded back through them**:
 `breakdown_of` reads the JUnit XML the run wrote, refuses it if it is stale,
 malformed or names a test the map does not, and answers *main ask* plus *edge
 cases n/m*. ⛔ The breakdown is a **report and never a second definition of a
 pass**, which is the sentence above said from the other end.
 
 ⭐ **And what an authored exercise CLEARED before it shipped is
-`gates`** (`AX-03`, spec §7 §6): `G1`–`G5` read over the runs a caller takes in
+`gates`** (spec §7 §6): `G1`–`G5` read over the runs a caller takes in
 the pinned runner image, and one `GateRecord` carrying the digest of every
 input beside each gate's verdict. ⛔ **No gate can be disabled, skipped or
-weakened by configuration**, and a second family of gates (`AX-06`) writes into
+weakened by configuration**, and a second family of gates writes into
 that same record without the package being edited. ⚠️ The gates are not part of
 reading a record: nothing in this module calls them, and a reader's machine
 never runs one.
 
-⭐ **And where an authored exercise LIVES is `bundle`** (`AX-04`, spec §7):
+⭐ **And where an authored exercise LIVES is `bundle`** (spec §7):
 the directory a corpus repository commits for one — its statement, its
 starter, its reference solution, its tests, its plants, its `cases` and the
 gate record beside them — plus the emission an adapter calls to turn it into a
@@ -95,12 +95,12 @@ as the bundle's own data (R1), and `studyforge validate` re-reads the gate
 record through `validate.exercises`.
 
 ⛔ **Structural, with no flag and no version bump.** A record written before
-`AX-00` reads unchanged and round-trips to the same bytes; a document carrying
+these keys reads unchanged and round-trips to the same bytes; a document carrying
 these keys is refused by a build that predates them, because the record's key
 set is closed.
 
 ⭐ **An exercise whose `kind` is `quiz` carries `questions` in place of a
-workspace** (`AX-05`, spec §7 §7) — a stem, an ordered set of options, exactly
+workspace** (spec §7 §7) — a stem, an ordered set of options, exactly
 one keyed correct, and one sentence per option. ⛔ **It is graded with no
 compiler, no container, no network and no model**: the key ships in the
 practice document and the rule is `studyforge.exercise.quiz`'s, so the reading
@@ -182,7 +182,7 @@ from studyforge.exercise.states import (
 
 #: ⛔ The package's whole public surface. A consumer that has to import
 #: `studyforge.exercise.record` directly is a consumer this contract failed —
-#: `docs/conventions/module-structure.md` calls `__init__.py` the contract, and
+#: R17 makes the package's `__init__.py` its contract, and
 #: this is what it says.
 __all__ = [
     "ARGUMENT_PERMITTED",

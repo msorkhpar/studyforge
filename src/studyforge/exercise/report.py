@@ -25,7 +25,7 @@ exception, and the standard library's `xml.etree.ElementTree` and `pathlib`.
 ⛔ Not on `execute`: this reads a file a run left behind and never starts one,
 so a breakdown can be taken from a run somebody else's process performed.
 ⛔ Not on `progress` or `serve`: recording the breakdown beside a verdict is
-`AX-02`'s, and the direction is those-depend-on-this.
+`progress`'s, and the direction is those-depend-on-this.
 
 ## ⛔ The channel is JUnit XML, and console output is not a channel
 
@@ -60,7 +60,7 @@ report of four results into *edge cases 1/1* — green, and a lie about what ran
 Ignoring the unnamed test is the same lie with an extra step. ⚠️ **The cost is
 stated:** the declared path must hold the exercise's report and nothing else,
 so a report directory shared with an unrelated test class is refused. That is
-the authoring defect `AX-03`'s gate G4 exists to catch, caught here too because
+the authoring defect gate G4 exists to catch, caught here too because
 a gate that runs at authoring time does not run on the reader's machine.
 
 ## ⛔ Staleness is a claim about TIME, so it is measured against the run
@@ -84,7 +84,7 @@ it.
 
 ## ⭐ A case passes only if the report says so
 
-⛔ **Enumerated the way this project enumerates** (Ruling 8): the closed set is
+⛔ **Enumerated the way this project enumerates**: the closed set is
 the children a **passing** testcase may carry, never the children that mean it
 failed. A report element this build has not seen — `rerunFailure`, a provider's
 own extension — therefore reads as *did not pass* rather than slipping through
@@ -93,7 +93,7 @@ not pass either: a run that stops early names fewer tests, and a case with no
 result is not a case that succeeded.
 
 ⭐ **The breakdown is a REPORT and never a second definition of a pass** (spec
-§7, `AX-02`). `is_pass` stays what it is — a test-mode run that exited zero —
+§7). `is_pass` stays what it is — a test-mode run that exited zero —
 and a reader shown *edge cases 2/3* is looking at an incomplete practice.
 """
 
@@ -312,7 +312,7 @@ def _spells(element: ElementTree.Element, case_id: str) -> bool:
 
     ⚠️ **The declared id is taken APART rather than a spelling composed from the
     report**, and that is not only style: `render.markup` owns the one composer
-    of a number sign in this tree (`W107`), asserted over `src/` by a sweep that
+    of a number sign in this tree, asserted over `src/` by a sweep that
     cannot tell a URL fragment from a method separator. ⭐ Reading the declared
     value is the honest direction anyway — the case map is the authority, and
     nothing here invents a string to test it against.
@@ -333,9 +333,9 @@ def _node_id(file: str, classname: str, name: str) -> str:
 
     ⚠️ pytest's JUnit `classname` is the module's dotted path with any class
     appended, so the class is what is left once the module is taken off the
-    front. ⭐ The rebuild is `tools.quality.gated._node_id`'s, which has read
-    this repository's own reports; it is re-spelled rather than
-    imported because `src/` never imports the developer tooling.
+    front. ⭐ The rebuild matches pytest's own node ids, checked against
+    this repository's own reports; it is spelled here because
+    `src/` imports no test or developer code.
     """
     module = file.removesuffix(".py").replace("/", ".")
     inner = classname[len(module) + 1 :].split(".") if classname.startswith(f"{module}.") else []

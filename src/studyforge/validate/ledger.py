@@ -63,7 +63,7 @@ RULE_LEDGER_UNACCOUNTED = "ledger-unaccounted"
 
 #: ⛔ A ledger or coverage report carrying personal data. ⚠️ `validate.corpus`'
 #: own spelling, because it is the same rule and two ids for one fact is two
-#: audits (`W213`).
+#: audits.
 RULE_PERSONAL_DATA = "personal-data"
 
 
@@ -121,7 +121,7 @@ def _rows(path: Path, where: str):
     try:
         assert_clean(document, where)
     except PersonalDataLeak as error:
-        # ⛔ Its own rule, as `validate.exercises` has it (`W213`).
+        # ⛔ Its own rule, as `validate.exercises` has it.
         yield Finding(RULE_PERSONAL_DATA, where, str(error))
         return None
     try:

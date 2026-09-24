@@ -124,7 +124,7 @@ def test_a_bundled_authoritative_record_is_accepted():
 
 
 def test_a_generated_authoritative_record_is_refused():
-    # ⛔ E06's named acceptance, and R5's whole point: presenting our own
+    # ⛔ A named acceptance, and R5's whole point: presenting our own
     # reading as the source's grader is a claim nobody notices is false until
     # a reader trusts a green tick that was never earned.
     message = refuse(from_document, record(provenance="generated", trust="authoritative"), WHERE)
@@ -301,7 +301,7 @@ def test_the_other_committed_practice_is_ungraded():
 
 
 def test_no_exercise_appears_anywhere_in_the_depth_one_fixture():
-    # ⛔ E06: "The depth-1 fixture (zero exercises) validates." A corpus with
+    # ⛔ "The depth-1 fixture (zero exercises) validates." A corpus with
     # no graders is complete, not short.
     #
     # ⭐ **Named reason for not taking `asserting=`**:

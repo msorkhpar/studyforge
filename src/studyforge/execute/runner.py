@@ -26,14 +26,14 @@ beside it.
 | output | `/work` made relative, then scrubbed | the root made relative, then scrubbed |
 | stop, timeout | the run's tree by its token, then the client | the command's process group |
 
-⛔ **The runner never starts, stops or builds a container** (round 112's
-ruling on `TC-00`'s answer 6): the reader starts it, and a stop here ends the
+⛔ **The runner never starts, stops or builds a container** (spec §8.3's
+seam): the reader starts it, and a stop here ends the
 RUN's processes inside it, never the container. ⛔ **No socket is mounted
 anywhere** (spec §8.3): the host's `docker` CLI reaches in from outside.
 
 ## ⭐ `RUN_ENVIRONMENT` — decided here, the same in both modes
 
-- `PYTHONDONTWRITEBYTECODE=1` (`W352/3`): a grader imports the file under test,
+- `PYTHONDONTWRITEBYTECODE=1`: a grader imports the file under test,
   and Python would write `__pycache__/` beside it — into the reader's tree,
   which a run must leave as it found it.
 - `PYTHONUNBUFFERED=1`: a Python program writing to a pipe buffers its output
@@ -41,7 +41,7 @@ anywhere** (spec §8.3): the host's `docker` CLI reaches in from outside.
   and stdout and stderr would interleave differently from a terminal.
 
 ⚠️ **Both reach a Python program only.** A JVM or a Node build that writes a
-cache into the tree is not stopped by them, and that is `W353`'s class and a
+cache into the tree is not stopped by them, and that class of write is a
 corpus's ignore rules, not this module's.
 
 ## Why stderr is joined INSIDE the container

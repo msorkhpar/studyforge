@@ -18,7 +18,7 @@ check's tuple — ⚠️ **only while narration is on** (`narrate.enabled`), whi
 
 ## ⛔ WHY `validate`, WHEN THE JOIN ALREADY KNEW
 
-⚠️ **Measured on the first corpus (row `W457`)**: three content-fix rounds
+⚠️ **Measured on the first corpus**: three content-fix rounds
 changed prose on thirteen pages and every changed paragraph kept playing its
 old clip. `narrate.playable` marked each one stale and resolved it anyway,
 which is right for the page (see below), and ⛔ **nothing any person or office
@@ -29,7 +29,7 @@ lands where it is read.
 ## ⭐ THE BUILD'S JOIN, NOT A SECOND ONE
 
 ⛔ **`generate.narration.heard` is asked, per unit, exactly as a build asks
-it**: the same served document, the same audio directory (`W222`), the same
+it**: the same served document, the same audio directory, the same
 `playable_of` with the disk probed. So the units this check names are the
 units a built page plays under protest, by construction — a second walk here
 would be a second answer to *which clip does this paragraph play*. ⚠️ The

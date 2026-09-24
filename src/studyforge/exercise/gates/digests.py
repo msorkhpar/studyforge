@@ -26,13 +26,13 @@ library only.
 
 ⚠️ **Collapsing the two would make gate `G5` unreadable.** An `origin` names a
 file the framework may not even have — a corpus's source repository — and the
-ledger (`AX-07`) is what carries its digest. ⭐ So a `Cited` entry records what
+ledger is what carries its digest. ⭐ So a `Cited` entry records what
 the source digested to **when the exercise was authored**, and `G5` asks the
 ledger what it digests to now.
 
 ## ⛔ The role is a TOKEN and the set of roles is OPEN, deliberately
 
-⭐ **This is the half of the record a second gate family extends** (`AX-06`).
+⭐ **This is the half of the record a second gate family extends**.
 `code` writes `statement`, `starter`, `reference`, `tests` and one
 `plant:<case id>` per edge; a quiz family writes one cited passage per
 question. ⛔ Closing the set here would mean every new family editing this
@@ -61,7 +61,7 @@ from studyforge.describe import describe
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.safety import require_path
 
-#: The one digest this build takes and reads. ⛔ Closed at one (Ruling 8).
+#: The one digest this build takes and reads. ⛔ Closed at one.
 SHA256 = "sha256"
 
 #: ⛔ Closed. A prefix this build cannot compute is refused, never trusted.
@@ -84,7 +84,7 @@ ROLE_PERMITTED = "ASCII letters, digits and '. _ - : # $ / @ + = , ( ) [ ]', wit
 #: The keys of one input, in the order a record writes them (R10).
 INPUT_KEYS = ("role", "path", "digest")
 
-#: The keys of one cited passage. ⚠️ `section` is `SF-36`'s second half of one
+#: The keys of one cited passage. ⚠️ `section` is the second half of one
 #: declared field and is `null` when the whole file is cited; it is written
 #: either way, so a round trip does not depend on which shape was authored.
 CITED_KEYS = ("role", "path", "section", "digest")
@@ -109,7 +109,7 @@ class Cited:
 
     ⛔ `path` is the source's path as the ledger spells it, so `G5` can look it
     up; `section` is the heading that bounds the region, or `None` for a whole
-    file (Ruling 92).
+    file.
     """
 
     role: str
@@ -166,7 +166,7 @@ def drifted(root: Path, inputs: tuple[Input, ...], where: str) -> tuple[str, ...
     """Every input whose file no longer digests to what the record says — one sentence each.
 
     ⭐ The answer is sentences and not a boolean, because a caller refusing a
-    bundle has to be able to name the file (spec §7 §10, `AX-04`).
+    bundle has to be able to name the file (spec §7 §10).
     """
     return tuple(
         f"the input at '{entry.path}' has changed since the gates were run, so the "

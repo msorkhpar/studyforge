@@ -39,14 +39,14 @@ drift the moment anybody did the exercise, and `studyforge validate` would
 report every worked corpus as broken. ⭐ So the bundle holds the **pristine**
 starter and `emit` writes a copy into the workspace; the record's `main_path`
 names the copy. ⛔ Every file the gate record digests is therefore one no reader
-touches, which is what makes `AX-11`'s *"every shipped exercise's gate record
+touches, which is what makes *"every shipped exercise's gate record
 verifies against the files beside it"* a reading that stays true.
 
-## ⛔ A BUNDLE'S FILE SET IS CLOSED, AND THAT IS WHERE `AX-03/1` IS ANSWERED
+## ⛔ A BUNDLE'S FILE SET IS CLOSED, SO NO RUN REPORT IS COMMITTED
 
 ⚠️ **A JUnit report carries the machine's hostname** — `pytest --junit-xml` and
 surefire both write `hostname="…"` — and a corpus repository is where this
-repository's own personal-data gate never looks (`AX-03/1`, R7). ⛔ **The remedy
+repository's own personal-data gate never looks (R7). ⛔ **The remedy
 is mechanical here rather than a sentence in a guide:** a bundle may hold
 `bundle.json`, `statement.md`, `gates.json` and files under `starter/`,
 `reference/`, `tests/` and `plants/`, and `unpermitted` names anything else, so
@@ -54,7 +54,7 @@ a run's report committed into a bundle is refused by `studyforge validate`.
 ⭐ **The report is a run artifact**: `document` requires its path to be in the
 workspace, which is not in the bundle at all.
 
-## ⭐ AN EXERCISE'S DEPENDENCIES ARRIVE THROUGH ITS BUILD ROLE (`W436`)
+## ⭐ AN EXERCISE'S DEPENDENCIES ARRIVE THROUGH ITS BUILD ROLE
 
 ⛔ **An exercise whose tests import a library needs a build declaration, and
 nothing else in the bundle could carry one.** ⭐ So `build/` is the one
@@ -64,24 +64,24 @@ digested by the gate record like every other input, and laid into the
 reader's workspace beside the starter and the tests. ⛔ **The framework never
 reads one**: it is corpus data a tool reads, so no line here branches on a
 language or a library (R1). The dependencies themselves are never files of
-the corpus — the runner image's prime carries them (`W390`), warmed from the
+the corpus — the runner image's prime carries them, warmed from the
 same declaration, so a graded run resolves them with no network.
 
 ## ⛔ EVERY RUN'S OUTPUT LANDS IN ONE DIRECTORY, AND IT NEVER SITS IN A BUNDLE
 
-⭐ **`RUN_OUTPUT_DIRNAME` is the one convention a report path follows**
-(`ISO-M10/4`): a bundle's report is under it, so the ignore rule a corpus
+⭐ **`RUN_OUTPUT_DIRNAME` is the one convention a report path follows**:
+a bundle's report is under it, so the ignore rule a corpus
 writes for its run artifacts is the one line `RUN_OUTPUT_IGNORE`, written once
 and never per exercise. ⚠️ `target` because it is where Maven writes with no
 configuration and already where `skills.execution.prime` refuses to take a
 specimen from; every other tool is told the directory in its own build file or
 command. ⛔ **A bundle file under a directory of that name is refused** by
 `unpermitted`, whichever role's directory it sits in — so the widened set
-still cannot hold a run's report, which is `AX-03/1`'s reason surviving.
+still cannot hold a run's report, and the hostname reason survives.
 
 ## ⚠️ A PLANT IS FILED BY ORDINAL, NEVER BY CASE ID
 
-⛔ **A case id is corpus data of an unbounded shape** (`AX-03/4`): `CASE_ID`
+⛔ **A case id is corpus data of an unbounded shape**: `CASE_ID`
 permits `. _ - : # $ / @ + = , ( ) [ ]`, so a valid case id can spell an
 absolute path. ⭐ A plant's directory is therefore `plants/edge-N`, N being the
 edge case's position in the record's own `cases`, and the case id reaches the
@@ -113,9 +113,9 @@ BUNDLE_FILENAME = "bundle.json"
 #: document's blocks, so the page and the bundle cannot disagree (R19).
 STATEMENT_FILENAME = "statement.md"
 
-#: ⛔ The gate record `AX-03` writes and `studyforge validate` re-reads. Beside
-#: the bundle rather than a key of the exercise record: `AX-03`'s handoff picked
-#: the two halves, and this row picks the filename.
+#: ⛔ The gate record the authoring gates write and `studyforge validate` re-reads.
+#: Beside the bundle rather than a key of the exercise record, so the two halves
+#: stay apart; this is its filename.
 GATES_FILENAME = "gates.json"
 
 #: The role a bundle's statement takes in the gate record's inputs.
@@ -125,7 +125,7 @@ STATEMENT = "statement"
 #: `gates.runs`' spellings, taken from that surface rather than re-minted.
 TESTS = "tests"
 
-#: ⭐ The build role (`W436`): the files a build tool reads to resolve the
+#: ⭐ The build role: the files a build tool reads to resolve the
 #: exercise's dependencies, laid into the workspace at the same relative path.
 BUILD = "build"
 
@@ -134,7 +134,7 @@ BUILD = "build"
 ROLE_DIRNAMES = {STARTER: STARTER, REFERENCE: REFERENCE, TESTS: TESTS}
 
 #: ⛔ **The one directory every run artifact of an exercise lands in**, inside
-#: its workspace — the report included (`ISO-M10/4`). Never a bundle's.
+#: its workspace — the report included. Never a bundle's.
 RUN_OUTPUT_DIRNAME = "target"
 
 #: ⭐ The one ignore line that keeps every run artifact out of every commit, in
@@ -235,7 +235,7 @@ class Places:
 def plant_dirname(position: int) -> str:
     """Return `edge-N` for the N-th edge case, counted from one.
 
-    ⛔ **The position, never the case id** (`AX-03/4`): a case id permits `/`
+    ⛔ **The position, never the case id**: a case id permits `/`
     and `:`, so one spelled as a path would put a plant outside its bundle.
     """
     return f"{PLANT_DIRNAME}-{require_ordinal(position)}"
@@ -277,10 +277,10 @@ def require_no_gap(values: tuple[int, ...], where: str) -> tuple[int, ...]:
 def unpermitted(root, places: Places) -> tuple[str, ...]:
     """Every file in the bundle the shape does not permit, bundle-relative, sorted.
 
-    ⛔ **The closed set is what refuses a committed run report** (`AX-03/1`): a
+    ⛔ **The closed set is what refuses a committed run report**: a
     JUnit report carries the machine's hostname, so a bundle that may hold
     anything is a bundle somebody commits one into. ⛔ A file under a
-    `RUN_OUTPUT_DIRNAME` directory is refused wherever it sits (`W436`).
+    `RUN_OUTPUT_DIRNAME` directory is refused wherever it sits.
     ⭐ Empty for a bundle that is not there, because *absent* is
     `validate.exercises`' finding to make and not this function's.
     """

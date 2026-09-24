@@ -65,8 +65,8 @@ R5's general rule leaves open for real shipped tests.
 | `shape` | what a quiz RECORD carries instead of a workspace, and its trust |
 | `grading` | the rule: what was answered, what was right, when it is complete |
 
-**Delivered by AX-05** (`M10` step 10.1, [`E14`](../../../../docs/tasks/E14-authored-exercises.md)).
-The authoring gates Q1–Q5 are `AX-06`'s and the reader's panel is `AX-09`'s.
+**Scope.** The authoring gates Q1–Q5 are `exercise.gates.quiz`'s and the
+reader's panel is the renderer's.
 """
 
 from __future__ import annotations
@@ -104,7 +104,7 @@ from studyforge.exercise.quiz.shape import (
 
 #: ⛔ The sub-package's whole public surface. A consumer that has to import
 #: `studyforge.exercise.quiz.questions` directly is a consumer this contract
-#: failed — `docs/conventions/module-structure.md` calls `__init__.py` the
+#: failed — R17 makes the package's `__init__.py` its
 #: contract, and this is what it says.
 __all__ = [
     "KEYED_OPTIONS",

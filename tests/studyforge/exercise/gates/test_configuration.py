@@ -1,6 +1,6 @@
 """⛔ *No gate can be disabled, skipped or weakened by configuration* — asserted by TRYING.
 
-⭐ **`E14`'s third property and `AX-03`'s Acceptance clause.** ⚠️ A module
+⭐ **R5's honesty as gates, and the gate record's promise.** ⚠️ A module
 docstring saying so is a promise; this file is the check. Every case below
 attempts the thing and asserts it did not work — ⛔ **and each attempt is
 observed first**: the environment really is set, the key really is in the

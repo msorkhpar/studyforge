@@ -127,7 +127,7 @@ def folded(
     """Fold the report a run left behind into the evidence a gate reads.
 
     `started` is the wall clock read **before** the run was started, so a
-    report an earlier run wrote is refused rather than folded (`AX-01`).
+    report an earlier run wrote is refused rather than folded.
     ⭐ A fold that refuses is carried as a `refusal` and never raised: an
     authoring defect is a gate's finding, not this function's crash.
     """

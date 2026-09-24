@@ -1,7 +1,7 @@
 r"""What the corpus root holds as material, asked of the repository and the plan.
 
 **What it does.** Enumerates the corpus root: every file that is material rather
-than output, and every nested repository store (`W259`). It gives no verdict;
+than output, and every nested repository store. It gives no verdict;
 `classification` judges what it returns.
 
 **How you use it.** `source_files(root)` returns a `Scan`. `repository_ignores` is
@@ -35,11 +35,11 @@ moves with the corpus because it belongs to the corpus.
 
 ## ⛔ A build's own output is recognised from the plan, not ignored and not declared
 
-⭐ **A build's pages and media are committed** (§5, `W242`), so git no longer
+⭐ **A build's pages and media are committed** (§5), so git no longer
 declares them output. `studyforge plan` already enumerates them from this
 corpus's declarations, so the scan asks it: a planned file is recognised by
-its exact path, and everything under a planned directory is recognised with it
-(`INT-06/7`). ⚠️ No glob. The manifest refuses a leading-wildcard
+its exact path, and everything under a planned directory is recognised with it.
+⚠️ No glob. The manifest refuses a leading-wildcard
 `not_material` glob, because its correctness depends on which files happen not
 to exist. A placed path doesn't. ⛔ A planned path the manifest includes as
 material is `contested`, never resolved by precedence. A plan that refused
@@ -63,13 +63,13 @@ from studyforge.corpus.placement import ARCHIVE_DIRNAME
 #: The name of a repository's store, a directory or a submodule's gitfile.
 REPOSITORY_STORE = ".git"
 
-#: What a source scan never enters, **at the corpus root only** (`W259`).
+#: What a source scan never enters, **at the corpus root only**.
 #:
 #: ⛔ **These two are the framework's own and nobody else's.** `.studyforge` is
 #: this tool's, and `.git` holds the declaration this module now reads rather
 #: than guesses at. ⚠️ **Beneath the root neither is the framework's**: a
 #: nested `.studyforge` is material, and a nested `.git` is refused by name
-#: (`RULE_NESTED_REPOSITORY`). ⚠️ **The archive root is not here** (`W248`): it
+#: (`RULE_NESTED_REPOSITORY`). ⚠️ **The archive root is not here**: it
 #: is skipped at the corpus root only, and `membership` refuses each file
 #: beneath it that is not an archive member. A source's own nested `archive/`
 #: is material.
@@ -100,13 +100,13 @@ class Scan:
     consulted: bool
     #: ⭐ The files a build of this corpus writes, recognised by the plan and
     #: therefore not in `files`. Carried rather than dropped, so an instrument
-    #: can print the population it judged (`W242`).
+    #: can print the population it judged.
     generated: tuple[Path, ...] = ()
     #: ⛔ False when the plan refused: nothing was recognised, which is not
     #: the same as nothing having been generated.
     planned: bool = True
     #: ⛔ Each nested repository store the repository does not declare as
-    #: output, refused by name (`W259`). Its contents are never in `files`.
+    #: output, refused by name. Its contents are never in `files`.
     stores: tuple[Path, ...] = ()
 
 
@@ -146,7 +146,7 @@ def source_files(root: Path) -> Scan:
 def _generated_output(root: Path, candidates: list[Path]) -> frozenset[Path] | None:
     """Which of `candidates` a build of this corpus writes, by the plan's own enumeration.
 
-    ⛔ **The plan's answer, never a list here** (Ruling 99, `W242`). A plan line
+    ⛔ **The plan's answer, never a list here**. A plan line
     ending in `/` is a directory whose contents a build or `narrate` fill, and
     every other line is a file — the plan's printed distinction, which
     `generate.footprint` reads the same way. ⚠️ Unlike a footprint, a unit's
@@ -157,8 +157,8 @@ def _generated_output(root: Path, candidates: list[Path]) -> frozenset[Path] | N
     nothing, and the caller says so.
 
     ⚠️ **The import is deferred, for `generate.footprint`'s reason:** `cli`
-    imports the dispatcher, which imports this package. The enumeration living
-    inside a command is `W202` item 5's finding.
+    imports the dispatcher, which imports this package. The enumeration used to
+    live inside a command, and no other package could reach it there.
     """
     from studyforge.cli.plan import plan_for
 
@@ -177,7 +177,7 @@ def _generated_output(root: Path, candidates: list[Path]) -> frozenset[Path] | N
 def _walk(root: Path) -> tuple[list[Path], list[Path]]:
     """Every file under `root` that is not the framework's own writing, and every nested store.
 
-    ⛔ **`SKIP_DIRS` is asked of the first part only** (`W259`): a nested
+    ⛔ **`SKIP_DIRS` is asked of the first part only**: a nested
     `.studyforge` is walked like any directory. A nested `.git`, directory or
     gitfile, is returned as a store and never entered.
     """
@@ -188,7 +188,7 @@ def _walk(root: Path) -> tuple[list[Path], list[Path]]:
         if parts[0] in SKIP_DIRS:
             continue
         if len(parts) > 1 and parts[0] == ARCHIVE_DIRNAME:
-            # ⛔ Not silent: `membership` accounts for every file here (`W248`).
+            # ⛔ Not silent: `membership` accounts for every file here.
             continue
         if REPOSITORY_STORE in parts:
             stores.add(root.joinpath(*parts[: parts.index(REPOSITORY_STORE) + 1]))
@@ -204,8 +204,8 @@ def _walk(root: Path) -> tuple[list[Path], list[Path]]:
 def repository_ignores(root: Path, candidates: list[Path]) -> frozenset[Path] | None:
     """Which of `candidates` the repository declares as generated output.
 
-    ⭐ **Public because it is the ONE ignore reader (`W28`), and a second
-    caller imports it rather than keeping a list** (`W257`): the scaffolded
+    ⭐ **Public because it is the ONE ignore reader, and a second
+    caller imports it rather than keeping a list**: the scaffolded
     `test_emit` asks it which directories a working copy leaves behind.
 
     ⛔ **Git's own answer, never a reimplementation of it.** Ignore rules have
@@ -230,7 +230,7 @@ def repository_ignores(root: Path, candidates: list[Path]) -> frozenset[Path] | 
         names = [path.relative_to(root).as_posix() for path in candidates]
     except ValueError:
         # ⛔ R7: `relative_to`'s own message quotes both paths, and `root` is the
-        # one input guaranteed to carry a home directory (`W257`, the census).
+        # one input guaranteed to carry a home directory (the census).
         raise ValueError("a candidate is not beneath the root it was asked about") from None
     payload = "\0".join(names)
     try:

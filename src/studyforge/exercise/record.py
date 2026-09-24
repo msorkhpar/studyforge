@@ -8,7 +8,7 @@ document, refuses every way it can be wrong, and writes it back byte-stably.
 is the round trip.
 
 **Depends on.** `safety` for the four workspace values, **`cases` for the
-vocabulary the four authored keys are written in** (`AX-00`), `states` for the
+vocabulary the four authored keys are written in**, `states` for the
 key whose presence is the graded state, and **`unit.trust` for R5's rule**.
 
 ## ⛔ R5's rule is imported, never re-spelled
@@ -32,15 +32,15 @@ graded state, so a key in the wrong place is a grader the reader will never be
 offered and the corpus would validate green — the exact failure §7's structure
 was chosen to make impossible.
 
-⛔ **A record is one of two shapes, and nothing in between** (`W357`):
+⛔ **A record is one of two shapes, and nothing in between**:
 
 | Shape | Carries | State |
 |---|---|---|
 | a file and how it runs | `REQUIRED_KEYS` — `main_path`, `run_command` | **ungraded** |
 | that, plus a grader | every key in `EXERCISE_KEYS` | **graded** |
 
-⭐ **Why a file with no test is a record and not a second declaration** is argued
-in `W357`'s handoff: the unit document's `workspace` is this record, so the
+⭐ **Why a file with no test is a record and not a second declaration** is this:
+the unit document's `workspace` is this record, so the
 reader's file reaches the one place every consumer already reads, with no new
 key in the archive or the unit document.
 
@@ -55,7 +55,7 @@ that does not exist is the claim R5 exists to stop.
 
 ## ⛔ The four authored keys are `cases`'s vocabulary, not a second spelling
 
-⭐ **`AX-00` adds `kind`, `cases`, `report` and `origin`, and every rule about
+⭐ **The case vocabulary adds `kind`, `cases`, `report` and `origin`; every rule about
 what they may *say* lives in `cases`** — the kinds, the case shape, the report
 formats, and what a region of the source is. ⛔ This module keeps the
 **document**: which keys are written, in what order, and which shape each one
@@ -63,7 +63,7 @@ may appear on. ⚠️ The seam is the same one `safety` and `unit.trust` sit on,
 and it is why `record` did not grow four vocabularies.
 
 ⭐ **Appended, never inserted** (the archive's `OPTIONAL_KEYS` made the same
-choice): the six keys `W357` left are in their old order and old position, so a
+choice): the six original keys are in their old order and old position, so a
 record that gains a `kind` does not reorder what was already on disk (R10).
 
 ⛔ **`cases` and `report` are a GRADER fact and are refused on a record with no
@@ -75,7 +75,7 @@ argument is `cases`'s docstring, which owns it.
 
 ## ⛔ A quiz carries `questions` in place of a workspace
 
-⭐ **`AX-05` adds the key and `exercise.quiz` owns every rule about it**, the
+⭐ **The quiz adds the key and `exercise.quiz` owns every rule about it**, the
 same seam `cases` sits on. ⚠️ A quiz names no `test_path`, so no RUN completes
 it — spec §7 §7's requirement, which `quiz`'s own contract argues.
 
@@ -135,7 +135,7 @@ EXERCISE_KEYS = (
 )
 
 #: The keys every record carries: the reader's file, and how it runs. ⭐ Also
-#: the whole of an ungraded record, in `EXERCISE_KEYS` order (`W357`).
+#: the whole of an ungraded record, in `EXERCISE_KEYS` order.
 REQUIRED_KEYS = ("main_path", "run_command")
 
 #: The grader half: written whole, or not at all. ⛔ `GRADER_KEY` first, because
@@ -146,9 +146,9 @@ GRADER_KEYS = (GRADER_KEY, "test_command", "provenance", "trust")
 #: reason.
 DEFAULTED_KEYS = ("trust",)
 
-#: ⭐ The keys `AX-00` and `AX-05` add, in `EXERCISE_KEYS` order. ⛔ **Written
+#: ⭐ The keys the cases and the quiz add, in `EXERCISE_KEYS` order. ⛔ **Written
 #: only where the record carries them**, which is what keeps every document
-#: written before `M10` byte-identical through a round trip (R10).
+#: written before them byte-identical through a round trip (R10).
 #: `BREAKDOWN_KEYS` is `cases`'s and `QUESTIONS` is `quiz`'s, with their reasons.
 AUTHORED_KEYS = ("kind", *BREAKDOWN_KEYS, "origin", quiz.QUESTIONS)
 
@@ -157,13 +157,13 @@ AUTHORED_KEYS = ("kind", *BREAKDOWN_KEYS, "origin", quiz.QUESTIONS)
 class Exercise:
     """One exercise: where the work lives, how it runs, and — if graded — what checks it.
 
-    ⚠️ **The four grader fields are `None` together, or set together** (`W357`),
+    ⚠️ **The four grader fields are `None` together, or set together**,
     which is what `from_document` guarantees. ⛔ The dataclass itself does not:
     it is frozen, not validated, so a caller that constructs one asks
     `from_document(to_document(...))` before believing it.
 
-    ⭐ **The `AX-00` and `AX-05` fields carry their defaults**, so every caller
-    written before `M10` constructs today's exercise by saying nothing: `kind`
+    ⭐ **The authored fields carry their defaults**, so every caller
+    written before them constructs today's exercise by saying nothing: `kind`
     is `code`, and a record built from no authored material carries none.
 
     ⛔ **`main_path` and `run_command` are `None` for a QUIZ and nothing else**,
@@ -214,7 +214,7 @@ def of(document: object, where: str) -> Exercise | None:
 
     ⚠️ `None` is not a failure: it is a unit that names no file, which is the
     common case. ⛔ **An `Exercise` is not the graded answer either** — one whose
-    `graded` is false names a file nothing checks (`W357`). A caller wanting
+    `graded` is false names a file nothing checks. A caller wanting
     the three states asks `states.state_of`, which also answers for a document
     that does not exist.
     """
@@ -275,9 +275,9 @@ def to_document(exercise: Exercise) -> dict:
 
     ⭐ **An authored key is written only where the record carries it**, and
     `kind` counts as carried only where it is not `code`. ⛔ So a record written
-    before `AX-00` round-trips to the same bytes it was read from, which is what
-    lets this contract land with no version bump (`cases`, and `W357` before
-    it).
+    before the authored keys round-trips to the same bytes it was read from, which is what
+    lets this contract land with no version bump (`cases`, and the ungraded record
+    before it).
     """
     values = {
         "main_path": exercise.main_path,
@@ -367,9 +367,9 @@ def _require_whole_breakdown(value: dict, where: str) -> None:
 
 
 def _authored(value: dict, kind: str, where: str) -> dict:
-    """Read the keys appended after `W357`, each only where the record writes it."""
+    """Read the keys appended after the original six, each only where the record writes it."""
     # ⚠️ One display, and `origin_in` takes the whole record: `origin` is read
-    # only where it is handed to its one reader (`W109`), so no site here reads
+    # only where it is handed to its one reader, so no site here reads
     # that key and decides something.
     return {
         "kind": kind,

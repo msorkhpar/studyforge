@@ -1,6 +1,6 @@
 """The case vocabulary: what a grader reports, in what kind of exercise, built from what.
 
-**What it does.** Reads and writes the four values `AX-00` adds to the §7
+**What it does.** Reads and writes the four values the case vocabulary adds to the §7
 record — the exercise's own `kind`, its `cases`, the `report` its grader
 writes, and the `origin` it was built from — and refuses every way each of
 them can be wrong.
@@ -16,7 +16,7 @@ reproducing it (R7).
 ## ⛔ `origin`'s rule is imported, never re-spelled
 
 ⚠️ **`origin` has ONE reader in this tree** — `fields.optional_origin`, which
-owns both of `SF-36`'s shapes and Ruling 92's heading bound — and that is a
+owns both origin shapes and the heading bound on a region — and that is a
 standing property, asserted by `tests/studyforge/corpus/container/
 test_origin_sites.py` over `src/` and `tests/` rather than at one ref. ⭐ So
 this module hands the value to that reader and re-raises its sentence under
@@ -60,7 +60,7 @@ and may carry nothing else new.
 
 ⛔ **The breakdown is written whole or not at all.** `cases` with no `report`
 names tests nothing can be read from, and a `report` with no `cases` is a file
-nothing folds through (`AX-01`). ⭐ The precedent is the grader half itself:
+nothing folds through. ⭐ The precedent is the grader half itself:
 half a claim is not a lesser exercise, it is a claim somebody half wrote.
 
 ## ⛔ `code` is the default and it is NOT written out
@@ -71,7 +71,7 @@ defaulted field anyway so that it cannot be told from one nobody wrote.
 that is already being written whole, so writing it costs one key on records
 that were being written anyway. Every `exercise` record ever written is `code`,
 so writing that token would re-render every archive document in existence —
-which is the cost `W357` refused to pay for a version bump, under R10, for this
+which is the cost the ungraded record refused to pay for a version bump, under R10, for this
 same reason. ⭐ **An absent `kind` is unambiguous precisely because `code` is
 the only kind that has ever existed**, which is the claim a defaulted `trust`
 could not make.
@@ -101,7 +101,7 @@ from studyforge.exercise.safety import require_path
 CODE = "code"
 
 #: A checkable practice for material that admits no coding task. ⚠️ The shape
-#: itself — questions, the key, and grading with no compiler — is `AX-05`'s;
+#: itself — questions, the key, and grading with no compiler — is `exercise.quiz`'s;
 #: what lands here is the token, so a record can carry it and round-trip.
 QUIZ = "quiz"
 
@@ -127,7 +127,7 @@ CASE_KINDS = (MAIN, EDGE)
 CASE_KEYS = ("id", "kind", "says")
 
 #: JUnit XML, as Maven's surefire writes it with no configuration and pytest
-#: writes it on one flag. ⭐ Named here and read by `AX-01`; console output is
+#: writes it on one flag. ⭐ Named here and read by `report`; console output is
 #: not a format, because the quiet run modes rewrite that stream by design.
 JUNIT = "junit"
 
@@ -137,8 +137,8 @@ REPORT_FORMATS = (JUNIT,)
 #: The grader's machine-readable output: what it is, and where it lands.
 REPORT_KEYS = ("format", "path")
 
-#: A region of the source — ⛔ **`SF-36`'s tuple itself, imported and never
-#: re-typed.** A region is bounded by a **heading** (Ruling 92), because a line
+#: A region of the source — ⛔ **the origin tuple itself, imported and never
+#: re-typed.** A region is bounded by a **heading**, because a line
 #: range couples a declaration to a file's byte layout and an anchor couples it
 #: to a renderer's slug rules. ⭐ Re-exported here so a consumer of `exercise`
 #: reads one contract, and it is the same object: two spellings of one shape is
@@ -148,7 +148,7 @@ ORIGIN_KEYS = CONTAINER_ORIGIN_KEYS
 #: ⛔ The two keys that are one claim, written whole or not at all.
 BREAKDOWN_KEYS = ("cases", "report")
 
-#: What a case `id` may be. ⛔ A permitted set (Ruling 8), and wider than a
+#: What a case `id` may be. ⛔ A permitted set, and wider than a
 #: path or an argv token on purpose: this value is compared byte for byte with
 #: what a test report spells, so it carries a Java `Class#method`, a pytest
 #: `file::test[param]` and a parameterised `name(int, int)`. ⚠️ It carries no
@@ -264,7 +264,7 @@ def origin_in(record: dict, where: str) -> Origin | None:
 
     ⛔ **Takes the record, not the value**, and that is not a convenience: the
     key is read where it is handed straight to its one reader, so there is no
-    second site in the tree that reads it and decides something (`W109`).
+    second site in the tree that reads it and decides something.
 
     ⚠️ Re-raised, not re-worded: `fields.optional_origin`'s message is the one
     that states the shape, and re-spelling it here is the duplication this

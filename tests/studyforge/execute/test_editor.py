@@ -2,7 +2,7 @@
 
 ⭐ The probe is measured against a FAKE `docker` — `test_mode.py`'s, imported
 rather than copied — so these cases need no daemon and hold no lock. ⛔ **The
-real daemon's answer is a HOST reading and is in this row's handoff**, because
+real daemon's answer is a HOST reading, taken outside this suite**, because
 the pinned image the suite runs in has no Docker and must not get one (§8.3).
 
 ⚠️ **Every container path below is a made-up one.** The probe reads the

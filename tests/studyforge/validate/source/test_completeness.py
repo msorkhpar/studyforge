@@ -12,8 +12,8 @@ so — which is why `test_no_module_in_this_package_reaches_for_the_markdown_rea
 exists, in `test_init.py`, over every module of the package rather than one.
 
 ⚠️ **The `count_headings` rows below assert a PREMISE rather than this
-module's own code** (`docs/conventions/module-structure.md`, *a test may assert
-the premise of the bug it prevents*): `check_completeness` is only a real check
+module's own code** (a test may assert
+the premise of the bug it prevents): `check_completeness` is only a real check
 while the count is fence-aware and parser-independent, so the rows that hold
 that live beside the check that rests on them. ⛔ They import from
 `validate.headings`, which owns the function — never from this package, which

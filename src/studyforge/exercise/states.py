@@ -21,18 +21,18 @@ archive document or `None`; `completes_practice(state, command, passed=...)`.
 | **graded** | the `exercise` record names a grader | the first consumer — the **exception** |
 
 ⭐ **Ungraded is written two ways**: a practice document with **no `exercise`
-key**, or one whose record names a file and **no grader** (`W357`).
+key**, or one whose record names a file and **no grader**.
 
-⭐ **`W357`: an ungraded unit may name its file.** The record then carries
+⭐ **An ungraded unit may name its file.** The record then carries
 `main_path` and `run_command` and no grader half, so a reader's file resolves to
 its unit whether or not anything checks it. ⚠️ **So the graded state is the
 grader's presence, not the key's** — `GRADER_KEY` below — and a consumer that
-asks whether the `exercise` key exists is asking the pre-`W357` question.
+asks whether the `exercise` key exists is asking the older question.
 
-⚠️ **The three shapes are named in `docs/tasks/E06-exercise-contract.md`, which
-holds this table with its corpora attached.** ⛔ Not here: R1 binds framework
-source and a document is the far end of the pointer, which is what lets the
-measurement survive without the framework knowing whose it is.
+⚠️ **Which corpora carry each shape is not recorded here.** ⛔ R1 binds
+framework source, so naming the material that taught these shapes would
+make the framework know whose it is; the shapes are stated, the corpora
+are not.
 
 ⛔ **A corpus that must declare its own emptiness is a contract fitted to the
 one source that ships 168 graders** (§11.0). The common case writes nothing:
@@ -81,7 +81,7 @@ COMMANDS = (RUN, TEST)
 #: differently.
 EXERCISE_KEY = "exercise"
 
-#: ⛔ The record field whose presence *is* the graded state (`W357`). The grader
+#: ⛔ The record field whose presence *is* the graded state. The grader
 #: half of a record is written whole or not at all (`record`), so for any record
 #: the reader accepts, this one field answers for all of it.
 GRADER_KEY = "test_path"
@@ -94,7 +94,7 @@ def state_of(document: object) -> str:
     unit has no practice document at all — which is the common case and the
     reason this function takes `None` rather than refusing it.
 
-    ⚠️ **A record that names a file and no grader is `UNGRADED`** (`W357`), and
+    ⚠️ **A record that names a file and no grader is `UNGRADED`**, and
     so is a value that is not a record at all: this answers on the completion
     path, never validates, and the conservative answer is the one that
     completes nothing. `archive.document.parse` is where a malformed record is

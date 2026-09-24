@@ -1,8 +1,8 @@
 r"""Checks about an authored exercise: its gate record, and the files it was taken over.
 
-**What it does.** The arm `AX-04` owes `studyforge validate`. For every
+**What it does.** The arm authored exercises owe `studyforge validate`. For every
 practice document whose grader is `generated`, it requires the gate record
-`AX-03` writes, requires that record to have cleared, re-digests every input it
+the authoring gates write, requires that record to have cleared, re-digests every input it
 names against the bundle beside it, and refuses a bundle holding a file its
 shape does not permit.
 
@@ -20,18 +20,18 @@ first bad bundle would be run once and abandoned.
 
 ## ⛔ `generated` IS THE TRIGGER, AND IT IS THE WHOLE OF R5's HONESTY AS A GATE
 
-⭐ **`E14`'s third property**: an authored grader is `generated`, therefore
+⭐ **R5, as gates**: an authored grader is `generated`, therefore
 `advisory`, and ships **only** with a gate record `validate` re-reads. ⛔ So a
 `generated` exercise with no record is refused rather than trusted — otherwise
 the cheapest way to ship an ungated exercise would be to delete the record that
-refused it, which is the shape `AX-03` already paid for once inside the record
+refused it, which is the shape the gate record already refuses inside itself
 (`all(())` is `True`).
 
 ⚠️ **A `bundled` exercise is untouched.** Its grader shipped with the material
-and `E08`'s derivation gates answer for it; nothing here widens to it, so a
+and its own derivation gates answer for it; nothing here widens to it, so a
 corpus that predates this milestone validates exactly as it did.
 
-## ⛔ CLEARED AND INTACT ARE TWO QUESTIONS (`AX-03`'s handoff)
+## ⛔ CLEARED AND INTACT ARE TWO QUESTIONS
 
 ⭐ `GateRecord.clears` reads the **verdicts** — did the bundle earn its place —
 and `drifted` reads the **files** — is the reading still about them. ⛔ A
@@ -72,7 +72,7 @@ RULE_BUNDLE_CONTENTS = "bundle-contents"
 RULE_PRACTICE_ORDINALS = "practice-ordinals"
 
 #: ⛔ A gate record carrying personal data. ⚠️ `validate.corpus`' own spelling,
-#: because it is the same rule and two ids for one fact is two audits (`W213`).
+#: because it is the same rule and two ids for one fact is two audits.
 RULE_PERSONAL_DATA = "personal-data"
 
 #: ⛔ The one provenance this arm is about. `unit.trust` owns the vocabulary and
@@ -109,7 +109,7 @@ def check_gate_records(walk: Walk) -> Iterator[Finding]:
             record = _read(path, places.gates)
         except PersonalDataLeak as error:
             # ⛔ FIRST, and its own arm: `validate.corpus` sets the shape, and
-            # two finding rules must not collapse into one (`W213`).
+            # two finding rules must not collapse into one.
             yield Finding(RULE_PERSONAL_DATA, where, str(error))
         except (ExerciseError, ValueError) as error:
             yield Finding(
@@ -157,7 +157,7 @@ def check_bundle_digests(walk: Walk) -> Iterator[Finding]:
 def check_bundle_contents(walk: Walk) -> Iterator[Finding]:
     """Refuse a bundle holding anything its shape does not permit.
 
-    ⛔ **This is where `AX-03/1` is refused.** A JUnit report carries the
+    ⛔ **This is where a committed run report is refused.** A JUnit report carries the
     machine's hostname — `pytest --junit-xml` and surefire both write
     `hostname="…"` — and a corpus repository is where this repository's own
     personal-data gate never looks (R7). A run's report is a run artifact; a
@@ -229,7 +229,7 @@ def _authored(unit: Unit) -> tuple[Places, str] | None:
 
 
 def _read(path, where: str):
-    """Decode one gate record and gate every string in it (R7, `W7`).
+    """Decode one gate record and gate every string in it (R7).
 
     ⛔ **The gate runs before the record is read**, because a gate record is a
     document a corpus wrote and every string in it reaches a report line. ⚠️ It

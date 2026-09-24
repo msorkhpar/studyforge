@@ -1,7 +1,7 @@
 """The quiz gate suite: all five, in order, over an exercise no path can call authoritative.
 
 **What it does.** Answers `Q1`–`Q5` over one quiz and returns the five verdicts
-that go into the gate record `AX-03` owns. ⛔ It takes no options, returns all
+that go into the gate record `gates.record` owns. ⛔ It takes no options, returns all
 five always, and refuses an exercise that is not a quiz or that claims anything
 but `generated`/`advisory`.
 
@@ -30,11 +30,11 @@ anything but `generated`/`advisory`** — so why refuse it again? ⭐ Because
 `Exercise` is frozen and **not validated**: its own contract says a caller that
 constructs one asks `from_document(to_document(...))` before believing it, and
 a gate suite handed a hand-built `Exercise` would otherwise gate a quiz that
-had never been through that reading. ⛔ **`E14` § `AX-06`'s Acceptance is
+had never been through that reading. ⛔ **The quiz gates' promise is
 *asserting `authoritative` anywhere in the chain fails*, and a chain is only
 closed where every link is.**
 
-⭐ **Stated positively, as the pair that is legal** (Ruling 35), and imported
+⭐ **Stated positively, as the pair that is legal**, and imported
 from `quiz.shape` rather than re-spelt — so a fourth provenance added to
 `unit.trust` is refused here on the day it is added, without anybody deciding.
 
@@ -43,7 +43,7 @@ from `quiz.shape` rather than re-spelt — so a fourth provenance added to
 ⭐ **`check_quiz` has five parameters, none of them defaulted, none of them
 variadic, and no branch leaves a verdict out.** A gate with nothing to read
 answers *did not hold* and says why — never *held vacuously*, because a gate
-that passes for want of evidence is `E14`'s third property failing open.
+that passes for want of evidence is R5's gates failing open.
 
 ⚠️ **And nothing in this sub-package reads an environment variable, a file or
 any other thing an installation could set.** That is asserted, not promised:
@@ -52,7 +52,7 @@ under `gates/` — this one included — for a reader of one.
 
 ## ⛔ THE EMPTY QUIZ IS REFUSED AT THE BOUNDARY, NOT LEFT TO `all(())`
 
-⚠️ **`all(())` is `True`**, and `AX-03` paid a red gate for it: the cheapest way
+⚠️ **`all(())` is `True`**, and the code gates paid a red gate for it: the cheapest way
 to make a failing bundle read green is to delete what was failing. ⭐ A quiz
 whose questions were all dropped is refused here, and each gate refuses it
 again on its own, and `record_of` refuses a record naming no gate — three
@@ -127,7 +127,7 @@ def require_advisory(exercise: Exercise, where: str) -> None:
 
     ⚠️ **The pair is compared whole**, so `generated` beside a `trust` somebody
     widened is refused as readily as `authoritative` itself — a forbidden-pair
-    list is the shape that failed open once already (Ruling 35).
+    list is the shape that failed open once already.
     """
     pair = (exercise.provenance, exercise.trust)
     if pair != (QUIZ_PROVENANCE, QUIZ_TRUST):

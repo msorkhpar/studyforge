@@ -68,7 +68,7 @@ def test_a_document_that_is_not_an_object_is_refused():
 
 
 def test_an_authored_exercise_with_no_origin_is_refused():
-    # ⛔ `E14`'s first property: `G5` resolves an origin against the ledger, so
+    # ⛔ Spec §7, nothing is lost: `G5` resolves an origin against the ledger, so
     # an authored exercise with none is material the ledger cannot account for.
     with pytest.raises(ExerciseError, match="source ledger"):
         bundle_of(bundles.document(origin=None), "bundle.json")
@@ -179,9 +179,9 @@ def test_a_build_file_in_the_run_output_directory_is_refused():
     ["report.xml", "reports/TEST-x.xml", f"{RUN_OUTPUT_DIRNAME}x/report.xml", "a/target/r.xml"],
 )
 def test_a_report_outside_the_run_output_directory_is_refused_naming_the_convention(path):
-    # ⭐ `ISO-M10/4`: one convention, so a corpus ignores every run's report
+    # ⭐ One convention, so a corpus ignores every run's report
     # with one line. Each of these would need a rule of its own.
-    with pytest.raises(ExerciseError, match="ISO-M10/4"):
+    with pytest.raises(ExerciseError, match="one line instead of one per exercise"):
         bundle_of(bundles.document(report={"format": "junit", "path": path}), "bundle.json")
 
 

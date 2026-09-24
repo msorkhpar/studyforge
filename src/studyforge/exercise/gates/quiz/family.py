@@ -35,7 +35,7 @@ document — two heights, neither relying on the other.
 
 ## ⛔ THE FAMILY IS REGISTERED HERE AND THE ONE LINE OUTSIDE THIS SUB-PACKAGE IS AN IMPORT
 
-⭐ **`AX-03`'s seam, used exactly as it was left:** `families.py`, `record.py`,
+⭐ **The gate record's seam, used exactly as it was left:** `families.py`, `record.py`,
 `digests.py` and `runs.py` take no edit at all. The only line this family adds
 anywhere outside `gates/quiz/` is the import in
 `studyforge/exercise/gates/__init__.py`, which R17 obliges a sub-package to

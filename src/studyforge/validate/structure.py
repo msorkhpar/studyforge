@@ -161,7 +161,7 @@ def check_digests(walk: Walk) -> Iterator[Finding]:
 def check_counts(walk: Walk) -> Iterator[Finding]:
     """Each document's `counts` matches the blocks it carries.
 
-    ⛔ A block that is not an object counts as no type (`W282`): `check_block_shapes` names
+    ⛔ A block that is not an object counts as no type: `check_block_shapes` names
     it, and reading a type off it here raised instead of yielding (R6).
     """
     for unit in walk.units:
