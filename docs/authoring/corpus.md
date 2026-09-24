@@ -213,7 +213,11 @@ release and never writes a file that is not one of the corpus's clips.
 volume and prints the one `gh release create` command that attaches them to a
 release of the checkout's `origin`, under the tag (`--tag`, default
 `narration-1.0.0`). The framework uploads nothing; you run that command with
-your own `gh` login. A reader
+your own `gh` login. A tag's release is created once: for new clips, pack
+again under a new tag, or replace the assets with the `gh release upload …
+--clobber` line the dry run prints. After you upgrade the framework, pack
+again before you publish. A corpus whose `commit` is not `never` is not packed
+at all: its clones already carry the clips. A reader
 runs `sh .studyforge/narration-release/restore.sh` (or `restore.ps1`) from a
 clone: each clip lands where the narration record says, the volumes are
 checked before anything is extracted, the downloads are deleted, and last the

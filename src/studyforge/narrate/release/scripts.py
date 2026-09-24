@@ -184,6 +184,28 @@ def write_release_record(
     return tuple(written)
 
 
+def tag_written(where: str, text: str) -> str | None:
+    """Return the tag a restore script at `where` was rendered with, or `None` if it cannot say.
+
+    ⭐ Read by the shipped template's own tag line, the mark standing for any tag,
+    so a publish can tell a script packed under another tag from one this
+    framework no longer renders. ⛔ `None` for a file that is not a script or
+    whose tag line no longer has the template's shape.
+    """
+    name = {RESTORE_SH: "restore.sh", RESTORE_PS1: "restore.ps1"}.get(where)
+    if name is None:
+        return None
+    template = (SCRIPT_DIR / name).read_text(encoding="utf-8")
+    line = next((one for one in template.splitlines() if TAG_MARK in one), None)
+    if line is None:
+        return None
+    before, _, after = line.partition(TAG_MARK)
+    found = re.search(
+        f"^{re.escape(before)}([A-Za-z0-9._-]+){re.escape(after)}$", text, re.MULTILINE
+    )
+    return found.group(1) if found else None
+
+
 def _render(name: str, tag: str) -> str:
     """Return one shipped script with its marks filled in. ⛔ Each mark is there exactly once."""
     text = (SCRIPT_DIR / name).read_text(encoding="utf-8")

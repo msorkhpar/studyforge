@@ -40,10 +40,11 @@ rewritten by an `insteadOf` rule is read as written.
 directory whose `SHA256SUMS` is not the committed one, and a committed clip list
 the narration record no longer matches.
 
-## ⛔ The corpus says its clips are released
+## ⛔ The corpus keeps its clips out of git, and says they are released
 
-⭐ The pack writes `released` into the clip signal (`scripts.SIGNAL`) and a
-build never undoes it. ⛔ A publish refuses any other answer: a corpus whose
+⭐ A publish refuses a corpus whose policy commits its clips, as the pack does
+(`volumes.require_released_policy`). The pack writes `released` into the clip
+signal (`scripts.SIGNAL`) and a build never undoes it. ⛔ A publish refuses any other answer: a corpus whose
 clips are a download must not commit a signal that tells a fresh checkout they
 are present.
 
@@ -52,7 +53,18 @@ are present.
 ⚠️ The corpus's restore scripts default to the tag they were packed under. A
 release under another tag would hold volumes no default restore finds, so it is
 REFUSED until the pack is re-run with that tag: the scripts in the corpus must
-be byte-identical to the ones `scripts.restore_scripts(tag)` renders.
+be byte-identical to the ones `scripts.restore_scripts(tag)` renders. ⭐ A
+script that carries the right tag and still differs is named as what it is: a
+framework upgrade changed the restore template since the pack (or a hand-edit),
+and the pack is run again with the framework installed now.
+
+## ⭐ A tag is published once
+
+`gh release create` refuses a tag whose release already exists. ⭐ So the dry
+run says so, and names both ways on: new clips go out under a new tag, which
+the next pack writes into the restore scripts; or the existing release's
+assets are replaced with `gh release upload --clobber`, which a checkout still
+holding the earlier pack's committed digests then refuses.
 """
 
 from __future__ import annotations
@@ -67,9 +79,16 @@ from studyforge.narrate.release.scripts import (
     SIGNAL,
     VOLUME_SUMS,
     restore_scripts,
+    tag_written,
     valid_tag,
 )
-from studyforge.narrate.release.volumes import SUMS, PackRefused, clips_of, read_sums
+from studyforge.narrate.release.volumes import (
+    SUMS,
+    PackRefused,
+    clips_of,
+    read_sums,
+    require_released_policy,
+)
 from studyforge.render.pageassets import RELEASED, clips_state
 
 #: The release's title, as the release page shows it.
@@ -80,6 +99,14 @@ NOTES = (
     "Narration clips for this corpus, as split zip volumes with a SHA256SUMS. "
     "Restore them from a clone with: sh .studyforge/narration-release/restore.sh "
     "(or restore.ps1 beside it on Windows). The site is complete without them."
+)
+
+#: What the dry run says about a tag whose release already exists.
+REPUBLISH = (
+    "a release under {tag} that already exists makes `gh release create` fail. Publish "
+    "new clips under a new tag (pack again with --tag <new tag>, and commit it), or "
+    "replace this release's assets with the command below, which a checkout still "
+    "holding the earlier pack's digests then refuses"
 )
 
 #: A GitHub remote, in any of the spellings git records.
@@ -140,8 +167,25 @@ class Publish:
         ]
         out += [f"asset   {name}  {size} byte(s)  sha256 {sha}" for name, size, sha in self.assets]
         out.append(f"asset   {SUMS}")
+        out.append(f"again   {REPUBLISH.format(tag=self.tag)}")
+        out.append("again   " + " ".join(_quoted(word) for word in self.replace_argv))
         out.append("command " + " ".join(_quoted(word) for word in self.argv))
         return out
+
+    @property
+    def replace_argv(self) -> list[str]:
+        """The command that replaces an existing release's assets under the same tag."""
+        return [
+            "gh",
+            "release",
+            "upload",
+            self.tag,
+            *(str(self.out / name) for name, _, _ in self.assets),
+            str(self.out / SUMS),
+            "--repo",
+            self.repository,
+            "--clobber",
+        ]
 
 
 def repository_of(root: Path | str) -> str:
@@ -161,6 +205,10 @@ def plan_publish(root: Path | str, out: Path | str, tag: str) -> Publish:
     """Decide one publish, checking everything it depends on. ⛔ Runs nothing."""
     if not valid_tag(tag):
         raise PublishRefused(BAD_TAG)
+    try:
+        require_released_policy(root)
+    except PackRefused as refused:
+        raise PublishRefused(str(refused)) from None
     _scripts_agree(Path(root), tag)
     _signal_released(Path(root))
     # ⛔ As typed, never resolved: the report names what was asked for, not a home (R7).
@@ -190,14 +238,20 @@ def _scripts_agree(root: Path, tag: str) -> None:
     for where, text in restore_scripts(tag).items():
         path = root / PurePosixPath(where)
         try:
-            same = path.is_file() and path.read_text(encoding="utf-8") == text
+            there = path.read_text(encoding="utf-8") if path.is_file() else None
         except OSError, UnicodeDecodeError:
-            same = False
-        if not same:
+            there = None
+        if there == text:
+            continue
+        again = f"run `studyforge narrate <root> --pack <dir> --tag {tag}`, and commit it"
+        if there is not None and tag_written(where, there) == tag:
             raise PublishRefused(
-                f"the corpus's {where} was not written for tag {tag}; run "
-                f"`studyforge narrate <root> --pack <dir> --tag {tag}` first, and commit it"
+                f"the corpus's {where} was written for tag {tag}, but it is not the script "
+                f"this framework renders for that tag: the framework was upgraded since the "
+                f"pack and its restore template changed, or the file was edited by hand; "
+                f"{again} with this framework"
             )
+        raise PublishRefused(f"the corpus's {where} was not written for tag {tag}; {again} first")
 
 
 def _record_agrees(root: Path, directory: Path) -> None:

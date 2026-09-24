@@ -202,7 +202,10 @@ studyforge narrate <corpus-root> --publish <dir> --tag narration-1.0.0
   `.studyforge/assets/narration-clips.js` to `released`, so a site committed
   after packing tells a fresh clone that its clips have to be fetched; a build
   never undoes that. The same corpus packs to the same bytes. It refuses,
-  naming how many, when a clip the record promises is not on disk.
+  naming how many, when a clip the record promises is not on disk. ⛔ It
+  refuses a corpus whose `corpus.json` commits its clips (`media.commit`
+  `auto` or `always`, or none declared): its clones already carry them. Only
+  `never` packs.
 - Commit everything the pack wrote into the corpus: a reader runs the scripts from a clone.
 - `--publish` is the dry run. It checks every volume against `SHA256SUMS`, the
   scripts against the tag, and that `narration-clips.js` says `released`
@@ -210,6 +213,14 @@ studyforge narrate <corpus-root> --publish <dir> --tag narration-1.0.0
   `origin`, and prints each asset and, last, the one `gh release create`
   command that uploads them. ⛔ It uploads nothing. Hand that command to the
   owner; ⛔ never run it for them.
+- ⚠️ **A tag is published once.** `gh release create` fails when that tag's
+  release exists, and the dry run says so: publish new clips under a new tag
+  (pack again with `--tag`, and commit it), or replace the release's assets
+  with the `gh release upload … --clobber` line it prints, which a clone still
+  holding the earlier pack's digests then refuses.
+- ⚠️ **After a framework upgrade, pack again.** The scripts in the corpus must
+  be exactly what the installed framework renders for the tag, so a publish
+  refuses scripts an earlier framework wrote, and says that is the reason.
 
 A reader restores with `sh .studyforge/narration-release/restore.sh`, or
 `restore.ps1` beside it in PowerShell. Each clip lands at the place the

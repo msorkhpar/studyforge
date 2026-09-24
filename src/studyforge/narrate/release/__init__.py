@@ -60,6 +60,7 @@ from studyforge.narrate.release.volumes import (
     clips_of,
     pack,
     read_sums,
+    require_released_policy,
 )
 
 #: ⛔ The package's whole public surface.
@@ -82,6 +83,7 @@ __all__ = [
     "pack",
     "plan_publish",
     "read_sums",
+    "require_released_policy",
     "restore_scripts",
     "valid_tag",
     "write_release_record",
