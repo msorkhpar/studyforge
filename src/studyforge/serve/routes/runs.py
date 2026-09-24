@@ -64,11 +64,16 @@ the wider policy. ⛔ A cold instance still frames nothing: the record starts em
 the readers a reader's own client asks for — the run index and the practice-editor route
 — are what fill it.
 
-## ⛔ Output is gated on the wire
+## ⛔ Output is filtered, then gated on the wire
 
-Every line `execute` yields is already relative to the source root and scrubbed; it is
-scrubbed again as it is written, where it leaves the process (R7; `scrub` is idempotent),
-⛔ after `withheld.OutputGate` has replaced any line carrying a served quiz's key.
+Every line `execute` yields is already relative to the source root and scrubbed. ⭐ A
+line the corpus's one declared build tool prints about itself is dropped
+(`execute.quiet`, chosen by `select` from the manifest's `runtimes`): Maven's rerun
+advice tells a reader to pass switches the page has no way to pass. The filter only
+ever drops a line, never an error, a stack frame or the exit line, and a corpus
+declaring no build tool with rules, or two, is streamed whole. A kept line is scrubbed
+again as it is written, where it leaves the process (R7; `scrub` is idempotent), ⛔
+after `withheld.OutputGate` has replaced any line carrying a served quiz's key.
 """
 
 from __future__ import annotations
@@ -86,12 +91,14 @@ from studyforge.execute import (
     EXIT_TIMEOUT,
     Editor,
     EditorProbe,
+    Quiet,
     RunHandle,
     Runner,
     exit_line,
     open_url,
     practice_folder,
     recorded,
+    select,
     write_settings,
 )
 from studyforge.progress import CASES_KEY
@@ -338,6 +345,7 @@ class Stream:
         self._outcome = outcome
         self._lines = live.handle.lines()
         self._gate = OutputGate(marks_of(runs.sources.get(outcome.corpus.source)))
+        self._quiet = Quiet(select(outcome.corpus.corpus.manifest.runtimes))
         self._chunks = self._generate()
         self._recorded = False
         self._finished = False
@@ -367,7 +375,9 @@ class Stream:
                     self._recorded = True
                     for said in self._outcome.record(verdict(handle, line)):
                         yield (said + "\n").encode("utf-8")
-                yield (scrub(self._gate(line.rstrip("\n"))) + "\n").encode("utf-8")
+                text = line.rstrip("\n")
+                if self._quiet.keeps(text):
+                    yield (scrub(self._gate(text)) + "\n").encode("utf-8")
         finally:
             self._finish()
 

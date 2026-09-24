@@ -919,6 +919,14 @@ What it reads, and the choices in it:
 
 **Serves.** `R7`, `R15`
 
+### The page is sent a run's output without its build tool's own lines
+
+**Decision.** `serve.routes.runs.Stream` passes each run line through `execute.quiet` before it is written to the page, with the rules `execute.quiet.select` picks from the manifest's `runtimes`: the one declared build tool that has rules (`TOOLCHAINS`, Maven and Gradle) loses its banners, timings and rerun advice, and every other line reaches the page unedited, including every error, stack frame and the exit line. A corpus declaring no build tool with rules, or two, is streamed whole. The verdict is still recorded from the exit line, which the filter never drops.
+
+**Why.** Read live on the practice command a corpus runs (`mvn -o -q test`), what remains after `-q` is Maven's help footer: eight of the twenty-eight lines a failing test printed, and eight of a compile error's twelve. It tells the reader to rerun Maven with `-e` or `-X`, which the page cannot pass, and it pushes the fault up the panel. A filter that guessed the tool, or dropped an error, would cost the reader the one line that says why their code failed.
+
+**Serves.** `R6`
+
 ### A run leaves the reader's tree as it found it
 
 **Decision.** `execute.runner.RUN_ENVIRONMENT` sets `PYTHONDONTWRITEBYTECODE=1` (and `PYTHONUNBUFFERED=1`) for every run, in the host environment and as `-e` arguments to the container run, so Python writes no bytecode cache beside the file under test.

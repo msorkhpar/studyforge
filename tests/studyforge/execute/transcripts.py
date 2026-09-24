@@ -25,14 +25,20 @@ runner does.
 - `JAVAC_ERROR`: javac 26.0.1 on one source file with an undefined name.
   No edits.
 - `GRADLE_FAILURE`: a reader's own paste. Edit: the report path, as `scrub` rewrites it.
+- `MAVEN_QUIET_TEST_FAILURE`, `MAVEN_QUIET_COMPILE_ERROR`: ⭐ **the command a
+  corpus's practice runs**, `mvn -o -q -f pom.xml test`, in a runner image
+  labelled `java maven` (Maven 3.9.16, surefire 3.6.0, compiler 3.16.0, Temurin
+  25.0.4), on a practice project of the shape the exercise bundle writes: the
+  first with a plant that fails one of three tests, the second with one
+  statement that does not compile. Edits: the container's workspace root `/w/`
+  is made relative, as `LineGate` does, and the shell's own exit line is
+  removed.
 
-⚠️ **Not captured, and why.** A real `mvn test` run with a compile error or
-a failing test needs the runner image or a Maven cache holding the pinned
-plugins' jars (surefire's JUnit provider among them), so **none exists in this
-module.** An offline Maven on an empty repository fails before any plugin
-runs. That failure is real, and it is what `MAVEN_OFFLINE` and
-`MAVEN_OFFLINE_TRACE` are. ⭐ `test_quiet_image.py` takes the missing
-readings against the runner image once one is named. It needs no edit.
+⚠️ **Captured in quiet mode only.** The two `MAVEN_QUIET_*` runs are the
+practice's own command, which passes `-q`, so Maven's `[INFO]` lines are
+already gone and what the filter meets is its `[ERROR]` help footer. A run
+without `-q`, with a compile error or a failing test, needs the runner image,
+and `test_quiet_image.py` takes those readings once one is named.
 """
 
 from __future__ import annotations
@@ -319,6 +325,94 @@ GRADLE_FAILURE = (
     "4 actionable tasks: 2 executed, 2 up-to-date",
 )
 
+MAVEN_QUIET_TEST_FAILURE = (
+    (
+        "[ERROR] Tests run: 3, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.025 s "
+        "<<< FAILURE! -- in com.example.practice.BitmapReaderTest"
+    ),
+    (
+        "[ERROR] "
+        "com.example.practice.BitmapReaderTest.fieldSixtyFiveIsTheSecondarysFirstBit -- "
+        "Time elapsed: 0.013 s <<< FAILURE!"
+    ),
+    "org.opentest4j.AssertionFailedError: expected: <[2, 65]> but was: <[2]>",
+    "\tat org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)",
+    (
+        "\tat "
+        "org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuil"
+        "der.java:132)"
+    ),
+    "\tat org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)",
+    "\tat org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)",
+    "\tat org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:177)",
+    "\tat org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1145)",
+    (
+        "\tat "
+        "com.example.practice.BitmapReaderTest.fieldSixtyFiveIsTheSecondarysFirstBit(Bitm"
+        "apReaderTest.java:25)"
+    ),
+    "\tat java.base/java.lang.reflect.Method.invoke(Method.java:565)",
+    "\tat java.base/java.util.ArrayList.forEach(ArrayList.java:1604)",
+    "\tat java.base/java.util.ArrayList.forEach(ArrayList.java:1604)",
+    "",
+    "[ERROR] Failures: ",
+    (
+        "[ERROR]   BitmapReaderTest.fieldSixtyFiveIsTheSecondarysFirstBit:25 expected: "
+        "<[2, 65]> but was: <[2]>"
+    ),
+    "[ERROR] Tests run: 3, Failures: 1, Errors: 0, Skipped: 0",
+    (
+        "[ERROR] Failed to execute goal "
+        "org.apache.maven.plugins:maven-surefire-plugin:3.6.0:test (default-test) on "
+        "project practice: There are test failures."
+    ),
+    "[ERROR] ",
+    "[ERROR] See target/surefire-reports for the individual test results.",
+    (
+        "[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and "
+        "[date].dumpstream."
+    ),
+    "[ERROR] -> [Help 1]",
+    "[ERROR] ",
+    "[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.",
+    "[ERROR] Re-run Maven using the -X switch to enable full debug logging.",
+    "[ERROR] ",
+    (
+        "[ERROR] For more information about the errors and possible solutions, please "
+        "read the following articles:"
+    ),
+    "[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException",
+)
+
+MAVEN_QUIET_COMPILE_ERROR = (
+    "[ERROR] COMPILATION ERROR : ",
+    (
+        "[ERROR] src/main/java/com/example/practice/BitmapReader.java:[6,48] illegal "
+        "start of expression"
+    ),
+    (
+        "[ERROR] Failed to execute goal "
+        "org.apache.maven.plugins:maven-compiler-plugin:3.16.0:compile (default-compile) "
+        "on project practice: Compilation failure"
+    ),
+    (
+        "[ERROR] src/main/java/com/example/practice/BitmapReader.java:[6,48] illegal "
+        "start of expression"
+    ),
+    "[ERROR] ",
+    "[ERROR] -> [Help 1]",
+    "[ERROR] ",
+    "[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.",
+    "[ERROR] Re-run Maven using the -X switch to enable full debug logging.",
+    "[ERROR] ",
+    (
+        "[ERROR] For more information about the errors and possible solutions, please "
+        "read the following articles:"
+    ),
+    "[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException",
+)
+
+
 #: Every transcript, by name, for the properties that hold of all of them.
 ALL = {
     "MAVEN_PASS": MAVEN_PASS,
@@ -327,4 +421,6 @@ ALL = {
     "JVM_TRACE": JVM_TRACE,
     "JAVAC_ERROR": JAVAC_ERROR,
     "GRADLE_FAILURE": GRADLE_FAILURE,
+    "MAVEN_QUIET_TEST_FAILURE": MAVEN_QUIET_TEST_FAILURE,
+    "MAVEN_QUIET_COMPILE_ERROR": MAVEN_QUIET_COMPILE_ERROR,
 }
