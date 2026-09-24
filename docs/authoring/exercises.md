@@ -169,11 +169,11 @@ further down.
 }
 ```
 
-**A complete practice document carrying that key is in this repository**, at
-[`tests/fixtures/depth2/.../practice-1.json`](../../tests/fixtures/depth2/archive/basics/01-getting-started/raw/java/unit-01/practice-1.json)
-— fifteen keys, then `starting_code`, then `exercise`. That one carries the
-first six fields only, which is what a record written from material a source
-already ships looks like.
+**A complete practice document carrying that key** writes the fifteen keys
+every unit document writes, listed under
+[the unit document](archive.md#the-unit-document), then `starting_code`, then
+`exercise`. A record written from material a source already ships carries the
+first six fields only.
 
 **The first six, in two halves.** `main_path` and `test_path` are the workspace; `run_command`
 and `test_command` are how it is exercised; `provenance` says where the grader
