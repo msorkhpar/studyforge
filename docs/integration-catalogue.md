@@ -188,7 +188,7 @@ for constructs the corpus does not use.
 
 The manifest parser (`studyforge.corpus.manifest.content.parse`) refuses a
 `not_material` entry whose wildcard has no directory above it. A clever glob
-such as `[CLR]*` can cover today's `CLAUDE.md`, `LICENSE` and `README.md`
+such as `[CLR]*` can cover today's `CONTRIBUTING.md`, `LICENSE` and `README.md`
 exactly, and is still wrong: the file added next year matches it, is
 classified by a reason that was never about it, and the unclassified check that
 would have surfaced it goes quiet. Write one honest entry per file rather than
