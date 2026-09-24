@@ -1,29 +1,11 @@
-# studyforge v1 — design
+# studyforge — design
 
-**Date:** 2026-09-08 · **revised 2026-09-09** · **amended 2026-09-23**
-**Status:** approved for planning
-**Scope:** the source-agnostic LMS framework, plus its first consumer — the
-`Claude-senior-java-engineer` tutorial repository.
-
-⚠️ **The 2026-09-09 revision** re-read this design against 32 hours of further
-CodeSignal work, and against a decision taken since: after v1 is accepted, a
-second, unnamed repository is converted by the skills alone, as the test that
-this is a framework rather than one pipeline with a good vocabulary (§12).
-That lens changed the priorities. What it added: R3 generalised from one
-hardcoded exception to a declared set (§4, R3); R19 and the corpus-onboarding
-skill (§9); the placement dry-run (§5); provenance in the archive (§6); progress
-as two records (§8.5); clip filenames carrying a digest (§8.2); and the ruling
-that a skill precedes the artifact it produces (§9). Findings that were
-CodeSignal's operational detail rather than this framework's concern were
-deliberately **not** carried; they are in `docs/tasks/v2-backlog.md`.
-
-⚠️ **The 2026-09-23 amendments that say *carried from*** bring into this document the
-clauses of the review rubric and the conventions that state what the product must be,
-when those process documents were archived. Each is written under the rule it serves:
-R1, R6, R7, R9, R10, R11, R12, R13, R17 and R21 in §2, standard library only in §3.2,
-the reading room's identity in §8.4, and commanded pages in §9.
-⛔ **No rule was renumbered and no rule's own words changed**; each amendment adds to
-its rule, and how the product's own code is reviewed is not carried.
+**What this document is.** The design of the framework as it exists: what it
+does, the rules it holds itself to, the contracts it reads and writes, and the
+reason behind a behaviour wherever the reason helps a reader. The code is the
+authority on *how*; this document is the authority on *what* and *why*.
+Decisions that shape the code but are not rules of the design are in
+[the decisions file](../decisions.md), each pointing back at the rule it serves.
 
 ---
 
@@ -31,174 +13,123 @@ its rule, and how the product's own code is reviewed is not carried.
 
 `studyforge` turns **any body of teaching material** into a local, offline study
 site: a reading page per unit, narrated, navigable, with a table of contents,
-progress tracking, and — where the material supports it — runnable practices
-with real graders.
+progress tracking, and — where the material supports it — practices with real
+graders or quizzes checked by the local study server.
 
 It is extracted from the CodeSignal study system, which proved every one of
 these surfaces against real material. What CodeSignal did for one source,
-`studyforge` does for any source. The framework's own docs already anticipated
-this; `backend.py` states it outright:
+`studyforge` does for any source:
 
 > *"a second source — another course site, a book, a repository of exercises —
 > must be able to populate the same API and get the same tutorial site out of
 > it. The endpoint shapes are the contract; the reading page is a consumer of
 > them."*
 
-v1 delivers the framework and its **first consumer**. The framework is *designed*
-against four material shapes so the generalisation is real rather than
-retrofitted.
-
-⚠️ **The first consumer is a small corpus, and it is deliberately not the
-largest one available.** An earlier plan made the 166-unit Java tutorial both
-the first adapter and the definition of done, which welded the framework's
-milestones to one source's shape — the exact conflation R1 exists to prevent.
-Building against something small first means the framework reaches a **complete,
-useful state** early, and the Java corpus becomes a consumer like any other
-rather than the reason the framework exists. ⭐ A framework proven on a small
+⭐ **The framework is designed against several material shapes at once, so the
+generalisation is real rather than retrofitted.** A framework proven on a small
 source and then applied to a large one has been tested; one grown around a large
 source and later pointed at a small one has been fitted.
 
 ### The four shapes the contracts must fit
 
-All four were **counted, not assumed** — the two tutorials were cloned and
-inspected on 2026-09-08, and both differed materially from what was first
-written here.
-
-| Source | Container levels | Units | Runnable | Graders |
-|---|---|---|---|---|
-| `Claude-senior-java-engineer` | 2 — section → module | 166 | Maven multi-module | **168 test classes, authoritative** |
-| CodeSignal | 2 — path → course | 1,290 declared | Gradle + Python, dockerised | hidden upstream; local tests advisory only |
-| ISO-8583-jPOS-tutorial | **1** — group (fundamentals / server / client) | 38 (16 + 11 + 11) | no build file | **none** — amended below (`W339`) |
-| Claude-SPARQL-tutorial | **1** — course | 19 | **yes** — Docker: Fuseki + Jupyter | none, but **every lesson carries an exercise** |
+| Source | Container levels | Runnable | Graders |
+|---|---|---|---|
+| `Claude-senior-java-engineer` | 2 — section → module | Maven multi-module | **test classes paired with the implementation, authoritative** |
+| CodeSignal | 2 — path → course | Gradle and Python, containerised | hidden upstream; local tests advisory only |
+| ISO-8583-jPOS-tutorial | **1** — group, encoded in filename prefixes | Java examples in the prose, no build file | **none** shipped by the source |
+| Claude-SPARQL-tutorial | **1** — course | a containerised query server and notebooks | none, but **every lesson ends in an exercise** |
 
 A contract that cannot express all four is wrong. A contract that requires
 special-casing any of them is wrong.
 
-⛔ **AMENDED 2026-09-18 (`W339`) — ISO's *Graders* cell read *"prose scenarios in
-`TestCases.md`"*, and that file is OUT by the user's ruling** (`Q5`, final,
-recorded at PO round 105). ⭐ **The
-corpus carries no graded practice at all, so it is complete at the reading
-floor, not short** (§11.0, C5). ⚠️ A planner reads this column to decide whether
-a corpus enters the execution track, which is why the cell is corrected here
-rather than left to a later reader: `tests/test_spec_corpus_table.py` reads the
-*Graders* column against the manifest each workspace-pinned corpus carries, and
-a row claiming graders for a corpus whose manifest says `exercises: false` is
-refused.
+⭐ **The *Graders* column records what a source ships**, which is what a planner
+reads to know whether a corpus's own tests can back its practices. It is not what
+a reader gets: exercises are also authored at ingestion from a source's examples,
+code and pages ([*Exercises authored for every
+corpus*](#exercises-authored-for-every-corpus), §7). A row claiming graders for a
+corpus whose manifest says `exercises: false` is refused by the test that reads
+this table against each pinned corpus's `corpus.json`.
 
-⛔ **DATED 2026-09-19 (`W389`) — the *Graders* column records what a source SHIPS, and
-that is no longer what a reader gets.** ⭐ **From `M10`, a corpus's exercises are
-authored at ingestion from its own examples, its code, its tests and its pages**
-([*Exercises authored for every corpus*](#exercises-authored-for-every-corpus-w389),
-below). ⚠️ **The column is NOT rewritten here, and the restraint is the point:** it
-reads a pinned manifest, ISO's still says `exercises: false`, and a cell claiming
-graders the corpus does not yet carry would be the untruth the instrument above exists
-to refuse. ⭐ **A cell moves when its corpus is re-onboarded with `exercises: true`,
-and not before** — a row of `M10`'s last step, never an edit made ahead of the corpus.
+### What the shapes teach
 
-### What the two tutorials taught us
+Each shape carries a constraint the design would otherwise meet late.
 
-Neither behaved as first described, and each surfaced a constraint the design
-would otherwise have met late:
-
-**C1 — A hierarchy can be encoded in filenames, not directories.** ISO's three
-groups live in one flat `src/`, distinguished only by prefix: `1.md`…`16.md`,
-`s1.md`…`s11.md`, `c1.md`…`c11.md`. Nothing in the filesystem expresses the
-grouping. This is a **validation** of R4, not a problem: the adapter maps prefix
-to group, and the generated artifact beside `s4.md` is locatable only by the
-identity it carries internally. A design that inferred meaning from paths would
-have failed here.
+**C1 — A hierarchy can be encoded in filenames, not directories.** A corpus's
+groups may live in one flat directory, distinguished only by a filename prefix
+(`1.md`, `s1.md`, `c1.md`). Nothing in the filesystem expresses the grouping.
+This is what R4 is for: the adapter maps prefix to group, and a generated
+artifact is locatable by the identity it carries inside it, never by its path.
 
 **C2 — A corpus can carry the same material twice, at different granularities.**
-ISO ships both per-unit files *and* whole-series aggregates (`ISO.md` 3,858
-lines, `Server.md` 2,813, `Client.md` 2,509). An adapter that globs `src/*.md`
-ingests everything twice and nothing complains. The manifest must be able to
-declare what is in and what is out, and reconnaissance (§9) must detect the
-overlap rather than leaving it to be noticed.
+A source may ship per-unit files *and* whole-series aggregates that concatenate
+them. An adapter that globs every Markdown file ingests everything twice and
+nothing complains. So the manifest declares what is in and what is out (§4), a
+file nobody classified is a validation failure, and reconnaissance (§9) detects
+the overlap rather than leaving it to be noticed.
 
-**C3 — Real Markdown carries constructs a strict parser must already know.**
-SF-07's parser raises on anything it does not recognise — correct behaviour, and
-the reason the vocabulary has to be right before a second source is attempted
-rather than after.
+**C3 — Real Markdown carries constructs a strict parser must already know.** The
+Markdown reader raises on anything it does not recognise, which is the reason the
+vocabulary has to be right before a new source is attempted. The constructs that
+matter in practice, and where the four shapes carry them:
 
-⚠️ **Recounted 2026-09-09; the first draft of this constraint attributed it to
-the wrong repository.** It said "18 of ISO's files contain raw HTML". With code
-fences stripped, ISO has **0 of 38**: the 26 files carrying `<tag>`-shaped text
-are all XML *inside fenced blocks* — Maven POM, Spring beans, jPOS channel
-configuration. The requirement survives; its constituency moved, and moved
-**earlier**:
-
-| Construct | Where it is actually measured | Consequence |
+| Construct | Where it occurs | Consequence |
 |---|---|---|
-| raw HTML | **SPARQL, 6 of 19** — `<details>`/`<summary>` | a v2 source, but see below |
-| thematic break | **Java, 10 of 166** | consumer 1, at M9 |
-| blockquote | **Java, 1 of 166** | consumer 1, at M9 |
-| **XML inside a fence** | **ISO, 26 of 41** | the real ISO constraint |
+| raw HTML | the SPARQL tutorial, 6 of 19 lessons — `<details>`/`<summary>` | the `disclosure` block, below |
+| thematic break | the Java tutorial | the `rule` block |
+| blockquote | the Java tutorial | the `quote` block |
+| XML inside a fence | the ISO tutorial — build files and configuration samples | a code block, never markup |
 
-⭐ **So the ISO constraint is fence-awareness, not tag counting.** A parser that
-scans for `<` without tracking fences reads a `pom.xml` sample as markup and
-either raises — stopping the ingest dead, which is the failure this constraint
-predicted by the wrong route — or renders it as HTML. That is a testable
-property and `FND-04` carries a fixture for it.
+⭐ **Fence-awareness, not tag counting**: a reader that scans for `<`
+without tracking fences reads a `pom.xml` sample as markup, and either raises or
+renders it as HTML.
 
-⛔ **And a disclosure is a third state, not markup.** All six SPARQL uses hide an
-*exercise answer*. Flattening `<details>` into ordinary blocks keeps the text and
-destroys the hiding — the answer is then shown outright. Storing the tags as one
-opaque raw-HTML block keeps the hiding and makes the body invisible to
-everything else: uncounted, unhighlighted, unreachable by the block-count gate.
-⭐ **Both fail, oppositely, and the resolution is the one C5 already taught this
-project: "shown" and "absent" are not the only states.** *Present but withheld*
-is real content, and it gets a container block of its own — `disclosure`, holding
-blocks exactly as `quote` does. §7's speakable ruling then decides what narration
-does with it.
+⛔ **A disclosure is a third state, not markup.** `<details>`/`<summary>` in
+teaching material usually hides an exercise's answer. Flattening it into ordinary
+blocks keeps the text and destroys the hiding; storing it as one opaque raw-HTML
+block keeps the hiding and makes the body invisible to everything else —
+uncounted, unhighlighted, unnarrated. *Present but withheld* is real content, and
+it is the `disclosure` block, which holds blocks exactly as `quote` does (§6).
 
-**C4 — Material includes companion files that are neither blocks nor media.**
-SPARQL ships `.ttl` datasets its lessons load and two Jupyter notebooks. A
-reader needs them; they are not prose, not images, not video. The archive needs
-an **attachment** class — a file a unit references and the reader must be able
-to open — distinct from the media the page renders inline.
+**C4 — Material includes companion files that are neither blocks nor media.** A
+dataset a lesson loads, a notebook, a sample document: the reader needs them, and
+they are not prose, not images, not video. The archive carries them as
+**attachments** — files a unit references and the reader can open — distinct from
+the media a page renders inline (§6).
 
-**C5 — An exercise can exist with no grader, and that is not "no exercise".**
-All 19 SPARQL lessons end in an exercise or challenge; none has a test. The
-first draft of §7 collapsed this into "zero exercises", which would have
-discarded real teaching content. The exercise contract must distinguish three
-states, not two: **no exercise**; an **ungraded** exercise (a prompt the reader
-works, with nothing to check it); and a **graded** exercise, whose trust is then
-`authoritative` or `advisory` under R5. Only the third can complete a practice.
-
-⛔ **AMENDED 2026-09-19 (`W389`, the user's direction) — the three states STAND, and
-what changes is which one a source lands in.** ⭐ **A source with no grader is no
-longer a source with no exercises:** [*Exercises authored for every
-corpus*](#exercises-authored-for-every-corpus-w389) authors graded ones for it, at
-ingestion, from the material it does have. ⚠️ **Ungraded stays a first-class state** —
-it is where a prompt goes when the authoring gates cannot back it, and it is still how
-a prompt the material sets but nothing can check is presented. ⛔ **The 19 SPARQL
-prompts are not deleted by any of this; they are kept and joined by authored work.**
+**C5 — An exercise can exist with no grader, and that is not "no exercise".** A
+lesson may end in a prompt that nothing checks. The exercise contract therefore
+distinguishes three states, not two: **no exercise**; an **ungraded** exercise (a
+prompt the reader works, with nothing to check it); and a **graded** exercise,
+whose trust is `authoritative` or `advisory` under R5. Only the third can complete
+a practice. ⭐ **A source with no grader is not a source with no exercises** —
+graded ones are authored for it at ingestion (§7) — and ungraded stays a
+first-class state for a prompt nothing can back.
 
 ---
 
 ## 2. Governing rules
 
-These are rulings, not preferences. A task that violates one is not done.
+These are rulings, not preferences. A change that violates one is not done.
 
 **R1 — The framework knows nothing about any source.** `studyforge` must not
 import from, name, or branch on any adapter. Every source-specific fact
 arrives as data, through the manifest or the archive.
 
-⭐ **AMENDED 2026-09-23 — what *names* means, carried from the review rubric when it
-was archived.** ⛔ **A source's name in framework source is a failure even inside a
-comment**, because the next reader takes a name as licence to branch on it. A fixture
-under `tests/` that names a *shape* is fine; a module under `src/` that names a *corpus*
-is not. ⚠️ **A name is matched in the forms people actually write it** — the repository
-slug, and the corpus named in English (*the Java corpus*) — and each is anchored on a
-word only a corpus's name takes: a bare `ISO` is far more often an ISO 8601 date, and a
-check that cannot tell the two apart is switched off within a day. ⭐ The floor's
-source-names check is the enforcement, so R1 is answered on every run rather than by a
-reviewer's grep.
+⛔ **A source's name in framework source is a failure even inside a comment**,
+because the next reader takes a name as licence to branch on it. A fixture
+under `tests/` that names a *shape* is fine; a module under `src/` that names a
+*corpus* is not. ⚠️ **A name is matched in the forms people actually write it** —
+the repository slug, and the corpus named in English (*the Java corpus*) — and
+each is anchored on a word only a corpus's name takes: a bare `ISO` is far more
+often an ISO 8601 date, and a check that cannot tell the two apart is switched
+off within a day. ⭐ The floor's source-names check is the enforcement, so R1 is
+answered on every run rather than by a reviewer's grep.
 
 **R2 — The adapter seam is on disk, not in Python.** An adapter's entire
 obligation is to write a valid archive. It gets no callbacks and no framework
 API. This is what lets adapters be built in any language, tested in isolation,
-and assigned to different agents in parallel.
+and written independently of each other. `studyforge validate` is an adapter's
+definition of done (§6).
 
 **R3 — Generation is non-destructive, and every exception is declared,
 additive and asserted.** No existing file in a source repository is moved,
@@ -210,37 +141,38 @@ declares it** — `permitted_edits`, naming the file, the exact insertion and wh
 be additive — it removes or rewrites an existing line — is **also** a build
 failure, so a declaration cannot be used to smuggle a rewrite past the rule.
 ⛔ **The check reads the declaration**; it never hardcodes one corpus's
-exception. The Java repo's additive `<module>practice</module>` line in the
-root `pom.xml` is one entry in that list, not a special case in the framework.
+exception. An additive `<module>practice</module>` line in a corpus's root
+`pom.xml` is one entry in that list, not a special case in the framework.
 
 ⛔ **Three edits are never permitted, however declared:** the repository's root
-ignore file — write new ignore files *inside* generated directories instead;
-any version-control configuration; and any file the material's own reader
-depends on as content.
+ignore file — new ignore files are written *inside* generated directories
+instead; any version-control configuration; and any file the material's own
+reader depends on as content.
 
 ⛔ **Content is a property of the file in its repository, not of the site's
-`content` policy** (`W278`, `INT-13/1`). A file the policy includes or contests
-is content, and so is **repository-root documentation**: a root `README`,
-`LICENSE`, `LICENCE` or `COPYING`, of any suffix, which the repository's own
-readers read whatever the manifest classifies it as for the site. ⭐ The
-manifest parser refuses such a declaration and the non-destructive check a
-declared change to it, through one predicate.
+`content` policy.** A file the policy includes or contests is content, and so is
+**repository-root documentation**: a root `README`, `LICENSE`, `LICENCE` or
+`COPYING`, of any suffix, which the repository's own readers read whatever the
+manifest classifies it as for the site. ⭐ The manifest parser refuses such a
+declaration and the non-destructive check a declared change to it, through one
+predicate.
 
-⭐ **The reverse of every declared edit is recorded.** An onboarding that cannot
-be undone is one nobody will run against a repository they care about.
+⭐ **The reverse of every declared edit is recorded.** An `insert-line`
+declaration records the anchor and the line, so its reverse is that line
+removed, and onboarding writes an uninstall that performs it (§9). An onboarding
+that cannot be undone is one nobody will run against a repository they care
+about.
 
-⛔ **R3 DISTINGUISHES THE BUILD'S OWN PRIOR OUTPUT FROM THE USER'S MATERIAL, and
-a file the build wrote last time is not somebody's material** — it is the
-build's own previous answer, and replacing it is the build answering again.
-⭐ **So a rebuild may overwrite exactly the paths its own generation created, and
-which those are is not a guess: `studyforge plan` enumerates every path a build
-creates before it creates one.** ⛔ **R3 still protects everything else
-absolutely — a hand-edited file, a foreign file, or any path the enumeration
-does not name is REFUSED BY NAME and never replaced** — ⚠️ **and an enumeration
-that has drifted from what the build writes is a build failure rather than a
-licence, because the two are asserted to agree path for path.** ⭐ **Ruled by
-the user, 2026-09-12, answering *what does a rebuild do*; the six decisions it
-belongs to are in the delivery epic, `docs/tasks/E09-delivery.md`.**
+⛔ **R3 distinguishes the build's own prior output from the user's material.** A
+file the build wrote last time is the build's own previous answer, and replacing
+it is the build answering again. ⭐ **So a rebuild may overwrite exactly the paths
+its own generation creates, and which those are is not a guess: `studyforge
+plan` enumerates every path a build creates before it creates one** (§5). ⛔ **R3
+still protects everything else absolutely** — a hand-edited file, a foreign file,
+or any path the enumeration does not name is **refused by name and never
+replaced**, and the build exits `1` — ⚠️ and the plan and the build are asserted
+to agree path for path, so an enumeration that has drifted from what the build
+writes is a failure rather than a licence.
 
 **R4 — Location is data; identity is embedded.** The framework never infers
 what a file *is* from where it sits. Every generated artifact carries its own
@@ -252,36 +184,34 @@ the unit it is. Its stylesheet, scripts and sibling audio resolve *relative to
 the page* (R8, §5), so a page moved away from its assets renders unstyled and
 silent. Both are true and neither is a defect — conflating them would either
 force absolute asset paths (breaking the `file://` floor) or force a fixed tree
-(breaking placement). Discovery's acceptance tests identity, not rendering.
+(breaking placement). Discovery is tested on identity, not on rendering.
 
-**R5 — Nothing generated is presented as more authoritative than it is.**
-Inherited from CodeSignal's R10. A grader written by us against a hidden
-upstream grader is `advisory`. A grader that shipped with the material and is
-proven by the gates in §7 is `authoritative`. The framework refuses to render
-the first as the second.
+**R5 — Nothing generated is presented as more authoritative than it is.** A
+grader written against a hidden upstream grader is `advisory`. A grader that
+ships with the material is **not** `authoritative` for shipping: it earns that
+label only through the derivation in §7, whose record `studyforge validate`
+re-reads, and without one it is `bundled` · `advisory`. The framework refuses to
+render anything as more than its record supports.
 
-⭐ **EXTENDED 2026-09-19 (`W389`) — R5 keeps every word above and gains one case.** A
-grader **authored at ingestion** — tests written by a model from the page, or from the
-source's own example code — is `generated`, and therefore `advisory`. It ships only
-when it clears §7's [authoring gates](#exercises-authored-for-every-corpus-w389), whose
-record ships beside it and which `studyforge validate` re-reads; an exercise that
-cannot clear a gate does not ship, and the coverage report names the gate that refused
-it and why. ⛔ **The vocabulary does not grow.** No third trust level is minted:
-`generated` still can never be `authoritative`, and a gate record is evidence for a
-claim, never a promotion of it. ⭐ **What the READER is shown is a sentence, not the
-vocabulary** (the user's ruling, 2026-09-19): `provenance` and `trust` are the
-framework's internal words, and §7 fixes the learner-facing wording each one renders
-as. ⛔ **A label is never omitted because it is unflattering.**
+⭐ **A grader authored at ingestion** — tests written from the page, or from the
+source's own example code — is `generated`, and therefore `advisory`. It ships
+only when it clears §7's [authoring gates](#exercises-authored-for-every-corpus),
+whose record ships beside it and which `studyforge validate` re-reads; an
+exercise that cannot clear a gate does not ship, and the coverage report names
+the gate that refused it and why. ⛔ **There is no third trust level.** Only
+`bundled` may be `authoritative`, and a gate record is evidence for a claim,
+never a promotion of it. ⭐ **What the reader is shown is a sentence, not the
+vocabulary**: `provenance` and `trust` are the framework's internal words, and
+§7 fixes the learner-facing wording each one renders as. ⛔ **A label is never
+omitted because it is unflattering.**
 
 **R6 — Fail loud, never silently short.** A unit with no content, a broken
 curriculum link, an unmatched class, a declared practice that is absent — each
-is reported by name and exits non-zero. Inherited from CodeSignal's
-`run_capture_audit` and the reason `layout.py` exists at all.
+is reported by name and exits non-zero.
 
-⭐ **AMENDED 2026-09-23 — R6's general form: enumerate the legal, never the illegal.**
-Carried from the module-structure convention when the conventions were archived. It is
-the rule that most often decides *how* a refusal is written, so it lives beside the
-rule that demands one.
+⭐ **R6's general form: enumerate the legal, never the illegal.** It is the rule
+that most often decides *how* a refusal is written, so it lives beside the rule
+that demands one.
 
 > ⛔ **A list of forbidden things is an open set: the unforeseen case is admitted
 > silently. A list of permitted things is a closed set: the unforeseen case is
@@ -297,15 +227,15 @@ question; a silent admission costs whatever the unforeseen case does.
   predicate** — keys, versions, profiles, skip causes, contract fields, filename
   components, slugs, legal pairings of values. A derived class, such as the
   characters a label may hold, is computed from that predicate and never typed out a
-  second time. ⚠️ A hand-written character blacklist for filenames once let a vertical
-  tab, a form feed, a non-breaking space, a line separator, a quote, a colon and an
-  asterisk through two gates at once, and one of them breaks R8's `file://` floor.
+  second time. ⚠️ A hand-written character blacklist for filenames lets through a
+  vertical tab, a form feed, a non-breaking space, a line separator, a quote, a colon
+  and an asterisk, and one of them breaks R8's `file://` floor.
 - ⭐ **Better still, the illegal value is made unrepresentable**: a key is required to
   be a slug rather than slugified into a possible collision, and a parameter is typed
   so that a leaking value cannot be passed. ⛔ **The tell of the wrong shape is a check
-  that grows by one entry every time somebody hits a case nobody thought of** — adding
-  the entry conceals the shape for one more round. A list that is genuinely right (a
-  sanctioned exception) is short, and each entry carries its reason.
+  that grows by one entry every time somebody hits a case nobody thought of.** A list
+  that is genuinely right (a sanctioned exception) is short, and each entry carries its
+  reason.
 - ⛔ **The domain limit.** Where the legal set cannot be written down — free text,
   whose permitted set is *all text that is not personal data* — a forbidden list is
   forced and known-incomplete by construction. What is owed then is depth, never
@@ -320,9 +250,9 @@ question; a silent admission costs whatever the unforeseen case does.
   file.*
 - ⛔ **Where one helper names several faults, every caller either refuses all of them
   or says in its own body which it does not, and why.** A phrase in a refusal
-  vocabulary that no caller can reach is a missing guard: a path helper named three
-  faults and one of its two callers guarded only two, so a tilde-rooted edit target
-  was accepted while the sentence refusing it existed and could never be printed.
+  vocabulary that no caller can reach is a missing guard.
+- ⭐ **A walk over many items gathers every failure and names them in one refusal**,
+  leading with the count, so a fix is not one full run per failure.
 
 Where each of these is enforced is recorded in [the decisions file](../decisions.md),
 under *Refusals, errors and personal data*.
@@ -330,19 +260,16 @@ under *Refusals, errors and personal data*.
 **R7 — No personal data reaches disk or the wire.** Every string entering the
 archive passes `assert_clean`, which **refuses** rather than rewrites. No
 absolute home path, account id, name or email in any generated file, log or
-report.
-
-⭐ **AMENDED 2026-09-23 — how R7 is upheld in code.** Carried from the review rubric and
-from the personal-data conventions when they were archived. The rule above states the
-outcome; these are the properties the code holds so that the outcome never depends on
-somebody noticing.
+report. The rule states the outcome; these are the properties the code holds so
+that the outcome never depends on somebody noticing.
 
 - ⛔ **R7 has three subjects: this repository's tracked files, the archive, and the
   rendered page.** A home path that reaches a page has reached a file R7 governs,
   however clean the other two are.
 - ⛔ **Every string composed for the archive, a log, a report or an outbound request
   passes the personal-data gate, and the gate refuses.** A gate that scrubs silently
-  produces a clean file and a false belief.
+  produces a clean file and a false belief. Narration text is gated before the
+  request to the synthesis service is built (§8.2).
 - ⛔ **A refusal describes the fault and never formats the value.** A branch that exists
   *because* a value is an absolute path, and prints that value, has taken the one input
   guaranteed to carry a home directory and written it into a log from inside the check
@@ -350,13 +277,12 @@ somebody noticing.
   either**: `OSError` formats itself with the filename it was given, so a refusal names
   the field it means — `strerror`, `errno` — and says what it knows itself. ⚠️ **The
   rule is blanket, including where one exception type happens to be harmless**,
-  because auditing each type at each call site is the work nobody does twice, and the
-  site that gets skipped is the one holding a filename.
+  because auditing each type at each call site is the work nobody does twice.
 - ⛔ **A *why it failed* field carries a code, never a captured stream.** When the
   framework runs another process, the reason it records is an exit code, a timeout
   with its bound, or a failure class — never standard output, standard error, a
   filename or an argument. A captured stream is the richest source of absolute paths
-  there is, and the counts are the useful half anyway.
+  there is.
 - ⛔ **The personal-data refusal travels through every caller as itself.** It is not a
   `ValueError` and belongs to no package's error family, deliberately: a family exists
   so that a walk can catch one type per item and continue, so translating a leak into
@@ -372,25 +298,21 @@ somebody noticing.
   (R2), so it imports nothing that could read the environment and gives the same
   verdict on every machine. ⭐ The repository's own hygiene sweep is the mirror image:
   its subject *is* this machine's leak surface, so it may derive the machine's identity
-  at run time. ⛔ Neither is a model for the other, and *align them* is the wrong
-  instinct.
+  at run time. ⛔ Neither is a model for the other.
 - ⭐ **One shape vocabulary, two policies.** Those two gates have different subjects and
   may differ in what they do with a match, never in which shapes they recognise. They
-  share evidence rather than code: one table, whose product copy is
-  `tests/harness/personal-data-shapes.json`, gives every shape a column per gate, and
-  ⛔ **a row whose columns disagree carries a `why`**, so a divergence is declared with
-  a reason instead of discovered by a reviewer. The rows are measured against the real
-  implementations, so a row that stops being true is a build failure. ⭐ The last rows
-  are controls that nothing refuses — a table whose every row read *refuse* would be
-  satisfied by gates that refused everything — and every spelling is stored as
-  fragments, because a real shape written whole into the table would be a finding
-  against the table.
+  share evidence rather than code: one table, `tests/harness/personal-data-shapes.json`,
+  gives every shape a column per gate, and ⛔ **a row whose columns disagree carries a
+  `why`**. The rows are measured against the real implementations, so a row that stops
+  being true is a build failure. ⭐ The last rows are controls that nothing refuses — a
+  table whose every row read *refuse* would be satisfied by gates that refused
+  everything — and every spelling is stored as fragments, because a real shape written
+  whole into the table would be a finding against the table.
 - ⛔ **A gate's false positive on ordinary source is a defect in the gate.** An author
-  who renames a field to get past R7 pays a real cost and leaves no trace, and the next
-  author pays it again; a checker people rename fields around is on its way to being
-  switched off. ⚠️ The shape known to be over-broad is the local hostname, which also
-  matches a Python attribute access at the end of an expression; its remedy narrows
-  that one lookahead while keeping the hostname shape, in both gates together.
+  who renames a field to get past R7 pays a real cost and leaves no trace, and a checker
+  people rename fields around is on its way to being switched off. ⚠️ The shape known to
+  be over-broad is the local hostname, which also matches a Python attribute access at
+  the end of an expression; its lookahead is narrowed in both gates together.
 - ⭐ **A sanctioned negative fixture is the one place a personal-data shape is
   required**, because a gate needs an input to refuse. It is legal only while all five
   hold: the value is fabricated and unreachable (an RFC 2606 reserved domain, a user
@@ -399,53 +321,45 @@ somebody noticing.
   and what the gate should say; tests assert both directions — nothing else in the
   fixture tree carries the shape, and the sanctioned value really does trip the gate —
   and the registry of such directories is itself asserted. ⛔ A repository-wide sweep
-  excludes that directory and only that one, by name; a sweep that excludes `tests/`
-  wholesale has stopped checking the tree where fixtures live.
+  excludes that directory and only that one, by name.
 
 **R8 — The site works over `file://` with no network and no server.** Every
-asset is local. A served origin adds the API, progress and Run/Submit; it is
-never a prerequisite for reading.
+asset is local. A served origin adds the API, progress, Run and Submit, and quiz
+checking; it is never a prerequisite for reading.
 
 **R9 — Contracts are versioned.** An unknown version is refused, never migrated
 in place at read time.
 
-⛔ **The list of versioned fields lives in `studyforge.version.CONTRACT_FIELDS`,
-not here** (ruled round 15). This sentence used to enumerate five and the code
-now holds seven; a list written twice is a list that disagrees with itself, and
-this one already did. ⚠️ The register below says *which contract*; the constant
-says *which field name*; a task that versions a new contract adds it to the
-constant **in the same commit**, or the guard cannot see it.
+⭐ **The list of versioned fields lives in `studyforge.version.CONTRACT_FIELDS`**,
+and the register under R21 says which file each one versions. A contract that
+gains a version key is added to the constant in the same change, or the guard
+cannot see it. ⛔ **A contract is versioned because somebody reads it, not because
+the framework wrote it** — the authored overlay is one the framework only ever
+reads, and it is versioned all the same.
 
-⭐ **Why this drifted is worth keeping.** The five originally listed are every
-document the framework **writes**. The authored overlay is the one it only ever
-**reads** — so it fell out of an enumeration built, without anyone deciding it,
-around authorship. ⛔ **A contract is versioned because somebody reads it, not
-because we wrote it** (SF-09's diagnosis, and the reason R21 exists).
-
-⚠️ **A declared v1 limitation: titles must slugify to something** (ruled round
-16). `slugify` replaces every non-ASCII-alphanumeric run with a separator — it
-does **not** transliterate — so an accented title is mangled rather than
-converted (`Ströme` becomes `str-me`) and a title with no ASCII letters at all
-produces an empty slug and is refused. ⛔ **That is a limitation of this
-framework, not a defect in the corpus**, and every refusal must say so: R1 means
-the framework knows nothing about a source, including which alphabet it is
-written in.
-
-⛔ **Open — transliteration.** Taking it later renames every generated page, so
-it is recorded now rather than discovered by the first non-English corpus. ⚠️ All
-four designed corpora are English, so nothing has ever exercised this. ⭐ A
-consequence that is *not* deferred: two titles differing only in accented
-characters can collide, invisibly in the source, which is why **SF-25 checks
-generated names and not only addresses**.
-
-⭐ **AMENDED 2026-09-23 — a version gate checks the type before the value.** Carried
-from the module-structure convention when it was archived. `True in {1}` and
+⭐ **A version gate checks the type before the value.** `True in {1}` and
 `1.0 in {1}` are both true in Python, so a JSON `true` or `1.0` passes a bare
 membership test — the one check whose whole job is to refuse a document this build
 cannot read. ⛔ The gate refuses a value that is not an `int`, and refuses a `bool`
 explicitly because `bool` is a subclass of `int`. ⭐ There is one implementation,
 `studyforge.version` (§3.2), and every versioned contract is read through it: one
 membership test per contract is one chance per contract to write the porous one.
+
+⭐ **A contract whose document is derived may discard an unknown version instead of
+refusing it** — the discovery cache is rebuilt by the scan it caches, so an unknown
+`site_api` is reported, not read, and rewritten. ⛔ **A record that is rebuildable
+only at real cost refuses** — the narration record would take re-synthesising every
+clip, so an unknown `narration_api` stops the run.
+
+⚠️ **A stated limitation: titles must slugify to something.** `slugify` replaces
+every non-ASCII-alphanumeric run with a separator — it does **not** transliterate —
+so an accented title is mangled rather than converted (`Ströme` becomes `str-me`)
+and a title with no ASCII letters at all produces an empty slug and is refused.
+⛔ **That is a limitation of this framework, not a defect in the corpus**, and every
+refusal says so: R1 means the framework knows nothing about a source, including
+which alphabet it is written in. ⭐ Two titles differing only in accented characters
+can collide, invisibly in the source, which is why `validate`, `plan` and a build
+check generated **names**, not only addresses, and refuse a duplicate path by name.
 
 **R10 — Generated output is byte-for-byte reproducible.** No clocks, no
 dependence on filesystem enumeration order. The same inputs produce the same
@@ -455,20 +369,17 @@ bytes on any machine.
 deterministic, and therefore reproducible by construction. The rule that bans
 digests is narrower, and it is about *churn*: ⛔ **a shared asset linked by
 every page carries a plain name**, because a digest there renames a file and
-rewrites every page that links it whenever a colour changes, buying nothing a
-local reader wanted. An artifact linked by **one** page, regenerated in the same
-run as that page, is not in that class; §8.2 rules on it.
-
-⭐ **AMENDED 2026-09-23 — what R10 forbids in code, and its two exemptions.** Carried
-from the review rubric and the module-structure convention when they were archived.
+rewrites every page that links it whenever a colour changes. An artifact linked by
+**one** page, regenerated in the same run as that page, is not in that class; §8.2
+rules on it.
 
 - ⛔ **No clocks and no randomness in anything that reaches a generated file**: no
   wall-clock or monotonic reads, no uuids, no random bytes. A timer used for a log line
   is still a clock if that log is an artifact. ⭐ **There are two exemptions and only
-  two:** `container.json`'s `ingested` field, which is excluded from `content_sha256`
-  so it cannot make unchanged content look edited (§6); and synthesised audio bytes,
-  because a speech model is not byte-stable and the clip is content-addressed instead
-  (§8.2). ⛔ **A new exemption is an amendment to this rule**, never a local decision.
+  two:** the archive's `ingested` date, which is excluded from `content_sha256` so it
+  cannot make unchanged content look edited (§6); and synthesised audio bytes, because
+  a speech model is not byte-stable and the clip is content-addressed instead (§8.2).
+  ⛔ **A new exemption is a change to this rule**, never a local decision.
 - ⛔ **No dependence on filesystem enumeration order.** Every listing is sorted before
   it is used, and an `os.walk` sorts its directory and file lists *in place*, because
   sorting the outer call orders nothing.
@@ -484,26 +395,14 @@ from the review rubric and the module-structure convention when they were archiv
 - ⭐ **The claim is proved by building twice into two directories and comparing**: the
   two are identical, or identical apart from `ingested` and said so.
 
-**R11 — No file grows past the size a person can hold in their head.** Soft
-ceiling **400 lines** for a module, **600** for a test module. A unit
-approaching it becomes a **package** of focused modules with one clear purpose
-each. This is inherited debt to be paid *during* extraction, not after: the
-largest modules in the port surface are several times the ceiling, and they
-arrive as **packages or not at all**. ⚠️ **Every measurement of a source
-repository in this document is a dated snapshot** (§8) — a task counts its own
-port surface at start rather than inheriting a number, and *how much* of a
-source module is ported at all is its own question: the Java repo ships its
-graders (§7), so CodeSignal's grader-guessing scaffolder is largely **not**
-ported rather than ported large. The test is not line count but the isolation
-question — *can someone understand what this unit does without reading its
-internals, and can its internals change without breaking consumers?* If not,
-the boundary is wrong. Smaller units are also what makes agent work reliable:
-an agent reasons better about code it can hold in context at once, and its
-edits are more accurate in focused files.
-
-⭐ **AMENDED 2026-09-23 — the ceiling's units, its one opt-out, and a split that is
-one-way.** Carried from the module-structure convention and the review rubric when
-they were archived.
+**R11 — No file grows past the size a person can hold in their head.** A unit
+approaching its ceiling becomes a **package** of focused modules with one clear
+purpose each. The test is not line count but the isolation question — *can
+someone understand what this unit does without reading its internals, and can its
+internals change without breaking consumers?* If not, the boundary is wrong.
+Smaller units are also what makes agent work reliable: an agent reasons better
+about code it can hold in context at once, and its edits are more accurate in
+focused files.
 
 | Unit | Soft ceiling | On exceeding |
 |---|---|---|
@@ -513,12 +412,13 @@ they were archived.
 | template file | — | markup only, never logic |
 
 ⭐ **A line is a physical line** — what `wc -l` reports — so the floor's arithmetic is
-checkable from a shell. ⚠️ **The ceiling binds every authored file under `src/`,
-stylesheets and skill documents included**, although the shipped checker counts
-Python modules only; a non-Python file near the ceiling is read by a person, because
-the instrument cannot see it.
+checkable from a shell. ⭐ **The ceiling binds every authored file under `src/`**:
+the floor's size check counts Python modules and the stylesheets, scripts and page
+templates the framework ships as source, and excludes a vendored third-party file
+by its path, each with its reason.
 
-⛔ **The opt-out is one line in the module's first docstring, and nowhere else**:
+⛔ **The opt-out is one line in a Python module's first docstring, and nowhere
+else**:
 
 ```text
 Size exception: the substitution table is one literal mapping, and splitting it
@@ -528,11 +428,15 @@ would hide half the placeholders from the reader of the other half.
 It begins `Size exception:` at the start of a line, case included, so the checker and
 every reader agree on one spelling; it is read from the docstring with `ast`, never
 from a comment beside the code, because the exception is recorded where the next
-reader of the module meets it; and it is one sentence saying why splitting would be
-*worse* — a reason too short to be one is reported as none. ⛔ **It is refused whenever
-the honest answer to the isolation question is no**: a justification is not a licence.
-An exception left in a module that is now under its ceiling is stale and is removed,
-and a ported module is not exempt by inheritance.
+reader of the module meets it; and it says why splitting would be *worse* — a reason
+too short to be one is reported as none. ⛔ **It is refused whenever the honest answer
+to the isolation question is no**: a justification is not a licence. ⛔ **It is a
+design claim and only a design claim**: never a promise that later work will split the
+module, which reads to a stranger as permanent and names nothing they can find. A module
+that should be split is split. An exception left in a module that is now under its
+ceiling is stale and is removed. ⚠️ A stylesheet, a
+script or a template has no docstring and so no opt-out: its remedy is a split at a
+named seam.
 
 ⭐ **A one-way seam is a valid split.** A parser must build the model it defines, so
 asking the two halves never to import each other would forbid the split or invent a
@@ -545,14 +449,12 @@ strongest form, not the required one.
 source tree.** A module without tests is not done. A package's tests are split
 the same way the package is, so a failing test names a module, not a subsystem.
 
-⭐ **AMENDED 2026-09-23 — the mirror's exact form, and the configuration it needs.**
-Carried from the module-structure convention and the review rubric when they were
-archived. `src/studyforge/<path>/<stem>.py` is tested at
-`tests/studyforge/<path>/test_<stem>.py`, and a dunder drops its underscores so the
-name stays readable (`__init__.py` at `test_init.py`, `__main__.py` at
-`test_main.py`); the floor's mirror check is the authority on where a test lives.
-⭐ **A package's `__init__.py` is its contract (R17), so its mirror is a test that
-imports the package's public names** — what stops the surface drifting from the code.
+`src/studyforge/<path>/<stem>.py` is tested at `tests/studyforge/<path>/test_<stem>.py`,
+and a dunder drops its underscores so the name stays readable (`__init__.py` at
+`test_init.py`, `__main__.py` at `test_main.py`); the floor's mirror check is the
+authority on where a test lives. ⭐ **A package's `__init__.py` is its contract (R17),
+so its mirror is a test that imports the package's public names** — what stops the
+surface drifting from the code.
 
 ⛔ **Two settings are behaviour, not style.** `--import-mode=importlib` in the test
 configuration is required: the mirror puts a `test_init.py` in every package
@@ -564,14 +466,9 @@ fails on a fresh clone, with nothing in `git status` to say why.
 
 **R13 — Markup, styling and scripts are source files, never code strings.**
 Templates in template files, CSS and JS in asset files, loaded and composed by
-code. Inherited from CodeSignal, where 80 KB of triple-quoted strings meant
-changing a colour required editing Python. Loop bodies and inline wrappers stay
-in code — a template file for a closing tag removes no duplication.
-
-⭐ **AMENDED 2026-09-23 — where markup lives, and how a template is used.** Carried
-from the module-structure convention and the review rubric when they were archived.
-Templates live in `render/templates/`, stylesheets and scripts in `render/assets/`,
-loaded and composed by code.
+code: changing a colour is a line in a stylesheet, never an edit to Python.
+Templates live in `render/templates/`, stylesheets and scripts in
+`render/assets/`.
 
 - ⛔ **A template is used exactly, minus one trailing newline** — no reflow, no
   re-indent, no whitespace collapse — because pages are compared byte for byte (R10).
@@ -579,67 +476,39 @@ loaded and composed by code.
 - ⛔ **Substitution fails on an unfilled placeholder**; a placeholder never reaches a
   page as a literal, and a new placeholder arrives with a test of that failure.
 - ⭐ **What stays in code is a fragment**: a loop body, an inline wrapper, a one-line
-  container. ⛔ A stylesheet, a script, or a whole element with attributes is never a
-  fragment. A docstring may show markup; it is not emitted.
+  container — a template file for a closing tag removes no duplication. ⛔ A
+  stylesheet, a script, or a whole element with attributes is never a fragment. A
+  docstring may show markup; it is not emitted.
 
-**R14 — ⛔ WITHDRAWN 2026-09-12, by user ruling. The number is retained and is
-never reused.**
-
-⭐ **The search path is `git grep`, `grep -rn` and `sed -n`.** ⛔ **No document
-in this project may name a code-graph or index tool, and no task's context
-budget may assume one exists.**
-
-⚠️ **What it used to say, and why it is gone.** R14 required every repository in
-the working set to carry a built knowledge index and required an agent to query
-it before reading files. ⛔ **The instruction could not be obeyed.** The index
-directory was git-ignored, so it existed only in the main checkout and was
-**absent from every linked worktree** — which is where the offices work — and
-the one copy was stale by the floor's own check, which says a stale index is
-worse than an absent one. ⭐ The tool has since been removed from the machine
-this project is built on, so the instruction is now false as well as
-unfollowable.
-
-⛔ **The id is WITHDRAWN IN PLACE and nothing is renumbered.** R1–R21 are cited
-by number across the whole corpus, including frozen records that cannot be
-edited (Ruling 106). ⚠️ **Renumbering would silently redirect every historical
-`R14` citation to a different rule** — unrecoverable, because the records cannot
-be edited to follow. ⭐ A withdrawn rule that explains itself is what every
-existing citation must still resolve to.
+**R14** is not assigned. The number is kept free so that R15–R21 keep theirs.
 
 **R15 — Every step whose result depends on installed tooling runs in a
-container.** A build, a test run, a grader verdict, a synthesis job: each is
-reproducible because its toolchain is pinned in an image, not inherited from
-whoever's machine it ran on. A step that only works on one person's machine is
-not done.
+container.** A build of a corpus's code, a test run, a grader verdict, a
+synthesis job: each is reproducible because its toolchain is pinned in an
+image, not inherited from whoever's machine it ran on.
 
 ⚠️ **This is deliberately not "every process runs in a container".** The
 framework's own serving process is standard-library only with no dependencies,
-so containerising it buys no reproducibility — and it costs something real. See
-§8.3: **the serving process must never receive the Docker socket**, and that
-rules out the naive reading of this ruling (§8.3). Execution reaches the toolchain
-container from outside it; the web-facing process is never the thing holding
-root-equivalent access to the host.
+so containerising it buys no reproducibility — and it would cost something real:
+**the serving process must never receive the Docker socket** (§8.3). Execution
+reaches the toolchain container from outside it; the web-facing process is never
+the thing holding root-equivalent access to the host.
 
-**R16 — The product is a set of skills, not a bespoke pipeline.** The end state
-is that someone points a skill at material they care about and gets this format
-back — pages, narration, contents, navigation, practices, examples, and their
-own progress — and keeps it as their durable personal record. The Java repo is
-the proving ground for that, not the destination (§9).
+**R16 — The product is a set of skills, not a bespoke pipeline.** Someone points
+a skill at material they care about and gets this format back — pages,
+narration, contents, navigation, practices, examples, and their own progress —
+and keeps it as their durable personal record (§9).
 
 **R17 — Every package states its contract in its own docstring:** what it does,
-how you use it, and what it depends on. A reader who has not seen the spec must
-be able to use a package correctly from that alone.
-
-⭐ **AMENDED 2026-09-23 — the three questions, and what a surface is.** Carried from the
-module-structure convention and the review rubric when they were archived.
+how you use it, and what it depends on. A reader who has not seen this document
+must be able to use a package correctly from that alone.
 
 - ⭐ **Every package's `__init__.py`, and every module, answers three things in its
   first docstring**: what it does, in one sentence and in this document's vocabulary;
   how you use it — the entry point, not a tour of the internals; and what it depends
-  on, with, where it matters, what it deliberately does not. ⛔ A reader who has not
-  seen this document answers all three from the docstring alone, so
-  `"""Path utilities."""` fails. The habit worth keeping is recording *why* a decision
-  was made and what broke before it: that is what prevents the regression.
+  on, with, where it matters, what it deliberately does not. ⛔ `"""Path
+  utilities."""` fails. The habit worth keeping is recording *why* a decision was made
+  and what it prevents.
 - ⛔ **`__init__.py` is the contract.** If a consumer has to import a submodule
   directly, the surface is wrong.
 - ⭐ **A name a second package needs is exported on the owning package's `__all__`**
@@ -648,43 +517,34 @@ module-structure convention and the review rubric when they were archived.
   surface.
 - ⭐ **A reader that deliberately lets another package's exception through exports the
   set as a `RAISES` tuple on its surface**, and a caller catches the tuple whole rather
-  than retyping a list from prose — callers that retyped it dropped members, and one
-  crashed a command whose contract is that nothing raises.
+  than retyping a list from prose, which drops members.
 
-**R18 — Components are separate repositories, pinned by one workspace.** Each
-component — the framework, the toolchain image, the narration service, each
-corpus — has its own release cadence and is checked out under a single parent
-workspace so one directory holds a complete, working system. **The parent's
-recorded component commits are the version pin**: they capture exactly which
-combination of components a working configuration used, which is what makes R9's
-per-contract versioning reproducible *across* repositories rather than only
-inside them. ⛔ A component is never vendored, copied or forked into another; it
-is pinned.
+**R18 — Components are separate repositories, and each is consumed only through
+its published contract.** The framework, the toolchain images
+(`code-server-toolchain`, §8.1), the narration service (`narrate-service`, §8.2)
+and each corpus are separate repositories with their own release cadence. ⛔ A
+component is never vendored, copied or forked into another.
 
-⚠️ **Amended 2026-09-09: nothing in this project is pushed to any remote, ever.**
-That is a standing decision, not a temporary state, and it removes the mechanism
-this ruling originally named. **Git submodules have no legal form here** and are
-not used:
-
-- an **absolute** local path in `.gitmodules` writes a home directory into a
-  tracked file — ⛔ a direct R7 violation;
-- a **relative** URL is R7-clean but git resolves it against the parent's own
-  remote, which does not exist;
-- a **real remote** URL names a commit that was never pushed, so it resolves to
-  nothing anywhere, including here.
-
-⭐ **The pin survives; the fetch does not, and the pin was always the valuable
-half.** A submodule is exactly two things — a URL and a commit — and only the URL
-half depended on pushing. So the parent records each component's verified commit
-in a tracked file and **verifies it against the local checkout**, which is
-mechanically checkable in the way this project checks everything else.
-
-⚠️ **The honest claim shrinks, and it is stated rather than implied.** This
-reproduces a working configuration **on this machine and across time** — which is
-what R9's cross-repository versioning actually needs — and **not across
-machines**. ⛔ Any document claiming otherwise is wrong. If pushing is ever
-adopted, submodules become legal again and the recorded commits are already the
-data they would need.
+- ⭐ **A component publishes what a consumer may rely on in one file,
+  `consuming.json`**, and the framework reads that file and nothing else of the
+  component — never its `Dockerfile`, its README or its own renderer. A value the
+  framework needs and the file does not carry is a finding against the component,
+  never a value typed into the framework (R19).
+- ⭐ **`consuming.json` carries two versions, and conflating them is the defect it
+  exists to prevent.** `consuming_api` versions the file's own schema; `provides`
+  records **which promise** the component makes. A consumer records the `provides`
+  it was built against, and a mismatch is refused, never migrated (R9). A component
+  rebuilds constantly without changing its promise, and can change its promise
+  without a new build.
+- ⭐ **A corpus installs the framework as a library and pins it.** Onboarding records
+  the installed library's version and the commit it was built from in the corpus's
+  `.studyforge/pin.json`, and the skill stubs it writes name that pin (§9). ⭐ A built
+  wheel carries the commit it was built from, so onboarding pins it without being
+  told; a source tree carries none, and then the caller names it. ⛔ **Never
+  a path to a checkout** — a path carries somebody's home directory (R7), and a
+  stranger converting their own material has the installed library, not a
+  checkout — and ⛔ **never a git submodule**: nothing here is pushed to a remote, so
+  a submodule URL has no legal form.
 
 **R19 — The consuming half of a corpus is generated, not hand-authored.** A
 source repository's obligation is the archive (R2) and the source-specific
@@ -694,183 +554,85 @@ the non-destructive assertion, the reader's own documentation — is produced by
 skill, from the manifest and from the components' published consuming contracts
 (§9). ⛔ **Anything a second source would have to retype is a hole in the
 skills**, and a hand-edit to a generated artifact is a **finding against the
-skill that should have produced it**, never a fix.
+skill that should have produced it**, never a fix. Customisation enters as
+manifest data.
 
-This is the argument `SF-28` already won for the build pipeline, applied to the
-rest of the seam: an orchestration or a deployment that lives inside one
-consumer is a framework with one consumer. ⭐ **The measure is what a second
-source costs**, not what the first one looks like when finished.
+An orchestration or a deployment that lives inside one consumer is a framework
+with one consumer. ⭐ **The measure is what a second source costs**, not what the
+first one looks like when finished.
 
 **R20 — The extraction is one-way. This framework mines its source; a consumer
-never sees it.**
-
-⭐ **Affirmatively: `studyforge` may and should use CodeSignal freely.** It is the
-extraction source — read it, port from it, measure it, mine it for the rulings
-that were expensive to learn. That is the whole point of it, and a framework
-task's `Context` naming a path inside it is correct and expected.
-
-⛔ **And a client application never has access to it.** Everything a consumer
-needs from CodeSignal is carried **in** `studyforge` — as a ruling, a contract, a
-skill, or the integration catalogue (§9) — never as a pointer into CodeSignal's
-tree. ⛔ **No task in a consumer repository cites a path inside the extraction
-source**, and no skill sends an integrator there to find out how something was
-done.
+never sees it.** `studyforge` may use CodeSignal freely — it is the extraction
+source, and the rulings it paid for are recorded here. ⛔ **A consumer never has
+access to it**: everything a consumer needs from CodeSignal is carried **in**
+`studyforge` — as a rule, a contract, a skill, or the integration catalogue
+(§9) — never as a pointer into CodeSignal's tree. No skill sends an integrator
+there to find out how something was done.
 
 ⭐ **This framework is the brain.** Knowledge flows *in* from the extraction
-source and *out* to consumers, and never sideways between them.
+source and *out* to consumers, and never sideways between them, for three
+reasons: the source is moving, so a consumer reading it inherits whatever it
+looks like that week; it does not generalise, so an integrator sent to read one
+course site's payload format is taught the wrong thing carefully; and ⭐
+**knowledge must accumulate in one place or it decays once per integration** —
+if each consumer distils what it learned back into `studyforge`, the *next*
+integration starts further along.
 
-Three reasons, and the third is the one that compounds:
-
-- **The source is moving.** §8 already warns that every measurement of it is a
-  dated snapshot; a consumer reading it directly inherits whatever it looks like
-  that week, with no record of what was actually relied on.
-- **It does not generalise.** The second consumer's material has nothing to do
-  with a course site's payload format, and a plan that sends its integrator to
-  read one is teaching them the wrong thing carefully.
-- ⭐ **Knowledge must accumulate in one place or it decays once per
-  integration.** If each new consumer re-derives from CodeSignal, the framework
-  is a library and the expertise lives nowhere. If each one distils what it
-  learned back into `studyforge`, the *next* integration starts further along.
-  That is what makes this a framework rather than a thing that has been used
-  twice.
-
-⚠️ **This constrains the plan, not the prose.** These documents explain *why* a
-rule exists by naming what it cost CodeSignal, and that history is exactly what
-makes a ruling followable rather than arbitrary. What R20 forbids is a
-**dependency**: a consumer's task whose `Context` is a path in the extraction
-source, or an acceptance that can only be judged by comparing against it.
+⚠️ **This constrains dependencies, not prose.** This document explains *why* a
+rule exists by naming what it cost CodeSignal, and that history is what makes a
+rule followable rather than arbitrary. What R20 forbids is a consumer's
+dependency on the extraction source, or an acceptance that can only be judged by
+comparing against it.
 
 **R21 — A contract is located before it is described.** Every document the
-framework reads or writes states three things *before* any task builds against
+framework reads or writes states three things *before* anything builds against
 it: **the file it lives in**, **the key that versions it** (R9), and **the one
-producer that writes it**.
+producer that writes it**. ⛔ **A contract described but not located is a
+contract two builders will locate differently**, and R9's versioning cannot
+repair it: by the time the disagreement surfaces, one invented location has
+shipped inside a version that refuses to migrate. ⭐ A change that meets an
+unlocated contract **stops and asks**; choosing quietly is the failure this rule
+names.
 
-⛔ **A contract described but not located is a contract two tasks will locate
-differently**, and R9's versioning is exactly the thing that cannot repair it:
-by the time the disagreement surfaces, one invented location has shipped inside
-a version that refuses to migrate. ⭐ A task that meets an unlocated contract
-**stops and asks**. It does not choose, and choosing quietly is the specific
-failure this rule names.
+⭐ **When a file takes a row.** A file takes a row here when a party other than
+the one that writes it reads it back — another component, a corpus repository,
+or the framework reading what another producer wrote. ⛔ It does not take one
+merely for being a file, for being written and read back by its own writer, or
+for carrying a version key. ⚠️ **A content-addressed filename does not discharge
+a contract whose subject is the conditions the content was produced under**: a
+clip named by the digest of its words answers *has the wording changed*, but a
+voice change leaves every filename byte-identical while every clip is stale —
+which is why the narration record is a located, versioned file rather than an
+inference from names.
 
-⚠️ **This was not a hypothetical when it was written.** Three had already
-happened in the first week: §7's exercise declaration named six fields and no
-document, so the fixture task could not fixture the thing R5 exists to enforce;
-`container.json` was described as generated in §6 and hand-authorable in its own
-task; and the block vocabulary described `html` without saying what a disclosure
-*is*, so two merged documents ruled it in opposite directions. ⭐ None was a
-mistake by the task that hit it — each was a **gap the task was obliged to fill
-and not equipped to fill**, which is why the rule binds on the spec rather than
-on the builder.
-
-**The register of located contracts, and what is still open:**
+**The register of located contracts:**
 
 | Contract | File | Versioned by | Written by |
 |---|---|---|---|
-| manifest | `corpus.json` | `corpus_api` — ⭐ **`2`, which added `content.not_material`** (ruling 90) | adapter (drafted by reconnaissance, §9) |
-| container map | `<address>/container.json` | `container_api` | adapter; `EX-04` amends counts (§6) |
-| archive document | `raw/<variant>/unit-NN/<kind>-M.json` | `raw_api` | adapter |
-| exercise declaration | the `exercise` key of a `practice-M.json` | that document's `raw_api` | adapter; `EX-04` for generated (§7) |
-| served unit | `unit.json` | `api` | `SF-10` |
-| table of contents | `toc.json` | TOC schema version | `SF-13` |
-| local status | `status.json` | TOC schema version | `SF-14` |
-| authored overlay | `<address>/units/unit-NN/content.json` | `content_api` (`SF-09`) | a person |
-| discovery cache | `.studyforge/site.json` | `site_api` (Ruling 95) | `SF-04` — ⛔ **the one writer** |
-| narration regeneration state | `.studyforge/narration.json` (Ruling 351) | `narration_api` (Ruling 351) | `SF-17` — ⛔ **the one writer** (Ruling 330) |
-| progress record | `.studyforge/progress/progress.json` | `progress_api` | `SF-21` — ⛔ **the one writer**; transcribed PO round 67 (`SF-21/1`) |
-| personal archive manifest | `personal-archive.json`, a member of the archive file | `personal_archive_api` | `SK-06` — ⛔ **the one writer**; transcribed PO round 72 (`SK-06/5`) |
-| coverage report | ⛔ **open** | n/a — not read back | whatever produced the gap |
-| component consuming contract | `consuming.json` | `consuming_api` + `provides` | each component (`TC-05`, E13) |
-| **workspace pin file** | `workspace.json` | `workspace_api` | `FND-05a`; a row per component |
+| manifest | `corpus.json` | `corpus_api` | corpus onboarding, from reconnaissance's draft (§9) |
+| container map | `archive/<address>/container.json` | `container_api` | adapter |
+| archive document | `archive/<address>/raw/<variant>/unit-NN/<kind>-M.json` | `raw_api` | adapter |
+| exercise declaration | the `exercise` key of a `practice-M.json` | that document's `raw_api` | adapter; the exercise bundle's emitter for an authored exercise (§7) |
+| authored overlay | `units/unit-NN/content.json`, beside the unit it overlays | `content_api` | a person |
+| identity block | embedded in every generated page | `identity_api` | the page renderer |
+| served unit | the `/api/v1/content/units/<key>` response | `api` | `unit.builder` |
+| contents and local status | the `/api/v1/content/toc` response, and the root index's embedded data | `toc_api` | `contents` |
+| discovery cache | `.studyforge/site.json` | `site_api` | `corpus.discovery` — the one writer |
+| narration record | `.studyforge/narration.json` | `narration_api` | `studyforge narrate` — the one writer |
+| progress record | `.studyforge/progress/progress.json` | `progress_api` | `progress` — the one writer |
+| framework pin | `.studyforge/pin.json` | `pin_api` | corpus onboarding |
+| install record | `.studyforge/installed.json` | `installed_api` | corpus onboarding |
+| execution record | `.studyforge/execution/written.json` | `written_api` | execution onboarding — read by onboarding's hand-edit check |
+| exercise bundle | `exercises/<address>/<variant>/unit-NN/practice-M/bundle.json` | `bundle_api` | the exercise-authoring skill |
+| gate record | `gates.json`, in the practice's directory under `exercises/` | `gates_api`; a record with no key is read as `1` only in its earlier three-key shape (`inputs`, `origins`, `gates`), and any other record without it is refused | the exercise-authoring skill, and an adapter that derives an exercise (§7) |
+| source ledger | `exercises/ledger.json` | `ledger_api` | the exercise-authoring skill |
+| coverage report | `coverage.json`, one per unit beside its bundles | `coverage_api` | the exercise-authoring skill |
+| personal archive manifest | `personal-archive.json`, a member of the archive file | `personal_archive_api` | the personal-archive skill |
+| component consuming contract | `consuming.json` | `consuming_api` + `provides` | each component |
 
-⛔ **THE ROW THAT READ *narration manifest … `NS-02` / `SF-17`* WAS TWO CONTRACTS
-WEARING ONE NAME, and the `/` is what hid it** — ⭐ **located CTO round 67,
-Ruling 330, which is R21's own *one producer* clause applied to its own register.**
-
-- ⛔ **`NS-02`'s batch manifest is a RESPONSE BODY and takes no row here.** ⚠️ **This
-  table's columns are `File` and `Written by`, and the clause below is *`R9` governs
-  what is written*: a wire shape is written to nobody's disk.** ⭐ **It is the
-  service's PROMISE, and the promise register already exists and is two rows above —
-  `consuming.json`, versioned by `consuming_api` + `provides`.** ⛔ **Minting a tenth
-  `*_api` for it would put a framework version key on a shape the framework does not
-  write, making it a second authority on a component's promise — the failure §8.2
-  removes when it rules that the service never writes into a corpus.**
-- ⭐ **`SF-17`'s half IS a file row and is now CLOSED above — located by Ruling 351 and
-  filled in by `SF-17` itself, the task that builds it.** ⚠️ **It is the state that makes
-  *"re-running with no content change writes nothing and requests nothing"* (E04,
-  `SF-17`'s Acceptance) decidable, so the framework reads it back and R9 binds it.**
-  ⛔ **It was owed before step 3.4 opens, not before 3.2, and the two cells were
-  transcribed here in the commit that minted the key** — ⭐ **`narration_api` is
-  registered in `version.CONTRACT_FIELDS` in that same commit, per that tuple's own
-  convention, and it is read through `check` rather than `is_supported`: unlike the
-  discovery cache two rows above, this record is rebuildable only by re-synthesising
-  every clip in the corpus, so R9's refusal is spent by stopping.**
-
-⚠️ **AND THE ORDERING THE SPLIT EXPOSED, which is the part a location alone would have
-missed:** ⛔ **`narrate-service`'s `consuming.json` is written by TWO tasks — E13 assigns it
-to `NS-03` (profiles) and `NS-04` (voices), *"both must contribute their half"* — so the file
-names its own holes in `not_yet_declared` rather than being absent.** ⭐ **`NS-03` is in
-`NS-02`'s own step and `NS-04` is the step after** — ⛔ **so `NS-02` could have been built
-before the file that versions its output existed.** ⚠️ **The edge was owed in `E13` before
-step 3.2 dispatched `NS-02`** (Ruling 330(c)).
-
-⛔ **CORRECTED, CTO round 69 — this paragraph asserted the POPULATION of another office's
-file and both halves went false as the tasks landed** (Ruling 335, and `NS-03/2` + `NS-02/3`
-reporting it two waves running). ⭐ **What it said, kept so the correction is legible:**
-*"`narrate-service` ships no `consuming.json` today"* and *"`NS-03` is in `NS-02`'s OWN STEP
-with no `Depends on` edge between them"*. ⚠️ **The first was false from `NS-03`'s landing and
-the second from round 53's edge; the repaired form POINTS at `not_yet_declared`, which
-resolves at read time, instead of claiming what the component ships.**
-
-⭐ **`workspace_api` is the eighth versioned contract and the first that lives
-outside `src/`** — which is why the register and the framework's own constant are
-not the same list. ⛔ **Ruled: this table is the register; `CONTRACT_FIELDS` is
-the framework's *subset* of it.** ⭐ **So a key entering `CONTRACT_FIELDS` owes its row here in the commit that mints it; `SF-21/1` and `SK-06/5` are the two that did not, and the register transcribed both.** ⚠️ A contract the framework does not read is
-still a contract — the pin file is read by `tools/`, and `R9` governs what is
-*written*, not what `src/` happens to import.
-
-⭐ **`consuming.json` carries two versions, and conflating them is the defect it
-exists to prevent** (ruled 2026-09-09, round 4). The pin file (R18) records
-**which build** a component was at; `provides` records **which promise** it is
-making. ⛔ They change at different rates and neither substitutes for the other:
-a component rebuilds constantly without changing its promise, and can change its
-promise without a new build. `consuming_api` versions the file's own schema, and
-a consumer records the `provides` it was built against; a mismatch is refused,
-never migrated (R9). ⚠️ **Everything else about the file belongs to the component
-that ships it** — E12 for the toolchain, E13 for narration — because it describes
-a runtime nobody has built yet, and designing it now would be designing against
-zero sources. ⭐ What is ruled here is only what stops **two components inventing
-two shapes**, which is the failure this seam is actually exposed to: it is the
-one seam neither side can inspect from its own repository.
-
-⛔ **Every row this register marks `open` is an instance waiting to happen**, and
-each is owed by the task named beside it *before* that task builds. ⚠️ **The
-COUNT is not typed here and its removal is `PO-38/2`** — ⛔ **this sentence said
-*"Four"* one line below a table of two, and a third number stood on the board;
-three documents held three counts of one set and two of them were on the same
-page.** ⭐ **The open set is whatever the table above marks `open`, read at read
-time — a document that GOVERNS a register may not carry a typed measurement of
-it** (Ruling 181), ⛔ **and the fix is to REMOVE the count, not to correct it**
-(Ruling 150's form). ⚠️ The overlay's row is the
-sharpest: it is the one document a **person** edits, which makes it the most
-likely to drift, and R9 does not list it. Either R9 gains it or R9 says in words
-why a hand-edited document needs no version — but not silence.
-
-⭐ **AMENDED 2026-09-23 — when a file takes a row.** Carried from the review rubric when
-it was archived, because the question had been derived from scratch twice. ⭐ **A file
-takes a row here when a party other than the one that writes it reads it back** —
-another component, a corpus repository, or the framework reading what another
-producer wrote. ⛔ It does not take one merely for being a file, for being written and
-read back by its own writer, or for carrying a version key: a version key shows that
-its author expected the shape to move, which is why the question must be asked, and
-is not what answers it. ⭐ **So a task that mints a persisted format says who reads it
-back.** Where every reader is inside the writing component, no row is minted and the
-task says so; the row is owed the moment a party outside that component opens the
-file, or a second writer appears in the same store. ⚠️ **And a content-addressed
-filename does not discharge a contract whose subject is the conditions the content was
-produced under**: a clip named by the digest of its words answers *has the wording
-changed*, but a voice change or a service promise bump leaves every filename
-byte-identical while every clip is stale — which is why the narration regeneration
-state is a located, versioned file rather than an inference from names.
+⭐ **`CONTRACT_FIELDS` is the framework's subset of this register**: the keys the
+framework's own readers check through `studyforge.version`. A key a skill owns and
+reads back through its own reader is registered here and versioned all the same.
 
 ---
 
@@ -878,82 +640,64 @@ state is a located, versioned file rather than an inference from names.
 
 ### 3.1 The workspace
 
-Five repositories, each with its own remote, composed as submodules of one
-parent so a single checkout is a complete system (R18):
+The system is several repositories, each consumed through a published contract
+and never copied into another (R18):
 
+```text
+studyforge/                 the framework: a library, its command, and the skills (§9)
+code-server-toolchain/      the runner and editor images (§8.1)
+narrate-service/            the synthesis service (§8.2)
+<corpus>/                   one repository of material, per corpus
+  corpus.json               the manifest (§4)
+  archive/                  what the corpus's adapter writes (§6)
+  exercises/                authored exercise bundles, where the corpus has them (§7)
+  .studyforge/              what the framework generates and records for it
 ```
-learning-workspace/               the parent — thin: docs, compose, scripts
-  studyforge/                     submodule — the framework
-  code-server-toolchain/          submodule — the IDE image (§8.1)
-  narrate-service/                submodule — synthesis (§8.2)
-  corpora/
-    java-senior/                  submodule — consumer 1, built in v1
-    codesignal/                   submodule — added at v2 convergence
-```
 
-The parent holds almost no code. What it holds is **the combination**: which
-commit of each component works with which, plus the compose files and scripts
-that run them together. That pin is the artifact — a component is pinned,
-never vendored, copied or forked into another (R18).
-
-Two consequences worth stating up front, because both are first-run failures:
-a plain clone yields empty submodule directories and must recurse; and a change
-to a component is **two commits** — one in the component, one in the parent
-recording the new pin. Neither is a defect; both need documenting (FND-05).
+A corpus installs the framework as a library into the Python that runs its
+checks, and records the version it installed in `.studyforge/pin.json` (R18).
+It reaches the images and the service only through what their `consuming.json`
+promises: it builds each component's image from that component and records the
+tag the build prints, and it records the `provides` it was built against. ⭐ **A
+change to a component is released by that component**, and a consumer moves to
+it by rebuilding and recording the new tag. ⛔ The framework locates no sibling
+checkout at run time; only its own test suite may be pointed at sibling
+checkouts, through the `STUDYFORGE_WORKSPACE` environment variable.
 
 ### 3.2 Inside the framework
 
 Every unit below is a **package** of focused modules, not a file (R11). The
-tree names responsibilities; the modules inside each are the owning task's to
-draw, subject to the size ceiling.
+tree names responsibilities; each package's `__init__.py` states its contract
+(R17).
 
-```
-studyforge/
-  src/studyforge/
-    version.py   the R9 gate: one implementation of "is this a version I speak"
-    address/     logical N-segment address, keys, slugs, identifiers
-    corpus/      manifest · container map · placement profiles · discovery
-    archive/     the archive document · block vocabulary · Markdown reader
+```text
+src/studyforge/
+  version.py     the R9 gate: one implementation of "is this a version I speak"
+  describe.py    how a refusal names a value without reproducing it (R7)
+  address/       logical N-segment address, keys, slugs, identifiers
+  corpus/        manifest · container map · placement profiles · discovery · media policy
+  archive/       the archive document · block vocabulary · Markdown reader
                  · the personal-data gate
-    unit/        the served unit document · authored overlay · section keys
-    contents/    table of contents and local status, as data
-    render/      page renderer · root index · templates/ · assets/
-    narrate/     speakable contract · synthesis
-    serve/       app · content, state, assets and run routes · security
-                 · caching.  A package precisely because it replaces a
-                 2,743-line file (R11)
-    execute/     the command runner — the only process-spawning package
-    progress/    the reader's local record
-    exercise/    workspace and trust contract
-    validate/    the CLI that defines "a valid archive"
-    cli/         build, serve, plan, reconcile — the framework's entry points
-    skills/      the authoring and conversion skills (§9)
-  tests/         mirrors src/ package for package (R12)
-  docker/        dev, test and serve images (R15)
-
-Claude-senior-java-engineer/      consumer 1 — built in v1
-  ingest/         curriculum · lessons · sources · emit · audit
-  exercise/       body-blanking · the two gates
-  practice/       generated exercise sources (additive Maven module)
-  docker/ docker-compose.yml
-  index.html  .studyforge/{assets,archive,site.json}
-  00-base/ 01-java-basics/ ... 45-java-persistence/   UNCHANGED
-
-code-server-toolchain/            shared, its own repo (§8.1)
-  Dockerfile entrypoint.sh
-  lockdown/         the practice-focus workbench extension
-  seed/             default settings and keybindings
-  prime/            build-time cache-warming contract
-
-CodeSignal/                       untouched in v1; converges in v2
+  unit/          the served unit document · authored overlay · section keys · trust
+  contents/      table of contents and local status, as data
+  generate/      one corpus's whole site, written in one pass
+  render/        page renderer · container pages · root index · templates/ · assets/
+  narrate/       speakable contract · the synthesis client and its record
+  serve/         app · content, state, assets, run and quiz routes · security · caching
+  execute/       the command runner — the only package that runs a corpus's commands
+  progress/      the reader's record of practice passes
+  exercise/      the exercise record, its states, the bundle, the gates, quizzes
+  validate/      what "a valid archive" means, and the command that decides it
+  cli/           validate, plan, narrate, build, serve, check — the command's verbs
+  skills/        the authoring and conversion skills (§9)
+tests/           mirrors src/ package for package (R12), plus the floor
+docker/          the development image the gates run in (R15)
 ```
 
 **Dependency direction is one-way.** `studyforge` never imports a consumer. A
 consumer never imports `studyforge` internals — it writes an archive and
-invokes the CLI.
+invokes the command, or runs a skill.
 
-⭐ **AMENDED 2026-09-23 — standard library only, declared and imported.** Carried from
-the module-structure convention and the review rubric when they were archived.
 ⛔ **Framework source imports nothing outside the standard library and itself, and
 `pyproject.toml` declares no runtime dependency** — the reader's host needs Python and
 a Docker CLI and nothing else (§8.3). ⚠️ The declaration and the code can disagree, so
@@ -967,18 +711,19 @@ them and are never edited**; a change is a re-vendor.
 
 ## 4. The address model
 
-CodeSignal's `CourseRef.key` is already a single joined string precisely so
-its halves cannot be swapped. v1 widens it from *exactly two* segments to
-*exactly `len(levels)`*.
+A unit's address is a single joined key, so its segments cannot be swapped,
+with exactly `len(levels)` segments: the corpus declares how deep it is, and
+every address in it has that depth.
 
 ```json
 // corpus.json — what makes a directory a source
-{ "corpus_api": 2,
+{ "corpus_api": 6,
   "source": "java-senior",
   "title": "Senior Java Engineer",
   "levels": ["section", "module"],
   "variants": ["java"],
   "exercises": true,
+  "runtimes": ["java", "maven"],
   "placement": "sibling",
   "content": {
     "include": ["*/README_*.md"],
@@ -994,77 +739,48 @@ its halves cannot be swapped. v1 widens it from *exactly two* segments to
       "why": "Maven compiles only what sits on a source root (§7)" } ] }
 ```
 
-### The complete key list — ⛔ **the example above is an instance, not the contract**
+### The complete key list — the example above is an instance, not the contract
 
-⚠️ **The example omits optional keys and that is correct.** ⭐ **A canonical
-example is a *realistic* manifest, and a realistic manifest omits the optional
-keys it does not need** — so the example is not where you learn what a manifest
-*may* carry. This list is. ⛔ **Without it `media` was unteachable from this
-document**: the contract owned a key the spec never named, and a reader looking
-for the vocabulary found only one corpus's choices.
+⚠️ **A realistic manifest omits the optional keys it does not need**, so the
+example is not where you learn what a manifest *may* carry. This list is.
 
 | Key | | Notes |
 |---|---|---|
-| `corpus_api` | **required** | R9's version key. An unknown value is refused, never migrated. ⭐ **`2` added `content.not_material`** (ruling 90), ⭐ **`3` added `media.max_files`** (`W207`) and ⭐ **`4` added `runtimes`** (`W350`), ⭐ **`5` added `narration`** (`W460`, amended 2026-09-23) and ⭐ **`6` added `onboarding_doc`** (`W461`); this build reads `1` to `6` |
-| `source` | **required** | ⛔ **A corpus id, not a fetch URL** (ruling 51) |
+| `corpus_api` | **required** | R9's version key. An unknown value is refused, never migrated. ⭐ **`2` added `content.not_material`**, **`3` added `media.max_files`**, **`4` added `runtimes`**, **`5` added `narration`**, **`6` added `onboarding_doc`** and **`7` added `curriculum`**; this build reads `1` to `7`, and a key used under a version older than the one that added it is refused naming both numbers |
+| `source` | **required** | ⛔ **A corpus id, not a fetch URL** |
 | `title` | **required** | |
 | `levels` | **required** | Names the *container* levels and fixes the depth |
 | `variants` | **required** | ⛔ Filing and presentation only — never *runnable* |
-| `curriculum` | *optional* | Where the curriculum is recorded (`record`), the address each of its groups is filed at (`containers`), and per group an optional filename `prefix` that is a declared cross-check and never files a unit (`W340`) |
+| `curriculum` | *optional* | Where the curriculum is recorded (`record`), the address each of its groups is filed at (`containers`), and per group an optional filename `prefix` that is a declared cross-check and never files a unit |
 | `exercises` | **required** | §7's gate onto the execution track |
 | `runtimes` | *optional* | Names, never versions, from a closed vocabulary. ⛔ **Absent means none: no runner, complete at the reading floor** (§7, C5) |
-| `narration` | *optional* | Whether a build and a serve voice the corpus (`W460`). ⭐ **Absent means voiced whenever clips are recorded**; ⛔ **`false` is the reading floor exactly, complete and never short** (C5) |
-| `onboarding_doc` | *optional* | Where onboarding writes its reader document (`W461`): a corpus-relative `.md` path, or `false` for none. ⭐ **Absent means `ONBOARDING.md` at the root**; ⛔ a fixed name was a branch nobody could move (R1, R19) |
-| `placement` | **required** | |
+| `narration` | *optional* | Whether a build and a serve voice the corpus. ⭐ **Absent means voiced whenever clips are recorded**; ⛔ **`false` is the reading floor exactly, complete and never short** (C5) |
+| `onboarding_doc` | *optional* | Where onboarding writes its reader document: a corpus-relative `.md` path, or `false` for none. ⭐ **Absent means `ONBOARDING.md` at the root** |
+| `placement` | **required** | `tree` or `sibling` (§5) |
 | `content` | **required** | `include` is plain globs; every `exclude` and every `not_material` entry carries its `why` |
-| `media` | *optional* | Defaulted. ⛔ **A corpus with no media declares nothing** |
-| `permitted_edits` | *optional* | Defaults to `[]`. ⭐ ISO's is structurally empty and that is a pass |
+| `media` | *optional* | Defaulted (§5). ⛔ **A corpus with no media declares nothing** |
+| `permitted_edits` | *optional* | Defaults to `[]`, which is the normal case (R3) |
 
-⛔ **The contract is `MANIFEST_KEYS` and `REQUIRED_KEYS` in
-`corpus/manifest/document.py`; this table is derived from them and the derivation
-**must be** asserted rather than maintained by hand.**
+⛔ **The contract is `MANIFEST_KEYS`, `REQUIRED_KEYS` and `KEY_VERSIONS` in
+`corpus/manifest/document.py`.** This table names every key the code has and no
+key it lacks, and marks *required* exactly the keys in `REQUIRED_KEYS`; a test
+holds it to both, each way. It is not derived from the example, and the example is deliberately
+not exhaustive: onboarding **generates** manifests, and an exhaustive example
+would propagate every optional key into every corpus, where R9 freezes it at
+first declaration.
 
-> ⛔ **CTO, 2026-09-10 — the assertion does NOT exist yet, and this paragraph
-> said it did.** ⚠️ **Measured: no test anywhere reads this document.**
-> `tests/studyforge/corpus/manifest/test_init.py` names `MANIFEST_KEYS` only
-> inside an `__all__` surface check. ⭐ **The table's *content* is correct** — all
-> ten keys match `MANIFEST_KEYS` and all eight *required* match `REQUIRED_KEYS`,
-> verified key by key. ⛔ **It is the claim of coverage that was false, and that
-> is worse than an unasserted table: the next reader trusts the sentence and does
-> not look.** ⚠️ **Ruling 48's shape, landed inside Ruling 30's landing.**
-> ⭐ **Owed as a task on `FND-08`'s seam** — it is a document walk with a
-> code-side comparison, which is exactly what that task builds. **PO to place and
-> number it.**
-
-⚠️ **And the assertion is deliberately
-*two* one-way checks, never an equality** (⭐ **ruling 30, which reversed ruling
-28**):
-
-- **subset** — every key this table names exists in `MANIFEST_KEYS`, so the spec
-  cannot teach a key the code does not have;
-- **coverage** — every key in `MANIFEST_KEYS` appears in this table, so the code
-  cannot own a key the spec never names. ⭐ **That is the half that closes
-  `media`.**
-
-⛔ **Equality was ruling 28's remedy and it was wrong in a way worth recording,
-because it would have been *enforced*.** Equality can only be satisfied by making
-the **example** exhaustive — and `SK-07` **generates** manifests from it, so an
-exhaustive example propagates `media` into every corpus that has none, and R9
-freezes it there at first declaration. ⭐ **The scope this was argued over is a
-canonical example whose consumer is a generator** (ruling 52); a hand-written
-example with no generator downstream would not have carried the same cost.
+### `content` — what is read, what is withheld, and what is not material
 
 `content` is **C2's countermeasure, and it is a schema field because C2 is a
-schema problem.** ISO ships both per-unit files *and* whole-series aggregates
-that are concatenations of them, so a `src/*.md` glob ingests every unit twice
-and nothing complains. Nothing in the manifest could say otherwise.
+schema problem.** A source that ships per-unit files *and* aggregates that
+concatenate them is ingested twice by a plain glob, and nothing complains.
 
 ```json
 "content": {
   "include": ["src/*.md"],
   "exclude": [
-    { "path": "src/ISO.md",
-      "why": "whole-series aggregate: a concatenation of 1.md…16.md (C2)" } ],
+    { "path": "src/All.md",
+      "why": "whole-series aggregate: a concatenation of the per-unit files (C2)" } ],
   "not_material": [
     { "glob": "docs/studyforge/*",
       "why": "this integration's own working notes about the corpus, not the corpus" },
@@ -1072,246 +788,245 @@ and nothing complains. Nothing in the manifest could say otherwise.
       "why": "the repository's licence; it teaches nothing and is not withheld from anyone" } ] }
 ```
 
-⭐ **The asymmetry is deliberate: an inclusion needs no justification; an
-exclusion does.** An excluded file is material being withheld from the reader,
-and a withholding nobody has to explain is one nobody audits — the same argument
-`permitted_edits` already makes about an edit. So `include` is plain globs and
-every `exclude` entry carries its `why`.
+The three states are about whether a file's prose is read into the archive:
 
-### `runtimes` — what a corpus's material needs to run (`W350`)
+- `include` — **read in.**
+- `exclude` — **prose that *would* be read, deliberately not read**, one named path
+  per entry, with its `why`. *Withheld* is the honest word here because it is true
+  here.
+- `not_material` — ⛔ **not prose to read at all**: the repository's own
+  scaffolding, content *about* the material rather than the material — a licence,
+  ignore files, an editor workspace, the corpus's own `README.md`.
 
-⭐ **The shape is `TC-00`'s proposal as round 112 accepted it.** An optional
-list of names from a **closed** vocabulary — `gradle`, `java`, `kotlin`,
-`maven`, `node`, `python`, `shell`, `sqlite` — which agrees name for name with
-what `code-server-toolchain`'s pin file pins (§8.1). ⛔ **Names only, never
-versions**: the corpus says *which*, the pin file says *which version*, and a
-version here would be a second place one is chosen.
+⭐ **X1 — an inclusion needs no justification; every declaration that the
+framework will not read a file needs one.** An excluded file is material being
+withheld from the reader, and a withholding nobody has to explain is one nobody
+audits — the same argument `permitted_edits` makes about an edit.
 
-- ⭐ **Order carries no meaning**; `Manifest.runtimes` holds the set sorted, so
-  two equal declarations are one value (R10). A repeated name is refused.
-- ⛔ **`maven`, `gradle` and `kotlin` are refused by name without `java`** in the
-  same list — nothing is inferred, the rule `corpus_api` follows.
-- ⛔ **Refused beside `exercises: false`**: it would declare a runner for a
-  corpus with nothing runnable (§7).
+⭐ **A source `README.md` is `not_material`, and it is not a special case** — it
+is the corpus's own navigation, and navigation is scaffolding. ⚠️ The reader
+loses nothing: the site carries its own contents from the container maps.
+
+⚠️ **`not_material` takes globs where `exclude` takes one named path**, because the
+harms differ. A new member of an exclusion's set is a new withholding and needs its
+own reason; a new member of a `not_material` glob's set is not a harm **unless it is
+actually material** — which is caught per file, against a real tree:
+
+- ⛔ **A file matched by both `include` and `not_material` is `contested`**, a
+  finding of its own that exits 1. **Never a precedence** — one order would drop
+  material the reader was promised and the other would read the scaffolding aloud.
+- ⛔ **A `not_material` entry is either an exact path, or a glob whose wildcard lies
+  inside a directory prefix that is itself entirely not-material.** A pattern whose
+  correctness depends on which files happen *not* to exist is refused, however
+  exactly it matches today: `docs/studyforge/*` is a wildcard under a directory,
+  `LICENSE` and `.gitignore` are exact paths, and `[CLR]*` is refused, because a
+  `why` cannot be true of a `CHANGELOG.md` nobody has written yet.
+- ⛔ **A file under the source root that matches none of the three is
+  `unclassified`**, and `studyforge validate` names it and exits 1 (R6). A file
+  that matches `include` and is then not ingested is also a failure. It follows
+  that a corpus cannot grow a file without someone deciding what it is — the
+  alternative is a second aggregate appearing and being read as a second copy of
+  every unit.
+
+⭐ **The reconnaissance skill (§9) drafts this**, and detecting an overlap is what
+C2 asks of it: two files whose content says one contains the other is a finding it
+reports, not something left to be noticed after ingest.
+
+### `curriculum` — where the reading order is recorded, and how its groups are filed
+
+An optional top-level key, added by `corpus_api: 7`, for a corpus whose own
+document records its reading order and grouping:
+
+```json
+"curriculum": {
+  "record": "README.md",
+  "containers": [
+    { "label": "jPOS Server Implementation", "address": "jpos-server", "prefix": "s" }
+  ]
+}
+```
+
+- ⭐ **`record`** is required inside the block: the Markdown document, inside the
+  corpus, that records the reading order and the grouping. `{"record": …}` alone is
+  a complete declaration.
+- ⭐ **`containers`** lists the record's groups in the record's order: each `label`
+  exactly as the record writes it, and the `address` that group is filed at, checked
+  against `levels`. This is what an adapter would otherwise carry as a constant, and
+  a second corpus would retype (R19).
+- ⛔ **`prefix` is a declared cross-check, never what files a unit.** The record
+  files every unit; the prefix — the text before the number in a group's filenames,
+  which may be empty — is a second partition of the same files, and the adapter
+  skill's filing refuses when the two disagree, in either direction. A filename
+  prefix is never a source of grouping on its own (C1, §6: an address is recorded,
+  never derived).
+- ⛔ **Strict by design**: the block and each group are closed key sets, and a
+  repeated label, address or prefix is refused. Reconnaissance drafts the block,
+  proposing addresses for a person to confirm, and writes a prefix only where the
+  filenames partition the units exactly as the record does.
+- ⭐ **Absent means no declared curriculum**, and the adapter files units as it
+  always has.
+
+### `runtimes` — what a corpus's material needs to run
+
+An optional list of names from a **closed** vocabulary — `gradle`, `java`,
+`kotlin`, `maven`, `node`, `python`, `shell`, `sqlite` — which agrees name for
+name with what `code-server-toolchain` pins (§8.1). ⛔ **Names only, never
+versions**: the corpus says *which*, the component's pin file says *which
+version*, and a version here would be a second place one is chosen.
+
+- ⭐ **Order carries no meaning**; the manifest holds the set sorted, so two equal
+  declarations are one value (R10). A repeated name is refused.
+- ⛔ **`maven`, `gradle` and `kotlin` are refused without `java`** in the same
+  list — nothing is inferred.
+- ⛔ **Refused beside `exercises: false`**: it would declare a runner for a corpus
+  with nothing runnable (§7).
 - ⭐ **Absent means none, and none is complete.** The framework neither builds,
   probes nor starts a container for such a corpus; `exercises: true` without
   `runtimes` is an ungraded corpus's honest shape.
-- ⛔ **It is `corpus_api: 4`'s key, and a top-level one** — `KEY_VERSIONS` keys
-  it under no block (`TC-00/2`), so under `1`–`3` it is refused naming both
-  numbers rather than parsed. ⭐ **The vocabulary is spelled once**, in
-  `corpus/manifest/runtimes.py` (`TC-00/3`).
+- ⭐ **The vocabulary is spelled once**, in `corpus/manifest/runtimes.py`.
 
-### `narration` — whether a corpus is voiced (`W460`, AMENDED 2026-09-23, user ruling)
+### `narration` — whether a corpus is voiced
 
-⛔ **USER RULING, 2026-09-23:** *"I need some changes regarding the narrition.
-First of all it should be optional and while serving or even while caputring the
-matterial skills should ask if user is interested in the narrition or not.
-Somebody might wants to just cover the course wihtout voices as mentioned the
-voice might be cgenerated but still not serving them would be an option"*.
+Narration is optional. Somebody may want to read a course without voices, and a
+corpus whose clips were synthesised may still be served silent.
 
-- ⭐ **A top-level bool, `corpus_api: 5`'s key** — `KEY_VERSIONS` keys it under no
-  block, so under `1`–`4` it is refused naming both numbers. The onboarding
-  skill ASKS the author and writes the answer; a draft that carried none writes
-  no key and keeps its version.
-- ⭐ **Absent means voiced**: every corpus before the key keeps the three states
-  of `W202` answer 4 — no record, a record whose clips play, a promise the disk
-  did not keep.
-- ⛔ **`false` is the FIRST of those states exactly, whatever the record says**:
-  a build reads no record, renders every page with no player and no gap notice,
-  and copies no clip — byte for byte the build of a corpus nobody narrated.
-  ⛔ **Nothing is deleted, moved or rewritten** (R3): the record and the clips
-  stay where `narrate` put them, so voicing the corpus again plays them with no
-  re-synthesis.
+- ⭐ **A top-level bool.** The onboarding skill asks the author and writes the
+  answer; a draft that carried none writes no key.
+- ⭐ **Absent means voiced**: a unit's page plays the clips its narration record
+  locates, and a clip the record promises and the disk does not have is reported
+  on the page.
+- ⛔ **`false` is the reading floor exactly, whatever the record says**: a build
+  reads no record, renders every page with no player and no gap notice, and
+  copies no clip. ⛔ **Nothing is deleted, moved or rewritten** (R3): the record and
+  the clips stay where `studyforge narrate` put them, so voicing the corpus again
+  plays them with no re-synthesis.
+- ⭐ **A build names what it will not act on, and its exit does not change.** A voiced
+  build reports each clip it plays whose words its paragraph no longer says
+  (`stale`), pointing at `studyforge validate`, which lists each one with the
+  `narrate` command that re-voices it. A build with narration off into an `--out`
+  an earlier voiced build used reports each clip left there that no page links
+  (`unlinked`), and says how to be rid of it. ⛔ A build deletes neither.
 - ⭐ **`studyforge build` and `studyforge serve` take `--narration` /
   `--no-narration`**, which override the declaration for that run, and the
-  build-and-serve skill ASKS for it. ⛔ **Narration is in a page's bytes** (R8:
-  the built page is the product), so `serve` never edits a page on the way out:
-  with narration off it refuses a site built with narration, naming each page
-  and the build that fixes it, and it refuses every clip file under the root it
-  serves by path.
+  build-and-serve skill asks for it. ⛔ **Narration is in a page's bytes** (R8: the
+  built page is the product), so `serve` never edits a page on the way out: with
+  narration off it refuses a site built with narration, naming each page and the
+  build that fixes it, and it refuses every clip file under the root it serves.
 - ⛔ **Off is not degraded**: no page, report or `validate` finding calls it
   short, and practices, quizzes, progress and contents are unchanged.
 
-### ⛔ `content` has **three** states, and the third is `not_material` (ruling 90)
-
-⛔ **Two states were not enough, because a real repository is mostly a third.**
-Measured against one, 2026-09-10: of 141 files, **38 included, 3 excluded, 100
-unclassified — and only 3 of that hundred were material withheld from anybody.**
-The rest were a licence, ignore files, an IDE workspace, a graph cache. Filing
-those under `exclude` makes every `why` a small lie and produces an audit nobody
-reads.
-
-⭐ **The three states are about whether a file's prose is read into the archive**,
-never about materiality in the abstract:
-
-- `include` — **read in.**
-- `exclude` — **prose that *would* be read, deliberately not read**, per file,
-  with its `why`. ⭐ *Withheld* is the honest word here because it is true here.
-- `not_material` — ⛔ **not prose to read at all**: the repository's own
-  scaffolding, content *about* the material rather than the material.
-
-⭐ **A source `README.md` is `not_material`, and it is not a special case** — it
-is the corpus's own navigation, and navigation is scaffolding. ⚠️ **The reader
-loses nothing**: the generated site carries its own contents from the manifest's
-container maps, so every address, title and ordinal the README records is already
-declared. ⛔ **`X1` is not weakened; its domain is now stated** — *an inclusion
-needs no justification; **every declaration that the framework will not read a
-file** needs one.*
-
-⚠️ **`not_material` takes globs where `exclude` takes one named path**, and the
-two audits differ because the harms differ. A new member of an exclusion's set is
-a new withholding and needs its own reason; a new member of a `not_material`
-glob's set is not a harm **unless it is actually material** — which is caught per
-file, against a real tree, by the rule below. ⛔ **The category also cannot be
-enumerated**: writing the finding that produced this field took the count from
-100 to 101, because the new entry was the file containing it.
-
-⛔ **A file matched by BOTH `include` and `not_material` is a finding of its own**
-(`contested`), and it exits 1. ⭐ **Never a precedence** — one order would drop
-material the reader was promised and the other would read the scaffolding aloud.
-⚠️ **This is what stops the third state becoming a drain.**
-
-> ⛔ **Rule 1a — a `not_material` entry is either an EXACT PATH, or a glob whose
-> wildcard lies inside a directory prefix that is itself entirely not-material.**
-> ⛔ **A pattern whose correctness depends on which files happen NOT to exist is
-> refused, however exactly it matches today.**
-
-⭐ **The check is one sentence and it is mechanical: reject an entry containing a
-wildcard whose fixed prefix is not a directory.** ⚠️ **It is not redundant with
-`contested`**, which catches a loose glob only when the swept file is *also* in
-`include`; the hole is the file that does not exist yet, classified by a `why`
-that was never about it — ⛔ **and the `unclassified` catch that would have
-surfaced it goes quiet precisely because the file is now classified.** ⭐ Ruling
-90's own examples pass unchanged: `docs/studyforge/*` is a wildcard under a
-directory, `LICENSE` and `.gitignore` are exact paths; `[CLR]*` is refused,
-because it covers three root files only by the accident of which fourth file
-exists, and a `why` cannot be true of a `CHANGELOG.md` nobody has written yet.
-⚠️ **Five honest globs, not three clever ones** — and `SK-07` must **generate**
-entries that satisfy this rule.
-
-⛔ **Silence is the failure C2 describes, so silence is what this removes.** A
-file under the source root that matches none of the three is **unclassified**,
-and `studyforge validate` names it and exits 1 (R6). A file that matches
-`include` and is then not ingested is also a failure. ⚠️ It follows that a corpus
-cannot grow a file without someone deciding what it is — which is the point,
-because the alternative is a second aggregate appearing and being read as
-thirty-eight more units.
-
-⭐ **The reconnaissance skill (§9) drafts this**, and detecting the overlap is
-exactly what C2 asks of it: two files whose digests say one contains the other is
-a finding it reports, not something left to be noticed after ingest.
+### `levels`, `variants` and `permitted_edits`
 
 `levels` names the **container** levels and fixes the depth. A unit is an
-ordinal inside the deepest container. `variants` replaces CodeSignal's closed
-`LANGUAGES` tuple, removing the framework's last dependency on
-`tools/catalog/`.
+ordinal inside the deepest container. `levels` also supplies the **display
+labels** the breadcrumb and index use, so one site says "Section › Module ›
+Lesson" while another says "Path › Course › Unit", from data.
+
+| Shape | `levels` | example address |
+|---|---|---|
+| one course | `["course"]` | `sparql-tutorial` + unit 07 |
+| sections of modules | `["section","module"]` | `concurrency/23-executors` + unit 02 |
+| paths of courses | `["path","course"]` | `kotlin-programming-for-beginners/getting-started-with-kotlin` + unit 03 |
+| groups | `["group"]` | `iso-fundamentals` + unit 02 |
+
+Depth is uniform **within** a source; a ragged source is normalised by its
+adapter. A free node tree would turn every flat contract downstream — progress
+keys, hrefs, editor task files — into a tree walk, for flexibility no known
+source needs.
 
 ⚠️ **`variants` is a filing and presentation key, and nothing more.** It says
 how the archive is partitioned and what a variant selector offers the reader.
 ⛔ It never implies that anything is buildable, runnable or gradable — that is
 declared per exercise (§7) — and it is **not** a code fence's language, which is
-a block's own attribute from the archive. CodeSignal blocked eight SQL courses
-for exactly this reason: one list answered both *"can this be filed here?"* and
-*"can we generate a test for it?"*, so a language with no grader could not be
-filed at all. Three questions, three answers, none of them derived from another.
+a block's own attribute in the archive. One list answering both *"can this be
+filed here?"* and *"can we generate a test for it?"* means a language with no
+grader cannot be filed at all. Three questions, three answers, none derived from
+another.
 
 ⛔ **A single-variant prose corpus declares `variants: ["prose"]`: the word is the
-framework's, not each corpus's** (`Q9`, ruled at PO round 107; landed by `W347`).
-⚠️ Every corpus must name at least one variant, and a word each corpus invents
-for the same case is a different label in the one variant selector. ⭐ The
-reconnaissance skill proposes it — `SINGLE_VARIANT` in
-`skills/reconnaissance/proposal.py` — and a person still confirms it.
+framework's, not each corpus's.** Every corpus names at least one variant, and a
+word each corpus invents for the same case is a different label in the one
+variant selector. ⭐ Reconnaissance proposes it — `SINGLE_VARIANT` in
+`skills/reconnaissance/proposal.py` — and a person confirms it.
 
 `permitted_edits` is R3's declaration: the complete, enumerated set of existing
-files this corpus may have added to, each with its insertion and its reason. An
-empty list is the normal case, and it is the one a purely additive source should
-be able to keep.
-
-| Source | `levels` | example address |
-|---|---|---|
-| SPARQL | `["course"]` | `sparql-tutorial` + unit 07 |
-| Java-senior | `["section","module"]` | `concurrency/23-executors` + unit 02 |
-| CodeSignal | `["path","course"]` | `kotlin-programming-for-beginners/getting-started-with-kotlin` + unit 03 |
-| ISO-8583 | `["group"]` | `iso-fundamentals` + unit 02 |
-
-Depth is uniform **within** a source. A ragged source is normalised by its
-adapter. This is a deliberate YAGNI: a free node tree would turn every flat
-contract downstream — progress keys, hrefs, editor task files, the source-tree
-mirror — into a tree walk, for flexibility no known source needs. Revisited in
-v2 only if a real source demands it.
-
-`levels` also supplies the **display labels** the breadcrumb and index use, so
-the Java site says "Section › Module › Lesson" while CodeSignal says
-"Path › Course › Unit", from data.
+files this corpus may have added to, each with its insertion and its reason.
+The one kind is `insert-line`. An empty list is the normal case, and it is the
+one a purely additive source keeps.
 
 ---
 
 ## 5. Placement and discovery
 
-The single largest departure from CodeSignal, which prescribes one tree.
+**Placement is a policy**, declared per corpus, mapping an address to physical
+locations. Two profiles ship:
 
-**Placement is a policy**, declared per source, mapping an address to physical
-locations. Two profiles ship in v1:
+| Profile | Where a unit's page and its files go |
+|---|---|
+| `tree` | under one generated root, `.studyforge/`, in directories that spell the address, with `units/unit-NN/` below the container |
+| `sibling` | in a `study/` directory beside the source file the unit was generated from |
 
-- `tree` — CodeSignal's existing shape. All output under one generated root.
-- `sibling` — output lands in a declared `study/` directory **beside the source
-  file it was generated from**.
+`tree` is for material with no layout worth preserving. `sibling` is for a
+repository whose layout the reader already knows, which R3 forbids
+restructuring:
 
-The Java repo uses `sibling`, because the material already has a layout the
-reader knows and R3 forbids restructuring it:
-
-```
-Claude-senior-java-engineer/
-  index.html                                     generated root index
-  .studyforge/assets/                            shared css, js, prism, plyr
-  archive/<address>/raw/java/unit-NN/lesson-1.json  the archive, beside corpus.json (§6)
-  .studyforge/site.json                          discovery cache
+```text
+my-java-course/
+  index.html                                   the root index
+  corpus.json
+  archive/<address>/raw/java/unit-NN/lesson-1.json   the archive (§6)
+  .studyforge/assets/                          the shared stylesheet, script, faces and player
   16-streams-api/
-    README.md                                    UNTOUCHED
-    README_4.4.1.md                              UNTOUCHED
+    README.md                                  untouched
+    README_4.4.1.md                            untouched
     study/
-      streams-api.section.html                   module page
-      basics.16-streams-api.4.4.1-introduction-to-the-streams-api.unit.html
-      audio/basics.16-streams-api.4.4.1-introduction-to-the-streams-api/*.mp3
-      practice/basics.16-streams-api.4.4.1-introduction-to-the-streams-api/
+      streams-api.section.html                 the container's page
+      basics.16-streams-api.unit-02-introduction-to-the-streams-api.unit.html
+      audio/basics.16-streams-api.unit-02-introduction-to-the-streams-api/
+      practice/basics.16-streams-api.unit-02-introduction-to-the-streams-api/
 ```
 
-⛔ **AMENDED PO round 76 — the archive root is `archive/`, beside `corpus.json`, under
-every profile** (`W241`, `INT-06/6`). ⚠️ **This example once read `.studyforge/archive/`:
-`plan` printed that root and nothing read it.** ⭐ **§6's `<archive-root>` is this directory.**
+- ⭐ **The archive root is `archive/`, beside `corpus.json`, under every profile.**
+- ⭐ **Under `sibling`, everything generated lands in one `study/` directory beside
+  its source file, never loose in that directory.** A source directory gains
+  exactly one name; its media sits one directory per kind under `study/`, with the
+  unit's stem below that, so many units can share one `study/`. The only
+  generated file at the corpus root is `index.html`.
+- ⭐ **Every generated page carries a real name, never `index.html`.** A scanner
+  reads names and a reader browses directories, and an `index.html` is neither
+  unique in a listing nor distinguishable from the root index. A unit's name is
+  its label — the corpus's own numbering where the container map records one,
+  otherwise `unit-NN` — and its title's slug; a container page is named from its
+  deepest title.
+- ⛔ **Under `sibling`, a unit's page and media names begin with its container's
+  address, dot-joined** (`basics.16-streams-api.` above, for a unit at
+  `basics/16-streams-api`). Where many units share a directory, numbering and
+  title alone are not unique: two containers whose series mirror each other would
+  give two units one name. A slug carries no `.` and depth is uniform, so two
+  containers never share a name. What one container still repeats (one label,
+  one title) is refused by name, by `validate`, `plan` and a build.
 
-⛔ **AMENDED (`W323`, a user requirement) — under `sibling` every generated
-artifact lands in a `study/` directory beside its source file, never loose in
-that directory.** ⚠️ **This example once put the page and a per-unit
-`<stem>.audio/` directly beside the `README`s**, which measured on the first
-corpus as 38 sources, 38 pages and 38 media directories interleaved in one
-listing, and put a page and a media directory at the **repository root** for
-every source file that sat there. ⭐ **The only generated file at the corpus
-root is `index.html`**; the media sits one directory per kind under `study/`,
-with the unit's stem below that, so a source directory gains exactly one name.
+**Where a build writes is the corpus owner's decision.** `studyforge build`
+takes `--out` with no default, and `studyforge serve --site` serves what it
+wrote; a default would answer by convention what only the owner can. A build
+into the corpus root lays the site out exactly as the placement profile says.
 
-**Every generated page carries a real name, never `index.html`.** Names come
-from the unit's own numbering and title, so they are human-readable in a
-directory listing and unambiguous to a scanner.
+**Discovery replaces path inference.** The server scans a root for
+`*.unit.html` and `*.section.html`, reads each file's embedded identity block,
+and assembles the site from what it finds. Consequences, all intended:
 
-⛔ **AMENDED (`W254`): under `sibling`, a unit's page and media names begin with
-its container's address, dot-joined** (`basics.16-streams-api.` above, for a
-unit at `basics/16-streams-api`). ⚠️ **Numbering and title alone were not
-unique:** two containers whose series mirror each other in one directory gave
-two units one name. A slug carries no `.` and depth is uniform, so two
-containers never share a name. What one container still repeats (one label,
-one title) is refused by name, by `validate`, `plan` and a build.
-
-**Discovery replaces path inference.** At startup the server scans the source
-root for `*.unit.html` and `*.section.html`, reads each file's embedded
-identity block, and assembles the site from what it finds. `site.json` is a
-cache of that scan, never the authority. Consequences, all intended:
-
-- The framework does not care where artifacts are; a source may place them
-  anywhere the reader finds natural.
+- The framework does not care where artifacts are; a corpus may place them
+  wherever the reader finds natural.
 - A moved or renamed artifact still identifies itself correctly.
-- A stale cache is detectable rather than silently wrong.
-- Two sources with different placement profiles are served by one server.
+- Two corpora with different placement profiles are served by one server.
+
+⛔ **`site.json` is a cache of that scan, never the authority.** The scan runs
+every time and its result is what is returned; no branch hands back a cached
+site. A stale cache is detectable by a content digest recorded in it, never by a
+modification time. ⭐ **The cache is this machine's, and it is ignored where it
+sits**: the framework writes an ignore file inside `.studyforge/` for it, never
+a line in the repository's root ignore file (R3), so serving a corpus leaves its
+working tree unmodified.
 
 Assets and audio resolve **relative to the page that references them**, so a
 unit page opened directly from `file://` works with no server and no rewriting
@@ -1320,54 +1035,45 @@ unit page opened directly from `file://` works with no server and no rewriting
 ⛔ **Delivery is orthogonal to placement, and an href never encodes how a file
 arrived.** A generated artifact is addressed relative to the page that
 references it, and that address is the same whether the file was generated
-locally, committed, or restored from somewhere else. Any future delivery
-mechanism moves the same bytes to the same paths. ⚠️ CodeSignal proved this in
-reverse, expensively: when 11.7 GiB of media left git for release assets, **the
-layout on disk did not move and every page still addressed a clip as plain
-`audio/<clip>.mp3`** — which is the only reason that change was a script rather
-than a re-render of 1,290 pages.
+locally, committed, or restored from somewhere else. Any delivery mechanism
+moves the same bytes to the same paths. ⚠️ CodeSignal proved this in reverse:
+when its media left git for release assets, the layout on disk did not move and
+every page still addressed a clip as plain `audio/<clip>.mp3` — which is the only
+reason that change was a script rather than a re-render of every page.
 
-**Generated media is committed by default.** ⭐ *Regenerable is not the same as
+### Generated media and pages are committed
+
+⭐ **Generated media is committed by default.** *Regenerable is not the same as
 available*: a clone that carries its own audio speaks with no synthesis service,
-no GPU and no network, and that is what R8 is for. A corpus that ignores its
-media asks every reader to stand up a service before they can hear anything.
-
-⭐ **A build's output is committed too: its pages, the root index and the asset bundle**
-(PO round 78, `W242/1`). The same argument holds: a clone that ignores its pages has no reading
-floor. ⛔ **So the only generated ignore rules ABOUT THE CORPUS are the media policy's, written
-inside the generated directory they are about and never in the root ignore file (R3).**
-⚠️ This dates Ruling 91's first half, which declared `sibling` output in `.gitignore`.
-
-⛔ **`site.json` was in that list and is not any more** (`W425`, PO round 132; measured
-2026-09-20 on the first corpus). ⚠️ **The argument does not reach it, and the difference is
-structural rather than a preference:** every other artifact in the list is READ by somebody — a
-reader opens the pages and the index, a page loads the bundle — and **nothing reads the cache**.
-`corpus.discovery.assemble` scans on every call and returns the scan; no branch hands back a
-cached `Site`. ⛔ So a clone carrying the cache gains nothing, while every reader who serves the
-corpus gets a modified file **for doing the one thing the tool is for**: `tools.workspace verify`
-refused the workspace within a minute of a serve, on `.studyforge/site.json` alone. ⭐ **So the
-cache is ignored where it sits**, by the same mechanism the progress store uses one directory
-over — an ignore file INSIDE the generated directory, never the repository's root one — and the
-rule is written by the framework rather than by a hand-added line per corpus (R19).
+no GPU and no network, and that is what R8 is for. ⭐ **A build's pages, the root
+index and the asset bundle are committed too**, for the same reason: a clone that
+ignores its pages has no reading floor. ⛔ **So the only generated ignore rules
+about a corpus are the media policy's and the machine-local ones**, written inside
+the generated directory they are about and never in the root ignore file (R3).
 
 ⛔ **The default has a ceiling, and crossing it is a decision, not an accident.**
-Narration is the largest thing this framework generates, and a corpus can
-outgrow what a git remote will take: CodeSignal reached **11.42 GiB of pack
-against a ~5 GB soft limit, with one file at 150.9 MiB against a hard 100 MiB
-per-file block** — and found out when the push became *impossible*, after the
-history already held the blob. So the policy is manifest data, the footprint is
-**measured**, and a corpus that crosses its limits **stops and says so**, naming
-the number and the limit. ⛔ It never silently switches to ignoring media, which
-would produce clones that are silent with no error, and it never silently keeps
-committing.
+Narration is the largest thing this framework generates, and a corpus can outgrow
+what a git remote will take — a repository limit of a few gigabytes, a per-file
+block of 100 MiB — and find out only when a push becomes impossible, after the
+history already holds the blob. So the policy is manifest data:
 
-⚠️ **Extraction — packing media out of git and restoring it — is deliberately
-not built in v1.** No source in scope needs it, and building a delivery
-mechanism for a problem nobody has is how a framework acquires machinery it
-cannot justify. What v1 builds is the **awareness**: the policy, the
-measurement, and the honest refusal. Because delivery is orthogonal to
-placement, the mechanism plugs in later behind the same decision without
-touching a single page.
+| `media` key | Meaning |
+|---|---|
+| `commit` | `auto` (the default) commits while the media fits and stops when it does not; `always` commits whatever the size; `never` is a corpus that holds its media elsewhere |
+| `max_total_bytes` | the total ceiling, `auto` only; defaults to 5 GB |
+| `max_file_bytes` | the per-file ceiling, `auto` only; defaults to 100 MiB |
+| `max_files` | the file-count ceiling, `auto` only; **no default** — unstated means unbounded, and the count is measured and reported either way |
+
+The footprint is **measured**, by `studyforge plan` and again by a build after it
+copies media, and a corpus that crosses a limit **stops and says so**, naming the
+number and the limit, and the build exits `1`. ⛔ It never silently switches to
+ignoring media, which would produce clones that are silent with no error, and it
+never silently keeps committing.
+
+⚠️ **Packing media out of git and restoring it is not built.** What the framework
+builds is the **awareness**: the policy, the measurement, and the honest refusal.
+Because delivery is orthogonal to placement, a mechanism can plug in behind the
+same decision without touching a single page.
 
 ### The placement dry-run
 
@@ -1375,16 +1081,19 @@ A consumer cannot write its ignore rules, declare its `permitted_edits` (R3) or
 review an onboarding without knowing every path the framework will create. So
 placement is **askable before it is exercised**:
 
-```
-studyforge plan <repo>
+```text
+studyforge plan <root>
 ```
 
-emits, from the manifest alone and before anything is generated, the complete
-set of paths that will be created, the set of existing files that will be
-edited, and the declared reason for each. It is what the onboarding skill
-renders ignore rules from, what the non-destructive check asserts against, and
-what lets a person read what is about to happen to their repository before it
-happens. The placement policy already computes all of it; nothing exposed it.
+prints, from the manifest and the container maps alone and before anything is
+generated, every path a build will create or replace, every directory it claims
+for media, every path it expects another command to write, the files it will
+edit and the declared reason for each, the ignore lines it needs, and the media
+policy with its measured footprint. It is what the onboarding skill renders
+ignore rules from, what the non-destructive check asserts against, and what lets
+a person read what is about to happen to their repository before it happens.
+⛔ **The plan and the build agree path for path**, and that agreement is
+asserted (R3).
 
 ---
 
@@ -1400,17 +1109,15 @@ corpus.json                                   the manifest (§4)
     raw/<variant>/unit-NN/practice-M.json     optional
 ```
 
-⛔ **A file under the archive root that is not a member of this layout is refused by name (`archive-stray`), never skipped** (`W248`, amended PO round 79).
+`<archive-root>` is `archive/`, beside `corpus.json` (§5). ⛔ **A file under the
+archive root that is not a member of this layout is refused by name
+(`archive-stray`), never skipped.**
 
-⛔ **A list item is a string, or an array of its parts in reading order** (`W258`, amended from `INT-09/6`). The block vocabulary is `archive/blocks.py`'s eleven rows, and a `list` block keeps its three fields; what changed is what one of its `items` may be. ⭐ An item holding no nested list is a string, byte-identical to every list written before. An item holding one is an array of text strings and whole `list` blocks, in the order the author wrote them, and a nested `list`'s items follow the same rule. ⚠️ A nested list is never folded into its parent's text, and it is not a block in reading order: `counts` does not count it. ⭐ Not a `raw_api` change, because every document without a nested list reads exactly as it did.
-
-⛔ **An ordered list keeps the number it starts at** (`W264`, amended from `W258/3`). A `list` block may carry a fourth key, `start`, after its three fields: the first item's number, an integer, written only when the list is ordered and that number is not `1`. ⭐ The page opens the list at it and the narration counts from it, at the top level and nested. ⭐ A list that starts at one carries no `start` and is byte-identical to every list written before, so is its document's `content_sha256`. ⚠️ Not a `raw_api` change for that reason, and the key a block may carry beyond its fields is `archive/blocks.py`'s `optional`.
-
-⛔ **Raw HTML IS in the vocabulary: it is the `html` block, the Markdown reader emits it for a run of block-level markup, and the page renders it VERBATIM — the one block type that bypasses escaping, by declaration and never by what its text looks like** (`Q2`, `W347`). ⭐ It stays: nothing is removed and `raw_api` does not change. ⚠️ The question was ruled at PO round 107 on the premise that raw HTML was *not* in the shipped vocabulary; that premise was measured wrong, and the register corrected it in its round 113. A tag-shaped line the reader keeps as a `para` is still escaped (`render/page/blocks/verbatim.py`).
+### The container map
 
 ```json
-// container.json — generalises CodeSignal's course-map.json
-{ "container_api": 1,
+// container.json — one per container
+{ "container_api": 3,
   "address": ["concurrency", "23-executors"],
   "titles":  ["Concurrency", "Executors and Thread Pools"],
   "variant": "java",
@@ -1419,31 +1126,69 @@ corpus.json                                   the manifest (§4)
   "note": "…",
   "units": [ { "n": 1, "title": "Thread pools and the Executor framework",
                "practices": 1, "origin": "23-executors/README_5.1.md",
-               "note": "…" } ] }
+               "label": "5.1", "note": "…" } ] }
 ```
 
-⭐ **`origin` is called `origin` and not `source`** because `source` is already
-the corpus's own identifier in the manifest, and two fields one word apart
-meaning different things is a defect waiting for a tired reader.
+- ⭐ **`origin` is called `origin` and not `source`**, because `source` is already
+  the corpus's own identifier in the manifest.
+- ⭐ **A unit's `origin` is a whole file, or a region of one**: a string names the
+  file; an object `{"path": …, "section": …}` names the region that opens at that
+  heading (`container_api` 2). ⭐ **`practice_origin`** names a second file holding
+  that unit's practice documents, where they are not in the file its prose came
+  from (`container_api` 3). A web source that has no file records its own
+  addressing as `url_slug` instead. `label` is the corpus's own display numbering
+  for the unit.
+- ⭐ **One variant per container**, so a map can never promise one variant while
+  the archive holds another.
+- ⭐ **Who writes it — one answer.** The adapter generates it on ingest. A person
+  may amend exactly the editorial fields — `title`, `titles`, `note` — and a
+  generator round-trips them rather than overwriting them; a generator that would
+  discard one **stops** (R6).
+- ⚠️ **`ingested` is a date, and it is exempt from R10.** It answers *how stale is
+  this capture?*, and it is excluded from `content_sha256`, so it cannot make
+  unchanged content look edited. Reproducibility is stated as *"identical bytes
+  apart from `ingested`"*, never silently.
 
-One variant per container, preserving CodeSignal's invariant that removed the
-"the map promised Java and the archive has none" failure class entirely.
+### The archive document
 
-**Who writes it — one answer.** An earlier draft had three tasks claiming it.
-The ruling: an adapter **generates** `container.json` on ingest (JS-05), and
-`EX-04` **updates only the declared practice counts** within it. Anything a
-human adds — a note, a corrected title — lives in fields the generator round-
-trips rather than overwrites, and a generator that would discard one **stops**
-(R6). It is not hand-authored-only; it is generator-owned with preserved
-judgement.
+A `lesson-M.json` or `practice-M.json` carries the unit's identity (`source`,
+`address`, `variant`, `unit`, `kind`, `ordinal`), its `ingested` date and
+`title`, its `blocks`, its `video`, `assets` and `attachments`, the per-type
+`counts` of its blocks, and `content_sha256` over the blocks; a practice
+document may add the `exercise` record (§7). ⛔ **A key the format does not
+define is refused**: an unknown sibling of `blocks` is outside the digest, and
+a typo'd key is a grader that is invisible while the corpus passes.
 
-⚠️ **`ingested` is a clock, and it is exempt from R10.** A date stamped at
-ingest time makes a document differ on every re-run, which would otherwise
-break byte-for-byte reproducibility. It earns the exemption the same way §8.2's
-audio does — it is genuinely useful (it answers "how stale is this capture?")
-and it is excluded from `content_sha256`, so it cannot make unchanged content
-look edited. Reproducibility claims elsewhere are stated as *"identical bytes
-apart from `ingested`"*, never silently.
+**The block vocabulary** is `archive/blocks.py`'s table, and a new block type is
+a `raw_api` change: `heading`, `para`, `code`, `table`, `list`, `image`,
+`video`, `rule`, `quote`, `html` and `disclosure`. `quote` and `disclosure` hold
+blocks; every walker recurses on that property rather than naming the two.
+
+- ⭐ **A list item is a string, or an array of its parts in reading order** — runs
+  of text and whole nested `list` blocks, whose items follow the same rule. A
+  nested list is part of its item, not a block in reading order, so `counts` does
+  not count it.
+- ⭐ **An ordered list keeps the number it starts at**: a `list` may carry `start`
+  after its three fields, written only when the list is ordered and does not
+  start at `1`. The page opens the list at it and the narration counts from it.
+  A list that starts at one carries no `start`.
+- ⛔ **Raw HTML is the `html` block**: the Markdown reader emits it for a run of
+  block-level markup, and the page renders it **verbatim** — the one block type
+  that bypasses escaping, by declaration and never by what its text looks like. A
+  tag-shaped line the reader keeps as a `para` is still escaped.
+- ⭐ **`disclosure` is content present but withheld** (C3): a `summary`, whether it
+  starts `open`, and the blocks it holds. That its markup is `<details>` is the
+  renderer's decision, not the archive's.
+- ⭐ **A `code` block's `lang` is the fence's own info string**, and an empty one
+  renders as plain text (§8.4).
+
+⭐ **An optional key is written only when it says something, after the keys every
+document carries**, so a document that does not use it is byte-identical to one
+written before it existed. That is the test that decides whether a new key is a
+`raw_api` change: every document valid before is valid after and means what it
+meant, and an older build refuses the new shape rather than misreading it.
+
+### What the archive records about its material
 
 **Attachments** (C4). A unit may reference files that are neither prose nor
 inline media — a dataset a lesson loads, a notebook, a sample document. They
@@ -1451,58 +1196,56 @@ are archived alongside the unit and placed by the placement policy, and the
 page links them for download rather than rendering them. Distinct from media,
 which the page displays.
 
-**Provenance.** A unit may record where it came from. `origin` is written by the
-adapter, carried into the unit document **verbatim**, and rendered by the page
-and the index. It is optional, because a corpus may be its owner's own material;
-it is **not optional chrome** where it exists, because material that came from
-somebody else is credited on the page that shows it.
+**Provenance.** `origin` is written by the adapter, carried into the served unit
+document **verbatim**, and rendered by the page and the index. It is optional,
+because a corpus may be its owner's own material; where it exists it is **not
+optional chrome**, because material that came from somebody else is credited on
+the page that shows it. ⭐ For a repository-shaped source, R3 guarantees the
+original file is never touched, so an `origin` pointing at it is a permanent,
+working link from every generated page back into the reader's own material.
 
-⛔ **An address is recorded, never derived.** Composing an address from a title
-is the tempting shortcut and it is measured wrong: on CodeSignal's catalog,
-**157 of 1,290 units (12.2%) are served at a slug their title does not
-produce**, so a derivation sends one link in eight to a page that is not there —
-and a link that fails is worse than no link, because it asserts an address the
-reader then cannot find. Where two records name an address for the same unit — a
-container map and an archive document — a disagreement is a **refusal** (R6),
-never a preference: one would be linked from the page and the other from the
-index, and the reader would be sent to two different places with nothing
-failing.
+⛔ **An address is recorded, never derived.** It is recorded by the container map,
+and a group's address may also be recorded in the manifest's `curriculum` (§4),
+which is still a record and never a derivation. Composing an address from a title
+is the tempting shortcut and it is wrong: on a real course catalogue, a
+sizeable share of units is served at a slug its title does not produce, so a
+derivation sends those links to pages that are not there. Where two
+records name an address for the same unit — a container map and an archive
+document — a disagreement is a **refusal** (R6), never a preference: one would
+be linked from the page and the other from the index, and the reader would be
+sent to two different places with nothing failing.
 
-⛔ **A title is not an address: where the curriculum index and a unit's own file
-disagree on the unit's TITLE, the curriculum index's title wins** (`Q3`, a user
-ruling recorded at PO round 107; landed by `W347`). ⚠️ So the refusal above does not
-extend to titles, and the precedence is stated here rather than left as a
-constant inside one adapter's code.
-
-⭐ **For a repository-shaped source this is a feature, not a formality.** R3
-guarantees the original file is never touched, so an `origin` pointing at it is
-a permanent, working link from every generated page back into the reader's own
-material.
-
-**Re-ingest semantics.** `content_sha256` covers a unit's blocks and answers one
-question: *did the source change since we read it?* On re-ingest, a digest that
-disagrees with the source means the material has been edited upstream. The
-ruling: the archive is **replaced** and the change is **reported** (R6) — never
-silently overwritten, and never silently kept. Anything derived from that unit
-(pages, narration, exercises) is invalidated by the same signal. Without this,
-a corpus drifts out of date with no symptom, which is the failure `layout.py`'s
-docstring describes in a different guise.
+**Re-ingest.** `content_sha256` covers a unit's blocks and answers one question:
+*did the source change since we read it?* On re-ingest, a digest that disagrees
+means the material was edited upstream: the archive is **replaced** and the
+change is **reported** (R6) — never silently overwritten, and never silently
+kept — and anything derived from that unit (pages, narration, exercises) is
+invalidated by the same signal.
 
 ⛔ **A generator stages beside its target, validates, then moves into place.** A
 document that fails its own validation is **never** left at the path something
-else will read. Keeping a bad file "so the reading is not lost" was measured to
-cost a whole phase of CodeSignal's capture: one unreadable container map halts
-every consumer that walks the tree, and the failure is then reported at the
-reader rather than at the writer that caused it — **116 archives, 0 pages, 0
-narration**, and a broken test suite. A reading that can be taken again is not
-worth a file nothing can load.
+else will read: one unreadable container map halts every consumer that walks
+the tree, and the failure is then reported at the reader rather than at the
+writer that caused it. A reading that can be taken again is not worth a file
+nothing can load.
 
-**`studyforge validate <repo>` is the definition of done** for any adapter:
-manifest parses and `corpus_api` is known; every `container.json` address
-matches the directory holding it; every archive document parses, carries a
-known `raw_api`, and its `content_sha256` matches its blocks; `assert_clean`
+### `studyforge validate` is the definition of done
+
+`studyforge validate <root>` decides whether a corpus's archive is valid, for
+any adapter, and exits `1` naming every failure. Among what it checks: the
+manifest parses and `corpus_api` is known; every file under the source root is
+classified by `content`, nothing is `contested`, and everything included was
+read in full; every `container.json` address matches the directory holding it,
+and every `origin` resolves to its file and, for a region, to exactly one
+heading; every archive document parses, carries a known `raw_api`, holds only
+the layout's files, and its `content_sha256` matches its blocks; `assert_clean`
 passes on every string; unit ordinals are contiguous from 1; declared practice
-counts match what is present. Exit 1 naming every failure.
+counts match what is present; no two artifacts claim one generated path; every
+exercise record is well formed and R5's pairs hold; every authored exercise's
+bundle holds only its permitted files and its gate record verifies against them
+(§7); the source ledger accounts for every page; and the narration record agrees
+with the clips and the words they speak, unless the run is given
+`--no-narration`.
 
 An agent building an adapter therefore has a green/red signal that depends on
 nobody's judgement.
@@ -1514,8 +1257,7 @@ nobody's judgement.
 ### The contract
 
 A unit carries zero or more exercises, and an exercise is in one of **three**
-states (C5) — a distinction the first draft collapsed, at the cost of throwing
-away real teaching content:
+states (C5):
 
 | State | What it is | Can complete a practice? |
 |---|---|---|
@@ -1523,33 +1265,23 @@ away real teaching content:
 | **ungraded** | a prompt the reader works, with nothing to check it | **no** |
 | **graded** | a workspace plus a grader, `authoritative` or `advisory` (R5) | only on a passing grader run |
 
-**Ungraded is why this matters.** All 19 SPARQL lessons end in an exercise; none
-ships a test. Recording those as "no exercise" would delete the exercise from
-the reader's material to satisfy a two-state model. They are presented as work,
-clearly marked as unchecked, and they never complete anything.
+**Ungraded is why this matters.** A lesson that ends in a prompt nothing checks
+still sets work; recording it as "no exercise" would delete it from the reader's
+material to satisfy a two-state model. It is presented as work, clearly marked
+as unchecked, and it never completes anything. Zero exercises remains a
+**first-class outcome**, not a degraded one.
 
-Zero remains a **first-class outcome**, not a degraded one — ISO-8583 has none
-(§1's table, amended by `W339`: it read *"few or none"* here), and that is
-correct.
-
-Each exercise declares a workspace — `main_path`, `test_path`, `run_command`,
-`test_command` — plus `provenance` (`bundled` | `generated` | `user`) and
-`trust` (`authoritative` | `advisory`). The framework refuses to render a
-`generated` grader as authoritative (R5).
-
-⛔ **AMENDED by `W357` — an ungraded unit may name its file.** `main_path` and
-`run_command` are the file and how it runs, and every record carries them.
-`test_path`, `test_command`, `provenance` and `trust` are the **grader**, written
-whole — `trust` alone may be omitted, and defaults from `provenance` — or not at
-all. A record with no grader is the **ungraded** state, and it is how the reader's
-terminal command (`SF-44`) resolves a file that nothing checks. See
-[*A file with no test*](#a-file-with-no-test-w357) below.
+A graded exercise declares its workspace — `main_path`, `test_path`,
+`run_command`, `test_command` — plus `provenance` (`bundled` | `generated` |
+`user`) and `trust` (`authoritative` | `advisory`). ⛔ Only `bundled` may be
+`authoritative`, and only with a derivation record behind it (§7); the framework
+refuses to render anything else as authoritative (R5).
 
 ### Where that declaration lives
 
 ⛔ **It is an `exercise` object inside the practice archive document** —
 `<archive-root>/<address>/raw/<variant>/unit-NN/practice-M.json` — versioned by
-that document's existing `raw_api`, and written by the **adapter** (R2).
+that document's `raw_api`, and written by the **adapter** (R2).
 
 ```json
 { "raw_api": 1, "kind": "practice", "ordinal": 1,
@@ -1563,40 +1295,34 @@ that document's existing `raw_api`, and written by the **adapter** (R2).
     "trust": "authoritative" } }
 ```
 
-Four reasons, and the third is the one that decided it:
-
-- **No new document and no new version.** R9 enumerates the versioned contracts
-  and each one costs something forever. ⭐ A contract that rides a version it is
-  already inside is strictly cheaper than one that adds a sixth.
+- **No new document and no new version.** A contract that rides a version it is
+  already inside is strictly cheaper than one that adds another.
 - **The adapter is the only thing that knows.** `run_command` is a fact about the
-  source's build; `provenance` is a fact about where the grader came from. R2
-  says an adapter's whole obligation is to write a valid archive, and this is
-  archive content. ⛔ Putting it in the authored overlay would make a human type
-  it, which R19 forbids.
-- ⭐ **§7's three states fall out of the structure, with no flag to remember.**
+  source's build; `provenance` is a fact about where the grader came from. This
+  is archive content, and putting it in the authored overlay would make a human
+  type it, which R19 forbids.
+- ⭐ **The three states fall out of the structure, with no flag to remember.**
   **none** — there is no `practice-M.json`. **ungraded** — a `practice-M.json`
-  with blocks and **no `exercise` key** (or, since `W357`, a record naming a
-  file and no grader). **graded** — the record names a grader. So the
-  common case is a corpus that writes nothing: ISO is `none` for all 38 units and
-  writes no practice document at all; SPARQL is `ungraded` for all 19 and writes
-  a prompt with no workspace. ⛔ A design in which every corpus must declare its
-  emptiness is a design fitted to the Java repo, which is the exception (§11.0).
-  ⚠️ **DATED 2026-09-19 (`W389`): the STRUCTURE above is unchanged and the reading
-  of it is now history.** ⭐ Those two readings are of the corpora *as their sources
-  ship them*; from `M10` both are re-ingested with exercises authored for them
-  ([above](#exercises-authored-for-every-corpus-w389)), so `none` stops being the
-  common case and stays the honest one wherever the gates refuse everything.
+  with blocks and no `exercise` key, or a record naming a file and no grader.
+  **graded** — the record names a grader. A corpus whose units set no work
+  writes no practice document at all.
 - **R5 gets one place to enforce.** `provenance` and `trust` sit on the same
-  document, so `studyforge validate` refuses `trust: "authoritative"` alongside
-  `provenance: "generated"` — one rule, one file, exit 1.
+  record, so the archive writer and `studyforge validate` refuse `trust:
+  "authoritative"` beside any provenance but `bundled` — one rule, one file.
 
 ⛔ **`trust` is declared but never believed.** An adapter writes what it claims;
 the framework checks the claim against `provenance` and refuses the combination
-R5 exists to prevent. `EX-04` writes the same key for a generated grader that
-cleared both gates — the same document, because a generated grader is still
-archive content — and it may only ever write `advisory`.
+R5 exists to prevent. `trust` may be omitted, and then defaults from
+`provenance`: `authoritative` for `bundled`, `advisory` for the rest. ⛔ **An
+`authoritative` claim, declared or defaulted, needs the derivation record** below,
+so a shipped grader that was not derived declares `advisory`.
 
-### A file with no test (`W357`)
+⛔ **The record's keys are a closed set, written in one order**: `main_path`,
+`test_path`, `run_command`, `test_command`, `provenance`, `trust`, `kind`,
+`cases`, `report`, `origin`, `questions`. A key the record does not define is
+refused. Each key after `trust` is written only where the record carries it.
+
+### A file with no test
 
 ⭐ **One record, two shapes, and nothing in between:**
 
@@ -1611,41 +1337,37 @@ archive content — and it may only ever write `advisory`.
 | `main_path`, `run_command` | **ungraded** — a file, and nothing checks it | **no** |
 | those, plus the whole grader | **graded** | only on a passing grader run |
 
-- ⭐ **Graded is the grader's presence, not the key's.** Before `W357` the key's
-  presence was the graded state. Now the record's `test_path` is. It is still
-  read off the structure, with no flag to set.
+- ⭐ **Graded is the grader's presence, not the key's.** The record's `test_path`
+  is the graded state, read off the structure with no flag to set.
 - ⛔ **Half a grader is refused**, naming what is missing, and so is a
   `provenance` or `trust` with no grader. Both are facts about a grader, and
   trust in a grader that does not exist is the claim R5 exists to stop.
-- ⭐ **The practice with no `exercise` key stays valid and stays ungraded.**
-  A corpus whose prompts name no file (the 19 SPARQL lessons) still writes
-  nothing.
-- ⭐ **Why a record and not a second declaration.** The unit document's
-  `workspace` is this record, so the file reaches the one place Run and the
-  terminal command already read. That needs no new key in the archive document
-  and none in the unit document. The argument is in
-  `W357`'s handoff.
-- ⭐ **Not a `raw_api` change.** Every document valid before is valid now and
-  means what it meant, and an older build refuses the new shape rather than
-  misreading it. That is the test §6 applies to `list.start`.
+- ⭐ **The practice with no `exercise` key stays valid and stays ungraded.** A
+  corpus whose prompts name no file writes nothing.
+- ⭐ **Why a record and not a second declaration.** The unit document's workspace
+  is this record, so the file reaches the one place Run and the terminal command
+  already read, with no new key in either document.
 
 **Run and Submit are different acts.** Run executes the reader's program so
-they can see what it printed. Only a `test` run can complete a practice. This
-is inherited verbatim from CodeSignal's progress rules and is not negotiable:
-a program that prints successfully has demonstrated nothing about its tests.
+they can see what it printed. Only a `test` run can complete a practice: a
+program that prints successfully has demonstrated nothing about its tests.
+⭐ **From a terminal, `studyforge check <file>`** runs the test for the unit's
+file the reader edited, or its program when nothing checks it — and a file with
+no test is not a failure. The command run is the one the unit's generated
+document names; nothing the reader types becomes a command.
 
-### Java exercise generation — the two gates
+### Exercises derived from a shipped grader — the two gates
 
-The Java repo inverts CodeSignal's central problem. CodeSignal must *guess* at
-a grader it cannot see, which is why its scaffolder is 1,793 lines of
-judgement. The Java repo **ships the grader** — 168 test classes that are real
-ground truth, paired 1:1 with implementation classes in almost every module.
+A source that **ships its grader** — test classes paired with the
+implementation they test — inverts the usual problem. Nothing has to be
+guessed: an exercise can be derived mechanically by blanking what a lesson
+teaches, and the derivation is **self-verifying**. This is the only way an
+exercise earns `bundled` · `authoritative`, and an adapter that derives one
+holds these gates:
 
-So generation is mechanical, and — more importantly — **self-verifying**:
-
-```
-for each (Impl.java, ImplTest.java) pair:
-    select the methods this lesson teaches      (see "Selection" below)
+```text
+for each (Impl, ImplTest) pair:
+    select the methods this lesson teaches
     for each selected method:
         blank EXACTLY THAT ONE body  -> candidate hole
         GATE 1: run ImplTest         MUST FAIL, and the failure attributed
@@ -1657,164 +1379,122 @@ for each (Impl.java, ImplTest.java) pair:
 
 ⚠️ **Gate 1 is per-method, and this is not a detail.** Blanking every body in a
 class and requiring the test class to fail proves only *"this test touches this
-class"* — which is nearly always true and therefore nearly vacuous. The claim
-being made is per-method (*this* body is what the lesson teaches, and the test
-discriminates on it), so the check must be per-method too. A class-granular
-gate would let a practice ship where most of the work is already done, marked
-`authoritative`, which is precisely the failure R5 exists to prevent.
+class"* — nearly always true and therefore nearly vacuous. The claim is
+per-method (*this* body is what the lesson teaches, and the test discriminates on
+it), so the check is per-method too. A class-granular gate would let a practice
+ship where most of the work is already done, marked `authoritative`, which is
+precisely the failure R5 exists to prevent. Gate 2 proves the grader itself
+works. **No human reads anything, and no assertion is authored by a model**,
+which is exactly why such an exercise keeps the stronger label.
 
-The cost is real: roughly one build per candidate method rather than one per
-class. `EX-02` caches by content address, and `EX-00` measures whether the cost
-is tolerable before any of E08 is built.
+⭐ **The derivation is recorded, and `validate` re-reads it.** The adapter writes
+the two gates into the practice's gate record, `gates.json` under `exercises/`, as
+the `derivation` family: `D1` is Gate 1, with one `hole:<method>` entry per blanked
+method and the attributed failure as its value, and `D2` is Gate 2. The record
+digests the `starter`, the `reference` (the original) and the `tests`, spelled
+from the corpus root. ⛔ **`studyforge validate` refuses every `authoritative`
+exercise without such a record** (`derivation-record`): no record, one that will
+not read, a `D1` naming no hole, a `starter` or `tests` that is not the
+exercise's own `main_path` or `test_path`, or a starter that still digests to the
+original. It refuses a record whose `D1` or `D2` did not hold
+(`derivation-shortfall`), and one whose named files changed since the gates ran
+(`derivation-digest`).
 
-Gate 2 proves the grader itself works. **No human reads anything, and no
-assertion is authored by an LLM.** A hole that clears both is provably solvable
-— git holds the reference solution — and provably non-trivial.
-
-⛔ **SCOPED, NOT STRUCK, 2026-09-19 (`W389`).** ⭐ **That sentence stays true of every
-exercise this section derives** — `bundled`, `authoritative`, blanked from a grader the
-source already ships — ⚠️ **and it is exactly why those keep the stronger label.** ⛔ **It
-was never a rule about the whole framework, and reading it as one is what left most
-sources with nothing to practise.** ⭐ **An exercise whose assertions ARE authored is
-`generated`/`advisory` and clears a different set of gates**
-([below](#exercises-authored-for-every-corpus-w389)); the two never trade labels.
-
-### Selection and size
-
-A gate says whether a hole is *valid*. It says nothing about whether the
-resulting exercise is *reasonable*, and the corpus makes that gap concrete:
-implementation classes run to a median of 211 lines and a maximum of **787**
-(`39-data-structures/CommonDataStructures.java`, ~100 methods, graded by a
-937-line test). Blanking that class yields one all-or-nothing practice that is
-a rewrite, not an exercise.
-
-So generation selects rather than blanks wholesale:
-
-- **The lesson README names the methods.** Measured: **162 of the 166 lesson
-  READMEs name an implementation class that exists in their own module** — a
-  97% signal, far stronger than positional matching, and the same signal that
-  drives attachment (§7 below). The methods a lesson discusses are the methods
-  it teaches.
+- **The lesson names the methods.** The methods a lesson discusses are the methods
+  it teaches, so selection follows the lesson's own text rather than position.
 - **An exercise has a size cap.** A pair that would exceed it emits **several**
   practices, not one; a hole that cannot be brought under it alone is reported,
   not shipped.
-- **Some shapes have nothing to blank, and that is predictable now.** Records,
-  sealed hierarchies, interfaces and enums teach through their *declaration* —
-  accessors, `equals` and `hashCode` are implicit and unblankable. `09-records`,
-  `10-sealed`, and much of `05-pattern-matching` and `28-enhanced-enums` are
-  expected to yield zero. That is honest, and it is predicted here so it is not
-  mistaken for a defect once generation runs.
+- **Some shapes have nothing to blank, and that is predictable.** Records, sealed
+  hierarchies, interfaces and enums teach through their *declaration*; their
+  accessors are implicit and unblankable, and such units are expected to yield no
+  derived exercise.
+- **Nothing unmatched is dropped silently.** Pairs attach to units by ordinal,
+  falling back to title and class-name similarity; a pair that matches no unit
+  attaches to its container's final unit as an additional practice, and
+  everything unmatched is named.
+- **Compilable sources live on a source root.** Reader-facing practice material
+  sits beside the page (§5); sources a build tool must compile go in an additive
+  `practice/` module mirroring addresses, joined to the build by the one line
+  `permitted_edits` declares (R3).
 
 Expected yield is well below 100%, and that is the honest outcome, not a bug.
 Units with no gate-passing exercise ship as reading-only and are named in the
 coverage report (R6). ⛔ **A low yield is never fixed by loosening a gate or
-generating an assertion** — that converts a proof into theatre.
+generating an assertion** — that converts a proof into theatre; an assertion
+that is authored is `generated` and belongs to the next section.
 
-### Attachment
+### Exercises authored for every corpus
 
-Exercises attach to units by ordinal, falling back to title/classname
-similarity. Measured across the repo: **87% of modules are cleanly 1:1**.
-The outliers — `08-object-oriented` (3 lessons, 11 classes),
-`22-locks-semaphores` (2/4), `21-synchronization` (2/3), `01-java-basics`
-(4/5), `25-fork-join` (5/4), `29-date-time-api` (8/7) — are handled by
-attaching unmatched pairs to their module's final unit as additional
-practices. Nothing is dropped silently; everything unmatched is named.
-`00-base` holds `PerformanceTestUtil` and no lessons: it is not a container,
-but stays on the classpath.
-
-### Where generated sources live
-
-Reader-facing practice material co-locates beside the `.md` (§5). The
-*compilable* sources cannot: Maven only compiles what sits on a source root.
-They go in an additive `practice/` module mirroring addresses, joined to the
-build by one line in the root `pom.xml` — the single existing-file change R3
-permits, asserted by `OPS-05`.
-
-### Exercises authored for every corpus (`W389`)
-
-⛔ **ADDED 2026-09-19 — the user's direction, and one of this project's core ideas.**
-
-> *"Bottom line we are building CodeSignal or LeetCode with the idea of LLM extracting
-> the content from a given source and make it an enjoyable interactive easy to read and
-> navigate website."*
-
-⛔ **Everything above this heading described what a source SHIPS. This subsection is what
-a READER gets, and the two stopped being the same thing here.** ⭐ **Delivered as
-milestone `M10`** (the task index's `M10`, and epic `E14`, in `docs/tasks/`).
+⭐ **The idea at the centre of the product: a practice site in the manner of
+CodeSignal or LeetCode, built from any given source.** A model reads the material
+once, at ingestion, and authors the exercises its pages support; the gates below
+prove each one before it ships.
 
 #### 1. Three source cases, one pipeline
 
 | the source has | where the exercise comes from | provenance · trust |
 |---|---|---|
-| **code and tests** | derived by blanking, through the two gates above — **unchanged** | `bundled` · `authoritative` |
+| **code and tests** | derived by blanking, through the two gates above | `bundled` · `authoritative` |
 | **code, no tests** | the source's own example is the reference solution; the ask, the starter and the tests are authored from the page | `generated` · `advisory` |
 | **neither** | the ask, a reference solution, the starter and the tests are all authored from the page | `generated` · `advisory` |
 
-⭐ **The first row may ALSO gain authored exercises** beyond what blanking yields; those
-are `generated`, and they never borrow the derived ones' label. ⛔ **The three rows are
-not three pipelines**: one authoring pass, one set of gates per exercise kind, one
-bundle shape, one coverage report.
+⭐ **The first row may also gain authored exercises** beyond what blanking yields;
+those are `generated`, and they never borrow the derived ones' label. ⛔ **The
+three rows are not three pipelines**: one authoring pass, one set of gates per
+exercise kind, one bundle shape, one coverage report.
 
 #### 2. Authoring happens once, at ingestion
 
-⭐ **A skill the converting agent runs writes the exercises and commits them into the
-CORPUS repository** as source-side material — the *exercise bundle*. The adapter reads
-the bundle and writes `practice-M.json` from it, so R2's on-disk seam is untouched and
-the framework still knows nothing about any source (R1).
+⭐ **The exercise-authoring skill writes the exercises and commits them into the
+corpus repository** as source-side material — one *exercise bundle* per exercise,
+under `exercises/<address>/<variant>/unit-NN/practice-M/`. A bundle holds
+`bundle.json`, `statement.md`, the gate record `gates.json`, and the files under
+`starter/`, `reference/`, `tests/`, `plants/` and `build/`, and nothing else. The
+bundle's emitter writes the unit's `practice-M.json` from it and lays the starter,
+the tests and any build files into the reader's workspace under
+`practice/<address>/<variant>/unit-NN/practice-M/`; the reader edits that copy,
+never the bundle, so the gate record's digests stay true. R2's on-disk seam is
+untouched, and the framework still knows nothing about any source (R1).
 
 ⛔ **No model runs at build time and no model runs at serve time.** The site stays
-offline over `file://` (R8) and the build stays byte-reproducible from the committed
-bundles (R10). ⭐ **The non-determinism lives in authoring, exactly where a human author's
-does** — and, like a human author's, it is reviewed once and then fixed in the tree.
+offline over `file://` (R8) and the build stays byte-reproducible from the
+committed bundles (R10). ⭐ **The non-determinism lives in authoring, exactly where
+a human author's does** — and, like a human author's, it is reviewed once and then
+fixed in the tree.
 
 #### 3. Nothing the source already has is lost
 
-⛔ **The reading floor is untouched.** Every example the source ships still renders on the
-page, verbatim, whether or not an exercise was built from it.
+⛔ **The reading floor is untouched.** Every example the source ships still renders on
+the page, verbatim, whether or not an exercise was built from it.
 
-⭐ **The proof is a *source ledger*.** Every fenced example and every test file the source
-carries is an entry, and each entry is either the basis of at least one exercise — named
-by that exercise's `origin`, using `SF-36`'s sub-file origins — or carried with a written
-reason it is not. ⛔ **An entry with neither is refused** (R6): a silent drop is how
-"nothing is lost" becomes a sentence nobody can check.
+⭐ **The proof is a *source ledger*, `exercises/ledger.json`.** Every fenced example
+and every test file the source carries is an entry, and each entry is either the
+basis of at least one exercise — named by that exercise's `origin` — or carried with a
+written reason it is not. ⛔ **An entry with neither is refused** (R6), and
+`studyforge validate` re-scans every material page against the committed ledger, so
+a ledger that lost a page's rows is a finding rather than a quiet pass.
 
 #### 4. How many exercises a page gets follows the page
 
-⛔ **SUPERSEDED 2026-09-23 by the user's ruling below (`W453`). The paragraph that follows
-is kept readable so every citation of it still resolves, and it is NOT in force where it
-sets the count by a band of the page's length.**
-
-> ⭐ **The skill writes a per-page *plan* before it authors anything:** a count inside a
-> band set by the page's length, moved by the page's distinct checkable skills and by a
-> difficulty tier, with every reason written down. ⛔ **The plan is a CEILING, never a
-> quota.** What ships is what clears the gates, and every shortfall is named with the gate
-> that refused it. ⛔ **A count is never met by lowering a bar.**
-
-⛔ **AMENDED 2026-09-23 (`W453`, USER RULING) — a page is planned by its ASPECTS, not by
-its length.** The ruling, verbatim, at the pilot review (on `ISO-M10/6`): *"Depending on
-the context of the page there might be no practice, 2 or more, The target is covering all
-the aspects not just having something minimum we are looking for quality"*. ⭐ **Refined by
-the user the same day**, verbatim: *"regarding the coverage don't over do it! at the same
-time we are not a university that wants to grade the knowdlge! Sometimes a single practice
-might cover better than 4 unrelated small practices. It's all about quality and the
-importants ofthe text. Like for the first quiz the dates do not matter. The version might
-matter. And for sure 4 questions were a lot"*.
-
-- ⭐ **The skill writes a per-page *plan* before it authors anything**, naming the page's
-  *aspects*: the IMPORTANT ideas it teaches that a reader could be checked on, read from
-  its prose AND its code. ⛔ **Trivia is not an aspect** — a date, a name or an incidental
-  number is not; the idea it illustrates may be.
-- ⛔ **Every aspect is accounted for**: checked by a named exercise (or quiz), or carried by
-  a written reason. **An aspect with neither is refused**, the same honesty §3's ledger asks
-  of files. ⭐ **One exercise may check many aspects, and one exercise practising related
-  ideas is preferred** over several small unrelated ones; a minor aspect is carried by a
-  short reason. ⭐ **A quiz asks few questions.**
+- ⭐ **The skill writes a per-page *plan* before it authors anything**, naming the
+  page's *aspects*: the important ideas it teaches that a reader could be checked
+  on, read from its prose and its code. ⛔ **Trivia is not an aspect** — a date, a
+  name or an incidental number is not; the idea it illustrates may be.
+- ⛔ **Every aspect is accounted for**: checked by a named exercise (or quiz), or
+  carried by a written reason. **An aspect with neither is refused**, the same
+  honesty §3's ledger asks of files. ⭐ **One exercise may check many aspects, and one
+  exercise practising related ideas is preferred** over several small unrelated
+  ones; a minor aspect is carried by a short reason. ⭐ **A quiz asks few
+  questions.**
 - ⛔ **Near-duplicates are refused**: two exercises never check one aspect.
-- ⛔ **No length ceiling, and no quota.** Zero stays legitimate, with its reason written.
-  The record is what was judged important and why — never a coverage percentage.
-- ⛔ **Unchanged: the plan is a CEILING, never a quota** (R6). What ships is what clears the
-  gates, and every shortfall is named with the gate that refused it. ⛔ **A count is never
-  met by lowering a bar.** ⭐ **The same aspects always produce the same plan** (R10).
+- ⛔ **No length ceiling, and no quota.** Zero stays legitimate, with its reason
+  written. The record is what was judged important and why — never a coverage
+  percentage.
+- ⛔ **The plan is a ceiling, never a quota** (R6). What ships is what clears the
+  gates, and every shortfall is named with the gate that refused it. ⛔ **A count
+  is never met by lowering a bar.** ⭐ **The same aspects always produce the same
+  plan** (R10).
 
 #### 5. What an exercise says
 
@@ -1837,20 +1517,18 @@ ships only if every gate holds.**
 | **G5 origin** | where the source supplied code, the `origin` resolves to a ledger entry whose digest matches the source | the exercise is built from what the source has |
 
 ⚠️ **G3 is per-case for the same reason the derivation gate above is per-method.** A gate
-coarser than the claim it backs is theatre, and it was expensive to learn that once.
+coarser than the claim it backs is theatre.
 
-⛔ **G1–G3 are MECHANICAL and re-runnable**: the bundle carries the reference, the starter
-and each plant, so anyone holding it can take the reading again.
+⛔ **Every gate answers, always.** A gate with nothing to read answers *did not hold*
+and says why — never *held vacuously*. ⛔ **G1–G3 are mechanical and re-runnable**:
+the bundle carries the reference, the starter and each plant, so anyone holding it can
+take the reading again.
 
 #### 7. A corpus whose subject is not code — the quiz shape
 
-⛔ **RULED by the user, 2026-09-19: the quiz shape is IN `M10`.** ⚠️ **It was proposed for a
-v2 backlog and the user said no** — a history book, a standards walkthrough or a prose
-tutorial must be able to activate its reader too, and deferring that left most material
-at the reading floor indefinitely.
-
-⭐ **The form.** A quiz is an exercise whose `kind` is `quiz` rather than `code`. In place
-of a workspace it carries **questions**: a stem, an ordered set of options, exactly one
+⭐ A history book, a standards walkthrough or a prose tutorial activates its reader
+too. **A quiz is an exercise whose `kind` is `quiz` rather than `code`.** In place of a
+workspace it carries **questions**: a stem, an ordered set of options, exactly one
 keyed as correct, one sentence per option saying why it is right or wrong, and an
 `origin` naming the passage of the page it came from.
 
@@ -1858,46 +1536,22 @@ keyed as correct, one sentence per option saying why it is right or wrong, and a
 quiz ones, from the same ledger: each question is written from one passage, and the
 passage is recorded by address, not paraphrased into the question's provenance.
 
-⛔ **SUPERSEDED 2026-09-23 by the user's ruling below (`W451`). The two paragraphs that
-follow are kept readable so every citation of them still resolves, and they are NOT in
-force where they say the key ships in the page or that the page grades itself.**
-
-> ⭐ **How it is graded without a compiler.** The key and the per-option sentences ship
-> inside the practice document, and the page grades the reader's answers itself — no
-> container, no network, no model, and identical over `file://` and over a served origin.
-> ⛔ **A quiz practice completes only when every question is answered correctly**, and that
-> completion is recorded through the reader's own state, never through a run verdict:
-> `is_pass`'s rule for a RUN is untouched and a quiz produces no run.
->
-> ⚠️ **The key is in the material, and the site does not pretend otherwise.** An offline
-> page cannot hide the answer it is about to grade with, exactly as an offline workspace
-> cannot hide its test file. ⛔ **Claiming to hide either would be the theatre R5 exists to
-> prevent**; the honest design shows the reader the answer after they answer.
-
-⛔ **AMENDED 2026-09-23 (`W451`, USER RULING) — the local study server grades a quiz, and
-the key never reaches the page.** The ruling, verbatim: *"the quiz itself again should not
-require an online or agent check for the answer user provided. It will be just a test with
-the correct answer residing on the server side. When user answers it will get validated
-and result will be returned to the user with explanation if needed"*.
+⭐ **The local study server grades a quiz, and the key never reaches the page.**
 
 - ⛔ **No built page and no asset a page loads carries a quiz's key or any per-option
-  sentence.** The key stays in the practice document on disk — the bundle's record, as
-  ingested — which is server-side material.
-- ⭐ **The local study server grades.** The page sends what the reader chose to a `serve`
-  route, which reads the key from the unit's generated document and answers, per question,
-  right or wrong **with the CHOSEN option's sentence** — never the keyed option's, so a
-  wrong answer is explained rather than corrected. ⛔ **No model, no network and no
-  container: a fixed comparison**, and the route never reaches the Docker socket (§8.3). It
-  sits behind `serve`'s guards like every other route (R8).
+  sentence.** The key stays in the practice document on disk, which is server-side
+  material, and the content route withholds it.
+- ⭐ **The page sends what the reader chose to `serve`'s quiz route**, which reads the
+  key from the unit's document and answers, per question, right or wrong **with the
+  chosen option's sentence** — never the keyed option's, so a wrong answer is
+  explained rather than corrected. ⛔ **No model, no network and no container: a fixed
+  comparison**, and the route imports nothing that could start a process or reach a
+  socket (§8.3). It sits behind `serve`'s guards like every other route.
 - ⭐ **Completion keeps its meaning**: a quiz completes only when every question is
-  answered correctly, decided by the framework's one rule on the server and shown in the
-  reader's own page; ⛔ **never a run verdict** — `is_pass`'s rule for a RUN is untouched,
-  a quiz produces no run, and grading records nothing.
-- ⭐ **Over `file://` a quiz shows its questions and options and says checking them needs
-  the local study server**, exactly as Run and Submit already do. ⚠️ This is the register's
-  default and it is reversible.
-- ⭐ **The quiz gates Q1–Q5 and the bundle record are unchanged**; only where the key is
-  read and who grades changed.
+  answered correctly, decided by the framework's one grading rule. ⛔ **Never a run
+  verdict** — the pass rule for a run is untouched, and a quiz produces no run.
+- ⭐ **Over `file://` a quiz shows its questions and options and says checking them
+  needs the local study server**, exactly as Run and Submit do.
 
 ⭐ **The honesty gates for a quiz.** A compiler cannot back these, so the gates are
 different and their difference is stated rather than smoothed over:
@@ -1910,36 +1564,33 @@ different and their difference is stated rather than smoothed over:
 | **Q4 key total and single** | exactly one option is keyed, the options are distinct after normalisation, and every option carries its one sentence | the reader is told why, for whichever option they chose |
 | **Q5 origin** | every question's `origin` resolves to a ledger entry whose digest matches the page as ingested | the question is built from the page it is attached to |
 
-⛔ **Q1–Q3 are MODEL JUDGEMENTS taken once at authoring and shipped as a record; Q4 and
+⛔ **Q1–Q3 are model judgements taken once at authoring and shipped as a record; Q4 and
 Q5 are mechanical and `studyforge validate` re-runs them.** ⭐ **So a quiz grader is
-`generated`/`advisory` ALWAYS, and there is no path by which one becomes
-`authoritative`** — that is the difference between a proof you can re-take and a reading
-somebody took for you, and R5 turns on exactly that distinction.
+`generated` · `advisory` always, and there is no path by which one becomes
+`authoritative`** — that is the difference between a proof you can re-take and a
+reading somebody took for you, and R5 turns on exactly that distinction.
 
 #### 8. The reference solution is always available
 
-⛔ **RULED by the user, 2026-09-19: always available, never gated behind a passing
-Submit.** ⚠️ **It was proposed as a reward for a first pass and the user said no.**
-
 ⭐ **Every authored code exercise ships its reference solution as reader-facing
-material**, and the page offers it at any time. ⛔ **It is never revealed
-automatically** — the reader asks — and asking is never recorded as a failure, because a
-reader who reads the answer has still read the material and this is not an exam.
-⚠️ **The gates already require the reference to exist** (G1), so shipping it costs
-nothing and withholding it would have been a pretence: the bundle is on the reader's
-disk either way.
+material**, inside the practice as a disclosure the reader opens — *Show a worked
+solution* — at any time, never gated behind a passing Submit. ⛔ **It is never revealed
+automatically**, and asking is never recorded as a failure, because a reader who reads
+the answer has still read the material and this is not an exam. ⚠️ **The gates already
+require the reference to exist** (G1), so shipping it costs nothing, and withholding it
+would be a pretence: the bundle is on the reader's disk either way.
 
 #### 9. What the reader is told, in a learner's words
 
-⛔ **RULED by the user, 2026-09-19: an authored grader is labelled, and the label is
-worded for a learner.** ⭐ **R5's vocabulary stays INTERNAL** — `provenance` and `trust`
-are the framework's words, in the record and in `validate`, and a reader never sees
-either token. ⭐ **The framework fixes the sentence each case renders as, and it is the
-framework's constant, not a corpus's string** (R1):
+⭐ **R5's vocabulary stays internal** — `provenance` and `trust` are the framework's
+words, in the record and in `validate`, and a reader never sees either token. ⭐ **The
+framework fixes the sentence each case renders as, and it is the framework's template,
+not a corpus's string** (R1):
 
 | the record says | the page says |
 |---|---|
 | `bundled` · `authoritative` | **Checked by the tests that ship with this material.** |
+| `bundled` · `advisory` | **Checked by tests that ship with this material. They have not been proven to catch a wrong answer.** |
 | `generated` · `advisory`, kind `code` | **Written for this site. Its tests were proven against a worked solution before it shipped.** |
 | `generated` · `advisory`, kind `quiz` | **Written for this site from this page.** |
 | no grader (ungraded) | **Nothing here checks your answer.** |
@@ -1949,13 +1600,17 @@ into a sentence that implies more than the gate record supports.
 
 #### 10. What is recorded, and what `validate` refuses
 
-- ⭐ **The exercise record gains `cases`** — an `id` as the test report spells it, a `kind`
-  (`main` or `edge`), and `says`, the one sentence the reader sees — plus the `report`
-  (its format and its path) and the `origin`.
+- ⭐ **The exercise record carries `cases`** — an `id` as the test report spells it, a
+  `kind` (`main` or `edge`), and `says`, the one sentence the reader sees — plus the
+  `report` (its format, JUnit XML, and its path in the workspace's run output
+  directory) and the `origin`. `cases` and `report` are facts about a grader and are
+  refused on a record with none.
 - ⭐ **A gate record ships beside every authored bundle.** It holds the digest of every
-  input — statement, starter, reference, tests, each plant, each cited passage — and each
-  gate's outcome. ⛔ **`studyforge validate` refuses a `generated` exercise whose gate
-  record is absent, or whose digests no longer match the files beside it.**
+  input — statement, starter, reference, tests, each plant, each build file, each cited
+  passage — and every gate's verdict. ⛔ **`studyforge validate` refuses a `generated`
+  exercise whose gate record is absent, incomplete, or whose digests no longer match the
+  files beside it**, and a bundle holding any file its shape does not permit — a run's
+  report among them, which carries the machine's hostname (R7).
 - ⭐ **Submit reports the breakdown from the test run's machine-readable report**, folded
   through `cases` into *main ask* plus *edge cases n/m*, naming each failed case by its
   `says`. ⛔ **The pass rule does not change**: a practice completes only when every case
@@ -1963,299 +1618,253 @@ into a sentence that implies more than the gate record supports.
 
 #### 11. When a gate refuses
 
-⛔ **The exercise does not ship.** The skill may re-author that one bundle within a fixed
-attempt budget, and ⛔ **never by loosening a gate, dropping a case or deleting a
-question**. When the budget runs out, the coverage report names the page, the exercise,
-the gate, the case and the run's last output, and a page left with nothing shipped is
-named as such (R6). ⭐ **That is the low-yield rule above, applied to authored work: a
-shortfall is reported, not engineered away.**
+⛔ **The exercise does not ship.** The skill may re-author that one exercise within a
+fixed number of attempts, and ⛔ **never by loosening a gate, dropping a case or deleting
+a question**. When the attempts run out, the unit's coverage report names the page, the
+exercise, the gate, the case and the run's last output, and a page left with nothing
+shipped is named as such (R6). ⭐ **That is the low-yield rule above, applied to
+authored work: a shortfall is reported, not engineered away.**
 
 ---
 
 ## 8. Inherited technical apparatus
 
 CodeSignal solved a number of problems the hard way, and the solutions are
-recorded here because **every one of them was measured, and none is obvious
-from the outside.** Re-deriving any of them is waste; changing one without
-knowing why it is that way is a regression.
+recorded here because **none of them is obvious from the outside.** Re-deriving
+any of them is waste; changing one without knowing why it is that way is a
+regression.
 
-⚠️ **CodeSignal is a live repository, and every measurement of it in these
-documents is a snapshot with a date.** In the 32 hours after this spec was
-frozen it took ~55 commits and 12,568 insertions across 108 files, and three of
-the modules this project ports grew by up to 21%. Treat every line count, file
-count and percentage here as **as of 2026-09-08** and as an estimate by the time
-you read it. ⭐ **A task re-measures its own port surface at start rather than
-inheriting a number, and ports from HEAD** — fixes that landed after the freeze
-are free if you port current source and are re-derived at full cost if you port
-the snapshot.
+### 8.1 The code-server toolchain — its own repository
 
-### 8.1 The code-server toolchain image — its own repository
+The toolchain is a **standalone repository**, `code-server-toolchain`, that
+publishes two images and describes both in its `consuming.json` (R18):
 
-The embedded IDE is the single most reusable asset in the project and becomes
-a **standalone repository**, `code-server-toolchain`. The seam:
+- **the runner** — the runtimes a corpus declares (§4's `runtimes`) and nothing
+  else, idling offline, for a reader's graded runs. ⭐ **The reader starts it**,
+  with the source root alone mounted at `/work`, `--network none`, no port and no
+  socket; the framework only probes that it is up and runs commands in it (§8.3).
+- **the editor** — a browser editor (code-server) over the same runtimes, opened
+  from a practice beside the page.
 
-| Shared — lives in the image repo | Per-project — lives in the consuming repo |
+⭐ **One file chooses every runtime version**, the component's `pins.json`, which
+pins its base image by digest; both images take their versions from it and
+neither may choose one of its own. A runner image's tag is computed from the
+declared runtime set, the architecture and a hash of every build input, so a
+corpus's compose file names exactly the image its declaration builds.
+
+| Shared — lives in the component | Per-project — generated into the corpus (§9) |
 |---|---|
-| `Dockerfile`, `entrypoint.sh` | `docker-compose.yml` |
-| the workbench lockdown extension | **mounts** — which paths, which read-only |
-| seed settings and keybindings | container name, port binding, password env |
-| toolchain selection and pinning | the `prime/` project supplied at build time |
-| extension list and verification | uid/gid mapping to the repository's owner |
+| `Dockerfile`s, entrypoint, build scripts | the compose file |
+| the practice-focus lockdown extension | **mounts** — which paths, which read-only |
+| seed settings and keybindings | container name and port binding |
+| runtime selection and pinning | the prime project supplied at build time |
+| extension list and verification | uid:gid mapping to the repository's owner |
 
-What the image already gets right, and must keep getting right:
+What the images must keep getting right:
 
-- ⚠️ **Version-pinning and SHA-256 verification are a TARGET here, not an
-  inherited property.** Three archive downloads are verified today (Gradle,
-  Kotlin, Node) — but `eclipse-temurin:26-jdk`, `ghcr.io/astral-sh/uv:latest`
-  and `codercom/code-server:latest` are all floating `:latest` tags, and
-  `apt-get`, `uv python install`, `npm install -g` and every marketplace
-  extension id are unpinned. **A `:latest` base image means the image is not
-  reproducible (R10)**, so `TC-01` must *reach* this state rather than preserve
-  it, and "functionally identical to CodeSignal's" is not sufficient acceptance.
-- **Extensions are installed at build time into a directory in the image**,
-  not onto a volume, so an image upgrade always carries them — and the build
-  **verifies the installed list and fails on a missing id**, with a documented
-  fallback where a marketplace may stop serving one.
+- **Extensions are installed at build time into a directory in the image**, not
+  onto a volume, so an image upgrade always carries them — and the build
+  **verifies the installed list and fails on a missing id**.
 - **PATH is set twice, deliberately.** `ENV` reaches non-login shells; the
   integrated terminal starts bash as a *login* shell and `/etc/profile` then
   overwrites PATH, silently dropping everything under `/opt` — so a tool works
-  under `docker exec` and is "command not found" in the terminal. A
-  `profile.d` script fixes it.
-- **The build cache is primed by building a real trivial project.** `prime/`
-  copies the consuming repository's wrapper and build files with one minimal
-  source and test per language, so the first offline build needs no download.
-  The sources must be *real*: a `NO-SOURCE` compile task never resolves the
-  compiler classpath, so an empty prime silently primes nothing. Version
-  guards fail the build if `prime/` and the image's pinned versions disagree.
-- **The lockdown extension is packaged as a `.vsix` and installed**, never
-  copied into the extensions directory — the workbench reads `extensions.json`
-  and never scans, so a copied folder is present, correct and silently never
-  loaded.
+  under `docker exec` and is "command not found" in the terminal. A `profile.d`
+  script fixes it.
+- **The build cache is primed by building a real trivial project.** The prime
+  project carries one minimal source and test per language, so the first offline
+  build needs no download. The sources must be *real*: a compile task with no
+  source never resolves the compiler classpath, so an empty prime silently primes
+  nothing. An exercise's own build dependencies are warmed into the prime from the
+  same declaration, so a graded run resolves them with no network.
+- **The lockdown extension is packaged as a `.vsix` and installed**, never copied
+  into the extensions directory — the workbench reads `extensions.json` and never
+  scans, so a copied folder is present, correct and silently never loaded.
 - **Named-volume mount points are created in the image, owned by the runtime
-  uid.** Docker creates a missing mount point root-owned, which leaves the
-  server unable to write its own config.
+  uid.** Docker creates a missing mount point root-owned, which leaves the server
+  unable to write its own config.
 - **`ENTRYPOINT` and `CMD` are both re-declared**, because the base image bakes
   arguments that a compose `command:` would otherwise be appended to.
 
-And what the *compose* side gets right, which stays per-project:
+And what the compose side gets right, which stays per-project:
 
-- ⚠️ **Loopback-only port binding, never `0.0.0.0`** — an unencrypted IDE with
-  a shell. Also a **target, not a preserved property**: the editor honours it,
-  but the synthesis service is published on all interfaces today, contradicting
-  its own compose file's header. `TC-05` and `OPS-03` fix it rather than copy
-  it.
+- ⛔ **Loopback-only port binding, never `0.0.0.0`.** The editor runs with **no
+  password**, which is safe only because it binds to `127.0.0.1`: loopback is the
+  whole of its access control, and widening the bind is a decision to put an
+  unauthenticated shell on the network, which requires restoring authentication.
 - **Only the sources are mounted** — not the repository, not `$HOME`.
 - **The container runs as the repository owner's uid:gid**, so files it creates
   are not root-owned on the host.
-- **A bind source must exist on the host before the container starts**, or
-  docker creates it root-owned and the writer can never write it. ⭐ **The
-  general form: every bind source exists before the start — where another
-  service in the project creates one, the editor is gated on that service's
-  health check; where the project creates it itself, it is created before the
-  containers come up.** ⚠️ **`TC-05/5`, corrected 2026-09-19 (`W400`): this
-  bullet used to say *"the backend creates it and the container waits on the
-  backend's health check"*, which describes a two-service project — and a
-  corpus served by this framework has no backend service in the editor's own
-  compose file.** ⭐ **The per-mount and ordering keys that carry the general
-  form live in `code-server-toolchain`'s consuming contract, which `TC-05`
-  owns; this section states the ruling, not the shape of one project.**
+- **Every bind source exists before the containers start**, or docker creates it
+  root-owned and the writer can never write it: where another service creates one,
+  the editor waits on that service's health check; where the project creates it,
+  it is created before the containers come up. The per-mount and ordering keys
+  live in the component's consuming contract.
 
-#### ⛔ AMENDED PO round 74 — the browser editor comes after the framework milestone (user direction, 2026-09-12)
-
-> *"We can even move the code-server to when after we are a framework! Because that functionallity is needed mostly for when exercises are in the picture. We can still have a dockerfile to run code in Java, Kotlin, Python, and Nodejs and maybe even shell and sql using an in memory database or whatver that course requires without the need of having the code-server to be deployed or shown in the web to client. Client still can run things in their terminal update the file and run them by a command which then will be run against that unit test associated with the file if there is any."*
-
-1. ⭐ **The execution track opens with a RUNNER IMAGE, not an editor** (`TC-00`, `M5`): pinned, no IDE, never served. ⛔ **The user's list is a requirement — Java, Kotlin, Python, Node.js, and possibly shell and SQL against an in-memory database, or whatever the course requires — and R1 makes the set a corpus gets MANIFEST DATA.**
-2. ⭐ **The reader runs a unit's test from their own terminal** (`SF-44`, `M5`). ⛔ **A file with no test is not a failure** (§7, C5).
-3. ⭐ **This section's image, the editor, lands at `M7`, and every measured property above binds it then.** ⛔ **§8.3 is untouched: the Docker socket is never mounted into the serving process.**
-
-⭐ **Ruled by the register as reversible, because the words do not decide it:** the terminal command and graded Submit both take `SF-20`'s two modes as §8.3 already states them — the runner container when it is up, the host otherwise, with identical observable behaviour.
+⭐ **A corpus with runnable material needs the runner, not the editor.** The reader
+can edit a file in their own editor and run `studyforge check` from a terminal
+(§7); the browser editor is an addition for the practice beside the page. ⛔
+**§8.3 binds both: the Docker socket is never mounted into the serving process.**
 
 ### 8.2 The narration service — its own repository
 
-Narration gets the same treatment as the IDE, and for the same reasons:
-`narrate-service` becomes a standalone repository exposing a **batch synthesis
-API over HTTP**, containerised, with the engine behind an adapter.
+Narration gets the same treatment as the toolchain: `narrate-service` is a
+standalone repository exposing a **synthesis API over HTTP**, containerised, with
+the engine behind an adapter, published on `127.0.0.1` only.
 
 | Shared — lives in the service repo | Per-project — lives in the consumer |
 |---|---|
-| the batch job API and its manifest format | which segments to synthesise |
+| the job API and its manifest format | which segments to synthesise |
 | engine adapters and the voice catalogue | voice selection for the corpus |
 | containerisation, CPU and GPU variants | **where the files land** (R4) |
 | content-addressed caching | the personal-data gate |
 | the optional agent-callable adapter | incremental regeneration policy |
 
-Four decisions, three of them corrections to what exists today:
-
-- **The unit of work is a batch of keyed segments, not one blob.** ⚠️ An earlier
-  draft of this section said today's client sends one request per unit and gets
-  one mp3 back. **That was wrong** — it has always looped one HTTP request per
-  *speech unit*, which is why the conclusion still holds and the premise needed
-  correcting. The page's highlight sync needs **one clip per speech unit**
-  (§8.4), so the API takes a list of `{id, text}` and returns one artifact per
-  id plus a manifest. A batch rather than a request per segment because a corpus
-  is thousands of segments, and per-request overhead is the difference between
-  minutes and hours. ⛔ **THE BATCH API ARRIVES IN TWO STEPS, and this paragraph
-  describes the FINISHED shape rather than the first one.** ⭐ The service is
-  stood up behind a single-utterance route first; the batch route and its
-  content-addressed cache land after it, and `E13` carries the split and which
-  task owns which half. ⚠️ **Written here because `E13` sends a taker to this
-  section FIRST, so a reader of this paragraph alone would build the whole batch
-  API in the task that only stands the service up** (`NS-01/1`, settled in code
-  by `NS-02`; this sentence is the remainder Ruling 335 leaves to this register).
-- **The service never writes into a corpus.** It returns artifacts for the
-  caller to fetch and place through the placement policy. A synthesis service
-  that knew where a study site keeps its audio would be a second authority on
-  layout, which is precisely what R4 removes.
-- **⛔ The gate runs client-side, before the request** — never in the service.
-  This is carried from today's implementation and the reasoning is worth
-  restating: **an mp3 that speaks an account identifier is personal data on
-  disk that cannot be grepped for afterwards.** The service is a third party
-  from the framework's point of view; ungated text must never reach it (R7).
-- **The engine is pluggable and must not require particular hardware.**
-  Today's deployment pins a GPU build for one specific card generation and
-  reserves every NVIDIA device on the host. That is fine as *a* deployment and
-  unacceptable as *the* deployment (R15): the service ships a CPU path that
-  works anywhere, with GPU as an opt-in profile.
-
-Two properties of the current implementation carry over unchanged because they
-are already right: **chunking is the service's job** — the endpoint accepts a
-very long input and splits internally, so no client keeps stitching logic — and
-**writes are atomic**, landing in a temporary sibling and being renamed, so an
-interrupted run never leaves a truncated file that looks finished.
+- **The unit of work is a batch of keyed segments, not one blob.** The page's
+  highlight sync needs **one clip per speech unit** (§8.4), so a job takes a list
+  of `{id, text}` and returns one artifact per id plus a manifest. A batch rather
+  than a request per segment, because a corpus is thousands of segments and
+  per-request overhead is the difference between minutes and hours. A
+  single-utterance route stands beside it for one-off use.
+- **The service never writes into a corpus.** It returns artifacts for the caller
+  to fetch and place through the placement policy. A synthesis service that knew
+  where a study site keeps its audio would be a second authority on layout, which
+  is precisely what R4 removes.
+- ⛔ **The personal-data gate runs client-side, before the request** — never in the
+  service. **An mp3 that speaks an account identifier is personal data on disk
+  that cannot be grepped for afterwards.** The service is a third party from the
+  framework's point of view; ungated text never reaches it (R7), and the gate is
+  asserted on what was *sent*, not on what was written.
+- **The engine is pluggable and requires no particular hardware.** The service
+  ships a CPU path that works anywhere, with GPU as an opt-in profile (R15).
+- **Chunking is the service's job** — it accepts a very long input and splits
+  internally, so no client keeps stitching logic — and **writes are atomic**,
+  landing in a temporary sibling and being renamed, so an interrupted run never
+  leaves a truncated file that looks finished.
 
 ⚠️ **Synthesised audio is the one carve-out from R10's byte-for-byte clause.** A
-speech model is not guaranteed to emit identical bytes for identical input, so
-audio is not byte-for-byte reproducible the way generated HTML is. It is instead
-**content-addressed and cached**: a segment whose text and voice parameters are
-unchanged is never re-synthesised, and the manifest records the address. R10
-continues to apply in full to every other generated artifact.
+speech model is not guaranteed to emit identical bytes for identical input. Audio
+is instead **content-addressed and cached**: a segment whose text and voice are
+unchanged is never re-synthesised. R10 applies in full to every other generated
+artifact.
+
+**`studyforge narrate <root> --voice <voice>`** is the framework's side: it
+submits a corpus's speech units, places the clips beside the material, and
+records in `.studyforge/narration.json` the conditions each clip was synthesised
+under — the voice, the audio format, the engine's model and the service's
+promise (`provides`). ⭐ **A re-run with
+nothing changed requests nothing**, and a change in any condition re-requests
+every clip it made stale. `studyforge narrate <root> --prune` deletes the clips
+of record entries the corpus no longer produces, over a walk of the whole corpus.
 
 ### A clip's filename carries a digest of the words it says
 
 ⛔ **A narration clip is named `<speech-id>-<8 hex of sha256(spoken text)>`.** It
-is minted by **one** function — the speakable contract, which already owns both
-what is said and what it is called — and both the renderer that links the clip
-and the client that places it go through it. A second minter is a page asking
-for a file the placer never wrote, with no symptom but silence.
+is minted by **one** function — the speakable contract, which owns both what is
+said and what it is called — and both the renderer that links the clip and the
+client that places it go through it. A second minter is a page asking for a file
+the placer never wrote, with no symptom but silence.
 
-The obvious alternative was to keep a plain positional name and decide currency
-with a *check* — a sidecar manifest of content addresses, or a re-submission to
-the service, whose cache is content-addressed anyway and would decline the work.
-Both were rejected, and the reason is the failure they permit: ⛔ **a check can
-be skipped, and the skip is silent.** CodeSignal's synthesis runner decided a
-clip was current by whether the file existed. When its catalog was re-captured,
-**619 clips went on speaking the previous wording** and 442 more were orphaned
-by documents that had changed shape — the run reported *"0 synthesised"* and
-every gate was green. Nothing distinguishes a correct incremental run from that
-one by inspection.
+The obvious alternative is a plain positional name and a *check* for currency — a
+sidecar manifest, or a re-submission to the service. ⛔ **A check can be skipped,
+and the skip is silent**: a runner that decides a clip is current by whether the
+file exists goes on playing the previous wording after a re-capture, reports
+*"0 synthesised"*, and every gate is green. Nothing distinguishes a correct
+incremental run from that one by inspection.
 
 ⭐ **The digest makes it structural rather than checked.** Change the spoken text
 and the name changes; the page then links a clip that is not on disk, and the
-client synthesises it. **A stale clip cannot be addressed.** It needs no
-discipline, survives a stage being run on its own, and survives a
-re-implementation.
+client synthesises it. **A stale clip cannot be addressed.**
 
-⚠️ **The speech id stays positional, and this is not a reversal of that.** The id
-is what a *structure* edit must not renumber, so that retitling a section does
-not orphan a unit's audio. The digest is what a *text* edit must change. They
-answer different questions and the filename carries both.
+⚠️ **The speech id stays positional.** The id is what a *structure* edit must not
+renumber, so that retitling a section does not orphan a unit's audio; the digest
+is what a *text* edit must change. They answer different questions and the
+filename carries both. ⚠️ **This is not the shared-asset case** R10 rules
+hash-free: the page is already rewritten whenever its text changes, in the same
+generator run.
 
-⚠️ **This is not the shared-asset case** R10 rules hash-free. That objection is
-about a stylesheet linked by every page, where a digest means rewriting the
-whole corpus for a colour change. Here the page is already rewritten whenever
-the text changes — in the same generator run.
+⚠️ **The old clip stays on disk under its old digest, playable by nothing**, until
+a prune deletes what the corpus's documents no longer name — ⛔ **only for units
+the run actually read**, never on behalf of one it skipped. **What it costs:** a
+prose edit renames one file and synthesises one segment — the segment the author
+just changed.
 
-⚠️ **The old clip stays on disk under its old digest, playable by nothing.**
-Reconciliation deletes what a unit's document no longer names, and ⛔ **only for
-the units the run actually read** — never on behalf of one it skipped.
+### 8.3 Where execution runs
 
-**What it costs:** a prose edit renames a file, so an incremental build writes an
-audio file it would otherwise have kept. That is one synthesis of one segment —
-the segment the author just changed — and the service's content-addressed cache
-means an unchanged segment is still never re-synthesised.
-
-### 8.3 Where execution runs — the resolved question
-
-**The problem.** R15 wants reproducible execution. The Run/Submit route and
-E08's gates must invoke a pinned Maven toolchain. The obvious reading — put the
-server in a container too — requires mounting the Docker socket into it, and a
-socket inside a network-listening process is root-equivalent access to the host.
-
-**What CodeSignal actually does**, which is the evidence that settled this: it
-**refuses** that trade. Its compose file states plainly that *no docker socket
-is mounted anywhere*; the study server runs with `network_mode: host` and is
-started with `--no-docker`, taking its toolchain from the host PATH. The
-`docker exec` mode exists in its runner and **the shipped deployment does not
-exercise it.** So the path studyforge depends on is, today, untested in anger.
+**The problem.** R15 wants reproducible execution, so Run, Submit and the
+authoring gates invoke a pinned toolchain. The obvious reading — put the server
+in a container too — requires mounting the Docker socket into it, and a socket
+inside a network-listening process is root-equivalent access to the host.
 
 **The ruling.**
 
-1. **The toolchain is containerised; the serving process is not.** Maven, the
-   JDK and their caches are pinned in the image (§8.1) — that is where
-   reproducibility actually lives. The server is a standard-library HTTP
-   process with no dependencies, so a container adds nothing to it.
+1. **The toolchain is containerised; the serving process is not.** The runtimes
+   and their caches are pinned in the runner image (§8.1) — that is where
+   reproducibility lives. The server is a standard-library HTTP process with no
+   dependencies, so a container adds nothing to it.
 2. ⛔ **The Docker socket is never mounted into the serving process.** Not as a
-   convenience, not behind a flag, not "only locally". This is the single
-   non-negotiable in this section.
-3. **Execution crosses into the container from outside it.** The runner, which
-   is the only package permitted to start a process (SF-20), invokes the
-   toolchain container from the host. Commands come from a generated document
-   on disk; nothing a client sends becomes a command.
-4. **The `docker exec` path must be proven, not assumed.** It is the one
-   inherited mechanism with no deployment behind it. `SF-20`'s acceptance —
-   *"both modes produce identical observable behaviour"* — is therefore a real
-   test to write, not a formality to restate.
-5. **If full containerisation is ever required**, the answer is a separate
+   convenience, not behind a flag, not "only locally".
+3. **Execution crosses into the container from outside it.** `execute`, the only
+   package that runs a corpus's commands, probes whether the corpus's runner
+   container is up and runs `docker exec` into it with the command's argv
+   verbatim; when it is not up, it runs the same argv on the host. ⭐ **Both modes
+   have identical observable behaviour** — the merged output streamed line by
+   line, every line relative to the source root and scrubbed (R7), and exactly
+   one exit line — and that is asserted, not assumed. ⛔ The runner never starts,
+   stops or builds a container. Commands come from a generated document on disk;
+   **nothing a client sends becomes a command.**
+4. **If full containerisation is ever required**, the answer is a separate
    execution broker owning the toolchain, which the server posts jobs to — the
-   same shape as the narration service (§8.2). It is not in v1 scope, and it is
-   recorded here so nobody reaches for the socket instead.
+   same shape as the narration service (§8.2) — and never the socket.
 
 **What this costs the reader:** the host needs Python (standard library only)
 and a Docker CLI. Nothing else. The toolchain, its caches and every pinned
 version stay in the image.
 
-### 8.4 What carries over from CodeSignal essentially unchanged
+### 8.4 The reading surface
 
-These are proven surfaces. v1 generalises their addressing and changes nothing
-else. Re-deriving them would be waste.
+These are proven surfaces, generalised in their addressing and otherwise kept.
 
-- **Reading page** — serif reading column, shared `unit.css`/`unit.js` with
-  deliberately unhashed names, browser-side Prism highlighting (never
-  build-time), light/dark palette with every token defined in both themes.
+- **Reading page** — a serif reading column; one shared stylesheet and one shared
+  script, `page.css` and `page.js`, with deliberately unhashed names (R10);
+  browser-side Prism highlighting, never build-time; light and dark palettes with
+  every token defined in both themes, and a control that lets the reader choose
+  light, dark or their system's setting.
 - **Narration** — positional (never content-derived) speech **ids**, display text
   and spoken text as two renderings of one list, clip-level highlight sync. The
-  clip **filename** adds a content digest, for the reason ruled in §8.2; whether
-  the clips are committed is a manifest policy, ruled in §5.
-- **Video** — vendored Plyr with `loadSprite:false`; nothing may reach the
-  network. Unused by the Java source, kept because the contract is generic.
-- **Table of contents** — `toc.json` (stable, reproducible) and `status.json`
-  (local, volatile) as two documents, so a consumer can cache one and poll the
-  other. Generalised from fixed nesting to `len(levels)`.
-- **Backend** — `/api/v1/content` (cacheable, strong ETag) vs `/api/v1/state`
-  (never cached) vs `/api/v1/assets` (Range, weak ETag); loopback only;
-  cross-site requests refused.
-- **Runner** — `docker exec` into the toolchain container when up, host `bash`
-  otherwise; line-by-line streaming; one exit line; every line scrubbed.
-- **Progress** — see below: it is two records, not one.
+  clip **filename** adds a content digest (§8.2); whether clips are committed is
+  the manifest's media policy (§5); whether a corpus is voiced at all is its
+  `narration` key (§4).
+- **Video** — vendored Plyr with its icon sprite substituted rather than fetched;
+  nothing may reach the network.
+- **Table of contents** — the contents document (stable, reproducible) and the
+  local status (volatile) as two documents, so a consumer can cache one and poll
+  the other, at any declared depth. ⛔ **The root index fetches nothing at
+  runtime**: `fetch` of a sibling file is refused over `file://`, there being no
+  origin to ask, so its contents data is delivered into the page at generation
+  time.
+- **Backend** — `/api/v1/content` (cacheable, strong ETag) and `/api/v1/state`
+  (never cached, derived from the filesystem on every request) as two namespaces
+  with opposite caching rules; `/api/v1/assets` (Range, weak ETag);
+  `/api/v1/run` for Run and Submit and `/api/v1/quiz` for quiz checking. ⛔ The
+  server binds loopback only, refuses a non-loopback peer, refuses a `Host` that
+  is not a loopback name, and refuses cross-site requests.
+- **Runner** — `docker exec` into the runner container when it is up, the host
+  otherwise; line-by-line streaming; one exit line; every line scrubbed (§8.3).
+- **Progress** — two records, not one (§8.5).
 
 ⛔ **A fence with no info string renders as plain text, and the renderer never
-guesses a language** (`Q7`, ruled at PO round 107; landed by `W347`). ⚠️ A guess is a
-silent wrong highlight, which is worse than no highlight. ⭐ A `code` block
-whose `lang` is empty carries no highlighter class and the caption `code`
-(`render/page/blocks/figure.py`).
+guesses a language.** A guess is a silent wrong highlight, which is worse than no
+highlight. A `code` block whose `lang` is empty carries no highlighter class and
+the caption `code`. ⭐ The vendored Prism bundle declares its languages, and a
+fence in an undeclared language falls back to plain text and says so.
 
-⭐ **AMENDED 2026-09-23 — the reading room's identity, and the palettes it may never
-ship.** Carried from the UI design convention when the conventions were archived. That
-convention held a whole design brief; what a rendered page is held to belongs here,
-beside the reading page it governs, and the brief's process advice to a designer does
-not.
+#### The reading room's identity
 
-⭐ **One framework identity, and a per-corpus theme that defaults to it.** Every
-studyforge site shares one look, drawn from the subject every such site shares —
-reading and study — and a corpus may declare its own theme as manifest data (R19),
-chosen from its own subject. ⛔ **It is built to be read for hours, so it is judged on a
-real generated page**, light and dark and at phone width, with its contrast computed
-rather than eyeballed, and what is reported is what was seen.
+⭐ **One framework identity.** Every studyforge site shares one look, drawn from
+the subject every such site shares — reading and study. ⛔ **It is built to be read
+for hours, so it is judged on a real generated page**, light and dark and at phone
+width, with its contrast computed rather than eyeballed, and what is reported is
+what was seen.
 
 - ⛔ **Colour is a role-named token and nothing else.** Every colour is a CSS custom
   property named by its role — ground, raised surface, ink and its quieter inks, rule,
@@ -2266,10 +1875,12 @@ rather than eyeballed, and what is reported is what was seen.
   ⛔ A saturated colour never grounds a whole page; it belongs on one element.
 - ⛔ **Contrast is computed and reported**: body text at least 4.5:1 against its actual
   background, large text and non-text marks at least 3:1.
-- ⭐ **Faces are vendored font files loaded by a relative `@font-face`, pinned by digest
-  with their licence beside them, and SIL OFL faces only** — ⛔ never a CDN, because a
-  generated page opens from `file://` with no network (R8). A face has a reason to be
-  there; a bare system stack or one of the generic defaults is not a choice.
+- ⭐ **Faces are vendored SIL Open Font License files, pinned by digest with their
+  licence beside them, and embedded in the stylesheet** — ⛔ never a CDN and never a
+  relative `url()`, because a generated page opens from `file://` with no network
+  (R8), and a browser's file-origin policy refuses a font outside the page's own
+  directory. Charis sets the prose, Andika the headings, navigation and controls, and
+  JetBrains Mono code and nothing else.
 - ⭐ **Structure encodes information.** Numbering only where order is real, dividers
   only between things that are separate, one bold element carrying the identity with
   everything around it quiet, prose at a readable measure, and a page that stacks at
@@ -2292,25 +1903,23 @@ rather than eyeballed, and what is reported is what was seen.
   a stripe down a card's edge, and gradient washes or badges that tell the reader
   nothing.
 
-⭐ **The rejected palettes are data, and the floor reads them.** A list of rejected
-palettes written as prose was right, was read by nothing, and a repaint's first stage
-shipped half of one. So the tells that can be read off a colour are the two tables
-below, which the palette check reads over every stylesheet the framework ships: a
-rejected identity that returns is a floor finding, by name. ⛔ **The tables are the
-authority and the check is only their reader**, so a new rejected identity is a row
-added here, with no code change. ⚠️ **A green check means *no rejected palette is
-shipped*, never *the identity is met*** — a face, the card kit or an eyebrow label is a
-tell no hue can see.
+⭐ **The rejected palettes are data, and the floor reads them.** The tells that can be
+read off a colour are the two tables below, which the palette check reads over every
+stylesheet the framework ships: a rejected identity that returns is a floor finding,
+by name. ⛔ **The tables are the authority and the check is only their reader**, so a
+new rejected identity is a row added here, with no code change. ⚠️ **A green check
+means *no rejected palette is shipped*, never *the identity is met*** — a face, the
+card kit or an eyebrow label is a tell no hue can see.
 
 Every colour is read as three measures: **hue** in degrees; **chroma**, `max − min` of
 its channels over 255, in percent; and **light**, `(max + min) / 2` over 255, in
 percent. ⛔ **Chroma and not HSL saturation, deliberately**: a near-white paper with a
 one-step tint reports a saturation near 40% and a chroma near 3%, so a bound written in
-saturation would refuse the paper that was accepted. ⭐ **A row's parts are joined by
-`+`, and every part must hold in one theme** — light and dark are read apart, each over
-the tokens it defines — with the parts on one role met by that theme's colours for it.
+saturation would refuse an accepted paper. ⭐ **A row's parts are joined by `+`, and
+every part must hold in one theme** — light and dark are read apart, each over the
+tokens it defines — with the parts on one role met by that theme's colours for it.
 ⛔ **The conjunction is the instrument**: cool slate alone is the accepted identity, and
-it is the triple that was rejected, so a row that fired on one part would refuse the
+it is the triple that is rejected, so a row that fired on one part would refuse the
 accepted identity on its first run.
 
 | Role | Read from |
@@ -2324,34 +1933,29 @@ accepted identity on its first run.
 
 | Rejected identity | Every part must be present | Why |
 |---|---|---|
-| Warm cream and terracotta | `ground: hue 20-70, light >= 85, chroma >= 3` + `accent: hue 5-32, chroma >= 25, light 25-65` | the first tell of generated design, and the one a repaint's first stage shipped |
+| Warm cream and terracotta | `ground: hue 20-70, light >= 85, chroma >= 3` + `accent: hue 5-32, chroma >= 25, light 25-65` | the commonest tell of generated design |
 | Near-black ground, acid-green accent | `ground: light <= 12` + `accent: hue 75-165, chroma >= 45` | a tinted near-black standing in for a dark ground, where a real mid-dark with character is asked for |
 | Near-black ground, vermilion accent | `ground: light <= 12` + `accent: hue 0-20, chroma >= 45` | the same tell's other accent |
-| Cool slate with teal-green and amber | `ground: hue 190-250, chroma <= 20` + `accent: hue 150-190, chroma >= 20` + `accent: hue 35-60, chroma >= 30` | the user's own rejection — *"very generic and repetitive between the designs you always generate"*. ⛔ It is the TRIPLE: the slate alone is accepted |
-| A saturated brand colour as the page ground | `ground: chroma >= 30` | a full guide-sign-green ground was rejected outright |
+| Cool slate with teal-green and amber | `ground: hue 190-250, chroma <= 20` + `accent: hue 150-190, chroma >= 20` + `accent: hue 35-60, chroma >= 30` | generic and repetitive between generated designs. ⛔ It is the TRIPLE: the slate alone is accepted |
+| A saturated brand colour as the page ground | `ground: chroma >= 30` | a saturated colour grounding a whole page |
 | A purple-to-blue gradient | `gradient stop: hue 258-300, chroma >= 20` + `gradient stop: hue 200-255, chroma >= 20` | a generated-design tell, read where a gradient actually is |
 
-#### ⭐ What the user ACCEPTED, 2026-09-19
+#### The accepted identity
 
-⛔ **The rejected table is half of what a repaint needs, and the other half is what was
-accepted** — six refusals do not say what to build.
+⭐ **The rejected table is half of what a repaint needs, and the other half is what
+the identity is:**
 
-| Part | What was accepted |
+| Part | The identity |
 |---|---|
 | neutrals | a cool slate scale, ground through rule, in both themes |
 | the accent | ONE loud accent, live where it means *next* or *you are here*, and nowhere else |
-| green | ⛔ **none in the identity** — *"I am not a fan of green"* |
+| green | ⛔ **none in the identity** |
 | themes | both, each designed, with the reader able to choose between them and the system |
-| ink | the quieter inks in separate contrast bands — one band for all three is what *"too dim"* named |
+| ink | the quieter inks in separate contrast bands, so none of them reads too dim |
 
-⭐ **Two reference pages of the user's own were named as the standard**: their
-documentation reference, for the slate scale and the ink bands, and their route
-planner, for the one loud accent and the contrast it holds. ⛔ **They are named in words
-and nothing else** — neither page's location, bytes, palette nor screenshot enters this
-repository, so nothing here can go stale against them, and a repaint that needs one
-asks the user for it. ⚠️ **The no-green bound is not read by the palette check**: it is a
-rule over the shipped tokens rather than a rejected identity, and the reading room's
-own palette tests hold it.
+⚠️ **The no-green bound is not read by the palette check**: it is a rule over the
+shipped tokens rather than a rejected identity, and the reading surface's own palette
+tests hold it.
 
 ### 8.5 Progress is two records
 
@@ -2363,27 +1967,21 @@ needs no server, no grader and no origin, so under R8 it must exist without one:
 it lives in the browser's local storage, and the site says plainly that it is
 **one browser, one machine, not in the repository, and gone with site data.**
 
-A **practice pass** is a fact established by a grader run. A grader run required
-the runner, which required the server, so the record is written where the fact
-was established: the git-ignored JSON file, read-validate-modify-write under a
-lock, atomic replace, `first_passed_at` set once and never moved.
+A **practice pass** is a fact established by a grader run. A grader run requires
+the runner, which requires the server, so the record is written where the fact
+was established: the corpus's git-ignored `.studyforge/progress/progress.json`,
+read-validate-modify-write under a lock, atomic replace, `first_passed_at` set once
+and never moved. A Submit's breakdown rides beside its verdict and is never a
+second rule for a pass.
 
 ⛔ **The obvious alternative — one store — fails in both directions.** Put
 everything in local storage and a pass becomes a claim by a client that the
-server cannot check, lost with site data and not worth restoring. Put everything
-server-side and R8's floor means a reader who only ever double-clicks a page has
-no record at all.
-
-⚠️ **The motivation was CodeSignal's and is temporary; the requirement is ours
-and is structural.** CodeSignal reached this because it happens to have no
-practices to submit — a state of one corpus that could change tomorrow.
-`studyforge` reaches it because **§7 admits three exercise states and two of
-them can never complete anything**, and R8 says a server is never a prerequisite
-for reading. ⭐ **It binds hardest on exactly the sources this framework exists
-to serve.** The Java repo, with 168 graders paired 1:1, is the exception; an
-arbitrary repository ships no graders at all, so every unit in it is `none` or
-`ungraded` — and a server-side-only store would record *nothing whatever* for
-the entire corpus.
+server cannot check, lost with site data. Put everything server-side and R8's
+floor means a reader who only ever double-clicks a page has no record at all. ⭐
+**It binds hardest on exactly the sources this framework exists to serve**: §7
+admits three exercise states and two of them can never complete anything, so a
+server-side-only store would record nothing whatever for a corpus with no
+graders.
 
 ⛔ **A read mark is an explicit act.** Never inferred from scrolling, from the
 narration reaching the end, or from a page having been opened. Inference marks a
@@ -2399,63 +1997,89 @@ client's read mark; it may **never** treat one as a pass.
 and it turns the personal-archive merge into an ordering problem rather than a
 set union.
 
-⛔ **Local storage is touched in exactly one source file**, which defines the
-store and is shared by the unit page, the container page and the index. Two
-implementations are the key-disagreement failure above, reached by another road.
+⛔ **Durable browser storage is touched in exactly one source file**,
+`study-progress.js`, which defines the store and is shared by the unit page, the
+container page and the index; the reader's display preferences are a record of
+their own inside it, so a preference that fails to parse cannot take every mark
+with it. Two implementations are the key-disagreement failure above, reached by
+another road.
 
 ⚠️ **A shared script is concatenated ahead of every file that uses it, and the
 order is asserted against the real composed bundle** — never against a test
-harness's own concatenation. CodeSignal placed its store *after* the page script
-that read it at startup; the guard skipped, the setting silently never came
-back, **the suite stayed green**, and it was found only by loading a page in a
-browser. A harness that arranges the world conveniently proves nothing.
+harness's own concatenation. A store placed *after* the page script that reads it
+at startup skips its guard, the setting silently never comes back, and the suite
+stays green. A harness that arranges the world conveniently proves nothing.
 
 ---
 
 ## 9. The skills layer — what is actually being built
 
-R16. The pipeline is the means; **the skills are the product.** The end state
-is that somebody points a skill at material they care about — a course site, a
-book, a paper collection, a repository of exercises, their own notes — and gets
-this format back, then keeps it as a durable personal record they can review,
-re-run and extend.
+R16. The pipeline is the means; **the skills are the product.** Somebody points a
+skill at material they care about — a course site, a book, a paper collection, a
+repository of exercises, their own notes — and gets this format back, then keeps
+it as a durable personal record they can review, re-run and extend.
 
 The division between them is the same seam as everywhere else (R2): one
-understands *a source*, the rest are source-agnostic.
+understands *a source*, the rest are source-agnostic. Each skill is a `SKILL.md`
+procedure shipped in the framework's package, with whatever executable support
+it calls beside it.
 
-- **Reconnaissance.** Given arbitrary material, work out its shape: how deep
-  the hierarchy is, what the units are, whether there are variants, whether
-  anything is runnable, whether any grader ships with it. Produces a draft
-  `corpus.json` and an honest report of what it could not determine. This is
-  the only skill that reasons about unfamiliar material.
-- **Adapter authoring.** Scaffold an adapter for that shape, against
-  `studyforge validate` as the definition of done — so the skill's output is
-  checkable by machine rather than by opinion.
+- **Reconnaissance.** Given arbitrary material, work out its shape: how deep the
+  hierarchy is, what the units are, whether there are variants, whether anything
+  is runnable and which runtimes it needs, whether any grader ships with it, and
+  whether any file duplicates another (C2). Produces a draft `corpus.json` and an
+  honest report of what it could not determine. This is the only skill that
+  reasons about unfamiliar material.
+- **Adapter authoring.** Scaffold an adapter for that shape — a package layout, a
+  test tree and an audit command, with the archive's paths computed by the
+  framework — against `studyforge validate` as the definition of done, so the
+  skill's output is checkable by machine rather than by opinion.
 - **Corpus onboarding.** R19's realisation: take a repository from nothing to a
-  serving study site. It writes the manifest, the adapter package and its tests,
-  the ignore rules, the compose file, the toolchain selection and its prime
-  project, the build entry point, the non-destructive assertion and the reader's
-  documentation — and it writes an **uninstall** that reverses every edit it
-  made. ⭐ **The one manual step is: add the framework, run this skill.**
-  Everything after that is generated, and anything a second source has to type
-  by hand is a defect in this skill.
-- **Build and serve.** One invocation from raw material to a running site:
-  ingest, validate, unit documents, pages, narration, contents, exercises.
+  corpus this framework can build. It writes the manifest, the adapter package
+  and its tests, the ignore rules, the non-destructive assertion, the framework
+  pin and its skill stubs, and the reader's document — and it writes an
+  **uninstall** that reverses every edit it made. It asks the author whether the
+  corpus is narrated. ⭐ **The one manual step is: install the framework, run this
+  skill.** Anything a second source has to type by hand is a defect in this skill.
+  ⭐ **It records every file it wrote with the digest it wrote**, in
+  `.studyforge/installed.json`, so a hand-edit to a generated file is named
+  (R19), and a regenerate is safe: a file the regenerate no longer writes is
+  removed when its bytes are still the ones recorded, and when a person has
+  edited it the regenerate is refused before anything is written, naming it
+  (R3). Its generated checks run under pytest or as plain scripts, so a Python
+  holding only the installed library can run them.
+- **Execution onboarding.** For a corpus whose material is runnable: the compose
+  file for the runner and the browser editor, the runner image's selection from
+  the declared runtimes, and the prime project — all rendered from
+  `code-server-toolchain`'s `consuming.json` (§8.1), with the image tags it records
+  in environment files the compose command reads. ⭐ It keeps its own record of what
+  it wrote, `.studyforge/execution/written.json`, which onboarding's hand-edit check
+  reads beside its own, so one check answers for both skills. ⭐ **Most corpora never
+  run this skill, and that is the design** (§11.0).
+- **Authoring exercises.** Plan every page by its aspects, author the exercises
+  and quizzes its material supports, run the gates over each, and commit what
+  clears them as bundles, with the ledger and the coverage report (§7).
+- **Build and serve.** One invocation from a corpus to a running site: validate,
+  narrate when asked, build into a directory the owner names, and serve it.
 - **Delivery planning.** The product owner for an integration: turns *"convert
   this repository"* into an ordered backlog whose every task ends in something a
-  person can be shown, with acceptance the framework itself can evaluate. It
-  runs in the target repository, and ⛔ **its only channel is this framework** —
+  person can be shown, with acceptance the framework itself can evaluate.
+  ⭐ **It plans against what the installed framework offers** — `python3 -m
+  studyforge.skills.delivery` lists every command the installation runs and every
+  skill it ships — never against a version the framework may become, so no task
+  waits for the framework to grow. ⛔ **A capability the plan needs and the offer
+  lacks is a finding the plan files**, and the task that needs it names that
+  finding as what it waits on. ⭐ **The plan says where the corpus finishes** — at
+  the reading floor or on the execution track (§11.0), with the evidence that
+  decided it — and names every offered capability the corpus will never use, with
+  the reason. It runs in the target repository, and ⛔ **its only channel is this framework** —
   it may ask questions, and it may file findings, but it may not patch (§12) and
-  it may not read the extraction source (R20). It maintains the **integration
+  it may not read the extraction source (R20). It feeds the **integration
   catalogue**, below.
 - **Personal archive.** Export and re-import a corpus *with its progress* —
   code, practices, examples and what the reader has completed — so the record
   survives a machine, and a corpus can be handed to somebody else without its
   owner's progress leaking with it (R7).
-
-**What this buys the Java repo:** it is built by the same skills anyone else
-would use, so if the skills are awkward there, they are awkward everywhere.
-The Java corpus is the proving ground, not a special case.
 
 ### A skill precedes the artifact it produces
 
@@ -2467,62 +2091,58 @@ test of it is the second source, which is precisely where it must not fail.
 So the skills divide by what they actually are:
 
 - **Skills that are how an artifact comes to exist** — reconnaissance, adapter
-  authoring, corpus onboarding, and the authoring reference they point at.
-  These land **before** the first corpus is built, and the Java corpus is their
-  **first output** rather than their input.
+  authoring, corpus onboarding, and the authoring reference they point at. These
+  come **before** a corpus is built, and a corpus is their output rather than
+  their input.
 - **Wrappers over entry points that already work** — build-and-serve, exercise
-  derivation, personal archive. These genuinely cannot precede what they wrap,
-  and they land last.
+  authoring, personal archive. These genuinely cannot precede what they wrap.
 
-⚠️ **The cost is real and is accepted:** the first three are written before
-anybody knows what a second adapter looks like. The answer is that they start
-deliberately minimal and grow — a skill that scaffolds a package layout, a test
-tree and an audit command, and leaves the source-specific reading to be filled
-in, is buildable early and is already what its definition asks for. The
-alternative is worse: a corpus built by hand, and skills written afterwards to
-claim they produced it.
+⚠️ **A skill that starts minimal is still a skill.** One that scaffolds a package
+layout, a test tree and an audit command, and leaves the source-specific reading
+to be filled in, is already what its definition asks for. The alternative is
+worse: a corpus built by hand, and skills written afterwards to claim they
+produced it.
 
 ### The integration catalogue
 
 R20 says a consumer never reads the repository this framework was extracted
 from. That is only honest if what a consumer would have gone looking for is
-**here** — so the framework carries a catalogue of what goes wrong when material
-meets it, written for somebody planning work rather than somebody writing code:
-a plausible short parse that raises nothing; a corpus carrying the same material
-twice; a hierarchy encoded in filenames; an exercise with no grader, which is
-not "no exercise"; media that outgrows a git remote; an address derived from a
-title, which sends one link in eight nowhere.
+**here** — so the framework carries [a catalogue](../integration-catalogue.md)
+of what goes wrong when material meets it, written for somebody planning work
+rather than somebody writing code: a plausible short parse that raises nothing;
+a corpus carrying the same material twice; a hierarchy encoded in filenames; an
+exercise with no grader, which is not "no exercise"; media that outgrows a git
+remote; an address derived from a title.
 
 ⭐ **It is a growing asset, not a founding document.** Each integration's
 findings (§12) are distilled back into it, so the next integration starts
 further along than the last. ⚠️ **This is the mechanism by which the framework
 gets better at being adopted**, as distinct from getting better at rendering
-pages — and without it, every new consumer re-derives the same lessons from a
-moving repository and the expertise lives nowhere.
+pages.
 
 ### How a consumer obtains the skills
 
-R18 settles the distribution: the framework is **pinned**, never copied, because
-a copied skill is a fork that a framework fix never reaches. ⚠️ **Pinned, not
-submoduled** — R18's 2026-09-09 amendment removes submodules, so the framework is
-present as a **sibling checkout at a recorded commit** and the parent's pin file
-is what records which one. The load-bearing half is unchanged: ⛔ never vendored,
-never copied, never forked.
-
-But there is a real tension worth naming, because it is where copying starts:
-**a pin is a commit, while skill discovery is path-based** — a skill has to be
-findable at a path inside the repository the agent is working in.
+The framework is **installed as a library, and pinned**, never copied, because a
+copied skill is a fork that a framework fix never reaches (R18). ⚠️ **A pin is a
+version, while skill discovery is path-based** — a skill has to be findable at a
+path inside the repository the agent is working in.
 
 ⭐ **The pin is the authority; the discoverable path is a generated pointer.**
-Onboarding writes thin **skill stubs** into the target repository that name the
-pinned framework's skill and delegate to it, carrying the pinned version and
-nothing else. ⛔ **A stub that has drifted from its pin is a build failure** —
-that is what stops a stub becoming a fork by accretion. It is the same shape as
-pinning a published image tag rather than forking a Dockerfile.
+Onboarding writes `.studyforge/pin.json` — the installed library's version and
+the commit it was built from — and a thin **skill stub** per skill into the
+corpus. A stub names its skill, the pin it was written at, and the command that
+prints the procedure from the installed package; ⛔ **it carries no path at all.**
+⛔ **A stub that has drifted from its pin is a build failure**: the generated
+`test_framework_pin.py` fails when a stub names another pin, or when the library
+the corpus's Python imports is not the pinned version or was not built from the
+pinned commit; a library with no commit stamp is reported as unverifiable, never
+passed. That is what stops a stub
+becoming a fork by accretion — the same shape as pinning a published image tag
+rather than forking a Dockerfile.
 
-⭐ **AMENDED 2026-09-23 — a page that hands a reader a command declares the modules it
-does not own.** Carried from the commanded-pages convention when the conventions were
-archived. Every `docs/authoring/` page and every shipped `SKILL.md` that gives a
+### A page that hands a reader a command declares the modules it does not own
+
+Every `docs/authoring/` page and every shipped `SKILL.md` that gives a
 `python3 -m` command is one population, and ⛔ **a commanded module must run in this
 repository unless the page declares that it belongs to the consumer.** The declaration
 is a line of its own whose backticked tokens are the modules, in one spelling:
@@ -2535,26 +2155,27 @@ This fence is the one place the spelling is written down, and a page that uses i
 this document beside it. The authoring suite's reader — `DECLARES_CONSUMER_SIDE` in
 `tests/authoring/support.py` — is the authority on that spelling: a page that disagrees
 with the reader is the defect, and `tests/test_consumer_side_contract.py` fails when the
-fence and the reader drift apart. ⛔ **The exemption belongs to the page that declares it**, so a module declared
-consumer-side on one page earns nothing on another. ⭐ **Why a declaration and not a
-list:** a list of exempt modules kept beside the checker is a second copy no page's
-reader can see, and a skill that sends a stranger to run a module absent from the
-repository they are standing in is a first-run failure the stranger cannot diagnose.
+fence and the reader drift apart. ⛔ **The exemption belongs to the page that declares
+it**, so a module declared consumer-side on one page earns nothing on another. ⭐ **Why a
+declaration and not a list:** a list of exempt modules kept beside the checker is a
+second copy no page's reader can see, and a skill that sends a stranger to run a module
+absent from the repository they are standing in is a first-run failure the stranger
+cannot diagnose.
 
 ---
 
-## 10. Out of scope for v1
+## 10. Out of scope
 
-Named explicitly so no agent builds them.
+Named explicitly so nobody builds them by accident.
 
-- Any CodeSignal change. It is untouched; convergence is v2.
-- ISO-8583 and SPARQL adapters. The contracts are designed for them; the
-  adapters are v2.
-- Cross-corpus dedupe, concept equivalence, multi-variant merged units.
-- Turning the uniform `Interview Q&A Section` into a quiz or flashcard mode.
+- Cross-corpus dedupe, concept equivalence, and multi-variant merged units.
 - Search across corpora.
-- Ragged-depth hierarchies.
-- Drift-check tooling. Nothing has diverged yet; revisit when it does.
+- Ragged-depth hierarchies (§4).
+- Transliterating non-ASCII titles into slugs (R9's stated limitation).
+- Packing generated media out of git and restoring it (§5).
+- A per-corpus visual theme: every site wears the one framework identity (§8.4).
+- A model at build time or at serve time (§7).
+- Mounting the Docker socket into the serving process, in any form (§8.3).
 
 ---
 
@@ -2567,64 +2188,51 @@ not when it delivers everything the framework can do.** Two tracks, and the
 manifest decides which apply:
 
 **The reading floor — every corpus, always.** Units readable offline over
-`file://` with no network and no server; narration; a table of contents and a
-root index with working deep links; navigation between units; the reader's own
-read marks. ⭐ **This is a complete product on its own.** A corpus that stops
-here is not a degraded one — for prose, a book, a paper collection or a set of
-notes, it is the whole thing, and R8's floor means it needs nothing running.
+`file://` with no network and no server; narration, unless the corpus or the
+run turns it off; a table of contents and a root index with working deep links;
+navigation between units; the reader's own read marks. ⭐ **This is a complete
+product on its own.** A corpus that stops here is not a degraded one — for prose,
+a book, a paper collection or a set of notes, it is the whole thing, and R8's
+floor means it needs nothing running. ⛔ **A corpus without narration is complete,
+not short** (C5): no player, no clip served, no "missing" notice, and every clip
+kept on disk (§4).
+
+**Checked practice for any subject.** ⭐ **A corpus whose subject admits no
+checkable coding task still gets checked practice — the quiz shape** (§7). A quiz
+needs no container, no network and no model, so it sits **on the reading floor**,
+not in the execution track; its answers are checked by the local study server,
+which holds the key the page never carries, and over `file://` a quiz shows its
+questions and says checking them needs that server.
 
 **The execution track — only where the material is runnable.** A workspace, Run
-and Submit, a pinned toolchain container, graded practices. Gated on the
-manifest's `exercises` (§4) and on §7's three states. ⛔ **A corpus with no
-graders skipping this entire track is a pass**, not a shortfall (C5) — and it is
-the *common* case, not the exception. The Java tutorial, with 168 test classes
-paired 1:1, is extraordinary; most material is not like it.
-
-⛔ **AMENDED 2026-09-19 (`W389`, user direction) — the gate is the MATERIAL, no longer
-what the source packaged.** ⭐ **A corpus enters the execution track when its subject
-admits a checkable coding task**, whether or not the source ships a grader: from `M10`
-the exercises are [authored at ingestion](#exercises-authored-for-every-corpus-w389).
-⭐ **A corpus whose subject admits no checkable coding task still gets *checked*
-practice — the quiz shape** — and a quiz needs no container, no network and no server,
-so it sits **on the reading floor**, not in the execution track. ⛔ **Skipping the track
-remains a PASS**; what stops being a pass is a reader with nothing to practise.
-⭐ **The reading floor is still a complete product on its own, and still offline.**
-
-⛔ **AMENDED 2026-09-23 (`W451`, user ruling) — *"no server"* above is SUPERSEDED.** A quiz
-still needs no container, no network and no model, and it still sits on the reading
-floor rather than in the execution track — ⭐ **but its answers are checked by the local
-study server**, which holds the key the page no longer carries (§7 §7's amendment). Over
-`file://` a quiz shows its questions and says checking them needs that server.
-
-⛔ **AMENDED 2026-09-23 (`W460`, user ruling) — *"narration"* above is OPTIONAL.** ⭐ *"it
-should be optional … Somebody might wants to just cover the course wihtout voices"*: a
-corpus whose `corpus.json` says `narration: false`, or a run given `--no-narration`, is
-the reading floor without its voice, and ⛔ **that is complete, not short** (C5) — no
-player, no clip served, no "missing" notice, and every clip kept on disk (§4, `narration`).
+and Submit, a pinned runner container, graded practices, and optionally the
+browser editor. ⭐ **A corpus enters it when its subject admits a checkable coding
+task**, whether or not the source ships a grader: the exercises are [authored at
+ingestion](#exercises-authored-for-every-corpus). It is gated on the manifest's
+`exercises` and `runtimes` (§4) and on §7's three states. ⛔ **A corpus whose
+material admits no checkable coding task skipping this entire track is a pass**,
+not a shortfall (C5); what is never a pass is a reader with nothing to practise
+where the material supports practice.
 
 ⚠️ **The order follows from that.** The reading floor comes first and completely,
 because it is what every consumer gets and the only thing some consumers want.
-The execution track is built when a corpus needs it — which is a real decision
-about a real source, not a milestone everyone waits behind.
-
-⛔ **AMENDED PO round 74 (user direction, quoted in §8.1's amendment and §12's):** ⭐ **the track's container is the runner image, and the browser editor joins at `M7`.** ⚠️ **The track now runs AFTER the first corpus and the framework proof — `M4` → `M6` → `M8` → `M5` → `M7` — and the Java corpus re-validates at `M9`.**
+The execution track is added when a corpus needs it — a real decision about a
+real source, not a stage everyone waits behind.
 
 ### 11.1 The framework
 
 1. `studyforge validate` passes on a valid archive and fails, naming the
    specific failure, on each invalid fixture — **including a source whose
-   material the adapter silently failed to read in full** (SF-25).
-2. Both `FND-04` fixtures — one **depth-1**, one depth-2 — build, render, and
-   serve with **no corpus-specific code anywhere in the framework** (R1),
-   asserted rather than assumed.
+   material the adapter silently failed to read in full**.
+2. A **depth-1** fixture and a depth-2 fixture both build, render and serve
+   with **no corpus-specific code anywhere in the framework** (R1), asserted
+   rather than assumed.
 3. A corpus's units are readable offline over `file://` — no network, no server
    — with narration, syntax highlighting, working navigation, and read marks
    recorded and surviving a reload (§8.5).
 4. The root index renders a hierarchy of any declared depth with working deep
    links. Its **only inputs** are the two contents documents — asserted; and ⛔
-   **it fetches nothing at runtime**, because `fetch` of a sibling file is
-   refused over `file://`, there being no origin to ask, so contents data is
-   delivered into the page at generation time.
+   **it fetches nothing at runtime** (§8.4).
 5. `studyforge plan` names every path a build will create and every declared
    edit, before anything is generated, and what a build then does matches it.
 6. No source module exceeds 400 lines and no test module exceeds 600, or the
@@ -2632,8 +2240,8 @@ about a real source, not a milestone everyone waits behind.
 7. Every package has tests, and the test tree mirrors the source tree (R12).
 8. Tests, generation and serving all run in a container from a clean checkout,
    with Docker as the only prerequisite (R15).
-9. ⛔ **WITHDRAWN 2026-09-12 with R14.** The number is retained so nothing
-   below it moves; there is no index and no criterion here.
+9. Framework source imports only the standard library and itself, and the
+   package declares no runtime dependency (§3.2).
 
 ### 11.2 Any corpus the framework builds
 
@@ -2648,92 +2256,59 @@ about a real source, not a milestone everyone waits behind.
     asserts it reads the declaration rather than naming the file (R3).
 12. Its ingest audit exits 0, or exits 1 naming exactly the known outliers.
 13. Its media footprint is measured and inside its declared limits, or the build
-    said so and stopped (SF-32).
-14. ⛔ **It reaches the reading floor in full**, and reaches whatever of the
-    execution track its material actually supports — with the coverage report
-    stating honestly which units are reading-only.
-    ⭐ **EXTENDED 2026-09-19 (`W389`), and binding from `M10`:** every page whose
-    material admits a checkable task carries its planned exercises, or the coverage
-    report names that page with the gate that refused each one
-    ([§7](#exercises-authored-for-every-corpus-w389)). ⛔ **"Reading-only" is a
+    said so and stopped (§5).
+14. ⛔ **It reaches the reading floor in full**, and whatever of the execution
+    track its material supports: every page whose material admits a checkable
+    task carries its planned exercises or quizzes, or the coverage report names
+    that page with the gate that refused each one (§7). ⛔ **"Reading-only" is a
     reading the gates produced, never a default nobody tried to move.**
-
-### 11.3 The Java corpus, when it is built
-
-Consumer 1's numbers, kept because they are measured and because they are the
-worked example the catalogue draws on — **not because the framework's acceptance
-depends on them.**
-
-15. All **166** units reach the reading floor, and the root index renders the
-    full 10 → 45 → 166 hierarchy.
-16. Every exercise that ships has cleared both gates; the coverage report names
-    every pair that did not.
-17. Run and Submit work from the page against the dockerised Maven toolchain;
-    only a passing Submit completes a practice.
 
 ---
 
 ## 12. Validating that the framework is a framework
 
 Everything in §11 is satisfied by a framework with exactly one consumer. The
-claim this project actually makes is larger, and it is only testable against a
-source nobody designed for.
+claim this framework makes is larger, and it is only testable against a source
+nobody designed for.
 
-**A second source is onboarded after v1 is otherwise accepted.** It is a real
-repository, chosen then, and ⛔ **it is deliberately not named in these
-documents** — a named target invites the framework to be shaped around it, which
-is R1's whole subject. The anonymity is the control.
+**The test is a source converted by the skills alone.** A real repository is
+onboarded by reconnaissance → adapter authoring → corpus onboarding, with no
+hand-authored framework code, and the result is judged against this section.
 
 **How it is conducted.**
 
-- ⛔ **Whoever integrates the second source does not modify `studyforge`.**
-  Anything the framework cannot do is filed as a **finding**, not patched. The
-  framework's submodule pin does not move during the exercise; where it must,
-  every commit it moves across is listed against the finding that forced it. ⭐ A
-  test of extensibility run by somebody who can edit the thing being tested
-  measures nothing.
-- The route is reconnaissance → adapter authoring → corpus onboarding, with no
-  hand-authored framework code.
+- ⛔ **Whoever integrates the source does not modify `studyforge`.** Anything the
+  framework cannot do is filed as a **finding**, not patched. The framework pin
+  does not move during the integration; where it must, every change it moves
+  across is listed against the finding that forced it. ⭐ A test of extensibility
+  run by somebody who can edit the thing being tested measures nothing.
 - **The work is planned by the delivery-planning skill** (§9), acting as the
-  product owner for that repository: an ordered backlog whose every task ends in
-  something demonstrable, so the conversion is watchable step by step rather
-  than reported finished at the end. ⭐ Its findings are the deliverable below,
-  and it distils them into the integration catalogue so the *third* source
-  starts further along than the second.
+  product owner for that repository: an ordered backlog, made against the installed
+  framework's offer, whose every task ends in something demonstrable, so the
+  conversion is watchable step by step rather than reported finished at the end. A
+  capability the source needs and the framework does not offer is a finding the
+  plan files, and the task that needs it waits on it. ⭐ Its findings are the deliverable below, and it
+  distils them into the integration catalogue so the *next* source starts further
+  along.
 
 **What it must assert.**
 
-1. The corpus reaches the Java corpus's floor — readable over `file://`,
-   narrated, navigable, read marks recorded — **minus what the source genuinely
-   lacks.**
-2. ⚠️ **A source with no graders yielding zero exercises is a pass**, not a
-   shortfall (§7, C5). This is written down here so the exercise is not judged
-   against a corpus that happens to ship 168 test classes.
-   ⛔ **DATED 2026-09-19 (`W389`, user direction) — true up to and including `M9`,
-   and superseded from `M10`.** ⭐ **Zero is a pass only for material that admits no
-   checkable task**; a source with no graders is authored ones
-   ([§7](#exercises-authored-for-every-corpus-w389)), and what is then judged is the
-   coverage report — every planned exercise shipped, or named with the gate that
-   refused it. ⚠️ **The sentence's original purpose survives intact**: nothing here
-   is measured against a corpus that happens to ship 168 test classes.
-3. The framework pin did not move, or every commit it moved across is accounted
+1. The corpus reaches the reading floor — readable over `file://`, navigable,
+   read marks recorded, narrated where it asks to be — **minus what the source
+   genuinely lacks.**
+2. Every page whose material admits a checkable task carries its planned
+   exercises or quizzes, or the coverage report names it with the gate that
+   refused each one (§7). ⚠️ **Zero exercises is a pass only for material that
+   admits no checkable task**, and the integration is never judged against a
+   corpus that happens to ship its own graders.
+3. The framework pin did not move, or every change it moved across is accounted
    for.
 4. ⛔ **Everything the integrator did by hand is a defect in the onboarding
    skill, named.** That list is what turns "extensible" into something with
    edges.
 
-⭐ **The deliverable is the findings log, not the site.** An exercise that
+⭐ **The deliverable is the findings log, not the site.** An integration that
 produces a working study site and reports no findings has not been conducted
-honestly — these skills will have seen exactly one source, and the odds that an
-unknown repository fits it perfectly are not good. The finding count is the
-**yield**, not the failure, in the same sense the exercise-feasibility spike
-already uses correctly: a negative result is a successful experiment.
-
-### ⛔ AMENDED PO round 74 — the second source is named, it goes first, and the Java corpus re-validates (user direction, 2026-09-12)
-
-> *"M6 M8 M5 M7 is the order I want also we were supposed to run it against ISO 8583 project first and if it worked and we are sure we are a framework ( now if it worked M5 and M7 should be finished then) and then apply it to java-senior project to revalidate being a framework."*
-
-1. ⭐ **The second source is `ISO-8583-jPOS-tutorial`, and the exercise is `M8`** (`QA-04`). ⛔ **The anonymity clause above is withdrawn for it by the user's own words; the control it bought is the cost.** ⚠️ Q18 had already named it as the track's second finish line.
-2. ⭐ **It runs BEFORE the execution track, not after v1 is otherwise accepted.** ⛔ **ISO never enters that track (zero build files, graders and exercises; Q18), so at `M5` and `M7` it passes with zero exercises (§7, C5), and those milestones are proved on the framework's own fixtures.** ⚠️ **DATED 2026-09-19 (`W389`, user direction): that clause is RECORD, and it stands for `M5` and `M7`, which closed under it.** ⛔ **"Never" is now wrong and `M10` is why** — ISO enters the track there, with a practice module and exercises [authored from its pages](#exercises-authored-for-every-corpus-w389), and it is the corpus `M10` is proved on. ⭐ **Its two earlier finish lines are not reopened; `M10` is a third.**
-3. ⭐ **`Claude-senior-java-engineer` then re-validates the framework at `M9`** (`QA-05`), ⛔ **under every rule in this section.**
-4. ⛔ **The no-patch rule holds for the integrator of `M8` and of `M9`.** ⭐ **Between them, `M5` and `M7` are framework work, and every commit the framework pin moves across is listed (bullet 1 above).**
+honestly — the odds that an unknown repository fits the skills perfectly are not
+good. The finding count is the **yield**, not the failure: a negative result is a
+successful experiment.
