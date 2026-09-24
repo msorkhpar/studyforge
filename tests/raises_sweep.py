@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import ast
 import importlib
+import importlib.util
 import inspect
 from dataclasses import dataclass
 from pathlib import Path
@@ -161,6 +162,11 @@ class Population:
     canonical: dict[str, str]
     #: Canonical name → the reader names a caller may wrap in a `try`.
     readers: dict[str, frozenset[str]]
+    #: ⭐ `(defining module, name)` of every reader → its canonical name (`W470/1`).
+    #: A caller may import a reader from the module that DEFINES it rather than
+    #: from the package surface — `from studyforge.generate.declarations import
+    #: read_corpus` — and that caller is the package's caller all the same.
+    defined: dict[tuple[str, str], str]
 
 
 def population(src: Path) -> Population:
@@ -173,7 +179,7 @@ def population(src: Path) -> Population:
             continue
         groups.setdefault(id(thrown), []).append(name)
         tuples[id(thrown)] = thrown
-    canonical, readers = {}, {}
+    canonical, readers, defined = {}, {}, {}
     for key, names in groups.items():
         # ⭐ The shortest name in the group is the package surface a caller meets.
         chosen = min(names, key=lambda name: (len(name), name))
@@ -183,7 +189,30 @@ def population(src: Path) -> Population:
             canonical[name] = chosen
             found |= readers_of(name, members)
         readers[chosen] = frozenset(found)
-    return Population(canonical, readers)
+        for name in names:
+            module = importlib.import_module(name)
+            for reader in found:
+                routine = getattr(module, reader, None)
+                if routine is not None:
+                    defined[(routine.__module__, routine.__name__)] = chosen
+    return Population(canonical, readers, defined)
+
+
+def _defining_package(module: str, name: str, subject: Population) -> str | None:
+    """The canonical package whose reader `from module import name` binds, or None.
+
+    ⛔ **Resolved by what the name IS, never by how the import spells it**
+    (`W470/1`): the sweep that matched only an exporter's own name missed every
+    caller importing the reader from its defining submodule, and a sliced tuple
+    around such a call survived it. ⚠️ A module absent from the real tree — a
+    plant's split-out file — is not imported and binds nothing here.
+    """
+    if not module.startswith("studyforge.") or importlib.util.find_spec(module) is None:
+        return None
+    bound = getattr(importlib.import_module(module), name, None)
+    if not inspect.isroutine(bound):
+        return None
+    return subject.defined.get((bound.__module__, bound.__name__))
 
 
 def names_the_tuple(held: ast.expr, bound: dict[str, frozenset[str]]) -> set[str]:
@@ -252,18 +281,27 @@ def catch_sites(src: Path, subject: Population) -> dict[str, CatchSite]:
         tree = ast.parse(path.read_text("utf-8"))
         readers, imported = {}, {}
         for node in ast.walk(tree):
-            if not isinstance(node, ast.ImportFrom) or node.module not in subject.canonical:
-                continue
-            chosen = subject.canonical[node.module]
-            # ⛔ A package's own modules are not callers of its surface.
-            if me == chosen or me.startswith(f"{chosen}."):
+            if not isinstance(node, ast.ImportFrom) or node.module is None or node.level:
                 continue
             for alias in node.names:
                 local = alias.asname or alias.name
-                if alias.name in subject.readers[chosen]:
-                    readers[local] = chosen
-                elif alias.name == "RAISES":
-                    imported[local] = chosen
+                if node.module in subject.canonical:
+                    chosen = subject.canonical[node.module]
+                    if alias.name == "RAISES":
+                        kind = imported
+                    elif alias.name in subject.readers[chosen]:
+                        kind = readers
+                    else:
+                        continue
+                else:
+                    chosen = _defining_package(node.module, alias.name, subject)
+                    kind = readers
+                    if chosen is None:
+                        continue
+                # ⛔ A package's own modules are not callers of its surface.
+                if me == chosen or me.startswith(f"{chosen}."):
+                    continue
+                kind[local] = chosen
         bound = tuple_names_bound_in(tree, imported)
         for function in ast.walk(tree):
             if not isinstance(function, ast.FunctionDef | ast.AsyncFunctionDef):

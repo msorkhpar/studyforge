@@ -71,7 +71,10 @@ REACH = {
     # ⚠️ `W460` RAISED it to 9 with `narrate.enabled.declared`'s site, for the same reason.
     "studyforge.corpus.manifest": 9,
     # ⚠️ `W457` RAISED it to 4 with `validate.narration`'s site, for the reason `W439` names.
-    "studyforge.generate": 4,
+    # ⚠️ `W470/1` RAISED it to 6: `cli/serve.py` and `cli/check.py` import `read_corpus`
+    # from `generate.declarations`, which defines it, and the sweep that matched only
+    # the exporter's own name never saw either catch.
+    "studyforge.generate": 6,
     # ⚠️ The run route's parse of a practice key is the first site naming
     # `progress.RAISES`, and a subject with NO floor here fails the deleted-outright
     # plant below, whatever the note above says of a new caller.
@@ -302,6 +305,52 @@ def test_a_narrowed_tuple_fails_the_sweep(tmp_path):
     assert sites[site].retyped, f"the narrowed handler at {site} still reads as naming the tuple"
     with pytest.raises(AssertionError, match="narrowed or retyped instead of RAISES"):
         assert_every_catch_names_its_tuple(sites)
+
+
+def _slice_every_constant_handler(path: Path, function: str) -> bool:
+    """Slice every UPPER-CASE tuple a handler in `function` names. Whether one was found."""
+    text = path.read_text("utf-8")
+    held = [
+        inner
+        for node in ast.walk(ast.parse(text))
+        if isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef) and node.name == function
+        for handler in ast.walk(node)
+        if isinstance(handler, ast.ExceptHandler) and handler.type is not None
+        for element in (
+            handler.type.elts if isinstance(handler.type, ast.Tuple) else [handler.type]
+        )
+        for inner in [element.value if isinstance(element, ast.Starred) else element]
+        if isinstance(inner, ast.Name) and inner.id.isupper()
+    ]
+    lines = text.splitlines(keepends=True)
+    for at in sorted(held, key=lambda n: (n.end_lineno, n.end_col_offset), reverse=True):
+        line = lines[at.end_lineno - 1]
+        lines[at.end_lineno - 1] = f"{line[: at.end_col_offset]}[:1]{line[at.end_col_offset :]}"
+    path.write_text("".join(lines), encoding="utf-8")
+    return bool(held)
+
+
+def test_a_narrowed_tuple_fails_the_sweep_at_every_site_whatever_the_import_spells(tmp_path):
+    # ⛔ `W470/1`: a `RAISES[:1]` in `cli/serve.py`'s `main` SURVIVED, because that
+    # caller imports `read_corpus` from `generate.declarations`, the module that
+    # defines it, and the sweep matched only the exporter's own name. ⭐ Planted
+    # at EVERY site in turn, so no caller is outside the reading by how it
+    # spells its import — and the two that were are named, so a sweep that lost
+    # them again cannot pass this by planting only the sites it still finds.
+    subject = population(source_root())
+    before = catch_sites(source_root(), subject)
+    assert {"cli/serve.py:main", "cli/check.py:main"} <= set(before), (
+        "a caller importing its reader from the defining submodule is outside the sweep"
+    )
+    for site in sorted(before):
+        copy = _one_per_site(tmp_path, f"narrow-{site}")
+        where, _, function = site.rpartition(":")
+        if not _slice_every_constant_handler(copy / where, function):
+            continue
+        after = catch_sites(copy, subject)
+        assert after[site].retyped, f"the narrowed handler at {site} still reads as whole"
+        with pytest.raises(AssertionError, match="narrowed or retyped instead of RAISES"):
+            assert_every_catch_names_its_tuple(after)
 
 
 def test_a_reader_split_into_another_module_is_not_a_loss(tmp_path):
