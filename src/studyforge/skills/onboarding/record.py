@@ -40,14 +40,14 @@ expects a digest on every entry and would fail on the marked one rather than
 refuse it by name. ⭐ This build still reads `1`: every entry there has a
 digest, so reading it is not a migration.
 
-## ⭐ A generated file a regenerate no longer writes is retired (`W467`, `W461/1`)
+## ⭐ A generated file a regenerate no longer writes is retired
 
-⚠️ **Measured** (`W461/1`): a corpus that placed its reader document elsewhere
-while the old copy still sat at the root got the new one written and the root
-one left behind, unrecorded, so `hand_edited` could not see it and `uninstall`
-would not remove it. ⭐ **`retire` removes such a file when its bytes are still
-the digest the record holds**: it is the framework's own output, which no
-person wrote, exactly what `uninstall` removes. ⛔ **One whose bytes changed is
+⚠️ A corpus that places its reader document elsewhere while the old copy still
+sits at the root would otherwise keep the root one, unrecorded, where
+`hand_edited` cannot see it and `uninstall` does not remove it. ⭐ **`retire`
+removes such a file when its bytes are still the digest the record holds**: it
+is the framework's own output, which no person wrote, exactly what `uninstall`
+removes. ⛔ **One whose bytes changed is
 a person's edit, and deleting it would break R3**, so the regenerate is refused
 before anything is written, naming each file and what to do.
 """
@@ -188,7 +188,7 @@ def gone(where: str) -> str:
     """Say, in a sentence, that one generated file is not where the record puts it (R6)."""
     return (
         f"{where} is missing: {RECORD_FILE} records it as generated there and nothing is "
-        f"there now. Moving or deleting a generated file is an edit to it (R19): regenerate "
+        f"there now. Moving or deleting a generated file is an edit to it: regenerate "
         f"to write it back, or, to keep it somewhere else, say where in {MANIFEST_FILENAME} "
         f"and regenerate"
     )
@@ -200,8 +200,8 @@ def hand_edited(root: Path | str) -> list[str]:
     ⭐ **R19, made checkable:** an empty list means nothing generated was edited
     by hand, whatever the person wrote in their own module. A file whose bytes
     differ is named by its path; one missing from its recorded place is a
-    sentence that says so and what to do (`W461`). ⭐ **The execution skill's
-    files are reported here too** (`W466`), each as a sentence, from that
+    sentence that says so and what to do. ⭐ **The execution skill's
+    files are reported here too**, each as a sentence, from that
     skill's own record (`skills.execution.written`).
     """
     root = Path(root)
@@ -255,8 +255,8 @@ def refuse_unrecorded(root: Path, files: Sequence[Written]) -> None:
             f"{len(theirs)} file(s) this regenerate would write are already here and "
             f"{RECORD_FILE} {'does not list them as generated' if present else 'is not here'}, "
             f"so they are not known to be the framework's: {theirs}. Nothing was written "
-            f"(R3); move each aside, regenerate, then keep what was yours outside the "
-            f"generated paths"
+            f"because generation never overwrites a file it did not write; move each "
+            f"aside, regenerate, then keep what was yours outside the generated paths"
         )
 
 
@@ -282,7 +282,7 @@ def retire(root: Path, files: Sequence[Written]) -> list[str]:
         raise OnboardingRefused(
             f"{len(edited)} generated file(s) an earlier onboarding wrote, which this "
             f"regenerate no longer writes, were edited since: {edited}. Nothing was written: "
-            f"removing them would delete your edit (R3). Move each where you want to keep "
+            f"removing them would delete your edit. Move each where you want to keep "
             f"it, outside the generated paths, or restore it, then regenerate"
         )
     retired = sorted(entry["where"] for entry in left)
@@ -325,6 +325,6 @@ def collision(blocked: Sequence[str]) -> str:
     """
     return (
         f"{len(blocked)} path(s) already exist and generation is non-destructive "
-        f"(R3): {sorted(blocked)}. Nothing was written; pass regenerate=True to "
-        "rewrite the generated ones and keep the one that is yours"
+        f"(it never overwrites a file): {sorted(blocked)}. Nothing was written; pass "
+        "regenerate=True to rewrite the generated ones and keep the one that is yours"
     )

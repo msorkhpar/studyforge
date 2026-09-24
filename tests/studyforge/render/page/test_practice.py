@@ -159,10 +159,10 @@ def test_each_of_the_four_label_cases_renders_its_own_stated_sentence():
 
 @pytest.mark.parametrize("workspace", [SHIPPED, GENERATED, UNGRADED])
 def test_neither_r5_key_ever_reaches_the_page(workspace):
-    # ⛔ The register's note, asserted: `provenance` and `trust` are the
-    # framework's vocabulary for how much a verdict is worth, and no reader was
-    # told what either word means. ⭐ Both the keys and their VALUES are read
-    # for, so an attribute carrying `advisory` fails here too.
+    # ⛔ `provenance` and `trust` are the framework's vocabulary for how much a
+    # verdict is worth, and no reader is told what either word means. ⭐ Both
+    # the keys and their VALUES are read for, so an attribute carrying
+    # `advisory` fails here too.
     markup = panel(sections=[section(workspace=workspace)])
     for word in ("provenance", "trust", "authoritative", "advisory", "bundled", "generated"):
         assert word not in markup, f"the page says {word!r}"
@@ -291,7 +291,7 @@ def test_the_editor_slot_says_it_is_not_running_and_how_to_start_it():
     # broken instead of saying so.
     note = panel().split('data-practice-part="no-editor"')[1]
     assert "not running" in note
-    # ⭐ `W466`: how to start it is the corpus's own command, never a README.
+    # ⭐ How to start it is the corpus's own command, never a README.
     assert 'the one command under "Bring it up" in this corpus\'s EXECUTION.md' in note
     assert "README" not in note.split("</p>")[0]
 

@@ -74,7 +74,7 @@ def test_a_bad_invocation_is_unusable(argv, capsys):
 
 
 #: Onboards the corpus at the working directory with whatever `studyforge` imports.
-#: ⭐ `W467`: no commit is passed; a built wheel pins its own.
+#: ⭐ No commit is passed; a built wheel pins its own.
 ONBOARD = (
     "import json, sys; from studyforge.skills.onboarding import onboard; "
     "made = onboard(json.loads(sys.argv[1]), *sys.argv[2:3]); made.write('.'); "
@@ -87,7 +87,7 @@ NAMED = (
     "onboard(json.loads(sys.argv[1]), framework_commit=sys.argv[2])"
 )
 
-#: Runs every test the generated pin check defines, with no test runner (`W467`).
+#: Runs every test the generated pin check defines, with no test runner.
 PIN_CHECK = ["python3", "tests/test_framework_pin.py"]
 
 #: Runs the one generated check that asks the installed library its version.
@@ -174,7 +174,7 @@ def test_the_installed_pin_check_fails_on_another_version(installed, tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⭐ `W467`: the installed library knows its commit, and the checks need no pytest
+# ⭐ The installed library knows its commit, and the checks need no pytest
 # --------------------------------------------------------------------------
 
 

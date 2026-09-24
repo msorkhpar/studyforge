@@ -10,7 +10,7 @@ what an install of a pure wheel puts there.
 ⚠️ The pinned dev image uninstalls setuptools once it has installed the package
 so there the build is skipped, saying why.
 
-⭐ **The export is committed to a git repository of its own** (`W467`): a wheel
+⭐ **The export is committed to a git repository of its own**: a wheel
 records the commit it was built from, and `setup.py` refuses to build one from a
 tree that is not the top of a checkout. Placeholder identities at a fixed date,
 and no user or system config, so no identity of this machine's is read (R7).

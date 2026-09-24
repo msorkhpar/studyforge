@@ -11,7 +11,7 @@ that reaches a message. ⛔ No I/O and nothing source-specific (R1).
 
 ## ⛔ WHY THESE ARE CHECKED AND NOT REMEMBERED
 
-⚠️ **The spec does not number these (`W462/1`).** §8.1 states them as the bullets
+⚠️ **The spec does not number these.** §8.1 states them as the bullets
 of *"what the compose side gets right"*, so a refusal cites each by what it
 says — loopback, the sources alone, the owner's uid:gid, a bind source that
 exists first — and never by a number a reader would look for and not find.

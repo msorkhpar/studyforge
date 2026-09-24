@@ -106,7 +106,7 @@ class Selection:
         """Return this image's prime flag with `directory` in its slot, or `None` for none.
 
         ⭐ `None` is a block that declares no prime: before `provides` 3 the
-        editor's contract declares none, and its editor is built unprimed (`W466`).
+        editor's contract declares none, and its editor is built unprimed.
         """
         if self.prime_flag is None:
             return None
@@ -191,7 +191,7 @@ def _reason(reasons: Mapping[str, object], name: str, block: str) -> str:
         f"the contract's {scrub(block)}.runtimes.selectable omits a runtime this corpus "
         f"declared and its not_carried block gives no reason for it. ⛔ A corpus is "
         f"owed the reason, and inventing one here would be this skill answering for "
-        f"the component (R19)"
+        f"the component"
     )
 
 

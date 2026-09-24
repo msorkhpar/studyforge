@@ -1,4 +1,4 @@
-"""`promote` writes the version every key it carries needs (`W467`: `W350/1`, `W460/2`).
+"""`promote` writes the version every key it carries needs.
 
 ⭐ The version is read from the manifest package's own `KEY_VERSIONS`, so a key a version
 adds is written under that version the day it is added. ⛔ Each case asks the manifest's
@@ -63,7 +63,7 @@ def test_an_empty_runtimes_list_is_dropped_and_raises_nothing():
     ids=["runtimes", "media.max_files"],
 )
 def test_a_settle_that_needs_a_newer_version_is_written_under_it(tmp_path, settle, key):
-    # ⛔ `W460/2`: each of these was refused by the version check (`corpus_api (1 -> n)`).
+    # ⛔ Each of these is refused by the version check under too low a `corpus_api`.
     root = corpora.material(tmp_path / "corpus")
     onboard(corpora.DRAFT, framework_commit=corpora.COMMIT).write(root)
 

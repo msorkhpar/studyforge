@@ -162,8 +162,8 @@ def test_a_copy_of_a_generated_file_still_in_place_is_not_taken_as_moved(tmp_pat
 
 @pytest.mark.parametrize("place", [ARCHIVED, False], ids=["elsewhere", "none"])
 def test_a_regenerate_that_moves_it_retires_the_unedited_copy_at_the_root(tmp_path, place):
-    # ⭐ `W467`, `W461/1`: the root copy was left behind, unrecorded, invisible to
-    # `hand_edited` and to `uninstall`. Unedited, it is the framework's own, and goes.
+    # ⭐ Left behind, the root copy would be unrecorded, invisible to `hand_edited`
+    # and to `uninstall`. Unedited, it is the framework's own, and goes.
     root, _made = _written(tmp_path)
 
     reonboard(root, settle={"onboarding_doc": place}).write(root, regenerate=True)

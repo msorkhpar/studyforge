@@ -43,7 +43,7 @@ for every other file it writes.
 ## ⭐ THE EDITOR'S TAG IS ASKED EXACTLY AS THE READER'S DOCUMENT BUILDS IT
 
 ⭐ **From `provides` 3 the contract declares `editor.prime` as it declares the
-runner's** (`W466`), so the editor's tag is asked with the same prime flagged,
+runner's**, so the editor's tag is asked with the same prime flagged,
 and `EXECUTION.md` prints the editor's build with it: the tag recorded is the
 tag the printed, primed build produces. ⚠️ A contract that declares no editor
 prime is read as it stands: the editor is asked, printed and recorded unprimed.
@@ -144,7 +144,8 @@ def _asked(ask: Ask, command: list[str], component: Path, repository: str, block
     if code != 0:
         raise ExecutionRefused(
             f"the component's {block}.image.tag_from exited {code}; its output is not "
-            f"reproduced here (R7). Run it in the pinned checkout to read why"
+            f"reproduced here, since it can carry a home path. Run it in the pinned "
+            f"checkout to read why"
         )
     tag = printed.strip()
     if not _one_tag(tag, repository):
@@ -171,7 +172,8 @@ def text(variable: str, tag: str, *, image: str = "runner") -> str:
     if holds is None:
         raise ExecutionRefused(
             f"an environment file is recorded for one of {sorted(WHAT_IT_HOLDS)} and for "
-            f"no other image; the one asked for is not reproduced here (R7)"
+            f"no other image; the one asked for is not reproduced here, since a refusal never "
+            f"quotes a value that may be personal"
         )
     return f"# {GENERATED}\n{holds}{variable}={tag}\n"
 

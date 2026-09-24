@@ -21,9 +21,9 @@ not `synthesise`: a build copies what narrate wrote.
 
 ⚠️ A page's audio href is relative to the page, so under an output root other
 than the corpus root it resolves under that root, where narrate wrote nothing:
-the player played nothing and named no gap. ⭐ The register answered from the
-user's answers 1 and 4: the record and the clips are inputs exactly like the
-archive, so the build copies them as `generate.media` copies the archive's.
+the player would play nothing and name no gap. ⭐ The record and the clips are
+inputs exactly like the archive, so the build copies them as `generate.media`
+copies the archive's.
 
 ## ⛔ The destination is ASKED, never composed
 
@@ -39,11 +39,10 @@ copied exactly when its page plays it.
 no page addresses is not copied. ⛔ A clip the record promised and the disk
 lacks (`NOT_ON_DISK`) is not copied and goes into `Written.missing`; the page
 already names the gap. `NOT_RECORDED` is never missing. ⚠️ A copy a later
-record no longer names is left where it is (answer 2; `W193` answer 1).
-⭐ `W467`: it is not left silently. A build with narration off into another root
-names each clip an earlier narrated build copied there (`Written.unlinked`,
-`W460/4`), and a voiced build names each clip it plays that says words its
-paragraph no longer says (`Written.stale`, `W457/1`). Neither is acted on.
+record no longer names is left where it is, and not silently: a build with
+narration off into another root names each clip an earlier narrated build copied
+there (`Written.unlinked`), and a voiced build names each clip it plays that says
+words its paragraph no longer says (`Written.stale`). Neither is acted on.
 
 ## ⚠️ What `studyforge plan` names and this does not copy
 
@@ -130,9 +129,9 @@ def unit_clips(corpus: Corpus, into: Path | str) -> Written:
 def _unlinked(corpus: Corpus, out: Path) -> tuple[PurePosixPath, ...]:
     """Every clip file under `out` in a unit's audio directory, which no page here links.
 
-    ⭐ `W460/4`: a build with narration off links no clip, so each one an earlier
+    ⭐ A build with narration off links no clip, so each one an earlier
     narrated build copied into this `--out` is reported. ⛔ Never deleted: a build
-    deletes nothing (answer 2), and the report says how a person removes them.
+    deletes nothing, and the report says how a person removes them.
     """
     found: set[PurePosixPath] = set()
     for source in corpus.units:

@@ -122,7 +122,7 @@ def test_a_pin_carrying_a_path_is_refused_and_not_quoted(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⭐ `W467`: the commit a built wheel carries
+# ⭐ The commit a built wheel carries
 # --------------------------------------------------------------------------
 
 

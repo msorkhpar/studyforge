@@ -49,7 +49,7 @@ You need three things, and nothing else:
 ⛔ **The pin is the INSTALLED library**. This skill reads the version
 of the `studyforge` this Python imports and writes it into the corpus's pin
 beside the commit that library was built from, which a wheel carries and says
-itself (`W467`). ⛔ **Never a path**, relative or absolute: a path carries somebody's
+itself. ⛔ **Never a path**, relative or absolute: a path carries somebody's
 home directory (R7), and a sibling checkout is a development arrangement a
 stranger with the installed library does not have.
 
@@ -67,7 +67,7 @@ question, of the same library, from inside the corpus:
 python3 -m studyforge.skills.onboarding.verify .
 ```
 
-⭐ **The version and the commit are both verified** (`W467`). A wheel built
+⭐ **The version and the commit are both verified.** A wheel built
 from a clone carries the commit it was built from, so `onboard(draft)` pins it
 without being told, and a `framework_commit` naming another is refused by name.
 ⚠️ **A source tree or an editable install carries none**: there, pass
@@ -207,11 +207,11 @@ python3 -c "from studyforge.skills.onboarding import hand_edited, reonboard; \
   is retyped is refused by name as a collision.
 - ⭐ **`settle` names a recorded answer you mean to change** — `{"exercises": True}`
   when a corpus starts authoring, or `{"narration": False}` when the author
-  decides to read without voices (`W460`), or `{"onboarding_doc": "docs/archive/ONBOARDING.md"}`
-  to keep the reader document somewhere other than the root (`false` for none, `W461`).
+  decides to read without voices, or `{"onboarding_doc": "docs/archive/ONBOARDING.md"}`
+  to keep the reader document somewhere other than the root (`false` for none).
   ⭐ The copy at its old place is removed while it is byte for byte what was
   generated; one you edited refuses the regenerate by name, writing nothing, until
-  you move it or restore it (`W467`).
+  you move it or restore it.
   ⛔ Any answer it does not name that would move is
   still refused by name (below); `content` is never settled here, because a
   new content shape is a new onboarding.
@@ -270,8 +270,8 @@ What lands, and why each one exists:
 | `corpus.json` | the draft promoted, with **every generated file already declared `content.not_material`** |
 | the adapter package and its suite | the adapter skill's scaffold, wired in — one file that is yours and every other one generated; ⛔ how many is the scaffold's own listing (`scaffold(...).lines()`, the adapter skill's step 1), never a number typed here |
 | `.studyforge/pin.json` and the skill stubs | the installed library's version and the commit it was built from, and thin pointers that carry both and name the command that prints each procedure from the installed package |
-| `tests/` — two checks | R3's assertion, read from what a build declares it writes and from the tree through that same declaration, with this corpus's edits baked in; and the pin check — the installed library is the pinned version and build, ships every stubbed skill, and no stub has drifted. ⭐ Each runs with no test runner, `python3 tests/<its name>.py`, as well as under pytest (`W467`) |
-| the reader document, `ONBOARDING.md` unless `onboarding_doc` places it elsewhere or turns it off | what a reader gets, read off the corpus's own declarations, with commands that run from a fresh clone (`W313`) — and **no live figure**: where the corpus stands is a command it prints, because nothing rewrites a generated document when narrating or re-ingesting moves the answer (`W332`) |
+| `tests/` — two checks | R3's assertion, read from what a build declares it writes and from the tree through that same declaration, with this corpus's edits baked in; and the pin check — the installed library is the pinned version and build, ships every stubbed skill, and no stub has drifted. ⭐ Each runs with no test runner, `python3 tests/<its name>.py`, as well as under pytest |
+| the reader document, `ONBOARDING.md` unless `onboarding_doc` places it elsewhere or turns it off | what a reader gets, read off the corpus's own declarations, with commands that run from a fresh clone — and **no live figure**: where the corpus stands is a command it prints, because nothing rewrites a generated document when narrating or re-ingesting moves the answer |
 | `.studyforge/installed.json` | what step 6 undoes, a digest per generated file, and the one module that is yours, marked `hand_written` with no digest |
 
 ### 4. Write the one file that is a person's

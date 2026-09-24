@@ -118,9 +118,9 @@ WHY_PIN = (
     "wrote: this corpus's own bookkeeping, never material it teaches."
 )
 WHY_TESTS = (
-    "the checks onboarding generated to hold this corpus to R3 and to its "
-    "framework pin, and whatever running them writes beside them: code the "
-    "corpus is audited with, not material."
+    "the checks onboarding generated to hold this corpus to leaving its own "
+    "files untouched and to its framework pin, and whatever running them writes "
+    "beside them: code the corpus is audited with, not material."
 )
 WHY_READER = (
     "the onboarding report, written from this corpus's own declarations and "
@@ -224,7 +224,7 @@ def reader_document(
         "",
         "This repository was onboarded by `studyforge`. Everything below is",
         "generated from `corpus.json` and from what the build reads — edit the",
-        "manifest, not this file (R19).",
+        "manifest, not this file: a regeneration writes over it.",
         "",
         "## What this corpus declares",
         "",

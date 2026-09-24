@@ -202,7 +202,7 @@ def _refuse_stale(pin: dict) -> None:
             f"from the pinned version. Nothing was written"
         )
     if built is not None and pin["commit"] != built:
-        # ⭐ `W467`: a wheel knows its commit, so a pin naming another is stale too.
+        # ⭐ A wheel knows its commit, so a pin naming another is stale too.
         raise OnboardingRefused(
             f"{PIN_FILE} pins a studyforge built from another commit than the one running "
             f"this; re-pin with framework_commit=<the commit {VERIFY} prints>, or run "

@@ -46,12 +46,12 @@ a hand-edit is a **finding against this skill** rather than a fix (R19), and
 
 ## ⛔ And it never changes an answer the corpus already records
 
-⚠️ **Measured**: a re-survey of an onboarded corpus read the framework's own
-generated checks as the corpus's graders and drafted `exercises: true`, which
-this skill wrote with no refusal — presenting a corpus COMPLETE at the reading
-floor as unfinished (C5). ⭐ `recorded.moved` compares the manifest on disk with
-the one about to be written, over the manifest's own fields, and a regenerate
-that would move one refuses by name and writes nothing.
+⚠️ A re-survey of an onboarded corpus can read the framework's own generated
+checks as the corpus's graders and draft `exercises: true`, which would present
+a corpus COMPLETE at the reading floor as unfinished (C5). ⭐ `recorded.moved`
+compares the manifest on disk with the one about to be written, over the
+manifest's own fields, and a regenerate that would move one refuses by name and
+writes nothing.
 
 ## ⛔ The pin is the library this runs AS, never a checkout beside the corpus
 
@@ -133,12 +133,12 @@ class Onboarding:
         ⭐ **With `regenerate=True` the generated files are rewritten and an
         existing hand-written one is left exactly as it is** — neither
         overwritten nor treated as a collision. ⛔ That is `write_files`, the
-        rule `Scaffold.write` follows too: two copies of it disagreed
-        once, so there is one.
+        rule `Scaffold.write` follows too: one rule, so the two cannot
+        disagree.
 
         ⛔ **The pin is checked against the library running this first**:
         a version this Python does not import is refused by name,
-        and nothing is written. ⭐ `W467`: a generated file an earlier run wrote
+        and nothing is written. ⭐ A generated file an earlier run wrote
         and this one does not is removed if unedited, else refused (`record.retire`).
         """
         _check_running(self.version)
@@ -240,16 +240,16 @@ def onboard(
 
     `framework_commit` is the commit the running library was built from; the pin
     records it beside the version read from that library. ⭐ A built wheel knows
-    its own (`W467`), so it may be left out, and one naming another is refused;
+    its own, so it may be left out, and one naming another is refused;
     a source tree does not, so there it is required. `existing` is
-    the text of the `corpus.json` a re-onboarding finds on disk (`W283`); a
-    first onboarding passes nothing and is unchanged. ⛔ **`root` moves no byte**
-    (`W442`): no document names a path to the framework, so a regenerate from a
+    the text of the `corpus.json` a re-onboarding finds on disk; a
+    first onboarding passes nothing and is unchanged. ⛔ **`root` moves no byte**:
+    no document names a path to the framework, so a regenerate from a
     linked worktree and one from the main checkout write the same files (R10).
-    ⭐ It is accepted so existing callers keep working; the reader's document
-    reads no state either.
+    ⭐ It is accepted for callers that pass it; the reader's document reads no
+    state either.
     """
-    del root  # ⛔ W442: the checkout that ran the skill never reaches a rendered byte.
+    del root  # ⛔ The checkout that ran the skill never reaches a rendered byte.
     framework_commit = _running(library.built_from, framework_commit)
     version = _running(library.version)
     kept = _declared(existing) if existing is not None else ()
@@ -267,7 +267,7 @@ def onboard(
     document = promote(_carried(draft, persons), not_material=declared, reasons=reasons)
     manifest = parse(render(document))
     checks = [
-        _own(artifacts.EDITS_TEST, edits_test(manifest), "R3, with this corpus's edits"),
+        _own(artifacts.EDITS_TEST, edits_test(manifest), "nothing moved, with its declared edits"),
         _own(artifacts.PIN_TEST, pin_test(skills, reader), "the pin, and every stub naming it"),
     ]
     files = [
@@ -362,7 +362,7 @@ def _ignore_file(manifest: Manifest) -> list[Written]:
         wanted = profile_for(manifest.placement).ignore_file(media=not manifest.media.commits)
     except PlacementError as error:
         raise OnboardingRefused(str(error)) from None
-    why = "the framework's own caches, and the media policy's rules (R3)"
+    why = "the framework's own caches, and the media policy's rules"
     return [_own(wanted.home.as_posix(), wanted.text(), why)]
 
 

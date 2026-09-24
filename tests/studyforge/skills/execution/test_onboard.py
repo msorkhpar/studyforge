@@ -214,7 +214,7 @@ def test_an_include_naming_one_file_still_says_where_the_material_lives():
     assert skill.source_root(one) == "docs"
 
 
-def test_material_at_the_repository_root_is_refused_by_ruling_2():
+def test_material_at_the_repository_root_is_refused_as_more_than_the_sources():
     # ⛔ There is then no directory to bind that is not the repository, and
     # §8.1 mounts only the sources. Reported, never defaulted.
     with pytest.raises(skill.ExecutionRefused, match="only the sources"):

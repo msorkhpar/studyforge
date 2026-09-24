@@ -99,10 +99,10 @@ from studyforge.corpus.manifest.runtimes import (
 )
 
 #: ⛔ **What `parse`, `load` and `from_document` let out, as a tuple a caller
-#: catches**, rather than the paragraph in `errors.py` it replaces.
+#: catches**, rather than a paragraph in `errors.py` a caller retypes.
 #: `ManifestError`, plus `PersonalDataLeak`, which is never wrapped (R7).
 #:
-#: ⚠️ **`AddressError` is NOT a member, and that is measured, not forgotten.**
+#: ⚠️ **`AddressError` is NOT a member, deliberately.**
 #: `errors.py` names it as a pass-through of `Manifest.parse_key`, which no
 #: reader calls; `parse` translates `studyforge.address`'s slug refusal in `fields.slug_of`. A
 #: caller of `parse_key` catches `AddressError` itself.

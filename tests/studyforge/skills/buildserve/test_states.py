@@ -156,10 +156,10 @@ def test_the_probe_is_asked_only_when_a_run_could_happen():
     assert probe.asked == 1
 
 
-def test_the_host_state_says_what_the_ruling_says():
-    # ⭐ Round 125's wording: where it runs, what it lacks, that everything works,
-    # and (`W466`) the remedy names the corpus's own EXECUTION.md command, which
-    # reads both recorded tags, never the component's README.
+def test_the_host_state_says_where_it_runs_what_it_lacks_and_how_to_start_it():
+    # ⭐ Where it runs, what it lacks, that everything works, and the remedy
+    # names the corpus's own EXECUTION.md command, which reads both recorded
+    # tags, never the component's README.
     assert HOST_EXECUTION.name == "host"
     assert "execute on this host, without the runner's isolation" in HOST_EXECUTION.missing
     assert HOST_EXECUTION.works.startswith("everything:")

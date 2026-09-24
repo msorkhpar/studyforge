@@ -106,14 +106,12 @@ KNOWN_CORPUS_API = frozenset({1, 2, 3, 4, 5, 6})
 #: note warned about**: the gate would have been complete for one block and
 #: silently absent for the rest.
 #:
-#: ⛔ **A TOP-LEVEL key is keyed under the block `None`**: the map
-#: read nested keys only, so a top-level key with no entry here would have
-#: parsed under any version.
+#: ⛔ **A TOP-LEVEL key is keyed under the block `None`**, so a top-level key
+#: is gated by version exactly as a nested one is.
 #:
-#: ⭐ **On the package's surface (`W467`)**, to be read and never written, so onboarding's `promote`
-#: raises the version it writes from THIS map rather than from one constant per
-#: key it had re-derived — which missed `runtimes` and `media.max_files`
-#: (`W350/1`, `W460/2`) and would have missed every key a version adds.
+#: ⭐ **On the package's surface**, to be read and never written, so onboarding's
+#: `promote` raises the version it writes from THIS map rather than from one
+#: constant per key, and a key a later version adds is covered with no edit there.
 KEY_VERSIONS: dict[tuple[str | None, str], int] = {
     ("content", "not_material"): 2,
     ("media", "max_files"): 3,
@@ -345,7 +343,7 @@ def _check_key_versions(document: dict, corpus_api: int, where: str) -> None:
                 f"{where} declares corpus_api {corpus_api} and uses '{name}', "
                 f"which corpus_api {needed} added; declare corpus_api {needed}. The "
                 f"version is what tells an older build it cannot read this manifest, "
-                f"and it is not inferred from the keys present (R9)."
+                f"and it is never inferred from the keys present."
             )
 
 

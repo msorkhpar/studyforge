@@ -1,10 +1,10 @@
-"""Every remedy that tells a reader to start the containers names the corpus's own command (`W466`).
+"""Every remedy that tells a reader to start the containers names the corpus's own command.
 
-⚠️ **Measured (`W464/1`):** serve's `host` remedy, the build-and-serve procedure
-and the practice panel's no-editor sentence each sent a reader to
-`code-server-toolchain`'s README, while the one command that reads BOTH tags
-the execution skill recorded is in the corpus's own `EXECUTION.md`. The user
-ruled the fix on 2026-09-24. ⭐ So the three places are read here as a reader
+⚠️ Serve's `host` remedy, the build-and-serve procedure and the practice panel's
+no-editor sentence each tell a reader how to start the containers, and the one
+command that reads BOTH tags the execution skill recorded is in the corpus's own
+`EXECUTION.md`; any other would start images the corpus never recorded.
+⭐ So the three places are read here as a reader
 meets them, and the section each one names is read out of a document the skill
 really generates, so a renamed section or a moved command turns this RED.
 """

@@ -18,13 +18,12 @@ reads as naming nothing, wherever it is written.
 
 ⛔ **THE FLOOR IS KEYED ON THE SUBJECT, BECAUSE A SITE'S NAME IS THE PART THAT
 MOVES.** ⚠️ A floor that pinned each site as `path:function` would read a
-declared split — a reader moved out of one module into another — as a lost
-site, while the sweep finds it in its new home and the reach has GROWN. ⭐ **So
-the key holds nothing a declared split may legitimately change** — not the module, not the function
-name
-— and what is left that still measures reach is WHICH package's tuple is caught
-and by HOW MANY callers. ⛔ A count would hide which site vanished, so every
-shortfall prints the whole population beside it.
+declared split — a reader moved out of one module into another — as a lost site,
+while the sweep finds it in its new home and the reach has GROWN. ⭐ **So the key
+holds nothing a declared split may legitimately change** — not the module, not
+the function name — and what is left that still measures reach is WHICH
+package's tuple is caught and by HOW MANY callers. ⛔ A count would hide which
+site vanished, so every shortfall prints the whole population beside it.
 
 ⛔ **`archive` is exempt, and the exemption is checked rather than asserted.**
 See `test_archive_lets_out_only_exceptions_it_defines_itself` below, which states
@@ -67,10 +66,8 @@ REACH = {
     # `narrate.enabled.declared`): one below the count, the deleted-outright plant
     # finds that many left and DOES NOT RAISE.
     "studyforge.corpus.manifest": 9,
-    # ⚠️ `W457` RAISED it to 4 with `validate.narration`'s site, for the reason `W439` names.
-    # ⚠️ `W470/1` RAISED it to 6: `cli/serve.py` and `cli/check.py` import `read_corpus`
-    # from `generate.declarations`, which defines it, and the sweep that matched only
-    # the exporter's own name never saw either catch.
+    # ⚠️ It counts `validate.narration`'s site, and `cli/serve.py` and `cli/check.py`,
+    # which import `read_corpus` from `generate.declarations`, the module that defines it.
     "studyforge.generate": 6,
     # ⚠️ The run route's parse of a practice key is the first site naming
     # `progress.RAISES`, and a subject with NO floor here fails the deleted-outright
@@ -137,8 +134,8 @@ def test_every_catch_around_a_reader_names_that_package_s_own_tuple():
 
 
 def test_a_handler_names_the_tuple_only_by_naming_it_whole():
-    # ⛔ The predicate itself, both ways. `RAISES[:1]` is the plant that survived
-    # the instrument this replaces; it must read as naming nothing.
+    # ⛔ The predicate itself, both ways. `RAISES[:1]` names a narrowed tuple;
+    # it must read as naming nothing.
     bound = {"RAISES": frozenset({"studyforge.corpus.manifest"})}
     named = {"studyforge.corpus.manifest"}
     forms = (
@@ -292,8 +289,8 @@ def test_the_unplanted_copy_reads_green(tmp_path):
 
 def test_a_narrowed_tuple_fails_the_sweep(tmp_path):
     # ⛔ The pass condition is the MOVED exit code, not a
-    # string in a report. `RAISES[:1]` in a real handler is the plant that
-    # SURVIVED the instrument this replaces; here it must turn it red.
+    # string in a report. `RAISES[:1]` in a real handler is a narrowed tuple;
+    # here it must turn the sweep red.
     subject = population(source_root())
     copy, site = _planted_copy(tmp_path, subject)
     sites = catch_sites(copy, subject)
@@ -326,12 +323,12 @@ def _slice_every_constant_handler(path: Path, function: str) -> bool:
 
 
 def test_a_narrowed_tuple_fails_the_sweep_at_every_site_whatever_the_import_spells(tmp_path):
-    # ⛔ `W470/1`: a `RAISES[:1]` in `cli/serve.py`'s `main` SURVIVED, because that
+    # ⛔ A `RAISES[:1]` in `cli/serve.py`'s `main` must fail the sweep, though that
     # caller imports `read_corpus` from `generate.declarations`, the module that
-    # defines it, and the sweep matched only the exporter's own name. ⭐ Planted
+    # defines it, rather than by the exporter's own name. ⭐ Planted
     # at EVERY site in turn, so no caller is outside the reading by how it
     # spells its import — and the two that were are named, so a sweep that lost
-    # them again cannot pass this by planting only the sites it still finds.
+    # them cannot pass this by planting only the sites it still finds.
     subject = population(source_root())
     before = catch_sites(source_root(), subject)
     assert {"cli/serve.py:main", "cli/check.py:main"} <= set(before), (

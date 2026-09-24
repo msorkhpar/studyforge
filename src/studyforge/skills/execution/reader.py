@@ -155,7 +155,7 @@ def _prime(primed: Prime, flag: str | None, editor_flag: str | None) -> list[str
 
 
 def _carried(flag: str, editor_flag: str | None) -> list[str]:
-    """Say which printed lines carry the prime, so the sentence matches the block (`W464/2`)."""
+    """Say which printed lines carry the prime, so the sentence matches the block."""
     if editor_flag is None:
         return [
             f"The runner's build above carries `{flag}`. The component's contract declares",

@@ -1,10 +1,10 @@
-"""Every refusal the execution skill raises cites the spec as the spec is numbered (`W462/1`).
+"""Every refusal the execution skill raises cites the spec as the spec is numbered.
 
-⚠️ **Measured:** `rulings` and `onboard` said "§8.1 ruling 1"–"4" in their
-refusals, and §8.1 numbers no rulings: it states them as the bullets of *"what
-the compose side gets right"*. A reader who looked for "ruling 2" found nothing.
-⭐ So this reads every string the package can put in a message — each constant,
-and each literal part of an f-string, but no docstring — and holds two rules:
+⚠️ §8.1 numbers no rulings: it states them as the bullets of *"what the compose
+side gets right"*, so a refusal that cited a numbered ruling would send a reader
+looking for something the spec does not have. ⭐ So this reads every string
+the package can put in a message — each constant, and each literal part of an
+f-string, but no docstring — and holds two rules:
 no string says "ruling <number>", and every "§<number>" is a section heading the
 spec carries.
 """

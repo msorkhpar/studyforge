@@ -75,8 +75,8 @@ def test_globs_entered_as_data_land_and_nothing_generated_reads_as_hand_edited(t
     assert len(_globs(root)) == len(set(_globs(root))), "a generated glob was declared twice"
 
 
-def test_the_hand_typed_entry_the_guide_once_prescribed_is_named(tmp_path):
-    # ⛔ The negative, and the register's measurement at its smallest: ONE entry
+def test_a_hand_typed_not_material_entry_is_named(tmp_path):
+    # ⛔ The negative at its smallest: ONE entry
     # typed into `corpus.json` by hand is an R19 finding against the corpus.
     root = _onboarded(tmp_path)
     document = _manifest(root)
@@ -248,7 +248,7 @@ def test_a_pin_naming_another_version_is_refused_without_a_re_pin(tmp_path, monk
 def test_a_pin_naming_another_commit_than_a_built_library_is_refused_until_re_pinned(
     tmp_path, monkeypatch
 ):
-    # ⭐ `W467`: a built wheel knows its commit, so a pin naming another is stale.
+    # ⭐ A built wheel knows its commit, so a pin naming another is stale.
     from studyforge.skills.onboarding import library
 
     root = corpora.material(tmp_path / "corpus")

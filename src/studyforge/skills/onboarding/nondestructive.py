@@ -95,7 +95,7 @@ EDITS_TEST = f"{TESTS_DIR}/test_non_destructive.py"
 #: What the generated module says it is. ⭐ One place, because the sentence is
 #: the first thing anybody reads when the check goes RED.
 SUMMARY = (
-    "R3 for this corpus: generation adds, and edits only what was declared.\n"
+    "Generation for this corpus adds, and edits only what was declared.\n"
     "\n"
     "Read twice — from what a build DECLARES it writes, which no working-tree\n"
     "state can move, and from the tree itself, where an addition is never a\n"
@@ -139,7 +139,7 @@ def _declarations(permitted: list[str]) -> list[str]:
         "#: Every path this corpus declared in permitted_edits, taken from",
         "#: corpus.json at the run that generated this file. An edit to anything",
         "#: else is what this check catches — and the corpus is asked below",
-        "#: whether this is still its own declaration (R19).",
+        "#: whether this is still its own declaration.",
         f"PERMITTED = {permitted!r}",
         "",
         "#: What a status letter says about a file that ALREADY EXISTED:",
@@ -164,7 +164,7 @@ def _declarations(permitted: list[str]) -> list[str]:
         "#: Said, never assumed, when the plan will not say what a build writes.",
         "UNPLANNABLE = (",
         "    'the plan for this corpus refused, so what a build writes into it '",
-        "    'cannot be read and R3 cannot be checked against it: '",
+        "    'cannot be read and nothing can be checked against it: '",
         ")",
         "",
         "",
@@ -200,7 +200,7 @@ def _readers() -> list[str]:
         "def _touched(code, where, origin):",
         '    """Every path one record says an EXISTING file was rewritten, removed or moved at.',
         "",
-        "    An addition is none of those: R3 forbids moving, renaming and",
+        "    An addition is none of those: generation never moves, renames or",
         "    rewriting, so a new file reports the same here staged or untracked.",
         '    """',
         "    if code == '??':",
@@ -233,7 +233,7 @@ def _checks() -> list[str]:
     """Return the assertions: the declaration, the baked list, and the tree."""
     return [
         "def test_no_path_a_build_writes_here_is_this_corpus_own_content():",
-        '    """R3 from the declaration, so the verdict does not move with the tree."""',
+        '    """Read from the declaration, so the verdict does not move with the tree."""',
         "    root = _root()",
         "    plan = _planned(root)",
         "    content = parse((root / MANIFEST_FILENAME).read_text(encoding='utf-8')).content",
@@ -243,7 +243,7 @@ def _checks() -> list[str]:
         "        if where not in PERMITTED and reads_as_content(where.rstrip('/'), content)",
         "    )",
         "    assert not landing, (",
-        "        'generation is additive (R3); a build of this corpus would write over '",
+        "        'generation is additive; a build of this corpus would write over '",
         "        'these paths, which its own manifest reads as content: ' + repr(landing)",
         "    )",
         "",
@@ -256,13 +256,13 @@ def _checks() -> list[str]:
         "",
         "    assert declared == sorted(PERMITTED), (",
         "        'this check was generated against permitted_edits that corpus.json no '",
-        "        'longer declares; regenerate it rather than editing it (R19): ' +",
+        "        'longer declares; regenerate it rather than editing it: ' +",
         "        repr(declared)",
         "    )",
         "",
         "",
         "def test_nothing_that_already_existed_changed_but_what_is_declared():",
-        '    """R3 in the tree, read through the same declaration and both status letters."""',
+        '    """Read in the tree, through the same declaration and both status letters."""',
         "    root = _root()",
         "    git = shutil.which('git')",
         "    if git is None:",
@@ -283,7 +283,7 @@ def _checks() -> list[str]:
         "    undeclared = _undeclared(root, _planned(root), touched)",
         "",
         "    assert not undeclared, (",
-        "        'generation is additive (R3); these files already existed and were '",
+        "        'generation is additive; these files already existed and were '",
         "        'rewritten, removed or moved, and nothing declares them — not this '",
         "        \"corpus's permitted_edits, not the plan's output, not the install \"",
         '        "record, not the execution skill\'s output: " + repr(undeclared)',

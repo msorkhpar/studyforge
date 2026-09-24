@@ -151,7 +151,7 @@ def test_the_generated_check_names_every_stub_it_must_agree_with():
 
 
 def test_the_generated_check_says_it_is_generated():
-    assert "R19" in pin.pin_test()
+    assert "rather than a fix" in pin.pin_test()
 
 
 def test_the_generated_check_asks_no_checkout_and_starts_no_process():
@@ -176,7 +176,7 @@ def _generated(root):
     return loaded
 
 
-#: The one generated check a source tree cannot answer (`W467`): its commit.
+#: The one generated check a source tree cannot answer: its commit.
 UNBUILT = "test_the_installed_library_was_built_from_the_pinned_commit"
 
 
@@ -280,7 +280,7 @@ def test_the_generated_check_fails_a_pin_naming_another_commit_than_a_built_libr
 
 
 def test_the_generated_check_runs_as_a_script_and_exits_by_its_checks(tmp_path):
-    # ⭐ `W467`, `ISO-32/4`: `python3 tests/test_framework_pin.py`, no test runner asked.
+    # ⭐ `python3 tests/test_framework_pin.py`, no test runner asked.
     from studyforge.skills.onboarding import artifacts
 
     root = _onboarded(tmp_path)

@@ -24,7 +24,7 @@ is `"installed"`, and a stub names its skill and the command that prints the
 procedure from the installed package (`studyforge.skills.documents`).
 ⛔ **A stub carries no path at all**, relative or absolute (R7).
 
-⭐ **Both are verified** (`W467`). The version is read from the library the
+⭐ **Both are verified.** The version is read from the library the
 corpus's Python imports, and so is the commit: a built wheel carries the one it
 was built from (`library.commit()`, stamped by the repository's `setup.py`),
 both when onboarding writes and when the generated `test_framework_pin.py` runs.
@@ -144,7 +144,7 @@ def stub(name: str, commit: str, version: str) -> str:
             f"    {VERIFY}",
             "",
             "This file is a pointer and is regenerated. A hand-edit to it is a",
-            "finding against the onboarding skill, not a fix (R19).",
+            "finding against the onboarding skill, not a fix.",
             "",
         ]
     )
@@ -201,7 +201,7 @@ def pin_test(skills: Sequence[str] = SKILLS, reader: str | None = ONBOARDING_DOC
             "",
             "",
             "def test_the_pin_records_a_version_and_a_commit_and_not_a_path():",
-            '    """A pin carrying a path would carry somebody\'s home directory (R7)."""',
+            '    """A pin carrying a path would carry somebody\'s home directory."""',
             "    pin = _pin()",
             "    assert pin['where'] == WHERE, 'the framework is the installed library'",
             "    assert re.fullmatch('[0-9a-f]{40}', pin['commit']), (",
@@ -219,7 +219,7 @@ def pin_test(skills: Sequence[str] = SKILLS, reader: str | None = ONBOARDING_DOC
             "    installed = library.version()",
             "    assert installed == pin['version'], (",
             "        'the installed ' + FRAMEWORK + ' is ' + installed + ' and the pin names ' +",
-            "        pin['version'] + '; install the pinned version, or re-pin (R19)'",
+            "        pin['version'] + '; install the pinned version, or re-pin'",
             "    )",
             "",
             "",
@@ -236,7 +236,7 @@ def pin_test(skills: Sequence[str] = SKILLS, reader: str | None = ONBOARDING_DOC
             "    pin = _pin()",
             "    assert built == pin['commit'], (",
             "        'the installed ' + FRAMEWORK + ' was built from ' + built + ' and the pin '",
-            "        'names ' + pin['commit'] + '; install the pinned build, or re-pin (R19)'",
+            "        'names ' + pin['commit'] + '; install the pinned build, or re-pin'",
             "    )",
             "",
             "",
@@ -262,12 +262,12 @@ def pin_test(skills: Sequence[str] = SKILLS, reader: str | None = ONBOARDING_DOC
             "            drifted.append(where)",
             "    assert not drifted, (",
             "        'these stubs name a commit or a version the pin does not: ' +",
-            "        repr(drifted) + '; regenerate them rather than editing them (R19)'",
+            "        repr(drifted) + '; regenerate them rather than editing them'",
             "    )",
             "",
             "",
             "def test_the_framework_is_not_a_submodule():",
-            '    """R18, amended: nothing here is pushed, so a submodule URL has no form."""',
+            '    """Nothing here is pushed, so a submodule URL has no form."""',
             "    assert not (_root() / '.gitmodules').exists(), (",
             "        'the framework is the installed library at a recorded version, '",
             "        'never a submodule'",

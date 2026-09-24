@@ -82,7 +82,7 @@ from studyforge.corpus.manifest import (
 from studyforge.version import check as check_version
 
 #: The `corpus_api` each named key first became legal in, READ from the manifest
-#: package's own map (`W467`): reconnaissance's proposal and the tests ask them.
+#: package's own map: reconnaissance's proposal and the tests ask them.
 #: ⛔ `promote` asks the whole map, never these three.
 NOT_MATERIAL_API = KEY_VERSIONS[("content", "not_material")]
 NARRATION_API = KEY_VERSIONS[(None, "narration")]
@@ -94,7 +94,7 @@ ONBOARDING_DOC_API = KEY_VERSIONS[(None, "onboarding_doc")]
 #: because it is absent from the draft, and an absent `media` block is a
 #: *stated* default of the manifest schema. A generator that
 #: wrote one out would freeze the footprint limits' names on every corpus,
-#: including the ones with no media at all. ⭐ `runtimes` is here (`W350/1`): an
+#: including the ones with no media at all. ⭐ `runtimes` is here: an
 #: empty list says what an absent key says, and would raise the version for nothing.
 OPTIONAL_KEYS = ("media", "permitted_edits", "runtimes")
 
@@ -160,9 +160,9 @@ def _api_for(draft: Mapping[str, object], document: Mapping[str, object]) -> int
     """Return the version to write: never below the draft's, never above what is needed.
 
     ⛔ **R9's membership test is `studyforge.version`'s, never a second copy
-    here** (SF-33). What this module decides is only which version the *data*
+    here**. What this module decides is only which version the *data*
     needs, and ⭐ **that is the manifest's own `KEY_VERSIONS`, asked of every key
-    the document carries** (`W467`) — the gate `parse` refuses by, read the same
+    the document carries** — the gate `parse` refuses by, read the same
     way, so no key a version adds can be written under a version that refuses it.
     """
     asked = check_version(
