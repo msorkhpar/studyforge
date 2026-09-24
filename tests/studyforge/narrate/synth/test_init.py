@@ -70,7 +70,7 @@ def test_narration_api_is_registered_in_the_one_tuple():
 
 def test_no_module_in_the_package_names_version_control_or_an_exclusion_file():
     # ⛔ SF-17's Acceptance, asserted rather than reviewed. Whether media is
-    # carried is a manifest policy (SF-02, SF-32) and this package has no
+    # carried is a manifest policy and this package has no
     # opinion — so the words are absent from the prose as well as from the code.
     pattern = re.compile(r"(?i)\b(git|gitignore|ignore|ignored|ignoring|exclude)\b")
     offenders = {path.name: pattern.findall(path.read_text(encoding="utf-8")) for path in MODULES}

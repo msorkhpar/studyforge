@@ -15,8 +15,8 @@ deliberately left in place.
 **Depends on.** `re`, and nothing else — not this framework's error type and not
 any renderer. ⛔ Nothing that knows what a block is: every block renderer
 depends on this module, and it depends on none of them. ⚠️ **The line this
-replaced said *"`re` and `page.errors`"* and had said so since `SF-12`; the
-import list has never carried `page.errors` (`W76/2`), and a "depends on" that
+replaced said *"`re` and `page.errors`"* and had said so from the start; the
+import list has never carried `page.errors`, and a "depends on" that
 names a dependency the module does not have is the sentence that makes the move
 this module has just made look impossible.
 
@@ -106,7 +106,7 @@ list that would have forgotten the second.
 
 ## ⛔ What this function does NOT guarantee
 
-⭐ **Ruling 56 — name the neighbour you have not asserted.** `safe_href` sees a
+⭐ **The neighbour this does not assert, named.** `safe_href` sees a
 string and no page, so it cannot know how many `../` steps leave the site root:
 `../../../../../etc/passwd` is a well-formed relative reference and is
 **admitted**. ⚠️ Bounding that needs the asking page's depth, which lives in

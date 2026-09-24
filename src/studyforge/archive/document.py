@@ -110,7 +110,7 @@ DOCUMENT_KEYS = (
 )
 
 #: Written only when they have something to say, and always after the digest.
-#: ⚠️ **Appended, never inserted.** `exercise` joined at SF-23 and went on the
+#: ⚠️ **Appended, never inserted.** `exercise` joined later and went on the
 #: end for that reason: every document written before it existed still renders
 #: the bytes it always did.
 OPTIONAL_KEYS = ("assets_sha256", "starting_code", "media_skipped", "exercise")

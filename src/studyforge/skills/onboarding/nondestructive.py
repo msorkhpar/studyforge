@@ -74,7 +74,7 @@ the corpus's own content is caught from the declaration, in every state.
 ⚠️ **A generated check that carried its own copy of *"what a build writes"*
 would be a copy of a 1599-path enumeration that ages the moment the corpus
 does.** ⭐ The corpus is pinned to a framework checkout and every generated
-suite already imports it — `SK-02`'s `tests/ingest/test_emit.py` imports
+suite already imports it — the adapter scaffold's `tests/ingest/test_emit.py` imports
 `studyforge.validate`, and `test_framework_pin.py` refuses a corpus with no
 framework beside it. ⛔ So this takes no dependency the corpus did not have.
 """

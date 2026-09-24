@@ -1,4 +1,4 @@
-r"""`W330`: the trees `docs/authoring/placement.md` draws are the trees placement places.
+r"""The trees `docs/authoring/placement.md` draws are the trees placement places.
 
 **What it asserts.** Step 3 of the six-step route is where an integrator learns
 what a build creates, **before** they write an ignore rule or declare a
@@ -15,11 +15,11 @@ its own.
 ## ⚠️ Why this is a module of its own, and not four more tests next door
 
 ⭐ `tests/test_authoring_reference.py` sits close to its 600-line ceiling and
-could not hold it, which is the same reason and the same precedent as
-`W117/2`. ⛔ **The seam is named rather than convenient:** that module reads the
-reference's **vocabularies** — the key lists, the check names, the rule ids,
-the exit codes — and imports no profile; this one reads its **geography**, and
-imports nothing else.
+could not hold it, which is the same reason as every split at a ceiling:
+the remedy is a split, never a trim. ⛔ **The seam is named rather than
+convenient:** that module reads the reference's **vocabularies** — the key
+lists, the check names, the rule ids, the exit codes — and imports no profile;
+this one reads its **geography**, and imports nothing else.
 
 ## ⛔ What went wrong, and what the shape of the fix has to be
 

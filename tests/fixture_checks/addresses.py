@@ -14,11 +14,11 @@ not handed.
 archive address it needs, `skills.adapter.Layout`, the one place in `src/` that
 computes one.
 
-⛔ **No address here is composed from a literal** (`W322`, received from
-`W198/4`). The archive root, a container map's filename, a unit's own directory
-and the authored overlay's name are the layout's arithmetic, not this module's:
-each is asked for, and where a **glob** is wanted — a pattern being the one
-thing a layout does not produce — the pattern is derived from what the layout
+⛔ **No address here is composed from a literal** (`W322`). The archive root,
+a container map's filename, a unit's own directory and the authored overlay's name
+are the layout's arithmetic, not this module's: each is asked for, and where a
+**glob** is wanted — a pattern being the one thing a layout does not produce —
+the pattern is derived from what the layout
 computed rather than retyped. ⚠️ A test that invents an address is a build that
 invents it, one register over: it passes while the constant happens to be what
 the test says, and goes silently wrong the day the constant moves.
@@ -79,7 +79,7 @@ def below_container(layout, path):
 def unit_files_in(container_dir, unit):
     """One unit's own directory beneath `container_dir`, as `Layout.unit_files` shapes it.
 
-    ⛔ **Not composed here** (`W298/2`). A fixture check is handed the container
+    ⛔ **Not composed here**. A fixture check is handed the container
     directory rather than the corpus root, so it cannot ask `Layout` for the
     whole path — but the part it needs is the part *below* that directory, and
     that part is the layout's to compute at any address at all.
@@ -258,7 +258,7 @@ def check_overlay_sections(overlay, where):
 
 
 def default_key(section):
-    """The key a section gets when it declares none — SF-09's escape hatch inverted."""
+    """The key a section gets when it declares none — the overlay's escape hatch inverted."""
     kind = section.get("kind")
     if kind == "shared":
         return "shared"

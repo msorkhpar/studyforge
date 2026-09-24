@@ -73,7 +73,7 @@ REFUSALS = [
 
 
 def test_a_manifest_error_is_a_value_error():
-    # ⚠️ SF-01's proposed precedent, and this line is the whole of SF-02's
+    # ⚠️ `address`'s precedent, and this line is the whole of the manifest's
     # exposure to it: a *value* error subclasses `ValueError`. If the CTO
     # overrules the split, this is what changes.
     assert issubclass(ManifestError, ValueError)
@@ -157,15 +157,15 @@ def test_only_this_module_and_its_two_callers_name_the_escaping_phrase():
     # a fourth module wanting it is a contract decision, not an import.
     named = modules_naming_escape()
     # ⭐ The inhabitation assertion, before the claim: a sweep that found
-    # nothing would pass the line below just as loudly (Ruling 132).
+    # nothing would pass the line below just as loudly.
     assert named, f"the sweep found no module at all under {SOURCE_ROOT.name}"
     assert named == list(MAY_NAME_ESCAPE), named
 
 
 def test_the_sweep_above_would_notice(tmp_path, monkeypatch):
-    # ⛔ Ruling 123, all three readings. Reading 1 is the test above, on the
+    # ⛔ All three readings. Reading 1 is the test above, on the
     # live tree. Reading 2 plants a fourth namer in the spelling the clause
-    # did not picture (Ruling 140) — not a definition and not the name, but
+    # did not picture — not a definition and not the name, but
     # an *aliased import*, which is exactly the bridge shape this row deleted.
     for name in MAY_NAME_ESCAPE:
         (tmp_path / name).parent.mkdir(parents=True, exist_ok=True)

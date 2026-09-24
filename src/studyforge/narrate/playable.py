@@ -26,7 +26,7 @@ on `render`** — this module hands out filenames, and turning one into an href 
 
 ## ⛔ WHY THIS MODULE EXISTS AT ALL, AND WHY IT IS NEITHER NEIGHBOUR'S
 
-⚠️ **`SF-17` is keyed by speech id and `SF-18` is keyed by position, and until
+⚠️ **Synthesis is keyed by speech id and the player by position, and until
 now nothing held both.** ⛔ It is not `narrate/synth/`'s: that package answers
 *which clips must be MADE now* and is the write side, whose seam runs
 `incremental → record` and stops. ⛔ It is not `render/page/`'s: that package's
@@ -196,7 +196,7 @@ def playable_of_units(
     none of them is reported: `narrated` is `False` and `silent` is empty. ⚠️ The
     alternative is a build that prints one complaint per paragraph for every
     corpus that has never been narrated, which is the reading floor arriving as
-    an error log (R6, and `SF-18`'s `SILENT` is the same answer at the page).
+    an error log (R6, and the player's `SILENT` is the same answer at the page).
     """
     if not isinstance(state, State):
         raise TypeError(f"the recorded clips arrive as a State, got {describe(state)}")

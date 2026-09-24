@@ -2,7 +2,7 @@
 
 **What it asserts.** R3 whole: a file already there with other bytes refuses
 every write, before any; the same bytes are kept; and `replaces` — the one
-exception, the ledger's (`W456`) — rewrites a file and never a directory.
+exception, the ledger's — rewrites a file and never a directory.
 """
 
 from __future__ import annotations

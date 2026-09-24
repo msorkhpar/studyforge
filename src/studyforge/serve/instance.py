@@ -12,7 +12,7 @@ every corpus a discovery found, and `cli/serve.py`'s `--site` form calls it over
 the one corpus it serves, so a served site answers `state`, `run` and `quiz` as a
 served root does. `site_discovery` is the one-corpus discovery the `--site` form
 hands it. `run` and `quiz` are the writer namespaces — a run's starts and its stop
-are `POST` (`SF-22`), and so is grading a quiz (`W451`) — and `WRITERS` names
+are `POST`, and so is grading a quiz — and `WRITERS` names
 them, so no caller spells the writers itself.
 ⚠️ The `serve` verb calls `discover` and `instance_of` and never `make_instance`,
 so a namespace registered only in `make_instance` would never be served.
@@ -57,7 +57,7 @@ index and the policy, and a seam registering no run namespace gets `'none'`.
 `archive.scrub` for the report, and `corpus.discovery`'s startup scan for a site
 built elsewhere.
 
-⭐ **This is the seam `studyforge serve` (`SF-39`, `W230`) calls**: a root and a
+⭐ **This is the seam `studyforge serve` (`W230`) calls**: a root and a
 port, and nothing else — no configured paths, no corpus named. ⚠️ The verb takes
 the two halves, so it can refuse a corpus that declares pages nobody built before
 any socket exists. ⛔ What a namespace answers is decided in its own module; this
@@ -81,8 +81,8 @@ from studyforge.serve.response import Request, Response
 from studyforge.serve.routes import quiz, run, runs, state
 from studyforge.serve.routes.content import CorpusContent
 
-#: The namespaces that also answer `POST`: `run` (`SF-22`), and `quiz`, whose
-#: grading is an act a prefetch must never take (`W451`).
+#: The namespaces that also answer `POST`: `run`, and `quiz`, whose grading is
+#: an act a prefetch must never take.
 WRITERS = (run.NAMESPACE, quiz.NAMESPACE)
 
 #: ⭐ Where a served page's execution client is fetched from (`SF-24`, `W370`) —
@@ -154,7 +154,7 @@ def namespaces_of(discovered: Discovered, sources: dict[str, CorpusContent]) -> 
 
     ⭐ `sources` maps each served corpus's `source` to the content its unit
     documents are read from, which is where a run reads its command and where
-    the quiz namespace reads a quiz's key (`W451`).
+    the quiz namespace reads a quiz's key.
     """
     return {
         state.NAMESPACE: partial(state.route, discovered),

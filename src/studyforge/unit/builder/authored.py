@@ -43,7 +43,7 @@ So it is refused, naming the key.
 
 ## ⚠️ What this module does **not** assert
 
-⛔ Ruling 56, so the neighbours are named: it does not check that the overlay's
+⛔ The neighbours are named: it does not check that the overlay's
 `address` and `unit` match the material's — `builder.document` does that once,
 where both are in hand — and it does not check that a section's `blocks` are
 well formed, which is `archive.blocks`' vocabulary and `validate`'s sweep.

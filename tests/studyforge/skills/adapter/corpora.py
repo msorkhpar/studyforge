@@ -1,4 +1,4 @@
-"""A synthetic corpus an adapter can be scaffolded into, and a reader for it (SK-02).
+"""A synthetic corpus an adapter can be scaffolded into, and a reader for it.
 
 ⛔ Synthetic on purpose. A fixture that depends on a sibling repository being
 checked out is a fixture that skips, and a skipped check is not evidence.

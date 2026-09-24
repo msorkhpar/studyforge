@@ -29,7 +29,7 @@ takes one of them:
 | ⭐ **FIXTURE** | the TEST decides the environment | `pinned_environment` |
 | ⭐ **LICENCE** | it may read the host and SAYS SO | `conftest.py` |
 
-⚠️ **A NAMED module with a STATED licence, never a pattern** (Ruling 185) —
+⚠️ **A NAMED module with a STATED licence, never a pattern** —
 `LIVE_ROOT_READERS` in `tools/tests/quality/board/test_host_population.py` is the
 prior art and this is its shape.
 
@@ -101,12 +101,12 @@ DEFINES_THE_READINGS = ("discovery.py",)
 #: (Ruling 204), the count of what did not run is printed, and the environment in
 #: force is printed beside it. ⚠️ **Nothing there can turn a silent non-run into
 #: a green reading** — which is the property `LIVE_ROOT_READERS` states for the
-#: git half, in the same form (Ruling 185).
+#: git half, in the same form.
 AMBIENT_ENVIRONMENT_READERS = ("conftest.py",)
 
 #: ⛔ The readings whose answer an environment variable changes. ⚠️ **Matched on
 #: the LAST SEGMENT**, so `discovery.state(...)` and a bare `state(...)` are both
-#: reached — a superset matcher, declared here the way Ruling 257 requires.
+#: reached — a superset matcher, and its reach is declared here.
 VERDICT_FUNCTIONS = (
     "require_browser",
     "state",
@@ -166,8 +166,8 @@ def _environment_key(node: ast.AST, bindings: dict[str, str]) -> str | None:
 def _environment_reads(node: ast.AST, bindings: dict[str, str], where: str) -> dict[str, str]:
     """Every `STUDYFORGE_*` environment read under `node`, mapped to its enclosing function.
 
-    ⚠️ **What it does NOT cover, DECLARED rather than implied** (Ruling 220,
-    Ruling 258): a name rebound through a second constant, a key built at run
+    ⚠️ **What it does NOT cover, DECLARED rather than implied**, as a closed
+    list: a name rebound through a second constant, a key built at run
     time, a read through `os.getenv`, and a read in a module this package
     imports rather than contains. ⛔ **Nothing in this package does any of the
     four, and that is a measurement rather than a hope** — a guard claiming a
@@ -205,9 +205,9 @@ def _pytest_runs_it(node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
     ⛔ **The distinction is load-bearing.** ⚠️ A plain module-level helper cannot
     request a fixture — it is called with arguments by its neighbours — so
     demanding one of `test_init.py`'s `_line_for(state)` would be the
-    fires-on-correct-work class this package has already met five times
-    (`W119/2`, Ruling 179). ⭐ **A helper CONTRIBUTES REACH and is never itself
-    the offender; the function pytest runs is the one that owes the fixture.**
+    fires-on-correct-work class this package has already met five times.
+    ⭐ **A helper CONTRIBUTES REACH and is never itself the offender; the function
+    pytest runs is the one that owes the fixture.**
 
     ⛔ **BOTH decorator spellings, and the first draft read only one** — see
     `W128/2`. ⚠️ `@pytest.fixture` is an `ast.Name`/`ast.Attribute` and
@@ -234,7 +234,7 @@ def _uncontrolled_verdict_callers(source: str) -> list[str]:
     only saw the direct call would have scored `test_init.py` clean while its
     helper called `report_line()` on the host's environment.
 
-    ⚠️ **Declared gaps** (Ruling 220, Ruling 258): a helper two levels down, a
+    ⚠️ **Declared gaps**, a closed list: a helper two levels down, a
     helper imported from another module, a verdict reached through a fixture
     this sweep does not resolve, a callable spelled outside `VERDICT_FUNCTIONS`,
     and a test that pins the environment some other way than by requesting
@@ -293,7 +293,7 @@ def test_every_environment_variable_this_package_reads_is_DECLARED_and_PARTITION
 
 
 def test_the_partition_is_TOTAL_and_DISJOINT_over_the_declared_population() -> None:
-    """⛔ Ruling 258: a declared list is a CLOSED claim, so a partial one is worse than none."""
+    """⛔ A declared list is a CLOSED claim, so a partial one is worse than none."""
     assert set(VERDICT_REACHING) | set(ARTIFACT_ONLY) == set(POPULATION)
     assert not set(VERDICT_REACHING) & set(ARTIFACT_ONLY)
     assert ARTIFACT_ONLY, "⛔ a partition with an empty half is a list, not a partition"
@@ -370,7 +370,7 @@ def test_STUDYFORGE_DEV_CONTAINER_reaches_the_ADMISSIBILITY_verdict_in_BOTH_dire
 def test_the_ARTIFACT_ONLY_variable_reaches_NO_verdict_and_that_is_the_CONTROL(
     pinned_environment, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """⭐ Ruling 70's form: the partition is a claim until its other half is exercised.
+    """⭐ The partition is a claim until its other half is exercised.
 
     ⛔ Flipping `STUDYFORGE_VISUAL_CAPTURES` must change NONE of the three
     verdicts and must not appear in the declaration — otherwise `ARTIFACT_ONLY`
@@ -467,9 +467,8 @@ def test_no_TEST_in_this_package_lets_the_AMBIENT_environment_reach_a_VERDICT() 
     ⭐ **The population is every module in this package EXCEPT the one that
     DEFINES the readings**, which is named in `DEFINES_THE_READINGS` and reads
     the environment on purpose. ⛔ **The one licensed caller is
-    `AMBIENT_ENVIRONMENT_READERS`, and it doubles as this guard's POSITIVE ROW
-    (Ruling 191(c)): the reading is `1` against a declared `1`, never `0`
-    against `0`.**
+    `AMBIENT_ENVIRONMENT_READERS`, and it doubles as this guard's POSITIVE ROW:
+    the reading is `1` against a declared `1`, never `0` against `0`.**
     """
     sources = _sources()
     for declared in (*DEFINES_THE_READINGS, *AMBIENT_ENVIRONMENT_READERS):
@@ -493,7 +492,7 @@ def test_no_TEST_in_this_package_lets_the_AMBIENT_environment_reach_a_VERDICT() 
 
 
 def test_the_AMBIENT_guard_is_PLANTED_in_both_directions_and_the_two_readings_DIFFER() -> None:
-    """⛔ Ruling 123: the guard above is validated by PLANTING, not only by running.
+    """⛔ The guard above is validated by PLANTING, not only by running.
 
     ⭐ **Nine readings.** The PLANTS are the retired shape in every spelling
     pytest runs — a test, a fixture, a hook, and a test reached through a

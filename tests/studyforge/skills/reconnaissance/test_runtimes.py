@@ -138,7 +138,7 @@ def test_the_same_files_unrecorded_ARE_evidence_so_the_clause_above_measures_som
 
 
 # --------------------------------------------------------------------------
-# ⭐ the draft reads back: `corpus_api` 4, through SF-02 and through `promote`
+# ⭐ the draft reads back: `corpus_api` 4, through the manifest reader and `promote`
 # --------------------------------------------------------------------------
 
 

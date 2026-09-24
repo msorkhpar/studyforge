@@ -12,7 +12,7 @@ the corpus tree. ⛔ **No model runs at build time and none at serve time** (spe
 §7 §2): the site stays offline (R8) and the build stays byte-reproducible from
 the committed bundles (R10).
 
-⭐ **It supersedes `SK-04`'s refusal of a grader-less source.** A source that
+⭐ **It supersedes the earlier refusal of a grader-less source.** A source that
 ships no test gets exercises authored for it. The honesty that refusal
 protected is kept by the gates: an authored grader is `generated`/`advisory`
 and ships only with the gate record that says it cleared.
@@ -52,8 +52,8 @@ report.** The case is not chosen. It is read off the ledger for each page:
 
 ⛔ **Every exercise this skill writes is `generated`/`advisory`, in every
 case.** The provenance is filled in by the skill and a draft cannot name one.
-A `bundled`/`authoritative` exercise comes from `SK-04`'s blanking derivation,
-unchanged, and this skill never assigns that label.
+A `bundled`/`authoritative` exercise comes from the blanking derivation over the
+source's own exercise, unchanged, and this skill never assigns that label.
 
 ⭐ **A page whose subject is not code gets a quiz** (spec §7 §7). You declare
 the page's kind as `quiz`, and you author questions from its passages. An
@@ -69,7 +69,7 @@ file, the unit it becomes (address, variant, unit number), its kind (`code` or
 `quiz`), the test files the corpus declares for it, its `aspects` and a `tier`
 (`introductory`, `core` or `advanced`).
 
-#### ⛔ Plan by the page's important ideas (`W453`, user ruling 2026-09-23)
+#### ⛔ Plan by the page's important ideas (user ruling 2026-09-23)
 
 The user's ruling, in their words:
 
@@ -111,7 +111,7 @@ reasoned plans zero, and a page teaching nothing checkable names no aspect
 and says why in `nothing_checkable`. ⚠️ `tier` says how hard each exercise is,
 never how many.
 
-⛔ **SUPERSEDED 2026-09-23 (`W453`)** — kept so a citation of it resolves, and
+⛔ **SUPERSEDED 2026-09-23** — kept so a citation of it resolves, and
 not in force:
 
 > *Your three readings. Those are `words` (count them with `words_of`, which
@@ -184,7 +184,7 @@ authored.bare  # every page left with nothing shipped (R6)
 4. Every ledger entry nothing shipped accounts for gets a written reason, and
    `account` refuses an entry with neither.
 5. The accounted ledger is merged into the committed one: rows for files this
-   pass did not read are kept (`W456`).
+   pass did not read are kept.
 6. Every file is checked against the tree **before any is written**, then the
    bundles, the reader's workspace files and each unit's coverage report are
    created, and the merged ledger is written.
@@ -238,7 +238,7 @@ is exactly what R3 forbids. Remove that directory from the corpus, and run
 the pass again. ⛔ **Never remove `exercises/ledger.json`** to get past a
 refusal: it holds every other page's rows.
 
-⭐ **A pass over part of a corpus owns only the files it read** (`W456`). The
+⭐ **A pass over part of a corpus owns only the files it read**. The
 ledger is one file for the whole corpus, and it is the one file a pass
 rewrites: the rows of the files handed in as `material` and `graders` are
 replaced, and every other row is kept byte for byte, so containers can be

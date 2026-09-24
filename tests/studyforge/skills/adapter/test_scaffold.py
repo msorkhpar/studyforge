@@ -43,7 +43,7 @@ def test_the_ceiling_is_the_one_the_quality_floor_owns():
 
 
 def test_every_generated_file_is_under_r11s_ceiling():
-    # ⭐ SK-02's acceptance clause, as a measurement rather than an assertion.
+    # ⭐ The scaffold's acceptance clause, as a measurement rather than an assertion.
     assert made().oversized() == ()
 
 

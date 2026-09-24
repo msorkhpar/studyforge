@@ -15,7 +15,7 @@ already tree-wide, so a new shape reaches every file the moment it exists.
 
 **Depends on.** `config` for the tree and the registry, `re`, and
 `tools.reserved_addresses` for WHICH addresses are unreachable by construction
-(`W310` — one vocabulary, two policies). ⛔ Still deliberately nothing that
+(one vocabulary, two policies). ⛔ Still deliberately nothing that
 holds a value: that module names reserved domains, never anybody's address.
 
 ⛔ **Every rule here is a shape, never a literal.** This module can be read by
@@ -96,11 +96,11 @@ SHAPES = (
         # A machine name. The trailing guard keeps `settings.local.json` — a
         # filename, not a host — out of it.
         #
-        # ⛔ KNOWN FALSE POSITIVE, RULED AND OWED — Ruling 179 (CTO round 45).
+        # ⛔ KNOWN FALSE POSITIVE, RULED AND OWED.
         # The trailing guard covers a `.` after the word, so a filename
         # survives; it does NOT cover a Python ATTRIBUTE ACCESS at the end of
         # an expression, which is the natural shape for every consumer of the
-        # local contents document. Measured 2026-09-10 by `SF-14/4`: six
+        # local contents document. Measured 2026-09-10: six
         # probes, written with placeholders because spelling them here would
         # be a finding against this file — `<object>.<the word>)`,
         # `<object>.<the word>,` and `x = <object>.<the word>` all return
@@ -117,8 +117,8 @@ SHAPES = (
         #
         # ⚠️ WHAT THE REMEDY OWES, so it is not re-derived: narrow this ONE
         # lookahead while KEEPING the hostname shape — it does not weaken R7,
-        # which has no "minor" verdict — and it owes Ruling 123's three
-        # readings with the real shape planted. The vocabulary half is in
+        # which has no "minor" verdict — and it owes three readings with
+        # the real shape planted, so the instrument is seen to move. The vocabulary half is in
         # `docs/conventions/personal-data-shapes.md` (Ruling 47: one
         # vocabulary, two policies), so narrowing one side alone is not a
         # developer's call.
@@ -138,20 +138,20 @@ SHAPES = (
 #: REAL domain, reachable by anybody: it is exempt because every commit here
 #: carries it, never because it identifies nobody. ⚠️ Moving it into
 #: `tools.reserved_addresses` would tell the MERGE PATH that a real domain is an
-#: office's line, which is the widening `W310` must not become.
+#: office's line, which is the widening sharing the list must not become.
 ATTRIBUTION_ADDRESS = r"(?:noreply\.[A-Za-z0-9.\-]+|anthropic\.com)\b"
 
 
 def build_allowed_address() -> re.Pattern[str]:
     """Build the address exemption, reading the shared vocabulary at CALL time.
 
-    ⛔ **A function rather than a literal so the vocabulary can be PLANTED**
-    (Ruling 123): `tools/tests/test_reserved_addresses.py` moves the shared list
+    ⛔ **A function rather than a literal so the vocabulary can be PLANTED**:
+    `tools/tests/test_reserved_addresses.py` moves the shared list
     and asserts THIS reading moves with it, which is the guard that a divergence
     nobody can produce would not be. ⭐ `ALLOWED_ADDRESS` is what this returns,
     and the mirror asserts the two agree — the constant is DERIVED, never typed.
 
-    ⛔ **THE GRAMMAR BELOW IS THIS SWEEP'S OWN AND IS UNCHANGED** — `W310` shares
+    ⛔ **THE GRAMMAR BELOW IS THIS SWEEP'S OWN AND IS UNCHANGED** — what is shared is
     the LIST, not the matching. ⭐ Three branches, as before: a bare reserved
     name, a documentation domain under an optional subdomain, and a reserved TLD
     after a dot. ⚠️ Only the bare branch is anchored at the end of the domain,
@@ -211,7 +211,7 @@ def shape_matches(text: str) -> list[tuple[int, str]]:
 
 
 def swept_files(root: Path) -> list[Path]:
-    """Every text file outside the registered directories — this arm's population (`W309`)."""
+    """Every text file outside the registered directories — this arm's population."""
     return [
         path
         for path in config.text_files(root)

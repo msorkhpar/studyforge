@@ -66,8 +66,8 @@ def audio_dir(root: Path | str, locations: UnitLocations) -> Path:
 
     ⭐ The *"through the placement policy"* half of `SF-17`: a caller that
     composed the media directory itself would be the second layout authority R4
-    removes, and `NS-05/2` measures why that mistake is invisible under one of
-    the two profiles.
+    removes, and that mistake is invisible under one of the two profiles, whose
+    media directory happens to sit where a hand-composed path would put it.
     """
     return Path(root) / Path(str(locations.media_dir(AUDIO_DIRNAME)))
 

@@ -148,7 +148,7 @@ def test_the_boot_never_touches_the_store_the_reader_s_MARKS_live_in():
 def test_the_boot_that_shipped_is_caught_by_that_clause():
     # ⭐ The other way, against the exact text that shipped rather than an
     # impression of it: a clause that has only ever seen the repair has not been
-    # shown to notice the defect it exists for (Ruling 70).
+    # shown to notice the defect it exists for.
     assert "localStorage" in BOOT_THAT_LOST_MARKS
     assert missing(BOOT_THAT_LOST_MARKS) == ["key", "area"]
 

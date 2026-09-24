@@ -22,8 +22,8 @@ back. Standard library only.
 
 ## ⛔ THE PIN ARM IS THE HALF THAT DOES NOT DEPEND ON A CONSUMER'S SPELLING
 
-⚠️ **Ruling 101 has two remedies and they are IN TENSION** (`W299/1`, measured on the
-row that hit it). Its table tells a consumer to import from the PACKAGE once the name is
+⚠️ **Ruling 101 has two remedies and they are IN TENSION** (measured on the change that
+hit it). Its table tells a consumer to import from the PACKAGE once the name is
 exported — and a sweep defined over SUBMODULE imports can only hold a name while some
 consumer still spells it the deviating way. ⛔ **So fixing a spelling removes the name
 from the only instrument holding it on the surface, and nothing goes red.**
@@ -32,7 +32,7 @@ from the only instrument holding it on the surface, and nothing goes red.**
 each.** `from studyforge.validate.corpus import Held` and `from studyforge.validate
 import Held` both require `Held` on `studyforge.validate.__all__`. ⛔ **A spelling fix
 therefore MOVES a name between this module's two arms and never out of its grip**, which
-is the property `W299/1` said a tree-wide row had to land BEFORE any spelling is touched.
+is the property a tree-wide sweep had to land BEFORE any spelling is touched.
 
 ## ⛔ THE POPULATION IS CLOSED AT THE REF IT WAS TAKEN AT
 
@@ -43,7 +43,7 @@ edit that deletes its entry, and the declaration cannot outlive the thing it exc
 ⚠️ **Adding an entry to quiet a red is declaring a defect, not fixing one** (`W199`'s
 rule, inherited unchanged).
 
-## ⚠️ WHAT THIS INSTRUMENT CANNOT SEE, SAID BY IT RATHER THAN DISCOVERED (`W298/3`)
+## ⚠️ WHAT THIS INSTRUMENT CANNOT SEE, SAID BY IT RATHER THAN DISCOVERED
 
 ⛔ **It reads a NAME against a surface; it never reads a VALUE.** A package exporting the
 wrong object under the right name passes here, exactly as `W298`'s mint scan stayed green
@@ -52,11 +52,11 @@ because this is green would be reading this as a guard it is not.
 
 ⛔ **And it does not fail Ruling 101's FIRST row.** A name that IS exported and is taken
 by the submodule spelling is a one-line deviation; it is counted and PRINTED by
-`surface_census` and never turned into a finding. ⚠️ The ground is FND-07's: that
+`surface_census` and never turned into a finding. ⚠️ The ground: that
 population is landed code no office has been assigned, and a red run for a condition
 nobody may clear is a red run that gets muted.
 
-## ⚠️ WHAT IT DECIDES, AND WHAT IT DECLARES (Ruling 292)
+## ⚠️ WHAT IT DECIDES, AND WHAT IT DECLARES
 
 ⭐ **Decided:** a `from studyforge.<…> import <name>` with no leading dot, in a module
 under `src/studyforge`, whose owning package is neither the importer's own package nor an
@@ -78,7 +78,7 @@ MODULE of the package it is taken from is an import of that module, not of a sur
    so one inside a function IS read — what is not read is whether it ever runs.
 5. An EMPTY population is reported through the notice rather than failed. The floor runs
    over a corpus, a consumer repository and an installed tree, and none of those owes a
-   `src/studyforge` (Ruling 191's split, `reach.py`'s precedent). ⛔ The real tree's
+   `src/studyforge` (an empty population is a disclosure, never a pass). ⛔ The real tree's
    population is pinned in the mirror instead, so a walk that reads nothing cannot pass
    here as a clean bill.
 6. A declaration whose package is absent from the walked tree is not read at all, so a
@@ -267,7 +267,7 @@ def check_producer_half(root: Path) -> list[Finding]:
     """Return a finding for every name shared between packages that is on no declared surface.
 
     ⛔ Two arms and one question. The PIN arm binds the PACKAGE spelling, so it holds a
-    name on its owner's surface however a consumer spells the import (`W299/1`). The SWEEP
+    name on its owner's surface however a consumer spells the import. The SWEEP
     arm binds the MODULE spelling against `DECLARED`, both ways.
     """
     known = packages(root)
@@ -289,9 +289,9 @@ def check_producer_half(root: Path) -> list[Finding]:
 def surface_census(root: Path) -> list[str]:
     """Print the walked population, the declared deviations, and the spelling backlog.
 
-    ⛔ Ruling 48: `0 findings` is `0 = 0` until it says out of how many. ⭐ The spelling
-    backlog is printed here and failed nowhere — see the contract's account of what this
-    instrument deliberately does not fail.
+    ⛔ A sweep states its denominator: `0 findings` is `0 = 0` until it says out of how
+    many. ⭐ The spelling backlog is printed here and failed nowhere — see the contract's
+    account of what this instrument deliberately does not fail.
     """
     known = packages(root)
     if not known:

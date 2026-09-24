@@ -195,7 +195,7 @@ def test_no_served_form_lacks_execution_so_the_toolchain_state_is_gone():
 
 
 def test_the_execution_namespace_is_the_frameworks_one_spelling_and_the_route_registers_it():
-    # ⭐ `SK-03/3`, closed by `SF-22`: the skill holds no spelling of its own — it is the
+    # ⭐ `SK-03/3`, closed by the run route: the skill holds no spelling of its own — it is the
     # run route's `NAMESPACE`, the very object `serve.instance.instance_of` registers.
     from studyforge.serve import instance
     from studyforge.serve.routes import run

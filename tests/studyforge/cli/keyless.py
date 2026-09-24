@@ -1,4 +1,4 @@
-"""Shared by `W452`'s readings: a corpus-shaped root, every path it serves, and every needle.
+"""Shared by the keyless-serving readings: a corpus-shaped root, its paths, every needle.
 
 ⭐ **The layout is ISO's**: the quiz corpus is built INTO its own root (`build . --out .`),
 so the archive's `practice-1.json` sits under the served root; the exercise bundle's
@@ -45,8 +45,9 @@ BACKUP = BUNDLE.with_name("quiz.json~")
 #: A corpus document that quotes one sentence, wrapped across two lines.
 NOTES = Path("docs/notes.md")
 
-#: The key, structurally: a JSON pair, or a pre-`W451` page's option attribute — read as
-#: the key only beside one of the served quiz's question ids (the register's review).
+#: The key, structurally: a JSON pair, or an older page's option attribute (from before
+#: the server graded) — read as the key only beside one of the served quiz's question ids (the
+#: register's review).
 KEY = re.compile(r'"correct"\s*:\s*(?:true|false)|data-[a-z-]*-correct\b')
 QUESTION_IDS = tuple(f'"{question["id"]}"' for question in QUESTIONS)
 

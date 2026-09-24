@@ -14,13 +14,13 @@ key whose presence is the graded state, and **`unit.trust` for R5's rule**.
 ## ⛔ R5's rule is imported, never re-spelled
 
 ⚠️ **`unit.trust` already owns the provenance and trust vocabulary and the pair
-R5 forbids**, and its own docstring says *"SF-23 consumes it"*. So this module
+R5 forbids**, and its own docstring says this package consumes it. So this module
 calls `check_test_record` and adds nothing to it. ⭐ The alternative was a
 second spelling of one rule, which is the defect `placement.names.label_of`
 records paying for: two guards, one missing character, and the failure showed
 as the *missing character* rather than as the duplication that caused it.
 
-⚠️ It does mean `exercise` imports `unit`, where the FND-01 skeleton predicted
+⚠️ It does mean `exercise` imports `unit`, where the original skeleton predicted
 it would import `unit` and `address`. `address` turned out not to be needed —
 an exercise names paths and commands, not addresses.
 

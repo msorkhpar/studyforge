@@ -23,7 +23,7 @@ for. So the files come from `source_files`, the walk `check_unclassified`
 uses: the framework's own directories and generated output are skipped, and
 so is whatever the repository's git ignore rules declare.
 
-## ⭐ Which state a file lands in follows SF-02's own semantics
+## ⭐ Which state a file lands in follows the manifest's own semantics
 
 An exclusion is prose an `include` would read and deliberately does not. So
 only a file an include pattern matches can be withheld. Every other file no
@@ -37,7 +37,7 @@ excluded or written by onboarding. Otherwise it is the file's exact path.
 
 ## ⛔ Onboarding's footprint is never proposed
 
-Paths listed in onboarding's record are declared by `SK-07`'s own generated
+Paths listed in onboarding's record are declared by onboarding's own generated
 globs. A drafted glob equal to one of those is refused by `promote`, never
 resolved by precedence (`W239`), so a re-survey of an onboarded corpus must
 not propose them. ⭐ **The record is `installed.generated`'s answer, the one
@@ -61,7 +61,7 @@ the silence this names.
 
 ## ⛔ The reasons are a person's (`W240/3`)
 
-Every `why` is `None`. SF-02 refuses it, and `promote` pairs it from the
+Every `why` is `None`. The manifest parser refuses it, and `promote` pairs it from the
 reasons a person gives. A generated reason would be an audit nobody performed.
 """
 
@@ -78,7 +78,7 @@ from studyforge.skills.reconnaissance.installed import generated
 from studyforge.validate.source import source_files
 
 #: What a proposed entry carries where its reason goes. ⛔ Never a string:
-#: SF-02 refuses `None`, so an unsettled draft cannot pass as settled.
+#: The manifest parser refuses `None`, so an unsettled draft cannot pass as settled.
 OPEN_REASON = None
 
 

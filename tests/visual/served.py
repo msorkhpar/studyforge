@@ -285,7 +285,7 @@ def serving(
     package counts stops.
 
     ⭐ **`editor=<origin>` answers the same route with that origin's `/main`
-    and `/test`** and admits it to `frame-src` instead (`W449`): a stand-in
+    and `/test`** and admits it to `frame-src` instead: a stand-in
     editor on ANOTHER origin, which is the only kind of frame whose own script
     can take focus the way a real workbench does.
 

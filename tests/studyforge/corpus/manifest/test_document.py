@@ -1,7 +1,7 @@
 """Mirror of `src/studyforge/corpus/manifest/document.py` (R12).
 
 Carries three checks that are about the whole of `src/` rather than about this
-module, because they are the negative half of SF-02's acceptance and
+module, because they are the negative half of the manifest's acceptance and
 `document.py`'s contract names them: no framework module imports anything
 source-specific, no framework module names a source in its code, and no
 framework module derives a capability from a variant name.
@@ -326,7 +326,7 @@ def test_exercises_must_be_a_real_bool(exercises):
 
 
 def test_an_absent_media_key_means_committed_with_default_limits():
-    # ⭐ SF-02's acceptance in as many words: asserted, not assumed.
+    # ⭐ The manifest's acceptance in as many words: asserted, not assumed.
     built = manifest()
     assert "media" not in BASE
     assert built.media == DEFAULT_MEDIA
@@ -424,7 +424,7 @@ def test_a_missing_manifest_refusal_carries_no_absolute_path(tmp_path):
 
 @pytest.mark.parametrize("fixture", ["depth1", "depth2"])
 def test_the_shared_fixtures_parse_under_this_module(fixture):
-    # ⭐ FND-04's fixtures are SF-02's test material, and the direction of
+    # ⭐ The shared fixtures are this module's test material, and the direction of
     # agreement matters: when `content` became a required key the **fixtures**
     # moved, because a manifest without one cannot say what its material is.
     built = load(repository_root() / "tests" / "fixtures" / fixture / MANIFEST_FILENAME)
@@ -455,14 +455,14 @@ WITHOUT_A_VALID_MANIFEST = {
 #: ⚠️ **This was a hand-written four and the tree had grown to seven.**
 #: `count-mismatch` and `user-authoritative` both carry a perfectly readable
 #: manifest and both landed in `INVALID_CORPORA` without reaching this list —
-#: silently, exactly as `FND-09` predicted, in the second of the two places the
+#: silently, exactly as predicted, in the second of the two places the
 #: scope was not looking. ⛔ Deriving it is what makes an eighth impossible.
 FIXTURES_WITH_A_VALID_MANIFEST = sorted(set(INVALID_CORPORA) - set(WITHOUT_A_VALID_MANIFEST))
 
 
 def test_the_divergence_from_the_declaration_is_declared():
-    # ⛔ `FND-09` acceptance 5: a deliberate divergence is legal and states its
-    # `why`. ⚠️ Ruling 48's denominator too — a subtraction that removed
+    # ⛔ A deliberate divergence is legal and states its
+    # `why`. ⚠️ The denominator too — a subtraction that removed
     # everything would parametrize nothing and look identical to a clean pass.
     assert set(WITHOUT_A_VALID_MANIFEST) < set(INVALID_CORPORA)
     assert len(FIXTURES_WITH_A_VALID_MANIFEST) == len(INVALID_CORPORA) - 1

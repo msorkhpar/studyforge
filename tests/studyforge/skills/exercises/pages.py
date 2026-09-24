@@ -61,7 +61,7 @@ def written(root: Path, name: str, text: str) -> str:
     return name
 
 
-#: ⭐ **`W453`'s positive control**: a code-dense page with little prose. Under
+#: ⭐ **The aspect plan's positive control**: a code-dense page with little prose. Under
 #: the withdrawn length band its prose alone planned it zero; planned by its
 #: aspects it gets one exercise per important idea, related ideas sharing one.
 DENSE = """# Parsing a record

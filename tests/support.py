@@ -73,7 +73,7 @@ def git() -> str:
     """The absolute path to git, or a failed assertion saying why it matters.
 
     ⛔ Asserted rather than skipped. The checks that use it — the ignore rules
-    that keep FND-04's golden fixtures trackable, and FND-02's index rules —
+    that keep FND-04's golden fixtures trackable, and the index rules —
     guard states whose failure is *silent* on a fresh clone. A skip there would
     look green and guard nothing.
     """
@@ -106,13 +106,12 @@ def is_ignored(path: str, cwd: Path | None = None) -> bool:
     must never arrive as the same answer.
 
     ⭐ One definition, per this file's own rule. It was written twice —
-    `tests/test_repository.py` had it first and a second module copied it,
-    because FND-02 was told not to touch the file that already had it and
-    recorded the duplication as a finding rather than reaching outside its
-    task. Consolidated here by FND-06, which owns both callers.
+    `tests/test_repository.py` had it first and a second module copied it
+    rather than reach into the file that already had it. Consolidated here,
+    beside both callers.
 
-    ⚠️ `cwd` defaults to this repository and is a parameter because FND-02 asks
-    the same question of *sibling* repositories, where the answer is about
+    ⚠️ `cwd` defaults to this repository and is a parameter because the
+    workspace checks ask the same question of *sibling* repositories, where the answer is about
     their ignore rules and not ours.
     """
     where = repository_root() if cwd is None else cwd
@@ -127,7 +126,7 @@ def tracked_files(patterns: tuple[str, ...], root: Path | None = None) -> list[s
     """Every file **git tracks** in `root` matching `patterns`, repo-relative.
 
     ⛔ **`patterns` is REQUIRED and is never defaulted, because the caller's tool
-    decides its own subject and no two of them agree** (`CTO-64/1`). ⭐ `ruff
+    decides its own subject and no two of them agree**. ⭐ `ruff
     check`'s subject is `*.py`; `ruff format`'s is `*.py` **and** `*.md`, because
     `docstring-code-format` makes a document's python blocks part of what gets
     formatted. ⚠️ **MEASURED in the pinned image: `ruff check` over the whole
@@ -136,12 +135,12 @@ def tracked_files(patterns: tuple[str, ...], root: Path | None = None) -> list[s
     one gate to inherit the other's subject, which is the defect this signature
     refuses to make expressible.
 
-    ⛔ **The index, never the disk** (Ruling 153, and Ruling 86a before it for
-    ruff's denominator). ⚠️ A `git status --porcelain` clean tree still carries
+    ⛔ **The index, never the disk** (and ruff's denominator reads the index
+    too). ⚠️ A `git status --porcelain` clean tree still carries
     every *ignored* file on the machine — an agent's `.scratch/`, a virtualenv,
     a second checkout — and a tool that walks the filesystem reads all of them
     as this repository's. ⛔ **And so is an untracked, un-ignored one, which is
-    the half `W142` was paid for:** a scratch module at the repository root
+    the half measured the hard way:** a scratch module at the repository root
     turned three innocent branches red under a reviewer who had measured the
     defect twenty minutes earlier.
 
@@ -163,7 +162,7 @@ def tracked_files(patterns: tuple[str, ...], root: Path | None = None) -> list[s
     from the working tree is refused rather than skipped, because an unstaged
     deletion would otherwise narrow the population in silence.
 
-    ⭐ `root` is a parameter for Ruling 11's reason: the mechanism is watched
+    ⭐ `root` is a parameter so a check can be watched failing: the mechanism is watched
     working in a throwaway repository, where a plant can be tracked or untracked
     on purpose, without writing into the tree the check is measuring.
     """
@@ -203,7 +202,7 @@ def imports_module(path: Path, module: str) -> bool:
     """Does the Python file at `path` take something from `module` by name?
 
     ⛔ **The one spelling of "does this module go to the owner?"**, and it was
-    written by hand twice before it was extracted (W13): `test_version.py`'s
+    written by hand twice before it was extracted: `test_version.py`'s
     `imports_the_guard` and `test_blocks.py`'s `imports_the_vocabulary` are the
     same eleven lines with a different constant, and the fixture checker was
     about to be the third. ⚠️ This file's own contract says a block repeated
@@ -226,10 +225,10 @@ def imports_module(path: Path, module: str) -> bool:
 
 #: Ruling 47's shared evidence: the one table both personal-data gates are
 #: measured against. ⛔ Shared as **data**, never as code — `tools/quality` may
-#: not import the framework (Ruling 31), so the two sides read the table and
+#: not import the framework, so the two sides read the table and
 #: each asserts only its own column.
 #:
-#: ⭐ `REL-02`: the product reads its OWN copy of the table, so the suite runs with
+#: ⭐ The product reads its OWN copy of the table, so the suite runs with
 #: no process document present. The convention `docs/conventions/personal-data-shapes.md`
 #: still carries it for the tooling, and `tests/test_process_twins.py` refuses the two
 #: tables differing by one row while both exist.
@@ -259,11 +258,11 @@ def shapes_agree(row: dict) -> bool:
 
 
 class ProcessOutput:
-    """The ONE reader of a child process's `stdout` and `stderr` (`W233`).
+    """The ONE reader of a child process's `stdout` and `stderr`.
 
     ⛔ **Nothing else may read either pipe.** A text wrapper's `readline` reads
     ahead into its own buffer, and `communicate()` then reads the raw pipe, so
-    lines already buffered are lost (`SK-03/5`). This reads the raw descriptors
+    lines already buffered are lost. This reads the raw descriptors
     with `os.read`, keeps every byte, and hands the lines out as a view: a line
     `line()` returned is still in what `rest()` returns.
 

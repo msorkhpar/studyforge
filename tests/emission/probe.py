@@ -40,7 +40,7 @@ POISON_DIRECTORY = "/" + "home/example/material"
 
 #: The fictional home both poisons live under. ⛔ The harness invented it and
 #: hands it out, so a write aimed into it is refused and counted rather than
-#: reported (`tests/emission/containment.py`, `W217`).
+#: reported (`tests/emission/containment.py`).
 POISON_ROOT = "/" + "home/example"
 
 #: ⛔ **The parameters a refusal exists to reproduce, excluded by construction
@@ -249,7 +249,7 @@ def _parameters(obj: object) -> list[inspect.Parameter] | None:
 def _call(
     found: Census, where: str, obj: object, arguments: dict[str, object]
 ) -> BaseException | None:
-    """Call `obj` inside a directory the harness mints, and nowhere else (`W217`)."""
+    """Call `obj` inside a directory the harness mints, and nowhere else."""
     with contained(found.contained, where, POISON_ROOT):
         try:
             obj(**arguments)
@@ -292,7 +292,7 @@ def census(package_name: str) -> Census:
 def probe_callable(obj: object, where: str, into: Census | None = None) -> Census:
     """Probe one callable, into `into` or into a fresh census.
 
-    ⭐ **Exposed so the check can be watched failing** (Ruling 11). An
+    ⭐ **Exposed so the check can be watched failing**. An
     assertion that a mechanism catches something is worthless until you have
     driven the defect through the mechanism itself, and a census over the whole
     package is the wrong grain for that.

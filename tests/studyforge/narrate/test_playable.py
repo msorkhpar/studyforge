@@ -384,7 +384,7 @@ def test_the_recorded_clips_arrive_as_a_state():
 
 
 def test_the_mapping_is_what_the_renderer_takes_unchanged(tmp_path):
-    # ⛔ `SF-18/4`'s hole, closed end to end: record → this join → the href on
+    # ⛔ The hole between record and page, closed end to end: record → this join → the href on
     # the element. Nothing between them composes a name or a path.
     units = units_of(sentences())
     state = recorded(units, tmp_path)
@@ -464,7 +464,7 @@ def test_a_record_that_exists_and_records_nothing_reports_every_unit(tmp_path):
 
 
 def test_an_unnarrated_page_renders_exactly_as_it_did_before_narration_existed(tmp_path):
-    # ⭐ `SF-18`'s reading floor, reached through this module: no transport, no
+    # ⭐ The narration player's reading floor, reached through this module: no transport, no
     # attribute, no branch anywhere on whether narration exists.
     fresh = tmp_path / "never-narrated"
     fresh.mkdir()

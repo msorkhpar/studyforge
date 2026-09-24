@@ -28,16 +28,16 @@ choice on a worse file.
 ## ⭐ THE POPULATION, AND WHY IT IS BIGGER THAN THE ROW THAT NAMED IT
 
 ⛔ **MEASURED at `2827409` with `surfaces.reaches` itself rather than with a grep.**
-⚠️ `W199/3` read this population as five packages and `W298/4` as its remainder; both
-were taken before `W299` closed `validate`'s names, and NEITHER counted a package that
-declares no `__all__` at all — which is where most of this table now sits. ⭐ That is the
-whole reason the row said to measure it again rather than inherit the figure.
+⚠️ Two earlier readings took this population as five packages and then as their
+remainder; both were taken before `validate`'s names were closed, and NEITHER counted a
+package that declares no `__all__` at all — which is where most of this table now sits.
+⭐ That is the whole reason it was measured again rather than the figure inherited.
 
 ⛔ **The two grounds are different remedies and are kept apart deliberately.** A package
 with a surface is one line from compliance. A package with NO surface needs a surface,
 and giving it one costs a ruling per name that collides with one of its own modules —
-the shape `W299` needed for `validate`'s five, and not something a sweep row may do to
-seven packages in passing.
+the shape `validate`'s five needed, and not something a sweep may do to seven packages
+in passing.
 """
 
 from __future__ import annotations
@@ -59,7 +59,7 @@ REACHED_PAST = "on a surface that exists; the remedy is one line on that package
 
 #: ⛔ The ground for a package that declares NO `__all__`. Every name it shares is
 #: off-surface by construction, so the remedy is a surface with a ruling per colliding
-#: name — the shape `W299` needed for `validate`'s five — and never a line in this row.
+#: name — the shape `validate`'s five needed — and never a line in this table.
 NO_SURFACE = "the package declares no __all__ at all, so a surface is a row, not a line"
 
 #: ⛔ **Closed at the ref above.** A pair missing from here is a finding, and a pair here

@@ -18,8 +18,8 @@ source (R1).
 ## ⛔ Why this row exists: the renderer copies nothing, and said so
 
 ⚠️ `render.page` emits `<img src="images/diagram.svg">` — the **placed** copy,
-whose directory the placement profile chose — and puts no file there. Measured
-(`QA-03/8`): until this pass existed, `depth1`'s one figure rendered as the
+whose directory the placement profile chose — and puts no file there. Measured:
+until this pass existed, `depth1`'s one figure rendered as the
 broken-image glyph with its `alt` text wrapped under a correctly styled caption,
 and **no test could see it**, because the renderer's own checks resolve hrefs
 against a tree those tests write.

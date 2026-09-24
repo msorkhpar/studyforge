@@ -24,7 +24,7 @@ EPIC = "docs/tasks/E04-narration.md"
 
 
 def test_an_absent_media_key_is_a_stated_default_and_not_a_shrug():
-    # ⭐ SF-02's acceptance in as many words: an absent `media` block means
+    # ⭐ The manifest's acceptance in as many words: an absent `media` block means
     # committed-with-default-limits, **asserted rather than assumed**. The
     # default is a value this module publishes, so a test can compare against
     # it rather than restate it.

@@ -21,8 +21,8 @@ FIXTURES = Path("tests/fixtures")
 #: must be allowed to disagree about the *name* of a rule. ⚠️ They may not
 #: disagree about **which fixtures exist**, and this used to: it carried five
 #: of the seven, and `count-mismatch` and `user-authoritative` had landed in
-#: `INVALID_CORPORA` without ever reaching here. ⛔ That is the defect Ruling 46
-#: exists to prevent, and `test_every_declared_corpus_is_exercised` closes it.
+#: `INVALID_CORPORA` without ever reaching here. ⛔ That is the defect naming fixtures by
+#: declared rule exists to prevent, and `test_every_declared_corpus_is_exercised` closes it.
 INVALID = {
     "bad-corpus-api": "manifest",
     "address-directory-mismatch": "address-directory",
@@ -35,7 +35,7 @@ INVALID = {
 
 
 def test_every_declared_corpus_is_exercised():
-    # ⛔ **The pin `FND-09` acceptance 5 asks for.** An eighth fixture added to
+    # ⛔ **The pin on the declared fixture set.** An eighth fixture added to
     # `INVALID_CORPORA` reds here rather than landing silently in a subset
     # nobody re-reads. ⚠️ It is the *keys* that are pinned; the values stay
     # this tool's own vocabulary, and the second assertion says so by

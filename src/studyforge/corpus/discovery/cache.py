@@ -15,10 +15,10 @@ this package's `site` and `errors`.
 | | |
 |---|---|
 | **File** | `.studyforge/site.json` — `SITE_CACHE_FILENAME`, which already existed |
-| **Version key** | `site_api` — ⭐ **minted here** (Ruling 95, CTO round 27) |
+| **Version key** | `site_api` — ⭐ **minted here** (Ruling 95) |
 | **Producer** | ⛔ **`SF-04`, and nothing else ever writes it** |
 
-⭐ **`SF-09`'s `content_api` is the worked example for the MECHANICS**: the key
+⭐ **`unit.content`'s `content_api` is the worked example for the MECHANICS**: the key
 is registered in `version.CONTRACT_FIELDS` in the same commit that mints it, or
 the shared guard cannot see it. ⛔ **It is not the example for the FAILURE, and
 a builder copying it faithfully would get this wrong.**

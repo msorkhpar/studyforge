@@ -56,7 +56,7 @@ def test_an_ungraded_practice_has_no_workspace():
 
 
 def test_the_trust_rule_is_not_re_spelled_here():
-    # ⚠️ Asserted by delegation, like SF-23's own guard: `unit.trust` owns R5
+    # ⚠️ Asserted by delegation, like the exercise package's own guard: `unit.trust` owns R5
     # and this module asks rather than answers.
     import inspect
 

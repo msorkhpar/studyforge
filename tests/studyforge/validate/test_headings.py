@@ -3,7 +3,7 @@
 ⛔ **Every expectation here is a literal.** The module under test owns a regex
 and a bound; a test that built its expected depth or its expected count out of
 the module's own constants would move with them and prove only
-self-consistency — `W39/5`'s shape, twice found by a sweep and never by a
+self-consistency — a shape twice found by a sweep and never by a
 reviewer.
 """
 

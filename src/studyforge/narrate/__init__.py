@@ -24,7 +24,7 @@ default: a clone that carries its own audio speaks with no synthesis service,
 no GPU and no network, which is what R8 is for. The default has a ceiling, and
 crossing it is a corpus's declared decision rather than an accident.
 
-**Skeleton at FND-01.** `speakable/` is SF-16's and landed as a **package**: the
+`speakable/` is SF-16's and landed as a **package**: the
 extraction source's one module is 626 lines, R11's ceiling is 400, and
 `docs/conventions/module-structure.md` pays that during extraction rather than
 after. Synthesis is SF-17's; the service it talks to is E13.

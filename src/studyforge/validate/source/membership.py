@@ -21,7 +21,7 @@ package's other three modules.
 
 ⭐ **Derived from two sources that already exist.** The walk records every
 container map it parsed and every document beneath each map's variant, parsed
-or refused. SK-02's `Layout.unit_files` names each declared unit's own
+or refused. The adapter scaffold's `Layout.unit_files` names each declared unit's own
 directory, which a build reads for media and the overlay. ⛔ Anything else is
 a stray: a note, a map's second variant, a file outside a unit, an undeclared
 unit's files.
@@ -201,7 +201,7 @@ def archive_members(walk: Walk) -> frozenset[Path]:
 
 
 def _unit_files(walk: Walk) -> frozenset[Path]:
-    """Each declared unit's own directory, as SK-02's published layout places it.
+    """Each declared unit's own directory, as the adapter's published layout places it.
 
     ⚠️ **The import is deferred.** `skills.adapter`'s package imports its
     scaffold and plan, and `validate` must stay importable before either.

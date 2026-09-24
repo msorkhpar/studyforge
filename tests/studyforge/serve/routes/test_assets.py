@@ -266,7 +266,7 @@ def served_quiz(body: bytes) -> bool:
 
 @pytest.mark.parametrize("name", ["quiz.json", "quiz.json~", "notes.txt"])
 def test_a_file_carrying_a_served_quizs_key_is_refused_a_text_or_an_unknown_type(site, name):
-    """⛔ `W452`: the key's STRUCTURE beside a served question id, even with no sentence."""
+    """⛔ The key's STRUCTURE beside a served question id, even with no sentence."""
     (site / name).write_text(QUIZ_FILE, encoding="utf-8")
     request = Request("GET", f"/{name}", {})
     assert serve(site, request, f"/{name}", withheld=served_quiz).status == 404

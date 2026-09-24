@@ -122,7 +122,7 @@ def test_every_shape_section_6_admits_reads_clean_in_validate_and_the_fixture_ch
 
 @pytest.mark.parametrize("case", sorted(MALFORMED))
 def test_a_malformed_list_is_refused_BY_WHERE_IT_SITS_exit_1(tmp_path, case):
-    # ⛔ Clause 1 and rider W264/4: `document`, exit 1, the place named.
+    # ⛔ Clause 1: `document`, exit 1, the place named.
     blocks, named = MALFORMED[case]
     report = validate(
         corpora.one_unit(tmp_path / "c", blocks=[{"type": "para", "text": "x"}, *blocks])
@@ -169,7 +169,7 @@ def test_W282_the_fixture_check_holds_no_vocabulary_of_its_own():
 
 
 def test_W264_2_a_list_carrying_start_AFTER_its_fields_is_not_a_vocabulary_error():
-    # ⭐ Rider W264/2: the optional key after the fields is admitted by the fixture check.
+    # ⭐ The optional key after the fields is admitted by the fixture check.
     assert list(check_blocks({"blocks": [_list(["a"], ordered=True, start=4)]}, "doc")) == []
 
 

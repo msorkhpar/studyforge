@@ -14,10 +14,10 @@ in `components`. This module is the index over what they produced.
     sequence = read_sequence("README.md", task_index_text)
     components = Components.read(pins, task_index_text)  # both are TEXT
     index = Index.of(read_epics(documents), sequence, components)
-    index.milestone_of("SK-07")     # when a capability lands
+    index.milestone_of("AB-07")     # when a capability lands
     index.after("M4")               # everything a corpus finishing at M4 forgoes
     index.later("M5", than="M8")    # ⛔ in the declared order, never by id
-    index.sides["JS-01"]            # ⭐ which side delivers it
+    index.sides["CD-01"]            # ⭐ which side delivers it
     index.render()                  # the document
 
 **Depends on.** `dataclasses` and this package's `components` and `refusal`.

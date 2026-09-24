@@ -202,7 +202,7 @@ def contract_readers(root: Path):
 
 
 def imports_the_guard(path: Path) -> bool:
-    # ⭐ The predicate is `tests.support.imports_module` (W13): this was one of
+    # ⭐ The predicate is `tests.support.imports_module`: this was one of
     # two hand-written copies of it, and the fixture checker was about to be a
     # third.
     return imports_module(path, "studyforge.version")

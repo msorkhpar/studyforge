@@ -36,7 +36,7 @@ def judged_directories(root: Path) -> list[str]:
     """Return the registered directories whose fixture area exists — this arm's population.
 
     ⚠️ Over a tree with no fixture area this is EMPTY and the arm compares nothing,
-    which `vacuity` discloses (`W309`); it is never a finding, for the reason below.
+    which `vacuity` discloses; it is never a finding, for the reason below.
     """
     return [
         directory

@@ -10,7 +10,7 @@ them can tell the two windows apart:
 - `settings(main, test)` and `write_settings(folder, main, test)` — the
   workspace settings a practice gets: everything read-only with the reader's
   own file excluded back out, the workbench closed, the two keys the
-  lockdown extension declares, and the page's colours (`editor_theme`, `W455`).
+  lockdown extension declares, and the page's colours (`editor_theme`).
 
 **How you use it.** `serve.routes.runs` calls all three when a page asks for a
 practice's editor: the folder is found, the settings are written into it, and
@@ -90,7 +90,7 @@ it. ⭐ **The boundary is the container, the loopback bind and one exact
 origin.** What is here removes the ways *in* — it does not remove the
 possibility, and nothing below should ever be read as if it did.
 
-## ⛔ Each practice opens its OWN folder, so no practice's lock is another's (`W446`)
+## ⛔ Each practice opens its OWN folder, so no practice's lock is another's
 
 ⛔ **One folder for every practice was one settings file for every practice**,
 and a lock that names ONE file editable: opening a practice silently locked
@@ -116,7 +116,7 @@ parse would raise on an ordinary one.
 
 ⭐ **Replaced whole, atomically**: a temporary file beside it and one `replace`,
 so a reader's workbench never reads half a settings file. ⛔ **Each write's
-temporary is its OWN** (`W446`), made in a staging directory beside it: two
+temporary is its OWN**, made in a staging directory beside it: two
 writes that shared one staging name moved it out from under each other, and the
 second one was refused.
 
@@ -156,7 +156,7 @@ from studyforge.execute.editor_theme import EditorColoursUnread, editor_colours
 SETTINGS_DIR = ".vscode"
 SETTINGS_FILE = "settings.json"
 
-#: The directory each settings write stages its OWN temporary in (`W446`). ⚠️
+#: The directory each settings write stages its OWN temporary in. ⚠️
 #: Named here because the ignore file names it too: a torn write must not dirty
 #: the corpus either. ⛔ A directory and not a file name, so the ignore file
 #: still names exactly what it ignores and never carries a `*`.
@@ -344,7 +344,7 @@ def write_settings(folder: Path, main: str, test: str | None) -> Path:
         body = json.dumps(settings(main, test), indent=2, sort_keys=True) + "\n"
         (target.parent / STAGING_DIR).mkdir(parents=True, exist_ok=True)
         _ensure_ignored(target.parent / IGNORE_FILE)
-        # ⛔ This write's OWN name (`W446`): a shared one is moved away by one
+        # ⛔ This write's OWN name: a shared one is moved away by one
         # concurrent write from under the other, and the other is refused.
         handle, temporary = tempfile.mkstemp(dir=target.parent / STAGING_DIR, prefix=SETTINGS_FILE)
         with os.fdopen(handle, "w", encoding="utf-8") as out:

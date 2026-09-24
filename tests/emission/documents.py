@@ -96,7 +96,7 @@ class DocumentCensus:
     leaks: list[Leak] = field(default_factory=list)
     accepted: int = 0
 
-    #: ⛔ What the containment saw while the readers ran (`W217/5`). A reader
+    #: ⛔ What the containment saw while the readers ran. A reader
     #: is a parser and is expected to write nothing — ⭐ which is a claim, and
     #: this is the instrument that makes it one instead of an assumption.
     contained: Tally = field(default_factory=Tally)
@@ -175,7 +175,7 @@ def _split(step: str) -> tuple[str | None, int | None]:
 def document_census(readers: list[Reader]) -> DocumentCensus:
     """Poison every field of every reader's document, one at a time.
 
-    ⛔ **Every reader runs inside the containment** (`W217/5`): a directory the
+    ⛔ **Every reader runs inside the containment**: a directory the
     harness mints, with every write aimed anywhere else refused and counted.
     ⚠️ Once per reader rather than once per probe — the containment is what the
     call may touch, and that does not change between two fields of one document.

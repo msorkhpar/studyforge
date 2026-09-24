@@ -36,7 +36,7 @@ did not, so `rulings.findings` runs first and a non-empty answer is a refusal.
 because the two can disagree only if this module has a defect, which is exactly
 when it matters.
 
-## ⭐ THE EDITOR, THE RUNNER BESIDE IT, AND WHAT THE EDITOR BINDS (`W445`)
+## ⭐ THE EDITOR, THE RUNNER BESIDE IT, AND WHAT THE EDITOR BINDS
 
 ⭐ **The runner a Submit execs into is the file's second service**, rendered by
 `runnerservice` from the same component's `runner` block and placed here, so
@@ -95,7 +95,7 @@ def service(
     """One compose service, every value of it read out of `block`.
 
     ⭐ `binds` are further `(host, container)` binds of the corpus's own
-    directories — the practice workspaces (`W445`) — each writable and each
+    directories — the practice workspaces — each writable and each
     named in ruling 4's footer beside the sources.
     """
     broken = rulings.findings(block, name=name)
@@ -148,7 +148,7 @@ def render(
 
     ⭐ `checked` is every other component block whose rulings are asserted and
     whose service is **not** rendered — see the module contract. ⭐ `runner` is
-    `(service name, mapping)` as `runnerservice.plan` rendered it (`W445`).
+    `(service name, mapping)` as `runnerservice.plan` rendered it.
     """
     for other, block in checked:
         broken = rulings.findings(block, name=other)

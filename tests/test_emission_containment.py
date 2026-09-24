@@ -1,4 +1,4 @@
-"""`W217`: the emission sweep cannot write anywhere the harness does not own.
+"""The emission sweep cannot write anywhere the harness does not own.
 
 ⛔ **Every write here is aimed at a directory the process CAN write** —
 `tmp_path`, at whatever uid runs the suite — so the only thing between each

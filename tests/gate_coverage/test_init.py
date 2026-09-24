@@ -115,7 +115,7 @@ def test_every_name_the_helpers_define_is_read_somewhere_in_the_package():
 
 
 def test_the_guard_above_would_notice(tmp_path):
-    # ⛔ Ruling 11, and the planted thing is in a shape the clause did not
+    # ⛔ Watched failing first, and the planted thing is in a shape the clause did not
     # picture: a name bound by tuple assignment, which is how `READER,
     # DELEGATES` is spelled and is the one form a naive walk drops.
     helper = tmp_path / "helper.py"
@@ -146,7 +146,7 @@ def test_the_guard_above_would_notice(tmp_path):
 def test_the_bound_lives_in_the_contract_and_the_tell_does_not_read_it():
     # ⛔ The seam. `tell.py` answers *is this a reader*; it must not know which
     # trees this repository decided to gate, or the bound and the scan drift
-    # into one thing again — which is the state Ruling 67 was minted against.
+    # into one thing again — a root chosen by a string nobody defends.
     tell = (PACKAGE / "tell.py").read_text(encoding="utf-8")
     assert "GATED_TREES" not in tell
     assert "SCAN_ROOT" not in tell

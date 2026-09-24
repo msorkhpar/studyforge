@@ -55,7 +55,7 @@ on**, so a link into this page needs no table to consult and nothing to mint.
 disclosure itself, which is what lets a user agent that implements the HTML
 Standard's auto-expanding `details` open every ancestor on fragment navigation.
 
-⛔ **What this does NOT guarantee, stated rather than discovered** (Ruling 56):
+⛔ **What this does NOT guarantee, stated rather than discovered**:
 that a user agent opens them. ⭐ Where one does not, the reader lands on the
 section holding the target — with every ancestor summary addressable, focusable
 and one keystroke from open — rather than on nothing. ⚠️ **What no policy here

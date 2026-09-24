@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/skills/execution/runnerservice.py` (R12) — `W445`'s runner.
+"""Mirror of `src/studyforge/skills/execution/runnerservice.py` (R12) — the runner service.
 
 ⛔ Every value of the rendered service is the contract's, and the one that
 matters most is asserted against the framework's OTHER spelling of it: the

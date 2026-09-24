@@ -20,7 +20,7 @@
    — and a preference that fails to parse cannot take every mark with it.
    ⚠️ The floor declares no display preference yet; the record exists because
    the INDEPENDENCE is the ruling, and the first consumer is expected to be
-   `SF-18`'s transport (a speed, a volume), which has no business sharing a
+   the narration transport (a speed, a volume), which has no business sharing a
    key with the reading record.
 
    ⛔ **No clock.** A timestamp is a second fact nobody asked for, and it turns

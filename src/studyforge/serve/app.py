@@ -18,14 +18,14 @@ and the Docker socket is never reachable from here (spec §8.3).
 ## ⭐ The seams later rows plug into
 
 - **`namespaces=`** — `{name: route(request, rest)}` added beside `content` and
-  `assets`. `SF-19b` registers `state` here and `SF-22` registers `run`. ⛔ A name
+  `assets`. `state` and `run` are registered here. ⛔ A name
   that is already taken is refused, so a later namespace cannot quietly replace
   content's caching rule with its own.
 - **`private=`** — a predicate over a resolved path; `SF-21`'s store names the
   reader's record through it, and it answers `404` on both mounts. ⛔ So does a file
-  carrying a quiz's key or sentence (`W452`), read off `source` in every form.
-- **`writers=`** — the registered namespaces that also answer `POST` (`SF-22`'s
-  `run`: starting a process is an act, and a `GET` that acted would run a grader
+  carrying a quiz's key or sentence, read off `source` in every form.
+- **`writers=`** — the registered namespaces that also answer `POST` (the
+  `run` namespace: starting a process is an act, and a `GET` that acted would run a grader
   on a prefetch). ⛔ Content, assets and the static mount never do.
 - **`client=`** — where the run namespace serves the page's execution client
   (`SF-24`, `W370`). ⭐ Handed to `routes.assets`, which inserts one script tag

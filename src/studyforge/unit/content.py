@@ -92,7 +92,7 @@ from studyforge.unit.errors import ContentError, describe
 from studyforge.unit.sections import KINDS_WITH_A_LANG, SECTION_KINDS, section_key
 from studyforge.version import check as check_version
 
-#: R9's key for this contract. ⭐ Minted by SF-09; registered in
+#: R9's key for this contract. ⭐ Registered in
 #: `version.CONTRACT_FIELDS` in the same commit, or the shared guard cannot see
 #: it.
 CONTENT_API = 1

@@ -30,7 +30,7 @@ package's `keys` and `errors`.
 only place that says so** — the writer and the validator reading the file back
 share it, so they cannot drift apart about what a pass is. A program that ran
 and printed successfully has demonstrated nothing about its tests; only a test
-run completes a practice (SF-22). ⛔ **`first_passed_at` is set by the first
+run completes a practice. ⛔ **`first_passed_at` is set by the first
 pass and never moves**: a later failure does not un-pass, and a later pass does
 not make it newer.
 

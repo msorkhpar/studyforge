@@ -1,4 +1,4 @@
-"""Is anything runnable, and does a grader ship with it? (SK-01)"""
+"""Is anything runnable, and does a grader ship with it?"""
 
 from __future__ import annotations
 

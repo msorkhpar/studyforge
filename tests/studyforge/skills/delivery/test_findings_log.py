@@ -90,7 +90,7 @@ def test_the_slot_asks_the_question_the_catalogue_refuses_on():
 
 
 def test_the_question_is_the_sorts_own_words():
-    # ⚠️ Reads a handoff, which leaves the main line with the process (`REL-10`), so
+    # ⚠️ Reads a handoff, which leaves the main line with the process, so
     # `tests/harness/process.py` declares this one test and the archive keeps it.
     sort = (repository_root() / "docs/tasks/handoffs/QA-04.md").read_text("utf-8")
     assert QUESTION in sort
@@ -243,7 +243,7 @@ def test_the_log_lives_in_a_directory_validate_skips():
 def test_the_stub_a_corpus_receives_points_at_a_procedure_that_names_the_log():
     # ⭐ The corpus's copy of the procedure is a GENERATED pointer; follow it to
     # the document it names — through the installed package's locator, the way
-    # its command does (`REL-05`) — and read the log's place out of that document.
+    # its command does — and read the log's place out of that document.
     assert "onboarding" in pin.SKILLS
     pointer = pin.stub("onboarding", COMMIT, "0.1.0")
     target = re.search(rf"^    {re.escape(pin.DOCUMENTS)} (\S+)$", pointer, re.MULTILINE)
@@ -259,7 +259,7 @@ def test_the_adapter_hand_over_step_obliges_the_log_rather_than_a_message():
 
 
 def test_the_delivery_sort_starts_from_the_log_and_points_at_the_catalogue():
-    # ⭐ `REL-01/2`: the section's NAME is read out of the procedure, never typed here, so a
+    # ⭐ The section's NAME is read out of the procedure, never typed here, so a
     # rewrite of that prose keeps this green exactly when the procedure and the catalogue
     # still agree — and a procedure that names no section at all is refused.
     text = skill(delivery)

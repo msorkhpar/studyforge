@@ -12,7 +12,7 @@ from tests.studyforge.skills.delivery import plans
 
 
 def test_the_three_readings_are_the_whole_vocabulary_and_nothing_else_exists():
-    # ⛔ Ruling 185: a narrowed population, never a widened predicate. A fourth
+    # ⛔ A narrowed population, never a widened predicate. A fourth
     # value is a change to this tuple and to this test, never a passed string.
     assert SIDES == (HERE, ELSEWHERE, UNDECLARED)
 
@@ -57,7 +57,7 @@ def test_a_workspace_that_pins_nothing_but_itself_reads_a_path_as_here():
 
 
 def test_the_reading_takes_the_two_cells_and_never_a_capability():
-    # ⛔ The seam asserted rather than described (`W92b`): this module imports
+    # ⛔ The seam asserted rather than described: this module imports
     # nothing from the package, so it cannot close a cycle with the module that
     # indexes what it reads. ⚠️ Read off the parsed IMPORTS, never off the
     # text: the docstring's own example names the package and is prose.

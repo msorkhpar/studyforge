@@ -25,10 +25,10 @@ Rewrite the goldens after a deliberate change to the page with:
         python3 -m tests.studyforge.render.index.indexes
 
 ⚠️ **`PYTHONPATH` is not optional** — `pyproject.toml` puts `src` and `.` on the
-path through `[tool.pytest]`, which `python3 -m` never reads (`SF-27/4`).
+path through `[tool.pytest]`, which `python3 -m` never reads.
 
 ⚠️ **This is the third regenerator writing into `tests/fixtures/pages/` and none
-of the three cleans it** (`SF-27/4`). Each writes named files and none
+of the three cleans it**. Each writes named files and none
 enumerates the directory, so today they coexist; the day any of them gains a
 `glob`-and-delete it silently deletes the other two's evidence.
 

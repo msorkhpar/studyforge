@@ -102,7 +102,7 @@ def test_the_skill_carries_the_measurements_rather_than_asserting_shape():
     # ⛔ R19: anything a second source would have to re-derive is a hole in the
     # skill. Each number below was counted in the pinned image, not inherited.
     # ⚠️ W257 (rider W248/3): the check and rule-id counts went stale after
-    # `f816454`. They are DATED IN PLACE (Ruling 106), not rewritten, so the
+    # `f816454`. They are DATED IN PLACE, not rewritten, so the
     # date beside each is pinned with it.
     text = skill_text()
     for measured in ("**12 checks**", "**23 distinct rule ids**", "**11\ntypes**", "12.2%"):

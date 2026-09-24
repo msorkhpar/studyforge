@@ -1,9 +1,10 @@
 r"""R1's registry of the sources the framework may not name, for the product's own tests.
 
-⭐ **`REL-02`: the product suite's OWN copy of `KNOWN_SOURCES` and `named_sources`** from
+⭐ **The product suite's OWN copy of `KNOWN_SOURCES` and `named_sources`** from
 `tools/quality/source_names.py`, so a product test that asks whether a shipped document names a
 source needs no tooling. ⛔ Both are the original's byte for byte, and
-`tests/test_process_twins.py` refuses a drift while both exist; `REL-10` leaves this copy.
+`tests/test_process_twins.py` refuses a drift while both exist; this copy stays when the
+tooling leaves.
 
 **How you use it.** `named_sources(text)` returns `(line, corpus, why)` for every line that
 names a known source, reporting the corpus's ROLE and never the matched text.

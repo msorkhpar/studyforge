@@ -58,7 +58,7 @@ def test_a_path_that_escapes_the_source_root_is_refused(pattern):
 
 
 #: The three faults, and the phrase each one is named by. ⚠️ Pinned because
-#: a refusal is a **format**: `W59` moved the function that produces the
+#: a refusal is a **format**: a later move of the function that produces the
 #: middle clause, and `match="stay inside it"` above would have read green
 #: through a transposition of the three phrases.
 ESCAPE_PHRASES = [
@@ -203,7 +203,7 @@ def test_a_not_material_glob_that_escapes_the_source_root_is_refused(glob):
 
 
 def test_a_bracket_class_is_a_wildcard_wherever_it_falls():
-    # ⛔ **Found by a mutant surviving** (`W40/3`). `WILDCARDS` names three
+    # ⛔ **Found by a mutant surviving.** `WILDCARDS` names three
     # characters and only two of them were ever exercised in a position that
     # tells them apart: replacing `[` with `]` left the whole suite green.
     # ⭐ Both halves are asserted, because `[` is read by two different rules.

@@ -143,7 +143,7 @@ import cut short by a crash can simply be run again.
 ## ⛔ The belief rule
 
 **An imported pass is believed as recorded.** This machine believes its own
-`first_passed_at` the same way (`SF-19b` reports a pass from it). No rule can
+`first_passed_at` the same way (serving reports a pass from it). No rule can
 do better, because the record keeps no history: a hand-written pass cannot be
 told from an earned one (`SF-19b/5`). ⭐ Progress also enters only from an
 `owner` file, which is the reader's own record from their own machine (R16).

@@ -227,7 +227,7 @@ def _run_as_written(root, text, bin_dir):
 
     ⭐ The library is on the path the way an installed one is — and this tree's
     `src` is what this test's own Python imports — while NOTHING is beside the
-    corpus (`REL-05`). The wheel-installed reading is `test_installed.py`'s.
+    corpus. The wheel-installed reading is `test_installed.py`'s.
     """
     environment = {
         key: value
@@ -367,7 +367,7 @@ def test_regeneration_is_idempotent_clean_and_follows_the_state(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W442` and `REL-05` — the document names no path to the framework at all
+# ⛔ `W442` — the document names no path to the framework at all
 # --------------------------------------------------------------------------
 
 
@@ -405,7 +405,7 @@ def test_what_a_worktree_writes_is_what_the_main_checkout_writes_and_runs_there(
 
 
 def test_no_generated_document_reaches_the_framework_by_path(tmp_path):
-    # ⛔ `REL-05`: a stranger has the installed library and no checkout beside
+    # ⛔ A stranger has the installed library and no checkout beside
     # the corpus, so nothing onboarding writes may address one.
     made = onboard(corpora.SETTLED, framework_commit=corpora.COMMIT)
     texts = {item.where: item.text for item in made.files}

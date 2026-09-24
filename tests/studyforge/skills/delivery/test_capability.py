@@ -253,7 +253,7 @@ def test_m10_keeps_its_declared_place_and_is_not_sorted_after_m1():
 
 
 def test_no_side_the_index_reports_is_outside_the_closed_vocabulary():
-    # ⛔ Ruling 185: a narrowed population, never a widened predicate. Every
+    # ⛔ A narrowed population, never a widened predicate. Every
     # value that reaches a row comes out of `SIDES`.
     assert set(plans.sided_index().sides.values()) <= set(SIDES)
     assert set(plans.live_index().sides.values()) <= set(SIDES)

@@ -11,7 +11,7 @@ or `Response(200, headers, stream=chunks)`. `app` writes it; nothing else touche
 the wire.
 
 ⭐ **A `stream` is written chunk by chunk and delimited by closing the connection**
-(`SF-22`: a run's output reaches the page line by line as the program writes it).
+(a run's output reaches the page line by line as the program writes it).
 ⛔ `app` always closes a stream it was handed — finished, failed or abandoned by
 the client — so whatever the stream holds open (a run) ends with the response.
 ⭐ A stream that also has `cancel()` has it called, from another thread, the moment

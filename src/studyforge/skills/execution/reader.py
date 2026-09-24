@@ -9,7 +9,7 @@ and the runner up, and where narration comes from.
 **Depends on.** `composefile` for the two answers it repeats, `contract` for
 narration's pointer. ⛔ No I/O and nothing source-specific (R1).
 
-⭐ **Split out of `onboard` at this seam (`W445`)**: that module carried the
+⭐ **Split out of `onboard` at this seam**: that module carried the
 generation and this document in one file at the 400-line bound, and the
 document is the half that grew.
 

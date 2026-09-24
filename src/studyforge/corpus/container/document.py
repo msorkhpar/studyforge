@@ -36,7 +36,7 @@ CONTAINER_API = 3
 #: `studyforge.version`'s (SF-33); what lives here is the set. ⭐ **Spelled as
 #: literals rather than derived from `CONTAINER_API`**: a set built out of the
 #: constant it is meant to accompany moves whenever that constant does, and an
-#: assertion about it can only prove self-consistency (`W39/5`'s shape).
+#: assertion about it can only prove self-consistency.
 #:
 #: ⚠️ **1 is still read, and that is not a migration.** A v1 map declares no
 #: region, so every claim it makes is one this build understands unchanged;

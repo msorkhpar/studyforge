@@ -28,7 +28,7 @@ PACKAGE = "src/studyforge/render/index"
 #: against this** — `ast.ImportFrom.module` is the name with the leading dots
 #: REMOVED and `level` is where they went, so a sweep matching `node.module`
 #: against absolute dotted names has silently excluded every relative import in
-#: its subject (**Ruling 178**, `CTO-45/6`). ⚠️ A relative import is also the
+#: its subject. ⚠️ A relative import is also the
 #: *shorter* spelling, which is the one a hurried author reaches for.
 PACKAGE_NAME = "studyforge.render.index"
 
@@ -51,7 +51,7 @@ FORBIDDEN_MODULES = (
 )
 
 #: Ways a module opens a file without importing anything at all. ⚠️ **Widened
-#: after `CTO-45/6` observed that door 2 did not save the sweep either**: a
+#: after a review observed that door 2 did not save the sweep either**: a
 #: corpus reader is reached through *its own* verb — `parse`, `read`, `load`,
 #: `scan` — long before anybody calls `open`. ⛔ Known-incomplete by
 #: construction, which is why it is the second layer and not the claim.
@@ -111,7 +111,7 @@ def imported(text: str, package: str = PACKAGE_NAME) -> list[str]:
     `studyforge.corpus`, so each imported NAME is appended to the resolved
     module too. ⚠️ It is the same defect as the relative form by a different
     door — the module reached is not the string `ast` hands you — and it was
-    found while fixing that one (`SF-14/7`).
+    found while fixing that one.
     """
     found: list[str] = []
     for node in ast.walk(ast.parse(text)):
@@ -141,7 +141,7 @@ def called(text: str) -> list[str]:
 
 
 def test_the_sweeps_subject_is_not_empty():
-    # ⛔ Ruling 132's refinement: an inhabitation assertion belongs on every
+    # ⛔ An inhabitation assertion belongs on every
     # sweep, including the one whose subject looks obviously non-empty. A
     # package with no modules would pass every clause below.
     found = modules()
@@ -192,7 +192,7 @@ def test_only_the_pure_path_type_is_taken_from_pathlib():
     ],
 )
 def test_a_relative_import_resolves_to_the_module_it_actually_reaches(source, expected):
-    # ⛔ **Ruling 178's arithmetic, asserted directly.** `ast` hands back
+    # ⛔ **The relative-import arithmetic, asserted directly.** `ast` hands back
     # `"corpus.container"` and `level=3` for the fifth row; the module reached is
     # `studyforge.corpus.container`, and a sweep matching the first string
     # against absolute names sees nothing at all.
@@ -208,7 +208,7 @@ def test_a_level_that_walks_past_the_top_names_no_module():
 
 
 #: ⛔ **Reading 2, PLANTED — one row per SPELLING, and never a disjunction.**
-#: Ruling 178's second half: *a control whose assertion is `A or B` discharges
+#: *A control whose assertion is `A or B` discharges
 #: nothing about `A`*. ⚠️ The relative rows are the ones the first version of
 #: this sweep could not see at all, and the `package named` rows are the second
 #: hole found while fixing that one.
@@ -311,7 +311,7 @@ def test_this_package_makes_no_relative_import_at_all_and_that_is_why_the_hole_w
     # EMPTY — which is precisely why a sweep that could not resolve a relative
     # import still looked like it was working for a whole round.
     #
-    # ⛔ **The second layer, and it is deliberate.** `CTO-45/6` offered two
+    # ⛔ **The second layer, and it is deliberate.** The review offered two
     # remedies: resolve the level, or refuse a relative import outright. Both
     # are here, because neither is sufficient on its own — resolution alone
     # leaves the isolation claim unreadable from the import line, and refusal

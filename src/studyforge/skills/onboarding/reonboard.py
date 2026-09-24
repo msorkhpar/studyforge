@@ -34,7 +34,7 @@ lost only because `existing=` carries it), so this module does it.
 
 ⚠️ `survey('.')` on an onboarded corpus reads the framework's own generated half
 as the corpus's material, and proposes answers that disagree with the recorded
-ones (`W329`, `ISO-M10` round 2) — so every regenerate from it is a string of
+ones (`W329`, measured on the first corpus) — so every regenerate from it is a string of
 refusals to settle. ⭐ **The recorded manifest IS the settled draft**: every
 answer a person already gave, byte for byte. A re-survey is for a corpus whose
 MATERIAL changed shape, and that is a new onboarding, not this.
@@ -83,7 +83,7 @@ def reonboard(
     without it the recorded pin is kept, and so are the recorded skills.
     ⛔ Nothing is written: `write(root, regenerate=True)` is the caller's act.
 
-    ⛔ **Kept only while it still describes the library running this** (`REL-05`):
+    ⛔ **Kept only while it still describes the library running this**:
     a pin naming another version, or one that predates the installed library
     (it names a sibling checkout), is refused by name without `framework_commit`
     — the commit it records says nothing about the library installed now.
@@ -177,7 +177,7 @@ def _pin(root: Path) -> dict:
 
 
 def _refuse_stale(pin: dict) -> None:
-    """Refuse to keep a pin that does not name the library running this (`REL-05`)."""
+    """Refuse to keep a pin that does not name the library running this."""
     try:
         running = library.version()
     except library.LibraryRefused as error:

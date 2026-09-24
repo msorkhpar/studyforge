@@ -29,12 +29,12 @@ extraction pays that debt during the port, not after: it arrives as focused
 modules or it does not arrive.
 
 **Filled by SF-19a**: `app` (the loopback server and its seams), `security`,
-`caching`, `response`, `routes.content` and `routes.assets`. **Filled by SF-19b**:
+`caching`, `response`, `routes.content` and `routes.assets`. **Then**:
 `discovery` (a root in, every corpus under it found, no configured paths),
 `addressing` (N-segment unit addresses at each corpus's own depth), `routes.state`
 (never cached, derived from the filesystem on every request) and `instance`
-(`make_instance(root, port, log)`, the seam `studyforge serve` calls). **Filled by
-SF-22**: `routes.run` (Run and Submit), registered in `instance.instance_of` as the one
+(`make_instance(root, port, log)`, the seam `studyforge serve` calls). **And**:
+`routes.run` (Run and Submit), registered in `instance.instance_of` as the one
 namespace `app` answers `POST` under, and `app`'s streamed response.
 
 ⛔ **`routes.run` is the one module here that imports `execute`** — the runner, which

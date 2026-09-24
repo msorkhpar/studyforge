@@ -1,4 +1,4 @@
-r"""`AX-10`: the authoring half of `docs/authoring/exercises.md` is the shipped skill.
+r"""The authoring half of `docs/authoring/exercises.md` is the shipped skill.
 
 **What it asserts.** The guide teaches a stranger to author exercises for their
 own source without reading the spec: the three source cases, the quiz, the
@@ -18,7 +18,7 @@ traceback (`W61` shipped a fence naming a command that did not exist).
 
 ⭐ `tests/test_authoring_reference.py` sits at its 600-line ceiling (R11), and
 the remedy is a split at a named seam, never a trim — the precedent is
-`W117/2`, and `W330`'s `tests/test_authoring_geography.py`. ⛔ **The seam:**
+`tests/test_authoring_geography.py`. ⛔ **The seam:**
 that module reads the reference's **record vocabularies** — the keys a document
 carries, the checks `validate` runs — and this one reads the **authoring
 procedure**: what the skill package does, and the worked corpus it does it to.
@@ -93,7 +93,7 @@ COUNTED_BUDGET = re.compile(
     r"\b(?:\d+|one|two|three|four|five|six)\s+(?:attempts|drafts|tries|retries)\b", re.I
 )
 
-#: What a reader is shown where a path was computed at a value (`W330`'s shape).
+#: What a reader is shown where a path was computed at a value (the geography test's shape).
 DRAWN = Places(Address(["kata"]), "python", 1, 1)
 SHOWN = {
     DRAWN.address.key: "<address>",
@@ -243,7 +243,7 @@ def test_each_field_table_is_the_shipped_shape_both_ways(heading, shape):
 # --- the plan --------------------------------------------------------------
 
 
-#: ⛔ `W453`: the user's two sentences, which the guide must quote where the
+#: ⛔ The user's ruling of 2026-09-23, in two sentences, which the guide must quote where the
 #: author reads it. Fragments, so a re-wrapped line still matches.
 RULED = (
     "The target is covering all the aspects not just having something minimum",

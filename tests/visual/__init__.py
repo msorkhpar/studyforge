@@ -34,8 +34,8 @@ table** — so a region added there is a red check here on the day it lands.
 every string in one language, the tests passed, and only a screenshot caught
 it.** A project whose reading surface is its product cannot verify that surface
 by assertion alone, and four later tasks have acceptance no unit test reaches:
-`SF-14` (works with JavaScript disabled), `SF-18` (a highlight tracking
-playback), `SF-24` (keyboard-operable), `QA-02` (contrast for every token in two
+`SF-14` (works with JavaScript disabled), the narration player (a highlight
+tracking playback), `SF-24` (keyboard-operable), `QA-02` (contrast for every token in two
 themes). This lands at M1 rather than M7 so those four use it instead of each
 improvising one.
 
@@ -188,13 +188,13 @@ ACCEPTANCE = {
     #: which needs a SERVED origin, and needs the server to say the lines.
     "draws what a Submit reported — main ask, edge cases n/m, each failed case "
     "named — beside a run verdict it never changes (AX-09)": "test_practice_breakdown",
-    #: ⭐ `W450`'s clause, and it is a row of its own because its ORIGIN and its
+    #: ⭐ The served-faces clause, and it is a row of its own because its ORIGIN and its
     #: POLICY are the subject: `file://` carries no policy, so every clause above
-    #: loaded the faces while every served page blocked all seven (`W447/1`).
+    #: loaded the faces while every served page blocked all seven.
     #: ⛔ Read over the real `serve` process, never a header written here.
     "loads every vendored face on a page the serve process answers, under the "
     "policy it sends, and raises no CSP violation (W450)": "test_served_faces",
-    #: ⭐ `W449`'s clause, the user's own: *"when user enters on a page they
+    #: ⭐ The page-start clause, the user's own: *"when user enters on a page they
     #: should remain at top"*. ⛔ A row of its own, because its frame must be a
     #: document of ANOTHER origin whose own script takes focus: `served.py`'s
     #: blank windows have no script, and the defect is the framed document's.

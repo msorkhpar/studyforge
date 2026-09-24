@@ -45,7 +45,7 @@ section[data-practice-quiz] p {
    to.
 
    ⛔ **The number is drawn IN THE LEGEND, never as the list's own marker**
-   (`W451`, the corpus office's finding F9). A marker sits on the list item's
+   (the first corpus's finding F9). A marker sits on the list item's
    FIRST LINE BOX, and a `<legend>` is laid out in its fieldset's border rather
    than as a line of content — so the browser's marker landed beside the FIRST
    OPTION and the stem stood unnumbered above it. ⭐ A counter in the legend's

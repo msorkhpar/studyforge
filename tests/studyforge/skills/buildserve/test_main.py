@@ -2,7 +2,7 @@
 
 ⛔ Started as a person starts it, answered over loopback, stopped with Ctrl-C's signal.
 
-⛔ **One reader of the process's output** (`W237`): `tests.support.ProcessOutput`, from
+⛔ **One reader of the process's output**: `tests.support.ProcessOutput`, from
 launch to exit, so both pipes are drained together. A child that fills its `stderr` pipe
 before it prints the listening line cannot block the reading, and a stand-in child that
 does exactly that is run below.
@@ -35,7 +35,7 @@ FLOOD = 4 * 65536
 
 #: A stand-in for the skill that fills `stderr` BEFORE it prints its listening line.
 #:
-#: ⛔ **`W378`: it BLOCKS `SIGINT` before it listens and TAKES it with `sigwait`.** A Python
+#: ⛔ **It BLOCKS `SIGINT` before it listens and TAKES it with `sigwait`.** A Python
 #: handler followed by `signal.pause()` lost the signal whenever it landed after the
 #: interpreter's last signal check and before `pause()` entered the kernel: the handler's flag
 #: was set, `pause()` then waited for a second signal that never came, and the reading ran out
@@ -90,7 +90,7 @@ def served(argv: list[str]) -> Iterator[Served]:
             result = Served(int(found.group(1)))
             yield result
             process.send_signal(signal.SIGINT)
-            # ⭐ `W378`: 60 s is what a child is given to END once told to — the skill's shutdown,
+            # ⭐ 60 s is what a child is given to END once told to — the skill's shutdown,
             # or the stand-in waking from `sigwait` — on a machine the parallel suite loads. It
             # is a backstop, never a wait for work: neither child has work left to do here.
             result.said, result.errors = output.rest(timeout=60)
@@ -116,7 +116,7 @@ def test_the_module_builds_serves_reports_and_stops_on_interrupt(tmp_path):
 
 
 def test_a_child_that_fills_its_stderr_pipe_before_it_listens_does_not_block_the_reading():
-    # ⛔ `W237`: `stdout` read to its end before `stderr` blocks here until the watchdog.
+    # ⛔ `stdout` read to its end before `stderr` blocks here until the watchdog.
     with served([sys.executable, "-c", FLOODING, str(FLOOD)]) as session:
         assert session.port == 9
     assert session.code == 0, session.errors[-400:]
@@ -148,7 +148,7 @@ def blocked_and_pending(pid: int) -> tuple[bool, bool]:
 
 
 def test_an_interrupt_that_lands_before_the_stand_in_waits_for_it_still_stops_it():
-    # ⛔ `W378`: the signal is sent while the stand-in is held short of `sigwait`, where the
+    # ⛔ The signal is sent while the stand-in is held short of `sigwait`, where the
     # handler-and-`pause()` stand-in could lose it. It is read back as BLOCKED and PENDING —
     # `kill` queues it before it returns — and it is then taken, not lost.
     with held() as (process, output):

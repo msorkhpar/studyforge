@@ -1,26 +1,26 @@
-"""What a test run could not reach, printed in every run's summary (`W158`).
+"""What a test run could not reach, printed in every run's summary.
 
-⭐ **`REL-02`: the product suite's OWN copy of `unreachable_population` and `skip_reason`** from
+⭐ **The product suite's OWN copy of `unreachable_population` and `skip_reason`** from
 `tools/quality/report.py`, so the disclosure prints in a checkout with no tooling in it. ⛔ The
 functions are that module's byte for byte, and `tests/test_process_twins.py` refuses a drift
-while both exist; `REL-10` leaves this copy as the only one.
+while both exist; once the tooling leaves, this copy is the only one.
 
 **How you use it.** The root `conftest.py` writes `unreachable_population(stats)` under every
 run's summary, where `stats` is pytest's own tally (`terminalreporter.stats`).
 
 **Depends on.** `collections` — the standard library.
 
-⛔ **A disclosure and never a verdict** (Ruling 328): it returns lines and no exit code, because
+⛔ **A disclosure and never a verdict**: it returns lines and no exit code, because
 what an environment cannot reach is host state no branch controls. ⚠️ Printed on an EMPTY
 population too: `green` with nothing skipped and `green` with a hole are two answers, and only
-a line present in BOTH tells them apart (Ruling 191).
+a line present in BOTH tells them apart.
 """
 
 from __future__ import annotations
 
 from collections import Counter
 
-#: ⛔ **The label every test run prints, reached or not** (`W158`).
+#: ⛔ **The label every test run prints, reached or not**.
 UNREACHABLE = "unreachable population"
 
 #: What pytest prefixes to a skip's own reason, dropped so the reason reads as typed.

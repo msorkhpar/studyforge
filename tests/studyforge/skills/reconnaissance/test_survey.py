@@ -1,4 +1,4 @@
-"""One pass over a source — SK-01's acceptance, end to end.
+"""One pass over a source — reconnaissance's acceptance, end to end.
 
 ⚠️ **The four real corpora are measured in the handoff, not here.** A claim
 about another repository is verified in that repository (the integration

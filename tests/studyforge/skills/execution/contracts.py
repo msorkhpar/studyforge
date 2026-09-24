@@ -10,7 +10,7 @@ votes. ⭐ What is asserted against the **real** contract is asserted in
 ⚠️ **The container's home is composed rather than written**, because R7's gate
 and this repository's own sweep both read `/home/<a name>` as a leak and cannot
 tell a container's account from the host user's. ⛔ That is a measured property
-of the gate, reported as `SK-09/6`, not a workaround anybody may generalise.
+of the gate, not a workaround anybody may generalise.
 """
 
 from __future__ import annotations

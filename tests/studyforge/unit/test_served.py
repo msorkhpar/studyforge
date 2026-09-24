@@ -120,7 +120,7 @@ def test_a_provenance_entry_off_contract_is_refused():
 
 
 def test_every_section_is_checked_and_the_list_is_inhabited():
-    # ⚠️ Ruling 48: a document with zero sections would pass every per-section
+    # ⚠️ The denominator: a document with zero sections would pass every per-section
     # assertion, and zero sections is the bug those assertions guard.
     built = document()
     assert len(built["sections"]) == 2

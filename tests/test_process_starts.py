@@ -18,13 +18,13 @@ package reaches a process only by handing a command to `execute`.
   literal whose first element is the resolved `git`, and a planted other program
   is refused;
 - **the epic names the list** — `SF-20`'s section in `E05` names each site;
-- **the detector knows every standard-library way to start a process** (`W375`) —
+- **the detector knows every standard-library way to start a process** —
   each entry of each of its tables is planted under each spelling it can take and
   fires, and a lookalike of each is planted and passes; `webbrowser` among them.
 
 ⭐ The detector is ONE, `tests/spawning.py`'s `spawns`, shared with `serve`'s
 no-spawn test — so neither file's rename breaks the other, and one list answers
-both questions (`W375`, closing `W361/2` and `W361/3`).
+both questions.
 """
 
 from __future__ import annotations
@@ -203,7 +203,7 @@ def test_a_git_question_passes_the_git_check():
     assert not_git("import subprocess\nsubprocess.run([git, '-C', where, 'status'])\n") == []
 
 
-# --- the detector itself: each way to start a process, both ways (`W375`) --
+# --- the detector itself: each way to start a process, both ways ---------
 
 
 def module_spellings(module: str) -> list[str]:
@@ -283,7 +283,7 @@ print(json.dumps({"before": before, "after": "subprocess" in sys.modules}))
 
 
 def test_webbrowser_is_listed_because_importing_it_loads_subprocess():
-    # ⭐ `W361/3`, measured rather than asserted: a fresh interpreter has no
+    # ⭐ Measured rather than asserted: a fresh interpreter has no
     # `subprocess` until `webbrowser` is imported, and has it after.
     result = run([sys.executable, "-I", "-c", WEBBROWSER], repository_root())
     assert result.returncode == 0, result.stderr

@@ -50,7 +50,7 @@ would be a second copy that goes stale. ⛔ And `require_after_carried` refuses
 a page whose authored ordinals repeat or skip past what it carries, naming the
 practice, before anything is committed.
 
-## ⛔ ONE PLANNED EXERCISE PER NAME THE ASPECTS GIVE (`W453`)
+## ⛔ ONE PLANNED EXERCISE PER NAME THE ASPECTS GIVE
 
 ⭐ Each planned exercise's brief carries the aspects the plan gave it to check,
 so the author drafts against what the page teaches rather than against a
@@ -158,8 +158,7 @@ def plan_page(page: Page, ledger: Ledger, where: str) -> Plan:
 
     ⭐ **The one place a page is planned**, so the pass and a single page's
     loop cannot plan the same page two ways. ⛔ Every aspect's basis must
-    resolve to the page's own ledger entries or to a heading it carries once
-    (`W453`).
+    resolve to the page's own ledger entries or to a heading it carries once.
     """
     headings = next((s.sections for s in ledger.sources if s.path == page.path), ())
     try:

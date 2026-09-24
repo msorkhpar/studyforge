@@ -1,4 +1,4 @@
-"""`studyforge` on the path inside the pinned image, asserted rather than arranged (`W211`).
+"""`studyforge` on the path inside the pinned image, asserted rather than arranged.
 
 ⛔ **The defect.** The image installed `requirements.txt` and never this project,
 and carried no build backend to install it with — so `command -v studyforge`
@@ -8,7 +8,7 @@ reading about the INSTALLED command was host-only.
 Two halves, split the way `test_dev_image.py` splits:
 
 **Static — always run.** The Dockerfile's installs, read one COMMAND at a time
-(`commands()`, `W131`): this project is installed EDITABLE against `/workspace`,
+(`commands()`): this project is installed EDITABLE against `/workspace`,
 offline, by a backend pinned by version and hash that is removed afterwards, and
 only the declaration crosses from the checkout.
 

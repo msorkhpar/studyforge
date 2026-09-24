@@ -174,7 +174,7 @@ def reader_document(
     no reading, and nothing here that a later `studyforge narrate` can make untrue.
     ⛔ **Every fenced line runs as written** from a fresh clone's root, in a
     Python with the pinned library installed, and a test executes each one.
-    ⛔ **No line names a path to the framework** (`REL-05`): the library is
+    ⛔ **No line names a path to the framework**: the library is
     installed, so a reader reaches it by module name, never through a checkout.
     """
     run = "python3 -m"
@@ -238,7 +238,7 @@ def _stands(run: str) -> list[str]:
 def _running(manifest: Manifest, commit: str, version: str, run: str) -> list[str]:
     """Give the commands that run from a fresh clone, with the pinned library installed.
 
-    ⛔ **Nothing here reaches the framework by path** (`REL-05`): the install is
+    ⛔ **Nothing here reaches the framework by path**: the install is
     said in prose, because where a reader's wheel sits is theirs, and every
     fenced line reaches the library by module name.
     """

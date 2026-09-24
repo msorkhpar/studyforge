@@ -59,7 +59,7 @@ def test_the_reverse_of_a_declared_edit_is_recorded():
 @pytest.mark.parametrize("path", [".gitignore", ".hgignore"])
 def test_the_root_ignore_file_is_never_editable(path):
     # ⛔ Write a new ignore file INSIDE a generated directory instead — which
-    # is what FND-02 did for a generated directory, and it works.
+    # is what the scaffold does for a generated directory, and it works.
     with pytest.raises(ManifestError, match="root ignore file"):
         edits({**POM_EDIT, "path": path})
 
@@ -137,7 +137,7 @@ def test_an_edit_may_not_reach_outside_the_source_root(path):
     ],
 )
 def test_the_twin_refusal_says_it_in_the_same_words_as_the_content_one(path, phrase):
-    # ⛔ W19 unified the middle clause onto one function and `W59` moved that
+    # ⛔ W19 unified the middle clause onto one function and a later move took that
     # function out of `content`; this is the byte-level pin at the second
     # site, so a move that quietly changed what either caller emits fails
     # here. ⭐ It is the same sentence as `content/test_parse.py`'s with a

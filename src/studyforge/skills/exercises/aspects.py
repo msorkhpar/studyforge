@@ -1,6 +1,6 @@
 r"""A page's checkable aspects, and how each one ends: checked by an exercise, or a reason.
 
-**What it does.** Holds the unit a page's plan is made of (`W453`): an
+**What it does.** Holds the unit a page's plan is made of: an
 **aspect** is one IMPORTANT idea the page teaches that a reader could be
 checked on, read from its prose **and** its code. ⛔ **Every aspect ends one of
 two ways** — the planned exercise (or quiz) that checks it, or a written reason

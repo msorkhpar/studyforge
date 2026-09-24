@@ -155,7 +155,7 @@ def test_the_scripts_query_only_classes_the_contract_publishes():
 
 
 def test_the_authored_population_is_inhabited_and_comes_from_the_bundle():
-    # ⛔ Ruling 48, at the set the two both-directions checks above walk. The
+    # ⛔ Inhabitation, at the set the two both-directions checks above walk. The
     # listed form of `AUTHORED_CSS` read `("reset.css", "palette.css",
     # "focus.css", "reading.css")`, and on the day `chrome.css` joined the
     # bundle it was silently outside the contract — a new authored stylesheet

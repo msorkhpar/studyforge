@@ -1,4 +1,4 @@
-"""A fixture corpus whose units RUN — the input `SF-20` and `SF-44` need (`W352`).
+"""A fixture corpus whose units RUN — the input the runner and the terminal command need.
 
 **What it asserts.** That `tests/fixtures/runnable/` is a valid corpus, that it
 carries by construction every shape a runner must tell apart, and that each
@@ -206,7 +206,7 @@ def test_the_file_that_does_not_compile_fails_as_a_syntax_error(copy):
 
 def test_the_file_parses_and_only_the_compiler_refuses_it():
     # ⛔ A PARSE error would break every walker in this suite that `ast.parse`s
-    # each `.py` under `tests/` (`W352/5`). ⭐ `'break' outside loop` is raised
+    # each `.py` under `tests/`. ⭐ `'break' outside loop` is raised
     # by the compiler, not the parser — still a `SyntaxError`, and still a file
     # that never runs — so both halves are pinned, and "simplifying" it to a
     # missing colon reds here rather than in five unrelated modules.

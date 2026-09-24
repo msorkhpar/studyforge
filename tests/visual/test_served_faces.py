@@ -1,6 +1,6 @@
-"""`W450` — the page's own faces load where the page is SERVED, under the policy it is served with.
+"""The page's own faces load where the page is SERVED, under the policy it is served with.
 
-⛔ **What went wrong, and why nothing here saw it** (`W447/1`). `faces.py` carries
+⛔ **What went wrong, and why nothing here saw it.** `faces.py` carries
 the seven vendored faces inside `page.css` as `data:` URIs, on purpose, because a
 `file://` page cannot rely on a font file (R8). ⛔ The served policy said
 `font-src 'self'`, which does not admit `data:`, so every face was blocked on every

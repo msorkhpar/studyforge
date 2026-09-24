@@ -9,7 +9,7 @@ that it carries no path at all.
 
 ⚠️ **This module used to hold a `COMPONENTS` tuple**, which was Ruling 20's
 shape exactly: a second, weaker copy of a list that already existed, in a file
-nobody would think to update. ⭐ Ruling 54 replaced it — `status` makes *"this
+nobody would think to update. ⭐ The register replaced it — `status` makes *"this
 component is owed and does not exist yet"* sayable in the register itself, so
 E12 and E13 **flip a status** rather than remembering a second file.
 """
@@ -44,7 +44,7 @@ def test_this_repository_is_the_one_self_row():
 
 
 def test_a_commit_is_recorded_exactly_when_the_component_exists():
-    # ⛔ Ruling 54, in both directions: a `present` row with no commit pins
+    # ⛔ Both directions: a `present` row with no commit pins
     # nothing, and a `not-yet-created` row with one claims a commit in a
     # repository that does not exist.
     for component in components():

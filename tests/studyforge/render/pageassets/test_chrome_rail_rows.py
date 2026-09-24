@@ -101,7 +101,7 @@ def test_the_rail_spans_every_row_the_page_skeleton_can_put_in_the_reading_colum
     ("grid-column: 1; grid-row: 1;", "grid-column: 1; grid-row: 1 / -1;"),
 )
 def test_that_check_refuses_both_placements_this_row_was_opened_over(placement):
-    # ⛔ Ruling 70: a check that has only ever seen the repaired file has not been
+    # ⛔ A check that has only ever seen the repaired file has not been
     # shown to notice the defect. ⚠️ BOTH literals here were shipped or proposed —
     # the first is what `W325` merged, the second is what was proposed to repair
     # it — and a real browser was asked which layout each produces before this

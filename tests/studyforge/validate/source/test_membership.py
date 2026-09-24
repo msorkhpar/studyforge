@@ -2,7 +2,7 @@
 
 ⛔ **A stray beneath the archive root is refused by name, never skipped.** Both
 ways: a planted file turns `validate` RED and names itself, and an archive
-laid out by SK-02's own `Layout` reads clean.
+laid out by the adapter scaffold's own `Layout` reads clean.
 
 ⛔ **And the other direction (`W214`): a file the archive DECLARES and does not
 hold is refused by name too.** Both ways again — declared media written where

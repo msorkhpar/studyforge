@@ -15,7 +15,7 @@ state it is in before rendering anything that implies a grade.
     completes_practice(state, "test", passed=True)
 
 **Depends on.** `unit.trust`, which owns R5's rule and whose own contract says
-*"SF-23 consumes it"*. ⛔ Not on `execute` — running a grader is a separate
+that this package consumes it. ⛔ Not on `execute` — running a grader is a separate
 concern from saying what a grader's word is worth. ⛔ Not on `render`: this
 says what may be claimed, never how it is drawn.
 
@@ -108,9 +108,6 @@ is identical over `file://` and over a served origin (R8). ⛔ **A quiz produces
 no run**, so it names no `test_path`, `completes_practice` answers `False` for
 it in every act, and its own completion rule is `quiz.completes` — every
 question answered correctly, recorded through the reader's state.
-
-**Skeleton at FND-01.** Filled by SF-23 (E06); the case vocabulary by AX-00 and
-the quiz by AX-05 (E14).
 """
 
 from __future__ import annotations

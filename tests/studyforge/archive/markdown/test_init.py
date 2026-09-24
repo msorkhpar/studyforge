@@ -26,7 +26,7 @@ def fixture_blocks(relative: str) -> list[dict]:
     return json.loads((FIXTURES / relative).read_text(encoding="utf-8"))["blocks"]
 
 
-#: ⛔ **What the sweep below asserts, as a rule id** (Ruling 46). Both of its
+#: ⛔ **What the sweep below asserts, as a rule id**, never a directory. Both of its
 #: consumers assert the block *vocabulary* — the type names and which of them
 #: hold blocks — so a fixture declared to break `vocabulary` is one this module
 #: is not entitled to read. ⚠️ No fixture declares it today and the exclusion is
@@ -86,7 +86,7 @@ def test_every_block_type_the_fixtures_carry_is_in_the_vocabulary():
     documents = {path for path, _block in every_fixture_block()}
     seen = {block["type"] for _path, block in every_fixture_block()}
     assert seen <= set(BLOCK_TYPES), sorted(seen - set(BLOCK_TYPES))
-    # ⛔ Ruling 48: a sweep that matched nothing satisfies the subset assertion
+    # ⛔ A sweep states its denominator: one that matched nothing satisfies the subset assertion
     # above against an empty set, so the denominator is asserted beside it.
     # ⚠️ Fewer than the coverage figure, deliberately: `corpus.json` and
     # `container.json` are read and carry no blocks.

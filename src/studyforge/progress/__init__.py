@@ -15,7 +15,8 @@ depth, record each finished run, and catch `RAISES` around any call:
 
 **Depends on.** `address`, `archive.scrub`, `corpus.placement` and `version`.
 ⛔ Not on `serve` — the store is what the server serves, not the other way
-round, and `SK-06` and `OPS-04` write it from outside any server.
+round, and the personal-archive skill and the build write it from outside any
+server.
 
 ⭐ **A Submit's breakdown rides beside its verdict** as `last.cases`, one
 verdict per case the practice's record declared (`AX-02`). ⛔ **It is a report
@@ -41,7 +42,7 @@ makes a generated site a personal record rather than a rendering.
 | `lock` | `exclusive` — the inter-process lock and what it guarantees on which platforms |
 | `errors` | `ProgressError`, `ProgressFormatError` |
 
-## ⭐ The seam the server calls (`SF-19b`'s state route, `SF-22`'s run route)
+## ⭐ The seam the server calls (the state route and the run route)
 
 A route holding a key string parses it with `parse_practice_key(key, depth)`
 or the address package, then calls `Progress.record_run` or `Progress.entry`

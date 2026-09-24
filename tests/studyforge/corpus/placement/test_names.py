@@ -53,7 +53,7 @@ def test_the_name_is_the_label_and_the_title():
 
 
 def test_the_default_label_is_the_units_own_ordinal_and_not_its_source_filename():
-    # ⭐ The derivation SF-31's golden was waiting on, stated as a test.
+    # ⭐ The derivation the placement golden was waiting on, stated as a test.
     # ⛔ From identity, never from the filename: `README_4.4.1.md`,
     # `01-what-a-triple-is.md` and `1.md` are three corpora's three
     # conventions, and a framework that read any of them would carry a parser
@@ -471,7 +471,7 @@ def test_the_mint_instrument_tells_a_directory_name_from_a_json_key():
     miscounted = sorted(UNITS_SPELT_BUT_NOT_MINTED & set(mints))
     assert miscounted == [], f"a key, a label or a URL was counted as a mint: {miscounted}"
 
-    # ⭐ Non-vacuity (Ruling 146): a discriminator that excludes nothing is
+    # ⭐ Non-vacuity: a discriminator that excludes nothing is
     # passing by finding nothing, and would pass if both arms were dead.
     assert len(literals) > len(mints), "the instrument excluded nothing; it is not discriminating"
     print(f"units: {len(literals)} module(s) spell it, {len(mints)} mint it")

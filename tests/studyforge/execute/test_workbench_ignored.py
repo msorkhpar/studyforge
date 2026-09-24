@@ -78,7 +78,7 @@ def test_the_ignore_file_names_the_three_files_and_itself_and_is_not_a_star(tmp_
     root = corpus(tmp_path)
     write_settings(root / BASE, INSIDE_MAIN, INSIDE_TEST)
     folder = f"{BASE}/{SETTINGS_DIR}"
-    # ⭐ `W446`: each write stages under its OWN name inside the staging
+    # ⭐ Each write stages under its OWN name inside the staging
     # directory, so the directory is what is named and whatever is in it is ours.
     for name in (SETTINGS_FILE, f"{STAGING_DIR}/{SETTINGS_FILE}k3x9_q", IGNORE_FILE):
         assert is_ignored(f"{folder}/{name}", cwd=root), name

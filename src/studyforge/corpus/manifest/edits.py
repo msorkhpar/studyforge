@@ -24,8 +24,8 @@ declare.
 R3 names them, and this module refuses each **however declared**:
 
 1. **The repository's root ignore file.** Write new ignore files *inside*
-   generated directories instead — which is exactly the mechanism FND-02 used
-   for a generated directory, and it works.
+   generated directories instead — a generated directory that carries its own
+   ignore file needs nothing from the root one, and it works.
 2. **Any version-control configuration.** `.git/`, `.gitattributes`,
    `.gitmodules`.
 3. ⭐ **Any file the material's own reader depends on as content** — and this
@@ -51,9 +51,8 @@ repository they care about. ⚠️ **There is no `reverse` field, and that is
 deliberate:** an `insert-line` declaration already records the insertion
 exactly — the anchor it goes after and the line it is — so the reverse is that
 line, removed. A second field would be a second thing to keep in step with the
-first, and the failure mode of a stale undo is worse than of no undo. If the
-CTO wants the reversal declared rather than derived, that is a schema change
-and it is flagged in `docs/tasks/handoffs/SF-02.md`.
+first, and the failure mode of a stale undo is worse than of no undo. Declaring
+the reversal rather than deriving it would be a schema change.
 """
 
 from __future__ import annotations

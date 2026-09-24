@@ -382,7 +382,7 @@ def test_each_way_the_page_can_waste_its_window_is_caught_by_name(what: str, cha
     assert wasting_the_window(sound(**changes)), what
 
 
-# --- `W447`: a code block in a disclosure is as wide as one in the flow ------
+# --- a code block in a disclosure is as wide as one in the flow -------------
 
 
 #: Every width the code-figure clause is read at: the five above, and the narrow
@@ -413,7 +413,7 @@ SOLUTION_AND_FLOW = """
 })()
 """
 
-#: The rule `W447` removed, planted back as a page style: the disclosure held to
+#: The rule the repair removed, planted back as a page style: the disclosure held to
 #: the prose measure, which is what the user read as a narrower solution.
 MEASURED_DISCLOSURE = (
     "(() => { const s = document.createElement('style');"

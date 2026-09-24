@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/skills/onboarding/verify/__init__.py` (R12), and `REL-05`'s reading.
+"""Mirror of `src/studyforge/skills/onboarding/verify/__init__.py` (R12), and the installed reading.
 
 ⭐ Two halves. The command, called in process: exit `0` for a pin naming the
 installed version, `1` for another, `UNUSABLE` with a sentence when there is no
@@ -67,7 +67,7 @@ def test_a_bad_invocation_is_unusable(argv, capsys):
 
 
 # --------------------------------------------------------------------------
-# ⛔ REL-05's reading: the INSTALLED library, and no framework checkout on disk
+# ⛔ The reading: the INSTALLED library, and no framework checkout on disk
 # --------------------------------------------------------------------------
 
 

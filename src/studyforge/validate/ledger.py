@@ -1,4 +1,4 @@
-r"""Refuse a committed ledger that no longer accounts for a page the corpus carries (`W456`).
+r"""Refuse a committed ledger that no longer accounts for a page the corpus carries.
 
 **What it does.** Where a corpus commits the authoring pass's ledger, requires
 it to account for every material page the corpus carries: the page is a file
@@ -15,7 +15,7 @@ check's tuple. Each function takes the `Walk` and yields `Finding`s.
 below — `skills.exercises` for where the ledger is, how its rows are keyed and
 read, and what a page's fences are. Standard library only.
 
-## ⛔ WHY `validate` AND NOT ONLY THE PASS (`ISO-M10/11`)
+## ⛔ WHY `validate` AND NOT ONLY THE PASS
 
 ⚠️ **The corpus office read a ledger that had lost a whole container's rows as
 0 findings.** `exercises/ledger.json` is one file per corpus, and the pass that

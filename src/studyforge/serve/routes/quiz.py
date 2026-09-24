@@ -20,14 +20,14 @@ served client publishes (`serve/assets/run-client.js`).
 imports nothing that can start a process, reach a network or touch a container,
 and `tests/studyforge/serve/test_init.py` reads that of the whole package.
 
-## ⛔ THE USER'S RULING, 2026-09-23, AND WHAT IT REVERSED (`W451`)
+## ⛔ THE USER'S RULING, 2026-09-23, AND WHAT IT REVERSED
 
 > *"the quiz itself again should not require an online or agent check for the answer
 > user provided. It will be just a test with the correct answer residing on the
 > server side. When user answers it will get validated and result will be returned
 > to the user with explanation if needed"*
 
-⛔ **Until `W451` the key and every per-option sentence shipped INSIDE the page** and
+⛔ **Until that ruling the key and every per-option sentence shipped INSIDE the page** and
 the page graded itself, identically over `file://`. ⭐ **Now no built page and no
 asset a page loads carries either**: the page sends what the reader chose, and this
 route reads the key from the unit's generated document — built, per request, from

@@ -73,14 +73,14 @@ BASE = {
 }
 
 
-#: ⛔ **What this module's sweeps assert, as rule ids** (Ruling 46). `build`
+#: ⛔ **What this module's sweeps assert, as rule ids**, never directories. `build`
 #: recomputes `counts` and `content_sha256`, and both `parse` and `build`
 #: refuse an R7 leak and a user-authoritative exercise — so a fixture declared
 #: to break any of the four is a fixture this module is not entitled to read.
 #:
 #: ⚠️ **Naming them gained five documents.** This used to say `depth1, depth2`,
 #: which dropped every invalid corpus including the four that break nothing
-#: this module asserts. ⛔ `by directory name` is not a reason (`FND-09`).
+#: this module asserts. ⛔ `by directory name` is not a reason.
 ASSERTED = {"counts", "digest", "personal-data", "exercise-trust"}
 
 
@@ -109,7 +109,7 @@ def test_every_committed_document_round_trips_byte_for_byte():
     # an unchanged document re-renders differently and every digest downstream
     # becomes noise.
     paths = archive_paths()
-    # ⛔ Ruling 48: the denominator, not `assert paths`. An exclusion widened by
+    # ⛔ The denominator, not `assert paths`. An exclusion widened by
     # mistake leaves a non-empty list and a sweep that reads half the tree.
     assert len(paths) == coverage(asserting=ASSERTED).swept
     for path in paths:
@@ -155,7 +155,7 @@ def test_W289_a_non_object_block_is_refused_through_the_builder_and_never_raises
 def test_optional_keys_are_appended_after_the_digest():
     # ⛔ So adding one cannot disturb `content_sha256`, and a document written
     # before a key existed still renders what it always did.
-    # ⚠️ Built as a **practice**: `exercise` joined `OPTIONAL_KEYS` at SF-23 and
+    # ⚠️ Built as a **practice**: `exercise` joined `OPTIONAL_KEYS` with the exercise package and
     # belongs to a practice document, so asserting "every optional key, in
     # order" now needs the one document kind that may carry all of them.
     document = build(

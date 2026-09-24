@@ -4,10 +4,10 @@
 Three arms: the source of every module is read (`spawns`), a fresh interpreter
 imports the package and reports which process libraries it loaded, and no module
 names the Docker socket or a Docker client (spec §8.3). ⭐ The first two arms read
-ONE list, `tests/spawning.py`'s (`W375`), whose plants live beside the tree-wide
+ONE list, `tests/spawning.py`'s, whose plants live beside the tree-wide
 sweep that shares it.
 
-⭐ **`SF-22` narrows the second arm, and says so rather than loosening it.** `serve`
+⭐ **The run route narrows the second arm, and says so rather than loosening it.** `serve`
 depends on `execute` — the runner, the one package that runs a corpus's commands —
 through `routes/run.py` and `routes/runs.py` and nowhere else. So the fresh interpreter
 imports `execute` FIRST and then asks what importing `serve` loaded on top of it:
@@ -35,7 +35,7 @@ from tests.support import assert_package_contract, repository_root, run
 
 PACKAGE = repository_root() / "src" / "studyforge" / "serve"
 
-#: The modules SF-19a and SF-19b wrote. ⭐ The scan must reach at least these — a
+#: The modules the first serving tasks wrote. ⭐ The scan must reach at least these — a
 #: scan whose population silently shrank would pass on nothing.
 THIS_ROW = frozenset(
     {
@@ -56,7 +56,7 @@ THIS_ROW = frozenset(
     }
 )
 
-#: ⛔ The two modules of this package that may import the runner (`SF-22`): the
+#: ⛔ The two modules of this package that may import the runner: the
 #: namespace and, split from it at its seam, what a started run is.
 EXECUTE = "studyforge.execute"
 RUNNER_IMPORTERS = frozenset({"routes/run.py", "routes/runs.py"})

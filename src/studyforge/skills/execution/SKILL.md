@@ -115,7 +115,7 @@ rendered file is complete with no argument and still adapts to the host it is on
 That is how *"sufficient from the contract alone"* and *"the port and the uid
 differ per host"* are both true at once.
 
-⛔ **The file has TWO services, and the editor binds TWO directories (`W445`):**
+⛔ **The file has TWO services, and the editor binds TWO directories:**
 
 - ⭐ **The editor binds the practice workspaces beside the sources.** Every
   practice workspace — the source's own and every authored one — lives under

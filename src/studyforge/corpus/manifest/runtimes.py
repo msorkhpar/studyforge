@@ -11,7 +11,7 @@ closed vocabulary and held sorted.
 
 ⭐ **The vocabulary is spelled ONCE, here** (`W350`), and the package exports
 it rather than any caller restating it. ⛔ **Its home is its own module,
-never `document.py`**, which sat near its R11 bound (`TC-00/3`): the key is a
+never `document.py`**, which sat near its R11 bound: the key is a
 split at the seam `media` already cut, one optional block per module.
 
 ## ⛔ Names, never versions

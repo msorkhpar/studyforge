@@ -17,7 +17,7 @@ from studyforge.unit import (
 
 
 def test_a_retitled_section_keeps_its_key_and_therefore_its_audio_filenames():
-    # ⛔ SF-09's headline acceptance. Those ids name audio files on disk, so a
+    # ⛔ The unit content's headline acceptance. Those ids name audio files on disk, so a
     # content-derived key would make a copy-edit silently orphan a unit's
     # narration: the page asks for clips that no longer exist, the clips that
     # do exist belong to nothing, and neither half fails.

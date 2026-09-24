@@ -41,7 +41,7 @@ either way.
 
 ## ⭐ `AUDIO_ATTRIBUTE` is named here, one milestone before its writer
 
-⛔ **`SF-12` mints no speech id** — `html.py`'s own docstring is explicit that
+⛔ **The page renderer mints no speech id** — `html.py`'s own docstring is explicit that
 *"two numbering schemes that agree today are exactly the coupling that breaks
 silently tomorrow"*, and `SF-16` owns the derivation at M3. ⚠️ But *the name of
 the attribute* is a contract with two sides and only one of them exists yet,
@@ -49,7 +49,7 @@ which is exactly the shape `identity.py` was landed early to avoid: *a
 definition arriving after its first writer is a definition two tasks each guess
 at differently.*
 
-⭐ **So the attribute is named, and nothing here writes one.** `SF-18`'s player
+⭐ **So the attribute is named, and nothing here writes one.** The player
 and `page.document`'s player region both take the spelling from this constant,
 which is what lets the region be *derived* — a page carries a player when its
 body carries audio — instead of gated on a document field this milestone would
@@ -72,8 +72,8 @@ from studyforge.render.page.errors import PageError
 from studyforge.render.pageassets import SCRIPT_NAME, STYLESHEET_NAME
 from studyforge.sourcepath import SOURCE_PATH_DESCRIBED, source_path_fault
 
-#: The attribute a narrated element carries. ⛔ Written by `SF-18` at M3 and by
-#: nothing at M1 — named here so the two sides cannot spell it differently.
+#: The attribute a narrated element carries. ⛔ Written by narration and by
+#: nothing else — named here so the two sides cannot spell it differently.
 AUDIO_ATTRIBUTE = "data-audio"
 
 #: How a media reference is recognised as pointing off this machine. ⚠️ The test

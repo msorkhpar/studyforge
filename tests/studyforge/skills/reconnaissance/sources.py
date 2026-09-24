@@ -1,8 +1,8 @@
-"""Synthetic sources shaped like the material reconnaissance actually meets (SK-01).
+"""Synthetic sources shaped like the material reconnaissance actually meets.
 
 ⭐ **Every shape here reproduces a trap measured in a real repository**, at the
-smallest size that still sets it. The measurements are recorded in
-`docs/tasks/handoffs/SK-01.md`; these are the regression floor for them.
+smallest size that still sets it. The measurements were taken on real
+sources when reconnaissance was built; these are the regression floor for them.
 
 ⛔ Synthetic on purpose. A fixture that depends on a sibling repository being
 checked out is a fixture that skips, and a skipped check is not evidence.
@@ -148,7 +148,7 @@ def reasons(proposal: dict) -> dict[str, str]:
 
 
 def settled(proposal: dict) -> dict:
-    """The draft with every open reason filled as a person would, for SF-02 to judge."""
+    """The draft with every open reason filled as a person would, for the manifest to judge."""
     content = dict(proposal["content"])
     content["exclude"] = [{"path": where, "why": REASON} for where in content.get("exclude", [])]
     if "not_material" in content:

@@ -1,10 +1,10 @@
-"""The one locator for a skill document, read from the INSTALLED package (`REL-04`).
+"""The one locator for a skill document, read from the INSTALLED package.
 
 **What it does.** Finds every skill's procedure — the `SKILL.md` beside each
 sub-package of `studyforge.skills` — in the directory this module was loaded
 from, so an installed `studyforge` hands a reader each skill's text with no
 checkout anywhere on the disk. ⭐ **The skill documents are the product** (R16, R19); a
-wheel that carried the code and not the procedure shipped half of it (`W438/5`).
+wheel that carried the code and not the procedure shipped half of it.
 
 **How you use it.** From code: `names()` is every skill that ships a document,
 sorted; `document(name)` is that document's `Path` inside the installed

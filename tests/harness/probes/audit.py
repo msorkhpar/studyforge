@@ -9,7 +9,7 @@ genuinely gone.
     python3 -m tests.harness.probes.audit <subject> <working directory>
 
 prints one line of JSON: `{"opened": [...], "spawned": [...], "digest": "...",
-"bytes": N}`. ⭐ `digest` and `bytes` are the **inhabitation** half (Ruling 191):
+"bytes": N}`. ⭐ `digest` and `bytes` are the **inhabitation** half:
 an armed hook that observed nothing reports `opened: []`, which is exactly what a
 probe that silently rendered nothing also reports, and the first reads as a pass.
 So every subject that renders says what it rendered, and the caller asserts the

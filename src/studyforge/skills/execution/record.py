@@ -4,7 +4,7 @@ r"""The primed runner's tag, recorded by the skill — never typed, never a hand
 declared set in its slot, the prime flag pointing at the prime this skill
 wrote — in the pinned component checkout, checks what it printed, and writes
 it into `RUNNER_ENV`: the one environment file the reader's compose command
-names, so `docker compose` starts the runner from exactly that tag (`W445`).
+names, so `docker compose` starts the runner from exactly that tag.
 
 **How you use it.** After `onboard.write`, because the tag is a function of the
 prime on disk: `record_runner(execution, root, component, ask=…)` returns the path
@@ -30,7 +30,7 @@ the caller's.
 
 ## ⛔ WHY THE SKILL RUNS IT RATHER THAN THE READER TYPING ITS OUTPUT
 
-⚠️ `ISO-20` measured the gap: nothing generated recorded the tag the corpus's
+⚠️ The first corpus measured the gap: nothing generated recorded the tag the corpus's
 primed build produced, so the corpus hand-scripted a record of it, and nothing
 generated READ that record either. ⭐ A tag is a function of the build's inputs
 (the contract says so), so the only honest way to hold one is to ask the build

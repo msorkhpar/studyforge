@@ -1,7 +1,7 @@
 """Mirror of `src/studyforge/validate/source/enumeration.py` (R12).
 
 ⛔ **What the corpus root holds, asked of the repository and the plan, before any
-verdict.** Moved here from `test_classification.py` when the module split (`W280`):
+verdict.** Moved here from `test_classification.py` when the module split:
 the tests are unchanged, and the module they name is the one they are about.
 """
 

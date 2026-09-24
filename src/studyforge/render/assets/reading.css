@@ -98,7 +98,7 @@ blockquote > :last-child { margin-bottom: 0; }
 /* ⭐ A real `<details>`, which opens, closes and takes keyboard focus with
    scripting off entirely. ⛔ No card: a feint rule above and below, and the
    summary in the interface face. `open` is the author's, from the archive.
-   ⛔ NO `max-width` OF ITS OWN (`W447`). A disclosure is a CONTAINER, and a
+   ⛔ NO `max-width` OF ITS OWN. A disclosure is a CONTAINER, and a
    worked solution is a code figure inside one: capped at `--measure` it laid
    out narrower than every code figure in the flow and scrolled where they did
    not. Its running text is measured by `main p, main li` above, exactly as it

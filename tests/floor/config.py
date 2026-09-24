@@ -13,10 +13,9 @@ modules that then drift apart.
 about a path.
 
 **Depends on.** `pathlib`, `re`, `shutil` and `subprocess` — all standard
-library — and `report`, for the shape a walk's answer takes (`W148`). ⚠️ This
-line read *"`pathlib` only"* while the module had imported `shutil` and
-`subprocess` since `FND-08`; corrected here because `W45` was editing it
-anyway, and R17's third part is worth nothing if it is decorative.
+library — and `report`, for the shape a walk's answer takes. ⚠️ This
+line once read *"`pathlib` only"* while the module imported `shutil` and
+`subprocess`; R17's third part is worth nothing if it is decorative.
 """
 
 from __future__ import annotations
@@ -53,14 +52,13 @@ SIZE_EXCEPTION_MARKER = "Size exception:"
 #: it only stops `Size exception: yes` from being a way through the gate.
 #:
 #: ⚠️ Measured against the WHOLE justification, not the marker line. Measuring
-#: one line refused a long, correct, multi-line reason for being short
-#: (Ruling 114).
+#: one line refused a long, correct, multi-line reason for being short.
 MIN_JUSTIFICATION_CHARS = 20
 
 #: How a deferral is told apart from a design claim: its reason names a board
-#: row (review rubric 3c, Ruling 113). Two id shapes are in use — `SF-35`,
-#: `FND-01`, `OPS-05` (an epic prefix, a number, an optional letter suffix)
-#: and `W44` (the wave rows, which carry no hyphen).
+#: row (review rubric 3c). Two id shapes are in use — `<PREFIX>-<n>` (an epic
+#: prefix, a hyphen, a number, an optional letter suffix) and `W<n>` (the wave
+#: rows, which carry no hyphen).
 #:
 #: ⛔ Deliberately narrow, and the narrowness is the point. `R11` is a rule,
 #: `M2` a milestone, `C5` a constraint and `E08` an epic — none of them a row
@@ -282,7 +280,7 @@ def text_files(root: Path) -> list[Path]:
 def tracked_paths(root: Path) -> set[Path] | None:
     """Return the paths git's INDEX holds under `root`, or None when it cannot say.
 
-    ⛔ **`None` is a THIRD answer and is never an empty set** (Ruling 216). A
+    ⛔ **`None` is a THIRD answer and is never an empty set**. A
     tree with no git, or one that is not a repository — the normal case for a
     test's temporary directory — has not said it tracks *nothing*; it has
     failed to answer, and coercing that to `set()` empties every population
@@ -316,20 +314,20 @@ def tracked_paths(root: Path) -> set[Path] | None:
 def markdown_population(root: Path) -> DocumentPopulation:
     """Every markdown document git TRACKS under `root`, sorted, with its walk.
 
-    ⭐ **A narrowing of `text_files`, never a second walk.** FND-08's acceptance
-    forbids a second file-walking helper: the pointer check needs *documents*
+    ⭐ **A narrowing of `text_files`, never a second walk.** There is one
+    file-walking helper: the pointer check needs *documents*
     rather than *every text file*, and that is one `suffix` test away from the
     walk `check_personal_data` already runs. Exclusions, git-ignore and the
     sort order are therefore inherited rather than restated, and a directory
     added to `TOOL_OUTPUT_DIRS` reaches this walk on the same commit.
 
-    ⛔ **And one further narrowing, which is `W148`: the document population is
+    ⛔ **And one further narrowing: the document population is
     repository state, and repository state is what git TRACKS.** An untracked
     markdown file in a main checkout is counted by a disk walk and is absent
     from every linked worktree, so no disk-derived figure is reproducible
     between two correct checkouts at ONE ref — measured, `458` against `457`,
-    same content, ZERO extra pointers, which defeats Ruling 277's ROLE
-    discipline exactly where it is supposed to work.
+    same content, ZERO extra pointers, so a figure would depend on which
+    checkout took it rather than on the ref.
 
     ⛔ **THE NARROWING IS HERE AND NEVER IN `text_files`.** That walk is the
     personal-data sweep's population and its own docstring says why it is
@@ -347,11 +345,11 @@ def markdown_population(root: Path) -> DocumentPopulation:
     `tests/fixtures/` carrying **0 pointers between them**, so including them
     costs no migration today and closes the hole before one is written.
 
-    ⚠️ **AND THE NARROWING COUNTS WHAT IT NARROWS OFF** (`W315`, for `W232/5`):
+    ⚠️ **AND THE NARROWING COUNTS WHAT IT NARROWS OFF**:
     the difference between the two lists is free on the line below and rides
     out as `DocumentPopulation.unread`, so a notice quoting this walk can say
-    what it did not read. ⛔ **A count and never a second walk** — FND-08's
-    acceptance forbids one, and `report.unread_caveat` carries the argument.
+    what it did not read. ⛔ **A count and never a second walk** — there is
+    one walk, and `report.unread_caveat` carries the argument.
     """
     documents = [path for path in text_files(root) if path.suffix == ".md"]
     tracked = tracked_paths(root)
@@ -365,7 +363,7 @@ def markdown_files(root: Path) -> list[Path]:
     """Return the paths half of `markdown_population`.
 
     ⛔ A caller that prints a FIGURE takes the population instead, so the walk
-    that produced its denominator is printed beside it (`W148`).
+    that produced its denominator is printed beside it.
     """
     return list(markdown_population(root).paths)
 

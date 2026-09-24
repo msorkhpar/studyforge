@@ -1,4 +1,4 @@
-"""`REL-04`: every `SKILL.md` ships in the wheel, and the installed package reads each one.
+"""Every `SKILL.md` ships in the wheel, and the installed package reads each one.
 
 ⭐ Three readings, from the cheapest to the one that IS the acceptance:
 
@@ -14,7 +14,7 @@
    bytes unchanged. ⛔ Skipped, saying why, only where no build backend is importable.
 
 ⭐ Planted, each RED: a glob that drops one skill's `SKILL.md` from `package-data` (readings
-2 and 3), and the release tip's `package-data`, which shipped none (`W438/5`).
+2 and 3), and the release tip's `package-data`, which shipped none.
 """
 
 from __future__ import annotations

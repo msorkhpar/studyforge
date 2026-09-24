@@ -1,6 +1,6 @@
 """The three isolation assertions, each proved to fail when deliberately violated.
 
-⛔ **SF-26's second acceptance clause, and the whole of its value.** An isolation
+⛔ **The harness's second acceptance clause, and the whole of its value.** An isolation
 assertion that has never been seen to fail is a comment: it reports nothing, and
 nothing is exactly what a clean tree reports, so the two are indistinguishable
 until the day the rule is broken and it stays silent.
@@ -49,7 +49,7 @@ def test_the_index_reads_the_two_documents_and_its_own_templates_and_nothing_els
     # audit hook can.
     seen = probe.observe("index", tmp_path)
     print(seen.population())
-    # ⭐ Inhabitation first (Ruling 191): a probe that rendered nothing also
+    # ⭐ Inhabitation first: a probe that rendered nothing also
     # observed nothing, and "observed nothing" is this check's pass reading.
     assert seen.digest == hashlib.sha256(case("depth1").golden.read_bytes()).hexdigest()
     assert seen.opened, "the probe observed no read at all, which is not a pass"
@@ -87,9 +87,9 @@ def test_the_verdict_ignores_a_record_entry_that_is_not_a_path(tmp_path):
 
 def test_the_serving_package_names_no_way_to_start_a_process():
     # ⚠️ The population is printed because it is SMALL: the package is a skeleton,
-    # and an empty one would report no offenders exactly as a clean one does
-    # (Ruling 191). ⭐ The floor arrives before the routes deliberately — SF-19a
-    # writes them against a red/green signal rather than being audited afterwards.
+    # and an empty one would report no offenders exactly as a clean one does.
+    # ⭐ The floor arrives before the routes deliberately — SF-19a writes them
+    # against a red/green signal rather than being audited afterwards.
     modules = isolation.serve_modules()
     for module in modules:
         print(f"serve  {module.name}  {len(module.text.splitlines())} lines")
@@ -160,7 +160,7 @@ def test_the_scan_does_not_fire_on_a_lookalike(why, body):
 
 
 def test_the_relative_door_is_covered_by_quantifying_over_the_package():
-    # ⛔ Ruling 178's relative form, and the answer is about the POPULATION rather
+    # ⛔ The relative import form, and the answer is about the POPULATION rather
     # than about one module. ⚠️ `from . import helper` is the shorter spelling and
     # therefore the one a hurried author reaches for — and `spawn_reach` does NOT
     # report it, deliberately: a relative import can only reach INSIDE the package,
@@ -180,7 +180,7 @@ def test_the_relative_door_is_covered_by_quantifying_over_the_package():
     assert len(reported) == 1
     assert reported[0].startswith("src/studyforge/serve/helper.py:")
     # ⛔ And the relative importer alone is silent, which is the half a disjunction
-    # would have hidden (Ruling 178's second clause).
+    # would have hidden.
     assert isolation.spawn_reach(package[:1]) == []
 
 

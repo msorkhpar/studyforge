@@ -82,8 +82,8 @@ def key(document: dict) -> str:
     single-character segments, every one of them a valid slug — so an address
     recorded as a *string* rather than a list becomes a six-level address that
     refuses nothing and keys every mark under a name nothing else will ever
-    produce. ⛔ Refused by name instead (R6). See the finding in `SF-30`'s
-    handoff: `page.document.identity` has the same door and it is `SF-12`'s.
+    produce. ⛔ Refused by name instead (R6). ⚠️ `page.document.identity` has
+    the same door, and closing it is that module's.
     """
     segments = document.get("address")
     if segments is not None and not isinstance(segments, list):

@@ -7,7 +7,7 @@ origin names (`W266`).
 **How you use it.** `check_unclassified(walk)`, yielding `Finding`s and
 `Unchecked`s like every other check. What it judges is `enumeration`'s
 `source_files(root)`, re-exported here with the rest of that module's public
-names, so an importer that named them from this module still reads them (`W280`).
+names, so an importer that named them from this module still reads them.
 
 **Depends on.** `corpus.manifest` for the classification, `enumeration` for what
 the corpus root holds, `validate.corpus` and `validate.report`. ⛔ **Nothing in
@@ -32,7 +32,7 @@ from studyforge.validate.source.enumeration import (
 )
 
 #: ⛔ This module's names, and `enumeration`'s that importers named from here before
-#: the split (`W280`). The package surface, not this list, is what a consumer reads.
+#: the split. The package surface, not this list, is what a consumer reads.
 __all__ = [
     "IGNORE_TIMEOUT",
     "REPOSITORY_STORE",

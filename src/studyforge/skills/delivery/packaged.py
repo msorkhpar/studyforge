@@ -1,4 +1,4 @@
-"""The capability index as the INSTALLED package ships it (`REL-06`).
+"""The capability index as the INSTALLED package ships it.
 
 **What it does.** Hands a planner the generated capability index from the
 directory this module was loaded from, so the delivery skill's first step

@@ -46,7 +46,7 @@ from tests.support import repository_root
 AUTHORING = "docs/authoring"
 
 #: Where the shipped skill documents live, relative to the repository root.
-#: ⛔ A glob, never a list. `W61`: `SK-05` shipped its console-script check with
+#: ⛔ A glob, never a list. `W61`: the console-script check first shipped with
 #: a population one directory wide, and two shipped `SKILL.md` files carried the
 #: exact defect it refuses for as long as it did.
 SKILLS = "src"
@@ -246,8 +246,8 @@ def code_spans(text: str) -> set[str]:
 def commanded_pages() -> dict[str, str]:
     """Every page that hands a reader a fenced command: the reference, and every skill.
 
-    ⛔ **`W61` widened this, and the widening is the fix.** `SK-05` shipped its
-    console-script check over `docs/authoring/` alone; `skills/adapter/SKILL.md` and
+    ⛔ **`W61` widened this, and the widening is the fix.** The console-script
+    check first shipped over `docs/authoring/` alone; `skills/adapter/SKILL.md` and
     `skills/onboarding/SKILL.md` gave `studyforge validate` in a fence the
     whole time and were never looked at. Both halves are walked rather than
     listed, so nothing joins the tree outside the population.
@@ -367,7 +367,7 @@ def installed_for_a_bare_shell() -> bool:
 
     ⭐ Asked of that interpreter in a subprocess, from the same root with the same
     scrubbed `PYTHONPATH` — never of this runner, whose `sys.path` pytest widened.
-    ⚠️ True in the pinned image since `W211` (an editable install), False on a host
+    ⚠️ True in the pinned image (an editable install), False on a host
     that installed nothing.
     """
     env = {key: value for key, value in os.environ.items() if key != "PYTHONPATH"}
@@ -399,8 +399,8 @@ def declared_pythonpath() -> str:
 def console_scripts() -> dict[str, str]:
     """`[project.scripts]`, read from `pyproject.toml` — the ground of the derivation.
 
-    ⛔ Asserted non-empty. Ruling 157 converted the check above this one rather
-    than deleting it, and a converted check whose population can silently
+    ⛔ Asserted non-empty. The check above this one was converted rather than
+    deleted, and a converted check whose population can silently
     become empty is the deletion wearing a different name.
     """
     config = tomllib.loads((repository_root() / "pyproject.toml").read_text("utf-8"))

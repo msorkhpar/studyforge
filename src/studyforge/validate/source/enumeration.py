@@ -2,7 +2,7 @@ r"""What the corpus root holds as material, asked of the repository and the plan
 
 **What it does.** Enumerates the corpus root: every file that is material rather
 than output, and every nested repository store (`W259`). It gives no verdict;
-`classification` judges what it returns (`W280`).
+`classification` judges what it returns.
 
 **How you use it.** `source_files(root)` returns a `Scan`. `repository_ignores` is
 the one ignore reader, and `REPOSITORY_STORE` and `SKIP_DIRS` name what a walk

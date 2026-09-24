@@ -1,4 +1,4 @@
-r"""Build and serve: one invocation from a corpus to a running study site (SK-03).
+r"""Build and serve: one invocation from a corpus to a running study site.
 
 **What it does.** Runs the framework's registered verbs in order: `validate`,
 `narrate` when a voice is given, `build`, then `serve`. It prints each verb's own
@@ -29,7 +29,7 @@ publishes on, `corpus.manifest` for whether exercises are declared, and
 opened by `studyforge serve` or `studyforge narrate`.** This package only
 decides the order and reads the verbs' answers. If a step needed more than a
 verb gives, the verb drew its surface wrong, and that is recorded as a finding
-rather than patched here (E11 § SK-03).
+rather than patched here.
 
 ## ⛔ A partial state is a known state with a stated consequence, never an error
 

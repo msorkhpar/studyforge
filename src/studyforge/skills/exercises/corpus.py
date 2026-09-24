@@ -31,7 +31,7 @@ the end, so the two cannot disagree about what the source was.
 half a pass in the tree. ⚠️ The ledger is the one file rewritten, and `merge`
 is why that is additive.
 
-## ⛔ A PASS OVER PART OF A CORPUS OWNS ONLY WHAT IT READ (`W456`)
+## ⛔ A PASS OVER PART OF A CORPUS OWNS ONLY WHAT IT READ
 
 ⭐ **The ledger is one file for the whole corpus, and this pass owns only the
 rows of the files it read.** `merge` keeps every other row byte-identical, and
@@ -111,7 +111,7 @@ class Authored:
     pages: tuple[Covered, ...]
     written: tuple[str, ...]
     kept: tuple[str, ...]
-    #: ⭐ What the pass did to the committed ledger, row by row (`W456`).
+    #: ⭐ What the pass did to the committed ledger, row by row.
     ledger: Delta = Delta()
 
     @property
@@ -126,7 +126,7 @@ class Authored:
 
     @property
     def reasoned(self) -> tuple[tuple[str, str], ...]:
-        """⭐ Every aspect no exercise was planned to check, with its page (`W453`).
+        """⭐ Every aspect no exercise was planned to check, with its page.
 
         The part of a thin plan a reviewer reads first: each one carries its
         written reason in the unit's coverage report.
@@ -239,8 +239,8 @@ def _reused(
 ) -> Covered:
     """Keep a unit whose recorded report still describes it — ⛔ or refuse it, naming it.
 
-    ⚠️ **A report planned under an older `plan_api` is refused by name**
-    (`W453`): its count was set by a rule this build no longer applies, so the
+    ⚠️ **A report planned under an older `plan_api` is refused by name**:
+    its count was set by a rule this build no longer applies, so the
     unit is re-planned by its aspects, never silently kept.
     """
     written = recorded.get("plan")
@@ -268,7 +268,7 @@ def _reused(
 
 
 def _elsewhere(base: Path, ledger: Ledger, units: set[str]) -> dict[str, Origin]:
-    """Return what the units OUTSIDE this pass account for, among the files it read (`W456`).
+    """Return what the units OUTSIDE this pass account for, among the files it read.
 
     ⛔ **A file this pass read may carry a page it was not handed**, and that
     page's committed exercises still account for its entries — without them a

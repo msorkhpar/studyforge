@@ -13,7 +13,7 @@ fails the build on.
 
 **Depends on.** The standard library. Nothing about poisons or `studyforge`.
 
-## ⛔ Why the harness refuses, rather than the permission bit (`W217`)
+## ⛔ Why the harness refuses, rather than the permission bit
 
 MEASURED in the pinned image at `STUDYFORGE_UID=0`, before this module: the
 census created a directory tree under the poison's `/home` namespace, and those
@@ -42,7 +42,7 @@ against the minted directory. It cannot see:
 
 That hook must be gone after it has recorded. This one is **inert when
 disarmed** — its first statement returns — and the census must call callables
-a test defines inside itself (Ruling 11's plants), which a child cannot import.
+a test defines inside itself (the plants that watch a check fail), which a child cannot import.
 """
 
 from __future__ import annotations

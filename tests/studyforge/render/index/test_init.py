@@ -69,7 +69,7 @@ def test_the_package_states_its_contract():
 
 def test_every_name_on_the_public_surface_resolves():
     # ⛔ **Added because the sweep found it missing.** A misspelling in `__all__`
-    # was killed by ruff alone and by no test at all (`SF-14/2`), and a row
+    # was killed by ruff alone and by no test at all, and a row
     # killed only by tidiness is a row killed by nothing when the tidiness moves.
     missing = [name for name in index.__all__ if not hasattr(index, name)]
     assert missing == [], missing

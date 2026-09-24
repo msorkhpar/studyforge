@@ -232,7 +232,7 @@ def test_no_rendered_file_names_the_docker_socket():
 
 
 # --------------------------------------------------------------------------
-# `W445` — the practice workspaces bound beside the sources, and the runner
+# The practice workspaces bound beside the sources, and the runner
 # --------------------------------------------------------------------------
 
 #: The practice workspaces, as the compose file reaches them and where they go.

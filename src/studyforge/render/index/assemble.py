@@ -30,7 +30,7 @@ clause would be a claim about a caller, and every consumer would retype the same
 twenty lines — ⛔ which R19 calls a hole in the thing that should have produced
 it. **So the mapping lives here and the isolation is a property of this package.**
 
-⚠️ **The limit, stated rather than discovered** (Ruling 56): the *corpus* input
+⚠️ **The limit, stated rather than discovered**: the *corpus* input
 is those two documents. ⭐ The renderer still loads this framework's **own**
 source files — the page skeleton and the two asset names — exactly as every
 other renderer does, and those carry nothing about any corpus (R1).

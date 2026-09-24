@@ -18,7 +18,7 @@ to name is no longer the only place the rule could be broken.
 | module | what it answers |
 |---|---|
 | `classification` | ⭐ what the corpus says its files **are** — material, output, or neither |
-| `enumeration` | ⭐ what the corpus root **holds**, which `classification` judges (`W280`) |
+| `enumeration` | ⭐ what the corpus root **holds**, which `classification` judges |
 | `completeness` | ⭐ what one file **contains**, counted without the parser that read it |
 | `membership` | ⭐ what the archive root holds, and what the archive declares and does not hold |
 
@@ -40,7 +40,7 @@ that needs tidying.
 ⭐ **Nothing crosses the seam.** No name defined in `classification` is read by
 `completeness` or the other way round; what they share is `Walk`, `Finding`
 and `Unchecked`, which every check in `validate` shares. ⚠️ `enumeration` is
-`classification`'s own walk, split out at R11's bound (`W280`): the one edge
+`classification`'s own walk, split out at R11's bound: the one edge
 inside the package, and it points one way.
 
 ## ⚠️ What the split does NOT buy, said because a guarantee does not extend to what sits beside it
@@ -104,7 +104,7 @@ CHECKS = (
 #: filters a report by rule needs the constant rather than the string, and
 #: that is what stopped `contested` and `ignore-declaration` being folded into
 #: `unclassified` in the first place. ⭐ `REPOSITORY_STORE` is on it for the survey,
-#: which names the store `validate` refuses by the same name (`W280`).
+#: which names the store `validate` refuses by the same name.
 __all__ = [
     "CHECKS",
     "IGNORE_TIMEOUT",

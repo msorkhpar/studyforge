@@ -157,7 +157,7 @@ def test_every_row_carries_the_unit_key_a_read_mark_is_filed_under():
 
 
 def test_the_key_is_asked_for_and_never_composed_in_this_module():
-    # ⛔ Ruling 123's planted half, at the door that matters: `Address.unit_key`
+    # ⛔ The planted half of the check, at the door that matters: `Address.unit_key`
     # is the one composer, so this module must contain no unit-name arithmetic of
     # its own. ⚠️ A second spelling differing by one character would simply never
     # match anything, with nothing failing anywhere — which is why the absence is

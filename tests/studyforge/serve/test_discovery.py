@@ -1,11 +1,11 @@
 """Mirror of `src/studyforge/serve/discovery.py` (R12).
 
-⭐ **E05 SF-19b**: *"the server is given a root and finds the corpus itself, with no
-configured paths"*; *"two corpora with different placement profiles serve from one
+⭐ **The serving task's acceptance**: *"the server is given a root and finds the corpus
+itself, with no configured paths"*; *"two corpora with different placement profiles serve from one
 instance"*; *"a stale discovery cache is detected rather than trusted"*.
 
 ⛔ **"Serves the Java corpus discovered at startup" is NOT met here and nothing here is
-called by that name**: it is `W80`'s open case, recorded in `docs/tasks/handoffs/SF-19b.md`.
+called by that name**: it needs the Java corpus present, and stays an open case.
 """
 
 from __future__ import annotations

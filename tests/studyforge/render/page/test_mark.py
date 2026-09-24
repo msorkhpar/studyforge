@@ -68,7 +68,7 @@ def test_the_key_is_the_one_address_mints():
 
 
 def test_nothing_in_this_module_composes_a_unit_name():
-    # ⛔ Ruling 123's third row, at the door that matters. ⚠️ Asserted over the
+    # ⛔ The planted check's third row, at the door that matters. ⚠️ Asserted over the
     # SOURCE and not over the output: two spellings that agree today disagree the
     # day one of them is padded differently, and the symptom is a key that simply
     # never matches anything, with nothing failing anywhere.
@@ -179,7 +179,7 @@ def test_the_region_is_never_empty_for_a_page_that_can_be_keyed():
 
 
 def test_the_golden_population_is_inhabited():
-    # ⛔ Ruling 48: a derived-set assertion asserts inhabitation before it asserts
+    # ⛔ A derived-set assertion asserts inhabitation before it asserts
     # anything about the set, or every check below passes over nothing.
     assert goldens(UNIT_SUFFIX), "no committed unit page"
     assert goldens(CONTAINER_SUFFIX), "no committed container page"

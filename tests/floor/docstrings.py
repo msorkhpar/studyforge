@@ -32,7 +32,7 @@ RULE = "contract"
 
 
 def contract_modules(root: Path) -> list[Path]:
-    """Every non-test module under the scan roots — this check's population (`W309`)."""
+    """Every non-test module under the scan roots — this check's population."""
     return [
         path
         for path in config.python_files(root)

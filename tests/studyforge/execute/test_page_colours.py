@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/execute/page_colours.py` (R12), `W455`: the page's colours, read.
+"""Mirror of `src/studyforge/execute/page_colours.py` (R12): the page's colours, read.
 
 ⭐ **Each reading is checked against the stylesheet's own words**, and each
 refusal names what it could not read — a colour the editor cannot be given is

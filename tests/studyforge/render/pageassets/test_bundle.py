@@ -77,7 +77,7 @@ def test_composing_twice_gives_identical_bytes():
 
 
 def test_the_written_names_carry_no_content_digest():
-    # ⛔ §8.2, and SF-11 is the task it was written for. A digest in the name
+    # ⛔ §8.2. A digest in the name
     # renames the file and rewrites every page that links it whenever a colour
     # changes — a thousand-file diff for one hex value.
     for name in written_files():

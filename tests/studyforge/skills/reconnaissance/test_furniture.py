@@ -2,7 +2,7 @@
 
 ⭐ The draft proposes the `not_material` globs and leaves every reason open.
 ⛔ Asserted both ways: a furnished source drafts its globs, and a control with
-no furniture drafts none. SF-02 judges, and SK-07's `onboard` is the collision
+no furniture drafts none. The manifest reader judges, and onboarding is the collision
 check, never a restatement of it.
 ⛔ `W269`: a file a declared glob covers is never re-proposed, and a proposal that
 stands down says so by name. Both asserted both ways.
@@ -67,7 +67,7 @@ def test_the_open_reasons_are_asked_about_with_the_population_they_were_judged_o
 
 
 # --------------------------------------------------------------------------
-# ⛔ no glob collides with SK-07's generated set, before or after onboarding
+# ⛔ no glob collides with onboarding's generated set, before or after onboarding
 # --------------------------------------------------------------------------
 
 
@@ -80,7 +80,7 @@ def test_onboarding_takes_the_draft_and_a_resurvey_re_proposes_nothing_it_declar
     again = survey(root).proposal
     # ⛔ `W269`, `INT-10/2`: the written manifest's globs cover every file, so none returns.
     assert globs(again) == []
-    # ⭐ SK-07 still takes the re-survey's draft, and `promote` refuses a drafted glob equal
+    # ⭐ Onboarding still takes the re-survey's draft, and `promote` refuses a drafted glob equal
     # to a generated one, so this is the collision check, asked of the owner.
     remade = onboard(again, framework_commit=COMMIT, reasons=sources.reasons(again))
     declared = [entry["glob"] for entry in remade.not_material]
@@ -194,7 +194,7 @@ def test_a_root_git_does_not_answer_for_says_so_even_when_it_proposes_nothing(tm
     (root / "README.md").unlink()
     [question] = stood_down(root)
     assert "git's ignore rules were not read" in question.why
-    # ⭐ The report a person reads, which is what SK-07's step prints.
+    # ⭐ The report a person reads, which is what onboarding's step prints.
     assert any("stood down" in line for line in survey(root).lines())
 
 

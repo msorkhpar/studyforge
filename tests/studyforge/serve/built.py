@@ -1,4 +1,4 @@
-"""Shared by SF-19b's tests: fixture corpora built IN PLACE under one harness-minted root.
+"""Shared by the serving tests: fixture corpora built IN PLACE under one harness-minted root.
 
 ⭐ `a_workspace` is the discovery clauses' input: a root holding the `tree`-profile
 depth-1 fixture and the `sibling`-profile depth-2 fixture, each built into itself

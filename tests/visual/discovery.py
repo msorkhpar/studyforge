@@ -80,7 +80,7 @@ import pytest
 
 #: The binaries looked for, in order. ⛔ Chromium-family only: the harness
 #: speaks the DevTools protocol, and Firefox's is not the same protocol. A
-#: second engine is a second transport, and `QA-03/3` records that as an open
+#: second engine is a second transport, and that stays an open
 #: question rather than pretending one binary covers both.
 CANDIDATES = (
     "google-chrome",
@@ -246,7 +246,7 @@ def environment_declaration() -> str:
 
     ⭐ **`STUDYFORGE_VISUAL_CAPTURES` is absent from this line ON PURPOSE**: it
     reaches no verdict, only where PNGs land. ⛔ A declared list is a CLOSED
-    claim, so an over-wide one is as wrong as a short one (Ruling 258).
+    claim, so an over-wide one is as wrong as a short one.
     """
     demand = (
         f"={DEMAND_VALUE}, absence is a FAILURE"

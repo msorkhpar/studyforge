@@ -37,7 +37,7 @@ def claimed():
 
 
 def test_the_census_is_inhabited_and_says_what_it_reached(claimed):
-    # ⛔ Ruling 191: print the population before any verdict. A census that
+    # ⛔ Print the population before any verdict. A census that
     # reached nothing reports no mismatches, and no mismatches is what a clean
     # tree reports — so the size is asserted before anything is asserted about
     # the contents.
@@ -51,7 +51,7 @@ def test_the_census_is_inhabited_and_says_what_it_reached(claimed):
 
 @pytest.mark.parametrize("golden", _CLAIMED, ids=_IDS)
 def test_every_golden_is_byte_for_byte_what_the_tree_produces(golden):
-    # ⛔ SF-26's first acceptance clause, and R10. One subject per test, so a
+    # ⛔ The harness's first acceptance clause, and R10. One subject per test, so a
     # failure names one case and its module rather than "the goldens".
     assert goldens.mismatches((golden,)) == []
 

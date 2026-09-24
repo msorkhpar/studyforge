@@ -248,7 +248,7 @@ def _content(inventory: Inventory, record: Record | None) -> tuple[list[str], li
     patterns = sorted({_pattern(target, record.path) for target in listed})
     everything = {p.relative_to(inventory.root).as_posix() for p in inventory.material}
     unlisted = everything - set(record.order) - {record.path.as_posix()}
-    # ⛔ Withheld only where an include would read it (SF-02); the rest is `furniture`'s.
+    # ⛔ Withheld only where an include would read it; the rest is `furniture`'s.
     return patterns, sorted(
         where for where in unlisted if any(PurePosixPath(where).full_match(p) for p in patterns)
     )

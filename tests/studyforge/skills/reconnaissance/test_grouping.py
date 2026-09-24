@@ -1,4 +1,4 @@
-"""Which lines are group labels, and which are units (SK-01).
+"""Which lines are group labels, and which are units.
 
 ⭐ `record` finds *which document* records the curriculum; this decides *what
 grouping it expresses*. The tests that drive it end to end live in

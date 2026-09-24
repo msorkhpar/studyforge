@@ -31,9 +31,9 @@ here instead, and the second is a collision:
    broken `studyforge` still lints. This check must *import and call*
    `studyforge`, so filing it there would make the lint tool fail on any
    import error in the tree it is linting.
-2. ⛔ `FND-07` is registering in `tools.quality.CHECKS` — the same five-entry
-   tuple — and two agents in one tuple is C5 with a contract instead of a line
-   length. Nothing here touches that tuple.
+2. ⛔ `tools.quality.CHECKS` is the floor's own registration tuple, and two
+   owners of one tuple is C5 with a contract instead of a line length. Nothing
+   here touches that tuple.
 
 ⭐ The gate is unchanged either way: `tests/test_quality_floor.py` shows the
 suite is already how the floor fails a build, so `pytest` alone still catches
@@ -49,7 +49,7 @@ with one bad field, is not probed — the framework has roughly forty-five such
 coverage would be worse than this one**; `Census.report` prints what it
 reached, and `Census.walked` names it — ⭐ **asserted against the modules the
 package ships on disk, so the coverage claim is measured against the tree and
-never against a figure typed on a day that has passed** (`W216`).
+never against a figure typed on a day that has passed**.
 """
 
 from __future__ import annotations

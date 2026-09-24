@@ -34,7 +34,7 @@ from pathlib import Path
 
 from studyforge.render.pageassets import ASSET_DIR
 
-#: The stylesheet that defines every token. One file, by `SF-11`'s design.
+#: The stylesheet that defines every token. One file, by the page assets' design.
 PALETTE = Path(ASSET_DIR) / "palette.css"
 
 #: How a token is covered. ⛔ Four values and no fifth: a token that fits none

@@ -12,7 +12,7 @@ capability the corpus will never use, with a reason for each.
     Terminal(
         milestone="M4",
         evidence=("0 build files", "0 graders", "0 runnable units"),
-        unused=(Unused("SF-22", "no exercise asks the reader to run anything"),),
+        unused=(Unused("AB-22", "no exercise asks the reader to run anything"),),
     ).checked(index)
 
 **Depends on.** `dataclasses` and this package's `capability`. ⛔ Not the
@@ -63,7 +63,7 @@ from dataclasses import dataclass, replace
 from studyforge.skills.delivery.capability import Index
 from studyforge.skills.delivery.components import ELSEWHERE, HERE, UNDECLARED
 
-#: The shortest reason that can carry information. ⛔ `Unused("SF-22", "n/a")`
+#: The shortest reason that can carry information. ⛔ `Unused("AB-22", "n/a")`
 #: is the failure this floor exists to catch: a table filled in to pass.
 MIN_REASON_CHARS = 12
 

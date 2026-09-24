@@ -73,8 +73,8 @@ def refusal(**overrides):
     return str(raised.value)
 
 
-#: ⛔ Ruling 46 — reading a map needs the manifest, so `corpus-api` joins the
-#: container's own `ordinal-gap`. Naming them gained **five** maps (`FND-09`).
+#: ⛔ Asserted as rule ids — reading a map needs the manifest, so `corpus-api` joins the
+#: container's own `ordinal-gap`. Naming them gained **five** maps.
 ASSERTED = {"corpus-api", "ordinal-gap"}
 
 
@@ -92,7 +92,7 @@ def fixture_maps():
 
 
 def test_every_committed_container_map_round_trips_byte_for_byte():
-    maps = list(fixture_maps())  # ⛔ Ruling 48: the entitled corpora, counted.
+    maps = list(fixture_maps())  # ⛔ The entitled corpora, counted.
     assert len(maps) >= coverage(asserting=ASSERTED, glob="corpus.json", within=None).swept > 0
     for where, path, made in maps:
         text = path.read_text(encoding="utf-8")

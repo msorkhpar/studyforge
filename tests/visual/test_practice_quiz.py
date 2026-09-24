@@ -1,6 +1,6 @@
-"""`AX-09` and `W451` — a quiz shows its questions, the SERVER grades them, and nothing runs.
+"""`AX-09` — a quiz shows its questions, the SERVER grades them, and nothing runs.
 
-⛔ **THE USER'S RULING, 2026-09-23 (`W451`)**: *"a test with the correct answer
+⛔ **THE USER'S RULING, 2026-09-23**: *"a test with the correct answer
 residing on the server side. When user answers it will get validated and result
 will be returned to the user with explanation if needed"*. ⭐ So this module
 takes its readings in TWO places, and the difference between them is the
@@ -15,8 +15,8 @@ subject:
   a right answer and a wrong answer each show the SERVER's verdict and the chosen
   option's sentence, and the network log shows the grading request.
 
-⚠️ **Superseded, and said so rather than silently rewritten:** until `W451` this
-module opened the page as a FILE and graded there, because the key shipped in the
+⚠️ **Superseded, and said so rather than silently rewritten:** until that ruling
+this module opened the page as a FILE and graded there, because the key shipped in the
 page. That reading is now the negative one.
 
 ⛔ **WHY THIS NEEDS A BROWSER.** Whether a reader who chooses an answer is told
@@ -158,7 +158,7 @@ def served(open_page: OpenPage, origin: str) -> OpenPage:
 
 
 def test_over_a_file_the_questions_show_and_the_page_says_it_needs_the_server(as_file):
-    # ⭐ `W451`'s register default: the questions and options show, a reader
+    # ⭐ The default over a file: the questions and options show, a reader
     # may choose, and the page says why nothing checks them — the mechanism Run
     # and Submit use. ⛔ And no run affordance, not even a disabled one.
     state = as_file.evaluate(STATE)

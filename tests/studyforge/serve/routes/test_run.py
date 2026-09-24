@@ -1,9 +1,9 @@
 """Mirror of `src/studyforge/serve/routes/run.py` (R12) — Run and Submit, over a real socket.
 
-⭐ **E05 SF-22's acceptance, each clause both ways, against the runnable fixture, in
-host mode** — which `SF-20` made a full execution mode; the container reading is the
-register's (`SF-20/1`). *Run streams program output. Submit streams grader output and,
-on success, completes the practice. Run never completes a practice. A stopped run is
+⭐ **The run route's acceptance, each clause both ways, against the runnable fixture, in
+host mode** — a full execution mode; the container reading is taken elsewhere. *Run
+streams program output. Submit streams grader output and, on success, completes the practice. Run
+never completes a practice. A stopped run is
 recorded as stopped. Output is gated on the wire.* ⛔ And the epic's own sentence:
 **nothing a browser sends ever becomes a command.**
 """
@@ -477,7 +477,7 @@ def test_the_probe_an_instance_makes_asks_docker_about_the_compose_container(roo
 def settings_in(root) -> Path:
     """Where the editor's own settings land for `UP`: inside the part of the
     source root it mounts — the HOST side of its bind, which the index never
-    carries, because that path is a home (R7) — the practice's OWN folder (`W446`)."""
+    carries, because that path is a home (R7) — the practice's OWN folder."""
     return root / UP.base / "passes" / workbench.SETTINGS_DIR / workbench.SETTINGS_FILE
 
 

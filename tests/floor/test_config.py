@@ -71,7 +71,7 @@ def test_python_files_finds_the_tree_and_is_sorted():
     assert not [name for name in names if "__pycache__" in name]
 
 
-# --- what "in the repository" means (FND-06) -------------------------------
+# --- what "in the repository" means -------------------------------------
 #
 # ⚠️ This is the second time a gate's *scope* rather than its patterns has been
 # the defect, so the scope is pinned by tests rather than by a docstring.
@@ -167,7 +167,7 @@ def track(root, *paths: str):
 
 
 def test_markdown_files_is_a_narrowing_of_the_shared_walk(tmp_path):
-    # ⭐ FND-08 acceptance 6: no second file-walking helper. The narrowing is
+    # ⭐ No second file-walking helper. The narrowing is
     # one `suffix` test, so exclusions and the sort order are inherited.
     init_repository(tmp_path)
     make(tmp_path, ".gitignore", "generated/\n")
@@ -194,9 +194,9 @@ def test_markdown_files_reads_the_fixture_tree_by_decision(tmp_path):
     assert found == ["tests/fixtures/README.md"]
 
 
-# --- W148: the document population is the INDEX; the R7 sweep is not --------
+# --- the document population is the INDEX; the R7 sweep is not -------------
 #
-# ⛔ The hard constraint this row was written under, pinned by tests rather
+# ⛔ The hard constraint this narrowing was written under, pinned by tests rather
 # than by a docstring: the narrowing is at `markdown_files` and NEVER at
 # `text_files`, because `text_files` is the personal-data sweep's population
 # (`personal_data/shapes.py` and `personal_data/identity.py` both walk it) and a
@@ -204,9 +204,9 @@ def test_markdown_files_reads_the_fixture_tree_by_decision(tmp_path):
 
 
 def test_the_narrowing_is_NOT_in_the_personal_data_sweeps_population(tmp_path):
-    # ⛔ THE TEST THAT MATTERS MOST IN THIS ROW. If this ever fails, an
+    # ⛔ THE TEST THAT MATTERS MOST IN THIS SECTION. If this ever fails, an
     # untracked file has left the R7 gate and the floor has gone quiet by going
-    # blind — which `rows/W148.md` names as what the row must not become.
+    # blind — which is what narrowing the documents must never become.
     init_repository(tmp_path)
     make(tmp_path, "docs/tracked.md")
     track(tmp_path, "docs/tracked.md")
@@ -229,7 +229,7 @@ def test_the_population_says_which_walk_produced_it(tmp_path):
 
 
 def test_a_tree_git_cannot_answer_for_falls_back_and_SAYS_so(tmp_path):
-    # ⛔ Ruling 216's THIRD answer. Not a silent fall-through and not a hard
+    # ⛔ `tracked_paths`' THIRD answer. Not a silent fall-through and not a hard
     # failure: `tracked_paths` returns None, the walk is named `disk`, and
     # `WALK_CAVEAT` carries what that costs a reader.
     make(tmp_path, "docs/notes.md")
@@ -242,7 +242,7 @@ def test_a_tree_git_cannot_answer_for_falls_back_and_SAYS_so(tmp_path):
 
 
 def test_the_population_counts_the_documents_the_INDEX_does_not_hold(tmp_path):
-    # ⛔ `W315`, for `W232/5`: the narrowing was silent about what it narrowed
+    # ⛔ The narrowing was silent about what it narrowed
     # off, so an office running the floor over a handoff it had written and not
     # staged read a green the merge did not repeat. ⭐ Both directions, and the
     # count is the difference between the two lists this walk already has.
@@ -276,7 +276,7 @@ def test_tracked_paths_reads_the_INDEX_and_not_the_disk(tmp_path):
 
 
 def test_the_repositorys_own_document_population_agrees_with_git_ls_files():
-    # ⭐ `W148` clause 1: the figure the floor prints and `git ls-files '*.md'`
+    # ⭐ The figure the floor prints and `git ls-files '*.md'`
     # are the same number, so a reading is reproducible from any checkout.
     root = repository_root()
     population = config.markdown_population(root)

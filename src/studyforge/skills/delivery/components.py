@@ -68,7 +68,7 @@ reaches an output, and no structure from it reaches a caller. ⚠️ A document
 that does not carry that shape declares no component, and saying whether the
 workspace's own pin file is well formed is the workspace check's question.
 
-## ⛔ Why this is its own module, and it is NOT a third seam (`W92b`)
+## ⛔ Why this is its own module, and it is NOT a third seam
 
 ⭐ **There is one cut in this package's index half — READING versus BEING THE
 INDEX** — and `W92` and `W94` each made it, naming the halves the other way

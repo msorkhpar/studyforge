@@ -1,4 +1,4 @@
-"""The shapes Ruling 57 was decided on, and the two spellings it retired.
+"""The shapes the origin tell was decided on, and the two spellings it retired.
 
 **What it does.** Holds the probe corpus by letter, each with what the tell
 must answer for it, and the superseded token match that both earlier spellings
@@ -14,8 +14,8 @@ nothing that ships imports this module, and `test_tell.py` is its only reader.
 import ast
 
 #
-# ⭐ **The probe shapes, and the letters are Ruling 57's** so the ruling and
-# this file name the same rows. Every one of them is run three ways below:
+# ⭐ **The probe shapes, lettered** so the decision's record and this file name
+# the same rows. Every one of them is run three ways below:
 # against the tell that ships, and against both superseded spellings.
 #
 READER, DELEGATES = True, False
@@ -81,7 +81,7 @@ PROBES: dict[str, tuple[str, bool]] = {
 def _token_tell(source: str, spellings: tuple[str, ...]) -> bool:
     """The superseded tell: match call *tokens* against `spellings`.
 
-    ⛔ **Dead as an implementation, live as a control.** Ruling 57 was decided
+    ⛔ **Dead as an implementation, live as a control.** The tell was decided
     by what each spelling got wrong, and *"the old one missed two readers"* is
     a claim until something runs it. ⚠️ It records an attribute call twice — as
     its bare name and, on a plain module name, as `module.name` — which is what
@@ -103,11 +103,11 @@ def _token_tell(source: str, spellings: tuple[str, ...]) -> bool:
 
 #: W7 as first written. ⛔ Two false positives: it reads delegation as decoding.
 W7_SPELLING = ("loads", "load")
-#: `SF-10`'s narrowing. ⛔ Two false negatives, and a false negative in a
+#: The later narrowing. ⛔ Two false negatives, and a false negative in a
 #: coverage check is the silent one.
 SF10_SPELLING = ("loads", "json.load")
 
-#: The eight shapes Ruling 57 was measured on, by letter. ⚠️ `I`–`K` are this
+#: The eight shapes the tell was measured on, by letter. ⚠️ `I`–`K` are this
 #: task's additions and are held out of the two counting assertions below: the
 #: ruling says *two* missed and *two* wrongly flagged, and a control that
 #: quietly widens its own population stops being a check on the ruling.

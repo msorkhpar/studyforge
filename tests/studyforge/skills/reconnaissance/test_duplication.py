@@ -1,4 +1,4 @@
-"""The same material twice — as a whole file, and as a region of one (SK-01)."""
+"""The same material twice — as a whole file, and as a region of one."""
 
 from __future__ import annotations
 

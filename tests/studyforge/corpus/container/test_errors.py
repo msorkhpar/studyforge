@@ -69,7 +69,7 @@ def test_every_way_the_container_map_says_no_is_the_same_type(call):
 
 
 def test_the_arity_comparison_is_the_one_deliberate_exception():
-    # ⚠️ SF-02's precedent exactly: the arity *comparison* is SF-01's and it
+    # ⚠️ The manifest's precedent exactly: the arity *comparison* is `address`'s and it
     # owns it outright — this document only supplies the address it declared.
     with pytest.raises(AddressError):
         built(address=["a", "b"])

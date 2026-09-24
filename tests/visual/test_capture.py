@@ -21,8 +21,8 @@ PNG = b"\x89PNG\r\n\x1a\n"
 #: A page of prose at 1280x900 is tens of kilobytes. ⛔ A blank page is about
 #: two, which is why the control below asserts a *size*, not a success.
 #:
-#: ⭐ **Deliberately LOOSE, and Ruling 236 is why that is stated here rather than
-#: left to be inferred.** A capture's size is a text-layout output and text layout
+#: ⭐ **Deliberately LOOSE, and said so, so nobody tightens it as a measured bound.**
+#: A capture's size is a text-layout output and text layout
 #: is a font metric. ⭐ **`fonts-liberation` is now pinned by version AND checksum
 #: in `docker/dev/Dockerfile` (`W124` landed), so the font is no longer an
 #: undeclared input** — ⛔ **but the looseness below stays, and stating it is still
@@ -48,12 +48,12 @@ MINIMUM_BYTES = 8_000
 #: would be "fixed" by narrowing the population back.
 #:
 #: ⛔ **No threshold here is TIGHTER than the one it replaces.** `400` survives
-#: unchanged as the unit floor — which is the figure Ruling 236 examined — and the
+#: unchanged as the unit floor — the figure whose looseness was examined — and the
 #: two rows beside it are LOOSER floors for two kinds that were never photographed
 #: before. ⚠️ Tightening one of these would be a different act from widening the
 #: harness, and `W98` did not perform it.
 #:
-#: ⭐ **Loose on purpose, and stated as Ruling 236 requires.** Measured in the
+#: ⭐ **Loose on purpose, and stated as such.** Measured in the
 #: pinned image at `f71c566`, viewport 1280x900, every reading printed:
 #: unit **960 / 2 212 px**, container **387 / 434 / 466 px**, index
 #: **303 / 529 px**. Margins: unit **2.40x** (wider than the 1.87x the CTO

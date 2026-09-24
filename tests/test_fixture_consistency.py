@@ -138,7 +138,7 @@ def compiled_patterns(path: Path):
 
 
 def test_the_fixture_checker_carries_no_personal_data_pattern_of_its_own():
-    # ⛔ W13, and this is the half that makes a FOURTH copy unrepresentable
+    # ⛔ One pattern set, and this is the half that makes a FOURTH copy unrepresentable
     # rather than merely discouraged. The copy that used to live here was the
     # weaker of two — it missed a bare home directory, the macOS spelling, a
     # shell command and a dict key — and it was the one guarding rubric §1e's
@@ -163,7 +163,7 @@ def test_the_fixture_checker_carries_no_personal_data_pattern_of_its_own():
 
 
 def test_that_check_would_catch_a_pattern_added_back(tmp_path):
-    # ⭐ Ruling 11 on the guard itself: an assertion that a mechanism refuses
+    # ⭐ On the guard itself: an assertion that a mechanism refuses
     # something is worthless until you have watched it pass without it.
     reintroduced = tmp_path / "personal_data.py"
     reintroduced.write_text('import re\nHOME = re.compile(r"/home/[a-z]+/")\n', encoding="utf-8")
@@ -172,7 +172,7 @@ def test_that_check_would_catch_a_pattern_added_back(tmp_path):
 
 
 def test_the_gate_the_fixture_checker_borrows_is_the_stronger_one():
-    # ⭐ Ruling 11: watch the assertion fail without the mechanism. These four
+    # ⭐ Watch the assertion fail without the mechanism. These four
     # shapes are the ones the deleted copy missed, driven through what replaced
     # it. ⛔ Synthetic throughout — a real home path here would be the exact
     # violation the gate exists to refuse.

@@ -290,7 +290,7 @@ def editor(runs: Runs, corpus: ServedCorpus, workspace: dict) -> Response:
     if not isinstance(main, str) or not main:
         return error(409, NO_FILE)
     test = workspace.get("test_path")
-    # ⭐ The files a command names weigh in the practice's own folder (`W446`).
+    # ⭐ The files a command names weigh in the practice's own folder.
     named = tuple(
         argument
         for key in ("run_command", "test_command")

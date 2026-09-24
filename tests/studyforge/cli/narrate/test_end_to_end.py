@@ -1,4 +1,4 @@
-"""⛔ `SF-42`'s end-to-end leg: a `FND-04` corpus narrated against a RUNNING `narrate-service`.
+"""⛔ `narrate`'s end-to-end leg: a `FND-04` corpus narrated against a RUNNING `narrate-service`.
 
 ⭐ **The leg `M3` is missing.** It is asserted as a READING OF THE DISK — clip
 files under the copied corpus that were not there before, one per speech unit,

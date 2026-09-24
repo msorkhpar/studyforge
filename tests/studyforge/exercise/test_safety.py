@@ -1,4 +1,4 @@
-r"""What a path and a command may be (SF-23).
+r"""What a path and a command may be.
 
 ⭐ **These four values leave the framework** — into an editor's task file and
 into a runner's arguments — so every test here is about a value that would

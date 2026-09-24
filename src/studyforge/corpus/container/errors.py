@@ -9,9 +9,9 @@ caller catches one type rather than eight.
 `document` raise it, and putting it in either would make the other import a
 module it has no other business with — the same seam `archive/errors.py` has.
 
-⚠️ **One deliberate exception, following SF-02's precedent exactly.** An
-address whose arity disagrees with the corpus raises SF-01's `AddressError`,
-because that call is the arity *comparison* and SF-01 owns it outright; the
+⚠️ **One deliberate exception, following `corpus.manifest`'s precedent exactly.**
+An address whose arity disagrees with the corpus raises `address`'s `AddressError`,
+because that call is the arity *comparison* and `address` owns it outright; the
 container map only supplies the address it declared. ⛔ Every other rule of
 SF-01's applied here — what a slug is, what an ordinal is — is **converted**,
 because the rule is SF-01's but the document is this contract's.

@@ -1,6 +1,6 @@
 """Mirror of `tests/harness/workspace.py`: the pin file READ, refused rather than repaired.
 
-⭐ `REL-02`: the reading half of the tooling original's tests, asked of `read` directly — the
+⭐ The reading half of the tooling original's tests, asked of `read` directly — the
 original asks them through `verify`, which stays with the tooling. Real `git init` trees from
 `tests/harness/workspaces.py`; no real sibling is touched.
 """

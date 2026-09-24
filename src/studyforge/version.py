@@ -56,9 +56,8 @@ from studyforge.describe import describe
 
 #: The fields R9 versions, for the tree check in `tests/studyforge/
 #: test_version.py` that refuses a second implementation. ⭐ `identity_api`
-#: joined it the day SF-03 minted it, `content_api` the day SF-09 did,
-#: `site_api` the day SF-04 did, ⭐ **`toc_api` the day SF-13 did**, and
-#: ⭐ **`narration_api` the day SF-17 did** (Ruling 351) — which is the
+#: joined it the day its contract was minted, and so did `content_api`,
+#: `site_api`, ⭐ **`toc_api`**, and ⭐ **`narration_api`** (Ruling 351) — which is the
 #: convention this line asks for: a task that versions a new contract
 #: registers it here in the same commit, or the guard cannot see it.
 #:
@@ -83,7 +82,7 @@ from studyforge.describe import describe
 #: which is the part of R9 that is about all of them.
 #:
 #: ⛔ **Two tasks appending here conflict, and the resolution is always
-#: keep-both** (Ruling 9). The explicitness is the mechanism — a tuple that
+#: keep-both**. The explicitness is the mechanism — a tuple that
 #: merges cleanly is one nobody had to look at — so a conflict here is the
 #: guard working, and it recurred at the TOC schema version exactly as this
 #: line predicted it would.

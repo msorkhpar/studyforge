@@ -17,7 +17,7 @@ is that line and the lines that follow it up to the next blank one, and
 string, case included — the review rubric greps for exactly that token, so
 anything else would pass here and fail there.
 
-⛔ **A deferral's row id goes on the marker line** (Ruling 114). The reader
+⛔ **A deferral's row id goes on the marker line**. The reader
 used to return only that line, so an id that wrapped onto the next one
 vanished from the wave-open sweep and the deferral printed as a permanent
 design claim — the one reading that makes it un-retirable. The whole
@@ -36,7 +36,7 @@ the module, in the diff, in front of the reviewer. A ceiling that lives only
 in a document erodes under deadline, and the 2,743-line module this project is
 paying down is what erosion looks like when nothing ever said no.
 
-## ⛔ The ceiling has an instrument; the APPROACH to it lives NEXT DOOR (`W155`)
+## ⛔ The ceiling has an instrument; the APPROACH to it lives NEXT DOOR
 
 ⭐ **`tests/floor/approach.py` is the other half**, and it is a NOTICE rather
 than a finding: R11's ceiling already fails the build, and a second hard gate
@@ -53,7 +53,7 @@ approach takes its own advice rather than buying an exception from the check
 it is extending.** The seam is the question asked: this module answers *"is
 this file over the line"* and that one answers *"is it heading for it"*.
 
-## ⛔ The ceiling reads every AUTHORED source file under `src/` (`W367`)
+## ⛔ The ceiling reads every AUTHORED source file under `src/`
 
 ⚠️ **It used to read `*.py` only, so `chrome.css` reached 748 lines and nothing
 failed** (`W362-plan/1`). ⭐ **`AUTHORED_SUFFIXES` names the other languages the
@@ -79,9 +79,9 @@ RULE_JUSTIFICATION = "size-justification"
 RULE_EXCEPTION_ID = "size-exception-id"
 
 #: The remedy, and it names BOTH admissible forms. ⛔ It used to name only the
-#: design claim, which is the one form Ruling 113 had just excused — so the
+#: design claim, when the deferral was the form a case needed — so the
 #: tool instructed a developer to write the inadmissible thing, and the
-#: correct branch was the one that ignored its own build output (Ruling 114).
+#: correct branch was the one that ignored its own build output.
 BOTH_FORMS = (
     "The review rubric admits two forms and no third. A design claim: "
     f"`{config.SIZE_EXCEPTION_MARKER} <why splitting would be worse>`, which "
@@ -96,7 +96,7 @@ BOTH_FORMS = (
 #: module, and R11 is a ceiling on modules.
 AUTHORED_SUFFIXES = (".css", ".js", ".html")
 
-#: The one scan root for `AUTHORED_SUFFIXES`: `W367` names the files the
+#: The one scan root for `AUTHORED_SUFFIXES`: the ceiling binds the files the
 #: framework SHIPS, and only `src/` is shipped.
 AUTHORED_ROOT = "src"
 
@@ -182,8 +182,7 @@ def size_exception(docstring: str | None) -> str | None:
     ⛔ The whole of it, not the marker line. A justification is English and
     English wraps; a reader that stopped at the line break made the visible
     reason a function of where the author happened to press return, which
-    both hid a deferral's row id and refused a long reason for being short
-    (Ruling 114).
+    both hid a deferral's row id and refused a long reason for being short.
 
     Continuation lines are joined with a single space, so the result reads as
     the sentence it is and can be printed on one line by a sweep. An empty or
@@ -200,8 +199,8 @@ def size_exception(docstring: str | None) -> str | None:
 def size_exception_marker_line(docstring: str | None) -> str | None:
     """Return only what the marker line itself carries, or None if absent.
 
-    Exists for one question: is the deferral's row id where Ruling 114
-    requires it? ⛔ Not a general-purpose reader — `size_exception` is that,
+    Exists for one question: is the deferral's row id on the marker line,
+    where it must be? ⛔ Not a general-purpose reader — `size_exception` is that,
     and a caller wanting the reason wants the whole reason.
     """
     lines = justification_lines(docstring)

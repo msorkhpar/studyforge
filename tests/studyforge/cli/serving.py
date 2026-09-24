@@ -30,7 +30,7 @@ from tests.fixture_checks import FIXTURES
 NAMES = ("depth1", "depth2")
 
 #: The line a serving PROCESS prints once it listens, naming the port it chose. ⛔ One home
-#: (`W237`): the verb's process test and the `buildserve` skill's both import it from here.
+#: the verb's process test and the `buildserve` skill's both import it from here.
 LISTENING = re.compile(r"^serve http://127\.0\.0\.1:(\d+)/")
 
 
@@ -51,7 +51,7 @@ SERVING_ORIGIN = re.compile(
 
 #: ⛔ `W370`: the run client, by its served path's tail or by its file's name. ⭐ **The one
 #: sanctioned way a page gets it is the SERVING PROCESS adding it to the page it answers**
-#: (`E05` § `SF-22`), so a BUILT text that names it is loading it some other way — and a
+#: (the run route's contract), so a BUILT text that names it is loading it some other way — and a
 #: relative `api/v1/…` resolved against `location.origin` would pass `SERVING_ORIGIN`.
 RUN_CLIENT_NAMES = (f"{NAMESPACE}/{CLIENT}", CLIENT_FILE.name)
 RUN_CLIENT = re.compile(

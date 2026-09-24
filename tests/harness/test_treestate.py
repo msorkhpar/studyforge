@@ -1,6 +1,6 @@
 """Mirror of `tests/harness/treestate.py`: the delta engine, against a real throwaway repository.
 
-⭐ `REL-02`: the tooling original's tests, carried with the product's copy, so the suite's exit
+⭐ The tooling original's tests, carried with the product's copy, so the suite's exit
 condition keeps its assertions and its plants in a checkout with no tooling in it.
 
 ⛔ Every assertion here runs `git` in a `tmp_path` repository. A parser tested
@@ -74,12 +74,12 @@ def test_a_rename_does_not_smear_its_origin_onto_the_next_entry(tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# The delta — and Ruling 11: watch it fire
+# The delta — and watch it fire
 # ---------------------------------------------------------------------------
 
 
 def test_a_file_that_appeared_during_the_run_is_the_finding(tmp_path):
-    # ⭐ THE PLANT. This is `SF-17/11` reduced to its shape: a file named
+    # ⭐ THE PLANT. A run that left a stray file behind, reduced to its shape: a file named
     # `alpha` that was not there when the run began.
     repository = init_repository(tmp_path)
     before = treestate.snapshot(repository)

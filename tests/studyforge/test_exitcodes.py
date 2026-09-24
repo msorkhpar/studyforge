@@ -110,7 +110,7 @@ def test_importing_the_shared_module_brings_no_other_framework_module():
 
 
 def test_that_instrument_reports_what_a_module_with_dependencies_pulls_in():
-    # ⭐ Inhabitation (Ruling 191): a child that imported nothing also reports
+    # ⭐ Inhabitation: a child that imported nothing also reports
     # an empty list, so the pass reading above is only attributable once the
     # same instrument is seen to report something. `validate.cli` is the module
     # `UNUSABLE` used to live in, and it pulls its own package's modules.

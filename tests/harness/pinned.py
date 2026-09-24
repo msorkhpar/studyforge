@@ -1,6 +1,6 @@
 r"""Reading a sibling component's file at the commit `workspace.json` pins it to.
 
-⭐ **`REL-02`: the product suite's OWN copy of `tools/workspace/pinned.py`**, reading the pin
+⭐ **The product suite's OWN copy of `tools/workspace/pinned.py`**, reading the pin
 through `tests.harness.workspace`, so a product test that reads a sibling needs no tooling. ⛔
 Every definition is the original's byte for byte save `_workspace`, which asks the product's
 reader, and `tests/test_process_twins.py` refuses a drift while both exist.

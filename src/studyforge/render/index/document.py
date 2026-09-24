@@ -27,7 +27,7 @@ explicitly.** `templates.fill` refuses a placeholder with no value **and** a
 value with no placeholder, so each one is passed `""` by name rather than
 omitted — which means the day the skeleton drops a slot this module fails by
 name instead of quietly losing a region. ⭐ **And the day it GAINS one this
-module fails too, which is how `breadcrumb` arrived** (`SF-15`).
+module fails too, which is how `breadcrumb` arrived**.
 
 ⚠️ **Each absence is a fact rather than an oversight:**
 
@@ -46,7 +46,7 @@ whose reading it records (`SF-30`). ⭐ The marks themselves DO reach this page 
 as a state on the rows this tree already keys by unit key — but that is the
 shared script's work at read time, not a region this module fills |
 | `pending` | practices belong to a unit |
-| `player` | narration belongs to a unit (`SF-18`) |
+| `player` | narration belongs to a unit |
 
 ## ⭐ Two slots it fills that a first reading would leave empty (`W388`)
 

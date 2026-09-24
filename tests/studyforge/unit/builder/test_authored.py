@@ -25,7 +25,7 @@ def material(documents=None):
 
 
 def test_the_authors_order_is_preserved_exactly():
-    # ⛔ **SF-10's acceptance, and the seam's whole reason.** The practice is
+    # ⛔ **The authored overlay's acceptance, and the seam's whole reason.** The practice is
     # written first here, which no derived build would ever produce.
     written = overlay(
         [
@@ -91,7 +91,7 @@ def test_an_authored_section_with_no_material_behind_it_is_refused():
 
 
 def test_every_authored_section_is_inhabited_and_keyed():
-    # ⚠️ Ruling 48: an overlay that produced no sections would satisfy every
+    # ⚠️ The denominator: an overlay that produced no sections would satisfy every
     # per-section assertion above.
     written = overlay(
         [

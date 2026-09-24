@@ -38,7 +38,7 @@ that was satisfiable. Text too large to gate is refused, never served ungated.
 — the reader's own record is the first. It answers `404`, as does every refusal,
 so a prober never learns which guess was interesting.
 
-## ⛔ A file carrying a quiz's key or sentence is REFUSED (`W452`)
+## ⛔ A file carrying a quiz's key or sentence is REFUSED
 
 ⭐ **The user's ruling (2026-09-23): what the site serves never carries a quiz's
 key.** A corpus built into its own root (`build . --out .`) puts the archive's
@@ -90,7 +90,7 @@ from studyforge.serve.caching import UNSATISFIABLE, WHOLE, not_modified, parse_r
 from studyforge.serve.response import TEXT_TYPE, Request, Response
 
 #: Assets revalidate every time; a `304` costs one `stat`, and one read of a text
-#: or unknown-type file, which `withheld` is asked of first (`W452`).
+#: or unknown-type file, which `withheld` is asked of first.
 ASSET_CACHE = "no-cache"
 
 #: Longest URL path accepted, before decoding.
@@ -155,13 +155,13 @@ DEFAULT_CONTENT_TYPE = "application/octet-stream"
 
 Private = Callable[[Path], bool]
 
-#: Whether a file's bytes carry what a site never serves (`W452`).
+#: Whether a file's bytes carry what a site never serves.
 Withheld = Callable[[bytes], bool]
 
 #: ⛔ **The reader's progress record, which is never content** (`SF-21/2`). It sits
 #: at `<generated root>/progress/` beside the pages a `tree` profile writes, so the
 #: static mount would otherwise serve it. Refused BY PATH, on the resolved file, so
-#: a symlink into it is refused too; the state namespace (`SF-19b`) is where the
+#: a symlink into it is refused too; the state namespace is where the
 #: record is served. ⚠️ A hard link to it elsewhere under the root is not seen.
 #: ⛔ **Matched ANYWHERE in the resolved absolute path, never relative to the served
 #: root** (`SF-39/4`): a root that is a corpus's generated directory, or one holding

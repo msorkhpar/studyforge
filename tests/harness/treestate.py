@@ -1,9 +1,9 @@
 """Whether a run changed the working tree, as a **delta** rather than a verdict on cleanliness.
 
-⭐ **`REL-02`: the product suite's OWN copy of `tools/treestate.py`**, so the suite's exit
+⭐ **The product suite's OWN copy of `tools/treestate.py`**, so the suite's exit
 condition holds in a checkout with no tooling in it. ⛔ The functions are that module's,
 byte for byte save the file a failure points its reader at, and `tests/test_process_twins.py`
-refuses a drift while both exist; `REL-10` leaves this copy as the only one.
+refuses a drift while both exist; once the tooling leaves, this copy is the only one.
 
 **What it does.** Takes two `git status` snapshots and reports every path whose
 status changed **between** them. Nothing else: it does not know what a writer
@@ -50,7 +50,7 @@ the signal, not noise.
    and no larger question.
 3. ⚠️ **`git` may not be installed.** Then there is no snapshot and the caller
    is told so **out loud**: a check over nothing must not return the pass
-   reading (Ruling 191). `snapshot` returns `None` and never `{}`, because an
+   reading. `snapshot` returns `None` and never `{}`, because an
    empty mapping is a real answer — a clean tree — and the two must not be
    confusable.
 

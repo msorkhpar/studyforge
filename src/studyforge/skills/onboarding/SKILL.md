@@ -5,7 +5,7 @@ framework can build, and leave nothing for anybody to retype.** The one manual
 step is: install the framework library into the Python you run this with.
 
 ⛔ **This skill does not reason about unfamiliar material and it does not write
-an adapter's reading step.** Reconnaissance answers the first (`SK-01`) and a
+an adapter's reading step.** Reconnaissance answers the first and a
 person answers the second, in exactly one file that this skill names for them.
 
 ---
@@ -44,9 +44,9 @@ You need three things, and nothing else:
    is pushed to any remote, so a submodule URL has no legal form), never
    vendored, never copied. It is not published to a package index: build a
    wheel from the framework and install it;
-3. reconnaissance's draft (`SK-01`), which is a `dict` and not yet a manifest.
+3. reconnaissance's draft, which is a `dict` and not yet a manifest.
 
-⛔ **The pin is the INSTALLED library** (`REL-05`). This skill reads the version
+⛔ **The pin is the INSTALLED library**. This skill reads the version
 of the `studyforge` this Python imports and writes it into the corpus's pin
 beside the commit you pass as `framework_commit` — the commit that library was
 built from. ⛔ **Never a path**, relative or absolute: a path carries somebody's
@@ -224,7 +224,7 @@ What lands, and why each one exists:
 | what | why it is generated rather than typed |
 |---|---|
 | `corpus.json` | the draft promoted, with **every generated file already declared `content.not_material`** |
-| the adapter package and its suite | `SK-02`'s scaffold, wired in — one file that is yours and every other one generated; ⛔ how many is the scaffold's own listing (`scaffold(...).lines()`, the adapter skill's step 1), never a number typed here (`W345`) |
+| the adapter package and its suite | the adapter skill's scaffold, wired in — one file that is yours and every other one generated; ⛔ how many is the scaffold's own listing (`scaffold(...).lines()`, the adapter skill's step 1), never a number typed here (`W345`) |
 | `.studyforge/pin.json` and the skill stubs | the installed library's version and the commit it was built from, and thin pointers that carry both and name the command that prints each procedure from the installed package |
 | `tests/` — two checks | R3's assertion, read from what a build declares it writes and from the tree through that same declaration, with this corpus's edits baked in; and the pin check — the installed library is the pinned version, ships every stubbed skill, and no stub has drifted |
 | `ONBOARDING.md` | what a reader gets, read off the corpus's own declarations, with commands that run from a fresh clone (`W313`) — and **no live figure**: where the corpus stands is a command it prints, because nothing rewrites a generated document when narrating or re-ingesting moves the answer (`W332`) |
@@ -286,7 +286,7 @@ narration is the defect, not the remedy.
 ⛔ **That line is a declaration, read by a check, and it is the only thing that
 exempts a commanded module from having to resolve in this repository.** Its
 spelling is declared in `docs/conventions/commanded-pages.md`. ⭐ **The
-corpus repository owns `ingest`** — `SK-02`'s scaffold writes it into the
+corpus repository owns `ingest`** — the adapter skill's scaffold writes it into the
 material's own tree, so it is importable where this skill is *pointed* and
 nowhere here. ⚠️ **Every other `python3 -m` form on this page is the framework's
 and is asserted runnable**, so a typo in one of them fails a check rather than
@@ -386,7 +386,7 @@ the first manifest declares it, and *what a generator emits by default becomes
 the convention*.
 
 ⭐ **It invents no key, and drops an empty optional one.** It adds no `media`
-block — an absent one is a **stated** default (`SF-02`), so omission is the
+block — an absent one is a **stated** default of the manifest schema, so omission is the
 declared path rather than a workaround — and it drops an empty
 `permitted_edits`. ⚠️ A block a *person* put in the draft is theirs and
 survives: the rule is that this generator adds nothing, not that it discards

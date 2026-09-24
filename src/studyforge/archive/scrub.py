@@ -29,7 +29,7 @@ is not redundancy but the news that an upstream stage failed (R6).
 ## The pattern set is ruled, and it is short
 
 ⭐ **The gate's question is not "is this string identifying?" but "did this
-build put it there?"** (CTO on X2 and on FND-02 finding 3). Four shapes pass
+build put it there?"** Four shapes pass
 that test and they are all that ship:
 
 | shape | why it is environmental |
@@ -40,7 +40,7 @@ that test and they are all that ship:
 | bearer token | a credential minted for whoever authenticated |
 
 ⚠️ **The fourth arrived by Ruling 47 and it was drift, not a new idea.** The
-repository hygiene check has swept `<host>.local` since FND-01 and this gate
+repository hygiene check has always swept `<host>.local` and this gate
 never did — ⛔ and a machine name is personal data in an archive document
 exactly as much as in a source file. ⭐ *One shape vocabulary, two policies*:
 the two checks may differ in what they **do** and may not differ in what they

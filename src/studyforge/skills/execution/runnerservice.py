@@ -2,7 +2,7 @@ r"""The runner Submit execs into, as a compose service — read from the contrac
 
 **What it does.** Turns the component's `runner` block into the second service
 of the corpus's compose file, so ONE `docker compose up` brings up the editor
-AND the long-lived container a graded run `docker exec`s into (`W445`).
+AND the long-lived container a graded run `docker exec`s into.
 
 **How you use it.** `plan(document, source=…, root=…, runs_as=…)` returns a
 `Runner`: the service mapping `composefile.render` places beside the editor,
@@ -31,11 +31,13 @@ and `composefile.render` checks the whole file's bytes for one besides.
 
 - ⛔ **`runner.image` declares a `run_value` (`<tag>`) and no `compose_value`**,
   so the interpolation is composed here from the block's own `env_var`: the
-  compose syntax `${VAR:?why}` and nothing else. `W445/1`.
+  compose syntax `${VAR:?why}` and nothing else. The remedy is a `compose_value`
+  in the component's `runner.image`.
 - ⛔ **`runner.runs_as` declares a shell `run_value` (`$(id -u):$(id -g)`) and
   no compose key or value**, which compose cannot evaluate. ⭐ The editor
   block's `runs_as` IS that answer — *"the uid:gid that owns the mounted
-  sources"* — so it is read from there rather than typed. `W445/2`.
+  sources"* — so it is read from there rather than typed. The remedy is a `compose_key`
+  and `compose_value` in the component's `runner.runs_as`.
 """
 
 from __future__ import annotations

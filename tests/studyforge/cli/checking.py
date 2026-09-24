@@ -1,7 +1,7 @@
 """Shared by the `check` verb's tests: a copy of the runnable corpus, the verb, what it handed on.
 
-⭐ **Every run happens in a temp COPY of `tests/fixtures/runnable/`** (`W352`'s rule, and
-`execute`'s helper makes the copy), so nothing a run writes lands in the fixture tree.
+⭐ **Every run happens in a temp COPY of `tests/fixtures/runnable/`** (the runnable fixture's rule,
+and `execute`'s helper makes the copy), so nothing a run writes lands in the fixture tree.
 
 ⭐ **The records are read with the framework's own reader** (`exercise.of`), so each test
 compares what the verb handed on with what the unit's record says, never with an argv typed

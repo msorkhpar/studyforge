@@ -186,7 +186,7 @@ def test_the_allow_list_is_a_pattern_not_a_list_of_people():
 
 
 def test_the_allow_list_is_DERIVED_from_the_shared_vocabulary_and_never_typed():
-    # ⛔ `W310`: one vocabulary, two policies. The shipped constant must BE what
+    # ⛔ One vocabulary, two policies. The shipped constant must BE what
     #    the builder returns, or somebody has re-typed the list here and the two
     #    halves can drift again. ⭐ The cross-side plant is in
     #    `tools/tests/test_reserved_addresses.py`; this is this arm's half.
@@ -262,7 +262,7 @@ def test_this_sweep_does_what_the_shared_table_says(row):
     # `archive.scrub` are ruled to have different subjects — this one may
     # derive the machine's identity and keeps an allow-list, that one may know
     # nothing — ⛔ and that never justified differing in what they
-    # *recognise*. ⚠️ Ruling 31 forbids importing the framework, so the two
+    # *recognise*. ⚠️ The tooling may not import the framework, so the two
     # sides share the table at `docs/conventions/personal-data-shapes.md` and
     # each asserts only its own column. This module reads no framework code.
     did = "report" if shape_matches(row["example"]) else "ignore"
@@ -270,12 +270,13 @@ def test_this_sweep_does_what_the_shared_table_says(row):
 
 
 def test_the_table_this_sweep_is_measured_against_is_inhabited():
-    # ⛔ Ruling 48: the parametrised test above is satisfied by an empty table.
+    # ⛔ A sweep states its denominator:
+    # the parametrised test above is satisfied by an empty table.
     assert len(VOCABULARY) >= 12
     assert {row["quality"] for row in VOCABULARY} == {"report", "ignore"}
 
 
 def test_this_module_reads_the_table_and_never_the_framework():
-    # ⛔ Ruling 31, asserted where it could be broken. Sharing evidence must
+    # ⛔ No framework import, asserted where it could be broken. Sharing evidence must
     # not become sharing code by somebody importing what looks convenient.
     assert not imports_module(Path(__file__), "studyforge")

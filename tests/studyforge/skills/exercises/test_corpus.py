@@ -4,7 +4,7 @@
 pages carry each of spec §7 §1's three source cases and a prose page that gets
 a quiz: each ships a gate-cleared exercise; every exercise is
 `generated`/`advisory`; a grader-less source gets exercises, which is what
-supersedes `SK-04`'s refusal; the pass writes only inside the corpus and only
+supersedes the old refusal of a grader-less source; the pass writes only inside the corpus and only
 additively (R3); and re-running it with nothing changed rewrites nothing (R10).
 
 ⭐ **One real pass, taken once per module**: the runs are real `pytest`
@@ -126,7 +126,7 @@ def test_every_exercise_it_writes_is_generated_and_advisory(corpus):
 
 
 def test_it_supersedes_sk04_s_refusal_of_a_grader_less_source(corpus):
-    # ⛔ `SK-04` once refused a source that ships no grader. Run on two of
+    # ⛔ Onboarding once refused a source that ships no grader. Run on two of
     # them — one with an example and one with nothing at all — and each ships
     # a gate-cleared exercise instead of a refusal.
     authored = corpus["authored"]
@@ -233,7 +233,7 @@ TONE = Aspect(
 
 
 def test_an_aspect_nothing_checks_is_visible_in_the_report_and_on_the_pass(tmp_path):
-    """⭐ `W453`: a thin plan is VISIBLE — each unchecked aspect, with its reason."""
+    """⭐ A thin plan is VISIBLE — each unchecked aspect, with its reason."""
     material, graders, pages = write_corpus(tmp_path)
     shout = replace(pages[1], aspects=(*pages[1].aspects, TONE))
     arguments = dict(material=material, graders=graders, pages=[shout], judge=Judging())
@@ -250,7 +250,7 @@ def test_an_aspect_nothing_checks_is_visible_in_the_report_and_on_the_pass(tmp_p
 
 
 def test_a_unit_planned_under_the_withdrawn_band_is_refused_by_its_plan_api(tmp_path):
-    """⛔ `W453`: a `plan_api` 1 report is re-planned by aspects, never silently kept."""
+    """⛔ A `plan_api` 1 report is re-planned by aspects, never silently kept."""
     material, graders, pages = write_corpus(tmp_path)
     author, judge, runner = Scripted(CLEAN), Judging(), Running()
     arguments = dict(material=material, graders=graders, pages=pages[1:2], author=author)
@@ -306,7 +306,7 @@ NOTES = ("notes/gauge.md",)
 
 @pytest.mark.parametrize("order", [("kata", "notes"), ("notes", "kata")])
 def test_a_pass_over_one_container_keeps_every_row_of_the_other_byte_for_byte(tmp_path, order):
-    """⛔ `W456`: `ISO-M10/11`'s shape — two containers, passed one at a time."""
+    """⛔ Two containers, passed one at a time: the other's rows are kept."""
     _, _, pages = write_corpus(tmp_path)
     first, second = order
     _container_pass(tmp_path, pages, first)

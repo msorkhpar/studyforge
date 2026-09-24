@@ -150,7 +150,7 @@ def test_the_step_that_draws_the_tree_writes_no_archive_path_in_prose():
 
 
 def test_the_contract_names_no_part_of_the_tree_the_skill_omits():
-    # ⛔ `W16`'s class: the spec's canonical example is a hand-maintained copy
+    # ⛔ A copy that drifts: the spec's canonical example is a hand-maintained copy
     # of a contract the code owns, so the agreement is asserted rather than read.
     unnamed = segments(contract_fence()) - segments(drawn_fence())
     assert unnamed == set(), f"{SPEC} §6 names {sorted(unnamed)}, which {SKILL} does not draw"

@@ -15,7 +15,7 @@ consumer asks `profile_for(manifest.placement)` and none of them names a
 profile. ⛔ There is no `if placement == "tree"` anywhere in this package or
 downstream of it, and `test_profile` asserts that of the whole of `src/`.
 
-## The seam with SF-02, drawn deliberately
+## The seam with `corpus.manifest`, drawn deliberately
 
 ⚠️ `corpus.manifest.PLACEMENT_PROFILES` lists **the names a manifest may
 declare**; this registry holds **what each one does**. The CTO judged that
@@ -40,10 +40,10 @@ root nothing read, and a malformed map there validated clean.
 
 ## Ignore lines are a profile's answer, not a caller's guess (Ruling 91)
 
-⛔ **`SF-31`'s acceptance is that `studyforge plan` prints the ignore lines its
+⛔ **`studyforge plan` must print the ignore lines its
 profile requires**, and R1 forbids the caller reaching that by asking which
 profile it has. So the profile answers — `ignore_file`, and `output_globs` for
-what is committed instead. `cli.plan` and `SK-07` are the callers.
+what is committed instead. `cli.plan` and the onboarding skill are the callers.
 
 ⛔ **A build's output is committed, and the only generated ignore rules about
 the CORPUS are the media policy's** (`W242`, `INT-06/7` and `/8`). §5's

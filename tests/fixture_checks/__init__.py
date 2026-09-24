@@ -41,7 +41,7 @@ only that one.
 
 ⭐ **Five seams, named before they were needed.** FND-04's handoff recorded
 that a sixth invalid fixture would want this module split along the seams its
-checks already had; the disclosure follow-up and SF-02's `content` key then
+checks already had; the disclosure follow-up and the manifest's `content` key then
 grew it past the point where that was optional. Each module is one kind of
 question, so a failing check names a concern rather than a file.
 
@@ -54,10 +54,10 @@ question, so a failing check names a concern rather than a file.
 | `addresses` | does what a thing says about where it is match where it sits |
 | `media` | is every declared file on disk, at the size and digest recorded |
 | `personal_data` | does anything carry an R7 shape (R7) |
-| `sweeps` | which of these files a given sweep is entitled to read (Ruling 46) |
+| `sweeps` | which of these files a given sweep is entitled to read |
 
 ⭐ **`sweeps` is the sixth, and it arrived from outside.** It was written
-against `tests/studyforge/archive/test_blocks.py` and moved here by `FND-09`,
+against `tests/studyforge/archive/test_blocks.py` and moved here,
 because a helper that reads `INVALID_CORPORA` belongs beside the declaration:
 anywhere else and the next person needing one reads the directory name instead.
 ⛔ **Two modules must never consume it** — see `sweeps.ENFORCERS`.

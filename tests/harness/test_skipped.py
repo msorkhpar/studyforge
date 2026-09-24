@@ -1,6 +1,6 @@
 """Mirror of `tests/harness/skipped.py`: the unreachable population, derived from the tally.
 
-⭐ `REL-02`: the pure-function arms of the tooling original's tests, carried with the product's
+⭐ The pure-function arms of the tooling original's tests, carried with the product's
 copy. The end-to-end arm — a child run printing the line through the root `conftest.py` — is
 `tests/test_product_stands_alone.py`'s, because that file owns what the root conftest prints.
 """

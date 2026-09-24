@@ -62,7 +62,7 @@ def test_every_question_carries_its_stem_and_every_option_its_words():
 
 
 def test_no_option_carries_the_key_or_its_sentence():
-    # ⛔ `W451`, the user's ruling of 2026-09-23: the correct answer resides on
+    # ⛔ The user's ruling of 2026-09-23: the correct answer resides on
     # the SERVER. ⭐ Every sentence and every spelling of the key is read for,
     # escaped and raw, because either one on the page tells a reader which
     # option is right before they choose. ⚠️ The positive control — the same
@@ -80,7 +80,7 @@ def test_no_option_carries_the_key_or_its_sentence():
 
 
 def test_no_built_page_or_asset_carries_a_key_or_a_sentence(tmp_path):
-    # ⛔ `W451`'s first clause, read on the BUILT prose fixture — every page and
+    # ⛔ The server-held key's first clause, read on the BUILT prose fixture — every page and
     # every asset the build wrote, because a key that leaked into a script, a
     # stylesheet or a JSON island is missed by a reading of one page's markup.
     # ⭐ Positive control, in the same test: every needle IS in the practice
@@ -109,7 +109,7 @@ def test_no_built_page_or_asset_carries_a_key_or_a_sentence(tmp_path):
 
 
 def test_over_a_file_the_quiz_says_it_needs_the_study_server_and_offers_no_check():
-    # ⭐ `W451`'s register default: the mechanism Run and Submit use — the
+    # ⭐ The default for an unserved page: the mechanism Run and Submit use — the
     # `offline` sentence ships showing and the controls ship `hidden`, and only
     # a served client unhides them. ⛔ The wording is the panel's own, so a
     # reader is told the same thing about both shapes.
@@ -216,7 +216,7 @@ def behaviour() -> str:
 
 
 def test_the_quiz_is_graded_by_the_served_client_and_never_by_the_page():
-    # ⛔ `W451` (spec §7 §7, amended 2026-09-23): the page holds no key, so it
+    # ⛔ Spec §7, amended 2026-09-23: the page holds no key, so it
     # cannot grade — it asks `window.studyforge.quiz`, which only a SERVING
     # process adds to a page, and only where that client says an origin can
     # answer. ⚠️ It names no API and fetches nothing itself: R8's floor reads a

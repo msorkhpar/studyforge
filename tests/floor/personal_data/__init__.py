@@ -34,7 +34,7 @@ reached 406 lines against R11's 400 and split along the seam it already had:
 - `registry` — the bounded exception, and what keeps it bounded.
 - `identity` — this machine's own values, derived and discarded. ⭐ It also
   carries `identity_notice`, which DISCLOSES which of its arms had a value to
-  compare at all, by label and never by value (`W307`).
+  compare at all, by label and never by value.
 
 ⛔ **A finding names the shape, never the match.** A refusal that quotes the
 leak has only relocated it into a build log.

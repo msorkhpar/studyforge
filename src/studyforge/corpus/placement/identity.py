@@ -3,7 +3,7 @@
 **What it does.** Defines what a generated page says about itself, renders it,
 and reads it back.
 
-**How you use it.** `render(Identity(...))` gives the markup SF-12 embeds;
+**How you use it.** `render(Identity(...))` gives the markup the page renderer embeds;
 `parse(html)` gives it back, which is what SF-04's scan does with every file it
 finds.
 
@@ -11,7 +11,7 @@ finds.
 
 ## Why it is here and not in SF-04
 
-⭐ **SF-12 writes it in M1; SF-04 reads it in M2.** A definition arriving after
+⭐ **The page renderer writes it; discovery reads it.** A definition arriving after
 its first writer is a definition two tasks each guess at differently — so it is
 defined once, here, with **both halves and the round-trip tested now**, a
 milestone before anything depends on it.

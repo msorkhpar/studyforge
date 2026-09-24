@@ -9,7 +9,7 @@ adapter — from a `Plan`.
 
 ## ⭐ A scaffold whose tests PASS on delivery is the failure mode this avoids
 
-⛔ **`SK-02`'s acceptance is that a scaffolded adapter's tests run and fail
+⛔ **The bar is that a scaffolded adapter's tests run and fail
 informatively before any source reading is written**, and the word doing the
 work is *fail*. A generated suite that passed on an empty adapter would put a
 green tick against a corpus with no material in it — and green is the one

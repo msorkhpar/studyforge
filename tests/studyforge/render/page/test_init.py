@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/render/page/__init__.py` (R12).
 
-⭐ **`SF-12`'s acceptance, clause by clause.** Everything here is about the page
+⭐ **The page renderer's acceptance, clause by clause.** Everything here is about the page
 as a whole: the goldens, the `file://` floor, R4's block and R10's stability.
 The seams themselves are asserted in the module each one belongs to.
 """
@@ -195,14 +195,14 @@ def test_every_cross_package_import_of_this_package_names_something_on_its_surfa
     # not the remedy: the next renderer is `SF-14`, and a contract re-opened by
     # its third private importer is a contract nobody is defending.
     importers = cross_package_importers()
-    # ⭐ The inhabitation assertion, before the claim (Ruling 132): a sweep with
+    # ⭐ The inhabitation assertion, before the claim: a sweep with
     # no subject would pass the line below just as loudly.
     assert importers, "no module outside this package imports it — the sweep found nothing"
     assert cross_package_reaches() == [], cross_package_reaches()
 
 
 def test_the_sweep_above_would_notice(tmp_path):
-    # ⛔ Ruling 123, all three readings. Reading 1 is the test above, live.
+    # ⛔ All three readings of a planted check. Reading 1 is the test above, live.
     legal = tmp_path / "src" / "studyforge" / "render" / "container"
     legal.mkdir(parents=True)
     (tmp_path / "tests").mkdir()

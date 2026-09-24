@@ -1,13 +1,13 @@
 """What `execute`'s tests run: a copy of the runnable fixture, its units' commands, plants.
 
-⭐ **Every run happens in a temp COPY of `tests/fixtures/runnable/`** (`W352`'s
-rule): the fixture tree is un-ignored, so anything a run wrote into it would be
+⭐ **Every run happens in a temp COPY of `tests/fixtures/runnable/`**: the
+fixture tree is un-ignored, so anything a run wrote into it would be
 an untracked file.
 
 ⭐ **A unit's commands come from its archive document, through the framework's
 own reader** (`studyforge.exercise.of`) — the same argv a generated document
 carries, so the runner is measured on what it will actually be handed. ⚠️ Unit
-3, the file with no test, carries no record (`W352/1`, row `W357`), so its one
+3, the file with no test, carries no record, so its one
 command is the run command its sibling units' shape gives it.
 
 ⭐ **Plants are written into the copy, never the fixture**: `nap.py` (a tree that

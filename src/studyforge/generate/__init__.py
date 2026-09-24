@@ -31,8 +31,8 @@ this is the library a command would call, not the command.
 
 ## ⛔ This package is a FLOOR, not the build pipeline
 
-⚠️ **`docs/tasks/E09-delivery.md` puts the pipeline in `SF-28` and `OPS-04`, and
-both are larger than this.** What is here is the part that is genuinely true end
+⚠️ **The build pipeline proper (`studyforge build` and its progress writer) is
+larger than this.** What is here is the part that is genuinely true end
 to end — a corpus goes in, a navigable site comes out, an unnarrated corpus stays
 quiet, this build's own previous answer is replaced and everything else in the
 output directory is refused by name (R3, and `footprint`'s contract for the line

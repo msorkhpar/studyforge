@@ -5,7 +5,7 @@ superseded clip, a refusal, the media projection, and the plan itself — and
 renders each as one greppable line.
 
 **How you use it.** `derive.plan_for` builds these; `cli.main` prints
-`Plan.lines()`; `SK-07` and `OPS-05` read `Plan.paths` rather than the text.
+`Plan.lines()`; onboarding and `OPS-05` read `Plan.paths` rather than the text.
 
 **Depends on.** `corpus.manifest` for the edit record it reports, and
 `cli.plan.media` for the `media` lines, which are their own module since `W314`.
@@ -169,8 +169,8 @@ class Plan:
     def paths(self) -> tuple[str, ...]:
         """Every path to be created, in the order the plan prints them.
 
-        ⭐ What `OPS-05` compares a finished build against and what `SK-07`
-        renders from — both take this rather than re-parsing the text.
+        ⭐ What `OPS-05` compares a finished build against and what the
+        onboarding skill renders from — both take this rather than re-parsing the text.
         """
         return tuple(creation.path for creation in self.creations)
 
@@ -238,8 +238,8 @@ def edit_lines(edit: PermittedEdit) -> list[str]:
     ⚠️ **The undo line is composed from `Reversal`'s fields rather than from
     its `__str__`**, which describes the content as *"a str"*. That is right
     for a refusal and useless in a plan, and the module owning it says the
-    line is *"a one-line description a person can read in a plan"* — recorded
-    as finding `SF-31/1` rather than corrected from here.
+    line is *"a one-line description a person can read in a plan"* — so the
+    wording is that module's to correct, never this one's.
     """
     undo = edit.reversal
     return [

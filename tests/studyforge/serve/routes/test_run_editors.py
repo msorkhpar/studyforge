@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/serve/routes/run.py`'s editor route, `W446`: two practices at once.
+"""Mirror of `src/studyforge/serve/routes/run.py`'s editor route: two practices at once.
 
 ⛔ **The user's report, over a real socket**: a page with two practices fires two
 `POST …/editor/…` at once, and one of them answered `409` with no editor in its
@@ -117,7 +117,7 @@ def test_opening_one_practice_after_another_leaves_the_first_ones_lock_alone(roo
     assert not (root / "practice" / workbench.SETTINGS_DIR).exists()
 
 
-# --- ⭐ the route passes the files a command names (`W446`, register review) --
+# --- ⭐ the route passes the files a command names -----------------------------
 
 #: A Maven practice: its build file beside `src/`, named only by its commands.
 MAVEN = "practice/maven"

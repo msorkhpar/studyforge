@@ -1,4 +1,4 @@
-"""`W310`: the RESERVED-ADDRESS vocabulary — ONE list, read by two policies that never meet.
+"""The RESERVED-ADDRESS vocabulary — ONE list, read by two policies that never meet.
 
 ⭐ **The product floor's copy of `tools/reserved_addresses.py`.** It stays on the main line
 when the tooling leaves, so the product's own rule keeps running; while both exist,
@@ -35,14 +35,14 @@ what the other accepts would be this module built wrong. ⭐ The floor also exem
 project's own attribution trailer, which is at a REAL domain and is therefore NOT here: it
 is exempt because every commit carries it, not because it identifies nobody. ⛔ Putting it
 in this file would tell the MERGE PATH that a real domain is an office's, which is exactly
-the widening `W310` must not become.
+the widening sharing this list must not become.
 
 ## ⛔ WHY A MODULE, AND NOT A TABLE IN A DOCUMENT
 
 ⚠️ **This repository's OTHER shared vocabulary is a table in a document that two tests
 read** — one side asserts its column, the other asserts its own, and neither imports the
-other. ⛔ **That form was FORCED rather than preferred:** Ruling 31 forbids `tools/quality`
-from importing the framework, so those two sides cannot share code at all and settle for
+other. ⛔ **That form was FORCED rather than preferred:** `tools/quality` may not import
+the framework, so those two sides cannot share code at all and settle for
 sharing evidence.
 
 ⭐ **This seam has no such wall.** `tools/quality` already imports a sibling top-level

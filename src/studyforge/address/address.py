@@ -30,9 +30,9 @@ segmentation, and `parse_key` is a true inverse of `.key`.
 
 ## Where arity is checked, and why here rather than in the manifest
 
-⚠️ **This is the SF-01/SF-02 boundary, decided once.** `corpus.json` *declares*
-the depth, by declaring `levels`; SF-02 owns that field and validates it as a
-declaration. **This package owns the comparison** — given a depth, is this
+⚠️ **This is the address/manifest boundary, decided once.** `corpus.json`
+*declares* the depth, by declaring `levels`; `corpus.manifest` owns that field and
+validates it as a declaration. **This package owns the comparison** — given a depth, is this
 address the right shape for it? — because the address is the thing being
 checked and it is the only thing both halves have in common.
 

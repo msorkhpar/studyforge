@@ -1,14 +1,14 @@
-"""`REL-02`: each product-side copy under `tests/harness/` is still its tooling original.
+"""Each product-side copy under `tests/harness/` is still its tooling original.
 
 ⛔ **A PROCESS test, declared in `tests/harness/process.py`**: it exists only while both copies
-do, and it leaves with the tooling in `REL-10`, after which the product's copy is the only one.
+do, and it leaves with the tooling, after which the product's copy is the only one.
 
-**Why it exists.** `REL-02` gave the product suite its own standard-library copies of what it
+**Why it exists.** The product suite was given its own standard-library copies of what it
 used to import from the tooling — the tree-state delta, the unreachable population, the pin
 reader, the sibling reader, the source-name registry, the shape table — because nothing may be
-MOVED before `REL-10` cuts the archive. ⚠️ **Two copies nobody compares become two rules**, so
-each copied definition is asserted to be its original's source, byte for byte, and each copied
-table its original's value. ⭐ A change to either side turns this red until both agree.
+MOVED before the tooling leaves for the archive. ⚠️ **Two copies nobody compares become two
+rules**, so each copied definition is asserted to be its original's source, byte for byte, and
+each copied table its original's value. ⭐ A change to either side turns this red until both agree.
 """
 
 from __future__ import annotations

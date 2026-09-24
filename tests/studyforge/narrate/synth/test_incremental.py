@@ -16,7 +16,7 @@ byte-identical, so each is asserted with the filenames pinned equal first.
 
 ⚠️ **The page half of *"every `<audio>` source resolves to a file on disk, both
 directions"* is NOT asserted here.** Nothing on this branch emits an audio source
-onto a page; `SF-18` lands the emitter. What is asserted is the half this row
+onto a page; the narration player lands the emitter. What is asserted is the half this row
 owns — record ↔ disk, both ways — plus the round-trip through `parse_clip_name`
 that the renderer reads the href back through.
 """
@@ -419,7 +419,7 @@ def test_the_record_and_the_disk_agree_in_both_directions(tmp_path):
 
 
 def test_every_recorded_filename_parses_back_to_the_speech_id_it_is_filed_under(tmp_path):
-    # ⭐ `SF-18` emits the href onto the page and reads it back through
+    # ⭐ The page emits the href onto the page and reads it back through
     # `parse_clip_name`. This is that round-trip asserted at the record, which
     # is the half of it this row owns.
     _into, state = first_pass(tmp_path)

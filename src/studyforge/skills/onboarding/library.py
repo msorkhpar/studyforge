@@ -7,7 +7,7 @@ and compares it with the version an onboarded corpus's pin records.
 
 **How you use it.** `version()` is the loaded library's version, and
 `pinned(root)` is the pin a corpus records, refused by name when it predates
-`REL-05`. From a shell, `verify` is the command that compares the two.
+version pins. From a shell, `verify` is the command that compares the two.
 
 **Depends on.** `tomllib` and `pathlib` from the standard library, `archive.scrub`
 for the personal-data gate on the pin it reads back, and this package's `pin`
@@ -17,7 +17,7 @@ in any form: a framework module never reaches a module by name at run time
 directory the package was loaded from — the rule `studyforge.skills.documents`
 keeps too.
 
-## ⛔ The INSTALLED library, never a checkout beside the corpus (`REL-05`)
+## ⛔ The INSTALLED library, never a checkout beside the corpus
 
 ⚠️ **The pin used to name a sibling checkout at a commit** (R18's workspace
 arrangement), and a stranger converting their own material has no such
@@ -119,7 +119,7 @@ def _source_tree(package: Path) -> str | None:
 
 
 def pinned(root: Path | str) -> dict:
-    """Return the pin at `root`, gated (R7). ⛔ A pin with no `version` predates `REL-05`."""
+    """Return the pin at `root`, gated (R7). ⛔ A pin with no `version` predates version pins."""
     where = Path(root) / PIN_FILE
     try:
         document = json.loads(where.read_text(encoding="utf-8"))

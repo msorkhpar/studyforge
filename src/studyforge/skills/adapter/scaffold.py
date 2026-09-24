@@ -55,7 +55,7 @@ same function for its own `tests/`, so there is one rule and one text.
 
 ## ⭐ The size ceiling is checked on the generated output, not asserted about it
 
-`SK-02`'s acceptance says the generated structure honours R11. That is a
+The generated structure must honour R11. That is a
 measurement, so `oversized()` makes it one — and the ceiling is re-declared
 here rather than imported, because `tools/` is developer tooling that is never
 shipped and `src/` may not import it. `tests` pins this number against

@@ -99,7 +99,7 @@ def test_a_json_list_is_accepted_because_that_is_how_the_archive_stores_it(
     assert isinstance(Address(list(segments)).segments, tuple)
 
 
-# --- arity: the SF-01/SF-02 boundary ---------------------------------------
+# --- arity: the boundary between the address and the manifest ---------------
 
 
 def test_a_key_of_the_wrong_arity_for_a_declared_depth_is_rejected():
@@ -167,8 +167,8 @@ def test_the_message_says_which_segment_of_how_many():
 
 @pytest.mark.parametrize("segments", [(), []])
 def test_an_address_must_have_at_least_one_segment(segments):
-    # Depth 0 is not a corpus shape; `levels` is non-empty by SF-02's own
-    # acceptance, so an address with no segments cannot correspond to one.
+    # Depth 0 is not a corpus shape; `levels` is non-empty by the manifest's own
+    # contract, so an address with no segments cannot correspond to one.
     with pytest.raises(AddressError, match="at least one segment"):
         Address(segments)
 

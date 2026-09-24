@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/serve/instance.py` (R12) — over a real loopback socket.
 
-⭐ **E05 SF-19b, the wire half**: one instance, given a root and nothing else, serves two
+⭐ **The serving task's wire half**: one instance, given a root and nothing else, serves two
 corpora with different placement profiles — content, state and the private progress
 record — and the state namespace answers `no-store` over the wire.
 """

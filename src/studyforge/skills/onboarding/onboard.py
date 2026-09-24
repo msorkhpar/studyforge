@@ -20,7 +20,7 @@ are what call it.
 ## ⛔ The manifest is promoted twice, and the second pass is the whole point
 
 ⚠️ **An adapter's file set has to be declared in the manifest, and the adapter
-is planned from the manifest.** `SK-02` left that circle open and a person
+is planned from the manifest.** The adapter skill left that circle open and a person
 closed it by hand — `SK-02/1`, measured: `NOT valid: 8 finding(s)`, one
 `unclassified` per generated file, two lines copied out of a report.
 
@@ -53,7 +53,7 @@ floor as unfinished (C5). ⭐ `recorded.moved` compares the manifest on disk wit
 the one about to be written, over the manifest's own fields, and a regenerate
 that would move one refuses by name and writes nothing.
 
-## ⛔ The pin is the library this runs AS, never a checkout beside the corpus (`REL-05`)
+## ⛔ The pin is the library this runs AS, never a checkout beside the corpus
 
 ⭐ `onboard` reads the running library's version (`library.version()`) and pins
 it with the commit it is given; no generated document names a path to the
@@ -106,9 +106,9 @@ class Onboarding:
     manifest: Manifest
     files: tuple[Written, ...]
     not_material: tuple[dict[str, str], ...]
-    #: The framework commit the pin records: the operator's, shape-checked (`REL-05`).
+    #: The framework commit the pin records: the operator's, shape-checked.
     commit: str
-    #: ⭐ `REL-05`: the version of the library this onboarding ran as, which the pin records.
+    #: ⭐ The version of the library this onboarding ran as, which the pin records.
     version: str
     #: ⭐ `W283`: the `not_material` globs a generator declares, re-derived on every run.
     generated: tuple[str, ...] = ()
@@ -137,8 +137,8 @@ class Onboarding:
         rule `Scaffold.write` follows too (`W265`): two copies of it disagreed
         once (`W257/2`), so there is one.
 
-        ⛔ **The pin is checked against the library running this first**
-        (`REL-05`): a version this Python does not import is refused by name,
+        ⛔ **The pin is checked against the library running this first**:
+        a version this Python does not import is refused by name,
         and nothing is written.
         """
         _check_running(self.version)
@@ -232,7 +232,7 @@ def onboard(
     """Return everything a repository becomes, from reconnaissance's draft.
 
     `framework_commit` is the commit the running library was built from; the pin
-    records it beside the version read from that library (`REL-05`). `existing` is
+    records it beside the version read from that library. `existing` is
     the text of the `corpus.json` a re-onboarding finds on disk (`W283`); a
     first onboarding passes nothing and is unchanged. ⛔ **`root` moves no byte**
     (`W442`): no document names a path to the framework, so a regenerate from a

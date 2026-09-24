@@ -133,7 +133,7 @@ BELOW_THE_FOLD = """
 
 #: Record every time the PAGE comes to rest, and what had focus when it did.
 #:
-#: ⛔ **`W441`, and this is the whole of its repair.** Reaching the control by
+#: ⛔ **The smooth-scroll repair, and this is the whole of it.** Reaching the control by
 #: Tab scrolls it into view, and `reset.css`'s `scroll-behavior: smooth` makes
 #: that scroll a GLIDE. ⭐ **MEASURED in the pinned image:** from a reader at the
 #: top, the glide runs `0, 2, 10, 25, 51, 93 … 1121, 1122` over about 560ms —
@@ -260,7 +260,7 @@ def test_the_practice_maximises_to_the_whole_viewport_and_escape_restores_it(
     # motion.** ⚠️ The first version compared against `at_rest`, taken before a
     # single Tab; the second read straight after the traversal, at the glide's
     # first frame, and failed under load by whatever frames slipped in before
-    # the press (`W441`, measured at `AT_REST`). ⛔ It is still EXACT equality
+    # the press (measured at `AT_REST`). ⛔ It is still EXACT equality
     # and not a tolerance — what changed is that both readings are of a page
     # that has stopped.
     rest = _glided_to(open_page, at_rest["maximise"]["label"])
@@ -389,8 +389,8 @@ def test_restoring_gives_back_the_place_in_the_page_the_reader_left(
     page asserts nothing about this**, and the first one was — which is how it
     reached a merge gate.
 
-    ⛔ **This case pins its own viewport and states its precondition in numbers**
-    (`W431/2`). ⚠️ Its first version depended on whatever room the browser
+    ⛔ **This case pins its own viewport and states its precondition in numbers**.
+    ⚠️ Its first version depended on whatever room the browser
     happened to give the page, and on a `scrollTo` that — like everything else
     on these pages — ANIMATES: it read `0` on this host's browser and the real
     position in the pinned image, and a guard refusing a meaningless reading is

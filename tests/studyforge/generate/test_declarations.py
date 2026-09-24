@@ -341,7 +341,7 @@ def framework_modules() -> list:
 
 
 def test_the_population_this_sweep_runs_over_is_inhabited():
-    # ⛔ Ruling 48: a derived-set assertion asserts inhabitation first, or a
+    # ⛔ A derived-set assertion asserts inhabitation first, or a
     # package that moved makes every check below pass over nothing.
     assert framework_modules(), f"no module found under {FRAMEWORK} — did the package move?"
 
@@ -451,6 +451,6 @@ def test_W290_declared_location_takes_both_objects_whole_and_agrees_about_materi
                 continue
             assert declared_location(corpus, container, unit) == unit_location(corpus, source)
             seen += 1
-    # ⛔ Ruling 48's denominator, not `> 0`: every unit with material was
+    # ⛔ The denominator, not `> 0`: every unit with material was
     # compared, rather than whichever one the walk reached first.
     assert seen == len(corpus.units)

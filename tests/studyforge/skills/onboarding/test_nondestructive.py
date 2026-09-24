@@ -47,9 +47,9 @@ TIMEOUT = 180
 UNCOMMITTED, STAGED, COMMITTED = "uncommitted", "staged", "committed"
 STATES = (UNCOMMITTED, STAGED, COMMITTED)
 
-#: What the pinned image sets to keep bytecode out of the bind mount (`W30`).
+#: What the pinned image sets to keep bytecode out of the bind mount.
 #: ⛔ Unset for the corpus's own suite, so it runs the interpreter an integrator
-#: runs (`W329/5`); the corpus is under pytest's `tmp_path`, never the checkout.
+#: runs; the corpus is under pytest's `tmp_path`, never the checkout.
 BYTECODE_OFF = ("PYTHONDONTWRITEBYTECODE", "PYTHONPYCACHEPREFIX")
 
 #: A path a `sibling` build writes at the corpus root. ⭐ Read back from the
@@ -163,7 +163,7 @@ def _check(root):
     """Run the corpus's own generated check the way its suite runs it.
 
     ⛔ **`BYTECODE_OFF` is unset**, so this reads the same in the pinned image
-    as on the host (`W329/5`); the bytecode it writes lands under pytest's own
+    as on the host; the bytecode it writes lands under pytest's own
     `tmp_path` and is untracked, which is the answer this check gives it.
     """
     environment = dict(os.environ)

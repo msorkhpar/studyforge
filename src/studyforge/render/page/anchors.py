@@ -16,9 +16,9 @@ wrapper, `render.markup` for escaping and for the one fragment composer, and
 `page.errors`. ⛔ Not on `contents`: the outline is derived from the one document
 being rendered, never from `toc.json`. ⛔ Not on `render.index` either, which
 imports this package — which is why an href here is `render.markup.anchor` of an
-id rather than a `"#"` spelled locally (`W107`, `SF-15/1`).
+id rather than a `"#"` spelled locally (`W107`).
 
-## ⭐ Split from `page.navigation` at the seam `SF-15/5` named (`W107`)
+## ⭐ Split from `page.navigation` at a seam that already existed (`W107`)
 
 ⚠️ One module answered four questions — anchors, the outline, the trail, the bar
 — at eight lines under its ceiling. ⭐ *What may be linked to* is this module;
@@ -35,7 +35,7 @@ reader's own bookmark, survives an edit to the prose it points at.
 ⭐ So an anchor is `(section key, block position)`, both structural, and the
 section key is already required to be a slug by the module that mints it.
 
-## ⛔ These are anchors. `SF-12` mints no speech id (R21 open, `SF-12-survey/3`)
+## ⛔ These are anchors. The page renderer mints no speech id (R21)
 
 ⚠️ **`SF-16` owns speech ids at M3** and the extraction source's own docstring
 says why the two must not be one scheme: *"two numbering schemes that agree

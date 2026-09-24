@@ -1,6 +1,6 @@
 """A wheel of this tree, installed into a fresh virtual environment outside the checkout.
 
-⭐ `REL-05`'s reading needs what a stranger has: the library INSTALLED, and no
+⭐ The installed-library reading needs what a stranger has: the library INSTALLED, and no
 framework checkout anywhere a corpus could reach. ⛔ Built from an export, never
 the checkout (a build writes `build/` and `*.egg-info` into its source tree), with
 the in-process backend and no pip: nothing is fetched. The venv is made
@@ -8,7 +8,7 @@ the in-process backend and no pip: nothing is fetched. The venv is made
 what an install of a pure wheel puts there.
 
 ⚠️ The pinned dev image uninstalls setuptools once it has installed the package
-(`REL-04/1`), so there the build is skipped, saying why.
+so there the build is skipped, saying why.
 """
 
 from __future__ import annotations

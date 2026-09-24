@@ -1,4 +1,4 @@
-"""`REL-02`: no product test imports the tooling, and the process tests are declared.
+"""No product test imports the tooling, and the process tests are declared.
 
 **What it asserts.** Every Python file under `tests/`, and the root `conftest.py`, reaches the
 tooling (`tools`, `tools.*`) by no import statement and by no literal handed to a run-time
@@ -186,7 +186,7 @@ def test_every_declaration_says_why():
 
 def test_each_deferred_file_still_needs_its_entry():
     # ⛔ An excuse that outlives its reason excuses the next regression instead.
-    # ⭐ A loop, never a parametrisation: `DEFERRED` is empty since `REL-06`, and an empty
+    # ⭐ A loop, never a parametrisation: `DEFERRED` is empty now, and an empty
     # parameter set would print a skip every run for a population that is merely empty.
     for path in sorted(process.DEFERRED):
         source = (repository_root() / path).read_text(encoding="utf-8")

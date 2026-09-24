@@ -1,4 +1,4 @@
-"""The served client's quiz half, `window.studyforge.quiz` (`W451`), read as the data it is.
+"""The served client's quiz half, `window.studyforge.quiz`, read as the data it is.
 
 Mirrors no source module — like `test_run_client.py`, whose file it reads: the
 quiz half lives in `serve/assets/run-client.js`, the ONE script a serving

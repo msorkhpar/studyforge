@@ -12,8 +12,8 @@ a skill's reader.
 ## ⭐ Composed, never pasted
 
 ⚠️ **A contract inside one long string literal is a contract no rule reaches**,
-and nothing lints a module that does not exist yet. `SK-02`'s `parts.compose`
-made the same argument for a generated adapter and **raises** when a piece is
+and nothing lints a module that does not exist yet. The adapter skill's
+`parts.compose` made the same argument for a generated adapter and **raises** when a piece is
 missing; this is its twin for the two modules an onboarding generates.
 
 ⛔ **Every module it composes says it is generated, in its own docstring.** A

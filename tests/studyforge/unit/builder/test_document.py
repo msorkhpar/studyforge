@@ -32,7 +32,7 @@ def test_the_document_carries_exactly_its_keys_in_order():
 
 
 def test_regenerating_produces_identical_bytes():
-    # ⛔ SF-10's acceptance and R10: nobody can tell a change from a reformat
+    # ⛔ The unit builder's acceptance and R10: nobody can tell a change from a reformat
     # if a rebuild is not byte-identical.
     once = render(build(material()))
     assert render(build(material())) == once
@@ -83,7 +83,7 @@ def test_no_verdict_word_appears_in_the_document():
 
 
 def test_every_archive_document_is_named_in_provenance():
-    # ⚠️ Ruling 48: assert the list is inhabited, not only that its entries are
+    # ⚠️ The denominator: assert the list is inhabited, not only that its entries are
     # well shaped — an empty `built_from` satisfies every per-entry loop.
     document = build(material())
     assert len(document["built_from"]) == 2

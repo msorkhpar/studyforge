@@ -56,7 +56,7 @@ wave 0 rather than discovered late. ⛔ **A corpus with no graders is complete,
 not short** (spec §7, C5) — nothing here should be read as a degraded corpus.
 
 `depth2` carries, deliberately, one unit **with** an authored overlay
-(`units/unit-01/content.json`) and two **without**, because SF-10's two shapes
+(`units/unit-01/content.json`) and two **without**, because a unit page's two shapes
 — derived and authored — are different code paths and each needs an input.
 
 ## ⛔ `shared-origin/` exists for one property, and it is not coverage
@@ -101,7 +101,7 @@ two units, one file — and the corpus that provoked the question is named in
 `docs/tasks/E04-narration.md`, which is where a source-specific measurement
 belongs (R1).
 
-## ⛔ `runnable/` is the one corpus whose units RUN (`W352`)
+## ⛔ `runnable/` is the one corpus whose units RUN
 
 ⭐ **It exists because `SF-20` (the runner) and `SF-44` (the terminal command)
 need something to execute**, and every other corpus here is JSON and Markdown:
@@ -159,12 +159,12 @@ manifest declares `python`.
 
 | Unit | Carries | So that |
 |---|---|---|
-| `basics/01-getting-started` 1 | a lesson, a practice, the authored overlay, and the **only `exercise` record outside `runnable/`** | SF-10(b), a practice's three-section layout, and §7's **graded** state |
-| `basics/01-getting-started` 2 | `table`, `rule`, no overlay | SF-10(a), the derived shape |
+| `basics/01-getting-started` 1 | a lesson, a practice, the authored overlay, and the **only `exercise` record outside `runnable/`** | the authored shape, a practice's three-section layout, and §7's **graded** state |
+| `basics/01-getting-started` 2 | `table`, `rule`, no overlay | the derived shape |
 | `basics/01-getting-started` 3 | a `video` block, a `video` record, `media_skipped` | media named and deliberately not fetched |
 | `advanced/02-going-further` 1 | a lesson, a practice with **no `exercise` key**, `url_slug` | a second container, SF-05's carried field, and §7's **ungraded** state |
 | `advanced/02-going-further` 2 | a closing lesson, plus a fenced Maven POM | a container whose last unit has no exercise; fence awareness at depth 2 |
-| `advanced/03-putting-it-together` 1 | a heading and a para, in a second module of `advanced` | ⛔ **the set's only module change inside one section** (`W108`) — the walk's other crossing changes section and module at once, and a renderer can get that one right and this one wrong |
+| `advanced/03-putting-it-together` 1 | a heading and a para, in a second module of `advanced` | ⛔ **the set's only module change inside one section** — the walk's other crossing changes section and module at once, and a renderer can get that one right and this one wrong |
 
 `shared-origin`
 
@@ -178,7 +178,7 @@ manifest declares `python`.
 ⭐ **All three appear across `depth1` and `depth2` — and again inside
 `runnable/`, whose units 1–5 carry all three — and none of them is written down
 anywhere as a state.** There is no `state` field to set and none to
-forget — the state *is* which files exist (spec §7, C5, SF-23):
+forget — the state *is* which files exist (spec §7, C5):
 
 | State | Where it is | How it appears |
 |---|---|---|
@@ -364,8 +364,8 @@ command prints for each corpus, byte for byte, asserted by
 inside one**, because a plan says what would be written *into* a corpus root
 and a golden sitting in that root is a file the plan would have to explain.
 
-⛔ **Nothing else has a golden file, and that is still deliberate.** SF-10 and
-SF-11's outputs are designed but not pinned here, and a golden for output
+⛔ **Nothing else has a golden file, and that is still deliberate.** The unit page's and
+the page assets' outputs are designed but not pinned here, and a golden for output
 nobody has designed is a fixture that will be wrong and will be trusted.
 `docs/tasks/handoffs/FND-04.md` lists every deferred golden and the task that
-owes it; `SF-31` closed the largest of them, which was its own acceptance.
+owes it; the placement goldens closed the largest of them.

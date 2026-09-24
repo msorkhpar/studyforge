@@ -17,7 +17,7 @@ from tests.studyforge.unit.builder import support
 
 
 def test_a_unit_nobody_has_ingested_is_a_named_outcome(tmp_path):
-    # ⛔ SF-10 (d), and never an empty document: a unit that renders as
+    # ⛔ A named outcome, and never an empty document: a unit that renders as
     # "lesson, then the end" is a page that lies by omission.
     empty = tmp_path / "unit-01"
     empty.mkdir()
@@ -62,7 +62,7 @@ def test_a_misleading_filename_does_not_change_the_order(tmp_path):
 
 
 def test_the_kind_order_is_inhabited_and_is_the_reading_order():
-    # ⚠️ Ruling 48: the tuple is asserted to have members, not only to be a
+    # ⚠️ The denominator: the tuple is asserted to have members, not only to be a
     # subset of something — an empty KIND_ORDER would satisfy a membership test
     # and order nothing.
     assert KIND_ORDER == ("lesson", "practice")

@@ -74,7 +74,7 @@ def test_no_test_module_here_is_outside_the_declared_clauses() -> None:
 
 
 def test_every_declared_damage_is_used_by_some_test() -> None:
-    """Ruling 70's form: a negative control nobody runs is not a control.
+    """A negative control nobody runs is not a control.
 
     ⛔ `site.DAMAGE` declares five broken trees. This asserts each is named in
     some test module, so a control cannot be written, forgotten, and quoted in a

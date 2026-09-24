@@ -33,7 +33,7 @@ An `Item` carries what a reader sees; a key is the corpus's own address, which
 belongs to the container and not to each row — and a per-row copy is a second
 place for it to disagree with the ordinal the row was listed under.
 
-## ⛔ A refused href RAISES here, and that is deliberate (Ruling 56)
+## ⛔ A refused href RAISES here, and that is deliberate
 
 ⚠️ **`page.navigation._link` drops a slot whose scheme is refused**, on the
 argument that chrome which cannot be followed is worse than chrome that is not

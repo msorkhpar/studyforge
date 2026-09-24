@@ -1,4 +1,4 @@
-"""The one exception this package raises (SF-23)."""
+"""The one exception this package raises."""
 
 from studyforge.exercise import ExerciseError
 from studyforge.exercise import errors as module

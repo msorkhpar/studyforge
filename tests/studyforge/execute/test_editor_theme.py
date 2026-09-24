@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/execute/editor_theme.py` (R12), `W455`: the page's colours.
+"""Mirror of `src/studyforge/execute/editor_theme.py` (R12): the page's colours.
 
 ⛔ **ONE SOURCE, and it is asserted three ways.** The editor's colours equal the
 page's, family for family and surface for surface, read back through an oracle

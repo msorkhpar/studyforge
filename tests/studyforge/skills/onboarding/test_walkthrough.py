@@ -1,4 +1,4 @@
-"""SK-07's acceptance, run end to end on a repository this skill has never seen.
+"""Onboarding's acceptance, run end to end on a repository this skill has never seen.
 
 ⭐ **The clauses, and each one is a command here rather than an opinion:**
 
@@ -225,7 +225,7 @@ REASON = "a reason a person gave for this glob, written by the test"
 #: `SKILL.md` step 4, as an agent executes it rather than as a reader reads it.
 STEP_FOUR = ("-m", "pytest", "tests", "-q")
 
-#: What the pinned image sets to keep bytecode out of the bind mount (`W30`).
+#: What the pinned image sets to keep bytecode out of the bind mount.
 #: ⛔ Unset for the step-4 subprocess only, and only into pytest's `tmp_path`.
 BYTECODE_OFF = ("PYTHONDONTWRITEBYTECODE", "PYTHONPYCACHEPREFIX")
 
@@ -235,12 +235,12 @@ def _run(root, *arguments):
 
     ⛔ **`BYTECODE_OFF` is unset here on purpose**, and the row turns on it: the
     pinned image both forbids bytecode and redirects its cache out of the bind
-    mount (`W30`), so step 4 writes nothing beside the modules there — while the
+    mount, so step 4 writes nothing beside the modules there — while the
     interpreter an integrator runs writes `tests/__pycache__/*.pyc` into the
     corpus, which is exactly the file the manifest has to classify. ⭐ Unsetting
     both makes the two environments read the same, rather than making this
     clause vacuous in one of them; `tests/docker/test_dev_image.py` unsets them
-    the same way for the same reason. ⚠️ **`W30`'s hazard is not reintroduced**:
+    the same way for the same reason. ⚠️ **Bytecode in the bind mount is not reintroduced**:
     `root` is under pytest's own `tmp_path` and never the bind-mounted checkout,
     so nothing lands in anybody's working tree.
     """

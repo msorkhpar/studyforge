@@ -45,7 +45,7 @@ from tests.fixture_checks import fixture_paths
 from tests.support import git, repository_root, run
 
 #: ⛔ The ref this reading is taken against: the release tip `AX-00` was cut
-#: at, `PO round 133`. ⚠️ Pinned rather than derived — `HEAD` moves with this
+#: at, the close of `M7`. ⚠️ Pinned rather than derived — `HEAD` moves with this
 #: branch, and a "previous" reader that follows the work is no control at all.
 PREVIOUS = "9806710e"
 
@@ -93,7 +93,7 @@ AFTER = {
 QUIZ_RECORD = {"kind": "quiz", "questions": AFTER["questions"]}
 
 #: The rule the one invalid fixture carrying a record is declared to break
-#: (Ruling 46). ⭐ This sweep reads every record through `from_document`, which
+#: as a rule id. ⭐ This sweep reads every record through `from_document`, which
 #: is the rule that fixture exists to be refused by.
 ASSERTED = {"exercise-trust"}
 
@@ -237,7 +237,7 @@ def test_a_whole_quiz_is_refused_by_the_previous_reader_and_read_by_todays(previ
 
 
 def test_the_sweep_has_a_population_to_read():
-    # ⛔ Ruling 48: every test below is a comparison, and an empty population
+    # ⛔ Every test below is a comparison, and an empty population
     # satisfies all of them. ⚠️ The five are the depth-2 graded fixture, the
     # execution fixture's three graded units and its ungraded one — the three
     # shapes `M7` shipped, which `AX-00` may not change.

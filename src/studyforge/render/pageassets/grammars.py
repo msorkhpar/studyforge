@@ -14,7 +14,7 @@ is the whole declared set.
 
 ⚠️ The declaration is the `Languages:` line of the vendoring header, the one
 part of a vendored file this project may write. A list no instrument checks
-would drift the day a grammar is re-vendored (Ruling 277). ⭐ So
+would drift the day a grammar is re-vendored. ⭐ So
 `test_highlight_grammars.py` runs the bundle and compares every name
 `Prism.languages` carries with this line, both ways. A name declared but
 absent is RED. A grammar carried but undeclared is RED too, because it would

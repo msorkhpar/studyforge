@@ -72,8 +72,8 @@ def test_this_repository_names_no_source_in_framework_code():
 
 
 def test_and_the_check_that_says_so_can_actually_fire(tmp_path):
-    # ⛔ **Ruling 48.** The test above asserts an empty list, and an empty list
-    # is what a check that reads nothing returns. This one shows the same
+    # ⛔ **A check states its denominator.** The test above asserts an empty list,
+    # and an empty list is what a check that reads nothing returns. This one shows the same
     # function finding something, on a tree it builds, so "clean" means clean
     # rather than "never ran".
     module = tmp_path / "src" / "studyforge" / "thing.py"
@@ -102,7 +102,7 @@ def test_a_document_may_name_a_corpus_and_a_module_may_not(tmp_path):
 
 
 def test_the_registry_is_inhabited_and_every_entry_carries_a_reason():
-    # ⛔ Ruling 48 again: a registry that emptied would make every test above
+    # ⛔ The denominator again: a registry that emptied would make every test above
     # that asserts *absence* pass, and only this one would notice.
     assert len(KNOWN_SOURCES) >= 4
     for corpus, pattern, why in KNOWN_SOURCES:

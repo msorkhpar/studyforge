@@ -193,7 +193,7 @@ def test_a_private_file_is_404_on_both_mounts(site, source):
         assert fetch(server, "/api/v1/assets/.studyforge/clip.mp3")[0] == 404
 
 
-# --- writers and streams (SF-22) ---------------------------------------------
+# --- writers and streams -----------------------------------------------------
 
 
 def echo(request, rest):
