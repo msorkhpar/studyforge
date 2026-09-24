@@ -27,6 +27,7 @@ PUBLIC_SURFACE = frozenset(
         "CORPUS_API",
         "DEFAULT_MEDIA",
         "EDIT_KINDS",
+        "KEY_VERSIONS",
         "KNOWN_CORPUS_API",
         "MANIFEST_FILENAME",
         "MANIFEST_KEYS",

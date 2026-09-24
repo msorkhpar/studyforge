@@ -1,0 +1,75 @@
+"""`promote` writes the version every key it carries needs (`W467`: `W350/1`, `W460/2`).
+
+⭐ The version is read from the manifest package's own `KEY_VERSIONS`, so a key a version
+adds is written under that version the day it is added. ⛔ Each case asks the manifest's
+own reader, never a literal: the promoted document parses, and one version lower does not.
+"""
+
+from __future__ import annotations
+
+import json
+
+import pytest
+
+from studyforge.corpus.manifest import KEY_VERSIONS, ManifestError, parse
+from studyforge.skills.onboarding import artifacts, hand_edited, onboard, reonboard
+from studyforge.skills.onboarding.manifest import promote, render
+from tests.studyforge.skills.onboarding import corpora
+
+#: One draft per key a version added after `1`, each carrying only that key.
+DRAFTS = {
+    ("media", "max_files"): {**corpora.DRAFT, "media": {"max_files": 4000}},
+    (None, "runtimes"): {**corpora.DRAFT, "exercises": True, "runtimes": ["java", "maven"]},
+    (None, "narration"): {**corpora.DRAFT, "narration": False},
+    (None, "onboarding_doc"): {**corpora.DRAFT, "onboarding_doc": "docs/reader.md"},
+}
+
+
+def test_every_key_a_version_added_has_a_case_here():
+    # ⭐ A key added to the map without a case fails here, not in a stranger's corpus.
+    assert set(DRAFTS) | {("content", "not_material")} == set(KEY_VERSIONS)
+
+
+@pytest.mark.parametrize("key", sorted(DRAFTS, key=str))
+def test_a_draft_carrying_a_key_is_written_under_the_version_that_key_needs(key):
+    document = promote(DRAFTS[key])
+
+    assert document["corpus_api"] == KEY_VERSIONS[key]
+    assert parse(render(document)).corpus_api == KEY_VERSIONS[key]
+    with pytest.raises(ManifestError):
+        parse(render({**document, "corpus_api": KEY_VERSIONS[key] - 1}))
+
+
+def test_the_highest_key_wins_and_no_key_lowers_a_drafted_version():
+    both = {**DRAFTS[(None, "runtimes")], "narration": True}
+
+    assert promote(both)["corpus_api"] == KEY_VERSIONS[(None, "narration")]
+    assert promote({**both, "corpus_api": 6})["corpus_api"] == 6
+
+
+def test_an_empty_runtimes_list_is_dropped_and_raises_nothing():
+    document = promote({**corpora.DRAFT, "exercises": True, "runtimes": []})
+
+    assert "runtimes" not in document
+    assert document["corpus_api"] == corpora.DRAFT["corpus_api"]
+
+
+@pytest.mark.parametrize(
+    ("settle", "key"),
+    [
+        ({"exercises": True, "runtimes": ["python"]}, (None, "runtimes")),
+        ({"media": {"max_files": 4000}}, ("media", "max_files")),
+    ],
+    ids=["runtimes", "media.max_files"],
+)
+def test_a_settle_that_needs_a_newer_version_is_written_under_it(tmp_path, settle, key):
+    # ⛔ `W460/2`: each of these was refused by the version check (`corpus_api (1 -> n)`).
+    root = corpora.material(tmp_path / "corpus")
+    onboard(corpora.DRAFT, framework_commit=corpora.COMMIT).write(root)
+
+    reonboard(root, settle=settle).write(root, regenerate=True)
+
+    written = json.loads((root / artifacts.MANIFEST).read_text(encoding="utf-8"))
+    assert {name: written[name] for name in settle} == settle
+    assert written["corpus_api"] == KEY_VERSIONS[key]
+    assert hand_edited(root) == []
