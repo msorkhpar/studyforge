@@ -1477,12 +1477,12 @@ What it reads, and the choices in it:
 
 **Aliases.** `Ruling 103`, `Ruling 156`, `W61`, `W74`
 
-### A sibling's contract is read at its pin
+### A sibling's contract is read at the commit its checkout has checked out
 
-**Decision.** A component's contract is read from the commit the workspace pin file (`workspace.json`) names, through `tests.harness.pinned`, never from the sibling's working tree; a reading that cannot be taken at the pin skips by name (`tests/studyforge/execute/container.py`).
+**Decision.** A test that reads another component, such as a `consuming.json` or a real corpus, finds that checkout only through the `STUDYFORGE_WORKSPACE` variable (`tests/harness/workspace.py`) and reads the file at the commit the checkout has checked out (`tests/harness/sibling.py`, `read_sibling`). Every reading says which of three things it is: read at a commit, read from a working tree, or absent; a caller that needs a reproducible reading asks for the committed one. With the variable unset every sibling is absent, and a test that needs one skips, naming the component and the variable. No pin file is read and no parent directory is searched.
 
-**Why.** A file present only in a working tree, or staged on no ref, gives a reading no other host can reproduce.
+**Why.** A file present only in a working tree, or staged on no ref, gives a reading no other host can reproduce, and a clean clone of this repository holds only the framework and its tests.
 
-**Serves.** `R18`
+**Serves.** `R18`, `R7`
 
 **Aliases.** `W404`
