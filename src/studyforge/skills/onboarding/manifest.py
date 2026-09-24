@@ -1,6 +1,6 @@
 r"""Promote reconnaissance's draft into the `corpus.json` a corpus starts from.
 
-**What it does.** Turns the `dict` `SK-01` hands over into a manifest document
+**What it does.** Turns the `dict` reconnaissance hands over into a manifest document
 that `studyforge.corpus.manifest.parse` accepts — with every file the
 onboarding writes already declared `content.not_material`, so nothing is left
 for a person to copy out of a report.
@@ -49,7 +49,7 @@ does not is whatever the draft asked for.
 
 ⚠️ **No key is ever invented, and an empty optional one is dropped.** A draft
 carries no `media` block and none is added: an absent one is a *stated* default
-(`SF-02`), so omission is the declared path rather than a workaround. ⭐ A
+of the manifest schema, so omission is the declared path rather than a workaround. ⭐ A
 `media` block a **person** put in the draft is theirs and survives — the rule
 is that this generator adds nothing, not that it discards declarations.
 
@@ -92,7 +92,7 @@ NOT_MATERIAL_API = 2
 #: set: every other key is either required, or present because the draft said
 #: so. ⛔ **Nothing here is ever invented** — `media` is absent from this list
 #: because it is absent from the draft, and an absent `media` block is a
-#: *stated* default (`SF-02`, and the PO's Q16 of 2026-09-09). A generator that
+#: *stated* default of the manifest schema (ruled 2026-09-09). A generator that
 #: wrote one out would freeze the footprint limits' names on every corpus,
 #: including the ones with no media at all.
 OPTIONAL_KEYS = ("media", "permitted_edits")

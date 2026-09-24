@@ -36,7 +36,7 @@ there is then no directory to bind that is not the repository. ⚠️ **`SK-09/5
 the remedy is a manifest key, and it is a finding rather than a default written
 in here** (R19).
 
-## ⭐ THE EDITOR SEES EVERY PRACTICE, AND THE RUNNER COMES UP WITH IT (`W445`)
+## ⭐ THE EDITOR SEES EVERY PRACTICE, AND THE RUNNER COMES UP WITH IT
 
 ⛔ **Every practice workspace — the source's own and every authored one — lives
 under `PRACTICE_DIRNAME`**, which is not under the sources' common root, so a
@@ -81,7 +81,7 @@ TOOLCHAIN_FILE = f"{DIRECTORY}/toolchain.json"
 PRIME_DIR = f"{DIRECTORY}/prime"
 
 #: The file the reader's compose command reads the runner's tag from, which the
-#: skill's record step writes (`record.record`, `W445`).
+#: skill's record step writes (`record.record`).
 RUNNER_ENV = f"{DIRECTORY}/runner.env"
 
 #: The slot `runner.prime.declared_by` leaves for the directory.
@@ -137,7 +137,7 @@ class Execution:
     copies: tuple[tuple[str, str], ...] = ()
     selection: toolchain.Selection | None = None
     primed: Prime | None = None
-    #: The runner's compose service and how its tag is computed (`W445`).
+    #: The runner's compose service and how its tag is computed.
     runner: runnerservice.Runner | None = None
 
     def paths(self) -> tuple[str, ...]:
@@ -249,7 +249,7 @@ def workspaces_bind(block: Mapping[str, object], sources: str) -> tuple[str, str
 
     ⭐ **Read FROM where `emit` places them** — `PRACTICE_DIRNAME`, the one
     spelling `exercise.bundle.Places.workspace` and the adapter's own practices
-    share — ⛔ never a second spelling of it (`W445`). It sits inside the
+    share — ⛔ never a second spelling of it. It sits inside the
     contract's workspace root, beside the sources, under its own name.
     ⭐ `None` when the sources already hold it: a second bind of what the first
     shows is two windows onto one directory.

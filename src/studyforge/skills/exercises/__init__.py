@@ -4,8 +4,8 @@ r"""The authoring skill: its two readings, and the loop that plans, authors, gat
 whose procedure is `SKILL.md` beside these modules. ⭐ **Two readings are taken
 BEFORE anything is authored** — the **ledger**, which accounts for every fenced
 example and every test file a source carries, and the **plan**, which says which
-exercises a page gets by the aspects it teaches, each checked or excused
-(`W453`). ⭐ **The loop** then
+exercises a page gets by the aspects it teaches, each checked or excused.
+⭐ **The loop** then
 drafts each planned exercise through the converting agent's author, gates it,
 re-drafts it inside a fixed budget, and commits what cleared into the corpus
 repository — additively, and once.
@@ -58,7 +58,7 @@ gate answers → what one page ships → what the corpus commits.
    with a written reason it is not.
 2. ⛔ **The plan is a CEILING, never a quota** (R6, spec §7 §4). `shortfall`
    refuses a page that shipped past its ceiling and a gap not named with a gate.
-   ⭐ **Its count is set by COVERAGE, not by length** (`W453`, user ruling
+   ⭐ **Its count is set by COVERAGE, not by length** (user ruling
    2026-09-23): every aspect a page teaches is checked by a named exercise or
    carried by a written reason, and an aspect with neither is refused.
 3. ⛔ **A gate failure is re-authored within `ATTEMPTS`, never by loosening a
@@ -67,10 +67,8 @@ gate answers → what one page ships → what the corpus commits.
 4. ⛔ **The pass writes only inside the corpus root, only additively (R3), and
    re-running it with nothing changed rewrites nothing (R10).**
 5. ⛔ **Every exercise it writes is `generated`/`advisory`** (R5). It
-   supersedes `SK-04`'s refusal of a grader-less source: such a source gets
+   supersedes the earlier refusal of a grader-less source: such a source gets
    exercises authored for it, and the gates are where its honesty lives.
-
-**Landed at AX-07 and AX-08 (E14, step 10.3).** `AX-10` writes the guide half.
 """
 
 from __future__ import annotations

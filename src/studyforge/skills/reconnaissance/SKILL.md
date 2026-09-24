@@ -157,7 +157,7 @@ version the reader requires for it, and every drafted runtime is asked about.
 the deliverable, and the level vocabulary is always one of them: §4 rules the
 names are the corpus's own, and this skill cannot know them.
 
-⛔ **A field the draft fills is filled with a value `SF-02` accepts.** `source`
+⛔ **A field the draft fills is filled with a value the manifest parser accepts.** `source`
 is the slug of the curriculum record's title and `variants` is `["prose"]`,
 both asked about; no include glob matches the curriculum record — a directory
 whose wildcard would catch it is listed file by file.
@@ -170,7 +170,7 @@ git, and never a remote URL.
 (`W240/3`).** Only a file an include reads is proposed for `exclude`. Every
 other file `validate` will classify gets a glob with `"why": null`, and so do
 the record and the root's furniture. Nothing onboarding recorded writing is
-proposed, so no glob collides with `SK-07`'s. Give each reason to `promote`
+proposed, so no glob collides with onboarding's. Give each reason to `promote`
 in `reasons`, keyed by its glob.
 
 ### 9. ⛔ On a corpus this framework already onboarded, survey the corpus

@@ -1,4 +1,4 @@
-r"""Corpus onboarding: a repository of material becomes a corpus (SK-07).
+r"""Corpus onboarding: a repository of material becomes a corpus.
 
 **What it does.** Takes reconnaissance's draft and a framework commit and
 produces everything a corpus needs — the manifest, the adapter's scaffold, the
@@ -53,13 +53,11 @@ it calls.
 ## ⛔ The framework is the installed library, never a checkout or a submodule
 
 ⭐ **The pin records the installed library's version and the commit it was
-built from** (`REL-05`), and each skill stub names its skill and the command
+built from**, and each skill stub names its skill and the command
 that prints the procedure from the installed package — ⛔ never a path, which
 would carry somebody's home directory (R7), and never a sibling checkout, which
 a stranger with the installed library does not have. ⚠️ R18 was amended:
 nothing in this project is pushed, so a submodule URL has no legal form.
-
-**Skeleton at FND-01.** Filled by SK-07 (E11).
 """
 
 from __future__ import annotations

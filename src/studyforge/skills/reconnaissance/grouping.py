@@ -8,7 +8,7 @@ where its lines sit rather than from how they are marked up.
 holds)` returns the labels with their lines, for a caller that needs positions.
 
 **Depends on.** `record`'s `Entry` and its line patterns. ⛔ Split out of
-`record` at SK-01 because they answer different questions and the module was
+`record` because they answer different questions and the module was
 over R11's ceiling: *which document records the curriculum* is one question,
 *what grouping does it express* is another, and a failing check should name
 the concern rather than the file.

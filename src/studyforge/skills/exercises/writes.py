@@ -12,18 +12,18 @@ overwrite a file with other bytes.
 **Depends on.** `drafts` for the refusal and `studyforge.exercise` for the
 rule a corpus-root path obeys. Standard library only.
 
-## ⛔ ONE NAMED EXCEPTION, AND IT IS THE LEDGER'S (`W456`)
+## ⛔ ONE NAMED EXCEPTION, AND IT IS THE LEDGER'S
 
 ⭐ **`replaces` names the files a pass may rewrite, and the corpus pass names
 exactly one: `exercises/ledger.json`.** It is one file for the whole corpus, so
 a pass over part of it must rewrite it to add its own rows — and `merge` is
 what makes that rewrite additive, keeping every row the pass did not re-read.
-⚠️ Before `W456` the ledger was not exempt, so a second pass over another
+⚠️ Before this exception the ledger was not exempt, so a second pass over another
 container was refused here, and the one way past the refusal — removing the
 ledger — lost every earlier container's rows. ⛔ A replaceable path holding a
 directory is still refused: a rewrite replaces a file and nothing else.
 
-⚠️ **Split out of `corpus` at `W456`**, when the merge brought that module to
+⚠️ **Split out of `corpus`** when the merge brought that module to
 R11's ceiling. The seam is the write: `corpus` decides what the pass produced,
 and this module decides whether the tree may take it.
 """
@@ -47,7 +47,7 @@ def commit(
     file present with different bytes — or two of this pass's own files at one
     path — refuses the pass and names the path. ⚠️ `replaces` is the one
     exception, and only the ledger is ever named in it: `merge` keeps every row
-    the pass did not re-read, so its rewrite adds and never loses (`W456`).
+    the pass did not re-read, so its rewrite adds and never loses.
     """
     wanted: dict[str, bytes] = {}
     for path, data in files:

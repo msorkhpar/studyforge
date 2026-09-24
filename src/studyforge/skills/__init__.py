@@ -32,6 +32,4 @@ knowledge must accumulate in one place or it decays once per integration.
 parent contract is where a reader finds out a sub-package exists.** It holds the
 two readings the exercise-authoring skill takes before it authors anything — the
 source ledger and the page plan (`AX-07`, `E14`) — and `AX-08` adds the loop.
-
-**Skeleton at FND-01.** Filled by SK-01…SK-09 (E11).
 """

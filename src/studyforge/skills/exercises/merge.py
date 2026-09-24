@@ -1,4 +1,4 @@
-r"""One pass's ledger merged into the committed one: what it did not re-read is KEPT (`W456`).
+r"""One pass's ledger merged into the committed one: what it did not re-read is KEPT.
 
 **What it does.** Takes the ledger document a pass just accounted for — which
 covers only the files that pass read — and the ledger already committed, and
@@ -19,9 +19,9 @@ row's path may be, and `studyforge.describe` for R7. Standard library only.
 
 ## ⛔ ONE FILE FOR THE WHOLE CORPUS, SO A PASS OVER PART OF IT MUST NOT OWN ALL OF IT
 
-⚠️ **Found by the corpus office (`ISO-M10/11`), ruled a defect by the user
-2026-09-23.** `exercises/ledger.json` is one file per corpus, and a pass over
-one container wrote it with that container's entries alone. ⭐ **A pass OWNS
+⚠️ **Found by the corpus office, ruled a defect by the user 2026-09-23.**
+`exercises/ledger.json` is one file per corpus, and a pass over one container
+wrote it with that container's entries alone. ⭐ **A pass OWNS
 exactly the files it read** — its material and its graders — and nothing else:
 every committed row for a file outside that set is carried over as the dict it
 was decoded into, so it re-encodes to the same bytes whatever order the passes

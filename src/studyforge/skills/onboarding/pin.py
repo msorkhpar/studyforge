@@ -14,7 +14,7 @@ written. Nothing source-specific (R1), and nothing from `artifacts` — the
 dependency runs one way, so what a corpus is told about the framework cannot
 come to depend on what the framework generated into the corpus.
 
-## ⛔ The installed library, never a sibling checkout (`REL-05`)
+## ⛔ The installed library, never a sibling checkout
 
 ⚠️ **The pin used to name a checkout of the framework beside the corpus** —
 the workspace's development arrangement (R18) — and every stub was a tree path
@@ -23,8 +23,8 @@ they install the library** (`E15`), so a stub that resolves only through a
 sibling resolves for nobody but this project. ⭐ **So the pin records the
 installed library's `version` and the `commit` it was built from**, `where`
 is `"installed"`, and a stub names its skill and the command that prints the
-procedure from the installed package (`studyforge.skills.documents`,
-`REL-04`). ⛔ **A stub carries no path at all**, relative or absolute (R7).
+procedure from the installed package (`studyforge.skills.documents`).
+⛔ **A stub carries no path at all**, relative or absolute (R7).
 
 ⭐ **The version is verified; the commit is recorded.** An installed wheel
 carries no git history, so there is nothing to ask whether it holds a commit
@@ -69,7 +69,7 @@ STUB_DIR = f"{PIN_DIR}/skills"
 RECORD_FILE = f"{PIN_DIR}/installed.json"
 
 #: The version of the pin document's own shape. ⚠️ Its own number, not the
-#: corpus's: the two documents move for different reasons. `2` is `REL-05`:
+#: corpus's: the two documents move for different reasons. `2` names
 #: the installed library, where `1` named a sibling checkout.
 PIN_API = 2
 
@@ -93,7 +93,7 @@ VERSION = re.compile(r"[0-9][0-9A-Za-z.+!_-]{0,63}")
 FRAMEWORK = "studyforge"
 
 #: The command that prints a skill's procedure from the INSTALLED package
-#: (`REL-04`). ⛔ The one way a stub reaches a procedure: never a tree path.
+#: ⛔ The one way a stub reaches a procedure: never a tree path.
 DOCUMENTS = f"python3 -m {FRAMEWORK}.skills.documents"
 
 #: The command that says whether the installed library is the pinned version.

@@ -1,4 +1,4 @@
-r"""Adapter authoring: scaffold an adapter against `studyforge validate` (SK-02).
+r"""Adapter authoring: scaffold an adapter against `studyforge validate`.
 
 **What it does.** Turns a corpus manifest into the adapter that will fill it —
 eight files, seven of them generated and one of them the source reading, which
@@ -31,8 +31,8 @@ not stop a single adapter from working.
 
 ⚠️ **A skill written after the thing it "produces" has been validated against
 exactly one source**, and reads as a description of that source rather than a
-procedure for the next. That is why `SK-02` sits inside M2 step 2.1 rather than
-after it, and why the acceptance is *following the skill on a source it has
+procedure for the next. That is why this skill was written inside M2 step 2.1 rather
+than after it, and why the acceptance is *following the skill on a source it has
 never seen reaches a `validate`-clean archive* — not *this skill describes the
 adapter we already wrote*.
 
@@ -48,8 +48,6 @@ untouched — by `write_files`, the one rule onboarding's writer follows too.
 manifest's content policy is reconnaissance's answer and is settled before an
 adapter exists; a second skill re-opening it would give a corpus two places to
 say what it ingests.
-
-**Skeleton at FND-01.** Filled by SK-02 (E11).
 """
 
 from __future__ import annotations

@@ -1,4 +1,4 @@
-r"""Delivery planning: the product owner for an integration (SK-08).
+r"""Delivery planning: the product owner for an integration.
 
 **What it does.** Turns *"convert this repository"* into an ordered backlog of
 tasks that each end in something a person can be **shown**, with acceptance
@@ -20,7 +20,7 @@ procedure. This package is what the skill *calls*:
 and ⛔ not on the filesystem: every module here is handed text and gives back
 text, so the caller names the documents. ⭐ The one exception is `packaged`,
 which reads the index this package ships from its own directory and never a
-path anybody names (`REL-06`).
+path anybody names, so a planner needs no checkout.
 
 ## ⛔ Three rules shape every refusal in this package
 

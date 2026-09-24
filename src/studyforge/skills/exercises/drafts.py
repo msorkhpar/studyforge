@@ -32,8 +32,8 @@ look at them.
 ⭐ **Every exercise this skill writes is `generated`/`advisory`**, and the two
 words are this module's constants rather than draft fields — so no author, and
 no retry, can write `authoritative` onto authored work (R5). ⚠️ A
-`bundled`/`authoritative` exercise is `SK-04`'s blanking derivation and is not
-produced here.
+`bundled`/`authoritative` exercise is the blanking derivation over the source's
+own exercise and is not produced here.
 """
 
 from __future__ import annotations
@@ -91,8 +91,8 @@ class AuthoringError(ValueError):
 class Page:
     """One page to author exercises for, as the converting agent read it.
 
-    ⭐ `aspects` and `tier` are the agent's readings (`W453`, superseding
-    `AX-07`'s `words` and `skills`): the plan is read off the aspects, each
+    ⭐ `aspects` and `tier` are the agent's readings (the coverage ruling of
+    2026-09-23, superseding `AX-07`'s `words` and `skills`): the plan is read off the aspects, each
     checked by a named exercise or carried by a reason, and nothing here
     guesses one. ⛔ `nothing_checkable` is the sentence a page naming no aspect
     owes, and only such a page may carry it.
@@ -152,7 +152,7 @@ class Brief:
 
     ⭐ `slot` is which of the plan's exercises this is; `places` is where it
     will sit if it ships, numbered after the ones that already have.
-    ⭐ `aspects` are the ones the plan gave this exercise to check (`W453`).
+    ⭐ `aspects` are the ones the plan gave this exercise to check.
     ⛔ On a retry, `refused` carries every gate that did not hold and `output`
     the last run's output, so the author re-authors against the finding.
     """
@@ -192,7 +192,7 @@ def words_of(text: str) -> int:
     ⚠️ **A decision, and this is its one spelling** (`AX-07` left it to the
     skill): a fence is an example, not reading, so its body and its language
     tag are not counted. The fence grammar is `scan`'s, never a second one.
-    ⛔ **Since `W453` it sets no count**: the plan is read off a page's
+    ⛔ **Since the coverage ruling of 2026-09-23 it sets no count**: the plan is read off a page's
     aspects. It stays as the reading that shows how little prose a code-dense
     page has, which is what the length band used to cap it by.
     """

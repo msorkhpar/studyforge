@@ -1,4 +1,4 @@
-r"""Source reconnaissance: work out the shape of material nobody has read (SK-01).
+r"""Source reconnaissance: work out the shape of material nobody has read.
 
 **What it does.** Given arbitrary material, measures its shape — how deep the
 hierarchy is, what the units are, whether anything is duplicated, whether
@@ -68,8 +68,6 @@ does **not** generalise.
 | `survey` | one pass, joining all of them |
 | `report` | what was measured, and what is still open |
 | `errors` | the one refusal these passes raise, and what its message may not say |
-
-**Skeleton at FND-01.** Filled by SK-01 (E11).
 """
 
 from __future__ import annotations

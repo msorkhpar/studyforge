@@ -62,8 +62,8 @@ R11's remedy is a split at a named seam, never a trim.
 
 ⭐ **`W92` cut the same module at the SAME line and named the halves the other
 way round** — its `capability` was this reading and its `index` was the index.
-⚠️ **One cut, two namings, and the two were collapsed rather than stacked**
-(`W92b`): this file is the reading half under `W94`'s name, and `components` is
+⚠️ **One cut, two namings, and the two were collapsed rather than stacked**:
+this file is the reading half under `W94`'s name, and `components` is
 the second READER on this side of that one cut — the pin document's, not the
 epics'. ⛔ **Nothing was cut a third time to avoid deciding.**
 """
@@ -78,7 +78,7 @@ from studyforge.skills.delivery.refusal import one_or_all
 
 #: A task heading: `### <ID> — <what>`. The id shapes are the two this
 #: project mints — an epic prefix with a number and an optional letter
-#: (`SF-35`, `FND-05a`), which is `tools.quality.config.ROW_ID`'s first half.
+#: (`AB-35`, `CD-05a`), which is `tools.quality.config.ROW_ID`'s first half.
 #: ⛔ Re-declared rather than imported: `src/` may not import `tools/`.
 _HEADING = re.compile(r"^###\s+([A-Z]{2,4}-[0-9]{1,3}[a-z]?)\s+—\s+(.+?)\s*$")
 

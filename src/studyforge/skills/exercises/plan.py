@@ -24,17 +24,17 @@ that refused it.
 `studyforge.exercise.gates` for the one registry of gate ids. Standard library
 only. ⛔ Not on any adapter and not on any source (R1).
 
-## ⛔ USER RULING, 2026-09-23 (`W453`) — THE COUNT IS SET BY COVERAGE, NOT BY LENGTH
+## ⛔ USER RULING, 2026-09-23 — THE COUNT IS SET BY COVERAGE, NOT BY LENGTH
 
 > *"Depending on the context of the page there might be no practice, 2 or more,
 > The target is covering all the aspects not just having something minimum we
 > are looking for quality"*
 
-⛔ **SUPERSEDED by that ruling: the length BAND.** Until `W453` a page's count
+⛔ **SUPERSEDED by that ruling: the length BAND.** Until that ruling a page's count
 started at the floor of a band its PROSE word count set, moved by a count of
 skills and a tier, and was clamped to the band's ceiling. ⚠️ **On a code-dense
 corpus that capped most pages at two and shipped most examples as a reason
-nobody weighed** (`ISO-M10/6`). ⭐ **There is now no length ceiling**, and the
+nobody weighed**. ⭐ **There is now no length ceiling**, and the
 tier no longer moves the count: it is recorded, and handed to the author with
 the page, because it says how hard each exercise is — never how many.
 ⚠️ **Refined by the user the same day** (quoted whole in `aspects`): *"don't
@@ -78,7 +78,7 @@ from studyforge.skills.exercises.aspects import Aspect, aspect_document, require
 
 #: The version of the document this module writes. ⛔ Bumped when a reader of
 #: the old shape would be *wrong* rather than merely incomplete. ⚠️ **2 at
-#: `W453`**: version 1 carried `words`, `skills`, `band` and movement `reasons`,
+#: the coverage ruling**: version 1 carried `words`, `skills`, `band` and movement `reasons`,
 #: and a reader of it would take a length-capped count for a covered one.
 PLAN_API = 2
 
@@ -100,7 +100,7 @@ CORE = "core"
 #: A page whose material a reader meets after the ones it builds on.
 ADVANCED = "advanced"
 
-#: ⛔ Closed, and three rather than a scale. ⚠️ Since `W453` a tier says how
+#: ⛔ Closed, and three rather than a scale. ⚠️ Since the coverage ruling a tier says how
 #: hard each exercise is and never how many: it is recorded and handed to the
 #: author. A tier this build does not define is refused, never defaulted.
 TIERS = (INTRODUCTORY, CORE, ADVANCED)
