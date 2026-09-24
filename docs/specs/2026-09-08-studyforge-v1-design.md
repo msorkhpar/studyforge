@@ -430,8 +430,11 @@ every reader agree on one spelling; it is read from the docstring with `ast`, ne
 from a comment beside the code, because the exception is recorded where the next
 reader of the module meets it; and it says why splitting would be *worse* — a reason
 too short to be one is reported as none. ⛔ **It is refused whenever the honest answer
-to the isolation question is no**: a justification is not a licence. An exception left
-in a module that is now under its ceiling is stale and is removed. ⚠️ A stylesheet, a
+to the isolation question is no**: a justification is not a licence. ⛔ **It is a
+design claim and only a design claim**: never a promise that later work will split the
+module, which reads to a stranger as permanent and names nothing they can find. A module
+that should be split is split. An exception left in a module that is now under its
+ceiling is stale and is removed. ⚠️ A stylesheet, a
 script or a template has no docstring and so no opt-out: its remedy is a split at a
 named seam.
 
@@ -2060,8 +2063,16 @@ it calls beside it.
   narrate when asked, build into a directory the owner names, and serve it.
 - **Delivery planning.** The product owner for an integration: turns *"convert
   this repository"* into an ordered backlog whose every task ends in something a
-  person can be shown, with acceptance the framework itself can evaluate. It
-  runs in the target repository, and ⛔ **its only channel is this framework** —
+  person can be shown, with acceptance the framework itself can evaluate.
+  ⭐ **It plans against what the installed framework offers** — `python3 -m
+  studyforge.skills.delivery` lists every command the installation runs and every
+  skill it ships — never against a version the framework may become, so no task
+  waits for the framework to grow. ⛔ **A capability the plan needs and the offer
+  lacks is a finding the plan files**, and the task that needs it names that
+  finding as what it waits on. ⭐ **The plan says where the corpus finishes** — at
+  the reading floor or on the execution track (§11.0), with the evidence that
+  decided it — and names every offered capability the corpus will never use, with
+  the reason. It runs in the target repository, and ⛔ **its only channel is this framework** —
   it may ask questions, and it may file findings, but it may not patch (§12) and
   it may not read the extraction source (R20). It feeds the **integration
   catalogue**, below.
@@ -2272,9 +2283,11 @@ hand-authored framework code, and the result is judged against this section.
   across is listed against the finding that forced it. ⭐ A test of extensibility
   run by somebody who can edit the thing being tested measures nothing.
 - **The work is planned by the delivery-planning skill** (§9), acting as the
-  product owner for that repository: an ordered backlog whose every task ends in
-  something demonstrable, so the conversion is watchable step by step rather than
-  reported finished at the end. ⭐ Its findings are the deliverable below, and it
+  product owner for that repository: an ordered backlog, made against the installed
+  framework's offer, whose every task ends in something demonstrable, so the
+  conversion is watchable step by step rather than reported finished at the end. A
+  capability the source needs and the framework does not offer is a finding the
+  plan files, and the task that needs it waits on it. ⭐ Its findings are the deliverable below, and it
   distils them into the integration catalogue so the *next* source starts further
   along.
 
