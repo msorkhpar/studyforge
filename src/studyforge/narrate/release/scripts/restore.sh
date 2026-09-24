@@ -34,8 +34,9 @@
 # The repository and the base URL default to a placeholder: this file is
 # committed, and an account name does not belong in it.
 #
-# Needs: curl (unless NARRATION_LOCAL_DIR is set), sha256sum or shasum, and
-# unzip or python3. python3 also reads a private release's asset list.
+# Needs: curl, or a logged-in gh (neither with NARRATION_LOCAL_DIR), sha256sum
+# or shasum, and unzip or python3. A private release's asset list is read with
+# curl and python3.
 
 set -u
 
@@ -75,7 +76,7 @@ BASE_URL="${NARRATION_BASE_URL:-https://github.com/${REPO:-OWNER/REPO}/releases/
 
 has sha256sum || has shasum || die "neither sha256sum nor shasum is installed"
 has unzip || has python3 || die "neither unzip nor python3 is installed"
-[ -n "$LOCAL_DIR" ] || has curl || die "curl is not installed"
+[ -n "$LOCAL_DIR" ] || has curl || has gh || die "neither curl nor gh is installed"
 
 sha_of() {
   if has sha256sum; then sha256sum "$1" | cut -d' ' -f1; else shasum -a 256 "$1" | cut -d' ' -f1; fi
@@ -90,7 +91,7 @@ with_token() {
 ASSETS=""
 load_assets() {
   [ -n "$ASSETS" ] && return 0
-  has python3 || die "python3 is needed to read a private release's asset list"
+  has curl && has python3 || die "curl and python3 are needed to read a private release"
   ASSETS=$(with_token -H "Accept: application/vnd.github+json" \
       "$API/repos/$REPO/releases/tags/$TAG" | python3 -c '
 import json, sys
@@ -119,6 +120,7 @@ fetch() {                       # fetch <name>: into PARTS, unless it is there a
            --dir "$PARTS" --clobber >/dev/null 2>&1 && [ -s "$dest" ]; then
     return 0
   else
+    has curl || return 1
     curl -fsSL --retry 3 -o "$dest.partial" "$BASE_URL/$name" || return 1
   fi
   mv -f "$dest.partial" "$dest" && [ -s "$dest" ]
