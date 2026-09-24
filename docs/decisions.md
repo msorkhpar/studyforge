@@ -699,6 +699,26 @@ What it reads, and the choices in it:
 
 **Aliases.** `W250/2`, `W252`
 
+### The reading order is the one the curriculum record states, and nothing derives it
+
+**Decision.** Reconnaissance finds the document that records the curriculum by how much of the material it links, never by its name (`studyforge.skills.reconnaissance.record.find`), and takes each unit's position from the order that document states (`Record.order`), never from a filename or directory sort. A corpus with no such record gets no sorted guess: the survey asks the reading order as an open question, and material the record does not name is a question too. The adapter skill forbids its reading step to derive an address, an ordinal or a reading order. The framework keeps no check of its own that unit *k* is the material the record puts at *k*: the order is data the adapter carries from the record into the archive, and an adapter asserts it in its own tests against that record, since only the record knows it.
+
+**Why.** A filename sort misplaces units while the count is right, every page renders and the first unit of each group stays first, so a count assertion and a spot-check both pass. An ordering claim needs an oracle, and the oracle is whatever records the order.
+
+**Serves.** `R1`, `R6`
+
+**Aliases.**
+
+### A curriculum line is a group label by its position, never by its heading level
+
+**Decision.** In a curriculum record, whether a line is a container label is decided by where it sits, not by its Markdown syntax (`studyforge.skills.reconnaissance.grouping`). A heading and a bare numbered line are both candidate labels; a candidate that heads no entry is dropped, so headings belonging to another document's outline below the curriculum never become containers; a set of labels is kept only when one line shape partitions the entries, and otherwise no grouping is proposed at all. A small, stated share of entries above the first label (`UNLABELLED_ALLOWANCE`) does not cost the hierarchy, and a leading label that opens almost nothing is dropped rather than kept. A line carrying a link is never read as a label by syntax; whether a linked heading is one is decided by its position (see the entry on files cut into regions).
+
+**Why.** Real curricula set this trap in both directions: one records its groups as headings beside many headings that are not groups, another records them as numbered lines with no heading at all. A grouping invented from syntax becomes a container tree in the built site, and the reader never learns it was invented.
+
+**Serves.** `R1`, `R6`
+
+**Aliases.**
+
 ### The survey and the scaffolded suite walk the corpus exactly as validate does
 
 **Decision.** Reconnaissance's inventory (`studyforge.skills.reconnaissance.inventory.take`) and the adapter's generated emission test (`studyforge.skills.adapter.parts.suite`) take their answers from the validator. They skip `SKIP_DIRS` only at the corpus root and get nested repository stores from `source_files(root).stores`. The survey never enters such a store and counts as the corpus's own only files `source_files` enumerates; the suite copies a store unchanged so the validator refuses it. The suite takes git's ignore rules from `repository_ignores`, the one ignore reader, asked once per directory, and keeps no list of names beyond its own output directories; outside a git working tree it copies everything but the archive and warns.
