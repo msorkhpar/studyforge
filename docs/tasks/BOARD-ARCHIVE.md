@@ -31956,3 +31956,17 @@ container each time.
 ### ⚠️ In flight
 
 ⭐ **`AX-11`**; ⭐ **`REL-07`**, **`REL-08`**, **`REL-09`**.
+
+## PO round 177
+
+⭐ **`M11` step 11.4 CLOSES** — `REL-07` `c74950ab` (the README is the whole reading list; register plant: a fenced module that does not exist → RED), `REL-09` `9c65162b` (process ids leave the product's prose — ⭐ **the register compared all 448 touched modules' syntax trees, docstrings stripped: 0 differ**; PARTIAL by its own report, the residue routed), `REL-08` `f6f8aae8` (13 dated spec amendments; the register read the spec diff: one line removed, its own date).
+
+⛔ **The USER asked whether the narration needed updating after the text fixes — IT DID, and nothing had said so.** ⭐ **Measured by the register:** about 62 prose lines and 6 headings changed on 13 pages, and ⛔ **each changed paragraph kept playing its OLD clip** — the join is on the speech id, the clip is marked `stale` and played anyway, and `validate`, `plan` and the build read clean. ⭐ **`ISO-30` on the corpus re-narrates** (voice `am_liam`, the record's own); ⭐ **minted [`W457`](rows/W457.md)** so `validate` reports it.
+
+⛔ **USER RULING — narration is OPTIONAL:** *"it should be optional and while serving or even while caputring the matterial skills should ask if user is interested in the narrition or not … the voice might be cgenerated but still not serving them would be an option"*. ⭐ **Minted [`W460`](rows/W460.md).** ⚠️ **The first corpus keeps its narration** unless the user says otherwise.
+
+⭐ **Minted [`W458`](rows/W458.md)** — the focus test that refused round 176 at random, its second flake — and **[`W459`](rows/W459.md)** — `REL-09/1` and `/6`, the user-facing refusal text and the decisions file.
+
+### ⚠️ In flight
+
+⭐ **`W457`**–**`W460`** on dev1, dev2, dev3, dev5; ⭐ **`AX-11`** on dev4; ⭐ **`ISO-30`** on the corpus.

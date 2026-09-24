@@ -66,6 +66,7 @@ one does.**
 | **M11 step 11.1** | ✅ CLOSED — `REL-01` | `af7711b3` | [record](BOARD-ARCHIVE.md#po-round-160) |
 | **M11 step 11.2** | ✅ CLOSED — `REL-02`, `REL-03` | `bed97114` | [record](BOARD-ARCHIVE.md#po-round-161) |
 | **M11 step 11.3** | ✅ CLOSED — `REL-04`, `REL-05`, `REL-06` | `06075ff0` | [record](BOARD-ARCHIVE.md#po-round-163) |
+| **M11 step 11.4** | ✅ CLOSED — `REL-07`, `REL-08`, `REL-09` | `f6f8aae8` | [record](BOARD-ARCHIVE.md#po-round-177) |
 | **M9** — the Java corpus re-validates | ⛔ **NOT STARTED, and it holds 21 of the 35 undelivered capabilities.** `Claude-senior-java-engineer` converted under §12's rules, with gate-clearing exercises, and the findings written down | — | [the plan](README.md) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
@@ -79,10 +80,11 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `REL-07` | Developer 2 | `docs/REL-07-the-readme-is-the-whole-reading-list` @ `wt/dev2` | 0 @ `39f12d4e` | `in-progress` — `M11` step 11.4 |
-| `REL-08` | Developer 3 | `docs/REL-08-rubric-and-conventions-sorted` @ `wt/dev3` | 0 @ `39f12d4e` | `in-progress` — `M11` step 11.4 |
-| `REL-09` | Developer 1 | `docs/REL-09-process-ids-leave-the-product-prose` @ `wt/dev1` | 0 @ `39f12d4e` | `in-progress` — `M11` step 11.4 |
 | `AX-11` | Developer 4 | `docs/AX-11-m10-acceptance-read` @ `wt/dev4` | 0 @ `f3bfc486` | `in-progress` — `M10` step 10.5 |
+| `W457` | Developer 1 | `fix/W457-validate-reports-stale-narration` @ `wt/dev1` | 0 @ `f6f8aae8` | `in-progress` |
+| `W458` | Developer 2 | `fix/W458-the-focus-test-waits-on-events` @ `wt/dev2` | 0 @ `f6f8aae8` | `in-progress` |
+| `W459` | Developer 3 | `fix/W459-no-user-reads-a-process-id` @ `wt/dev3` | 0 @ `f6f8aae8` | `in-progress` — `M11` |
+| `W460` | Developer 5 | `feat/W460-narration-is-optional` @ `wt/dev5` | 0 @ `f6f8aae8` | `in-progress` |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -645,6 +647,10 @@ else.**
 | W454 | The editor image still carries and starts the Copilot CLI (user ruling: remove it) | framework agent | ✅ done — `65c3851` toolchain | [`rows/W454.md`](rows/W454.md) |
 | W455 | The practice editor wears code-server's stock theme, not the site's code colours (user request) | framework agent | ✅ done — `b1649f6b` | [`rows/W455.md`](rows/W455.md) |
 | W456 | An authoring pass over one container rewrites the corpus-wide ledger and silently drops every other container's entries | framework agent | ✅ done — `de1ea776` | [`rows/W456.md`](rows/W456.md) |
+| W457 | A changed paragraph keeps playing its old narration, and nothing reports the stale clip | framework agent | `in-progress` — ⛔ found on the user's question | [`rows/W457.md`](rows/W457.md) |
+| W458 | A browser focus test fails at random under parallel load and blocks merges | framework agent | `in-progress` | [`rows/W458.md`](rows/W458.md) |
+| W459 | Refusals a user reads cite process ids, and the decisions file lacks today's product decisions | framework agent | `in-progress` — `M11` | [`rows/W459.md`](rows/W459.md) |
+| W460 | Narration is optional: the skills ask at capture and at serve, and generated clips can go unserved (user ruling) | framework agent | `in-progress` — ⛔ USER RULING | [`rows/W460.md`](rows/W460.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
