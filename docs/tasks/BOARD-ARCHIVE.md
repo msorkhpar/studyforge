@@ -32136,3 +32136,11 @@ manifest or its record, the docs.
 
 ⭐ **`W461`**, **`W462`**, **`REL-10`**, **`REL-13`**.
 
+## PO round 182
+
+⚠️ **`REL-13` returned PARTIAL and was sent back**: both siblings' READMEs and prose are clean, and narrate-service's suite and image read GREEN from a clean clone — ⛔ **but the toolchain's own `TC_DOCKER` suite is RED, and RED on its `main` too.** ⭐ **Ruled:** the four prose-only `consuming.json` values that cite ids may be rewritten, since nothing reads them (`REL-13/4`); the planted-copy runner builds that omit `prime/` are `REL-13`'s to fix (`REL-13/2`); ⭐ **and `REL-13/1` is MINTED as `W463`** — only a `java,maven` editor builds, every other declared runtime set is refused by its own confinement gate. ⚠️ **Every toolchain tag moves with `REL-13`** (`REL-13/5`), so its landing carries a re-record of the corpus's tags and a rebuild before the site is regenerated.
+
+### ⚠️ In flight
+
+⭐ **`W461`**, **`W462`**, **`W463`**, **`REL-10`**, **`REL-13`**.
+
