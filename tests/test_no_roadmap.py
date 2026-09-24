@@ -51,9 +51,8 @@ COMMIT = re.compile(r"`[0-9a-f]{7,40}`")
 #: Paths this sweep does not read, each with its reason.
 NOT_READ = {
     "src/studyforge/render/assets/plyr.svg": "vendored path data, where `M2` is a drawing command",
-    # ⚠️ The three design documents still carry the framework's build history.
+    # ⚠️ The two design documents below still carry the framework's build history.
     # Remove each from this set once it describes the current product only.
-    "docs/specs/": "a design document not yet rewritten to the current product",
     "docs/decisions.md": "a design document not yet rewritten to the current product",
     "docs/integration-catalogue.md": "a design document not yet rewritten to the current product",
     "tests/test_no_roadmap.py": "this module spells every pattern it looks for",
@@ -115,6 +114,7 @@ def test_a_planted_roadmap_id_is_read_wherever_the_sweep_reads(tmp_path):
         "tests/fixtures/x/VIOLATION.md": "Expected of validate (" + "SF-25" + ").\n",
         "tests/test_x.py": '"""See ' + "M7" + '."""\n',
         "src/pkg/data.json": '{"note": "see ' + "W" + '108"}\n',
+        "docs/specs/design.md": "Lands at " + "M4" + ".\n",
     }
     found = roadmap(scratch_repository(tmp_path, planted))
     assert sorted(found) == sorted(planted), f"a planted id went unread: {sorted(found)}"
@@ -124,7 +124,6 @@ def test_what_the_sweep_does_not_read_is_not_read(tmp_path):
     planted = {
         "tests/test_data.py": '"""A test."""\nPLANT = "' + "W" + '44"\n',
         "src/studyforge/render/assets/plyr.svg": '<path d="' + "M2" + ' 3"/>\n',
-        "docs/specs/design.md": "Lands at " + "M4" + ".\n",
         "docs/prose.md": "A C5 state, the R11 ceiling and §7's three states.\n",
     }
     assert roadmap(scratch_repository(tmp_path, planted)) == {}
