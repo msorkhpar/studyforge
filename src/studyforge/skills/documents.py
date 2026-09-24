@@ -87,7 +87,8 @@ def document(name: str) -> Path:
     if name not in shipped:
         raise UnknownSkill(
             f"that name is not a skill that ships a {DOCUMENT}; the skills are "
-            f"{', '.join(shipped)}. The name is not reproduced here (R7)."
+            f"{', '.join(shipped)}. The name is not reproduced here, since a refusal never quotes "
+            f"a value that may be personal."
         )
     return SKILLS_DIR / name / DOCUMENT
 

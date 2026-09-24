@@ -62,4 +62,4 @@ def test_the_refusal_says_why_it_is_silent_so_the_next_author_does_not_undo_it(t
     root = tmp_path / "corpus"
     with pytest.raises(ReconnaissanceRefused) as refused:
         inside_root(tmp_path / "elsewhere" / "unit.md", root)
-    assert "R7" in str(refused.value)
+    assert "is personal data" in str(refused.value)

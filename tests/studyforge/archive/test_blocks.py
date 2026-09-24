@@ -463,7 +463,7 @@ NOT_OBJECTS = ("a string", 7, 1.5, True, None, ["nested"])
 
 
 @pytest.mark.parametrize("block", NOT_OBJECTS)
-def test_W289_a_non_object_block_reaches_no_get_and_is_refused_by_name(block):
+def test_a_non_object_block_reaches_no_get_and_is_refused_by_name(block):
     # ⛔ `AttributeError` would name a TYPE where the reader needs an INDEX.
     # ⭐ `ArchiveError` is a `ValueError`, so an `AttributeError` escaping here
     # FAILS this test rather than passing it —
@@ -475,7 +475,7 @@ def test_W289_a_non_object_block_reaches_no_get_and_is_refused_by_name(block):
     assert "a block is an object with a type" in str(raised.value)
 
 
-def test_W289_the_counts_of_a_document_of_objects_are_unchanged():
+def test_the_counts_of_a_document_of_objects_are_unchanged():
     # ⭐ The positive direction. Without it the refusal above is satisfied by a
     # `counts_of` that refuses everything.
     counted = counts_of([{"type": "para", "text": "one"}, {"type": "rule"}])
@@ -485,7 +485,7 @@ def test_W289_the_counts_of_a_document_of_objects_are_unchanged():
     assert counted["rules"] == 1
 
 
-def test_W289_the_refusal_describes_the_value_and_never_quotes_a_string():
+def test_the_refusal_describes_the_value_and_never_quotes_a_string():
     # ⚠️ R7: a refusal names what a value IS, never what it SAYS — `describe`'s
     # `SAFE_TO_QUOTE` is `(int,)`, so a block that is a string is *"a str"*.
     words = "the material's own sentence"
@@ -497,7 +497,7 @@ def test_W289_the_refusal_describes_the_value_and_never_quotes_a_string():
     assert "a str" in str(raised.value)
 
 
-def test_W289_the_caller_names_the_document_the_refusal_belongs_to():
+def test_the_caller_names_the_document_the_refusal_belongs_to():
     # ⭐ `where` is the document's own, spelled as `assert_clean`'s is, so the
     # builder's refusal says which FILE as well as which block.
     with pytest.raises(ArchiveError) as raised:
@@ -506,7 +506,7 @@ def test_W289_the_caller_names_the_document_the_refusal_belongs_to():
     assert "solo/unit-1/lesson-1 blocks[0]" in str(raised.value)
 
 
-def test_W289_a_non_object_block_inside_a_container_is_not_this_functions_business():
+def test_a_non_object_block_inside_a_container_is_not_this_functions_business():
     # ⚠️ The boundary, asserted so it is not read as an oversight: `counts_of`
     # counts TOP-LEVEL blocks, so a malformed block inside a quote is
     # `validate.blocks`'s to name and this function neither counts nor refuses

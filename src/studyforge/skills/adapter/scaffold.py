@@ -93,7 +93,7 @@ IGNORE_FILE = ".gitignore"
 BYTECODE_RULES = ("__pycache__/", "*.py[co]")
 
 #: Why each of those files exists, in the report a person reads first.
-WHY_IGNORE = "the bytecode running this directory's modules writes, ignored here (R3, R7)"
+WHY_IGNORE = "the bytecode running this directory's modules writes, kept out of every commit"
 
 
 class ScaffoldRefused(ValueError):
@@ -302,5 +302,5 @@ def _collision(blocked: list[str]) -> str:
         f"{len(blocked)} file(s) already exist:\n{which}\n"
         "Pass regenerate=True to rewrite the generated ones and keep the one you wrote. "
         "⛔ A hand-edit to a generated file is a finding, not a fix — customisation "
-        "enters as manifest data (R19)."
+        "enters as manifest data."
     )

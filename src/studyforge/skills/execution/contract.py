@@ -178,7 +178,7 @@ def require(document: Mapping[str, object], *path: str) -> object:
         raise ContractRefused(
             f"the contract carries no {scrub('.'.join(path))}. ⛔ This renderer needs it "
             f"and will not invent it: that key is a finding against the component "
-            f"that publishes {CONSUMING}, not a value to write into this skill (R19)"
+            f"that publishes {CONSUMING}, not a value to write into this skill"
         )
     return found
 
@@ -274,6 +274,6 @@ def _version(
     if found < held or (exact and found != held):
         raise ContractRefused(
             f"{scrub(where)} declares {field} {found} and this renderer was written "
-            f"against {held}. ⛔ Nothing is migrated (R9): re-pin the component, or "
+            f"against {held}. ⛔ Nothing is migrated: re-pin the component, or "
             f"read its contract and move the recorded number in one commit"
         )

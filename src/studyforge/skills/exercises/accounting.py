@@ -203,7 +203,8 @@ def _require_origin(name: str, origin: Origin, carried: Mapping[str, Source], wh
         raise LedgerError(
             f"{where}: the exercise {name!r} cites a section of '{origin.path}' that "
             f"the file carries {occurrences} times, and a region is bounded by a "
-            f"heading. The section is not reproduced here (R7)."
+            f"heading. The section is not reproduced here, since a refusal never quotes a value "
+            f"that may be personal."
         )
 
 

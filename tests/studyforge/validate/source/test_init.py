@@ -167,7 +167,7 @@ def past_the_surface(text: str) -> set[str]:
     return past
 
 
-def test_W280_no_module_outside_the_package_imports_past_its_surface():
+def test_no_module_outside_the_package_imports_past_its_surface():
     # ⛔ The split's second clause: a consumer under `src/` reads `__all__`, never a
     # submodule. ⚠️ Tests
     # are not swept: they name a submodule to monkeypatch a private, and say so.
@@ -194,13 +194,13 @@ def test_W280_no_module_outside_the_package_imports_past_its_surface():
         "from studyforge.validate.source import enumeration\n",
     ],
 )
-def test_W280_a_planted_import_past_all_is_named(planted):
+def test_a_planted_import_past_all_is_named(planted):
     # ⛔ The split's third clause, run negatively: the same expression that reads the
     # tree clean names these.
     assert past_the_surface(planted), planted
 
 
-def test_W280_the_store_name_imported_through_the_surface_reads_clean():
+def test_the_store_name_imported_through_the_surface_reads_clean():
     # ⭐ The control for the plants above: the import the survey now makes.
     assert "REPOSITORY_STORE" in source.__all__
     assert past_the_surface("from studyforge.validate.source import REPOSITORY_STORE\n") == set()

@@ -80,7 +80,7 @@ def inside_root(path: Path, root: Path) -> None:
         f"inside it: this pass was given {describe(path)} as the document and "
         f"{describe(root)} as the root, and the document's parent directory is not "
         "inside that root. Neither is reproduced here, because an absolute path in a "
-        "refusal is personal data (R7) — that silence is the rule, not vagueness to be "
+        "refusal is personal data — that silence is the rule, not vagueness to be "
         "helpfully filled in. Pass the root that was walked, which is `inventory.root` "
         "where a survey passes it, or a document under that root."
     )

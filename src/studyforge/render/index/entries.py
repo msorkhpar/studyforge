@@ -201,7 +201,7 @@ def _require_members(children: object, kind: type, what: str) -> None:
         raise PageError(
             f"a root index holds its {what} in a tuple, in declared order, and this "
             f"record holds {describe(children)}; an order that came from a set or a "
-            f"directory walk is one that differs between machines (R10)"
+            f"directory walk is one that differs between machines"
         )
     for child in children:
         if not isinstance(child, kind):

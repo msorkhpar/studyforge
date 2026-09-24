@@ -543,7 +543,7 @@ def test_every_commanded_module_runs_in_a_real_interpreter(name):
     )
 
 
-def test_the_reader_s_bare_shell_cannot_run_the_framework_and_that_gap_is_w75_s():
+def test_the_reader_s_bare_shell_cannot_run_the_framework_and_that_gap_is_pinned():
     """⛔ The divergence `find_spec` cannot see, PINNED — and it has an expiry.
 
     ⭐ **Red for a module `find_spec` resolves and a bare shell does not.** `studyforge` lives under

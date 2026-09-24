@@ -253,12 +253,14 @@ def _require_basis(
         raise AspectError(
             f"{where}: the aspect {aspect.id!r} is read from a section the page carries "
             f"{occurrences} times, and a region is bounded by one heading. "
-            f"The section is not reproduced here (R7)."
+            f"The section is not reproduced here, since a refusal never quotes a value that may "
+            f"be personal."
         )
     if basis not in keys:
         raise AspectError(
             f"{where}: the aspect {aspect.id!r} names a basis that is not {BASIS_DESCRIBED}. "
-            f"The value is not reproduced here (R7)."
+            f"The value is not reproduced here, since a refusal never quotes a value that may be "
+            f"personal."
         )
 
 

@@ -222,7 +222,8 @@ def judge_bytes(path: str, data: bytes) -> None:
     """
     for _where, shape in leaks(carried_text(data), path):
         raise ArchiveError(
-            f"'{path}' is not UTF-8 text and its bytes carry text shaped like {shape} (R7); "
+            f"'{path}' is not UTF-8 text and its bytes carry text shaped like {shape}, which may "
+            f"be personal data; "
             f"remove the file or strip what it carries before sharing it, "
             f"or keep it in an owner archive, which carries it unread"
         )

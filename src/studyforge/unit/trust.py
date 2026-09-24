@@ -84,6 +84,6 @@ def check_test_record(provenance: object, trust: object = None) -> tuple[str, st
         raise ContentError(
             f"only {list(MAY_BE_AUTHORITATIVE)} may be marked authoritative, not "
             f"{provenance}: no check written here may claim to be the source's "
-            f"grader (R5)"
+            f"grader"
         )
     return provenance, trust

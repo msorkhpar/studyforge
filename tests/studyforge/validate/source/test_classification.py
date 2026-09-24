@@ -363,7 +363,7 @@ def test_NO_origin_on_disk_is_origin_missing_s_answer_and_never_unread(tmp_path)
     assert validate(root).rules == ("origin-missing",)
 
 
-def test_W280_every_name_importers_read_from_this_module_still_imports_from_it():
+def test_every_name_importers_read_from_this_module_still_imports_from_it():
     # ⛔ The split's first clause: the split moved the enumeration out, and an importer that named a
     # name from `classification` before it still reads the SAME object from there.
     moved = ("IGNORE_TIMEOUT", "REPOSITORY_STORE", "SKIP_DIRS", "Scan", "repository_ignores")

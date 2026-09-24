@@ -145,7 +145,7 @@ def check(
     """
     if contract not in CONTRACT_FIELDS:
         raise error(
-            f"{describe(contract)} is not a contract this build versions; R9 "
+            f"{describe(contract)} is not a contract this build versions; it "
             f"versions {list(CONTRACT_FIELDS)}, and a new one is registered in "
             f"CONTRACT_FIELDS in the commit that mints it."
         )
@@ -155,7 +155,7 @@ def check(
         f"{where} declares {_said(contract, declared)}; this build speaks "
         f"{contract} {sorted(accepted)}. An unknown version is refused and "
         f"never migrated in place — a migration that runs at read time "
-        f"rewrites the record of what was ingested (R9)."
+        f"rewrites the record of what was ingested."
     )
 
 

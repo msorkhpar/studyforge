@@ -129,7 +129,7 @@ def _test_emit(plan: Plan) -> str:
         summary="The adapter's whole obligation: what it emits is what `validate` accepts.",
         does=(
             "Emits this corpus into a temporary directory and validates it there. ⭐ One "
-            "assertion, and it is the definition of done (R2) — there is no other agreement "
+            "assertion, and it is the definition of done — there is no other agreement "
             "between an adapter and the framework."
         ),
         uses=f"`python3 -m pytest tests/{plan.package}/test_emit.py` from the corpus root.",
@@ -153,7 +153,8 @@ def _test_emit(plan: Plan) -> str:
             "",
             _ROOT,
             "",
-            "#: Fixed, never today's date. ⚠️ R10: two runs differ only in `ingested`, so a",
+            "#: Fixed, never today's date. ⚠️ Reproducible: two runs differ only in `ingested`, "
+            "so a",
             "#: test that passed a moving date could not compare two runs byte for byte.",
             'INGESTED = "2026-01-01"',
             "",
@@ -213,7 +214,8 @@ def _test_emit(plan: Plan) -> str:
             "",
             "",
             "def _emitted(root: Path) -> list:",
-            '    """Every JSON file under `root`, with its bytes — what R10 compares."""',
+            '    """Every JSON file under `root`, with its bytes — what the reproducibility check '
+            'compares."""',
             "    return sorted(",
             "        (path.relative_to(root).as_posix(), path.read_bytes())",
             '        for path in root.rglob("*.json")',
@@ -221,7 +223,7 @@ def _test_emit(plan: Plan) -> str:
             "",
             "",
             "def test_what_this_adapter_emits_is_what_validate_accepts(tmp_path):",
-            "    # ⭐ The whole obligation, in one assertion (R2). Everything else in this",
+            "    # ⭐ The whole obligation, in one assertion. Everything else in this",
             "    # package exists to make this line reachable.",
             "    root = _copy(tmp_path)",
             "    written = emit(root, ingested=INGESTED)",
@@ -231,7 +233,8 @@ def _test_emit(plan: Plan) -> str:
             "",
             "",
             "def test_two_runs_produce_the_same_bytes(tmp_path):",
-            "    # ⭐ R10. `ingested` is held fixed above, so anything that differs between",
+            "    # ⭐ Reproducibility. `ingested` is held fixed above, so anything that differs "
+            "between",
             "    # these two runs is non-determinism in the reader — a dict order, a",
             "    # directory listing, a set — and every one of them is a real defect.",
             "    root = _copy(tmp_path)",
@@ -308,7 +311,7 @@ SUITE_PARTS: tuple[Part, ...] = (
     Part(
         where="tests/{package}/test_emit.py",
         step=4,
-        why="the whole obligation in one assertion — emitted, then validated (R2)",
+        why="the whole obligation in one assertion — emitted, then validated",
         generated=True,
         render=_test_emit,
     ),

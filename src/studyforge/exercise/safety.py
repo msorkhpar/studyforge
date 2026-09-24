@@ -93,7 +93,8 @@ def require_path(value: object, what: str, where: str) -> str:
     """
     if not isinstance(value, str) or not value:
         raise ExerciseError(
-            f"{where}: '{what}' must be a non-empty str; the value is not reproduced here (R7)"
+            f"{where}: '{what}' must be a non-empty str; the value is not reproduced here, since "
+            f"a refusal never quotes a value that may be personal"
         )
     if "\\" in value or value.startswith("/") or _is_drive_qualified(value):
         raise ExerciseError(_refusal(what, where))
@@ -113,14 +114,14 @@ def require_command(value: object, what: str, where: str) -> tuple[str, ...]:
     if isinstance(value, str) or not isinstance(value, (list, tuple)) or not value:
         raise ExerciseError(
             f"{where}: '{what}' must be {ARGUMENT_PERMITTED}. The value is not "
-            f"reproduced here (R7)."
+            f"reproduced here, since a refusal never quotes a value that may be personal."
         )
     for token in value:
         if not _is_safe_argument(token):
             raise ExerciseError(
                 f"{where}: one of '{what}'s arguments is outside the permitted "
                 f"set. It must be {ARGUMENT_PERMITTED}. The argument is not "
-                f"reproduced here (R7)."
+                f"reproduced here, since a refusal never quotes a value that may be personal."
             )
     return tuple(value)
 
@@ -158,7 +159,8 @@ def _refusal(what: str, where: str) -> str:
     return (
         f"{where}: '{what}' must be {PATH_PERMITTED}. These values reach a file "
         f"a runner executes against, so the shape is checked before the record "
-        f"is accepted. The value is not reproduced here (R7)."
+        f"is accepted. The value is not reproduced here, since a refusal never quotes a value "
+        f"that may be personal."
     )
 
 

@@ -64,7 +64,7 @@ def module(*, summary: str, does: str, uses: str, depends: str, body: Iterable[s
         ("depends", depends),
     ):
         if not isinstance(piece, str) or not piece.strip():
-            raise ValueError(f"a generated module needs a {name}; R17 is not optional")
+            raise ValueError(f"a generated module needs a {name}; it must state its contract")
     head = [
         f"{DQ}{summary}",
         "",

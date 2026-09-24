@@ -113,7 +113,7 @@ def test_parse_key_supplies_this_corpus_s_depth():
 
 
 @pytest.mark.parametrize("key", ["basics", "a/b/c", "a/b/c/d"])
-def test_a_key_of_the_wrong_arity_is_refused_by_sf01_and_not_by_this_module(key):
+def test_a_key_of_the_wrong_arity_is_refused_by_the_address_package_and_not_by_this_module(key):
     # ⚠️ The boundary, asserted rather than described: the refusal is an
     # `AddressError`. ⛔ A second arity check here with a different message is
     # how two tasks come to disagree about which is authoritative.
@@ -279,7 +279,7 @@ def test_a_variant_may_begin_with_a_digit_because_a_slug_may():
     assert manifest(variants=["01-java"]).variants == ("01-java",)
 
 
-def test_a_slug_refusal_from_sf01_arrives_as_this_package_s_error():
+def test_a_slug_refusal_from_the_address_package_arrives_as_this_package_s_error():
     # ⛔ `errors.ManifestError` promises one type from reading a manifest, and
     # a `variants` entry is checked by the address package's rule. A caller reading
     # `corpus.json` should not have to know that.

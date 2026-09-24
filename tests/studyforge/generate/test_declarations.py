@@ -355,12 +355,12 @@ def test_both_derivations_are_really_called_in_the_tree():
 
 
 @pytest.mark.parametrize("case", framework_modules(), ids=lambda case: case[0])
-def test_W290_no_call_site_spells_a_units_arguments_out_of_it(case):
+def test_no_call_site_spells_a_units_arguments_out_of_it(case):
     where, source = case
     assert spelled_calls(source, where) == []
 
 
-def test_W290_a_planted_call_that_drops_the_label_is_named_by_this_sweep():
+def test_a_planted_call_that_drops_the_label_is_named_by_this_sweep():
     # ⛔ The other direction, and what makes the sweep above an instrument
     # rather than a wish: this is a spelling with `label` dropped, which the
     # sweep must name.
@@ -375,7 +375,7 @@ def test_W290_a_planted_call_that_drops_the_label_is_named_by_this_sweep():
     assert named[0].startswith("planted.py:1 unit_location"), named
 
 
-def test_W290_a_planted_declared_call_that_drops_the_label_is_named_too():
+def test_a_planted_declared_call_that_drops_the_label_is_named_too():
     planted = "target = declared_location(corpus, container.address, unit.n, unit.title)\n"
 
     named = spelled_calls(planted, "planted.py")
@@ -384,7 +384,7 @@ def test_W290_a_planted_declared_call_that_drops_the_label_is_named_too():
     assert "declared_location" in named[0], named
 
 
-def test_W290_the_derivation_takes_the_source_whole_and_honours_its_label():
+def test_the_derivation_takes_the_source_whole_and_honours_its_label():
     corpus = read_corpus(FIXTURES / "depth2")
     source = corpus.units[0]
 
@@ -403,7 +403,7 @@ def test_W290_the_derivation_takes_the_source_whole_and_honours_its_label():
     assert unit_location(corpus, relabelled) != unit_location(corpus, source)
 
 
-def test_W290_the_old_spelling_cannot_be_written_at_all():
+def test_the_old_spelling_cannot_be_written_at_all():
     # ⛔ *Unwritable*, not merely RED. The five arguments a call site would
     # compose are not parameters, so dropping one is a `TypeError` at
     # the call rather than a page linking beside the file the build wrote.
@@ -420,7 +420,7 @@ def test_W290_the_old_spelling_cannot_be_written_at_all():
         )
 
 
-def test_W290_declared_location_takes_both_objects_whole_and_agrees_about_material():
+def test_declared_location_takes_both_objects_whole_and_agrees_about_material():
     # ⭐ The two spellings are one derivation, so a unit that HAS material is
     # placed identically whether it is reached as a source or as a declaration.
     # ⛔ A disagreement here is a container page anchored beside the real page.

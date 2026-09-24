@@ -234,7 +234,8 @@ def from_document(value: object, where: str) -> Exercise:
     """Read one `exercise` object, refusing every way it can be wrong."""
     if not isinstance(value, dict):
         raise ExerciseError(
-            f"{where}: 'exercise' must be a JSON object; the value is not reproduced here (R7)"
+            f"{where}: 'exercise' must be a JSON object; the value is not reproduced here, since "
+            f"a refusal never quotes a value that may be personal"
         )
     _require_known_keys(value, where)
     kind = kind_of(value["kind"], where) if "kind" in value else DEFAULT_KIND

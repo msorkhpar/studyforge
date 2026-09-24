@@ -37,7 +37,7 @@ def test_an_empty_list_is_refused_naming_the_key():
         variants_of([], "corpus.json")
 
 
-def test_slugs_are_sf01_s_and_a_refusal_arrives_as_this_package_s_error():
+def test_slugs_are_the_address_package_s_and_a_refusal_arrives_as_this_package_s_error():
     assert variants_of(["java", "2nd"], "corpus.json") == ("java", "2nd")
     assert slug_of("demo", "source") == "demo"
     with pytest.raises(ManifestError):

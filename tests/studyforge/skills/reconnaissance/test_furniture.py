@@ -40,7 +40,7 @@ def test_a_furnished_source_drafts_a_glob_for_everything_no_include_reads(tmp_pa
     assert proposal["corpus_api"] == 2
 
 
-def test_sf02_leaves_nothing_unclassified_once_a_person_gives_the_reasons(tmp_path):
+def test_the_manifest_reader_leaves_nothing_unclassified_once_a_person_gives_the_reasons(tmp_path):
     root = sources.furnished(tmp_path / "c")
     content = parse(json.dumps(sources.settled(survey(root).proposal))).content
     judged = [path.relative_to(root).as_posix() for path in source_files(root).files]
@@ -50,7 +50,7 @@ def test_sf02_leaves_nothing_unclassified_once_a_person_gives_the_reasons(tmp_pa
     assert Classification.CONTESTED not in verdicts.values(), verdicts
 
 
-def test_every_reason_is_left_open_and_sf02_refuses_the_draft_until_one_is_given(tmp_path):
+def test_every_reason_is_left_open_and_the_draft_is_refused_until_one_is_given(tmp_path):
     proposal = survey(sources.furnished(tmp_path / "c")).proposal
     assert all(entry["why"] is None for entry in proposal["content"]["not_material"])
     open_reasons = sources.settled(proposal)

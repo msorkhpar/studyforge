@@ -20,7 +20,7 @@ def test_a_new_file_is_written_and_the_same_bytes_are_kept(tmp_path):
 
 def test_other_bytes_refuse_every_write_before_any(tmp_path):
     (tmp_path / "old.txt").write_text("the reader's own\n", encoding="utf-8")
-    with pytest.raises(AuthoringError, match="R3"):
+    with pytest.raises(AuthoringError, match="non-destructive"):
         commit(tmp_path, [("new.txt", b"new\n"), ("old.txt", b"mine\n")], "the pass")
     assert not (tmp_path / "new.txt").exists(), "a refused pass wrote a file"
 
@@ -29,7 +29,7 @@ def test_the_ledger_named_in_replaces_is_rewritten(tmp_path):
     (tmp_path / LEDGER_PATH).parent.mkdir()
     (tmp_path / LEDGER_PATH).write_bytes(b"{}\n")
     files = [(LEDGER_PATH, b'{"merged": true}\n')]
-    with pytest.raises(AuthoringError, match="R3"):
+    with pytest.raises(AuthoringError, match="non-destructive"):
         commit(tmp_path, files, "the pass")
     assert commit(tmp_path, files, "the pass", replaces=(LEDGER_PATH,)) == ((LEDGER_PATH,), ())
     assert (tmp_path / LEDGER_PATH).read_bytes() == b'{"merged": true}\n'
@@ -38,5 +38,5 @@ def test_the_ledger_named_in_replaces_is_rewritten(tmp_path):
 
 def test_a_replaceable_path_holding_a_directory_is_still_refused(tmp_path):
     (tmp_path / LEDGER_PATH).mkdir(parents=True)
-    with pytest.raises(AuthoringError, match="R3"):
+    with pytest.raises(AuthoringError, match="non-destructive"):
         commit(tmp_path, [(LEDGER_PATH, b"{}\n")], "the pass", replaces=(LEDGER_PATH,))

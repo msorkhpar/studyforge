@@ -136,7 +136,8 @@ def test_media_that_is_not_committed_is_ignored_from_its_home_or_refused(name, t
         # ⛔ No SINGLE generated directory encloses this profile's media, and
         # the root ignore file is R3's: refused, never printed homeless.
         assert plan.ignore == ()
-        assert [refusal for refusal in plan.refusals if "R3" in refusal.why], plan.refusals
+        refused = [refusal for refusal in plan.refusals if "never edited" in refusal.why]
+        assert refused, plan.refusals
         assert plan.exit_code == INVALID
         return
     assert plan.exit_code == OK
@@ -214,7 +215,7 @@ def _with_clips(tmp_path, sizes, **limits):
     return root
 
 
-def test_W287_a_corpus_with_clips_on_disk_measures_them_and_names_no_task_as_future(tmp_path):
+def test_a_corpus_with_clips_on_disk_measures_them_and_names_no_task_as_future(tmp_path):
     plan = plan_for(_with_clips(tmp_path, (10, 20, 30)))
 
     assert plan.exit_code == OK
@@ -223,7 +224,7 @@ def test_W287_a_corpus_with_clips_on_disk_measures_them_and_names_no_task_as_fut
     assert not TASK_ID.search(footprint), footprint
 
 
-def test_W287_a_measured_crossing_is_reported_with_the_limit_it_crossed(tmp_path):
+def test_a_measured_crossing_is_reported_with_the_limit_it_crossed(tmp_path):
     root = _with_clips(tmp_path, (10, 20, 30), max_total_bytes=50, max_file_bytes=25)
     [footprint] = _footprints(plan_for(root))
     assert footprint.startswith("media footprint  EXCEEDS — measured 60 byte(s) in 3 file(s)")
@@ -232,14 +233,14 @@ def test_W287_a_measured_crossing_is_reported_with_the_limit_it_crossed(tmp_path
 
 
 @pytest.mark.parametrize("name", VALID)
-def test_W287_a_corpus_with_no_media_says_so_and_names_no_task_as_future(name):
+def test_a_corpus_with_no_media_says_so_and_names_no_task_as_future(name):
     [footprint] = _footprints(plan_for(FIXTURES / name))
     assert footprint.startswith("media footprint  measured — 0 byte(s) in 0 file(s)")
     assert "nothing is there yet" in footprint and UNPROJECTED not in footprint
     assert not TASK_ID.search(footprint), footprint
 
 
-def test_W287_a_rate_never_hides_what_is_on_disk(tmp_path):
+def test_a_rate_never_hides_what_is_on_disk(tmp_path):
     plan = plan_for(_with_clips(tmp_path, (40, 40), max_total_bytes=50), bytes_per_unit=1)
     projected, measured = _footprints(plan)
     assert projected.startswith("media footprint  fits — 3 byte(s) projected")
@@ -247,7 +248,7 @@ def test_W287_a_rate_never_hides_what_is_on_disk(tmp_path):
 
 
 @pytest.mark.parametrize("commit", ["always", "never"])
-def test_W287_a_policy_that_does_not_weigh_its_media_walks_no_disk(commit, tmp_path, monkeypatch):
+def test_a_policy_that_does_not_weigh_its_media_walks_no_disk(commit, tmp_path, monkeypatch):
     import studyforge.cli.plan.derive as derive
 
     def refuse(*_):
@@ -273,14 +274,14 @@ def _refused(plan) -> list[str]:
     return [refusal.line() for refusal in plan.refusals]
 
 
-def test_W314_a_corpus_inside_every_limit_plans_cleanly_and_exits_zero(tmp_path):
+def test_a_corpus_inside_every_limit_plans_cleanly_and_exits_zero(tmp_path):
     # ⭐ The other way round (R12): the stop is a stop and not a new floor.
     plan = _planted(tmp_path, (10, 20, 30), max_total_bytes=500, max_file_bytes=100)
     assert (plan.exit_code, plan.refusals) == (OK, ())
     assert "media footprint  fits" in "\n".join(plan.lines())
 
 
-def test_W314_a_crossed_total_exits_one_naming_the_number_and_the_limit(tmp_path):
+def test_a_crossed_total_exits_one_naming_the_number_and_the_limit(tmp_path):
     plan = _planted(tmp_path, (10, 20, 30), max_total_bytes=50, max_file_bytes=100)
     assert plan.exit_code == INVALID
     [refused] = _refused(plan)
@@ -289,7 +290,7 @@ def test_W314_a_crossed_total_exits_one_naming_the_number_and_the_limit(tmp_path
     assert "a build stops here" in refused
 
 
-def test_W314_a_crossed_per_file_limit_exits_one_naming_the_file_over_it(tmp_path):
+def test_a_crossed_per_file_limit_exits_one_naming_the_file_over_it(tmp_path):
     plan = _planted(tmp_path, (10, 30), max_total_bytes=500, max_file_bytes=25)
     assert plan.exit_code == INVALID
     [refused] = _refused(plan)
@@ -297,7 +298,7 @@ def test_W314_a_crossed_per_file_limit_exits_one_naming_the_file_over_it(tmp_pat
     assert "clip-1.mp3" in refused
 
 
-def test_W314_a_crossed_file_count_exits_one_and_is_reported_in_files(tmp_path):
+def test_a_crossed_file_count_exits_one_and_is_reported_in_files(tmp_path):
     # ⛔ The third limit is not a bigger version of the first two: both byte
     # ceilings are comfortably under here, and the corpus still stops.
     plan = _planted(tmp_path, (10, 10, 10), max_total_bytes=500, max_file_bytes=100, max_files=2)
@@ -306,14 +307,14 @@ def test_W314_a_crossed_file_count_exits_one_and_is_reported_in_files(tmp_path):
     assert "max_files crossed: 3 file(s) against a limit of 2" in refused
 
 
-def test_W314_every_limit_crossed_at_once_is_refused_once_each(tmp_path):
+def test_every_limit_crossed_at_once_is_refused_once_each(tmp_path):
     plan = _planted(tmp_path, (10, 30, 30), max_total_bytes=50, max_file_bytes=25, max_files=2)
     assert plan.exit_code == INVALID
     assert len(plan.refusals) == 3
     assert plan.summary().endswith("3 refusal(s)")
 
 
-def test_W314_a_projection_that_crosses_is_not_a_refusal(tmp_path):
+def test_a_projection_that_crosses_is_not_a_refusal(tmp_path):
     # ⛔ A projection is a question asked at a rate, not a reading, and only a
     # measurement may decide a commit (§5). The line still says EXCEEDS.
     plan = plan_for(FIXTURES / "depth2", bytes_per_unit=2_000_000_000)
@@ -322,7 +323,7 @@ def test_W314_a_projection_that_crosses_is_not_a_refusal(tmp_path):
 
 
 @pytest.mark.parametrize("commit", ["always", "never"])
-def test_W314_a_policy_whose_limits_are_inapplicable_is_never_refused(commit, tmp_path):
+def test_a_policy_whose_limits_are_inapplicable_is_never_refused(commit, tmp_path):
     # ⛔ `verdict_for` weighs nothing for a decision already taken, and this
     # must not become a refusal invented one layer up.
     root = _with_clips(tmp_path, (10, 20, 30), max_total_bytes=1, max_file_bytes=1)
@@ -333,7 +334,7 @@ def test_W314_a_policy_whose_limits_are_inapplicable_is_never_refused(commit, tm
     assert (plan.exit_code, plan.refusals) == (OK, ())
 
 
-def test_W314_a_reading_that_could_not_be_taken_refuses_nothing_about_the_limits(tmp_path):
+def test_a_reading_that_could_not_be_taken_refuses_nothing_about_the_limits(tmp_path):
     # ⭐ The record's own refusal already exits 1; an unweighed corpus must not
     # also be reported as having crossed a limit nobody measured.
     root = _with_clips(tmp_path, (10,), max_total_bytes=1, max_file_bytes=1)
@@ -359,14 +360,14 @@ def _version_one_record(root, speech_id, filename):
     write_state(state_file(root), {speech_id: Clip(filename, settings.fingerprint)}, settings)
 
 
-def test_W311_the_measured_line_says_the_reading_covers_the_located_clips_too(tmp_path):
+def test_the_measured_line_says_the_reading_covers_the_located_clips_too(tmp_path):
     # ⛔ The sentence was narrower than the figure beside it.
     [footprint] = _footprints(plan_for(_with_clips(tmp_path, (10,))))
     assert "under the declared units' media directories" in footprint
     assert "wherever the narration record locates a clip" in footprint
 
 
-def test_W311_a_clip_the_reading_could_not_weigh_is_named_on_its_own_line(tmp_path):
+def test_a_clip_the_reading_could_not_weigh_is_named_on_its_own_line(tmp_path):
     # ⛔ A fitting total is never read as the whole corpus.
     root = _with_clips(tmp_path, (10,))
     _version_one_record(root, "u1-s1", "u1-s1-nowhere.mp3")
@@ -376,7 +377,7 @@ def test_W311_a_clip_the_reading_could_not_weigh_is_named_on_its_own_line(tmp_pa
     assert [line for line in lines if line.startswith("media footprint  fits")]
 
 
-def test_W311_a_corpus_whose_clips_are_all_weighed_says_nothing_about_unweighed(tmp_path):
+def test_a_corpus_whose_clips_are_all_weighed_says_nothing_about_unweighed(tmp_path):
     lines = plan_for(_with_clips(tmp_path, (10,))).lines()
     assert [line for line in lines if line.startswith("media unweighed")] == []
 
@@ -402,7 +403,7 @@ def weighing(*sizes: int) -> MediaFootprint:
     )
 
 
-def test_W287_no_footprint_sentence_names_a_task_as_the_owner_of_the_measurement():
+def test_no_footprint_sentence_names_a_task_as_the_owner_of_the_measurement():
     # ⛔ The sentence must never name a task as the future owner on a corpus
     # with clips on disk. Every form the line can take is read, not only the
     # constant.
@@ -421,7 +422,7 @@ def test_W287_no_footprint_sentence_names_a_task_as_the_owner_of_the_measurement
     assert not TASK_ID.search(UNPROJECTED) and not TASK_ID.search(NOTHING_ON_DISK)
 
 
-def test_W287_a_measurement_is_printed_with_its_verdict_in_both_directions():
+def test_a_measurement_is_printed_with_its_verdict_in_both_directions():
     policy = MediaPolicy("auto", 50, 25)
     fits = MediaProjection(policy, 1, measured=weighing(10, 20)).lines()[-1]
     exceeds = MediaProjection(policy, 1, measured=weighing(10, 30, 20)).lines()[-1]
@@ -432,7 +433,7 @@ def test_W287_a_measurement_is_printed_with_its_verdict_in_both_directions():
     assert empty.endswith(f"measured — 0 byte(s) in 0 file(s) {MEASURED_OVER}; {NOTHING_ON_DISK}")
 
 
-def test_W287_a_refused_reading_says_why_and_is_never_printed_as_zero():
+def test_a_refused_reading_says_why_and_is_never_printed_as_zero():
     line = MediaProjection(DEFAULT_MEDIA, 1, unmeasured="no root").lines()[-1]
     assert line == "media footprint  not measured — no root"
 

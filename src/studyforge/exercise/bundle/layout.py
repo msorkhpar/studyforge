@@ -329,6 +329,7 @@ def require_inside(path: object, root: object, where: str) -> str:
             f"{where}: this names a path outside the exercise's own workspace "
             f"directory, so one exercise could reach another's files or the "
             f"corpus's own. Every path an exercise emits is inside its workspace. "
-            f"The value is not reproduced here (R7)."
+            f"The value is not reproduced here, since a refusal never quotes a value that may be "
+            f"personal."
         )
     return inside

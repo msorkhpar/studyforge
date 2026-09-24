@@ -139,8 +139,8 @@ def parse(html: str, depth: int, where: str = "artifact") -> Identity:
     found = IDENTITY_PATTERN.search(html)
     if found is None:
         raise PlacementError(
-            f"{where} carries no identity block; every generated artifact embeds one "
-            f"(R4), and a file without one is reported rather than skipped"
+            f"{where} carries no identity block; every generated artifact embeds one,"
+            f" and a file without one is reported rather than skipped"
         )
     return from_document(_loads(found.group(1), where), depth, where)
 

@@ -154,7 +154,7 @@ def test_more_ordinal_levels_than_this_skill_can_name_is_asked_about(tmp_path):
 # --------------------------------------------------------------------------
 
 
-def test_a_corpus_surveyed_as_dot_drafts_a_manifest_sf02_accepts(tmp_path, monkeypatch):
+def test_a_corpus_surveyed_as_dot_drafts_an_acceptable_manifest(tmp_path, monkeypatch):
     # ⛔ `survey('.')` is the documented call. Its unresolved name is empty,
     # and `variants: []` is refused, so every draft was unpromotable by hand.
     for build in EXCLUDES_NOTHING:

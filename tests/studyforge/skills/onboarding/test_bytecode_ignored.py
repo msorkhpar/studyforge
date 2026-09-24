@@ -176,7 +176,7 @@ def test_the_ignore_files_ignore_nothing_a_person_wrote(tmp_path):
 # --------------------------------------------------------------------------
 
 
-def _before_w345(tmp_path):
+def _onboarded_without_bytecode_ignores(tmp_path):
     """A corpus onboarded with no bytecode ignore files, committed.
 
     ⚠️ Its bytecode is deleted before the commit: committed bytecode is a
@@ -206,7 +206,7 @@ def _generated_check(root: Path) -> subprocess.CompletedProcess:
 
 
 def test_a_corpus_onboarded_before_gains_the_files_on_regeneration(tmp_path):
-    root = _before_w345(tmp_path)
+    root = _onboarded_without_bytecode_ignores(tmp_path)
     assert not [home for home in PYTHON_HOMES if (root / home / IGNORE_FILE).exists()]
     manifest = (root / "corpus.json").read_bytes()
 
@@ -222,7 +222,7 @@ def test_a_corpus_onboarded_before_gains_the_files_on_regeneration(tmp_path):
 
 
 def test_and_the_generated_non_destructive_check_does_not_read_them_as_an_edit(tmp_path):
-    root = _before_w345(tmp_path)
+    root = _onboarded_without_bytecode_ignores(tmp_path)
     _regenerate(root)
 
     unstaged = _generated_check(root)
@@ -237,7 +237,7 @@ def test_and_the_generated_non_destructive_check_does_not_read_them_as_an_edit(t
 
 def test_while_the_same_check_still_catches_a_real_edit_in_that_state(tmp_path):
     # ⭐ The control: the green above is not a check that reads nothing.
-    root = _before_w345(tmp_path)
+    root = _onboarded_without_bytecode_ignores(tmp_path)
     _regenerate(root)
     (root / "src/01.md").write_text("# First\n\nRewritten.\n", encoding="utf-8")
 
@@ -248,7 +248,7 @@ def test_while_the_same_check_still_catches_a_real_edit_in_that_state(tmp_path):
 
 
 def test_a_persons_ignore_file_at_one_of_those_paths_is_refused_and_nothing_written(tmp_path):
-    root = _before_w345(tmp_path)
+    root = _onboarded_without_bytecode_ignores(tmp_path)
     (root / "tests" / IGNORE_FILE).write_text("scratch/\n", encoding="utf-8")
     before = {p: p.read_bytes() for p in root.rglob("*") if p.is_file() and ".git" not in p.parts}
 

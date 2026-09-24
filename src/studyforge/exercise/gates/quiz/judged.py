@@ -145,7 +145,7 @@ def require_judgements(judgements: object, where: str) -> tuple[Judgement, ...]:
             f"{where}: {repeated} judgement is recorded twice for one gate and one "
             f"question. A gate reads one judgement per thing it judges, so a second "
             f"one is a reading nobody can say was used. The ids are not reproduced "
-            f"here (R7)."
+            f"here, since a refusal never quotes a value that may be personal."
         )
     return taken
 
@@ -252,7 +252,8 @@ def _unowed(
     return [
         f"{extra} {gate} judgement is recorded for a question or an option this quiz "
         f"does not offer, so the record was taken over material that has since moved "
-        f"(the ids are not reproduced here, R7)"
+        f"(the ids are not reproduced here, since a refusal never quotes a value that may be "
+        f"personal)"
     ]
 
 

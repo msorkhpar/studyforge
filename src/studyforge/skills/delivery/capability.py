@@ -279,7 +279,7 @@ class Index:
             "read to find out: *when does capability X become available?***",
             "",
             "⛔ **Derived from the epic documents, never transcribed from them.** "
-            "A hand-edit here is a finding against the delivery skill (R19), not "
+            "A hand-edit here is a finding against the delivery skill, not "
             "a fix — it is reverted by the next regeneration.",
             "",
             self._derivation(),

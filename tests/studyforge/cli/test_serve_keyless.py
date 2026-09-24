@@ -201,7 +201,7 @@ def test_a_quiz_edited_while_served_is_withheld_from_its_next_request(tmp_path) 
         assert fetch(serving.server, "/docs/fresh.md")[0] == 404
 
 
-def test_a_page_built_before_W451_is_refused_whole(tmp_path) -> None:
+def test_a_page_that_carries_its_quiz_key_is_refused_whole(tmp_path) -> None:
     """⚠️ Fail closed: a page that carries the key in its attributes is not served at
     all until the corpus is rebuilt, so a rebuild comes BEFORE a restart."""
     shape = layout(tmp_path / "old")

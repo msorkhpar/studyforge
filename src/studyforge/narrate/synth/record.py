@@ -211,7 +211,7 @@ def the_one_file(path: Path | str) -> Path:
         raise StateError(
             f"the regeneration record is {NARRATION_STATE_FILENAME} and this path "
             f"ends in {file.name!r}; ask `state_file(root)` for it rather than "
-            f"composing one, because R9 gives this contract one file and one writer"
+            f"composing one, because this contract has one file and one writer"
         )
     return file
 

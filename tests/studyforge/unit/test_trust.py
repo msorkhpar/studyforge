@@ -72,7 +72,7 @@ def test_an_unknown_trust_is_refused(trust):
         check_test_record("bundled", trust)
 
 
-def test_the_vocabulary_is_exactly_what_sf23_will_consume():
+def test_the_vocabulary_is_exactly_what_the_trust_reader_consumes():
     assert PROVENANCE == ("bundled", "generated", "user")
     assert TRUST == ("authoritative", "advisory")
 

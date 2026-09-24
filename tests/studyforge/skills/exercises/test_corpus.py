@@ -125,7 +125,7 @@ def test_every_exercise_it_writes_is_generated_and_advisory(corpus):
         assert (bundle.provenance, bundle.trust) == ("generated", "advisory")
 
 
-def test_it_supersedes_sk04_s_refusal_of_a_grader_less_source(corpus):
+def test_it_supersedes_the_refusal_of_a_grader_less_source(corpus):
     # ⛔ Onboarding once refused a source that ships no grader. Run on two of
     # them — one with an example and one with nothing at all — and each ships
     # a gate-cleared exercise instead of a refusal.
@@ -212,7 +212,7 @@ def test_an_existing_file_with_other_bytes_refuses_the_whole_pass_before_any_wri
     (tmp_path / blocking).parent.mkdir(parents=True)
     (tmp_path / blocking).write_text("# the reader's own work\n", encoding="utf-8")
     before = snapshot(tmp_path)
-    with pytest.raises(AuthoringError, match="R3"):
+    with pytest.raises(AuthoringError, match="non-destructive"):
         author_corpus(
             tmp_path,
             source="demo",

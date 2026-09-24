@@ -284,7 +284,7 @@ def _corpus_creations(root: Path, profile: Profile) -> list[Creation]:
         Creation(f"{where.assets.as_posix()}/", "the shared stylesheets, scripts and player"),
         Creation(
             f"{where.archive.as_posix()}/",
-            "the archive root, which every build reads (R2)",
+            "the archive root, which every build reads",
             writer=ADAPTER,
         ),
         Creation(

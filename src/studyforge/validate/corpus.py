@@ -159,8 +159,8 @@ def _no_archive(walk: Walk) -> Finding:
     return Finding(
         RULE_NO_ARCHIVE,
         f"{ARCHIVE_DIRNAME}/",
-        f"{state}, so there is no archive to judge. An adapter writes the archive here "
-        f"(R2), and a corpus is not valid until one is present.",
+        f"{state}, so there is no archive to judge. An adapter writes the archive here,"
+        f" and a corpus is not valid until one is present.",
     )
 
 

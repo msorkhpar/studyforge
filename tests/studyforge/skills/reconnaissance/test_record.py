@@ -268,7 +268,7 @@ def test_a_numbered_heading_that_links_a_file_of_regions_is_still_a_container(tm
     ]
 
 
-def test_sf02_accepts_the_draft_of_a_record_with_heading_form_entries(tmp_path):
+def test_the_manifest_reader_accepts_the_draft_of_a_record_with_heading_form_entries(tmp_path):
     headed = survey(sources.heading_entries(tmp_path / "h")).proposal
     assert headed == survey(sources.heading_entries(tmp_path / "b", heading=False)).proposal
     content = parse(json.dumps(sources.settled(headed))).content

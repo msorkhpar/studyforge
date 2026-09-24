@@ -197,7 +197,7 @@ class Container:
             f"{self.address.key} declares unit {n} {what} at container_api "
             f"{self.container_api}; it needs container_api {needs}. It is refused "
             f"rather than read: a build that does not speak the shape must be unable "
-            f"to read the map, or the version says nothing (R9)."
+            f"to read the map, or the version says nothing."
         )
 
     @property

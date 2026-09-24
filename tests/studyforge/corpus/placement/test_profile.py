@@ -332,7 +332,7 @@ def test_a_profile_answering_the_root_ignore_file_as_its_home_is_refused():
 def test_sibling_media_that_is_not_committed_has_no_home_and_is_refused():
     with pytest.raises(PlacementError) as raised:
         profile_for("sibling").ignore_file(media=True)
-    assert "R3" in str(raised.value)
+    assert "is never edited" in str(raised.value)
 
 
 @pytest.mark.parametrize("name", registered())

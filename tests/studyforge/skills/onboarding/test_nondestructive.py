@@ -353,7 +353,7 @@ def test_a_check_generated_against_edits_the_corpus_no_longer_declares_refuses(t
     ran = _check(root)
 
     assert ran.returncode != 0, ran.stdout
-    assert "R19" in ran.stdout, ran.stdout
+    assert "regenerate it rather than editing it" in ran.stdout, ran.stdout
 
 
 # ---------------------------------------------------------------------------

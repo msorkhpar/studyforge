@@ -10,10 +10,10 @@ import pytest
 
 from tests.gate_coverage import SCAN_ROOT
 from tests.gate_coverage.probes import (
+    BY_NAME_SPELLING,
+    MEASURED_SHAPES,
+    NARROWED_SPELLING,
     PROBES,
-    RULING_57,
-    SF10_SPELLING,
-    W7_SPELLING,
     _token_tell,
 )
 from tests.gate_coverage.tell import GATE, _calls, decodes, document_readers, import_origins
@@ -30,7 +30,7 @@ def test_resolving_origins_finds_the_same_readers_the_token_tell_found():
     by_token = {
         path
         for path in root.rglob("*.py")
-        if _token_tell(path.read_text(encoding="utf-8"), SF10_SPELLING)
+        if _token_tell(path.read_text(encoding="utf-8"), NARROWED_SPELLING)
     }
     assert by_origin == by_token, {
         "only by origin": sorted(str(p.relative_to(root)) for p in by_origin - by_token),
@@ -56,7 +56,7 @@ def test_the_shipped_spelling_missed_two_genuine_readers():
     missed = sorted(
         label
         for label, (source, is_reader) in PROBES.items()
-        if label[0] in RULING_57 and is_reader and not _token_tell(source, SF10_SPELLING)
+        if label[0] in MEASURED_SHAPES and is_reader and not _token_tell(source, NARROWED_SPELLING)
     )
     assert missed == [
         "D from json import load / load",
@@ -66,14 +66,14 @@ def test_the_shipped_spelling_missed_two_genuine_readers():
         assert decodes(PROBES[label][0]) is True
 
 
-def test_w7s_first_spelling_read_delegation_as_decoding():
+def test_the_by_name_spelling_reads_delegation_as_decoding():
     # ⛔ The other half of the same control, and the false positive that
     # produced the origin tell in the first place: `("loads", "load")` sees
     # `archive.document.load` and cannot tell it from `json.load`.
     flagged = sorted(
         label
         for label, (source, is_reader) in PROBES.items()
-        if label[0] in RULING_57 and not is_reader and _token_tell(source, W7_SPELLING)
+        if label[0] in MEASURED_SHAPES and not is_reader and _token_tell(source, BY_NAME_SPELLING)
     )
     assert flagged == [
         "F from archive.document import load / load",
@@ -92,8 +92,8 @@ def test_a_shadowed_import_is_asked_rather_than_assumed_away():
     # silence the origin tell was written against. ⚠️ Both token spellings miss it.
     source, _ = PROBES["J from json import load, then shadowed"]
     assert decodes(source) is True
-    assert _token_tell(source, SF10_SPELLING) is False
-    assert _token_tell(source, W7_SPELLING) is True
+    assert _token_tell(source, NARROWED_SPELLING) is False
+    assert _token_tell(source, BY_NAME_SPELLING) is True
 
     # ⭐ And the control on the control: with no `json` import above it, the
     # very same `def load` names only itself and nothing is asked.

@@ -5,7 +5,7 @@ must answer for it, and the superseded token match that both earlier spellings
 used.
 
 **How you use it.** `PROBES[label]` is `(source, is_reader)`;
-`_token_tell(source, W7_SPELLING)` re-runs a retired tell.
+`_token_tell(source, BY_NAME_SPELLING)` re-runs a retired tell.
 
 **Depends on.** `ast`. ⛔ **Dead as an implementation, live as a control** —
 nothing that ships imports this module, and `test_tell.py` is its only reader.
@@ -102,13 +102,13 @@ def _token_tell(source: str, spellings: tuple[str, ...]) -> bool:
 
 
 #: The by-name spelling. ⛔ Two false positives: it reads delegation as decoding.
-W7_SPELLING = ("loads", "load")
+BY_NAME_SPELLING = ("loads", "load")
 #: The later narrowing. ⛔ Two false negatives, and a false negative in a
 #: coverage check is the silent one.
-SF10_SPELLING = ("loads", "json.load")
+NARROWED_SPELLING = ("loads", "json.load")
 
 #: The eight shapes the tell was measured on, by letter. ⚠️ `I`–`K` are later
 #: additions and are held out of the two counting assertions below: over these
 #: eight, *two* are missed and *two* wrongly flagged, and a control that quietly
 #: widens its own population stops being a check on that reading.
-RULING_57 = "ABCDEFGH"
+MEASURED_SHAPES = "ABCDEFGH"

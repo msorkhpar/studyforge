@@ -228,7 +228,7 @@ class Profile:
                 f"the corpus's media policy does not commit generated media, and placement "
                 f"{self.name!r} has no ignore file that may hold the rules: no single "
                 f"directory this framework generates encloses its media, and the repository's "
-                f"root ignore file is never edited (R3). Commit the media, or choose a "
+                f"root ignore file is never edited. Commit the media, or choose a "
                 f"placement whose media lives under {GENERATED_ROOT}/"
             )
         return IgnoreFile(home=home, lines=(*CACHE_IGNORE_LINES, *lines))

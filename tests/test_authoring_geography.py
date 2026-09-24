@@ -184,7 +184,7 @@ def assert_page_draws(drawn: tuple[str, ...], profile: Profile, where: str) -> N
         )
 
 
-class PreW323Sibling(SiblingProfile):
+class LooseBesideTheSourceSibling(SiblingProfile):
     """An older `sibling` arithmetic: pages and media loose beside the source file.
 
     ⛔ **The plant, and it is never registered** — `register` would put it in the
@@ -241,7 +241,7 @@ def test_a_planted_change_to_the_geography_turns_the_page_red_by_name():
     # ⛔ R12, the half that matters: the defect, planted. The page
     # is correct and the CODE moves under it.
     with pytest.raises(AssertionError, match="placement 'sibling' puts"):
-        assert_page_draws(drawn_on_the_page("sibling"), PreW323Sibling(), "the plant")
+        assert_page_draws(drawn_on_the_page("sibling"), LooseBesideTheSourceSibling(), "the plant")
 
 
 @pytest.mark.parametrize("name", sorted(registered()))

@@ -133,7 +133,7 @@ class Cached:
             return (
                 f"{self.where} declares {_said(self.declared)}; this build speaks "
                 f"site_api {sorted(KNOWN_SITE_API)}, so the cache is not read — "
-                f"the scan runs and the cache is rewritten (R9)"
+                f"the scan runs and the cache is rewritten"
             )
         return f"{self.where} declares site_api {self.declared}"
 
@@ -224,7 +224,7 @@ def ensure_ignored(path: Path | str) -> tuple[str, ...]:
     return (
         f"{IGNORE_FILENAME} beside the discovery cache does not ignore "
         f"{SITE_CACHE_FILENAME}, and it is not this writer's to rewrite; regenerate the "
-        f"corpus so its generated ignore file carries the rule (R19)",
+        f"corpus so its generated ignore file carries the rule",
     )
 
 

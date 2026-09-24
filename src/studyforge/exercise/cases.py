@@ -310,7 +310,7 @@ def _case_id(value: object, where: str) -> str:
     if not isinstance(value, str) or not CASE_ID.match(value):
         raise ExerciseError(
             f"{where}: a case's 'id' must be {CASE_ID_PERMITTED}. The value is not "
-            f"reproduced here (R7)."
+            f"reproduced here, since a refusal never quotes a value that may be personal."
         )
     return value
 
@@ -353,5 +353,6 @@ def _require_distinct_ids(cases: tuple[Case, ...], where: str) -> None:
         raise ExerciseError(
             f"{where}: 'cases' names {repeated} id more than once. Every test the "
             f"report names maps to exactly one case, so a repeated id is a result "
-            f"counted twice. The ids are not reproduced here (R7)."
+            f"counted twice. The ids are not reproduced here, since a refusal never quotes a "
+            f"value that may be personal."
         )

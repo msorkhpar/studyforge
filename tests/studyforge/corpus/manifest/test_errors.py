@@ -141,7 +141,7 @@ def test_the_escaping_phrase_names_the_fault_and_repeats_no_part_of_the_path(pat
     assert pattern not in errors._escape(pattern)
 
 
-def test_both_refusals_say_it_with_the_one_function_W19_unified_them_onto():
+def test_both_refusals_say_it_with_the_one_shared_function():
     # ⭐ Not two copies that agree today. `is`, so a second definition
     # appearing anywhere fails here rather than drifting for a release.
     assert parse_module._escape is errors._escape

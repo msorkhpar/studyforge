@@ -236,5 +236,5 @@ def _reject_forbidden_target(edit: PermittedEdit, content: ContentPolicy) -> Non
         raise ManifestError(
             f"permitted_edits may never name {path.name!r}: it is repository-root "
             f"documentation, which the repository's own readers read as content whatever "
-            f"'content' classifies it as for the site (R3)"
+            f"'content' classifies it as for the site"
         )

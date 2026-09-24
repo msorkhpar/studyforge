@@ -182,13 +182,13 @@ POISON_SHAPES = {
 #: ⭐ Each reader is fixed per function, and these cases passing is the fix
 #: holding **through a composed pipeline** — a bad file on disk, through the
 #: walk, the reader and the report (§10b's vantage-point argument).
-OWED_TO_W1: tuple[str, ...] = ()
+OWED_TO_A_FIX: tuple[str, ...] = ()
 
 
 def poisoned(shape):
     """One parametrised shape, marked `xfail(strict=True)` while it is owed.
 
-    ⛔ The mark is driven from `OWED_TO_W1` rather than written per test, so
+    ⛔ The mark is driven from `OWED_TO_A_FIX` rather than written per test, so
     emptying the table is the whole edit — there is no second place a stale
     marker can survive.
     """
@@ -198,11 +198,11 @@ def poisoned(shape):
                 strict=True,
                 reason=(
                     f"{shape}: R7 echo owed to a fix. Delete this entry from "
-                    f"OWED_TO_W1 when the fix lands; strict makes that compulsory."
+                    f"OWED_TO_A_FIX when the fix lands; strict makes that compulsory."
                 ),
             )
         ]
-        if shape in OWED_TO_W1
+        if shape in OWED_TO_A_FIX
         else []
     )
     return pytest.param(shape, POISON_SHAPES[shape], id=shape.replace(" ", "-"), marks=marks)

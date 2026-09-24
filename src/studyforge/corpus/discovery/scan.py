@@ -207,7 +207,7 @@ def _block_of(text: str, where: str) -> object:
     if found is None:
         return _refuse(
             f"{where} carries no identity block; every generated artifact embeds "
-            f"one (R4), and a file without one is reported rather than skipped"
+            f"one, and a file without one is reported rather than skipped"
         )
     try:
         return json.loads(found.group(1))

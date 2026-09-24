@@ -214,7 +214,8 @@ def label_of(ordinal: int, label: str | None = None) -> str:
     if not is_filename_component(label):
         raise PlacementError(
             "a unit label becomes part of a filename, so it may carry only "
-            f"{FILENAME_PERMITTED_DESCRIBED}; the label is not reproduced here (R7)"
+            f"{FILENAME_PERMITTED_DESCRIBED}; the label is not reproduced here, since a refusal "
+            f"never quotes a value that may be personal"
         )
     return label
 

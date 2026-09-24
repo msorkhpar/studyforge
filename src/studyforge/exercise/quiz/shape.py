@@ -154,6 +154,6 @@ def _quiz_trust(record: dict, where: str) -> tuple[str, str]:
             f"one declares {pair[0]!r} and {pair[1]!r}. A quiz's honesty gates "
             f"are taken ONCE at authoring and cannot be re-run by whoever holds "
             f"the bundle, so no quiz may claim to be the source's own grader "
-            f"(R5, spec §7)."
+            f"(spec §7)."
         )
     return pair

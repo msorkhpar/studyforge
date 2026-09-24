@@ -315,7 +315,8 @@ def _require_distinct(roles: Iterable[str], key: str, where: str) -> None:
         raise ExerciseError(
             f"{where}: '{key}' names {repeated} role more than once. Each role is one "
             f"file, so a repeated role is two digests for it and no answer about "
-            f"which was read. The roles are not reproduced here (R7)."
+            f"which was read. The roles are not reproduced here, since a refusal never quotes a "
+            f"value that may be personal."
         )
 
 

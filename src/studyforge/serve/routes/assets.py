@@ -187,7 +187,8 @@ def client_tag(client: str) -> bytes:
     if not client.startswith("/") or any(char in client for char in CLIENT_PATH_FORBIDDEN):
         raise ValueError(
             "the run client is served at one rooted URL path carrying no attribute "
-            "delimiter; the value is not reproduced here (R7)"
+            "delimiter; the value is not reproduced here, since a refusal never quotes a value "
+            "that may be personal"
         )
     return CLIENT_TAG.format(path=client).encode("utf-8")
 

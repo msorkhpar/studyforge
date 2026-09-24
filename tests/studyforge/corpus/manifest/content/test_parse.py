@@ -15,7 +15,7 @@ from tests.studyforge.corpus.manifest.content.policies import WHY, policy, scaff
 #: was derived from what a loose glob does to rule 4, **not** fitted to these;
 #: they are here so that a later tightening of the rule that would have
 #: refused the ruling's own examples fails loudly.
-RULING_90_GLOBS = ("docs/studyforge/*", "LICENSE", ".gitignore")
+NOT_MATERIAL_GLOBS = ("docs/studyforge/*", "LICENSE", ".gitignore")
 
 
 @pytest.mark.parametrize("include", [[], None, "src/*.md", [""], [7]])
@@ -94,7 +94,7 @@ def test_content_must_be_an_object(value):
         parse_content(value)
 
 
-@pytest.mark.parametrize("glob", RULING_90_GLOBS)
+@pytest.mark.parametrize("glob", NOT_MATERIAL_GLOBS)
 def test_the_rulings_own_three_examples_are_accepted(glob):
     assert scaffolding((glob, WHY)).not_material == (NotMaterial(glob, WHY),)
 

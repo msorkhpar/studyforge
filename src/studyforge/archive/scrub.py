@@ -379,6 +379,6 @@ def assert_clean(value: object, where: str) -> None:
     """
     for at, name in leaks(value, where):
         raise PersonalDataLeak(
-            f"{scrub(at)} carries {_article(name)} {name} (R7); "
+            f"{scrub(at)} carries {_article(name)} {name}, which is personal data; "
             f"refusing to write it rather than rewriting the record"
         )

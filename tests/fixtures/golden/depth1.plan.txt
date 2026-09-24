@@ -22,7 +22,7 @@ claim .studyforge/depth-one/units/unit-03/practice/  depth-one unit 3's practice
 create .studyforge/depth-one/units/unit-03/unit-03-asking-the-first-question.unit.html  depth-one unit 3's page
 claim .studyforge/depth-one/units/unit-03/video/  depth-one unit 3's video — a build creates it only when it copies a file into it
 expect .studyforge/site.json  the discovery cache, never the authority — `studyforge serve` writes it; a build into this root does not
-keep archive/  the archive root, which every build reads (R2) — an adapter writes it; a build into this root does not
+keep archive/  the archive root, which every build reads — an adapter writes it; a build into this root does not
 create index.html  the root index
 ignore site.json  in .studyforge/.gitignore
 ignore site.json.writing  in .studyforge/.gitignore

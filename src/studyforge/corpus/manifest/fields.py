@@ -148,5 +148,5 @@ def onboarding_doc_of(value: object, where: str) -> str | None:
         and path.stem != ""
     )
     if not clean:
-        raise ManifestError(f"{rule}; the value is not reproduced, since it may be a path (R7)")
+        raise ManifestError(f"{rule}; the value is not reproduced, since it may be a path")
     return value

@@ -174,7 +174,7 @@ def test_one_runtime_and_it_is_python():
     assert exercise(3).run_command[0] == "python3"
 
 
-def test_the_runtimes_key_is_not_invented_before_w350_lands():
+def test_the_runtimes_key_is_declared_only_where_the_framework_knows_it():
     # ⛔ The framework owns the key: absent from the framework, it is absent
     # here, and present there it must be declared here.
     manifest = json.loads((ROOT / "corpus.json").read_text(encoding="utf-8"))

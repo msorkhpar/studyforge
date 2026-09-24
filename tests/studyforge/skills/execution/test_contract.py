@@ -160,7 +160,7 @@ def test_a_key_the_contract_does_not_carry_is_named_and_called_a_finding():
     with pytest.raises(contract.ContractRefused) as refused:
         contract.require(loaded(), "editor", "image", "never_declared")
     assert "editor.image.never_declared" in str(refused.value)
-    assert "finding" in str(refused.value) and "R19" in str(refused.value)
+    assert "finding" in str(refused.value) and "into this skill" in str(refused.value)
 
 
 def test_an_optional_key_is_absent_rather_than_refused_and_a_declared_null_is_a_value():

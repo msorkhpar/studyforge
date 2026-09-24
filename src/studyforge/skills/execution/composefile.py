@@ -308,7 +308,7 @@ def _environment(block: Mapping[str, object]) -> dict[str, object]:
             raise ContractRefused(
                 "the contract requires an environment variable and declares neither a "
                 "default nor a compose value for it, so nothing says what a rendered "
-                "file writes there, and this renderer will not invent it (R19)"
+                "file writes there, and this renderer will not invent it"
             )
         if value is not None:
             built[name] = value

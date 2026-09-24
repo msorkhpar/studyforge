@@ -265,7 +265,7 @@ def test_the_real_transport_reports_absence_in_a_scrubbed_printable_sentence(mon
     leaking = Sent("GET", f"{BASE}/x{HOME}/y", None, "application/json", 1.0)
     with pytest.raises(ServiceUnavailable) as absent:
         over_http(leaking)
-    assert "R6, R8" in str(absent.value)
+    assert "still reads" in str(absent.value)
     assert "jane" not in str(absent.value)
 
 

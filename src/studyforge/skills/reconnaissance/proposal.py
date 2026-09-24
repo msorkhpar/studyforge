@@ -306,8 +306,8 @@ def _choices(
         ),
         settles_it=(
             "'sibling' puts each page in a 'study' directory beside the file it "
-            "was made from, which is right when a reader already knows the layout "
-            "(R3); 'tree' puts everything under one generated root"
+            "was made from, which is right when a reader already knows the layout;"
+            " 'tree' puts everything under one generated root"
         ),
     )
     if record is not None:

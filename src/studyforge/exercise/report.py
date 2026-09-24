@@ -268,7 +268,8 @@ def _parse(path: Path, declared: str, where: str) -> ElementTree.Element:
         raise ExerciseError(
             f"{where}: the report at '{_named(declared, path)}' is XML, but its root "
             f"element is not one of {list(REPORT_ROOTS)}, so it is not a {JUNIT!r} "
-            f"report. The element's name is not reproduced here (R7)."
+            f"report. The element's name is not reproduced here, since a refusal never quotes a "
+            f"value that may be personal."
         )
     return root
 
@@ -289,13 +290,15 @@ def _identify(
             f"{where}: the report at '{_named(declared, path)}' names a test the "
             f"record's 'cases' does not, so it is refused rather than counted — a "
             f"breakdown that silently drops a result is a green lie about what ran. "
-            f"The ids are not reproduced here (R7)."
+            f"The ids are not reproduced here, since a refusal never quotes a value that may be "
+            f"personal."
         )
     if len(named) > 1:
         raise ExerciseError(
             f"{where}: the report at '{_named(declared, path)}' names one test that "
             f"{len(named)} of the record's 'cases' each claim, so no result can "
-            f"be attributed. The ids are not reproduced here (R7)."
+            f"be attributed. The ids are not reproduced here, since a refusal never quotes a "
+            f"value that may be personal."
         )
     return named[0]
 

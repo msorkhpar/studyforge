@@ -138,7 +138,7 @@ def test_the_key_order_is_what_reaches_disk():
     assert tuple(order) == DOCUMENT_KEYS
 
 
-def test_W289_a_non_object_block_is_refused_through_the_builder_and_never_raises():
+def test_a_non_object_block_is_refused_through_the_builder_and_never_raises():
     # ⛔ `check_counts` filters to object blocks first, and the builder calls
     # `counts_of` unfiltered, so `counts_of` itself must refuse by name rather
     # than let an `AttributeError` out of `build` naming a TYPE and never the

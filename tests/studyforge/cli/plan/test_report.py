@@ -196,7 +196,7 @@ def test_a_path_a_build_does_not_write_is_never_a_create_and_names_what_does():
     assert claimed.line().endswith("a build creates it only when it copies a file into it")
 
 
-def test_W288_a_superseded_clip_is_its_own_line_counted_and_never_a_path():
+def test_a_superseded_clip_is_its_own_line_counted_and_never_a_path():
     clip = SupersededClip("u/audio/u.intro.b1-0123abcd.mp3", "u.intro.b1")
     copy = Creation("u/audio/u.intro.b1-feedbeef.mp3", "copy")
     plan = a_plan(creations=(copy,), superseded=(clip,))

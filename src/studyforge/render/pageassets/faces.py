@@ -173,7 +173,7 @@ LICENCE_PINS = {
 HEADER = (
     "/* Faces: Charis and Andika (SIL Global) and JetBrains Mono, SIL Open Font\n"
     "   License 1.1; each licence ships beside its files in the asset directory.\n"
-    "   Embedded unmodified as base64 so no page requests a font (R8). */\n"
+    "   Embedded unmodified as base64 so no page requests a font. */\n"
 )
 
 

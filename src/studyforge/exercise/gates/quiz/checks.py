@@ -136,5 +136,5 @@ def require_advisory(exercise: Exercise, where: str) -> None:
             f"declares {exercise.provenance!r} and {exercise.trust!r}. Three of a "
             f"quiz's five gates are model judgements taken ONCE at authoring and "
             f"cannot be re-run by whoever holds the bundle, so no quiz may claim to "
-            f"be the source's own grader (R5, spec §7)."
+            f"be the source's own grader (spec §7)."
         )

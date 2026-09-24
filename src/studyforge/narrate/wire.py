@@ -97,5 +97,5 @@ def over_http(sent: Sent) -> Received:
 
 def _absent(url: str, kind: str) -> str:
     """Say the service did not answer, ⛔ naming the failure's type and never it."""
-    ending = "A corpus with no narration still reads (R6, R8); nothing was written."
+    ending = "A corpus with no narration still reads; nothing was written."
     return scrub(f"the narration service did not answer at {url} ({kind}). {ending}")

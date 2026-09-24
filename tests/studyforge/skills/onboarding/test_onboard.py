@@ -319,7 +319,7 @@ def test_media_that_is_not_committed_under_sibling_is_refused_before_anything_is
     with pytest.raises(OnboardingRefused) as refused:
         _made(placement="sibling", media={"commit": "never"})
 
-    assert "R3" in str(refused.value)
+    assert "is never edited" in str(refused.value)
 
 
 # --------------------------------------------------------------------------

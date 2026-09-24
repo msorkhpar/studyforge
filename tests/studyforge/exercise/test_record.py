@@ -128,7 +128,7 @@ def test_a_generated_authoritative_record_is_refused():
     # reading as the source's grader is a claim nobody notices is false until
     # a reader trusts a green tick that was never earned.
     message = refuse(from_document, record(provenance="generated", trust="authoritative"), WHERE)
-    assert "R5" in message
+    assert "claim to be the source's grader" in message
 
 
 def test_a_generated_advisory_record_is_accepted():

@@ -192,7 +192,8 @@ def _region(value: dict, what: str, where: str) -> tuple[str, str]:
             f"{where} declares {what} as an object that is not a region; a region is "
             f"{list(ORIGIN_KEYS)}, both required. A path alone is the string form "
             f"written the long way, and a section alone is a region of nothing. "
-            f"The keys are not reproduced here (R7)."
+            f"The keys are not reproduced here, since a refusal never quotes a value that may be "
+            f"personal."
         )
     path = optional_path(value["path"], f"{what} path", where)
     if path is None:
@@ -242,6 +243,6 @@ def optional_label(value: object, what: str, where: str) -> str | None:
             f"{where} declares {what} as text that cannot become part of a filename. "
             f"A label may carry only {FILENAME_PERMITTED_DESCRIBED}. Accepted here, "
             f"it would validate and then fail at render. It is not reproduced, "
-            f"because a declared field is read out of a file somebody else wrote (R7)."
+            f"because a declared field is read out of a file somebody else wrote."
         )
     return text

@@ -23,7 +23,7 @@ claim advanced/03-putting-it-together/study/images/advanced.03-putting-it-togeth
 claim advanced/03-putting-it-together/study/practice/advanced.03-putting-it-together.unit-01-one-small-program/  advanced/03-putting-it-together unit 1's practice — a build creates it only when it copies a file into it
 create advanced/03-putting-it-together/study/putting-it-together.section.html  the page for container advanced/03-putting-it-together
 claim advanced/03-putting-it-together/study/video/advanced.03-putting-it-together.unit-01-one-small-program/  advanced/03-putting-it-together unit 1's video — a build creates it only when it copies a file into it
-keep archive/  the archive root, which every build reads (R2) — an adapter writes it; a build into this root does not
+keep archive/  the archive root, which every build reads — an adapter writes it; a build into this root does not
 claim basics/01-getting-started/study/attachments/basics.01-getting-started.unit-01-your-first-class/  basics/01-getting-started unit 1's attachments — a build creates it only when it copies a file into it
 claim basics/01-getting-started/study/attachments/basics.01-getting-started.unit-02-fields-and-constructors/  basics/01-getting-started unit 2's attachments — a build creates it only when it copies a file into it
 claim basics/01-getting-started/study/attachments/basics.01-getting-started.unit-03-watching-it-run/  basics/01-getting-started unit 3's attachments — a build creates it only when it copies a file into it

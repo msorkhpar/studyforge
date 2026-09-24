@@ -133,7 +133,7 @@ def _citable(name: str) -> None:
         raise IndexRefused(
             "a document is cited by a bare filename, never by a path — ⛔ and the "
             "offending value is withheld rather than quoted, because a refusal that "
-            "echoed it would put an unvetted path in a log (R7)"
+            "echoed it would put an unvetted path in a log"
         )
 
 

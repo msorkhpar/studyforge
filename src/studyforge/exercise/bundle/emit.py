@@ -210,7 +210,7 @@ def write(root: Path | str, emission: Emission, where: str) -> tuple[str, ...]:
         raise ExerciseError(
             f"{where}: the emission would write over {len(existing)} file(s) that "
             f"already exist, the first at '{existing[0]}'. Generation is "
-            f"non-destructive (R3): nothing in a source repository is rewritten, so "
+            f"non-destructive: nothing in a source repository is rewritten, so "
             f"an emission that lands on an existing file is refused rather than "
             f"deciding which copy is the real one."
         )

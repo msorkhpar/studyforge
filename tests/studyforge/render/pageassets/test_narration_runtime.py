@@ -428,7 +428,7 @@ def test_a_browser_that_refuses_to_start_audio_is_a_stated_state_and_not_an_erro
     assert reading["face"] == ["paused"]
 
 
-def test_W276_an_ERROR_before_the_REJECTION_keeps_missing_and_play_stays_enabled(tmp_path):
+def test_an_ERROR_before_the_REJECTION_keeps_missing_and_play_stays_enabled(tmp_path):
     # ⛔ Clause 1 and 3, first order: the clip is not on disk, `error` arrives, and the
     # rejection that follows must not replace *missing* with *press play once*.
     reading = run(tmp_path, action="errorThenRejection", blockAutoplay=True)
@@ -438,7 +438,7 @@ def test_W276_an_ERROR_before_the_REJECTION_keeps_missing_and_play_stays_enabled
     assert reading["disabled"] == [False, False, False, False], "two passages still play"
 
 
-def test_W276_the_SAME_order_with_NO_passage_left_reads_none_and_disables_play(tmp_path):
+def test_the_SAME_order_with_NO_passage_left_reads_none_and_disables_play(tmp_path):
     # ⛔ Clause 1: play is disabled once no passage is playable, whichever event came last.
     reading = run(tmp_path, action="errorThenRejection", blockAutoplay=True, passages=THREE[:1])
     assert reading["early"] == ["none"]
@@ -446,7 +446,7 @@ def test_W276_the_SAME_order_with_NO_passage_left_reads_none_and_disables_play(t
     assert reading["disabled"] == [True, True, True, True]
 
 
-def test_W276_a_REJECTION_before_the_ERROR_reads_blocked_then_missing(tmp_path):
+def test_a_REJECTION_before_the_ERROR_reads_blocked_then_missing(tmp_path):
     # ⛔ Clause 3, the other order: the refusal is stated first, and the error that
     # proves the clip is absent then replaces it.
     reading = run(tmp_path, action="rejectionThenError", blockAutoplay=True)

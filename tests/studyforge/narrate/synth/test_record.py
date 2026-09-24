@@ -139,7 +139,7 @@ def test_the_record_renders_identically_for_an_unchanged_corpus():
     assert render_state(one_clip(), conditions()) == render_state(one_clip(), conditions())
 
 
-def test_the_record_carries_no_clock_and_exactly_the_fields_the_office_chose():
+def test_the_record_carries_no_clock_and_exactly_its_declared_fields():
     document = json.loads(render_state(one_clip(), conditions()))
     assert list(document) == ["narration_api", "conditions", "clips"]
     assert document["narration_api"] == NARRATION_API

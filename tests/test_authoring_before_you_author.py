@@ -140,7 +140,7 @@ def test_the_refusal_for_a_declared_tree_advises_what_a_reader_can_do(tmp_path):
     assert "the refusal tells you to leave it out" in " ".join(section(guide(), BEFORE).split())
 
 
-def test_the_hand_typed_entries_the_guide_once_prescribed_are_named(tmp_path):
+def test_hand_typed_not_material_entries_are_named(tmp_path):
     # ⛔ The negative: the same entries typed into `corpus.json`, as the struck
     # sentence said to, are an R19 finding the moment they land.
     from studyforge.skills.onboarding import hand_edited

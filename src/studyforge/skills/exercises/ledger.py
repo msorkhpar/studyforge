@@ -201,7 +201,7 @@ def _scanned(text: str, path: str, where: str) -> Scan:
         raise LedgerError(
             f"{where}: '{path}' opens a fenced block and never closes it, so the "
             f"ledger cannot say where that example ends. The file's contents are not "
-            f"reproduced here (R7)."
+            f"reproduced here, since a refusal never quotes a value that may be personal."
         )
     return read
 
@@ -217,7 +217,8 @@ def _source_path(value: object, what: str, where: str) -> str:
     if fault is not None:
         raise LedgerError(
             f"{where}: {what} must be {SOURCE_PATH_DESCRIBED} — this one is {fault}. "
-            f"The value is not reproduced here (R7)."
+            f"The value is not reproduced here, since a refusal never quotes a value that may be "
+            f"personal."
         )
     return value  # type: ignore[return-value]
 

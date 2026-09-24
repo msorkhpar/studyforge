@@ -76,8 +76,8 @@ NOT_OURS = (
 )
 NOT_SAID = (
     "⚠️ **{count} more declare no path in any document**, so nothing says which side "
-    "delivers them. ⛔ A `why` here would be a claim the documents do not support "
-    "(R1); the remedy is a component in the row's own `Owns` cell."
+    "delivers them. ⛔ A `why` here would be a claim the documents do not support;"
+    " the remedy is a component in the row's own `Owns` cell."
 )
 
 
@@ -185,7 +185,7 @@ class Terminal:
                 f"{'y is' if len(stray) == 1 else 'ies are'} not delivered after this "
                 "milestone at all, so calling them unused says nothing about this "
                 "corpus. ⛔ Their names are withheld: `unused` is caller text, and a "
-                "refusal that quoted it would put an unvetted value in a log (R7)"
+                "refusal that quoted it would put an unvetted value in a log"
             )
         return replace(
             self,

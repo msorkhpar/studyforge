@@ -126,7 +126,7 @@ def test_the_survey_proposes_the_regions_file_as_a_container(tmp_path):
     )
 
 
-def test_sf02_accepts_the_draft_and_includes_the_regions_file_but_not_the_record(tmp_path):
+def test_the_draft_is_accepted_and_includes_the_regions_file_but_not_the_record(tmp_path):
     root = sources.linked_regions(tmp_path / "c")
     content = parse(json.dumps(sources.settled(survey(root).proposal))).content
     assert content.classify("TestCases.md") is Classification.INCLUDED

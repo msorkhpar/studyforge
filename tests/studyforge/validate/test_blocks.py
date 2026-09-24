@@ -162,24 +162,24 @@ def test_ONE_reader_a_planted_reader_speaks_through_BOTH_consumers(tmp_path, mon
     assert said == ["doc planted-where planted-what"], said
 
 
-def test_W282_the_fixture_check_holds_no_vocabulary_of_its_own():
+def test_the_fixture_check_holds_no_vocabulary_of_its_own():
     # ⛔ Never a second copy: the harness's module imports no field or type table to decide with.
     for name in ("BLOCK_FIELDS", "BLOCK_OPTIONAL", "BLOCK_TYPES", "CONTAINER_TYPES"):
         assert not hasattr(shape, name), f"tests/fixture_checks/shape.py still holds {name}"
 
 
-def test_W264_2_a_list_carrying_start_AFTER_its_fields_is_not_a_vocabulary_error():
+def test_a_list_carrying_start_AFTER_its_fields_is_not_a_vocabulary_error():
     # ⭐ The optional key after the fields is admitted by the fixture check.
     assert list(check_blocks({"blocks": [_list(["a"], ordered=True, start=4)]}, "doc")) == []
 
 
-def test_W264_2_every_OTHER_type_still_carries_exactly_its_fields():
+def test_every_OTHER_type_still_carries_exactly_its_fields():
     # ⛔ The optional-key allowance is per type, and `para` names none.
     said = list(check_blocks({"blocks": [{"type": "para", "text": "x", "start": 2}]}, "doc"))
     assert [rule for rule, _ in said] == ["vocabulary"], said
 
 
-def test_W282_a_block_that_is_not_an_object_is_named_and_validate_never_raises(tmp_path):
+def test_a_block_that_is_not_an_object_is_named_and_validate_never_raises(tmp_path):
     # ⛔ R6: every check yields. `check_counts` read a type off every block and raised on this
     # shape. The archive's builder cannot write it, so it is edited into the written document.
     root = corpora.one_unit(tmp_path / "c", blocks=[{"type": "para", "text": "x"}])

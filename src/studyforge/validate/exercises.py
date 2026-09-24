@@ -126,7 +126,7 @@ def check_gate_records(walk: Walk) -> Iterator[Finding]:
                 RULE_GATE_SHORTFALL,
                 where,
                 "ships a gate record in which not every gate held. A shortfall is "
-                "reported rather than engineered away (R6): re-author the exercise, "
+                "reported rather than engineered away: re-author the exercise, "
                 "never loosen the gate.",
             )
 

@@ -190,7 +190,8 @@ def questions_of(value: object, where: str) -> tuple[Question, ...]:
         where,
         "'questions' names {count} id more than once. A reader's answer is "
         "filed under the question's id, so a repeated id is one answer "
-        "standing for two questions. The ids are not reproduced here (R7).",
+        "standing for two questions. The ids are not reproduced here, since a refusal never "
+        "quotes a value that may be personal.",
     )
     return questions
 
@@ -266,7 +267,8 @@ def _options(value: object, where: str) -> tuple[Option, ...]:
         where,
         "a question names {count} option id more than once. A reader's answer "
         "names the option by its id, so a repeated id is an answer that means "
-        "two things. The ids are not reproduced here (R7).",
+        "two things. The ids are not reproduced here, since a refusal never quotes a value that "
+        "may be personal.",
     )
     _require_distinct(
         [normalised(option.text) for option in options],
@@ -274,7 +276,8 @@ def _options(value: object, where: str) -> tuple[Option, ...]:
         "a question offers {count} option that is identical to another after "
         "normalisation. Two options that say the same thing are one answer "
         "offered twice, and a reader who picks the wrong copy of the right "
-        "words is marked wrong. The text is not reproduced here (R7).",
+        "words is marked wrong. The text is not reproduced here, since a refusal never quotes a "
+        "value that may be personal.",
     )
     _require_the_key(options, where)
     return options
@@ -339,7 +342,7 @@ def _id(value: object, whose: str, where: str) -> str:
     if not isinstance(value, str) or not QUIZ_ID.match(value):
         raise ExerciseError(
             f"{where}: {whose} 'id' must be {QUIZ_ID_PERMITTED}. The value is not "
-            f"reproduced here (R7)."
+            f"reproduced here, since a refusal never quotes a value that may be personal."
         )
     return value
 

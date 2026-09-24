@@ -166,7 +166,7 @@ def a_corpus_with_clips(tmp_path, sizes, **limits):
     return root
 
 
-def test_W314_a_corpus_over_a_limit_exits_one_and_names_the_number_and_the_limit(tmp_path):
+def test_a_corpus_over_a_limit_exits_one_and_names_the_number_and_the_limit(tmp_path):
     root = a_corpus_with_clips(tmp_path, (10, 20, 30), max_total_bytes=50, max_file_bytes=100)
     code, printed = invoke(str(root))
     assert code == INVALID
@@ -175,7 +175,7 @@ def test_W314_a_corpus_over_a_limit_exits_one_and_names_the_number_and_the_limit
     assert printed.rstrip().endswith("1 refusal(s)")
 
 
-def test_W314_a_corpus_inside_its_limits_still_exits_zero(tmp_path):
+def test_a_corpus_inside_its_limits_still_exits_zero(tmp_path):
     root = a_corpus_with_clips(tmp_path, (10, 20, 30), max_total_bytes=500, max_file_bytes=100)
     code, printed = invoke(str(root))
     assert code == OK

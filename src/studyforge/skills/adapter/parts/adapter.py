@@ -59,7 +59,7 @@ def _surface(plan: Plan) -> str:
         ),
         depends=(
             "`studyforge` as a sibling checkout, and nothing else. "
-            "⛔ The framework never imports this package: the seam is on disk (R2)."
+            "⛔ The framework never imports this package: the seam is on disk."
         ),
         body=[
             "",
@@ -107,7 +107,7 @@ def _emit(plan: Plan) -> str:
             "class EmitRefused(RuntimeError):",
             '    """An emission this adapter will not perform, and the field that is why.',
             "",
-            "    ⛔ Names the field and what would settle it, never a path or a value (R7).",
+            "    ⛔ Names the field and what would settle it, never a path or a value.",
             '    """',
             "",
             "",
@@ -126,7 +126,7 @@ def _emit(plan: Plan) -> str:
             "    if layout.archive.exists() and not replace:",
             "        raise EmitRefused(",
             '            "the archive directory already exists; pass replace=True to rebuild it. "',
-            '            "⛔ Nothing outside it is written, moved or renamed either way (R3)."',
+            '            "⛔ Nothing outside it is written, moved or renamed either way."',
             "        )",
             "    staging = Layout(layout.staging, plan.archive_dir)",
             "    if layout.staging.exists():",
@@ -165,7 +165,8 @@ def _emit(plan: Plan) -> str:
             "",
             "",
             "def _write(path: Path, text: str, staging: Layout) -> str:",
-            '    """Write one staged file and return where it will land, root-relative (R7)."""',
+            '    """Write one staged file and return where it will land, root-relative, so no '
+            'home path is printed."""',
             "    path.parent.mkdir(parents=True, exist_ok=True)",
             '    path.write_text(text, encoding="utf-8")',
             "    return staging.relative(path)",
@@ -290,7 +291,8 @@ def _command(plan: Plan) -> str:
             f'        print("usage: python3 -m {plan.package} <corpus-root> [YYYY-MM-DD]")',
             "        return UNUSABLE",
             "    root = argv[0]",
-            "    # ⚠️ R10: re-running produces identical bytes apart from `ingested`, so the",
+            "    # ⚠️ Reproducible: re-running produces identical bytes apart from `ingested`, so "
+            "the",
             "    # date is an argument first and today's date only as a fallback.",
             "    ingested = argv[1] if len(argv) == 2 else date.today().isoformat()",
             "    for where in emit(root, ingested=ingested, replace=True):",
@@ -327,7 +329,7 @@ ADAPTER_PARTS: tuple[Part, ...] = (
     Part(
         where="{package}/audit.py",
         step=6,
-        why="R6's enforcement: the source-side count `validate` cannot make",
+        why="the source-side count `validate` cannot make",
         generated=True,
         render=_audit,
     ),

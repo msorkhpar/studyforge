@@ -276,7 +276,7 @@ def require_no_retreat(
             f"{where}: a re-authored draft drops {len(gone)} {noun}(s) the draft it "
             f"replaces carried. A gate refusal is answered by re-authoring, never by "
             f"dropping a case or deleting a question (spec §7 §11). The ids are not "
-            f"reproduced here (R7)."
+            f"reproduced here, since a refusal never quotes a value that may be personal."
         )
     return draft
 

@@ -3,7 +3,7 @@ placement sibling  each artifact in a study/ directory beside the source file it
 read corpus.json + 1 container.json  no file inside the source material was opened
 create .studyforge/assets/  the shared stylesheets, scripts and player
 expect .studyforge/site.json  the discovery cache, never the authority — `studyforge serve` writes it; a build into this root does not
-keep archive/  the archive root, which every build reads (R2) — an adapter writes it; a build into this root does not
+keep archive/  the archive root, which every build reads — an adapter writes it; a build into this root does not
 claim field-notes/study/attachments/field-notes.unit-01-taking-a-reading/  field-notes unit 1's attachments — a build creates it only when it copies a file into it
 claim field-notes/study/attachments/field-notes.unit-02-writing-it-down/  field-notes unit 2's attachments — a build creates it only when it copies a file into it
 claim field-notes/study/audio/field-notes.unit-01-taking-a-reading/  field-notes unit 1's audio — a build creates it only when it copies a file into it
