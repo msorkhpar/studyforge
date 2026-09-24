@@ -6,7 +6,8 @@ only one they are handed. So four properties of it are checked here rather than
 trusted to whoever edits it next:
 
 - **every link resolves** at this ref, anchors included, and none leaves the
-  repository;
+  repository — on the README and on every page of `docs/authoring/` it sends
+  the reader to, each link resolved from the page that holds it;
 - **no link reaches what leaves the main line**: the task records under
   `docs/tasks/`, the process conventions under `docs/conventions/`, the tooling
   under `tools/`, the generated capability index file and `ONBOARDING.md`. The
@@ -40,6 +41,8 @@ import os
 import re
 import subprocess
 import sys
+
+import pytest
 
 from tests.authoring.support import declared_pythonpath, fences, prose_lines, rows_under
 from tests.support import repository_root
@@ -86,12 +89,12 @@ def _text() -> str:
     return (repository_root() / README).read_text(encoding="utf-8")
 
 
-def _links(text: str) -> list[tuple[int, str]]:
+def _links(text: str, page: str = README) -> list[tuple[int, str]]:
     """Every `(line number, target)` link outside the fenced blocks."""
     found = [
         (number, target) for number, line in prose_lines(text) for target in _LINK.findall(line)
     ]
-    assert found, f"{README} links nothing, so nothing here could fail"
+    assert found, f"{page} links nothing, so nothing here could fail"
     return found
 
 
@@ -108,30 +111,32 @@ def _anchors(text: str) -> set[str]:
     }
 
 
-def _resolve(target: str) -> tuple[str, str]:
-    """Return the repository-relative path a link names and its anchor.
+def _resolve(target: str, page: str = README) -> tuple[str, str]:
+    """Return the repository-relative path a link on `page` names and its anchor.
 
-    ⛔ Refuses a link whose path leaves the repository, because no checkout can
-    guarantee what is beside it.
+    A relative link resolves against the directory `page` sits in, as a
+    renderer resolves it. ⛔ Refuses a link whose path leaves the repository,
+    because no checkout can guarantee what is beside it.
     """
     path, _, anchor = target.partition("#")
     root = repository_root()
-    resolved = (root / path).resolve() if path else (root / README).resolve()
-    assert resolved.is_relative_to(root), f"{README} links {target!r}, which leaves the repository"
+    base = (root / page).parent
+    resolved = (base / path).resolve() if path else (root / page).resolve()
+    assert resolved.is_relative_to(root), f"{page} links {target!r}, which leaves the repository"
     relative = resolved.relative_to(root).as_posix()
     if resolved.is_dir():
         relative += "/"
     return relative, anchor
 
 
-def link_faults(text: str) -> list[str]:
-    """Every link in `text` that does not resolve, or resolves where a reader must not go."""
+def link_faults(text: str, page: str = README) -> list[str]:
+    """Every link on `page` that does not resolve, or resolves where a reader must not go."""
     faults: list[str] = []
-    for number, target in _links(text):
+    for number, target in _links(text, page):
         if _SCHEME.match(target):
             continue
-        where = f"{README}:{number + 1} links {target!r}"
-        relative, anchor = _resolve(target)
+        where = f"{page}:{number + 1} links {target!r}"
+        relative, anchor = _resolve(target, page)
         path = repository_root() / relative
         # ⭐ Asked BEFORE existence: what left the main line is gone from it, and the
         #    reader deserves the reason rather than a bare "nothing is there".
@@ -294,6 +299,32 @@ def test_every_fenced_module_form_names_a_module_that_runs():
 
 def test_every_shipped_skill_is_named_with_the_step_it_serves():
     assert skill_faults(_text()) == []
+
+
+def authoring_pages() -> list[str]:
+    """Every page of the authoring reference, repository-relative, walked from the tree."""
+    pages = sorted(
+        path.relative_to(repository_root()).as_posix()
+        for path in (repository_root() / "docs/authoring").glob("*.md")
+    )
+    assert pages, "docs/authoring holds no page"
+    return pages
+
+
+@pytest.mark.parametrize("page", authoring_pages())
+def test_every_link_on_an_authoring_page_resolves_and_none_leaves_the_main_line(page):
+    # ⭐ The reference is what the README sends a reader to, so its links are
+    # held to the README's own rule, each resolved from the page that holds it.
+    text = (repository_root() / page).read_text(encoding="utf-8")
+    assert link_faults(text, page) == []
+
+
+def test_a_dangling_link_on_an_authoring_page_is_refused_from_its_own_directory():
+    # ⚠️ Resolved from docs/authoring/, a link that works from the root does not.
+    page = "docs/authoring/README.md"
+    planted = "[the spec](docs/specs/2026-09-08-studyforge-v1-design.md) [ok](corpus.md)\n"
+    faults = link_faults(planted, page)
+    assert len(faults) == 1 and "nothing is there" in faults[0], faults
 
 
 def test_the_readme_sends_the_reader_to_every_authoring_page():

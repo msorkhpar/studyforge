@@ -20,12 +20,12 @@ and Submit, a pinned toolchain container, graded practices. Gated on
 `exercises` in the manifest.
 
 **A corpus with no graders skipping the entire execution track is a pass, not a
-shortfall — and it is the common case.** A tutorial with 168 test classes
-paired one-to-one with its lessons is extraordinary. Most material is not like
-that, and a framework that treated the extraordinary case as the standard would
-report every ordinary corpus as unfinished forever.
+shortfall — and it is the common case.** A tutorial that ships a test for
+every lesson is extraordinary. Most material is not like that, and a framework
+that treated the extraordinary case as the standard would report every ordinary
+corpus as unfinished forever.
 
-**But a source with no graders no longer means a reader with nothing to
+**But a source with no graders does not mean a reader with nothing to
 practise.** You can write exercises for any page and prove them before they
 ship: code exercises where the subject is code, and quizzes where it is not. A
 quiz needs no container and no network. See *Author, then prove*, below.
@@ -40,11 +40,11 @@ quiz needs no container and no network. See *Author, then prove*, below.
 | `ungraded` | a prompt the reader works, or a file they run, with nothing to check it | **no** |
 | `graded` | a workspace plus a grader | only on a passing grader run |
 
-**`ungraded` is why three states and not two.** One surveyed tutorial ends all
-19 of its lessons in an exercise and ships a test for none of them. Recording
-those as *no exercise* would delete real teaching content from the reader's
-material in order to satisfy a two-state model. They are presented as work,
-marked clearly as unchecked, and they never complete anything.
+**`ungraded` is why three states and not two.** Many tutorials end each lesson
+in an exercise and ship a test for none of them. Recording those as *no
+exercise* would delete real teaching content from the reader's material in
+order to satisfy a two-state model. They are presented as work, marked
+clearly as unchecked, and they never complete anything.
 
 ---
 
@@ -58,9 +58,8 @@ marked clearly as unchecked, and they never complete anything.
 
 **Graded is the grader's presence, not the key's.** An `exercise` may name the
 reader's file and how it runs, and nothing that checks it: that record is
-ungraded, the same as a practice with no key at all. The rule is §7's, in
-[*A file with no test*](../specs/2026-09-08-studyforge-v1-design.md#a-file-with-no-test-w357),
-and this page does not restate it.
+ungraded, the same as a practice with no key at all. The record is shown in
+full under *A file with no test*, below.
 
 **So the common case is a corpus that writes nothing.** A design in which every
 corpus had to declare its emptiness would be a design fitted to the one
@@ -72,11 +71,9 @@ repository that is full.
 
 **A practice belongs in the unit whose material it practises.** It is a
 `practice` document in that unit's directory, so it renders on that unit's
-page, under the prose it is practising. **Not in a container of its own.** The
-user's words, on the first corpus that tried it: *"the practices should be as
-part of each topic page not a separate UI after the entire chapter"*
-(2026-09-21). A reader who finishes a chapter and then navigates somewhere else
-to practise has left the material behind.
+page, under the prose it is practising. **Not in a container of its own.** A
+reader who finishes a chapter and then navigates somewhere else to practise has
+left the material behind.
 
 **Its prose comes from one of exactly two files, and you choose by asking one
 question: does the unit's own source file already carry the practice?**
@@ -102,7 +99,7 @@ question: does the unit's own source file already carry the practice?**
 ### ⛔ You may not add the practice to the unit's existing source file
 
 **Not by hand, and not through `permitted_edits`.** Generation is
-non-destructive (R3), and the manifest's edit policy refuses an edit to any
+non-destructive, and the manifest's edit policy refuses an edit to any
 file the corpus's own `content` rules classify as **included** — however that
 edit is declared. Every prose unit's source file is included by definition,
 because that is what makes it a unit. So the practice's material arrives as a
@@ -188,10 +185,10 @@ the other four are the grader**, and the grader is written whole or not at all
 ### The last five: what an authored exercise says
 
 **`kind` is `code` or `quiz`**, and `code` is what a record with no `kind`
-means. **Write it only where it is not `code`**: every record ever written is a
-code exercise, so the framework writes that token back only for a `quiz`, and a
-`"kind": "code"` you write yourself is read, accepted, and then left out of what
-the build writes. It is shown above because this fence lists every key.
+means. **Write it only where it is not `code`**: the framework writes that
+token back only for a `quiz`, and a `"kind": "code"` you write yourself is
+read, accepted, and then left out of what the build writes. It is shown above
+because this fence lists every key.
 
 **`cases` and `report` are one claim and go together**, and only beside a
 grader. A case is three fields: `id`, exactly as the test report spells it; a
@@ -211,9 +208,7 @@ a grader**, so it is the one of these an *ungraded* record may carry.
 is a refusal; see *A practice for material that is not code* below.
 
 **The breakdown is a report, never a second definition of a pass.** A practice
-completes when every case passes, exactly as before. The rules are §7's, in
-[*Exercises authored for every corpus*](../specs/2026-09-08-studyforge-v1-design.md#exercises-authored-for-every-corpus-w389),
-and this page does not restate them.
+completes when every case passes.
 
 ### A practice for material that is not code
 
@@ -263,10 +258,10 @@ why whichever way they went.
 Write `correct` for every option, always. The built page shows each question and
 its options and nothing else; when the reader checks their answers, the local
 study server reads the key from your document and answers each question right or
-wrong with the sentence of the option the reader chose (the user's ruling of
-2026-09-23). The page puts its own *Right.* or *Not this one.* in front of that
-sentence, so do not open a sentence with a verdict of your own: say why, and
-leave the verdict to the page.
+wrong with the sentence of the option the reader chose, so the key never
+reaches the reader's browser. The page puts its own *Right.* or *Not this one.*
+in front of that sentence, so do not open a sentence with a verdict of your
+own: say why, and leave the verdict to the page.
 
 **A quiz is graded by the framework with no compiler, no container, no network
 and no model** — a fixed comparison on the local study server. Opened as a file,
@@ -296,9 +291,9 @@ write the file half and stop:
 **That record is ungraded.** The reader gets the file and Run; there is no
 Submit, and it completes nothing. The framework refuses a record in between:
 a grader written in part, and a `provenance` or `trust` beside no grader,
-because both are facts about a grader and there is none. The shapes and their
-refusals are §7's —
-[*A file with no test*](../specs/2026-09-08-studyforge-v1-design.md#a-file-with-no-test-w357).
+because both are facts about a grader and there is none. The design reasoning
+behind this record is in
+[the design specification](../specs/2026-09-08-studyforge-v1-design.md).
 
 **If your prompts name no file at all, write no `exercise` key.** The record is
 for a file that exists; a practice that is only a prompt is still ungraded with
@@ -337,7 +332,7 @@ ship something that can check an answer?**
 - **It teaches and sets no work.** `"exercises": false`, no practice documents,
   and you are finished at the reading floor.
 
-**The answer describes your source. It no longer decides whether your reader
+**The answer describes your source. It does not decide whether your reader
 gets to practise.** A page with no grader can still get exercises: you write
 them for it, and they ship only after they pass the gates. That is the rest of
 this page. **Stopping at the reading floor is still a pass.** What you give up
@@ -426,7 +421,7 @@ command, and a checkout you have not installed has only the form above.
 
 **Do not edit `corpus.json` by hand, for either step.** Onboarding generated
 it, and `.studyforge/installed.json` records its digest. A hand-typed entry is
-named by `hand_edited`, as a generated file somebody edited (R19). Give both
+named by `hand_edited`, as a generated file somebody edited. Give both
 changes to the onboarding skill as data, and regenerate:
 
 ```python
@@ -528,9 +523,8 @@ you start from:
 least one edge case, proven by `G1`–`G5`. The difference is only how much of it
 already existed.
 
-⚠️ **A page with tests gets `generated` exercises from this pass too.** Blanking
-a source's own solution into an `authoritative` exercise is a different step,
-and this pass does not do it.
+⚠️ **A page with tests gets `generated` exercises from this pass too.** The pass
+never turns a source's own solution into an `authoritative` exercise.
 
 ### The worked corpus
 
@@ -709,21 +703,10 @@ its tests exercise the pass rather than a model.
 
 ## The plan
 
-⛔ **Changed 2026-09-23 by the user's ruling (`W453`).** A page's plan is set by
-the important ideas it teaches, not by how long its prose is. The ruling, in
-the user's words:
-
-> *"Depending on the context of the page there might be no practice, 2 or more,
-> The target is covering all the aspects not just having something minimum we
-> are looking for quality"*
-
-And the same day, on how far to take it:
-
-> *"regarding the coverage don't over do it! at the same time we are not a
-> university that wants to grade the knowdlge! Sometimes a single practice might
-> cover better than 4 unrelated small practices. It's all about quality and the
-> importants ofthe text. Like for the first quiz the dates do not matter. The
-> version might matter. And for sure 4 questions were a lot"*
+**A page's plan is set by the important ideas it teaches, not by how long its
+prose is.** The aim is to cover every idea that matters, with as few exercises
+as do it well: a single practice can cover more than several small, unrelated
+ones.
 
 **Each page gets a plan before anything is written.** You read the page, its
 prose and its code, and list its *aspects* on the `Page`. An aspect is one
@@ -780,38 +763,6 @@ missing one. Never lower a bar to reach a count.
 **Where to read a thin plan:** each unit's `coverage.json` holds the plan, with
 every aspect and how it ended. `authored.reasoned` lists every aspect no
 exercise was planned for, page by page.
-
-### ⛔ SUPERSEDED — the length bands
-
-⛔ **Superseded 2026-09-23 by the ruling above (`W453`).** What this section
-taught until then is kept so every citation of it still resolves. It is not
-in force.
-
-> **Each page gets a plan before anything is written: a ceiling on how many
-> exercises it may have.** It comes from three readings you give on the `Page`:
-> `words` (count them with `words_of`, which counts the prose and skips fenced
-> code), `skills` (how many distinct checkable skills the page teaches) and
-> `tier`.
->
-> **The page's length picks a band.** The count starts at the band's floor, goes
-> up one for each distinct skill after the first, and moves by the tier. The
-> band then clamps it.
->
-> | band | opens at (words) | floor | ceiling |
-> |---|---|---|---|
-> | `stub` | 0 | 0 | 0 |
-> | `short` | 250 | 1 | 2 |
-> | `standard` | 700 | 1 | 4 |
-> | `long` | 1800 | 2 | 6 |
->
-> | tier | moves the count |
-> |---|---|
-> | `introductory` | -1 |
-> | `core` | 0 |
-> | `advanced` | +1 |
->
-> So a page under the `short` band's opening count planned zero, and nothing
-> was authored for it.
 
 ---
 
@@ -1069,7 +1020,7 @@ emission.document  # write this as the unit's practice-1.json
 `emission.document` only. The package's `write` would refuse those files
 because they already exist.
 
-⚠️ **The framework has no `emit` for a quiz yet.** Your adapter builds a quiz's
+⚠️ **The framework has no `emit` for a quiz.** Your adapter builds a quiz's
 practice document itself, from the `exercise` record in its `tests/quiz.json`.
 
 Then run the checker, and fix what it names:

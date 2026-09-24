@@ -19,6 +19,7 @@ corpus.json                                       the manifest
 archive/<address>/container.json                  one per container
 archive/<address>/raw/<variant>/unit-NN/lesson-M.json
 archive/<address>/raw/<variant>/unit-NN/practice-M.json     optional
+archive/<address>/units/unit-NN/                  a unit's own files, when it has any
 ```
 
 `<address>` is one directory per level, so a depth-1 corpus has one segment and
@@ -33,6 +34,9 @@ archive/basics/01-getting-started/container.json          depth 2
 four of them fail *silently* when they are wrong. `unit-3/` instead of
 `unit-03/` produces a tree the checker reports as *unit missing* — at the
 reader, not at the writer, and only after everything else has looked fine.
+`studyforge.skills.adapter.Layout` computes every one of them, and the
+[adapter skill](../../src/studyforge/skills/adapter/SKILL.md) shows how to use
+it.
 
 ---
 
@@ -66,7 +70,7 @@ detectable failure rather than a silently shorter site.
 | `container_api` | the version of this document format | this build reads `1`, `2` and `3` |
 | `address` | exactly `len(levels)` segments | and it must match the directory holding the file |
 | `titles` | one per segment, in the same order | what the reader sees |
-| `variant` | **one** variant per container | which removed an entire failure class: *the map promised one thing and the archive has none* |
+| `variant` | **one** variant per container | so the map cannot promise a variant the archive does not hold |
 | `ingested` | the date it was read | |
 | `origin` | the file in **your** repository this map was read from | optional; see below |
 | `note` | free text a person added | preserved across regeneration, never overwritten |
@@ -133,7 +137,7 @@ reader:**
 | | What it is | What the site does with it |
 |---|---|---|
 | `assets` | a file a **block already names** — an `image`'s or a `video`'s `src` | the page **shows** it, through that block, and the build places it beside the page |
-| `attachments` | a companion file **no block names** — a dataset a lesson loads, a notebook, a sample document (C4) | the page **links** it for download, and the build copies it into the attachments directory the placement profile gives that unit |
+| `attachments` | a companion file **no block names** — a dataset a lesson loads, a notebook, a sample document | the page **links** it for download, and the build copies it into the attachments directory the placement profile gives that unit |
 
 **So an attachment is declared once and lands three times:** `studyforge plan`
 names the directory it will occupy, the unit page carries the link, and the
@@ -144,7 +148,7 @@ is a file nothing will reach — list that one under `attachments` instead.
 `corpus.json`'s `content` classifies **your source material** — whether a file's
 prose is read into the archive — and these files are already *in* the archive,
 written by your adapter. Their placed copies are the build's own output, which
-R3 tells from your material by path. So an attachment needs no `content.include`
+the non-destructive check tells from your material by path. So an attachment needs no `content.include`
 entry, adding one would claim its prose is ingested, and no build touches your
 original in order to place one.
 
@@ -170,12 +174,10 @@ list is a contract, not a convenience.**
 | `disclosure` | `summary`, `open`, `blocks` — it holds other blocks |
 
 **`quote` and `disclosure` hold other blocks**, so anything that walks a
-document recurses on that property rather than naming those two by hand — which
-is how the second one nearly got missed.
+document recurses on that property rather than naming those two by hand.
 
 **`html` exists because real material contains raw markup**, and a reader that
-raised on anything it did not recognise would stop an ingest dead. In one
-surveyed tutorial, raw HTML appeared in 18 files.
+raised on anything it did not recognise would stop an ingest dead.
 
 **A construct that fits none of the eleven is a finding about the vocabulary,
 not a block to throw away.** Report what you cannot read; never drop it. A
@@ -189,11 +191,10 @@ downstream can notice it went missing.
 ### An address is recorded, never derived
 
 **Do not slugify a title to get an address.** It is the tempting shortcut and
-it is measured wrong: on one real catalogue, **157 of 1,290 units — 12.2%, one
-in eight** — are served at a slug their title does not produce. A derivation
-therefore sends one link in eight to a page that is not there, and a link that
-fails is worse than no link, because it asserts an address the reader then
-cannot find.
+it is wrong: real catalogues serve many units at a slug their title does not
+produce. A derivation sends each of those links to a page that is not there,
+and a link that fails is worse than no link, because it asserts an address the
+reader then cannot find.
 
 **Where two records name an address for the same unit** — a container map and a
 unit document — **a disagreement is a refusal, never a preference.** One would
@@ -217,11 +218,10 @@ on the page that shows it.
 only when every file exists.** A document that fails its own validation is
 never left at a path something else will read.
 
-**The price of getting this wrong was measured**: one unreadable container map
-halts every consumer that walks the tree, and the failure is then reported at
-the reader rather than at the writer that caused it. The bill was 116 archives,
-0 pages, 0 narration and a broken suite. A reading that can be taken again is
-never worth a file nothing can load.
+**One unreadable container map halts every consumer that walks the tree**, and
+the failure is then reported at the reader rather than at the writer that
+caused it. A reading that can be taken again is never worth a file nothing can
+load.
 
 ### No personal data reaches an archive
 
@@ -249,8 +249,8 @@ signal. Without it a corpus drifts out of date with no symptom at all.
 
 ## Next
 
-- [What `validate` checks](validate.md) — the thirteen checks your archive is
-  about to meet.
+- [What `validate` checks](validate.md) — every check your archive is about to
+  meet.
 - [Exercises](exercises.md) — the `exercise` key, and when to write no practice
   document at all.
 - [Worked examples](examples.md) — two archives that exist, and the commands

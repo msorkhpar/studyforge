@@ -243,31 +243,26 @@ def test_each_field_table_is_the_shipped_shape_both_ways(heading, shape):
 # --- the plan --------------------------------------------------------------
 
 
-#: ⛔ The user's ruling of 2026-09-23, in two sentences, which the guide must quote where the
-#: author reads it. Fragments, so a re-wrapped line still matches.
-RULED = (
-    "The target is covering all the aspects not just having something minimum",
-    "Sometimes a single practice might cover better than 4 unrelated small practices",
-)
-
-
 def test_the_aspect_field_table_is_the_shipped_shape_both_ways():
     assert vocabulary_under(guide(), PLAN) == {field.name for field in fields(Aspect)}
 
 
-def test_the_guide_quotes_the_ruling_and_its_refinement():
-    text = " ".join(section(guide(), PLAN).replace("> ", " ").split())
-    for fragment in RULED:
-        assert fragment in text, f"'{PLAN}' does not quote the user: {fragment!r}"
+#: What a plan set by page length would teach: a band's table row, or the count
+#: of words the band was read from. ⛔ The plan is set by a page's aspects.
+LENGTH_BAND = re.compile(r"^\| `(stub|short|standard|long)` \||`words_of`|SUPERSEDED", re.M)
 
 
-def test_the_length_band_is_taught_only_under_its_superseded_marker():
-    # ⛔ The band's table survives only blockquoted, under SUPERSEDED: a live
-    # table row naming a band would be read as a rule still in force.
-    text = section(guide(), PLAN)
-    live = [line for line in text.splitlines() if line.startswith("| `short`")]
-    assert not live, f"'{PLAN}' still teaches a band as live: {live}"
-    assert "SUPERSEDED" in text
+def test_the_plan_is_set_by_aspects_and_no_length_band_is_taught():
+    # ⭐ The guide describes the product as it is: no band, live or retired.
+    text = " ".join(section(guide(), PLAN).split())
+    assert "important ideas it teaches" in text, f"'{PLAN}' no longer says what sets a plan"
+    found = LENGTH_BAND.findall(guide())
+    assert not found, f"{PAGE} teaches a length band: {found}"
+
+
+def test_a_planted_length_band_turns_its_check_red():
+    planted = guide() + "\n| `short` | 250 | 1 | 2 |\n"
+    assert LENGTH_BAND.findall(planted) == ["short"]
 
 
 def test_the_two_zeros_the_guide_promises_are_the_plan_s():

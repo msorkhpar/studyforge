@@ -322,3 +322,51 @@ def test_the_index_says_what_is_not_checked():
     # reads exactly like a page that never claimed it.
     said = section(document("README.md"), INDEX_SECTION)
     assert "not checked" in said, f"{AUTHORING}/README.md no longer says what is unchecked"
+
+
+# --- the plan counts the worked examples quote --------------------------------
+
+#: The worked examples, and the page that quotes what `studyforge plan` prints for them.
+EXAMPLES_PAGE = "examples.md"
+EXAMPLE_ROOTS = ("tests/fixtures/depth1", "tests/fixtures/depth2")
+
+#: The count of files to edit, as the `plan:` summary line prints it.
+EDIT_COUNT = re.compile(r"\b\d+ file\(s\) to edit\b")
+
+
+def edit_count_printed(root: str) -> str:
+    """The `N file(s) to edit` count `studyforge plan <root>` prints on its summary line."""
+    import io
+
+    from studyforge.cli.plan import main
+
+    said = io.StringIO()
+    assert main([str(repository_root() / root)], out=said) == 0, said.getvalue()
+    (summary,) = [line for line in said.getvalue().splitlines() if line.startswith("plan:")]
+    (count,) = EDIT_COUNT.findall(summary)
+    return count
+
+
+def edit_count_faults(text: str) -> list[str]:
+    """Every `N file(s) to edit` the page quotes that no example's plan prints, and the reverse."""
+    quoted = set(re.findall(r"`(\d+ file\(s\) to edit)`", text))
+    printed = {edit_count_printed(root) for root in EXAMPLE_ROOTS}
+    faults = [f"the page quotes `{q}`, which no example's plan prints" for q in quoted - printed]
+    faults += [
+        f"the page never quotes `{p}`, which an example's plan prints" for p in printed - quoted
+    ]
+    return sorted(faults)
+
+
+def test_the_edit_counts_the_examples_quote_are_what_plan_prints():
+    # ⭐ Each count is `permitted_edits` read back by the real command; the page
+    # quotes the count and nothing else of the summary, so only it is compared.
+    assert edit_count_faults(document(EXAMPLES_PAGE)) == []
+
+
+def test_a_planted_edit_count_turns_its_check_red():
+    planted = document(EXAMPLES_PAGE).replace("`1 file(s) to edit`", "`2 file(s) to edit`")
+    assert planted != document(EXAMPLES_PAGE), "the plant replaced nothing"
+    faults = edit_count_faults(planted)
+    assert any("`2 file(s) to edit`" in fault for fault in faults), faults
+    assert any("never quotes `1 file(s) to edit`" in fault for fault in faults), faults

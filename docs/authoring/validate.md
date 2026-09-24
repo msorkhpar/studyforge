@@ -3,7 +3,7 @@
 **One command decides whether you are done.**
 
 ```
-python3 -m studyforge.validate <your-repository>
+studyforge validate <your-repository>
 ```
 
 **It reports everything it found in a single run.** There is never a reason to
@@ -11,10 +11,10 @@ fix one problem and run it again to discover the next. A validator that
 reported nine problems out of ten and exited `0` would be worse than none at
 all.
 
-> **Why not `studyforge validate`?** That spelling runs too — it is the
-> installed command, and the same code. `python3 -m studyforge.validate`
-> reaches it from a checkout you have not installed, so it is the form every
-> command on these pages uses.
+> **Without an install**, `python3 -m studyforge.validate <your-repository>`
+> runs the same code from a checkout whose `src/` directory is on
+> `PYTHONPATH`. `--no-narration` judges the corpus with narration off for that
+> run, so no clip is checked against the words its paragraph says now.
 
 ---
 
@@ -68,7 +68,7 @@ checker check* is this table and nothing else.
 | 5 | `check_document_identity` | does each document agree with where it sits — address, unit, kind, ordinal, filename? |
 | 6 | `check_digests` | does each `content_sha256` match the blocks it covers? |
 | 7 | `check_counts` | do the per-type block counts match the blocks? |
-| 8 | `check_block_shapes` | is every block, at any depth, the shape spec §6 admits — an object of a known type, its fields then only its optional keys, and for a `list` each item a string or an array of strings and whole lists, and `start` an integer? |
+| 8 | `check_block_shapes` | is every block, at any depth, a shape [the block vocabulary](archive.md) admits — an object of a known type, its fields then only its optional keys, and for a `list` each item a string or an array of strings and whole lists, and `start` an integer? |
 | 9 | `check_units_have_content` | is any unit carrying no blocks at all? |
 | 10 | `check_placement` | does every path the placement profile would produce come out unique and legal? |
 | 11 | `check_origins_are_files` | does every declared `origin` name a file that exists? |
@@ -108,16 +108,17 @@ file in both.
 ## The forty-three rule ids
 
 **Every finding carries one**, so a script can filter a report by rule rather
-than by matching on message text. ⚠️ **The last six are not emitted by
-`studyforge validate <root>`**: they come from the non-destructive check a build
-is wrapped in — `snapshot` before it, `check_untouched` after — which reports in
-the same shape.
+than by matching on message text. ⚠️ **Six are not emitted by `studyforge
+validate <root>`** — `modified`, `deleted`, `moved`, `not-additive`,
+`forbidden-edit` and `nothing-compared`, the rows that begin *after a build*:
+they come from the non-destructive check a build is wrapped in — `snapshot`
+before it, `check_untouched` after — which reports in the same shape.
 
 | Rule id | Fires when |
 |---|---|
 | `manifest` | `corpus.json` is missing, malformed, or declares a `corpus_api` this build does not read |
 | `container` | a container map is missing, malformed, or declares an unknown `container_api` |
-| `document` | a unit document is missing, malformed — a block spec §6 does not admit included: an unknown type, a wrong field set, or a malformed `list` — or declares an unknown `raw_api` |
+| `document` | a unit document is missing, malformed — a block [the block vocabulary](archive.md) does not admit included: an unknown type, a wrong field set, or a malformed `list` — or declares an unknown `raw_api` |
 | `unreadable` | a file that must be read cannot be |
 | `no-archive` | no container map sits beneath `archive/` — it is absent, or present and empty — so there is no archive to call valid |
 | `archive-stray` | a file sits beneath `archive/` and is not a container map, a document under its map's variant, or a declared unit's own file — so nothing would read it |

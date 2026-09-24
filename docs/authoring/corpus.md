@@ -58,7 +58,7 @@ below.
 
 | Key | | What it says |
 |---|---|---|
-| `corpus_api` | **required** | Which version of this format the file speaks. An unknown value is **refused**, never quietly migrated. This build reads `1` to `6`; `2` added `content.not_material`, `3` added `media.max_files`, `4` added `runtimes`, `5` added `narration` and `6` added `onboarding_doc` |
+| `corpus_api` | **required** | Which version of this format the file speaks. An unknown value is **refused**, never quietly migrated. This build reads `1` to `6`. A key needs at least the version that introduced it: `2` for `content.not_material`, `3` for `media.max_files`, `4` for `runtimes`, `5` for `narration` and `6` for `onboarding_doc` |
 | `source` | **required** | An id for the corpus — a short stable name. **Not a URL to fetch from** |
 | `title` | **required** | What the reader sees at the top of the site |
 | `levels` | **required** | Names your container levels, and by its length fixes the depth of every address |
@@ -115,11 +115,11 @@ declaration that the framework will *not* read a file does.** An excluded file
 is material being kept from the reader, and a withholding nobody has to explain
 is one nobody audits.
 
-**Two states were not enough, and the measurement is why.** Counted against one
-real repository: of 141 files, 38 were included, 3 excluded, and **100 were
-neither** — a licence, ignore files, an IDE workspace, a graph cache. Only 3 of
-that hundred were material withheld from anybody. Filing the rest under
-`exclude` makes every `why` a small lie and produces an audit nobody reads.
+**Two states are not enough.** In a real repository most of the files that
+are not read in are not material at all — a licence, ignore files, an editor's
+workspace, a cache — and only a few are material deliberately withheld from the
+reader. Filing the rest under `exclude` makes every `why` a small lie and
+produces an audit nobody reads.
 
 **Your own `README.md` is `not_material`, and it is not a special case.** It is
 your repository's navigation, and navigation is scaffolding. The reader loses
@@ -188,16 +188,16 @@ service, no GPU and no network.
 makes many small files: 20 000 clips at 20 KB each is 400 MB, which is under
 both ceilings above, and it is still 20 000 paths every `clone`, `status` and
 `checkout` pays for. It has **no default** — leave it out and there is no
-ceiling on the count — because the two byte defaults come from a measurement
-and nobody has measured a count. Declaring it is how you say your repository
-has one.
+ceiling on the count — because no one count suits every repository. Declaring
+it is how you say yours has one.
 
 **Crossing a limit stops the build and says so, naming the number and the
-limit — the count for `max_files`, the file for `max_file_bytes`.** It never silently starts ignoring media — which would produce clones
-that are silent with no error — and it never silently keeps committing. The
-default ceilings are not arbitrary: one real corpus reached 11.42 GiB of packed
-history against a ~5 GB soft limit, with a single 150.9 MiB file against a hard
-100 MiB block, and found out when the push became impossible.
+limit — the count for `max_files`, the file for `max_file_bytes`.** It never
+silently starts ignoring media — which would produce clones that are silent
+with no error — and it never silently keeps committing. The default ceilings
+sit under the limits git hosting commonly imposes, about 5 GB for a repository
+and 100 MiB for a single file, so a corpus finds out at build time rather than
+when a push is refused.
 
 ---
 
@@ -235,12 +235,8 @@ still need nothing to run them.
 
 ## `narration` — whether the site speaks
 
-**Narration is optional.** In the words of the ruling that made it so: *"it
-should be optional and while serving or even while caputring the matterial
-skills should ask if user is interested in the narrition or not. Somebody might
-wants to just cover the course wihtout voices as mentioned the voice might be
-cgenerated but still not serving them would be an option"*. **Needs
-`corpus_api: 5`.**
+**Narration is optional.** Some readers want the material without a voice, and
+a site without one is complete. **Needs `corpus_api: 5`.**
 
 ```json
 { "narration": false }
@@ -254,8 +250,7 @@ asks you and writes it; you do not type it.
   progress and contents are unchanged. **It is a complete site, not a short
   one.**
 - **`true`** plays the clips `studyforge narrate` records.
-- **Leave it out** and the site plays clips whenever they are recorded, which is
-  how every corpus behaved before the key existed.
+- **Leave it out** and the site plays clips whenever they are recorded.
 
 **Nothing is deleted.** With `false`, clips already on disk stay where they are
 and are simply not served. `studyforge build` and `studyforge serve` take
@@ -283,14 +278,17 @@ is `ONBOARDING.md` at the root.** Say somewhere else, or say you want none.
   already writes, or lie under `.studyforge/` or the archive directory.
 - **`false`** writes no reader document. The generated pin check then says how
   to install the library itself rather than naming a file.
-- **Leave it out** and it is `ONBOARDING.md` at the root, as before the key.
+- **Leave it out** and it is `ONBOARDING.md` at the root.
 
 **Moving the file by hand is not how you move it.** The next re-onboarding
 writes it back where the manifest says, and `hand_edited` reports the gap until
 then. Declare the place, then re-onboard with
-`reonboard('.', settle={"onboarding_doc": "docs/archive/ONBOARDING.md"})`:
+`reonboard('.', settle={"onboarding_doc": "docs/archive/ONBOARDING.md"}).write('.', regenerate=True)`,
+from `studyforge.skills.onboarding`, run at the corpus root:
 the document is written there, nothing is written at the root, and a copy you
-already moved there unchanged is rewritten in place rather than refused.
+already moved there unchanged is rewritten in place rather than refused. A copy
+still at the root is not deleted, because generation never deletes: remove it
+yourself.
 
 ---
 
