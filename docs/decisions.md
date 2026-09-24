@@ -595,7 +595,7 @@ What it reads, and the choices in it:
 
 **Why.** Every build of one version shares its version number, so the commit is what tells two libraries apart, and a commit typed by an operator is a claim the library can check for itself.
 
-**Serves.** `R10`, `R19`
+**Serves.** `R18`, `R10`, `R19`
 
 **Aliases.**
 
