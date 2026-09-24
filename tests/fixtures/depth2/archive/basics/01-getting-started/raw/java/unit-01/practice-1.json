@@ -39,7 +39,7 @@
     },
     {
       "type": "para",
-      "text": "The test class shipped with the material is the grader. It is authoritative because nobody here wrote it (R5)."
+      "text": "The test class shipped with the material is the grader. Nobody here derived it, so it has not been proven to catch a wrong answer."
     },
     {
       "type": "heading",
@@ -68,7 +68,7 @@
     "html": 0,
     "disclosures": 1
   },
-  "content_sha256": "71eed6329bf706e99286122aa2f246c1109fa7d091e8f875adb00ba24b6daa18",
+  "content_sha256": "b94a83dfb04bd01ab1851b5046a20e417a743de58226f793bf38180f8efc00b4",
   "starting_code": "public final class Greeter {\n    public String greet(String who) {\n        // your code here\n    }\n}\n",
   "exercise": {
     "main_path": "practice/basics-01/src/main/java/Greeter.java",
