@@ -42,7 +42,7 @@ def test_one_command_brings_up_both_reading_both_recorded_tags(tmp_path):
 
 
 def test_the_instance_file_is_named_with_what_it_holds_and_who_reads_it(tmp_path):
-    """⭐ `W465`: the reader is told a second checkout records its own four values."""
+    """⭐ the reader is told a second checkout records its own four values."""
     text = document(tmp_path)
     assert f"`{skill.INSTANCE_ENV}` holds this checkout's compose project" in text
     assert "the study server finds the containers by" in text

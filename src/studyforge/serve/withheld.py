@@ -9,7 +9,7 @@ two ways a document leaves this process:
 - `carries(body, marks)` — whether a file's bytes hold a served quiz's key or one
   of its sentences, which is what the static mount refuses;
 - `OutputGate(marks)` — a run's output, line by line, with a line that carries
-  either replaced by `WITHHELD_LINE` (`W465`, the run route's half of `W452/1`).
+  either replaced by `WITHHELD_LINE`.
 
 **How you use it.**
 
@@ -216,9 +216,9 @@ WITHHELD_LINE = "--- a line is withheld here: it carries a quiz's key ---"
 
 
 class OutputGate:
-    """A run's output, one line at a time, never carrying a served quiz's key (`W465`).
+    """A run's output, one line at a time, never carrying a served quiz's key.
 
-    ⛔ **A run's output is whatever a corpus program prints** (`W452/1`), and the
+    ⛔ **A run's output is whatever a corpus program prints**, and the
     runner binds the whole corpus root — so a program that prints a bundle
     would hand the reader its key through the run route. ⭐ Each line is
     read as `carries` reads a file, and ⛔ **a line is judged with the run's

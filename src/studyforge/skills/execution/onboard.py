@@ -47,7 +47,7 @@ places workspaces by (`workspaces_bind`), and the sources stay where they were.
 (`runnerservice`), started by the reader's one compose command — never by the
 serving process (§8.3) — from the tag `record` writes into `RUNNER_ENV`.
 
-## ⭐ A SECOND INSTANCE, AND NO KEY IN THE EDITOR (`W465`)
+## ⭐ A SECOND INSTANCE, AND NO KEY IN THE EDITOR
 
 ⭐ `write` defaults the four values `INSTANCE_ENV` records and never overwrites
 a recorded one (`instance.record_instance`); `binds.unkeyed` refuses any

@@ -73,9 +73,9 @@ def test_the_container_is_named_for_its_corpus_as_the_readers_run_line_names_it(
 
 
 def test_the_editor_container_is_the_one_the_generated_compose_file_brings_up(tmp_path):
-    """⭐ The name the framework looks a running editor up by, read in the file (`W416`).
+    """⭐ The name the framework looks a running editor up by, read in the file.
 
-    ⭐ **Declared now, not derived** (`W465`): the editor service carries a
+    ⭐ **Declared now, not derived**: the editor service carries a
     `container_name` interpolation whose default is this spelling, and the
     project's default is still the one whose `<project>-editor-1` it was, so an
     instance that recorded nothing is called exactly what it always was.

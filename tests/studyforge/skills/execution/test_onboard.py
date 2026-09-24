@@ -158,7 +158,7 @@ def test_write_puts_every_path_on_disk_and_the_copies_are_byte_identical(tmp_pat
     root = corpus(tmp_path)
     result = skill.generate(manifest(), editor_text=editor_text(), root=root)
     written = skill.write(result, root)
-    # ⭐ Plus the instance's defaults, which a fresh checkout has not recorded yet (`W465`).
+    # ⭐ Plus the instance's defaults, which a fresh checkout has not recorded yet.
     assert set(written) == {*result.paths(), skill.INSTANCE_ENV}
     for where, origin in result.copies:
         assert (root / where).read_bytes() == (root / origin).read_bytes()
@@ -317,7 +317,7 @@ def test_the_runner_comes_up_with_the_editor_under_the_names_execute_looks_for(t
     text = dict(made_.files)[skill.COMPOSE_FILE]
     assert "\n  runner:\n" in text
     # ⭐ Each name is an interpolation whose default is the one `execute` has
-    # always looked for (`W465`); the editor's is declared, not compose's own.
+    # always looked for; the editor's is declared, not compose's own.
     assert f'container_name: "${{STUDYFORGE_RUNNER_NAME:-{container_for("demo")}}}"' in text
     assert made_.runner is not None and made_.runner.name == container_for("demo")
     assert 'name: "${STUDYFORGE_PROJECT:-studyforge-demo}"\n' in text

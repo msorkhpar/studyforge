@@ -69,7 +69,7 @@ def test_the_runner_is_handed_the_corpus_container_and_takes_host_when_it_is_not
 
 
 def test_a_second_checkout_is_checked_in_the_runner_it_recorded(stage):
-    """⭐ `W465/3`: `check` in a second checkout names that checkout's runner, not `source`'s."""
+    """⭐ `check` in a second checkout names that checkout's runner, not `source`'s."""
     root, _, _ = stage
     target = root / instance.INSTANCE_FILE
     target.parent.mkdir(parents=True, exist_ok=True)

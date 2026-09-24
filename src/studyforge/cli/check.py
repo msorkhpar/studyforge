@@ -192,7 +192,7 @@ def _check(
     """Run the one command the practice's record names, and report it."""
     exercise = practice.exercise
     try:
-        # ⭐ THIS checkout's runner, by the name it recorded (`W465`), never `source` alone.
+        # ⭐ THIS checkout's runner, by the name it recorded, never `source` alone.
         runner = runner_for(corpus.root, recorded(corpus.root, corpus.manifest.source).runner)
         command = exercise.test_command if exercise.graded else exercise.run_command
         state = f"graded ({exercise.trust})" if exercise.graded else "ungraded"

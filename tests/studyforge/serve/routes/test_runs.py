@@ -337,7 +337,7 @@ def test_a_practice_neither_bind_holds_has_no_editor(root):
 
 
 # --------------------------------------------------------------------------
-# ⭐ `W465`: THIS checkout's containers, and a run's output never carries a key
+# ⭐ THIS checkout's containers, and a run's output never carries a key
 # --------------------------------------------------------------------------
 
 

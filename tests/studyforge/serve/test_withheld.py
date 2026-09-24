@@ -162,7 +162,7 @@ def test_a_source_that_cannot_say_withholds_nothing() -> None:
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W465`: a run's output, line by line — the run route's half of `W452/1`
+# ⛔ a run's output, line by line — the run route's half of keeping a quiz's key local
 # --------------------------------------------------------------------------
 
 

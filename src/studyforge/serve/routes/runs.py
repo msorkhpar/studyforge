@@ -68,7 +68,7 @@ the readers a reader's own client asks for — the run index and the practice-ed
 
 Every line `execute` yields is already relative to the source root and scrubbed; it is
 scrubbed again as it is written, where it leaves the process (R7; `scrub` is idempotent),
-⛔ after `withheld.OutputGate` has replaced any line carrying a served quiz's key (`W465`).
+⛔ after `withheld.OutputGate` has replaced any line carrying a served quiz's key.
 """
 
 from __future__ import annotations
@@ -109,7 +109,7 @@ EditorFor = Callable[[ServedCorpus], EditorProbe]
 
 
 def runner_for(corpus: ServedCorpus) -> Runner:
-    """Return the corpus's runner: its root, and the container THIS checkout recorded (`W465`)."""
+    """Return the corpus's runner: its root, and the container THIS checkout recorded."""
     return Runner(corpus.root, recorded(corpus.root, corpus.source).runner)
 
 

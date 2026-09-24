@@ -17,7 +17,7 @@ sentence is never respelled, `serve.routes.run.NAMESPACE` for the execution
 namespace's one spelling, `validate.report.OK`, and this package's
 `narration` for what provides narration and how to have it, and
 `studyforge.execute` for `ModeProbe`, `recorded` and `HOST` — the one
-definition of where a run executes, imported and never copied (`W381`). ⛔ It
+definition of where a run executes, imported and never copied. ⛔ It
 reads answers and opens nothing; the one question it asks is that probe's, which
 reads (`docker inspect`) and never starts, stops or enters a container.
 
@@ -206,7 +206,7 @@ def probe_for(root: Path | str, source: str) -> ModeProbe:
 
     ⭐ The same container name and root the served instance's runner is built
     from (`serve.routes.runs.runner_for`): the name THIS checkout recorded
-    (`W465`), so the skill asks the question a run asks. ⛔ Nothing is asked until `mode()`.
+   , so the skill asks the question a run asks. ⛔ Nothing is asked until `mode()`.
     """
     where = Path(root).absolute()
     return ModeProbe(where, recorded_names(where, source).runner)

@@ -20,7 +20,7 @@ finds the container and `execute.mode` stops falling back to the host. ⚠️ Tw
 spellings of one name is the defect where they differ by a character and every
 run silently goes to the host; the skill's tests hold the two equal.
 
-⭐ **Written as an interpolation with that name as its default** (`W465`):
+⭐ **Written as an interpolation with that name as its default**:
 `container_name: ${STUDYFORGE_RUNNER_NAME:-studyforge-runner-<source>}`, so a
 second instance of one corpus records its own runner's name and `serve` reads it
 from the same record (`execute.instance`). ⭐ `Runner.name` is the DEFAULT —

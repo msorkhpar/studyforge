@@ -21,14 +21,14 @@ one is refused by name rather than filled in from memory (R19).
 is how *"sufficient from the contract alone"* and *"the uid differs per host"*
 are both true of one file at once.
 
-⭐ **The published host port is one of them** (`W465`): a `per_project` port is
+⭐ **The published host port is one of them**: a `per_project` port is
 `127.0.0.1:${STUDYFORGE_EDITOR_PORT:-<the contract's host>}:<container>`, so a
 second instance of one corpus publishes its own port and an instance that
 recorded none publishes the one it always did. ⛔ **Only the PORT is
 interpolated**: the contract's `host_bind` is written literally, so no recorded
 value can widen the bind. ⚠️ The variable's NAME is the framework's
 (`execute.instance`), because `serve` reads the same record; the contract's
-entry still declares none (`SK-09/4`), and the default is its `host`.
+entry still declares none, and the default is its `host`.
 
 ## ⛔ THE RULINGS ARE CHECKED BEFORE ANYTHING IS EMITTED
 
@@ -100,8 +100,8 @@ def service(
 
     ⭐ `binds` are further `(host, container)` binds of the corpus's own
     directories — the practice workspaces — each writable and each
-    named in ruling 4's footer beside the sources. ⭐ `container_name` is
-    written as given (an interpolation, `W465`); `port_variable` names the
+    named in the footer's list of bind sources that exist before the start. ⭐ `container_name` is
+    written as given (an interpolation); `port_variable` names the
     variable a `per_project` port's host side is interpolated from.
     """
     broken = rulings.findings(block, name=name)
@@ -160,7 +160,7 @@ def render(
     whose service is **not** rendered — see the module contract. ⭐ `runner` is
     `(service name, mapping)` as `runnerservice.plan` rendered it.
     ⭐ `project`, `container_name` and `port_variable` are written as given, so
-    the caller hands in interpolations with their defaults (`W465`).
+    the caller hands in interpolations with their defaults.
     """
     for other, block in checked:
         broken = rulings.findings(block, name=other)

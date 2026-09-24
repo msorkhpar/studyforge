@@ -216,7 +216,7 @@ def test_a_state_is_data_and_not_an_exception():
 
 
 def test_the_probe_names_the_runner_this_checkout_recorded(tmp_path):
-    """⭐ `W465/3`: a second checkout's probe asks about ITS runner, never the first's."""
+    """⭐ a second checkout's probe asks about ITS runner, never the first's."""
     target = tmp_path / instance.INSTANCE_FILE
     target.parent.mkdir(parents=True)
     values = dict(instance.defaults("some-corpus", port=8443))

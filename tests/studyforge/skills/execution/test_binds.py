@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/skills/execution/binds.py` (R12) — what the editor may see.
 
-⭐ `W465`'s clause 1 as the skill decides it: no directory the editor binds
+⭐ As the skill decides it: no directory the editor binds
 reaches the bundles' or the archive's directory, where a quiz's key is kept.
 The derivation of the sources directory is `test_onboard.py`'s.
 """
