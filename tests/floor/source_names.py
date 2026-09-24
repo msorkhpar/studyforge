@@ -112,12 +112,37 @@ def named_sources(text: str) -> list[tuple[int, str, str]]:
     reader takes it as licence.
     """
     found: list[tuple[int, str, str]] = []
-    for number, line in enumerate(text.splitlines(), start=1):
+    lines = text.splitlines()
+    for number, line in enumerate(lines, start=1):
+        following = lines[number] if number < len(lines) else ""
+        joint = _joined(line, following)
         for corpus, pattern, why in KNOWN_SOURCES:
-            if pattern.search(line):
+            if pattern.search(line) or (pattern.search(joint) and not pattern.search(following)):
                 found.append((number, corpus, why))
                 break
     return found
+
+
+#: What ends a line before its words carry on: a closing quote or backtick.
+_LINE_END = re.compile(r"[\s\"'`]*$")
+
+#: What opens a continuation line before its words: indentation, a comment or
+#: list marker, and an opening quote with its string prefix.
+_LINE_START = re.compile(r"^[\s#/*>\-]*(?:[rRbBfFuU]{0,2}[\"'`])?")
+
+
+def _joined(line: str, following: str) -> str:
+    """`line` and the next as one run of words, so a name split across the break is seen.
+
+    ⭐ A name wrapped in prose, in a comment or across two concatenated string
+    literals reads as the one phrase it is. It is reported on the line where it
+    starts, and a name the next line holds whole is left to that line.
+    """
+    if not following:
+        return line
+    head = _LINE_END.sub("", line)
+    # A word hyphenated at the break carries on with no space, as `iso-` and `8583` do.
+    return head + ("" if head.endswith("-") else " ") + _LINE_START.sub("", following)
 
 
 def framework_files(root: Path) -> list[Path]:
