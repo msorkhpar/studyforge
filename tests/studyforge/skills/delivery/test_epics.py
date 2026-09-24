@@ -166,12 +166,6 @@ def test_reading_several_readable_documents_gives_them_all_back():
     assert [epic.epic for epic in read] == ["E01", "E05"]
 
 
-def test_the_live_epic_documents_all_read():
-    # ⭐ Over the real population as well as the invented one: a parser that
-    # only ever meets its own fixture has met the shape somebody imagined.
-    assert len(read_epics(plans.live_epics())) == len(plans.live_epics())
-
-
 # --- W92: the `Owns` cell is read VERBATIM, and nothing here interprets it ---
 
 

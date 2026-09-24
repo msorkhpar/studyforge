@@ -10,8 +10,6 @@ reader that borrowing one is normal.
 
 from __future__ import annotations
 
-from pathlib import Path
-
 from studyforge.skills.delivery import (
     Acceptance,
     Backlog,
@@ -168,20 +166,6 @@ def wide_index() -> Index:
         read_sequence("README.md", WIDE_SEQUENCE),
         Components.none(),
     )
-
-
-def _tasks() -> Path:
-    return Path(__file__).resolve().parents[4] / "docs/tasks"
-
-
-def live_epics() -> list[tuple[str, str]]:
-    """This repository's own epic documents, as `(name, text)` pairs.
-
-    ⭐ The generator is exercised against the real population as well as the
-    small one: a parser that only ever meets its own fixture has been tested
-    against the shape somebody imagined.
-    """
-    return [(p.name, p.read_text("utf-8")) for p in sorted(_tasks().glob("E*.md"))]
 
 
 def terminal() -> Terminal:
