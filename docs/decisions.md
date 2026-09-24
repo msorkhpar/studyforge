@@ -77,7 +77,7 @@ What it reads, and the choices in it:
 
 ### Refusals gather every failure and name them in one message
 
-**Decision.** A walk over many items collects every failure first and raises once: epic documents and their rows in `studyforge.skills.delivery.epics`, capabilities in `skills.delivery.capability`, a backlog's milestones and dependency cycles in `skills.delivery.backlog`, the findings log in `skills.delivery.findings_log`, and file collisions in `skills.adapter.scaffold`. Within the delivery package, `skills.delivery.refusal.one_or_all` is the single plural form: one reason reads unchanged, several are joined behind a preamble that leads with the count. Cycles are refused as a set before the critical-path walk, so that walk needs no guard of its own.
+**Decision.** A walk over many items collects every failure first and raises once: a backlog's dependencies and cycles in `studyforge.skills.delivery.backlog`, the terminal statement's coverage of the offer in `skills.delivery.terminal`, duplicate capabilities in `skills.delivery.offer`, the findings log in `skills.delivery.findings_log`, and file collisions in `skills.adapter.scaffold`. Within the delivery package, `skills.delivery.refusal.one_or_all` is the single plural form: one reason reads unchanged, several are joined behind a preamble that leads with the count. Cycles are refused as a set before the critical-path walk, so that walk needs no guard of its own.
 
 **Why.** A refusal that stops at the first failure hides how much is wrong and turns every fix into another full run.
 
@@ -109,7 +109,7 @@ What it reads, and the choices in it:
 
 ### Legal combinations are stated positively
 
-**Decision.** Where only some pairings of values are valid, the code enumerates the legal set and refuses everything outside it. In `studyforge.unit.trust`, the provenances allowed to claim `authoritative` are the data tuple `MAY_BE_AUTHORITATIVE`, which holds only `bundled`, so a grader the reader wrote, or any provenance added later, is refused that claim. In `studyforge.exercise.quiz.shape`, the keys a quiz record may carry are the tuple `QUIZ_KEYS`.
+**Decision.** Where only some pairings of values are valid, the code enumerates the legal set and refuses everything outside it. In `studyforge.unit.trust`, the provenances allowed to claim `authoritative` are the data tuple `MAY_BE_AUTHORITATIVE`, which holds only `bundled`, so a grader the reader wrote, or any provenance added later, is refused that claim. A `bundled` grader earns `authoritative` only through its derivation, which `studyforge validate` checks (see the entry on shipped graders). In `studyforge.exercise.quiz.shape`, the keys a quiz record may carry are the tuple `QUIZ_KEYS`.
 
 **Why.** A list of forbidden pairs fails open: a value added later is accepted in every pairing nobody thought to forbid. A legal set refuses a new value until somebody decides about it.
 
@@ -443,21 +443,13 @@ What it reads, and the choices in it:
 
 ## The skills: onboarding, reconnaissance, adapter, delivery, execution, personal archive
 
-### Milestone order is declared, and milestone ids are read at any width
+### A plan is checked against what the installed framework offers, and a missing capability is a finding
 
-**Decision.** The delivery skill (`studyforge.skills.delivery.epics.read_sequence`) reads the order milestones run in from the `### M<n> — <name>` sections of the order document the caller names, in the order they appear, and refuses a document that declares none or declares one twice. It never sorts ids, and `studyforge.skills.delivery.capability` prints a declared milestone that has no capability. A milestone id is `M` followed by any number of digits (`epics.MILESTONE_ID`). In a task's `**Milestone**` cell only a dash cancels the task, and any other shape is refused.
+**Decision.** The delivery skill plans against the framework as it is installed. `studyforge.skills.delivery.offer.Offer.installed()` reads the offer from two registries the package already keeps, the command table (`studyforge.cli.dispatch.VERBS`) and the skill tree (`studyforge.skills.documents`), leaving out the delivery skill itself, and `python3 -m studyforge.skills.delivery` prints it. `Backlog.checked(offer)` (`skills.delivery.backlog`) accepts a task's dependency only when it names a task of the plan in the same or an earlier milestone, an offered capability, or a finding the plan files; anything else is refused, all reasons at once, saying that a capability the framework lacks is filed as a finding and the task waits on it. The terminal statement (`skills.delivery.terminal`) must account for every offered capability no task uses, and may not name one a task uses or one the framework does not offer. The backlog's header counts the tasks waiting on a finding against the framework. A plan's milestones are its own and carry no framework gate.
 
-**Why.** An id names a gate but says nothing about when the gate comes, and a plan can be reordered without renaming a milestone. A pattern of fixed width would read a wider id as something else, so the id has no width limit and an unreadable cell is refused rather than counted as cancelled.
+**Why.** A capability exists for a plan exactly when a reader could run it, and a list typed by hand is the copy that is wrong the day a command or skill is added. A wait on something nobody offers is a slip nobody wrote down, so it is written as a finding and counted where a reader agreeing to the plan sees it.
 
-**Serves.** `R6`, `R19`
-
-### The capability index says which side delivers each capability
-
-**Decision.** `studyforge.skills.delivery.capability_index(documents, order, pins)` requires the text of the workspace pin document and reads it through `studyforge.skills.delivery.components.Components`, so each capability is marked as delivered here, elsewhere, or undeclared (`HERE`, `ELSEWHERE`, `UNDECLARED`). The side column is rendered only when some row is not delivered here, no component is named in the output, and `Backlog.check` returns a plan whose terminal statement carries back the capabilities another side delivers.
-
-**Why.** A plan must neither claim work another component delivers nor silently drop it, and a row that declares no side is shown as undeclared rather than guessed.
-
-**Serves.** `R1`, `R19`
+**Serves.** `R19`, `R6`
 
 ### A conversion is not done until its findings log is written
 
@@ -581,7 +573,7 @@ What it reads, and the choices in it:
 
 ### The reading order is the one the curriculum record states, and nothing derives it
 
-**Decision.** Reconnaissance finds the document that records the curriculum by how much of the material it links, never by its name (`studyforge.skills.reconnaissance.record.find`), and takes each unit's position from the order that document states (`Record.order`), never from a filename or directory sort. A corpus with no such record gets no sorted guess: the survey asks the reading order as an open question, and material the record does not name is a question too. The adapter skill forbids its reading step to derive an address, an ordinal or a reading order. The framework keeps no check of its own that unit *k* is the material the record puts at *k*: the order is data the adapter carries from the record into the archive, and an adapter asserts it in its own tests against that record, since only the record knows it.
+**Decision.** Reconnaissance finds the document that records the curriculum by how much of the material it links, never by its name (`studyforge.skills.reconnaissance.record.find`), and takes each unit's position from the order that document states (`Record.order`), never from a filename or directory sort. A corpus with no such record gets no sorted guess: the survey asks the reading order as an open question, and material the record does not name is a question too. The adapter skill forbids its reading step to derive an address, an ordinal or a reading order. When the manifest declares the record and its groups (`curriculum`), `studyforge validate` holds the archive's filing to that record, an ordinal out of place included (`curriculum-disagrees`); a corpus that declares no `curriculum` carries the order as data from the record into the archive, and its adapter asserts it in its own tests against that record, since only the record knows it.
 
 **Why.** A filename sort misplaces units while the count is right, every page renders and the first unit of each group stays first, so a count assertion and a spot-check both pass. An ordering claim needs an oracle, and the oracle is whatever records the order.
 
@@ -594,6 +586,14 @@ What it reads, and the choices in it:
 **Why.** Real curricula set this trap in both directions: one records its groups as headings beside many headings that are not groups, another records them as numbered lines with no heading at all. A grouping invented from syntax becomes a container tree in the built site, and the reader never learns it was invented.
 
 **Serves.** `R1`, `R6`
+
+### A corpus's curriculum record and its group addresses are manifest data
+
+**Decision.** The manifest's optional `curriculum` block (`studyforge.corpus.manifest.curriculum`, read from `corpus_api` 7) names the document that records the reading order and grouping (`record`, a Markdown path inside the corpus) and, optionally, the record's groups in the record's order (`containers`: each group's `label` exactly as the record writes it, the `address` it is filed at, checked against `levels`, and an optional filename `prefix`). The block and each group are closed key sets, and a repeated label, address or prefix is refused. The adapter skill files every unit from the declared record at its group's declared address (`studyforge.skills.adapter.curriculum.filed`), reading the record with the reader reconnaissance proposed the declaration from, and the scaffolded reading step takes its containers from the declaration, leaving only the documents to a person. A declared prefix never files a unit: it is a second partition of the same files, and the filing refuses with every disagreement named (`CurriculumDisagrees`) when a unit's name lacks its group's prefix, carries another group's, or an included file carries a group's prefix and the record never files it there. Reconnaissance drafts the block (`skills.reconnaissance.curriculum.declare`), proposing a prefix only where the names partition the units exactly as the record does. `studyforge validate` runs the same filing over the tree (`studyforge.validate.source.curriculum.check_curriculum`) and reports any disagreement, a missing record or labels that are not the record's own as `curriculum-disagrees`, so a stale declaration is refused whoever wrote the reading step. A manifest without the block reads as before.
+
+**Why.** Where a curriculum lives and which address each group is filed at are facts a second corpus would otherwise retype in adapter code (R19). The record files units because a record is the author's own statement of order and grouping; a prefix is derivation, which is kept only as a check that must agree.
+
+**Serves.** `R19`, `R6`, `R9`
 
 ### The survey and the scaffolded suite walk the corpus exactly as validate does
 
@@ -889,11 +889,19 @@ What it reads, and the choices in it:
 
 ### A second gate family extends the gate record by registering
 
-**Decision.** The quiz gates live in their own sub-package, `studyforge.exercise.gates.quiz`. They join the shared gate record by declaring a `Family` and calling `register` from `exercise.gates.families`, using only names `exercise.gates` exports. The `families`, `record`, `digests` and `runs` modules take no edit. The one line added outside the sub-package is its import in `exercise/gates/__init__.py`.
+**Decision.** A gate family joins the shared gate record by declaring a `Family` and calling `register` from `exercise.gates.families`, using only names `exercise.gates` exports: the quiz gates in their own sub-package, `studyforge.exercise.gates.quiz`, and the derivation's two gates (`D1`, `D2`) in `exercise.gates.derivation`. The `families`, `record`, `digests` and `runs` modules take no edit for a new family; the one line added outside it is its import in `exercise/gates/__init__.py`. Every family's record is one file, `gates.json`, versioned by `gates_api` as its first key (`exercise.gates.record.GATES_API`) and read through `version.check`; a record with no `gates_api` is read as version 1 only when its keys are exactly the earlier shape (`UNVERSIONED_KEYS`), and any other record without the key is refused naming it.
 
-**Why.** It must be possible to add a gate family without reaching inside the package that verifies them all, and completeness rules apply to a family as soon as it registers.
+**Why.** It must be possible to add a gate family without reaching inside the package that verifies them all, and completeness rules apply to a family as soon as it registers. A record committed before the version key is read rather than refused, because re-running its gates would re-run judgements made once at authoring.
 
-**Serves.** `R5`, `R17`
+**Serves.** `R5`, `R9`, `R17`, `R21`
+
+### A shipped grader is authoritative only through its derivation, and one that was not derived says so
+
+**Decision.** `studyforge validate` checks every exercise whose grader is `authoritative`, declared or defaulted from `bundled` (`studyforge.validate.derived`). It requires the record of the derivation's two gates at the practice's `gates.json`: `D1`, one `hole:<method>` key for each blanked method with the failure it caused, and `D2`, the shipped test passing on the original, over a `starter`, `reference` and `tests` spelled from the corpus root that are the exercise's own `main_path` and `test_path`. A missing, unreadable or unsupporting record is `derivation-record`, a gate that did not hold is `derivation-shortfall`, and a named file that changed since the gates ran is `derivation-digest`. A grader that ships with the material and was not derived declares `advisory`, and its page says so in its own sentence (`templates/practice-grader-bundled.html`, chosen by `Exercise.ships_with_material` in `render.page.practice`): the tests ship with the material and have not been proven to catch a wrong answer.
+
+**Why.** Blanking each taught method and watching the shipped test fail is what shows the test catches a wrong answer, so a claim of `authoritative` without that proof is refused rather than believed, and a reader is never told a shipped test was written for the site.
+
+**Serves.** `R5`, `R6`
 
 ### The reader starts the runner container and the framework only probes it
 

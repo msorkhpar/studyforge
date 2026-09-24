@@ -51,11 +51,14 @@ not use, each with its reason: the runner, Run and Submit, the practice panel,
 authored exercises, the editor container, attachments, video, multiple
 variants, the media-footprint refusal.
 
-Check the table for coverage against the framework's full list of
-capabilities, never for a subset. A partial table looks exactly like a complete
-one, and the capability a planner forgets is, by construction, the one they
-also forget to list. Check the other direction too: a capability listed as
-unused that the corpus does in fact exercise says nothing about the corpus.
+Check the table for coverage against what the installed framework offers,
+never for a subset: `python3 -m studyforge.skills.delivery` prints every
+command and skill the installation offers, and the delivery skill's terminal
+statement must account for each offered capability no task of the plan uses.
+A partial table looks exactly like a complete one, and the capability a
+planner forgets is, by construction, the one they also forget to list. Check
+the other direction too: a capability listed as unused that a task of the plan
+does use says nothing about what the corpus forgoes.
 
 ### Size narration from units you have narrated, not from an estimate
 
@@ -96,9 +99,13 @@ unit it touches. Look for that change class by name before advancing a pin.
 Unit files grouped by a filename prefix look like a structure to derive. Look
 first for a document where the author records the same grouping in their own
 words: a curriculum or contents file with titles, ordinals and reading order.
-Reading names is derivation; reading that document is a record. Propose "the
-curriculum is recorded in `<file>`", and keep the filename rule as a
-cross-check that must agree, never as the source. A regex fitted to one
+Reading names is derivation; reading that document is a record. Declare the
+record in the manifest (`curriculum.record`, with each group's label and
+address under `curriculum.containers`), and keep the filename rule as a
+cross-check that must agree, never as the source: a group's
+`curriculum.containers[].prefix` files no unit, and `studyforge validate`
+refuses the tree (`curriculum-disagrees`) when the prefixes partition the
+files differently from the record. A regex fitted to one
 corpus's names produces a plausible manifest for it and an unjustifiable one
 for the next.
 

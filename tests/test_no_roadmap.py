@@ -51,10 +51,6 @@ COMMIT = re.compile(r"`[0-9a-f]{7,40}`")
 #: Paths this sweep does not read, each with its reason.
 NOT_READ = {
     "src/studyforge/render/assets/plyr.svg": "vendored path data, where `M2` is a drawing command",
-    # ⚠️ The two design documents below still carry the framework's build history.
-    # Remove each from this set once it describes the current product only.
-    "docs/decisions.md": "a design document not yet rewritten to the current product",
-    "docs/integration-catalogue.md": "a design document not yet rewritten to the current product",
     "tests/test_no_roadmap.py": "this module spells every pattern it looks for",
 }
 
