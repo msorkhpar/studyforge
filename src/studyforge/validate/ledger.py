@@ -100,24 +100,34 @@ def check_ledger_accounts(walk: Walk) -> Iterator[Finding]:
 
 
 def _rows(path: Path, where: str):
-    """Read the ledger's two row lists, yielding a finding and returning `None` if it will not."""
+    """Read the ledger's two row lists, yielding a finding and returning `None` if it will not.
+
+    ⚠️ **Three `try` blocks, not one, on purpose.** The R7 gate is `archive`'s
+    reader, and `tests/test_raises_convention.py` holds that a caller wrapping
+    an `archive` reader catches only `archive`'s own exceptions there; the
+    ledger's refusal is this package's, so it is caught around its own call.
+    """
     from studyforge.skills.exercises import LedgerError, ledger_rows
 
     try:
         document = json.loads(path.read_text(encoding="utf-8"))
-        assert_clean(document, where)
-        return ledger_rows(document, where)
-    except PersonalDataLeak as error:
-        # ⛔ FIRST, and its own arm, as `validate.exercises` has it (`W213`).
-        yield Finding(RULE_PERSONAL_DATA, where, str(error))
     except OSError:
         yield Finding(RULE_LEDGER, where, "could not be read.")
-    except LedgerError as error:
-        # ⚠️ Before `ValueError`, which it is: the merge's own sentence names the fault.
-        yield Finding(RULE_LEDGER, where, str(error))
+        return None
     except UnicodeDecodeError, ValueError:
         # ⛔ The kind of failure, never a value read out of the file (R7).
         yield Finding(RULE_LEDGER, where, "is not UTF-8 JSON, so it accounts for nothing.")
+        return None
+    try:
+        assert_clean(document, where)
+    except PersonalDataLeak as error:
+        # ⛔ Its own rule, as `validate.exercises` has it (`W213`).
+        yield Finding(RULE_PERSONAL_DATA, where, str(error))
+        return None
+    try:
+        return ledger_rows(document, where)
+    except LedgerError as error:
+        yield Finding(RULE_LEDGER, where, str(error))
     return None
 
 
