@@ -84,9 +84,8 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 |---|---|---|---|---|
 | `REL-13` | Developer 4 | `docs/REL-13-handoff` @ `wt/dev4`; `chore/REL-13-release-ready` in each sibling | 0 @ `090dc4ca` | `in-progress` — `M11` step 11.5 |
 | `REL-10` | Developer 6 | `chore/REL-10-the-process-leaves-the-main-line` @ `wt/dev6` | 0 @ `6ca2c94c` | `in-progress` — `M11` step 11.5 |
-| `W461` | Developer 1 | `fix/W461-onboarding-places-its-reader-doc` @ `wt/dev1` | 0 @ `fc6c8008` | `in-progress` — `M11` |
-| `W462` | Developer 2 | `fix/W462-generated-text-cites-no-process-id` @ `wt/dev2` | 0 @ `fc6c8008` | `in-progress` — `M11` |
 | `W463` | Developer 7 | `fix/W463-every-runtime-set-builds-an-editor` @ `code-server-toolchain-wt/dev7` | 0 @ `aca5b88` toolchain | `in-progress` — `M11` |
+| `REL-11` | Developer 3 | `docs/REL-11-a-light-board` @ `wt/dev3` | 0 @ `6d74029e` | `in-progress` — `M11` step 11.5 |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -653,8 +652,8 @@ else.**
 | W458 | A browser focus test fails at random under parallel load and blocks merges | framework agent | ✅ done — `692fa6d2` | [`rows/W458.md`](rows/W458.md) |
 | W459 | Refusals a user reads cite process ids, and the decisions file lacks today's product decisions | framework agent | ✅ done — `59299974` | [`rows/W459.md`](rows/W459.md) |
 | W460 | Narration is optional: the skills ask at capture and at serve, and generated clips can go unserved (user ruling) | framework agent | ✅ done — `6ca2c94c` | [`rows/W460.md`](rows/W460.md) |
-| W461 | Onboarding writes a corpus's ONBOARDING.md back at the root, so the user's archive ruling does not survive a regenerate | framework agent | `in-progress` — `M11` | [`rows/W461.md`](rows/W461.md) |
-| W462 | Text the framework generates into a corpus still cites process ids | framework agent | `in-progress` — `M11` | [`rows/W462.md`](rows/W462.md) |
+| W461 | Onboarding writes a corpus's ONBOARDING.md back at the root, so the user's archive ruling does not survive a regenerate | framework agent | ✅ done — `b02ba0d0` | [`rows/W461.md`](rows/W461.md) |
+| W462 | Text the framework generates into a corpus still cites process ids | framework agent | ✅ done — `c0c390ca` | [`rows/W462.md`](rows/W462.md) |
 | W463 | Only a java,maven editor image builds; every other declared runtime set is refused by its own confinement gate | framework agent | `in-progress` — `M11` | [`rows/W463.md`](rows/W463.md) |
 <!-- /register -->
 
