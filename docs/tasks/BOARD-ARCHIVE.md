@@ -31896,3 +31896,41 @@ stock dark theme beside them.
 ### ⚠️ In flight
 
 ⭐ **`W456`** on `wt/dev1`; ⭐ **`ISO-27`** on the corpus's integration office.
+
+### W456 — An authoring pass over one container rewrites the corpus-wide ledger and silently drops every other container's entries
+
+⛔ **Found by the corpus office in `ISO-23` (`ISO-M10/11`), and the USER ruled it be fixed
+(2026-09-23: *"good it should be fixed"*):** `exercises/ledger.json` is ONE file for the
+whole corpus, and an authoring pass over ONE container rewrote it with that container's
+entries alone — ⛔ **silently dropping every other container's** — while `studyforge
+validate` still read 0 findings. The office survived it only by re-running every earlier
+container each time.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A pass over any subset of a corpus never drops an entry it did not re-read**:
+   entries for pages outside the pass are KEPT byte-identical, whatever the order of
+   passes — read on a fixture with two containers passed one at a time, with the current
+   code as the positive control (the first container's entries vanish).
+2. ⛔ **`studyforge validate` refuses a ledger that no longer accounts for a page the
+   corpus carries** — every fence and declared grader of every material page is covered
+   by an exercise or a reason, or it is a finding. ⭐ The current code's clean reading of
+   a clobbered ledger is the positive control.
+3. ⭐ **A pass reports what it kept, added, changed and dropped**, and a DROP happens only
+   when the page itself is gone.
+4. ⭐ Planted back and RED at both seams.
+
+⭐ **Surface:** `skills/exercises/ledger.py`, `loop.py`, and `validate`'s exercise checks.
+⚠️ **The next corpus (`M9`) meets it on its first multi-container pass.**
+
+[the mint](#po-round-173)
+
+## PO round 174
+
+⭐ **`W456` CLOSED — merged `de1ea776`:** a pass never drops a ledger row it did not re-read, and `validate` check 20 refuses a ledger that stops accounting for a page. ⭐ **Register plant: the check skipping declared graders → RED;** the live first corpus read clean under it before the merge.
+
+⭐ **The first corpus DEPLOYED at `99c607d` and PINNED** — `ISO-23` (38 units by `W453`, 40 code exercises and 2 quizzes, 0 shortfalls), `ISO-27` + `ISO-28` (the user's "fix them": 28 tutorial pages corrected, every changed fence proved offline, 6 headings renamed and their exercises re-gated), and **spring-web 5.3.20 on the user's ruling**, the runner rebuilt as **`…-7a5a2f2aacba`** by the register with it in the offline prime. ⭐ **Re-pinned to framework `de1ea776`**; the regeneration kept the ledger (220 entries before and after, none dropped).
+- ⭐ **Read on the LIVE `:8770`:** `validate` clean at the release tip; jpos-server unit 3 shows the renamed heading "3.2 NAC Channel", its editor opens and its starter Submits RED on the new runner.
+- ⚠️ **Findings carried** in `ISO-28`'s handoff — smaller content gaps (an LMK file the page never explains, a packager XML no fence provides, a routing claim no participant implements, two unconfirmed codes on src/6).
+
+⚠️ **Nothing in flight.** ⭐ **`M10`'s remaining row is `AX-11`, its acceptance.**
