@@ -64,6 +64,38 @@ def test_the_finding_names_the_role_and_never_the_corpus():
     assert corpus == "a v2 target"
 
 
+#: ⭐ A name wrapped across a line break, in prose, in a comment and across two
+#: concatenated string literals, and each is reported on the line it starts on.
+SPLIT_ACROSS_A_BREAK = [
+    "the Java\ncorpus numbers every module",
+    "# the ISO\n# corpus ships three aggregates",
+    '    "measured against the ISO "\n    "repository"',
+    "the senior-\njava material ships 168 graders",
+    "* the ISO-\n* 8583 material",
+]
+
+#: ⚠️ The controls: the same words wrapped where they name no corpus.
+SPLIT_AND_NO_SOURCE = [
+    "an ISO\ndate, YYYY-MM-DD",
+    "an ISO-\n8601 date",
+    "a leading digit is illegal in a Java\npackage segment",
+]
+
+
+@pytest.mark.parametrize("text", SPLIT_ACROSS_A_BREAK)
+def test_a_corpus_named_across_a_line_break_is_a_finding_on_its_first_line(text):
+    assert [line for line, _corpus, _why in named_sources(text)] == [1], text
+
+
+@pytest.mark.parametrize("text", SPLIT_AND_NO_SOURCE)
+def test_and_the_same_words_wrapped_where_they_name_nothing_are_not(text):
+    assert named_sources(text) == [], text
+
+
+def test_a_name_the_next_line_holds_whole_is_reported_once_on_that_line():
+    assert [line for line, _c, _w in named_sources("before\nthe Java corpus\nafter")] == [2]
+
+
 def test_this_repository_names_no_source_in_framework_code():
     root = repository_root()
     findings = check_source_names(root)
@@ -153,3 +185,13 @@ def test_the_product_suites_own_registry_is_this_registry():
         return [(corpus, pattern.pattern, pattern.flags, why) for corpus, pattern, why in registry]
 
     assert shape(sources.KNOWN_SOURCES) == shape(KNOWN_SOURCES)
+
+
+@pytest.mark.parametrize(
+    "text", NAMES_A_SOURCE + NAMES_NO_SOURCE + SPLIT_ACROSS_A_BREAK + SPLIT_AND_NO_SOURCE
+)
+def test_the_product_suites_own_reader_reads_as_this_reader(text):
+    # ⛔ The two readers are one rule too, not only the two registries.
+    from tests.harness import sources
+
+    assert sources.named_sources(text) == named_sources(text)

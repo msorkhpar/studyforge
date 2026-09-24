@@ -34,6 +34,16 @@ def narrated(tmp_path: Path, name: str = "depth1") -> Path:
     return root
 
 
+def released_corpus(tmp_path: Path, name: str = "depth1") -> Path:
+    """A narrated fixture copy whose manifest keeps its clips out of git, as a release needs."""
+    root = narrated(tmp_path, name)
+    manifest = root / "corpus.json"
+    document = json.loads(manifest.read_text(encoding="utf-8"))
+    document["media"] = {"commit": "never"}
+    manifest.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+    return root
+
+
 def record_of(root: Path) -> dict:
     """The record as JSON, read straight off the disk."""
     return json.loads(state_file(root).read_text(encoding="utf-8"))

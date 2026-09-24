@@ -58,7 +58,8 @@ def _surface(plan: Plan) -> str:
             "The exit code is the answer; there is no other agreement with the framework."
         ),
         depends=(
-            "`studyforge` as a sibling checkout, and nothing else. "
+            "the installed `studyforge` library, at the version and commit onboarding "
+            "pins, and nothing else. "
             "⛔ The framework never imports this package: the seam is on disk."
         ),
         body=[

@@ -30,7 +30,7 @@ from studyforge.narrate.release import (
     read_sums,
 )
 from studyforge.render.pageassets import RELEASED, clips_state
-from tests.studyforge.cli.narrate.plant import narrated
+from tests.studyforge.cli.narrate.plant import released_corpus
 from tests.support import git, init_repository, run
 
 REPO = "example-owner/example-course"
@@ -44,7 +44,7 @@ def invoke(*argv):
 @pytest.fixture
 def corpus(tmp_path, monkeypatch):
     """A narrated fixture checkout with a placeholder origin; the suite runs beside it."""
-    root = narrated(tmp_path)
+    root = released_corpus(tmp_path)
     init_repository(root)
     added = run([git(), "remote", "add", "origin", f"https://github.com/{REPO}.git"], cwd=root)
     assert added.returncode == 0, added.stderr

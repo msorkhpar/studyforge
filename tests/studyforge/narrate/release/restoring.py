@@ -41,7 +41,7 @@ from studyforge.narrate.release import (
     write_signal,
 )
 from studyforge.render.pageassets import clips_state
-from tests.studyforge.cli.narrate.plant import narrated
+from tests.studyforge.cli.narrate.plant import released_corpus
 from tests.studyforge.narrate.release.stand_in import TAG
 
 #: Where a request that escaped would be sent: a loopback port nothing listens on.
@@ -63,7 +63,7 @@ class Prepared:
 
 def prepared(tmp_path: Path, *, part_bytes: int = 1500, name: str = "depth1") -> Prepared:
     """Narrate, pack and write the scripts; then delete every clip the pack carried."""
-    root = narrated(tmp_path, name)
+    root = released_corpus(tmp_path, name)
     release = tmp_path / "release"
     packed = pack(root, release, part_bytes=part_bytes)
     write_scripts(root, TAG)

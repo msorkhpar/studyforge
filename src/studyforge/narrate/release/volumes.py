@@ -11,9 +11,17 @@ returns the population without writing anything; `read_sums(out)` reads a
 checksum manifest back. `studyforge narrate <root> --pack <dir>` is the command.
 
 **Depends on.** `narrate.synth` for the record (`read_state`, `state_file`,
-`located`), `checksum` for each volume's SHA-256, and the standard library
-(`zipfile`). ⛔ It names no
+`located`), `corpus.manifest` for the media policy, `checksum` for each
+volume's SHA-256, and the standard library (`zipfile`). ⛔ It names no
 source (R1) and composes no layout (R4): every path comes from the record.
+
+## ⛔ Only a corpus that does not commit its clips is packed
+
+⭐ A release is how a corpus whose `corpus.json` says `media.commit: never`
+delivers its clips. ⛔ A corpus whose policy commits them is REFUSED before
+anything is written (`require_released_policy`): its checkout already carries
+the clips, and the pack would mark them `released`, so its unserved pages would
+hide narration a clone already holds.
 
 ## ⛔ The population is the record's, never a directory walk
 
@@ -46,7 +54,9 @@ import zipfile
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
+from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.checksum import Running
+from studyforge.corpus.manifest import MANIFEST_FILENAME, RAISES, load
 from studyforge.narrate.synth import located, read_state, state_file
 
 #: The most bytes one volume holds: at most 999 MB, inside a 2 GiB asset limit.
@@ -114,6 +124,26 @@ def is_volume(name: str) -> bool:
     return stem == VOLUME and len(digits) == DIGITS and digits.isdigit()
 
 
+def require_released_policy(root: Path | str) -> None:
+    """Refuse, with `PackRefused`, a corpus whose manifest does not keep its clips out of git."""
+    try:
+        policy = load(Path(root) / MANIFEST_FILENAME).media
+    except PersonalDataLeak:
+        raise  # ⛔ R7's refusal is never swallowed.
+    except RAISES as refused:
+        raise PackRefused(
+            f"the corpus's {MANIFEST_FILENAME} does not read, so its media policy is "
+            f"unknown: {refused}"
+        ) from None
+    if policy.commits:
+        raise PackRefused(
+            f"this corpus's {MANIFEST_FILENAME} commits its clips (media.commit "
+            f"'{policy.commit}'), so every checkout already carries them, and a pack "
+            f"would mark them released and hide narration a clone holds; a release is "
+            f"for a corpus that declares media.commit 'never'"
+        )
+
+
 def clips_of(root: Path | str) -> tuple[tuple[str, Path], ...]:
     """Return `(member path, file)` for every clip the record locates, sorted by member path.
 
@@ -149,13 +179,15 @@ def clips_of(root: Path | str) -> tuple[tuple[str, Path], ...]:
 def pack(root: Path | str, out: Path | str, *, part_bytes: int = PART_BYTES) -> Packed:
     """Pack the clips of the corpus at `root` into volumes and a `SHA256SUMS` under `out`.
 
-    ⛔ Refuses an `out` inside the corpus (the volumes would be committed or
-    unclassified there) and an `out` holding anything but an earlier pack's
-    files, which are replaced. The corpus itself is only read.
+    ⛔ Refuses a corpus whose policy commits its clips, an `out` inside the
+    corpus (the volumes would be committed or unclassified there) and an `out`
+    holding anything but an earlier pack's files, which are replaced. The corpus
+    itself is only read.
     """
     if part_bytes < 1:
         raise PackRefused(f"a volume holds at least one byte, got {part_bytes}")
     base, target = Path(root).resolve(), Path(out).resolve()
+    require_released_policy(base)
     if target == base or base in target.parents:
         raise PackRefused(
             "the release directory is inside the corpus, where the volumes would be "

@@ -1113,7 +1113,9 @@ decision without touching a page:
   already compressed, so the split is what matters, not the compression. ⛔ A
   pack is **deterministic** (sorted members, one timestamp, fixed permissions,
   no attributes of the machine), and a clip the record promises and the disk
-  lacks is refused before anything is written.
+  lacks is refused before anything is written. ⛔ **Only a corpus whose
+  `media.commit` is `never` is packed**: one that commits its clips already
+  hands every clone the clips, and a pack would mark them `released`.
 - **The pack writes two restore scripts into the corpus**,
   `.studyforge/narration-release/restore.sh` and `restore.ps1`, with the tag
   filled in and nothing else. ⛔ **No account name is in either**: the
@@ -1139,7 +1141,11 @@ decision without touching a page:
   refuses a clip signal that does not say `released`, reads
   the repository from the checkout's git configuration, and prints the one
   `gh release create` command, which the owner runs with their own `gh` login.
-  ⛔ The framework starts no process for it and uploads nothing (§8.3).
+  ⛔ The framework starts no process for it and uploads nothing (§8.3). A tag's
+  release is created once, so the dry run also prints how to go on when it
+  exists: a new tag, or the `gh release upload --clobber` that replaces its
+  assets. Scripts an earlier framework rendered for the same tag are refused
+  as exactly that, and the corpus is packed again.
 - ⭐ **Narration stays optional**: a clone that never restores is the reading
   floor, complete, and the onboarding guide says how to get the clips.
 

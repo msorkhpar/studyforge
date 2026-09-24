@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import hashlib
 import shlex
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -26,6 +27,7 @@ from studyforge.narrate.release import (
     SIGNAL,
     VOLUME_SUMS,
     pack,
+    scripts,
     write_release_record,
     write_scripts,
     write_signal,
@@ -39,7 +41,7 @@ from studyforge.narrate.release.publish import (
 )
 from studyforge.narrate.release.volumes import SUMS
 from studyforge.render.pageassets import ABSENT, PRESENT
-from tests.studyforge.cli.narrate.plant import narrated
+from tests.studyforge.cli.narrate.plant import released_corpus
 from tests.support import git, init_repository, run
 
 #: The user an SSH remote logs in as: a remote's login name, not anybody's address.
@@ -60,7 +62,7 @@ def with_origin(root: Path, url: str = f"https://github.com/{REPO}.git") -> Path
 
 def packed(tmp_path: Path, tag: str = TAG) -> tuple[Path, Path]:
     """A narrated fixture with an origin, packed in several volumes under `tag`."""
-    root = with_origin(narrated(tmp_path))
+    root = with_origin(released_corpus(tmp_path))
     out = tmp_path / "release"
     made = pack(root, out, part_bytes=2048)
     write_scripts(root, tag)
@@ -155,6 +157,65 @@ def test_a_clip_signal_that_does_not_say_released_is_refused(tmp_path, state):
 
     with pytest.raises(PublishRefused, match="does not say released"):
         plan_publish(root, out, TAG)
+
+
+def test_a_corpus_whose_policy_now_commits_its_clips_is_refused(tmp_path):
+    # ⛔ Packed under `never`, then the policy moved: its checkouts carry the
+    # clips again, and a release would tell their pages to hide them.
+    root, out = packed(tmp_path)
+    manifest = root / "corpus.json"
+    manifest.write_text(
+        manifest.read_text(encoding="utf-8").replace('"never"', '"always"'), encoding="utf-8"
+    )
+
+    with pytest.raises(PublishRefused, match="commits its clips"):
+        plan_publish(root, out, TAG)
+
+
+def test_the_dry_run_says_a_tag_is_published_once_and_how_to_go_on(tmp_path):
+    # ⭐ `gh release create` fails on a tag whose release exists; the dry run
+    # names a new tag, and the clobbering upload that replaces the assets.
+    root, out = packed(tmp_path)
+
+    lines = plan_publish(root, out, TAG).lines()
+
+    said = [line for line in lines if line.startswith("again ")]
+    assert any(f"a release under {TAG} that already exists" in line for line in said), lines
+    assert any("--tag <new tag>" in line for line in said), lines
+    upload = shlex.split(said[-1].removeprefix("again"))
+    assert upload[:4] == ["gh", "release", "upload", TAG] and upload[-1] == "--clobber"
+    assert f"--repo {REPO}" in said[-1]
+    assert lines.index(said[-1]) < len(lines) - 1 and lines[-1].startswith(
+        "command gh release create"
+    )
+
+
+def test_a_script_the_framework_now_renders_differently_is_named_as_an_upgrade(
+    tmp_path, monkeypatch
+):
+    # ⭐ Packed under this tag by an earlier framework: the tag agrees and the
+    # template moved, so the refusal names the upgrade and not the tag.
+    root, out = packed(tmp_path)
+    upgraded = tmp_path / "upgraded"
+    shutil.copytree(scripts.SCRIPT_DIR, upgraded)
+    (upgraded / "restore.sh").write_text(
+        (upgraded / "restore.sh").read_text(encoding="utf-8") + "# a newer template\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(scripts, "SCRIPT_DIR", upgraded)
+
+    with pytest.raises(PublishRefused, match="framework was upgraded since the pack"):
+        plan_publish(root, out, TAG)
+
+
+def test_a_script_packed_under_another_tag_is_named_by_the_tag(tmp_path):
+    root, out = packed(tmp_path, tag="narration-0.9.0")
+
+    with pytest.raises(PublishRefused) as refused:
+        plan_publish(root, out, TAG)
+
+    assert f"not written for tag {TAG}" in str(refused.value)
+    assert "upgraded" not in str(refused.value)
 
 
 def test_a_hand_edited_restore_script_is_refused(tmp_path):

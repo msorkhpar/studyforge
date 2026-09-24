@@ -20,7 +20,11 @@ trusted to whoever edits it next:
 - **every shipped skill is named with the step it serves**, in the table under
   the skills heading, and that row links the skill's own document. The skill
   population is walked from `src/`, so a new skill fails here until the README
-  places it.
+  places it;
+- **following every link from the README reaches only the reading list**: the
+  README, `docs/authoring/`, the decisions file, the integration catalogue, the
+  spec and the skills' own documents. User documentation shows or describes an
+  example rather than linking the suite's fixtures, which are test internals.
 
 **Why the commands are read off `--help` and not the dispatcher's table.** The
 acceptance is phrased as what the command *offers*, and `--help` is where a
@@ -89,6 +93,22 @@ _MODULE_FORM = re.compile(r"python3 -m ([\w.]+)")
 
 #: A markdown heading line.
 _HEADING = re.compile(r"^#{1,6}\s+(.*)$")
+
+#: An inline code span, which quotes a link rather than making one.
+_CODE_SPAN = re.compile(r"`[^`]*`")
+
+#: What a reader may reach by following links from the README. A directory is
+#: written with its slash and matches everything beneath it.
+READING_LIST = (
+    README,
+    "docs/authoring/",
+    "docs/decisions.md",
+    "docs/integration-catalogue.md",
+    "docs/specs/",
+)
+
+#: The one file of a skill's directory that is its document.
+SKILL_DOCUMENT = "SKILL.md"
 
 
 def _text() -> str:
@@ -338,7 +358,80 @@ def test_the_readme_sends_the_reader_to_every_authoring_page():
     assert sorted(pages - linked) == []
 
 
+def on_the_reading_list(relative: str) -> bool:
+    """Whether a repository-relative path is one the README's reader may be sent to."""
+    if relative.startswith(f"{SKILLS_ROOT}/"):
+        return relative.endswith(f"/{SKILL_DOCUMENT}")
+    return any(
+        relative == one or (one.endswith("/") and relative.startswith(one)) for one in READING_LIST
+    )
+
+
+def reached(read=None) -> dict[str, list[str]]:
+    """`{target: [the pages that link it]}` for every link followed from the README.
+
+    ⭐ Every markdown page reached is followed in turn. Fenced blocks and inline
+    code spans are stripped first: a quoted link is an example, not a link.
+    `read(page)` answers a page's text, so a test can plant a link in one.
+    """
+    root = repository_root()
+    read = read or (lambda page: (root / page).read_text(encoding="utf-8"))
+    found: dict[str, list[str]] = {}
+    queue, seen = [README], set()
+    while queue:
+        page = queue.pop()
+        if page in seen:
+            continue
+        seen.add(page)
+        for _, line in prose_lines(read(page)):
+            for target in _LINK.findall(_CODE_SPAN.sub("", line)):
+                if _SCHEME.match(target) or target.startswith("#"):
+                    continue
+                relative, _ = _resolve(target, page)
+                found.setdefault(relative, []).append(page)
+                if relative.endswith(".md") and (root / relative).is_file():
+                    queue.append(relative)
+    return found
+
+
+def reading_list_faults(read=None) -> list[str]:
+    """Every link, followed from the README, that reaches a document off the reading list."""
+    return [
+        f"{', '.join(sorted(set(pages)))} links {target}, which is not on the reading list"
+        for target, pages in sorted(reached(read).items())
+        if not on_the_reading_list(target)
+    ]
+
+
+def test_following_every_link_from_the_readme_reaches_only_the_reading_list():
+    found = reached()
+    assert "docs/authoring/README.md" in found and len(found) > len(READING_LIST), found
+    assert reading_list_faults() == []
+
+
 # --- each check refuses its violation ---------------------------------------
+
+
+def test_a_link_into_the_suites_fixtures_is_refused_and_a_quoted_one_is_not():
+    # ⛔ The plant: a fixture linked from an authoring page the README reaches.
+    # ⭐ The control: the same link inside a code span, and inside a fence, is an
+    #    example and is not followed.
+    page = "docs/authoring/examples.md"
+    fixture = "../../tests/fixtures/depth1/corpus.json"
+    plants = {
+        page: f"[the manifest]({fixture})\n",
+        "docs/authoring/corpus.md": f"`[the manifest]({fixture})`\n\n```\n[x]({fixture})\n```\n",
+    }
+    root = repository_root()
+
+    def read(where):
+        text = (root / where).read_text(encoding="utf-8")
+        return text + plants.get(where, "")
+
+    faults = reading_list_faults(read)
+    assert faults == [
+        f"{page} links tests/fixtures/depth1/corpus.json, which is not on the reading list"
+    ], faults
 
 
 def test_a_link_into_what_leaves_the_main_line_is_refused():

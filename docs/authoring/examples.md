@@ -31,8 +31,7 @@ not: depth 1 is fully supported.
 
 ## A — flat prose, no exercises
 
-**The manifest**, in full, from
-[`tests/fixtures/depth1/corpus.json`](../../tests/fixtures/depth1/corpus.json):
+**The manifest**, in full, as `tests/fixtures/depth1/corpus.json` holds it:
 
 ```json
 {
@@ -115,8 +114,7 @@ counts is `0 file(s) to edit`. **Zero files to edit** — that is
 
 ## B — a repository with two levels and graded practices
 
-**The manifest**, from
-[`tests/fixtures/depth2/corpus.json`](../../tests/fixtures/depth2/corpus.json):
+**The manifest**, in full, as `tests/fixtures/depth2/corpus.json` holds it:
 
 ```json
 {

@@ -37,6 +37,15 @@ def test_every_module_parses_and_states_a_contract():
         assert ast.get_docstring(ast.parse(text)), f"{where} has no contract (R17)"
 
 
+def test_the_adapter_depends_on_the_installed_library_and_never_a_sibling_checkout():
+    # ⛔ A corpus is pinned to the installed library; a stranger has no
+    # checkout of the framework beside theirs, so the contract must not say so.
+    made = files()
+    assert "the installed `studyforge` library" in made["ingest/__init__.py"]
+    for where, text in made.items():
+        assert "sibling checkout" not in text, where
+
+
 def test_the_reading_step_refuses_by_naming_what_to_return():
     text = files()["ingest/read.py"]
     assert "raise NotImplementedError" in text
