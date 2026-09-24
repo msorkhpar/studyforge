@@ -744,7 +744,8 @@ example is not where you learn what a manifest *may* carry. This list is.
 
 ⛔ **The contract is `MANIFEST_KEYS`, `REQUIRED_KEYS` and `KEY_VERSIONS` in
 `corpus/manifest/document.py`.** This table names every key the code has and no
-key it lacks. It is not derived from the example, and the example is deliberately
+key it lacks, and marks *required* exactly the keys in `REQUIRED_KEYS`; a test
+holds it to both, each way. It is not derived from the example, and the example is deliberately
 not exhaustive: onboarding **generates** manifests, and an exhaustive example
 would propagate every optional key into every corpus, where R9 freezes it at
 first declaration.
@@ -1861,8 +1862,10 @@ accepted identity on its first run.
 | A saturated brand colour as the page ground | `ground: chroma >= 30` | a saturated colour grounding a whole page |
 | A purple-to-blue gradient | `gradient stop: hue 258-300, chroma >= 20` + `gradient stop: hue 200-255, chroma >= 20` | a generated-design tell, read where a gradient actually is |
 
-⭐ **The rejected table is half of what a repaint needs, and the other half is the
-accepted identity:**
+#### The accepted identity
+
+⭐ **The rejected table is half of what a repaint needs, and the other half is what
+the identity is:**
 
 | Part | The identity |
 |---|---|

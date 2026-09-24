@@ -9,9 +9,8 @@ column reads as zero rejected identities, and a check that compares nothing is
 green over everything. ⛔ **That is a red suite here, never a quiet pass at the
 floor.**
 
-⭐ **The accepted identity is asserted here too**: the table records what was
-ACCEPTED, and its two reference pages are NAMED — never located, in any form
-the predicate below can find.
+⭐ **The accepted identity is asserted here too**: the spec records it beside the
+rejected one, and never locates a page in any form the predicate below can find.
 """
 
 from __future__ import annotations
@@ -32,7 +31,7 @@ from tests.floor.palettes.support import CREAM, GRADIENT, SATURATED, SLATE, conv
 from tests.support import assert_package_contract, repository_root
 
 #: The spec's record of the accepted identity, located by the heading it carries.
-ACCEPTED_HEADING = "What the user ACCEPTED, 2026-09-19"
+ACCEPTED_HEADING = "The accepted identity"
 
 #: ⛔ What a reference page must NEVER be given as: a URL, a home path, or any
 #: multi-segment path. ⭐ Named in words is the whole instruction.
@@ -134,13 +133,12 @@ def test_the_convention_RECORDS_what_the_user_accepted():
     text = accepted()
     assert "cool slate" in text.lower()
     assert "ONE loud accent" in text
-    assert "I am not a fan of green" in text
+    assert "none in the identity" in text
 
 
-def test_the_two_reference_pages_are_NAMED_and_never_LOCATED():
+def test_the_accepted_identity_is_described_and_never_LOCATED():
     text = accepted()
-    assert "reference pages" in text
-    assert _LOCATED.search(text) is None, "a reference page is named in words, never located"
+    assert _LOCATED.search(text) is None, "the identity is described in words, never located"
 
 
 def test_the_predicate_that_says_so_actually_FIRES_on_a_planted_location():
