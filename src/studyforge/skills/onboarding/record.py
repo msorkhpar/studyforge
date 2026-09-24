@@ -32,7 +32,9 @@ bytes, and `hand_edited` never names it.
 another directory by hand, and `hand_edited` read `[]`, because an absent file
 has no bytes to differ. ⭐ **Moving or deleting a generated file is an edit to
 it**, so each one missing from where the record puts it is reported as a
-sentence a person reads (R6), after the paths whose bytes differ.
+sentence a person reads (R6), after the paths whose bytes differ. ⛔ **Except
+an ignore file that hides itself** (`W425`): it is one machine's own and never
+enters a commit, so every fresh clone lacks it and that is not an edit.
 
 ⚠️ **`installed_api` moved to `2` for that reason.** A build that reads `1`
 expects a digest on every entry and would fail on the marked one rather than
@@ -45,10 +47,11 @@ from __future__ import annotations
 import hashlib
 import json
 from collections.abc import Sequence
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from studyforge.archive.scrub import assert_clean
 from studyforge.corpus.manifest import MANIFEST_FILENAME
+from studyforge.corpus.placement import IGNORE_FILENAME, IgnoreFile, cache_ignore_lines
 from studyforge.skills.adapter import Written
 from studyforge.skills.onboarding.pin import RECORD_FILE
 
@@ -144,12 +147,30 @@ def changed(root: Path, listed: Sequence[dict]) -> list[str]:
 
 
 def missing(root: Path, listed: Sequence[dict]) -> list[str]:
-    """Every generated file the record lists that is not on disk, sorted. Never the person's."""
+    """Every generated file the record lists that is not on disk, sorted. Never the person's.
+
+    ⛔ Nor one that never enters a commit (`machine_local`), which a clone lacks by design.
+    """
     return sorted(
         entry["where"]
         for entry in listed
-        if not is_yours(entry) and not (root / entry["where"]).is_file()
+        if not is_yours(entry)
+        and not machine_local(entry)
+        and not (root / entry["where"]).is_file()
     )
+
+
+def machine_local(entry: dict) -> bool:
+    """Whether a recorded file is an ignore file that hides itself, so no commit carries it.
+
+    ⭐ Read off the digest: the bytes placement writes for a file holding only this
+    framework's caches (`cache_ignore_lines`, `W425`). ⛔ One that also carries the
+    media policy does not hide itself, is committed, and is reported when missing.
+    """
+    where = PurePosixPath(entry["where"])
+    if where.name != IGNORE_FILENAME:
+        return False
+    return entry.get("sha256") == _digest(IgnoreFile(where, cache_ignore_lines()).text())
 
 
 def gone(where: str) -> str:

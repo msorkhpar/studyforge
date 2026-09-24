@@ -223,6 +223,8 @@ python3 -c "from studyforge.skills.onboarding import hand_edited, reonboard; \
   an editor fails it: `.studyforge/installed.json` digests the manifest as generated.
   ⛔ **A generated file moved or deleted by hand fails it too** (`W461`): each one
   missing from where the record puts it is a sentence saying so and what to do.
+  ⭐ An ignore file that hides itself is one machine's own (`W425`), so a fresh
+  clone lacks it and it is never reported.
 - ⭐ **The reader document goes where `corpus.json` says** (`onboarding_doc`, `W461`),
   and every generated line that points at it points there. ⛔ **Never move it by
   hand**: the next regenerate writes it back at the recorded place. Settle the key

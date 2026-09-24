@@ -18,6 +18,7 @@ import pytest
 
 from studyforge.corpus.manifest import ONBOARDING_DOC, ManifestError, parse
 from studyforge.corpus.manifest.fields import onboarding_doc_of
+from studyforge.corpus.placement import GENERATED_IGNORE_HOME
 from studyforge.skills.onboarding import artifacts, hand_edited, onboard, reonboard
 from studyforge.skills.onboarding.manifest import ONBOARDING_DOC_API, promote, render
 from studyforge.skills.onboarding.pin import PIN_DIR, RECORD_FILE
@@ -26,6 +27,9 @@ from tests.studyforge.skills.onboarding import corpora
 
 #: Where the corpus in `ISO-32` keeps the document now.
 ARCHIVED = "docs/archive/ONBOARDING.md"
+
+#: The generated ignore file that hides itself when media is committed (`W425`).
+SELF_HIDDEN = GENERATED_IGNORE_HOME.as_posix()
 
 
 def _written(tmp_path, **changes):
@@ -207,7 +211,11 @@ def test_a_place_another_writer_owns_is_refused_before_anything_is_planned(tmp_p
 
 def test_every_generated_file_missing_from_its_recorded_place_is_reported(tmp_path):
     root, made = _written(tmp_path)
-    generated = [item.where for item in made.files if item.generated and item.where != RECORD_FILE]
+    generated = [
+        item.where
+        for item in made.files
+        if item.generated and item.where not in (RECORD_FILE, SELF_HIDDEN)
+    ]
     assert ONBOARDING_DOC in generated, "the population moved"
 
     for where in generated:
@@ -218,6 +226,29 @@ def test_every_generated_file_missing_from_its_recorded_place_is_reported(tmp_pa
         path.write_bytes(kept)
 
     assert hand_edited(root) == []
+
+
+def test_an_ignore_file_that_hides_itself_is_absent_from_every_clone_and_not_reported(tmp_path):
+    # ⛔ Measured on the corpus that found this row: a clone of it has no
+    # `.studyforge/.gitignore`, because that file ignores itself (`W425`), and
+    # the first cut of this clause reported it on every fresh clone.
+    root, made = _written(tmp_path)
+    hidden = root / SELF_HIDDEN
+    assert SELF_HIDDEN in made.paths and ".gitignore" in hidden.read_text("utf-8").splitlines()
+    hidden.unlink()
+
+    assert hand_edited(root) == []
+
+
+def test_an_ignore_file_carrying_the_media_policy_is_committed_and_reported(tmp_path):
+    # ⭐ The opposite shape: it does not hide itself, so a clone has it.
+    root, made = _written(tmp_path, media={"commit": "never"})
+    committed = [where for where in made.paths if where.endswith("/.gitignore")]
+    policy = [w for w in committed if ".gitignore" not in (root / w).read_text("utf-8").split()]
+    assert policy, "the population moved: no ignore file carries the media policy"
+    (root / policy[0]).unlink()
+
+    assert hand_edited(root) == [gone(policy[0])]
 
 
 def test_the_person_s_own_module_missing_is_theirs_and_never_reported(tmp_path):
