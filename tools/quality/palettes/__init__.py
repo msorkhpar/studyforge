@@ -2,7 +2,8 @@
 
 **What it does.** Puts the document's side (`rejected`) and the tree's side
 (`shipped`) together and answers one question: is any theme this framework ships
-an identity `docs/conventions/ui-design.md` §2 REJECTS? ⛔ **The convention
+an identity the spec's §8.4 table REJECTS (moved there from the UI convention
+by `REL-08`)? ⛔ **The convention
 already listed *warm cream + serif display + terracotta*, a repaint shipped the
 first half of it, and the user rejected it for exactly that reason (`W388/4`)** —
 the list was right and nothing read it.

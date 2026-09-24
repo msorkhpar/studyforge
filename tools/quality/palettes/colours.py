@@ -2,7 +2,7 @@
 
 **What it does.** Turns a colour a stylesheet writes — `#rgb`, `#rrggbb`,
 `rgb(…)` or `rgba(…)` — into a hue, a chroma and a light, which are the measures
-`docs/conventions/ui-design.md`'s rejected-palette table states its bands in.
+the spec's §8.4 rejected-palette table states its bands in.
 
 **How you use it.** `colour(value)` for a value off a stylesheet, `measure(r, g,
 b)` for a triple you already have, and `Colour.reading()` for the three numbers
