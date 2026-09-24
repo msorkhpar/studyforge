@@ -101,27 +101,27 @@ first-class state for a prompt nothing can back.
 
 ## 2. Governing rules
 
-These are rulings, not preferences. A task that violates one is not done.
+These are rulings, not preferences. A change that violates one is not done.
 
 **R1 — The framework knows nothing about any source.** `studyforge` must not
 import from, name, or branch on any adapter. Every source-specific fact
 arrives as data, through the manifest or the archive.
 
-⭐ **AMENDED 2026-09-23 — what *names* means, carried from the review rubric when it
-was archived.** ⛔ **A source's name in framework source is a failure even inside a
-comment**, because the next reader takes a name as licence to branch on it. A fixture
-under `tests/` that names a *shape* is fine; a module under `src/` that names a *corpus*
-is not. ⚠️ **A name is matched in the forms people actually write it** — the repository
-slug, and the corpus named in English (*the Java corpus*) — and each is anchored on a
-word only a corpus's name takes: a bare `ISO` is far more often an ISO 8601 date, and a
-check that cannot tell the two apart is switched off within a day. ⭐ The floor's
-source-names check is the enforcement, so R1 is answered on every run rather than by a
-reviewer's grep.
+⛔ **A source's name in framework source is a failure even inside a comment**,
+because the next reader takes a name as licence to branch on it. A fixture
+under `tests/` that names a *shape* is fine; a module under `src/` that names a
+*corpus* is not. ⚠️ **A name is matched in the forms people actually write it** —
+the repository slug, and the corpus named in English (*the Java corpus*) — and
+each is anchored on a word only a corpus's name takes: a bare `ISO` is far more
+often an ISO 8601 date, and a check that cannot tell the two apart is switched
+off within a day. ⭐ The floor's source-names check is the enforcement, so R1 is
+answered on every run rather than by a reviewer's grep.
 
 **R2 — The adapter seam is on disk, not in Python.** An adapter's entire
 obligation is to write a valid archive. It gets no callbacks and no framework
 API. This is what lets adapters be built in any language, tested in isolation,
-and assigned to different agents in parallel.
+and written independently of each other. `studyforge validate` is an adapter's
+definition of done (§6).
 
 **R3 — Generation is non-destructive, and every exception is declared,
 additive and asserted.** No existing file in a source repository is moved,
@@ -133,37 +133,38 @@ declares it** — `permitted_edits`, naming the file, the exact insertion and wh
 be additive — it removes or rewrites an existing line — is **also** a build
 failure, so a declaration cannot be used to smuggle a rewrite past the rule.
 ⛔ **The check reads the declaration**; it never hardcodes one corpus's
-exception. The Java repo's additive `<module>practice</module>` line in the
-root `pom.xml` is one entry in that list, not a special case in the framework.
+exception. An additive `<module>practice</module>` line in a corpus's root
+`pom.xml` is one entry in that list, not a special case in the framework.
 
 ⛔ **Three edits are never permitted, however declared:** the repository's root
-ignore file — write new ignore files *inside* generated directories instead;
-any version-control configuration; and any file the material's own reader
-depends on as content.
+ignore file — new ignore files are written *inside* generated directories
+instead; any version-control configuration; and any file the material's own
+reader depends on as content.
 
 ⛔ **Content is a property of the file in its repository, not of the site's
-`content` policy** (`W278`, `INT-13/1`). A file the policy includes or contests
-is content, and so is **repository-root documentation**: a root `README`,
-`LICENSE`, `LICENCE` or `COPYING`, of any suffix, which the repository's own
-readers read whatever the manifest classifies it as for the site. ⭐ The
-manifest parser refuses such a declaration and the non-destructive check a
-declared change to it, through one predicate.
+`content` policy.** A file the policy includes or contests is content, and so is
+**repository-root documentation**: a root `README`, `LICENSE`, `LICENCE` or
+`COPYING`, of any suffix, which the repository's own readers read whatever the
+manifest classifies it as for the site. ⭐ The manifest parser refuses such a
+declaration and the non-destructive check a declared change to it, through one
+predicate.
 
-⭐ **The reverse of every declared edit is recorded.** An onboarding that cannot
-be undone is one nobody will run against a repository they care about.
+⭐ **The reverse of every declared edit is recorded.** An `insert-line`
+declaration records the anchor and the line, so its reverse is that line
+removed, and onboarding writes an uninstall that performs it (§9). An onboarding
+that cannot be undone is one nobody will run against a repository they care
+about.
 
-⛔ **R3 DISTINGUISHES THE BUILD'S OWN PRIOR OUTPUT FROM THE USER'S MATERIAL, and
-a file the build wrote last time is not somebody's material** — it is the
-build's own previous answer, and replacing it is the build answering again.
-⭐ **So a rebuild may overwrite exactly the paths its own generation created, and
-which those are is not a guess: `studyforge plan` enumerates every path a build
-creates before it creates one.** ⛔ **R3 still protects everything else
-absolutely — a hand-edited file, a foreign file, or any path the enumeration
-does not name is REFUSED BY NAME and never replaced** — ⚠️ **and an enumeration
-that has drifted from what the build writes is a build failure rather than a
-licence, because the two are asserted to agree path for path.** ⭐ **Ruled by
-the user, 2026-09-12, answering *what does a rebuild do*; the six decisions it
-belongs to are in the delivery epic, `docs/tasks/E09-delivery.md`.**
+⛔ **R3 distinguishes the build's own prior output from the user's material.** A
+file the build wrote last time is the build's own previous answer, and replacing
+it is the build answering again. ⭐ **So a rebuild may overwrite exactly the paths
+its own generation creates, and which those are is not a guess: `studyforge
+plan` enumerates every path a build creates before it creates one** (§5). ⛔ **R3
+still protects everything else absolutely** — a hand-edited file, a foreign file,
+or any path the enumeration does not name is **refused by name and never
+replaced**, and the build exits `1` — ⚠️ and the plan and the build are asserted
+to agree path for path, so an enumeration that has drifted from what the build
+writes is a failure rather than a licence.
 
 **R4 — Location is data; identity is embedded.** The framework never infers
 what a file *is* from where it sits. Every generated artifact carries its own
@@ -175,36 +176,32 @@ the unit it is. Its stylesheet, scripts and sibling audio resolve *relative to
 the page* (R8, §5), so a page moved away from its assets renders unstyled and
 silent. Both are true and neither is a defect — conflating them would either
 force absolute asset paths (breaking the `file://` floor) or force a fixed tree
-(breaking placement). Discovery's acceptance tests identity, not rendering.
+(breaking placement). Discovery is tested on identity, not on rendering.
 
-**R5 — Nothing generated is presented as more authoritative than it is.**
-Inherited from CodeSignal's R10. A grader written by us against a hidden
-upstream grader is `advisory`. A grader that shipped with the material and is
-proven by the gates in §7 is `authoritative`. The framework refuses to render
-the first as the second.
+**R5 — Nothing generated is presented as more authoritative than it is.** A
+grader written against a hidden upstream grader is `advisory`. A grader that
+shipped with the material is `authoritative` only where it is proven by the
+gates in §7. The framework refuses to render the first as the second.
 
-⭐ **EXTENDED 2026-09-19 (`W389`) — R5 keeps every word above and gains one case.** A
-grader **authored at ingestion** — tests written by a model from the page, or from the
-source's own example code — is `generated`, and therefore `advisory`. It ships only
-when it clears §7's [authoring gates](#exercises-authored-for-every-corpus-w389), whose
-record ships beside it and which `studyforge validate` re-reads; an exercise that
-cannot clear a gate does not ship, and the coverage report names the gate that refused
-it and why. ⛔ **The vocabulary does not grow.** No third trust level is minted:
-`generated` still can never be `authoritative`, and a gate record is evidence for a
-claim, never a promotion of it. ⭐ **What the READER is shown is a sentence, not the
-vocabulary** (the user's ruling, 2026-09-19): `provenance` and `trust` are the
-framework's internal words, and §7 fixes the learner-facing wording each one renders
-as. ⛔ **A label is never omitted because it is unflattering.**
+⭐ **A grader authored at ingestion** — tests written from the page, or from the
+source's own example code — is `generated`, and therefore `advisory`. It ships
+only when it clears §7's [authoring gates](#exercises-authored-for-every-corpus),
+whose record ships beside it and which `studyforge validate` re-reads; an
+exercise that cannot clear a gate does not ship, and the coverage report names
+the gate that refused it and why. ⛔ **There is no third trust level.** Only
+`bundled` may be `authoritative`, and a gate record is evidence for a claim,
+never a promotion of it. ⭐ **What the reader is shown is a sentence, not the
+vocabulary**: `provenance` and `trust` are the framework's internal words, and
+§7 fixes the learner-facing wording each one renders as. ⛔ **A label is never
+omitted because it is unflattering.**
 
 **R6 — Fail loud, never silently short.** A unit with no content, a broken
 curriculum link, an unmatched class, a declared practice that is absent — each
-is reported by name and exits non-zero. Inherited from CodeSignal's
-`run_capture_audit` and the reason `layout.py` exists at all.
+is reported by name and exits non-zero.
 
-⭐ **AMENDED 2026-09-23 — R6's general form: enumerate the legal, never the illegal.**
-Carried from the module-structure convention when the conventions were archived. It is
-the rule that most often decides *how* a refusal is written, so it lives beside the
-rule that demands one.
+⭐ **R6's general form: enumerate the legal, never the illegal.** It is the rule
+that most often decides *how* a refusal is written, so it lives beside the rule
+that demands one.
 
 > ⛔ **A list of forbidden things is an open set: the unforeseen case is admitted
 > silently. A list of permitted things is a closed set: the unforeseen case is
@@ -220,15 +217,15 @@ question; a silent admission costs whatever the unforeseen case does.
   predicate** — keys, versions, profiles, skip causes, contract fields, filename
   components, slugs, legal pairings of values. A derived class, such as the
   characters a label may hold, is computed from that predicate and never typed out a
-  second time. ⚠️ A hand-written character blacklist for filenames once let a vertical
-  tab, a form feed, a non-breaking space, a line separator, a quote, a colon and an
-  asterisk through two gates at once, and one of them breaks R8's `file://` floor.
+  second time. ⚠️ A hand-written character blacklist for filenames lets through a
+  vertical tab, a form feed, a non-breaking space, a line separator, a quote, a colon
+  and an asterisk, and one of them breaks R8's `file://` floor.
 - ⭐ **Better still, the illegal value is made unrepresentable**: a key is required to
   be a slug rather than slugified into a possible collision, and a parameter is typed
   so that a leaking value cannot be passed. ⛔ **The tell of the wrong shape is a check
-  that grows by one entry every time somebody hits a case nobody thought of** — adding
-  the entry conceals the shape for one more round. A list that is genuinely right (a
-  sanctioned exception) is short, and each entry carries its reason.
+  that grows by one entry every time somebody hits a case nobody thought of.** A list
+  that is genuinely right (a sanctioned exception) is short, and each entry carries its
+  reason.
 - ⛔ **The domain limit.** Where the legal set cannot be written down — free text,
   whose permitted set is *all text that is not personal data* — a forbidden list is
   forced and known-incomplete by construction. What is owed then is depth, never
@@ -243,9 +240,9 @@ question; a silent admission costs whatever the unforeseen case does.
   file.*
 - ⛔ **Where one helper names several faults, every caller either refuses all of them
   or says in its own body which it does not, and why.** A phrase in a refusal
-  vocabulary that no caller can reach is a missing guard: a path helper named three
-  faults and one of its two callers guarded only two, so a tilde-rooted edit target
-  was accepted while the sentence refusing it existed and could never be printed.
+  vocabulary that no caller can reach is a missing guard.
+- ⭐ **A walk over many items gathers every failure and names them in one refusal**,
+  leading with the count, so a fix is not one full run per failure.
 
 Where each of these is enforced is recorded in [the decisions file](../decisions.md),
 under *Refusals, errors and personal data*.
@@ -253,19 +250,16 @@ under *Refusals, errors and personal data*.
 **R7 — No personal data reaches disk or the wire.** Every string entering the
 archive passes `assert_clean`, which **refuses** rather than rewrites. No
 absolute home path, account id, name or email in any generated file, log or
-report.
-
-⭐ **AMENDED 2026-09-23 — how R7 is upheld in code.** Carried from the review rubric and
-from the personal-data conventions when they were archived. The rule above states the
-outcome; these are the properties the code holds so that the outcome never depends on
-somebody noticing.
+report. The rule states the outcome; these are the properties the code holds so
+that the outcome never depends on somebody noticing.
 
 - ⛔ **R7 has three subjects: this repository's tracked files, the archive, and the
   rendered page.** A home path that reaches a page has reached a file R7 governs,
   however clean the other two are.
 - ⛔ **Every string composed for the archive, a log, a report or an outbound request
   passes the personal-data gate, and the gate refuses.** A gate that scrubs silently
-  produces a clean file and a false belief.
+  produces a clean file and a false belief. Narration text is gated before the
+  request to the synthesis service is built (§8.2).
 - ⛔ **A refusal describes the fault and never formats the value.** A branch that exists
   *because* a value is an absolute path, and prints that value, has taken the one input
   guaranteed to carry a home directory and written it into a log from inside the check
@@ -273,13 +267,12 @@ somebody noticing.
   either**: `OSError` formats itself with the filename it was given, so a refusal names
   the field it means — `strerror`, `errno` — and says what it knows itself. ⚠️ **The
   rule is blanket, including where one exception type happens to be harmless**,
-  because auditing each type at each call site is the work nobody does twice, and the
-  site that gets skipped is the one holding a filename.
+  because auditing each type at each call site is the work nobody does twice.
 - ⛔ **A *why it failed* field carries a code, never a captured stream.** When the
   framework runs another process, the reason it records is an exit code, a timeout
   with its bound, or a failure class — never standard output, standard error, a
   filename or an argument. A captured stream is the richest source of absolute paths
-  there is, and the counts are the useful half anyway.
+  there is.
 - ⛔ **The personal-data refusal travels through every caller as itself.** It is not a
   `ValueError` and belongs to no package's error family, deliberately: a family exists
   so that a walk can catch one type per item and continue, so translating a leak into
@@ -295,25 +288,21 @@ somebody noticing.
   (R2), so it imports nothing that could read the environment and gives the same
   verdict on every machine. ⭐ The repository's own hygiene sweep is the mirror image:
   its subject *is* this machine's leak surface, so it may derive the machine's identity
-  at run time. ⛔ Neither is a model for the other, and *align them* is the wrong
-  instinct.
+  at run time. ⛔ Neither is a model for the other.
 - ⭐ **One shape vocabulary, two policies.** Those two gates have different subjects and
   may differ in what they do with a match, never in which shapes they recognise. They
-  share evidence rather than code: one table, whose product copy is
-  `tests/harness/personal-data-shapes.json`, gives every shape a column per gate, and
-  ⛔ **a row whose columns disagree carries a `why`**, so a divergence is declared with
-  a reason instead of discovered by a reviewer. The rows are measured against the real
-  implementations, so a row that stops being true is a build failure. ⭐ The last rows
-  are controls that nothing refuses — a table whose every row read *refuse* would be
-  satisfied by gates that refused everything — and every spelling is stored as
-  fragments, because a real shape written whole into the table would be a finding
-  against the table.
+  share evidence rather than code: one table, `tests/harness/personal-data-shapes.json`,
+  gives every shape a column per gate, and ⛔ **a row whose columns disagree carries a
+  `why`**. The rows are measured against the real implementations, so a row that stops
+  being true is a build failure. ⭐ The last rows are controls that nothing refuses — a
+  table whose every row read *refuse* would be satisfied by gates that refused
+  everything — and every spelling is stored as fragments, because a real shape written
+  whole into the table would be a finding against the table.
 - ⛔ **A gate's false positive on ordinary source is a defect in the gate.** An author
-  who renames a field to get past R7 pays a real cost and leaves no trace, and the next
-  author pays it again; a checker people rename fields around is on its way to being
-  switched off. ⚠️ The shape known to be over-broad is the local hostname, which also
-  matches a Python attribute access at the end of an expression; its remedy narrows
-  that one lookahead while keeping the hostname shape, in both gates together.
+  who renames a field to get past R7 pays a real cost and leaves no trace, and a checker
+  people rename fields around is on its way to being switched off. ⚠️ The shape known to
+  be over-broad is the local hostname, which also matches a Python attribute access at
+  the end of an expression; its lookahead is narrowed in both gates together.
 - ⭐ **A sanctioned negative fixture is the one place a personal-data shape is
   required**, because a gate needs an input to refuse. It is legal only while all five
   hold: the value is fabricated and unreachable (an RFC 2606 reserved domain, a user
@@ -322,53 +311,45 @@ somebody noticing.
   and what the gate should say; tests assert both directions — nothing else in the
   fixture tree carries the shape, and the sanctioned value really does trip the gate —
   and the registry of such directories is itself asserted. ⛔ A repository-wide sweep
-  excludes that directory and only that one, by name; a sweep that excludes `tests/`
-  wholesale has stopped checking the tree where fixtures live.
+  excludes that directory and only that one, by name.
 
 **R8 — The site works over `file://` with no network and no server.** Every
-asset is local. A served origin adds the API, progress and Run/Submit; it is
-never a prerequisite for reading.
+asset is local. A served origin adds the API, progress, Run and Submit, and quiz
+checking; it is never a prerequisite for reading.
 
 **R9 — Contracts are versioned.** An unknown version is refused, never migrated
 in place at read time.
 
-⛔ **The list of versioned fields lives in `studyforge.version.CONTRACT_FIELDS`,
-not here** (ruled round 15). This sentence used to enumerate five and the code
-now holds seven; a list written twice is a list that disagrees with itself, and
-this one already did. ⚠️ The register below says *which contract*; the constant
-says *which field name*; a task that versions a new contract adds it to the
-constant **in the same commit**, or the guard cannot see it.
+⭐ **The list of versioned fields lives in `studyforge.version.CONTRACT_FIELDS`**,
+and the register under R21 says which file each one versions. A contract that
+gains a version key is added to the constant in the same change, or the guard
+cannot see it. ⛔ **A contract is versioned because somebody reads it, not because
+the framework wrote it** — the authored overlay is one the framework only ever
+reads, and it is versioned all the same.
 
-⭐ **Why this drifted is worth keeping.** The five originally listed are every
-document the framework **writes**. The authored overlay is the one it only ever
-**reads** — so it fell out of an enumeration built, without anyone deciding it,
-around authorship. ⛔ **A contract is versioned because somebody reads it, not
-because we wrote it** (SF-09's diagnosis, and the reason R21 exists).
-
-⚠️ **A declared v1 limitation: titles must slugify to something** (ruled round
-16). `slugify` replaces every non-ASCII-alphanumeric run with a separator — it
-does **not** transliterate — so an accented title is mangled rather than
-converted (`Ströme` becomes `str-me`) and a title with no ASCII letters at all
-produces an empty slug and is refused. ⛔ **That is a limitation of this
-framework, not a defect in the corpus**, and every refusal must say so: R1 means
-the framework knows nothing about a source, including which alphabet it is
-written in.
-
-⛔ **Open — transliteration.** Taking it later renames every generated page, so
-it is recorded now rather than discovered by the first non-English corpus. ⚠️ All
-four designed corpora are English, so nothing has ever exercised this. ⭐ A
-consequence that is *not* deferred: two titles differing only in accented
-characters can collide, invisibly in the source, which is why **SF-25 checks
-generated names and not only addresses**.
-
-⭐ **AMENDED 2026-09-23 — a version gate checks the type before the value.** Carried
-from the module-structure convention when it was archived. `True in {1}` and
+⭐ **A version gate checks the type before the value.** `True in {1}` and
 `1.0 in {1}` are both true in Python, so a JSON `true` or `1.0` passes a bare
 membership test — the one check whose whole job is to refuse a document this build
 cannot read. ⛔ The gate refuses a value that is not an `int`, and refuses a `bool`
 explicitly because `bool` is a subclass of `int`. ⭐ There is one implementation,
 `studyforge.version` (§3.2), and every versioned contract is read through it: one
 membership test per contract is one chance per contract to write the porous one.
+
+⭐ **A contract whose document is derived may discard an unknown version instead of
+refusing it** — the discovery cache is rebuilt by the scan it caches, so an unknown
+`site_api` is reported, not read, and rewritten. ⛔ **A record that is rebuildable
+only at real cost refuses** — the narration record would take re-synthesising every
+clip, so an unknown `narration_api` stops the run.
+
+⚠️ **A stated limitation: titles must slugify to something.** `slugify` replaces
+every non-ASCII-alphanumeric run with a separator — it does **not** transliterate —
+so an accented title is mangled rather than converted (`Ströme` becomes `str-me`)
+and a title with no ASCII letters at all produces an empty slug and is refused.
+⛔ **That is a limitation of this framework, not a defect in the corpus**, and every
+refusal says so: R1 means the framework knows nothing about a source, including
+which alphabet it is written in. ⭐ Two titles differing only in accented characters
+can collide, invisibly in the source, which is why `validate`, `plan` and a build
+check generated **names**, not only addresses, and refuse a duplicate path by name.
 
 **R10 — Generated output is byte-for-byte reproducible.** No clocks, no
 dependence on filesystem enumeration order. The same inputs produce the same
@@ -378,20 +359,17 @@ bytes on any machine.
 deterministic, and therefore reproducible by construction. The rule that bans
 digests is narrower, and it is about *churn*: ⛔ **a shared asset linked by
 every page carries a plain name**, because a digest there renames a file and
-rewrites every page that links it whenever a colour changes, buying nothing a
-local reader wanted. An artifact linked by **one** page, regenerated in the same
-run as that page, is not in that class; §8.2 rules on it.
-
-⭐ **AMENDED 2026-09-23 — what R10 forbids in code, and its two exemptions.** Carried
-from the review rubric and the module-structure convention when they were archived.
+rewrites every page that links it whenever a colour changes. An artifact linked by
+**one** page, regenerated in the same run as that page, is not in that class; §8.2
+rules on it.
 
 - ⛔ **No clocks and no randomness in anything that reaches a generated file**: no
   wall-clock or monotonic reads, no uuids, no random bytes. A timer used for a log line
   is still a clock if that log is an artifact. ⭐ **There are two exemptions and only
-  two:** `container.json`'s `ingested` field, which is excluded from `content_sha256`
-  so it cannot make unchanged content look edited (§6); and synthesised audio bytes,
-  because a speech model is not byte-stable and the clip is content-addressed instead
-  (§8.2). ⛔ **A new exemption is an amendment to this rule**, never a local decision.
+  two:** the archive's `ingested` date, which is excluded from `content_sha256` so it
+  cannot make unchanged content look edited (§6); and synthesised audio bytes, because
+  a speech model is not byte-stable and the clip is content-addressed instead (§8.2).
+  ⛔ **A new exemption is a change to this rule**, never a local decision.
 - ⛔ **No dependence on filesystem enumeration order.** Every listing is sorted before
   it is used, and an `os.walk` sorts its directory and file lists *in place*, because
   sorting the outer call orders nothing.
@@ -407,26 +385,14 @@ from the review rubric and the module-structure convention when they were archiv
 - ⭐ **The claim is proved by building twice into two directories and comparing**: the
   two are identical, or identical apart from `ingested` and said so.
 
-**R11 — No file grows past the size a person can hold in their head.** Soft
-ceiling **400 lines** for a module, **600** for a test module. A unit
-approaching it becomes a **package** of focused modules with one clear purpose
-each. This is inherited debt to be paid *during* extraction, not after: the
-largest modules in the port surface are several times the ceiling, and they
-arrive as **packages or not at all**. ⚠️ **Every measurement of a source
-repository in this document is a dated snapshot** (§8) — a task counts its own
-port surface at start rather than inheriting a number, and *how much* of a
-source module is ported at all is its own question: the Java repo ships its
-graders (§7), so CodeSignal's grader-guessing scaffolder is largely **not**
-ported rather than ported large. The test is not line count but the isolation
-question — *can someone understand what this unit does without reading its
-internals, and can its internals change without breaking consumers?* If not,
-the boundary is wrong. Smaller units are also what makes agent work reliable:
-an agent reasons better about code it can hold in context at once, and its
-edits are more accurate in focused files.
-
-⭐ **AMENDED 2026-09-23 — the ceiling's units, its one opt-out, and a split that is
-one-way.** Carried from the module-structure convention and the review rubric when
-they were archived.
+**R11 — No file grows past the size a person can hold in their head.** A unit
+approaching its ceiling becomes a **package** of focused modules with one clear
+purpose each. The test is not line count but the isolation question — *can
+someone understand what this unit does without reading its internals, and can its
+internals change without breaking consumers?* If not, the boundary is wrong.
+Smaller units are also what makes agent work reliable: an agent reasons better
+about code it can hold in context at once, and its edits are more accurate in
+focused files.
 
 | Unit | Soft ceiling | On exceeding |
 |---|---|---|
@@ -436,12 +402,13 @@ they were archived.
 | template file | — | markup only, never logic |
 
 ⭐ **A line is a physical line** — what `wc -l` reports — so the floor's arithmetic is
-checkable from a shell. ⚠️ **The ceiling binds every authored file under `src/`,
-stylesheets and skill documents included**, although the shipped checker counts
-Python modules only; a non-Python file near the ceiling is read by a person, because
-the instrument cannot see it.
+checkable from a shell. ⭐ **The ceiling binds every authored file under `src/`**:
+the floor's size check counts Python modules and the stylesheets, scripts and page
+templates the framework ships as source, and excludes a vendored third-party file
+by its path, each with its reason.
 
-⛔ **The opt-out is one line in the module's first docstring, and nowhere else**:
+⛔ **The opt-out is one line in a Python module's first docstring, and nowhere
+else**:
 
 ```text
 Size exception: the substitution table is one literal mapping, and splitting it
@@ -451,11 +418,12 @@ would hide half the placeholders from the reader of the other half.
 It begins `Size exception:` at the start of a line, case included, so the checker and
 every reader agree on one spelling; it is read from the docstring with `ast`, never
 from a comment beside the code, because the exception is recorded where the next
-reader of the module meets it; and it is one sentence saying why splitting would be
-*worse* — a reason too short to be one is reported as none. ⛔ **It is refused whenever
-the honest answer to the isolation question is no**: a justification is not a licence.
-An exception left in a module that is now under its ceiling is stale and is removed,
-and a ported module is not exempt by inheritance.
+reader of the module meets it; and it says why splitting would be *worse* — a reason
+too short to be one is reported as none. ⛔ **It is refused whenever the honest answer
+to the isolation question is no**: a justification is not a licence. An exception left
+in a module that is now under its ceiling is stale and is removed. ⚠️ A stylesheet, a
+script or a template has no docstring and so no opt-out: its remedy is a split at a
+named seam.
 
 ⭐ **A one-way seam is a valid split.** A parser must build the model it defines, so
 asking the two halves never to import each other would forbid the split or invent a
@@ -468,14 +436,12 @@ strongest form, not the required one.
 source tree.** A module without tests is not done. A package's tests are split
 the same way the package is, so a failing test names a module, not a subsystem.
 
-⭐ **AMENDED 2026-09-23 — the mirror's exact form, and the configuration it needs.**
-Carried from the module-structure convention and the review rubric when they were
-archived. `src/studyforge/<path>/<stem>.py` is tested at
-`tests/studyforge/<path>/test_<stem>.py`, and a dunder drops its underscores so the
-name stays readable (`__init__.py` at `test_init.py`, `__main__.py` at
-`test_main.py`); the floor's mirror check is the authority on where a test lives.
-⭐ **A package's `__init__.py` is its contract (R17), so its mirror is a test that
-imports the package's public names** — what stops the surface drifting from the code.
+`src/studyforge/<path>/<stem>.py` is tested at `tests/studyforge/<path>/test_<stem>.py`,
+and a dunder drops its underscores so the name stays readable (`__init__.py` at
+`test_init.py`, `__main__.py` at `test_main.py`); the floor's mirror check is the
+authority on where a test lives. ⭐ **A package's `__init__.py` is its contract (R17),
+so its mirror is a test that imports the package's public names** — what stops the
+surface drifting from the code.
 
 ⛔ **Two settings are behaviour, not style.** `--import-mode=importlib` in the test
 configuration is required: the mirror puts a `test_init.py` in every package
@@ -487,14 +453,9 @@ fails on a fresh clone, with nothing in `git status` to say why.
 
 **R13 — Markup, styling and scripts are source files, never code strings.**
 Templates in template files, CSS and JS in asset files, loaded and composed by
-code. Inherited from CodeSignal, where 80 KB of triple-quoted strings meant
-changing a colour required editing Python. Loop bodies and inline wrappers stay
-in code — a template file for a closing tag removes no duplication.
-
-⭐ **AMENDED 2026-09-23 — where markup lives, and how a template is used.** Carried
-from the module-structure convention and the review rubric when they were archived.
-Templates live in `render/templates/`, stylesheets and scripts in `render/assets/`,
-loaded and composed by code.
+code: changing a colour is a line in a stylesheet, never an edit to Python.
+Templates live in `render/templates/`, stylesheets and scripts in
+`render/assets/`.
 
 - ⛔ **A template is used exactly, minus one trailing newline** — no reflow, no
   re-indent, no whitespace collapse — because pages are compared byte for byte (R10).
@@ -502,67 +463,39 @@ loaded and composed by code.
 - ⛔ **Substitution fails on an unfilled placeholder**; a placeholder never reaches a
   page as a literal, and a new placeholder arrives with a test of that failure.
 - ⭐ **What stays in code is a fragment**: a loop body, an inline wrapper, a one-line
-  container. ⛔ A stylesheet, a script, or a whole element with attributes is never a
-  fragment. A docstring may show markup; it is not emitted.
+  container — a template file for a closing tag removes no duplication. ⛔ A
+  stylesheet, a script, or a whole element with attributes is never a fragment. A
+  docstring may show markup; it is not emitted.
 
-**R14 — ⛔ WITHDRAWN 2026-09-12, by user ruling. The number is retained and is
-never reused.**
-
-⭐ **The search path is `git grep`, `grep -rn` and `sed -n`.** ⛔ **No document
-in this project may name a code-graph or index tool, and no task's context
-budget may assume one exists.**
-
-⚠️ **What it used to say, and why it is gone.** R14 required every repository in
-the working set to carry a built knowledge index and required an agent to query
-it before reading files. ⛔ **The instruction could not be obeyed.** The index
-directory was git-ignored, so it existed only in the main checkout and was
-**absent from every linked worktree** — which is where the offices work — and
-the one copy was stale by the floor's own check, which says a stale index is
-worse than an absent one. ⭐ The tool has since been removed from the machine
-this project is built on, so the instruction is now false as well as
-unfollowable.
-
-⛔ **The id is WITHDRAWN IN PLACE and nothing is renumbered.** R1–R21 are cited
-by number across the whole corpus, including frozen records that cannot be
-edited (Ruling 106). ⚠️ **Renumbering would silently redirect every historical
-`R14` citation to a different rule** — unrecoverable, because the records cannot
-be edited to follow. ⭐ A withdrawn rule that explains itself is what every
-existing citation must still resolve to.
+**R14** is not assigned. The number is kept free so that R15–R21 keep theirs.
 
 **R15 — Every step whose result depends on installed tooling runs in a
-container.** A build, a test run, a grader verdict, a synthesis job: each is
-reproducible because its toolchain is pinned in an image, not inherited from
-whoever's machine it ran on. A step that only works on one person's machine is
-not done.
+container.** A build of a corpus's code, a test run, a grader verdict, a
+synthesis job: each is reproducible because its toolchain is pinned in an
+image, not inherited from whoever's machine it ran on.
 
 ⚠️ **This is deliberately not "every process runs in a container".** The
 framework's own serving process is standard-library only with no dependencies,
-so containerising it buys no reproducibility — and it costs something real. See
-§8.3: **the serving process must never receive the Docker socket**, and that
-rules out the naive reading of this ruling (§8.3). Execution reaches the toolchain
-container from outside it; the web-facing process is never the thing holding
-root-equivalent access to the host.
+so containerising it buys no reproducibility — and it would cost something real:
+**the serving process must never receive the Docker socket** (§8.3). Execution
+reaches the toolchain container from outside it; the web-facing process is never
+the thing holding root-equivalent access to the host.
 
-**R16 — The product is a set of skills, not a bespoke pipeline.** The end state
-is that someone points a skill at material they care about and gets this format
-back — pages, narration, contents, navigation, practices, examples, and their
-own progress — and keeps it as their durable personal record. The Java repo is
-the proving ground for that, not the destination (§9).
+**R16 — The product is a set of skills, not a bespoke pipeline.** Someone points
+a skill at material they care about and gets this format back — pages,
+narration, contents, navigation, practices, examples, and their own progress —
+and keeps it as their durable personal record (§9).
 
 **R17 — Every package states its contract in its own docstring:** what it does,
-how you use it, and what it depends on. A reader who has not seen the spec must
-be able to use a package correctly from that alone.
-
-⭐ **AMENDED 2026-09-23 — the three questions, and what a surface is.** Carried from the
-module-structure convention and the review rubric when they were archived.
+how you use it, and what it depends on. A reader who has not seen this document
+must be able to use a package correctly from that alone.
 
 - ⭐ **Every package's `__init__.py`, and every module, answers three things in its
   first docstring**: what it does, in one sentence and in this document's vocabulary;
   how you use it — the entry point, not a tour of the internals; and what it depends
-  on, with, where it matters, what it deliberately does not. ⛔ A reader who has not
-  seen this document answers all three from the docstring alone, so
-  `"""Path utilities."""` fails. The habit worth keeping is recording *why* a decision
-  was made and what broke before it: that is what prevents the regression.
+  on, with, where it matters, what it deliberately does not. ⛔ `"""Path
+  utilities."""` fails. The habit worth keeping is recording *why* a decision was made
+  and what it prevents.
 - ⛔ **`__init__.py` is the contract.** If a consumer has to import a submodule
   directly, the surface is wrong.
 - ⭐ **A name a second package needs is exported on the owning package's `__all__`**
@@ -571,43 +504,32 @@ module-structure convention and the review rubric when they were archived.
   surface.
 - ⭐ **A reader that deliberately lets another package's exception through exports the
   set as a `RAISES` tuple on its surface**, and a caller catches the tuple whole rather
-  than retyping a list from prose — callers that retyped it dropped members, and one
-  crashed a command whose contract is that nothing raises.
+  than retyping a list from prose, which drops members.
 
-**R18 — Components are separate repositories, pinned by one workspace.** Each
-component — the framework, the toolchain image, the narration service, each
-corpus — has its own release cadence and is checked out under a single parent
-workspace so one directory holds a complete, working system. **The parent's
-recorded component commits are the version pin**: they capture exactly which
-combination of components a working configuration used, which is what makes R9's
-per-contract versioning reproducible *across* repositories rather than only
-inside them. ⛔ A component is never vendored, copied or forked into another; it
-is pinned.
+**R18 — Components are separate repositories, and each is consumed only through
+its published contract.** The framework, the toolchain images
+(`code-server-toolchain`, §8.1), the narration service (`narrate-service`, §8.2)
+and each corpus are separate repositories with their own release cadence. ⛔ A
+component is never vendored, copied or forked into another.
 
-⚠️ **Amended 2026-09-09: nothing in this project is pushed to any remote, ever.**
-That is a standing decision, not a temporary state, and it removes the mechanism
-this ruling originally named. **Git submodules have no legal form here** and are
-not used:
-
-- an **absolute** local path in `.gitmodules` writes a home directory into a
-  tracked file — ⛔ a direct R7 violation;
-- a **relative** URL is R7-clean but git resolves it against the parent's own
-  remote, which does not exist;
-- a **real remote** URL names a commit that was never pushed, so it resolves to
-  nothing anywhere, including here.
-
-⭐ **The pin survives; the fetch does not, and the pin was always the valuable
-half.** A submodule is exactly two things — a URL and a commit — and only the URL
-half depended on pushing. So the parent records each component's verified commit
-in a tracked file and **verifies it against the local checkout**, which is
-mechanically checkable in the way this project checks everything else.
-
-⚠️ **The honest claim shrinks, and it is stated rather than implied.** This
-reproduces a working configuration **on this machine and across time** — which is
-what R9's cross-repository versioning actually needs — and **not across
-machines**. ⛔ Any document claiming otherwise is wrong. If pushing is ever
-adopted, submodules become legal again and the recorded commits are already the
-data they would need.
+- ⭐ **A component publishes what a consumer may rely on in one file,
+  `consuming.json`**, and the framework reads that file and nothing else of the
+  component — never its `Dockerfile`, its README or its own renderer. A value the
+  framework needs and the file does not carry is a finding against the component,
+  never a value typed into the framework (R19).
+- ⭐ **`consuming.json` carries two versions, and conflating them is the defect it
+  exists to prevent.** `consuming_api` versions the file's own schema; `provides`
+  records **which promise** the component makes. A consumer records the `provides`
+  it was built against, and a mismatch is refused, never migrated (R9). A component
+  rebuilds constantly without changing its promise, and can change its promise
+  without a new build.
+- ⭐ **A corpus installs the framework as a library and pins it.** Onboarding records
+  the installed library's version and the commit it was built from in the corpus's
+  `.studyforge/pin.json`, and the skill stubs it writes name that pin (§9). ⛔ **Never
+  a path to a checkout** — a path carries somebody's home directory (R7), and a
+  stranger converting their own material has the installed library, not a
+  checkout — and ⛔ **never a git submodule**: nothing here is pushed to a remote, so
+  a submodule URL has no legal form.
 
 **R19 — The consuming half of a corpus is generated, not hand-authored.** A
 source repository's obligation is the archive (R2) and the source-specific
@@ -617,183 +539,83 @@ the non-destructive assertion, the reader's own documentation — is produced by
 skill, from the manifest and from the components' published consuming contracts
 (§9). ⛔ **Anything a second source would have to retype is a hole in the
 skills**, and a hand-edit to a generated artifact is a **finding against the
-skill that should have produced it**, never a fix.
+skill that should have produced it**, never a fix. Customisation enters as
+manifest data.
 
-This is the argument `SF-28` already won for the build pipeline, applied to the
-rest of the seam: an orchestration or a deployment that lives inside one
-consumer is a framework with one consumer. ⭐ **The measure is what a second
-source costs**, not what the first one looks like when finished.
+An orchestration or a deployment that lives inside one consumer is a framework
+with one consumer. ⭐ **The measure is what a second source costs**, not what the
+first one looks like when finished.
 
 **R20 — The extraction is one-way. This framework mines its source; a consumer
-never sees it.**
-
-⭐ **Affirmatively: `studyforge` may and should use CodeSignal freely.** It is the
-extraction source — read it, port from it, measure it, mine it for the rulings
-that were expensive to learn. That is the whole point of it, and a framework
-task's `Context` naming a path inside it is correct and expected.
-
-⛔ **And a client application never has access to it.** Everything a consumer
-needs from CodeSignal is carried **in** `studyforge` — as a ruling, a contract, a
-skill, or the integration catalogue (§9) — never as a pointer into CodeSignal's
-tree. ⛔ **No task in a consumer repository cites a path inside the extraction
-source**, and no skill sends an integrator there to find out how something was
-done.
+never sees it.** `studyforge` may use CodeSignal freely — it is the extraction
+source, and the rulings it paid for are recorded here. ⛔ **A consumer never has
+access to it**: everything a consumer needs from CodeSignal is carried **in**
+`studyforge` — as a rule, a contract, a skill, or the integration catalogue
+(§9) — never as a pointer into CodeSignal's tree. No skill sends an integrator
+there to find out how something was done.
 
 ⭐ **This framework is the brain.** Knowledge flows *in* from the extraction
-source and *out* to consumers, and never sideways between them.
+source and *out* to consumers, and never sideways between them, for three
+reasons: the source is moving, so a consumer reading it inherits whatever it
+looks like that week; it does not generalise, so an integrator sent to read one
+course site's payload format is taught the wrong thing carefully; and ⭐
+**knowledge must accumulate in one place or it decays once per integration** —
+if each consumer distils what it learned back into `studyforge`, the *next*
+integration starts further along.
 
-Three reasons, and the third is the one that compounds:
-
-- **The source is moving.** §8 already warns that every measurement of it is a
-  dated snapshot; a consumer reading it directly inherits whatever it looks like
-  that week, with no record of what was actually relied on.
-- **It does not generalise.** The second consumer's material has nothing to do
-  with a course site's payload format, and a plan that sends its integrator to
-  read one is teaching them the wrong thing carefully.
-- ⭐ **Knowledge must accumulate in one place or it decays once per
-  integration.** If each new consumer re-derives from CodeSignal, the framework
-  is a library and the expertise lives nowhere. If each one distils what it
-  learned back into `studyforge`, the *next* integration starts further along.
-  That is what makes this a framework rather than a thing that has been used
-  twice.
-
-⚠️ **This constrains the plan, not the prose.** These documents explain *why* a
-rule exists by naming what it cost CodeSignal, and that history is exactly what
-makes a ruling followable rather than arbitrary. What R20 forbids is a
-**dependency**: a consumer's task whose `Context` is a path in the extraction
-source, or an acceptance that can only be judged by comparing against it.
+⚠️ **This constrains dependencies, not prose.** This document explains *why* a
+rule exists by naming what it cost CodeSignal, and that history is what makes a
+rule followable rather than arbitrary. What R20 forbids is a consumer's
+dependency on the extraction source, or an acceptance that can only be judged by
+comparing against it.
 
 **R21 — A contract is located before it is described.** Every document the
-framework reads or writes states three things *before* any task builds against
+framework reads or writes states three things *before* anything builds against
 it: **the file it lives in**, **the key that versions it** (R9), and **the one
-producer that writes it**.
+producer that writes it**. ⛔ **A contract described but not located is a
+contract two builders will locate differently**, and R9's versioning cannot
+repair it: by the time the disagreement surfaces, one invented location has
+shipped inside a version that refuses to migrate. ⭐ A change that meets an
+unlocated contract **stops and asks**; choosing quietly is the failure this rule
+names.
 
-⛔ **A contract described but not located is a contract two tasks will locate
-differently**, and R9's versioning is exactly the thing that cannot repair it:
-by the time the disagreement surfaces, one invented location has shipped inside
-a version that refuses to migrate. ⭐ A task that meets an unlocated contract
-**stops and asks**. It does not choose, and choosing quietly is the specific
-failure this rule names.
+⭐ **When a file takes a row.** A file takes a row here when a party other than
+the one that writes it reads it back — another component, a corpus repository,
+or the framework reading what another producer wrote. ⛔ It does not take one
+merely for being a file, for being written and read back by its own writer, or
+for carrying a version key. ⚠️ **A content-addressed filename does not discharge
+a contract whose subject is the conditions the content was produced under**: a
+clip named by the digest of its words answers *has the wording changed*, but a
+voice change leaves every filename byte-identical while every clip is stale —
+which is why the narration record is a located, versioned file rather than an
+inference from names.
 
-⚠️ **This was not a hypothetical when it was written.** Three had already
-happened in the first week: §7's exercise declaration named six fields and no
-document, so the fixture task could not fixture the thing R5 exists to enforce;
-`container.json` was described as generated in §6 and hand-authorable in its own
-task; and the block vocabulary described `html` without saying what a disclosure
-*is*, so two merged documents ruled it in opposite directions. ⭐ None was a
-mistake by the task that hit it — each was a **gap the task was obliged to fill
-and not equipped to fill**, which is why the rule binds on the spec rather than
-on the builder.
-
-**The register of located contracts, and what is still open:**
+**The register of located contracts:**
 
 | Contract | File | Versioned by | Written by |
 |---|---|---|---|
-| manifest | `corpus.json` | `corpus_api` — ⭐ **`2`, which added `content.not_material`** (ruling 90) | adapter (drafted by reconnaissance, §9) |
-| container map | `<address>/container.json` | `container_api` | adapter; `EX-04` amends counts (§6) |
-| archive document | `raw/<variant>/unit-NN/<kind>-M.json` | `raw_api` | adapter |
-| exercise declaration | the `exercise` key of a `practice-M.json` | that document's `raw_api` | adapter; `EX-04` for generated (§7) |
-| served unit | `unit.json` | `api` | `SF-10` |
-| table of contents | `toc.json` | TOC schema version | `SF-13` |
-| local status | `status.json` | TOC schema version | `SF-14` |
-| authored overlay | `<address>/units/unit-NN/content.json` | `content_api` (`SF-09`) | a person |
-| discovery cache | `.studyforge/site.json` | `site_api` (Ruling 95) | `SF-04` — ⛔ **the one writer** |
-| narration regeneration state | `.studyforge/narration.json` (Ruling 351) | `narration_api` (Ruling 351) | `SF-17` — ⛔ **the one writer** (Ruling 330) |
-| progress record | `.studyforge/progress/progress.json` | `progress_api` | `SF-21` — ⛔ **the one writer**; transcribed PO round 67 (`SF-21/1`) |
-| personal archive manifest | `personal-archive.json`, a member of the archive file | `personal_archive_api` | `SK-06` — ⛔ **the one writer**; transcribed PO round 72 (`SK-06/5`) |
-| coverage report | ⛔ **open** | n/a — not read back | whatever produced the gap |
-| component consuming contract | `consuming.json` | `consuming_api` + `provides` | each component (`TC-05`, E13) |
-| **workspace pin file** | `workspace.json` | `workspace_api` | `FND-05a`; a row per component |
+| manifest | `corpus.json` | `corpus_api` | corpus onboarding, from reconnaissance's draft (§9) |
+| container map | `archive/<address>/container.json` | `container_api` | adapter |
+| archive document | `archive/<address>/raw/<variant>/unit-NN/<kind>-M.json` | `raw_api` | adapter |
+| exercise declaration | the `exercise` key of a `practice-M.json` | that document's `raw_api` | adapter; the exercise bundle's emitter for an authored exercise (§7) |
+| authored overlay | `units/unit-NN/content.json`, beside the unit it overlays | `content_api` | a person |
+| identity block | embedded in every generated page | `identity_api` | the page renderer |
+| served unit | the `/api/v1/content/units/<key>` response | `api` | `unit.builder` |
+| contents and local status | the `/api/v1/content/toc` response, and the root index's embedded data | `toc_api` | `contents` |
+| discovery cache | `.studyforge/site.json` | `site_api` | `corpus.discovery` — the one writer |
+| narration record | `.studyforge/narration.json` | `narration_api` | `studyforge narrate` — the one writer |
+| progress record | `.studyforge/progress/progress.json` | `progress_api` | `progress` — the one writer |
+| framework pin | `.studyforge/pin.json` | `pin_api` | corpus onboarding |
+| exercise bundle | `exercises/<address>/<variant>/unit-NN/practice-M/bundle.json` | `bundle_api` | the exercise-authoring skill |
+| gate record | `gates.json`, in the bundle | no key of its own: a record carrying a gate or a key this build does not define is refused whole | the exercise-authoring skill |
+| source ledger | `exercises/ledger.json` | `ledger_api` | the exercise-authoring skill |
+| coverage report | `coverage.json`, one per unit beside its bundles | `coverage_api` | the exercise-authoring skill |
+| personal archive manifest | `personal-archive.json`, a member of the archive file | `personal_archive_api` | the personal-archive skill |
+| component consuming contract | `consuming.json` | `consuming_api` + `provides` | each component |
 
-⛔ **THE ROW THAT READ *narration manifest … `NS-02` / `SF-17`* WAS TWO CONTRACTS
-WEARING ONE NAME, and the `/` is what hid it** — ⭐ **located CTO round 67,
-Ruling 330, which is R21's own *one producer* clause applied to its own register.**
-
-- ⛔ **`NS-02`'s batch manifest is a RESPONSE BODY and takes no row here.** ⚠️ **This
-  table's columns are `File` and `Written by`, and the clause below is *`R9` governs
-  what is written*: a wire shape is written to nobody's disk.** ⭐ **It is the
-  service's PROMISE, and the promise register already exists and is two rows above —
-  `consuming.json`, versioned by `consuming_api` + `provides`.** ⛔ **Minting a tenth
-  `*_api` for it would put a framework version key on a shape the framework does not
-  write, making it a second authority on a component's promise — the failure §8.2
-  removes when it rules that the service never writes into a corpus.**
-- ⭐ **`SF-17`'s half IS a file row and is now CLOSED above — located by Ruling 351 and
-  filled in by `SF-17` itself, the task that builds it.** ⚠️ **It is the state that makes
-  *"re-running with no content change writes nothing and requests nothing"* (E04,
-  `SF-17`'s Acceptance) decidable, so the framework reads it back and R9 binds it.**
-  ⛔ **It was owed before step 3.4 opens, not before 3.2, and the two cells were
-  transcribed here in the commit that minted the key** — ⭐ **`narration_api` is
-  registered in `version.CONTRACT_FIELDS` in that same commit, per that tuple's own
-  convention, and it is read through `check` rather than `is_supported`: unlike the
-  discovery cache two rows above, this record is rebuildable only by re-synthesising
-  every clip in the corpus, so R9's refusal is spent by stopping.**
-
-⚠️ **AND THE ORDERING THE SPLIT EXPOSED, which is the part a location alone would have
-missed:** ⛔ **`narrate-service`'s `consuming.json` is written by TWO tasks — E13 assigns it
-to `NS-03` (profiles) and `NS-04` (voices), *"both must contribute their half"* — so the file
-names its own holes in `not_yet_declared` rather than being absent.** ⭐ **`NS-03` is in
-`NS-02`'s own step and `NS-04` is the step after** — ⛔ **so `NS-02` could have been built
-before the file that versions its output existed.** ⚠️ **The edge was owed in `E13` before
-step 3.2 dispatched `NS-02`** (Ruling 330(c)).
-
-⛔ **CORRECTED, CTO round 69 — this paragraph asserted the POPULATION of another office's
-file and both halves went false as the tasks landed** (Ruling 335, and `NS-03/2` + `NS-02/3`
-reporting it two waves running). ⭐ **What it said, kept so the correction is legible:**
-*"`narrate-service` ships no `consuming.json` today"* and *"`NS-03` is in `NS-02`'s OWN STEP
-with no `Depends on` edge between them"*. ⚠️ **The first was false from `NS-03`'s landing and
-the second from round 53's edge; the repaired form POINTS at `not_yet_declared`, which
-resolves at read time, instead of claiming what the component ships.**
-
-⭐ **`workspace_api` is the eighth versioned contract and the first that lives
-outside `src/`** — which is why the register and the framework's own constant are
-not the same list. ⛔ **Ruled: this table is the register; `CONTRACT_FIELDS` is
-the framework's *subset* of it.** ⭐ **So a key entering `CONTRACT_FIELDS` owes its row here in the commit that mints it; `SF-21/1` and `SK-06/5` are the two that did not, and the register transcribed both.** ⚠️ A contract the framework does not read is
-still a contract — the pin file is read by `tools/`, and `R9` governs what is
-*written*, not what `src/` happens to import.
-
-⭐ **`consuming.json` carries two versions, and conflating them is the defect it
-exists to prevent** (ruled 2026-09-09, round 4). The pin file (R18) records
-**which build** a component was at; `provides` records **which promise** it is
-making. ⛔ They change at different rates and neither substitutes for the other:
-a component rebuilds constantly without changing its promise, and can change its
-promise without a new build. `consuming_api` versions the file's own schema, and
-a consumer records the `provides` it was built against; a mismatch is refused,
-never migrated (R9). ⚠️ **Everything else about the file belongs to the component
-that ships it** — E12 for the toolchain, E13 for narration — because it describes
-a runtime nobody has built yet, and designing it now would be designing against
-zero sources. ⭐ What is ruled here is only what stops **two components inventing
-two shapes**, which is the failure this seam is actually exposed to: it is the
-one seam neither side can inspect from its own repository.
-
-⛔ **Every row this register marks `open` is an instance waiting to happen**, and
-each is owed by the task named beside it *before* that task builds. ⚠️ **The
-COUNT is not typed here and its removal is `PO-38/2`** — ⛔ **this sentence said
-*"Four"* one line below a table of two, and a third number stood on the board;
-three documents held three counts of one set and two of them were on the same
-page.** ⭐ **The open set is whatever the table above marks `open`, read at read
-time — a document that GOVERNS a register may not carry a typed measurement of
-it** (Ruling 181), ⛔ **and the fix is to REMOVE the count, not to correct it**
-(Ruling 150's form). ⚠️ The overlay's row is the
-sharpest: it is the one document a **person** edits, which makes it the most
-likely to drift, and R9 does not list it. Either R9 gains it or R9 says in words
-why a hand-edited document needs no version — but not silence.
-
-⭐ **AMENDED 2026-09-23 — when a file takes a row.** Carried from the review rubric when
-it was archived, because the question had been derived from scratch twice. ⭐ **A file
-takes a row here when a party other than the one that writes it reads it back** —
-another component, a corpus repository, or the framework reading what another
-producer wrote. ⛔ It does not take one merely for being a file, for being written and
-read back by its own writer, or for carrying a version key: a version key shows that
-its author expected the shape to move, which is why the question must be asked, and
-is not what answers it. ⭐ **So a task that mints a persisted format says who reads it
-back.** Where every reader is inside the writing component, no row is minted and the
-task says so; the row is owed the moment a party outside that component opens the
-file, or a second writer appears in the same store. ⚠️ **And a content-addressed
-filename does not discharge a contract whose subject is the conditions the content was
-produced under**: a clip named by the digest of its words answers *has the wording
-changed*, but a voice change or a service promise bump leaves every filename
-byte-identical while every clip is stale — which is why the narration regeneration
-state is a located, versioned file rather than an inference from names.
+⭐ **`CONTRACT_FIELDS` is the framework's subset of this register**: the keys the
+framework's own readers check through `studyforge.version`. A key a skill owns and
+reads back through its own reader is registered here and versioned all the same.
 
 ---
 
