@@ -9,7 +9,7 @@
    controls and practice panels are NOT here: they belong to the tasks that
    render them, and each adds its own part beside this one.
 
-   ⭐ THE TYPE (`W362`): prose is Charis at 1.1875rem, headings are Andika at
+   ⭐ THE TYPE: prose is Charis at 1.1875rem, headings are Andika at
    its heaviest shipped weight (700 — Andika has no 800, so the contrast with
    the prose is weight AND family rather than 800 against 400 in one face), on
    a scale with real jumps: 2.5 / 1.6 / 1.2rem. Sentence case is the corpus's
@@ -47,7 +47,7 @@ p { margin: 0 0 1.1rem; }
    below the masthead is the masthead's to set, once. ⚠️ Without this the two
    shapes disagree by the first heading's own margin — in the wide shape `main`
    is a grid item, so that margin stays inside it, and in the narrow shape it
-   collapses out through `main` and starts the reading lower (`W388`). */
+   collapses out through `main` and starts the reading lower. */
 main > :first-child,
 main > :first-child > :first-child { margin-top: 0; }
 
@@ -143,8 +143,8 @@ figure.code figcaption .what { flex: 1 1 auto; }
    caption says so, so a plain block never looks like a broken highlighter. */
 figure.code figcaption .unhighlighted { flex: 0 0 auto; font-style: italic; }
 
-/* ⛔ THE SIZE AND THE LINE HEIGHT ARE THE `pre`'S, NOT THE `code`'S (`W362`,
-   K1). A `pre` left at the body's 19px/1.65 lays every line on a 19px strut,
+/* ⛔ THE SIZE AND THE LINE HEIGHT ARE THE `pre`'S, NOT THE `code`'S.
+   A `pre` left at the body's 19px/1.65 lays every line on a 19px strut,
    so 13px code sat twice as far apart as it should — the inline `code`'s own
    line height cannot shrink the line box its block parent sets. */
 figure.code pre {

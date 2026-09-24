@@ -2,7 +2,7 @@
    plain explanation, the practices note, the read control and the theme
    control.
 
-   ⭐ ONE OF THE FOUR CHROME PARTS (`W362`; `chrome.css` says how they divide).
+   ⭐ ONE OF THE FOUR CHROME PARTS (`chrome.css` says how they divide).
 
    ⛔ NOTES, NOT PANELS. Both regions were tinted, rounded panels — one with a
    coloured stripe down its left edge, the brief's tell (P1, RM1). They are now
@@ -40,7 +40,7 @@ body > section[data-section="practices-pending"] p {
 
 /* --- the read control ---------------------------------------------------- */
 
-/* ⭐ The reader's own record (`SF-30`): a button that looks like one, with the
+/* ⭐ The reader's own record: a button that looks like one, with the
    tick box it sets drawn inside it — empty, then solid ink once pressed — and
    one quiet line about where the mark lives. ⚠️ The region ships `hidden` and
    `read-mark.js` unhides it only with a working store. The state is told apart
@@ -101,7 +101,7 @@ body > section[data-section="read-mark"] p:first-child { margin: 0; }
    it is ordered — which share the width when there is room and stack when
    there is not, by flex-wrap, so no second width threshold is declared.
    ⚠️ No "where it comes from" column: that is the corpus's own fact and waits
-   for `W363`'s manifest data (the register's D5). */
+   for manifest data that declares it. */
 section[aria-label="About this site"] {
   display: flex;
   flex-wrap: wrap;
@@ -128,10 +128,10 @@ section[aria-label="About this site"] ol { margin: 0; padding-left: 1.2rem; }
 section[aria-label="About this site"] li,
 section[aria-label="About this site"] p { margin: 0 0 .35rem; max-width: none; }
 
-/* --- the theme control (`W388` stage 2) ---------------------------------- */
+/* --- the theme control --------------------------------------------------- */
 
 /* ⛔ THE USER'S WORDS: *"have the both dark and light themes in studyforge as
-   well"*. The palette has carried both since `W362`; this is the control that
+   well"*. The palette carries both; this is the control that
    lets a reader say which one they want, on every page kind.
 
    ⭐ INSIDE THE MASTHEAD, NOT A REGION OF ITS OWN. `page.html` declares ten

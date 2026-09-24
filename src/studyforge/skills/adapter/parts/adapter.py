@@ -133,7 +133,7 @@ def _emit(plan: Plan) -> str:
             "        shutil.rmtree(layout.staging)",
             "    written = []",
             "    for reading in read.containers(root):",
-            "        # ⛔ One run, one date (INT-09/3). The run's `ingested` is applied AFTER",
+            "        # ⛔ One run, one date. The run's `ingested` is applied AFTER",
             "        # `read`, never handed to it, so whatever date `read` recorded is replaced",
             "        # and a map can never disagree with the documents beneath it.",
             "        container = dataclasses.replace(reading, ingested=ingested)",

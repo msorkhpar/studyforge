@@ -5,7 +5,7 @@
    `studyforge serve` still keeps their place, because a read mark is the
    reader's own assertion and needs nobody's agreement to be true. ⚠️ The
    served half is a different fact: a PASS is established by a grader run and
-   is written where it was established (SF-21, spec §8.5). ⛔ **A read mark is
+   is written where it was established (spec §8.5). ⛔ **A read mark is
    never a pass**, and nothing here can produce one — this file has no notion
    of a practice, a grader or a result at all.
 
@@ -24,7 +24,7 @@
    key with the reading record.
 
    ⛔ **No clock.** A timestamp is a second fact nobody asked for, and it turns
-   `SK-06`'s merge from a set union into an ordering problem. Nothing here
+   the personal archive's merge from a set union into an ordering problem. Nothing here
    reads `Date`, and the marks are kept sorted so the stored text is stable
    under re-marking rather than ordered by when somebody pressed a button.
 
@@ -54,8 +54,8 @@
   var MARKS_KEY = 'studyforge.read.v1';
   var DISPLAY_KEY = 'studyforge.display.v1';
 
-  /* ⛔ THE BOOT CACHE, AND IT IS A DIFFERENT STORAGE AREA ON PURPOSE — `W388`
-     stage 5. ⚠️ `page.html` carries a synchronous boot in the `<head>` so a
+  /* ⛔ THE BOOT CACHE, AND IT IS A DIFFERENT STORAGE AREA ON PURPOSE.
+     ⚠️ `page.html` carries a synchronous boot in the `<head>` so a
      reader who chose a theme is not shown the other one for a frame. That boot
      ran against `localStorage`, and it is the EARLIEST a document can touch
      that area: a document that binds it before the previous page's write has

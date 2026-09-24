@@ -301,7 +301,7 @@ def _footer(
         return ""
     lines = [
         "",
-        "# ⛔ §8.1 ruling 4 — every bind source below exists on the host BEFORE this",
+        "# ⛔ Spec §8.1: every bind source below exists on the host BEFORE this",
         "# file is brought up. Docker creates a missing one root-owned, and the",
         "# container can then never write it:",
         *(f"#   - {one}" for one in first),

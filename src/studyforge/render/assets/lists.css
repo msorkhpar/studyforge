@@ -1,6 +1,6 @@
 /* What the reader navigates, and where they are in it.
 
-   ⭐ ONE OF THE FOUR CHROME PARTS (`W362`; `chrome.css` says how they divide).
+   ⭐ ONE OF THE FOUR CHROME PARTS (`chrome.css` says how they divide).
    This one holds the in-page outline, the two lists that ARE their pages (a
    container's units, the root index's tree), the progress line and the
    segmented strip, and the filter. The Up next slip is `onward.css`.

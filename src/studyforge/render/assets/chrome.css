@@ -1,7 +1,7 @@
 /* The page's frame: the column, the margin rule, the masthead and trail, and
    the rail that reaches the other containers, at both widths.
 
-   ⭐ ONE OF FOUR CHROME PARTS SINCE `W362`, SPLIT AT SEAMS BY JOB. This file
+   ⭐ ONE OF FOUR CHROME PARTS, SPLIT AT SEAMS BY JOB. This file
    was 748 lines against R11's 400 with no justification in it. It divides by
    what each part answers:
    - `chrome.css` (this): WHERE THINGS ARE — the column, the rail beside it or
@@ -23,7 +23,7 @@
    equal specificity mean the last one wins, and the page column below refines
    what `reading.css` sets on `body`. */
 
-/* --- the column (PO-22/6) ------------------------------------------------ */
+/* --- the column ---------------------------------------------------------- */
 
 /* ⛔ ONE BOUND, ON `body`, IN THE PROSE MEASURE. `ch` resolves against the
    element's own font, so a bound written on each region gave each region a
@@ -32,12 +32,12 @@
    the narrow shape; the wide shape at the foot of this file bounds the same
    element.
 
-   ⭐ THE MARGIN RULE (`W362`, the plan's §3 and §7). A pale line down every
+   ⭐ THE MARGIN RULE. A pale line down every
    page: left of it is the reader's (the course, their ticks, where the
    narration is), right of it is the work. It is drawn once, by one
    pseudo-element on `body`, with no markup. ⚠️ It is structure, never a
    signal — `--margin` sits below 3:1 on purpose, because nothing is told apart
-   by it alone, and since `W388` it is a neutral hairline, not a red one. The
+   by it alone, and it is a neutral hairline, not a red one. The
    left padding gives the text room to its right. */
 
 body {
@@ -81,7 +81,7 @@ body > a[href="#content"]:focus-visible { top: .75rem; }
 
 /* --- the masthead and the trail ------------------------------------------ */
 
-/* ⭐ The trail sits ABOVE the title (`W362`, M5): where the page is comes
+/* ⭐ The trail sits ABOVE the title: where the page is comes
    before what it is called. Then the title, heavy; then one quiet line. No
    rule under it and no capitals: the brief's eyebrow tell is gone. */
 
@@ -151,7 +151,7 @@ nav[aria-label="Breadcrumb"] li[aria-current="page"] {
 nav[aria-label="Breadcrumb"] span[data-kind="level"],
 nav[aria-label="Containers"] span[data-kind="level"] { display: none; }
 
-/* --- the rail across containers (W324), in the column -------------------- */
+/* --- the rail across containers, in the column --------------------------- */
 
 /* ⛔ A plain list on the ground, not a card. At a narrow width it is folded
    into one line — `rail.html` wraps it in one `<details>`, which the page
@@ -241,7 +241,7 @@ nav[aria-label="Containers"] li[data-readable="false"] {
   color: var(--muted);
 }
 
-/* ⭐ A unit the reader marked read ends its row with a tick (`W368`), in the
+/* ⭐ A unit the reader marked read ends its row with a tick, in the
    colour the listings' read box takes. ⚠️ `data-marked` is set at read time by
    `progress-view.js` and emitted by no renderer (R10). */
 nav[aria-label="Containers"] li li[data-marked="true"] > a::after,
@@ -253,7 +253,7 @@ nav[aria-label="Containers"] li li[data-marked="true"]:not(:has(> a))::after {
   color: var(--done);
 }
 
-/* ⭐ The words a read row says to assistive technology (`W383`), in the rail
+/* ⭐ The words a read row says to assistive technology, in the rail
    and in both lists: kept in the accessibility tree and off the screen, so the
    tick above and the listings' box stay the only visual mark. ⚠️ `hidden` on
    an unread row still removes them; this rule sets no `display`. */
@@ -269,7 +269,7 @@ span[data-kind="read-state"] {
   white-space: nowrap;
 }
 
-/* --- the rail beside the column (W325, W326, W328, W333) ----------------- */
+/* --- the rail beside the column ------------------------------------------ */
 
 /* ⛔ THE USER'S WORDS: a left bar, flush to the window's edge, fixed while the
    page scrolls. ⭐ Three rules of CSS over the same bytes, asked for by the
@@ -286,7 +286,7 @@ span[data-kind="read-state"] {
    ⭐ The margin rule moves to the rail's right edge, between the reader's
    column and the work. `72rem` is the one threshold in these parts.
 
-   ⭐ THE ASIDE (`W388` clause 4, folding `W369` clause 1): a page with a
+   ⭐ THE ASIDE: a page with a
    secondary block — a unit's outline, the index's explanation — gives it a
    third column, `--aside`, on the far side of the reading column, so a wide
    window's room holds it and the list or the prose starts at the top. ⛔ No
@@ -295,7 +295,7 @@ span[data-kind="read-state"] {
    is back in the one column above the content. The block is the page's own
    aside: it is sticky and scrolls itself, as the rail does.
 
-   ⛔ ONE SHAPE THAT WORKS ON EVERY DISPLAY (`W388` STAGE 4). ⚠️ The user has
+   ⛔ ONE SHAPE THAT WORKS ON EVERY DISPLAY. ⚠️ The user has
    now read three of them. A shell ceilinged at `110rem` WITH `margin-left: 0`
    was pinned left and left a dead band down the right of their window —
    *"the paragraph texts are not using the full width"*. Releasing the ceiling
@@ -322,7 +322,7 @@ span[data-kind="read-state"] {
    `palette.css` beside the declaration, measured from the first corpus's own
    code blocks.
 
-   ⚠️ THE INSET IS WRITTEN OUT RATHER THAN LEFT TO `auto`, AND `W333` IS WHY.
+   ⚠️ THE INSET IS WRITTEN OUT RATHER THAN LEFT TO `auto`, AND THIS IS WHY.
    `margin-inline: auto` would centre the shell and say nothing a second rule
    could agree with — and the page with NO rail is bounded by the measure, not
    by the ceiling, so centring that one puts it somewhere else entirely and the
@@ -350,8 +350,8 @@ span[data-kind="read-state"] {
     left: calc(var(--rail) + var(--gutter) / 2 - 1px);
   }
 
-  /* ⛔ The page without a rail starts where the page with one starts (`W333`),
-     keeping its own gutter. ⚠️ Since `W388` stage 4 that place is the shell's
+  /* ⛔ The page without a rail starts where the page with one starts,
+     keeping its own gutter. ⚠️ That place is the shell's
      left edge rather than the window's, so this is the same expression the
      shape above takes and the right margin is still left to `auto`. */
   body:not(:has(nav[aria-label="Containers"])) {

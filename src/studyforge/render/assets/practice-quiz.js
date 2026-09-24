@@ -6,7 +6,7 @@
    returned to the user with explanation if needed"*. ⭐ So this file reads
    which option the reader chose, hands the choices to `window.studyforge.quiz`
    — which the SERVING PROCESS adds to a served page and a built page never
-   names (R8, `W370`) — and shows what came back: right or wrong per question,
+   names (R8) — and shows what came back: right or wrong per question,
    the chosen option's sentence, the count, and whether the quiz is complete.
    ⛔ **The completion rule is the server's** (`exercise.quiz.completes`, applied
    once, in Python); this file shows `complete` and never re-derives it.
@@ -22,8 +22,8 @@
    Nothing is sent from a file page — there is no origin to send it to.
 
    ⛔ **A quiz has no file, no command and no grader to submit to, so it renders
-   no Run and no Submit — and not disabled ones** (`AX-05/3`, `SF-24`'s standing
-   rule about a dead button).
+   no Run and no Submit — and not disabled ones**: a dead button is never
+   rendered.
 
    ⛔ **Nothing is written to browser storage, and the server records nothing
    either.** What a reader answered is the page's for as long as they are on
@@ -32,7 +32,7 @@
    run verdict, which a quiz does not produce.
 
    ⭐ **Every word this file says is read off the markup**, where Python put it —
-   the same two-sided spelling every hook on this page has (`W431`). */
+   the same two-sided spelling every hook on this page has. */
 
 (function () {
   'use strict';

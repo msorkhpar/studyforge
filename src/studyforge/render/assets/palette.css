@@ -5,12 +5,12 @@
    is editing this file. `test_palette` asserts that no other authored part
    contains a raw colour, and recomputes every contrast pair below.
 
-   ⭐ THE LOOK IS A ROAD SIGN ON COOL SLATE (`W388` stage 2). The user read the
+   ⭐ THE LOOK IS A ROAD SIGN ON COOL SLATE. The user read the
    first repaint and said the colours were "boring", "too dim and maybe too
    warm", and worse than two pages of their own. Those two pages are the brief:
    a route planner (asphalt ground, lane-paint ink, warning-yellow accent) and a
    documentation site carrying BOTH themes on the slate scale. ⛔ This
-   supersedes the warm paper of stage 1 and the green board of `W362`.
+   supersedes the warm paper and the green board of the earlier repaints.
    - ⛔ COOL NEUTRALS, NEVER WARM. Every ground and every ink is on the slate
      scale: blue is the strongest channel, red the weakest. `test_identity`
      bounds the warmth of every ground and ink and catches stage 1's parchment.
@@ -42,7 +42,7 @@
 
    ⛔ BOTH THEMES, EVERY COLOUR TOKEN, AND THE READER CHOOSES. Dark is keyed on
    the reader's system until they say otherwise: `[data-theme="light"]` opts out
-   of it and `[data-theme="dark"]` opts in, and since `W388` stage 2 the page
+   of it and `[data-theme="dark"]` opts in, and the page
    carries a control that writes one of them and remembers the choice
    (`theme.js`, the boot in `page.html`). A reader who has chosen nothing still
    follows the system. */
@@ -56,7 +56,7 @@
   --font-ui: "Andika", Verdana, sans-serif;
   --font-mono: "JetBrains Mono", "DejaVu Sans Mono", monospace;
 
-  /* ⛔ `80ch`, AND EVERY DIGIT OF IT IS COUNTED — `W388` STAGE 4, the user's
+  /* ⛔ `80ch`, AND EVERY DIGIT OF IT IS COUNTED — the user's
      fourth reading. ⚠️ Charis's `ch` is its zero, which is wider than an
      average letter of running prose, so what a cap buys has to be COUNTED on a
      laid-out line and never reasoned from the token.
@@ -95,7 +95,7 @@
   /* The column beside the reading surface for a page's secondary block — a
      unit's outline, the index's explanation — where the window has room. */
   --aside: 16rem;
-  /* ⛔ THE SHELL'S CEILING, AND ABOVE IT THE SHELL CENTRES — `W388` STAGE 4.
+  /* ⛔ THE SHELL'S CEILING, AND ABOVE IT THE SHELL CENTRES.
      ⚠️ Three shapes have now been read by the user. `110rem` PINNED LEFT left a
      dead band down the right of a ~2000px window (*"not using the full width"*).
      `180rem`, effectively unbounded, grew the reading column without limit and

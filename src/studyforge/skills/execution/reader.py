@@ -58,7 +58,7 @@ def document(
         "## What this corpus declared",
         "",
         f"- runtimes: `{'`, `'.join(selection.declared)}`",
-        f"- the directory the editor binds: `{sources}` (§8.1 ruling 2)",
+        f"- the directory the editor binds: `{sources}` — the sources alone (§8.1)",
     ]
     if workspaces is not None:
         lines.append(f"- the practice workspaces the editor binds too: `{workspaces}`")
@@ -101,7 +101,7 @@ def document(
     )
     if first:
         lines += [
-            "⛔ §8.1 ruling 4 — these exist on the host before the start, or docker",
+            "⛔ These exist on the host before the start (§8.1), or docker",
             "creates them root-owned and the container can never write them:",
             "",
             *(f"- `{one}`" for one in first),
@@ -161,6 +161,6 @@ def _narration(narration_text: str) -> list[str]:
         *(f"- `{one}`" for one in files),
         "",
         "⚠️ Its contract declares no per-project keys, so a consumer cannot render it",
-        "without inventing a host port and a volume name (`SK-09/2`).",
+        "without inventing a host port and a volume name.",
         "",
     ]

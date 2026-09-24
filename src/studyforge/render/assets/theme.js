@@ -1,10 +1,10 @@
 /* The reader's choice of theme: light, dark, or whatever their system says.
 
    ⛔ **The user asked for BOTH THEMES to be reachable from the page**
-   (`W388` stage 2, 2026-09-19: *"have the both dark and light themes in
-   studyforge as well"*). `palette.css` has carried both since `W362` and the
-   guards `[data-theme="light"]` and `[data-theme="dark"]` since then; until now
-   nothing wrote either, so a reader whose system said light could not read the
+   (2026-09-19: *"have the both dark and light themes in
+   studyforge as well"*). `palette.css` carried both, behind the guards
+   `[data-theme="light"]` and `[data-theme="dark"]`, but nothing wrote
+   either, so a reader whose system said light could not read the
    dark page at all.
 
    ⛔ **THREE STATES, AND THE THIRD IS THE DEFAULT.** *System* is not the same
@@ -36,8 +36,8 @@
    painted.
 
    ⛔ **AND THAT BOOT READS `sessionStorage`, NEVER `localStorage`, WHICH IS
-   `W388` STAGE 5 AND IS A MEASURED DEFECT RATHER THAN A PREFERENCE.** The boot
-   as stage 2 shipped it read the display record out of `localStorage` in the
+   A MEASURED DEFECT RATHER THAN A PREFERENCE.** The boot
+   as it first shipped read the display record out of `localStorage` in the
    `<head>` — the document's FIRST touch of that area, far earlier than any
    build before it. ⚠️ Measured on this host at `-n 16`: with that boot, a mark
    written on one page and read on the next was MISSING in 14 of 35 runs; with
