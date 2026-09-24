@@ -1,14 +1,14 @@
 r"""Narration off, as the `build` and `serve` verbs honour it (`W460`).
 
-**What it does.** Answers the three questions a verb asks once a run may leave
-narration out: whether this run voices a corpus (`speaks`), which built pages
-still carry narration a run asked to leave out (`voiced_pages`), and which files
-under a served root are narration clips that must not be served
-(`unvoiced_clips`).
+**What it does.** Answers the two questions a verb asks once a run has left
+narration out: which built pages still carry narration (`voiced_pages`), and
+which files under a served root are narration clips that must not be served
+(`unvoiced_clips`). ⛔ **Whether a run leaves it out is not asked here**: that is
+`narrate.narration_on`, the one predicate every stage asks (`W457`, `W460`).
 
 **How you use it.**
 
-    if not speaks(corpus.narration, arguments.narration):
+    if not narration_on(root, asked=arguments.narration):
         loud = voiced_pages(corpus, site)        # non-empty: refuse, name each
         private = unvoiced_clips([site])         # the static mount's `private=`
 
@@ -62,11 +62,6 @@ BUILT_VOICED = (
 
 #: What a serve says for each corpus it serves without narration.
 SERVED_SILENT = "no player and no clip is served; every clip stays on disk"
-
-
-def speaks(declared: bool, asked: bool | None) -> bool:
-    """Whether this run voices a corpus: what the run asked, else what `corpus.json` says."""
-    return declared if asked is None else asked
 
 
 def voiced_pages(corpus: object, site: Path) -> list[str]:

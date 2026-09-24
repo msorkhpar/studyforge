@@ -5,38 +5,46 @@ before it reads it: *is narration part of this corpus, for this run?*
 
 **How you use it.**
 
-    from studyforge.narrate.enabled import narration_on
+    from studyforge.narrate import narration_on
 
     if narration_on(root, asked=arguments.narration):   # None: nobody asked this run
         ...judge, build or serve the clips...
 
-**Depends on.** Nothing. ⛔ It opens no record and no clip: whether a corpus HAS
-narration is the record's question (`synth.read_state`, whose `present=False`
-is the reading floor, C5); whether narration is WANTED is this one's.
+**Depends on.** `corpus.manifest` for the corpus's recorded answer, and nothing
+else. ⛔ It opens no record and no clip: whether a corpus HAS narration is the
+record's question (`synth.read_state`, whose `present=False` is the reading
+floor, C5); whether narration is WANTED is this one's.
 
 ## ⛔ ONE PREDICATE, SO "NARRATION OFF" HAS ONE MEANING EVERYWHERE
 
-⭐ **The user ruled narration optional per corpus and per run (2026-09-23)**,
-and three stages read clips: `validate` judges whether they are current,
-`build` links them and `serve` answers them. ⚠️ Three private answers to *is it
-off?* would drift the way three readers of one record always have, and the
-symptom would be a `validate` that reports stale clips for a corpus whose site
-carries no player. ⭐ So each stage asks here.
+⭐ **The user ruled narration optional per corpus and per run (2026-09-23)**:
+*"it should be optional and while serving or even while caputring the matterial
+skills should ask if user is interested in the narrition or not"*. Four stages
+read clips: `validate` judges whether they are current, `build` links them,
+`serve` answers them and the build-and-serve skill reports them. ⚠️ Private
+answers to *is it off?* would drift the way readers of one record always have,
+and the symptom would be a `validate` that reports stale clips for a corpus whose
+site carries no player. ⭐ So each stage asks here (`W457` minted it, `W460` gave
+it the corpus's answer).
 
 ## ⭐ THE ORDER: THIS RUN'S ANSWER, THEN THE CORPUS'S, THEN ON
 
-1. `asked` — the run's own option — wins whenever it was given, either way.
-2. ⚠️ **The corpus's recorded choice is not read yet.** Where it lives (a
-   manifest field or the onboarding skill's committed record) is the decision
-   of the row that makes narration optional; ⛔ **that row reads it HERE, from
-   `root`, and nowhere else**, so every stage learns it at once.
-3. Otherwise ON — ⭐ the behaviour every corpus had before the ruling, so a
-   corpus nobody has asked about is judged exactly as it was.
+1. `asked` — the run's own `--narration` / `--no-narration` — wins whenever it
+   was given, either way.
+2. ⭐ **The corpus's recorded choice**: `corpus.json`'s `narration` (`W460`,
+   `corpus_api: 5`), which the onboarding skill asks the author for.
+3. Otherwise ON — ⭐ the behaviour every corpus had before the ruling: a manifest
+   that says nothing, or that cannot be read, is voiced. ⛔ An unreadable manifest
+   is not this predicate's to report: `validate` and `build` refuse it in its own
+   words, and a second reason here would name the same defect twice.
 """
 
 from __future__ import annotations
 
 from pathlib import Path
+
+from studyforge.archive.scrub import PersonalDataLeak
+from studyforge.corpus.manifest import MANIFEST_FILENAME, RAISES, load
 
 
 def narration_on(root: Path | str, *, asked: bool | None = None) -> bool:
@@ -47,4 +55,14 @@ def narration_on(root: Path | str, *, asked: bool | None = None) -> bool:
     """
     if asked is not None:
         return bool(asked)
-    return True
+    return declared(root)
+
+
+def declared(root: Path | str) -> bool:
+    """Return the corpus's recorded answer: `corpus.json`'s `narration`, or on."""
+    try:
+        return load(Path(root) / MANIFEST_FILENAME).narration
+    except PersonalDataLeak:
+        raise  # ⛔ R7's refusal is never swallowed (Ruling 58).
+    except RAISES:
+        return True

@@ -103,12 +103,12 @@ from studyforge.archive.scrub import scrub
 from studyforge.cli.unvoiced import (
     BUILT_VOICED,
     SERVED_SILENT,
-    speaks,
     unvoiced_clips,
     voiced_pages,
 )
 from studyforge.generate import RAISES
 from studyforge.generate.declarations import read_corpus
+from studyforge.narrate import narration_on
 from studyforge.progress import store_dir
 from studyforge.serve import RAISES as REFUSED
 from studyforge.serve import (
@@ -210,7 +210,7 @@ def main(
         for page in unbuilt:
             say(f"unbuilt {page}  {NOT_BUILT}")
         return INVALID
-    silent = not speaks(corpus.narration, arguments.narration)
+    silent = not narration_on(root, asked=arguments.narration)
     loud = voiced_pages(corpus, site) if silent else []
     if loud:
         for page in loud:
@@ -264,7 +264,7 @@ def _serve_root(
     silent = [
         served
         for served in discovered.corpora
-        if not speaks(served.corpus.narration, arguments.narration)
+        if not narration_on(served.root, asked=arguments.narration)
     ]
     loud = sorted(
         (served.relative / page).as_posix()

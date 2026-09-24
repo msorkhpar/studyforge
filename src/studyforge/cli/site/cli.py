@@ -63,9 +63,9 @@ from pathlib import Path
 
 from studyforge.cli.plan import MediaProjection, plan_for
 from studyforge.cli.site.report import exit_code, lines
-from studyforge.cli.unvoiced import speaks
 from studyforge.corpus.media import MediaError, require_committable
-from studyforge.generate import RAISES, read_manifest, write_site
+from studyforge.generate import RAISES, write_site
+from studyforge.narrate import narration_on
 from studyforge.validate.cli import UNUSABLE
 from studyforge.validate.paths import RULE_DUPLICATE_PATH
 from studyforge.validate.report import INVALID
@@ -146,7 +146,9 @@ def main(argv: list[str] | None = None, out=None) -> int:
         print(f"build refused: {OVER}, so nothing was written", file=stream)
         return INVALID
     try:
-        written = write_site(root, Path(arguments.out), narration=arguments.narration)
+        # ⭐ `W460`: the one predicate (`narrate.narration_on`) answers for this run.
+        voiced = narration_on(root, asked=arguments.narration)
+        written = write_site(root, Path(arguments.out), narration=voiced)
     except RAISES as refusal:
         # ⛔ **The package's own tuple, never a list retyped here** (`W212`).
         # Catching `BuildError` alone let `PersonalDataLeak` out as a traceback
@@ -157,7 +159,7 @@ def main(argv: list[str] | None = None, out=None) -> int:
         return UNUSABLE
     for line in lines(written, arguments.root, arguments.out):
         print(line, file=stream)
-    if not speaks(read_manifest(root).narration, arguments.narration):
+    if not voiced:
         print(SILENT, file=stream)
     crossed = media_stop(plan_for(root).media, measured=True)
     if crossed:

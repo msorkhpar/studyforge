@@ -44,6 +44,7 @@ from pathlib import Path
 
 from studyforge.cli.plan import plan_for
 from studyforge.corpus.manifest import MANIFEST_FILENAME, load
+from studyforge.narrate import narration_on
 from studyforge.skills.buildserve import verbs
 from studyforge.skills.buildserve.states import (
     NARRATION_OFF,
@@ -82,11 +83,13 @@ def build_and_serve(
     corpus, site = str(root), str(out)
     # ⛔ `W457`: asked to narrate, the run re-makes every clip whose words moved, so
     # a stale clip is not a reason to stop before that; `narrate` reports what it could not.
-    code, _ = _step(verbs.validate(corpus, narration=False if voice is not None else None), say)
+    # ⭐ `W460`: a run the user asked to leave narration out judges no clip either.
+    quiet = voice is not None or narration is False
+    code, _ = _step(verbs.validate(corpus, narration=False if quiet else None), say)
     if code != OK:
         return code
     manifest = load(Path(corpus) / MANIFEST_FILENAME)
-    speaks = manifest.narration if narration is None else narration
+    speaks = narration_on(corpus, asked=narration)
     if voice is not None and not speaks:
         say(VOICE_UNHEARD)
         return UNUSABLE

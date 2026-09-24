@@ -9,7 +9,6 @@ import pytest
 from studyforge.cli.unvoiced import (
     NARRATED_MARK,
     is_clip,
-    speaks,
     unvoiced_clips,
     voiced_pages,
 )
@@ -18,14 +17,6 @@ from tests.studyforge.generate.corpora import a_corpus
 from tests.studyforge.generate.test_narration import narrate
 
 CLIP = "u.b1-0123abcd.mp3"
-
-
-@pytest.mark.parametrize(
-    ("declared", "asked", "voiced"),
-    [(True, None, True), (False, None, False), (True, False, False), (False, True, True)],
-)
-def test_the_run_s_answer_overrides_the_corpus_s_and_none_keeps_it(declared, asked, voiced):
-    assert speaks(declared, asked) is voiced
 
 
 @pytest.mark.parametrize(
