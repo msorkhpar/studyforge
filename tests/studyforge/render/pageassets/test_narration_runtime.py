@@ -37,7 +37,7 @@ import subprocess
 import pytest
 
 from studyforge.render import templates
-from studyforge.render.pageassets import text
+from studyforge.render.pageassets import ABSENT, PRESENT, RELEASED, text
 
 #: Set by `docker/dev/Dockerfile`. ⭐ Its presence means "this run is the one
 #: that certifies a result", which is what turns an absent runtime from a skip
@@ -175,7 +175,10 @@ const documentStub = {
   fire(name, event) { body.fire(name, event); },
 };
 
+/* ⭐ What `pageassets.CLIPS_NAME` said before the bundle ran: `null` is a page
+   whose signal never ran at all. */
 global.window = { matchMedia: () => ({ matches: false }) };
+if (spec.clips !== null) { global.window.studyforge = { clips: spec.clips }; }
 global.document = documentStub;
 
 eval(fs.readFileSync(process.argv[2], 'utf8'));
@@ -285,6 +288,7 @@ def run(tmp_path, **spec):
     """Drive one scenario through the real part and return what the page ended up as."""
     spec.setdefault("passages", THREE)
     spec.setdefault("player", templates.template(PLAYER).template)
+    spec.setdefault("clips", PRESENT)
     driver = tmp_path / "drive.js"
     driver.write_text(DRIVER, encoding="utf-8")
     part = tmp_path / PART
@@ -471,3 +475,25 @@ def test_space_plays_and_the_arrows_move(tmp_path):
     assert run(tmp_path, action="keys", keys=["ArrowRight"])["speaking"] == [None, "true", None]
     right_then_left = run(tmp_path, action="keys", keys=["ArrowRight", "ArrowLeft"])
     assert right_then_left["speaking"] == ["true", None, None]
+
+
+# --- the clips are not on disk ----------------------------------------------
+
+
+@pytest.mark.parametrize("told", [ABSENT, RELEASED, None])
+def test_a_page_whose_clips_are_absent_keeps_every_control_hidden_and_inert(tmp_path, told):
+    # ⛔ The page learned it from the signal, and it binds nothing: the transport
+    # stays hidden, a passage does not answer a click, and no key starts a clip.
+    # ⭐ `None` is a page whose signal never ran, which must read as absent.
+    for action, extra in (("play", {}), ("clickSecond", {}), ("keys", {"keys": [" "]})):
+        reading = run(tmp_path, clips=told, action=action, **extra)
+        assert reading["hidden"] is True, action
+        assert reading["src"] is None and reading["plays"] == 0, action
+        assert reading["speaking"] == [None, None, None], action
+
+
+def test_the_same_page_with_its_clips_present_comes_up(tmp_path):
+    # ⭐ The negative control of the case above, on the same passages.
+    reading = run(tmp_path, clips=PRESENT, action="clickSecond")
+    assert reading["hidden"] is False
+    assert reading["src"] == THREE[1]

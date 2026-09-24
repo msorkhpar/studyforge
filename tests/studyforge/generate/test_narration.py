@@ -44,6 +44,14 @@ from studyforge.narrate.synth import (
     write_state,
 )
 from studyforge.render.page import AUDIO_ATTRIBUTE
+from studyforge.render.pageassets import (
+    ABSENT,
+    CLIPS_NAME,
+    PRESENT,
+    RELEASED,
+    clips_script,
+    clips_state,
+)
 from studyforge.unit.builder import build_unit
 from studyforge.validate.cli import UNUSABLE
 from tests.studyforge.generate.corpora import BOTH, a_corpus, an_output
@@ -338,3 +346,125 @@ def test_the_pass_alone_into_an_empty_root_writes_every_unit_page(tmp_path):
 
     assert alone.unchanged == () and alone.written.refused == ()
     assert len(alone.written.pages) == len(read_corpus(root).units)
+
+
+# --------------------------------------------------------------------------
+# no clip on disk at all: a download not taken, told through the clip signal
+# --------------------------------------------------------------------------
+
+
+def signal_of(out: Path) -> str | None:
+    """What the clip signal under `out` tells a page, or `None` when there is none."""
+    path = out / ".studyforge" / "assets" / CLIPS_NAME
+    return clips_state(path.read_bytes()) if path.is_file() else None
+
+
+def taken_away(clips: list[Path]) -> None:
+    for clip in clips:
+        clip.unlink()
+
+
+@pytest.mark.parametrize("name", BOTH)
+def test_with_no_clip_on_disk_every_page_links_its_clips_and_names_no_gap(tmp_path, name):
+    # ⭐ A fresh checkout of a corpus whose clips are a download: every page links
+    # what the record names, so a restore is heard with no rebuild, and no page
+    # calls its passages missing.
+    root = a_corpus(tmp_path, name)
+    clips = narrate(root)
+    taken_away(clips)
+
+    build(root)
+
+    linked = []
+    for path, body in unit_pages(root).items():
+        assert GAP not in body, f"{path.name} names a gap for a download not taken"
+        hrefs = HREF.findall(body)
+        assert "" not in hrefs, f"{path.name} dropped a clip the record names"
+        linked += [(path.parent / href).resolve() for href in hrefs]
+    assert sorted(linked) == sorted(clip.resolve() for clip in clips)
+    assert signal_of(root) == ABSENT
+
+
+def test_with_no_clip_on_disk_a_fault_in_the_record_is_still_a_gap(tmp_path):
+    # ⛔ Only NOT_ON_DISK stops being a gap: a record naming no file is a fault.
+    root = a_corpus(tmp_path, "depth1")
+    clips = narrate(root)
+    taken_away(clips)
+    record = json.loads(state_file(root).read_text("utf-8"))
+    first = sorted(record["clips"])[0]
+    record["clips"][first]["filename"] = ""
+    state_file(root).write_text(json.dumps(record), "utf-8")
+
+    build(root)
+
+    assert sum(GAP in body for body in unit_pages(root).values()) == 1
+
+
+@pytest.mark.parametrize("name", BOTH)
+def test_a_build_tells_the_page_what_the_disk_holds(tmp_path, name):
+    root = a_corpus(tmp_path, name)
+    clips = narrate(root)
+    build(root)
+    assert signal_of(root) == PRESENT
+    taken_away(clips)
+    build(root)
+    assert signal_of(root) == ABSENT
+
+
+def test_a_restore_after_the_build_is_heard_without_a_rebuild(tmp_path):
+    # ⭐ The pages a build wrote with no clip on disk already link every clip, so
+    # putting the clips back and the signal to PRESENT is the whole restore.
+    root = a_corpus(tmp_path, "depth2")
+    clips = narrate(root)
+    held = {clip: clip.read_bytes() for clip in clips}
+    taken_away(clips)
+    build(root)
+    before = {path: body for path, body in unit_pages(root).items()}
+
+    for clip, body in held.items():
+        clip.write_bytes(body)
+    (root / ".studyforge" / "assets" / CLIPS_NAME).write_bytes(clips_script(PRESENT))
+
+    assert unit_pages(root) == before, "nothing but the clips and the signal moved"
+    for path, body in before.items():
+        for href in HREF.findall(body):
+            assert (path.parent / href).is_file(), f"{path.name} links a clip not restored"
+
+
+def test_a_build_never_turns_released_into_present(tmp_path):
+    # ⛔ The author who packed the clips still has them; a site committed from that
+    # disk must keep telling a fresh checkout they are not there.
+    root = a_corpus(tmp_path, "depth1")
+    clips = narrate(root)
+    build(root)
+    (root / ".studyforge" / "assets" / CLIPS_NAME).write_bytes(clips_script(RELEASED))
+
+    build(root)
+    assert signal_of(root) == RELEASED
+    taken_away(clips)
+    build(root)
+    assert signal_of(root) == RELEASED
+
+
+def test_a_corpus_with_no_record_gets_no_clip_signal(tmp_path):
+    root = a_corpus(tmp_path, "depth2")
+    build(root)
+    assert signal_of(root) is None
+
+
+def test_the_signal_goes_where_the_site_is_built(tmp_path):
+    root = a_corpus(tmp_path, "depth2")
+    narrate(root)
+    out = an_output(tmp_path)
+    build(root, out)
+    assert signal_of(out) == PRESENT and signal_of(root) is None
+
+
+def test_the_narration_pass_alone_writes_the_signal_and_leaves_an_unmoved_one(tmp_path):
+    root = a_corpus(tmp_path, "depth1")
+    narrate(root)
+    first = write_narration(root, root)
+    assert signal_of(root) == PRESENT
+    assert Path(".studyforge/assets", CLIPS_NAME) in {Path(str(p)) for p in first.written.assets}
+    again = write_narration(root, root)
+    assert again.written.assets == ()

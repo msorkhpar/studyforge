@@ -365,7 +365,7 @@ def test_the_no_record_page_is_a_WHOLE_page_and_not_merely_an_unnarrated_one(cas
     assert case.document["title"] in never
     assert never.count("<section") >= len(case.document["sections"])
 
-    transport = document_module._region(document_module.player(plays))
+    transport = document_module._region(document_module.player(plays, clips=case.placement.clips()))
     assert transport, "the narrated page carries no transport, so this comparison is empty"
     stripped = re.sub(rf'\s{re.escape(AUDIO_ATTRIBUTE)}="[^"]*"', "", plays).replace(transport, "")
     assert stripped == never, (
@@ -395,7 +395,9 @@ def test_a_planted_player_on_the_no_record_page_turns_this_arm_red(case):
     never = document_module.compose(case.document, case.placement, narration=SILENT)
     assert unnarrated_and_whole(never, case)
 
-    transport = templates.fill(document_module.PLAYER_TEMPLATE, gap="")
+    transport = templates.fill(
+        document_module.PLAYER_TEMPLATE, gap="", clips=case.placement.clips()
+    )
     planted = never.replace("</main>", "</main>\n" + transport, 1)
     assert planted != never, "the plant did not apply, so this control measured nothing"
     assert not unnarrated_and_whole(planted, case), (

@@ -48,6 +48,7 @@ colour changes.
 | `vendored` | the two bundles this project did not write, and their licences |
 | `grammars` | which fence languages the vendored highlighter covers, and the plain fallback |
 | `surface` | the class names and `data-*` hooks the stylesheet targets |
+| `clips` | the script a narrated page reads to learn whether its clips are on disk |
 | `errors` | `AssetError`, the only exception any of it raises |
 
 ⭐ **Assets are shared and linked, never inlined.** They were 79% of each 60 KB
@@ -77,6 +78,15 @@ from studyforge.render.pageassets.bundle import (
     script,
     stylesheet,
     written_files,
+)
+from studyforge.render.pageassets.clips import (
+    ABSENT,
+    CLIPS_NAME,
+    PRESENT,
+    RELEASED,
+    STATES,
+    clips_script,
+    clips_state,
 )
 from studyforge.render.pageassets.errors import AssetError
 from studyforge.render.pageassets.grammars import (
@@ -112,7 +122,9 @@ from studyforge.render.pageassets.vendored import (
 #: `studyforge.render.pageassets.bundle` directly is a consumer this contract
 #: failed.
 __all__ = [
+    "ABSENT",
     "ASSET_DIR",
+    "CLIPS_NAME",
     "HEADER_CHARS",
     "HEADER_MARKERS",
     "HOOK_CLASSES",
@@ -120,10 +132,13 @@ __all__ = [
     "LICENCE_SUFFIX",
     "PART_SUFFIXES",
     "PLAIN",
+    "PRESENT",
+    "RELEASED",
     "SCRIPT_NAME",
     "SCRIPT_PARTS",
     "SPRITE_PART",
     "SPRITE_PLACEHOLDER",
+    "STATES",
     "STYLESHEET_NAME",
     "STYLE_PARTS",
     "SURFACE_CLASSES",
@@ -131,6 +146,8 @@ __all__ = [
     "VENDORED",
     "AssetError",
     "class_for",
+    "clips_script",
+    "clips_state",
     "compose",
     "falls_back",
     "grammar_for",

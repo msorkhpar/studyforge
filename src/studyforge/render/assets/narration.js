@@ -21,7 +21,9 @@
 
    ⛔ **Progressive enhancement, and the transport ships HIDDEN.** With scripting
    off, a reader is shown nothing rather than a Play button that cannot play —
-   a control that does nothing is a dead control, and none is shown.
+   a control that does nothing is a dead control, and none is shown. ⭐ The same
+   holds when the clips are not on disk: the transport stays hidden, and this
+   file learns it without requesting a clip (see `CLIPS` below).
 
    ⭐ **It degrades honestly, in three named states** (R6). A passage whose clip
    is not on disk says so and stops rather than pretending; a unit with no usable
@@ -76,6 +78,18 @@
   var player = document.getElementById(PLAYER);
   var audio = document.getElementById(NARRATOR);
   if (!player || !audio) { return; }
+
+  /* ⛔ **Whether the clips are on disk is asked of a script that is always
+     there, never of a clip.** `templates/player.html` links
+     `pageassets.CLIPS_NAME` ahead of this bundle, and it says `present` only
+     where a build found clips or a restore put them back. ⚠️ A request for a
+     clip that is not there is an error in the console, over `file://` and
+     served alike, and a site whose clips are a download nobody has taken is the
+     normal case. ⭐ So anything but `present` leaves the transport hidden and
+     binds nothing: no button, no passage that answers a click, no key. */
+  var CLIPS = 'present';
+  var told = window.studyforge && window.studyforge.clips;
+  if (told !== CLIPS) { return; }
 
   /* ⛔ THE WHOLE DOCUMENT, NOT `#content`. A unit page is headed by its
      material's own opening heading, and that heading sits in the `<header>`

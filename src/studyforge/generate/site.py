@@ -68,7 +68,7 @@ from studyforge.generate.clips import for_output, unit_clips
 from studyforge.generate.containers import container_pages, page_paths
 from studyforge.generate.declarations import Corpus, read_corpus
 from studyforge.generate.media import unit_media
-from studyforge.generate.narration import voiced
+from studyforge.generate.narration import clip_signal, voiced
 from studyforge.generate.navigation import rail
 from studyforge.generate.units import unit_pages
 from studyforge.generate.writing import Written, place
@@ -96,6 +96,7 @@ def write_site(root: Path | str, into: Path | str, *, narration: bool | None = N
         + assets(corpus, into)
         + unit_media(corpus, into)
         + unit_clips(corpus, into)
+        + clip_signal(corpus, into)
     )
 
 
