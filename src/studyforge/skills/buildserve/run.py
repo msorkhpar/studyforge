@@ -19,8 +19,7 @@ the exit code of a run that cannot start.
 
 ## ⭐ Narration is the user's to choose, and off is not a partial state
 
-⭐ The user's ruling, 2026-09-23: *"while serving or even while caputring the
-matterial skills should ask if user is interested in the narrition or not"*.
+⭐ The skill asks whether narration is wanted, when capturing and when serving.
 `narration` is that answer, handed to `build` and `serve` as their own flag.
 ⛔ **Off prints no `partial` block**: the reading floor is complete (C5), so the
 skill says once that narration is off and what it kept, and nothing calls it

@@ -14,9 +14,9 @@ lives and `studyforge.archive.scrub` for R7's gate. ⛔ Nothing source-specific
 ## ⛔ One instrument, and it already existed
 
 ⚠️ **A skill that reads a corpus it has already onboarded reads its own output
-back.** Measured on a clean run: a re-survey counted the generated
-`tests/**/test_*.py` as the corpus's graders, dropped its *"no runnable code,
-no graders"* verdict, and drafted `exercises: true` for a corpus whose own
+back.** Unchecked, a re-survey counts the generated
+`tests/**/test_*.py` as the corpus's graders, drops its *"no runnable code,
+no graders"* verdict, and drafts `exercises: true` for a corpus whose own
 onboarding report printed `graded practices  no` three lines above. ⛔ **A
 COMPLETE corpus is then presented to its reader as unfinished** — the spec's own
 C5 failure — and nothing raises.
@@ -53,7 +53,7 @@ def generated(root: Path | str) -> frozenset[str]:
     ⭐ Relative, posix-spelled, exactly as the record states them — which is how
     every other pass in this skill spells a path. ⛔ An absent, unreadable or
     malformed record is *no footprint*, never a guess: a corpus nobody onboarded
-    must survey exactly as it did before this module existed.
+    must survey exactly as if this module did not exist.
     """
     try:
         document = json.loads((Path(root) / INSTALL_RECORD).read_text(encoding="utf-8"))

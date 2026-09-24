@@ -4,8 +4,8 @@
 narrated through the recording fake, a clip removed, a practice declared — and
 each clause both ways, so a reader that answered a constant would fail one side.
 
-⛔ **`W332` moved the RENDERING here too**, out of the reader's document, so
-there is one place a figure becomes prose (Ruling 330). The clauses below the
+⛔ **The RENDERING is here too**, not in the reader's document, so
+there is one place a figure becomes prose. The clauses below the
 rule assert that rendering; `test_artifacts.py` asserts the document holds none
 of it.
 """
@@ -117,7 +117,7 @@ def test_a_container_map_the_build_refuses_is_a_refusal_not_an_exception(tmp_pat
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W332` — the one place a figure becomes prose, and it is not a document
+# ⛔ The one place a figure becomes prose, and it is not a document
 # --------------------------------------------------------------------------
 
 READ = Standing(read=True, declared=3, units=2, narrated=1, reading_only=2, recorded=True)

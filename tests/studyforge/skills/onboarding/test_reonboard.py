@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/skills/onboarding/reonboard.py` (R12, `W439`).
+"""Mirror of `src/studyforge/skills/onboarding/reonboard.py` (R12).
 
 ⭐ **The property this file exists for:** a change to an onboarded corpus's
 manifest enters as DATA and lands through a regenerate, so `hand_edited` reads
@@ -123,7 +123,7 @@ def test_a_settled_answer_moves_and_the_record_follows_it(tmp_path):
 
 
 def test_an_answer_nobody_settled_is_still_refused_by_name(tmp_path):
-    # ⛔ `W329` is narrowed to what a person named, never switched off.
+    # ⛔ The refusal is narrowed to what a person named, never switched off.
     root = _onboarded(tmp_path)
     moved = reonboard(root, settle={"exercises": True})
     unnamed = dataclasses.replace(moved, settled=("title",))
@@ -188,7 +188,7 @@ def test_a_re_pin_through_the_skill_moves_the_pin_and_every_stub_together(tmp_pa
 
 
 def test_a_pin_moved_by_hand_is_refused_by_the_corpus_side_check_and_named(tmp_path):
-    # ⛔ `ISO-M10/1`, at its smallest: the pin advanced, the stubs left behind.
+    # ⛔ At its smallest: the pin advanced, the stubs left behind.
     root = _onboarded(tmp_path)
     pinned = root / PIN_FILE
     document = json.loads(pinned.read_text(encoding="utf-8"))

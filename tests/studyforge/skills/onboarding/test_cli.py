@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/skills/onboarding/cli.py` (R12).
 
-⛔ **This is the instrument the reader's document points at** (`W332`), so every
+⛔ **This is the instrument the reader's document points at**, so every
 clause here is against a corpus whose state the test MADE — ingested, then
 narrated through the recording fake — rather than against a `Standing` somebody
 typed. ⭐ **Both exit codes are asserted**, and so is the one property the whole

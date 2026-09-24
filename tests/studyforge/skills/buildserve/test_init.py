@@ -120,7 +120,7 @@ def test_the_procedure_starts_no_container_and_says_so():
     # ⛔ Spec §8.3, and the skill's own *will not do* list carries it too.
     assert "§8.3" in narration_prose()
     assert "start, stop or reach into a container" in skill_text()
-    # ⭐ `W381`: it ASKS whether the runner container is up, through execute's probe.
+    # ⭐ It ASKS whether the runner container is up, through execute's probe.
     assert "only asks, through the framework's own\n  mode probe" in skill_text()
     assert "docker compose" not in skill_text().lower()
 
@@ -133,7 +133,7 @@ def test_the_procedure_gives_no_route_of_that_component():
 
 
 def test_every_command_the_narration_section_prints_runs_as_written():
-    # ⛔ `W313`'s standing bar: executed, never string-matched. ⭐ Nothing here needs
+    # ⛔ Executed, never string-matched. ⭐ Nothing here needs
     # a service or a container, which is why these are the lines that are fenced.
     commands = fenced(narration_section())
     assert commands, "the section fences no command, so this check is vacuous"

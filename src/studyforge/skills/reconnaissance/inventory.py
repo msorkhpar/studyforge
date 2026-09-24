@@ -207,10 +207,10 @@ def enters(name: str) -> bool:
     """Whether the walk enters a directory of this name beneath the root.
 
     ⭐ **Public because it is the skill's one walk rule**. `capability`
-    walks the whole tree rather than the material and used to keep a second,
-    looser rule of its own: it entered `__pycache__`, `node_modules`, `build`
-    and `target`, so a directory this module has always called *never material*
-    supplied a corpus's graders. ⛔ Two walk rules over one tree disagree
+    walks the whole tree rather than the material, and a second, looser rule of
+    its own would enter `__pycache__`, `node_modules`, `build` and `target`, so
+    a directory this module calls *never material* would supply a corpus's
+    graders. ⛔ Two walk rules over one tree disagree
     eventually, and the disagreement is silent — the scaffolded suite's
     walk follows `validate` for the same reason.
     """

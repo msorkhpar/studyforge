@@ -27,7 +27,7 @@ def test_the_chain_is_every_enclosing_heading_outermost_first():
 
 
 def test_a_heading_of_the_same_depth_closes_the_one_before_it():
-    """⛔ Ruling 92's region boundary, read from the other end."""
+    """⛔ A heading region's boundary, read from the other end."""
     read = scan("# One\n\n## Under\n\n# Two\n\n```py\nx\n```\n")
     assert read.fences[0].sections == ("Two",), "a sibling's subsection is not an ancestor"
 

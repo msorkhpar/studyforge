@@ -24,22 +24,16 @@ that refused it.
 `studyforge.exercise.gates` for the one registry of gate ids. Standard library
 only. ⛔ Not on any adapter and not on any source (R1).
 
-## ⛔ USER RULING, 2026-09-23 — THE COUNT IS SET BY COVERAGE, NOT BY LENGTH
+## ⛔ THE COUNT IS SET BY COVERAGE, NOT BY LENGTH
 
-> *"Depending on the context of the page there might be no practice, 2 or more,
-> The target is covering all the aspects not just having something minimum we
-> are looking for quality"*
-
-⛔ **SUPERSEDED by that ruling: the length BAND.** Until that ruling a page's count
-started at the floor of a band its PROSE word count set, moved by a count of
-skills and a tier, and was clamped to the band's ceiling. ⚠️ **On a code-dense
-corpus that capped most pages at two and shipped most examples as a reason
-nobody weighed**. ⭐ **There is now no length ceiling**, and the
-tier no longer moves the count: it is recorded, and handed to the author with
-the page, because it says how hard each exercise is — never how many.
-⚠️ **Refined by the user the same day** (quoted whole in `aspects`): *"don't
-over do it"* — plan by the page's IMPORTANT ideas, one exercise may check
-several, and a minor aspect is carried by a short reason.
+A page may get no practice, two, or more: the target is covering every aspect
+it teaches, not a minimum. ⚠️ **A length band would cap a code-dense page and
+ship most of its examples as a reason nobody weighed**, so ⭐ **there is no
+length ceiling**, and the tier does not move the count: it is recorded, and
+handed to the author with the page, because it says how hard each exercise is
+— never how many. ⚠️ **And not overdone** (see `aspects`): plan by the page's
+IMPORTANT ideas, one exercise may check several, and a minor aspect is carried
+by a short reason.
 
 ## ⚠️ WHY THE COUNT IS DERIVED FROM NAMES AND NOT FROM A FORMULA
 
@@ -77,8 +71,8 @@ from studyforge.exercise.gates import family_of
 from studyforge.skills.exercises.aspects import Aspect, aspect_document, require_aspects
 
 #: The version of the document this module writes. ⛔ Bumped when a reader of
-#: the old shape would be *wrong* rather than merely incomplete. ⚠️ **2 at
-#: the coverage ruling**: version 1 carried `words`, `skills`, `band` and movement `reasons`,
+#: the old shape would be *wrong* rather than merely incomplete. ⚠️ **2**:
+#: version 1 carried `words`, `skills`, `band` and movement `reasons`,
 #: and a reader of it would take a length-capped count for a covered one.
 PLAN_API = 2
 
@@ -100,7 +94,7 @@ CORE = "core"
 #: A page whose material a reader meets after the ones it builds on.
 ADVANCED = "advanced"
 
-#: ⛔ Closed, and three rather than a scale. ⚠️ Since the coverage ruling a tier says how
+#: ⛔ Closed, and three rather than a scale. ⚠️ A tier says how
 #: hard each exercise is and never how many: it is recorded and handed to the
 #: author. A tier this build does not define is refused, never defaulted.
 TIERS = (INTRODUCTORY, CORE, ADVANCED)

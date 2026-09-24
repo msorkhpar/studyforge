@@ -16,15 +16,14 @@ from studyforge.skills.reconnaissance.errors import describe, inside_root
 
 
 def test_the_refusal_is_a_value_error_so_code_that_handles_bad_input_handles_it():
-    # ⚠️ SF-01's split: a value a caller passed, not a document that could not
+    # ⚠️ A value a caller passed, not a document that could not
     # be read.
     assert issubclass(ReconnaissanceRefused, ValueError)
 
 
 def test_describe_is_re_exported_and_never_re_implemented():
-    # ⛔ `W17` and Ruling 10: "describe a value without reproducing it" has ONE
-    # home. The measured cost of the alternative was four copies that had
-    # already drifted about integers.
+    # ⛔ R7: "describe a value without reproducing it" has ONE
+    # home. Copies of it drift apart, about integers first.
     assert describe is the_one_spelling
 
 
@@ -58,7 +57,7 @@ def test_the_refusal_names_the_types_and_reproduces_neither_path(tmp_path):
 
 
 def test_the_refusal_says_why_it_is_silent_so_the_next_author_does_not_undo_it(tmp_path):
-    # ⭐ `W1` / Ruling 14: the one recorded way this discipline gets reversed is
+    # ⭐ The one way this discipline gets reversed is
     # a reader taking the vagueness for an oversight and putting the value back.
     root = tmp_path / "corpus"
     with pytest.raises(ReconnaissanceRefused) as refused:

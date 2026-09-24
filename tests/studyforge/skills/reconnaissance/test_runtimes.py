@@ -1,8 +1,8 @@
-"""Mirror of `src/studyforge/skills/reconnaissance/runtimes.py` (`W351`, R12).
+"""Mirror of `src/studyforge/skills/reconnaissance/runtimes.py` (R12).
 
-⭐ Every clause the row settles is asserted both ways, over fabricated corpora of
+⭐ Every clause is asserted both ways, over fabricated corpora of
 each shape: a corpus whose material evidences runtimes drafts them, and prose
-drafts no key. ⛔ The vocabulary is `W350`'s and is imported, never retyped.
+drafts no key. ⛔ The vocabulary is the manifest's and is imported, never retyped.
 """
 
 from __future__ import annotations
@@ -118,7 +118,7 @@ def test_graders_with_a_build_no_runtime_names_draft_no_key_and_ask_which(tmp_pa
 
 
 # --------------------------------------------------------------------------
-# ⛔ the framework's own generated half evidences nothing (`W329`)
+# ⛔ the framework's own generated half evidences nothing
 # --------------------------------------------------------------------------
 
 #: What onboarding generates: Python, into a corpus whose own material is Java.
@@ -162,7 +162,7 @@ def test_a_draft_with_no_runtimes_does_not_raise_its_version_for_them(tmp_path):
 
 
 def test_promote_reads_the_drafted_runtimes_back(tmp_path):
-    # ⭐ `W350/1`: promote only raises `corpus_api` for `not_material`, so the draft
+    # ⭐ Promote only raises `corpus_api` for `not_material`, so the draft
     # must ask for the version itself — and it does, so onboarding keeps the key.
     proposal = survey(sources.runnable(tmp_path / "c")).proposal
     document = promote(proposal, reasons=sources.reasons(proposal))

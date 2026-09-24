@@ -1,10 +1,10 @@
-"""`W353`, end to end: a regeneration never takes a person's file at a newly generated path.
+"""End to end: a regeneration never takes a person's file at a newly generated path.
 
-⭐ **The row's clauses, through `Onboarding.write`, each asserted both ways (clause 3, R12):**
+⭐ **The clauses, through `Onboarding.write`, each asserted both ways (clause 3, R12):**
 
 1. a regenerate refuses, by name, to write ANY generated path that is already on
    disk and that the install record does not list as generated — not only the
-   ignore files `W345` guarded — and writes nothing at all;
+   ignore files — and writes nothing at all;
 2. a corpus whose record PREDATES a path (a later framework added it) gains it
    when the path is free, and is refused when something is already there —
    ⛔ even bytes identical to the framework's: the decision is to refuse, never
@@ -27,7 +27,7 @@ from studyforge.skills.onboarding.record import OnboardingRefused, hand_edited
 from tests.studyforge.skills.onboarding import corpora
 
 #: The path a later framework is taken to have added. ⭐ Deliberately not an
-#: ignore file: `W345`'s guard read only those, and this row is the rest.
+#: ignore file, so the guard is shown to reach beyond those.
 ADDED = artifacts.READER_DOC
 
 

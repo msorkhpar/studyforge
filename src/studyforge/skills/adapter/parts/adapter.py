@@ -29,11 +29,11 @@ moves it only once every file exists.
 
 ## ⛔ One run, one date — applied after the reader, never handed to it
 
-⚠️ **One date per run (R10):** a container map once took the date `read` recorded while its
-documents took the run's, so one emission could disagree with itself. ⭐ The
-run's `ingested` now replaces each container's after `read` returns it, and
-`read`'s signature is unchanged: an adapter written before this keeps reading,
-and regenerating `emit` is the whole fix (R19).
+⚠️ **One date per run (R10):** a container map that kept the date `read` recorded
+while its documents took the run's would let one emission disagree with itself. ⭐ The
+run's `ingested` replaces each container's after `read` returns it, and
+`read`'s signature does not carry the date: any adapter keeps reading,
+and regenerating `emit` is all it needs (R19).
 """
 
 from __future__ import annotations

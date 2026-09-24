@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/skills/onboarding/__main__.py` (R12): the module as a real process.
 
-⛔ **The reader's document prints this invocation** (`W332`), so it is started
+⛔ **The reader's document prints this invocation**, so it is started
 here the way a reader starts it — a subprocess, `python3 -m`, a corpus root —
 rather than by calling `main` in-process, which would not catch a package that
 cannot be run as a module at all.

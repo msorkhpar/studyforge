@@ -353,9 +353,8 @@ def _unread(furniture: Furniture) -> Iterator[Uncertainty]:
 def _collisions(record: Record) -> Iterator[Uncertainty]:
     """Titles that would become one address if anybody derived one.
 
-    ⚠️ **Measured, and the ruling's own example was wrong.** The task said accents
-    collide — `Café` and `Cafe`. They do not: an accent is a non-alphanumeric,
-    so it collapses to a **separator**, and those two give `caf` and `cafe`.
+    ⚠️ **Accents do not collide** — `Café` and `Cafe` differ: an accent is a
+    non-alphanumeric, so it collapses to a **separator**, and those two give `caf` and `cafe`.
     ⭐ The class that actually occurs is **punctuation**: `'Streams: an API'`
     and `'Streams, an API'` both give `streams-an-api`. A skill built for the
     accent case would miss the case that happens.
@@ -380,6 +379,6 @@ def _collisions(record: Record) -> Iterator[Uncertainty]:
                 "record a distinct address for each, or confirm they are in "
                 "different containers where the collision does not arise. ⚠️ "
                 "Teaching material that covers the same topics for two audiences "
-                "collides by construction — measured at 15 of 38 units in one corpus"
+                "collides by construction"
             ),
         )

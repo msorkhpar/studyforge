@@ -14,12 +14,12 @@ that had to parse could not be run against a manifest the reader refuses.
 
 ## ⛔ A re-survey may not change an answer somebody already recorded
 
-⚠️ **Measured on a clean run.** A survey of a corpus this framework had already
-onboarded read the framework's own generated half as the corpus's material, and
-drafted `exercises: true` for a corpus whose first survey had measured *"build
-files 0, graders 0"*. ⛔ **Onboarding wrote it, with no refusal, three lines
-below its own report printing `graded practices  no`** — and `buildserve` then
-presents a corpus that is COMPLETE at the reading floor as unfinished (C5).
+⚠️ **A survey of a corpus this framework has already onboarded can read the
+framework's own generated half as the corpus's material**, and draft
+`exercises: true` for a corpus whose first survey measured *"build files 0,
+graders 0"*. ⛔ **Written with no refusal, it would sit three lines below the
+report printing `graded practices  no`** — and `buildserve` would then
+present a corpus that is COMPLETE at the reading floor as unfinished (C5).
 
 ⭐ **Reconnaissance already protects exactly one field, `not_material`, against
 this class. The rule it states for one field is the rule for all of them**, so the

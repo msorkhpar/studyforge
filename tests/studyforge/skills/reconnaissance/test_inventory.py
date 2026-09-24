@@ -1,6 +1,6 @@
 """What is on disk, and what a filename implies.
 
-⛔ `W272`: a nested `.studyforge` or `.git` is what `validate` says it is, asserted
+⛔ A nested `.studyforge` or `.git` is what `validate` says it is, asserted
 both ways against `validate`'s own walk, on synthetic trees.
 """
 
@@ -68,7 +68,7 @@ def test_a_file_of_an_unrecognised_kind_is_asked_about_never_swept_in(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W272`: the survey and `validate` agree on a nested `.studyforge` or `.git`
+# ⛔ The survey and `validate` agree on a nested `.studyforge` or `.git`
 # --------------------------------------------------------------------------
 
 
@@ -140,7 +140,7 @@ def test_control_a_tree_with_no_store_prints_zero_and_asks_nothing(tmp_path):
 
 
 def test_every_OTHER_dot_directory_is_still_skipped_at_any_depth_unchanged(tmp_path):
-    # ⚠️ Outside the row: stated, and asserted so a change to it is never silent.
+    # ⚠️ Stated, and asserted so a change to it is never silent.
     root = sources.flat_prose(tmp_path / "c")
     write(root, ".github/about.md")
     write(root, "src/.idea/about.md")
@@ -150,7 +150,7 @@ def test_every_OTHER_dot_directory_is_still_skipped_at_any_depth_unchanged(tmp_p
 
 
 # --------------------------------------------------------------------------
-# ⛔ W329: what this framework wrote is set aside, not classified
+# ⛔ What this framework wrote is set aside, not classified
 # --------------------------------------------------------------------------
 
 #: Onboarding's own footprint, in the two shapes the walk would otherwise

@@ -52,7 +52,7 @@ def test_a_document_path_is_five_joins_and_this_module_owns_all_of_them(tmp_path
 
 
 def test_the_unit_directory_is_named_by_the_package_that_owns_the_padding(tmp_path):
-    # ⭐ Ruling 101's other row: `unit_name` IS on `studyforge.address.__all__`,
+    # ⭐ One exported home (R21): `unit_name` IS on `studyforge.address.__all__`,
     # so it is imported rather than re-derived — and this asserts the import
     # rather than the string it happens to produce.
     layout = Layout(tmp_path, "archive")
@@ -66,7 +66,7 @@ def test_a_units_own_directory_is_beside_raw_and_not_inside_any_variant(tmp_path
     is per *unit* and holds what the unit owns — an asset's `local` path
     resolves against it, and the authored overlay `content` addresses sits in
     it. ⛔ The overlay's own file is spelled by `content` and by nothing else,
-    here included (`W198`).
+    here included.
     """
     layout = Layout(tmp_path, "archive")
 
@@ -80,13 +80,13 @@ def test_a_units_own_directory_is_beside_raw_and_not_inside_any_variant(tmp_path
 def test_the_two_shipped_fixtures_keep_their_material_where_unit_files_says():
     """⭐ The behavioural pin, on the corpora rather than on a literal.
 
-    ⚠️ **This method was landed by `SF-37` because the path was declared nowhere
-    in `src/`** — both fixtures use the directory and every reader was composing
-    it for itself. A literal compared against the same literal would agree with
-    itself; these are files somebody else wrote.
+    ⚠️ **This method is the one place `src/` declares the path** — both
+    fixtures use the directory, and no reader composes it for itself. A literal
+    compared against the same literal would agree with itself; these are files
+    somebody else wrote.
 
     ⭐ `depth2`'s is asked through `content`, which is this method plus the
-    contract's filename, so the one fixture pins both halves (`W198`). ⛔ The
+    contract's filename, so the one fixture pins both halves. ⛔ The
     filename is not spelled here either.
     """
     fixtures = Path(__file__).resolve().parents[3] / "fixtures"
@@ -99,10 +99,10 @@ def test_the_two_shipped_fixtures_keep_their_material_where_unit_files_says():
 
 
 def test_the_overlays_address_is_this_layouts_to_answer_and_nobody_elses(tmp_path):
-    """⛔ `W198`: nothing in `src/` said where a unit's authored overlay sits.
+    """⛔ This is the one place `src/` says where a unit's authored overlay sits.
 
-    ⭐ `SF-37` landed the directory and left the file, so a build still had to
-    invent one — and two builds would have invented two. This is the join, and
+    ⭐ Without it a build would have to invent the file — and two builds would
+    invent two. This is the join, and
     the point of it is that it is the ONLY join: the directory is `unit_files`'
     answer, the filename is the contract's, and neither is respelled here.
     """
@@ -116,7 +116,7 @@ def test_the_overlays_address_is_this_layouts_to_answer_and_nobody_elses(tmp_pat
 
 
 def test_the_overlays_filename_is_the_contracts_and_is_not_a_second_literal_here():
-    """⭐ The `W198` counterpart of the segment test below, one level down.
+    """⭐ The counterpart of the segment test below, one level down.
 
     ⛔ `ARCHIVE_DIR`, `RAW_DIR` and `UNITS_DIR` survive on this surface because
     an adapter's vocabulary arrives through this package (R19). ⚠️ The overlay's
@@ -136,7 +136,7 @@ def test_the_overlays_filename_is_the_contracts_and_is_not_a_second_literal_here
 
 
 def test_this_layout_locates_an_overlay_and_claims_nothing_about_applying_one():
-    """⚠️ `W198` clause 4, asserted against the prose rather than left to a reader.
+    """⚠️ Asserted against the prose rather than left to a reader.
 
     ⛔ An address is not a feature. A maintainer who meets `content` must not
     read it as *overlays work now*, so the docstring says the verb is unowned
@@ -186,13 +186,11 @@ def test_a_report_never_carries_an_absolute_path(tmp_path):
 
 
 def test_the_segment_names_on_this_surface_are_placements_and_not_a_second_value():
-    # ⛔ `W199`: `archive` and `raw` were each minted twice, and one copy of each
-    # was off every package surface — `validate.corpus` held the `raw` one, so
-    # the archive's reader and its writer each kept a private copy of the one
-    # directory they must agree about. ⛔ `W298`: `units` was the third, minted
-    # here and in placement. ⭐ All three names SURVIVE here, because an
-    # adapter's whole vocabulary arrives through this package (R19); what they
-    # may never be again is a second VALUE.
+    # ⛔ `archive`, `raw` and `units` each have one value, placement's: the
+    # archive's reader and its writer must agree about each directory, so
+    # neither may keep a private copy. ⭐ All three names are bound here,
+    # because an adapter's whole vocabulary arrives through this package
+    # (R19); what they may never be is a second VALUE.
     # ⚠️ That there is no second LITERAL is a claim about `src/`, and it is
     # asserted where the one home is, in `tests/studyforge/corpus/placement/
     # test_names.py`. This asserts what this surface hands an adapter author.
@@ -202,7 +200,7 @@ def test_the_segment_names_on_this_surface_are_placements_and_not_a_second_value
 
 
 def test_the_archive_and_the_site_agree_on_where_a_units_own_files_sit(tmp_path):
-    """⭐ The cross-TREE pin `W298` adds, and it is the reason the two names bind.
+    """⭐ The cross-TREE pin, and it is the reason the two names bind.
 
     ⛔ `UNITS_DIR` names a segment in the **archive**, which an adapter writes
     and `validate.source.membership` reads; `UNITS_DIRNAME` names one in the
@@ -228,8 +226,8 @@ def test_the_archive_and_the_site_agree_on_where_a_units_own_files_sit(tmp_path)
 def test_what_this_layout_writes_is_what_validate_reads(tmp_path):
     """⛔ The pin for `ARCHIVE_DIR` and `RAW_DIR`, and it is behavioural.
 
-    ⭐ Both names are `corpus.placement`'s, on its surface and imported here
-    (`INT-06/6`, `W199`); each was once minted in two places at once. ⛔ A test
+    ⭐ Both names are `corpus.placement`'s, on its surface and imported here,
+    so neither has a second home. ⛔ A test
     comparing this module's constant against the same constant would agree with
     itself either way. This one lays out a real archive with `Layout` alone and
     asserts that `validate`'s own walk finds the document it wrote — which is
@@ -276,7 +274,7 @@ def _write(path: Path, text: str) -> None:
 
 
 # --------------------------------------------------------------------------
-# ⛔ W214 — the drawn tree IS the layout, at values it was not drawn at
+# ⛔ The drawn tree IS the layout, at values it was not drawn at
 # --------------------------------------------------------------------------
 
 #: A second set of values, chosen to share nothing with the ones the tree is
@@ -320,7 +318,7 @@ def test_the_drawn_tree_is_the_four_places_layout_computes(tmp_path):
 
 
 def test_the_tree_draws_a_units_own_directory_and_it_is_not_inside_any_variant():
-    # ⛔ The line `W214` found missing from every page that draws this tree.
+    # ⛔ The line every page that draws this tree must carry.
     home = archive_tree().splitlines()[-1]
     assert home.endswith(f"{UNITS_DIR}/unit-NN/"), home
     assert f"/{RAW_DIR}/" not in home, "a unit's own files were drawn inside a variant"

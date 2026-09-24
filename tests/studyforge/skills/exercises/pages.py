@@ -1,4 +1,4 @@
-"""The pages `AX-07`'s three mirrors are read on, written once.
+"""The pages the three planning mirrors are read on, written once.
 
 ⭐ **Shared so the three test modules cannot drift about what a page is.**
 ⛔ Nothing here asserts anything: a helper that asserted would be a fourth

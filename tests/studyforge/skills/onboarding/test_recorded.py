@@ -1,4 +1,4 @@
-"""What a manifest already records, and what a second run would change (`W329`)."""
+"""What a manifest already records, and what a second run would change."""
 
 from __future__ import annotations
 
@@ -62,7 +62,7 @@ def test_every_answer_that_moved_is_named_at_once():
 
 
 def test_a_grown_not_material_block_is_never_named_here():
-    # ⛔ Not an exemption: `W283` states the finer rule for that one field, and
+    # ⛔ Not an exemption: re-onboarding states the finer rule for that one field, and
     # comparing it as a single answer would forbid its one legal change.
     grown = {GROWS: [*json.loads(RECORDED)["content"][GROWS], corpora.NOTES]}
 

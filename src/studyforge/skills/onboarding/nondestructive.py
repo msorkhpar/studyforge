@@ -19,20 +19,18 @@ R3 cannot come to depend on what else a corpus is given.
 ⚠️ **`artifacts` renders what a person reads and declares what this skill
 occupies; this renders what a machine checks.** `pin` already keeps its own
 generated check beside the document that check is about, and this is that
-arrangement applied to the second one. ⛔ **Not a trim**: the check grew because
-it was answering the wrong question, and `artifacts` was within a few lines of
-R11's bound before it did.
+arrangement applied to the second one.
 
 ## ⛔ THE CHECK ANSWERS R3, NOT `git status`
 
-⚠️ **Measured, twice, on a correct run of this framework.** The check read
-`git status --porcelain -z`, kept every entry that did not start with `??`, and
-asked whether that set was inside `permitted_edits`. So:
+⚠️ **A check that read `git status --porcelain -z`, kept every entry that did
+not start with `??`, and asked whether that set was inside `permitted_edits`
+would answer, on a correct run of this framework:**
 
 | what was done | what the check said |
 |---|---|
 | a narration pass, then a re-build | ⛔ RED, naming the pages the build
-  had just replaced — **and a re-build of a corpus whose pages are committed
+  has just replaced — **and a re-build of a corpus whose pages are committed
   always produces those entries** |
 | the same run's output was `git add`ed | ⛔ RED, naming files that had
   never existed, because a newly generated file that is staged reports `A `,
@@ -54,7 +52,7 @@ output**, and the answer to it does not move when a file is staged.
    plan, so it is RED whether the tree is clean, dirty or staged.**
 2. ⛔ **The tree.** Both status letters are read, and a rename's origin field is
    CONSUMED rather than indexed — with `-z` it arrives as its own NUL-separated
-   field, so the old parser read `one.txt` as a status record and reported
+   field, and indexing it would read `one.txt` as a status record and report
    `.txt` as a changed path. ⭐ **An addition is never a breach**: R3 forbids
    moving, renaming and rewriting, and says nothing against adding, so `A` and
    `??` are alike here and staging cannot fail the check. What is left — a

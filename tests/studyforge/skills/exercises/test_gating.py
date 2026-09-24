@@ -171,7 +171,7 @@ def test_a_runs_output_is_made_relative_and_scrubbed_before_it_is_kept(tmp_path)
     assert not gated.clears, "a run that wrote no report cleared the gates"
 
 
-# ⭐ `W436`: a draft's build role is staged into every run, digested, and shipped.
+# ⭐ A draft's build role is staged into every run, digested, and shipped.
 
 #: A build file of the draft's own. ⚠️ The framework never reads it, so its
 #: content only has to reach every place it is owed, byte for byte.

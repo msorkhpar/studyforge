@@ -19,9 +19,8 @@ keeps too.
 
 ## ⛔ The INSTALLED library, never a checkout beside the corpus
 
-⚠️ **The pin used to name a sibling checkout at a commit** (R18's workspace
-arrangement), and a stranger converting their own material has no such
-checkout: they install the library. ⭐ **So the version is read from what this
+⚠️ **A stranger converting their own material has no sibling checkout of the
+framework**: they install the library. ⭐ **So the version is read from what this
 Python imports** — ⛔ never from a path a corpus reaches, and never written
 down: a path here is this machine's, at run time (R7).
 

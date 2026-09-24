@@ -121,7 +121,7 @@ def test_the_prime_the_document_names_is_the_prime_that_is_copied(tmp_path):
 
 
 def test_the_written_prime_holds_one_project_per_seeded_tool_and_nothing_else(tmp_path):
-    # ⛔ `W440`: the component refuses anything at the prime's top but a seeded
+    # ⛔ The component refuses anything at the prime's top but a seeded
     # tool's project, so the top is exactly the seed keys the corpus declares.
     root = corpus(tmp_path)
     skill.write(skill.generate(manifest(), editor_text=editor_text(), root=root), root)

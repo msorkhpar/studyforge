@@ -1,21 +1,19 @@
-"""A small corpus, a deterministic author, a judge and a runner — `AX-08`'s fixtures, written once.
+"""A small corpus, a deterministic author, a judge and a runner — the loop's fixtures, once.
 
-⭐ **The author is a stand-in and that is the point** (`AX-08`'s brief): in
+⭐ **The author is a stand-in and that is the point**: in
 real use a model authors at ingestion, and here a SCRIPT does, so what is under
 test is the loop, the budget and the reporting — never a model's taste.
 ⛔ **The runner is NOT a stand-in**: every gate reading comes out of a real
 `pytest` process over real files, so a plant's effect is observed rather than
-typed into a verdict (`AX-03`'s workspace makes the same choice).
+typed into a verdict (the gates' workspace makes the same choice).
 
 ⚠️ **Why a corpus of its own rather than `tests/fixtures/`.** Each page here
 is a real page with the case its section says, and each carries the aspects an
 author would read off it: the exercise that checks each one is named
-in `ASPECTS`, so the plan is read, never typed. `depth1/`, the prose fixture
-`AX-05` names, carries no source material on disk, so no ledger can be taken
-over it. ⚠️ **The shared reading section was written to carry each page into
-the length band's `short` range, and planning by aspects withdrew the band**; it stays as
-the kind of prose that teaches no checkable aspect of its own, so no aspect
-names it.
+in `ASPECTS`, so the plan is read, never typed. `depth1/`, the prose fixture,
+carries no source material on disk, so no ledger can be taken over it.
+⚠️ **The shared reading section** is the kind of prose that teaches no
+checkable aspect of its own, so no aspect names it.
 
 ⛔ Nothing here asserts: a helper that asserted would be an instrument nobody
 names.

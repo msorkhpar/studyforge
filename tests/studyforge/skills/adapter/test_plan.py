@@ -40,7 +40,7 @@ def test_a_corpus_with_no_exercises_gets_no_practice_path():
 
 
 def test_a_sole_variant_is_named_and_two_are_not():
-    # ⚠️ A container carries one variant (SF-05), so a corpus declaring two
+    # ⚠️ A container carries one variant, so a corpus declaring two
     # chooses per container — and a scaffold that picked the first would be
     # silently right for one corpus in two.
     assert plan_for(manifest()).sole_variant == "prose"

@@ -18,25 +18,24 @@ name this module knows.
 
 ## ⛔ The one hand-written module is MARKED, and carries no digest
 
-⚠️ **Measured at a corpus:** the record filed the adapter's reading step under
-its stub's digest, and a regenerate re-recorded that digest. So the one
-legitimate edit in a corpus read exactly like a hand-edit to a generated file,
-and R19's *"a hand-edit to a generated artifact is a finding"* could not be
-checked by anybody. ⭐ **The entry is now `{"where": …, "hand_written": true}`**:
+⚠️ **A digest on the adapter's reading step would make the one legitimate edit
+in a corpus read exactly like a hand-edit to a generated file**, and R19's
+*"a hand-edit to a generated artifact is a finding"* could not be checked by
+anybody. ⭐ **The entry is `{"where": …, "hand_written": true}`**:
 a regenerate writes the same entry, which records nothing about the file's
 bytes, and `hand_edited` never names it.
 
 ## ⛔ A generated file that is GONE is reported too
 
-⚠️ **Measured at a corpus**: the reader document was moved to
-another directory by hand, and `hand_edited` read `[]`, because an absent file
-has no bytes to differ. ⭐ **Moving or deleting a generated file is an edit to
-it**, so each one missing from where the record puts it is reported as a
-sentence a person reads (R6), after the paths whose bytes differ. ⛔ **Except
+⚠️ **An absent file has no bytes to differ**, so a reader document moved to
+another directory by hand would otherwise read `[]`. ⭐ **Moving or deleting a
+generated file is an edit to it**, so each one missing from where the record
+puts it is reported as a sentence a person reads (R6), after the paths whose
+bytes differ. ⛔ **Except
 an ignore file that hides itself**: it is one machine's own and never
 enters a commit, so every fresh clone lacks it and that is not an edit.
 
-⚠️ **`installed_api` moved to `2` for that reason.** A build that reads `1`
+⚠️ **`installed_api` is `2` for that reason.** A build that reads `1`
 expects a digest on every entry and would fail on the marked one rather than
 refuse it by name. ⭐ This build still reads `1`: every entry there has a
 digest, so reading it is not a migration.

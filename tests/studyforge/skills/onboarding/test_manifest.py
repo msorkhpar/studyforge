@@ -103,7 +103,7 @@ def test_the_version_never_falls_below_what_the_draft_asked_for():
 def test_not_material_is_unreadable_one_version_below_the_one_promote_writes():
     # ⛔ The behavioural pin for `NOT_MATERIAL_API`, which is re-derived here
     # because the owner's key-to-version map is not on its `__all__`
-    # (Ruling 101). ⚠️ A literal compared against the same literal would agree
+    # (R21). ⚠️ A literal compared against the same literal would agree
     # with itself; this asks the manifest package what it actually accepts.
     document = promote(corpora.DRAFT, not_material=[GLOB])
     lowered = {**document, "corpus_api": NOT_MATERIAL_API - 1}
@@ -182,8 +182,8 @@ def test_a_persons_block_alone_is_carried_and_raises_the_version_it_needs():
 
 
 def test_a_reason_the_survey_left_open_is_paired_from_the_reasons_a_person_gave():
-    # ⭐ W249: reconnaissance drafts the glob with `why: None`; the reason is a
-    # person's (W240/3), handed over keyed by the glob. A written reason is kept.
+    # ⭐ Reconnaissance drafts the glob with `why: None`; the reason is a
+    # person's, handed over keyed by the glob. A written reason is kept.
     opened = {"glob": "LICENSE", "why": None}
     document = promote(_with_notes(corpora.NOTES, opened), reasons={"LICENSE": WHY})
 
@@ -226,7 +226,7 @@ def test_a_glob_the_draft_and_a_generator_both_declare_is_refused_naming_both_si
 
 
 def test_a_collision_is_refused_even_when_both_sides_give_the_same_reason():
-    # ⚠️ Ruled (INT06-1): a person retyping a generated declaration is R19's
+    # ⚠️ A person retyping a generated declaration is R19's
     # retyping, and the manifest refuses the repeat whatever the reasons say.
     with pytest.raises(PromotionRefused):
         promote(_with_notes(GLOB), not_material=[GLOB])
@@ -243,8 +243,8 @@ def test_every_collision_is_named_at_once():
 
 
 def test_two_generators_declaring_one_glob_are_refused_naming_both_sides():
-    # ⛔ INT06-1/4 (W242): keeping the first generator's reason was precedence
-    # between generators, which W239 refused between a draft and a generator.
+    # ⛔ Keeping the first generator's reason would be precedence
+    # between generators, which is refused between a draft and a generator too.
     other = {"glob": "tests/*.py", "why": "the generated checks this corpus carries"}
     again = {**GLOB, "why": "a second generator's reason for the same directory"}
 
@@ -318,7 +318,7 @@ def test_render_is_json_a_person_can_read_and_a_diff_can_hold_still():
 
 
 def test_a_promoted_manifest_carrying_a_home_path_is_refused_as_itself():
-    # ⛔ Ruling 58: `_refuse_unreadable` catches the reader's `RAISES` but
+    # ⛔ R7: `_refuse_unreadable` catches the reader's `RAISES` but
     # re-raises the leak rather than filing it as a promotion refusal.
     from studyforge.archive.scrub import PersonalDataLeak
 

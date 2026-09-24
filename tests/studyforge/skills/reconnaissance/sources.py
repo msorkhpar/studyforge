@@ -107,7 +107,7 @@ def aggregated(root: Path) -> Path:
 def furnished(root: Path) -> Path:
     """A recorded corpus with root furniture and notes beside one aggregate.
 
-    ⭐ **W249's shape, at the smallest size that sets it.** A licence, two git
+    ⭐ **Root furniture, at the smallest size that sets it.** A licence, two git
     declarations, a notes file at the root, a directory of notes and a hidden
     file among the units: none is read by an include. The aggregate is.
     """
@@ -214,7 +214,7 @@ def marker_ordinals(root: Path) -> Path:
 def heading_entries(root: Path, heading: bool = True) -> Path:
     """Marker-ordinal entries with two minority entries written as `## N. [Title](x)`.
 
-    ⭐ **W250/2's finding, at the smallest size that sets it.** Most entries
+    ⭐ **Mixed ordinal forms, at the smallest size that sets them.** Most entries
     carry the ordinal as the list marker; two carry it outside the link after a
     heading's hashes, under heading group labels. ⚠️ `heading=False` is the twin:
     the same two entries after a bullet, the form whose ordinal was always read.
@@ -277,9 +277,9 @@ def linked_regions(
 ) -> Path:
     """A record whose last group label is a heading linking a file of regions.
 
-    ⭐ **W250's finding, at the smallest size that sets it.** Two groups under
-    unlinked headings, one unit written as a linked heading inside its run (the
-    minority form, and its file has subsections), then a heading that links a
+    ⭐ **A heading linking a file of regions, at the smallest size that sets it.**
+    Two groups under unlinked headings, one unit written as a linked heading
+    inside its run (the minority form, and its file has subsections), then a heading that links a
     file whose headings are regions, followed by a copy of that file's heading
     tree. ⚠️ `link=False` is the control: the same heading, linking nothing.
     `linked_aggregate` makes the second group's label a heading linking a
@@ -305,7 +305,7 @@ def linked_regions(
 
 
 def onboarded(root: Path, generated: dict[str, str]) -> Path:
-    """Write `generated` into `root` and record it as this framework's own (`W329`).
+    """Write `generated` into `root` and record it as this framework's own.
 
     ⭐ **The record is the one instrument**, so a fixture that means *"this file
     is the framework's"* writes the same record onboarding writes — never a name

@@ -2,7 +2,7 @@
 
 ⛔ Every argument list is parsed by that verb's OWN parser, reached through the
 registered table rather than imported by name. So a verb whose interface changes
-(`W230`) turns this module RED, naming the seam, before any reader runs the skill.
+ turns this module RED, naming the seam, before any reader runs the skill.
 """
 
 from __future__ import annotations
@@ -51,7 +51,7 @@ def test_the_optional_arguments_reach_the_verb_only_when_given():
     assert "http://127.0.0.1:1" in vars(given).values()
     assert len(serve(CORPUS, SITE)) < len(serve(CORPUS, SITE, 0))
     assert len(narrate(CORPUS, "v")) < len(narrate(CORPUS, "v", "u"))
-    # ⭐ `W457`: only an explicit False turns narration off; None and True say nothing.
+    # ⭐ Only an explicit False turns narration off; None and True say nothing.
     assert vars(parser_of("validate").parse_args(LISTS["validate+no-narration"][1:])) == {
         "root": CORPUS,
         "narration": False,
@@ -73,13 +73,13 @@ def test_a_list_that_names_no_verb_is_refused_without_echoing_it(argv):
 
 
 def test_the_seam_is_the_only_caller_of_the_table():
-    # ⭐ The contract W230's taker relies on; `test_thin.py` asserts it over the package.
+    # ⭐ The contract every verb relies on; `test_thin.py` asserts it over the package.
     assert "VERBS" in vars(verbs)
 
 
 @pytest.mark.parametrize("answer", [True, False])
 def test_the_user_s_narration_answer_reaches_build_and_serve_as_their_own_flag(answer):
-    # ⭐ `W460`: one spelling of the answer, parsed by each verb's own parser.
+    # ⭐ One spelling of the answer, parsed by each verb's own parser.
     for verb, argv in (
         ("build", build(CORPUS, SITE, answer)),
         ("serve", serve(CORPUS, SITE, 0, answer)),

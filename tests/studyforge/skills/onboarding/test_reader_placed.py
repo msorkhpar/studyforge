@@ -1,10 +1,9 @@
-"""`W461`: onboarding places its reader document where the corpus says, and a gap is reported.
+"""Onboarding places its reader document where the corpus says, and a gap is reported.
 
-⭐ **Found at a corpus** (`ISO-32/1`, `ISO-32/2`): the user ruled that a corpus's
-`ONBOARDING.md` moves to its archive, and the corpus moved it — but onboarding
-wrote it at the root by a fixed name, so the next regenerate put it back, the
-generated pin check still pointed a reader at the root, and `hand_edited` read
-`[]` with a generated file missing from where the record put it.
+⭐ **A corpus may keep its `ONBOARDING.md` elsewhere than the root**, so
+onboarding writes it at the declared place, a regenerate never puts it back at
+the root, the generated pin check points a reader at the declared place, and
+`hand_edited` names a generated file missing from where the record put it.
 
 Read here through the public calls: `onboard`, `reonboard`, `hand_edited`, and
 the manifest's own reader.
@@ -25,10 +24,10 @@ from studyforge.skills.onboarding.pin import PIN_DIR, RECORD_FILE
 from studyforge.skills.onboarding.record import OnboardingRefused, gone
 from tests.studyforge.skills.onboarding import corpora
 
-#: Where the corpus in `ISO-32` keeps the document now.
+#: Where a corpus keeps the document when it declares an archive place for it.
 ARCHIVED = "docs/archive/ONBOARDING.md"
 
-#: The generated ignore file that hides itself when media is committed (`W425`).
+#: The generated ignore file that hides itself when media is committed.
 SELF_HIDDEN = GENERATED_IGNORE_HOME.as_posix()
 
 
@@ -140,7 +139,7 @@ def test_a_corpus_that_moved_it_settles_the_place_and_a_regenerate_writes_nothin
 
 
 def test_a_file_of_yours_at_the_new_place_is_still_refused(tmp_path):
-    # ⛔ `W353` holds: only bytes the record holds for a generated path now EMPTY
+    # ⛔ Only bytes the record holds for a generated path now EMPTY
     # are recognised as moved, so somebody's own document there is never taken.
     root, _made = _written(tmp_path)
     (root / ARCHIVED).parent.mkdir(parents=True)
@@ -260,9 +259,8 @@ def test_every_generated_file_missing_from_its_recorded_place_is_reported(tmp_pa
 
 
 def test_an_ignore_file_that_hides_itself_is_absent_from_every_clone_and_not_reported(tmp_path):
-    # ⛔ Measured on the corpus that found this row: a clone of it has no
-    # `.studyforge/.gitignore`, because that file ignores itself (`W425`), and
-    # the first cut of this clause reported it on every fresh clone.
+    # ⛔ A clone has no `.studyforge/.gitignore`, because that file ignores
+    # itself, so reporting it would fire on every fresh clone.
     root, made = _written(tmp_path)
     hidden = root / SELF_HIDDEN
     assert SELF_HIDDEN in made.paths and ".gitignore" in hidden.read_text("utf-8").splitlines()

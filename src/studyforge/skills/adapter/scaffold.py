@@ -44,9 +44,9 @@ guessing game. One refusal names them all.
 
 ## ⛔ Every directory it puts Python in ignores its own bytecode
 
-⚠️ **Measured on the first corpus:** running the adapter and its tests left
-`__pycache__/` untracked beside every generated module, because a corpus's root
-ignore file is written for its own language — and that bytecode can embed an
+⚠️ **Running the adapter and its tests leaves `__pycache__/` beside every
+generated module**, and a corpus's root ignore file is written for its own
+language, so nothing else hides it — and that bytecode can embed an
 absolute path (R7). ⛔ **The root ignore file is a source file** (R3), and
 `permitted_edits` may never name it. ⭐ So `ignore_files` writes a
 `.gitignore` *inside* each directory a `.py` lands in, derived from the paths

@@ -1,22 +1,22 @@
-"""`W440`'s reading: the prime the skill writes is the one the REAL component builds from.
+"""The prime the skill writes is the one the REAL component builds from.
 
-⭐ **The row's first two clauses, read against the sibling itself rather than a
-restatement of it.** A fixture corpus with its own Maven build at its root AND
+⭐ **Read against the sibling itself rather than a restatement of it.** A
+fixture corpus with its own Maven build at its root AND
 an emitted exercise whose build role names a library nobody can resolve is run
 through `onboard.generate` with the sibling's own `consuming.json` at its pin.
 The prime it writes is handed to the sibling's own `tag_from` and `built_by`
 argv — each substituted by `toolchain.select` from the contract's `runner`
 block, the prime flag from `runner.prime.declared_by` — and ⛔ **no tag is typed**.
 
-⛔ **And the negative, by name** (R12): the same files laid out the old way, at
-their corpus-relative paths, are refused by the component before Docker starts,
+⛔ **And the negative, by name** (R12): the same files laid out at their
+corpus-relative paths, are refused by the component before Docker starts,
 naming the directory it will not warm.
 
 ⭐ **Two consents, because two things differ.** The tag cases run the sibling's
 build script with `--print-tag`, which reads and guards the prime and starts no
 Docker: they need only the sibling at its pin. ⚠️ The build case builds an image
 (pulling the sibling's pinned inputs and the prime's JUnit through the warmer's
-placeholder User-Agent, as `W390` and `W436` did), so it is opt-in behind
+placeholder User-Agent), so it is opt-in behind
 `STUDYFORGE_RUNNER_BUILDS=1`, is a HOST reading, and is taken holding the shared
 container lock.
 """
@@ -110,7 +110,7 @@ def test_the_exercise_build_role_never_reaches_the_prime(contract, tmp_path):
 
 
 def test_the_old_layout_is_refused_by_the_component_by_name(contract, tmp_path):
-    # ⛔ The layout `W436/1` measured: every file at its corpus-relative path.
+    # ⛔ The refused layout: every file at its corpus-relative path.
     root = corpus(tmp_path / "corpus")
     made = generated(root, contract)
     old = tmp_path / "old-prime"

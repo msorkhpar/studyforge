@@ -16,10 +16,8 @@ come to depend on what the framework generated into the corpus.
 
 ## ⛔ The installed library, never a sibling checkout
 
-⚠️ **The pin used to name a checkout of the framework beside the corpus** —
-the workspace's development arrangement (R18) — and every stub was a tree path
-into it. ⛔ **A stranger converting their own material has no such checkout:
-they install the library**, so a stub that resolves only through a
+⚠️ **A stranger converting their own material has no checkout of the framework
+beside the corpus: they install the library**, so a stub that resolves only through a
 sibling resolves for nobody but this project. ⭐ **So the pin records the
 installed library's `version` and the `commit` it was built from**, `where`
 is `"installed"`, and a stub names its skill and the command that prints the
@@ -35,7 +33,7 @@ one assertion rather than passing it. ⛔ Both values are checked by
 SHAPE here and never quoted back: the value that fails that test is almost
 always a path, and a refusal is read in a log and pasted into a bug report.
 
-⚠️ **`pin_api` moved to `2` for that reason**: a pin at `1` names a sibling
+⚠️ **`pin_api` is `2` for that reason**: a pin at `1` names a sibling
 checkout. `reonboard` still reads one — its commit and its skills — and
 refuses to keep it without a re-pin, because the commit a sibling was at says
 nothing about the library installed now.

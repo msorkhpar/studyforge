@@ -5,10 +5,9 @@ asserted by being RUN** — generated into a fabricated corpus, in a real git
 working tree, by the same `python3 -m pytest` an integrator runs.
 
 ⭐ **Every clause is asserted in all three working-tree states**, because the
-defect `W331` fixes was exactly that the verdict moved between them: RED while
-a correct run's output was uncommitted, RED while it was staged, green the
-moment it was committed. ⛔ A state is not a parameter for symmetry here; it is
-the subject.
+verdict must not move between them: a correct run's output is green whether it
+is uncommitted, staged or committed. ⛔ A state is not a parameter for symmetry
+here; it is the subject.
 
 ⚠️ **Both directions, every time** (R12): a corpus whose build would write over
 its own content is caught, and a corpus whose build merely replaced its own
@@ -45,7 +44,7 @@ from tests.support import repository_root
 #: How long one command is given. ⚠️ A bound rather than a hope.
 TIMEOUT = 180
 
-#: The three states one run's output can be in, and the whole point of the row.
+#: The three states one run's output can be in, and the whole point of the check.
 UNCOMMITTED, STAGED, COMMITTED = "uncommitted", "staged", "committed"
 STATES = (UNCOMMITTED, STAGED, COMMITTED)
 
@@ -125,7 +124,7 @@ def test_a_renames_origin_is_consumed_as_a_field_and_never_read_as_a_record():
 
 
 def test_neither_status_column_is_ignored_and_an_addition_is_never_a_breach():
-    # ⭐ Both letters (clause 2), and the staging half of the defect: a newly
+    # ⭐ Both letters (clause 2), and the staging half: a newly
     # generated file that has been `git add`ed reports `A `, not `??`.
     _, namespace = _generated()
     touched = namespace["_touched"]
@@ -294,7 +293,7 @@ def test_a_source_file_rewritten_in_place_is_caught(tmp_path, state):
 
 
 def test_once_that_rewrite_is_committed_only_the_declaration_still_answers(tmp_path):
-    # ⚠️ **The limit, asserted rather than implied** (`W331/2`). A committed
+    # ⚠️ **The limit, asserted rather than implied**. A committed
     # working tree holds no record of what changed, so the tree reading has
     # nothing left to read; what a build DECLARES it writes is what still
     # answers, and the test above is where that is measured.

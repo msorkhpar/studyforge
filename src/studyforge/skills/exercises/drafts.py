@@ -91,8 +91,7 @@ class AuthoringError(ValueError):
 class Page:
     """One page to author exercises for, as the converting agent read it.
 
-    ⭐ `aspects` and `tier` are the agent's readings (the coverage ruling of
-    2026-09-23, superseding `words` and `skills`): the plan is read off the aspects, each
+    ⭐ `aspects` and `tier` are the agent's readings: the plan is read off the aspects, each
     checked by a named exercise or carried by a reason, and nothing here
     guesses one. ⛔ `nothing_checkable` is the sentence a page naming no aspect
     owes, and only such a page may carry it.
@@ -192,9 +191,8 @@ def words_of(text: str) -> int:
     ⚠️ **A decision, and this is its one spelling** (the ledger's contract
     leaves it to the skill): a fence is an example, not reading, so its body and its language
     tag are not counted. The fence grammar is `scan`'s, never a second one.
-    ⛔ **Since the coverage ruling of 2026-09-23 it sets no count**: the plan is read off a page's
-    aspects. It stays as the reading that shows how little prose a code-dense
-    page has, which is what the length band used to cap it by.
+    ⛔ **It sets no count**: the plan is read off a page's aspects. It is the
+    reading that shows how little prose a code-dense page has.
     """
     read = scan(text)
     fenced = sum(len(_WORD.findall(fence.body)) for fence in read.fences)

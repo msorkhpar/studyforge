@@ -58,8 +58,8 @@ gate answers → what one page ships → what the corpus commits.
    with a written reason it is not.
 2. ⛔ **The plan is a CEILING, never a quota** (R6, spec §7 §4). `shortfall`
    refuses a page that shipped past its ceiling and a gap not named with a gate.
-   ⭐ **Its count is set by COVERAGE, not by length** (user ruling
-   2026-09-23): every aspect a page teaches is checked by a named exercise or
+   ⭐ **Its count is set by COVERAGE, not by length**: every aspect a page
+   teaches is checked by a named exercise or
    carried by a written reason, and an aspect with neither is refused.
 3. ⛔ **A gate failure is re-authored within `ATTEMPTS`, never by loosening a
    gate, dropping a case or deleting a question** (spec §7 §11). No gate takes

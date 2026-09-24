@@ -208,7 +208,7 @@ def test_emphasis_inside_a_title_is_left_alone(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ a heading-form entry yields the ordinal its bullet-form twin yields (W252)
+# ⛔ a heading-form entry yields the ordinal its bullet-form twin yields
 # --------------------------------------------------------------------------
 
 
@@ -218,7 +218,7 @@ def entries_of(root):
 
 
 def test_a_heading_form_entry_yields_the_ordinal_its_bullet_form_twin_yields(tmp_path):
-    # ⚠️ W250/2, measured: a corpus's two heading-form entries read no ordinal.
+    # ⚠️ A heading-form entry must read the ordinal its bullet form reads.
     headed = entries_of(sources.heading_entries(tmp_path / "h"))
     assert headed == entries_of(sources.heading_entries(tmp_path / "b", heading=False))
     assert [(entry[0], entry[2]) for entry in headed][2:4] == [("src/3.md", "3"), ("src/4.md", "4")]
@@ -251,7 +251,7 @@ def test_a_heading_yields_what_a_bullet_yields_and_nothing_more(tmp_path, hashes
 
 
 def test_a_numbered_heading_that_links_a_file_of_regions_is_still_a_container(tmp_path):
-    # ⛔ W250's reading holds when the label carries an ordinal: its units are
+    # ⛔ The reading holds when the label carries an ordinal: its units are
     # still the regions, and each keeps its own ordinal, never the label's.
     root = sources.linked_regions(tmp_path / "c")
     readme = root / "README.md"
@@ -282,8 +282,8 @@ def test_sf02_accepts_the_draft_of_a_record_with_heading_form_entries(tmp_path):
 
 
 def test_a_document_outside_the_root_is_refused_without_reproducing_its_path(tmp_path):
-    # ⛔ `W220`, from `W217/2`. The refusal used to be the standard library's,
-    # and `Path.relative_to` writes BOTH absolute paths into its message — one
+    # ⛔ The refusal is never the standard library's:
+    # `Path.relative_to` writes BOTH absolute paths into its message — one
     # of them under a home directory, which is personal data (R7).
     #
     # ⚠️ **The poisoned document EXISTS**, and that is the whole point: the

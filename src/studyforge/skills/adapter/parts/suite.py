@@ -196,7 +196,7 @@ def _test_emit(plan: Plan) -> str:
             "",
             "    ⭐ Asked once per directory, so an ignored directory is never walked, let",
             "    alone copied. ⛔ A repository that stops answering part-way refuses the",
-            "    copy: a copy that quietly took everything is the defect this replaced.",
+            "    copy: a copy that quietly took everything would test the wrong tree.",
             "    ⛔ A nested store `validate` refuses is copied and never asked about.",
             '    """',
             "    left: set[str] = set()",

@@ -1,7 +1,7 @@
 """Mirror of `src/studyforge/skills/exercises/plan.py` (R12) — the plan, by aspects.
 
 **What it asserts.** That a page is planned by its ASPECTS and not by its
-length (user ruling 2026-09-23): one planned exercise per distinct name
+length: one planned exercise per distinct name
 the aspects give, each carrying the aspects it checks, with no ceiling; that a
 plan of zero says why; and that the same aspects always produce the same plan
 (R10). ⛔ **And the half R6 turns on:** a page cannot ship past its plan, and a
@@ -48,7 +48,7 @@ from tests.studyforge.skills.exercises.pages import DENSE, fixture_corpus, writt
 #: What a gate said when it refused. A sentence, because a reader is shown it.
 SAID = "the starter passed one of the tests, so that test is vacuous"
 
-#: A written reason an aspect is not checked, as the user's refinement words one.
+#: A written reason an aspect is not checked, worded as a minor aspect's is.
 MINOR = "incidental detail, not practised"
 
 

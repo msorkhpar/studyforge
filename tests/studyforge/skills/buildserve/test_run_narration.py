@@ -1,10 +1,9 @@
-"""Mirror of `src/studyforge/skills/buildserve/run.py`'s `W460` half: the user's answer.
+"""Mirror of `src/studyforge/skills/buildserve/run.py`'s narration half: the reader's answer.
 
-⭐ **The user's ruling, 2026-09-23:** *"while serving or even while caputring the
-matterial skills should ask if user is interested in the narrition or not"*.
-Read over a served site with clips on disk: off serves no clip, prints no
-`partial` narration state and says once what it chose; on, the positive control,
-serves every clip its pages name.
+⭐ **Narration is optional:** the skill asks whether the reader wants it, and
+serves according to the answer. Read over a served site with clips on disk: off
+serves no clip, prints no `partial` narration state and says once what it chose;
+on, the positive control, serves every clip its pages name.
 """
 
 from __future__ import annotations

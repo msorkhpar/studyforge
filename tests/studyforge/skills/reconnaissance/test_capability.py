@@ -57,7 +57,7 @@ def test_non_prose_files_with_no_build_are_asked_about(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ W329: the framework's own generated half is not this corpus's capability
+# ⛔ The framework's own generated half is not this corpus's capability
 # --------------------------------------------------------------------------
 
 #: What onboarding generates into a corpus that has no graders of its own.

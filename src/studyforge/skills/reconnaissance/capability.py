@@ -33,13 +33,12 @@ question names what was looked for — which is also how the set grows.
 
 ## ⛔ The framework's own generated checks are not this corpus's graders
 
-⚠️ **Measured on a clean run**: re-assessing a corpus this framework had already
-onboarded counted the *generated* `tests/**/test_*.py` as graders, so `graded`
-flipped from false to true, the *"no runnable code, no graders"* verdict
-disappeared, and the draft asked for `exercises: true` on a corpus whose own
-onboarding report printed `graded practices  no`. ⛔ **`buildserve` then reports
-the toolchain partial state instead of the exercises one, so a corpus that is
-COMPLETE at the reading floor is presented to its reader as unfinished** (C5).
+⚠️ **Counting the *generated* `tests/**/test_*.py` of a corpus this framework
+has already onboarded as graders** would flip `graded` from false to true, drop
+the *"no runnable code, no graders"* verdict, and draft `exercises: true` on a
+corpus whose own onboarding report printed `graded practices  no`. ⛔ **A corpus
+that is COMPLETE at the reading floor would then be presented to its reader as
+unfinished** (C5).
 
 ⭐ So this pass asks `inventory` rather than the disk, and both of `inventory`'s
 answers are instruments that already existed: `generated` is onboarding's own

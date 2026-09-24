@@ -14,15 +14,15 @@ and the standard library. ⛔ Nothing source-specific (R1), and nothing from
 `skills.adapter`: the globs arrive as an argument, because a promoter that
 knew what an adapter looks like would have to be edited for the second one.
 
-## ⛔ The hole this closes, and it was measured rather than predicted
+## ⛔ What this closes
 
-Measured: scaffolding an adapter into a clean corpus and running
-`studyforge validate` gives `NOT valid: 8 finding(s)` — one `unclassified` per
+Scaffolding an adapter into a clean corpus and running
+`studyforge validate` with no declaration gives `NOT valid: 8 finding(s)` — one `unclassified` per
 generated file — and `content.exclude` **cannot** say it, because `exclude`
 matches by exact path equality and means *material withheld from the reader*,
 which code is not. ⭐ `content.not_material` is the vocabulary and the scaffold
-already computes the globs; ⛔ **nothing wrote them into the manifest, so a
-person copied two lines**, which is R19's *anything a second source would have
+already computes the globs; ⛔ **left out of the manifest, a person would copy
+them by hand**, which is R19's *anything a second source would have
 to retype*. This function is where they land.
 
 ## ⛔ What it refuses to invent
@@ -53,8 +53,8 @@ of the manifest schema, so omission is the declared path rather than a workaroun
 `media` block a **person** put in the draft is theirs and survives — the rule
 is that this generator adds nothing, not that it discards declarations.
 
-⛔ **So does a drafted `content.not_material`** (measured: it was once
-dropped, and a corpus's own declarations could not be generated). The draft's
+⛔ **So does a drafted `content.not_material`** (dropping it would leave a
+corpus's own declarations impossible to generate). The draft's
 entries come first as written, then the generated globs. ⭐ **An entry whose
 `why` is `None` is one reconnaissance proposed with its reason open**:
 it is paired from `reasons`, keyed by its glob, and every glob still open is
@@ -92,7 +92,7 @@ ONBOARDING_DOC_API = KEY_VERSIONS[(None, "onboarding_doc")]
 #: set: every other key is either required, or present because the draft said
 #: so. ⛔ **Nothing here is ever invented** — `media` is absent from this list
 #: because it is absent from the draft, and an absent `media` block is a
-#: *stated* default of the manifest schema (ruled 2026-09-09). A generator that
+#: *stated* default of the manifest schema. A generator that
 #: wrote one out would freeze the footprint limits' names on every corpus,
 #: including the ones with no media at all. ⭐ `runtimes` is here (`W350/1`): an
 #: empty list says what an absent key says, and would raise the version for nothing.

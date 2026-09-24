@@ -68,7 +68,7 @@ def test_the_emission_stages_before_it_moves():
 
 
 def test_the_emission_dates_every_container_with_the_run_and_not_the_reader():
-    # ⛔ W257 (INT-09/3): the date is applied AFTER `read`, before the map is
+    # ⛔ The date is applied AFTER `read`, before the map is
     # rendered, and the documents are read from the dated container.
     text = files()["ingest/emit.py"]
     dated = text.index("container = dataclasses.replace(reading, ingested=ingested)")

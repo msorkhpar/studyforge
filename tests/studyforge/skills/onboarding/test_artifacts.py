@@ -1,10 +1,9 @@
 """Mirror of `src/studyforge/skills/onboarding/artifacts.py` (R12).
 
-⚠️ **R3's generated check moved to `nondestructive` and so did its three
-clauses** (`W331`): they are in `test_nondestructive.py`, which runs the check
-rather than only parsing it.
+⚠️ **R3's generated check lives in `nondestructive`**, and its clauses are in
+`test_nondestructive.py`, which runs the check rather than only parsing it.
 
-⚠️ **`W313`'s figure-by-figure clauses moved to `test_standing.py`** (`W332`):
+⚠️ **The figure-by-figure clauses are in `test_standing.py`**:
 the document states no figure, so what is asserted here is that it states NONE
 of them, under a corpus whose state moved after it was written, and that the
 command it prints instead answers from the corpus as it is.
@@ -95,17 +94,17 @@ def test_the_manifest_is_not_declared_not_material_by_the_document_it_is():
 
 
 def test_this_skill_never_writes_a_repository_root_ignore_file():
-    # ⛔ R3, and W15's measured breach: tooling appended to a source
-    # repository's root ignore file on an ordinary commit, unrequested.
+    # ⛔ R3: tooling must never append to a source repository's root ignore
+    # file, which a commit would then carry unrequested.
     roots = [where for where in artifacts.paths() if where in (".gitignore", ".gitattributes")]
     assert not roots, f"this skill writes a repository-root ignore file: {roots}"
 
 
 def test_no_ignore_rule_this_skill_writes_reaches_the_archive():
-    # ⛔ SF-32's verdict: generated media is committed by default, so an ignore
+    # ⛔ Generated media is committed by default, so an ignore
     # rule that swept it out would flip a corpus's policy without anybody
     # declaring it. ⭐ The one ignore file this skill's own paths carry is
-    # `W345`'s, inside `tests/`, and it names bytecode and nothing else.
+    # the bytecode one, inside `tests/`, and it names bytecode and nothing else.
     rules = [where for where in artifacts.paths() if where.rsplit("/", 1)[-1] == ".gitignore"]
     assert rules == [f"{TESTS_DIR}/.gitignore"]
     named = [line for line in bytecode_ignore().splitlines() if not line.startswith("#")]
@@ -158,19 +157,19 @@ def test_every_reason_clears_the_minimum_the_manifest_enforces():
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W332` — the document states no live count, it points at what answers
+# ⛔ The document states no live count, it points at what answers
 # --------------------------------------------------------------------------
 
-#: Every figure `W313` used to freeze into this document. ⭐ A reading that
+#: Every figure this document must never freeze. ⭐ A reading that
 #: produces all four, so the "none of them is here" clause has a control.
 READ = Standing(read=True, declared=3, units=2, narrated=1, reading_only=2, recorded=True)
 FIGURES = ("units:", "narrated:", "reading-only:", "container:")
 
 
 def test_it_says_where_the_state_is_read_and_why_it_is_not_stated_here():
-    # ⛔ THE SECTION. ⚠️ The figures themselves are asserted absent where they
-    # used to appear — on an INGESTED corpus, in the row's own clause below —
-    # because before ingest even the old document printed none.
+    # ⛔ THE SECTION. ⚠️ The figures themselves are asserted absent on an
+    # INGESTED corpus, in the clause below — before ingest there would be none
+    # to print anyway.
     text = _document(_manifest(), ("ingest/read.py",))
 
     assert "## Where it stands" in text
@@ -180,7 +179,7 @@ def test_it_says_where_the_state_is_read_and_why_it_is_not_stated_here():
 
 
 def test_every_figure_this_document_no_longer_states_is_produced_by_the_renderer():
-    # ⛔ One producer (Ruling 330), and the CONTROL for `FIGURES`: a spelling
+    # ⛔ One producer, and the CONTROL for `FIGURES`: a spelling
     # that no renderer produces would make every "it is not in the document"
     # clause pass over nothing. ⭐ Both sides read from the same tuple.
     rendered = "\n".join(standing_lines(READ))
@@ -191,7 +190,7 @@ def test_every_figure_this_document_no_longer_states_is_produced_by_the_renderer
 
 def test_the_document_is_the_same_whether_or_not_a_corpus_root_was_read(tmp_path):
     # ⭐ The structural half: nothing in it is a reading, so a reading cannot
-    # date it. ⭐ And `root=` moves no byte at all (`W442`).
+    # date it. ⭐ And `root=` moves no byte at all.
     root, _bin = _fresh_clone(tmp_path)
     with_root = onboard(corpora.SETTLED, framework_commit=corpora.COMMIT, root=root)
     without = onboard(corpora.SETTLED, framework_commit=corpora.COMMIT)
@@ -272,7 +271,7 @@ def _narrate(root):
     narrate_corpus(root, client, voice=VOICE, fmt=FMT)
 
 
-#: The fence the document prints instead of a figure (`W332`). ⚠️ It is the
+#: The fence the document prints instead of a figure. ⚠️ It is the
 #: LAST fenced line, after the ingest the fresh-clone section commands, so a
 #: reader working down the page reads a standing off the corpus they just built.
 STANDS = "python3 -m studyforge.skills.onboarding ."
@@ -291,7 +290,7 @@ def _stand_alone(root, text, bin_dir):
 
 def test_every_command_runs_as_written_before_ingest_and_after_narration(tmp_path):
     # ⛔ Clauses 1, 2 and 4, over one fabricated corpus: every fenced line is
-    # EXECUTED from the corpus root. ⭐ `W332`: the standing fence is read three
+    # EXECUTED from the corpus root. ⭐ The standing fence is read three
     # times off the SAME never-rewritten document — before the ingest the page
     # commands, after it, and after a narration — and answers differently each
     # time, which is the property a printed figure cannot have.
@@ -340,8 +339,8 @@ def test_the_document_that_was_written_before_narration_is_not_contradicted_by_i
 
 
 def test_regeneration_is_idempotent_clean_and_follows_the_state(tmp_path):
-    # ⛔ Clause 3: a second run diffs empty and R7's gate passes. ⭐ `W332`
-    # strengthens the third reading: a regeneration AFTER narration is
+    # ⛔ Clause 3: a second run diffs empty and R7's gate passes. ⭐ And
+    # the third reading: a regeneration AFTER narration is
     # byte-identical too, because the document holds nothing that moved.
     root, bin_dir = _fresh_clone(tmp_path)
     made = onboard(corpora.SETTLED, framework_commit=corpora.COMMIT, root=root)
@@ -367,7 +366,7 @@ def test_regeneration_is_idempotent_clean_and_follows_the_state(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W442` — the document names no path to the framework at all
+# ⛔ The document names no path to the framework at all
 # --------------------------------------------------------------------------
 
 
@@ -390,7 +389,7 @@ def _written(root):
 
 
 def test_what_a_worktree_writes_is_what_the_main_checkout_writes_and_runs_there(tmp_path):
-    # ⛔ `W442`'s property survives the move: no address at all, so the bytes
+    # ⛔ No address at all, so the bytes
     # cannot depend on the checkout that ran the skill (R10).
     main, worktree, bin_dir = _both_checkouts(tmp_path)
     _made, from_worktree = _written(worktree)

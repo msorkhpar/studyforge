@@ -159,14 +159,13 @@ def read(path: Path, root: Path, targets: set[str]) -> Record | None:
     ⛔ **A `path` outside `root` is refused before anything is taken apart**.
     Three expressions below read `path` relative to `root`, and the
     standard library's own failure for that writes **both** absolute paths into
-    its message — a home directory in a refusal is personal data (R7), and
-    this function was measured doing it. ⭐ `errors.inside_root` carries
+    its message — a home directory in a refusal is personal data (R7).
+    ⭐ `errors.inside_root` carries
     the test and the sentence, so the message lives once.
 
-    ⚠️ **Before the read, not after it, and that is a behaviour change on one
-    edge:** an unreadable path outside the root used to be a quiet `None`. It
-    is a caller mistake either way and R6 wants it loud. ⛔ What a *successful*
-    read returns is untouched.
+    ⚠️ **Before the read, not after it:** an unreadable path outside the root
+    is refused too, never a quiet `None`. It is a caller mistake either way and
+    R6 wants it loud.
     """
     inside_root(path, root)
     try:

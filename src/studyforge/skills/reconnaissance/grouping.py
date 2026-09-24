@@ -63,7 +63,7 @@ from studyforge.skills.reconnaissance.record import (
 #: sentence about itself before it starts listing, and one stray link must not
 #: cost a corpus its hierarchy.
 #:
-#: ⛔ Measured, and this is why the obvious heuristic was abandoned: the
+#: ⛔ Measured, and this is why the obvious heuristic is not used: the
 #: "densest run of entries" rule **cannot be tuned to work on both measured
 #: corpora at once** — one's largest gap *inside* its curriculum is wider than
 #: the other's distance to a stray entry *outside* it, so every threshold gets

@@ -105,7 +105,7 @@ def test_every_entry_the_store_can_write_is_believed():
 
 
 def test_an_imported_pass_is_believed_as_recorded_with_no_run_that_shows_it():
-    # ⚠️ SF-19b/5: the record keeps no history, so the belief rule cannot ask for one.
+    # ⚠️ The record keeps no history, so the belief rule cannot ask for one.
     plan = merged(None, made(5, "t1", "t3", False))
     assert plan.outcome == RESTORED
     assert plan.entry["first_passed_at"] == TIMES["t1"]

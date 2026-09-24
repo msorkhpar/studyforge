@@ -39,8 +39,7 @@ both refuse, because renumbering later would move every reader's progress.
 
 ## ⛔ A UNIT'S OWN PRACTICES COME FIRST, AND THEY ARE READ, NEVER DECLARED
 
-⚠️ **A unit may already carry practices** — the first corpus's
-`iso-fundamentals` units 2, 3 and 4 each carry a bundled `practice-1` — so an
+⚠️ **A unit may already carry practices** — a bundled `practice-1`, say — so an
 authored exercise numbered from 1 would take an ordinal a reader's progress is
 already keyed to. ⛔ **Renumbering the source's practice is refused for the
 reason above**, so authored exercises number AFTER it. ⭐ `carried_practices`

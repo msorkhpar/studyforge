@@ -61,7 +61,7 @@ segment and joined into a path anywhere in `src/` is a MINT; the same literal
 read as a mapping key is not.
 
 ⚠️ `unit_name` is *not* re-derived either. It is on
-`studyforge.address.__all__`, so the same ruling's other row applies.
+`studyforge.address.__all__`, so it is imported from its one home (R21).
 """
 
 from __future__ import annotations

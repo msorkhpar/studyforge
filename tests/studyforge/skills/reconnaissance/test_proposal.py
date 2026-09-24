@@ -31,7 +31,7 @@ def propose(root):
 def accepted(proposal):
     """Parse the draft, its reasons given as a person would, with the manifest's own reader.
 
-    ⛔ Its rules are never restated here, and the reasons are the test's (W240/3).
+    ⛔ Its rules are never restated here, and the reasons are the test's.
     """
     return parse(json.dumps(sources.settled(proposal)))
 
@@ -109,7 +109,7 @@ def test_the_placement_choice_is_always_explained(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⚠️ the collision class, with the ruling's example corrected
+# ⚠️ the collision class: punctuation, not accents
 # --------------------------------------------------------------------------
 
 
@@ -127,8 +127,8 @@ def test_punctuation_is_the_class_that_actually_occurs():
 
 
 def test_titles_that_would_become_one_address_are_reported(tmp_path):
-    # ⚠️ Measured at 15 of 38 units in one corpus, because two of its series
-    # deliberately mirror each other. It is the **good** material that does this.
+    # ⚠️ Two series that deliberately mirror each other collide by construction.
+    # It is the **good** material that does this.
     root = sources.prefixed_groups(tmp_path / "c")
     readme = root / "README.md"
     readme.write_text(
@@ -150,7 +150,7 @@ def test_more_ordinal_levels_than_this_skill_can_name_is_asked_about(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ W240: the draft of `survey('.')` is one the manifest reader accepts
+# ⛔ The draft of `survey('.')` is one the manifest reader accepts
 # --------------------------------------------------------------------------
 
 
@@ -194,7 +194,7 @@ def test_no_include_glob_matches_the_curriculum_record(tmp_path):
         manifest, _ = propose(root)
         content = accepted(manifest).content
         record = find(take(root))
-        # ⭐ W249: and it is proposed `not_material`, so it is no longer unclassified.
+        # ⭐ And it is proposed `not_material`, so it is no longer unclassified.
         assert content.classify(record.path.as_posix()) is Classification.NOT_MATERIAL, (
             build.__name__
         )
@@ -202,7 +202,7 @@ def test_no_include_glob_matches_the_curriculum_record(tmp_path):
 
 
 def test_a_record_no_wildcard_catches_keeps_directory_globs(tmp_path):
-    # ⭐ The fix lists files only where a wildcard would catch the record.
+    # ⭐ Files are listed only where a wildcard would catch the record.
     manifest, _ = propose(sources.flat_prose(tmp_path / "c"))
     assert manifest["content"]["include"] == ["src/*.md"]
     beside, _ = propose(sources.record_beside_units(tmp_path / "b"))
@@ -217,7 +217,7 @@ def test_a_corpus_with_no_curriculum_record_keeps_its_draft(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ W249: `source` does not depend on the name of the directory surveyed
+# ⛔ `source` does not depend on the name of the directory surveyed
 # --------------------------------------------------------------------------
 
 
@@ -231,8 +231,8 @@ def _git(where, *arguments):
 def test_two_differently_named_checkouts_of_one_repository_draft_one_proposal(
     tmp_path, monkeypatch
 ):
-    # ⛔ INT-07/1: a worktree named `int` drafted `int`, and a clone named after
-    # the repository drafted the repository's name. One corpus, one `source`.
+    # ⛔ A worktree named `int` must not draft `int`, nor a clone named after
+    # the repository draft the repository's name. One corpus, one `source`.
     origin = sources.furnished(tmp_path / "origin")
     _git(origin, "init", "-q")
     _git(origin, "add", "-A")

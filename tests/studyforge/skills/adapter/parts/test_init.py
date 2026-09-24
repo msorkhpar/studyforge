@@ -54,7 +54,7 @@ def test_the_package_name_reaches_every_path():
 
 def test_no_part_renders_an_empty_file():
     # ⚠️ Over the parts' own files: a scaffold also carries the short bytecode
-    # ignore files `W345` derives, which are no part and are held in test_scaffold.
+    # ignore files it derives, which are no part and are held in test_scaffold.
     made = scaffold(plan())
     rendered = [item for item in made.files if item.where in made.paths[: len(PARTS)]]
     assert len(rendered) == len(PARTS)

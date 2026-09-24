@@ -20,9 +20,9 @@ are what call it.
 ## ⛔ The manifest is promoted twice, and the second pass is the whole point
 
 ⚠️ **An adapter's file set has to be declared in the manifest, and the adapter
-is planned from the manifest.** The adapter skill left that circle open and a person
-closed it by hand — measured: `NOT valid: 8 finding(s)`, one
-`unclassified` per generated file, two lines copied out of a report.
+is planned from the manifest.** Left open, that circle reads `NOT valid: 8
+finding(s)`, one `unclassified` per generated file, until a person copies two
+lines out of a report.
 
 ⭐ **It is not really a circle, and the resolution is checkable rather than
 argued.** A scaffold varies only on what `Plan` carries — source, levels,

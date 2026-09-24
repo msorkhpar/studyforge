@@ -32,10 +32,9 @@ the caller's.
 
 ## ⛔ WHY THE SKILL RUNS IT RATHER THAN THE READER TYPING ITS OUTPUT
 
-⚠️ The first corpus measured the gap twice: nothing generated recorded the tag
-the corpus's primed runner build produced, and once that was recorded, nothing
-recorded the editor's, so the tag a site's editor ran was known only to the
-running environment and a switch-over had to take it from a person. ⭐ A tag is
+⚠️ Unrecorded, the tags a corpus's primed runner and editor builds produce are
+known only to the running environment, and a switch-over would have to take
+them from a person. ⭐ A tag is
 a function of the build's inputs (the contract says so), so the only honest way
 to hold one is to ask the build for it and write down what it answered.
 ⛔ **A hand-edit to either file is a finding against this skill**, exactly as

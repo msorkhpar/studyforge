@@ -132,7 +132,7 @@ def test_every_name_on_the_surface_resolves_and_none_is_there_twice():
 
 
 def test_the_procedure_states_the_rule_that_a_missing_key_is_a_finding():
-    # ⛔ R19, and `TC-05/2`: this skill is where a consuming contract's
+    # ⛔ R19: this skill is where a consuming contract's
     # sufficiency is demonstrated, so the procedure has to say what happens
     # when it is not sufficient.
     text = SKILL.read_text(encoding="utf-8")

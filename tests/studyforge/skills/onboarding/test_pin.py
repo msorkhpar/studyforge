@@ -69,7 +69,7 @@ def test_anything_that_is_not_a_version_is_refused(value):
 
 
 def test_the_refused_value_is_not_quoted_back():
-    # ⚠️ W19's rule: the branch fires *because* the value looks like a path,
+    # ⚠️ R7: the branch fires *because* the value looks like a path,
     # which is precisely when reproducing it puts one in a log.
     with pytest.raises(pin.PinRefused) as refused:
         pin.pin_document("/somewhere/studyforge", VERSION)

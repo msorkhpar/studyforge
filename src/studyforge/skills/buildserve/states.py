@@ -28,10 +28,9 @@ code. The reading floor still works in every one of them.
 
 ## ⛔ *CANNOT NARRATE* AND *HAS NOT NARRATED* ARE TWO STATES, NOT ONE
 
-⚠️ **They read as one state until this was split**, and the cost was measured: a
-clean run of the skills produced a corpus with no narration at all and reported
-it beside `exercises`, whose whole point is that it **is** a legitimate finished
-state (C5).
+⚠️ **As one state, a clean run of the skills that produced a corpus with no
+narration at all would be reported** beside `exercises`, whose whole point is
+that it **is** a legitimate finished state (C5).
 
 ⭐ **The two are told apart by the narration run's own answer, and by nothing
 this module had to go and read:**
@@ -47,8 +46,8 @@ need.
 
 ## ⭐ NARRATION OFF IS A CHOICE, AND A CHOICE IS NOT A PARTIAL STATE
 
-⭐ The user's ruling, 2026-09-23: *"it should be optional … Somebody might wants
-to just cover the course wihtout voices"*. A run with narration off — the
+⭐ Narration is optional: a reader may cover the course without voices. A run
+with narration off — the
 author's `corpus.json` answer or the operator's `--no-narration` — reports none
 of the narration states above: `NARRATION_OFF` is one plain line saying what was
 chosen and what was kept, and it is not a `partial` block. ⛔ **Nothing here
@@ -63,9 +62,8 @@ corpus, `execute` runs a reader's code on the host, without the runner's
 isolation. That is `host`, reported whenever the served instance offers
 execution and `execute`'s probe answers `HOST`.
 
-⛔ **The old `toolchain` state is gone**, by the ruling's own condition: it named a
-serving process that offers no execution, and no served form can now lack the
-namespace, so it described a state this skill no longer produces.
+⛔ **There is no `toolchain` state**: it would name a serving process that
+offers no execution, and no served form lacks the namespace.
 """
 
 from __future__ import annotations

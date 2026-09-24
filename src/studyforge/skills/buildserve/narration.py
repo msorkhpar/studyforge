@@ -22,7 +22,7 @@ R1 is that the framework knows nothing about any **source**. `narrate-service`
 is not a source: it is one of this framework's own components, pinned beside it
 by `workspace.json`, and this framework's narration client was written against
 its contract. ⛔ A skill that would not name it leaves an operator to discover
-that narration exists at all — which is the defect this module closes.
+that narration exists at all.
 
 ## ⛔ THIS SKILL STARTS NO CONTAINER, AND THE RULE IS NOT THIS SKILL'S
 

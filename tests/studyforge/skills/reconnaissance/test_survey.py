@@ -85,7 +85,7 @@ def test_reconnaissance_writes_nothing_into_the_source(tmp_path):
 
 
 def test_a_survey_of_dot_names_the_directory_it_read(tmp_path, monkeypatch):
-    # ⚠️ W240: the report's header carried the unresolved name of `.`, empty.
+    # ⚠️ The report's header names the resolved directory, never an empty `.`.
     root = sources.flat_prose(tmp_path / "named-course")
     monkeypatch.chdir(root)
     assert survey(".").root == "named-course"

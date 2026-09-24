@@ -13,17 +13,14 @@ file set can be read back before anything is on disk.
 refusal a misplaced reader document gets). ⛔ No I/O, and nothing
 source-specific (R1).
 
-## ⛔ This document states no live count, and that is the whole fix
+## ⛔ This document states no live count
 
-⚠️ **It once stated the corpus's real state, read through the build's own
-readers, and NOTHING REFRESHED IT.** ⛔ Measured on the first corpus: the
-document a reader opens first said *narrated: 0 of 38* while every unit page
-carried audio, because `studyforge narrate` writes the narration record and no
-verb rewrites a generated document.
+⚠️ **Nothing refreshes a generated document**: `studyforge narrate` writes the
+narration record and no verb rewrites the reader's document, so a count stated
+there (*narrated: 0 of 38*) would stay while every unit page gained audio.
 
 ⭐ **A count is a fact, and a fact in a file that only a regeneration rewrites
-can only be kept freshly wrong** — the property this repository's own
-`CLAUDE.md` was rewritten over. ⭐ **A POINTER resolves when it is
+can only be kept freshly wrong.** ⭐ **A POINTER resolves when it is
 read.** So this prints the invocation that reads the standing
 (`cli.main`, rendered by `standing.lines`) and never the standing itself, and
 `reader_document` is a pure function of the manifest: regenerating it after a
@@ -31,33 +28,31 @@ narration changes nothing, because there was nothing to go stale.
 
 ## ⛔ The reader document goes where the corpus says
 
-⚠️ **Measured at a corpus**: the user ruled that its reader
-document moves to an archive, the corpus moved it, and the next regenerate
-would have written it back at the root, because its path was a name fixed here.
-⭐ **`onboarding_doc` in `corpus.json` places it, or turns it off** (R1, R19):
+⚠️ **A corpus may keep its reader document somewhere other than the root**,
+and a regenerate must not write it back there, so its path is not a name fixed
+here. ⭐ **`onboarding_doc` in `corpus.json` places it, or turns it off** (R1, R19):
 `READER_DOC` is only the default, and the glob, the path and the pin check's
 pointer all follow the manifest.
 
 ## ⛔ R3's generated check is `nondestructive`'s, not this module's
 
 ⚠️ **This module renders what a person reads; that one renders what a machine
-checks**, and the check moved there when it grew — `pin` already keeps its own
-generated check beside the document it is about. ⭐ `TESTS_DIR` and `EDITS_TEST`
-went with it, so the check and the directory it lands in cannot be moved apart,
+checks** — `pin` keeps its own generated check beside the document it is
+about in the same way. ⭐ `TESTS_DIR` and `EDITS_TEST`
+live there too, so the check and the directory it lands in cannot be moved apart,
 and the dependency runs one way.
 
 ## ⛔ An ignore rule goes inside the directory it is about
 
 ⚠️ **R3 forbids an edit to a source repository's root ignore file, however
-declared** — and tooling has already done exactly that once in this project,
-unrequested, in the one repository where R3 is absolute. ⭐ So any rule
+declared**. ⭐ So any rule
 this skill needs for a generated directory goes in a `.gitignore` written
 *inside* that directory, which needs no edit to anything that already exists.
 
 ⭐ **This skill applies it to what it generates.** Every directory a
 generated Python module lands in gets its own `.gitignore` naming the bytecode
 running it writes — which can carry an absolute path (R7), and which nothing
-before this ignored, because a corpus's root ignore file is written for its own
+else ignores, because a corpus's root ignore file is written for its own
 language. ⛔ **Derived from the `.py` paths, never listed**, and never at the
 root: a module there would need the root file, so the scaffold's
 `bytecode_ignores` places none. ⭐ One rule for both writers, so the adapter's

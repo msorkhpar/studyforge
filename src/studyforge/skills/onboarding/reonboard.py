@@ -19,11 +19,9 @@ for the reader that gates the manifest, and `pin` for the commit's shape.
 
 ## ⛔ The manifest is generated, so a change to it is data, never a hand-edit (R19)
 
-⚠️ **Measured by the register** (corpus `fac256a`, framework `a469adc2`): an
-onboarded corpus reads `hand_edited` as `[]`, and `['corpus.json']` after ONE
-`not_material` entry typed by hand — which is what the exercise authoring guide
-told its reader to do. ⭐ **The path that works was found by the integration
-office and written nowhere**: the recorded manifest as the draft, its
+⚠️ An onboarded corpus reads `hand_edited` as `[]`, and `['corpus.json']` after
+ONE `not_material` entry typed by hand. ⭐ **The path that works**: the
+recorded manifest as the draft, its
 `not_material` list emptied of what the skill generates, the new globs as the
 draft's data, `existing=` its text, then a regenerate. ⛔ **Emptying a list by
 hand is a step a person can get wrong** (leave a generated glob in and the
@@ -34,7 +32,7 @@ lost only because `existing=` carries it), so this module does it.
 
 ⚠️ `survey('.')` on an onboarded corpus reads the framework's own generated half
 as the corpus's material, and proposes answers that disagree with the recorded
-ones (measured on the first corpus) — so every regenerate from it is a string of
+ones — so every regenerate from it is a string of
 refusals to settle. ⭐ **The recorded manifest IS the settled draft**: every
 answer a person already gave, byte for byte. A re-survey is for a corpus whose
 MATERIAL changed shape, and that is a new onboarding, not this.

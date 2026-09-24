@@ -21,13 +21,12 @@ only. ⛔ Not on any adapter and not on any source (R1): an aspect arrives as
 data the converting agent wrote, and nothing here can be told which corpus it
 came from.
 
-## ⛔ USER RULING, 2026-09-23 — COVERAGE, NOT LENGTH
+## ⛔ COVERAGE, NOT LENGTH
 
-> *"Depending on the context of the page there might be no practice, 2 or more,
-> The target is covering all the aspects not just having something minimum we
-> are looking for quality"*
+A page may get no practice, two, or more: the target is covering every aspect
+it teaches, not a minimum.
 
-⭐ **This module is that ruling's accounting**, and it mirrors the ledger's on
+⭐ **This module is that rule's accounting**, and it mirrors the ledger's on
 purpose (`accounting`): the ledger asks of every FILE entry *is it built on, or
 excused?*; this asks the same of every ASPECT a page teaches. ⛔ **A thin plan
 is therefore VISIBLE** — every aspect the author did not check is listed, with
@@ -35,8 +34,7 @@ the sentence that excuses it, in the page's committed plan.
 
 ## ⚠️ WHAT AN ASPECT IS, AND WHO JUDGES IT, IS AN AUTHORING JUDGEMENT
 
-⛔ **Nothing here decides what a page teaches**, exactly as the band this
-replaced never decided whether its numbers were right. A model or a person
+⛔ **Nothing here decides what a page teaches**. A model or a person
 reads the page and names the aspects; ⭐ what this module guarantees is that
 the judgement is **written down where a reviewer can argue with it**: each
 aspect says what it is, names what it was read from, and ends with an exercise

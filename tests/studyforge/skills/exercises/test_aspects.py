@@ -22,7 +22,7 @@ from studyforge.skills.exercises.aspects import (
     require_read,
 )
 
-#: A written reason, as the user's refinement words a minor aspect's.
+#: A written reason, worded as a minor aspect's is.
 MINOR = "incidental detail, not practised"
 
 #: A well-formed aspect: a token, a sentence, a basis and one ending.

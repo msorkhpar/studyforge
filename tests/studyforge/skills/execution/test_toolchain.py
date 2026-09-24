@@ -6,7 +6,7 @@ asserted by MOVING one of them and watching the answer move.
 
 ⚠️ **One test in here is a held-open hole.** `SET_SEPARATOR` is provisional
 because the component's contract leaves `<the declared set>` in one argv slot
-and declares nowhere how a set is written into it (`SK-09/1`). ⭐ The guard
+and declares nowhere how a set is written into it. ⭐ The guard
 below goes RED the day that key appears, which is when the constant is deleted.
 """
 
@@ -115,7 +115,7 @@ def test_the_rendered_selection_is_json_a_corpus_can_keep():
 
 
 def test_the_component_still_declares_no_separator_for_its_own_build_flag():
-    # ⛔ `SK-09/1`. `SET_SEPARATOR` is PROVISIONAL and this is what holds it
+    # ⛔ `SET_SEPARATOR` is PROVISIONAL and this is what holds it
     # open: the day the component declares how a set is written into that argv
     # slot, this goes RED, the constant is deleted, and the value is read.
     document = declared()
@@ -125,7 +125,7 @@ def test_the_component_still_declares_no_separator_for_its_own_build_flag():
         found = contract.optional(document, block, *toolchain.SEPARATOR_KEY)
         assert found is None, (
             f"{block}.{'.'.join(toolchain.SEPARATOR_KEY)} now exists: delete "
-            f"toolchain.SET_SEPARATOR, read this instead, and close SK-09/1"
+            f"toolchain.SET_SEPARATOR and read this instead"
         )
 
 
