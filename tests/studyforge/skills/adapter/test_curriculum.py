@@ -18,6 +18,7 @@ import pytest
 from studyforge.address import Address
 from studyforge.corpus.manifest import parse
 from studyforge.skills.adapter.curriculum import CurriculumDisagrees, counted, filed
+from tests.support import init_repository
 
 #: The second corpus's groups: `label`, `address`, `prefix`, and its units' titles.
 #: ⭐ Word prefixes with separators, in a subdirectory, recorded in `SUMMARY.md`
@@ -212,3 +213,11 @@ def test_a_unit_whose_name_lacks_its_group_s_prefix_is_refused(tmp_path):
         encoding="utf-8",
     )
     assert "lessons/intro.md is filed at basics, not named 'basics-'" in refusal(root)
+
+
+def test_a_file_the_repository_ignores_is_not_one_the_filing_counts(tmp_path):
+    # ⭐ The population `validate` judges: an ignored file is not material to either.
+    root = init_repository(corpus(tmp_path, extra=["lessons/deep_3.md"]))
+    (root / ".gitignore").write_text("lessons/deep_3.md\n", encoding="utf-8")
+    assert [len(group.units) for group in filed(root, loaded(root))] == [3, 2]
+    assert counted(root, loaded(root)) == {"basics": 3, "deeper": 2}
