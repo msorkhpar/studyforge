@@ -32,9 +32,6 @@ def test_ruff_line_length_agrees_with_the_always_on_checker():
 def test_test_files_get_the_test_ceiling():
     assert config.ceiling_for("tests/studyforge/test_init.py") == config.TEST_LINE_CEILING
     assert config.ceiling_for("src/studyforge/serve/app.py") == config.SOURCE_LINE_CEILING
-    assert config.ceiling_for("tools/quality/size.py") == config.SOURCE_LINE_CEILING
-    # The tooling's tests live beside the tooling and are still tests.
-    assert config.ceiling_for("tools/tests/quality/test_size.py") == config.TEST_LINE_CEILING
 
 
 def test_a_path_merely_containing_tests_is_not_a_test_file():
@@ -55,8 +52,8 @@ def test_fixtures_are_never_read():
 
 def test_relative_is_repo_relative_with_forward_slashes():
     root = repository_root()
-    assert config.relative(root / "tools" / "quality" / "config.py", root) == (
-        "tools/quality/config.py"
+    assert config.relative(root / "tests" / "floor" / "config.py", root) == (
+        "tests/floor/config.py"
     )
 
 

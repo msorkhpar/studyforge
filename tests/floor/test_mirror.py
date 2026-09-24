@@ -26,21 +26,6 @@ def test_a_package_contract_is_tested_as_test_init():
     assert mirror_for("src/studyforge/__init__.py") == "tests/studyforge/test_init.py"
 
 
-def test_tools_mirrors_itself_beside_itself():
-    # ⛔ "Outside src/" must not mean "outside R12". The size checker is
-    # developer tooling rather than shipped API, so its tests sit beside it at
-    # `tools/tests/` — locality, which is what R12 is actually asking for —
-    # and the mapping is the same mapping.
-    assert mirror_for("tools/quality/size.py") == "tools/tests/quality/test_size.py"
-    assert mirror_for("tools/quality/__main__.py") == "tools/tests/quality/test_main.py"
-
-
-def test_the_tooling_test_tree_is_not_itself_mirrored():
-    # ⚠️ `tools/tests/` sits inside its own source root. Without the guard it
-    # would be read as a source module wanting a test of its own, forever.
-    assert mirror_for("tools/tests/quality/test_size.py") is None
-
-
 def test_a_path_under_no_source_root_is_not_mirrored():
     assert mirror_for("tests/support.py") is None
     assert mirror_for("docs/conventions/module-structure.md") is None
@@ -58,14 +43,6 @@ def test_a_source_module_with_no_test_fails(tmp_path):
 def test_a_source_module_with_its_mirror_passes(tmp_path):
     write(tmp_path, "src/studyforge/address/__init__.py")
     write(tmp_path, "tests/studyforge/address/test_init.py")
-    assert check_mirrors(tmp_path) == []
-
-
-def test_the_tooling_passes_with_its_mirror_beside_it(tmp_path):
-    write(tmp_path, "tools/quality/size.py")
-    findings = check_mirrors(tmp_path)
-    assert "tools/tests/quality/test_size.py" in findings[0].message
-    write(tmp_path, "tools/tests/quality/test_size.py")
     assert check_mirrors(tmp_path) == []
 
 

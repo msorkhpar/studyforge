@@ -28,6 +28,7 @@ from pathlib import Path
 from tests.floor import config
 from tests.floor.docstrings import check_docstrings, contract_modules
 from tests.floor.mirror import check_mirrors, mirrored
+from tests.floor.palettes import check_rejected_palettes, palette_census
 from tests.floor.personal_data import check_personal_data, identity_notice
 from tests.floor.personal_data.registry import judged_directories
 from tests.floor.personal_data.shapes import swept_files
@@ -48,6 +49,7 @@ TAG = "vacuous checks (Ruling 191):"
 DISCLOSED_BY: tuple[tuple[Check, Notice], ...] = (
     (check_personal_data, identity_notice),
     (check_producer_half, surface_census),
+    (check_rejected_palettes, palette_census),
 )
 
 

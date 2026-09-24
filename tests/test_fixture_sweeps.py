@@ -221,7 +221,7 @@ def test_the_enforcers_are_named_in_the_code_and_state_why():
     # seam would have it assert `INVALID_CORPORA` against itself.
     assert set(ENFORCERS) == {
         "tests/test_fixture_consistency.py",
-        "tools/tests/quality/personal_data/test_registry.py",
+        "tests/floor/personal_data/test_registry.py",
     }
     for where, why in ENFORCERS.items():
         assert (repository_root() / where).is_file(), where

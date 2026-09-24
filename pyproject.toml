@@ -1,7 +1,7 @@
 # studyforge — packaging, test runner, and lint configuration.
 #
 # ⛔ `dependencies` is empty and stays empty. Standard library only in framework
-# source (R11's neighbour in `docs/conventions/module-structure.md`, and the
+# source (the spec's §3.2, and the
 # reason R15 exempts the serving process from containerisation: a process with
 # no dependencies gains no reproducibility from an image). A runtime dependency
 # added here is a design change, not a convenience — `tests/test_repository.py`
@@ -39,9 +39,9 @@ studyforge = "studyforge.cli:main"
 [tool.setuptools]
 package-dir = { "" = "src" }
 
-# ⛔ `src` only. This is what keeps `tools/` — the quality floor — out of the
-# distribution: it is developer tooling, not shipped API, and an installed
-# `studyforge` must contain no `tools` package.
+# ⛔ `src` only. This is what keeps the test suite and its product floor
+# (`tests/floor/`) out of the distribution: they are developer tooling, not
+# shipped API, and an installed `studyforge` must contain no `tools` package.
 [tool.setuptools.packages.find]
 where = ["src"]
 
@@ -67,19 +67,13 @@ studyforge = [
 
 [tool.pytest.ini_options]
 minversion = "8.0"
-# Two roots, by ruling: the framework's tests mirror `src/` into `tests/`, and
-# the quality tooling's tests sit beside the tooling at `tools/tests/`.
-# ⛔ `REL-02` KEEPS the second root, and it is not an oversight: the merge gate's
-# full-scope suite passes no path and reads THIS list, so dropping it would stop
-# every suite gate running the tooling's own tests while the tooling is still the
-# merge authority. ⭐ It costs a checkout without the tooling nothing: an absent
-# root matches no path, and `pytest` collects `tests` alone (measured in a scratch
-# export with `tools/` removed). `REL-10`'s removal commit drops it with `tools/`.
-testpaths = ["tests", "tools/tests"]
+# One root: the framework's tests mirror `src/` into `tests/`. ⚠️ A second root,
+# for the tests of the tooling that built the framework, left the main line with
+# that tooling, for the `archive/process` branch.
+testpaths = ["tests"]
 # `src` puts the package on the path without an install step, so the suite runs
 # from a clean checkout with no network. `.` makes `tests.support` importable the
-# way CodeSignal's suite imports `tests.support` — and `tools.*` for the tooling's
-# own tests, which the product's tests no longer import (`REL-02`).
+# way CodeSignal's suite imports `tests.support`.
 pythonpath = ["src", "."]
 # ⚠️ `importlib` is not decoration. R12's mirror puts a `test_init.py` in every
 # package directory, and under pytest's default `prepend` import mode two files
@@ -101,13 +95,13 @@ consider_namespace_packages = true
 # On the host the floor degrades to the standard-library size and style check,
 # which always runs.
 # The rules this project actually cares about (R11 size, R12 mirroring, R17
-# contracts) are enforced by `tools/quality/`, which is standard library only
-# and therefore always runs. Ruff covers the ordinary style layer on top,
+# contracts) are enforced by the product floor, `python3 -m tests.floor`, which
+# is standard library only and therefore always runs. Ruff covers the ordinary style layer on top,
 # wherever it happens to be available (FND-03's image is the obvious place).
 #
-# ⛔ `line-length` here and `tools.quality.config.LINE_LENGTH` must agree, or
+# ⛔ `line-length` here and `tests.floor.config.LINE_LENGTH` must agree, or
 # the always-on checker and the optional one disagree about the same file.
-# `tools/tests/quality/test_config.py` asserts they do.
+# `tests/floor/test_config.py` asserts they do.
 #
 # ⛔ `target-version` is DECLARED, never inferred (`W116`, Ruling 210). Absent,
 # ruff infers it from `requires-python` — an input to R10's byte-for-byte claim
@@ -122,7 +116,7 @@ consider_namespace_packages = true
 [tool.ruff]
 target-version = "py314"
 line-length = 100
-src = ["src", "tools", "tests"]
+src = ["src", "tests"]
 extend-exclude = ["tests/fixtures"]
 
 [tool.ruff.lint]
@@ -140,24 +134,22 @@ ignore = ["D203", "D213"]
 [tool.ruff.lint.per-file-ignores]
 # ⛔ Docstring rules do not apply to test modules, and this defers to a ruling
 # this repository already made rather than inventing one: the project's own
-# contract check exempts them, in `tools/quality/docstrings.py`, because "a
+# contract check exempts them, in `tests/floor/docstrings.py`, because "a
 # test module's name and its assertions say what it covers. Demanding a
 # contract from it would be demanding a second description of the same thing,
 # which is a description that goes stale."
 #
-# ⚠️ Scoped to the two test trees by name, never turned off globally. D103 on
-# a public function in `src/` or `tools/quality/` is a real R17 failure and
-# still fails the build.
+# ⚠️ Scoped to the test tree by name, never turned off globally. D103 on
+# a public function in `src/` is a real R17 failure and still fails the build.
 "tests/**/*.py" = ["D"]
-"tools/tests/**/*.py" = ["D"]
 
 [tool.ruff.lint.isort]
-# ⛔ All three of this repository's import roots are first-party, and saying so
+# ⛔ Both of this repository's import roots are first-party, and saying so
 # is not cosmetic. Left to inference, ruff reads `studyforge` as first-party
 # (it finds `src/studyforge`) and `tests` as third-party, and then sorts a
 # module's own package BELOW the test helper it imports — a diff that reverses
 # the reading order of every mirrored test for no reason a reader could name.
-known-first-party = ["studyforge", "tests", "tools"]
+known-first-party = ["studyforge", "tests"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "pep257"

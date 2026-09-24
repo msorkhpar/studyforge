@@ -18,12 +18,12 @@ them got *wrong*, and a control that cannot be run is a claim.
 
 ⛔ **The scan root is `src/studyforge`, and that bound is named rather than
 implicit.** Readers exist outside it, and that reads as though the remedy were
-a wider scan; it is not. ⭐ **They are three trees under
-three gates, not one hole** — see `GATED_TREES`, which this package asserts is
-total over the repository so that a *fourth* tree cannot appear unnamed.
-⛔ Extending this scan is refused: `tools/` is gated by `tools.quality.
-personal_data` and the tooling may not import the framework, so covering it
-here would mean naming a gate per root. ⛔ **`tests/fixture_checks/corpus.py`
+a wider scan; it is not. ⭐ **They are two trees under
+two answers, not one hole** — see `GATED_TREES`, which this package asserts is
+total over the repository so that a *third* tree cannot appear unnamed.
+⚠️ The tooling that built the framework was a third tree with its own gate
+until it left the main line for the `archive/process` branch; its row left with
+it. ⛔ **`tests/fixture_checks/corpus.py`
 stays ungated deliberately, to keep its oracle independent** — an oracle
 that calls the code under test agrees with its bugs — **and the cost is bounded
 rather than waved: it decodes only the §1e fixture trees this repository itself
@@ -82,8 +82,6 @@ HOME = "/" + "home/jane"
 GATED_TREES: dict[str, str | None] = {
     # ⭐ What this file measures, and the only row whose gate is `GATE`.
     "src/studyforge": "studyforge.archive.scrub.assert_clean",
-    # ⛔ Its own gate, because `tools/` may not import the framework.
-    "tools": "tools.quality.personal_data",
     # ⛔ None, deliberately — an independent oracle; see the module docstring.
     "tests": None,
 }

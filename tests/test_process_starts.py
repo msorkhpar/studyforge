@@ -17,7 +17,6 @@ package reaches a process only by handing a command to `execute`.
 - **the exceptions ask `git`** — every process call in a named site hands an argv
   literal whose first element is the resolved `git`, and a planted other program
   is refused;
-- **the epic names the list** — `SF-20`'s section in `E05` names each site;
 - **the detector knows every standard-library way to start a process** —
   each entry of each of its tables is planted under each spelling it can take and
   fires, and a lookalike of each is planted and passes; `webbrowser` among them.
@@ -41,7 +40,6 @@ from tests.spawning import SPAWNING_FROM, SPAWNING_MODULES, SPAWNING_OS, spawns
 from tests.support import repository_root, run
 
 SOURCE = repository_root() / "src" / "studyforge"
-EPIC = repository_root() / "docs" / "tasks" / "E05-serving-execution.md"
 
 #: The package that runs a corpus's commands (`SF-20`).
 RUNNER = "execute"
@@ -138,23 +136,6 @@ def test_each_named_site_asks_git_and_nothing_else(site):
     assert set(spawns(source)) == {"subprocess"}, "a named site imports `subprocess` plainly"
     assert process_calls(source), site
     assert not_git(source) == []
-
-
-def sf20_section() -> str:
-    text = EPIC.read_text(encoding="utf-8")
-    start = text.index("### SF-20 ")
-    return text[start : text.index("\n### ", start + 1)]
-
-
-@pytest.mark.parametrize("site", sorted(EXCEPTIONS))
-def test_the_epic_names_each_site_in_the_runners_definition(site):
-    assert f"`{site}`" in sf20_section()
-
-
-def test_the_epic_states_the_narrowed_sentence_and_its_exceptions():
-    section = sf20_section()
-    assert "runs a corpus's commands" in section
-    assert "save two named sites" in section
 
 
 # --- plants, in a temp copy ------------------------------------------------

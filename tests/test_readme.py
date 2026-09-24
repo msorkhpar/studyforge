@@ -307,7 +307,9 @@ def test_the_readme_sends_the_reader_to_every_authoring_page():
 
 
 def test_a_link_into_what_leaves_the_main_line_is_refused():
-    planted = _text() + "\n[the board](docs/tasks/BOARD.md) [rules](docs/conventions/)\n"
+    # ⚠️ Both plants name paths that still EXIST on the main line: a path already gone
+    #    is refused as dangling first, which would prove the other check.
+    planted = _text() + "\n[the board](docs/tasks/BOARD.md) [the plan](docs/tasks/README.md)\n"
     faults = link_faults(planted)
     assert sum("leaves the main line" in fault for fault in faults) == 2, faults
 

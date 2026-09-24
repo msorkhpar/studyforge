@@ -89,13 +89,6 @@ def test_the_slot_asks_the_question_the_catalogue_refuses_on():
     assert "Anything a skill could generate" in catalogue
 
 
-def test_the_question_is_the_sorts_own_words():
-    # ⚠️ Reads a handoff, which leaves the main line with the process, so
-    # `tests/harness/process.py` declares this one test and the archive keeps it.
-    sort = (repository_root() / "docs/tasks/handoffs/QA-04.md").read_text("utf-8")
-    assert QUESTION in sort
-
-
 def test_every_answer_in_the_closed_set_is_accepted():
     for answer in ANSWERS:
         why = "" if answer == "open" else "the pin check is generated"

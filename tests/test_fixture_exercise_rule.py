@@ -2,8 +2,8 @@
 
 **What it does.** Asserts the two clauses of row `W365`, both ways (R12):
 
-1. The authoring guide and the exercise epic describe the record that names a
-   file and no grader, and cite §7 for it rather than restating it.
+1. The authoring guide describes the record that names a file and no grader,
+   and cites §7 for it rather than restating it.
 2. `tests/fixture_checks/exercise.py` names a refusal of a record with no whole
    grader under the shape rule `exercise`, and keeps `exercise-trust` for R5's
    refusal of a whole one.
@@ -27,7 +27,6 @@ from tests.fixture_checks.exercise import check_exercise
 
 ROOT = Path(__file__).resolve().parent.parent
 SPEC = ROOT / "docs" / "specs" / "2026-09-08-studyforge-v1-design.md"
-EPIC = ROOT / "docs" / "tasks" / "E06-exercise-contract.md"
 #: §7's subsection for the record, as a heading and as the anchor that cites it.
 HEADING = "### A file with no test (`W357`)"
 ANCHOR = "2026-09-08-studyforge-v1-design.md#a-file-with-no-test-w357"
@@ -99,12 +98,11 @@ def test_the_section_both_documents_cite_is_in_the_spec():
     assert HEADING in SPEC.read_text(encoding="utf-8").splitlines()
 
 
-#: ⭐ Each document is READ inside the test, never at collection, so a checkout
-#: without the epic still collects this file; the `e06` case is declared process in
-#: `tests/harness/process.py` and the guide's case is the product's.
+#: ⭐ Each document is READ inside the test, never at collection. ⚠️ The epic's
+#: case left the main line with the process, for the `archive/process` branch; the
+#: guide's case is the product's.
 CITING = {
     "authoring-guide": lambda: document("exercises.md"),
-    "e06": lambda: EPIC.read_text(encoding="utf-8"),
 }
 
 

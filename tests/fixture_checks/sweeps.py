@@ -77,7 +77,7 @@ ENFORCERS = {
         "pins the invalid set on disk to INVALID_CORPORA; consuming a helper "
         "that reads INVALID_CORPORA would compare the dict with itself"
     ),
-    "tools/tests/quality/personal_data/test_registry.py": (
+    "tests/floor/personal_data/test_registry.py": (
         "pins the §1e sanctioned-directory registry to what is on disk; a "
         "helper that already excludes the declared directories would hide "
         "exactly the directory the registry exists to sanction"

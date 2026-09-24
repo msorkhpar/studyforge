@@ -8,15 +8,12 @@ the pin document is asserted next door, in `test_components.py`.
 
 from __future__ import annotations
 
-import re
-
 import pytest
 
 from studyforge.skills.delivery import (
     ELSEWHERE,
     HERE,
     SIDE_COLUMN,
-    SIDES,
     UNDECLARED,
     Components,
     Index,
@@ -25,7 +22,6 @@ from studyforge.skills.delivery import (
     read_sequence,
 )
 from studyforge.skills.delivery.capability import BANNER, EMPTY
-from studyforge.skills.delivery.epics import MILESTONE_ID
 from tests.studyforge.skills.delivery import plans
 
 
@@ -186,58 +182,6 @@ def test_one_misplaced_capability_reads_exactly_as_it_did():
 # --- been tested against the shape somebody imagined ------------------------
 
 
-def test_every_task_in_every_epic_document_reaches_the_index():
-    # ⭐ Counted from the documents by a second, deliberately dumber walk: the
-    # index's number must not be checkable only against the code that made it.
-    declaration = re.compile(r"^\*\*Milestone\*\*")
-    heading = re.compile(r"^###\s+\S")
-    counted = 0
-    for _, text in plans.live_epics():
-        lines = text.splitlines()
-        for position, line in enumerate(lines):
-            if not heading.match(line):
-                continue
-            following = [item for item in lines[position + 1 : position + 4] if item.strip()]
-            if following and declaration.match(following[0]):
-                counted += 1
-    index = plans.live_index()
-    assert counted == len(index.capabilities) + len(index.cancelled)
-
-
-def test_the_derivation_the_document_prints_is_computed_and_not_typed():
-    # ⛔ Ruling on a measurement pinned as a literal: a thirteenth check leaves
-    # a document claiming twelve with the test still green. So the assertion is
-    # the derivation, and no number is written here at all.
-    index = plans.live_index()
-    rendered = index.render()
-    empty = sum(1 for milestone in index.milestones if not index.at(milestone))
-    assert (
-        f"**{len(index.capabilities)} capabilities · {len(index.epics)} epic documents · "
-        f"{len(index.milestones)} milestones, {empty} with no capability"
-    ) in rendered
-
-
-def test_every_milestone_section_holds_exactly_the_capabilities_at_it():
-    index = plans.live_index()
-    rendered = index.render()
-    for milestone in index.milestones:
-        delivered = index.at(milestone)
-        word = "capability" if len(delivered) == 1 else "capabilities"
-        assert f"## {milestone} — {len(delivered)} {word}" in rendered
-    assert sum(len(index.at(m)) for m in index.milestones) == len(index.capabilities)
-
-
-def test_the_live_sections_print_in_the_order_the_task_index_declares():
-    # ⭐ Re-derived by a second walk over the rendered headings, not over the
-    # sequence object the renderer iterated.
-    printed = re.findall(rf"^## ({MILESTONE_ID}) — ", plans.live_index().render(), re.M)
-    assert tuple(printed) == plans.live_sequence().milestones
-
-
-def test_no_capability_in_the_live_index_lost_its_area():
-    assert all(capability.area for capability in plans.live_index().capabilities)
-
-
 def test_m10_keeps_its_declared_place_and_is_not_sorted_after_m1():
     index = plans.wide_index()
     assert index.milestones == ("M1", "M2", "M10", "M9")
@@ -250,13 +194,6 @@ def test_m10_keeps_its_declared_place_and_is_not_sorted_after_m1():
 
 
 # --- W92: the index can say NOT THIS SIDE, and it is READ, never judged ------
-
-
-def test_no_side_the_index_reports_is_outside_the_closed_vocabulary():
-    # ⛔ A narrowed population, never a widened predicate. Every
-    # value that reaches a row comes out of `SIDES`.
-    assert set(plans.sided_index().sides.values()) <= set(SIDES)
-    assert set(plans.live_index().sides.values()) <= set(SIDES)
 
 
 def test_a_row_owning_inside_a_pinned_component_is_not_this_frameworks():
@@ -296,12 +233,6 @@ def test_asking_for_a_side_outside_the_vocabulary_is_refused():
         plans.sided_index().on("somebody else's")
 
 
-def test_the_three_sides_partition_the_index():
-    index = plans.live_index()
-    counted = sum(len(index.on(side)) for side in SIDES)
-    assert counted == len(index.capabilities)
-
-
 # --- the column appears when the distinction applies, and not when it does not
 
 
@@ -328,22 +259,3 @@ def test_the_legend_is_printed_only_beside_a_table_that_carries_the_column():
     assert SIDE_COLUMN in plans.sided_index().render()
     assert "READ, never judged" in plans.sided_index().render()
     assert "READ, never judged" not in plans.index().render()
-
-
-def test_no_component_is_ever_NAMED_in_what_the_index_renders():
-    # ⛔ R1 in the direction that is easy to miss: the pin document's names are
-    # READ and never printed. The distinction a planner needs is structural.
-    index = plans.live_index()
-    rendered = index.render()
-    assert index.components.names, "the live workspace pins no component, so this checks nothing"
-    for name in index.components.names:
-        assert name not in rendered, name
-
-
-def test_the_split_by_side_the_document_prints_is_derived_too():
-    index = plans.live_index()
-    assert (
-        f"**Of those capabilities, {len(index.on(HERE))} are this framework's to deliver, "
-        f"{len(index.on(ELSEWHERE))} are delivered inside a component pinned somewhere "
-        f"else, and {len(index.on(UNDECLARED))} declare no path at all.**"
-    ) in index.render()

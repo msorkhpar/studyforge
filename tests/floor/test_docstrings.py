@@ -41,11 +41,6 @@ def test_a_label_is_not_a_contract(tmp_path):
     assert str(config.MIN_DOCSTRING_CHARS) in findings[0].message
 
 
-def test_tools_are_held_to_the_same_contract(tmp_path):
-    write(tmp_path, "tools/quality/size.py", "value = 1\n")
-    assert [finding.path for finding in check_docstrings(tmp_path)] == ["tools/quality/size.py"]
-
-
 def test_test_modules_are_not_checked(tmp_path):
     # A test module's name and its assertions say what it covers. Demanding a
     # contract from it would be demanding a second description of the same

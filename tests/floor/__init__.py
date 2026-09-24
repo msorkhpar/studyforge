@@ -4,7 +4,8 @@
 own rules set — R7 (no personal data reaches a tracked file), R11 (the size ceiling), R12 (every
 module has its mirrored test), R17 (every module states its contract), R1 (framework source
 names no corpus), the producer half of a package's surface (a name one package takes from
-another is on the owner's `__all__`), and the standard-library style layer. Exit code, not
+another is on the owner's `__all__`), the rejected palettes (spec §8.4: no shipped theme is an
+identity the user rejected), and the standard-library style layer. Exit code, not
 advice: `python3 -m tests.floor` returns 1 when anything is found.
 
 **How you use it.**
@@ -24,11 +25,11 @@ ceiling check would become importable, versioned API (R9) that consumers depend 
 `tests/` it travels with the product's suite, is never packaged, and still runs on every
 checkout of the main line — including one where the tooling that built the framework is gone.
 
-⭐ **Every check here is a copy of the tooling's, never a re-write.** While the tooling exists
-it is the merge authority and runs the same rules; `tests/test_floor_twins.py` holds each copy's
-code to its original's, so the two cannot become two different rules before one of them leaves.
-⚠️ The checks that police the PROCESS — the board, the register, rows, handoffs, rulings,
-rounds, the plan's graph — are not here and never will be: they leave with the tooling.
+⭐ **Every check here was copied from the tooling that built the framework, never re-written.**
+The copies were held code-for-code to their originals until the tooling left the main line for
+the `archive/process` branch; from then on these are the only copies. ⚠️ The checks that
+policed the PROCESS — the board, the register, rows, handoffs, rulings, rounds, the plan's
+graph — are not here and never will be: they left with the tooling.
 """
 
 from __future__ import annotations
@@ -44,6 +45,7 @@ from tests.floor.config import (
 )
 from tests.floor.docstrings import check_docstrings
 from tests.floor.mirror import check_mirrors
+from tests.floor.palettes import check_rejected_palettes, palette_census
 from tests.floor.personal_data import check_personal_data, identity_notice
 from tests.floor.report import Finding, format_findings
 from tests.floor.size import check_sizes
@@ -63,6 +65,7 @@ CHECKS = (
     check_personal_data,
     check_source_names,
     check_producer_half,
+    check_rejected_palettes,
 )
 
 #: Lines printed on every run that never affect the exit code: the populations a green run
@@ -70,6 +73,7 @@ CHECKS = (
 #: compare, by label and never by value; `vacuity_notice` speaks only when a check read nothing.
 NOTICES = (
     surface_census,
+    palette_census,
     vacuity_notice,
     identity_notice,
 )

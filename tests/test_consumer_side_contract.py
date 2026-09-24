@@ -1,7 +1,7 @@
 """The consumer-side declaration has ONE home, and each of its sites points at it.
 
-**What it asserts.** `docs/conventions/commanded-pages.md` declares the spelling
-once, in a `text` fence. The shipped reader, `DECLARES_CONSUMER_SIDE` in
+**What it asserts.** The spec's §9 declares the spelling once, in a `text`
+fence. The shipped reader, `DECLARES_CONSUMER_SIDE` in
 `tests/authoring/support.py`, is that spelling as a literal and nothing wider.
 Every file that spells the declaration is one of three kinds: the home, the
 reader, or a commanded page that names the home.
@@ -9,8 +9,9 @@ reader, or a commanded page that names the home.
 ⛔ **This module never types the spelling.** It reads it from the home, so it
 cannot become a third copy of the contract.
 
-⚠️ **Survivors, stated so nobody assumes they are covered.** A spelling under
-`docs/tasks/` or `docs/specs/` is not read, because those are records. A page
+⚠️ **Survivors, stated so nobody assumes they are covered.** A spelling
+elsewhere under `docs/` is not read, because those are records; the spec is read
+as the home and for nothing else. A page
 that invents a label without the words *consumer side* is not seen either.
 """
 
@@ -22,15 +23,15 @@ from pathlib import Path
 from tests.authoring.support import DECLARES_CONSUMER_SIDE, commanded_pages, consumer_side
 from tests.support import repository_root
 
-#: The one convention document that declares the spelling.
-HOME = "docs/conventions/commanded-pages.md"
+#: The one document that declares the spelling: the spec, in its §9.
+HOME = "docs/specs/2026-09-08-studyforge-v1-design.md"
 
 #: The shipped reader, which is the authority (Ruling 103).
 READER = "tests/authoring/support.py"
 
 #: Where a third site could appear. ⛔ The record directories are left out on
 #: purpose: a frozen record is annotated, never edited.
-SWEPT = ("src", "tests", "tools", "docs/conventions", "docs/authoring")
+SWEPT = ("src", "tests", "docs/authoring")
 
 #: The declaring fence in the home: a bold label ending in a colon, then a placeholder.
 _DECLARED = re.compile(r"^```text\n(\*\*[^*\n]+:\*\*) `<module>`\n```$", re.MULTILINE)
@@ -76,7 +77,8 @@ def spelling_sites() -> list[str]:
     """
     root = repository_root()
     label = declared_spelling().strip("*")
-    paths = sorted(p for d in SWEPT for p in (root / d).rglob("*") if p.suffix in {".py", ".md"})
+    swept = (p for d in SWEPT for p in (root / d).rglob("*") if p.suffix in {".py", ".md"})
+    paths = sorted({*swept, root / HOME})
     assert paths, "the sweep read no file at all"
     return [str(p.relative_to(root)) for p in paths if label in _text(p)]
 

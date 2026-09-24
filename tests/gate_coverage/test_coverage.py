@@ -126,11 +126,10 @@ def test_the_scan_root_is_the_one_tree_this_gate_covers():
     assert GATED_TREES[SCAN_ROOT].endswith(f".{GATE}")
     assert (repository_root() / SCAN_ROOT).is_dir()
 
-    # ⛔ And the other two rows are named as *not* this test's to measure: one
-    # gated elsewhere, one deliberately ungated.
-    assert GATED_TREES["tools"] == "tools.quality.personal_data"
+    # ⛔ And the other row is named as *not* this test's to measure: it is
+    # deliberately ungated.
     assert GATED_TREES["tests"] is None
-    assert sorted(GATED_TREES) == ["src/studyforge", "tests", "tools"]
+    assert sorted(GATED_TREES) == ["src/studyforge", "tests"]
 
 
 def test_no_fourth_tree_of_readers_exists_unnamed():
@@ -196,7 +195,6 @@ def test_every_named_tree_is_populated_so_the_bound_is_not_vacuous():
     assert all((root / tree).is_dir() for tree in GATED_TREES), per_tree
     assert all(count > 0 for count in per_tree.values()), per_tree
     assert per_tree["src/studyforge"] >= 5, per_tree
-    assert per_tree["tools"] >= 2, per_tree
     assert sum(per_tree.values()) == len(tracked_readers()), per_tree
 
     # ⛔ **And the population is a real population, both ends**. A

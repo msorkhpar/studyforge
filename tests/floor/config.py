@@ -73,7 +73,7 @@ ROW_ID = re.compile(r"\b(?:[A-Z]{2,4}-[0-9]{1,3}[a-z]?|W[0-9]{1,3})\b")
 
 # --- R17: contracts --------------------------------------------------------
 
-#: Minimum characters of module docstring under `src/` and `tools/`. Presence
+#: Minimum characters of module docstring under `src/`. Presence
 #: and substance are machine-checkable; R17's three parts (what it does, how
 #: you use it, what it depends on) are a review criterion, because a checker
 #: that parsed for three headings would be enforcing a template nobody agreed
@@ -83,32 +83,24 @@ MIN_DOCSTRING_CHARS = 40
 # --- style -----------------------------------------------------------------
 
 #: ⛔ Must equal `[tool.ruff] line-length` in `pyproject.toml`.
-#: `tools/tests/quality/test_config.py` asserts it.
+#: `tests/floor/test_config.py` asserts it.
 LINE_LENGTH = 100
 
 # --- the tree --------------------------------------------------------------
 
 #: Directories the checks read, relative to the repository root.
-SCAN_ROOTS = ("src", "tools", "tests")
+SCAN_ROOTS = ("src", "tests")
 
-#: Directories whose Python files are held to the test ceiling. Two, because
-#: the tooling's tests sit beside the tooling (see `MIRRORS`).
-TEST_ROOTS = ("tests", "tools/tests")
+#: Directories whose Python files are held to the test ceiling.
+TEST_ROOTS = ("tests",)
 
 #: R12's mirrors: (source directory, test directory). A source module
 #: `<source>/a/b.py` must have a test at `<test>/a/test_b.py`.
 #:
-#: ⚠️ There are two pairs, not one, and the second is the ruled shape. The
-#: framework's tests mirror `src/` into the one `tests/` tree. The tooling's
-#: tests sit **beside the tooling**, at `tools/tests/`, because R12's
-#: requirement is locality of tests rather than one global tree — and because
-#: `tools/` is not shipped API and has no business appearing in the tree that
-#: mirrors what is. Either way the mapping is the same mapping, computed once
-#: in `mirror.mirror_for`.
-MIRRORS = (
-    ("src/studyforge", "tests/studyforge"),
-    ("tools", "tools/tests"),
-)
+#: ⭐ The framework's tests mirror `src/` into the one `tests/` tree; the
+#: mapping is computed once, in `mirror.mirror_for`. ⚠️ A second pair, for the
+#: tooling that built the framework, left the main line with that tooling.
+MIRRORS = (("src/studyforge", "tests/studyforge"),)
 
 #: Nothing a person wrote lives in these — they are build output, tool caches
 #: and version-control internals. ⛔ No check reads them, ever, including the

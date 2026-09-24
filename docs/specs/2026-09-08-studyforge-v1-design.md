@@ -2525,10 +2525,17 @@ does not own.** Carried from the commanded-pages convention when the conventions
 archived. Every `docs/authoring/` page and every shipped `SKILL.md` that gives a
 `python3 -m` command is one population, and ⛔ **a commanded module must run in this
 repository unless the page declares that it belongs to the consumer.** The declaration
-is a line of its own whose backticked tokens are the modules, in one spelling, and the
-authoring suite's reader — `DECLARES_CONSUMER_SIDE` in `tests/authoring/support.py` —
-is the authority on that spelling: a page that disagrees with the reader is the
-defect. ⛔ **The exemption belongs to the page that declares it**, so a module declared
+is a line of its own whose backticked tokens are the modules, in one spelling:
+
+```text
+**Consumer-side modules:** `<module>`
+```
+
+This fence is the one place the spelling is written down, and a page that uses it names
+this document beside it. The authoring suite's reader — `DECLARES_CONSUMER_SIDE` in
+`tests/authoring/support.py` — is the authority on that spelling: a page that disagrees
+with the reader is the defect, and `tests/test_consumer_side_contract.py` fails when the
+fence and the reader drift apart. ⛔ **The exemption belongs to the page that declares it**, so a module declared
 consumer-side on one page earns nothing on another. ⭐ **Why a declaration and not a
 list:** a list of exempt modules kept beside the checker is a second copy no page's
 reader can see, and a skill that sends a stranger to run a module absent from the

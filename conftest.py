@@ -7,7 +7,7 @@ nothing else.
 
 **Why here.** ⛔ `pytest_sessionstart` and `pytest_sessionfinish` fire once per
 session and only for an **initial** conftest, so a conftest deeper in the tree
-would answer for `pytest tests/` and be silent for `pytest tools/tests/`. The
+would answer for `pytest tests/` and be silent for a run pointed anywhere else. The
 repository root is the only place that holds for every invocation, including
 the bare `python3 -m pytest` that `docker/dev/check` runs.
 
@@ -56,36 +56,19 @@ with its reason; its tests go to ONE worker in declaration order, beside the
 rest (`--dist loadgroup`, which a bare `-n` is promoted to below). ⭐ A test is
 never deleted for being unsafe in parallel: it is fixed, or it is named here.
 
-## ⛔ `W366` — the `reads_tree` marker, and where it comes from
+## ⛔ THE PRODUCT SUITE STANDS ALONE
 
-⭐ The merge gate selects tests by what a change can reach; a test that reads the working
-tree — a document, a sweep — is reached by ANY change, and carries `reads_tree`. ⛔ The
-marker is APPLIED here from `tools.treereaders.TreeReaders`, the very rule the selection uses,
-so the two cannot disagree; a test the rule misses is marked by hand with
-`pytest.mark.reads_tree`, which that rule reads too. `python3 -m pytest -m reads_tree` is
-what a document-only change runs.
-
-## ⛔ `REL-02` — THE PRODUCT SUITE STANDS WITHOUT THE TOOLING
-
-⭐ **Nothing here imports the tooling.** The tree-state exit condition and the unreachable
-population are the PRODUCT suite's own, standard library only, under `tests/harness/`: a
-stray file a test leaves in the checkout is a defect of the PRODUCT (both measured instances
-were a framework writer under test), so the check that catches it must hold wherever the
-product's tests run — including a checkout with no tooling in it.
-
-⚠️ **The `reads_tree` rule is NOT the product's** — it exists for the merge gate's selection,
-which is tooling. ⛔ So it is reached through ONE seam, `TREE_READERS`, named as data and imported
-only when the tooling is present: with it present the marker lands exactly as before, and with
-it absent there is no merge gate to select for. `REL-10` deletes the seam with the tooling.
-
-⭐ **The process tests are DECLARED in `tests/harness/process.py`**, and carry the `process`
-marker. With the tooling present they run exactly as before; with it absent a declared file is
-not collected and a declared test is skipped with its reason, and every run prints which.
+⭐ **Nothing here imports anything outside the product and its tests.** The tree-state exit
+condition and the unreachable population are the product suite's own, standard library only,
+under `tests/harness/`: a stray file a test leaves in the checkout is a defect of the PRODUCT
+(both measured instances were a framework writer under test), so the check that catches it
+must hold wherever the product's tests run. ⚠️ The tooling that built the framework, its merge
+gate's test selection and the tests that policed that process left the main line together,
+for the `archive/process` branch.
 """
 
 from __future__ import annotations
 
-import importlib
 from pathlib import Path
 
 import pytest
@@ -126,31 +109,8 @@ def _on_worker(config: pytest.Config) -> bool:
     return hasattr(config, "workerinput")
 
 
-#: ⭐ `W366`: the marker every test that reads the working tree carries, and what it means.
-READS_TREE = "reads_tree"
-READS_TREE_MEANS = (
-    "reads the working tree (a document, a sweep), so the merge gate runs it on ANY change"
-)
-
 #: The key the controller hands each worker its distribution mode under (`W364`).
 DIST_KEY = "studyforge_dist"
-
-#: ⛔ `REL-02`: the ONE name the product suite gives the tooling, as data — the merge gate's
-#: `reads_tree` rule, imported only when the tooling is present (see the module docstring).
-TREE_READERS = "tools.treereaders"
-
-
-def _tree_readers():
-    """Return the merge gate's `TreeReaders` over this checkout, or `None` without the tooling.
-
-    ⛔ Absence is read off the tooling DIRECTORY, never off a failed import: with the tooling
-    present a broken rule must fail the run, not quietly stop marking.
-    """
-    from tests.harness import process
-
-    if not process.present(_root()):
-        return None
-    return importlib.import_module(TREE_READERS).TreeReaders(_root())
 
 
 def pytest_configure(config: pytest.Config) -> None:
@@ -165,11 +125,6 @@ def pytest_configure(config: pytest.Config) -> None:
     suffix each grouped id. ⭐ The controller therefore hands its mode to every
     worker (`pytest_configure_node`), and a worker promotes itself from that.
     """
-    from tests.harness import process
-
-    # ⭐ `W366`, on the controller AND every worker: `--strict-markers` refuses an unregistered one.
-    config.addinivalue_line("markers", f"{READS_TREE}: {READS_TREE_MEANS}")
-    config.addinivalue_line("markers", f"{process.MARKER}: {process.MARKER_MEANS}")
     if _on_worker(config):
         if config.workerinput.get(DIST_KEY) == "loadgroup":
             config.option.loadgroup = True
@@ -188,47 +143,13 @@ def pytest_configure_node(node) -> None:
 #    registered after this file, so without it the marks would land after that reading.
 @pytest.hookimpl(tryfirst=True)
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
-    """Mark the tree readers (`W366`) and the process (`REL-02`); group each `SERIAL` directory."""
-    from tests.harness import process
-
-    readers = _tree_readers()
-    present = process.present(_root())
-    for item in items:
-        relative, _, rest = item.nodeid.partition("::")
-        if readers is not None and readers.reads(relative, rest.split("::", 1)[0].split("[", 1)[0]):
-            item.add_marker(getattr(pytest.mark, READS_TREE))
-        reason = process.declared(item.nodeid)
-        if reason is not None:
-            item.add_marker(getattr(pytest.mark, process.MARKER))
-            if not present:
-                item.add_marker(pytest.mark.skip(reason=f"{ABSENT_REASON}: {reason}"))
+    """Group each `SERIAL` directory onto one worker under `xdist` (`W364`)."""
     if not config.pluginmanager.hasplugin("xdist"):
         return
     for item in items:
         for prefix in SERIAL:
             if item.nodeid.startswith(prefix):
                 item.add_marker(pytest.mark.xdist_group(name=prefix.strip("/").replace("/", "-")))
-
-
-#: What a declared process test says when the tooling is absent (`REL-02`).
-ABSENT_REASON = "a process test, not run because the tooling is absent from this checkout"
-
-
-def pytest_ignore_collect(collection_path: Path, config: pytest.Config) -> bool | None:
-    """Leave a declared process or deferred FILE uncollected without the tooling (`REL-02`).
-
-    ⭐ A whole file, because it imports the tooling at its top and would fail at import. ⛔
-    `None`, never `False`, for everything else, so no other plugin's answer is overridden.
-    """
-    from tests.harness import process
-
-    if process.present(_root()):
-        return None
-    try:
-        relative = collection_path.resolve().relative_to(_root()).as_posix()
-    except ValueError:
-        return None
-    return True if relative in process.uncollected() else None
 
 
 def pytest_sessionstart(session: pytest.Session) -> None:
@@ -307,12 +228,10 @@ def _forward_visual(terminalreporter, exitstatus: int, config: pytest.Config) ->
 
 
 def pytest_terminal_summary(terminalreporter, exitstatus: int, config: pytest.Config) -> None:
-    """Print what this run could not reach, on every run, empty or not (`W158`, `REL-02`)."""
-    from tests.harness import process
+    """Print what this run could not reach, on every run, empty or not (`W158`)."""
     from tests.harness.skipped import unreachable_population
 
     _forward_visual(terminalreporter, exitstatus, config)
     terminalreporter.write_line("")
     for line in unreachable_population(terminalreporter.stats):
         terminalreporter.write_line(line)
-    terminalreporter.write_line(process.population_line(process.present(_root())))

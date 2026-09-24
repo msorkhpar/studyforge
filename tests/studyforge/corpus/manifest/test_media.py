@@ -2,9 +2,6 @@
 
 from __future__ import annotations
 
-import json
-import re
-
 import pytest
 
 from studyforge.corpus.manifest import (
@@ -14,13 +11,6 @@ from studyforge.corpus.manifest import (
     MediaPolicy,
     parse_media,
 )
-from tests.support import repository_root
-
-#: ⛔ **The epic is where the intent was written down, and until `W207` nothing
-#: read it.** Its `media` example declared `max_files` for a whole milestone
-#: while the shipped reader refused the key by name, so a corpus copying the
-#: published example got a `ManifestError`. ⭐ The example is now the fixture.
-EPIC = "docs/tasks/E04-narration.md"
 
 
 def test_an_absent_media_key_is_a_stated_default_and_not_a_shrug():
@@ -135,35 +125,3 @@ def test_a_byte_limit_still_asks_for_bytes():
     # ⭐ The control for the case above: the unit is per-field, not removed.
     with pytest.raises(ManifestError, match="positive int of bytes"):
         parse_media({"commit": "auto", "max_file_bytes": 0})
-
-
-def epic_media_example() -> dict:
-    """The `media` block `E04-narration.md` publishes, read from the epic itself."""
-    text = (repository_root() / EPIC).read_text(encoding="utf-8")
-    blocks = [
-        found
-        for found in re.findall(r"```json\n(.*?)```", text, re.DOTALL)
-        if found.lstrip().startswith('"media"')
-    ]
-    # ⛔ A filter that returns nothing is not a measurement: without this the
-    # test below would pass by parsing an empty list of examples.
-    assert len(blocks) == 1, f"{EPIC} publishes {len(blocks)} media examples, expected 1"
-    return json.loads("{" + blocks[0] + "}")["media"]
-
-
-def test_the_example_the_epic_publishes_parses():
-    # ⛔ **This is the row.** The epic declared `max_files: 20000` while
-    # `parse_media` refused unknown keys by name, so the only written record of
-    # the intent was an example that did not validate — and no test anywhere
-    # read it, which is why it could stay wrong for a milestone.
-    policy = parse_media(epic_media_example())
-    assert policy.commits is True
-    assert policy.max_files is not None
-
-
-def test_the_epic_says_which_version_its_example_needs():
-    # ⚠️ Half the trap: an example that parses through `parse_media` but is
-    # pasted into a `corpus_api: 2` manifest is refused by the version gate.
-    # The reader has to be told the number, not left to find it in a raise.
-    text = (repository_root() / EPIC).read_text(encoding="utf-8")
-    assert "corpus_api: 3" in text or "corpus_api` 3" in text

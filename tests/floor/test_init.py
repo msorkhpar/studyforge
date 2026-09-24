@@ -15,6 +15,7 @@ import tests.floor as floor
 from tests.floor import CHECKS, NOTICES, format_findings, run_all, run_notices
 from tests.floor.docstrings import check_docstrings
 from tests.floor.mirror import check_mirrors
+from tests.floor.palettes import check_rejected_palettes
 from tests.floor.personal_data import check_personal_data
 from tests.floor.size import check_sizes
 from tests.floor.source_names import check_source_names
@@ -38,7 +39,7 @@ def test_the_repository_is_on_the_product_floor():
 
 
 def test_the_registry_is_the_products_rules_and_nothing_else():
-    # ⭐ R11, R12, R17, style, R7, R1 and the producer half — in the tooling's order.
+    # ⭐ R11, R12, R17, style, R7, R1, the producer half and the rejected palettes (§8.4).
     assert CHECKS == (
         check_sizes,
         check_mirrors,
@@ -47,6 +48,7 @@ def test_the_registry_is_the_products_rules_and_nothing_else():
         check_personal_data,
         check_source_names,
         check_producer_half,
+        check_rejected_palettes,
     )
 
 

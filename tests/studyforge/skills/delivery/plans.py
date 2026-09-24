@@ -23,7 +23,6 @@ from studyforge.skills.delivery import (
     Terminal,
     Unused,
     read_epic,
-    read_epics,
     read_sequence,
 )
 
@@ -183,26 +182,6 @@ def live_epics() -> list[tuple[str, str]]:
     against the shape somebody imagined.
     """
     return [(p.name, p.read_text("utf-8")) for p in sorted(_tasks().glob("E*.md"))]
-
-
-def live_sequence() -> Sequence:
-    """This repository's own declared milestone order, read from its task index."""
-    return read_sequence("README.md", (_tasks() / "README.md").read_text("utf-8"))
-
-
-def live_pins() -> str:
-    """This repository's own workspace pin document, as text."""
-    return (_tasks().parents[1] / "workspace.json").read_text("utf-8")
-
-
-def live_components() -> Components:
-    """The components this repository pins, and the shorthand its task index declares."""
-    return Components.read(live_pins(), (_tasks() / "README.md").read_text("utf-8"))
-
-
-def live_index() -> Index:
-    """This repository's own index, in its own declared order."""
-    return Index.of(read_epics(live_epics()), live_sequence(), live_components())
 
 
 def terminal() -> Terminal:
