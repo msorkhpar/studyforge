@@ -31970,3 +31970,19 @@ container each time.
 ### ⚠️ In flight
 
 ⭐ **`W457`**–**`W460`** on dev1, dev2, dev3, dev5; ⭐ **`AX-11`** on dev4; ⭐ **`ISO-30`** on the corpus.
+
+## PO round 178
+
+⭐ **`M10` CLOSES — every corpus has practices.** ⭐ **`AX-11` merged `779f2aef`**, read at corpus `0799d0a`: every one of 38 units has a `plan_api` 2 plan and ships its 42 planned exercises with no shortfall; every gate record re-digests; a planted partial solution Submits in a real browser as *main ask done* with both missed edges named; the ledger accounts for all 188 Java fences; authoring changed no reading section; and on the prose fixture a quiz completes only on all-correct answers, graded by the local server with no connection and no container. ⭐ **The register cross-read its counts** (220 ledger entries, 188 Java, none without an ending; 38 plans; 40 code bundles and 2 quizzes).
+
+⭐ **Since then, on the corpus, and pinned here at `e456e77`:**
+- ⭐ **`ISO-30`** — on the user's question, the narration re-synthesised: **73 stale and 557 silent units → 0 and 0** (630 clips made in the record's voice, 73 pruned). ⭐ **Read LIVE on `:8770`:** a rewritten paragraph now links and serves its new clip.
+- ⭐ **`ISO-31`** — `AX-11/1`: the three aggregate pages regenerated from their parts (58 drifted fences → 0), and a corpus test now asserts the "by digest" claim. ⭐ **Register plant in a different aggregate → RED.**
+
+⚠️ **Carried:** `AX-11/2` — the runner's container name is fixed per source, so a second checkout cannot grade in container mode; `AX-11/3`, `AX-11/4` in the handoff.
+
+⚠️ **The USER is asleep with the register's overnight mandate** (2026-09-23): run the plan through `M11` step 11.5, and ⛔ **HOLD advancing `main` and deleting merged branches for the user's word in the morning.**
+
+### ⚠️ In flight
+
+⭐ **`W457`**–**`W460`**.

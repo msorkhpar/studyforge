@@ -58,10 +58,12 @@ one does.**
 | **M7 step 7.3** | ✅ CLOSED — `TC-05` + `TC-06` | `4c8490b4` | [record](BOARD-ARCHIVE.md#po-round-128) |
 | **M7 step 7.4** | ✅ CLOSED — `SK-09` + `SF-24`, ⭐ **its one named gap ([`W416`](rows/W416.md)) FILLED at `7ce4fddd`** | `04b3e65e` | [record](BOARD-ARCHIVE.md#po-round-131) |
 | **M7 step 7.5** | ✅ CLOSED — `QA-02`, ⭐ **closing `W417` and `W419` too** | `d9cce6bc` | [record](BOARD-ARCHIVE.md#po-round-133) |
-| **M10** — every corpus has practices | ⏳ **OPEN — round 134.** ⭐ **A CORE IDEA of the project (user, 2026-09-19)**; the pilot awaits the USER's review | — | [the open](BOARD-ARCHIVE.md#po-round-134) |
+| **M10** — every corpus has practices | ✅ **CLOSED — round 178**, read by `AX-11` on ISO and the prose fixture | `779f2aef` | [the close](BOARD-ARCHIVE.md#po-round-178) |
 | **M10 step 10.1** | ✅ CLOSED — `AX-00`, `AX-01`, `AX-05` | `9cd37ccd` | [record](BOARD-ARCHIVE.md#po-round-136) |
 | **M10 step 10.2** | ✅ CLOSED — `AX-02`, `AX-03`, `AX-04`, `AX-06` | `638ec209` | [record](BOARD-ARCHIVE.md#po-round-141) |
 | **M10 step 10.3** | ✅ CLOSED — `AX-07`, `AX-08`, `AX-09`, `AX-10` | `e72b28b7` | [record](BOARD-ARCHIVE.md#po-round-150) |
+| **M10 step 10.4** | ✅ CLOSED — the corpus rows `ISO-18`…`ISO-31` | `e456e77` corpus | [record](BOARD-ARCHIVE.md#po-round-178) |
+| **M10 step 10.5** | ✅ CLOSED — `AX-11` | `779f2aef` | [record](BOARD-ARCHIVE.md#po-round-178) |
 | **M11** — it is release-ready | ⏳ **OPEN — round 159**; ⛔ **nothing moves before 11.5** | — | [the open](BOARD-ARCHIVE.md#po-round-159) |
 | **M11 step 11.1** | ✅ CLOSED — `REL-01` | `af7711b3` | [record](BOARD-ARCHIVE.md#po-round-160) |
 | **M11 step 11.2** | ✅ CLOSED — `REL-02`, `REL-03` | `bed97114` | [record](BOARD-ARCHIVE.md#po-round-161) |
@@ -80,7 +82,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `AX-11` | Developer 4 | `docs/AX-11-m10-acceptance-read` @ `wt/dev4` | 0 @ `f3bfc486` | `in-progress` — `M10` step 10.5 |
 | `W457` | Developer 1 | `fix/W457-validate-reports-stale-narration` @ `wt/dev1` | 0 @ `f6f8aae8` | `in-progress` |
 | `W458` | Developer 2 | `fix/W458-the-focus-test-waits-on-events` @ `wt/dev2` | 0 @ `f6f8aae8` | `in-progress` |
 | `W459` | Developer 3 | `fix/W459-no-user-reads-a-process-id` @ `wt/dev3` | 0 @ `f6f8aae8` | `in-progress` — `M11` |
