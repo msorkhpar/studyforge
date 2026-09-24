@@ -109,7 +109,7 @@ def test_a_milestone_that_is_neither_an_id_nor_a_dash_is_refused_by_name(unreada
 
 
 def test_a_document_with_four_unreadable_rows_names_all_four():
-    # ⛔ The defect this row exists for: the reader fixed the row that was
+    # ⛔ The case this guards: the reader fixed the row that was
     # named, re-ran, and was told about the next one — four times.
     with pytest.raises(IndexRefused) as refused:
         read_epic("E09.md", FOUR_BAD_ROWS)

@@ -36,7 +36,7 @@ one that module can read.
 
 ## ⭐ THE REFERENCE SOLUTION SHIPS IN THE PAGE, WITHHELD BUT PRESENT
 
-⛔ **The user ruled it always available**, and the practice panel offers it at any time
+⛔ **It is always available**, and the practice panel offers it at any time
 without gating on a pass. ⚠️ The page is offline and `file://`-addressable
 (R8), so a reference the page did not carry would be one the reader could not
 be offered — and the bundle is already on their disk, so withholding it would

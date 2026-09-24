@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/skills/exercises/gating.py` (R12) — and `G5`'s seam, gate-side.
 
-⛔ **The register's requirement, and why these tests exist.** The contract
+⛔ **The requirement, and why these tests exist.** The contract
 between the ledger and `G5` — `G5` asks `ledger.get(origin.path)` of the
 mapping `digests(ledger)` returns — was asserted from ONE side only:
 `test_ledger.py` pins the ledger's key spelling, and the gates' own suite hands

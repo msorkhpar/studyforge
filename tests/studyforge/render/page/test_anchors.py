@@ -273,7 +273,7 @@ def test_the_outline_does_not_list_the_heading_the_page_is_headed_by():
 
 
 def test_the_headings_beneath_it_keep_their_own_levels():
-    # ⚠️ The register asked what happens to the `<h2>`s beneath a promoted
+    # ⚠️ The question is what happens to the `<h2>`s beneath a promoted
     # heading: NOTHING. Promotion renumbers nothing, so the page's outline is the
     # document's own outline rather than a copy flattened onto one level.
     document = titled(

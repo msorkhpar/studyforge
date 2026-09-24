@@ -78,7 +78,7 @@ the wider set.
 
 ## ⭐ THE REFERENCE SOLUTION SHIPS, WITHHELD BUT PRESENT
 
-⛔ **The user ruled it always available** and the practice panel offers it at any time,
+⛔ **It is always available** and the practice panel offers it at any time,
 never gated on a pass. ⭐ `emit` writes it into the practice document as a
 `disclosure` block — the archive's own *present but withheld* state — so an
 offline page can offer it with no run, no request and nothing recorded.

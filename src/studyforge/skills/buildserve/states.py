@@ -205,8 +205,8 @@ def probe_for(root: Path | str, source: str) -> ModeProbe:
     """Return `execute`'s own probe for corpus `source` at `root`.
 
     ⭐ The same container name and root the served instance's runner is built
-    from (`serve.routes.runs.runner_for`): the name THIS checkout recorded
-   , so the skill asks the question a run asks. ⛔ Nothing is asked until `mode()`.
+    from (`serve.routes.runs.runner_for`): the name THIS checkout recorded,
+    so the skill asks the question a run asks. ⛔ Nothing is asked until `mode()`.
     """
     where = Path(root).absolute()
     return ModeProbe(where, recorded_names(where, source).runner)

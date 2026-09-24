@@ -1,6 +1,6 @@
 """E11's acceptance for the delivery skill, asserted end to end rather than described.
 
-⛔ The subjects here are the two documents this task ships — `SKILL.md` and
+⛔ The subjects here are the two documents the skill ships — `SKILL.md` and
 the generated capability index the package ships beside it — plus
 one whole plan built through the public surface. The per-module refusals are
 next door; what lives here is the claim that the pieces compose into the thing

@@ -39,7 +39,7 @@ def planted_identity() -> str:
 
 
 def binary_identity(encoding: str = "utf-8") -> bytes:
-    """Return the register's `cover.bin`: bytes that are not UTF-8, around a planted home path."""
+    """Return the planted `cover.bin`: bytes that are not UTF-8, around a planted home path."""
     return b"\x89\xff\xfe\x00" + f"{planted_identity()}/Pictures".encode(encoding) + b"\x00\xff"
 
 

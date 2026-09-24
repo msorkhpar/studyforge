@@ -84,7 +84,7 @@ def test_the_built_stylesheet_carries_every_face_as_base64():
 
 
 def test_the_built_stylesheet_names_no_font_file_by_url():
-    # ⛔ The register's D3: a relative face breaks R8 in Firefox, so every
+    # ⛔ A relative face breaks R8 in Firefox, so every
     # `url()` in the built stylesheet is a `data:` URI and none names a file.
     urls = re.findall(r"url\(\s*['\"]?([^'\")]+)", stylesheet())
     assert urls, "the stylesheet embeds no face at all"

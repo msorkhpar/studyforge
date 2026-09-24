@@ -7,8 +7,8 @@ emitter actually writes. `sites()` returns every site, resolved or not;
 `authorable()` the selectors of the resolved ones; `painted()` the `nav`
 selectors every stylesheet in `render/assets/` reaches.
 
-**How you use it.** `test_chrome` asserts `authorable ⊆ recognisable` over it
-, and asserts first that no site went unresolved.
+**How you use it.** `test_chrome` asserts `authorable ⊆ recognisable` over it,
+and asserts first that no site went unresolved.
 
 ## ⛔ Why the labels are RESOLVED and never swept as literals
 

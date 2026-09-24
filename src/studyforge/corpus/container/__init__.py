@@ -13,7 +13,7 @@ declares.
 
 **Depends on.** `studyforge.address`, `studyforge.corpus.manifest`,
 `studyforge.archive.scrub` for R7's gate and `studyforge.version` for R9's.
-⛔ **This task builds the reader and the round-trip guarantee. It builds no
+⛔ **This package builds the reader and the round-trip guarantee. It builds no
 writer** — nothing here touches disk except `load`, and nothing writes.
 
 ## Who writes this, and what a person may amend
