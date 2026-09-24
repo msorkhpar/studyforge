@@ -212,6 +212,9 @@ python3 -c "from studyforge.skills.onboarding import hand_edited, reonboard; \
   when a corpus starts authoring, or `{"narration": False}` when the author
   decides to read without voices (`W460`), or `{"onboarding_doc": "docs/archive/ONBOARDING.md"}`
   to keep the reader document somewhere other than the root (`false` for none, `W461`).
+  ⭐ The copy at its old place is removed while it is byte for byte what was
+  generated; one you edited refuses the regenerate by name, writing nothing, until
+  you move it or restore it (`W467`).
   ⛔ Any answer it does not name that would move is
   still refused by name (`W329`, below); `content` is never settled here, because a
   new content shape is a new onboarding.

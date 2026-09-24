@@ -161,6 +161,37 @@ def test_a_copy_of_a_generated_file_still_in_place_is_not_taken_as_moved(tmp_pat
         reonboard(root, settle={"onboarding_doc": ARCHIVED}).write(root, regenerate=True)
 
 
+@pytest.mark.parametrize("place", [ARCHIVED, False], ids=["elsewhere", "none"])
+def test_a_regenerate_that_moves_it_retires_the_unedited_copy_at_the_root(tmp_path, place):
+    # ⭐ `W467`, `W461/1`: the root copy was left behind, unrecorded, invisible to
+    # `hand_edited` and to `uninstall`. Unedited, it is the framework's own, and goes.
+    root, _made = _written(tmp_path)
+
+    reonboard(root, settle={"onboarding_doc": place}).write(root, regenerate=True)
+
+    assert not (root / ONBOARDING_DOC).exists(), "the old copy was left behind"
+    assert (root / ARCHIVED).is_file() == bool(place)
+    assert hand_edited(root) == []
+    placed = [e["where"] for e in json.loads((root / RECORD_FILE).read_text("utf-8"))["files"]]
+    assert ONBOARDING_DOC not in placed
+
+
+def test_an_edited_copy_at_the_root_refuses_the_regenerate_naming_it_and_writes_nothing(
+    tmp_path,
+):
+    # ⛔ Edited, it is a person's: deleting it would break R3, so it is refused by name.
+    root, _made = _written(tmp_path)
+    with (root / ONBOARDING_DOC).open("a", encoding="utf-8") as handle:
+        handle.write("\nmy own note\n")
+    before = _tree(root)
+
+    with pytest.raises(OnboardingRefused, match="were edited since") as refused:
+        reonboard(root, settle={"onboarding_doc": ARCHIVED}).write(root, regenerate=True)
+
+    assert ONBOARDING_DOC in str(refused.value) and "Move each" in str(refused.value)
+    assert _tree(root) == before
+
+
 # --------------------------------------------------------------------------
 # ⛔ The place is a corpus path of its own, and a refusal never quotes it (R7)
 # --------------------------------------------------------------------------

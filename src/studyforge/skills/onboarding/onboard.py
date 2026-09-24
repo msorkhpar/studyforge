@@ -138,13 +138,15 @@ class Onboarding:
 
         ⛔ **The pin is checked against the library running this first**:
         a version this Python does not import is refused by name,
-        and nothing is written.
+        and nothing is written. ⭐ `W467`: a generated file an earlier run wrote
+        and this one does not is removed if unedited, else refused (`record.retire`).
         """
         _check_running(self.version)
         if regenerate:
             self._refuse_dropping(Path(root))
             self._refuse_changing(Path(root))
             record.refuse_unrecorded(Path(root), self.files)
+            record.retire(Path(root), self.files)
         return write_files(
             self.files,
             root,
