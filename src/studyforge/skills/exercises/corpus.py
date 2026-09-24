@@ -250,7 +250,7 @@ def _reused(
             unit,
             where,
             f"was planned under plan_api {describe(api)}, and this build plans by a "
-            f"page's aspects under plan_api {PLAN_API} (W453)",
+            f"page's aspects under plan_api {PLAN_API} (spec §7 §4)",
         )
     same = (
         recorded.get("page") == page.path
@@ -361,5 +361,5 @@ def _moved(unit: str, where: str, why: str) -> AuthoringError:
     return AuthoringError(
         f"{where}: the unit at '{unit}' {why}. Its exercises were proven against that "
         f"material, and rewriting them is what R3 forbids. Remove '{unit}' from the "
-        f"corpus and run the pass again: the ledger keeps every other page's rows (W456)."
+        f"corpus and run the pass again: the ledger keeps every other page's rows."
     )

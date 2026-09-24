@@ -1133,6 +1133,36 @@ What it reads, and the choices in it:
 
 **Aliases.** `W435`
 
+### Each practice opens its own editor folder and owns its lock
+
+**Decision.** A practice's editor windows open the deepest directory holding every file the practice names (its main file, its test, and each file its run or test command names), found by `execute.workbench.practice_folder`, and the read-only lock is written into that folder's own `.vscode/settings.json`. Opening one practice never changes another's lock, and each settings write stages its own temporary file, so two practices on one page can be opened at once. `serve.routes.runs` asks for the folder before it writes the settings.
+
+**Why.** With one folder for every practice, the one settings file named only the practice opened last as editable, and two practices on one page raced for that file and one was refused.
+
+**Serves.** `R5`
+
+**Aliases.** `W446`
+
+### The practice editor wears the page's code colours
+
+**Decision.** A practice's editor is painted in the same colours as the page's code blocks, in the light and the dark theme. `execute.editor_theme` builds the workspace colour settings and `execute.page_colours` reads each colour, when it is asked for, from `palette.css`, `code-highlight.css` and `reading.css`. Neither module holds a colour of its own, and the colours travel in the practice's workspace settings, so the editor image stays generic.
+
+**Why.** A second, hand-kept copy of the palette would drift from the page, and the editor had worn code-server's stock theme beside the page's code.
+
+**Serves.** `R13`
+
+**Aliases.** `W455`
+
+### The editor image carries no AI assistant
+
+**Decision.** The editor image carries neither the bundled chat extension nor the Copilot CLI, and no editor session starts an agent host. This rule is kept in the `code-server-toolchain` repository, in its editor image (`docker/editor/Dockerfile`) and its tests (`tests/test_editor_agent_host.py`), and the image build fails if the Copilot CLI returns. It was the user's ruling.
+
+**Why.** On a container that can reach the internet, the agent host started a program that could send a reader's code off the machine, and studying offline needs no such program.
+
+**Serves.** `R7`
+
+**Aliases.** `W454`
+
 ### A component is read through what it declares
 
 **Decision.** How the runner image is run comes from the run shape declared in its consuming contract, not from parsing its README, and an image is judged by the runtimes its label declares rather than by what it happens to contain.
@@ -1172,6 +1202,46 @@ What it reads, and the choices in it:
 **Serves.** `R4`
 
 **Aliases.** `W380/2`, `W385`
+
+### A quiz's key never leaves the local study server
+
+**Decision.** No built page, no page asset and no other response of the serving process carries which option of a quiz is correct or any option's sentence. The key stays in the practice document on disk. The page sends the reader's choices to `serve.routes.quiz`, which grades them with the framework's one rule, `exercise.quiz.grading.grade`, and returns only the sentence for the option the reader chose. `serve.withheld` redacts quiz options from the content namespace's unit documents and makes the static mount refuse a file that carries a served quiz's key. Over `file://` a quiz shows its questions and says it needs the local study server to check them. It was the user's ruling, and spec §7 §7 states it.
+
+**Why.** A key that the page or a published URL delivers can simply be read, so the quiz would check nothing.
+
+**Serves.** `R5`
+
+**Aliases.** `W451`, `W452`
+
+### A page's exercises are planned by the important ideas it teaches
+
+**Decision.** A page's plan lists its aspects, the important ideas it teaches that a reader could be checked on, read from its prose and its code. Each aspect is checked by a named exercise or quiz question, or carries a written reason. One exercise may check several related aspects and is preferred over several small unrelated ones. Trivia such as dates is carried by a reason, a quiz asks few questions, and zero exercises is a valid plan for a page with nothing checkable. The count is neither a ceiling set by prose length nor a quota. `skills.exercises.aspects` refuses an aspect with no outcome or with two, `skills.exercises.plan` turns aspects into the plan, and a report planned under an older `plan_api` is refused so the unit is planned again. It was the user's ruling and refinement, and spec §7 §4 states it.
+
+**Why.** A cap set by prose length left most of a code-heavy corpus's examples unpractised, and an aspect that nobody accounted for is how a thin plan hides.
+
+**Serves.** `R6`
+
+**Aliases.** `W453`
+
+### An authoring pass never drops a ledger row it did not read
+
+**Decision.** The corpus's one exercise ledger is merged, not rewritten: `skills.exercises.merge` keeps every committed row for a page the pass did not read while that page is still on disk, and reports what was kept, added, changed and dropped, where a dropped row is always one whose page is gone. `validate.ledger` refuses a committed ledger that stops accounting for a material page, meaning a fenced example or declared grader that is neither the basis of an exercise nor given a written reason.
+
+**Why.** A pass over one container had rewritten the ledger with that container's rows alone, and validate still reported nothing wrong.
+
+**Serves.** `R6`
+
+**Aliases.** `W456`
+
+### The served page admits its embedded typefaces
+
+**Decision.** The served page's content security policy in `serve.security` allows `data:` for fonts, as it already did for images, and no other directive is widened for them. The faces stay embedded in `page.css` by `render/pageassets/faces.py`.
+
+**Why.** Embedding is what lets `file://` carry the faces, and a `'self'`-only font policy blocked every one of them on the served site, so the served site had never shown its typography.
+
+**Serves.** `R8`
+
+**Aliases.** `W450`
 
 ## Narration
 

@@ -226,7 +226,7 @@ def _unaccounted(path: str, why: str) -> Finding:
         f"'{path}' {why}. Every fenced example and every declared grader of every "
         f"material page is the basis of an exercise or carries a written reason (spec "
         f"§7 §3); run the authoring pass over that page's container, which keeps "
-        f"every other page's rows (W456).",
+        f"every other page's rows.",
     )
 
 

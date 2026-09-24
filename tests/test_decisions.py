@@ -23,6 +23,7 @@ itself names.
 
 from __future__ import annotations
 
+import ast
 import re
 from pathlib import Path
 
@@ -161,3 +162,53 @@ def test_headings_are_unique():
 
 def test_nothing_is_cited_that_leaves_the_main_line():
     assert re.findall(r"handoffs/|rows/|BOARD", document()) == []
+
+
+# --- what a user reads -----------------------------------------------------------
+
+
+def literals(source: str) -> list[str]:
+    """Every string constant in a module that is not a docstring: what a user can be shown."""
+    tree = ast.parse(source)
+    documented = (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)
+    docstrings = {
+        id(node.body[0].value)
+        for node in ast.walk(tree)
+        if isinstance(node, documented)
+        and node.body
+        and isinstance(node.body[0], ast.Expr)
+        and isinstance(node.body[0].value, ast.Constant)
+    }
+    return [
+        node.value
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Constant)
+        and isinstance(node.value, str)
+        and id(node) not in docstrings
+    ]
+
+
+def test_a_planted_id_in_a_message_is_read_and_a_docstring_is_not():
+    planted = "W" + "9876"
+    source = f'"""A module; see {planted}."""\nraise ValueError(f"{{x}} is refused ({planted})")\n'
+    assert [text for text in literals(source) if planted in text] == [f" is refused ({planted})"]
+
+
+def test_no_message_a_user_reads_cites_an_id_this_file_does_not_alias(tmp_path):
+    """A refusal, finding or CLI message carries its reason or a spec rule, never a bare process id.
+
+    Every non-docstring string literal under `src/` is written into a throwaway
+    repository and read by the header's own command, so the grammar is the one
+    the file states, never a second spelling of it.
+    """
+    root = repository_root()
+    tracked = run([git(), "ls-files", "src/*.py"], cwd=root)
+    assert tracked.returncode == 0, tracked.stderr
+    text = "".join(
+        f"{literal}\n"
+        for name in tracked.stdout.split()
+        for literal in literals((root / name).read_text("utf-8"))
+    )
+    repo = scratch_repository(tmp_path, {"src/literals.txt": text})
+    listed = {a for _, body in entries() for a in aliases(body)}
+    assert sorted(set(population(repo)) - listed) == []
