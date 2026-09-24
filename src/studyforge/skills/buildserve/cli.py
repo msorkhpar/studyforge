@@ -1,7 +1,8 @@
 """The skill's command line: the arguments `python3 -m studyforge.skills.buildserve` takes.
 
 **What it does.** Parses a corpus root, a required `--out`, an optional
-`--voice`, `--service` and `--port`, and hands them to `build_and_serve`.
+`--voice`, `--service`, `--port` and `--narration` / `--no-narration` (`W460`: the
+user's answer to whether the site speaks), and hands them to `build_and_serve`.
 
 **How you use it.** `main(argv) -> int`, and `python3 -m studyforge.skills.buildserve`.
 `build_parser()` returns the parser, so a test can read the interface.
@@ -41,6 +42,15 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--voice", help="narrate first, in this voice")
     parser.add_argument("--service", metavar="URL", help="where the narration service answers")
     parser.add_argument("--port", type=int, help="the loopback port (0 picks a free one)")
+    parser.add_argument(
+        "--narration",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "the user's answer: voice the site, or leave narration out (--no-narration) "
+            "with every clip kept on disk. Default: corpus.json's `narration`"
+        ),
+    )
     return parser
 
 
@@ -53,5 +63,6 @@ def main(argv: list[str] | None = None, out=None) -> int:
         voice=arguments.voice,
         service=arguments.service,
         port=arguments.port,
+        narration=arguments.narration,
         stream=out,
     )

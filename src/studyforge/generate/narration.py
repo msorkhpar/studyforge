@@ -14,10 +14,11 @@ whose bytes moved.
     moved.written.pages    # pages whose narration changed, rewritten
     moved.unchanged        # this build's own pages whose bytes did not move
 
-`recorded(root)` and `narration_for(...)` are the two halves `generate.units`
-calls while it renders; a page pass never reads the record itself. `heard(...)`
-is the join both the page and `generate.clips` ask, so the clip a build copies
-is the clip the page addresses.
+`narrated(corpus)` and `narration_for(...)` are the two halves `generate.units`
+calls while it renders; a page pass never reads the record itself.
+`voiced(corpus, choice)` is a run's override of the corpus's own choice.
+`heard(...)` is the join both the page and `generate.clips` ask, so the clip a
+build copies is the clip the page addresses.
 
 **Depends on.** `narrate.playable` for the join, `narrate.synth` for where the
 record lives, how it is read and where a unit's clips were placed,
@@ -32,6 +33,20 @@ record: `playable_of` is asked WITH `audio=`, because without the directory a
 recorded clip is taken at its word and a broken corpus renders as a working one.
 The gaps are `UNKEPT` only (`handoffs/SF-38.md`, *For dependents*):
 `NOT_RECORDED` is a unit nobody promised anything, never a gap.
+
+## ⛔ Narration off is a fourth input, and it is the FIRST state exactly (`W460`)
+
+⭐ **The user's ruling, 2026-09-23:** *"it should be optional … Somebody might
+wants to just cover the course wihtout voices as mentioned the voice might be
+cgenerated but still not serving them would be an option"*. ⭐ So `narrated`
+answers an absent record for a corpus that is not voiced (`Corpus.narration`,
+from `corpus.json`'s `narration` or a run's `--no-narration`), **without
+opening the record**: every page is `SILENT` and no clip is copied, which is
+the reading floor byte for byte, with no player and no gap notice. ⛔ **Nothing
+is deleted and nothing is rewritten** (R3): the record and every clip stay
+where `narrate` put them, so voicing the corpus again plays them with no
+re-synthesis. ⛔ **`narrated` is the ONE gate**: a pass that called `recorded`
+itself would voice a corpus its author turned off.
 
 ## Where the disk is probed: the page's own directory (`W222`)
 
@@ -52,8 +67,9 @@ disk is not opened for writing at all, and every other target goes through
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path, PurePosixPath
+from types import MappingProxyType
 
 from studyforge.corpus.placement import UnitLocations
 from studyforge.generate.declarations import BuildError, Corpus, UnitSource, read_corpus
@@ -65,6 +81,11 @@ from studyforge.render.page import SILENT, Narration, Placement
 #: The silent states that are a promise the disk did not keep. `NOT_RECORDED`
 #: is deliberately absent: see this module's contract.
 UNKEPT = frozenset({NOT_PLACED, MISFILED, NOT_ON_DISK})
+
+#: ⭐ What a corpus that is not voiced reads (`W460`): the record's own absent
+#: state, so every reader downstream takes the path it already takes for a
+#: corpus nobody narrated, and no branch on narration grows anywhere else.
+SILENCED = State(clips=MappingProxyType({}), present=False)
 
 
 @dataclass(frozen=True, slots=True)
@@ -88,6 +109,27 @@ def recorded(root: Path | str) -> State:
         return read_state(state_file(root))
     except StateError as error:
         raise BuildError(f"the narration record cannot be read: {error}") from None
+
+
+def narrated(corpus: Corpus) -> State:
+    """Return the record this build voices, or an absent one when narration is off (`W460`).
+
+    ⭐ **The one gate every pass reads the record through**, so the page pass and
+    the clip pass cannot disagree about whether a corpus speaks. ⛔ Off reads
+    nothing: not the record and not the disk.
+    """
+    if not corpus.narration:
+        return SILENCED
+    return recorded(corpus.root)
+
+
+def voiced(corpus: Corpus, choice: bool | None) -> Corpus:
+    """Return `corpus` voiced as a run asked, or as it declares when the run asked nothing.
+
+    ⭐ A run's `--narration` / `--no-narration` overrides `corpus.json` for that
+    run only; `None` keeps the corpus's own answer. ⛔ Nothing is written.
+    """
+    return corpus if choice is None else replace(corpus, narration=choice)
 
 
 def gaps(playing: Playable) -> tuple:

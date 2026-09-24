@@ -47,6 +47,8 @@ person's answer to the question that refusal asks, so `write` lets that one
 field move and still refuses every other. ⛔ `content` is never settled here —
 its one growing field is `not_material`, which has its own argument, and its
 others are the material's shape, which is a new onboarding.
+⭐ A settled answer that needs a newer `corpus_api` — `narration` (`W460`) — moves
+the version with it; ⛔ no settle, no rise.
 """
 
 from __future__ import annotations
@@ -102,7 +104,13 @@ def reonboard(
         existing=text,
         root=root,
     )
-    return dataclasses.replace(made, settled=tuple(settle or ()))
+    settled = tuple(settle or ())
+    if settled and made.manifest.corpus_api > json.loads(text).get("corpus_api", 1):
+        # ⭐ `W460`: a settled answer that only a newer contract reads carries that
+        # version with it. The version is `promote`'s choice, never a person's, so
+        # refusing its rise would refuse the answer the person just gave.
+        settled += ("corpus_api",)
+    return dataclasses.replace(made, settled=settled)
 
 
 def recorded_draft(

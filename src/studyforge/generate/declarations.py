@@ -116,6 +116,11 @@ class Corpus:
     #: default owns nothing**, so a `Corpus` assembled by hand gets R3's floor
     #: rather than a licence; `read_corpus` is what fills it.
     footprint: Footprint = Footprint()
+    #: Whether this build voices the corpus (`W460`): `corpus.json`'s
+    #: `narration`, or a run's override of it (`generate.narration.voiced`).
+    #: ⭐ **`True` by default**, so a `Corpus` assembled by hand builds as
+    #: every corpus did before the key: a record's clips play.
+    narration: bool = True
 
     @property
     def shared(self) -> CorpusLocations:
@@ -152,6 +157,7 @@ def read_corpus(root: Path | str) -> Corpus:
         contents=_contents(manifest, maps),
         units=_sources(root, manifest, maps),
         footprint=footprint_for(root, profile),
+        narration=manifest.narration,
     )
 
 

@@ -56,6 +56,7 @@ from studyforge.corpus.manifest.errors import ManifestError
 from studyforge.corpus.manifest.fields import (
     exercises_of,
     levels_of,
+    narration_of,
     slug_of,
     title_of,
     variants_of,
@@ -75,7 +76,8 @@ MANIFEST_FILENAME = "corpus.json"
 #: what was ingested.
 #:
 #: ⭐ **`2` added `content.not_material`** (Ruling 90), ⭐ **`3` added
-#: `media.max_files`** (`W207`) and ⭐ **`4` added `runtimes`** (`W350`), and no
+#: `media.max_files`** (`W207`), ⭐ **`4` added `runtimes`** (`W350`) and ⭐ **`5`
+#: added `narration`** (`W460`, the user's ruling of 2026-09-23), and no
 #: bump is about old manifests — each key is optional and an absent one has a
 #: stated default, so every `1` still parses. ⛔ **A bump is about a manifest
 #: that *uses* the key being unreadable to an older build**, which reports an
@@ -86,8 +88,8 @@ MANIFEST_FILENAME = "corpus.json"
 #: `CORPUS_API`.** A set built as `{1, CORPUS_API}` silently stops speaking
 #: `2` on the day somebody writes `3`, and the refusal for an unknown version
 #: has to stay exactly as sharp as it is for `5` today.
-CORPUS_API = 4
-KNOWN_CORPUS_API = frozenset({1, 2, 3, 4})
+CORPUS_API = 5
+KNOWN_CORPUS_API = frozenset({1, 2, 3, 4, 5})
 
 #: The `corpus_api` each key added after version 1 requires, keyed by the block
 #: it lives under and its name.
@@ -108,6 +110,7 @@ KEY_VERSIONS: dict[tuple[str | None, str], int] = {
     ("content", "not_material"): 2,
     ("media", "max_files"): 3,
     (None, "runtimes"): 4,
+    (None, "narration"): 5,
 }
 
 #: The placement profiles that may be declared. ⚠️ **SF-03 owns the profiles;
@@ -125,6 +128,7 @@ MANIFEST_KEYS = (
     "variants",
     "exercises",
     "runtimes",
+    "narration",
     "placement",
     "content",
     "media",
@@ -159,6 +163,10 @@ class Manifest:
     permitted_edits: tuple[PermittedEdit, ...] = field(default=())
     #: Sorted names from `runtimes.RUNTIMES`; empty is *no runner* (§7, C5).
     runtimes: tuple[str, ...] = NO_RUNTIMES
+    #: Whether a build and a serve voice this corpus (`W460`). ⭐ **Absent is
+    #: `True`**, which is every corpus's behaviour before the key existed: a
+    #: record's clips play. `False` is the reading floor exactly — never short.
+    narration: bool = True
     corpus_api: int = CORPUS_API
 
     @property
@@ -254,6 +262,7 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
         runtimes=parse_runtimes(
             document.get("runtimes"), exercises=exercises, present="runtimes" in document
         ),
+        narration=narration_of(document.get("narration", True), where),
         corpus_api=corpus_api,
     )
 

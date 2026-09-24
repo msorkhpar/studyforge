@@ -108,7 +108,9 @@ def plan_for(root: Path | str, *, bytes_per_unit: int | None = None) -> Plan:
     held, unreadable = _containers(root, manifest, profile)
     refusals += unreadable
     refusals += _claimed_twice(root, manifest, held)
-    record = read_record(root)
+    # ⭐ `W460`: a corpus that is not voiced reads no record, exactly as a build
+    # of it does (`generate.narration.narrated`), so the plan names no clip copy.
+    record = read_record(root) if manifest.narration else Recorded()
     refusals += record.refusals
     creations = _corpus_creations(root, profile)
     placed: list[UnitLocations] = []

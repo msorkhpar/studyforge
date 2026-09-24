@@ -13,6 +13,7 @@ from studyforge.corpus.manifest import ManifestError
 from studyforge.corpus.manifest.fields import (
     exercises_of,
     levels_of,
+    narration_of,
     slug_of,
     title_of,
     variants_of,
@@ -48,3 +49,12 @@ def test_exercises_is_a_real_bool_and_nothing_that_looks_like_one(value):
     assert exercises_of(False, "corpus.json") is False
     with pytest.raises(ManifestError, match="'exercises' must be true or false"):
         exercises_of(value, "corpus.json")
+
+
+@pytest.mark.parametrize("value", [0, "off", "false", None])
+def test_narration_is_a_real_bool_and_nothing_that_looks_like_one(value):
+    # ⭐ `W460`: the author's answer, recorded as they gave it.
+    assert narration_of(False, "corpus.json") is False
+    assert narration_of(True, "corpus.json") is True
+    with pytest.raises(ManifestError, match="'narration' must be true or false"):
+        narration_of(value, "corpus.json")

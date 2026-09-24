@@ -23,11 +23,18 @@ never a reason for this skill to reach inside `generate/`, `serve/` or
 2. **An existing directory for the site.** ⛔ There is no default. Where
    generated output belongs is the corpus owner's decision, and `studyforge
    build` refuses a directory that does not exist.
-3. **A running narration service, and the voice to narrate in**, if you want the
-   site to speak. ⛔ **Not optional in the sense of "do not bother": a corpus
-   that could narrate and did not is not finished.** ⭐ Read *Narration* below —
-   it says what provides it and how to have it, and you do not have to know
-   anything about this workspace's layout to follow it.
+3. **The user's answer to one question: do they want narration?** ⭐ **Ask it
+   before you run anything** (step 0 below). ⭐ **Narration is optional** — the
+   user's ruling, 2026-09-23: *"it should be optional and while serving or even
+   while caputring the matterial skills should ask if user is interested in the
+   narrition or not. Somebody might wants to just cover the course wihtout
+   voices as mentioned the voice might be cgenerated but still not serving them
+   would be an option"*.
+4. **If they want it: a running narration service, and the voice to narrate
+   in.** ⛔ A corpus the user wants voiced that never ran narration is not
+   finished. ⭐ Read *Narration* below — it says what provides it and how to
+   have it, and you do not have to know anything about this workspace's layout
+   to follow it.
 
 ## ⭐ Narration — what provides it, and how to have it
 
@@ -74,15 +81,37 @@ once the component is up, or through `--voice` in step 1.
 
 ## Procedure
 
+### 0. Ask the user whether they want narration
+
+⭐ **Ask, in these words or close to them: *"Do you want this course narrated,
+or would you rather read it without voices?"*** — every time, before step 1,
+even when the corpus already has clips on disk. ⛔ **Do not decide for them**:
+generated voices are not always wanted, and not serving them is a complete
+answer.
+
+| the answer | what you pass | what the site is |
+|---|---|---|
+| *without voices* | `--no-narration` | ⭐ **the reading floor, exactly**: no player on any page, no clip served, no "missing" notice — pages, navigation, contents, progress, practices and quizzes all unchanged. ⛔ **Not a partial state and not short** (C5) |
+| *narrated* | `--narration`, and `--voice <voice>` if it was never narrated | the player plays the recorded clips |
+| *whatever the corpus says* | nothing | `corpus.json`'s `narration` answer, recorded at onboarding; absent means narrated |
+
+⛔ **Turning narration off deletes, moves and rewrites nothing** (R3): every clip
+and the narration record stay where `studyforge narrate` put them, so a later
+run with `--narration` plays them again **with no re-synthesis**. ⭐ The flag
+overrides `corpus.json` for this run only; to change the corpus's own answer,
+re-onboard with `settle={"narration": ...}` (the onboarding skill, step 3).
+
 ### 1. Run it
 
 ```
 python3 -m studyforge.skills.buildserve <corpus-root> --out <directory>
 ```
 
+Add `--no-narration` or `--narration` with the user's answer from step 0.
 Add `--voice <voice>` to narrate first, and `--service <url>` if the service is
-not at its default loopback address. Add `--port <port>` to choose the port
-(`0` picks a free one).
+not at its default loopback address. ⛔ `--voice` with narration off is refused
+before anything runs: it would synthesise clips the run does not serve. Add
+`--port <port>` to choose the port (`0` picks a free one).
 
 ### 2. Know what it ran, because you can run each step yourself
 
@@ -92,6 +121,13 @@ studyforge narrate <corpus-root> --voice <voice>
 studyforge build <corpus-root> --out <directory>
 studyforge serve <corpus-root> --site <directory>
 ```
+
+⭐ `build` and `serve` each take `--narration` / `--no-narration`, and the skill
+hands them the same answer. ⛔ **`serve --no-narration` refuses a site that was
+built with narration**, naming each page and telling you to build again with
+`--no-narration`: the player is in a page's bytes, and `serve` never edits a
+page. ⭐ It also refuses to serve any clip file, so none is reachable by typing
+its address.
 
 Each verb's own report is printed unchanged, followed by a `step <verb> exit <code>`
 line. ⛔ **It stops at the first verb that fails and exits with that verb's code**,
@@ -106,12 +142,17 @@ consequence (R6, R8):
 
 | state | when | what is missing | what still works |
 |---|---|---|---|
-| `narration` | narration was never run, and no record exists | audio: every page is silent, and ⛔ **this corpus is not finished** | the reading floor |
+| `narration` | narration is wanted, was never run, and no record exists | audio: every page is silent, and ⛔ **this corpus is not finished** | the reading floor |
 | `narration-none` | narration ran against a service and placed no clip | nothing: there was nothing to say aloud | everything: a corpus with nothing to speak is complete, not short (C5) |
 | `narration-service` | `--voice` given and no service answered | new clips | the reading floor, and clips recorded earlier |
 | `narration-incomplete` | the narration run placed only some clips | the clips it did not place | the reading floor, and every clip it placed |
 | `exercises` | the corpus declares no exercises | nothing to Run or Submit | everything: a corpus with no graders is complete, not short (C5) |
 | `host` | exercises are declared, the site offers execution, and no runner container is up over this corpus | the runner's isolation: Run and Submit execute on this host, with whatever toolchain it has | everything |
+
+⭐ **Narration off is not in this table, because it is not a partial state.** With
+`--no-narration`, or a `corpus.json` whose `narration` is `false`, the skill prints
+one `narration off  chosen: …` line and none of the four `narration` states: the
+user chose the reading floor, and it is complete.
 
 ⭐ **A corpus that declares exercises is served with Run and Submit**: the
 `studyforge serve --site` this skill runs registers the run namespace (`W371`).

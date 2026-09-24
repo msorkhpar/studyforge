@@ -111,8 +111,14 @@ def instance_of(
     discovered: Discovered,
     port: int = DEFAULT_PORT,
     log: Callable[[str], None] | None = None,
+    private: Callable[[Path], bool] | None = None,
 ) -> ServingServer:
-    """Return a server wired to serve every corpus one discovery found, from its root."""
+    """Return a server wired to serve every corpus one discovery found, from its root.
+
+    ⭐ `private` is the static mount's refusal by path, for what the verb decided is
+    not served — narration clips a run left out (`W460`); `None` refuses nothing
+    beyond what the mount already refuses.
+    """
     sources = {served.source: CorpusContent(served.corpus) for served in discovered.corpora}
     namespaces = namespaces_of(discovered, sources)
     return make_server(
@@ -124,6 +130,7 @@ def instance_of(
         writers=WRITERS,
         client=client_for(namespaces),
         frames=frames_for(namespaces),
+        **({} if private is None else {"private": private}),
     )
 
 

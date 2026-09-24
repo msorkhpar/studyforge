@@ -202,6 +202,7 @@ class Onboarding:
             f"  levels            {self.manifest.depth}: {', '.join(self.manifest.levels)}",
             f"  variants          {', '.join(self.manifest.variants)}",
             f"  graded practices  {'yes' if self.manifest.exercises else 'no'}",
+            f"  narration         {self.narration()}",
         ]
         out += ["", f"files ({len(self.files)})"]
         out += [item.line() for item in self.files]
@@ -209,6 +210,11 @@ class Onboarding:
         out += [f"  {entry['glob']}" for entry in self.not_material]
         out += ["", self.verdict()]
         return out
+
+    def narration(self) -> str:
+        """Say the author's answer to whether the site speaks, or that nobody asked (`W460`)."""
+        text = next(item.text for item in self.files if item.where == artifacts.MANIFEST)
+        return recorded.narration(json.loads(text), self.manifest.narration)
 
     def verdict(self) -> str:
         """One line: how much is generated, what is yours, and where done is defined."""

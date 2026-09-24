@@ -53,7 +53,7 @@ from pathlib import Path, PurePosixPath
 from studyforge.corpus.placement import relative_href
 from studyforge.generate.containers import page_paths
 from studyforge.generate.declarations import Corpus, read_corpus, unit_location
-from studyforge.generate.narration import narration_for, recorded
+from studyforge.generate.narration import narrated, narration_for
 from studyforge.generate.navigation import bar, index_href, rail, trail
 from studyforge.generate.writing import Written, place
 from studyforge.render.page import Placement, render
@@ -88,7 +88,7 @@ def unit_bodies(corpus: Corpus) -> Iterator[tuple[PurePosixPath, bytes]]:
     The narration record is read once, before the first page is rendered, so an
     unreadable record stops the pass before anything reaches disk.
     """
-    state = recorded(corpus.root)
+    state = narrated(corpus)
     shared = corpus.shared
     absent = corpus.absent
     above = page_paths(corpus)

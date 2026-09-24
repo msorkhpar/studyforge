@@ -88,6 +88,13 @@ from studyforge.version import check as check_version
 #: manifest package refuses to parse it one version lower.
 NOT_MATERIAL_API = 2
 
+#: The `corpus_api` that `narration` first became legal in (`W460`). ⭐ Re-derived
+#: and pinned behaviourally for `NOT_MATERIAL_API`'s reason. ⭐ **The author's
+#: answer is the data**: a draft carrying `narration` — `true` or `false` — was
+#: ASKED, and the version rises to read it back; a draft without it was not
+#: asked and keeps its version, voiced as every corpus before the key was.
+NARRATION_API = 5
+
 #: The keys dropped when the corpus has nothing to say with them. ⭐ A closed
 #: set: every other key is either required, or present because the draft said
 #: so. ⛔ **Nothing here is ever invented** — `media` is absent from this list
@@ -172,6 +179,8 @@ def _api_for(draft: Mapping[str, object], *, uses_not_material: bool) -> int:
         error=PromotionRefused,
     )
     needed = NOT_MATERIAL_API if uses_not_material else 1
+    if "narration" in draft:
+        needed = NARRATION_API
     if asked > CORPUS_API:
         raise PromotionRefused(
             f"the draft asks for corpus_api {asked}; this build writes {CORPUS_API}"
