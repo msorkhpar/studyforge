@@ -1049,17 +1049,15 @@ corpus.json                                   the manifest (§4)
     raw/<variant>/unit-NN/practice-M.json     optional
 ```
 
-⛔ **A file under the archive root that is not a member of this layout is refused by name (`archive-stray`), never skipped** (`W248`, amended PO round 79).
+`<archive-root>` is `archive/`, beside `corpus.json` (§5). ⛔ **A file under the
+archive root that is not a member of this layout is refused by name
+(`archive-stray`), never skipped.**
 
-⛔ **A list item is a string, or an array of its parts in reading order** (`W258`, amended from `INT-09/6`). The block vocabulary is `archive/blocks.py`'s eleven rows, and a `list` block keeps its three fields; what changed is what one of its `items` may be. ⭐ An item holding no nested list is a string, byte-identical to every list written before. An item holding one is an array of text strings and whole `list` blocks, in the order the author wrote them, and a nested `list`'s items follow the same rule. ⚠️ A nested list is never folded into its parent's text, and it is not a block in reading order: `counts` does not count it. ⭐ Not a `raw_api` change, because every document without a nested list reads exactly as it did.
-
-⛔ **An ordered list keeps the number it starts at** (`W264`, amended from `W258/3`). A `list` block may carry a fourth key, `start`, after its three fields: the first item's number, an integer, written only when the list is ordered and that number is not `1`. ⭐ The page opens the list at it and the narration counts from it, at the top level and nested. ⭐ A list that starts at one carries no `start` and is byte-identical to every list written before, so is its document's `content_sha256`. ⚠️ Not a `raw_api` change for that reason, and the key a block may carry beyond its fields is `archive/blocks.py`'s `optional`.
-
-⛔ **Raw HTML IS in the vocabulary: it is the `html` block, the Markdown reader emits it for a run of block-level markup, and the page renders it VERBATIM — the one block type that bypasses escaping, by declaration and never by what its text looks like** (`Q2`, `W347`). ⭐ It stays: nothing is removed and `raw_api` does not change. ⚠️ The question was ruled at PO round 107 on the premise that raw HTML was *not* in the shipped vocabulary; that premise was measured wrong, and the register corrected it in its round 113. A tag-shaped line the reader keeps as a `para` is still escaped (`render/page/blocks/verbatim.py`).
+### The container map
 
 ```json
-// container.json — generalises CodeSignal's course-map.json
-{ "container_api": 1,
+// container.json — one per container
+{ "container_api": 3,
   "address": ["concurrency", "23-executors"],
   "titles":  ["Concurrency", "Executors and Thread Pools"],
   "variant": "java",
@@ -1068,31 +1066,69 @@ corpus.json                                   the manifest (§4)
   "note": "…",
   "units": [ { "n": 1, "title": "Thread pools and the Executor framework",
                "practices": 1, "origin": "23-executors/README_5.1.md",
-               "note": "…" } ] }
+               "label": "5.1", "note": "…" } ] }
 ```
 
-⭐ **`origin` is called `origin` and not `source`** because `source` is already
-the corpus's own identifier in the manifest, and two fields one word apart
-meaning different things is a defect waiting for a tired reader.
+- ⭐ **`origin` is called `origin` and not `source`**, because `source` is already
+  the corpus's own identifier in the manifest.
+- ⭐ **A unit's `origin` is a whole file, or a region of one**: a string names the
+  file; an object `{"path": …, "section": …}` names the region that opens at that
+  heading (`container_api` 2). ⭐ **`practice_origin`** names a second file holding
+  that unit's practice documents, where they are not in the file its prose came
+  from (`container_api` 3). A web source that has no file records its own
+  addressing as `url_slug` instead. `label` is the corpus's own display numbering
+  for the unit.
+- ⭐ **One variant per container**, so a map can never promise one variant while
+  the archive holds another.
+- ⭐ **Who writes it — one answer.** The adapter generates it on ingest. A person
+  may amend exactly the editorial fields — `title`, `titles`, `note` — and a
+  generator round-trips them rather than overwriting them; a generator that would
+  discard one **stops** (R6).
+- ⚠️ **`ingested` is a date, and it is exempt from R10.** It answers *how stale is
+  this capture?*, and it is excluded from `content_sha256`, so it cannot make
+  unchanged content look edited. Reproducibility is stated as *"identical bytes
+  apart from `ingested`"*, never silently.
 
-One variant per container, preserving CodeSignal's invariant that removed the
-"the map promised Java and the archive has none" failure class entirely.
+### The archive document
 
-**Who writes it — one answer.** An earlier draft had three tasks claiming it.
-The ruling: an adapter **generates** `container.json` on ingest (JS-05), and
-`EX-04` **updates only the declared practice counts** within it. Anything a
-human adds — a note, a corrected title — lives in fields the generator round-
-trips rather than overwrites, and a generator that would discard one **stops**
-(R6). It is not hand-authored-only; it is generator-owned with preserved
-judgement.
+A `lesson-M.json` or `practice-M.json` carries the unit's identity (`source`,
+`address`, `variant`, `unit`, `kind`, `ordinal`), its `ingested` date and
+`title`, its `blocks`, its `video`, `assets` and `attachments`, the per-type
+`counts` of its blocks, and `content_sha256` over the blocks; a practice
+document may add the `exercise` record (§7). ⛔ **A key the format does not
+define is refused**: an unknown sibling of `blocks` is outside the digest, and
+a typo'd key is a grader that is invisible while the corpus passes.
 
-⚠️ **`ingested` is a clock, and it is exempt from R10.** A date stamped at
-ingest time makes a document differ on every re-run, which would otherwise
-break byte-for-byte reproducibility. It earns the exemption the same way §8.2's
-audio does — it is genuinely useful (it answers "how stale is this capture?")
-and it is excluded from `content_sha256`, so it cannot make unchanged content
-look edited. Reproducibility claims elsewhere are stated as *"identical bytes
-apart from `ingested`"*, never silently.
+**The block vocabulary** is `archive/blocks.py`'s table, and a new block type is
+a `raw_api` change: `heading`, `para`, `code`, `table`, `list`, `image`,
+`video`, `rule`, `quote`, `html` and `disclosure`. `quote` and `disclosure` hold
+blocks; every walker recurses on that property rather than naming the two.
+
+- ⭐ **A list item is a string, or an array of its parts in reading order** — runs
+  of text and whole nested `list` blocks, whose items follow the same rule. A
+  nested list is part of its item, not a block in reading order, so `counts` does
+  not count it.
+- ⭐ **An ordered list keeps the number it starts at**: a `list` may carry `start`
+  after its three fields, written only when the list is ordered and does not
+  start at `1`. The page opens the list at it and the narration counts from it.
+  A list that starts at one carries no `start`.
+- ⛔ **Raw HTML is the `html` block**: the Markdown reader emits it for a run of
+  block-level markup, and the page renders it **verbatim** — the one block type
+  that bypasses escaping, by declaration and never by what its text looks like. A
+  tag-shaped line the reader keeps as a `para` is still escaped.
+- ⭐ **`disclosure` is content present but withheld** (C3): a `summary`, whether it
+  starts `open`, and the blocks it holds. That its markup is `<details>` is the
+  renderer's decision, not the archive's.
+- ⭐ **A `code` block's `lang` is the fence's own info string**, and an empty one
+  renders as plain text (§8.4).
+
+⭐ **An optional key is written only when it says something, after the keys every
+document carries**, so a document that does not use it is byte-identical to one
+written before it existed. That is the test that decides whether a new key is a
+`raw_api` change: every document valid before is valid after and means what it
+meant, and an older build refuses the new shape rather than misreading it.
+
+### What the archive records about its material
 
 **Attachments** (C4). A unit may reference files that are neither prose nor
 inline media — a dataset a lesson loads, a notebook, a sample document. They
@@ -1100,58 +1136,54 @@ are archived alongside the unit and placed by the placement policy, and the
 page links them for download rather than rendering them. Distinct from media,
 which the page displays.
 
-**Provenance.** A unit may record where it came from. `origin` is written by the
-adapter, carried into the unit document **verbatim**, and rendered by the page
-and the index. It is optional, because a corpus may be its owner's own material;
-it is **not optional chrome** where it exists, because material that came from
-somebody else is credited on the page that shows it.
+**Provenance.** `origin` is written by the adapter, carried into the served unit
+document **verbatim**, and rendered by the page and the index. It is optional,
+because a corpus may be its owner's own material; where it exists it is **not
+optional chrome**, because material that came from somebody else is credited on
+the page that shows it. ⭐ For a repository-shaped source, R3 guarantees the
+original file is never touched, so an `origin` pointing at it is a permanent,
+working link from every generated page back into the reader's own material.
 
 ⛔ **An address is recorded, never derived.** Composing an address from a title
-is the tempting shortcut and it is measured wrong: on CodeSignal's catalog,
-**157 of 1,290 units (12.2%) are served at a slug their title does not
-produce**, so a derivation sends one link in eight to a page that is not there —
-and a link that fails is worse than no link, because it asserts an address the
-reader then cannot find. Where two records name an address for the same unit — a
-container map and an archive document — a disagreement is a **refusal** (R6),
-never a preference: one would be linked from the page and the other from the
-index, and the reader would be sent to two different places with nothing
-failing.
+is the tempting shortcut and it is wrong: on a real course catalogue, a
+sizeable share of units is served at a slug its title does not produce, so a
+derivation sends those links to pages that are not there. Where two
+records name an address for the same unit — a container map and an archive
+document — a disagreement is a **refusal** (R6), never a preference: one would
+be linked from the page and the other from the index, and the reader would be
+sent to two different places with nothing failing.
 
-⛔ **A title is not an address: where the curriculum index and a unit's own file
-disagree on the unit's TITLE, the curriculum index's title wins** (`Q3`, a user
-ruling recorded at PO round 107; landed by `W347`). ⚠️ So the refusal above does not
-extend to titles, and the precedence is stated here rather than left as a
-constant inside one adapter's code.
-
-⭐ **For a repository-shaped source this is a feature, not a formality.** R3
-guarantees the original file is never touched, so an `origin` pointing at it is
-a permanent, working link from every generated page back into the reader's own
-material.
-
-**Re-ingest semantics.** `content_sha256` covers a unit's blocks and answers one
-question: *did the source change since we read it?* On re-ingest, a digest that
-disagrees with the source means the material has been edited upstream. The
-ruling: the archive is **replaced** and the change is **reported** (R6) — never
-silently overwritten, and never silently kept. Anything derived from that unit
-(pages, narration, exercises) is invalidated by the same signal. Without this,
-a corpus drifts out of date with no symptom, which is the failure `layout.py`'s
-docstring describes in a different guise.
+**Re-ingest.** `content_sha256` covers a unit's blocks and answers one question:
+*did the source change since we read it?* On re-ingest, a digest that disagrees
+means the material was edited upstream: the archive is **replaced** and the
+change is **reported** (R6) — never silently overwritten, and never silently
+kept — and anything derived from that unit (pages, narration, exercises) is
+invalidated by the same signal.
 
 ⛔ **A generator stages beside its target, validates, then moves into place.** A
 document that fails its own validation is **never** left at the path something
-else will read. Keeping a bad file "so the reading is not lost" was measured to
-cost a whole phase of CodeSignal's capture: one unreadable container map halts
-every consumer that walks the tree, and the failure is then reported at the
-reader rather than at the writer that caused it — **116 archives, 0 pages, 0
-narration**, and a broken test suite. A reading that can be taken again is not
-worth a file nothing can load.
+else will read: one unreadable container map halts every consumer that walks
+the tree, and the failure is then reported at the reader rather than at the
+writer that caused it. A reading that can be taken again is not worth a file
+nothing can load.
 
-**`studyforge validate <repo>` is the definition of done** for any adapter:
-manifest parses and `corpus_api` is known; every `container.json` address
-matches the directory holding it; every archive document parses, carries a
-known `raw_api`, and its `content_sha256` matches its blocks; `assert_clean`
+### `studyforge validate` is the definition of done
+
+`studyforge validate <root>` decides whether a corpus's archive is valid, for
+any adapter, and exits `1` naming every failure. Among what it checks: the
+manifest parses and `corpus_api` is known; every file under the source root is
+classified by `content`, nothing is `contested`, and everything included was
+read in full; every `container.json` address matches the directory holding it,
+and every `origin` resolves to its file and, for a region, to exactly one
+heading; every archive document parses, carries a known `raw_api`, holds only
+the layout's files, and its `content_sha256` matches its blocks; `assert_clean`
 passes on every string; unit ordinals are contiguous from 1; declared practice
-counts match what is present. Exit 1 naming every failure.
+counts match what is present; no two artifacts claim one generated path; every
+exercise record is well formed and R5's pairs hold; every authored exercise's
+bundle holds only its permitted files and its gate record verifies against them
+(§7); the source ledger accounts for every page; and the narration record agrees
+with the clips and the words they speak, unless the run is given
+`--no-narration`.
 
 An agent building an adapter therefore has a green/red signal that depends on
 nobody's judgement.
