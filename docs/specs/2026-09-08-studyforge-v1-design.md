@@ -1673,8 +1673,9 @@ artifact.
 **`studyforge narrate <root> --voice <voice>`** is the framework's side: it
 submits a corpus's speech units, places the clips beside the material, and
 records in `.studyforge/narration.json` the conditions each clip was synthesised
-under — the voice, the engine and the service's promise. ⭐ **A re-run with
-nothing changed requests nothing**, and a change of voice or engine re-requests
+under — the voice, the audio format, the engine's model and the service's
+promise (`provides`). ⭐ **A re-run with
+nothing changed requests nothing**, and a change in any condition re-requests
 every clip it made stale. `studyforge narrate <root> --prune` deletes the clips
 of record entries the corpus no longer produces, over a walk of the whole corpus.
 
