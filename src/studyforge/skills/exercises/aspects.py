@@ -197,7 +197,7 @@ def _require_aspect(aspect: Aspect, where: str) -> None:
         raise AspectError(
             f"{where}: the aspect {ident!r} is checked by no exercise and carries no "
             f"written reason it is not. Every aspect a page teaches is one or the other "
-            f"(W453), because an aspect nobody accounted for is how a thin plan hides."
+            f"(spec §7 §4), because an aspect nobody accounted for is how a thin plan hides."
         )
     if aspect.exercise is not None:
         _token(aspect.exercise, f"the exercise that checks {ident!r}", where)
