@@ -2167,64 +2167,45 @@ real source, not a stage everyone waits behind.
 ## 12. Validating that the framework is a framework
 
 Everything in §11 is satisfied by a framework with exactly one consumer. The
-claim this project actually makes is larger, and it is only testable against a
-source nobody designed for.
+claim this framework makes is larger, and it is only testable against a source
+nobody designed for.
 
-**A second source is onboarded after v1 is otherwise accepted.** It is a real
-repository, chosen then, and ⛔ **it is deliberately not named in these
-documents** — a named target invites the framework to be shaped around it, which
-is R1's whole subject. The anonymity is the control.
+**The test is a source converted by the skills alone.** A real repository is
+onboarded by reconnaissance → adapter authoring → corpus onboarding, with no
+hand-authored framework code, and the result is judged against this section.
 
 **How it is conducted.**
 
-- ⛔ **Whoever integrates the second source does not modify `studyforge`.**
-  Anything the framework cannot do is filed as a **finding**, not patched. The
-  framework's submodule pin does not move during the exercise; where it must,
-  every commit it moves across is listed against the finding that forced it. ⭐ A
-  test of extensibility run by somebody who can edit the thing being tested
-  measures nothing.
-- The route is reconnaissance → adapter authoring → corpus onboarding, with no
-  hand-authored framework code.
+- ⛔ **Whoever integrates the source does not modify `studyforge`.** Anything the
+  framework cannot do is filed as a **finding**, not patched. The framework pin
+  does not move during the integration; where it must, every change it moves
+  across is listed against the finding that forced it. ⭐ A test of extensibility
+  run by somebody who can edit the thing being tested measures nothing.
 - **The work is planned by the delivery-planning skill** (§9), acting as the
   product owner for that repository: an ordered backlog whose every task ends in
-  something demonstrable, so the conversion is watchable step by step rather
-  than reported finished at the end. ⭐ Its findings are the deliverable below,
-  and it distils them into the integration catalogue so the *third* source
-  starts further along than the second.
+  something demonstrable, so the conversion is watchable step by step rather than
+  reported finished at the end. ⭐ Its findings are the deliverable below, and it
+  distils them into the integration catalogue so the *next* source starts further
+  along.
 
 **What it must assert.**
 
-1. The corpus reaches the Java corpus's floor — readable over `file://`,
-   narrated, navigable, read marks recorded — **minus what the source genuinely
-   lacks.**
-2. ⚠️ **A source with no graders yielding zero exercises is a pass**, not a
-   shortfall (§7, C5). This is written down here so the exercise is not judged
-   against a corpus that happens to ship 168 test classes.
-   ⛔ **DATED 2026-09-19 (`W389`, user direction) — true up to and including `M9`,
-   and superseded from `M10`.** ⭐ **Zero is a pass only for material that admits no
-   checkable task**; a source with no graders is authored ones
-   ([§7](#exercises-authored-for-every-corpus-w389)), and what is then judged is the
-   coverage report — every planned exercise shipped, or named with the gate that
-   refused it. ⚠️ **The sentence's original purpose survives intact**: nothing here
-   is measured against a corpus that happens to ship 168 test classes.
-3. The framework pin did not move, or every commit it moved across is accounted
+1. The corpus reaches the reading floor — readable over `file://`, navigable,
+   read marks recorded, narrated where it asks to be — **minus what the source
+   genuinely lacks.**
+2. Every page whose material admits a checkable task carries its planned
+   exercises or quizzes, or the coverage report names it with the gate that
+   refused each one (§7). ⚠️ **Zero exercises is a pass only for material that
+   admits no checkable task**, and the integration is never judged against a
+   corpus that happens to ship its own graders.
+3. The framework pin did not move, or every change it moved across is accounted
    for.
 4. ⛔ **Everything the integrator did by hand is a defect in the onboarding
    skill, named.** That list is what turns "extensible" into something with
    edges.
 
-⭐ **The deliverable is the findings log, not the site.** An exercise that
+⭐ **The deliverable is the findings log, not the site.** An integration that
 produces a working study site and reports no findings has not been conducted
-honestly — these skills will have seen exactly one source, and the odds that an
-unknown repository fits it perfectly are not good. The finding count is the
-**yield**, not the failure, in the same sense the exercise-feasibility spike
-already uses correctly: a negative result is a successful experiment.
-
-### ⛔ AMENDED PO round 74 — the second source is named, it goes first, and the Java corpus re-validates (user direction, 2026-09-12)
-
-> *"M6 M8 M5 M7 is the order I want also we were supposed to run it against ISO 8583 project first and if it worked and we are sure we are a framework ( now if it worked M5 and M7 should be finished then) and then apply it to java-senior project to revalidate being a framework."*
-
-1. ⭐ **The second source is `ISO-8583-jPOS-tutorial`, and the exercise is `M8`** (`QA-04`). ⛔ **The anonymity clause above is withdrawn for it by the user's own words; the control it bought is the cost.** ⚠️ Q18 had already named it as the track's second finish line.
-2. ⭐ **It runs BEFORE the execution track, not after v1 is otherwise accepted.** ⛔ **ISO never enters that track (zero build files, graders and exercises; Q18), so at `M5` and `M7` it passes with zero exercises (§7, C5), and those milestones are proved on the framework's own fixtures.** ⚠️ **DATED 2026-09-19 (`W389`, user direction): that clause is RECORD, and it stands for `M5` and `M7`, which closed under it.** ⛔ **"Never" is now wrong and `M10` is why** — ISO enters the track there, with a practice module and exercises [authored from its pages](#exercises-authored-for-every-corpus-w389), and it is the corpus `M10` is proved on. ⭐ **Its two earlier finish lines are not reopened; `M10` is a third.**
-3. ⭐ **`Claude-senior-java-engineer` then re-validates the framework at `M9`** (`QA-05`), ⛔ **under every rule in this section.**
-4. ⛔ **The no-patch rule holds for the integrator of `M8` and of `M9`.** ⭐ **Between them, `M5` and `M7` are framework work, and every commit the framework pin moves across is listed (bullet 1 above).**
+honestly — the odds that an unknown repository fits the skills perfectly are not
+good. The finding count is the **yield**, not the failure: a negative result is a
+successful experiment.
