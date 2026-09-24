@@ -32125,3 +32125,14 @@ to take a course without voices once they were generated.
 manifest or its record, the docs.
 
 [the mint](#po-round-177)
+
+## PO round 181
+
+⭐ **`ISO-32` DONE and DEPLOYED — the corpus pinned at `f329855`**: re-onboarded on the INSTALLED library (a wheel of `6ca2c94c`, no framework checkout on the import path); the pin names the installed version and commit, and each skill stub prints the wheel's own procedure. `ONBOARDING.md` left the root for `docs/archive/` on the user's ruling — ⚠️ **not the corpus's `archive/`, which is studyforge's own archive and turns `validate` RED (`ISO-32/5`)**. The README opens with a stranger's reading list. ⭐ **Register plant:** a wrong version in the pin → the generated pin test RED. ⭐ **`:8770` serves `f329855`**, its assets byte-identical to the checkout. ⛔ **The corpus's `main` is NOT advanced and no branch is pruned** — the commands are in its handoff, for the user's word.
+
+⭐ **Two rows MINTED from its findings, because the fix lands in the framework:** **`W461`** — onboarding writes `ONBOARDING.md` back at the root, so the ruling does not survive a regenerate, and `hand_edited` misses a missing generated file; **`W462`** — generated corpus text still cites process ids. ⚠️ **Carried:** `ISO-32/4` (the wheel declares no test dependency, so a wheel-only venv cannot run the pin test) and `REL-05/1`.
+
+### ⚠️ In flight
+
+⭐ **`W461`**, **`W462`**, **`REL-10`**, **`REL-13`**.
+
