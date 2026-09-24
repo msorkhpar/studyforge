@@ -8,5 +8,5 @@ documents for units 1 and 3. Unit 2 does not exist anywhere. The map and the
 archive **agree** with each other on purpose — this fixture is about the gap,
 not about a map/archive disagreement, which is a different check.
 
-**Expected of `studyforge validate` (SF-25):** exit 1, naming the container
+**Expected of `studyforge validate`:** exit 1, naming the container
 and the missing ordinal.

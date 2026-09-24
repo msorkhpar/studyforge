@@ -150,8 +150,6 @@ a two-level corpus.
 (§11.0, C5). ⛔ Report *"no runnable code, no graders"* as a **finished
 verdict** with its evidence, never as a blank section — the difference decides
 whether the corpus finishes at the reading floor or enters the execution track.
-⚠️ Neither is a milestone id read as a position: the order milestones run in is
-the one the capability index prints, not the order their ids sort to.
 
 ⭐ **A graded corpus's draft declares the `runtimes` its material evidences**
 — a build file or a source suffix, each from a closed map, and `java`
@@ -295,7 +293,7 @@ a label for everything below it.
 | SPARQL | **0 of any kind** | 0 |
 | Java-senior | 47 | 168, of 792 non-prose files |
 
-⭐ ISO's whole vocabulary is five block types. ⛔ **It is finished at M4, not
-short** (§11.0, C5). ⚠️ Java's 168 are what a closed set of test markers
+⭐ ISO's whole vocabulary is five block types. ⛔ **It is finished at the reading
+floor, not short** (§11.0, C5). ⚠️ Java's 168 are what a closed set of test markers
 matched; whether they grade the *teaching material* is a question this skill
 asks and cannot answer.

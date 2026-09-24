@@ -20,8 +20,6 @@ things:
 
 What is not read, and why:
 
-- `src/studyforge/skills/delivery/capability-index.md`: the packaged index is
-  DATA whose rows are the framework's own task ids, frozen by a digest.
 - The string literals of a test: they are its data, and a test that plants an id
   or a path has to spell one.
 - The documents under `docs/`, the README and `CLAUDE.md`: other checks own them.
@@ -40,9 +38,6 @@ from pathlib import Path
 
 from tests.support import git, repository_root, run
 from tests.test_decisions import population, scratch_repository
-
-#: The packaged capability index: data whose rows are task ids, frozen by a digest.
-PACKAGED_INDEX = "src/studyforge/skills/delivery/capability-index.md"
 
 #: The root files the pointer sweep reads besides `src/`, `tests/` and `docker/`.
 ROOT_FILES = (".gitignore", "pyproject.toml", "conftest.py")
@@ -118,8 +113,6 @@ def prose(root: Path) -> dict[str, str]:
     """What the id sweep reads, by file: all of `src/`, and the prose of the test code."""
     read: dict[str, str] = {}
     for name in tracked(root):
-        if name == PACKAGED_INDEX:
-            continue
         if name.startswith("src/"):
             text = _text(root / name)
         elif _is_test_code(name):
@@ -189,7 +182,6 @@ def test_what_the_sweep_does_not_read_is_not_read(tmp_path):
         {
             "docs/guide.md": f"{PLANTED}\n",
             "README.md": f"{PLANTED}\n",
-            PACKAGED_INDEX: f"| `{PLANTED}` |\n",
             "tests/test_data.py": f'"""A test."""\nPLANT = "{PLANTED}"\n',
             "tests/fixtures/note.md": f"{PLANTED}\n",
         },

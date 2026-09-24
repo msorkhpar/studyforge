@@ -1,8 +1,8 @@
 # ⛔ Build by hand from the checkout root, naming the checkout as a context:
-# `docker build --build-context project=. docker/dev` (W211/3) — or run
-# `docker/dev/check`, which also names the image by its inputs (W225).
+# `docker build --build-context project=. docker/dev` — or run
+# `docker/dev/check`, which also names the image by its inputs.
 #
-# The framework's own build environment (R15).
+# The framework's own build environment.
 #
 # What it is: the image in which `studyforge`'s tests, quality floor and lint
 # run, so that a contributor needs Docker and nothing else, and a result never
@@ -17,7 +17,7 @@
 # happened to be first.
 #
 # ⛔ No Docker socket is mounted into anything here, and nothing in this image
-# talks to a daemon (spec §8.3). The rule is written about the serving
+# talks to a daemon. The rule is written about the serving
 # process; it is repeated here because a build image is exactly where somebody
 # would reach for one "just to run the integration tests".
 #
@@ -28,7 +28,7 @@
 FROM python:3.14-slim@sha256:cad9a2c871761c413caa6fdd6441c783451e740a48aaeba60ae62a8b53525ef6
 
 # git is a test dependency, not a convenience: `tests/test_repository.py`
-# asks `git check-ignore` whether the ignore rules still keep FND-04's golden
+# asks `git check-ignore` whether the ignore rules still keep the golden
 # fixtures trackable. Without git in the image that check cannot answer, and a
 # check that cannot answer is a check that has stopped guarding anything.
 #
@@ -40,22 +40,13 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 # ---------------------------------------------------------------------------
-# The JavaScript runtime (W8, Ruling 21).
+# The JavaScript runtime.
 #
 # ⭐ Why it is here at all: `tests/studyforge/render/pageassets/
 # test_highlight_grammars.py` runs the vendored Prism grammars for real, and
-# without a runtime it **skipped every test in that module** in the one
-# environment that is authoritative. ⛔ "Did not run" is not evidence, so those
-# were claims this image could not certify — they passed only on a host that
-# happened to have `node`, which is the divergence R15 exists to eliminate.
-#
-# ⭐ **The figure, with its UNIT and its REF, because a historical reading
-# carrying neither is not a measurement** (Ruling 240's general clause, `W122`):
-# **38 tests — every test in that module — DERIVED at `af31fd7` in this image by
-# hiding `node` from `PATH` and reading the module both ways: 38 passed with the
-# runtime, 38 without it.** ⚠️ The unit is *the module's whole population*,
-# which is why the property above is stated in words and the number is dated —
-# a grammar added tomorrow moves the figure and does not move the property.
+# without a runtime every test in that module skips. ⛔ "Did not run" is not
+# evidence, and this image is the environment whose readings count, so the
+# runtime has to be in it.
 #
 # ⛔ Pinned by version AND checksum, for exactly the reason the `FROM` line
 # above is pinned by tag and digest: the version says what it is for a reader,
@@ -117,16 +108,13 @@ RUN set -eu; \
 # ownership from the tarball's author.
 
 # ---------------------------------------------------------------------------
-# The browser (W36, QA-03/1, Ruling 40).
+# The browser.
 #
 # ⭐ Why it is here at all: `tests/visual/` opens a page this repository
 # generated in a real browser and reads back what no assertion over the source
-# can see. ⛔ Without a browser in *this* image those checks **did not run** —
-# 57 of them, measured — and Ruling 40 makes the pinned container the only
-# authority for a reading, so a check that cannot run here is a check with no
-# authority anywhere. ⚠️ The defect that priced this: `--measure: 80ch`
-# resolves `ch` against **the element's own font**, so one declaration produced
-# three different columns. Every stylesheet assertion passed.
+# can see: a resolved column width, a contrast ratio, a focus order. ⛔ Without a
+# browser in *this* image those checks do not run, and this image is the only
+# environment whose readings count.
 #
 # ⛔ Pinned by version AND checksum, for exactly the reason the `FROM` line and
 # the Node.js tarball above are. ⚠️ An unpinned browser — `apt-get install
@@ -148,41 +136,25 @@ RUN set -eu; \
 # shared libraries than full Chrome's desktop set** — which is why the apt list
 # below is as short as it is.
 #
-# ⛔ **NO COUNT IN THAT SENTENCE, AND THAT IS RULING 240 RATHER THAN VAGUENESS**
-# (`W122`). It used to carry a number. ⚠️ No unit made it true: `CTO-55/1`
-# printed five populations beside it — apt `lib*` packages, all apt packages,
-# the binary's `DT_NEEDED` entries, transitive `ldd` lines, and `not found`
-# entries — and the claimed figure was none of the five. ⛔ `CTO-56/8` then
-# found the only unit that did reproduce it, and it was an instrument rather
-# than a fact: a grep for `lib*` over this file, which counted `liberation`,
-# `deliberately`, and the comment's own word in the very sentence making the
-# claim.
-#
-# ⚠️ A corrected number would be falsified again by the next edit to the apt
-# list below, which is the most likely history of the first one — the list was
-# trimmed and the comment was not. ⭐ So a shipped comment either states a
-# property that survives a trim, or it states nothing.
-#
-# ⛔ **The DERIVATION, for a reader who wants a figure rather than a property:
-# run `ldd` on the installed binary, in this image.** That answers it at the
-# version in front of you instead of at the version somebody last edited a
-# comment, which is the whole of why no number is written here.
+# ⛔ For the exact set of shared libraries the binary needs, run `ldd` on the
+# installed binary, in this image: that answers it for the version in front of
+# you, and a figure written here would go stale with the next edit to the apt
+# list below.
 #
 # ⚠️ **`TARGETARCH`, for the reason the Node block states**: an architecture
 # with no recorded checksum fails **loudly**, naming itself, rather than
 # falling back to something unverified.
 #
 # ---------------------------------------------------------------------------
-# ⛔ **THE FONT IS PINNED BY VERSION AND CHECKSUM (`W124`, Ruling 236), AND THE
-# SHARED LIBRARIES ARE STILL ONLY SNAPSHOT-PINNED. The two are different on
-# purpose and the difference is measured, not felt.**
+# ⛔ **THE FONT IS PINNED BY VERSION AND CHECKSUM, AND THE SHARED LIBRARIES
+# ARE ONLY PINNED BY THE BASE IMAGE'S SNAPSHOT. The two differ on purpose.**
 #
-# ⭐ Ruling 236's rule: R10's pin must reach every input whose value a shipped
-# check compares against a **recorded number**, and an input compared against a
-# deliberately **loose** threshold is adequately pinned at the base image's
-# snapshot *provided the threshold says it is loose*.
+# ⭐ An input whose value a check compares against a **recorded number** must be
+# pinned exactly; an input compared against a deliberately **loose** threshold
+# is adequately pinned by the base image's snapshot, provided the threshold says
+# it is loose.
 #
-# ⚠️ The font is on the wrong side of that line and the libraries are not.
+# ⚠️ The font is on the exact side of that line and the libraries are not.
 # `fonts-liberation` is a **font-metric input**: `tests/visual/test_capture.py`
 # compares a body height and a capture size against recorded figures, and
 # `--measure: 80ch` resolves against whatever face the image ships. ⛔ An engine
@@ -190,22 +162,22 @@ RUN set -eu; \
 # different font does not.
 #
 # ⭐ **Why a version constraint plus a checksum over the installed files, and
-# not either of the two other remedies.** Both were weighed against a build:
+# not either of the two other remedies.** Each is weaker:
 #
 #   * a `.deb` from `snapshot.debian.org` pins the **package file** and adds a
 #     fourth build-time host — and the least reliable one in the set — to buy
 #     nothing: if `deb.debian.org` is unreachable, `apt-get update` two lines
 #     up has already failed the build.
-#   * a vendored font costs **4 360 440 bytes** of binary in the repository
-#     (measured) plus an OFL-1.1 licence to carry, and still leaves three
-#     build-time remotes, so it does not make the build offline either.
+#   * a vendored font costs megabytes of binary in the repository plus an
+#     OFL-1.1 licence to carry, and still leaves three build-time remotes, so it
+#     does not make the build offline either.
 #   * ⭐ **What is recorded below pins the bytes the layout engine actually
 #     reads** — the installed `.ttf` files — which is one level closer to the
 #     input than a package file is, and it is the same two-part pin (a version
 #     that says what was asked for, a checksum that says what arrived) that the
 #     `FROM` line, the Node.js tarball and the browser archive all use.
 #
-# ⭐ `Architecture: all` and `Depends:` empty (both measured), so unlike `node`
+# ⭐ `Architecture: all` and `Depends:` empty, so unlike `node`
 # and the browser **one recorded version and one checksum list covers every
 # architecture** — there is no per-arch case to get wrong here.
 #
@@ -219,15 +191,15 @@ RUN set -eu; \
 # ⛔ `fonts-liberation` is not cosmetic — it is the vendor's own declared
 # dependency, and a font-metric check on an image with no fonts at all would
 # measure a fallback nobody chose. ⚠️ It is also the image's **entire** font
-# surface: 12 files and nothing else (measured), so `serif`, `sans-serif` and
+# surface, which the build checks below, so `serif`, `sans-serif` and
 # `monospace` all resolve inside this one package and pinning it pins every
 # face any page in `tests/visual/` can reach.
 ARG CHROME_VERSION=153.0.8010.36
 ARG CHROME_SHA256_AMD64=a0079df5617da34bcd1debad18196568b072ec3d8ec57944008972a4fc970580
 ARG CHROME_SHA256_ARM64=66776cb47927f88a44dda83ebd113b226714a45e7cd3b6e845907477a0b7b096
 
-# ⛔ The font's two-part pin (`W124`). ⚠️ The epoch is part of the version and
-# apt will not match without it.
+# ⛔ The font's two-part pin. ⚠️ The epoch is part of the version and apt will
+# not match without it.
 ARG FONTS_LIBERATION_VERSION=1:2.1.5-3
 
 RUN set -eu; \
@@ -313,9 +285,8 @@ RUN set -eu; \
 # threat that can arise. ⛔ The same line on a host would be wrong.
 RUN git config --system --add safe.directory /workspace
 
-# ⚠️ Network is required HERE and only here. This is the whole of the tension
-# in FND-03's acceptance, and it resolves cleanly because the two happen at
-# different times: `pip install` needs the network at IMAGE-BUILD time; the
+# ⚠️ Network is required HERE and only here, and that holds because the two
+# happen at different times: `pip install` needs the network at IMAGE-BUILD time; the
 # test run needs none, and `compose.yaml` gives the service `network_mode:
 # none` so it could not reach one if something tried.
 COPY requirements.txt /opt/studyforge/requirements.txt
@@ -323,30 +294,29 @@ RUN pip install --no-cache-dir --disable-pip-version-check \
         --requirement /opt/studyforge/requirements.txt
 
 # ---------------------------------------------------------------------------
-# ⭐ **THE INSTALLED COMMAND: `studyforge` IS ON THE PATH, AND IT RUNS THE MOUNT**
-# (`W211`). Before this block `command -v studyforge` answered 127 in here, so
-# every reading about the installed command was host-only.
+# ⭐ **THE INSTALLED COMMAND: `studyforge` IS ON THE PATH, AND IT RUNS THE MOUNT.**
+# A reading about the installed command is then a reading in this image, not a
+# host-only one.
 #
-# ⛔ FND-03 refused an install because a SECOND COPY in site-packages could
-# shadow the bind mount. That ground still holds and this install has no copy:
-# it is EDITABLE, so pip writes a `.pth` naming `/workspace/src`, a `dist-info`
-# and the console script — and the code is read from the mount on every run.
-# ⭐ It is built with `/workspace/src` EMPTY, so the image holds no module of
-# this project at all: without the mount, `studyforge` fails on
-# `ModuleNotFoundError` instead of running something stale.
+# ⛔ A plain install would put a SECOND COPY in site-packages that could shadow
+# the bind mount. This one has no copy: it is EDITABLE, so pip writes a `.pth`
+# naming `/workspace/src`, a `dist-info` and the console script, and the code is
+# read from the mount on every run. ⭐ It is built with `/workspace/src` EMPTY,
+# so the image holds no module of this project at all: without the mount,
+# `studyforge` fails on `ModuleNotFoundError` instead of running something stale.
 #
-# ⛔ Not `pip install -e .` at RUN time, which writes into the checkout (`W209`'s
-# class). It happens here, against a `/workspace` that is not the checkout, and
-# only `pyproject.toml` and `README.md` cross — BIND-MOUNTED from the `project`
-# build context `compose.yaml` names, so no layer keeps them and a change to
-# either re-runs this step under `check`'s `--build`.
+# ⛔ Not `pip install -e .` at RUN time, which would write into the checkout. It
+# happens here, against a `/workspace` that is not the checkout, and only
+# `pyproject.toml` and `README.md` cross — BIND-MOUNTED from the `project` build
+# context `compose.yaml` names, so no layer keeps them and a change to either
+# re-runs this step under `check`'s `--build`.
 #
 # ⚠️ What IS baked is the METADATA: the entry-point table and version as of this
 # build. `tests/docker/test_dev_image_command.py` compares them with the MOUNTED
 # `pyproject.toml` from inside the image, so a stale image is a red, not a lie.
 #
-# ⛔ **The build backend is an image input, pinned by version AND hash** (`W124`'s
-# two-part pin). `pyproject.toml` asks for a RANGE, and build isolation would
+# ⛔ **The build backend is an image input, pinned by version AND hash**, the
+# same two-part pin as the font. `pyproject.toml` asks for a RANGE, and build isolation would
 # fetch whatever met it that day; `--no-build-isolation --no-index` leaves the
 # pinned wheel the only backend reachable. ⭐ It is UNINSTALLED on the way out,
 # the rule `curl` and `npm` already follow: an image that can build this package
@@ -371,15 +341,15 @@ RUN --mount=type=bind,from=project,source=pyproject.toml,target=/workspace/pypro
     rm -rf /tmp/backend.txt /workspace/src; \
     command -v studyforge
 #
-# ⛔ And no `COPY . .`. The acceptance is "from a clean checkout", meaning the
-# checkout on disk, not a snapshot baked into a layer at some earlier commit.
-# A copied source is a source that silently goes stale.
+# ⛔ And no `COPY . .`. The suite runs against the checkout on disk, not a
+# snapshot baked into a layer at some earlier commit: a copied source is a
+# source that silently goes stale.
 
 # HOME is /tmp because the container runs as the invoking user's numeric uid
 # (see `check`), which has no entry in /etc/passwd and therefore no home. Tools
 # that want somewhere to write find it, and nothing needs a real account.
-# ⛔ It is a fixed, generic path on purpose: no host home directory is ever
-# named in this file (R7).
+# ⛔ It is a fixed, generic path on purpose: a host home directory is personal
+# data, and none is ever named in this file.
 ENV HOME=/tmp \
     RUFF_CACHE_DIR=/tmp/ruff-cache \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -396,15 +366,15 @@ ENV HOME=/tmp \
 # bind-mounted, so a `__pycache__` written in here appears in the contributor's
 # working tree owned by whatever uid the container used.
 #
-# ⛔ `PYTHONPYCACHEPREFIX` is the OTHER half, and W30 exists because the first
-# half alone reads as sufficient and is not (`CTO-21/1`). `DONTWRITEBYTECODE`
+# ⛔ `PYTHONPYCACHEPREFIX` is the OTHER half, because the first half alone
+# reads as sufficient and is not. `DONTWRITEBYTECODE`
 # stops this image CREATING the taint; it does nothing about READING one. The
 # checkout is bind-mounted, so a `__pycache__/` a HOST run left behind is
 # visible in here — and CPython validates a cached module by the source's
 # (mtime, size), so a stale `.pyc` beside a source the host has since changed
 # under the same mtime and size is loaded in preference to the source. The
 # container then certifies code that is in nobody's working tree, which is the
-# divergence R15 exists to eliminate.
+# divergence this image exists to eliminate.
 #
 # ⭐ Setting the prefix moves the cache path the loader COMPUTES out of the
 # mount entirely, so the tree's `__pycache__/` is not consulted at all — the

@@ -28,56 +28,31 @@ It runs **in the target repository**, and its authority is `studyforge`.
 
 ## Procedure
 
-### 1. Read the capability index — ⛔ never the epic documents
+### 1. Read what the installed framework offers
 
 ```
 python3 -m studyforge.skills.delivery
 ```
 
-⭐ **The index ships in the installed package**, generated, and this command
-prints it byte for byte — from any directory, with no checkout and no plan
-documents anywhere on the disk. It is what a planner reads about the
-framework, and the only thing.
+⭐ **The command reads the installation it runs from**: every command the
+installed `studyforge` runs and every skill it ships, each with the id a plan
+names it by. It works from any directory, with no checkout anywhere on the
+disk. It is what a planner reads about the framework, and the only thing.
 
-⛔ **The package never goes looking for a plan's documents.** It reads the one
-file it ships, from its own directory. The **generator** is
-`capability_index(documents, order, pins)`, and it stays on the package's
-surface for a plan of your own: the caller names every document it reads,
-because a framework module that knew where a plan lives would be a module the
-next repository has to be arranged around.
+⭐ **Everything it lists is available now.** A plan is made against the
+framework that is installed, never against one a later version may become,
+so no task waits for the framework to grow.
 
-⛔ **The generator's second document declares the ORDER milestones run in**, by the order
-its `### M<n> — <name>` sections appear, and the index prints and compares
-milestones in that order — ⚠️ **never the order their ids sort to**, because a
-plan can be reordered without renaming a milestone. ⭐ A declared milestone no
-epic delivers anything at is printed and says so: it is still a gate.
+⛔ **A capability the plan needs and the offer does not list is a finding,
+filed with the plan as a `Finding`**, and the task that needs it names the
+finding in its *depends on*. The finding goes to the framework; the plan
+carries the wait. ⛔ Nothing a plan does adds a capability to the offer.
 
-⛔ **The third argument is the workspace's pin document**, and it is what lets
-the index carry a `delivered in` column: a capability whose `Owns` reaches a
-component pinned somewhere else is ⭐ **not this framework's to deliver**, and
-one whose `Owns` names no path at all is ⚠️ **undeclared** — nothing in the
-documents says. ⛔ Neither is a capability this corpus explains away in step 3
-(R1), and the statement there refuses a `why` for one. ⭐ **No component is
-ever named in what is rendered** (R1); the distinction is structural.
-
-⭐ **The index answers one question and it is the only question a planner has
-about the framework: *when does capability X become available?*** It is
-**generated** from the epic documents, never hand-edited (R19). ⚠️ **On the main
-line it is frozen**: the epics' task text it was generated from lives on the
-branch `archive/process`, so the package's tests pin the shipped file's SHA-256
-digest and any change to its bytes fails. A deliberate regeneration runs
-`capability_index(...)` over the epics, the task index and the pin document as
-they stand on `archive/process`, and updates the pinned digest in the same
-commit.
-
-⛔ **Reading the epics directly is the defect this step exists to stop.** A
-capability→milestone map derived by reading every epic document is a cost
-the index exists to prevent, it is paid again by every integration, and it
-is stale the moment an epic moves.
-
-⛔ **A hand-edit to the index is a finding against this skill** (R19). If the
-index cannot say something a planner needs, the *generator* is missing a
-column.
+⛔ **Reading the framework's source to find out what it can do is the defect
+this step exists to stop.** The offer is read from the installation's own
+command table and skill tree, so it is right for the version installed, and a
+planner who went looking in the source would be planning against whatever
+they happened to read.
 
 ### 2. Decide where this corpus **finishes**, and say what it will never use
 
@@ -90,21 +65,16 @@ python3 -c "from studyforge.skills.delivery import Terminal; \
 identical: one for a corpus genuinely complete at the reading floor, one whose
 planner forgot the execution track existed.
 
-⭐ **What separates them is a table naming every framework capability this
-corpus will never use, with the reason** — and the terminal milestone, with
-the **evidence** that decided it. A corpus with no graders is complete at M4,
-not short (§7's three states, C5).
+⭐ **What separates them is a table naming every offered capability this
+corpus will never use, with the reason**, and where the corpus finishes, with
+the **evidence** that decided it. A corpus with no graders is complete at the
+reading floor, not short (§7's three states, C5).
 
-⛔ **`Terminal` refuses a milestone it has no evidence for, and refuses to be
-built against an index whose later capabilities it has not accounted for.**
-The coverage is checked against the index, not against the planner's memory.
-
-⛔ **The table covers only the capabilities the index places on THIS side.**
-⭐ A capability delivered inside a component pinned somewhere else, and one
-the documents place nowhere at all, come back on the checked statement and are
-rendered by side — named and counted, with no `why`. ⚠️ **Writing a `why` for
-one of them is refused**: this corpus may be the very thing that
-delivers it, so *"it never reaches it"* is a sentence with no true form.
+⛔ **`Terminal` refuses a statement with no evidence, and the backlog refuses
+one that leaves an offered capability unaccounted for.** An offered capability
+is either used by a task of the plan or named in the table, never neither and
+never both. The coverage is checked against the offer, not against the
+planner's memory.
 
 ### 3. Cut the backlog — ⛔ each task ends in something demonstrable
 
@@ -124,18 +94,17 @@ framework whose generators do not work yet.
 ⛔ **So `Task` refuses two things:** a task with no demonstrable outcome, and
 a task that owns nothing and states no evidence either.
 
-### 4. Declare the gate — ⛔ a corpus milestone names the framework milestone
+### 4. Name the framework each task uses — ⛔ and file what it lacks
 
-⛔ **A corpus milestone that is silently gated on framework work is a plan
-that will slip for a reason nobody wrote down.** So a milestone **declares**
-the framework milestone that gates it, and a task's *depends on* may name a
-**framework** task id as well as a corpus one.
+⭐ **A task's *depends on* names three kinds of thing**: a task of this plan,
+a capability the offer lists, or a finding this plan files. `Backlog` checks
+every one against the offer, and a task that waits on anything else is a
+refusal, never a note.
 
-⭐ **`Backlog` checks the declaration against the index**: if a task in a
-milestone uses a capability the index places later than the milestone's
-declared gate, that is a refusal with the capability named — never a note.
-⛔ **"Later" is the index's declared order** (step 1), never the order ids
-sort to.
+⛔ **A corpus task that silently waits on framework work is a plan that will
+slip for a reason nobody wrote down.** So the wait is written: the finding is
+filed, the task names it, and the backlog's header counts the tasks waiting on
+a finding against the framework.
 
 ### 5. Write acceptance the framework can evaluate — ⛔ never acceptance by opinion
 
@@ -156,8 +125,8 @@ python3 -c "from studyforge.skills.delivery import concentration; \
 most of the work says so.
 
 ⭐ **And the risk is not all inside the target repository.** A corpus whose
-plan is small and whose framework gate is a milestone away has its risk in
-**somebody else's repository**, and a concentration report that can only see
+plan is small and whose tasks wait on findings against the framework has its
+risk in **somebody else's repository**, and a concentration report that can only see
 its own tasks reports a comfortable plan. ⛔ **`concentration` takes the
 outside carriers as well, and refuses to rank without them** — an empty
 outside is *declared* empty, never defaulted.
@@ -245,8 +214,8 @@ rebuilding the log from memory.
 
 | output | what it is |
 |---|---|
-| the **backlog document** | milestones, the gate each declares, tasks with owns, depends on, definition, acceptance and the demonstrable outcome |
-| the **capability index** | generated, regenerable, the only thing a planner reads about the framework |
+| the **backlog document** | milestones, tasks with owns, depends on, definition, acceptance and the demonstrable outcome, and how many tasks wait on a finding |
+| the **offer** | what the installed framework runs and ships, read from the installation, the only thing a planner reads about the framework |
 | the **terminal statement** | where this corpus finishes, the evidence, and every capability it will never use |
 | the **concentration report** | where the work sits, inside this repository **and** outside it |
 | the **questions** | numbered, routed, blocking-named, re-runnable |

@@ -24,8 +24,8 @@ dependencies = []
 test = ["pytest>=8.0", "pytest-xdist>=3.8"]
 lint = ["ruff>=0.6"]
 
-# ⛔ The installed command, and SF-40 is this table's ONLY minter: nothing else
-# in the tree registers a verb. The verbs are `studyforge.cli.dispatch.VERBS`,
+# ⛔ The installed command, and this table is its ONLY registration: nothing
+# else in the tree registers a verb. The verbs are `studyforge.cli.dispatch.VERBS`,
 # reached from here rather than listed anywhere a second time.
 #
 # ⚠️ One script name, not one per verb. `studyforge-build` and its siblings
@@ -45,35 +45,28 @@ package-dir = { "" = "src" }
 [tool.setuptools.packages.find]
 where = ["src"]
 
-# R13: templates and assets are source files, shipped with the package.
-# Declared here so SF-11/SF-12 add files rather than build configuration.
+# Templates and assets are source files, shipped with the package, so a new
+# template or asset is a file added rather than a build configuration changed.
 #
-# ⛔ `REL-04`: every skill's procedure ships too — the skill documents are the
-# product (R16, R19), and until this glob the wheel carried none (`W438/5`). A
-# glob, never a list, so a new skill ships by existing.
+# ⛔ Every skill's procedure ships too: the skill documents are the product
+# (R16, R19). A glob, never a list, so a new skill ships by existing.
 # `studyforge.skills.documents` is how an installed package reads them, and
 # `tests/studyforge/skills/test_documents.py` builds a wheel and fails on any
 # tree `SKILL.md` missing from it.
-# ⛔ `REL-06`: the delivery skill's generated capability index ships beside its
-# procedure, so the skill's first step reads the installed package and never a
-# plan document; `tests/studyforge/skills/delivery/test_packaged.py` proves it.
 [tool.setuptools.package-data]
 studyforge = [
     "**/templates/*.html",
     "**/assets/*",
     "skills/**/SKILL.md",
-    "skills/delivery/capability-index.md",
 ]
 
 [tool.pytest.ini_options]
 minversion = "8.0"
-# One root: the framework's tests mirror `src/` into `tests/`. ⚠️ A second root,
-# for the tests of the tooling that built the framework, left the main line with
-# that tooling, for the `archive/process` branch.
+# One root: the framework's tests mirror `src/` into `tests/`.
 testpaths = ["tests"]
 # `src` puts the package on the path without an install step, so the suite runs
-# from a clean checkout with no network. `.` makes `tests.support` importable the
-# way CodeSignal's suite imports `tests.support`.
+# from a clean checkout with no network. `.` makes the test tree's own helpers,
+# such as `tests.support`, importable as a package.
 pythonpath = ["src", "."]
 # ⚠️ `importlib` is not decoration. R12's mirror puts a `test_init.py` in every
 # package directory, and under pytest's default `prepend` import mode two files
@@ -87,29 +80,25 @@ consider_namespace_packages = true
 # ---------------------------------------------------------------------------
 # Lint and format — ruff, optional and absent here.
 #
-# ⚠️ Ruff is NOT installed in this environment and no network install is
-# assumed. ⛔ The lint clause of FND-01's acceptance is therefore **blocked on
-# FND-03**, which builds the image ruff is installed into; it is not claimed as
-# passing. Ruff is configured here, declared as the `lint` extra above, and
-# skipped with an explicit message when missing — see `tests/test_repository.py`.
-# On the host the floor degrades to the standard-library size and style check,
-# which always runs.
-# The rules this project actually cares about (R11 size, R12 mirroring, R17
-# contracts) are enforced by the product floor, `python3 -m tests.floor`, which
-# is standard library only and therefore always runs. Ruff covers the ordinary style layer on top,
-# wherever it happens to be available (FND-03's image is the obvious place).
+# ⚠️ Ruff may be absent on a host, and no network install is assumed. It is
+# configured here, declared as the `lint` extra above, installed in the
+# development image (`docker/dev/`), and skipped with an explicit message when
+# missing — see `tests/test_repository.py`.
+# The rules this project cares about most (the size ceiling, the mirrored
+# tests, the module contracts) are enforced by the product floor,
+# `python3 -m tests.floor`, which is standard library only and therefore always
+# runs. Ruff covers the ordinary style layer on top.
 #
 # ⛔ `line-length` here and `tests.floor.config.LINE_LENGTH` must agree, or
 # the always-on checker and the optional one disagree about the same file.
 # `tests/floor/test_config.py` asserts they do.
 #
-# ⛔ `target-version` is DECLARED, never inferred (`W116`, Ruling 210). Absent,
-# ruff infers it from `requires-python` — an input to R10's byte-for-byte claim
-# that nothing names. ⭐ `py314` is `requires-python`'s floor, the image's pinned
-# Python, and what the inference already resolved, so declaring it moves no byte.
-# ⚠️ It is the one declaration: top-level, so the formatter AND the linter read
-# it, and it keeps PEP 758's bare `except A, B:` wherever no name is bound.
-# `py313` was refused in `W196` (a Python this project does not run on).
+# ⛔ `target-version` is DECLARED, never inferred. Absent, ruff infers it from
+# `requires-python`, an input to the byte-for-byte reproducibility claim that
+# nothing names. ⭐ `py314` is `requires-python`'s floor and the image's pinned
+# Python. ⚠️ It is the one declaration: top-level, so the formatter AND the
+# linter read it, and it keeps PEP 758's bare `except A, B:` wherever no name is
+# bound. An older target would describe a Python this project does not run on.
 # `tests/test_repository.py` asserts it exists, follows `requires-python`, and is
 # what ruff resolves in every formatted directory.
 # ---------------------------------------------------------------------------
@@ -125,12 +114,6 @@ select = ["E", "F", "W", "I", "UP", "B", "D"]
 # a summary line on the opening quotes, no blank line before the class body.
 ignore = ["D203", "D213"]
 
-# ⚠️ This block is FND-03's, and it exists because FND-01 chose this ruleset
-# without ever being able to run it — ruff was not installed and no network
-# install could be assumed, so the lint clause was recorded Blocked. The image
-# is where it first ran, and the first run reported 126 findings of which 95
-# were D103 on test functions. That is not 95 defects; it is one wrong rule
-# selection, and this is where it is corrected.
 [tool.ruff.lint.per-file-ignores]
 # ⛔ Docstring rules do not apply to test modules, and this defers to a ruling
 # this repository already made rather than inventing one: the project's own
@@ -157,12 +140,7 @@ convention = "pep257"
 [tool.ruff.format]
 docstring-code-format = true
 
-# ⛔ There is no `exclude` here, and there is not meant to be one. FND-03 added
-# a one-file exclusion because formatting `tests/test_fixture_consistency.py`
-# took it over R11's 600-line test ceiling, and recorded it as an interim with
-# three ways out. FND-04's follow-up took the one the CTO ruled for: the module
-# is split along the five seams its checks already had, into
-# `tests/fixture_checks/`, and every file is formatted and well under the
-# ceiling. ⚠️ The assertion that kept the list to one entry is gone with it —
-# a guard that outlives what it guarded is how a list becomes the place
+# ⛔ There is no `exclude` here, and there is not meant to be one: every file is
+# formatted. A module that formatting would take over the size ceiling is split
+# along its seams instead, because an exclusion list becomes the place
 # difficult files go.

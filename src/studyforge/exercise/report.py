@@ -47,8 +47,8 @@ and this module refuses any other rather than guessing.
 | a record with no `cases` and no `report` | ⭐ **no breakdown and no error** |
 
 ⚠️ **The two quiet answers are quiet for different reasons and both are
-`None`.** A record that declares no breakdown is every exercise shipped before
-`M10`; a declared report that is not on disk is a run that did not get far
+`None`.** A record that declares no breakdown is an exercise with no `cases`;
+a declared report that is not on disk is a run that did not get far
 enough to write one — a compile failure writes no surefire file. ⛔ Neither is
 a defect, and raising for either would make a breakdown a precondition of
 running rather than a report about a run.

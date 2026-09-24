@@ -148,11 +148,12 @@ class Task:
         return not self.owns
 
     def framework_dependencies(self, known: frozenset[str]) -> tuple[str, ...]:
-        """Those of this task's dependencies that name a **framework** task.
+        """Those of this task's dependencies that reach outside the plan.
 
         ⭐ `depends_on` is allowed to reach outside the corpus, and this is
-        what makes the reach visible. `known` is the set of ids the capability
-        index carries — passed in, because this module knows no index.
+        what makes the reach visible. `known` is every id outside the plan a
+        task may name — the installed framework's capabilities and the plan's
+        findings — passed in, because this module knows neither.
         """
         return tuple(name for name in self.depends_on if name in known)
 

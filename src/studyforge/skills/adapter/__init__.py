@@ -33,8 +33,8 @@ not stop a single adapter from working.
 
 ⚠️ **A skill written after the thing it "produces" has been validated against
 exactly one source**, and reads as a description of that source rather than a
-procedure for the next. That is why this skill was written inside M2 step 2.1 rather
-than after it, and why the acceptance is *following the skill on a source it has
+procedure for the next. That is why this skill is written before the adapter
+it produces, and why the acceptance is *following the skill on a source it has
 never seen reaches a `validate`-clean archive* — not *this skill describes the
 adapter we already wrote*.
 

@@ -34,8 +34,8 @@ shape `sourcepath` and `describe` already have — would be the better home for 
 ⭐ **A split at a named seam** (R11): `record` owns the **document** — which
 keys exist, which of them are written, and in what order — and this module owns
 the **vocabulary** those keys are written in. ⚠️ The alternative was a wider
-`record`, which was already the longest module in this package before `M10`
-added a key to it, and the remedy for that is a seam rather than a trim.
+`record`, which is the longest module in this package, and the remedy for
+that is a seam rather than a trim.
 
 ## ⛔ Three kinds of key, and the shape each one belongs to
 
@@ -94,8 +94,8 @@ from studyforge.describe import describe, describe_keys
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.safety import require_path
 
-#: Today's exercise, and the only one that existed before `M10`: a workspace
-#: the reader writes code in.
+#: The exercise with no quiz and no cases: a workspace the reader writes code
+#: in.
 CODE = "code"
 
 #: A checkable practice for material that admits no coding task. ⚠️ The shape

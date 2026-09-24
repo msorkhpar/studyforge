@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 from studyforge.exitcodes import UNUSABLE
-from studyforge.skills.delivery import packaged
+from studyforge.skills.delivery import offer
 from tests.support import repository_root
 
 
@@ -26,10 +26,10 @@ def run(cwd: Path, *argv: str) -> subprocess.CompletedProcess[bytes]:
     )
 
 
-def test_the_module_prints_the_shipped_index_from_an_empty_directory(tmp_path: Path) -> None:
+def test_the_module_prints_the_installed_offer_from_an_empty_directory(tmp_path: Path) -> None:
     done = run(tmp_path)
     assert done.returncode == 0, done.stderr.decode("utf-8", "replace")
-    assert done.stdout == packaged.INDEX.read_bytes()
+    assert done.stdout == offer.Offer.installed().render().encode("utf-8")
     assert not any(tmp_path.iterdir()), "the command wrote into the directory it ran in"
 
 
@@ -37,4 +37,4 @@ def test_the_module_refuses_an_argument(tmp_path: Path) -> None:
     done = run(tmp_path, "docs/tasks")
     assert done.returncode == UNUSABLE
     assert done.stdout == b""
-    assert packaged.USAGE.encode() in done.stderr
+    assert offer.USAGE.encode() in done.stderr

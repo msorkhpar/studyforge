@@ -7,5 +7,5 @@ refused rather than migrated in place. Spec §6: *"the manifest parses and
 **The one defect:** `corpus.json` declares `"corpus_api": 99`. Everything
 else in this corpus is valid.
 
-**Expected of `studyforge validate` (SF-25):** exit 1, naming `corpus.json`
+**Expected of `studyforge validate`:** exit 1, naming `corpus.json`
 and the version it cannot read. Nothing is migrated and nothing is written.

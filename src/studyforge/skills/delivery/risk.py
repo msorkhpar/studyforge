@@ -8,7 +8,7 @@ repository's own tasks.
 
     from studyforge.skills.delivery import Carrier, concentration
 
-    report = concentration(backlog.tasks, outside=(Carrier("AB-28", "the framework", 8),))
+    report = concentration(backlog.tasks, outside=(Carrier("C-01/1", "the framework", 8),))
     print("\n".join(report.lines()))
 
 **Depends on.** `dataclasses` and this package's `task`. ⛔ Nothing else.
@@ -21,11 +21,11 @@ twelve-day task average out to something reassuring.
 
 ## ⛔ And the risk is not all inside the target repository
 
-⚠️ **The current shape of a plan cannot express where an integration's risk
-actually sits.** A corpus whose own plan is six small tasks, all of which wait
-on a framework milestone that has not started, has a *small plan* and a *large
-risk* — and a concentration report that can only see its own tasks reports the
-first and misses the second entirely.
+⚠️ **A plan's own tasks cannot express where an integration's risk actually
+sits.** A corpus whose own plan is six small tasks, all of which wait on a
+finding the framework has not answered, has a *small plan* and a *large risk*
+— and a concentration report that can only see its own tasks reports the first
+and misses the second entirely.
 
 ⭐ **So `outside` is a required argument and never a defaulted one.** An
 integration with nothing outside says so by passing an empty declaration;
@@ -150,7 +150,7 @@ def concentration(
     """Rank a plan's carriers — ⛔ refusing until `outside` has been declared.
 
     `outside` is where this integration's risk sits that is not in the target
-    repository: a framework task that gates it, a shared component that does
+    repository: a finding the framework has to answer, a shared component that does
     not exist yet, a person who is the only one who can answer something.
     ⭐ Pass `()` to declare there is none. ⛔ Omitting it is refused.
     """

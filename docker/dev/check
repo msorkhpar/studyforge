@@ -1,5 +1,5 @@
 #!/bin/sh
-# Run the framework's checks in the framework's build environment (R15).
+# Run the framework's checks in the framework's build environment.
 #
 #     docker/dev/check                            the whole suite
 #     docker/dev/check python3 -m tests.floor     the quality floor alone
@@ -8,14 +8,14 @@
 # ⭐ Every run first prints, on stderr, the image it runs — named by the CONTENT
 # of its build inputs (the block below the attestation variable).
 #
-# ⭐ **Three variables cross into the container** (W36), declared once in
+# ⭐ **Three variables cross into the container**, declared once in
 # `compose.yaml`'s `environment:` block and set the ordinary way:
 #
 #     STUDYFORGE_VISUAL=required docker/dev/check      absence is a FAILURE
 #     STUDYFORGE_VISUAL_BROWSER=/some/browser …        name one explicitly
 #     STUDYFORGE_VISUAL_CAPTURES=/workspace/… …        keep the screenshots
 #
-# ⭐ **A fourth variable is read HERE and does not cross** (`W123`), because it
+# ⭐ **A fourth variable is read HERE and does not cross**, because it
 # shapes the command this wrapper builds rather than anything inside:
 #
 #     STUDYFORGE_CHECK_TIMEOUT=300 docker/dev/check    bound the run at 300s
@@ -26,8 +26,8 @@
 # ⛔ Unset on the host means unset in there, so this wrapper decides nothing —
 # it only stops the caller's answer being dropped at the boundary. ⚠️ The
 # capture directory is a path INSIDE the container: only somewhere under
-# `/workspace` reaches the checkout, and nothing is written there by default
-# (R7 — a capture's directory is somebody's home).
+# `/workspace` reaches the checkout, and nothing is written there by default,
+# because a capture's directory could be somebody's home, which is personal data.
 #
 # ⭐ On the host, the same work is the same command with the wrapper removed:
 #
@@ -36,12 +36,12 @@
 # That is the design, not a coincidence. A build environment invoked
 # differently from the host is one whose divergence you find out about late.
 #
-# ⛔ POSIX sh, and it uses only `docker`, `id` and shell builtins. The whole
-# claim of this task is that a contributor needs Docker and nothing else — a
-# wrapper that reached for Python would have quietly refuted it.
+# ⛔ POSIX sh, and it uses only `docker`, `id` and shell builtins, because a
+# contributor needs Docker and nothing else; a wrapper that reached for Python
+# would quietly break that.
 #
 # ⛔ No path from this machine is written into any file. `ROOT` is derived from
-# where this script sits and the uid/gid are read at run time (R7).
+# where this script sits and the uid/gid are read at run time.
 set -eu
 
 # The repository root: this file is at <root>/docker/dev/check.
@@ -59,65 +59,49 @@ STUDYFORGE_GID=${STUDYFORGE_GID:-$(id -g)}
 export STUDYFORGE_UID STUDYFORGE_GID
 
 # ---------------------------------------------------------------------------
-# ⛔ **ONE ENVIRONMENT, ONE IDENTIFIER: no build provenance** (`W152`, the
-# durable repair Ruling 317 was routed for).
+# ⛔ **ONE ENVIRONMENT, ONE IDENTIFIER: no build provenance.**
 #
-# ⚠️ **The defect, and it is this file's.** `--build` at the bottom re-runs the
-# exporter on every invocation, and BuildKit stamps TWO of the FOUR digests it
-# exports with build-time provenance — so byte-identical contents get a fresh
-# attestation manifest, and a fresh manifest list indexing it, every time.
-# ⛔ MEASURED here, three invocations with `docker/dev/` untouched and every
-# build step `CACHED`, with the line below absent:
+# ⚠️ `--build` at the bottom re-runs the exporter on every invocation, and
+# BuildKit stamps two of the four digests it exports with build-time provenance:
+# the attestation manifest and the manifest list indexing it. Byte-identical
+# contents would then get fresh digests on every run, and
+# `docker image inspect --format '{{.Id}}'` reports the manifest LIST, so two
+# checkouts holding an identical environment would read different ids for it.
+# ⭐ With the line below the attestation is never built, the list is not
+# exported, and the two stable digests (config and manifest) are the only two
+# left.
 #
-#       exporting config                 IDENTICAL 3/3
-#       exporting manifest               IDENTICAL 3/3
-#       exporting attestation manifest   THREE DISTINCT VALUES
-#       exporting manifest list          THREE DISTINCT VALUES
+# ⚠️ **A VARIABLE AND NOT A FLAG, because nothing else works.**
+# `docker compose run --build` accepts no `--provenance`; only
+# `docker compose build` does, and this wrapper would then run two commands.
+# ⛔ `compose.yaml`'s declarative `build: provenance: false` key is INERT with
+# this Compose and buildx: the attestation is still exported and still moves.
+# A `.env` beside `compose.yaml` does not carry it either: that file is
+# interpolated into the YAML, not exported to the client. ⭐ Shipping the inert
+# key anyway would be a decoration that READS like the fix.
 #
-# ⛔ And `docker image inspect --format '{{.Id}}'` reports the manifest LIST —
-# the worst of the four and the first one an office reaches for. So two offices
-# holding an IDENTICAL environment read DIFFERENT shas for it, and a reviewer
-# comparing them reads a difference where there is none. ⭐ With the line, the
-# attestation is never built, the list stops being exported at all, and the two
-# stable digests are the only two left.
-#
-# ⚠️ **A VARIABLE AND NOT A FLAG, and that is FORCED rather than preferred.**
-# `docker compose run --build` accepts no `--provenance`; only `docker compose
-# build` does, and this wrapper cannot use that without running two commands.
-# ⛔ And `compose.yaml`'s declarative `build: provenance: false` key is INERT on
-# this Docker — MEASURED at Compose v5.2.0 / buildx v0.35.0, the attestation was
-# still exported and still moved, through `run --build`, through plain `build`,
-# and through `COMPOSE_BAKE=true`. A `.env` beside `compose.yaml` does not carry
-# it either: that file is interpolated into the YAML, not exported to the
-# client. ⭐ Shipping the inert key anyway would be a decoration that READS like
-# the fix, which is worse than no fix at all.
-#
-# ⛔ **Set unconditionally, with no `${VAR:-…}` escape** — the only variable in
-# this file that has none, deliberately. The others carry a CALLER's answer
-# across a boundary; this one is the wrapper's own guarantee that a reading
-# taken here is comparable to a reading taken in another checkout, and a caller
-# who unset it would silently restore the defect while everything still looked
-# green.
+# ⛔ **Set unconditionally, with no `${VAR:-…}` escape.** The other variables
+# carry a CALLER's answer across a boundary; this one is the wrapper's own
+# guarantee that a reading taken here is comparable to a reading taken in
+# another checkout, and a caller who unset it would silently lose that.
 #
 # ⭐ **It is read by the docker CLIENT and does not cross.** What crosses is
 # `compose.yaml`'s `environment:` block, which stays at three entries.
 #
 # ⭐ **And it changes NOTHING THE IMAGE CONTAINS.** An attestation is metadata
 # ABOUT the build: the base digest, both toolchain pins and every `==` in
-# `requirements.txt` are untouched, so every reading in this repository is still
-# taken against the environment it names. ⛔ **THE PINS STILL PIN** (Ruling 317,
-# not repealed by this line): a stable sha becomes QUOTABLE, never
-# AUTHORITATIVE. `tests/docker/test_dev_provenance.py` asserts all of this.
+# `requirements.txt` are untouched. ⛔ **The pins still pin**: a stable id is
+# QUOTABLE, never AUTHORITATIVE. `tests/docker/test_dev_provenance.py` asserts
+# all of this.
 BUILDX_NO_DEFAULT_ATTESTATIONS=1
 export BUILDX_NO_DEFAULT_ATTESTATIONS
 
 # ---------------------------------------------------------------------------
-# ⛔ **THE IMAGE IS NAMED BY ITS INPUTS, NEVER BY ONE SHARED TAG** (`W225`).
+# ⛔ **THE IMAGE IS NAMED BY ITS INPUTS, NEVER BY ONE SHARED TAG.**
 #
-# ⚠️ **The defect.** `compose.yaml` once named `studyforge/dev:local` for every
-# checkout, and `--build` rewrote that tag from whichever checkout ran last — so
-# two checkouts running this at once could start a container from each other's
-# image (`W211/2`), and a reading of the wrong image is a green gate about a
+# ⚠️ One shared tag would be rewritten by `--build` from whichever checkout ran
+# last, so two checkouts running this at once could start a container from each
+# other's image, and a reading of the wrong image is a green gate about a
 # different environment.
 #
 # ⭐ **The tag is `studyforge/dev:inputs-<IDENTITY>`**, IDENTITY a sha256 over the
@@ -126,7 +110,7 @@ export BUILDX_NO_DEFAULT_ATTESTATIONS
 # Inputs differing by one byte name different tags, so no build can overwrite the
 # tag another checkout runs; identical inputs name one tag, and either image is
 # the environment both declared. ⛔ No path enters it: the listing hashed carries
-# RELATIVE names only (R7).
+# RELATIVE names only.
 #
 # ⚠️ **Hashed inside the Dockerfile's own pinned base**, read off its `FROM` line,
 # because this file uses only `docker`, `id` and shell builtins — a host
@@ -162,8 +146,8 @@ echo "docker/dev/check: image studyforge/dev:inputs-$STUDYFORGE_DEV_IDENTITY" >&
 # ⚠️ A linked git worktree keeps its real git directory OUTSIDE the checkout —
 # `.git` is a file naming it, not a directory. Mounting only the checkout
 # would leave git unable to answer anything inside the container, and
-# `tests/test_repository.py` asks it whether the ignore rules still keep
-# FND-04's golden fixtures trackable. A plain clone needs none of this and
+# `tests/test_repository.py` asks it whether the ignore rules still keep the
+# golden fixtures trackable. A plain clone needs none of this and
 # gets none of it; if git is not installed on the host, nothing is added and
 # the affected tests skip rather than lie.
 GIT_MOUNT=""
@@ -175,56 +159,42 @@ if [ -f "$ROOT/.git" ] && command -v git >/dev/null 2>&1; then
 fi
 
 # ---------------------------------------------------------------------------
-# ⛔ **THE OUTER BOUND: a hang becomes a non-zero exit** (`W123`, Ruling 235(d)).
+# ⛔ **THE OUTER BOUND: a hang becomes a non-zero exit.**
 #
-# ⚠️ **The defect it bounds, and it is not this file's.** `tests/visual/`'s
-# harness sets `deadline = time.monotonic() + CALL_TIMEOUT` and loops
-# `while time.monotonic() < deadline`, but the loop body blocks in `os.read` on
-# a live pipe with no deadline. ⛔ So its own `"no answer in 30s"` is
-# **unreachable** for a browser that is up and silent; it fires only if the pipe
-# closes. A full-page capture at Docker's 64 MB `/dev/shm` default once wedged
-# the suite exactly that way — 5 of 7 capture checks passed and the 6th never
-# returned. ⚠️ **A hang is worse than a failure: it has no verdict at all.**
+# ⚠️ A command can wedge rather than fail: a browser that is up and silent
+# leaves a harness blocked on a read of a live pipe, and a read with no deadline
+# never returns. ⚠️ **A hang is worse than a failure: it has no verdict at all.**
 #
-# ⛔ **This is the OUTER bound and NOT the deadlined read.** Deadlining the read
-# means `select`-ing on the fd, which is a different I/O path, so it would change
-# what every reading in `tests/visual/` is taken against; that stays with the
-# harness's own row. ⭐ A bound out here changes nothing any reading is taken
-# against, which is the whole of why the two are separable.
+# ⛔ **This is the OUTER bound and NOT a deadlined read.** Deadlining a read
+# changes the I/O path every reading in `tests/visual/` is taken against; a
+# bound out here changes nothing any reading is taken against, which is why the
+# two are separable.
 #
-# ⛔ **IT MUST NOT SWALLOW A REAL RED, and the exit codes are MEASURED rather
-# than assumed** (`W123`, in the pinned image):
+# ⛔ **IT MUST NOT SWALLOW A REAL RED**, so nothing here touches the status:
 #
 #       a command that overruns        -> 124   (`timeout` terminated it)
 #       one that ignores SIGTERM       -> 137   (it had to be killed, 128+9)
-#       one that fails on its own      -> its OWN code, unchanged (7 -> 7)
+#       one that fails on its own      -> its OWN code, unchanged
 #       one that succeeds              -> 0
 #
 # ⚠️ **Both overrun codes are outside pytest's range (0-5), so a wedged run is
 # never confusable with a failing assertion.** ⛔ A wrapper that collapsed them
-# into `1` would make a hang indistinguishable from a red, which is strictly
-# worse than the hang it replaces — so nothing here touches the status.
+# into `1` would make a hang indistinguishable from a red.
 #
-# ⭐ **The bound runs INSIDE the container, and that is three measurements
-# rather than a preference:**
+# ⭐ **The bound runs INSIDE the container, for three reasons:**
 #
-#   1. ⛔ **The host's `timeout` is not the same program.** It is `uutils
-#      coreutils 0.8.0` on the machine this was written on and GNU coreutils 9.7
-#      in the image — and on macOS there is no `timeout` at all. A bound whose
-#      implementation depends on the host is an unpinned bound, which is the
-#      defect Ruling 238 names one level up.
-#   2. ⛔ **This file claims, above, that it uses only `docker`, `id` and shell
-#      builtins** — "a contributor needs Docker and nothing else". A host-side
-#      `timeout` would falsify that claim in the same file that makes it.
+#   1. ⛔ **The host's `timeout` is not one program.** It differs between
+#      coreutils implementations, and on macOS there is none, so a bound whose
+#      implementation depends on the host is an unpinned bound.
+#   2. ⛔ **This file uses only `docker`, `id` and shell builtins**, so a
+#      contributor needs Docker and nothing else. A host-side `timeout` would
+#      break that.
 #   3. ⭐ **It bounds the COMMAND and not the image BUILD.** `--build` below can
 #      legitimately take minutes on a cold cache and a slow link; the thing that
-#      hangs is a read inside the suite. Bounding the right one keeps the figure
-#      small enough to be meaningful.
+#      hangs is a read inside the suite.
 #
-# ⚠️ **THE FIGURE IS DELIBERATELY LOOSE AND SAYS SO** (Ruling 236's clause).
-# MEASURED at `af31fd7` in the pinned image: the whole suite runs in **57.66 s**
-# and `tests/visual/` alone in **8.44 s**. ⛔ The default below is **1800 s**, a
-# margin of about **31x**, and it is that loose on purpose: with
+# ⚠️ **THE FIGURE IS DELIBERATELY LOOSE AND SAYS SO.** The default below is far
+# above a healthy run of the whole suite, because with
 # `STUDYFORGE_DOCKER_TESTS=1` the command itself builds images and runs the
 # suite inside them, and a contributor's hardware is not this hardware. ⭐ A
 # bound that fires on a healthy run is a bound somebody deletes.

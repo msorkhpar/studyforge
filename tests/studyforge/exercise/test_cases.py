@@ -7,7 +7,7 @@ record is refused, naming the key; an unknown case kind is refused; an unknown
 exercise kind is refused.
 
 ⚠️ **No fixture is added and none is modified.** The corpus and
-`tests/fixtures/runnable/` carry the three shapes `M7` shipped, and this
+`tests/fixtures/runnable/` carry the three shapes with no `cases`, and this
 contract's job is to keep them valid — so the documents below live here, where
 a shape being *refused* cannot be mistaken for material.
 """
@@ -65,7 +65,7 @@ GRADER = {
     "trust": "advisory",
 }
 
-#: ⭐ The shape `M10` authors: an ask, one named edge of it, the report the two
+#: ⭐ The shape an authored exercise takes: an ask, one named edge of it, the report the two
 #: ids are read out of, and the passage the exercise was built from.
 CASES = [
     {"id": "com.example.ParserTest#parsesTheMti", "kind": MAIN, "says": "It reads the MTI."},
@@ -263,8 +263,8 @@ def test_a_breakdown_written_in_part_is_refused_naming_what_is_missing(missing):
 
 
 def test_a_graded_record_need_not_carry_a_breakdown_at_all():
-    # ⚠️ The negative control: `M10` adds a shape, it does not require one.
-    # Every graded record `M7` shipped has no `cases` and stays valid.
+    # ⚠️ The negative control: `cases` is a shape a record may add, never one it
+    # must. A graded record with no `cases` stays valid.
     assert from_document({**UNGRADED, **GRADER}, WHERE).breaks_down is False
     assert from_document(AUTHORED, WHERE).breaks_down is True
 

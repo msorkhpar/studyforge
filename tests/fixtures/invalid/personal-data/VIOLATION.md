@@ -18,7 +18,7 @@ this file came from any real machine, account or person. `contact@example.com`
 is deliberately **not** used: it is the scrubber's own replacement value, and
 a gate that skips its own placeholder would not refuse this fixture at all.
 
-**Expected of `studyforge validate` (SF-25) and of `assert_clean` (SF-08):**
+**Expected of `studyforge validate` and of `assert_clean`:**
 exit 1, naming the file and the *shape* that matched — never echoing the
 matched text, because a refusal that quotes the leak has only relocated it
 into a log.

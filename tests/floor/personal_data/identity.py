@@ -260,9 +260,9 @@ def check_identifiers(root: Path, values: dict[str, str] | None = None) -> list[
                             line=number,
                             rule=RULE_IDENTIFIER,
                             message=(
-                                f"carries this machine's {label} (R7). Session context is "
-                                f"read-only background, never material to write down — use "
-                                f"a placeholder."
+                                f"carries this machine's {label}, which is personal data. "
+                                f"Session context is read-only background, never material "
+                                f"to write down — use a placeholder."
                             ),
                         )
                     )
@@ -273,7 +273,7 @@ def check_identifiers(root: Path, values: dict[str, str] | None = None) -> list[
 def _census(armed: list[str], unarmed: list[str], known: list[str]) -> str:
     """Build the line carrying which arms armed, which did not, and the denominator."""
     head = (
-        f"personal data (R7): the identifier arm derived {len(armed)} of "
+        f"personal data: the identifier arm derived {len(armed)} of "
         f"{len(known)} identifier(s) on this machine — "
     )
     head += f"ARMED: {', '.join(armed)}." if armed else "ARMED: NONE, so NOTHING was compared."
@@ -289,7 +289,7 @@ def _census(armed: list[str], unarmed: list[str], known: list[str]) -> str:
 def _standing_clause() -> str:
     """Build the line saying what an unarmed arm means, and why it is not a failure."""
     return (
-        f"  ⛔ Labels only, never values (R7) — printing one would be the leak this check "
+        f"  ⛔ Labels only, never values — printing one would be the leak this check "
         f"exists to prevent. ⭐ An UNARMED arm is CORRECT in the pinned image, which has "
         f"no passwd entry and configures no git identity, so this is a NOTICE and never a "
         f"failure. ⚠️ The git arm reads {' and '.join(IDENTITY_SCOPES)} ONLY, so an "

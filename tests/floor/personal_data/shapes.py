@@ -229,9 +229,9 @@ def check_shapes(root: Path) -> list[Finding]:
                     line=number,
                     rule=RULE_SHAPE,
                     message=(
-                        f"carries {article(name)} {name} (R7). Replace it with a "
-                        f"documented placeholder, or read the value from the "
-                        f"environment at run time."
+                        f"carries {article(name)} {name}, which is personal data. "
+                        f"Replace it with a documented placeholder, or read the value "
+                        f"from the environment at run time."
                     ),
                 )
             )

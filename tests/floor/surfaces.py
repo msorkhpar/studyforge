@@ -211,7 +211,7 @@ def _undeclared(reach: Reach) -> Finding:
         rule=RULE_UNDECLARED,
         message=(
             f"{reach.name!r} is taken from {reach.owner} and is not on that package's "
-            f"__all__. One exported home (R21): export it from {reach.owner}, or the "
+            f"__all__. A name has one exported home: export it from {reach.owner}, or the "
             f"two packages do not share it."
         ),
     )
@@ -225,7 +225,7 @@ def _reached_past(reach: Reach) -> Finding:
         rule=RULE_REACHED_PAST,
         message=(
             f"{reach.name!r} is taken from the module {reach.module} and is on no surface "
-            f"of {reach.owner}. One exported home (R21): export it, or the two packages "
+            f"of {reach.owner}. A name has one exported home: export it, or the two packages "
             f"do not share it. ⛔ Declaring it in deviations.DECLARED to quiet this is declaring a "
             f"defect, not fixing one."
         ),

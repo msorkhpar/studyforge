@@ -176,7 +176,7 @@ filename would have to know which corpus it was reading (R1).
 `label` changes only what a unit is **called**. Nothing may parse one back
 into an ordinal — R4's argument about paths, applied to numbering.
 
-⭐ **Taken now rather than at M6**, deliberately. §4's YAGNI refuses
+⭐ **In the contract from the start**, deliberately. §4's YAGNI refuses
 flexibility *nobody has asked for*; a measured corpus needs this, and placement
 built the consumer, and pinned it against §5's worked example. And R9 makes
 the alternative expensive in a way that is not symmetric: adding a field later

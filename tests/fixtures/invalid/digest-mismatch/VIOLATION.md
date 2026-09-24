@@ -10,5 +10,5 @@ change reported (R6).
 ordinals and version are all valid, and every other file in the corpus is
 valid.
 
-**Expected of `studyforge validate` (SF-25):** exit 1, naming the document
+**Expected of `studyforge validate`:** exit 1, naming the document
 and that its digest does not cover its blocks.

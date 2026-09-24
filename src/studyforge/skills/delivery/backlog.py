@@ -1,36 +1,34 @@
-r"""The backlog document: milestones that declare their gate, and a critical path.
+r"""The backlog document: milestones, the framework they use, and a critical path.
 
-**What it does.** Gathers tasks into milestones, **checks the plan against the
-capability index** rather than against the planner's memory, and renders the
-durable artifact an integration works from.
+**What it does.** Gathers tasks into milestones, **checks the plan against what
+the installed framework offers** rather than against the planner's memory, and
+renders the durable artifact an integration works from.
 
 **How you use it.**
 
-    from studyforge.skills.delivery import Backlog, Milestone
+    from studyforge.skills.delivery import Backlog, Milestone, Offer
 
     plan = Backlog(
         corpus="a repository of teaching material",
-        milestones=(Milestone("C1", "one unit reads", gated_by="M4", tasks=(...,)),),
+        milestones=(Milestone("C1", "one unit reads", tasks=(...,)),),
         terminal=terminal,
-    ).checked(index)
+    ).checked(Offer.installed())
     print("\n".join(plan.lines()))
 
-**Depends on.** `dataclasses` and this package's `capability`, `task`,
-`terminal`, `question`, `finding` and `refusal`. ⛔ Not the filesystem, and not
-any source.
+**Depends on.** `dataclasses` and this package's `offer`, `task`, `terminal`,
+`question`, `finding` and `refusal`. ⛔ Not the filesystem, and not any source.
 
-## ⛔ A corpus milestone DECLARES the framework milestone that gates it
+## ⛔ A task names the framework capability it uses, and the offer checks it
 
-⚠️ **Today a corpus milestone is silently gated on framework work and nothing
-in the plan says so.** A plan that slips because a framework milestone slipped
-is a plan that slipped for a reason nobody wrote down, and the integration
-finds out by trying.
+⭐ A task's `depends_on` may name a task of this plan, a capability the
+installed framework offers, or a finding this plan files. ⛔ Anything else is
+refused: a task that waits on a capability nobody offers is a plan that will
+slip for a reason nobody wrote down.
 
-⭐ **So `gated_by` is a field, a task's `depends_on` may name a framework task
-id, and the check is against the index**: a milestone whose tasks reach a
-capability the index places *later* than the declared gate is refused, with
-the capability named. ⛔ Never a warning — a warning about a plan is a warning
-nobody reads until the plan has already been agreed.
+⭐ **A capability the framework lacks is filed as a finding, and the task waits
+on the finding.** The plan then says, in its header, how many of its tasks are
+waiting on the framework, which is the progress a reader needs before
+agreeing to it.
 
 ## ⭐ The critical path is derived, never asserted
 
@@ -41,24 +39,23 @@ computed — and the same walk is what refuses a cycle.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, field
 
-from studyforge.skills.delivery.capability import Index
 from studyforge.skills.delivery.finding import Finding
+from studyforge.skills.delivery.offer import Offer
 from studyforge.skills.delivery.question import Question, numbered
 from studyforge.skills.delivery.refusal import one_or_all
 from studyforge.skills.delivery.task import PlanRefused, Task
-from studyforge.skills.delivery.terminal import Terminal
+from studyforge.skills.delivery.terminal import Terminal, TerminalRefused
 
 
 @dataclass(frozen=True, slots=True)
 class Milestone:
-    """A group of tasks that lands together, and what it waits on."""
+    """A group of tasks that lands together."""
 
     id: str
     name: str
     tasks: tuple[Task, ...]
-    gated_by: str | None = None
 
     def __post_init__(self) -> None:
         """Refuse a milestone that lands nothing, or names a task twice."""
@@ -78,12 +75,10 @@ class Milestone:
 
     def lines(self) -> list[str]:
         """Render the milestone's header. Its tasks render themselves."""
-        gate = f"`{self.gated_by}`" if self.gated_by else "⭐ nothing — this corpus alone"
         return [
             f"## {self.id} — {self.name.strip()}",
             "",
-            f"**Gated by (framework)** {gate} · **Tasks** {len(self.tasks)} · "
-            f"**Effort** {self.effort}",
+            f"**Tasks** {len(self.tasks)} · **Effort** {self.effort}",
         ]
 
 
@@ -133,70 +128,65 @@ class Backlog:
                 return milestone.id
         raise PlanRefused("no such task in this plan")
 
-    def checked(self, index: Index) -> Backlog:
-        """Refuse a plan the index contradicts, ⛔ naming EVERYTHING that contradicts it.
+    @property
+    def filed(self) -> frozenset[str]:
+        """The ids of the findings this plan files, which a task may wait on."""
+        return frozenset(item.id for item in self.findings)
 
-        ⛔ **Every reason is named** (R6). The two checks below give back their reasons
-        rather than raising, because the loop that drives them is here: a check
-        that raised would refuse on the first offending task of the first
-        offending milestone, and the reader would learn how many more there are
-        only by fixing that one and running the whole plan again.
+    @property
+    def waiting(self) -> tuple[Task, ...]:
+        """⭐ The tasks that wait on a finding: the plan's work the framework holds up."""
+        return tuple(task for task in self.tasks if set(task.depends_on) & self.filed)
 
-        ⭐ Returns a plan carrying the CHECKED terminal statement, which is
-        where the capabilities that are not this framework's to deliver come
-        back from the index. ⛔ Dropping the return would render a
-        statement that had been checked and then thrown away.
+    def used(self, offer: Offer) -> frozenset[str]:
+        """Every offered capability a task of this plan names."""
+        return frozenset(name for task in self.tasks for name in task.depends_on) & offer.ids
+
+    def checked(self, offer: Offer) -> Backlog:
+        """Refuse a plan the offer contradicts, ⛔ naming EVERYTHING that contradicts it.
+
+        ⛔ **Every reason is named.** The check below gives back its reasons
+        rather than raising, because the loop that drives it is here: a check
+        that raised would refuse on the first offending task, and the reader
+        would learn how many more there are only by fixing that one and
+        running the whole plan again.
+
+        ⭐ The terminal statement is checked against the same offer and against
+        what this plan's tasks use, so the never-used table and the tasks can
+        never disagree.
         """
-        terminal = self.terminal.checked(index)
-        known = frozenset(capability.id for capability in index.capabilities)
-        order = {milestone.id: position for position, milestone in enumerate(self.milestones)}
         refusals: list[str] = []
+        try:
+            self.terminal.checked(offer, used=self.used(offer))
+        except TerminalRefused as refused:
+            refusals.append(str(refused))
+        order = {milestone.id: position for position, milestone in enumerate(self.milestones)}
+        outside = offer.ids | self.filed
         for milestone in self.milestones:
             for task in milestone.tasks:
-                refusals += self._check_framework(index, milestone, task, known)
-                refusals += self._check_corpus(order, milestone, task, known)
+                refusals += self._check_dependencies(order, milestone, task, outside)
         if refusals:
             raise PlanRefused(one_or_all(refusals))
         self.critical_path()
-        return replace(self, terminal=terminal)
+        return self
 
-    def _check_framework(
-        self, index: Index, milestone: Milestone, task: Task, known: frozenset[str]
+    def _check_dependencies(
+        self, order: dict[str, int], milestone: Milestone, task: Task, outside: frozenset[str]
     ) -> list[str]:
-        """⛔ Every capability this milestone reaches later than its declared gate."""
-        reaches = task.framework_dependencies(known)
-        if not reaches:
-            return []
-        if milestone.gated_by is None:
-            return [
-                f"a milestone declares no framework gate and one of its tasks waits on "
-                f"{', '.join(reaches)}. ⛔ A corpus milestone silently gated on "
-                "framework work is a plan that slips for an unwritten reason"
-            ]
-        found: list[str] = []
-        for name in reaches:
-            lands = index.milestone_of(name)
-            # ⛔ In the index's declared sequence, never by id: `M5` lands after
-            # `M8` in a plan whose order is not the order its ids sort to.
-            if index.later(lands, than=milestone.gated_by):
-                found.append(
-                    f"a milestone is gated by {milestone.gated_by}, but one of its "
-                    f"tasks waits on {name}, which lands at {lands}"
-                )
-        return found
+        """⛔ Every dependency nobody offers, and every one this plan carries later.
 
-    def _check_corpus(
-        self, order: dict[str, int], milestone: Milestone, task: Task, known: frozenset[str]
-    ) -> list[str]:
-        """⛔ Every dependency this plan does not carry, or carries later."""
+        ⚠️ No dependency is quoted: `depends_on` is caller text.
+        """
         found: list[str] = []
-        for name in task.corpus_dependencies(known):
+        for name in task.corpus_dependencies(outside):
             try:
                 where = self._milestone_of(name)
             except PlanRefused:
                 found.append(
-                    "a task waits on something that is neither in this plan nor a "
-                    "capability the index carries"
+                    "a task waits on something that is neither a task of this plan, nor a "
+                    "capability the installed framework offers, nor a finding this plan "
+                    "files. ⛔ A capability the framework lacks is filed as a finding, and "
+                    "the task waits on the finding"
                 )
                 continue
             if order[where] > order[milestone.id]:
@@ -267,7 +257,8 @@ class Backlog:
             f"# Delivery plan — {self.corpus.strip()}",
             "",
             f"**{len(self.tasks)} tasks · {len(self.milestones)} milestones · "
-            f"{self.effort} units of effort · {len(self.open_questions)} open questions.**",
+            f"{self.effort} units of effort · {len(self.open_questions)} open questions · "
+            f"{len(self.waiting)} tasks waiting on a finding against the framework.**",
             "",
             "⛔ **Every task below ends in something a person can be shown, and every "
             "acceptance clause names the instrument that decides it.**",

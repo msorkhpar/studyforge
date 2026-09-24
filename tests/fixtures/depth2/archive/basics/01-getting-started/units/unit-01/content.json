@@ -13,7 +13,7 @@
       "blocks": [
         {
           "type": "para",
-          "text": "Read the module README first. This section is the author's, not the archive's, and the builder uses this array verbatim (SF-10b)."
+          "text": "Read the module README first. This section is the author's, not the archive's, and the builder uses this array verbatim."
         }
       ]
     },

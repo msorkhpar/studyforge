@@ -13,5 +13,5 @@ reads *instead of* walking the blocks — a table of contents, a progress
 estimate, a narration length. A wrong count is not caught by the digest,
 renders no error, and is discovered as a reader's confusion.
 
-**Expected of `studyforge validate` (SF-25):** exit 1, naming the document and
+**Expected of `studyforge validate`:** exit 1, naming the document and
 that its counts disagree with its blocks.

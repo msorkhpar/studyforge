@@ -185,7 +185,7 @@ def test_a_rate_turns_the_footprint_into_a_verdict():
 # ⛔ The footprint is measured on disk, and no closed task is named as future
 # --------------------------------------------------------------------------
 
-#: A task or milestone id, which the plan must never print (`AB-32`, `M3`).
+#: The shape of a task or milestone id, which the plan must never print.
 TASK_ID = re.compile(r"\b(?:[A-Z]{1,4}-\d+|M\d+)\b")
 
 

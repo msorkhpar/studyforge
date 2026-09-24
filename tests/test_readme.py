@@ -10,9 +10,9 @@ trusted to whoever edits it next:
   the reader to, each link resolved from the page that holds it;
 - **no link reaches what leaves the main line**: the task records under
   `docs/tasks/`, the process conventions under `docs/conventions/`, the tooling
-  under `tools/`, the generated capability index file and `ONBOARDING.md`. The
-  installed library prints the capability index itself, so a reader never needs
-  the file;
+  under `tools/`, the old capability index file and `ONBOARDING.md`. The
+  installed library prints what it offers itself, so a reader never needs a
+  file;
 - **every fenced `studyforge` command is a verb the command offers**, read from
   what `python3 -m studyforge.cli --help` prints, and every flag on it is one
   that verb's own `--help` prints; every fenced `python3 -m studyforge…` form

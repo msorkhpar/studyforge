@@ -11,7 +11,7 @@
   "variant": "java",
   "ingested": "2026-01-05",
   "origin": "advanced/02-going-further/README.md",
-  "note": "Carries per-unit 'url_slug', SF-05's second carried field.",
+  "note": "Carries per-unit 'url_slug', the second carried field.",
   "units": [
     {
       "n": 1,

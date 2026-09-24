@@ -57,7 +57,6 @@ FIELDS: dict[str, Callable[[Task, Milestone], str]] = {
     "id": lambda task, milestone: task.id,
     "title": lambda task, milestone: task.title.strip(),
     "milestone": lambda task, milestone: milestone.id,
-    "gate": lambda task, milestone: milestone.gated_by or "",
     "owns": lambda task, milestone: ", ".join(task.owns),
     "depends_on": lambda task, milestone: ", ".join(task.depends_on),
     "effort": lambda task, milestone: str(task.effort),
@@ -121,7 +120,6 @@ JIRA = Profile(
         ("Description", "demonstrable"),
         ("Acceptance Criteria", "acceptance"),
         ("Blocked By", "depends_on"),
-        ("Labels", "gate"),
     ),
 )
 
@@ -140,7 +138,6 @@ GITHUB = Profile(
         ("blocked-by", "depends_on"),
         ("size", "effort"),
         ("acceptance", "acceptance"),
-        ("gate", "gate"),
     ),
 )
 
