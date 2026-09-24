@@ -2,7 +2,8 @@
 
 ⭐ The reader-facing half: ONE command brings up the editor and the runner,
 reading the tag the skill recorded; both builds are printed with the prime; and
-ruling 4's list names the practice workspaces beside the sources.
+the list of what must exist before the start (§8.1) names the practice
+workspaces beside the sources.
 """
 
 from __future__ import annotations
@@ -58,10 +59,10 @@ def test_a_corpus_with_no_prime_builds_its_runner_without_one(tmp_path):
     assert "--prime" not in text and "no prime" in text
 
 
-def test_ruling_4_names_the_practice_workspaces_beside_the_sources(tmp_path):
+def test_what_must_exist_first_names_the_practice_workspaces_beside_the_sources(tmp_path):
     text = document(tmp_path)
     assert "- the practice workspaces the editor binds too: `practice`" in text
-    first = text.split("ruling 4", 1)[1]
+    first = text.split("exist on the host before the start", 1)[1]
     assert "- `sources`\n- `practice`" in first
 
 

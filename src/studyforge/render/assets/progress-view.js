@@ -1,6 +1,6 @@
 /* Where the reader is: the Up next slip, the progress line and strip, the tick
    of the unit up next, the filter and the two expand controls, and the rail's
-   fold on a narrow screen (`W362`, the plan's §6).
+   fold on a narrow screen.
 
    ⛔ **Every word a reader sees is markup.** The index and container renderers
    write each sentence with its numbers at zero and its alternatives hidden;
@@ -9,7 +9,7 @@
 
    ⛔ **Joined by the unit key and nothing else**, as `read-mark.js` is: a row
    on the index or a container page carries its key as its `id`, a rail row
-   carries it as `data-unit` (`W368`), and the store holds keys. Nothing here
+   carries it as `data-unit`, and the store holds keys. Nothing here
    derives a key from an href or a position.
 
    ⭐ **Progressive enhancement.** With no script the slip names the first unit
@@ -29,7 +29,7 @@
   var LISTS = 'nav[aria-label="Contents"] li[id], nav[aria-label="Units"] li[id]';
   var RAIL_UNITS = 'nav[aria-label="Containers"] li[data-unit]';
   var MARKED = 'data-marked';
-  /* The hidden words a read row speaks (`W383`): markup, shown or hidden here
+  /* The hidden words a read row speaks: markup, shown or hidden here
      from the store's answer, so a screen reader hears what the tick shows. */
   var SAID = 'span[data-kind="read-state"]';
 
@@ -57,7 +57,7 @@
      the button: moving it would take the reader somewhere they did not ask to
      go. ⚠️ Here and not in `read-mark.js`, which must never reach for scrolling
      (a mark is an explicit act and nothing about scrolling may infer one). */
-  /* --- the rail shows what the reader marked (`W368`) --------------------- */
+  /* --- the rail shows what the reader marked ------------------------------ */
 
   /* ⭐ On every page that carries a rail, a row whose key the store holds is
      marked, and one it does not hold is cleared — so an unmark shows too.
@@ -205,7 +205,7 @@
   }
 
   /* ⚠️ A row's text without its read words: filtering for "read" must not
-     match every row the reader finished (`W383`). */
+     match every row the reader finished. */
   function searchable(row) {
     var copy = row.cloneNode(true);
     [].slice.call(copy.querySelectorAll(SAID)).forEach(function (words) {

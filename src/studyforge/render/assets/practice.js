@@ -21,23 +21,23 @@
    simply never match anything with nothing failing anywhere.
 
    ⛔ **Nothing is written to browser storage.** A run's outcome is the SERVER's
-   record (`SF-21`), written where it was established; a page that also
+   record (spec §8.5), written where it was established; a page that also
    remembered would be a second answer to *did this pass?*. ⭐ So nothing here
    has to be namespaced against the one storage origin every `file://` page
    shares.
 
-   ## ⭐ THE TWO EDITOR WINDOWS ARE `practice-editor.js`'s (`AX-09`)
+   ## ⭐ THE TWO EDITOR WINDOWS ARE `practice-editor.js`'s
 
    ⚠️ **This file stood at `399` of R11's `400`** and the breakdown below had to
    go somewhere. ⛔ **Neither a size exception nor a trim of four other rows'
-   prose was an honest answer** (`W422`'s second clause), so the split was taken
-   at the seam `W431` named: the frames, their tablist and the one reload a cold
+   prose was an honest answer**, so the split was taken
+   at the seam by subject: the frames, their tablist and the one reload a cold
    instance needs are *the editor*, and this file is *the controls, the run and
    what the run reported*. ⭐ The two share nothing but the markup.
 
-   ## ⛔ THE BREAKDOWN IS READ OFF THIS RUN'S OWN STREAM, NOT FETCHED (`AX-02`)
+   ## ⛔ THE BREAKDOWN IS READ OFF THIS RUN'S OWN STREAM, NOT FETCHED
 
-   ⛔ **A built page may name no API and no origin** (R8, `W370`), so there is no
+   ⛔ **A built page may name no API and no origin** (R8), so there is no
    asking the state namespace where the recorded breakdown lives. ⭐ **The run's
    response body is the one thing the server already hands this page**, and the
    verdicts are said on it — one framed `--- case <id>: passed|failed ---` per
@@ -88,7 +88,7 @@
   var FAILED = 'failed';
 
   /* Every word the breakdown says, kept where the markup is. ⭐ The same reason
-     the maximise control's second word lives in its template (`W431`): a label
+     the maximise control's second word lives in its template: a label
      spelled in the script too would be a second place for it to drift. */
   var SAYS = {
     done: 'data-practice-ask-done',
@@ -142,14 +142,14 @@
     return 'That could not be started.';
   }
 
-  /* ⭐ **MAXIMISE: the PANEL'S OWN GEOMETRY, never a reparent** (`W431`) — the
+  /* ⭐ **MAXIMISE: the PANEL'S OWN GEOMETRY, never a reparent** — the
      panel already holds all of it, so the move is one attribute on the section.
 
      ⛔ **A frame is never moved to another parent.** An `iframe` REPARENTED IN
      THE DOM RELOADS, so nothing below appends, removes or replaces a node.
 
-     ⛔ **THE SCROLL POSITION IS REMEMBERED AND PUT BACK INSTANTLY** (`W431/1`,
-     measured and argued where the rule is, in `practice.css`).
+     ⛔ **THE SCROLL POSITION IS REMEMBERED AND PUT BACK INSTANTLY** (measured
+     and argued where the rule is, in `practice.css`).
 
      ⛔ **No keyboard exit would make this a trap.** A real button, focus into
      the expanded practice and back on restore, Escape on the DOCUMENT (focus
@@ -275,8 +275,8 @@
        Stop, a disabled element drops focus to the document AT ONCE, and the
        run then settles a moment later with focus already on `<body>` — so the
        question *did the panel have focus?* answers no and the keyboard reader
-       is left at the top of the page. ⚠️ **Measured in a browser by `W417`,
-       the first reading this panel ever had on a served origin**; the ordinary
+       is left at the top of the page. ⚠️ **Measured in a browser, in the
+       first reading this panel ever had on a served origin**; the ordinary
        end-of-run path was correct and only this one was not. */
     var handedBack = false;
 

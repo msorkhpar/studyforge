@@ -1,8 +1,8 @@
 /* The practice panel's two editor windows: where each one is, and the tablist over them.
 
-   ⛔ **Split out of `practice.js` at the seam `W431` named**, and the split is
-   its own act rather than a passenger (`W422`): that file stood at `399` of
-   R11's `400` and `AX-09` had behaviour to add to the panel. ⭐ The seam is the
+   ⛔ **Split out of `practice.js` at its seam**, and the split is
+   its own act rather than a passenger: that file stood at `399` of
+   R11's `400` and the Submit breakdown had behaviour to add to the panel. ⭐ The seam is the
    SUBJECT — `practice.js` is *the controls, the run and what the run reported*,
    and this is *the two windows of the editor* — and the two share nothing but
    the markup, which is why neither has to reach into the other.
@@ -18,7 +18,7 @@
    consent to run one. The slot carries the sentence saying it is not running
    and how to start it, so a reader sees a statement rather than a blank frame —
    ⭐ and when the server answers where this practice's two windows are, the
-   frames replace that sentence (`W416`, `W429`). ⛔ **Every URL is the SERVER's
+   frames replace that sentence. ⛔ **Every URL is the SERVER's
    answer, never a name in this file**: a built page may name no origin and no
    port (R8), the editor's host port is per-project, and the absolute path a
    window opens is a path inside somebody else's container.
@@ -27,7 +27,7 @@
    editor enforces that itself, out of the workspace settings the server writes
    — a guard here would be a second, weaker copy of a rule the editor keeps.
 
-   ## ⛔ ONE reload, and only a genuinely COLD instance can ever need it (`W430`)
+   ## ⛔ ONE reload, and only a genuinely COLD instance can ever need it
 
    ⭐ **What a served page may frame is composed from the editor origins the
    SERVING INSTANCE has discovered**, and a cold instance has discovered none

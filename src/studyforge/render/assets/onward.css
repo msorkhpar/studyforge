@@ -1,6 +1,6 @@
 /* Where the reader goes next: the between-pages bar and the Up next slip.
 
-   ⭐ ONE OF THE CHROME PARTS (`W362`; `chrome.css` says how they divide). It is
+   ⭐ ONE OF THE CHROME PARTS (`chrome.css` says how they divide). It is
    its own part because it holds THE ONE BOLD ELEMENT: the Up next slip, the
    label on the next exercise book in the pile, filled with `--sign` on exactly
    one element per page and nowhere else in any part (`test_identity` asserts

@@ -8,7 +8,7 @@
    so a selector that covered both would carry rules for parts that are not
    there.
 
-   ⛔ **ITS OWN PART, and the split is the same one the script took** (`AX-09`):
+   ⛔ **ITS OWN PART, and the split is the same one the script took**:
    `practice.css` is *the panel, the editor and the run*; this is *the
    questions*. ⚠️ It follows `practice.css` in `pageassets.bundle` so the two
    read together, and it shares every one of that file's rules about colour —
@@ -17,7 +17,7 @@
 
    ⛔ **NO DEAD CONTROL ANYWHERE BELOW.** There is no rule here for a disabled
    Run or a greyed Submit, because the page emits neither: a quiz has no file to
-   open, no command to run and no grader to submit to (`AX-05`, `SF-24`). */
+   open, no command to run and no grader to submit to. */
 
 section[data-practice-quiz] {
   margin: 2rem 0 0;

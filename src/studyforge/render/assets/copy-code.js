@@ -12,7 +12,7 @@
    nothing. */
 
 (function () {
-  /* ⛔ The fallback names the key THIS machine uses (`W362`, K4): it said
+  /* ⛔ The fallback names the key THIS machine uses: it said
      "Press ⌘C" to every reader, which is wrong everywhere but a Mac. */
   function copyKey() {
     var platform = (navigator.userAgentData && navigator.userAgentData.platform) ||

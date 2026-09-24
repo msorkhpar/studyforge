@@ -101,8 +101,8 @@ section[data-practice] button[role="tab"][aria-selected="true"] {
   border-color: var(--practice);
 }
 
-/* ⭐ The frames `practice-editor.js` puts a RUNNING editor's two windows in (`W416`,
-   `W429`), and they exist only on a served page: a built one names no origin
+/* ⭐ The frames `practice-editor.js` puts a RUNNING editor's two windows in,
+   and they exist only on a served page: a built one names no origin
    (R8). ⚠️ A box of its own, for the reason the output has one — an editor
    given no height is a 150-pixel-tall development environment. ⛔ No colour of
    its own: the ground is the same surface token the slot already stands on. */
@@ -115,7 +115,7 @@ section[data-practice] div[data-practice-part="editor"] iframe {
   background: var(--surface-2);
 }
 
-/* ⭐ **MAXIMISED — THE PANEL'S OWN GEOMETRY, AND NOTHING MOVES** (`W431`).
+/* ⭐ **MAXIMISED — THE PANEL'S OWN GEOMETRY, AND NOTHING MOVES**.
    The reader asked for room for the code, the tests and the two acts, and the
    panel already holds every one of them — so the whole expansion is this rule
    and the one attribute `practice.js` sets on the section.
@@ -135,7 +135,7 @@ section[data-practice] div[data-practice-part="editor"] iframe {
    rather than leaving the property to a comment.
 
    ⛔ **AND THE RULE BELOW MOVES THE READER'S PAGE, WHICH IS WHY `practice.js`
-   REMEMBERS WHERE IT WAS** (`W431/1` — a merge gate found it, and it was then
+   REMEMBERS WHERE IT WAS** (a merge gate found it, and it was then
    measured deterministically here rather than guessed at twice more).
 
    ⛔ **Two causes, one symptom, and the second is the one that hid.**
@@ -255,7 +255,7 @@ section[data-practice] pre[data-practice-part="output"] {
   border-radius: var(--radius-tight);
 }
 
-/* ⭐ **WHAT THE SUBMIT REPORTED** (`AX-09`): every case this practice declares,
+/* ⭐ **WHAT THE SUBMIT REPORTED**: every case this practice declares,
    marked with what the run said about it, under one sentence that counts the
    edges. ⛔ It sits between the status line and the raw output on purpose — the
    reader's question after a Submit is *what is still missing*, and the grader's

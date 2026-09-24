@@ -23,7 +23,7 @@
    shown nothing rather than a control that cannot do anything: a control that
    does nothing is worse than no control.
 
-   ⛔ **Joined by the address and nothing else** (SF-01). The control carries
+   ⛔ **Joined by the address and nothing else**. The control carries
    the unit key `Address.unit_key` minted in Python; a row on the root index or
    on a container page carries that same key as its `id`, which is also its
    deep-link anchor. Nothing here composes a key, derives one from a position,

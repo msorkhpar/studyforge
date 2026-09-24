@@ -26,6 +26,9 @@ IMAGE = "${EDITOR_IMAGE:?build it}"
 #: Where the corpus's sources are, as the compose file reaches them.
 SOURCES = "../../sources"
 
+#: The words that open the footer naming what must exist before the start.
+FOOTER = "every bind source below exists on the host BEFORE this"
+
 
 def editor() -> dict:
     """The synthetic editor block."""
@@ -189,13 +192,13 @@ def test_without_the_seed_map_no_optional_volume_is_earned():
 
 
 # --------------------------------------------------------------------------
-# Ruling 4, and §8.3 over the bytes
+# Every bind source exists before the start (§8.1), and §8.3 over the bytes
 # --------------------------------------------------------------------------
 
 
 def test_the_file_names_every_bind_source_that_must_exist_before_the_start():
     text = rendered()
-    assert "ruling 4" in text and f"#   - {SOURCES}" in text
+    assert FOOTER in text and f"#   - {SOURCES}" in text
 
 
 def test_the_bind_source_it_names_is_the_host_side_and_never_the_container_side():
@@ -209,7 +212,7 @@ def test_a_contract_with_nothing_to_create_first_emits_no_footer():
     block["mounts"][0]["must_exist_before_start"] = False
     block["mounts"][0]["kind"] = "volume"
     block["mounts"][0]["volume"] = "sources"
-    assert "ruling 4" not in rendered(editor=block)
+    assert FOOTER not in rendered(editor=block)
 
 
 def test_a_block_that_breaks_a_ruling_is_refused_before_a_byte_is_emitted():
@@ -245,8 +248,8 @@ def test_a_further_bind_is_mounted_writable_beside_the_sources():
     assert f'"{PRACTICE[0]}:{PRACTICE[1]}"' in text
 
 
-def test_a_further_bind_is_named_in_ruling_4s_footer_by_its_host_side():
-    footer = rendered(binds=(PRACTICE,)).split("ruling 4", 1)[1]
+def test_a_further_bind_is_named_in_the_must_exist_footer_by_its_host_side():
+    footer = rendered(binds=(PRACTICE,)).split(FOOTER, 1)[1]
     assert f"#   - {SOURCES}" in footer and f"#   - {PRACTICE[0]}" in footer
     assert PRACTICE[1] not in footer
     assert composefile.must_exist_first(editor(), (), "src", also=("practice",)) == (

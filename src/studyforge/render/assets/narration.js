@@ -1,7 +1,7 @@
 /* The narration transport: play, advance, and the highlight that tracks what is spoken.
 
    ⛔ **One clip per speech unit, and the granularity is the whole design.**
-   `SF-16` chose the speech unit precisely so a highlight can track playback with
+   Spec §8.2 chose the speech unit precisely so a highlight can track playback with
    no word-level timing data anywhere: the audio element already knows which clip
    it is playing, so *which passage is lit* is the same question as *which clip is
    loaded*, and no timing table has to be kept in step with anything.
@@ -49,7 +49,7 @@
      reaches* declares.
 
      ⚠️ **`data-speech-id` is deliberately NOT read here.** The positional id is
-     what a *structure* edit must not renumber (`SF-16`), and the player has no
+     what a *structure* edit must not renumber (spec §8.2), and the player has no
      question it answers: which clip is loaded already says which passage is lit.
      ⛔ Reading it to key something the DOM order already keys would be a second
      ordering, agreeing today and disagreeing the day one of them is wrong. */
@@ -78,7 +78,7 @@
   var audio = document.getElementById(NARRATOR);
   if (!player || !audio) { return; }
 
-  /* ⛔ THE WHOLE DOCUMENT, NOT `#content` (`W407`). A unit page is headed by its
+  /* ⛔ THE WHOLE DOCUMENT, NOT `#content`. A unit page is headed by its
      material's own opening heading, and that heading sits in the `<header>`
      above the content — it is a narrated passage like every other one. Scoped to
      `#content` the transport skipped the first passage of every page while the
@@ -244,7 +244,7 @@
      exact failure R6 is here to prevent. `begin` clears the status before it
      starts, so there is nothing left for a success to clear.
 
-     ⛔ **`W276`: a clip that is not on disk fires `error` AND rejects `play()`, in
+     ⛔ **A clip that is not on disk fires `error` AND rejects `play()`, in
      either order.** The rejection stands down when the passage it started is no
      longer playable, so an `error` that arrived first keeps its sentence; one that
      arrives second overwrites the blocked one on its own. */
@@ -367,7 +367,7 @@
      three buttons that do nothing. */
   showFace(PAUSED);
   if (anyPlayable()) {
-    /* ⛔ `W369`: the first passage is where narration WILL start, and the
+    /* ⛔ The first passage is where narration WILL start, and the
        transport's own line says so; nothing on the page is lit until the
        reader starts it. `load` lights a passage, and only a press reaches it. */
     at = firstPlayable();
