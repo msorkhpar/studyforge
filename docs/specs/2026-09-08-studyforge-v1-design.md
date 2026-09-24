@@ -1,6 +1,6 @@
 # studyforge v1 — design
 
-**Date:** 2026-09-08 · **revised 2026-09-09**
+**Date:** 2026-09-08 · **revised 2026-09-09** · **amended 2026-09-23**
 **Status:** approved for planning
 **Scope:** the source-agnostic LMS framework, plus its first consumer — the
 `Claude-senior-java-engineer` tutorial repository.
@@ -16,6 +16,14 @@ as two records (§8.5); clip filenames carrying a digest (§8.2); and the ruling
 that a skill precedes the artifact it produces (§9). Findings that were
 CodeSignal's operational detail rather than this framework's concern were
 deliberately **not** carried; they are in `docs/tasks/v2-backlog.md`.
+
+⚠️ **The 2026-09-23 amendments** carry into this document the clauses of the review
+rubric and the conventions that state what the product must be, when those process
+documents were archived. Each is written under the rule it serves and marked
+*AMENDED 2026-09-23*: R1, R6, R7, R9, R10, R11, R12, R13, R17 and R21 in §2, standard
+library only in §3.2, the reading room's identity in §8.4, and commanded pages in §9.
+⛔ **No rule was renumbered and no rule's own words changed**; each amendment adds to
+its rule, and how the product's own code is reviewed is not carried.
 
 ---
 
@@ -176,6 +184,17 @@ These are rulings, not preferences. A task that violates one is not done.
 import from, name, or branch on any adapter. Every source-specific fact
 arrives as data, through the manifest or the archive.
 
+⭐ **AMENDED 2026-09-23 — what *names* means, carried from the review rubric when it
+was archived.** ⛔ **A source's name in framework source is a failure even inside a
+comment**, because the next reader takes a name as licence to branch on it. A fixture
+under `tests/` that names a *shape* is fine; a module under `src/` that names a *corpus*
+is not. ⚠️ **A name is matched in the forms people actually write it** — the repository
+slug, and the corpus named in English (*the Java corpus*) — and each is anchored on a
+word only a corpus's name takes: a bare `ISO` is far more often an ISO 8601 date, and a
+check that cannot tell the two apart is switched off within a day. ⭐ The floor's
+source-names check is the enforcement, so R1 is answered on every run rather than by a
+reviewer's grep.
+
 **R2 — The adapter seam is on disk, not in Python.** An adapter's entire
 obligation is to write a valid archive. It gets no callbacks and no framework
 API. This is what lets adapters be built in any language, tested in isolation,
@@ -259,10 +278,129 @@ curriculum link, an unmatched class, a declared practice that is absent — each
 is reported by name and exits non-zero. Inherited from CodeSignal's
 `run_capture_audit` and the reason `layout.py` exists at all.
 
+⭐ **AMENDED 2026-09-23 — R6's general form: enumerate the legal, never the illegal.**
+Carried from the module-structure convention when the conventions were archived. It is
+the rule that most often decides *how* a refusal is written, so it lives beside the
+rule that demands one.
+
+> ⛔ **A list of forbidden things is an open set: the unforeseen case is admitted
+> silently. A list of permitted things is a closed set: the unforeseen case is
+> refused, and somebody has to decide.**
+
+⚠️ **Both lists are always incomplete; what differs is what incompleteness does.** An
+open set fails toward acceptance — nothing raises, and the defect is found by its
+consequences, which is precisely what R6 forbids. A closed set fails toward refusal,
+loudly, at the boundary, naming the thing it did not expect. A refusal costs a
+question; a silent admission costs whatever the unforeseen case does.
+
+- ⭐ **Where the legal set can be written down it is enumerated, through one
+  predicate** — keys, versions, profiles, skip causes, contract fields, filename
+  components, slugs, legal pairings of values. A derived class, such as the
+  characters a label may hold, is computed from that predicate and never typed out a
+  second time. ⚠️ A hand-written character blacklist for filenames once let a vertical
+  tab, a form feed, a non-breaking space, a line separator, a quote, a colon and an
+  asterisk through two gates at once, and one of them breaks R8's `file://` floor.
+- ⭐ **Better still, the illegal value is made unrepresentable**: a key is required to
+  be a slug rather than slugified into a possible collision, and a parameter is typed
+  so that a leaking value cannot be passed. ⛔ **The tell of the wrong shape is a check
+  that grows by one entry every time somebody hits a case nobody thought of** — adding
+  the entry conceals the shape for one more round. A list that is genuinely right (a
+  sanctioned exception) is short, and each entry carries its reason.
+- ⛔ **The domain limit.** Where the legal set cannot be written down — free text,
+  whose permitted set is *all text that is not personal data* — a forbidden list is
+  forced and known-incomplete by construction. What is owed then is depth, never
+  length: every layer is asserted on its own, because the argument for depth is that
+  no layer is sufficient, and the docstring says the list is known-incomplete so that
+  nobody mistakes it for a closed set. R7's layered gates are the worked example.
+  ⭐ **Enumerability is a property of the domain, not a choice the author makes.**
+- ⚠️ **A guarantee does not extend to what sits beside it.** Closing one set says
+  nothing about its neighbour, and the closed half is the one everybody reads —
+  including its own author. When a guarantee is asserted, the adjacent thing that is
+  *not* asserted is named beside it. *A file being clean is not a property of the
+  file.*
+- ⛔ **Where one helper names several faults, every caller either refuses all of them
+  or says in its own body which it does not, and why.** A phrase in a refusal
+  vocabulary that no caller can reach is a missing guard: a path helper named three
+  faults and one of its two callers guarded only two, so a tilde-rooted edit target
+  was accepted while the sentence refusing it existed and could never be printed.
+
+Where each of these is enforced is recorded in [the decisions file](../decisions.md),
+under *Refusals, errors and personal data*.
+
 **R7 — No personal data reaches disk or the wire.** Every string entering the
 archive passes `assert_clean`, which **refuses** rather than rewrites. No
 absolute home path, account id, name or email in any generated file, log or
 report.
+
+⭐ **AMENDED 2026-09-23 — how R7 is upheld in code.** Carried from the review rubric and
+from the personal-data conventions when they were archived. The rule above states the
+outcome; these are the properties the code holds so that the outcome never depends on
+somebody noticing.
+
+- ⛔ **R7 has three subjects: this repository's tracked files, the archive, and the
+  rendered page.** A home path that reaches a page has reached a file R7 governs,
+  however clean the other two are.
+- ⛔ **Every string composed for the archive, a log, a report or an outbound request
+  passes the personal-data gate, and the gate refuses.** A gate that scrubs silently
+  produces a clean file and a false belief.
+- ⛔ **A refusal describes the fault and never formats the value.** A branch that exists
+  *because* a value is an absolute path, and prints that value, has taken the one input
+  guaranteed to carry a home directory and written it into a log from inside the check
+  meant to prevent it. ⛔ **An exception object is never formatted into a message
+  either**: `OSError` formats itself with the filename it was given, so a refusal names
+  the field it means — `strerror`, `errno` — and says what it knows itself. ⚠️ **The
+  rule is blanket, including where one exception type happens to be harmless**,
+  because auditing each type at each call site is the work nobody does twice, and the
+  site that gets skipped is the one holding a filename.
+- ⛔ **A *why it failed* field carries a code, never a captured stream.** When the
+  framework runs another process, the reason it records is an exit code, a timeout
+  with its bound, or a failure class — never standard output, standard error, a
+  filename or an argument. A captured stream is the richest source of absolute paths
+  there is, and the counts are the useful half anyway.
+- ⛔ **The personal-data refusal travels through every caller as itself.** It is not a
+  `ValueError` and belongs to no package's error family, deliberately: a family exists
+  so that a walk can catch one type per item and continue, so translating a leak into
+  one turns a hard stop into a skipped item, logged as *that unit did not build* under a
+  green report. ⭐ A package that promises *only this error* states the exception that
+  crosses it in its own contract instead of swallowing it.
+- ⛔ **An emitter and its gate agree on one input.** Where one module refuses to emit a
+  value class and another admits it, both are run on the same input, and a
+  disagreement is a defect in either direction: a lax gate is a hole, a strict one a
+  silent drop.
+- ⛔ **A gate whose verdict is part of a published contract is a pure function of its
+  input.** The archive gate is half of what `studyforge validate` promises an adapter
+  (R2), so it imports nothing that could read the environment and gives the same
+  verdict on every machine. ⭐ The repository's own hygiene sweep is the mirror image:
+  its subject *is* this machine's leak surface, so it may derive the machine's identity
+  at run time. ⛔ Neither is a model for the other, and *align them* is the wrong
+  instinct.
+- ⭐ **One shape vocabulary, two policies.** Those two gates have different subjects and
+  may differ in what they do with a match, never in which shapes they recognise. They
+  share evidence rather than code: one table, whose product copy is
+  `tests/harness/personal-data-shapes.json`, gives every shape a column per gate, and
+  ⛔ **a row whose columns disagree carries a `why`**, so a divergence is declared with
+  a reason instead of discovered by a reviewer. The rows are measured against the real
+  implementations, so a row that stops being true is a build failure. ⭐ The last rows
+  are controls that nothing refuses — a table whose every row read *refuse* would be
+  satisfied by gates that refused everything — and every spelling is stored as
+  fragments, because a real shape written whole into the table would be a finding
+  against the table.
+- ⛔ **A gate's false positive on ordinary source is a defect in the gate.** An author
+  who renames a field to get past R7 pays a real cost and leaves no trace, and the next
+  author pays it again; a checker people rename fields around is on its way to being
+  switched off. ⚠️ The shape known to be over-broad is the local hostname, which also
+  matches a Python attribute access at the end of an expression; its remedy narrows
+  that one lookahead while keeping the hostname shape, in both gates together.
+- ⭐ **A sanctioned negative fixture is the one place a personal-data shape is
+  required**, because a gate needs an input to refuse. It is legal only while all five
+  hold: the value is fabricated and unreachable (an RFC 2606 reserved domain, a user
+  who is obviously nobody); it is traceable to nobody on any machine; it lives in one
+  named directory whose purpose is to be refused, with a file beside it naming the rule
+  and what the gate should say; tests assert both directions — nothing else in the
+  fixture tree carries the shape, and the sanctioned value really does trip the gate —
+  and the registry of such directories is itself asserted. ⛔ A repository-wide sweep
+  excludes that directory and only that one, by name; a sweep that excludes `tests/`
+  wholesale has stopped checking the tree where fixtures live.
 
 **R8 — The site works over `file://` with no network and no server.** Every
 asset is local. A served origin adds the API, progress and Run/Submit; it is
@@ -300,6 +438,15 @@ consequence that is *not* deferred: two titles differing only in accented
 characters can collide, invisibly in the source, which is why **SF-25 checks
 generated names and not only addresses**.
 
+⭐ **AMENDED 2026-09-23 — a version gate checks the type before the value.** Carried
+from the module-structure convention when it was archived. `True in {1}` and
+`1.0 in {1}` are both true in Python, so a JSON `true` or `1.0` passes a bare
+membership test — the one check whose whole job is to refuse a document this build
+cannot read. ⛔ The gate refuses a value that is not an `int`, and refuses a `bool`
+explicitly because `bool` is a subclass of `int`. ⭐ There is one implementation,
+`studyforge.version` (§3.2), and every versioned contract is read through it: one
+membership test per contract is one chance per contract to write the porous one.
+
 **R10 — Generated output is byte-for-byte reproducible.** No clocks, no
 dependence on filesystem enumeration order. The same inputs produce the same
 bytes on any machine.
@@ -311,6 +458,31 @@ every page carries a plain name**, because a digest there renames a file and
 rewrites every page that links it whenever a colour changes, buying nothing a
 local reader wanted. An artifact linked by **one** page, regenerated in the same
 run as that page, is not in that class; §8.2 rules on it.
+
+⭐ **AMENDED 2026-09-23 — what R10 forbids in code, and its two exemptions.** Carried
+from the review rubric and the module-structure convention when they were archived.
+
+- ⛔ **No clocks and no randomness in anything that reaches a generated file**: no
+  wall-clock or monotonic reads, no uuids, no random bytes. A timer used for a log line
+  is still a clock if that log is an artifact. ⭐ **There are two exemptions and only
+  two:** `container.json`'s `ingested` field, which is excluded from `content_sha256`
+  so it cannot make unchanged content look edited (§6); and synthesised audio bytes,
+  because a speech model is not byte-stable and the clip is content-addressed instead
+  (§8.2). ⛔ **A new exemption is an amendment to this rule**, never a local decision.
+- ⛔ **No dependence on filesystem enumeration order.** Every listing is sorted before
+  it is used, and an `os.walk` sorts its directory and file lists *in place*, because
+  sorting the outer call orders nothing.
+- ⛔ **No dependence on set iteration order.** String hashing is salted per process, so
+  a set of strings iterates stably within one run and differently across two. A set is
+  sorted before it reaches an artifact; a `dict`'s insertion order is guaranteed and is
+  fine.
+- ⛔ **An order that reaches a file is the format.** A constant that decides a
+  serialised order is asserted element for element, in order, against the artifact —
+  membership and length leave exactly that property unasserted. ⭐ When two orders
+  disagree, the one that reaches disk wins, because changing it rewrites every
+  document that was already correct.
+- ⭐ **The claim is proved by building twice into two directories and comparing**: the
+  two are identical, or identical apart from `ingested` and said so.
 
 **R11 — No file grows past the size a person can hold in their head.** Soft
 ceiling **400 lines** for a module, **600** for a test module. A unit
@@ -329,15 +501,86 @@ the boundary is wrong. Smaller units are also what makes agent work reliable:
 an agent reasons better about code it can hold in context at once, and its
 edits are more accurate in focused files.
 
+⭐ **AMENDED 2026-09-23 — the ceiling's units, its one opt-out, and a split that is
+one-way.** Carried from the module-structure convention and the review rubric when
+they were archived.
+
+| Unit | Soft ceiling | On exceeding |
+|---|---|---|
+| source module | 400 lines | split into a package, or justify it in the docstring |
+| test module | 600 lines | split along the seam the source split |
+| function | 50 lines | almost always a missing helper |
+| template file | — | markup only, never logic |
+
+⭐ **A line is a physical line** — what `wc -l` reports — so the floor's arithmetic is
+checkable from a shell. ⚠️ **The ceiling binds every authored file under `src/`,
+stylesheets and skill documents included**, although the shipped checker counts
+Python modules only; a non-Python file near the ceiling is read by a person, because
+the instrument cannot see it.
+
+⛔ **The opt-out is one line in the module's first docstring, and nowhere else**:
+
+```text
+Size exception: the substitution table is one literal mapping, and splitting it
+would hide half the placeholders from the reader of the other half.
+```
+
+It begins `Size exception:` at the start of a line, case included, so the checker and
+every reader agree on one spelling; it is read from the docstring with `ast`, never
+from a comment beside the code, because the exception is recorded where the next
+reader of the module meets it; and it is one sentence saying why splitting would be
+*worse* — a reason too short to be one is reported as none. ⛔ **It is refused whenever
+the honest answer to the isolation question is no**: a justification is not a licence.
+An exception left in a module that is now under its ceiling is stale and is removed,
+and a ported module is not exempt by inheritance.
+
+⭐ **A one-way seam is a valid split.** A parser must build the model it defines, so
+asking the two halves never to import each other would forbid the split or invent a
+third module to hold the constructors. What a one-way seam owes instead: its direction
+stated in the package contract, and asserted over the source, including against the
+forbidden import written in its relative spelling. Mutual independence is the
+strongest form, not the required one.
+
 **R12 — Every module ships with its own tests, and the test tree mirrors the
 source tree.** A module without tests is not done. A package's tests are split
 the same way the package is, so a failing test names a module, not a subsystem.
+
+⭐ **AMENDED 2026-09-23 — the mirror's exact form, and the configuration it needs.**
+Carried from the module-structure convention and the review rubric when they were
+archived. `src/studyforge/<path>/<stem>.py` is tested at
+`tests/studyforge/<path>/test_<stem>.py`, and a dunder drops its underscores so the
+name stays readable (`__init__.py` at `test_init.py`, `__main__.py` at
+`test_main.py`); the floor's mirror check is the authority on where a test lives.
+⭐ **A package's `__init__.py` is its contract (R17), so its mirror is a test that
+imports the package's public names** — what stops the surface drifting from the code.
+
+⛔ **Two settings are behaviour, not style.** `--import-mode=importlib` in the test
+configuration is required: the mirror puts a `test_init.py` in every package
+directory, and under pytest's default import mode those collide on module name and
+the suite fails to collect before it runs a test. ⛔ **And an ignore rule is checked
+against the paths that must stay tracked** as well as those that must not: a pattern
+that swallows a fixture gives a suite that passes on the machine that has the file and
+fails on a fresh clone, with nothing in `git status` to say why.
 
 **R13 — Markup, styling and scripts are source files, never code strings.**
 Templates in template files, CSS and JS in asset files, loaded and composed by
 code. Inherited from CodeSignal, where 80 KB of triple-quoted strings meant
 changing a colour required editing Python. Loop bodies and inline wrappers stay
 in code — a template file for a closing tag removes no duplication.
+
+⭐ **AMENDED 2026-09-23 — where markup lives, and how a template is used.** Carried
+from the module-structure convention and the review rubric when they were archived.
+Templates live in `render/templates/`, stylesheets and scripts in `render/assets/`,
+loaded and composed by code.
+
+- ⛔ **A template is used exactly, minus one trailing newline** — no reflow, no
+  re-indent, no whitespace collapse — because pages are compared byte for byte (R10).
+  Markup emitted on one line is authored on one line, however long.
+- ⛔ **Substitution fails on an unfilled placeholder**; a placeholder never reaches a
+  page as a literal, and a new placeholder arrives with a test of that failure.
+- ⭐ **What stays in code is a fragment**: a loop body, an inline wrapper, a one-line
+  container. ⛔ A stylesheet, a script, or a whole element with attributes is never a
+  fragment. A docstring may show markup; it is not emitted.
 
 **R14 — ⛔ WITHDRAWN 2026-09-12, by user ruling. The number is retained and is
 never reused.**
@@ -386,6 +629,27 @@ the proving ground for that, not the destination (§9).
 **R17 — Every package states its contract in its own docstring:** what it does,
 how you use it, and what it depends on. A reader who has not seen the spec must
 be able to use a package correctly from that alone.
+
+⭐ **AMENDED 2026-09-23 — the three questions, and what a surface is.** Carried from the
+module-structure convention and the review rubric when they were archived.
+
+- ⭐ **Every package's `__init__.py`, and every module, answers three things in its
+  first docstring**: what it does, in one sentence and in this document's vocabulary;
+  how you use it — the entry point, not a tour of the internals; and what it depends
+  on, with, where it matters, what it deliberately does not. ⛔ A reader who has not
+  seen this document answers all three from the docstring alone, so
+  `"""Path utilities."""` fails. The habit worth keeping is recording *why* a decision
+  was made and what broke before it: that is what prevents the regression.
+- ⛔ **`__init__.py` is the contract.** If a consumer has to import a submodule
+  directly, the surface is wrong.
+- ⭐ **A name a second package needs is exported on the owning package's `__all__`**
+  and imported from the package. A name on no surface is not shared, whatever a
+  second package's import says; the fix is to export it, never to reach past the
+  surface.
+- ⭐ **A reader that deliberately lets another package's exception through exports the
+  set as a `RAISES` tuple on its surface**, and a caller catches the tuple whole rather
+  than retyping a list from prose — callers that retyped it dropped members, and one
+  crashed a command whose contract is that nothing raises.
 
 **R18 — Components are separate repositories, pinned by one workspace.** Each
 component — the framework, the toolchain image, the narration service, each
@@ -591,6 +855,23 @@ sharpest: it is the one document a **person** edits, which makes it the most
 likely to drift, and R9 does not list it. Either R9 gains it or R9 says in words
 why a hand-edited document needs no version — but not silence.
 
+⭐ **AMENDED 2026-09-23 — when a file takes a row.** Carried from the review rubric when
+it was archived, because the question had been derived from scratch twice. ⭐ **A file
+takes a row here when a party other than the one that writes it reads it back** —
+another component, a corpus repository, or the framework reading what another
+producer wrote. ⛔ It does not take one merely for being a file, for being written and
+read back by its own writer, or for carrying a version key: a version key shows that
+its author expected the shape to move, which is why the question must be asked, and
+is not what answers it. ⭐ **So a task that mints a persisted format says who reads it
+back.** Where every reader is inside the writing component, no row is minted and the
+task says so; the row is owed the moment a party outside that component opens the
+file, or a second writer appears in the same store. ⚠️ **And a content-addressed
+filename does not discharge a contract whose subject is the conditions the content was
+produced under**: a clip named by the digest of its words answers *has the wording
+changed*, but a voice change or a service promise bump leaves every filename
+byte-identical while every clip is stale — which is why the narration regeneration
+state is a located, versioned file rather than an inference from names.
+
 ---
 
 ## 3. Architecture
@@ -670,6 +951,17 @@ CodeSignal/                       untouched in v1; converges in v2
 **Dependency direction is one-way.** `studyforge` never imports a consumer. A
 consumer never imports `studyforge` internals — it writes an archive and
 invokes the CLI.
+
+⭐ **AMENDED 2026-09-23 — standard library only, declared and imported.** Carried from
+the module-structure convention and the review rubric when they were archived.
+⛔ **Framework source imports nothing outside the standard library and itself, and
+`pyproject.toml` declares no runtime dependency** — the reader's host needs Python and
+a Docker CLI and nothing else (§8.3). ⚠️ The declaration and the code can disagree, so
+both are checked. ⭐ Test and lint dependencies are fine and are **declared**, as
+optional groups, never assumed present: an undeclared test dependency is a suite that
+passes for its author and errors for everyone else. ⛔ **Vendored third-party assets —
+the highlighter, the media player, the faces — are committed with their licence beside
+them and are never edited**; a change is a re-vendor.
 
 ---
 
@@ -1919,6 +2211,115 @@ silent wrong highlight, which is worse than no highlight. ⭐ A `code` block
 whose `lang` is empty carries no highlighter class and the caption `code`
 (`render/page/blocks/figure.py`).
 
+⭐ **AMENDED 2026-09-23 — the reading room's identity, and the palettes it may never
+ship.** Carried from the UI design convention when the conventions were archived. That
+convention held a whole design brief; what a rendered page is held to belongs here,
+beside the reading page it governs, and the brief's process advice to a designer does
+not.
+
+⭐ **One framework identity, and a per-corpus theme that defaults to it.** Every
+studyforge site shares one look, drawn from the subject every such site shares —
+reading and study — and a corpus may declare its own theme as manifest data (R19),
+chosen from its own subject. ⛔ **It is built to be read for hours, so it is judged on a
+real generated page**, light and dark and at phone width, with its contrast computed
+rather than eyeballed, and what is reported is what was seen.
+
+- ⛔ **Colour is a role-named token and nothing else.** Every colour is a CSS custom
+  property named by its role — ground, raised surface, ink and its quieter inks, rule,
+  accent, the semantic states — and a stylesheet paints only with tokens. Both themes
+  are designed: the dark tokens are defined under `prefers-color-scheme: dark`, guarded
+  so an explicit light choice wins, and again under an explicit dark choice. One
+  dominant ground, one sharp accent, and semantic colour kept apart from the accent.
+  ⛔ A saturated colour never grounds a whole page; it belongs on one element.
+- ⛔ **Contrast is computed and reported**: body text at least 4.5:1 against its actual
+  background, large text and non-text marks at least 3:1.
+- ⭐ **Faces are vendored font files loaded by a relative `@font-face`, pinned by digest
+  with their licence beside them, and SIL OFL faces only** — ⛔ never a CDN, because a
+  generated page opens from `file://` with no network (R8). A face has a reason to be
+  there; a bare system stack or one of the generic defaults is not a choice.
+- ⭐ **Structure encodes information.** Numbering only where order is real, dividers
+  only between things that are separate, one bold element carrying the identity with
+  everything around it quiet, prose at a readable measure, and a page that stacks at
+  phone width with no horizontal scroll.
+- ⛔ **Motion answers an action and never holds content hostage**: it animates
+  `transform` and `opacity` only, honours `prefers-reduced-motion`, and no element's
+  resting state depends on an animation having run.
+- ⛔ **Interaction and accessibility.** Expand and collapse are two controls, never one
+  toggle whose label flips; `:focus-visible` is visible everywhere; `<button>` acts and
+  `<a>` navigates; an icon-only button has a label, a decorative glyph is hidden from
+  assistive technology and a live message is announced; a skip link reaches the main
+  content, heading levels run in order, and a sticky header never covers what the
+  reader jumps to.
+- ⛔ **Copy is written from the reader's side** — sentence case, active voice, no
+  builder vocabulary, and no label that stops being true, such as a *New* badge on a
+  site where everything is new to its reader.
+- ⛔ **The tells of generated design are refused**: content chopped into identical
+  rounded cards, pill tags in several accents, all-caps eyebrow labels, meta strings
+  joined by middle dots, arrows appended to links, a monospace face for small labels,
+  a stripe down a card's edge, and gradient washes or badges that tell the reader
+  nothing.
+
+⭐ **The rejected palettes are data, and the floor reads them.** A list of rejected
+palettes written as prose was right, was read by nothing, and a repaint's first stage
+shipped half of one. So the tells that can be read off a colour are the two tables
+below, which the palette check reads over every stylesheet the framework ships: a
+rejected identity that returns is a floor finding, by name. ⛔ **The tables are the
+authority and the check is only their reader**, so a new rejected identity is a row
+added here, with no code change. ⚠️ **A green check means *no rejected palette is
+shipped*, never *the identity is met*** — a face, the card kit or an eyebrow label is a
+tell no hue can see.
+
+Every colour is read as three measures: **hue** in degrees; **chroma**, `max − min` of
+its channels over 255, in percent; and **light**, `(max + min) / 2` over 255, in
+percent. ⛔ **Chroma and not HSL saturation, deliberately**: a near-white paper with a
+one-step tint reports a saturation near 40% and a chroma near 3%, so a bound written in
+saturation would refuse the paper that was accepted. ⭐ **A row's parts are joined by
+`+`, and every part must hold in one theme** — light and dark are read apart, each over
+the tokens it defines — with the parts on one role met by that theme's colours for it.
+⛔ **The conjunction is the instrument**: cool slate alone is the accepted identity, and
+it is the triple that was rejected, so a row that fired on one part would refuse the
+accepted identity on its first run.
+
+| Role | Read from |
+|---|---|
+| `ground` | `--bg` |
+| `raised` | `--surface`, `--surface-2`, `--panel` |
+| `ink` | `--fg`, `--fg-soft`, `--muted` |
+| `rule` | `--rule`, `--rule-strong` |
+| `accent` | `--accent`, `--sign`, `--focus` |
+| `gradient stop` | ⛔ no token — every colour inside ONE `linear-gradient(` or `radial-gradient(`, its `var()` resolved in that theme; a row's stop parts must meet in the SAME gradient |
+
+| Rejected identity | Every part must be present | Why |
+|---|---|---|
+| Warm cream and terracotta | `ground: hue 20-70, light >= 85, chroma >= 3` + `accent: hue 5-32, chroma >= 25, light 25-65` | the first tell of generated design, and the one a repaint's first stage shipped |
+| Near-black ground, acid-green accent | `ground: light <= 12` + `accent: hue 75-165, chroma >= 45` | a tinted near-black standing in for a dark ground, where a real mid-dark with character is asked for |
+| Near-black ground, vermilion accent | `ground: light <= 12` + `accent: hue 0-20, chroma >= 45` | the same tell's other accent |
+| Cool slate with teal-green and amber | `ground: hue 190-250, chroma <= 20` + `accent: hue 150-190, chroma >= 20` + `accent: hue 35-60, chroma >= 30` | the user's own rejection — *"very generic and repetitive between the designs you always generate"*. ⛔ It is the TRIPLE: the slate alone is accepted |
+| A saturated brand colour as the page ground | `ground: chroma >= 30` | a full guide-sign-green ground was rejected outright |
+| A purple-to-blue gradient | `gradient stop: hue 258-300, chroma >= 20` + `gradient stop: hue 200-255, chroma >= 20` | a generated-design tell, read where a gradient actually is |
+
+#### ⭐ What the user ACCEPTED, 2026-09-19
+
+⛔ **The rejected table is half of what a repaint needs, and the other half is what was
+accepted** — six refusals do not say what to build.
+
+| Part | What was accepted |
+|---|---|
+| neutrals | a cool slate scale, ground through rule, in both themes |
+| the accent | ONE loud accent, live where it means *next* or *you are here*, and nowhere else |
+| green | ⛔ **none in the identity** — *"I am not a fan of green"* |
+| themes | both, each designed, with the reader able to choose between them and the system |
+| ink | the quieter inks in separate contrast bands — one band for all three is what *"too dim"* named |
+
+⭐ **Two reference pages of the user's own were named as the standard**: their
+documentation reference, for the slate scale and the ink bands, and their route
+planner, for the one loud accent and the contrast it holds. ⛔ **They are named in words
+and nothing else** — neither page's location, bytes, palette nor screenshot enters this
+repository, so nothing here can go stale against them, and a repaint that needs one
+asks the user for it. ⚠️ **The no-green bound is not read by the palette check**: it is a
+rule over the shipped tokens rather than a rejected identity, and the reading room's
+own palette tests hold it.
+
 ### 8.5 Progress is two records
 
 **Two different things are being recorded, and they are established by different
@@ -2085,6 +2486,20 @@ pinned framework's skill and delegate to it, carrying the pinned version and
 nothing else. ⛔ **A stub that has drifted from its pin is a build failure** —
 that is what stops a stub becoming a fork by accretion. It is the same shape as
 pinning a published image tag rather than forking a Dockerfile.
+
+⭐ **AMENDED 2026-09-23 — a page that hands a reader a command declares the modules it
+does not own.** Carried from the commanded-pages convention when the conventions were
+archived. Every `docs/authoring/` page and every shipped `SKILL.md` that gives a
+`python3 -m` command is one population, and ⛔ **a commanded module must run in this
+repository unless the page declares that it belongs to the consumer.** The declaration
+is a line of its own whose backticked tokens are the modules, in one spelling, and the
+authoring suite's reader — `DECLARES_CONSUMER_SIDE` in `tests/authoring/support.py` —
+is the authority on that spelling: a page that disagrees with the reader is the
+defect. ⛔ **The exemption belongs to the page that declares it**, so a module declared
+consumer-side on one page earns nothing on another. ⭐ **Why a declaration and not a
+list:** a list of exempt modules kept beside the checker is a second copy no page's
+reader can see, and a skill that sends a stranger to run a module absent from the
+repository they are standing in is a first-run failure the stranger cannot diagnose.
 
 ---
 

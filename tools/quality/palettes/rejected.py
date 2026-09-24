@@ -1,6 +1,7 @@
 """The rejected identities, READ OUT of the UI convention's own table (`W392`).
 
-**What it does.** Reads the two tables `docs/conventions/ui-design.md` writes —
+**What it does.** Reads the two tables the spec's §8.4 writes (`REL-08` moved them there from
+`docs/conventions/ui-design.md`) —
 the roles and the tokens that carry them, and the rejected identities as
 conjunctions of bands over hue, chroma and light — and returns them as data.
 ⛔ **The document is the authority and this module is only its reader:** a sixth
@@ -40,9 +41,11 @@ from tools.quality import config
 from tools.quality.palettes.colours import Colour
 
 #: The document that carries the table. ⛔ One named document, not a walk: the
-#: convention is the authority, and a second copy of it would be the defect
-#: `W392` exists over.
-UI_CONVENTION = "docs/conventions/ui-design.md"
+#: document is the authority, and a second copy of it would be the defect
+#: `W392` exists over. ⭐ `REL-08` moved the tables from the UI convention into
+#: the spec's §8.4, the product's home for what a rendered page is held to; the
+#: name is kept so every reader of it follows without an edit.
+UI_CONVENTION = "docs/specs/2026-09-08-studyforge-v1-design.md"
 
 #: The one role that is NOT carried by a token, named here because a document
 #: cannot spell a pool. ⭐ Its parts must meet inside ONE gradient.

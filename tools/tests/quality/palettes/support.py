@@ -1,6 +1,6 @@
 """Shared machinery for the palette mirrors: a tree that carries the LIVE convention.
 
-⛔ **Every plant is judged against the table in `docs/conventions/ui-design.md`**,
+⛔ **Every plant is judged against the table the spec's §8.4 carries** (`UI_CONVENTION`),
 copied into the temp tree, so a row somebody edits there is a row these tests
 re-read rather than a fixture that quietly drifts from it.
 """

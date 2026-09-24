@@ -177,8 +177,9 @@ from tools.quality.vacuity import vacuity_notice
 #: half that does not depend on a consumer.
 #:
 #: ⚠️ `check_rejected_palettes` reads a CONVENTION'S TABLE over the stylesheets
-#: this framework ships (`W392`): the identities `docs/conventions/ui-design.md`
-#: §2 rejects, written as bands over hue, chroma and light. ⛔ Its exemption
+#: this framework ships (`W392`): the identities the spec's §8.4 table
+#: rejects (`REL-08` moved it there from the UI convention), written as bands
+#: over hue, chroma and light. ⛔ Its exemption
 #: mechanism is a TWELFTH distinct one and it is the DOCUMENT ITSELF — an
 #: identity stops being refused only when its row leaves that table, which is
 #: the same edit as changing the rule, so the instrument and the convention
