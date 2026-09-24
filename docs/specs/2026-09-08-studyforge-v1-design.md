@@ -76,7 +76,7 @@ special-casing any of them is wrong.
 
 ⛔ **AMENDED 2026-09-18 (`W339`) — ISO's *Graders* cell read *"prose scenarios in
 `TestCases.md`"*, and that file is OUT by the user's ruling** (`Q5`, final,
-recorded at [PO round 105](../tasks/BOARD-ARCHIVE.md#po-round-105)). ⭐ **The
+recorded at PO round 105). ⭐ **The
 corpus carries no graded practice at all, so it is complete at the reading
 floor, not short** (§11.0, C5). ⚠️ A planner reads this column to decide whether
 a corpus enters the execution track, which is why the cell is corrected here
@@ -1215,7 +1215,7 @@ for exactly this reason: one list answered both *"can this be filed here?"* and
 filed at all. Three questions, three answers, none of them derived from another.
 
 ⛔ **A single-variant prose corpus declares `variants: ["prose"]`: the word is the
-framework's, not each corpus's** (`Q9`, ruled at [PO round 107](../tasks/BOARD-ARCHIVE.md#po-round-107); landed by `W347`).
+framework's, not each corpus's** (`Q9`, ruled at PO round 107; landed by `W347`).
 ⚠️ Every corpus must name at least one variant, and a word each corpus invents
 for the same case is a different label in the one variant selector. ⭐ The
 reconnaissance skill proposes it — `SINGLE_VARIANT` in
@@ -1405,7 +1405,7 @@ corpus.json                                   the manifest (§4)
 
 ⛔ **An ordered list keeps the number it starts at** (`W264`, amended from `W258/3`). A `list` block may carry a fourth key, `start`, after its three fields: the first item's number, an integer, written only when the list is ordered and that number is not `1`. ⭐ The page opens the list at it and the narration counts from it, at the top level and nested. ⭐ A list that starts at one carries no `start` and is byte-identical to every list written before, so is its document's `content_sha256`. ⚠️ Not a `raw_api` change for that reason, and the key a block may carry beyond its fields is `archive/blocks.py`'s `optional`.
 
-⛔ **Raw HTML IS in the vocabulary: it is the `html` block, the Markdown reader emits it for a run of block-level markup, and the page renders it VERBATIM — the one block type that bypasses escaping, by declaration and never by what its text looks like** (`Q2`, `W347`). ⭐ It stays: nothing is removed and `raw_api` does not change. ⚠️ The question was ruled at [PO round 107](../tasks/BOARD-ARCHIVE.md#po-round-107) on the premise that raw HTML was *not* in the shipped vocabulary; that premise was measured wrong, and the register corrected it in its round 113. A tag-shaped line the reader keeps as a `para` is still escaped (`render/page/blocks/verbatim.py`).
+⛔ **Raw HTML IS in the vocabulary: it is the `html` block, the Markdown reader emits it for a run of block-level markup, and the page renders it VERBATIM — the one block type that bypasses escaping, by declaration and never by what its text looks like** (`Q2`, `W347`). ⭐ It stays: nothing is removed and `raw_api` does not change. ⚠️ The question was ruled at PO round 107 on the premise that raw HTML was *not* in the shipped vocabulary; that premise was measured wrong, and the register corrected it in its round 113. A tag-shaped line the reader keeps as a `para` is still escaped (`render/page/blocks/verbatim.py`).
 
 ```json
 // container.json — generalises CodeSignal's course-map.json
@@ -1469,7 +1469,7 @@ failing.
 
 ⛔ **A title is not an address: where the curriculum index and a unit's own file
 disagree on the unit's TITLE, the curriculum index's title wins** (`Q3`, a user
-ruling recorded at [PO round 107](../tasks/BOARD-ARCHIVE.md#po-round-107); landed by `W347`). ⚠️ So the refusal above does not
+ruling recorded at PO round 107; landed by `W347`). ⚠️ So the refusal above does not
 extend to titles, and the precedence is stated here rather than left as a
 constant inside one adapter's code.
 
@@ -1623,7 +1623,7 @@ archive content — and it may only ever write `advisory`.
   `workspace` is this record, so the file reaches the one place Run and the
   terminal command already read. That needs no new key in the archive document
   and none in the unit document. The argument is in
-  [`W357`'s handoff](../tasks/handoffs/W357.md).
+  `W357`'s handoff.
 - ⭐ **Not a `raw_api` change.** Every document valid before is valid now and
   means what it meant, and an older build refuses the new shape rather than
   misreading it. That is the test §6 applies to `list.start`.
@@ -2239,7 +2239,7 @@ else. Re-deriving them would be waste.
 - **Progress** — see below: it is two records, not one.
 
 ⛔ **A fence with no info string renders as plain text, and the renderer never
-guesses a language** (`Q7`, ruled at [PO round 107](../tasks/BOARD-ARCHIVE.md#po-round-107); landed by `W347`). ⚠️ A guess is a
+guesses a language** (`Q7`, ruled at PO round 107; landed by `W347`). ⚠️ A guess is a
 silent wrong highlight, which is worse than no highlight. ⭐ A `code` block
 whose `lang` is empty carries no highlighter class and the caption `code`
 (`render/page/blocks/figure.py`).
