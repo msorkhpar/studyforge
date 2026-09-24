@@ -9,6 +9,11 @@ what an install of a pure wheel puts there.
 
 ⚠️ The pinned dev image uninstalls setuptools once it has installed the package
 so there the build is skipped, saying why.
+
+⭐ **The export is committed to a git repository of its own** (`W467`): a wheel
+records the commit it was built from, and `setup.py` refuses to build one from a
+tree that is not the top of a checkout. Placeholder identities at a fixed date,
+and no user or system config, so no identity of this machine's is read (R7).
 """
 
 from __future__ import annotations
@@ -23,10 +28,15 @@ from pathlib import Path
 
 import pytest
 
+from tests.studyforge.skills.onboarding.corpora import SYNTHETIC_GIT
 from tests.support import repository_root
 
-#: What an export needs to build a wheel: the build configuration and its readme.
-EXPORT = ("pyproject.toml", "README.md")
+#: What an export needs to build a wheel: the build configuration, the build step
+#: that stamps the commit, and the readme.
+EXPORT = ("pyproject.toml", "setup.py", "README.md")
+
+#: Where a wheel carries its commit (`library.STAMP`, written by `setup.py`).
+STAMPED = "studyforge/COMMIT"
 
 #: Builds a wheel with the in-process backend and prints its file name.
 BUILD = "import sys; from setuptools import build_meta; print(build_meta.build_wheel(sys.argv[1]))"
@@ -47,6 +57,7 @@ def build(scratch: Path) -> Path:
     shutil.copytree(
         root / "src", export / "src", ignore=shutil.ignore_patterns("__pycache__", "*.egg-info")
     )
+    commit_tree(export)
     out = scratch / "wheel"
     out.mkdir()
     built = subprocess.run(
@@ -59,6 +70,22 @@ def build(scratch: Path) -> Path:
     )
     assert built.returncode == 0, built.stderr[-2000:]
     return out / built.stdout.strip().splitlines()[-1]
+
+
+def commit_tree(tree: Path) -> str:
+    """Make `tree` a git repository holding one commit of everything in it; return the commit."""
+    env = {**environment(Path(sys.executable).parent), **SYNTHETIC_GIT}
+    for argv in (["init", "-q"], ["add", "-A"], ["commit", "-q", "-m", "export"]):
+        subprocess.run(["git", *argv], cwd=tree, env=env, check=True, capture_output=True)
+    return subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=tree, env=env, check=True, capture_output=True, text=True
+    ).stdout.strip()
+
+
+def stamp_of(wheel: Path) -> str:
+    """Return the commit a wheel carries."""
+    with zipfile.ZipFile(wheel) as archive:
+        return archive.read(STAMPED).decode("utf-8").strip()
 
 
 def environment(bin_dir: Path) -> dict[str, str]:

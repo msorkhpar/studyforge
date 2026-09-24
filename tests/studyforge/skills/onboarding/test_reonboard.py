@@ -243,3 +243,20 @@ def test_a_pin_naming_another_version_is_refused_without_a_re_pin(tmp_path, monk
 
     with pytest.raises(OnboardingRefused, match="other than the 9.9.9 running this"):
         reonboard(root)
+
+
+def test_a_pin_naming_another_commit_than_a_built_library_is_refused_until_re_pinned(
+    tmp_path, monkeypatch
+):
+    # ⭐ `W467`: a built wheel knows its commit, so a pin naming another is stale.
+    from studyforge.skills.onboarding import library
+
+    root = corpora.material(tmp_path / "corpus")
+    onboard(corpora.DRAFT, framework_commit=corpora.COMMIT).write(root)
+    monkeypatch.setattr(library, "commit", lambda: "b" * 40)
+
+    with pytest.raises(OnboardingRefused, match="another commit than the one running"):
+        reonboard(root)
+    reonboard(root, framework_commit="b" * 40).write(root, regenerate=True)
+
+    assert json.loads((root / PIN_FILE).read_text(encoding="utf-8"))["commit"] == "b" * 40

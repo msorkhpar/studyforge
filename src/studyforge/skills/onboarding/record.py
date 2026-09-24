@@ -40,6 +40,17 @@ enters a commit, so every fresh clone lacks it and that is not an edit.
 expects a digest on every entry and would fail on the marked one rather than
 refuse it by name. ⭐ This build still reads `1`: every entry there has a
 digest, so reading it is not a migration.
+
+## ⭐ A generated file a regenerate no longer writes is retired (`W467`, `W461/1`)
+
+⚠️ **Measured** (`W461/1`): a corpus that placed its reader document elsewhere
+while the old copy still sat at the root got the new one written and the root
+one left behind, unrecorded, so `hand_edited` could not see it and `uninstall`
+would not remove it. ⭐ **`retire` removes such a file when its bytes are still
+the digest the record holds**: it is the framework's own output, which no
+person wrote, exactly what `uninstall` removes. ⛔ **One whose bytes changed is
+a person's edit, and deleting it would break R3**, so the regenerate is refused
+before anything is written, naming each file and what to do.
 """
 
 from __future__ import annotations
@@ -248,6 +259,37 @@ def refuse_unrecorded(root: Path, files: Sequence[Written]) -> None:
             f"(R3); move each aside, regenerate, then keep what was yours outside the "
             f"generated paths"
         )
+
+
+def retire(root: Path, files: Sequence[Written]) -> list[str]:
+    """Remove each generated file the record lists that `files` no longer writes; return them.
+
+    ⛔ **Only one still byte for byte what was written** (its recorded digest).
+    Any other is refused, all at once, before anything is removed: it is a
+    person's edit now (R3). Never the person's module, never the record itself.
+    """
+    if not (root / RECORD_FILE).exists():
+        return []
+    writing = {item.where for item in files}
+    left = [
+        entry
+        for entry in entries(root)
+        if not is_yours(entry)
+        and entry["where"] not in writing
+        and (root / entry["where"]).is_file()
+    ]
+    edited = changed(root, left)
+    if edited:
+        raise OnboardingRefused(
+            f"{len(edited)} generated file(s) an earlier onboarding wrote, which this "
+            f"regenerate no longer writes, were edited since: {edited}. Nothing was written: "
+            f"removing them would delete your edit (R3). Move each where you want to keep "
+            f"it, outside the generated paths, or restore it, then regenerate"
+        )
+    retired = sorted(entry["where"] for entry in left)
+    for where in retired:
+        (root / where).unlink()
+    return retired
 
 
 def _digest(text: str) -> str:

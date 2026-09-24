@@ -62,7 +62,7 @@ from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.corpus.manifest import MANIFEST_KEYS, RAISES, parse
 from studyforge.skills.onboarding import artifacts, library
 from studyforge.skills.onboarding.onboard import Onboarding, onboard
-from studyforge.skills.onboarding.pin import PIN_FILE, WHERE, PinRefused, check_commit
+from studyforge.skills.onboarding.pin import PIN_FILE, VERIFY, WHERE, PinRefused, check_commit
 from studyforge.skills.onboarding.record import OnboardingRefused
 
 #: The manifest key `settle` never takes, and why is the module's docstring.
@@ -188,6 +188,7 @@ def _refuse_stale(pin: dict) -> None:
     """Refuse to keep a pin that does not name the library running this."""
     try:
         running = library.version()
+        built = library.commit()
     except library.LibraryRefused as error:
         raise OnboardingRefused(str(error)) from None
     if pin["version"] is None:
@@ -201,4 +202,11 @@ def _refuse_stale(pin: dict) -> None:
             f"{PIN_FILE} pins a studyforge version other than the {running} running this; "
             f"re-pin with framework_commit=<the commit {running} was built from>, or run "
             f"from the pinned version. Nothing was written"
+        )
+    if built is not None and pin["commit"] != built:
+        # ⭐ `W467`: a wheel knows its commit, so a pin naming another is stale too.
+        raise OnboardingRefused(
+            f"{PIN_FILE} pins a studyforge built from another commit than the one running "
+            f"this; re-pin with framework_commit=<the commit {VERIFY} prints>, or run "
+            f"from the pinned build. Nothing was written"
         )

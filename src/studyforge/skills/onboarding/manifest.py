@@ -71,6 +71,7 @@ from collections.abc import Mapping, Sequence
 from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.corpus.manifest import (
     CORPUS_API,
+    KEY_VERSIONS,
     KNOWN_CORPUS_API,
     MANIFEST_KEYS,
     MIN_WHY_CHARS,
@@ -80,25 +81,12 @@ from studyforge.corpus.manifest import (
 )
 from studyforge.version import check as check_version
 
-#: The `corpus_api` that `content.not_material` first became legal in.
-#: ⚠️ **Re-derived**, because the owning module's map of key-to-version is not
-#: on `studyforge.corpus.manifest.__all__` and a name not on the owner's
-#: surface is not shared (Ruling 101). ⛔ **Pinned behaviourally, never against
-#: a literal**: the test promotes a document that uses the key and asserts the
-#: manifest package refuses to parse it one version lower.
-NOT_MATERIAL_API = 2
-
-#: The `corpus_api` that `narration` first became legal in (`W460`). ⭐ Re-derived
-#: and pinned behaviourally for `NOT_MATERIAL_API`'s reason. ⭐ **The author's
-#: answer is the data**: a draft carrying `narration` — `true` or `false` — was
-#: ASKED, and the version rises to read it back; a draft without it was not
-#: asked and keeps its version, voiced as every corpus before the key was.
-NARRATION_API = 5
-
-#: The `corpus_api` that `onboarding_doc` first became legal in (`W461`). ⭐ Re-derived
-#: and pinned behaviourally for the same reason; a draft that places the reader
-#: document says so, and one that does not keeps its version.
-ONBOARDING_DOC_API = 6
+#: The `corpus_api` each named key first became legal in, READ from the manifest
+#: package's own map (`W467`): reconnaissance's proposal and the tests ask them.
+#: ⛔ `promote` asks the whole map, never these three.
+NOT_MATERIAL_API = KEY_VERSIONS[("content", "not_material")]
+NARRATION_API = KEY_VERSIONS[(None, "narration")]
+ONBOARDING_DOC_API = KEY_VERSIONS[(None, "onboarding_doc")]
 
 #: The keys dropped when the corpus has nothing to say with them. ⭐ A closed
 #: set: every other key is either required, or present because the draft said
@@ -106,8 +94,9 @@ ONBOARDING_DOC_API = 6
 #: because it is absent from the draft, and an absent `media` block is a
 #: *stated* default of the manifest schema (ruled 2026-09-09). A generator that
 #: wrote one out would freeze the footprint limits' names on every corpus,
-#: including the ones with no media at all.
-OPTIONAL_KEYS = ("media", "permitted_edits")
+#: including the ones with no media at all. ⭐ `runtimes` is here (`W350/1`): an
+#: empty list says what an absent key says, and would raise the version for nothing.
+OPTIONAL_KEYS = ("media", "permitted_edits", "runtimes")
 
 #: Generated `not_material` entries: one sequence, or sequences keyed by producer.
 Declarations = Sequence[Mapping[str, str]] | Mapping[str, Sequence[Mapping[str, str]]]
@@ -148,11 +137,10 @@ def promote(
     declared = _not_material_of(not_material)
     document = {key: draft[key] for key in MANIFEST_KEYS if key in draft}
     document["content"] = _content_of(draft, declared, reasons or {})
-    uses = bool(document["content"].get("not_material"))
-    document["corpus_api"] = _api_for(draft, uses_not_material=uses)
     for key in OPTIONAL_KEYS:
         if not document.get(key):
             document.pop(key, None)
+    document["corpus_api"] = _api_for(draft, document)
     ordered = {key: document[key] for key in MANIFEST_KEYS if key in document}
     _refuse_unreadable(ordered)
     return ordered
@@ -168,13 +156,14 @@ def render(document: Mapping[str, object]) -> str:
     return json.dumps(dict(document), indent=2, ensure_ascii=False) + "\n"
 
 
-def _api_for(draft: Mapping[str, object], *, uses_not_material: bool) -> int:
+def _api_for(draft: Mapping[str, object], document: Mapping[str, object]) -> int:
     """Return the version to write: never below the draft's, never above what is needed.
 
     ⛔ **R9's membership test is `studyforge.version`'s, never a second copy
     here** (SF-33). What this module decides is only which version the *data*
-    needs; whether a declared one is speakable is one question with one answer,
-    and the second implementation is the one that comes to disagree.
+    needs, and ⭐ **that is the manifest's own `KEY_VERSIONS`, asked of every key
+    the document carries** (`W467`) — the gate `parse` refuses by, read the same
+    way, so no key a version adds can be written under a version that refuses it.
     """
     asked = check_version(
         "corpus_api",
@@ -183,16 +172,21 @@ def _api_for(draft: Mapping[str, object], *, uses_not_material: bool) -> int:
         where="the draft manifest",
         error=PromotionRefused,
     )
-    needed = NOT_MATERIAL_API if uses_not_material else 1
-    if "narration" in draft:
-        needed = NARRATION_API
-    if "onboarding_doc" in draft:
-        needed = ONBOARDING_DOC_API
     if asked > CORPUS_API:
         raise PromotionRefused(
             f"the draft asks for corpus_api {asked}; this build writes {CORPUS_API}"
         )
-    return max(asked, needed)
+    return max(asked, *_needed(document))
+
+
+def _needed(document: Mapping[str, object]) -> list[int]:
+    """Every version a key the document carries needs, and `1` for the document itself."""
+    needed = [1]
+    for (block, key), version in KEY_VERSIONS.items():
+        holder = document if block is None else document.get(block)
+        if isinstance(holder, dict) and key in holder:
+            needed.append(version)
+    return needed
 
 
 def _refuse_unknown_keys(draft: Mapping[str, object]) -> None:

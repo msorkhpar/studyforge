@@ -109,6 +109,11 @@ KNOWN_CORPUS_API = frozenset({1, 2, 3, 4, 5, 6})
 #: ⛔ **A TOP-LEVEL key is keyed under the block `None`** (`TC-00/2`): the map
 #: read nested keys only, so a top-level key with no entry here would have
 #: parsed under any version.
+#:
+#: ⭐ **On the package's surface (`W467`)**, to be read and never written, so onboarding's `promote`
+#: raises the version it writes from THIS map rather than from one constant per
+#: key it had re-derived — which missed `runtimes` and `media.max_files`
+#: (`W350/1`, `W460/2`) and would have missed every key a version adds.
 KEY_VERSIONS: dict[tuple[str | None, str], int] = {
     ("content", "not_material"): 2,
     ("media", "max_files"): 3,

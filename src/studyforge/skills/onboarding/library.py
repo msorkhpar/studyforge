@@ -32,12 +32,17 @@ editable install loads. ⛔ Neither found, or two distributions beside one
 package, is refused by name: a version this module cannot state is not one a
 pin may record.
 
-## ⚠️ What the library cannot say: its commit
+## ⭐ The commit, as the wheel was stamped with it (`W467`, `REL-05/1`)
 
-An installed wheel carries no git history, so the commit a pin records is the
-operator's statement of which commit the library was built from — shape-checked
-by `pin.check_commit`, never asked of anything. ⭐ The version is what is
-verified, here and by the corpus's generated `test_framework_pin.py`.
+⚠️ **It used to be the operator's word**, shape-checked and verified by nothing,
+because a wheel carries no git history. ⭐ **A wheel now carries `STAMP`**, the
+commit the build ran at (the repository's `setup.py` writes it), so `commit()`
+reads it beside the package, `onboard` pins it without being told, and the
+corpus's generated `test_framework_pin.py` checks it. ⚠️ **A source tree or an
+editable install has no stamp and answers `None`**: its commit is whatever the
+checkout holds, and this module reads no checkout. Onboarding from one takes
+the commit from its caller, as before, and the generated check says it cannot
+verify it rather than passing.
 """
 
 from __future__ import annotations
@@ -58,6 +63,9 @@ from studyforge.skills.onboarding.pin import (
 
 #: The `studyforge` package directory this module was loaded from.
 PACKAGE = Path(__file__).resolve().parents[2]
+
+#: The file a built wheel carries its commit in, inside the package.
+STAMP = "COMMIT"
 
 
 class LibraryRefused(LookupError):
@@ -84,6 +92,50 @@ def version(package: Path = PACKAGE) -> str:
         f"beside it nor a pyproject.toml above it, so its version cannot be read; install "
         f"the library (a wheel built from the framework) into this Python"
     )
+
+
+def commit(package: Path = PACKAGE) -> str | None:
+    """Return the commit the loaded library was built from, `None` for an unbuilt tree.
+
+    ⛔ A stamp that is not a commit is refused, never quoted (R7).
+    """
+    try:
+        text = (package / STAMP).read_text(encoding="utf-8")
+    except FileNotFoundError:
+        return None
+    except OSError, ValueError:
+        raise LibraryRefused(
+            f"the {FRAMEWORK} this Python imports carries an unreadable "
+            f"{STAMP}; install a wheel built from a clone"
+        ) from None
+    try:
+        return check_commit(text.strip())
+    except PinRefused as error:
+        raise LibraryRefused(f"{STAMP}: {error}") from None
+
+
+def built_from(asked: str | None) -> str:
+    """Return the commit a pin records: the library's own, or the caller's when it has none.
+
+    ⛔ A commit the caller names that is not the one the library was built from is
+    refused by name: the pin would name a library this Python does not import.
+    """
+    known = commit()
+    if asked is None and known is None:
+        raise LibraryRefused(
+            f"the {FRAMEWORK} this Python imports is a source tree, not a built wheel, so "
+            f"it cannot say which commit it is; pass framework_commit=<the checkout's commit>"
+        )
+    if asked is None:
+        return known
+    check_commit(asked)
+    if known is not None and asked != known:
+        raise LibraryRefused(
+            f"framework_commit names another commit than the one the {FRAMEWORK} this Python "
+            f"imports was built from; leave it out and the library's own is pinned, or "
+            f"install the library built from the commit you named"
+        )
+    return asked
 
 
 def _metadata(dist_info: Path) -> str | None:

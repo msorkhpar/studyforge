@@ -176,12 +176,20 @@ def _generated(root):
     return loaded
 
 
+#: The one generated check a source tree cannot answer (`W467`): its commit.
+UNBUILT = "test_the_installed_library_was_built_from_the_pinned_commit"
+
+
 def _every(loaded):
-    """Run every test the generated module defines; return how many ran."""
+    """Run every test the generated module defines; return how many ran, and which skipped."""
     tests = [name for name in sorted(vars(loaded)) if name.startswith("test_")]
+    skipped = []
     for name in tests:
-        getattr(loaded, name)()
-    return len(tests)
+        try:
+            getattr(loaded, name)()
+        except pytest.skip.Exception:
+            skipped.append(name)
+    return len(tests), skipped
 
 
 def _onboarded(tmp_path):
@@ -202,7 +210,8 @@ def test_the_generated_pin_test_passes_with_nothing_beside_the_corpus(tmp_path):
     root = _onboarded(tmp_path)
 
     assert sorted(path.name for path in tmp_path.iterdir()) == ["corpus"]
-    assert _every(_generated(root)) == 5
+    # ⭐ This suite imports the source tree, which cannot say its commit: that one skips.
+    assert _every(_generated(root)) == (6, [UNBUILT])
 
 
 def test_the_generated_pin_test_fails_when_the_installed_library_is_another_version(tmp_path):
@@ -258,3 +267,30 @@ def test_a_stub_pointed_back_at_a_tree_path_fails_the_generated_test(tmp_path):
 
     with pytest.raises(AssertionError, match="name a commit or a version the pin does not"):
         _generated(root).test_no_stub_has_drifted_from_the_pin()
+
+
+def test_the_generated_check_fails_a_pin_naming_another_commit_than_a_built_library(
+    tmp_path, monkeypatch
+):
+    root = _onboarded(tmp_path)
+    monkeypatch.setattr(library, "commit", lambda: "b" * 40)
+
+    with pytest.raises(AssertionError, match="install the pinned build, or re-pin"):
+        getattr(_generated(root), UNBUILT)()
+
+
+def test_the_generated_check_runs_as_a_script_and_exits_by_its_checks(tmp_path):
+    # ⭐ `W467`, `ISO-32/4`: `python3 tests/test_framework_pin.py`, no test runner asked.
+    from studyforge.skills.onboarding import artifacts
+
+    root = _onboarded(tmp_path)
+    run = [sys.executable, str(root / artifacts.PIN_TEST)]
+    env = {"PYTHONPATH": str(repository_root() / "src"), "PATH": ""}
+    passed = subprocess.run(run, capture_output=True, text=True, env=env, check=False)
+    _repin(root, version="0.0.1")
+    failed = subprocess.run(run, capture_output=True, text=True, env=env, check=False)
+
+    assert passed.returncode == 0, passed.stdout + passed.stderr
+    assert f"skip {UNBUILT}" in passed.stdout
+    assert failed.returncode == 1
+    assert "FAIL test_the_installed_library_is_the_pinned_version" in failed.stdout

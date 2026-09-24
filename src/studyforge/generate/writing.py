@@ -136,6 +136,11 @@ class Written:
     refused: tuple[PurePosixPath, ...] = ()
     missing: tuple[PurePosixPath, ...] = ()
     replaced: tuple[PurePosixPath, ...] = ()
+    #: ⭐ `W467`: clips a page plays that say words its paragraph no longer says
+    #: (`W457/1`), and clips an earlier narrated build copied here that no page of
+    #: this one links (`W460/4`). ⛔ Reported, never acted on: nothing is deleted.
+    stale: tuple[PurePosixPath, ...] = ()
+    unlinked: tuple[PurePosixPath, ...] = ()
 
     def __add__(self, other: Written) -> Written:
         """Two passes' records, in the order the passes ran."""
@@ -148,6 +153,8 @@ class Written:
             refused=self.refused + other.refused,
             missing=self.missing + other.missing,
             replaced=self.replaced + other.replaced,
+            stale=self.stale + other.stale,
+            unlinked=self.unlinked + other.unlinked,
         )
 
     @property

@@ -66,6 +66,7 @@ from studyforge.corpus.manifest.content import (
 )
 from studyforge.corpus.manifest.document import (
     CORPUS_API,
+    KEY_VERSIONS,
     KNOWN_CORPUS_API,
     MANIFEST_FILENAME,
     MANIFEST_KEYS,
@@ -118,6 +119,7 @@ __all__ = [
     "CORPUS_API",
     "DEFAULT_MEDIA",
     "EDIT_KINDS",
+    "KEY_VERSIONS",
     "KNOWN_CORPUS_API",
     "MANIFEST_FILENAME",
     "MANIFEST_KEYS",
