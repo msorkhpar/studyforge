@@ -1,21 +1,17 @@
-"""The decisions file's own acceptance: its population command, and its entry shape.
+"""The decisions file's own acceptance: its id command, and its entry shape.
 
-Mirrors no source module. It holds `docs/decisions.md` to the four things that
-make the file useful to a reader who has no process archive to consult:
+Mirrors no source module. It holds `docs/decisions.md` to the things that
+make the file useful to a reader of the product as it is:
 
-- the header carries ONE command that derives the population of process ids
-  cited in the product's prose, and that command sees an id planted in a
-  docstring (the plant, below, run in a throwaway repository);
-- every alias the file lists is a spelling that command reads and prints back
-  unchanged, so a reader grepping the file for an id they met in a docstring
-  finds the same string;
-- each entry states a decision, a reason and the spec rule it serves, or says
-  why it serves none;
+- the header carries ONE command that prints every process id cited in the
+  product's prose, and that command sees an id planted in a docstring (the
+  plant, below, run in a throwaway repository);
+- no message a user reads, and neither the decisions file nor the
+  integration catalogue, cites a process id at all: each says the thing
+  itself or cites a spec rule;
+- each entry states a decision, names where it lives, gives a reason and the
+  spec rule it serves, or says why it serves none;
 - the file cites nothing that leaves the main line with the process records.
-
-What it does not assert is COVERAGE of the live tree. Which ids explain nothing
-without the archive is a list another task consumes and rewrites away, and a
-test pinned to it would turn red on every branch that adds a citation.
 
 Standard library only, plus `git`, `bash`, `awk` and `sort`, which the command
 itself names.
@@ -27,13 +23,18 @@ import ast
 import re
 from pathlib import Path
 
+import pytest
+
 from tests.support import git, init_repository, repository_root, run
 
 #: The document under test, relative to the repository root.
 DECISIONS = Path("docs") / "decisions.md"
 
+#: The integration catalogue, which ships beside it and is held to the same no-id rule.
+CATALOGUE = Path("docs") / "integration-catalogue.md"
+
 #: The label that opens every entry part, in the order an entry carries them.
-PARTS = ("**Decision.**", "**Why.**", "**Serves.**", "**Aliases.**")
+PARTS = ("**Decision.**", "**Why.**", "**Serves.**")
 
 #: How an entry says it serves no spec rule.
 NO_RULE = "No spec rule:"
@@ -67,12 +68,6 @@ def entries() -> list[tuple[str, str]]:
     return [(chunks[i], chunks[i + 1]) for i in range(1, len(chunks), 2)]
 
 
-def aliases(body: str) -> list[str]:
-    """The backticked ids on an entry's Aliases line."""
-    line = next(ln for ln in body.splitlines() if ln.startswith(PARTS[3]))
-    return re.findall(r"`([^`]+)`", line)
-
-
 def scratch_repository(tmp_path: Path, files: dict[str, str]) -> Path:
     """A throwaway repository with `files` written and staged, so `git grep` reads them."""
     repo = init_repository(tmp_path / "repo")
@@ -95,7 +90,7 @@ def test_the_command_names_the_four_roots():
 
 def test_a_clean_tree_prints_nothing(tmp_path):
     repo = scratch_repository(tmp_path, {"src/pkg/mod.py": '"""A module."""\n'})
-    assert population(repo) == []
+    assert population(repo) == [], "a message cites a process id; say its reason instead"
 
 
 def test_a_planted_id_is_printed(tmp_path):
@@ -109,20 +104,13 @@ def test_a_planted_id_is_printed(tmp_path):
 def test_an_id_outside_the_four_roots_is_not_read(tmp_path):
     planted = "W" + "9876"
     repo = scratch_repository(tmp_path, {"docs/other/note.md": f"{planted}\n"})
-    assert population(repo) == []
+    assert population(repo) == [], "a message cites a process id; say its reason instead"
 
 
 def test_every_root_is_read(tmp_path):
     files = {f"{root}/probe.txt": f"Ruling {900 + n}\n" for n, root in enumerate(ROOTS)}
     repo = scratch_repository(tmp_path, files)
     assert population(repo) == sorted(f"Ruling {900 + n}" for n in range(len(ROOTS)))
-
-
-def test_every_alias_is_a_spelling_the_command_prints_unchanged(tmp_path):
-    listed = sorted({a for _, body in entries() for a in aliases(body)})
-    repo = scratch_repository(tmp_path, {"src/aliases.txt": "".join(f"{a}\n" for a in listed)})
-    printed = population(repo)
-    assert sorted(set(printed) ^ set(listed)) == []
 
 
 # --- the entries ---------------------------------------------------------------
@@ -141,18 +129,20 @@ def test_every_entry_carries_its_four_parts_in_order():
 
 def test_every_entry_names_a_spec_rule_or_says_why_none():
     for heading, body in entries():
-        serves = body[body.find(PARTS[2]) : body.find(PARTS[3])]
+        serves = body[body.find(PARTS[2]) :]
         assert re.search(r"\bR([1-9]|1[0-9]|2[01])\b", serves) or NO_RULE in serves, (
             f"{heading!r} names no spec rule and does not say why"
         )
 
 
-def test_an_alias_names_one_decision():
-    seen: dict[str, str] = {}
+def test_every_entry_names_where_it_lives():
+    # A module, a file or a test: a code span holding a dot or a slash.
     for heading, body in entries():
-        for alias in aliases(body):
-            assert alias not in seen, f"{alias} aliases {seen[alias]!r} and {heading!r}"
-            seen[alias] = heading
+        decision = body[body.find(PARTS[0]) : body.find(PARTS[1])]
+        spans = re.findall(r"`([^`]+)`", decision)
+        assert any("." in span or "/" in span for span in spans), (
+            f"{heading!r} names no module, file or test that carries it"
+        )
 
 
 def test_headings_are_unique():
@@ -162,6 +152,14 @@ def test_headings_are_unique():
 
 def test_nothing_is_cited_that_leaves_the_main_line():
     assert re.findall(r"handoffs/|rows/|BOARD", document()) == []
+
+
+@pytest.mark.parametrize("name", [DECISIONS, CATALOGUE], ids=str)
+def test_neither_document_cites_a_process_id(tmp_path, name):
+    # The command's own pattern is in the file and prints nothing: a spelling
+    # such as `W<n>` is a shape, not an id.
+    text = (repository_root() / name).read_text("utf-8")
+    assert population(scratch_repository(tmp_path, {"src/document.md": text})) == []
 
 
 # --- what a user reads -----------------------------------------------------------

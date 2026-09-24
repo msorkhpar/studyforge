@@ -57,8 +57,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`, `R19`
 
-**Aliases.**
-
 ### A defect a corpus shows is fixed in the framework, and the corpus is regenerated
 
 **Decision.** When a built corpus shows a defect in anything the framework generates (a page, a stylesheet, a skill stub, the manifest, a generated check), the fix lands in the framework or its skills and reaches the corpus by regeneration: `reonboard` rewrites the consuming half from the corpus's recorded answers at the new pin, and a build rewrites the site. A generated file is never patched in place: `hand_edited` (`skills.onboarding.record`) names every generated file whose bytes differ from what was written, and a regenerate replaces it. Customisation enters as manifest data. The test of a fix is the next corpus, not the one that showed it.
@@ -66,8 +64,6 @@ What it reads, and the choices in it:
 **Why.** A patch in one corpus is a fix the next source has to rediscover, and a hand-edited generated file is overwritten, silently, by the next regeneration.
 
 **Serves.** `R19`, `R3`
-
-**Aliases.**
 
 ## Refusals, errors and personal data
 
@@ -79,8 +75,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R7`, `R6`
 
-**Aliases.** `Ruling 10`, `Ruling 13`, `Ruling 14`, `Ruling 17`, `Ruling 37`, `Ruling 135`, `W1`, `W17`, `W19`, `W40/1`
-
 ### Refusals gather every failure and name them in one message
 
 **Decision.** A walk over many items collects every failure first and raises once: epic documents and their rows in `studyforge.skills.delivery.epics`, capabilities in `skills.delivery.capability`, a backlog's milestones and dependency cycles in `skills.delivery.backlog`, the findings log in `skills.delivery.findings_log`, and file collisions in `skills.adapter.scaffold`. Within the delivery package, `skills.delivery.refusal.one_or_all` is the single plural form: one reason reads unchanged, several are joined behind a preamble that leads with the count. Cycles are refused as a set before the critical-path walk, so that walk needs no guard of its own.
@@ -88,8 +82,6 @@ What it reads, and the choices in it:
 **Why.** A refusal that stops at the first failure hides how much is wrong and turns every fix into another full run.
 
 **Serves.** `R6`
-
-**Aliases.** `Ruling 188`, `W94`
 
 ### A count is reported with the population it was taken over
 
@@ -99,8 +91,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`
 
-**Aliases.** `Ruling 128`
-
 ### Names and identifiers are validated against a permitted set
 
 **Decision.** Wherever a legal set can be written down (filename components, slugs, case ids, gate and family names, quiz and question ids, digests), it is enforced by enumerating what is permitted, never by a list of forbidden characters. Filename components pass the one predicate `studyforge.corpus.container.fields.is_filename_component`. A permitted character class is computed from its predicate, never typed out as a second list: `studyforge.address.slug.SLUG_PERMITTED` is the set of characters `is_slug` accepts, and `corpus.container.fields.FILENAME_PERMITTED` is derived from that constant.
@@ -108,8 +98,6 @@ What it reads, and the choices in it:
 **Why.** A forbidden list is an open set that cannot be finished, so any character nobody thought of passes it, including ones that break a filename or a URL on the offline floor. A class derived from its predicate cannot drift from it.
 
 **Serves.** `R8`, `R7`
-
-**Aliases.** `Ruling 8`, `Ruling 12`
 
 ### Identifier patterns are anchored at both ends
 
@@ -119,8 +107,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`
 
-**Aliases.** `AX-00/1`, `W434`
-
 ### Legal combinations are stated positively
 
 **Decision.** Where only some pairings of values are valid, the code enumerates the legal set and refuses everything outside it. In `studyforge.unit.trust`, the provenances allowed to claim `authoritative` are the data tuple `MAY_BE_AUTHORITATIVE`, which holds only `bundled`, so a grader the reader wrote, or any provenance added later, is refused that claim. In `studyforge.exercise.quiz.shape`, the keys a quiz record may carry are the tuple `QUIZ_KEYS`.
@@ -128,8 +114,6 @@ What it reads, and the choices in it:
 **Why.** A list of forbidden pairs fails open: a value added later is accepted in every pairing nobody thought to forbid. A legal set refuses a new value until somebody decides about it.
 
 **Serves.** `R5`, `R6`
-
-**Aliases.** `Ruling 35`, `W18`
 
 ### A source path is checked against a permitted set before any text gate
 
@@ -139,8 +123,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R7`
 
-**Aliases.** `Ruling 44`
-
 ### Both personal-data gates recognise the same shapes
 
 **Decision.** The archive gate in `studyforge.archive.scrub` and the repository hygiene check may differ in what they do with a match but not in which shapes they recognise, local hostnames included. The shared shape table is data, `tests/harness/personal-data-shapes.json`, with one column per gate; `tests/test_shape_vocabulary.py` asserts the gate and scrub columns against it and refuses any row whose columns disagree without a stated reason.
@@ -148,8 +130,6 @@ What it reads, and the choices in it:
 **Why.** A machine name is personal data in an archive document exactly as in a source file. Two gates that keep their own shape lists drift apart without any test failing.
 
 **Serves.** `R7`
-
-**Aliases.** `Ruling 47`
 
 ### Every module that decodes a document calls the personal-data gate
 
@@ -159,8 +139,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R7`
 
-**Aliases.** `W7`
-
 ### Every trust boundary gates, and one read path never re-asks
 
 **Decision.** Reading a document off disk is a trust boundary, so the reader at that boundary version-checks the document and runs the personal-data gate there, and nothing further in repeats it. The builder reads archive documents through `studyforge.archive.document.load` (called from `unit.builder.material`), and the serve-time reader of a built unit in `studyforge.unit.served` gates the `unit.json` it reads. The gate on reading the archive and the gate on reading the built unit are separate boundaries, not duplicates.
@@ -168,8 +146,6 @@ What it reads, and the choices in it:
 **Why.** `studyforge validate` is optional, so a reader that assumed it had run would be trusting a check that may never have happened.
 
 **Serves.** `R7`, `R9`
-
-**Aliases.** `Ruling 50`
 
 ### A personal-data refusal travels through every caller as itself
 
@@ -179,8 +155,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R7`, `R6`
 
-**Aliases.** `Ruling 58`, `W27`
-
 ### Each package publishes the exceptions it lets out as a tuple
 
 **Decision.** A reader or builder package exports a `RAISES` tuple naming every exception its public calls can let out (`corpus.manifest`, `corpus.container`, `generate`, `progress`, `serve.discovery`), and a caller catches that tuple rather than retyping the members. The build in `studyforge.generate.declarations` converts every member except `PersonalDataLeak` into its own `BuildError`, so a malformed container map is a refusal and never a traceback. `tests/test_raises_convention.py` checks the convention.
@@ -189,8 +163,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`, `R17`
 
-**Aliases.** `SF-28/1`, `W208`, `W208/1`, `W212`, `W213`
-
 ### Reconnaissance checks path containment itself so no absolute path leaks
 
 **Decision.** Before any relative-path computation, reconnaissance calls `studyforge.skills.reconnaissance.errors.inside_root`, which checks that a document's parent directory is inside the root and otherwise raises `ReconnaissanceRefused` naming neither path. It never lets the standard library's `relative_to` error surface and never chains from it.
@@ -198,8 +170,6 @@ What it reads, and the choices in it:
 **Why.** The standard library's message carries both absolute paths, and one of them is usually under a home directory.
 
 **Serves.** `R7`, `R6`
-
-**Aliases.** `W217/2`, `W220`
 
 ## One home for each rule
 
@@ -211,8 +181,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R4`, `R6`
 
-**Aliases.** `SF-01`
-
 ### A value a second package needs has one exported home
 
 **Decision.** A constant another package needs is exported by its owner and imported, never retyped. The archive directory names come from `studyforge.corpus.placement` (`ARCHIVE_DIRNAME`, `RAW_DIRNAME`, `UNITS_DIRNAME`) and the adapter `Layout` in `skills.adapter.layout` only re-exports them. The run namespace is `studyforge.serve.routes.run.NAMESPACE`, which `serve.instance` and `skills.buildserve.states` import. `tests/studyforge/corpus/placement/test_names.py` fails on a second literal of each directory name in `src`.
@@ -220,8 +188,6 @@ What it reads, and the choices in it:
 **Why.** Two spellings of one value can disagree with nothing failing.
 
 **Serves.** `R21`
-
-**Aliases.** `Ruling 101`, `SK-03/3`, `W199/1`, `W298`
 
 ### Primitives several renderers need live once, in a sibling package
 
@@ -231,8 +197,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R17`
 
-**Aliases.** `Ruling 20`, `SF-15/1`, `SF-27/1`, `W76`, `W107`
-
 ### The origin key has one reader
 
 **Decision.** A document's `origin` (a path string, or a `{path, section}` region) is interpreted only by `studyforge.corpus.container.fields.optional_origin`. Other code passes the raw value straight to it and does nothing else with it. `tests/studyforge/corpus/container/test_origin_sites.py` scans source and tests and refuses any other site that reads the key.
@@ -240,8 +204,6 @@ What it reads, and the choices in it:
 **Why.** A second reader interprets the key by its own idea of the shape and breaks as soon as a new origin shape is used.
 
 **Serves.** No spec rule: one reader keeps one interpretation of a shape.
-
-**Aliases.** `W109`
 
 ### The build package is the one reader of a corpus's declarations
 
@@ -251,8 +213,6 @@ What it reads, and the choices in it:
 
 **Serves.** No spec rule: one reader per contract.
 
-**Aliases.** `SF-19a/1`
-
 ### Display and speech share one inline-markup interpreter
 
 **Decision.** Narration (`studyforge.narrate.speakable.voice`) consumes `render.markup.segments` to find inline markers rather than parsing them itself, even though that parser lives under `render`.
@@ -260,8 +220,6 @@ What it reads, and the choices in it:
 **Why.** Display and speech must never disagree about where a marker begins.
 
 **Serves.** No spec rule: one parser for one syntax.
-
-**Aliases.** `SF-12/7`
 
 ### A practice is named by its progress key verbatim
 
@@ -271,8 +229,6 @@ What it reads, and the choices in it:
 
 **Serves.** No spec rule: one spelling from the data to the record.
 
-**Aliases.** `SF-21/4`
-
 ### Served provenance is called built_from and source stays a corpus id
 
 **Decision.** In the manifest (`studyforge.corpus.manifest.document`), `source` is a corpus id, validated as a slug, never a fetch address. The served unit's provenance array, written by `studyforge.unit.builder.document` and checked by `unit.served`, is named `built_from` and may not be called `sources`, `source` or `origin`. Its entries carry `variant`, `kind`, `ordinal`, `ingested` and `content_sha256`, never a path.
@@ -280,8 +236,6 @@ What it reads, and the choices in it:
 **Why.** Another common meaning of `source` is a fetched address, and one word with two meanings confuses the two levels exactly where they meet. A location is a fact about a disk, while an entry identifies a document within the corpus.
 
 **Serves.** `R4`
-
-**Aliases.** `Ruling 51`
 
 ## The corpus: manifest, archive, placement and validation
 
@@ -293,8 +247,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R9`, `R10`, `R21`
 
-**Aliases.** `Ruling 18`, `Ruling 95`
-
 ### A placement profile answers which ignore lines a corpus needs
 
 **Decision.** `studyforge.corpus.placement.Profile.ignore_file(media=...)` returns an `IgnoreFile`, the one file that holds the rules and its lines; the caller passes whether generated media is ignored (the media policy inverted) and never asks which profile it has. The file is always `.studyforge/.gitignore` inside the generated root and always carries the discovery cache's machine-local lines; the media lines from the profile's `media_ignore_lines` are added only when the policy does not commit media. Under `tree` those lines are scoped by living below `.studyforge/`. Under `sibling` they are `study/<kind>/`, unanchored but carrying the profile's own `study/` segment so they could match only inside directories the framework writes; because there is one `study/` directory per source directory and no single file can hold them, `ignore_file` raises `PlacementError` instead of returning them, and the repository's root ignore file is never used.
@@ -302,8 +254,6 @@ What it reads, and the choices in it:
 **Why.** A caller that asked which profile it has would be branching on placement, and only the profile knows where its media lands. A rule with no file inside a generated directory would end up in the repository's own root ignore file, which non-destructive generation forbids.
 
 **Serves.** `R1`, `R3`, `R19`
-
-**Aliases.** `Ruling 91`
 
 ### The media byte-limit field names are frozen
 
@@ -313,8 +263,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R9`
 
-**Aliases.** `Ruling 104`
-
 ### A container origin may name a heading-bounded region of a file
 
 **Decision.** A unit's `origin` in `container.json` is either a string naming a whole file or an object with `path` and `section`, where `section` is the exact text of the heading that opens the region. The region ends at the next heading of the same or shallower depth, and the heading must occur exactly once in the file. The object form requires `container_api` 2 (`REGION_ORIGIN_API` in `studyforge.corpus.container.document`), and `Unit.origin` stays a plain path in both forms, so placement uses only the path.
@@ -322,8 +270,6 @@ What it reads, and the choices in it:
 **Why.** Many units can be regions of one file. A heading is a bound the completeness check can find with its own heading pattern, independent of the Markdown reader it exists to disagree with; a renderer's anchor would come from that reader, and a line range breaks when the upstream file grows a paragraph.
 
 **Serves.** `R9`, `R6`, `R3`
-
-**Aliases.** `Ruling 92`
 
 ### A unit's practice may be read from a file of its own
 
@@ -333,8 +279,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R3`, `R6`
 
-**Aliases.** `W428`
-
 ### An authored practice is left out of the source completeness check
 
 **Decision.** In `studyforge.validate.source.completeness`, a practice whose `exercise` record has provenance `generated` (authored from a bundle) opens its unit's completeness buckets but adds no headings to them. The decision is read from the document's own provenance, never from its ordinal, path or bundle location; every other document, a bundled practice included, is still counted.
@@ -342,8 +286,6 @@ What it reads, and the choices in it:
 **Why.** An authored practice's headings come from its bundle and never from the source, so counting them against the source would report a false short read on every unit that has one.
 
 **Serves.** `R5`, `R6`
-
-**Aliases.** `W444`
 
 ### Source absence is read from the disk, never inferred from origins
 
@@ -353,8 +295,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`
 
-**Aliases.** `W255`, `W255/3`, `W261`
-
 ### Framework directories are skipped only at the corpus root
 
 **Decision.** `studyforge.validate.source.enumeration` skips `.git` and `.studyforge` (`SKIP_DIRS`) and the archive root only at the corpus root. Beneath it a `.studyforge` or `archive/` directory is the source's own material, and a nested repository store is refused by name as `nested-repository`. Reconnaissance (`skills.reconnaissance.inventory` and `capability`) imports the same `SKIP_DIRS` rather than keeping its own rule.
@@ -362,8 +302,6 @@ What it reads, and the choices in it:
 **Why.** Below the root those names belong to the source, and skipping them anywhere would silently hide material.
 
 **Serves.** `R1`, `R6`
-
-**Aliases.** `W241/2`, `W259`
 
 ### The source scan recognises build output from the plan
 
@@ -373,8 +311,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R3`, `R1`, `R6`
 
-**Aliases.** `INT-06/7`
-
 ### An included file that no unit reads is refused
 
 **Decision.** In `studyforge.validate.source.classification`, a file the manifest's `content` includes but that no unit's `origin` or `practice_origin` names is reported by name as `included-unread`. A container's origin only places its page and does not count as a reader. The check runs only while some unit origin is on disk.
@@ -382,8 +318,6 @@ What it reads, and the choices in it:
 **Why.** An aggregate document left un-excluded, or a stray file, would otherwise sit as material that no page shows.
 
 **Serves.** `R6`
-
-**Aliases.** `W266`
 
 ### Validate refuses a corpus with no archive
 
@@ -393,8 +327,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`, `R2`
 
-**Aliases.** `INT-06/5`
-
 ### The archive layout is spelled once and checked from both ends
 
 **Decision.** The archive's directory segments (`ARCHIVE_DIRNAME`, `RAW_DIRNAME`, `UNITS_DIRNAME`) are spelled once in `studyforge.corpus.placement.names`, and the paths an adapter writes, including `raw/<variant>/` and a unit's own files directory, are composed by `studyforge.skills.adapter.Layout`, never from literals by readers, skills or tests; `tests/studyforge/corpus/placement/test_names.py` fails on a second literal. `studyforge.validate.source.membership` checks both directions: every file under the archive root is a member (`archive-stray` otherwise), and every file an archive document declares is where `Layout.unit_files` puts it (`media-missing` otherwise).
@@ -402,8 +334,6 @@ What it reads, and the choices in it:
 **Why.** A second spelling of a segment lets a writer and a reader disagree with nothing failing, and the disagreement surfaces only as broken media on a page.
 
 **Serves.** `R2`, `R6`, `R19`
-
-**Aliases.** `W199`, `W214`, `W322`, `SF-25`
 
 ### A malformed block is refused by name through one reader per direction
 
@@ -413,8 +343,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`, `R2`
 
-**Aliases.** `W263`, `W282`, `W282/1`, `W289`, `W297`
-
 ### Assets and attachments share one entry shape
 
 **Decision.** Every entry in a unit document's `assets` or `attachments` list uses the same keys, `MEDIA_ENTRY_KEYS` in `studyforge.archive.document`: `remote`, `local`, `sha256`, `bytes`, `content_type` and `kind`. `local` is the path inside the unit's archive directory and is the only half a page may address; `remote` is provenance that is kept but never rendered. The two lists differ only in purpose: an asset is a file some block shows, and an attachment is a companion file no block names, which the page links for download.
@@ -422,8 +350,6 @@ What it reads, and the choices in it:
 **Why.** Two vocabularies for the same record would drift, and a remote address rendered would break the offline page.
 
 **Serves.** `R8`, `R2`
-
-**Aliases.** `FND-04/4`
 
 ### A build copies each file a page addresses and mints media directories only for copies
 
@@ -433,8 +359,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R8`, `R10`, `R3`
 
-**Aliases.** `SF-37`, `W268`
-
 ### A unit's output locations are derived once, from the whole unit
 
 **Decision.** Where a unit's page, media and audio go is answered by `studyforge.generate.declarations`: `unit_location` takes a unit with material whole and `declared_location` takes a container and its declared unit whole, and both call one private derivation that passes address, ordinal, title, origin and label to the profile. `studyforge narrate` places clips through `unit_location`, and a build probes and links through the same answer.
@@ -442,8 +366,6 @@ What it reads, and the choices in it:
 **Why.** When callers spell the arguments themselves, one of them can drop the label, and then the writer and the page look in different places with nothing raising.
 
 **Serves.** `R4`, `R8`
-
-**Aliases.** `SF-42/1`, `W222`, `W290`
 
 ### An intermediate container level has no page and its crumb is unlinked
 
@@ -453,8 +375,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`, `R8`
 
-**Aliases.** `SF-14/3`
-
 ### A build never creates its own output root
 
 **Decision.** Every writer in `studyforge.generate.writing` refuses when the output root is not an existing directory; the caller creates it, and a build creates only what lies beneath it.
@@ -462,8 +382,6 @@ What it reads, and the choices in it:
 **Why.** A relative root resolves against whatever the process's working directory happens to be, so a writer that created its own root could silently write output into the wrong place, such as the repository itself.
 
 **Serves.** `R3`
-
-**Aliases.** `SF-28/2`
 
 ## The command line and the plan
 
@@ -475,8 +393,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`
 
-**Aliases.** `W32`
-
 ### The installed command loads a verb only when that verb is dispatched
 
 **Decision.** `studyforge.cli.dispatch` registers each verb with a loader that imports the verb's module only when it runs, so importing the command, or one verb, loads no other verb; `tests/harness/test_isolation.py` holds this. The could-not-run exit code, `UNUSABLE = 2`, lives in `studyforge.exitcodes`, a module that belongs to no stage and imports nothing, and `studyforge.validate` re-exports the same object.
@@ -484,8 +400,6 @@ What it reads, and the choices in it:
 **Why.** A shared constant defined in one stage, or a module-level import in the dispatcher, would drag every stage, and `--help`, through the whole validator.
 
 **Serves.** No spec rule: an import-boundary decision about the command line's own shape.
-
-**Aliases.** `W223/1`, `W293`, `W293/3`, `W320`
 
 ### Every ignore rule the plan prints names the file that holds it
 
@@ -495,8 +409,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R3`, `R19`
 
-**Aliases.** `INT-06/8`
-
 ### A plan says who writes each path and whether it is already there
 
 **Decision.** `studyforge.cli.plan` prints each path with a verb (`create`, `replace`, `keep`, `claim` or `expect`) chosen by who writes it (a build, an adapter, `studyforge serve`, `studyforge narrate`) and by whether it already exists at the corpus root, checked with `os.path.lexists` and never by opening it. A path already on disk is never printed as `create`. `tests/studyforge/cli/plan/test_agreement.py` compares the plan with what a build actually writes, under both placement profiles.
@@ -504,8 +416,6 @@ What it reads, and the choices in it:
 **Why.** A plan is the go signal a person reads before letting a build near their repository, so it must agree with what the build will really do.
 
 **Serves.** `R3`
-
-**Aliases.** `W267`, `W268/1`
 
 ### Only the measured media footprint can refuse a plan or stop a build
 
@@ -515,8 +425,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`
 
-**Aliases.** `W287`, `W311/1`, `W311/2`, `W314`
-
 ### The terminal check runs a file's test, or its program when nothing grades it
 
 **Decision.** `studyforge check <file>` (`studyforge.cli.check`) selects the practice whose `main_path` is that file and runs the command the generated unit document names, never anything the reader typed; a path no practice names is refused and nothing runs. A graded file runs its test, exits with the test's verdict and records the run in the progress store as a practice pass or fail, the same fact the page's Submit records. An ungraded file runs its program, says no test checks it, exits `0` and records nothing. Exit `2` means nothing ran.
@@ -525,8 +433,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R5`
 
-**Aliases.** `SF-44`
-
 ### A served site answers state, Run and Submit as a served root does
 
 **Decision.** `studyforge serve --site` takes its namespaces from the one constructor `studyforge.serve.instance.namespaces_of`, as the root form does, so a site built elsewhere answers `state`, `run` and `quiz`. That site is scanned where it was built (`serve.instance.site_discovery`), while the progress store and unit documents stay the corpus root's, and nothing is written into the site and no discovery cache into the corpus root. `site_namespaces` in `studyforge.cli.serve` is the one seam a caller replaces to serve a site without execution.
@@ -534,8 +440,6 @@ What it reads, and the choices in it:
 **Why.** A site that registers Run but not state records progress it cannot read back, so both forms must register the same namespaces from one place.
 
 **Serves.** `R8`
-
-**Aliases.** `SF-22/2`, `W371`, `W371/1`, `W371/2`, `W380`, `W380/1`, `W386`
 
 ## The skills: onboarding, reconnaissance, adapter, delivery, execution, personal archive
 
@@ -547,8 +451,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`, `R19`
 
-**Aliases.** `W238`, `W247`
-
 ### The capability index says which side delivers each capability
 
 **Decision.** `studyforge.skills.delivery.capability_index(documents, order, pins)` requires the text of the workspace pin document and reads it through `studyforge.skills.delivery.components.Components`, so each capability is marked as delivered here, elsewhere, or undeclared (`HERE`, `ELSEWHERE`, `UNDECLARED`). The side column is rendered only when some row is not delivered here, no component is named in the output, and `Backlog.check` returns a plan whose terminal statement carries back the capabilities another side delivers.
@@ -556,8 +458,6 @@ What it reads, and the choices in it:
 **Why.** A plan must neither claim work another component delivers nor silently drop it, and a row that declares no side is shown as undeclared rather than guessed.
 
 **Serves.** `R1`, `R19`
-
-**Aliases.** `W92`
 
 ### A conversion is not done until its findings log is written
 
@@ -567,8 +467,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R19`, `R6`
 
-**Aliases.** `QA-04`, `W346`
-
 ### Generated documents point at a command instead of carrying live figures
 
 **Decision.** The reader's onboarding document, rendered by `studyforge.skills.onboarding.artifacts`, states no figure that moves after it is generated, such as unit count, narrated units or container need. It prints `python3 -m studyforge.skills.onboarding`, which reads the corpus's standing when it runs (`onboarding.cli`), and `onboarding.standing.lines` is the only place those figures become prose. Skill documents follow the same rule: the validator's number of checks is printed by a command the adapter skill gives, and the scaffold's file count is read from the scaffold's own listing, never typed in.
@@ -576,8 +474,6 @@ What it reads, and the choices in it:
 **Why.** Nothing regenerates a document when narrating or re-ingesting moves the answer, so a stored figure can only go stale.
 
 **Serves.** `R19`
-
-**Aliases.** `Ruling 161`, `Ruling 163`, `W248/3`, `W257/1`, `W313`, `W332`, `W345/1`
 
 ### The framework pin records the installed library's version and commit, never a path
 
@@ -587,8 +483,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R10`, `R18`, `R7`
 
-**Aliases.** `INT-14/1`, `ISO-M10/1`, `W270`, `W286`, `W321`, `W442`
-
 ### The pin names the installed wheel's own commit, and it is verified
 
 **Decision.** A wheel built from the framework carries a `COMMIT` stamp: `setup.py` writes `studyforge/COMMIT` at build time, holding the forty-hex commit of the git checkout the wheel is built from, and refuses to build from anything that is not the top of a git checkout. `studyforge.skills.onboarding.library.commit()` reads it back, and answers `None` for an editable or source-tree install, which cannot say its commit. `onboard` pins that commit without being told (`library.built_from`); a `framework_commit` a caller names is accepted only when the library has no stamp, and refused when it differs from the stamp. `python3 -m studyforge.skills.onboarding.verify` and `reonboard` (`skills.onboarding.reonboard`) refuse a pin that names another commit than the one the running library was built from, and the generated `test_framework_pin.py` asserts the same.
@@ -596,8 +490,6 @@ What it reads, and the choices in it:
 **Why.** Every build of one version shares its version number, so the commit is what tells two libraries apart, and a commit typed by an operator is a claim the library can check for itself.
 
 **Serves.** `R18`, `R10`, `R19`
-
-**Aliases.**
 
 ### Re-onboarding keeps every answer the corpus already records
 
@@ -607,8 +499,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R19`, `R6`
 
-**Aliases.** `W283`, `W329`, `W439`, `W443`
-
 ### The install record marks the person's module and guards every generated path
 
 **Decision.** `.studyforge/installed.json` (`studyforge.skills.onboarding.record`, `installed_api` 2, and it still reads 1) lists each generated file with a digest. It marks the adapter's reading step `hand_written` and keeps no digest for it, so `hand_edited` names only generated files whose bytes changed, followed by generated files that are missing, except a self-hiding ignore file. `refuse_unrecorded` refuses by name any file at a newly generated path that the record does not list, and never adopts it; the one exception is a file whose bytes match the recorded digest of a generated path that is now empty, which is a generated file moved. `onboarding.removal.uninstall` removes only what was written, refuses when any generated file changed, and removes the reading step only while that file is still the stub.
@@ -616,8 +506,6 @@ What it reads, and the choices in it:
 **Why.** The one legitimate edit must not look like a hand-edit, moving or deleting a generated file is an edit to it, and a person's file must never be overwritten or silently claimed.
 
 **Serves.** `R3`, `R19`
-
-**Aliases.** `INT-09/1`, `W256`, `W353`
 
 ### Every writer of a generated file set keeps the person's module
 
@@ -627,8 +515,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R19`, `R3`
 
-**Aliases.** `W257/2`, `W265`
-
 ### Generated Python directories carry their own bytecode ignore file
 
 **Decision.** Every directory where the adapter scaffold or onboarding writes a `.py` file gets a `.gitignore` inside it naming interpreter output (`studyforge.skills.adapter.scaffold.bytecode_ignores`, `ignore_files`, `BYTECODE_RULES`). These files are derived from the generated paths, never placed at the corpus root, and never written into the root ignore file. A corpus onboarded earlier gains them when it is regenerated.
@@ -636,8 +522,6 @@ What it reads, and the choices in it:
 **Why.** Bytecode can embed absolute paths, and the root ignore file is source material that R3 forbids editing.
 
 **Serves.** `R3`, `R7`
-
-**Aliases.** `W15`, `W345`
 
 ### The non-destructive check reads the build's declaration, not commit state
 
@@ -647,8 +531,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R3`
 
-**Aliases.** `W331`, `W331/2`, `W278`
-
 ### Execution-generated files are guarded as onboarding's are
 
 **Decision.** `.studyforge/execution/written.json` (`studyforge.skills.execution.written`, `written_api` 1) records the digest of every file the execution skill writes: `write` and the two record steps (`record_runner`, `record_editor`) stamp what they put on disk. Entries are sorted by path and carry no clock, a stamp merges into the record rather than replacing it, and the record does not list itself. Onboarding's `hand_edited` includes the execution record's report, so one check names every generated file of either skill that was edited or is missing. The record sits under the skill's own directory, which the corpus already declares not material, so no manifest changes.
@@ -656,8 +538,6 @@ What it reads, and the choices in it:
 **Why.** A hand-edit to a generated file is a finding (R19), and a file no record lists cannot be found edited. Each writer keeps its own record because onboarding's is rewritten by every re-onboard and undone by `uninstall`, neither of which is the execution skill's to trigger.
 
 **Serves.** `R19`, `R10`
-
-**Aliases.** `W466`, `PO-188/1`
 
 ### Skills point at the never-editable vocabularies instead of listing them
 
@@ -667,8 +547,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R3`, `R19`
 
-**Aliases.** `W281`, `W281/1`, `W292`, `W310/2`
-
 ### Reconnaissance proposes not-material globs and leaves the reasons to a person
 
 **Decision.** `studyforge.skills.reconnaissance.furniture.propose` proposes a `not_material` glob for every file the validator would call unclassified, taken from `validate.source.source_files`, and every proposed glob has a null `why`. Only a person supplies reasons, through onboarding's `promote`. A re-survey never proposes a file that a declared glob already covers, or anything onboarding recorded writing. A proposal that judged no file, or ran without git's ignore rules, says why in `stands_down`.
@@ -676,8 +554,6 @@ What it reads, and the choices in it:
 **Why.** A generated reason would be an audit nobody performed, and a silent empty proposal reads as complete.
 
 **Serves.** `R19`, `R6`
-
-**Aliases.** `INT-07/2`, `INT-10/1`, `INT-10/2`, `W240/3`, `W269`
 
 ### A drafted source name comes from the curriculum title, never the directory
 
@@ -687,8 +563,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R10`, `R7`
 
-**Aliases.** `INT-07/1`, `W240`, `W249`
-
 ### A heading that links a file is a group label when that file is cut into regions
 
 **Decision.** In a curriculum record (`studyforge.skills.reconnaissance.grouping`), a heading that links a file is not a unit just because of the link. When it sits where the group labels sit, opens no entry, and its linked file is split by headings (`reconnaissance.regions`), it is a group label, and each region becomes a unit whose origin is a path plus section. A linked file that is one unit stays an entry, and the survey asks the person to confirm either reading.
@@ -696,8 +570,6 @@ What it reads, and the choices in it:
 **Why.** A link records where something is, not what role it has; reading such a heading as one whole-file unit erases every unit inside the file.
 
 **Serves.** `R6`
-
-**Aliases.** `INT-07/3`, `W250`
 
 ### A heading-form curriculum entry reads the ordinal its bullet form reads
 
@@ -707,8 +579,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`
 
-**Aliases.** `W250/2`, `W252`
-
 ### The reading order is the one the curriculum record states, and nothing derives it
 
 **Decision.** Reconnaissance finds the document that records the curriculum by how much of the material it links, never by its name (`studyforge.skills.reconnaissance.record.find`), and takes each unit's position from the order that document states (`Record.order`), never from a filename or directory sort. A corpus with no such record gets no sorted guess: the survey asks the reading order as an open question, and material the record does not name is a question too. The adapter skill forbids its reading step to derive an address, an ordinal or a reading order. The framework keeps no check of its own that unit *k* is the material the record puts at *k*: the order is data the adapter carries from the record into the archive, and an adapter asserts it in its own tests against that record, since only the record knows it.
@@ -716,8 +586,6 @@ What it reads, and the choices in it:
 **Why.** A filename sort misplaces units while the count is right, every page renders and the first unit of each group stays first, so a count assertion and a spot-check both pass. An ordering claim needs an oracle, and the oracle is whatever records the order.
 
 **Serves.** `R1`, `R6`
-
-**Aliases.**
 
 ### A curriculum line is a group label by its position, never by its heading level
 
@@ -727,8 +595,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R1`, `R6`
 
-**Aliases.**
-
 ### The survey and the scaffolded suite walk the corpus exactly as validate does
 
 **Decision.** Reconnaissance's inventory (`studyforge.skills.reconnaissance.inventory.take`) and the adapter's generated emission test (`studyforge.skills.adapter.parts.suite`) take their answers from the validator. They skip `SKIP_DIRS` only at the corpus root and get nested repository stores from `source_files(root).stores`. The survey never enters such a store and counts as the corpus's own only files `source_files` enumerates; the suite copies a store unchanged so the validator refuses it. The suite takes git's ignore rules from `repository_ignores`, the one ignore reader, asked once per directory, and keeps no list of names beyond its own output directories; outside a git working tree it copies everything but the archive and warns.
@@ -736,8 +602,6 @@ What it reads, and the choices in it:
 **Why.** A second walk rule passes locally what the validator refuses, or walks a large ignored directory.
 
 **Serves.** `R2`, `R6`
-
-**Aliases.** `INT-09/7`, `W28`, `W257`, `W259/1`, `W271`, `W272`
 
 ### The generated emit stages the archive and applies one ingestion date
 
@@ -747,8 +611,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R10`, `R6`
 
-**Aliases.** `INT-09/3`
-
 ### The adapter layout is the one address of a unit's authored overlay
 
 **Decision.** `studyforge.skills.adapter.layout.Layout.content(address, unit)` is the only place the per-unit overlay path is computed. It joins placement's units directory with `studyforge.unit.content.CONTENT_FILENAME` and mints nothing itself. Declaring where an overlay sits does not apply one: v1 still builds each unit from its archive documents alone.
@@ -756,8 +618,6 @@ What it reads, and the choices in it:
 **Why.** With no stated location, every build that wanted an overlay would invent its own.
 
 **Serves.** `R21`, `R4`
-
-**Aliases.** `SF-37/3`, `W198`
 
 ### Missing contract or manifest keys are findings, never typed-in defaults
 
@@ -767,8 +627,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R19`
 
-**Aliases.** `SK-09/1`, `SK-09/2`, `SK-09/3`, `SK-09/5`, `TC-05/2`
-
 ### The prime is one project per seeded tool, taken from the corpus's own build
 
 **Decision.** `studyforge.skills.execution.prime` copies the corpus's own build into `prime/<tool>/` for each tool that both the component seeds and the corpus declares. Each copy is re-rooted at the tool's shallowest build-file directory and holds every build file under it plus the smallest real source and test. The tool names come from the contract's `runner.prime.seeds` map. Exercise bundles and reader workspaces are never read from. A seeded tool with no build file, or a build with no source or no test, is refused by name; a corpus that declares no seeded tool gets an empty prime.
@@ -776,8 +634,6 @@ What it reads, and the choices in it:
 **Why.** The runner's build refuses anything else at the prime's top level, and an empty or foreign prime warms nothing while appearing to succeed.
 
 **Serves.** `R15`, `R19`
-
-**Aliases.** `W436/1`, `W440`
 
 ### Build and serve reports where a run executes
 
@@ -787,8 +643,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R15`, `R6`
 
-**Aliases.** `W381`, `round 125`
-
 ### Skills reach commands only through the CLI's verb table
 
 **Decision.** `studyforge.cli.VERBS` is the only place a verb is minted. Skills run as `python3 -m` modules and are not verbs. The build-and-serve skill builds every argument list in `studyforge.skills.buildserve.verbs` and hands it to its verb through that table, and a test parses each list with the verb's own parser. `tests/test_authoring_reference.py` checks every fenced command in the skills and authoring pages against the console scripts `pyproject.toml` registers and each one's `VERBS`, rather than against a list.
@@ -796,8 +650,6 @@ What it reads, and the choices in it:
 **Why.** If a verb's interface changes, one edit and one failing test catch it before a reader's shell does.
 
 **Serves.** `R19`
-
-**Aliases.** `Ruling 138`, `SF-40`
 
 ### Serving a root with no site flag discovers every corpus under it
 
@@ -807,8 +659,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R4`
 
-**Aliases.** `SF-19b/3`, `W230`
-
 ### A personal archive's audience is chosen at export, and sharing judges every file
 
 **Decision.** `studyforge.skills.personalarchive.export.export` requires the archive's kind, owner or sharing (`--for` on the command line), and has no default. A sharing archive never reads progress. Every file name and every UTF-8 text file is gated for personal data. In a sharing archive, every file whose contents are not read as text is passed to `personalarchive.layout.judge_bytes`, which scans runs of at least 16 printable characters (`TEXT_RUN`), single-byte and UTF-16, for personal-data shapes, and the report counts every file judged that way. A root holding a virtual environment or build output is therefore usually refused, naming the file. An owner archive carries such files unread.
@@ -816,8 +666,6 @@ What it reads, and the choices in it:
 **Why.** An archive meant for someone else must not leak its owner's identity by default or through binary files, and a run length of 16 lets real audio pass.
 
 **Serves.** `R7`
-
-**Aliases.** `SK-06`, `SK-06/3`, `SK-06/4`, `W235`
 
 ### Imported progress merges as a join through the store's public write
 
@@ -827,8 +675,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R16`
 
-**Aliases.** `SF-19b/5`, `SK-06/1`
-
 ### Authored exercise trees are declared not material and run output is ignored
 
 **Decision.** Before the exercises skill (`studyforge.skills.exercises`) runs, the corpus must already declare `exercises/**` and `practice/**` under `content.not_material`, and the skill never edits `corpus.json`. Every run's output lands in `target/` inside the reader's workspace (`studyforge.exercise.bundle.RUN_OUTPUT_DIRNAME`); a bundle report path anywhere else is refused, and so is a bundle file under that directory. One ignore file of the corpus's own under `practice/`, holding the one line `RUN_OUTPUT_IGNORE`, keeps `target/` out of commits.
@@ -836,8 +682,6 @@ What it reads, and the choices in it:
 **Why.** Without the declaration the validator refuses every authored file, and a test report carries the machine's hostname.
 
 **Serves.** `R3`, `R7`
-
-**Aliases.** `AX-04/2`, `AX-04/3`
 
 ### Authored practices are numbered after those a unit already carries
 
@@ -847,8 +691,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R3`
 
-**Aliases.** `W437`
-
 ### An origin names a source file or one heading region of it
 
 **Decision.** An exercise's origin, or a ledger entry, is a path or a path plus section (`studyforge.skills.exercises.accounting`, `exercises.ledger`). A region is a heading and everything under it up to the next heading of the same or shallower depth, and a section that is missing or appears twice is refused. A source path carrying a fragment is refused, so ledger keys (`ledger.key_of`) use `:` as their separator. The ledger scan (`exercises.scan`) reads the source Markdown bytes itself, borrowing only the heading and fence patterns of `validate.headings`, rather than going through the archive's Markdown parser.
@@ -856,8 +698,6 @@ What it reads, and the choices in it:
 **Why.** The ledger has to report what the source carries, including anything the parser drops.
 
 **Serves.** `R6`
-
-**Aliases.** `SF-36`
 
 ### Reconnaissance drafts runtimes only from what the material evidences
 
@@ -867,8 +707,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R1`, `R19`
 
-**Aliases.** `W350/1`, `W351`
-
 ### A not-material glob declared by two producers is refused
 
 **Decision.** When the draft or a generator declares a `not_material` glob that another producer also declares, `studyforge.skills.onboarding.manifest.promote` refuses it and names both sides. It never keeps the first declaration by precedence. A person's own declarations in the draft, such as the root ignore file, are carried through unchanged.
@@ -877,8 +715,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`
 
-**Aliases.** `W239`
-
 ### Onboarding declares every generated file in the manifest it writes
 
 **Decision.** `studyforge.skills.onboarding.onboard` promotes a provisional manifest, scaffolds from it, collects the generated files' `not_material` globs, and promotes again, so the written `corpus.json` already classifies every generated file. A test re-scaffolds from the written manifest and asserts the files are byte-identical.
@@ -886,8 +722,6 @@ What it reads, and the choices in it:
 **Why.** A freshly scaffolded corpus must validate without a person copying lines out of a validation report, which a second source would otherwise pay again.
 
 **Serves.** `R19`
-
-**Aliases.** `SK-02/1`
 
 ## Rendering and the reading room
 
@@ -899,8 +733,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R6, R8`
 
-**Aliases.** `Ruling 164`, `SF-13/1`, `W57`
-
 ### Markup is styled only through the published surface
 
 **Decision.** Renderers do not type class names or styling hooks. Each block class comes from `pageassets.class_for`, which reads `SURFACE_CLASSES` (keyed by the archive's block vocabulary). Each other hook is an element, an `aria-label`, or a class or `data-*` name taken from `pageassets.SURFACE_HOOKS` (`src/studyforge/render/pageassets/surface.py`). Product strings and glyphs sit in the template files under `src/studyforge/render/templates/`, not in Python.
@@ -908,8 +740,6 @@ What it reads, and the choices in it:
 **Why.** If the stylesheet does not target a class, the page renders complete and unstyled with no error. Two independently spelled hooks drift apart as soon as one page gains a state. With one published surface, both ends read the same name.
 
 **Serves.** `R13, R1`
-
-**Aliases.** `CTO round 12`, `CTO round 45`, `SF-14/1`, `SF-34`, `W9`, `round 45`
 
 ### The rail reaches every container and sits beside a bounded column
 
@@ -919,8 +749,6 @@ What it reads, and the choices in it:
 
 **Serves.** No spec rule: a UI layout decision.
 
-**Aliases.** `PO-22/6`, `W324`, `W325`, `W325/3`, `W326`, `W328`, `W328/7`, `W333`
-
 ### The reading room is calm, themed and bounded on any display
 
 **Decision.** `palette.css` defines every colour token once, on a cool slate scale with one accent, for both a light and a dark theme. No other stylesheet defines a colour. The page follows the system scheme until the reader picks light, dark or system with the theme control (`theme.js`). That choice is kept in the reader's display record in browser storage, and a boot in `page.html` applies it before first paint. On a wide window (`chrome.css`), the whole shell is held at one ceiling (`--page-max`) and centred. The page's secondary block (a unit's outline, the index's explanation) becomes a third column (`--aside`), and the narration bar spans every column right of the rail. The root index carries the rail too. The trail and the rail do not print the corpus's level word, because indentation already shows depth.
@@ -928,8 +756,6 @@ What it reads, and the choices in it:
 **Why.** The site is read for hours at a time, so the palette must not tire the eye, and the reader must be able to choose a theme. Width must be neither wasted on a large display nor allowed to grow without limit.
 
 **Serves.** No spec rule: a UI decision for long reading sessions.
-
-**Aliases.** `W388`, `W388/13`
 
 ### The site has one framework identity, worded for a reader
 
@@ -939,8 +765,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R1, R13`
 
-**Aliases.** `W362`
-
 ### A unit page is headed by its material's own opening heading
 
 **Decision.** `render.page.anchors.title_heading` can promote the first block of the opening section when that block is a heading. It promotes it when nothing else in the section stands at its declared level, or when its text matches the unit's title. A promoted heading becomes the page's `<h1>` (`render.page.document`). It keeps its anchor and narration clip, and `render.page.section` withholds it from the body and from the outline. The unit's own title still names the unit in the `<title>`, the trail, the contents and the bar. When the material states no title, the page is headed by the unit title.
@@ -948,8 +772,6 @@ What it reads, and the choices in it:
 **Why.** A page that prints both the unit title and the material's first heading shows its title twice. Promoting the heading instead of deleting it keeps every bookmark and audio passage addressed as before.
 
 **Serves.** `R1`
-
-**Aliases.** `W388/17`, `W407`
 
 ### A read mark shows on the rail and is spoken to assistive technology
 
@@ -959,8 +781,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R8, R10`
 
-**Aliases.** `W368`, `W383`
-
 ### A built page names no API and no origin
 
 **Decision.** The practice scripts (`practice.js`, `practice-editor.js`) reach the server only through `window.studyforge.run`. The execution client that defines it (`src/studyforge/serve/assets/run-client.js`) is inserted by the serving process (`serve.routes.assets`) into the pages it serves and is never written into built HTML. A run's per-case verdicts arrive on the run's own response stream. Over `file://` the object is absent, so the controls stay hidden and the panel says why.
@@ -968,8 +788,6 @@ What it reads, and the choices in it:
 **Why.** Only a server knows it is a server. A built page that named an endpoint, an origin or the client file would break the offline floor.
 
 **Serves.** `R8`
-
-**Aliases.** `W370`
 
 ### Maximising the practice panel changes geometry only
 
@@ -979,8 +797,6 @@ What it reads, and the choices in it:
 
 **Serves.** No spec rule: a practice-panel UI decision.
 
-**Aliases.** `W431`, `W431/1`
-
 ### The page never shows a control it cannot honour
 
 **Decision.** `src/studyforge/render/page/practice.py`, where the markup is emitted, renders only the controls a practice can serve. A quiz has no file, command or grader, so it renders through `render.page.quiz` with no Run and no Submit, not with disabled ones. Run is emitted for other practices, and Submit is emitted only where the record names a test command. No script hides controls after the fact.
@@ -988,8 +804,6 @@ What it reads, and the choices in it:
 **Why.** A dead or disabled button is a promise the page cannot keep.
 
 **Serves.** `R5`
-
-**Aliases.** `AX-05/3`, `SF-24`
 
 ### After a Submit the panel shows every declared case with its result
 
@@ -999,8 +813,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R1, R5, R8`
 
-**Aliases.** `AX-09`
-
 ### A block whose type is not a name is refused by name
 
 **Decision.** `render_one` in `src/studyforge/render/page/blocks/__init__.py` checks that a block's `type` is a string before using it as a lookup key. Otherwise it raises `PageError` with a description of what arrived, not a quote of it. Individual renderers do not repeat the guard.
@@ -1008,8 +820,6 @@ What it reads, and the choices in it:
 **Why.** A served archive can reach the dispatcher with an array or object as a block type, and an unhashable key would otherwise escape as a bare `TypeError` instead of a page's refusal.
 
 **Serves.** `R6, R7`
-
-**Aliases.** `W303`
 
 ### Syntax highlighting uses a vendored bundle with a declared language set
 
@@ -1019,8 +829,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R8, R10`
 
-**Aliases.** `ISO-06`, `W243/1`, `W295`
-
 ### The root index opens levels by a row budget, not by corpus
 
 **Decision.** `render.index.policy` opens each level of the index tree only while the rows shown at once stay within `VISIBLE_ROW_BUDGET` (60). This is a constant about a reader, not about any corpus, so a small corpus renders fully open and a large one folds its long tail.
@@ -1028,8 +836,6 @@ What it reads, and the choices in it:
 **Why.** A one-level corpus and a four-level corpus want opposite defaults, and neither may be chosen by branching on which corpus it is.
 
 **Serves.** `R1`
-
-**Aliases.** `Ruling 165`
 
 ## Serving, execution and exercises
 
@@ -1041,8 +847,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`, `R10`
 
-**Aliases.** `AX-01`
-
 ### The bundle holds the pristine material and the workspace holds the reader's copy
 
 **Decision.** An authored exercise has two roots. The bundle keeps the starter, reference, tests, plants and build files untouched. `exercise.bundle.emit` writes the reader's working copy (the starter, the tests and the build files) into a separate workspace, and the record's `main_path` and `test_path` name that workspace. The gate record digests only bundle files, which no reader edits.
@@ -1050,8 +854,6 @@ What it reads, and the choices in it:
 **Why.** With one root, doing the exercise would change the digested starter, and every worked corpus would fail validation.
 
 **Serves.** `R5`
-
-**Aliases.** `AX-11`
 
 ### A bundle's file set is closed
 
@@ -1061,8 +863,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R7`
 
-**Aliases.** `AX-03/1`
-
 ### Every run's output lands in one ignored directory
 
 **Decision.** `exercise.bundle.layout` fixes one run-output directory inside the workspace, `RUN_OUTPUT_DIRNAME` (`target`). A bundle's report path must lie inside it, so a corpus ignores every run artifact with the single line `RUN_OUTPUT_IGNORE` (`target/`). A bundle file under a directory of that name is refused wherever it sits, and so is a build file declared there.
@@ -1070,8 +870,6 @@ What it reads, and the choices in it:
 **Why.** One convention for every exercise keeps run artifacts out of every commit without a per-exercise ignore rule.
 
 **Serves.** `R3`, `R7`
-
-**Aliases.** `ISO-M10/4`
 
 ### A plant is filed by its position, never by its case id
 
@@ -1081,8 +879,6 @@ What it reads, and the choices in it:
 
 **Serves.** No spec rule: path safety against corpus data that can look like a path.
 
-**Aliases.** `AX-03/4`
-
 ### An exercise's dependencies arrive through its build role and the runner image's prime
 
 **Decision.** A bundle may carry build files. They are declared by name under `build` in `bundle.json`, digested by the gate record and copied into the workspace by `exercise.bundle.emit`, and the framework never reads their contents. The libraries themselves are never corpus files. The runner image's prime is warmed from the same declaration (`studyforge.skills.execution.prime`). A prime is accepted only if the build compiles a real source and a real test for each declared language. So a graded run resolves its dependencies with no network.
@@ -1090,8 +886,6 @@ What it reads, and the choices in it:
 **Why.** Without a build declaration, an exercise whose tests import a library cannot be graded, and branching on a language would break source-agnosticism.
 
 **Serves.** `R1`, `R8`, `R15`
-
-**Aliases.** `TC-03`, `W390`, `W436`
 
 ### A second gate family extends the gate record by registering
 
@@ -1101,8 +895,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R5`, `R17`
 
-**Aliases.** `AX-06`, `W199/3`
-
 ### The reader starts the runner container and the framework only probes it
 
 **Decision.** The reader starts the runner container (named `studyforge-runner-<source>`, `execute.commands.CONTAINER_PREFIX`) with the toolchain component's documented run line. `execute.mode.ModeProbe` only inspects it with `docker inspect`. It counts as up only when it is running and mounts this source root at `/work`, and the answer is cached for `MODE_TTL`. The run reaches in with `docker exec` and the command's argv verbatim. Any failure to probe falls back to host mode with the same argv. The framework never starts, stops or builds a container. The runtimes a corpus may declare are the closed set `corpus.manifest.runtimes.RUNTIMES`.
@@ -1110,8 +902,6 @@ What it reads, and the choices in it:
 **Why.** Starting containers would put daemon access in the framework's hands, and the serving process must never hold it. A container that mounts a different checkout would grade files the reader is not editing.
 
 **Serves.** `R15`
-
-**Aliases.** `round 112`
 
 ### Run output is written relative to the source root in both modes
 
@@ -1121,8 +911,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R7`, `R15`
 
-**Aliases.** `TC-00/6`
-
 ### A run leaves the reader's tree as it found it
 
 **Decision.** `execute.runner.RUN_ENVIRONMENT` sets `PYTHONDONTWRITEBYTECODE=1` (and `PYTHONUNBUFFERED=1`) for every run, in the host environment and via `docker exec -e` in the container, so Python writes no bytecode cache beside the file under test.
@@ -1130,8 +918,6 @@ What it reads, and the choices in it:
 **Why.** A grader imports the reader's file, and otherwise Python would leave `__pycache__` directories in the source tree.
 
 **Serves.** `R3`
-
-**Aliases.** `W352/3`
 
 ### The editor's location is published only by the served index
 
@@ -1141,8 +927,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R8`
 
-**Aliases.** `SK-09/4`, `W416`, `W416/1`
-
 ### A practice opens as two windows of one editor
 
 **Decision.** A code practice shows the file to edit and its test as two tabs, each a frame of the same editor opened at a URL the server provides (`execute.workbench.open_url`, answered by `serve.routes.runs.Runs.practice_editor`), one visible at a time and never a split pane (`render/assets/practice-editor.js`). The tablist is shown only when the practice names a test. Preparing the windows writes the practice's workspace settings and starts nothing: `execute.workbench` imports no process module.
@@ -1150,8 +934,6 @@ What it reads, and the choices in it:
 **Why.** Side by side halves the width of both files, and a window's own URL is the only thing that can tell two windows of one editor apart, because both share one workspace settings file.
 
 **Serves.** `R8`
-
-**Aliases.** `W429`
 
 ### The frame policy is composed per response from every editor the instance has discovered
 
@@ -1161,8 +943,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R8`
 
-**Aliases.** `W416/2`, `W427`, `W430`
-
 ### The editor enforces read-only and the page never claims it
 
 **Decision.** `execute.workbench.settings` makes every file read-only through `files.readonlyInclude` and excludes only the practice's own file through `files.readonlyExclude`; the test stays read-only. The workbench's side surfaces are closed by the settings in `execute.workbench.CLOSED` and by the lockdown extension in the editor image. The page carries no guard of its own and says nothing about read-only.
@@ -1170,8 +950,6 @@ What it reads, and the choices in it:
 **Why.** A page-side guard would be a weaker copy of a rule the editor keeps, and the lock is only as strong as the editor image's own confinement of its settings surfaces.
 
 **Serves.** `R5`
-
-**Aliases.** `W432`, `W433`
 
 ### Workbench settings never enter the corpus's commits
 
@@ -1181,8 +959,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R3`
 
-**Aliases.** `W435`
-
 ### Each practice opens its own editor folder and owns its lock
 
 **Decision.** A practice's editor windows open the deepest directory holding every file the practice names (its main file, its test, and each file its run or test command names), found by `execute.workbench.practice_folder`, and the read-only lock is written into that folder's own `.vscode/settings.json`. Opening one practice never changes another's lock, and each settings write stages its own temporary file, so two practices on one page can be opened at once. `serve.routes.runs` asks for the folder before it writes the settings.
@@ -1190,8 +966,6 @@ What it reads, and the choices in it:
 **Why.** One settings file shared by every practice could name only one practice as editable, and two practices opened together would race for it.
 
 **Serves.** `R5`
-
-**Aliases.** `W446`
 
 ### The practice editor wears the page's code colours
 
@@ -1201,8 +975,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R13`
 
-**Aliases.** `W455`
-
 ### The editor image carries no AI assistant
 
 **Decision.** The editor image carries neither the bundled chat extension nor the Copilot CLI, and no editor session starts an agent host. This rule is kept in the `code-server-toolchain` repository, in its editor image (`docker/editor/Dockerfile`) and its tests (`tests/test_editor_agent_host.py`), and the image build fails if the Copilot CLI returns.
@@ -1210,8 +982,6 @@ What it reads, and the choices in it:
 **Why.** An agent host on a container that can reach the internet can send a reader's code off the machine, and studying offline needs no such program.
 
 **Serves.** `R7`
-
-**Aliases.** `W454`
 
 ### A component is read through what it declares
 
@@ -1221,8 +991,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R18`, `R21`
 
-**Aliases.** `TC-05/3`, `W374`, `W401`, `Ruling 1`, `Ruling 2`, `Ruling 3`, `Ruling 4`
-
 ### The progress record is never served as content
 
 **Decision.** `serve.routes.assets.resolve` refuses the reader's progress store by matching `PROGRESS_PREFIX`, derived from `progress.store_dir`, anywhere in the resolved path, so symlinks and any serving root depth are covered. The record reaches a browser only through the state namespace.
@@ -1230,8 +998,6 @@ What it reads, and the choices in it:
 **Why.** The store sits beside generated pages, and the static mount would otherwise hand it out.
 
 **Serves.** `R7`
-
-**Aliases.** `SF-19a/2`, `SF-21/2`, `SF-39/4`
 
 ### The generated directory is the one dot-directory served, and only beside a manifest
 
@@ -1241,8 +1007,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R4`, `R8`
 
-**Aliases.** `SF-19b/2`
-
 ### A corpus's record root and its page scan root are two paths
 
 **Decision.** A served corpus (`serve.discovery.ServedCorpus`) keeps its manifest, unit documents and progress at `root` and scans pages at `scan_root`, which defaults to `root`; a site built elsewhere with `build --out` is scanned where it was written (`serve.instance.site_discovery`).
@@ -1250,8 +1014,6 @@ What it reads, and the choices in it:
 **Why.** The corpus root holds no page of an out-of-tree site, so scanning it would report every page absent.
 
 **Serves.** `R4`
-
-**Aliases.** `W380/2`, `W385`
 
 ### A quiz's key never leaves the local study server
 
@@ -1261,8 +1023,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R5`
 
-**Aliases.** `W451`, `W452`
-
 ### A page's exercises are planned by the important ideas it teaches
 
 **Decision.** A page's plan lists its aspects, the important ideas it teaches that a reader could be checked on, read from its prose and its code. Each aspect is checked by a named exercise or quiz question, or carries a written reason. One exercise may check several related aspects and is preferred over several small unrelated ones. Trivia such as dates is carried by a reason, a quiz asks few questions, and zero exercises is a valid plan for a page with nothing checkable. The count is neither a ceiling set by prose length nor a quota. `skills.exercises.aspects` refuses an aspect with no outcome or with two, and two aspects that state one idea; `skills.exercises.plan` turns aspects into the plan (`PLAN_API`); and `skills.exercises.corpus` refuses a report planned under an older `plan_api`, so the unit is planned again. Spec §7 (part 4) states the rule.
@@ -1270,8 +1030,6 @@ What it reads, and the choices in it:
 **Why.** A count set by prose length leaves most of a code-heavy page's examples unpractised, and an aspect nobody accounted for is how a thin plan hides; writing each aspect's outcome down makes the judgement reviewable.
 
 **Serves.** `R6`
-
-**Aliases.** `W453`
 
 ### An authoring pass never drops a ledger row it did not read
 
@@ -1281,8 +1039,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`
 
-**Aliases.** `W456`
-
 ### The served page admits its embedded typefaces
 
 **Decision.** The served page's content security policy in `serve.security` allows `data:` for fonts (`font-src 'self' data:`), as it does for images, and no other directive is widened for them. The faces stay embedded in `page.css` by `render/pageassets/faces.py`.
@@ -1290,8 +1046,6 @@ What it reads, and the choices in it:
 **Why.** Embedding is what lets `file://` carry the faces, and a `'self'`-only font policy would block every embedded face on the served site.
 
 **Serves.** `R8`
-
-**Aliases.** `W450`
 
 ## Narration
 
@@ -1303,8 +1057,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`
 
-**Aliases.** `W276`, `W369`
-
 ### The media footprint weighs every clip the narration record locates
 
 **Decision.** `corpus.media.footprint` adds to its walk of the declared units' media directories every clip the narration record places anywhere (read by `corpus.media.recorded`), counting a clip both reach once; a recorded clip it cannot locate is named in `MediaFootprint.unweighed` rather than dropped. It reads placement from the record and never re-derives it.
@@ -1312,8 +1064,6 @@ What it reads, and the choices in it:
 **Why.** Clips left in a removed or relabelled unit's directory are still committed, so a walk of declared directories alone could read under a limit the bytes have crossed.
 
 **Serves.** `R6`
-
-**Aliases.** `W287/3`, `W311`
 
 ### Narration is recorded by narrate and a build only copies it
 
@@ -1323,8 +1073,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R8`, `R10`, `R3`
 
-**Aliases.** `SF-38`, `SF-38/8`, `W202`, `W224`, `W226/2`, `W288`
-
 ### Clips are written atomically
 
 **Decision.** `narrate.answers.place` writes each clip to a temporary sibling (`PARTIAL_SUFFIX`) and renames it over the target, into the directory the placement policy named.
@@ -1332,8 +1080,6 @@ What it reads, and the choices in it:
 **Why.** An interrupted run must leave no truncated clip that looks finished.
 
 **Serves.** `R6`
-
-**Aliases.** `NS-01`
 
 ### A corpus probes the narration service once and hands the answer in
 
@@ -1343,8 +1089,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`
 
-**Aliases.** `NS-05`
-
 ### The narration record names the conditions clips were made under
 
 **Decision.** `.studyforge/narration.json` records the conditions of synthesis (`narrate.synth.record.Conditions`): the voice, the format, the service's promise, the chunk size and the deployment's engine model as reported by the service's health answer, and a change to any of them makes clips stale. A clip's own engine fields are provenance and are not compared.
@@ -1352,8 +1096,6 @@ What it reads, and the choices in it:
 **Why.** A content-addressed filename captures the words but not the deployment settings that produced the audio.
 
 **Serves.** `R9`, `R21`
-
-**Aliases.** `NS-04/4`, `Ruling 351`, `SF-42/2`
 
 ### Building and planning never load the narration transport
 
@@ -1363,8 +1105,6 @@ What it reads, and the choices in it:
 
 **Serves.** No spec rule: an import boundary that keeps building free of network code.
 
-**Aliases.** `SF-38/9`, `W223`, `W224/4`
-
 ### Every service answer fails with the wire's one decode error
 
 **Decision.** Decoding a narration service answer as JSON raises one error class, `narrate.wire.UnreadableAnswer`, for health answers and jobs alike.
@@ -1372,8 +1112,6 @@ What it reads, and the choices in it:
 **Why.** Reading bytes as JSON is the same act for every answer, so its refusal is one class of the narration error family.
 
 **Serves.** `R6`
-
-**Aliases.** `W212/3`
 
 ### A fence is captioned, never read aloud
 
@@ -1383,8 +1121,6 @@ What it reads, and the choices in it:
 
 **Serves.** No spec rule: a narration presentation choice.
 
-**Aliases.** `Ruling 93`
-
 ### Spoken text is gated before and after its transform
 
 **Decision.** `narrate.speakable.script` passes the source string and the derived spoken string through the personal-data gate, and refuses rather than scrubs.
@@ -1392,8 +1128,6 @@ What it reads, and the choices in it:
 **Why.** The spoken transform can respace a shape the gate recognises, such as a hostname, into words it no longer recognises, and a scrubbed clip would say something the material does not.
 
 **Serves.** `R7`
-
-**Aliases.** `Ruling 144`
 
 ### Clip names are one-to-one with spoken units
 
@@ -1403,8 +1137,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`
 
-**Aliases.** `Ruling 187`
-
 ### Narration deletes nothing, and stale clips go only through an explicit prune
 
 **Decision.** `studyforge narrate` (`cli.narrate.cli`) requires either `--voice` or `--prune` and refuses both together. A narration run merges into the record, deletes no file and no entry, and reports on every run how many record entries the corpus no longer produces. `--prune` (`cli.narrate.prune`) builds no service client, refuses by name when the walk skipped a declared unit, and deletes only the one clip file a dead entry names, holding any entry it cannot place by rule. The record names each superseded clip with the directory it was written into, because placement can change with a unit's declarations and a filename alone could not locate it.
@@ -1412,8 +1144,6 @@ What it reads, and the choices in it:
 **Why.** A deletion that rides along with synthesis, or that trusts a partial walk, would remove a unit's clips because its material was momentarily absent.
 
 **Serves.** `R3`, `R6`
-
-**Aliases.** `W193`, `W218`, `W218/1`, `W218/2`, `W226`
 
 ## The test suite
 
@@ -1425,8 +1155,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R13`
 
-**Aliases.** `QA-03/2`, `Ruling 192`, `SF-15/3`, `SF-27/2`, `W105`, `W324/1`
-
 ### The pinned dev image carries a JavaScript runtime, a browser and a font
 
 **Decision.** The development image (`docker/dev/Dockerfile`) pins Node.js, a headless Chrome build and the font text metrics are read in, each by version and checksum, so the script and browser checks run there rather than skipping. In the unit suite, a script's own logic runs under Node against a small DOM stub (for example `tests/studyforge/render/pageassets/test_narration_runtime.py`); what scripts do in a real page is checked by the visual harness.
@@ -1434,8 +1162,6 @@ What it reads, and the choices in it:
 **Why.** A check that skips in the pinned environment certifies nothing, however honestly the skip is labelled.
 
 **Serves.** `R15`, `R10`
-
-**Aliases.** `QA-03/1`, `Ruling 21`, `W8`, `W36`, `W124`
 
 ### Browser behaviour is verified in a real browser over built and served pages
 
@@ -1445,8 +1171,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R12`, `R8`
 
-**Aliases.** `QA-02`, `QA-03`, `SF-24/5`, `W98`, `W417`
-
 ### The visual harness never reaches a verdict from the host silently
 
 **Decision.** The three `STUDYFORGE_*` variables that can reach a verdict (`STUDYFORGE_VISUAL`, `STUDYFORGE_VISUAL_BROWSER`, `STUDYFORGE_DEV_CONTAINER`) are declared by name in `tests/visual/discovery.py`, and `tests/visual/test_host_environment.py` asserts that every `STUDYFORGE_*` name the package reads is in that declaration with the function that reads it. Every run of the suite prints, through `tests/visual/conftest.py`, a line that names the browser or its absence, the remedy, the count of visual checks that did not run, and the variables in force; `STUDYFORGE_VISUAL=required` turns a missing browser into a failure.
@@ -1454,8 +1178,6 @@ What it reads, and the choices in it:
 **Why.** A verdict that depends on the host's environment is not a test of the commit, and an undeclared skip reads as a pass.
 
 **Serves.** `R15`, `R6`
-
-**Aliases.** `Ruling 204`, `Ruling 225`, `Ruling 263`, `Ruling 269`, `W115/4`, `W119`, `W124/5`, `W128`, `W128/1`, `W128/2`, `W128/4`
 
 ### A browser launch and every tab leave nothing behind
 
@@ -1465,8 +1187,6 @@ What it reads, and the choices in it:
 
 **Serves.** `R10`
 
-**Aliases.** `W312`, `W312/1`, `W397`, `W397/3`, `W404/6`, `W419`
-
 ### Authoring pages are checked against the shipped code, which is the authority
 
 **Decision.** `tests/test_authoring_reference.py`, reading through `tests/authoring/support.py`, checks every command and key the pages under `docs/authoring/` and the skills' `SKILL.md` pages give against the installed code. Commands are derived from the registered verbs and console scripts that run them, and the pages are found by walking both directories, never from a hand-kept list. A page exempts a module it does not own by declaring so itself, and that exemption covers only that page. At least one commanded module is run in a real interpreter rather than looked up. When the written spelling and the shipped reader disagree, the document is the one that is wrong.
@@ -1474,8 +1194,6 @@ What it reads, and the choices in it:
 **Why.** A hand-kept list or a looked-up module lets a page ship a command that does not exist with nothing to catch it.
 
 **Serves.** `R16`
-
-**Aliases.** `Ruling 103`, `Ruling 156`, `W61`, `W74`
 
 ### A sibling's contract is read at the commit its checkout has checked out
 
@@ -1485,4 +1203,3 @@ What it reads, and the choices in it:
 
 **Serves.** `R18`, `R7`
 
-**Aliases.** `W404`

@@ -259,7 +259,7 @@ be quoted, constrain its shape first, for example refuse anything that is not a
 bare filename, so quoting it cannot carry a path by construction. Do not rely
 on review to catch an echo; the helpful-looking message is the leaking one.
 
-## The first conversion's sort (the `QA-04` sort)
+## The first conversion's sort
 
 The shape a finished sort takes: every finding the conversion's log carries,
 a verdict, and why, with the refusals written beside the adoptions. A sort
