@@ -71,7 +71,7 @@ def test_the_quality_tooling_is_excluded_from_packaging():
     assert not (repository_root() / "src" / "tools").exists()
 
 
-#: ⛔ What developing this framework uses and a client never does (`W472`): the task
+#: ⛔ What developing this framework uses and a client never does: the task
 #: records, the agent instructions and the pin file of the development workspace. They
 #: live on the process branch. A directory is written with its slash.
 DEVELOPMENT_ONLY = ("docs/tasks/", "CLAUDE.md", ".claude/", "workspace.json")

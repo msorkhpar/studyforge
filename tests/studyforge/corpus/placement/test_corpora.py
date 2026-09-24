@@ -51,7 +51,7 @@ def test_the_fixture_set_is_read_from_the_declaration():
     assert "invalid/bad-corpus-api" not in FIXTURES
 
 
-#: The corpus SF-03's acceptance names by name.
+#: The corpus placement's acceptance names by name.
 JAVA_CORPUS = "Claude-senior-java-engineer"
 
 

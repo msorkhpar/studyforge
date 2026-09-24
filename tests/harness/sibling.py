@@ -17,7 +17,7 @@ construction. Both return a `Reading`: `reading.committed`,
 **Depends on.** `tests.harness.workspace` for where the checkout is, `git` and
 `head`. Standard library otherwise.
 
-## ⛔ Why the working tree is not good enough (`W404`)
+## ⛔ Why the working tree is not good enough
 
 ⚠️ **While a component's checkout was mid-merge, its `consuming.json` read as
 PRESENT from a STAGED file that existed on no ref.** A green reading taken from
@@ -119,7 +119,7 @@ def read_sibling(name: str, path: str, *, environ: Mapping[str, str] | None = No
 def read_checkout(directory: Path, path: str, *, name: str) -> Reading:
     """Read `path` from this checkout at its `HEAD`, falling back to its working tree.
 
-    ⚠️ The fallback is the **labelled** half of `W404`, not a convenience: a
+    ⚠️ The fallback is the **labelled** half of the rule, not a convenience: a
     checkout whose commit lacks the file may still have it on disk, and saying
     *"this came from the working tree"* is more useful than both refusing and
     pretending.

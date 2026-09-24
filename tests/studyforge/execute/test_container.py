@@ -123,7 +123,7 @@ def a_local_reading(tmp_path) -> sibling.Reading:
 
 
 def test_a_contract_read_off_a_working_tree_is_refused_when_the_sibling_was_ours_to_find(tmp_path):
-    # ⛔ MEASURED (`W404`): mid-merge, a STAGED `consuming.json` on no ref read
+    # ⛔ Mid-merge, a STAGED `consuming.json` on no ref read
     # as present and went green — on this host only. The contract below is
     # perfectly valid; what is refused is WHERE it came from.
     reading = a_local_reading(tmp_path)

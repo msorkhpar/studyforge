@@ -32,7 +32,7 @@ Dockerfile, not its `consuming/` modules, not its README.
 lock**: it is taken around the pytest run, not in here, so
 one gate is one lock.
 
-## ⛔ THE CONTRACT IS READ AT A COMMIT, NEVER OFF A WORKING TREE (`W404`)
+## ⛔ THE CONTRACT IS READ AT A COMMIT, NEVER OFF A WORKING TREE
 
 ⚠️ **Measured:** while the sibling's checkout was mid-merge, its
 `consuming.json` read as **present** from a **staged** file that existed on no
@@ -109,7 +109,7 @@ def reason_for(reading: sibling.Reading, *, must_be_committed: bool) -> str | No
 
     ⛔ **The whole policy, in one place.** `must_be_committed` is the caller
     saying *"I resolved this sibling myself, so it has to be read at a commit"* —
-    the `W404` refusal. A caller that named a directory passes `False`, because
+    the working-tree refusal. A caller that named a directory passes `False`, because
     no commit covers that reading.
     """
     contract = _loaded(reading)
@@ -119,7 +119,7 @@ def reason_for(reading: sibling.Reading, *, must_be_committed: bool) -> str | No
             f"checkout: {reading.source}"
         )
     if must_be_committed and reading.working_tree:
-        # ⛔ `W404`: a staged or uncommitted contract is a green reading that
+        # ⛔ A staged or uncommitted contract is a green reading that
         # exists on no ref, so it reproduces on no other host. Refused.
         return (
             f"{SIBLING}'s {CONTRACT} was not read at a commit, so a reading from "

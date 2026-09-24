@@ -1,4 +1,4 @@
-"""The spec's corpus table, read against the corpora a named workspace holds (`W339`).
+"""The spec's corpus table, read against the corpora a named workspace holds.
 
 Mirrors no source module. ⭐ It answers a clause no unit test can: *a row of the
 spec's corpus table that contradicts a committed corpus's manifest is caught
@@ -23,7 +23,7 @@ claiming graders for that corpus is a claim the corpus refutes.
   is a real third state (§7, C5) — so the converse would refuse a true row.
 - ⚠️ **A sibling that is not named is not read**, and the sweep SKIPS SAYING
   SO when it could read no manifest at all — a clean clone, and the pinned
-  image, where only the checkout is mounted (Ruling 204). ⭐ The refusal half is held on a
+  image, where only the checkout is mounted. ⭐ The refusal half is held on a
   synthetic table below, so the image still proves the instrument can go red.
 """
 
