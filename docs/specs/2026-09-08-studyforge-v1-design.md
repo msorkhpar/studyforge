@@ -240,7 +240,7 @@ does not name is REFUSED BY NAME and never replaced** — ⚠️ **and an enumer
 that has drifted from what the build writes is a build failure rather than a
 licence, because the two are asserted to agree path for path.** ⭐ **Ruled by
 the user, 2026-09-12, answering *what does a rebuild do*; the six decisions it
-belongs to are in [`../tasks/E09-delivery.md`](../tasks/E09-delivery.md).**
+belongs to are in the delivery epic, `docs/tasks/E09-delivery.md`.**
 
 **R4 — Location is data; identity is embedded.** The framework never infers
 what a file *is* from where it sits. Every generated artifact carries its own
@@ -1739,8 +1739,7 @@ permits, asserted by `OPS-05`.
 
 ⛔ **Everything above this heading described what a source SHIPS. This subsection is what
 a READER gets, and the two stopped being the same thing here.** ⭐ **Delivered as
-milestone `M10`** ([the plan](../tasks/README.md#m10-every-corpus-has-practices), epic
-[`E14`](../tasks/E14-authored-exercises.md)).
+milestone `M10`** (the task index's `M10`, and epic `E14`, in `docs/tasks/`).
 
 #### 1. Three source cases, one pipeline
 
