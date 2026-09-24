@@ -3,16 +3,16 @@ r"""The instance's runs: the one live slot, a run's streamed body, and its recor
 **What it does.** `Runs` holds what a run is read from (every corpus discovered and its
 content), the one run in flight, one `EditorProbe` per corpus, and the editor origins this
 instance has EVER discovered — `editors()` is where a running editor is, for the index to
-publish, `origins()` is the frame policy's reading of that record (it
-never forks, spec §8.3), and `practice_editor()` is ONE practice's two windows
-and the settings they are read under; `Stream` is a run's response
-body — each line gated, the verdict recorded just before the exit line, which
-is last; `Outcome` records it, with a Submit's case breakdown beside it.
+publish, `origins()` is the frame policy's reading of that record (it never forks, spec
+§8.3), and `practice_editor()` is ONE practice's two windows and the settings they are
+read under; `Stream` is a run's response body — each line filtered and gated, the verdict
+recorded just before the exit line, which is last; `Outcome` records it, with a Submit's
+case breakdown beside it.
 
 **How you use it.** `serve.routes.run` claims the slot with `Runs.claim`, and answers
 with `Response(200, headers, stream=Stream(runs, live, Outcome(...)))`.
 
-**Depends on.** `execute` (the handle, the exit line, the recorded names), `progress`,
+**Depends on.** `execute` (the handle, the exit line, the filter), `progress`,
 `routes.breakdown` for a Submit's cases, `archive.scrub` and `serve.withheld` for the wire.
 
 ## ⭐ A Submit is recorded with its breakdown, which is never a verdict
@@ -22,9 +22,9 @@ a test-mode run exits zero, and a breakdown is a REPORT about that run. ⭐ **Th
 its clock and what a refusal says are [`routes.breakdown`](breakdown.py)'s**, which
 says why it is a module; this one holds the two values and writes what comes back.
 
-⭐ **Split from `routes.run` at this seam** (R11): that module is the NAMESPACE — what a
-request selects and where the command is read from; this one is what a started run IS
-until it ends. ⛔ Neither ever takes a command from anywhere but the unit document.
+⭐ **Split from `routes.run`** (R11): that module is what a request selects and where
+the command is read from; this one is what a started run IS until it ends. ⛔ Neither
+takes a command from anywhere but the unit document.
 
 ## One run at a time, and every run ends recorded
 
@@ -43,37 +43,28 @@ may NAME, and the ground does not transfer between the two: a reading older than
 `EDITOR_TTL` is not a reason to start anything, but it is a perfectly good reason to say
 which loopback port a document may embed.
 
-⚠️ **Why this record exists.** With the policy read straight through the probe, a served
-`frame-src` would name the editor for `EDITOR_TTL` seconds after anything asked and
-`'none'` from then on — a cold window that RECURS every ten seconds. ⛔ **A policy that
-oscillates between correct and `'none'` is a worse failure than one that names an origin
-a moment too long.**
+⚠️ **Why this record exists.** Read straight through the probe, a served `frame-src`
+would name the editor for `EDITOR_TTL` seconds after an ask and `'none'` after that. ⛔ **A
+policy that oscillates between correct and `'none'` is a worse failure than one that
+names an origin a moment too long.**
 
-⭐ **A stale entry grants no capability.** Its whole effect is that the policy names a
-loopback origin where nothing is listening, so the frame fails to load — which is exactly
-what happens when there is no editor at all. ⛔ **A wildcard `frame-src` of
-`http://127.0.0.1:*` was REFUSED** as the alternative: it would cost no reload and take
-the probe off the CSP path entirely, but it lets a page frame ANY local service, on any
-port, forever, including one no editor ever ran on. ⭐ This record is strictly narrower —
-it names only ports an editor for THIS source root was discovered on — and a widening is
-argued rather than defaulted into.
+⭐ **A stale entry grants no capability**: the policy names a loopback origin where
+nothing listens, and the frame fails to load, as it does with no editor at all. ⛔ **A
+wildcard `frame-src` of `http://127.0.0.1:*` was REFUSED**: it would cost no reload, but
+it lets a page frame ANY local service, on any port, forever. ⭐ This record names only
+ports an editor for THIS source root was discovered on, and a widening is argued rather
+than defaulted into.
 
-⚠️ **Forgetting is not offered, deliberately.** The record is dropped when the process
-ends, which is the one event that cannot leave a reader holding a document composed under
-the wider policy. ⛔ A cold instance still frames nothing: the record starts empty, and
-the readers a reader's own client asks for — the run index and the practice-editor route
-— are what fill it.
+⚠️ **Forgetting is not offered.** The record is dropped when the process ends, and a
+cold instance frames nothing: the run index and the practice-editor route fill it.
 
 ## ⛔ Output is filtered, then gated on the wire
 
-Every line `execute` yields is already relative to the source root and scrubbed. ⭐ A
-line the corpus's one declared build tool prints about itself is dropped
-(`execute.quiet`, chosen by `select` from the manifest's `runtimes`): Maven's rerun
-advice tells a reader to pass switches the page has no way to pass. The filter only
-ever drops a line, never an error, a stack frame or the exit line, and a corpus
-declaring no build tool with rules, or two, is streamed whole. A kept line is scrubbed
-again as it is written, where it leaves the process (R7; `scrub` is idempotent), ⛔
-after `withheld.OutputGate` has replaced any line carrying a served quiz's key.
+Every line `execute` yields is already relative to the source root and scrubbed. ⭐
+`execute.quiet` drops what the corpus's one declared build tool says about itself
+(Maven's rerun advice names switches the page cannot pass), never an error, a frame
+or the exit line. A kept line is scrubbed again as it leaves the process (R7;
+`scrub` is idempotent), ⛔ after `withheld.OutputGate` replaced any quiz-key line.
 """
 
 from __future__ import annotations
@@ -375,8 +366,7 @@ class Stream:
                     self._recorded = True
                     for said in self._outcome.record(verdict(handle, line)):
                         yield (said + "\n").encode("utf-8")
-                text = line.rstrip("\n")
-                if self._quiet.keeps(text):
+                if self._quiet.keeps(text := line.rstrip("\n")):
                     yield (scrub(self._gate(text)) + "\n").encode("utf-8")
         finally:
             self._finish()
