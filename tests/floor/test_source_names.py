@@ -1,4 +1,4 @@
-"""Mirror of `tools/quality/source_names.py` (R12).
+"""Mirror of `tests/floor/source_names.py` (R12).
 
 ⭐ **Every positive here is paired with the legitimate use it is one word
 from.** A check that fires on `an ISO date` or on `a Java package segment`

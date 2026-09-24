@@ -193,7 +193,7 @@ def test_no_framework_module_imports_anything_but_the_standard_library_and_itsel
     # ⛔ R1's import form, as a CLOSED positive set — the one spelling of this rule
     # that cannot be walked around, because the permitted side is enumerable and
     # the forbidden side is not. ⚠️ Two other doors exist and neither is here:
-    # `tools/quality/source_names.py` owns the prose form, and the run-time form is
+    # `tests/floor/source_names.py` owns the prose form, and the run-time form is
     # the test below.
     print(f"framework modules {len(framework)}")
     assert len(framework) >= LEAST_FRAMEWORK_MODULES

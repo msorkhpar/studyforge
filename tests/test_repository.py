@@ -64,9 +64,9 @@ def test_no_source_module_imports_a_third_party_package():
 
 
 def test_the_quality_tooling_is_excluded_from_packaging():
-    # ⛔ `tools/` is developer tooling, not shipped API. Packaging looks only
+    # ⛔ The developer tooling (on `archive/process`) is not shipped API. Packaging looks only
     # in `src`, so an installed `studyforge` contains no `tools` package —
-    # which is the other half of the ruling that kept the size checker out of
+    # which is the other half of the rule that keeps the size checker out of
     # `src/studyforge/`.
     assert pyproject()["tool"]["setuptools"]["packages"]["find"]["where"] == ["src"]
     assert not (repository_root() / "src" / "tools").exists()
@@ -193,11 +193,10 @@ def test_ruff_lint_is_clean_where_ruff_exists():
     # a CORRECT tree red: measured by two offices, and it failed three innocent
     # branches in one wave under a reviewer who had measured it that same hour.
     #
-    # ⚠️ **The working-tree reading is not deleted, it is demoted**:
-    # `tools/quality/lint.py`'s NOTICE still walks the disk, still
-    # names the scratch file's findings, and as a notice can never fail a
-    # build. ⭐ A reviewer still learns their scratch file is dirty — as a notice,
-    # and not as three branches failing.
+    # ⚠️ **The working-tree reading was demoted, not deleted**: the developer
+    # tooling (now on the branch `archive/process`) kept a NOTICE that walked the
+    # disk and named a scratch file's findings, and a notice can never fail a
+    # build. ⭐ A dirty scratch file is a notice, never three branches failing.
     ruff = tool_on_path("ruff")
     if ruff is None:
         pytest.skip("ruff not installed; `pip install -e '.[lint]'` to enable this check")

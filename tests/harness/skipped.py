@@ -1,9 +1,8 @@
 """What a test run could not reach, printed in every run's summary.
 
-⭐ **The product suite's OWN copy of `unreachable_population` and `skip_reason`** from
-`tools/quality/report.py`, so the disclosure prints in a checkout with no tooling in it. ⛔ The
-functions are that module's byte for byte, and `tests/test_process_twins.py` refuses a drift
-while both exist; once the tooling leaves, this copy is the only one.
+⭐ **The product suite's OWN `unreachable_population` and `skip_reason`**, so the disclosure
+prints in any checkout. They began as copies of the developer tooling's, which lives on the
+branch `archive/process`; these are the only ones on the main line.
 
 **How you use it.** The root `conftest.py` writes `unreachable_population(stats)` under every
 run's summary, where `stats` is pytest's own tally (`terminalreporter.stats`).

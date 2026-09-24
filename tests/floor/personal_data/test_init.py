@@ -1,4 +1,4 @@
-"""Mirror of `tools/quality/personal_data/__init__.py` (R12).
+"""Mirror of `tests/floor/personal_data/__init__.py` (R12).
 
 ⛔ **Not one real identifier appears in this file**, and not one personal-data
 shape is written as a literal. The shapes are assembled from fragments at run
@@ -47,8 +47,8 @@ def test_states_its_contract():
 
 
 def test_the_public_surface_is_what_consumers_import():
-    # ⛔ `tools.quality.CHECKS` imports `check_personal_data` from the package,
+    # ⛔ `tests.floor.CHECKS` imports `check_personal_data` from the package,
     # never from a submodule. If a consumer has to reach past `__init__`, the
-    # surface is wrong (`module-structure.md`).
+    # surface is wrong (R17).
     for name in personal_data.__all__:
         assert hasattr(personal_data, name), name

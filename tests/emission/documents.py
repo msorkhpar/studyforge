@@ -22,7 +22,7 @@ gate and never arrives.
 48 of them.** ⛔ That is not the probe being wrong — it is the probe's stated
 coverage limit, recorded in `tests/emission/__init__.py` and now closed from
 the other side. ⭐ **A check that knows what it cannot see is what let this be
-built at all;** the finding was in W1's handoff before the code was.
+built at all;** the limit was written down before the code was.
 
 ## ⛔ Two poisons, because one of them is protected by luck
 

@@ -1,13 +1,11 @@
 """`W128`'s SWEEP: no VERDICT in this package is reached from the HOST's environment silently.
 
-⛔ **RULING 225'S OTHER HALF.** ⭐ `W119` closed the git-shaped half — no test in
-`tools/tests/quality/board/` may take its POPULATION from the host — and NARROWED
-the class rather than discharging it (Ruling 263). ⚠️ **The residue is a different
-mechanism in a different package: an environment variable crossing the host
-boundary into `tests/visual/`, where the guard `W119` shipped reads git calls and
-cannot see one.**
+⛔ **No verdict may depend on the host silently (R15).** ⭐ A git call that takes
+its population from the host is one way a verdict can; ⚠️ **this module guards a
+different mechanism: an environment variable crossing the host boundary into
+`tests/visual/`, which a guard that reads git calls cannot see.**
 
-## ⛔ THE UNIT, NAMED, AND NEVER A BARE COUNT (Ruling 269)
+## ⛔ THE UNIT, NAMED, AND NEVER A BARE COUNT
 
 ⛔ **The subject is *the distinct `STUDYFORGE_*` names that `tests/visual/`
 reads*.** ⚠️ **A bare `3` or `4` cannot identify which population is meant** —
@@ -29,9 +27,8 @@ takes one of them:
 | ⭐ **FIXTURE** | the TEST decides the environment | `pinned_environment` |
 | ⭐ **LICENCE** | it may read the host and SAYS SO | `conftest.py` |
 
-⚠️ **A NAMED module with a STATED licence, never a pattern** —
-`LIVE_ROOT_READERS` in `tools/tests/quality/board/test_host_population.py` is the
-prior art and this is its shape.
+⚠️ **A NAMED module with a STATED licence, never a pattern** — a list of named
+readers, each with its licence, is the shape.
 
 ## ⛔ THE LIVE INSTANCE THIS CLOSES, MEASURED AT THIS BRANCH'S BASE
 

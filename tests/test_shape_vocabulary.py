@@ -1,17 +1,16 @@
-"""The framework gate's column of Ruling 47's shared table.
+"""The framework gate's column of the shared personal-data shape table (R7).
 
 ⛔ **One shape vocabulary, two policies.** `archive.scrub` and
-`tools/quality/personal_data` are ruled to have different *subjects* and
+the floor's `tests.floor.personal_data` are ruled to have different *subjects* and
 therefore different *policies* — one may know this machine, the other may know
 nothing — ⛔ and that never justified differing in what they **recognise**.
-They had drifted, and nobody noticed for eleven rounds because nothing
+They had drifted, and nobody noticed for a long time because nothing
 compared them.
 
-⚠️ The tooling may not import the framework, so the two sides
-share **evidence, not code**: `docs/conventions/personal-data-shapes.md` holds
-one table — read here through the product's copy of it, `tests/support.py`'s
+⚠️ The floor may not import the framework, so the two sides
+share **evidence, not code**: one table, `tests/support.py`'s
 `SHAPE_VOCABULARY` — this module asserts the `gate` and `scrub` columns of it, and
-`tools/tests/quality/personal_data/test_shapes.py` asserts the `quality`
+`tests/floor/personal_data/test_shapes.py` asserts the `quality`
 column. Neither module imports the other's subject.
 """
 

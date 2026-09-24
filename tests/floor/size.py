@@ -1,25 +1,24 @@
 """R11's ceiling, enforced rather than documented.
 
-⭐ **The product floor's copy of `tools/quality/size.py`.** It stays on the main line when
-the tooling leaves, so the product's own rule keeps running; while both exist,
-`tests/test_floor_twins.py` holds its code to the original's, docstrings aside.
+⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
+checkout. It began as a copy of the developer tooling's check; that tooling, and its
+records, live on the branch `archive/process`, and nothing here depends on them.
 
 **What it does.** Fails a source module over 400 physical lines and a test
 module over 600, unless the module's own docstring carries a justification in
-one of the review rubric's two admissible forms — a **design claim** (why
-splitting would be worse) or a **deferral** naming the board row that splits
-the module.
+one of R11's two admissible forms — a **design claim** (why splitting would
+be worse) or a **deferral** naming the task that splits the module.
 
 **How you use it.** `check_sizes(repo_root)` returns findings. The opt-out is
 `Size exception:` as a line of the module's FIRST docstring; the justification
 is that line and the lines that follow it up to the next blank one, and
 `MIN_JUSTIFICATION_CHARS` of it must be reason. ⛔ The marker is that literal
-string, case included — the review rubric greps for exactly that token, so
-anything else would pass here and fail there.
+string, case included — R11 spells it once, and every reader looks for exactly
+that token, so anything else would pass one reader and fail another.
 
 ⛔ **A deferral's row id goes on the marker line**. The reader
 used to return only that line, so an id that wrapped onto the next one
-vanished from the wave-open sweep and the deferral printed as a permanent
+vanished from every reader of the marker and the deferral printed as a permanent
 design claim — the one reading that makes it un-retirable. The whole
 justification is read now, and an id found anywhere *but* the marker line is
 refused rather than silently accepted, because the sweep's reader and this
@@ -29,12 +28,12 @@ one must agree about what the line says.
 run the module: a file too broken to import is still a file whose length can
 be counted, and the check must work on it.
 
-⚠️ The point of automating this. `docs/conventions/module-structure.md` calls
-the ceiling "a signal, not a law", and it is — the opt-out exists and is meant
-to be used. What automation changes is *where* the exception is recorded: in
-the module, in the diff, in front of the reviewer. A ceiling that lives only
-in a document erodes under deadline, and the 2,743-line module this project is
-paying down is what erosion looks like when nothing ever said no.
+⚠️ The point of automating this. R11 calls the ceiling SOFT, and it is — a
+signal, not a law: the opt-out exists and is meant to be used. What automation
+changes is *where* the exception is recorded: in the module, in the diff, in
+front of the reviewer. A ceiling that lives only in a document erodes under
+deadline, and a 2,743-line module is what erosion looks like when nothing ever
+said no.
 
 ## ⛔ The ceiling has an instrument; the APPROACH to it lives NEXT DOOR
 
@@ -83,12 +82,12 @@ RULE_EXCEPTION_ID = "size-exception-id"
 #: tool instructed a developer to write the inadmissible thing, and the
 #: correct branch was the one that ignored its own build output.
 BOTH_FORMS = (
-    "The review rubric admits two forms and no third. A design claim: "
+    "R11 admits two forms and no third. A design claim: "
     f"`{config.SIZE_EXCEPTION_MARKER} <why splitting would be worse>`, which "
     "is permanent. Or a deferral: "
     f"`{config.SIZE_EXCEPTION_MARKER} <TASK-ID> splits this module`, plus why "
     "not in this task, which the named row retires by deleting the line. The "
-    "task id goes on the marker line, where the wave-open sweep reads it."
+    "task id goes on the marker line, where this check reads it."
 )
 
 #: The non-Python source languages the framework ships, read under `src/` only.
@@ -157,7 +156,7 @@ def justification_lines(docstring: str | None) -> list[str] | None:
     part of the reason.
 
     ⛔ Case-sensitive, deliberately. See the module docstring: the marker is a
-    fixed token that a review rubric greps for, so `size-exception:` must be
+    fixed token that R11 spells once, so `size-exception:` must be
     reported as *no exception claimed* rather than quietly accepted.
     """
     if not docstring:

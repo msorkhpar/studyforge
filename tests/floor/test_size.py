@@ -1,4 +1,4 @@
-"""Mirror of `tools/quality/size.py` (R12).
+"""Mirror of `tests/floor/size.py` (R12).
 
 The two acceptance cases for the ceiling are `test_oversized_source_module_fails`
 and `test_justified_oversized_module_passes`: the ceiling must actually stop a
@@ -144,7 +144,7 @@ def test_the_marker_must_be_in_the_docstring_not_merely_in_the_file(tmp_path):
 
 
 def test_the_marker_is_the_ruled_literal_and_case_sensitive():
-    # ⛔ Case-sensitive by ruling. The review rubric greps for `Size
+    # ⛔ Case-sensitive by R11. Every reader looks for `Size
     # exception:` exactly, so a lowercase variant must be reported as no
     # exception claimed rather than quietly accepted here and rejected there.
     assert size_exception("Thing.\n\nSize exception: because it is one table.") == (

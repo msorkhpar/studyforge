@@ -1,8 +1,8 @@
 """The RESERVED-ADDRESS vocabulary — ONE list, read by two policies that never meet.
 
-⭐ **The product floor's copy of `tools/reserved_addresses.py`.** It stays on the main line
-when the tooling leaves, so the product's own rule keeps running; while both exist,
-`tests/test_floor_twins.py` holds its code to the original's, docstrings aside.
+⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
+checkout. It began as a copy of the developer tooling's check; that tooling, and its
+records, live on the branch `archive/process`, and nothing here depends on them.
 
 **What it does.** Names the addresses that are unreachable BY CONSTRUCTION and therefore
 identify nobody: RFC 6761's reserved TLDs and RFC 2606's documentation domains. ⛔ It holds
@@ -16,45 +16,38 @@ grammar around it. ⭐ Both read the tuples below at CALL time, so moving the vo
 moves every reading derived from it — which is what the mirror plants.
 
 **Depends on.** Nothing: no import but `__future__`'s annotation directive. ⛔ That is a
-CONTRACT and not an accident. `tools/mergegate.py` imports neither `studyforge` nor
-`tests.floor`, so that a tree too broken to import is still one whose merge is REFUSED
-rather than one that crashes the gate — and this module sits on that import path, through
-`tools.authorship`. ⚠️ **A dependency added here is a dependency added to the merge path.**
+CONTRACT and not an accident: a reader that must answer on a tree too broken to import
+can still import this module, because it reaches nothing else.
 
-## ⛔ THE TWO POLICIES, AND WHY SHARING A LIST IS NOT SHARING A VERDICT
+## ⛔ ONE VOCABULARY, TWO POLICIES — SHARING A LIST IS NOT SHARING A VERDICT
 
-⭐ **Ruling 47's shape, cited rather than re-derived: one vocabulary, two policies.**
+⭐ **Every reader agrees on what is RESERVED and on nothing else.** What a reserved
+address MEANS is the reader's policy:
 
-- ⛔ `tools.authorship` refuses a merge whose commits CROSS OFFICES. To it, a reserved
-  address means *this line is an OFFICE's*, so the line is COUNTED.
 - ⛔ `tests.floor.personal_data.shapes` refuses personal data in a tracked file. To it,
   a reserved address means *this leaks nobody*, so the address is EXEMPT.
+- ⭐ The developer tooling's authorship check (on the branch `archive/process`) read the
+  same list with the opposite policy: to it a reserved address marked a line as an
+  agent's, so the line was COUNTED.
 
-⛔ **They agree on what is RESERVED and on nothing else.** ⚠️ A change that made one accept
-what the other accepts would be this module built wrong. ⭐ The floor also exempts this
-project's own attribution trailer, which is at a REAL domain and is therefore NOT here: it
-is exempt because every commit carries it, not because it identifies nobody. ⛔ Putting it
-in this file would tell the MERGE PATH that a real domain is an office's, which is exactly
-the widening sharing this list must not become.
+⚠️ A change that made one policy accept what the other accepts would be this module built
+wrong. ⭐ The floor also exempts this project's own attribution trailer, which is at a
+REAL domain and is therefore NOT here: it is exempt because every commit carries it, not
+because it identifies nobody. ⛔ Putting it in this file would tell every reader of the
+list that a real domain is unreachable, which is exactly the widening sharing this list
+must not become.
 
 ## ⛔ WHY A MODULE, AND NOT A TABLE IN A DOCUMENT
 
-⚠️ **This repository's OTHER shared vocabulary is a table in a document that two tests
-read** — one side asserts its column, the other asserts its own, and neither imports the
-other. ⛔ **That form was FORCED rather than preferred:** `tools/quality` may not import
-the framework, so those two sides cannot share code at all and settle for
-sharing evidence.
+⚠️ **This repository's OTHER shared vocabulary is a table that two tests read**
+(`tests/harness/personal-data-shapes.json`) — one side asserts its column, the other
+asserts its own, and neither imports the other, because the floor may not import the
+framework. ⭐ **This seam has no such wall**, so the stronger instrument is taken: a
+shared table makes a divergence DETECTABLE, a shared module makes it IMPOSSIBLE.
 
-⭐ **This seam has no such wall.** `tools/quality` already imports a sibling top-level
-`tools` package, and the direction that is forbidden here runs the other way: the merge path
-may not reach the FLOOR. Both sides may reach a module that reaches neither. ⛔ **So the
-stronger instrument is available and is the one taken: a shared table makes a divergence
-DETECTABLE, a shared module makes it IMPOSSIBLE.**
-
-⛔ **And data on DISK would have cost the merge path the property this row must not spend.**
-A JSON file read at import is one more way for the gate to CRASH on a tree whose files are
-missing, unreadable or malformed — which is the failure `tools/mergegate.py` exists to turn
-into a refusal. ⭐ Literals in a module are read by an import that already had to succeed.
+⛔ **And data on DISK would cost a reader the property above.** A JSON file read at
+import is one more way to CRASH on a tree whose files are missing, unreadable or
+malformed. ⭐ Literals in a module are read by an import that already had to succeed.
 """
 
 from __future__ import annotations

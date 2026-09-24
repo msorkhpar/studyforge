@@ -97,9 +97,9 @@ reds. ⛔ Measured, not reasoned: that is what the first version of this fixture
 did.
 
 ⛔ **Nothing in this corpus names any real source.** The shape is the subject —
-two units, one file — and the corpus that provoked the question is named in
-`docs/tasks/E04-narration.md`, which is where a source-specific measurement
-belongs (R1).
+two units, one file — and the corpus that provoked the question is named only
+in the project's process records (on the branch `archive/process`), which is
+where a source-specific measurement belongs (R1).
 
 ## ⛔ `runnable/` is the one corpus whose units RUN
 
@@ -367,5 +367,5 @@ and a golden sitting in that root is a file the plan would have to explain.
 ⛔ **Nothing else has a golden file, and that is still deliberate.** The unit page's and
 the page assets' outputs are designed but not pinned here, and a golden for output
 nobody has designed is a fixture that will be wrong and will be trusted.
-`docs/tasks/handoffs/FND-04.md` lists every deferred golden and the task that
-owes it; the placement goldens closed the largest of them.
+The placement goldens closed the largest of the deferred ones; the rest are
+owed by the task that designs each output.

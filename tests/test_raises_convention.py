@@ -1,9 +1,10 @@
 """The `RAISES` convention's one instrument, over every package that exports a tuple.
 
-`docs/conventions/module-structure.md` says a package whose reader lets another
-package's exception through exports that set as `RAISES`, and a caller catches
-the tuple rather than retyping its members. This is what enforces it, rebuilt
-because the version it replaces was narrow twice.
+`docs/decisions.md` (*Each package publishes the exceptions it lets out as a
+tuple*) says a package whose reader lets another package's exception through
+exports that set as `RAISES`, and a caller catches the tuple rather than
+retyping its members. This is what enforces it, rebuilt because the version it
+replaces was narrow twice.
 
 ⛔ **The population was a typed map of two `corpus.*` packages.** ⭐ It is now
 DERIVED — by [`raises_sweep.py`](raises_sweep.py) — from every module that

@@ -1,8 +1,8 @@
 r"""R1, enforced: the framework names no source.
 
-⭐ **The product floor's copy of `tools/quality/source_names.py`.** It stays on the main line
-when the tooling leaves, so the product's own rule keeps running; while both exist,
-`tests/test_floor_twins.py` holds its code to the original's, docstrings aside.
+⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
+checkout. It began as a copy of the developer tooling's check; that tooling, and its
+records, live on the branch `archive/process`, and nothing here depends on them.
 
 **What it does.** Fails any module under `src/` that names one of the corpora
 this workspace knows — in code, in a comment, or in a docstring. ⛔ R1 is *"the
@@ -61,9 +61,9 @@ from tests.floor.report import Finding
 
 RULE_SOURCE_NAME = "source-name"
 
-#: The directory whose modules R1 binds. ⛔ `tools/` is developer tooling and
-#: not the framework — this module names four corpora itself and must — and
-#: `tests/` holds fixtures, which are allowed to be shaped like a real source.
+#: The directory whose modules R1 binds. ⛔ Only `src/` is the framework: this
+#: module names four corpora itself and must, and it lives under `tests/`, which
+#: holds fixtures, which are allowed to be shaped like a real source.
 FRAMEWORK_ROOT = "src"
 
 #: `(corpus, pattern, why the framework may not name it)`. ⚠️ Every pattern is

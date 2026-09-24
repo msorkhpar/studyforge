@@ -57,8 +57,8 @@ def commands(name: str) -> list[str]:
        string, and that string carries `/opt/chrome-headless-shell` and
        `nodejs.org` — so `test_the_browser_does_not_arrive_from_a_package_manager`
        and its Node.js sibling would both fire on the CORRECT implementation,
-       which is a check somebody deletes. `W124` learned this on the font and
-       the reading is in `docs/tasks/handoffs/W124.md` §3.3.
+       which is a check somebody deletes. This was first learned on the font
+       package, where the same cut fired on a correct `RUN`.
 
     ⚠️ Cutting per logical line rather than over the whole text, so a segment
     can never span two instructions: `;` does not appear at the end of every

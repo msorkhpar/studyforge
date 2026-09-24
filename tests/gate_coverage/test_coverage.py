@@ -38,10 +38,10 @@ def tracked_python_modules(root: Path | None = None) -> list[Path]:
     every reader in this repository live in a named, gated tree"* — a claim
     about the repository, whose contents are its tracked contents, and which is
     still true of a file the moment it is added. ⛔ They do **not** ask *"does
-    my working tree pass right now"*; that question is `tools.quality`'s, it is
-    answered over `git check-ignore` precisely so that a brand-new unadded file
-    is caught (in `tools/quality/config.py`), and it is a different
-    instrument on purpose.
+    my working tree pass right now"*; that question is the product floor's
+    (`python3 -m tests.floor`), answered over `git check-ignore` precisely so
+    that a brand-new unadded file is caught (in `tests/floor/config.py`), and
+    it is a different instrument on purpose.
 
     ⚠️ **A tracked module absent from the working tree is refused, not
     skipped** — an unstaged deletion would otherwise narrow this population by
@@ -119,7 +119,7 @@ def test_the_scan_root_is_the_one_tree_this_gate_covers():
     # ⛔ **The bound, half one.** `SCAN_ROOT` was a literal repeated in three
     # test bodies and justified nowhere; now it is a row of `GATED_TREES`, and
     # it must be *the* row whose gate is the one this file looks for. ⭐ Swapping
-    # the root to `tools` — the fix a reader outside it seems to ask for — is not
+    # the root to `tests` — the fix a reader outside it seems to ask for — is not
     # a one-word edit that keeps the suite green: it contradicts this line.
     assert SCAN_ROOT in GATED_TREES
     assert GATED_TREES[SCAN_ROOT] is not None
@@ -135,7 +135,7 @@ def test_the_scan_root_is_the_one_tree_this_gate_covers():
 def test_no_fourth_tree_of_readers_exists_unnamed():
     # ⛔ **The bound, half two, and the half with teeth.** The bound is not
     # "`src/studyforge` is where we look"; it is "`src/studyforge` is one of
-    # exactly three trees that decode anything, and the other two have their own
+    # exactly two trees that decode anything, and the other has its own
     # answer". ⚠️ That second clause is about the whole repository, so it is
     # measured over the whole repository — a new package or script directory
     # that decodes arrives as a failure naming itself, not as a silent hole.
@@ -146,11 +146,9 @@ def test_no_fourth_tree_of_readers_exists_unnamed():
     #     tracked_readers()                                # the whole population
     #     {t: len(tracked_readers(t)) for t in GATED_TREES}          # per tree
     #
-    # ⛔ **44 at `ad27ed2`, decomposing 11 `src/studyforge` + 3 `tools` + 30
-    # `tests`** — ⚠️ ~~*37 at `ddddd05`: 8, 3, 26*~~ and ~~*26: 6, 2, 18*~~
-    # before that, which is what this comment said until the package split
-    # measured it. It was true at `4f2fbf8` and nobody re-ran it, which is the
-    # exact failure stating the command prevents.
+    # ⚠️ No count is written here: a figure copied into a comment is true at
+    # one commit and silently false after the next split, and the command
+    # above derives it at any commit.
     # ⭐ The assertion below never read the number, so the drift was silent
     # rather than red — the decomposition is checked by
     # `test_every_named_tree_is_populated_so_the_bound_is_not_vacuous`, whose
@@ -158,15 +156,9 @@ def test_no_fourth_tree_of_readers_exists_unnamed():
     # failure and a *shrink* still is.
     #
     # ⛔ **`tracked_readers()`, not `document_readers(repository_root())`.**
-    # ⚠️ The disk walk read **88** here in a worktree carrying a second checkout
-    # under `.scratch/`, and `git status --porcelain` printed nothing. ⭐ The
-    # two instruments agreed exactly — 44, and 11/3/30 — in a clean checkout of
-    # `ad27ed2`, which is the measurement that says this swap de-biased the
-    # population rather than narrowing it.
-    #
-    # ⛔ An earlier report's "three" counted a set it never stated (ungated
-    # readers outside `src/studyforge` that are not test modules); the raw tell
-    # finds 33 outside it at this ref, and both are true of different sets.
+    # ⚠️ A disk walk reads a second checkout nested under `.scratch/` as this
+    # repository's, while `git status --porcelain` prints nothing; the tracked
+    # set is this repository's contents and nothing else.
     root = repository_root()
     homeless = sorted(
         str(path.relative_to(root))
@@ -175,7 +167,7 @@ def test_no_fourth_tree_of_readers_exists_unnamed():
     )
     assert homeless == [], (
         "these modules decode a document from a tree GATED_TREES does not name; "
-        f"name the tree and its R7 gate rather than widening SCAN_ROOT (Ruling 67): {homeless}"
+        f"name the tree and its R7 gate rather than widening SCAN_ROOT (R7): {homeless}"
     )
 
 
@@ -187,9 +179,9 @@ def test_every_named_tree_is_populated_so_the_bound_is_not_vacuous():
     # part moved.
     #
     # ⛔ **Over the tracked set, for the reason above the sibling test.**
-    # ⚠️ This is the half that went red on the nested checkout — `assert 44 ==
-    # 88`, because the *sum* was measured over three trees and the *total* over
-    # a disk holding two repositories.
+    # ⚠️ This is the half that goes red on a nested checkout, because the
+    # *sum* is measured over the named trees and a disk *total* over a disk
+    # holding two repositories.
     root = repository_root()
     per_tree = {tree: len(tracked_readers(tree)) for tree in GATED_TREES}
     assert all((root / tree).is_dir() for tree in GATED_TREES), per_tree

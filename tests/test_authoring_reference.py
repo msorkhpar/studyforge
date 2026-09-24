@@ -238,7 +238,7 @@ def test_every_rule_id_has_a_row_and_no_row_invents_one():
 
 
 def test_the_heading_the_reader_scans_for_carries_the_derived_rule_id_count():
-    # ⛔ Ruling 128: the population is printed in the handoff; the scalar is
+    # ⛔ A count is reported with its population: the scalar is
     # pinned to the derivation here. ⚠️ And it READS the document — this test
     # asserted only `len(rule_ids()) == 23` until the empty-population control
     # showed it passing with the whole reference deleted.

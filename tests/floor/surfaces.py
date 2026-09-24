@@ -1,8 +1,8 @@
 r"""`W199/3` tree-wide: a name one package takes from another reaches a DECLARED surface.
 
-⭐ **The product floor's copy of `tools/quality/surfaces.py`.** It stays on the main line
-when the tooling leaves, so the product's own rule keeps running; while both exist,
-`tests/test_floor_twins.py` holds its code to the original's, docstrings aside.
+⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
+checkout. It began as a copy of the developer tooling's check; that tooling, and its
+records, live on the branch `archive/process`, and nothing here depends on them.
 
 **What it does.** Reads every cross-package import under `src/studyforge` and asks
 Ruling 101's producer-half question of each one: is the name the importer takes on the
@@ -72,7 +72,7 @@ MODULE of the package it is taken from is an import of that module, not of a sur
 2. A re-export: a package whose `__init__` takes the name and lists it is ON its surface,
    and this module cannot tell that from a definition. ⭐ That is Ruling 101's own answer
    (`W199`'s rider), not a gap in the reading.
-3. `tests/` and `tools/`. R1 binds framework source and Ruling 101 governs packages; a
+3. `tests/`. R1 binds framework source and Ruling 101 governs packages; a
    test reaching into a module is a test of that module.
 4. A conditional or function-local import. The walk reads every `ImportFrom` in the tree,
    so one inside a function IS read — what is not read is whether it ever runs.

@@ -1,4 +1,4 @@
-"""Mirror of `tools/quality/surfaces.py` (R12).
+"""Mirror of `tests/floor/surfaces.py` (R12).
 
 ⭐ **Every positive here is paired with the legitimate shape it is one character from.**
 A check that fired on a sub-package importing its own parent, or on a module imported

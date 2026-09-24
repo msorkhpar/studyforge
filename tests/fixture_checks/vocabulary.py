@@ -65,8 +65,8 @@ FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
 #: `depth2` — it is the reading floor (spec §11.0) in its complete form.
 #:
 #: ⭐ **`shared-origin` is the third, and it is here for one property the other
-#: two cannot carry: two units declaring the same `origin.path`** (`Q23`'s
-#: answer in `docs/tasks/E04-narration.md`). ⛔ It is **not** a coverage
+#: two cannot carry: two units declaring the same `origin.path`** (spec §8.2:
+#: a clip's name comes from the unit's address, never its source path). ⛔ It is **not** a coverage
 #: corpus — see `REQUIRED_TYPES` — and the README says what it is for. ⚠️ It is
 #: also the set's only `container_api: 2` map, which is why the version check
 #: below reads a set: a whole-file `origin` and a region `origin` are two code

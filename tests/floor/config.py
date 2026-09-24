@@ -1,8 +1,8 @@
 """Every number and path the quality floor enforces, in one place.
 
-⭐ **The product floor's copy of `tools/quality/config.py`.** It stays on the main line when
-the tooling leaves, so the product's own rule keeps running; while both exist,
-`tests/test_floor_twins.py` holds its code to the original's, docstrings aside.
+⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
+checkout. It began as a copy of the developer tooling's check; that tooling, and its
+records, live on the branch `archive/process`, and nothing here depends on them.
 
 **What it does.** Holds the ceilings, the markers and the tree layout that the
 four checks share, so a rule is stated once rather than re-typed in four
@@ -56,7 +56,7 @@ SIZE_EXCEPTION_MARKER = "Size exception:"
 MIN_JUSTIFICATION_CHARS = 20
 
 #: How a deferral is told apart from a design claim: its reason names a board
-#: row (review rubric 3c). Two id shapes are in use — `<PREFIX>-<n>` (an epic
+#: row (R11's deferral form). Two id shapes are in use — `<PREFIX>-<n>` (an epic
 #: prefix, a hyphen, a number, an optional letter suffix) and `W<n>` (the wave
 #: rows, which carry no hyphen).
 #:
@@ -140,7 +140,7 @@ EXCLUDED_DIRS = ("tests/fixtures", *TOOL_OUTPUT_DIRS)
 #: Every value inside one of these is fabricated and unreachable — an RFC 2606
 #: reserved TLD, a documented placeholder home path — and each directory says
 #: so in a `VIOLATION.md` beside the data. Adding an entry here is how a sixth
-#: negative fixture becomes legal, and `tools/tests/quality/test_personal_data.py`
+#: negative fixture becomes legal, and the shape sweep in `tests.floor.personal_data`
 #: fails if one appears without it.
 SANCTIONED_PERSONAL_DATA_DIRS = ("tests/fixtures/invalid/personal-data",)
 

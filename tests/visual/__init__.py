@@ -62,7 +62,7 @@ end of every suite run whether or not a browser was found.
 
 from __future__ import annotations
 
-#: `E10`'s acceptance for QA-03, mapped to the module that answers it. ⭐ Each
+#: The visual harness's acceptance, clause by clause, mapped to the module that answers it. ⭐ Each
 #: is run twice — against the built site, and against a tree damaged in exactly
 #: the way that clause exists to catch (`site.DAMAGE`).
 ACCEPTANCE = {

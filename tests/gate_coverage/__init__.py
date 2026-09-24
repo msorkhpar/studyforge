@@ -71,14 +71,14 @@ HOME = "/" + "home/jane"
 #: ⛔ **The scan's bound, named.** Every tree in this repository that holds a
 #: document reader, mapped to the R7 gate that covers it — `None` where a tree
 #: is ungated *on purpose*. ⭐ The point is not the scan; it is that the scan's
-#: root is a **choice among three**, and until now that choice was made by a
-#: string in three test bodies and defended nowhere.
+#: root is a **choice among the trees named here**, and that choice is
+#: defended here rather than by a string in each test body.
 #:
 #: ⚠️ This map is asserted **total** over the repository's Python below, which
-#: is the half that has teeth: a fourth tree of readers — a new top-level
+#: is the half that has teeth: a third tree of readers — a new top-level
 #: package, a script directory — cannot arrive without either a gate named here
 #: or a red test. ⛔ Widening `SCAN_ROOT` is not the way to satisfy it (the
-#: tooling may not import the framework), and neither is deleting a row.
+#: `tests` tree is an independent oracle), and neither is deleting a row.
 GATED_TREES: dict[str, str | None] = {
     # ⭐ What this file measures, and the only row whose gate is `GATE`.
     "src/studyforge": "studyforge.archive.scrub.assert_clean",

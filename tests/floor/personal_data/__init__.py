@@ -1,8 +1,8 @@
 """R7 at the repository boundary: no personal data reaches a tracked file.
 
-⭐ **The product floor's copy of `tools/quality/personal_data/__init__.py`.** It stays on the
-main line when the tooling leaves, so the product's own rule keeps running; while both
-exist, `tests/test_floor_twins.py` holds its code to the original's, docstrings aside.
+⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
+checkout. It began as a copy of the developer tooling's check; that tooling, and its
+records, live on the branch `archive/process`, and nothing here depends on them.
 
 **What it does.** Sweeps every text file in the tree for personal-data
 **shapes** — an absolute home path, an email address, an local hostname, a

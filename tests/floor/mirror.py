@@ -1,14 +1,14 @@
 """R12's mirror, enforced rather than remembered.
 
-⭐ **The product floor's copy of `tools/quality/mirror.py`.** It stays on the main line when
-the tooling leaves, so the product's own rule keeps running; while both exist,
-`tests/test_floor_twins.py` holds its code to the original's, docstrings aside.
+⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
+checkout. It began as a copy of the developer tooling's check; that tooling, and its
+records, live on the branch `archive/process`, and nothing here depends on them.
 
 **What it does.** Fails any source module with no test module at the mirrored
 path. `src/studyforge/serve/routes/content.py` requires
-`tests/studyforge/serve/routes/test_content.py`, and `tests/floor/size.py`
-requires `tools/tests/quality/test_size.py`; a package's `__init__.py`
-requires `test_init.py` beside its siblings.
+`tests/studyforge/serve/routes/test_content.py`, and a package's
+`__init__.py` requires `test_init.py` beside its siblings. Only `src/` is
+mirrored (`config.MIRRORS`).
 
 **How you use it.** `check_mirrors(repo_root)` returns findings.
 `mirror_for(relative_path)` answers "where does this module's test live" and
@@ -25,10 +25,9 @@ reverse direction would turn each of those into an exemption list that grows
 every time somebody adds a legitimate test, which is how a check stops being
 believed.
 
-⚠️ The tooling's mirror is nested inside its own source root — `tools/tests/`
-sits under `tools/` — so the first thing `mirror_for` does is decline test
-files. Without that, `tools/tests/quality/test_size.py` would be read as a
-source module wanting a test of its own, forever.
+⚠️ A tree whose tests nest inside its own source root would read each test as
+a source module wanting a test of its own, forever, so the first thing
+`mirror_for` does is decline test files, wherever they sit.
 """
 
 from __future__ import annotations
@@ -46,7 +45,7 @@ def mirror_for(relative_path: str) -> str | None:
 
     Returns None for a path under no configured source root — `tests/` itself,
     for one, which is why running this over the whole tree is safe — and for
-    any test file, including `tools/tests/`, which lives inside a source root.
+    any test file, including one that lives inside a source root.
     """
     if config.is_test_file(relative_path):
         return None

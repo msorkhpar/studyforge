@@ -1,4 +1,4 @@
-"""Mirror of `tools/quality/personal_data/shapes.py` (R12).
+"""Mirror of `tests/floor/personal_data/shapes.py` (R12).
 
 ⛔ **Not one real identifier appears in this file**, and not one personal-data
 shape is written as a literal. The shapes are assembled from fragments at run
@@ -90,9 +90,9 @@ def test_a_real_looking_domain_is_still_a_finding():
 
 def test_the_one_character_local_part_false_positive_does_not_fire():
     # ⚠️ The measured case, and the reason the local part must be two
-    # characters. `docs/tasks/E02-content-pipeline.md` and
-    # `docs/conventions/review-rubric.md` both discuss `\n@router.get` being
-    # address-shaped, and E02 writes it BOTH escaped and bare — so no
+    # characters. Two process documents (now on the branch `archive/process`)
+    # discuss `\n@router.get` being address-shaped, and one writes it BOTH
+    # escaped and bare — so no
     # lookbehind for a backslash reaches both. What they have in common is a
     # one-character local part.
     assert shape_matches(r"serialised as `...\n@router.get(...)`") == []
@@ -189,7 +189,7 @@ def test_the_allow_list_is_DERIVED_from_the_shared_vocabulary_and_never_typed():
     # ⛔ One vocabulary, two policies. The shipped constant must BE what
     #    the builder returns, or somebody has re-typed the list here and the two
     #    halves can drift again. ⭐ The cross-side plant is in
-    #    `tools/tests/test_reserved_addresses.py`; this is this arm's half.
+    #    `tests/floor/test_reserved_addresses.py`; this is this arm's half.
     assert ALLOWED_ADDRESS.pattern == build_allowed_address().pattern
     vocabulary = (*reserved.RESERVED_TLDS, *reserved.RESERVED_DOMAINS)
     assert vocabulary, "the vocabulary is empty, so every assertion below is free"
@@ -249,7 +249,7 @@ def test_every_shape_is_a_pattern_holding_no_value():
 
 
 # --------------------------------------------------------------------------
-# Ruling 47 — this sweep's column of the shared shape vocabulary
+# One vocabulary, two policies — this sweep's column of the shared shape vocabulary
 # --------------------------------------------------------------------------
 
 VOCABULARY = personal_data_shapes()
@@ -262,8 +262,8 @@ def test_this_sweep_does_what_the_shared_table_says(row):
     # `archive.scrub` are ruled to have different subjects — this one may
     # derive the machine's identity and keeps an allow-list, that one may know
     # nothing — ⛔ and that never justified differing in what they
-    # *recognise*. ⚠️ The tooling may not import the framework, so the two
-    # sides share the table at `docs/conventions/personal-data-shapes.md` and
+    # *recognise*. ⚠️ This floor may not import the framework, so the two
+    # sides share the table at `tests/harness/personal-data-shapes.json` and
     # each asserts only its own column. This module reads no framework code.
     did = "report" if shape_matches(row["example"]) else "ignore"
     assert did == row["quality"], row["shape"]

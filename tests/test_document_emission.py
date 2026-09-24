@@ -6,8 +6,8 @@ poisons an argument at a public boundary, which reaches the refusals raised
 rest of the document is valid. ⚠️ **Measured: it reported zero on a tree with
 58 of them.**
 
-⭐ Its stated coverage limit is what made this buildable. The finding was in
-W1's handoff before this code existed, and it named the number.
+⭐ Its stated coverage limit is what made this buildable: the limit was measured
+and written down before this code existed, and it named the number.
 """
 
 from __future__ import annotations

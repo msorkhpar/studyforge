@@ -1,4 +1,4 @@
-"""Mirror of `tools/quality/personal_data/registry.py` (R12).
+"""Mirror of `tests/floor/personal_data/registry.py` (R12).
 
 ⛔ **Not one real identifier appears in this file**, and not one personal-data
 shape is written as a literal. The shapes are assembled from fragments at run

@@ -1,8 +1,8 @@
 """What a check says, what a notice counts, and how either is printed.
 
-⭐ **The product floor's copy of `tools/quality/report.py`.** It stays on the main line when
-the tooling leaves, so the product's own rule keeps running; while both exist,
-`tests/test_floor_twins.py` holds its code to the original's, docstrings aside.
+⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
+checkout. It began as a copy of the developer tooling's check; that tooling, and its
+records, live on the branch `archive/process`, and nothing here depends on them.
 
 **What it does.** Gives the floor's two channels one shape of answer each — a
 `Finding` for a violation, and a `DocumentPopulation` for the denominator a
@@ -57,7 +57,7 @@ class DocumentPopulation:
     did NOT read**, and it is `0` by construction on `DISK_WALK`, where git
     named no tracked set and nothing was narrowed away. ⭐ **It exists because
     a narrowed population is silent about what it narrowed off**:
-    an office running the floor over a handoff it has written but not staged
+    a person running the floor over a document written but not yet staged
     gets a green that the merge will not repeat, and no figure said so.
     """
 

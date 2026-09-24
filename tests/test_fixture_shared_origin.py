@@ -13,8 +13,8 @@ green, and sixteen units play the wrong audio. ⭐ The form that states injectiv
 is a **cardinality equality** — `|clips| == |spoken units|` — and it cannot be
 written at all against a fixture set in which no two units share a source file.
 
-⭐ **The answer being tested is ruled, not re-decided here** (`Q23`, carried in
-`docs/tasks/E04-narration.md`): a clip is keyed `<speech-id>-<digest>`, the
+⭐ **The answer being tested is ruled, not re-decided here** (spec §8.2, *A clip's
+filename carries a digest of the words it says*): a clip is keyed `<speech-id>-<digest>`, the
 speech id from the unit's **logical address** and the digest from the **spoken
 text**. ⛔ Neither half comes from the source path. `origin` is *provenance*, and
 provenance is never identity.

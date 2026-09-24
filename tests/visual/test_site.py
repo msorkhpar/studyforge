@@ -56,20 +56,14 @@ declares.** The equality below catches a region resolving a column of its *own*;
 it cannot catch every region, the reading surface included, resolving the *wrong*
 one — `--measure: 80ch` against a font that changed under the image.
 
-⛔ **`W124` WAS THAT ASSERTION'S GATE AND HAS LANDED, AND `W124` DELIBERATELY DID
-NOT WRITE IT.** ⭐ The reason is scope and it is recorded in
-`docs/tasks/handoffs/W124.md`: that row's own argument says *"the font is what
-`W98` needs"*, and pinning an input is a different act from authoring an
-acceptance clause over it. ⚠️ **The assertion that goes here needs things `W124`
+⛔ **The font the column is measured in is now pinned in the image, and that pin
+deliberately did not add the assertion.** ⚠️ **The assertion needs things the pin
 neither measured nor owns** — a recorded px figure per page kind and viewport, a
-looseness statement of its own, and a negative control that
-reds when a face is swapped under the image, which means building a second image
-to prove it can fail. ⛔ **A row that quietly grew all of that would be the scope
-creep this project treats as worse than leaving work undone, so it is ROUTED as a
-finding for the PO to mint rather than written here.**
+looseness statement of its own, and a negative control that reds when a face is
+swapped under the image, which means building a second image to prove it can fail.
 
 ⭐ Stated rather than left as a silence, so the next reader knows the blocker is
-gone and that what remains is a row, not an oversight.
+gone and that what remains is work of its own, not an oversight.
 """
 
 from __future__ import annotations

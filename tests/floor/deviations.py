@@ -1,8 +1,8 @@
 r"""The producer-half deviations this tree carries, DECLARED with the ground of each.
 
-⭐ **The product floor's copy of `tools/quality/deviations.py`.** It stays on the main line
-when the tooling leaves, so the product's own rule keeps running; while both exist,
-`tests/test_floor_twins.py` holds its code to the original's, docstrings aside.
+⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
+checkout. It began as a copy of the developer tooling's check; that tooling, and its
+records, live on the branch `archive/process`, and nothing here depends on them.
 
 **What it does.** Holds `DECLARED`: for each package that some other package reaches
 past, the names reached past and the ground the exemption stands on. ⛔ It is DATA and

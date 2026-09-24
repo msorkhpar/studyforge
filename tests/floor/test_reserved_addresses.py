@@ -1,9 +1,9 @@
 """Mirror of `tests/floor/reserved_addresses.py` (R12): the vocabulary, and R7's policy over it.
 
-⭐ **Ported from the tooling's own mirror of the original.** The tooling's copy also reads the
-MERGE PATH's policy over the same list — an office's author line — and that half is process: it
-stays with the tooling's test. What is here is the vocabulary's own membership question and the
-floor's R7 exemption built from it, with the plant that proves the exemption tracks the list.
+⭐ **Ported from the developer tooling's mirror**, whose other half (a second policy over the
+same list) is process and lives on the branch `archive/process` with that tooling. What is here
+is the vocabulary's own membership question and the floor's R7 exemption built from it, with
+the plant that proves the exemption tracks the list.
 
 ⛔ **EVERY ADDRESS IN THIS FILE IS FABRICATED, AND THE FIXTURES ARE BUILT TO STAY LEGAL.**
 An address whose domain is not reserved matches the floor's own email shape and is NOT
@@ -45,7 +45,7 @@ _NOT_RESERVED = (
 #: ⚠️ A domain somebody really owns, carrying a reserved name that is NOT where it ENDS.
 #: ⛔ **The two sides DISAGREE here, and the disagreement is in their GRAMMARS and not in
 #: the vocabulary**: the floor looks for a reserved name INSIDE free text and stops at a
-#: word boundary, while `tools.authorship` parses the domain and tests its SUFFIX. ⭐ The
+#: word boundary, while `reserved.is_reserved` parses the domain and tests its SUFFIX. ⭐ The
 #: LIST is shared and neither grammar is rewritten, so the divergence is asserted below as
 #: the state of the tree rather than smoothed away.
 _GRAMMARS_DISAGREE = "example.com" + ".elsewhere.co.uk"
@@ -116,7 +116,7 @@ def test_case_and_surrounding_space_are_absorbed_and_nothing_is_a_verdict():
 
 @pytest.mark.parametrize("domain", (*_RESERVED, *_NOT_RESERVED))
 def test_the_floor_exempts_exactly_what_is_RESERVED(domain):
-    # ⛔ The row's subject. `tools.authorship` reads a reserved address as an OFFICE's line;
+    # ⛔ The subject. `reserved.is_reserved` answers membership for a whole domain;
     #    the floor reads it as exempt from R7's shape arm. ⭐ Two policies — but the LIST
     #    behind them is one, so the two answers move together on every domain.
     assert _floor_exempts(domain) is reserved.is_reserved(domain)

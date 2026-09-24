@@ -1,4 +1,4 @@
-"""Mirror of `tools/quality/report.py` (R12).
+"""Mirror of `tests/floor/report.py` (R12).
 
 ⭐ **The skip census's end-to-end arms run a CHILD pytest** through the repository's own root
 `conftest.py`, because the disclosure is a line in a run's summary and a line nobody
@@ -84,7 +84,7 @@ def test_a_population_carries_its_paths_and_the_walk_that_found_them():
 
 def test_a_tracked_figure_says_what_its_walk_did_not_read_whether_or_not_it_fired():
     # ⛔ A figure states its denominator, and that is why the sentence is not fired-only: an office
-    # believing a green over its own unstaged handoff needs to read `0`, and a
+    # believing a green over its own unstaged document needs to read `0`, and a
     # sentence that appears only when something was missed never gives it one.
     quiet = unread_caveat(DocumentPopulation((Path("a.md"),), TRACKED_WALK))
     loud = unread_caveat(DocumentPopulation((Path("a.md"),), TRACKED_WALK, 3))

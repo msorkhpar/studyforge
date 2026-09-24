@@ -1,7 +1,6 @@
-"""The rejected identities, READ OUT of the UI convention's own table (`W392`).
+"""The rejected identities, READ OUT of the spec's own table (§8.4).
 
-**What it does.** Reads the two tables the spec's §8.4 writes (`REL-08` moved them there from
-`docs/conventions/ui-design.md`) —
+**What it does.** Reads the two tables the spec's §8.4 writes —
 the roles and the tokens that carry them, and the rejected identities as
 conjunctions of bands over hue, chroma and light — and returns them as data.
 ⛔ **The document is the authority and this module is only its reader:** a sixth

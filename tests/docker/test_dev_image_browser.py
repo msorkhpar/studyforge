@@ -4,7 +4,7 @@
 reason is R11: that file sits close enough to the 600-line test ceiling that the
 checks below would have taken it over. ⚠️ **No figure here, because a figure here
 would be falsified by the next edit to THAT file and has been twice** — the split
-of `devfiles.py` moved it again. The authority is `python3 -m tools.quality`,
+of `devfiles.py` moved it again. The authority is `python3 -m tests.floor`,
 which reads both files at the ref in front of you.
 
 ⭐ They also have one subject —

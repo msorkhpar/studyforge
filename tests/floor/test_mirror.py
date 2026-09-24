@@ -1,4 +1,4 @@
-"""Mirror of `tools/quality/mirror.py` (R12)."""
+"""Mirror of `tests/floor/mirror.py` (R12)."""
 
 from __future__ import annotations
 

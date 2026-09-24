@@ -33,7 +33,7 @@ by importing the framework.
 standard library or is `studyforge`* — and that is a closed set nobody can argue
 with. ⛔ But `importlib.import_module(name)` is in the standard library, so a
 framework module could reach a corpus-specific package with **no** import
-statement to catch, and both the closed-set check and `tools/quality`'s
+statement to catch, and both the closed-set check and the floor's
 source-name sweep would be silent. ⭐ The third door is the one that is open
 today; it is asserted empty rather than policed, because a framework that never
 needs a run-time import is a stronger statement than a list of permitted ones.

@@ -23,10 +23,10 @@ place where personal-data-shaped content is *permitted*.** Measured against
 | one inside a shell command | ⛔ **missed** | caught |
 | a leak in a **dict key** | ⛔ **missed** — `strings_in` walks `values()` | caught |
 
-⛔ **Three of four, plus the keys.** And rubric §1a had already ruled this shape
-— *"do not re-derive the patterns; `tools/quality/` owns them"*, a duplication
-this project has refused five times — but nobody had swept for a **third** copy.
-There was one, it was already weaker, and it was guarding rubric §1e's fixture
+⛔ **Three of four, plus the keys.** And the project had already ruled this
+shape — *do not re-derive the patterns; one owner holds them*, a duplication
+refused five times — but nobody had swept for a **third** copy. There was one,
+it was already weaker, and it was guarding the negative fixtures' R7
 exception.
 
 ⭐ **Deleted rather than reconciled.** Reconciling two lists produces a third

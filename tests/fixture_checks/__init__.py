@@ -39,7 +39,7 @@ only that one.
 
 ## What is in the package
 
-⭐ **Five seams, named before they were needed.** FND-04's handoff recorded
+⭐ **Five seams, named before they were needed.** It was foreseen early
 that a sixth invalid fixture would want this module split along the seams its
 checks already had; the disclosure follow-up and the manifest's `content` key then
 grew it past the point where that was optional. Each module is one kind of

@@ -1,8 +1,8 @@
 """The shape half of R7: patterns that hold no value.
 
-⭐ **The product floor's copy of `tools/quality/personal_data/shapes.py`.** It stays on the
-main line when the tooling leaves, so the product's own rule keeps running; while both
-exist, `tests/test_floor_twins.py` holds its code to the original's, docstrings aside.
+⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
+checkout. It began as a copy of the developer tooling's check; that tooling, and its
+records, live on the branch `archive/process`, and nothing here depends on them.
 
 **What it does.** Recognises the four personal-data shapes a tracked file must
 not carry — an absolute home path, an email address, an local hostname, a bearer
@@ -14,7 +14,7 @@ for one string. ⭐ **Adding a rule is one entry in `SHAPES`** and the sweep is
 already tree-wide, so a new shape reaches every file the moment it exists.
 
 **Depends on.** `config` for the tree and the registry, `re`, and
-`tools.reserved_addresses` for WHICH addresses are unreachable by construction
+`tests.floor.reserved_addresses` for WHICH addresses are unreachable by construction
 (one vocabulary, two policies). ⛔ Still deliberately nothing that
 holds a value: that module names reserved domains, never anybody's address.
 
@@ -36,8 +36,8 @@ RULE_SHAPE = "personal-data"
 #: R7's shapes. ⛔ Every one is a *shape*: none contains a value, so this
 #: module can be read by anybody without learning anything about anyone.
 #:
-#: ⚠️ Two deliberate divergences from the reviewer's grep in
-#: `docs/conventions/review-rubric.md` §1a, both because a build-failing check
+#: ⚠️ Two deliberate divergences from a reviewer's personal-data grep (R7),
+#: both because a build-failing check
 #: may not cry wolf the way a human grep may — a reviewer dismisses a hit in
 #: writing, a gate that fires on correct code just gets switched off.
 #:
@@ -78,8 +78,8 @@ SHAPES = (
         "email address",
         # ⚠️ The local part must be at least TWO characters, and that is not
         # arbitrary. Measured on this tree, the only email-shaped text outside
-        # the sanctioned fixture was `n@router.get` — prose in
-        # `docs/tasks/E02-content-pipeline.md` and `review-rubric.md`
+        # the sanctioned fixture was `n@router.get` — prose in two process
+        # documents, now on the branch `archive/process`,
         # illustrating that `\n@router.get` is address-shaped. It appears both
         # escaped and bare, so no lookbehind for a backslash can reach both,
         # and the thing they have in common is a one-character local part.
@@ -119,7 +119,7 @@ SHAPES = (
         # lookahead while KEEPING the hostname shape — it does not weaken R7,
         # which has no "minor" verdict — and it owes three readings with
         # the real shape planted, so the instrument is seen to move. The vocabulary half is in
-        # `docs/conventions/personal-data-shapes.md` (Ruling 47: one
+        # `tests/harness/personal-data-shapes.json` (one
         # vocabulary, two policies), so narrowing one side alone is not a
         # developer's call.
         re.compile(r"(?<![\w.])[A-Za-z0-9-]+\.local(?![\w.])"),
@@ -137,8 +137,8 @@ SHAPES = (
 #: vocabulary.** The attribution trailer this project's commits carry sits at a
 #: REAL domain, reachable by anybody: it is exempt because every commit here
 #: carries it, never because it identifies nobody. ⚠️ Moving it into
-#: `tools.reserved_addresses` would tell the MERGE PATH that a real domain is an
-#: office's line, which is the widening sharing the list must not become.
+#: `tests.floor.reserved_addresses` would tell every reader of that list that a real
+#: domain is unreachable, which is the widening sharing the list must not become.
 ATTRIBUTION_ADDRESS = r"(?:noreply\.[A-Za-z0-9.\-]+|anthropic\.com)\b"
 
 
@@ -146,7 +146,7 @@ def build_allowed_address() -> re.Pattern[str]:
     """Build the address exemption, reading the shared vocabulary at CALL time.
 
     ⛔ **A function rather than a literal so the vocabulary can be PLANTED**:
-    `tools/tests/test_reserved_addresses.py` moves the shared list
+    `tests/floor/test_reserved_addresses.py` moves the shared list
     and asserts THIS reading moves with it, which is the guard that a divergence
     nobody can produce would not be. ⭐ `ALLOWED_ADDRESS` is what this returns,
     and the mirror asserts the two agree — the constant is DERIVED, never typed.
@@ -177,7 +177,7 @@ def build_allowed_address() -> re.Pattern[str]:
 
 #: Addresses this sweep does not report: the ones unreachable by construction —
 #: RFC 6761's reserved TLDs and RFC 2606's documentation domains, read from the
-#: ONE vocabulary `tools.authorship` reads — and this project's own attribution
+#: ONE vocabulary `tests.floor.reserved_addresses` holds — and this project's own attribution
 #: trailer. ⛔ Deliberately tiny. An address at a real domain is a leak even if
 #: the author believes nobody owns it.
 ALLOWED_ADDRESS = build_allowed_address()

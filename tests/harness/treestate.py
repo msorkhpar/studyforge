@@ -1,9 +1,8 @@
 """Whether a run changed the working tree, as a **delta** rather than a verdict on cleanliness.
 
-⭐ **The product suite's OWN copy of `tools/treestate.py`**, so the suite's exit
-condition holds in a checkout with no tooling in it. ⛔ The functions are that module's,
-byte for byte save the file a failure points its reader at, and `tests/test_process_twins.py`
-refuses a drift while both exist; once the tooling leaves, this copy is the only one.
+⭐ **The product suite's OWN tree-state check**, so the suite's exit condition holds in
+any checkout. It began as a copy of the developer tooling's module, which lives on the
+branch `archive/process`; this copy is the only one on the main line.
 
 **What it does.** Takes two `git status` snapshots and reports every path whose
 status changed **between** them. Nothing else: it does not know what a writer

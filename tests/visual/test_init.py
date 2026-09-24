@@ -32,7 +32,7 @@ def test_the_package_states_its_contract() -> None:
 
 
 def test_every_acceptance_clause_has_a_module_that_answers_it() -> None:
-    """E10's five clauses, each mapped to a module that exists and holds tests.
+    """The harness's five clauses, each mapped to a module that exists and holds tests.
 
     ⛔ The failure this catches is a clause deleted by deleting a file. A
     harness is judged on what it still runs, and a missing module is silent.
@@ -78,7 +78,7 @@ def test_every_declared_damage_is_used_by_some_test() -> None:
 
     ⛔ `site.DAMAGE` declares five broken trees. This asserts each is named in
     some test module, so a control cannot be written, forgotten, and quoted in a
-    handoff as though it had run.
+    report as though it had run.
     """
     sources = _sources()
     body = "".join(text for stem, text in sources.items() if stem.startswith("test_"))

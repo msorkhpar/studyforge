@@ -1,4 +1,4 @@
-"""Mirror of `tools/quality/deviations.py` (R12).
+"""Mirror of `tests/floor/deviations.py` (R12).
 
 ⭐ **This module is DATA, so its mirror asserts the shape of the declaration rather than
 a reading.** ⛔ Whether the declaration still MATCHES the tree is the check's question and
