@@ -1022,6 +1022,20 @@ because they already exist.
 
 ⚠️ **The framework has no `emit` for a quiz.** Your adapter builds a quiz's
 practice document itself, from the `exercise` record in its `tests/quiz.json`.
+Read that file through `quiz_of`, which refuses a `quiz_api` this framework
+does not speak and an identity that does not name the bundle's own directory:
+
+```python
+import json
+from pathlib import Path
+
+from studyforge.skills.exercises import QUIZ_DOCUMENT, quiz_of
+
+root = Path("path/to/your-corpus")
+where = "exercises/kata/python/unit-03/practice-2"
+quiz = quiz_of(json.loads((root / where / QUIZ_DOCUMENT).read_text(encoding="utf-8")), where)
+quiz.places, quiz.title, quiz.record   # the record goes under the document's `exercise`
+```
 
 Then run the checker, and fix what it names:
 

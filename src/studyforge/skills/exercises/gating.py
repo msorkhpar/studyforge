@@ -63,7 +63,7 @@ from pathlib import Path
 from typing import Protocol
 
 from studyforge.archive.scrub import scrub
-from studyforge.exercise import QUIZ, Exercise, Origin, from_document, origin_document, to_document
+from studyforge.exercise import QUIZ, Exercise, Origin, origin_document, to_document
 from studyforge.exercise import of as exercise_of
 from studyforge.exercise.bundle import (
     BUILD,
@@ -101,15 +101,7 @@ from studyforge.skills.exercises.drafts import (
     QuizDraft,
 )
 from studyforge.skills.exercises.ledger import Ledger, digests
-
-#: ⭐ Where a quiz's own document sits inside its bundle. ⚠️ `tests/` because a
-#: quiz's key IS its grader, and because `bundle.layout` closes a bundle's file
-#: set: no other name would pass `studyforge validate`'s contents check.
-QUIZ_DOCUMENT = "tests/quiz.json"
-
-#: The quiz document's version, and its key order (R10).
-QUIZ_API = 1
-QUIZ_KEYS = ("quiz_api", "address", "variant", "unit", "ordinal", "title", "exercise")
+from studyforge.skills.exercises.quizdoc import QUIZ_API, QUIZ_DOCUMENT, quiz_of
 
 #: How many lines of a run's output a coverage report keeps.
 OUTPUT_LINES = 40
@@ -240,9 +232,9 @@ def gate_quiz(draft: QuizDraft, brief: Brief, ledger: Ledger, judge: Judge, *, w
         inputs = taken_over(stage / places.bundle, (("tests", QUIZ_DOCUMENT),), where)
     record = GateRecord(inputs=inputs, origins=origins, verdicts=verdicts)
     if record.clears:
-        # ⛔ A quiz that cleared is re-read as the record an adapter will emit,
-        # so what ships is a document `exercise.from_document` accepts.
-        from_document(document["exercise"], where)
+        # ⛔ A quiz that cleared is re-read through the one reader an adapter
+        # reads it by, so what ships is a document `quiz_of` accepts.
+        quiz_of(document, places.bundle)
     files = (
         (places.in_bundle(QUIZ_DOCUMENT), json_bytes(document)),
         (places.gates, _record_bytes(record, where)),

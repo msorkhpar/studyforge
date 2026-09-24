@@ -40,6 +40,7 @@ runner is the caller's.
 | `plan` | which exercises a page gets, read off its aspects, and the shortfall report |
 | `drafts` | the page, the three source cases, the brief, the two draft shapes, and no retreat |
 | `gating` | one draft staged, run through the caller's runner, and answered by every gate |
+| `quizdoc` | a quiz's own document read back, through R9's guard, as an adapter reads it |
 | `loop` | one page: planned, drafted, gated, re-drafted inside the budget, reported |
 | `merge` | one pass's ledger merged into the committed one, and the delta it reports |
 | `writes` | the additive commit: every file checked against the tree before any is written |
@@ -126,9 +127,6 @@ from studyforge.skills.exercises.drafts import (
 )
 from studyforge.skills.exercises.gating import (
     OUTPUT_LINES,
-    QUIZ_API,
-    QUIZ_DOCUMENT,
-    QUIZ_KEYS,
     Gated,
     Ran,
     Runner,
@@ -176,6 +174,14 @@ from studyforge.skills.exercises.plan import (
     plan_for,
     shortfall,
     shortfall_document,
+)
+from studyforge.skills.exercises.quizdoc import (
+    QUIZ_API,
+    QUIZ_DOCUMENT,
+    QUIZ_KEYS,
+    Quiz,
+    QuizRefused,
+    quiz_of,
 )
 from studyforge.skills.exercises.scan import Fence, Scan, scan
 from studyforge.skills.exercises.writes import commit
@@ -241,7 +247,9 @@ __all__ = [
     "Plan",
     "PlanError",
     "Planned",
+    "Quiz",
     "QuizDraft",
+    "QuizRefused",
     "Ran",
     "Refusal",
     "Runner",
@@ -267,6 +275,7 @@ __all__ = [
     "plan_document",
     "plan_for",
     "plan_page",
+    "quiz_of",
     "require_after_carried",
     "require_aspects",
     "require_draft",
