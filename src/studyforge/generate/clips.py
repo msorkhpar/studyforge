@@ -55,7 +55,7 @@ from pathlib import Path, PurePosixPath
 
 from studyforge.corpus.placement import AUDIO_DIRNAME
 from studyforge.generate.declarations import BuildError, Corpus, read_corpus, unit_location
-from studyforge.generate.narration import heard, recorded
+from studyforge.generate.narration import heard, narrated
 from studyforge.generate.writing import Written, copy, same_root
 from studyforge.narrate.playable import NOT_ON_DISK
 from studyforge.unit.builder import build_unit
@@ -82,7 +82,7 @@ def unit_clips(corpus: Corpus, into: Path | str) -> Written:
     """Run the clip pass over declarations that have already been read."""
     out = Path(into)
     beside = same_root(out, corpus.root)
-    state = recorded(corpus.root)
+    state = narrated(corpus)
     if not state.present:
         return Written()
     written: list[PurePosixPath] = []

@@ -58,13 +58,14 @@ below.
 
 | Key | | What it says |
 |---|---|---|
-| `corpus_api` | **required** | Which version of this format the file speaks. An unknown value is **refused**, never quietly migrated. This build reads `1`, `2`, `3` and `4`; `2` added `content.not_material`, `3` added `media.max_files` and `4` added `runtimes` |
+| `corpus_api` | **required** | Which version of this format the file speaks. An unknown value is **refused**, never quietly migrated. This build reads `1` to `5`; `2` added `content.not_material`, `3` added `media.max_files`, `4` added `runtimes` and `5` added `narration` |
 | `source` | **required** | An id for the corpus — a short stable name. **Not a URL to fetch from** |
 | `title` | **required** | What the reader sees at the top of the site |
 | `levels` | **required** | Names your container levels, and by its length fixes the depth of every address |
 | `variants` | **required** | Filing and presentation only. A variant is *not* a thing that runs |
 | `exercises` | **required** | Whether this corpus is on the execution track at all. `false` is an answer |
 | `runtimes` | *optional* | Which runtimes your material's commands need, by name. Absent means none, and a corpus with none needs no runner |
+| `narration` | *optional* | Whether the site speaks. `false` is a site with no voice: no player, no clip served, nothing called missing. Absent means narrated whenever clips are recorded |
 | `placement` | **required** | `tree` or `sibling` |
 | `content` | **required** | Which of your files are read in, which are deliberately not, and which are not prose at all |
 | `media` | *optional* | Whether generated narration is committed, and the limits past which the build stops. A corpus with no media declares nothing |
@@ -228,6 +229,40 @@ sets no runnable work needs no runner.
 answer, not a gap: the site reads, narrates and navigates with no container at
 all. `exercises: true` without `runtimes` is fine too — exercises nobody runs
 still need nothing to run them.
+
+---
+
+## `narration` — whether the site speaks
+
+**Narration is optional.** In the words of the ruling that made it so: *"it
+should be optional and while serving or even while caputring the matterial
+skills should ask if user is interested in the narrition or not. Somebody might
+wants to just cover the course wihtout voices as mentioned the voice might be
+cgenerated but still not serving them would be an option"*. **Needs
+`corpus_api: 5`.**
+
+```json
+{ "narration": false }
+```
+
+That is the fragment; the rest of the file is as above. The onboarding skill
+asks you and writes it; you do not type it.
+
+- **`false`** builds and serves the reading floor exactly: no player on any
+  page, no clip served, no notice that anything is missing. Practices, quizzes,
+  progress and contents are unchanged. **It is a complete site, not a short
+  one.**
+- **`true`** plays the clips `studyforge narrate` records.
+- **Leave it out** and the site plays clips whenever they are recorded, which is
+  how every corpus behaved before the key existed.
+
+**Nothing is deleted.** With `false`, clips already on disk stay where they are
+and are simply not served. `studyforge build` and `studyforge serve` take
+`--narration` or `--no-narration` to override your answer for one run, and a run
+with narration on plays the same clips again without synthesising anything.
+`studyforge serve --no-narration` refuses a site that was built with narration
+and tells you to build again with `--no-narration`, because the player is part
+of each page.
 
 ---
 

@@ -68,7 +68,8 @@ REACH = {
     "studyforge.corpus.container": 3,
     # ⚠️ `W439` RAISED it to 8 with `reonboard.recorded_draft`'s site: at 7 the deleted-outright
     # plant found 7 left and DID NOT RAISE — the floor moves with the site, as `SF-24`'s did.
-    "studyforge.corpus.manifest": 8,
+    # ⚠️ `W460` RAISED it to 9 with `narrate.enabled.declared`'s site, for the same reason.
+    "studyforge.corpus.manifest": 9,
     # ⚠️ `W457` RAISED it to 4 with `validate.narration`'s site, for the reason `W439` names.
     "studyforge.generate": 4,
     # ⚠️ The run route's parse of a practice key is the first site naming

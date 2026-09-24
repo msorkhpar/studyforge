@@ -75,3 +75,14 @@ def test_a_list_that_names_no_verb_is_refused_without_echoing_it(argv):
 def test_the_seam_is_the_only_caller_of_the_table():
     # ⭐ The contract W230's taker relies on; `test_thin.py` asserts it over the package.
     assert "VERBS" in vars(verbs)
+
+
+@pytest.mark.parametrize("answer", [True, False])
+def test_the_user_s_narration_answer_reaches_build_and_serve_as_their_own_flag(answer):
+    # ⭐ `W460`: one spelling of the answer, parsed by each verb's own parser.
+    for verb, argv in (
+        ("build", build(CORPUS, SITE, answer)),
+        ("serve", serve(CORPUS, SITE, 0, answer)),
+    ):
+        assert vars(parser_of(verb).parse_args(argv[1:]))["narration"] is answer
+    assert "narration" not in " ".join(build(CORPUS, SITE) + serve(CORPUS, SITE))

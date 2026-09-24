@@ -3,7 +3,8 @@
 **What it does.** Owns the manifest: its version, the corpus's identity, the
 container levels that fix its depth, its variants, its placement profile, what
 counts as its content, whether it commits its media, the runtimes its material
-needs, and the enumerated set of existing files it may add to.
+needs, whether it is narrated, and the enumerated set of existing files it may
+add to.
 
 **How you use it.** `load(path)` or `parse(text)`; then ask the `Manifest`.
 
@@ -15,6 +16,7 @@ needs, and the enumerated set of existing files it may add to.
     manifest.content.classify("src/whole-series.md")  # Classification.EXCLUDED
     manifest.media.commits               # True — 'auto' commits
     manifest.runtimes                    # () — absent means no runner (§7, C5)
+    manifest.narration                   # True — absent means voiced; False is the floor
     manifest.allows_edit_to("pom.xml")   # R3's declaration, asked not assumed
 
 **Depends on.** `studyforge.address`, `studyforge.version` for the R9 gate,

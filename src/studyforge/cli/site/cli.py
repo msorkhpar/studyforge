@@ -31,6 +31,12 @@ run at all.
 that replaced only its own previous answer exits `0`** — otherwise *edit a
 lesson, build again* would be a failure to every script that ran it.
 
+## ⭐ `--no-narration` builds the reading floor and keeps every clip (`W460`)
+
+⭐ Narration is optional (the user's ruling, 2026-09-23). `--narration` /
+`--no-narration` override `corpus.json`'s `narration` for this build; off renders
+no player and copies no clip, touches none, and prints `SILENT` once.
+
 ## ⛔ A crossed media limit stops the build and says so (`W314`, §5)
 
 ⭐ **Asked twice, of the one measurement and the one verdict** — `plan_for`'s
@@ -59,9 +65,17 @@ from studyforge.cli.plan import MediaProjection, plan_for
 from studyforge.cli.site.report import exit_code, lines
 from studyforge.corpus.media import MediaError, require_committable
 from studyforge.generate import RAISES, write_site
+from studyforge.narrate import narration_on
 from studyforge.validate.cli import UNUSABLE
 from studyforge.validate.paths import RULE_DUPLICATE_PATH
 from studyforge.validate.report import INVALID
+
+#: What a build with narration off says (`W460`). ⭐ Not a warning: the reading
+#: floor is complete, so this states a choice and what it left alone (R3).
+SILENT = (
+    "narration  off: no player and no clip on any page; every recorded clip is "
+    "kept where it is, and a build with narration on plays it again"
+)
 
 #: What a stopped build says it stopped on, before its consequence (`W314`).
 OVER = "the corpus's generated media is not committable under corpus.json's media policy"
@@ -85,6 +99,16 @@ def build_parser() -> argparse.ArgumentParser:
         help=(
             "the directory the site is written into. Required and with no default: "
             "where generated output belongs is the corpus owner's decision"
+        ),
+    )
+    parser.add_argument(
+        "--narration",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "voice the site with the clips `studyforge narrate` recorded, or leave "
+            "narration out (--no-narration) with every clip kept where it is. "
+            "Default: corpus.json's `narration`, which is on when it says nothing"
         ),
     )
     return parser
@@ -122,7 +146,9 @@ def main(argv: list[str] | None = None, out=None) -> int:
         print(f"build refused: {OVER}, so nothing was written", file=stream)
         return INVALID
     try:
-        written = write_site(root, Path(arguments.out))
+        # ⭐ `W460`: the one predicate (`narrate.narration_on`) answers for this run.
+        voiced = narration_on(root, asked=arguments.narration)
+        written = write_site(root, Path(arguments.out), narration=voiced)
     except RAISES as refusal:
         # ⛔ **The package's own tuple, never a list retyped here** (`W212`).
         # Catching `BuildError` alone let `PersonalDataLeak` out as a traceback
@@ -133,6 +159,8 @@ def main(argv: list[str] | None = None, out=None) -> int:
         return UNUSABLE
     for line in lines(written, arguments.root, arguments.out):
         print(line, file=stream)
+    if not voiced:
+        print(SILENT, file=stream)
     crossed = media_stop(plan_for(root).media, measured=True)
     if crossed:
         print(crossed, file=stream)

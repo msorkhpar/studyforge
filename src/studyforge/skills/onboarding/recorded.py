@@ -79,6 +79,21 @@ def moved(before: str, after: str) -> tuple[str, ...]:
     return tuple(changed)
 
 
+def narration(text: str, voiced: bool) -> str:
+    """Say the author's answer to *narration or not?* (`W460`), or that nobody asked.
+
+    ⭐ Read off the manifest's own keys, gated as every decode here is, so a
+    draft that carried no answer is said as UNASKED rather than as a `yes`
+    nobody gave. ⛔ Neither answer is
+    short: a corpus without narration is complete at the reading floor (C5).
+    """
+    if "narration" not in _document(text):
+        return "not asked: voiced whenever clips are recorded; ask the author (step 1)"
+    if voiced:
+        return "yes: the site plays the clips `studyforge narrate` records"
+    return "no: the site carries no player and serves no clip, complete as it is"
+
+
 def refusal(names: tuple[str, ...], before: str, after: str) -> str:
     """Say which answers would move, how, and the two ways forward."""
     first, second = _document(before), _document(after)

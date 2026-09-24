@@ -68,6 +68,7 @@ from studyforge.generate.clips import for_output, unit_clips
 from studyforge.generate.containers import container_pages, page_paths
 from studyforge.generate.declarations import Corpus, read_corpus
 from studyforge.generate.media import unit_media
+from studyforge.generate.narration import voiced
 from studyforge.generate.navigation import rail
 from studyforge.generate.units import unit_pages
 from studyforge.generate.writing import Written, place
@@ -77,14 +78,17 @@ from studyforge.render.index import render as render_index
 from studyforge.render.pageassets import written_files
 
 
-def write_site(root: Path | str, into: Path | str) -> Written:
+def write_site(root: Path | str, into: Path | str, *, narration: bool | None = None) -> Written:
     """Build one corpus's whole reading floor under `into`.
 
     ⛔ `into` is separate from `root` and required, for the reason
     `units.write_pages` gives: where generated output goes is the corpus's
     decision and not the framework's, and no default may take it silently.
+    ⭐ `narration` overrides `corpus.json`'s `narration` for this build
+    (`W460`); `None` keeps the corpus's own answer. Off copies no clip and
+    deletes none.
     """
-    corpus = for_output(read_corpus(root), into)
+    corpus = for_output(voiced(read_corpus(root), narration), into)
     return (
         unit_pages(corpus, into)
         + container_pages(corpus, into)

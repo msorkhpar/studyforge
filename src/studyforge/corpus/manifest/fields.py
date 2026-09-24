@@ -1,4 +1,6 @@
-"""The plain fields of `corpus.json` — `source`, `title`, `levels`, `variants`, `exercises`.
+"""The plain fields of `corpus.json`: `source`, `title`, `levels`, `variants`, and two flags.
+
+⭐ The flags are `exercises` and `narration` (`W460`).
 
 **What it does.** Validates one top-level value each, and raises this
 package's `ManifestError` naming the key it read.
@@ -91,4 +93,16 @@ def exercises_of(value: object, where: str) -> bool:
     """
     if not isinstance(value, bool):
         raise ManifestError(f"{where} 'exercises' must be true or false, got {describe(value)}")
+    return value
+
+
+def narration_of(value: object, where: str) -> bool:
+    """`narration`: whether this corpus is voiced, as a real bool (`W460`).
+
+    ⭐ The author's answer to the onboarding skill's question, recorded where
+    every later stage already reads. ⛔ Not `"off"`, not `0`: the refusal
+    `exercises_of` gives a string that looks like a flag, for the same reason.
+    """
+    if not isinstance(value, bool):
+        raise ManifestError(f"{where} 'narration' must be true or false, got {describe(value)}")
     return value

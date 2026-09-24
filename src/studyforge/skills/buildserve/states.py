@@ -45,6 +45,15 @@ this module had to go and read:**
 a corpus with nothing to narrate is never sent to start a service it does not
 need.
 
+## ⭐ NARRATION OFF IS A CHOICE, AND A CHOICE IS NOT A PARTIAL STATE (`W460`)
+
+⭐ The user's ruling, 2026-09-23: *"it should be optional … Somebody might wants
+to just cover the course wihtout voices"*. A run with narration off — the
+author's `corpus.json` answer or the operator's `--no-narration` — reports none
+of the narration states above: `NARRATION_OFF` is one plain line saying what was
+chosen and what was kept, and it is not a `partial` block. ⛔ **Nothing here
+calls it short**; the reading floor is complete (C5).
+
 ## ⛔ WHERE A RUN EXECUTES IS A STATE OF ITS OWN (`W381`, ruled round 125)
 
 ⭐ Every served form registers the `run` namespace (`serve.instance.namespaces_of`
@@ -84,6 +93,19 @@ READING_FLOOR = (
 #: this package holds no spelling of its own.
 EXECUTION_NAMESPACE = run.NAMESPACE
 
+#: ⭐ What a run with narration off says once the site is listening (`W460`). ⛔ Not
+#: a `partial` line: a choice is not a shortfall, and the reading floor is whole.
+NARRATION_OFF = (
+    "narration off  chosen: no page carries a player and no clip is served; every "
+    "recorded clip stays on disk, and a run with --narration plays it again"
+)
+
+#: ⛔ Why a `--voice` with narration off is refused before anything runs.
+VOICE_UNHEARD = (
+    "narration is off for this run, so --voice would synthesise clips it does not "
+    "serve; drop --voice, or run with --narration"
+)
+
 
 @dataclass(frozen=True, slots=True)
 class PartialState:
@@ -113,7 +135,8 @@ NOT_NARRATED = PartialState(
 
 #: ⭐ The other half of the split: a corpus with nothing to say aloud is FINISHED.
 #: ⛔ Read from what happened — a run against a service that placed no clip — and
-#: never from a declaration, because no manifest declares narration.
+#: never from a declaration: `corpus.json`'s `narration` (`W460`) says whether to
+#: voice a corpus, never whether it has anything to say.
 NOTHING_TO_NARRATE = PartialState(
     "narration-none",
     "narration ran against a service and placed no clip, so this corpus has nothing to say aloud",

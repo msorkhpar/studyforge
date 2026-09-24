@@ -77,6 +77,8 @@ class Standing:
     reading_only: int = 0
     #: Whether the corpus holds a narration record at all.
     recorded: bool = False
+    #: ⭐ Whether `corpus.json` voices the corpus (`W460`). Off is not short.
+    voiced: bool = True
 
     @property
     def container(self) -> bool:
@@ -92,9 +94,10 @@ def standing_of(root: Path | str | None) -> Standing:
         corpus = read_corpus(root)
         if not corpus.maps:
             return Standing()
-        state = read_state(state_file(root))
+        # ⭐ `W460`: a corpus that is not voiced reads no record, as its build does.
+        state = read_state(state_file(root)) if corpus.narration else None
         narrated = 0
-        for source in corpus.units:
+        for source in corpus.units if state is not None else ():
             probed = audio_dir(root, unit_location(corpus, source))
             narrated += bool(playable_of(_document(source), state, audio=probed))
     except StateError as error:
@@ -108,7 +111,8 @@ def standing_of(root: Path | str | None) -> Standing:
         units=len(corpus.units),
         narrated=narrated,
         reading_only=sum(1 for source in corpus.units if not source.declared_practices),
-        recorded=state.present,
+        recorded=state is not None and state.present,
+        voiced=corpus.narration,
     )
 
 
@@ -139,8 +143,12 @@ def lines(standing: Standing) -> list[str]:
         "Read from the archive and the narration record, the way a build reads them:",
         "",
         f"- units: {standing.declared} declared, {units} with material",
-        f"- narrated: {standing.narrated} of {units}"
-        + ("" if standing.recorded else " (there is no narration record yet)"),
+        (
+            f"- narrated: {standing.narrated} of {units}"
+            + ("" if standing.recorded else " (there is no narration record yet)")
+            if standing.voiced
+            else "- narrated: off, as corpus.json records; the reading floor is complete"
+        ),
         f"- reading-only: {standing.reading_only} of {units}",
         "- container: "
         + (

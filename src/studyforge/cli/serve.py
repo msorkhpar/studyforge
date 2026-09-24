@@ -17,6 +17,8 @@ a second author of it.
     studyforge build <corpus-root> --out <directory>
     studyforge serve <corpus-root> --site <directory> [--port N]
 
+    studyforge serve <root> --no-narration                 # no voice (`W460`)
+
 `main(argv) -> int` is the callable the dispatcher registers. Ctrl-C (or
 `SIGTERM`) stops it and exits `0`. ⚠️ `started=` hands the bound server to a
 caller before serving begins, which is how a test stops the verb in-process.
@@ -26,6 +28,15 @@ caller before serving begins, which is how a test stops the verb in-process.
 `serve.routes.content` for `--site`, `generate.declarations` for
 the corpus, `progress` for the store's one spelling, `validate` for the exit
 codes, and `argparse`. ⛔ Nothing here knows any source (R1).
+
+## ⭐ `--no-narration` serves the reading floor and edits no page (`W460`)
+
+⭐ The user's ruling, 2026-09-23: narration is optional. A corpus is served
+without it when `--no-narration` is given or its `corpus.json` says
+`narration: false`; `--narration` voices it over that answer. ⛔ The player is in a
+built page's bytes, so a site built WITH narration is refused, each page named,
+exactly as an unbuilt page is (exit `1`), and every clip under the served root is
+refused by path. `cli.unvoiced` holds all three answers and argues the choice.
 
 ## ⛔ With no `--site`, NO CONFIGURED PATH (`W230`)
 
@@ -89,8 +100,15 @@ from collections.abc import Callable
 from pathlib import Path
 
 from studyforge.archive.scrub import scrub
+from studyforge.cli.unvoiced import (
+    BUILT_VOICED,
+    SERVED_SILENT,
+    unvoiced_clips,
+    voiced_pages,
+)
 from studyforge.generate import RAISES
 from studyforge.generate.declarations import read_corpus
+from studyforge.narrate import narration_on
 from studyforge.progress import store_dir
 from studyforge.serve import RAISES as REFUSED
 from studyforge.serve import (
@@ -141,6 +159,16 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument(
+        "--narration",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "serve the site's narration, or leave it out (--no-narration): no clip is "
+            "served and a page built with narration is refused. Default: each "
+            "corpus.json's `narration`, which is on when it says nothing"
+        ),
+    )
+    parser.add_argument(
         "--port",
         type=_port,
         default=DEFAULT_PORT,
@@ -182,6 +210,14 @@ def main(
         for page in unbuilt:
             say(f"unbuilt {page}  {NOT_BUILT}")
         return INVALID
+    silent = not narration_on(root, asked=arguments.narration)
+    loud = voiced_pages(corpus, site) if silent else []
+    if loud:
+        for page in loud:
+            say(f"narrated {page}  {BUILT_VOICED}")
+        return INVALID
+    store = _inside(store_dir(root))
+    clips = unvoiced_clips([site] if silent else [])
     content = CorpusContent(corpus)
     namespaces = site_namespaces(site_discovery(corpus, root, site), content)
     try:
@@ -190,7 +226,7 @@ def main(
             content,
             port=arguments.port,
             namespaces=namespaces,
-            private=_inside(store_dir(root)),
+            private=lambda path: store(path) or clips(path),
             log=say,
             writers=tuple(name for name in WRITERS if name in namespaces),
             client=client_for(namespaces),
@@ -200,6 +236,8 @@ def main(
         return _could_not_listen(arguments.port, refusal, say)
     host, port = server.server_address[:2]
     say(f"serve http://{host}:{port}/  site {arguments.site}  corpus {arguments.root}")
+    if silent:
+        say(f"narration off  {SERVED_SILENT}")
     return _serve(server, say, started)
 
 
@@ -223,12 +261,27 @@ def _serve_root(
         for served in discovered.corpora
         for page in _unbuilt(served.corpus, served.root)
     )
-    if unbuilt:
-        for line in (*report, *(f"unbuilt {page}  {NOT_BUILT}" for page in unbuilt)):
+    silent = [
+        served
+        for served in discovered.corpora
+        if not narration_on(served.root, asked=arguments.narration)
+    ]
+    loud = sorted(
+        (served.relative / page).as_posix()
+        for served in silent
+        for page in voiced_pages(served.corpus, served.root)
+    )
+    if unbuilt or loud:
+        for line in (
+            *report,
+            *(f"unbuilt {page}  {NOT_BUILT}" for page in unbuilt),
+            *(f"narrated {page}  {BUILT_VOICED}" for page in loud),
+        ):
             say(line)
         return INVALID
+    clips = unvoiced_clips(served.root for served in silent)
     try:
-        server = instance_of(discovered, port=arguments.port, log=say)
+        server = instance_of(discovered, port=arguments.port, log=say, private=clips)
     except OSError as refusal:
         return _could_not_listen(arguments.port, refusal, say)
     host, port = server.server_address[:2]
@@ -237,6 +290,8 @@ def _serve_root(
     for served in discovered.corpora:
         index = served.href(served.corpus.shared.root_index)
         say(f"corpus {served.source} http://{host}:{port}{index}")
+    for served in silent:
+        say(f"narration off  corpus {served.source}: {SERVED_SILENT}")
     for line in report:
         say(line)
     return _serve(server, say, started)

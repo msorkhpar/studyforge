@@ -43,14 +43,24 @@ def narrate(corpus: str, voice: str, service: str | None = None) -> list[str]:
     return asked + ([] if service is None else ["--service", service])
 
 
-def build(corpus: str, site: str) -> list[str]:
-    """Return the arguments that build one corpus into `site`."""
-    return ["build", corpus, "--out", site]
+def build(corpus: str, site: str, narration: bool | None = None) -> list[str]:
+    """Return the arguments that build one corpus into `site`, voiced as asked (`W460`)."""
+    return ["build", corpus, "--out", site, *_narration(narration)]
 
 
-def serve(corpus: str, site: str, port: int | None = None) -> list[str]:
+def serve(
+    corpus: str, site: str, port: int | None = None, narration: bool | None = None
+) -> list[str]:
     """Return the arguments that serve the site `build` wrote, on `port` if named."""
-    return ["serve", corpus, "--site", site] + ([] if port is None else ["--port", str(port)])
+    ported = [] if port is None else ["--port", str(port)]
+    return ["serve", corpus, "--site", site, *ported, *_narration(narration)]
+
+
+def _narration(narration: bool | None) -> list[str]:
+    """Spell a run's narration choice once; `None` leaves it to `corpus.json`."""
+    if narration is None:
+        return []
+    return ["--narration" if narration else "--no-narration"]
 
 
 def call(argv: Sequence[str], out=None, **hooks: object) -> int:

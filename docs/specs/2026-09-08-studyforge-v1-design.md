@@ -1005,13 +1005,14 @@ for the vocabulary found only one corpus's choices.
 
 | Key | | Notes |
 |---|---|---|
-| `corpus_api` | **required** | R9's version key. An unknown value is refused, never migrated. ⭐ **`2` added `content.not_material`** (ruling 90), ⭐ **`3` added `media.max_files`** (`W207`) and ⭐ **`4` added `runtimes`** (`W350`); this build reads `1`, `2`, `3` and `4` |
+| `corpus_api` | **required** | R9's version key. An unknown value is refused, never migrated. ⭐ **`2` added `content.not_material`** (ruling 90), ⭐ **`3` added `media.max_files`** (`W207`) and ⭐ **`4` added `runtimes`** (`W350`) and ⭐ **`5` added `narration`** (`W460`, amended 2026-09-23); this build reads `1` to `5` |
 | `source` | **required** | ⛔ **A corpus id, not a fetch URL** (ruling 51) |
 | `title` | **required** | |
 | `levels` | **required** | Names the *container* levels and fixes the depth |
 | `variants` | **required** | ⛔ Filing and presentation only — never *runnable* |
 | `exercises` | **required** | §7's gate onto the execution track |
 | `runtimes` | *optional* | Names, never versions, from a closed vocabulary. ⛔ **Absent means none: no runner, complete at the reading floor** (§7, C5) |
+| `narration` | *optional* | Whether a build and a serve voice the corpus (`W460`). ⭐ **Absent means voiced whenever clips are recorded**; ⛔ **`false` is the reading floor exactly, complete and never short** (C5) |
 | `placement` | **required** | |
 | `content` | **required** | `include` is plain globs; every `exclude` and every `not_material` entry carries its `why` |
 | `media` | *optional* | Defaulted. ⛔ **A corpus with no media declares nothing** |
@@ -1097,6 +1098,37 @@ version here would be a second place one is chosen.
   it under no block (`TC-00/2`), so under `1`–`3` it is refused naming both
   numbers rather than parsed. ⭐ **The vocabulary is spelled once**, in
   `corpus/manifest/runtimes.py` (`TC-00/3`).
+
+### `narration` — whether a corpus is voiced (`W460`, AMENDED 2026-09-23, user ruling)
+
+⛔ **USER RULING, 2026-09-23:** *"I need some changes regarding the narrition.
+First of all it should be optional and while serving or even while caputring the
+matterial skills should ask if user is interested in the narrition or not.
+Somebody might wants to just cover the course wihtout voices as mentioned the
+voice might be cgenerated but still not serving them would be an option"*.
+
+- ⭐ **A top-level bool, `corpus_api: 5`'s key** — `KEY_VERSIONS` keys it under no
+  block, so under `1`–`4` it is refused naming both numbers. The onboarding
+  skill ASKS the author and writes the answer; a draft that carried none writes
+  no key and keeps its version.
+- ⭐ **Absent means voiced**: every corpus before the key keeps the three states
+  of `W202` answer 4 — no record, a record whose clips play, a promise the disk
+  did not keep.
+- ⛔ **`false` is the FIRST of those states exactly, whatever the record says**:
+  a build reads no record, renders every page with no player and no gap notice,
+  and copies no clip — byte for byte the build of a corpus nobody narrated.
+  ⛔ **Nothing is deleted, moved or rewritten** (R3): the record and the clips
+  stay where `narrate` put them, so voicing the corpus again plays them with no
+  re-synthesis.
+- ⭐ **`studyforge build` and `studyforge serve` take `--narration` /
+  `--no-narration`**, which override the declaration for that run, and the
+  build-and-serve skill ASKS for it. ⛔ **Narration is in a page's bytes** (R8:
+  the built page is the product), so `serve` never edits a page on the way out:
+  with narration off it refuses a site built with narration, naming each page
+  and the build that fixes it, and it refuses every clip file under the root it
+  serves by path.
+- ⛔ **Off is not degraded**: no page, report or `validate` finding calls it
+  short, and practices, quizzes, progress and contents are unchanged.
 
 ### ⛔ `content` has **three** states, and the third is `not_material` (ruling 90)
 
@@ -2555,6 +2587,12 @@ still needs no container, no network and no model, and it still sits on the read
 floor rather than in the execution track — ⭐ **but its answers are checked by the local
 study server**, which holds the key the page no longer carries (§7 §7's amendment). Over
 `file://` a quiz shows its questions and says checking them needs that server.
+
+⛔ **AMENDED 2026-09-23 (`W460`, user ruling) — *"narration"* above is OPTIONAL.** ⭐ *"it
+should be optional … Somebody might wants to just cover the course wihtout voices"*: a
+corpus whose `corpus.json` says `narration: false`, or a run given `--no-narration`, is
+the reading floor without its voice, and ⛔ **that is complete, not short** (C5) — no
+player, no clip served, no "missing" notice, and every clip kept on disk (§4, `narration`).
 
 ⚠️ **The order follows from that.** The reading floor comes first and completely,
 because it is what every consumer gets and the only thing some consumers want.

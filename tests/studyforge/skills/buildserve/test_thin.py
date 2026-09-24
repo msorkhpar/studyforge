@@ -34,6 +34,10 @@ PACKAGE = Path(buildserve.__file__).parent
 #: where a run executes is ruled to be `execute`'s probe's answer, ONE definition, so
 #: the skill imports it rather than copying it. ⛔ The probe only reads (`docker
 #: inspect`); the skill never starts, stops or enters a container, and never a run.
+#:
+#: ⚠️ `narrate` is admitted for `narration_on` alone (`W460`): whether a run is voiced
+#: is ONE predicate every stage asks, so the skill asks it rather than reading the
+#: manifest's field itself. ⛔ It buys a pure function — no client, no record, no clip.
 ALLOWED = frozenset(
     {
         "studyforge.cli",
@@ -43,6 +47,7 @@ ALLOWED = frozenset(
         "studyforge.cli.narrate.cli",
         "studyforge.cli.narrate.report",
         "studyforge.corpus.manifest",
+        "studyforge.narrate",
         "studyforge.validate.cli",
         "studyforge.validate.report",
     }

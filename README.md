@@ -98,15 +98,27 @@ documents in this checkout.
 |---|---|---|---|
 | 0, optional | `delivery` — [delivery planning](src/studyforge/skills/delivery/SKILL.md) | For a large conversion: turns "convert this repository" into an ordered backlog whose every task ends in something you can be shown | the backlog is written, and the conversion's findings log exists by its end |
 | 1 | `reconnaissance` — [source reconnaissance](src/studyforge/skills/reconnaissance/SKILL.md) | Surveys material nobody has read yet: how deep it is, what a unit is, what repeats, whether anything runs | you hold a draft manifest and the questions only you can answer |
-| 2 | `onboarding` — [corpus onboarding](src/studyforge/skills/onboarding/SKILL.md) | Turns the settled draft into `corpus.json` and writes everything around it: the adapter scaffold and its tests, the skill stubs, the pin to the installed library | the one file that is yours is named, and every other file is generated |
+| 2 | `onboarding` — [corpus onboarding](src/studyforge/skills/onboarding/SKILL.md) | Asks whether you want narration, then turns the settled draft into `corpus.json` and writes everything around it: the adapter scaffold and its tests, the skill stubs, the pin to the installed library | the one file that is yours is named, and every other file is generated |
 | 3 | `adapter` — [adapter authoring](src/studyforge/skills/adapter/SKILL.md) | Writes that one file, the adapter's reading step, and emits the archive | `studyforge validate` exits `0` |
 | 4 | `execution` — [execution onboarding](src/studyforge/skills/execution/SKILL.md) | Only for runnable material: selects a toolchain and writes the compose file for the browser editor and the runner | the runner's tag is recorded; a corpus that declares no runtime skips this step and is not short |
 | 5 | `exercises` — [authoring exercises](src/studyforge/skills/exercises/SKILL.md) | Authors each page's exercises once, runs every gate over them, and commits what clears | every page has what its material supports, and every shortfall is reported |
-| 6 | `buildserve` — [build and serve](src/studyforge/skills/buildserve/SKILL.md) | Validates, narrates if you ask, builds the site and serves it on loopback | the site answers, and every partial state is named |
+| 6 | `buildserve` — [build and serve](src/studyforge/skills/buildserve/SKILL.md) | Asks whether you want narration for this run, then validates, narrates if you ask, builds the site and serves it on loopback; `--no-narration` serves no voice and deletes no clip | the site answers, and every partial state is named |
 | 7 | `personalarchive` — [personal archive](src/studyforge/skills/personalarchive/SKILL.md) | Exports the corpus to one file, with your progress or without it, and imports it on another machine | the file imports where you take it |
 
 Step 3's done condition is the agreement: if `studyforge validate` exits `0`,
 the framework accepts the corpus, and nothing else is asked of you.
+
+**Narration is optional.** In the words of the ruling that made it so: *"it should
+be optional and while serving or even while caputring the matterial skills should
+ask if user is interested in the narrition or not. Somebody might wants to just
+cover the course wihtout voices as mentioned the voice might be cgenerated but
+still not serving them would be an option"*. Steps 2 and 6 ask. Your answer at
+onboarding is `corpus.json`'s `narration`, and `studyforge build` and
+`studyforge serve` take `--narration` / `--no-narration` to override it for one
+run. A site without narration has no player and no "missing" notice, and it is
+complete: practices, quizzes, progress and contents are unchanged, and clips
+already on disk are kept, so turning narration back on plays them without
+synthesising anything.
 
 ## The authoring reference
 

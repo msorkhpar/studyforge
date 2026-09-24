@@ -106,6 +106,34 @@ onboards unattended.
 Reconnaissance drafts each with `"why": null`; `promote` pairs it by glob and
 names every glob still open in one refusal. A reason already written is kept.
 
+⭐ **Then ask the author whether they want narration, and record the answer in
+the draft.** The user's ruling, 2026-09-23: *"it should be optional and while
+serving or even while caputring the matterial skills should ask if user is
+interested in the narrition or not. Somebody might wants to just cover the
+course wihtout voices as mentioned the voice might be cgenerated but still not
+serving them would be an option"*. Ask it plainly — *"Do you want this course
+narrated, or read without voices?"* — and write what they said:
+
+```python
+draft["narration"] = False  # "without voices"; True for "narrated"
+```
+
+- ⭐ **It lands in `corpus.json` as `narration`**, the one place every later
+  stage already reads — `studyforge build`, `studyforge serve`, `studyforge
+  plan` and the build-and-serve skill — so one answer is read everywhere and
+  nothing has to be retyped. ⭐ `promote` writes `corpus_api: 5`, the version
+  that reads the key back.
+- ⭐ **`false` is the reading floor exactly**: no player, no clip served, no
+  "missing" notice, and ⛔ **nothing calls it short** (C5) — practices, quizzes,
+  progress and contents are unchanged.
+- ⛔ **It deletes nothing**: clips a later `studyforge narrate` makes are kept on
+  disk and simply not served, and a build or serve with `--narration` plays them
+  with no re-synthesis. The build-and-serve skill asks again at serve time, and
+  its answer overrides this one for that run.
+- ⚠️ **A draft without the key was not asked**: the manifest keeps its version
+  and the corpus is voiced whenever clips are recorded, as every corpus was
+  before the question existed. The report in step 2 says `not asked`.
+
 ### 2. Ask what will be written, before anything is on disk
 
 ```
@@ -179,7 +207,8 @@ python3 -c "from studyforge.skills.onboarding import hand_edited, reonboard; \
   one a generator owns is derived again — ⛔ **so none is retyped**, and one that
   is retyped is refused by name as a collision.
 - ⭐ **`settle` names a recorded answer you mean to change** — `{"exercises": True}`
-  when a corpus starts authoring. ⛔ Any answer it does not name that would move is
+  when a corpus starts authoring, or `{"narration": False}` when the author
+  decides to read without voices (`W460`). ⛔ Any answer it does not name that would move is
   still refused by name (`W329`, below); `content` is never settled here, because a
   new content shape is a new onboarding.
 - ⭐ **`framework_commit` re-pins**, to the library running `reonboard`. Without it
@@ -380,7 +409,8 @@ how a framework acquires a consumer it cannot serve.
 
 ⭐ **The `corpus_api` it writes is never below what the draft asked for and
 never above what the data needs.** A manifest using `content.not_material` is
-`2`; one that does not stays at the draft's version. ⛔ **A generator that emits
+`2`; one recording the author's `narration` answer is `5`; one that does neither
+stays at the draft's version. ⛔ **A generator that emits
 a key merely because the contract has one freezes that key on everybody** — R9 makes a rename a migration from the moment
 the first manifest declares it, and *what a generator emits by default becomes
 the convention*.
