@@ -188,8 +188,10 @@ force absolute asset paths (breaking the `file://` floor) or force a fixed tree
 
 **R5 — Nothing generated is presented as more authoritative than it is.** A
 grader written against a hidden upstream grader is `advisory`. A grader that
-shipped with the material is `authoritative` only where it is proven by the
-gates in §7. The framework refuses to render the first as the second.
+ships with the material is **not** `authoritative` for shipping: it earns that
+label only through the derivation in §7, whose record `studyforge validate`
+re-reads, and without one it is `bundled` · `advisory`. The framework refuses to
+render anything as more than its record supports.
 
 ⭐ **A grader authored at ingestion** — tests written from the page, or from the
 source's own example code — is `generated`, and therefore `advisory`. It ships
@@ -619,7 +621,7 @@ inference from names.
 | install record | `.studyforge/installed.json` | `installed_api` | corpus onboarding |
 | execution record | `.studyforge/execution/written.json` | `written_api` | execution onboarding — read by onboarding's hand-edit check |
 | exercise bundle | `exercises/<address>/<variant>/unit-NN/practice-M/bundle.json` | `bundle_api` | the exercise-authoring skill |
-| gate record | `gates.json`, in the bundle | no key of its own: a record carrying a gate or a key this build does not define is refused whole | the exercise-authoring skill |
+| gate record | `gates.json`, in the practice's directory under `exercises/` | `gates_api`; a record with no key is read as `1` only in its earlier three-key shape (`inputs`, `origins`, `gates`), and any other record without it is refused | the exercise-authoring skill, and an adapter that derives an exercise (§7) |
 | source ledger | `exercises/ledger.json` | `ledger_api` | the exercise-authoring skill |
 | coverage report | `coverage.json`, one per unit beside its bundles | `coverage_api` | the exercise-authoring skill |
 | personal archive manifest | `personal-archive.json`, a member of the archive file | `personal_archive_api` | the personal-archive skill |
@@ -1269,8 +1271,8 @@ as unchecked, and it never completes anything. Zero exercises remains a
 A graded exercise declares its workspace — `main_path`, `test_path`,
 `run_command`, `test_command` — plus `provenance` (`bundled` | `generated` |
 `user`) and `trust` (`authoritative` | `advisory`). ⛔ Only `bundled` may be
-`authoritative`, and the framework refuses to render anything else as
-authoritative (R5).
+`authoritative`, and only with a derivation record behind it (§7); the framework
+refuses to render anything else as authoritative (R5).
 
 ### Where that declaration lives
 
@@ -1308,7 +1310,9 @@ that document's `raw_api`, and written by the **adapter** (R2).
 ⛔ **`trust` is declared but never believed.** An adapter writes what it claims;
 the framework checks the claim against `provenance` and refuses the combination
 R5 exists to prevent. `trust` may be omitted, and then defaults from
-`provenance`: `authoritative` for `bundled`, `advisory` for the rest.
+`provenance`: `authoritative` for `bundled`, `advisory` for the rest. ⛔ **An
+`authoritative` claim, declared or defaulted, needs the derivation record** below,
+so a shipped grader that was not derived declares `advisory`.
 
 ⛔ **The record's keys are a closed set, written in one order**: `main_path`,
 `test_path`, `run_command`, `test_command`, `provenance`, `trust`, `kind`,
@@ -1379,6 +1383,19 @@ ship where most of the work is already done, marked `authoritative`, which is
 precisely the failure R5 exists to prevent. Gate 2 proves the grader itself
 works. **No human reads anything, and no assertion is authored by a model**,
 which is exactly why such an exercise keeps the stronger label.
+
+⭐ **The derivation is recorded, and `validate` re-reads it.** The adapter writes
+the two gates into the practice's gate record, `gates.json` under `exercises/`, as
+the `derivation` family: `D1` is Gate 1, with one `hole:<method>` entry per blanked
+method and the attributed failure as its value, and `D2` is Gate 2. The record
+digests the `starter`, the `reference` (the original) and the `tests`, spelled
+from the corpus root. ⛔ **`studyforge validate` refuses every `authoritative`
+exercise without such a record** (`derivation-record`): no record, one that will
+not read, a `D1` naming no hole, a `starter` or `tests` that is not the
+exercise's own `main_path` or `test_path`, or a starter that still digests to the
+original. It refuses a record whose `D1` or `D2` did not hold
+(`derivation-shortfall`), and one whose named files changed since the gates ran
+(`derivation-digest`).
 
 - **The lesson names the methods.** The methods a lesson discusses are the methods
   it teaches, so selection follows the lesson's own text rather than position.
@@ -1570,6 +1587,7 @@ not a corpus's string** (R1):
 | the record says | the page says |
 |---|---|
 | `bundled` · `authoritative` | **Checked by the tests that ship with this material.** |
+| `bundled` · `advisory` | **Checked by tests that ship with this material. They have not been proven to catch a wrong answer.** |
 | `generated` · `advisory`, kind `code` | **Written for this site. Its tests were proven against a worked solution before it shipped.** |
 | `generated` · `advisory`, kind `quiz` | **Written for this site from this page.** |
 | no grader (ungraded) | **Nothing here checks your answer.** |
