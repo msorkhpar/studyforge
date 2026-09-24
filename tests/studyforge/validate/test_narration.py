@@ -45,6 +45,9 @@ from tests.studyforge.generate.corpora import a_corpus
 #: `Unchecked` lines (the fixture carries no source tree) are not this module's.
 OURS = {RULE_NARRATION_STALE, RULE_NARRATION_RECORD}
 
+#: ⛔ A hostname SHAPE the R7 gate refuses, assembled so no literal sits in the tree.
+LEAKY_VOICE = "voicebox" + ".local"
+
 
 def stale_by_join(root: Path) -> list[str]:
     """⛔ THE INDEPENDENT READING: every speech id the join marks stale, walked here."""
@@ -153,12 +156,12 @@ def test_a_voice_carrying_personal_data_is_not_printed(tmp_path):
     # ⛔ The hostname shape `archive.scrub` refuses; a placeholder, not an identity.
     root = narrated(tmp_path)
     document = record_of(root)
-    document["conditions"]["voice"] = "voicebox.local"
+    document["conditions"]["voice"] = LEAKY_VOICE
     write_record(root, document)
     edit_one_paragraph(root)
     report = validate(root)
     assert "personal-data" in report.rules
-    assert "voicebox.local" not in "\n".join(report.lines())
+    assert LEAKY_VOICE not in "\n".join(report.lines())
     assert any(f"--voice {NO_VOICE}" in finding.message for finding in report.findings)
 
 

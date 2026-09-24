@@ -76,8 +76,7 @@ def check_narration_current(walk: Walk) -> Iterator[Finding | Unchecked]:
     directory and naming its speech id — the id carries the section and the
     block, so the paragraph is found without a word of it quoted.
     """
-    from studyforge.generate import RAISES, read_corpus, unit_location
-    from studyforge.generate.narration import heard
+    from studyforge.generate import RAISES, heard, read_corpus, unit_location
     from studyforge.narrate.synth import StateError, read_state, state_file
     from studyforge.unit.builder import build_unit
     from studyforge.unit.errors import ContentError

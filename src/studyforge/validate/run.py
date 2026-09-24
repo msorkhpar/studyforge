@@ -22,7 +22,7 @@ from __future__ import annotations
 from collections.abc import Iterator
 from pathlib import Path
 
-from studyforge.narrate.enabled import narration_on
+from studyforge.narrate import narration_on
 from studyforge.validate import exercises, ledger, narration, paths, source, structure
 from studyforge.validate.corpus import Walk, read
 from studyforge.validate.report import Finding, Report, Unchecked

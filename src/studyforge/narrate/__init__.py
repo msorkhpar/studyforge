@@ -29,3 +29,8 @@ extraction source's one module is 626 lines, R11's ceiling is 400, and
 `docs/conventions/module-structure.md` pays that during extraction rather than
 after. Synthesis is SF-17's; the service it talks to is E13.
 """
+
+from studyforge.narrate.enabled import narration_on
+
+#: ⭐ `W457`: the one "narration is on" predicate, exported so no stage reaches past it.
+__all__ = ["narration_on"]
