@@ -21,7 +21,7 @@ leak that travels through untranslated.
 
 ⚠️ **No progress store is named private here.** `routes.assets` refuses every
 store on any resolved path, so a predicate here would be a second
-refusal nothing could reach — it was planted out during this row and no test failed.
+refusal nothing could reach.
 
 ## ⛔ No configured paths
 

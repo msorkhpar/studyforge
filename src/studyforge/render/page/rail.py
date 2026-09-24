@@ -18,14 +18,14 @@ escaping and the href gate, and `render.pageassets` for the two hooks a row
 carries. ⛔ Not on `contents`, and not on any peer renderer: a rail arrives as
 **plain values a caller built**, exactly as a trail and a bar do.
 
-## ⛔ Why this region exists — the route between two courses was the root index
+## ⛔ Why this region exists — without it the route between two courses is the root index
 
-⚠️ **Measured before this module: a unit page carried three `<nav>` regions and
-not one href in any of them reached a page in another container.** The bar
+⚠️ **A unit page's other three `<nav>` regions never reach a page in another
+container.** The bar
 points at the previous and next units *inside one container*; the trail points
 up at that container and at the root index; the outline points into the page
-itself. ⭐ So the only way from one course to another was back through the root
-index — two clicks and a lost place, on every crossing.
+itself. ⭐ So without the rail the only way from one course to another is back
+through the root index — two clicks and a lost place, on every crossing.
 
 ## ⛔ It degrades to NOTHING below two containers, and that is asserted
 

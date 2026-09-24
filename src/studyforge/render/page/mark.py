@@ -77,8 +77,8 @@ def key(document: dict) -> str:
     ordinal — the same function the root index's rows are keyed by, so the mark
     the page writes and the mark the index reads back are one string.
 
-    ⚠️ **The list is checked for being a list, and that is a measured defect and
-    not defensiveness.** `tuple("basics")` is `("b","a","s","i","c","s")` — six
+    ⚠️ **The list is checked for being a list, and that is not defensiveness.** `tuple("basics")`
+    is `("b","a","s","i","c","s")` — six
     single-character segments, every one of them a valid slug — so an address
     recorded as a *string* rather than a list becomes a six-level address that
     refuses nothing and keys every mark under a name nothing else will ever

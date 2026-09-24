@@ -59,7 +59,7 @@ the branch list below is checked against `SEGMENT_KINDS` by this module's test.
 live anchor. The corpus is trusted-ish; a page the reader opens in their own
 browser is not the place to find out that it was not.
 
-## ⛔ TWO permitted forms, and the second one used to be missing
+## ⛔ TWO permitted forms
 
 ⛔ **A permitted href is an *absolute* one whose scheme is in `SAFE_SCHEMES`, or
 a *relative reference* that stays inside the site. Nothing else.**
@@ -69,21 +69,19 @@ closed because the unforeseen scheme must be refused; the relative form is
 closed because it is a *grammar* — no scheme, not rooted — rather than a list of
 prefixes somebody extends when a page breaks.
 
-⛔ **The prefix list this replaced was `("http://", "https://", "mailto:", "#",
-"/", "./", "../")`, and four of those seven are not schemes at all.** ⚠️ Crowding
-`#`, `./` and `../` into a set called `SAFE_SCHEMES` made it look complete while
-the commonest relative reference of all — a bare `page.html`, naming a file in
-the same directory — had **no entry**. ⭐ **Measured: under `sibling` placement
-that is every same-container *next* and *previous* link, 6 of the `depth2`
-corpus's 13 navigation slots, dropped with nothing raised.**
+⛔ **`#`, `./` and `../` are not schemes.** ⚠️ Crowded into a set called
+`SAFE_SCHEMES` they would make it look complete while the commonest relative
+reference of all — a bare `page.html`, naming a file in the same directory —
+had no entry. ⭐ **Under `sibling` placement that is every same-container
+*next* and *previous* link.**
 
-⭐ **The consequence, stated rather than hidden: `example.com/x` is now a
-relative link to a local file that does not exist, where it used to keep its
-words.** ⚠️ It is formally indistinguishable from `unit-02-fields.unit.html` —
+⭐ **The consequence, stated rather than hidden: `example.com/x` is a
+relative link to a local file that does not exist.** ⚠️ It is formally indistinguishable from
+`unit-02-fields.unit.html` —
 both are one path segment containing dots — so separating them needs a *"looks
 like a hostname"* heuristic, which is the open set this project has banned five
-times. ⛔ **A dead relative link costs one reader one click; the alternative cost
-46 % of the bar on every `sibling` corpus.**
+times. ⛔ **A dead relative link costs one reader one click; the alternative costs
+every same-container link on every `sibling` corpus.**
 
 ## ⛔ What a relative reference may NOT be, and why each one is named
 
@@ -125,9 +123,8 @@ _ESCAPES = (("&", "&amp;"), ("<", "&lt;"), (">", "&gt;"), ('"', "&quot;"))
 #: forbidden list is the one that is silently incomplete, and `vbscript:` is the
 #: entry every version of it forgets.
 #:
-#: ⚠️ **These are schemes and only schemes.** `#`, `/`, `./` and `../` used to
-#: sit in this tuple; none of them is a scheme, and their presence is what made
-#: the set read as complete while a bare `page.html` had no entry.
+#: ⚠️ **These are schemes and only schemes.** `#`, `/`, `./` and `../` are not
+#: schemes; a relative reference is the second, separate form above.
 SAFE_SCHEMES = ("http", "https", "mailto")
 
 #: Every character an href may be spelled with: RFC 3986's whole repertoire —

@@ -95,8 +95,8 @@ def test_the_href_is_escaped_as_an_attribute():
 
 
 def test_every_clip_the_walker_mints_reaches_exactly_one_element(case):
-    # ⛔ **BOTH DIRECTIONS AND A CARDINALITY.** Surjectivity alone is what
-    # Ruling 187 refuses: seventeen clips colliding onto one element still
+    # ⛔ **BOTH DIRECTIONS AND A CARDINALITY.** Surjectivity alone is not
+    # enough: seventeen clips colliding onto one element still
     # resolve both ways. The equality is what states that each unit got its own.
     units = speakable_of(case.document).units
     emitted = carriers(case.render().decode("utf-8"))
@@ -194,7 +194,7 @@ def test_the_reading_floor_renders_identically_to_before_narration_existed(case)
     )
 
 
-# --- W202 Q4: a broken promise, and the three states it separates -------------
+# --- A broken promise, and the three states it separates ---------------------
 
 
 def positions(case) -> list:
@@ -296,7 +296,7 @@ def test_the_promised_count_is_the_playable_plus_the_missing_and_nothing_else():
 
 
 def test_a_broken_promise_brings_the_transport_and_names_the_gap(case):
-    # ⛔ **`W202` Q4's third row, end to end.** Every clip promised, none on disk:
+    # ⛔ **The third state, end to end.** Every clip promised, none on disk:
     # the page carries the player — through the SAME derived gate, because the
     # empty attribute is still the attribute — and it says so in prose.
     page = document_module.compose(
@@ -321,10 +321,10 @@ def test_a_page_with_one_broken_promise_says_how_many_and_still_plays_the_rest(c
 
 
 def test_the_three_states_are_told_apart_from_the_bytes_of_the_page_alone(case):
-    # ⛔ **THE DEFECT, AS A TEST.** Before this row, "never narrated" and
-    # "narration broke" rendered IDENTICALLY — so a reader could not tell a
-    # finished prose corpus from one whose audio had failed. All three pages must
-    # now differ, and the never-narrated one must still be the clean prose page.
+    # ⛔ **"Never narrated" and "narration broke" must not render identically**,
+    # or a reader cannot tell a finished prose corpus from one whose audio
+    # failed. All three pages must differ, and the never-narrated one must still be the clean
+    # prose page.
     never = document_module.compose(case.document, case.placement, narration=SILENT)
     plays = document_module.compose(case.document, case.placement, narration=case.narration)
     broke = document_module.compose(
@@ -347,7 +347,7 @@ def test_the_three_states_are_told_apart_from_the_bytes_of_the_page_alone(case):
 
 
 def test_the_no_record_page_is_a_WHOLE_page_and_not_merely_an_unnarrated_one(case):
-    # ⛔ **`SF-38`'s Acceptance, and it is the arm that a negative alone cannot
+    # ⛔ **The arm that a negative alone cannot
     # hold.** *"No `data-audio` anywhere"* is ALSO true of a page that rendered
     # nothing at all — and *"renders nothing"* is one of the states answer 4
     # exists to tell apart, so the negative needs a positive companion or it is
@@ -385,8 +385,8 @@ def unnarrated_and_whole(page: str, case) -> bool:
 
 
 def test_a_planted_player_on_the_no_record_page_turns_this_arm_red(case):
-    # ⛔ **The both-directions half, RUN as a plant rather than promised** (R12,
-    # and `SF-38`'s Acceptance says it in those words). ⚠️ A negative assertion
+    # ⛔ **The both-directions half, RUN as a plant rather than promised** (R12). ⚠️ A negative
+    # assertion
     # nobody has seen fail is a negative assertion nobody knows can.
     #
     # ⭐ The plant is the transport a build would wrongly emit for a corpus that

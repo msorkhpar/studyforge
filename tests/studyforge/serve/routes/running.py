@@ -3,7 +3,7 @@
 ⭐ **Every run happens in a temp COPY of `tests/fixtures/runnable/`**, built in place and
 discovered from its parent, so the route reads each practice's workspace from the unit
 document the way a served instance does. ⭐ Every practice key is spelled by
-`progress.practice_key` and never typed (`SF-21/4`).
+`progress.practice_key` and never typed.
 
 ⭐ `plant_command` rewrites one practice's workspace IN THE COPY's archive — the
 generated document is built from it — which is how a test shows the command that runs
@@ -116,12 +116,12 @@ class StubEditor:
     `docker` per corpus per index fetch, and the pinned gate has no daemon to
     ask (§8.3; the host reading is a live one).
 
-    ⛔ **`known()` MODELS THE REAL PROBE'S CACHE and must not shortcut it**
-    (`W427`): it answers only once `editor()` has been asked, because a stub that
+    ⛔ **`known()` MODELS THE REAL PROBE'S CACHE and must not shortcut it**:
+    it answers only once `editor()` has been asked, because a stub that
     answered cold would hide the very thing the frame policy depends on — that
     composing a policy asks NOTHING, so a cold instance frames nothing.
 
-    ⛔ **And it EXPIRES, which is the half this stub was missing** (`W430`): the
+    ⛔ **And it EXPIRES, which is the half this stub was missing**: the
     real cache goes cold again `EDITOR_TTL` seconds after the ask, so a stub
     that modelled only *cold until asked* could not tell a policy that LASTS
     from one that lapses — and a reading that never crosses that boundary is not

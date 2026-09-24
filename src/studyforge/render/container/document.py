@@ -19,8 +19,8 @@ taken from the page package's published surface rather than from inside it
 would be a second masthead, a second head, a second place a `<meta viewport>`
 has to be remembered — and the day one gains a region the other silently would
 not. ⚠️ **The design asks the root index to share the unit page's palette and type
-stack *by importing them rather than restating them*; this is the same ruling
-one page earlier**, and it is why this task adds no template file.
+stack *by importing them rather than restating them*; this is the same rule
+one page earlier**, and it is why this package adds no template file.
 
 ⛔ **Five of the skeleton's slots are empty here, and they are empty
 explicitly.** `templates.fill` refuses a placeholder with no value **and** a

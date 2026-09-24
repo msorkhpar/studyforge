@@ -6,7 +6,7 @@ grammars emit; this one needs no runtime at all and asserts what the stylesheet
 does with a combination once you have it. ⛔ The split exists because the dev
 image has no JS runtime: the highest-value assertion — no combination takes the
 comment colour without being a comment — must run in the gate, against the
-combinations already measured, rather than skipping there.
+combinations already recorded, rather than skipping there.
 
 ⚠️ The two halves are not redundant. This one cannot notice a new combination;
 that one cannot run everywhere.
@@ -43,7 +43,7 @@ GROUP_ORDER_MARKERS = (
 #: `punctuation` too, and would read as punctuation if `type` did not come
 #: after it in the stylesheet.
 #:
-#: ⛔ **The markup rows are the second interesting group** (`W295`): a `prolog`,
+#: ⛔ **The markup rows are the second interesting group**: a `prolog`,
 #: a `doctype` and a `cdata` marker land on **punct** and never on comment,
 #: because Prism's own themes colour them as comments and this stylesheet's
 #: standing rule is that nothing takes the comment colour and its italics

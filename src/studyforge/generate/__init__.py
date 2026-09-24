@@ -41,8 +41,7 @@ not a subcommand and not a flag**: registering an entry point is the command
 line's alone, and adding one here would put a second declaration of the
 build's surface in the tree.
 
-⭐ **Where this package finally homes is the register's call, not this module's.**
-It sits beside `cli/` rather than inside it precisely so that the command line can adopt,
+⭐ **It sits beside `cli/`** rather than inside it so that the command line can adopt,
 move or absorb it without a consumer having imported a command.
 
 ## What is in the package

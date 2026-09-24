@@ -1,4 +1,4 @@
-"""Every container page of both FND-04 fixtures, built the way a build would.
+"""Every container page of both framework fixture corpora, built the way a build would.
 
 ⛔ **Imported, never copied.** Four test modules render these pages and a fifth
 regenerates the goldens; five spellings of "turn a container map into a page" is
@@ -12,7 +12,7 @@ the one nobody re-measures when a fixture gains a container.
 ⚠️ **Every href here is computed by `placement.relative_href`, never spelled.**
 `depth1` is `tree` and `depth2` is `sibling`, so a container page addresses its
 units with `units/unit-NN/…` in one and with a bare filename in the other —
-which is exactly the pair `SF-13/1` and `W57` were about.
+which is exactly the pair a bare-filename href needs.
 
 Rewrite the goldens after a deliberate change to the page with:
 
@@ -21,7 +21,7 @@ Rewrite the goldens after a deliberate change to the page with:
 
 ⚠️ **`PYTHONPATH` is not optional and the command beside this one omits it.**
 `pyproject.toml` puts `src` and `.` on the path through `[tool.pytest]`, which
-`python3 -m` never reads — measured 2026-09-10: without it the run stops at
+`python3 -m` never reads — without it the run stops at
 `ModuleNotFoundError: No module named 'studyforge'`.
 
 ⚠️ A golden that changes without a deliberate change to the renderer is the R10
@@ -46,7 +46,7 @@ from tests.support import repository_root
 #: which is otherwise ignored as build output everywhere.
 GOLDEN_DIR = repository_root() / "tests" / "fixtures" / "pages"
 
-#: The two FND-04 fixture corpora, in a stated order. ⛔ A tuple rather than a
+#: The two framework fixture corpora, in a stated order. ⛔ A tuple rather than a
 #: directory walk, so the suite's own list does not depend on filesystem
 #: order (R10).
 FIXTURES = ("depth1", "depth2")

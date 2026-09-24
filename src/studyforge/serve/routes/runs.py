@@ -43,12 +43,11 @@ may NAME, and the ground does not transfer between the two: a reading older than
 `EDITOR_TTL` is not a reason to start anything, but it is a perfectly good reason to say
 which loopback port a document may embed.
 
-⚠️ **Measured, and that reading is why this record exists.** With the policy read straight
-through the probe, a served `frame-src` named the editor for `EDITOR_TTL` seconds after
-anything asked and `'none'` from then on — so the cold window was not a start-up window,
-it RECURRED every ten seconds and a reader was essentially never inside it. ⛔ **A policy
-that oscillates between correct and `'none'` is a worse failure than one that names an
-origin a moment too long**, and it is the one a reader actually had.
+⚠️ **Why this record exists.** With the policy read straight through the probe, a served
+`frame-src` would name the editor for `EDITOR_TTL` seconds after anything asked and
+`'none'` from then on — a cold window that RECURS every ten seconds. ⛔ **A policy that
+oscillates between correct and `'none'` is a worse failure than one that names an origin
+a moment too long.**
 
 ⭐ **A stale entry grants no capability.** Its whole effect is that the policy names a
 loopback origin where nothing is listening, so the frame fails to load — which is exactly

@@ -39,12 +39,11 @@ the href gate, the between-pages bar and the error type. ⛔ Not on `serve`, and
 not on `contents`: this page is handed its units already ordered and already
 addressed, so it renders whether or not a contents document has ever been built.
 
-## ⛔ Why this task exists at all
+## ⛔ Why this package exists
 
-⚠️ **The spec named `*.section.html`, discovery scans for it, and nothing
-rendered it** — a page missing per container in the first corpus to be
-integrated, and a discovery that could not find what it scans for (a module
-names no corpus, R1). ⭐ It is the one page a reader lands on when navigating downward, so its
+⚠️ **The spec names `*.section.html` and discovery scans for it**, so without
+this package a page is missing per container and discovery cannot find what it
+scans for. ⭐ It is the one page a reader lands on when navigating downward, so its
 absence is not cosmetic.
 
 ## ⭐ One renderer at every depth

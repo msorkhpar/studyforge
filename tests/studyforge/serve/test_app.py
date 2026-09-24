@@ -236,7 +236,7 @@ class Chunks:
     """One chunk, then a stream WAITING on its next one — the shape of a quiet run.
 
     ⚠️ A stream that kept writing would find the hang-up by its own failed write;
-    only one that is waiting needs the watcher, so that is the one measured.
+    only one that is waiting needs the watcher, so that is the one read.
     """
 
     def __init__(self, waits: float):
@@ -304,7 +304,7 @@ def _post(server, path, body):
         connection.close()
 
 
-# --- what a served page may EMBED, on the wire (`W427`) ---------------------
+# --- what a served page may EMBED, on the wire ---------------------
 
 EDITOR = "http://127.0.0.1:8443"
 
@@ -316,8 +316,8 @@ def policy_sent(headers) -> dict[str, str]:
 
 
 def test_a_served_page_may_frame_the_editor_this_instance_discovered(site, source):
-    # ⛔ Asserted on the RESPONSE, never on the constant: the constant is what
-    # `W416/2` measured a half of, and the reader's browser reads this.
+    # ⛔ Asserted on the RESPONSE, never on the constant: the constant is one
+    # half of framing, and the reader's browser reads this.
     with running(site, source, frames=lambda: [EDITOR]) as server:
         status, headers, _ = fetch(server, "/index.html")
     assert status == 200

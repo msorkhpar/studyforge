@@ -177,7 +177,7 @@ def truncates_a_digest(tree: ast.AST) -> bool:
 
 
 def test_exactly_one_module_in_the_whole_framework_truncates_a_digest():
-    # ⛔ The population printed before the scalar (Ruling 128): six framework modules
+    # ⛔ The population printed before the scalar: six framework modules
     # compute a digest, and five of them use the whole of it — a `content_sha256`, a
     # freshness mark, a duplication key. Only a short NAME truncates one, and exactly
     # one module may mint a short name.
@@ -261,7 +261,7 @@ def test_a_unit_token_round_trips_to_the_key_it_came_from(segments):
 
 
 def test_the_two_keys_a_single_hyphen_would_have_collided_stay_distinct():
-    # ⛔ The measured reason `UNIT_SEPARATOR` is two characters: these two addresses
+    # ⛔ The reason `UNIT_SEPARATOR` is two characters: these two addresses
     # both flatten to `a-b-c-unit-01` under a single hyphen.
     left = unit_token(Address.of("a-b", "c").unit_key(1))
     right = unit_token(Address.of("a", "b-c").unit_key(1))

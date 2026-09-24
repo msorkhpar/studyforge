@@ -32,8 +32,8 @@ R10 forbids.
 ## ⛔ A type that is not a NAME is refused here, never used as a key
 
 ⚠️ **`RENDERERS.get(block_type)` cannot be *asked* about an unhashable value.**
-A block whose `type` arrived as a JSON array or object raised a bare
-`TypeError` out of this dispatcher instead of refusing — and that was measured
+A block whose `type` arrives as a JSON array or object would raise a bare
+`TypeError` out of this dispatcher instead of refusing — and it is
 **reachable**: `archive.document.parse` and `unit.served.parse` both accept
 such a block, and `serve.routes.content` is the door it arrives by. ⭐ So the
 type is checked for being a **name** before it is used as a key, and the refusal
@@ -45,8 +45,8 @@ other.** `isinstance(block, dict)` catches a block that is not an object;
 this one catches an object whose `type` is not a name.
 
 ⭐ **What was deliberately NOT added is a guard inside `prose` or
-`figure`.** Their `_RENDERERS[block["type"]]` is unreachable with a bad key,
-**measured**: a renderer is entered only for a type this mapping already
+`figure`.** Their `_RENDERERS[block["type"]]` is unreachable with a bad key: a renderer is entered
+only for a type this mapping already
 matched, so the key is present by the time it is indexed. ⚠️ A second guard
 there would be a second place the same guarantee is made, and the package's
 test asserts the property that keeps the first one sufficient — that no module

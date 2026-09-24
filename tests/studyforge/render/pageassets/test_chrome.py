@@ -5,13 +5,9 @@ which is data, the way `test_palette` does for `palette.css`.
 
 ## ⛔ Why the region list is DERIVED and not listed
 
-⚠️ **`SF-34`'s founding defect is that it reads as complete either way.** Its
-scope line said *"the three chrome regions the unit page already emits"* and was
-stale in two directions at once: the practice panel had become a fourth, and a
-container page — a page kind the line did not contemplate — a fifth, then the
-root index a sixth. ⛔ **Nothing about a `solo` row whose scope is short signals
-the gap**, and the epic's own instruction to whoever takes the task is to
-*re-measure the region list against the tree rather than against the table*.
+⚠️ **A typed region list reads as complete either way.** A new page kind or a
+new panel adds a region, and nothing about a short list signals the gap, so the
+region list is measured against the tree rather than against a table.
 
 ⭐ **So the population here is read out of the tree on every run:** every
 `<nav aria-label>` a committed golden page carries, plus every framework-typed
@@ -20,7 +16,7 @@ region element in `render/templates/`. A seventh region fails
 and the answer *"it is another task's"* is a row in the table rather than a
 silence.
 
-⛔ **And what the tree can AUTHOR, not only what it emits** (Ruling 192, `W105`):
+⛔ **And what the tree can AUTHOR, not only what it emits**:
 a `<nav>` a template or an emitter can write and no golden carries was invisible
 to that population — the trail was. `authoring.py` reads every authoring site's
 RESOLVED label, and `authorable ⊆ REGIONS` is asserted as a subset.
@@ -46,7 +42,7 @@ from tests.studyforge.render.pageassets import authoring
 #: The part under test.
 CHROME = "chrome.css"
 
-#: ⭐ `W362` split the part at named seams for R11: `chrome.css` is where things
+#: ⭐ The part is split at named seams for R11: `chrome.css` is where things
 #: are, `lists.css` what the reader navigates, `onward.css` where they go
 #: next, `notes.css` what the page tells them. Every claim below is about the
 #: four together, read as one part.
@@ -54,15 +50,15 @@ CHROME_PARTS = (CHROME, "lists.css", "onward.css", "notes.css")
 
 #: Who answers for a region. ⛔ Three values and no fourth: a region that fits
 #: none of them is a region whose owner nobody decided, which is the exact state
-#: `QA-03/2` found four palette tokens in.
+#: an ownerless palette token is in.
 CHROME_RULED = "chrome"  # this part carries its rules
 SURFACE_RULED = "reading"  # `reading.css` already styles it as the element it is
-DEFERRED = "deferred"  # another task's, and the task is named
+DEFERRED = "deferred"  # another part's, and the part is named
 
 #: `region anchor -> (who answers for it, why)`. ⛔ Asserted TOTAL over what the
 #: tree emits, in both directions, by the first test below.
 REGIONS: dict[str, tuple[str, str]] = {
-    "body": (CHROME_RULED, "the page column — `PO-22/6`, note (d); one bound, on one element"),
+    "body": (CHROME_RULED, "the page column — note (d); one bound, on one element"),
     "header": (CHROME_RULED, "region 1, the masthead — `page.html`, every page kind"),
     "main#content": (
         SURFACE_RULED,
@@ -80,62 +76,61 @@ REGIONS: dict[str, tuple[str, str]] = {
     ),
     'nav[aria-label="Breadcrumb"]': (
         CHROME_RULED,
-        "region 9, the unit page's trail — `SF-15`. ⛔ No committed golden emits it, "
-        "so it is here because the tree can AUTHOR it (Ruling 192, `W105`)",
+        "region 9, the unit page's trail. ⛔ No committed golden emits it, "
+        "so it is here because the tree can AUTHOR it",
     ),
-    'nav[aria-label="Units"]': (CHROME_RULED, "region 5, a container's unit listing — `SF-27`"),
+    'nav[aria-label="Units"]': (CHROME_RULED, "region 5, a container's unit listing"),
     'nav[aria-label="Containers"]': (
         CHROME_RULED,
-        "region 10, the rail that reaches the OTHER containers — `W324`. ⛔ A unit "
-        "page carried three navs and not one href in any of them left its own "
-        "container, so the only crossing was back through the root index. ⭐ Laid "
+        "region 10, the rail that reaches the OTHER containers. ⛔ Without it a unit "
+        "page's navs never leave its own container, so the only crossing is "
+        "back through the root index. ⭐ Laid "
         "out BESIDE the reading column where a viewport has room for one, and as a "
-        "card in the column where it has not (`W325`) — so it is the one region "
+        "card in the column where it has not — so it is the one region "
         "that does not resolve the reading surface's column at every width",
     ),
     'nav[aria-label="Contents"]': (
         CHROME_RULED,
-        "region 6, the root index's disclosure tree — `SF-14`",
+        "region 6, the root index's disclosure tree",
     ),
     'section[aria-label="About this site"]': (
         CHROME_RULED,
-        "region 12, the root index's plain explanation and its short columns — "
-        "`W362`. ⚠️ Not a `<nav>` and not in a template, so the census reaches it "
+        "region 12, the root index's plain explanation and its short columns. "
+        "⚠️ Not a `<nav>` and not in a template, so the census reaches it "
         "through the index renderer's own markup",
     ),
     'section[aria-label="Progress"]': (
         CHROME_RULED,
-        "region 13, the progress line and the segmented strip on the index and a "
-        "container page — `W362`",
+        "region 13, the progress line and the segmented strip on the index and a container page",
     ),
     'form[role="search"]': (
         CHROME_RULED,
-        "region 14, the index's filter and its expand and collapse controls — `W362`",
+        "region 14, the index's filter and its expand and collapse controls",
     ),
     'nav[aria-label="Up next"]': (
         CHROME_RULED,
-        "region 11, the Up next slip on the root index and a container page — "
-        "`W362`. ⭐ The one filled area of `--sign` on the page",
+        "region 11, the Up next slip on the root index and a container page. "
+        "⭐ The one filled area of `--sign` on the page",
     ),
     # ⚠️ `data-practice`, never `data-section`: that one carries a CORPUS's key (R1).
-    "section[data-practice]": (DEFERRED, "region 15, `SF-24`'s panel — `practice.css`'s"),
+    "section[data-practice]": (DEFERRED, "region 15, the practice panel — `practice.css`'s"),
     'section[data-section="read-mark"]': (
         CHROME_RULED,
-        "region 7, the reader's own mark-as-read control — `SF-30`. ⚠️ It ships "
+        "region 7, the reader's own mark-as-read control. ⚠️ It ships "
         "`hidden` and `read-mark.js` unhides it only with a working store behind "
         "it, so the rules here are for the region a reader actually sees",
     ),
     "footer#player": (
         DEFERRED,
-        "the narration transport is `SF-18`'s, and it has ARRIVED — in "
-        "`narration.css`, its own part, which is why this row stays DEFERRED "
+        "the narration transport — painted in "
+        "`narration.css`, its own part, which is why this region stays DEFERRED "
         "rather than becoming this part's: `--player-height`, `--panel` and "
         "`--shadow` are painted there and this file still reaches none of them",
     ),
     'section[data-section="narration-gap"]': (
         DEFERRED,
         "region 8, the panel that names a narration promise the disk did not keep "
-        "(`W202` Q4). ⛔ It is the transport's own region and is painted in "
+        "⛔ It is the transport's own region and is painted in "
         "`narration.css` beside `footer#player`, for the same reason and against "
         "the same `--panel` ground — so this file reaches none of it either. "
         "⚠️ It is NOT on every page: a corpus that was never narrated is complete "
@@ -172,31 +167,27 @@ SKELETON_SLOTS = {
     "heading": "the masthead's `<h1>` — region 1",
     "headingattributes": (
         "the anchor and the clip the `<h1>` carries when the material's own "
-        "opening heading was promoted into it (`W407`); it is addressing and "
+        "opening heading was promoted into it; it is addressing and "
         "narration, and nothing is painted"
     ),
     # every slot below lands inside the one column `body` bounds
     "meta": "the masthead's second line — region 1",
     "breadcrumb": (
-        "region 9, `SF-15`'s trail. ⭐ A row in `REGIONS` since `W105`: the census "
-        "reads what the tree can AUTHOR, so a region no golden emits is no longer "
-        "invisible to it (`SF-15/3`, Ruling 192)"
+        "region 9, the trail. ⭐ A row in `REGIONS`: the census reads what the tree "
+        "can AUTHOR, so a region no golden emits is still visible to it"
     ),
     "outline": "region 2",
     "body": "the reading surface — `reading.css`, by the block vocabulary",
     "pending": "region 4",
     "mark": (
-        "region 7, `SF-30`'s read control. ⭐ It arrived as a NEW SLOT, which is "
-        "the case this table's own comment said would show up here immediately "
-        "rather than waiting for a golden to emit it — and it did"
+        "region 7, the read control. ⭐ A slot shows up here as soon as the "
+        "skeleton carries it, without waiting for a golden to emit it"
     ),
-    "player": "`SF-18`'s at M3 — the one DEFERRED row above",
+    "player": "the narration transport's — the DEFERRED row above",
     "nav": "region 3",
     "rail": (
-        "region 10, `W324`'s rail across containers. ⭐ It arrived as a NEW SLOT, "
-        "which is the case this table's own comment said would show up here "
-        "immediately rather than waiting for a golden to emit it — and it did, for "
-        "the second time"
+        "region 10, the rail across containers. ⭐ A slot shows up here as soon as "
+        "the skeleton carries it, without waiting for a golden to emit it"
     ),
 }
 
@@ -240,7 +231,7 @@ def nav_regions_in_the_goldens() -> set[str]:
 def region_elements_in_the_templates() -> set[str]:
     """Every framework-typed region element `render/templates/` or a golden emits.
 
-    ⚠️ The goldens as well since `W362`: the index's head and the progress
+    ⚠️ The goldens as well: the index's head and the progress
     region are written by the index and container renderers, not by a template.
     """
     markup = "\n".join(templates.template(name).template for name in templates.names())
@@ -267,18 +258,17 @@ def test_the_population_read_off_the_tree_is_inhabited():
 
 
 def test_the_region_table_is_total_over_what_the_tree_emits():
-    # ⛔ **This is `SF-34`'s founding defect turned into a test.** Its scope line
-    # was stale in two directions at once and nothing said so; from here a
-    # seventh region is a red test, and *"that one is another task's"* is a row
+    # ⛔ **A typed list that reads as complete either way, turned into a test.**
+    # A new region is a red test, and *"that one is another task's"* is a row
     # rather than a silence.
     emitted = regions_emitted()
     declared = set(REGIONS)
     assert emitted - declared == set(), (
         f"the tree emits regions this part does not answer for: {sorted(emitted - declared)}"
     )
-    # ⛔ `W105`, Ruling 192 (c): against EMITTED alone, declaring the trail — a
-    # region the tree authors and no golden emits — failed here. A stale row is
-    # still caught; a row the tree can author is not refused for being unrendered.
+    # ⛔ Against EMITTED alone, declaring the trail — a region the tree authors
+    # and no golden emits — would fail here. A stale row is still caught; a row the tree can
+    # author is not refused for being unrendered.
     reachable = emitted | authoring.authorable()
     assert declared - reachable == set(), (
         f"this part answers for regions the tree can neither emit nor author: "
@@ -286,11 +276,11 @@ def test_the_region_table_is_total_over_what_the_tree_emits():
     )
 
 
-# --- Ruling 192: what the tree can AUTHOR, and never only what it emits ------
+# --- What the tree can AUTHOR, and never only what it emits ----------------
 
 
 def test_every_nav_the_tree_can_author_resolves_to_a_label():
-    # ⛔ `W105`. An authoring site whose label is not a value — a local, a call,
+    # ⛔ An authoring site whose label is not a value — a local, a call,
     # a concatenation — is a region the census below cannot name, so it is a red
     # check here rather than a site the sweep quietly dropped.
     sites = authoring.sites()
@@ -309,7 +299,7 @@ def test_every_region_a_golden_emits_is_one_the_tree_can_author():
 
 
 def test_every_region_the_tree_can_author_is_one_this_table_recognises():
-    # ⛔ **Ruling 192 (b): `authorable ⊆ recognisable`, a SUBSET and never the
+    # ⛔ **`authorable ⊆ recognisable`, a SUBSET and never the
     # equality** — a row stated ahead of its renderer is legitimate, a region
     # authored with no row is the only direction that can hide one.
     authorable = authoring.authorable()
@@ -333,7 +323,7 @@ def test_every_region_names_one_of_the_three_owners_and_says_why(anchor):
     "anchor", sorted(a for a, (owner, _) in REGIONS.items() if owner == CHROME_RULED)
 )
 def test_every_region_this_part_owns_has_a_rule_in_it(anchor):
-    # ⛔ The whole of the task in one assertion: *a class name with no rule is
+    # ⛔ The whole of the part in one assertion: *a class name with no rule is
     # not styling*, and neither is an `aria-label` with no rule.
     assert declarations_reaching(anchor), f"{anchor} is this part's and carries no declaration"
 
@@ -364,8 +354,8 @@ def test_a_deferred_region_is_left_alone_rather_than_half_styled(anchor):
 def test_a_region_the_reading_surface_rules_is_not_re_decided_here(anchor):
     # ⭐ `main#content` needs no rule of its own: the column is bounded once, on
     # `body`, and `reading.css` already caps the prose inside it. ⛔ A second
-    # `max-width` here would be the two-rules-for-one-question defect, and it is
-    # also how the per-element `ch` bug arrived in the first draft of this file.
+    # `max-width` here would be the two-rules-for-one-question defect, and the
+    # per-element `ch` one besides.
     assert not declarations_reaching(anchor), f"{anchor} is the surface's and this part styles it"
 
 
@@ -380,11 +370,10 @@ def test_the_page_skeletons_slots_are_exactly_the_ones_this_table_answers_for():
 
 
 def test_the_page_column_is_bounded_and_the_bound_is_a_palette_measure():
-    # ⛔ `PO-22/6`: `body` carries `margin: 0; padding: 0 var(--gutter)` and no
-    # `max-width`, so at 1280px *"the full column"* was the full viewport and the
-    # page read as a narrow measure with full-bleed islands. ⚠️ This is the
-    # missing half of `reading.css:38-41`, never a reopening of it — which is why
-    # the bound is expressed in the measure the prose already uses.
+    # ⛔ Without a `max-width` on `body`, the full column is the full viewport
+    # and the page reads as a narrow measure with full-bleed islands. ⚠️ This
+    # completes `reading.css`'s measure, never reopens it — which is why the
+    # bound is expressed in the measure the prose already uses.
     column = rule_for("body")
     assert column is not None, "`body` carries no rule, so nothing bounds the page"
     assert re.search(r"max-width\s*:", column), "the page column carries no bound"
@@ -392,24 +381,19 @@ def test_the_page_column_is_bounded_and_the_bound_is_a_palette_measure():
 
 
 def test_the_column_is_bounded_only_ever_on_the_element_that_owns_the_measure():
-    # ⛔ **A measured defect, pinned.** `--measure` is `80ch` and `ch` resolves
-    # against the ELEMENT's own font, so the first draft of this file wrote the
-    # same `max-width` on each region and produced THREE columns — 800px, 715.7px
-    # and 680.3px at a 1280px viewport in Chrome 149, because the masthead, the
-    # outline and the bar each set their own face and size. ⭐ `body` carries the
+    # ⛔ `--measure` is `80ch` and `ch` resolves against the ELEMENT's own
+    # font, so the same `max-width` on each region would produce three columns
+    # of different widths, because the masthead, the outline and the bar each
+    # set their own face and size. ⭐ `body` carries the
     # prose font, which is the font the measure was chosen in, so the number is
     # computed there and nowhere else.
     #
-    # ⚠️ **`W325` NARROWED THIS CLAUSE AND ADDED ITS OTHER HALF — read the change
-    # before the assertion.** It asserted the bounding selectors were EXACTLY
-    # `["body"]`, which said two things at once: *the bound lives on `body`* —
-    # the defect above — and *there is exactly one of them*, which was true only
-    # while the page had one shape. ⛔ The rail beside the column is a second
-    # bound on the SAME element under a media query, and the defect this clause
-    # exists for is a bound on a DIFFERENT element. ⭐ So the subject is asserted
-    # instead, in both directions: every bounding selector's subject is `body`,
+    # ⚠️ The rail beside the column is a second bound on the SAME element under
+    # a media query, and the defect this clause exists for is a bound on a
+    # DIFFERENT element. ⭐ So the subject is asserted, in both directions: every bounding
+    # selector's subject is `body`,
     # and there is at least one, so a file that bounded nothing cannot pass.
-    # ⚠️ `max-width: none` is the ABSENCE of a bound (`W362`: a list row is not
+    # ⚠️ `max-width: none` is the ABSENCE of a bound (a list row is not
     # running text, so it gives up the prose measure `reading.css` sets on every
     # `main li`), and is not counted as one.
     bounded = sorted(
@@ -422,7 +406,7 @@ def test_the_column_is_bounded_only_ever_on_the_element_that_owns_the_measure():
     assert astray == [], f"the column is bounded on an element other than `body`: {astray}"
 
 
-# --- W325: the second shape, and the two tokens it paints -------------------
+# --- The second shape, and the two tokens it paints ------------------------
 
 
 def test_the_rail_beside_the_column_is_declared_under_exactly_one_threshold():
@@ -438,7 +422,7 @@ def test_the_rail_beside_the_column_is_declared_under_exactly_one_threshold():
 
 
 def test_the_two_shapes_are_one_markup_and_the_wide_one_is_asked_for_by_the_region():
-    # ⭐ `W325`: the rail moves beside the column on a wide viewport and folds
+    # ⭐ The rail moves beside the column on a wide viewport and folds
     # back into it on a narrow one, over the SAME bytes. ⛔ The wide shape is
     # conditioned on the page CARRYING the region — the root index carries none,
     # and a grid declared unconditionally would give it an empty rail track.
@@ -457,10 +441,8 @@ def test_the_two_shapes_are_one_markup_and_the_wide_one_is_asked_for_by_the_regi
 
 @pytest.mark.parametrize("token", ("--rail", "--page-max"))
 def test_the_layout_tokens_this_file_left_unpainted_are_painted_now(token):
-    # ⛔ `W324/1` named both as *"defined for a layout and painted by nothing"*,
-    # and this file's own column note said `--page-max` "would never bite at any
-    # viewport" **against a bounded single column**. ⭐ There is a rail-and-content
-    # layout here now, which is the layout both were minted for.
+    # ⛔ A token defined for a layout and painted by nothing is dead. ⭐ The
+    # rail-and-content layout here is the layout both exist for.
     assert f"var({token})" in body(), f"{token} is still unpainted"
 
 
@@ -477,8 +459,7 @@ def test_the_running_measure_is_not_reopened_here():
     "hook", sorted(h for h, f in _FORM_OF.items() if f in (ATTRIBUTE_FORM, KIND_FORM))
 )
 def test_every_non_class_hook_is_reached_by_a_rule_in_this_part(hook):
-    # ⛔ `SF-27/2` measured that NOTHING painted either hook at all — the markup
-    # shipped and the rules did not, which is this task's whole reason to exist.
+    # ⛔ Markup that ships a hook no rule paints is a hook that does nothing.
     assert SURFACE_HOOKS[hook] in body(), f"{hook} is published and nothing here reaches it"
 
 
@@ -524,7 +505,7 @@ def test_it_is_a_file_on_disk_and_not_a_string_in_python():
     assert text(CHROME) == (ASSET_DIR / CHROME).read_bytes().decode("utf-8")
 
 
-# --- the read words, off the screen and in the accessibility tree (`W383`) --
+# --- the read words, off the screen and in the accessibility tree --
 
 READ_STATE = f'span[{SURFACE_HOOKS["kind"]}="{SURFACE_HOOKS["read_state"]}"]'
 

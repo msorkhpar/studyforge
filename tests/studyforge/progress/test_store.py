@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/progress/store.py` (R12): SF-21's Acceptance, clause by clause.
+"""Mirror of `src/studyforge/progress/store.py` (R12): the store's acceptance, clause by clause.
 
 ⚠️ **Leak material is assembled at run time**, so the repository's own hygiene
 sweep is not asked to except this file. Nothing here came from a real machine.
@@ -382,7 +382,7 @@ def test_a_hand_edited_record_carrying_personal_data_is_refused_on_read(tmp_path
 
 
 # --------------------------------------------------------------------------
-# `AX-02` — the breakdown the store keeps beside a Submit's verdict
+# The breakdown the store keeps beside a Submit's verdict
 # --------------------------------------------------------------------------
 
 VERDICTS = {"test_the_ask": True, "test_an_edge": False}

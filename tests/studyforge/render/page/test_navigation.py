@@ -15,8 +15,8 @@ SOURCE = (repository_root() / "src" / "studyforge" / "render" / "page" / "naviga
 )
 
 #: Every glyph this module's regions put in front of a reader that is not a
-#: letter, a digit or punctuation a keyboard types. ⛔ The population is the
-#: FINDING `SF-34` handed over, written down: the bar's two arrows, and the
+#: letter, a digit or punctuation a keyboard types. ⛔ The population is
+#: written down: the bar's two arrows, and the
 #: trail's separator, which would have been the third instance.
 PRODUCT_GLYPHS = ("\u2190", "\u2192", "\u203a", "\u2014", "\u00b7")
 
@@ -57,7 +57,7 @@ def test_the_slots_are_the_fields_of_links():
 
 
 def test_every_slot_of_the_bar_is_authored_in_a_template_that_wants_exactly_two_values():
-    # ⛔ `SF-34`'s handed finding, at the mechanism: the row is a FILE now, so the
+    # ⛔ At the mechanism: the row is a FILE, so the
     # `rel` and the arrow are not in Python to be got wrong. ⚠️ `placeholders`
     # rather than a substring, because `fill` is exact in both directions and a
     # template that wanted a third value would fail at run time, not here.
@@ -73,8 +73,8 @@ def test_every_slot_of_the_bar_is_authored_in_a_template_that_wants_exactly_two_
 
 @pytest.mark.parametrize("glyph", PRODUCT_GLYPHS)
 def test_no_product_glyph_is_typed_in_this_module(glyph):
-    # ⛔ R13, and the population is `SF-34`'s finding rather than this test's
-    # guess. ⚠️ The docstring QUOTES the two arrows it removed, which is the
+    # ⛔ R13, and the population is written down rather than
+    # guessed. ⚠️ The docstring QUOTES the two arrows it removed, which is the
     # shape that would make a naive `glyph in SOURCE` read red on a green tree —
     # so the sweep reads the code and not the prose.
     assert glyph not in code_of(SOURCE), glyph
@@ -150,7 +150,7 @@ def test_a_neighbour_that_has_a_page_is_the_negative_control_for_that_fallback()
 
 
 def test_a_neighbour_with_no_page_and_no_key_drops_rather_than_guessing():
-    # ⛔ Ruling 164: this is chrome, and there is nothing useful to point at.
+    # ⛔ Chrome drops a refused href: and there is nothing useful to point at.
     links = navigation.Links(next=navigation.Link(None, "Fields"), index=AN_INDEX)
     assert 'rel="next"' not in navigation.between_units(links)
     assert 'rel="up"' in navigation.between_units(links)
@@ -209,7 +209,7 @@ def test_every_word_of_the_trail_came_out_of_the_trail():
 
 
 def test_the_level_word_is_wrapped_in_the_published_hooks_and_not_a_new_spelling():
-    # ⛔ `SF-14/1`: two renderers had each invented their own spelling for this.
+    # ⛔ One spelling for every renderer.
     markup = navigation.breadcrumb(A_TRAIL)
     attribute, value = SURFACE_HOOKS["kind"], SURFACE_HOOKS["level"]
     assert f'<span {attribute}="{value}">section</span> Basics' in markup
@@ -240,7 +240,7 @@ def test_the_last_crumb_is_the_page_and_is_never_a_link():
 
 
 def test_a_crumb_with_no_page_keeps_its_words_and_loses_only_its_link():
-    # ⛔ Ruling 164 read at the element: dropping the crumb would renumber the
+    # ⛔ Chrome drops a refused href, read at the element: dropping the crumb would renumber the
     # hierarchy on the page, which is worse than an unlinked word.
     trail = (navigation.Crumb("section", "Basics"), *A_TRAIL[1:])
     markup = navigation.breadcrumb(trail)

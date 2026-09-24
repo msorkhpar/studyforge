@@ -183,7 +183,7 @@ def _disclosure(block, position, section, children, path, narration) -> str:
     author's, delivered from the archive, and is never defaulted here.
 
     ⛔ **The clip belongs to the `<summary>`, never to the `<details>`.**
-    Narration speaks a disclosure's summary and stops (CTO ruling); the body gets
+    Narration speaks a disclosure's summary and stops; the body gets
     no speech id at all, so a `<details>` carrying the attribute would put the
     highlight over content the audio deliberately withheld — on a surface the
     reader chose not to open.

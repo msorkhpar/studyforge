@@ -14,7 +14,7 @@ byte (R10), so the read has to be exact.
 
 ⚠️ **`render/assets/` is a data directory, not a package.** It holds no
 `__init__.py` and never will; `[tool.setuptools.package-data]` is what ships
-it, and that declaration already exists — this task adds files, not build
+it, and that declaration already exists — a new asset is a file, not build
 configuration.
 
 ⛔ **Not to be confused with a corpus's generated media.** This directory is

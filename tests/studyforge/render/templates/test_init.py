@@ -172,12 +172,12 @@ def test_every_template_is_asked_for_by_some_renderer():
 
 @pytest.mark.parametrize("name", templates.names())
 def test_a_template_names_no_class_the_surface_does_not_publish(name):
-    # ⛔ `W9`, asserted from the renderer's side. `test_surface` says every class
+    # ⛔ Asserted from the renderer's side. `test_surface` says every class
     # the stylesheet targets is published; this says every class the markup
     # emits is published too. Without both, the two sides can still disagree —
     # and a page that renders, carries every word and is unstyled is the failure
     # with no error anywhere.
-    # ⛔ `HOOK_CLASSES` and not `SURFACE_HOOKS`: since `SF-34` the hook mapping
+    # ⛔ `HOOK_CLASSES` and not `SURFACE_HOOKS`: the hook mapping
     # also carries `data-*` attribute names and `data-kind` values, and comparing
     # a class against those would let a template carry `class="data-readable"`.
     published = set(SURFACE_CLASSES.values()) | set(HOOK_CLASSES.values())

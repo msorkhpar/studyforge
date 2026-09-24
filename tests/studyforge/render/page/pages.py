@@ -1,4 +1,4 @@
-"""Both FND-04 fixtures, built the way a build would, and where their goldens sit.
+"""Both framework fixture corpora, built the way a build would, and where their goldens sit.
 
 ⛔ **Imported, never copied.** Three test modules render these two documents and
 a fourth regenerates the goldens; four spellings of "build the depth-2 unit with
@@ -36,7 +36,7 @@ FIXTURES = repository_root() / "tests" / "fixtures"
 #:
 #: ⛔ **A FIXTURE'S STAND-IN FOR A RECORD, AND NOT A DECISION THE FRAMEWORK MAKES.**
 #: A clip's real filename is whatever synthesis placed — `narrate/client.py` names
-#: it from a format the SERVICE answered with — and `SF-17`'s
+#: it from a format the SERVICE answered with — and
 #: `.studyforge/narration.json` records it per clip. ⚠️ A build reads that record;
 #: this harness has no service and no record, so it stands one in. ⛔ Nothing under
 #: `src/` may do the same: a renderer that assumed a format would be a second

@@ -14,7 +14,7 @@ refuses to do one keystroke away.
 # ⛔ This module is small on purpose, and the reason is that its failure is silent
 
 ⚠️ **Two block types are byte-identical in shape and have opposite rules about
-the same field.** Measured, in `archive/markdown/leaf.py`:
+the same field.** In `archive/markdown/leaf.py`:
 
 - `read_paragraph` returns `{"type": "para", "text": …}`
 - `read_html` returns `{"type": "html", "text": …}`

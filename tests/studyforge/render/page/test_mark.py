@@ -101,7 +101,7 @@ def test_a_document_that_cannot_be_keyed_raises_this_packages_own_error(document
 
 
 def test_an_address_recorded_as_a_string_is_refused_and_never_taken_apart():
-    # ⛔ **A measured defect, not defensiveness.** `tuple("basics")` is six
+    # ⛔ **Not defensiveness.** `tuple("basics")` is six
     # single-character segments, every one a valid slug, so a string address would
     # key `b/a/s/i/c/s/unit-01` — refusing nothing and matching nothing. ⚠️ The
     # reading that found it: `mark.render({"address": "basics", "unit": 1})`
@@ -136,10 +136,9 @@ def test_the_region_ships_hidden_so_a_scriptless_reader_sees_no_dead_control():
     # ⛔ `copy-code.js`'s bargain: a control that does nothing is worse than no
     # control. The region is unhidden by `read-mark.js` only with a working store.
     #
-    # ⚠️ **The REGION's own opening tag, and the first draft of this assertion was
-    # `" hidden>" in region` — which PASSED with the region's `hidden` deleted,
-    # because one of the two labels carries `hidden` too.** A plant refuted the
-    # prediction written for it; this is the form that holds.
+    # ⚠️ **The REGION's own opening tag**, never `" hidden>" in region`, which
+    # passes with the region's `hidden` deleted because one of the two labels
+    # carries `hidden` too.
     region = mark_module.render(a_document())
     opening = region.split(">", 1)[0]
     assert opening.startswith("<section "), opening
@@ -202,7 +201,7 @@ def test_the_control_sits_outside_the_reading_column():
 
 
 def test_every_key_a_unit_page_writes_under_is_a_key_the_root_index_reads_back():
-    # ⛔ **THE assertion of this task.** Two implementations are a mark written
+    # ⛔ **THE assertion of the read mark.** Two implementations are a mark written
     # under one name and read back under another, with no symptom but a badge that
     # never lights — so the two surfaces are compared rather than trusted.
     indexed = {key for path in goldens(INDEX_SUFFIX) for key in ROW_KEY.findall(text_of(path))}
@@ -212,9 +211,8 @@ def test_every_key_a_unit_page_writes_under_is_a_key_the_root_index_reads_back()
 
 
 def test_every_container_row_is_keyed_the_way_the_root_index_keys_it():
-    # ⭐ The second half, and it is the one that was missing: a container row
-    # carried no key at all before `SF-30`, so the same mark could light a row on
-    # one page and nothing on the other. ⚠️ Both placement profiles are in the
+    # ⭐ The second half: a container row carries the key too, or the same mark
+    # could light a row on one page and nothing on the other. ⚠️ Both placement profiles are in the
     # population — `depth1` is `tree` and `depth2` is `sibling` — and a key is not
     # a path, so the two must agree anyway.
     indexed = {key for path in goldens(INDEX_SUFFIX) for key in ROW_KEY.findall(text_of(path))}

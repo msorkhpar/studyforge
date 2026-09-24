@@ -23,7 +23,7 @@ def plan_lines(name: str) -> list[str]:
     what a footprint is made of.
     """
     lines = (GOLDEN / f"{name}.plan.txt").read_text(encoding="utf-8").splitlines()
-    # ⭐ `W267`: every path line, whatever its verb, which is the whole of `Plan.paths`.
+    # ⭐ Every path line, whatever its verb, which is the whole of `Plan.paths`.
     return [line.split()[1] for line in lines if line.split(" ", 1)[0] in CREATION_VERBS]
 
 
@@ -114,7 +114,7 @@ def test_the_derived_footprint_is_the_committed_plans_own_enumeration(tmp_path, 
 
 @pytest.mark.parametrize("name", BOTH)
 def test_every_path_a_build_writes_is_inside_the_footprint_it_derived(tmp_path, name):
-    """⛔ Ruling 99 from the other side: a path the build writes that the plan
+    """⛔ The plan-and-build agreement from the other side: a path the build writes that the plan
     never declared would be refused on the next run and never rebuilt."""
     from studyforge.generate import write_site
 
@@ -155,7 +155,7 @@ def test_a_corpus_whose_plan_refuses_yields_a_footprint_that_owns_nothing(tmp_pa
 
 
 # --------------------------------------------------------------------------
-# ⛔ narration (`W224`): an audio directory is no prefix, a clip copy is owned one by one
+# ⛔ narration: an audio directory is no prefix, a clip copy is owned one by one
 # --------------------------------------------------------------------------
 
 AUDIO = "units/unit-01/audio/"

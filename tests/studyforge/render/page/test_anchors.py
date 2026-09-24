@@ -98,7 +98,7 @@ def test_an_outline_of_fewer_than_two_entries_is_no_outline_at_all():
 def test_the_outline_escapes_and_renders_its_labels():
     heading = {"type": "heading", "level": 2, "text": "`x` <y>"}
     # ⚠️ A PEER at its own level, so this heading is the section's content and
-    # not the page's own title (`W407`) — the label has to reach the outline for
+    # not the page's own title — the label has to reach the outline for
     # there to be anything to escape.
     peer = {"type": "heading", "level": 2, "text": "z"}
     document = {
@@ -112,12 +112,12 @@ def test_the_outline_escapes_and_renders_its_labels():
 
 
 # --------------------------------------------------------------------------
-# Ruling 187 — the outline's anchors are INJECTIVE, not merely covered
+# The outline's anchors are INJECTIVE, not merely covered
 # --------------------------------------------------------------------------
 
 
 def test_no_two_outline_entries_point_at_the_same_anchor():
-    # ⛔ **Ruling 187.** `test_every_outline_entry_points_at_an_anchor_the_page
+    # ⛔ **Injective.** `test_every_outline_entry_points_at_an_anchor_the_page
     # _emits` is asserted in both directions and a COLLISION satisfies both
     # halves of it: two sections keyed `java` both yield `#s-java`, every entry
     # still points at an anchor the page emits, and the rail silently sends two
@@ -138,7 +138,7 @@ def test_the_injectivity_check_above_would_notice_a_collision():
 
 
 # --------------------------------------------------------------------------
-# W407 — the heading the page is headed by, and the two ways it says the title
+# The heading the page is headed by, and the two ways it says the title
 # --------------------------------------------------------------------------
 
 
@@ -149,10 +149,10 @@ def titled(*blocks, title: str = "Testing", **overrides) -> dict:
 
 
 def test_an_opening_heading_that_dominates_its_material_is_the_title():
-    # ⭐ **The measured case.** A unit titled `Testing` opens with
+    # ⭐ **The real case.** A unit titled `Testing` opens with
     # `10. Testing in jPOS Client Implementation` — the same statement, not the
     # same words — over sections one level below it. A rule that only compared
-    # text leaves that page reading its title twice, which is what `W388/17` saw.
+    # text leaves that page reading its title twice.
     block = {"type": "heading", "level": 1, "text": "10. Testing in jPOS Client"}
     document = titled(
         block,

@@ -42,10 +42,8 @@ bar is chrome and this list is the page. ⛔ A silently dropped anchor here turn
 a module's contents into unclickable text — the reader sees every title, every
 row is present, `validate` passes, nothing logs, and not one unit can be opened.
 
-⚠️ **A measured loss is why this is spelled out rather than assumed.** The bar lost 6
-of the `depth2` corpus's 13 slots under `sibling` placement and the acceptance
-clause beside it still passed. ⭐ The lesson taken here is not *"widen the
-gate"* — that was done, correctly — it is that **the emitter and the gate must
+⚠️ **Spelled out rather than assumed.** A bar can lose slots to a wrong refusal
+while its acceptance clause still passes. ⭐ So **the emitter and the gate must
 agree about what a refusal means**, and a page whose whole content is links
 cannot answer *"drop it"*.
 
@@ -59,9 +57,9 @@ this shape — a `<nav>`, an `<ol>`, a row per entry — the same way.
 ## ⭐ Not one class name is typed here either
 
 ⚠️ Every hook is an element, an `aria-label` or a `data-*` attribute, which is
-what let the stylesheet be written a milestone after the markup it styles. ⛔ A class
+what lets the stylesheet change independently of the markup it styles. ⛔ A class
 would cost an entry in `SURFACE_HOOKS` and one in `chrome.css`, in two packages
-this task does not own — and a class name with no rule is not styling.
+this one does not own — and a class name with no rule is not styling.
 
 ⭐ **And the hooks themselves are now TAKEN from `pageassets.SURFACE_HOOKS`
 rather than spelled here** (R13). ⚠️ The spelling

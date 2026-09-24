@@ -23,13 +23,13 @@ two ways a document leaves this process:
 so `routes.content` and `routes.assets` can both use it and neither imports the
 other.
 
-## ⛔ THE USER'S RULING, 2026-09-23
+## ⛔ THE KEY STAYS ON THE SERVER
 
 ⭐ **A quiz's correct answer resides on the SERVER side, and the reader's answers
 are validated there.** ⛔ **What the SITE serves never carries the key**, except the
-grading route's answer for the option the reader chose (`routes.quiz`). The page
-renderer took the key out of every built page; ⛔ **this module closes the URLs a page never
-loads but a reader can type** (the first corpus's finding `F10`): the unit
+grading route's answer for the option the reader chose (`routes.quiz`). No built
+page carries the key; ⛔ **this module closes the URLs a page never loads but a
+reader can type**: the unit
 document on the content namespace, the archive's `practice-M.json`, the bundle's
 `tests/quiz.json`, and any other file under the served root that repeats them.
 
@@ -68,7 +68,7 @@ attributes and answers `404` here until the corpus is rebuilt — a page that
 would hand out the key is not served at all.
 
 ⛔ **The files on disk are never touched** (R3): a reader who holds the corpus
-checkout can open the bundle, and the ruling is about what the SITE serves.
+checkout can open the bundle, and the rule is about what the SITE serves.
 """
 
 from __future__ import annotations

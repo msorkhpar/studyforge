@@ -22,7 +22,7 @@ from studyforge.render.pageassets import SURFACE_HOOKS
 #: The container every row below belongs to. ⛔ An `Address`, because the keys
 #: the rows carry are minted by `Address.unit_key` and never spelled here — a
 #: test that typed `"basics/01-intro/unit-01"` would be the second spelling the
-#: one composer exists to prevent (`SF-30`).
+#: one composer exists to prevent.
 WHERE = Address(("basics", "01-getting-started"))
 
 #: ⛔ Synthetic, and assembled rather than written whole (R7).
@@ -43,7 +43,7 @@ REFUSED = {
 def render(items: tuple[Item, ...]) -> str:
     """The module's `render`, with this file's one container supplied.
 
-    ⚠️ Wrapped rather than repeated: the address is an argument now (`SF-30`),
+    ⚠️ Wrapped rather than repeated: the address is an argument now,
     and nineteen call sites spelling it is nineteen places to forget it.
     """
     return listing_module.render(WHERE, items)
@@ -86,7 +86,7 @@ def test_a_refused_href_raises_rather_than_dropping_the_row(href):
     # ⛔ THE decision of this module. `page.navigation._link` drops a refused
     # slot because the bar is chrome; here the links ARE the page, and a silent
     # drop is a module's contents rendered unclickable with nothing raised —
-    # `SF-13/1`'s defect with no acceptance clause left to catch it.
+    # a defect with no acceptance clause left to catch it.
     assert safe_href(href) is None, "the fixture must actually be refused"
     with pytest.raises(PageError, match="position 1"):
         render((an_item(href=href),))
@@ -125,7 +125,7 @@ def test_numbering_is_wrapped_and_its_trailing_space_goes_with_it():
     numbered = render((an_item(numbering="4.4.1", href=None),))
     assert '<span data-kind="numbering">4.4.1</span> Your first class' in numbered
     plain = render((an_item(numbering="", href=None),))
-    # ⭐ The only `data-kind` left is the hidden read words every row ends with (`W383`).
+    # ⭐ The only `data-kind` left is the hidden read words every row ends with.
     assert 'data-kind="numbering"' not in plain
     said = f'<span data-kind="{SURFACE_HOOKS["read_state"]}" hidden>'
     assert plain.count("data-kind") == plain.count(said) == 1
@@ -140,14 +140,14 @@ def test_the_list_is_labelled_and_ordered():
 
 def test_not_one_class_name_is_typed_in_this_module():
     # ⛔ Every hook is an element, an `aria-label` or a `data-*` attribute —
-    # which is what let `SF-34` be scheduled a milestone after this markup. A
+    # which is what lets the stylesheet stay independent of this markup. A
     # class here would need an entry in a published class set two packages away.
     rendered = render((an_item(), an_item(href=None)))
     assert re.search(r'\sclass="', rendered) is None
 
 
 def test_every_row_carries_the_unit_key_a_read_mark_is_filed_under():
-    # ⛔ `SF-30`'s join, and it is the whole reason the address reaches this
+    # ⛔ The read mark's join, and it is the whole reason the address reaches this
     # module. The mark the unit page writes and the mark this row reads back are
     # one string, or the badge never lights and nothing fails anywhere.
     rendered = render((an_item(), an_item(href=None), an_item()))

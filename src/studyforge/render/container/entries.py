@@ -28,8 +28,8 @@ else entirely, and `listing` **raises** on it rather than dropping the anchor.
 
 ⭐ **That is the one place this page deliberately differs from the between-units
 bar.** `page.navigation._link` drops a refused slot, because chrome that cannot
-be followed is worse than chrome that is not there — and a measured case shows what
-that costs when the refusal is wrong: 6 of 13 slots gone, with nothing raised.
+be followed is worse than chrome that is not there — and when the refusal is
+wrong, slots are gone with nothing raised.
 ⛔ **Here the links are not chrome, they are the page**, so a silent drop would
 turn a module's contents into an unclickable list with no error anywhere.
 

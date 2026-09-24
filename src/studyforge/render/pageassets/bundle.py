@@ -135,8 +135,7 @@ STYLE_PARTS = (
 #: that is a property rather than luck: each one selects its own elements, none
 #: defines anything another reads. ⚠️ `practice-quiz.js` asks
 #: `window.studyforge.quiz` — not `.run` — whether an origin exists, because
-#: since the user's ruling of 2026-09-23 the local study server grades a quiz and
-#: the page holds no key (spec §7 §7, amended 2026-09-23). ⚠️ They are before
+#: the local study server grades a quiz and the page holds no key (spec §7 §7). ⚠️ They are before
 #: `read-mark.js` because that part's LAST-ness is the property being kept.
 #:
 #: ⭐ `theme.js` reads and writes the store's DISPLAY record,

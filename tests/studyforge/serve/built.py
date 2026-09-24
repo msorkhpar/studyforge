@@ -5,7 +5,7 @@ depth-1 fixture and the `sibling`-profile depth-2 fixture, each built into itsel
 the way a consumer repository is, with no path configured anywhere.
 
 ⛔ Every practice key is spelled by `progress.practice_key` and every unit key is
-read from the corpus's own declarations — never typed here (`SF-21/4`).
+read from the corpus's own declarations — never typed here.
 """
 
 from __future__ import annotations
@@ -62,9 +62,9 @@ def record(
     section: str = SECTION,
     cases: dict[str, bool] | None = None,
 ) -> dict:
-    """Record one run through the store, the only writer (`SF-21`).
+    """Record one run through the store, the only writer.
 
-    ⭐ `cases` is `AX-02`'s breakdown and defaults to none, so every caller
+    ⭐ `cases` is a Submit's breakdown and defaults to none, so every caller
     written before it records exactly what it recorded before.
     """
     depth = depth_of(root)

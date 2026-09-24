@@ -55,10 +55,9 @@ nothing else, so an origin carrying a space, a quote or a `;` — which is how a
 second directive would be forged into the header — names nothing; `*` is in
 `FORBIDDEN`, so `http://127.0.0.1:*` cannot be smuggled in as an origin either.
 
-⚠️ **Measured once, on one half, and wrong for it**: `code-server` was
-asked whether it refuses being framed, it did not, and the feature was called
-unblocked — while OUR OWN `frame-src 'none'` blocked every load. A negative on one
-side of a two-sided property is not a negative.
+⚠️ **Framing has two halves**: `code-server` must not refuse being framed, and
+OUR OWN `frame-src` must allow the load. A negative on one side of a two-sided
+property is not a negative.
 """
 
 from __future__ import annotations
@@ -106,7 +105,7 @@ NOTHING = "'none'"
 
 #: ⛔ Characters an origin this policy names may never carry. A space or a comma
 #: ends one source, a `;` starts the next directive, a quote forges a keyword, `*`
-#: is the wildcard this row forbids outright, and `@` hides a host behind userinfo.
+#: is the wildcard this module forbids outright, and `@` hides a host behind userinfo.
 FORBIDDEN = frozenset(" \t\r\n\f\v;,*'\"\\@")
 
 
@@ -161,9 +160,9 @@ def security_headers(frames: Collection[str] = ()) -> tuple[tuple[str, str], ...
 #: Sent on every response an instance with no editor writes.
 SECURITY_HEADERS = security_headers()
 
-#: ⛔ Said ONCE per host an editor is withheld from. The symptom it replaces is a
+#: ⛔ Said ONCE per host an editor is withheld from. Without it the symptom is a
 #: login form inside the panel that loops forever with the right password and
-#: NOTHING in the browser to say why, which is the worst failure in this row.
+#: NOTHING in the browser to say why.
 WITHHELD = (
     "editor {origin} withheld from a page reached as '{host}': a session cookie is "
     "same-site by HOST and a port is not part of a site, so open the site at '{editor}'"

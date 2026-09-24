@@ -36,7 +36,7 @@ def test_every_vendored_bundle_ships_its_licence_beside_it(bundle):
 def test_no_licence_sits_there_covering_nothing():
     # The other direction: a licence whose bundle was removed is a claim about
     # code that is no longer shipped.
-    # ⭐ Since `W362` the faces' licences are the other population: each sits
+    # ⭐ The faces' licences are the other population: each sits
     # beside the faces of its archive (`pageassets.faces.ARCHIVES`).
     covered = set(VENDORED.values()) | {archive.licence for archive in ARCHIVES}
     assert set(licence_names()) == covered
@@ -58,7 +58,7 @@ def test_the_header_names_the_licence_file_beside_it(bundle):
 def test_the_header_is_read_as_characters_because_a_bundle_is_one_line():
     # ⚠️ A minified bundle is a single enormous line, so "the first five lines"
     # would be the whole file. Proved rather than remembered.
-    # ⛔ Bounded by the CONSTANT and not by a literal of its own (`W295`): the
+    # ⛔ Bounded by the CONSTANT and not by a literal of its own: the
     # window moved once, and a magic number here would have gone quietly stale
     # while still passing.
     assert "\n" not in text("plyr.js")[HEADER_CHARS:5000]

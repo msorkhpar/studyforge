@@ -1,33 +1,27 @@
-"""`W328`: the wide layout read against the WINDOW it is opened in.
+"""The wide layout read against the WINDOW it is opened in.
 
 ⛔ **SPLIT OUT OF `test_chrome.py` AT A SEAM, AND THE SEAM IS THE SUBJECT**
-(Ruling 261, and the same move `W326` made one row earlier). That module answers
+(R11). That module answers
 *which regions `chrome.css` rules and where the column's one bound lives*;
 `test_chrome_rail_rows.py` answers *does the rail's row span cover the page
 skeleton*. ⭐ **The clauses below answer neither: every one of them is a claim
 about the VIEWPORT** — the edge of it the rail sits on, the scroll of it the rail
 survives, the height of it the rail is bounded by, and the share of it the
-reading column now takes. ⚠️ **The ceiling is the other half of the reason and it
-is stated rather than implied**: `test_chrome.py` was measured at 537 lines
-against a 600 ceiling before this row, and R11's remedy is a split at a named
-seam, never a trim.
+reading column takes. ⚠️ R11's remedy for a module at its size ceiling is a
+split at a named seam, never a trim.
 
-## ⛔ The row is a user requirement, and it is quoted
+## ⛔ The requirement
 
-> the left panel shou go all the way to the left side and be fixed. the context
-> panel should be dynamic using more content of the page than longer scroll than
-> needed.
-
-⭐ **Two clauses, and they are kept separate here for the reason the brief keeps
-them separate**: a rail pinned to the edge of a page that is still centred inside
-a constant is only half of it, and a column that grew while the rail still
-floated 94px in from the screen is the other half.
+The rail stays fixed at the side of the window, and the reading column uses the
+width the window has rather than a longer scroll. ⭐ **Two clauses, kept
+separate**: a fixed rail beside a column held to a constant is only half of it,
+and a wide column beside a rail that floats in from the edge is the other half.
 
 ## ⚠️ What a declaration can and cannot settle
 
 ⛔ **Nothing here is a geometry reading.** Which side of the screen an element
-lands on is exactly what no assertion over a stylesheet can see — that is `W98`'s
-argument and it has not changed. ⭐ **These are the joins**: that both
+lands on is exactly what no assertion over a stylesheet can see. ⭐ **These are the joins**: that
+both
 declarations of a two-declaration decision are present, that the bound is the
 palette's own token rather than a number typed twice, and that the wide shape is
 still asked for by the page that carries the region. The browser arm is
@@ -48,9 +42,8 @@ RAIL = 'body > nav[aria-label="Containers"]'
 #: The page in its two-column shape, spelled as `chrome.css` spells it.
 WIDE_PAGE = 'body:has(nav[aria-label="Containers"])'
 
-#: The reading surface inside that shape. ⚠️ Stage 3 ceilinged this element and
-#: `W388` stage 4 took that bound away again — the shell carries the one ceiling
-#: — so the selector is kept here to assert the wide shape does NOT rule it.
+#: The reading surface inside that shape. ⚠️ The shell carries the one ceiling,
+#: so the selector is kept here to assert the wide shape does NOT rule it.
 SURFACE = 'body:has(nav[aria-label="Containers"]) > main'
 
 
@@ -88,12 +81,9 @@ def wide_rule_for(selector: str) -> str:
 
 
 def test_the_wide_page_centres_its_shell_instead_of_pinning_it_to_one_edge():
-    # ⛔ **`W388` STAGE 4 REVERSES THIS CLAUSE, and the reversal is the row.**
-    # `W326` zeroed the left margin so the rail would sit on the window's left
-    # edge; with a ceiling above it that is a page pinned LEFT, and the user read
-    # the result on their own window as *"the paragraph texts are not using the
-    # full width"* — every spare pixel was on one side. ⭐ The shell is centred
-    # now: the inset is HALF of whatever the window has past the ceiling, and the
+    # ⛔ A zero left margin under a ceiling is a page pinned LEFT, with every
+    # spare pixel on one side. ⭐ The shell is centred: the inset is HALF of whatever the window
+    # has past the ceiling, and the
     # `max(0px, …)` floor is what keeps the rail on the window's own edge at
     # every width below it. ⚠️ Written out rather than left to `margin-inline:
     # auto` because the page with NO rail has to take the same inset and is
@@ -106,7 +96,7 @@ def test_the_wide_page_centres_its_shell_instead_of_pinning_it_to_one_edge():
     inset = found.group(1).strip()
     assert inset != "0", (
         "the wide page still pins itself to the left edge, which is the shape "
-        f"the user read as a dead band down the right: {declarations}"
+        f"that leaves a dead band down the right: {declarations}"
     )
     assert inset.startswith("max(0px,") and "var(--page-max)" in inset and "/ 2" in inset, (
         "the shell's left inset is not half of what the window has past the "
@@ -151,11 +141,10 @@ def test_the_rail_is_stuck_to_the_top_of_the_window_and_names_the_edge_it_sticks
 
 
 def test_the_sticky_rail_still_spans_the_rows_that_give_it_somewhere_to_travel():
-    # ⛔ **`W326`'s span is what makes this row possible and the join is asserted
-    # rather than remembered.** A grid item's containing block is its grid AREA,
+    # ⛔ **The rail's row span is what makes sticky work, and the join is
+    # asserted rather than remembered.** A grid item's containing block is its grid AREA,
     # and sticky cannot travel outside its containing block — so a rail placed in
-    # one row would stick within that row and move by nothing. ⭐ `W325/3` said
-    # exactly that, and it is DATED by the span rather than refuted.
+    # one row would stick within that row and move by nothing.
     # ⚠️ `test_chrome_rail_rows.py` owns the span's NUMBER; this owns the fact
     # that the two declarations are in the same rule.
     declarations = wide_rule_for(RAIL)
@@ -178,10 +167,9 @@ def test_the_sticky_rail_still_spans_the_rows_that_give_it_somewhere_to_travel()
 def test_a_rail_taller_than_the_window_scrolls_itself(declaration, without_it):
     # ⛔ **ONE DECISION, TWO DECLARATIONS, AND NEITHER IS ANY USE ALONE.** The
     # height without the overflow CLIPS the course list; the overflow without the
-    # height never applies, because nothing bounds the box. ⚠️ A rail that no
-    # longer scrolls with the page is exactly the thing that makes this
-    # mandatory: before this row a reader reached the last container by scrolling
-    # the page, and there is no page scroll to reach it with now.
+    # height never applies, because nothing bounds the box. ⚠️ A rail that does
+    # not scroll with the page is exactly the thing that makes this mandatory:
+    # there is no page scroll to reach the last container with.
     declarations = wide_rule_for(RAIL)
     assert re.search(declaration, declarations), f"{without_it}: {declarations}"
 
@@ -214,10 +202,10 @@ def test_the_rail_meets_the_edge_with_neither_a_border_nor_a_rounded_corner_on_i
 
 
 def test_the_reading_columns_track_is_a_share_of_the_viewport_and_not_a_constant():
-    # ⛔ **The user's second clause, and the defect it names.** The track shipped
-    # as `minmax(0, calc(var(--measure) + 2 * var(--gutter)))` — a constant — so
-    # the page resolved one width and centred itself inside any screen wider than
-    # it. ⭐ `1fr` is what is LEFT of the viewport once the rail and the gutters
+    # ⛔ **The second clause.** A track such as
+    # `minmax(0, calc(var(--measure) + 2 * var(--gutter)))` is a constant, so
+    # the page would resolve one width and centre itself inside any screen wider
+    # than it. ⭐ `1fr` is what is LEFT of the viewport once the rail and the gutters
     # are taken off it, which is a function of the window and not of the face.
     # ⚠️ `minmax(0, …)` stays: it is what keeps a wide code block from pushing
     # the track past its share.
@@ -236,16 +224,13 @@ def test_the_reading_columns_track_is_a_share_of_the_viewport_and_not_a_constant
 
 
 def test_the_wide_page_is_ceilinged_at_the_palettes_own_token():
-    # ⛔ **`W388` stage 4: the ceiling is back on the shell**, because a shell
-    # that centres has to have something to centre at. Stage 3 released it
-    # (`none`) and bounded `> main` instead, which cured the pin and opened the
-    # other failure — the three tracks grew with the screen without limit and
-    # the user read *"the width is too wide"*.
+    # ⛔ **The ceiling is on the shell**, because a shell that centres has to
+    # have something to centre at. Without one the three tracks grow with the
+    # screen without limit.
     #
     # ⚠️ **The TOKEN is asserted, not a number.** A literal here would be a
-    # second place to change the ceiling and the argument for its value —
-    # measured from the first corpus's own code blocks — lives beside the
-    # declaration in `palette.css`.
+    # second place to change the ceiling and the argument for its value lives
+    # beside the declaration in `palette.css`.
     declarations = wide_rule_for(WIDE_PAGE)
     found = re.search(r"max-width:\s*([^;]+);", declarations)
     assert found, (
@@ -278,8 +263,8 @@ def test_the_reading_surface_declares_no_second_ceiling_of_its_own():
 
 def test_the_running_measure_is_still_the_only_thing_bounding_prose():
     # ⚠️ **"Use more of the page" is NOT "remove the measure from prose."** The
-    # measure is a COUNTED number with a bound above it (`palette.css`, and
-    # since `W388` stage 4 it is `80ch` laying about 105 characters); a column
+    # measure is a COUNTED number with a bound above it (`palette.css`: `80ch`,
+    # laying about 105 characters); a column
     # with no cap at all lays 230 on a wide screen. ⭐ What widened is the
     # half `reading.css` calls *"scanned rather than read"* — the figure, the
     # table and the code block — and that is a consequence of the track, not a
@@ -295,7 +280,7 @@ def test_the_whole_of_this_row_lives_under_the_one_threshold_the_file_declares()
     # a page with its gutters, and no sticky anything. ⚠️ The browser arm reads
     # the threshold back out of this file, so a second one here would leave it
     # judging one of two layouts twice — asserted in `test_chrome.py`, from the
-    # other side. This asserts the other half: every declaration this row added
+    # other side. This asserts the other half: every declaration of the wide shape
     # is inside it.
     outside = body().replace(wide_part(), "")
     for declaration in ("position: sticky", "max-height: 100vh", "overflow-y: auto", "1fr"):

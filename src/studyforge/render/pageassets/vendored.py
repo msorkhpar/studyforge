@@ -50,15 +50,14 @@ HEADER_MARKERS = ("MIT", "VENDORED, UNMODIFIED", "re-vendor")
 #: bundle is one enormous line, so this is a character count and not a line
 #: count — reading "the first five lines" of `plyr.js` reads the whole file.
 #:
-#: ⛔ **900 rather than 600, and the widening is MEASURED rather than
-#: preferred**. A bundle declares every name its grammars carry on one
+#: ⛔ **900 rather than 600.** A bundle declares every name its grammars carry on one
 #: `Languages:` line, and at eleven Prism components that line alone is 170
 #: characters: inside a 600-character window the header had **2** characters of
 #: margin left, which strands the next grammar and buys the reproduce recipe
 #: nothing. ⭐ It is safe because the invariant was never the window — it is
 #: `grammars.declared_languages`, which REFUSES a header carrying two
-#: `Languages:` lines — and no Prism 1.30.0 component carries that marker at
-#: all, measured over all eleven vendored here.
+#: `Languages:` lines — and no Prism 1.30.0 component vendored here carries
+#: that marker at all.
 HEADER_CHARS = 900
 
 

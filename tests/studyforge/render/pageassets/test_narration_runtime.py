@@ -1,6 +1,6 @@
 """The real player, run under a real JS runtime, against a stub of the real page.
 
-⛔ **The dev image pins a JS runtime (W8, Ruling 21), so in the environment that
+⛔ **The dev image pins a JS runtime, so in the environment that
 certifies a result this file does not skip — it fails.** On a contributor's host
 with no runtime it skips, because a host without Docker is not the thing being
 certified. ⭐ `test_narration.py` holds everything a text can establish and needs
@@ -8,7 +8,7 @@ no runtime at all; this file is what establishes that the thing *runs*.
 
 ## ⛔ Why the DOM is a stub and not a browser
 
-⚠️ The pinned image has no browser (`QA-03/1`) and the framework takes no
+⚠️ The pinned image has no browser and the framework takes no
 dependency that would bring one, so "does the highlight move" cannot be asked of
 a real engine here. ⭐ What CAN be asked is whether the part's own logic is
 right, and the stub is deliberately **small and dumb**: it implements the six DOM
@@ -41,7 +41,7 @@ from studyforge.render.pageassets import text
 
 #: Set by `docker/dev/Dockerfile`. ⭐ Its presence means "this run is the one
 #: that certifies a result", which is what turns an absent runtime from a skip
-#: into a failure (Ruling 21).
+#: into a failure.
 DEV_CONTAINER = "STUDYFORGE_DEV_CONTAINER"
 
 #: The part under test and the markup it is the other side of.
@@ -200,7 +200,7 @@ const actions = {
   previous() { byId.next.fire('click'); byId.previous.fire('click'); },
   ended() { byId.play.fire('click'); audio.fire('ended'); },
   error() { byId.play.fire('click'); audio.fire('error'); },
-  /* ⛔ `W276`: the two orders a missing clip's `error` and `play()` rejection arrive in.
+  /* ⛔ The two orders a missing clip's `error` and `play()` rejection arrive in.
      The mid-scenario reading proves which one came first. */
   errorThenRejection() {
     byId.play.fire('click');
@@ -269,7 +269,7 @@ def node():
             "no JavaScript runtime on PATH inside the dev image, where "
             "docker/dev/Dockerfile pins one. This is a failure rather than a skip "
             "because the pinned environment is the one that certifies a result "
-            "(Ruling 21) — rebuild the image rather than reading this run as green."
+            "(R15) — rebuild the image rather than reading this run as green."
         )
     pytest.skip(
         "node is not installed on this host, so the narration player cannot be run "
@@ -312,8 +312,8 @@ def test_the_transport_is_unhidden_once_there_is_something_to_play(tmp_path):
 
 
 def test_nothing_is_lit_before_anything_is_pressed(tmp_path):
-    # ⛔ `W369` clause 2: a marker beside the first heading before anything
-    # played read as narration already under way. The transport's own line says
+    # ⛔ A marker beside the first heading before anything played would read
+    # as narration already under way. The transport's own line says
     # where it will start; the page lights nothing until the reader starts it.
     assert run(tmp_path)["speaking"] == [None, None, None]
 

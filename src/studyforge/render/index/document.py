@@ -17,8 +17,8 @@ anything here runs.
 
 ⭐ **The three documents are one product.** The design asks this page to share the unit
 page's palette and type stack *by importing them rather than restating them*;
-sharing the **skeleton** is that ruling taken as far as it goes, and it is why
-this task adds no template file and no asset. ⚠️ A second skeleton would be a
+sharing the **skeleton** is that rule taken as far as it goes, and it is why
+this package adds no template file and no asset. ⚠️ A second skeleton would be a
 second `<head>`, a second masthead and a second place a `<meta viewport>` has to
 be remembered — and the day one gains a region the other silently would not.
 
@@ -50,10 +50,9 @@ shared script's work at read time, not a region this module fills |
 
 ## ⭐ Two slots it fills that a first reading would leave empty
 
-⛔ **`rail`: the user, 2026-09-19 — *"keep left menu even in the first page."***
-The argument that stood here was that the body already lists every container, so
-a rail would be the same tree twice. ⚠️ It was right about the tree and wrong
-about the reader: the rail is the site's one constant place, and a first page
+⛔ **`rail`: the first page keeps the rail.** The body already lists every
+container, so a rail repeats the tree. ⚠️ It is kept for the reader: the rail is
+the site's one constant place, and a first page
 without it is the one page where the reader has to learn a second way round.
 ⭐ It arrives from the caller as plain values, exactly as a unit page's does, and
 below `rail.RAIL_MINIMUM` containers it is still nothing.

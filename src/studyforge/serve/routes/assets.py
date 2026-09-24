@@ -40,8 +40,8 @@ so a prober never learns which guess was interesting.
 
 ## ⛔ A file carrying a quiz's key or sentence is REFUSED
 
-⭐ **The user's ruling (2026-09-23): what the site serves never carries a quiz's
-key.** A corpus built into its own root (`build . --out .`) puts the archive's
+⭐ **What the site serves never carries a quiz's key.** A corpus built into its own root (`build .
+--out .`) puts the archive's
 `practice-M.json` and the bundle's `tests/quiz.json` under the served root, so
 `withheld` is asked of every text — and of every file of an unknown type, which
 is where an editor's backup or a `.yaml` copy lands — before anything else is

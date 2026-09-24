@@ -33,8 +33,7 @@ the other corpus, whose depth it happens to match.
 `parse_unit_key` refuses every spelling `Address.unit_key` would not write
 (`unit-1`, `unit-001`, a capital, a trailing separator), so a unit is reachable
 under one URL only. ⚠️ **That refusal is the address package's and is not
-re-checked here**: a second check was planted out during this row and nothing
-failed, because nothing it could catch reaches it. A unit reachable under two
+re-checked here**: nothing a second check could catch reaches it. A unit reachable under two
 spellings would have two strong validators for one document in the content namespace.
 
 ⚠️ **No URL segment is decoded.** A slug cannot hold `%`, so an encoded

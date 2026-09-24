@@ -31,7 +31,7 @@ imports this package — hence `render.markup.anchor` rather than `index.anchor`
 ⭐ **The bar drops the whole slot** — a bar with a dead `next` is worse than one
 with no `next`, and the reader still has the trail, the outline and the page.
 
-⛔ **The trail drops the LINK and keeps the CRUMB**, and that is the same ruling
+⛔ **The trail drops the LINK and keeps the CRUMB**, and that is the same rule
 rather than an exception to it. Its question is *"has the reader lost a WAY TO
 GET SOMEWHERE, or has the page lost THE THING IT EXISTS TO SHOW?"* — and a crumb
 is both at once: the **anchor** is the way somewhere, the **trail of labels** is
@@ -132,7 +132,7 @@ class Link:
 class Links:
     """Where a unit page points when the reader has finished it.
 
-    ⭐ Every field optional, and all three absent is the normal state at M1:
+    ⭐ Every field optional, and all three absent is a normal state:
     nothing computes a reading order before the study order does, and a page with no bar is a
     page that renders exactly as it will once one does — minus the bar.
     """

@@ -4,7 +4,7 @@
 the page renderer's acceptance names. ⚠️ The first two go through **`markdown.parse`** and
 never a hand-built block dict: the promise spans two tasks, and a test that built
 `{"type": "para", …}` by hand would assert the renderer against its own belief
-about what `SF-07` emits — and the belief is the thing that can be wrong.
+about what the archive emits — and the belief is the thing that can be wrong.
 
 ⭐ They hold spec §6's `Q2` statement: raw HTML is the `html` block, and it
 alone bypasses escaping.
@@ -34,7 +34,7 @@ def render(markdown: str) -> str:
 
 
 def test_a_para_whose_text_is_tag_shaped_renders_as_visible_text():
-    # ⛔ The clause `SF-07` declined CommonMark's type-7 raw-HTML rule to keep:
+    # ⛔ The archive declines CommonMark's type-7 raw-HTML rule so that
     # an unknown tag on its own line stays prose, because a lesson TEACHING HTML
     # must keep it. The page renderer is the half that gets it onto the page.
     parsed = parse(UNKNOWN_TAG + "\n")

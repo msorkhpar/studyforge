@@ -20,16 +20,12 @@ served client publishes (`serve/assets/run-client.js`).
 imports nothing that can start a process, reach a network or touch a container,
 and `tests/studyforge/serve/test_init.py` reads that of the whole package.
 
-## ⛔ THE USER'S RULING, 2026-09-23, AND WHAT IT REVERSED
+## ⛔ THE KEY LIVES ON THE SERVER
 
-> *"the quiz itself again should not require an online or agent check for the answer
-> user provided. It will be just a test with the correct answer residing on the
-> server side. When user answers it will get validated and result will be returned
-> to the user with explanation if needed"*
-
-⛔ **Until that ruling the key and every per-option sentence shipped INSIDE the page** and
-the page graded itself, identically over `file://`. ⭐ **Now no built page and no
-asset a page loads carries either**: the page sends what the reader chose, and this
+⭐ A quiz is a test whose correct answer resides on the server: the reader's
+answers are validated there and the result comes back with its explanation, with
+no online or agent check. ⭐ **No built page and no asset a page loads carries the
+key or a per-option sentence**: the page sends what the reader chose, and this
 route reads the key from the unit's generated document — built, per request, from
 the corpus's archive on disk, which is where the exercise bundle's quiz record
 lives — and answers. ⛔ **No model, no network, no container: a fixed comparison.**
@@ -54,7 +50,7 @@ never named in a verdict.** A reader told the answer on their first wrong choice
 has been told instead of taught; one told why their choice fails can try again,
 and a quiz has no attempt limit. ⚠️ Named for what it is: with three options a
 reader can still find the key by trying each, and nothing here pretends
-otherwise — the key is kept out of the PAGE, which is the ruling, not made
+otherwise — the key is kept out of the PAGE, not made
 unguessable.
 
 ## ⛔ A quiz produces no run, and this route records nothing

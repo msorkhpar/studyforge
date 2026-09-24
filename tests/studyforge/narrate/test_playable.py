@@ -169,8 +169,8 @@ def test_a_page_with_clips_is_truthy(tmp_path):
 
 
 def test_the_shipped_record_is_not_in_reading_order_which_is_why_position_cannot_join(tmp_path):
-    # ⛔ The ground fact every refutation control below stands on, measured
-    # against the shipped writer rather than asserted. `render_state` sorts by
+    # ⛔ The ground fact every refutation control below stands on, read off
+    # the real writer rather than asserted. `render_state` sorts by
     # id, and `…b10` sorts before `…b2`.
     units = units_of(sentences())
     state = recorded(units, tmp_path)
@@ -321,7 +321,7 @@ def test_every_placed_clip_resolves_when_the_directory_is_given(tmp_path):
 def test_a_clip_made_from_other_words_still_plays_and_is_reported(tmp_path):
     # ⚠️ The record has not caught up with the text. The file is real, so the
     # reader gets audio rather than unexplained silence, and the disagreement is
-    # surfaced instead of being thrown away — `SF-17`'s `unsettled` argument.
+    # surfaced instead of being thrown away — the `unsettled` argument.
     before = units_of(sentences())
     state = recorded(before, tmp_path)
     after = units_of([*sentences()[:-1], "sentence number eleven, rewritten"])

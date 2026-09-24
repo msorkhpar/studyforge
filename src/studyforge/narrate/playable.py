@@ -45,8 +45,8 @@ says what can be *said*; `playable_of(units, state)` says what can be *played*.
 is correct exactly until one unit gains or loses a speakable element, and then
 every clip after it addresses the WRONG audio, with every file present and every
 filename valid.** ⛔ Nothing renders wrong and nothing raises; the reader simply
-hears another paragraph. ⭐ **Two measured facts make that failure ordinary
-rather than exotic, and either alone is enough:**
+hears another paragraph. ⭐ **Two facts make that failure ordinary rather than
+exotic, and either alone is enough:**
 
 1. ⛔ **The record is written in `sorted(clips)` order, which is lexicographic
    over ids and NOT reading order.** `…b10` sorts before `…b2`, so the record's

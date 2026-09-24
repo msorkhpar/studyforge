@@ -102,7 +102,7 @@ def test_every_response_header_set_carries_the_policy_and_refuses_framing():
     assert sent["X-Content-Type-Options"] == "nosniff"
 
 
-# --- what this page may EMBED, composed at serve time (`W427`) --------------
+# --- what this page may EMBED, composed at serve time --------------
 
 EDITOR = "http://127.0.0.1:8443"
 
@@ -156,7 +156,7 @@ def test_a_loopback_editor_origin_is_named_as_an_origin_and_never_a_path(origin)
 
 
 def test_being_framed_is_refused_however_wide_frame_src_gets():
-    # ⛔ `W427`'s whole point: `frame-src` and `frame-ancestors` are opposite
+    # ⛔ The whole point: `frame-src` and `frame-ancestors` are opposite
     # questions, and widening the first must never touch the second.
     sent = dict(security_headers([EDITOR]))
     assert directives(sent["Content-Security-Policy"])["frame-ancestors"] == "'none'"
@@ -164,7 +164,7 @@ def test_being_framed_is_refused_however_wide_frame_src_gets():
     assert dict(security_headers()) == dict(SECURITY_HEADERS)
 
 
-# --- the HOST must match, not merely the machine (`W427`) -------------------
+# --- the HOST must match, not merely the machine -------------------
 
 
 @pytest.mark.parametrize("host", ["127.0.0.1", "127.0.0.1:8770", None])

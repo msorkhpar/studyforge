@@ -1,12 +1,12 @@
 """Mirror of `src/studyforge/generate/media.py` (R12).
 
-⭐ **The clause this module exists for is `SF-37`'s Acceptance** — *"every `src`
+⭐ **The clause this module exists for** — *"every `src`
 and `href` a built page emits resolves to a file the build wrote"* — and it is
 asserted over the whole site in `test_site.py`, because that is where the pages
 are. ⛔ What is here is the pass's own contract: where it reads, where it puts
 what it read, what it refuses, and what it names rather than inventing.
 
-⚠️ **Three shapes neither `FND-04` fixture has are built here from a copy of
+⚠️ **Three shapes neither framework fixture corpus has are built here from a copy of
 one**: a figure nested inside another block, a reference that points off this
 machine, and two files that would be placed under one name. Each is a branch
 this pass has, and a branch no fixture reaches is a branch no plant can kill.
@@ -49,7 +49,7 @@ def rewritten(
     """Replace one archive document's blocks, and optionally its deck or its attachments.
 
     ⚠️ **`attachments` left out leaves the document's own declaration standing**
-    — `depth1`'s unit 2 declares one (`W215`), and a case about BLOCK references
+    — `depth1`'s unit 2 declares one, and a case about BLOCK references
     clears it rather than asserting around a file it is not about.
     """
     path = root / where
@@ -87,12 +87,11 @@ def built(tmp_path, root: Path):
 # --------------------------------------------------------------------------
 
 
-#: ⛔ W268: the depth1 figure's digest, measured on the output of `e556179`,
-#: before this row. A unit WITH media keeps its directory and its bytes.
+#: ⛔ The depth1 figure's digest. A unit WITH media keeps its directory and its bytes.
 DIAGRAM = ".studyforge/depth-one/units/unit-02/images/diagram.svg"
 DIAGRAM_SHA256 = "ae70ec31fcb3903fb48c24c2db8d19d2097533af10e32bd41129665d8d9ac552"
 
-#: ⛔ `W215`: the same unit's ATTACHMENT — a file no block shows and the page
+#: ⛔ The same unit's ATTACHMENT — a file no block shows and the page
 #: links (spec C4). ⭐ The digest is the fixture's own, declared in
 #: `lesson-1.json` beside the file, so a copy that altered a byte is red here.
 DATASET = ".studyforge/depth-one/units/unit-02/attachments/small-graph.ttl"
@@ -112,7 +111,7 @@ def declared_directories(corpus):
 
 @pytest.mark.parametrize("name", BOTH)
 def test_a_unit_gets_a_media_directory_only_for_a_kind_it_has_files_of(tmp_path, name):
-    # ⛔ W268, both ways over the population the plan declares: a directory a
+    # ⛔ Both ways over the population the plan declares: a directory a
     # copy filled exists, and one nothing filled was never minted.
     written, out = built(tmp_path, FIXTURES / name)
     filled = {path.parent for path in written.media}
@@ -133,7 +132,7 @@ def test_the_media_bearing_unit_keeps_its_directory_and_its_bytes(tmp_path):
 
 
 def test_a_unit_the_corpus_declares_and_nobody_built_gets_no_directories(tmp_path):
-    """⛔ W268: a declared unit with no material has no file to copy, so nothing is minted.
+    """⛔ A declared unit with no material has no file to copy, so nothing is minted.
 
     ⭐ It was the case `with_a_unit_missing` exposed for the old rule, when every
     declared unit got four; it now shows the opposite.
@@ -220,7 +219,7 @@ def test_the_copy_lands_exactly_where_the_unit_page_addresses_it(tmp_path):
 
 
 def test_the_attachment_lands_exactly_where_the_unit_page_links_it(tmp_path):
-    """⛔ `W215`'s whole clause: the plan declares the directory, the page links
+    """⛔ The whole clause: the plan declares the directory, the page links
     the file, and the copy lands on the link — resolved from the page's own
     directory, which is what R8 makes the page address."""
     _, out = built(tmp_path, FIXTURES / "depth1")
@@ -486,7 +485,7 @@ def test_a_reference_leaving_the_source_root_is_refused_without_being_quoted(tmp
 
 
 def test_an_attachment_that_leaves_the_source_root_is_refused_as_a_figure_would_be(tmp_path):
-    """⛔ `W215`: both halves refuse the same entry.
+    """⛔ Both halves refuse the same entry.
 
     ⭐ `render.page.section` refuses a `local` that is not a location inside the
     source, and so does this pass — an attachment is a file the archive says it

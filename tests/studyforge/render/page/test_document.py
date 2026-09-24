@@ -64,9 +64,9 @@ def test_a_document_that_cannot_identify_itself_is_refused_as_a_page_error():
 
 
 def test_the_masthead_prints_no_bare_kind_label_and_no_builder_slug():
-    # ⛔ `W362`: the address slugs joined by middle dots were builder words
-    # (M2, M3). ⛔ `W388` clause 5: the variant alone under the title was a bare
-    # kind word; the masthead is the trail and the title, and nothing else.
+    # ⛔ The address slugs joined by middle dots are builder words, and the
+    # variant alone under the title is a bare kind word; the masthead is the trail and the title,
+    # and nothing else.
     page = compose()
     masthead = page.split("<header>", 1)[1].split("</header>", 1)[0]
     assert "<p>" not in masthead
@@ -101,7 +101,7 @@ def test_a_complete_unit_shows_no_pending_panel():
 def test_a_short_unit_says_so_with_both_counts():
     markup = document_module.pending(a_document(practices={"declared": 3, "archived": 1}))
     assert "1 practice is here, 2 still to come." in markup
-    # ⛔ `W362` (P2): no builder word and no middle dot in what the reader reads.
+    # ⛔ No builder word and no middle dot in what the reader reads.
     assert "archived" not in markup
     assert "·" not in markup
 
@@ -122,15 +122,15 @@ def test_a_unit_with_no_practices_block_shows_no_panel():
 
 
 def test_the_player_is_absent_when_the_body_carries_no_audio():
-    # ⛔ At M1 the page renderer mints no speech id and writes no audio attribute, so the
-    # gate is never open and a page carries no transport for nothing.
+    # ⛔ The page renderer mints no speech id and writes no audio attribute, so
+    # a page without narration carries no transport for nothing.
     assert document_module.player("<p>no audio here</p>") == ""
     assert '<footer id="player"' not in compose()
 
 
 def test_the_player_appears_the_moment_the_body_carries_audio():
-    # ⭐ The negative control run negatively, and the M3 behaviour asserted now:
-    # when narration writes the attribute the transport arrives with it.
+    # ⭐ The negative control run negatively: when narration writes the attribute the transport
+    # arrives with it.
     body = f'<p {AUDIO_ATTRIBUTE}="audio/a-1.mp3">spoken</p>'
     markup = document_module.player(body)
     # ⛔ `hidden` is part of the opening tag and is the player's: the transport ships
@@ -143,8 +143,7 @@ def test_the_player_appears_the_moment_the_body_carries_audio():
 
 
 def test_a_page_that_was_promised_nothing_carries_no_gap_panel():
-    # ⛔ `W202` Q4's first row, and the reason the expensive option was chosen
-    # over a permanent notice: a corpus without narration is COMPLETE, not short.
+    # ⛔ No permanent notice: a corpus without narration is COMPLETE, not short.
     assert document_module.narration_gap(SILENT) == ""
     assert "narration-gap" not in compose()
 
@@ -184,7 +183,7 @@ def test_the_panel_tells_the_reader_which_of_the_two_states_this_is():
     # ⛔ **PLANT `P13` SURVIVED TWELVE RED AND THIS IS THE TEST IT ASKED FOR.**
     # Deleting the panel's last sentence — the one that says the audio WENT
     # MISSING rather than was NEVER MADE — broke nothing, and that sentence is
-    # the entire product promise of `W202` Q4 as a reader experiences it. ⭐ The
+    # the entire narration promise as a reader experiences it. ⭐ The
     # counts are machinery; this is what makes the two states distinguishable to
     # a person, so it is a CONTRACT, exactly as `player.html`'s keyboard sentence
     # is one.
@@ -245,7 +244,7 @@ def test_every_slot_the_skeleton_declares_is_filled_by_the_composer():
 
 
 # --------------------------------------------------------------------------
-# W407 — a unit page states its title once
+# A unit page states its title once
 # --------------------------------------------------------------------------
 
 
@@ -273,7 +272,7 @@ def with_material(*blocks, title: str = "Testing") -> dict:
 
 
 def test_a_page_whose_material_restates_the_title_in_other_words_says_it_once():
-    # ⭐ **`W388/17`, as the ISO corpus carries it**: the unit is titled `Testing`
+    # ⭐ **As a real corpus carries it**: the unit is titled `Testing`
     # and its material opens with `10. Testing in jPOS Client Implementation`.
     document = with_material(
         {"type": "heading", "level": 1, "text": "10. Testing in jPOS Client"},

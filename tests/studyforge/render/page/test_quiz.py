@@ -62,8 +62,8 @@ def test_every_question_carries_its_stem_and_every_option_its_words():
 
 
 def test_no_option_carries_the_key_or_its_sentence():
-    # ⛔ The user's ruling of 2026-09-23: the correct answer resides on
-    # the SERVER. ⭐ Every sentence and every spelling of the key is read for,
+    # ⛔ The correct answer resides on the SERVER. ⭐ Every sentence and every spelling of the key
+    # is read for,
     # escaped and raw, because either one on the page tells a reader which
     # option is right before they choose. ⚠️ The positive control — the same
     # needles FOUND in the record this page was rendered from — is what makes
@@ -123,9 +123,9 @@ def test_over_a_file_the_quiz_says_it_needs_the_study_server_and_offers_no_check
 
 
 def test_a_quiz_shows_no_run_no_submit_no_editor_and_no_disabled_one_either():
-    # ⛔ `AX-05/3` and this row's Acceptance. A quiz has no file to name, no
+    # ⛔ A quiz has no file to name, no
     # command to run and no grader to submit to — ⚠️ **and a disabled control is
-    # not the remedy**, which is `SF-24`'s standing rule. ⭐ The negative control
+    # not the remedy**: the page never shows a control it cannot honour. ⭐ The negative control
     # is the code panel, where every one of these IS present.
     said = markup()
     code = markup(SHIPPED)
@@ -204,7 +204,7 @@ def test_the_quiz_is_rendered_where_the_panel_would_have_been():
 
 # --- the quiz's script, read as the data it is ------------------------------
 
-#: ⛔ No JavaScript runs in this suite (`QA-03/1`: the pinned image has no
+#: ⛔ No JavaScript runs in this suite (the pinned image has no
 #: engine), so what a text can establish is asserted here and the browser
 #: reading is the visual harness's.
 SCRIPT = ASSET_DIR / "practice-quiz.js"
@@ -263,7 +263,7 @@ def test_an_unanswered_question_shows_nothing_and_only_the_latest_answer_draws()
 
 
 def test_every_word_the_quiz_says_is_read_off_the_markup():
-    # ⭐ The two-sided spelling every hook on this page has (`W431`): a label
+    # ⭐ The two-sided spelling every hook on this page has: a label
     # spelled in the script too would be a second place for it to drift.
     body = behaviour()
     for said in (

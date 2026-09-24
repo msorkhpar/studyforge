@@ -45,9 +45,8 @@ either way.
 *"two numbering schemes that agree today are exactly the coupling that breaks
 silently tomorrow"*, and narration owns the derivation. ⚠️ But *the name of
 the attribute* is a contract with two sides and only one of them exists yet,
-which is exactly the shape `identity.py` was landed early to avoid: *a
-definition arriving after its first writer is a definition two tasks each guess
-at differently.*
+and *a definition arriving after its first writer is a definition two writers
+each guess at differently.*
 
 ⭐ **So the attribute is named, and nothing here writes one.** The player
 and `page.document`'s player region both take the spelling from this constant,

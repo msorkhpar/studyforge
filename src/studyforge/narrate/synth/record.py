@@ -27,11 +27,11 @@ wrote that no prune has removed yet. ⛔ **A version-1 record still reads**: its
 entries carry no directory until a run finds their clip, and an entry nobody
 can place stays in the record and is held by name, never dropped.
 
-## ⛔ THE CONDITIONS GAINED `engine_model`, AND AN OLDER RECORD STILL READS
+## ⛔ THE CONDITIONS CARRY `engine_model`, AND A RECORD WITHOUT IT STILL READS
 
-⭐ **No version bump: every entry's keys are unchanged**, and the top-level
-`conditions` object gained one key, which `_conditions_of` reads as absent. ⛔ **A
-record written before it reads, and every clip in it is judged STALE, never
+⭐ **No version bump: every entry's keys are the same**, and the top-level
+`conditions` object carries one optional key, which `_conditions_of` reads as
+absent. ⛔ **A record without it reads, and every clip in it is judged STALE, never
 current**: its fingerprints were taken over conditions that named no model, so
 they cannot equal one that does. The next run asks for every clip once, with the
 reason *the conditions changed*, and drops no entry. ⚠️ That is the correct cost,
@@ -143,8 +143,7 @@ class Conditions:
 
         ⛔ **`speakable.naming.digest_of`, never a second truncation.** That
         module is the framework's ONE minter of a short hash and a test asserts
-        it — `test_exactly_one_module_in_the_whole_framework_truncates_a_digest`,
-        which failed on this file's first draft and is what put this line here.
+        it — `test_exactly_one_module_in_the_whole_framework_truncates_a_digest`.
         """
         return digest_of(json.dumps(self.document(), sort_keys=True, ensure_ascii=False))
 
@@ -202,11 +201,10 @@ def the_one_file(path: Path | str) -> Path:
     contract is a convention, and the record is then discoverable only by
     whoever wrote it. ⭐ `state_file(root)` is how a caller obtains the path.
 
-    ⚠️ **MEASURED, and it is why this is a gate rather than a note.** Without it
-    `write_state` wrote a file called `alpha` into the repository root during
-    `tests/test_emission.py`'s probe — the census fills unprobed parameters with
-    that word — and the stray file then changed what an unrelated module's scan
-    refused, turning a suite green on one machine and red on the next.
+    ⚠️ **A gate rather than a note.** Without it `write_state` would write a file
+    named by any caller's argument — a probe filling parameters with `alpha`
+    would put one in the repository root, and a stray file changes what an
+    unrelated module's scan refuses.
     """
     file = Path(path)
     if file.name != NARRATION_STATE_FILENAME:

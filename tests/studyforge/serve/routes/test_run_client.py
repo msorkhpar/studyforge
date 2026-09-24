@@ -3,12 +3,12 @@
 Mirrors no source module — like `render/pageassets/test_progress`, it asserts what a text
 can establish about a script, and reads the served bytes over a real socket.
 
-⛔ **No JavaScript runs in this suite** (`QA-03/1`: the pinned image has no engine).
+⛔ **No JavaScript runs in this suite** (the pinned image has no engine).
 ⭐ What is pinned instead: the client's endpoint, modes and stop path are the run
 route's own (read from Python, never retyped here); a start sends NO body; the key is
 passed verbatim and its pattern — which Python's `re` reads as JavaScript does — accepts
 every key `progress.practice_key` mints and refuses every spelling that would reach a
-different endpoint; the script draws nothing, because the panel is `SF-24`'s; and it is
+different endpoint; the script draws nothing, because the panel is the page's; and it is
 served by the run namespace and NEVER written into a built site, whose floor names no
 server (R8).
 """
@@ -79,8 +79,8 @@ def test_a_start_is_a_post_with_no_body_and_nothing_else_is_sent():
     body = uncommented()
     # ⭐ Four requests in the whole client and no fifth: the two acts, each a
     # POST that SELECTS; the index — a GET, because asking what this instance
-    # offers is a read (`W416`); and one practice's editor windows, a POST
-    # because preparing that practice's workspace settings WRITES (`W429`).
+    # offers is a read; and one practice's editor windows, a POST
+    # because preparing that practice's workspace settings WRITES.
     # ⭐ And a fifth, since the server grades quizzes: grading a quiz, a POST that selects a quiz
     # and carries the reader's choices in its PATH (`test_quiz_client.py`).
     assert body.count("fetch(") == 5
@@ -90,7 +90,7 @@ def test_a_start_is_a_post_with_no_body_and_nothing_else_is_sent():
 
 
 def test_the_editor_word_is_the_run_routes_own_and_is_not_a_mode():
-    # ⛔ `W429`: `editor` stands where a mode stands in the path and STARTS
+    # ⛔ `editor` stands where a mode stands in the path and STARTS
     # NOTHING, so it must not drift into `MODES` and must not be retyped here.
     assert constant("EDITOR") == f"'{run.EDITOR}'"
     assert run.EDITOR not in run.MODES
@@ -144,7 +144,7 @@ def test_the_key_pattern_refuses_any_spelling_a_browser_would_resolve_elsewhere(
 
 
 def test_it_draws_nothing_and_types_no_word_a_reader_sees():
-    # ⛔ The panel is `SF-24`'s: a control drawn here before it would be a dead button.
+    # ⛔ The panel is the page's: a control drawn here before it would be a dead button.
     body = uncommented()
     for word in ("document.", "innerHTML", "textContent", "createElement", "alert("):
         assert word not in body, word
@@ -152,15 +152,15 @@ def test_it_draws_nothing_and_types_no_word_a_reader_sees():
 
 def test_over_a_file_it_is_not_available_and_sends_nothing():
     # ⛔ R8: `file://` has no origin. EVERY entry point asks `available()` first
-    # — the two acts, where a running editor is (`W416`), and one practice's
-    # two editor windows (`W429`) — and grading a quiz.
+    # — the two acts, where a running editor is, and one practice's
+    # two editor windows — and grading a quiz.
     body = uncommented()
     assert "location.protocol === 'http:'" in body
     assert body.count("if (!available())") == 5
 
 
 def test_a_refusal_is_a_rejection_naming_what_was_refused_before_any_request():
-    # ⭐ What `SF-24` is told to expect: `{refused: …}`, decided before `fetch`.
+    # ⭐ What the panel is told to expect: `{refused: …}`, decided before `fetch`.
     body = uncommented()
     assert "Promise.reject({ refused: reason })" in body
     start = body[body.index("function start(") :]
@@ -169,7 +169,7 @@ def test_a_refusal_is_a_rejection_naming_what_was_refused_before_any_request():
         assert f"refused({reason})" in before_fetch, reason
 
 
-# --- where a running editor is (`W416`) -------------------------------------
+# --- where a running editor is -------------------------------------
 
 
 def test_it_publishes_where_a_running_editor_is_beside_the_two_acts():

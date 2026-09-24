@@ -16,12 +16,11 @@ for the join — the bar, the trail and the rail across containers —
 for R3, `generate.narration` for what each page plays, `unit.builder` for the
 document and `render.page` for the bytes. ⛔ It names no source (R1).
 
-## ⛔ Why this module exists at all
+## ⛔ Why this module exists
 
-Measured at `2d2af22`, population `src/**/*.py`, instrument `git grep`: **no
-module outside `render/` called the page renderer, and no module anywhere wrote
-a unit page.** The renderer, the builder, the placement profiles and the
-navigation join were finished and reachable only from tests.
+It is the one module outside `render/` that calls the page renderer and writes
+a unit page: the renderer, the builder, the placement profiles and the
+navigation join meet here.
 
 ## ⚠️ Two things this module deliberately does NOT do, each for a reason
 
@@ -33,12 +32,10 @@ over the record `studyforge narrate` wrote; a corpus with no record renders
 ⛔ **No authored overlay.** A unit that has one is built without it: this
 module hands `build_unit` a unit's archive documents and nothing else.
 
-⚠️ **What changed under this sentence, and what did not**. It used to
-say nothing in `src/` declared *where* an overlay sits, so this module could
-not have applied one even had it wanted to. ⭐ **That half is closed:
-`skills.adapter.Layout.content(address, unit)` is the address now**, so a
-build has somewhere to look. ⛔ **The verb is the half that remains and it is
-unowned** — reading the file, refusing its version, composing it over the
+⭐ **Where an overlay sits is declared:
+`skills.adapter.Layout.content(address, unit)` is the address**, so a build
+has somewhere to look. ⛔ **Applying one is unowned** — reading the file, refusing its version,
+composing it over the
 archive's blocks and deciding what a conflict means are none of them decided,
 and this module will not decide them by being the first caller. ⭐ A path
 invented here would still be a second authority on the archive's shape; that

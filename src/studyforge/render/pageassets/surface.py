@@ -29,15 +29,15 @@ class name says what the stylesheet may reach. Nothing downstream may read a
 class name back as a block type — that is R4's argument about paths, applied
 to markup.
 
-## ⛔ A hook is not always a class, and the stylesheet is where that stopped being true
+## ⛔ A hook is not always a class
 
-⚠️ **`SURFACE_CLASSES` is classes and `SURFACE_HOOKS` no longer is.** Three of
+⚠️ **`SURFACE_CLASSES` is classes and `SURFACE_HOOKS` is not.** Three of
 its entries are classes; the rest are the **name** of a `data-*` attribute or a
 **value** of `data-kind`, because `render.container.listing` and
 `render.index.disclosure` address their rows that way on purpose — ⭐ *"a
 `data-*` rather than a class, so this page needs no entry in a published class
-set"* — and that is the property that let a chrome stylesheet be written a
-milestone after the markup it styles, with no page change and no re-render.
+set"* — and that is the property that lets a chrome stylesheet change
+independently of the markup it styles, with no page change and no re-render.
 
 ⛔ **So `_FORM_OF` says which form each hook takes, `HOOK_CLASSES` is the
 class-shaped subset, and the both-directions class contract compares against

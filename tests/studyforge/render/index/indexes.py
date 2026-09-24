@@ -1,4 +1,4 @@
-"""The root index of both FND-04 fixtures, built the way a build would.
+"""The root index of both framework fixture corpora, built the way a build would.
 
 ⛔ **Imported, never copied.** Six test modules render these pages and a seventh
 regenerates the goldens; seven spellings of "turn two contents documents into a
@@ -59,7 +59,7 @@ from tests.support import repository_root
 #: patterns that would otherwise swallow a generated page.
 GOLDEN_DIR = repository_root() / "tests" / "fixtures" / "pages"
 
-#: The two FND-04 fixture corpora, in a stated order. ⛔ A tuple rather than a
+#: The two framework fixture corpora, in a stated order. ⛔ A tuple rather than a
 #: directory walk, so the suite's own list does not depend on filesystem
 #: order (R10).
 FIXTURES = ("depth1", "depth2")

@@ -105,9 +105,8 @@ def _document(corpus: Corpus, container: Container, at: ContainerLocations) -> D
     `Address(...).require_depth(manifest.depth)`, so a map at any other depth is
     refused before it reaches here. ⭐ `levels[-1]` and `levels[depth - 1]` are
     therefore the same expression, and the first is written because the second
-    implies a variation this contract does not permit — measured: a plant
-    swapping them was GREEN on both fixtures, which is what says the distinction
-    is not real. ⚠️ The refusal is what makes it true, so it is asserted rather
+    implies a variation this contract does not permit. ⚠️ The refusal is what makes it true, so it
+    is asserted rather
     than assumed.
     """
     present = corpus.present

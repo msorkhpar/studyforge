@@ -11,8 +11,8 @@ from studyforge.render.markup import text
 #: repository's own personal-data sweep refuses that literal in any file and it
 #: is right to: the value under test is a shape, and committing an instance of
 #: the shape to prove it is refused would be the defect the rule prevents.
-#: ⭐ Measured 2026-09-10: written as one literal, the quality floor
-#: reported `[personal-data] carries a home path (R7)` on this very line.
+#: ⭐ Written as one literal, the quality floor would report
+#: `[personal-data] carries a home path (R7)` on this very line.
 A_ROOTED_HOME_PATH = "/" + "home/example/notes.html"
 
 #: Every href a page must refuse, and the class it is refused by. ⚠️ A forbidden
@@ -20,8 +20,8 @@ A_ROOTED_HOME_PATH = "/" + "home/example/notes.html"
 #: `SAFE_SCHEMES` and the relative grammar are what the module decides with, and
 #: these are the cases somebody would actually try.
 #:
-#: ⛔ **`W57` widened what is admitted, so every one of these is a refusal that
-#: had to be re-proved rather than inherited** — a gate that gains a permitted
+#: ⛔ **The gate admits bare relative hrefs, so every one of these is a refusal
+#: proved here rather than inherited** — a gate that gains a permitted
 #: form is a gate whose refusals are all newly in question.
 REFUSED = (
     # A scheme outside the closed set.
@@ -32,11 +32,11 @@ REFUSED = (
     ("file:///etc/passwd", "scheme"),
     ("ftp://host/x", "scheme"),
     ("notes:draft.html", "scheme"),
-    # ⛔ A ONE-CHARACTER scheme, and it is here because `W76`'s mutant sweep
-    # found the row missing: RFC 3986's `scheme` is one ALPHA followed by *zero*
+    # ⛔ A ONE-CHARACTER scheme, and it is here because a mutant
+    # sweep needs it: RFC 3986's `scheme` is one ALPHA followed by *zero*
     # or more, so `_SCHEME`'s `*` is load-bearing. ⚠️ With a `+` there instead,
     # `x:` has no scheme to this function, falls through to the relative branch
-    # and is **admitted** — the gate quietly widened, which is the `W57` shape.
+    # and is **admitted** — the gate quietly widened.
     ("x:alert(1)", "scheme"),
     # A spelling a browser normalises before it parses. ⛔ Each of these has no
     # scheme to a naive reader and a refused one to a browser.
@@ -60,7 +60,7 @@ REFUSED = (
 )
 
 #: The classes above, named so that losing one is a failure rather than a
-#: quietly shorter table. ⭐ Ruling 128: the population is stated, not counted.
+#: quietly shorter table. ⭐ The population is stated, not counted.
 REFUSAL_CLASSES = ("scheme", "spelling", "outside", "empty")
 
 
@@ -97,7 +97,7 @@ def test_a_refused_href_yields_no_href(href, why):
 def test_every_named_refusal_class_is_actually_exercised():
     # ⛔ The table above is the instrument; a class silently dropping out of it
     # would leave the corresponding refusal unasserted while every remaining row
-    # still passed. ⭐ Ruling 128: the population is printed, not reduced to a
+    # still passed. ⭐ The population is printed, not reduced to a
     # count that agrees with itself.
     found = {}
     for href, why in REFUSED:
@@ -106,8 +106,8 @@ def test_every_named_refusal_class_is_actually_exercised():
     assert all(found[why] for why in REFUSAL_CLASSES), found
 
 
-#: Every href a page must keep. ⭐ The `relative` rows are what `W57` added, and
-#: the first of them is the defect itself: `relative_href` answers with a bare
+#: Every href a page must keep. ⭐ The `relative` rows are bare relative hrefs, and
+#: the first of them is the commonest: `relative_href` answers with a bare
 #: filename for two units of one container under `sibling` placement.
 PERMITTED = (
     ("http://x/y", "absolute"),
@@ -146,12 +146,10 @@ def test_the_permitted_list_is_the_negative_control_for_the_refused_one():
 
 
 def test_a_bare_same_directory_href_is_permitted_and_that_is_this_row():
-    # ⛔ **`W57`, and `SF-13/1` before it.** Under `sibling` placement two units
-    # of one container share a directory, so `contents.links` answers with a
-    # bare filename — and the old prefix set had no entry for one, so
-    # `navigation._link` dropped the slot with nothing raised. ⭐ Measured then:
-    # 13 slots computed for the `depth2` corpus and 6 refused, every one of them
-    # a same-container `next` or `previous`.
+    # ⛔ Under `sibling` placement two units of one container share a
+    # directory, so `contents.links` answers with a bare filename, and a gate
+    # with no entry for one would drop every same-container `next` or
+    # `previous` slot with nothing raised.
     href = "unit-02-fields-and-constructors.unit.html"
     assert text.safe_href(href) == href
     assert text.inline(f"[next]({href})") == (
@@ -161,17 +159,16 @@ def test_a_bare_same_directory_href_is_permitted_and_that_is_this_row():
 
 def test_an_href_is_trimmed_before_it_is_judged_and_returned_trimmed():
     # ⛔ Load-bearing, and only just: the spelling gate refuses whitespace
-    # ANYWHERE, so without this row a `safe_href` that never trimmed would still
-    # refuse `"   "` and pass every other assertion in this file. ⭐ The sweep
-    # found that: dropping `.strip()` was a mutant nothing killed until here.
+    # ANYWHERE, so without this case a `safe_href` that never trimmed would still
+    # refuse `"   "` and pass every other assertion in this file: dropping
+    # `.strip()` is a mutant only this kills.
     assert text.safe_href("  ./a  ") == "./a"
     assert text.safe_href("\thttps://host/x\n") == "https://host/x"
 
 
 def test_the_scheme_set_holds_schemes_and_not_prefixes():
-    # ⛔ The regression this row exists to prevent from coming back: a `#`, `/`
-    # or `./` in this tuple is a relative *form* wearing a scheme's name, and it
-    # is what made the set read as complete while a bare filename had no entry.
+    # ⛔ A `#`, `/` or `./` in this tuple is a relative *form* wearing a
+    # scheme's name, and it would make the set read as complete while a bare filename had no entry.
     for scheme in text.SAFE_SCHEMES:
         assert scheme.isalpha(), scheme
         assert scheme == scheme.lower(), scheme

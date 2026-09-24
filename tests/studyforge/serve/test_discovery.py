@@ -158,7 +158,7 @@ def test_rescan_reads_the_tree_now_and_never_the_startup_scan(tmp_path):
 
 
 def test_a_discovered_corpus_is_scanned_at_its_root_unless_a_scan_root_is_given(tmp_path):
-    # ⭐ `W385`, closing `W380/2`: where the record lives and where pages are scanned are
+    # ⭐ Where the record lives and where pages are scanned are
     # two fields, and the second defaults to the first.
     root = a_workspace(tmp_path, ("depth1",)) / "depth1"
     served = discover(root).corpora[0]

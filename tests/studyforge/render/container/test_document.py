@@ -62,19 +62,15 @@ def test_the_empty_slots_are_the_ones_a_container_page_has_no_answer_for():
     # ⚠️ Named, so their absence is a decision rather than an oversight: a
     # container page's own contents ARE the unit list, it declares no practices,
     # and narration is a unit's.
-    # ⭐ `breadcrumb` joined them when the trail added the slot, and it is the one
-    # of the five that is a GAP rather than an absence — a container page has
-    # ancestors to name. That it is empty here is the container page's own gap, and
-    # the point of the by-name form is that the skeleton's growth could not be
-    # silent: this assertion is what went red.
-    # ⭐ **And it went red a second time, as designed**: `SF-30` added `mark`, and
-    # a read mark is a UNIT's — a container is read by reading what is under it.
-    # ⚠️ The marks themselves DO reach this page, as a state on the rows, which is
-    # why each row now carries the unit key a mark is filed under.
-    # ⭐ **And a third time, as designed**: `W407` added `headingattributes`, because a
-    # unit page's `<h1>` now carries the anchor of the heading it was promoted
-    # from — and a container page is headed by a NAME, which has no block and so
-    # no anchor to carry.
+    # ⭐ `breadcrumb` is a GAP rather than an absence — a container page has
+    # ancestors to name — and the by-name form means the skeleton cannot grow
+    # a slot silently: this assertion goes red.
+    # ⭐ `mark`: a read mark is a UNIT's — a container is read by reading what is
+    # under it. ⚠️ The marks DO reach this page, as a state on the rows, which is
+    # why each row carries the unit key a mark is filed under.
+    # ⭐ `headingattributes`: a unit page's `<h1>` carries the anchor of the
+    # heading it was promoted from, and a container page is headed by a NAME,
+    # which has no block and so no anchor to carry.
     assert document_module.EMPTY_SLOTS == (
         "breadcrumb",
         "headingattributes",
@@ -113,8 +109,8 @@ def test_the_identity_refusal_does_not_reproduce_what_it_refused():
 
 
 def test_the_masthead_says_how_many_units_the_container_holds_in_the_corpus_word():
-    # ⛔ `W362` (M1–M3, CP1): the address slugs and the variant joined by middle
-    # dots told a reader nothing. ⭐ The count is a fact about the site, and the
+    # ⛔ The address slugs and the variant joined by middle dots would tell a
+    # reader nothing. ⭐ The count is a fact about the site, and the
     # depth keeps the CORPUS's word for it (R1).
     assert document_module.meta(a_document()) == "<p>1 unit in this module</p>"
 
@@ -179,11 +175,9 @@ def test_the_bar_carries_every_slot_it_is_given():
 
 
 def test_a_bare_same_directory_neighbour_survives_the_bar_s_gate():
-    # ⛔ `W57`'s fix, asserted from this page rather than inherited. Under
-    # `sibling` two containers of one parent share a directory, so the
-    # commonest neighbour href of all is a bare filename — the shape that had
-    # no entry in the old `SAFE_SCHEMES` and dropped 6 of 13 slots silently
-    # (`SF-13/1`).
+    # ⛔ Asserted from this page rather than inherited. Under `sibling` two
+    # containers of one parent share a directory, so the commonest neighbour
+    # href of all is a bare filename, and the gate must admit it.
     page = compose(
         a_document(),
         a_placement(),

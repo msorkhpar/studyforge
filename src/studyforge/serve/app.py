@@ -90,7 +90,7 @@ HANGUP_POLL = 0.25
 #: not lost to a reset, and discarded: no route is ever handed it.
 MAX_DISCARDED = 64 * 1024
 
-#: The namespaces this row owns, which nothing registered later may replace.
+#: The namespaces this module owns, which nothing registered later may replace.
 OWN_NAMESPACES = ("content", "assets")
 
 Route = Callable[[Request, str], Response]

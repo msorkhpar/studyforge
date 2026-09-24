@@ -83,7 +83,7 @@ def up_next(title: str, href: str | None) -> str:
 
 
 def finder() -> str:
-    """Return the filter and its two controls (the brief's §3), shipped hidden."""
+    """Return the filter and its two controls , shipped hidden."""
     return (
         '<form role="search" aria-label="Filter units" hidden>'
         '<input type="search" name="filter" placeholder="Filter units…" '

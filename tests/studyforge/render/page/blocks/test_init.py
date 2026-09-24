@@ -111,7 +111,7 @@ def test_blocks_are_joined_by_a_newline_so_a_page_can_be_read():
     assert markup.count("\n") == 2
 
 
-# --- W303: a type that is not a name is refused by name --------------------
+# --- A type that is not a name is refused by name -------------------------
 
 #: Every way a block's `type` can arrive as something that is not a name.
 #: ⛔ Each is valid JSON, so each can reach the dispatcher off disk: `[...]` and
@@ -122,7 +122,7 @@ UNNAMEABLE_TYPES = [["para"], {"para": 1}, None, 3, True]
 
 @pytest.mark.parametrize("block_type", UNNAMEABLE_TYPES)
 def test_W303_a_type_that_is_not_a_name_is_refused_by_name(block_type):
-    # ⛔ Measured reachable through a document that BOTH `archive.document.parse`
+    # ⛔ Reachable through a document that BOTH `archive.document.parse`
     # and `unit.served.parse` accept, so the refusal has to be the page's rather
     # than the interpreter's.
     with pytest.raises(PageError) as raised:
@@ -168,7 +168,7 @@ def test_an_empty_run_of_blocks_renders_as_nothing():
 
 
 def test_omit_withholds_a_block_from_the_output_and_renumbers_nothing():
-    # ⛔ `W407`: the page's own heading is withheld from the body it was promoted
+    # ⛔ The page's own heading is withheld from the body it was promoted
     # out of. A caller that sliced the list instead would shift every position
     # after it, and a position is what a clip is filed under.
     run = [

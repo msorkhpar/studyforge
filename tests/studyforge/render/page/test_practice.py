@@ -34,7 +34,7 @@ SHIPPED = {
 #: advisory grader looks like on disk.
 GENERATED = {**SHIPPED, "provenance": "generated", "trust": "advisory"}
 
-#: `AX-05`'s shape: questions in place of a workspace. ⛔ Every workspace key is
+#: A quiz: questions in place of a workspace. ⛔ Every workspace key is
 #: refused on it, which is why it carries none of them.
 QUIZ = {
     "kind": "quiz",
@@ -51,7 +51,7 @@ QUIZ = {
     ],
 }
 
-#: `W357`'s other shape: a file nothing checks. ⛔ The grader half is written
+#: The other shape: a file nothing checks. ⛔ The grader half is written
 #: whole or not at all, so an ungraded record is exactly these two keys.
 UNGRADED = {"main_path": "kata/greet.py", "run_command": ["python3", "kata/greet.py"]}
 
@@ -117,7 +117,7 @@ def test_a_unit_whose_every_section_is_a_lesson_renders_no_panel_anywhere():
 
 
 def test_submit_is_offered_only_where_the_workspace_names_a_test():
-    # ⛔ `W357`: a record may carry `main_path` and `run_command` alone, and
+    # ⛔ A record may carry `main_path` and `run_command` alone, and
     # `serve.routes.run` answers `409` for the mode it does not name.
     graded = panel()
     assert 'data-practice-act="run"' in graded
@@ -138,7 +138,7 @@ def test_the_material_s_own_grader_and_a_generated_one_read_differently():
 
 
 def test_each_of_the_four_label_cases_renders_its_own_stated_sentence():
-    # ⛔ Spec §7 §9, the user's ruling of 2026-09-19, read as the table it is:
+    # ⛔ Spec §7 §9, read as the table it is:
     # four records, four sentences, and every one of them different from every
     # other. ⭐ The ungraded case says *nothing here checks your answer* rather
     # than saying nothing — a label is never omitted because it is unflattering.
@@ -169,7 +169,7 @@ def test_neither_r5_key_ever_reaches_the_page(workspace):
 
 
 def test_the_practice_key_is_the_one_progress_would_mint():
-    # ⛔ Asked for, never composed (`SF-21/4`): the string the run route parses
+    # ⛔ Asked for, never composed: the string the run route parses
     # back and the store records under. Compared against `progress`'s own
     # composer rather than against a literal, so a change there is a red test
     # here rather than a key that matches nothing.
@@ -200,7 +200,7 @@ def test_a_workspace_the_record_refuses_is_a_page_error_and_not_a_half_panel():
 
 def test_the_panel_names_no_api_no_origin_and_no_client_file():
     # ⛔ R8's floor, at the renderer rather than over a built site, so the
-    # failure is named here first (`W370`). The client is added by the SERVING
+    # failure is named here first. The client is added by the SERVING
     # process and a built page must name none of it.
     markup = panel()
     assert "/api" not in markup
@@ -209,7 +209,7 @@ def test_the_panel_names_no_api_no_origin_and_no_client_file():
 
 
 def test_every_control_is_a_real_button_and_the_output_is_reachable_by_keyboard():
-    # ⛔ Keyboard accessibility is in this row's acceptance, not a follow-up. A
+    # ⛔ Keyboard accessibility is part of the panel, not a follow-up. A
     # styled `div` is not in the tab order, takes no Enter or Space and is
     # announced as nothing; a scrolling region with no `tabindex` cannot be
     # scrolled without a mouse.
@@ -217,12 +217,12 @@ def test_every_control_is_a_real_button_and_the_output_is_reachable_by_keyboard(
     acts = re.findall(r"<(\w+)[^>]*data-practice-act=", markup)
     tabs = re.findall(r"<(\w+)[^>]*data-practice-tab=", markup)
     assert acts and set(acts) == {"button"}
-    # ⭐ `W429`: the two window tabs are controls too, and they are held to the
+    # ⭐ The two window tabs are controls too, and they are held to the
     # same rule rather than exempted from it — a tab that was a styled `div`
     # would be announced as nothing in a `role="tablist"` that promises tabs.
     assert tabs and set(tabs) == {"button"}
     # ⛔ **Counted over every `<button>` the panel emits, and not over the two
-    # families above** (`W431`): the maximise control is neither an act nor a
+    # families above**: the maximise control is neither an act nor a
     # tab, so a sum of those two would have stopped covering the panel on the
     # day it was added — with nothing failing.
     buttons = re.findall(r"<button\b[^>]*>", markup)
@@ -243,7 +243,7 @@ def test_the_controls_and_the_editor_ship_hidden_and_the_offline_note_does_not()
 
 
 def test_the_two_tabs_ship_hidden_and_name_the_two_windows():
-    # ⭐ `W429`: the reader's own file and the test that judges it, as two tabs
+    # ⭐ The reader's own file and the test that judges it, as two tabs
     # over two frames of ONE editor — never a split pane, which halves the
     # width of both. ⛔ Hidden in the built page: there is no editor to show
     # until a served origin says there is one.
@@ -266,7 +266,7 @@ def test_the_tests_tab_is_emitted_only_where_the_record_names_a_test():
 
 
 def test_a_quiz_shows_its_questions_and_no_run_affordance_at_all():
-    # ⛔ `AX-05/3` and `AX-09`'s Acceptance. A quiz carries QUESTIONS in place of
+    # ⛔ A quiz carries QUESTIONS in place of
     # a workspace: no file to name, nothing to open in an editor, no command to
     # Run and no grader to Submit to — ⚠️ **and not disabled ones**, which is
     # this module's standing rule about a dead button. ⭐ Asserted both ways
@@ -296,11 +296,11 @@ def test_the_editor_slot_says_it_is_not_running_and_how_to_start_it():
     assert "README" not in note.split("</p>")[0]
 
 
-# --- the panel's script, read as the data it is (`W416`) --------------------
+# --- the panel's script, read as the data it is --------------------
 
-#: ⛔ No JavaScript runs in this suite (`QA-03/1`: the pinned image has no
-#: engine), so what a text can establish about the panel's script is asserted
-#: here and the browser reading is `QA-02`'s (`SF-24/5`).
+#: ⛔ No JavaScript runs in this suite (the pinned image has no engine),
+#: so what a text can establish about the panel's script is asserted here
+#: and the browser reading is the visual harness's.
 SCRIPT = ASSET_DIR / "practice.js"
 
 
@@ -378,12 +378,12 @@ def test_a_real_fixture_unit_carries_the_panel_its_archive_declares():
     assert 'data-corpus="depth2-demo"' in page
 
 
-# --- ⛔ `W431`: the control that gives the practice the whole viewport --------
+# --- ⛔ The control that gives the practice the whole viewport --------
 
 
 def test_the_panel_ships_one_maximise_control_hidden_and_a_quiz_ships_none():
-    # ⛔ The user's own words: *"a button that user could maximize this window
-    # to have more control over the code and tests + run and summit buttons"*.
+    # ⛔ One control gives the code, the tests and the Run and Submit buttons
+    # the whole window.
     # ⭐ Hidden in the built page for the reason every other control is: over
     # `file://` this panel is one sentence, and a control that makes a sentence
     # full-screen is the dead button this module refuses everywhere else.
@@ -393,7 +393,7 @@ def test_the_panel_ships_one_maximise_control_hidden_and_a_quiz_ships_none():
     )
     assert markup.count('data-practice-part="expand"') == 1
     assert 'aria-expanded="false"' in markup
-    # ⛔ A quiz renders NO PANEL (`W429`), so it cannot carry this control
+    # ⛔ A quiz renders NO PANEL, so it cannot carry this control
     # either — asserted against the very same section, both ways round.
     assert 'data-practice-part="expand"' not in panel(sections=[section(workspace=QUIZ)])
 
@@ -419,7 +419,7 @@ def test_the_panel_itself_can_take_focus_so_the_expansion_has_somewhere_to_put_i
 
 
 def test_the_panel_expands_by_its_own_attribute_and_moves_no_frame():
-    # ⛔ **THE clause this row is measured by** (`W431`, clause 3). The two
+    # ⛔ **THE clause the maximise control is measured by.** The two
     # windows are `iframe`s, and an `iframe` MOVED TO ANOTHER PARENT RELOADS —
     # the reader's unsaved buffer is gone and the code-server session restarts.
     # ⭐ So the expansion is one attribute on the section, and the region that
@@ -434,15 +434,14 @@ def test_the_panel_expands_by_its_own_attribute_and_moves_no_frame():
     # program's own output — so there is no second place a frame could be moved
     # from. ⚠️ Read over the file and not over the region, because a reparent
     # written in `wire` would satisfy the clause above. ⭐ The frame's own
-    # append left with `practice-editor.js` (`AX-09`), and the count here fell
+    # append left with `practice-editor.js`, and the count here fell
     # from two to one saying so.
     assert body.count("appendChild") == 1  # one output line, and nothing else
     assert "output.appendChild(document.createTextNode(line" in body
 
 
 def test_the_restore_puts_the_page_back_where_it_was_rather_than_leaving_it():
-    # ⛔ `W431/1`, the defect a merge gate found and this office then measured.
-    # Two causes: `position: fixed` shortens the document so the browser CLAMPS
+    # ⛔ Two things move the page: `position: fixed` shortens the document so the browser CLAMPS
     # a scroll that no longer fits, and `reset.css`'s `scroll-behavior: smooth`
     # makes every scroll — including the one `focus()` starts — an ANIMATION
     # that is still running when the next reader of the page looks. ⭐ So the
@@ -464,7 +463,7 @@ def test_the_restore_puts_the_page_back_where_it_was_rather_than_leaving_it():
 
 
 def test_the_expanded_practice_is_escapable_and_focus_goes_both_ways():
-    # ⛔ `QA-02`'s ground, and this row's clause 4: a real button, focus into
+    # ⛔ A real button, focus into
     # the expanded practice and back to the control on restore, and Escape
     # restores. ⚠️ Escape is read on the DOCUMENT because focus may rest on
     # `<body>` — and a key pressed inside the editor frame never reaches this

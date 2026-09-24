@@ -112,7 +112,7 @@ def a_leaking_manifest(root):
     return root
 
 
-#: ⛔ `W208`: every member of `RAISES` reached from `discover` by a fixture.
+#: ⛔ Every member of `RAISES` reached from `discover` by a fixture.
 REACHES = {DiscoveryRefused: no_corpus, PersonalDataLeak: a_leaking_manifest}
 
 

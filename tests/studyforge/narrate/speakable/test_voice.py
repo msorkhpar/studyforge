@@ -63,13 +63,13 @@ def test_an_identifier_shape_is_recognised(token):
 
 @pytest.mark.parametrize("token", ["item2Count", "v2Api", "x1Y2"])
 def test_a_digit_boundary_alone_is_not_an_identifier_shape_and_that_is_inherited(token):
-    # ⚠️ Pinned as measured, NOT as desired. The four shape gates are camel
+    # ⚠️ Pinned as it is, NOT as desired. The four shape gates are camel
     # (`[a-z][A-Z]`), snake, screaming and dotted; a token whose only case change
     # sits across a digit passes none of them, so `_LETTER_DIGIT` and
     # `_DIGIT_LETTER` are reachable only once some other gate has already fired.
     # ⛔ Inherited verbatim from the extraction source and deliberately not changed
-    # here: widening the gate changes what every clip says, which is a decision with
-    # a measurement behind it rather than a tidy-up. Filed as a finding on SF-16.
+    # here: widening the gate changes what every clip says, which is a decision rather
+    # than a tidy-up.
     assert not looks_like_code(token)
     assert split_identifier(token) != token.lower()  # the splitter would have handled it
 

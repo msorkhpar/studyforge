@@ -1,6 +1,6 @@
 """The real vendored bundle, run under a real JS runtime, on real samples.
 
-⛔ **The dev image pins a JS runtime (W8, Ruling 21), so in the environment
+⛔ **The dev image pins a JS runtime, so in the environment
 that certifies a result this half does not skip — it fails.** Before that, 38
 tests here skipped in the pinned container and ran only on a host that happened
 to have `node`: 38 claims the authoritative environment could not make, and
@@ -115,7 +115,7 @@ DEV_CONTAINER = "STUDYFORGE_DEV_CONTAINER"
 def node():
     """The pinned JS runtime — or a skip on a host, a failure in the image.
 
-    ⛔ **The asymmetry is the whole of Ruling 21.** The pinned container is
+    ⛔ **The asymmetry is the whole of R15.** The pinned container is
     authoritative *because it is pinned*, so a check that quietly does not run
     in there turns green into a claim nobody made. On a contributor's host the
     same absence is a known, stated partial state and stays a skip.
@@ -128,7 +128,7 @@ def node():
             "no JavaScript runtime on PATH inside the dev image, where "
             "docker/dev/Dockerfile pins one. This is a failure rather than a "
             "skip because the pinned environment is the one that certifies a "
-            "result (Ruling 21) — rebuild the image rather than reading this "
+            "result (R15) — rebuild the image rather than reading this "
             "run as green."
         )
     pytest.skip(
@@ -206,12 +206,12 @@ def test_a_language_nobody_vendored_a_grammar_for_is_left_alone(tmp_path):
 
 
 def test_the_bundle_concatenates_markup_before_javascript(tmp_path):
-    # ⛔ THE CONCATENATION ORDER IS LOAD-BEARING AND IT FAILS SILENTLY (`W295`).
+    # ⛔ THE CONCATENATION ORDER IS LOAD-BEARING AND IT FAILS SILENTLY.
     # `javascript` attaches inlined `<script>` support behind
     # `Prism.languages.markup &&`, so a bundle carrying markup AFTER javascript
     # highlights the tags, leaves the script body bare, and reports nothing.
-    # ⭐ Measured both ways when the four grammars were vendored: markup first
-    # emits the keyword below; markup last emits only `tag` and `punctuation`.
+    # ⭐ Both ways: markup first emits the keyword below; markup last emits only `tag` and
+    # `punctuation`.
     out = highlight(tmp_path, "<p>\n  <script>var a = 1;</script>\n</p>", "markup")
     assert "token tag" in out["html"], "the markup grammar did not run at all"
     assert "token keyword" in out["html"], (
@@ -222,8 +222,7 @@ def test_the_bundle_concatenates_markup_before_javascript(tmp_path):
 
 @pytest.mark.parametrize("language", ["markup", "xml"])
 def test_an_xml_fence_is_highlighted_rather_than_rendering_plain(tmp_path, language):
-    # ⛔ ISO-06's *"XML fences highlighted"*, which `W243/1` left unmeetable
-    # until these grammars were vendored. Both halves, because either alone
+    # ⛔ XML fences are highlighted, by vendored grammars. Both halves, because either alone
     # passes while the reader sees plain text: the bundle DECLARES the
     # language, and running it over real XML actually emits tokens.
     assert language in highlighted_languages()

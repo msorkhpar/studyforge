@@ -38,7 +38,7 @@ def carries_personal_data(root):
     return store
 
 
-#: ⛔ `W208`: every member of `RAISES` reached from the reader by a fixture.
+#: ⛔ Every member of `RAISES` reached from the reader by a fixture.
 REACHES = {ProgressError: unreadable, PersonalDataLeak: carries_personal_data}
 
 

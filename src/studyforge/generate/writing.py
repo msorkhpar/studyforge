@@ -56,8 +56,8 @@ the next build is where the lost edit shows.
 
 ⛔ **It follows that a file somebody put at a named path before any build ever
 ran is replaced too**, on the FIRST build, with no prior output in existence.
-⚠️ Measured, not feared: a hand-written `index.html` in an empty output
-directory does not survive. ⭐ It is named in the report — a `replace` line,
+⚠️ A hand-written `index.html` in an empty output directory does not
+survive. ⭐ It is named in the report — a `replace` line,
 never a silent `wrote` — and it is the price of a rule that needs no memory.
 
 ⛔ **A directory where a file belongs is still a refusal, and a file where a
@@ -83,10 +83,9 @@ pass existed.
 
 ## ⛔ A build mints its own pages and never its own output ROOT
 
-⚠️ **Measured, and this guard exists because of it**: `tests/emission` calls
-every public callable in `src/` with filler arguments, so it called this one
-with the relative path `alpha` — and a writer that minted its own root created
-`alpha/alpha` **in the repository**, silently, on every full test run. ⭐ A
+⚠️ A writer that minted its own root would create a directory wherever a
+relative path points — `tests/emission` calls every public callable with
+filler arguments such as `alpha`, which would land **in the repository**. ⭐ A
 relative output root resolves against whatever the process's working directory
 happens to be, which is the one thing a build must never let decide where its
 output lands. ⛔ So the root is the caller's to create and this refuses without

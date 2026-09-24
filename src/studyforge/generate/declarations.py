@@ -201,10 +201,9 @@ def _sources(
 def unit_location(corpus: Corpus, source: UnitSource) -> UnitLocations:
     """Where one unit WITH MATERIAL puts its artifacts, asked of the corpus's own profile.
 
-    ⛔ **It takes the unit WHOLE**. Every caller used to spell five
-    arguments out of a `UnitSource` it already held, so *dropping* one — the
-    label — stayed writable at four call sites and was caught only by a RED
-    test. ⭐ There is nothing left to drop: the source carries its own
+    ⛔ **It takes the unit WHOLE**, so no caller spells arguments out of a
+    `UnitSource` it already holds and none can drop one. ⭐ There is nothing to
+    drop: the source carries its own
     address, ordinal, title, origin and label, and this is the one place they
     are read off it.
     """

@@ -112,7 +112,7 @@ def root_index(corpus: Corpus, into: Path | str) -> Written:
         render_index(
             from_contents(corpus.contents, local, where),
             where,
-            # ⭐ The first page carries the rail too (the user's words).
+            # ⭐ The first page carries the rail too.
             rail(
                 corpus.contents,
                 where.shared.root_index,

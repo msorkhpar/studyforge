@@ -83,7 +83,7 @@ def test_a_submit_records_one_verdict_per_declared_case(tmp_path, ask, edge):
     cases, said = fold("test", workspace(), tmp_path, started)
     assert cases == {ASK: ask, EDGE: edge}
     # ⭐ And what is RECORDED is also what is SAID, in the record's own order
-    # (`AX-09`): the panel cannot fetch the state namespace — a built page may
+    #: the panel cannot fetch the state namespace — a built page may
     # name no API (R8) — so this stream is the only channel the breakdown has.
     assert said == (said_of(ASK, ask), said_of(EDGE, edge))
 
@@ -206,7 +206,7 @@ def test_every_line_said_is_the_one_template_and_carries_no_absolute_path(tmp_pa
 
 
 # --------------------------------------------------------------------------
-# ⛔ `AX-09`: what the panel reads off the stream, and what it cannot
+# ⛔ What the panel reads off the stream, and what it cannot
 # --------------------------------------------------------------------------
 
 
@@ -224,7 +224,7 @@ def test_the_line_a_case_is_said_on_is_framed_like_every_other_line_about_the_ru
 def test_the_two_verdict_words_are_the_module_s_and_are_not_the_run_s_verdict():
     # ⛔ `failed` is a CASE the grader reported against, never a word about the
     # run: `progress.is_pass` is untouched and a reader shown *edge cases 2/3*
-    # is looking at an incomplete practice (`AX-02`). ⚠️ Asserted so a later
+    # is looking at an incomplete practice. ⚠️ Asserted so a later
     # rewording cannot quietly turn the breakdown into a second verdict.
     assert CASE_PASSED != CASE_FAILED
     assert CASE_PASSED in said("x", passed=True)

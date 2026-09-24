@@ -15,15 +15,11 @@ the outcome:
 `routes.runs`: this reads a file a run left behind, and the module that
 records is the one that calls it.
 
-## ⛔ Its own module, because `routes.runs` had no room and a trim is not a seam
+## ⛔ Its own module, because the seam is the subject (R11)
 
-⚠️ **MEASURED at `a821c32f`: `src/studyforge/serve/routes/runs.py` stood at
-`378` of R11's `400`.** ⭐ The seam is the subject: that module is *what a
+⭐ The seam is the subject: that module is *what a
 started run IS until it ends* — the slot, the stream, the write — and this one
-is *what a grader's own report says about it*. ⛔ **Written here rather than
-bought as a size exception or paid for by trimming other prose out of a file
-several changes touched at once** (R11: a split is its own act, never a
-passenger).
+is *what a grader's own report says about it*.
 
 ## ⛔ A breakdown is a REPORT, never a second definition of a pass
 

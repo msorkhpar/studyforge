@@ -1,12 +1,12 @@
 """Mirror of `src/studyforge/render/markup/fragment.py` (R12).
 
-⭐ **`W107`'s settlement, as a tree property rather than a convention.** The
+⭐ **One anchor composer, as a tree property rather than a convention.** The
 composer is one line; what this module holds is the assertion its own docstring
 asks for — *no module outside `render.markup` composes an anchor from a literal,
 defines the name, or publishes it* — and the readings that show each assertion
 can fail, by planting what each one refuses.
 
-⚠️ **Resolved, never a grep** (`W105`'s lesson). The sweep reads the AST, so a
+⚠️ **Resolved, never a grep.** The sweep reads the AST, so a
 `"\\x23"`, a `"\\N{NUMBER SIGN}"` and a docstring that merely QUOTES `"#" + key`
 are told apart by their values rather than by their spelling.
 
@@ -35,7 +35,7 @@ SOURCE_ROOT = repository_root() / "src" / "studyforge"
 #: The one place a fragment may be composed from a literal, relative to the root.
 HOME = "render/markup/"
 
-#: The names this row moved, which nothing outside `HOME` defines or publishes.
+#: The names `HOME` owns, which nothing outside it defines or publishes.
 NAMES = ("FRAGMENT", "anchor")
 
 #: The modules the two producers are now, which the sweep must have READ — the
@@ -198,7 +198,7 @@ def test_the_literal_sweep_does_not_mistake_a_reader_for_a_composer(tmp_path, pl
 
 @pytest.mark.parametrize("survivor", ['href = "%c" % 35 + key\n', 'h = "".join(map(chr, [35]))\n'])
 def test_the_stated_survivors_do_survive(tmp_path, survivor):
-    # ⚠️ Reading the limit, so the docstring's claim about it is measured.
+    # ⚠️ Reading the limit, so the docstring's claim about it is checked.
     (tmp_path / "planted.py").write_text(survivor, encoding="utf-8")
     assert fragment_literals(tmp_path) == ([], 1)
 

@@ -6,8 +6,8 @@ the second set, places what comes back, and hands the record next door what it
 learned.
 
 ⛔ **Four ways to be stale and every one is checked**, including that the file is
-actually on disk: a record agreeing with itself is what reported *"0
-synthesised"* over 619 clips that were not there. ⚠️ The acceptance is asserted
+actually on disk: a record agreeing with itself would report *"0
+synthesised"* over clips that are not there. ⚠️ The acceptance is asserted
 over the set of files written and the set of ids submitted, never over this
 module's own report.
 

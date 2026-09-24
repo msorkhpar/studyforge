@@ -1,4 +1,4 @@
-"""Mirrors `render/container/progress.py`: the markup of where the reader is (`W362`)."""
+"""Mirrors `render/container/progress.py`: the markup of where the reader is."""
 
 from __future__ import annotations
 

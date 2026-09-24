@@ -8,9 +8,9 @@ emitter actually writes. `sites()` returns every site, resolved or not;
 selectors every stylesheet in `render/assets/` reaches.
 
 **How you use it.** `test_chrome` asserts `authorable ⊆ recognisable` over it
-(Ruling 192), and asserts first that no site went unresolved.
+, and asserts first that no site went unresolved.
 
-## ⛔ Why the labels are RESOLVED and never swept as literals (`W105`)
+## ⛔ Why the labels are RESOLVED and never swept as literals
 
 ⚠️ Two labels are COMPOSED — `f'<nav aria-label="{LIST_LABEL}">'` in
 `render/container/listing.py` and `render/index/disclosure.py` — so a literal

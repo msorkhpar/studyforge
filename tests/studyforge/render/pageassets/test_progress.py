@@ -17,7 +17,7 @@ reverses `SCRIPT_PARTS` and puts it through **the same composer**.
 ## ⚠️ What is NOT asserted here, and where it is
 
 ⛔ **No JavaScript runs in this suite.** The pinned image has no browser
-(`QA-03/1`) and the framework takes no dependency that would bring a second
+ and the framework takes no dependency that would bring a second
 engine — so whether a mark actually survives a reload over `file://` is a
 **browser** reading, taken in a named browser and version, not a text
 assertion. ⭐ What is pinned here is everything a text can
@@ -64,7 +64,7 @@ FIRST_USE = "studyforge.progress."
 STORAGE = ("localStorage", "sessionStorage", "indexedDB", "openDatabase")
 
 #: A clock, in every spelling that would put one in the record. ⚠️ A timestamp is
-#: a second fact nobody asked for, and it turns `SK-06`'s merge from a set union
+#: a second fact nobody asked for, and it turns the personal archive's merge from a set union
 #: into an ordering problem.
 CLOCKS = ("Date", "performance.now", "getTime", "toISOString")
 
@@ -111,14 +111,12 @@ def tracked_copies(name: str, root: Path | None = None) -> list[str]:
     ask — a fourth walk with its own idea of what this repository contains is
     exactly what that consolidation exists to prevent.
 
-    ⚠️ **What it replaces, and why the replacement is not a bigger exclusion
-    list.** The walk here read the disk from the repository root and excluded
-    `.git` by name, so a copy of a tree under the git-ignored `.scratch/` —
-    where every office's harness copies go, and where the pinned image
-    then mounts it — turned this suite RED on a tree with nothing wrong in it
-    (measured three times). ⛔ An exemption for
-    `.scratch` by name would have been the same defect waiting for the next
-    ignored directory; the tracked set has no names in it at all.
+    ⚠️ **Why not a walk with an exclusion list.** A walk of the disk from the
+    repository root would read a copy of the tree under the git-ignored
+    `.scratch/` — where harness copies go, and where the pinned image mounts it
+    — and turn this suite RED on a tree with nothing wrong in it. ⛔ An exemption
+    for `.scratch` by name would be the same defect waiting for the next ignored
+    directory; the tracked set has no names in it at all.
 
     ⚠️ **The blindness, said here rather than discovered later.** `git ls-files`
     reads the **index**, so a copy written and not yet `git add`ed is invisible.
@@ -284,7 +282,7 @@ def test_a_mark_is_an_explicit_act_and_nothing_infers_one(word):
 
 
 def test_the_consumer_joins_by_the_key_and_never_by_a_path():
-    # ⛔ Joined to everything else by the address and nothing else (SF-01). A join
+    # ⛔ Joined to everything else by the address and nothing else. A join
     # on an href would make a mark a property of where a file sits (R4).
     body = uncommented(CONSUMER)
     assert "getElementById" in body
@@ -296,17 +294,17 @@ def test_the_marked_hook_is_taken_from_the_published_contract():
     # ⛔ `chrome.css` draws the marked state, so the spelling is published rather
     # than agreed by coincidence between a script and a stylesheet.
     assert SURFACE_HOOKS["marked"] in uncommented(CONSUMER)
-    # ⭐ `W362` moved the drawing of a marked row into `lists.css`, one of the
-    # three chrome parts split from `chrome.css` at named seams.
+    # ⭐ A marked row is drawn in `lists.css`, one of the three chrome parts
+    # split from `chrome.css` at named seams.
     assert SURFACE_HOOKS["marked"] in text("lists.css")
 
 
 def test_no_python_module_anywhere_can_read_the_readers_store():
     # ⛔ **"A server run never treats a read mark as a pass."** The strongest form
-    # available at M2, and it is stronger than a route's behaviour: the two
+    # available, and it is stronger than a route's behaviour: the two
     # storage keys appear in no Python source at all, so nothing server-side can
     # read a mark, let alone promote one. ⚠️ A pass is established by a grader run
-    # and written where it was established (`SF-21`); this is the other half.
+    # and written where it was established; this is the other half.
     keys = sorted(set(re.findall(r"'(studyforge\.[a-z]+\.v\d+)'", uncommented(STORE))))
     assert keys, "no keys found, so this would pass over nothing"
     offenders = []
@@ -323,15 +321,13 @@ def test_the_store_and_its_consumer_are_reachable_from_the_asset_directory_only(
 
 
 def test_a_copy_under_the_ignored_scratch_directory_is_not_in_the_population(tmp_path):
-    # ⭐ The first plant, the one the check was fixed for: an office copies a
-    # tree under the ignored `.scratch/`, and the check
+    # ⭐ The first plant: a harness copies a tree under the ignored `.scratch/`, and the check
     # above stays GREEN because the copy is not in the tree.
     repository = planted_repository(tmp_path / "tree")
     harness = repository / ".scratch/src/studyforge/render/assets"
     harness.mkdir(parents=True)
-    (harness / STORE).write_text("// an office's harness copy\n", encoding="utf-8")
-    # ⛔ First that the plant is REAL and the disk form would have read it — the
-    # control this row exists because the previous form did not have.
+    (harness / STORE).write_text("// a harness copy\n", encoding="utf-8")
+    # ⛔ First that the plant is REAL and a disk walk would have read it.
     on_disk = sorted(path.relative_to(repository).as_posix() for path in repository.rglob(STORE))
     assert on_disk == sorted([ASSET_PATH, (harness / STORE).relative_to(repository).as_posix()])
     assert tracked_copies(STORE, repository) == [ASSET_PATH]
@@ -372,7 +368,7 @@ def test_the_region_the_script_looks_for_is_the_region_the_page_emits():
     assert f'{attribute}="{value}"' in emitted.read_text(encoding="utf-8")
 
 
-# --- the read words the rail and the lists speak (`W383`) --------------------
+# --- the read words the rail and the lists speak --------------------
 
 #: The page script that shows them, and the one template that holds them.
 VIEW = "progress-view.js"

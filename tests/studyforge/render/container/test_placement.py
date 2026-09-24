@@ -84,13 +84,13 @@ def test_the_refusal_does_not_reproduce_the_absolute_path():
 #: one directory, so the two hrefs are the same string.
 #:
 #: ⚠️ Written down rather than derived, so a profile that changed its shape
-#: fails this row instead of quietly agreeing with whatever it now does.
+#: fails here instead of quietly agreeing with whatever it now does.
 SAME_AS_ITS_UNITS = {"tree": False, "sibling": True}
 
 
 @pytest.mark.parametrize("profile_name", sorted(SAME_AS_ITS_UNITS))
 def test_a_container_page_reaches_the_assets_from_where_it_actually_sits(profile_name):
-    # ⭐ The module docstring's point, and the measurement that corrected it: a
+    # ⭐ The module docstring's point: a
     # container page is at or ABOVE its units, never below, so it needs no more
     # `../` steps than they do — and under `tree` it needs strictly fewer. A
     # renderer that assumed a unit page's href would load nothing there, render

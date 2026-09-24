@@ -67,11 +67,11 @@ figure renumbers only the blocks after it.
 
 ## ⛔ The gate runs here, on every string, regardless of what ran upstream (R7)
 
-⛔ **It runs at BOTH ends of the transform, and that is measured rather than
-cautious.** A plant put a local hostname — one of the four shapes the gate's own
-vocabulary recognises — into a list item and it was **admitted**: `split_identifier`
-had already respaced the machine-name shape — a host followed by the `.local`
-suffix — into two words, destroying the dot the gate's pattern anchors on.
+⛔ **It runs at BOTH ends of the transform.** A local hostname — one of the four
+shapes the gate's own vocabulary recognises — in a list item would otherwise be
+**admitted**: `split_identifier` respaces the machine-name shape — a host
+followed by the `.local` suffix — into two words, destroying the dot the gate's
+pattern anchors on.
 ⭐ So `_spoken` gates the **source** string and `_emit` gates the **derived**
 one, and `test_script.py` asserts every refusing row of
 the personal-data shape table through every carrier this module has — an
@@ -228,11 +228,11 @@ def _one_block(
 def _spoken(value: object, where: str) -> str:
     """Return `value` spoken, having gated it BEFORE the transform as well as after.
 
-    ⛔ **The transform must not be able to launder a leak, and this is measured rather
-    than feared.** A plant put a local hostname — one of the four shapes the gate's own
-    vocabulary recognises — into a list item, and it was **admitted**: the identifier
-    splitter had already respaced the machine-name shape — a host followed by
-    the `.local` suffix — into two words, destroying the dot the gate anchors on.
+    ⛔ **The transform must not be able to launder a leak.** A local hostname — one of
+    the four shapes the gate's own vocabulary recognises — in a list item would
+    otherwise be **admitted**: the identifier splitter respaces the machine-name
+    shape — a host followed by the `.local` suffix — into two words, destroying
+    the dot the gate anchors on.
     ⭐ So the source string is gated here and the derived string again in
     `_emit` — R7's rule that an emitter and its
     gate are read as a pair, with the pair being this module's own two ends.

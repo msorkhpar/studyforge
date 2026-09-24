@@ -60,9 +60,8 @@ guesses no suffix.**
 
 ## ⛔ THREE STATES, AND A BROKEN PROMISE IS THE ONE THIS PAGE COMPLAINS ABOUT
 
-⚠️ **A corpus that was NEVER NARRATED used to render identically to one whose
-audio FAILED**, and that is the defect the three states answer. ⭐ The three states,
-and they are the user's own decision rather than this module's:
+⚠️ **A corpus that was NEVER NARRATED must not render identically to one whose
+audio FAILED**, and the three states are what tell them apart:
 
 | what the record says | what the page shows |
 |---|---|
@@ -85,28 +84,27 @@ corpus somebody narrated half of. ⭐ The caller partitions, because this packag
 must not import `narrate` (see the key's note below) — and `playable.py`
 publishes those four sentences as module constants precisely so a caller can.
 
-## ⛔ A PROMISED, UNDELIVERABLE CLIP IS AN **EMPTY** ATTRIBUTE, AND THAT IS A REVERSAL
+## ⛔ A PROMISED, UNDELIVERABLE CLIP IS AN **EMPTY** ATTRIBUTE
 
-⚠️ **This package used to state that `data-audio=""` is never emitted.** ⛔ That
-was decided for the case *"this element has no clip"* and is still right there —
-an unnarrated paragraph carries no attribute at all. ⭐ **A promise the record
+⚠️ **An element with no clip carries no attribute at all** — an unnarrated
+paragraph never has `data-audio`. ⭐ **A promise the record
 made and the disk did not keep is a different state**, and the empty attribute is
-what says so, for three reasons that already existed:
+what says so, for three reasons:
 
 1. ⛔ **`narration.js` was written for it** and says so in its own comment:
    *"a passage may arrive with an empty source — the renderer emitted the
    attribute and synthesis has not run"*. It maps such a passage to
    `playable = false`, keeps it in the passage count, and never assigns it to
-   `audio.src` — so the *"a control that loads the page itself"* hazard the old
-   note named is guarded by the transport rather than by withholding the
+   `audio.src` — so the *"a control that loads the page itself"* hazard is guarded by the
+   transport rather than by withholding the
    attribute.
 2. ⭐ **`page.document`'s player gate is derived from the body** — a page carries
    a player when its body carries `AUDIO_ATTRIBUTE` — so the transport arrives
    for a broken promise with **no new gate**, which is the whole reason that gate
    was written as a derivation.
-3. ⛔ **Withholding it is what made the two states identical.** With every clip
-   absent and no attribute emitted, a broken corpus rendered byte-for-byte like a
-   corpus nobody had ever narrated.
+3. ⛔ **Withholding it would make the two states identical.** With every clip
+   absent and no attribute emitted, a broken corpus would render byte-for-byte
+   like a corpus nobody had ever narrated.
 """
 
 from __future__ import annotations

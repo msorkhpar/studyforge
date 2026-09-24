@@ -36,9 +36,8 @@ The gaps are `UNKEPT` only:
 
 ## ⛔ Narration off is a fourth input, and it is the FIRST state exactly
 
-⭐ **The user's ruling, 2026-09-23:** *"it should be optional … Somebody might
-wants to just cover the course wihtout voices as mentioned the voice might be
-cgenerated but still not serving them would be an option"*. ⭐ So `narrated`
+⭐ **Narration is optional**: a corpus may be read without voices, even when
+clips were generated. ⭐ So `narrated`
 answers an absent record for a corpus that is not voiced (`Corpus.narration`,
 from `corpus.json`'s `narration` or a run's `--no-narration`), **without
 opening the record**: every page is `SILENT` and no clip is copied, which is

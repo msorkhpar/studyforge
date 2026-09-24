@@ -66,7 +66,7 @@ def test_prev_and_next_traverse_every_declared_unit_in_reading_order(name):
 
 
 def test_a_neighbour_with_no_page_is_a_declared_absence_and_never_a_guessed_href(tmp_path):
-    """⛔ The failure neither of Ruling 164's policies catches: a legal dangling href."""
+    """⛔ The failure neither href policy catches: a legal dangling href."""
     root = with_a_unit_missing(tmp_path, "depth1", "archive/depth-one/raw/prose/unit-02")
     corpus = read_corpus(root)
 
@@ -122,7 +122,7 @@ def test_the_trail_runs_corpus_then_every_container_then_the_unit(name):
 def named_once(contents, key):
     """The groups above `key` a trail prints: each one whose title is not the crumb before it.
 
-    ⛔ `W388` clause 5 — the trail names each level once. Derived from the
+    ⛔ The trail names each level once. Derived from the
     contents document here, so the expectation is not the code's own loop.
     """
     kept, before = [], contents.title
@@ -166,7 +166,7 @@ def test_every_label_comes_out_of_the_contents_document(name):
 
 
 def test_a_container_with_a_page_is_linked_and_one_without_is_only_listed():
-    """⚠️ `SF-14/3` from the page's side, and the half of it this row closes.
+    """⚠️ An intermediate level has no page, read from the page's side.
 
     ⭐ A container map is written at the address units are declared under and
     nowhere above it, so `advanced/02-going-further` has a page and `advanced`
@@ -201,7 +201,7 @@ def test_a_container_with_a_page_is_linked_and_one_without_is_only_listed():
 
 @pytest.mark.parametrize("name", BOTH)
 def test_the_trail_matches_the_stand_in_apart_from_the_hrefs_this_row_adds(tmp_path, name):
-    """⭐ The stand-in gave every container crumb `href=None`; this row links them."""
+    """⭐ The stand-in gives every container crumb `href=None`; the build links them."""
     from tests.studyforge.render.page.sites import a_site, trail_for
 
     site = a_site(name, tmp_path / name)
@@ -211,7 +211,7 @@ def test_the_trail_matches_the_stand_in_apart_from_the_hrefs_this_row_adds(tmp_p
         to_index = index_href(corpus.contents, entry.key)
         mine = trail(corpus.contents, entry.key, to_index)
         theirs = trail_for(corpus.contents, entry, to_index)
-        # ⭐ `W388`: the stand-in predates naming each level once, so a crumb
+        # ⭐ The stand-in predates naming each level once, so a crumb
         # repeating the one before it is set aside on its side of the comparison.
         theirs = tuple(c for i, c in enumerate(theirs) if i == 0 or c.title != theirs[i - 1].title)
         assert [Crumb(c.level, c.title) for c in mine] == [Crumb(c.level, c.title) for c in theirs]
@@ -219,7 +219,7 @@ def test_the_trail_matches_the_stand_in_apart_from_the_hrefs_this_row_adds(tmp_p
 
 
 # --------------------------------------------------------------------------
-# ⭐ rail — the region that reaches the OTHER containers (`W324`)
+# ⭐ rail — the region that reaches the OTHER containers
 # --------------------------------------------------------------------------
 
 
@@ -305,11 +305,11 @@ def test_every_href_the_rail_writes_lands_on_a_page_the_build_wrote(tmp_path):
 
 
 def test_a_built_unit_page_links_a_unit_in_another_container(tmp_path):
-    """⛔ **The row's founding measurement, inverted and asserted.**
+    """⛔ **A unit page reaches a page in another container.**
 
-    Measured before this region: a unit page carried three `<nav>` elements and
-    not one href in any of them reached a page in another container, so the only
-    route from one course to another was back through the root index.
+    Without the rail a unit page's `<nav>` elements never reach another
+    container, so the only route from one course to another is back through the
+    root index.
     """
     out = an_output(tmp_path)
     write_site(FIXTURES / "depth2", out)
@@ -367,7 +367,7 @@ def test_a_unit_with_no_material_is_a_declared_absence_in_the_rail_too(tmp_path)
 
 @pytest.mark.parametrize("name", BOTH)
 def test_every_rail_unit_carries_the_key_the_contents_declares_for_it(name):
-    """⛔ `W368`: the key a read mark is stored under reaches every rail row."""
+    """⛔ The key a read mark is stored under reaches every rail row."""
     corpus = read_corpus(FIXTURES / name)
     walked = [entry.key for entry in order(corpus.contents)]
     _, _, listed = a_rail(name, walked[0])

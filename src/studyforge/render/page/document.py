@@ -38,8 +38,8 @@ something*. When this file crosses R11's 400 it divides into `document.py` and
 ## ⛔ The page's heading is the MATERIAL's when the material has one
 
 ⚠️ **A source document states what it is in its first heading**, and this page
-states what it is in its `<h1>` — and printing both is the title read twice,
-which was measured on **every** page of a rebuilt corpus. ⭐ So the two are
+states what it is in its `<h1>` — and printing both is the title read twice.
+⭐ So the two are
 one statement: `page.anchors.title_heading` names the block, this module prints
 it as the page's heading, and `page.section` withholds it from the body.
 
@@ -53,24 +53,21 @@ corpus.
 
 ## ⛔ The player is *derived*, not declared — and that is the answer to a real tension
 
-⚠️ **The page renderer lands before the speech ids it must not invent.** The
-extraction source's own docstring states the invariant: *"Ids come from
+⚠️ **The page renderer must not invent speech ids.** *"Ids come from
 `speakable.py`, never from here … two numbering schemes that agree today are
-exactly the coupling that breaks silently tomorrow."* ⛔ At M1 there is no such
-module, so this task mints no speech id and writes no audio attribute.
+exactly the coupling that breaks silently tomorrow."* ⛔ So this module mints
+no speech id and writes no audio attribute.
 
 ⭐ **So the player's gate reads what the page actually emitted**: a page carries
-a player when its body carries `assets.AUDIO_ATTRIBUTE`, and nothing else. At M1
-that is never true and the region is absent; at M3 narration writes the attribute
-and the player appears with it, in one change. ⚠️ **No document field was
-invented to hold a gate** — which is what a declared version of this would have
-required, one milestone before the task that owns it.
+a player when its body carries `assets.AUDIO_ATTRIBUTE`, and nothing else.
+Without narration that is never true and the region is absent; with it the
+player appears. ⚠️ **No document field holds a gate**, which a declared version
+of this would require.
 
-⚠️ **The stated consequence:** M1's golden pages **do** change at M3, when
-narration arrives. ⛔ That is a product change — a reading floor gaining a
-narrator — not a regression, and R10 pins that *a rerun is identical*, never
-that a page is frozen across milestones. It is recorded here so it is a decision
-rather than a surprise.
+⚠️ **The stated consequence:** a page's bytes change when a corpus gains
+narration. ⛔ That is a product change — a reading floor gaining a narrator —
+not a regression: R10 pins that *a rerun is identical*, never that a page is
+frozen across such a change.
 """
 
 from __future__ import annotations
@@ -100,8 +97,8 @@ SKELETON = "page.html"
 #: The panel that says a unit is not finished.
 PENDING_TEMPLATE = "pending-practices.html"
 
-#: The narration transport. ⛔ Its region is gated, and at M1 the gate is never
-#: open — see this module's docstring.
+#: The narration transport. ⛔ Its region is gated on the body carrying a clip —
+#: see this module's docstring.
 PLAYER_TEMPLATE = "player.html"
 
 #: The panel that says this unit was narrated and some of its audio is not on
@@ -272,14 +269,13 @@ def heading_attributes(document: dict, narration: Narration = SILENT) -> str:
 
 
 def meta(document: dict) -> str:
-    """Return the masthead's quieter second line — which a unit page no longer has.
+    """Return the masthead's quieter second line — which a unit page does not have.
 
-    ⛔ **The address slugs went first** (M2 and M3): builder identifiers
-    joined by middle dots, while the trail above the title already names every
-    container by its title. ⛔ **The variant went next**: shown alone
-    under the title it was a bare kind word (`prose`, `java`) that tells a
-    reader nothing the page does not, which is the brief's label that stops
-    being true. ⭐ It is still the page's, in R4's identity block and the served
+    ⛔ **No address slugs**: builder identifiers joined by middle dots, while
+    the trail above the title already names every container by its title.
+    ⛔ **No variant**: shown alone under the title it is a bare kind word
+    (`prose`, `java`) that tells a reader nothing the page does not.
+    ⭐ The variant is still the page's, in R4's identity block and the served
     document; it is just not printed as a line of its own.
     """
     del document

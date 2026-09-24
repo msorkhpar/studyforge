@@ -55,7 +55,7 @@ from the section above it.
 
 ⚠️ **`unit.sections` mints the key from kind and variant**, both structural,
 *because* a retitled section must not renumber the audio filed under it. ⭐ The
-page carries that key verbatim, so the player at M3, progress at M5 and an
+page carries that key verbatim, so the player, progress and an
 in-page link all address the same thing, and none of them has to read a heading.
 
 ## ⛔ The attachments are LINKS and sit after the section (spec C4)
@@ -123,8 +123,8 @@ def render(
 
     ⚠️ **The section's own key is what a clip is addressed under**, which is the
     reason `data-section` is minted from kind and variant rather than from a
-    heading: *"the page carries that key verbatim, so the player at M3, progress
-    at M5 and an in-page link all address the same thing"*. ⛔ Narration is
+    heading: *"the page carries that key verbatim, so the player, progress and an
+    in-page link all address the same thing"*. ⛔ Narration is
     looked up under that key and never under a title.
 
     ⚠️ `heads_page` says this section's first block is what the page is already

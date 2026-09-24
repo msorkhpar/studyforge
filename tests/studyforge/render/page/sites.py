@@ -1,4 +1,4 @@
-"""The site a build would write, for both `FND-04` fixtures and one planted shape.
+"""The site a build would write, for both framework fixture corpora and one planted shape.
 
 ⛔ **Imported, never copied.** The trail's acceptance is about a SITE — *"prev/next
 traverses every unit"* and *"no dangling links anywhere in the generated
@@ -8,26 +8,25 @@ module writes one, and `test_acceptance.py` reads it back.
 Run nothing here: it writes under a `tmp_path` a test hands it, never into the
 repository.
 
-## ⛔ The caller this stands in for is `SF-28`'s, and saying so is the point
+## ⛔ The caller this stands in for is the build's, and saying so is the point
 
 ⚠️ **Nothing in `src/` turns two contents documents into a `Links` and a trail
 yet.** `bar_for` and `trail_for` are that caller, written here so the clause can
-be run today rather than asserted about. ⭐ `W57`'s lesson is why it has to
-exist at all: a slot computed in `contents` and dropped in `render` satisfied
+be run today rather than asserted about. ⭐ It has to
+exist at all because a slot computed in `contents` and dropped in `render` satisfied
 both halves of two separate tests, because nothing joined them.
 
 ## ⛔ The last declared unit of every corpus here has NO page
 
 ⭐ `indexes.a_status`'s deliberate shape, carried so the fixture path and the
-planted path have one. ⚠️ It is what makes `Link(href=None)` a **measured** path:
+planted path have one. ⚠️ It is what makes `Link(href=None)` an **exercised** path:
 the second-to-last unit's `next` has nowhere to point, and the generated site is
 where a guessed href would dangle.
 
 ## ⭐ `depth2` crosses a module inside one section, and `crossings` says so apart
 
-⛔ The fixtures used to cross ONE boundary between them, and it
-changed the section and the module at once — so a count of crossings read `1`
-and hid that the module-only case was absent. ⭐ `depth2` now carries
+⛔ A single boundary that changes the section and the module at once would
+hide a missing module-only case behind a count of `1`. ⭐ `depth2` carries
 `advanced/03-putting-it-together`, and `crossings` classes every boundary by the
 levels it changes, so each kind is counted under its own name and never summed.
 ⚠️ `PLANTED_SHAPE` stays as the one module-only crossing under `tree` placement
@@ -58,7 +57,7 @@ from tests.studyforge.contents.corpora import (
 )
 from tests.studyforge.render.page.pages import depth1_unit_02, depth2_unit_01
 
-#: Both `FND-04` fixtures, and the served document each one's pages are rendered
+#: Both framework fixture corpora, and the served document each one's pages are rendered
 #: from. ⚠️ The body is irrelevant to every clause here — what is under test is
 #: where a page POINTS — so one real document per corpus is rendered at every
 #: unit's own placement rather than fifteen documents being invented.
@@ -133,8 +132,8 @@ def trail_for(contents: Contents, entry: Entry, index_href: str) -> tuple[Crumb,
     `Group.level` (which is `manifest.levels[d]`) and `Group.title` — and not one
     of them is spelled here, which is the clause *"read from data"*.
 
-    ⚠️ **Every container crumb is `href=None`, and that is `SF-14/3` showing up
-    from the page's side**: `contents.Group` carries no container page name, so
+    ⚠️ **Every container crumb is `href=None`, and that is the page's side of
+    an intermediate level having no page**: `contents.Group` carries no container page name, so
     nothing that reads only the two contents documents can address a container
     page. ⭐ The trail lists those steps rather than dropping them, which is why
     the hole is visible on the page instead of being invisible.
@@ -169,11 +168,11 @@ def _descend(group: Group, key: str) -> tuple[Group, ...] | None:
 def bar_for(site: Site, entry: Entry) -> Links:
     """The bar for one unit, with a declared absence wherever a page is missing.
 
-    ⛔ This is the one decision standing in for `SF-28`: a neighbour the corpus
+    ⛔ This is the one decision standing in for the build: a neighbour the corpus
     declares but this machine has no page for is handed as `Link(href=None,
     key=…)`, never as the href the contents computed for it. ⚠️ Passing that href
     would be the *guessed href for a page that does not exist* — the one failure
-    neither of Ruling 164's policies catches, and the one this clause is about.
+    neither href policy catches, and the one this clause is about.
     """
     computed = links(site.contents, entry.key)
     slots: dict[str, Link] = {}
@@ -248,7 +247,7 @@ def assemble(
 
 
 def a_site(name: str, root: Path) -> Site:
-    """One `FND-04` fixture corpus, generated as a site."""
+    """One framework fixture corpus, generated as a site."""
     contents = fixture_contents(name)
     return assemble(name, contents, placements(name, contents), FIXTURES[name]().document, root)
 

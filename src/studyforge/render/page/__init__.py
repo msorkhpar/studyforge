@@ -92,7 +92,7 @@ by typing a name, because it does not type one.
 
 ## ⛔ What is on this surface, and what deliberately is not
 
-⛔ **The sentence beside `__all__` used to be a promise; it is a test now.**
+⛔ **The sentence beside `__all__` is a test, not a promise.**
 `test_every_cross_package_import_of_this_package_names_something_on_its_surface`
 sweeps every module under `src/studyforge` that is not part of this package and
 fails on any import that reaches past `__all__` — so the next renderer cannot

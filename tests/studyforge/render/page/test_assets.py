@@ -27,8 +27,8 @@ def tree_placement() -> assets.Placement:
 
 
 def test_the_audio_attribute_is_named_once_for_both_sides():
-    # ⛔ The page renderer writes none; narration writes them at M3. The spelling is here so
-    # the two cannot differ — the same move `identity.py` made ahead of SF-04.
+    # ⛔ The page renderer writes none; narration writes them. The spelling is
+    # here so the two cannot differ.
     assert assets.AUDIO_ATTRIBUTE == "data-audio"
 
 

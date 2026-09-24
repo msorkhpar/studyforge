@@ -90,7 +90,7 @@ def test_a_fence_produces_a_caption_and_never_a_reading_of_the_code():
 
 
 def test_a_fence_is_not_narrated_whatever_its_language():
-    # ⛔ Ruling 93. The steps are shown on the page and never read aloud.
+    # ⛔ The steps are shown on the page and never read aloud.
     body = "Given a reading\nWhen it is written down\nThen the book agrees\n"
     pairs = said([{"type": "code", "lang": "gherkin", "text": body}])
     assert len(pairs) == 1
@@ -126,7 +126,7 @@ def test_an_ordered_list_numbers_each_item_aloud_in_words():
 
 
 def test_a_nested_list_is_spoken_inside_its_parent_items_clip():
-    # ⛔ W258: one unit per top-level item, as before, and the nested items are
+    # ⛔ One unit per top-level item, as before, and the nested items are
     # said in reading order inside it — numbered when that list is ordered.
     marker = SUB_MARKER["list"]
     nested = {"type": "list", "ordered": True, "items": ["zero", "one"]}
@@ -138,7 +138,7 @@ def test_a_nested_list_is_spoken_inside_its_parent_items_clip():
 
 
 def test_an_ordered_list_counts_aloud_from_the_number_its_author_started_at():
-    # ⛔ W264, from the source: the continued step list says "Second", not "First".
+    # ⛔ From the source: the continued step list says "Second", not "First".
     continued = parse("1. one\n\n```\nx\n```\n\n2. two\n3. three\n")[2]
     assert [words for _id, words in said([continued])] == ["Second, two", "Third, three"]
 
@@ -278,7 +278,7 @@ def test_the_gate_refuses_a_leak_inside_a_list_item_and_a_table_cell():
 
 
 def test_an_r7_refusal_is_never_translated_into_this_packages_error_family():
-    # ⛔ Ruling 58. A caller looping over a corpus must not log a leak as "that unit
+    # ⛔ R7: a caller looping over a corpus must not log a leak as "that unit
     # did not narrate" and finish.
     with pytest.raises(PersonalDataLeak) as refused:
         said([{"type": "para", "text": f"at {HOME}/x"}])
@@ -306,7 +306,7 @@ def test_a_section_with_no_blocks_says_nothing_and_does_not_raise(blocks):
 
 
 # --------------------------------------------------------------------------
-# ⛔ Ruling 144 — the emitter and the gate read as a pair, over the SHARED vocabulary
+# ⛔ The emitter and the gate read as a pair, over the SHARED vocabulary
 # --------------------------------------------------------------------------
 
 #: Every shape that carries text into this module, named by where it carries it. ⭐ One
@@ -348,9 +348,9 @@ def test_both_halves_of_the_shared_shape_vocabulary_are_inhabited():
 @pytest.mark.parametrize("carrier", sorted(CARRIERS))
 @pytest.mark.parametrize("row", REFUSED_SHAPES, ids=lambda row: row["shape"])
 def test_every_refusing_shape_is_refused_through_every_carrier(row, carrier):
-    # ⛔ The defect this closes, measured: a local hostname in a list item was
-    # ADMITTED, because `split_identifier` destroyed the dot the gate anchors on
-    # before the gate ran. The transform must not be able to launder a leak.
+    # ⛔ A local hostname in a list item would be ADMITTED if the gate ran only
+    # after `split_identifier`, which destroys the dot the gate anchors on. The transform must not
+    # be able to launder a leak.
     with pytest.raises(PersonalDataLeak):
         units_of(UNIT, "shared", [CARRIERS[carrier]("".join(row["spelling"]))])
 

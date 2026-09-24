@@ -168,7 +168,7 @@ def test_keys_sort_stably_whatever_order_they_were_built_in():
 
 
 # --------------------------------------------------------------------------
-# `last.cases` — the breakdown, which is a report and never a pass rule (AX-02)
+# `last.cases` — the breakdown, which is a report and never a pass rule
 # --------------------------------------------------------------------------
 
 VERDICTS = {"test_the_ask": True, "test_an_edge": False}
@@ -194,7 +194,7 @@ def test_the_breakdown_is_copied_rather_than_held_by_reference():
 
 
 def test_a_failing_edge_does_not_stop_the_run_passing_and_a_passing_one_does_not_start_it():
-    # ⛔ The clause AX-02 may not touch: `is_pass` is the mode and the status,
+    # ⛔ The clause the breakdown may not touch: `is_pass` is the mode and the status,
     # and nothing in the breakdown is allowed to become a second definition.
     incomplete = graded(cases={"test_the_ask": True, "test_an_edge": False}, exit_code=0)
     assert incomplete["last"]["passed"] is True

@@ -133,7 +133,7 @@ def test_a_corpus_with_a_source_and_no_depth_is_refused():
 
 
 def test_a_contents_document_carrying_personal_data_is_refused_before_it_is_decoded():
-    # ⛔ W7: this module decodes each corpus's contents document, so it gates each one.
+    # ⛔ R7: this module decodes each corpus's contents document, so it gates each one.
     leaking = FakeSource(toc=json.dumps({"title": LEAK}) + "\n")
     source = CorporaContent({"leaking": leaking}, {"leaking": 1})
     with pytest.raises(PersonalDataLeak) as refused:

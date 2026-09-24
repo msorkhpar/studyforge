@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/narrate/synth/location.py` (R12) — `W226`, where a clip is."""
+"""Mirror of `src/studyforge/narrate/synth/location.py` (R12) — where a clip is."""
 
 from __future__ import annotations
 

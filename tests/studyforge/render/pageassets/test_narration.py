@@ -40,7 +40,7 @@ from studyforge.render.pageassets import (
     text,
 )
 
-#: The two parts this task owns, and the template they are the other side of.
+#: The two parts narration owns, and the template they are the other side of.
 PART = "narration.js"
 STYLE = "narration.css"
 PLAYER = "player.html"
@@ -174,18 +174,17 @@ def test_the_three_honest_states_each_have_their_own_sentence(state):
 
 
 def test_the_nothing_to_play_sentence_does_not_claim_the_unit_was_never_narrated():
-    # ⛔ **`W202` Q4, at the one sentence that could still undo it.** After the
-    # promise states landed, a page reaches this transport ONLY when a narration
+    # ⛔ **The narration promise, at the one sentence that could undo it.** A
+    # page reaches this transport ONLY when a narration
     # record exists — a corpus nobody ever narrated emits no passage at all and
     # this part returns before unhiding anything. ⚠️ So *"no audio has been
-    # generated for this unit yet"* became a sentence that can only be FALSE when
-    # it is shown, and it is the exact conflation this row was dispatched to
-    # remove: the reader is told the unit was never narrated when in fact its
-    # clips went missing.
+    # generated for this unit yet"* is a sentence that can only be FALSE when it
+    # is shown: the reader would be told the unit was never narrated when in
+    # fact its clips went missing.
     #
-    # ⭐ **PLANT `P14`.** Reverting the wording was caught only by the committed
-    # goldens, which the next person regenerates without knowing why they moved.
-    # This states the intent, so the wording has a reason rather than a hash.
+    # ⭐ The committed goldens alone would catch a reworded sentence only as a
+    # moved hash, which the next person regenerates. This states the intent, so the wording has a
+    # reason rather than a hash.
     match = re.search(r'data-state="none" hidden>([^<]+)<', player_markup())
     assert match, "no sentence for the none state"
     sentence = match.group(1)
@@ -274,8 +273,8 @@ def test_the_highlight_hook_is_reached_by_both_halves_of_this_task():
 
 def test_the_highlight_hook_is_deliberately_not_published_and_needs_no_renderer():
     # ⛔ `data-marked` IS published because `chrome.css` paints a state
-    # `read-mark.js` writes — two offices holding the two ends of one spelling.
-    # Here both ends are this task's and no renderer emits it, so publishing it
+    # `read-mark.js` writes — two files holding the two ends of one spelling.
+    # Here both ends are this part's and no renderer emits it, so publishing it
     # would oblige a contract with no second side. ⚠️ Asserted so the omission
     # reads as a decision rather than as something nobody got to.
     from studyforge.render.pageassets import SURFACE_HOOKS
@@ -290,7 +289,7 @@ def test_the_highlight_hook_is_deliberately_not_published_and_needs_no_renderer(
 def test_the_stylesheet_defines_no_colour_and_no_measure_of_its_own():
     # ⛔ `test_palette` asserts the first half over every authored part; this is
     # the same property said at this part, so a raw value added here fails with
-    # this task's name on it rather than as a line in a sweep.
+    # this part's name on it rather than as a line in a sweep.
     body = uncommented(STYLE)
     assert re.search(r"#[0-9a-fA-F]{3,8}\b", body) is None
     assert re.search(r"\brgba?\(", body) is None
@@ -298,10 +297,10 @@ def test_the_stylesheet_defines_no_colour_and_no_measure_of_its_own():
 
 def test_the_stylesheet_paints_the_five_tokens_that_were_waiting_for_it():
     # ⭐ `chrome.css` deferred exactly this region and named the tokens: "the
-    # narration player is the only `<footer>` a page carries, it is narration's at
-    # M3, and `--player-height`, `--panel` and `--shadow` are defined and waiting
-    # for it." ⛔ `tests/visual/palette.py`'s ledger called four more UNPAINTED
-    # with this task named against each, and painting one forces somebody to say
+    # narration player is the only `<footer>` a page carries, it is narration's,
+    # and `--player-height`, `--panel` and `--shadow` are defined and waiting
+    # for it." ⛔ `tests/visual/palette.py`'s ledger names the highlight tokens with this
+    # part against each, and painting one forces somebody to say
     # which ground its contrast is taken against.
     body = uncommented(STYLE)
     for token in ("--player-height", "--panel", "--shadow", "--hl-bg", "--hl-bar", "--hl-fg"):
@@ -334,10 +333,10 @@ def test_lighting_a_passage_does_not_move_it():
 
 
 def test_the_transport_does_not_answer_the_page_column_a_second_time():
-    # ⛔ `chrome.css` bounds the column ONCE, on `body` (`PO-22/6`). A fixed
+    # ⛔ `chrome.css` bounds the column ONCE, on `body`. A fixed
     # footer would have to be paid for with a `padding-bottom` on `body` here,
     # which is the two-rules-for-one-question defect; sticky costs nothing.
-    # ⭐ `W388` places the footer in the grid with `body:has(…) > footer#player`,
+    # ⭐ The footer is placed in the grid with `body:has(…) > footer#player`,
     # a rule whose subject is the FOOTER; what is refused is a rule on `body`.
     body = uncommented(STYLE)
     assert on_body(body) == []

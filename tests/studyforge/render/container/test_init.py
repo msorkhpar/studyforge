@@ -2,7 +2,7 @@
 
 ⭐ **The container page's acceptance, clause by clause.** Everything here is about the
 container page as a whole: the goldens, the `file://` floor, R4's block, R10's
-stability, and the clause nothing else can check — that `SF-04` discovers these
+stability, and the clause nothing else can check — that discovery finds these
 pages **by identity**. The seams themselves are asserted in the module each one
 belongs to.
 """
@@ -42,7 +42,7 @@ _ADDRESSES = re.compile(r'(?:href|src)="([^"]*)"')
 
 @pytest.fixture(params=cases(), ids=lambda case: case.name)
 def case(request):
-    """Each container of each FND-04 fixture, built the way a build would."""
+    """Each container of each framework fixture corpus, built the way a build would."""
     return request.param
 
 
@@ -143,7 +143,7 @@ def test_every_unit_the_page_links_is_addressed_from_this_page(case):
 
 
 def test_a_scan_discovers_every_container_page_by_identity(tmp_path):
-    # ⛔ The rendering acceptance: "SF-04 discovers them by identity." The pages are
+    # ⛔ The rendering acceptance: "discovery finds them by identity." The pages are
     # written where placement says, the real scan walks the tree, and what comes
     # back is compared against the addresses the maps declare.
     depths = {}
@@ -166,7 +166,7 @@ def test_the_two_fixtures_use_two_different_placement_profiles():
     # ⚠️ The unasserted neighbour, named: the goldens above prove the renderer
     # under the profiles the fixtures happen to declare. This is the assertion that they are two — a
     # pair of `tree` corpora would have left `sibling`'s bare-filename href, the
-    # shape `W57` was about, untested here.
+    # shape, untested here.
     declared = {name: fixture_manifest(name).placement for name in ("depth1", "depth2")}
     assert declared == {"depth1": "tree", "depth2": "sibling"}
 

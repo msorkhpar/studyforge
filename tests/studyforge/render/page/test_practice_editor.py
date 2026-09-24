@@ -1,11 +1,9 @@
 """Mirror of `src/studyforge/render/assets/practice-editor.js` (R12).
 
-⛔ **Split out of `test_practice.py` with the code it reads** (`AX-09`): that
-module stood at `599` of R11's `600` and `practice.js` at `399` of `400`, so the
-row that had behaviour to add to the panel took the seam `W431` named — the two
+⛔ **Its own module, as `practice-editor.js` is its own file** (R11): the two
 editor windows, their tablist, and the one reload a cold instance needs.
 
-⚠️ **No JavaScript runs in this suite** (`QA-03/1`: the pinned image has no
+⚠️ **No JavaScript runs in this suite** (the pinned image has no
 engine), so what a TEXT can establish about the editor half is established here
 and the browser reading is the visual harness's. ⭐ What a text can establish is
 exactly what makes an automatic reload safe rather than catastrophic: that each
@@ -28,7 +26,7 @@ def behaviour() -> str:
 
 
 def test_the_editor_half_names_no_api_no_origin_and_no_client_file():
-    # ⛔ R8 and `W370`, on the second file as on the first: a built text that
+    # ⛔ R8, on the second file as on the first: a built text that
     # named the API, the serving origin or the client would be a defect the
     # floor reads. ⭐ `window.studyforge.run` is the one seam, exactly once.
     body = behaviour()
@@ -48,7 +46,7 @@ def test_the_editor_half_never_claims_or_enforces_read_only():
 
 
 def test_the_editor_slot_is_filled_from_the_served_client_and_from_nowhere_else():
-    # ⭐ The seam `W416` drew and `W429` kept: the panel reads
+    # ⭐ The seam: the panel reads
     # `studyforge.run` — the same object it already runs and stops through —
     # and fills the slot the panel already ships. ⛔ It asks for ONE PRACTICE's
     # windows, not for the corpus's folder: a folder cannot say which of two
@@ -77,7 +75,7 @@ def test_a_frame_is_added_only_for_an_editor_the_server_says_is_up():
 def test_the_two_frames_are_built_from_urls_the_server_answered_and_from_nothing_else():
     # ⛔ R8: a built page names no origin, no port and no path inside anybody's
     # container. ⭐ **The whole URL arrives at serve time** — this file composes
-    # no part of it, which is stronger than `W416`'s encoded folder was.
+    # no part of it.
     body = behaviour()
     assert "built.src = url;" in body
     for word in ("?folder=", "payload=", "openFile", "vscode-remote", "encodeURIComponent"):
@@ -105,11 +103,9 @@ def test_the_tests_frame_is_built_lazily_on_the_first_click_of_its_tab():
     # opens the tests never pays for one — so the test frame is built inside
     # `select`, behind the once-only latch, and never beside the main one.
     #
-    # ⛔ **The COUNT is the half that measures anything, and it is here because
-    # the first version of this case did not have it.** Asserting only that the
+    # ⛔ **The COUNT is the half that checks anything.** Asserting only that the
     # lazy call is inside `select` is satisfied by a build that ALSO builds the
-    # frame eagerly beside the main one — measured: that exact plant left this
-    # case GREEN, which is a plant that observed nothing.
+    # frame eagerly beside the main one.
     body = behaviour()
     region = body[body.index("function windows(panel, where)") : body.index("function ask(")]
     assert region.count("frame(slots.test") == 1
@@ -131,7 +127,7 @@ def test_the_sentence_stands_until_a_frame_replaces_it():
 
 
 def test_the_tablist_is_shown_only_where_there_are_two_windows_to_choose_between():
-    # ⚠️ `W357`'s shape: a record may name a file and no test. One tab is no
+    # ⚠️ A record may name a file and no test. One tab is no
     # choice, and a tab over a file the material does not have is a dead
     # control — the same honesty that offers no Submit there.
     body = behaviour()
@@ -139,9 +135,9 @@ def test_the_tablist_is_shown_only_where_there_are_two_windows_to_choose_between
     assert "var tested = !!(where.test && where.test.url);" in body
 
 
-# --- ⛔ `W430`: the ONE reload a genuinely cold instance's first page needs ---
+# --- ⛔ The ONE reload a genuinely cold instance's first page needs ---
 #
-# ⛔ **No JavaScript runs in this suite** (`QA-03/1`), so what a TEXT can
+# ⛔ **No JavaScript runs in this suite**, so what a TEXT can
 # establish about the reload is established here and the browser reading is the
 # visual harness's. ⭐ What a text can establish is exactly the thing that makes
 # an automatic reload safe or catastrophic: that each of its guards is in front
@@ -214,8 +210,8 @@ def test_every_frame_is_held_before_it_is_added_to_the_page():
 def test_a_steal_that_raises_no_blur_is_still_seen():
     # ⛔ **The route the visual harness cannot stage**: a frame taking focus
     # from another frame, or while the browser window is not focused, raises
-    # no `blur` on the page — measured on the pilot, where the page still
-    # glided to the editor. ⭐ So the page reads `activeElement` on an interval
+    # no `blur` on the page, and the page would still glide to the editor. ⭐ So the page reads
+    # `activeElement` on an interval
     # from the moment its first frame is built, and never stops.
     body = behaviour()
     install = body[body.index("function install()") : body.index("return function (built)")]
@@ -225,8 +221,8 @@ def test_a_steal_that_raises_no_blur_is_still_seen():
 
 
 def test_focus_is_given_back_one_task_later_and_never_inside_the_blur():
-    # ⚠️ Measured: a focus moved inside the `blur` — or in a microtask, which is
-    # still inside it — is ignored, and the page glided to the editor.
+    # ⚠️ A focus moved inside the `blur` — or in a microtask, which is still
+    # inside it — is ignored, and the page glides to the editor.
     body = behaviour()
     refuse = body[body.index("function refuse(at)") : body.index("function arrived(at)")]
     assert "setTimeout(function () {" in refuse

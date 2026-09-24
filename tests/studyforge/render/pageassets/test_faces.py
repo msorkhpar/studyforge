@@ -1,7 +1,6 @@
 """The vendored faces: pinned, unmodified, licensed, and carried inside the stylesheet.
 
-Mirrors `render/pageassets/faces.py` (`W362`, the register's rulings on the fonts
-and on D3).
+Mirrors `render/pageassets/faces.py`.
 """
 
 from __future__ import annotations
@@ -52,7 +51,7 @@ def test_every_face_ships_beside_its_open_font_licence():
 
 @pytest.mark.parametrize("family", ["Charis", "Andika"])
 def test_a_family_with_a_reserved_name_is_vendored_whole(family):
-    # ⛔ The register's ruling: Charis and Andika reserve their names, a subset
+    # ⛔ Charis and Andika reserve their names, a subset
     # is a Modified Version that may not carry them, so no file is subset. The
     # licence says which names are reserved; this checks the claim is still true
     # of the file that ships, and that every face of the family is a full release

@@ -112,7 +112,7 @@ definition of a pass.
 ⚠️ `exercise.bundle.emit` ships it as a **`disclosure` block** under the
 lesson, so `page.blocks.prose` draws it as a real `<details>`: closed until the
 reader asks, openable with scripting off entirely, and reachable before a first
-Submit because nothing gates it (the user's ruling, spec §7 §8). ⛔ **There is
+Submit because nothing gates it (spec §7 §8). ⛔ **There is
 nothing for this module to add and adding one would be the second copy** — a
 region here would be a second place the reference could be withheld from.
 """
@@ -150,8 +150,8 @@ TESTS_TAB_TEMPLATE = "practice-tab-tests.html"
 #: under is spelled once, in the package that owns it.
 ACT_TEMPLATES = {RUN: "practice-run.html", TEST: "practice-submit.html"}
 
-#: `what this record IS -> the sentence a reader is shown` (spec §7 §9, the
-#: user's ruling of 2026-09-19). ⛔ **Four cases and four files** (R13), keyed on
+#: `what this record IS -> the sentence a reader is shown` (spec §7 §9). ⛔ **Four cases and four
+#: files** (R13), keyed on
 #: the record's own PREDICATES and never on `provenance` or `trust`, so neither
 #: R5 key can reach the page through this mapping — and no `data-*` attribute
 #: carries one either, which is what stops the words leaking back through a
@@ -254,7 +254,7 @@ def controls(exercise: Exercise) -> str:
     (and `serve.routes.run` answers `409` for the other case): a record
     carries `main_path` and `run_command` or it is not a record, while the
     grader half is written whole or not at all. ⚠️ Offering a Submit that can
-    only fail is the dead button this row exists to refuse.
+    only fail is a dead button.
     """
     acts = [RUN] if exercise.test_command is None else [RUN, TEST]
     return "".join(templates.fill(ACT_TEMPLATES[act], mode=act) for act in acts)

@@ -2,7 +2,7 @@
 
 Mirrors no source module — like `test_run_client.py`, whose file it reads: the
 quiz half lives in `serve/assets/run-client.js`, the ONE script a serving
-process adds to a page (`W370`).
+process adds to a page.
 
 ⛔ **No JavaScript runs in this suite**; the browser reading is
 `tests/visual/test_practice_quiz.py`'s. ⭐ What a text can establish is pinned

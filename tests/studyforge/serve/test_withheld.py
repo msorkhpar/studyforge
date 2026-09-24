@@ -95,8 +95,8 @@ def test_the_key_is_carried_by_its_structure_beside_a_served_question_id(text: s
     ],
 )
 def test_the_key_structure_with_no_served_question_id_is_not_withheld(text: str) -> None:
-    """⛔ Register review: a `"correct"` field that names no quiz this instance serves is
-    that file's own data — `M9`'s Java fixtures may carry one — and is served."""
+    """⛔ A `"correct"` field that names no quiz this instance serves is that
+    file's own data — another corpus's fixtures may carry one — and is served."""
     assert not carries(text.encode(), SERVED)
 
 

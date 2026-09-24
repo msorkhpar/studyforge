@@ -1,4 +1,4 @@
-"""The framework's narration client (NS-05, R7, R4, R6, R8, W223).
+"""The framework's narration client (R7, R4, R6, R8).
 
 ⛔ **The acceptance clause this file exists for is asserted over the REQUESTS,
 not over the output and not over the exception.** `Recorder` collects every
@@ -13,7 +13,7 @@ not merely *every request the seam produced*. Its own positive control is
 never fire would prove the same nothing.
 
 ⭐ Placing clips is `answers.place` and is tested in `test_answers.py`; reading
-an answer's bytes is the wire's and is tested in `test_wire.py` (`W223`).
+an answer's bytes is the wire's and is tested in `test_wire.py`.
 
 ⚠️ **The home-path and token material below is assembled at run time**, the same
 trick `tests/studyforge/archive/test_scrub.py` uses and for the same reason: this
@@ -270,7 +270,7 @@ def test_the_real_transport_reports_absence_in_a_scrubbed_printable_sentence(mon
 
 
 # --------------------------------------------------------------------------
-# ⛔ Ruling 58, and the refusal's own words
+# ⛔ R7, and the refusal's own words
 # --------------------------------------------------------------------------
 
 
@@ -284,7 +284,7 @@ def except_arms(function: ast.AST) -> list[str]:
 
 
 def test_no_arm_of_this_module_catches_a_leak_or_swallows_everything():
-    """⛔ Ruling 58's own instrument, run over this module rather than the tree."""
+    """⛔ R7's own instrument, run over this module rather than the tree."""
     caught = except_arms(ast.parse(SOURCE.read_text(encoding="utf-8")))
     assert caught, "the scan found no arm, so the checks below read nothing"
     assert "bare" not in caught
@@ -367,7 +367,7 @@ def test_probe_reports_a_reachable_service_and_its_deployment_settings():
 
 @pytest.mark.parametrize("model", ["kokoro", "kokoro-v1.1"])
 def test_probe_reads_the_deployments_model_off_healthz_and_composes_none(model):
-    # ⛔ W223 clause 1: `engine_model` is what `/healthz` reports, read verbatim.
+    # ⛔ `engine_model` is what `/healthz` reports, read verbatim.
     health = NarrateClient(BASE, transport=Recorder(as_json({**HEALTHY, "engine_model": model})))
     assert health.probe().engine_model == model
 
@@ -394,7 +394,7 @@ def test_an_unreadable_health_answer_is_still_not_a_crash():
 
 
 def test_probe_catches_only_the_wires_own_refusals():
-    # ⛔ W212/3: a health answer is not a manifest, and the decode error is the
+    # ⛔ A health answer is not a manifest, and the decode error is the
     # wire's. Every arm `probe` holds names a class `narrate.wire` defines.
     method = next(
         node

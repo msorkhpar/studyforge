@@ -15,14 +15,12 @@ for where the copy goes, `sourcepath` for what a reference may be, and
 `unit.builder` for the document a page is rendered from. ⛔ It names no
 source (R1).
 
-## ⛔ Why this row exists: the renderer copies nothing, and said so
+## ⛔ Why this pass exists: the renderer copies nothing
 
 ⚠️ `render.page` emits `<img src="images/diagram.svg">` — the **placed** copy,
-whose directory the placement profile chose — and puts no file there. Measured:
-until this pass existed, `depth1`'s one figure rendered as the
-broken-image glyph with its `alt` text wrapped under a correctly styled caption,
-and **no test could see it**, because the renderer's own checks resolve hrefs
-against a tree those tests write.
+whose directory the placement profile chose — and puts no file there. Without
+this pass a figure renders as the broken-image glyph, and the renderer's own
+checks cannot see it, because they resolve hrefs against a tree they write.
 
 ## ⛔ The destination is ASKED, and the population is the RENDERER's
 
@@ -61,10 +59,9 @@ a reader can never reach.
 
 ## ⛔ A unit gets a media directory only for a kind it has files of
 
-⚠️ **This pass used to mint every declared directory for every declared unit**,
-so a corpus with no media got one empty directory per kind per unit, and git
-cannot track an empty directory: a built checkout differed from its clone. ⭐ A
-directory is now minted only when a copy fills it. ⛔ **Every declared
+⚠️ **Git cannot track an empty directory**, so a directory minted for every
+declared unit would make a built checkout differ from its clone. ⭐ A directory
+is minted only when a copy fills it. ⛔ **Every declared
 directory is still asked about** (`writing.stand`), so a reader's file standing
 where one belongs is named whether or not anything would fill it (R3), and a
 directory an earlier build left on disk is never removed.

@@ -40,51 +40,48 @@ section key is already required to be a slug by the module that mints it.
 ⚠️ **Narration owns speech ids** and the extraction source's own docstring
 says why the two must not be one scheme: *"two numbering schemes that agree
 today are exactly the coupling that breaks silently tomorrow."* ⭐ So this
-module answers the question a page has at M1 — *what may be linked to?* — and
+module answers the question a page has — *what may be linked to?* — and
 answers it for **headings and sections only**, which is what an outline and a
 cross-page link actually address.
 
 ⛔ **Deliberately not one id per block.** Minting an anchor for every paragraph
-would be the speech-id scheme under another name, arriving one milestone before
-the task that owns it, and its agreement with narration's would be a coincidence
+would be the speech-id scheme under another name, and its agreement with narration's would be a
+coincidence
 nothing checks.
 
 ## ⛔ The page is headed by the material's own title when the material states one
 
 ⚠️ **A source document states what it is in its first line**, and a unit page
 states what it is in its `<h1>` — so a page that emits both prints the title
-twice, which is what a reader sees first, and it showed on every page of
-a rebuilt corpus. ⭐ **The resolution is that the two are ONE statement**: when
+twice, which is what a reader sees first. ⭐ **The resolution is that the two are ONE statement**:
+when
 the page's opening section begins with a heading that is that material's own
 title, that block **is** the page's heading, and the body does not print it a
 second time.
 
-⛔ **Promoted, never dropped.** *"Drop the first `<h1>`"* is the wrong rule, and
-the reason was measured on a real corpus rather than reasoned about: a unit whose
+⛔ **Promoted, never dropped.** *"Drop the first `<h1>`"* is the wrong rule: a unit whose
 page title is one word opens with a numbered sentence that contains that word
 and says more — it **restates the title and is not the same words** — so a rule that
-only compared text would not have fixed it, and a rule that deleted the block
-would have taken the material's own numbering off the page. ⭐ Moving it keeps
+only compared text would miss it, and a rule that deleted the block would take the material's own
+numbering off the page. ⭐ Moving it keeps
 every word, keeps its anchor, and leaves the `<h2>`s beneath it at the level the
 document wrote them, so the page's outline becomes the document's own outline
 instead of a flattened copy.
 
 ## ⛔ A TITLE DOMINATES ITS MATERIAL, AND THAT — NOT ITS LEVEL — IS THE TEST
 
-⛔ **A level test was written first and it was WRONG, measured on a built site.**
-One corpus writes its document titles at level 1 in **25** of its documents and
-at level **2** in the other **13**, with each document's sub-sections one level
-below its own opener. ⚠️ A rule keyed on level 1 left those thirteen pages
-reading their title twice, and the pages were rebuilt and counted before the
-rule was rewritten — which is the only reason it was caught.
+⛔ **A level test is wrong.** A corpus may write some document titles at level 1
+and others at level 2, with each document's sub-sections one level below its own
+opener. ⚠️ A rule keyed on level 1 leaves the second kind reading their title
+twice.
 
-⭐ **What every one of those openers has in common is not a level: it is that
+⭐ **What every such opener has in common is not a level: it is that
 NOTHING ELSE IN THE MATERIAL STANDS AT ITS LEVEL.** A title dominates the
 document under it; a section heading has siblings. ⛔ So the test is: the first
 block is a heading, and no other heading in that section's material is at the
 same level.
 
-⚠️ **Measured on the declared level and never on the rendered one.** The rendered
+⚠️ **Read on the declared level and never on the rendered one.** The rendered
 level is clamped to `h2..h6`, so a level-1 opener and its level-2 sections all
 render as `<h2>` and would look like peers to a test that asked the clamp — and
 the rule would refuse exactly the documents it exists for.
