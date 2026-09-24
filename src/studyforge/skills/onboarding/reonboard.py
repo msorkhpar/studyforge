@@ -105,7 +105,7 @@ def reonboard(
         root=root,
     )
     settled = tuple(settle or ())
-    if settled and made.manifest.corpus_api > json.loads(text).get("corpus_api", 1):
+    if settled and made.manifest.corpus_api > parse(text).corpus_api:
         # ⭐ `W460`: a settled answer that only a newer contract reads carries that
         # version with it. The version is `promote`'s choice, never a person's, so
         # refusing its rise would refuse the answer the person just gave.

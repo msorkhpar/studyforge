@@ -242,7 +242,7 @@ cgenerated but still not serving them would be an option"*. **Needs
 `corpus_api: 5`.**
 
 ```json
-{ "corpus_api": 5, "narration": false }
+{ "narration": false }
 ```
 
 That is the fragment; the rest of the file is as above. The onboarding skill

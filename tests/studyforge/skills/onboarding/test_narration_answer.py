@@ -57,7 +57,7 @@ def test_the_onboarding_report_says_the_answer_or_that_nobody_asked(tmp_path, dr
 
 
 def test_off_is_said_as_complete_and_never_as_short():
-    said = narration({"narration": False}, False)
+    said = narration('{"narration": false}', False)
     assert "complete" in said
     assert not any(word in said for word in ("missing", "unfinished", "short", "0 of"))
 

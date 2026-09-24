@@ -46,7 +46,7 @@ from collections.abc import Callable, Iterable
 from pathlib import Path, PurePath
 
 from studyforge.corpus.placement import AUDIO_DIRNAME
-from studyforge.narrate.speakable import SpeakableError, parse_clip_name
+from studyforge.narrate.speakable.naming import SpeakableError, parse_clip_name
 from studyforge.render.page import AUDIO_ATTRIBUTE
 
 #: What a page built with narration carries: the attribute, opened. ⭐ The

@@ -79,14 +79,15 @@ def moved(before: str, after: str) -> tuple[str, ...]:
     return tuple(changed)
 
 
-def narration(document: Mapping[str, object], voiced: bool) -> str:
+def narration(text: str, voiced: bool) -> str:
     """Say the author's answer to *narration or not?* (`W460`), or that nobody asked.
 
-    ⭐ Read off the manifest's own keys, so a draft that carried no answer is
-    said as UNASKED rather than as a `yes` nobody gave. ⛔ Neither answer is
+    ⭐ Read off the manifest's own keys, gated as every decode here is, so a
+    draft that carried no answer is said as UNASKED rather than as a `yes`
+    nobody gave. ⛔ Neither answer is
     short: a corpus without narration is complete at the reading floor (C5).
     """
-    if "narration" not in document:
+    if "narration" not in _document(text):
         return "not asked: voiced whenever clips are recorded; ask the author (step 1)"
     if voiced:
         return "yes: the site plays the clips `studyforge narrate` records"

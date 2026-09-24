@@ -214,7 +214,7 @@ class Onboarding:
     def narration(self) -> str:
         """Say the author's answer to whether the site speaks, or that nobody asked (`W460`)."""
         text = next(item.text for item in self.files if item.where == artifacts.MANIFEST)
-        return recorded.narration(json.loads(text), self.manifest.narration)
+        return recorded.narration(text, self.manifest.narration)
 
     def verdict(self) -> str:
         """One line: how much is generated, what is yours, and where done is defined."""
