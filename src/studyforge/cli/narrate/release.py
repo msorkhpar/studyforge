@@ -54,7 +54,7 @@ DRY_RUN = (
 )
 
 #: What a pack says the owner does next.
-NEXT = "next    commit the restore scripts, then read the publish dry run below"
+NEXT = "next    commit the four files written above, then read the publish dry run below"
 
 
 def pack_command(root: str, out: str, tag: str) -> tuple[list[str], int]:
