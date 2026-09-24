@@ -58,6 +58,7 @@ from studyforge.generate.declarations import BuildError, Corpus, read_corpus, un
 from studyforge.generate.narration import heard, narrated
 from studyforge.generate.writing import Written, copy, same_root
 from studyforge.narrate.playable import NOT_ON_DISK
+from studyforge.narrate.speakable.naming import SpeakableError, parse_clip_name
 from studyforge.unit.builder import build_unit
 
 
@@ -84,11 +85,12 @@ def unit_clips(corpus: Corpus, into: Path | str) -> Written:
     beside = same_root(out, corpus.root)
     state = narrated(corpus)
     if not state.present:
-        return Written()
+        return Written(unlinked=() if beside or corpus.narration else _unlinked(corpus, out))
     written: list[PurePosixPath] = []
     refused: list[PurePosixPath] = []
     replaced: list[PurePosixPath] = []
     missing: list[PurePosixPath] = []
+    stale: list[PurePosixPath] = []
     for source in corpus.units:
         at = unit_location(corpus, source)
         document = build_unit(source.directory, declared_practices=source.declared_practices)
@@ -111,12 +113,39 @@ def unit_clips(corpus: Corpus, into: Path | str) -> Written:
             for entry in playing.silent
             if entry.reason == NOT_ON_DISK
         ]
+        stale += [audio / _one_file(entry.filename) for entry in playing.stale]
     return Written(
         media=tuple(written),
         refused=tuple(refused),
         missing=tuple(missing),
         replaced=tuple(replaced),
+        stale=tuple(sorted(set(stale))),
     )
+
+
+def _unlinked(corpus: Corpus, out: Path) -> tuple[PurePosixPath, ...]:
+    """Every clip file under `out` in a unit's audio directory, which no page here links.
+
+    ⭐ `W460/4`: a build with narration off links no clip, so each one an earlier
+    narrated build copied into this `--out` is reported. ⛔ Never deleted: a build
+    deletes nothing (answer 2), and the report says how a person removes them.
+    """
+    found: set[PurePosixPath] = set()
+    for source in corpus.units:
+        audio = unit_location(corpus, source).media_dir(AUDIO_DIRNAME)
+        directory = out / Path(str(audio))
+        if directory.is_dir():
+            found |= {audio / path.name for path in directory.iterdir() if _is_clip(path)}
+    return tuple(sorted(found))
+
+
+def _is_clip(path: Path) -> bool:
+    """Whether a file's name is a narration clip's (spec §8.2, the one parser)."""
+    try:
+        parse_clip_name(path.stem)
+    except SpeakableError:
+        return False
+    return path.is_file()
 
 
 def _one_file(name: str) -> str:
