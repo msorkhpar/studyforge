@@ -2063,18 +2063,18 @@ cannot diagnose.
 
 ---
 
-## 10. Out of scope for v1
+## 10. Out of scope
 
-Named explicitly so no agent builds them.
+Named explicitly so nobody builds them by accident.
 
-- Any CodeSignal change. It is untouched; convergence is v2.
-- ISO-8583 and SPARQL adapters. The contracts are designed for them; the
-  adapters are v2.
-- Cross-corpus dedupe, concept equivalence, multi-variant merged units.
-- Turning the uniform `Interview Q&A Section` into a quiz or flashcard mode.
+- Cross-corpus dedupe, concept equivalence, and multi-variant merged units.
 - Search across corpora.
-- Ragged-depth hierarchies.
-- Drift-check tooling. Nothing has diverged yet; revisit when it does.
+- Ragged-depth hierarchies (§4).
+- Transliterating non-ASCII titles into slugs (R9's stated limitation).
+- Packing generated media out of git and restoring it (§5).
+- A per-corpus visual theme: every site wears the one framework identity (§8.4).
+- A model at build time or at serve time (§7).
+- Mounting the Docker socket into the serving process, in any form (§8.3).
 
 ---
 
