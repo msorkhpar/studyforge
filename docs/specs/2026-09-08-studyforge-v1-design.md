@@ -525,7 +525,9 @@ component is never vendored, copied or forked into another.
   without a new build.
 - ⭐ **A corpus installs the framework as a library and pins it.** Onboarding records
   the installed library's version and the commit it was built from in the corpus's
-  `.studyforge/pin.json`, and the skill stubs it writes name that pin (§9). ⛔ **Never
+  `.studyforge/pin.json`, and the skill stubs it writes name that pin (§9). ⭐ A built
+  wheel carries the commit it was built from, so onboarding pins it without being
+  told; a source tree carries none, and then the caller names it. ⛔ **Never
   a path to a checkout** — a path carries somebody's home directory (R7), and a
   stranger converting their own material has the installed library, not a
   checkout — and ⛔ **never a git submodule**: nothing here is pushed to a remote, so
@@ -606,6 +608,8 @@ inference from names.
 | narration record | `.studyforge/narration.json` | `narration_api` | `studyforge narrate` — the one writer |
 | progress record | `.studyforge/progress/progress.json` | `progress_api` | `progress` — the one writer |
 | framework pin | `.studyforge/pin.json` | `pin_api` | corpus onboarding |
+| install record | `.studyforge/installed.json` | `installed_api` | corpus onboarding |
+| execution record | `.studyforge/execution/written.json` | `written_api` | execution onboarding — read by onboarding's hand-edit check |
 | exercise bundle | `exercises/<address>/<variant>/unit-NN/practice-M/bundle.json` | `bundle_api` | the exercise-authoring skill |
 | gate record | `gates.json`, in the bundle | no key of its own: a record carrying a gate or a key this build does not define is refused whole | the exercise-authoring skill |
 | source ledger | `exercises/ledger.json` | `ledger_api` | the exercise-authoring skill |
@@ -847,6 +851,12 @@ corpus whose clips were synthesised may still be served silent.
   copies no clip. ⛔ **Nothing is deleted, moved or rewritten** (R3): the record and
   the clips stay where `studyforge narrate` put them, so voicing the corpus again
   plays them with no re-synthesis.
+- ⭐ **A build names what it will not act on, and its exit does not change.** A voiced
+  build reports each clip it plays whose words its paragraph no longer says
+  (`stale`), pointing at `studyforge validate`, which lists each one with the
+  `narrate` command that re-voices it. A build with narration off into an `--out`
+  an earlier voiced build used reports each clip left there that no page links
+  (`unlinked`), and says how to be rid of it. ⛔ A build deletes neither.
 - ⭐ **`studyforge build` and `studyforge serve` take `--narration` /
   `--no-narration`**, which override the declaration for that run, and the
   build-and-serve skill asks for it. ⛔ **Narration is in a page's bytes** (R8: the
@@ -1964,11 +1974,21 @@ it calls beside it.
   **uninstall** that reverses every edit it made. It asks the author whether the
   corpus is narrated. ⭐ **The one manual step is: install the framework, run this
   skill.** Anything a second source has to type by hand is a defect in this skill.
+  ⭐ **It records every file it wrote with the digest it wrote**, in
+  `.studyforge/installed.json`, so a hand-edit to a generated file is named
+  (R19), and a regenerate is safe: a file the regenerate no longer writes is
+  removed when its bytes are still the ones recorded, and when a person has
+  edited it the regenerate is refused before anything is written, naming it
+  (R3). Its generated checks run under pytest or as plain scripts, so a Python
+  holding only the installed library can run them.
 - **Execution onboarding.** For a corpus whose material is runnable: the compose
   file for the runner and the browser editor, the runner image's selection from
   the declared runtimes, and the prime project — all rendered from
-  `code-server-toolchain`'s `consuming.json` (§8.1). ⭐ **Most corpora never run
-  this skill, and that is the design** (§11.0).
+  `code-server-toolchain`'s `consuming.json` (§8.1), with the image tags it records
+  in environment files the compose command reads. ⭐ It keeps its own record of what
+  it wrote, `.studyforge/execution/written.json`, which onboarding's hand-edit check
+  reads beside its own, so one check answers for both skills. ⭐ **Most corpora never
+  run this skill, and that is the design** (§11.0).
 - **Authoring exercises.** Plan every page by its aspects, author the exercises
   and quizzes its material supports, run the gates over each, and commit what
   clears them as bundles, with the ledger and the coverage report (§7).
@@ -2039,7 +2059,9 @@ corpus. A stub names its skill, the pin it was written at, and the command that
 prints the procedure from the installed package; ⛔ **it carries no path at all.**
 ⛔ **A stub that has drifted from its pin is a build failure**: the generated
 `test_framework_pin.py` fails when a stub names another pin, or when the library
-the corpus's Python imports is not the pinned version. That is what stops a stub
+the corpus's Python imports is not the pinned version or was not built from the
+pinned commit; a library with no commit stamp is reported as unverifiable, never
+passed. That is what stops a stub
 becoming a fork by accretion — the same shape as pinning a published image tag
 rather than forking a Dockerfile.
 
