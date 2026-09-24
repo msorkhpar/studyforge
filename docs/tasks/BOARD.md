@@ -24,28 +24,32 @@ In the order the work runs, which is not the order the ids sort to.
 | **M11** — It is release-ready | Every repository cleaned for release, and the next corpus needs only the README and the skills | ⏳ **open** — step 11.5 |
 | **M9** — The Java corpus re-validates | `Claude-senior-java-engineer` converted under §12's rules, practices included | not started |
 
-## Open now — M11, step 11.5
+## Open now — M11, the findings before the close
+
+Every earlier `M11` task is done, and `REL-14`'s reading holds on a clean clone. The user
+ruled on 2026-09-24 that every carried finding is fixed before the close.
 
 | Work | Who has it | State |
 |---|---|---|
-| `REL-10` — the archive branch, and the main line without the process | Developer 6 | ✅ done |
-| `REL-11` — a light board, and epics as high-level design | Developer 3 | ✅ done |
-| `REL-13` — the framework's siblings are release-ready | Developer 4 | ✅ done |
-| `W463` — every declared runtime set builds an editor (in `code-server-toolchain`) | Developer 7 | ✅ done |
-| The first corpus on the installed library | integration agent | ✅ done — regenerated on the release line, both image tags recorded, and serving |
-| `REL-14` — `M11`'s close, read from a clean clone | Developer 1 | read — every clause holds on a clean clone and an installed package; `M11` closes once `REL-12` has run |
-| `W464` — the execution skill's procedure can be followed as printed | Developer 2 | ✅ done |
+| `W465` — the quiz key stays out of the editor's reach; a second instance runs beside a live one | Developer 1 | in progress |
+| `W466` — the execution skill's outputs are guarded, and its remedies point at the corpus | Developer 2 | in progress |
+| `W467` — six onboarding, packaging and narration edges a stranger meets | Developer 3 | in progress |
+| `W468` — the editor idles light and wears the page's font; three sibling guards | Developer 4 | in progress |
+| `W469` — the product's prose without the process | Developer 5 | in progress |
+| `W470` — two backlog branches: merge what has value, drop the rest | Developer 6 | in progress |
+| The first corpus's fifteen pre-rebuild branches, the same way | integration agent | in progress |
 
 ## Next
 
-1. `REL-12` — prune merged branches and idle worktrees. Prepared; waits on the user's go-ahead.
-2. `REL-14` closes `M11` once `REL-12` has run.
+1. The first corpus regenerates once against the fixes, and `REL-14` is read again.
+2. `M11` closes. Merged branches and idle worktrees are kept until the code is pushed (the
+   user's ruling); `REL-12` runs then.
 3. **M9** — the Java corpus, converted from the README and the skills alone.
 
 ## Waiting on the user
 
-- Whether each repository's `main` advances to its release line, and merged branches and idle worktrees
-  are pruned (`REL-12`, and the same in each sibling and the corpus).
+- Whether the first corpus's generated onboarding guide stays in `docs/archive/` or returns to
+  its root.
 - Whether the reading measure should rise now the column is wider. Not blocking.
 
 ## Standing for every corpus
