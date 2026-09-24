@@ -1055,6 +1055,14 @@ What it reads, and the choices in it:
 
 **Serves.** `R8`
 
+### A served site with no icon answers the icon request with no content
+
+**Decision.** `serve.routes.assets` answers a request for the root `FAVICON` with `204` when the site has none, and serves the file when it has one; every other missing path is still `404`.
+
+**Why.** A browser asks every served origin for the icon unprompted, no page names one, and a `404` is an error in the reader's console on every served page.
+
+**Serves.** `R8`
+
 ## Narration
 
 ### Narration lights nothing until the reader starts it, and a missing clip says so once

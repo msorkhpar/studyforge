@@ -39,7 +39,7 @@ from collections.abc import Callable
 from pathlib import Path, PurePath
 
 from studyforge.corpus.placement import ASSETS_DIRNAME, AUDIO_DIRNAME, GENERATED_ROOT
-from studyforge.narrate.speakable import SpeakableError, parse_clip_name
+from studyforge.narrate.speakable.naming import SpeakableError, parse_clip_name
 from studyforge.render.pageassets import ABSENT, CLIPS_NAME, PRESENT, clips_script
 
 #: Whether a resolved file is one the static mount would refuse.

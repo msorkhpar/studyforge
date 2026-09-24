@@ -144,7 +144,8 @@ def loud(page: OpenPage) -> list[tuple[str, str]]:
         if method == "Log.entryAdded":
             entry = params["entry"]
             if entry.get("level") in LOUD:
-                found.append((entry["level"], str(entry.get("text", ""))[:160]))
+                where = str(entry.get("url", "")).rsplit("/", 1)[-1]
+                found.append((entry["level"], f"{str(entry.get('text', ''))[:120]} {where}"))
         elif method == "Runtime.consoleAPICalled":
             level = "warning" if params.get("type") == "warn" else params.get("type")
             if level in LOUD:

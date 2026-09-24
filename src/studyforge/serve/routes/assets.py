@@ -14,6 +14,10 @@ directory's name, `serve.caching`, `serve.response`, `serve.withheld` for a
 quiz's key, and `serve.clips` for the one file answered from the disk rather than
 from its bytes.
 
+⭐ **A missing `/favicon.ico` is `204`, not `404`**: a browser asks every origin for
+it unprompted, a page names no icon, and a `404` is an error in the reader's
+console on every served page.
+
 ## ⭐ One file is answered, not served: the clip signal
 
 A narrated page links `render.pageassets.CLIPS_NAME` to learn whether its clips
@@ -102,6 +106,11 @@ from studyforge.serve.response import NO_STORE, TEXT_TYPE, Request, Response
 #: Assets revalidate every time; a `304` costs one `stat`, and one read of a text
 #: or unknown-type file, which `withheld` is asked of first.
 ASSET_CACHE = "no-cache"
+
+#: What a browser asks every served origin for, unprompted. ⭐ Answered `204` when
+#: the site has none: a `404` is an error in the reader's console on every page,
+#: and a page names no icon, so there is nothing a build could fix.
+FAVICON = "/favicon.ico"
 
 #: Longest URL path accepted, before decoding.
 MAX_PATH = 1024
@@ -309,6 +318,8 @@ def serve(
     HTML page's BYTES and never the file on disk — see this module's docstring.
     """
     target = resolve(root, url_path)
+    if target is None and url_path == FAVICON:
+        return Response(204, ())
     if target is None or private(target):
         return _not_found()
     if is_signal(target):
