@@ -38,7 +38,7 @@ def test_a_furnished_source_drafts_a_glob_for_everything_no_include_reads(tmp_pa
     # ⛔ Only a file an include reads is withheld: the aggregate, and nothing else.
     assert proposal["content"]["exclude"] == ["src/Whole.md"]
     # ⭐ `not_material` needs 2; the record this source carries is drafted as
-    # `curriculum` (`W340`), which needs more, and the draft asks for the higher.
+    # `curriculum`, which needs more, and the draft asks for the higher.
     assert proposal["corpus_api"] == max(2, KEY_VERSIONS[(None, "curriculum")])
     assert "curriculum" in proposal
 

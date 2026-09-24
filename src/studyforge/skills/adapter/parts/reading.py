@@ -67,7 +67,7 @@ _DOCUMENTS = [
 def _read(plan: Plan) -> str:
     """Render the one module a person writes: signatures, and a refusal naming what to return.
 
-    ⭐ **Where `corpus.json` declares its record's groups** (`W340`) and the
+    ⭐ **Where `corpus.json` declares its record's groups** and the
     corpus has one variant, `containers` and `expected_units` are written from
     the declaration and only `documents` is left to write: the filing is
     manifest data, so a second corpus never retypes it (R19).
@@ -145,7 +145,7 @@ def _read(plan: Plan) -> str:
 
 
 def _declared(plan: Plan) -> str:
-    """Render `read.py` for a corpus whose manifest files its units (`W340`)."""
+    """Render `read.py` for a corpus whose manifest files its units."""
     return module(
         summary="Read this source. ⛔ THE ONE MODULE IN THIS PACKAGE YOU WRITE BY HAND.",
         does=(

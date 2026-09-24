@@ -183,7 +183,7 @@ class Manifest:
     #: (declared `false`) is no reader document at all.
     onboarding_doc: str | None = ONBOARDING_DOC
     #: Where the curriculum is recorded and what its groups are filed at
-    #: (`W340`). ⭐ **Absent is `None`**: the adapter reads its record itself,
+    #: ⭐ **Absent is `None`**: the adapter reads its record itself,
     #: as every corpus did before the key.
     curriculum: Curriculum | None = None
     corpus_api: int = CORPUS_API

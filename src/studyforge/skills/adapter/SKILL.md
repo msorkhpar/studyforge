@@ -168,8 +168,8 @@ Two rules, and both are §6:
   touched — so it stays a working link from every generated page back into the
   reader's own material, and it is the field a re-fetch would use.
 
-⭐ **Where `corpus.json` declares `curriculum.containers`** (`corpus_api` 7,
-`W340`), the scaffold has already written `containers` and `expected_units`:
+⭐ **Where `corpus.json` declares `curriculum.containers`** (`corpus_api` 7),
+the scaffold has already written `containers` and `expected_units`:
 `studyforge.skills.adapter.curriculum` files each unit from the declared record
 at its declared address, and refuses when the record, or a declared filename
 prefix, disagrees with the tree. ⛔ **Change the filing in `corpus.json`, never

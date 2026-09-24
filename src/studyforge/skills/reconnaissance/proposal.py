@@ -48,7 +48,7 @@ Every default below is a measurement on real material rather than a taste:
 - **`runtimes` follows what the material evidences**, only beside
   `exercises: true`, and the draft then declares `corpus_api` 4 so it reads
   back. ⛔ Prose gets no key; `runtimes` holds the evidence and the rule.
-- **`curriculum` is what step 2 detected, written down** (`W340`): the record,
+- **`curriculum` is what step 2 detected, written down**: the record,
   its groups' proposed addresses and any prefix that agrees with them, at the
   version the key needs. `curriculum` holds the rule.
 - **`placement` follows whether the material shares its directories with

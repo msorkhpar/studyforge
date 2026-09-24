@@ -13,7 +13,7 @@ returns `(block or None, uncertainties)`.
 a slug is, and `corpus.manifest` for what a prefix is and the version the key
 needs. ⛔ Nothing source-specific (R1).
 
-## ⭐ Detection and declaration are one act (`F6`)
+## ⭐ Detection and declaration are one act
 
 ⚠️ Before this block existed, step 2's *"the curriculum is recorded in
 `<file>`"* and its prefix cross-check were detected and then **said** — in a
@@ -32,7 +32,7 @@ a detection that goes stale is a refusal rather than a memory.
   group is drafted at all: a draft the manifest refuses left nothing open.
 - ⛔ **A prefix is drafted only where it agrees.** Reconnaissance step 2 keeps
   the filename-prefix rule *"as a cross-check that must agree — never as the
-  source"* (`W471/1`). So a group gets a prefix only when every unit it lists
+  source"*. So a group gets a prefix only when every unit it lists
   carries that one prefix, no other group's units carry it, and no other
   material file does. ⭐ A partial agreement drafts no prefix and says so.
 """

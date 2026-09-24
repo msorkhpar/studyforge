@@ -1,4 +1,4 @@
-"""The adapter skill, end to end, on a corpus whose manifest files its units (`W340`).
+"""The adapter skill, end to end, on a corpus whose manifest files its units.
 
 ⭐ **Clause 1 as a command.** The scaffold writes `read.py`'s filing from
 `corpus.json`'s `curriculum` declaration; the only function a person writes is
@@ -40,7 +40,7 @@ MANIFEST = {
     "content": {
         "include": ["lessons/*.md"],
         "not_material": [
-            {"glob": "SUMMARY.md", "why": "the record of the curriculum; no unit reads it (W340)"}
+            {"glob": "SUMMARY.md", "why": "the record of the curriculum; no unit reads it"}
         ],
     },
 }

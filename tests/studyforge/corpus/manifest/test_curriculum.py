@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/corpus/manifest/curriculum.py` (R12) — `W340`.
+"""Mirror of `src/studyforge/corpus/manifest/curriculum.py` (R12).
 
 ⭐ The declaration is asserted both ways: each shape the contract admits parses to
 the value it states, and each refusal fires. ⛔ Whether a TREE agrees with it is

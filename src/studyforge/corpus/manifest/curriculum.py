@@ -1,4 +1,4 @@
-r"""`curriculum` — where a corpus records its curriculum, and how its names cross-check it (`W340`).
+r"""`curriculum` — where a corpus records its curriculum, and how its names cross-check it.
 
 **What it does.** Validates the optional top-level `curriculum` block: the
 document that records the corpus's reading order and grouping, the address each
@@ -23,11 +23,11 @@ filesystem (`document.parse`).
 ⭐ **§6: an address is recorded, never derived.** The document named by
 `record` is the record, and `containers` says which address each of its groups
 is filed at — the map a corpus's adapter otherwise carries as a constant a
-second corpus would retype (R19, Ruling 107's `Q11` and `Q12`).
+second corpus would retype (R19).
 
 ⚠️ **A prefix is a derivation, so it may only ever agree.** The reconnaissance
 skill's step 2 keeps the filename-prefix rule *"as a cross-check that must
-agree — never as the source"* (`W471/1`). So `prefix` decides nothing: it is a
+agree — never as the source"*. So `prefix` decides nothing: it is a
 second partition of the same files, and the adapter refuses when the two
 partitions differ, in either direction.
 
@@ -135,7 +135,7 @@ def _record_of(value: object, where: str) -> str:
         and path.stem != ""
     )
     if not clean:
-        raise ManifestError(f"{rule}; the value is not reproduced, since it may be a path (R7)")
+        raise ManifestError(f"{rule}; the value is not reproduced, since it may be a path")
     return value
 
 

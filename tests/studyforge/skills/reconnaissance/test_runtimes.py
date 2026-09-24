@@ -145,7 +145,7 @@ def test_the_same_files_unrecorded_ARE_evidence_so_the_clause_above_measures_som
 def test_a_draft_carrying_runtimes_declares_the_version_that_reads_it(tmp_path):
     manifest, _ = drafted(sources.runnable(tmp_path / "c"))
     # ⭐ At least the runtimes' version, and exactly what the drafted keys need:
-    # a draft with a record also carries `curriculum` (`W340`).
+    # a draft with a record also carries `curriculum`.
     assert manifest["corpus_api"] == max(RUNTIMES_API, _curriculum_api(manifest))
     assert parse(json.dumps(sources.settled(manifest))).runtimes == ("java", "maven")
 

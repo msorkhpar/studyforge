@@ -76,7 +76,7 @@ class Plan:
     exercises: bool
     archive_dir: str
     package: str
-    #: Whether `corpus.json` declares the record's groups (`W340`), so the
+    #: Whether `corpus.json` declares the record's groups, so the
     #: scaffold can write the filing into `read.py` instead of a refusal.
     filed: bool = False
 

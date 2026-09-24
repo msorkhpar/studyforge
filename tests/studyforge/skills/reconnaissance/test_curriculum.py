@@ -1,10 +1,10 @@
-"""Mirror of `src/studyforge/skills/reconnaissance/curriculum.py` (R12) — `W340` clause 2, `F6`.
+"""Mirror of `src/studyforge/skills/reconnaissance/curriculum.py` (R12).
 
 ⭐ **Detection and declaration are one act.** What the survey detects — the
 record, its groups, the prefixes that agree with them — is written into the
 draft's `curriculum`, and the adapter's filing reads that declaration back into
 exactly the grouping the survey detected. ⛔ A prefix that does not agree is
-never drafted: `W471/1` keeps it a cross-check.
+never drafted: it stays a cross-check.
 """
 
 from __future__ import annotations
@@ -31,7 +31,7 @@ def test_the_survey_writes_what_it_detected_into_the_draft(tmp_path):
 
 
 def test_the_declaration_files_back_exactly_what_the_survey_detected(tmp_path):
-    # ⭐ `F6`: the draft is promoted as onboarding would, and the adapter's
+    # ⭐ The draft is promoted as onboarding would, and the adapter's
     # filing reads it — the survey's grouping, unit for unit, from the manifest.
     root = sources.prefixed_groups(tmp_path / "c")
     found = survey(root)
@@ -55,7 +55,7 @@ def test_every_part_of_the_declaration_is_asked_about(tmp_path):
 
 
 def test_names_the_record_does_not_agree_with_draft_no_prefix(tmp_path):
-    # ⛔ `W471/1`: a server-named file the record never lists makes the two
+    # ⛔ A server-named file the record never lists makes the two
     # partitions differ, so the prefix rule is not drafted as a cross-check.
     root = sources.prefixed_groups(tmp_path / "c")
     sources.write(root, {"src/s9.md": sources.unit("Unlisted")})

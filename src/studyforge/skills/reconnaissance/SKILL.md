@@ -54,8 +54,8 @@ rule as a cross-check that must agree — never as the source.** A skill that
 proposes the regex has produced a plausible manifest for that corpus and an
 unjustifiable one for the next.
 
-⭐ **What this step finds is written into the draft, not only reported**
-(`W340`, `F6`). The draft's `curriculum` block names the record, each group's
+⭐ **What this step finds is written into the draft, not only reported.**
+The draft's `curriculum` block names the record, each group's
 label with a proposed address, and a group's `prefix` **only where the names
 partition the units exactly as the record groups them**. ⛔ The prefix is a
 declared cross-check: the adapter files every unit from the record and refuses

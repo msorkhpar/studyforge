@@ -3,7 +3,7 @@ r"""File a corpus's units from its manifest's `curriculum`, and refuse a tree th
 **What it does.** Reads the document `corpus.json`'s `curriculum.record` names,
 files each unit it lists under the address its group is declared at, and
 checks every declared filename prefix against that filing in both directions
-(`W340`). ⭐ `counted` is the second reading: the units each prefix's files
+⭐ `counted` is the second reading: the units each prefix's files
 number on disk, taken without the record.
 
 **How you use it.** From an adapter's `read.py`, which the scaffold writes this
@@ -22,7 +22,7 @@ way when the manifest declares its groups:
 and `validate.source.source_files` for which files exist, deferred (`_included`).
 ⛔ Nothing source-specific (R1): every fact arrives in `corpus.json`.
 
-## ⭐ One reader detects and files, so the two are one act (`F6`)
+## ⭐ One reader detects and files, so the two are one act
 
 ⚠️ The record is read with **the reader reconnaissance proposed the
 declaration from** — positional roles, every entry shape, the region and not
@@ -34,7 +34,7 @@ must be the declared labels, in the declared order, or this refuses.
 ## ⛔ A prefix never files a unit; it can only disagree
 
 The record files every unit (§6). A declared prefix is a second partition of
-the same files (`W471/1`), and this refuses when the two differ:
+the same files, and this refuses when the two differ:
 
 - a unit filed under a group whose prefix its name does not carry;
 - a unit whose name carries another group's prefix;
@@ -109,8 +109,8 @@ def filed(root: Path, manifest: Manifest, *, included: set[str] | None = None) -
         raise CurriculumDisagrees(
             f"corpus.json declares filename prefixes as a cross-check, and "
             f"{len(problems)} file(s) disagree with {curriculum.record}: "
-            f"{'; '.join(problems)}. The record files a unit and a prefix never does "
-            f"(§6), so settle it by correcting the record or the declared prefix"
+            f"{'; '.join(problems)}. The record files every unit and a prefix only checks "
+            f"it, so settle it by correcting the record or the declared prefix"
         )
     return found
 

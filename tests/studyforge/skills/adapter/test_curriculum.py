@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/skills/adapter/curriculum.py` (R12) — `W340` clause 4.
+"""Mirror of `src/studyforge/skills/adapter/curriculum.py` (R12).
 
 ⭐ **Both ways.** A corpus whose names carry a prefix shape the first corpus never
 used is filed correctly from its manifest alone, and a manifest whose declaration
