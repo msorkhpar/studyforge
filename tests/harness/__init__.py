@@ -38,7 +38,7 @@ a subject that cannot match, whose reading must DIFFER from the pass, because a
 predicate with a typo in it reports nothing, and nothing is what a clean tree
 reports too.
 
-⚠️ **A population is printed before any scalar** (Ruling 191). `0` offenders over
+⚠️ **A population is printed before any scalar**. `0` offenders over
 `0` modules is not a pass, it is a missing reading — and two of these instruments
 have a genuinely small population today: the serving package is a skeleton, and
 one of the three doors has never been walked through.

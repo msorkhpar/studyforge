@@ -1,4 +1,4 @@
-"""`REL-02`: which tests police the PROCESS, so the product suite runs without it.
+"""Which tests police the PROCESS, so the product suite runs without it.
 
 **What it does.** Declares, in one place, every test that guards how the framework was BUILT —
 the tooling, the board, the epics, the rubric, a convention whose home is still being sorted —
@@ -8,9 +8,9 @@ collected and a declared TEST is skipped with its reason, and the run says how m
 
 **How you use it.** `declared(nodeid)` returns the reason a test is process, or `None`.
 `files()` is the whole-file population. `present(root)` says whether the process is here.
-⭐ This list is what `REL-10` acts on, entry for entry, and each reason says which act: an entry
-whose reason says it STAYS is edited in the removal commit; every other one MOVES to the archive
-branch. `DEFERRED` is neither — product files another task re-points (`REL-06`).
+⭐ This list is what the tooling's removal acts on, entry for entry, and each reason says which
+act: an entry whose reason says it STAYS is edited in the removal commit; every other one MOVES
+to the archive branch. `DEFERRED` is neither — product files that are re-pointed elsewhere.
 
 **Depends on.** Nothing but the standard library. ⛔ It imports no tooling: it is the list of
 what does.
@@ -52,14 +52,14 @@ TOOLING_RUN = "runs or imports the tooling itself, which REL-10 archives"
 TWIN = "compares a product-side copy with its tooling original while both exist"
 HOME = "reads docs/conventions/commanded-pages.md, whose home REL-08 decides"
 HANDOFF = "reads a handoff under docs/tasks/handoffs/, which REL-10 archives"
-#: ⭐ `REL-06`: the delivery skill's generator read over THIS repository's epics. The shipped
-#: index stands without them; these readings do not, and `REL-11` decides what replaces them.
+#: ⭐ The delivery skill's generator read over THIS repository's epics. The shipped index
+#: stands without them; these readings do not, and the epics' trim decides what replaces them.
 LIVE_EPICS = (
     "regenerates the delivery skill's index from the epics under docs/tasks/, whose task "
     "blocks REL-11 trims; the shipped index stands without them, this reading does not"
 )
 #: ⭐ The one kind that does NOT move: a product test whose DATA names the tooling as part of
-#: the repository. `REL-10`'s removal commit drops the tooling's row, and the test stays.
+#: the repository. The tooling's removal commit drops the tooling's row, and the test stays.
 LAYOUT = (
     "names the tooling as part of the repository's layout; it STAYS, and REL-10's removal "
     "commit drops the tooling's row from its data"
@@ -134,7 +134,7 @@ TESTS: dict[str, str] = {
 #: process, never marked, and not collected without the tooling only so a run from the suite's
 #: root can collect at all. `tests/test_product_stands_alone.py` fails once an entry stops
 #: needing to be here, so none outlives its reason.
-#: ⭐ Empty since `REL-06` re-pointed the delivery skill's tests; kept so the next file that
+#: ⭐ Empty since the delivery skill's tests were re-pointed; kept so the next file that
 #: needs an excuse is named here rather than excused silently.
 DEFERRED: dict[str, str] = {}
 

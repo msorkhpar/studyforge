@@ -31,7 +31,7 @@ would agree with the renderers right up to the moment one of them gained a case.
 
 ⚠️ **A `Golden` names the module that rewrites it**, because that is what a
 reader of a failing run needs: not "the renderer changed" but
-`python3 -m tests.studyforge.render.page.pages` (R12, and SF-26's acceptance
+`python3 -m tests.studyforge.render.page.pages` (R12, and the harness's acceptance
 clause that a failure names the module and not the subsystem).
 """
 

@@ -1,9 +1,9 @@
-"""Mirror of `tests/harness/sources.py`: the tooling original's registry tests, carried (`REL-02`).
+"""Mirror of `tests/harness/sources.py`: the tooling original's registry tests, carried.
 
 ⭐ **Every positive here is paired with the legitimate use it is one word
 from.** A check that fires on `an ISO date` or on `a Java package segment`
 would be switched off within a day, and then R1 would be enforced by nobody.
-The whole-tree sweep stays with the tooling's floor, which `REL-03` sorts.
+The whole-tree sweep stays with the tooling's floor.
 """
 
 from __future__ import annotations
@@ -62,7 +62,7 @@ def test_the_finding_names_the_role_and_never_the_corpus():
 
 
 def test_the_registry_is_inhabited_and_every_entry_carries_a_reason():
-    # ⛔ Ruling 48 again: a registry that emptied would make every test above
+    # ⛔ Again, a sweep states its denominator: a registry that emptied would make every test above
     # that asserts *absence* pass, and only this one would notice.
     assert len(KNOWN_SOURCES) >= 4
     for corpus, pattern, why in KNOWN_SOURCES:

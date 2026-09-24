@@ -1,10 +1,11 @@
 r"""The workspace pin file, READ: which components this repository was built beside.
 
-⭐ **`REL-02`: the product suite's OWN reader of `workspace.json`**, copied from
+⭐ **The product suite's OWN reader of `workspace.json`**, copied from
 `tools/workspace/` so a product test that reads a sibling at its pin needs no tooling. ⛔ It
 READS and never verifies or records — `verify` and `record` are the tooling's commands and stay
 there. Each copied definition is the original's byte for byte, and
-`tests/test_process_twins.py` refuses a drift while both exist; `REL-10` leaves this copy.
+`tests/test_process_twins.py` refuses a drift while both exist; this copy stays when the
+tooling leaves.
 
 **How you use it.** `read(repository_root)` returns the components, validated, or raises
 `PinError` naming what is wrong. `workspace_root(repository)` is where the siblings sit;
@@ -47,7 +48,7 @@ COMPONENT_KEYS = ("name", "where", "status", "commit")
 #: `status` says exactly when — see `STATUS`.
 REQUIRED_COMPONENT_KEYS = ("name", "where", "status")
 
-#: ⛔ Whether a component exists yet, as a **closed set**. ⭐ Ruling 54: the pin
+#: ⛔ Whether a component exists yet, as a **closed set**. ⭐ The pin
 #: file is the register, so *"this component is owed and does not exist"* has to
 #: be sayable here — otherwise the owed half lives in a second file and E12 and
 #: E13 have to remember it. ⚠️ A `not-yet-created` row flips to `present` in the

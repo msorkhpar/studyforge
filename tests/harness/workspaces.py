@@ -1,6 +1,6 @@
 """Synthetic workspaces: real git repositories, small enough to build per test.
 
-⭐ `REL-02`: the product suite's copy of `tools/tests/workspace/support.py`, for the tests of
+⭐ The product suite's copy of `tools/tests/workspace/support.py`, for the tests of
 `tests.harness.workspace` and `tests.harness.pinned`, so they build their trees without the
 tooling.
 

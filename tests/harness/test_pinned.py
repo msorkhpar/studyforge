@@ -1,4 +1,4 @@
-"""Mirror of `tests/harness/pinned.py`: the tooling original's tests, carried with it (`REL-02`).
+"""Mirror of `tests/harness/pinned.py`: the tooling original's tests, carried with it.
 
 ⛔ **The subject is a distinction, so every case asserts both sides of it.** A
 file that is at the pin must read **at the pin** even when a different one sits
@@ -158,7 +158,7 @@ def test_a_component_the_pin_file_does_not_name_is_absent(tmp_path):
 
 
 def test_a_component_that_is_not_created_yet_is_absent(tmp_path):
-    # ⭐ `not-yet-created` is a first-class row (Ruling 54), so it is a first-class
+    # ⭐ `not-yet-created` is a first-class row, so it is a first-class
     # reading too — never a lookup that silently falls through to the disk.
     root, here, _ = workspace(tmp_path)
     document = json.loads((here / "workspace.json").read_text(encoding="utf-8"))

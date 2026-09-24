@@ -23,7 +23,7 @@ unusual. It is observed instead — `tests/harness/probes/audit.py`, and
     isolation.foreign_imports(isolation.framework_modules())
     isolation.dynamic_imports(isolation.framework_modules())
 
-**Depends on.** `ast` and `sys` — the standard library; the tree walk is its own (`REL-02`).
+**Depends on.** `ast` and `sys` — the standard library; the tree walk is its own.
 ⛔ Nothing from `studyforge`: a check on what the framework imports may not begin
 by importing the framework.
 
@@ -53,7 +53,7 @@ FRAMEWORK = "src"
 
 #: The serving package, relative to the repository root. ⚠️ A skeleton today
 #: (spec §8.3's rule arrives before the routes do), which is why the population
-#: is printed: a check over nothing returns the pass reading (Ruling 191).
+#: is printed: a check over nothing returns the pass reading.
 SERVE = "src/studyforge/serve"
 
 #: Modules whose mere import is a way to start a process.
@@ -174,7 +174,7 @@ def outside_roots(opened: tuple[str, ...], allowed: tuple[Path, ...]) -> list[st
     return sorted(found)
 
 
-#: ⭐ `REL-02`: what the walk never reads — build output, tool caches and version control, the
+#: ⭐ What the walk never reads — build output, tool caches and version control, the
 #: floor's own `TOOL_OUTPUT_DIRS` — so the walk needs no tooling. Every prefix walked here is
 #: under `src/`, where the floor's other exclusion (`tests/fixtures`) cannot occur.
 WALK_SKIPS = frozenset(

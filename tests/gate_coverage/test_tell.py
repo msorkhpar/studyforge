@@ -1,4 +1,4 @@
-"""Ruling 57's acceptance: the tell, against every probe shape, three ways.
+"""The origin tell's acceptance: against every probe shape, three ways.
 
 ⛔ The ruling was decided by what each retired spelling got *wrong*, so both
 are run here rather than described. ⚠️ A control that cannot be run is a claim.
@@ -21,7 +21,7 @@ from tests.support import repository_root
 
 
 def test_resolving_origins_finds_the_same_readers_the_token_tell_found():
-    # ⭐ **Ruling 55: the migration is whatever the check finds.** Ruling 57 was
+    # ⭐ **The migration is whatever the check finds.** The origin tell was
     # accepted on a measurement that said there is none, and this is that
     # measurement, run rather than inherited. ⛔ If a future module arrives in a
     # spelling only one of the two can see, this goes red and the diff says so.
@@ -40,7 +40,7 @@ def test_resolving_origins_finds_the_same_readers_the_token_tell_found():
 
 @pytest.mark.parametrize("label", list(PROBES))
 def test_every_probe_shape_is_classified_by_its_origin(label):
-    # ⛔ Ruling 57's acceptance, one row at a time. A–E and H decode; F and G
+    # ⛔ The tell's acceptance, one row at a time. A–E and H decode; F and G
     # delegate; I names its own `load`; J is shadowed and is still asked; K's
     # base was never imported.
     source, is_reader = PROBES[label]
@@ -68,7 +68,7 @@ def test_the_shipped_spelling_missed_two_genuine_readers():
 
 def test_w7s_first_spelling_read_delegation_as_decoding():
     # ⛔ The other half of the same control, and the false positive that
-    # produced Ruling 57 in the first place: `("loads", "load")` sees
+    # produced the origin tell in the first place: `("loads", "load")` sees
     # `archive.document.load` and cannot tell it from `json.load`.
     flagged = sorted(
         label
@@ -89,7 +89,7 @@ def test_a_shadowed_import_is_asked_rather_than_assumed_away():
     # else, so what `load(path)` means depends on which binding wins at run
     # time. ⭐ W7 asks whether a module that *might* decode has gated; the cost
     # of asking is one argued false positive, and the cost of not asking is the
-    # silence Ruling 57 was written against. ⚠️ Both token spellings miss it.
+    # silence the origin tell was written against. ⚠️ Both token spellings miss it.
     source, _ = PROBES["J from json import load, then shadowed"]
     assert decodes(source) is True
     assert _token_tell(source, SF10_SPELLING) is False
