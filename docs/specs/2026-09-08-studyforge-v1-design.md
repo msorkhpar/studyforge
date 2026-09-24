@@ -1,29 +1,11 @@
-# studyforge v1 — design
+# studyforge — design
 
-**Date:** 2026-09-08 · **revised 2026-09-09** · **amended 2026-09-23**
-**Status:** approved for planning
-**Scope:** the source-agnostic LMS framework, plus its first consumer — the
-`Claude-senior-java-engineer` tutorial repository.
-
-⚠️ **The 2026-09-09 revision** re-read this design against 32 hours of further
-CodeSignal work, and against a decision taken since: after v1 is accepted, a
-second, unnamed repository is converted by the skills alone, as the test that
-this is a framework rather than one pipeline with a good vocabulary (§12).
-That lens changed the priorities. What it added: R3 generalised from one
-hardcoded exception to a declared set (§4, R3); R19 and the corpus-onboarding
-skill (§9); the placement dry-run (§5); provenance in the archive (§6); progress
-as two records (§8.5); clip filenames carrying a digest (§8.2); and the ruling
-that a skill precedes the artifact it produces (§9). Findings that were
-CodeSignal's operational detail rather than this framework's concern were
-deliberately **not** carried; they are in `docs/tasks/v2-backlog.md`.
-
-⚠️ **The 2026-09-23 amendments that say *carried from*** bring into this document the
-clauses of the review rubric and the conventions that state what the product must be,
-when those process documents were archived. Each is written under the rule it serves:
-R1, R6, R7, R9, R10, R11, R12, R13, R17 and R21 in §2, standard library only in §3.2,
-the reading room's identity in §8.4, and commanded pages in §9.
-⛔ **No rule was renumbered and no rule's own words changed**; each amendment adds to
-its rule, and how the product's own code is reviewed is not carried.
+**What this document is.** The design of the framework as it exists: what it
+does, the rules it holds itself to, the contracts it reads and writes, and the
+reason behind a behaviour wherever the reason helps a reader. The code is the
+authority on *how*; this document is the authority on *what* and *why*.
+Decisions that shape the code but are not rules of the design are in
+[the decisions file](../decisions.md), each pointing back at the rule it serves.
 
 ---
 
@@ -31,148 +13,89 @@ its rule, and how the product's own code is reviewed is not carried.
 
 `studyforge` turns **any body of teaching material** into a local, offline study
 site: a reading page per unit, narrated, navigable, with a table of contents,
-progress tracking, and — where the material supports it — runnable practices
-with real graders.
+progress tracking, and — where the material supports it — practices with real
+graders or quizzes checked by the local study server.
 
 It is extracted from the CodeSignal study system, which proved every one of
 these surfaces against real material. What CodeSignal did for one source,
-`studyforge` does for any source. The framework's own docs already anticipated
-this; `backend.py` states it outright:
+`studyforge` does for any source:
 
 > *"a second source — another course site, a book, a repository of exercises —
 > must be able to populate the same API and get the same tutorial site out of
 > it. The endpoint shapes are the contract; the reading page is a consumer of
 > them."*
 
-v1 delivers the framework and its **first consumer**. The framework is *designed*
-against four material shapes so the generalisation is real rather than
-retrofitted.
-
-⚠️ **The first consumer is a small corpus, and it is deliberately not the
-largest one available.** An earlier plan made the 166-unit Java tutorial both
-the first adapter and the definition of done, which welded the framework's
-milestones to one source's shape — the exact conflation R1 exists to prevent.
-Building against something small first means the framework reaches a **complete,
-useful state** early, and the Java corpus becomes a consumer like any other
-rather than the reason the framework exists. ⭐ A framework proven on a small
+⭐ **The framework is designed against several material shapes at once, so the
+generalisation is real rather than retrofitted.** A framework proven on a small
 source and then applied to a large one has been tested; one grown around a large
 source and later pointed at a small one has been fitted.
 
 ### The four shapes the contracts must fit
 
-All four were **counted, not assumed** — the two tutorials were cloned and
-inspected on 2026-09-08, and both differed materially from what was first
-written here.
-
-| Source | Container levels | Units | Runnable | Graders |
-|---|---|---|---|---|
-| `Claude-senior-java-engineer` | 2 — section → module | 166 | Maven multi-module | **168 test classes, authoritative** |
-| CodeSignal | 2 — path → course | 1,290 declared | Gradle + Python, dockerised | hidden upstream; local tests advisory only |
-| ISO-8583-jPOS-tutorial | **1** — group (fundamentals / server / client) | 38 (16 + 11 + 11) | no build file | **none** — amended below (`W339`) |
-| Claude-SPARQL-tutorial | **1** — course | 19 | **yes** — Docker: Fuseki + Jupyter | none, but **every lesson carries an exercise** |
+| Source | Container levels | Runnable | Graders |
+|---|---|---|---|
+| `Claude-senior-java-engineer` | 2 — section → module | Maven multi-module | **test classes paired with the implementation, authoritative** |
+| CodeSignal | 2 — path → course | Gradle and Python, containerised | hidden upstream; local tests advisory only |
+| ISO-8583-jPOS-tutorial | **1** — group, encoded in filename prefixes | Java examples in the prose, no build file | **none** shipped by the source |
+| Claude-SPARQL-tutorial | **1** — course | a containerised query server and notebooks | none, but **every lesson ends in an exercise** |
 
 A contract that cannot express all four is wrong. A contract that requires
 special-casing any of them is wrong.
 
-⛔ **AMENDED 2026-09-18 (`W339`) — ISO's *Graders* cell read *"prose scenarios in
-`TestCases.md`"*, and that file is OUT by the user's ruling** (`Q5`, final,
-recorded at PO round 105). ⭐ **The
-corpus carries no graded practice at all, so it is complete at the reading
-floor, not short** (§11.0, C5). ⚠️ A planner reads this column to decide whether
-a corpus enters the execution track, which is why the cell is corrected here
-rather than left to a later reader: `tests/test_spec_corpus_table.py` reads the
-*Graders* column against the manifest each workspace-pinned corpus carries, and
-a row claiming graders for a corpus whose manifest says `exercises: false` is
-refused.
+⭐ **The *Graders* column records what a source ships**, which is what a planner
+reads to know whether a corpus's own tests can back its practices. It is not what
+a reader gets: exercises are also authored at ingestion from a source's examples,
+code and pages ([*Exercises authored for every
+corpus*](#exercises-authored-for-every-corpus), §7). A row claiming graders for a
+corpus whose manifest says `exercises: false` is refused by the test that reads
+this table against each pinned corpus's `corpus.json`.
 
-⛔ **DATED 2026-09-19 (`W389`) — the *Graders* column records what a source SHIPS, and
-that is no longer what a reader gets.** ⭐ **From `M10`, a corpus's exercises are
-authored at ingestion from its own examples, its code, its tests and its pages**
-([*Exercises authored for every corpus*](#exercises-authored-for-every-corpus-w389),
-below). ⚠️ **The column is NOT rewritten here, and the restraint is the point:** it
-reads a pinned manifest, ISO's still says `exercises: false`, and a cell claiming
-graders the corpus does not yet carry would be the untruth the instrument above exists
-to refuse. ⭐ **A cell moves when its corpus is re-onboarded with `exercises: true`,
-and not before** — a row of `M10`'s last step, never an edit made ahead of the corpus.
+### What the shapes teach
 
-### What the two tutorials taught us
+Each shape carries a constraint the design would otherwise meet late.
 
-Neither behaved as first described, and each surfaced a constraint the design
-would otherwise have met late:
-
-**C1 — A hierarchy can be encoded in filenames, not directories.** ISO's three
-groups live in one flat `src/`, distinguished only by prefix: `1.md`…`16.md`,
-`s1.md`…`s11.md`, `c1.md`…`c11.md`. Nothing in the filesystem expresses the
-grouping. This is a **validation** of R4, not a problem: the adapter maps prefix
-to group, and the generated artifact beside `s4.md` is locatable only by the
-identity it carries internally. A design that inferred meaning from paths would
-have failed here.
+**C1 — A hierarchy can be encoded in filenames, not directories.** A corpus's
+groups may live in one flat directory, distinguished only by a filename prefix
+(`1.md`, `s1.md`, `c1.md`). Nothing in the filesystem expresses the grouping.
+This is what R4 is for: the adapter maps prefix to group, and a generated
+artifact is locatable by the identity it carries inside it, never by its path.
 
 **C2 — A corpus can carry the same material twice, at different granularities.**
-ISO ships both per-unit files *and* whole-series aggregates (`ISO.md` 3,858
-lines, `Server.md` 2,813, `Client.md` 2,509). An adapter that globs `src/*.md`
-ingests everything twice and nothing complains. The manifest must be able to
-declare what is in and what is out, and reconnaissance (§9) must detect the
-overlap rather than leaving it to be noticed.
+A source may ship per-unit files *and* whole-series aggregates that concatenate
+them. An adapter that globs every Markdown file ingests everything twice and
+nothing complains. So the manifest declares what is in and what is out (§4), a
+file nobody classified is a validation failure, and reconnaissance (§9) detects
+the overlap rather than leaving it to be noticed.
 
-**C3 — Real Markdown carries constructs a strict parser must already know.**
-SF-07's parser raises on anything it does not recognise — correct behaviour, and
-the reason the vocabulary has to be right before a second source is attempted
-rather than after.
+**C3 — Real Markdown carries constructs a strict parser must already know.** The
+Markdown reader raises on anything it does not recognise, which is the reason the
+vocabulary has to be right before a new source is attempted. The constructs that
+matter in practice: raw HTML, thematic breaks, blockquotes, and XML **inside a
+fence**. ⭐ **Fence-awareness, not tag counting**: a reader that scans for `<`
+without tracking fences reads a `pom.xml` sample as markup, and either raises or
+renders it as HTML.
 
-⚠️ **Recounted 2026-09-09; the first draft of this constraint attributed it to
-the wrong repository.** It said "18 of ISO's files contain raw HTML". With code
-fences stripped, ISO has **0 of 38**: the 26 files carrying `<tag>`-shaped text
-are all XML *inside fenced blocks* — Maven POM, Spring beans, jPOS channel
-configuration. The requirement survives; its constituency moved, and moved
-**earlier**:
+⛔ **A disclosure is a third state, not markup.** `<details>`/`<summary>` in
+teaching material usually hides an exercise's answer. Flattening it into ordinary
+blocks keeps the text and destroys the hiding; storing it as one opaque raw-HTML
+block keeps the hiding and makes the body invisible to everything else —
+uncounted, unhighlighted, unnarrated. *Present but withheld* is real content, and
+it is the `disclosure` block, which holds blocks exactly as `quote` does (§6).
 
-| Construct | Where it is actually measured | Consequence |
-|---|---|---|
-| raw HTML | **SPARQL, 6 of 19** — `<details>`/`<summary>` | a v2 source, but see below |
-| thematic break | **Java, 10 of 166** | consumer 1, at M9 |
-| blockquote | **Java, 1 of 166** | consumer 1, at M9 |
-| **XML inside a fence** | **ISO, 26 of 41** | the real ISO constraint |
+**C4 — Material includes companion files that are neither blocks nor media.** A
+dataset a lesson loads, a notebook, a sample document: the reader needs them, and
+they are not prose, not images, not video. The archive carries them as
+**attachments** — files a unit references and the reader can open — distinct from
+the media a page renders inline (§6).
 
-⭐ **So the ISO constraint is fence-awareness, not tag counting.** A parser that
-scans for `<` without tracking fences reads a `pom.xml` sample as markup and
-either raises — stopping the ingest dead, which is the failure this constraint
-predicted by the wrong route — or renders it as HTML. That is a testable
-property and `FND-04` carries a fixture for it.
-
-⛔ **And a disclosure is a third state, not markup.** All six SPARQL uses hide an
-*exercise answer*. Flattening `<details>` into ordinary blocks keeps the text and
-destroys the hiding — the answer is then shown outright. Storing the tags as one
-opaque raw-HTML block keeps the hiding and makes the body invisible to
-everything else: uncounted, unhighlighted, unreachable by the block-count gate.
-⭐ **Both fail, oppositely, and the resolution is the one C5 already taught this
-project: "shown" and "absent" are not the only states.** *Present but withheld*
-is real content, and it gets a container block of its own — `disclosure`, holding
-blocks exactly as `quote` does. §7's speakable ruling then decides what narration
-does with it.
-
-**C4 — Material includes companion files that are neither blocks nor media.**
-SPARQL ships `.ttl` datasets its lessons load and two Jupyter notebooks. A
-reader needs them; they are not prose, not images, not video. The archive needs
-an **attachment** class — a file a unit references and the reader must be able
-to open — distinct from the media the page renders inline.
-
-**C5 — An exercise can exist with no grader, and that is not "no exercise".**
-All 19 SPARQL lessons end in an exercise or challenge; none has a test. The
-first draft of §7 collapsed this into "zero exercises", which would have
-discarded real teaching content. The exercise contract must distinguish three
-states, not two: **no exercise**; an **ungraded** exercise (a prompt the reader
-works, with nothing to check it); and a **graded** exercise, whose trust is then
-`authoritative` or `advisory` under R5. Only the third can complete a practice.
-
-⛔ **AMENDED 2026-09-19 (`W389`, the user's direction) — the three states STAND, and
-what changes is which one a source lands in.** ⭐ **A source with no grader is no
-longer a source with no exercises:** [*Exercises authored for every
-corpus*](#exercises-authored-for-every-corpus-w389) authors graded ones for it, at
-ingestion, from the material it does have. ⚠️ **Ungraded stays a first-class state** —
-it is where a prompt goes when the authoring gates cannot back it, and it is still how
-a prompt the material sets but nothing can check is presented. ⛔ **The 19 SPARQL
-prompts are not deleted by any of this; they are kept and joined by authored work.**
+**C5 — An exercise can exist with no grader, and that is not "no exercise".** A
+lesson may end in a prompt that nothing checks. The exercise contract therefore
+distinguishes three states, not two: **no exercise**; an **ungraded** exercise (a
+prompt the reader works, with nothing to check it); and a **graded** exercise,
+whose trust is `authoritative` or `advisory` under R5. Only the third can complete
+a practice. ⭐ **A source with no grader is not a source with no exercises** —
+graded ones are authored for it at ingestion (§7) — and ungraded stays a
+first-class state for a prompt nothing can back.
 
 ---
 
