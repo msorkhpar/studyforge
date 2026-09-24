@@ -215,13 +215,13 @@ def test_an_include_naming_one_file_still_says_where_the_material_lives():
 
 def test_material_at_the_repository_root_is_refused_by_ruling_2():
     # ⛔ There is then no directory to bind that is not the repository, and
-    # §8.1 ruling 2 mounts only the sources. Reported, never defaulted.
-    with pytest.raises(skill.ExecutionRefused, match="ruling 2"):
+    # §8.1 mounts only the sources. Reported, never defaulted.
+    with pytest.raises(skill.ExecutionRefused, match="only the sources"):
         skill.source_root(manifest(content={"include": ["*.md"], "exclude": []}))
 
 
 def test_globs_that_share_no_directory_are_refused_rather_than_widened():
-    with pytest.raises(skill.ExecutionRefused, match="ruling 2"):
+    with pytest.raises(skill.ExecutionRefused, match="only the sources"):
         skill.source_root(manifest(content={"include": ["a/*.md", "b/*.md"], "exclude": []}))
 
 
@@ -240,7 +240,7 @@ def test_the_compose_file_reaches_the_sources_from_where_it_sits(tmp_path):
 def test_a_contract_that_breaks_a_ruling_refuses_the_whole_generation(tmp_path):
     broken = json.loads(editor_text())
     broken["editor"]["ports"][0]["host_bind"] = "0.0.0.0"
-    with pytest.raises(Exception, match="ruling 1"):
+    with pytest.raises(Exception, match="to loopback only"):
         skill.generate(manifest(), editor_text=json.dumps(broken), root=corpus(tmp_path))
 
 

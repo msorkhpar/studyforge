@@ -53,6 +53,7 @@ from studyforge.archive.scrub import assert_clean
 from studyforge.corpus.manifest import MANIFEST_FILENAME
 from studyforge.corpus.placement import IGNORE_FILENAME, IgnoreFile, cache_ignore_lines
 from studyforge.skills.adapter import Written
+from studyforge.skills.execution import written as execution_written
 from studyforge.skills.onboarding.pin import RECORD_FILE
 
 #: The version of the install record's own shape.
@@ -189,11 +190,14 @@ def hand_edited(root: Path | str) -> list[str]:
     ⭐ **R19, made checkable:** an empty list means nothing generated was edited
     by hand, whatever the person wrote in their own module. A file whose bytes
     differ is named by its path; one missing from its recorded place is a
-    sentence that says so and what to do (`W461`).
+    sentence that says so and what to do (`W461`). ⭐ **The execution skill's
+    files are reported here too** (`W466`), each as a sentence, from that
+    skill's own record (`skills.execution.written`).
     """
     root = Path(root)
     listed = entries(root)
-    return changed(root, listed) + [gone(where) for where in missing(root, listed)]
+    ours = changed(root, listed) + [gone(where) for where in missing(root, listed)]
+    return ours + execution_written.hand_edited(root)
 
 
 def refuse_unrecorded(root: Path, files: Sequence[Written]) -> None:

@@ -56,6 +56,9 @@ from studyforge.archive.scrub import scrub
 from studyforge.describe import describe
 from studyforge.skills.execution.contract import ContractRefused, optional, require, words
 
+#: The slot a contract's `prime.declared_by` leaves for the prime directory.
+DIRECTORY_SLOT = "<directory>"
+
 #: The slot a contract leaves in its build argv for the runtimes a consumer
 #: declared. ⛔ Read from the contract's own text rather than assumed: a
 #: command whose argv carries no slot is refused rather than run with the set
@@ -94,6 +97,22 @@ class Selection:
     read_back_from: str
     #: `<block>.image.repository`, which every tag this image is built under begins with.
     repository: str
+    #: `<block>.prime.declared_by`, its directory slot left open, or `None` for a
+    #: block that declares no prime. ⭐ A contract before `provides` 3 declares
+    #: none for the editor, and its editor is then built and recorded unprimed.
+    prime_flag: str | None = None
+
+    def primed_by(self, directory: str) -> str | None:
+        """Return this image's prime flag with `directory` in its slot, or `None` for none.
+
+        ⭐ `None` is a block that declares no prime: before `provides` 3 the
+        editor's contract declares none, and its editor is built unprimed (`W466`).
+        """
+        if self.prime_flag is None:
+            return None
+        if DIRECTORY_SLOT not in self.prime_flag:
+            raise ContractRefused(f"a prime.declared_by has no {DIRECTORY_SLOT} slot")
+        return self.prime_flag.replace(DIRECTORY_SLOT, directory)
 
     def document(self) -> dict[str, object]:
         """Return the selection as a corpus keeps it: data, and no tag."""
@@ -146,7 +165,21 @@ def select(
         tag_from=_argv(contract, carried, block, "image", "tag_from"),
         read_back_from=_string(contract, block, "runtimes", "read_back_from"),
         repository=_string(contract, block, "image", "repository"),
+        prime_flag=_prime_flag(contract, block),
     )
+
+
+def _prime_flag(contract: Mapping[str, object], block: str) -> str | None:
+    """Return `<block>.prime.declared_by`, or `None` when the block declares no prime."""
+    flag = optional(contract, block, "prime", "declared_by")
+    if flag is None:
+        return None
+    if not isinstance(flag, str) or not flag:
+        raise ContractRefused(
+            f"the contract's {scrub(block)}.prime.declared_by must be a non-empty string, "
+            f"got {describe(flag)}"
+        )
+    return flag
 
 
 def _reason(reasons: Mapping[str, object], name: str, block: str) -> str:

@@ -26,7 +26,7 @@ Docker dependency in front of somebody converting a book (spec §11.0).
 
 ## ⭐ WHICH DIRECTORY IS BOUND IS DERIVED, AND THE DERIVATION IS THE RULING
 
-⚠️ **§8.1 ruling 2: only the sources are mounted — not the repository.** The
+⚠️ **§8.1: only the sources are mounted — not the repository.** The
 manifest carries no key naming the directory an editor binds, so it is derived
 from `content.include`'s own common root, which is the corpus's own statement
 about where its material lives.
@@ -47,12 +47,12 @@ places workspaces by (`workspaces_bind`), and the sources stay where they were.
 (`runnerservice`), started by the reader's one compose command — never by the
 serving process (§8.3) — from the tag `record` writes into `RUNNER_ENV`.
 
-## ⛔ RE-RUNNING CHANGES NOTHING
+## ⛔ RE-RUNNING CHANGES NOTHING, AND A HAND-EDIT IS REPORTED
 
-⭐ The same manifest and the same contracts render the same bytes, and `write`
-is therefore idempotent. ⛔ **A hand-edit to any file this writes is a finding
-against this skill, not a fix**: it is reverted on the next run, and a tool that
-eats your changes is a tool nobody runs twice.
+⭐ The same manifest and contracts render the same bytes, so `write` is
+idempotent (R10). ⛔ **A hand-edit to a file this writes is a finding, not a
+fix** (R19): `written` records each file's digest, and onboarding's
+`hand_edited` names the one whose bytes moved (`W466`).
 """
 
 from __future__ import annotations
@@ -64,7 +64,9 @@ from pathlib import Path, PurePosixPath
 from studyforge.corpus.manifest import Manifest
 from studyforge.corpus.placement import PRACTICE_DIRNAME
 from studyforge.skills.execution import composefile, contract, reader, runnerservice, toolchain
+from studyforge.skills.execution import written as record_of
 from studyforge.skills.execution.prime import Prime, PrimeRefused, prime_for
+from studyforge.skills.execution.toolchain import DIRECTORY_SLOT
 
 #: Where everything this skill generates lives. ⭐ Under the corpus's own
 #: bookkeeping directory, never beside its material: every byte here is
@@ -88,9 +90,6 @@ RUNNER_ENV = f"{DIRECTORY}/runner.env"
 #: writes (`record.record_editor`). ⭐ Beside the runner's and in its shape, so
 #: the tag a site's editor runs is the corpus's record and not a person's memory.
 EDITOR_ENV = f"{DIRECTORY}/editor.env"
-
-#: The slot `runner.prime.declared_by` leaves for the directory.
-DIRECTORY_SLOT = "<directory>"
 
 #: What a reader opens first.
 READER_DOC = "EXECUTION.md"
@@ -151,12 +150,12 @@ class Execution:
 
 
 def source_root(manifest: Manifest) -> str:
-    """Return the directory an editor binds, from `content.include` (ruling 2)."""
+    """Return the directory an editor binds, from `content.include` (§8.1: the sources alone)."""
     roots = [_root_of(one) for one in manifest.content.include]
     if not roots or not all(roots):
         raise ExecutionRefused(
-            "this corpus's content.include names the repository root, so §8.1 ruling 2 "
-            "leaves no directory to mount: only the sources are mounted, never the "
+            "this corpus's content.include names the repository root, so §8.1 leaves "
+            "no directory to mount: only the sources are mounted, never the "
             "repository. Declare material under a directory, or add a manifest key that "
             "names the one an editor binds"
         )
@@ -165,8 +164,8 @@ def source_root(manifest: Manifest) -> str:
         shared = _common(shared, PurePosixPath(one))
     if not shared.parts:
         raise ExecutionRefused(
-            "this corpus's content.include globs share no directory, so §8.1 ruling 2 "
-            "would mount the repository to reach them all. Declare them under one "
+            "this corpus's content.include globs share no directory, so reaching them all "
+            "would mount the repository, and §8.1 mounts only the sources. Declare them under one "
             "directory, or add a manifest key that names the one an editor binds"
         )
     return shared.as_posix()
@@ -201,6 +200,7 @@ def generate(
     seeded = tuple(seeds) if isinstance(seeds, Mapping) else ()
     primed = _primed(root, selection.carried, seeded)
     flag = _prime_flag(editor) if primed.projects else None
+    editor_flag = selection.primed_by(f"<this corpus>/{PRIME_DIR}") if flag else None
     workspaces = workspaces_bind(block, sources)
     runner = runnerservice.plan(
         editor,
@@ -235,6 +235,7 @@ def generate(
         narration_text=narration_text,
         seeds=seeds,
         flag=flag,
+        editor_flag=editor_flag,
     )
     return Execution(
         runnable=True,
@@ -292,6 +293,8 @@ def write(execution: Execution, root: Path) -> tuple[str, ...]:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((root / origin).read_bytes())
         written.append(where)
+    if written:
+        record_of.stamp(root, written)
     return tuple(written)
 
 

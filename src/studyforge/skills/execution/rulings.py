@@ -1,7 +1,7 @@
-r"""Spec §8.1's four rulings and §8.3's, asserted against a contract block.
+r"""Spec §8.1's four compose rules and §8.3's, asserted against a contract block.
 
-**What it does.** Reports every ruling one component's consuming block breaks,
-in ruling order, so a renderer can refuse rather than emit a file that looks
+**What it does.** Reports every rule one component's consuming block breaks,
+in the order below, so a renderer can refuse rather than emit a file that looks
 exactly like a correct one.
 
 **How you use it.** `findings(block, name=…)` for the list; empty is clean.
@@ -10,6 +10,12 @@ exactly like a correct one.
 that reaches a message. ⛔ No I/O and nothing source-specific (R1).
 
 ## ⛔ WHY THESE ARE CHECKED AND NOT REMEMBERED
+
+⚠️ **The spec does not number these (`W462/1`).** §8.1 states them as the bullets
+of *"what the compose side gets right"*, so a refusal cites each by what it
+says — loopback, the sources alone, the owner's uid:gid, a bind source that
+exists first — and never by a number a reader would look for and not find.
+The numbers below order this list and nothing else.
 
 ⚠️ Each of the four was bought by a failure, and each failure is silent in the
 rendered bytes:
@@ -43,16 +49,16 @@ from studyforge.skills.execution.contract import blocks, optional
 SOCKET_PATHS = ("/var/run/docker.sock", "/run/docker.sock", "docker.sock")
 
 #: A host bind that offers a service to every machine that can reach this host.
-#: ⛔ Ruling 1's failure, by value — including the empty string, which docker
+#: ⛔ The loopback rule's failure, by value — including the empty string, which docker
 #: reads as every interface rather than as nothing.
 EVERY_INTERFACE = ("0.0.0.0", "::", "*", "")
 
-#: Host paths a bind may never name, whatever a contract declares. ⛔ Ruling 2.
+#: Host paths a bind may never name, whatever a contract declares. ⛔ The sources alone.
 NEVER_BOUND = (".", "..", "/", "~", "${HOME}", "$HOME")
 
 
 def findings(block: Mapping[str, object], *, name: str) -> tuple[str, ...]:
-    """Every §8.1 or §8.3 ruling this block breaks, in ruling order."""
+    """Every §8.1 or §8.3 rule this block breaks, in the module's order."""
     return tuple(
         [
             *_ports(block, name),
@@ -69,7 +75,7 @@ def names_a_socket(text: str) -> bool:
 
 
 def _ports(block: Mapping[str, object], name: str) -> list[str]:
-    """Ruling 1 — loopback only, never every interface."""
+    """Loopback only, never every interface (§8.1)."""
     found = []
     for entry in blocks(block, "ports"):
         if (
@@ -77,47 +83,47 @@ def _ports(block: Mapping[str, object], name: str) -> list[str]:
             or entry.get("host_bind") in EVERY_INTERFACE
         ):
             found.append(
-                f"{scrub(name)} publishes a port on every interface; §8.1 ruling 1 binds "
-                f"it to loopback, because this is an unencrypted service with a shell"
+                f"{scrub(name)} publishes a port on every interface; §8.1 binds it to "
+                f"loopback only, because this is an unencrypted service with a shell"
             )
     return found
 
 
 def _mounts(block: Mapping[str, object], name: str) -> list[str]:
-    """Rulings 2 and 4 — only the sources, and a bind source that exists first."""
+    """Only the sources, and a bind source that exists first (§8.1)."""
     found = []
     binds = [entry for entry in blocks(block, "mounts") if entry.get("kind") == "bind"]
     for entry in binds:
         if str(entry.get("host_path", "")).strip() in NEVER_BOUND:
             found.append(
-                f"{scrub(name)} binds the repository or a home directory; §8.1 ruling 2 "
-                f"mounts only the sources"
+                f"{scrub(name)} binds the repository or a home directory; §8.1 mounts "
+                f"only the sources"
             )
         if entry.get("must_exist_before_start") is not True:
             found.append(
                 f"{scrub(name)} declares a bind that need not exist before the start; "
-                f"§8.1 ruling 4 says docker then creates it root-owned and the writer "
-                f"can never write it"
+                f"§8.1 says a bind source exists on the host before the start, or docker "
+                f"creates it root-owned and the writer can never write it"
             )
     per_project = [entry for entry in binds if entry.get("per_project") is True]
     if binds and len(per_project) != 1:
         found.append(
-            f"{scrub(name)} declares {len(per_project)} per-project binds; §8.1 ruling 2 "
-            f"gives a corpus exactly one, which is its sources"
+            f"{scrub(name)} declares {len(per_project)} per-project binds; §8.1 mounts "
+            f"only the sources, so a corpus gets exactly one"
         )
     return found
 
 
 def _owner(block: Mapping[str, object], name: str) -> list[str]:
-    """Ruling 3 — the container runs as the owner of the mounted sources."""
+    """Report a bind with no owner to run as (§8.1: the repository owner's uid:gid)."""
     if not any(entry.get("kind") == "bind" for entry in blocks(block, "mounts")):
         return []
     if optional(block, "runs_as", "compose_value") or optional(block, "runs_as", "run_value"):
         return []
     return [
         f"{scrub(name)} binds a host directory and declares no value for the uid to run "
-        f"as; §8.1 ruling 3 says every file it writes there is then root-owned and the "
-        f"reader can never edit their own repository"
+        f"as; §8.1 runs the container as the repository owner's uid:gid, or every file "
+        f"it writes there is root-owned and the reader can never edit their own repository"
     ]
 
 

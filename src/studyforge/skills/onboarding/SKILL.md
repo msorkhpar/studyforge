@@ -293,7 +293,10 @@ were told to run.** `ingest/**` and `tests/ingest/**` always read this way.
 ⭐ **The install record marks it `hand_written` and keeps no digest of it**, so
 a regenerate neither rewrites what you wrote nor records it (`INT-09/1`).
 ⛔ `hand_edited(root)` names every **generated** file whose bytes differ from
-the record, and never yours: an empty list is R19 checked, not assumed.
+the record, and never yours: an empty list is R19 checked, not assumed. ⭐ It
+also reports, one sentence each, every file the **execution** skill wrote that
+was edited or is gone, from that skill's own record
+(`.studyforge/execution/written.json`), so one check answers for both skills.
 
 ### 5. Ingest, and let the machine say whether it worked
 

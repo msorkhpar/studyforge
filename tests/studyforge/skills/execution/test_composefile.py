@@ -67,7 +67,7 @@ def test_the_image_the_uid_and_the_project_are_what_they_were_given():
 
 
 def test_the_published_port_is_bound_to_loopback_and_to_nothing_else():
-    # ⛔ §8.1 ruling 1, in the output rather than in the check.
+    # ⛔ §8.1's loopback rule, in the output rather than in the check.
     assert '- "127.0.0.1:8443:8080"' in rendered()
 
 
@@ -218,7 +218,7 @@ def test_a_contract_with_nothing_to_create_first_emits_no_footer():
 def test_a_block_that_breaks_a_ruling_is_refused_before_a_byte_is_emitted():
     block = editor()
     block["ports"][0]["host_bind"] = "0.0.0.0"
-    with pytest.raises(composefile.ComposeRefused, match="ruling 1"):
+    with pytest.raises(composefile.ComposeRefused, match="to loopback only"):
         rendered(editor=block)
 
 

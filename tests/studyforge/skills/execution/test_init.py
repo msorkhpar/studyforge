@@ -106,7 +106,15 @@ def test_this_skill_starts_no_container_because_it_can_reach_nothing(wanted):
 def test_it_imports_no_third_party_package():
     # ⛔ Standard library only in framework source — which is also why the YAML
     # it emits is emitted rather than serialised by a library.
-    allowed = {"studyforge", "__future__", "json", "collections", "dataclasses", "pathlib"}
+    allowed = {
+        "studyforge",
+        "__future__",
+        "json",
+        "collections",
+        "dataclasses",
+        "hashlib",
+        "pathlib",
+    }
     for path in files(".py"):
         tree = ast.parse(path.read_text(encoding="utf-8"))
         for node in ast.walk(tree):

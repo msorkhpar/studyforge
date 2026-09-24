@@ -119,7 +119,7 @@ run in the browser and what a graded practice runs in the runner.
 
 `composefile.render(...)` writes one service per component block it is given,
 and every value in it is read out of a contract. It refuses to emit a file that
-breaks any of spec §8.1's four rulings, and §8.3's socket rule besides:
+breaks any of spec §8.1's four compose rules, and §8.3's socket rule besides:
 
 | ruling | what the renderer does | what it refuses |
 |---|---|---|
@@ -141,7 +141,7 @@ differ per host"* are both true at once.
   the directory `emit` places them in (`corpus.placement.PRACTICE_DIRNAME`),
   which is not under the sources' common root. It is bound at the contract's
   workspace root under its own name, read from that one spelling
-  (`onboard.workspaces_bind`), and named in ruling 4's list. ⚠️ An editor that
+  (`onboard.workspaces_bind`), and named in the list of bind sources that exist first. ⚠️ An editor that
   binds the sources alone can open no practice file: the frame gets no URL.
 - ⭐ **The runner a Submit execs into is the second service**
   (`runnerservice`), every value read from the contract's `runner` block: the
@@ -218,9 +218,13 @@ nothing**: the same manifest and the same contract render the same bytes.
 
 ⛔ **A hand-edit to any of these files is a finding against this skill, not a
 fix** (R19). It is reverted the next time somebody runs step 5, and a tool that
-eats your changes is a tool nobody runs twice. Customisation enters as manifest
-data; if the manifest cannot say it, the manifest is missing a field and *that*
-is the finding.
+eats your changes is a tool nobody runs twice. ⭐ **It is also REPORTED:**
+`write` and step 5a record each file's digest in
+`.studyforge/execution/written.json`, and onboarding's `hand_edited` names, in
+a sentence, every one whose bytes moved or that is gone. Running the skill
+again over an unchanged corpus rewrites no byte, that record included.
+Customisation enters as manifest data; if the manifest cannot say it, the
+manifest is missing a field and *that* is the finding.
 
 ### 5a. Record both tags — the skill does it, never the reader's typing
 
@@ -231,10 +235,11 @@ on disk — call both, with the component's pinned checkout:
     record_runner(execution, corpus, component, ask=ask)
     record_editor(execution, corpus, component, ask=ask)
 
-Each composes the contract's own `tag_from` for its image — the runner's with
-the prime flag pointing at the written prime, the editor's as the contract
-spells it, since the contract declares a prime flag for the runner alone —
-hands that ONE argv to `ask` (which runs it and answers `(exit code, stdout)`),
+Each composes the contract's own `tag_from` for its image, with that image's
+own prime flag (`runner.prime.declared_by`, `editor.prime.declared_by`) pointing
+at the written prime — ⭐ one prime warms both images. ⚠️ A contract before
+`provides` 3 declares no `editor.prime`, and its editor is then asked, printed
+and recorded unprimed. Each hands that ONE argv to `ask` (which runs it and answers `(exit code, stdout)`),
 refuses anything but one tag of that image's own `repository`, and writes one
 environment file:
 
@@ -254,10 +259,11 @@ moves.
 ### 6. Build the images and bring both up — one command
 
 Run the runner's and the editor's `built_by` argv **from the component's
-checkout** — the runner's with the flag `runner.prime.declared_by` names
-pointing at the written prime directory by its full path. `EXECUTION.md`
-prints both lines with this corpus's directory in the slot, and each builds
-the tag step 5a recorded for it. Then, from the corpus root:
+checkout** — each with the flag its block declares (`runner.prime.declared_by`,
+`editor.prime.declared_by`) pointing at the written prime directory by its full
+path. `EXECUTION.md` prints both lines with this corpus's directory in the slot,
+says which of them carry the flag, and each builds the tag step 5a recorded for
+it. Then, from the corpus root:
 
     docker compose --env-file .studyforge/execution/runner.env \
       --env-file .studyforge/execution/editor.env \
@@ -280,7 +286,8 @@ running it runs `docker compose`, and the study server never holds the socket.
 |---|---|
 | `.studyforge/execution/compose.yaml` | the compose file, rendered from the contracts: the editor and the runner |
 | `.studyforge/execution/runner.env` | the primed runner's tag, as the component printed it (step 5a) |
-| `.studyforge/execution/editor.env` | the editor's tag, as the component printed it (step 5a) |
+| `.studyforge/execution/editor.env` | the editor's tag, primed as the contract declares, as the component printed it (step 5a) |
+| `.studyforge/execution/written.json` | every file above and its digest, so a hand-edit to one is reported (step 5) |
 | `.studyforge/execution/toolchain.json` | the selection: the set, what is carried, what is not and why, and the two argv |
 | `.studyforge/execution/prime/<tool>/…` | one project per seeded tool: the corpus's own build, source and test, re-rooted at the build |
 | `EXECUTION.md` | what a reader opens first: what to build, what to run, and what this corpus declared |

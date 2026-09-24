@@ -619,6 +619,16 @@ What it reads, and the choices in it:
 
 **Aliases.** `W331`, `W331/2`
 
+### The execution skill keeps its own record of what it wrote
+
+**Decision.** `execution.write` and both record steps stamp each file they write, with its digest, in `.studyforge/execution/written.json`. Onboarding's `hand_edited` reads that record beside its own install record and names, in a sentence, each execution file whose bytes moved or that is gone. The stamp merges, sorts and carries no clock, so running the skill again over an unchanged corpus rewrites no byte. Onboarding's install record is not extended: a re-onboard rewrites it and `uninstall` undoes it, and neither is the execution skill's to trigger.
+
+**Why.** A wrong tag planted in `editor.env` was caught by nothing, because the execution skill's outputs were outside the only record the hand-edit check read.
+
+**Serves.** `R19`
+
+**Aliases.** `W466`, `PO-188/1`
+
 ### Skills point at the never-editable vocabularies instead of listing them
 
 **Decision.** The adapter and onboarding skills each carry one statement of what `permitted_edits` may never name. The statement points at `edits.reads_as_content`, `ROOT_DOCUMENTATION` and `parse_edits` and never retypes a file name. A test reads the four vocabularies from their single definitions each time it runs, and it fails when a skill types any name they hold.

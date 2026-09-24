@@ -202,9 +202,10 @@ def test_the_editors_tag_the_component_printed_is_recorded_beside_the_runners(tm
 
 
 def test_it_asks_the_editor_blocks_own_tag_from_and_hands_it_no_prime(tmp_path):
-    # ⭐ The contract declares a prime flag for the runner alone, and the
-    # reader's document prints the editor's build without one: the tag recorded
-    # is the tag that printed build produces.
+    # ⭐ A contract before `provides` 3 declares a prime flag for the runner
+    # alone, and the reader's document then prints the editor's build without
+    # one: the tag recorded is the tag that printed build produces. The primed
+    # editor is `test_editor_prime.py`'s.
     execution = made(tmp_path)
     assert execution.primed is not None and execution.primed.projects, "no prime: vacuous"
     asked = Asked(0, EDITOR_TAG)
