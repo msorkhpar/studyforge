@@ -1,4 +1,4 @@
-"""`W449` — an editor frame that takes focus as it starts never moves the page or keeps the focus.
+"""An editor frame that takes focus as it starts never moves the page or keeps the focus.
 
 ⛔ **The user's report, 2026-09-23:** *"When the code-server runs page suddenly
 scrolls to that UI automatically while it should have never changed the focus
@@ -22,8 +22,7 @@ other route — a steal that raises NO `blur` (an unfocused window, or a frame
 taking focus from another frame) — cannot be staged by this harness: every tab
 it opens reports `document.hasFocus()` true, and a backgrounded one stops
 painting. ⭐ That route was read on the host against the pilot instead, and its
-watch is held by `tests/studyforge/render/page/test_practice_editor.py`
-(`W448-W449.md`).
+watch is held by `tests/studyforge/render/page/test_practice_editor.py`.
 
 ⭐ **And the reader's own hand still works**: a click into the frame focuses it
 and what is typed reaches it.

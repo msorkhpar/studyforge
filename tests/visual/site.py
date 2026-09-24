@@ -17,7 +17,7 @@ re-spelled.
 
 ## ⛔ Why the damaged tree exists, and why it is not optional
 
-⚠️ **Ruling 70's form, applied to a screenshot.** A harness that has only ever
+⚠️ **A negative control must be exercised, applied to a screenshot.** A harness that has only ever
 seen a good page has never been shown to notice a bad one — and a visual check
 that cannot fail is the most convincing check in the repository and the most
 worthless. ⭐ So every acceptance clause here is run **twice**: once against the
@@ -52,7 +52,7 @@ the easy one: a live relative href for the index slot, and a **declared
 absence** (`Link(href=None, key=…)`) either side of it, which falls back to that
 unit's own row on the root index. ⚠️ The slots are not a reading order and are
 not asserted as one — prev/next traversal over a generated site is
-`tests/studyforge/render/page/sites.py`'s subject and `SF-15`'s clause. What is
+`tests/studyforge/render/page/sites.py`'s subject and the trail's clause. What is
 under test here is the **region**.
 """
 

@@ -1,4 +1,4 @@
-"""One environment, one identifier: the build exports no provenance (`W152`).
+"""One environment, one identifier: the build exports no provenance.
 
 ⛔ **A fourth module under `tests/docker/` rather than a section of an existing
 one, and R11 is half the reason.** `test_dev_image.py` stands at 586 lines
@@ -28,14 +28,13 @@ untouched, every build step CACHED, on the HOST in the dev2 worktree:
 ⛔ **And `docker image inspect --format '{{.Id}}'` reports the manifest LIST** —
 the worst of the four and the first one an office reaches for. Two offices then
 read different shas for one identical environment, and a reviewer comparing them
-reads a difference where there is none. That is Ruling 317's false refutation,
-and this module is its repair enforced by the build rather than remembered by a
-reader (Ruling 185(a)).
+reads a difference where there is none — a false refutation — and this module
+is its repair, enforced by the build rather than remembered by a reader.
 
 ## ⭐ THE PINS STILL PIN
 
-⛔ **Ruling 317 is not repealed here and must not be.** An environment is named
-by its pins — `Dockerfile`'s `FROM` digest, its two toolchain `ARG`s, every `==`
+⛔ **An environment is still named by its pins, and that must not change** —
+`Dockerfile`'s `FROM` digest, its two toolchain `ARG`s, every `==`
 in `requirements.txt`. ⭐ What changes is that the exported config digest becomes
 **quotable** across offices instead of dead text; it never becomes authoritative.
 
@@ -44,7 +43,7 @@ in `requirements.txt`. ⭐ What changes is that the exported config digest becom
 ⭐ The static half reads text and runs everywhere — host, container, any
 checkout — and **each positive assertion is paired with a control that feeds the
 same predicate a doctored copy and requires it to say no**, so no check in here
-is dark (Ruling 191). ⛔ The one check that actually builds twice and compares
+is dark. ⛔ The one check that actually builds twice and compares
 what came out is gated on `STUDYFORGE_DOCKER_TESTS=1` and on not already being
 inside the image, for `test_dev_image.py`'s reasons: the build needs the network,
 and without the recursion guard the suite would build a container to run the
@@ -174,7 +173,7 @@ def documented_invocation_carries_the_variable(compose: str) -> bool:
 
 
 def test_the_wrapper_disables_default_build_attestations():
-    # ⛔ The whole of `W152`. Without this line `--build` re-exports a new
+    # ⛔ The whole of the repair. Without this line `--build` re-exports a new
     # attestation manifest and a new manifest list on every invocation over
     # identical contents, and the id the tooling surfaces is the list.
     assert assigned_value(instructions("check")) == "1", (
@@ -239,10 +238,9 @@ def test_the_unconditional_check_can_say_no():
     # ⚠️ **This control is DERIVED from the real file, so it fails LOUDLY when
     # the assignment is gone rather than passing over an empty doctoring** — and
     # that is deliberate. MEASURED: with `docker/dev/check` planted back to its
-    # pre-`W152` state, this is the SIXTH red beside the five the plant was
+    # state before the repair, this is the SIXTH red beside the five the plant was
     # predicted to produce. ⛔ A control that quietly passed there would be a
-    # control whose subject had vanished, which is the vacuous pass Ruling 191
-    # is about.
+    # control whose subject had vanished: a vacuous pass.
     doctored = instructions("check").replace(f"{VARIABLE}=1", f"{VARIABLE}=${{{VARIABLE}:-1}}")
     assert f"${{{VARIABLE}:-" in doctored, (
         f"the doctored copy carries no `${{{VARIABLE}:-…}}`, which means the "
@@ -277,7 +275,7 @@ def test_it_does_not_cross_into_the_container():
     # ⭐ It is the docker CLIENT's variable. ⛔ Adding it to the pass-through
     # block would put a build-time setting inside a container that never builds
     # anything, and `compose.yaml` carries three crossing variables, not four
-    # (`W36`, `W123`'s same distinction).
+    # (`W36`, and the run's outer bound draws the same distinction).
     entries = [line.strip() for line in instructions("compose.yaml").splitlines()]
     assert f"- {VARIABLE}" not in entries, (
         f"{VARIABLE} crosses into the container, where nothing builds; it "

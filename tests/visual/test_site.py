@@ -26,9 +26,9 @@ same run** — each region's column against the reading surface's — rather tha
 resolved width against a recorded number. ⭐ It is invariant under any font the
 image ships and still fails the moment a region resolves a measure of its own.
 
-⚠️ **When `W98` wrote that clause, Ruling 236 was also a reason for it:**
+⚠️ **When `W98` wrote that clause, an undeclared font was also a reason for it:**
 `fonts-liberation` then arrived unconstrained from the base image's Debian
-snapshot (`W36/5`, `CTO-55/5`), so a px figure here would have been a recorded
+snapshot, so a px figure here would have been a recorded
 value with an undeclared font behind it. ⛔ **That reason is GONE — `W124` landed
 and the font is pinned by version and checksum in `docker/dev/Dockerfile`** — and
 the clause is kept anyway, because an equality between two live measurements is
@@ -62,7 +62,7 @@ NOT WRITE IT.** ⭐ The reason is scope and it is recorded in
 `W98` needs"*, and pinning an input is a different act from authoring an
 acceptance clause over it. ⚠️ **The assertion that goes here needs things `W124`
 neither measured nor owns** — a recorded px figure per page kind and viewport, a
-looseness statement of its own under Ruling 236, and a negative control that
+looseness statement of its own, and a negative control that
 reds when a face is swapped under the image, which means building a second image
 to prove it can fail. ⛔ **A row that quietly grew all of that would be the scope
 creep this project treats as worse than leaving work undone, so it is ROUTED as a
@@ -114,7 +114,7 @@ THE_ASIDE_BESIDE_THE_COLUMN = (
 )
 
 #: How far two columns may differ and still be the same column, in CSS pixels.
-#: ⛔ **Not a font threshold**, which is why Ruling 236 permits it: both sides of
+#: ⛔ **Not a font threshold**, which is why it needs no recorded font: both sides of
 #: the comparison are measured in the same run under the same font, so a font
 #: change moves them together. ⭐ It is here only for subpixel layout — measured
 #: in the pinned image at `f71c566` every pair is equal to the hundredth of a
@@ -162,7 +162,7 @@ def _columns(page: OpenPage, regions: tuple[str, ...]) -> list[list]:
 def test_the_region_population_is_inhabited_and_is_the_disposition_tables() -> None:
     """⭐ The population comes from `SF-34`'s table and is non-empty.
 
-    ⛔ Ruling 48: a totality claim over an empty set is the most convincing check
+    ⛔ A totality claim over an empty set is the most convincing check
     in the repository and says nothing at all.
     """
     regions = site.chrome_regions()
@@ -298,7 +298,7 @@ def test_every_chrome_region_resolves_the_same_column_as_the_reading_surface(
     ⛔ A per-region bound written in `ch` resolves against that region's **own**
     inherited font, so one correct declaration produces as many columns as there
     are fonts on the page. ⚠️ This is an equality between two live measurements
-    and never a px figure from a file — see this module's docstring and Ruling 236.
+    and never a px figure from a file — see this module's docstring.
 
     ⛔ **`W325` took the containers rail OUT of this population and put the width
     IN.** The rail is now beside the column at a wide viewport, so it resolves

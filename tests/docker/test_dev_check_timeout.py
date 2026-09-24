@@ -1,4 +1,4 @@
-"""The outer bound on a run, and the statuses it must not touch (`W123`).
+"""The outer bound on a run, and the statuses it must not touch.
 
 ⛔ **A third module under `tests/docker/` and not a section of either existing
 one, and R11 is the reason.** `test_dev_image.py` is 583 lines against a
@@ -20,13 +20,12 @@ returned.
 the read means `select`-ing on the fd, a different I/O path, which would change
 what every reading in `tests/visual/` is taken against; that belongs to the
 harness's own row. ⭐ A bound in `docker/dev/check` changes nothing any reading
-is taken against, which is the whole of why the two are separable
-(Ruling 235(a), (d)).
+is taken against, which is the whole of why the two are separable.
 
 ## ⛔ Why the plant is the point and the `timeout` is not
 
 ⚠️ **An instrument that converts a hang into a non-zero exit is DARK until
-somebody hangs the thing on purpose** (Ruling 191, `W37`). A bound that nothing
+somebody hangs the thing on purpose**. A bound that nothing
 ever trips is a check that cannot fail by construction, and it would pass every
 static assertion in the first half of this file while doing nothing at all.
 
@@ -119,7 +118,7 @@ def check_line() -> str:
 
 
 def test_the_run_is_bounded_at_all():
-    # ⛔ The whole of `W123`: an unbounded hang has no verdict, and Ruling 40
+    # ⛔ The whole of the bound: an unbounded hang has no verdict, and Ruling 40
     # makes this container the only authority for a reading — so a run that
     # never returns withholds the only reading that counts.
     assert "timeout" in check_line(), (
@@ -164,7 +163,7 @@ def test_the_bound_is_overridable_and_carries_a_default():
 
 
 def test_the_default_bound_is_loose_against_a_measured_run_and_says_so():
-    # ⛔ **Ruling 236's second half.** A threshold chosen to be LOOSE must SAY so
+    # ⛔ **A loose threshold says so.** A threshold chosen to be LOOSE must SAY so
     # in its own body, or the next reader cannot tell a measured bound from a
     # guessed one — and tightens it.
     script = read("check")
@@ -225,7 +224,7 @@ def bounded(command: list[str], bound: str = PLANT_BOUND):
 def test_a_run_that_never_finishes_comes_back_with_an_overrun_status():
     # ⭐ **THE PLANT, and without it every assertion above is dark.** A bound
     # that nothing ever trips is a check that cannot fail by construction
-    # (Ruling 191), so this wedges a run on purpose and reads what comes out.
+    # until something trips it, so this wedges a run on purpose and reads what comes out.
     require_docker_run()
     result = bounded(["sh", "-c", "sleep 300"])
     assert result.returncode in OVERRUN, (

@@ -1,11 +1,11 @@
-"""The image a `check` run executes is named by its build inputs' CONTENT (`W225`).
+"""The image a `check` run executes is named by its build inputs' CONTENT.
 
 ⛔ **The defect.** `compose.yaml` named ONE tag, `studyforge/dev:local`, for every
 checkout, and `check`'s `run --build` rewrote it from whichever checkout ran last.
 Two checkouts running `check` at once could therefore start a container from each
-other's image (`W211/2`, measured racing twice in wave 19), and the guard offices
-used — `command -v studyforge` — tells a pre-`W211` image from a post-`W211` one and
-nothing else.
+other's image (measured racing, twice), and the guard offices used —
+`command -v studyforge` — tells an image without the installed command from one with
+it and nothing else.
 
 ⭐ **The repair, in `check`'s own block:** a sha256 over every build input's content
 is exported as `STUDYFORGE_DEV_IDENTITY`, `compose.yaml`'s `image:` REQUIRES it, and
@@ -13,7 +13,7 @@ every run prints the name it runs. Inputs that differ name different tags, so no
 build can overwrite what another checkout is about to run.
 
 **Static — always run.** Each predicate reads TEXT, and each is fed a doctored copy
-that must make it say no (Ruling 191).
+that must make it say no.
 
 **The plant — opt-in** (`STUDYFORGE_DOCKER_TESTS=1`, `test_dev_image.py`'s reasons).
 Two scratch checkouts differ in one input. A docker client on `PATH` OPENS THE RACE
@@ -50,7 +50,7 @@ NAME = "studyforge/dev:inputs-"
 #: The shared tag this row retired. ⛔ No instruction in `docker/dev/` may name it.
 SHARED = "studyforge/dev:local"
 
-#: The hand build the Dockerfile's FIRST sentence must carry (`W211/3`).
+#: The hand build the Dockerfile's FIRST sentence must carry.
 HAND_BUILD = "docker build --build-context project=. docker/dev"
 
 

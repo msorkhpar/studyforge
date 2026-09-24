@@ -149,8 +149,8 @@ def test_every_closed_disclosure_in_the_tree_is_itself_reachable_by_tab(
     focusable would have navigation no keyboard reader can open, and the check
     above would report it as clean.
 
-    ⛔ **One check over every page rather than one per page** (Ruling 48's shape
-    here): most pages in this tree carry no closed disclosure, and a per-page
+    ⛔ **One check over every page rather than one per page**, stating its
+    denominator: most pages in this tree carry no closed disclosure, and a per-page
     version would skip on each of them — seven named skips in every run of the
     whole suite, for a population that is inhabited on one page. ⭐ The
     inhabitation is asserted first, so the walk can never pass over nothing.
@@ -187,7 +187,7 @@ ANNOUNCE_TIMEOUT = 15.0
 #: What the transport's state reads as, in one evaluation: what is lit, what the
 #: live region says, and what has focus. ⚠️ `textContent` and not `innerText`
 #: for the status region — ⛔ **an element with no layout box answers `innerText`
-#: with its WHOLE text**, hidden children included (`SF-24/3`'s class, measured
+#: with its WHOLE text**, hidden children included (the zero-box class, measured
 #: by `QA-02` on this very region: the three state sentences came back at once
 #: from a region whose computed `display` was `none`).
 TRANSPORT_STATE = """

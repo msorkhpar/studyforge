@@ -12,7 +12,7 @@ machine. These are the checks that would otherwise be a reviewer's memory.
 it. ⛔ They are gated on `STUDYFORGE_DOCKER_TESTS=1` and not on "is Docker
 reachable", because a build on a COLD cache needs the **network** and FND-03's
 own acceptance is that *running* the tests needs none. ⭐ The gate and its
-reason live in `devgate.py` (`W162`): the reason tells a cold cache from a warm
+reason live in `devgate.py`: the reason tells a cold cache from a warm
 one and names the invocation that reaches these checks.
 
 ⛔ And they are gated a second time on not already being inside the image.
@@ -76,7 +76,7 @@ def test_the_base_image_is_pinned_by_digest():
 
 
 def test_the_base_image_is_python_314():
-    # FND-01 declared `requires-python = ">=3.14"`; an image below that runs a
+    # The project declares `requires-python = ">=3.14"`; an image below that runs a
     # different language from the one the project says it needs.
     from_line = next(line for line in read("Dockerfile").splitlines() if line.startswith("FROM "))
     assert "python:3.14" in from_line, from_line
@@ -112,8 +112,8 @@ def test_the_image_carries_everything_the_declared_extras_name():
 
 
 def test_ruff_is_in_the_image_because_that_is_what_unblocks_fnd_01():
-    # ⭐ FND-01 recorded its lint clause as Blocked-on-FND-03: no linter was
-    # installed and no network install could be assumed. This line is where
+    # ⭐ The package skeleton's lint clause was once blocked on this image: no linter
+    # was installed and no network install could be assumed. This line is where
     # that closes. If ruff ever leaves this file, the clause silently reopens
     # and two tests go back to skipping — which looks green.
     assert "ruff" in requirement_names()
@@ -182,9 +182,9 @@ def test_no_path_from_anybody_s_machine_is_written_down():
             assert shape not in text, f"{name} names a home directory: {shape}"
 
 
-# --- the bytecode cache, which the mount turns into a READ problem (W30) ---
+# --- the bytecode cache, which the mount turns into a READ problem ---
 #
-# ⛔ `CTO-21/1`, and it is why these four tests are not one: the image sets
+# ⛔ Why these four tests are not one: the image sets
 # `PYTHONDONTWRITEBYTECODE=1` and therefore **cannot create** the taint — but
 # the checkout is bind-mounted, so a container run **read** a stale `.pyc` a
 # HOST run had left behind. ⚠️ Ruling 40 is necessary and **not sufficient**.
@@ -289,7 +289,7 @@ def test_a_stale_bytecode_file_in_the_tree_is_ignored_when_the_prefix_redirects(
 
 
 def test_without_the_prefix_that_same_stale_bytecode_is_read(tmp_path):
-    # ⛔ Direction two, and the reason `W30` is a row rather than a comment:
+    # ⛔ Direction two, and the reason this is a test rather than a comment:
     # this is the defect, reproduced. `PYTHONDONTWRITEBYTECODE=1` is set here
     # exactly as the image sets it, and it changes nothing — the interpreter
     # loads a module whose source says something else.
@@ -388,9 +388,8 @@ def test_the_runtime_arrives_pinned_rather_than_from_a_package_manager():
     # on `nodejs.org` in the download URL — a check that fires on the correct
     # implementation, which is a check somebody deletes.
     #
-    # ⛔ **AND IT SHIPPED VACUOUS FOR THE OPPOSITE REASON** (`W131`, Ruling 267;
-    # confirmed by plant in `CTO-2026-09-11-round58.md` §3b and re-planted in
-    # `docs/tasks/handoffs/W131.md`). The raw-line version asserted over the
+    # ⛔ **AND IT SHIPPED VACUOUS FOR THE OPPOSITE REASON**, confirmed by plant.
+    # The raw-line version asserted over the
     # LINE carrying `apt-get install`, and every package this Dockerfile installs
     # sits on a CONTINUATION below it — so a planted bare `nodejs` in the
     # browser block's package list passed, green. ⭐ `commands()` collapses the
@@ -524,7 +523,7 @@ def test_the_suite_passes_for_a_uid_that_owns_nothing(dev_image):
 
 
 def test_lint_actually_runs_in_there_rather_than_skipping(dev_image):
-    # ⭐ FND-01's blocked clause, closed and asserted. On the host these two
+    # ⭐ The skeleton's blocked lint clause, closed and asserted. On the host these two
     # tests skip because ruff is not installed; in the image they must RUN.
     # ⛔ A skip that nobody notices is how a blocked clause stays blocked while
     # looking green.

@@ -1,7 +1,7 @@
 """Clause 5 — R8's floor: opened from a file, and reaching nothing but files.
 
 ⛔ **R8 is *"the floor is `file://`"*, and until now it was checked by reading
-the markup.** `SF-12`'s own test resolves every href against a written tree,
+the markup.** The unit page renderer's own test resolves every href against a written tree,
 which is the right check and a different one: it proves the page *names* nothing
 remote. This proves the browser *fetched* nothing remote — including what a
 stylesheet's `@font-face`, an `@import`, a favicon guess or a script's own

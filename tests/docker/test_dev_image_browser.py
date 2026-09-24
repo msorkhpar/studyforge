@@ -3,9 +3,9 @@
 ⛔ **This is a second module and not a section of `test_dev_image.py`**, and the
 reason is R11: that file sits close enough to the 600-line test ceiling that the
 checks below would have taken it over. ⚠️ **No figure here, because a figure here
-would be falsified by the next edit to THAT file and has been twice** — `W131`'s
-split of `devfiles.py` moved it again. The authority is `python3 -m tools.quality`,
-which reads both files at the ref in front of you (Rulings 240, 277).
+would be falsified by the next edit to THAT file and has been twice** — the split
+of `devfiles.py` moved it again. The authority is `python3 -m tools.quality`,
+which reads both files at the ref in front of you.
 
 ⭐ They also have one subject —
 *which browser this image carries and how a rebuild gets the same one* — which
@@ -112,7 +112,7 @@ def test_the_archive_comes_from_an_immutable_per_version_url():
     # digest is a complete description of which browser produced a reading.
     # ⛔ A `latest`, a channel name or a branch in the URL would make the
     # checksum a check on today's bytes and nothing more.
-    # ⛔ `commands()` and not raw lines (`W131`). MEASURED: the URL sits on a
+    # ⛔ `commands()` and not raw lines. MEASURED: the URL sits on a
     # CONTINUATION of its own `curl`, so a raw-line reading searched the URL line
     # alone — and a plant that put `/latest/` on the `curl -fsSLO \` line above
     # it passed, green. ⭐ One command per element puts the flags and the URL in
@@ -134,7 +134,7 @@ def test_an_architecture_with_no_recorded_checksum_fails_loudly():
     # this repository has never built on.
     dockerfile = instructions("Dockerfile")
     assert "no pinned browser recorded for TARGETARCH" in read("Dockerfile")
-    # ⛔ `commands()` and not raw lines (`W131`): `CHROME_SHA256_` is a SUBSTRING,
+    # ⛔ `commands()` and not raw lines: `CHROME_SHA256_` is a SUBSTRING,
     # and two of the four places it appears are continuations of the `case` inside
     # the browser's `RUN`. ⭐ MEASURED at `51dee3b` in the pinned image — 4
     # commands carry it (two `ARG`s and two `case` arms), so the bound below keeps
@@ -157,10 +157,8 @@ def test_the_browser_does_not_arrive_from_a_package_manager():
     # the correct implementation is a check somebody deletes. ⚠️ And not against
     # the whole `RUN` either — it carries `/opt/chrome-headless-shell` four times.
     #
-    # ⛔ **THIS CHECK SHIPPED VACUOUS AND ROUNDS 36 ONWARD QUOTED ITS GREEN**
-    # (`W124/4`, `W131`, Ruling 267; confirmed by plant in
-    # `CTO-2026-09-11-round58.md` §3a, re-planted in
-    # `docs/tasks/handoffs/W131.md`). The raw-line version read the LINE carrying
+    # ⛔ **THIS CHECK SHIPPED VACUOUS AND ITS GREEN WAS QUOTED**, until a plant
+    # showed it could not fail. The raw-line version read the LINE carrying
     # `apt-get install` — and all 22 of the packages below it are on
     # CONTINUATIONS, which is the only form this Dockerfile writes. A planted bare
     # `chromium`, the literal shape the paragraph above forbids, passed.
@@ -208,7 +206,7 @@ def recorded_digests() -> dict[str, str]:
 
 
 def test_the_font_is_pinned_by_version():
-    # ⛔ **Ruling 236: R10's pin must reach every input whose value a shipped
+    # ⛔ **R10's pin must reach every input whose value a shipped
     # check compares against a recorded number.** A font is a text-metric input
     # — `test_capture.py` compares a body height and a capture size against
     # recorded figures, and `--measure: 80ch` resolves against whatever face the
@@ -281,7 +279,7 @@ def test_the_font_does_not_arrive_unconstrained():
     # line with every package on a continuation below it, so the package list was
     # never in the searched text: it passed the live reading AND passed a plant
     # that removed the version constraint outright — a check with no population
-    # at all (Ruling 191).
+    # at all.
     #
     # ⚠️ *Second* version collapsed continuations but kept the whole `RUN` as one
     # string. That RUN also carries `dpkg-query … fonts-liberation` and an error
@@ -292,10 +290,10 @@ def test_the_font_does_not_arrive_unconstrained():
     # ⭐ So the population is the install command's ARGUMENTS: continuations
     # collapsed, then cut at the shell separators that end a command.
     #
-    # ⭐ **`W131` HOISTED THAT INTO `commands()`** rather than leaving a second
+    # ⭐ **THAT WAS HOISTED INTO `commands()`** rather than leaving a second
     # copy here, because the defect this check paid two plants to find turned out
     # to be shipping in four of its neighbours — and the only thing that stops a
-    # fifth is one reader they all share (`docs/tasks/handoffs/W131.md`). ⚠️ The
+    # fifth is one reader they all share. ⚠️ The
     # behaviour is unchanged and it was RE-PLANTED to prove it: this check is the
     # sweep's control, not its remedy, and a refactor that silently broke the
     # control would have hidden the whole row.
@@ -329,7 +327,7 @@ def test_the_pinned_font_is_the_one_this_image_actually_carries():
     # Dockerfile records twelve digests" and "the image you are running in was
     # built from them". ⛔ That gap is not hypothetical: `studyforge/dev:local`
     # named a browserless image and a browsered one inside 24 hours, which is
-    # why Ruling 238 disqualified the tag as an identity.
+    # why a tag is never an image's identity.
     if not os.environ.get(MARKER):
         pytest.skip(
             f"not inside the dev image, where the font is pinned. The static "
@@ -370,7 +368,7 @@ def test_this_image_carries_no_font_outside_the_pinned_directory():
 def test_the_declared_font_version_is_the_installed_one():
     # ⭐ The version half of the pin, asked of dpkg rather than of the file. ⛔ A
     # digest list can be right while the recorded version is stale, and the
-    # version is what a reader quotes in a reading (Ruling 238).
+    # version is what a reader quotes in a reading.
     if not os.environ.get(MARKER):
         pytest.skip("not inside the dev image; only a run in here can ask dpkg what landed")
     recorded = instructions("Dockerfile").split("ARG FONTS_LIBERATION_VERSION=")[1].split()[0]

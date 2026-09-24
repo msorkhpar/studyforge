@@ -10,15 +10,15 @@ is one half of it:**
 ⭐ **A RAIL TALLER THAN THE WINDOW IS THE FIXTURE THIS MODULE EXISTS FOR.** A
 rail that no longer scrolls with the page is a rail whose last containers are
 unreachable unless it scrolls itself — and that is invisible on every committed
-corpus, because the biggest container in any of them declares THREE units
-(`W326/2`). ⚠️ `test_rail_rows.py` widens ONE container to sixteen, which is
+corpus, because the biggest container in any of them declares THREE units.
+⚠️ `test_rail_rows.py` widens ONE container to sixteen, which is
 enough to overhang a masthead and not enough to overhang a window; this module
 widens EVERY container far enough that the rail runs past the bottom of the
 screen, and then asserts the reader can still get to the end of it.
 
 ## ⛔ Which box each reading measured is named in the reading itself
 
-⚠️ **`PO-105/4` is a register that misread its own probe by not saying.** Every
+⚠️ **A probe that does not say what it measured gets misread.** Every
 reading below is taken with `getBoundingClientRect()` — the **border box**, in
 **viewport** coordinates — except the two that say otherwise: `scrollHeight` and
 `clientHeight` on the rail, which are the rail's own **scrollable content** and
@@ -28,7 +28,7 @@ fold. ⭐ The element each one was read from is named in the failure message.
 ## ⛔ Asserted the other way, on the tree that shipped
 
 ⚠️ A control that has only ever seen the repaired stylesheet has not been shown
-to notice the defect it exists for (Ruling 70). ⭐ A third tree is built with the
+to notice the defect it exists for. ⭐ A third tree is built with the
 wide shape rewritten back to what `W326` merged — the centred cap, the constant
 track, no sticky — and the three settling clauses are asserted to FAIL on it.
 """
@@ -152,7 +152,7 @@ def _widen(source: Path, destination: Path) -> None:
     ⛔ Nothing here names a corpus's own subject (R1): the units it adds are
     titled by their number and their prose is one sentence of filler. ⭐ The added
     unit inherits the copied entry's `origin` rather than being given one —
-    `W95`'s sweep asserts the tree holds one declared reader and one declared
+    the shared-origin sweep asserts the tree holds one declared reader and one declared
     writer of that key, and a fixture builder that wrote it would be a second.
     """
     shutil.copytree(source, destination, dirs_exist_ok=True)
@@ -541,7 +541,7 @@ def test_at_the_narrow_width_the_page_keeps_its_gutter_and_the_rail_is_a_card(
     )
 
 
-# --- Ruling 70: the same clauses, on the tree that shipped ------------------
+# --- the negative control: the same clauses, on the tree that shipped -------
 
 
 def test_the_three_settling_clauses_fail_on_the_wide_shape_that_shipped(

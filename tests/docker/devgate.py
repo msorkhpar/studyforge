@@ -1,12 +1,12 @@
-"""The gate the image-starting checks pass, and the ground its skip states (`W162`).
+"""The gate the image-starting checks pass, and the ground its skip states.
 
 ⛔ **The defect.** The gate refused all of them with one sentence, *"the build needs
 network; a test run must not"*, whatever the image cache held. ⭐ That is true of a COLD
 cache and false of a WARM one: with the image the build inputs name already present,
-`check`'s `--build` runs every step from cache (Ruling 333 moved the cost from the MODE
-to the TEST). So the reason names what this run actually knows.
+`check`'s `--build` runs every step from cache (the cost belongs to the TEST that needs
+a build, never to the MODE). So the reason names what this run actually knows.
 
-⛔ **A DEFAULT RUN MAKES NO DOCKER CALL** (round 75's ruling on `W162/7`). Unset, the
+⛔ **A DEFAULT RUN MAKES NO DOCKER CALL.** Unset, the
 reason says the cache was NOT PROBED and names `INVOCATION`, the run that probes it: no
 container starts and no image is inspected. ⭐ Set, the gate probes. WARM runs the checks;
 COLD skips them, because a build needs network and a test run must not. A check that
@@ -43,7 +43,7 @@ MARKER = "STUDYFORGE_DEV_CONTAINER"
 #: The start of the line `check` prints its image with; the probe runs `check` through it.
 ANNOUNCEMENT = 'echo "docker/dev/check: image '
 
-#: What `check` prints on stderr before it runs anything: the image, by its inputs (`W225`).
+#: What `check` prints on stderr before it runs anything: the image, by its inputs.
 ANNOUNCED = re.compile(r"^docker/dev/check: image (\S+:inputs-[0-9a-f]{64})$", re.MULTILINE)
 
 #: ⭐ The environment that probes the cache and reaches the gated checks, named once.
@@ -59,7 +59,7 @@ NOT_PROBED = (
 )
 
 #: ⛔ A FRESH-building check's reason, and it names the environment that would reach it
-#: (`W162/6`, `W163`). This gate refuses it before the flag is read, so NO environment
+#: This gate refuses it before the flag is read, so NO environment
 #: does: it would need network to the package index, which a test run must not have.
 FRESH = (
     "This check builds a FRESH image whatever the cache holds, and a build needs network; "

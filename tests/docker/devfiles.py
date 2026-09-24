@@ -1,6 +1,6 @@
 """The text of `docker/dev/`, read the three ways its checks are allowed to read it.
 
-⛔ **Extracted from `test_dev_image.py` by `W131`, and not for tidiness.** That
+⛔ **Extracted from `test_dev_image.py`, and not for tidiness.** That
 module stood at 583 lines against R11's 600-line test ceiling, so the readers every
 check in this directory shares could not be documented without breaking the build —
 and `commands()` is the one function in here whose whole value IS its documentation:
@@ -39,19 +39,19 @@ def instructions(name: str) -> str:
 def commands(name: str) -> list[str]:
     """Every shell command in `name`, one per element, continuations COLLAPSED.
 
-    ⛔ **`W131`: a check that splits one of these files into PHYSICAL lines is
+    ⛔ **A check that splits one of these files into PHYSICAL lines is
     blind to the only form this Dockerfile writes.** `apt-get install` sits on
     its own line with all 22 of the browser's packages on continuations below
     it, so a forbidden package planted there was never in the text a raw-line
     check searched — and the check passed, green, certifying a property it could
     not observe. Four checks shipped that way and all four were confirmed by
-    plant, not by reading (`docs/tasks/handoffs/W131.md`).
+    plant, not by reading.
 
     ⭐ Two cuts, in this order, and both cost a red to learn:
 
     1. **Collapse `\\`-continuations**, so one element is one LOGICAL line — the
        shape a reader sees. `test_dev_check_timeout.py`'s `joined()` states the
-       same rule for `check` and `W123` paid for it there.
+       same rule for `check`, where the run's outer bound needed it.
     2. **Then cut at the shell separators that END a command.** ⛔ Stopping at
        step 1 is worse than not starting: the browser's whole `RUN` becomes one
        string, and that string carries `/opt/chrome-headless-shell` and

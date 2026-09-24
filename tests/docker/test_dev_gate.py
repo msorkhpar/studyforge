@@ -1,6 +1,6 @@
-"""The docker gate's skip reason, read both ways (`W162`).
+"""The docker gate's skip reason, read both ways.
 
-⛔ **A DEFAULT RUN MAKES NO DOCKER CALL** (round 75's ruling on `W162/7`). A recording
+⛔ **A DEFAULT RUN MAKES NO DOCKER CALL.** A recording
 client first on `PATH` must see no call from the gate, and none from any check in
 `tests/docker/` run unflagged in a child session.
 
@@ -67,7 +67,7 @@ ABSOLUTE = re.compile(r"(?<![\w.:~-])/[\w.-]")
 def carries_no_path(found: Cache) -> bool:
     """Are `found` and the flagged reason it produces free of any absolute path?
 
-    ⛔ `W158/6`: every skip reason prints on EVERY run, so a path in one is printed
+    ⛔ Every skip reason prints on EVERY run, so a path in one is printed
     unconditionally, and a path is somebody's machine (R7).
     """
     said = skip_reason(FLAGGED, "docker", lambda: found, builds_fresh=False) or ""
@@ -103,7 +103,7 @@ def test_a_check_that_builds_fresh_says_so_with_or_without_the_flag():
 def test_the_identity_checks_skip_as_fresh_even_on_a_flagged_warm_cache(
     tmp_path, monkeypatch, differing
 ):
-    # ⛔ `W162/5`: a check that needs network must never read WARM. So on the most permissive
+    # ⛔ A check that needs network must never read WARM. So on the most permissive
     # environment the gate knows (flagged, a client, a warm cache) the identity checks must
     # still skip as FRESH before their body runs. ⭐ No daemon is reached: the client is a
     # name, the cache is faked, and the body's first acts are refusals.

@@ -12,13 +12,13 @@ wider they had opened the window the further it slid.**
 
 ## ⛔ Which box each reading measured is named in the reading itself
 
-⚠️ **`PO-105/4` is a register that misread its own probe by not saying.** Every
+⚠️ **A probe that does not say what it measured gets misread.** Every
 rectangle below is `getBoundingClientRect()` — the **border box**, in **viewport**
 coordinates. ⭐ The three readings that are not rectangles say so: the computed
 `margin-left`, `padding-left` and `display` of `body`, which are strings out of
 `getComputedStyle` and are asserted BEFORE any geometry is believed.
 
-## ⛔ The computed style is read first, and `W328/3` is why
+## ⛔ The computed style is read first, and why
 
 ⚠️ **A probe that establishes a state by script and then measures it can certify
 something the reader never gets.** ⭐ Nothing here drives the page: every check
@@ -41,7 +41,7 @@ which is a different row's claim and one this row's own title never made.
 ## ⛔ Asserted the other way, on the shape that shipped
 
 ⚠️ A control that has only ever seen the repaired stylesheet has not been shown
-to notice the defect it exists for (Ruling 70). ⭐ A second tree is built with
+to notice the defect it exists for. ⭐ A second tree is built with
 this row's one rule cut back out of its own generated stylesheet; the settling
 clauses are asserted to FAIL on it, and the narrow readings are asserted to be
 IDENTICAL on it — which is how *"the narrow page is unchanged"* is measured
@@ -145,7 +145,7 @@ def _build(root: Path) -> Crossing:
 
     ⛔ **`write_site` and not the page fixtures.** The two kinds this row is
     about are told apart by whether the renderer was handed a rail, and only a
-    real build decides that — measured, and it is `W333/2`: the harness's own
+    real build decides that — measured: the harness's own
     container fixtures render WITHOUT one while a build gives every container
     page a rail, so a tree assembled from them would have disagreed with the site
     a reader opens about which pages this row even touches.
@@ -278,7 +278,7 @@ def test_a_container_page_carries_the_rail_so_the_index_is_the_page_this_row_mov
     ⚠️ **`generate.containers` hands every container page a rail**, so in a real
     build of a corpus with two containers or more the root index is the ONLY page
     without one. ⛔ That is asserted here because the visual package's own
-    container fixtures render without a rail (`W333/2`), and a reader of this
+    container fixtures render without a rail, and a reader of this
     module would otherwise have two incompatible answers to *which pages does
     this row move*.
     """
@@ -296,7 +296,7 @@ def test_a_container_page_carries_the_rail_so_the_index_is_the_page_this_row_mov
 def test_the_computed_left_margin_is_the_same_on_both_page_kinds(
     layout, crossing: Crossing
 ) -> None:
-    """⛔ The DECLARATION first, before any geometry is believed (`W328/3`).
+    """⛔ The DECLARATION first, before any geometry is believed.
 
     ⭐ Read off the live cascade on both pages and compared with each other, so a
     rule that stopped applying — a renamed region, a selector a browser dropped —
@@ -441,7 +441,7 @@ def test_the_page_with_no_rail_reserves_no_track_for_the_rail_it_does_not_carry(
     )
 
 
-# --- Ruling 70: the clauses go red on the shape that shipped ----------------
+# --- the negative control: the clauses go red on the shape that shipped -----
 
 
 def test_the_settling_clause_fails_on_the_shape_that_shipped(layout, as_shipped: Crossing) -> None:

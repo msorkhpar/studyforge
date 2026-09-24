@@ -301,8 +301,8 @@ def test_a_closed_group_in_the_index_opens_from_the_keyboard_with_scripts_off(
     groups were open to begin with — which is the state `render.index.policy`
     puts a small corpus in, and the reason the shut one is asserted first.
 
-    ⛔ **One check over every index rather than one per index** (Ruling 48's
-    shape, and `test_keyboard`'s own precedent one region along): a small corpus
+    ⛔ **One check over every index rather than one per index** (`test_keyboard`'s
+    own precedent one region along): a small corpus
     has every group open, so a parametrised version would SKIP on it — a named
     skip in every run of the whole suite, for a population that is inhabited on
     one page. ⭐ The inhabitation is asserted first, so the press can never pass

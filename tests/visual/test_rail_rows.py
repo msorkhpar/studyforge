@@ -25,7 +25,7 @@ in both. ⭐ That is what *"the masthead's row is sized by the masthead"* means
 operationally, and on the tree this row was opened over the two readings differ
 by the rail's whole overhang — reported by the failure, never written down here.
 
-⛔ **And it is asserted the other way too** (Ruling 70): a third tree is built
+⛔ **And it is asserted the other way too**: a third tree is built
 with the repaired declaration put back to the one that shipped, and the two
 clauses above are asserted to FAIL on it. A control that only ever sees the fixed
 stylesheet has not been shown to notice the defect it exists for.
@@ -134,7 +134,7 @@ def _widen(source: Path, destination: Path) -> str:
     adds is titled by its number and its prose is one sentence of filler.
 
     ⚠️ **The added unit inherits the copied entry's `origin` rather than being
-    given one**, and that is deliberate: `W95`'s sweep asserts the tree holds ONE
+    given one**, and that is deliberate: the shared-origin sweep asserts the tree holds ONE
     reader and one writer of that key, and a fixture builder that wrote it would
     be a second writer nobody declared. ⭐ Nothing here reads the value either —
     the rail is built from titles, and where a unit came from is the placement's
@@ -389,7 +389,7 @@ def test_at_the_narrow_width_the_rail_is_still_the_card_above_the_reading_surfac
 def test_both_wide_clauses_fail_on_a_tree_whose_placement_is_the_one_that_shipped(
     column, regressed: WideCorpus, railless: WideCorpus
 ) -> None:
-    """⛔ Ruling 70, and the answer to *why did the arms already here not catch it*.
+    """⛔ The negative control, and the answer to *why did the arms already here not catch it*.
 
     ⭐ **The tree is the real one and the defect is the real one**: the same build,
     with the rail's placement rewritten in its own stylesheet back to the single

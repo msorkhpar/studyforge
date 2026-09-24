@@ -1,4 +1,4 @@
-"""The rubric's obliged self-certification block, read against `check`'s own contract (`W301`).
+"""The rubric's obliged self-certification block, read against `check`'s own contract.
 
 ⛔ **A fourth module under `tests/docker/` and not a section of an existing one, for
 R11's reason and for a subject reason.** `test_dev_check_timeout.py` owns *what
@@ -9,12 +9,12 @@ happens to a run that never finishes*; this owns *which command each gate names*
 
 ⚠️ `docker/dev/check`'s no-argument case sets `python3 -m pytest` — the image's own
 `CMD`, which `test_dev_check_timeout.py` pins as a CHECKED COPY. ⛔ So a **bare**
-`docker/dev/check` runs THE SUITE. Until `W301` the rubric's obliged block redirected
+`docker/dev/check` runs THE SUITE. The rubric's obliged block once redirected
 a bare invocation into `floor.txt` and read its status as `FLOOR_EXIT`, so an office
 that pasted the block ran the suite twice and filed one run under the floor's name.
 
 ⭐ **It is the worst class a gate can have: it does not FAIL, it PASSES THE WRONG
-THING** (Ruling 191's family). Both statuses are `0` whenever the suite is green, so
+THING** — a reading with nothing under it. Both statuses are `0` whenever the suite is green, so
 no instrument downstream could tell — which is why the check has to be on the TEXT
 the office pastes, and not on an exit code.
 
@@ -26,14 +26,14 @@ form of its own. ⚠️ A check that read only the rubric would assert the rubri
 with itself; this reads BOTH and fails if they ever disagree, which is the idiom
 `test_the_no_argument_case_names_the_image_s_own_command` already uses for `CMD`.
 
-## ⛔ `W191` — THE COMMANDS MOVED OUT OF THE DOCUMENT, SO THE QUESTION MOVED WITH THEM
+## ⛔ THE COMMANDS MOVED OUT OF THE DOCUMENT, SO THE QUESTION MOVED WITH THEM
 
 ⭐ **The obliged block is now ONE command with ONE exit code** — a two-item list of
-readings is satisfiable by halves, which is `W191`'s defect — ⛔ **so the gate argv an
+readings is satisfiable by halves — ⛔ **so the gate argv an
 office runs is `tools.mergegate.GATES` and is no longer TYPED into the rubric at all.**
 
-⚠️ **Nothing `W301` pinned is dropped; each assertion is re-pointed at the population
-that now carries the answer** (Ruling 143(2): inverted, never deleted). ⭐ **The ONE
+⚠️ **Nothing the first version pinned is dropped; each assertion is re-pointed at the
+population that now carries the answer** — a control is inverted, never deleted. ⭐ **The ONE
 control that inverts says so in its own body:** the block used to owe the wrapper two
 invocations and now owes it NONE, because an office invoking the wrapper by hand is
 back to running two things and remembering to `&&` them.
@@ -48,14 +48,14 @@ from tests.support import repository_root
 from tools.mergegate import GATES
 
 #: The document carrying the obliged block. ⚠️ Named as a path rather than linked:
-#: this is a test, and Ruling 285(b) binds a handoff's citations, not a constant.
+#: this is a test, and the link rule binds a handoff's citations, not a constant.
 RUBRIC = "docs/conventions/review-rubric.md"
 
 #: The block is identified by what it WRITES, never by a line number or a heading —
 #: both of which move every time the rubric is re-wrapped.
 MARKER = "$CAP/certification.txt"
 
-#: The one command the block obliges, whose exit code IS the certification (`W191`).
+#: The one command the block obliges, whose exit code IS the certification.
 CERTIFY = "python3 -m tools.quality.certify"
 
 #: The floor's own command, as `check`'s header documents it.
@@ -110,8 +110,8 @@ def block_invocations() -> list[list[str]]:
 def invocations() -> list[list[str]]:
     """What each declared gate names as its command, for every gate run through the wrapper.
 
-    ⛔ **Read from `tools.mergegate.GATES` and no longer from the document** (`W191`).
-    ⭐ Every question below is the one `W301` asked; only the population moved, from text
+    ⛔ **Read from `tools.mergegate.GATES` and no longer from the document**.
+    ⭐ Every question below is the one the first version asked; only the population moved, from text
     an office retypes to the declaration the office and the merge gate both run.
     """
     return [
@@ -144,7 +144,7 @@ def test_the_obliged_block_names_the_one_certifying_command():
 
 
 def test_the_obliged_block_RUNS_NO_GATE_BY_HAND():
-    # ⛔ **THE INVERTED CONTROL** (`W191`, Ruling 143(2)). This module used to require
+    # ⛔ **THE INVERTED CONTROL** — inverted, never deleted. This module used to require
     # the block to invoke the wrapper TWICE, once per gate. It now requires NONE: an
     # office invoking the wrapper by hand is back to running two things and remembering
     # to `&&` them, which is the office this row is about. ⭐ The commands still exist —
@@ -158,7 +158,7 @@ def test_the_obliged_block_RUNS_NO_GATE_BY_HAND():
 def test_the_declared_gates_are_inhabited_and_reach_the_wrapper():
     # ⭐ The second half of the control, on the population that moved: an empty GATES,
     # or one that stopped naming the wrapper, would make every assertion below vacuous
-    # (Ruling 191 — an empty population is never the pass reading).
+    # (an empty population is never the pass reading).
     assert len(invocations()) >= 2, (
         f"the declared gates make {len(invocations())} wrapper invocations; they owe "
         f"one for the floor and one for the suite"
@@ -166,7 +166,7 @@ def test_the_declared_gates_are_inhabited_and_reach_the_wrapper():
 
 
 def test_no_declared_gate_is_a_bare_invocation():
-    # ⛔ **THE WHOLE OF `W301`**, asked of `GATES` (`W191`). A bare `docker/dev/check`
+    # ⛔ **THE WHOLE OF THE DEFECT**, asked of `GATES`. A bare `docker/dev/check`
     # runs the image's `CMD`, so a bare call filed under the FLOOR's name is a SUITE
     # run — and exits 0, so nothing downstream can tell.
     for command in invocations():

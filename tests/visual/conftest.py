@@ -21,7 +21,7 @@ can turn a silent non-run into a green reading.**
 environment instead, by requesting `pinned_environment`** — and
 `test_host_environment.py` enforces exactly that, with this module named as the
 single licensed exception. ⚠️ **The exception is a NAMED module with a STATED
-licence and never a pattern** (Ruling 185).
+licence and never a pattern**.
 """
 
 from __future__ import annotations

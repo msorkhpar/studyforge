@@ -4,7 +4,7 @@
 page script calls `focus()` on it twice as the document starts, with no
 `preventScroll` — ⭐ the shape measured in code-server 4.137.0, where
 `restoreParts()` focuses the editor group and the editor that opens the window's
-file then focuses its input (`W449`). Each `focus()` it makes and every value
+file then focuses its input. Each `focus()` it makes and every value
 typed into it is reported back to this server, so a check can read what
 happened INSIDE a frame of another origin without reaching into it.
 

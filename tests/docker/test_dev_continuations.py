@@ -1,12 +1,12 @@
-"""Every reader of `docker/dev/` text, classified — and the claim is CLOSED (`W131`).
+"""Every reader of `docker/dev/` text, classified — and the claim is CLOSED.
 
 ⛔ **The defect this module exists to make unrepeatable.** Four shipped checks in
 this directory certified properties of `docker/dev/Dockerfile` that they could not
 observe, because they split the file into PHYSICAL lines and every package this
 Dockerfile installs sits on a backslash CONTINUATION below the line that names the
 installer. ⭐ All four were confirmed by PLANT rather than by reading — the live
-reading was green and stayed green with the forbidden word planted — and rounds 36
-onward quoted that green (`docs/tasks/handoffs/W131.md`, Ruling 267):
+reading was green and stayed green with the forbidden word planted — and that green
+was quoted as evidence until the plant was run:
 
 ```text
 test_the_browser_does_not_arrive_from_a_package_manager    bare `chromium`  -> PASSED
@@ -19,12 +19,12 @@ test_studyforge_is_not_installed_into_the_image            a 2nd install    -> P
 `commands()`, and it is copyable — which is exactly the problem: the NEXT reader of
 this Dockerfile will reach for `.splitlines()` because it is shorter, and their
 check will be green on the day it ships. ⛔ So the population of readers is asserted
-here, CLOSED in both directions (Ruling 258): a site that appears and is not
+here, CLOSED in both directions: a site that appears and is not
 classified fails, and a classification whose site has gone fails too. ⭐ An
 incomplete list of safe sites is worse than no list, because it reads as a sweep.
 
 ⛔ **And the `line-anchored` verdict is not taken on trust.** *"A continuation
-cannot carry `FROM `"* is a claim about the TOKEN SET (Ruling 220), so it is
+cannot carry `FROM `"* is a claim about the TOKEN SET, so it is
 ASSERTED against the real files rather than reasoned about: every continuation line
 in `docker/dev/` is read, and none of them may begin with any declared anchor.
 """
@@ -94,7 +94,7 @@ CLASSIFIED_BY_MODULE: dict[str, dict[str, str]] = {
         "test_the_source_is_mounted_not_copied": "line-anchored",
         "test_the_suite_passes_inside_the_image_with_no_network": "not-dev-text",
     },
-    # ⭐ `W211`: every read of the Dockerfile in it goes through `dockerfile()`.
+    # ⭐ Every read of the Dockerfile in it goes through `dockerfile()`.
     "test_dev_image_command.py": {
         "dockerfile": "collapsed",
     },
@@ -107,7 +107,7 @@ CLASSIFIED_BY_MODULE: dict[str, dict[str, str]] = {
         "test_the_font_does_not_arrive_unconstrained": "collapsed",
         "test_the_visual_harness_variables_cross_into_the_container": "no-continuations",
     },
-    # ⭐ `W152`'s module. Every site in it that reads `check` goes through its own
+    # ⭐ The provenance module. Every site in it that reads `check` goes through its own
     # `joined()` rather than claiming an exemption; the two that read `compose.yaml`
     # structurally rest on that file's own lack of continuations instead.
     # ⚠️ `documented_invocation_carries_the_variable` is the one that NEEDED the
@@ -126,13 +126,13 @@ CLASSIFIED_BY_MODULE: dict[str, dict[str, str]] = {
         "test_the_export_check_can_say_no": "collapsed",
         "test_the_ordering_check_can_say_no": "collapsed",
     },
-    # ⭐ `W225`: `check` is read through `joined()`; `compose.yaml` line by line, on
+    # ⭐ The identity module: `check` is read through `joined()`; `compose.yaml` line by line, on
     # that file's own lack of continuations.
     "test_dev_image_identity.py": {
         "check_lines": "collapsed",
         "image_declarations": "no-continuations",
     },
-    # ⭐ `W301`: the rubric's obliged block is read against `check`'s own contract.
+    # ⭐ The rubric's obliged block is read against `check`'s own contract.
     # ⚠️ `obliged_block` reads `docs/conventions/review-rubric.md` and no
     # `docker/dev/` text at all; `default_command` rests on the SAME `set --` anchor
     # `test_dev_check_timeout.py` already declares, because it reads the same line for
@@ -145,7 +145,7 @@ CLASSIFIED_BY_MODULE: dict[str, dict[str, str]] = {
         "default_command": "line-anchored",
         "test_the_wrapper_still_documents_the_bare_form_as_the_whole_suite": "per-physical-line",
     },
-    # ⭐ `W162`: the gate reads the one `FROM` and cuts `check` at its image print.
+    # ⭐ The gate reads the one `FROM` and cuts `check` at its image print.
     "devgate.py": {
         "announcement_prefix": "line-anchored",
         "base_image": "line-anchored",
@@ -181,7 +181,7 @@ DECOMPOSITION_SITES = 41
 #: _continued_instruction` is that half.
 #:
 #: ⛔ Only the two files that HAVE continuations appear, so neither reading below is
-#: a vacuous pass (Ruling 191). `compose.yaml` and `requirements.txt` have none at
+#: a vacuous pass. `compose.yaml` and `requirements.txt` have none at
 #: all and `test_the_files_with_no_continuations_still_have_none` is their ground.
 LINE_ANCHORS: dict[str, tuple[str, ...]] = {
     "Dockerfile": ("FROM ", "COPY ", "CMD ", "ARG "),
@@ -196,7 +196,7 @@ CONTINUATION_FREE = ("compose.yaml", "requirements.txt")
 #: `compose.yaml` and **0** in `requirements.txt`. ⛔ The bound
 #: is a floor and not the figure, because a package added to the browser's list
 #: moves the number and does not move the property — but a reading of ZERO would
-#: mean this whole module had no population (Ruling 191), and that must fail.
+#: mean this whole module had no population, and that must fail.
 CONTINUATION_FLOOR = 20
 
 
@@ -268,8 +268,8 @@ def source_of(key: str) -> str:
 
 
 def test_every_reader_of_the_dev_files_is_classified():
-    # ⛔ The closed half of Ruling 258. A new `.splitlines()` over one of these
-    # files is the defect `W131` swept, and the next person to write one is not
+    # ⛔ The closed half of the claim. A new `.splitlines()` over one of these
+    # files is the defect this module swept, and the next person to write one is not
     # going to read this module first — so it fails their run instead.
     found = set(sites())
     declared = set(CLASSIFIED)
@@ -351,7 +351,7 @@ def test_a_no_continuations_site_reads_only_a_file_that_has_none(key: str):
 
 
 def test_the_dev_files_actually_have_continuation_lines():
-    # ⛔ Ruling 191: the two assertions below are vacuous on a file with no
+    # ⛔ The two assertions below are vacuous on a file with no
     # continuations, and a vacuous check that reads green is worse than none. ⭐ The
     # browser's 22-package install is why the floor is comfortably met.
     found = continuation_lines("Dockerfile")
@@ -365,7 +365,7 @@ def test_the_dev_files_actually_have_continuation_lines():
 @pytest.mark.parametrize("name", sorted(LINE_ANCHORS))
 def test_no_continuation_line_can_carry_a_line_anchored_predicate(name: str):
     # ⛔ **This is the whole of the `line-anchored` verdict, and it is a reading of
-    # the file rather than an argument about grammar** (Ruling 220). The day somebody
+    # the file rather than an argument about grammar**. The day somebody
     # writes a continuation line beginning `ARG ` or `- `, four checks above quietly
     # start reading a population that is missing a member — and this fails first,
     # naming the line.
@@ -397,7 +397,7 @@ def test_no_comment_sits_inside_a_continued_instruction(name: str):
 
 
 def test_commands_joins_text_that_raw_lines_keep_apart():
-    # ⛔ The positive control for the remedy itself (Ruling 191). `commands()` is
+    # ⛔ The positive control for the remedy itself. `commands()` is
     # only worth anything if it actually returns text spanning physical lines, and
     # the browser's install is the case the whole row turns on: `apt-get install` is
     # on one line and `libxrandr2` is six lines below it.

@@ -211,7 +211,7 @@ def grown(narrow: list[dict], wide: list[dict]) -> list[str]:
 def unpainted(controls: list[dict]) -> list[str]:
     """Which of the transport's controls have no box at all, as sentences.
 
-    ⛔ **`SF-24/3`'s blindness, swept for by `QA-02` and found here.** `grown`
+    ⛔ **The zero-box blindness, swept for by `QA-02` and found here.** `grown`
     compares a control's box at one width against its box at another, and a
     `hidden` element reports `0 × 0` at EVERY width — so a transport that had
     stopped being revealed at all would satisfy *"the buttons did not grow"*
@@ -415,7 +415,7 @@ def test_a_planted_stretched_control_is_caught() -> None:
 
 
 def test_a_planted_unpainted_control_is_caught() -> None:
-    """⭐ Both ways: `SF-24/3`'s zero box is named, and a real one is not."""
+    """⭐ Both ways: a zero box is named, and a real one is not."""
     assert unpainted([{"width": 0.0, "height": 0.0}]) == ["control 0 has no box (0.00 x 0.00)"]
     assert unpainted([{"width": 120.0, "height": 34.0}]) == []
 
