@@ -54,19 +54,21 @@ SIZE_EXCEPTION_MARKER = "Size exception:"
 #: one line refused a long, correct, multi-line reason for being short.
 MIN_JUSTIFICATION_CHARS = 20
 
-#: How a deferral is told apart from a design claim: its reason names a task
-#: id (R11's deferral form). Two id shapes are read — `<PREFIX>-<n>` (a
-#: prefix, a hyphen, a number, an optional letter suffix) and `W<n>`, which
-#: carries no hyphen.
+#: A work item named in a size justification, which makes it a promise of later
+#: work rather than a design claim (R11 admits the claim only). Two id shapes
+#: are read: `<PREFIX>-<n>` (a prefix, a hyphen, a number, an optional letter
+#: suffix) and `W<n>`, which carries no hyphen.
 #:
-#: ⛔ Deliberately narrow, and the narrowness is the point. `R11` is a rule,
-#: `C5` a constraint, and a milestone or an epic name another kind of record —
-#: none of them a task anybody can close, and a design claim has to stay free
-#: to cite them without being read as a deferral. Only `W` takes the hyphenless form.
-#:
-#: ⚠️ It answers *"is a task named here"*, never *"is that task still open"*:
-#: this package reads the tree and nothing that plans work on it.
-ROW_ID = re.compile(r"\b(?:[A-Z]{2,4}-[0-9]{1,3}[a-z]?|W[0-9]{1,3})\b")
+#: ⛔ Deliberately narrow. `R11` is a rule, `C5` a constraint, and a milestone
+#: or an epic another kind of record, none of them work anybody promises, and a
+#: design claim has to stay free to cite them. Only `W` takes the hyphenless form.
+WORK_ITEM_ID = re.compile(r"\b(?:[A-Z]{2,4}-[0-9]{1,3}[a-z]?|W[0-9]{1,3})\b")
+
+#: The words a promise of later work is written in when it names no work item.
+#: ⚠️ A forbidden list, so it is open by construction: it catches the common
+#: spellings, and review catches the rest. A design claim says why splitting
+#: would be worse, which none of these words is needed for.
+DEFERRAL_WORDS = re.compile(r"\b(?:defer\w*|later|TODO|FIXME)\b")
 
 # --- R17: contracts --------------------------------------------------------
 

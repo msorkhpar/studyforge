@@ -34,7 +34,7 @@ from tests.floor.personal_data.registry import judged_directories
 from tests.floor.personal_data.shapes import swept_files
 from tests.floor.report import Finding
 from tests.floor.size import check_sizes
-from tests.floor.source_names import FRAMEWORK_ROOT, check_source_names, framework_modules
+from tests.floor.source_names import FRAMEWORK_ROOT, check_source_names, framework_files
 from tests.floor.style import check_style
 from tests.floor.surfaces import check_producer_half, surface_census
 
@@ -89,7 +89,7 @@ POPULATIONS: tuple[Population, ...] = (
         "registered negative-fixture directories whose fixture area exists",
         judged_directories,
     ),
-    Population(check_source_names, "", f"modules under {FRAMEWORK_ROOT}/", framework_modules),
+    Population(check_source_names, "", f"shipped files under {FRAMEWORK_ROOT}/", framework_files),
 )
 
 

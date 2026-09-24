@@ -126,10 +126,10 @@ def test_a_tree_with_no_convention_reads_two_EMPTY_answers(tmp_path):
     assert convention(tmp_path) == ({}, ())
 
 
-# --- the other half of the table: what was ACCEPTED -----------------------------
+# --- the other half of the table: the accepted identity ----------------------------
 
 
-def test_the_convention_RECORDS_what_the_user_accepted():
+def test_the_convention_RECORDS_the_accepted_identity():
     text = accepted()
     assert "cool slate" in text.lower()
     assert "ONE loud accent" in text

@@ -42,8 +42,9 @@ nothing reads, where a malformed map validates clean.
 
 ⛔ **`studyforge plan` must print the ignore lines its
 profile requires**, and R1 forbids the caller reaching that by asking which
-profile it has. So the profile answers — `ignore_file`, and `output_globs` for
-what is committed instead. `cli.plan` and the onboarding skill are the callers.
+profile it has. So the profile answers with `ignore_file`, and everything else it
+places (`unit`, `container`, `corpus`) is committed. `cli.plan` and the onboarding
+skill are the callers.
 
 ⛔ **A build's output is committed, and the only generated ignore rules about
 the CORPUS are the media policy's**. §5's

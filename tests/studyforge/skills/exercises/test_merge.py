@@ -93,6 +93,9 @@ def test_a_fence_a_re_read_page_no_longer_carries_is_changed_and_not_dropped(tmp
     ("prior", "says"),
     [
         ({"ledger_api": 2, "sources": [], "entries": []}, "ledger_api 2"),
+        # ⛔ Both equal 1, and neither is a version: only `version.check` refuses them.
+        ({"ledger_api": True, "sources": [], "entries": []}, "ledger_api as a bool"),
+        ({"ledger_api": 1.0, "sources": [], "entries": []}, "ledger_api"),
         ({"ledger_api": 1, "sources": {}, "entries": []}, "'sources'"),
         ({"ledger_api": 1, "sources": [{"path": "../outside.md"}], "entries": []}, "'sources'"),
         ({"ledger_api": 1, "sources": [], "entries": [{"path": "a.md", "kind": "x"}]}, "'entries'"),

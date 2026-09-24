@@ -97,7 +97,7 @@
         },
         {
           "type": "para",
-          "text": "The test class shipped with the material is the grader. It is authoritative because nobody here wrote it (R5)."
+          "text": "The test class shipped with the material is the grader. Nobody here derived it, so it has not been proven to catch a wrong answer."
         },
         {
           "type": "heading",

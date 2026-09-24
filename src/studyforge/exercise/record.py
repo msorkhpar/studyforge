@@ -13,20 +13,16 @@ key whose presence is the graded state, and **`unit.trust` for R5's rule**.
 
 ## ⛔ R5's rule is imported, never re-spelled
 
-⚠️ **`unit.trust` already owns the provenance and trust vocabulary and the pair
-R5 forbids**, and its own docstring says this package consumes it. So this module
-calls `check_test_record` and adds nothing to it. ⭐ The alternative was a
-second spelling of one rule, which is the defect `placement.names.label_of`
-records paying for: two guards, one missing character, and the failure showed
-as the *missing character* rather than as the duplication that caused it.
+⚠️ **`unit.trust` owns the provenance and trust vocabulary and the pairs R5
+forbids**, so this module calls `check_test_record` and adds nothing to it. ⭐ A
+second spelling of one rule is the defect `placement.names.label_of` records:
+two guards, one missing character, and a failure that showed as the character.
 
 ## Where it lives, and what its presence means
 
-⛔ An `exercise` belongs to a **practice** document (spec §7, CTO on Q2). A
-lesson carrying one is refused rather than ignored: the key's presence *is* the
-graded state, so a key in the wrong place is a grader the reader will never be
-offered and the corpus would validate green — the exact failure §7's structure
-was chosen to make impossible.
+⛔ An `exercise` belongs to a **practice** document (spec §7). On a lesson it is
+refused, not ignored: its presence *is* the graded state, and a misplaced one is a
+grader never offered, in a corpus that validates green.
 
 ⛔ **A record is one of two shapes, and nothing in between**:
 
@@ -35,10 +31,9 @@ was chosen to make impossible.
 | a file and how it runs | `REQUIRED_KEYS` — `main_path`, `run_command` | **ungraded** |
 | that, plus a grader | every key in `EXERCISE_KEYS` | **graded** |
 
-⭐ **Why a file with no test is a record and not a second declaration** is this:
-the unit document's `workspace` is this record, so the
-reader's file reaches the one place every consumer already reads, with no new
-key in the archive or the unit document.
+⭐ **A file with no test is a record and not a second declaration** because the
+unit document's `workspace` is this record: the reader's file reaches the one
+place every consumer already reads, with no new key anywhere.
 
 ⛔ **The grader half is written whole or not at all.** A record carrying
 `test_path` and no `test_command` is not a lesser exercise; it is a grader
@@ -208,6 +203,11 @@ class Exercise:
     def ships_with_material(self) -> bool:
         """Did this grader come with the material, whatever it may claim? ⭐ `bundled`."""
         return self.provenance == "bundled"
+
+    @property
+    def written_by_hand(self) -> bool:
+        """Did somebody write this grader by hand, so that no gate proved it? ⭐ `user`."""
+        return self.provenance == "user"
 
 
 def of(document: object, where: str) -> Exercise | None:

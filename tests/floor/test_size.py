@@ -4,10 +4,10 @@ The two acceptance cases for the ceiling are `test_oversized_source_module_fails
 and `test_justified_oversized_module_passes`: the ceiling must actually stop a
 file, and the documented opt-out must actually let one through.
 
-The deferral cases are the `--- a deferral ---` block. ⚠️ Its fixtures are
-pairs that differ ONLY in where a line breaks, because the visible reason must
-not be a function of the author's return key. A fixture that changed the
-wording too would prove nothing.
+The deferral cases are the `--- a promise of later work is refused ---` block:
+R11 admits a design claim only, so a justification that promises later work is
+refused wherever in the paragraph it is written, and a design claim of the same
+length passes.
 
 The authored-file cases are the `--- authored stylesheets, scripts and templates ---`
 block: the ceiling stops an authored non-Python file under `src/`, and lets a
@@ -18,19 +18,20 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from tests.floor import config
 from tests.floor.size import (
     AUTHORED_SUFFIXES,
-    BOTH_FORMS,
+    DESIGN_FORM,
     SPLIT_ONLY,
     VENDORED,
     authored_files,
     check_sizes,
     count_lines,
     module_docstring,
-    row_ids,
+    promises,
     size_exception,
-    size_exception_marker_line,
 )
 
 
@@ -165,42 +166,57 @@ def test_an_unparseable_module_is_measured_anyway(tmp_path):
     assert [finding.rule for finding in check_sizes(tmp_path)] == ["size"]
 
 
-# --- a deferral ---------------------------------------------------------------
+# --- a promise of later work is refused ------------------------------------------
 
-# ⚠️ A deferral written the way a module writes one, kept here as a literal
-# rather than read off a live module. The row a live deferral names deletes its
-# paragraph, so a test that read one would fail the moment that row does its
-# job — and a fixture that expires when a split lands elsewhere is not a
-# fixture.
-LIVE_DEFERRAL = (
+# ⚠️ Fixtures written the way a module would write one, as literals. ⛔ Each is a
+# promise that later work will split the module: one names a work item on the
+# marker line, one names it a line further down, and one names nothing at all.
+DEFERRAL_BY_ID = (
     "The two checks that read the material.\n"
     "\n"
-    "Size exception: W44 splits this module into a package, and it is deferred to\n"
-    "that row rather than done here because this file crossed the ceiling only when\n"
-    "AB-35 and AB-36 merged — each is under it alone, and neither task may\n"
-    "restructure a file the other is concurrently editing.\n"
+    "Size exception: W44 splits this module into a package, and it is left here\n"
+    "because this file crossed the ceiling only when two branches merged.\n"
 )
 
-# The SAME deferral, same English, one word past the wrap.
-WRAPPED_DEFERRAL = (
+DEFERRAL_WRAPPED = (
     "The two checks that read the material.\n"
     "\n"
-    "Size exception: this module is split into a package by the row that owns\n"
-    "it, W44, and it is deferred there rather than done here because the file\n"
-    "crossed the ceiling only when two individually-legal branches merged.\n"
+    "Size exception: this module is split into a package by the task that owns\n"
+    "it, AB-35, because the file crossed the ceiling only when two branches merged.\n"
 )
+
+DEFERRAL_IN_WORDS = (
+    "The two checks that read the material.\n"
+    "\n"
+    "Size exception: the split into a package is deferred until the two readers\n"
+    "settle, because moving them now would conflict with the work on both.\n"
+)
+
+#: A design claim: why splitting would be worse. ⭐ It cites a rule, which is
+#: not a promise of anything.
+DESIGN_CLAIM = (
+    "A template renderer.\n\nSize exception: the substitution table is one\n"
+    "literal mapping and splitting it across modules would hide half the\n"
+    "placeholders from the reader of the other half. R11 permits this."
+)
+
+
+def oversized(tmp_path: Path, name: str, docstring: str) -> list:
+    write_module(
+        tmp_path,
+        f"src/studyforge/{name}.py",
+        module_of(config.SOURCE_LINE_CEILING + 25, docstring.strip("\n")),
+    )
+    return check_sizes(tmp_path)
 
 
 def test_the_justification_is_the_whole_paragraph_not_the_marker_line():
     # ⛔ A reader that stopped at the line break would print, in a sweep,
-    # whatever reason fitted on one line.
-    reason = size_exception(LIVE_DEFERRAL)
-    assert reason.startswith("W44 splits this module into a package")
-    assert reason.endswith("the other is concurrently editing.")
+    # whatever reason fitted on one line, and would miss a promise below it.
+    reason = size_exception(DEFERRAL_WRAPPED)
+    assert reason.startswith("this module is split into a package")
+    assert reason.endswith("only when two branches merged.")
     assert "\n" not in reason  # joined, so a sweep can print it on one line
-    assert size_exception_marker_line(LIVE_DEFERRAL) == (
-        "W44 splits this module into a package, and it is deferred to"
-    )
 
 
 def test_the_justification_stops_at_the_next_blank_line():
@@ -214,40 +230,42 @@ def test_the_justification_stops_at_the_next_blank_line():
     assert "Depends on" not in reason
 
 
-def test_row_ids_finds_both_shapes_and_nothing_else():
-    assert row_ids("W44 splits this module") == ["W44"]
-    assert row_ids("AB-35 and AB-36 merged") == ["AB-35", "AB-36"]
-    assert row_ids("ABC-05a is the row") == ["ABC-05a"]
-    assert row_ids("W44, and again W44") == ["W44"]  # deduplicated, order kept
-    # ⛔ A rule, a milestone, a constraint and an epic are not rows anybody can
-    # close. A design claim must stay free to cite them.
-    assert row_ids("R11 is the ceiling, M2 the milestone, C5 a state, E08 an epic") == []
-    assert row_ids("") == []
-    assert row_ids(None) == []
+def test_promises_finds_work_items_and_deferral_words_and_nothing_else():
+    assert promises("W44 splits this module") == ["W44"]
+    assert promises("AB-35 and AB-36 merged") == ["AB-35", "AB-36"]
+    assert promises("ABC-05a is the task") == ["ABC-05a"]
+    assert promises("W44, and again W44") == ["W44"]  # deduplicated, order kept
+    assert promises("the split is deferred until later") == ["deferred", "later"]
+    assert promises("TODO: split it") == ["TODO"]
+    # ⛔ A rule, a milestone, a constraint and an epic are not work anybody
+    # promises. A design claim must stay free to cite them.
+    assert promises("R11 is the ceiling, M2 the milestone, C5 a state, E08 an epic") == []
+    assert promises("") == []
+    assert promises(None) == []
 
 
-def test_a_deferral_with_its_id_on_the_marker_line_passes(tmp_path):
-    write_module(
-        tmp_path,
-        "src/studyforge/deferred.py",
-        module_of(config.SOURCE_LINE_CEILING + 25, LIVE_DEFERRAL.strip("\n")),
-    )
-    assert check_sizes(tmp_path) == []
+@pytest.mark.parametrize(
+    ("docstring", "named"),
+    [
+        pytest.param(DEFERRAL_BY_ID, "W44", id="work-item-on-the-marker-line"),
+        pytest.param(DEFERRAL_WRAPPED, "AB-35", id="work-item-past-the-wrap"),
+        pytest.param(DEFERRAL_IN_WORDS, "deferred", id="deferral-in-words"),
+    ],
+)
+def test_a_deferral_is_refused_wherever_it_is_written(tmp_path, docstring, named):
+    # ⛔ R11 admits a design claim only. A promise of later work reads to a
+    # stranger as permanent, so the floor refuses it, however it is spelled.
+    findings = oversized(tmp_path, "deferred", docstring)
+    assert [finding.rule for finding in findings] == ["size-deferral"]
+    assert named in findings[0].message
+    assert DESIGN_FORM in findings[0].message
 
 
-def test_a_deferral_whose_id_wrapped_is_refused(tmp_path):
-    # ⭐ The negative control for the test above: same English, same length,
-    # the id one word past the line break.
-    write_module(
-        tmp_path,
-        "src/studyforge/wrapped.py",
-        module_of(config.SOURCE_LINE_CEILING + 25, WRAPPED_DEFERRAL.strip("\n")),
-    )
-    findings = check_sizes(tmp_path)
-    assert len(findings) == 1
-    assert findings[0].rule == "size-exception-id"
-    assert "W44" in findings[0].message
-    assert "not on the marker line" in findings[0].message
+def test_a_design_claim_passes(tmp_path):
+    # ⭐ The negative control for the refusals above: the same ceiling, the same
+    # length, and a reason that says why splitting would be worse.
+    assert promises(size_exception(DESIGN_CLAIM)) == []
+    assert oversized(tmp_path, "claimed", DESIGN_CLAIM) == []
 
 
 def test_a_long_justification_with_a_short_first_line_is_not_refused_for_length(tmp_path):
@@ -255,68 +273,39 @@ def test_a_long_justification_with_a_short_first_line_is_not_refused_for_length(
     # a correct multi-line reason whose first line is short is not refused for
     # being short.
     docstring = (
-        "Thing.\n\nSize exception: W44 splits it.\n"
-        "The reason it is not done here is that the file crossed the ceiling\n"
-        "only when two individually-legal branches merged, and neither task\n"
-        "may restructure a file the other is concurrently editing."
+        "Thing.\n\nSize exception: one table.\n"
+        "Splitting it across modules would hide half the placeholders from\n"
+        "the reader of the other half, and every one of them is read together."
     )
-    assert len(size_exception_marker_line(docstring)) < config.MIN_JUSTIFICATION_CHARS
-    write_module(
-        tmp_path,
-        "src/studyforge/short_first_line.py",
-        module_of(config.SOURCE_LINE_CEILING + 25, docstring),
-    )
-    assert check_sizes(tmp_path) == []
+    assert len("one table.") < config.MIN_JUSTIFICATION_CHARS
+    assert oversized(tmp_path, "short_first_line", docstring) == []
 
 
-def test_a_design_claim_naming_no_row_is_still_a_design_claim(tmp_path):
-    # ⭐ The id requirement binds deferrals only. A permanent design claim that
-    # happens to wrap must not acquire one.
-    docstring = (
-        "A template renderer.\n\nSize exception: the substitution table is one\n"
-        "literal mapping and splitting it across modules would hide half the\n"
-        "placeholders from the reader of the other half. R11 permits this."
-    )
-    assert row_ids(size_exception(docstring)) == []
-    write_module(
-        tmp_path,
-        "src/studyforge/claimed.py",
-        module_of(config.SOURCE_LINE_CEILING + 25, docstring),
-    )
-    assert check_sizes(tmp_path) == []
+# --- the remedy names the one form ------------------------------------------
 
 
-# --- the remedy names both forms --------------------------------------------
+def test_the_remedy_names_the_design_claim_and_refuses_a_promise():
+    assert "<why splitting would be worse>" in DESIGN_FORM
+    assert "never a promise of later work" in DESIGN_FORM
+    assert "<TASK-ID>" not in DESIGN_FORM
 
 
-def test_both_forms_names_the_deferral_and_the_design_claim():
-    assert "<why splitting would be worse>" in BOTH_FORMS
-    assert "<TASK-ID> splits this module" in BOTH_FORMS
-    assert "goes on the marker line" in BOTH_FORMS
-
-
-def test_every_size_remedy_offers_both_forms(tmp_path):
-    # ⛔ A message naming only the design claim would instruct the reader to
-    # write the inadmissible thing. Each of the three refusals must offer both.
+def test_every_size_remedy_offers_the_design_claim(tmp_path):
+    # ⛔ Each of the three refusals says what the one admissible form is.
     write_module(tmp_path, "src/studyforge/none.py", module_of(config.SOURCE_LINE_CEILING + 1))
     write_module(
         tmp_path,
         "src/studyforge/hollow.py",
         module_of(config.SOURCE_LINE_CEILING + 1, "Thing.\n\nSize exception: yes"),
     )
-    write_module(
-        tmp_path,
-        "src/studyforge/wrapped.py",
-        module_of(config.SOURCE_LINE_CEILING + 25, WRAPPED_DEFERRAL.strip("\n")),
-    )
-    findings = check_sizes(tmp_path)
+    findings = oversized(tmp_path, "deferred", DEFERRAL_BY_ID)
     assert sorted(finding.rule for finding in findings) == [
         "size",
-        "size-exception-id",
+        "size-deferral",
         "size-justification",
     ]
     for finding in findings:
-        assert BOTH_FORMS in finding.message
+        assert DESIGN_FORM in finding.message
 
 
 # --- authored stylesheets, scripts and templates ----------------------------
@@ -404,20 +393,15 @@ def test_the_authored_walk_reads_every_shipped_non_vendored_file():
 # --- the tree itself --------------------------------------------------------
 
 
-def test_no_deferral_in_this_repository_hides_its_row_id():
-    # ⭐ The in-the-wild check, and it is written to outlive its one subject:
-    # it asserts the invariant over whatever exceptions the tree holds, so it
-    # stays true (vacuously) once the only one there is is deleted.
+def test_no_size_exception_in_this_repository_promises_later_work():
+    # ⭐ The in-the-wild check, asserted over whatever exceptions the tree holds,
+    # so it stays true (vacuously) while there is none.
     root = Path(__file__).resolve().parents[2]
     for path in config.python_files(root):
         text = path.read_text(encoding="utf-8")
         if count_lines(text) <= config.ceiling_for(config.relative(path, root)):
             continue
-        docstring = module_docstring(text, path)
-        if size_exception(docstring) is None:
-            continue
-        if row_ids(size_exception(docstring)):
-            assert row_ids(size_exception_marker_line(docstring)), (
-                f"{config.relative(path, root)} defers to a row whose id is not on the "
-                f"marker line, so a reader of that line sees it without an id"
-            )
+        reason = size_exception(module_docstring(text, path))
+        assert not promises(reason), (
+            f"{config.relative(path, root)} justifies its size with a promise of later work"
+        )

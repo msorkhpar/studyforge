@@ -86,8 +86,8 @@ def test_and_the_check_that_says_so_can_actually_fire(tmp_path):
 def test_a_document_may_name_a_corpus_and_a_module_may_not(tmp_path):
     # ⭐ The exemption, and it is structural rather than a list: `docs/` is not
     # a scan root and `tests/` is not framework source, so a corpus's name is
-    # legal there without anything being excused. ⛔ There is nowhere to add a
-    # module to, which is the property being asserted.
+    # legal there without anything being excused. ⛔ There is nowhere under
+    # `src/` to add a file to, which is the property being asserted.
     for where in ("docs/notes.md", "tests/studyforge/test_thing.py", "tools/thing.py"):
         path = tmp_path / where
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -98,6 +98,26 @@ def test_a_document_may_name_a_corpus_and_a_module_may_not(tmp_path):
     module.parent.mkdir(parents=True)
     module.write_text('"""The jPOS tutorial."""\n', encoding="utf-8")
     assert len(check_source_names(tmp_path)) == 1
+
+
+@pytest.mark.parametrize(
+    "where",
+    [
+        "src/studyforge/skills/thing/SKILL.md",
+        "src/studyforge/render/templates/thing.html",
+        "src/studyforge/render/assets/thing.css",
+        "src/studyforge/render/assets/thing.js",
+    ],
+)
+def test_every_file_the_framework_ships_is_read_and_not_only_its_modules(tmp_path, where):
+    # ⛔ A skill's page ships inside the package and a client reads it as the
+    # framework's own words, so a corpus it names is a corpus the framework
+    # knows (R1), exactly as it would be in a docstring.
+    path = tmp_path / where
+    path.parent.mkdir(parents=True)
+    path.write_text("measured on the jPOS tutorial\n", encoding="utf-8")
+    findings = check_source_names(tmp_path)
+    assert [(f.path, f.line) for f in findings] == [(where, 1)]
 
 
 def test_the_registry_is_inhabited_and_every_entry_carries_a_reason():

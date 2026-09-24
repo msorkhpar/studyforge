@@ -50,6 +50,7 @@ from collections.abc import Iterable
 from pathlib import Path, PurePosixPath
 
 from studyforge.archive.scrub import assert_clean
+from studyforge.version import check as check_version
 
 #: Where the record lives. ⭐ Under the skill's own directory, so the glob the
 #: skill already declares not-material covers it and no manifest changes.
@@ -112,12 +113,16 @@ def entries(root: Path) -> list[dict[str, str]]:
     assert_clean(document, RECORD)
     if not isinstance(document, dict):
         document = {}
+    check_version(
+        "written_api",
+        document.get("written_api"),
+        (WRITTEN_API,),
+        where=RECORD,
+        error=WrittenRefused,
+    )
     listed = document.get("files")
-    if document.get("written_api") != WRITTEN_API or not isinstance(listed, list):
-        raise WrittenRefused(
-            f"{RECORD} declares a record this build does not read; this build writes "
-            f"written_api {WRITTEN_API}"
-        )
+    if not isinstance(listed, list):
+        raise WrittenRefused(f"{RECORD} lists no files, so nothing it records can be checked")
     return [
         {"where": entry["where"], "sha256": entry["sha256"]}
         for entry in listed

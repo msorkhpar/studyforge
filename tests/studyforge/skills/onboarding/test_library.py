@@ -106,6 +106,17 @@ def test_a_sibling_pin_is_refused_as_predating_the_installed_library(tmp_path):
         library.pinned(root)
 
 
+@pytest.mark.parametrize("declared", [3, True, 2.0, None], ids=repr)
+def test_a_pin_whose_version_this_build_does_not_read_is_refused(tmp_path, declared):
+    # ⛔ `2.0 == 2`: only `version.check` tells a pin this build wrote from one
+    # it did not. An installed pin's `where` alone is not its version.
+    document = {**pin.pin_document(corpora.COMMIT, "3.2.1"), "pin_api": declared}
+    root = _pinned(tmp_path, **document)
+
+    with pytest.raises(library.LibraryRefused, match="pin_api"):
+        library.pinned(root)
+
+
 def test_an_absent_pin_is_refused_by_name(tmp_path):
     with pytest.raises(library.LibraryRefused, match="there is no pin"):
         library.pinned(tmp_path)

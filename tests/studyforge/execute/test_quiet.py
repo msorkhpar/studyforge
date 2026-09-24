@@ -39,6 +39,8 @@ from tests.studyforge.execute.transcripts import (
     MAVEN_OFFLINE,
     MAVEN_OFFLINE_TRACE,
     MAVEN_PASS,
+    MAVEN_QUIET_COMPILE_ERROR,
+    MAVEN_QUIET_TEST_FAILURE,
 )
 
 EVERY_FILTER = [pytest.param(MAVEN, id="maven"), pytest.param(GRADLE, id="gradle")]
@@ -373,10 +375,14 @@ def test_gradle_keeps_the_verdict_the_assertion_and_the_tests_own_output():
 
 # --- Maven's rerun advice: every footer rule, named by its line ---------------------------
 
-#: The offline capture carries the first four. ⚠️ The rest are Maven's and surefire's
-#: wording, as the rules name them, and not a capture: a reactor build's resume hint
-#: and surefire's report and dump notices.
+#: The offline capture carries the first four, and the quiet-mode captures the
+#: `See` notices. ⚠️ The rest are Maven's and surefire's wording, as the rules name
+#: them, and not a capture: a reactor build's resume hint and an older surefire's
+#: report and dump notices.
 FOOTER = (
+    "[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.",
+    "[ERROR] See target/surefire-reports for the individual test results.",
+    "[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump",
     "[ERROR] ",
     "[ERROR] -> [Help 1]",
     "[ERROR] Re-run Maven using the -X switch to enable full debug logging.",
@@ -392,6 +398,55 @@ FOOTER = (
 def test_every_footer_rule_drops_its_line_and_only_that(line):
     assert not Quiet(MAVEN).keeps(line)
     assert Quiet(dataclasses.replace(MAVEN, always_noise=())).keeps(line)
+
+
+# --- the practice's own command, captured: `mvn -o -q test` ---------------------------------
+
+#: What Maven prints after the failure is reported: how to rerun Maven, and where
+#: its files are. ⛔ Nothing in it says why the build failed.
+QUIET_FOOTER_FROM = "[ERROR] -> [Help 1]"
+
+
+@pytest.mark.parametrize(
+    "transcript",
+    [
+        pytest.param(MAVEN_QUIET_TEST_FAILURE, id="test-failure"),
+        pytest.param(MAVEN_QUIET_COMPILE_ERROR, id="compile-error"),
+    ],
+)
+def test_a_quiet_practice_run_loses_only_mavens_rerun_advice(transcript):
+    # ⭐ The live reading behind wiring the filter in: with `-q`, what remains to
+    # drop is the help footer, which tells a reader to rerun Maven with switches
+    # the page has no way to pass. Every line before it survives, byte for byte.
+    lines = run(transcript, 1)
+    kept = shown(lines)
+    footer = transcript.index(QUIET_FOOTER_FROM)
+    assert kept[-1] == exit_line(1)
+    dropped = [line for line in lines if line not in kept]
+    assert dropped, "the filter dropped nothing from a real failure"
+    assert all(line.startswith("[ERROR]") for line in dropped)
+    assert all(
+        line in kept
+        for line in transcript[:footer]
+        if not line.startswith(("[ERROR] See ", "[ERROR] Please refer to "))
+        and line.strip() != "[ERROR]"
+    )
+    assert not any("-X switch" in line or "[Help 1]" in line for line in kept)
+
+
+def test_a_quiet_test_failure_keeps_its_verdict_its_assertion_and_its_frames():
+    kept = shown(run(MAVEN_QUIET_TEST_FAILURE, 1))
+    assert any(line.startswith("[ERROR] Tests run: 3, Failures: 1") for line in kept)
+    assert any("AssertionFailedError: expected: <[2, 65]>" in line for line in kept)
+    frames = [line for line in MAVEN_QUIET_TEST_FAILURE if line.startswith("\tat ")]
+    assert frames and contiguous(frames, kept)
+
+
+def test_a_quiet_compile_error_keeps_the_file_the_line_and_the_fault():
+    kept = shown(run(MAVEN_QUIET_COMPILE_ERROR, 1))
+    faults = [line for line in kept if "illegal start of expression" in line]
+    assert len(faults) == 2
+    assert "[ERROR] COMPILATION ERROR : " in kept
 
 
 # --- signal beats noise: a line that matches BOTH is kept ---------------------------------

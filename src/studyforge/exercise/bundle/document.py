@@ -88,6 +88,7 @@ from studyforge.exercise.cases import (
 )
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.safety import require_command, require_path
+from studyforge.version import check as check_version
 
 #: The bundle format's version. ⚠️ Bumped when a reader of the old shape would
 #: be *wrong* rather than merely incomplete, following the archive document's
@@ -241,11 +242,9 @@ def _require_keys(value: object, where: str) -> dict:
             f"does not define. An unknown key is refused rather than ignored, because "
             f"ignoring one is how a typo becomes a grader nothing runs."
         )
-    if value["bundle_api"] != BUNDLE_API:
-        raise ExerciseError(
-            f"{where}: this build reads bundle_api {BUNDLE_API} and the document "
-            f"declares {describe(value['bundle_api'])}."
-        )
+    check_version(
+        "bundle_api", value["bundle_api"], (BUNDLE_API,), where=where, error=ExerciseError
+    )
     return value
 
 

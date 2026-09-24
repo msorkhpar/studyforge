@@ -56,7 +56,6 @@ from dataclasses import dataclass, replace
 from pathlib import Path
 
 from studyforge.archive.scrub import assert_clean
-from studyforge.describe import describe
 from studyforge.exercise import Origin, origin_document, origin_in
 from studyforge.exercise.bundle import BUNDLES_DIRNAME, Places
 from studyforge.skills.exercises.accounting import account, accounts_for, ledger_document
@@ -67,6 +66,7 @@ from studyforge.skills.exercises.loop import Shortfall, author_page, carried_pra
 from studyforge.skills.exercises.merge import Delta, merged
 from studyforge.skills.exercises.plan import PLAN_API, plan_document
 from studyforge.skills.exercises.writes import commit
+from studyforge.version import check as check_version
 
 #: Each unit's coverage report, beside its bundles and never inside one.
 COVERAGE_FILENAME = "coverage.json"
@@ -239,19 +239,23 @@ def _reused(
 ) -> Covered:
     """Keep a unit whose recorded report still describes it — ⛔ or refuse it, naming it.
 
-    ⚠️ **A report planned under an older `plan_api` is refused by name**:
-    its count was set by a rule this build no longer applies, so the
-    unit is re-planned by its aspects, never silently kept.
+    ⚠️ **A report written under another `coverage_api`, or planned under
+    another `plan_api`, is refused by name**, both read through
+    `version.check`: a plan's count set by a rule this build no longer applies
+    is re-planned by its aspects, never silently kept.
     """
     written = recorded.get("plan")
-    api = written.get("plan_api") if isinstance(written, dict) else None
-    if api != PLAN_API:
-        raise _moved(
-            unit,
-            where,
-            f"was planned under plan_api {describe(api)}, and this build plans by a "
-            f"page's aspects under plan_api {PLAN_API} (spec §7 §4)",
-        )
+    versions = (
+        ("coverage_api", recorded.get("coverage_api"), COVERAGE_API),
+        ("plan_api", written.get("plan_api") if isinstance(written, dict) else None, PLAN_API),
+    )
+    for contract, declared, speaks in versions:
+        try:
+            check_version(
+                contract, declared, (speaks,), where="its coverage report", error=AuthoringError
+            )
+        except AuthoringError as refused:
+            raise _moved(unit, where, f"cannot be kept: {refused}") from None
     same = (
         recorded.get("page") == page.path
         and recorded.get("kind") == page.kind

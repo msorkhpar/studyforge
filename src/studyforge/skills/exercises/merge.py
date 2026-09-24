@@ -48,10 +48,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-from studyforge.describe import describe
 from studyforge.skills.exercises.accounting import LEDGER_API
 from studyforge.skills.exercises.ledger import EXAMPLE, TESTS, LedgerError
 from studyforge.sourcepath import source_path_fault
+from studyforge.version import check as check_version
 
 #: The key a file row is reported under. ⛔ Not an entry kind: a file is what
 #: the ledger READ, and an entry is what that file carries.
@@ -143,13 +143,18 @@ def ledger_rows(prior: object, where: str) -> dict:
         return {"sources": [], "entries": []}
     if not isinstance(prior, dict):
         raise LedgerError(f"{where}: the committed ledger is not an object. Nothing was written.")
-    api = prior.get("ledger_api")
-    if api != LEDGER_API:
-        raise LedgerError(
-            f"{where}: the committed ledger is ledger_api {describe(api)} and this build "
-            f"reads ledger_api {LEDGER_API}, so it cannot say which of its rows to keep. "
-            f"Nothing was written."
+    try:
+        check_version(
+            "ledger_api",
+            prior.get("ledger_api"),
+            (LEDGER_API,),
+            where=f"{where}: the committed ledger",
+            error=LedgerError,
         )
+    except LedgerError as refused:
+        raise LedgerError(
+            f"{refused} It cannot say which of its rows to keep, so nothing was written."
+        ) from None
     rows = {}
     for field in ("sources", "entries"):
         value = prior.get(field)

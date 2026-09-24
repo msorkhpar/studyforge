@@ -1,7 +1,8 @@
 """The run output filter: keep what a run tells the reader, drop what the build tool says.
 
-**What it does.** Sits between the runner and the page and drops the lines a
-build tool prints about itself (plugin banners, task lines, separators,
+**What it does.** Sits between the runner and the page (`serve.routes.runs`
+applies it to every line a run streams) and drops the lines a build tool prints
+about itself (plugin banners, task lines, separators,
 timings, help links) so the reader sees their program's output and the
 verdict. It only ever DROPS a line. A kept line is the runner's line, byte
 for byte, in its original order.
@@ -123,8 +124,10 @@ MAVEN = Toolchain(
         r"^\[ERROR\] \[Help \d+\] https?://",
         r"^\[ERROR\] After correcting the problems, you can resume the build with the command",
         r"^\[ERROR\]   mvn .* -rf :",
-        r"^\[ERROR\] Please refer to .* for the individual test results",
-        r"^\[ERROR\] Please refer to dump files",
+        # Surefire's pointers at its own files: `Please refer to` before 3.x,
+        # `See` in the pinned one.
+        r"^\[ERROR\] (Please refer to|See) .* for the individual test results",
+        r"^\[ERROR\] (Please refer to|See) dump files",
     ),
     signal=(
         # ⛔ Every other [ERROR] line: a compile error, a failed test, the goal

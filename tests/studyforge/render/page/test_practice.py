@@ -17,7 +17,40 @@ from studyforge.render import templates
 from studyforge.render.page import anchors, practice, render
 from studyforge.render.page.errors import PageError
 from studyforge.render.pageassets import ASSET_DIR
+from studyforge.unit.errors import ContentError
+from studyforge.unit.trust import PROVENANCE, TRUST, check_test_record
 from tests.studyforge.render.page.pages import depth2_unit_01, sample_placement
+from tests.support import repository_root
+
+
+def _legal_pairs() -> set[tuple[str, str]]:
+    """Every `(provenance, trust)` pair R5 admits, asked of `unit.trust` itself."""
+    legal = set()
+    for provenance in PROVENANCE:
+        for trust in TRUST:
+            try:
+                legal.add(check_test_record(provenance, trust))
+            except ContentError:
+                continue
+    return legal
+
+
+LEGAL_PAIRS = _legal_pairs()
+
+
+def spec_label_rows() -> dict[str, str]:
+    """The spec's §7 §9 table: `{record cell: the bold sentence}`, one per row."""
+    spec = next((repository_root() / "docs" / "specs").glob("*-design.md"))
+    text = spec.read_text(encoding="utf-8")
+    start = text.index("| the record says | the page says |")
+    rows = {}
+    for line in text[start:].splitlines()[2:]:
+        if not line.startswith("|"):
+            break
+        record, says = (cell.strip() for cell in line.strip("|").split("|"))
+        rows[record] = re.fullmatch(r"\*\*(.+)\*\*", says).group(1)
+    return rows
+
 
 #: A graded record: a file, how it runs, and the material's own grader.
 SHIPPED = {
@@ -37,6 +70,10 @@ GENERATED = {**SHIPPED, "provenance": "generated", "trust": "advisory"}
 #: A grader that shipped with the material and was never derived through the
 #: two gates: it claims no authority, and it was not written for this site.
 BUNDLED = {**SHIPPED, "trust": "advisory"}
+
+#: A grader somebody wrote by hand for this practice: neither the material's
+#: nor one this site authored and proved, so it gets neither sentence.
+USER = {**SHIPPED, "provenance": "user", "trust": "advisory"}
 
 #: A quiz: questions in place of a workspace. ⛔ Every workspace key is
 #: refused on it, which is why it carries none of them.
@@ -141,28 +178,69 @@ def test_the_material_s_own_grader_and_a_generated_one_read_differently():
     assert shipped != generated
 
 
-def test_each_of_the_five_label_cases_renders_its_own_stated_sentence():
-    # ⛔ Spec §7 §9 read as the table it is:
-    # four records, four sentences, and every one of them different from every
-    # other. ⭐ The ungraded case says *nothing here checks your answer* rather
-    # than saying nothing — a label is never omitted because it is unflattering.
+#: Every record the page can be handed, by the label it is owed.
+EVERY_LABEL = (
+    ("shipped", SHIPPED),
+    ("bundled", BUNDLED),
+    ("user", USER),
+    ("generated", GENERATED),
+    ("quiz", QUIZ),
+    ("none", UNGRADED),
+)
+
+
+def test_each_label_case_renders_its_own_stated_sentence():
+    # ⛔ Spec §7 §9 read as the table it is: one record per row, one sentence
+    # per record, and every one of them different from every other. ⭐ The
+    # ungraded case says *nothing here checks your answer* rather than saying
+    # nothing — a label is never omitted because it is unflattering.
     said = {}
-    for name, workspace in (
-        ("shipped", SHIPPED),
-        ("bundled", BUNDLED),
-        ("generated", GENERATED),
-        ("quiz", QUIZ),
-        ("none", UNGRADED),
-    ):
+    for name, workspace in EVERY_LABEL:
         markup = panel(sections=[section(workspace=workspace)])
         wanted = templates.template(f"practice-grader-{name}.html").template
         assert wanted in markup, name
         said[name] = wanted
-    assert len(set(said.values())) == 5, "two of the five labels are the same sentence"
+    assert set(said) == set(practice.GRADER_TEMPLATES)
+    assert len(set(said.values())) == len(said), "two labels are the same sentence"
     assert 'data-practice-part="grader"' in panel(sections=[section(workspace=UNGRADED)])
 
 
-@pytest.mark.parametrize("workspace", [SHIPPED, BUNDLED, GENERATED, UNGRADED])
+def test_a_grader_written_by_hand_is_not_told_it_was_proven():
+    # ⛔ The generated sentence says its tests were proven against a worked
+    # solution. Nothing proves a grader somebody wrote by hand, so it must not
+    # borrow that sentence, nor the material's own.
+    markup = panel(sections=[section(workspace=USER)])
+    assert templates.template("practice-grader-user.html").template in markup
+    for other in ("generated", "shipped", "bundled"):
+        assert templates.template(f"practice-grader-{other}.html").template not in markup
+    assert "proven against" not in markup
+
+
+@pytest.mark.parametrize("pair", sorted(LEGAL_PAIRS), ids="-".join)
+def test_every_legal_record_renders_a_label_the_spec_table_states(pair):
+    # ⭐ Every combination `unit.trust` admits, for a code practice, renders one
+    # of the page's sentences, and the spec's §7 §9 table has a row for that
+    # combination saying exactly that sentence.
+    provenance, trust = pair
+    workspace = {**SHIPPED, "provenance": provenance, "trust": trust}
+    exercise = practice._exercise(workspace)
+    sentence = templates.template(practice.GRADER_TEMPLATES[practice.label_of(exercise)]).template
+    rows = spec_label_rows()
+    cells = [f"`{provenance}` · `{trust}`", f"`{provenance}` · `{trust}`, kind `code`"]
+    found = [rows[cell] for cell in cells if cell in rows]
+    assert len(found) == 1, pair
+    assert found[0] in sentence, pair
+
+
+def test_the_spec_table_states_every_sentence_the_page_renders():
+    # ⭐ The other direction: no template says a sentence the table does not.
+    stated = set(spec_label_rows().values())
+    for name in practice.GRADER_TEMPLATES:
+        body = templates.template(f"practice-grader-{name}.html").template
+        assert any(sentence in body for sentence in stated), name
+
+
+@pytest.mark.parametrize("workspace", [SHIPPED, BUNDLED, USER, GENERATED, UNGRADED])
 def test_neither_r5_key_ever_reaches_the_page(workspace):
     # ⛔ `provenance` and `trust` are the framework's vocabulary for how much a
     # verdict is worth, and no reader is told what either word means. ⭐ Both

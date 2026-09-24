@@ -57,9 +57,11 @@ def test_an_unknown_key_is_refused_rather_than_ignored():
         bundle_of(bundles.document(test_fiel="t.py"), "bundle.json")
 
 
-def test_a_bundle_api_this_build_does_not_read_is_refused():
+@pytest.mark.parametrize("declared", [2, True, 1.0, "1", None], ids=repr)
+def test_a_bundle_api_this_build_does_not_read_is_refused(declared):
+    # ⛔ `True` and `1.0` both equal 1: only `version.check` tells them apart.
     with pytest.raises(ExerciseError, match="bundle_api"):
-        bundle_of(bundles.document(bundle_api=2), "bundle.json")
+        bundle_of(bundles.document(bundle_api=declared), "bundle.json")
 
 
 def test_a_document_that_is_not_an_object_is_refused():

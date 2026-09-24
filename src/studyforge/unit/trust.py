@@ -18,12 +18,18 @@ under naming.
 
 ⛔ **Only a test that came with the source may claim to be the source's.** R5
 was written for a source whose grader is hidden and ungettable, so a test
-written locally against it is *ours*, advisory, and reviewed by the reader. A
-source that ships real tests with the material is a different situation
-entirely: those are authoritative and they are **the source's**. Presenting our
-own reading as the source's grader is exactly what R5 forbids, and it is the
-kind of claim nobody notices is false until a reader trusts a green tick that
-was never earned.
+written locally against it is *ours*, advisory, and reviewed by the reader.
+Presenting our own reading as the source's grader is exactly what R5 forbids,
+and it is the kind of claim nobody notices is false until a reader trusts a
+green tick that was never earned.
+
+⚠️ **Coming with the source is necessary and not sufficient.** A shipped test
+is not authoritative by being shipped: the claim is earned by the blanking
+derivation's two gates (spec §7), and `studyforge validate` refuses an
+`authoritative` exercise with no derivation record behind it. This module
+decides only which provenances may *make* the claim; `validate.derived` checks
+that the claim was earned. A shipped test nobody derived is `bundled` and
+`advisory`.
 
 ⚠️ **A list of forbidden pairs fails open.** One naming only
 `("generated", "authoritative")` accepts `user` + `authoritative`, and a grader
@@ -33,9 +39,11 @@ stated from the other side: `MAY_BE_AUTHORITATIVE` is a closed set of one, and
 non-authoritative automatically** rather than by somebody remembering to add a
 row. *Enumerate the legal, never the illegal* (R5, R6).
 
-⚠️ **`trust` defaults from `provenance` rather than being required**, because
-the default is right in every case and a field an author must fill in to say
-the obvious is a field an author fills in wrongly.
+⚠️ **`trust` defaults from `provenance` rather than being required.** For
+`generated` and `user` the default is the only legal value. For `bundled` it is
+`authoritative`, which is a claim like any other: `validate` holds it to a
+derivation record whether it was written out or defaulted, so a shipped test
+that was not derived says `advisory` in its record.
 """
 
 from __future__ import annotations
@@ -52,7 +60,8 @@ PROVENANCE = ("bundled", "generated", "user")
 TRUST = ("authoritative", "advisory")
 
 #: What each provenance means when nobody says. ⛔ Only material that came
-#: with the source may default to authoritative.
+#: with the source may default to authoritative, and `validate` holds that
+#: default to a derivation record as it holds a written-out claim.
 DEFAULT_TRUST = {
     "bundled": "authoritative",
     "generated": "advisory",

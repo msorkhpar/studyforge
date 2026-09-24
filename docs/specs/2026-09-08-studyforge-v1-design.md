@@ -117,8 +117,9 @@ arrives as data, through the manifest or the archive.
 
 ⛔ **A source's name in framework source is a failure even inside a comment**,
 because the next reader takes a name as licence to branch on it. A fixture
-under `tests/` that names a *shape* is fine; a module under `src/` that names a
-*corpus* is not. ⚠️ **A name is matched in the forms people actually write it** —
+under `tests/` that names a *shape* is fine; a file under `src/` that names a
+*corpus* is not, a skill's page as much as a module, because it ships with the
+framework and is read as the framework's own words. ⚠️ **A name is matched in the forms people actually write it** —
 the repository slug, and the corpus named in English (*the Java corpus*) — and
 each is anchored on a word only a corpus's name takes: a bare `ISO` is far more
 often an ISO 8601 date, and a check that cannot tell the two apart is switched
@@ -432,8 +433,9 @@ reader of the module meets it; and it says why splitting would be *worse* — a 
 too short to be one is reported as none. ⛔ **It is refused whenever the honest answer
 to the isolation question is no**: a justification is not a licence. ⛔ **It is a
 design claim and only a design claim**: never a promise that later work will split the
-module, which reads to a stranger as permanent and names nothing they can find. A module
-that should be split is split. An exception left in a module that is now under its
+module, which reads to a stranger as permanent and names nothing they can find. The
+floor's size check refuses one (`size-deferral`), whether it names a work item or says so
+in words, anywhere in the justification. A module that should be split is split. An exception left in a module that is now under its
 ceiling is stale and is removed. ⚠️ A stylesheet, a
 script or a template has no docstring and so no opt-out: its remedy is a split at a
 named seam.
@@ -630,9 +632,12 @@ inference from names.
 | personal archive manifest | `personal-archive.json`, a member of the archive file | `personal_archive_api` | the personal-archive skill |
 | component consuming contract | `consuming.json` | `consuming_api` + `provides` | each component |
 
-⭐ **`CONTRACT_FIELDS` is the framework's subset of this register**: the keys the
-framework's own readers check through `studyforge.version`. A key a skill owns and
-reads back through its own reader is registered here and versioned all the same.
+⭐ **`CONTRACT_FIELDS` is the framework's subset of this register**: every version
+key the framework writes, the skills' records among them, and each reader of one
+checks it through `studyforge.version` and never compares it by hand. Two keys
+version a part of a row rather than a row of their own: `plan_api` versions the
+plan inside a coverage report, and `quiz_api` versions a quiz's own document,
+`tests/quiz.json` inside its bundle.
 
 ---
 
@@ -1618,6 +1623,7 @@ not a corpus's string** (R1):
 |---|---|
 | `bundled` · `authoritative` | **Checked by the tests that ship with this material.** |
 | `bundled` · `advisory` | **Checked by tests that ship with this material. They have not been proven to catch a wrong answer.** |
+| `user` · `advisory` | **Checked by tests written by hand for this practice. They have not been proven to catch a wrong answer.** |
 | `generated` · `advisory`, kind `code` | **Written for this site. Its tests were proven against a worked solution before it shipped.** |
 | `generated` · `advisory`, kind `quiz` | **Written for this site from this page.** |
 | no grader (ungraded) | **Nothing here checks your answer.** |

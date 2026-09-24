@@ -23,7 +23,7 @@ practice layout's three headings, `archive.markdown` for the statement,
 ⭐ **Every source-specific fact arrives as data** — the bundle document, the
 files beside it, and the four values an adapter already holds about the page.
 ⛔ There is no import of any corpus, no branch on one and no name of one: the
-same function emits an ISO exercise and a Python one, and the difference is
+same function emits a Java exercise and a Python one, and the difference is
 entirely in what the bundle says.
 
 ## ⛔ THE PRACTICE LAYOUT IS THE ARCHIVE'S, NOT A SECOND ONE

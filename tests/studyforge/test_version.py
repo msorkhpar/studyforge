@@ -222,6 +222,91 @@ def test_no_module_reads_a_contract_field_without_importing_the_guard():
     assert offenders == []
 
 
+def calls_the_guard(path: Path) -> bool:
+    """Does the module call `check` or `is_supported`, as a name or an attribute?
+
+    ⛔ Importing the guard is not using it: a module can import `version` and
+    still compare its field with `!=`, which reads a JSON `true` as 1.
+    """
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    wanted = {"check", "is_supported"}
+    # ⚠️ A reader may bind the guard under its own name (`check as check_version`).
+    wanted |= {
+        alias.asname
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ImportFrom) and node.module == "studyforge.version"
+        for alias in node.names
+        if alias.name in {"check", "is_supported"} and alias.asname
+    }
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call):
+            func = node.func
+            if (isinstance(func, ast.Name) and func.id in wanted) or (
+                isinstance(func, ast.Attribute) and func.attr in wanted
+            ):
+                return True
+    return False
+
+
+def written_version_keys(root: Path) -> dict[str, set[str]]:
+    """`{field: {module}}` for every `*_api` key a module writes into a dict literal."""
+    found: dict[str, set[str]] = {}
+    for path in sorted(root.rglob("*.py")):
+        for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
+            if isinstance(node, ast.Dict):
+                for key in node.keys:
+                    if (
+                        isinstance(key, ast.Constant)
+                        and isinstance(key.value, str)
+                        and key.value.endswith("_api")
+                    ):
+                        found.setdefault(key.value, set()).add(str(path.relative_to(root)))
+    return found
+
+
+def test_every_version_key_the_framework_writes_is_a_registered_contract():
+    # ⛔ A version key written and not registered is one `check` refuses to
+    # read, so its reader is left to compare it by hand, which is the porous
+    # test this module exists to replace.
+    written = written_version_keys(repository_root() / "src")
+    assert written, "no version key written anywhere; the scan is wrong"
+    unregistered = sorted(field for field in written if field not in CONTRACT_FIELDS)
+    assert unregistered == [], {field: sorted(written[field]) for field in unregistered}
+
+
+def test_every_module_that_reads_a_contract_field_calls_the_guard():
+    root = repository_root()
+    guard = root / GUARD
+    offenders = sorted(
+        str(path.relative_to(root))
+        for path, _fields in contract_readers(root / "src").items()
+        if path != guard and not calls_the_guard(path)
+    )
+    assert offenders == []
+
+
+def test_the_call_check_is_not_blind(tmp_path):
+    # ⭐ Both directions, on a written tree: an import with a hand-written
+    # comparison is caught, and a real call is not.
+    porous = tmp_path / "porous.py"
+    porous.write_text(
+        "from studyforge.version import CONTRACT_FIELDS\n\n\ndef read(document):\n"
+        '    return document.get("bundle_api") != 1\n',
+        encoding="utf-8",
+    )
+    called = tmp_path / "called.py"
+    called.write_text(
+        "from studyforge.version import check\n\n\ndef read(document):\n"
+        '    return check("bundle_api", document.get("bundle_api"), (1,), where="x")\n',
+        encoding="utf-8",
+    )
+    assert imports_the_guard(porous) and not calls_the_guard(porous)
+    assert calls_the_guard(called)
+    assert written_version_keys(tmp_path) == {}
+    (tmp_path / "writes.py").write_text('DOCUMENT = {"made_up_api": 1}\n', encoding="utf-8")
+    assert written_version_keys(tmp_path) == {"made_up_api": {"writes.py"}}
+
+
 def test_the_tree_check_is_not_vacuous():
     # ⭐ Both directions. A check that found nothing to check would pass
     # forever, so this asserts the scanner really does see today's one caller.

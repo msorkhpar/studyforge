@@ -20,12 +20,15 @@ from studyforge.execute import (
     exit_line,
     instance,
 )
+from studyforge.execute.quiet import MAVEN, filter_lines
+from studyforge.generate import write_site
 from studyforge.serve.response import Request
 from studyforge.serve.routes import run
 from studyforge.serve.routes.runs import editor_for, runner_for, verdict
 from studyforge.serve.withheld import WITHHELD_LINE, marks_in
 from tests.studyforge.execute.runnable import RAW
 from tests.studyforge.execute.test_mode import fake_docker
+from tests.studyforge.execute.transcripts import MAVEN_QUIET_COMPILE_ERROR
 from tests.studyforge.serve.routes.quizzing import QUESTIONS
 from tests.studyforge.serve.routes.running import (
     SOURCE,
@@ -98,6 +101,42 @@ def test_the_slot_holds_one_run_and_is_released_only_by_that_run(root):
     assert runs.stop() is True and handle.stopped
     first.stream.close()
     assert runs.live is None and runs.stop() is False
+
+
+def declare_runtimes(root, runtimes: list[str]) -> None:
+    """Rewrite the copy's `runtimes`, then build it again, so discovery reads the new set."""
+    manifest = root / "corpus.json"
+    document = json.loads(manifest.read_text(encoding="utf-8"))
+    document["runtimes"] = runtimes
+    manifest.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+    write_site(root, root)
+
+
+def streamed(root, transcript, code) -> list[str]:
+    """What a page is sent for a run printing `transcript`, then exiting `code`."""
+    handle = StubHandle([line + "\n" for line in transcript], code)
+    runs, _ = runs_over(root, runner=stub_runner(handle))
+    response = started(runs)
+    body = b"".join(response.stream).decode("utf-8").splitlines()
+    response.stream.close()
+    return body
+
+
+def test_a_run_is_streamed_through_the_declared_build_tools_filter(root):
+    # ⭐ The page is sent what `execute.quiet` keeps for the ONE build tool the
+    # corpus declares: Maven's rerun advice goes, the compile error stays.
+    declare_runtimes(root, ["java", "maven"])
+    body = streamed(root, MAVEN_QUIET_COMPILE_ERROR, 1)
+    assert body == [*filter_lines(MAVEN_QUIET_COMPILE_ERROR, MAVEN), exit_line(1)]
+    assert "[ERROR] -> [Help 1]" not in body
+    assert sum("illegal start of expression" in line for line in body) == 2
+
+
+def test_a_corpus_declaring_no_build_tool_with_rules_is_streamed_unfiltered(root):
+    # ⭐ The negative control: the same lines, a corpus declaring `python`, and
+    # every line reaches the page, because nothing is guessed.
+    body = streamed(root, MAVEN_QUIET_COMPILE_ERROR, 1)
+    assert body == [*MAVEN_QUIET_COMPILE_ERROR, exit_line(1)]
 
 
 @pytest.mark.parametrize(
