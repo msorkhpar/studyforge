@@ -97,7 +97,7 @@ def test_every_declared_unit_of_both_fixtures_reaches_the_contents():
 
 
 # --------------------------------------------------------------------------
-# The between-units bar — M1's close condition 8 had to VOID this
+# The between-units bar, built from contents data and nothing else
 # --------------------------------------------------------------------------
 
 

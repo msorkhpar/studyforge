@@ -33,9 +33,9 @@ def main(argv: list[str] | None = None) -> int:
     """Run the product floor over `--root` and return the process exit code."""
     parser = argparse.ArgumentParser(
         prog="python3 -m tests.floor",
-        description="Fail on personal data (R7), a module over the size ceiling (R11), a "
-        "module with no mirrored test (R12), a missing contract (R17), a corpus named in "
-        "framework source (R1), an undeclared package surface, or a style violation.",
+        description="Fail on personal data, a module over the size ceiling, a module with "
+        "no mirrored test, a missing contract, a corpus named in framework source, an "
+        "undeclared package surface, or a style violation.",
     )
     parser.add_argument(
         "--root",

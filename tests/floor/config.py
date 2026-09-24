@@ -60,9 +60,9 @@ MIN_JUSTIFICATION_CHARS = 20
 #: carries no hyphen.
 #:
 #: ⛔ Deliberately narrow, and the narrowness is the point. `R11` is a rule,
-#: `M2` a milestone, `C5` a constraint and `E08` an epic — none of them a task
-#: anybody can close, and a design claim has to stay free to cite them without
-#: being read as a deferral. Only `W` takes the hyphenless form.
+#: `C5` a constraint, and a milestone or an epic name another kind of record —
+#: none of them a task anybody can close, and a design claim has to stay free
+#: to cite them without being read as a deferral. Only `W` takes the hyphenless form.
 #:
 #: ⚠️ It answers *"is a task named here"*, never *"is that task still open"*:
 #: this package reads the tree and nothing that plans work on it.

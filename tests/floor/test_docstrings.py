@@ -29,7 +29,7 @@ def test_a_module_with_no_docstring_fails(tmp_path):
     findings = check_docstrings(tmp_path)
     assert len(findings) == 1
     assert findings[0].rule == "contract"
-    assert "R17" in findings[0].message
+    assert "states its contract" in findings[0].message
 
 
 def test_a_label_is_not_a_contract(tmp_path):

@@ -98,4 +98,10 @@ def test_no_field_in_the_registry_computes_anything_about_the_plan():
     task = milestone.tasks[0]
     assert FIELDS["id"](task, milestone) == task.id
     assert FIELDS["milestone"](task, milestone) == milestone.id
-    assert FIELDS["gate"](task, milestone) == milestone.gated_by
+    assert FIELDS["depends_on"](task, milestone) == ", ".join(task.depends_on)
+
+
+def test_no_field_carries_a_framework_gate():
+    # ⛔ A plan is made against the installed framework, so no milestone
+    # waits on a later one and no tracker column can say it does.
+    assert "gate" not in FIELDS

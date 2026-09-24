@@ -18,7 +18,7 @@ have no build file of any kind.
 ⚠️ **So this module's job is to say "none" clearly**, with the evidence, rather
 than to leave a section blank that a reader will mistake for "not looked at".
 ⛔ Two of the designed corpora have **no build file of any kind**; they are
-finished at M4. `SKILL.md`, appendix **A4**, holds the counts.
+finished at the reading floor. `SKILL.md`, appendix **A4**, holds the counts.
 
 ## ⛔ Enumerate the legal, never the illegal
 

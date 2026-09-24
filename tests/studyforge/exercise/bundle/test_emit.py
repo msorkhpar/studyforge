@@ -209,7 +209,7 @@ def test_a_declared_build_file_is_laid_into_the_workspace_beside_the_readers_fil
 
 
 def test_an_exercise_with_no_build_role_emits_only_the_readers_two_files(tmp_path):
-    # ⭐ The M7 shape, unchanged: nothing is added where nothing was declared.
+    # ⭐ The graded shape, unchanged: nothing is added where nothing was declared.
     assert len(an_emission(tmp_path).paths) == 2
 
 

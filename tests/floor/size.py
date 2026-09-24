@@ -70,7 +70,7 @@ RULE_EXCEPTION_ID = "size-exception-id"
 #: design claim would instruct a developer to write the inadmissible thing
 #: whenever the deferral is the form the case needs.
 BOTH_FORMS = (
-    "R11 admits two forms and no third. A design claim: "
+    "The size ceiling admits two forms and no third. A design claim: "
     f"`{config.SIZE_EXCEPTION_MARKER} <why splitting would be worse>`, which "
     "is permanent. Or a deferral: "
     f"`{config.SIZE_EXCEPTION_MARKER} <TASK-ID> splits this module`, plus why "

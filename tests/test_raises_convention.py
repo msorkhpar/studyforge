@@ -119,7 +119,7 @@ def test_the_population_is_derived_from_the_tree_and_is_inhabited():
     # ⭐ The reach the derivation buys, asserted rather than described: the
     # population reaches past the `corpus.*` packages.
     assert {name for name in subject.readers if not name.startswith("studyforge.corpus.")}, (
-        "the derived population is inside `corpus.*`, which is the narrowness W219 removed"
+        "the derived population is inside `corpus.*`, a narrowness the derivation exists to avoid"
     )
     # ⛔ The floor names only subjects the derivation still knows, or it pins a
     # package that no longer exports and can never go red for it.

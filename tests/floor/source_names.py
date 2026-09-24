@@ -73,7 +73,7 @@ KNOWN_SOURCES: tuple[tuple[str, re.Pattern[str], str], ...] = (
     (
         "the extraction source",
         re.compile(r"codesignal", re.IGNORECASE),
-        "R20: the extraction is one-way, so framework code never cites it",
+        "the extraction is one-way, so framework code never cites it",
     ),
     (
         "consumer 1",
@@ -81,7 +81,7 @@ KNOWN_SOURCES: tuple[tuple[str, re.Pattern[str], str], ...] = (
             r"\bjava[-\s](?:corpus|repo|repository|tutorial)|senior[-\s]?java|java[-\s]senior",
             re.IGNORECASE,
         ),
-        "the first consuming corpus; the framework is source-agnostic (R1)",
+        "the first consuming corpus; the framework is source-agnostic",
     ),
     (
         "a v2 target",

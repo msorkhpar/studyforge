@@ -11,7 +11,7 @@
   "variant": "java",
   "ingested": "2026-01-05",
   "origin": "advanced/03-putting-it-together/README.md",
-  "note": "A second module in the section 'advanced', so the walk changes module without changing section (W108).",
+  "note": "A second module in the section 'advanced', so the walk changes module without changing section.",
   "units": [
     {
       "n": 1,

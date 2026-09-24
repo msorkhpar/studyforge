@@ -8,7 +8,7 @@ the container map; both disagree with the directory.
 address `["solo"]` while the directory holding them is `archive/not-solo/`.
 Digests, ordinals, versions and every string are otherwise valid.
 
-**Expected of `studyforge validate` (SF-25):** exit 1, naming the directory
+**Expected of `studyforge validate`:** exit 1, naming the directory
 and the address it holds. ⚠️ It is *not* resolved by preferring one over the
 other — §6 rules that a disagreement about an address is a refusal, because
 one reading would be linked from the page and the other from the index.

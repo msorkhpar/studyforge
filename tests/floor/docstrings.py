@@ -57,8 +57,8 @@ def check_docstrings(root: Path) -> list[Finding]:
                     line=1,
                     rule=RULE,
                     message=(
-                        "no module docstring. R17: state what it does, how you use it, "
-                        "and what it depends on."
+                        "no module docstring. A module states its contract: what it does, "
+                        "how you use it, and what it depends on."
                     ),
                 )
             )
@@ -70,7 +70,7 @@ def check_docstrings(root: Path) -> list[Finding]:
                     rule=RULE,
                     message=(
                         f"docstring is {len(docstring.strip())} characters "
-                        f"({config.MIN_DOCSTRING_CHARS} required). R17 wants a contract, "
+                        f"({config.MIN_DOCSTRING_CHARS} required). A module states a contract, "
                         f"not a label."
                     ),
                 )

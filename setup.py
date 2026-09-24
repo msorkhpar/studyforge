@@ -3,7 +3,7 @@
 **What it does.** When a wheel is built, writes `studyforge/COMMIT` into it: the
 40-character commit of the git checkout the wheel is built from, and nothing else.
 `studyforge.skills.onboarding.library.commit()` reads it back, so the installed
-library can say which commit it is (`W467`, `REL-05/1`).
+library can say which commit it is.
 
 **How you use it.** You do not call it. `python3 -m pip wheel <checkout> --no-deps
 -w wheels` runs it, as the README says. Everything else about the build is

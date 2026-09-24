@@ -96,8 +96,8 @@ def check_mirrors(root: Path) -> list[Finding]:
                 line=0,
                 rule=RULE,
                 message=(
-                    f"no test module. R12: the test tree mirrors the source tree — "
-                    f"add `{expected}`."
+                    f"no test module. Every module is tested, and the test tree mirrors "
+                    f"the source tree — add `{expected}`."
                 ),
             )
         )

@@ -1,10 +1,9 @@
-"""E11's acceptance for the delivery skill, asserted end to end rather than described.
+"""The delivery skill end to end: its procedure, its first command, and one whole plan.
 
-⛔ The subjects here are the two documents the skill ships — `SKILL.md` and
-the generated capability index the package ships beside it — plus
-one whole plan built through the public surface. The per-module refusals are
-next door; what lives here is the claim that the pieces compose into the thing
-the epic asked for.
+⛔ The subjects here are `SKILL.md`, the offer its first command prints from the
+installed package, and one whole plan built through the public surface. The
+per-module refusals are next door; what lives here is the claim that the
+pieces compose into a plan a client can work from.
 """
 
 from __future__ import annotations
@@ -28,9 +27,9 @@ def skill_document() -> str:
     return (Path(delivery.__file__).parent / "SKILL.md").read_text("utf-8")
 
 
-def index_document() -> str:
-    """The index the package ships, read the way an installed package reads it."""
-    return delivery.packaged_index()
+def offer_document() -> str:
+    """The offer this installation makes, read the way an installed package reads it."""
+    return delivery.Offer.installed().render()
 
 
 def first_command() -> list[str]:
@@ -42,11 +41,24 @@ def first_command() -> list[str]:
     return words[1:]
 
 
-# --- R19: the index is generated, and says so --------------------------------
+# --- the offer is read from the installation, and says so ----------------------
 
 
-def test_the_index_says_it_is_generated_so_nobody_edits_it_by_accident():
-    assert delivery.BANNER in index_document()
+def test_the_offer_says_it_is_read_from_the_installation():
+    assert delivery.BANNER in offer_document()
+
+
+def test_the_offer_lists_every_installed_command_and_every_skill_but_the_planner():
+    # ⭐ Derived from the two registries, so a verb or a skill added tomorrow is
+    # offered by existing, and one removed stops being offered.
+    from studyforge.cli.dispatch import VERBS
+    from studyforge.skills import documents
+
+    ids = delivery.Offer.installed().ids
+    assert {f"studyforge {name}" for name in VERBS} <= ids
+    assert {f"skill {name}" for name in documents.names() if name != "delivery"} <= ids
+    assert "skill delivery" not in ids
+    assert len(ids) == len(VERBS) + len(documents.names()) - 1
 
 
 # --- R20: nothing here cites a path inside the extraction source ------------
@@ -60,7 +72,7 @@ def extraction_source() -> re.Pattern[str]:
 
 
 def test_nothing_this_skill_ships_cites_a_path_inside_the_extraction_source():
-    # ⛔ R20 read as the epic states it. The check is on the PATH shape, since
+    # ⛔ R20 read as the spec states it. The check is on the PATH shape, since
     # a document is allowed to say the repository exists and this one does not
     # even do that.
     slug = extraction_source().pattern
@@ -130,12 +142,12 @@ def test_the_procedure_offers_no_console_script_that_does_not_exist():
             assert not line.strip().startswith("studyforge "), line
 
 
-def test_the_procedures_first_command_runs_and_prints_the_index(tmp_path):
+def test_the_procedures_first_command_runs_and_prints_the_offer(tmp_path):
     # ⛔ The live reading: the command a reader types first, typed.
     # ⭐ read out of `SKILL.md` rather than retyped here, so the procedure
     # and this test cannot drift apart with the test still green.
-    # ⭐ Run from a directory that holds no plan document at all, and
-    # compared byte for byte — never stripped.
+    # ⭐ Run from a directory that holds nothing at all, and compared byte
+    # for byte — never stripped.
     done = subprocess.run(  # noqa: S603
         [sys.executable, *first_command()],
         cwd=tmp_path,
@@ -144,64 +156,67 @@ def test_the_procedures_first_command_runs_and_prints_the_index(tmp_path):
         check=False,
     )
     assert done.returncode == 0, done.stderr.decode("utf-8", "replace")
-    assert done.stdout == index_document().encode("utf-8")
+    assert done.stdout == offer_document().encode("utf-8")
 
 
-def test_the_procedure_never_sends_a_planner_to_a_plans_documents():
-    # ⛔ The skill reads the package, and its procedure names
-    # no directory a plan's documents live in.
-    assert "docs/tasks" not in skill_document()
+def test_the_procedure_plans_against_the_installed_framework_and_no_roadmap():
+    # ⛔ The skill reads what is installed. It names no directory of the
+    # framework's own plan, no roadmap index, and no framework milestone.
+    document = skill_document()
+    assert "docs/tasks" not in document
+    assert "capability index" not in document and "capability-index" not in document
+    assert not re.search(r"\bM[0-9]{1,2}\b", document), "the procedure names a framework milestone"
+    assert "finding" in document and "installed" in document
 
 
 # --- the whole plan, through the public surface only ------------------------
 
 
 def test_a_plan_reaches_a_document_an_export_and_a_risk_report():
-    index = plans.index()
-    plan = plans.backlog().checked(index)
+    plan = plans.backlog().checked(plans.offer())
     document = "\n".join(plan.lines())
     assert document.startswith("# Delivery plan — a repository of teaching prose")
     assert "**Critical path.**" in document
-    assert "## This corpus finishes at M2" in document
+    assert "## This corpus finishes at the reading floor" in document
 
     exported = export(plan, JIRA)
     assert exported.splitlines()[0].startswith("Issue key")
     assert len(exported.splitlines()) == len(plan.tasks) + 1
 
-    report = concentration(plan.tasks, outside=(Carrier("RS-02", "the framework", 6),))
+    report = concentration(plan.tasks, outside=(Carrier("C-01/1", "the framework", 6),))
     assert "outside this repository" in report.headline()
 
 
 def test_every_task_in_a_checked_plan_ends_in_something_a_person_is_shown():
-    # ⭐ E11's clause, asserted over the whole plan rather than trusted to the
-    # constructor that made each task.
-    for task in plans.backlog().checked(plans.index()).tasks:
+    # ⭐ Asserted over the whole plan rather than trusted to the constructor
+    # that made each task.
+    for task in plans.backlog().checked(plans.offer()).tasks:
         assert task.demonstrable.strip()
 
 
 def test_every_acceptance_clause_in_a_checked_plan_names_its_instrument():
-    for task in plans.backlog().checked(plans.index()).tasks:
+    for task in plans.backlog().checked(plans.offer()).tasks:
         for clause in task.acceptance:
             assert clause.instrument
 
 
 def test_the_plan_a_reader_gets_is_the_plan_the_export_renders():
-    plan = plans.backlog().checked(plans.index())
+    plan = plans.backlog().checked(plans.offer())
     document = "\n".join(plan.lines())
     for row in export(plan, JIRA).splitlines()[1:]:
         assert f"### {row.split(',')[0]} —" in document
 
 
-def test_a_plan_that_contradicts_the_index_never_reaches_a_document():
+def test_a_plan_that_asks_for_a_capability_the_framework_lacks_never_reaches_a_document():
     # ⛔ The negative control for the whole walkthrough. Without it, a
     # walkthrough that only ever sees green cannot tell you the green means
-    # anything.
+    # anything. ⭐ And the refusal sends the planner to a finding.
     from studyforge.skills.delivery import Milestone, PlanRefused
 
     broken = plans.backlog(
         milestones=(
-            Milestone("C1", "first", (plans.reading_task("C-01", depends_on=("RS-20",)),), "M1"),
+            Milestone("C1", "first", (plans.reading_task("C-01", depends_on=("tool slides",)),)),
         )
     )
-    with pytest.raises(PlanRefused, match="waits on RS-20, which lands at M5"):
-        broken.checked(plans.index())
+    with pytest.raises(PlanRefused, match="filed as a finding"):
+        broken.checked(plans.offer())

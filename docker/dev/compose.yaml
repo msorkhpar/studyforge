@@ -1,26 +1,25 @@
-# The framework's build environment, as a service (R15, FND-03).
+# The framework's build environment, as a service.
 #
 #     docker/dev/check                      the whole suite, in the container
 #     docker/dev/check python3 -m tests.floor        anything else, in it
 #
 # ⛔ **There is no direct form that is not `check`'s own.** What `check` runs is
 # below: with the attestation variable, or this build re-exports moving
-# provenance digests (`W152`; the ground is in `check`'s own block), and with the
-# identity `check` DERIVES from the build inputs, or `image:` refuses to resolve
-# (`W225`). ⚠️ A hand-typed identity is a name, not a derivation:
+# provenance digests (the reason is in `check`'s own block), and with the
+# identity `check` DERIVES from the build inputs, or `image:` refuses to
+# resolve. ⚠️ A hand-typed identity is a name, not a derivation:
 #
 #     STUDYFORGE_DEV_IDENTITY=<derived by check> BUILDX_NO_DEFAULT_ATTESTATIONS=1 \
 #         docker compose -f docker/dev/compose.yaml run --rm --build dev
 #
-# ⚠️ **The declarative form belongs in THIS file and is INERT here.**
-# `build: provenance: false` was tried and MEASURED at Compose v5.2.0 / buildx
-# v0.35.0: the attestation manifest was still exported and still moved, through
-# `run --build`, through plain `build`, and through `COMPOSE_BAKE=true`; a
-# `.env` beside this file does not carry the variable either. ⛔ So the key is
-# NOT shipped — a decoration that reads like the fix is worse than none — and
-# the wrapper is the only site that works. ⭐ `tests/docker/test_dev_provenance.py`
-# asserts both halves: that this header carries the variable, and that the inert
-# key is absent from the YAML.
+# ⚠️ **The declarative form would belong in THIS file and is INERT here.**
+# `build: provenance: false` does not stop this Compose and buildx exporting a
+# moving attestation, through `run --build`, through plain `build`, or through
+# `COMPOSE_BAKE=true`; a `.env` beside this file does not carry the variable
+# either. ⛔ So the key is NOT shipped — a decoration that reads like the fix is
+# worse than none — and the wrapper is the only site that works.
+# ⭐ `tests/docker/test_dev_provenance.py` asserts both halves: that this header
+# carries the variable, and that the inert key is absent from the YAML.
 #
 # ⭐ The command inside is the same command a contributor runs on the host:
 # `python3 -m pytest`. That is the point of the image rather than a detail of
@@ -28,13 +27,12 @@
 # people two things instead of one, and hides the divergence it was built to
 # eliminate.
 #
-# ⛔ No Docker socket is mounted, here or anywhere (spec §8.3). Not behind a
-# flag, not "only locally". Carried from the extraction source's own compose
-# file, which states the same rule for the same reason.
+# ⛔ No Docker socket is mounted, here or anywhere. Not behind a flag, not
+# "only locally": a process holding the socket holds the host.
 #
 # ⛔ No port is published and no network is joined. This image builds and
-# tests; it serves nothing. `studyforge serve` is a host process by ruling
-# (§8.3) and has no service here.
+# tests; it serves nothing. `studyforge serve` is a host process and has no
+# service here.
 
 name: studyforge-dev
 
@@ -42,21 +40,21 @@ services:
   dev:
     build:
       # Relative to this file, so the same command works from any directory
-      # and no absolute path is written down (R7).
+      # and no absolute path is written down.
       context: .
       dockerfile: Dockerfile
-      # ⭐ `W211`: the checkout as a NAMED context, for the Dockerfile's install
+      # ⭐ The checkout as a NAMED context, for the Dockerfile's install
       # step to bind-mount `pyproject.toml` and `README.md` from. BuildKit
       # transfers only the paths a step names, so nothing else crosses.
       additional_contexts:
         project: ../..
-    # ⛔ **Named by its build inputs' CONTENT, never by one shared tag** (`W225`).
+    # ⛔ **Named by its build inputs' CONTENT, never by one shared tag.**
     # `check` derives the identity and exports it; unset, this file refuses to
-    # start rather than fall back to a name two checkouts would share (`W211/2`).
+    # start rather than fall back to a name two checkouts would share.
     image: "studyforge/dev:inputs-${STUDYFORGE_DEV_IDENTITY:?docker/dev/check derives this from the build inputs; run that}"
 
-    # ⛔ The acceptance condition, enforced rather than asserted: **no network
-    # access is required to run tests**. `none` means the container has no
+    # ⛔ Enforced rather than asserted: **no network access is required to run
+    # tests**. `none` means the container has no
     # interface at all, so a test that quietly reached for a package index or
     # an API would fail here rather than pass on the machine that had one.
     #
@@ -80,66 +78,40 @@ services:
     # set it degrades to "cannot write" rather than to "writes as root".
     user: "${STUDYFORGE_UID:-65534}:${STUDYFORGE_GID:-65534}"
 
-    # ⛔ **Shared memory, and it is a MEASUREMENT rather than a precaution**
-    # (W36). Docker's default `/dev/shm` is 64 MB. The browser transfers a
-    # `Page.captureScreenshot` result through shared memory, and
-    # `tests/visual/page.py` asks for `captureBeyondViewport` — a full-page
-    # capture, not a viewport one. At 64 MB the GPU process died and respawned
-    # in a loop with `VALIDATION_ERROR_DESERIALIZATION_FAILED` on
-    # `viz.mojom.CopyOutputResultSender`, and the suite **hung** rather than
-    # failing: 5 of the 7 capture checks passed and the 6th never returned.
-    # ⚠️ Measured at `a0d7e88` with the browser installed and this line absent.
+    # ⛔ **Shared memory, sized for a full-page capture.** Docker's default
+    # `/dev/shm` is 64 MB. The browser transfers a `Page.captureScreenshot`
+    # result through shared memory, and `tests/visual/page.py` asks for
+    # `captureBeyondViewport`, a full-page capture. At 64 MB the browser's GPU
+    # process dies and respawns in a loop, and a capture never returns: the
+    # suite hangs rather than failing.
     #
     # ⭐ Fixed HERE rather than by adding `--disable-dev-shm-usage` to the
-    # harness's launch flags, and the reason is whose property it is: the size
-    # of `/dev/shm` is a fact about how this image is RUN, which this file owns.
-    # A flag that routes the browser's shared memory onto disk instead would
-    # change what every reading is taken against, in a file W36 does not own.
+    # harness's launch flags, because the size of `/dev/shm` is a fact about how
+    # this image is RUN, which this file owns. A flag that routes the browser's
+    # shared memory onto disk instead would change what every reading is taken
+    # against.
     shm_size: "1gb"
 
-    # ⭐ **The visual harness's three variables, passed through** (W36).
+    # ⭐ **The visual harness's three variables, passed through.**
     # ⛔ Without this the container cannot be told to demand a browser, to name
-    # one, or to keep its captures — the values stop at the host, and a
-    # reviewer who ran `STUDYFORGE_VISUAL=required docker/dev/check` would get
-    # a green run that proved nothing, which is the most expensive way this
-    # could be wrong.
-    # ⚠️ STALE IN PART, kept and annotated (`W163`): *"proved nothing"* was true
-    # while this image had no browser. `W36` pinned one into it, so a dropped
-    # demand still leaves the visual checks RUNNING in here, and the harness's
-    # summary line says the demand was unset. What such a run cannot prove is
-    # that an absent browser FAILS. The decision does not move: the caller's
-    # answer must cross.
+    # one, or to keep its captures: the values stop at the host, and a reviewer
+    # who ran `STUDYFORGE_VISUAL=required docker/dev/check` would get a run
+    # whose demand was silently unset.
     #
     # ⭐ **Pass-through, and deliberately NOT a default.** The bare-name form
     # takes the host's value and leaves the variable *unset* in here when the
     # host has none, so this file decides nothing about what a run demands — it
-    # only stops the caller's answer being dropped at the boundary.
-    # ⚠️ Writing `required` in here as a default was tried, measured and
-    # rejected: it sets the demand for every run of the pinned image, which
-    # changes what every reading is taken against, and it turned
-    # `tests/visual/test_discovery.py` red — a test that fakes the browser's
-    # absence but does not control this variable. ⛔ That test is red at
-    # `a0d7e88` too, with no browser and no diff, whenever the variable is set;
-    # the defect is the harness's. ⭐ What keeps the browser honest instead is
-    # `tests/docker/test_dev_image_browser.py`, which asserts from **inside**
-    # this image that one arrived — the idiom the Node.js runtime already uses.
-    #
-    # ⛔ **STALE REASONS UNDER A CORRECT DECISION, kept and annotated** (`W163`,
-    # from `W128/6`). ⭐ The refusal stands on its FIRST reason alone: a default
-    # here changes what every reading is taken against, which is a property of
-    # this file and cannot go stale. ⚠️ The rest were true at `a0d7e88` (`W36/1`)
-    # and are not true since:
-    #   - *"turned test_discovery.py red … does not control this variable"*,
-    #     *"red … whenever the variable is set"* and *"the defect is the
-    #     harness's"*: `W128` gave that test `pinned_environment`
-    #     (`tests/visual/conftest.py`), which pins the variable off. Measured at
-    #     `828b37f` in this image: with `=required` the module passes, and with
-    #     the fixture removed it fails again.
+    # only stops the caller's answer being dropped at the boundary. ⛔ A default
+    # of `required` here would set the demand for every run of the image, which
+    # changes what every reading is taken against. ⭐ What keeps the browser
+    # honest instead is `tests/docker/test_dev_image_browser.py`, which asserts
+    # from **inside** this image that one arrived.
     #
     # ⚠️ `STUDYFORGE_VISUAL_CAPTURES` is a path INSIDE the container. A host
     # path only resolves if it is under the bind mount, and nothing is written
     # into the checkout by default — `conftest.py` uses pytest's temporary
-    # directory when it is unset (R7: a capture's path is a home directory).
+    # directory when it is unset, because a capture's path could be a home
+    # directory, which is personal data.
     environment:
       - STUDYFORGE_VISUAL
       - STUDYFORGE_VISUAL_BROWSER

@@ -6,7 +6,6 @@ import ast
 from pathlib import Path
 
 from studyforge.skills import delivery
-from tests.studyforge.skills.delivery import plans
 from tests.support import assert_package_contract
 
 
@@ -17,7 +16,7 @@ def test_states_its_contract():
 def test_a_consumer_needs_only_the_package():
     # ⭐ A consumer that has to import a submodule directly is a consumer this
     # contract failed. The planner's whole surface is reachable from here.
-    assert {"Backlog", "Task", "Terminal", "Question", "capability_index"} <= set(delivery.__all__)
+    assert {"Backlog", "Task", "Terminal", "Question", "Offer"} <= set(delivery.__all__)
     assert all(hasattr(delivery, name) for name in delivery.__all__)
 
 
@@ -30,69 +29,25 @@ def test_the_procedure_ships_beside_the_package():
     assert (Path(delivery.__file__).parent / "SKILL.md").exists()
 
 
-def test_the_one_call_the_procedures_first_step_makes():
-    rendered = delivery.capability_index(
-        (("E01.md", plans.EPIC_ONE), ("E05.md", plans.EPIC_TWO)),
-        ("README.md", plans.SEQUENCE),
-        plans.NO_PINS,
-    )
-    assert delivery.BANNER in rendered
-    assert "`RS-01`" in rendered
-
-
-def test_the_pin_document_is_required_rather_than_defaulted():
-    # ⛔ an index that defaulted to *everything is this framework's*
-    # would state the thing the row was filed about, and state it silently.
-    # ⭐ A plan with no component but itself says so by passing a document
-    # that pins none, exactly as `concentration(outside=())` requires.
-    import inspect
-
-    parameters = inspect.signature(delivery.capability_index).parameters
-    assert parameters["pins"].default is inspect.Parameter.empty
-
-
-def test_the_pin_document_is_what_places_a_row_on_the_other_side():
-    # ⭐ Same documents, two pin declarations: the only thing that can make a
-    # row *not this framework's* is a component declared somewhere else.
-    documents = (("E12.md", plans.EPIC_ELSEWHERE),)
-    order = ("README.md", plans.SEQUENCE)
-
-    def placed(pins: str) -> set[str]:
-        rows = delivery.capability_index(documents, order, pins).splitlines()
-        return {row for row in rows if row.startswith("| `TV-00`")}
-
-    assert placed(plans.NO_PINS) != placed(plans.PINS)
-    assert all(delivery.HERE in row for row in placed(plans.NO_PINS))
-    assert all(delivery.ELSEWHERE in row for row in placed(plans.PINS))
+def test_the_package_ships_no_roadmap():
+    # ⛔ The package carries its procedure and its code, and no data file
+    # describing how the framework itself is being built.
+    package = Path(delivery.__file__).parent
+    shipped = {path.name for path in package.iterdir() if path.is_file()}
+    assert {name for name in shipped if not name.endswith(".py")} == {"SKILL.md"}
 
 
 #: ⛔ What a module that had gone looking for documents would have to reach
 #: for. `io` is absent deliberately: `export` uses `StringIO` and never a file.
 _FILESYSTEM = frozenset({"pathlib", "os", "os.path", "shutil", "glob", "tempfile"})
 
-#: ⭐ The one excused reach, by module and by name: `packaged` reads the index this
-#: package SHIPS, from its own directory, and never a path a caller names.
-_OWN_DATA = {"packaged.py": frozenset({"pathlib"})}
-
-
-def test_the_one_excused_reach_is_anchored_to_the_modules_own_file():
-    # ⛔ The excuse above holds only while every `Path` in `packaged` is built from its own
-    # `__file__`: a `Path(...)` of anything else would be a module that goes looking.
-    tree = ast.parse((Path(delivery.__file__).parent / "packaged.py").read_text("utf-8"))
-    built = [
-        node
-        for node in ast.walk(tree)
-        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == "Path"
-    ]
-    assert built, "packaged builds no Path, so this checks nothing"
-    for node in built:
-        assert [ast.unparse(arg) for arg in node.args] == ["__file__"], ast.unparse(node)
-
 
 def test_the_package_reaches_the_filesystem_nowhere():
-    # ⛔ Every module here is handed text and gives back text, so the caller
-    # names the documents. A planner that went looking for `docs/tasks/` would
-    # be a framework module the next repository has to be arranged around.
+    # ⛔ Every module here is handed data and gives back text. A planner that
+    # went looking for a plan's documents would be a framework module the next
+    # repository has to be arranged around. ⭐ `offer` reads the installation
+    # through the command table and the skill locator, and imports no
+    # filesystem module either.
     #
     # ⚠️ Read by `ast` rather than by a substring scan, and the first draft was
     # the scan: it reported `question.py` for `def open(self)`. A text proxy
@@ -110,7 +65,7 @@ def test_the_package_reaches_the_filesystem_nowhere():
                 names = {node.module or ""}
             else:
                 continue
-            reached = names & _FILESYSTEM - _OWN_DATA.get(module.name, frozenset())
+            reached = names & _FILESYSTEM
             assert not reached, f"{module.name} imports {', '.join(sorted(reached))}"
 
 
@@ -154,18 +109,11 @@ RESIDUE = {
         "`Backlog.lines` shares a short name with `Milestone.lines`, which the "
         "renderer does call in a loop.",
     ),
-    ("capability.py", "Index.milestone_of"): (
+    ("offer.py", "Capability.__post_init__"): (
         1,
-        "a lookup about the ONE capability asked for. The loop that reaches it, "
-        "`backlog._check_framework` over a task's framework dependencies, asks "
-        "one question per call and every name it asks about came from the "
-        "index's own ids, so this refusal cannot fire from there.",
-    ),
-    ("capability.py", "Index._position"): (
-        1,
-        "a lookup about the ONE milestone asked for. The loop that reaches it "
-        "is `Index.after`, and `Index.of` has already refused every capability "
-        "whose milestone the declared order omits.",
+        "the generators that reach it in `Offer.installed` build each capability "
+        "out of the installed command table and skill tree, whose names and "
+        "summaries are never empty, so it cannot fire from there.",
     ),
     ("risk.py", "Carrier.__post_init__"): (
         2,

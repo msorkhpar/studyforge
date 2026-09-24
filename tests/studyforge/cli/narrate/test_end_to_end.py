@@ -1,6 +1,6 @@
 """⛔ `narrate`'s end-to-end leg: a fixture corpus narrated against a RUNNING `narrate-service`.
 
-⭐ **The leg `M3` is missing.** It is asserted as a READING OF THE DISK — clip
+⭐ **The leg a unit test cannot reach.** It is asserted as a READING OF THE DISK — clip
 files under the copied corpus that were not there before, one per speech unit,
 each carrying MPEG audio bytes — and the re-run as a reading of the TRANSPORT.
 

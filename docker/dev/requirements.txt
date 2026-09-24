@@ -1,9 +1,9 @@
-# The framework's build environment, pinned exactly (R15).
+# The framework's build environment, pinned exactly.
 #
 # ⛔ Every version is `==`, transitive dependencies included, because "pinned
 # in an image" is only true if resolving it twice gives the same answer. A
 # `>=` here would make the image's contents depend on the day it was built,
-# which is the thing R15 exists to prevent.
+# which is the thing a pinned build environment exists to prevent.
 #
 # ⚠️ These are TEST-ONLY tools. The framework itself declares no runtime
 # dependencies and never will (`pyproject.toml`); nothing in `src/` may import
@@ -27,14 +27,12 @@ iniconfig==2.3.0
 packaging==26.3
 pluggy==1.6.0
 Pygments==2.21.0
-# ⭐ `W364`: the suite runs on every core. `pytest-xdist` needs `execnet` and
+# ⭐ The suite runs on every core. `pytest-xdist` needs `execnet` and
 # `pytest`, and nothing else; both of its own requirements are pinned here.
 pytest-xdist==3.8.0
 execnet==2.1.1
 
 # --- the `lint` extra ---
-# ⭐ This line is what closes FND-01's one open acceptance clause. Lint was
-# recorded Blocked-on-FND-03 because no linter was installed and no network
-# install could be assumed; the install happens here, at image-build time,
-# where network is available and a test run is not.
+# ⭐ The linter is installed here, at image-build time, where network is
+# available and a test run is not, so lint runs even on a host with no ruff.
 ruff==0.16.6

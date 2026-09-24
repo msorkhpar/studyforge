@@ -95,7 +95,8 @@ def test_a_one_level_corpus_is_not_a_special_case():
 
 def test_exercises_is_a_declaration_and_not_a_promise_of_graders():
     # ⛔ C5's three states: the SPARQL shape carries an exercise in every
-    # lesson and no grader at all, and it is complete at M4 rather than short.
+    # lesson and no grader at all, and it is complete at the reading floor
+    # rather than short.
     sparql = manifest(levels=["course"], variants=["sparql"], exercises=True)
     assert sparql.exercises is True
     assert sparql.variants == ("sparql",)

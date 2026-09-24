@@ -27,7 +27,7 @@ from tests.studyforge.exercise.quiz.depth1 import PAGE, record
 
 WHERE = "depth-one/unit-01/practice-1"
 
-#: A code record, as everything written before `M10` is: the ungraded shape.
+#: A code record with no quiz and no cases: the ungraded shape.
 CODE_RECORD = {"main_path": "practice/hello.py", "run_command": ["python3", "practice/hello.py"]}
 
 
