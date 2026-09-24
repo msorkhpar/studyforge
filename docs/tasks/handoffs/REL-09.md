@@ -94,8 +94,15 @@ two. Comments never reach the tree. It exits 1 if any module differs or fails to
 
 ## Gates
 
-Each gate was run bare from `studyforge-wt/dev1` at the tip, with its output sent to a scratch file
-and `$?` read on the next line.
+Each gate was run bare from `studyforge-wt/dev1` at `5a0ddd09`, the last prose commit, with its output
+sent to a scratch file and `$?` read on the next line. The only commits after it add this file,
+and `python3 -m tools.quality` and `python3 -m tests.floor` were re-run at that later commit, both GREEN, exit 0.
+
+⚠️ **Re-running the suite at that commit is NOT a reading.** Three attempts were killed with
+`OSError: [Errno 122] Disk quota exceeded`. `/tmp` is a tmpfs with a per-user quota, shared with
+the other offices' concurrent runs and their `pytest-of-*` base directories. Nothing outside this
+office's scratch was deleted to make room. The `5a0ddd09` reading stands for the tree, because
+the only difference is one markdown handoff.
 
 | gate | environment | reading |
 |---|---|---|
