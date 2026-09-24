@@ -16,7 +16,7 @@ and `table` for the grammar underneath them.
 
 ## ⛔ A ROW IS A CONJUNCTION
 
-⭐ **Cool slate is the ACCEPTED identity; slate WITH teal-green AND amber is a
+⭐ **Cool slate is the site's identity; slate WITH teal-green AND amber is a
 rejected one.** ⛔ So a row is every part at once, and a reader that
 returned its parts separately would be describing a different rule from the one
 the document states.

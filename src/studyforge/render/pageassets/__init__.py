@@ -26,7 +26,7 @@ stated too — loop bodies and inline wrappers stay in code, because a file for
 a closing tag removes no duplication and adds a hop.
 
 ⛔ **R8 — the site works over `file://`, with no network and no server.** Every
-asset is local, every font is a system stack, and the icon sprite is
+asset is local, every face is vendored and embedded, and the icon sprite is
 substituted rather than fetched. A served origin adds the API, progress and
 Run/Submit; it is never a prerequisite for *reading*.
 

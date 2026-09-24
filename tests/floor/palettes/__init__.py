@@ -26,8 +26,8 @@ never *§2 is met*.
 
 ## ⛔ THE ROW IS THE UNIT AND THE CONJUNCTION IS THE INSTRUMENT
 
-⭐ **Cool slate is the ACCEPTED identity; slate WITH teal-green AND amber is a
-rejected one.** ⛔ A row that fired on one part would refuse the accepted
+⭐ **Cool slate is the site's identity; slate WITH teal-green AND amber is a
+rejected one.** ⛔ A row that fired on one part would refuse the site's own
 identity, so every part must hold in ONE theme, and the parts written on one
 role must be met inside ONE group of that role — one gradient, or that theme's
 colours for a token role.
