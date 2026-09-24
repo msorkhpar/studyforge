@@ -117,8 +117,9 @@ arrives as data, through the manifest or the archive.
 
 ⛔ **A source's name in framework source is a failure even inside a comment**,
 because the next reader takes a name as licence to branch on it. A fixture
-under `tests/` that names a *shape* is fine; a module under `src/` that names a
-*corpus* is not. ⚠️ **A name is matched in the forms people actually write it** —
+under `tests/` that names a *shape* is fine; a file under `src/` that names a
+*corpus* is not, a skill's page as much as a module, because it ships with the
+framework and is read as the framework's own words. ⚠️ **A name is matched in the forms people actually write it** —
 the repository slug, and the corpus named in English (*the Java corpus*) — and
 each is anchored on a word only a corpus's name takes: a bare `ISO` is far more
 often an ISO 8601 date, and a check that cannot tell the two apart is switched

@@ -58,7 +58,7 @@ linked, which is the unlinked intermediate crumb made visible on the page instea
 
 ## ⛔ The trail names each level once
 
-⚠️ **A corpus may call its outermost group what it calls itself** — the ISO
+⚠️ **A corpus may call its outermost group what it calls itself** — a measured
 corpus's first group carries the corpus's own title — and the trail then read
 the same long title twice in a row. ⭐ A group crumb whose title is the crumb
 before it is not printed a second time: the first one stays, because it is the

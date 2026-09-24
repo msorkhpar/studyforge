@@ -3,8 +3,9 @@ r"""R1, enforced: the framework names no source.
 ⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
 checkout, and depends on nothing outside it.
 
-**What it does.** Fails any module under `src/` that names one of the corpora
-this workspace knows — in code, in a comment, or in a docstring. ⛔ R1 is *"the
+**What it does.** Fails any file the framework ships under `src/` that names one
+of the corpora this workspace knows: a module, in code, a comment or a
+docstring, and a skill's page, a template, a stylesheet or a script. ⛔ R1 is *"the
 framework knows nothing about any source"*, and a source's name in framework
 source is a fail **even in a comment, because the next reader takes it as
 licence**.
@@ -15,21 +16,20 @@ one entry, and the sweep reaches every file the moment it exists.
 
 **Depends on.** `config` for the tree, and `re`. Nothing else.
 
-## ⛔ Modules are never exempted, and documents are never scanned
+## ⛔ Nothing shipped is exempted, and `docs/` is never scanned
 
-⭐ **The exemption is structural rather than a list.** This check reads
-`src/**/*.py` and nothing else, so a *document* may name every corpus in the
-workspace — the spec and the integration catalogue must, or the
-measurements they hold would be unattributable — and a *module* has no way to
-be excused. ⛔ There is no allow-list here and there is not meant to be one:
-the moment a module can be exempted, the exemption is where source-specific
-knowledge accumulates.
+⭐ **The exemption is structural rather than a list.** This check reads every
+text file under `src/` (`SHIPPED_SUFFIXES`) and nothing else, so a document
+under `docs/` may name every corpus in the workspace — the spec and the
+integration catalogue must, or the measurements they hold would be
+unattributable — and a shipped file has no way to be excused. ⛔ There is no
+allow-list here and there is not meant to be one: the moment a file can be
+exempted, the exemption is where source-specific knowledge accumulates.
 
-⭐ **So a module that needs a corpus's measured fact points at the document
-that holds it.** That is the reconnaissance skill's precedent for `SKILL.md` — the far end of a
-pointer is exempt *for a reason* rather than by name — so the remedy for a
-finding is a citation rather than a deletion. The evidence is not lost; it
-stops being in the wrong file.
+⭐ **A skill's page is shipped, so it is read.** A client installs it with the
+framework and reads it as the framework's own words. A measurement it needs
+names the corpus by its shape (*corpus A: one flat directory, three prefix
+groups*), which is what the measurement is about.
 
 ## ⚠️ This layer is open, and the closed one is beside it
 
@@ -59,10 +59,15 @@ from tests.floor.report import Finding
 
 RULE_SOURCE_NAME = "source-name"
 
-#: The directory whose modules R1 binds. ⛔ Only `src/` is the framework: this
+#: The directory whose files R1 binds. ⛔ Only `src/` is the framework: this
 #: module names four corpora itself and must, and it lives under `tests/`, which
 #: holds fixtures, which are allowed to be shaped like a real source.
 FRAMEWORK_ROOT = "src"
+
+#: The text files the framework ships: its modules, its skills' pages, and the
+#: templates, stylesheets, scripts and icons a page is built from. ⚠️ A font and a
+#: licence text are the only other files under `src/`, and neither is prose.
+SHIPPED_SUFFIXES = (".py", ".md", ".html", ".css", ".js", ".svg", ".json")
 
 #: `(corpus, pattern, why the framework may not name it)`. ⚠️ Every pattern is
 #: **anchored on a word that only a corpus's name takes**, never on a bare
@@ -115,22 +120,28 @@ def named_sources(text: str) -> list[tuple[int, str, str]]:
     return found
 
 
-def framework_modules(root: Path) -> list[Path]:
-    """Every module under `FRAMEWORK_ROOT` — this check's population.
+def framework_files(root: Path) -> list[Path]:
+    """Every shipped text file under `FRAMEWORK_ROOT`, sorted — this check's population.
 
     ⚠️ Narrower than `SCAN_ROOTS` by design, so it is the one a tree can leave
-    EMPTY while every other Python check is inhabited.
+    EMPTY while every other check is inhabited.
     """
-    prefix = FRAMEWORK_ROOT + "/"
-    return [
-        path for path in config.python_files(root) if config.relative(path, root).startswith(prefix)
-    ]
+    directory = root / FRAMEWORK_ROOT
+    if not directory.is_dir():
+        return []
+    return sorted(
+        path
+        for path in directory.rglob("*")
+        if path.is_file()
+        and path.suffix in SHIPPED_SUFFIXES
+        and not config.is_excluded(config.relative(path, root))
+    )
 
 
 def check_source_names(root: Path) -> list[Finding]:
     """Every place framework source names a corpus this workspace knows (R1)."""
     findings: list[Finding] = []
-    for path in framework_modules(root):
+    for path in framework_files(root):
         relative = config.relative(path, root)
         text = path.read_text(encoding="utf-8", errors="replace")
         for number, corpus, why in named_sources(text):
@@ -139,9 +150,9 @@ def check_source_names(root: Path) -> list[Finding]:
                     relative,
                     number,
                     RULE_SOURCE_NAME,
-                    f"names {corpus} — {why}. Cite the document that holds the "
-                    f"measurement instead; a document may name a corpus and a "
-                    f"module may not.",
+                    f"names {corpus} — {why}. Name the corpus by its shape instead; "
+                    f"a document under docs/ may name a corpus and a shipped file "
+                    f"may not.",
                 )
             )
     return findings
