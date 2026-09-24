@@ -1,119 +1,157 @@
 # studyforge
 
-**Status: planned, not built.** This repository currently contains a complete
-design and task backlog. No framework code exists yet.
+**Turn a body of teaching material into a study site you can read offline.**
+Point it at a course you wrote, a book, a folder of notes or a repository of
+exercises, and it gives you back a local site: a reading page per unit,
+narrated audio, a table of contents, navigation, progress that is remembered,
+and, where the material supports it, practices you can run and have graded.
 
-A source-agnostic framework that converts any body of teaching material into a
-local, offline study site: a reading page per unit, narrated audio, a table of
-contents, navigation, progress tracking, and — where the material supports it —
-runnable practices with real graders.
+The framework never looks at your material directly. It reads a manifest,
+`corpus.json`, that says what your material is, and an archive of documents
+written from it. A set of **skills** (procedures an agent or a person follows)
+produces both for you, and one command, `studyforge validate`, says whether
+they are right.
 
-It is extracted from the CodeSignal study system, which proved every one of
-these surfaces against real material, and generalised so that any source can
-populate the same contracts and get the same site out.
+A corpus of prose with no exercises is finished once it reads, speaks and
+remembers where you got to. Containers, a browser editor and graded practices
+are only for material that is actually runnable.
 
-**The product is a set of skills**, not a bespoke pipeline: someone points a
-skill at material they care about and gets this format back, then keeps it as a
-durable personal record they can review, re-run and extend. The
-`Claude-senior-java-engineer` tutorial repository is v1's proving ground, not
-its destination.
+This file is the whole reading list. Everything it sends you to is in this
+repository and ships with it: the authoring reference under
+[`docs/authoring/`](docs/authoring/README.md) and the skill documents.
 
 ---
 
-## Start here
+## Install
 
-| Read | For |
-|---|---|
-| [`docs/specs/2026-09-08-studyforge-v1-design.md`](docs/specs/2026-09-08-studyforge-v1-design.md) | The design, and rulings **R1–R20** that every task cites |
-| [`docs/tasks/README.md`](docs/tasks/README.md) | The index, ordering and critical path; every count is the generated [`docs/capability-index.md`](docs/capability-index.md)'s |
-| [`docs/conventions/`](docs/conventions/) | Module structure, the agent working agreement, the review rubric |
-| [`docs/tasks/v2-backlog.md`](docs/tasks/v2-backlog.md) | Deliberately unplanned future work |
+You need **Python 3.14 or later** and **git**. Docker is needed only for
+narration and for runnable practices (see [Images](#images-built-locally-by-tag)).
 
-⭐ **What is built, what is open and what is next is [`docs/tasks/BOARD.md`](docs/tasks/BOARD.md)'s.** This file carries no state.
+The framework is a library with no runtime dependencies. It is not published
+to a package index: build a wheel from a checkout and install that. From the
+directory where you want to work:
 
-⭐ **The first consumer is a small corpus, not the 166-unit Java tutorial.** A
-framework proven on a small source and then applied to a large one has been
-tested; one grown around a large source and later pointed at a small one has
-been fitted. So the plan's spine is the **reading floor** — narrated, navigable,
-offline, no server — which is a complete product for prose material and lands by
-M4. The execution track (containers, Run and Submit, graded practices) begins at
-M5 — after M6 and M8, by the user's order — and a corpus enters it only if its material is
-actually runnable.
-
-## The workspace
-
-Components are separate repositories that sit **side by side** on disk, pinned
-by a tracked file rather than composed as submodules (R18, amended — see
-`docs/conventions/workspace.md`). ⛔ Nothing is pushed to any remote, so a
-submodule has no legal form here; `workspace.json` records the commit of each
-component and `python3 -m tools.workspace verify` checks it. ⚠️ That reproduces
-a configuration **across time on this machine**, and deliberately **not** across
-machines:
-
-```
-<workspace>/
-  studyforge/                  this repo — the framework
-  code-server-toolchain/       to be created (E12) — the embedded IDE image
-  narrate-service/             to be created (E13) — batch speech synthesis
-  CodeSignal/                  the extraction source; untouched in v1
-  Claude-senior-java-engineer/ the re-validation corpus (M9)
-  ISO-8583-jPOS-tutorial/      the first corpus (M6, M8)
-  Claude-SPARQL-tutorial/      v2 adapter target
+```sh
+git clone <this repository> studyforge
+python3 -m venv .venv
+. .venv/bin/activate
+python3 -m pip wheel ./studyforge --no-deps -w wheels
+python3 -m pip install --no-index wheels/studyforge-*.whl
 ```
 
-`FND-05` stands the parent up. Until then the components are siblings on disk.
+Building the wheel fetches the build backend (`setuptools`) from the package
+index once; installing it fetches nothing. Keep the wheel: it is what you
+install into any other Python you convert material with.
 
-## Milestones
+Check that it worked:
 
-Ordered so each ends in something demonstrable, rather than nine layers that
-only become a product at the end.
+```sh
+studyforge --help
+python3 -m studyforge.skills.onboarding.verify
+```
 
-| | |
-|---|---|
-| **M0** | Foundations |
-| **M1** | One page renders |
-| **M2** | **A corpus is readable** — first genuinely useful state |
-| **M3** | Narrated; media footprint known |
-| **M4** | Served, with an API and a pass record |
-| **M6** | The first corpus, `ISO-8583`, reads |
-| **M8** | **It is a framework** — `ISO-8583` converted by the skills alone |
-| **M5** | Runs code from the reader's terminal — *execution track begins* |
-| **M7** | Has practices — the browser editor and the practice panel |
-| **M9** | The Java corpus re-validates the framework |
+The first lists the verbs; the second prints the version of the library this
+Python imports. Onboarding records that version, and the commit the wheel was
+built from, in your corpus. Keep that commit to hand:
 
-⭐ **The order is the user's (2026-09-12), and the ids are kept** — [`docs/tasks/README.md`](docs/tasks/README.md).
-⛔ **Task counts are the generated [`docs/capability-index.md`](docs/capability-index.md)'s (Ruling 150).**
+```sh
+git -C studyforge rev-parse HEAD
+```
 
-⭐ **A prose corpus is finished at M4** — the reading floor is a complete
-product, not a degraded one (spec §11.0).
+## A first run, on an example that ships with the framework
 
-⭐ **M8 tests the claim this project makes, on `ISO-8583`, and M9 tests it again on the
-Java corpus.**
+The checkout holds two small, valid corpora. This builds and serves the flat
+one, which is three units of prose and no exercises:
 
-## Two open items carried into implementation
+```sh
+studyforge validate studyforge/tests/fixtures/depth1
+studyforge plan studyforge/tests/fixtures/depth1
+mkdir site
+studyforge build studyforge/tests/fixtures/depth1 --out site
+studyforge serve studyforge/tests/fixtures/depth1 --site site
+```
 
-Neither blocks M0; both are recorded so they are not rediscovered late.
+`validate` exits `0` and names the three claims it could not check, because
+this example carries its archive but not the source files it was written from.
+`plan` lists every path a build would write before it writes one. `build`
+writes the site into `site/`, and `serve` prints a loopback address to open in
+a browser (port 8765 unless you pass `--port`). Stop it with Ctrl-C.
 
-1. **The container execution path has never run in anger.** CodeSignal ships
-   `--no-docker` with `network_mode: host` and mounts no socket, so its
-   `docker exec` mode is untested. `SF-20` must prove it against a real
-   container — Run/Submit, the E08 gates and R15 all rest on it. The ruling on
-   *where* execution runs is settled in spec §8.3; ⛔ the socket is never
-   mounted into the serving process.
-2. **R12 implies roughly 18,000 lines of new test code** that no task budget
-   names, and **three tasks carry 51% of the port surface** (`SF-19` 2,743,
-   `SF-12` 1,407, `SF-14` 1,179 of ~10,500). "Most tasks are solo" is false
-   comfort. Recorded in E05's preamble.
+Both examples, and why each looks the way it does, are walked through in
+[Worked examples](docs/authoring/examples.md).
 
-## Provenance
+## Converting your own material: the skills, in order
 
-The design was reviewed adversarially before being committed to. Every
-"measured fact" in it was counted against the real repositories rather than
-assumed — a process that corrected the curriculum section count, the
-implementation/test pairing ceiling, the heading uniformity claim, and both
-external tutorial shapes, and that produced the plan's single most valuable
-addition (`EX-00`). Facts in these documents carry their counts; where
-something is a hypothesis it says so.
+Each skill is a document you, or an agent working for you, follow in the
+repository that holds your material. The installed library prints any of them,
+so you do not need this checkout to read one:
+
+```sh
+python3 -m studyforge.skills.documents
+python3 -m studyforge.skills.documents reconnaissance
+```
+
+The first lists the skills; the second prints one. The links below are the same
+documents in this checkout.
+
+| Step | Skill | What the step does | Done when |
+|---|---|---|---|
+| 0, optional | `delivery` — [delivery planning](src/studyforge/skills/delivery/SKILL.md) | For a large conversion: turns "convert this repository" into an ordered backlog whose every task ends in something you can be shown | the backlog is written, and the conversion's findings log exists by its end |
+| 1 | `reconnaissance` — [source reconnaissance](src/studyforge/skills/reconnaissance/SKILL.md) | Surveys material nobody has read yet: how deep it is, what a unit is, what repeats, whether anything runs | you hold a draft manifest and the questions only you can answer |
+| 2 | `onboarding` — [corpus onboarding](src/studyforge/skills/onboarding/SKILL.md) | Turns the settled draft into `corpus.json` and writes everything around it: the adapter scaffold and its tests, the skill stubs, the pin to the installed library | the one file that is yours is named, and every other file is generated |
+| 3 | `adapter` — [adapter authoring](src/studyforge/skills/adapter/SKILL.md) | Writes that one file, the adapter's reading step, and emits the archive | `studyforge validate` exits `0` |
+| 4 | `execution` — [execution onboarding](src/studyforge/skills/execution/SKILL.md) | Only for runnable material: selects a toolchain and writes the compose file for the browser editor and the runner | the runner's tag is recorded; a corpus that declares no runtime skips this step and is not short |
+| 5 | `exercises` — [authoring exercises](src/studyforge/skills/exercises/SKILL.md) | Authors each page's exercises once, runs every gate over them, and commits what clears | every page has what its material supports, and every shortfall is reported |
+| 6 | `buildserve` — [build and serve](src/studyforge/skills/buildserve/SKILL.md) | Validates, narrates if you ask, builds the site and serves it on loopback | the site answers, and every partial state is named |
+| 7 | `personalarchive` — [personal archive](src/studyforge/skills/personalarchive/SKILL.md) | Exports the corpus to one file, with your progress or without it, and imports it on another machine | the file imports where you take it |
+
+Step 3's done condition is the agreement: if `studyforge validate` exits `0`,
+the framework accepts the corpus, and nothing else is asked of you.
+
+## The authoring reference
+
+[`docs/authoring/`](docs/authoring/README.md) is the reference the skills point
+at, written for somebody who has not read the design and does not intend to:
+
+- [Turning your material into a study site](docs/authoring/README.md): the route in six steps, and five things that surprise people.
+- [What a corpus is](docs/authoring/corpus.md): the manifest, key by key.
+- [Placement](docs/authoring/placement.md): where generated output goes, drawn for each choice.
+- [Exercises](docs/authoring/exercises.md): deciding about exercises, including deciding you have none.
+- [What an adapter must produce](docs/authoring/archive.md): the archive's documents and blocks.
+- [What `validate` checks](docs/authoring/validate.md): every check and what it refuses.
+- [Worked examples](docs/authoring/examples.md): the two shipped corpora, end to end.
+
+## Images, built locally by tag
+
+Every image the framework and its components use is built on your machine from
+a checkout and addressed by a tag. What a build pulls, a base image or an
+engine, is pinned by digest, never by a moving name.
+
+- **The study site runs in no container.** `studyforge build` and
+  `studyforge serve` are ordinary processes on your machine, standard library
+  only, and the serving process is never given the Docker socket.
+- **Narration** comes from the `narrate-service` component, a separate
+  repository. You build and start it from its own checkout, following its own
+  README; it answers on `127.0.0.1:8870`, which is where `studyforge narrate`
+  looks. Its first start pulls its pinned engine image and downloads a speech
+  model. After that, nothing leaves your machine.
+- **Runnable practices** use the `code-server-toolchain` component, also a
+  separate repository, which builds two images: the runner that grades
+  submissions and the browser editor. Each is tagged from its build inputs, and
+  its build script prints that tag without building. The `execution` skill asks
+  for the tag, records it in your corpus, and writes the one `docker compose`
+  command that starts both.
+- **The framework's own build environment** is `docker/dev/check` in this
+  checkout. It builds an image tagged from the content of its inputs and runs
+  the framework's test suite inside it. You need it only to change the
+  framework, not to use it.
+
+## The design behind it
+
+- [The design specification](docs/specs/2026-09-08-studyforge-v1-design.md):
+  the governing rules, R1 to R21, that the skills and the reference cite.
+- [Decisions](docs/decisions.md): each decision that still shapes the product,
+  with its reason in a sentence.
 
 ## Licence
 
