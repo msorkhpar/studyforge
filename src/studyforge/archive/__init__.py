@@ -21,7 +21,7 @@ account id, name or email reaches the archive. A scrubber that silently
 rewrote would leave nobody knowing personal data had been there.
 
 ⚠️ **The vocabulary must cover what real material contains**, not what a clean
-corpus contains: raw HTML appears in 18 files of one surveyed tutorial, and a
+corpus contains: raw HTML appears in 6 of 19 files of one surveyed tutorial, and a
 parser that raises on anything it does not recognise stops an ingest dead (C3).
 Attachments — a dataset a lesson loads, a notebook — are a class of their own,
 neither block nor rendered media (C4).
