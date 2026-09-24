@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import re
 
-from studyforge.render.page.practice import PANEL_TEMPLATE
 from studyforge.render.templates import template
 from studyforge.skills import documents
 from studyforge.skills.buildserve.states import HOST_EXECUTION, START_DOCUMENT, START_SECTION
@@ -32,7 +31,7 @@ def the_command_under(document: str, heading: str) -> str:
 
 def remedies() -> dict[str, str]:
     """Each place that tells a reader how to start the containers, as the reader meets it."""
-    panel = template(PANEL_TEMPLATE).template
+    panel = template("practice-panel.html").template
     no_editor = panel.split('data-practice-part="no-editor">', 1)[1].split("</p>", 1)[0]
     procedure = documents.text("buildserve")
     host = procedure[procedure.index("Its `remedy` line says what to do") :]
