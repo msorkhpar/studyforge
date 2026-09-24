@@ -95,6 +95,11 @@ NOT_MATERIAL_API = 2
 #: asked and keeps its version, voiced as every corpus before the key was.
 NARRATION_API = 5
 
+#: The `corpus_api` that `onboarding_doc` first became legal in (`W461`). ⭐ Re-derived
+#: and pinned behaviourally for the same reason; a draft that places the reader
+#: document says so, and one that does not keeps its version.
+ONBOARDING_DOC_API = 6
+
 #: The keys dropped when the corpus has nothing to say with them. ⭐ A closed
 #: set: every other key is either required, or present because the draft said
 #: so. ⛔ **Nothing here is ever invented** — `media` is absent from this list
@@ -181,6 +186,8 @@ def _api_for(draft: Mapping[str, object], *, uses_not_material: bool) -> int:
     needed = NOT_MATERIAL_API if uses_not_material else 1
     if "narration" in draft:
         needed = NARRATION_API
+    if "onboarding_doc" in draft:
+        needed = ONBOARDING_DOC_API
     if asked > CORPUS_API:
         raise PromotionRefused(
             f"the draft asks for corpus_api {asked}; this build writes {CORPUS_API}"

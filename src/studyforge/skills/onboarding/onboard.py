@@ -252,17 +252,20 @@ def onboard(
     kept = _declared(existing) if existing is not None else ()
     provisional = parse(render(promote(_carried(draft, kept), reasons=reasons)))
     made = scaffold(plan_for(provisional))
+    reader = artifacts.placed(provisional, [item.where for item in made.files])
     declared = {
         "the adapter scaffold": made.not_material,
-        "this skill's own files": artifacts.NOT_MATERIAL,
+        "this skill's own files": artifacts.own_not_material(reader),
     }
-    generated = tuple(sorted({entry["glob"] for side in declared.values() for entry in side}))
+    # ⛔ `W461`: the reader's glob where an earlier run placed it is this skill's too.
+    ours = {entry["glob"] for entry in kept if entry["why"] == artifacts.WHY_READER}
+    generated = tuple(sorted({e["glob"] for side in declared.values() for e in side} | ours))
     persons = [entry for entry in kept if entry["glob"] not in generated]
     document = promote(_carried(draft, persons), not_material=declared, reasons=reasons)
     manifest = parse(render(document))
     checks = [
         _own(artifacts.EDITS_TEST, edits_test(manifest), "R3, with this corpus's edits"),
-        _own(artifacts.PIN_TEST, pin_test(skills), "the pin, and every stub that names it"),
+        _own(artifacts.PIN_TEST, pin_test(skills, reader), "the pin, and every stub naming it"),
     ]
     files = [
         _own(artifacts.MANIFEST, render(document), "the declaration that makes this a source"),
@@ -271,17 +274,12 @@ def onboard(
         *_ignore_file(manifest),
         *ignore_files(checks),
         *checks,
-        _own(
-            artifacts.READER_DOC,
-            artifacts.reader_document(
-                manifest,
-                made.hand_written,
-                commit=framework_commit,
-                version=version,
-            ),
-            "what a reader is told, from the declarations, and where to read the state",
-        ),
     ]
+    if reader is not None:
+        text = artifacts.reader_document(
+            manifest, made.hand_written, commit=framework_commit, version=version
+        )
+        files.append(_own(reader, text, "what a reader is told, and where to read the state"))
     files.append(_own(RECORD_FILE, record.render(files), "what uninstall undoes, and its digests"))
     return Onboarding(
         manifest=manifest,

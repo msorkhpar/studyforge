@@ -9,7 +9,7 @@ would take a file it does not claim (`W353`).
 
     from studyforge.skills.onboarding import hand_edited
 
-    hand_edited(corpus_root)    # [] when nothing generated was hand-edited
+    hand_edited(corpus_root)    # [] when nothing generated was hand-edited or moved
 
 **Depends on.** `archive.scrub` for the gate, `skills.adapter.Written` for the
 file set, and `pin` for where the record lives. ⛔ Nothing source-specific
@@ -26,6 +26,14 @@ checked by anybody. ⭐ **The entry is now `{"where": …, "hand_written": true}
 a regenerate writes the same entry, which records nothing about the file's
 bytes, and `hand_edited` never names it.
 
+## ⛔ A generated file that is GONE is reported too (`W461`)
+
+⚠️ **Measured at a corpus** (`ISO-32/2`): the reader document was moved to
+another directory by hand, and `hand_edited` read `[]`, because an absent file
+has no bytes to differ. ⭐ **Moving or deleting a generated file is an edit to
+it**, so each one missing from where the record puts it is reported as a
+sentence a person reads (R6), after the paths whose bytes differ.
+
 ⚠️ **`installed_api` moved to `2` for that reason.** A build that reads `1`
 expects a digest on every entry and would fail on the marked one rather than
 refuse it by name. ⭐ This build still reads `1`: every entry there has a
@@ -40,6 +48,7 @@ from collections.abc import Sequence
 from pathlib import Path
 
 from studyforge.archive.scrub import assert_clean
+from studyforge.corpus.manifest import MANIFEST_FILENAME
 from studyforge.skills.adapter import Written
 from studyforge.skills.onboarding.pin import RECORD_FILE
 
@@ -134,14 +143,36 @@ def changed(root: Path, listed: Sequence[dict]) -> list[str]:
     )
 
 
+def missing(root: Path, listed: Sequence[dict]) -> list[str]:
+    """Every generated file the record lists that is not on disk, sorted. Never the person's."""
+    return sorted(
+        entry["where"]
+        for entry in listed
+        if not is_yours(entry) and not (root / entry["where"]).is_file()
+    )
+
+
+def gone(where: str) -> str:
+    """Say, in a sentence, that one generated file is not where the record puts it (R6)."""
+    return (
+        f"{where} is missing: {RECORD_FILE} records it as generated there and nothing is "
+        f"there now. Moving or deleting a generated file is an edit to it (R19): regenerate "
+        f"to write it back, or, to keep it somewhere else, say where in {MANIFEST_FILENAME} "
+        f"and regenerate"
+    )
+
+
 def hand_edited(root: Path | str) -> list[str]:
-    """Name every generated file whose bytes differ from the record. Never the person's.
+    """Name every generated file edited by hand, then say which ones are gone. Never the person's.
 
     ⭐ **R19, made checkable:** an empty list means nothing generated was edited
-    by hand, whatever the person wrote in their own module.
+    by hand, whatever the person wrote in their own module. A file whose bytes
+    differ is named by its path; one missing from its recorded place is a
+    sentence that says so and what to do (`W461`).
     """
     root = Path(root)
-    return changed(root, entries(root))
+    listed = entries(root)
+    return changed(root, listed) + [gone(where) for where in missing(root, listed)]
 
 
 def refuse_unrecorded(root: Path, files: Sequence[Written]) -> None:
@@ -162,12 +193,19 @@ def refuse_unrecorded(root: Path, files: Sequence[Written]) -> None:
     the whole cost of refusing. ⛔ No record at all claims nothing.
 
     ⭐ Not refused: the person's module (`write_files` never rewrites an
-    existing one), the record itself (it never lists itself), and an absent
-    path (there is nothing to lose).
+    existing one), the record itself (it never lists itself), an absent
+    path (there is nothing to lose), and ⭐ **a generated file MOVED there**
+    (`W461`): its bytes are the digest the record holds for a generated path
+    that is now empty. That is the reader document moved to the place the
+    manifest now gives it, and it is the framework's, byte for byte. ⛔ Only a
+    MISSING entry's digest counts, so a file of yours that happens to match a
+    generated file still in place is refused as before.
     """
     present = (root / RECORD_FILE).exists()
     listed = entries(root) if present else []
     claimed = {entry["where"] for entry in listed if not is_yours(entry)}
+    gaps = set(missing(root, listed))
+    written = {entry.get("sha256") for entry in listed if entry["where"] in gaps} - {None}
     theirs = sorted(
         item.where
         for item in files
@@ -175,6 +213,7 @@ def refuse_unrecorded(root: Path, files: Sequence[Written]) -> None:
         and item.where != RECORD_FILE
         and item.where not in claimed
         and (root / item.where).exists()
+        and _bytes_digest(root / item.where) not in written
     )
     if theirs:
         raise OnboardingRefused(
@@ -194,6 +233,14 @@ def _digest(text: str) -> str:
 def _digest_of(path: Path) -> str:
     """Return the digest of what is on disk now."""
     return _digest(path.read_text(encoding="utf-8"))
+
+
+def _bytes_digest(path: Path) -> str | None:
+    """Return the digest of a file's bytes, or `None` for one that is not a readable file."""
+    try:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+    except OSError:
+        return None
 
 
 def _entry(item: Written) -> dict:

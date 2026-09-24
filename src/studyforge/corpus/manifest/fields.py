@@ -1,6 +1,7 @@
-"""The plain fields of `corpus.json`: `source`, `title`, `levels`, `variants`, and two flags.
+"""The plain fields of `corpus.json`: `source`, `title`, `levels`, `variants`, two flags, a place.
 
-⭐ The flags are `exercises` and `narration` (`W460`).
+⭐ The flags are `exercises` and `narration` (`W460`); the place is
+`onboarding_doc` (`W461`).
 
 **What it does.** Validates one top-level value each, and raises this
 package's `ManifestError` naming the key it read.
@@ -22,9 +23,20 @@ document's version, its keys or its gate.
 
 from __future__ import annotations
 
+from pathlib import PurePosixPath
+
 from studyforge.address import AddressError, require_slug
 from studyforge.corpus.manifest.errors import ManifestError
 from studyforge.describe import describe
+
+#: Where onboarding writes the document a reader opens first, when the corpus
+#: says nothing (`W461`). ⭐ A **stated** default, so every corpus onboarded before
+#: the key existed reads exactly as it did.
+ONBOARDING_DOC = "ONBOARDING.md"
+
+#: What a place for that document may not contain. ⛔ It is also the glob that
+#: classifies it, so a glob character would classify files nobody named.
+GLOB_CHARACTERS = frozenset("*?[]\\")
 
 
 def title_of(value: object, where: str) -> str:
@@ -105,4 +117,36 @@ def narration_of(value: object, where: str) -> bool:
     """
     if not isinstance(value, bool):
         raise ManifestError(f"{where} 'narration' must be true or false, got {describe(value)}")
+    return value
+
+
+def onboarding_doc_of(value: object, where: str) -> str | None:
+    """`onboarding_doc`: where the onboarding reader document goes, or `None` for none (`W461`).
+
+    ⭐ **A path relative to the corpus root, spelled the one way**: no `.` or
+    `..` segment, no leading `/`, no glob character, and ending `.md`, because it
+    is Markdown and because it doubles as the glob that classifies it.
+    ⛔ `false` means onboarding writes no reader document; `true` says nothing
+    and is refused. ⛔ **The value is never quoted** (R7): a path that is not
+    a corpus path is usually somebody's home directory.
+    """
+    if value is False:
+        return None
+    rule = (
+        f"{where} 'onboarding_doc' must be false, or a path inside the corpus ending .md "
+        f"with no '.' or '..' segment and no glob character"
+    )
+    if not isinstance(value, str) or not value:
+        raise ManifestError(f"{rule}, got {describe(value)}")
+    path = PurePosixPath(value)
+    clean = (
+        path.as_posix() == value
+        and not path.is_absolute()
+        and not any(part in (".", "..") for part in path.parts)
+        and not GLOB_CHARACTERS & set(value)
+        and path.suffix == ".md"
+        and path.stem != ""
+    )
+    if not clean:
+        raise ManifestError(f"{rule}; the value is not reproduced, since it may be a path (R7)")
     return value

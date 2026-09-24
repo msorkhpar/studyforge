@@ -54,9 +54,11 @@ from studyforge.corpus.manifest.content import ContentPolicy, parse_content
 from studyforge.corpus.manifest.edits import PermittedEdit, parse_edits
 from studyforge.corpus.manifest.errors import ManifestError
 from studyforge.corpus.manifest.fields import (
+    ONBOARDING_DOC,
     exercises_of,
     levels_of,
     narration_of,
+    onboarding_doc_of,
     slug_of,
     title_of,
     variants_of,
@@ -76,8 +78,9 @@ MANIFEST_FILENAME = "corpus.json"
 #: what was ingested.
 #:
 #: ⭐ **`2` added `content.not_material`** (Ruling 90), ⭐ **`3` added
-#: `media.max_files`** (`W207`), ⭐ **`4` added `runtimes`** (`W350`) and ⭐ **`5`
-#: added `narration`** (`W460`, the user's ruling of 2026-09-23), and no
+#: `media.max_files`** (`W207`), ⭐ **`4` added `runtimes`** (`W350`), ⭐ **`5`
+#: added `narration`** (`W460`, the user's ruling of 2026-09-23) and ⭐ **`6` added
+#: `onboarding_doc`** (`W461`), and no
 #: bump is about old manifests — each key is optional and an absent one has a
 #: stated default, so every `1` still parses. ⛔ **A bump is about a manifest
 #: that *uses* the key being unreadable to an older build**, which reports an
@@ -87,9 +90,9 @@ MANIFEST_FILENAME = "corpus.json"
 #: ⚠️ **The accepted set is spelled out rather than derived from
 #: `CORPUS_API`.** A set built as `{1, CORPUS_API}` silently stops speaking
 #: `2` on the day somebody writes `3`, and the refusal for an unknown version
-#: has to stay exactly as sharp as it is for `5` today.
-CORPUS_API = 5
-KNOWN_CORPUS_API = frozenset({1, 2, 3, 4, 5})
+#: has to stay exactly as sharp as it is for `6` today.
+CORPUS_API = 6
+KNOWN_CORPUS_API = frozenset({1, 2, 3, 4, 5, 6})
 
 #: The `corpus_api` each key added after version 1 requires, keyed by the block
 #: it lives under and its name.
@@ -111,6 +114,7 @@ KEY_VERSIONS: dict[tuple[str | None, str], int] = {
     ("media", "max_files"): 3,
     (None, "runtimes"): 4,
     (None, "narration"): 5,
+    (None, "onboarding_doc"): 6,
 }
 
 #: The placement profiles that may be declared. ⚠️ **SF-03 owns the profiles;
@@ -129,6 +133,7 @@ MANIFEST_KEYS = (
     "exercises",
     "runtimes",
     "narration",
+    "onboarding_doc",
     "placement",
     "content",
     "media",
@@ -167,6 +172,10 @@ class Manifest:
     #: `True`**, which is every corpus's behaviour before the key existed: a
     #: record's clips play. `False` is the reading floor exactly — never short.
     narration: bool = True
+    #: Where onboarding writes its reader document, root-relative (`W461`).
+    #: ⭐ **Absent is `ONBOARDING.md` at the root**, as before the key; `None`
+    #: (declared `false`) is no reader document at all.
+    onboarding_doc: str | None = ONBOARDING_DOC
     corpus_api: int = CORPUS_API
 
     @property
@@ -263,6 +272,7 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
             document.get("runtimes"), exercises=exercises, present="runtimes" in document
         ),
         narration=narration_of(document.get("narration", True), where),
+        onboarding_doc=onboarding_doc_of(document.get("onboarding_doc", ONBOARDING_DOC), where),
         corpus_api=corpus_api,
     )
 
