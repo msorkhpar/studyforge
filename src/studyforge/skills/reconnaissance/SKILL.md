@@ -54,6 +54,15 @@ rule as a cross-check that must agree — never as the source.** A skill that
 proposes the regex has produced a plausible manifest for that corpus and an
 unjustifiable one for the next.
 
+⭐ **What this step finds is written into the draft, not only reported.**
+The draft's `curriculum` block names the record, each group's
+label with a proposed address, and a group's `prefix` **only where the names
+partition the units exactly as the record groups them**. ⛔ The prefix is a
+declared cross-check: the adapter files every unit from the record and refuses
+when the names disagree, so it never files anything. Every address is a
+proposal and is asked about, because §6 records an address and never derives
+one.
+
 ⚠️ If nothing records the curriculum, **say so and stop guessing.** Do not sort
 filenames and move on — see step 4.
 

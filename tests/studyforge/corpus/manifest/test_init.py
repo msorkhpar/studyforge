@@ -41,6 +41,8 @@ PUBLIC_SURFACE = frozenset(
         "RUNTIMES",
         "Classification",
         "ContentPolicy",
+        "Curriculum",
+        "DeclaredContainer",
         "Exclusion",
         "Manifest",
         "ManifestError",
@@ -52,9 +54,11 @@ PUBLIC_SURFACE = frozenset(
         "load",
         "parse",
         "parse_content",
+        "parse_curriculum",
         "parse_edits",
         "parse_media",
         "parse_runtimes",
+        "prefix_of",
     }
 )
 

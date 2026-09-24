@@ -48,6 +48,9 @@ Every default below is a measurement on real material rather than a taste:
 - **`runtimes` follows what the material evidences**, only beside
   `exercises: true`, and the draft then declares `corpus_api` 4 so it reads
   back. ⛔ Prose gets no key; `runtimes` holds the evidence and the rule.
+- **`curriculum` is what step 2 detected, written down**: the record,
+  its groups' proposed addresses and any prefix that agrees with them, at the
+  version the key needs. `curriculum` holds the rule.
 - **`placement` follows whether the material shares its directories with
   anything else.** `sibling` puts a page in a `study/` directory beside the
   file it was made from, which is right when a reader already knows the layout
@@ -64,6 +67,7 @@ from pathlib import PurePosixPath
 from studyforge.address import slugify as slug_of
 from studyforge.skills.onboarding import NOT_MATERIAL_API  # the owner's version for the key
 from studyforge.skills.reconnaissance.capability import Capability
+from studyforge.skills.reconnaissance.curriculum import CURRICULUM_API, declare
 from studyforge.skills.reconnaissance.furniture import Furniture, propose
 from studyforge.skills.reconnaissance.inventory import Inventory
 from studyforge.skills.reconnaissance.record import Record
@@ -113,15 +117,21 @@ def draft(
     include, exclude = _content(inventory, record)
     furniture = propose(inventory.root, include, exclude)
     runtimes = evidenced(capability)
+    curriculum, asked = declare(record, inventory, len(levels))
     content: dict[str, object] = {"include": include, "exclude": exclude}
     if furniture.entries:
         content["not_material"] = [dict(entry) for entry in furniture.entries]
     manifest = {
-        "corpus_api": max(NOT_MATERIAL_API if furniture.entries else 1, runtimes.api),
+        "corpus_api": max(
+            NOT_MATERIAL_API if furniture.entries else 1,
+            runtimes.api,
+            CURRICULUM_API if curriculum else 1,
+        ),
         "source": _source(record),
         "title": _title(record, inventory),
         "levels": levels,
         "variants": [SINGLE_VARIANT],
+        **({"curriculum": curriculum} if curriculum else {}),
         "exercises": capability.graded,
         **({"runtimes": list(runtimes.names)} if runtimes.names else {}),
         "placement": _placement(inventory, capability),
@@ -129,6 +139,7 @@ def draft(
     }
     open_questions += list(_choices(manifest, inventory, record, capability))
     open_questions += list(runtimes.questions())
+    open_questions += asked
     open_questions += list(_unread(furniture))
     return manifest, open_questions
 

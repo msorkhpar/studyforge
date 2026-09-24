@@ -3,8 +3,9 @@
 **What it does.** Owns the manifest: its version, the corpus's identity, the
 container levels that fix its depth, its variants, its placement profile, what
 counts as its content, whether it commits its media, the runtimes its material
-needs, whether it is narrated, where onboarding's reader document goes, and the
-enumerated set of existing files it may add to.
+needs, whether it is narrated, where onboarding's reader document goes, where
+its curriculum is recorded, and the enumerated set of existing files it may add
+to.
 
 **How you use it.** `load(path)` or `parse(text)`; then ask the `Manifest`.
 
@@ -18,6 +19,7 @@ enumerated set of existing files it may add to.
     manifest.runtimes                    # () — absent means no runner (§7, C5)
     manifest.narration                   # True — absent means voiced; False is the floor
     manifest.onboarding_doc              # 'ONBOARDING.md' — absent; None when declared false
+    manifest.curriculum                  # None — absent; the adapter reads its record itself
     manifest.allows_edit_to("pom.xml")   # R3's declaration, asked not assumed
 
 **Depends on.** `studyforge.address`, `studyforge.version` for the R9 gate,
@@ -40,6 +42,7 @@ finding; it is never a hand-edit to generated output.
 | `edits` | `permitted_edits`, the three targets R3 never permits, and the undo |
 | `media` | the commit mode and its limits; an absent key is a **stated** default |
 | `runtimes` | the closed vocabulary of runtimes, spelled once, and its refusals |
+| `curriculum` | where the curriculum is recorded, its groups' addresses, the prefix check |
 | `fields` | the plain field rules `document` applies, one function per key |
 | `errors` | `ManifestError`, the only exception it raises, and R7's one phrase about a path |
 
@@ -63,6 +66,12 @@ from studyforge.corpus.manifest.content import (
     Exclusion,
     NotMaterial,
     parse_content,
+)
+from studyforge.corpus.manifest.curriculum import (
+    Curriculum,
+    DeclaredContainer,
+    parse_curriculum,
+    prefix_of,
 )
 from studyforge.corpus.manifest.document import (
     CORPUS_API,
@@ -133,6 +142,8 @@ __all__ = [
     "RUNTIMES",
     "Classification",
     "ContentPolicy",
+    "Curriculum",
+    "DeclaredContainer",
     "Exclusion",
     "Manifest",
     "ManifestError",
@@ -144,7 +155,9 @@ __all__ = [
     "load",
     "parse",
     "parse_content",
+    "parse_curriculum",
     "parse_edits",
     "parse_media",
     "parse_runtimes",
+    "prefix_of",
 ]

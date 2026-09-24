@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import pytest
 
+from studyforge.corpus.manifest import prefix_of
 from studyforge.skills.reconnaissance import prefix_groups, take
 from studyforge.skills.reconnaissance.inventory import observe
 from studyforge.skills.reconnaissance.report import Observation, Uncertainty
@@ -214,3 +215,24 @@ def test_the_survey_says_how_many_files_it_set_aside(tmp_path):
     counted = [i for i in counted if "set aside" in i.what]
 
     assert [i.measured for i in counted] == [str(len(FOOTPRINT))]
+
+
+def test_the_observed_partition_is_the_manifests_own_prefix_rule():
+    # ⭐ One rule: a name the survey groups under a prefix is a name a declared
+    # `curriculum` prefix would check, and a name it cannot place is one no
+    # declared prefix could.
+    names = ["deep_3.md", "basics-1.md", "s10-notes.md", "S1.md", "10.md"]
+    groups = prefix_groups(names)
+    assert groups == {
+        "deep_": ["deep_3.md"],
+        "basics-": ["basics-1.md"],
+        "?": ["s10-notes.md"],
+        "S": ["S1.md"],
+        "": ["10.md"],
+    }
+    assert all(
+        prefix_of(name) == prefix
+        for prefix, found in groups.items()
+        if prefix != "?"
+        for name in found
+    )

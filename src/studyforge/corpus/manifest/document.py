@@ -51,6 +51,7 @@ from pathlib import Path
 from studyforge.address import Address, parse_key
 from studyforge.archive.scrub import assert_clean
 from studyforge.corpus.manifest.content import ContentPolicy, parse_content
+from studyforge.corpus.manifest.curriculum import Curriculum, parse_curriculum
 from studyforge.corpus.manifest.edits import PermittedEdit, parse_edits
 from studyforge.corpus.manifest.errors import ManifestError
 from studyforge.corpus.manifest.fields import (
@@ -79,8 +80,8 @@ MANIFEST_FILENAME = "corpus.json"
 #:
 #: ⭐ **`2` added `content.not_material`**, ⭐ **`3` added
 #: `media.max_files`**, ⭐ **`4` added `runtimes`**, ⭐ **`5`
-#: added `narration`** and ⭐ **`6` added
-#: `onboarding_doc`**, and no
+#: added `narration`**, ⭐ **`6` added `onboarding_doc`** and
+#: ⭐ **`7` added `curriculum`**, and no
 #: bump is about old manifests — each key is optional and an absent one has a
 #: stated default, so every `1` still parses. ⛔ **A bump is about a manifest
 #: that *uses* the key being unreadable to an older build**, which reports an
@@ -91,8 +92,8 @@ MANIFEST_FILENAME = "corpus.json"
 #: `CORPUS_API`.** A set built as `{1, CORPUS_API}` silently stops speaking
 #: `2` on the day somebody writes `3`, and the refusal for an unknown version
 #: has to stay exactly as sharp as it is for `6` today.
-CORPUS_API = 6
-KNOWN_CORPUS_API = frozenset({1, 2, 3, 4, 5, 6})
+CORPUS_API = 7
+KNOWN_CORPUS_API = frozenset({1, 2, 3, 4, 5, 6, 7})
 
 #: The `corpus_api` each key added after version 1 requires, keyed by the block
 #: it lives under and its name.
@@ -118,6 +119,7 @@ KEY_VERSIONS: dict[tuple[str | None, str], int] = {
     (None, "runtimes"): 4,
     (None, "narration"): 5,
     (None, "onboarding_doc"): 6,
+    (None, "curriculum"): 7,
 }
 
 #: The placement profiles that may be declared. ⚠️ **`placement.profile` owns the profiles;
@@ -133,6 +135,7 @@ MANIFEST_KEYS = (
     "title",
     "levels",
     "variants",
+    "curriculum",
     "exercises",
     "runtimes",
     "narration",
@@ -179,6 +182,10 @@ class Manifest:
     #: ⭐ **Absent is `ONBOARDING.md` at the root**, as before the key; `None`
     #: (declared `false`) is no reader document at all.
     onboarding_doc: str | None = ONBOARDING_DOC
+    #: Where the curriculum is recorded and what its groups are filed at
+    #: ⭐ **Absent is `None`**: the adapter reads its record itself,
+    #: as every corpus did before the key.
+    curriculum: Curriculum | None = None
     corpus_api: int = CORPUS_API
 
     @property
@@ -260,10 +267,11 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
     _check_key_versions(document, corpus_api, where)
     content = parse_content(document["content"])
     exercises = exercises_of(document["exercises"], where)
+    levels = levels_of(document["levels"], where)
     return Manifest(
         source=slug_of(document["source"], f"{where} 'source'"),
         title=title_of(document["title"], where),
-        levels=levels_of(document["levels"], where),
+        levels=levels,
         variants=variants_of(document["variants"], where),
         exercises=exercises,
         placement=_placement_of(document["placement"], where),
@@ -275,6 +283,11 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
         ),
         narration=narration_of(document.get("narration", True), where),
         onboarding_doc=onboarding_doc_of(document.get("onboarding_doc", ONBOARDING_DOC), where),
+        curriculum=(
+            parse_curriculum(document["curriculum"], where, len(levels))
+            if "curriculum" in document
+            else None
+        ),
         corpus_api=corpus_api,
     )
 

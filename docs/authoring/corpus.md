@@ -58,11 +58,12 @@ below.
 
 | Key | | What it says |
 |---|---|---|
-| `corpus_api` | **required** | Which version of this format the file speaks. An unknown value is **refused**, never quietly migrated. This build reads `1` to `6`. A key needs at least the version that introduced it: `2` for `content.not_material`, `3` for `media.max_files`, `4` for `runtimes`, `5` for `narration` and `6` for `onboarding_doc` |
+| `corpus_api` | **required** | Which version of this format the file speaks. An unknown value is **refused**, never quietly migrated. This build reads `1` to `7`. A key needs at least the version that introduced it: `2` for `content.not_material`, `3` for `media.max_files`, `4` for `runtimes`, `5` for `narration`, `6` for `onboarding_doc` and `7` for `curriculum` |
 | `source` | **required** | An id for the corpus — a short stable name. **Not a URL to fetch from** |
 | `title` | **required** | What the reader sees at the top of the site |
 | `levels` | **required** | Names your container levels, and by its length fixes the depth of every address |
 | `variants` | **required** | Filing and presentation only. A variant is *not* a thing that runs |
+| `curriculum` | *optional* | Which document records your reading order and grouping, the address each of its groups is filed at, and optionally the filename prefix each group's files carry, as a check. Absent means your adapter reads its record itself |
 | `exercises` | **required** | Whether this corpus is on the execution track at all. `false` is an answer |
 | `runtimes` | *optional* | Which runtimes your material's commands need, by name. Absent means none, and a corpus with none needs no runner |
 | `narration` | *optional* | Whether the site speaks. `false` is a site with no voice: no player, no clip served, nothing called missing. Absent means narrated whenever clips are recorded |
@@ -295,6 +296,56 @@ copy onboarding wrote at the root is removed, because onboarding no longer
 writes it there — unless you edited it, in which case nothing is written and
 the refusal names it: move your edited copy out of the generated paths, or
 restore it, and regenerate.
+
+---
+
+## `curriculum` — where your reading order is recorded
+
+**Most material records its own order and grouping in one document**: a README,
+a table of contents, a summary. Name it here, and name the address each of its
+groups is filed at, and the framework files every unit from it. **Needs
+`corpus_api: 7`.**
+
+```json
+{
+  "curriculum": {
+    "record": "SUMMARY.md",
+    "containers": [
+      { "label": "The Basics", "address": "basics", "prefix": "basics-" },
+      { "label": "Going Deeper", "address": "deeper", "prefix": "deep_" }
+    ]
+  }
+}
+```
+
+That is the fragment; the rest of the file is as above.
+
+- **`record`** is the document, as a path inside the corpus ending `.md`: no
+  leading `/`, no `.` or `..` segment, no glob character. It may be the only key.
+- **`containers`** lists the record's groups in the record's order. `label` is
+  the group's heading exactly as the record writes it, and `address` is where
+  that group is filed, one segment per level in `levels`. The units are the
+  record's entries under each label, numbered by their position; an ordinal the
+  record writes must match that position.
+- **`prefix`** is optional, per group: the text before the number in the names
+  of that group's files — `basics-` for `basics-3.md`, `s` for `s10.md`, the
+  empty string for `10.md`. A prefix holds no digit, `/`, space or glob
+  character.
+
+**A prefix never decides where a unit goes.** The record does. The prefix is a
+second reading of the same files, and the two must agree: a unit filed under a
+group whose prefix its name does not carry, a unit named for another group, or
+a file named for a group that the record never lists is refused, by the adapter
+and by `studyforge validate` alike. A file your repository ignores is not
+counted.
+
+**Each label, address and prefix appears once.** The reconnaissance skill
+drafts this block from what it finds: the record, each group with a proposed
+address it asks you to confirm, and a prefix only where every file already
+agrees with the record.
+
+**Leave it out and nothing changes.** Your adapter reads its record itself, as
+any adapter may.
 
 ---
 

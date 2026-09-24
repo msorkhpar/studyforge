@@ -38,6 +38,13 @@ reader, not at the writer, and only after everything else has looked fine.
 [adapter skill](../../src/studyforge/skills/adapter/SKILL.md) shows how to use
 it.
 
+**If `corpus.json` declares `curriculum.containers`, the adapter skill's scaffold
+writes the filing for you**: which units each container holds, at which
+address, and the unit count taken from the file names. Reading each unit's
+material into blocks is then the only part you write, and a change to the
+filing is made in `corpus.json`, never in the adapter
+([`curriculum`](corpus.md#curriculum--where-your-reading-order-is-recorded)).
+
 ---
 
 ## `container.json` — the map

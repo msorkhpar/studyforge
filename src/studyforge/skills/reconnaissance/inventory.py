@@ -67,11 +67,11 @@ extension would be admitted without anybody deciding.
 
 from __future__ import annotations
 
-import re
 from collections.abc import Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from studyforge.corpus.manifest import prefix_of
 from studyforge.skills.reconnaissance.installed import INSTALL_RECORD, generated
 from studyforge.skills.reconnaissance.report import Observation, Uncertainty
 from studyforge.validate.source import (
@@ -101,11 +101,9 @@ NOT_MATERIAL = (
     ".venv",
 )
 
-#: A leading ordinal, with or without an alphabetic series prefix: `1.md`,
-#: `s1.md`, `c11.md`, `01-basics`. ⭐ The series letter is captured
-#: separately from the number because they answer different questions — which
-#: group, and which position in it.
-NAMED_ORDINAL = re.compile(r"^(?P<series>[A-Za-z]*)(?P<ordinal>\d+)(?P<rest>[-_. ].*|$)")
+#: The key of the names no prefix places. ⭐ No declared prefix can spell it,
+#: because a prefix carries no glob character.
+UNPLACED = "?"
 
 
 @dataclass
@@ -223,18 +221,18 @@ def enters(name: str) -> bool:
 
 
 def prefix_groups(names: list[str]) -> dict[str, list[str]]:
-    """Partition filenames by the series letters their leading ordinal carries.
+    """Partition filenames by the prefix each name carries, by the manifest's own rule.
 
-    ⚠️ Returns `{"": [...]}` for names with no series letter, which is the
-    common case and not a failure — a corpus can be one group.
+    ⭐ **One prefix rule** (`corpus.manifest.prefix_of`): what this survey
+    observes is exactly what a `curriculum` declaration's `prefix` would check,
+    so an observed partition and a declared cross-check can never disagree
+    about a name. ⚠️ `{"": [...]}` holds names that are only a number, the
+    common case and not a failure; `UNPLACED` holds the names no prefix places.
     """
     groups: dict[str, list[str]] = {}
     for name in names:
-        match = NAMED_ORDINAL.match(Path(name).stem)
-        if match is None:
-            groups.setdefault("?", []).append(name)
-        else:
-            groups.setdefault(match.group("series").lower(), []).append(name)
+        prefix = prefix_of(name)
+        groups.setdefault(UNPLACED if prefix is None else prefix, []).append(name)
     return groups
 
 
