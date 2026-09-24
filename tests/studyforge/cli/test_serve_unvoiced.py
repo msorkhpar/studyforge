@@ -16,11 +16,13 @@ import hashlib
 import io
 import json
 import shutil
+import threading
 from pathlib import Path
 
 import pytest
 
 from studyforge.cli import VERBS
+from studyforge.cli.serve import main
 from studyforge.cli.unvoiced import BUILT_VOICED, SERVED_SILENT
 from studyforge.validate.report import INVALID, OK
 from tests.fixture_checks import FIXTURES
@@ -81,15 +83,24 @@ def test_site_form_off_serves_no_clip_and_on_serves_it(tmp_path):
     assert clips(root) == before
 
 
+def refused(argv: list[str]) -> tuple[int, str, list]:
+    """Run the verb; a server it wrongly starts is stopped at once, so a regression fails."""
+    out, seen = io.StringIO(), []
+
+    def started(server):
+        seen.append(server)
+        threading.Thread(target=server.shutdown, daemon=True).start()
+
+    return main(argv, out=out, started=started), out.getvalue(), seen
+
+
 def test_off_over_a_site_built_with_narration_refuses_naming_each_page(tmp_path):
     root = a_narrated_corpus(tmp_path)
     build(root)
-    out = io.StringIO()
 
-    code = VERBS["serve"].run([str(root), "--site", str(root), "--no-narration"], out=out)
+    code, said, seen = refused([str(root), "--site", str(root), "--port", "0", "--no-narration"])
 
-    said = out.getvalue()
-    assert code == INVALID, said
+    assert code == INVALID and seen == [], said
     assert f"narrated {first_page(root)}  {BUILT_VOICED}" in said
     assert "serve http" not in said
 
@@ -118,10 +129,10 @@ def test_root_form_override_refuses_a_voiced_build_and_serves_a_silent_one(tmp_p
     served = tmp_path / "served"
     root = a_narrated_corpus(served)
     build(root)
-    out = io.StringIO()
 
-    assert VERBS["serve"].run([str(served), "--no-narration"], out=out) == INVALID
-    assert f"narrated {root.name}/{first_page(root)}  {BUILT_VOICED}" in out.getvalue()
+    code, said, seen = refused([str(served), "--port", "0", "--no-narration"])
+    assert code == INVALID and seen == [], said
+    assert f"narrated {root.name}/{first_page(root)}  {BUILT_VOICED}" in said
 
     build(root, "--no-narration")
     clip = next(iter(clips(root)))
