@@ -82,8 +82,8 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W460` | Developer 5 | `feat/W460-narration-is-optional` @ `wt/dev5` | 0 @ `f6f8aae8` | `in-progress` |
 | `REL-13` | Developer 4 | `docs/REL-13-handoff` @ `wt/dev4`; `chore/REL-13-release-ready` in each sibling | 0 @ `090dc4ca` | `in-progress` — `M11` step 11.5 |
+| `REL-10` | Developer 6 | `chore/REL-10-the-process-leaves-the-main-line` @ `wt/dev6` | 0 @ `6ca2c94c` | `in-progress` — `M11` step 11.5 |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -649,7 +649,7 @@ else.**
 | W457 | A changed paragraph keeps playing its old narration, and nothing reports the stale clip | framework agent | ✅ done — `090dc4ca` | [`rows/W457.md`](rows/W457.md) |
 | W458 | A browser focus test fails at random under parallel load and blocks merges | framework agent | ✅ done — `692fa6d2` | [`rows/W458.md`](rows/W458.md) |
 | W459 | Refusals a user reads cite process ids, and the decisions file lacks today's product decisions | framework agent | ✅ done — `59299974` | [`rows/W459.md`](rows/W459.md) |
-| W460 | Narration is optional: the skills ask at capture and at serve, and generated clips can go unserved (user ruling) | framework agent | `in-progress` — ⛔ USER RULING | [`rows/W460.md`](rows/W460.md) |
+| W460 | Narration is optional: the skills ask at capture and at serve, and generated clips can go unserved (user ruling) | framework agent | ✅ done — `6ca2c94c` | [`rows/W460.md`](rows/W460.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
