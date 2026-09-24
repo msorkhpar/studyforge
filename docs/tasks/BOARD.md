@@ -29,22 +29,22 @@ In the order the work runs, which is not the order the ids sort to.
 | Work | Who has it | State |
 |---|---|---|
 | `REL-10` — the archive branch, and the main line without the process | Developer 6 | ✅ done |
-| `REL-11` — a light board, and epics as high-level design | Developer 3 | in progress |
-| `REL-13` — the framework's siblings are release-ready | Developer 4 | landed on both siblings; closes when `W463` lands |
-| `W463` — every declared runtime set builds an editor (in `code-server-toolchain`) | Developer 7 | in progress |
-| The first corpus on the installed library | integration agent | re-onboarded and deployed; regenerates once more against the new toolchain tags when `W463` lands |
+| `REL-11` — a light board, and epics as high-level design | Developer 3 | ✅ done |
+| `REL-13` — the framework's siblings are release-ready | Developer 4 | ✅ done |
+| `W463` — every declared runtime set builds an editor (in `code-server-toolchain`) | Developer 7 | ✅ done |
+| The first corpus on the installed library | integration agent | in progress — regenerating once against the release-ready framework and the new toolchain tags |
 
 ## Next
 
-1. `REL-12` — prune merged branches and idle worktrees. Unassigned; starts when `REL-11` has
-   landed.
+1. `REL-12` — prune merged branches and idle worktrees. Prepared; waits on the user's go-ahead.
 2. `REL-14` — step 11.6: read `M11`'s close from a clean clone of the main line, installed.
    Closes `M11`.
 3. **M9** — the Java corpus, converted from the README and the skills alone.
 
 ## Waiting on the user
 
-- Whether the first corpus's `main` advances to its pin, and its merged branches are pruned.
+- Whether each repository's `main` advances to its release line, and merged branches and idle worktrees
+  are pruned (`REL-12`, and the same in each sibling and the corpus).
 - Whether the reading measure should rise now the column is wider. Not blocking.
 
 ## Standing for every corpus
