@@ -12,7 +12,7 @@ ADDRESS = Address.of("basics", "01-getting-started")
 
 
 def test_a_placement_error_is_a_value_error():
-    # ⚠️ SF-01's split: every failure here is "you handed me something I
+    # ⚠️ The address package's split: every failure here is "you handed me something I
     # cannot place", never "this file is not one I can read" — ⛔ because this
     # package reads no files at all.
     assert issubclass(PlacementError, ValueError)
@@ -34,7 +34,7 @@ def test_every_way_it_can_fail_raises_this_one_type(call):
 
 
 def test_a_refusal_names_the_closed_set_it_would_accept_and_not_the_value():
-    # ⛔ Ruling 14: a profile name arrives from `corpus.json`, which is
+    # ⛔ A profile name arrives from `corpus.json`, which is
     # hand-written, so it is a string that can be a path. The accepted set is
     # what makes the refusal actionable.
     with pytest.raises(PlacementError) as raised:

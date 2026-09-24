@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/corpus/media/recorded.py` (R12) — what the record locates.
 
-`W311`: the footprint weighs every clip the narration record locates, so this
+The footprint weighs every clip the narration record locates, so this
 module's answer is the population the widening adds. Records are fabricated
 through `narrate.synth`'s own writer, never typed as JSON by hand.
 """
@@ -87,7 +87,7 @@ def test_a_blank_filename_records_no_clip_and_names_nothing(tmp_path):
 
 
 def test_an_unreadable_record_refuses_and_quotes_no_path(tmp_path):
-    # ⛔ An empty answer here would be the silent under-count `W311` closes.
+    # ⛔ An empty answer here would be a silent under-count.
     state_file(tmp_path).parent.mkdir(parents=True)
     state_file(tmp_path).write_text("not a record", encoding="utf-8")
     with pytest.raises(MediaError) as raised:

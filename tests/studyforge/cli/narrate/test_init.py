@@ -29,6 +29,6 @@ def test_the_verb_precedes_build_in_the_table():
 
 
 def test_the_package_lives_in_cli_and_not_inside_narrate():
-    # ⛔ `narrate/` is `SF-16`'s and `SF-17`'s; this row is their caller.
+    # ⛔ `narrate/` speaks and synthesises; this package is its caller.
     assert (repository_root() / "src/studyforge/cli/narrate/__init__.py").is_file()
     assert not (repository_root() / "src/studyforge/narrate/cli").exists()

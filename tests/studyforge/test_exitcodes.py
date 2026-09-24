@@ -1,11 +1,10 @@
 """Mirror of `src/studyforge/exitcodes.py` (R12).
 
-⛔ **`W320`: the shared exit code belongs to no stage.** Two halves, and the
-second is the one the row exists for — the value is unchanged and every old
-spelling still resolves to the same object, AND importing this module brings no
+⛔ **The shared exit code belongs to no stage.** Two halves: the value and every
+spelling resolve to the same object, AND importing this module brings no
 other `studyforge` module with it. ⭐ The second is measured in a FRESH
-interpreter, never read off the source text, which cannot see an import
-(`SF-38/9`); the instrument's inhabitation is a module that DOES pull others.
+interpreter, never read off the source text, which cannot see an import made
+at run time; the instrument's inhabitation is a module that DOES pull others.
 """
 
 from __future__ import annotations
@@ -46,8 +45,7 @@ def loaded_by(importer: str) -> list[str]:
 
 
 def test_the_shared_code_is_the_value_it_has_always_had():
-    # ⛔ `W320` moves a definition; it renumbers nothing. A script that greps
-    # for `2` today must keep getting `2`.
+    # ⛔ A script that greps for `2` must keep getting `2`.
     assert UNUSABLE == 2
 
 
@@ -58,8 +56,8 @@ def test_the_three_exit_codes_still_mean_three_different_things():
 
 
 def test_every_old_spelling_still_reaches_the_shared_code():
-    # ⛔ No consumer moves: the two spellings that existed before `W320` and the
-    # dispatcher's own binding must all still answer.
+    # ⛔ No consumer moves: the two package spellings and the dispatcher's own
+    # binding must all answer.
     import studyforge.validate as validate_package
     from studyforge.cli import dispatch
     from studyforge.validate.cli import UNUSABLE as from_the_verb
@@ -75,7 +73,7 @@ def test_exactly_one_framework_module_defines_the_shared_exit_code():
     # one module, so it is quantified over the whole of `src/`: a second
     # `UNUSABLE = …` anywhere names its own file here.
     #
-    # ⚠️ **`is` was written above first, and the plant refuted it.** Copying
+    # ⚠️ **Not `is`.** Copying
     # `UNUSABLE = 2` back into `validate/cli.py` passes an identity check,
     # because CPython caches small integers and both names then point at the
     # same `2`. ⭐ An identity assertion cannot see a second definition of a
@@ -112,8 +110,8 @@ def test_importing_the_shared_module_brings_no_other_framework_module():
 def test_that_instrument_reports_what_a_module_with_dependencies_pulls_in():
     # ⭐ Inhabitation: a child that imported nothing also reports
     # an empty list, so the pass reading above is only attributable once the
-    # same instrument is seen to report something. `validate.cli` is the module
-    # `UNUSABLE` used to live in, and it pulls its own package's modules.
+    # same instrument is seen to report something. `validate.cli` pulls its
+    # own package's modules.
     held = loaded_by("studyforge.validate.cli")
     print(held)
     assert "studyforge.exitcodes" in held

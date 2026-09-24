@@ -1,16 +1,16 @@
-"""`SF-13`'s acceptance, asserted rather than described.
+"""The contents package's acceptance, asserted rather than described.
 
 ⛔ **Not a mirror of any one module** (R12 is one-way): these are the clauses
-the epic states for the task as a whole, and each one names the instrument that
-would fail it.
+the package meets as a whole, and each one names the instrument that would fail
+it.
 
 | Clause | Instrument |
 |---|---|
-| both `FND-04` fixtures build, at both depths, from one builder | `test_both_fnd04_fixtures_*` |
+| both fixture corpora build, at both depths, from one builder | `test_both_fnd04_fixtures_*` |
 | reproducible byte for byte | `test_*_bytes_*` |
 | a mismatched pair is detected, not silently joined | `test_status.py`'s `join` tests |
 | a neighbour yields `Links`, and the page carries the bar | `test_a_unit_with_a_neighbour_*` |
-| `W32` — a mixed-form contents document parses to the FULL count | `test_a_mixed_form_*` |
+| a mixed-form contents document parses to the FULL count | `test_a_mixed_form_*` |
 """
 
 from __future__ import annotations
@@ -42,7 +42,7 @@ from tests.studyforge.contents.corpora import (
 from tests.studyforge.render.page.pages import depth1_unit_02, depth2_unit_01
 from tests.support import repository_root
 
-#: The `W32` donation, as material rather than as a description of material.
+#: The mixed-form fixture, as material rather than as a description of material.
 MIXED_FORM = repository_root() / "tests" / "fixtures" / "contents" / "mixed-form"
 
 #: What the donation records: 38 entries, 2 of them written as headings.
@@ -56,7 +56,7 @@ LIST_ONLY = re.compile(rf"{record.LIST_MARKER.pattern}.*{record.LINK.pattern}")
 
 
 # --------------------------------------------------------------------------
-# Both FND-04 fixtures, at both depths, from one builder
+# Both fixture corpora, at both depths, from one builder
 # --------------------------------------------------------------------------
 
 
@@ -106,8 +106,7 @@ def a_bar(built, key) -> Links:
 
     ⚠️ **This mapping is the seam, and it is one line.** `contents` returns
     plain strings so it need not import `render`; the renderer's caller turns
-    them into its own type. ⛔ Which caller does it is the renderer's side —
-    see `SF-13/1`.
+    them into its own type. ⛔ Which caller does it is the renderer's side.
     """
     return Links(**{field: Link(**slot) for field, slot in links(built, key).items()})
 
@@ -125,9 +124,9 @@ def test_the_contents_agree_with_the_placement_the_renderer_was_given():
 
 
 def test_a_unit_with_a_neighbour_renders_the_between_units_bar():
-    # ⛔ The between-units clause. Until this task there was no
-    # reading order, so `between_units` returned `''` for every caller in
-    # `src/` and the symptom was neither legible nor illegible — it was absent.
+    # ⛔ The between-units clause. Without a reading order `between_units`
+    # returns `''` for every caller in `src/`, and the symptom is neither
+    # legible nor illegible — it is absent.
     case = depth1_unit_02()
     built = fixture_contents("depth1")
     page = compose_page(case.document, case.placement, a_bar(built, "depth-one/unit-02"))
@@ -174,8 +173,8 @@ def test_every_bar_link_lands_on_a_page_the_contents_declare(name):
 
 
 def test_the_same_page_without_a_reading_order_carries_no_bar():
-    # ⛔ The negative control, and it is the state every ref before this task
-    # was in: the bar is absent, not merely illegible.
+    # ⛔ The negative control: without a reading order the bar is absent, not
+    # merely illegible.
     case = depth1_unit_02()
     assert '<nav aria-label="Between units">' not in compose_page(case.document, case.placement)
 
@@ -191,13 +190,10 @@ def test_the_first_unit_of_the_reading_order_has_no_previous_link_in_its_bar():
 
 
 def test_a_same_directory_neighbour_survives_in_the_data_and_now_survives_on_the_page():
-    # ⛔ **`SF-13/1`, fixed by `W57`.** This test pinned the defect: under
-    # `sibling` placement two units of one container share a directory, so
-    # `relative_href` answers with a bare filename, and `SAFE_SCHEMES` was a
-    # closed set of *prefixes* with no entry for one — so `navigation._link`
-    # dropped the slot with nothing raised. ⭐ Its author wrote it so that the
-    # day somebody widened the set, the test would say so. This is that day, and
-    # the assertions are inverted rather than deleted.
+    # ⛔ Under `sibling` placement two units of one container share a
+    # directory, so `relative_href` answers with a bare filename, and the set
+    # of safe hrefs must admit one, or `navigation._link` drops the slot with
+    # nothing raised.
     case = depth2_unit_01()
     built = fixture_contents("depth2")
     key = "basics/01-getting-started/unit-01"
@@ -219,13 +215,11 @@ BAR_RELATIONS = {"previous": 'rel="prev"', "index": 'rel="up"', "next": 'rel="ne
     ("corpus", "case"), (("depth1", depth1_unit_02), ("depth2", depth2_unit_01))
 )
 def test_every_slot_the_contents_compute_reaches_the_page_under_both_profiles(corpus, case):
-    # ⛔ **`W57`'s acceptance clause, and it is watched to fail first**: before
-    # the fix `depth2` computed **13** slots and rendered **7**, while `depth1`
-    # computed **7** and rendered **7** — which is why the clause was met under
-    # `tree` and the hole sat beside it.
+    # ⛔ Under both profiles, because `depth2` computes more slots than
+    # `depth1` and a hole under `sibling` would sit beside a pass under `tree`.
     #
-    # ⭐ Ruling 128 — the population is reported, never reduced to a scalar that
-    # agrees with itself: the failure names the page and the slot.
+    # ⭐ The population is reported, never reduced to a scalar that agrees
+    # with itself (R6): the failure names the page and the slot.
     rendered = case()
     built = fixture_contents(corpus)
     computed, present = 0, 0
@@ -249,7 +243,7 @@ def test_a_corpus_of_one_unit_still_points_at_its_index():
 
 
 # --------------------------------------------------------------------------
-# W32 — the mixed-form contents fixture
+# The mixed-form contents fixture
 # --------------------------------------------------------------------------
 
 
@@ -268,7 +262,7 @@ def test_the_fixture_is_mixed_form_and_the_minority_is_the_heading_form():
 
 
 def test_a_mixed_form_contents_document_parses_to_the_full_count():
-    # ⛔ `W32`'s clause. 36 of 38 are list items; a reader that saw only the
+    # ⛔ 36 of 38 are list items; a reader that saw only the
     # list form would read 36, emit 36, and raise nothing.
     read = record.read(MIXED_FORM / "README.md", MIXED_FORM, mixed_form_targets())
     assert len(read.entries) == MIXED_FORM_ENTRIES
@@ -277,7 +271,7 @@ def test_a_mixed_form_contents_document_parses_to_the_full_count():
 
 def test_the_fixture_fails_a_reader_that_sees_only_the_list_form():
     # ⭐ The negative control run negatively: the fixture is only worth
-    # committing if it can actually fail the parser it was donated to catch.
+    # committing if it can actually fail the parser it exists to catch.
     lines = (MIXED_FORM / "README.md").read_text(encoding="utf-8").splitlines()
     short = [line for line in lines if LIST_ONLY.search(line)]
     assert len(short) == MIXED_FORM_ENTRIES - MIXED_FORM_AS_HEADINGS
@@ -297,7 +291,7 @@ def test_the_reading_order_the_document_states_is_the_order_it_writes_them_in():
 
 
 def test_a_contents_document_short_by_two_is_what_this_guards_against():
-    # ⭐ `W32`'s defect stated in this package's own terms, and refused here
+    # ⭐ A short contents read, stated in this package's own terms, and refused here
     # for a different reason: `build` counts what the corpus DECLARES, so a
     # short read upstream is short in the container map, where the declared
     # count is a thing somebody can compare against.

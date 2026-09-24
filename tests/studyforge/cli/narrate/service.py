@@ -1,7 +1,7 @@
 """A recording narration service, and the disk readings `cli/narrate/`'s tests assert.
 
 ⛔ **Every population here is read off the TRANSPORT or the DISK, never off the
-run's report.** `SF-17`'s *"0 synthesised"* over 619 stale clips is a report
+run's report.** A report of *"0 synthesised"* over stale clips is a report
 agreeing with itself; these helpers exist so no test in this package can.
 
 ⭐ `speech_ids` derives the expected population from the corpus through the

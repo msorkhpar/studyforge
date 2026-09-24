@@ -47,9 +47,8 @@ likeliest to drift, because a person edits it.
 ⛔ **Silence was not an option (R21), so this is a decision and not an
 omission.** Three things decided it:
 
-1. **Measured 2026-09-09: the extraction source contains 0 `content.json`
-   files** across 1,290 units. So there is nothing to migrate, and versioning
-   costs exactly nothing today.
+1. **There is nothing to migrate**: no overlay predates the version key, so
+   versioning costs nothing.
 2. **R9's asymmetry, which the manifest reader already lives by.** An unknown version is
    *refused, never migrated*. Adding the key later means every overlay written
    before it is refused until somebody edits it — and for a generated map that
@@ -62,11 +61,10 @@ omission.** Three things decided it:
 
 ## What the overlay may say, and what it may not
 
-⛔ **The address is recorded, never derived** (§6). The extraction source
-allowed an overlay to spell its address as *titles* and slugified them to
-compare; measured on that catalog, **157 of 1,290 units are served at a slug
-their title does not produce**, so a title-to-slug comparison accepts an
-overlay filed under the wrong unit one time in eight. Here `address` is a list
+⛔ **The address is recorded, never derived** (§6). An overlay that spelled
+its address as *titles*, slugified to compare, would be filed under the wrong
+unit about one time in eight, because a real catalogue serves that share of
+its units at a slug their title does not produce. Here `address` is a list
 of slugs and is compared as one.
 
 ⛔ **`workspace` and `video` are refused**, in every section. They are derived

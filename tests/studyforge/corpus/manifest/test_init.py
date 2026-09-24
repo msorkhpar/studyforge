@@ -18,7 +18,7 @@ from studyforge.corpus import manifest
 from tests.support import assert_package_contract
 
 #: The whole public surface, spelled out. ⚠️ Duplicated from `__all__` on
-#: purpose, following SF-01: a test that read `__all__` and then asserted the
+#: purpose, following the address package: a test that read `__all__` and then asserted the
 #: names in it exist would pass whatever the module happened to export, which
 #: is not a contract.
 PUBLIC_SURFACE = frozenset(
@@ -127,7 +127,7 @@ def test_the_package_imports_nothing_outside_the_standard_library_and_itself():
 
 
 def test_the_worked_example_in_the_contract_is_the_api_that_exists():
-    # ⚠️ A contract carrying a call that no longer exists is worse than none,
+    # ⚠️ A contract carrying a call that does not exist is worse than none,
     # because it is believed. Each of these is the line `__init__.py` shows.
     built = manifest.parse(
         '{"corpus_api": 1, "source": "example", "title": "Example",'
@@ -142,7 +142,7 @@ def test_the_worked_example_in_the_contract_is_the_api_that_exists():
 
 
 # --------------------------------------------------------------------------
-# `RAISES` — the tuple a caller catches (`W213`)
+# `RAISES` — the tuple a caller catches
 # --------------------------------------------------------------------------
 
 #: ⛔ Assembled rather than written whole, so this file needs no exception from
@@ -184,8 +184,8 @@ def test_the_population_is_not_silently_narrower_than_the_tuple():
 
 
 def test_address_error_is_not_a_member_because_parse_translates_it():
-    # ⚠️ **The property `W208/1` found and nothing asserted**: a non-slug
-    # `source` is SF-01's refusal, re-raised as `ManifestError` in `slug_of`.
+    # ⚠️ **The property**: a non-slug
+    # `source` is the address package's refusal, re-raised as `ManifestError` in `slug_of`.
     # `parse_key` is the one call that lets `AddressError` out, and no reader
     # makes it — if that ever moves, this fails before a command crashes.
     with pytest.raises(manifest.ManifestError):

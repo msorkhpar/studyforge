@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/corpus/placement/profile.py` (R12).
 
-Carries SF-03's headline acceptance: one address under both profiles yields two
+Carries placement's headline acceptance: one address under both profiles yields two
 correct, different location sets, and a third profile can be added without
 changing any consumer.
 """
@@ -181,7 +181,7 @@ def test_the_generated_root_sorts_out_of_the_way():
 
     corpus = profile_for("tree").corpus()
     assert str(corpus.assets).startswith(GENERATED_ROOT)
-    # ⛔ The archive is the one exception, and it is ruled (`INT-06/6`): it sits at
+    # ⛔ The archive is the one exception, and it is ruled: it sits at
     # `ARCHIVE_DIRNAME` beside `corpus.json`, where `validate` reads it.
     assert corpus.archive == PurePosixPath(ARCHIVE_DIRNAME)
 
@@ -221,13 +221,13 @@ def test_an_origin_that_escapes_the_source_root_is_refused_without_being_quoted(
     assert "basics/16-streams-api" in str(raised.value)
 
 
-# --- the ignore file and the committed output (Ruling 91, W242) -------------
+# --- the ignore file and the committed output -------------
 
 #: Paths no generated rule may ignore, at the root and below it: pages, the root
 #: index, the bundle, a JSON document and the archive.
-#: ⛔ ISO-05's clause and §5's reading floor, as data a git answer is asked about.
-#: ⚠️ **The discovery cache was on this list until `W425` and is now on
-#: `ALWAYS_IGNORED` instead**, because nothing reads it: `assemble` scans on
+#: ⛔ §5's reading floor, as data a git answer is asked about.
+#: ⚠️ **The discovery cache is on `ALWAYS_IGNORED` instead**, because nothing
+#: reads it: `assemble` scans on
 #: every call and returns the scan, so a clone carrying the cache gains
 #: nothing, while every reader who serves the corpus gets a modified file.
 NEVER_IGNORED = (
@@ -241,7 +241,7 @@ NEVER_IGNORED = (
     "archive/d/container.json",
 )
 
-#: ⛔ `W425`: what every generated ignore file covers, whatever the media
+#: ⛔ What every generated ignore file covers, whatever the media
 #: policy says — the cache this framework writes into a corpus by serving it,
 #: and the name it is staged under.
 ALWAYS_IGNORED = (
@@ -271,9 +271,9 @@ def test_the_base_profile_refuses_to_guess(question):
 
 @pytest.mark.parametrize("name", registered())
 def test_with_media_committed_the_only_rules_are_the_frameworks_own_caches(name):
-    # ⛔ W242 still: pages, the root index and the bundle are what a clone
+    # ⛔ Pages, the root index and the bundle are what a clone
     # reads, so no rule about the CORPUS is written when media is committed.
-    # ⭐ W425: the framework's own cache is the exception, and the file that
+    # ⭐ The framework's own cache is the exception, and the file that
     # carries nothing else hides itself, because it is this machine's own.
     assert profile_for(name).ignore_lines(media=False) == ()
     wanted = profile_for(name).ignore_file(media=False)
@@ -283,7 +283,7 @@ def test_with_media_committed_the_only_rules_are_the_frameworks_own_caches(name)
 
 @pytest.mark.parametrize("name", registered())
 def test_a_file_that_also_carries_the_media_policy_does_not_hide_itself(name):
-    # ⛔ W425's second half, and it is the half that is easy to get wrong: a
+    # ⛔ The half that is easy to get wrong: a
     # clone has to READ the media rules, so that file is committed — while a
     # file holding only machine-local rules must never be. Asked of every
     # profile that has a home for media rules at all.
@@ -296,7 +296,7 @@ def test_a_file_that_also_carries_the_media_policy_does_not_hide_itself(name):
 
 @pytest.mark.parametrize("name", registered())
 def test_every_profiles_ignore_file_covers_the_cache_this_framework_writes(name, tmp_path):
-    # ⭐ W425, asked of git rather than of a reviewer, and in both media
+    # ⭐ Asked of git rather than of a reviewer, and in both media
     # policies: a reader who serves a corpus must not have to add a line.
     for media in (False, True):
         if media and profile_for(name).ignore_home() is None:
@@ -337,7 +337,7 @@ def test_sibling_media_that_is_not_committed_has_no_home_and_is_refused():
 
 @pytest.mark.parametrize("name", registered())
 def test_no_rule_a_profile_writes_ignores_a_page_json_or_the_archive(name, tmp_path):
-    """ISO-05's clause, asked of git rather than of a reviewer."""
+    """§5's reading floor, asked of git rather than of a reviewer."""
     wanted = profile_for(name).ignore_file(media=True) if profile_for(name).ignore_home() else None
     repository = init_repository(tmp_path / name)
     if wanted is not None:

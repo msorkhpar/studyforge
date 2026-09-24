@@ -15,26 +15,25 @@ this module cannot loop back into the dispatcher. It recurses only into itself.
 
 ## ⛔ A nested list is a nested list, never text folded into its parent
 
-⚠️ **This reader used to fold a nested item into its parent, marker and all**,
-on the argument that the block model was flat. The words survived and the
-structure did not: an item read as *"Version: - 0: 1987 - 1: 1993"*. ⭐ **The
-vocabulary now says what an item is** (`archive.blocks.item_parts`): a string
-when it holds no nested list, and otherwise an array of its **parts in reading
-order** — runs of text and whole `list` blocks — so any depth is the same rule
-applied again, and an unnested list is byte-identical to what it always was.
+⚠️ **Folding a nested item into its parent, marker and all, keeps the words
+and loses the structure**: an item reads as *"Version: - 0: 1987 - 1: 1993"*.
+⭐ **The vocabulary says what an item is** (`archive.blocks.item_parts`): a
+string when it holds no nested list, and otherwise an array of its **parts in
+reading order** — runs of text and whole `list` blocks — so any depth is the
+same rule applied again, and an unnested list is a plain string.
 
-⚠️ **Parts, not `{"text", "list"}`, and that is measured.** One pinned corpus
-file continues an item with a paragraph **after** its nested list and then
-opens a second one. A single text-and-list pair would have to refuse that file,
-which reads today, or fold the paragraph ahead of the list it follows.
+⚠️ **Parts, not `{"text", "list"}`.** Real material continues an item with a
+paragraph **after** its nested list and then opens a second one. A single
+text-and-list pair would have to refuse that file, or fold the paragraph ahead
+of the list it follows.
 
 ## ⛔ An ordered list keeps the number it starts at
 
-⭐ An author who continues a step list after a code block writes `2.`, and the
-reader used to record only that the list was ordered, so the page and the
-narration started again at one. The first marker's number is now `start`,
-written only when it is not `1` (`archive.blocks.list_start`), so every list
-that starts at one reads byte-identical.
+⭐ An author who continues a step list after a code block writes `2.`, and a
+reader that recorded only that the list was ordered would start the page and
+the narration again at one. The first marker's number is `start`, written only
+when it is not `1` (`archive.blocks.list_start`), so a list that starts at one
+carries no extra key.
 """
 
 from __future__ import annotations

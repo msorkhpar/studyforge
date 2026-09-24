@@ -1,18 +1,16 @@
 """Mirror of `src/studyforge/cli/plan/media.py` (R12), and of what a plan decides with it.
 
-⛔ **A SPLIT AT A SEAM, not a trim** (`W314`, Ruling 261). `report.py` reached
-the 400-line source ceiling and `test_derive.py` the 600-line test ceiling when
-the crossed-limit clauses landed, and one seam settles both: everything a plan
+⛔ **A SPLIT AT A SEAM, not a trim** (R11), and one seam serves the source
+and its tests alike: everything a plan
 says about **media** — the `MediaProjection` rendering, the ignore lines the
 policy requires, the footprint it projects and measures, and the verdict it
 refuses on — is here, while `test_report.py` and `test_derive.py` keep what a
 plan says about **paths, edits and declarations**. The halves share only the
 fixture copier, imported from the mirror that owns it.
 
-⭐ **The rows whose clauses live here:** `W242` and Ruling 91 (the ignore file),
-`W287` (the footprint is measured), `W311` (what the reading covers and what it
-could not weigh) and `W314` (a crossed limit is a refusal, and the plan exits
-non-zero).
+⭐ **The clauses that live here:** the ignore file, the footprint is measured, what
+the reading covers and what it could not weigh, and a crossed limit is a refusal
+and the plan exits non-zero.
 """
 
 from __future__ import annotations
@@ -40,7 +38,7 @@ from tests.studyforge.cli.plan.test_derive import copy_fixture
 from tests.support import init_repository, is_ignored
 
 # --------------------------------------------------------------------------
-# ⛔ the ignore file the profile requires (Ruling 91, W242)
+# ⛔ the ignore file the profile requires
 # --------------------------------------------------------------------------
 
 
@@ -56,7 +54,7 @@ def _with_media(name, commit, tmp_path):
 def _clips(plan):
     """One clip in every audio directory the plan claims, whatever shape the profile gives it.
 
-    ⛔ **Asked by SEGMENT, never by the last one** (`W323`). `tree` ends an
+    ⛔ **Asked by SEGMENT, never by the last one**. `tree` ends an
     audio directory at `audio/`; `sibling` continues below it with the unit's
     stem, so a predicate on the final segment found every clip under one
     profile and none under the other — and *found none* reads as *nothing to
@@ -85,15 +83,15 @@ def _homed(plan, repository):
 @pytest.mark.parametrize("commit", COMMIT_MODES)
 @pytest.mark.parametrize("name", VALID)
 def test_git_ignores_no_page_no_json_and_no_archive_under_any_media_policy(name, commit, tmp_path):
-    """ISO-05's clause, asked of git: no generated rule matches `*.html` or `*.json`.
+    """Asked of git: no generated rule matches `*.html` or `*.json`.
 
-    ⛔ **Pages are what a clone reads** (§5, `W242`), so this holds under every
+    ⛔ **Pages are what a clone reads** (§5), so this holds under every
     policy, not only the default. ⚠️ The archive is the ingested record an
     adapter wrote (R2); a clone without it rebuilds nothing.
 
-    ⚠️ **The discovery cache was in this population and is not any more**
-    (`W425`): nothing reads it back, so it is the one generated file a corpus
-    does not commit — and the other direction is asserted below.
+    ⚠️ **The discovery cache is not in this population**: nothing reads it
+    back, so it is the one generated file a corpus does not commit — and the
+    other direction is asserted below.
     """
     plan = _with_media(name, commit, tmp_path)
     repository = _homed(plan, init_repository(tmp_path / f"{name}-repo"))
@@ -103,7 +101,7 @@ def test_git_ignores_no_page_no_json_and_no_archive_under_any_media_policy(name,
     kept += [f"{archive}some/container.json"]
     assert [p for p in kept if p.endswith(".unit.html")], "no page was asked about"
     assert [p for p in kept if is_ignored(p, cwd=repository)] == []
-    # ⭐ The control, and `W425`'s own direction: wherever the plan has a file
+    # ⭐ The control, in the other direction: wherever the plan has a file
     # to put rules in, they DO cover the cache — so the clean answer above is a
     # measurement and not an empty ignore file. ⚠️ A policy whose media rules
     # have no home is refused whole (`plan.ignore_home is None`), and then the
@@ -118,7 +116,7 @@ def test_committed_media_is_not_ignored_and_the_only_rules_are_the_frameworks(na
     # ⭐ Generated media is committed by default (§5), and every fixture takes
     # that default. Ignoring it would produce clones that are silent with no
     # error, which is the outcome the whole media policy refuses.
-    # ⭐ `W425`: what the plan does print is the framework's own cache rules,
+    # ⭐ What the plan does print is the framework's own cache rules,
     # which no corpus adds by hand.
     plan = plan_for(FIXTURES / name)
     assert plan.ignore == (SITE_CACHE_FILENAME, f"{SITE_CACHE_FILENAME}.writing", ".gitignore")
@@ -164,7 +162,7 @@ def test_no_plan_names_anything_but_a_file_inside_the_generated_root(tmp_path):
 
 
 def test_every_ignore_line_names_the_file_that_holds_it(tmp_path):
-    # ⛔ INT-06/8: plan printed lines and named no file to hold them.
+    # ⛔ Plan printed lines and named no file to hold them.
     plans = [_with_media(name, "never", tmp_path / name) for name in VALID]
     lines = [line for plan in plans for line in plan.lines() if line.startswith("ignore ")]
     assert lines
@@ -183,10 +181,10 @@ def test_a_rate_turns_the_footprint_into_a_verdict():
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W287` — the footprint is measured on disk, and no closed task is named as future
+# ⛔ The footprint is measured on disk, and no closed task is named as future
 # --------------------------------------------------------------------------
 
-#: A task or milestone id as the plan once printed one (`SF-32`, `M3`).
+#: A task or milestone id, which the plan must never print (`AB-32`, `M3`).
 TASK_ID = re.compile(r"\b(?:[A-Z]{1,4}-\d+|M\d+)\b")
 
 
@@ -262,7 +260,7 @@ def test_W287_a_policy_that_does_not_weigh_its_media_walks_no_disk(commit, tmp_p
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W314` — a crossed limit stops the plan and says so (§5), both ways
+# ⛔ A crossed limit stops the plan and says so (§5), both ways
 # --------------------------------------------------------------------------
 
 
@@ -347,7 +345,7 @@ def test_W314_a_reading_that_could_not_be_taken_refuses_nothing_about_the_limits
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W311/1`, `W311/2` — the measured line says what it covered, and names
+# ⛔ The measured line says what it covered, and names
 # what it could not weigh
 # --------------------------------------------------------------------------
 
@@ -362,14 +360,14 @@ def _version_one_record(root, speech_id, filename):
 
 
 def test_W311_the_measured_line_says_the_reading_covers_the_located_clips_too(tmp_path):
-    # ⛔ `W311/1`: the sentence was narrower than the figure beside it.
+    # ⛔ The sentence was narrower than the figure beside it.
     [footprint] = _footprints(plan_for(_with_clips(tmp_path, (10,))))
     assert "under the declared units' media directories" in footprint
     assert "wherever the narration record locates a clip" in footprint
 
 
 def test_W311_a_clip_the_reading_could_not_weigh_is_named_on_its_own_line(tmp_path):
-    # ⛔ `W311/2`: a fitting total is never read as the whole corpus.
+    # ⛔ A fitting total is never read as the whole corpus.
     root = _with_clips(tmp_path, (10,))
     _version_one_record(root, "u1-s1", "u1-s1-nowhere.mp3")
     lines = plan_for(root).lines()
@@ -393,7 +391,7 @@ def test_with_no_rate_the_footprint_says_it_is_unprojected_and_why():
     assert any(UNPROJECTED in line for line in lines)
 
 
-#: A task or milestone id, as `W287` found one printed as a future owner.
+#: A task or milestone id, which the plan must never print as a future owner.
 TASK_ID = re.compile(r"\b(?:[A-Z]{1,4}-\d+|M\d+)\b")
 
 
@@ -405,8 +403,9 @@ def weighing(*sizes: int) -> MediaFootprint:
 
 
 def test_W287_no_footprint_sentence_names_a_task_as_the_owner_of_the_measurement():
-    # ⛔ Found on the first corpus: the sentence named a closed task as future on a corpus with
-    # clips on disk. Every form the line can take is read, not only the constant.
+    # ⛔ The sentence must never name a task as the future owner on a corpus
+    # with clips on disk. Every form the line can take is read, not only the
+    # constant.
     policy = MediaPolicy("auto", 50, 25)
     projections = (
         MediaProjection(policy, 5),

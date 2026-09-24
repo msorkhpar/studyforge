@@ -18,10 +18,10 @@ corpus, no manifest.
 ⚠️ **The branch fires *because* the value is not a slug — which is precisely
 when it may be an absolute path.** A refusal that quoted it would take the one
 input guaranteed to carry a home directory and put it in a log, from inside
-the check that exists to catch it. ⭐ **Measured, and this is the leverage:**
-`require_slug` and `require_ordinal` are two lines that **7 of the tree's 26
-§1f emission sites are, seen through their callers** — every address segment,
-every identity field and every unit ordinal inherited the echo.
+the check that exists to catch it. ⭐ **This is the leverage:** `require_slug`
+and `require_ordinal` are two lines that many refusals in the tree reach
+through their callers — every address segment, every identity field and every
+unit ordinal would inherit an echo.
 
 ⛔ **And the diagnosis is not what was removed.** *"did you pass a title?"* is
 the most useful sentence in this module and it stays; what replaces the value
@@ -38,8 +38,7 @@ source had the same property and used it the same way.
 on it being reversible.** Every character outside `[a-z0-9]` becomes a
 separator, so two distinct titles *can* collide.
 
-⛔ **The collision class is punctuation, not accents, and this paragraph used to
-say the opposite.** Measured 2026-09-09, on this module:
+⛔ **The collision class is punctuation, not accents:**
 
 ```text
 'Streams: an API'  ->  'streams-an-api'      ⛔ collides
@@ -50,16 +49,14 @@ say the opposite.** Measured 2026-09-09, on this module:
 
 ⚠️ An accented character collapses to a **separator** and is then stripped or
 kept as a hyphen — it is not *deleted*, so `Café` and `Cafe` produce different
-slugs. ⭐ The example that was here claimed they collide; it was wrong, and the
-real class is both wider and more likely, because every English title with a
-colon, a comma or a dash in the same place is in it. That is survivable only
-because §6 rules an
-address is **recorded, never derived** — measured on the extraction source's
-catalogue, **157 of 1,290 units (12.2%) are served at a slug their title does
-not produce**, so deriving one would send one link in eight to a page that is
-not there. ⛔ An adapter that slugifies its titles owes itself a collision
-check; the framework cannot make one for it, because by the time the framework
-sees an address the title is gone.
+slugs. ⭐ The real class is wide and likely, because every English title with
+a colon, a comma or a dash in the same place is in it. That is survivable only
+because §6 rules an address is **recorded, never derived**: a real catalogue
+serves about one unit in eight at a slug its title does not produce, so
+deriving one would send one link in eight to a page that is not there. ⛔ An
+adapter that slugifies its titles owes itself a collision check; the framework
+cannot make one for it, because by the time the framework sees an address the
+title is gone.
 """
 
 from __future__ import annotations
@@ -109,8 +106,8 @@ SLUG_PERMITTED = frozenset(
     character for character in map(chr, range(128)) if is_slug(f"a{character}a")
 )
 
-#: How a refusal names that class. ⛔ Stated once: two callers describing one
-#: class two ways is a defect a neighbouring package once had.
+#: How a refusal names that class. ⛔ Stated once, so no two callers describe
+#: one class two ways.
 SLUG_PERMITTED_DESCRIBED = "lowercase ASCII letters, digits and hyphens"
 
 

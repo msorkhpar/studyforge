@@ -136,7 +136,7 @@ def test_the_three_states_spell_themselves_the_way_a_manifest_reads():
     # pins a *vocabulary*, not a behaviour: the hyphen in `not-material` is a
     # decision, and `unclassified`/`contested` are the same two strings
     # `validate.source.classification` keeps as `RULE_*` constants of its own.
-    # A mutant on any of them survived the whole suite.
+    # A mutant on any of them would otherwise survive the whole suite.
     assert [state.value for state in Classification] == [
         "included",
         "excluded",

@@ -18,14 +18,11 @@ format hang from.
 
 ## One list, and why it is a list of rows
 
-⛔ **The same contract was written twice** — `BLOCK_TYPES`/`CONTAINER_TYPES`
-in `archive/markdown/` and `COUNT_KEYS`/`CONTAINER_BLOCKS`/`BLOCK_FIELDS` in
-the fixture checker, which wrote its copy *knowing* this task would come and
-said so in its docstring. Two copies of a contract is the defect this project
-has now diagnosed four times, and each time the answer was the same: one
-definition, imported.
+⛔ **One definition, imported** — the Markdown reader's block and container
+types and the fixture checker's count keys, container blocks and block fields
+all read it. Two copies of a contract disagree with each other.
 
-⭐ **The consolidation is a row per block type rather than four parallel
+⭐ **A row per block type rather than four parallel
 tuples**, because four tuples that must stay in the same order are three
 chances to get the order wrong. Adding a block type is one row, and it is a
 `raw_api` change — a block type is a contract, not a convenience.
@@ -45,8 +42,7 @@ sits in `blocks` in reading order and carries `src` and `title`. The
 document's `video` **record** is the unit's headline video and carries
 `VIDEO_KEYS` (`archive.document`): how the page plays it, plus the addresses
 it came from. ⛔ Do not fold one into the other while consolidating lists;
-this is the fact most easily lost here, and it has nearly been lost
-once already.
+this is the fact most easily lost here.
 """
 
 from __future__ import annotations
@@ -175,13 +171,12 @@ def counts_of(blocks: list, where: str = "blocks") -> dict[str, int]:
 
     ## ⛔ A block that is not an object is REFUSED BY NAME (R6)
 
-    ⚠️ **It used to reach `.get`**, so a non-object block left `AttributeError`
-    — a Python error naming a *type* — to travel out through
-    `archive.document.build`. ⛔ The one thing that message could not say is
-    the thing the reader needs: **which block**. ⭐ `validate` reached the same
-    defect from the other side and filtered to object blocks first;
-    the builder has no such filter and needs none, because a document it must
-    refuse is refused rather than counted.
+    ⚠️ **Reaching `.get` on one** would send `AttributeError` — a Python error
+    naming a *type* — out through `archive.document.build`. ⛔ The one thing
+    that message cannot say is the thing the reader needs: **which block**.
+    ⭐ `validate` filters to object blocks first; the builder has no such
+    filter and needs none, because a document it must refuse is refused rather
+    than counted.
 
     ⭐ `where` is the document's own, spelled as `assert_clean`'s is, and the
     refusal names the index and **describes** the value rather than quoting
@@ -201,11 +196,11 @@ def _objects(blocks: list, where: str) -> Iterator[dict]:
     read path alike). `counts_of` reads it on the way IN, through `build`;
     `read_layout` reads it on the way OUT, over a document that was parsed off
     disk and never built here. ⚠️ **Two doors, one sentence** — a second copy
-    is the defect this module's own docstring has now named four times.
+    would disagree with the first.
 
     ⭐ **A generator rather than a check beside a loop**, so a caller cannot
     take the blocks without taking the refusal: there is no unguarded way to
-    iterate them, which is exactly what was once missing one function away.
+    iterate them.
     """
     for index, block in enumerate(blocks):
         if not isinstance(block, dict):
@@ -299,10 +294,10 @@ def read_layout(document: dict, where: str) -> Layout | None:
 
     ## ⛔ A non-object block is refused BY NAME here too (R6)
 
-    ⚠️ **Closing this on the BUILD path once left it open one function
-    away.** `_sections` read `tail[0].get("type")` unguarded, so a hand-written
-    or adapter-written practice raised `AttributeError` — a Python error naming
-    a TYPE — where `build` had already learned to name the BLOCK and the FILE.
+    ⚠️ **The BUILD path's guard is not enough.** `_sections` reading
+    `tail[0].get("type")` unguarded would let a hand-written or adapter-written
+    practice raise `AttributeError` — a Python error naming a TYPE — where
+    `build` names the BLOCK and the FILE.
     ⛔ **And `build` is not the door such a document arrives by**: it is parsed
     off disk, and `parse` reads the key set and the version, never a shape.
 

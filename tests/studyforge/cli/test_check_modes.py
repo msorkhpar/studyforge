@@ -1,4 +1,4 @@
-"""The `check` verb takes `SF-20`'s mode: the runner container when it is up, the host otherwise.
+"""The `check` verb takes the runner's mode: the runner container when it is up, the host otherwise.
 
 ⭐ **The verb chooses no mode.** It hands the runner the corpus's container name
 (`execute.container_for`) and the runner probes. So the same file checked in either mode

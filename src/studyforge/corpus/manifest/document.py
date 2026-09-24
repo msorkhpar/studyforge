@@ -79,7 +79,7 @@ MANIFEST_FILENAME = "corpus.json"
 #:
 #: ⭐ **`2` added `content.not_material`**, ⭐ **`3` added
 #: `media.max_files`**, ⭐ **`4` added `runtimes`**, ⭐ **`5`
-#: added `narration`** (the user's ruling of 2026-09-23) and ⭐ **`6` added
+#: added `narration`** and ⭐ **`6` added
 #: `onboarding_doc`**, and no
 #: bump is about old manifests — each key is optional and an absent one has a
 #: stated default, so every `1` still parses. ⛔ **A bump is about a manifest
@@ -236,12 +236,11 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
     """Build a `Manifest` from an already-parsed object.
 
     ⛔ **The personal-data gate runs over the whole decoded document** (R7),
-    before any field is read. ⚠️ **It was once missing entirely**,
-    and the shape of that miss is worth keeping: `studyforge validate` was
-    already wired to report a leak here, the archive and the container map and
-    the overlay all gated, and `corpus.json` — **the corpus's front door** —
-    gated nothing. A home path in `title` validated green. The catch was
-    correct; the raise never came, so nothing looked wrong from either side.
+    before any field is read. ⚠️ **Without it `corpus.json` — the corpus's
+    front door — would gate nothing** while the archive, the container map and
+    the overlay all do: a home path in `title` would validate green, and
+    because `validate` is wired to report a leak here, nothing would look
+    wrong from either side.
 
     ⭐ The fields this module validates are not the fields a leak turns up in:
     `title` is free authored text and `content.exclude[].why` is a sentence
@@ -285,14 +284,11 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
 def _gate(document: dict, where: str) -> None:
     """Refuse a manifest carrying personal data, naming the shape and not the value.
 
-    ⛔ **`PersonalDataLeak` is raised as itself, not translated** (R7). ⚠️ This
-    docstring used to say it was *"Converted to `ManifestError`, following
-    `unit.content._gate` **exactly**"* — and that sentence is the defect's
-    propagation vector, because a module citing a neighbour as its justification
-    is how one translating site became three.
-    ⭐ The counter-argument it recorded — *a promise with one exception is not
-    a promise* — is answered where it belongs: `manifest/errors.py` names what
-    crosses, rather than swallowing it.
+    ⛔ **`PersonalDataLeak` is raised as itself, not translated** (R7). ⚠️ A
+    module that cites a neighbour's translation as its justification spreads
+    one translating site into many.
+    ⭐ *A promise with one exception is not a promise* is answered where it
+    belongs: `manifest/errors.py` names what crosses, rather than swallowing it.
 
     ⛔ It is already load-bearing. `validate/corpus.py` catches `ManifestError`
     and **then** `PersonalDataLeak`; while this translated, the second arm
@@ -305,16 +301,15 @@ def _gate(document: dict, where: str) -> None:
 def _check_version(document: dict, where: str) -> int:
     """Return the `corpus_api` declared, refusing one this build cannot speak (R9).
 
-    ⛔ The test itself is `studyforge.version`'s, not this module's. It was
-    written here first and was correct here; R9 versions **six** contracts,
-    and the second copy is the one people forget. What stays here is
+    ⛔ The test itself is `studyforge.version`'s, not this module's: R9
+    versions several contracts, and a second copy is the one people forget. What stays here is
     the set — `KNOWN_CORPUS_API` — because which versions a manifest may
     declare is this contract's business and nobody else's.
 
-    ⚠️ **The checked version is returned rather than discarded**, and that
-    only became visible when the set grew: while `KNOWN_CORPUS_API` held one
-    number, a `Manifest` that always reported the default reported the truth
-    by coincidence. ⛔ A manifest declaring `1` must say `1`, because the
+    ⚠️ **The checked version is returned rather than discarded**: a
+    `Manifest` that always reported the default would report the truth only
+    while `KNOWN_CORPUS_API` held one number. ⛔ A manifest declaring `1` must
+    say `1`, because the
     field records what the corpus declared and not what this build writes.
     """
     return check_version(

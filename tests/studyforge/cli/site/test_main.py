@@ -54,7 +54,7 @@ def test_the_module_is_one_implementation_on_top_of_cli_main():
 
 
 def test_a_refusal_leaves_the_process_as_a_line_and_not_a_traceback(tmp_path):
-    # ⛔ `W212`: only a real process shows what reaches stderr.
+    # ⛔ Only a real process shows what reaches stderr.
     import json
     import shutil
 

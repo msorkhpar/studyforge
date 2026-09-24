@@ -95,15 +95,15 @@ def test_the_package_does_not_reach_for_a_renderer():
 
 
 def test_the_block_vocabulary_is_imported_and_never_restated():
-    # ⭐ SF-06 consolidated four copies of the block-type list into one table.
-    # This package is a fifth consumer and imports it.
+    # ⭐ The block-type list is one table in `archive.blocks`, and this
+    # package imports it.
     body = (Path(unit.__file__).parent / "content.py").read_text("utf-8")
     assert "from studyforge.archive.blocks import BLOCK_FIELDS" in body
 
 
 def test_the_version_gate_is_imported_and_never_reimplemented():
-    # ⚠️ SF-33 ships a tree test that fails any module rolling its own
-    # membership check; this states the same expectation locally.
+    # ⚠️ `studyforge.version` ships a tree test that fails any module rolling
+    # its own membership check; this states the same expectation locally.
     body = (Path(unit.__file__).parent / "content.py").read_text("utf-8")
     assert "from studyforge.version import check" in body
 
@@ -118,7 +118,7 @@ def test_the_contract_names_the_three_things_r21_requires():
 
 
 def test_the_contract_sends_a_reader_to_one_address_and_promises_no_application():
-    """⛔ `W198`: a located contract says where it sits in a real archive.
+    """⛔ A located contract says where it sits in a real archive.
 
     ⭐ Clause 1 — the address is named once, and this package points at that
     name rather than keeping a second copy of the path. ⚠️ Clause 4 — v1
@@ -135,8 +135,7 @@ def test_the_contract_does_not_import_the_layout_it_points_at():
     """⛔ The arrow points one way: `Layout` imports this name, never the reverse.
 
     ⚠️ A contract that resolved itself against an archive would be a second
-    authority on the archive's shape — which is the failure `W198` closes, not
-    one to reopen from the other end.
+    authority on the archive's shape, from the other end.
     """
     import ast
 

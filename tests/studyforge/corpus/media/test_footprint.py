@@ -36,7 +36,7 @@ def write(root, relative, size):
 
 
 def test_the_footprint_is_read_from_the_files_that_are_actually_there(tmp_path):
-    # ⛔ SF-32's acceptance: *the verdict is derived from the files actually on
+    # ⛔ the media policy's acceptance: *the verdict is derived from the files actually on
     # disk, not from a prediction.* No rate, no unit count, no multiplication.
     write(tmp_path, "unit-01.audio/u-1-s1-abcd1234.mp3", 300)
     write(tmp_path, "unit-01.audio/u-1-s2-abcd5678.mp3", 700)
@@ -196,12 +196,12 @@ def test_a_file_exactly_at_a_limit_is_not_over_it():
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W311` — every clip the narration record locates is weighed
+# ⛔ Every clip the narration record locates is weighed
 # --------------------------------------------------------------------------
 
 TREE = profile_for("tree")
 DECLARED = TREE.unit(ADDRESS, 1, "Getting started")
-#: A unit the corpus once declared and no longer does: its directory is still on disk.
+#: A unit the corpus does not declare whose directory is still on disk.
 REMOVED = TREE.unit(Address.of("basics", "02-removed"), 2, "Removed")
 SETTINGS = Conditions(voice="voice-a", fmt="mp3", provides=3, chunk_chars=320)
 
@@ -290,7 +290,7 @@ def test_W311_an_unreadable_record_refuses_the_reading(tmp_path):
 
 
 def test_W311_plan_reads_the_widened_footprint_without_a_measurement_of_its_own(tmp_path):
-    # ⭐ `W287` routed `plan` through `measure`; the widening reaches it untouched.
+    # ⭐ `plan` goes through `measure`, so the widening reaches it untouched.
     import json
     import shutil
 

@@ -90,13 +90,13 @@ of them is sufficient:
 | `assert_clean` (`SHAPES`) | the **source's** free text | open, narrow | let through |
 | `scrub` (`SCRUBBED`) | text **this framework wrote** | open, wide | rewrite |
 
-⚠️ **Read the third column before adding anything to the second.** Measured
-2026-09-09: of seven home-path spellings, the path rule refuses all seven, this
-gate names three, and `scrub` rewrites six. ⛔ The seventh — a `home` segment
+⚠️ **Read the third column before adding anything to the second.** Of seven
+home-path spellings, the path rule refuses all seven, this gate names three,
+and `scrub` rewrites six. ⛔ The seventh — a `home` segment
 under a longer prefix, inside free text a source wrote — is **not closable
 here**, because `/export/home/<name>/x` and `/var/lib/home/cache/x` are the
 same shape. It is closed for every path field and for our own output, and the
-residual is this sentence rather than a discovery somebody makes later.
+residual is stated here.
 
 ## The residual class is specified, not built
 
@@ -225,8 +225,8 @@ ALSO_SCRUBBED: tuple[tuple[str, re.Pattern[str], str], ...] = (
     (
         "home path with Windows separators",
         # ⛔ `\\host\home\<name>` is a home directory that no POSIX
-        # predicate calls absolute and no `/`-anchored pattern sees. Measured
-        # 2026-09-09: it passed both the gate and both path readers.
+        # predicate calls absolute and no `/`-anchored pattern sees, so it is
+        # named here in its own spelling.
         re.compile(r"\\(?:home|Users)\\[A-Za-z0-9._\-]+"),
         HOME_PATH_PLACEHOLDER,
     ),

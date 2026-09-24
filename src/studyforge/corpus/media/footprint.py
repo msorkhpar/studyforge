@@ -111,9 +111,8 @@ class MediaFootprint:
         """How many generated media files there are.
 
         ⭐ **`max_files` reads it** — the limit a corpus of many small
-        clips crosses while both byte ceilings are still under. ⚠️ It was
-        recorded here before any limit read it, on the ground that a file count
-        is the third thing a host bounds; that forecast is now discharged.
+        clips crosses while both byte ceilings are still under. ⚠️ A file
+        count is the third thing a host bounds.
         """
         return len(self.files)
 

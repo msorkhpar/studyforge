@@ -189,7 +189,7 @@ def test_a_block_that_is_not_valid_json_is_reported_without_echoing_it(tmp_path)
     site = scan(tmp_path, DEPTHS)
     fault = site.unidentified[0].fault
     assert "not valid JSON" in fault
-    # ⛔ R7, rubric §1f: a refusal that quotes an unreadable block has only
+    # ⛔ R7: a refusal that quotes an unreadable block has only
     # relocated whatever it held into a log.
     assert "secret" not in fault
 
@@ -228,7 +228,7 @@ def test_no_fault_a_scan_records_carries_an_absolute_path(tmp_path):
 
 
 def test_a_personal_data_leak_stops_the_scan_rather_than_becoming_a_finding(tmp_path):
-    # ⛔ Ruling 58. `PersonalDataLeak` is not a `DiscoveryError`, so it travels
+    # ⛔ `PersonalDataLeak` is not a `DiscoveryError`, so it travels
     # as itself. Filed among the unidentified it would read as one more page
     # that could not be identified, in a report whose whole purpose is that
     # nobody reads it line by line.

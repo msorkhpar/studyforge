@@ -14,8 +14,8 @@ filesystem, and no second comparison: every verdict here is `verdict_for`'s.
 
 ## ⛔ A SPLIT AT A SEAM, and the seam is the subject
 
-⚠️ `report.py` reached the 400-line ceiling when the crossed-limit refusal
-landed. ⭐ **The line taken is the one the report itself draws**: what a plan
+⚠️ R11: the report is split. ⭐ **The line taken is the one the report itself
+draws**: what a plan
 says about **media** is here, and what it says about **paths, edits and
 refusals** stays in `report.py`. ⛔ The dependency runs one way — `report`
 imports this module for `Plan.media` and nothing here imports `report`, so a

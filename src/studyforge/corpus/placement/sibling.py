@@ -19,26 +19,25 @@ would be a site they had to learn twice. So the page appears beside the
 
 ## ⛔ Every name carries the container
 
-Two containers whose series mirror each other in one source directory once
-placed two units at one path. Every call was correct and the pair was wrong,
-and a build replaced pages it had written in the same run. ⭐ The address makes
+Two containers whose series mirror each other in one source directory would
+otherwise place two units at one path: every call correct and the pair wrong,
+and a build replacing pages it had written in the same run. ⭐ The address makes
 two containers' names distinct by construction, whatever their ordinals, titles
-or labels. ⚠️ The cost: every page and media name of every `sibling` corpus
-moves, by exactly that prefix and nothing else.
+or labels. ⚠️ The cost: every page and media name of a `sibling` corpus carries
+that prefix.
 
 ## ⛔ Beside the source file means beside it in `study/`, not loose in it
 
-⚠️ **"Beside the source file" was read as *in the same directory, unqualified*,
-and that is what a reader met.** Measured on the first corpus: one source
-directory held its sources, one page per source **and** one media directory per
-source, interleaved in one listing; a source file sitting at the repository
-root put its page and its media at the repository root. ⛔ Enhancing a
-repository and burying its material are not the same thing, and the second is
-what the unqualified reading delivered.
+⚠️ **Read as *in the same directory, unqualified*, "beside the source file"
+buries the material**: one source directory holds its sources, one page per
+source **and** one media directory per source, interleaved in one listing, and
+a source file at the repository root puts its page and its media at the
+repository root. ⛔ Enhancing a repository and burying its material are not
+the same thing.
 
 ⭐ **So one declared segment, `names.STUDY_DIRNAME`, holds everything this
-profile writes into a source directory**, and that directory's own listing goes
-back to being its own files plus one entry. ⛔ **The segment is declared once
+profile writes into a source directory**, and that directory's own listing is
+its own files plus one entry. ⛔ **The segment is declared once
 and composed nowhere**: every consumer asks this profile, and the page,
 the media and the container page all come back already carrying it.
 
@@ -51,10 +50,9 @@ from another. ⭐ The stem discriminates one level lower instead:
 source directory's `study/` lists its pages and at most five directories,
 whatever the unit count.
 
-⚠️ **The cost, stated rather than hidden: a unit's artifacts no longer sort as
-one contiguous run**, which the dot-suffixed `<stem>.audio/` shape did give.
-⭐ That was a property of a listing nobody wanted to read; the kinds are a
-listing somebody does. ⛔ Deleting one unit is now one page plus one directory
+⚠️ **The cost, stated rather than hidden: a unit's artifacts do not sort as
+one contiguous run.** ⭐ The kinds are a listing somebody reads. ⛔ Deleting one
+unit is one page plus one directory
 per kind, and `UnitLocations.directories` is what names them — never a glob a
 caller composes.
 
@@ -132,10 +130,10 @@ class SiblingProfile(Profile):
 
         ⚠️ **Unanchored, because the material is**: a corpus has one `study/`
         per source directory and no way to say in advance which directories
-        those are. ⭐ **The rule is narrowed to limit that cost.** The rule was `*.audio/`
-        — a bare stem suffix, which a repository keeping its own `lecture.audio/`
-        would have had git ignore. It now carries this profile's own declared
-        segment in front of it, so it matches only inside a directory this
+        those are. ⭐ **The rule is narrowed to limit that cost.** A bare stem
+        suffix such as `*.audio/` would make git ignore a repository's own
+        `lecture.audio/`, so the rule carries this profile's own declared
+        segment in front of it and matches only inside a directory this
         framework writes.
 
         ⛔ **These lines have no home** (`ignore_home`), so they are only ever
@@ -146,11 +144,9 @@ class SiblingProfile(Profile):
     def ignore_home(self) -> None:
         """None: this profile's media is enclosed by many generated directories, not one.
 
-        ⚠️ **The reason has changed and the answer has not.** A `study/`
-        directory *is* generated and *does* enclose the media beneath it — so
-        the old reason, that nothing but the repository's root ignore file
-        encloses it, is no longer the true one. ⛔ What is still true is that
-        there is one such directory **per source directory**, an `IgnoreFile`
+        ⚠️ A `study/` directory *is* generated and *does* enclose the media
+        beneath it. ⛔ But there is one such directory **per source
+        directory**, an `IgnoreFile`
         has one home, and a build that wrote an ignore file into each of them
         is a write this profile cannot make. The root ignore file
         stays the one thing never edited (R3).

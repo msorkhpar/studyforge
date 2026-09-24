@@ -13,14 +13,11 @@ written `{value!r}`:
 package imports, so a dependency in any direction is a cycle waiting for the
 second caller (`studyforge.version`'s argument, for the same reason).
 
-⛔ **Why one module rather than one function per package** (R7). This
-rule was written three times before it was extracted — `version._said`,
-`corpus.container.fields.said`, `unit.errors.describe` — and the three had
-already drifted: two quoted integers and stated why, the third returned
-*"an int"*. ⚠️ Nobody chose that difference; it is what a third copy does.
-⭐ The measured spread was 10 sites, 8 modules, 5 packages, and it is the same
-finding shape this project has now taken three times: a constant or a rule
-written twice is a rule that disagrees with itself.
+⛔ **Why one module rather than one function per package** (R7). Copies of
+this rule in `version`, `corpus.container.fields` and `unit.errors` would
+drift — one quoting integers and another returning *"an int"* — and nobody
+would choose that difference. ⭐ A constant or a rule written twice is a rule
+that disagrees with itself, so the three import this one.
 
 ⭐ **Integers are quoted; booleans are not** (this is the one place
 the three copies genuinely disagreed). An integer cannot carry an identifier
@@ -53,10 +50,9 @@ from __future__ import annotations
 #: this module exists to remove, so a second entry needs an argument that a
 #: string does not also satisfy.
 #:
-#: ⚠️ **`bool` was here and is not any more**. It is equally safe and
-#: quoting it was equally harmless — it was removed because `True` is not what
-#: the integrator typed, and *"a bool"* is. ⭐ Safety was never the question for
-#: that type, which is why the disagreement survived three copies.
+#: ⚠️ **`bool` is not here**, although quoting it would be equally safe:
+#: `True` is not what the integrator typed, and *"a bool"* is. ⭐ Safety is not
+#: the question for that type.
 SAFE_TO_QUOTE = (int,)
 
 

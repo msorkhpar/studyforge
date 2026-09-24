@@ -43,7 +43,7 @@ def test_the_package_is_the_three_modules_this_file_sweeps():
 
 
 def test_the_public_surface_is_what_a_consumer_needs_and_no_more():
-    # ⛔ Ruling 101's producer half: a name a second package needs is on this
+    # ⛔ One exported home (R21): a name a second package needs is on this
     # list, and reaching past it for one that is not is the deviation.
     assert content.__all__ == [
         "MIN_WHY_CHARS",
@@ -111,18 +111,16 @@ def test_every_public_name_in_the_package_is_reachable_through_it():
 def routes_to_the_escaping_phrase() -> list[str]:
     """Every name on this package through which `errors._escape` is reachable.
 
-    ⛔ Identity, not spelling. The bridge this row deleted was spelled
-    `_escape`; the next one would not have to be.
+    ⛔ Identity, not spelling: a bridge need not be spelled `_escape`.
     """
     return sorted(name for name, value in vars(content).items() if value is errors._escape)
 
 
 def test_the_package_neither_defines_nor_routes_to_the_escaping_phrase():
-    # ⛔ Ruling 135, and it replaces the former
-    # `test_the_one_private_name_edits_already_takes_is_still_reachable`.
-    # That test pinned a bridge; the bridge is gone, so a test asserting it
+    # ⛔ The escaping phrase has one home, in `manifest.errors`. There is no
+    # bridge through this package, so a test asserting one
     # still stands would be asserting the defect. ⭐ What is worth pinning is
-    # the other half of the same fact — `edits` no longer reaches past this
+    # the other half of the same fact — `edits` does not reach past this
     # package's `__all__`, because there is nothing here to reach.
     defined = [
         name
@@ -135,7 +133,7 @@ def test_the_package_neither_defines_nor_routes_to_the_escaping_phrase():
     assert "_escape" not in content.__all__
 
     # ⭐ And it did not move by being copied: `parse` still calls the one
-    # function W19 unified both refusals onto, from its new home.
+    # function both refusals share, from its home.
     assert parse._escape is errors._escape
 
 

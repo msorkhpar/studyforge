@@ -18,9 +18,8 @@ bites.** `FENCE_OPEN` is tested **first**, before any tag rule, so a
 markup — the code reader consumes to the closing fence and the tag is never
 offered to anything. ⚠️ A reader that scanned the document for `<` instead
 would pass every other case and fail here, silently, on material that quotes
-XML or HTML in a fence. That is not hypothetical: a corpus of 38 files was
-once reported as carrying raw HTML in 18 of them, and the true number is 0 —
-all 26 tag-shaped matches were inside fences.
+XML or HTML in a fence: in real material, tag-shaped text is mostly inside
+fences.
 """
 
 from __future__ import annotations

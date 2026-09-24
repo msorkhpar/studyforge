@@ -116,7 +116,7 @@ def test_a_declaration_that_is_not_a_list_of_objects_carries_nothing():
 
 
 def test_the_assets_a_block_already_shows_are_not_carried():
-    # ⛔ `W215`: an asset is reached through the block that names it, so listing
+    # ⛔ An asset is reached through the block that names it, so listing
     # it as well would offer the reader the diagram they are looking at.
     document = support.lesson()
     document["assets"] = [dict(support.ATTACHMENT)]

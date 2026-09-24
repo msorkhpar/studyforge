@@ -65,7 +65,7 @@ def test_the_parser_takes_a_root_a_site_and_a_port():
 
 
 def test_the_site_is_an_override_with_no_default_and_a_root_alone_parses():
-    # ⭐ `W230`: a root and nothing else is the no-configured-path form; `--site`
+    # ⭐ A root and nothing else is the no-configured-path form; `--site`
     # names one built directory and is never filled in by convention.
     assert build_parser().parse_args(["corpus"]).site is None
     site = [action for action in build_parser()._actions if action.dest == "site"]
@@ -185,7 +185,7 @@ def test_a_port_already_taken_is_unusable(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⭐ serves both FND-04 fixtures, and stops without leaking
+# ⭐ serves both fixture corpora, and stops without leaking
 # --------------------------------------------------------------------------
 
 
@@ -198,7 +198,7 @@ def test_the_verb_serves_each_fixture_from_its_built_root_over_loopback(name, tm
         index = fetch(serving.server, "/index.html")
         toc = fetch(serving.server, "/api/v1/content/toc")
         page = fetch(serving.server, "/" + quote(unit))
-    # ⛔ `W370`: the SERVED page is the built file plus the one execution client
+    # ⛔ The SERVED page is the built file plus the one execution client
     # the serving process adds, and the file on disk still names none of it.
     assert (index[0], index[2]) == (200, served_page((site / "index.html").read_bytes()))
     assert toc[0] == 200 and json.loads(toc[2])

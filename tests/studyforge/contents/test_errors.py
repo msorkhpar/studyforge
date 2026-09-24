@@ -26,7 +26,7 @@ def test_a_version_refusal_arrives_as_this_packages_own_type():
 
 
 def test_a_personal_data_leak_is_not_in_this_family():
-    # ⛔ Ruling 58. A caller rendering a whole site catches `ContentsError` per
+    # ⛔ A caller rendering a whole site catches `ContentsError` per
     # corpus and carries on; an R7 refusal folded into that family would be
     # logged as one more corpus that did not build.
     assert not issubclass(PersonalDataLeak, ContentsError)

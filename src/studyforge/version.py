@@ -24,10 +24,7 @@ document is then processed as though it declared a version it never declared.
 clause; it is the clause**, and the type is tested before the value.
 
 ⚠️ **How many contracts R9 versions is `CONTRACT_FIELDS` below, and it is not
-restated here.** This paragraph used to enumerate six; two tasks appended in
-one round and it would have said six while the tuple said eight. ⛔ A list
-written twice is a list that disagrees with itself (the
-spec's own copy was retired for the same reason).
+restated here.** ⛔ A list written twice is a list that disagrees with itself.
 
 ⭐ The argument stands however many there are: one independent membership test
 per contract is one chance per contract to write the porous one, in front of
@@ -142,10 +139,9 @@ def check(
     task that versions a new contract registers it in that tuple *in the same
     commit*; until now the only thing holding the convention was a tree test
     that a caller outside `src/` never runs. ⭐ Making the unregistered name
-    unrepresentable is cheaper than listing the places it could arrive, and it
-    closes the last §1f site in the tree: `contract` is interpolated into the
-    refusal twice, so a `contract` that could be anything was a refusal that
-    could reproduce anything.
+    unrepresentable is cheaper than listing the places it could arrive (R7):
+    `contract` is interpolated into the refusal twice, so a `contract` that
+    could be anything would be a refusal that could reproduce anything.
     """
     if contract not in CONTRACT_FIELDS:
         raise error(
@@ -174,11 +170,9 @@ def _said(contract: str, declared: object) -> str:
     ⛔ Naming the type also means an unexpected payload is described rather
     than reproduced into the message (R7).
 
-    ⭐ **This is now `studyforge.describe` with the contract's name in front of
-    it** (R7). It used to be the third copy of that rule and the only one that
-    said *"a bool"*; ⛔ the argument above is why `describe` says *"a bool"*
-    too, rather than why this module keeps its own answer. **The disagreement
-    was resolved in favour of the copy that had made the case.**
+    ⭐ **This is `studyforge.describe` with the contract's name in front of
+    it** (R7). ⛔ The argument above is why `describe` says *"a bool"*, rather
+    than why this module keeps its own answer.
     """
     if declared is None:
         return f"no {contract}"

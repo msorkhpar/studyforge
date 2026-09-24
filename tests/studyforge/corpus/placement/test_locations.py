@@ -45,7 +45,7 @@ def test_a_page_addresses_its_own_media_relative_to_itself(profile):
 def test_the_href_is_asked_for_and_never_composed():
     # ⛔ The rule a renderer must follow. `audio/<clip>.mp3` is the `tree`
     # shape; under `sibling` many units share one `study/` directory, so the
-    # same clip is `audio/<stem>/<clip>.mp3` (`W323`). The invariant that
+    # same clip is `audio/<stem>/<clip>.mp3`. The invariant that
     # survives every profile is "relative to the page", not the literal string.
     assert unit("tree").href("audio", "07.mp3") == "audio/07.mp3"
     assert unit("sibling").href("audio", "07.mp3") == (
@@ -102,10 +102,8 @@ def test_an_absolute_path_is_refused_at_either_end():
 
 @pytest.mark.parametrize("end", ["page", "target"])
 def test_the_refusal_never_emits_the_absolute_path_it_refuses(end):
-    # ⛔ R7, rubric §1f — and this is the branch the first version got wrong.
-    # It fires BECAUSE the value is absolute, so echoing it emitted a home
-    # directory out of the check written to prevent one. ⚠️ The original R7
-    # test in this file pointed at `origin_directory`, which was already safe.
+    # ⛔ R7. The branch fires BECAUSE the value is absolute, so echoing it
+    # would emit a home directory out of the check written to prevent one.
     leak = PurePosixPath("/" + "home/somebody/material/page.html")
     inside = PurePosixPath("a/x.css")
     pair = (leak, inside) if end == "page" else (inside, leak)

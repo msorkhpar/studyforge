@@ -43,8 +43,8 @@ def test_the_document_is_written_in_a_stated_key_order():
 def test_the_stated_order_survives_into_the_BYTES():
     # ⛔ **The object's order is not the document's order**, and only one of
     # them is what a consumer reads. `json.dumps(sort_keys=True)` would re-sort
-    # every key on the way out and leave the assertion above passing — measured
-    # as a surviving mutant, and this is the row that kills it (R10).
+    # every key on the way out and leave the assertion above passing, so this
+    # assertion reads the text itself (R10).
     text = render(fixture_contents("depth2"))
     assert [key for key in TOC_KEYS if f'"{key}"' in text] == list(TOC_KEYS)
     assert [text.index(f'"{key}"') for key in TOC_KEYS] == sorted(
@@ -176,7 +176,7 @@ def test_a_practice_count_that_is_not_a_count_is_refused(practices):
 
 
 def test_a_leak_anywhere_in_the_document_is_refused_as_itself():
-    # ⛔ Ruling 58: `PersonalDataLeak` travels through as itself and is not
+    # ⛔ R7: `PersonalDataLeak` travels through as itself and is not
     # folded into "the contents would not build".
     with pytest.raises(PersonalDataLeak):
         from_document(a_document(title=f"{HOME}/notes"))

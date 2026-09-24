@@ -18,8 +18,8 @@ downstream of it, and `test_profile` asserts that of the whole of `src/`.
 ## The seam with `corpus.manifest`, drawn deliberately
 
 ⚠️ `corpus.manifest.PLACEMENT_PROFILES` lists **the names a manifest may
-declare**; this registry holds **what each one does**. The CTO judged that
-correct as written — they are different questions, and a manifest must be able
+declare**; this registry holds **what each one does**. They are different
+questions, and a manifest must be able
 to refuse an unknown name without importing a placement engine. ⛔ But they
 must not drift, so `test_profile` asserts the two sets are equal and fails a
 profile registered here that a manifest may not name.
@@ -35,8 +35,8 @@ through it.
 ⛔ **The archive is the one shared artifact NOT under the generated root**.
 It is the adapter's output (R2), and `validate`, the adapter's
 definition of done, reads it at `names.ARCHIVE_DIRNAME` beside `corpus.json`.
-`corpus()` once composed `.studyforge/archive` from that name, so `plan` printed a
-root nothing read, and a malformed map there validated clean.
+Composing `.studyforge/archive` from that name would make `plan` print a root
+nothing reads, where a malformed map validates clean.
 
 ## Ignore lines are a profile's answer, not a caller's guess
 
@@ -50,9 +50,8 @@ the CORPUS are the media policy's**. §5's
 *regenerable is not the same as available* holds for the page that plays a clip
 as much as for the clip: a clone that ignores its pages has no reading floor,
 and one that ignores only the bundle has pages that render unstyled with no
-error. ⚠️ The pages, the root index and the discovery cache were once ignored
-here, and under `sibling` those rules had no home R3 allows and matched
-`*.html` and `*.json`.
+error. ⚠️ Under `sibling`, rules ignoring the pages and the root index would
+have no home R3 allows and would match `*.html` and `*.json`.
 
 ## ⛔ The discovery cache is the one build output that IS ignored
 
@@ -63,8 +62,8 @@ somebody: a reader opens the pages and the index, and a page loads the bundle. �
 returns the scan — there is no branch on which a cached `Site` is handed back —
 so a clone that carries the cache gains exactly nothing, while every reader who
 serves the corpus gets a modified file for doing the one thing the tool is for.
-⭐ **Measured on the first corpus, 2026-09-20: the workspace pin check refused
-the workspace within a minute of a serve**, on `.studyforge/site.json` alone.
+⭐ **A workspace pin check refuses the workspace within a minute of a serve**
+if the cache is tracked, on `.studyforge/site.json` alone.
 
 ⛔ **The home is a `.gitignore` inside the generated directory the rules are
 about, never the repository root** (R3). A profile whose media **no one**
@@ -122,10 +121,10 @@ CACHE_IGNORE_LINES = (SITE_CACHE_FILENAME, SITE_CACHE_FILENAME + STAGING_SUFFIX)
 #: exactly one shape of file**: one carrying nothing but
 #: `CACHE_IGNORE_LINES`. ⭐ Such a file is this machine's own — the same
 #: judgement `progress.store` makes about the directory it records into — so it
-#: never enters a commit, and a corpus onboarded before this rule existed goes
-#: clean the first time it is served rather than trading one untracked file for
-#: another. ⚠️ **A file that also carries the corpus's media policy is the
-#: opposite and must NOT hide itself**: a clone has to read those rules or the
+#: never enters a commit, and a corpus that has no such file yet goes clean the
+#: first time it is served rather than trading one untracked file for another.
+#: ⚠️ **A file that also carries the corpus's media policy is the opposite and
+#: must NOT hide itself**: a clone has to read those rules or the
 #: media it regenerates reads as dirt, so that file is committed.
 SELF_IGNORE_LINE = IGNORE_FILENAME
 
@@ -305,10 +304,9 @@ def origin_directory(origin: object, address: Address, what: str = "artifact") -
     # data into a build log, from the check that exists to catch it. Name the
     # fault and the record, and let the integrator look at the one named.
     #
-    # ⚠️ The predicate is `sourcepath`'s and not this module's. It used to be
-    # `is_absolute() or ".." in parts` here and a different forbidden list in
-    # `container.fields.optional_path`, and the gap between the two lists was
-    # reachable by `C:/Users/<name>/x`, which neither refused.
+    # ⚠️ The predicate is `sourcepath`'s and not this module's: a local
+    # `is_absolute() or ".." in parts` and a different forbidden list elsewhere
+    # leave a gap, such as `C:/Users/<name>/x`, that neither refuses.
     fault = source_path_fault(origin)
     if fault is not None:
         raise PlacementError(
@@ -324,7 +322,7 @@ def cache_ignore_lines() -> tuple[str, ...]:
     ⛔ **The self-ignore line is part of the answer and not an afterthought.**
     A file carrying only machine-local rules is itself machine-local: written
     without it, the first serve of an already-onboarded corpus would trade one
-    untracked file for another and the workspace pin check would still refuse
-    the workspace (measured on the first corpus).
+    untracked file for another and a workspace pin check would still refuse
+    the workspace.
     """
     return (*CACHE_IGNORE_LINES, SELF_IGNORE_LINE)

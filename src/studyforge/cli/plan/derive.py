@@ -46,9 +46,9 @@ every check.
 
 ## ⛔ Two artifacts claiming one path are a REFUSAL
 
-⚠️ This module once printed the pair as two `create` lines beside `0 refusal(s)`,
-deferring to `validate`, and a build then replaced one page with the other in
-the same run. A plan that exits `0` is the go signal for a build. ⭐ So each
+⚠️ Printed as two `create` lines beside `0 refusal(s)`, the pair would let a
+build replace one page with the other in the same run, because a plan that
+exits `0` is the go signal for a build. ⭐ So each
 path claimed twice is a refusal naming both claimants, and it is asked of
 `validate`'s own `duplicate-path` enumeration, never of a second copy.
 """

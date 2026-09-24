@@ -4,18 +4,16 @@
 list here: the whole point of one minter is that there is one place a verb is
 declared, and a second list in a test is a second place.
 
-⛔ **`W293`: a verb is resolved when it is DISPATCHED.** Asserted over
-`sys.modules` in a FRESH interpreter (the instrument `W223` shipped in
+⛔ **A verb is resolved when it is DISPATCHED.** Asserted over
+`sys.modules` in a FRESH interpreter (the instrument in
 `tests/studyforge/narrate/test_wire.py`), never over source text, which cannot
-see an import (`SF-38/9`). The verb modules come from `VERBS`' own entry points.
+see an import. The verb modules come from `VERBS`' own entry points.
 
-⛔ **`W320`: NO verb, and no exemption left.** `W293` held
-`studyforge.validate.cli` exempt because `UNUSABLE` was imported from it; the
-constant moved to `studyforge.exitcodes`, so the assertion is `[]` and
-`validate` is now one of the verbs the control dispatches. ⚠️ **That exemption
-was also this file's inhabitation reading** — the one module both instruments
-were known to see — so `SHARED` takes that role: it is imported from the
-dispatcher's own module body, and it is no verb.
+⛔ **NO verb, and no exemption.** The shared exit code lives in
+`studyforge.exitcodes`, so the assertion is `[]` and `validate` is one of the
+verbs the control dispatches. ⚠️ **`SHARED` is this file's inhabitation
+reading** — the one module both instruments are known to see: it is imported
+from the dispatcher's own module body, and it is no verb.
 """
 
 from __future__ import annotations
@@ -52,8 +50,8 @@ if sys.argv[3:]:
 print(json.dumps(sorted(name for name in sys.modules if name.startswith("studyforge."))))
 """
 
-#: ⭐ The one module the dispatcher's body does import, and it is no verb
-#: (`W320`). ⛔ It is watched as the INHABITATION of the two instruments below:
+#: ⭐ The one module the dispatcher's body does import, and it is no verb.
+#: ⛔ It is watched as the INHABITATION of the two instruments below:
 #: a finder that reports nothing has the same reading as a finder that is
 #: broken, and this is the module that tells them apart.
 SHARED = "studyforge.exitcodes"
@@ -194,13 +192,13 @@ def test_the_usage_text_lists_every_registered_verb_with_its_summary():
 
 
 # --------------------------------------------------------------------------
-# ⛔ W293: a verb is resolved when it is dispatched, from the one table
+# ⛔ A verb is resolved when it is dispatched, from the one table
 # --------------------------------------------------------------------------
 
 
 @pytest.mark.parametrize("importer", ["studyforge.cli", "studyforge.cli.dispatch"])
 def test_importing_the_command_loads_no_verb_in_a_fresh_interpreter(importer):
-    # ⛔ `W320`: EVERY verb, with nothing held exempt. ⭐ The two inhabitation
+    # ⛔ EVERY verb, with nothing held exempt. ⭐ The two inhabitation
     # readings are the dispatcher itself (the child got that far) and `SHARED`
     # (its body really did import something), so an empty `eager` cannot be a
     # child that imported nothing.
@@ -226,7 +224,7 @@ def test_importing_one_verbs_module_loads_no_other_verb_through_the_dispatcher(n
     # ⛔ The row's clause read per verb, over the verbs whose module runs this
     # package when imported: whatever else that module imports is its own
     # dependency, and none of it arrives by way of the dispatcher.
-    # ⭐ Inhabitation (`W320`): the same finder, in the same child, is read for
+    # ⭐ Inhabitation: the same finder, in the same child, is read for
     # `SHARED` — which the dispatcher's body does import — so a watcher that
     # could not see that route reds here instead of reporting the empty list
     # below as a pass.
@@ -235,15 +233,15 @@ def test_importing_one_verbs_module_loads_no_other_verb_through_the_dispatcher(n
 
 
 def test_importing_the_plan_no_longer_loads_the_narrate_verb():
-    # ⛔ `W223/1`'s measured route: `cli/plan` reached `cli.narrate` through the
-    # dispatcher. The plan still reaches narration's read side on its own.
+    # ⛔ `cli/plan` must not reach `cli.narrate` through the dispatcher. The
+    # plan does reach narration's read side on its own.
     loaded = loaded_by("studyforge.cli.plan")
     assert "studyforge.narrate.synth" in loaded
     assert [name for name in loaded if name.startswith("studyforge.cli.narrate")] == []
 
 
 def test_every_verb_resolves_to_the_main_its_module_defines():
-    # ⛔ `SF-40`: `run` is the verb module's own `main`, the same object every
+    # ⛔ `run` is the verb module's own `main`, the same object every
     # time it is read, so the table is not a second copy of anything.
     for verb in VERBS.values():
         assert verb.run is sys.modules[verb.run.__module__].main, verb.name

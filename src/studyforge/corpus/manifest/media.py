@@ -41,14 +41,14 @@ can state, and it is why this is a third limit rather than a lonely one.
 
 ⛔ **It has NO default, deliberately.** The two byte defaults trace to §5's
 measured numbers; there is no measured count in this project, and a number
-invented here would make every existing corpus's build depend on a ceiling no
-round chose. ⭐ **Unstated means unbounded** — the count is measured and
+invented here would make every existing corpus's build depend on a ceiling
+nobody chose. ⭐ **Unstated means unbounded** — the count is measured and
 reported either way, and it refuses only where a corpus asked it to.
 
 ⛔ **`max_files` is `corpus_api: 3`'s key** (`document.py`'s `KEY_VERSIONS`).
 An older build refuses an unknown key by name and blames the corpus for the
-framework's age, which is exactly what R9 versions — so the field and the bump
-landed in one commit, as they did for `content.not_material` at `2`.
+framework's age, which is exactly what R9 versions — so a new field and its
+version bump go together, as `content.not_material` did at `2`.
 """
 
 from __future__ import annotations

@@ -77,7 +77,7 @@ def test_the_unusable_message_names_what_was_asked_for_not_where_it_resolved(tmp
 
 
 # --------------------------------------------------------------------------
-# ⛔ the golden files (FND-04's largest deferred golden, closed here)
+# ⛔ the golden files
 # --------------------------------------------------------------------------
 
 
@@ -85,9 +85,9 @@ def test_the_unusable_message_names_what_was_asked_for_not_where_it_resolved(tmp
 def test_the_output_is_byte_for_byte_the_committed_golden(name):
     """⛔ R10, and the reason the golden exists at all.
 
-    `FND-04` could not write this one: §5 pins the *kinds* of path and not
-    artifact naming, and `SF-03` owns the derivation. It is written here
-    instead, beside the contract that produces it.
+    The fixture corpora cannot carry this one: §5 pins the *kinds* of path and
+    not artifact naming, and placement owns the derivation. It is written here,
+    beside the contract that produces it.
     """
     _, printed = invoke(str(FIXTURES / name))
     assert printed == (GOLDEN / f"{name}.plan.txt").read_text(encoding="utf-8")
@@ -100,9 +100,8 @@ def test_two_runs_of_one_corpus_agree_byte_for_byte(name):
 
 
 def test_the_goldens_are_one_per_valid_corpus_and_exactly_what_is_on_disk():
-    # ⚠️ The name used to say "two". It is read from `VALID` and has been three
-    # since a third valid corpus landed, and a test name that states a count states it in the one
-    # place nothing checks.
+    # ⚠️ The count is read from `VALID`, because a test name that states a
+    # count states it in the one place nothing checks.
     on_disk = sorted(p.name for p in GOLDEN.iterdir())
     assert on_disk == sorted(f"{name}.plan.txt" for name in VALID)
 
@@ -141,7 +140,7 @@ def test_the_rate_reaches_the_projection_through_the_command_line():
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W314` — a crossed limit reaches the exit code, through `main`
+# ⛔ A crossed limit reaches the exit code, through `main`
 # --------------------------------------------------------------------------
 
 

@@ -17,12 +17,11 @@ which files under a served root are narration clips that must not be served
 attribute a narrated element carries. ⛔ Read at startup, never per request:
 `serve` renders nothing at request time and this adds nothing to it.
 
-## ⛔ The user's ruling, 2026-09-23
+## ⛔ Narration is optional
 
-*"it should be optional and while serving or even while caputring the matterial
-skills should ask if user is interested in the narrition or not. Somebody might
-wants to just cover the course wihtout voices as mentioned the voice might be
-cgenerated but still not serving them would be an option"*.
+A reader may cover a course without voices: the skills ask about narration when
+the material is captured and when it is served, and clips that were generated
+may still go unserved.
 
 ## ⭐ Why serve REFUSES a narrated build rather than editing it on the way out
 

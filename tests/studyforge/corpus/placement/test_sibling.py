@@ -25,7 +25,7 @@ TITLE = "Introduction to the Streams API"
 
 
 def outside_the_declaration(paths):
-    """Every path that is not inside a `study/` directory, named (`W323`, clause 5).
+    """Every path that is not inside a `study/` directory, named.
 
     ⭐ **The instrument both ways.** A corpus placed under this profile has no
     such path; a plant that writes beside the material has one per artifact,
@@ -40,17 +40,17 @@ def every_path(where):
 
 
 def test_a_unit_page_lands_in_the_declared_subdirectory_beside_its_source_file():
-    # ⭐ SF-03's acceptance, and R3's whole point: the material's own directory
-    # gains a page, and the README beside it is untouched. ⛔ `W323`, clause 1:
-    # the page is in that directory's `study/`, not loose in it.
+    # ⭐ Placement's acceptance, and R3's whole point: the material's own directory
+    # gains a page, and the README beside it is untouched. ⛔ The page is in
+    # that directory's `study/`, not loose in it.
     page = SIBLING.unit(ADDRESS, 7, TITLE, origin=ORIGIN).page
     assert page.parent == PurePosixPath(ORIGIN).parent / STUDY_DIRNAME
     assert page.name.endswith(".unit.html")
 
 
 def test_the_source_directory_gains_one_entry_and_not_one_per_artifact():
-    # ⛔ `W323`'s measured defect: a source directory held its sources, one page
-    # per source and one media directory per source, in one listing. ⭐ Whatever
+    # ⛔ A source directory must not hold its sources, one page per source and
+    # one media directory per source, in one listing. ⭐ Whatever
     # this profile writes from a source file, the directory holding that file
     # gains exactly one name.
     beside = PurePosixPath(ORIGIN).parent
@@ -61,9 +61,9 @@ def test_the_source_directory_gains_one_entry_and_not_one_per_artifact():
 
 
 def test_a_source_file_at_the_corpus_root_puts_no_generated_file_at_the_root():
-    # ⛔ `W323`, clause 3: the only generated file at the corpus ROOT is the
-    # root index. A source at the root is exactly the case that broke it — the
-    # rule was "beside the source file", so its page and its media landed there.
+    # ⛔ The only generated file at the corpus ROOT is the root index. A source
+    # at the root is the case a "beside the source file" rule gets wrong: its
+    # page and its media would land there.
     where = SIBLING.unit(ADDRESS, 7, TITLE, origin="README.md")
     container = SIBLING.container(ADDRESS, ("Basics", "Streams API"), origin="README.md")
     at_the_root = [
@@ -76,7 +76,7 @@ def test_a_source_file_at_the_corpus_root_puts_no_generated_file_at_the_root():
 
 
 def test_the_page_is_beside_the_source_and_not_under_the_address():
-    # ⚠️ Measured 2026-09-09: the Java corpus's module directories are FLAT —
+    # ⚠️ A real corpus's module directories can be FLAT —
     # `16-streams-api/` sits at the repository root — while its address is two
     # levels. So the address is identity and the directory comes from
     # `origin`; a profile that used the address for both would create
@@ -87,9 +87,9 @@ def test_the_page_is_beside_the_source_and_not_under_the_address():
 
 
 def test_every_artifact_of_one_unit_is_named_from_that_units_stem():
-    # ⚠️ `W323` moved the media one level down, so a directory's NAME is now the
-    # stem exactly rather than the stem plus a suffix; what has not changed is
-    # that a unit's artifacts are all named from its own identity.
+    # ⚠️ The media sits one level down, so a directory's NAME is the stem
+    # exactly rather than the stem plus a suffix, and a unit's artifacts are
+    # all named from its own identity.
     where = SIBLING.unit(ADDRESS, 7, TITLE, origin=ORIGIN)
     stem = contained_stem(ADDRESS, 7, TITLE)
     assert where.page.name.startswith(stem)
@@ -99,7 +99,7 @@ def test_every_artifact_of_one_unit_is_named_from_that_units_stem():
 
 
 def test_the_media_sits_under_one_directory_per_kind_and_one_per_unit_inside_it():
-    # ⛔ `W323`, clause 2: generated audio is under a declared subdirectory,
+    # ⛔ Generated audio is under a declared subdirectory,
     # not one directory per unit interleaved with the material. ⚠️ Many units
     # share one `study/`, so the stem still has to discriminate — one level
     # lower, inside the kind's own directory, where it collides with nothing.
@@ -123,9 +123,9 @@ def test_two_units_in_one_directory_never_produce_the_same_name():
 
 
 def test_two_containers_sharing_a_directory_are_named_apart_by_their_address():
-    # ⛔ `W254`. This test once pinned the collision: two CONTAINERS whose units
-    # land in one directory with one ordinal and title. A real corpus did it (a
-    # mirrored series), so every `sibling` name now carries its container's address.
+    # ⛔ Two CONTAINERS whose units land in one directory with one ordinal and
+    # title (a mirrored series), so every `sibling` name carries its
+    # container's address.
     here = SIBLING.unit(ADDRESS, 7, "Streams", origin="shared/README_a.md")
     there = SIBLING.unit(Address.of("advanced", "17-x"), 7, "Streams", origin="shared/README_b.md")
     assert here.page.parent == there.page.parent
@@ -175,7 +175,7 @@ def test_the_profile_declares_its_name_and_what_it_does():
 
 
 def test_the_media_globs_match_the_directories_this_profile_actually_mints():
-    # ⭐ Ruling 91's cheapest half: under this profile the generated names are
+    # ⭐ Under this profile the generated names are
     # the unit's own stem, so a corpus cannot enumerate them — one measured
     # build wrote 79 artifacts, 67 of them content-hash-named.
     where = SIBLING.unit(ADDRESS, 7, TITLE, origin=ORIGIN)
@@ -191,9 +191,9 @@ def test_the_media_globs_match_the_directories_this_profile_actually_mints():
 
 
 def test_the_media_globs_no_longer_match_a_repositorys_own_directory_by_suffix():
-    # ⚠️ The rule was `*.audio/`, a bare stem suffix: a repository keeping its
-    # own `lecture.audio/` had one git would ignore. ⭐ `W323` put this
-    # profile's declared segment in front of every line.
+    # ⚠️ A bare stem suffix such as `*.audio/` would make git ignore a
+    # repository's own `lecture.audio/`. ⭐ This profile's declared segment is
+    # in front of every line.
     assert not [line for line in SIBLING.media_ignore_lines() if line.startswith("*.")]
 
 
@@ -202,7 +202,7 @@ def test_the_media_globs_are_unanchored_because_the_material_is():
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W254`: every name carries the container's address
+# ⛔ Every name carries the container's address
 # --------------------------------------------------------------------------
 
 
@@ -216,7 +216,7 @@ def test_containers_whose_deepest_segments_match_are_still_named_apart():
 
 @pytest.mark.parametrize("fixture", ["depth2", "shared-origin"])
 def test_a_name_differs_from_the_unit_stem_only_by_the_address_in_front(fixture):
-    # ⛔ The control for `W254`'s cost: every `sibling` name moves by exactly
+    # ⛔ The control: every `sibling` name moves by exactly
     # the address prefix, and nothing else about it changes.
     from studyforge.corpus.container import parse
     from studyforge.corpus.manifest import parse as parse_manifest
@@ -244,13 +244,13 @@ def test_a_name_differs_from_the_unit_stem_only_by_the_address_in_front(fixture)
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W323`: everything this profile writes is under the declared subdirectory
+# ⛔ Everything this profile writes is under the declared subdirectory
 # --------------------------------------------------------------------------
 
 
 @pytest.mark.parametrize("fixture", ["depth2", "shared-origin"])
 def test_a_whole_corpus_lands_under_the_declared_subdirectory_and_nowhere_else(fixture):
-    # ⛔ `W323`, clause 5, the affirming half: placed over a real corpus rather
+    # ⛔ The affirming half: placed over a real corpus rather
     # than over one call, because "and nowhere else" is a property of the set.
     from studyforge.corpus.container import parse
     from studyforge.corpus.manifest import parse as parse_manifest
@@ -271,9 +271,8 @@ def test_a_whole_corpus_lands_under_the_declared_subdirectory_and_nowhere_else(f
 
 
 def test_a_plant_that_writes_beside_the_material_is_caught_by_name():
-    # ⛔ `W323`, clause 5, the refuting half — and the plant is not invented:
-    # it is this profile's own arithmetic from before the row, which is what
-    # the instrument has to catch if it is worth running.
+    # ⛔ The refuting half — the plant writes beside the material, which is
+    # what the instrument has to catch if it is worth running.
     class Loose(SiblingProfile):
         name = "loose"
 

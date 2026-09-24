@@ -63,7 +63,7 @@ def test_regenerating_from_disk_produces_identical_bytes(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⭐ both FND-04 fixtures build
+# ⭐ both fixture corpora build
 # --------------------------------------------------------------------------
 
 
@@ -72,9 +72,9 @@ def test_regenerating_from_disk_produces_identical_bytes(tmp_path):
 #: source-authoritative exercise before it can produce a section — and those
 #: are the only two properties a fixture here is declared to break.
 #:
-#: ⚠️ **Naming them gained five unit directories.** This used to say
-#: `depth1, depth2`, which dropped five corpora that build perfectly and break
-#: something else entirely. ⛔ `by directory name` is not a reason.
+#: ⚠️ **Named, not listed by directory**: a list of `depth1, depth2` would drop
+#: five corpora that build perfectly and break something else entirely.
+#: ⛔ `by directory name` is not a reason.
 ASSERTED = {"personal-data", "exercise-trust"}
 
 

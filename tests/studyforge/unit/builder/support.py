@@ -46,7 +46,7 @@ EXERCISE = {
 }
 
 
-#: ⭐ `W215`: one declared companion file, in the archive's own entry shape
+#: ⭐ One declared companion file, in the archive's own entry shape
 #: (`archive.document.MEDIA_ENTRY_KEYS`). ⚠️ `remote` is provenance and must
 #: never reach a page, so it is a value here rather than `None`.
 ATTACHMENT = {

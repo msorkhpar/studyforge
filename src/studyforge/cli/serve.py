@@ -30,7 +30,7 @@ codes, and `argparse`. ⛔ Nothing here knows any source (R1).
 
 ## ⭐ `--no-narration` serves the reading floor and edits no page
 
-⭐ The user's ruling, 2026-09-23: narration is optional. A corpus is served
+⭐ Narration is optional. A corpus is served
 without it when `--no-narration` is given or its `corpus.json` says
 `narration: false`; `--narration` voices it over that answer. ⛔ The player is in a
 built page's bytes, so a site built WITH narration is refused, each page named,

@@ -1,4 +1,4 @@
-"""`container_api: 3` — a unit whose practice came from a file of its own (`W428`).
+"""`container_api: 3` — a unit whose practice came from a file of its own.
 
 ⛔ **A sibling of `test_document.py` rather than an addition to it**, for the
 reason `test_document_origin.py` states: that module is against R11's test
@@ -72,7 +72,7 @@ def refusal(**overrides):
 
 
 # --------------------------------------------------------------------------
-# ⛔ the version this row mints
+# ⛔ the version a practice origin needs
 # --------------------------------------------------------------------------
 
 
@@ -137,7 +137,7 @@ def test_it_carries_the_region_shape_too():
 
 
 def test_a_unit_entry_keeps_its_key_order():
-    # ⛔ **Moved here from `test_document.py` by `W428`**, because the only
+    # ⛔ **Here and not in `test_document.py`**, because the only
     # shape that can assert the order is one with every optional key set — an
     # absent key is omitted rather than written null — and `practice_origin`
     # made that shape a `container_api` 3 one. ⚠️ The module it left is against

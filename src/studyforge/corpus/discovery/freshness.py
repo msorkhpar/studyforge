@@ -21,13 +21,11 @@ be able to say that the file on disk no longer matches.**
 
 ## ⛔ The signal is content, never a clock and never the filesystem
 
-⚠️ **`mtime` is not used here and must not be added**, and the argument is
-measured rather than felt. Measured 2026-09-09: an mtime verdict and a
-content verdict disagreed **in opposite directions at once**; re-measured 33
-minutes later the mtime verdict flipped FAIL→PASS while nothing in the tree had
-moved; and ⛔ **`git worktree add` resets every mtime**, so an mtime signal
-fails in every trial-merge worktree — which is where this project's own merges
-are measured. ⭐ *"And the right signal was already in the file."*
+⚠️ **`mtime` is not used here and must not be added.** An mtime verdict and a
+content verdict can disagree **in opposite directions at once**; an mtime
+verdict can flip while nothing in the tree has moved; and ⛔ **a fresh checkout
+or `git worktree add` resets every mtime**, so an mtime signal fails in every
+new checkout.
 
 ⭐ **So the right signal is put in the file.** `scan_sha256` is a digest of the
 scan's own findings — every artifact's path and identity, and every page that

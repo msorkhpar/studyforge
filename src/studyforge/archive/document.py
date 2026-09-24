@@ -260,11 +260,10 @@ def parse(text: str, where: str) -> dict:
 
     ## ⛔ A key this format does not define is refused, not carried
 
-    ⚠️ **Measured 2026-09-09, before this check existed:** a document carrying a
-    top-level `"exercise"` object validated **green — 0 findings, 0 unchecked
-    claims**. `content_sha256` covers `blocks` and nothing else, so an unknown
-    sibling key disturbs no digest and no count, and nothing asked whether it
-    was a key at all.
+    ⚠️ **Without this check** a document carrying an unknown top-level object
+    validates **green — 0 findings, 0 unchecked claims**. `content_sha256`
+    covers `blocks` and nothing else, so an unknown sibling key disturbs no
+    digest and no count.
 
     ⭐ **Tolerating an unknown key means tolerating a typo in a known one**, and
     a misspelled `exercise` is a grader the reader is never offered while the

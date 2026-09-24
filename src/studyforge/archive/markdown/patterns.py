@@ -9,10 +9,10 @@ copy is a second answer to "what is a fence".
 
 **Depends on.** `re`. Nothing in this package, so it can be read first.
 
-⚠️ **The comments are the deliverable as much as the expressions are.** Most
-of these were corrected after a real document was misread, and the correction
-is only followable if what broke is written beside it. A bare pattern invites
-somebody to "simplify" it back to the version that lost a lesson.
+⚠️ **The comments are the deliverable as much as the expressions are.** Each
+pattern's comment says what real material it must read and what a simpler
+pattern would misread, because a bare pattern invites somebody to "simplify"
+it into one that misreads that material.
 """
 
 from __future__ import annotations
@@ -73,7 +73,7 @@ MEDIA_EMBED = re.compile(
 )
 
 #: ⛔ The SOURCE inside a media embed is content, not markup. Dropping the
-#: wrapper whole once left a reader looking at "watch the video below" above
+#: wrapper whole leaves a reader looking at "watch the video below" above
 #: nothing.
 EMBED_SRC = re.compile(
     r"^<(?:source|iframe|embed)\b[^>]*\bsrc=[\"\']([^\"\']+)[\"\']",

@@ -41,9 +41,8 @@ is a fact about a disk; this is a fact about the corpus.
 
 ## ⚠️ The next seam in this module, named before it is needed
 
-⛔ **Do not pre-split it.** This file has the least headroom in the package —
-⚠️ **measured at 182 lines, where the survey that proposed it predicted ~290**
-— and when it needs a seam the division is already known: `practices` is asked
+⛔ **Do not pre-split it.** When this file needs a seam the division is
+already known: `practices` is asked
 by the **page** — *is there more to come?* — and `built_from` by **re-ingest
 detection** — *did the material change under us?* Two questions, two consumers,
 already two constants.

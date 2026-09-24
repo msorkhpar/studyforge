@@ -104,9 +104,9 @@ def test_the_verb_is_what_these_sites_are_served_by():
     assert VERBS["serve"].run is main
 
 
-#: ⛔ `W370`: ways a BUILT text could load the run client itself, and whether this check is
+#: ⛔ Ways a BUILT text could load the run client itself, and whether this check is
 #: the ONLY one that sees it. The rooted ones also name the origin; the relative one and
-#: the bare file name name none, and before `W370` the floor read them green.
+#: the bare file name name none, so the floor alone would read them green.
 SCRIPT = ".studyforge/assets/page.js"
 CLIENT_PLANTS = [
     ("index.html", '<script src="/api/v1/run/client.js" defer></script>', False),

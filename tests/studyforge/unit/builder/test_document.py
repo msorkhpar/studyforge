@@ -97,8 +97,8 @@ def test_provenance_carries_the_digest_and_the_ingest_date():
 
 
 def test_provenance_records_no_path_of_any_kind():
-    # ⛔ The lesson `workspace.json` paid for: a location is a fact about a
-    # disk. ⚠️ And Ruling 51 — the array is not called `sources`, `source` or
+    # ⛔ A location is a fact about a disk, and a provenance record names
+    # none. ⚠️ The array is not called `sources`, `source` or
     # `origin`, because `source` already means a corpus id one level up.
     document = build(material())
     assert "sources" not in document

@@ -33,7 +33,7 @@ lesson, build again* would be a failure to every script that ran it.
 
 ## ⭐ `--no-narration` builds the reading floor and keeps every clip
 
-⭐ Narration is optional (the user's ruling, 2026-09-23). `--narration` /
+⭐ Narration is optional. `--narration` /
 `--no-narration` override `corpus.json`'s `narration` for this build; off renders
 no player and copies no clip, touches none, and prints `SILENT` once.
 

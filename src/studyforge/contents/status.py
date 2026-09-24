@@ -112,7 +112,7 @@ class LocalStatus:
 def found(site: Site, corpus: str) -> frozenset[str]:
     """Return the unit keys `site` has a page for, for one corpus.
 
-    ⭐ **This is why the task depends on discovery at all.** The mapping from a
+    ⭐ **This is why the package depends on discovery at all.** The mapping from a
     scan's artifacts to the keys this document is written in is one line, and a
     line every consumer would otherwise retype — which R19 calls a hole in the
     thing that should have produced it.

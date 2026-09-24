@@ -34,9 +34,8 @@ class PlacementError(ValueError):
     exception object into itself either, which would carry an absolute path into
     a log.
 
-    ⚠️ **This sentence used to say the opposite**, and that is the finding
-    worth keeping: it *mandated* the echo, so a fix to the code without a fix
-    to the policy would have been undone by the next author, correctly, by the
-    module's own written rules. ⭐ `studyforge.describe` is how a refusal says
-    what arrived without saying what it said.
+    ⚠️ **This sentence is part of the rule**: the next author follows the
+    module's written policy, so the policy must be the one the code keeps.
+    ⭐ `studyforge.describe` is how a refusal says what arrived without saying
+    what it said.
     """

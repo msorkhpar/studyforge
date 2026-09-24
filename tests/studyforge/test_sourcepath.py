@@ -1,4 +1,4 @@
-"""What a path inside the source may be — the permitted set, exercised (Ruling 44).
+"""What a path inside the source may be — the permitted set, exercised.
 
 ⭐ **Every negative here is paired with the positive it is one character from.**
 A rule that refuses `~/x` is worth nothing if it also refuses `x`, and a rule
@@ -14,10 +14,8 @@ HOME = "/" + "home/jane"
 USERS = "/" + "Users/jane"
 
 #: `(value, the fault it is named by)`. ⛔ Three of these — the tilde forms
-#: aside — were refused by **neither** of the two forbidden lists this rule
-#: replaced, and one of them, `\\host\home\<name>`, was not in Ruling 44's
-#: table either: this module's own probe found it while measuring the two the
-#: ruling named.
+#: aside — pass a forbidden list of home-path shapes, which is why the rule is a
+#: permitted set.
 NOT_A_SOURCE_PATH = [
     ("", "an empty path"),
     ("   ", "an empty path"),
@@ -32,8 +30,8 @@ NOT_A_SOURCE_PATH = [
     ("file:///etc/passwd", "a path carrying a drive letter or scheme"),
     (r"\\host\home\jane\README.md", "a path written with Windows separators"),
     (r"material\jane\README.md", "a path written with Windows separators"),
-    # ⛔ Ruling 92. Accepted before this rule and meaningless: nothing ever
-    # read the part after the `#`, so the unit silently became the whole file.
+    # ⛔ Meaningless as a path: nothing reads the part after the `#`, so the
+    # unit would silently become the whole file.
     ("TestCases.md#3. Card issuance", "a path carrying a fragment"),
     ("TestCases.md#card-issuance", "a path carrying a fragment"),
     ("docs/TestCases.md#", "a path carrying a fragment"),

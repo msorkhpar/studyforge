@@ -1,4 +1,4 @@
-"""The R9 gate (SF-33): one implementation of "is this a version I speak?"."""
+"""The R9 gate: one implementation of "is this a version I speak?"."""
 
 import ast
 import inspect
@@ -209,7 +209,7 @@ def imports_the_guard(path: Path) -> bool:
 
 
 def test_no_module_reads_a_contract_field_without_importing_the_guard():
-    # ⛔ SF-33's acceptance: a test fails if a second version check appears in
+    # ⛔ The guard's acceptance: a test fails if a second version check appears in
     # the tree. R9 versions six contracts and five are unwritten, so this
     # fires the day somebody writes the sixth membership test by hand.
     root = repository_root()
@@ -253,19 +253,15 @@ def test_the_tree_check_catches_a_second_implementation(tmp_path):
 
 
 def test_sf_02_imports_the_guard_rather_than_keeping_its_own_copy():
-    # ⚠️ The check was written in `corpus/manifest/document.py` first and was
-    # correct there. What moved is the *test*; what stayed is the *set*,
-    # because which versions a manifest may declare is that contract's own
-    # business — SF-33 is explicitly out of scope for deciding it.
+    # ⚠️ The *set* stays in `corpus/manifest/document.py`, because which
+    # versions a manifest may declare is that contract's own business, and the
+    # version guard does not decide it.
     root = repository_root()
     source = (root / "src/studyforge/corpus/manifest/document.py").read_text(encoding="utf-8")
     assert imports_the_guard(root / "src/studyforge/corpus/manifest/document.py")
     assert "KNOWN_CORPUS_API" in source
     assert "isinstance(api, bool)" not in source
     # ⭐ A literal, not a read of `KNOWN_CORPUS_API`: the number this build
-    # writes moved from 1 to 2 when `content.not_material` landed, from 2 to 3
-    # when `media.max_files` did, from 3 to 4 when `runtimes` did, from 4 to 5
-    # when `narration` did and from 5 to 6 when `onboarding_doc` did, and an
-    # assertion built from the set it is pinning would have moved with it each
-    # time without anybody noticing.
+    # writes moves with every new key, and an assertion built from the set it
+    # is pinning would move with it without anybody noticing.
     assert CORPUS_API == 6

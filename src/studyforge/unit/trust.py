@@ -25,12 +25,11 @@ own reading as the source's grader is exactly what R5 forbids, and it is the
 kind of claim nobody notices is false until a reader trusts a green tick that
 was never earned.
 
-⚠️ **This rule used to be a list of forbidden pairs, and it failed open.**
-`FORBIDDEN = (("generated", "authoritative"),)` named one pair of the two that
-break R5 — so `user` + `authoritative` was **accepted**, and a grader the
-reader wrote could declare itself the source's own. Nothing raised. ⭐ The
-replacement is the same rule stated from the other side: `MAY_BE_AUTHORITATIVE`
-is a closed set of one, and **a provenance nobody has decided about is
+⚠️ **A list of forbidden pairs fails open.** One naming only
+`("generated", "authoritative")` accepts `user` + `authoritative`, and a grader
+the reader wrote could declare itself the source's own. ⭐ So the rule is
+stated from the other side: `MAY_BE_AUTHORITATIVE` is a closed set of one, and
+**a provenance nobody has decided about is
 non-authoritative automatically** rather than by somebody remembering to add a
 row. *Enumerate the legal, never the illegal* (R5, R6).
 

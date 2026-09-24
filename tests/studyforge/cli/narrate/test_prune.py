@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/cli/narrate/prune.py` (R12) — `W218`'s settlement, over the DISK.
+"""Mirror of `src/studyforge/cli/narrate/prune.py` (R12) — the prune, over the DISK.
 
 ⛔ **Every clause is a reading of the files under the copied corpus**, bytes
 and modification times, taken before and after — never `Pruned`'s own
@@ -135,7 +135,7 @@ def test_an_entry_naming_a_file_that_is_not_its_own_clip_is_held_and_the_file_su
 
 
 def test_an_entry_of_a_unit_no_longer_declared_is_reached_through_its_recorded_directory(tmp_path):
-    # ⛔ W226 clause 3 (W218/1): the record carries the directory, so the held count is 0.
+    # ⛔ The record carries the directory, so the held count is 0.
     root = narrated(tmp_path)
     dead, clip = plant_dead_entry(root, token="depth-one--unit-09")
     assert clip.is_file(), "the plant is not on disk; the reading is vacuous"
@@ -160,7 +160,7 @@ def test_a_version_1_entry_of_a_unit_no_longer_declared_is_still_held_and_kept(t
 
 
 def test_a_reworded_passages_old_clip_is_the_one_clip_a_prune_deletes(tmp_path, monkeypatch):
-    # ⛔ W226 clauses 1, 3 and 4 through the recording fake: narrate keeps the
+    # ⛔ Through the recording fake: narrate keeps the
     # old clip and names it; `--prune` deletes exactly it, and nothing is held.
     root = narrated(tmp_path)
     reword(root)

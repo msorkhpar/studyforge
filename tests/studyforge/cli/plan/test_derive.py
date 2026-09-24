@@ -29,7 +29,7 @@ from tests.support import repository_root
 
 
 def copy_fixture(name: str, tmp_path):
-    """A throwaway copy of one FND-04 corpus, so a test may edit its manifest."""
+    """A throwaway copy of one fixture corpus, so a test may edit its manifest."""
     root = tmp_path / name
     shutil.copytree(FIXTURES / name, root)
     return root
@@ -74,7 +74,7 @@ def independent_paths(root) -> list[str]:
 
 
 # --------------------------------------------------------------------------
-# ⛔ path for path, for both FND-04 fixtures
+# ⛔ path for path, for both fixture corpora
 # --------------------------------------------------------------------------
 
 
@@ -91,8 +91,8 @@ def test_the_arithmetic_is_one_page_per_container_and_one_directory_per_media_ki
     unit, plus the four a corpus gets once. A build that wrote a different
     number of things would have to disagree with this and not merely with the
     sort order. ⚠️ The kinds are counted from placement's own tuple and never
-    typed here: `W215` added a fifth, and a typed number would have been the
-    thing that went stale rather than the thing that caught it.
+    typed here, so a new kind moves this count with it rather than leaving a
+    typed number stale.
     """
     root = FIXTURES / name
     maps = sorted((root / ARCHIVE_DIR).rglob(CONTAINER_FILENAME))
@@ -101,12 +101,12 @@ def test_the_arithmetic_is_one_page_per_container_and_one_directory_per_media_ki
 
 
 def test_the_plan_declares_the_directory_an_attachment_is_copied_into():
-    """⛔ `W215` clause 1, Ruling 99: the plan names the path before a build writes it.
+    """⛔ R3: the plan names the path before a build writes it.
 
     ⭐ `depth1`'s unit 2 declares one companion file; this asserts the plan
     claims the directory that unit's page links into, by asking placement for
     the same path `generate.media` copies to. ⚠️ That the directory is created
-    only when the copy fills it is `W268`'s clause, asserted in
+    only when the copy fills it is asserted in
     `tests/studyforge/cli/plan/test_agreement.py` over every claimed path.
     """
     root = FIXTURES / "depth1"
@@ -184,8 +184,7 @@ def test_it_runs_on_a_repository_with_no_generated_output_present(name, tmp_path
     assert plan.exit_code == OK
     assert plan.paths
     # Nothing it names exists before the run, and nothing exists after it —
-    # ⛔ except the archive, which an adapter wrote (R2) and this plan read. Until
-    # `INT-06/6` this passed on the archive because the plan named a root nothing wrote.
+    # ⛔ except the archive, which an adapter wrote (R2) and this plan read.
     archive = f"{ARCHIVE_DIR}/"
     assert archive in plan.paths and (root / archive).is_dir()
     for path in plan.paths:
@@ -296,7 +295,7 @@ def test_a_sibling_unit_with_no_origin_is_refused_and_named(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W208` — nothing raises out of `plan_for`, whatever a container map says
+# ⛔ Nothing raises out of `plan_for`, whatever a container map says
 # --------------------------------------------------------------------------
 
 
@@ -310,10 +309,10 @@ def break_a_container_map(root, **fields):
 
 
 def test_a_wrong_depth_container_address_is_a_refusal_and_not_a_crash(tmp_path):
-    # ⛔ **The defect `W208` records.** `container.parse` raises SF-01's
+    # ⛔ `container.parse` raises `studyforge.address`'s
     # `AddressError` for an arity disagreement — argued for in the reader's own
-    # contract — and this site caught two of the three names that paragraph
-    # gives. A wrong-depth map therefore CRASHED the one command whose whole
+    # contract — and a site catching two of the three names that paragraph
+    # gives would CRASH the one command whose whole
     # contract is that nothing raises.
     root = copy_fixture("depth2", tmp_path)
     where = break_a_container_map(root, address=["basics"], titles=["Basics"])
@@ -349,8 +348,8 @@ def test_an_unreadable_container_map_is_a_refusal_and_not_a_crash(tmp_path):
 
 
 def test_no_refusal_carries_the_absolute_path_it_was_read_from(tmp_path):
-    # ⛔ R7: the crash this row fixes would have printed a traceback naming the
-    # absolute path, so the refusal that replaces it must not.
+    # ⛔ R7: a crash here would print a traceback naming the absolute path, so
+    # the refusal must not.
     root = copy_fixture("depth2", tmp_path)
     break_a_container_map(root, address=["basics"], titles=["Basics"])
 
@@ -364,6 +363,6 @@ def test_the_catch_list_is_the_readers_own_tuple_and_not_a_copy():
     # checked by reading the source, where a re-typed tuple would appear.
     source = (repository_root() / "src/studyforge/cli/plan/derive.py").read_text("utf-8")
     assert "except CONTAINER_RAISES as error:" in source
-    assert "except MANIFEST_RAISES as error:" in source  # ⭐ `W213`, the manifest site
+    assert "except MANIFEST_RAISES as error:" in source  # ⭐ the manifest site
     assert "except (ContainerError" not in source, "the catch list was retyped again"
     assert "except (ManifestError" not in source, "the catch list was retyped again"

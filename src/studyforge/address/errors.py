@@ -10,7 +10,7 @@ bad input, or repairs a value quietly (R6).
 **Depends on.** Nothing.
 
 ⛔ **Read the class docstring before writing a message that formats a value.**
-It carries the one rule this package's refusals have already got wrong once.
+It carries the one rule this package's refusals must keep.
 
 ⚠️ **It subclasses `ValueError`, and that is a deliberate divergence from the
 extraction source**, whose `LayoutError` and `RawDocError` subclass `Exception`
@@ -33,17 +33,13 @@ class AddressError(ValueError):
     """A value this package cannot accept as a slug, address or ordinal.
 
     ⛔ **The message never reproduces the offending value, and never says only
-    "invalid" either.** Both halves are required and this sentence used to
-    mandate the first of them: it said the message *"names the offending value
-    with `!r`"*, which is how every address segment, identity field and unit
-    ordinal in the framework came to inherit an R7 echo.
+    "invalid" either.** Both halves are required: a message that names the
+    offending value with `!r` would pass an R7 echo to every address segment,
+    identity field and unit ordinal in the framework.
 
-    ⚠️ **Fixing the code and leaving this sentence would have been worse than
-    fixing neither.** The next author to touch `slug.py` would have read the
-    module's own documented policy and put the echo back, correctly by the
-    rules as written. ⭐ A commit that tightens a rule brings the whole tree
-    into compliance in the same commit — and the tree includes the sentence
-    that authorised the defect.
+    ⚠️ **This sentence is part of the rule.** The next author to touch
+    `slug.py` reads the module's documented policy and follows it, so the
+    policy written here must be the one the code keeps.
 
     ⭐ **What a refusal owes the reader instead** (R6, and it is more
     actionable than the value was): the **field** that was wrong — `what` —

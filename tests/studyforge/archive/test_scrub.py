@@ -1,4 +1,4 @@
-"""The archive's personal-data gate (SF-08, R7).
+"""The archive's personal-data gate (R7).
 
 ⚠️ **This file is swept by the repository hygiene check like every other
 tracked file**, and that check has no allow-list for home paths. So the
@@ -97,8 +97,8 @@ BENIGN = "see docs/conventions/ and /var/lib/home/cache and $HOME/.config"
 def test_the_gate_leaves_a_home_segment_under_a_longer_prefix_alone():
     # ⛔ The lookbehind exists for this: `/home` mid-path names nobody, and a
     # gate that *refused* it would refuse a lesson about container images or
-    # CI checkouts. ⚠️ Ruling 44 called `/export/home/<name>` passing this
-    # gate a live hole — and it is — but it is **the same shape as the line
+    # CI checkouts. ⚠️ `/export/home/<name>` passing this gate is a live
+    # hole, but it is **the same shape as the line
     # above**, so the gate cannot refuse one without refusing the other. That
     # is why the layer protecting a path is `studyforge.sourcepath` and not
     # this one, and why the residual is written down rather than closed.
@@ -218,7 +218,7 @@ def test_where_has_no_default():
 
 
 def test_the_gate_reaches_a_leak_nested_in_containers():
-    # The SF-07 vocabulary nests: a quote holds blocks, a list holds items, a
+    # The block vocabulary nests: a quote holds blocks, a list holds items, a
     # table holds rows. Anything that read one named field at a time would be
     # wrong for the vocabulary we have and wrong again for the next type.
     document = {
@@ -336,13 +336,10 @@ def test_and_the_serialised_form_would_have_matched():
 
 def test_the_pattern_set_is_exactly_the_four_environmental_shapes():
     # ⛔ Every one reaches a document because of *whose machine and whose
-    # account ran the build*. ⚠️ This test said **three** and its comment said
-    # "a fourth entry needs that argument made for it" — and the argument was
-    # made by Ruling 47, from the other side: the repository hygiene check had
-    # swept `<host>.local` from the start and this gate never did. ⛔ A machine
-    # name is personal data in an archive document exactly as much as in a
-    # source file, so the omission was drift rather than a decision. A fifth
-    # entry still needs the argument made for it.
+    # account ran the build*. ⛔ A machine name is personal data in an archive
+    # document exactly as much as in a source file, and the repository
+    # hygiene check sweeps `<host>.local` too, so both gates recognise it. A
+    # fifth entry needs the argument made for it.
     assert [name for name, _pattern, _placeholder in SHAPES] == [
         "home path",
         "local hostname",
@@ -355,7 +352,7 @@ def test_a_tilde_username_is_the_same_shape_as_a_slash_home_path():
     # ⭐ **Two spellings of one shape, not a new entry.** `~<name>/notes` and
     # `/home/<name>/notes` name the same account by the same structural
     # anchor, so the ruling above — three environmental shapes — is untouched
-    # covering it. ⛔ Ruling 44 reported this one as passing clean.
+    # covering it.
     assert shape_in(f"built from {TILDE_USER}/material") == "home path"
     assert scrub(f"built from {TILDE_USER}/material") == (
         f"built from {HOME_PATH_PLACEHOLDER}/material"
@@ -551,7 +548,7 @@ def test_a_build_output_line_is_scrubbed_before_it_reaches_a_stream():
     assert_clean(emitted, "javac stderr")
 
 
-# ⭐ **W7's tree-wide half lives in `tests/test_gate_coverage.py`**, not here:
+# ⭐ **The tree-wide half lives in `tests/test_gate_coverage.py`**, not here:
 # *"every module that decodes a document calls this gate"* is a claim about the
 # tree rather than about this module's behaviour, and this file is 4 lines from
 # R11's test ceiling. ⚠️ It is one file, one claim — read it when changing what

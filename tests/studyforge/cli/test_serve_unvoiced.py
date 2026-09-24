@@ -1,7 +1,7 @@
-"""`studyforge serve` with narration off (`W460`), in both forms, over clips on disk.
+"""`studyforge serve` with narration off, in both forms, over clips on disk.
 
-⭐ **The user's ruling, 2026-09-23:** *"the voice might be cgenerated but still
-not serving them would be an option"*. Read here over real connections:
+⭐ **Narration is optional**: clips may be generated and still not served.
+Read here over real connections:
 
 - off serves no clip — a typed clip address answers `404` — and says so;
 - off over a site BUILT with narration refuses, naming each page and the fix,

@@ -13,7 +13,7 @@ def test_states_its_contract():
 def test_the_package_is_tracked_despite_the_verb_being_called_build():
     # ⛔ The hazard the package name exists to avoid: `.gitignore` carries a
     # bare `build/`, which matches at every depth, so `cli/build/` would be
-    # untracked from the moment it was written and every check that walks the
+    # untracked from the moment it is written and every check that walks the
     # tracked tree would read it as absent.
     ignore = (repository_root() / ".gitignore").read_text("utf-8").splitlines()
     assert "build/" in [line.strip() for line in ignore], (

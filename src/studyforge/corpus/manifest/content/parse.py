@@ -231,11 +231,10 @@ def _reject_absolute(pattern: str, where: str) -> None:
     """Refuse a path that escapes the source root — and never quote it (R7).
 
     ⛔ **This branch fires *because* the value is an absolute or escaping path,
-    which is precisely when it carries a home directory.** It once quoted the
-    value: the check written to keep a path out of the corpus put it in the
-    log instead. ⚠️ **Worse than the slug refusal's echo** — `require_slug` fired on
-    "not a slug", which is only *sometimes* a path; this one tests
-    `startswith("/")`.
+    which is precisely when it carries a home directory.** Quoting the value
+    would put the path the check keeps out of the corpus into the log instead.
+    ⚠️ **Worse than a slug refusal's echo** — `require_slug` fires on "not a
+    slug", which is only *sometimes* a path; this one tests `startswith("/")`.
 
     ⭐ The fault is named instead, and it is the actionable half: a reader who
     wrote `/opt/material/x` knows what they wrote and needs to be told which

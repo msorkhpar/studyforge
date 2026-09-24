@@ -24,7 +24,7 @@ def test_a_depth_one_corpus_builds_one_level_of_groups():
 
 
 def test_a_depth_two_corpus_builds_two_levels_from_the_same_code():
-    # ⭐ SF-13's acceptance in one assertion: one builder, both depths.
+    # ⭐ The package's acceptance in one assertion: one builder, both depths.
     built = fixture_contents("depth2")
     assert built.depth == 2
     assert [group.segment for group in built.groups] == ["advanced", "basics"]
@@ -83,7 +83,7 @@ def test_units_keep_the_order_their_container_declares():
 
 
 def test_the_contents_count_what_is_declared_and_never_what_exists():
-    # ⛔ The short parse with no symptom, in this task's own terms. Nothing in
+    # ⛔ The short parse with no symptom, in this package's own terms. Nothing in
     # `build` opens a file, so an ungenerated unit cannot go missing here.
     manifest = a_manifest()
     container = a_container(

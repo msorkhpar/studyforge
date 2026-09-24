@@ -1,10 +1,9 @@
 """Mirror of `src/studyforge/corpus/__init__.py` (R12).
 
-⚠️ The `RAISES` sweep that stood here is now `tests/test_raises_convention.py`.
-⛔ It was never this package's to hold: its population is now DERIVED from every
-package that exports a tuple, so it reaches `generate`, `progress` and `serve`
-as well, and a tree-wide instrument living in one package's mirror is how it
-came to range over `corpus.*` alone.
+⚠️ The `RAISES` sweep is `tests/test_raises_convention.py`, not this package's:
+its population is DERIVED from every package that exports a tuple, so it
+reaches `generate`, `progress` and `serve` as well, and a tree-wide
+instrument living in one package's mirror would range over `corpus.*` alone.
 """
 
 from __future__ import annotations

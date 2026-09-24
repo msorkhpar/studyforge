@@ -7,10 +7,8 @@ each of them in a message that names the field and the fault.
 **How you use it.** `required_text`, `optional_text`, `optional_path`,
 `optional_origin`, `optional_slug`, `optional_label`, and
 `is_filename_component` for the one permitted-set rule a filename component
-obeys. ⭐ `said` is gone: it is
-`studyforge.describe.describe`, which now carries the one behaviour this
-module had that the extraction had lost — **an empty string is named as
-one**.
+obeys. ⭐ A value is described by `studyforge.describe.describe`, which names
+**an empty string as one**.
 
 **Depends on.** `studyforge.address` for what a slug is,
 `studyforge.sourcepath` for what a source path is, `studyforge.describe` for
@@ -20,16 +18,16 @@ how a value is named, and this package's `errors`.
 this module refuses most often is `origin`, and **the one shape being refused
 there is precisely the shape that carries a home directory** — so a message
 quoting it would copy personal data into a log *from the check that exists to
-catch it* (R7). Placement's first attempt did exactly that.
+catch it* (R7).
 
-⭐ **The rule has one home and this module no longer keeps a copy.** It kept
-the third one, and the three disagreed about integers, booleans and the empty
-string — none of it decided by anybody, all of it what a third copy does.
+⭐ **The rule has one home and this module keeps no copy**: copies of it
+disagree about integers, booleans and the empty string, and nobody decides
+which.
 
-⚠️ **Twice over, now.** `optional_path` also kept its own spelling of what a
-source path may be, and `placement.profile.origin_directory` kept another; the
-two forbidden lists disagreed and the gap between them was reachable (Ruling
-44). Both now ask `studyforge.sourcepath`, which states the permitted set
+⚠️ **The same holds for paths.** `optional_path` and
+`placement.profile.origin_directory` both ask `studyforge.sourcepath`, because
+two forbidden lists disagree and the gap between them is reachable; it states
+the permitted set
 instead. ⭐ Each package keeps its own error type and its own sentence — the
 rule is `sourcepath`'s, the document is this contract's.
 """
@@ -47,23 +45,21 @@ from studyforge.sourcepath import SOURCE_PATH_DESCRIBED, source_path_fault
 #:
 #: ⛔ A forbidden list is an **open set and cannot be finished**: every
 #: character nobody thought of is permitted by default, so it is wrong the
-#: moment it is written and stays wrong silently. This module carried one
-#: (`"/\\ \t\n\r"`), re-typed by hand in `placement.names`, and it was wrong
-#: in duplicate past two reviews and a gate. Measured 2026-09-09 on the merged
-#: tree, **seven shapes passed both copies into a filename**: a vertical tab, a
+#: moment it is written and stays wrong silently. A list such as
+#: `"/\\ \t\n\r"` passes **seven shapes into a filename**: a vertical tab, a
 #: form feed, a non-breaking space, U+2028, `"`, `:` and `*`. Two of those —
-#: `:` and `"` — break the `file://` floor (R8), so the open set was not a
+#: `:` and `"` — break the `file://` floor (R8), so an open set is not a
 #: tidiness question.
 #:
 #: ⭐ **Derived from `is_slug`, never re-typed.** The permitted class is *what a
 #: slug accepts*, plus `.` so `4.4.1` passes — and it is computed by asking, so
 #: a second spelling of the slug rule cannot exist here to drift from the
-#: first. ⛔ A constant exported and then re-typed is what this replaces; a
-#: constant *derived* cannot be re-typed at all. `tests/.../test_fields.py`
+#: first. ⛔ A constant exported can be re-typed; a constant *derived* cannot
+#: be re-typed at all. `tests/.../test_fields.py`
 #: pins the resulting set literally, so a change to `is_slug` is a decision
 #: somebody makes rather than one that arrives.
 #:
-#: ⚠️ **The derivation itself now lives once, in `address.slug`**, and this is
+#: ⚠️ **The derivation itself lives once, in `address.slug`**, and this is
 #: `SLUG_PERMITTED | {"."}`. A refusal needs the same set to describe a slug fault
 #: without reproducing the value; two copies of one *computation* is the same
 #: defect as two copies of one constant, one step earlier.

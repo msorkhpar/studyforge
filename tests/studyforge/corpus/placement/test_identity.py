@@ -1,7 +1,7 @@
 """Mirror of `src/studyforge/corpus/placement/identity.py` (R12).
 
-⭐ Both halves and the round-trip are tested **here, a milestone before SF-04
-reads any of it** — which is the whole reason the block is defined in SF-03.
+⭐ Both halves and the round-trip are tested **here, a milestone before discovery
+reads any of it** — which is the whole reason the block is defined in placement.
 """
 
 from __future__ import annotations
@@ -106,7 +106,7 @@ def test_the_block_is_found_whatever_order_the_attributes_are_in():
 
 
 def test_an_artifact_with_no_identity_block_is_reported_by_name():
-    # ⛔ R6, and it is SF-04's acceptance too: never skipped silently.
+    # ⛔ R6, and it is discovery's acceptance too: never skipped silently.
     with pytest.raises(PlacementError, match="carries no identity block"):
         identity.parse("<html><body>a page nobody stamped</body></html>", 2, "16-x/page.unit.html")
 
@@ -146,10 +146,10 @@ def test_a_block_that_is_not_json_is_refused_without_quoting_it():
 
 
 def test_reading_a_document_raises_this_packages_error_including_for_arity():
-    # ⚠️ **Changed under review, and the contract is stronger for it.** SF-01
-    # still owns the comparison; what moved is the front door. The delegation
+    # ⚠️ The address package owns the comparison; this package owns the front
+    # door. The delegation
     # belongs where a CALLER asks a question — `Manifest.parse_key` — not
-    # where this package READS A FILE: SF-04 walks this function over every
+    # where this package READS A FILE: discovery walks this function over every
     # artifact in a site, and a caller reading a thousand files must be able
     # to catch one type.
     with pytest.raises(PlacementError, match="the corpus declares"):
@@ -158,26 +158,25 @@ def test_reading_a_document_raises_this_packages_error_including_for_arity():
 
 @pytest.mark.parametrize("segments", [[1, 2], ["a", None], [["a"]], [], "a/b", {}, None])
 def test_no_malformed_address_escapes_as_some_other_exception(segments):
-    # ⛔ The defect this replaces: `"/".join(segments)` let a `TypeError` out
-    # on three of these, from the path SF-04 walks over every file in a site.
+    # ⛔ A bare `"/".join(segments)` would let a `TypeError` out on three of
+    # these, from the path discovery walks over every file in a site.
     document = dict(UNIT.document, address=segments)
     with pytest.raises(PlacementError):
         identity.from_document(document, 2)
 
 
 def test_a_refusal_never_emits_the_address_segment_it_refuses():
-    # ⛔ R7, rubric §1f. This reads a file somebody else wrote, so a segment
-    # can be an absolute path — and SF-01's own message, correct where a
+    # ⛔ R7. This reads a file somebody else wrote, so a segment
+    # can be an absolute path — and the address package's own message, correct where a
     # caller passed a literal, would echo it into a build log.
     found = "/" + "home/somebody/material"
     document = dict(UNIT.document, address=[found])
-    # ⛔ **Ruling 58: the refusal is a `PersonalDataLeak` and NOT a
-    # `PlacementError`.** W7 moved which refusal fires — the personal-data gate
-    # runs over the whole block before any field is read — and W27 moved which
-    # *type* carries it: a caller sweeping a site catches `PlacementError` per
-    # artifact and carries on, so an R7 refusal inside that family would be
-    # logged as one more file that could not be placed. ⚠️ The claim the test
-    # was written for is unchanged and still asserted below.
+    # ⛔ **The refusal is a `PersonalDataLeak` and NOT a
+    # `PlacementError`.** The personal-data gate runs over the whole block
+    # before any field is read, and the refusal keeps its own *type*: a caller
+    # sweeping a site catches `PlacementError` per artifact and carries on, so
+    # an R7 refusal inside that family would be logged as one more file that
+    # could not be placed.
     with pytest.raises(PersonalDataLeak) as raised:
         identity.from_document(document, 1)
     assert not isinstance(raised.value, PlacementError)
@@ -187,9 +186,9 @@ def test_a_refusal_never_emits_the_address_segment_it_refuses():
 
 
 def test_a_segment_that_is_not_a_slug_is_still_refused_by_name():
-    # ⭐ The other half, so W7's gate cannot be read as having replaced SF-01's
-    # check. A segment that is merely not a slug carries no personal data and
-    # reaches the address model exactly as before.
+    # ⭐ The other half, so the personal-data gate cannot be read as having
+    # replaced the address package's check. A segment that is merely not a
+    # slug carries no personal data and reaches the address model as before.
     document = dict(UNIT.document, address=["Getting Started"])
     with pytest.raises(PlacementError) as raised:
         identity.from_document(document, 1)

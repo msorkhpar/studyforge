@@ -1,9 +1,10 @@
-"""`W267`: `plan` against what `build` actually writes, over a corpus without output and with it.
+"""`plan` against what `build` actually writes, over a corpus without output and with it.
 
-⛔ **The golden test compares `plan` with its own golden**, which is why `W268/1` stayed
-hidden. ⭐ These build each fixture copy into its own root and compare `plan` with the
-build's own record, on the tree profile and the sibling profile. Nothing under `tests/`
-is written: every tree is a copy under `tmp_path`.
+⛔ **The golden test compares `plan` with its own golden**, which cannot see a
+path the build writes differently. ⭐ These build each fixture copy into its own
+root and compare `plan` with the build's own record, on the tree profile and the
+sibling profile. Nothing under `tests/` is written: every tree is a copy under
+`tmp_path`.
 """
 
 from __future__ import annotations
@@ -54,7 +55,7 @@ def test_WITH_output_no_path_on_disk_is_a_create(name, tmp_path):
 
 @pytest.mark.parametrize("name", BUILT)
 def test_the_plan_lists_what_the_BUILD_writes_and_nothing_it_does_not(name, tmp_path):
-    """⛔ `W268/1`: asserted against what `build` wrote, never against the plan's own golden."""
+    """⛔ Asserted against what `build` wrote, never against the plan's own golden."""
     root = copy_fixture(name, tmp_path)
     before = plan_for(root)
     wrote = {path.as_posix() for path in write_site(root, root).paths}

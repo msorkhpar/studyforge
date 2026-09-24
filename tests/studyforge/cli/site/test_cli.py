@@ -70,7 +70,7 @@ def test_it_builds_a_corpus_into_the_named_directory(tmp_path):
 
 
 def test_it_builds_the_deeper_fixture_too(tmp_path):
-    # ⛔ Both `FND-04` fixtures, so a command that only worked on the flat one
+    # ⛔ Both fixture corpora, so a command that only worked on the flat one
     # could not pass.
     code, _ = invoke(str(FIXTURES / "depth2"), "--out", str(tmp_path))
     assert code == OK
@@ -92,7 +92,7 @@ def test_a_second_run_rebuilds_its_own_output_and_exits_zero(tmp_path):
 
 
 def test_a_rebuild_prints_each_path_exactly_once(tmp_path):
-    """⛔ Ruling 99: the report is a path-for-path diff against `studyforge
+    """⛔ The report is a path-for-path diff against `studyforge
     plan`, and a path printed as both `wrote` and `replace` breaks the diff."""
     invoke(str(FIXTURES / "depth1"), "--out", str(tmp_path))
     _, printed = invoke(str(FIXTURES / "depth1"), "--out", str(tmp_path))
@@ -161,7 +161,7 @@ def test_the_refusal_message_is_not_prefixed_with_the_corpus_root(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W212` — a declaration the build cannot read is refused, never raised
+# ⛔ A declaration the build cannot read is refused, never raised
 # --------------------------------------------------------------------------
 
 #: ⛔ Assembled rather than written whole (R7's sweep reads this file).
@@ -222,8 +222,8 @@ def test_the_catch_list_is_the_build_s_own_tuple_and_not_a_copy():
 
 
 def test_a_mirrored_series_builds_one_page_per_unit_and_every_instrument_agrees(tmp_path):
-    # ⚠️ `W254`, measured at `973fc67`: `validate` refused this layout while `plan`
-    # and a build exited 0, and the build replaced two of its four pages.
+    # ⚠️ Every instrument must agree on this layout: a build that replaced two
+    # of its four pages while `plan` exited 0 would pass unseen.
     root = corpora.mirrored(tmp_path / "c")
     out = tmp_path / "site"
     out.mkdir()
@@ -262,7 +262,7 @@ def test_a_path_two_units_claim_is_refused_by_name_by_plan_and_build_and_nothing
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W314` — a crossed media limit stops the build and says so (§5)
+# ⛔ A crossed media limit stops the build and says so (§5)
 # --------------------------------------------------------------------------
 
 #: The bytes the depth1 fixture's own media weighs once a build has copied it

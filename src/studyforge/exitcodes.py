@@ -16,13 +16,11 @@ imports this module in its own body, so a dependency here on any stage would
 load that stage with the installed command — the defect this module exists to
 remove.
 
-## ⛔ Why `2` moved out of `validate` and `0`/`1` did not
+## ⛔ Why `2` lives outside `validate` and `0`/`1` do not
 
-⚠️ **The command once resolved a verb only when it was dispatched, yet
-imported `UNUSABLE` from `validate.cli` anyway**, so `studyforge --help` still
-loaded the whole validator. The property held for four verbs of five, and the
-isolation test had to hold `validate` exempt — an exemption that was a defect's
-shadow rather than a design.
+⚠️ **The command resolves a verb only when it is dispatched**, so importing
+`UNUSABLE` from `validate.cli` would make `studyforge --help` load the whole
+validator, and the isolation test would have to hold `validate` exempt.
 
 ⭐ **The split is by what the code SAYS, not by who happened to write it first.**
 `0` and `1` are `validate`'s verdicts about an archive (`validate.report`),

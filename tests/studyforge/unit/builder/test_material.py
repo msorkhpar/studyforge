@@ -104,7 +104,7 @@ def test_a_document_of_an_unknown_kind_is_refused():
 
 
 def test_a_document_carrying_personal_data_is_refused_on_the_way_in(tmp_path):
-    # ⛔ Ruling 50: reading a file off disk is a trust boundary. ⭐ Asserted by
+    # ⛔ Reading a file off disk is a trust boundary. ⭐ Asserted by
     # delegation — `archive.document.load` owns R7 and this module adds no
     # second spelling of it.
     directory = tmp_path / "unit-01"

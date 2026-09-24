@@ -79,16 +79,15 @@ def test_require_slug_returns_the_value_unchanged():
 
 
 def test_require_slug_refuses_a_title_and_says_so():
-    # ⛔ SF-01's acceptance: a title passed where a slug is required raises.
+    # ⛔ The package's acceptance: a title passed where a slug is required raises.
     # ⚠️ And the message has to be actionable — "invalid" would send the
     # reader to the wrong place, because the value is not malformed, it is
     # the wrong KIND of string.
     #
-    # ⛔ This test used to assert the message contained "Getting Started".
-    # That assertion was the R7 defect, pinned: the branch fires BECAUSE the
-    # value is not a slug, which is exactly when it may be an absolute path
-    # (Ruling 14). What replaces the echo is below, and it is more actionable
-    # than the echo was.
+    # ⛔ The message never contains "Getting Started".
+    # Echoing it would be an R7 defect: the branch fires BECAUSE the value is
+    # not a slug, which is exactly when it may be an absolute path. What the
+    # refusal says instead is below, and it is more actionable than an echo.
     with pytest.raises(AddressError) as raised:
         require_slug("Getting Started", "address segment 1 of 2")
     message = str(raised.value)
@@ -100,10 +99,10 @@ def test_require_slug_refuses_a_title_and_says_so():
 
 
 def test_the_diagnosis_survives_the_removal_of_the_echo():
-    # ⭐ The half that makes W1 a fix rather than a deletion. A refusal that
-    # says nothing is a different defect from one that says too much, and
-    # Ruling 13/14 required both to be avoided at once: "did you pass a
-    # title?" is the most useful sentence in this module.
+    # ⭐ The refusal keeps its diagnosis while it drops the value. A refusal
+    # that says nothing is a different defect from one that says too much,
+    # and both are avoided at once: "did you pass a title?" is the most
+    # useful sentence in this module.
     for title in ["Getting Started", "Введение в потоки", "Café Décor"]:
         with pytest.raises(AddressError) as raised:
             require_slug(title, "segment")
@@ -147,7 +146,7 @@ def test_slug_fault_is_total_over_every_non_slug_it_can_meet():
 
 
 def test_the_permitted_set_is_derived_and_pinned():
-    # ⛔ Ruling 8/12: the class is asked of `is_slug`, never re-typed — and the
+    # ⛔ A permitted set (R8): the class is asked of `is_slug`, never re-typed — and the
     # resulting set is pinned literally, so widening `is_slug` is a decision
     # somebody makes rather than one that arrives.
     assert "".join(sorted(SLUG_PERMITTED)) == "-0123456789abcdefghijklmnopqrstuvwxyz"

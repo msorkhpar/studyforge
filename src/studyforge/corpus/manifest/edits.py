@@ -28,11 +28,10 @@ R3 names them, and this module refuses each **however declared**:
    ignore file needs nothing from the root one, and it works.
 2. **Any version-control configuration.** `.git/`, `.gitattributes`,
    `.gitmodules`.
-3. ⭐ **Any file the material's own reader depends on as content** — and this
-   is the one that used to be unenforceable prose. It is checkable now,
-   because `content` exists: **a file that the corpus's own `content` policy
-   classifies as INCLUDED is content**, and editing it is refused. That is why
-   X1 and R3 belong in one release. ⚠️ One designed shape is the live case: its
+3. ⭐ **Any file the material's own reader depends on as content.** It is
+   checkable because `content` exists: **a file that the corpus's own
+   `content` policy classifies as INCLUDED is content**, and editing it is
+   refused. ⚠️ One designed shape is the live case: its
    `permitted_edits` is `[]` and its `README.md` is material, so the check
    holds it there structurally rather than by anyone remembering.
 

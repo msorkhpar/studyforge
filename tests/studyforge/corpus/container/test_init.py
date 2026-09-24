@@ -1,4 +1,4 @@
-"""The container-map package's contract and public surface (SF-05).
+"""The container-map package's contract and public surface.
 
 ⚠️ The home-path material below is **assembled at run time** rather than
 written as a literal: this file is swept by the repository hygiene check like
@@ -45,8 +45,8 @@ def test_the_public_surface_is_declared_and_complete():
 
 
 def test_the_package_builds_no_writer():
-    # ⛔ SF-05's scope, asserted rather than promised: "this task builds the
-    # reader and the round-trip guarantee. It builds no writer." Nothing here
+    # ⛔ The package's scope, asserted rather than promised: a reader and the
+    # round-trip guarantee, and no writer. Nothing here
     # opens a file for writing, and only `load` reads one.
     root = repository_root() / "src/studyforge/corpus/container"
     for path in sorted(root.glob("*.py")):
@@ -68,7 +68,7 @@ def test_only_one_module_reads_from_disk():
 
 
 # --------------------------------------------------------------------------
-# `RAISES` — the tuple a caller catches (`W208`)
+# `RAISES` — the tuple a caller catches
 # --------------------------------------------------------------------------
 
 
@@ -122,7 +122,7 @@ REACHES = {
 def test_the_tuple_names_the_three_the_contract_argues_for():
     # ⛔ `errors.py` argues for `ContainerError` plus two deliberate
     # pass-throughs. A caller catches the tuple instead of re-reading that
-    # paragraph, which is the mistake `W208` records.
+    # paragraph and dropping a member.
     assert [error.__name__ for error in container.RAISES] == [
         "ContainerError",
         "AddressError",
@@ -142,7 +142,7 @@ def test_every_member_is_reachable_from_parse(name):
 
 @pytest.mark.parametrize("name", sorted(REACHES))
 def test_nothing_outside_the_tuple_escapes_parse(name):
-    # ⭐ The other half, and the one that would have caught `W208`: catching
+    # ⭐ The other half: catching
     # the tuple is enough, for every refusal shape this file can build.
     try:
         container.parse(REACHES[name], "container.json", a_manifest())

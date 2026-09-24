@@ -1,9 +1,8 @@
-"""`W109`: `origin` has ONE reader, `fields.optional_origin`, as a standing tree property.
+"""`origin` has ONE reader, `fields.optional_origin`, as a standing tree property.
 
-⭐ **The settlement.** A test helper once took `origin` raw out of a document and
-handed `sibling` a dict the moment a fixture used Ruling 92's region shape. The fix
-went through the one reader; this module makes that a property of the tree instead of a reading at
-one ref.
+⭐ **Why.** A helper that takes `origin` raw out of a document hands `sibling` a
+dict the moment a fixture uses the region shape. Every read goes through the one
+reader, and this module makes that a property of the tree.
 
 ⛔ **A guard that cannot fail proves nothing**, so the synthesised plants below
 are the inhabitation reading: each shape of second reader is
@@ -76,7 +75,7 @@ TO_PLACEMENT = (
 )
 
 SECOND_READERS = {
-    "tests, W95/3's own shape": ("tests/planted.py", TO_PLACEMENT.format('unit.get("origin")')),
+    "tests, a raw read": ("tests/planted.py", TO_PLACEMENT.format('unit.get("origin")')),
     "src, the same": ("src/studyforge/planted.py", TO_PLACEMENT.format('unit.get("origin")')),
     "subscript": ("tests/planted.py", TO_PLACEMENT.format('unit["origin"]')),
     "pop": ("tests/planted.py", TO_PLACEMENT.format('unit.pop("origin")')),

@@ -1,8 +1,8 @@
 """Mirror of `src/studyforge/archive/markdown/__init__.py` (R12).
 
 ⭐ **The acceptance that matters is here:** authored Markdown parsed by this
-reader must produce, block for block, the archive documents FND-04 ruled and
-committed. Those fixtures are the vocabulary's definition; a reader that agrees
+reader must produce, block for block, the fixture corpora's archive documents,
+as committed. Those fixtures are the vocabulary's definition; a reader that agrees
 with its own tests and disagrees with them has re-ruled the vocabulary by
 accident.
 """
@@ -31,7 +31,7 @@ def fixture_blocks(relative: str) -> list[dict]:
 #: hold blocks — so a fixture declared to break `vocabulary` is one this module
 #: is not entitled to read. ⚠️ No fixture declares it today and the exclusion is
 #: empty; naming it costs nothing and is what makes the day one arrives a
-#: decision rather than a surprise. ⛔ It used to name nothing at all.
+#: decision rather than a surprise.
 ASSERTED = {"vocabulary"}
 
 
@@ -187,7 +187,7 @@ The next corpus in this fixture set does have exercises.
 def test_authored_markdown_reproduces_the_committed_document(source, relative):
     # ⭐ Not "does the parser agree with itself" but "does it agree with the
     # ruled vocabulary" — block for block, key for key, on the two documents
-    # FND-04 built for this reader.
+    # the fixture corpora carry for this reader.
     assert parse(source) == fixture_blocks(relative)
 
 

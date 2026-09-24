@@ -11,7 +11,7 @@ import pytest
 from studyforge.corpus.manifest import MIN_WHY_CHARS, ManifestError, NotMaterial, parse_content
 from tests.studyforge.corpus.manifest.content.policies import WHY, policy, scaffolding
 
-#: ⭐ Ruling 90's own three examples, copied rather than paraphrased. Rule 1a
+#: ⭐ The three worked examples of `not_material`, copied rather than paraphrased. Rule 1a
 #: was derived from what a loose glob does to rule 4, **not** fitted to these;
 #: they are here so that a later tightening of the rule that would have
 #: refused the ruling's own examples fails loudly.
@@ -134,7 +134,7 @@ def test_a_wildcard_inside_a_directory_name_is_refused():
 def test_the_rule_1a_refusal_does_not_reproduce_the_pattern():
     # ⭐ The actionable half is which rule was broken; the author has what
     # they wrote in front of them, and a refusal that echoes a path is where
-    # a home directory ends up in a build log (R7, W19).
+    # a home directory ends up in a build log (R7).
     with pytest.raises(ManifestError) as raised:
         scaffolding(("[CLR]*", WHY))
     assert "[CLR]*" not in str(raised.value)
@@ -154,7 +154,7 @@ def test_a_not_material_entry_must_say_why():
 def test_a_nineteen_character_reason_is_refused_and_a_twenty_character_one_is_not():
     # ⛔ The boundary in literal characters, never `MIN_WHY_CHARS * "x"`: an
     # assertion built from the constant it pins passes whatever the constant
-    # becomes, which is a defect this project has now caught twice.
+    # becomes.
     short, long = "the repo's own note", "the repo's own notes"
     assert (len(short), len(long)) == (19, 20)
     with pytest.raises(ManifestError, match="at least 20 characters"):

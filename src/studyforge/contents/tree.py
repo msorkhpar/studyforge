@@ -18,7 +18,7 @@ table of contents ends up short by the units nobody has generated yet.
 
 ## ⛔ The contents count what the corpus DECLARES, never what a scan FOUND
 
-⚠️ **This is the short-parse defect in this task's own terms.** A contents
+⚠️ **This is the short-parse defect in this package's own terms.** A contents
 document sourced from discovery would list the pages that exist; a unit
 declared in a container map and not yet generated would simply not appear, the
 document would be internally consistent, and **nothing would raise** — the

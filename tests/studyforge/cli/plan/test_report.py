@@ -167,14 +167,14 @@ def test_a_creation_is_not_narration_unless_it_says_so_and_its_line_is_unchanged
 
 
 def test_an_ignore_line_names_the_file_that_holds_it():
-    # ⛔ INT-06/8: a rule with no named file is a rule pasted into the root
+    # ⛔ A rule with no named file is a rule pasted into the root
     # ignore file, which R3 forbids however declared.
     lines = a_plan(ignore=("**/audio/",), ignore_home=".studyforge/.gitignore").lines()
     assert "ignore **/audio/  in .studyforge/.gitignore" in lines
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W267`: a path's verb says who writes it and whether it is there
+# ⛔ A path's verb says who writes it and whether it is there
 # --------------------------------------------------------------------------
 
 

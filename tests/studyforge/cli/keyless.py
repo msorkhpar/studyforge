@@ -45,9 +45,9 @@ BACKUP = BUNDLE.with_name("quiz.json~")
 #: A corpus document that quotes one sentence, wrapped across two lines.
 NOTES = Path("docs/notes.md")
 
-#: The key, structurally: a JSON pair, or an older page's option attribute (from before
-#: the server graded) — read as the key only beside one of the served quiz's question ids (the
-#: register's review).
+#: The key, structurally: a JSON pair, or an option attribute a page built without
+#: server grading carries — read as the key only beside one of the served quiz's
+#: question ids.
 KEY = re.compile(r'"correct"\s*:\s*(?:true|false)|data-[a-z-]*-correct\b')
 QUESTION_IDS = tuple(f'"{question["id"]}"' for question in QUESTIONS)
 

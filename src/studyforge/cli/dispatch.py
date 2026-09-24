@@ -26,11 +26,9 @@ framework source (R1). ⛔ **A loader registers nothing: `VERBS` is the only
 place a verb is named**, and `run` is the same callable object the
 verb's module defines.
 
-⚠️ **One verb was once loaded anyway, and no longer is.** `UNUSABLE` was
-imported from `validate.cli`, so importing the command loaded the validator —
-the property held for four verbs of five, and the mirror had to hold `validate`
-exempt. ⭐ The constant now lives in `studyforge.exitcodes`, which is no verb's,
-so **importing this module loads no verb at all** and the exemption is gone.
+⚠️ **The shared exit code is no verb's.** `UNUSABLE` lives in
+`studyforge.exitcodes`, not in `validate.cli`, so **importing this module loads
+no verb at all** and the mirror holds no verb exempt.
 
 ## ⛔ A verb is registered here only when it can be RUN
 

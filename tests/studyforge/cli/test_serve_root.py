@@ -1,6 +1,6 @@
-"""`studyforge serve <root>` with no configured path (`W230`): every corpus under one root.
+"""`studyforge serve <root>` with no configured path: every corpus under one root.
 
-⭐ **Both `FND-04` fixtures sit under one harness-minted root, each built in place by
+⭐ **Both fixture corpora sit under one harness-minted root, each built in place by
 `studyforge build` through the dispatcher**, and the verb is given that root and a
 port and nothing else. ⛔ Every clause is read over a real loopback socket: content,
 state and pages for both corpora; every href a nested page emits; the progress
@@ -38,7 +38,7 @@ from tests.studyforge.cli.serving import (
 from tests.studyforge.serve.built import record, source_of, unit_keys
 from tests.studyforge.serve.serving import fetch
 
-#: The store's one spelling, relative to a corpus root (`SF-21`), never typed here.
+#: The store's one spelling, relative to a corpus root, never typed here.
 STORE = store_dir(Path(".")).as_posix()
 
 

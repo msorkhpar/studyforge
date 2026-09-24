@@ -1,23 +1,20 @@
-"""A non-object block reaches no `.get` on the READ path either (`W297`).
+"""A non-object block reaches no `.get` on the READ path either.
 
 ⛔ **A module of its own rather than a section of `test_blocks.py`, and R11 is the
-reason** (Ruling 261: the answer to a module at its ceiling is a SPLIT, not a
-shorter comment). That module stood at 517 lines against the 600-line test ceiling,
-and this row's assertions would have left it three lines from the wall — headroom
-the next office to touch the block vocabulary would have had to pay for.
+reason**: the answer to a module near its ceiling is a SPLIT, not a shorter comment.
 
 ⭐ **The subject is also genuinely its own**: `test_blocks.py` asserts the
 VOCABULARY and the BUILD path's guard; this asserts what happens to a document that
 was never built here — one a hand or an adapter wrote and `parse` read off disk.
 
-## ⛔ What `W289` closed, and what it left open one function away
+## ⛔ The builder refuses, and so must the reader
 
-⚠️ `W289` made `archive.blocks.counts_of` refuse a non-object block by name through
+⚠️ `archive.blocks.counts_of` refuses a non-object block by name through
 `archive.document.build`. ⛔ **But nothing BUILDS a hand-written document.** It is
 parsed, and `parse` checks the key set and the version and never a block's SHAPE —
-so `read_layout` still walked into `tail[0].get("type")` unguarded.
+so `read_layout` must guard `tail[0].get("type")` itself.
 
-⛔ **MEASURED at `5fca2ea`**, `read_layout` over the document these tests build:
+⛔ `read_layout` over the document these tests build, three ways, without the guard:
 
 ```text
 A: read_layout, hand-written        AttributeError: 'str' object has no attribute 'get'
@@ -81,7 +78,7 @@ FENCE_AT = len(practice()["blocks"]) - 1
 
 @pytest.mark.parametrize("block", NOT_OBJECTS)
 def test_W297_a_non_object_block_is_refused_by_name_through_read_layout(block):
-    # ⛔ The refusal `build` has given since `W289`, now given by the reader too.
+    # ⛔ The refusal `build` gives, given by the reader too.
     # ⭐ `ArchiveError` is a `ValueError`, so an `AttributeError` escaping here
     # FAILS this test rather than passing it — which is what makes the assertion
     # an instrument and not a restatement of the fix.
@@ -113,7 +110,7 @@ def test_W297_the_guard_runs_before_the_layout_is_read_and_not_only_at_the_fence
 
 
 def test_W297_the_read_path_refuses_what_the_builder_already_refuses():
-    # ⛔ **The whole of `W297`, taken through the door such a document actually
+    # ⛔ **The whole guard, taken through the door such a document actually
     # arrives by.** Not `build`: nothing builds a hand-written or adapter-written
     # document. ⭐ So this parses one off its own text and then reads it, which is
     # exactly what a consumer of an adapter's archive does.

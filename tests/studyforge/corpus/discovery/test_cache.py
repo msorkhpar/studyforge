@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/corpus/discovery/cache.py` (R12).
 
-⛔ **Ruling 95's two traps are asserted here**, because a builder copying
+⛔ **Two traps are asserted here**, because a builder copying
 the unit content's `content_api` faithfully would get both wrong: an unsupported
 `site_api` **does not raise**, and `site_api` is **not** the staleness
 mechanism.
@@ -115,7 +115,7 @@ def test_write_creates_the_directory_and_leaves_no_staging_file(tmp_path):
     path = tmp_path / ".studyforge" / SITE_CACHE_FILENAME
     cache_module.write(path, SITE)
     assert path.is_file()
-    # ⭐ `W425`: the ignore file is written beside the cache in the same act,
+    # ⭐ The ignore file is written beside the cache in the same act,
     # and it is the ONLY other thing this writer leaves behind.
     assert sorted(item.name for item in path.parent.iterdir()) == [
         IGNORE_FILENAME,
@@ -123,7 +123,7 @@ def test_write_creates_the_directory_and_leaves_no_staging_file(tmp_path):
     ]
 
 
-# --- ⛔ `W425`: the cache is ignored where it sits, or a served corpus is dirty
+# --- ⛔ The cache is ignored where it sits, or a served corpus is dirty
 
 
 def test_the_cache_is_ignored_by_git_the_first_time_it_is_written(tmp_path):
@@ -143,7 +143,7 @@ def test_the_ignore_file_hides_itself_so_nothing_new_is_left_to_commit(tmp_path)
 
 
 def test_the_cache_goes_dirty_the_moment_the_rule_stops_being_written(tmp_path):
-    # ⛔ The plant this row exists to keep failing. Written by hand exactly as
+    # ⛔ The plant this rule exists to keep failing. Written by hand exactly as
     # `write` would leave the directory MINUS the ignore file, so a green run
     # here is evidence about the rule and not about the fixture.
     repository = init_repository(tmp_path)
@@ -156,8 +156,8 @@ def test_the_cache_goes_dirty_the_moment_the_rule_stops_being_written(tmp_path):
 
 def test_an_ignore_file_already_there_is_reported_and_never_rewritten(tmp_path):
     # ⛔ It is not this writer's to change — it may carry the corpus's media
-    # policy, which a clone has to read. A corpus generated before this rule
-    # is regenerated, not silently repaired.
+    # policy, which a clone has to read. A corpus whose file lacks the rule is
+    # regenerated, not silently repaired.
     directory = tmp_path / GENERATED_ROOT
     directory.mkdir(parents=True)
     theirs = "# theirs\n**/audio/\n"
@@ -270,7 +270,7 @@ def test_a_scan_digest_that_is_not_a_string_is_not_believed(tmp_path):
 
 
 def test_the_cache_is_gated_like_every_other_document_reader(tmp_path):
-    # ⛔ W7. This file is generated, but it is generated into a repository
+    # ⛔ This file is generated, but it is generated into a repository
     # somebody clones, and it is the one document in this contract a person can
     # hand-edit with nothing noticing.
     path = written(tmp_path, {"site_api": SITE_API, "origin": "/" + "home/jane/notes.md"})

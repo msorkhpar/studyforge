@@ -1,6 +1,6 @@
-"""Mirror of `src/studyforge/corpus/manifest/runtimes.py` (R12) — `W350`.
+"""Mirror of `src/studyforge/corpus/manifest/runtimes.py` (R12).
 
-⭐ Every settling clause of the row is asserted both ways: each refusal fires by
+⭐ Every clause is asserted both ways: each refusal fires by
 name, and every valid shape parses. The version gate is reached through the
 document, because `corpus_api` is the document's and not this module's.
 ⚠️ Two instruments read beyond the module: the spec's §4 carries the key, and
@@ -51,7 +51,7 @@ def refusal(value: object, *, exercises: bool = True) -> str:
 
 
 def test_the_vocabulary_is_the_ruled_one_and_is_held_sorted():
-    # ⭐ Literal, never read from the constant it pins: round 112's accepted set.
+    # ⭐ Literal, never read from the constant it pins: the accepted set.
     assert RUNTIMES == ("gradle", "java", "kotlin", "maven", "node", "python", "shell", "sqlite")
     assert list(RUNTIMES) == sorted(RUNTIMES)
 
@@ -134,7 +134,7 @@ def test_the_key_beside_exercises_false_is_refused(value):
     assert "exercises: false" in refusal(value, exercises=False)
 
 
-# --- through the document: the field, the version gate (`TC-00/2`) ------------
+# --- through the document: the field, the version gate ------------
 
 
 def test_the_manifest_carries_the_declaration_sorted():
@@ -151,7 +151,7 @@ def test_a_manifest_without_the_key_declares_none_at_every_version(api):
 
 @pytest.mark.parametrize("api", [1, 2, 3])
 def test_the_top_level_key_is_refused_under_every_earlier_version(api):
-    # ⛔ `TC-00/2`: the version map read nested keys only, so a top-level key
+    # ⛔ The version map read nested keys only, so a top-level key
     # with no entry would have parsed under `3`. Refused naming both numbers.
     with pytest.raises(ManifestError) as raised:
         from_document({**BASE, "corpus_api": api, "runtimes": ["java"]})
@@ -221,7 +221,7 @@ RUNNER = "code-server-toolchain"
 def unpinned(vocabulary: tuple[str, ...], pins: dict) -> list[str]:
     """Every declarable name the pin file does not pin, sorted.
 
-    ⭐ One-way, never an equality (the shape Ruling 30 gave `MANIFEST_KEYS`): a
+    ⭐ One-way, never an equality (the shape `MANIFEST_KEYS` has): a
     pin no vocabulary names is harmless, a name nothing pins is a build refusal.
     """
     return sorted(set(vocabulary) - set(pins.get("runtimes", {})))

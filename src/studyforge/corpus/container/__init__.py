@@ -36,8 +36,7 @@ bytes of everything untouched are the bytes that were there.
 
 ## One variant per container
 
-⚠️ This preserves the invariant that removed a whole failure class: a map
-promising a variant the archive does not hold used to be an ambiguous
+⚠️ A map promising a variant the archive does not hold would be an ambiguous
 half-state, and a single-variant container cannot express it.
 
 ## `origin` is provenance, and it lives **here** and not in the archive
@@ -45,18 +44,17 @@ half-state, and a single-variant container cannot express it.
 ⭐ **Ruled.** `origin` says where in the
 source a container and each of its units came from. It is in the container map
 and ⛔ **not** in the archive document, because two places to look for one fact
-is the defect this project keeps diagnosing — and the archive document already
+disagree with each other — and the archive document already
 carries what it needs to stand alone, which is its *identity* (R4), not its
 provenance.
 
 ⚠️ **It is optional, and that is measured rather than generous.** The
 extraction source's equivalent field — `folder` — is present in **116 of 285**
-maps. A required `origin` would refuse the other 169 and take V2-03's
-migration harness with them.
+maps. A required `origin` would refuse the other 169 and a migration of them
+with it.
 
-⛔ **`folder` is `origin`, and it is not `address`.** It was once argued that
-`folder` "is exactly what `address` already is, so it is subsumed"; measured
-against all 116, **0 are derivable from the titles**. They are truncated and
+⛔ **`folder` is `origin`, and it is not `address`.** Of the 116 that carry
+one, **none is derivable from the titles**. They are truncated and
 carry disambiguating suffixes — `…-and-beyond-in-kotlin` where slugifying the
 title gives `…-and-beyond`, and `…-usage-1` where it gives `…-usage`. A site's
 own URL scheme is not a function of its titles, which is the same reason a
@@ -112,16 +110,16 @@ other consumer that wants a location are untouched.
 
 ## ⭐ A unit's PRACTICE may come from a file of its own — `container_api: 3`
 
-⛔ **Ruled by the user, on the first corpus:** *"the practices should be as part
-of each topic page not a separate UI after the entire chapter"* (2026-09-21).
-A practice belongs on the page it practises, which makes it a
-`practice` document of that unit.
+⛔ **A practice belongs on the page it practises**, as part of each topic page
+and never a separate UI after the chapter, which makes it a `practice`
+document of that unit.
 
-⚠️ **The obstacle was never the renderer** — a unit page already renders every
-document in its directory, practice panel and all. It was the **accounting**.
-`validate.source.completeness` compared a unit's whole heading total against the
-one file its `origin` named, so a practice added to a prose unit read as a short
-read — ⭐ correctly, because the practice's prose is not in that file. ⛔ And
+⚠️ **The renderer already handles this** — a unit page renders every document
+in its directory, practice panel and all. The **accounting** is what needs the
+key: `validate.source.completeness` compares a unit's whole heading total
+against the one file its `origin` names, so a practice added to a prose unit
+would read as a short read, because the practice's prose is not in that
+file. ⛔ And
 putting it there is refused: R3 forbids rewriting a source file, and
 `corpus.manifest.edits` refuses an edit to any file the corpus's own `content`
 policy classifies as INCLUDED **however it is declared**, so `permitted_edits`

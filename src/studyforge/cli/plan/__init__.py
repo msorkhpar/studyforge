@@ -59,8 +59,7 @@ in whatever the plan gets pasted into.
 ⚠️ **Modules rather than one file, and the shape is `validate/`'s.** The
 model that a plan *is*, the derivation that produces one, the narration record
 it reads, and the command that prints it are separate concerns with separate
-tests, and the house already answered this question once for the other command
-that reads a corpus root.
+tests, as they are for the other command that reads a corpus root.
 
 | Module | Owns |
 |---|---|

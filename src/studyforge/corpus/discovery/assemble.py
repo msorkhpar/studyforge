@@ -110,8 +110,7 @@ def assemble(
     if verdict == FRESH:
         # ⛔ **Ensured on the fresh path too, and that is not belt and braces**
         #: a corpus whose cache is fresh is rewritten by nothing, so
-        # the one moment the rule could be written would never come — which is
-        # exactly the state the first corpus was measured in.
+        # the one moment the rule could be written would never come.
         report.extend(cache_module.ensure_ignored(path))
         return Discovery(site, verdict, False, tuple(report))
 

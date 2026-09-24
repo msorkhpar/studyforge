@@ -23,8 +23,8 @@ not a page any scan treats as a unit.
 `4.4.1-introduction-to-the-streams-api.unit.html` beside `README_4.4.1.md`, and
 it is tempting to read `4.4.1` out of that filename. ⛔ Three reasons not to:
 
-1. **R1.** `README_<numbering>.md` is one corpus's convention. Measured
-   2026-09-09 across the four designed shapes: one spells a unit
+1. **R1.** `README_<numbering>.md` is one corpus's convention. Across the
+   four designed shapes, one spells a unit
    `README_4.4.1.md`, the depth-1 fixture spells it `01-what-a-triple-is.md`,
    and a third spells it `1.md`, `s1.md`, `c1.md`. Deriving from the
    filename means the framework carries a parser per corpus.
@@ -118,11 +118,10 @@ ATTACHMENTS_DIRNAME = "attachments"
 #: ⛔ **The subdirectory a generated artifact lands in when it is placed beside
 #: the material, and its ONE spelling.** ⚠️ A profile that writes
 #: *into* the reader's own directories has to write somewhere in them, and
-#: "loose beside the source file" was that somewhere until this name existed:
-#: measured on the first corpus, one source directory held 38 sources, 38 pages
-#: and 38 media directories interleaved, and the repository root held a page and
-#: a media directory for every source file that sat there. ⭐ **One declared
-#: segment makes a source directory readable again** — its own files, plus one
+#: "loose beside the source file" interleaves every source with its page and
+#: its media directory, and puts a page and a media directory at the repository
+#: root for every source file that sits there. ⭐ **One declared segment keeps a
+#: source directory readable** — its own files, plus one
 #: directory holding everything a build wrote from them — and it is what lets
 #: the root hold one generated file, the root index, and no other. ⛔ Not
 #: dot-prefixed, and that is the difference from `GENERATED_ROOT`: this holds
@@ -164,8 +163,8 @@ def contained_stem(address: Address, ordinal: int, title: str, label: str | None
     ⛔ **A unit's name is a function of its own identity, and
     its container is part of that identity.** Where many units share a
     directory, `unit_stem` alone gives two containers' units one name as soon
-    as their ordinals and titles mirror. Measured on a real corpus: 5 pairs,
-    and a build that replaced 5 pages it had written in the same run.
+    as their ordinals and titles mirror, and a build replaces pages it wrote
+    in the same run.
 
     ⭐ **Distinct containers never share a name, by construction.** An address
     segment is a slug, and a slug carries no `.`. Every address in one corpus
@@ -186,19 +185,15 @@ def label_of(ordinal: int, label: str | None = None) -> str:
     becomes part of a filename, so it must be a **usable filename component**.
 
     ⛔ **The rule is `container.fields.is_filename_component`, imported and
-    never re-spelled.** This function once carried its own forbidden list,
-    `"/\\ \t\n"`, a copy of the map's that was missing the carriage return.
-    Adding the carriage return would have been the wrong fix twice over:
+    never re-spelled**, for two reasons:
 
     1. **A permitted set, never a forbidden one (R8).** A forbidden list is an
-       open set and cannot be finished.
-       Measured 2026-09-09 on the merged tree, **seven further shapes passed
-       both guards into a filename** — a vertical tab, a form feed, a
-       non-breaking space, U+2028, `"`, `:` and `*` — and `:` and `"` break
-       the `file://` floor, so this was an R8 defect and not a tidy-up.
-    2. **One rule has one home.** Two spellings of one rule is the defect; the
-       missing character was only how it showed. The predicate replaces the
-       constant, so there is no longer a thing to copy.
+       open set and cannot be finished: a list such as `"/\\ \t\n"` passes
+       a carriage return, a vertical tab, a form feed, a non-breaking space,
+       U+2028, `"`, `:` and `*` into a filename, and `:` and `"` break the
+       `file://` floor.
+    2. **One rule has one home.** Two spellings of one rule drift apart. The
+       predicate is imported, so there is no constant to copy.
 
     ⭐ Defence in depth, and neither guard substitutes for the other: the
     container map refuses a bad label where it enters, so the failure lands
@@ -240,7 +235,7 @@ def container_page_name(titles: tuple[str, ...]) -> str:
         raise PlacementError("a container needs at least one title to be named")
     slug = slugify(titles[-1])
     if not slug:
-        # ⛔ §1f: the title is the corpus's own text and is described, not
+        # ⛔ R7: the title is the corpus's own text and is described, not
         # reproduced. Its depth is what tells the author where to look.
         raise PlacementError(
             f"the container title at depth {len(titles)} slugifies to nothing, so "

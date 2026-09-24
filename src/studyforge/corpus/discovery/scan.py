@@ -35,7 +35,7 @@ to a walk that does not have it.
 
 ⚠️ **Hidden directories are walked, and that is load-bearing, not incidental.**
 Under the `tree` profile every generated page lives below `.studyforge/`;
-measured on this build's Python, `Path.rglob` matches inside dot-directories
+on this build's Python, `Path.rglob` matches inside dot-directories
 and matches dot-prefixed names. ⛔ A walk that skipped them would find zero
 pages for an entire placement profile and report a perfectly empty site.
 

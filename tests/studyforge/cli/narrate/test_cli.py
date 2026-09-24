@@ -156,7 +156,7 @@ def test_an_unreadable_record_exits_two_without_a_request(tmp_path, monkeypatch)
 
 
 def test_prune_takes_the_place_of_voice_and_the_two_are_exclusive():
-    # ⛔ W218: one of the two is required, and both is refused — so a narration
+    # ⛔ One of the two is required, and both is refused — so a narration
     # run cannot prune and a prune cannot narrate.
     arguments = build_parser().parse_args(["corpus", "--prune"])
     assert (arguments.prune, arguments.voice) == (True, None)
