@@ -2,7 +2,8 @@
 
 **Give a corpus whose material is runnable the three things the reading floor
 does not need: a compose file for the browser editor and the runner, a
-toolchain selection, and a prime project** — and the runner's recorded tag. Everything below is derived from the corpus's own
+toolchain selection, and a prime project** — and the recorded tags of both
+images. Everything below is derived from the corpus's own
 `corpus.json` and from the pinned component's own `consuming.json`. Nothing is
 typed twice and nothing is typed here.
 
@@ -74,8 +75,26 @@ at.
 
 ### 1. Read the manifest, and stop here for most corpora
 
-`Execution.for_corpus(manifest, ...)`. When `manifest.runtimes` is empty the
-result is **empty** — no paths, no text, no refusal — and you are done.
+    from studyforge.corpus.manifest import parse
+    from studyforge.skills.execution import generate, write
+
+    manifest = parse((corpus / "corpus.json").read_text(encoding="utf-8"))
+    execution = generate(
+        manifest,
+        editor_text=...,     # code-server-toolchain's consuming.json, as text
+        root=corpus,
+        narration_text=...,  # narrate-service's consuming.json, as text, or None
+    )
+
+⭐ **Where the two texts come from:** each is the `consuming.json` at the root
+of that sibling, **read at the commit `workspace.json` pins** — `git show
+<commit>:consuming.json` in the sibling's checkout, or the file in an export of
+that commit — and never a working tree that has moved past its pin.
+`narration_text` is optional: without it the reader's document says nothing
+about narration and the narration contract's rulings are not asserted.
+
+When `manifest.runtimes` is empty the result is **empty** —
+`execution.runnable` is false, no paths, no text, no refusal — and you are done.
 
 ### 2. Select the toolchain
 
@@ -88,9 +107,9 @@ result is **empty** — no paths, no text, no refusal — and you are done.
 | how to build the image and how to ask it for its tag | the contract's own argv, with the declared set substituted into the slot it left |
 
 ⛔ **Never pin a tag you did not compute, and never edit one by hand.** The tag
-is a function of the build's inputs, so a hand-made one names nothing. Run the
-printed `tag_from` command in the pinned checkout and record what it prints
-beside the commit `workspace.json` pins.
+is a function of the build's inputs, so a hand-made one names nothing. Step 5a
+runs each image's `tag_from` in the pinned checkout and records what it prints;
+nothing here does, and nobody types one.
 
 ⚠️ A runtime the corpus declared and the editor does not carry is **reported,
 not dropped in silence** — it is a real difference between what a reader can
@@ -194,7 +213,7 @@ an edit to the corpus's root ignore file (R3).
 
 ### 5. Write, and re-run whenever anything moves
 
-`Execution.write(root)` writes every generated file and **re-running changes
+`write(execution, corpus)` writes every generated file and **re-running changes
 nothing**: the same manifest and the same contract render the same bytes.
 
 ⛔ **A hand-edit to any of these files is a finding against this skill, not a
@@ -203,35 +222,50 @@ eats your changes is a tool nobody runs twice. Customisation enters as manifest
 data; if the manifest cannot say it, the manifest is missing a field and *that*
 is the finding.
 
-### 5a. Record the runner's tag — the skill does it, never the reader's typing
+### 5a. Record both tags — the skill does it, never the reader's typing
 
 ⛔ **A tag is a function of the build's inputs, so the only honest way to hold
-one is to ask the build.** After step 5 — the tag folds in the prime on disk —
-call `record_runner(execution, root, component, ask=…)` with the component's
-pinned checkout. It composes the contract's own `runner.image.tag_from` with
-the prime flag pointing at the written prime, hands that ONE argv to `ask`
-(which runs it and answers `(exit code, stdout)`), refuses anything but one tag
-of `runner.image.repository`, and writes `.studyforge/execution/runner.env`
-holding `<runner.image.env_var>=<tag>`. ⭐ `--print-tag` hashes files and starts
-no Docker; this package itself imports nothing that can start a process, which
-is why the caller hands the one process in.
+one is to ask the build.** After step 5 — the runner's tag folds in the prime
+on disk — call both, with the component's pinned checkout:
 
-⛔ **A hand-edit to `runner.env` is a finding against this skill.** Re-run 5a
-when the component's pin, the prime or the host's architecture moves.
+    record_runner(execution, corpus, component, ask=ask)
+    record_editor(execution, corpus, component, ask=ask)
+
+Each composes the contract's own `tag_from` for its image — the runner's with
+the prime flag pointing at the written prime, the editor's as the contract
+spells it, since the contract declares a prime flag for the runner alone —
+hands that ONE argv to `ask` (which runs it and answers `(exit code, stdout)`),
+refuses anything but one tag of that image's own `repository`, and writes one
+environment file:
+
+| step | writes | holding |
+|---|---|---|
+| `record_runner` | `.studyforge/execution/runner.env` | `<runner.image.env_var>=<tag>` |
+| `record_editor` | `.studyforge/execution/editor.env` | `<editor.image.env_var>=<tag>` |
+
+⭐ `--print-tag` hashes files and starts no Docker; this package itself imports
+nothing that can start a process, which is why the caller hands the one process
+in. The `ask` in `record`'s own docstring is one that works.
+
+⛔ **A hand-edit to either file is a finding against this skill.** Re-run 5a —
+both calls — when the component's pin, the prime or the host's architecture
+moves.
 
 ### 6. Build the images and bring both up — one command
 
 Run the runner's and the editor's `built_by` argv **from the component's
-checkout**, with the flag `runner.prime.declared_by` names pointing at the
-written prime directory by its full path — `EXECUTION.md` prints both lines
-with this corpus's directory in the slot. Set the editor's image variable to
-the tag its `tag_from` prints. Then, from the corpus root:
+checkout** — the runner's with the flag `runner.prime.declared_by` names
+pointing at the written prime directory by its full path. `EXECUTION.md`
+prints both lines with this corpus's directory in the slot, and each builds
+the tag step 5a recorded for it. Then, from the corpus root:
 
     docker compose --env-file .studyforge/execution/runner.env \
+      --env-file .studyforge/execution/editor.env \
       -f .studyforge/execution/compose.yaml up -d --wait
 
-⭐ That one command starts the editor AND the runner. Confirm the editor answers
-the health path the contract names; a Submit then runs in the runner rather
+⭐ That one command starts the editor AND the runner, each from the tag the
+corpus recorded — nobody sets an image variable by hand. Confirm the editor
+answers the health path the contract names; a Submit then runs in the runner rather
 than on the host.
 
 ⛔ **The framework never starts a container for you** (§8.3). Not behind a flag,
@@ -246,6 +280,7 @@ running it runs `docker compose`, and the study server never holds the socket.
 |---|---|
 | `.studyforge/execution/compose.yaml` | the compose file, rendered from the contracts: the editor and the runner |
 | `.studyforge/execution/runner.env` | the primed runner's tag, as the component printed it (step 5a) |
+| `.studyforge/execution/editor.env` | the editor's tag, as the component printed it (step 5a) |
 | `.studyforge/execution/toolchain.json` | the selection: the set, what is carried, what is not and why, and the two argv |
 | `.studyforge/execution/prime/<tool>/…` | one project per seeded tool: the corpus's own build, source and test, re-rooted at the build |
 | `EXECUTION.md` | what a reader opens first: what to build, what to run, and what this corpus declared |

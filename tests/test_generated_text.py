@@ -66,6 +66,8 @@ def written(tmp_path) -> dict[str, str]:
     texts |= {f"execution/{where}": text for where, text in runnable.files}
     image = runnable.runner.selection.image_env
     texts[f"execution/{execution.RUNNER_ENV}"] = record.text(image, TAG)
+    editor = runnable.selection.image_env
+    texts[f"execution/{execution.EDITOR_ENV}"] = record.text(editor, TAG, image="editor")
     texts |= {
         f"assets/{name}": EMBEDDED.sub('url("data:")', text)
         for name, text in bundle.written_files().items()
@@ -89,6 +91,7 @@ def test_every_writer_is_read(tmp_path):
         f"execution/{execution.READER_DOC}",
         f"execution/{execution.COMPOSE_FILE}",
         f"execution/{execution.RUNNER_ENV}",
+        f"execution/{execution.EDITOR_ENV}",
         f"assets/{bundle.STYLESHEET_NAME}",
         f"assets/{bundle.SCRIPT_NAME}",
     ):

@@ -92,6 +92,8 @@ class Selection:
     tag_from: tuple[str, ...]
     #: The image label a consumer reads the set back from, once it has one.
     read_back_from: str
+    #: `<block>.image.repository`, which every tag this image is built under begins with.
+    repository: str
 
     def document(self) -> dict[str, object]:
         """Return the selection as a corpus keeps it: data, and no tag."""
@@ -143,6 +145,7 @@ def select(
         build=_argv(contract, carried, block, "image", "built_by"),
         tag_from=_argv(contract, carried, block, "image", "tag_from"),
         read_back_from=_string(contract, block, "runtimes", "read_back_from"),
+        repository=_string(contract, block, "image", "repository"),
     )
 
 

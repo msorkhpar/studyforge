@@ -81,8 +81,13 @@ TOOLCHAIN_FILE = f"{DIRECTORY}/toolchain.json"
 PRIME_DIR = f"{DIRECTORY}/prime"
 
 #: The file the reader's compose command reads the runner's tag from, which the
-#: skill's record step writes (`record.record`).
+#: skill's record step writes (`record.record_runner`).
 RUNNER_ENV = f"{DIRECTORY}/runner.env"
+
+#: The file the same command reads the editor's tag from, which the same step
+#: writes (`record.record_editor`). ⭐ Beside the runner's and in its shape, so
+#: the tag a site's editor runs is the corpus's record and not a person's memory.
+EDITOR_ENV = f"{DIRECTORY}/editor.env"
 
 #: The slot `runner.prime.declared_by` leaves for the directory.
 DIRECTORY_SLOT = "<directory>"
@@ -220,6 +225,7 @@ def generate(
         generated=GENERATED,
         compose_file=COMPOSE_FILE,
         runner_env=RUNNER_ENV,
+        editor_env=EDITOR_ENV,
         selection=selection,
         primed=primed,
         block=block,
@@ -287,6 +293,20 @@ def write(execution: Execution, root: Path) -> tuple[str, ...]:
         target.write_bytes((root / origin).read_bytes())
         written.append(where)
     return tuple(written)
+
+
+def generated_here(root: Path, where: str) -> bool:
+    """Whether `where` is this skill's own output at `root`, so R3 reads it as declared.
+
+    ⭐ **The generated non-destructive check asks this**, so a regenerate that
+    rewrote `READER_DOC` at the root is not an undeclared rewrite while it is
+    uncommitted. ⛔ **A reader's document this skill did not write is not its
+    output** — `write` refuses to overwrite one — so a rewrite of it is still
+    somebody else's file changed, and the check still names it.
+    """
+    if not classified(where):
+        return False
+    return where != READER_DOC or not _is_somebody_elses(root / where)
 
 
 def _is_somebody_elses(target: Path) -> bool:

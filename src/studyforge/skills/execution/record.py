@@ -1,14 +1,16 @@
-r"""The primed runner's tag, recorded by the skill — never typed, never a hand-written file.
+r"""The runner's and the editor's tags, recorded by the skill — never typed, never hand-written.
 
-**What it does.** Runs the component's own `runner.image.tag_from` argv — the
-declared set in its slot, the prime flag pointing at the prime this skill
-wrote — in the pinned component checkout, checks what it printed, and writes
-it into `RUNNER_ENV`: the one environment file the reader's compose command
-names, so `docker compose` starts the runner from exactly that tag.
+**What it does.** Runs the component's own `tag_from` argv for each image — the
+declared set in its slot and, for the runner, the prime flag pointing at the
+prime this skill wrote — in the pinned component checkout, checks what it
+printed, and writes it into the environment file the reader's compose command
+names: `RUNNER_ENV` for the runner, `EDITOR_ENV` for the editor. So
+`docker compose` starts both from exactly the tags the corpus recorded.
 
-**How you use it.** After `onboard.write`, because the tag is a function of the
-prime on disk: `record_runner(execution, root, component, ask=…)` returns the path
-written. `ask(argv, cwd)` runs one argv and answers `(exit code, stdout)`:
+**How you use it.** After `onboard.write`, because the runner's tag is a
+function of the prime on disk: `record_runner(execution, root, component,
+ask=…)` and `record_editor(execution, root, component, ask=…)` each return the
+path written. `ask(argv, cwd)` runs one argv and answers `(exit code, stdout)`:
 
     def ask(argv, cwd):
         done = subprocess.run(argv, cwd=cwd, stdin=subprocess.DEVNULL,
@@ -30,22 +32,31 @@ the caller's.
 
 ## ⛔ WHY THE SKILL RUNS IT RATHER THAN THE READER TYPING ITS OUTPUT
 
-⚠️ The first corpus measured the gap: nothing generated recorded the tag the corpus's
-primed build produced, so the corpus hand-scripted a record of it, and nothing
-generated READ that record either. ⭐ A tag is a function of the build's inputs
-(the contract says so), so the only honest way to hold one is to ask the build
-for it and write down what it answered. ⛔ **A hand-edit to `RUNNER_ENV` is a
-finding against this skill**, exactly as for every other file it writes.
+⚠️ The first corpus measured the gap twice: nothing generated recorded the tag
+the corpus's primed runner build produced, and once that was recorded, nothing
+recorded the editor's, so the tag a site's editor ran was known only to the
+running environment and a switch-over had to take it from a person. ⭐ A tag is
+a function of the build's inputs (the contract says so), so the only honest way
+to hold one is to ask the build for it and write down what it answered.
+⛔ **A hand-edit to either file is a finding against this skill**, exactly as
+for every other file it writes.
+
+## ⭐ THE EDITOR'S TAG IS ASKED EXACTLY AS THE READER'S DOCUMENT BUILDS IT
+
+⛔ **The contract declares a prime flag for the runner and none for the
+editor**, and `EXECUTION.md` prints the editor's build without one. So the
+editor's tag is asked of `editor.image.tag_from` as the contract spells it, and
+the tag recorded is the tag the printed build produces.
 
 ## ⚠️ RE-RUN IT WHEN AN INPUT MOVES
 
-The component's pin, the prime, and the host's architecture each move the tag.
+The component's pin, the prime, and the host's architecture each move a tag.
 Re-running with none of them moved rewrites the same bytes.
 
 ## ⛔ NO ABSOLUTE PATH IS WRITTEN (R7)
 
 ⭐ The prime's absolute path is an ARGUMENT to the component's build and never
-reaches the file; what is written is the tag, which the contract builds from a
+reaches a file; what is written is a tag, which the contract builds from a
 repository, a set, an architecture and a digest — never from a host path.
 """
 
@@ -56,6 +67,7 @@ from pathlib import Path
 
 from studyforge.skills.execution.onboard import (
     DIRECTORY_SLOT,
+    EDITOR_ENV,
     GENERATED,
     PRIME_DIR,
     RUNNER_ENV,
@@ -63,10 +75,26 @@ from studyforge.skills.execution.onboard import (
     ExecutionRefused,
 )
 from studyforge.skills.execution.runnerservice import Runner
+from studyforge.skills.execution.toolchain import Selection
 
 #: What a printed tag may be made of. ⛔ One image reference and nothing else: no
 #: space, no `=`, no `#`, no newline, nothing a compose env file reads otherwise.
 TAG_CHARACTERS = frozenset("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._/:-")
+
+#: What each environment file says it holds, and when to re-record it. ⭐ The
+#: runner's lines are the bytes a corpus already carries, unchanged.
+WHAT_IT_HOLDS = {
+    "runner": (
+        "# The primed runner's tag, as the component's own runner.image.tag_from printed it\n"
+        "# for the prime beside this file. Re-run the skill's record step when the\n"
+        "# component's pin, the prime or the host's architecture moves.\n"
+    ),
+    "editor": (
+        "# The editor's tag, as the component's own editor.image.tag_from printed it.\n"
+        "# Re-run the skill's record step when the component's pin or the host's\n"
+        "# architecture moves.\n"
+    ),
+}
 
 #: Runs one argv in one directory and answers `(exit code, stdout)`.
 Ask = Callable[[Sequence[str], Path], tuple[int, str]]
@@ -85,34 +113,52 @@ def argv(execution: Execution, root: Path) -> list[str]:
 def record_runner(execution: Execution, root: Path, component: Path, *, ask: Ask) -> str:
     """Ask the component for the primed runner's tag, write it, and return the path written."""
     runner = _runner(execution)
-    code, printed = ask(argv(execution, root), component)
+    tag = _asked(ask, argv(execution, root), component, runner.repository, "runner")
+    return _written(root, RUNNER_ENV, text(runner.selection.image_env, tag))
+
+
+def record_editor(execution: Execution, root: Path, component: Path, *, ask: Ask) -> str:
+    """Ask the component for the editor's tag, write it, and return the path written."""
+    editor = _editor(execution)
+    tag = _asked(ask, list(editor.tag_from), component, editor.repository, "editor")
+    return _written(root, EDITOR_ENV, text(editor.image_env, tag, image="editor"))
+
+
+def _asked(ask: Ask, command: list[str], component: Path, repository: str, block: str) -> str:
+    """Run one `tag_from` through `ask`, and return the one tag it printed or refuse."""
+    code, printed = ask(command, component)
     if code != 0:
         raise ExecutionRefused(
-            f"the component's runner.image.tag_from exited {code}; its output is not "
+            f"the component's {block}.image.tag_from exited {code}; its output is not "
             f"reproduced here (R7). Run it in the pinned checkout to read why"
         )
     tag = printed.strip()
-    if not _one_tag(tag, runner.repository):
+    if not _one_tag(tag, repository):
         raise ExecutionRefused(
-            "the component's runner.image.tag_from printed something that is not one tag "
-            "of its own runner.image.repository, and a tag this skill cannot read is not one "
-            "it will record"
+            f"the component's {block}.image.tag_from printed something that is not one tag "
+            f"of its own {block}.image.repository, and a tag this skill cannot read is not "
+            f"one it will record"
         )
-    target = root / RUNNER_ENV
+    return tag
+
+
+def _written(root: Path, where: str, content: str) -> str:
+    """Write one environment file under `root`, and return where."""
+    target = root / where
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(text(runner.selection.image_env, tag), encoding="utf-8")
-    return RUNNER_ENV
+    target.write_text(content, encoding="utf-8")
+    return where
 
 
-def text(variable: str, tag: str) -> str:
-    """Return the environment file's bytes: the generated sentence and the one variable."""
-    return (
-        f"# {GENERATED}\n"
-        "# The primed runner's tag, as the component's own runner.image.tag_from printed it\n"
-        "# for the prime beside this file. Re-run the skill's record step when the\n"
-        "# component's pin, the prime or the host's architecture moves.\n"
-        f"{variable}={tag}\n"
-    )
+def text(variable: str, tag: str, *, image: str = "runner") -> str:
+    """Return one environment file's bytes: the generated sentence and the one variable."""
+    holds = WHAT_IT_HOLDS.get(image)
+    if holds is None:
+        raise ExecutionRefused(
+            f"an environment file is recorded for one of {sorted(WHAT_IT_HOLDS)} and for "
+            f"no other image; the one asked for is not reproduced here (R7)"
+        )
+    return f"# {GENERATED}\n{holds}{variable}={tag}\n"
 
 
 def _one_tag(tag: str, repository: str) -> bool:
@@ -126,3 +172,10 @@ def _runner(execution: Execution) -> Runner:
     if not execution.runnable or execution.runner is None:
         raise ExecutionRefused("this corpus declares no runtime, so there is no runner to record")
     return execution.runner
+
+
+def _editor(execution: Execution) -> Selection:
+    """Return the editor's selection, or refuse a corpus that is not runnable."""
+    if not execution.runnable or execution.selection is None:
+        raise ExecutionRefused("this corpus declares no runtime, so there is no editor to record")
+    return execution.selection
