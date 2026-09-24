@@ -53,12 +53,14 @@ from pathlib import Path
 from studyforge.archive.scrub import assert_clean
 from studyforge.skills.onboarding.pin import (
     FRAMEWORK,
+    PIN_API,
     PIN_FILE,
     WHERE,
     PinRefused,
     check_commit,
     check_version,
 )
+from studyforge.version import check as check_contract
 
 #: The `studyforge` package directory this module was loaded from.
 PACKAGE = Path(__file__).resolve().parents[2]
@@ -184,6 +186,9 @@ def pinned(root: Path | str) -> dict:
             f"installed library, re-pinning: reonboard('.', framework_commit=<the commit "
             f"the library was built from>).write('.', regenerate=True)"
         )
+    check_contract(
+        "pin_api", document.get("pin_api"), (PIN_API,), where=PIN_FILE, error=LibraryRefused
+    )
     try:
         return {
             **document,
