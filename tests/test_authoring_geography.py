@@ -279,24 +279,56 @@ def instruments_named() -> set[str]:
     return named
 
 
+def _page_openers(tree: ast.Module, opens: frozenset[str]) -> frozenset[str]:
+    """The module's own top-level functions whose body names one of `opens`."""
+    return frozenset(
+        node.name
+        for node in tree.body
+        if isinstance(node, ast.FunctionDef)
+        and any(isinstance(n, ast.Name) and n.id in opens for n in ast.walk(node))
+    )
+
+
 def instruments_that_read_a_page() -> set[str]:
     """Every suite module that opens a page of the reference, derived from its imports.
 
     ⛔ Derived, never listed: a module added to the suite that reads these pages
     joins this set by importing an accessor, and the index fails until it says
-    so. ⚠️ Parsed rather than imported — importing every test module here would
-    run their collection-time derivations a second time — and parsed rather than
-    grepped, because the one import that matters spans five lines.
+    so. ⭐ **Or by importing a reader's own opener**: a module that takes
+    another suite module's function which opens a page reads that page too, so
+    the set is closed over such imports until it stops growing. ⚠️ Parsed rather
+    than imported — importing every test module here would run their
+    collection-time derivations a second time — and parsed rather than grepped,
+    because the one import that matters spans five lines.
     """
     root = repository_root()
-    found = set()
-    for path in sorted(Path(root / "tests").glob("test_*.py")):
-        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-        for node in ast.walk(tree):
-            if not isinstance(node, ast.ImportFrom) or node.module != SUPPORT:
+    trees = {
+        f"tests.{path.stem}": (
+            str(path.relative_to(root)),
+            ast.parse(path.read_text(encoding="utf-8"), filename=str(path)),
+        )
+        for path in sorted(Path(root / "tests").glob("test_*.py"))
+    }
+    #: What each module offers that opens a page: the accessors, then each reader's openers.
+    openers: dict[str, frozenset[str]] = {SUPPORT: frozenset(READS_A_PAGE)}
+    found: set[str] = set()
+    grew = True
+    while grew:
+        grew = False
+        for module, (relative, tree) in trees.items():
+            bound = frozenset(
+                alias.asname or alias.name
+                for node in ast.walk(tree)
+                if isinstance(node, ast.ImportFrom) and node.module in openers
+                for alias in node.names
+                if alias.name in openers[node.module]
+            )
+            if not bound:
                 continue
-            if any(alias.name in READS_A_PAGE for alias in node.names):
-                found.add(str(path.relative_to(root)))
+            found.add(relative)
+            offers = _page_openers(tree, bound)
+            if openers.get(module) != offers:
+                openers[module], grew = offers, True
     assert found, "no suite module reads a page of the reference; the derivation is broken"
     return found
 

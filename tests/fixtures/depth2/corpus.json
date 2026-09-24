@@ -28,7 +28,7 @@
       "kind": "insert-line",
       "anchor": "<modules>",
       "content": "  <module>practice</module>",
-      "why": "Maven compiles only what sits on a source root (spec §7)."
+      "why": "Maven compiles only what sits on a source root, so the generated practice module has to be listed."
     }
   ]
 }

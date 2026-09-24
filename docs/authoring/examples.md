@@ -48,7 +48,7 @@ not: depth 1 is fully supported.
     "exclude": [
       {
         "path": "depth-one/ALL.md",
-        "why": "whole-series aggregate: an ordered concatenation of 01, 02 and 03, digest-identical to them joined (C2). Ingesting it would read every unit twice."
+        "why": "whole-series aggregate: an ordered concatenation of 01, 02 and 03, identical to them joined. Ingesting it would read every unit twice."
       }
     ]
   },
@@ -142,7 +142,7 @@ counts is `0 file(s) to edit`. **Zero files to edit** — that is
       "kind": "insert-line",
       "anchor": "<modules>",
       "content": "  <module>practice</module>",
-      "why": "Maven compiles only what sits on a source root (spec §7)."
+      "why": "Maven compiles only what sits on a source root, so the generated practice module has to be listed."
     }
   ]
 }

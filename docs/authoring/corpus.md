@@ -256,6 +256,10 @@ asks you and writes it; you do not type it.
 and are simply not served. `studyforge build` and `studyforge serve` take
 `--narration` or `--no-narration` to override your answer for one run, and a run
 with narration on plays the same clips again without synthesising anything.
+A build says what it left alone: an `unlinked` line for each clip an earlier
+narrated build copied into an `--out` that a build with narration off now
+leaves unplayed, and a `stale` line for each clip it plays whose paragraph no
+longer says those words. Neither changes its exit code.
 `studyforge serve --no-narration` refuses a site that was built with narration
 and tells you to build again with `--no-narration`, because the player is part
 of each page.
@@ -286,9 +290,11 @@ then. Declare the place, then re-onboard with
 `reonboard('.', settle={"onboarding_doc": "docs/archive/ONBOARDING.md"}).write('.', regenerate=True)`,
 from `studyforge.skills.onboarding`, run at the corpus root:
 the document is written there, nothing is written at the root, and a copy you
-already moved there unchanged is rewritten in place rather than refused. A copy
-still at the root is not deleted, because generation never deletes: remove it
-yourself.
+already moved there unchanged is rewritten in place rather than refused. The
+copy onboarding wrote at the root is removed, because onboarding no longer
+writes it there — unless you edited it, in which case nothing is written and
+the refusal names it: move your edited copy out of the generated paths, or
+restore it, and regenerate.
 
 ---
 

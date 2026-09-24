@@ -97,8 +97,10 @@ worked examples rather than trusting their description. The two trees on
 [Placement](placement.md) are drawn by the placement code, and the plan counts
 [Worked examples](examples.md) quotes are printed by `studyforge plan`; both are
 compared by `tests/test_authoring_geography.py`. On [Exercises](exercises.md), the
-authoring procedure is read by `tests/test_authoring_exercises.py` and the
-file-only exercise record by `tests/test_fixture_exercise_rule.py`. A claim of
+authoring procedure is read by `tests/test_authoring_exercises.py`, the steps
+before you author are run by `tests/test_authoring_before_you_author.py`, and
+the file-only exercise record is read by `tests/test_fixture_exercise_rule.py`.
+Every link on these pages is resolved by `tests/test_readme.py`. A claim of
 that kind that stops being true fails a test rather than misleading you.
 
 **The prose around them is not checked.** The reasons and the advice about

@@ -44,7 +44,13 @@ import sys
 
 import pytest
 
-from tests.authoring.support import declared_pythonpath, fences, prose_lines, rows_under
+from tests.authoring.support import (
+    declared_pythonpath,
+    document_paths,
+    fences,
+    prose_lines,
+    rows_under,
+)
 from tests.support import repository_root
 
 #: The document under test, relative to the repository root.
@@ -303,12 +309,7 @@ def test_every_shipped_skill_is_named_with_the_step_it_serves():
 
 def authoring_pages() -> list[str]:
     """Every page of the authoring reference, repository-relative, walked from the tree."""
-    pages = sorted(
-        path.relative_to(repository_root()).as_posix()
-        for path in (repository_root() / "docs/authoring").glob("*.md")
-    )
-    assert pages, "docs/authoring holds no page"
-    return pages
+    return [path.relative_to(repository_root()).as_posix() for path in document_paths()]
 
 
 @pytest.mark.parametrize("page", authoring_pages())
