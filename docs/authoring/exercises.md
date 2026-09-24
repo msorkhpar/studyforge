@@ -1023,15 +1023,26 @@ is checked before any is written. A file already there with the same bytes is
 left alone. One with different bytes stops the whole pass, names the first such
 file, and nothing is written.
 
+⭐ **The ledger is the one file a pass rewrites, and it only ever adds.** It is
+one file for your whole corpus, so you can run the pass over one container at a
+time, in any order. A pass replaces the rows of the files you handed it as
+`material` and `graders`, and keeps every other row exactly as it was. A row
+leaves only when its file is gone from the corpus. `authored.ledger` says what
+the pass did, row by row: `kept`, `added`, `changed` and `dropped`. A fence that
+a re-read page no longer carries is listed under `changed`, because the page
+changed but is still there.
+
 **Running it again with nothing changed writes nothing.** A unit whose
 `coverage.json` still matches its page and its plan is not authored again, so
 the author, the judge and the runner are not called for it.
 
 ⚠️ **A page whose source changed is refused, and the refusal names its unit.**
 Its exercises were proven against material that has since moved. To author it
-again, delete that unit's directory under `exercises/` and
-`exercises/ledger.json`, then run the pass again. **Delete the unit's
-directory under `practice/` as well.** The refusal does not mention it, but a
+again, delete that unit's directory under `exercises/`, then run the pass
+again. ⛔ **Do not delete `exercises/ledger.json`**: the pass keeps every row
+for a file it did not read, so deleting the ledger loses every other page's
+rows, and `validate` then names each such page (`ledger-unaccounted`).
+**Delete the unit's directory under `practice/` as well.** The refusal does not mention it, but a
 new draft whose starter or tests differ would otherwise land on the old
 workspace files, and the pass refuses any file that exists with different
 bytes.

@@ -12,11 +12,12 @@ ledger — into the corpus repository, additively.
                              pages=pages, author=author, judge=judge, runner=runner)
     authored.shortfalls                 # (page, Shortfall) for every refused exercise
     authored.bare                       # every page left with nothing shipped (R6)
+    authored.ledger                     # the ledger rows kept, added, changed, dropped
 
 **Depends on.** This package's `drafts`, `gating`, `loop`, `ledger`,
-`accounting` and `plan`; `exercise` for an origin's two spellings and a path's
-rule; `exercise.bundle` for where a unit's bundles sit; `archive.scrub` for R7.
-Standard library only.
+`accounting`, `merge`, `writes` and `plan`; `exercise` for an origin's two
+spellings; `exercise.bundle` for where a unit's bundles sit; `archive.scrub`
+for R7. Standard library only.
 
 ## ⛔ THE LEDGER IS TAKEN ONCE, BEFORE ANY EXERCISE IS GATED
 
@@ -24,13 +25,18 @@ Standard library only.
 origin *during* the gate run, and the accounting closes over the same object at
 the end, so the two cannot disagree about what the source was.
 
-## ⛔ ONLY INSIDE THE CORPUS ROOT, AND ONLY ADDITIVELY (R3)
+## ⛔ ONLY INSIDE THE CORPUS ROOT, AND ONLY ADDITIVELY (R3) — `writes`' rule
 
-⭐ **Every file is checked before any is written.** A file already there with
-the same bytes is kept; one there with different bytes refuses the whole pass,
-naming it, and nothing is written — so a refusal never leaves half a pass in
-the tree. ⛔ Every path is corpus-root-relative and passes `require_path`, so
-nothing this pass writes can land outside the root.
+⭐ **Every file is checked before any is written**, and a refusal never leaves
+half a pass in the tree. ⚠️ The ledger is the one file rewritten, and `merge`
+is why that is additive.
+
+## ⛔ A PASS OVER PART OF A CORPUS OWNS ONLY WHAT IT READ (`W456`)
+
+⭐ **The ledger is one file for the whole corpus, and this pass owns only the
+rows of the files it read.** `merge` keeps every other row byte-identical, and
+`_elsewhere` reads what units outside the pass account for, so a page this pass
+was not handed never loses the exercise its entries are built on.
 
 ## ⛔ RE-RUNNING WITH NOTHING CHANGED REWRITES NOTHING (R10)
 
@@ -51,14 +57,16 @@ from pathlib import Path
 
 from studyforge.archive.scrub import assert_clean
 from studyforge.describe import describe
-from studyforge.exercise import Origin, origin_document, origin_in, require_path
+from studyforge.exercise import Origin, origin_document, origin_in
 from studyforge.exercise.bundle import BUNDLES_DIRNAME, Places
 from studyforge.skills.exercises.accounting import account, accounts_for, ledger_document
 from studyforge.skills.exercises.drafts import Author, AuthoringError, Judge, Page, require_page
 from studyforge.skills.exercises.gating import Runner, json_bytes
 from studyforge.skills.exercises.ledger import Entry, Ledger, key_of, take
 from studyforge.skills.exercises.loop import Shortfall, author_page, carried_practices, plan_page
+from studyforge.skills.exercises.merge import Delta, merged
 from studyforge.skills.exercises.plan import PLAN_API, plan_document
+from studyforge.skills.exercises.writes import commit
 
 #: Each unit's coverage report, beside its bundles and never inside one.
 COVERAGE_FILENAME = "coverage.json"
@@ -103,6 +111,8 @@ class Authored:
     pages: tuple[Covered, ...]
     written: tuple[str, ...]
     kept: tuple[str, ...]
+    #: ⭐ What the pass did to the committed ledger, row by row (`W456`).
+    ledger: Delta = Delta()
 
     @property
     def shortfalls(self) -> tuple[tuple[str, Shortfall], ...]:
@@ -189,53 +199,14 @@ def author_corpus(
                 reasoned=reasoned,
             )
         )
-    reasons = _reasons(ledger, accounts, author, _read(base / LEDGER_PATH, "the ledger"))
+    accounts = _elsewhere(base, ledger, {c.unit for c in covered}) | accounts
+    prior = _read(base / LEDGER_PATH, "the ledger")
+    reasons = _reasons(ledger, accounts, author, prior)
     accounted = account(ledger, accounts, reasons, "the ledger")
-    files.append((LEDGER_PATH, _document_bytes(ledger_document(ledger, accounted), "the ledger")))
-    written, kept = commit(base, files, "the authoring pass")
-    return Authored(tuple(covered), written, kept)
-
-
-def commit(
-    root: Path, files: Sequence[tuple[str, bytes]], where: str
-) -> tuple[tuple[str, ...], tuple[str, ...]]:
-    """Create every file not already there, refusing ALL of them if any would be rewritten.
-
-    ⛔ **R3, checked whole before a byte is written.** A file present with the
-    same bytes is kept, which is what makes a re-run write nothing (R10); a
-    file present with different bytes — or two of this pass's own files at one
-    path — refuses the pass and names the path.
-    """
-    wanted: dict[str, bytes] = {}
-    for path, data in files:
-        inside = require_path(path, "a path the authoring pass writes", where)
-        if wanted.setdefault(inside, data) != data:
-            raise AuthoringError(
-                f"{where}: two of this pass's own files land on '{inside}' with "
-                f"different bytes, so one of them would be lost."
-            )
-    rewritten = [
-        path
-        for path, data in wanted.items()
-        if (root / path).exists() and not _same(root / path, data)
-    ]
-    if rewritten:
-        raise AuthoringError(
-            f"{where}: {len(rewritten)} file(s) this pass would write are already in the "
-            f"corpus with different contents, the first at '{rewritten[0]}'. Generation "
-            f"is non-destructive (R3): nothing was written, and no existing file is "
-            f"rewritten to make room."
-        )
-    written, kept = [], []
-    for path, data in wanted.items():
-        target = root / path
-        if target.exists():
-            kept.append(path)
-            continue
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_bytes(data)
-        written.append(path)
-    return tuple(written), tuple(kept)
+    document, delta = merged(base, prior, ledger_document(ledger, accounted), "the ledger")
+    files.append((LEDGER_PATH, _document_bytes(document, "the ledger")))
+    written, kept = commit(base, files, "the authoring pass", replaces=(LEDGER_PATH,))
+    return Authored(tuple(covered), written, kept, delta)
 
 
 def _in_order(pages: Sequence[Page]) -> tuple[Page, ...]:
@@ -294,6 +265,24 @@ def _reused(
         for entry in recorded.get("shortfalls", ())
     )
     return Covered(page.path, unit, tuple(recorded.get("shipped", ())), missed, authored=False)
+
+
+def _elsewhere(base: Path, ledger: Ledger, units: set[str]) -> dict[str, Origin]:
+    """Return what the units OUTSIDE this pass account for, among the files it read (`W456`).
+
+    ⛔ **A file this pass read may carry a page it was not handed**, and that
+    page's committed exercises still account for its entries — without them a
+    pass over one page would re-excuse another page's built-on example.
+    """
+    read = {source.path for source in ledger.sources}
+    found: dict[str, Origin] = {}
+    for path in sorted(base.glob(f"{BUNDLES_DIRNAME}/**/{COVERAGE_FILENAME}")):
+        unit = path.parent.relative_to(base).as_posix()
+        if unit not in units:
+            recorded = _read(path, f"the unit '{unit}'") or {}
+            accounts = _accounts_in(recorded, f"the unit '{unit}'").items()
+            found |= {name: origin for name, origin in accounts if origin.path in read}
+    return found
 
 
 def _accounts_in(recorded: dict, where: str) -> dict[str, Origin]:
@@ -367,15 +356,10 @@ def _read(path: Path, where: str) -> dict | None:
     return value
 
 
-def _same(path: Path, data: bytes) -> bool:
-    """Is the file at `path` exactly these bytes? ⛔ A directory is never the same."""
-    return path.is_file() and path.read_bytes() == data
-
-
 def _moved(unit: str, where: str, why: str) -> AuthoringError:
     """Return the refusal for a unit whose committed exercises may not be rewritten (R3)."""
     return AuthoringError(
         f"{where}: the unit at '{unit}' {why}. Its exercises were proven against that "
-        f"material, and rewriting them is what R3 forbids. Remove '{unit}' and "
-        f"'{LEDGER_PATH}' from the corpus and run the pass again."
+        f"material, and rewriting them is what R3 forbids. Remove '{unit}' from the "
+        f"corpus and run the pass again: the ledger keeps every other page's rows (W456)."
     )
