@@ -24,12 +24,9 @@ never a reason for this skill to reach inside `generate/`, `serve/` or
    generated output belongs is the corpus owner's decision, and `studyforge
    build` refuses a directory that does not exist.
 3. **The user's answer to one question: do they want narration?** ⭐ **Ask it
-   before you run anything** (step 0 below). ⭐ **Narration is optional** — the
-   user's ruling, 2026-09-23: *"it should be optional and while serving or even
-   while caputring the matterial skills should ask if user is interested in the
-   narrition or not. Somebody might wants to just cover the course wihtout
-   voices as mentioned the voice might be cgenerated but still not serving them
-   would be an option"*.
+   before you run anything** (step 0 below). ⭐ **Narration is optional**: a
+   reader may want the course without voices, and clips that were generated
+   may still go unserved.
 4. **If they want it: a running narration service, and the voice to narrate
    in.** ⛔ A corpus the user wants voiced that never ran narration is not
    finished. ⭐ Read *Narration* below — it says what provides it and how to

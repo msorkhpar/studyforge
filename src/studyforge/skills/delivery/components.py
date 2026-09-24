@@ -19,11 +19,11 @@ on the pin document below.
 
 ## ⛔ Why there is a column for the side at all
 
-⚠️ **The index had four columns and none of them said whose work a row is.**
+⚠️ **Without it, no column says whose work a row is.**
 A corpus that finishes at the reading floor has to account for every
 capability delivered after it, and the table it writes asks *why this corpus
 never reaches it* — ⛔ **which is a false question for a row delivered in
-another repository entirely, and there was no field in which to say so.**
+another repository entirely, and needs a field in which to say so.**
 
 ⭐ **It is the absence of a field, not a wrong value in one**, so no amount of
 care at generation time could avoid the false statement. The remedy is the

@@ -21,8 +21,7 @@
 
    ⛔ **Progressive enhancement, and the transport ships HIDDEN.** With scripting
    off, a reader is shown nothing rather than a Play button that cannot play —
-   the row's own acceptance says *no dead control*, and a control that does
-   nothing is the dead one.
+   a control that does nothing is a dead control, and none is shown.
 
    ⭐ **It degrades honestly, in three named states** (R6). A passage whose clip
    is not on disk says so and stops rather than pretending; a unit with no usable
@@ -57,9 +56,9 @@
 
   /* The highlight. ⭐ NOT published in `pageassets.SURFACE_HOOKS`, and that is a
      decision rather than an omission: `data-marked` is published because
-     `chrome.css` paints a state `read-mark.js` writes, so two offices hold the
-     two ends. Here `narration.css` and this file are one task's, the spelling has
-     one owner, and publishing it would oblige a stylesheet nobody else writes. */
+     `chrome.css` paints a state `read-mark.js` writes, so two parts hold the
+     two ends. Here `narration.css` and this file are one feature's, the spelling
+     has one owner, and publishing it would oblige a stylesheet nobody else writes. */
   var SPEAKING = 'data-speaking';
 
   /* Which sentence, and which face of the play button, is showing. */
@@ -81,9 +80,8 @@
   /* ⛔ THE WHOLE DOCUMENT, NOT `#content`. A unit page is headed by its
      material's own opening heading, and that heading sits in the `<header>`
      above the content — it is a narrated passage like every other one. Scoped to
-     `#content` the transport skipped the first passage of every page while the
-     page still carried its attribute and `speakable` still minted its clip: a
-     clip on disk that nothing could ever play. ⭐ `querySelectorAll` answers in
+     `#content` the transport would skip the first passage of every page while
+     `speakable` still made its clip: a clip on disk that nothing could play. ⭐ `querySelectorAll` answers in
      document order, so the heading is still passage one. ⚠️ Nothing outside the
      heading and the content carries `data-audio` — `render/page/document.py` is
      the one composer of this skeleton and fills the attribute in exactly those

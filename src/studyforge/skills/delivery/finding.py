@@ -25,17 +25,16 @@ learns anything; an integrator who can only file a finding produces a record
 of what the framework could not do. ⚠️ That record is the entire yield of §12,
 and it is why this module exists in a *planner* rather than in a patch tool.
 
-## ⛔ The marker vocabulary is closed at three, and a fourth was tried
+## ⛔ The marker vocabulary is closed at three
 
 - **`local`** — a defect in one place, fixed by whoever next touches it.
 - **`structural`** — a defect that **will recur**. ⭐ Ruled on, scheduled, or
-  explicitly accepted before the next wave. *"Noted"* is not one of the three.
+  explicitly accepted before work continues. *"Noted"* is not one of the three.
 - **`none`** — nothing outside scope, said rather than left to be inferred.
   ⛔ It may not stand beside a real finding, and it is the only way to write
   zero.
 
-⚠️ **A fourth — `negative` — was written in three documents by two roles
-before anybody checked whether it counted, and it does not join them.** ⭐ A
+⚠️ **A fourth — `negative` — does not join them.** ⭐ A
 marker encodes **routing**, and a recorded negative routes where a `local`
 routes: nowhere. ⛔ So polarity is content: a recorded negative is `local` and
 its text opens with *A NEGATIVE result.*
@@ -102,7 +101,7 @@ class Finding:
         if self.marker not in MARKERS:
             raise FindingRefused(
                 "a finding's `marker` is not a marker. ⛔ The vocabulary is "
-                f"closed at {', '.join(MARKERS)} — a fourth was tried and refused"
+                f"closed at {', '.join(MARKERS)} and admits no fourth"
             )
         if "/" not in self.id:
             raise FindingRefused(
@@ -130,7 +129,7 @@ class Finding:
 
     @property
     def obliges_a_ruling(self) -> bool:
-        """⛔ True when somebody must rule, schedule or accept before the next wave."""
+        """⛔ True when somebody must rule, schedule or accept before work continues."""
         return self.marker == "structural"
 
     def lines(self) -> list[str]:

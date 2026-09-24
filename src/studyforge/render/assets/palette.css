@@ -5,38 +5,29 @@
    is editing this file. `test_palette` asserts that no other authored part
    contains a raw colour, and recomputes every contrast pair below.
 
-   ⭐ THE LOOK IS A ROAD SIGN ON COOL SLATE. The user read the
-   first repaint and said the colours were "boring", "too dim and maybe too
-   warm", and worse than two pages of their own. Those two pages are the brief:
-   a route planner (asphalt ground, lane-paint ink, warning-yellow accent) and a
-   documentation site carrying BOTH themes on the slate scale. ⛔ This
-   supersedes the warm paper and the green board of the earlier repaints.
+   ⭐ THE LOOK IS A ROAD SIGN ON COOL SLATE: a route planner's palette (asphalt
+   ground, lane-paint ink, warning-yellow accent) and BOTH themes on the slate
+   scale.
    - ⛔ COOL NEUTRALS, NEVER WARM. Every ground and every ink is on the slate
      scale: blue is the strongest channel, red the weakest. `test_identity`
-     bounds the warmth of every ground and ink and catches stage 1's parchment.
-   - ⛔ CRISP, NOT DIM. Body text is about 12:1 in both themes, which is what
-     the user's own route planner measures (12.14:1), and each quieter ink sits
-     in a band taken from that same page (8.33:1 and 5.59:1). ⛔ Text is still
-     never pure white on dark and never pure black on light: the route planner
-     honours both and so does this.
-   - ⛔ NO GREEN ANYWHERE (the user, 2026-09-19: "I am not a fan of green"). The
-     guide-sign green of the route planner and the emerald of the documentation
-     site are the two things NOT taken from them. `test_identity` reads the hue
-     of every token and refuses a saturated green, both ways. What green used to
-     mean — done, passed, settled — is now the slate ink itself: the road behind
-     you is solid, the road ahead is dashed.
-   - ⭐ ONE LIVE ACCENT, AND IT IS ALLOWED TO BE LOUD. The route planner's
+     bounds the warmth of every ground and ink.
+   - ⛔ CRISP, NOT DIM. Body text is about 12:1 in both themes, and each quieter
+     ink sits in a band around 8.3:1 and 5.6:1. ⛔ Text is never pure white on
+     dark and never pure black on light.
+   - ⛔ NO GREEN ANYWHERE. `test_identity` reads the hue of every token and
+     refuses a saturated green, both ways. *Done, passed, settled* is the slate
+     ink itself: the road behind you is solid, the road ahead is dashed.
+   - ⭐ ONE LIVE ACCENT, AND IT IS ALLOWED TO BE LOUD. A
      warning yellow `#ffc933` by night and a deep amber by day. It means *next*,
      *here* and *speaking* and nothing else, and it is a mark, a line, a ring or
-     a word — never a ground under running text. ⛔ Stage 1 bounded the accent's
-     CHROMA from above and that is the half the user rejected; the bound is now
-     a FLOOR, and a washed-out accent is what the check catches.
+     a word — never a ground under running text. ⛔ The accent's CHROMA has a
+     FLOOR, and a washed-out accent is what the check catches.
    - ⭐ Sky blue is the interactive ink: the focus ring, a type name in code.
      ⛔ Structure stays neutral — the margin rule and every hairline are slate.
 
    ⛔ THE ROLE NAMES ARE THE BRIEF'S, THE TOKEN NAMES ARE KEPT. Other parts
    (and the execution client) paint with the names below, so a role is
-   renamed only in the row that moves every reader of it. The mapping: ground
+   renamed only together with every reader of it. The mapping: ground
    `--bg`, raised `--surface`/`--panel`, ink `--fg`, ink-soft `--fg-soft`,
    ink-faint `--muted`, rule `--rule`, next `--accent`, sign `--sign`.
 
@@ -56,69 +47,45 @@
   --font-ui: "Andika", Verdana, sans-serif;
   --font-mono: "JetBrains Mono", "DejaVu Sans Mono", monospace;
 
-  /* ⛔ `80ch`, AND EVERY DIGIT OF IT IS COUNTED — the user's
-     fourth reading. ⚠️ Charis's `ch` is its zero, which is wider than an
-     average letter of running prose, so what a cap buys has to be COUNTED on a
-     laid-out line and never reasoned from the token.
+  /* ⛔ `80ch`, AND EVERY DIGIT OF IT IS COUNTED. ⚠️ Charis's `ch` is its zero,
+     which is wider than an average letter of running prose, so what a cap buys
+     has to be COUNTED on a laid-out line and never reasoned from the token.
 
-     ⛔ TWO INSTRUMENTS, BECAUSE ONE OF THEM SATURATES. Counted on the fixture
-     unit page in the PINNED image's browser — the longest line of running
-     prose, in characters, at the four widths this row is settled at:
-
-       cap    1280   1440   1920   2560
-       76ch     84    100    100    100
-       80ch     84    102    105    105
-       82ch     84    102    105    105
-       83ch     84    102    110    110
-       84ch     84    102    111    111
-
-     ⚠️ Above `80ch` that one paragraph stops answering: its line breaks fall
-     where they fall and the count plateaus. ⭐ So the cap is settled on the
-     FIRST CORPUS instead — the worst paragraph of each of its 41 unit and
-     section pages, every one of them opened and measured:
+     ⭐ Counted over a real corpus's 41 unit and section pages, the worst
+     paragraph's longest line, in characters:
 
        cap    76ch   80ch   82ch   83ch   84ch
        worst   101    106    109    109    111
 
-     ⛔ THE ENVIRONMENT IS PART OF THE READING, and that corpus reading is a
-     HOST one because a corpus is not mounted in the image. ⭐ The same `ch`
-     resolves 813px on the host against 836px in the image at `76ch` — 2.8%
-     wider there — so the image lays about three more characters on a line this
-     long. ⭐ `80ch` therefore puts the first corpus's worst paragraph at about
-     109 in the environment that decides, and `82ch` at about 112. ⛔ 110 is the
-     bound (`tests/visual/test_reading_room.py`'s `LONGEST_LINE`): past it the
-     eye stops finding the start of the next line, and the row's fourth reading
-     is the user asking for MORE width, not less. ⚠️ At 1280 the cap does not
+     ⭐ The pinned image lays about three more characters on a line this long
+     than a host browser (the same `ch` is 2.8% wider there), so `80ch` puts
+     that worst paragraph at about 109. ⛔ 110 is the bound
+     (`tests/visual/test_reading_room.py`'s `LONGEST_LINE`): past it the eye
+     stops finding the start of the next line. ⚠️ At 1280px the cap does not
      bite at all — the column is narrower than it and the line runs to 84. */
   --measure: 80ch;
   --rail: 17rem;
   /* The column beside the reading surface for a page's secondary block — a
      unit's outline, the index's explanation — where the window has room. */
   --aside: 16rem;
-  /* ⛔ THE SHELL'S CEILING, AND ABOVE IT THE SHELL CENTRES.
-     ⚠️ Three shapes have now been read by the user. `110rem` PINNED LEFT left a
-     dead band down the right of a ~2000px window (*"not using the full width"*).
-     `180rem`, effectively unbounded, grew the reading column without limit and
-     was read as *"too wide… maybe if the display is too big having the menu and
-     content in the middle by forcing a max width"*. ⭐ The third shape is this
-     one: `chrome.css` gives the shell `max-width: var(--page-max)` AND a left
-     inset of half whatever the window has past it, so under the ceiling the
-     inset floors at nothing and the page fills the window exactly as before,
-     and above it the shell holds this width with EQUAL margins. ⛔ The value was
-     never what was wrong with the first shape — the PIN was.
+  /* ⛔ THE SHELL'S CEILING, AND ABOVE IT THE SHELL CENTRES. `chrome.css` gives
+     the shell `max-width: var(--page-max)` AND a left inset of half whatever the
+     window has past it, so under the ceiling the inset floors at nothing and the
+     page fills the window, and above it the shell holds this width with EQUAL
+     margins. A shell pinned left would leave a dead band down the right of a
+     wide window, and an unbounded one grows the reading column without limit.
 
-     ⛔ WHY 110rem (1760px), FROM BOTH SIDES, MEASURED. The shell holds the rail
+     ⛔ WHY 110rem (1760px), FROM BOTH SIDES. The shell holds the rail
      (17rem), three gutters and the aside (16rem), so the reading surface is the
      shell less 588px: 1172px here. ⭐ FROM BELOW — the surface is what a code
-     block is scanned in, and the first corpus ships 218 of them: at a 1012px
+     block is scanned in; over a real corpus's 218 code blocks, at a 1012px
      surface (`100rem`) 20.2% need a horizontal scrollbar, at 1172px (`110rem`)
      8.7%, at 1252px (`115rem`) 4.6%, at 1332px (`120rem`) 3.2%. ⛔ The first
      160px buys 11.5 points and the next 160px buys 5.5: `110rem` is the knee.
      ⭐ FROM ABOVE — every pixel past the knee is open room right of a paragraph
      that is capped at `--measure` (880px). At `110rem` that room is 292px,
      about the one outline column the reader can see beside it; at `120rem` it
-     is 452px, nearly two. ⚠️ That room growing without limit is what the user
-     read as *"too wide"*, so the ceiling is where it stops growing. */
+     is 452px, nearly two, which reads as too wide. */
   --page-max: 110rem;
   --gutter: 1.25rem;
   --player-height: 3.5rem;

@@ -170,8 +170,8 @@
       .then(function (answer) { return answer.stopped === true; });
   }
 
-  /* ⭐ A QUIZ IS GRADED HERE TOO, AND IT IS NOT A RUN (the user's ruling
-     of 2026-09-23). The key never reaches the page: what the reader chose is
+  /* ⭐ A QUIZ IS GRADED HERE TOO, AND IT IS NOT A RUN. The key never reaches
+     the page: what the reader chose is
      sent to `/api/v1/quiz/<corpus>/<practice>/<question>=<option>/…` and the
      server answers the verdict — right or wrong per question, the CHOSEN
      option's sentence, the count, and whether the quiz is complete. ⛔ It is

@@ -1,9 +1,8 @@
 /* The quiz: what a reader chose, and what the local study server said about it.
 
-   ⛔ **THE KEY IS NOT IN THE PAGE, AND THIS FILE DOES NOT GRADE** — the user's
-   ruling of 2026-09-23: *"a test with the correct answer residing on
-   the server side. When user answers it will get validated and result will be
-   returned to the user with explanation if needed"*. ⭐ So this file reads
+   ⛔ **THE KEY IS NOT IN THE PAGE, AND THIS FILE DOES NOT GRADE**: the correct
+   answers stay on the local server, which validates each answer and returns
+   the result with its explanation. ⭐ So this file reads
    which option the reader chose, hands the choices to `window.studyforge.quiz`
    — which the SERVING PROCESS adds to a served page and a built page never
    names (R8) — and shows what came back: right or wrong per question,
@@ -28,7 +27,7 @@
    ⛔ **Nothing is written to browser storage, and the server records nothing
    either.** What a reader answered is the page's for as long as they are on
    it; ⚠️ **so a reload clears the answers**, and recording a quiz's completion
-   in the reader's own state is a decision for the row that takes it — never a
+   in the reader's own state is not done here — and it would never be a
    run verdict, which a quiz does not produce.
 
    ⭐ **Every word this file says is read off the markup**, where Python put it —

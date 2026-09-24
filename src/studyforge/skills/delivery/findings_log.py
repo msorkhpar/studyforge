@@ -23,21 +23,20 @@ every module here keeps.
 
 ## ⛔ Why a skill obliges this, and why it is not a message
 
-⚠️ **Measured:** the first conversion obliged no log, so its milestone's
-whole deliverable was produced by hand a milestone later, by an office reading
-commit bodies — and two of its seven numbered findings existed only in a
-hand-back message and were found in no ref at all. ⭐ **A finding written into
+⚠️ **A finding carried only in a message is lost with the message**, and a
+conversion with no log leaves its findings to be reconstructed by hand from
+whatever survived. ⭐ **A finding written into
 the corpus, at a place the skill names, survives the message that announced
 it.** The place is `.studyforge/`, which the validator already skips as this
 tool's directory, so writing the log never makes the corpus it describes invalid.
 
 ## ⭐ The slot is the sort, started early
 
-The catalogue's first conversion's sort asked one question of every finding: *could a
+The catalogue's sort asks one question of every finding: *could a
 skill have generated this?* **`yes`** is a hole in a skill (R19) and names
 where it goes; **`no`** is a candidate entry and says why no generator could
 write it; **`open`** is the question not yet asked. ⛔ `open` is allowed — the
-conversion may not be the office that sorts — but `closing` counts it aloud,
+conversion may not be the one that sorts — but `closing` counts it aloud,
 so an unsorted log is reported as unsorted rather than read as done.
 """
 

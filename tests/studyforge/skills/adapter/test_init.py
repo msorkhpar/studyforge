@@ -14,9 +14,6 @@ from studyforge.skills.adapter import PARTS
 from studyforge.validate import CHECKS
 from tests.support import assert_package_contract, repository_root
 
-#: How far past a dated figure its dating must appear, in characters.
-DATED_WITHIN = 400
-
 #: The verb the skill's fence gives. ⛔ Checked against the registered table
 #: rather than assumed, so retiring the verb fails here and not in a reader's
 #: shell.
@@ -26,12 +23,12 @@ SKILL = "src/studyforge/skills/adapter/SKILL.md"
 WHERE = "src/studyforge/skills/adapter"
 
 #: ⛔ **The package's whole public surface, spelled out.** ⚠️ Duplicated from
-#: `__all__` on purpose, following SF-01 and the pin `corpus.placement` already
+#: `__all__` on purpose, like the pin `corpus.placement` and `studyforge.address`
 #: has: a check that walks `__all__` to test `__all__` agrees with itself, so a
 #: name silently LEAVING this surface was invisible to it.
-#: ⭐ `W298`'s clause 3 is why it exists — `UNITS_DIR` survives here as a
-#: BINDING of placement's spelling (`W199`'s rider: an adapter's whole
-#: vocabulary arrives through this package, R19), and a surviving name owes a
+#: ⭐ `UNITS_DIR` is here as a
+#: BINDING of placement's spelling (an adapter's whole
+#: vocabulary arrives through this package, R19), and a bound name owes a
 #: CLOSED check rather than a spot assertion.
 PUBLIC_SURFACE = frozenset(
     {
@@ -84,9 +81,9 @@ def test_the_skill_document_sits_beside_the_code_it_calls():
 def test_the_skill_names_validate_as_its_definition_of_done():
     # ⛔ R2: an adapter's whole obligation is an archive `validate` accepts, and
     # a skill that described a shape instead would be checkable by opinion.
-    # ⛔ W61 / Ruling 138: the command is DERIVED from what runs it, never
-    # pinned as a literal. ⭐ SF-40 registered the console script, so the fence
-    # is now the installed spelling and the derivation moves with it: the verb
+    # ⛔ The command is DERIVED from what runs it, never
+    # pinned as a literal. ⭐ The fence is the installed console script's
+    # spelling, and the derivation moves with it: the verb
     # comes from `cli.VERBS` and the program name from `cli.PROGRAM`, both
     # reached from `[project.scripts]`. Pinning the string here would let the
     # skill outlive the verb.
@@ -100,22 +97,17 @@ def test_the_skill_names_validate_as_its_definition_of_done():
 
 def test_the_skill_carries_the_measurements_rather_than_asserting_shape():
     # ⛔ R19: anything a second source would have to re-derive is a hole in the
-    # skill. Each number below was counted in the pinned image, not inherited.
-    # ⚠️ W257 (rider W248/3): the check and rule-id counts went stale after
-    # `f816454`. They are DATED IN PLACE, not rewritten, so the
-    # date beside each is pinned with it.
+    # skill. The block vocabulary and the real corpus's recorded-address share
+    # are carried; a count that moves (checks, rule ids) is printed, not typed.
     text = skill_text()
-    for measured in ("**12 checks**", "**23 distinct rule ids**", "**11\ntypes**", "12.2%"):
+    for measured in ("**11\ntypes**", "12.2%"):
         assert measured in text, f"the skill no longer carries the measurement {measured!r}"
-    for stale in ("**12 checks**", "| checks | **12** |"):
-        following = text[text.index(stale) : text.index(stale) + DATED_WITHIN]
-        assert "⚠️ **Dated, and stale**" in following, (
-            f"{stale!r} reads as current; it is a reading at f816454 and must say so"
-        )
+    for moving in ("**12 checks**", "| checks | **12** |", "**23 distinct rule ids**"):
+        assert moving not in text, f"{moving!r} is a count that moves; the skill prints it instead"
 
 
 def test_the_skill_prints_the_check_count_rather_than_carrying_it():
-    # ⭐ Ruling 163: a pointer resolves at read time, and an agent executes a
+    # ⭐ A pointer resolves at read time, and an agent executes a
     # fence, so the fence is run here rather than read.
     fences = [line for line in skill_text().splitlines() if "len(v.CHECKS)" in line]
     assert len(fences) == 1, fences
@@ -155,7 +147,7 @@ def test_no_module_here_names_a_corpus_even_in_a_docstring():
 
 
 def test_the_surface_is_exactly_what_it_declares():
-    # ⛔ Ruling 101's producer half: a name a second package needs is on this
+    # ⛔ One exported home (R21): a name a second package needs is on this
     # `__all__`, or the two packages do not share it.
     for name in adapter.__all__:
         assert hasattr(adapter, name), f"__all__ names {name!r}, which is not exported"
@@ -163,7 +155,7 @@ def test_the_surface_is_exactly_what_it_declares():
 
 
 def test_the_public_surface_is_exactly_what_the_contract_says():
-    # ⛔ `W298` clause 3. ⚠️ The arm above walks `__all__`, so it answers
+    # ⚠️ The arm above walks `__all__`, so it answers
     # "does every declared name resolve" and CANNOT answer "is every name that
     # belongs here still declared" — dropping `UNITS_DIR` from `__all__` passes
     # it. ⭐ This one is closed over a population declared outside `__all__`.

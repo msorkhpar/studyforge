@@ -26,13 +26,11 @@ is handed data and gives back text, so the caller names the documents. A
 module that went looking for `docs/tasks/` would be a framework module that
 knows where a plan lives, and the next repository's plan does not live there.
 
-## ⛔ Why this exists at all, measured on the filing side
+## ⛔ Why this exists at all
 
-⚠️ **An integration wrote a delivery plan by hand and derived the
-capability→milestone map by reading thirteen epic documents** — which is
-exactly the cost R14's context budgets exist to prevent, paid again by every
-integration, and stale the moment an epic moves. ⭐ **Cost measured where it
-was paid: 18 rows of a hand-written plan.**
+⚠️ **A plan written by hand derives the capability→milestone map by reading
+every epic document** — a cost paid again by every integration, and stale the
+moment an epic moves.
 
 ⛔ **A hand-written index would be that same defect one layer up** (R19: the
 consuming half is generated, never hand-authored), which is why this module is
@@ -50,18 +48,17 @@ typed a second time here, and never retyped by the next repository (R19).
 
 ## ⛔ `of` names every capability it cannot place, never the first one
 
-⚠️ **A refusal names its whole population** (R6). A build over thirteen epic
-documents that refused the first id it could not place made the number of runs
-it takes to fix the epics unknowable, and each round is the whole generation. ⭐ **So the nested
-walk gathers and the refusal is raised once, after it** — and a single
-violation reads exactly as it read before, so nothing that was already right
-moved.
+⚠️ **A refusal names its whole population** (R6). A build that refused the
+first id it could not place would make the number of runs it takes to fix the
+epics unknowable, and each run is the whole generation. ⭐ **So the nested
+walk gathers and the refusal is raised once, after it**, and a single
+violation reads as a one-item refusal.
 
 ## ⭐ A column that would say the same thing in every row says nothing
 
 ⛔ So the side column is rendered only when at least one row is not `HERE`. A
-plan whose pin document declares nothing beyond itself renders exactly the
-four columns it rendered before — the distinction does not apply there, and a
+plan whose pin document declares nothing beyond itself renders four
+columns — the distinction does not apply there, and a
 fifth column of one repeated value is a column nobody reads. ⚠️ What the three
 values MEAN, and why the column exists at all, is `components`'.
 

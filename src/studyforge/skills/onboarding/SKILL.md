@@ -75,8 +75,8 @@ without being told, and a `framework_commit` naming another is refused by name.
 commit assertion, saying why, rather than passing it. ⛔ A library whose version
 cannot be read is refused by name, and nothing is written.
 
-⛔ **A corpus onboarded before this — its pin names a framework checkout beside
-it (`"where": "sibling"`) — keeps working until it re-onboards**: its committed
+⛔ **A corpus whose pin names a framework checkout beside it (`"where":
+"sibling"`) keeps working until it re-onboards**: its committed
 stubs and pin test do not import this library. ⭐ Its next regenerate must
 re-pin, from the installed library: `reonboard('.', framework_commit=<the
 commit the library was built from>)`. Without `framework_commit` that
@@ -109,11 +109,8 @@ Reconnaissance drafts each with `"why": null`; `promote` pairs it by glob and
 names every glob still open in one refusal. A reason already written is kept.
 
 ⭐ **Then ask the author whether they want narration, and record the answer in
-the draft.** The user's ruling, 2026-09-23: *"it should be optional and while
-serving or even while caputring the matterial skills should ask if user is
-interested in the narrition or not. Somebody might wants to just cover the
-course wihtout voices as mentioned the voice might be cgenerated but still not
-serving them would be an option"*. Ask it plainly — *"Do you want this course
+the draft.** Narration is optional: a reader may want the course without
+voices, and generated clips may still go unserved. Ask it plainly — *"Do you want this course
 narrated, or read without voices?"* — and write what they said:
 
 ```python
@@ -287,9 +284,8 @@ python3 -m pytest tests -q          # ⛔ it fails, and the failure is the speci
 other file in the corpus is downstream of it and is generated.
 
 ⛔ **That command leaves the corpus valid, and this skill is what makes that
-true**. ⚠️ **Measured**: it writes `tests/__pycache__/*.pyc`, the
-manifest this skill generated declared `tests/*.py`, and so the step this page
-commands left `studyforge validate` exiting 1 on bytecode. ⭐ **Settled as
+true**. ⚠️ It writes `tests/__pycache__/*.pyc`, which a manifest declaring only
+`tests/*.py` would leave unaccounted for. ⭐ **Settled as
 manifest data** — the generated glob is `tests/**`, which covers what the
 generated tests produce — **never by telling you to clean up after a step you
 were told to run.** `ingest/**` and `tests/ingest/**` always read this way.
@@ -322,14 +318,12 @@ as they are at the moment it is typed:
 python3 -m studyforge.skills.onboarding .
 ```
 
-⚠️ **Figures written INTO the document are never refreshed.**
-⛔ Measured on the first corpus: it said *narrated: 0 of 38* while every unit
-page carried audio, because narrating writes the narration record and no verb
-rewrites a generated document. ⭐ **A count is a fact, and a fact in a generated
-document can only be kept freshly wrong; a pointer resolves when it is read**
-(R19). ⛔ **So the old instruction to re-run step 3 is GONE rather than
-repeated louder** — an instruction that has to be remembered after every
-narration is the defect, not the remedy.
+⚠️ **Figures written INTO the document are never refreshed**: narrating writes
+the narration record, and no verb rewrites a generated document. ⭐ **A count is
+a fact, and a fact in a generated document can only be kept freshly wrong; a
+pointer resolves when it is read** (R19). ⛔ So nothing here asks you to re-run
+step 3 after narrating: an instruction that has to be remembered after every
+narration would be a defect, not a remedy.
 
 **Consumer-side modules:** `ingest`
 
@@ -365,10 +359,8 @@ uninstall refuses: it is removed only while it is still the stub.
 
 ⛔ **Exit 0 at step 5 says the archive is valid. It does not say what this run
 found, and a run that found things and wrote them nowhere is not done** (R19).
-⚠️ **Measured on the first conversion:** no step obliged a log, so its
-milestone's whole deliverable was rebuilt by hand a milestone later from commit
-bodies — ⛔ **and two of its seven numbered findings existed only in a hand-back
-message and were found in no ref at all.**
+⚠️ **A finding carried only in a hand-back message is lost with the message**,
+and a run with no log leaves its findings to be rebuilt by hand.
 
 ⭐ **The log lives at `.studyforge/findings.md`**, the one place this procedure
 names for it, and `studyforge.skills.delivery.LOG` spells it. `.studyforge/` is

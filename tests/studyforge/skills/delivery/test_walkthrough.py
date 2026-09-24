@@ -132,7 +132,7 @@ def test_the_procedure_offers_no_console_script_that_does_not_exist():
 
 def test_the_procedures_first_command_runs_and_prints_the_index(tmp_path):
     # ⛔ The live reading: the command a reader types first, typed.
-    # ⭐ W238: read out of `SKILL.md` rather than retyped here, so the procedure
+    # ⭐ read out of `SKILL.md` rather than retyped here, so the procedure
     # and this test cannot drift apart with the test still green.
     # ⭐ Run from a directory that holds no plan document at all, and
     # compared byte for byte — never stripped.
@@ -168,7 +168,7 @@ def test_a_plan_reaches_a_document_an_export_and_a_risk_report():
     assert exported.splitlines()[0].startswith("Issue key")
     assert len(exported.splitlines()) == len(plan.tasks) + 1
 
-    report = concentration(plan.tasks, outside=(Carrier("SF-02", "the framework", 6),))
+    report = concentration(plan.tasks, outside=(Carrier("RS-02", "the framework", 6),))
     assert "outside this repository" in report.headline()
 
 
@@ -200,8 +200,8 @@ def test_a_plan_that_contradicts_the_index_never_reaches_a_document():
 
     broken = plans.backlog(
         milestones=(
-            Milestone("C1", "first", (plans.reading_task("C-01", depends_on=("SF-20",)),), "M1"),
+            Milestone("C1", "first", (plans.reading_task("C-01", depends_on=("RS-20",)),), "M1"),
         )
     )
-    with pytest.raises(PlanRefused, match="waits on SF-20, which lands at M5"):
+    with pytest.raises(PlanRefused, match="waits on RS-20, which lands at M5"):
         broken.checked(plans.index())

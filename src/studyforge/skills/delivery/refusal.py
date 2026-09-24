@@ -1,7 +1,7 @@
 r"""The one form every refusal in this package takes when it found more than one thing.
 
 **What it does.** Renders a gathered list of reasons as a single refusal
-message: one reason reads exactly as it read before this module existed,
+message: one reason reads as that reason alone, and
 several are **all** named.
 
 **How you use it.**
@@ -26,11 +26,10 @@ the work before starting it.
 gathering is what the caller writes; this module is only the sentence that
 comes out the other end.
 
-## ⭐ One reason reads exactly as it did, and that is deliberate
+## ⭐ One reason reads as itself, and that is deliberate
 
-⚠️ **A message that gained a count and a preamble when there was only ever one
-thing to say would have moved every refusal in the package**, including the
-ones that were already right, and every test that pins them. ⛔ So the
+⚠️ **A count and a preamble over a single reason add nothing a reader needs**
+and would make every one-reason refusal read differently from its reason. ⛔ So the
 singular case is the identity: `one_or_all(("x",)) == "x"`.
 
 ⚠️ **This module adds no vocabulary of its own to a reason.** A reason arrives

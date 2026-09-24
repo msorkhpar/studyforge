@@ -37,11 +37,11 @@ def test_the_one_call_the_procedures_first_step_makes():
         plans.NO_PINS,
     )
     assert delivery.BANNER in rendered
-    assert "`SF-01`" in rendered
+    assert "`RS-01`" in rendered
 
 
 def test_the_pin_document_is_required_rather_than_defaulted():
-    # ⛔ `W92`: an index that defaulted to *everything is this framework's*
+    # ⛔ an index that defaulted to *everything is this framework's*
     # would state the thing the row was filed about, and state it silently.
     # ⭐ A plan with no component but itself says so by passing a document
     # that pins none, exactly as `concentration(outside=())` requires.
@@ -59,7 +59,7 @@ def test_the_pin_document_is_what_places_a_row_on_the_other_side():
 
     def placed(pins: str) -> set[str]:
         rows = delivery.capability_index(documents, order, pins).splitlines()
-        return {row for row in rows if row.startswith("| `TC-00`")}
+        return {row for row in rows if row.startswith("| `TV-00`")}
 
     assert placed(plans.NO_PINS) != placed(plans.PINS)
     assert all(delivery.HERE in row for row in placed(plans.NO_PINS))
@@ -114,7 +114,7 @@ def test_the_package_reaches_the_filesystem_nowhere():
             assert not reached, f"{module.name} imports {', '.join(sorted(reached))}"
 
 
-# --- W94 / Ruling 188: no refusal in this package stops at its first witness --
+# --- no refusal in this package stops at its first witness --
 #
 # ⛔ **Why this walk is not a grep for "raises inside a loop".** That is a
 # SYNTACTIC proxy for a BEHAVIOURAL property and it is blind in exactly the
@@ -298,7 +298,7 @@ def _package() -> Path:
 
 
 def test_the_population_this_walk_reads_is_inhabited():
-    # ⛔ Ruling 128: the population is printed before the verdict it qualifies.
+    # ⛔ R6: the population is printed before the verdict it qualifies.
     # An empty walk and a clean walk read the same, and only one is good news.
     census = _census(_package())
     assert int(census["modules"]) > 1
@@ -307,8 +307,8 @@ def test_the_population_this_walk_reads_is_inhabited():
 
 
 def test_no_refusal_is_raised_from_inside_a_loop_of_its_own():
-    # ⛔ The syntactic half of Ruling 188, and the half the round-49 instrument
-    # could see: a refusal raised inside a loop abandons the rest of that loop.
+    # ⛔ The syntactic half of R6's whole-population refusal: a refusal raised
+    # inside a loop abandons the rest of that loop.
     census = _census(_package())
     assert int(census["lexical"]) == 0
 

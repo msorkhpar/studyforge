@@ -25,7 +25,7 @@ def test_an_empty_outside_is_a_declaration_and_is_accepted():
 def test_risk_outside_the_repository_reaches_the_headline():
     report = concentration(
         plans.backlog().tasks,
-        outside=(Carrier("SF-28", "the framework, not started", 20),),
+        outside=(Carrier("RS-28", "the framework, not started", 20),),
     )
     assert report.outside_share > 0.5
     assert OUTSIDE in report.headline()
@@ -33,8 +33,8 @@ def test_risk_outside_the_repository_reaches_the_headline():
 
 
 def test_the_heaviest_carriers_are_the_fewest_reaching_half_the_work():
-    report = concentration(plans.backlog().tasks, outside=(Carrier("SF-28", "the framework", 20),))
-    assert [carrier.id for carrier in report.heaviest] == ["SF-28"]
+    report = concentration(plans.backlog().tasks, outside=(Carrier("RS-28", "the framework", 20),))
+    assert [carrier.id for carrier in report.heaviest] == ["RS-28"]
     assert report.concentrated
 
 
@@ -46,10 +46,10 @@ def test_an_even_plan_is_reported_as_spread():
 
 
 def test_the_report_prints_the_whole_population_and_not_a_top_slice():
-    # ⛔ Ruling 128: an instrument reducing a population to a scalar prints
+    # ⛔ R6: an instrument reducing a population to a scalar prints
     # that population in full.
     tasks = tuple(plans.reading_task(f"C-0{n}") for n in range(1, 5))
-    report = concentration(tasks, outside=(Carrier("SF-28", "the framework", 3),))
+    report = concentration(tasks, outside=(Carrier("RS-28", "the framework", 3),))
     rows = [line for line in report.lines() if line.startswith("| `")]
     assert len(rows) == len(tasks) + 1 == len(report.carriers)
 
@@ -67,18 +67,18 @@ def test_a_plan_with_no_carriers_at_all_is_refused():
 
 def test_a_carrier_with_no_effort_is_refused():
     with pytest.raises(RiskRefused, match="which is not work"):
-        Carrier("SF-28", "the framework", 0)
+        Carrier("RS-28", "the framework", 0)
 
 
 def test_a_carrier_with_no_name_or_no_place_is_refused():
     with pytest.raises(RiskRefused, match="names what it is and where it lives"):
-        Carrier("SF-28", "  ", 3)
+        Carrier("RS-28", "  ", 3)
 
 
 def test_neither_side_of_the_report_is_the_unmarked_default():
     # ⚠️ `INSIDE` is a literal too, so a reader scanning the table can find
     # every row of either kind.
-    report = concentration(plans.backlog().tasks, outside=(Carrier("SF-28", OUTSIDE, 3),))
+    report = concentration(plans.backlog().tasks, outside=(Carrier("RS-28", OUTSIDE, 3),))
     wheres = {carrier.where for carrier in report.carriers}
     assert wheres == {INSIDE, OUTSIDE}
     assert not Carrier("C-01", INSIDE, 1).is_outside

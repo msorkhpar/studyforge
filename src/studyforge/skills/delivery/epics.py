@@ -40,7 +40,7 @@ caller exactly as the epics are, and never retyped by the next repository
 ## ⛔ Every unreadable row is named, and so is every unreadable document
 
 ⚠️ **Refusals gather, at the two places this module iterates** (R6). A walk over a
-document that stopped at its first malformed row, or a walk over thirteen
+document that stopped at its first malformed row, or a walk over many
 documents that stopped at the first unreadable one, tells its reader how much
 is wrong only by being run again — and each run is the whole generation.
 ⭐ **So both loops gather and refuse once**, and `read_epics` is the reason
@@ -270,8 +270,8 @@ def read_epics(documents: Iterable[tuple[str, str]]) -> tuple[Epic, ...]:
     """Read every `(name, text)` document, ⛔ naming EVERY one that cannot be read.
 
     ⚠️ **This is the call boundary the refusal's population is derived across**
-    (R6). Reading thirteen epic documents through a generator that stops at
-    the first unreadable one tells the reader nothing about the other twelve,
+    (R6). Reading many epic documents through a generator that stops at
+    the first unreadable one tells the reader nothing about the others,
     and the shape of that refusal — correct inside `read_epic`, first-witness
     once a loop is wrapped around it — is invisible to any instrument that
     looks at one function at a time.

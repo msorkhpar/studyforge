@@ -47,10 +47,9 @@ section[data-practice] div[data-practice-part="head"] {
 
 /* ⛔ The measure is NOT reopened here. `reading.css` caps `main p` at
    `--measure` and the panel sits inside the reading column, so its sentences
-   break where every other sentence on the page does. ⚠️ Measured: an earlier
-   draft of this file lifted that cap and the panel's own explanation laid out
-   as one 269-character line — which `tests/visual/test_reading_room.py` reads
-   and no stylesheet test could have. */
+   break where every other sentence on the page does. ⚠️ Lifting that cap lays
+   the panel's own explanation out as one line of hundreds of characters, which
+   `tests/visual/test_reading_room.py` reads and no stylesheet test could. */
 section[data-practice] p {
   margin: 0 0 .5rem;
   font-size: .95rem;
@@ -116,7 +115,7 @@ section[data-practice] div[data-practice-part="editor"] iframe {
 }
 
 /* ⭐ **MAXIMISED — THE PANEL'S OWN GEOMETRY, AND NOTHING MOVES**.
-   The reader asked for room for the code, the tests and the two acts, and the
+   A reader writing code needs room for the code, the tests and the two acts, and the
    panel already holds every one of them — so the whole expansion is this rule
    and the one attribute `practice.js` sets on the section.
 
@@ -135,26 +134,23 @@ section[data-practice] div[data-practice-part="editor"] iframe {
    rather than leaving the property to a comment.
 
    ⛔ **AND THE RULE BELOW MOVES THE READER'S PAGE, WHICH IS WHY `practice.js`
-   REMEMBERS WHERE IT WAS** (a merge gate found it, and it was then
-   measured deterministically here rather than guessed at twice more).
+   REMEMBERS WHERE IT WAS**.
 
    ⛔ **Two causes, one symptom, and the second is the one that hid.**
    ⚠️ **First:** `position: fixed` takes the panel OUT OF FLOW, so the document
-   loses exactly the panel's own height — **MEASURED on the fixture unit page:
+   loses exactly the panel's own height — **on the fixture unit page,
    2390px becomes 2084px and the furthest a reader can scroll drops from 1490 to
    1184** — the browser CLAMPS a scroll that no longer fits, and restoring the
    height does not undo a clamp. ⚠️ **Second:** `reset.css` sets
    `scroll-behavior: smooth` on `html`, so EVERY scroll animates, including the
    one a `focus()` starts by bringing its target into view. ⛔ **A reading taken
-   during that glide sees somewhere the reader is only passing through** — which
-   is why the merge gate reported a drift of **2px** and this office, measuring
-   the same mechanism deterministically, saw **306px**.
+   during that glide sees somewhere the reader is only passing through**,
+   anywhere from a couple of pixels to the panel's whole height away.
 
    ⭐ **So the restore both `preventScroll`s the focus and sets the position
    `behavior: 'instant'`**: exactly one thing decides where the page is, and it
    decides it in one frame. ⭐ **And the check for it is taken at the END of the
-   page** — at the top of a page this defect is invisible, and the first reading
-   of it was taken there and passed.
+   page** — at the top of a page the clamp is invisible.
 
    ⭐ **Nothing is done to `body`, and no scroll lock is taken.** The usual
    companion to a full-viewport surface is `overflow: hidden` on `body`; it is
@@ -178,7 +174,7 @@ section[data-practice][data-practice-expanded] {
 
 /* ⭐ The editor slot is the one region that takes the room the expansion made:
    the note, the controls, the status line and the output are all the size they
-   already were, and the reader asked for more of the CODE. ⚠️ `min-height: 0`
+   already were, and what a reader needs more of is the CODE. ⚠️ `min-height: 0`
    on both, because a flex item's floor is its content and an editor frame
    would otherwise refuse to shrink below its own 30rem. */
 section[data-practice][data-practice-expanded] div[data-practice-part="editor"] {

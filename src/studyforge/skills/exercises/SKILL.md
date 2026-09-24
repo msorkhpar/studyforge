@@ -69,21 +69,11 @@ file, the unit it becomes (address, variant, unit number), its kind (`code` or
 `quiz`), the test files the corpus declares for it, its `aspects` and a `tier`
 (`introductory`, `core` or `advanced`).
 
-#### ⛔ Plan by the page's important ideas (user ruling 2026-09-23)
+#### ⛔ Plan by the page's important ideas
 
-The user's ruling, in their words:
-
-> *"Depending on the context of the page there might be no practice, 2 or more,
-> The target is covering all the aspects not just having something minimum we
-> are looking for quality"*
-
-And the same day, on how far to take it:
-
-> *"regarding the coverage don't over do it! at the same time we are not a
-> university that wants to grade the knowdlge! Sometimes a single practice might
-> cover better than 4 unrelated small practices. It's all about quality and the
-> importants ofthe text. Like for the first quiz the dates do not matter. The
-> version might matter. And for sure 4 questions were a lot"*
+A page may get no practice, one, or several: the target is every important
+aspect covered well, not a minimum, and not a university grading knowledge. One
+practice often covers more than several unrelated small ones.
 
 ⭐ **Read the page, its prose AND its code, and name its aspects.** An `Aspect`
 is one important idea a reader could be checked on: an `id`, one sentence
@@ -110,13 +100,6 @@ and a basis the page does not carry. ⭐ **Zero is legitimate**: every aspect
 reasoned plans zero, and a page teaching nothing checkable names no aspect
 and says why in `nothing_checkable`. ⚠️ `tier` says how hard each exercise is,
 never how many.
-
-⛔ **SUPERSEDED 2026-09-23** — kept so a citation of it resolves, and
-not in force:
-
-> *Your three readings. Those are `words` (count them with `words_of`, which
-> counts prose and leaves fences out), the number of distinct checkable
-> `skills` it teaches, and a `tier` (`introductory`, `core` or `advanced`).*
 
 ⛔ **The two populations are the corpus's to declare** (R1). What is
 material comes from the manifest's `content` policy, and what is a grader

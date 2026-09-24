@@ -1,8 +1,8 @@
 """Mirror of `src/studyforge/skills/delivery/capability.py` (R12).
 
-⚠️ The tests over the markdown parse moved to `test_epics.py` when `W94` split
-that half out; what stays here is the index over what the parse produced —
-⭐ including **which side delivers a row** (`W92`). What READS a side out of
+⚠️ The tests over the markdown parse are in `test_epics.py`; what is here is
+the index over what the parse produced —
+⭐ including **which side delivers a row**. What READS a side out of
 the pin document is asserted next door, in `test_components.py`.
 """
 
@@ -26,7 +26,7 @@ from tests.studyforge.skills.delivery import plans
 
 
 def test_the_bold_some_rows_put_round_their_milestone_does_not_hide_it():
-    assert plans.index().milestone_of("SF-02") == "M2"
+    assert plans.index().milestone_of("RS-02") == "M2"
 
 
 def test_an_index_of_no_epics_is_refused():
@@ -35,7 +35,7 @@ def test_an_index_of_no_epics_is_refused():
 
 
 def test_a_capability_declared_twice_is_refused_and_both_epics_are_named():
-    with pytest.raises(IndexRefused, match="SF-01 is declared twice"):
+    with pytest.raises(IndexRefused, match="RS-01 is declared twice"):
         Index.of(
             (read_epic("E01.md", plans.EPIC_ONE), read_epic("E02.md", plans.EPIC_ONE)),
             plans.sequence(),
@@ -45,7 +45,7 @@ def test_a_capability_declared_twice_is_refused_and_both_epics_are_named():
 
 def test_asking_for_a_capability_the_index_does_not_carry_is_refused():
     with pytest.raises(IndexRefused, match="no such capability"):
-        plans.index().milestone_of("SF-77")
+        plans.index().milestone_of("RS-77")
 
 
 def test_asking_after_a_milestone_the_index_does_not_know_is_refused():
@@ -55,8 +55,8 @@ def test_asking_after_a_milestone_the_index_does_not_know_is_refused():
 
 def test_after_is_strictly_later_because_it_is_what_a_corpus_forgoes():
     index = plans.index()
-    assert [c.id for c in index.after("M1")] == ["SF-02", "SF-20"]
-    assert [c.id for c in index.after("M2")] == ["SF-20"]
+    assert [c.id for c in index.after("M1")] == ["RS-02", "RS-20"]
+    assert [c.id for c in index.after("M2")] == ["RS-20"]
     assert index.after("M5") == ()
 
 
@@ -75,7 +75,7 @@ def test_rendering_twice_gives_the_same_bytes():
     assert plans.index().render() == plans.index().render()
 
 
-# --- W238: the order is DECLARED, and the fixture's is not id order ----------
+# --- the order is DECLARED, and the fixture's is not id order ----------
 
 
 def test_the_fixture_order_is_not_id_order_or_every_test_below_proves_nothing():
@@ -104,7 +104,7 @@ def test_later_refuses_a_milestone_the_order_does_not_declare():
 
 def test_after_follows_the_declared_order_so_m5_is_after_m6():
     # ⛔ By id, `M5` sorts before `M6` and this would be empty.
-    assert [c.id for c in plans.index().after("M6")] == ["SF-20"]
+    assert [c.id for c in plans.index().after("M6")] == ["RS-20"]
 
 
 def test_a_declared_milestone_with_no_capability_is_printed_and_says_so():
@@ -120,7 +120,7 @@ def test_the_document_prints_the_order_it_was_given_and_names_its_source():
 
 def test_a_capability_at_a_milestone_the_order_omits_is_refused():
     omitting = read_sequence("README.md", "### M1 — One\n### M2 — Two\n")
-    with pytest.raises(IndexRefused, match="SF-20 lands at M5, which README.md does not declare"):
+    with pytest.raises(IndexRefused, match="RS-20 lands at M5, which README.md does not declare"):
         Index.of(
             (read_epic("E01.md", plans.EPIC_ONE), read_epic("E05.md", plans.EPIC_TWO)),
             omitting,
@@ -128,22 +128,22 @@ def test_a_capability_at_a_milestone_the_order_omits_is_refused():
         )
 
 
-# --- W94 / Ruling 188: `of` names every capability it cannot place -----------
+# --- `of` names every capability it cannot place -----------
 
 #: An epic placing two capabilities at milestones the order does not declare.
 MISPLACED = """# E20 — Misplaced
 
-### SF-60 — Lands nowhere
+### RS-60 — Lands nowhere
 **Milestone** M7 · **Team** solo
 
-### SF-61 — Also lands nowhere
+### RS-61 — Also lands nowhere
 **Milestone** M8 · **Team** solo
 """
 
 #: And a second one repeating an id from the first. ⛔ Four reasons in all.
 MISPLACED_AGAIN = """# E21 — Misplaced again
 
-### SF-60 — The same id
+### RS-60 — The same id
 **Milestone** M7 · **Team** solo
 """
 
@@ -159,9 +159,9 @@ def test_every_capability_that_cannot_be_placed_is_named_not_the_first():
         )
     message = str(refused.value)
     assert "4 refusals" in message
-    assert "SF-60 lands at M7" in message
-    assert "SF-61 lands at M8" in message
-    assert "SF-60 is declared twice — in E20 and in E21" in message
+    assert "RS-60 lands at M7" in message
+    assert "RS-61 lands at M8" in message
+    assert "RS-60 is declared twice — in E20 and in E21" in message
 
 
 def test_one_misplaced_capability_reads_exactly_as_it_did():
@@ -174,7 +174,7 @@ def test_one_misplaced_capability_reads_exactly_as_it_did():
             Components.none(),
         )
     assert str(refused.value) == (
-        "SF-20 lands at M5, which README.md does not declare, so it has no place in the order"
+        "RS-20 lands at M5, which README.md does not declare, so it has no place in the order"
     )
 
 
@@ -188,26 +188,26 @@ def test_m10_keeps_its_declared_place_and_is_not_sorted_after_m1():
     assert index.milestones not in (tuple(sorted(index.milestones)), ("M1", "M2", "M9", "M10"))
     assert index.later("M9", than="M10") and index.later("M10", than="M2")
     assert not index.later("M10", than="M9")
-    assert [c.id for c in index.after("M10")] == ["SF-41"]
+    assert [c.id for c in index.after("M10")] == ["RS-41"]
     rendered = index.render()
     assert rendered.index("## M2 — ") < rendered.index("## M10 — ") < rendered.index("## M9 — ")
 
 
-# --- W92: the index can say NOT THIS SIDE, and it is READ, never judged ------
+# --- the index can say NOT THIS SIDE, and it is READ, never judged ------
 
 
 def test_a_row_owning_inside_a_pinned_component_is_not_this_frameworks():
-    assert plans.sided_index().sides["TC-00"] == ELSEWHERE
+    assert plans.sided_index().sides["TV-00"] == ELSEWHERE
 
 
 def test_a_row_owning_a_path_that_reaches_no_component_is_this_frameworks():
-    assert plans.sided_index().sides["SF-01"] == HERE
+    assert plans.sided_index().sides["RS-01"] == HERE
 
 
 def test_a_row_that_names_no_path_at_all_is_undeclared_and_is_never_guessed():
     # ⛔ The hole is printed rather than smoothed into a confident value: a
-    # `why` written against a guess is the defect `W92` reports, one layer on.
-    assert plans.sided_index().sides["TC-01"] == UNDECLARED
+    # `why` written against a guess is the defect this guards, one layer on.
+    assert plans.sided_index().sides["TV-01"] == UNDECLARED
 
 
 def test_an_epics_preamble_places_a_row_whose_own_cell_names_no_path():
@@ -218,14 +218,14 @@ def test_an_epics_preamble_places_a_row_whose_own_cell_names_no_path():
         "# E12 — A shared component\n\nIt becomes **`elsewhere-component`**, its own repository.",
     )
     index = Index.of((read_epic("E12.md", text),), plans.sequence(), plans.components())
-    assert index.sides["TC-01"] == ELSEWHERE
+    assert index.sides["TV-01"] == ELSEWHERE
 
 
 def test_a_workspace_that_pins_nothing_but_itself_places_every_row_here():
     epics = (read_epic("E12.md", plans.EPIC_ELSEWHERE),)
     index = Index.of(epics, plans.sequence(), Components.none())
     assert set(index.sides.values()) == {HERE, UNDECLARED}
-    assert index.sides["TC-00"] == HERE
+    assert index.sides["TV-00"] == HERE
 
 
 def test_asking_for_a_side_outside_the_vocabulary_is_refused():
@@ -241,7 +241,7 @@ def test_the_column_is_rendered_when_at_least_one_row_is_not_this_frameworks():
     assert index.distinguishes
     rendered = index.render()
     assert f"| capability | what it is | area | {SIDE_COLUMN} | waits on |" in rendered
-    assert f"| `TC-00` | The runner image | A shared component | {ELSEWHERE} |" in rendered
+    assert f"| `TV-00` | The runner image | A shared component | {ELSEWHERE} |" in rendered
 
 
 def test_the_column_is_absent_when_no_row_is_delivered_anywhere_else():

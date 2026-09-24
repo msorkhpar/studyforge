@@ -35,7 +35,7 @@ def test_a_milestone_gated_on_framework_work_and_declaring_nothing_is_refused():
     plan = Backlog(
         corpus="a corpus",
         milestones=(
-            milestone(gated_by=None, tasks=(plans.reading_task("C-01", depends_on=("SF-01",)),)),
+            milestone(gated_by=None, tasks=(plans.reading_task("C-01", depends_on=("RS-01",)),)),
         ),
         terminal=plans.terminal(),
     )
@@ -47,27 +47,27 @@ def test_a_milestone_reaching_past_its_declared_gate_is_refused_by_capability():
     plan = Backlog(
         corpus="a corpus",
         milestones=(
-            milestone(gated_by="M1", tasks=(plans.reading_task("C-01", depends_on=("SF-02",)),)),
+            milestone(gated_by="M1", tasks=(plans.reading_task("C-01", depends_on=("RS-02",)),)),
         ),
         terminal=plans.terminal(),
     )
-    with pytest.raises(PlanRefused, match="waits on SF-02, which lands at M2"):
+    with pytest.raises(PlanRefused, match="waits on RS-02, which lands at M2"):
         plan.checked(plans.index())
 
 
 def test_the_gate_is_compared_in_the_declared_order_and_never_by_id():
-    # ⛔ W238. The fixture runs `M6` before `M5`. By id `M5` < `M6`, so a gate
-    # of `M6` would wrongly admit a task waiting on `SF-20`, which lands at `M5`
+    # ⛔ The fixture runs `M6` before `M5`. By id `M5` < `M6`, so a gate
+    # of `M6` would wrongly admit a task waiting on `RS-20`, which lands at `M5`
     # — AFTER the gate. And the other way round, a gate of `M5` admits it.
     def gated(gate: str) -> Backlog:
-        waits = (plans.reading_task("C-01", depends_on=("SF-20",)),)
+        waits = (plans.reading_task("C-01", depends_on=("RS-20",)),)
         return Backlog(
             corpus="a corpus",
             milestones=(milestone(gated_by=gate, tasks=waits),),
             terminal=plans.terminal(),
         )
 
-    with pytest.raises(PlanRefused, match="gated by M6, .* waits on SF-20, which lands at M5"):
+    with pytest.raises(PlanRefused, match="gated by M6, .* waits on RS-20, which lands at M5"):
         gated("M6").checked(plans.index())
     assert gated("M5").checked(plans.index())
 
@@ -133,7 +133,7 @@ def test_the_critical_path_is_the_heaviest_chain_and_not_the_longest():
 
 
 def test_a_cycle_through_the_plans_own_tasks_is_refused():
-    # ⛔ `W94`: BOTH tasks are on this cycle, so both are counted. A guard
+    # ⛔ BOTH tasks are on this cycle, so both are counted. A guard
     # inside the walk raised on whichever one it entered first.
     plan = plans.backlog(
         milestones=(
@@ -188,7 +188,7 @@ def test_every_cycle_is_counted_and_not_only_the_one_the_walk_entered_first():
         plan.critical_path()
 
 
-# --- W94 / Ruling 188: `checked` names every contradiction it found ----------
+# --- `checked` names every contradiction it found ----------
 
 
 def test_every_contradiction_in_a_plan_is_named_not_the_first():
@@ -201,7 +201,7 @@ def test_every_contradiction_in_a_plan_is_named_not_the_first():
                 "C1",
                 "first",
                 (
-                    plans.reading_task("C-01", depends_on=("SF-01",)),
+                    plans.reading_task("C-01", depends_on=("RS-01",)),
                     plans.reading_task("C-02", depends_on=("C-99",)),
                 ),
                 None,
@@ -210,7 +210,7 @@ def test_every_contradiction_in_a_plan_is_named_not_the_first():
                 "C2",
                 "second",
                 (
-                    plans.reading_task("C-03", depends_on=("SF-20",)),
+                    plans.reading_task("C-03", depends_on=("RS-20",)),
                     plans.reading_task("C-04", depends_on=("C-05",)),
                 ),
                 "M1",
@@ -225,7 +225,7 @@ def test_every_contradiction_in_a_plan_is_named_not_the_first():
     assert "4 refusals" in message
     assert "declares no framework gate" in message
     assert "neither in this plan nor a capability" in message
-    assert "waits on SF-20, which lands at M5" in message
+    assert "waits on RS-20, which lands at M5" in message
     assert "waits on a task in a later milestone" in message
 
 
@@ -285,14 +285,14 @@ def test_a_finding_id_used_twice_is_refused():
 
 
 def test_the_questions_a_plan_carries_are_numbered_when_it_is_built():
-    question = Question(2, "is it?", routed_at="SF-01", blocks=("C-01",), rerun="python3 -m x")
+    question = Question(2, "is it?", routed_at="RS-01", blocks=("C-01",), rerun="python3 -m x")
     with pytest.raises(Exception, match=r"\[2\]"):
         plans.backlog(questions=(question,))
 
 
 def test_open_questions_are_the_ones_still_blocking_somebody():
-    one = Question(1, "is it?", routed_at="SF-01", blocks=("C-01",), rerun="python3 -m x")
-    two = Question(2, "and this?", routed_at="SF-01", blocks=("C-01",), rerun="python3 -m x")
+    one = Question(1, "is it?", routed_at="RS-01", blocks=("C-01",), rerun="python3 -m x")
+    two = Question(2, "and this?", routed_at="RS-01", blocks=("C-01",), rerun="python3 -m x")
     plan = plans.backlog(questions=(one, two.settled("yes", at="8146bdb")))
     assert [q.number for q in plan.open_questions] == [1]
 
@@ -310,7 +310,7 @@ def test_the_document_carries_every_task_the_terminal_and_the_critical_path():
 
 
 def test_the_document_carries_questions_and_findings_when_there_are_any():
-    question = Question(1, "is it?", routed_at="SF-01", blocks=("C-01",), rerun="python3 -m x")
+    question = Question(1, "is it?", routed_at="RS-01", blocks=("C-01",), rerun="python3 -m x")
     found = Finding("C-01/1", "structural", "a wall", (Claim("hit it", measured="here"),))
     text = "\n".join(plans.backlog(questions=(question,), findings=(found,)).lines())
     assert "## Questions" in text and "## Findings" in text

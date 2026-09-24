@@ -73,8 +73,7 @@ commit.
 ⛔ **Reading the epics directly is the defect this step exists to stop.** A
 capability→milestone map derived by reading every epic document is a cost
 the index exists to prevent, it is paid again by every integration, and it
-is stale the moment an epic moves. ⚠️ **Measured on the filing side: 18 rows of
-a hand-written plan.**
+is stale the moment an epic moves.
 
 ⛔ **A hand-edit to the index is a finding against this skill** (R19). If the
 index cannot say something a planner needs, the *generator* is missing a
@@ -215,7 +214,7 @@ message** (R19). The conversion wrote it at `.studyforge/findings.md` —
 paragraph above turns on: *could a skill have generated this?* ⭐ **`yes`
 routes to a skill as a finding against a task, `no` is a candidate entry, and
 `open` is the sort still owed.**
-The shape a finished sort takes is the catalogue's own *first conversion's sort* section:
+The shape a finished sort takes is the catalogue's own *sort* section:
 every finding, a verdict, and why — the refusals written beside the adoptions.
 
 ```

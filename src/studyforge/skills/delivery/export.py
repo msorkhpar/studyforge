@@ -125,8 +125,8 @@ JIRA = Profile(
     ),
 )
 
-#: ⭐ And one other, to prove the seam: this profile was added without a line
-#: of the planner changing. ⚠️ It reaches `owns` and `evidence`, which Jira
+#: ⭐ And one other, to prove the seam: this profile needs no line of the
+#: planner to change. ⚠️ It reaches `owns` and `evidence`, which Jira
 #: does not — between the two, every field in the registry is exported.
 GITHUB = Profile(
     name="github",

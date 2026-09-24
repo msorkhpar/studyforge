@@ -83,7 +83,7 @@ into regions by its headings, it is a group label whose units are those regions:
 each unit's `origin` is `{path, section}`, a heading-bounded region. A linked file that is one
 unit stays an entry, and the survey asks about it by name.
 
-> **Measured** at ISO `ab9e765`: read as an entry, `# [Test cases](TestCases.md)`
+> **Measured** on the ISO-8583 corpus: read as an entry, `# [Test cases](TestCases.md)`
 > gave **39 units in 3 groups**. Read as a label, it gives **55 units in 4 groups**,
 > 17 of them regions of `TestCases.md`, one per top-level heading.
 
@@ -176,13 +176,13 @@ in `reasons`, keyed by its glob.
 ### 9. ⛔ On a corpus this framework already onboarded, survey the corpus
 
 ⚠️ **A second survey reads the framework's own consuming half back**, and the
-worst symptom is silent. ⭐ **Measured on a clean run:** the raw repository gave
-*"build files 0, graders 0"* and a draft of `exercises: false`; the same
-repository after onboarding gave **12 files that look like graders — the
-scaffold's own `tests/**/test_*.py`** — dropped the verdict line and drafted
-`exercises: true`. ⛔ **A COMPLETE corpus is then presented to its reader as
-unfinished** (§7, C5). The archive a build wrote flipped `placement` the same
-way, and the generated documents were re-proposed as this corpus's material.
+worst symptom is silent. ⭐ A raw repository that reads *"build files 0,
+graders 0"* and drafts `exercises: false` reads, once onboarded, the scaffold's
+own `tests/**/test_*.py` as files that look like graders, drops the verdict line
+and drafts `exercises: true`. ⛔ **A COMPLETE corpus would then be presented to
+its reader as unfinished** (§7, C5). The archive a build wrote would flip
+`placement` the same way, and the generated documents would be re-proposed as
+this corpus's material.
 
 ⭐ **`.studyforge/installed.json` names every file of it, and it is the one
 instrument** — `installed.generated` reads it, `inventory` sets those files
@@ -210,10 +210,9 @@ the corpus as its own working tree.
   are served at a slug their title does not produce.
 - ⛔ **Never smooth over an uncertainty to make the report look finished.**
 
-## ⚠️ One correction worth carrying, because the ruling was wrong
+## ⚠️ Which titles collide: punctuation, not accents
 
-An earlier plan and ruling said `slugify` collides on **accents** — that `Café`
-and `Cafe` become one slug. ⛔ **Measured: they do not.** An accent is a
+`slugify` does not collide `Café` and `Cafe`. An accent is a
 non-alphanumeric, so it collapses to a *separator*: `caf` and `cafe`.
 
 ⭐ **The class that actually occurs is punctuation.** `'Streams: an API'` and

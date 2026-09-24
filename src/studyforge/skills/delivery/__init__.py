@@ -3,7 +3,7 @@ r"""Delivery planning: the product owner for an integration.
 **What it does.** Turns *"convert this repository"* into an ordered backlog of
 tasks that each end in something a person can be **shown**, with acceptance
 the framework can **evaluate**, gated against a **generated** capability index
-rather than against thirteen epic documents.
+rather than against every epic document.
 
 **How you use it.** Through `SKILL.md` beside this file, which is the
 procedure. This package is what the skill *calls*:
@@ -38,7 +38,7 @@ path anybody names, so a planner needs no checkout.
 
 | Module | ⛔ What it will not let a plan say |
 |---|---|
-| `epics` | that a row is unreadable, or that thirteen documents are worth one refusal |
+| `epics` | that a row is unreadable, or that many documents are worth one refusal |
 | `components` | that a side is guessed, or that a fourth value joins the three that are read |
 | `capability` | that ids sort to the order, or that a row nobody delivers here is ours to explain |
 | `refusal` | ⭐ nothing — it is the FORM the rest take once they found several (R6) |
@@ -58,10 +58,9 @@ inside one. ⭐ A planner is the one place where a source-specific shortcut
 would look most reasonable — *"for a corpus of this kind, do this"* — and it
 is the one place where it would be copied by every integration that followed.
 
-⚠️ **That sentence originally carried a corpus's name as its example, and the
-check in this package's own test suite is what found it** — which is the shape
-of the defect exactly: the naming looked like illustration rather than
-knowledge, and R1's prose form is where source-specific knowledge accumulates.
+⚠️ **A corpus's name used as an example is the same defect**: naming looks like
+illustration rather than knowledge, and R1's prose form is where
+source-specific knowledge accumulates. This package's own test suite checks it.
 """
 
 from __future__ import annotations

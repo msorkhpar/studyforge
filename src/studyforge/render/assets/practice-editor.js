@@ -87,29 +87,27 @@
   }
 
   /* ⛔ **A FRAME NEVER TAKES FOCUS THE READER DID NOT GIVE IT, AND THE PAGE
-     NEVER MOVES ON ITS OWN** (the user's report of 2026-09-23).
+     NEVER MOVES ON ITS OWN**.
 
-     ⚠️ **The mechanism, measured in a real browser and not guessed.** A
+     ⚠️ **The mechanism, as a real browser behaves.** A
      workbench focuses its editor as it starts — `restoreParts()` calls
      `activeGroup.focus()`, then the editor that opens the window's file calls
      `focus()` on its input, neither with `preventScroll` — and the browser lets
      a frame of another origin on the same site take focus from the page with
      no user activation at all. ⛔ **Focusing an element scrolls every ancestor
      frame to it**, so a reader who opened the page at its top was carried to
-     the editor seconds later, and `document.activeElement` became the frame.
+     the editor seconds later, and `document.activeElement` would become the frame.
      ⚠️ Nothing on the frame refuses it: `inert` does not reach the framed
      document, and `allow="focus-without-user-activation 'none'"` is not
-     honoured (both measured). ⛔ Delaying the frame until the reader reaches it
-     was not needed, so it was not done.
+     honoured.
 
      ⭐ **So the page gives focus back, and it can because of an order the
      browser keeps.** The page's `blur` is dispatched INSIDE the frame's
      `focus()` call, before the scroll it starts has moved anything; one task
      later focus goes back to where the reader left it and the page is put back
      where it was, which also cancels the glide `scroll-behavior: smooth` had
-     queued. ⛔ **The reader never sees the page move** (measured over the
-     two-practice pilot page: the page rests where it was opened, and at most
-     one 3px step is painted before it is put back).
+     queued. ⛔ **The reader never sees the page move**: the page rests where
+     it was opened, and at most one 3px step is painted before it is put back.
 
      ⭐ **What counts as GIVEN is the reader's hand, never a timer:** the
      pointer over THAT frame together with the page's own user activation —
@@ -117,7 +115,7 @@
      pressed on the page just before focus arrived. ⚠️ **Two steals raise NO
      `blur`**: a frame taking focus while the reader types in ANOTHER frame, and
      any frame taking it while the browser window itself is not focused (the
-     page still scrolls — measured). So the page also reads `activeElement`
+     page still scrolls). So the page also reads `activeElement`
      every `WATCH_EVERY` ms for as long as it carries a frame, and answers
      those the same way. ⭐ Nothing is installed until the first frame is
      built, so a page with no editor carries none of it. */
@@ -147,10 +145,10 @@
 
     /* ⚠️ Put the page back, and CANCEL the glide the frame queued. A scroll to
        where the page already is does nothing, and a glide not yet begun
-       survives it (measured: the page crept 3px and stopped there), so the
+       survives it (the page creeps 3px and stops there), so the
        page is moved one pixel and back — both instant, within one task, so no
        frame is ever painted between them. ⚠️ A glide already under way can
-       still land one step after that (measured, once in six), so the next two
+       still land one step after that, so the next two
        frames look again. */
     function stay(at, again) {
       if (window.scrollX !== at.x || window.scrollY !== at.y || again === undefined) {
@@ -164,8 +162,8 @@
 
     /* ⚠️ One task later, and not inside the `blur`: a focus moved while the
        browser is still dispatching the frame's own focus change is ignored,
-       and a MICROTASK is still inside it (both measured — `activeElement`
-       stayed the frame and the page glided to it). ⛔ Whichever frame holds
+       and a MICROTASK is still inside it (`activeElement`
+       stays the frame and the page glides to it). ⛔ Whichever frame holds
        focus by THEN is the one answered: the second practice's workbench can
        take it from the first in between, and raises no event here. */
     function refuse(at) {
