@@ -14,7 +14,7 @@ import pytest
 
 from studyforge.cli.narrate import report
 from studyforge.cli.plan import plan_for
-from studyforge.execute import CONTAINER, HOST
+from studyforge.execute import CONTAINER, HOST, instance
 from studyforge.skills.buildserve import narration, states
 from studyforge.skills.buildserve.states import (
     EXECUTION_NAMESPACE,
@@ -213,3 +213,13 @@ def test_the_execution_namespace_is_the_frameworks_one_spelling_and_the_route_re
 def test_a_state_is_data_and_not_an_exception():
     assert not any(isinstance(state, BaseException) for state in KNOWN)
     assert all(isinstance(state, PartialState) for state in KNOWN)
+
+
+def test_the_probe_names_the_runner_this_checkout_recorded(tmp_path):
+    """⭐ `W465/3`: a second checkout's probe asks about ITS runner, never the first's."""
+    target = tmp_path / instance.INSTANCE_FILE
+    target.parent.mkdir(parents=True)
+    values = dict(instance.defaults("some-corpus", port=8443))
+    values[instance.RUNNER_NAME] = "second-runner"
+    target.write_text(instance.text(values, header=""), encoding="utf-8")
+    assert probe_for(tmp_path, "some-corpus").container == "second-runner"

@@ -30,7 +30,7 @@ PACKAGE = Path(buildserve.__file__).parent
 #: again would report `toolchain` against a server that offers it. ⛔ It buys the
 #: constant and nothing else — the skill never starts a run.
 #:
-#: ⚠️ `execute` is admitted for `ModeProbe`, `container_for` and `HOST` alone (`W381`):
+#: ⚠️ `execute` is admitted for `ModeProbe`, `recorded` and `HOST` alone (`W381`, `W465`):
 #: where a run executes is ruled to be `execute`'s probe's answer, ONE definition, so
 #: the skill imports it rather than copying it. ⛔ The probe only reads (`docker
 #: inspect`); the skill never starts, stops or enters a container, and never a run.

@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import pytest
 
-from studyforge.execute import CONTAINER, HOST, Runner
+from studyforge.execute import CONTAINER, HOST, Runner, instance
 from tests.studyforge.cli.checking import FAILING, PASSING, UNTESTED, check, main_path
 from tests.studyforge.execute import container
 from tests.studyforge.execute.runnable import fixture_copy, host_environment_clean, observed
@@ -66,3 +66,17 @@ def test_the_runner_is_handed_the_corpus_container_and_takes_host_when_it_is_not
         assert checked.lines[0].endswith(f"mode {HOST}")
     recorded = check(main_path(root, PASSING)).handed.built
     assert recorded == [(root, "studyforge-runner-runnable-demo")]
+
+
+def test_a_second_checkout_is_checked_in_the_runner_it_recorded(stage):
+    """⭐ `W465/3`: `check` in a second checkout names that checkout's runner, not `source`'s."""
+    root, _, _ = stage
+    target = root / instance.INSTANCE_FILE
+    target.parent.mkdir(parents=True, exist_ok=True)
+    values = dict(instance.defaults("runnable-demo", port=8443))
+    values[instance.RUNNER_NAME] = "second-runner"
+    target.write_text(instance.text(values, header=""), encoding="utf-8")
+    try:
+        assert check(main_path(root, PASSING)).handed.built == [(root, "second-runner")]
+    finally:
+        target.unlink()
