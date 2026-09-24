@@ -28,19 +28,19 @@ value with no placeholder, so `outline`, `pending`, `player`, `breadcrumb` and
 `mark` are passed as `""` rather than omitted — which means the day the skeleton drops a
 slot this module fails by name instead of quietly losing a region. ⭐ **And the
 day it GAINS one this module fails too, which is how `breadcrumb` arrived** —
-`SF-15` added the slot and could not add it silently.
+the slot was added and could not be added silently.
 
 ⚠️ **A container page has no outline, no pending panel, no player and no read
 control, and each absence is a fact rather than an oversight:** its own contents
-*are* the unit list, it declares no practices of its own, `SF-18`'s narration is
+*are* the unit list, it declares no practices of its own, the narration player is
 a unit's — and a read mark is a unit's too. A container is read by reading what
 is under it, so the page that offers the control is the one whose reading it
 records (`SF-30`). ⭐ **The marks themselves DO reach this page**, as a state on
 the rows below, which is why each row carries the unit key a mark is filed under.
 ⚠️ **The trail is the one of the five that is a GAP rather than an absence**: a
 container page sits in the hierarchy and has ancestors to name, and that its
-`up` link is the root index is `SF-27`'s own note. ⛔ Wiring a trail here is that
-task's row and not `SF-15`'s — see finding `SF-15/2`.
+`up` link is the root index is this module's own note. ⛔ Wiring a trail here is
+this renderer's to do, not the trail module's.
 
 ## ⛔ This module is the format (R10)
 

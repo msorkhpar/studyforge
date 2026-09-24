@@ -8,7 +8,7 @@
 
    ⭐ **A client and nothing else.** It publishes `studyforge.run` — `available`,
    `start`, `stop`, `editor`, `practice` — and `studyforge.quiz` — `available`,
-   `grade` (`W451`, below) — and draws nothing: the practice panel that puts Run and
+   `grade` (below) — and draws nothing: the practice panel that puts Run and
    Submit in front of a reader is `SF-24`'s, at `M7`. ⛔ A control this file
    drew before that panel existed would be a dead button, and a dead button is
    a promise the page cannot keep.
@@ -170,7 +170,7 @@
       .then(function (answer) { return answer.stopped === true; });
   }
 
-  /* ⭐ A QUIZ IS GRADED HERE TOO, AND IT IS NOT A RUN (`W451`, the user's ruling
+  /* ⭐ A QUIZ IS GRADED HERE TOO, AND IT IS NOT A RUN (the user's ruling
      of 2026-09-23). The key never reaches the page: what the reader chose is
      sent to `/api/v1/quiz/<corpus>/<practice>/<question>=<option>/…` and the
      server answers the verdict — right or wrong per question, the CHOSEN

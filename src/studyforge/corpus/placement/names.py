@@ -17,7 +17,7 @@ from the root index — and, in `sibling`, twenty units share one directory, so
 ⛔ **The one `index.html` this framework writes is the root index**, and it is
 not a page any scan treats as a unit.
 
-## Where the numbering comes from — settled here, because SF-31 waits on it
+## Where the numbering comes from — settled here, because `plan` prints it
 
 ⭐ **From identity, never from the source filename.** §5's worked example shows
 `4.4.1-introduction-to-the-streams-api.unit.html` beside `README_4.4.1.md`, and

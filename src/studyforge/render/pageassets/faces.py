@@ -78,7 +78,7 @@ class Face:
     sha256: str
 
 
-#: The archives, carried over from the register's pins record (round 119).
+#: The archives, each pinned by its digest.
 ARCHIVES: tuple[Archive, ...] = (
     Archive(
         family="Charis",

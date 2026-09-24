@@ -39,7 +39,7 @@ rather than from the declared *type* — `if text.lstrip().startswith("<")` insi
 a generic block renderer, written by somebody reasonably trying to be helpful.
 ⛔ **That is exactly the promise `SF-07` declined CommonMark's type-7 raw-HTML
 rule to keep** — *an unknown tag on its own line stays a paragraph, because a
-lesson teaching HTML must keep it* — and `SF-12` is its only enforcer.
+lesson teaching HTML must keep it* — and the page renderer is its only enforcer.
 
 ⭐ **Split out, "which block types bypass escaping" is a one-line answer that a
 diff can review.** Adding a second raw type becomes a new name in `RENDERS`, in

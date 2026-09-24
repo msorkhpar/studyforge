@@ -18,9 +18,9 @@ index. ⛔ Not on `contents`: a trail and a bar arrive as **plain values a calle
 built**, so this module imports nothing from the package that computes a reading
 order and nothing from a peer renderer. ⛔ Not on `render.index` either, which
 imports this package — hence `render.markup.anchor` rather than `index.anchor`
-(`W107`, `SF-15/1`).
+(`W107`).
 
-## ⭐ Split from `page.anchors` at the seam `SF-15/5` named (`W107`)
+## ⭐ Split from `page.anchors` at a seam that already existed (`W107`)
 
 ⚠️ One module answered four questions — anchors, the outline, the trail, the bar
 — at eight lines under its ceiling. ⭐ *Where this page points* is this module;

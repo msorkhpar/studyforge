@@ -5,7 +5,7 @@ the corpus as a whole — plus the one relative-href computation every page
 needs.
 
 **How you use it.** A profile returns these; `studyforge plan` prints them,
-`SF-12` writes to them, and `href_from` turns two of them into a link.
+the page renderer writes to them, and `href_from` turns two of them into a link.
 
 **Depends on.** `names` and `errors`. ⛔ No filesystem: every path here is a
 `PurePosixPath` **relative to the source root**, and whether it exists is

@@ -57,8 +57,8 @@ in the package contract and not here because this module depends on nothing.
 ("you handed me something I cannot accept") subclasses `ValueError`; a
 *document* error ("this file is not one I can read") subclasses `Exception`.
 A manifest is a value read from a document, and both halves fail the same way
-here, so one base is enough. ⚠️ If the CTO overrules SF-01's split, this line
-is the whole of SF-02's exposure to it — see `docs/tasks/handoffs/SF-02.md`.
+here, so one base is enough. ⚠️ If the address package's split of its own
+errors ever changes, this line is the whole of this package's exposure to it.
 """
 
 from __future__ import annotations

@@ -94,7 +94,7 @@ KNOWN_CORPUS_API = frozenset({1, 2, 3, 4})
 #:
 #: ⚠️ **ONE map over every block, not one map per block.** It was
 #: `CONTENT_KEY_VERSIONS` while `content` was the only block that had grown a
-#: key, and `SF-35` wrote the convention down as *"an entry in
+#: key, and the convention was written down as *"an entry in
 #: `CONTENT_KEY_VERSIONS` **if it lives under `content`**"* — leaving the other
 #: half of the sentence to whoever added a key somewhere else. ⛔ **A second
 #: map beside the first is the branch beside the branch this constant's own
@@ -112,8 +112,8 @@ KEY_VERSIONS: dict[tuple[str | None, str], int] = {
 
 #: The placement profiles that may be declared. ⚠️ **SF-03 owns the profiles;
 #: this is only the set a manifest may name**, and the two must not drift.
-#: When SF-03 lands, this constant is where a third profile is registered —
-#: see `docs/tasks/handoffs/SF-02.md`, which routes the seam.
+#: This constant is where a third profile is registered, beside its
+#: definition in `corpus.placement`.
 PLACEMENT_PROFILES = ("tree", "sibling")
 
 #: Every key a manifest may carry, in the order §4 writes them.

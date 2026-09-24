@@ -10,7 +10,7 @@ recorded in, and the one rule that binds them.
 
 ⭐ **It is here rather than in `sections` because it answers a different
 question with a different consumer.** A section key is *what is this called*;
-this is *may this grader claim to be the source's*. SF-23 consumes it and R5
+this is *may this grader claim to be the source's*. `exercise` consumes it and R5
 enforces it, and putting both in one module would file the exercise-trust rule
 under naming.
 

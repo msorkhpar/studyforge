@@ -176,7 +176,7 @@ class NarrateClient:
         """Report whether the service is there. ⛔ Never raises for its absence (R6, R8).
 
         ⛔ `chunk_chars` and `engine_model` are both in the service's content
-        address and both deployment settings (`NS-02`, `W223`), so an answer
+        address and both deployment settings (`W223`), so an answer
         without either is unreadable rather than a guess.
         """
         try:

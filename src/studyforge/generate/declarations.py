@@ -313,9 +313,9 @@ def _text(path: Path, where: str) -> str:
     directory with a few segments on the end — into a build log (R7).
 
     ⚠️ **Two `except` clauses rather than one two-type clause, deliberately.**
-    Ruling 74 rules the unparenthesised spelling out and `ruff format` rewrites
+    The house style rules the unparenthesised spelling out and `ruff format` rewrites
     the parenthesised one into it whenever there is no `as` binding, so the two
-    cannot both be satisfied by a single clause — see `W195/8`. One type each
+    cannot both be satisfied by a single clause. One type each
     satisfies both, and it lets each refusal say what actually went wrong.
     """
     try:

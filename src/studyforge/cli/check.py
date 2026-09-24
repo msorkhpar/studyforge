@@ -249,7 +249,7 @@ def _record(
             practice.section,
             mode=MODE_TEST,
             exit_code=verdict,
-            # ⭐ `shlex.join`, the spelling `SF-22` records: it reads back to the argv.
+            # ⭐ `shlex.join`, the spelling a run records: it reads back to the argv.
             commands=[shlex.join(command)],
             when=when,
         )

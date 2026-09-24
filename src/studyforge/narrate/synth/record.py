@@ -6,7 +6,7 @@ r"""`.studyforge/narration.json` — what a clip was synthesised UNDER (R9).
 | **Version key** | `narration_api` — ⭐ **minted here**, registered in `version.CONTRACT_FIELDS` |
 | **Written by** | `SF-17` — ⛔ **the one writer** (Ruling 330, unchanged) |
 
-⛔ **Ruling 351 deliberately left the FIELDS to this office** (Ruling 344): the
+⛔ **Ruling 351 deliberately left the FIELDS to this module**: the
 property it fixed is *for each speech unit, whether the clip on disk was
 synthesised under the conditions in force now*. The argument for which facts are
 conditions and which are provenance is in the package docstring next door.

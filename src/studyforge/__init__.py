@@ -23,6 +23,5 @@ on any adapter, and every source-specific fact arrives as data through the
 manifest or the archive (R1).
 
 **Layout.** One package per responsibility, named by spec §3.2; each states its
-own contract in its own docstring (R17). Skeleton at FND-01 — the packages here
-carry their contracts and no implementation; the epics named in each fill them.
+own contract in its own docstring (R17).
 """

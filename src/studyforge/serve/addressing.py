@@ -17,7 +17,7 @@ by one string.
 **Depends on.** `address` for the parse and every key, `archive.scrub` for R7's
 gate on each contents document before it is decoded (W7), `contents` for that
 document's name, `serve.routes.content` for the `ContentSource` seam, and
-`serve.withheld` for what marks every quiz no file may carry (`W452`).
+`serve.withheld` for what marks every quiz no file may carry.
 ⛔ No key is composed here: `Address.unit_key` spells it, and `parse_unit_key`
 reads it.
 
@@ -125,7 +125,7 @@ class CorporaContent:
         return located is not None and self._sources[located.corpus].declares(located.key)
 
     def withheld(self) -> Marks:
-        """Return the marks of every quiz of every corpus served (`W452`)."""
+        """Return the marks of every quiz of every corpus served."""
         found = Marks()
         for source in self._sources.values():
             found |= marks_of(source)

@@ -2,9 +2,9 @@
 
    ⭐ THE SCOPE IS THE ONE REGION `chrome.css` DEFERRED. It says of itself:
    "`footer` is absent … The narration player is the only `<footer>` a page
-   carries, it is `SF-18`'s at M3, and `--player-height`, `--panel` and
+   carries, it is the narration player's, and `--player-height`, `--panel` and
    `--shadow` are defined and waiting for it." ⛔ This is that part. Five palette
-   tokens were `UNPAINTED` in `tests/visual/palette.py`'s ledger with `SF-18`
+   tokens were `UNPAINTED` in `tests/visual/palette.py`'s ledger with the player
    named against each; painting them is what forces the ledger to say which
    ground each one's contrast is taken against.
 

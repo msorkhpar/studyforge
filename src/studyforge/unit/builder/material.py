@@ -40,7 +40,7 @@ and `studyforge validate` already asks it.
 
 ## ⚠️ What this module does **not** assert
 
-⛔ **Ruling 56: a guarantee does not extend to what sits beside it**, so the
+⛔ **A guarantee does not extend to what sits beside it**, so the
 adjacent unasserted things are named rather than left to be assumed:
 
 - **that the address matches the directory these files were found in.** That is
@@ -70,7 +70,7 @@ KIND_ORDER = ("lesson", "practice")
 class NoMaterial(ContentError):
     """Nothing has been ingested for this unit — ⭐ an answer, not a failure.
 
-    ⚠️ **A first-class outcome (SF-10 (d)), and the distinction is the point.**
+    ⚠️ **A first-class outcome, and the distinction is the point.**
     A caller walking a whole corpus skips these and reports the rest: a unit
     nobody has ingested yet is a fact about the run, not a disagreement worth
     stopping for. ⛔ And it is never an empty document — a unit that renders as

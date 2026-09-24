@@ -47,7 +47,7 @@ while every clip on disk is stale (Ruling 351, `NS-04/4`'s residual).
 | `voice` | not in the name, and it is the whole sound of the clip |
 | `format` | in the name's suffix, and recorded so a change is one comparison |
 | `provides` | the service's promise. A bump may change what synthesis means |
-| `chunk_chars` | ⛔ part of the content address and a **deployment** setting (`NS-02`) |
+| `chunk_chars` | ⛔ part of the content address and a **deployment** setting |
 | `engine_model` | ⛔ part of the content address, read off `/healthz` (`W223`, `SF-42/2`) |
 
 ⚠️ **A clip's own `engine` and `engine_model` are recorded and are NOT compared.**
@@ -70,7 +70,7 @@ clips and no record re-synthesises all of them on its first build.
 
 ⛔ **This package holds no opinion about how any file reaches a clone** — `into`
 and `state` are arguments, and what is or is not carried is a manifest policy
-(`SF-02`, `SF-32`).
+(`corpus.manifest`, `SF-32`).
 
 ## ⛔ THE SEAM, AND WHY THIS IS A PACKAGE
 

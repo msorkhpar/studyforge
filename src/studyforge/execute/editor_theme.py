@@ -1,4 +1,4 @@
-r"""The practice editor wears the page's colours, derived from the page's own stylesheets (`W455`).
+r"""The practice editor wears the page's colours, derived from the page's own stylesheets.
 
 **What it does.** `editor_colours()` returns the workspace settings that paint
 a practice's code-server windows in the colour set of the page's code blocks:

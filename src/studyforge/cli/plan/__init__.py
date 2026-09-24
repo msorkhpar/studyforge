@@ -10,7 +10,7 @@ disk, and projected when a rate is given — against the corpus's own limits.
     studyforge plan <repo>            # python3 -m studyforge.cli.plan <repo>
 
     from studyforge.cli.plan import plan_for
-    plan_for(root).paths              # what SK-07 renders and OPS-05 asserts
+    plan_for(root).paths              # what onboarding renders and OPS-05 asserts
 
 **Depends on.** `corpus.manifest`, `corpus.container`, `corpus.placement`, and
 `validate` for the three names both commands must spell the same way. ⛔ It

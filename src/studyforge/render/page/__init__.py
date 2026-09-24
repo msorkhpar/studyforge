@@ -110,10 +110,10 @@ peers already take their class names and asset filenames from.
 `Links` were already published, and there is nothing to do with a `Links` but
 hand it to `between_units`; a surface that publishes the argument while hiding
 the function it is an argument to has published half a call. ⚠️ It is this
-page's bar rather than a primitive — `SF-15` owns the module, and `SF-27/3`'s
-`aria-label` remedy is that task's rather than this surface's.
+page's bar rather than a primitive — `page.navigation` owns it, and an
+`aria-label` remedy is that module's rather than this surface's.
 
-⭐ **`Crumb` and `breadcrumb` are here on that same argument** (`SF-15`). ⚠️ The
+⭐ **`Crumb` and `breadcrumb` are here on that same argument**. ⚠️ The
 trail also reaches `render` and `compose` as an argument, because a page that
 renders the region only when somebody calls the region's own function is a page
 whose chrome depends on which entry point a build used.

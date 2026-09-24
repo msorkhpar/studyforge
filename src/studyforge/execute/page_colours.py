@@ -1,4 +1,4 @@
-r"""The page's colours, read out of the page's own stylesheets for the practice editor (`W455`).
+r"""The page's colours, read out of the page's own stylesheets for the practice editor.
 
 **What it does.** Reads the three stylesheets that paint a code block —
 `palette.css` for each custom property in each theme, `code-highlight.css` for

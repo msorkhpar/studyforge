@@ -225,8 +225,8 @@ class Runs:
         opens an empty, dirty buffer titled with the file's own name, which
         looks exactly like a corrupted file and is not one.
 
-        ⛔ **Each practice opens its OWN folder, and its settings are its own**
-        (`W446`): one shared folder was one lock naming one file, so opening a
+        ⛔ **Each practice opens its OWN folder, and its settings are its own**:
+        one shared folder was one lock naming one file, so opening a
         practice locked every other and two at once refused one. `named` is the
         files the practice's commands name. Raises `WorkbenchRefused`.
         """

@@ -88,7 +88,7 @@ def _by_address(
     ⛔ The depth is re-checked here even though `container.parse` checks it
     against the same manifest: this function also accepts containers a caller
     built in memory, and a guarantee that holds for one producer is not a
-    property of the value (Ruling 56).
+    property of the value.
     """
     held: dict[tuple[str, ...], Container] = {}
     for container in containers:

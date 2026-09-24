@@ -34,7 +34,4 @@ page as a literal.
 ⛔ **A shared asset linked by every page carries a plain name**, never a
 content digest: a digest there renames a file and rewrites every page that
 links it whenever a colour changes.
-
-**Skeleton at FND-01.** Filled by SF-11, SF-12, SF-14, SF-15, SF-27 (E03),
-SF-18 (E04), SF-24 (E06) and SF-30 (E05).
 """

@@ -19,7 +19,7 @@ this data, and changing a template must not be able to break it.
 ⭐ **A unit is looked up by its whole key, exactly** — the string the contents
 document joins on — so no part of the URL is ever split, decoded or used as a path,
 and there is no traversal surface here at all. ⚠️ The N-segment routing a reader
-types, and discovering the corpus from a root, are `SF-19b`'s (`serve/addressing.py`);
+types, and discovering the corpus from a root, are `serve/addressing.py`'s;
 it plugs in by supplying a `ContentSource` or by mapping its addresses onto keys.
 
 ## ⭐ Why a document is built on request and not held
@@ -29,7 +29,7 @@ changed underneath it — and the strong tag is then the thing that lies. Built 
 request, the tag is always over the bytes being served, which is the whole
 guarantee a `304` makes.
 
-## ⛔ A quiz's key and sentences are WITHHELD (`W452`)
+## ⛔ A quiz's key and sentences are WITHHELD
 
 ⭐ **The user's ruling (2026-09-23) puts a quiz's correct answer on the SERVER
 side**, so a unit document is answered with every quiz option cut down to its id

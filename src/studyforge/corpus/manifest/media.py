@@ -26,7 +26,7 @@ would produce clones that are silent with no error, and it never silently
 keeps committing.
 
 ⛔ **The two byte-limit field names are CONFIRMED and FROZEN, and the rename
-`SF-02` offered is CLOSED** — Ruling 104, discharged by `SF-32`. ⚠️ The
+once offered is CLOSED** — Ruling 104. ⚠️ The
 paragraph that stood here still described that window as open long after it
 had shut, which is how a stale offer gets taken up by somebody moving fast.
 
@@ -108,7 +108,7 @@ class MediaPolicy:
 
 
 #: ⭐ Returned when `media` is absent. Stated as a value rather than left
-#: implicit, because SF-02's acceptance is that the default is **asserted
+#: implicit, because the manifest's contract is that the default is **asserted
 #: rather than assumed**: a test compares against this object.
 DEFAULT_MEDIA = MediaPolicy()
 

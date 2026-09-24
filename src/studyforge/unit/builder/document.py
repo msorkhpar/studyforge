@@ -50,7 +50,7 @@ already two constants.
 
 ## ⚠️ What this module does **not** assert
 
-⛔ Ruling 56, so the neighbours are named: it does not recompute
+⛔ The neighbours are named: it does not recompute
 `content_sha256` (the archive owns it and `validate` recomputes it), it does not
 check a block's shape, and it does not decide whether the practice counts agree.
 ⭐ What it *does* assert is that the overlay in hand and the material in hand

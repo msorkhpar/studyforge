@@ -334,7 +334,7 @@ def _node_id(file: str, classname: str, name: str) -> str:
     ⚠️ pytest's JUnit `classname` is the module's dotted path with any class
     appended, so the class is what is left once the module is taken off the
     front. ⭐ The rebuild is `tools.quality.gated._node_id`'s, which has read
-    this repository's own reports since `W309`; it is re-spelled rather than
+    this repository's own reports; it is re-spelled rather than
     imported because `src/` never imports the developer tooling.
     """
     module = file.removesuffix(".py").replace("/", ".")

@@ -20,20 +20,18 @@ told which corpus it was for would be the source knowledge R1 forbids.
 
 ## ⛔ The loader lives in the directory it loads (R21, and it was unowned)
 
-⚠️ **`SF-12-survey/3` recorded that this function had no owner**: `SF-11` ported
-`pageassets`' asset half and not its template half, and `E03` gives `SF-12`
-subtask (a) — *template loading and strict substitution* — while giving it
-`Owns render/page/`, `render/templates/` and **not** `render/pageassets/`. The
-survey proposed `render/pageassets/templates.py`; ⛔ **that would publish three
-new names from a package this task does not own**, which is the escalation R21
-asks for rather than a placement.
+⚠️ **This function once had no owner**: the port of `pageassets` carried its
+asset half and not its template half. Putting it in
+`render/pageassets/templates.py` was considered; ⛔ **that would publish three
+new names from a package the page renderer does not own**, which is the
+escalation R21 asks for rather than a placement.
 
 ⭐ **So it is here, and here is better than beside it for three reasons that are
 not about ownership:**
 
-1. **It is a sibling of `page/`, not a child.** `SF-14`'s root index needs
+1. **It is a sibling of `page/`, not a child.** The root index needs
    templates and must not import the unit renderer to get them — which was the
-   survey's actual requirement, and this satisfies it.
+   actual requirement, and this satisfies it.
 2. **The directory is `Path(__file__).parent`.** There is no path arithmetic
    from another package to drift, so the loader and the files it loads cannot
    come apart.

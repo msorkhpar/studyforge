@@ -87,7 +87,7 @@
   }
 
   /* ⛔ **A FRAME NEVER TAKES FOCUS THE READER DID NOT GIVE IT, AND THE PAGE
-     NEVER MOVES ON ITS OWN** (`W449`, the user's report of 2026-09-23).
+     NEVER MOVES ON ITS OWN** (the user's report of 2026-09-23).
 
      ⚠️ **The mechanism, measured in a real browser and not guessed.** A
      workbench focuses its editor as it starts — `restoreParts()` calls

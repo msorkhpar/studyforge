@@ -15,10 +15,10 @@ this file exists to prevent arriving by a different door.
 ⭐ **This exists because the failure it prevents is silent.** A stylesheet and
 a template that disagree about a class name produce a page that renders,
 carries every word, and is unstyled — with no error anywhere. Before the split
-between them existed they were one codebase and could not disagree; SF-11
-lands before SF-12, so the agreement has to be written down and checked.
+between them existed they were one codebase and could not disagree; the
+assets and the renderer are separate here, so the agreement has to be written down and checked.
 
-⚠️ **SF-12 may rename any of these**, and that is a change to this file plus
+⚠️ **The page renderer may rename any of these**, and that is a change to this file plus
 the stylesheet, together. ⛔ What it may not do is invent a second name for
 something already here: `test_surface` asserts that every class the shared
 stylesheet targets appears in this mapping, so a rename that touches only one

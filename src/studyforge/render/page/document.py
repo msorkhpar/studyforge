@@ -53,7 +53,7 @@ corpus.
 
 ## ⛔ The player is *derived*, not declared — and that is the answer to a real tension
 
-⚠️ **`SF-12` lands at M1 and the ids it must not invent land at M3.** The
+⚠️ **The page renderer lands before the speech ids it must not invent.** The
 extraction source's own docstring states the invariant: *"Ids come from
 `speakable.py`, never from here … two numbering schemes that agree today are
 exactly the coupling that breaks silently tomorrow."* ⛔ At M1 there is no such
@@ -61,7 +61,7 @@ module, so this task mints no speech id and writes no audio attribute.
 
 ⭐ **So the player's gate reads what the page actually emitted**: a page carries
 a player when its body carries `assets.AUDIO_ATTRIBUTE`, and nothing else. At M1
-that is never true and the region is absent; at M3 `SF-18` writes the attribute
+that is never true and the region is absent; at M3 narration writes the attribute
 and the player appears with it, in one change. ⚠️ **No document field was
 invented to hold a gate** — which is what a declared version of this would have
 required, one milestone before the task that owns it.
@@ -134,7 +134,7 @@ def compose(
 
     ⚠️ `trail` is optional for the reason `links` is: only something that has
     walked the corpus's hierarchy can build one, so a page renders without it
-    exactly as it will once a build does — minus the region (`SF-15`).
+    exactly as it will once a build does — minus the region.
 
     ⚠️ `rail` is optional for exactly that reason too, and it is the region that
     reaches the OTHER containers (`W324`): only a caller holding the whole
@@ -325,7 +325,7 @@ def player(body: str, narration: Narration = SILENT) -> str:
     """Return the narration transport, or `''` when this page has nothing to play.
 
     ⛔ **Derived from the body, never from a document field** — see this
-    module's docstring for why the gate is here rather than in a key `SF-12`
+    module's docstring for why the gate is here rather than in a key this module
     would have had to invent one milestone early. ⭐ **The derivation survived
     `W202`'s Q4 unchanged**, and that is the payoff for writing it as one: a
     promised clip that is not on disk emits an *empty* `AUDIO_ATTRIBUTE`, so the
@@ -369,7 +369,7 @@ def _region(markup: str) -> str:
     slots it is one chance per slot to emit a page that differs from its golden
     file by one blank line, which is the least interesting diff a reviewer can be
     handed. ⛔ A count here would be a second statement of `page.html`'s slot
-    list, wrong the next time the skeleton grows — which `SF-15` is.
+    list, wrong the next time the skeleton grows — which it has.
     """
     return f"{markup}{JOIN}" if markup else ""
 

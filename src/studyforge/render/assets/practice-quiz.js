@@ -1,7 +1,7 @@
 /* The quiz: what a reader chose, and what the local study server said about it.
 
    ⛔ **THE KEY IS NOT IN THE PAGE, AND THIS FILE DOES NOT GRADE** — the user's
-   ruling of 2026-09-23 (`W451`): *"a test with the correct answer residing on
+   ruling of 2026-09-23: *"a test with the correct answer residing on
    the server side. When user answers it will get validated and result will be
    returned to the user with explanation if needed"*. ⭐ So this file reads
    which option the reader chose, hands the choices to `window.studyforge.quiz`
@@ -11,8 +11,8 @@
    ⛔ **The completion rule is the server's** (`exercise.quiz.completes`, applied
    once, in Python); this file shows `complete` and never re-derives it.
 
-   ⚠️ **Superseded, and kept readable so it is not re-derived:** until `W451`
-   this file graded in the page from a key every option carried, identically
+   ⚠️ **Superseded, and kept readable so it is not re-derived:** until that
+   ruling this file graded in the page from a key every option carried, identically
    over `file://`, on the stance that an offline page cannot hide the key it grades
    with. The ruling removes the key from the page instead.
 

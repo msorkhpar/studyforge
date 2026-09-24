@@ -32,7 +32,7 @@ the build that wrote it did not know about audio.
 
 ## ⚠️ What this module does **not** assert
 
-⛔ Ruling 56, so the neighbours are named. It checks the document's **shape**:
+⛔ The neighbours are named. It checks the document's **shape**:
 its version, its keys and their order, and that every section carries the keys a
 section carries. It does **not** re-validate blocks against the archive
 vocabulary, does not recompute a digest — there is none in this document — and

@@ -25,7 +25,7 @@ finding was that a component which slugifies owes itself a collision check the
 framework cannot make; the answer here is to remove the slugification instead.
 
 ⭐ **It costs nothing, because every input is already a slug.** `variants` are
-validated as slugs by `corpus.manifest` (SF-02), so deriving `<variant>` is the
+validated as slugs by `corpus.manifest`, so deriving `<variant>` is the
 *identity function* and cannot collide however the corpus spells its variants.
 The only remaining input is an explicit `key`, and refusing a non-slug there is
 SF-01's own precedent: *a title passed where a slug is required raises; it does
@@ -53,7 +53,7 @@ SECTION_KINDS = ("shared", "lang", "practice")
 #: The section kinds that carry a `lang` field, and must.
 #:
 #: ⚠️ Named for the field rather than for "variant", and that is not cosmetic:
-#: SF-02's tripwire — *no module-level collection derives a capability from a
+#: the manifest's tripwire — *no module-level collection derives a capability from a
 #: variant name* — fired on the first spelling, `KINDS_WITH_A_LANG`. It was a false
 #: positive by intent and a true positive by rule, so the constant moved rather
 #: than the rule. It lists section KINDS, never variants, and nothing here maps

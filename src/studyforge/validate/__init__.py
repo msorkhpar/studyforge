@@ -29,8 +29,6 @@ hardcodes any corpus's exception. It is framework code for the same reason: a
 guarantee that lives in one consumer is a guarantee the next consumer does not
 get.
 
-**Skeleton at FND-01.** Filled by SF-25 (E10) and OPS-05 (E09).
-
 ## ⛔ What another package takes, it takes from HERE (Ruling 101's producer half)
 
 ⭐ **Seven names below are on this surface because a package outside `validate`
@@ -49,7 +47,7 @@ is on the first package's `__all__`, or the two packages do not share it, and
 ## ⛔ `headings` is a CALLABLE here, and `validate.headings` is still the MODULE
 
 ⚠️ **The export shadows the submodule attribute, and that is a decision rather
-than an oversight** (`W299`). ⭐ **It is this project's standing shape, not a
+than an oversight**. ⭐ **It is this project's standing shape, not a
 novelty:** measured at `5fca2ea`, twelve `(package, name)` pairs in `src/`
 already export a callable whose name is one of that package's own modules —
 `address.identifier`, `contents.order` and `skills.reconnaissance.survey`

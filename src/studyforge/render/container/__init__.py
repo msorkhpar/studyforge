@@ -53,7 +53,7 @@ absence is not cosmetic.
 ⛔ **No branch on how deep a corpus is.** A 1-level corpus has one container
 page and a 2-level corpus has one per module; the same renderer serves both,
 because the only thing that varies is the address and the corpus's own word for
-the level — which arrives as data (`levels`, `SF-02`), exactly as the breadcrumb
+the level — which arrives as data (`levels`, in the manifest), exactly as the breadcrumb
 takes it. ⚠️ A renderer that asked *"how many levels?"* would be the source
 knowledge R1 forbids, in the one module where it would look reasonable.
 
@@ -78,7 +78,7 @@ body, which is the far side of the line `render/page/__init__.py` draws.
 ⛔ **R1 — the framework knows nothing about any source.** Not a corpus name, not
 a level's word, not a sentence of one site's wording.
 
-## ⛔ What this package does NOT guarantee (Ruling 56)
+## ⛔ What this package does NOT guarantee
 
 ⚠️ **That a linked unit page exists.** `Item.href` is checked for *shape* — it
 is a permitted relative reference — and never for *presence*, because this

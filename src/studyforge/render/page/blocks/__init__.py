@@ -74,7 +74,7 @@ itself is the next `disclosure` waiting to be forgotten.*
 narration)` and ignores what it does not need. A renderer that took fewer would
 be the one that has to be special-cased the day it needs one more, and the
 dispatcher would grow a branch per module — which is the shape this package
-exists to avoid. ⭐ `SF-18` added the last two and added them to **every**
+exists to avoid. ⭐ Narration added the last two and added them to **every**
 renderer for that reason, not only to the two that read them.
 
 ## ⛔ `path` IS THE BLOCK'S ADDRESS FROM THE SECTION DOWN, AND THAT IS WHY IT IS THREADED

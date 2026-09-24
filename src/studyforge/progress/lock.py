@@ -14,7 +14,7 @@ is the caller; nothing else in the framework should need to be.
 
 It protects nothing against a second **process**. That was safe there because
 one server owned the file; here `SK-06` merges progress from outside the
-server and `OPS-04` may run while a site is served (E05, SF-21).
+server and a build may run while a site is served (E05, SF-21).
 
 ## ⭐ What it guarantees, and where
 

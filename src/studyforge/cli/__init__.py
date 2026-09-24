@@ -31,7 +31,7 @@ contributes is its configuration.
 ⛔ **Every verb above but one is REGISTERED.**
 `validate`, `plan`, `narrate`, `build`, `serve` and `check` are in
 `dispatch.VERBS` and run today. ⚠️ `reconcile` is named here as the shape the command line will
-have — `OPS-07` builds it — and is deliberately absent from the table, because
+have and is deliberately absent from the table, because
 a verb registered against a callable that does not exist yet makes an installed
 command that fails on first invocation. ⚠️ `serve` is one module, `cli.serve`,
 not a package: it runs as `studyforge serve` or `python3 -m studyforge.cli serve`.

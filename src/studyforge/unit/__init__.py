@@ -24,7 +24,7 @@ thing it marked.
 none is complete, not deficient — the fixtures carry both from wave 0 so the
 no-overlay path is never the one discovered late.
 
-## What SF-09 landed
+## What it holds
 
 | Module | Owns |
 |---|---|
@@ -45,7 +45,7 @@ row exists to remove. ⚠️ **Located is not applied: v1's build serves a unit
 from its archive documents alone**, so an overlay that exists is read by
 nothing a build runs, and that verb is still unowned.
 
-**Skeleton at FND-01.** `builder` is SF-10's.
+`builder` assembles the unit document from the material and the overlay.
 """
 
 from __future__ import annotations

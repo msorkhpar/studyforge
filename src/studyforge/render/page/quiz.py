@@ -17,7 +17,7 @@ own `Question` and `Option`, never a second reading of the shape — plus
 needed a server to RENDER would fail the `file://` floor (R8). The page renders
 there; it simply cannot have its answers checked there, and says so.
 
-## ⛔ THE KEY IS NOT IN THE PAGE — THE USER'S RULING, 2026-09-23 (`W451`)
+## ⛔ THE KEY IS NOT IN THE PAGE — THE USER'S RULING, 2026-09-23
 
 > *"the quiz itself again should not require an online or agent check for the
 > answer user provided. It will be just a test with the correct answer residing
@@ -25,7 +25,7 @@ there; it simply cannot have its answers checked there, and says so.
 > returned to the user with explanation if needed"*
 
 ⛔ **An option is emitted as its id and its words, and NOTHING ELSE.** Until
-`W451` each option carried `data-practice-correct` and its own sentence in
+that ruling each option carried `data-practice-correct` and its own sentence in
 `data-practice-says`, and the page graded itself; ⚠️ that stance — *"an offline
 page cannot hide the answer it grades with"* — is **superseded**, not argued
 with: the page no longer grades. ⭐ The local study server does
@@ -127,7 +127,7 @@ def question(asked: Question, key: str) -> str:
 def option(offered: Option, name: str) -> str:
     """Return one answer: its id and its words, and nothing that says whether it is right.
 
-    ⛔ **`offered.correct` and `offered.says` are never read here** (`W451`): the
+    ⛔ **`offered.correct` and `offered.says` are never read here**: the
     first IS the key and the second tells a reader which option it is, so either
     one in the markup is the key in the page. ⭐ Both reach a reader only from
     the server's verdict, and only for the option they chose.

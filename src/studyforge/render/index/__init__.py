@@ -36,7 +36,7 @@ lives **here** rather than in every caller, and the isolation is a property of
 this package that `test_assemble` asserts over the source — ⛔ not a claim about
 whoever happens to call it.
 
-⚠️ **The limit, stated rather than discovered** (Ruling 56): the *corpus* input
+⚠️ **The limit, stated rather than discovered**: the *corpus* input
 is those two documents. This package still loads the framework's own page
 skeleton and asset names, exactly as the other two renderers do, and neither
 carries anything about any corpus (R1).

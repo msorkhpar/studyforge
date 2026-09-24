@@ -87,7 +87,7 @@ POLICY_HEAD = (
     "img-src 'self' data:",
     "media-src 'self'",
     # ⭐ `data:` because `render/pageassets/faces.py` embeds every face in `page.css`
-    # so `file://` carries them too (R8); `'self'` alone blocked all seven (`W450`).
+    # so `file://` carries them too (R8); `'self'` alone blocked all seven.
     "font-src 'self' data:",
     "connect-src 'self'",
 )

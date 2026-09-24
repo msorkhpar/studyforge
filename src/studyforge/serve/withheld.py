@@ -1,4 +1,4 @@
-r"""Withheld: a quiz's key and its sentences never leave the serving process (`W452`).
+r"""Withheld: a quiz's key and its sentences never leave the serving process.
 
 **What it does.** Says what of a quiz the SITE may never serve — which option is
 keyed (`correct`) and each option's sentence (`says`) — and applies that on the
@@ -25,9 +25,9 @@ other.
 
 ⭐ **A quiz's correct answer resides on the SERVER side, and the reader's answers
 are validated there.** ⛔ **What the SITE serves never carries the key**, except the
-grading route's answer for the option the reader chose (`routes.quiz`). `W451`
-took the key out of every built page; ⛔ **this module closes the URLs a page never
-loads but a reader can type** (`W451/1`, and the corpus office's `F10`): the unit
+grading route's answer for the option the reader chose (`routes.quiz`). The page
+renderer took the key out of every built page; ⛔ **this module closes the URLs a page never
+loads but a reader can type** (the first corpus's finding `F10`): the unit
 document on the content namespace, the archive's `practice-M.json`, the bundle's
 `tests/quiz.json`, and any other file under the served root that repeats them.
 
@@ -45,9 +45,9 @@ content source every form already hands it.
 
 1. ⭐ **The key, structurally — and ONLY beside a quiz this instance serves**: a
    JSON `"correct": true|false` pair, or a `data-…-correct` attribute (a page
-   from a build before `W451`), in a file that ALSO names one of the served
+   from a build before the key left the page), in a file that ALSO names one of the served
    quizzes' question ids, quoted (`"q-1"`). ⛔ **Either half alone withholds
-   nothing** (register review of `W452`): a question id is on every quiz page
+   nothing**: a question id is on every quiz page
    and is no secret, and a `"correct"` field with no quiz id is some other
    data's own field — a code practice's test cases must not answer a
    silent `404`. ⭐ Both together are a quiz record carrying its
@@ -90,7 +90,7 @@ WITHHELD = (KEY, SAYS)
 #: A sentence shorter than this, in words, is not searched for in a file.
 MIN_WORDS = 4
 
-#: The key as structure: a JSON pair, or a pre-`W451` page's option attribute.
+#: The key as structure: a JSON pair, or an older page's option attribute.
 KEY_PATTERN = re.compile(r'"correct"\s*:\s*(?:true|false)\b|\bdata-[a-z-]*-correct\b')
 
 

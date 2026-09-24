@@ -57,7 +57,7 @@ mounts the root itself** — §8.1 ruling 2 mounts only the sources, never the
 repository — which is why this probe accepts a descendant and `mode.ModeProbe`
 demands equality. No mount inside the root is no editor.
 
-⭐ **Several binds inside the root are several answers, one per path** (`W445`):
+⭐ **Several binds inside the root are several answers, one per path**:
 the generated editor binds the sources AND the practice workspaces, which are
 siblings, so a practice file is held by exactly one of them. `Editor.holding`
 answers the editor as seen through the bind that holds a path — its own folder,
@@ -158,7 +158,7 @@ class Editor:
     origin: str
     folder: str
     base: str = ""
-    #: Every FURTHER bind of this source root, as `(base, folder)` (`W445`).
+    #: Every FURTHER bind of this source root, as `(base, folder)`.
     others: tuple[tuple[str, str], ...] = ()
 
     def holding(self, path: str) -> Editor | None:
@@ -179,7 +179,7 @@ class Editor:
         return Editor(origin=self.origin, folder=folder, base=base)
 
     def within(self, directory: str) -> Editor | None:
-        """Return this editor opened on `directory` of its bind, or `None` (`W446`).
+        """Return this editor opened on `directory` of its bind, or `None`.
 
         `directory` is relative to the SOURCE ROOT and is `base` or below it.
         ⭐ The answer is a narrower folder of the SAME container, so a practice

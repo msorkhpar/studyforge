@@ -35,7 +35,4 @@ amending an editorial field a round trip rather than a rewrite.
 stand alone, which is its *identity* (R4), and provenance is the container's to
 declare. A placement profile that needs it says so and fails loudly when it is
 absent.
-
-**Skeleton at FND-01.** Filled by SF-02, SF-03, SF-04, SF-05 (E01) and SF-32
-(E04).
 """

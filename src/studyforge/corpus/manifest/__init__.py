@@ -21,9 +21,9 @@ needs, and the enumerated set of existing files it may add to.
 `studyforge.archive.scrub` for R7's, and the standard library. ⛔ Nothing
 source-specific (R1), asserted over the whole of `src/` rather than promised.
 
-⭐ **This file is where a corpus's customisation lives** (SK-07). Everything
-that differs between two sources and is not the source's own content is a
-field here — which is what makes "every artifact is generated" and "every
+⭐ **This file is where a corpus's customisation lives** (onboarding writes it).
+Everything that differs between two sources and is not the source's own
+content is a field here — which is what makes "every artifact is generated" and "every
 corpus is different" both true at once. ⛔ If a corpus needs something this
 file cannot express, **the manifest is missing a field**, and that is the
 finding; it is never a hand-edit to generated output.
