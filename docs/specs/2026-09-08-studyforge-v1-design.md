@@ -17,11 +17,11 @@ that a skill precedes the artifact it produces (§9). Findings that were
 CodeSignal's operational detail rather than this framework's concern were
 deliberately **not** carried; they are in `docs/tasks/v2-backlog.md`.
 
-⚠️ **The 2026-09-23 amendments** carry into this document the clauses of the review
-rubric and the conventions that state what the product must be, when those process
-documents were archived. Each is written under the rule it serves and marked
-*AMENDED 2026-09-23*: R1, R6, R7, R9, R10, R11, R12, R13, R17 and R21 in §2, standard
-library only in §3.2, the reading room's identity in §8.4, and commanded pages in §9.
+⚠️ **The 2026-09-23 amendments that say *carried from*** bring into this document the
+clauses of the review rubric and the conventions that state what the product must be,
+when those process documents were archived. Each is written under the rule it serves:
+R1, R6, R7, R9, R10, R11, R12, R13, R17 and R21 in §2, standard library only in §3.2,
+the reading room's identity in §8.4, and commanded pages in §9.
 ⛔ **No rule was renumbered and no rule's own words changed**; each amendment adds to
 its rule, and how the product's own code is reviewed is not carried.
 

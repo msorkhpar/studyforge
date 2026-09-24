@@ -31,7 +31,7 @@ nothing was merged, and no file under `src/` or `tests/` was edited.
   | §8.4 | the reading room's identity, the two rejected-palette tables, and *What the user ACCEPTED, 2026-09-19* | ui-design (§2, §3, the readings, the tables) |
   | §9 | a page that hands a reader a command declares the modules it does not own | commanded-pages whole |
 
-- ⭐ **The rejected-palette tables MOVED** (one copy, not two): out of `docs/conventions/ui-design.md`,
+- ⭐ **The rejected-palette tables MOVED** (one copy, not two): out of [`docs/conventions/ui-design.md`](../../conventions/ui-design.md),
   which now carries a pointer where they stood, into the §8.4 amendment. `tools/quality/palettes/rejected.py`'s
   `UI_CONVENTION` is re-pointed at the spec in the same commit, so the floor's palette check reads the
   spec; the constant's name is kept so every reader of it (`tools/tests/quality/palettes/`) follows
@@ -56,15 +56,15 @@ prints** (a `grep '^#'` reads the shell comments in its fences and overstates):
 
 | document | headings | product | split | process | container |
 |---|---|---|---|---|---|
-| `review-rubric.md` | 235 | 14 | 14 | 206 | 1 |
-| `module-structure.md` | 36 | 17 | 3 | 15 | 1 |
-| `personal-data-shapes.md` | 4 | 3 | — | — | 1 |
-| `commanded-pages.md` | 2 | 1 | — | — | 1 |
-| `ui-design.md` | 11 | 5 | 2 | 4 | — |
-| `workspace.md` | whole document | — | — | ✔ | — |
-| `delivery-flow.md` | whole document | — | — | ✔ | — |
-| `agent-protocol.md` | whole document | — | — | ✔ | — |
-| `board.md` | whole document | — | — | ✔ | — |
+| [`review-rubric.md`](../../conventions/review-rubric.md) | 235 | 14 | 14 | 206 | 1 |
+| [`module-structure.md`](../../conventions/module-structure.md) | 36 | 17 | 3 | 15 | 1 |
+| [`personal-data-shapes.md`](../../conventions/personal-data-shapes.md) | 4 | 3 | — | — | 1 |
+| [`commanded-pages.md`](../../conventions/commanded-pages.md) | 2 | 1 | — | — | 1 |
+| [`ui-design.md`](../../conventions/ui-design.md) | 11 | 5 | 2 | 4 | — |
+| [`workspace.md`](../../conventions/workspace.md) | whole document | — | — | ✔ | — |
+| [`delivery-flow.md`](../../conventions/delivery-flow.md) | whole document | — | — | ✔ | — |
+| [`agent-protocol.md`](../../conventions/agent-protocol.md) | whole document | — | — | ✔ | — |
+| [`board.md`](../../conventions/board.md) | whole document | — | — | ✔ | — |
 
 ⚠️ *Split* means the clause's rule is product and landed in the spec, while its procedure (a sweep, a
 hand form, a verdict class) is process and stays. ⭐ Every product and split row lands somewhere named;
@@ -72,7 +72,7 @@ every process row stays in place for `REL-10`.
 
 ### The conventions
 
-**`module-structure.md`** — ⭐ **product**, sorted by section:
+**[`module-structure.md`](../../conventions/module-structure.md)** — ⭐ **product**, sorted by section:
 
 | section | side | landed in |
 |---|---|---|
@@ -112,16 +112,16 @@ every process row stays in place for `REL-10`.
 
 ⚠️ The table folds the four Ruling 74 headings into one row, so its rows cover all 36 headings.
 
-**`personal-data-shapes.md`** — ⭐ **product**, whole: the one-vocabulary-two-policies rule, the
+**[`personal-data-shapes.md`](../../conventions/personal-data-shapes.md)** — ⭐ **product**, whole: the one-vocabulary-two-policies rule, the
 `why`-per-divergence rule, the controls and Ruling 179 → spec R7. ⚠️ **Its JSON table is not moved**:
 the product already reads its own copy, `tests/harness/personal-data-shapes.json` (`REL-02`), and the
 convention's copy is the tooling's until `REL-10`, with `tests/test_process_twins.py` holding the two
 equal. The `quality` column is the tooling's.
 
-**`commanded-pages.md`** — ⭐ **product**, whole → spec §9. ⛔ **The declaring fence is NOT moved in
+**[`commanded-pages.md`](../../conventions/commanded-pages.md)** — ⭐ **product**, whole → spec §9. ⛔ **The declaring fence is NOT moved in
 this task** — see *Decisions*.
 
-**`ui-design.md`** — sorted:
+**[`ui-design.md`](../../conventions/ui-design.md)** — sorted:
 
 | section | side | landed in |
 |---|---|---|
@@ -138,7 +138,7 @@ this task** — see *Decisions*.
 | What the user ACCEPTED, 2026-09-19 | product | ⭐ **MOVED** to spec §8.4, same heading (a `tools/` test locates it by that heading) |
 | Worked example: the study-route page | process | stays (a different page's decisions, for judging) |
 
-**`workspace.md`, `delivery-flow.md`, `agent-protocol.md`, `board.md`** — ⛔ **process, whole**, as the
+**[`workspace.md`](../../conventions/workspace.md), [`delivery-flow.md`](../../conventions/delivery-flow.md), [`agent-protocol.md`](../../conventions/agent-protocol.md), [`board.md`](../../conventions/board.md)** — ⛔ **process, whole**, as the
 epic classifies them. Each was read by heading for a product clause hiding inside, and none was
 found: the workspace pin is a development arrangement (R18's amendment and `REL-05` say a stranger
 installs the library instead), and the other three govern offices, rows, rounds and records.
@@ -210,7 +210,7 @@ what the product must be except the three R21 rows marked below.
 | 1677 | `#####` | Ruling 109 — a gate command is written in ONE block, and §4b's is it | process | stays; archived by `REL-10` |
 | 1709 | `####` | Ruling 53 — `host-verified` is bounded by *the image is right to exclude the subject* | process | stays; archived by `REL-10` |
 | 1736 | `#####` | Ruling 159 (CTO round 41) — the state is named in the SAME SENTENCE as the number, and the che… | process | stays; archived by `REL-10` |
-| 1765 | `#####` | Ruling 61 — this section is the **source**; `workspace.md` is its worked example | process | stays; archived by `REL-10` |
+| 1765 | `#####` | Ruling 61 — this section is the **source**; [`workspace.md`](../../conventions/workspace.md) is its worked example | process | stays; archived by `REL-10` |
 | 1800 | `####` | Amendment — unpinned green is evidence about the **code**, never about the **toolchain** | process | stays; archived by `REL-10` |
 | 1842 | `###` | 4b-i. Every skip is READ, and the run says GREEN or RED | process | stays; archived by `REL-10` |
 | 1855 | `####` | Ruling 142 (CTO round 38) — a skip census parses the MULTIPLICITY, and `uniq -c` reads 29 wher… | process | stays; archived by `REL-10` |
@@ -398,15 +398,15 @@ git grep -nE 'review-rubric|docs/conventions/' -- src tests docs/specs docs/auth
 
 ⭐ **`docs/specs/` and `docs/authoring/` print nothing**, before this task and after it: no amendment
 names a convention's path, and the spec's §8.4 names *the UI design convention* in words only.
-⛔ **Every line it prints is under `src/`, `tests/` or `README.md`, none of which this task may edit**,
+⛔ **Every line it prints is under `src/`, `tests/` or [`README.md`](../../../README.md), none of which this task may edit**,
 so each is listed with its kind and where it goes. ⛔ **Nothing below is a pointer a product reader is
 left following after `REL-07`, `REL-09` and `REL-10` land**; each is one of: a comment or docstring
 pointer `REL-09` rewrites, a reader or reason string that leaves or changes with the tooling in
-`REL-10`, inert fixture data, or `README.md`, which is `REL-07`'s.
+`REL-10`, inert fixture data, or [`README.md`](../../../README.md), which is `REL-07`'s.
 
 | where | kind | goes with | its re-point target |
 |---|---|---|---|
-| `README.md:29`, `README.md:47` | README links | `REL-07` | the README may name neither |
+| [`README.md:29`](../../../README.md), [`README.md:47`](../../../README.md) | README links | `REL-07` | the README may name neither |
 | `src/studyforge/address/__init__.py:61` | `#:` comment pointer | `REL-09` | spec R17 amendment |
 | `src/studyforge/contents/__init__.py:120` | `#:` comment pointer | `REL-09` | spec R17 amendment |
 | `src/studyforge/exercise/__init__.py:188` | `#:` comment pointer | `REL-09` | spec R17 amendment |
@@ -421,7 +421,7 @@ pointer `REL-09` rewrites, a reader or reason string that leaves or changes with
 | `src/studyforge/unit/trust.py:35` | docstring pointer | `REL-09` | spec R6 amendment |
 | `src/studyforge/archive/scrub.py:47` | docstring pointer | `REL-09` | spec R7 amendment |
 | `src/studyforge/narrate/speakable/script.py:77` | docstring pointer | `REL-09` | spec R7 amendment |
-| `src/studyforge/skills/onboarding/SKILL.md:288` | ⛔ **something else: skill prose that names the consumer-side HOME, and `tests/test_consumer_side_contract.py` asserts every site names it** | `REL-10`, in the one act that moves the fence (see *For dependents*) | spec §9 amendment |
+| [`src/studyforge/skills/onboarding/SKILL.md:288`](../../../src/studyforge/skills/onboarding/SKILL.md) | ⛔ **something else: skill prose that names the consumer-side HOME, and `tests/test_consumer_side_contract.py` asserts every site names it** | `REL-10`, in the one act that moves the fence (see *For dependents*) | spec §9 amendment |
 | `tests/authoring/support.py:285` | `#:` comment pointer, and names the HOME | `REL-09`, or `REL-10` with the fence | spec §9 amendment |
 | `tests/docker/test_dev_check_rubric_form.py:52` | ⛔ **reader** (`RUBRIC` constant) | `REL-10` — the file is declared process (`tests/harness/process.py`, RUBRIC) | none: it polices the rubric |
 | `tests/docker/test_dev_continuations.py:136` | comment in a declaration entry for the file above | `REL-10` drops the entry with that file | none |
@@ -443,12 +443,12 @@ pointer `REL-09` rewrites, a reader or reason string that leaves or changes with
 | `tests/test_gate_layers.py:153` | ⭐ **inert fixture text** the scrubber must keep | stays | none needed |
 | `tests/test_process_twins.py:104` | ⛔ **reader** (`CONVENTION`) of the tooling's copy of the shape table | `REL-10` — the file is declared process (TWIN) | none: the product copy is `tests/harness/personal-data-shapes.json` |
 | `tests/test_raises_convention.py:3` | docstring pointer | `REL-09` | spec R17 amendment |
-| `tests/test_round_mint_collision_rule.py:31` | ⛔ **reader** of `delivery-flow.md` | `REL-10` — declared process (BOARD) | none: it polices the process |
+| `tests/test_round_mint_collision_rule.py:31` | ⛔ **reader** of [`delivery-flow.md`](../../conventions/delivery-flow.md) | `REL-10` — declared process (BOARD) | none: it polices the process |
 | `tests/test_rubric_exit_code_forms.py:45` | ⛔ **reader** of the rubric | `REL-10` — declared process (RUBRIC) | none: it polices the rubric |
 | `tests/test_shape_vocabulary.py:11` | docstring pointer | `REL-09` | spec R7 amendment |
 
 ⚠️ **The population was re-taken at this branch's tip and is identical to the one at `f3bfc486`**,
-line for line, because no file under `src/`, `tests/` or `README.md` was edited here; the lines above
+line for line, because no file under `src/`, `tests/` or [`README.md`](../../../README.md) was edited here; the lines above
 are at that ref.
 
 ## Gates
@@ -458,7 +458,19 @@ line; the pinned-image rows through the worktree's own `docker/dev/check`.
 
 | gate | environment | reading |
 |---|---|---|
-| (to be filled) | | |
+| `./docker/dev/check ruff check .` | pinned image | GREEN, exit 0 |
+| `./docker/dev/check ruff format --check .` | pinned image | GREEN, exit 0 |
+| `python3 -m tools.quality` | host | GREEN, exit 0 |
+| `python3 -m tests.floor` | host | GREEN, exit 0 |
+| `python3 -m pytest -n auto -q` | host | GREEN, exit 0 |
+
+⚠️ **Two earlier suite runs were RED, neither for this diff.** The first, exit 1, was the tree-state
+guard catching an edit made to the spec *while the suite ran* — the guard working. The second, exit 1,
+was run with `--basetemp` inside the session scratchpad after `/tmp/pytest-of-*` hit a disk quota,
+and three socket tests in `tests/studyforge/cli/test_serve_process.py` refuse a socket path of 100
+characters or more — a finding about that test's premise, below. The third, with the tree held
+still and the default base, is the reading above. The gates table itself was written after it; every
+other byte of the tip was the tree that run read.
 
 ## Decisions
 
@@ -471,8 +483,8 @@ line; the pinned-image rows through the worktree's own `docker/dev/check`.
   same commit.
 - ⭐ **The consumer-side declaration's home is spec §9 — and its fence is NOT moved here.** `tests/harness/process.py`
   deferred this to `REL-08`. The spec states the rule now; the ` ```text ` fence that
-  `tests/test_consumer_side_contract.py` parses stays in `commanded-pages.md` until one act moves it,
-  re-points `HOME`, and re-points the two sites that must name the home (`SKILL.md:288`,
+  `tests/test_consumer_side_contract.py` parses stays in [`commanded-pages.md`](../../conventions/commanded-pages.md) until one act moves it,
+  re-points `HOME`, and re-points the two sites that must name the home ([`SKILL.md:288`](../../../src/studyforge/skills/onboarding/SKILL.md),
   `tests/authoring/support.py:285`). ⛔ Typing the fence into the spec now would make a second copy no
   test reads, and that act needs edits under `src/` and `tests/` this task may not make.
 - ⭐ **The palette check's product home is decided: the spec.** `tests/test_floor_twins.py` holds
@@ -503,22 +515,23 @@ line; the pinned-image rows through the worktree's own `docker/dev/check`.
 | id | marker | where | what |
 |---|---|---|---|
 | `REL-08/1` | `[structural]` | [the spec](../../specs/2026-09-08-studyforge-v1-design.md) | ⛔ **`REL-01/1` is still open and is not discharged here**: the spec cites process ids that explain nothing without the archive (`REL-01`'s list, e.g. `Ruling 150`, `PO round 67`, `SF-21/1`). `REL-08`'s epic text and brief own the product clauses, not a rewrite of the spec's existing prose, so it is routed rather than widened into this diff. Until an owner takes it, `REL-01`'s command keeps printing those ids after `REL-09` |
-| `REL-08/2` | `[structural]` | `tests/test_consumer_side_contract.py`, `src/studyforge/skills/onboarding/SKILL.md:288` | ⛔ **After `REL-10` removes `docs/conventions/`, the consumer-side guard leaves with it** (the file is declared process for `HOME`) **and the skill's pointer dangles** — unless the fence moves into spec §9 with `HOME` re-pointed in one act. ⚠️ And a skill naming `docs/specs/` points outside the installed package, which `E15`'s property 2 forbids; the skill may need to carry the spelling itself |
+| `REL-08/2` | `[structural]` | `tests/test_consumer_side_contract.py`, [`src/studyforge/skills/onboarding/SKILL.md:288`](../../../src/studyforge/skills/onboarding/SKILL.md) | ⛔ **After `REL-10` removes `docs/conventions/`, the consumer-side guard leaves with it** (the file is declared process for `HOME`) **and the skill's pointer dangles** — unless the fence moves into spec §9 with `HOME` re-pointed in one act. ⚠️ And a skill naming `docs/specs/` points outside the installed package, which `E15`'s property 2 forbids; the skill may need to carry the spelling itself |
 | `REL-08/3` | `[local]` | `tests/test_floor_twins.py` `DEFERRED` | `check_rejected_palettes` and `palette_census` are now unblocked: the table is in the spec, which stays on the main line. Moving them into the product floor is a `tests/` edit |
 | `REL-08/4` | `[local]` | `tools/quality/palettes/rejected.py` | The constant `UI_CONVENTION` now names the spec. The name was kept to avoid editing its readers; a rename is cosmetic and belongs with the check's move (`REL-08/3`) |
+| `REL-08/6` | `[local]` | `tests/studyforge/cli/test_serve_process.py` | Three tests assert the pytest base temp path leaves a Unix socket path under 100 characters, so a run with a long `--basetemp` goes RED for a reason that is not the product's. Measured here with the base under the session scratchpad |
 | `REL-08/5` | `[local]` | spec §3.1 | §3.1 still describes submodules and *five repositories, each with its own remote*, which R18's 2026-09-09 amendment made false. Outside this task (not a rubric or convention clause) |
 
 ## For dependents
 
 - ⭐ **`REL-10`:** every convention and the rubric may leave whole; every product clause in them is in
-  the spec, and the palette tables are already out of `ui-design.md`. ⛔ **Before removing
-  `commanded-pages.md`, move its fence** into spec §9's amendment (exactly one ` ```text ` fence of that
+  the spec, and the palette tables are already out of [`ui-design.md`](../../conventions/ui-design.md). ⛔ **Before removing
+  [`commanded-pages.md`](../../conventions/commanded-pages.md), move its fence** into spec §9's amendment (exactly one ` ```text ` fence of that
   shape, so `declared_spelling()` still finds one), re-point `HOME` in
-  `tests/test_consumer_side_contract.py`, re-point `SKILL.md:288` and `tests/authoring/support.py:285`,
+  `tests/test_consumer_side_contract.py`, re-point [`SKILL.md:288`](../../../src/studyforge/skills/onboarding/SKILL.md) and `tests/authoring/support.py:285`,
   and drop its process mark — or record why the guard leaves. The four readers marked ⛔ in the residue
   table leave with the tooling.
 - ⭐ **`REL-09`:** the residue rows marked `REL-09` each name the spec amendment that now carries the
   rule their comment cites; re-point to it by section and rule, or carry the reason in place.
 - ⭐ **`REL-07`:** the README's two lines are the only residue outside `src/` and `tests/`.
-- ⭐ **`REL-11`:** `CLAUDE.md`'s hard rules can cite the spec's amendments (R7, R11, R12, R13, R17, §3.2)
+- ⭐ **`REL-11`:** [`CLAUDE.md`](../../../CLAUDE.md)'s hard rules can cite the spec's amendments (R7, R11, R12, R13, R17, §3.2)
   instead of `docs/conventions/`.
