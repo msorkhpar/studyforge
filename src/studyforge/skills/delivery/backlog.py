@@ -136,7 +136,7 @@ class Backlog:
     def checked(self, index: Index) -> Backlog:
         """Refuse a plan the index contradicts, ⛔ naming EVERYTHING that contradicts it.
 
-        ⛔ **Ruling 188** (`W94`). The two checks below give back their reasons
+        ⛔ **Every reason is named** (R6). The two checks below give back their reasons
         rather than raising, because the loop that drives them is here: a check
         that raised would refuse on the first offending task of the first
         offending milestone, and the reader would learn how many more there are
@@ -144,7 +144,7 @@ class Backlog:
 
         ⭐ Returns a plan carrying the CHECKED terminal statement, which is
         where the capabilities that are not this framework's to deliver come
-        back from the index (`W92`). ⛔ Dropping the return would render a
+        back from the index. ⛔ Dropping the return would render a
         statement that had been checked and then thrown away.
         """
         terminal = self.terminal.checked(index)
@@ -229,7 +229,7 @@ class Backlog:
         """Derive the heaviest chain of this plan's own tasks, ⛔ refusing every cycle.
 
         ⛔ **The cycles are refused before the walk, all of them at once**
-        (Ruling 188, `W94`): a guard inside the walk raises on the first cycle
+        (R6): a guard inside the walk raises on the first cycle
         it enters and says nothing about the rest. ⭐ The walk below is
         therefore over a graph already known to be acyclic, which is why it
         carries no cycle guard of its own.

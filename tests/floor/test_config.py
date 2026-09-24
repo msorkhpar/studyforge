@@ -1,4 +1,4 @@
-"""Mirror of `tools/quality/config.py` (R12)."""
+"""Mirror of `tests/floor/config.py` (R12)."""
 
 from __future__ import annotations
 
@@ -9,14 +9,14 @@ from tests.support import git, init_repository, repository_root, run, tracked_fi
 
 
 def test_the_size_exception_marker_is_the_ruled_literal():
-    # ⛔ Fixed by ruling, case included: the review rubric greps for exactly
-    # this token, so a marker that drifts passes here and fails there.
+    # ⛔ Fixed by R11, case included: every reader looks for exactly this
+    # token, so a marker that drifts passes here and fails there.
     assert config.SIZE_EXCEPTION_MARKER == "Size exception:"
 
 
 def test_ceilings_are_the_documented_ones():
-    # docs/conventions/module-structure.md states 400 and 600. If these move,
-    # that document moved first — this assertion is the tripwire.
+    # R11 in the spec states 400 and 600. If these move, that rule moved
+    # first — this assertion is the tripwire.
     assert config.SOURCE_LINE_CEILING == 400
     assert config.TEST_LINE_CEILING == 600
 
@@ -42,7 +42,7 @@ def test_a_path_merely_containing_tests_is_not_a_test_file():
 
 
 def test_fixtures_are_never_read():
-    # FND-04's fixtures are deliberately shaped wrong — an invalid corpus is
+    # The fixture corpora are deliberately shaped wrong — an invalid corpus is
     # the point of half of them — so holding them to the repository's style
     # would be a category error.
     assert config.is_excluded("tests/fixtures/depth1/corpus.json")
@@ -240,7 +240,7 @@ def test_a_tree_git_cannot_answer_for_falls_back_and_SAYS_so(tmp_path):
 
 def test_the_population_counts_the_documents_the_INDEX_does_not_hold(tmp_path):
     # ⛔ The narrowing was silent about what it narrowed
-    # off, so an office running the floor over a handoff it had written and not
+    # off, so a person running the floor over a document written and not yet
     # staged read a green the merge did not repeat. ⭐ Both directions, and the
     # count is the difference between the two lists this walk already has.
     init_repository(tmp_path)

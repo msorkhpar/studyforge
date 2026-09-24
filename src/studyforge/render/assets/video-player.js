@@ -54,7 +54,7 @@
 
   /* Two videos on one page must not speak over each other. Wired from the
      elements' own events rather than from either player's internals, so
-     neither has to know the other exists — and so narration (E04) can join
+     neither has to know the other exists — and so narration can join
      the same convention without either side being edited. */
   videos.forEach(function (video) {
     video.addEventListener('play', function () {

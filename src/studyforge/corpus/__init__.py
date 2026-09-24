@@ -30,9 +30,8 @@ everything; `container` reads a `container.json` — the deepest container's
 declaration of what its units are — and re-renders it, which is what makes
 amending an editorial field a round trip rather than a rewrite.
 
-⭐ **`origin` lives in the container map and not in the archive document**
-(SF-05, closing FND-04's open condition): the archive carries what it needs to
-stand alone, which is its *identity* (R4), and provenance is the container's to
-declare. A placement profile that needs it says so and fails loudly when it is
-absent.
+⭐ **`origin` lives in the container map and not in the archive document**: the
+archive carries what it needs to stand alone, which is its *identity* (R4), and
+provenance is the container's to declare. A placement profile that needs it says
+so and fails loudly when it is absent.
 """

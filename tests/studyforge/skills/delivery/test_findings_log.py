@@ -1,6 +1,6 @@
-"""Mirror of `src/studyforge/skills/delivery/findings_log.py` (R12), and `W346`'s clauses.
+"""Mirror of `src/studyforge/skills/delivery/findings_log.py` (R12).
 
-⛔ `W346`: a conversion is obliged to write its findings log. Three clauses,
+⛔ A conversion is obliged to write its findings log. Three clauses,
 each asserted both ways — the procedure names the log, each finding carries a
 disposition slot, and a run that ends without a log is refused, never green.
 """
@@ -36,7 +36,7 @@ from tests.support import repository_root
 COMMIT = "0" * 40
 
 
-def finding(id: str = "INT-19/1", marker: str = "structural") -> Finding:
+def finding(id: str = "IX-19/1", marker: str = "structural") -> Finding:
     claims = () if marker == "none" else (Claim("seen on the corpus", measured="counted"),)
     return Finding(id=id, marker=marker, says="the scaffold wrote no ignore rule", claims=claims)
 
@@ -117,7 +117,7 @@ def test_an_entry_renders_its_finding_then_its_slot():
 
 
 def test_a_none_entry_carries_no_slot_because_it_writes_zero():
-    none = finding("INT-19/1", "none")
+    none = finding("IX-19/1", "none")
     assert Entry(none).lines() == none.lines()
 
 
@@ -130,13 +130,13 @@ def test_an_empty_log_is_refused_because_zero_is_a_none_finding():
 
 
 def test_a_repeated_id_is_refused_by_name():
-    with pytest.raises(LogRefused, match="appears twice: INT-19/2"):
-        FindingsLog(run="r", entries=(Entry(finding("INT-19/2")), Entry(finding("INT-19/2"))))
+    with pytest.raises(LogRefused, match="appears twice: IX-19/2"):
+        FindingsLog(run="r", entries=(Entry(finding("IX-19/2")), Entry(finding("IX-19/2"))))
 
 
 def test_a_none_beside_a_real_finding_is_refused():
     with pytest.raises(LogRefused, match="stands beside a real one"):
-        FindingsLog(run="r", entries=(Entry(finding()), Entry(finding("INT-19/2", "none"))))
+        FindingsLog(run="r", entries=(Entry(finding()), Entry(finding("IX-19/2", "none"))))
 
 
 def test_every_refusal_of_a_log_is_named_at_once():
@@ -146,7 +146,7 @@ def test_every_refusal_of_a_log_is_named_at_once():
 
 
 def test_a_log_that_can_be_read_back_is_accepted():
-    log = FindingsLog(run="r", entries=(Entry(finding()), Entry(finding("INT-19/2"))))
+    log = FindingsLog(run="r", entries=(Entry(finding()), Entry(finding("IX-19/2"))))
     assert len(log.entries) == 2
 
 
@@ -160,12 +160,12 @@ def test_a_run_with_no_log_is_refused_and_the_refusal_names_where_it_belongs():
 
 def test_a_rendered_log_closes_and_reports_every_finding_and_its_answer():
     text = rendered(
-        Entry(finding("INT-19/1"), Disposition("yes", "the adapter scaffold")),
-        Entry(finding("INT-19/2"), Disposition("no", "the anchor is source-specific")),
-        Entry(finding("INT-19/3")),
+        Entry(finding("IX-19/1"), Disposition("yes", "the adapter scaffold")),
+        Entry(finding("IX-19/2"), Disposition("no", "the anchor is source-specific")),
+        Entry(finding("IX-19/3")),
     )
     report = closing(text)
-    assert report[:3] == ["INT-19/1  yes", "INT-19/2  no", "INT-19/3  open"]
+    assert report[:3] == ["IX-19/1  yes", "IX-19/2  no", "IX-19/3  open"]
     assert report[-1] == "open: 1 — the sort is not done"
 
 
@@ -175,17 +175,17 @@ def test_a_fully_sorted_log_says_so():
 
 
 def test_a_log_recording_nothing_closes_and_says_it_found_nothing():
-    report = closing(rendered(Entry(finding("INT-19/1", "none"))))
+    report = closing(rendered(Entry(finding("IX-19/1", "none"))))
     assert "none: the run recorded that it found nothing" in report
 
 
 def test_a_finding_with_no_slot_is_refused_by_id():
-    text = rendered(Entry(finding("INT-19/4")), Entry(finding("INT-19/5")))
+    text = rendered(Entry(finding("IX-19/4")), Entry(finding("IX-19/5")))
     stripped = "\n".join(line for line in text.splitlines() if QUESTION not in line)
     with pytest.raises(LogRefused) as raised:
         closing(stripped)
-    assert "INT-19/4 carries no disposition slot" in str(raised.value)
-    assert "INT-19/5 carries no disposition slot" in str(raised.value)
+    assert "IX-19/4 carries no disposition slot" in str(raised.value)
+    assert "IX-19/5 carries no disposition slot" in str(raised.value)
 
 
 def test_a_finding_with_two_slots_is_refused():
@@ -218,7 +218,7 @@ def test_a_log_holding_no_finding_is_refused():
 
 
 def test_a_none_beside_a_real_finding_is_refused_when_read_back():
-    text = rendered(Entry(finding())) + "\n" + "\n".join(finding("INT-19/9", "none").lines())
+    text = rendered(Entry(finding())) + "\n" + "\n".join(finding("IX-19/9", "none").lines())
     with pytest.raises(LogRefused, match="stands beside a real one"):
         closing(text)
 
@@ -301,7 +301,7 @@ def test_the_procedures_closing_command_passes_a_run_that_wrote_its_log(tmp_path
     (tmp_path / LOG).write_text(rendered(Entry(finding())), "utf-8")
     done = run_closing(tmp_path)
     assert done.returncode == 0, done.stderr
-    assert "INT-19/1  open" in done.stdout
+    assert "IX-19/1  open" in done.stdout
 
 
 def test_the_procedures_closing_command_refuses_a_log_with_a_missing_slot(tmp_path):
@@ -310,12 +310,12 @@ def test_the_procedures_closing_command_refuses_a_log_with_a_missing_slot(tmp_pa
     (tmp_path / LOG).write_text(text.replace(Disposition("open").line(), ""), "utf-8")
     done = run_closing(tmp_path)
     assert done.returncode != 0
-    assert "INT-19/1 carries no disposition slot" in done.stderr
+    assert "IX-19/1 carries no disposition slot" in done.stderr
 
 
-# --- W345/1: the scaffold's file count is its own listing's, never typed ----
+# --- the scaffold's file count is its own listing's, never typed ----
 
-#: Typed counts of the scaffold's file set that `W345` made undercount.
+#: Typed counts of the scaffold's file set, which undercount as it grows.
 TYPED_COUNTS = re.compile(r"\b(?:seven|eight) (?:generated|files|as generated)\b", re.I)
 
 

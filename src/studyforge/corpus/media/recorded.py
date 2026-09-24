@@ -13,14 +13,14 @@ the corpus root `footprint` has already checked is a directory.
 `located`, this package's `errors`, and the standard library. ⛔ It opens the
 record and nothing else, and it never opens a clip.
 
-## ⛔ Why the footprint reads the record at all (`W311`, `W287/3`)
+## ⛔ Why the footprint reads the record at all
 
 ⚠️ **The declared units' media directories are not every clip a corpus holds.**
 A clip in a removed or relabelled unit's old directory, or a superseded clip
 outside every declared directory, is still on disk and still committed under
 `auto`, and a walk over the declared directories alone never weighs it — so a
 corpus could read UNDER a limit its bytes had crossed. ⭐ The record locates
-every clip it wrote (`W226`), so the footprint asks it.
+every clip it wrote, so the footprint asks it.
 
 ⛔ **The record locates; this module never re-derives placement.** A path here
 is `synth.located(root, where, filename)` and nothing else, and a recorded

@@ -19,13 +19,13 @@ round, and the personal-archive skill and the build write it from outside any
 server.
 
 ⭐ **A Submit's breakdown rides beside its verdict** as `last.cases`, one
-verdict per case the practice's record declared (`AX-02`). ⛔ **It is a report
+verdict per case the practice's record declared. ⛔ **It is a report
 and never a second rule for a pass**: `is_pass` is untouched, and `document`'s
 own docstring carries the whole ground.
 
 ⚠️ **Two records, not one, and this package is one of them.** A pass is earned
 from a grader, so it is written where the run happened; a **read mark** is the
-reader's own assertion and lives in the browser (`SF-30`,
+reader's own assertion and lives in the browser (§8.5,
 `render/assets/study-progress.js`). ⛔ **Nothing here can hold a read mark**:
 the modes are `run` and `test`, and only a test run that exits 0 passes.
 
@@ -69,7 +69,7 @@ from studyforge.progress.keys import parse_practice_key, practice_key
 from studyforge.progress.lock import LOCK_FILENAME
 from studyforge.progress.store import IGNORE_FILENAME, PROGRESS_DIRNAME, Progress, store_dir
 
-#: ⛔ What any call into this package lets out (`W208`). `ProgressFormatError`
+#: ⛔ What any call into this package lets out, as a tuple. `ProgressFormatError`
 #: is a `ProgressError` and needs no entry of its own; `PersonalDataLeak` is
 #: R7's gate on a record somebody edited by hand, and is let through unchanged.
 RAISES = (ProgressError, PersonalDataLeak)

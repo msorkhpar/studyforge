@@ -1,4 +1,4 @@
-r"""R3 as a check: after a build, nothing that already existed was harmed (OPS-05).
+r"""R3 as a check: after a build, nothing that already existed was harmed.
 
 **What it does.** Compares a repository before a build with the same repository
 after it, and reports — by rule and by relative path — every pre-existing file
@@ -43,7 +43,7 @@ unnoticed. A symbolic link is compared by its target and never followed.
 2. ⛔ **A deletion is always a finding**, and is named a move when the same
    bytes appear at a path that did not exist before. No build deletes.
 3. ⭐ **A path the footprint owns may change** — R3 distinguishes the build's
-   own prior output from the user's material, by path (W202 answer 2). ⚠️ By
+   own prior output from the user's material, by path. ⚠️ By
    path only: a hand-edited copy of a generated page reads as prior output.
 4. **A declared path may change only additively**: the after-file is the
    before-file with exactly the declared line inserted immediately after a line
@@ -54,7 +54,7 @@ unnoticed. A symbolic link is compared by its target and never followed.
 ## ⚠️ What this cannot decide mechanically
 
 *"A file the material's own reader depends on as content"* is decided by the
-manifest parser's own predicate, `reads_as_content` (`W278`): the corpus's
+manifest parser's own predicate, `reads_as_content`: the corpus's
 `content` policy, or repository-root documentation by convention. ⚠️ The
 convention refuses a DECLARED change; an undeclared one is `modified`, as it
 was. A file the reader depends on that neither covers — a picture a lesson
@@ -241,7 +241,7 @@ def _judge(
 def _forbidden(path: str, manifest: Manifest, declared: bool = True) -> str:
     """Why R3 forbids changing `path` whatever is declared, or `""`.
 
-    ⛔ `W278`: content is the parser's own predicate, never a second copy of it.
+    ⛔ Content is the parser's own predicate, never a second copy of it.
     """
     reason = _forbidden_to_create(path)
     if reason:

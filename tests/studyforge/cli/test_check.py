@@ -1,10 +1,10 @@
-"""`SF-44`'s acceptance and its two decisions, on the runnable fixture, each clause both ways.
+"""The `check` verb's acceptance and its two decisions, on the runnable fixture, both ways.
 
 ⭐ **The corpus has every shape the acceptance names**: units 1, 2 and 4 are graded (a test
 that passes, one that fails, a file that does not compile), unit 3 is a file with no test,
 and unit 5 is reading only. Each run is in a temp copy (`checking.py`).
 
-⭐ **Host mode here, both modes in `test_check_modes.py`.** The mode is `SF-20`'s, and the
+⭐ **Host mode here, both modes in `test_check_modes.py`.** The mode is the runner's, and the
 verb only hands it a command.
 """
 

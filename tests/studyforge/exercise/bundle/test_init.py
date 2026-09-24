@@ -67,7 +67,7 @@ def test_the_parent_contract_says_this_sub_package_exists():
 
 
 def test_no_module_here_runs_anything_or_reaches_a_module_by_name():
-    # ⛔ There is no legal discovery mechanism in `src/` (`AX-03`'s first
+    # ⛔ There is no legal discovery mechanism in `src/` (the gate framework's first
     # surprise), and a bundle is read off disk rather than executed.
     forbidden = {"subprocess", "importlib", "shutil", "socket", "urllib"}
     for path in package_modules():

@@ -4,14 +4,14 @@
 read, and one it must never accept — a bound in saturation, a half-written range
 — is refused, taking its whole row out of the population rather than widening it.
 
-⭐ **The LIVE table is asserted inhabited and PARSED** (Ruling 48): a renamed
+⭐ **The LIVE table is asserted inhabited and PARSED**: a renamed
 column reads as zero rejected identities, and a check that compares nothing is
 green over everything. ⛔ **That is a red suite here, never a quiet pass at the
 floor.**
 
-⭐ **`W392`'s third clause is asserted here too**: the table records what the
-user ACCEPTED on 2026-09-19, and its two reference pages are NAMED — never
-located, in any form the predicate below can find.
+⭐ **The accepted identity is asserted here too**: the table records what was
+ACCEPTED, and its two reference pages are NAMED — never located, in any form
+the predicate below can find.
 """
 
 from __future__ import annotations
@@ -31,7 +31,7 @@ from tests.floor.palettes.rejected import (
 from tests.floor.palettes.support import CREAM, GRADIENT, SATURATED, SLATE, convention_text
 from tests.support import assert_package_contract, repository_root
 
-#: The record `W392`'s third clause asks for, located by text it carries.
+#: The spec's record of the accepted identity, located by the heading it carries.
 ACCEPTED_HEADING = "What the user ACCEPTED, 2026-09-19"
 
 #: ⛔ What a reference page must NEVER be given as: a URL, a home path, or any
@@ -127,7 +127,7 @@ def test_a_tree_with_no_convention_reads_two_EMPTY_answers(tmp_path):
     assert convention(tmp_path) == ({}, ())
 
 
-# --- the other half of the table: what the user ACCEPTED ------------------------
+# --- the other half of the table: what was ACCEPTED -----------------------------
 
 
 def test_the_convention_RECORDS_what_the_user_accepted():

@@ -75,8 +75,8 @@ def fixture_copy(where: Path) -> Path:
 def unit_commands(unit: int) -> list[tuple[str, ...]]:
     """The unit's run command, then its test command when it has one.
 
-    ⭐ Both read from the unit's own record: since `W357` the untested unit's
-    record names its file and run command, and no grader.
+    ⭐ Both read from the unit's own record: the untested unit's record names its file
+    and run command, and no grader.
     """
     path = FIXTURE / RAW / f"unit-{unit:02d}" / "practice-1.json"
     exercise = of(json.loads(path.read_text(encoding="utf-8")), str(path.name))

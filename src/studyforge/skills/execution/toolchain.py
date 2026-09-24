@@ -40,7 +40,7 @@ nowhere how a set is written into it.** It declares the separator for the
 different purpose, so it is not an answer.
 
 ⭐ **So this constant is provisional, it is a finding against the component's
-contract (`SK-09/1`), and a test asserts the contract still carries no key that
+contract, and a test asserts the contract still carries no key that
 would settle it.** ⚠️ The day the component declares one, that test goes RED,
 this constant is deleted and the value is read. ⛔ It is not a fix and it must
 not be allowed to become one by being quietly forgotten.
@@ -65,7 +65,7 @@ DIRECTORY_SLOT = "<directory>"
 #: appended to whatever it happened to end with.
 PLACEHOLDER = "<the declared set>"
 
-#: ⚠️ **Provisional. See the module contract above and `SK-09/1`.** How the
+#: ⚠️ **Provisional. See the module contract above.** How the
 #: declared set is written into the one argv slot the contract leaves for it.
 SET_SEPARATOR = ","
 
@@ -106,7 +106,7 @@ class Selection:
         """Return this image's prime flag with `directory` in its slot, or `None` for none.
 
         ⭐ `None` is a block that declares no prime: before `provides` 3 the
-        editor's contract declares none, and its editor is built unprimed (`W466`).
+        editor's contract declares none, and its editor is built unprimed.
         """
         if self.prime_flag is None:
             return None
@@ -191,7 +191,7 @@ def _reason(reasons: Mapping[str, object], name: str, block: str) -> str:
         f"the contract's {scrub(block)}.runtimes.selectable omits a runtime this corpus "
         f"declared and its not_carried block gives no reason for it. ⛔ A corpus is "
         f"owed the reason, and inventing one here would be this skill answering for "
-        f"the component (R19)"
+        f"the component"
     )
 
 

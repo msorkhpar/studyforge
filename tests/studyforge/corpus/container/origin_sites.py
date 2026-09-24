@@ -1,4 +1,4 @@
-"""Every site in `src/` and `tests/` that ACCESSES a document's `origin` key (`W109`).
+"""Every site in `src/` and `tests/` that ACCESSES a document's `origin` key.
 
 **What it does.** Reads the AST of every module under the two roots and returns
 each access to the key `origin` — a subscript, a `.get`/`.pop`/`.setdefault`, a
@@ -9,8 +9,8 @@ classes against `DECLARED`.
 `findings(sites, declared)` returns what the tree must not hold. The test beside
 this module asserts both over the repository and over planted trees.
 
-⭐ **The one reader is `fields.optional_origin`** (Ruling 92, F21: `origin` has
-two shapes and will grow a third). A read whose value is handed straight to it
+⭐ **The one reader is `fields.optional_origin`** (`origin` has
+two shapes and may grow a third). A read whose value is handed straight to it
 is re-pointed and needs no name. ⛔ **Resolved by identity, never by spelling**:
 the callee is imported and compared with the real function, so a local function
 that merely shares the name is a second reader.
@@ -25,13 +25,13 @@ that merely shares the name is a second reader.
   name. ⚠️ **A declared writer does not exempt a bare read** — that is how a
   declaration stays a claim the tree can refute.
 
-⚠️ **Keys are RESOLVED, not grepped** (`W105`): a literal, a concatenation of
+⚠️ **Keys are RESOLVED, not grepped**: a literal, a concatenation of
 literals, a module or local constant, a loop or comprehension variable over a
 literal collection, and a `studyforge` constant imported by name or through a
 module (so `for key in UNIT_KEYS` is an access). ⛔ **A dict display is not an
 access** — it cannot read a field — so declaring every one would be an exemption
 list that grows with every fixture and stops being believed (the argument
-`tools/quality/mirror.py` makes for its own one-way rule).
+`tests/floor/mirror.py` makes for its own one-way rule).
 
 ⛔ **Stated survivors, each planted in the test**: a key passed in as
 a parameter, a whole document unpacked with `**`, a key found by iterating
@@ -72,7 +72,7 @@ PARSER, WRITER = "parser", "writer"
 DECLARED: dict[str, tuple[str, str]] = {
     "src/studyforge/corpus/container/document.py::from_document": (
         PARSER,
-        "a container's own origin is one-shaped (Ruling 92 is per unit); fields.optional_path",
+        "a container's own origin is one-shaped (a region is per unit); fields.optional_path",
     ),
     "src/studyforge/corpus/container/document.py::to_document": (
         WRITER,

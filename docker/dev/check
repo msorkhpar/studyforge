@@ -2,11 +2,11 @@
 # Run the framework's checks in the framework's build environment (R15).
 #
 #     docker/dev/check                            the whole suite
-#     docker/dev/check python3 -m tools.quality   the quality floor alone
+#     docker/dev/check python3 -m tests.floor     the quality floor alone
 #     docker/dev/check python3 -m pytest -k ruff  anything else
 #
 # ⭐ Every run first prints, on stderr, the image it runs — named by the CONTENT
-# of its build inputs (`W225`, the block below the attestation variable).
+# of its build inputs (the block below the attestation variable).
 #
 # ⭐ **Three variables cross into the container** (W36), declared once in
 # `compose.yaml`'s `environment:` block and set the ordinary way:

@@ -32,7 +32,7 @@ entirely open and reads as a plain nested list, and a large one renders as the
 shape of the material with the long tail one click away. ⛔ Neither is a branch
 on which corpus it is (R1) — both fall out of the same arithmetic.
 
-## ⛔ Why a constant here is not the thing Ruling 165 forbids
+## ⛔ Why a constant here is not a corpus reading (R1)
 
 ⚠️ **A bare integer in an *Acceptance* is a corpus reading wearing a number.**
 ⭐ This one is not a reading of any corpus: it is a claim about a **reader** —

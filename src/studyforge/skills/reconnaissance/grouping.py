@@ -26,7 +26,7 @@ corpora and the counts.
 itself an entry"*, and the labels of one grouping all share one **shape**. Both
 corpora fall out of that rule; neither falls out of a syntax rule.
 
-## ⛔ A heading that links a file is not a unit by the link alone (W250)
+## ⛔ A heading that links a file is not a unit by the link alone
 
 ⭐ **It is read as a group label that names where its units are**, when it
 stands where the grouping's labels stand, opens no entry of the record, and the
@@ -35,7 +35,7 @@ file it links is cut into regions (`regions`). Its units are those regions.
 - **§6 reads a record by position, not by mark.** A link records an `origin`,
   and a container carries an `origin` exactly as a unit does, so a link says
   *where something is* and never *what role it has*. Role stays positional.
-- **Ruling 92 makes a unit a region of one file** (`origin: {path, section}`). A
+- **A unit may be a region of one file** (`origin: {path, section}`). A
   label whose file is cut into regions heads a container of sub-file units, and
   reading that label as one whole-file unit erases every unit inside it.
 
@@ -63,7 +63,7 @@ from studyforge.skills.reconnaissance.record import (
 #: sentence about itself before it starts listing, and one stray link must not
 #: cost a corpus its hierarchy.
 #:
-#: ⛔ Measured, and this is why the obvious heuristic was abandoned: the
+#: ⛔ Measured, and this is why the obvious heuristic is not used: the
 #: "densest run of entries" rule **cannot be tuned to work on both measured
 #: corpora at once** — one's largest gap *inside* its curriculum is wider than
 #: the other's distance to a stray entry *outside* it, so every threshold gets

@@ -17,10 +17,10 @@ read, and what a page's fences are. Standard library only.
 
 ## ⛔ WHY `validate` AND NOT ONLY THE PASS
 
-⚠️ **The corpus office read a ledger that had lost a whole container's rows as
-0 findings.** `exercises/ledger.json` is one file per corpus, and the pass that
-rewrote it with one container's entries was the very thing that should have
-known better — so the proof that *nothing is lost* cannot live only in the
+⚠️ **A ledger can lose a whole container's rows and still read as 0
+findings.** `exercises/ledger.json` is one file per corpus, and a pass that
+rewrites it with one container's entries is the very thing that should know
+better — so the proof that *nothing is lost* cannot live only in the
 writer. ⭐ This check reads the ledger against what the corpus DECLARES, which
 no pass can narrow: every unit's `origin` in every container map, and every
 page and grader a committed coverage report names.
@@ -63,7 +63,7 @@ RULE_LEDGER_UNACCOUNTED = "ledger-unaccounted"
 
 #: ⛔ A ledger or coverage report carrying personal data. ⚠️ `validate.corpus`'
 #: own spelling, because it is the same rule and two ids for one fact is two
-#: audits (`W213`).
+#: audits.
 RULE_PERSONAL_DATA = "personal-data"
 
 
@@ -121,7 +121,7 @@ def _rows(path: Path, where: str):
     try:
         assert_clean(document, where)
     except PersonalDataLeak as error:
-        # ⛔ Its own rule, as `validate.exercises` has it (`W213`).
+        # ⛔ Its own rule, as `validate.exercises` has it.
         yield Finding(RULE_PERSONAL_DATA, where, str(error))
         return None
     try:

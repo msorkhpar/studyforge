@@ -1,10 +1,10 @@
-"""Mirror of `src/studyforge/validate/source/membership.py` (R12, `W248`, `W214`).
+"""Mirror of `src/studyforge/validate/source/membership.py` (R12).
 
 ⛔ **A stray beneath the archive root is refused by name, never skipped.** Both
 ways: a planted file turns `validate` RED and names itself, and an archive
 laid out by the adapter scaffold's own `Layout` reads clean.
 
-⛔ **And the other direction (`W214`): a file the archive DECLARES and does not
+⛔ **And the other direction: a file the archive DECLARES and does not
 hold is refused by name too.** Both ways again — declared media written where
 `Layout.unit_files` puts it passes, and media that is absent, written inside a
 variant, or named by no path at all is refused.
@@ -38,7 +38,7 @@ STRAY = RULE_ARCHIVE_STRAY
 
 #: The one container every corpus in this module holds, and the variant it
 #: declares. ⛔ **Declared once, here, because every path below is asked of
-#: `Layout` at this address rather than spelled** (`W322`): the address and the
+#: `Layout` at this address rather than spelled**: the address and the
 #: variant are the corpus's own data, and the geography around them —
 #: `archive/`, `raw/`, `units/`, `unit-NN`, and each filename — is the layout's.
 ADDRESS = Address(["demo"])
@@ -175,7 +175,7 @@ def test_an_archive_laid_out_by_the_adapter_layout_reads_clean(tmp_path):
         )
         _write(layout.document(ADDRESS, VARIANT, 1, kind, 1), render_document(document))
     _write(layout.unit_files(ADDRESS, 1) / "media" / "diagram.svg", "<svg/>\n")
-    # ⛔ `layout.content`, not the directory plus a typed filename (`W322`): the
+    # ⛔ `layout.content`, not the directory plus a typed filename: the
     # overlay's name is the contract's, and a test that spells it is a second
     # producer of an address `src/` computes in one place.
     _write(layout.content(ADDRESS, 1), "{}\n")
@@ -191,7 +191,7 @@ def test_the_shipped_archives_hold_no_stray(name):
 
 
 # --------------------------------------------------------------------------
-# ⛔ W214 — a declared file the archive does not hold is refused by name
+# ⛔ A declared file the archive does not hold is refused by name
 # --------------------------------------------------------------------------
 
 
@@ -253,12 +253,12 @@ def test_a_declared_attachment_that_was_never_written_is_refused_too(tmp_path):
 
 
 def test_media_written_inside_the_variant_is_refused_where_it_is_and_where_it_is_not(tmp_path):
-    """⛔ The `W214` defect exactly: an adapter that wrote media under `raw/`.
+    """⛔ An adapter that wrote media under `raw/`.
 
     ⭐ Two findings, and they are two different true statements: the file that
     is there is read by nothing, and the file that was declared is not there.
-    ⚠️ Before this check the first was the only one, and a stray beside a
-    document is easy to read as untidiness rather than as a broken page.
+    ⚠️ The first alone would be easy to read as untidiness rather than as a
+    broken page.
     """
     root = declaring(tmp_path / "c", assets=[entry("media/diagram.svg")])
     _write(

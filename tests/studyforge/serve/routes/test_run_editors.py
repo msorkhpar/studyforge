@@ -1,7 +1,7 @@
 """Mirror of `src/studyforge/serve/routes/run.py`'s editor route: two practices at once.
 
-⛔ **The user's report, over a real socket**: a page with two practices fires two
-`POST …/editor/…` at once, and one of them answered `409` with no editor in its
+⛔ **Over a real socket**: a page with two practices fires two
+`POST …/editor/…` at once, and neither may answer `409` with no editor in its
 panel. ⭐ Here both are fired at once and both must answer `200`, each with the
 practice's OWN folder and a lock naming its OWN file — ⛔ with the interleaving
 FORCED (every settings `replace` waits for the other request to reach it), so a

@@ -48,7 +48,7 @@ CONTAINER_PREFIX = "studyforge-runner-"
 #: editor is brought up by the compose file `skills.execution` generates, so its
 #: name is the one Compose derives — `<project>-<service>-<index>`, where the
 #: project is `studyforge-<source>` and the one service is `editor`.
-#: ⛔ **A convention, not a declaration, and that is a finding** (`W416/1`): the
+#: ⛔ **A convention, not a declaration, and that is a known gap**: the
 #: editor block of `consuming.json` carries no `name_template` where the runner
 #: block carries one, and the generated compose service declares no
 #: `container_name`, so nothing fails if the two spellings come apart. ⭐ A
@@ -63,7 +63,8 @@ def require_commands(commands: object) -> tuple[tuple[str, ...], ...]:
     """Return `commands` as a tuple of argv tuples, or raise `RunRefused`."""
     if isinstance(commands, (str, bytes)) or not isinstance(commands, Sequence) or not commands:
         raise RunRefused(
-            f"the runner takes {COMMANDS_PERMITTED}; the value is not reproduced here (R7)"
+            f"the runner takes {COMMANDS_PERMITTED}; the value is not reproduced here, since a "
+            f"refusal never quotes a value that may be personal"
         )
     checked = []
     for index, command in enumerate(commands, start=1):
@@ -89,7 +90,8 @@ def require_container(name: object) -> str:
     if not isinstance(name, str) or SAFE_SEGMENT.match(name) is None:
         raise RunRefused(
             "a container name must be one word of ASCII letters, digits, '.', '_' and '-', "
-            "not beginning '-'; the value is not reproduced here (R7)"
+            "not beginning '-'; the value is not reproduced here, since a refusal never quotes a "
+            "value that may be personal"
         )
     return name
 

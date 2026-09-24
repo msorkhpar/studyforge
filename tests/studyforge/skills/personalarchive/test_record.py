@@ -169,7 +169,7 @@ def test_the_store_path_and_the_owned_record_are_the_stores_own(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# `AX-02` — a `last` that carries a breakdown survives the round trip
+# A `last` that carries a breakdown survives the round trip
 # --------------------------------------------------------------------------
 
 VERDICTS = {"test_the_ask": True, "test_an_edge": False}

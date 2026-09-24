@@ -14,7 +14,7 @@ whether anything is there.
 
 ⚠️ **These four values leave the framework.** `main_path` and `test_path` reach
 an editor's task file and a runner's arguments; `run_command` and
-`test_command` are executed. E06 says they are validated **before they can
+`test_command` are executed. They are validated **before they can
 reach a generated document** — so the check is at the point the record is read,
 not at the point somebody runs it, because by then the value is in a file that
 several other things also read.
@@ -30,9 +30,9 @@ become five perfectly valid tokens.
 
 ⭐ The token pattern is then belt to that brace. It carries no metacharacter
 and no whitespace, so a value that somehow reached `sh -c` anyway is still one
-word. ⛔ It is a permitted set, never a forbidden list: Ruling 8 settled that a
-forbidden list is an open set and cannot be finished — measured, when seven
-further shapes walked through one.
+word. ⛔ It is a permitted set, never a forbidden list, because a
+forbidden list is an open set and cannot be finished: every shape nobody
+listed walks through it.
 
 ## A path is relative, stays inside the workspace, and cannot become a flag
 
@@ -41,10 +41,9 @@ refused. The first three put files outside the workspace (R3's prohibition
 reached by accident); the fourth is the one that looks harmless — a file named
 `-rf` handed to a command as an argument is an option, not a path.
 
-⚠️ **An *argument* may not be absolute either**, and that rule was found by a
-test rather than designed: `SAFE_ARGUMENT` permits `/`, because a real command
-carries `-pl practice/basics-01` — so `/home/<name>/run.sh` passed it. See
-`_is_rooted`; the reason it is refused is only partly R7.
+⚠️ **An *argument* may not be absolute either**: `SAFE_ARGUMENT` permits `/`,
+because a real command carries `-pl practice/basics-01`, so
+`/home/<name>/run.sh` passes it. See `_is_rooted`; the reason it is refused is only partly R7.
 """
 
 from __future__ import annotations
@@ -53,7 +52,7 @@ import re
 
 from studyforge.exercise.errors import ExerciseError
 
-# ⛔ **Anchored `\A…\Z`, never `^…$`** (W434): Python's `$` also matches
+# ⛔ **Anchored `\A…\Z`, never `^…$`**: Python's `$` also matches
 # BEFORE a trailing newline, so `^…$` admitted `ok\n` — a character the set
 # never names. `\Z` is the true end, so `.match` is a whole-value test for
 # every caller, including `execute/commands.py`, which calls it directly.
@@ -94,7 +93,8 @@ def require_path(value: object, what: str, where: str) -> str:
     """
     if not isinstance(value, str) or not value:
         raise ExerciseError(
-            f"{where}: '{what}' must be a non-empty str; the value is not reproduced here (R7)"
+            f"{where}: '{what}' must be a non-empty str; the value is not reproduced here, since "
+            f"a refusal never quotes a value that may be personal"
         )
     if "\\" in value or value.startswith("/") or _is_drive_qualified(value):
         raise ExerciseError(_refusal(what, where))
@@ -114,14 +114,14 @@ def require_command(value: object, what: str, where: str) -> tuple[str, ...]:
     if isinstance(value, str) or not isinstance(value, (list, tuple)) or not value:
         raise ExerciseError(
             f"{where}: '{what}' must be {ARGUMENT_PERMITTED}. The value is not "
-            f"reproduced here (R7)."
+            f"reproduced here, since a refusal never quotes a value that may be personal."
         )
     for token in value:
         if not _is_safe_argument(token):
             raise ExerciseError(
                 f"{where}: one of '{what}'s arguments is outside the permitted "
                 f"set. It must be {ARGUMENT_PERMITTED}. The argument is not "
-                f"reproduced here (R7)."
+                f"reproduced here, since a refusal never quotes a value that may be personal."
             )
     return tuple(value)
 
@@ -141,7 +141,7 @@ def _is_rooted(token: str) -> bool:
 
     ⛔ **Refused, and not only for R7.** `/home/<name>/run.sh` in a command is
     a home directory written into an archive — and the gate that would catch
-    it is a shape list, which Ruling 17 measured being lucky 4 times in 10. But
+    it is a shape list, which catches only the shapes it names. But
     `/usr/bin/mvn` carries no identifier and is refused too: a command runs in
     a **pinned toolchain image** (spec §8.1) where the program is on `PATH`, so
     an absolute path is a fact about the machine that wrote the record rather
@@ -159,7 +159,8 @@ def _refusal(what: str, where: str) -> str:
     return (
         f"{where}: '{what}' must be {PATH_PERMITTED}. These values reach a file "
         f"a runner executes against, so the shape is checked before the record "
-        f"is accepted. The value is not reproduced here (R7)."
+        f"is accepted. The value is not reproduced here, since a refusal never quotes a value "
+        f"that may be personal."
     )
 
 
@@ -167,7 +168,7 @@ def _is_drive_qualified(value: str) -> bool:
     r"""Return whether this is `C:\…` — absolute on a platform we do not target.
 
     ⚠️ Cheap, and it earns its place: `C:\Users\<name>\…` is a home path the
-    personal-data gate's shape list does not recognise, measured in SF-25's
-    poison table. Refusing the shape here means the gate never has to.
+    personal-data gate's shape list does not recognise. Refusing the shape here
+    means the gate never has to.
     """
     return len(value) > 1 and value[1] == ":" and value[0].isalpha()

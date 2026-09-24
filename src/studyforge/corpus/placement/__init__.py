@@ -15,7 +15,7 @@ block** every generated artifact embeds, which is what makes any of it safe.
 
 **Depends on.** `studyforge.address` and `studyforge.version`. ⛔ **No
 filesystem, no I/O.** This package answers "where would this go"; whether
-anything is there is SF-04's question, and `studyforge plan` exists precisely
+anything is there is `corpus.discovery`'s question, and `studyforge plan` exists precisely
 because the answer is computable before a single file is written.
 
 ## Location is data; identity is embedded

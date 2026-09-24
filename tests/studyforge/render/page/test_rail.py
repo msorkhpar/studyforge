@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/render/page/rail.py` (R12).
 
-⭐ **Every clause `W324` settles on is asserted BOTH WAYS here** — the region is
+⭐ **Every clause of the rail is asserted BOTH WAYS here** — the region is
 emitted and is not, a row is current and is not, a link is offered and is
 dropped — because a rail that rendered nothing would satisfy half of them by
 being absent.
@@ -144,7 +144,7 @@ def test_a_rail_with_no_current_anything_marks_nothing():
 def test_the_current_container_opens_and_the_others_stay_closed():
     # ⚠️ Structure, not styling: `open` is what makes the reader's own course
     # visible on arrival, and the others one keystroke away.
-    # ⚠️ Read inside the fold (`W362`): `rail.html` wraps the whole list in one
+    # ⚠️ Read inside the fold: `rail.html` wraps the whole list in one
     # `<details open>` that the page script closes on a narrow screen, and that
     # outer one is not a container.
     markup = rail(TWO).split("<summary>Course contents</summary>", 1)[1]
@@ -179,7 +179,7 @@ def test_every_row_is_a_list_item_inside_the_regions_own_lists():
 
 
 # --------------------------------------------------------------------------
-# ⭐ Ruling 164 here — a refused href drops the LINK and keeps the ROW
+# ⭐ Chrome here — a refused href drops the LINK and keeps the ROW
 # --------------------------------------------------------------------------
 
 
@@ -238,7 +238,7 @@ def test_the_rail_emits_no_id_so_a_container_pages_own_listing_keeps_its_keys():
 
 
 # --------------------------------------------------------------------------
-# ⭐ `W368` — a unit row carries the key a read mark is stored under
+# ⭐ A unit row carries the key a read mark is stored under
 # --------------------------------------------------------------------------
 
 KEYED = (
@@ -327,7 +327,7 @@ def test_a_container_declaring_no_units_yet_is_still_a_row():
     assert "Empty" in markup
 
 
-# --- a screen reader hears what the tick shows (`W383`) ----------------------
+# --- a screen reader hears what the tick shows ----------------------
 
 #: The hidden words, as the one template holds them, filled the way every region fills them.
 SAID = templates.fill("read-state.html", kind=SURFACE_HOOKS["read_state"])

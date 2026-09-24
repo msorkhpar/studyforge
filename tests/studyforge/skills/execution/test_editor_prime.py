@@ -1,10 +1,8 @@
-"""The editor's prime, declared by the contract as the runner's is (`W464/2`, `W466`).
+"""The editor's prime, declared by the contract as the runner's is.
 
-⚠️ **Measured (`W464/2`):** the editor's build accepts `--prime` and a prime
-moves its tag, but the contract declared a prime only under `runner.prime`, so
-the skill built and recorded the editor unprimed, and `EXECUTION.md` said
-"Pass `--prime …` to the builds above" of a block where one line carried it.
-⭐ From `provides` 3 the contract declares `editor.prime`; the editor's build,
+⚠️ The editor's build accepts `--prime` and a prime moves its tag, so a contract
+that declared a prime only under `runner.prime` would leave the editor built and
+recorded unprimed. ⭐ From `provides` 3 the contract declares `editor.prime`; the editor's build,
 its tag command and the recorded tag are then all primed, and the document's
 sentence says exactly which printed lines carry the flag — held here against
 the block it prints, for a contract with the key and for one without.

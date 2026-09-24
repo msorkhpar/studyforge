@@ -1,8 +1,7 @@
-"""No test spells an archive address — the three sites `W322` received, and the instrument.
+"""No test spells an archive address — three test sites, and the instrument.
 
-⛔ **`W198` removed the composition from `src/`; three test sites kept it**,
-so the one contract had a single producer in
-`src/` and three in `tests/`. ⚠️ A test that invents an address is a build that
+⛔ **`src/` composes an archive address in one place, and a test that composes
+its own is a second producer** in `tests/`. ⚠️ A test that invents an address is a build that
 invents it, one register over: it passes for exactly as long as the constant is
 what the test happens to say, and goes silently wrong the day the constant
 moves — without anything going RED to say so.
@@ -52,9 +51,8 @@ from tests.fixture_checks.addresses import (
 from tests.fixture_checks.media import check_media
 from tests.support import repository_root
 
-#: ⛔ **The three sites `W322` received, by path.** Named rather than globbed:
-#: the row measured these three, and a scan that widened itself would be
-#: asserting something nobody agreed to.
+#: ⛔ **The three sites, by path.** Named rather than globbed: a scan that
+#: widened itself would be asserting something nobody agreed to.
 SITES = (
     "tests/studyforge/validate/source/test_membership.py",
     "tests/fixture_checks/addresses.py",
@@ -91,9 +89,9 @@ def joined_literals(source: str):
 
     ⭐ **A join, not a spelling.** `container.get("units")` reads a JSON key and
     mints no directory; `x / "units"` makes one. The discriminator is the same
-    one `W298` needed for the `src/` scan, for the same reason: the word is a
+    one the `src/` scan needs, for the same reason: the word is a
     key as well as a segment, and a census that cannot tell them apart teaches
-    the next office to edit the census.
+    the next developer to edit the census.
 
     ⚠️ **Its limit, stated rather than discovered later:** it reads `pathlib`
     joins and glob patterns, which is what these files use. A path assembled

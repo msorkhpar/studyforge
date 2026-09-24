@@ -26,16 +26,16 @@ and ships only with the gate record that says it cleared.
 2. ⛔ **The manifest classifies the two trees this skill fills.** `exercises/**`
    and `practice/**` are declared under `content.not_material` (which needs
    `corpus_api` 2 or later). Without those lines `studyforge validate` refuses
-   every file in both trees before any exercise check runs (`AX-04/2`). This
+   every file in both trees before any exercise check runs. This
    skill does not edit `corpus.json`: an existing file is never rewritten (R3).
 3. ⛔ **The corpus ignores a run's report.** A JUnit report carries the
    machine's hostname (R7), and it lands in the reader's workspace, so the
-   corpus's ignore rules keep it out of every commit (`AX-04/3`). ⭐ Every
+   corpus's ignore rules keep it out of every commit. ⭐ Every
    run's output lands in `target/` inside the workspace
    (`exercise.bundle.RUN_OUTPUT_DIRNAME`), and a bundle's report path is
    refused anywhere else, so the rule is the one line `target/`
    (`RUN_OUTPUT_IGNORE`), written once in an ignore file of the corpus's own
-   under `practice/` (`ISO-M10/4`).
+   under `practice/`.
 4. **The pinned runner image**, for the gate runs. The gates are only as
    reproducible as the toolchain they ran in (R15).
 
@@ -69,21 +69,11 @@ file, the unit it becomes (address, variant, unit number), its kind (`code` or
 `quiz`), the test files the corpus declares for it, its `aspects` and a `tier`
 (`introductory`, `core` or `advanced`).
 
-#### ⛔ Plan by the page's important ideas (user ruling 2026-09-23)
+#### ⛔ Plan by the page's important ideas
 
-The user's ruling, in their words:
-
-> *"Depending on the context of the page there might be no practice, 2 or more,
-> The target is covering all the aspects not just having something minimum we
-> are looking for quality"*
-
-And the same day, on how far to take it:
-
-> *"regarding the coverage don't over do it! at the same time we are not a
-> university that wants to grade the knowdlge! Sometimes a single practice might
-> cover better than 4 unrelated small practices. It's all about quality and the
-> importants ofthe text. Like for the first quiz the dates do not matter. The
-> version might matter. And for sure 4 questions were a lot"*
+A page may get no practice, one, or several: the target is every important
+aspect covered well, not a minimum, and not a university grading knowledge. One
+practice often covers more than several unrelated small ones.
 
 ⭐ **Read the page, its prose AND its code, and name its aspects.** An `Aspect`
 is one important idea a reader could be checked on: an `id`, one sentence
@@ -111,14 +101,7 @@ reasoned plans zero, and a page teaching nothing checkable names no aspect
 and says why in `nothing_checkable`. ⚠️ `tier` says how hard each exercise is,
 never how many.
 
-⛔ **SUPERSEDED 2026-09-23** — kept so a citation of it resolves, and
-not in force:
-
-> *Your three readings. Those are `words` (count them with `words_of`, which
-> counts prose and leaves fences out), the number of distinct checkable
-> `skills` it teaches, and a `tier` (`introductory`, `core` or `advanced`).*
-
-⛔ **The two populations are the corpus's to declare** (`AX-07`). What is
+⛔ **The two populations are the corpus's to declare** (R1). What is
 material comes from the manifest's `content` policy, and what is a grader
 comes from the corpus's own declaration. The framework never guesses a
 test-file pattern.
@@ -135,7 +118,7 @@ test-file pattern.
   shipped accounts for.
 - **`judge(brief, questions)`** returns the `Q1`–`Q3` judgements for a quiz.
   One `Q1` and one `Q2` per question, one `Q3` per wrong option, each taken
-  over `question_digest(question)` (`AX-06`).
+  over `question_digest(question)`.
 - **`runner(root, command)`** runs one test command from `root` in the pinned
   runner image and returns a `Ran`: its exit code and its output. The gate
   suite stages every run in a fresh directory, so nothing a run leaves behind
@@ -145,7 +128,7 @@ test-file pattern.
 inside the exercise's own workspace (`brief.places.workspace`), or `emit`
 refuses the bundle.
 
-⭐ **An exercise whose tests import a library ships its build role** (`W436`):
+⭐ **An exercise whose tests import a library ships its build role**:
 `CodeDraft.build` maps each build file's workspace-relative path to its text —
 a `pom.xml` naming the library, say — and the command names it inside the
 workspace (`-f <workspace>/pom.xml`). Every gate run stages it beside the
@@ -173,7 +156,7 @@ authored.shortfalls  # every exercise the gates refused, named
 authored.bare  # every page left with nothing shipped (R6)
 ```
 
-⭐ **In order, and the order is the contract** (`AX-07`'s composition):
+⭐ **In order, and the order is the contract** (the skill's composition):
 
 1. `take` reads the ledger **once**, before any exercise is gated, because
    `G5` and `Q5` ask it about each exercise's origin *during* the gate run.
@@ -209,13 +192,13 @@ read), and the last run's output, made relative to the run and scrubbed (R7).
 
 | path | what it holds |
 |---|---|
-| `exercises/<address>/<variant>/unit-NN/practice-M/` | one bundle, in `AX-04`'s shape, with `gates.json` beside it |
+| `exercises/<address>/<variant>/unit-NN/practice-M/` | one bundle, in `exercise.bundle`'s shape, with `gates.json` beside it |
 | `…/practice-M/tests/quiz.json` | a quiz's own document: its identity and its record |
 | `practice/<address>/<variant>/unit-NN/practice-M/` | the reader's starter and tests, from `emit` |
 | `exercises/<address>/<variant>/unit-NN/coverage.json` | the unit's plan (every aspect and how it ended), what shipped, and every shortfall |
 | `exercises/ledger.json` | the source ledger, every entry accounted for |
 
-⛔ **`M` follows the practices the unit already carries** (`W437`). A unit
+⛔ **`M` follows the practices the unit already carries**. A unit
 whose archive holds `practice-1` from the source gets its first authored
 exercise at `practice-2`. The pass reads what the unit carries from its
 archive, so you declare no offset. The source's practice is never renumbered

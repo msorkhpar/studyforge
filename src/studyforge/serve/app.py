@@ -21,21 +21,21 @@ and the Docker socket is never reachable from here (spec §8.3).
   `assets`. `state` and `run` are registered here. ⛔ A name
   that is already taken is refused, so a later namespace cannot quietly replace
   content's caching rule with its own.
-- **`private=`** — a predicate over a resolved path; `SF-21`'s store names the
+- **`private=`** — a predicate over a resolved path; the progress store names the
   reader's record through it, and it answers `404` on both mounts. ⛔ So does a file
   carrying a quiz's key or sentence, read off `source` in every form.
 - **`writers=`** — the registered namespaces that also answer `POST` (the
   `run` namespace: starting a process is an act, and a `GET` that acted would run a grader
   on a prefetch). ⛔ Content, assets and the static mount never do.
-- **`client=`** — where the run namespace serves the page's execution client
-  (`SF-24`, `W370`). ⭐ Handed to `routes.assets`, which inserts one script tag
+- **`client=`** — where the run namespace serves the page's execution client.
+  ⭐ Handed to `routes.assets`, which inserts one script tag
   into an HTML page's BYTES as it answers it, so a BUILT page names no API, no
   origin and no client file (R8). ⛔ This module holds no spelling of that path
   and imports nothing from `routes.run` to learn one: `serve.instance` registers
   the namespace and passes the path, and importing the run route here would put
   `execute` — and a process library — into every import of `serve.app`.
-- **`frames=`** — what this instance may EMBED, asked per response and per `Host`
-  (`W427`), because the editor's origin is a per-project host port. ⛔ Never widens
+- **`frames=`** — what this instance may EMBED, asked per response and per `Host`,
+  because the editor's origin is a per-project host port. ⛔ Never widens
   `frame-ancestors`.
 - `GET` and `HEAD` are answered everywhere; `POST` only under a writer; every other
   method, and a `POST` anywhere else, is `405` after the gate. ⛔ A `POST`'s body
@@ -90,12 +90,12 @@ HANGUP_POLL = 0.25
 #: not lost to a reset, and discarded: no route is ever handed it.
 MAX_DISCARDED = 64 * 1024
 
-#: The namespaces this row owns, which nothing registered later may replace.
+#: The namespaces this module owns, which nothing registered later may replace.
 OWN_NAMESPACES = ("content", "assets")
 
 Route = Callable[[Request, str], Response]
 
-#: Where this instance's editors are, asked afresh per response (`W427`).
+#: Where this instance's editors are, asked afresh per response.
 Frames = Callable[[], Collection[str]]
 
 
@@ -147,7 +147,7 @@ class ServingServer(ThreadingHTTPServer):
     def headers(self, host: str | None = None) -> tuple[tuple[str, str], ...]:
         """Return this response's security headers, the frame policy composed for `host`.
 
-        ⛔ **Per response AND per host** (`W427`): an editor comes and goes while
+        ⛔ **Per response AND per host**: an editor comes and goes while
         this process serves, and a page reached as `localhost` may not frame one
         at `127.0.0.1` — same machine, different site. What is withheld is said.
         """

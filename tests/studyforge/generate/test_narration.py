@@ -1,7 +1,7 @@
 """Mirror of `src/studyforge/generate/narration.py` (R12).
 
-`SF-38`'s Acceptance, THROUGH the build: `W202` answer 4's three states over
-both `FND-04` fixtures, each page read off disk after `write_site` or the
+The narration states, THROUGH the build: the three states over
+both framework fixture corpora, each page read off disk after `write_site` or the
 `build` command. The renderer's own tests are the other half and do not
 discharge this one.
 
@@ -202,7 +202,7 @@ def test_the_gap_partition_is_the_three_unkept_states_and_never_not_recorded():
 
 
 def test_a_labelled_sibling_unit_plays_from_the_directory_its_page_links(tmp_path):
-    # W222 (SF-42/1): one derivation, so the writer, the build's read and the page
+    # One derivation, so the writer, the build's read and the page
     # agree on a labelled unit's audio directory, and its page links clips on disk.
     root = a_corpus(tmp_path, "depth2")
     path = sorted((root / "archive").rglob("container.json"))[0]
@@ -278,10 +278,10 @@ def test_an_unreadable_record_stops_the_build_before_a_page_is_written(tmp_path)
 def test_a_build_writes_no_clip_beside_the_material_and_none_under_its_output_no_page_addresses(
     tmp_path,
 ):
-    """CONVERTED from `test_a_build_places_no_clip_under_its_output_root` (`W224` clause 6).
+    """A build copies each clip a page addresses into its output, and no other.
 
-    That test cited `W193` answer 1, which is a DELETION rule about the originals;
-    `E09` § SF-38/8 has a build copy each clip a page addresses into its output.
+    The deletion rule is about the originals beside the material, which a build
+    never touches.
     """
     root = a_corpus(tmp_path, "depth1")
     placed = narrate(root)

@@ -194,8 +194,8 @@ def test_a_planted_id_in_a_message_is_read_and_a_docstring_is_not():
     assert [text for text in literals(source) if planted in text] == [f" is refused ({planted})"]
 
 
-def test_no_message_a_user_reads_cites_an_id_this_file_does_not_alias(tmp_path):
-    """A refusal, finding or CLI message carries its reason or a spec rule, never a bare process id.
+def test_no_message_a_user_reads_cites_a_process_id(tmp_path):
+    """A refusal, finding or CLI message carries its reason or a spec rule, never a process id.
 
     Every non-docstring string literal under `src/` is written into a throwaway
     repository and read by the header's own command, so the grammar is the one
@@ -210,5 +210,4 @@ def test_no_message_a_user_reads_cites_an_id_this_file_does_not_alias(tmp_path):
         for literal in literals((root / name).read_text("utf-8"))
     )
     repo = scratch_repository(tmp_path, {"src/literals.txt": text})
-    listed = {a for _, body in entries() for a in aliases(body)}
-    assert sorted(set(population(repo)) - listed) == []
+    assert population(repo) == [], "a message cites a process id; say its reason instead"

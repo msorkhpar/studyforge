@@ -10,16 +10,16 @@ for the code blocks, and `vocabulary_under(text, heading)` for the backticked
 first column that names a closed set.
 
 ⭐ **One population here is not a parser: `commanded_pages()` and everything
-derived from it.** It lives here because `W74` widened the runnable-module check
-onto the same derivation its sibling already used, and a derivation two modules
-can each hold a copy of is how that pair came to disagree at all. ⛔ **The
+derived from it.** It lives here because the runnable-module check reads the
+same derivation as its sibling, and a derivation two modules each hold a copy
+of is how a pair of checks comes to disagree. ⛔ **The
 derivation and both declared exemptions are here; every assertion over them is
 in `tests/test_authoring_reference.py`.**
 
 **Depends on.** The standard library and `tests.support`. ⛔ Nothing under
 `src/` — this half reads the document; the assertions import the code. ⚠️
-**`run_bare()` is the one accessor that does not read a document: Ruling 156
-clause 3 requires a REAL interpreter, because `find_spec` measures the runner's
+**`run_bare()` is the one accessor that does not read a document: the
+module check needs a REAL interpreter, because `find_spec` measures the runner's
 path rather than the reader's. It spawns one; it still imports nothing.**
 
 ⚠️ **The parsers here are deliberately small and strict.** A lenient markdown
@@ -46,9 +46,8 @@ from tests.support import repository_root
 AUTHORING = "docs/authoring"
 
 #: Where the shipped skill documents live, relative to the repository root.
-#: ⛔ A glob, never a list. `W61`: the console-script check first shipped with
-#: a population one directory wide, and two shipped `SKILL.md` files carried the
-#: exact defect it refuses for as long as it did.
+#: ⛔ A glob, never a list: a population one directory wide lets a shipped
+#: `SKILL.md` carry the exact defect the console-script check refuses.
 SKILLS = "src"
 
 #: The document every other one is reached from. ⛔ Named here rather than in
@@ -95,9 +94,8 @@ def skill_documents() -> dict[str, str]:
 
     ⛔ **Walked, not listed.** The population is whatever `src/**/SKILL.md`
     finds, so a fifth skill package joins it by existing rather than by
-    somebody remembering to add it here — which is the whole of `W61`: the
-    check that refuses a fenced console script shipped watching one directory,
-    and the two skills that ship the defect were never in its population.
+    somebody remembering to add it here. A check that watches one directory
+    never sees a fenced console script in a skill outside it.
     """
     root = repository_root()
     paths = sorted((root / SKILLS).glob("**/SKILL.md"))
@@ -246,11 +244,11 @@ def code_spans(text: str) -> set[str]:
 def commanded_pages() -> dict[str, str]:
     """Every page that hands a reader a fenced command: the reference, and every skill.
 
-    ⛔ **`W61` widened this, and the widening is the fix.** The console-script
-    check first shipped over `docs/authoring/` alone; `skills/adapter/SKILL.md` and
-    `skills/onboarding/SKILL.md` gave `studyforge validate` in a fence the
-    whole time and were never looked at. Both halves are walked rather than
-    listed, so nothing joins the tree outside the population.
+    ⛔ **Both halves, always.** `skills/adapter/SKILL.md` and
+    `skills/onboarding/SKILL.md` give `studyforge validate` in a fence just as
+    the reference does, so a check over `docs/authoring/` alone would never
+    look at them. Both halves are walked rather than listed, so nothing joins
+    the tree outside the population.
     """
     pages = {f"{AUTHORING}/{name}": text for name, text in documents().items()}
     pages.update(skill_documents())
@@ -261,7 +259,7 @@ def assert_both_halves_reached(pages: Iterable[str]) -> None:
     """⛔ The population must reach both halves, or it has silently narrowed.
 
     Without this a check over `commanded_pages()` degrades to the one directory
-    it used to watch — the state `W61` exists to leave — and stays green.
+    the reference lives in, and stays green.
     """
     names = sorted(pages)
     assert any(name.startswith(f"{AUTHORING}/") for name in names), "no reference page reached"
@@ -280,20 +278,19 @@ COMMAND = re.compile(r"python3 -m ([\w.<>-]+)")
 PLACEHOLDER = re.compile(r"[<>]")
 
 #: The machine-readable line a page uses to declare a commanded module it does
-#: NOT own. ⛔ Ruling 156: the exemption is the DOCUMENT's, never a list in this
+#: NOT own. ⛔ The exemption is the DOCUMENT's, never a list in this
 #: file — `ingest` earns its exemption from `skills/onboarding/SKILL.md`.
 #: ⭐ The spelling is declared in `docs/specs/2026-09-08-studyforge-v1-design.md` §9, and this
-#: pattern is its AUTHORITY (Ruling 103): if the two disagree, the document is wrong.
+#: pattern is its AUTHORITY: if the two disagree, the document is wrong.
 DECLARES_CONSUMER_SIDE = re.compile(r"^\*\*Consumer-side modules:\*\*(.*)$", re.MULTILINE)
 
 
 def commanded_modules() -> dict[str, set[str]]:
     """Every `python3 -m <token>` any page gives, mapped to the pages giving it.
 
-    ⛔ **Ruling 156 clause 1 — ONE population, both halves.** This read
-    `documents()` while its sibling above read `commanded_pages()`, and a pair
-    of checks over two different populations is exactly how `W61` happened: a
-    typo'd module inside a `SKILL.md` fence was measured by nothing.
+    ⛔ **ONE population, both halves.** This reads `commanded_pages()` like
+    its sibling above: a pair of checks over two different populations lets a
+    typo'd module inside a `SKILL.md` fence be measured by nothing.
     """
     found: dict[str, set[str]] = {}
     for page, text in sorted(commanded_pages().items()):
@@ -342,7 +339,7 @@ def resolves(name: str) -> bool:
 def run_bare(name: str, pythonpath: str | None) -> str:
     """Run `python3 -m <name> --help` in a real interpreter; return everything it said.
 
-    ⛔ **Ruling 156 clause 3 — a subprocess, NOT `find_spec`.** `find_spec`
+    ⛔ **A subprocess, NOT `find_spec`.** `find_spec`
     measures the runner's `sys.path` and the runner's already-imported modules.
     It cannot see a `__main__.py` that raises, and it cannot see a module that
     resolves only because a plugin put it there.

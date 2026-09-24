@@ -50,7 +50,7 @@ FILE_SUFFIXES = frozenset({"json", "md", "yaml", "env", "py", "toml", "txt", "ht
 #: Python's own words that look like calls in an example and are not names.
 BUILTINS = frozenset({"print", "open", "list", "dict", "str", "len"})
 
-#: The two sentences the first corpus met in step 1 and step 5. Both are
+#: Two unresolved sentences of the kind step 1 and step 5 could carry. Both are
 #: planted below and each must be read as unresolved.
 MET = (
     "`Execution.for_corpus(manifest, ...)`",

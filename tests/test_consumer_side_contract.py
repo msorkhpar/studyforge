@@ -26,7 +26,7 @@ from tests.support import repository_root
 #: The one document that declares the spelling: the spec, in its §9.
 HOME = "docs/specs/2026-09-08-studyforge-v1-design.md"
 
-#: The shipped reader, which is the authority (Ruling 103).
+#: The shipped reader, which is the authority.
 READER = "tests/authoring/support.py"
 
 #: Where a third site could appear. ⛔ The record directories are left out on

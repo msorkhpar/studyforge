@@ -39,13 +39,11 @@ the href gate, the between-pages bar and the error type. ⛔ Not on `serve`, and
 not on `contents`: this page is handed its units already ordered and already
 addressed, so it renders whether or not a contents document has ever been built.
 
-## ⛔ Why this task exists at all
+## ⛔ Why this package exists
 
-⚠️ **The spec named `*.section.html`, `SF-04`'s discovery scans for it, and no
-task owned it** — a page missing per container in the first corpus to be
-integrated, and a failing `SF-04` acceptance; the count is measured in
-`docs/tasks/E03-rendering.md`, which may name a corpus where a module may not
-(R1). ⭐ It is the one page a reader lands on when navigating downward, so its
+⚠️ **The spec names `*.section.html` and discovery scans for it**, so without
+this package a page is missing per container and discovery cannot find what it
+scans for. ⭐ It is the one page a reader lands on when navigating downward, so its
 absence is not cosmetic.
 
 ## ⭐ One renderer at every depth
@@ -82,7 +80,7 @@ a level's word, not a sentence of one site's wording.
 
 ⚠️ **That a linked unit page exists.** `Item.href` is checked for *shape* — it
 is a permitted relative reference — and never for *presence*, because this
-package touches no filesystem. ⭐ Whether the file is there is `SF-04`'s
+package touches no filesystem. ⭐ Whether the file is there is discovery's
 question, and `Item(href=None)` is how a caller says it already knows it is not.
 """
 

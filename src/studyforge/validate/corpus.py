@@ -21,15 +21,15 @@ must not stop the twelve documents beside it from being read.
 An absolute path in a report is personal data in a log (R7), and a report is
 the most-pasted artifact this tool produces.
 
-## ⛔ This module forwards refusals, and it does not scrub them (Ruling 17)
+## ⛔ This module forwards refusals, and it does not scrub them
 
 ⚠️ Six of the findings here are `str(error)` from a reader that refused, and a
-refusal's R7-cleanliness is **that reader's** guarantee. Measured 2026-09-09:
-6 of 10 poison shapes reached a report line through this forwarding, all six
-through one `{value!r}` upstream. ⭐ Ruling 17 fixes it there rather than here,
+refusal's R7-cleanliness is **that reader's** guarantee: one `{value!r}`
+upstream would reach a report line through this forwarding. ⭐ The raising
+reader keeps it clean rather than this one,
 because a scrub in the one report anybody reads would hide the same echo in
 every traceback and every other caller — and `test_run` measures the
-composition end to end so the trust is enforced somewhere (Ruling 13).
+composition end to end so the trust is enforced somewhere.
 """
 
 from __future__ import annotations
@@ -61,7 +61,7 @@ RULE_MANIFEST = "manifest"
 RULE_CONTAINER = "container"
 RULE_DOCUMENT = "document"
 RULE_PERSONAL_DATA = "personal-data"
-#: ⛔ No container map beneath the archive root (`INT-06/5`): absent, or present and empty.
+#: ⛔ No container map beneath the archive root: absent, or present and empty.
 RULE_NO_ARCHIVE = "no-archive"
 
 
@@ -148,20 +148,19 @@ def read(root: Path) -> Walk:
 
 
 def _no_archive(walk: Walk) -> Finding:
-    """Refuse a corpus with no container map beneath its archive root (`INT-06/5`).
+    """Refuse a corpus with no container map beneath its archive root.
 
     ⛔ **A `Finding`, never an `Unchecked`.** `report` keeps `Unchecked` for an
     input whose absence is itself a validated fact, like the source tree an
     archive ships without (R2). The archive is not such an input: it is what
     `validate` judges, so "valid" over no archive is a verdict with no subject.
-    An integration measured exactly that at exit 0 (`INT-06/5`).
     """
     state = "holds no container map" if (walk.root / ARCHIVE_DIRNAME).is_dir() else "is absent"
     return Finding(
         RULE_NO_ARCHIVE,
         f"{ARCHIVE_DIRNAME}/",
-        f"{state}, so there is no archive to judge. An adapter writes the archive here "
-        f"(R2), and a corpus is not valid until one is present.",
+        f"{state}, so there is no archive to judge. An adapter writes the archive here,"
+        f" and a corpus is not valid until one is present.",
     )
 
 
@@ -174,7 +173,7 @@ def _manifest(walk: Walk) -> Manifest | None:
         return parse_manifest(text, MANIFEST_FILENAME)
     except PersonalDataLeak as error:
         # ⛔ FIRST, and its own arm: the tuple below contains it, and two finding
-        # rules must not collapse into one (`W213`).
+        # rules must not collapse into one.
         walk.findings.append(Finding(RULE_PERSONAL_DATA, MANIFEST_FILENAME, str(error)))
     except MANIFEST_RAISES as error:
         walk.findings.append(Finding(RULE_MANIFEST, MANIFEST_FILENAME, str(error)))
@@ -194,7 +193,7 @@ def _container(walk: Walk, path: Path) -> Held | None:
         walk.findings.append(Finding(RULE_PERSONAL_DATA, where, str(error)))
     except CONTAINER_RAISES as error:
         # ⛔ Named types, never the `ValueError` category this once caught
-        # (Finding 11) — and named by the reader, never retyped here (`W213`).
+        # (Finding 11) — and named by the reader, never retyped here.
         walk.findings.append(Finding(RULE_CONTAINER, where, str(error)))
     return None
 

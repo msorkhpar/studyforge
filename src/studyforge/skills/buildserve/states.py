@@ -17,7 +17,7 @@ sentence is never respelled, `serve.routes.run.NAMESPACE` for the execution
 namespace's one spelling, `validate.report.OK`, and this package's
 `narration` for what provides narration and how to have it, and
 `studyforge.execute` for `ModeProbe`, `recorded` and `HOST` — the one
-definition of where a run executes, imported and never copied (`W381`). ⛔ It
+definition of where a run executes, imported and never copied. ⛔ It
 reads answers and opens nothing; the one question it asks is that probe's, which
 reads (`docker inspect`) and never starts, stops or enters a container.
 
@@ -28,10 +28,9 @@ code. The reading floor still works in every one of them.
 
 ## ⛔ *CANNOT NARRATE* AND *HAS NOT NARRATED* ARE TWO STATES, NOT ONE
 
-⚠️ **They read as one state until this was split**, and the cost was measured: a
-clean run of the skills produced a corpus with no narration at all and reported
-it beside `exercises`, whose whole point is that it **is** a legitimate finished
-state (C5).
+⚠️ **As one state, a clean run of the skills that produced a corpus with no
+narration at all would be reported** beside `exercises`, whose whole point is
+that it **is** a legitimate finished state (C5).
 
 ⭐ **The two are told apart by the narration run's own answer, and by nothing
 this module had to go and read:**
@@ -45,16 +44,16 @@ this module had to go and read:**
 a corpus with nothing to narrate is never sent to start a service it does not
 need.
 
-## ⭐ NARRATION OFF IS A CHOICE, AND A CHOICE IS NOT A PARTIAL STATE (`W460`)
+## ⭐ NARRATION OFF IS A CHOICE, AND A CHOICE IS NOT A PARTIAL STATE
 
-⭐ The user's ruling, 2026-09-23: *"it should be optional … Somebody might wants
-to just cover the course wihtout voices"*. A run with narration off — the
+⭐ Narration is optional: a reader may cover the course without voices. A run
+with narration off — the
 author's `corpus.json` answer or the operator's `--no-narration` — reports none
 of the narration states above: `NARRATION_OFF` is one plain line saying what was
 chosen and what was kept, and it is not a `partial` block. ⛔ **Nothing here
 calls it short**; the reading floor is complete (C5).
 
-## ⛔ WHERE A RUN EXECUTES IS A STATE OF ITS OWN (`W381`, ruled round 125)
+## ⛔ WHERE A RUN EXECUTES IS A STATE OF ITS OWN (R15)
 
 ⭐ Every served form registers the `run` namespace (`serve.instance.namespaces_of`
 builds it for both), so a site that declares exercises always answers Run and
@@ -63,9 +62,8 @@ corpus, `execute` runs a reader's code on the host, without the runner's
 isolation. That is `host`, reported whenever the served instance offers
 execution and `execute`'s probe answers `HOST`.
 
-⛔ **The old `toolchain` state is gone**, by the ruling's own condition: it named a
-serving process that offers no execution, and no served form can now lack the
-namespace, so it described a state this skill no longer produces.
+⛔ **There is no `toolchain` state**: it would name a serving process that
+offers no execution, and no served form lacks the namespace.
 """
 
 from __future__ import annotations
@@ -90,11 +88,11 @@ READING_FLOOR = (
 
 #: The namespace a serving process offers once it can run a reader's code. ⭐ The
 #: framework's own `serve.routes.run.NAMESPACE`, the name `serve.instance.instance_of`
-#: registers and `studyforge serve --site` registers too (`SK-03/3`, `W371`):
+#: registers and `studyforge serve --site` registers too:
 #: this package holds no spelling of its own.
 EXECUTION_NAMESPACE = run.NAMESPACE
 
-#: ⭐ What a run with narration off says once the site is listening (`W460`). ⛔ Not
+#: ⭐ What a run with narration off says once the site is listening. ⛔ Not
 #: a `partial` line: a choice is not a shortfall, and the reading floor is whole.
 NARRATION_OFF = (
     "narration off  chosen: no page carries a player and no clip is served; every "
@@ -136,7 +134,7 @@ NOT_NARRATED = PartialState(
 
 #: ⭐ The other half of the split: a corpus with nothing to say aloud is FINISHED.
 #: ⛔ Read from what happened — a run against a service that placed no clip — and
-#: never from a declaration: `corpus.json`'s `narration` (`W460`) says whether to
+#: never from a declaration: `corpus.json`'s `narration` says whether to
 #: voice a corpus, never whether it has anything to say.
 NOTHING_TO_NARRATE = PartialState(
     "narration-none",
@@ -169,13 +167,12 @@ NO_EXERCISES = PartialState(
 #: Where a reader starts the containers: the corpus's own document, and the
 #: section of it that holds the one command. ⭐ That command reads both tags
 #: the execution skill recorded, so a remedy that pointed anywhere else would
-#: start images the corpus never recorded (`W464/1`, `W466`).
+#: start images the corpus never recorded.
 START_DOCUMENT = "EXECUTION.md"
 START_SECTION = "Bring it up"
 
-#: ⭐ `W381`: the ruled wording, its remedy pointed at the corpus's own command
-#: (`W466`, the user's ruling of 2026-09-24). ⛔ Not finished in the C5 sense —
-#: it has a remedy.
+#: ⭐ Its remedy points at the corpus's own command. ⛔ Not finished in the C5
+#: sense — it has a remedy.
 HOST_EXECUTION = PartialState(
     "host",
     "no runner container is up over this corpus, so Run and Submit execute on this "
@@ -208,8 +205,8 @@ def probe_for(root: Path | str, source: str) -> ModeProbe:
     """Return `execute`'s own probe for corpus `source` at `root`.
 
     ⭐ The same container name and root the served instance's runner is built
-    from (`serve.routes.runs.runner_for`): the name THIS checkout recorded
-    (`W465`), so the skill asks the question a run asks. ⛔ Nothing is asked until `mode()`.
+    from (`serve.routes.runs.runner_for`): the name THIS checkout recorded,
+    so the skill asks the question a run asks. ⛔ Nothing is asked until `mode()`.
     """
     where = Path(root).absolute()
     return ModeProbe(where, recorded_names(where, source).runner)

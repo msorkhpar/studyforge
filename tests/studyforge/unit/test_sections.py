@@ -57,8 +57,8 @@ def test_an_explicit_key_is_the_authors_escape_hatch_and_wins():
 
 @pytest.mark.parametrize("key", ["Extra Reading", "café", "Java", "a_b", "", "  "])
 def test_an_explicit_key_must_already_be_a_slug_and_is_never_made_into_one(key):
-    # ⛔ `require_slug`, never `slugify`. SF-01's finding was that a component
-    # which slugifies owes itself a collision check the framework cannot make;
+    # ⛔ `require_slug`, never `slugify`. A component which slugifies owes
+    # itself a collision check the framework cannot make;
     # the answer here is to remove the slugification instead. A title passed
     # where a slug is required raises — it is not repaired.
     with pytest.raises(ContentError, match="slug|non-empty str"):

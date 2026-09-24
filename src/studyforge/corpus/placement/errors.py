@@ -5,7 +5,7 @@ so a caller catches one type rather than four.
 
 **How you use it.** Catch `PlacementError`.
 
-⚠️ **One exception travels through, deliberately** (Ruling 58, rubric §1d).
+⚠️ **One exception travels through, deliberately** (R7).
 `identity.from_document` gates the block it reads, and `PersonalDataLeak` from
 `archive.scrub` is **not** wrapped: R7's refusal is louder than a placement
 error, and this family exists so a caller sweeping a site catches one type per
@@ -17,10 +17,10 @@ promise"*.
 
 **Depends on.** Nothing.
 
-⚠️ **`ValueError`, following SF-01's split**: every failure here is "you handed
+⚠️ **`ValueError`, following `studyforge.address`'s split**: every failure here is "you handed
 me something I cannot place" — an unknown profile name, an origin that escapes
 the source root, a title that slugifies to nothing. ⛔ None of them is a
-*document* error, because this package reads no files at all (that is SF-04).
+*document* error, because this package reads no files at all (that is `corpus.discovery`).
 """
 
 from __future__ import annotations
@@ -29,14 +29,13 @@ from __future__ import annotations
 class PlacementError(ValueError):
     """An address, origin or profile this build cannot turn into a location.
 
-    ⛔ **The message names the field, and the accepted values where a closed
-    set was expected — never the offending value itself** (R7, rubric §1f,
-    Ruling 14). It never formats an exception object into itself either, which
-    would carry an absolute path into a log.
+    ⛔ **The message names the field, and the accepted values where a closed set
+    was expected — never the offending value itself** (R7). It never formats an
+    exception object into itself either, which would carry an absolute path into
+    a log.
 
-    ⚠️ **This sentence used to say the opposite**, and that is the finding
-    worth keeping: it *mandated* the echo, so a fix to the code without a fix
-    to the policy would have been undone by the next author, correctly, by the
-    module's own written rules. ⭐ `studyforge.describe` is how a refusal says
-    what arrived without saying what it said.
+    ⚠️ **This sentence is part of the rule**: the next author follows the
+    module's written policy, so the policy must be the one the code keeps.
+    ⭐ `studyforge.describe` is how a refusal says what arrived without saying
+    what it said.
     """

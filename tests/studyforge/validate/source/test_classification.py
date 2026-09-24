@@ -61,10 +61,9 @@ def redeclare(root, content, corpus_api=2):
 
 
 def test_a_file_the_manifest_calls_never_material_is_not_a_finding(tmp_path):
-    # ⛔ **The hole this closes.** Measured against a real corpus: 100 of its
-    # files were reported unclassified and only 3 were material withheld from
-    # anybody — the rest a licence, ignore files, an editor's workspace. There
-    # was no honest state for them and `exclude` made every `why` a small lie.
+    # ⛔ **The hole this closes.** A real corpus holds files that are not
+    # material at all — a licence, ignore files, an editor's workspace — and
+    # without this state `exclude` would make every `why` a small lie.
     root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
     (root / "LICENSE").write_text("A licence.\n", encoding="utf-8")
     redeclare(root, {"include": ["src/*.md"], "not_material": [{"glob": "LICENSE", "why": WHY}]})
@@ -135,8 +134,8 @@ def test_the_archive_is_never_swept_as_source_material(tmp_path):
 
 
 def test_a_sources_own_nested_archive_directory_is_material_and_never_skipped(tmp_path):
-    # ⛔ `W241/2`: the scan skipped ANY `archive/`, so a source keeping its own
-    # lost it from every reading. Only the root beside `corpus.json` is skipped.
+    # ⛔ Skipping ANY `archive/` would lose a source's own from every reading.
+    # Only the root beside `corpus.json` is skipped.
     root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
     (root / "src" / ARCHIVE_DIR).mkdir()
     (root / "src" / ARCHIVE_DIR / "old.md").write_text("# Old\n", encoding="utf-8")
@@ -194,7 +193,7 @@ def test_a_corpus_with_no_material_says_so_before_it_says_anything_else(tmp_path
 
 
 # --------------------------------------------------------------------------
-# ⛔ W259 — only the corpus root's own `.git` and `.studyforge` are skipped
+# ⛔ Only the corpus root's own `.git` and `.studyforge` are skipped
 # --------------------------------------------------------------------------
 
 
@@ -239,9 +238,9 @@ def test_the_roots_own_studyforge_directory_reads_clean(tmp_path, versioned):
 
 @pytest.mark.parametrize("store", ["directory", "gitfile"])
 def test_a_nested_repository_store_is_refused_by_name_and_never_entered(tmp_path, store):
-    # ⛔ **Refused, never skipped and never scanned** (`W259`'s ruling). A
-    # vendored repository's objects are not prose, and a submodule's `.git` is
-    # a file, which the old walk scanned while it skipped the directory form.
+    # ⛔ **Refused, never skipped and never scanned.** A vendored repository's
+    # objects are not prose, and a submodule's `.git` is a file, which a walk
+    # skipping only the directory form would scan.
     root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
     declared_output(root)
     if store == "directory":
@@ -286,7 +285,7 @@ def test_the_roots_own_repository_store_reads_clean(tmp_path):
 
 
 def test_a_store_beneath_the_archive_root_stays_an_archive_stray(tmp_path):
-    # ⛔ `W248` keeps reading exactly as it did: beneath `archive/`, membership
+    # ⛔ Beneath `archive/`, membership
     # accounts for every file, and this check never sees it.
     root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
     declared_output(root)
@@ -296,7 +295,7 @@ def test_a_store_beneath_the_archive_root_stays_an_archive_stray(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W266` — an INCLUDED file no origin names is refused by name
+# ⛔ An INCLUDED file no origin names is refused by name
 # --------------------------------------------------------------------------
 
 #: A whole-series aggregate: the unit's own prose again, which a glob sweeps in beside it.
@@ -358,13 +357,13 @@ def test_NOT_MATERIAL_code_and_DECLARED_OUTPUT_are_never_refused_as_unread(tmp_p
 
 
 def test_NO_origin_on_disk_is_origin_missing_s_answer_and_never_unread(tmp_path):
-    # ⛔ W255/W261 keep their own reading: with every origin absent nothing here is judged.
+    # ⛔ With every origin absent nothing here is judged: the absent-source reading stands.
     root = corpora.one_unit(tmp_path / "c", origin="src/missing.md")
     plant(root, "src/present.md", corpora.SOURCE)
     assert validate(root).rules == ("origin-missing",)
 
 
-def test_W280_every_name_importers_read_from_this_module_still_imports_from_it():
+def test_every_name_importers_read_from_this_module_still_imports_from_it():
     # ⛔ The split's first clause: the split moved the enumeration out, and an importer that named a
     # name from `classification` before it still reads the SAME object from there.
     moved = ("IGNORE_TIMEOUT", "REPOSITORY_STORE", "SKIP_DIRS", "Scan", "repository_ignores")

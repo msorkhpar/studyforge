@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/describe.py` (R12) — Ruling 10's one describer."""
+"""Mirror of `src/studyforge/describe.py` (R12) — the one describer."""
 
 from __future__ import annotations
 
@@ -54,7 +54,7 @@ def test_the_article_agrees_with_the_type_name():
     ],
 )
 def test_nothing_that_carries_a_path_is_reproduced(carrier):
-    # ⛔ Rubric §1f, at the source. Every shape a decoded JSON document can
+    # ⛔ R7, at the source. Every shape a decoded JSON document can
     # take, carrying a path in the position a refusal would have quoted.
     assert POISON not in describe(carrier)
     assert "example" not in describe(carrier)
@@ -62,14 +62,14 @@ def test_nothing_that_carries_a_path_is_reproduced(carrier):
 
 def test_a_string_is_never_safe_to_quote():
     # ⛔ The one widening that would undo the module. `str` in this tuple is
-    # the whole defect Ruling 10 and Ruling 14 exist to remove, so it is
+    # the whole defect the one describer exists to remove (R7), so it is
     # asserted rather than left to review.
     assert str not in SAFE_TO_QUOTE
     assert SAFE_TO_QUOTE == (int,)
 
 
 def test_a_bool_is_named_rather_than_quoted():
-    # ⛔ W17, and safety was never the question — a bool carries no identifier
+    # ⛔ Safety is not the question — a bool carries no identifier
     # either way. `True` is not what the integrator typed: they wrote JSON
     # `true` where `1` was wanted, and "a bool" names that mistake while
     # `True` obscures it. ⚠️ `version._said` had this argument written down and
@@ -96,9 +96,8 @@ def test_the_check_is_not_vacuous():
 
 
 def test_the_unit_package_re_exports_rather_than_re_implements():
-    # ⛔ Ruling 10's point, asserted rather than trusted: `unit.errors` used to
-    # carry the third copy of this rule. It now carries the same object, which
-    # is a claim a later edit cannot quietly break.
+    # ⛔ One describer, asserted rather than trusted: `unit.errors` carries the
+    # same object, which is a claim a later edit cannot quietly break.
     from studyforge.unit import errors
 
     assert errors.describe is describe
@@ -133,9 +132,8 @@ def test_the_naming_is_sorted_so_a_message_is_reproducible():
     ],
 )
 def test_a_key_that_could_carry_an_identifier_is_counted_not_shown(key):
-    # ⛔ The guarantee is **structural, never a shape list.** Ruling 17 measured
-    # what a shape list is worth: 4 of 10 poison shapes came back clean because
-    # the list happened to name them, not because anything refused.
+    # ⛔ The guarantee is **structural, never a shape list**: a shape list
+    # passes every poison shape it happens not to name.
     said = describe_keys([key])
     assert key not in said
     assert "1 of which 0 can be named safely" in said
@@ -160,11 +158,8 @@ def test_it_answers_a_different_question_from_describe():
 
 
 def test_no_module_carries_a_second_copy_of_this_rule():
-    # ⛔ **Finding 26, closed against itself.** The exercise package filed "four spellings of
-    # one discipline, do not unify mid-flight" and then added a fifth and a
-    # sixth — `_named`, verbatim, in two modules of the same commit. W1 landed
-    # `describe.py` in the meantime, so the rebase is where it could be fixed,
-    # and this assertion is what stops a seventh.
+    # ⛔ One describer: a verbatim copy of `_named` in another module is a
+    # second spelling of one discipline, and this assertion refuses it.
     import ast
 
     from tests.support import repository_root
@@ -180,13 +175,13 @@ def test_no_module_carries_a_second_copy_of_this_rule():
 
 
 def test_the_contract_says_what_a_plain_key_can_still_be():
-    # ⛔ **Ruling 37.** The docstring's promise is that a plain key cannot be a
+    # ⛔ **What a plain key can still be.** The docstring's promise is that a plain key cannot be a
     # path, an address or a token — which is true, and is *not* the same as
     # "cannot identify anybody". A bare lowercase personal name is a valid
     # lowercase identifier, and this function reproduces it verbatim:
     assert describe_keys(["jane"]) == "['jane']"
     # ⭐ So the contract has to say so, in the place a caller reads before
-    # deciding what to pass. ⚠️ Ten call sites now depend on this distinction:
+    # deciding what to pass. ⚠️ Many call sites depend on this distinction:
     # keys here, values through `describe`.
     # ⚠️ Whitespace-normalised: the sentence is wrapped prose, and a test that
     # depended on where the formatter broke the line would fail on a reflow

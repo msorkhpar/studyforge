@@ -18,7 +18,7 @@ file"* is the only argument for keeping them together.
 
 ## ⛔ Why this gates rather than trusting `validate`
 
-⭐ **Ruling 50: do not re-ask within one read path; do gate at every trust
+⭐ **Do not re-ask within one read path; do gate at every trust
 boundary.** Reading a document off disk is a trust boundary, and the decisive
 argument is that **`studyforge validate` is optional** — so a serve-time reader
 assuming it ran trusts a promise nobody made. ⚠️ The version check and the
@@ -100,7 +100,7 @@ def _gate(document: dict, where: str) -> None:
 
     ⭐ **The last boundary before a browser.** Everything in here was gated on
     the way into the archive; this is the gate on the way out of the build, and
-    Ruling 50 is why both exist without either being a re-ask.
+    gating at every trust boundary is why both exist without either being a re-ask.
 
     ⛔ **`PersonalDataLeak` is raised as itself, not translated.** A caller
     serving a corpus catches `ContentError` per unit and serves the rest; if an

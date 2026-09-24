@@ -36,17 +36,17 @@ one that module can read.
 
 ## ⭐ THE REFERENCE SOLUTION SHIPS IN THE PAGE, WITHHELD BUT PRESENT
 
-⛔ **The user ruled it always available**, and `AX-09` offers it at any time
+⛔ **It is always available**, and the practice panel offers it at any time
 without gating on a pass. ⚠️ The page is offline and `file://`-addressable
 (R8), so a reference the page did not carry would be one the reader could not
 be offered — and the bundle is already on their disk, so withholding it would
 be the pretence R5 exists to prevent. ⭐ It is emitted as a **`disclosure`**
 block, which is the archive's own *present but withheld* state: nothing is
 revealed automatically, and asking is not a run and cannot be recorded as a
-failure. ⚠️ **`AX-09` owns how it is drawn and what its summary reads**; this
+failure. ⚠️ **The practice panel owns how it is drawn and what its summary reads**; this
 module owns only that it is in the document.
 
-## ⭐ THE BUILD ROLE IS LAID INTO THE WORKSPACE, AND NEVER READ (`W436`)
+## ⭐ THE BUILD ROLE IS LAID INTO THE WORKSPACE, AND NEVER READ
 
 ⭐ Each file `bundle.build` names is copied from the bundle's `build/` into the
 workspace at the same relative path, beside the starter and the tests, so the
@@ -58,7 +58,7 @@ what it declares, is the corpus's data (R1).
 
 ⛔ **The archive document's own path is `skills.adapter.Layout`'s**, and this
 module does not compute one: a second spelling of the archive arithmetic is
-exactly the defect `W199` and `W298` were paid for. ⭐ `emit` answers with the
+the drift the one spelled layout exists to stop. ⭐ `emit` answers with the
 document; where it lands is placement's decision (R2).
 """
 
@@ -89,7 +89,7 @@ from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.gates import REFERENCE, STARTER
 
 #: ⛔ The summary a reader sees on the withheld reference. A framework constant
-#: and never a corpus's string (R1), worded for a learner. ⚠️ `AX-09` owns the
+#: and never a corpus's string (R1), worded for a learner. ⚠️ The practice panel owns the
 #: panel's wording and may replace this from its own vocabulary; what it may
 #: not do is make the reference conditional on a pass.
 REFERENCE_SUMMARY = "Show a worked solution"
@@ -178,7 +178,7 @@ def emit_page(
 
     ⛔ **`1..n`, checked before anything is emitted.** A page whose exercises
     are numbered 1 and 3 has lost one, and emitting the two that remain would
-    publish the loss as if it were the plan (`E14`'s first property).
+    publish the loss as if it were the plan (spec §7: nothing is lost).
     """
     where = f"{source} unit {bundles[0].unit}" if bundles else source
     require_no_gap(tuple(one.ordinal for one in bundles), where)
@@ -210,7 +210,7 @@ def write(root: Path | str, emission: Emission, where: str) -> tuple[str, ...]:
         raise ExerciseError(
             f"{where}: the emission would write over {len(existing)} file(s) that "
             f"already exist, the first at '{existing[0]}'. Generation is "
-            f"non-destructive (R3): nothing in a source repository is rewritten, so "
+            f"non-destructive: nothing in a source repository is rewritten, so "
             f"an emission that lands on an existing file is refused rather than "
             f"deciding which copy is the real one."
         )
@@ -311,7 +311,7 @@ def _require_plants(base: Path, bundle: Bundle, where: str) -> None:
     """Every edge case has the planted solution `G3` was run over.
 
     ⛔ **Refused rather than shipped short.** A gate is as fine as the claim it
-    backs (`E08`'s per-method argument), so an edge case whose plant is absent
+    backs (one gate per case, as per method), so an edge case whose plant is absent
     is an edge case nothing was ever proved against.
     """
     for position, _case in enumerate(edges_of(bundle.cases), start=1):

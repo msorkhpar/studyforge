@@ -209,9 +209,8 @@ def test_a_level_that_walks_past_the_top_names_no_module():
 
 #: ⛔ **Reading 2, PLANTED — one row per SPELLING, and never a disjunction.**
 #: *A control whose assertion is `A or B` discharges
-#: nothing about `A`*. ⚠️ The relative rows are the ones the first version of
-#: this sweep could not see at all, and the `package named` rows are the second
-#: hole found while fixing that one.
+#: nothing about `A`*. ⚠️ The relative rows and the `package named` rows are
+#: the spellings a narrower sweep would not see.
 FORBIDDEN_SPELLINGS = (
     (
         "absolute, submodule named",
@@ -307,7 +306,7 @@ def test_the_second_door_notices_a_call_made_through_an_attribute():
 
 
 def test_this_package_makes_no_relative_import_at_all_and_that_is_why_the_hole_was_invisible():
-    # ⭐ **The population, printed rather than counted** (Ruling 128), and it is
+    # ⭐ **The population, printed rather than counted**, and it is
     # EMPTY — which is precisely why a sweep that could not resolve a relative
     # import still looked like it was working for a whole round.
     #

@@ -37,10 +37,9 @@ plan position would leave `1` and `3` on a page whose second exercise was
 refused — the gap `bundle.require_no_gap` and `validate`'s `practice-ordinals`
 both refuse, because renumbering later would move every reader's progress.
 
-## ⛔ A UNIT'S OWN PRACTICES COME FIRST, AND THEY ARE READ, NEVER DECLARED (`W437`)
+## ⛔ A UNIT'S OWN PRACTICES COME FIRST, AND THEY ARE READ, NEVER DECLARED
 
-⚠️ **A unit may already carry practices** — the first corpus's
-`iso-fundamentals` units 2, 3 and 4 each carry a bundled `practice-1` — so an
+⚠️ **A unit may already carry practices** — a bundled `practice-1`, say — so an
 authored exercise numbered from 1 would take an ordinal a reader's progress is
 already keyed to. ⛔ **Renumbering the source's practice is refused for the
 reason above**, so authored exercises number AFTER it. ⭐ `carried_practices`
@@ -172,7 +171,7 @@ def plan_page(page: Page, ledger: Ledger, where: str) -> Plan:
 def carried_practices(root: Path | str, page: Page, where: str) -> tuple[int, ...]:
     """Return the ordinals of the practices the page's unit already carries, `1..n`.
 
-    ⭐ **Read, never declared** (`W437`): the unit's archive directory is
+    ⭐ **Read, never declared**: the unit's archive directory is
     `Layout`'s, and its documents are read by `unit.builder.read` — the one
     reader a build uses, gates and all. A unit nothing has been ingested for
     carries nothing. ⛔ Ordinals that are not `1..n` are refused: an authored

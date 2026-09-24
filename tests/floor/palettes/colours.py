@@ -12,7 +12,7 @@ in a finding somebody has to be able to check by hand.
 
 ## ⛔ CHROMA, AND NOT HSL SATURATION
 
-⚠️ **Measured on the paper the user accepted (`W392`):** a near-white with a
+⚠️ **On the site's paper:** a near-white with a
 one-step tint reports an HSL saturation near 40% and a chroma near 3%. ⛔ A bound
 written in saturation would refuse that paper on its first run — so chroma here
 is `max − min` over 255, where a near-white and a near-black both read near

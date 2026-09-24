@@ -1,13 +1,11 @@
 """The image a `check` run executes is named by its build inputs' CONTENT.
 
-⛔ **The defect.** `compose.yaml` named ONE tag, `studyforge/dev:local`, for every
-checkout, and `check`'s `run --build` rewrote it from whichever checkout ran last.
-Two checkouts running `check` at once could therefore start a container from each
-other's image (measured racing, twice), and the guard offices used —
-`command -v studyforge` — tells an image without the installed command from one with
-it and nothing else.
+⛔ **The hazard.** ONE tag for every checkout, rewritten by `check`'s `run --build`
+from whichever checkout ran last, lets two checkouts running `check` at once start a
+container from each other's image — and `command -v studyforge` tells an image
+without the installed command from one with it and nothing else.
 
-⭐ **The repair, in `check`'s own block:** a sha256 over every build input's content
+⭐ **The mechanism, in `check`'s own block:** a sha256 over every build input's content
 is exported as `STUDYFORGE_DEV_IDENTITY`, `compose.yaml`'s `image:` REQUIRES it, and
 every run prints the name it runs. Inputs that differ name different tags, so no
 build can overwrite what another checkout is about to run.
@@ -21,7 +19,7 @@ WINDOW ON PURPOSE: between the first checkout's build and its container start, t
 second checkout's whole `check` runs. ⛔ Each run must still read its own input —
 and with the fixed shared tag restored, the first reads the second's (a moved exit).
 ⚠️ The scratch checkouts build under a throwaway repository, never `studyforge/dev`,
-so the plant cannot touch a tag a live office runs; the images are removed after.
+so the plant cannot touch a tag a live run uses; the images are removed after.
 """
 
 from __future__ import annotations
@@ -47,7 +45,7 @@ VARIABLE = "STUDYFORGE_DEV_IDENTITY"
 #: `check` prints what `compose.yaml` resolves and a disagreement is a false print.
 NAME = "studyforge/dev:inputs-"
 
-#: The shared tag this row retired. ⛔ No instruction in `docker/dev/` may name it.
+#: A shared tag the image must not carry. ⛔ No instruction in `docker/dev/` may name it.
 SHARED = "studyforge/dev:local"
 
 #: The hand build the Dockerfile's FIRST sentence must carry.

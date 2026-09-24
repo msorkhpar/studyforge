@@ -14,14 +14,14 @@ to any service.
 the predicate, `narrate.synth` for the record and its removal, and
 `narrate.speakable.naming` for the one minter's inverse.
 
-## ⛔ `E09` § W193 is this module's whole authority
+## ⛔ Narration deletes nothing except through this explicit prune (R3, R6)
 
 1. **Its own request.** Nothing else in `src/` calls `prune_corpus`; `--prune`
    is exclusive with `--voice`, so a narration run never reaches it and a
    build never imports it.
 2. **A partial walk refuses BY NAME**, before a file is looked at.
 3. **Only what the record names.** The path is the directory the record
-   carries for the clip (`W226`) — or, for a version-1 entry that carries none,
+   carries for the clip — or, for a version-1 entry that carries none,
    the walked unit's audio directory — joined to the entry's filename, and that
    filename must parse back to the entry's own speech id. ⭐ A superseded clip
    an entry still names is reached the same way. ⭐ A file beside the clips that no dead entry
@@ -32,7 +32,7 @@ the predicate, `narrate.synth` for the record and its removal, and
 ## ⚠️ Why a version-1 entry of a unit no longer declared is still HELD
 
 A version-2 entry carries the directory its clip was written into, so a
-removed or renumbered unit's clips are reached (`W226`). ⛔ A version-1 entry
+removed or renumbered unit's clips are reached. ⛔ A version-1 entry
 carries a filename and no directory, and a unit's audio directory is
 placement's answer to declarations an undeclared unit no longer has. Guessing
 it would compose a path (R4) inside somebody's repository (R3), so that entry
@@ -82,7 +82,7 @@ class Pruned:
     deleted: tuple[Path, ...] = ()
     forgotten: tuple[str, ...] = ()
     held: tuple[tuple[str, str], ...] = ()
-    #: `(speech id, superseded clip)` removed from a live entry (`W226`).
+    #: `(speech id, superseded clip)` removed from a live entry.
     cleared: tuple[tuple[str, Superseded], ...] = ()
 
     @property

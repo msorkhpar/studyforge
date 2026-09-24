@@ -1,6 +1,6 @@
-"""Mirror of `src/studyforge/cli/site/cli.py`'s `W460` half: `build --no-narration`.
+"""Mirror of `src/studyforge/cli/site/cli.py`'s narration half: `build --no-narration`.
 
-⭐ And `W467`'s: a build names every stale clip it plays, and every clip an earlier
+⭐ And a build names every stale clip it plays, and every clip an earlier
 narrated build left in its `--out`, and deletes neither.
 """
 
@@ -53,7 +53,7 @@ def test_the_build_says_narration_is_off_exactly_when_it_is(tmp_path, declared, 
 
 
 # --------------------------------------------------------------------------
-# ⭐ `W467`: what a build says about clips it does not act on
+# ⭐ What a build says about clips it does not act on
 # --------------------------------------------------------------------------
 
 
@@ -72,7 +72,7 @@ def _clips(out):
 
 
 def test_a_bare_build_names_each_clip_that_plays_words_its_paragraph_no_longer_says(tmp_path):
-    # ⛔ `W457/1`: the bare verb built a stale corpus without a word.
+    # ⛔ The bare verb names every stale clip rather than building without a word.
     root = narrated(tmp_path)
     assert [line for line in _said(root, an_output(tmp_path)) if line.startswith("stale ")] == []
     edit_one_paragraph(root)
@@ -86,7 +86,7 @@ def test_a_bare_build_names_each_clip_that_plays_words_its_paragraph_no_longer_s
 
 
 def test_a_build_with_narration_off_names_each_clip_an_earlier_build_left_and_keeps_it(tmp_path):
-    # ⛔ `W460/4`: the clips stayed, and nothing said so. They are still kept (R3).
+    # ⛔ The clips stay, and the build says so. They are kept (R3).
     root = a_corpus(tmp_path, "depth1")
     narrate(root)
     out = an_output(tmp_path)

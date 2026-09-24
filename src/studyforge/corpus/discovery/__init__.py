@@ -40,7 +40,7 @@ placement.
 - *"the scan wins"* is **`assemble`**: the scan runs every time and its result
   is what is returned. ⛔ No branch hands back a cached site.
 - *"a stale cache is detectable"* is **`freshness`**: a content digest recorded
-  in the file, and three verdicts. ⛔ **No `mtime` anywhere** (Ruling 18).
+  in the file, and three verdicts. ⛔ **No `mtime` anywhere**.
 
 ⛔ **`site_api` is neither of them.** It is R9's schema version for this
 contract, minted in `cache.py` and registered in `version.CONTRACT_FIELDS` in

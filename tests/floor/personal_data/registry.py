@@ -1,8 +1,7 @@
 """The bounded exception: directories permitted to carry personal-data shapes.
 
-⭐ **The product floor's copy of `tools/quality/personal_data/registry.py`.** It stays on the
-main line when the tooling leaves, so the product's own rule keeps running; while both
-exist, `tests/test_floor_twins.py` holds its code to the original's, docstrings aside.
+⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
+checkout, and depends on nothing outside it.
 
 **What it does.** Checks that every directory in
 `config.SANCTIONED_PERSONAL_DATA_DIRS` still exists and still declares itself
@@ -15,10 +14,10 @@ read the same list.
 **Depends on.** `config` and `pathlib`.
 
 ⚠️ **Why an exception exists at all.** A gate that refuses personal data needs
-an input to refuse — SF-08's and SF-25's acceptance is a corpus that trips
-them. ⛔ And the existence of that exception is exactly how a real leak gets
+an input to refuse — the archive gate's own tests need a corpus that trips
+it. ⛔ And the existence of that exception is exactly how a real leak gets
 waved through, so it is bounded by tests rather than by a reviewer's memory
-(rubric §1e): one directory, registered, self-declaring, asserted to be the
+(R7): one directory, registered, self-declaring, asserted to be the
 only one and asserted still to carry what it claims.
 """
 
@@ -48,7 +47,7 @@ def judged_directories(root: Path) -> list[str]:
 def check_registry(root: Path) -> list[Finding]:
     """Every registered negative-fixture directory exists and declares itself.
 
-    Rubric §1e, condition 3: a sanctioned directory says what it is, in a file
+    A sanctioned directory says what it is, in a file
     beside the data. ⛔ Without this the registry could name a directory that
     has quietly become an ordinary one, and the exemption would keep applying
     to whatever moved in.

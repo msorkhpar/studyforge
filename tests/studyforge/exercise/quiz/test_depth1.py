@@ -1,11 +1,11 @@
-"""`AX-05` proved on the prose fixture — `FND-04`'s `depth1/`, end to end.
+"""The quiz shape proved on the prose fixture — the fixture corpora's `depth1/`, end to end.
 
 ⭐ **The corpus this shape exists for**: one level, no exercises, nothing
 runnable. ⛔ The reading is taken through the bytes a build would write — built
 by `archive.document`, rendered, parsed back, read as a record and graded — so
 no step is skipped by handing a dict to the next layer.
 
-⛔ **The fixture itself is untouched** (see `depth1.py`), because other offices
+⛔ **The fixture itself is untouched** (see `depth1.py`), because other tests
 pin counts and digests against it.
 """
 
@@ -40,7 +40,7 @@ def test_the_quiz_is_built_from_the_page_it_is_attached_to():
 
 
 def test_the_origin_names_a_page_the_container_map_declares():
-    # ⚠️ Containment, never a read of that map's `origin` key: `W109` holds
+    # ⚠️ Containment, never a read of that map's `origin` key: the one-reader rule holds
     # that key to one reader across `src/` and `tests/`.
     assert PAGE in container_text()
     assert section() in container_text(), "the section is not a heading this unit has"
@@ -92,8 +92,8 @@ def test_a_reader_is_told_why_whichever_way_they_went():
 
 
 def test_a_corpus_with_no_quiz_is_unaffected():
-    # ⭐ The Acceptance's last clause, read on `depth1` AS IT SHIPS: nothing in
-    # this task changed what a corpus carrying no quiz does. ⛔ Its archive
+    # ⭐ Read on `depth1` AS IT SHIPS: the quiz shape changes nothing for a
+    # corpus carrying no quiz. ⛔ Its archive
     # documents are read here, not the ones this module builds.
     archived = sorted((fixture_root() / "archive").rglob("*.json"))
     documents = [json.loads(path.read_text(encoding="utf-8")) for path in archived]

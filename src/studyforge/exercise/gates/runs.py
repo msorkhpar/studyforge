@@ -127,7 +127,7 @@ def folded(
     """Fold the report a run left behind into the evidence a gate reads.
 
     `started` is the wall clock read **before** the run was started, so a
-    report an earlier run wrote is refused rather than folded (`AX-01`).
+    report an earlier run wrote is refused rather than folded.
     ⭐ A fold that refuses is carried as a `refusal` and never raised: an
     authoring defect is a gate's finding, not this function's crash.
     """
@@ -168,6 +168,7 @@ def require_run(value: object, role: str, attempt: int, where: str) -> Run:
         raise ExerciseError(
             f"{where}: a gate asked for one role's attempt {attempt} and was handed "
             f"another run. A suite answered from the wrong run is one whose gates all "
-            f"hold for a reason nobody intended. The roles are not reproduced here (R7)."
+            f"hold for a reason nobody intended. The roles are not reproduced here, since a "
+            f"refusal never quotes a value that may be personal."
         )
     return value

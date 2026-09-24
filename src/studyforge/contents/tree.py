@@ -18,7 +18,7 @@ table of contents ends up short by the units nobody has generated yet.
 
 ## ⛔ The contents count what the corpus DECLARES, never what a scan FOUND
 
-⚠️ **This is the short-parse defect in this task's own terms.** A contents
+⚠️ **This is the short-parse defect in this package's own terms.** A contents
 document sourced from discovery would list the pages that exist; a unit
 declared in a container map and not yet generated would simply not appear, the
 document would be internally consistent, and **nothing would raise** — the
@@ -201,7 +201,7 @@ def _entry(profile: Profile, container: Container, ordinal: int) -> Entry:
         # ⛔ Re-typed, not re-worded: `placement` owns what a page may be
         # called and re-spelling its sentence here would be two descriptions
         # of one rule. ⚠️ `PersonalDataLeak` is deliberately not in this pair
-        # and travels through as itself (Ruling 58).
+        # and travels through as itself (R7).
         raise ContentsError(
             f"{container.address.key} unit {unit.n} has no place in this corpus: {error}"
         ) from None

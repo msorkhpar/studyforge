@@ -14,15 +14,13 @@ there keeps working and nothing is renumbered.
 **Depends on.** Nothing, and that is the whole requirement. ⛔ The dispatcher
 imports this module in its own body, so a dependency here on any stage would
 load that stage with the installed command — the defect this module exists to
-remove (`W293/3`).
+remove.
 
-## ⛔ Why `2` moved out of `validate` and `0`/`1` did not
+## ⛔ Why `2` lives outside `validate` and `0`/`1` do not
 
-⚠️ **`W293` made the command resolve a verb when it is dispatched, and then
-imported `UNUSABLE` from `validate.cli` anyway**, so `studyforge --help` still
-loaded the whole validator. The property held for four verbs of five, and the
-isolation test had to hold `validate` exempt — an exemption that was a defect's
-shadow rather than a design.
+⚠️ **The command resolves a verb only when it is dispatched**, so importing
+`UNUSABLE` from `validate.cli` would make `studyforge --help` load the whole
+validator, and the isolation test would have to hold `validate` exempt.
 
 ⭐ **The split is by what the code SAYS, not by who happened to write it first.**
 `0` and `1` are `validate`'s verdicts about an archive (`validate.report`),
@@ -30,7 +28,7 @@ and no other stage may return them meaning anything else. `2` says the tool
 never got as far as a verdict, which is a sentence every stage needs — five
 modules under `cli/` already imported it across a package boundary. ⛔ A
 constant a second package needs is on a surface both may reach, or the two
-packages do not share it (Ruling 101).
+packages do not share it (R21).
 
 ⚠️ **Placed at the top of the package rather than under `cli/`** because
 `validate` imports it too, and ⛔ no stage may import the dispatcher's package:

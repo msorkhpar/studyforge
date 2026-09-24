@@ -47,7 +47,7 @@ DRAFT = {
 }
 
 
-#: ⭐ `W266`: the draft a PERSON settled before onboarding. The README records the units and no
+#: ⭐ The draft a PERSON settled before onboarding. The README records the units and no
 #: unit reads it, so it is `not_material` (`docs/authoring/corpus.md`), never an include.
 SETTLED = {
     **DRAFT,
@@ -56,7 +56,7 @@ SETTLED = {
         "not_material": [
             {
                 "glob": "README.md",
-                "why": "navigation that records the units; no unit reads it (W266)",
+                "why": "navigation that records the units; no unit reads it",
             }
         ],
     },

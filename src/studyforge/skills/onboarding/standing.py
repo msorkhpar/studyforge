@@ -32,15 +32,15 @@ the calls `generate.narration.heard` and `recorded` make, asked of surfaces.
 
 ## ⛔ The figures are rendered HERE, and the reader's document only points here
 
-⚠️ **`W313` put these figures into `ONBOARDING.md` and nothing refreshed them.**
+⚠️ **These figures once sat in `ONBOARDING.md` and nothing refreshed them.**
 ⭐ `studyforge narrate` writes the narration record and a re-ingest rewrites the
 archive; neither rewrites a generated document, so the number a reader opened
-first could only be kept freshly wrong (`W332`, and Ruling 161's reading of the
-same property one level up).
+first could only be kept freshly wrong (R19: a generated document points at a
+command instead of carrying a live figure).
 
 ⭐ **So `lines` lives beside the reading that produces it**, the command prints
 what it renders, and `artifacts` prints the invocation instead of the answer.
-⛔ **One producer** (Ruling 330): there is exactly one place that turns a
+⛔ **One producer**: there is exactly one place that turns a
 `Standing` into prose, and no document holds a second copy of its figures.
 """
 
@@ -77,7 +77,7 @@ class Standing:
     reading_only: int = 0
     #: Whether the corpus holds a narration record at all.
     recorded: bool = False
-    #: ⭐ Whether `corpus.json` voices the corpus (`W460`). Off is not short.
+    #: ⭐ Whether `corpus.json` voices the corpus. Off is not short.
     voiced: bool = True
 
     @property
@@ -94,7 +94,7 @@ def standing_of(root: Path | str | None) -> Standing:
         corpus = read_corpus(root)
         if not corpus.maps:
             return Standing()
-        # ⭐ `W460`: a corpus that is not voiced reads no record, as its build does.
+        # ⭐ A corpus that is not voiced reads no record, as its build does.
         state = read_state(state_file(root)) if corpus.narration else None
         narrated = 0
         for source in corpus.units if state is not None else ():
@@ -119,7 +119,7 @@ def standing_of(root: Path | str | None) -> Standing:
 def lines(standing: Standing) -> list[str]:
     """Render one `Standing` as a person reads it: its figures, or plainly why there are none.
 
-    ⛔ **The one place a figure becomes prose** (Ruling 330). ⚠️ Every line is
+    ⛔ **The one place a figure becomes prose**. ⚠️ Every line is
     derived from the argument, so a reader that answered a constant would be
     caught by the same clause that catches a wrong count. ⛔ **No path, no
     identity, no hostname** (R7): a refusal names the record it could not read.

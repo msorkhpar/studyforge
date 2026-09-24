@@ -65,8 +65,8 @@ Why this shape, and not the other two:
 - **Not a refusal of every file that is not text.** That refuses every real clip
   and every image. The run length is why real audio passes: over a GiB of random
   bytes, runs of 12 characters still misfired on a short tilde fragment or an
-  address-shaped one, and runs of 16 did not. The readings over real clips
-  and images are in `W235`'s handoff.
+  address-shaped one, and runs of 16 did not, read over real clips and
+  images.
 
 ⚠️ **What the judgement cannot see.** Each is a stated cost, not a promise:
 - a shape inside a run of fewer than 16 characters, such as a short path between
@@ -75,7 +75,7 @@ Why this shape, and not the other two:
   any zip-based file such as `.docx`, `.epub` or a wheel;
 - text in any other encoding.
 
-⚠️ **A corpus root holding a virtual environment or build output** (`SK-06/4`) is
+⚠️ **A corpus root holding a virtual environment or build output** is
 judged file by file. Compiled modules often carry build paths and addresses, so
 such a root is usually refused by name. Move the environment out of the root.
 
@@ -122,7 +122,7 @@ store, and **the archive** is the entry in the file.
 1. **A pass is never lost.** If either side has a `first_passed_at`, the result has
    one.
 2. **This machine's `first_passed_at` never moves.** The archive's is taken only
-   when this machine has none. This is `SF-21`'s own rule, that a first pass is
+   when this machine has none. This is the progress store's own rule, that a first pass is
    set once and never moves, and it holds across machines.
 3. **`last` is the later of the two runs**, compared as instants. If the two
    cannot be ordered, this machine's run stands.
@@ -135,7 +135,7 @@ store, and **the archive** is the entry in the file.
 5. **Runs are written only through `Progress.record_run`**, the store's one public
    locked write. So `runs` also rises by however many runs the store must record to
    carry the pass or the later `last` this machine did not have: two at most. This
-   is `SK-06/1`, and a public merge in `studyforge.progress` would remove the raise.
+   is a stated cost, and a public merge in `studyforge.progress` would remove the raise.
 
 ⭐ **The rule is a join.** Importing a merged record again changes nothing, so an
 import cut short by a crash can simply be run again.
@@ -145,7 +145,7 @@ import cut short by a crash can simply be run again.
 **An imported pass is believed as recorded.** This machine believes its own
 `first_passed_at` the same way (serving reports a pass from it). No rule can
 do better, because the record keeps no history: a hand-written pass cannot be
-told from an earned one (`SF-19b/5`). ⭐ Progress also enters only from an
+told from an earned one. ⭐ Progress also enters only from an
 `owner` file, which is the reader's own record from their own machine (R16).
 
 ⛔ **The one exception: the import refuses an entry this machine's store could

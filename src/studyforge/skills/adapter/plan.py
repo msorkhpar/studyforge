@@ -97,7 +97,7 @@ class Plan:
     def sole_variant(self) -> str | None:
         """The one variant, when a corpus has exactly one — otherwise `None`.
 
-        ⚠️ `None` is not a failure. A container carries one variant (SF-05),
+        ⚠️ `None` is not a failure. A container carries one variant,
         so a corpus declaring two makes the choice **per container**, and the
         scaffold has to leave that to the person rather than pick the first
         and be silently right for one corpus in two.

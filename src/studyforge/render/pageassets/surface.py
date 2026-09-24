@@ -29,15 +29,15 @@ class name says what the stylesheet may reach. Nothing downstream may read a
 class name back as a block type — that is R4's argument about paths, applied
 to markup.
 
-## ⛔ A hook is not always a class, and `SF-34` is where that stopped being true
+## ⛔ A hook is not always a class
 
-⚠️ **`SURFACE_CLASSES` is classes and `SURFACE_HOOKS` no longer is.** Three of
+⚠️ **`SURFACE_CLASSES` is classes and `SURFACE_HOOKS` is not.** Three of
 its entries are classes; the rest are the **name** of a `data-*` attribute or a
 **value** of `data-kind`, because `render.container.listing` and
 `render.index.disclosure` address their rows that way on purpose — ⭐ *"a
 `data-*` rather than a class, so this page needs no entry in a published class
-set"* — and that is the property that let a chrome stylesheet be written a
-milestone after the markup it styles, with no page change and no re-render.
+set"* — and that is the property that lets a chrome stylesheet change
+independently of the markup it styles, with no page change and no re-render.
 
 ⛔ **So `_FORM_OF` says which form each hook takes, `HOOK_CLASSES` is the
 class-shaped subset, and the both-directions class contract compares against
@@ -78,7 +78,7 @@ _CLASS_OF = {
 
 #: `archive block type -> the class its element carries`, for the types that
 #: have one. ⛔ Built by walking `BLOCK_TYPES`, so the keys come from the one
-#: block-type list (SF-06) and a vocabulary change cannot pass unnoticed.
+#: block-type list and a vocabulary change cannot pass unnoticed.
 SURFACE_CLASSES = {
     block_type: _CLASS_OF[block_type]
     for block_type in BLOCK_TYPES
@@ -117,19 +117,19 @@ _FORM_OF = {
 #: with it.
 #:
 #: ⭐ **The last four are here because MORE THAN ONE RENDERER NEEDS THEM**, and
-#: `W76`'s own answer governs: what more than one renderer needs is a sibling
+#: R17's answer governs: what more than one renderer needs is a sibling
 #: package, never a name on one of them. `render.container.listing` and
 #: `render.index.disclosure` both say *this row could not be linked* and *this is
-#: the unit's reader-facing numbering*, and before `SF-34` they each spelled it
-#: themselves (`SF-14/1`). ⚠️ Two spellings that agree today disagree the day one
-#: page gains a third state — and `SF-34` writes the rules against whichever it
+#: the unit's reader-facing numbering*, and before the stylesheet they each spelled it
+#: themselves. ⚠️ Two spellings that agree today disagree the day one
+#: page gains a third state — and the stylesheet writes the rules against whichever it
 #: finds first, so the spelling had to stop being plural before the rules
 #: existed. ⛔ **Not promoted onto `render.container.__all__`**: that would be a
-#: Ruling 101 row 1 reach, which `render/page/test_init.py`'s sweep fails by
+#: reach past a package's exported surface (R21), which `render/page/test_init.py`'s sweep fails by
 #: name.
 #:
 #: ⭐ **`marked` is the one hook NO renderer emits, and it is published for the
-#: same reason the others are** (`SF-30`). A read mark is the reader's own
+#: same reason the others are**. A read mark is the reader's own
 #: assertion, kept in their browser — so it can only be set at read time, by
 #: `render/assets/read-mark.js`, on the unit page's control and on the rows of
 #: the two lists. ⛔ It is here rather than spelled in the script because
@@ -149,7 +149,7 @@ _FORM_OF = {
 #: anything, including one of these words.
 #:
 #: ⭐ **`read_state` wraps the words that tell assistive technology a row is
-#: read** (`W383`). The rail and both lists emit it hidden on every row, from
+#: read**. The rail and both lists emit it hidden on every row, from
 #: one template, and `progress-view.js` shows it on the rows the store holds —
 #: so a built page stays byte-identical whoever opens it (R10). `chrome.css`
 #: keeps it off the screen: the tick is the visual mark, the words are not.

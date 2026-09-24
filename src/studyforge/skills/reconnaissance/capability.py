@@ -5,7 +5,7 @@ the execution track at all — and answers *"no"* as a first-class result.
 
 **How you use it.** `assess(inventory)` returns a `Capability`.
 
-**Depends on.** `inventory` — for the walk as well as for the tree (`W329`) —
+**Depends on.** `inventory` — for the walk as well as for the tree —
 `report`, and `validate.source` for the directories a root never enters.
 
 ## ⭐ "No runnable code, no graders" is a complete answer, not a shortfall
@@ -31,15 +31,14 @@ admitted without anybody deciding.
 ⭐ The cost of the closed set is exactly one question to a person, and the
 question names what was looked for — which is also how the set grows.
 
-## ⛔ The framework's own generated checks are not this corpus's graders (`W329`)
+## ⛔ The framework's own generated checks are not this corpus's graders
 
-⚠️ **Measured on a clean run**: re-assessing a corpus this framework had already
-onboarded counted the *generated* `tests/**/test_*.py` as graders, so `graded`
-flipped from false to true, the *"no runnable code, no graders"* verdict
-disappeared, and the draft asked for `exercises: true` on a corpus whose own
-onboarding report printed `graded practices  no`. ⛔ **`buildserve` then reports
-the toolchain partial state instead of the exercises one, so a corpus that is
-COMPLETE at the reading floor is presented to its reader as unfinished** (C5).
+⚠️ **Counting the *generated* `tests/**/test_*.py` of a corpus this framework
+has already onboarded as graders** would flip `graded` from false to true, drop
+the *"no runnable code, no graders"* verdict, and draft `exercises: true` on a
+corpus whose own onboarding report printed `graded practices  no`. ⛔ **A corpus
+that is COMPLETE at the reading floor would then be presented to its reader as
+unfinished** (C5).
 
 ⭐ So this pass asks `inventory` rather than the disk, and both of `inventory`'s
 answers are instruments that already existed: `generated` is onboarding's own
@@ -113,11 +112,11 @@ def assess(inventory: Inventory) -> Capability:
     material and `inventory.material` will never contain one. This is the one
     question that has to look at the files reconnaissance otherwise ignores.
 
-    ⛔ **But never this framework's own output** (`W329`): `inventory.generated`
+    ⛔ **But never this framework's own output**: `inventory.generated`
     is onboarding's record of what it wrote, and a corpus's execution question
     is about the corpus.
 
-    ⛔ **And it is `inventory`'s walk, not a second one** (`W329`). This pass
+    ⛔ **And it is `inventory`'s walk, not a second one**. This pass
     kept its own: it enumerated the tree itself and entered every directory
     `inventory.NOT_MATERIAL` names, so `__pycache__` supplied graders — and
     after a corpus had run the checks onboarding generated for it, the bytecode

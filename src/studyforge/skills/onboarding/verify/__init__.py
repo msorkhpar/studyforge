@@ -1,7 +1,7 @@
 r"""`python3 -m studyforge.skills.onboarding.verify` — whether the pin is what is installed.
 
 **What it does.** Prints the version of the `studyforge` this Python imports,
-and the commit a built wheel says it was built from (`W467`), and, given a
+and the commit a built wheel says it was built from, and, given a
 corpus root, whether that corpus's pin names both.
 
 **How you use it.** From a corpus root:

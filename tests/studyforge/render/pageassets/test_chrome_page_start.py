@@ -1,7 +1,7 @@
-"""`W333`: the page WITHOUT a rail starts where the page WITH one starts.
+"""The page WITHOUT a rail starts where the page WITH one starts.
 
-⛔ **SPLIT OUT AT A SEAM, AND THE SEAM IS THE SUBJECT** (Ruling 261, the move
-`W326` and `W328` each made before it). `test_chrome.py` answers *which regions
+⛔ **SPLIT OUT AT A SEAM, AND THE SEAM IS THE SUBJECT** (R11). `test_chrome.py` answers *which
+regions
 `chrome.css` rules and where the column's one bound lives*;
 `test_chrome_rail_rows.py` answers *does the rail's span cover the page
 skeleton*; `test_chrome_viewport.py` answers *what the wide shape says about the
@@ -9,28 +9,26 @@ WINDOW*. ⭐ **Every clause below answers a fourth question and none of those
 three**: *do the file's TWO page shapes agree about where a page begins* — which
 is a claim about a pair of rules rather than about either one of them.
 
-## ⛔ The defect, and it is two rules disagreeing
+## ⛔ The failure is two rules disagreeing
 
-⚠️ `W328` made the two-column page flush left and wide; the one-column page —
-the root index, whose own body IS the tree — kept the centred, measure-derived
-cap the column section declares. ⛔ **Neither is wrong on its own. Together they
-are a site whose layout moves when the reader clicks**, and that is `W328/7`.
+⚠️ The two-column page and the one-column page — the root index, whose own body
+IS the tree — are laid out by different rules. ⛔ **Neither can be wrong on its
+own. Disagreeing, they are a site whose layout moves when the reader clicks.**
 
 ## ⚠️ What a declaration can and cannot settle
 
 ⛔ **Nothing here is a geometry reading.** Where an element lands is what no
-assertion over a stylesheet can see (`W98`). ⭐ **These are the joins**: that the
+assertion over a stylesheet can see. ⭐ **These are the joins**: that the
 two shapes agree about the left margin, that the one-column page did NOT inherit
 the two insets that belong to the rail, that the rule is conditioned on the same
 region selector the rail's own rules name, and that all of it lives under the one
 threshold this file declares. ⭐ **The browser arm is
 `tests/visual/test_page_start.py` and it is where the pixels are read.**
 
-## ⛔ `W328`'s and `W326`'s modules are re-taken, never edited
+## ⛔ The sibling modules are read, never edited
 
-⚠️ Re-read against later rules, never rewritten: `test_chrome_viewport.py` and
-`test_chrome_rail_rows.py` are run at this tip and not touched; the clauses here are
-additions beside them.
+⚠️ `test_chrome_viewport.py` and `test_chrome_rail_rows.py` answer their own
+questions; the clauses here are additions beside them.
 """
 
 from __future__ import annotations
@@ -49,7 +47,7 @@ from tests.studyforge.render.pageassets.test_chrome import body, rules
 REGION = 'nav[aria-label="Containers"]'
 
 #: The page in its two-column shape, and the page in its one-column shape, as
-#: selectors. ⛔ **The second is the whole of this row's product change.**
+#: selectors. ⛔ **The second is the one this module is about.**
 WITH_RAIL = f"body:has({REGION})"
 WITHOUT_RAIL = f"body:not(:has({REGION}))"
 
@@ -61,7 +59,7 @@ def wide_part() -> str:
     expression over the whole file, for `test_chrome_viewport.wide_part`'s
     reason: a reading that swept up the narrow rules would answer about a layout
     nobody asked it about. ⚠️ Spelled again here rather than imported, because
-    importing it would make this module's verdict depend on `W328`'s module
+    importing it would make this module's verdict depend on another module
     staying unedited — and a clause that fails for a reason outside its own
     subject is not a clause.
     """
@@ -99,10 +97,9 @@ def left_margin_of(selector: str) -> str:
 
 
 def test_the_two_page_shapes_agree_about_the_pages_left_margin():
-    # ⛔ **The row in one declaration.** `W328` zeroed the left margin on the
-    # two-column page; the one-column page kept `margin-left: auto` from the
-    # column section, so on a wide screen the index floated in the middle of the
-    # window while a unit page sat against its left edge. ⭐ **Asserted as a
+    # ⛔ **One declaration.** If the one-column page kept `margin-left: auto`
+    # while the two-column page sat elsewhere, on a wide screen the index would
+    # float in the middle of the window while a unit page sat against its edge. ⭐ **Asserted as a
     # COMPARISON between the two rules and never against a typed value**: a file
     # that moved both to some third margin still passes, and a file that moves
     # one of them reds.
@@ -115,7 +112,7 @@ def test_the_two_page_shapes_agree_about_the_pages_left_margin():
 def test_the_right_margin_is_left_alone_so_the_page_is_left_aligned_and_not_stretched():
     # ⚠️ **Flush left is `margin-left` GIVEN UP and `margin-right` KEPT.** Zeroing
     # both would pin the page to both edges, and the measure-derived cap above
-    # would then never bite — a different layout wearing this row's name.
+    # would then never bite — a different layout altogether.
     declarations = wide_rule_for(WITHOUT_RAIL)
     assert not re.search(r"margin-right:\s*0\s*;", declarations), (
         "the one-column page zeroes its right margin too, so it is pinned to "
@@ -148,7 +145,7 @@ def test_the_right_margin_is_left_alone_so_the_page_is_left_aligned_and_not_stre
         (
             "max-width",
             "the one-column page re-decides its own ceiling here, which is the "
-            "reading measure question and is not this row's to answer",
+            "reading measure question and is not this rule's to answer",
         ),
     ),
 )
@@ -158,9 +155,9 @@ def test_the_one_column_page_takes_only_the_margin_and_none_of_the_rest(declarat
     # here: giving it the rail's gutterless edge (its text would touch the
     # screen), and giving it the rail's empty track so its masthead lines up with
     # a unit page's (the index's own content would then jump by a rail's width as
-    # the reader widened the window — this row's defect moved from the click to
+    # the reader widened the window — the same defect, moved from the click to
     # the resize). ⚠️ `max-width` is refused for a different reason: the bound is
-    # the open question the user owns, and a bound moved here would answer it.
+    # the reading measure's question, and a bound here would answer it twice.
     assert declaration not in wide_rule_for(WITHOUT_RAIL), why
 
 
@@ -212,11 +209,11 @@ def test_the_whole_of_this_row_lives_under_the_one_threshold_the_file_declares()
 
 
 def test_the_narrow_shape_still_centres_the_page_it_has_room_to_centre():
-    # ⚠️ **What this row removed above the threshold is still declared below
-    # it**, and that is the clause rather than an accident: the column section's
-    # `body` rule is what every page gets at every width, and a row that had
-    # deleted `margin-left: auto` there would have changed the one shape the file
-    # has below its threshold.
+    # ⚠️ **What the wide rule gives up above the threshold is still declared
+    # below it**, and that is the clause rather than an accident: the column
+    # section's `body` rule is what every page gets at every width, and deleting
+    # `margin-left: auto` there would change the one shape the file has below
+    # its threshold.
     column = [block for selector, block in rules() if selector == "body"]
     assert len(column) == 1, f"the column section carries {len(column)} rules for `body`, not one"
     assert re.search(r"margin-left:\s*auto\s*;", column[0]), (
@@ -228,10 +225,9 @@ def test_the_narrow_shape_still_centres_the_page_it_has_room_to_centre():
 
 
 def test_this_row_mints_no_token_and_states_no_bound_of_its_own():
-    # ⛔ Settling clause 4, and it survives `W388` stage 4 intact. ⭐ The rule
-    # this row adds still declares ONE property. ⚠️ Its value is no longer the
-    # constant `0` — the two-column page it has to agree with is centred under a
-    # ceiling now, so the shared inset is half of whatever the window has past
+    # ⛔ ⭐ The rule declares ONE property. ⚠️ Its value is not a constant — the
+    # two-column page it has to agree with is centred under a ceiling, so the shared inset is half
+    # of whatever the window has past
     # that ceiling — but the ceiling is `palette.css`'s OWN token, READ here and
     # minted nowhere: a row that painted a `--something` of its own would be a
     # second place to reason about where a page starts.
@@ -240,7 +236,7 @@ def test_this_row_mints_no_token_and_states_no_bound_of_its_own():
         f"the one-column page's wide rule declares more than the margin: {declarations}"
     )
     assert not re.search(r"--[a-z-]+\s*:", wide_rule_for(WITHOUT_RAIL)), (
-        "this row paints a custom property of its own"
+        "the one-column rule paints a custom property of its own"
     )
     assert set(re.findall(r"var\((--[a-z-]+)\)", wide_rule_for(WITHOUT_RAIL))) <= {"--page-max"}, (
         "the one-column page reads a token other than the ceiling the "

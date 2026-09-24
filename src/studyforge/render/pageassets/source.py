@@ -3,7 +3,7 @@ r"""The asset directory: the page's CSS and JS as files, read exactly.
 **What it does.** Finds the parts on disk and returns their exact text.
 
 **How you use it.** `text("palette.css")`, `names()`; `data(name)` and
-`font_names()` for the vendored faces (`W362`).
+`font_names()` for the vendored faces.
 
 **Depends on.** `errors` and `pathlib`.
 
@@ -14,7 +14,7 @@ byte (R10), so the read has to be exact.
 
 ⚠️ **`render/assets/` is a data directory, not a package.** It holds no
 `__init__.py` and never will; `[tool.setuptools.package-data]` is what ships
-it, and that declaration already exists — this task adds files, not build
+it, and that declaration already exists — a new asset is a file, not build
 configuration.
 
 ⛔ **Not to be confused with a corpus's generated media.** This directory is
@@ -38,7 +38,7 @@ ASSET_DIR = Path(__file__).resolve().parent.parent / "assets"
 #: than fetched, so `.svg` belongs here.
 PART_SUFFIXES = (".css", ".js", ".svg")
 
-#: A vendored face (`W362`). ⛔ Never a part: it is binary, it is never
+#: A vendored face. ⛔ Never a part: it is binary, it is never
 #: composed as text, and `faces` is the one reader of it — it arrives in the
 #: page stylesheet as base64, so no page ever requests a font file (R8).
 FONT_SUFFIX = ".woff2"

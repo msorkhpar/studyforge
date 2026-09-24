@@ -6,7 +6,7 @@ caller catches one type rather than five.
 **How you use it.** Catch `ContentError`; `describe(value)` when a refusal
 needs to say what arrived without reproducing it.
 
-⚠️ **One exception travels through, deliberately** (Ruling 58, rubric §1d).
+⚠️ **One exception travels through, deliberately** (R7).
 `PersonalDataLeak` from `archive.scrub` is **not** wrapped, in `content.py` or
 in `served.py`: R7's refusal is louder than a format error, and this family
 exists so a caller walking a corpus catches one type per unit, reports it and
@@ -18,14 +18,14 @@ with one exception is not a promise"*.
 
 **Depends on.** `studyforge.describe`, and nothing else.
 
-⭐ **`describe` is re-exported, not re-implemented** (Ruling 10). This module
+⭐ **`describe` is re-exported, not re-implemented** (R7). This module
 wrote the third copy of "name the type, not the value", and the three had
 already drifted about integers. The rule now has one home at
 `studyforge.describe`; the name stays importable from here because that is
 where this package's callers already reach for it, and because a re-export
 cannot disagree with what it re-exports.
 
-⚠️ **`ValueError`, following SF-01's split and `corpus.manifest`'s reading of
+⚠️ **`ValueError`, following `studyforge.address`'s split and `corpus.manifest`'s reading of
 it:** an overlay is a *value read from a document*, so both halves fail the
 same way and one base is enough.
 

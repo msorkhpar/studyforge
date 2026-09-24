@@ -19,7 +19,7 @@ from studyforge.render.pageassets.source import font_names
 def test_the_asset_directory_is_a_data_directory_and_not_a_package():
     # ⚠️ §3.2: `render/assets/` holds no `__init__.py` and never will.
     # `[tool.setuptools.package-data]` is what ships it, and that declaration
-    # already exists — this task adds files, not build configuration.
+    # already exists — a new asset is a file, not build configuration.
     assert ASSET_DIR.is_dir()
     assert not (ASSET_DIR / "__init__.py").exists()
 
@@ -50,7 +50,7 @@ def test_every_name_is_a_part_and_no_licence_is():
 
 
 def test_the_directory_holds_nothing_that_is_neither():
-    # ⭐ A third kind since `W362`: the vendored faces, which are binary, never
+    # ⭐ A third kind: the vendored faces, which are binary, never
     # composed as text, and read only by `faces`.
     on_disk = {path.name for path in ASSET_DIR.iterdir() if path.is_file()}
     assert on_disk == set(names()) | set(licence_names()) | set(font_names()), (

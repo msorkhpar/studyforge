@@ -1,6 +1,6 @@
-"""Mirror of `src/studyforge/narrate/speakable/__init__.py` (R12), and SF-16's acceptance.
+"""Mirror of `src/studyforge/narrate/speakable/__init__.py` (R12), and the package's acceptance.
 
-⛔ **Every clause of `E04`'s `SF-16` Acceptance has a test in this module, named for
+⛔ **Every clause of the speech units' Acceptance has a test in this module, named for
 the clause**, and the two clauses that cannot be discharged here say so in their own
 reason rather than being quietly asserted over something weaker.
 """
@@ -40,10 +40,8 @@ SHARED_ORIGIN = FIXTURES / "shared-origin/archive/field-notes/raw/prose"
 #:
 #: ⛔ **The value is an HREF, not a speech id** — `render/page/assets.py` declares
 #: `AUDIO_ATTRIBUTE` in the module whose whole subject is where a page reaches, and
-#: the id is recovered from the filename through `parse_clip_name` below. ⚠️ This
-#: comment used to be wrong in the other direction and the assertion under it
-#: compared these values to the id set; it never ran, because nothing wrote the
-#: attribute until the narration player landed.
+#: the id is recovered from the filename through `parse_clip_name` below. ⚠️ The
+#: values are filenames, never ids, so they are never compared to the id set.
 AUDIO_VALUES = re.compile(re.escape(AUDIO_ATTRIBUTE) + r'="([^"]*)"')
 
 
@@ -205,7 +203,7 @@ def test_every_id_a_rendered_page_addresses_resolves_to_a_clip_and_back():
         identifier, digest = parse_clip_name(stem)
         assert stem in minted, f"the page links a clip this walker never mints: {identifier}"
         by_name.setdefault(stem, []).append(href)
-    # ⛔ Ruling 187's shape, at the page: two elements addressing one clip is sixteen
+    # ⛔ At the page: two elements addressing one clip is sixteen
     # passages playing the wrong audio, and every containment check still passes.
     collided = sorted(name for name, hrefs in by_name.items() if len(hrefs) > 1)
     assert collided == [], f"two elements on a page address one clip: {collided}"
@@ -218,7 +216,7 @@ def test_every_id_a_rendered_page_addresses_resolves_to_a_clip_and_back():
 
 @pytest.mark.parametrize(("name", "document"), CASES)
 def test_the_clip_names_are_exactly_as_many_as_the_spoken_units(name, document):
-    # ⛔ Ruling 187. "Asserted in both directions" proves surjectivity: seventeen
+    # ⛔ "Asserted in both directions" proves surjectivity: seventeen
     # clips colliding onto one filename still resolve both ways and the suite stays
     # green. A cardinality equality is what states injectivity.
     units = speakable_of(document).units
@@ -244,7 +242,7 @@ def test_the_cardinality_can_come_out_wrong_so_the_green_is_a_reading():
 
 
 # --------------------------------------------------------------------------
-# ⛔ Acceptance 5 — the NEGATIVE, and it is this task's because this task mints the name
+# ⛔ Acceptance 5 — the NEGATIVE, and it is this package's because it mints the name
 # --------------------------------------------------------------------------
 
 
@@ -309,7 +307,7 @@ def test_a_disclosures_summary_is_spoken_and_no_block_inside_it_has_an_id():
 
 
 def test_the_withheld_count_is_carried_on_the_record_and_a_unit_without_one_reads_zero():
-    # ⚠️ The record half of the clause. The *report* is not this task's: the coverage
+    # ⚠️ The record half of the clause. The *report* is not this package's: the coverage
     # report that names units with unspoken content belongs to narration synthesis.
     assert speakable_of(depth1_unit_03()).withheld == 3
     assert speakable_of(depth1_unit_02()).withheld == 0

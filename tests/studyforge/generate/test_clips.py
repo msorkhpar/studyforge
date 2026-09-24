@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/generate/clips.py` (R12) — `W224`'s settlement, through the build.
+"""Mirror of `src/studyforge/generate/clips.py` (R12) — a build copies clips, through the build.
 
 Every corpus here is narrated by `studyforge narrate`'s own stage against the
 recording fake service in `tests/studyforge/cli/narrate/service.py` (no
@@ -131,7 +131,7 @@ def test_plan_enumerates_every_copy_and_the_build_agrees_path_for_path(tmp_path,
     assert plan_main([str(root)], out=stream) == 0
     plan = plan_for(root)
     planned = sorted(c.path for c in plan.creations if c.narration and not c.path.endswith("/"))
-    # ⛔ `W267`: a clip `narrate` wrote beside the material is on disk, so its line is
+    # ⛔ A clip `narrate` wrote beside the material is on disk, so its line is
     # never a `create`; it is kept, and the one removed above is expected from narrate.
     said = {line.split()[1]: line.split()[0] for line in stream.getvalue().splitlines()}
     printed = sorted(path for path in said if path in planned)

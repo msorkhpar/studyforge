@@ -6,7 +6,7 @@ API envelope, each with a strong ETag and `Cache-Control: no-cache`, and each
 answered `304` when `If-None-Match` names the current tag.
 
 **How you use it.** `route(source, request, rest)`, where `source` is any
-`ContentSource`. `CorpusContent(corpus)` is the one this row ships: it builds each
+`ContentSource`. `CorpusContent(corpus)` is the one this module ships: it builds each
 document from a corpus's declarations on request.
 
 **Depends on.** `contents.document`, `unit.builder`, `unit.served`, `archive.scrub`,
@@ -31,8 +31,8 @@ guarantee a `304` makes.
 
 ## ⛔ A quiz's key and sentences are WITHHELD
 
-⭐ **The user's ruling (2026-09-23) puts a quiz's correct answer on the SERVER
-side**, so a unit document is answered with every quiz option cut down to its id
+⭐ **A quiz's correct answer lives on the SERVER side**, so a unit document is answered with every
+quiz option cut down to its id
 and its words (`serve.withheld.redacted`). ⛔ The quiz route reads the key from
 `ContentSource.unit`, which is NOT redacted — the redaction is this route's, on
 the way out. ⭐ `CorpusContent.withheld` names every sentence and question id its quizzes carry,

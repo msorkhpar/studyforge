@@ -151,7 +151,7 @@ def test_a_directory_that_is_already_there_is_simply_already_there(tmp_path):
 
 
 def test_stand_creates_nothing_and_refuses_nothing_on_a_clear_path(tmp_path):
-    # ⛔ W268: a declared directory nothing fills is asked about, never minted.
+    # ⛔ A declared directory nothing fills is asked about, never minted.
     refused = []
 
     assert stand(tmp_path, PurePosixPath("one/images"), refused) is True
@@ -172,7 +172,7 @@ def test_stand_names_a_file_standing_where_a_directory_belongs(tmp_path):
 
 
 def test_every_writer_here_refuses_the_emission_census_own_filler(tmp_path, monkeypatch):
-    """⛔ `SF-28/2`, closed for all three writers rather than for the first one.
+    """⛔ Closed for all three writers rather than for the first one.
 
     ⭐ **The census fills a `Path` parameter with `Path("alpha")`** — a *relative*
     path, resolved against whatever the process's working directory happens to
@@ -259,9 +259,9 @@ def test_adding_something_that_is_not_a_record_is_refused():
 
 
 def test_an_output_root_that_does_not_exist_is_refused_and_never_minted(tmp_path):
-    """⛔ Measured: `tests/emission` calls this with `Path('alpha')`.
+    """⛔ `tests/emission` calls this with `Path('alpha')`.
 
-    ⭐ A writer that minted its own root created `alpha/alpha` **in the
+    ⭐ A writer that minted its own root would create `alpha/alpha` **in the
     repository** on every full test run, silently, because a relative root
     resolves against the process's working directory. ⛔ The refusal names
     neither the root nor the target (R7).
@@ -305,7 +305,7 @@ def test_a_path_the_plan_declares_as_the_builds_own_is_replaced_and_recorded(tmp
 
 
 def test_a_replaced_path_is_still_one_of_the_paths_the_run_wrote(tmp_path):
-    """⛔ Ruling 99: `paths` is the path-for-path diff against `studyforge plan`.
+    """⛔ `paths` is the path-for-path diff against `studyforge plan`.
 
     ⭐ A rebuild must diff exactly as a first build does, so `replaced` is a
     cross-cutting record and never a fourth category that removes a path from
@@ -449,7 +449,7 @@ def test_a_foreign_file_in_the_output_root_survives_a_rebuild_byte_for_byte(tmp_
 
 
 # --------------------------------------------------------------------------
-# same_root — whether a build's output IS the corpus root (`W224`)
+# same_root — whether a build's output IS the corpus root
 # --------------------------------------------------------------------------
 
 
@@ -473,7 +473,7 @@ def test_same_root_refuses_an_output_root_that_is_not_a_directory(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W254`, clause 3: one run never writes one path twice
+# ⛔ One run never writes one path twice
 # --------------------------------------------------------------------------
 
 

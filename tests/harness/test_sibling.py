@@ -66,7 +66,7 @@ def test_a_committed_file_is_read_at_the_commit(tmp_path):
 
 
 def test_the_working_tree_is_not_read_when_the_commit_carries_the_file(tmp_path):
-    # ⛔ `W404` head on: a different contract sits on disk and must not be seen.
+    # ⛔ Head on: a different contract sits on disk and must not be seen.
     root, directory = workspace(tmp_path)
     (directory / CONTRACT).write_text(IN_TREE, encoding="utf-8")
     reading = contract(root)

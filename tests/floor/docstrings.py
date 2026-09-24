@@ -1,10 +1,9 @@
 """R17's contract, checked for presence rather than for shape.
 
-⭐ **The product floor's copy of `tools/quality/docstrings.py`.** It stays on the main line
-when the tooling leaves, so the product's own rule keeps running; while both exist,
-`tests/test_floor_twins.py` holds its code to the original's, docstrings aside.
+⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
+checkout, and depends on nothing outside it.
 
-**What it does.** Fails a module under `src/` or `tools/` that has no module
+**What it does.** Fails a non-test module under `src/` that has no module
 docstring, or one too short to be a contract.
 
 **How you use it.** `check_docstrings(repo_root)` returns findings.
@@ -16,8 +15,8 @@ you use it, what it depends on — and it is tempting to parse for three
 headings. That check would enforce a template nobody agreed to, and would pass
 a module that filled the template in with nothing. So the floor catches the
 failure a machine can actually see (no contract at all, or `\"\"\"path
-utilities\"\"\"`), and the three parts stay a review criterion. The convention
-document gives the example that makes the difference plain.
+utilities\"\"\"`), and the three parts stay a review criterion. R17 in the spec
+states the three parts.
 """
 
 from __future__ import annotations

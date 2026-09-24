@@ -23,21 +23,20 @@ every module here keeps.
 
 ## ⛔ Why a skill obliges this, and why it is not a message
 
-⚠️ **`W346`, measured:** the first conversion obliged no log, so its milestone's
-whole deliverable was produced by hand a milestone later, by an office reading
-commit bodies — and two of its seven numbered findings existed only in a
-hand-back message and were found in no ref at all. ⭐ **A finding written into
+⚠️ **A finding carried only in a message is lost with the message**, and a
+conversion with no log leaves its findings to be reconstructed by hand from
+whatever survived. ⭐ **A finding written into
 the corpus, at a place the skill names, survives the message that announced
 it.** The place is `.studyforge/`, which the validator already skips as this
 tool's directory, so writing the log never makes the corpus it describes invalid.
 
 ## ⭐ The slot is the sort, started early
 
-The catalogue's `QA-04` sort asked one question of every finding: *could a
+The catalogue's sort asks one question of every finding: *could a
 skill have generated this?* **`yes`** is a hole in a skill (R19) and names
 where it goes; **`no`** is a candidate entry and says why no generator could
 write it; **`open`** is the question not yet asked. ⛔ `open` is allowed — the
-conversion may not be the office that sorts — but `closing` counts it aloud,
+conversion may not be the one that sorts — but `closing` counts it aloud,
 so an unsorted log is reported as unsorted rather than read as done.
 """
 
@@ -53,7 +52,7 @@ from studyforge.skills.delivery.refusal import one_or_all
 #: directory, which `validate` skips, so the log is never read as material.
 LOG = ".studyforge/findings.md"
 
-#: The question the catalogue's R19 refusal turns on, in the `QA-04` sort's words.
+#: The question the catalogue's R19 refusal turns on, in its first sort's words.
 QUESTION = "could a skill have generated this?"
 
 #: ⛔ Closed. `yes` is a hole in a skill, `no` a catalogue candidate, `open` unasked.

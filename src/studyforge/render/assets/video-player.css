@@ -61,10 +61,9 @@ figure.video .plyr__control:focus-visible {
      3. NO JS AT ALL — the native controls fullscreen the `<video>` itself,
         which is the only case `video:fullscreen` matches.
 
-   ⚠️ An earlier fix targeted `.plyr--fullscreen-active`, a class that does
-   not exist, and was "verified" by simulating the FALLBACK class — the one
-   path that already worked. It shipped with the real bug untouched. Check a
-   selector against the vendored stylesheet, not against memory.
+   ⚠️ `.plyr--fullscreen-active` does not exist, and simulating the FALLBACK
+   class verifies only the one path that already works. Check a selector
+   against the vendored stylesheet, not against memory.
 
    Separate rules, never one list: an unknown selector invalidates the WHOLE
    list, so the class-based hooks must not share a list with the pseudo-class

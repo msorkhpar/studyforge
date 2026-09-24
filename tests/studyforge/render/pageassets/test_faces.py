@@ -1,7 +1,6 @@
 """The vendored faces: pinned, unmodified, licensed, and carried inside the stylesheet.
 
-Mirrors `render/pageassets/faces.py` (`W362`, the register's rulings on the fonts
-and on D3).
+Mirrors `render/pageassets/faces.py`.
 """
 
 from __future__ import annotations
@@ -52,7 +51,7 @@ def test_every_face_ships_beside_its_open_font_licence():
 
 @pytest.mark.parametrize("family", ["Charis", "Andika"])
 def test_a_family_with_a_reserved_name_is_vendored_whole(family):
-    # ⛔ The register's ruling: Charis and Andika reserve their names, a subset
+    # ⛔ Charis and Andika reserve their names, a subset
     # is a Modified Version that may not carry them, so no file is subset. The
     # licence says which names are reserved; this checks the claim is still true
     # of the file that ships, and that every face of the family is a full release
@@ -85,7 +84,7 @@ def test_the_built_stylesheet_carries_every_face_as_base64():
 
 
 def test_the_built_stylesheet_names_no_font_file_by_url():
-    # ⛔ The register's D3: a relative face breaks R8 in Firefox, so every
+    # ⛔ A relative face breaks R8 in Firefox, so every
     # `url()` in the built stylesheet is a `data:` URI and none names a file.
     urls = re.findall(r"url\(\s*['\"]?([^'\")]+)", stylesheet())
     assert urls, "the stylesheet embeds no face at all"

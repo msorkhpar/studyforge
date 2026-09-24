@@ -70,7 +70,7 @@ def test_it_builds_a_corpus_into_the_named_directory(tmp_path):
 
 
 def test_it_builds_the_deeper_fixture_too(tmp_path):
-    # ⛔ Both `FND-04` fixtures, so a command that only worked on the flat one
+    # ⛔ Both fixture corpora, so a command that only worked on the flat one
     # could not pass.
     code, _ = invoke(str(FIXTURES / "depth2"), "--out", str(tmp_path))
     assert code == OK
@@ -92,7 +92,7 @@ def test_a_second_run_rebuilds_its_own_output_and_exits_zero(tmp_path):
 
 
 def test_a_rebuild_prints_each_path_exactly_once(tmp_path):
-    """⛔ Ruling 99: the report is a path-for-path diff against `studyforge
+    """⛔ The report is a path-for-path diff against `studyforge
     plan`, and a path printed as both `wrote` and `replace` breaks the diff."""
     invoke(str(FIXTURES / "depth1"), "--out", str(tmp_path))
     _, printed = invoke(str(FIXTURES / "depth1"), "--out", str(tmp_path))
@@ -161,7 +161,7 @@ def test_the_refusal_message_is_not_prefixed_with_the_corpus_root(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W212` — a declaration the build cannot read is refused, never raised
+# ⛔ A declaration the build cannot read is refused, never raised
 # --------------------------------------------------------------------------
 
 #: ⛔ Assembled rather than written whole (R7's sweep reads this file).
@@ -222,8 +222,8 @@ def test_the_catch_list_is_the_build_s_own_tuple_and_not_a_copy():
 
 
 def test_a_mirrored_series_builds_one_page_per_unit_and_every_instrument_agrees(tmp_path):
-    # ⚠️ `W254`, measured at `973fc67`: `validate` refused this layout while `plan`
-    # and a build exited 0, and the build replaced two of its four pages.
+    # ⚠️ Every instrument must agree on this layout: a build that replaced two
+    # of its four pages while `plan` exited 0 would pass unseen.
     root = corpora.mirrored(tmp_path / "c")
     out = tmp_path / "site"
     out.mkdir()
@@ -262,7 +262,7 @@ def test_a_path_two_units_claim_is_refused_by_name_by_plan_and_build_and_nothing
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W314` — a crossed media limit stops the build and says so (§5)
+# ⛔ A crossed media limit stops the build and says so (§5)
 # --------------------------------------------------------------------------
 
 #: The bytes the depth1 fixture's own media weighs once a build has copied it
@@ -292,7 +292,7 @@ def a_corpus_with_clips(tmp_path, sizes=(), **limits):
     return root
 
 
-def test_W314_a_corpus_inside_its_limits_builds_and_exits_zero(tmp_path):
+def test_a_corpus_inside_its_limits_builds_and_exits_zero(tmp_path):
     # ⭐ The other way round (R12): the stop is a stop, not a new floor.
     root = a_corpus_with_clips(tmp_path, (10, 20), max_total_bytes=5000, max_file_bytes=1000)
     out = tmp_path / "site"
@@ -314,9 +314,7 @@ def test_W314_a_corpus_inside_its_limits_builds_and_exits_zero(tmp_path):
         ),
     ],
 )
-def test_W314_media_already_over_a_limit_refuses_the_build_and_writes_nothing(
-    tmp_path, limits, crossed
-):
+def test_media_already_over_a_limit_refuses_the_build_and_writes_nothing(tmp_path, limits, crossed):
     root = a_corpus_with_clips(tmp_path, (10, 20, 30), **limits)
     out = tmp_path / "site"
     out.mkdir()
@@ -329,7 +327,7 @@ def test_W314_media_already_over_a_limit_refuses_the_build_and_writes_nothing(
     assert list(out.iterdir()) == []
 
 
-def test_W314_the_refusal_names_the_ways_forward_and_the_file_responsible(tmp_path):
+def test_the_refusal_names_the_ways_forward_and_the_file_responsible(tmp_path):
     # ⛔ A refusal with no way forward is a wall, and one that does not name the
     # file responsible sends a person looking. Both sentences are the verdict's
     # own, so this reads them through the command rather than writing them here.
@@ -344,7 +342,7 @@ def test_W314_the_refusal_names_the_ways_forward_and_the_file_responsible(tmp_pa
     assert "clip-0.mp3" in printed
 
 
-def test_W314_media_this_build_wrote_over_a_limit_stops_it_after_the_site_is_written(tmp_path):
+def test_media_this_build_wrote_over_a_limit_stops_it_after_the_site_is_written(tmp_path):
     # ⛔ A build into the corpus root copies the archive's media into the unit
     # directory its page addresses, and those bytes are weighable only once
     # they exist — predicting them would be a second measurement (§5). So the
@@ -360,7 +358,7 @@ def test_W314_media_this_build_wrote_over_a_limit_stops_it_after_the_site_is_wri
     assert "build stopped" in printed and "commit nothing yet" in printed
 
 
-def test_W314_the_same_build_under_limits_that_fit_exits_zero(tmp_path):
+def test_the_same_build_under_limits_that_fit_exits_zero(tmp_path):
     # ⭐ The same run, asserted the other way: what stops it is the limit and
     # not the fact that a build into the corpus root writes media at all.
     root = a_corpus_with_clips(tmp_path, max_total_bytes=5_000_000, max_file_bytes=1_000_000)
@@ -370,7 +368,7 @@ def test_W314_the_same_build_under_limits_that_fit_exits_zero(tmp_path):
 
 
 @pytest.mark.parametrize("commit", ["always", "never"])
-def test_W314_a_policy_whose_limits_are_inapplicable_never_stops_the_build(commit, tmp_path):
+def test_a_policy_whose_limits_are_inapplicable_never_stops_the_build(commit, tmp_path):
     root = a_corpus_with_clips(tmp_path, (10, 20, 30), max_total_bytes=1, max_file_bytes=1)
     manifest = json.loads((root / "corpus.json").read_text("utf-8"))
     manifest["media"] = {**manifest["media"], "commit": commit}
@@ -382,7 +380,7 @@ def test_W314_a_policy_whose_limits_are_inapplicable_never_stops_the_build(commi
     assert "crossed" not in printed
 
 
-def test_W314_a_reading_that_could_not_be_taken_is_a_stop_only_after_the_build(tmp_path):
+def test_a_reading_that_could_not_be_taken_is_a_stop_only_after_the_build(tmp_path):
     # ⛔ Never silently committable: a footprint that could not be weighed after
     # the build is said and exits 1. ⭐ Before one it is not this command's
     # refusal — the build's own reader refuses the same record with its own
@@ -398,7 +396,7 @@ def test_W314_a_reading_that_could_not_be_taken_is_a_stop_only_after_the_build(t
     assert media_stop(None, measured=True) == ""
 
 
-def test_W314_an_unreadable_narration_record_never_lets_a_build_exit_zero(tmp_path):
+def test_an_unreadable_narration_record_never_lets_a_build_exit_zero(tmp_path):
     # ⭐ The end the command actually has today, read rather than assumed: the
     # build's own reader refuses the record before the site is written.
     root = a_corpus_with_clips(tmp_path, max_total_bytes=5_000_000, max_file_bytes=1_000_000)

@@ -5,7 +5,7 @@ here**: a block inside an `@media` is read, a block that redeclares what the bas
 already says is read ONCE, and two stops in two gradients are two groups rather
 than one pool.
 
-⭐ **The live population is asserted inhabited** (Ruling 48): a reader that found
+⭐ **The live population is asserted inhabited**: a reader that found
 no theme and no gradient would make every verdict above it a green over nothing.
 """
 

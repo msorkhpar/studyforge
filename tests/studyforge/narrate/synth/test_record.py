@@ -113,7 +113,7 @@ def test_a_record_this_build_does_speak_round_trips(tmp_path):
 
 
 def test_the_record_says_which_voice_its_conditions_name(tmp_path):
-    # ⭐ `W457`: what a stale-clip finding tells the author to re-run with.
+    # ⭐ What a stale-clip finding tells the author to re-run with.
     path = state_file(tmp_path)
     write_state(path, one_clip(), conditions())
     assert read_state(path).voice == conditions().voice
@@ -139,7 +139,7 @@ def test_the_record_renders_identically_for_an_unchanged_corpus():
     assert render_state(one_clip(), conditions()) == render_state(one_clip(), conditions())
 
 
-def test_the_record_carries_no_clock_and_exactly_the_fields_the_office_chose():
+def test_the_record_carries_no_clock_and_exactly_its_declared_fields():
     document = json.loads(render_state(one_clip(), conditions()))
     assert list(document) == ["narration_api", "conditions", "clips"]
     assert document["narration_api"] == NARRATION_API
@@ -200,7 +200,7 @@ def test_the_fingerprint_moves_with_every_recorded_condition_and_with_nothing_el
     assert conditions(fmt="opus").fingerprint != base
     assert conditions(provides=3).fingerprint != base
     assert conditions(chunk_chars=512).fingerprint != base
-    # ⛔ W223: the deployment's model is a condition, so a new one moves it.
+    # ⛔ The deployment's model is a condition, so a new one moves it.
     assert conditions(engine_model="kokoro-v1.1").fingerprint != base
     assert conditions().fingerprint == base
 
@@ -232,10 +232,10 @@ def test_the_record_lives_beside_the_discovery_cache_under_the_generated_root(tm
 
 @pytest.mark.parametrize("named", ["alpha", "narration.jsonl", "state.json", ".narration.json"])
 def test_the_writer_refuses_any_path_that_is_not_this_contracts_one_file(tmp_path, named):
-    # ⛔ MEASURED: without this, `tests/test_emission.py`'s probe — which fills
-    # unprobed parameters with the word `alpha` — made `write_state` drop a file
-    # called `alpha` into the repository root, and that stray file changed what
-    # an UNRELATED module's scan refused. A writer pointed anywhere is a
+    # ⛔ Without this, a probe that fills unprobed parameters with the word
+    # `alpha` would make `write_state` drop a file called `alpha` into the
+    # repository root, and a stray file changes what an UNRELATED module's scan
+    # refuses. A writer pointed anywhere is a
     # contract nobody can find and a suite whose colour depends on run order.
     target = tmp_path / named
     with pytest.raises(StateError):
@@ -262,7 +262,7 @@ def test_the_refusal_says_how_to_obtain_the_right_path(tmp_path):
 
 def test_the_fingerprint_comes_from_the_one_minter_and_is_not_a_second_truncation():
     # ⛔ `test_exactly_one_module_in_the_whole_framework_truncates_a_digest`
-    # failed on this file's first draft, which computed its own. The fingerprint
+    # refuses a second truncation. The fingerprint
     # is `speakable.naming.digest_of` over the canonical conditions.
     canonical = json.dumps(conditions().document(), sort_keys=True, ensure_ascii=False)
     assert conditions().fingerprint == digest_of(canonical)
@@ -270,7 +270,7 @@ def test_the_fingerprint_comes_from_the_one_minter_and_is_not_a_second_truncatio
 
 
 # --------------------------------------------------------------------------
-# ⛔ W218: `forget` — the smallest removal, and the record keeps one writer
+# ⛔ `forget` — the smallest removal, and the record keeps one writer
 # --------------------------------------------------------------------------
 
 
@@ -326,7 +326,7 @@ def test_forget_refuses_any_file_but_the_one_record(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ W226: version 2 locates every clip, and version 1 still reads
+# ⛔ Version 2 locates every clip, and version 1 still reads
 # --------------------------------------------------------------------------
 
 
@@ -393,13 +393,13 @@ def test_forget_superseded_removes_only_the_named_clip_and_otherwise_writes_noth
 
 
 # --------------------------------------------------------------------------
-# ⛔ W223: the conditions gained `engine_model`, and an older record still reads
+# ⛔ The conditions carry `engine_model`, and an older record still reads
 # --------------------------------------------------------------------------
 
 
 def test_a_record_whose_conditions_name_no_model_reads_whole_and_forget_carries_them(tmp_path):
     # ⛔ The MUST-NOT: an older record is neither refused nor shortened. Its
-    # top-level conditions are exactly what the writer before `W223` rendered.
+    # top-level conditions are exactly what a writer without `engine_model` rendered.
     older = {key: value for key, value in conditions().document().items() if key != "engine_model"}
     entry = {"filename": "u1-aaaaaaaa.mp3", "where": "audio", "conditions": "f", "engine": "k"}
     clips = {"u1": entry, "u2": {**entry, "filename": "u2-bbbbbbbb.mp3"}}

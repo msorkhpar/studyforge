@@ -96,7 +96,7 @@ def test_the_summary_counts_written_and_fresh_clips():
 
 
 # --------------------------------------------------------------------------
-# ⛔ W193 answer 4, and `--prune`'s own report
+# ⛔ The dead-entry disclosure, and `--prune`'s own report
 # --------------------------------------------------------------------------
 
 

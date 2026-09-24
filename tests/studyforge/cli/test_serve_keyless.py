@@ -1,6 +1,6 @@
 """The serving process never hands out a quiz's key, in either form of `serve`.
 
-⛔ **The user's ruling (2026-09-23): a quiz's correct answer resides on the SERVER side.**
+⛔ **A quiz's correct answer resides on the SERVER side.**
 What the site serves never carries the key or an option's sentence, except the grading
 route's answer for the option the reader chose.
 
@@ -201,9 +201,9 @@ def test_a_quiz_edited_while_served_is_withheld_from_its_next_request(tmp_path) 
         assert fetch(serving.server, "/docs/fresh.md")[0] == 404
 
 
-def test_a_page_built_before_W451_is_refused_whole(tmp_path) -> None:
+def test_a_page_that_carries_its_quiz_key_is_refused_whole(tmp_path) -> None:
     """⚠️ Fail closed: a page that carries the key in its attributes is not served at
-    all until the corpus is rebuilt — the register rebuilds BEFORE it restarts."""
+    all until the corpus is rebuilt, so a rebuild comes BEFORE a restart."""
     shape = layout(tmp_path / "old")
     old = shape.quiz / "old.unit.html"
     old.write_text(

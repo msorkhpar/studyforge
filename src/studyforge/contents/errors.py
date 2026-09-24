@@ -22,7 +22,7 @@ class ContentsError(ValueError):
     this build disagreed about a version"*.
 
     ⚠️ `PersonalDataLeak` is deliberately **outside** this family and travels
-    through as itself (Ruling 58). A caller that folded an R7 refusal into
+    through as itself (R7). A caller that folded an R7 refusal into
     *"the contents would not build"* would log the leak as one more corpus
     that did not render, with the leak the thing nobody looked at.
     """

@@ -51,22 +51,22 @@ from studyforge.render.pageassets.source import text
 #: ⛔ `chrome.css` sits after `reading.css` and before `code-highlight.css`, and
 #: both halves of that are meaning. It comes *after* the reading surface because
 #: it refines what `reading.css` sets on `body` and on `body`'s children — the
-#: page column (`PO-22/6`) is exactly that refinement, and at equal specificity
+#: page column is exactly that refinement, and at equal specificity
 #: the last rule wins. It comes *before* the highlight part because the
 #: highlight refines the inside of a code block, which no chrome rule reaches.
 #:
 #: ⭐ `lists.css`, `onward.css` and `notes.css` follow `chrome.css` directly:
-#: the four are one part split at named seams for R11 (`W362`; `chrome.css`
+#: the four are one part split at named seams for R11 (`chrome.css`
 #: names them), and they share its position's argument.
 #:
-#: ⭐ `practice.css` (`SF-24`) follows those four directly and for their reason:
+#: ⭐ `practice.css` follows those four directly and for their reason:
 #: the practice panel is a region this framework emits, reached by an attribute
 #: and painted in palette tokens, so it belongs with the other authored region
 #: parts and before anything that refines the inside of a code block. ⛔ It comes
 #: after `notes.css` because the panel sits under a section the reading surface
 #: has already set, and at equal specificity the last rule wins.
 #:
-#: ⭐ `practice-quiz.css` (`AX-09`) follows `practice.css` directly and for that
+#: ⭐ `practice-quiz.css` follows `practice.css` directly and for that
 #: part's own reason: the two are one region split at a named seam for R11 — the
 #: panel and the run on one side, the questions on the other — and a quiz wears
 #: `data-practice-quiz` rather than `data-practice`, so neither file's rules can
@@ -111,7 +111,7 @@ STYLE_PARTS = (
 #: instead of shipping a feature that is quietly absent — and it is **LAST**, so
 #: a throw of its own reaches no other part.
 #:
-#: ⭐ `progress-view.js` (`W362`) reads the store too, so it follows
+#: ⭐ `progress-view.js` reads the store too, so it follows
 #: `study-progress.js`; it sits before `read-mark.js` because that part's
 #: LAST-ness is the property being kept.
 #:
@@ -121,25 +121,24 @@ STYLE_PARTS = (
 #: `read-mark.js` because that part's LAST-ness is the property being kept, and
 #: after `video-player.js` so the two media parts read together.
 #:
-#: ⭐ `practice.js` (`SF-24`) needs no library and no store: it draws the panel
+#: ⭐ `practice.js` needs no library and no store: it draws the panel
 #: and reaches the API only through `window.studyforge.run`, which the SERVING
 #: PROCESS adds to the page it answers — so a built page names no client and no
-#: origin (R8, `W370`). ⛔ It is before `read-mark.js` because that part's
+#: origin (R8). ⛔ It is before `read-mark.js` because that part's
 #: LAST-ness is the property being kept, and after `narration.js` so the parts
 #: that draw a region of their own read together.
 #:
-#: ⭐ `practice-editor.js` and `practice-quiz.js` (`AX-09`) follow `practice.js`
+#: ⭐ `practice-editor.js` and `practice-quiz.js` follow `practice.js`
 #: for the same reason `practice-quiz.css` follows `practice.css`: they are that
 #: part split at named seams for R11 — the panel and the run, the two editor
 #: windows, and the quiz. ⛔ **The order between the three settles nothing**, and
 #: that is a property rather than luck: each one selects its own elements, none
 #: defines anything another reads. ⚠️ `practice-quiz.js` asks
 #: `window.studyforge.quiz` — not `.run` — whether an origin exists, because
-#: since the user's ruling of 2026-09-23 the local study server grades a quiz and
-#: the page holds no key (spec §7 §7, amended 2026-09-23). ⚠️ They are before
+#: the local study server grades a quiz and the page holds no key (spec §7 §7). ⚠️ They are before
 #: `read-mark.js` because that part's LAST-ness is the property being kept.
 #:
-#: ⭐ `theme.js` (`W388` stage 2) reads and writes the store's DISPLAY record,
+#: ⭐ `theme.js` reads and writes the store's DISPLAY record,
 #: so it follows `study-progress.js` for the same reason `progress-view.js`
 #: does; it sits before `read-mark.js` because that part's LAST-ness is the
 #: property being kept. ⚠️ It is not what stops the page flashing the wrong
@@ -177,7 +176,7 @@ def stylesheet() -> str:
 
     ⭐ The faces come first because an `@font-face` rule is order-free and the
     parts after it are not; putting the one block that cannot conflict ahead of
-    everything keeps "the order is meaning" true of the parts alone (`W362`).
+    everything keeps "the order is meaning" true of the parts alone.
     """
     return faces.rules() + JOIN + compose(STYLE_PARTS)
 

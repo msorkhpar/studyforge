@@ -3,7 +3,7 @@
 ⛔ **Not a fourth comparison of the same files.** Each renderer already compares
 its own goldens where its own tests live. What fails here is the shape between
 them — the census, the orphan, the collision — plus one place a reader can count
-the total, which is what makes `SF-30`'s assertions checkable against something
+the total, which makes the floor's assertions checkable against something
 other than a harness's own concatenation.
 """
 
@@ -14,10 +14,10 @@ import pytest
 from tests.harness import goldens
 from tests.harness.goldens import Golden
 
-#: A floor on **coverage**, not a count. ⚠️ Measured 2026-09-10 at `5e608bfc`:
-#: 10 goldens — 7 rendered pages and 3 plans. ⛔ A lower bound rather than an
-#: equality, so adding a golden is not a failing test; it can only break by the
-#: census reaching LESS than it does today, which is the failure that matters.
+#: A floor on **coverage**, not a count: rendered pages and plans together.
+#: ⛔ A lower bound rather than an equality, so adding a golden is not a
+#: failing test; it can only break by the census reaching LESS, which is the
+#: failure that matters.
 LEAST_GOLDENS = 10
 
 #: How many writers claim them. ⭐ Four: three regenerators and the plan CLI.
@@ -64,7 +64,7 @@ def test_no_committed_golden_is_claimed_by_nobody(claimed):
 
 
 def test_no_two_cases_claim_one_golden(claimed):
-    # ⛔ Ruling 187. "Every case has a golden" and "every golden has a case" are
+    # ⛔ Injectivity. "Every case has a golden" and "every golden has a case" are
     # both satisfied by a collision, which pins only whichever case writes last
     # — surjectivity, asserted twice, is still not injectivity.
     print(f"distinct paths {len({golden.path for golden in claimed})} of {len(claimed)} cases")

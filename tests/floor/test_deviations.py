@@ -1,4 +1,4 @@
-"""Mirror of `tools/quality/deviations.py` (R12).
+"""Mirror of `tests/floor/deviations.py` (R12).
 
 ⭐ **This module is DATA, so its mirror asserts the shape of the declaration rather than
 a reading.** ⛔ Whether the declaration still MATCHES the tree is the check's question and
@@ -18,7 +18,7 @@ def test_the_declaration_is_inhabited():
 
 
 def test_every_entry_carries_a_ground_and_at_least_one_name():
-    # ⛔ The row's clause: an exemption is DECLARED WITH ITS GROUND, never silent. An
+    # ⛔ The clause: an exemption is DECLARED WITH ITS GROUND, never silent. An
     # entry with an empty ground is a silent exemption wearing the shape of a declared one.
     for package, declaration in DECLARED.items():
         assert declaration.names, f"{package} declares a ground and excuses nothing"

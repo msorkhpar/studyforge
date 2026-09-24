@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/validate/blocks.py` (R12) — every block's shape, through ONE reader.
 
-⛔ **`W263` (a `list`'s shape) and `W282` (every type and field set).** `validate` refuses by
+⛔ **A `list`'s shape, and every type and field set.** `validate` refuses by
 where it sits every block spec §6 does not admit, at any depth, and
 `tests/fixture_checks.check_blocks` says the same, at the same path, through the same function:
 
@@ -11,7 +11,7 @@ where it sits every block spec §6 does not admit, at any depth, and
 | the same, inside a quote and a nested list | named at its full depth |
 | `start` that is not an integer (a string, a boolean, a float) | named; `0` is admitted |
 | a key out of order or unknown | named |
-| ⛔ `W282`: an unknown type, or keys not its fields then its optional ones | named, any depth |
+| ⛔ An unknown type, or keys not its fields then its optional ones | named, any depth |
 | the reader planted to say something | ⭐ both consumers repeat it — one reader, never two |
 """
 
@@ -44,7 +44,7 @@ ADMITTED = [
     ),
     {"type": "quote", "blocks": [_list(["quoted"])]},
     _list([]),
-    # ⭐ `W282`: every other type with exactly its fields, and containers at depth.
+    # ⭐ Every other type with exactly its fields, and containers at depth.
     {"type": "heading", "level": 2, "text": "A heading"},
     {"type": "code", "lang": "python", "text": "x = 1"},
     {"type": "table", "headers": ["a"], "rows": [["b"]]},
@@ -86,7 +86,7 @@ MALFORMED = {
         "blocks[0] has keys",
     ),
     "an unknown key": ([_list(["a"], numbering="roman")], "blocks[0] has keys"),
-    # ⛔ `W282`: any type's field set, and a type the vocabulary does not name.
+    # ⛔ Any type's field set, and a type the vocabulary does not name.
     "an unknown type": ([{"type": "aside", "text": "x"}], "blocks[0] has type a str"),
     "no type at all": ([{"text": "x"}], "blocks[0] has type"),
     "a paragraph with an extra key": (
@@ -136,7 +136,7 @@ def test_a_malformed_list_is_refused_BY_WHERE_IT_SITS_exit_1(tmp_path, case):
 @pytest.mark.parametrize("case", sorted(MALFORMED))
 def test_the_fixture_check_names_the_SAME_place(case):
     # ⛔ Clause 2's other half: the harness agrees with `validate`, case by case, and at the
-    # SAME path, because it hands the reader the whole block list (`W282`).
+    # SAME path, because it hands the reader the whole block list.
     blocks, named = MALFORMED[case]
     said = [message for rule, message in check_blocks({"blocks": blocks}, "doc")]
     assert said, f"the fixture check read {case} as clean"
@@ -154,7 +154,7 @@ def test_ONE_reader_a_planted_reader_speaks_through_BOTH_consumers(tmp_path, mon
         lambda blocks, where="blocks": iter([("planted-where", "planted-what")]),
     )
     assert any("planted-where planted-what" in f.message for f in validate(root).findings)
-    # ⭐ `W282`: a paragraph, not a list, so every type reaches the reader, not only `list`.
+    # ⭐ A paragraph, not a list, so every type reaches the reader, not only `list`.
     said = [
         message
         for _rule, message in check_blocks({"blocks": [{"type": "para", "text": "x"}]}, "doc")
@@ -162,24 +162,24 @@ def test_ONE_reader_a_planted_reader_speaks_through_BOTH_consumers(tmp_path, mon
     assert said == ["doc planted-where planted-what"], said
 
 
-def test_W282_the_fixture_check_holds_no_vocabulary_of_its_own():
+def test_the_fixture_check_holds_no_vocabulary_of_its_own():
     # ⛔ Never a second copy: the harness's module imports no field or type table to decide with.
     for name in ("BLOCK_FIELDS", "BLOCK_OPTIONAL", "BLOCK_TYPES", "CONTAINER_TYPES"):
         assert not hasattr(shape, name), f"tests/fixture_checks/shape.py still holds {name}"
 
 
-def test_W264_2_a_list_carrying_start_AFTER_its_fields_is_not_a_vocabulary_error():
+def test_a_list_carrying_start_AFTER_its_fields_is_not_a_vocabulary_error():
     # ⭐ The optional key after the fields is admitted by the fixture check.
     assert list(check_blocks({"blocks": [_list(["a"], ordered=True, start=4)]}, "doc")) == []
 
 
-def test_W264_2_every_OTHER_type_still_carries_exactly_its_fields():
+def test_every_OTHER_type_still_carries_exactly_its_fields():
     # ⛔ The optional-key allowance is per type, and `para` names none.
     said = list(check_blocks({"blocks": [{"type": "para", "text": "x", "start": 2}]}, "doc"))
     assert [rule for rule, _ in said] == ["vocabulary"], said
 
 
-def test_W282_a_block_that_is_not_an_object_is_named_and_validate_never_raises(tmp_path):
+def test_a_block_that_is_not_an_object_is_named_and_validate_never_raises(tmp_path):
     # ⛔ R6: every check yields. `check_counts` read a type off every block and raised on this
     # shape. The archive's builder cannot write it, so it is edited into the written document.
     root = corpora.one_unit(tmp_path / "c", blocks=[{"type": "para", "text": "x"}])

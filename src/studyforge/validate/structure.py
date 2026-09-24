@@ -161,7 +161,7 @@ def check_digests(walk: Walk) -> Iterator[Finding]:
 def check_counts(walk: Walk) -> Iterator[Finding]:
     """Each document's `counts` matches the blocks it carries.
 
-    ⛔ A block that is not an object counts as no type (`W282`): `check_block_shapes` names
+    ⛔ A block that is not an object counts as no type: `check_block_shapes` names
     it, and reading a type off it here raised instead of yielding (R6).
     """
     for unit in walk.units:
@@ -192,8 +192,8 @@ def check_declared_units_are_present(walk: Walk) -> Iterator[Finding | Unchecked
 
     ⛔ **A document that was *refused* is not a missing unit.** Reporting it as
     one turns a corpus that breaks a single rule into two findings and sends
-    the reader after the wrong defect. Measured: the personal-data fixture,
-    which breaks exactly one rule, produced two until this distinction existed.
+    the reader after the wrong defect: the personal-data fixture breaks
+    exactly one rule and reads as one finding.
     """
     for held in walk.containers:
         present = {

@@ -17,11 +17,11 @@ discovery reported (R6).
 **Depends on.** `corpus.manifest` for the file's name, `corpus.discovery` for the
 scan, the verdict and the cache, `generate` for `read_corpus` and `Corpus`
 (⚠️ see below), `progress` for each corpus's store, and `archive.scrub` for the
-leak that travels through untranslated (Ruling 58).
+leak that travels through untranslated.
 
 ⚠️ **No progress store is named private here.** `routes.assets` refuses every
-store on any resolved path (`SF-39/4`), so a predicate here would be a second
-refusal nothing could reach — it was planted out during this row and no test failed.
+store on any resolved path, so a predicate here would be a second
+refusal nothing could reach.
 
 ## ⛔ No configured paths
 
@@ -38,7 +38,7 @@ only as its digest**: a state request calls `rescan` and compares, so a tree tha
 changed after startup reads `stale` and the answer is the new scan's. ⛔ No field
 here hands a caller the startup scan's artifacts to answer from.
 
-## ⛔ Where the record lives and where the pages are scanned are TWO paths (`W385`)
+## ⛔ Where the record lives and where the pages are scanned are TWO paths
 
 ⭐ **`root` is where a corpus's manifest, unit documents and progress store live;
 `scan_root` is where its pages are scanned, and it defaults to `root`.** A corpus
@@ -53,7 +53,7 @@ A URL addresses a corpus by its `source`, so two with the same one would put two
 corpora behind one address — and which answered would be decided by walk order.
 ⛔ Refused before a socket exists, naming both manifests by relative path.
 
-## ⚠️ Why `read_corpus` comes from the build package (`SF-19a/1`)
+## ⚠️ Why `read_corpus` comes from the build package
 
 It is the one reader of a corpus's manifest, container maps and contents together;
 `CorpusContent` already consumes its value. A second reader here would be a second
@@ -83,7 +83,7 @@ class DiscoveryRefused(ValueError):
     """
 
 
-#: ⛔ What `discover` lets out (`W208`). `PersonalDataLeak` travels as itself.
+#: ⛔ What `discover` lets out. `PersonalDataLeak` travels as itself.
 RAISES = (DiscoveryRefused, PersonalDataLeak)
 
 
@@ -91,7 +91,7 @@ RAISES = (DiscoveryRefused, PersonalDataLeak)
 class ServedCorpus:
     """One corpus an instance serves: its declarations, where it sits, how it started.
 
-    ⭐ `scan_root` is where its pages are scanned; given as `None` it is `root` (`W385`).
+    ⭐ `scan_root` is where its pages are scanned; given as `None` it is `root`.
     """
 
     corpus: Corpus
@@ -183,10 +183,10 @@ def discover(root: Path | str) -> Discovered:
         try:
             corpus = read_corpus(manifest.parent)
         except PersonalDataLeak:
-            raise  # ⛔ R7's refusal is never demoted to a skipped corpus (Ruling 58).
+            raise  # ⛔ R7's refusal is never demoted to a skipped corpus.
         except BUILD_RAISES as fault:
             # ⭐ What `generate` lets out is its `RAISES`, never a member retyped
-            # here (`W208`, `W213`); the leak above is this site's own arm, and
+            # here; the leak above is this site's own arm, and
             # `RAISES` is what it reaches when the corpus is merely unreadable.
             report.append(f"{named} is not served: {fault}")
             continue

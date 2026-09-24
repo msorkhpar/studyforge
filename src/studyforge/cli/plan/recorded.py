@@ -13,7 +13,7 @@ superseded clips the record still names on disk (`Recorded.superseded`).
 `narrate.speakable.naming` for the clip name's parser, and `cli.plan.report`
 for the records a plan is made of. ⛔ It opens the record and nothing else.
 
-## ⛔ The narration record is a plan input (`E09` § SF-38/8, `W224`)
+## ⛔ The narration record is a plan input
 
 ⭐ A build copies each clip a page addresses into any `--out` but the corpus
 root, so the plan names every copy: one line per clip the record files under a
@@ -22,7 +22,7 @@ the declarations can answer; an entry whose filename does not carry the id it
 is filed under is `narrate.playable`'s MISFILED, which no page addresses, so it
 is not named.
 
-## ⛔ A copy is LOCATED FROM THE RECORD, never re-derived (`W288`, `W226/2`)
+## ⛔ A copy is LOCATED FROM THE RECORD, never re-derived
 
 ⚠️ A build probes a unit's clips in that unit's own audio directory, so an
 entry whose recorded `where` is some other directory — a relabelled or removed
@@ -37,9 +37,9 @@ directory, and a line that overclaimed is not.
 ⚠️ **What is still named and not copied, stated rather than hidden:** an entry
 whose speech id no page produces any more, filed in its unit's own directory,
 cannot be told apart without opening the unit documents, which a plan never
-does. `narrate` discloses such entries and `--prune` removes them (`W218`).
+does. `narrate` discloses such entries and `--prune` removes them.
 
-## ⛔ A superseded clip is named as SUPERSEDED, never as a copy (`W226`)
+## ⛔ A superseded clip is named as SUPERSEDED, never as a copy
 
 ⭐ The record names every clip an earlier wording or directory wrote that no
 prune has removed. A build never copies one, so it is never a `Creation` and

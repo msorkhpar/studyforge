@@ -1,9 +1,7 @@
 """Whether a run changed the working tree, as a **delta** rather than a verdict on cleanliness.
 
-⭐ **The product suite's OWN copy of `tools/treestate.py`**, so the suite's exit
-condition holds in a checkout with no tooling in it. ⛔ The functions are that module's,
-byte for byte save the file a failure points its reader at, and `tests/test_process_twins.py`
-refuses a drift while both exist; once the tooling leaves, this copy is the only one.
+⭐ **The product suite's OWN tree-state check**, so the suite's exit condition holds in
+any checkout.
 
 **What it does.** Takes two `git status` snapshots and reports every path whose
 status changed **between** them. Nothing else: it does not know what a writer
@@ -28,8 +26,8 @@ just committed. ⛔ A check that is red by default is a check that gets an
 environment variable to switch it off within a week.
 
 ⭐ A delta is red only for a path whose status **moved while the suite ran**,
-which is the actual question. It is therefore also indifferent to what another
-office merged on top: a merge changes the tree *before* the run, so both
+which is the actual question. It is therefore also indifferent to what somebody
+else merged on top: a merge changes the tree *before* the run, so both
 snapshots see the same thing and the delta is empty. The one way a merge turns
 this red is a merged branch that really does write during the run — which is
 the signal, not noise.
@@ -42,10 +40,9 @@ the signal, not noise.
    that included them would never be equal to another one. ⭐ The cost is a
    blind spot exactly the size of the ignore file; the alternative is an
    instrument that is always red, which sees nothing at all.
-2. ⛔ **A write outside the repository is invisible.** MEASURED at `abee048`
-   with an audit hook over the emission census: eight public callables attempt
-   `os.mkdir` under the probe's synthetic poison path, and every one of them
-   fails only because the process is unprivileged. Nothing here would notice if
+2. ⛔ **A write outside the repository is invisible.** Under the emission
+   census, public callables attempt `os.mkdir` under the probe's synthetic
+   poison path, and `tests/emission/containment.py` refuses each one. Nothing here would notice if
    one succeeded — this instrument answers *"did the run dirty the checkout"*
    and no larger question.
 3. ⚠️ **`git` may not be installed.** Then there is no snapshot and the caller

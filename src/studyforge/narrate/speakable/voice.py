@@ -32,8 +32,8 @@ have none.** ⛔ It is taken deliberately and the alternative is worse: a second
 parser. ⭐ It is also a **leaf** — `studyforge.render.__init__` is a docstring and
 nothing else, and `render.markup.text` imports only `re`, so nothing of the page
 renderer is reached. ⚠️ That the parser's home is under `render/` at all is
-`SF-12/7`'s recorded inversion, and moving it to a neutral home is a finding filed
-with this task rather than an edit made from inside it.
+a known inversion, and moving it to a neutral home is a separate change
+rather than an edit made from inside this module.
 
 ## ⛔ Order is load-bearing
 

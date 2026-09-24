@@ -8,12 +8,12 @@ shape BEHAVES as it is named when its own declared commands are run:
 |---|---|---|---|
 | 1 | a file and a test that passes | succeeds | passes |
 | 2 | a file and a test that fails | succeeds | fails |
-| 3 | a file and NO test — ungraded, its record names the file (`W357`) | succeeds | none declared |
+| 3 | a file and NO test — ungraded, its record names the file | succeeds | none declared |
 | 4 | a file that does not compile | fails | errors at collection |
 | 5 | no practice at all — reading only | — | — |
 
 ⭐ **Why unit 4's run command matters as much as its test.** *"The first
-failure ends the run"* (`SF-20`): a runner that stops at the failed run never
+failure ends the run"*: a runner that stops at the failed run never
 reaches the grader, and the grader it did not reach is asserted to be one that
 could not have been run against anything.
 
@@ -31,7 +31,7 @@ both halves are asserted below.
 **Depends on.** `tests.fixture_checks` for the declaration, and the framework's
 own readers — `studyforge.exercise` for the record and its state,
 `studyforge.validate` for the verdict. ⛔ It imports nothing from `execute/`:
-the runner is `SF-20`'s, and this is the fixture it will be measured on.
+the runner is `studyforge.execute`'s, and this is the fixture it is measured on.
 """
 
 from __future__ import annotations
@@ -143,11 +143,11 @@ def test_a_graded_unit_names_files_that_are_on_disk_in_its_own_directory(unit):
 
 
 def test_the_ungraded_unit_has_a_file_and_no_grader():
-    # ⭐ *A file with no test is not a failure* (`M5`'s Done when) — so the
+    # ⭐ *A file with no test is not a failure* (spec §7) — so the
     # file must be there for a runner to be handed, and nothing may grade it.
     folder = ROOT / "practice" / SHAPES[3][1]
     assert [p.name for p in folder.iterdir()] == ["hello.py"]
-    # ⭐ `W357`: the record names that file and how it runs, and no grader.
+    # ⭐ The record names that file and how it runs, and no grader.
     record = exercise(3)
     assert record.main_path == "practice/untested/hello.py"
     assert (ROOT / record.main_path).is_file()
@@ -156,7 +156,7 @@ def test_the_ungraded_unit_has_a_file_and_no_grader():
 
 
 def test_every_unit_with_a_file_names_it_and_only_the_graded_ones_name_a_grader():
-    # ⭐ What `SF-44` resolves a reader's file through: every unit whose
+    # ⭐ What `studyforge check` resolves a reader's file through: every unit whose
     # practice has a file carries a record naming it, graded or not. ⛔ The
     # other way: the record's `graded` is exactly the unit's state.
     named = {unit: exercise(unit) for unit, (_s, folder) in SHAPES.items() if folder}
@@ -174,9 +174,9 @@ def test_one_runtime_and_it_is_python():
     assert exercise(3).run_command[0] == "python3"
 
 
-def test_the_runtimes_key_is_not_invented_before_w350_lands():
-    # ⛔ `W350` owns the key. Absent from the framework, it is absent here; the
-    # day it lands this test turns red until the fixture declares it.
+def test_the_runtimes_key_is_declared_only_where_the_framework_knows_it():
+    # ⛔ The framework owns the key: absent from the framework, it is absent
+    # here, and present there it must be declared here.
     manifest = json.loads((ROOT / "corpus.json").read_text(encoding="utf-8"))
     if "runtimes" in MANIFEST_KEYS:
         assert manifest.get("runtimes") == ["python"]
@@ -232,7 +232,7 @@ def test_every_practice_starts_from_the_file_as_shipped():
 
 def test_the_unit_with_no_test_runs_and_collects_nothing(copy):
     folder = f"practice/{SHAPES[3][1]}"
-    # ⭐ `W357`: its OWN declared run command, read from its record.
+    # ⭐ Its OWN declared run command, read from its record.
     ran = run(exercise(3).run_command, copy)
     assert ran.returncode == PASSED, ran.stderr
     assert "Hello from a file with no test" in ran.stdout

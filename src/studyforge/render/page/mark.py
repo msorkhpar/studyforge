@@ -14,7 +14,7 @@ reads one.
 ## ⛔ Why the control exists at all, and why it is not the server's
 
 ⚠️ **A reader who never starts the server had no record of anything** (spec
-§8.5). `SF-21` is the served half: a **pass** is a fact established by a grader
+§8.5). The progress store is the served half: a **pass** is a fact established by a grader
 run, so it is written where it was established. ⛔ A **read mark** is the
 reader's own assertion, needs no server and no origin (R8), and lives in the
 browser. ⭐ **And it binds hardest on exactly the sources this framework exists
@@ -31,7 +31,7 @@ has a working store behind it. ⚠️ With scripting off the reader is shown
 nothing, which is the `copy-code.js` bargain: a control that does nothing is
 worse than no control.
 
-## ⛔ The key is ASKED FOR, never composed (SF-01)
+## ⛔ The key is ASKED FOR, never composed
 
 ⚠️ `Address.unit_key` is the one composer, and its own docstring says why: *"the
 page writes a read mark under it, the index reads the mark back … a second
@@ -46,8 +46,8 @@ arithmetic here, and no second format anywhere on the page.
 `test_chrome.py::test_every_non_class_hook_is_reached_by_a_rule_in_this_part`
 obliges every non-class entry to be reached by a rule in `chrome.css`. ⛔ A
 stylesheet rule keyed on a unit's address would be meaningless — and writing one
-only so a published hook could be called painted is `QA-03/2` committed on
-purpose. ⭐ This attribute is a **script** hook: one emitter (this module) and
+only so a published hook could be called painted is a false paint, committed
+on purpose. ⭐ This attribute is a **script** hook: one emitter (this module) and
 one reader (`read-mark.js`), which is the same two-sided spelling every hook on
 the page has, because markup and script cannot import Python.
 
@@ -77,8 +77,8 @@ def key(document: dict) -> str:
     ordinal — the same function the root index's rows are keyed by, so the mark
     the page writes and the mark the index reads back are one string.
 
-    ⚠️ **The list is checked for being a list, and that is a measured defect and
-    not defensiveness.** `tuple("basics")` is `("b","a","s","i","c","s")` — six
+    ⚠️ **The list is checked for being a list, and that is not defensiveness.** `tuple("basics")`
+    is `("b","a","s","i","c","s")` — six
     single-character segments, every one of them a valid slug — so an address
     recorded as a *string* rather than a list becomes a six-level address that
     refuses nothing and keys every mark under a name nothing else will ever

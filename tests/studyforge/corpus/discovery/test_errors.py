@@ -14,7 +14,7 @@ ADDRESS = Address.of("basics", "16-streams-api")
 
 
 def test_a_discovery_error_is_a_value_error():
-    # ⚠️ SF-01's split, and `placement`'s: "you handed me something I cannot
+    # ⚠️ The address package's split, and `placement`'s: "you handed me something I cannot
     # scan". ⛔ The malformed *documents* this package meets are reported
     # rather than raised, so they never reach this type's front door.
     assert issubclass(DiscoveryError, ValueError)
@@ -35,7 +35,7 @@ def test_a_refusal_carries_no_absolute_path(tmp_path):
 
 
 def test_a_personal_data_leak_is_not_a_discovery_error(tmp_path):
-    # ⛔ Ruling 58, rubric §1d. This family exists so a scan over a thousand
+    # ⛔ R7. This family exists so a scan over a thousand
     # files catches one type per file and carries on; an R7 refusal inside it
     # would be filed as one more page that could not be identified.
     assert not issubclass(PersonalDataLeak, DiscoveryError)

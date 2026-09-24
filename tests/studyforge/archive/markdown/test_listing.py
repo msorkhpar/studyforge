@@ -99,7 +99,7 @@ def test_a_continuation_line_that_starts_a_block_ends_the_list_instead():
     assert [block["type"] for block in blocks("- one\n## a heading\n")] == ["list", "heading"]
 
 
-#: ⛔ `W258`'s two-level fixture: a nested list four spaces under each item, one
+#: ⛔ The two-level fixture: a nested list four spaces under each item, one
 #: unordered and one ordered, with a blank line between the parents.
 TWO_LEVEL = (
     "- Version (1st digit):\n"
@@ -131,7 +131,7 @@ def words_of_source(text: str) -> Counter:
 
 
 def test_a_nested_list_is_read_as_a_nested_list():
-    # ⛔ W258 clause 1. An item holding a nested list is its parts in reading
+    # ⛔ An item holding a nested list is its parts in reading
     # order — its text, then the whole nested `list` block.
     assert blocks(TWO_LEVEL) == [
         {
@@ -190,7 +190,7 @@ def test_three_levels_are_the_same_rule_applied_again():
 
 
 def test_text_after_a_nested_list_is_a_part_after_it_and_a_second_list_follows():
-    # ⛔ Measured in a pinned corpus: a paragraph continues the item AFTER its
+    # ⛔ Real material does this: a paragraph continues the item AFTER its
     # nested list, and a second nested list follows. Folded into the item's
     # text, the paragraph would move ahead of the list it was written after.
     text = "4. Autoboxing:\n\n    - costs memory\n\n   **When to use:**\n    - primitives\n"
@@ -232,7 +232,7 @@ def test_a_fence_under_a_nested_item_still_follows_the_whole_list():
 
 def test_an_indented_marker_outside_any_list_is_still_not_a_list():
     # ⚠️ Four spaces at the top level is an indented code block, not a list, and
-    # W258 widens the marker only inside a list.
+    # The marker is widened only inside a list.
     assert blocks("prose\n\n    - not an item\n")[1]["type"] != "list"
 
 
@@ -265,7 +265,7 @@ def test_read_list_returns_several_blocks_and_where_it_stopped():
 
 
 # --------------------------------------------------------------------------
-# ⛔ W264: an ordered list keeps the number it starts at
+# ⛔ An ordered list keeps the number it starts at
 # --------------------------------------------------------------------------
 
 #: A document with lists that all start at one, nested included.
@@ -273,8 +273,8 @@ UNNUMBERED = (
     "Steps:\n\n1. one\n2. two\n\n```\ncode\n```\n\n- a\n  1. nested one\n  2. nested two\n- b\n"
 )
 
-#: ⛔ Its `content_sha256`, measured at `8f59ed9` before `W264` existed. A pin and
-#: not a recomputation, so a reader that starts writing `start: 1` goes RED here.
+#: ⛔ Its `content_sha256` with no `start` key. A pin and not a recomputation,
+#: so a reader that starts writing `start: 1` goes RED here.
 UNNUMBERED_SHA256 = "baa69df8565b52a2968439bba753bad0e838a80ffd52ba48f10990fb9fffbc5a"
 
 

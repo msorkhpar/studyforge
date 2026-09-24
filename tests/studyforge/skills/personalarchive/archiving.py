@@ -1,6 +1,6 @@
 """Shared by the skill's tests: machines, a recorded practice, a planted identity, archive reads.
 
-⛔ Every corpus is a copy of an `FND-04` fixture under a directory the harness mints, and
+⛔ Every corpus is a copy of a fixture corpus under a directory the harness mints, and
 each "machine" is its own directory under `tmp_path`. ⚠️ Identity material is assembled
 at run time, so the repository's hygiene sweep is never asked to except this file.
 """
@@ -39,7 +39,7 @@ def planted_identity() -> str:
 
 
 def binary_identity(encoding: str = "utf-8") -> bytes:
-    """Return the register's `cover.bin`: bytes that are not UTF-8, around a planted home path."""
+    """Return the planted `cover.bin`: bytes that are not UTF-8, around a planted home path."""
     return b"\x89\xff\xfe\x00" + f"{planted_identity()}/Pictures".encode(encoding) + b"\x00\xff"
 
 
@@ -47,7 +47,7 @@ def clip_audio(speech_id: str) -> bytes:
     """Return bytes shaped like a narration clip: an ID3 tag naming its encoder, then MPEG frames.
 
     ⚠️ The frames' bodies are seeded noise, which is what compressed audio reads as. The
-    size is the mean of the real clips the run length was measured over (`W235`).
+    size is the mean of the real clips the run length was measured over.
     """
     noise = random.Random(speech_id)
     encoder = b"\x03Lavf61.7.100"

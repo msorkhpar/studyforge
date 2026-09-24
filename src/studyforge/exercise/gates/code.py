@@ -28,7 +28,7 @@ and `errors`. Standard library only.
 | **G4** | every reported test maps to one case; every case is reported | the breakdown is total |
 | **G5** | each cited passage still digests to the ledger's value | it is built from the source |
 
-⚠️ **`G3` is per-case for the same reason `E08`'s derivation gate is
+⚠️ **`G3` is per-case for the same reason a derivation gate is
 per-method.** A gate coarser than the claim it backs is theatre, and it was
 expensive to learn that once (R5). ⛔ So a suite with three edge cases reads
 three plants and answers for each of them by name.
@@ -39,7 +39,7 @@ three plants and answers for each of them by name.
 that returns nothing, and no branch that leaves a verdict out. A gate with
 nothing to read answers **did not hold** and says why — ⚠️ never *held
 vacuously*, because a gate that passes for want of evidence is the exact defect
-`E14`'s third property is written against.
+R5's gates exist to stop.
 
 ## ⛔ A FOLD THAT REFUSED IS `G4`'s FINDING, AND IT COSTS THE OTHERS THEIR EVIDENCE
 

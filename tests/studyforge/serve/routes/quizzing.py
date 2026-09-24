@@ -1,6 +1,6 @@
 """Shared by the quiz route's tests: the prose fixture with a quiz in it, built and served.
 
-⭐ **The corpus is `FND-04`'s `depth1/` — the prose fixture, the corpus the quiz
+⭐ **The corpus is the fixture `depth1/` — the prose fixture, the corpus the quiz
 shape exists for — COPIED, with one practice document added**. ⛔ The
 fixture itself is never touched; the quiz record is the one `depth1.py` builds
 through `archive.document`, so the bytes on disk are the bytes a build reads.

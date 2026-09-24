@@ -1,4 +1,4 @@
-"""Mirror of `tools/quality/personal_data/registry.py` (R12).
+"""Mirror of `tests/floor/personal_data/registry.py` (R12).
 
 ⛔ **Not one real identifier appears in this file**, and not one personal-data
 shape is written as a literal. The shapes are assembled from fragments at run
@@ -56,7 +56,7 @@ def sanctioned_shapes() -> set[str]:
 
 
 def test_the_real_sanctioned_directory_really_does_carry_the_shapes():
-    # ⛔ Rubric §1e condition 4, the half that is easy to forget: if the
+    # ⛔ The half that is easy to forget: if the
     # negative fixture were ever neutered into an input that this sweep
     # accepts, the exemption above would be protecting an empty box and
     # nobody would notice, because everything would stay green.
@@ -70,18 +70,18 @@ def test_this_gate_and_the_archive_gate_disagree_about_the_fixture_s_address():
     # The fixture's address is `…@example.invalid`: an RFC 2606 reserved TLD,
     # deliberately unreachable. **This** gate is repository hygiene, and an
     # address that can reach nobody identifies nobody, so it is allowed here —
-    # `CLAUDE.md` positively instructs authors to write such placeholders.
-    # ⛔ **SF-08's gate is the archive**, where any address is wrong content
+    # authors are told to write such placeholders.
+    # ⛔ **The archive gate's subject is the archive**, where any address is wrong content
     # whether or not it is deliverable, and `tests/test_fixture_consistency.py`
     # carries the stricter rule with no allow-list at all.
     #
     # So the fixture trips this sweep on its home path and not on its email,
-    # and it must keep tripping SF-08 on both.
+    # and it must keep tripping the archive gate on both.
     assert "email address" not in sanctioned_shapes()
 
 
 def test_the_registry_is_exactly_what_is_on_disk():
-    # ⛔ Rubric §1e condition 5: a sixth negative fixture cannot appear without
+    # ⛔ A new negative fixture cannot appear without
     # appearing in a test. Any directory under `tests/fixtures/invalid/` whose
     # own content trips the sweep must be registered.
     root = repository_root()

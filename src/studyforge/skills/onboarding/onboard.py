@@ -2,7 +2,7 @@ r"""One pass: a repository of material becomes a corpus, and nothing is retyped.
 
 **What it does.** Composes the manifest, the adapter's scaffold and this
 skill's own documents into one file set, and writes it all or none of it.
-`removal.uninstall` takes it back out again (split out at that seam, `W313`).
+`removal.uninstall` takes it back out again (split out at that seam).
 
 **How you use it.**
 
@@ -20,9 +20,9 @@ are what call it.
 ## ⛔ The manifest is promoted twice, and the second pass is the whole point
 
 ⚠️ **An adapter's file set has to be declared in the manifest, and the adapter
-is planned from the manifest.** The adapter skill left that circle open and a person
-closed it by hand — `SK-02/1`, measured: `NOT valid: 8 finding(s)`, one
-`unclassified` per generated file, two lines copied out of a report.
+is planned from the manifest.** Left open, that circle reads `NOT valid: 8
+finding(s)`, one `unclassified` per generated file, until a person copies two
+lines out of a report.
 
 ⭐ **It is not really a circle, and the resolution is checkable rather than
 argued.** A scaffold varies only on what `Plan` carries — source, levels,
@@ -40,24 +40,24 @@ reading step — and `hand_written` names it. Everything else is regenerable, so
 a hand-edit is a **finding against this skill** rather than a fix (R19), and
 `uninstall` refuses rather than destroying one silently.
 
-## ⛔ Re-onboarding keeps what the manifest on disk declares (`W283`)
+## ⛔ Re-onboarding keeps what the manifest on disk declares
 
 ⭐ `existing` carries its text, and a regenerate that would drop a glob refuses by name.
 
-## ⛔ And it never changes an answer the corpus already records (`W329`)
+## ⛔ And it never changes an answer the corpus already records
 
-⚠️ **Measured**: a re-survey of an onboarded corpus read the framework's own
-generated checks as the corpus's graders and drafted `exercises: true`, which
-this skill wrote with no refusal — presenting a corpus COMPLETE at the reading
-floor as unfinished (C5). ⭐ `recorded.moved` compares the manifest on disk with
-the one about to be written, over the manifest's own fields, and a regenerate
-that would move one refuses by name and writes nothing.
+⚠️ A re-survey of an onboarded corpus can read the framework's own generated
+checks as the corpus's graders and draft `exercises: true`, which would present
+a corpus COMPLETE at the reading floor as unfinished (C5). ⭐ `recorded.moved`
+compares the manifest on disk with the one about to be written, over the
+manifest's own fields, and a regenerate that would move one refuses by name and
+writes nothing.
 
 ## ⛔ The pin is the library this runs AS, never a checkout beside the corpus
 
 ⭐ `onboard` reads the running library's version (`library.version()`) and pins
 it with the commit it is given; no generated document names a path to the
-framework, so nothing written depends on which checkout wrote it (`W442`, R10).
+framework, so nothing written depends on which checkout wrote it (R10).
 ⛔ A library whose version cannot be read is refused by name before anything is
 planned. ⚠️ `root=` is still accepted and moves nothing.
 """
@@ -109,9 +109,9 @@ class Onboarding:
     commit: str
     #: ⭐ The version of the library this onboarding ran as, which the pin records.
     version: str
-    #: ⭐ `W283`: the `not_material` globs a generator declares, re-derived on every run.
+    #: ⭐ The `not_material` globs a generator declares, re-derived on every run.
     generated: tuple[str, ...] = ()
-    #: ⭐ `W439`: the recorded answers a person changes on purpose (`reonboard`'s `settle`).
+    #: ⭐ The recorded answers a person changes on purpose (`reonboard`'s `settle`).
     settled: tuple[str, ...] = ()
 
     @property
@@ -133,12 +133,12 @@ class Onboarding:
         ⭐ **With `regenerate=True` the generated files are rewritten and an
         existing hand-written one is left exactly as it is** — neither
         overwritten nor treated as a collision. ⛔ That is `write_files`, the
-        rule `Scaffold.write` follows too (`W265`): two copies of it disagreed
-        once (`W257/2`), so there is one.
+        rule `Scaffold.write` follows too: one rule, so the two cannot
+        disagree.
 
         ⛔ **The pin is checked against the library running this first**:
         a version this Python does not import is refused by name,
-        and nothing is written. ⭐ `W467`: a generated file an earlier run wrote
+        and nothing is written. ⭐ A generated file an earlier run wrote
         and this one does not is removed if unedited, else refused (`record.retire`).
         """
         _check_running(self.version)
@@ -155,7 +155,7 @@ class Onboarding:
         )
 
     def _refuse_dropping(self, root: Path) -> None:
-        """Refuse, by name, a regenerate dropping or re-reasoning a person's glob (`W283`)."""
+        """Refuse, by name, a regenerate dropping or re-reasoning a person's glob."""
         path = root / artifacts.MANIFEST
         if not path.exists():
             return
@@ -179,7 +179,7 @@ class Onboarding:
     def _refuse_changing(self, root: Path) -> None:
         """Refuse, by name, a regenerate that would change an answer the manifest records.
 
-        ⛔ `W329`: a second run of the documented procedure writes the same
+        ⛔ A second run of the documented procedure writes the same
         manifest or says which answer it cannot write, and `exercises` is the
         one that was silently flipped. ⭐ The fields are the manifest's own, so
         one added to the contract is compared the day it exists.
@@ -213,7 +213,7 @@ class Onboarding:
         return out
 
     def narration(self) -> str:
-        """Say the author's answer to whether the site speaks, or that nobody asked (`W460`)."""
+        """Say the author's answer to whether the site speaks, or that nobody asked."""
         text = next(item.text for item in self.files if item.where == artifacts.MANIFEST)
         return recorded.narration(text, self.manifest.narration)
 
@@ -240,16 +240,16 @@ def onboard(
 
     `framework_commit` is the commit the running library was built from; the pin
     records it beside the version read from that library. ⭐ A built wheel knows
-    its own (`W467`), so it may be left out, and one naming another is refused;
+    its own, so it may be left out, and one naming another is refused;
     a source tree does not, so there it is required. `existing` is
-    the text of the `corpus.json` a re-onboarding finds on disk (`W283`); a
-    first onboarding passes nothing and is unchanged. ⛔ **`root` moves no byte**
-    (`W442`): no document names a path to the framework, so a regenerate from a
+    the text of the `corpus.json` a re-onboarding finds on disk; a
+    first onboarding passes nothing and is unchanged. ⛔ **`root` moves no byte**:
+    no document names a path to the framework, so a regenerate from a
     linked worktree and one from the main checkout write the same files (R10).
-    ⭐ It is accepted so existing callers keep working; the reader's document
-    reads no state either (`W332`).
+    ⭐ It is accepted for callers that pass it; the reader's document reads no
+    state either.
     """
-    del root  # ⛔ W442: the checkout that ran the skill never reaches a rendered byte.
+    del root  # ⛔ The checkout that ran the skill never reaches a rendered byte.
     framework_commit = _running(library.built_from, framework_commit)
     version = _running(library.version)
     kept = _declared(existing) if existing is not None else ()
@@ -260,14 +260,14 @@ def onboard(
         "the adapter scaffold": made.not_material,
         "this skill's own files": artifacts.own_not_material(reader),
     }
-    # ⛔ `W461`: the reader's glob where an earlier run placed it is this skill's too.
+    # ⛔ The reader's glob where an earlier run placed it is this skill's too.
     ours = {entry["glob"] for entry in kept if entry["why"] == artifacts.WHY_READER}
     generated = tuple(sorted({e["glob"] for side in declared.values() for e in side} | ours))
     persons = [entry for entry in kept if entry["glob"] not in generated]
     document = promote(_carried(draft, persons), not_material=declared, reasons=reasons)
     manifest = parse(render(document))
     checks = [
-        _own(artifacts.EDITS_TEST, edits_test(manifest), "R3, with this corpus's edits"),
+        _own(artifacts.EDITS_TEST, edits_test(manifest), "nothing moved, with its declared edits"),
         _own(artifacts.PIN_TEST, pin_test(skills, reader), "the pin, and every stub naming it"),
     ]
     files = [
@@ -319,12 +319,12 @@ def _unreadable(why: str) -> str:
 
 
 def _carried(draft: object, kept: Sequence[Mapping[str, str]]) -> object:
-    """Return the draft with `kept` first in its `not_material`, each glob once (`W283`).
+    """Return the draft with `kept` first in its `not_material`, each glob once.
 
     ⛔ **Never widened, narrowed or re-reasoned**: the entries go in byte for byte,
     in the manifest's order. A drafted entry on a kept glob is dropped when its
     reason is the same or open, and refused by name when it differs (no precedence).
-    ⛔ `W443`: the refusal advises leaving it out, the one step that works: `settle`
+    ⛔ The refusal advises leaving it out, the one step that works: `settle`
     takes no `content` key, and nothing here re-reasons a recorded glob.
     """
     content = draft.get("content") if isinstance(draft, dict) else None
@@ -351,8 +351,8 @@ def _carried(draft: object, kept: Sequence[Mapping[str, str]]) -> object:
 def _ignore_file(manifest: Manifest) -> list[Written]:
     """Return the ignore file inside the generated root: the framework's caches, and the policy's.
 
-    ⛔ **Asked of placement, never the root ignore file** (R3, `W242`). ⭐ There
-    is always one now (`W425`): with media committed it carries only the rules
+    ⛔ **Asked of placement, never the root ignore file** (R3). ⭐ There
+    is always one now: with media committed it carries only the rules
     covering the discovery cache this framework writes into every corpus it
     serves, which is the one thing a second source would otherwise have to
     retype (R19). A placement with no home for the rules the media policy
@@ -362,7 +362,7 @@ def _ignore_file(manifest: Manifest) -> list[Written]:
         wanted = profile_for(manifest.placement).ignore_file(media=not manifest.media.commits)
     except PlacementError as error:
         raise OnboardingRefused(str(error)) from None
-    why = "the framework's own caches, and the media policy's rules (R3)"
+    why = "the framework's own caches, and the media policy's rules"
     return [_own(wanted.home.as_posix(), wanted.text(), why)]
 
 

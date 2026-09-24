@@ -3,7 +3,7 @@ r"""What a walk over a corpus read, and which record entries it did not produce.
 **What it does.** Holds `Walk` — every speech id one walk derived, each walked
 unit's audio directory, and the declared units it could NOT read — and
 `dead_entries(state, walk)`: the record entries whose speech id the walk did
-not produce. ⭐ That count is `E09` § W193 answer 4's disclosure, which
+not produce. ⭐ That count is the dead-entry disclosure, which
 `studyforge narrate` prints on every run.
 
 **How you use it.** `stage.survey(root)` returns the `Walk`; `narrate` reports
@@ -19,7 +19,7 @@ no deletion: this module reads what a walk found and never touches a file.
 silence** — `validate` owns that report — so a walk can miss units without
 raising. ⛔ Every entry of a unit it missed looks dead to it, and a prune
 acting on that would delete a unit's clips because its material was
-momentarily absent. ⭐ So the walk carries `unwalked`, and W193 answer 3's *"a
+momentarily absent. ⭐ So the walk carries `unwalked`, and the rule *"a
 partial walk refuses by name"* has the names to refuse with.
 
 ## ⭐ The predicate is over the DOCUMENT, never the disk
@@ -65,7 +65,7 @@ def dead_entries(state: State, walk: Walk) -> tuple[str, ...]:
 def superseded_clips(state: State) -> tuple[tuple[str, Superseded], ...]:
     """Return every clip an entry names as superseded, sorted (R10).
 
-    ⭐ `W226`: a re-wording keeps its old clip on disk until a prune, and this
+    ⭐ A re-wording keeps its old clip on disk until a prune, and this
     is the count that says so — read off the record, never off the disk.
     """
     return tuple(

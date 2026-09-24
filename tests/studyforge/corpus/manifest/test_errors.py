@@ -23,7 +23,7 @@ from studyforge.corpus.manifest.content import parse as parse_module
 #: than about the three files that happen to be open.
 SOURCE_ROOT = Path(studyforge.__file__).parent
 
-#: ⭐ Ruling 135's home for `_escape`, and the only two modules that may take
+#: ⭐ The home for `_escape`, and the only two modules that may take
 #: it. Written out rather than derived: a list built from what imports it
 #: today would agree with whatever the tree happens to do.
 MAY_NAME_ESCAPE = (
@@ -74,8 +74,8 @@ REFUSALS = [
 
 def test_a_manifest_error_is_a_value_error():
     # ⚠️ `address`'s precedent, and this line is the whole of the manifest's
-    # exposure to it: a *value* error subclasses `ValueError`. If the CTO
-    # overrules the split, this is what changes.
+    # exposure to it: a *value* error subclasses `ValueError`. If the split
+    # changes, this is what changes.
     assert issubclass(ManifestError, ValueError)
 
 
@@ -101,7 +101,7 @@ def test_a_refusal_names_the_field_and_the_permitted_class_but_not_the_value():
     # ⭐ A manifest is the first file an integrator writes by hand, so its
     # refusals are the first thing this framework ever says to them.
     # ⛔ Which is also why the value is not repeated back: any string in a
-    # hand-written file can be an absolute path (R7, Ruling 14). The field and
+    # hand-written file can be an absolute path (R7). The field and
     # the permitted set are what the reader cannot see; the value is in the
     # file in front of them.
     with pytest.raises(ManifestError) as raised:
@@ -115,9 +115,7 @@ def test_a_refusal_names_the_field_and_the_permitted_class_but_not_the_value():
 def test_a_refusal_over_a_closed_set_says_what_the_set_is():
     with pytest.raises(ManifestError) as raised:
         from_document({"corpus_api": 99})
-    # ⚠️ The whole set, sorted; it grew to two when `content.not_material`
-    # landed, to three when `media.max_files` did, to four when `runtimes`
-    # did, to five when `narration` did and to six when `onboarding_doc` did.
+    # ⚠️ The whole set, sorted, one version per key that needed a bump.
     # ⛔ Spelled out rather
     # than read from `KNOWN_CORPUS_API`: the point of the assertion is that the
     # refusal *names* the set, and one built from the set would say nothing
@@ -132,20 +130,18 @@ def test_it_can_be_caught_as_a_value_error_by_a_caller_that_does_not_import_it()
         parse_content(None)
 
 
-# --- Ruling 135: the one phrase R7 lets a refusal say about a path ---------
+# --- The one phrase R7 lets a refusal say about a path ---------
 
 
 @pytest.mark.parametrize("pattern,phrase", FAULTS)
 def test_the_escaping_phrase_names_the_fault_and_repeats_no_part_of_the_path(pattern, phrase):
-    # ⛔ Three faults, three sentences, and none of them is the path. This is
-    # the assertion `content/test_init.py` used to make about a re-export; it
-    # is here now because the function is, and it says more than the bridge
-    # did — the bridge pinned one fault out of three.
+    # ⛔ Three faults, three sentences, and none of them is the path. It is
+    # asserted here because the function is here, over all three faults.
     assert errors._escape(pattern) == phrase
     assert pattern not in errors._escape(pattern)
 
 
-def test_both_refusals_say_it_with_the_one_function_W19_unified_them_onto():
+def test_both_refusals_say_it_with_the_one_shared_function():
     # ⭐ Not two copies that agree today. `is`, so a second definition
     # appearing anywhere fails here rather than drifting for a release.
     assert parse_module._escape is errors._escape
@@ -153,8 +149,7 @@ def test_both_refusals_say_it_with_the_one_function_W19_unified_them_onto():
 
 
 def test_only_this_module_and_its_two_callers_name_the_escaping_phrase():
-    # ⛔ Ruling 135's second half: it moved, and it did **not** become
-    # public on the way. Nothing outside `corpus/manifest` may reach it, and
+    # ⛔ The phrase is **not** public. Nothing outside `corpus/manifest` may reach it, and
     # a fourth module wanting it is a contract decision, not an import.
     named = modules_naming_escape()
     # ⭐ The inhabitation assertion, before the claim: a sweep that found
@@ -167,7 +162,7 @@ def test_the_sweep_above_would_notice(tmp_path, monkeypatch):
     # ⛔ All three readings. Reading 1 is the test above, on the
     # live tree. Reading 2 plants a fourth namer in the spelling the clause
     # did not picture — not a definition and not the name, but
-    # an *aliased import*, which is exactly the bridge shape this row deleted.
+    # an *aliased import*, which is exactly the bridge shape that must not exist.
     for name in MAY_NAME_ESCAPE:
         (tmp_path / name).parent.mkdir(parents=True, exist_ok=True)
         (tmp_path / name).write_text("def _escape(pattern):\n    return pattern\n", "utf-8")

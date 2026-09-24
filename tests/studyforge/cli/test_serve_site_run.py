@@ -1,6 +1,6 @@
-"""Mirror of `src/studyforge/cli/serve.py`'s `--site` execution (R12) — `W371`, closing `SF-22/2`.
+"""Mirror of `src/studyforge/cli/serve.py`'s `--site` execution (R12).
 
-⭐ **The row's settling clause, both ways, over a real socket**: a site served with
+⭐ **Both ways, over a real socket**: a site served with
 `--site` for an exercised corpus answers Run and Submit — the program's output streamed
 and the practice completed on a passing Submit — and what it answers is the corpus's
 own: a corpus the site does not serve, and a start from a page opened over `file://`,
@@ -8,8 +8,8 @@ are each refused. ⛔ Nothing a run does is written into the site, and serving w
 discovery cache into the corpus root.
 
 ⭐ Every run is in a temp COPY of the runnable fixture, built with `--out` OUTSIDE the
-corpus root — the form the build-and-serve skill uses — and in host mode, which `SF-20`
-made a full execution mode (no runner container is started here).
+corpus root — the form the build-and-serve skill uses — and in host mode, which is
+a full execution mode (no runner container is started here).
 """
 
 from __future__ import annotations
@@ -54,7 +54,7 @@ def recorded(root: Path, unit: int) -> dict | None:
 
 
 def test_the_served_corpus_types_are_on_the_serve_packages_surface_and_are_discoverys_own():
-    # ⭐ Ruling 101's one-line remedy, taken instead of a declared deviation (`W199`).
+    # ⭐ One exported home for a value a second package needs (R21).
     from studyforge import serve
     from studyforge.serve import discovery
 

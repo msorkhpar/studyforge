@@ -1,6 +1,6 @@
 """⛔ *No gate can be disabled, skipped or weakened by configuration* — asserted by TRYING.
 
-⭐ **`E14`'s third property and `AX-03`'s Acceptance clause.** ⚠️ A module
+⭐ **R5's honesty as gates, and the gate record's promise.** ⚠️ A module
 docstring saying so is a promise; this file is the check. Every case below
 attempts the thing and asserts it did not work — ⛔ **and each attempt is
 observed first**: the environment really is set, the key really is in the
@@ -158,7 +158,7 @@ def test_a_failed_gate_cannot_be_dropped_to_make_a_record_clear():
 
     # ⛔ And flipping the answer instead is not a way through either: the
     # record then says something the gate never said, which is the drift a
-    # digest over the inputs is there to catch (`AX-04`).
+    # digest over the inputs is there to catch.
     flipped = record_document(failed)
     for entry in flipped["gates"]:
         entry["held"] = True

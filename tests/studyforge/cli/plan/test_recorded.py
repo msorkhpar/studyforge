@@ -1,7 +1,7 @@
 """Mirror of `src/studyforge/cli/plan/recorded.py` (R12) — the record as a plan input.
 
-`W224` made the record a plan input; `W288` made a copy something the record
-LOCATES, and a superseded clip something the plan names as superseded. The
+The record is a plan input: a copy is something the record LOCATES, and a
+superseded clip is something the plan names as superseded. The
 record-level tests fabricate a record over a fixture copy; the last test
 narrates a corpus through the recording fake and builds it, so "a copy the
 build makes" is read off the build and never assumed.
@@ -67,7 +67,7 @@ def copies(plan) -> list[str]:
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W224` — the record is read, and nothing else is opened
+# ⛔ The record is read, and nothing else is opened
 # --------------------------------------------------------------------------
 
 
@@ -122,11 +122,11 @@ def test_only_a_units_audio_directory_is_marked_narration_when_no_record_exists(
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W288` clause 1 — a copy is named only where the RECORD locates its clip
+# ⛔ A copy is named only where the RECORD locates its clip
 # --------------------------------------------------------------------------
 
 
-def test_W288_a_copy_is_named_only_where_the_record_locates_it_in_its_units_audio_directory(
+def test_a_copy_is_named_only_where_the_record_locates_it_in_its_units_audio_directory(
     tmp_path,
 ):
     root, token, audio = a_unit(tmp_path)
@@ -157,18 +157,18 @@ def test_W288_a_copy_is_named_only_where_the_record_locates_it_in_its_units_audi
     assert copies(plan) == [f"{audio}/{live}", f"{audio}/{absent}"]
     verbs = {c.path: c.verb for c in plan.creations}
     assert (verbs[f"{audio}/{live}"], verbs[f"{audio}/{absent}"]) == ("keep", "expect")
-    # ⛔ The direction `W226/2` found broken: the dead entry is named as nothing.
+    # ⛔ The dead entry is named as nothing.
     text = "\n".join(plan.lines())
     assert dead not in text and unlocated not in text
     assert plan.superseded == ()
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W288` clause 2 — a superseded clip is named SUPERSEDED, never as a copy
+# ⛔ A superseded clip is named SUPERSEDED, never as a copy
 # --------------------------------------------------------------------------
 
 
-def test_W288_a_superseded_clip_is_named_superseded_and_never_a_path_a_build_owns(tmp_path):
+def test_a_superseded_clip_is_named_superseded_and_never_a_path_a_build_owns(tmp_path):
     root, token, audio = a_unit(tmp_path)
     live, reworded = f"{token}.intro.b1-0123abcd.mp3", f"{token}.intro.b1-feedbeef.mp3"
     on_disk(root, audio, live)
@@ -201,11 +201,11 @@ def test_W288_a_superseded_clip_is_named_superseded_and_never_a_path_a_build_own
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W288` clause 3 — asserted both ways against what a BUILD copies
+# ⛔ Asserted both ways against what a BUILD copies
 # --------------------------------------------------------------------------
 
 
-def test_W288_over_a_dead_and_a_superseded_entry_the_plan_names_exactly_what_the_build_copies(
+def test_over_a_dead_and_a_superseded_entry_the_plan_names_exactly_what_the_build_copies(
     tmp_path,
 ):
     root = a_corpus(tmp_path, "depth1")

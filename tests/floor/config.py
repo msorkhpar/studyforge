@@ -1,8 +1,7 @@
 """Every number and path the quality floor enforces, in one place.
 
-⭐ **The product floor's copy of `tools/quality/config.py`.** It stays on the main line when
-the tooling leaves, so the product's own rule keeps running; while both exist,
-`tests/test_floor_twins.py` holds its code to the original's, docstrings aside.
+⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
+checkout, and depends on nothing outside it.
 
 **What it does.** Holds the ceilings, the markers and the tree layout that the
 four checks share, so a rule is stated once rather than re-typed in four
@@ -39,10 +38,10 @@ TEST_LINE_CEILING = 600
 #: module docstring — the FIRST docstring in the file — carries a line
 #: beginning with this marker, followed by a real reason.
 #:
-#: ⛔ The literal string is fixed and case-sensitive, by ruling: the review
-#: rubric greps for exactly this token, so a marker that differs by a hyphen
-#: or a capital passes the checker and then fails review, which is the worst
-#: of the available outcomes. Matched via `ast`, never anywhere in the file: a
+#: ⛔ The literal string is fixed and case-sensitive: every reader greps for
+#: exactly this token, so a marker that differs by a hyphen or a capital would
+#: pass one reader and fail another, which is the worst of the available
+#: outcomes. Matched via `ast`, never anywhere in the file: a
 #: comment next to the offending code is not a contract, and a string in the
 #: middle of a function is not something a reader of the module's top will
 #: ever see.
@@ -55,20 +54,18 @@ SIZE_EXCEPTION_MARKER = "Size exception:"
 #: one line refused a long, correct, multi-line reason for being short.
 MIN_JUSTIFICATION_CHARS = 20
 
-#: How a deferral is told apart from a design claim: its reason names a board
-#: row (review rubric 3c). Two id shapes are in use — `<PREFIX>-<n>` (an epic
-#: prefix, a hyphen, a number, an optional letter suffix) and `W<n>` (the wave
-#: rows, which carry no hyphen).
+#: How a deferral is told apart from a design claim: its reason names a task
+#: id (R11's deferral form). Two id shapes are read — `<PREFIX>-<n>` (a
+#: prefix, a hyphen, a number, an optional letter suffix) and `W<n>`, which
+#: carries no hyphen.
 #:
 #: ⛔ Deliberately narrow, and the narrowness is the point. `R11` is a rule,
-#: `M2` a milestone, `C5` a constraint and `E08` an epic — none of them a row
+#: `M2` a milestone, `C5` a constraint and `E08` an epic — none of them a task
 #: anybody can close, and a design claim has to stay free to cite them without
 #: being read as a deferral. Only `W` takes the hyphenless form.
 #:
-#: ⚠️ It answers *"is a row named here"*, never *"is that row live"*. Whether
-#: the id is a row still open is the wave-open sweep's question and a
-#: reviewer's, because this package may not read the board (it would be
-#: checking a document that changes hourly against a tree that does not).
+#: ⚠️ It answers *"is a task named here"*, never *"is that task still open"*:
+#: this package reads the tree and nothing that plans work on it.
 ROW_ID = re.compile(r"\b(?:[A-Z]{2,4}-[0-9]{1,3}[a-z]?|W[0-9]{1,3})\b")
 
 # --- R17: contracts --------------------------------------------------------
@@ -120,7 +117,7 @@ TOOL_OUTPUT_DIRS = (
 )
 
 #: Never read by the *style, size, mirror and contract* checks. `tests/fixtures/`
-#: is FND-04's, and a fixture is deliberately shaped wrong — an invalid corpus is
+#: holds the fixture corpora, and a fixture is deliberately shaped wrong — an invalid corpus is
 #: its whole purpose — so holding it to the repository's style is a category
 #: error.
 #:
@@ -133,14 +130,14 @@ TOOL_OUTPUT_DIRS = (
 EXCLUDED_DIRS = ("tests/fixtures", *TOOL_OUTPUT_DIRS)
 
 #: ⛔ The complete list of directories permitted to contain personal-data
-#: **shapes**, and the rule each is the negative fixture for. Rubric §1e: the
+#: **shapes**, and the rule each is the negative fixture for. The
 #: exception exists because a gate that refuses such data needs an input to
 #: refuse, and it is bounded by tests rather than by a reviewer's memory.
 #:
 #: Every value inside one of these is fabricated and unreachable — an RFC 2606
 #: reserved TLD, a documented placeholder home path — and each directory says
 #: so in a `VIOLATION.md` beside the data. Adding an entry here is how a sixth
-#: negative fixture becomes legal, and `tools/tests/quality/test_personal_data.py`
+#: negative fixture becomes legal, and the shape sweep in `tests.floor.personal_data`
 #: fails if one appears without it.
 SANCTIONED_PERSONAL_DATA_DIRS = ("tests/fixtures/invalid/personal-data",)
 
@@ -333,9 +330,8 @@ def markdown_population(root: Path) -> DocumentPopulation:
     fixture is allowed to be *shaped* wrong — an invalid corpus is its whole
     purpose — but `tests/fixtures/README.md` is prose a person reads, and a
     pointer that goes nowhere is broken there exactly as it is in `docs/`.
-    ⛔ Measured before deciding, on `2926dc2`: 8 markdown files under
-    `tests/fixtures/` carrying **0 pointers between them**, so including them
-    costs no migration today and closes the hole before one is written.
+    ⛔ The markdown under `tests/fixtures/` carries few pointers, so including
+    it costs little and closes the hole before a broken one is written.
 
     ⚠️ **AND THE NARROWING COUNTS WHAT IT NARROWS OFF**:
     the difference between the two lists is free on the line below and rides

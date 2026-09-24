@@ -1,9 +1,7 @@
 """Mirror of `tests/floor/reserved_addresses.py` (R12): the vocabulary, and R7's policy over it.
 
-⭐ **Ported from the tooling's own mirror of the original.** The tooling's copy also reads the
-MERGE PATH's policy over the same list — an office's author line — and that half is process: it
-stays with the tooling's test. What is here is the vocabulary's own membership question and the
-floor's R7 exemption built from it, with the plant that proves the exemption tracks the list.
+⭐ **What is here** is the vocabulary's own membership question and the floor's R7
+exemption built from it, with the plant that proves the exemption tracks the list.
 
 ⛔ **EVERY ADDRESS IN THIS FILE IS FABRICATED, AND THE FIXTURES ARE BUILT TO STAY LEGAL.**
 An address whose domain is not reserved matches the floor's own email shape and is NOT
@@ -45,7 +43,7 @@ _NOT_RESERVED = (
 #: ⚠️ A domain somebody really owns, carrying a reserved name that is NOT where it ENDS.
 #: ⛔ **The two sides DISAGREE here, and the disagreement is in their GRAMMARS and not in
 #: the vocabulary**: the floor looks for a reserved name INSIDE free text and stops at a
-#: word boundary, while `tools.authorship` parses the domain and tests its SUFFIX. ⭐ The
+#: word boundary, while `reserved.is_reserved` parses the domain and tests its SUFFIX. ⭐ The
 #: LIST is shared and neither grammar is rewritten, so the divergence is asserted below as
 #: the state of the tree rather than smoothed away.
 _GRAMMARS_DISAGREE = "example.com" + ".elsewhere.co.uk"
@@ -79,9 +77,9 @@ def test_this_module_carries_NO_DEPENDENCY_because_the_merge_path_would_inherit_
     # ⛔ The copy keeps the original's leaf property: a vocabulary module reaches nothing
     #    that can fail to import, so the floor cannot crash on a tree too broken to import.
     #
-    # ⚠️ READ AS A PARSE, NEVER AS A LINE SCAN, and the first form of this test was the
-    #    line scan: it matched a DOCSTRING SENTENCE beginning "from ", which is Ruling
-    #    337's defect — a claim about a module established by grepping its text.
+    # ⚠️ READ AS A PARSE, NEVER AS A LINE SCAN: a line scan matches a DOCSTRING
+    #    SENTENCE beginning "from " — a claim about a module established by grepping
+    #    its text.
     source = Path(reserved.__file__).read_text(encoding="utf-8")
     imported = [
         node
@@ -116,7 +114,7 @@ def test_case_and_surrounding_space_are_absorbed_and_nothing_is_a_verdict():
 
 @pytest.mark.parametrize("domain", (*_RESERVED, *_NOT_RESERVED))
 def test_the_floor_exempts_exactly_what_is_RESERVED(domain):
-    # ⛔ The row's subject. `tools.authorship` reads a reserved address as an OFFICE's line;
+    # ⛔ The subject. `reserved.is_reserved` answers membership for a whole domain;
     #    the floor reads it as exempt from R7's shape arm. ⭐ Two policies — but the LIST
     #    behind them is one, so the two answers move together on every domain.
     assert _floor_exempts(domain) is reserved.is_reserved(domain)
@@ -125,17 +123,16 @@ def test_the_floor_exempts_exactly_what_is_RESERVED(domain):
 def test_the_two_GRAMMARS_differ_where_a_reserved_name_is_not_where_the_domain_ENDS():
     # ⛔ DISCLOSED, never smoothed. The VOCABULARY is one list and both sides
     #    read it; what differs is how each LOOKS FOR a name in it, and that is each side's
-    #    own policy. ⚠️ The list is shared and neither grammar is rewritten — an earlier
-    #    form of this change DID anchor the floor's, and it reddened the floor on another
-    #    office's negative fixture, which is how the divergence was measured at all.
+    #    own policy. ⚠️ The list is shared and neither grammar is rewritten — anchoring
+    #    the floor's grammar reddens the floor on a negative fixture.
     assert reserved.is_reserved(_GRAMMARS_DISAGREE) is False
     assert _floor_exempts(_GRAMMARS_DISAGREE) is True
 
 
 def test_they_share_a_VOCABULARY_and_NOT_a_VERDICT():
-    # ⚠️ The thing this row must not become. The floor exempts this project's attribution
+    # ⚠️ The thing this must not become. The floor exempts this project's attribution
     #    trailer, which is at a REAL domain — so the two are NOT the same predicate, and a
-    #    change that made them one would be a widening of the merge path's policy.
+    #    change that made them one would be a widening of the reserved-address policy.
     trailer = "noreply@" + "anthropic.com"
     assert _floor_exempts(trailer.partition("@")[2]) is True
     assert reserved.is_reserved("anthropic" + ".com") is False
@@ -145,7 +142,7 @@ def test_they_share_a_VOCABULARY_and_NOT_a_VERDICT():
 
 
 def test_PLANTING_the_vocabulary_moves_the_FLOOR(monkeypatch):
-    # ⛔ THE ROW'S REAL GUARD. A divergence nobody can produce is not a guarded one, so the
+    # ⛔ THE REAL GUARD. A divergence nobody can produce is not a guarded one, so the
     #    vocabulary is MOVED and both readings are watched. ⭐ If either side goes back to a
     #    private copy, its reading stops moving here and this test goes red.
     planted = "host." + _PLANTED

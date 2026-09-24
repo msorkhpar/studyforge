@@ -6,16 +6,16 @@ the footprint projected at a rate and measured off the disk, and the verdict
 `corpus.media` returns on that measurement.
 
 **How you use it.** `derive` builds one and hands it to `Plan`; `cli.site` asks
-its `verdict` for the stop a build owes (`W314`).
+its `verdict` for the stop a build owes.
 
 **Depends on.** `corpus.manifest` for the policy, `corpus.media` for the
 measurement and the verdict, `corpus.placement` for the media kinds. ⛔ No
 filesystem, and no second comparison: every verdict here is `verdict_for`'s.
 
-## ⛔ A SPLIT AT A SEAM, and the seam is the subject (`W314`, Ruling 261)
+## ⛔ A SPLIT AT A SEAM, and the seam is the subject
 
-⚠️ `report.py` reached the 400-line ceiling when the crossed-limit refusal
-landed. ⭐ **The line taken is the one the report itself draws**: what a plan
+⚠️ R11: the report is split. ⭐ **The line taken is the one the report itself
+draws**: what a plan
 says about **media** is here, and what it says about **paths, edits and
 refusals** stays in `report.py`. ⛔ The dependency runs one way — `report`
 imports this module for `Plan.media` and nothing here imports `report`, so a
@@ -46,8 +46,7 @@ from studyforge.corpus.placement import UNIT_MEDIA_DIRNAMES
 #: to let this tool near a repository they care about. ⭐ A footprint is either
 #: MEASURED — the bytes on disk, which `derive` reads for every corpus whose
 #: policy weighs its media — or PROJECTED from a rate the person supplied.
-#: ⛔ `W287`: this sentence once named a closed task as the future owner of the
-#: measurement; it names no task, because nothing is owed.
+#: ⛔ This sentence names no future owner of the measurement, because nothing is owed.
 UNPROJECTED = (
     "not stated — this run took no reading of the disk and was given no rate, so "
     "there is no number to weigh. A footprint is measured from the media on disk, "
@@ -56,14 +55,14 @@ UNPROJECTED = (
 
 #: What the measured footprint line says the reading covered. ⛔ The population
 #: is `corpus.media.measure`'s, and this sentence names it rather than widening it
-#: — nor narrowing it: `W311` widened the reading to every clip the narration
-#: record locates, and this sentence said only the directories until `W314`.
+#: — nor narrowing it: the reading covers every clip the narration record
+#: locates, not only the media directories.
 MEASURED_OVER = (
     "on disk under the declared units' media directories and wherever the narration "
     "record locates a clip"
 )
 
-#: What a refusal for a crossed limit adds: that a build stops on it too (`W314`).
+#: What a refusal for a crossed limit adds: that a build stops on it too.
 STOPS = "; a build stops here until corpus.json answers it (§5)"
 
 #: What a measured line adds when the reading found nothing: why, and what fills it.
@@ -80,8 +79,8 @@ class MediaProjection:
     policy: MediaPolicy
     units: int
     bytes_per_unit: int | None = None
-    #: ⭐ `W287`: what the corpus's generated media weighs on disk, read by `derive`
-    #: — the population `MEASURED_OVER` names, widened by `W311`.
+    #: ⭐ What the corpus's generated media weighs on disk, read by `derive`
+    #: — the population `MEASURED_OVER` names.
     measured: MediaFootprint | None = None
     #: Why the disk could not be read, when a reading was attempted and refused.
     unmeasured: str = ""
@@ -95,7 +94,7 @@ class MediaProjection:
     def verdict(self) -> MediaVerdict | None:
         """`corpus.media`'s verdict on the measurement, or None when none could be taken.
 
-        ⛔ **Asked of `verdict_for`, never re-derived** (`W314`): the plan's
+        ⛔ **Asked of `verdict_for`, never re-derived**: the plan's
         refusal and the build's stop read this one verdict. `always` and `never`
         get their verdict with no footprint, which is what `verdict_for` defines.
         """
@@ -143,7 +142,7 @@ class MediaProjection:
         out.append(f"media limit max_total_bytes {self.policy.max_total_bytes}")
         out.append(f"media limit max_file_bytes {self.policy.max_file_bytes}")
         out += [f"media footprint  {said}" for said in self._footprints()]
-        # ⛔ `W311/2`: a clip the reading could not weigh is named, as the verdict names it.
+        # ⛔ A clip the reading could not weigh is named, as the verdict names it.
         unweighed = () if self.measured is None else self.measured.unweighed
         out += [f"media unweighed  {said}" for said in unweighed]
         return out

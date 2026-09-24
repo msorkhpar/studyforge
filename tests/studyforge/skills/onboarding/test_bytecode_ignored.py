@@ -1,6 +1,6 @@
-"""`W345`, end to end: the Python the skills generate ignores its own bytecode.
+"""End to end: the Python the skills generate ignores its own bytecode.
 
-⭐ **The row's three clauses, each asserted both ways (R12):**
+⭐ **Three clauses, each asserted both ways (R12):**
 
 1. every directory the skills generate that holds Python carries its OWN ignore
    file — a new file inside it, never an edit to the root one (R3);
@@ -35,7 +35,7 @@ from studyforge.skills.onboarding.record import OnboardingRefused
 from tests.studyforge.skills.onboarding import corpora
 from tests.studyforge.skills.onboarding.test_walkthrough import _first_run, _run, _surveyed
 
-#: Every directory whose generated Python the first corpus left bytecode under.
+#: Every directory whose generated Python leaves bytecode when it runs.
 PYTHON_HOMES = ("ingest", "tests", "tests/ingest")
 
 
@@ -63,12 +63,12 @@ def _bytecode(paths: list[str]) -> list[str]:
 
 
 def _ignores(made) -> list[str]:
-    """Every ignore file THIS row is about. ⛔ Not the generated root's.
+    """Every bytecode ignore file. ⛔ Not the generated root's.
 
-    ⚠️ `W425` put a second ignore file in a corpus, at `GENERATED_IGNORE_HOME`,
+    ⚠️ A corpus carries a second ignore file, at `GENERATED_IGNORE_HOME`,
     written for a different reason by a different writer — it covers the
     discovery cache `studyforge serve` leaves behind. Counting it here would
-    make this row's population wrong in both directions.
+    make this population wrong in both directions.
     """
     home = GENERATED_IGNORE_HOME.as_posix()
     named = [where for where in made.paths if PurePosixPath(where).name == IGNORE_FILE]
@@ -99,9 +99,9 @@ def test_it_is_a_new_file_and_never_the_root_ignore_file(tmp_path):
     assert not (root / IGNORE_FILE).exists()
     assert IGNORE_FILE not in made.paths
     assert not (root / "src" / IGNORE_FILE).exists()
-    # ⚠️ The generated root DOES carry one since `W425`, for the discovery
+    # ⚠️ The generated root DOES carry one, for the discovery
     # cache and not for bytecode — so it is checked by what it says, not by
-    # being absent, and this row's text is not in it.
+    # being absent, and the bytecode rules are not in it.
     generated = (root / GENERATED_IGNORE_HOME).read_text(encoding="utf-8")
     assert SITE_CACHE_FILENAME in generated.splitlines()
     assert generated != bytecode_ignore()
@@ -152,7 +152,7 @@ def test_the_ignore_files_ignore_nothing_a_person_wrote(tmp_path):
     root, made = _first_run(tmp_path)
     (root / "tests/helper.py").write_text("HELPER = 1\n", encoding="utf-8")
     (root / "ingest/NOTES.md").write_text("# notes\n", encoding="utf-8")
-    # ⛔ `W425`'s file is left out and asked about separately below: it is the
+    # ⛔ The generated root's file is left out and asked about separately below: it is the
     # framework's own, it hides itself on purpose, and nobody wrote it.
     written = [
         p.relative_to(root).as_posix()
@@ -172,15 +172,15 @@ def test_the_ignore_files_ignore_nothing_a_person_wrote(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ Clause 3: a corpus onboarded before W345 gains them on regeneration
+# ⛔ Clause 3: a corpus onboarded without them gains them on regeneration
 # --------------------------------------------------------------------------
 
 
-def _before_w345(tmp_path):
-    """A corpus as an onboarding before this row left it, committed: no ignore files.
+def _onboarded_without_bytecode_ignores(tmp_path):
+    """A corpus onboarded with no bytecode ignore files, committed.
 
-    ⚠️ Its bytecode is deleted before the commit, as the first corpus's office
-    declined to stage it: committed bytecode is a different state, not this one.
+    ⚠️ Its bytecode is deleted before the commit: committed bytecode is a
+    different state, not this one.
     """
     root, made = _first_run(tmp_path)
     for where in _ignores(made):
@@ -191,7 +191,7 @@ def _before_w345(tmp_path):
     earlier = [item for item in earlier if item.where != RECORD_FILE]
     (root / RECORD_FILE).write_text(record.render(earlier), encoding="utf-8")
     corpora.git(root, "add", "-A")
-    corpora.git(root, "commit", "-q", "-m", "a corpus onboarded before W345")
+    corpora.git(root, "commit", "-q", "-m", "a corpus onboarded without ignore files")
     return root
 
 
@@ -206,7 +206,7 @@ def _generated_check(root: Path) -> subprocess.CompletedProcess:
 
 
 def test_a_corpus_onboarded_before_gains_the_files_on_regeneration(tmp_path):
-    root = _before_w345(tmp_path)
+    root = _onboarded_without_bytecode_ignores(tmp_path)
     assert not [home for home in PYTHON_HOMES if (root / home / IGNORE_FILE).exists()]
     manifest = (root / "corpus.json").read_bytes()
 
@@ -222,7 +222,7 @@ def test_a_corpus_onboarded_before_gains_the_files_on_regeneration(tmp_path):
 
 
 def test_and_the_generated_non_destructive_check_does_not_read_them_as_an_edit(tmp_path):
-    root = _before_w345(tmp_path)
+    root = _onboarded_without_bytecode_ignores(tmp_path)
     _regenerate(root)
 
     unstaged = _generated_check(root)
@@ -237,7 +237,7 @@ def test_and_the_generated_non_destructive_check_does_not_read_them_as_an_edit(t
 
 def test_while_the_same_check_still_catches_a_real_edit_in_that_state(tmp_path):
     # ⭐ The control: the green above is not a check that reads nothing.
-    root = _before_w345(tmp_path)
+    root = _onboarded_without_bytecode_ignores(tmp_path)
     _regenerate(root)
     (root / "src/01.md").write_text("# First\n\nRewritten.\n", encoding="utf-8")
 
@@ -248,7 +248,7 @@ def test_while_the_same_check_still_catches_a_real_edit_in_that_state(tmp_path):
 
 
 def test_a_persons_ignore_file_at_one_of_those_paths_is_refused_and_nothing_written(tmp_path):
-    root = _before_w345(tmp_path)
+    root = _onboarded_without_bytecode_ignores(tmp_path)
     (root / "tests" / IGNORE_FILE).write_text("scratch/\n", encoding="utf-8")
     before = {p: p.read_bytes() for p in root.rglob("*") if p.is_file() and ".git" not in p.parts}
 

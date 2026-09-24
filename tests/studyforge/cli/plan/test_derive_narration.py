@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/cli/plan/derive.py`'s `W460` half: a silenced corpus plans no copy.
+"""Mirror of `src/studyforge/cli/plan/derive.py`'s narration half: a silenced corpus plans no copy.
 
 ⭐ A build of a corpus whose `corpus.json` says `narration: false` copies no clip
 (`generate.narration.narrated`), so the plan — the build's own enumeration —

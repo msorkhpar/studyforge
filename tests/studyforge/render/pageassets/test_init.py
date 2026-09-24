@@ -11,7 +11,7 @@ from studyforge.render import pageassets
 from tests.support import assert_package_contract
 
 #: The whole public surface, spelled out. ⚠️ Duplicated from `__all__` on
-#: purpose, following SF-01: a test that read `__all__` and then asserted the
+#: purpose: a test that read `__all__` and then asserted the
 #: names in it exist would pass whatever the module happened to export.
 PUBLIC_SURFACE = frozenset(
     {
@@ -86,7 +86,7 @@ def test_the_package_imports_nothing_outside_the_standard_library_and_itself():
         "studyforge",
         "pathlib",
         "__future__",
-        # ⭐ `faces` (`W362`): pins, encodes and caches the vendored faces.
+        # ⭐ `faces`: pins, encodes and caches the vendored faces.
         "base64",
         "dataclasses",
         "functools",
@@ -106,7 +106,7 @@ def test_the_package_imports_nothing_outside_the_standard_library_and_itself():
 #: not anything a source wrote. A class name exists to style a block type, so
 #: a surface that did not know the block types is precisely how the two came
 #: to disagree silently in the first place; `surface.py` takes its keys from
-#: there and answers for every type either way (CTO round 12).
+#: there and answers for every type either way.
 #: ⛔ Nothing else under `studyforge.archive` is allowed: `archive.document`
 #: **is** content-shaped, and an asset reaching for it would be the failure
 #: this test exists to catch.

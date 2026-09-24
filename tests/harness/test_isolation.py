@@ -24,8 +24,8 @@ from tests.harness import isolation, probe
 from tests.studyforge.render.index.indexes import case
 from tests.support import repository_root
 
-#: Floors on coverage, not counts. ⚠️ Measured 2026-09-10 at `5e608bfc`: **165**
-#: framework modules, of which the serving package is **1**. ⛔ Lower bounds, so a
+#: Floors on coverage, not counts: the framework's modules, and the serving
+#: package's. ⛔ Lower bounds, so a
 #: new module is not a failing test — but a walk that silently stopped reaching the
 #: tree is, and that is the only way this can break.
 LEAST_FRAMEWORK_MODULES = 150
@@ -38,7 +38,7 @@ def framework():
 
 
 # --------------------------------------------------------------------------
-# ⛔ assertion 1 — the index reads only the two contents documents (SF-14)
+# ⛔ assertion 1 — the index reads only the two contents documents
 # --------------------------------------------------------------------------
 
 
@@ -81,15 +81,15 @@ def test_the_verdict_ignores_a_record_entry_that_is_not_a_path(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ assertion 2 — the serving package starts no process (§8.3, SF-19a)
+# ⛔ assertion 2 — the serving package starts no process (§8.3)
 # --------------------------------------------------------------------------
 
 
 def test_the_serving_package_names_no_way_to_start_a_process():
-    # ⚠️ The population is printed because it is SMALL: the package is a skeleton,
-    # and an empty one would report no offenders exactly as a clean one does.
-    # ⭐ The floor arrives before the routes deliberately — SF-19a writes them
-    # against a red/green signal rather than being audited afterwards.
+    # ⚠️ The population is printed and bounded below, because an empty one
+    # would report no offenders exactly as a clean one does.
+    # ⭐ Every new route is written against this red/green signal rather than
+    # audited afterwards.
     modules = isolation.serve_modules()
     for module in modules:
         print(f"serve  {module.name}  {len(module.text.splitlines())} lines")
@@ -193,7 +193,7 @@ def test_no_framework_module_imports_anything_but_the_standard_library_and_itsel
     # ⛔ R1's import form, as a CLOSED positive set — the one spelling of this rule
     # that cannot be walked around, because the permitted side is enumerable and
     # the forbidden side is not. ⚠️ Two other doors exist and neither is here:
-    # `tools/quality/source_names.py` owns the prose form, and the run-time form is
+    # `tests/floor/source_names.py` owns the prose form, and the run-time form is
     # the test below.
     print(f"framework modules {len(framework)}")
     assert len(framework) >= LEAST_FRAMEWORK_MODULES

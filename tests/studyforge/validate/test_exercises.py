@@ -1,4 +1,4 @@
-"""`validate`'s arm over an authored exercise's gate record and bundle (`AX-04`).
+"""`validate`'s arm over an authored exercise's gate record and bundle.
 
 ⭐ Every check here has a **negative control**: the same corpus with the defect
 removed is clean. ⛔ And every plant is a REAL edit to a REAL file whose effect
@@ -135,7 +135,7 @@ def test_a_readers_own_edit_never_moves_a_digest(tmp_path):
 
 
 def test_a_run_report_committed_into_a_bundle_is_refused(tmp_path):
-    # ⛔ `AX-03/1`: a JUnit report carries the machine's hostname, and a corpus
+    # ⛔ A JUnit report carries the machine's hostname, and a corpus
     # repository is where this repository's personal-data gate never looks.
     root, places = a_corpus(tmp_path / "c")
     report_file = root / places[0].bundle / "report.xml"
@@ -164,7 +164,7 @@ def test_a_page_whose_practices_skip_an_ordinal_is_refused(tmp_path):
 
 
 def test_a_corpus_with_no_authored_exercise_is_untouched(tmp_path):
-    # ⚠️ A `bundled` grader's derivation gates are `E08`'s; nothing here widens
+    # ⚠️ A `bundled` grader's derivation gates are its own; nothing here widens
     # to it, so a corpus that predates this milestone validates as it did.
     root = corpora.one_unit(tmp_path / "c")
     report = validate(root)
@@ -172,7 +172,7 @@ def test_a_corpus_with_no_authored_exercise_is_untouched(tmp_path):
     assert RULE_GATE_RECORD not in report.rules
 
 
-# ⭐ `W436`: a bundle with a build role is held to the same two questions.
+# ⭐ the build role: a bundle with a build role is held to the same two questions.
 
 
 def test_a_corpus_whose_exercise_ships_a_build_role_validates(tmp_path):
@@ -193,7 +193,7 @@ def test_a_build_file_changed_after_the_gates_ran_is_refused_naming_it(tmp_path)
 
 
 def test_a_run_report_committed_under_the_build_role_is_refused(tmp_path):
-    # ⛔ `AX-03/1` survives the wider set: the run-output directory is refused
+    # ⛔ The hostname rule survives the wider set: the run-output directory is refused
     # under every role, so the build role cannot carry a run's report either.
     root, places = a_corpus(tmp_path / "c", build=["pom.xml"])
     planted = root / places[0].bundle / "build" / "target" / "TEST-x.xml"

@@ -19,13 +19,11 @@ the questions; the page grades them with the two functions here.
 `exercise.errors` for the one exception, and `unit.trust` for R5's rule.
 ⛔ **Nothing else, ever** — see *no compiler, no container* below.
 
-## ⭐ WHY THIS EXISTS, AND WHY IT IS NOT A V2 BACKLOG
+## ⭐ WHY THIS EXISTS
 
-⛔ **Ruled by the user, 2026-09-19: the quiz shape is IN `M10`** (spec §7 §7).
-⚠️ **It was proposed for a v2 backlog and the user said no.** Most teaching
-material is not code — a history book, a standards walkthrough, a prose
-tutorial — and deferring this would have left all of it at the reading floor
-indefinitely, activating no reader at all.
+⭐ **Most teaching material is not code** (spec §7 §7) — a history book, a
+standards walkthrough, a prose tutorial — and without this shape all of it
+would stay at the reading floor, with no practice for a reader at all.
 
 ## ⛔ NO COMPILER, NO CONTAINER, NO NETWORK AND NO MODEL
 
@@ -65,8 +63,8 @@ R5's general rule leaves open for real shipped tests.
 | `shape` | what a quiz RECORD carries instead of a workspace, and its trust |
 | `grading` | the rule: what was answered, what was right, when it is complete |
 
-**Delivered by AX-05** (`M10` step 10.1, [`E14`](../../../../docs/tasks/E14-authored-exercises.md)).
-The authoring gates Q1–Q5 are `AX-06`'s and the reader's panel is `AX-09`'s.
+**Scope.** The authoring gates Q1–Q5 are `exercise.gates.quiz`'s and the
+reader's panel is the renderer's.
 """
 
 from __future__ import annotations
@@ -104,7 +102,7 @@ from studyforge.exercise.quiz.shape import (
 
 #: ⛔ The sub-package's whole public surface. A consumer that has to import
 #: `studyforge.exercise.quiz.questions` directly is a consumer this contract
-#: failed — `docs/conventions/module-structure.md` calls `__init__.py` the
+#: failed — R17 makes the package's `__init__.py` its
 #: contract, and this is what it says.
 __all__ = [
     "KEYED_OPTIONS",

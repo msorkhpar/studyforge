@@ -1,8 +1,8 @@
 """Mirror of `src/studyforge/corpus/discovery/freshness.py` (R12).
 
-⛔ **Ruling 95's second trap is asserted here**: `site_api` is not the staleness
-mechanism, and the digest is what is. ⛔ **Ruling 18 is asserted here too**:
-there is no `mtime` in this module and there must never be one.
+⛔ **`site_api` is not the staleness mechanism**, and the digest is what is.
+⛔ **No clock either**: there is no `mtime` in this module and there must never
+be one (R10).
 """
 
 from __future__ import annotations
@@ -104,7 +104,7 @@ def test_the_version_key_is_a_constant_and_not_bumped_per_scan():
     assert first == second == cache_module.SITE_API
 
 
-# --- ⛔ Ruling 18: the signal is content, never a clock ----------------------
+# --- ⛔ The signal is content, never a clock ----------------------
 
 
 def test_this_module_names_no_filesystem_timestamp():
@@ -119,8 +119,8 @@ def test_this_module_names_no_filesystem_timestamp():
     tree = ast.parse(source)
     # ⭐ The module contract is where the argument is written down and names
     # `mtime` four times; `ast.unparse` drops comments outright, so what is
-    # left is the code and nothing else. A grep over the file would have
-    # measured the docstring and been red from the day it was written.
+    # left is the code and nothing else. A grep over the file would read the
+    # docstring and always be red.
     if tree.body and isinstance(tree.body[0], ast.Expr):
         tree.body = tree.body[1:]
     code = ast.unparse(tree)

@@ -8,7 +8,7 @@ from studyforge.render.pageassets import AssetError, licence_for, text
 
 
 def test_an_asset_error_is_not_a_value_error():
-    # ⚠️ SF-01's split, applied: a *document* error ("this file is not one I
+    # ⚠️ The package split: a *document* error ("this file is not one I
     # can read") subclasses Exception; a *value* error subclasses ValueError.
     # Every failure here is the first kind.
     assert issubclass(AssetError, Exception)
@@ -36,7 +36,7 @@ def test_a_missing_part_is_loud_rather_than_empty():
 
 
 def test_a_refusal_carries_no_absolute_path():
-    # ⛔ R7, and the rule the conventions now state: never format an exception
+    # ⛔ R7: never format an exception
     # object into a message. `OSError` renders with the absolute path it was
     # given, which in a build log is the user's home directory.
     with pytest.raises(AssetError) as raised:

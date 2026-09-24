@@ -18,7 +18,7 @@ imported and never re-spelled — the shape `record._trust` and
 ⭐ **A quiz has no `main_path`, no `run_command`, no `test_path` and no
 `test_command`** (spec §7 §7): there is no file for the reader to edit and
 nothing to execute. ⛔ So `QUIZ_KEYS` **enumerates what a quiz may carry** —
-Ruling 35's shape, the legal set and never the illegal one — and a key outside
+stated positively, the legal set and never the illegal one — and a key outside
 it is refused naming it. ⚠️ A key outside the record altogether was already
 refused by `record._require_known_keys`; this is the second, narrower question.
 
@@ -41,7 +41,7 @@ module closes, and not through `user`.
 ⭐ **Stated positively, as the pair that is legal**, so a fourth provenance
 added to `unit.trust.PROVENANCE` is refused on a quiz the day it is added,
 without anybody deciding. ⚠️ That is the shape `MAY_BE_AUTHORITATIVE` was
-rewritten into after a forbidden-pair list failed open (Ruling 35), and the
+rewritten into after a forbidden-pair list failed open, and the
 reason is the same one.
 
 ## ⛔ NEITHER KEY IS REQUIRED, AND BOTH ARE WRITTEN BACK
@@ -53,9 +53,8 @@ writes both back**, following `trust`'s ruling that a defaulted field which
 disappears when it is obvious cannot be told from one nobody wrote.
 
 ⚠️ **The cost, stated:** a quiz document that omits them round-trips to one
-that carries them. ⛔ That is affordable here and was not for `kind`, and the
-difference is measured rather than argued: the installed base of quiz records
-is **zero**, so no document in existence is re-rendered by this choice (R10).
+that carries them. ⛔ That is affordable here and not for `kind`: a quiz
+record always carries them, so no document is re-rendered by this choice (R10).
 """
 
 from __future__ import annotations
@@ -70,10 +69,10 @@ from studyforge.unit.trust import check_test_record
 QUESTIONS = "questions"
 
 #: ⛔ Every key a quiz record may carry, in `record.EXERCISE_KEYS` order. The
-#: legal set, never the illegal one (Ruling 35). ⚠️ `cases` and `report` are
+#: legal set, never the illegal one. ⚠️ `cases` and `report` are
 #: absent because they are facts about what a test RUN reports, and a quiz
 #: produces no run — `record` already refuses them beside no grader, and that
-#: refusal is `AX-00`'s Acceptance rather than something to relax here.
+#: refusal is the case vocabulary's own rule rather than something to relax here.
 QUIZ_KEYS = ("provenance", "trust", "kind", "origin", QUESTIONS)
 
 #: ⛔ The one a quiz record must carry. `kind` is what selected this shape, and
@@ -155,6 +154,6 @@ def _quiz_trust(record: dict, where: str) -> tuple[str, str]:
             f"one declares {pair[0]!r} and {pair[1]!r}. A quiz's honesty gates "
             f"are taken ONCE at authoring and cannot be re-run by whoever holds "
             f"the bundle, so no quiz may claim to be the source's own grader "
-            f"(R5, spec §7)."
+            f"(spec §7)."
         )
     return pair

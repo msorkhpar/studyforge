@@ -14,7 +14,7 @@ not handed.
 archive address it needs, `skills.adapter.Layout`, the one place in `src/` that
 computes one.
 
-⛔ **No address here is composed from a literal** (`W322`). The archive root,
+⛔ **No address here is composed from a literal**. The archive root,
 a container map's filename, a unit's own directory and the authored overlay's name
 are the layout's arithmetic, not this module's: each is asked for, and where a
 **glob** is wanted — a pattern being the one thing a layout does not produce —

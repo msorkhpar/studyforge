@@ -45,21 +45,21 @@ runner is the caller's.
 | `writes` | the additive commit: every file checked against the tree before any is written |
 | `corpus` | the whole pass: the ledger once, every page, the reasons, the merge and the commit |
 
-⚠️ **`AX-07`'s `Owns` named `ledger.py` as one module and R11 refused it at 502
-lines**, and `AX-08`'s loop is four modules for the same reason: the remedy
-this tree takes is a split at a NAMED seam, never a trim (Ruling 261). ⭐ The
-loop's seams are the handoffs a pass makes: what an author is asked → what a
+⚠️ **`ledger.py` as one module was refused by R11 at 502
+lines**, and the authoring loop is four modules for the same reason: the remedy
+this tree takes is a split at a NAMED seam, never a trim. ⭐ The
+loop's seams are the hand-overs a pass makes: what an author is asked → what a
 gate answers → what one page ships → what the corpus commits.
 
 ## ⛔ THE PROPERTIES THIS PACKAGE EXISTS TO MAKE CHECKABLE
 
-1. ⛔ **Nothing the source already has is lost** (`E14`'s first property). The
+1. ⛔ **Nothing the source already has is lost** (spec §7, section 3). The
    ledger refuses an entry that is neither the basis of an exercise nor carried
    with a written reason it is not.
 2. ⛔ **The plan is a CEILING, never a quota** (R6, spec §7 §4). `shortfall`
    refuses a page that shipped past its ceiling and a gap not named with a gate.
-   ⭐ **Its count is set by COVERAGE, not by length** (user ruling
-   2026-09-23): every aspect a page teaches is checked by a named exercise or
+   ⭐ **Its count is set by COVERAGE, not by length**: every aspect a page
+   teaches is checked by a named exercise or
    carried by a written reason, and an aspect with neither is refused.
 3. ⛔ **A gate failure is re-authored within `ATTEMPTS`, never by loosening a
    gate, dropping a case or deleting a question** (spec §7 §11). No gate takes
@@ -182,7 +182,7 @@ from studyforge.skills.exercises.writes import commit
 
 #: ⛔ The package's whole public surface. A consumer that has to import
 #: `studyforge.skills.exercises.ledger` directly is a consumer this contract
-#: failed — `docs/conventions/module-structure.md` calls `__init__.py` the
+#: failed — R17 makes `__init__.py` the
 #: contract, and this is what it says.
 __all__ = [
     "ACCOUNTED_KEYS",

@@ -15,7 +15,7 @@ fine (R6, R8).
 `narrate.speakable` for the records and the one clip minter, `narrate.wire` for
 the request, the answer and the decode error, and `narrate.answers` for the values.
 ⭐ The JSON readers stay here, beside this module's `assert_clean` calls, so the
-module that decodes a service answer is the module that calls the R7 gate (`W7`).
+module that decodes a service answer is the module that calls the R7 gate.
 ⛔ **Not on `corpus.placement`** — asserted, see R4.
 
 ## ⛔ THE POPULATION IS THE REQUESTS, AND EXACTLY ONE SEAM PRODUCES IT
@@ -29,12 +29,12 @@ the acceptance is that its list is **empty**.
 ⚠️ **A gate that only ran in `narrate()` would be a discipline, not a property**, so
 the seam gates too: `_send` runs `assert_clean` over the decoded payload and the URL,
 and the body is **encoded after that call and nowhere else**. ⭐ The inner layer is
-news, not redundancy (SF-08's argument): the per-segment gate names the speech id and
+news, not redundancy (R7): the per-segment gate names the speech id and
 is actionable; the seam gate cannot, so a match there means an upstream stage failed.
 
 ## ⛔ `scrub` THEN `assert_clean`, AND THEY READ DIFFERENT WORDS
 
-⭐ **The order is the archive writer's and so is the division** (SF-08 *Decisions* 1):
+⭐ **The order is the archive writer's and so is the division**:
 `scrub` rewrites text **this framework wrote** — the `where` label and every message
 raised here — and `assert_clean` **refuses** text a source wrote, because rewriting a
 record corrupts it. ⛔ Scrubbing a segment then asserting it would swap the leak for a
@@ -44,8 +44,8 @@ placeholder and pass: a gate that cannot fire. Never done here.
 
 ⛔ A manifest entry's `url` is ignored: the path is rebuilt from `artifact_id`,
 checked against `ARTIFACT_ID`, against the configured base, so the service cannot
-redirect a fetch elsewhere. ⭐ **`probe` reads `engine_model` off `/healthz`**
-(`W223`): the service's cache key is the service's, and this client reports what
+redirect a fetch elsewhere. ⭐ **`probe` reads `engine_model` off `/healthz`**:
+the service's cache key is the service's, and this client reports what
 the deployment says rather than composing a key of its own.
 """
 
@@ -176,7 +176,7 @@ class NarrateClient:
         """Report whether the service is there. ⛔ Never raises for its absence (R6, R8).
 
         ⛔ `chunk_chars` and `engine_model` are both in the service's content
-        address and both deployment settings (`W223`), so an answer
+        address and both deployment settings, so an answer
         without either is unreadable rather than a guess.
         """
         try:

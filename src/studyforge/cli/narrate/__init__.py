@@ -20,7 +20,8 @@ handed in.
 `validate` for the exit codes.
 ⛔ Nothing here knows any source (R1).
 
-⭐ **`E09` § W202 answer 3 is this package's reason to exist**: a build never
+⭐ **Narration is recorded by `narrate` and a build only copies it, and that is
+this package's reason to exist**: a build never
 synthesises, so something a person can type must — and the order is `narrate`
 then `build`. ⚠️ Clips land beside the material through `corpus.placement`,
 never under a build's `--out`.

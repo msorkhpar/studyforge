@@ -1,9 +1,9 @@
-"""FND-04's fixtures check themselves, so twelve epics can trust them.
+"""The framework fixtures check themselves, so every package that reads them can trust them.
 
 The checks live in `tests/fixture_checks/`, one module per seam; this module is
 what asserts them. ⭐ The two are separate because they answer different
-questions — *what does this corpus break?* is reusable and is what SF-25 will
-re-ask of a real source, while *and is that empty?* is a test.
+questions — *what does this corpus break?* is reusable and is what `validate`
+re-asks of a real source, while *and is that empty?* is a test.
 
 Run `python3 -m tests.fixture_checks` for the block-type coverage table.
 """
@@ -139,13 +139,10 @@ def compiled_patterns(path: Path):
 
 def test_the_fixture_checker_carries_no_personal_data_pattern_of_its_own():
     # ⛔ One pattern set, and this is the half that makes a FOURTH copy unrepresentable
-    # rather than merely discouraged. The copy that used to live here was the
-    # weaker of two — it missed a bare home directory, the macOS spelling, a
-    # shell command and a dict key — and it was the one guarding rubric §1e's
-    # fixture exception, the single place personal-data-shaped content is
-    # permitted. ⭐ Deleting it is not enough: reconciling or re-adding a list
-    # is exactly what the standing ruling forbids, so the absence is asserted
-    # across the whole package rather than in the one file it used to be in.
+    # rather than merely discouraged. A copy here drifts weaker than the
+    # original, and it would guard the fixture exception — the single place
+    # personal-data-shaped content is permitted. ⭐ So the absence is asserted
+    # across the whole package rather than in one file.
     package = Path(personal_data.__file__).parent
     offenders = [
         f"{path.name}: {pattern}"
@@ -154,8 +151,8 @@ def test_the_fixture_checker_carries_no_personal_data_pattern_of_its_own():
         if any(tell in pattern for tell in R7_PATTERN_TELLS)
     ]
     assert offenders == [], (
-        "R7's shapes have one home, `studyforge.archive.scrub` — rubric §1a, "
-        f"and this is the copy that was already weaker than it: {offenders}"
+        "R7's shapes have one home, `studyforge.archive.scrub`, "
+        f"and a second copy drifts weaker than it: {offenders}"
     )
     assert imports_module(Path(personal_data.__file__), "studyforge.archive.scrub"), (
         "the fixture checker must take R7's shapes from the gate the archive uses"
@@ -184,6 +181,6 @@ def test_the_gate_the_fixture_checker_borrows_is_the_stronger_one():
 
 
 def test_the_sanctioned_fixture_really_does_carry_it():
-    """Otherwise SF-08 and SF-25 would be accepted against a fixture that passes."""
+    """Otherwise the R7 gate and `validate` would be tested against a fixture that passes."""
     found = violations(FIXTURES / "invalid" / "personal-data")
     assert [rule for rule, _ in found] == ["personal-data"]

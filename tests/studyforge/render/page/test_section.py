@@ -139,7 +139,7 @@ def test_a_section_key_that_is_not_a_slug_is_refused():
 
 
 # --------------------------------------------------------------------------
-# ⭐ `W215` / spec C4 — the files the page LINKS rather than shows
+# ⭐ Spec C4 — the files the page LINKS rather than shows
 # --------------------------------------------------------------------------
 
 
@@ -208,7 +208,7 @@ def test_an_attachments_filename_is_escaped():
 
 
 # --------------------------------------------------------------------------
-# W407 — the section that opens the page withholds the block the page prints
+# The section that opens the page withholds the block the page prints
 # --------------------------------------------------------------------------
 
 

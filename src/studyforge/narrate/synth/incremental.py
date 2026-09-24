@@ -6,8 +6,8 @@ the second set, places what comes back, and hands the record next door what it
 learned.
 
 ⛔ **Four ways to be stale and every one is checked**, including that the file is
-actually on disk: a record agreeing with itself is what reported *"0
-synthesised"* over 619 clips that were not there. ⚠️ The acceptance is asserted
+actually on disk: a record agreeing with itself would report *"0
+synthesised"* over clips that are not there. ⚠️ The acceptance is asserted
 over the set of files written and the set of ids submitted, never over this
 module's own report.
 
@@ -15,8 +15,8 @@ module's own report.
 and therefore no transport, which is the *"requests nothing"* half of the
 acceptance made a property of the shape rather than a promise.
 
-⛔ **Nothing is deleted, and nothing written goes unnamed** (`W226`, `E09` § W193
-answer 2). Every clip is recorded with the directory it was written into, and a
+⛔ **Nothing is deleted, and nothing written goes unnamed** (R3,
+R6). Every clip is recorded with the directory it was written into, and a
 clip a re-wording replaces stays on disk as the entry's `superseded` until a
 prune, so a prune can reach it without scanning a directory.
 
@@ -45,7 +45,7 @@ from studyforge.narrate.synth.record import (
 )
 
 #: ⚠️ The service caps a request body at 4 MiB and this client does not split
-#: for you (`NS-05`). Counted in characters of speech, well under that cap once
+#: for you. Counted in characters of speech, well under that cap once
 #: the envelope and worst-case multi-byte encoding are paid for.
 DEFAULT_BATCH_CHARS = 500_000
 
@@ -59,12 +59,12 @@ CLIP_ABSENT = "the clip is not on disk"
 def audio_dir(root: Path | str, locations: UnitLocations) -> Path:
     """Return where one unit's clips go: its placement answer, rooted — ⛔ never composed here.
 
-    ⛔ **`W222` (`SF-42/1`): `locations` is the ONE derivation**, the unit's
+    ⛔ **`locations` is the ONE derivation**, the unit's
     `generate.declarations.unit_location`, which takes what `unit_stem` takes,
     the label included. `narrate`, the build's read and the page hold that one
     answer, so no stem is spelled here and no argument of it can be dropped here.
 
-    ⭐ The *"through the placement policy"* half of `SF-17`: a caller that
+    ⭐ The *"through the placement policy"* half of synthesis: a caller that
     composed the media directory itself would be the second layout authority R4
     removes, and that mistake is invisible under one of the two profiles, whose
     media directory happens to sit where a hand-composed path would put it.
@@ -75,7 +75,7 @@ def audio_dir(root: Path | str, locations: UnitLocations) -> Path:
 def wanted_name(unit: SpeechUnit, conditions: Conditions) -> str:
     """Return the filename this unit's clip must have under `conditions`.
 
-    ⛔ The stem comes from `SF-16`'s one minter, which takes the whole unit so an
+    ⛔ The stem comes from `speakable`'s one minter, which takes the whole unit so an
     id cannot be paired with words that are not its own.
     """
     return f"{clip_name(unit)}.{conditions.fmt}"
@@ -225,7 +225,7 @@ def _placing(file: Path, into: Path | str) -> tuple[Path, str]:
     """Return the corpus root and `into` as the record spells it, refusing before any request.
 
     ⛔ A directory the record cannot spell relative to its root is a clip nobody
-    could locate from the record, so it is refused rather than written (`W226`).
+    could locate from the record, so it is refused rather than written.
     """
     try:
         root = root_of(file)

@@ -111,7 +111,7 @@ def test_blocks_are_joined_by_a_newline_so_a_page_can_be_read():
     assert markup.count("\n") == 2
 
 
-# --- W303: a type that is not a name is refused by name --------------------
+# --- A type that is not a name is refused by name -------------------------
 
 #: Every way a block's `type` can arrive as something that is not a name.
 #: ⛔ Each is valid JSON, so each can reach the dispatcher off disk: `[...]` and
@@ -121,8 +121,8 @@ UNNAMEABLE_TYPES = [["para"], {"para": 1}, None, 3, True]
 
 
 @pytest.mark.parametrize("block_type", UNNAMEABLE_TYPES)
-def test_W303_a_type_that_is_not_a_name_is_refused_by_name(block_type):
-    # ⛔ Measured reachable through a document that BOTH `archive.document.parse`
+def test_a_type_that_is_not_a_name_is_refused_by_name(block_type):
+    # ⛔ Reachable through a document that BOTH `archive.document.parse`
     # and `unit.served.parse` accept, so the refusal has to be the page's rather
     # than the interpreter's.
     with pytest.raises(PageError) as raised:
@@ -131,7 +131,7 @@ def test_W303_a_type_that_is_not_a_name_is_refused_by_name(block_type):
 
 
 @pytest.mark.parametrize("block_type", UNNAMEABLE_TYPES)
-def test_W303_the_refusal_describes_the_type_and_never_quotes_the_block(block_type):
+def test_the_refusal_describes_the_type_and_never_quotes_the_block(block_type):
     # ⛔ R7: a block's own fields are a corpus's material and can carry anything,
     # so the refusal names what arrived instead of reproducing it.
     with pytest.raises(PageError) as raised:
@@ -139,7 +139,7 @@ def test_W303_the_refusal_describes_the_type_and_never_quotes_the_block(block_ty
     assert "SECRET" not in str(raised.value)
 
 
-def test_W303_a_well_formed_run_of_blocks_still_renders_unchanged():
+def test_a_well_formed_run_of_blocks_still_renders_unchanged():
     # ⭐ The other direction: the guard sits in front of the dispatch and changes
     # nothing that was already renderable.
     markup = blocks.render_all([SAMPLES["para"], SAMPLES["heading"]], section="shared")
@@ -147,7 +147,7 @@ def test_W303_a_well_formed_run_of_blocks_still_renders_unchanged():
     assert "<h2" in markup
 
 
-def test_W303_no_module_declares_a_type_its_own_dispatch_cannot_answer():
+def test_no_module_declares_a_type_its_own_dispatch_cannot_answer():
     # ⛔ This is the property that keeps `_RENDERERS[block["type"]]` in `prose`
     # and `figure` unreachable with a bad key, and so keeps a guard out of both:
     # a renderer is entered only for a type `RENDERERS` already matched, so the
@@ -168,7 +168,7 @@ def test_an_empty_run_of_blocks_renders_as_nothing():
 
 
 def test_omit_withholds_a_block_from_the_output_and_renumbers_nothing():
-    # ⛔ `W407`: the page's own heading is withheld from the body it was promoted
+    # ⛔ The page's own heading is withheld from the body it was promoted
     # out of. A caller that sliced the list instead would shift every position
     # after it, and a position is what a clip is filed under.
     run = [

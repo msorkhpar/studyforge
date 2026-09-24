@@ -21,7 +21,7 @@ is, `studyforge.describe` for naming a value without reproducing it (R7), and
 
 ## ⭐ ONE RECORD, AND A SECOND GATE FAMILY WRITES INTO IT
 
-⛔ **`AX-06`'s quiz gates share this record rather than opening a second one**,
+⛔ **The quiz gates share this record rather than opening a second one**,
 and nothing in this module knows they exist. It reads the registry,
 so the moment a family is registered its gates are ones this record *requires*,
 its verdicts are ones this record *accepts*, and a record carrying only half of
@@ -48,7 +48,7 @@ than chosen, and that nothing in it can say a gate held when it did not.
 
 ## ⛔ NOTHING HERE READS A CONFIGURATION, AND THAT IS THE POINT
 
-⭐ **Spec §7 and `E14`'s third property: no gate may be disabled by
+⭐ **Spec §7 and R5, as gates: no gate may be disabled by
 configuration.** There is no environment variable, no options argument, no
 `skip` key and no `enabled` flag anywhere in this package — and because the
 document's key sets are **closed**, a bundle that invents one is refused rather
@@ -101,7 +101,7 @@ class Verdict:
 
     ⛔ Frozen, and `says` is required whether the gate held or not. A gate that
     holds silently is a gate nobody can tell from one that did not run, and
-    `E14`'s first property turns on being able to tell.
+    spec §7's *nothing is lost* turns on being able to tell.
     """
 
     id: str
@@ -315,7 +315,8 @@ def _require_distinct(roles: Iterable[str], key: str, where: str) -> None:
         raise ExerciseError(
             f"{where}: '{key}' names {repeated} role more than once. Each role is one "
             f"file, so a repeated role is two digests for it and no answer about "
-            f"which was read. The roles are not reproduced here (R7)."
+            f"which was read. The roles are not reproduced here, since a refusal never quotes a "
+            f"value that may be personal."
         )
 
 
@@ -326,7 +327,7 @@ def _section(value: object, where: str) -> str | None:
     if not isinstance(value, str) or not value.strip():
         raise ExerciseError(
             f"{where}: a cited passage's 'section' is the heading that bounds the "
-            f"region (Ruling 92), or null where the whole file is cited. The value "
+            f"region, or null where the whole file is cited. The value "
             f"is {describe(value)}."
         )
     return value

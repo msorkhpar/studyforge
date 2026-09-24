@@ -1,4 +1,4 @@
-"""What a question may say, and every way `AX-05`'s Acceptance says it may not.
+"""What a question may say, and every way the quiz shape says it may not.
 
 ⭐ **Taken on `depth1`'s own quiz** (`depth1.py`), so every refusal below is a
 plant into the material this shape exists for rather than into a shape invented
@@ -89,7 +89,7 @@ def test_the_keys_of_a_question_and_an_option_are_what_the_contract_names():
 
 
 # --------------------------------------------------------------------------
-# ⛔ the Acceptance: the four refusals, each named
+# ⛔ The four refusals, each named
 # --------------------------------------------------------------------------
 
 
@@ -118,7 +118,7 @@ def test_an_option_with_no_sentence_is_refused():
 
 
 # --------------------------------------------------------------------------
-# ⛔ and the refusals the shape needs beyond the Acceptance, each argued
+# ⛔ And the refusals the shape needs beyond those, each argued
 # --------------------------------------------------------------------------
 
 
@@ -160,7 +160,7 @@ def test_an_option_correct_must_be_a_real_boolean():
 
 @pytest.mark.parametrize("bad", ["q 1", "q/1", "-q1", "q-1\n", "", 7, None])
 def test_an_id_outside_the_permitted_set_is_refused(bad):
-    # ⚠️ `q-1\n` is `AX-00/1`'s shape: `^…$` with `.match` accepts a trailing
+    # ⚠️ `q-1\n` is the trailing-newline shape: `^…$` with `.match` accepts a trailing
     # newline, and this pattern is anchored `\A…\Z` so that it does not.
     message = refuse(question(id=bad))
     assert "id" in message

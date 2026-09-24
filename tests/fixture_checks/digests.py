@@ -15,7 +15,7 @@ walking the tree would silently make that fixture valid — which has been
 avoided once already, when the count keys grew.
 
 ⚠️ **Nested blocks are not counted.** A quote's or a disclosure's inner blocks
-are the container's content, not the document's top level; SF-25 counts
+are the container's content, not the document's top level; `validate` counts
 top-level blocks and recurses separately if it wants the total.
 """
 

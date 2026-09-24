@@ -17,7 +17,7 @@ this package's `entries`, `errors` and `writing`.
 |---|---|
 | **File** | `toc.json` — `TOC_FILENAME` |
 | **Version key** | `toc_api` — ⭐ **minted here**, and registered in `version.CONTRACT_FIELDS` |
-| **Producer** | ⛔ **`SF-13`. The *local* document that annotates it carries the same key** |
+| **Producer** | ⛔ **`generate`. The *local* document that annotates it carries the same key** |
 
 ⚠️ **One version key covers both documents, and that is deliberate.** The
 spec's register calls it *"the TOC schema version"* for `toc.json` and for
@@ -27,7 +27,7 @@ one half and not the other could join a pair it does not understand.
 ## ⛔ An unknown `toc_api` is refused, never migrated (R9)
 
 ⭐ **Refused, unlike the discovery cache.** `site.json` is derived from a scan
-that can simply be re-run, so Ruling 95 lets it be discarded and rebuilt. This
+that can simply be re-run, so it may be discarded and rebuilt. This
 document is not that: a consumer holding a `toc.json` it cannot read has no
 scan to fall back on and no way to tell a shape it does not speak from a shape
 that means something different. ⛔ So this uses `version.check`, which raises,
@@ -64,7 +64,7 @@ from studyforge.contents.writing import write as write_text
 from studyforge.describe import describe, describe_keys
 from studyforge.version import check as check_version
 
-#: R9's key for this contract. ⭐ Minted by `SF-13`; registered in
+#: R9's key for this contract. ⭐ Registered in
 #: `version.CONTRACT_FIELDS` in the commit that mints it.
 TOC_API = 1
 KNOWN_TOC_API = frozenset({TOC_API})

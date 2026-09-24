@@ -73,9 +73,9 @@ def test_the_container_is_named_for_its_corpus_as_the_readers_run_line_names_it(
 
 
 def test_the_editor_container_is_the_one_the_generated_compose_file_brings_up(tmp_path):
-    """⭐ The name the framework looks a running editor up by, read in the file (`W416`).
+    """⭐ The name the framework looks a running editor up by, read in the file.
 
-    ⭐ **Declared now, not derived** (`W465`): the editor service carries a
+    ⭐ **Declared now, not derived**: the editor service carries a
     `container_name` interpolation whose default is this spelling, and the
     project's default is still the one whose `<project>-editor-1` it was, so an
     instance that recorded nothing is called exactly what it always was.
@@ -101,7 +101,7 @@ def test_a_container_name_that_is_not_one_word_is_refused(name):
 
 @pytest.mark.parametrize("ending", ["\n", "\r\n", "\r"])
 def test_a_trailing_line_ending_is_refused_by_every_check_here(ending):
-    # ⛔ W434. `require_container` reads `SAFE_SEGMENT` directly and never
+    # ⛔ `require_container` reads `SAFE_SEGMENT` directly and never
     # re-checks, so the pattern's anchor is this module's whole defence. Each
     # value is legal without its ending — the negative control is asserted.
     assert require_container("runner") == "runner"

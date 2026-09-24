@@ -7,7 +7,7 @@ caller catches one type rather than three.
 
 **Depends on.** Nothing.
 
-⚠️ **`Exception`, not `ValueError`, and that follows SF-01's split rather than
+⚠️ **`Exception`, not `ValueError`, and that follows the package error split rather than
 inventing one.** A *value* error means "you handed me something I cannot
 accept"; a *document* error means "this file is not one I can read". Every
 failure here is the second kind — a part missing from the package, a vendored

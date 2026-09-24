@@ -12,8 +12,8 @@ from studyforge.corpus.placement.tree import TreeProfile
 
 TREE = profile_for("tree")
 
-#: The extraction source's shape below the container, measured 2026-09-09 from
-#: a real unit directory: `audio/`, `video/` and the unit document beside
+#: The extraction source's shape below the container, from a real unit
+#: directory: `audio/`, `video/` and the unit document beside
 #: `index.html`, under `units/unit-NN/`.
 SOURCE_SHAPE = ("units", "unit-07")
 
@@ -35,12 +35,9 @@ def test_the_shape_below_the_container_is_the_extraction_sources_own():
 
 
 def test_the_page_filename_is_the_one_thing_that_is_not_the_same():
-    # ⛔ Measured 2026-09-09: the extraction source's `study/` tree holds 1,290
-    # unit pages named `index.html` and 0 named `*.unit.html`. §5 rules that
-    # every generated page carries a real name, because a scan reads names.
-    # So one file per unit is renamed by a migration and nothing else moves —
-    # and the task document's "byte-identically" is true of the directories
-    # and false of that one filename.
+    # ⛔ The extraction source names every unit page `index.html`. §5 rules
+    # that every generated page carries a real name, because a scan reads
+    # names, so the page is `*.unit.html` and the directories are the same.
     where = TREE.unit(Address.of("basics", "16-streams-api"), 7, "Streams")
     assert where.page.name != "index.html"
     assert where.page.name.endswith(".unit.html")
@@ -93,7 +90,7 @@ def test_the_profile_declares_its_name_and_what_it_does():
 def test_the_media_globs_are_scoped_under_the_generated_root_by_where_they_live():
     # ⛔ Every media kind's directory name — `audio` first — is a word a real
     # repository uses for its own material; an unanchored `audio/` in the root
-    # ignore file would tell git to ignore its own recordings. ⭐ W242: the lines
+    # ignore file would tell git to ignore its own recordings. ⭐ The lines
     # live in `.studyforge/.gitignore`, so git applies them below it and nowhere
     # else — the file's place is the anchor.
     lines = TREE.media_ignore_lines()

@@ -1,4 +1,4 @@
-"""The container map's one exception type (SF-05)."""
+"""The container map's one exception type."""
 
 import json
 
@@ -76,9 +76,9 @@ def test_the_arity_comparison_is_the_one_deliberate_exception():
 
 
 def test_but_every_other_rule_of_sf_01_s_is_converted():
-    # ⛔ What a slug is and what an ordinal is are SF-01's rules; the *document*
+    # ⛔ What a slug is and what an ordinal is are the address package's rules; the *document*
     # is this contract's. ⭐ And converting them is not only consistency —
-    # SF-01's messages format the offending value with `!r`, and these values
+    # The address package's messages format the offending value with `!r`, and these values
     # are read straight out of a file somebody else wrote (R7).
     for broken in (
         {"n": 0, "title": "a", "practices": 0},
@@ -97,7 +97,7 @@ def test_a_leak_is_not_a_container_error():
 
 
 def test_a_version_refusal_arrives_as_a_container_error():
-    # ⭐ Each contract keeps its own front door: SF-33's guard is handed
+    # ⭐ Each contract keeps its own front door: the version guard is handed
     # `error=ContainerError`, so the shared check does not leak a shared type.
     assert not issubclass(ContainerError, VersionError)
     with pytest.raises(ContainerError):

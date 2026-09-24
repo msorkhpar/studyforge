@@ -1,8 +1,7 @@
 """The theme control: the reader's own choice of light, dark or the system's.
 
 Mirrors `render/assets/theme.js` and the head boot in `render/templates/page.html`
-(`W388` stage 2, the user: *"have the both dark and light themes in studyforge as
-well"*).
+(a light and a dark theme, and the system's).
 
 ⛔ **THE SPELLING IS TWO-SIDED AND THAT IS WHY THIS MODULE EXISTS.** The boot
 runs in the head, before any bundle exists, so it cannot ask `study-progress.js`
@@ -48,10 +47,9 @@ def code(part: str) -> str:
 
     ⛔ **A clause about what a part DOES must not read what it SAYS.**
     `test_the_part_reads_the_store_through_its_published_name` refuses the name
-    `localStorage` in this part — and `W388` stage 5 gave the part a docstring
-    that has to name it, because the defect it records is that the head boot
-    touched it. ⚠️ Without this the file could only be made green by leaving the
-    measurement unwritten, which is the wrong thing to trade.
+    `localStorage` in this part — and the part's docstring has to name it, to say
+    why the head boot never touches it. ⚠️ Without this the file could only be
+    made green by leaving that reason unwritten.
     """
     return re.sub(r"/\*.*?\*/", "", text(part), flags=re.S)
 
@@ -63,15 +61,12 @@ def declared(part: str, name: str) -> str:
     return found.group(1).strip()
 
 
-#: The boot exactly as `W388` stage 2 shipped it, and what `W388` stage 5
-#: measured it costing. ⛔ **It read the display record out of `localStorage` in
-#: the `<head>`** — the document's first touch of that area, far earlier than
-#: any build before it — and a document that binds the area before the previous
-#: document's write has committed keeps a snapshot without it, for its whole
-#: life. ⚠️ Measured on the host at `-n 16`: a mark written on one page was
-#: missing on the next in 14 of 35 runs with this boot, 0 of 10 with the same
-#: branch and the boot not touching `localStorage`, 0 of 10 on the release tip.
-#: ⛔ The reader then marks the page they are on and the earlier mark is
+#: A boot that reads the display record out of `localStorage` in the `<head>`,
+#: and what that costs. ⛔ **The `<head>` is the document's first touch of that
+#: area**, and a document that binds the area before the previous document's
+#: write has committed keeps a snapshot without it, for its whole life: a mark
+#: written on one page can be missing on the next. ⛔ The reader then marks the page they are on
+#: and the earlier mark is
 #: DESTROYED, because the new record is composed from the stale set.
 #: ⭐ It is kept here as the thing every clause below is refuted against.
 BOOT_THAT_LOST_MARKS = (
@@ -88,8 +83,8 @@ def missing(script: str) -> list[str]:
     ⛔ ONE function, used by the reading and by its refutation: a check written
     twice is a check that can pass in one spelling and fail in the other.
 
-    ⚠️ **The boot no longer spells the DISPLAY record's key, and that is `W388`
-    stage 5.** What it spells is the boot CACHE the store keeps in
+    ⚠️ **The boot does not spell the DISPLAY record's key.** What it spells is the boot CACHE the
+    store keeps in
     `sessionStorage` — a different storage area, so reading it binds nothing the
     marks live in. ⛔ The key is COMPOSED by the store from a prefix, the
     preference's name and a suffix, and it is composed the same way here rather
@@ -132,8 +127,7 @@ def test_a_boot_that_misspells_the_mirror_is_caught_by_name(planted, said):
 
 
 def test_the_boot_never_touches_the_store_the_reader_s_MARKS_live_in():
-    # ⛔ **`W388` STAGE 5's SETTLING CLAUSE, and it is a measured defect rather
-    # than a style rule.** The `<head>` is the earliest a document can touch
+    # ⛔ **Not a style rule.** The `<head>` is the earliest a document can touch
     # `localStorage`, and a snapshot taken there can be older than the write the
     # previous page made — permanently, for that document. ⚠️ The theme is worth
     # one frame of flash on the first page of a tab; it is not worth a reader's
@@ -141,7 +135,7 @@ def test_the_boot_never_touches_the_store_the_reader_s_MARKS_live_in():
     # of the repair.
     assert "localStorage" not in boot(), (
         "the head boot binds the durable store before the page is parsed, which "
-        "is what cost a mark in 14 of 35 measured runs"
+        "is what can cost a reader a mark"
     )
 
 
@@ -209,7 +203,7 @@ def test_the_part_reads_the_store_through_its_published_name():
 
 
 def test_the_part_keeps_the_boot_cache_through_the_store_and_clears_it_for_system():
-    # ⛔ **The cache is never an authority** (`W388` stage 5). The durable answer
+    # ⛔ **The cache is never an authority.** The durable answer
     # stays in the display record, which only this part reads; what is cached is
     # the one string the head boot may act on. ⚠️ *System* caches `null` rather
     # than the word, because an absent cache and a cached *system* must not be

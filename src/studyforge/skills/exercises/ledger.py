@@ -24,7 +24,7 @@ only. ⛔ Not on any adapter and not on any source (R1).
 
 ## ⛔ THE LEDGER IS THE PROOF OF *NOTHING IS LOST*, AND A PROOF IS MECHANICAL
 
-⭐ **`E14`'s first property is the reason this module exists.** The reading
+⭐ **Spec §7's *nothing the source already has is lost* is why this exists.** The reading
 floor is untouched and every example still renders; the ledger is what makes
 that a claim somebody can check rather than a sentence in a guide (spec §7 §3).
 
@@ -80,7 +80,7 @@ ENTRY_KEYS = ("kind", "path", "ordinal", "sections", "language", "digest")
 
 #: The keys of one source file the ledger read. ⭐ `sections` is every heading
 #: the file carries, in order and with its repeats, because that is what
-#: answers both of `SF-36`'s questions about a region an origin names.
+#: answers both questions a region origin raises: does it exist, and is it unique.
 SOURCE_KEYS = ("path", "digest", "sections")
 
 
@@ -137,8 +137,8 @@ def key_of(entry: Entry) -> str:
 
     ⛔ A test file is its path and an example is its path and its position in
     that file, so a reason names an entry without anybody inventing an id.
-    ⚠️ **The separator is `:` and deliberately NOT `#`.** `SF-36` refused a
-    fragment in a source path outright — *"a path carrying a fragment"* — so a
+    ⚠️ **The separator is `:` and deliberately NOT `#`.** The source-path
+    rule refuses a fragment outright — *"a path carrying a fragment"* — so a
     key that looked like one would invite exactly the spelling this tree
     refuses; ⭐ and `<what>:<which>` is the shape `gates.digests` already uses
     for `plant:<case id>` and `question:<id>`. ⛔ No source path carries a `:`,
@@ -201,7 +201,7 @@ def _scanned(text: str, path: str, where: str) -> Scan:
         raise LedgerError(
             f"{where}: '{path}' opens a fenced block and never closes it, so the "
             f"ledger cannot say where that example ends. The file's contents are not "
-            f"reproduced here (R7)."
+            f"reproduced here, since a refusal never quotes a value that may be personal."
         )
     return read
 
@@ -217,7 +217,8 @@ def _source_path(value: object, what: str, where: str) -> str:
     if fault is not None:
         raise LedgerError(
             f"{where}: {what} must be {SOURCE_PATH_DESCRIBED} — this one is {fault}. "
-            f"The value is not reproduced here (R7)."
+            f"The value is not reproduced here, since a refusal never quotes a value that may be "
+            f"personal."
         )
     return value  # type: ignore[return-value]
 

@@ -11,16 +11,16 @@ got from `corpus.placement`.
 
 **Depends on.** `dataclasses`, `pathlib`, `typing` (standard library only) and
 `narrate.speakable.records` for the unit type. ⛔ **Not on `narrate.wire` and not
-on `narrate.client`**, and that is the reason this module exists (`W223`).
+on `narrate.client`**, and that is the reason this module exists.
 
 ## ⛔ THE WIRE SEAM, AND WHY THESE VALUES ARE ON THIS SIDE OF IT
 
 ⭐ **`narrate.wire` is bytes out and bytes in: `urllib`, the transport and
 reading a JSON answer.** `narrate.client` speaks the service's protocol over it.
-⛔ **A build never synthesises** (`W202` answer 3), but it does read the record,
+⛔ **A build never synthesises** (R8), but it does read the record,
 and the record's `Conditions` are read off a `Health`. With `Health` inside the
-client module, `import studyforge.generate` loaded the HTTP client (`SF-38/9`),
-and so did `cli/plan` (`W224/4`). ⭐ So the values sit here and both sides import
+client module, `import studyforge.generate` loaded the HTTP client,
+and so did `cli/plan`. ⭐ So the values sit here and both sides import
 them, and a fresh interpreter's `sys.modules` is the test, not source text.
 
 ## ⛔ R4: `place` HOLDS NO OPINION ABOUT WHERE AUDIO LIVES
@@ -46,7 +46,7 @@ class NarrationError(Exception):
     """Synthesis did not happen.
 
     ⛔ **`PersonalDataLeak` is deliberately outside this family and is never
-    translated into it** (Ruling 58): a caller catching this reports and carries
+    translated into it**: a caller catching this reports and carries
     on, and an R7 refusal must stop the run. ⭐ Two exceptions travel through
     unconverted, deliberately — `PersonalDataLeak` and `SpeakableError`.
     """
@@ -66,7 +66,7 @@ class Health:
     #: ⛔ In the content address AND a deployment setting: read it here, never
     #: from a constant.
     chunk_chars: int | None = None
-    #: ⛔ `W223`: the model the deployment synthesises with, as `/healthz` reports
+    #: ⛔ The model the deployment synthesises with, as `/healthz` reports
     #: it. In the service's content address, so a change makes every clip stale.
     engine_model: str | None = None
 
@@ -128,7 +128,7 @@ def place(narration: Narration, into: Path) -> tuple[Path, ...]:
     ⭐ `into` is an argument and never a default: this module holds no opinion about
     where a study site keeps its audio (R4). Each file lands in a temporary sibling
     and is renamed over its target, so an interrupted run leaves no truncated clip
-    that looks finished — `NS-01`'s property, at this end.
+    that looks finished — the service's own property, at this end.
     """
     destination = Path(into)
     destination.mkdir(parents=True, exist_ok=True)

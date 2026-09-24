@@ -77,13 +77,13 @@ lines, of which lines **313–674 (53.7%) are a structural copy of
 the corpus's addresses, titles, ordinals and grouping. `content.exclude` names
 files; this is not a file. So the answer is a region, not an exclusion.
 
-⛔ **A heading that links a file is not a unit by the link alone (W250).** Where
+⛔ **A heading that links a file is not a unit by the link alone.** Where
 it stands in the labels' shape and opens no entry, and the file it links is cut
 into regions by its headings, it is a group label whose units are those regions:
-each unit's `origin` is `{path, section}` (Ruling 92). A linked file that is one
+each unit's `origin` is `{path, section}`, a heading-bounded region. A linked file that is one
 unit stays an entry, and the survey asks about it by name.
 
-> **Measured** at ISO `ab9e765`: read as an entry, `# [Test cases](TestCases.md)`
+> **Measured** on the ISO-8583 corpus: read as an entry, `# [Test cases](TestCases.md)`
 > gave **39 units in 3 groups**. Read as a label, it gives **55 units in 4 groups**,
 > 17 of them regions of `TestCases.md`, one per top-level heading.
 
@@ -145,7 +145,7 @@ whether the corpus finishes at the reading floor or enters the execution track.
 the one the capability index prints, not the order their ids sort to.
 
 ⭐ **A graded corpus's draft declares the `runtimes` its material evidences**
-(`W351`) — a build file or a source suffix, each from a closed map, and `java`
+— a build file or a source suffix, each from a closed map, and `java`
 beside any name that runs on a JVM. ⛔ **Never a runtime nothing evidences**,
 never the key for prose, and never beside `exercises: false`: evidence there is
 one question instead. A draft carrying the key declares `corpus_api` 4, the
@@ -162,12 +162,12 @@ is the slug of the curriculum record's title and `variants` is `["prose"]`,
 both asked about; no include glob matches the curriculum record — a directory
 whose wildcard would catch it is listed file by file.
 
-⛔ **`source` never depends on the directory surveyed (`W249`).** A worktree, a
+⛔ **`source` never depends on the directory surveyed.** A worktree, a
 clone and an archive of one commit draft one `source`. Nothing is read from
 git, and never a remote URL.
 
-⭐ **The draft proposes the `not_material` globs; the reasons stay yours
-(`W240/3`).** Only a file an include reads is proposed for `exclude`. Every
+⭐ **The draft proposes the `not_material` globs; the reasons stay
+yours.** Only a file an include reads is proposed for `exclude`. Every
 other file `validate` will classify gets a glob with `"why": null`, and so do
 the record and the root's furniture. Nothing onboarding recorded writing is
 proposed, so no glob collides with onboarding's. Give each reason to `promote`
@@ -176,13 +176,13 @@ in `reasons`, keyed by its glob.
 ### 9. ⛔ On a corpus this framework already onboarded, survey the corpus
 
 ⚠️ **A second survey reads the framework's own consuming half back**, and the
-worst symptom is silent. ⭐ **Measured on a clean run:** the raw repository gave
-*"build files 0, graders 0"* and a draft of `exercises: false`; the same
-repository after onboarding gave **12 files that look like graders — the
-scaffold's own `tests/**/test_*.py`** — dropped the verdict line and drafted
-`exercises: true`. ⛔ **A COMPLETE corpus is then presented to its reader as
-unfinished** (§7, C5). The archive a build wrote flipped `placement` the same
-way, and the generated documents were re-proposed as this corpus's material.
+worst symptom is silent. ⭐ A raw repository that reads *"build files 0,
+graders 0"* and drafts `exercises: false` reads, once onboarded, the scaffold's
+own `tests/**/test_*.py` as files that look like graders, drops the verdict line
+and drafts `exercises: true`. ⛔ **A COMPLETE corpus would then be presented to
+its reader as unfinished** (§7, C5). The archive a build wrote would flip
+`placement` the same way, and the generated documents would be re-proposed as
+this corpus's material.
 
 ⭐ **`.studyforge/installed.json` names every file of it, and it is the one
 instrument** — `installed.generated` reads it, `inventory` sets those files
@@ -193,7 +193,7 @@ than the record's, and `inventory.enumerated` is `source_files` — so this surv
 stops exactly where `validate` stops.
 
 ⛔ **A re-survey never proposes again what the corpus already declares, and
-a proposal that stands down says so (`W269`).** A file a `not_material` glob
+a proposal that stands down says so.** A file a `not_material` glob
 in the root's own `corpus.json` covers is not proposed, and no directory glob
 sweeps it. A survey that judged no file, or judged without git's ignore
 rules, asks one question naming why, even when it proposes nothing. ⚠️ A
@@ -210,10 +210,9 @@ the corpus as its own working tree.
   are served at a slug their title does not produce.
 - ⛔ **Never smooth over an uncertainty to make the report look finished.**
 
-## ⚠️ One correction worth carrying, because the ruling was wrong
+## ⚠️ Which titles collide: punctuation, not accents
 
-E10 and an earlier ruling say `slugify` collides on **accents** — that `Café`
-and `Cafe` become one slug. ⛔ **Measured: they do not.** An accent is a
+`slugify` does not collide `Café` and `Cafe`. An accent is a
 non-alphanumeric, so it collapses to a *separator*: `caf` and `cafe`.
 
 ⭐ **The class that actually occurs is punctuation.** `'Streams: an API'` and

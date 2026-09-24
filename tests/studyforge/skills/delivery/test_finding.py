@@ -15,7 +15,7 @@ def claim(**overrides: object) -> Claim:
 
 def finding(**overrides: object) -> Finding:
     fields: dict[str, object] = {
-        "id": "SK-08/1",
+        "id": "SV-08/1",
         "marker": "structural",
         "says": "the planner cannot express a gate on a shared component",
         "claims": (claim(),),
@@ -33,7 +33,7 @@ def test_every_marker_in_the_vocabulary_is_accepted():
     # vocabulary entry nobody can reach.
     for marker in MARKERS:
         claims = () if marker == "none" else (claim(),)
-        assert Finding(id="SK-08/1", marker=marker, says="x" * 20, claims=claims).marker == marker
+        assert Finding(id="SV-08/1", marker=marker, says="x" * 20, claims=claims).marker == marker
 
 
 def test_a_fourth_marker_is_refused_and_the_refusal_names_the_three():
@@ -62,7 +62,7 @@ def test_a_none_marker_beside_a_real_claim_is_refused():
 
 
 def test_a_none_marker_alone_is_the_way_to_write_zero():
-    assert Finding(id="SK-08/1", marker="none", says="nothing outside scope", claims=()).marker
+    assert Finding(id="SV-08/1", marker="none", says="nothing outside scope", claims=()).marker
 
 
 def test_a_finding_with_a_marker_and_no_claims_states_nothing_checkable():
@@ -91,7 +91,7 @@ def test_a_claim_that_is_both_measured_and_received_is_refused():
 
 def test_a_measured_and_a_received_claim_render_differently():
     assert claim().line().startswith("  - *measured:*")
-    assert Claim("W16 is open", received="BOARD.md").line().startswith("  - *received:*")
+    assert Claim("a check is open", received="the plan").line().startswith("  - *received:*")
 
 
 def test_a_claim_with_no_text_claims_nothing():

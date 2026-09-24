@@ -18,13 +18,12 @@ both skills:
 ⛔ Nothing source-specific (R1), and nothing inside `skills.onboarding`: that
 package reads this one, never the reverse.
 
-## ⛔ WHY THE EXECUTION SKILL KEEPS A RECORD OF ITS OWN (`PO-188/1`)
+## ⛔ WHY THE EXECUTION SKILL KEEPS A RECORD OF ITS OWN
 
-⚠️ **Measured by the register:** a wrong tag planted in `editor.env` left
-onboarding's `hand_edited` at `[]` and the corpus's suite GREEN, because the
-execution skill's outputs are outside onboarding's install record. R19 says a
-hand-edit to a generated artifact is a finding; for these files nothing could
-find it. ⭐ So the skill that writes them records them, in the shape onboarding
+⚠️ The execution skill's outputs are outside onboarding's install record, so
+without a record of their own a wrong tag hand-written into `editor.env` would
+leave onboarding's `hand_edited` at `[]`. R19 says a hand-edit to a generated
+artifact is a finding. ⭐ So the skill that writes them records them, in the shape onboarding
 records its own, and onboarding's check reads both records.
 
 ⛔ **Not added to onboarding's install record.** That record is rewritten by
@@ -61,7 +60,7 @@ WRITTEN_API = 1
 
 #: What a reader is told to do about a generated file that moved (R6).
 REMEDY = (
-    "A hand-edit to a generated file is a finding, not a fix (R19): change corpus.json "
+    "A hand-edit to a generated file is a finding, not a fix: change corpus.json "
     "or the component's pin, then re-run the execution skill's write and record steps, "
     "which write it back"
 )

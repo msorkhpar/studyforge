@@ -1,9 +1,8 @@
 """Mirror of `render/page/practice.py`'s BREAKDOWN, and of the reference beside it.
 
-⛔ **Its own module, because `test_practice.py` had no room** — it stood at `599`
-of R11's `600` the day this row opened, and a trim of four other rows' prose is
-not a seam (`W422`'s second clause). ⭐ The seam is the SUBJECT: that file is
-*the panel, its controls and its label*, and this is *what a Submit reported and
+⛔ **Its own module, because its subject is its own** (R11). ⭐ The seam is the
+SUBJECT: that file is *the panel, its controls and its label*, and this is *what a Submit reported
+and
 what the reader may always read instead*.
 
 ⚠️ **Every clause is asserted BOTH WAYS**, for `test_practice.py`'s own reason:
@@ -24,10 +23,10 @@ from tests.studyforge.render.page.test_practice import (
     section,
 )
 
-# --- ⛔ `AX-09`: the Submit breakdown, and the reference that is always there -
+# --- ⛔ The Submit breakdown, and the reference that is always there -
 
 
-#: A record that declares what it is checked IN (`AX-00`): a main ask and two
+#: A record that declares what it is checked IN: a main ask and two
 #: edges, each with the sentence a reader is shown.
 BROKEN_DOWN = {
     **GENERATED,
@@ -55,7 +54,7 @@ def test_the_breakdown_region_is_emitted_only_where_the_record_declares_one():
 
 
 def test_every_declared_case_is_emitted_with_its_kind_and_the_corpus_s_sentence():
-    # ⛔ **The counts are DERIVED and were never recorded** (`AX-02`): what a run
+    # ⛔ **The counts are DERIVED and were never recorded**: what a run
     # reports is `{case id: did it pass}`, so *main ask* and *edge cases n/m* are
     # that map joined with these. ⭐ In the order the corpus wrote them, because
     # re-ordering would be this framework editing the material (R1).
@@ -71,14 +70,14 @@ def test_every_declared_case_is_emitted_with_its_kind_and_the_corpus_s_sentence(
 def test_the_breakdown_ships_hidden_and_is_announced_rather_than_only_coloured():
     # ⛔ Nothing is reported before a Submit reports it. ⭐ And the region is a
     # live one, so a reader who cannot see the ink is told what changed — which
-    # is this row's Acceptance, not a preference.
+    # is required, not a preference.
     region = broken_down().split('data-practice-part="breakdown"')[1].split(">")[0]
     assert "hidden" in region
     assert 'role="status"' in region and 'aria-live="polite"' in region
 
 
 def test_every_word_the_breakdown_says_lives_in_the_markup_and_not_in_the_script():
-    # ⭐ The two-sided spelling every hook on this page has (`W431`): a sentence
+    # ⭐ The two-sided spelling every hook on this page has: a sentence
     # spelled in the script too would be a second place for it to drift. ⚠️ The
     # counting sentence is a PATTERN in the markup, and the script substitutes.
     said = broken_down()
@@ -90,7 +89,7 @@ def test_every_word_the_breakdown_says_lives_in_the_markup_and_not_in_the_script
 
 
 def test_the_script_draws_nothing_when_the_two_case_populations_disagree():
-    # ⛔ `AX-02`, *For dependents*: a corpus regenerated after a Submit can change
+    # ⛔ A corpus regenerated after a Submit can change
     # the case map under a reader, and a breakdown whose population does not
     # match the practice is not *edge cases 1/2* — it is a breakdown of a
     # different practice. ⭐ Both directions are read, because either alone lets
@@ -103,7 +102,7 @@ def test_the_script_draws_nothing_when_the_two_case_populations_disagree():
 
 
 def test_the_breakdown_is_read_off_this_run_s_stream_and_is_never_fetched():
-    # ⛔ A built page may name no API, no origin and no client file (R8, `W370`),
+    # ⛔ A built page may name no API, no origin and no client file (R8),
     # so the state namespace is out of reach and the run's own body is the one
     # channel left. ⚠️ Read for BOTH: the line's shape, and the absence of any
     # second way of asking.
@@ -126,10 +125,10 @@ def test_a_case_line_is_taken_off_the_stream_and_every_other_line_is_shown():
 
 
 def test_the_breakdown_never_decides_what_passed():
-    # ⛔ **The clause this row is measured by.** `progress.is_pass` is the
+    # ⛔ **The clause the breakdown is measured by.** `progress.is_pass` is the
     # verdict and the breakdown is a report; a panel that called a practice
-    # complete because every case passed would be the second definition of a
-    # pass `AX-02` exists to avoid. ⭐ So the status line is set from the run's
+    # complete because every case passed would be a second definition of a
+    # pass. ⭐ So the status line is set from the run's
     # own answer and never from the case map.
     body = behaviour()
     assert "status.textContent = text;" in body
@@ -138,7 +137,7 @@ def test_the_breakdown_never_decides_what_passed():
 
 
 def test_the_reference_solution_is_present_closed_and_gated_on_nothing():
-    # ⛔ The user's ruling (spec §7 §8): always available, never revealed
+    # ⛔ Spec §7 §8: always available, never revealed
     # automatically, and asking is never recorded as a failure. ⭐ It arrives as
     # the archive's own `disclosure` block — a real `<details>` that opens with
     # scripting off entirely — so there is nothing in the panel that could

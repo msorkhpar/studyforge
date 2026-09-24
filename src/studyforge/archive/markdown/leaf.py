@@ -110,7 +110,7 @@ def read_image(line: str, lineno: int) -> dict | None:
         src = attrs.get("src")
         if not src:
             # ⛔ The line is the source's own text and is never reproduced
-            # (R7, W19): a markdown line can carry anything the corpus author
+            # (R7): a markdown line can carry anything the corpus author
             # wrote, including a path. The line **number** is what a reader
             # needs, and they have the file.
             raise MarkdownError(

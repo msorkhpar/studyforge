@@ -14,13 +14,13 @@ path §6 requires a writer to build at before it moves anything into place.
 
 `archive_tree()` is the same arithmetic drawn for a reader — the four places an
 adapter writes, with the values replaced by placeholders — so a page shows the
-layout instead of retyping it (`W214`).
+layout instead of retyping it.
 
 **Depends on.** `address` (for `Address`, `unit_name` and `require_ordinal`)
 `corpus.container`/`corpus.manifest` for the two filenames they own,
 `corpus.placement` for the archive root, the `raw/` segment and the `units/`
 segment, and `unit.content` for the third filename — the authored overlay's,
-which `content` joins and never spells (`W198`).
+which `content` joins and never spells.
 ⛔ Not on `validate`: this module says where to *write*, `validate` says
 whether what was written is right, and a writer that imported its own judge
 would be checking itself.
@@ -36,10 +36,10 @@ reports as *unit missing*, at the reader rather than at the writer.
 ## ⛔ All THREE archive segments are IMPORTED; none is a literal here
 
 ⛔ **`ARCHIVE_DIR`, `RAW_DIR` and `UNITS_DIR` are `corpus.placement`'s
-`ARCHIVE_DIRNAME`, `RAW_DIRNAME` and `UNITS_DIRNAME`, never a literal here**
-(`INT-06/6`, `W199`, `W298`). Each was re-derived under Ruling 101's second
-row: three spellings of the archive root let `plan` print a root neither this
-module nor `validate` read, and `raw` was minted twice — here and in
+`ARCHIVE_DIRNAME`, `RAW_DIRNAME` and `UNITS_DIRNAME`, never a literal here**,
+because a value a second package needs has one exported home (R21): three
+spellings of the archive root let `plan` print a root neither this module nor
+`validate` read, and `raw` was minted twice — here and in
 `validate.corpus`, off both surfaces — so the two writers of one segment could
 disagree with nothing failing.
 
@@ -52,7 +52,7 @@ fails on a second `archive` or `raw` literal anywhere in `src/`, and
 module and asserts `validate` reads exactly the documents it wrote — ⚠️ a
 literal compared against the same literal would agree with itself.
 
-⚠️ **`units` is held by a THIRD instrument, and `W298` is why it needed one.**
+⚠️ **`units` is held by a THIRD instrument, because a scan by spelling cannot hold it.**
 It cannot be counted the way the other two are: `"units"` is also a JSON **key**
 — `container.json` and the contents document both carry a `"units"` array — so
 a spelled-once scan reds modules that mint nothing. ⭐ The instrument therefore
@@ -61,7 +61,7 @@ segment and joined into a path anywhere in `src/` is a MINT; the same literal
 read as a mapping key is not.
 
 ⚠️ `unit_name` is *not* re-derived either. It is on
-`studyforge.address.__all__`, so the same ruling's other row applies.
+`studyforge.address.__all__`, so it is imported from its one home (R21).
 """
 
 from __future__ import annotations
@@ -82,15 +82,15 @@ from studyforge.unit.content import CONTENT_FILENAME
 ARCHIVE_DIR = ARCHIVE_DIRNAME
 
 #: The directory under a container that holds its documents, by variant:
-#: placement's one spelling, on this skill's surface (`W199`). ⚠️ One variant per
-#: container (SF-05), so this is one directory and not a search.
+#: placement's one spelling, on this skill's surface. ⚠️ One variant per
+#: container, so this is one directory and not a search.
 RAW_DIR = RAW_DIRNAME
 
 #: The directory under a container that holds each unit's **own** files — the
 #: ones that belong to the unit rather than to one of its variants: its media,
 #: its attachments, and the authored overlay. ⛔ **Placement's one spelling, on
-#: this skill's surface (`W298`)** — it was a second literal here until then,
-#: which is `W199/1`. ⚠️ The value is load-bearing in BOTH trees and they are
+#: this skill's surface** — never a second literal here, because a second
+#: literal is a second authority (R21). ⚠️ The value is load-bearing in BOTH trees and they are
 #: required to agree: a build reads a unit's media from the archive's
 #: `<address>/units/unit-NN/` and writes it under the site's `units/unit-NN/`.
 #: ⭐ Pinned behaviourally by the fixtures as well as by the mint scan, because
@@ -180,7 +180,7 @@ class Layout:
           is what lets a build find the file a lesson's `<img>` names;
         - the authored overlay sits in it, and `content` below is the one
           method that says where — ⛔ **this docstring does not spell it, and
-          `W198` is why: a second spelling is a second authority.**
+          R21 is why: a second spelling is a second authority.**
 
         ⚠️ **This is stated here because it was stated nowhere in `src/`.** The
         two shipped fixtures both use the directory, the spec's contract table
@@ -193,9 +193,9 @@ class Layout:
     def content(self, address: Address | list | tuple, unit: int) -> Path:
         """One unit's authored overlay — **the** address, so no consumer derives it.
 
-        ⛔ **`W198`: nothing in `src/` said where an overlay sits, so every
-        build that wanted one had to invent a place, and two builds would have
-        invented two.** `SF-37` landed the directory (`unit_files`); this is
+        ⛔ **Without this method nothing in `src/` says where an overlay sits, so
+        every build that wanted one would invent a place, and two builds would
+        invent two.** `unit_files` is the directory; this is
         the file, and it is the last half of R21's *located* for the one
         contract this framework only ever reads.
 
@@ -209,7 +209,7 @@ class Layout:
         ⚠️ **Declaring where an overlay sits is not APPLYING one, and v1's
         build applies none.** ⛔ A unit that carries an overlay is still built
         from its archive documents alone — that verb is unowned and is not
-        this address's to answer (`W198`'s clause 4, `SF-37/3`). ⭐ Saying so
+        this address's to answer. ⭐ Saying so
         is the point: a reader who finds this method must not read it as the
         feature.
         """
@@ -278,7 +278,7 @@ def archive_tree() -> str:
 
     ⛔ **Every line is a path this module computed**, so a page that draws this
     tree is not a second spelling of the layout and cannot drift from it
-    (`W214`, R19). ⚠️ The line a skill was missing is the last one: a unit's
+    (R19). ⚠️ The line a skill was missing is the last one: a unit's
     **own** files — each asset's and attachment's `local`, and the authored
     overlay — sit beside `raw/`, never inside a variant, and an adapter that
     wrote them anywhere else produced a page whose every figure is a broken

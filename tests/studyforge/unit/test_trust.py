@@ -50,9 +50,9 @@ def test_a_bundled_test_may_be_recorded_either_way(trust):
 
 
 def test_a_user_written_test_may_be_advisory_and_not_authoritative():
-    # ⛔ **This test is why the hole survived.** It was named for `user` and
-    # asserted `generated` — so `user` + `authoritative` was refused by nobody
-    # and asserted by nobody, and the suite was green about it.
+    # ⛔ **Named for `user`, and it asserts `user`**: a test named for one
+    # provenance and asserting another leaves `user` + `authoritative`
+    # refused by nobody and asserted by nobody.
     assert check_test_record("user") == ("user", "advisory")
     with pytest.raises(ContentError):
         check_test_record("user", "authoritative")
@@ -72,13 +72,13 @@ def test_an_unknown_trust_is_refused(trust):
         check_test_record("bundled", trust)
 
 
-def test_the_vocabulary_is_exactly_what_sf23_will_consume():
+def test_the_vocabulary_is_exactly_what_the_trust_reader_consumes():
     assert PROVENANCE == ("bundled", "generated", "user")
     assert TRUST == ("authoritative", "advisory")
 
 
 # --------------------------------------------------------------------------
-# ⛔ Ruling 35 — `authoritative` ⟹ `bundled`, stated positively
+# ⛔ `authoritative` ⟹ `bundled`, stated positively
 # --------------------------------------------------------------------------
 
 

@@ -33,8 +33,8 @@ from tests.support import repository_root
 #: whole reason a sweep excludes by declaration and not by directory.
 ASSERTED = {"corpus-api"}
 
-#: Every fixture corpus this module is entitled to place. ⛔ It used to read
-#: `("depth1", "depth2")`, which dropped five corpora that place perfectly and
+#: Every fixture corpus this module is entitled to place. ⛔ A list such as
+#: `("depth1", "depth2")` would drop five corpora that place perfectly and
 #: break something this module never asserts.
 FIXTURES = tuple(
     path.parent.relative_to(FIXTURE_ROOT).as_posix()
@@ -51,7 +51,7 @@ def test_the_fixture_set_is_read_from_the_declaration():
     assert "invalid/bad-corpus-api" not in FIXTURES
 
 
-#: The corpus SF-03's acceptance names by name.
+#: The corpus placement's acceptance names by name.
 JAVA_CORPUS = "Claude-senior-java-engineer"
 
 
@@ -67,7 +67,7 @@ def placed(fixture, profile_name):
     """Every unit of a fixture corpus, placed under one profile.
 
     ⛔ **`origin` is read through the map's own reader, never taken raw.** It
-    carries two shapes (Ruling 92) — a path for a whole file, `{path, section}`
+    carries two shapes — a path for a whole file, `{path, section}`
     for a unit that is a *region* of a shared one — and placement wants the
     path in both cases. ⚠️ `unit["origin"]` was a second reader of a field that
     has one, and it handed `sibling` a dict the moment a fixture declared the
@@ -115,7 +115,7 @@ def test_the_two_profiles_disagree_about_every_page_in_a_real_corpus(fixture):
 
 @pytest.mark.parametrize("fixture", FIXTURES)
 def test_every_placed_unit_can_stamp_and_recover_its_own_identity(fixture):
-    # ⭐ Placement and identity, end to end, a milestone before SF-04 needs it:
+    # ⭐ Placement and identity, end to end, a milestone before discovery needs it:
     # a page written anywhere reads back as the unit it is.
     for manifest, container in containers(fixture):
         address = manifest.parse_key("/".join(container["address"]))
@@ -135,7 +135,7 @@ def test_every_placed_unit_can_stamp_and_recover_its_own_identity(fixture):
 
 #: The stand-in's shape, as two numbers rather than two literals buried in a
 #: comprehension. ⚠️ A `48 × 5` grid is exactly the shape that makes a
-#: uniqueness claim easy, which is why the case that places it now says
+#: uniqueness claim easy, which is why the case that places it says
 #: `synthetic` in its own name.
 SYNTHETIC_MODULES = 48
 SYNTHETIC_UNITS_PER_MODULE = 5
@@ -167,13 +167,12 @@ def java_modules():
 def the_java_corpus_or_skip():
     """The real corpus's shape, or a SKIP THAT SAYS SO.
 
-    ⛔ **It replaces `shape_to_place()`.** That function answered
-    the absence with a synthetic grid of its own and returned a `provenance`
-    string read only inside an assertion message, which fires on red — so on
-    green a clause naming *the Java corpus* was discharged by a `48 × 5` grid
-    and no instrument in this repository could report it. ⭐ A caller may not
-    pass silently on a stand-in it did not ask for: the absence now skips, and
-    the skip is admissible because it SAYS SO (Ruling 204).
+    ⛔ **Never a silent stand-in.** Answering the absence with a synthetic grid
+    and a `provenance` string read only inside an assertion message, which
+    fires on red, would discharge on green a clause naming *the Java corpus*
+    with a `48 × 5` grid that no instrument reports. ⭐ A caller may not pass
+    silently on a stand-in it did not ask for: the absence skips, and the skip
+    is admissible because it SAYS SO.
     """
     modules = java_modules()
     if not modules:
@@ -189,8 +188,8 @@ def synthetic_modules():
     """A stand-in of roughly the Java corpus's shape, KEPT and NAMED.
 
     ⭐ **The stand-in is the right thing to have**:
-    what was wrong was a caller that could not tell the reader which shape it
-    placed. The grid stays, under a name that reports itself.
+    a caller must be able to tell the reader which shape it placed, so the
+    grid has a name that reports itself.
     """
     return {
         f"{n:02d}-module": [f"README_{n}.{u}.md" for u in range(1, SYNTHETIC_UNITS_PER_MODULE + 1)]
@@ -229,7 +228,7 @@ def shape_of(modules):
 
 
 def test_no_two_units_in_the_java_corpus_produce_the_same_artifact_name():
-    # ⭐ The clause SF-03's acceptance names BY NAME, and it is now proved of
+    # ⭐ The clause placement's acceptance names BY NAME, and it is proved of
     # that corpus or of nothing — never of a grid standing in for it.
     modules = the_java_corpus_or_skip()
     paths = artifact_paths(modules)
@@ -273,8 +272,7 @@ A_MODULE = "01-java-basics"
 def test_the_collision_check_goes_red_when_two_units_genuinely_collide():
     """⭐ The control is seen to FIND and to REFUSE, in one test.
 
-    ⛔ Without this the clause above is a green with no red behind it, which
-    is the failure this row was minted over one level up.
+    ⛔ Without this the clause above is a green with no red behind it.
     """
     one, two = COLLIDING_SOURCES
     together = place_one(A_MODULE, one, 1) + place_one(A_MODULE, two, 1)

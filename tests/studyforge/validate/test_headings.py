@@ -1,10 +1,9 @@
-"""The parser-independent heading scan, and the region a section bounds (SF-36).
+"""The parser-independent heading scan, and the region a section bounds.
 
 ⛔ **Every expectation here is a literal.** The module under test owns a regex
 and a bound; a test that built its expected depth or its expected count out of
 the module's own constants would move with them and prove only
-self-consistency — a shape twice found by a sweep and never by a
-reviewer.
+self-consistency.
 """
 
 import ast
@@ -84,7 +83,7 @@ def test_the_count_is_the_length_of_the_scan():
 
 
 # --------------------------------------------------------------------------
-# ⛔ Ruling 92 — the region ends at the next heading of the same or shallower depth
+# ⛔ The region ends at the next heading of the same or shallower depth
 # --------------------------------------------------------------------------
 
 

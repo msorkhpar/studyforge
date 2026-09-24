@@ -1,8 +1,8 @@
 r"""What the archive root holds and does not account for, and what it accounts for and has not.
 
 **What it does.** Refuses, by name, every file beneath the archive root that is
-not an archive member (`W248`, `W241/2`), and every file a document declares
-that the archive does not hold where the declaration says (`W214`).
+not an archive member, and every file a document declares
+that the archive does not hold where the declaration says.
 `classification` never scans beneath the root, so the first check is the other
 half of that skip: every file there is a member or a finding, and none is
 silently lost.
@@ -37,7 +37,7 @@ judged here: `run` already reports that no document there was read.
 
 ## ⛔ And the other direction: a file the archive DECLARES and did not write
 
-⚠️ **`W214`.** `check_archive_members` asks whether every file beneath the root
+⚠️ **Two questions.** `check_archive_members` asks whether every file beneath the root
 is accounted for; `check_declared_files` asks whether everything the archive
 accounts for is there. ⛔ Without the second, an adapter that wrote a unit's
 media anywhere but `Layout.unit_files` shipped an archive `validate` called
@@ -52,8 +52,8 @@ refuse.
 ⛔ **`media_skipped` is a third state and is exempt**, on the terms
 `archive.document` states: *an ingest that named media and deliberately did not
 fetch it*. Saying so is not the same as looking finished — the marker is in the
-document, and `tests/fixture_checks/media.py` has read it that way since
-`FND-04`.
+document, and `tests/fixture_checks/media.py` has read it that way from
+the start.
 """
 
 from __future__ import annotations
@@ -72,11 +72,11 @@ from studyforge.validate.report import Finding
 if TYPE_CHECKING:  # pragma: no cover - the import itself is deferred at runtime
     from studyforge.skills.adapter import Layout
 
-#: ⛔ A file beneath the archive root that no reader reads (`W248`).
+#: ⛔ A file beneath the archive root that no reader reads.
 RULE_ARCHIVE_STRAY = "archive-stray"
 
-#: ⛔ A file a document declares and the archive does not hold where it says
-#: (`W214`). ⚠️ One rule id for three shapes of the same defect — absent,
+#: ⛔ A file a document declares and the archive does not hold where it says.
+#: ⚠️ One rule id for three shapes of the same defect — absent,
 #: misplaced, or named by nothing — because they are one question to a reader
 #: and one fix to an adapter: write the file where `Layout.unit_files` puts it.
 RULE_MEDIA_MISSING = "media-missing"
@@ -117,8 +117,7 @@ def check_declared_files(walk: Walk) -> Iterator[Finding]:
 
     ⛔ **`local` resolves against the unit's own directory and nowhere else**
     (`archive.document`), so this asks `Layout.unit_files` for the directory
-    rather than composing one — the composing is what `W214` found every reader
-    of this location doing.
+    rather than composing one, so no reader of this location composes its own.
     """
     if walk.manifest is None:  # pragma: no cover - the walk stops without one
         return

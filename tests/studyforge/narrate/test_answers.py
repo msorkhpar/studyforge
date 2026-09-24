@@ -1,7 +1,7 @@
 """Mirror of `src/studyforge/narrate/answers.py` (R12): the values, `place`, and no wire.
 
 ⭐ **`place` is exercised on a `Narration` built here, with no client**, because
-writing clips needs no service. That it is reachable without one is `W223`'s seam.
+writing clips needs no service. That it is reachable without one is the seam.
 """
 
 from __future__ import annotations
@@ -53,7 +53,7 @@ def test_artifacts_are_placed_where_the_policy_says_and_nowhere_else(tmp_path, p
     )
     into = tmp_path / locations.media_dir(AUDIO_DIRNAME)
     written = place(narration_of(spoken), into)
-    # ⚠️ MEASURED: a writer that composed `parent / "audio"` for itself is a
+    # ⚠️ A writer that composed `parent / "audio"` for itself is a
     # NO-OP under `tree`, whose audio directory is literally `<unit>/audio` — so
     # only the `sibling` arm can discriminate that defect.
     assert written[0].parent == into
@@ -84,7 +84,7 @@ def test_place_has_no_default_destination():
 
 
 # --------------------------------------------------------------------------
-# ⛔ Ruling 58, and what a Health says when nobody read a deployment
+# ⛔ R7, and what a Health says when nobody read a deployment
 # --------------------------------------------------------------------------
 
 
@@ -99,7 +99,7 @@ def test_a_health_nobody_probed_claims_no_deployment_setting():
 
 
 # --------------------------------------------------------------------------
-# ⛔ W223: this module is the side of the seam that loads no wire
+# ⛔ This module is the side of the seam that loads no wire
 # --------------------------------------------------------------------------
 
 

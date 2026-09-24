@@ -1,4 +1,4 @@
-"""The root index of both FND-04 fixtures, built the way a build would.
+"""The root index of both framework fixture corpora, built the way a build would.
 
 ⛔ **Imported, never copied.** Six test modules render these pages and a seventh
 regenerates the goldens; seven spellings of "turn two contents documents into a
@@ -59,7 +59,7 @@ from tests.support import repository_root
 #: patterns that would otherwise swallow a generated page.
 GOLDEN_DIR = repository_root() / "tests" / "fixtures" / "pages"
 
-#: The two FND-04 fixture corpora, in a stated order. ⛔ A tuple rather than a
+#: The two framework fixture corpora, in a stated order. ⛔ A tuple rather than a
 #: directory walk, so the suite's own list does not depend on filesystem
 #: order (R10).
 FIXTURES = ("depth1", "depth2")
@@ -73,7 +73,7 @@ GOLDEN_SUFFIX = ".index.html"
 #: refusal to prove it does not echo what it refused. ⛔ Written as FRAGMENTS and
 #: joined, because a real home path written whole into a tracked file is a
 #: finding against that file — by the very sweep this constant is here to
-#: exercise. `docs/conventions/personal-data-shapes.md` uses the same technique
+#: exercise. The personal-data shape table uses the same technique
 #: for the same reason, and `jane` is nobody.
 A_HOME_PATH = "".join(("/", "home/jane/material/one.unit.html"))
 

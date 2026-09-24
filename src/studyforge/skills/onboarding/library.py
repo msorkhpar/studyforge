@@ -19,9 +19,8 @@ keeps too.
 
 ## ⛔ The INSTALLED library, never a checkout beside the corpus
 
-⚠️ **The pin used to name a sibling checkout at a commit** (R18's workspace
-arrangement), and a stranger converting their own material has no such
-checkout: they install the library. ⭐ **So the version is read from what this
+⚠️ **A stranger converting their own material has no sibling checkout of the
+framework**: they install the library. ⭐ **So the version is read from what this
 Python imports** — ⛔ never from a path a corpus reaches, and never written
 down: a path here is this machine's, at run time (R7).
 
@@ -32,16 +31,16 @@ editable install loads. ⛔ Neither found, or two distributions beside one
 package, is refused by name: a version this module cannot state is not one a
 pin may record.
 
-## ⭐ The commit, as the wheel was stamped with it (`W467`, `REL-05/1`)
+## ⭐ The commit, as the wheel was stamped with it
 
-⚠️ **It used to be the operator's word**, shape-checked and verified by nothing,
-because a wheel carries no git history. ⭐ **A wheel now carries `STAMP`**, the
+⚠️ A wheel carries no git history, so its commit cannot be read from a
+checkout. ⭐ **A wheel carries `STAMP`** instead, the
 commit the build ran at (the repository's `setup.py` writes it), so `commit()`
 reads it beside the package, `onboard` pins it without being told, and the
 corpus's generated `test_framework_pin.py` checks it. ⚠️ **A source tree or an
 editable install has no stamp and answers `None`**: its commit is whatever the
 checkout holds, and this module reads no checkout. Onboarding from one takes
-the commit from its caller, as before, and the generated check says it cannot
+the commit from its caller, and the generated check says it cannot
 verify it rather than passing.
 """
 

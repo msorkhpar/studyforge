@@ -39,7 +39,7 @@ UNSTYLED = tuple(name for name in BLOCK_TYPES if name not in SURFACE_CLASSES)
 LIBRARY_CLASS_PARTS = ("code-highlight.css", "video-player.css")
 
 #: The parts whose class names a RENDERER must emit. ⭐ **Derived from the bundle
-#: rather than listed** (`SF-34`): the listed form silently excluded
+#: rather than listed**: the listed form silently excluded
 #: `chrome.css` on the day it was added, which is the shape of defect the whole
 #: both-directions contract exists to catch — a new authored stylesheet could
 #: target a class nobody publishes and this check would have reported success.
@@ -216,9 +216,8 @@ def test_a_class_or_kind_hook_is_not_an_attribute_name(hook):
 
 # --- spelled once, and the consumers take it rather than typing it ----------
 
-#: Where a `data-*` hook may be spelled. ⛔ One module, ruled CTO round 45 §12
-#: from `SF-14/1` — and this is the census that makes the ruling checkable
-#: rather than remembered.
+#: Where a `data-*` hook may be spelled. ⛔ One module, and this is the census
+#: that makes that checkable rather than remembered.
 HOOK_OWNER = "src/studyforge/render/pageassets/surface.py"
 
 #: The renderers that address their rows by `data-*`, and the hook each of their

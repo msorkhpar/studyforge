@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/render/index/__init__.py` (R12).
 
-⭐ **`SF-14`'s acceptance, clause by clause.** Everything here is about the root
+⭐ **The root index's acceptance, clause by clause.** Everything here is about the root
 index as a whole: the goldens, both depths, the deep links into collapsed
 sections, the `file://` floor with scripting off, the two-documents isolation and
 the runtime fetch that must not exist. The seams themselves are asserted in the
@@ -59,7 +59,7 @@ _HANDLER = re.compile(r"\son[a-z]+=")
 
 @pytest.fixture(params=cases(), ids=lambda built: built.name)
 def case(request):
-    """The root index of each FND-04 fixture, built the way a build would."""
+    """The root index of each framework fixture corpus, built the way a build would."""
     return request.param
 
 
@@ -78,7 +78,7 @@ def test_every_name_on_the_public_surface_resolves():
 def test_the_public_surface_is_exactly_the_package_s_public_names():
     # ⭐ Derived on both sides rather than typed on one: a name re-exported and
     # forgotten on `__all__` fails here instead of being discovered by the next
-    # consumer — `SF-27/1`'s shape, which `W76` closed one package along.
+    # consumer.
     # ⚠️ Submodules and `from __future__` flags are what a package's namespace
     # carries besides its own surface; neither is one.
     public = {
@@ -136,7 +136,7 @@ def test_render_returns_bytes():
 
 
 def test_both_fixtures_render_against_their_golden_file(case):
-    # ⛔ E03's acceptance: "renders both FND-04 fixtures, at both depths". A
+    # ⛔ The rendering acceptance: "renders both fixture corpora, at both depths". A
     # golden that moved without a deliberate change to the renderer is the R10
     # failure; regenerate with
     # `python3 -m tests.studyforge.render.index.indexes` once you know which
@@ -157,7 +157,7 @@ def test_rendering_twice_gives_identical_bytes(case):
 
 
 def test_the_page_reaches_the_network_nowhere(case):
-    # ⛔ E03's acceptance: "issues no runtime fetch — asserted". A
+    # ⛔ The rendering acceptance: "issues no runtime fetch — asserted". A
     # `fetch('toc.json')` passes every served test and dies silently over
     # `file://`, showing an empty index and no error.
     page = case.render().decode(index.ENCODING)
@@ -166,11 +166,11 @@ def test_the_page_reaches_the_network_nowhere(case):
 
 
 def test_the_page_carries_no_script_of_its_own(case):
-    # ⛔ E03's acceptance: "works with JavaScript disabled". Neither script is
+    # ⛔ The rendering acceptance: "works with JavaScript disabled". Neither script is
     # the INDEX's: both come from the skeleton every page kind shares, and the
     # page renders and reads with both disabled.
     #
-    # ⚠️ `W388` stage 2 added the SECOND one, and it is the head boot that
+    # ⚠️ The SECOND one is the head boot that
     # applies the reader's stored theme before the first paint. A deferred part
     # cannot do that — it runs after the page is painted — so the boot is
     # inline, synchronous and in the head by necessity, not by preference. It
@@ -260,7 +260,7 @@ def test_every_unit_the_page_links_is_addressed_from_this_page(case):
 
 
 def test_a_deep_link_into_a_collapsed_section_lands_on_a_row_inside_it():
-    # ⛔ E03's acceptance: "with working deep links into collapsed sections".
+    # ⛔ The rendering acceptance: "with working deep links into collapsed sections".
     # ⭐ The corpus is planted big enough that the policy CLOSES its deepest
     # level, so this is the collapsed case rather than the easy one.
     big = planted((10, 5, 10))
@@ -284,7 +284,7 @@ def test_every_row_is_addressed_by_the_key_the_rest_of_the_framework_joins_on(ca
 
 
 def test_the_page_is_built_from_the_two_documents_and_nothing_else(case, tmp_path):
-    # ⛔ E03's acceptance: "reads no file other than the two contents documents —
+    # ⛔ The rendering acceptance: "reads no file other than the two contents documents —
     # asserted, not assumed". ⭐ The two documents are WRITTEN OUT and READ BACK
     # in a directory that holds nothing else — no manifest, no container map, no
     # archive, no generated page — and the bytes match the golden.

@@ -25,17 +25,17 @@ PACKAGE = Path(buildserve.__file__).parent
 #: port would be sending them where the verb never calls. ⛔ It buys the constant
 #: and nothing else — no client, no transport, no socket.
 #:
-#: ⚠️ `serve.routes.run` is admitted for `NAMESPACE` alone (`SK-03/3`): the
+#: ⚠️ `serve.routes.run` is admitted for `NAMESPACE` alone: the
 #: execution namespace's one spelling is the route's, and a skill that spelled it
 #: again would report `toolchain` against a server that offers it. ⛔ It buys the
 #: constant and nothing else — the skill never starts a run.
 #:
-#: ⚠️ `execute` is admitted for `ModeProbe`, `recorded` and `HOST` alone (`W381`, `W465`):
+#: ⚠️ `execute` is admitted for `ModeProbe`, `recorded` and `HOST` alone:
 #: where a run executes is ruled to be `execute`'s probe's answer, ONE definition, so
 #: the skill imports it rather than copying it. ⛔ The probe only reads (`docker
 #: inspect`); the skill never starts, stops or enters a container, and never a run.
 #:
-#: ⚠️ `narrate` is admitted for `narration_on` alone (`W460`): whether a run is voiced
+#: ⚠️ `narrate` is admitted for `narration_on` alone: whether a run is voiced
 #: is ONE predicate every stage asks, so the skill asks it rather than reading the
 #: manifest's field itself. ⛔ It buys a pure function — no client, no record, no clip.
 ALLOWED = frozenset(
@@ -141,7 +141,7 @@ def outside_the_seam(source: str) -> list[str]:
 
 
 def test_every_verb_is_reached_through_the_one_seam():
-    # ⛔ The coordinator's relay for `W230`: a verb whose arguments change is an
+    # ⛔ A verb whose arguments change is an
     # edit to `verbs.py` alone, so no other module may reach the table or spell a flag.
     for name, source in modules().items():
         if name in (SEAM, OWN_PARSER):

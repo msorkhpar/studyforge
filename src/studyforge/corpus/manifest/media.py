@@ -19,14 +19,14 @@ anything.
 accident.** The extraction source reached **11.42 GiB of pack against a ~5 GB
 soft limit, with one file at 150.9 MiB against a hard 100 MiB per-file block**
 — and found out when the push became *impossible*, after the history already
-held the blob. So the policy is manifest data, the footprint is measured
-(SF-32), and a corpus that crosses its limits **stops and says so**, naming the
+held the blob. So the policy is manifest data, the footprint is measured,
+and a corpus that crosses its limits **stops and says so**, naming the
 number and the limit. ⛔ It never silently switches to ignoring media, which
 would produce clones that are silent with no error, and it never silently
 keeps committing.
 
 ⛔ **The two byte-limit field names are CONFIRMED and FROZEN, and the rename
-once offered is CLOSED** — Ruling 104. ⚠️ The
+once offered is CLOSED** (R9). ⚠️ The
 paragraph that stood here still described that window as open long after it
 had shut, which is how a stale offer gets taken up by somebody moving fast.
 
@@ -41,14 +41,14 @@ can state, and it is why this is a third limit rather than a lonely one.
 
 ⛔ **It has NO default, deliberately.** The two byte defaults trace to §5's
 measured numbers; there is no measured count in this project, and a number
-invented here would make every existing corpus's build depend on a ceiling no
-round chose. ⭐ **Unstated means unbounded** — the count is measured and
+invented here would make every existing corpus's build depend on a ceiling
+nobody chose. ⭐ **Unstated means unbounded** — the count is measured and
 reported either way, and it refuses only where a corpus asked it to.
 
 ⛔ **`max_files` is `corpus_api: 3`'s key** (`document.py`'s `KEY_VERSIONS`).
 An older build refuses an unknown key by name and blames the corpus for the
-framework's age, which is exactly what R9 versions — so the field and the bump
-landed in one commit, as they did for `content.not_material` at `2`.
+framework's age, which is exactly what R9 versions — so a new field and its
+version bump go together, as `content.not_material` did at `2`.
 """
 
 from __future__ import annotations

@@ -30,7 +30,7 @@ from studyforge.validate.report import Finding, Report, Unchecked
 #: Every check, in the order a report reads best. ⛔ One list, so the answer to
 #: "what does validate check" is not spread across five modules. ⚠️ The
 #: authored-exercise arm is last because it reads what the first three have
-#: already judged to be a document (`AX-04`).
+#: already judged to be a document.
 CHECKS = (
     *structure.CHECKS,
     *paths.CHECKS,

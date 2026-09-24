@@ -65,7 +65,7 @@ def test_an_address_carries_its_key_and_its_depth(levels, segments, key, ordinal
 
 @pytest.mark.parametrize("levels,segments,key,ordinal", CASES)
 def test_a_key_round_trips_through_parse_key(levels, segments, key, ordinal):
-    # ⭐ SF-01's acceptance, at depths 1 through 4: `parse_key` is a true
+    # ⭐ The package's acceptance, at depths 1 through 4: `parse_key` is a true
     # inverse of `.key`, which holds only because no slug can contain the
     # separator.
     assert parse_key(key, depth=len(levels)) == Address(segments)
@@ -103,7 +103,7 @@ def test_a_json_list_is_accepted_because_that_is_how_the_archive_stores_it(
 
 
 def test_a_key_of_the_wrong_arity_for_a_declared_depth_is_rejected():
-    # ⛔ SF-01's acceptance, and the failure it prevents is silent: a
+    # ⛔ The package's acceptance, and the failure it prevents is silent: a
     # two-segment key handed to a one-level corpus resolves to a container
     # that does not exist, and nothing says so.
     with pytest.raises(AddressError) as raised:
@@ -193,7 +193,7 @@ def test_an_address_cannot_be_edited_after_it_is_validated():
 
 def test_identifiers_are_returned_per_segment_and_never_joined():
     # ⛔ How they join — a dotted package, a directory chain — is a placement
-    # decision (SF-03). This package does not make placement decisions.
+    # decision. This package does not make placement decisions.
     address = Address.of("basics", "01-getting-started")
     assert address.identifiers == ("basics", "_01_getting_started")
 

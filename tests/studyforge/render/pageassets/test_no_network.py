@@ -1,7 +1,7 @@
 """R8's floor: the page opens from a file, and asks for nothing.
 
 Mirrors no source module — it asserts a property of `render/assets/`, which is
-data. ⛔ The failure it guards is the one E03's own shared context calls a
+data. ⛔ The failure it guards is the one the rendering design calls a
 trap: code that passes every served test and then dies silently over `file://`.
 """
 

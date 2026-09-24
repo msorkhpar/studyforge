@@ -1,11 +1,11 @@
 """Mirror of `src/studyforge/skills/execution/written.py` (R12): its outputs, guarded.
 
-⚠️ **`PO-188/1`, measured by the register:** a wrong tag planted in `editor.env`
-left `hand_edited` at `[]` and the corpus's suite GREEN. ⭐ Reproduced here on a
-REAL onboarded corpus that a REAL execution run wrote into, and then held: every
-file the execution skill writes is reported by onboarding's own `hand_edited`
-when its bytes move or it is gone, in a sentence (R6); and running the skill
-again over an unchanged corpus rewrites no byte (R10).
+⚠️ A wrong tag hand-written into `editor.env` must not leave `hand_edited` at
+`[]` and the corpus's suite GREEN. ⭐ Held here on a REAL onboarded corpus that a
+REAL execution run wrote into: every file the execution skill writes is reported
+by onboarding's own `hand_edited` when its bytes move or it is gone, in a
+sentence (R6); and running the skill again over an unchanged corpus rewrites no
+byte (R10).
 """
 
 from __future__ import annotations
@@ -68,14 +68,15 @@ def test_a_corpus_both_skills_wrote_reads_nothing_edited(root):
     assert listed == sorted(OUTPUTS), "the record lists every file the skill wrote, and itself not"
 
 
-def test_the_registers_reading_a_wrong_tag_planted_in_the_editors_file_is_reported(root):
-    # ⚠️ `PO-188/1`, exactly: before this, `hand_edited` read `[]` here.
+def test_a_wrong_tag_planted_in_the_editors_file_is_reported(root):
+    # ⚠️ Without the execution skill's own record, `hand_edited` would read `[]` here.
     target = root / execution.EDITOR_ENV
     planted = "EDITOR_IMAGE=example/editor:java-maven-amd64-000000000000\n"
     target.write_text(target.read_text(encoding="utf-8").rsplit("EDITOR_IMAGE=", 1)[0] + planted)
     [sentence] = hand_edited(root)
     assert sentence.startswith(f"{execution.EDITOR_ENV} was edited by hand: ")
-    assert "(R19)" in sentence and "re-run the execution skill's write and record steps" in sentence
+    assert "not a fix" in sentence
+    assert "re-run the execution skill's write and record steps" in sentence
     assert str(root) not in sentence, "a report is pasted: no absolute path in it (R7)"
 
 

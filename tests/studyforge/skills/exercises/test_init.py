@@ -3,8 +3,7 @@
 ⭐ **What goes RED, each planted:** a package that stops stating its contract, a
 name that leaves the surface, a surface that stops being the modules' own
 names, and a run-time import appearing in either module — the door
-`tests/harness/test_isolation.py` closes for the framework and `AX-03` lost a
-design to.
+`tests/harness/test_isolation.py` closes for the framework.
 """
 
 from __future__ import annotations

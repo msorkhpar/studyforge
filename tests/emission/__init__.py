@@ -1,4 +1,4 @@
-"""Rubric §1f, made behavioural: no refusal reproduces what it refused.
+"""A refusal never echoes the value (R7), made behavioural: no refusal reproduces what it refused.
 
 **What it does.** Poisons a synthetic absolute path into every string-shaped
 parameter of every public callable in `studyforge`, and reports each one whose
@@ -12,40 +12,38 @@ real absolute path and asserts no refusal reproduces a directory from it.
 **Depends on.** `fillers`, `probe`, and the standard library. It imports the
 package under test by name and knows nothing else about it.
 
-## ⛔ Why this replaces a reviewer reading raise-lines (Ruling 13)
+## ⛔ Why a sweep and not a reviewer reading raise-lines
 
-§1f asks a reviewer to read every message a diff adds and ask whether the value
-being formatted *could* be a path. ⚠️ **That rule has now missed a site twice**
-— once in round 15, two lines from the defect it did catch. ⭐ A rule a machine
+A reviewer reading every message a diff adds, asking whether the value being
+formatted *could* be a path, misses sites. ⭐ A rule a machine
 can check should not be a rule a person checks: this has no AST, no heuristic
 and **no false positives by construction**, because it fails only when a
 refusal really does reproduce what it was handed.
 
-## ⛔ Where it lives, and why not in `tools/quality`
+## ⛔ Where it lives, and why not in the quality floor
 
-`handoffs/SF-03.md` proposed this beside the R7 sweep. ⚠️ Two reasons it is
+The obvious home was beside the floor's R7 sweep. ⚠️ Two reasons it is
 here instead, and the second is a collision:
 
-1. `tools/quality` declares it depends on **the standard library and nothing
+1. The floor (`tests/floor/`) depends on **the standard library and nothing
    else, ever**, and is deliberately independent of the framework so that a
-   broken `studyforge` still lints. This check must *import and call*
-   `studyforge`, so filing it there would make the lint tool fail on any
-   import error in the tree it is linting.
-2. ⛔ `tools.quality.CHECKS` is the floor's own registration tuple, and two
+   broken `studyforge` still gets its floor read. This check must *import and
+   call* `studyforge`, so filing it there would make the floor fail on any
+   import error in the tree it is reading.
+2. ⛔ `tests.floor.CHECKS` is the floor's own registration tuple, and two
    owners of one tuple is C5 with a contract instead of a line length. Nothing
    here touches that tuple.
 
-⭐ The gate is unchanged either way: `tests/test_quality_floor.py` shows the
-suite is already how the floor fails a build, so `pytest` alone still catches
-this and no contributor has a second command to remember.
+⭐ The gate is unchanged either way: the suite is already how a build fails,
+so `pytest` alone still catches this and no contributor has a second command
+to remember.
 
 ## ⭐ What the check does **not** claim, said here rather than discovered later
 
 ⚠️ **It sees what a public callable emits when called directly.** A refusal
 raised deep inside a document reader, reached only by a whole valid document
 with one bad field, is not probed — the framework has roughly forty-five such
-`{value!r}` sites left and they are recorded as a finding in
-`docs/tasks/handoffs/W1-W2.md`, not held here. ⛔ **A check that overstated its
+`{value!r}` sites left, and they are not held here. ⛔ **A check that overstated its
 coverage would be worse than this one**; `Census.report` prints what it
 reached, and `Census.walked` names it — ⭐ **asserted against the modules the
 package ships on disk, so the coverage claim is measured against the tree and

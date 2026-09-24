@@ -1,4 +1,4 @@
-"""`W324` in a real browser: the crossing from one container to another, followed.
+"""The crossing from one container to another, followed in a real browser.
 
 ⛔ **A built site, not a hand-assembled tree.** `tests/visual/site.py` writes one
 unit page per fixture corpus, which is enough to judge a REGION and not enough to
@@ -130,7 +130,7 @@ def crossings(page: OpenPage, from_url: str) -> list[dict]:
         found
         for found in page.evaluate(
             # ⭐ The link's own words, without the read words a screen reader
-            # is given on a marked row (`W383`): those are not what it names.
+            # is given on a marked row: those are not what it names.
             "(shown => "
             f"Array.from(document.querySelectorAll('{RAIL} a'))"
             ".map(a => ({href: a.href, text: shown(a),"
@@ -162,7 +162,7 @@ def box(page: OpenPage, selector: str) -> dict:
 
     ⛔ Read off the live layout and never off a declaration: which side of the
     reading column a region ends up on is exactly the thing no assertion over a
-    stylesheet can see, which is `W98`'s whole argument one region along.
+    stylesheet can see.
     """
     found = page.evaluate(
         "(() => { const el = document.querySelector('" + selector + "');"
@@ -191,7 +191,7 @@ def test_the_two_widths_this_module_judges_at_straddle_the_stylesheets_threshold
 def test_the_rail_is_beside_the_reading_column_at_the_wide_width(
     open_page: OpenPage, built_corpus: BuiltCorpus, here: str
 ) -> None:
-    """⛔ `W325`'s first clause: a bar down the LEFT, and the user's own words.
+    """⛔ The rail is a bar down the LEFT of the reading column.
 
     ⭐ **Opened with scripts DISABLED**, because R8's floor makes the layout's
     scriptlessness part of the clause and not a separate one: a rail that is only
@@ -227,9 +227,9 @@ def test_the_rail_is_beside_the_reading_column_at_the_wide_width(
 def test_the_rail_folds_back_into_the_column_at_the_narrow_width(
     open_page: OpenPage, built_corpus: BuiltCorpus, here: str
 ) -> None:
-    """⛔ `W325`'s second clause, and the chosen degradation is NAMED.
+    """⛔ The narrow shape, and the chosen degradation is NAMED.
 
-    ⭐ **The narrow shape is the card `W324` shipped** — the region in the one
+    ⭐ **The narrow shape is a card** — the region in the one
     column, above the reading surface, at the column's own width. ⚠️ A rail
     squeezed against prose is the failure this forbids, and it is refused by the
     width equality rather than by anybody's judgement of a screenshot.
@@ -256,7 +256,7 @@ def test_the_rail_folds_back_into_the_column_at_the_narrow_width(
 def test_the_crossing_still_resolves_at_the_narrow_width(
     open_page: OpenPage, built_corpus: BuiltCorpus, here: str
 ) -> None:
-    """⭐ `W324`'s clause re-taken in the shape `W325` added, rather than assumed.
+    """⭐ The crossing re-taken in the narrow shape, rather than assumed.
 
     ⚠️ The two layouts are one set of bytes, so this cannot fail while the wide
     one passes — which is the claim, and a claim asserted is worth more than a
@@ -283,10 +283,9 @@ def test_the_reading_surface_stays_inside_the_ceiling_the_palette_declares(
     together — stops growing at the ceiling the palette names, so a table or a
     line of code is never stretched across a display nobody has.
 
-    ⚠️ **And it CENTRES in what is left, which is `W388` stage 4.** A shell that
-    stops growing and stays against the left edge is the row's own first defect:
-    the user read it on a 2000px window as *"the paragraph texts are not using
-    the full width"*, because every spare pixel was on one side. ⛔ So both
+    ⚠️ **And it CENTRES in what is left.** A shell that stops growing and stays
+    against the left edge leaves the paragraphs short of the window's width,
+    because every spare pixel is on one side. ⛔ So both
     halves are read here — bounded, and equally inset either side.
     """
     open_page.resize(4 * WIDE[0], WIDE[1])
@@ -324,10 +323,10 @@ def test_the_reading_surface_stays_inside_the_ceiling_the_palette_declares(
 def test_a_unit_page_offers_a_link_to_a_unit_in_another_container(
     open_page: OpenPage, built_corpus: BuiltCorpus, here: str
 ) -> None:
-    """⛔ **The row's founding measurement, inverted in a browser.**
+    """⛔ **A page with no rail reaches no other container, read in a browser.**
 
-    Measured before this region: a unit page carried three `<nav>` elements and
-    not one href in any of them reached a page in another container.
+    Without the rail a unit page carries three `<nav>` elements and not one href
+    in any of them reaches a page in another container.
     """
     url = built_corpus.url(here)
     open_page.open(url)
@@ -398,7 +397,7 @@ def test_the_readers_own_container_is_open_and_another_is_not(
     """
     open_page.open(built_corpus.url(here))
     states = open_page.evaluate(
-        # ⚠️ `li details`: since `W362` the whole rail sits inside one fold
+        # ⚠️ `li details`: the whole rail sits inside one fold
         # (`rail.html`), which is not a container and is open at this width.
         f"Array.from(document.querySelectorAll('{RAIL} li details')).map(d => d.open)"
     )
@@ -440,7 +439,7 @@ def test_the_checks_above_fail_on_a_tree_whose_rail_was_removed(
 
     assert open_page.evaluate(f"document.querySelectorAll('{RAIL}').length") == 0
     assert crossings(open_page, url) == []
-    # ⛔ `W325`'s half of the same control: the two-column page is asked for by
+    # ⛔ The layout's half of the same control: the two-column page is asked for by
     # the page that CARRIES the region (`:has()`), so a tree with no rail must
     # still be laid out in one column — otherwise every page without one, the
     # root index first, gets an empty rail track down its left.

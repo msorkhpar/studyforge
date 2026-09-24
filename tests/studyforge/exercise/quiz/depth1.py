@@ -1,11 +1,11 @@
 """A quiz built from `depth1`'s own material — the corpus this shape exists for.
 
-⭐ **`AX-05`'s Acceptance is taken on `FND-04`'s `depth1/`**, the 1-level,
+⭐ **The quiz shape's acceptance is taken on the fixture corpora's `depth1/`**, the 1-level,
 zero-exercise prose fixture: a corpus whose subject is not code, which is what
 the quiz shape is for. ⛔ **The fixture itself is NOT modified.** A quiz
 practice is BUILT here, from the lesson document `depth1` already ships, and
 read back through `archive.document` — so the reading is taken on that
-corpus's material without touching a fixture other offices pin counts against.
+corpus's material without touching a fixture other tests pin counts against.
 
 ⛔ **The question is DERIVED from the page, not pasted beside it.** Its
 `origin` names the page the container map declares for unit 1 and the section
@@ -15,7 +15,7 @@ nowhere on the page is gate `Q1`'s failure, and a fixture that could not be
 checked against the page would be the same failure in a test.
 
 ⚠️ **The origin path is a LITERAL here and is checked by containment against
-the container map's bytes**, never by reading that map's `origin` key: `W109`
+the container map's bytes**, never by reading that map's `origin` key: the one-reader rule
 holds `origin` to one reader in `src/` and `tests/`, and a second site reading
 it — even a test's — is what that instrument exists to refuse.
 
@@ -30,7 +30,7 @@ from pathlib import Path
 from studyforge.archive.document import build, parse, render
 from tests.support import repository_root
 
-#: `depth1`, as `FND-04` shipped it.
+#: `depth1`, as the fixture corpora carry it.
 FIXTURE = "tests/fixtures/depth1"
 
 #: The container this corpus's one level holds.

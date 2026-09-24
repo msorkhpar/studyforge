@@ -43,7 +43,7 @@ MANIFEST_MEMBER = "personal-archive.json"
 PROGRESS_MEMBER = "progress-record.json"
 MATERIAL_PREFIX = "material/"
 
-#: Who an archive is for. ⛔ Chosen at the call, never defaulted (E11 § SK-06, R7).
+#: Who an archive is for. ⛔ Chosen at the call, never defaulted (R7).
 OWNER = "owner"
 SHARING = "sharing"
 KINDS = (OWNER, SHARING)
@@ -55,7 +55,7 @@ MANIFEST_KEYS = frozenset({"personal_archive_api", "kind", "source", "material",
 FILE_KEYS = frozenset({"path", "sha256", "bytes", "executable"})
 
 #: The shortest run of printable characters that `judge_bytes` reads as text. ⚠️ Measured,
-#: not chosen (`W235`'s handoff): over random bytes, runs of 12 still misfire on a short
+#: not chosen: over random bytes, runs of 12 still misfire on a short
 #: tilde fragment or an address-shaped one and runs of 16 do not, so real audio passes. A
 #: shape in a shorter run is not seen, and `SKILL.md` states that cost.
 TEXT_RUN = 16
@@ -194,7 +194,7 @@ def gate(path: str, data: bytes) -> bool:
     """Refuse a carried file whose name or UTF-8 text holds a personal-data shape.
 
     Return whether the contents were read as text. ⛔ `False` is an answer the caller
-    must act on: a sharing archive hands such a file to `judge_bytes` (`SK-06/3`).
+    must act on: a sharing archive hands such a file to `judge_bytes`.
     """
     gate_name(path)
     try:
@@ -222,7 +222,8 @@ def judge_bytes(path: str, data: bytes) -> None:
     """
     for _where, shape in leaks(carried_text(data), path):
         raise ArchiveError(
-            f"'{path}' is not UTF-8 text and its bytes carry text shaped like {shape} (R7); "
+            f"'{path}' is not UTF-8 text and its bytes carry text shaped like {shape}, which may "
+            f"be personal data; "
             f"remove the file or strip what it carries before sharing it, "
             f"or keep it in an owner archive, which carries it unread"
         )

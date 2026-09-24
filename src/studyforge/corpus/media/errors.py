@@ -22,12 +22,12 @@ from __future__ import annotations
 class MediaError(ValueError):
     """A media footprint that cannot be measured, or a policy that refuses it.
 
-    ⛔ **The message names the limit, the measured number and the generated
-    file responsible — and never a path this framework did not mint** (R7,
-    rubric §1f). A measured path here is always relative to the corpus root,
-    because that is the only shape the measurement records; the root itself is
-    described and never echoed, since it is an absolute path on somebody's
-    machine and this refusal is one a build prints into a log.
+    ⛔ **The message names the limit, the measured number and the generated file
+    responsible — and never a path this framework did not mint** (R7). A
+    measured path here is always relative to the corpus root, because that is
+    the only shape the measurement records; the root itself is described and
+    never echoed, since it is an absolute path on somebody's machine and this
+    refusal is one a build prints into a log.
 
     ⭐ **The refusal is the product, not a side effect.** Crossing the ceiling
     is a decision (§5), and this exception is how it reaches a person early —

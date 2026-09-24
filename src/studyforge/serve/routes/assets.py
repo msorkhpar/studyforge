@@ -20,7 +20,7 @@ quiz's key.
 3. refuse a dot-prefixed segment — ⭐ **except the build's own generated directory,
    as the first segment or beside a `corpus.json`**, because every page a build
    writes links into it and a blanket dotfile rule would serve a site with no
-   stylesheet. ⛔ **Beside a manifest, not "at any depth"** (`W230`, `SF-19b/2`): a
+   stylesheet. ⛔ **Beside a manifest, not "at any depth"**: a
    root holding several corpora puts each one's generated directory one level
    down, and the manifest on disk is what says a corpus is there — no mount list is
    configured, and any other nested dot-directory is still refused;
@@ -40,8 +40,8 @@ so a prober never learns which guess was interesting.
 
 ## ⛔ A file carrying a quiz's key or sentence is REFUSED
 
-⭐ **The user's ruling (2026-09-23): what the site serves never carries a quiz's
-key.** A corpus built into its own root (`build . --out .`) puts the archive's
+⭐ **What the site serves never carries a quiz's key.** A corpus built into its own root (`build .
+--out .`) puts the archive's
 `practice-M.json` and the bundle's `tests/quiz.json` under the served root, so
 `withheld` is asked of every text — and of every file of an unknown type, which
 is where an editor's backup or a `.yaml` copy lands — before anything else is
@@ -51,7 +51,7 @@ quizzes an instance SERVES, and `serve.app` hands both mounts that predicate.
 ⚠️ Media is not read, and an unknown-type file over `GATE_MAX_BYTES` is served
 unread: a compressed archive holding a bundle cannot be read here at all.
 
-## ⛔ The run client reaches a page ONE way, and this is it (`W370`, `SF-24`)
+## ⛔ The run client reaches a page ONE way, and this is it
 
 ⭐ **The serving process adds the client to the page it answers; a built page
 never loads it.** When an instance registers the run namespace it hands this
@@ -60,8 +60,8 @@ route the client's path, and an HTML page leaves here with exactly one
 file on disk is untouched** — nothing is written, and the same bytes are served
 again the next time with no client when the namespace is not registered.
 
-⚠️ **Why this way and no other** (`E05` § *How a served page loads the run
-client*): every alternative puts the client's address into the BUILD. A
+⚠️ **Why this way and no other** (how a served page loads the run
+client): every alternative puts the client's address into the BUILD. A
 `<script src="/api/…">` is a rooted reference that names the API; a relative
 `api/v1/…` resolved against `location.origin` names no origin and still loads
 it; a copy of the client in the site names the API on every line. ⭐ Only the
@@ -158,16 +158,16 @@ Private = Callable[[Path], bool]
 #: Whether a file's bytes carry what a site never serves.
 Withheld = Callable[[bytes], bool]
 
-#: ⛔ **The reader's progress record, which is never content** (`SF-21/2`). It sits
+#: ⛔ **The reader's progress record, which is never content**. It sits
 #: at `<generated root>/progress/` beside the pages a `tree` profile writes, so the
 #: static mount would otherwise serve it. Refused BY PATH, on the resolved file, so
 #: a symlink into it is refused too; the state namespace is where the
 #: record is served. ⚠️ A hard link to it elsewhere under the root is not seen.
 #: ⛔ **Matched ANYWHERE in the resolved absolute path, never relative to the served
-#: root** (`SF-39/4`): a root that is a corpus's generated directory, or one holding
+#: root**: a root that is a corpus's generated directory, or one holding
 #: several corpora, puts a store at a different depth, and no caller has to pass
 #: `private=` to keep it unserved.
-#: ⭐ **Derived from `progress.store_dir`, SF-21's one spelling** (`SF-19a/2`), so
+#: ⭐ **Derived from `progress.store_dir`, the store's one spelling**, so
 #: the store cannot move without this refusal moving with it.
 PROGRESS_PREFIX = store_dir(".").parts
 
@@ -187,7 +187,8 @@ def client_tag(client: str) -> bytes:
     if not client.startswith("/") or any(char in client for char in CLIENT_PATH_FORBIDDEN):
         raise ValueError(
             "the run client is served at one rooted URL path carrying no attribute "
-            "delimiter; the value is not reproduced here (R7)"
+            "delimiter; the value is not reproduced here, since a refusal never quotes a value "
+            "that may be personal"
         )
     return CLIENT_TAG.format(path=client).encode("utf-8")
 

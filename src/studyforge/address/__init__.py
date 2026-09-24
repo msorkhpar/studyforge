@@ -58,7 +58,7 @@ from studyforge.address.slug import is_slug, require_slug, slugify
 
 #: ⛔ The package's whole public surface. A consumer that has to import
 #: `studyforge.address.address` directly is a consumer this contract failed —
-#: `docs/conventions/module-structure.md` calls `__init__.py` the contract, and
+#: a package's `__init__.py` is its contract (R17), and
 #: this is what it says.
 __all__ = [
     "DIGIT_PREFIX",

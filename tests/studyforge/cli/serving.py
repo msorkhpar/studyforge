@@ -26,7 +26,7 @@ from studyforge.serve.routes.run import CLIENT, CLIENT_FILE, CLIENT_PATH, NAMESP
 from studyforge.validate.report import OK
 from tests.fixture_checks import FIXTURES
 
-#: Both `FND-04` fixtures.
+#: Both fixture corpora.
 NAMES = ("depth1", "depth2")
 
 #: The line a serving PROCESS prints once it listens, naming the port it chose. ⛔ One home
@@ -49,7 +49,7 @@ SERVING_ORIGIN = re.compile(
     rf"|:{DEFAULT_PORT}\b"
 )
 
-#: ⛔ `W370`: the run client, by its served path's tail or by its file's name. ⭐ **The one
+#: ⛔ The run client, by its served path's tail or by its file's name. ⭐ **The one
 #: sanctioned way a page gets it is the SERVING PROCESS adding it to the page it answers**
 #: (the run route's contract), so a BUILT text that names it is loading it some other way — and a
 #: relative `api/v1/…` resolved against `location.origin` would pass `SERVING_ORIGIN`.
@@ -60,19 +60,19 @@ RUN_CLIENT = re.compile(
 
 REFERENCE = re.compile(r"""(?:src|href)\s*=\s*["']([^"']*)["']""")
 
-#: ⛔ `W370`: what a SERVING PROCESS adds to the page it answers, and the ONE way
-#: a page ever gets the execution client (`SF-24`, `E05` § how a served page
-#: loads the run client). ⚠️ A built text that names it is a floor defect above;
-#: a SERVED page that does not carry it is an instance offering Run and Submit
-#: the page cannot reach. ⭐ Both directions, one constant.
+#: ⛔ What a SERVING PROCESS adds to the page it answers, and the ONE way a page
+#: ever gets the execution client (§8.3). ⚠️ A built text that names it is a
+#: floor defect above; a SERVED page that does not carry it is an instance
+#: offering Run and Submit the page cannot reach. ⭐ Both directions, one
+#: constant.
 CLIENT_TAG = f'<script src="{CLIENT_PATH}" defer></script>'.encode()
 
 
 def served_page(on_disk: bytes) -> bytes:
     """Return the bytes an instance that registers `run` answers this built page with.
 
-    ⛔ **A served page is no longer byte-identical to its file, and that is a
-    RULING rather than a regression** (`W370`): only the server knows it is a
+    ⛔ **A served page is not byte-identical to its file, by design**: only
+    the server knows it is a
     server, so it inserts the client into what it answers and the file on disk
     stays a page that names no API at all (R8). ⭐ Derived here rather than
     imported from `routes.assets`, so a test comparing against it is comparing
@@ -171,7 +171,7 @@ def floor(site: Path, missing: frozenset[str] = frozenset()) -> Floor:
     ⛔ Two ways to need a server and both are read: a page or script that NAMES the
     serving origin, and a reference that resolves to no file — a rooted path needs an
     origin to mean anything. ⛔ A third is read because it is the one a panel would reach
-    for (`W370`): a built text naming the run client, which only the server adds.
+    for: a built text naming the run client, which only the server adds.
     ⚠️ `missing` is the build's own report of material the archive lacks, and is the
     only allowance.
     """

@@ -41,17 +41,16 @@ def test_the_generated_root_and_the_vcs_directory_are_skipped():
 
 
 # --------------------------------------------------------------------------
-# ⛔ W28 — what is material is the corpus's declaration, not this file's guess
+# ⛔ What is material is the corpus's declaration, not this file's guess
 # --------------------------------------------------------------------------
 
 
 def test_the_framework_names_only_its_own_two_directories():
-    # ⛔ **`SKIP_DIRS` was R1 in miniature.** Two of its five names were the
-    # framework knowing about two ecosystems it was told nothing about, and a
-    # list of other people's build directories is wrong for the first corpus
-    # that uses a third. These two are the framework's own: `.studyforge` is
-    # this tool's, `.git` holds the declaration. ⚠️ The archive root left the
-    # list (`W248`): it is skipped at the corpus root only.
+    # ⛔ **A list of ecosystem directories would be R1 in miniature**: the
+    # framework knowing about ecosystems it was told nothing about, wrong for
+    # any corpus that uses another. These two are the framework's own:
+    # `.studyforge` is this tool's, `.git` holds the declaration. ⚠️ The archive
+    # root is not in the list: it is skipped at the corpus root only.
     assert SKIP_DIRS == (".git", ".studyforge")
     assert ARCHIVE_DIR not in SKIP_DIRS
     assert "node_modules" not in SKIP_DIRS
@@ -69,9 +68,8 @@ def test_a_corpus_that_uses_neither_ecosystem_is_unaffected(tmp_path):
 
 
 def test_a_file_the_repository_declares_as_output_is_not_material(tmp_path):
-    # ⛔ **The whole task, in one assertion.** Measured against a real corpus,
-    # 100 of 159 enumerated files were the repository's own declared output and
-    # every one was reported as unclassified material.
+    # ⛔ **The whole point, in one assertion.** A real corpus's walk can be
+    # mostly its own declared output, and none of it is unclassified material.
     root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
     (root / "generated").mkdir()
     (root / "generated" / "graph.json").write_text("{}\n", encoding="utf-8")
@@ -144,7 +142,7 @@ def test_git_being_absent_degrades_the_same_way_as_a_missing_repository(tmp_path
 def test_an_unexpected_answer_from_git_is_not_read_as_nothing_is_ignored(tmp_path):
     # ⛔ **128 is "not a repository, or worse", and "or worse" is the point.**
     # Reading any non-verdict return code as an empty ignore set is the
-    # fail-open this task exists to remove.
+    # fail-open this check exists to refuse.
     # ⭐ Asked with an empty candidate list on purpose: git still discriminates
     # "a repository, nothing ignored" (frozenset()) from "not a repository"
     # (None), so `consulted` is truthful even for a corpus with no files.
@@ -157,7 +155,7 @@ def test_an_unexpected_answer_from_git_is_not_read_as_nothing_is_ignored(tmp_pat
 
 
 def test_a_candidate_outside_the_root_is_refused_naming_neither_path(tmp_path):
-    # ⛔ R7, reached when `W257` made the reader public: `relative_to`'s own
+    # ⛔ R7, for a public reader: `relative_to`'s own
     # message quotes the root, which is the input that carries a home directory.
     root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
     declared_output(root)

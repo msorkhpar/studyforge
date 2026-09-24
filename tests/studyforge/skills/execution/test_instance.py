@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/skills/execution/instance.py` (R12) — a second instance, recorded.
 
-⭐ `W465`'s clause 2 as the skill writes it: the compose file interpolates the
+⭐ As the skill writes it: the compose file interpolates the
 project, the editor's port and both container names with the values they
 always had as defaults; `write` records those defaults once and never over a
 recorded file; `record_instance` records a second checkout's own four; and the
@@ -127,7 +127,7 @@ def test_each_default_is_read_from_the_contract_whose_field_keeps_its_meaning(tm
 
 
 def test_a_recorded_second_instance_is_no_hand_edit_and_an_edit_to_it_is(tmp_path):
-    """⭐ `W466`'s record: `record_instance` stamps what it writes, as `record_runner` does."""
+    """⭐ `record_instance` stamps what it writes, as `record_runner` does."""
     made, root = generated(tmp_path)
     onboard.write(made, root)
     record_instance(made, root, project="demo-second", port=18443)

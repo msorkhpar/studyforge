@@ -6,8 +6,7 @@ checked out is a fixture that skips, and a skipped check is not evidence.
 ⚠️ **The manifest is written twice, and the second write is the point.** A
 corpus is only `validate`-clean once the adapter's own files are declared
 `content.not_material` — and the globs come from the scaffold rather than from
-a person, which is R19's own remedy applied to the hole this task found
-(`SK-02/1`).
+a person, which is R19's own remedy.
 """
 
 from __future__ import annotations
@@ -32,7 +31,7 @@ MANIFEST = {
         "not_material": [
             {
                 "glob": "README.md",
-                "why": "navigation that records the units; no unit reads it (W266)",
+                "why": "navigation that records the units; no unit reads it",
             }
         ],
     },

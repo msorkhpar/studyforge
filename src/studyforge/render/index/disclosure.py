@@ -6,7 +6,7 @@ another page deep-links it by.
 
 **How you use it.** `disclosure.render(document)` returns the markup;
 `index.document` puts it in the page's body. `render.markup.anchor(key)` is
-the fragment for a row — ⛔ **ask, never compose** (`W107`).
+the fragment for a row — ⛔ **ask, never compose**.
 
 **Depends on.** `entries`, `policy` for which levels start open, `render.markup`
 for the escaping and the href gate, and `render.page` for `PageError`.
@@ -25,7 +25,7 @@ its own.** ⭐ That is subtask (d) discharged the strongest way available: an
 enhancement gated on protocol is one that can be absent, and the one that is
 absent here cannot be a dependency.
 
-## ⛔ Ruling 164 — this list is CONTENT, so a refused href RAISES
+## ⛔ This list is CONTENT, so a refused href RAISES
 
 ⚠️ **`page.navigation._link` DROPS a slot whose scheme is refused**, on the
 argument that chrome which cannot be followed is worse than chrome that is not
@@ -73,12 +73,12 @@ removes no duplication and adds a hop."* ⚠️ `container.listing` and
 
 ⚠️ Every hook is an element, an `aria-label` or a `data-*` attribute, so this
 page costs no entry in the published CLASS vocabulary and needs no class in the
-stylesheet — which is what let `SF-34` be scheduled after the markup it styles.
+stylesheet — which is what let the stylesheet be written after the markup it styles.
 ⛔ **The three hooks are now TAKEN from `pageassets.SURFACE_HOOKS`** rather than
-spelled here: `SF-14/1` reported that two of them were spelled in
-`render.container.listing` as well and meant the same thing in both, and CTO
-round 45 §12 ruled the home. ⭐ The destination was ruled rather than left to
-this module, because `SF-34` writes the rules against whichever spelling it
+spelled here: two of them were spelled in
+`render.container.listing` as well and meant the same thing in both, so they
+have one home (R13). ⭐ The destination is fixed rather than left to
+this module, because the stylesheet writes the rules against whichever spelling it
 finds first and two spellings that agree today disagree the day one page gains a
 third state.
 """
@@ -99,8 +99,8 @@ LIST_LABEL = "Contents"
 
 #: The attribute that says whether a row could be linked. ⚠️ `data-*` rather
 #: than a class, so this page needs no entry in a published class set. ⛔ **Taken
-#: from the contract, never typed** (`SF-14/1`): `render.container.listing` says
-#: the same thing about the same rows, and `SF-34` writes one rule for both.
+#: from the contract, never typed**: `render.container.listing` says
+#: the same thing about the same rows, and the stylesheet writes one rule for both.
 READABLE_ATTRIBUTE = SURFACE_HOOKS["readable"]
 
 #: The attribute a reader-facing label's kind is carried in. ⚠️ Overloaded on
@@ -113,7 +113,7 @@ KIND_ATTRIBUTE = SURFACE_HOOKS["kind"]
 NUMBERING_KIND = SURFACE_HOOKS["numbering"]
 
 #: The words a read row says to assistive technology, and the kind that wraps
-#: them (`W383`). ⛔ One file for the rail and both lists (R13): emitted hidden,
+#: them. ⛔ One file for the rail and both lists (R13): emitted hidden,
 #: shown by `progress-view.js` on a row the store holds, never drawn on screen.
 READ_STATE_TEMPLATE = "read-state.html"
 READ_STATE_KIND = SURFACE_HOOKS["read_state"]
@@ -164,7 +164,7 @@ def readable_items(section: Section) -> list[Item]:
 def _tally(section: Section) -> str:
     """Return the group's own `0 of N read`, hidden until the page script fills it.
 
-    ⭐ `W362`: each group says how far through it the reader is, right-aligned
+    ⭐ Each group says how far through it the reader is, right-aligned
     on its own summary. ⛔ The words are here; `progress-view.js` writes the
     number only, and with no script it stays hidden, because the marks are the
     browser's.

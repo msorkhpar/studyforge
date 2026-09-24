@@ -11,17 +11,16 @@ would answer for `pytest tests/` and be silent for a run pointed anywhere else. 
 repository root is the only place that holds for every invocation, including
 the bare `python3 -m pytest` that `docker/dev/check` runs.
 
-## ⛔ The two instances this exists for
+## ⛔ The two failures this exists for
 
-⚠️ **`SF-17/11`.** A writer under test wrote a file named `alpha` into the
-repository root, and that stray file changed what an *unrelated* module's probe
-refused — a RED in a module nobody had touched. ⚠️ **`SF-28/2`.** An untracked
-`alpha/alpha` appeared after a full suite run and **nothing failed and nothing
-reported it**.
+⚠️ **A stray file changes an unrelated module's reading.** A writer under test
+that drops a file named `alpha` into the repository root changes what an
+*unrelated* module's probe refuses — a RED in a module nobody touched.
+⚠️ **A stray tree goes unreported.** An untracked `alpha/alpha` left behind by
+a full suite run fails nothing and is reported by nothing.
 
-⭐ Both were found by a person noticing. Neither instrument that could have
-found them was looking, and neither needed to know what a writer is — which is
-why this check knows nothing about writers either.
+⭐ Neither needs knowledge of what a writer is to be caught — which is why
+this check knows nothing about writers either.
 
 ## ⛔ It reports even when the suite is already red, and only *sets* the code
 when it is green
@@ -31,17 +30,17 @@ less: the stray file may be *why* the run failed. So the report always prints.
 ⛔ But the exit status is only taken over from `0`, because overwriting a real
 failure's code with this one would hide which gate spoke.
 
-## ⛔ `W158` — every run PRINTS the population it could not reach
+## ⛔ Every run PRINTS the population it could not reach
 
-⚠️ **The two routine environments are not supersets of each other** (Ruling 326):
+⚠️ **The two routine environments are not supersets of each other**:
 the pinned container mounts only the checkout and skips every sibling assertion,
 the host skips the in-image ones, and both print `passed`. ⭐ So the summary says
 how many tests this run skipped and why — derived from the run's own tally by
 `tests.harness.skipped.unreachable_population`, and printed when the count is `0`.
 ⛔ **It never touches the exit status**: a population out of reach is a
-disclosure, not a failure (Ruling 328).
+disclosure, not a failure.
 
-## ⛔ `W364` — under `pytest-xdist`, every reading here is the CONTROLLER's
+## ⛔ Under `pytest-xdist`, every reading here is the CONTROLLER's
 
 ⭐ With `-n`, each worker is a pytest session of its own and fires these hooks
 too. ⛔ **A worker's tree check is a race, never a reading:** workers finish at
@@ -61,10 +60,8 @@ never deleted for being unsafe in parallel: it is fixed, or it is named here.
 ⭐ **Nothing here imports anything outside the product and its tests.** The tree-state exit
 condition and the unreachable population are the product suite's own, standard library only,
 under `tests/harness/`: a stray file a test leaves in the checkout is a defect of the PRODUCT
-(both measured instances were a framework writer under test), so the check that catches it
-must hold wherever the product's tests run. ⚠️ The tooling that built the framework, its merge
-gate's test selection and the tests that policed that process left the main line together,
-for the `archive/process` branch.
+(a framework writer under test is the usual culprit), so the check that catches it must
+hold wherever the product's tests run.
 """
 
 from __future__ import annotations
@@ -85,7 +82,7 @@ _BEFORE: list[dict[str, str] | None] = []
 DIRTY_EXIT = 1
 
 
-#: ⛔ The directories whose tests run on ONE worker under `-n`, and why (`W364`).
+#: ⛔ The directories whose tests run on ONE worker under `-n`, and why.
 SERIAL = {
     "tests/visual/": (
         "one headless browser per session: spread across workers it is one browser "
@@ -109,12 +106,12 @@ def _on_worker(config: pytest.Config) -> bool:
     return hasattr(config, "workerinput")
 
 
-#: The key the controller hands each worker its distribution mode under (`W364`).
+#: The key the controller hands each worker its distribution mode under.
 DIST_KEY = "studyforge_dist"
 
 
 def pytest_configure(config: pytest.Config) -> None:
-    """Promote a bare `-n`'s `load` to `loadgroup`, so `SERIAL` is honoured (`W364`).
+    """Promote a bare `-n`'s `load` to `loadgroup`, so `SERIAL` is honoured.
 
     ⭐ `loadgroup` distributes every unmarked test exactly as `load` does, so this
     moves nothing but the groups; an explicit `--dist` of any other kind is kept.
@@ -135,7 +132,7 @@ def pytest_configure(config: pytest.Config) -> None:
 
 @pytest.hookimpl(optionalhook=True)
 def pytest_configure_node(node) -> None:
-    """Hand the controller's distribution mode to a worker as it starts (`W364`)."""
+    """Hand the controller's distribution mode to a worker as it starts."""
     node.workerinput[DIST_KEY] = getattr(node.config.option, "dist", "no")
 
 
@@ -143,7 +140,7 @@ def pytest_configure_node(node) -> None:
 #    registered after this file, so without it the marks would land after that reading.
 @pytest.hookimpl(tryfirst=True)
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
-    """Group each `SERIAL` directory onto one worker under `xdist` (`W364`)."""
+    """Group each `SERIAL` directory onto one worker under `xdist`."""
     if not config.pluginmanager.hasplugin("xdist"):
         return
     for item in items:
@@ -174,7 +171,7 @@ def pytest_sessionfinish(session: pytest.Session, exitstatus: int) -> None:
     if moved is None:
         if reporter is not None:
             # ⛔ Loud, never silent: a check over nothing must not read as a
-            # pass (Ruling 191).
+            # pass.
             reporter.write_line(
                 "tree state: NOT CHECKED — git could not answer, so whether this run "
                 "dirtied the checkout is unknown",
@@ -200,9 +197,9 @@ VISUAL = "tests/visual/"
 
 
 def _forward_visual(terminalreporter, exitstatus: int, config: pytest.Config) -> None:
-    """Print the visual harness's line on an `xdist` CONTROLLER, as a serial run does (`W364`).
+    """Print the visual harness's line on an `xdist` CONTROLLER, as a serial run does.
 
-    ⚠️ **MEASURED in the pinned image:** under `-n` the line VANISHED. The controller
+    ⚠️ **In the pinned image, under `-n`, the line would VANISH otherwise.** The controller
     never collects, so `tests/visual/conftest.py` — not an initial conftest — is never
     loaded there, and its summary hook never fires. ⭐ Its `report_line` reads only the
     environment, so the controller's reading is the one a serial run prints; it is
@@ -211,7 +208,7 @@ def _forward_visual(terminalreporter, exitstatus: int, config: pytest.Config) ->
     if not config.pluginmanager.hasplugin("dsession"):
         return
     # ⚠️ MEASURED: a run whose ARGUMENT lies inside that directory loads its conftest on the
-    #    controller as an INITIAL one, and then the line was printed twice.
+    #    controller as an INITIAL one, and then the line would print twice.
     own = (_root() / VISUAL / "conftest.py").resolve()
     for plugin in config.pluginmanager.get_plugins():
         if Path(getattr(plugin, "__file__", None) or ".").resolve() == own:
@@ -228,7 +225,7 @@ def _forward_visual(terminalreporter, exitstatus: int, config: pytest.Config) ->
 
 
 def pytest_terminal_summary(terminalreporter, exitstatus: int, config: pytest.Config) -> None:
-    """Print what this run could not reach, on every run, empty or not (`W158`)."""
+    """Print what this run could not reach, on every run, empty or not."""
     from tests.harness.skipped import unreachable_population
 
     _forward_visual(terminalreporter, exitstatus, config)

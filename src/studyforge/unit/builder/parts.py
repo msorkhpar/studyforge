@@ -22,13 +22,13 @@ where they come from instead.
   rather than shows. ⛔ A hand-written list here would name files no ingest ever
   fetched, and the build would copy nothing to meet the link.
 
-## ⭐ `attachments` is the page's half of C4, and it is carried, never invented (`W215`)
+## ⭐ `attachments` is the page's half of C4, and it is carried, never invented (§6)
 
 ⚠️ **The archive declared these files and nothing read them**: they were
 archived, digested and then mentioned by no page and copied by no build. ⭐ The
 served section carries the archive's own entries, `render.page.section` links
 them, and `generate.media` copies exactly what the page links — the order spec
-§5 and Ruling 99 require, because a copy no page addresses is bytes a reader
+§5 and R3 require, because a copy no page addresses is bytes a reader
 can never reach.
 
 ⛔ **`assets` is deliberately NOT carried.** An asset is a file a **block**

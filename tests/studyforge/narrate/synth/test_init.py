@@ -1,4 +1,4 @@
-"""The synthesis package's surface, and the two clauses SF-17 asserts about itself.
+"""The synthesis package's surface, and the two clauses it asserts about itself.
 
 ⛔ **Both source-shape tests run over EVERY module in the package**, not over the
 one that happened to be split out. ⭐ Each has a positive control beside it: a
@@ -64,12 +64,12 @@ def test_narration_api_is_registered_in_the_one_tuple():
     # ⛔ `CONTRACT_FIELDS`' own convention: a task that versions a new contract
     # registers it in the same commit, or `check` refuses the name outright.
     assert "narration_api" in CONTRACT_FIELDS
-    # ⛔ W226: version 1 still reads, so an existing record is never refused for its age.
+    # ⛔ Version 1 still reads, so an existing record is never refused for its age.
     assert synth.KNOWN_NARRATION_API == frozenset({1, synth.NARRATION_API})
 
 
 def test_no_module_in_the_package_names_version_control_or_an_exclusion_file():
-    # ⛔ SF-17's Acceptance, asserted rather than reviewed. Whether media is
+    # ⛔ The package's acceptance, asserted rather than reviewed. Whether media is
     # carried is a manifest policy and this package has no
     # opinion — so the words are absent from the prose as well as from the code.
     pattern = re.compile(r"(?i)\b(git|gitignore|ignore|ignored|ignoring|exclude)\b")

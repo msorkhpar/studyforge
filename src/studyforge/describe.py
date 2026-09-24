@@ -2,7 +2,7 @@
 
 **What it does.** Turns any value into a short phrase naming its **type** —
 `a str`, `an int`, `nothing` — so a refusal can say what it was given without
-reproducing it (R7, rubric §1f).
+reproducing it (R7).
 
 **How you use it.** `describe(value)` wherever a message would otherwise have
 written `{value!r}`:
@@ -13,16 +13,13 @@ written `{value!r}`:
 package imports, so a dependency in any direction is a cycle waiting for the
 second caller (`studyforge.version`'s argument, for the same reason).
 
-⛔ **Why one module rather than one function per package** (Ruling 10). This
-rule was written three times before it was extracted — `version._said`,
-`corpus.container.fields.said`, `unit.errors.describe` — and the three had
-already drifted: two quoted integers and stated why, the third returned
-*"an int"*. ⚠️ Nobody chose that difference; it is what a third copy does.
-⭐ The measured spread was 10 sites, 8 modules, 5 packages, and it is the same
-finding shape this project has now taken three times: a constant or a rule
-written twice is a rule that disagrees with itself.
+⛔ **Why one module rather than one function per package** (R7). Copies of
+this rule in `version`, `corpus.container.fields` and `unit.errors` would
+drift — one quoting integers and another returning *"an int"* — and nobody
+would choose that difference. ⭐ A constant or a rule written twice is a rule
+that disagrees with itself, so the three import this one.
 
-⭐ **Integers are quoted; booleans are not** (W17, and this is the one place
+⭐ **Integers are quoted; booleans are not** (this is the one place
 the three copies genuinely disagreed). An integer cannot carry an identifier
 and a refusal that will not say `unit 4` is a refusal nobody can act on — so
 `3` is quoted. ⛔ A boolean cannot carry one either, so R7 is indifferent, and
@@ -53,10 +50,9 @@ from __future__ import annotations
 #: this module exists to remove, so a second entry needs an argument that a
 #: string does not also satisfy.
 #:
-#: ⚠️ **`bool` was here and is not any more** (W17). It is equally safe and
-#: quoting it was equally harmless — it was removed because `True` is not what
-#: the integrator typed, and *"a bool"* is. ⭐ Safety was never the question for
-#: that type, which is why the disagreement survived three copies.
+#: ⚠️ **`bool` is not here**, although quoting it would be equally safe:
+#: `True` is not what the integrator typed, and *"a bool"* is. ⭐ Safety is not
+#: the question for that type.
 SAFE_TO_QUOTE = (int,)
 
 
@@ -70,7 +66,7 @@ def describe_keys(keys: object) -> str:
     no space fits the pattern, so there is no path, address or token it could
     be — and naming it is what makes "you misspelled this field" actionable.
 
-    ⛔ **Structural, never a shape list.** Ruling 17 measured what the
+    ⛔ **Structural, never a shape list.** A measurement shows what the
     shape-list argument is worth: 4 of 10 poison shapes came back clean because
     the personal-data gate's list happened to name them, not because anything
     refused. This asks what a string *can hold*, which does not depend on

@@ -4,7 +4,7 @@
 accepted, a `generated` + `authoritative` one is refused — in code, at the point
 the record is read, so no consumer has to remember to ask.
 
-⭐ **`W357`'s shape is here too**: a record may name a file and no grader, and
+⭐ **The untested unit's shape is here too**: a record may name a file and no grader, and
 the grader half is written whole or not at all.
 """
 
@@ -45,11 +45,11 @@ RECORD = {
 
 GRADED_DOCUMENT = {"kind": "practice", "blocks": [], "exercise": RECORD}
 
-#: The keys a graded record with no authored material writes — `W357`'s whole
-#: record, which is every key `EXERCISE_KEYS` held before `AX-00` appended four
+#: The keys a graded record with no authored material writes — the untested unit's whole
+#: record, which is every key `EXERCISE_KEYS` holds except the four case keys
 #: more. ⭐ Derived, so a fifth authored key cannot make this claim silently
 #: narrower.
-#: ⚠️ The loop variable is `name` and not `key` deliberately: `W109`'s sweep
+#: ⚠️ The loop variable is `name` and not `key` deliberately: the one-reader sweep
 #: resolves a subscript's key through every module-level binding of that name,
 #: so a second `for key in …` up here would widen what the reads below are
 #: read as.
@@ -88,7 +88,7 @@ def test_the_record_round_trips_through_a_document():
     # unchanged, in the same key order.
     exercise = from_document(RECORD, WHERE)
     again = to_document(exercise)
-    # ⚠️ `WORKSPACE_KEYS`, not `EXERCISE_KEYS`, since `AX-00`: this record
+    # ⚠️ `WORKSPACE_KEYS`, not `EXERCISE_KEYS`: this record
     # carries no authored material, and a key it does not carry is not written.
     assert tuple(again) == WORKSPACE_KEYS
     assert from_document(again, WHERE) == exercise
@@ -124,11 +124,11 @@ def test_a_bundled_authoritative_record_is_accepted():
 
 
 def test_a_generated_authoritative_record_is_refused():
-    # ⛔ E06's named acceptance, and R5's whole point: presenting our own
+    # ⛔ A named acceptance, and R5's whole point: presenting our own
     # reading as the source's grader is a claim nobody notices is false until
     # a reader trusts a green tick that was never earned.
     message = refuse(from_document, record(provenance="generated", trust="authoritative"), WHERE)
-    assert "R5" in message
+    assert "claim to be the source's grader" in message
 
 
 def test_a_generated_advisory_record_is_accepted():
@@ -142,7 +142,7 @@ def test_the_rule_is_not_re_spelled_in_this_package(monkeypatch):
     # records paying for, so this asserts the verdict comes from **there**.
     #
     # ⚠️ Asserted by **delegation**, not by importing that module's `FORBIDDEN`
-    # tuple. Ruling 35 is restating R5 positively — `authoritative` implies
+    # tuple. This restates R5 positively — `authoritative` implies
     # `bundled` — so a test shaped around the enumeration would go red for a
     # ruling that strengthens the rule it is guarding. What must stay true is
     # that this package asks rather than answers.
@@ -191,7 +191,7 @@ def test_a_record_missing_a_required_field_is_refused(missing):
 
 
 def test_the_refusal_says_what_to_write_instead():
-    # ⭐ `W357`: a half-written grader is told it may drop the grader whole,
+    # ⭐ The untested unit: a half-written grader is told it may drop the grader whole,
     # and a record with no file is told to write no key at all.
     message = refuse(from_document, record(test_command=None), WHERE)
     assert "or none of them, for a file with no test" in message
@@ -259,7 +259,7 @@ def test_an_exercise_on_a_document_with_no_kind_at_all_is_refused():
 
 
 # --------------------------------------------------------------------------
-# the committed fixture — the graded state, shipped by this task
+# the committed fixture — the graded state
 # --------------------------------------------------------------------------
 
 
@@ -276,9 +276,8 @@ def load(relative):
 
 
 def test_the_committed_graded_fixture_reads_back_field_for_field():
-    # ⭐ **This package ships this fixture.** Measured before it existed: nothing under
-    # `tests/fixtures/` carried an `exercise` key, so the state this task
-    # encodes had no committed example.
+    # ⭐ **This package ships this fixture**, so the graded state has a
+    # committed example under `tests/fixtures/`.
     exercise = of(load(GRADED_FIXTURE), "depth2 basics unit-01 practice-1")
     assert exercise is not None
     assert exercise.provenance == "bundled"
@@ -301,7 +300,7 @@ def test_the_other_committed_practice_is_ungraded():
 
 
 def test_no_exercise_appears_anywhere_in_the_depth_one_fixture():
-    # ⛔ E06: "The depth-1 fixture (zero exercises) validates." A corpus with
+    # ⛔ "The depth-1 fixture (zero exercises) validates." A corpus with
     # no graders is complete, not short.
     #
     # ⭐ **Named reason for not taking `asserting=`**:
@@ -320,16 +319,16 @@ def test_no_exercise_appears_anywhere_in_the_depth_one_fixture():
 #: exercise the source declared authoritative, which is exactly what
 #: `user-authoritative` is declared to break — so the *valid* set is the one
 #: the declaration leaves, and the refused set is the one it drops.
-#: ⚠️ Both used to be `"/invalid/" in p.as_posix()`, which is the directory
-#: name a sweep may not exclude by, and which would have swept in an eighth fixture
-#: declaring something else entirely.
+#: ⚠️ Neither is `"/invalid/" in p.as_posix()`: that is the directory name a
+#: sweep may not exclude by, and it would sweep in a fixture declaring something
+#: else entirely.
 ASSERTED = {"exercise-trust"}
 
 
 def _carrying_an_exercise(*, asserting):
     """Every archive document a sweep asserting `asserting` may read that carries a record.
 
-    ⚠️ Carries, not grades: since `W357` a record may name a file and no grader.
+    ⚠️ Carries, not grades: a record may name a file and no grader.
     The only such record is in `runnable/`, which the rule below states apart.
     """
     return [
@@ -357,7 +356,7 @@ def test_exactly_one_valid_corpus_document_carries_an_exercise():
 
 def test_every_other_exercise_in_the_tree_exists_to_be_refused():
     # ⭐ The one sanctioned second copy, and its licence is that it must fail.
-    # `user-authoritative` is W18's negative control: restore the forbidden-pair
+    # `user-authoritative` is the forbidden-pair list's negative control: restore the forbidden-pair
     # list and it violates nothing, which reds the fixture-consistency suite.
     # ⛔ So the rule is not "one exercise in the tree" but "one that validates",
     # and this states the second half rather than leaving it to a count.
@@ -383,7 +382,7 @@ def test_the_frozen_record_is_not_a_validated_one():
 
 
 # --------------------------------------------------------------------------
-# ⭐ W357 — a file with no test is a record too
+# ⭐ The untested unit — a file with no test is a record too
 # --------------------------------------------------------------------------
 
 #: The ungraded shape: the reader's file, and how it runs, and nothing else.
@@ -394,7 +393,7 @@ def test_the_keys_split_into_the_file_and_the_grader_with_nothing_left_over():
     # ⛔ The ungraded record is written in the graded record's own order, so
     # adding a grader to one never reorders what was already on disk (R10).
     assert tuple(k for k in EXERCISE_KEYS if k in REQUIRED_KEYS) == REQUIRED_KEYS
-    # ⭐ Three-way since `AX-00`, and the third part is the reason this claim
+    # ⭐ Three-way, and the third part is the reason this claim
     # is worth restating rather than deleting: the file, the grader and the
     # authored keys partition the record, and nothing is left over.
     assert set(REQUIRED_KEYS) | set(GRADER_KEYS) | set(AUTHORED_KEYS) == set(EXERCISE_KEYS)
@@ -447,7 +446,7 @@ GRADER_SUBSETS = [
 
 @pytest.mark.parametrize("grader", GRADER_SUBSETS, ids="+".join)
 def test_a_grader_written_in_part_is_refused_naming_what_is_missing(grader):
-    # ⛔ The old refusal's purpose survives `W357`: half a grader is not a
+    # ⛔ The untested unit does not relax this: half a grader is not a
     # lesser exercise, and it may not pass for either shape.
     message = refuse(from_document, {**UNGRADED, **{k: RECORD[k] for k in grader}}, WHERE)
     for key in set(GRADER_KEYS) - set(grader) - set(DEFAULTED_KEYS):

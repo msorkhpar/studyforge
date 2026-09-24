@@ -1,4 +1,4 @@
-"""A heading that links a file is not a unit by the link alone (W250, `INT-07/3`).
+"""A heading that links a file is not a unit by the link alone.
 
 ⭐ Two halves. `cut` says whether a linked file's headings are regions (Ruling
 92); the record reads a heading that links such a file, where the group labels
@@ -38,7 +38,7 @@ def test_a_title_above_the_regions_is_not_one(tmp_path):
 
 
 def test_every_proposed_section_names_exactly_one_region_the_validator_reads(tmp_path):
-    # ⭐ The judge is `check_completeness`'s own region reader (SF-36).
+    # ⭐ The judge is `check_completeness`'s own region reader.
     for section in regions_of(tmp_path, sources.CASES).sections:
         assert region(sources.CASES, section).occurrences == 1, section
 
@@ -91,7 +91,7 @@ def test_a_heading_linking_a_file_of_regions_is_a_container_not_a_unit(tmp_path)
 def test_a_linked_heading_inside_a_run_of_entries_stays_a_unit(tmp_path):
     # ⚠️ Its file has two subsections, so the shape alone would cut it.
     record = record_of(sources.linked_regions(tmp_path / "c"))
-    # ⭐ A heading-form entry reads the ordinal its bullet twin reads (W252).
+    # ⭐ A heading-form entry reads the ordinal its bullet twin reads.
     heading = [
         (e.target, e.ordinal, e.group, e.section) for e in record.entries if e.target == "src/3.md"
     ]
@@ -126,7 +126,7 @@ def test_the_survey_proposes_the_regions_file_as_a_container(tmp_path):
     )
 
 
-def test_sf02_accepts_the_draft_and_includes_the_regions_file_but_not_the_record(tmp_path):
+def test_the_draft_is_accepted_and_includes_the_regions_file_but_not_the_record(tmp_path):
     root = sources.linked_regions(tmp_path / "c")
     content = parse(json.dumps(sources.settled(survey(root).proposal))).content
     assert content.classify("TestCases.md") is Classification.INCLUDED
@@ -146,7 +146,7 @@ def test_a_heading_that_links_nothing_is_unchanged(tmp_path):
     assert shaped(record) == shaped(record_of(control))
     assert record.groups == ["Fundamentals", "Server"] == record_of(control).groups
     assert record.containers == [] and record.uncut == []
-    # ⚠️ W249: an unlinked file no include reads is proposed `not_material`, not
+    # ⚠️ An unlinked file no include reads is proposed `not_material`, not
     # excluded; it is still not read, which is what this control holds.
     content = survey(control).proposal["content"]
     assert content["exclude"] == []

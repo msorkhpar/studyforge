@@ -33,20 +33,20 @@ def test_a_block_that_breaks_no_ruling_reports_nothing():
 
 
 @pytest.mark.parametrize("bind", rulings.EVERY_INTERFACE)
-def test_ruling_1_a_port_published_on_every_interface_is_reported(bind):
+def test_loopback_a_port_published_on_every_interface_is_reported(bind):
     block = editor()
     block["ports"][0]["host_bind"] = bind
     found = rulings.findings(block, name="editor")
     assert len(found) == 1 and "to loopback only" in found[0]
 
 
-def test_ruling_1_is_also_reported_when_the_contract_says_so_in_its_own_flag():
+def test_loopback_is_also_reported_when_the_contract_says_so_in_its_own_flag():
     block = editor()
     block["ports"][0]["publish_on_all_interfaces"] = True
     assert any("to loopback only" in one for one in rulings.findings(block, name="editor"))
 
 
-def test_ruling_1_reaches_the_narration_block_too():
+def test_loopback_reaches_the_narration_block_too():
     # ⭐ §8.1 names that service as publishing on all interfaces TODAY and says
     # it is to be fixed rather than copied, so it is on trial here as well.
     block = narration_contract()["service"]
@@ -55,32 +55,32 @@ def test_ruling_1_reaches_the_narration_block_too():
 
 
 @pytest.mark.parametrize("host_path", rulings.NEVER_BOUND)
-def test_ruling_2_a_bind_of_the_repository_or_a_home_is_reported(host_path):
+def test_sources_only_a_bind_of_the_repository_or_a_home_is_reported(host_path):
     block = editor()
     block["mounts"][0]["host_path"] = host_path
     assert any("only the sources" in one for one in rulings.findings(block, name="editor"))
 
 
-def test_ruling_2_a_second_per_project_bind_is_reported():
+def test_sources_only_a_second_per_project_bind_is_reported():
     block = editor()
     block["mounts"].append(copy.deepcopy(block["mounts"][0]))
     found = [one for one in rulings.findings(block, name="editor") if "only the sources" in one]
     assert found and "2 per-project binds" in found[0]
 
 
-def test_ruling_2_no_per_project_bind_at_all_is_reported():
+def test_sources_only_no_per_project_bind_at_all_is_reported():
     block = editor()
     block["mounts"][0]["per_project"] = False
     assert any("only the sources" in one for one in rulings.findings(block, name="editor"))
 
 
-def test_ruling_3_a_block_that_binds_and_names_no_uid_is_reported():
+def test_owner_uid_a_block_that_binds_and_names_no_uid_is_reported():
     block = editor()
     del block["runs_as"]["compose_value"]
     assert any("uid:gid" in one for one in rulings.findings(block, name="editor"))
 
 
-def test_ruling_3_does_not_fire_on_a_block_that_binds_nothing():
+def test_owner_uid_does_not_fire_on_a_block_that_binds_nothing():
     # ⚠️ Both directions. A service with no bind writes into no host directory,
     # so the ruling has nothing to be about and a finding there would be noise.
     block = editor()
@@ -88,13 +88,13 @@ def test_ruling_3_does_not_fire_on_a_block_that_binds_nothing():
     assert rulings.findings(block, name="editor") == ()
 
 
-def test_ruling_3_accepts_a_run_value_where_a_block_is_consumed_by_a_run_line():
+def test_owner_uid_accepts_a_run_value_where_a_block_is_consumed_by_a_run_line():
     block = editor()
     block["runs_as"] = {"user": "coder", "run_value": "$(id -u):$(id -g)"}
     assert not [one for one in rulings.findings(block, name="editor") if "uid:gid" in one]
 
 
-def test_ruling_4_a_bind_that_need_not_exist_first_is_reported():
+def test_bind_source_first_a_bind_that_need_not_exist_first_is_reported():
     block = editor()
     block["mounts"][0]["must_exist_before_start"] = False
     found = [one for one in rulings.findings(block, name="editor") if "before the start" in one]

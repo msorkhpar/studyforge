@@ -1,7 +1,7 @@
 r"""The build's narration pass: it READS a record and a disk, and synthesises nothing.
 
 **What it does.** Opens a corpus's narration record once and answers, for each
-unit page, which of the three states `W202` answer 4 names that page is in, as
+unit page, which of the three narration states that page is in, as
 the `render.page.Narration` the renderer takes. `write_narration(root, into)`
 re-runs the unit-page pass after `studyforge narrate`, rewriting only the pages
 whose bytes moved.
@@ -24,21 +24,20 @@ build copies is the clip the page addresses.
 record lives, how it is read and where a unit's clips were placed,
 `render.page` for `Narration`, and `generate.units` for the page pass (deferred:
 `units` imports this module). Not `narrate.client` and not `synthesise`
-(`W202` answer 3), asserted by `tests/studyforge/generate/test_no_synthesis.py`.
+(a build never synthesises), asserted by `tests/studyforge/generate/test_no_synthesis.py`.
 
-## The three states are `W202` answer 4's, cited and not re-derived
+## The three states: recorded, unkept and not recorded
 
 No record: `SILENT`, so the page is byte-for-byte the pre-narration page. A
 record: `playable_of` is asked WITH `audio=`, because without the directory a
 recorded clip is taken at its word and a broken corpus renders as a working one.
-The gaps are `UNKEPT` only (`handoffs/SF-38.md`, *For dependents*):
+The gaps are `UNKEPT` only:
 `NOT_RECORDED` is a unit nobody promised anything, never a gap.
 
-## ⛔ Narration off is a fourth input, and it is the FIRST state exactly (`W460`)
+## ⛔ Narration off is a fourth input, and it is the FIRST state exactly
 
-⭐ **The user's ruling, 2026-09-23:** *"it should be optional … Somebody might
-wants to just cover the course wihtout voices as mentioned the voice might be
-cgenerated but still not serving them would be an option"*. ⭐ So `narrated`
+⭐ **Narration is optional**: a corpus may be read without voices, even when
+clips were generated. ⭐ So `narrated`
 answers an absent record for a corpus that is not voiced (`Corpus.narration`,
 from `corpus.json`'s `narration` or a run's `--no-narration`), **without
 opening the record**: every page is `SILENT` and no clip is copied, which is
@@ -48,15 +47,15 @@ where `narrate` put them, so voicing the corpus again plays them with no
 re-synthesis. ⛔ **`narrated` is the ONE gate**: a pass that called `recorded`
 itself would voice a corpus its author turned off.
 
-## Where the disk is probed: the page's own directory (`W222`)
+## Where the disk is probed: the page's own directory
 
 The disk is probed at `synth.audio_dir(root, at)`, where `at` is this page's own
 `unit_location`, the one derivation `narrate` places clips through as well. So a
-labelled unit's clips are where its page looks (`SF-42/1`), and every href a
+labelled unit's clips are where its page looks, and every href a
 page emits is answerable. A clip that is not there is a gap the page names;
 nothing is guessed.
 
-## What "does not rewrite" means here, against `SF-43`'s rebuild policy
+## What "does not rewrite" means here, against the rebuild policy (R3)
 
 A full build (`write_site`) replaces its whole footprint, so every page is
 rewritten, byte-identical where nothing moved (R10). `write_narration` is the
@@ -82,7 +81,7 @@ from studyforge.render.page import SILENT, Narration, Placement
 #: is deliberately absent: see this module's contract.
 UNKEPT = frozenset({NOT_PLACED, MISFILED, NOT_ON_DISK})
 
-#: ⭐ What a corpus that is not voiced reads (`W460`): the record's own absent
+#: ⭐ What a corpus that is not voiced reads: the record's own absent
 #: state, so every reader downstream takes the path it already takes for a
 #: corpus nobody narrated, and no branch on narration grows anywhere else.
 SILENCED = State(clips=MappingProxyType({}), present=False)
@@ -101,8 +100,8 @@ def recorded(root: Path | str) -> State:
     """Read the corpus's narration record once, or stop naming it.
 
     An absent record is `State(present=False)`, the ordinary case. An unreadable
-    one STOPS the build (`W202` answer 6): rendering it silent would make a
-    broken narration identical to none, which is the defect answer 4 removes.
+    one STOPS the build (R6): rendering it silent would make a
+    broken narration identical to none, which is the defect the three states remove.
     The message is the record's own and carries no path (R7).
     """
     try:
@@ -112,7 +111,7 @@ def recorded(root: Path | str) -> State:
 
 
 def narrated(corpus: Corpus) -> State:
-    """Return the record this build voices, or an absent one when narration is off (`W460`).
+    """Return the record this build voices, or an absent one when narration is off.
 
     ⭐ **The one gate every pass reads the record through**, so the page pass and
     the clip pass cannot disagree about whether a corpus speaks. ⛔ Off reads
@@ -157,7 +156,7 @@ def heard(
 ) -> tuple[Path, Playable]:
     """Return the directory one unit's clips were probed in, and what its page plays.
 
-    ⛔ `at` is the page's own placement, the one `narrate` wrote through (`W222`).
+    ⛔ `at` is the page's own placement, the one `narrate` wrote through.
     """
     probed = audio_dir(corpus.root, at)
     return probed, playable_of(document, state, audio=probed)

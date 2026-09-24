@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/skills/exercises/accounting.py` (R12) — the *nothing is lost* half.
 
-**What it asserts.** `E14`'s first property, mechanically: each ledger entry
+**What it asserts.** Spec §7's *nothing is lost*, mechanically: each ledger entry
 ends either as the basis of an exercise — named by that exercise's `origin` —
 or with a written reason it is not, and ⛔ **an entry with neither is refused**.
 Plus the region rules an origin resolves through, and the byte stability of the
@@ -76,7 +76,7 @@ def test_an_ancestor_section_accounts_for_an_example_nested_under_it(tmp_path):
     ledger = ledger_of(tmp_path)
     nested = next(entry for entry in ledger.entries if entry.ordinal == 2)
     assert nested.sections == ("Adding up", "Edge cases"), "the chain is outermost first"
-    assert accounts_for(nested, Origin("guide.md", "Adding up")), "Ruling 92, from the inside"
+    assert accounts_for(nested, Origin("guide.md", "Adding up")), "a region, from the inside"
     assert not accounts_for(nested, Origin("guide.md", "Elsewhere")), "a sibling covers nothing"
     assert not accounts_for(nested, Origin("other.md", None)), "another file covers nothing"
 
@@ -150,7 +150,7 @@ def test_a_section_the_file_carries_twice_is_refused(tmp_path):
     ledger = ledger_of(tmp_path, "# Same\n\n```py\na\n```\n\n# Same\n\n```py\nb\n```\n", "twice.md")
     with pytest.raises(LedgerError) as refusal:
         account(ledger, {"p": Origin("twice.md", "Same")}, {}, "the ledger")
-    assert "2 times" in str(refusal.value), "zero and two are both loud (SF-36)"
+    assert "2 times" in str(refusal.value), "zero and two are both loud"
 
 
 def test_an_origin_that_accounts_for_no_entry_is_not_a_fault(tmp_path):

@@ -1,4 +1,4 @@
-"""`W281`: the adapter and onboarding skills state what `permitted_edits` may never name.
+"""The adapter and onboarding skills state what `permitted_edits` may never name.
 
 ⛔ R19: an integrator learns R3's never-editable targets from the skill, not from a
 refusal. Each skill carries ONE statement, and it POINTS at the predicate
@@ -6,7 +6,7 @@ refusal. Each skill carries ONE statement, and it POINTS at the predicate
 which refuses all three categories. It never restates the names, so the only copy an
 integrator reads is `edits.py`'s.
 
-⛔ `W292`: the statement points at FOUR vocabularies, not one — `IGNORE_NAMES`,
+⛔ The statement points at FOUR vocabularies, not one — `IGNORE_NAMES`,
 `VCS_NAMES` and `VCS_DIRECTORIES` arrive through `parse_edits`. `NEVER_EDITABLE` reads
 every one of them from its ONE definition, so each name is on trial here rather than
 only root documentation's. ⚠️ **No vocabulary is retyped into this file**: what is
@@ -46,9 +46,9 @@ AUDITED_AGAINST = frozenset({"readme", "license", "licence", "copying"})
 #: A policy that includes no root file, so only the convention reads one as content.
 NOTHING_AT_THE_ROOT = parse_content({"include": ["src/*.md"], "exclude": []})
 
-#: ⛔ `W292`: every vocabulary the statement points at, named by POINTER and never
+#: ⛔ Every vocabulary the statement points at, named by POINTER and never
 #: retyped — each row holds the ATTRIBUTE's name, so the population is read out of
-#: `edits` when a test runs rather than bound here (`W310/2`: an imported name is a
+#: `edits` when a test runs rather than bound here (an imported name is a
 #: snapshot). Each row also carries the WORDS the statement and `parse_edits`' refusal
 #: both use for that category, and the shape of a declaration naming a member: an
 #: ignore file and version-control configuration are named as they are, a
@@ -87,7 +87,7 @@ def _types(held: str, text: str, spans: list[str]) -> bool:
 
     ⚠️ A DOTTED name is never an English word, so any occurrence of one is a copy —
     and `git status` in prose is not `.gitignore`, because the dot is required. A bare
-    stem IS a word (`W281/1`: the onboarding skill uses the verb *copying*), so it
+    stem IS a word (the onboarding skill uses the verb *copying*), so it
     counts only in upper case anywhere, or in any case inside a code span.
     """
     if held.startswith("."):
@@ -130,16 +130,15 @@ def test_each_skill_points_at_the_predicate_and_its_vocabulary(name):
     assert "repository-root documentation" in statement
     assert any(target is edits.reads_as_content for target in resolved), pointers
     assert any(target is edits.ROOT_DOCUMENTATION for target in resolved), pointers
-    # ⛔ `W292`: the other three vocabularies reach an integrator ONLY through this
+    # ⛔ The other three vocabularies reach an integrator ONLY through this
     # pointer, so a statement that stops carrying it stops carrying them.
     assert any(target is edits.parse_edits for target in resolved), pointers
 
 
 @pytest.mark.parametrize("name", SKILLS)
 def test_no_skill_types_a_name_a_never_editable_vocabulary_holds(name):
-    # ⭐ Read from every vocabulary, so a name added to one is refused here too. ⚠️ This
-    # is `W281`'s `test_no_skill_types_a_name_the_predicate_holds`, widened by `W292`
-    # from the predicate's names to all four.
+    # ⭐ Read from every vocabulary, so a name added to one is refused here too:
+    # all four, not only the predicate's names.
     text, _ = _skill(name)
     spans = re.findall(r"`([^`\n]+)`", text)
     typed = {}

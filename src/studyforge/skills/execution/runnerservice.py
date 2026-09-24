@@ -20,7 +20,7 @@ finds the container and `execute.mode` stops falling back to the host. ⚠️ Tw
 spellings of one name is the defect where they differ by a character and every
 run silently goes to the host; the skill's tests hold the two equal.
 
-⭐ **Written as an interpolation with that name as its default** (`W465`):
+⭐ **Written as an interpolation with that name as its default**:
 `container_name: ${STUDYFORGE_RUNNER_NAME:-studyforge-runner-<source>}`, so a
 second instance of one corpus records its own runner's name and `serve` reads it
 from the same record (`execute.instance`). ⭐ `Runner.name` is the DEFAULT —
@@ -29,7 +29,7 @@ what an instance that recorded nothing runs.
 ## ⛔ THE SERVING PROCESS IS NOT HERE, AND NEITHER IS THE SOCKET
 
 ⭐ **The reader's `docker compose` starts this container, never `serve`** (spec
-§8.3, round 112's `TC-00` answer 6): the runner only asks whether it is up and
+§8.3): the runner only asks whether it is up and
 execs into it from the host. ⛔ Nothing rendered here mounts the Docker socket,
 and `composefile.render` checks the whole file's bytes for one besides.
 

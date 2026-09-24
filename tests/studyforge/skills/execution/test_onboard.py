@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/skills/execution/generate.py` (R12) — the acceptance.
 
-⛔ `E11`'s execution-skill acceptance, clause by clause: a runnable corpus gets a
+⛔ The execution skill's acceptance, clause by clause: a runnable corpus gets a
 working compose file and a primed image **from manifest data alone**; a corpus
 whose manifest says it is not runnable gets **nothing from this skill and no
 error**; re-running changes nothing; and §8.1's four rulings are honoured, each
@@ -121,7 +121,7 @@ def test_the_prime_the_document_names_is_the_prime_that_is_copied(tmp_path):
 
 
 def test_the_written_prime_holds_one_project_per_seeded_tool_and_nothing_else(tmp_path):
-    # ⛔ `W440`: the component refuses anything at the prime's top but a seeded
+    # ⛔ The component refuses anything at the prime's top but a seeded
     # tool's project, so the top is exactly the seed keys the corpus declares.
     root = corpus(tmp_path)
     skill.write(skill.generate(manifest(), editor_text=editor_text(), root=root), root)
@@ -158,7 +158,7 @@ def test_write_puts_every_path_on_disk_and_the_copies_are_byte_identical(tmp_pat
     root = corpus(tmp_path)
     result = skill.generate(manifest(), editor_text=editor_text(), root=root)
     written = skill.write(result, root)
-    # ⭐ Plus the instance's defaults, which a fresh checkout has not recorded yet (`W465`).
+    # ⭐ Plus the instance's defaults, which a fresh checkout has not recorded yet.
     assert set(written) == {*result.paths(), skill.INSTANCE_ENV}
     for where, origin in result.copies:
         assert (root / where).read_bytes() == (root / origin).read_bytes()
@@ -199,7 +199,7 @@ def test_a_document_this_skill_wrote_is_regenerated_without_complaint(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ Ruling 2 decides which directory is bound, and it is derived
+# ⛔ §8.1's sources-only rule decides which directory is bound, and it is derived
 # --------------------------------------------------------------------------
 
 
@@ -214,7 +214,7 @@ def test_an_include_naming_one_file_still_says_where_the_material_lives():
     assert skill.source_root(one) == "docs"
 
 
-def test_material_at_the_repository_root_is_refused_by_ruling_2():
+def test_material_at_the_repository_root_is_refused_as_more_than_the_sources():
     # ⛔ There is then no directory to bind that is not the repository, and
     # §8.1 mounts only the sources. Reported, never defaulted.
     with pytest.raises(skill.ExecutionRefused, match="only the sources"):
@@ -317,7 +317,7 @@ def test_the_runner_comes_up_with_the_editor_under_the_names_execute_looks_for(t
     text = dict(made_.files)[skill.COMPOSE_FILE]
     assert "\n  runner:\n" in text
     # ⭐ Each name is an interpolation whose default is the one `execute` has
-    # always looked for (`W465`); the editor's is declared, not compose's own.
+    # always looked for; the editor's is declared, not compose's own.
     assert f'container_name: "${{STUDYFORGE_RUNNER_NAME:-{container_for("demo")}}}"' in text
     assert made_.runner is not None and made_.runner.name == container_for("demo")
     assert 'name: "${STUDYFORGE_PROJECT:-studyforge-demo}"\n' in text

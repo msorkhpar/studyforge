@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/validate/source/completeness.py` (R12).
 
-⭐ **This is the module SF-25 exists for.** Every other check compares the
+⭐ **This is the module `validate` exists for.** Every other check compares the
 archive against itself; a digest taken over the blocks and compared against the
 blocks answers *"was this corrupted after we wrote it?"* and can never answer
 *"did the adapter read everything?"*.
@@ -12,12 +12,11 @@ so — which is why `test_no_module_in_this_package_reaches_for_the_markdown_rea
 exists, in `test_init.py`, over every module of the package rather than one.
 
 ⚠️ **The `count_headings` rows below assert a PREMISE rather than this
-module's own code** (`docs/conventions/module-structure.md`, *a test may assert
-the premise of the bug it prevents*): `check_completeness` is only a real check
+module's own code** (a test may assert
+the premise of the bug it prevents): `check_completeness` is only a real check
 while the count is fence-aware and parser-independent, so the rows that hold
 that live beside the check that rests on them. ⛔ They import from
-`validate.headings`, which owns the function — never from this package, which
-merely used to re-export it by accident of one import line.
+`validate.headings`, which owns the function — never from this package.
 """
 
 import json
@@ -142,7 +141,7 @@ def test_a_half_present_source_tree_is_a_failure_and_not_a_discount(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W255` — "the source tree is absent" is CHECKED against the tree
+# ⛔ "The source tree is absent" is CHECKED against the tree
 # --------------------------------------------------------------------------
 
 #: A unit origin that names no file, beside a source that is present.
@@ -178,7 +177,7 @@ def missing_origins(root, *, units=(1,), sources=None, manifest=None):
 
 
 def test_a_ONE_unit_archive_whose_origin_is_missing_BESIDE_a_present_source_is_RED(tmp_path):
-    # ⛔ Clause 4, the RED direction: a plant that survived on the first corpus, built for the test.
+    # ⛔ The RED direction, built for the test.
     root = corpora.one_unit(tmp_path / "c", origin=MISSING)
     (root / "src").mkdir()
     (root / "src" / "one.md").write_text(corpora.SOURCE, encoding="utf-8")
@@ -226,8 +225,8 @@ def test_a_ROOT_level_origin_missing_beside_a_root_level_source_is_RED(tmp_path)
 
 
 def test_an_origin_whose_top_directory_is_ABSENT_beside_source_ELSEWHERE_is_RED(tmp_path):
-    # ⛔ `W261` clause 1, inverting `W255/3`'s declared gap: the origins name `src/`, which
-    # is absent, while the manifest's source sits under another top-level directory.
+    # ⛔ The origins name `src/`, which is absent, while the manifest's source sits under
+    # another top-level directory.
     manifest = {**corpora.MANIFEST, "content": {"include": ["lessons/*.md"]}}
     root = missing_origins(
         tmp_path / "c", manifest=manifest, sources={"lessons/one.md": corpora.SOURCE}
@@ -239,7 +238,7 @@ def test_an_origin_whose_top_directory_is_ABSENT_beside_source_ELSEWHERE_is_RED(
 
 
 def test_a_ROOT_file_declared_NOT_MATERIAL_is_not_a_present_source(tmp_path):
-    # ⭐ `W261` clause 2's shape: FND-04's fixtures declare their `VIOLATION.md` not
+    # ⭐ The fixture corpora declare their `VIOLATION.md` not
     # material, so the whole-root reading finds no source and adds no second rule.
     note = {"glob": "NOTE.md", "why": "a note about the fixture, built for the test"}
     content = {"include": ["src/*.md"], "not_material": [note]}
@@ -276,7 +275,7 @@ def test_a_NESTED_source_directory_is_read(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ SF-36 / Ruling 92 — a unit may be a REGION of a file
+# ⛔ Region origins — a unit may be a REGION of a file
 # --------------------------------------------------------------------------
 
 #: One file, two units, and a heading each unit does not own. ⚠️ Four headings
@@ -337,7 +336,7 @@ def test_units_sharing_one_file_are_compared_against_their_own_regions(tmp_path)
 
 
 def test_the_same_corpus_short_reads_when_the_units_name_the_whole_file(tmp_path):
-    # ⛔ **The negative control for the row above, and it is the defect
+    # ⛔ **The negative control for the test above, and it is the defect
     # itself**: with `origin` a plain path both units are compared against all
     # four headings, and both report a short read against 2 and 1.
     root = shared_file(tmp_path / "c", first_origin="src/shared.md", second_origin="src/shared.md")
@@ -391,7 +390,7 @@ def test_a_region_still_names_a_file_that_must_be_on_disk(tmp_path):
 
 
 def test_a_fragment_origin_is_refused_where_the_map_is_read(tmp_path):
-    # ⛔ Ruling 92: `TestCases.md#…` was accepted and meant nothing. It is now
+    # ⛔ A fragment such as `TestCases.md#…` would mean nothing, so it is
     # refused by `studyforge.sourcepath`, before any check runs.
     with pytest.raises(ContainerError) as raised:
         shared_file(tmp_path / "c", first_origin="src/shared.md#1. One")
@@ -399,7 +398,7 @@ def test_a_fragment_origin_is_refused_where_the_map_is_read(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W428` — a practice from a file of its own, counted against THAT file
+# ⛔ A practice from a file of its own, counted against THAT file
 # --------------------------------------------------------------------------
 
 
@@ -415,8 +414,8 @@ def test_without_the_declaration_the_same_archive_is_a_short_read(tmp_path):
     # ⛔ **The negative control that proves the check was not weakened.** The
     # archive is byte-identical; only the declaration is gone. The practice's
     # headings then have no file of their own, are summed against the prose
-    # file, and the check fires — which is what it did before `W428` and what
-    # it must still do for every corpus that declares nothing new.
+    # file, and the check fires — as it must for every corpus that declares no
+    # practice origin.
     root = corpora.practised(tmp_path / "c", declare_practice_origin=False)
     assert "short-read" in validate(root).rules
 

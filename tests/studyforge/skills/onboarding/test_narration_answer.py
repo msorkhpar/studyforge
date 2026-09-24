@@ -1,7 +1,6 @@
-"""The onboarding skill's half of `W460`: the author is ASKED, and the answer is corpus data.
+"""The onboarding skill's half of optional narration: the author is ASKED, and the answer is data.
 
-⭐ **The user's ruling, 2026-09-23:** *"while serving or even while caputring the
-matterial skills should ask if user is interested in the narrition or not"*.
+⭐ **Narration is optional**, so onboarding asks whether the author wants it.
 Spread over the modules it touches — `manifest` (the version that reads the key
 back), `onboard` (the report says the answer, or that nobody asked), `recorded`
 (the sentence) and `standing` (off is not *narrated: 0*) — and read here

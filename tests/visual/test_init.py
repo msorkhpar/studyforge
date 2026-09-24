@@ -32,7 +32,7 @@ def test_the_package_states_its_contract() -> None:
 
 
 def test_every_acceptance_clause_has_a_module_that_answers_it() -> None:
-    """E10's five clauses, each mapped to a module that exists and holds tests.
+    """The harness's five clauses, each mapped to a module that exists and holds tests.
 
     ⛔ The failure this catches is a clause deleted by deleting a file. A
     harness is judged on what it still runs, and a missing module is silent.
@@ -61,7 +61,7 @@ def test_no_test_module_here_is_outside_the_declared_clauses() -> None:
         "test_contrast_math",
         "test_discovery",
         "test_host_environment",
-        #: ⭐ `W397`: the harness's own lifetime — that a check's tab is closed
+        #: ⭐ The harness's own lifetime — that a check's tab is closed
         #: when the check ends, and that a silent browser fails rather than
         #: hangs. ⛔ Machinery and not a clause: it asserts nothing about any
         #: page this repository renders, which is what `ACCEPTANCE` is a map of.
@@ -78,7 +78,7 @@ def test_every_declared_damage_is_used_by_some_test() -> None:
 
     ⛔ `site.DAMAGE` declares five broken trees. This asserts each is named in
     some test module, so a control cannot be written, forgotten, and quoted in a
-    handoff as though it had run.
+    report as though it had run.
     """
     sources = _sources()
     body = "".join(text for stem, text in sources.items() if stem.startswith("test_"))
@@ -95,12 +95,9 @@ def test_the_harness_reports_its_state_in_both_directions(
     this machine did *not* take — and it is the one that would otherwise ship
     untested and print nothing on the machine that needed it most.
 
-    ⛔ **`W36` made the evidence state a second axis, and the defect is
-    instructive.** This test asserted `"unpinned"` outright, which was true of
-    every machine for as long as the pinned image had no browser — so it passed
-    everywhere and went red in the image the moment one arrived. ⭐ A line whose
-    value depends on the environment is asserted on **both** of its values,
-    never on the one this machine happens to produce.
+    ⛔ **The evidence state is a second axis.** ⭐ A line whose value depends on
+    the environment is asserted on **both** of its values, never on the one this
+    machine happens to produce.
     """
     present = discovery.State(binary="/some/browser", version="Some Browser 1.2", searched=())
     absent = discovery.State(binary=None, version=None, searched=discovery.CANDIDATES)
@@ -112,10 +109,10 @@ def test_the_harness_reports_its_state_in_both_directions(
     assert "evidence state: pinned" in _line_for(present)
     assert "NO BROWSER" in _line_for(absent)
     assert "3 visual check(s) DID NOT RUN" in _line_for(absent)
-    assert "QA-03/1" in absent.reason, "the skip reason does not point at the finding"
+    assert "pinned dev image has one" in absent.reason, "the skip reason names no remedy"
     assert len(absent.reason.splitlines()) == 1, (
-        "the skip reason is printed once per skipped check — 55 times in the pinned "
-        "image — so a multi-line reason buries the skips that were there before it"
+        "the skip reason is printed once per skipped check, so a multi-line reason "
+        "buries every other skip"
     )
     assert "Install a Chromium-family browser" in absent.remedy
     assert discovery.DEMAND_VARIABLE in absent.remedy

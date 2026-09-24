@@ -1,11 +1,11 @@
-"""`W362`: the page's own identity, and every tell of the design brief kept out of it.
+"""The page's own identity, and every tell of the design brief kept out of it.
 
 Mirrors no source module: it asserts things about the authored stylesheets, the
 page templates and the palette, which are data. ⭐ Every tell is asserted BOTH
 WAYS (R12, the row's clause 7): the shipped files pass, and a planted instance
 of the same tell is caught by the same check, by name.
 
-The brief is `docs/conventions/ui-design.md`, §2 and §3.
+The brief is the UI design convention's §2 and §3, kept on the branch `archive/process`.
 """
 
 from __future__ import annotations
@@ -219,25 +219,22 @@ def test_every_pair_the_design_paints_clears_its_floor(theme, foreground, backgr
     )
 
 
-# --- `W388` stage 2: the palette against the user's own two pages -------------
+# --- The palette against the two reference pages -----------------------------
 
 #: The band each ink that carries running text sits in, as ratios, `token ->
 #: (floor, ceiling)`. ⛔ NOT WCAG AA AND NOT A MAXIMUM — the bounds are taken
-#: from the user's own route-planner page, which is the page they said this one
-#: is worse than: its body ink measures 12.14:1, its quieter ink 8.33:1 and its
-#: faintest 5.59:1, and all three sit inside the bands below. ⚠️ Stage 1 set one
-#: band of 4.5–9.0 for all three and the user read the result as "too dim"; the
-#: FLOOR is what that got wrong, and the ceiling stays because near-white chalk
-#: on a dark board is what the row was opened over.
+#: from a reference page read for hours: its body ink is 12.14:1, its quieter
+#: ink 8.33:1 and its faintest 5.59:1, and all three sit inside the bands below.
+#: ⚠️ One band of 4.5–9.0 for all three reads as too dim — the FLOOR matters —
+#: and the ceiling refuses near-white chalk on a dark board.
 BANDS = {"--fg": (10.0, 14.0), "--fg-soft": (6.5, 10.0), "--muted": (4.5, 7.0)}
 
 #: The inks that carry running text, against the ground they are read on.
 BODY_TEXT = (("--fg", "--bg"), ("--fg-soft", "--bg"), ("--muted", "--bg"))
 
 #: How far from neutral a ground or an ink may be, as `(red - blue) / 255`. ⛔ A
-#: SIGNED bound and not a spread: the user's word was "too warm", and warm means
-#: red above blue. Both reference pages are at or below zero; stage 1's
-#: parchment ground and its ink are above it.
+#: SIGNED bound and not a spread: warm means red above blue. Both reference pages
+#: are at or below zero; a parchment ground and its ink are above it.
 WARMTH = 0.015
 
 #: The grounds and inks the warmth bound applies to — everything a reader looks
@@ -259,17 +256,16 @@ NEUTRALS = (
 #: What the palette may paint a LINE with at rest, as chroma — the spread
 #: between the strongest and weakest sRGB channel, scaled to 0–1. ⛔ Structure
 #: stays on the neutral scale: nothing on the page is told apart by a hairline's
-#: hue. ⚠️ `0.12` was stage 1's figure and it was measured against a warm grey;
+#: hue. ⚠️ A bound read against a warm grey would be too tight:
 #: the slate scale both reference pages use is a TINTED neutral (its blue
 #: channel leads by about a seventh), so the bound is the scale's own spread
 #: plus room, and the rules are held to the warmth bound above as well — a red
 #: hairline is caught by that one whatever its spread.
 RULE_CHROMA = 0.20
 
-#: ⛔ THE ACCENT'S BOUND IS A FLOOR, AND THAT IS THE STAGE-1 REVERSAL. Stage 1
-#: capped it at 0.30 and shipped a washed ink blue the user called "boring"; a
-#: live accent that is nearly grey is not an accent. The user's own route
-#: planner sets its accent at 0.80.
+#: ⛔ THE ACCENT'S BOUND IS A FLOOR. A cap would allow a washed ink blue, and a
+#: live accent that is nearly grey is not an accent. The reference page sets its
+#: accent at 0.80.
 ACCENT_CHROMA = 0.45
 
 #: `token -> the chroma it may not exceed`. Lines only.
@@ -350,12 +346,9 @@ def test_the_reference_page_the_user_gave_us_sits_inside_the_same_bands():
 
 
 def test_both_palettes_this_row_replaced_are_caught_by_the_same_bands():
-    # ⭐ Both ways, and both bounds, against the two palettes that actually
-    # shipped: `W362`'s near-black ink on its cool paper broke the CEILING, and
-    # stage 1's warm-grey ink on warm paper broke the FLOOR in both themes.
-    # ⚠️ `W362`'s DARK pair reads 11.6:1 from the file and is inside these
-    # bands — the "15:1" in stage 1's handoff was a browser reading of the
-    # highlighted passage, not of this pair, and it is not evidence here.
+    # ⭐ Both ways, and both bounds, against two palettes the bands must
+    # refuse: near-black ink on cool paper breaks the CEILING, and warm-grey ink
+    # on warm paper breaks the FLOOR in both themes.
     assert contrast("#1b2236", "#f1f5f2") > BANDS["--fg"][1]
     assert contrast("#534e46", "#f6f1e7") < BANDS["--fg"][0]
     assert contrast("#bdb6a8", "#2a2825") < BANDS["--fg"][0]
@@ -374,7 +367,7 @@ def test_no_ground_or_ink_is_warm(theme):
 
 
 def test_the_warm_paper_that_shipped_is_caught_and_the_reference_is_not():
-    # ⭐ Both ways: stage 1's four warm values, and the two reference grounds.
+    # ⭐ Both ways: four warm values, and the two reference grounds.
     assert [warmth(colour) > WARMTH for colour in ("#f6f1e7", "#534e46", "#2a2825", "#bdb6a8")] == [
         True,
         True,
@@ -411,9 +404,9 @@ def test_the_live_accent_is_not_a_grey(theme):
 
 
 def test_the_saturated_rule_and_the_washed_accent_that_shipped_are_both_caught():
-    # ⭐ The red margin rule `W362` shipped breaks the line bound and the warmth
-    # bound; a saturated blue breaks the line bound; the two ink blues stage 1
-    # shipped are below the accent floor; a slate hairline is inside every one.
+    # ⭐ A red margin rule breaks the line bound and the warmth bound; a
+    # saturated blue breaks the line bound; two washed ink blues are below the
+    # accent floor; a slate hairline is inside every one.
     assert chroma("#cf8f98") > RULE_CHROMA
     assert warmth("#cf8f98") > WARMTH and warmth("#8a5257") > WARMTH
     assert chroma("#23449a") > RULE_CHROMA
@@ -432,7 +425,7 @@ def test_nothing_in_the_palette_is_green(theme):
 def test_every_green_the_two_reference_pages_use_is_caught_by_name():
     # ⭐ The other way, over the greens this palette had to give up: the route
     # planner's guide sign and its bash ink, the documentation site's emerald,
-    # and stage 1's own olive string ink in both themes.
+    # and an olive string ink in both themes.
     planted = {
         "--sign": "#0b5a3a",
         "--bash": "#cde688",

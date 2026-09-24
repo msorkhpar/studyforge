@@ -13,7 +13,7 @@ which is the procedure. This package is what the skill *calls*:
     made = onboard(draft)
     print("\\n".join(made.lines()))     # what it will write, and why
     made.write(corpus_root)             # ⛔ refuses to overwrite anything
-    reonboard(corpus_root).write(corpus_root, regenerate=True)  # its recorded answers (W439)
+    reonboard(corpus_root).write(corpus_root, regenerate=True)  # its recorded answers
     uninstall(corpus_root)              # ⛔ refuses if any of it changed
     hand_edited(corpus_root)            # generated files edited by hand, never yours
 
@@ -32,12 +32,12 @@ the next run, and a tool that eats your changes is a tool nobody runs twice.
 something `corpus.json` cannot say, the manifest is missing a field, and that
 is the finding.
 
-## ⭐ The hole this closes, and it was measured rather than predicted
+## ⭐ What this closes
 
-`SK-02/1`: scaffolding an adapter into a clean corpus and running
-`studyforge validate` gave `NOT valid: 8 finding(s)` — one `unclassified` per
-generated file — and closing it meant **a person copying two lines out of a
-report** into `corpus.json`, which is R19's *anything a second source would
+Scaffolding an adapter into a clean corpus and running `studyforge validate`
+with no declaration gives `NOT valid: 8 finding(s)` — one `unclassified` per
+generated file — and closing it by hand would mean **a person copying two lines
+out of a report** into `corpus.json`, which is R19's *anything a second source would
 have to retype*. ⛔ `content.exclude` cannot say it: it matches by exact path
 equality and means *material withheld from the reader*, which code is not.
 ⭐ `promote` writes `content.not_material` from the globs the generators

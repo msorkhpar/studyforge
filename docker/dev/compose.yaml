@@ -1,7 +1,7 @@
 # The framework's build environment, as a service (R15, FND-03).
 #
 #     docker/dev/check                      the whole suite, in the container
-#     docker/dev/check python3 -m tools.quality      anything else, in it
+#     docker/dev/check python3 -m tests.floor        anything else, in it
 #
 # ⛔ **There is no direct form that is not `check`'s own.** What `check` runs is
 # below: with the attestation variable, or this build re-exports moving
@@ -120,8 +120,7 @@ services:
     # `tests/visual/test_discovery.py` red — a test that fakes the browser's
     # absence but does not control this variable. ⛔ That test is red at
     # `a0d7e88` too, with no browser and no diff, whenever the variable is set;
-    # the defect is the harness's and the measurement is in
-    # `../tasks/handoffs/W36.md`. ⭐ What keeps the browser honest instead is
+    # the defect is the harness's. ⭐ What keeps the browser honest instead is
     # `tests/docker/test_dev_image_browser.py`, which asserts from **inside**
     # this image that one arrived — the idiom the Node.js runtime already uses.
     #
@@ -136,8 +135,6 @@ services:
     #     (`tests/visual/conftest.py`), which pins the variable off. Measured at
     #     `828b37f` in this image: with `=required` the module passes, and with
     #     the fixture removed it fails again.
-    #   - the pointer `../tasks/handoffs/W36.md` resolves nowhere from this
-    #     directory. The measurement is in `../../docs/tasks/handoffs/W36.md`.
     #
     # ⚠️ `STUDYFORGE_VISUAL_CAPTURES` is a path INSIDE the container. A host
     # path only resolves if it is under the bind mount, and nothing is written

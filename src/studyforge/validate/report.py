@@ -17,17 +17,17 @@ signal an integrator has (R2), so a check that quietly did not happen turns
 green into a lie — and the failure is invisible precisely when it matters, on
 a source nobody has read before.
 
-⭐ The precedent is E04's narration coverage: *the unit's speakable record
+⭐ The precedent is narration's coverage: *the unit's speakable record
 states how many blocks it withheld, and the report names units with unspoken
 content, so the omission reads as a decision rather than as a bug in the
-walker.* The same shape, one epic over.
+walker.* The same shape, one package over.
 
 ⚠️ **An `Unchecked` does not fail the run**, and the line between it and a
 `Finding` is where the design lives, not where a compromise does. It is an
 `Unchecked` only when the *absence of the input is itself a validated fact* —
 the whole source tree is absent, not half of it. A half-present input is a
 `Finding`, because that is where a short read hides. ⛔ So is an absent or
-empty **archive** (`no-archive`, `INT-06/5`): it is what this report judges, so
+empty **archive** (`no-archive`): it is what this report judges, so
 its absence is not a validated fact but a verdict with no subject.
 
 ## Every failure, never just the first
@@ -55,16 +55,14 @@ class Finding:
 
     ## ⛔ R7 is the *raiser's* guarantee, and this class does not scrub
 
-    ⚠️ **The promise this docstring used to make was false, and measuring it is
-    what found that out.** It said `message` never quotes a value. But half of
-    `validate`'s findings are not written here — they are `str(error)` from a
-    refusal raised upstream, and **6 of 10 poison shapes driven end-to-end
-    reproduced an identifier in a report line** (CTO, 2026-09-09; the probe is
-    `tests/.../test_run.py::test_no_identifier_reaches_a_report_line`). The 4
-    that were clean were clean because the personal-data gate's **shape list**
-    happened to name them, not because anything here refused.
+    ⚠️ **`message` is not promised to quote no value.** Half of `validate`'s
+    findings are not written here — they are `str(error)` from a refusal raised
+    upstream, and an upstream `{value!r}` reaches a report line through them
+    (`tests/.../test_run.py::test_no_identifier_reaches_a_report_line` drives
+    that end to end). The personal-data gate's **shape list** catches only the
+    shapes it names; nothing here refuses.
 
-    ⭐ **Ruling 17 puts the boundary upstream and it does not move here.** A
+    ⭐ **The boundary is upstream (R7) and it does not move here.** A
     scrub in this class would silence every leak *in the one report anybody
     reads*, which makes the upstream fix look unnecessary while the echo stays
     in every traceback and every other caller of the same function. So:
@@ -73,7 +71,7 @@ class Finding:
       never the value, following `corpus.container.fields.said`.
     - A message **forwarded** from an upstream refusal is that module's
       guarantee to keep, and `validate` is where the composition is measured —
-      Ruling 13: trust enforced nowhere is not trust.
+      trust enforced nowhere is not trust.
     """
 
     rule: str

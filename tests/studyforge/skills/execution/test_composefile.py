@@ -2,7 +2,7 @@
 
 ⛔ Every value in a rendered file is asserted to be a value the CONTRACT
 carries, and each is planted in the contract and watched moving the output.
-⭐ That is the claim `TC-05`'s acceptance makes — that a consuming contract is
+⭐ That is the consuming contract's claim — that a consuming contract is
 sufficient to generate a working compose file with no other input — and this is
 where it is demonstrated rather than asserted.
 """
@@ -88,7 +88,7 @@ def test_a_protocol_that_is_not_tcp_is_carried_and_tcp_is_left_implicit():
 def test_the_only_host_directory_it_mounts_is_the_sources():
     text = rendered()
     assert f'- "{SOURCES}:{WORKSPACE}/sources"' in text
-    # ⚠️ The mount lines alone: the ruling-4 footer names the same host path
+    # ⚠️ The mount lines alone: the bind-source footer names the same host path
     # on purpose, and counting it would read one directory as two.
     hosts = [
         line
@@ -186,7 +186,7 @@ def test_every_named_volume_in_a_service_is_declared_at_the_top_level():
 
 
 def test_without_the_seed_map_no_optional_volume_is_earned():
-    # ⛔ `SK-09/3`: the join lives in the other block's prime map and the mounts
+    # ⛔ The join lives in the other block's prime map and the mounts
     # themselves carry no key for it, so a renderer handed no map earns nothing.
     assert composefile.volumes_for(None, ("gradle", "maven")) == ()
 

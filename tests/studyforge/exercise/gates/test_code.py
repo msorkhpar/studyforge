@@ -1,6 +1,6 @@
 """`G1`–`G5`, read over real runs of a real exercise — one planted defect per gate.
 
-⛔ **`AX-03`'s Acceptance, and its first half is the NEGATIVE CONTROL**: the
+⛔ **The gate framework's acceptance, and its first half is the NEGATIVE CONTROL**: the
 same bundle with nothing planted reads every gate GREEN, in this same module,
 off the same machinery. ⚠️ A plant whose reading is indistinguishable from the
 control has controlled nothing, so every case below **asserts the planted state
@@ -8,7 +8,7 @@ exists and prints it** before it reads a single gate.
 
 ⭐ **Nothing here is stubbed.** Each reading comes out of five real `pytest`
 processes over files on disk, and each plant is a real edit to one of them —
-[`workspace.py`](workspace.py) says why and what it measured.
+[`workspace.py`](workspace.py) says why.
 
 ## ⚠️ Four plants are isolated and the fifth is not, and that is stated
 
@@ -172,7 +172,7 @@ def test_an_exercise_with_no_cases_is_refused_rather_than_gated(tmp_path):
 
 def test_a_gate_with_nothing_to_read_does_not_hold(tmp_path):
     # ⛔ Never "held vacuously": a gate that passes for want of evidence is the
-    # defect `E14`'s third property is written against. Every run is absent
+    # defect R5's gates are written against. Every run is absent
     # here, and every gate but the vacuous-origin arm refuses.
     bundle = Bundle(tmp_path)
     verdicts = check(bundle.exercise, Evidence(runs=()), bundle.origins, bundle.ledger, WHERE)

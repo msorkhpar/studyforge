@@ -1,6 +1,6 @@
-"""Mirror of `src/studyforge/narrate/wire.py` (R12): the wire, and who loads it (`W223`).
+"""Mirror of `src/studyforge/narrate/wire.py` (R12): the wire, and who loads it.
 
-⛔ **`SF-38/9` and `W224/4` are asserted over `sys.modules` in a FRESH interpreter**,
+⛔ **A build and a plan loading no wire is asserted over `sys.modules` in a FRESH interpreter**,
 never over source text. `tests/studyforge/generate/test_no_synthesis.py` reads
 import lines as text, and could not see `import studyforge.generate` loading the
 HTTP client through `narrate.synth`'s own module-level import. ⭐ The positive
@@ -47,7 +47,7 @@ def loaded_by(importer: str) -> list[str]:
 
 
 # --------------------------------------------------------------------------
-# ⛔ SF-38/9 and W224/4: a build and a plan load no wire
+# ⛔ A build and a plan load no wire
 # --------------------------------------------------------------------------
 
 
@@ -61,10 +61,10 @@ def test_importing_the_build_or_the_plan_loads_no_wire_in_a_fresh_interpreter(im
 
 
 def test_the_plan_no_longer_reaches_the_narrate_verb_through_the_dispatcher():
-    # ⚠️ MEASURED by `W223`: `cli/plan` had TWO routes to the client,
-    # `narrate.synth` and the dispatcher, which imported every verb. ⭐ `W293`
-    # resolves a verb when it is dispatched, so the second route is closed; this
-    # pins it closed, and `tests/studyforge/cli/test_dispatch.py` owns the clause.
+    # ⚠️ `cli/plan` has two possible routes to the client,
+    # `narrate.synth` and the dispatcher. ⭐ The dispatcher
+    # resolves a verb only when it is dispatched, so the second route is closed;
+    # this pins it closed, and `tests/studyforge/cli/test_dispatch.py` owns the clause.
     assert "studyforge.cli.narrate.stage" not in loaded_by("studyforge.cli.plan")
 
 
@@ -75,7 +75,7 @@ def test_the_same_instrument_sees_the_wire_arrive_when_an_importer_loads_it(impo
 
 
 # --------------------------------------------------------------------------
-# ⛔ W212/3: the decode error is the wire's, and inside the narration family
+# ⛔ The decode error is the wire's, and inside the narration family
 # --------------------------------------------------------------------------
 
 

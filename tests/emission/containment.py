@@ -15,12 +15,12 @@ fails the build on.
 
 ## ⛔ Why the harness refuses, rather than the permission bit
 
-MEASURED in the pinned image at `STUDYFORGE_UID=0`, before this module: the
-census created a directory tree under the poison's `/home` namespace, and those
-writes then turned the suite's own echo checks RED. At the default uid the same
-`mkdir` failed on permissions, which is the only reason nobody had seen it.
-⭐ The refusal is raised here, with the error an unprivileged process would
-have got, so every uid now runs the census the unprivileged run already did —
+In the pinned image at `STUDYFORGE_UID=0`, an unrefused census creates a
+directory tree under the poison's `/home` namespace, and those writes turn the
+suite's own echo checks RED. At the default uid the same `mkdir` fails on
+permissions, which hides it. ⭐ The refusal is raised here, with the error an
+unprivileged process would get, so every uid runs the census the unprivileged
+run does —
 **for a reason, and not by permission.**
 
 ## ⛔ The population, and what it cannot see

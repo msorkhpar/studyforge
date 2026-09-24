@@ -24,12 +24,9 @@ never a reason for this skill to reach inside `generate/`, `serve/` or
    generated output belongs is the corpus owner's decision, and `studyforge
    build` refuses a directory that does not exist.
 3. **The user's answer to one question: do they want narration?** ⭐ **Ask it
-   before you run anything** (step 0 below). ⭐ **Narration is optional** — the
-   user's ruling, 2026-09-23: *"it should be optional and while serving or even
-   while caputring the matterial skills should ask if user is interested in the
-   narrition or not. Somebody might wants to just cover the course wihtout
-   voices as mentioned the voice might be cgenerated but still not serving them
-   would be an option"*.
+   before you run anything** (step 0 below). ⭐ **Narration is optional**: a
+   reader may want the course without voices, and clips that were generated
+   may still go unserved.
 4. **If they want it: a running narration service, and the voice to narrate
    in.** ⛔ A corpus the user wants voiced that never ran narration is not
    finished. ⭐ Read *Narration* below — it says what provides it and how to
@@ -46,7 +43,7 @@ that component is silent no matter how it is built.**
 
 | the question | the answer |
 |---|---|
-| what provides narration | the `narrate-service` component, pinned beside this one in `workspace.json` |
+| what provides narration | the `narrate-service` component, installed or built beside this one |
 | where it answers | `http://127.0.0.1:8870` — ⛔ loopback, never an interface anyone else can reach |
 | how it is started | from **its own** checkout, by you, following its `README.md`. ⛔ Never by this skill |
 | what a caller may rely on | its `provides` promise, which this framework's narration client was built against: **`3`** |
@@ -155,8 +152,8 @@ one `narration off  chosen: …` line and none of the four `narration` states: t
 user chose the reading floor, and it is complete.
 
 ⭐ **A corpus that declares exercises is served with Run and Submit**: the
-`studyforge serve --site` this skill runs registers the run namespace (`W371`).
-⚠️ **What the skill reports is WHERE a run executes** (`W381`): it asks the
+`studyforge serve --site` this skill runs registers the run namespace.
+⚠️ **What the skill reports is WHERE a run executes**: it asks the
 framework's own mode probe whether the corpus's runner container is up over the
 corpus root. When it is not, `host` is printed: a reader's code runs on this host,
 without the runner's isolation. Its `remedy` line says what to do: start the runner

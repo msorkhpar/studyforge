@@ -56,7 +56,7 @@ def test_the_id_is_one_based_and_the_coordinates_are_zero_based():
 
 
 def test_the_contract_says_what_withheld_does_not_count():
-    # ⚠️ `docs/conventions/module-structure.md`: when one half of a pair is
+    # ⚠️ R17: when one half of a pair is
     # constrained, name what sits beside it that is not. A coverage report reading
     # `withheld` as "everything the listener does not hear" would under-report.
     contract = records.__doc__ or ""

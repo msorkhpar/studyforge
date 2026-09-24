@@ -1,4 +1,4 @@
-r"""Personal archive: export a corpus with or without its progress, and import it anywhere (SK-06).
+r"""Personal archive: export a corpus with or without its progress, and import it anywhere.
 
 **What it does.** Packs a corpus root's material into one zip file. The progress record
 goes in too when the file is for its owner, and never when it is for sharing. It
@@ -36,8 +36,8 @@ build-and-serve skill, never by this one.
 
 ⭐ **No store is re-implemented here.** Validation, the R7 gate on a record and the
 first-pass rule are all the store's own. A merge that `record_run` cannot express
-exactly costs at most two runs more than the larger count. That is recorded as
-`SK-06/1` rather than worked around through the store's private methods.
+exactly costs at most two runs more than the larger count. That is a stated
+limit rather than worked around through the store's private methods.
 """
 
 from __future__ import annotations

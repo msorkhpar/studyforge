@@ -1,10 +1,10 @@
-"""The browser in the build environment, asserted rather than described (W36, QA-03/1).
+"""The browser in the build environment, asserted rather than described.
 
 ⛔ **This is a second module and not a section of `test_dev_image.py`**, and the
 reason is R11: that file sits close enough to the 600-line test ceiling that the
 checks below would have taken it over. ⚠️ **No figure here, because a figure here
 would be falsified by the next edit to THAT file and has been twice** — the split
-of `devfiles.py` moved it again. The authority is `python3 -m tools.quality`,
+of `devfiles.py` moved it again. The authority is `python3 -m tests.floor`,
 which reads both files at the ref in front of you.
 
 ⭐ They also have one subject —
@@ -19,13 +19,12 @@ a host.
 ## ⛔ Why a browser is in a build image at all
 
 ⚠️ `tests/visual/` opens a page this repository generated in a real browser and
-reads back what no assertion over the source can see. ⛔ **Before `W36` those 57
-checks DID NOT RUN in the pinned image** — `5277 passed, 68 skipped` at
-`a0d7e88` — and Ruling 40 makes the pinned container the only authority for a
-reading, so a check that cannot run there is a check with no authority
-anywhere. ⭐ The defect that priced it: `--measure: 80ch` resolves `ch` against
-the element's own font, so one correct declaration produced three different
-columns and every stylesheet assertion passed.
+reads back what no assertion over the source can see. ⛔ **Without a browser in
+the pinned image those checks do not run there**, and R15 makes the pinned
+container the only authority for a reading, so a check that cannot run there is
+a check with no authority anywhere. ⭐ What they catch: `--measure: 80ch`
+resolves `ch` against the element's own font, so one correct declaration can
+produce three different columns while every stylesheet assertion passes.
 
 ## ⛔ Why the pin is the whole of it
 
@@ -49,8 +48,8 @@ import pytest
 from tests.docker.devfiles import DEV, commands, instructions, read
 from tests.docker.test_dev_image import MARKER
 
-#: Where the image's fonts live, and it is the whole of its font surface
-#: (`W124`). ⛔ Measured in the pinned image: 12 files, all from one package, so
+#: Where the image's fonts live, and it is the whole of its font surface.
+#: ⛔ Measured in the pinned image: 12 files, all from one package, so
 #: `serif`, `sans-serif` and `monospace` all resolve inside it and pinning it
 #: pins every face any page in `tests/visual/` can reach.
 FONT_DIR = Path("/usr/share/fonts/truetype/liberation")
@@ -73,7 +72,7 @@ CANDIDATE_NAMES = (
     "headless-shell",
 )
 
-#: The three variables `compose.yaml` carries across the boundary (W36).
+#: The three variables `compose.yaml` carries across the boundary.
 PASSED_THROUGH = (
     "STUDYFORGE_VISUAL",
     "STUDYFORGE_VISUAL_BROWSER",
@@ -112,10 +111,10 @@ def test_the_archive_comes_from_an_immutable_per_version_url():
     # digest is a complete description of which browser produced a reading.
     # ⛔ A `latest`, a channel name or a branch in the URL would make the
     # checksum a check on today's bytes and nothing more.
-    # ⛔ `commands()` and not raw lines. MEASURED: the URL sits on a
-    # CONTINUATION of its own `curl`, so a raw-line reading searched the URL line
-    # alone — and a plant that put `/latest/` on the `curl -fsSLO \` line above
-    # it passed, green. ⭐ One command per element puts the flags and the URL in
+    # ⛔ `commands()` and not raw lines. The URL sits on a CONTINUATION of its
+    # own `curl`, so a raw-line reading would search the URL line alone — and a
+    # plant that put `/latest/` on the `curl -fsSLO \` line above it would pass. ⭐ One command per
+    # element puts the flags and the URL in
     # the same string, which is the only shape in which "the URL moves" is a
     # question this can answer.
     fetched = [command for command in commands("Dockerfile") if "chrome-for-testing" in command]
@@ -136,7 +135,7 @@ def test_an_architecture_with_no_recorded_checksum_fails_loudly():
     assert "no pinned browser recorded for TARGETARCH" in read("Dockerfile")
     # ⛔ `commands()` and not raw lines: `CHROME_SHA256_` is a SUBSTRING,
     # and two of the four places it appears are continuations of the `case` inside
-    # the browser's `RUN`. ⭐ MEASURED at `51dee3b` in the pinned image — 4
+    # the browser's `RUN`. ⭐ Four
     # commands carry it (two `ARG`s and two `case` arms), so the bound below keeps
     # the margin it had on raw lines and means something after the collapse.
     both = [command for command in commands("Dockerfile") if "CHROME_SHA256_" in command]
@@ -186,7 +185,7 @@ def test_nothing_that_can_fetch_at_test_time_survives_into_the_image():
     )
 
 
-# --- the font, which is the other input every text metric reads (W124) ------
+# --- the font, which is the other input every text metric reads ------
 
 
 def recorded_digests() -> dict[str, str]:
@@ -416,7 +415,7 @@ def test_the_visual_harness_variables_cross_into_the_container(variable: str):
     entries = [line.strip() for line in instructions("compose.yaml").splitlines()]
     assert f"- {variable}" in entries, (
         f"{variable} does not cross into the container, so a caller cannot ask "
-        f"the one environment Ruling 40 makes authoritative for anything"
+        f"the one environment R15 makes authoritative for anything"
     )
 
 
@@ -439,8 +438,8 @@ def test_a_browser_is_actually_on_the_path_in_here():
     # ⭐ **The acceptance, asked of the environment rather than of a file.**
     # Every check above reads `docker/dev/`; this one is the difference between
     # "the Dockerfile says it installs a browser" and "the browser is here".
-    # ⛔ Ruling 21 exists because 38 tests were skipping on precisely that gap,
-    # and this row exists because 57 more were.
+    # ⛔ A browser the Dockerfile names and the image lacks is every visual
+    # check skipping.
     if not os.environ.get(MARKER):
         pytest.skip(
             f"not inside the dev image, where the browser is pinned. The static "
@@ -450,8 +449,8 @@ def test_a_browser_is_actually_on_the_path_in_here():
     found = {name: shutil.which(name) for name in CANDIDATE_NAMES}
     assert any(found.values()), (
         f"no browser on PATH inside the dev image, so 57 visual checks skip in "
-        f"the one environment that certifies a result (Ruling 40). Searched "
-        f"{list(CANDIDATE_NAMES)}, found none — W36 is undone."
+        f"the one environment that certifies a result (R15). Searched "
+        f"{list(CANDIDATE_NAMES)}, found none."
     )
 
 

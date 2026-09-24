@@ -1,6 +1,6 @@
-"""Who in `src/` may start a process — a sweep of the whole tree (`W361`, `SF-20/4`, `SF-22/6`).
+"""Who in `src/` may start a process — a sweep of the whole tree.
 
-⛔ **E05's settled sentence:** `execute` is the only package that runs a corpus's
+⛔ **Spec §8.3's settled sentence:** `execute` is the only package that runs a corpus's
 commands and the only package permitted to start a process, save two named sites
 that each ask the local `git` a fixed question about a source checkout. Any other
 package reaches a process only by handing a command to `execute`.
@@ -41,7 +41,7 @@ from tests.support import repository_root, run
 
 SOURCE = repository_root() / "src" / "studyforge"
 
-#: The package that runs a corpus's commands (`SF-20`).
+#: The package that runs a corpus's commands.
 RUNNER = "execute"
 
 #: ⛔ The named sites outside the runner, relative to the package root.
@@ -127,7 +127,7 @@ def test_the_runner_starts_processes_so_the_sweep_is_not_blind():
 
 @pytest.mark.parametrize("site", sorted(EXCEPTIONS))
 def test_each_named_site_still_starts_a_process(site):
-    assert site in starters(SOURCE), f"{site} starts nothing: take it out of E05's list"
+    assert site in starters(SOURCE), f"{site} starts nothing: take it out of the named sites"
 
 
 @pytest.mark.parametrize("site", sorted(EXCEPTIONS))

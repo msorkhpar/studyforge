@@ -14,14 +14,11 @@ that spell the address, with the extraction source's per-unit shape below that.
 migration moves a tree rather than re-deriving one, and every href a page holds
 to its own media is unchanged.
 
-⛔ **The page's filename is not identical, and cannot be.** Measured 2026-09-09:
-the extraction source's `study/` tree holds **1,290 unit pages named
-`index.html` and 0 named `*.unit.html`**. §5 rules that every generated page
-carries a real name, *because a scan reads names* — and an `index.html` is
-neither unique in a listing nor distinguishable from the root index. So one
-file per unit is renamed by a migration, and nothing else moves. The task
-document's "byte-identically" is true of the directories and false of that one
-filename; see `docs/tasks/handoffs/SF-03.md`.
+⛔ **The page's filename is not `index.html`, and cannot be.** §5 rules that
+every generated page carries a real name, *because a scan reads names* — and
+an `index.html` is neither unique in a listing nor distinguishable from the
+root index. So a unit page is `*.unit.html`, and the directories are what
+this profile keeps as they are.
 
 ⚠️ **`tree` needs no `origin`.** A corpus whose container map records none can
 still be placed this way, which is what makes it the profile for material that

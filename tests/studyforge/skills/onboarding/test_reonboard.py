@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/skills/onboarding/reonboard.py` (R12, `W439`).
+"""Mirror of `src/studyforge/skills/onboarding/reonboard.py` (R12).
 
 ⭐ **The property this file exists for:** a change to an onboarded corpus's
 manifest enters as DATA and lands through a regenerate, so `hand_edited` reads
@@ -75,8 +75,8 @@ def test_globs_entered_as_data_land_and_nothing_generated_reads_as_hand_edited(t
     assert len(_globs(root)) == len(set(_globs(root))), "a generated glob was declared twice"
 
 
-def test_the_hand_typed_entry_the_guide_once_prescribed_is_named(tmp_path):
-    # ⛔ The negative, and the register's measurement at its smallest: ONE entry
+def test_a_hand_typed_not_material_entry_is_named(tmp_path):
+    # ⛔ The negative at its smallest: ONE entry
     # typed into `corpus.json` by hand is an R19 finding against the corpus.
     root = _onboarded(tmp_path)
     document = _manifest(root)
@@ -123,7 +123,7 @@ def test_a_settled_answer_moves_and_the_record_follows_it(tmp_path):
 
 
 def test_an_answer_nobody_settled_is_still_refused_by_name(tmp_path):
-    # ⛔ `W329` is narrowed to what a person named, never switched off.
+    # ⛔ The refusal is narrowed to what a person named, never switched off.
     root = _onboarded(tmp_path)
     moved = reonboard(root, settle={"exercises": True})
     unnamed = dataclasses.replace(moved, settled=("title",))
@@ -188,7 +188,7 @@ def test_a_re_pin_through_the_skill_moves_the_pin_and_every_stub_together(tmp_pa
 
 
 def test_a_pin_moved_by_hand_is_refused_by_the_corpus_side_check_and_named(tmp_path):
-    # ⛔ `ISO-M10/1`, at its smallest: the pin advanced, the stubs left behind.
+    # ⛔ At its smallest: the pin advanced, the stubs left behind.
     root = _onboarded(tmp_path)
     pinned = root / PIN_FILE
     document = json.loads(pinned.read_text(encoding="utf-8"))
@@ -248,7 +248,7 @@ def test_a_pin_naming_another_version_is_refused_without_a_re_pin(tmp_path, monk
 def test_a_pin_naming_another_commit_than_a_built_library_is_refused_until_re_pinned(
     tmp_path, monkeypatch
 ):
-    # ⭐ `W467`: a built wheel knows its commit, so a pin naming another is stale.
+    # ⭐ A built wheel knows its commit, so a pin naming another is stale.
     from studyforge.skills.onboarding import library
 
     root = corpora.material(tmp_path / "corpus")

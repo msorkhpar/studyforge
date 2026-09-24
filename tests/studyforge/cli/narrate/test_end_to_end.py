@@ -1,4 +1,4 @@
-"""⛔ `narrate`'s end-to-end leg: a `FND-04` corpus narrated against a RUNNING `narrate-service`.
+"""⛔ `narrate`'s end-to-end leg: a fixture corpus narrated against a RUNNING `narrate-service`.
 
 ⭐ **The leg `M3` is missing.** It is asserted as a READING OF THE DISK — clip
 files under the copied corpus that were not there before, one per speech unit,
@@ -45,7 +45,7 @@ def service_url() -> str:
     url = os.environ.get(VARIABLE, "").strip()
     if not url:
         pytest.skip(
-            f"SF-42 end-to-end narration DID NOT RUN: set {VARIABLE} to a running "
+            f"end-to-end narration DID NOT RUN: set {VARIABLE} to a running "
             f"narrate-service's URL (a host reading; the pinned image has no network)"
         )
     return url
@@ -64,7 +64,7 @@ def test_a_fixture_corpus_is_narrated_end_to_end_and_its_clips_are_on_disk(
     root = a_corpus(tmp_path, name)
     before = files(root)
     out = io.StringIO()
-    # ⭐ `main` imports the transport when it runs (`W223`), so the wire's own
+    # ⭐ `main` imports the transport when it runs, so the wire's own
     # attribute is the one to replace.
     monkeypatch.setattr(wire, "over_http", Recording(over_http))
 
@@ -88,4 +88,4 @@ def test_a_fixture_corpus_is_narrated_end_to_end_and_its_clips_are_on_disk(
     assert files(root) == settled
     with capsys.disabled():
         reading = f"{len(clips)} clip file(s) on disk, {len(expected)} speech unit(s)"
-        print(f"\nSF-42 end-to-end [{name}]: {reading}")
+        print(f"\nend-to-end narration [{name}]: {reading}")

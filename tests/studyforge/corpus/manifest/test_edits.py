@@ -7,7 +7,7 @@ import pytest
 from studyforge.corpus.manifest import ManifestError, parse_content, parse_edits
 
 #: The Java corpus's real declaration — the one existing-file change R3 permits
-#: there, and the one `OPS-05` asserts against.
+#: there, and the one the non-destructive check asserts against.
 POM_EDIT = {
     "path": "pom.xml",
     "kind": "insert-line",
@@ -83,8 +83,7 @@ def test_version_control_configuration_is_never_editable(path):
     "path", ["basics/01-getting-started/README.md", "advanced/02-x/README_2.1.md"]
 )
 def test_a_file_the_reader_depends_on_as_content_is_never_editable(path):
-    # ⭐ The prohibition that used to be unenforceable prose, and is checkable
-    # now only because `content` exists: a file the corpus's own policy
+    # ⭐ Checkable because `content` exists: a file the corpus's own policy
     # classifies as INCLUDED **is** content. ⚠️ The ISO corpus is the live
     # case — its `permitted_edits` is `[]` and its `README.md` is material, so
     # this holds it there structurally rather than by anyone remembering.
@@ -137,9 +136,9 @@ def test_an_edit_may_not_reach_outside_the_source_root(path):
     ],
 )
 def test_the_twin_refusal_says_it_in_the_same_words_as_the_content_one(path, phrase):
-    # ⛔ W19 unified the middle clause onto one function and a later move took that
-    # function out of `content`; this is the byte-level pin at the second
-    # site, so a move that quietly changed what either caller emits fails
+    # ⛔ The middle clause is one function, outside `content`; this is the
+    # byte-level pin at the second site, so a move that quietly changed what
+    # either caller emits fails
     # here. ⭐ It is the same sentence as `content/test_parse.py`'s with a
     # different field name in front of it.
     with pytest.raises(ManifestError) as raised:
@@ -163,7 +162,7 @@ def test_an_unknown_key_in_an_entry_is_refused():
         edits({**POM_EDIT, "reverse": "remove the line"})
 
 
-# --- `W278`: content is a property of the file in its repository ---------------
+# --- Content is a property of the file in its repository ---------------
 
 #: ⛔ ISO's shape, built for the test: the root README is `not_material` for the site.
 README_NOT_MATERIAL = parse_content(
@@ -188,7 +187,7 @@ def test_a_build_file_beside_it_is_still_editable_under_the_same_policy():
 
 @pytest.mark.parametrize("path", ["docs/README.md", "README-notes.md", "notes/LICENSE"])
 def test_a_nested_or_differently_named_file_is_not_root_documentation(path):
-    # ⚠️ Decided (`W278`): the convention is the repository's ROOT, by exact stem.
+    # ⚠️ Decided: the convention is the repository's ROOT, by exact stem.
     assert parse_edits([{**POM_EDIT, "path": path}], README_NOT_MATERIAL)[0].path == path
 
 

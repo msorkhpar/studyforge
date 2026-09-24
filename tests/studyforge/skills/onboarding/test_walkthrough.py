@@ -11,9 +11,9 @@
 5. **re-running changes nothing**, and the uninstall returns the repository to
    its prior state, asserted by comparing the tree.
 
-⚠️ **The negative control is the point of the first clause.** `SK-02/1`
-measured `NOT valid: 8 finding(s)` — one `unclassified` per generated file —
-and the remedy was a person copying two lines. So the control here scaffolds
+⚠️ **The negative control is the point of the first clause.** Without the
+declaration a scaffold reads `NOT valid: 8 finding(s)` — one `unclassified`
+per generated file. So the control here scaffolds
 *without* the declaration and asserts that those findings come back: a test
 that only ever sees green cannot tell you the green means anything.
 """
@@ -87,7 +87,7 @@ def test_a_repository_of_material_reaches_a_validate_clean_corpus(tmp_path):
 
 
 def test_without_the_declaration_the_same_corpus_reports_one_finding_per_generated_file(tmp_path):
-    # ⛔ The negative control, and it is `SK-02/1`'s own measurement re-run.
+    # ⛔ The negative control.
     # ⚠️ Same tree, same adapter, same walk — the *only* difference is that the
     # manifest does not carry `content.not_material`.
     root = corpora.material(tmp_path / "corpus")
@@ -131,7 +131,7 @@ def test_a_persons_not_material_block_classifies_the_files_it_declares(tmp_path)
 
 
 def test_nothing_it_emits_makes_the_framework_a_submodule(tmp_path):
-    # ⛔ Clause 2. R18 was amended: nothing here is pushed to any remote, so a
+    # ⛔ Clause 2. R18: nothing here is pushed to any remote, so a
     # submodule URL has no legal form.
     root, made = _onboarded(tmp_path)
 
@@ -142,9 +142,9 @@ def test_nothing_it_emits_makes_the_framework_a_submodule(tmp_path):
 
 
 def test_the_repositorys_own_root_ignore_file_is_untouched(tmp_path):
-    # ⛔ Clause 3, and W15's measured breach: tooling appended a generated
-    # directory to a source repository's root ignore file on an ordinary
-    # commit. Any rule this skill needs goes inside its own directory instead.
+    # ⛔ Clause 3: tooling must never append a generated directory to a
+    # source repository's root ignore file, which an ordinary commit would
+    # carry. Any rule this skill needs goes inside its own directory instead.
     root = corpora.material(tmp_path / "corpus")
     (root / ".gitignore").write_text("target/\n", encoding="utf-8")
     before = (root / ".gitignore").read_bytes()
@@ -216,7 +216,7 @@ def test_nothing_it_writes_carries_an_absolute_path(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ W329: the documented procedure runs a SECOND time, over its own result
+# ⛔ The documented procedure runs a SECOND time, over its own result
 # --------------------------------------------------------------------------
 
 #: A reason as a PERSON gives it. ⛔ Test-owned: the skill never writes one.
@@ -233,7 +233,7 @@ BYTECODE_OFF = ("PYTHONDONTWRITEBYTECODE", "PYTHONPYCACHEPREFIX")
 def _run(root, *arguments):
     """Run one of the procedure's own commands from inside the corpus, as an operator does.
 
-    ⛔ **`BYTECODE_OFF` is unset here on purpose**, and the row turns on it: the
+    ⛔ **`BYTECODE_OFF` is unset here on purpose**, and the check turns on it: the
     pinned image both forbids bytecode and redirects its cache out of the bind
     mount, so step 4 writes nothing beside the modules there — while the
     interpreter an integrator runs writes `tests/__pycache__/*.pyc` into the
@@ -301,7 +301,7 @@ def test_the_skills_own_step_four_leaves_the_corpus_valid(tmp_path):
 def test_under_the_narrower_glob_that_same_bytecode_is_unclassified(tmp_path):
     # ⭐ The control: without the widened declaration the findings come back, so
     # the clause above is not passing on a walk that never saw `__pycache__`.
-    # ⚠️ `W345`'s ignore file is taken out too: with it, the walk never offers
+    # ⚠️ The bytecode ignore file is taken out too: with it, the walk never offers
     # the bytecode at all, and this control would be measuring that instead.
     root, made = _first_run(tmp_path)
     (root / "tests/.gitignore").unlink()
@@ -316,9 +316,8 @@ def test_under_the_narrower_glob_that_same_bytecode_is_unclassified(tmp_path):
 
 
 def test_a_second_run_of_the_whole_procedure_writes_the_same_manifest(tmp_path):
-    # ⛔ Clause 5, and the second run is the test. Measured before this row: the
-    # re-survey counted the scaffold's own `tests/**/test_*.py` as graders and
-    # drafted `exercises: true`, which onboarding wrote with no refusal.
+    # ⛔ Clause 5, and the second run is the test: a re-survey that counted the
+    # scaffold's own `tests/**/test_*.py` as graders would draft `exercises: true`.
     root, _ = _first_run(tmp_path)
     before = (root / "corpus.json").read_bytes()
 

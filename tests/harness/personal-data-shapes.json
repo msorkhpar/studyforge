@@ -19,7 +19,7 @@
 
   {"shape": "email address", "spelling": ["write to jane.doe", "@example.invalid"],
    "gate": "refuse", "scrub": "rewrite", "quality": "ignore",
-   "why": "The quality sweep exempts addresses that are unreachable by construction, because CLAUDE.md positively instructs authors to write them and a check firing on the sanctioned placeholder tells people not to use the safe form. The framework gate has no allow-list at all: in captured material an address is wrong content whether or not it is deliverable, and a corpus that legitimately carries one is answered by a manifest declaration rather than by a pattern."},
+   "why": "The quality sweep exempts addresses that are unreachable by construction, because authors are told to write them as placeholders and a check firing on the sanctioned placeholder tells people not to use the safe form. The framework gate has no allow-list at all: in captured material an address is wrong content whether or not it is deliverable, and a corpus that legitimately carries one is answered by a manifest declaration rather than by a pattern."},
 
   {"shape": "home under a longer prefix", "spelling": ["/export/", "home/jane/x.md"],
    "gate": "pass", "scrub": "rewrite", "quality": "ignore",
@@ -31,7 +31,7 @@
 
   {"shape": "tilde-rooted path", "spelling": ["~/", "material/README.md"],
    "gate": "pass", "scrub": "rewrite", "quality": "ignore",
-   "why": "A bare tilde names a home and never whose, so it carries no identity and neither refusing gate has any business rejecting a lesson that says cd ~/src. CLAUDE.md names the environment variable as the sanctioned way to carry a real value, so flagging the reference would tell people not to use the safe form. Rewritten in our own output, where it is still a build-machine path, and refused for any field typed as a path."},
+   "why": "A bare tilde names a home and never whose, so it carries no identity and neither refusing gate has any business rejecting a lesson that says cd ~/src. An environment variable is the sanctioned way to carry a real value, so flagging the reference would tell people not to use the safe form. Rewritten in our own output, where it is still a build-machine path, and refused for any field typed as a path."},
 
   {"shape": "a directory merely named home", "spelling": ["/var/lib/", "home/cache/x.md"],
    "gate": "pass", "scrub": "rewrite", "quality": "ignore",

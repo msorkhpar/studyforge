@@ -9,7 +9,7 @@ two ways a document leaves this process:
 - `carries(body, marks)` — whether a file's bytes hold a served quiz's key or one
   of its sentences, which is what the static mount refuses;
 - `OutputGate(marks)` — a run's output, line by line, with a line that carries
-  either replaced by `WITHHELD_LINE` (`W465`, the run route's half of `W452/1`).
+  either replaced by `WITHHELD_LINE`.
 
 **How you use it.**
 
@@ -23,13 +23,13 @@ two ways a document leaves this process:
 so `routes.content` and `routes.assets` can both use it and neither imports the
 other.
 
-## ⛔ THE USER'S RULING, 2026-09-23
+## ⛔ THE KEY STAYS ON THE SERVER
 
 ⭐ **A quiz's correct answer resides on the SERVER side, and the reader's answers
 are validated there.** ⛔ **What the SITE serves never carries the key**, except the
-grading route's answer for the option the reader chose (`routes.quiz`). The page
-renderer took the key out of every built page; ⛔ **this module closes the URLs a page never
-loads but a reader can type** (the first corpus's finding `F10`): the unit
+grading route's answer for the option the reader chose (`routes.quiz`). No built
+page carries the key; ⛔ **this module closes the URLs a page never loads but a
+reader can type**: the unit
 document on the content namespace, the archive's `practice-M.json`, the bundle's
 `tests/quiz.json`, and any other file under the served root that repeats them.
 
@@ -68,7 +68,7 @@ attributes and answers `404` here until the corpus is rebuilt — a page that
 would hand out the key is not served at all.
 
 ⛔ **The files on disk are never touched** (R3): a reader who holds the corpus
-checkout can open the bundle, and the ruling is about what the SITE serves.
+checkout can open the bundle, and the rule is about what the SITE serves.
 """
 
 from __future__ import annotations
@@ -216,9 +216,9 @@ WITHHELD_LINE = "--- a line is withheld here: it carries a quiz's key ---"
 
 
 class OutputGate:
-    """A run's output, one line at a time, never carrying a served quiz's key (`W465`).
+    """A run's output, one line at a time, never carrying a served quiz's key.
 
-    ⛔ **A run's output is whatever a corpus program prints** (`W452/1`), and the
+    ⛔ **A run's output is whatever a corpus program prints**, and the
     runner binds the whole corpus root — so a program that prints a bundle
     would hand the reader its key through the run route. ⭐ Each line is
     read as `carries` reads a file, and ⛔ **a line is judged with the run's

@@ -23,35 +23,32 @@ compute the same page path, and neither call had any way to know.
 
 ⛔ **So the check is the whole path set, not the addresses.** Two distinct
 titles can be one name, and that is invisible in the source and in the address.
-⚠️ **E10 names the mechanism wrongly and measuring it is how that was found:**
-it says `slugify` *deletes* an accented character, so `café` and `cafe` are one
-slug. Measured 2026-09-09 in the pinned image, `slugify('café') == 'caf'` and
-`slugify('cafe') == 'cafe'` — an accent is a non-alphanumeric, so it collapses
-to a **separator**, and those two do not collide at all. ⭐ The real class is
+⚠️ **`slugify` does not delete an accented character:** `slugify('café') ==
+'caf'` and `slugify('cafe') == 'cafe'` — an accent is a non-alphanumeric, so it
+collapses to a **separator**, and those two do not collide at all. ⭐ The real class is
 wider than accents: any two titles whose non-alphanumerics collapse to the same
 separator run are one name, so `'Streams: an API'` and `'Streams, an API'` both
 give `streams-an-api`. ⛔ Which is the argument for checking the *set* rather
-than any one cause — the set catches every cause, including the one the ruling
-described wrongly.
+than any one cause — the set catches every cause, including one nobody has
+named.
 
-⚠️ SF-03's corpus-wide test places units only;
+⚠️ The placement package's corpus-wide test places units only;
 container pages are the half it does not cover, and two containers whose
 origins share a directory and whose deepest titles slugify alike collide the
 same way.
 
 ## ⛔ It names no profile
 
-⚠️ **The predecessor's version compared `manifest.placement` against the string
-`'sibling'`, and `test_nothing_downstream_branches_on_a_profile_name` failed
-on it** — measured, not argued. A registry that coexists with `if placement ==
-"…"` has already failed, and the third profile somebody registers would silently
-skip the check. So this module asks the profile where things go and compares
-what comes back; a profile with no collisions produces a set with no
-duplicates, and the check costs nothing on it.
+⚠️ **Comparing `manifest.placement` against the string `'sibling'` would fail
+`test_nothing_downstream_branches_on_a_profile_name`.** A registry that coexists
+with `if placement == "…"` has already failed, and the third profile somebody
+registers would silently skip the check. So this module asks the profile where
+things go and compares what comes back; a profile with no collisions produces a
+set with no duplicates, and the check costs nothing on it.
 
 ## `origin` is a file, and this is the only place that is checkable
 
-⛔ SF-05's contract says an `origin` names a **file**. `origin_directory` takes
+⛔ The unit contract says an `origin` names a **file**. `origin_directory` takes
 its parent and does no I/O, so a container that recorded its *directory* places
 its page one level up — at the repository root, for a top-level container — and
 nothing raises. ⭐ This module has the filesystem in front of it.
@@ -223,7 +220,7 @@ def _container_origins(walk: Walk, held: Held) -> Iterator[tuple[str, str, objec
                 f"unit {declared.n}",
                 walk.root / _relative(declared.origin),
             )
-        # ⭐ `W428`: a unit's practice may name a file of its own, and it is a
+        # ⭐ A unit's practice may name a file of its own, and it is a
         # file for exactly the same reason its prose origin is.
         if declared.practice_origin is not None:
             yield (

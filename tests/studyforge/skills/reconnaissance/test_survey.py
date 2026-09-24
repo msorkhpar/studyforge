@@ -1,13 +1,13 @@
 """One pass over a source — reconnaissance's acceptance, end to end.
 
-⚠️ **The four real corpora are measured in the handoff, not here.** A claim
+⚠️ **The four real corpora are measured in their own repositories, not here.** A claim
 about another repository is verified in that repository (the integration
 catalogue's own entry 2), and a test that skipped when a sibling checkout was
-missing would be a check that is not evidence. ⛔ W8 has just spent a task
-removing skips from the authoritative run; this adds none.
+missing would be a check that is not evidence. ⛔ The authoritative run
+carries no skips, and this adds none.
 
-⭐ What these fixtures do is pin the **shape**, so the measurements recorded in
-the handoff cannot quietly stop being reproducible.
+⭐ What these fixtures do is pin the **shape**, so the measurements taken in
+those repositories cannot quietly stop being reproducible.
 """
 
 from __future__ import annotations
@@ -18,14 +18,14 @@ from tests.studyforge.skills.reconnaissance import sources
 
 
 def test_a_flat_prose_source_gets_a_one_level_manifest(tmp_path):
-    # ⭐ E11's second acceptance clause.
+    # ⭐ The skill's second acceptance clause.
     found = survey(sources.flat_prose(tmp_path / "c"))
     assert found.proposal["levels"] == ["course"]
     assert found.proposal["content"]["include"] == ["src/*.md"]
 
 
 def test_a_prose_only_source_reports_no_runnable_code_and_no_graders(tmp_path):
-    # ⭐ E11's third clause, and it is a **verdict**: a corpus with no graders
+    # ⭐ The skill's third clause, and it is a **verdict**: a corpus with no graders
     # is complete at the reading floor, not short.
     found = survey(sources.flat_prose(tmp_path / "c"))
     assert found.proposal["exercises"] is False
@@ -33,14 +33,14 @@ def test_a_prose_only_source_reports_no_runnable_code_and_no_graders(tmp_path):
 
 
 def test_a_two_level_source_gets_a_two_level_manifest(tmp_path):
-    # ⭐ E11's first clause, in the shape the Java corpus actually has: the
+    # ⭐ The skill's first clause, in the shape the Java corpus actually has: the
     # sections exist **only** in the record, as bare numbered lines.
     found = survey(sources.nested_sections(tmp_path / "c"))
     assert found.proposal["levels"] == ["section", "module"]
 
 
 def test_every_survey_carries_open_questions_rather_than_a_finished_look(tmp_path):
-    # ⛔ E11's fourth clause, and the hardest one: every uncertainty appears in
+    # ⛔ The skill's fourth clause, and the hardest one: every uncertainty appears in
     # the report rather than as a silent guess. ⚠️ Unfamiliar material always
     # leaves something open — the level vocabulary is §4's and cannot be known.
     for build in (sources.flat_prose, sources.nested_sections, sources.prefixed_groups):
@@ -85,7 +85,7 @@ def test_reconnaissance_writes_nothing_into_the_source(tmp_path):
 
 
 def test_a_survey_of_dot_names_the_directory_it_read(tmp_path, monkeypatch):
-    # ⚠️ W240: the report's header carried the unresolved name of `.`, empty.
+    # ⚠️ The report's header names the resolved directory, never an empty `.`.
     root = sources.flat_prose(tmp_path / "named-course")
     monkeypatch.chdir(root)
     assert survey(".").root == "named-course"

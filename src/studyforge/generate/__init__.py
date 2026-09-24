@@ -6,10 +6,10 @@ container page per declared container, the root index, the shared bundle those
 three link, and every file a page shows, copied out of the archive into the
 directory the page addresses. Narration is READ here and never made: a page
 plays the clips `studyforge narrate` recorded, names the ones it promised and
-cannot find, and a corpus with no record renders exactly as before (`W202`
-answers 3 and 4). `write_narration(root, into)` re-runs that pass alone. Under
+cannot find, and a corpus with no record renders exactly as before (R3, R8).
+`write_narration(root, into)` re-runs that pass alone. Under
 any output root but the corpus root the clips a page addresses are copied there
-(`E09` § SF-38/8); `write_clips(root, into)` is that copy alone.
+(R8); `write_clips(root, into)` is that copy alone.
 
 **How you use it.**
 
@@ -22,8 +22,8 @@ any output root but the corpus root the clips a page addresses are copied there
 `write_pages(root, into)` runs the unit-page pass alone and
 `write_media(root, into)` the media pass alone. ⛔ **A caller catches
 `RAISES`**: `BuildError`, plus `PersonalDataLeak`, which travels through
-untranslated (Ruling 58) — so a command over this package refuses a leak
-instead of printing a traceback (`W212`).
+untranslated — so a command over this package refuses a leak
+instead of printing a traceback.
 
 **Depends on.** the declaration, contents, placement, builder and renderer
 packages. ⛔ Nothing here knows any source (R1), and nothing here is a command:
@@ -37,12 +37,11 @@ to end — a corpus goes in, a navigable site comes out, an unnarrated corpus st
 quiet, this build's own previous answer is replaced and everything else in the
 output directory is refused by name (R3, and `footprint`'s contract for the line
 between the two). ⛔ **It is deliberately
-not a subcommand and not a flag**: registering an entry point is `SF-28`'s and
-its only minter's, and adding one here would put a second declaration of the
+not a subcommand and not a flag**: registering an entry point is the command
+line's alone, and adding one here would put a second declaration of the
 build's surface in the tree.
 
-⭐ **Where this package finally homes is the register's call, not this module's.**
-It sits beside `cli/` rather than inside it precisely so that `SF-28` can adopt,
+⭐ **It sits beside `cli/`** rather than inside it so that the command line can adopt,
 move or absorb it without a consumer having imported a command.
 
 ## What is in the package
@@ -96,14 +95,14 @@ from studyforge.generate.site import assets, root_index, write_site
 from studyforge.generate.units import unit_pages, write_pages
 from studyforge.generate.writing import Written
 
-#: ⛔ **What a build lets out, as the tuple a command catches** (`W212`).
+#: ⛔ **What a build lets out, as the tuple a command catches**.
 #: ⭐ Every member is reached from `write_site` in
 #: `tests/studyforge/generate/test_init.py`, so an unreachable one fails.
 RAISES: tuple[type[Exception], ...] = (BuildError, PersonalDataLeak)
 
 #: ⛔ The package's whole public surface. A consumer that has to import
 #: `studyforge.generate.declarations` directly is a consumer this contract
-#: failed — `docs/conventions/module-structure.md` calls `__init__.py` the
+#: failed — R17 makes `__init__.py` the
 #: contract.
 __all__ = [
     "BuildError",

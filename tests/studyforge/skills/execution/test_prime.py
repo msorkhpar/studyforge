@@ -64,7 +64,7 @@ def test_a_runtime_the_component_does_not_seed_is_not_asked_for_a_build_file(tmp
     (root / "sources/app/test_run.py").write_text("def test_one():\n    pass\n", encoding="utf-8")
     made = prime.prime_for(root, ("python",), seeded=SEEDED)
     # ⭐ And it gets no project: the component warms nothing for a runtime it
-    # does not seed, and anything else at the prime's top is refused (`W440`).
+    # does not seed, and anything else at the prime's top is refused.
     assert made.projects == () and made.copies() == ()
 
 
@@ -175,7 +175,7 @@ def test_the_document_names_every_file_the_prime_carries(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W440`: the component's layout — one project per seeded tool
+# ⛔ The component's layout — one project per seeded tool
 # --------------------------------------------------------------------------
 
 
@@ -236,7 +236,7 @@ def test_a_build_with_a_source_and_no_language_of_its_own_is_refused(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W440`: the prime is the corpus's own build, never its exercises'
+# ⛔ The prime is the corpus's own build, never its exercises'
 # --------------------------------------------------------------------------
 
 

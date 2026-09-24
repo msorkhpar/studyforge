@@ -28,7 +28,7 @@ rules out.
 extraction pays that debt during the port, not after: it arrives as focused
 modules or it does not arrive.
 
-**Filled by SF-19a**: `app` (the loopback server and its seams), `security`,
+**The static half**: `app` (the loopback server and its seams), `security`,
 `caching`, `response`, `routes.content` and `routes.assets`. **Then**:
 `discovery` (a root in, every corpus under it found, no configured paths),
 `addressing` (N-segment unit addresses at each corpus's own depth), `routes.state`
@@ -42,7 +42,7 @@ starts every process; no module of this package starts one or imports a library 
 does (asserted in `tests/studyforge/serve/test_init.py`).
 
 ⚠️ `discovery` reads a corpus through `generate`'s `read_corpus`, the one reader of
-a corpus's declarations (`SF-19a/1`), which is why `generate` is named above.
+a corpus's declarations, which is why `generate` is named above.
 """
 
 from __future__ import annotations
@@ -57,14 +57,14 @@ from studyforge.serve.instance import (
     site_discovery,
 )
 
-#: ⛔ What `discovery.discover` and `instance.make_instance` let out (`W208`).
+#: ⛔ What `discovery.discover` and `instance.make_instance` let out.
 #: ⭐ `Discovered` and `ServedCorpus` are shared with `cli.serve`, whose `--site` form
-#: serves one corpus with Run and Submit (`W371`, Ruling 101's one-line remedy).
+#: serves one corpus with Run and Submit (one exported home, R21).
 #: ⭐ `WRITERS`, `namespaces_of` and `site_discovery` are shared with it too: both forms
-#: take their namespaces from the one constructor (`W380`, the same remedy).
-#: ⭐ `CLIENT` and `client_for` are shared for the same reason (`SF-24`): both forms hand the static
+#: take their namespaces from the one constructor (the same remedy).
+#: ⭐ `CLIENT` and `client_for` are shared for the same reason: both forms hand the static
 #: mount the one path the execution client is served at, so a served page gets it
-#: and a built page still names nothing (R8, `W370`).
+#: and a built page still names nothing (R8).
 __all__ = [
     "CLIENT",
     "RAISES",

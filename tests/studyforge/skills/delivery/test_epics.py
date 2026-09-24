@@ -1,8 +1,7 @@
 """Mirror of `src/studyforge/skills/delivery/epics.py` (R12).
 
-⚠️ Most of this file moved here from `test_capability.py` when `W94` split the
-reading half of that module out; the assertions are unchanged, so the tests
-that already pinned this behaviour still pin it.
+⚠️ The reading half of the index: `test_capability.py` asserts the index over
+what this reads.
 """
 
 from __future__ import annotations
@@ -20,13 +19,13 @@ FOUR_BAD_ROWS = """# E09 — Delivery
 ### Something
 **Milestone** M1
 
-### SF-01 — Unreadable milestone
+### RS-01 — Unreadable milestone
 **Milestone** Mx · **Team** solo
 
 ### Another thing
 **Milestone** M2
 
-### SF-02 — Also unreadable
+### RS-02 — Also unreadable
 **Milestone** TBD · **Team** solo
 """
 
@@ -35,7 +34,7 @@ def test_a_heading_is_a_task_only_when_the_next_line_declares_a_milestone():
     # ⛔ The rule is adjacency, never a list of headings to skip. E01's carried
     # ruling is a `###` heading and is not a capability.
     epic = read_epic("E01.md", plans.EPIC_ONE)
-    assert [c.id for c in epic.capabilities] == ["SF-01", "SF-02"]
+    assert [c.id for c in epic.capabilities] == ["RS-01", "RS-02"]
 
 
 def test_the_shouting_in_a_heading_is_not_part_of_the_capabilitys_name():
@@ -46,8 +45,8 @@ def test_the_shouting_in_a_heading_is_not_part_of_the_capabilitys_name():
 def test_a_row_that_declares_no_milestone_is_cancelled_and_is_counted():
     # ⛔ A generator that quietly discards input is one nobody can check.
     epic = read_epic("E05.md", plans.EPIC_TWO)
-    assert epic.cancelled == ("SF-99",)
-    assert [c.id for c in epic.capabilities] == ["SF-20"]
+    assert epic.cancelled == ("RS-99",)
+    assert [c.id for c in epic.capabilities] == ["RS-20"]
 
 
 def test_a_task_heading_with_no_id_is_refused_rather_than_skipped():
@@ -59,7 +58,7 @@ def test_a_task_heading_with_no_id_is_refused_rather_than_skipped():
 
 def test_a_document_with_no_area_title_is_refused():
     with pytest.raises(IndexRefused, match="no `# E<nn>"):
-        read_epic("stray.md", "### SF-01 — A thing\n**Milestone** M1\n")
+        read_epic("stray.md", "### RS-01 — A thing\n**Milestone** M1\n")
 
 
 def test_a_heading_that_names_milestones_but_is_not_a_section_declares_nothing():
@@ -84,13 +83,13 @@ def test_the_order_document_is_cited_by_a_bare_filename_only():
         read_sequence("docs/tasks/README.md", plans.SEQUENCE)
 
 
-# --- W247: a milestone id of any width is read, and only a dash cancels ------
+# --- a milestone id of any width is read, and only a dash cancels ------
 
 
 def test_a_row_at_m10_is_a_capability_at_m10_and_never_cancelled():
     epic = read_epic("E12.md", plans.WIDE_EPIC)
     assert epic.cancelled == ()
-    assert [(c.id, c.milestone) for c in epic.capabilities] == [("SF-40", "M10"), ("SF-41", "M9")]
+    assert [(c.id, c.milestone) for c in epic.capabilities] == [("RS-40", "M10"), ("RS-41", "M9")]
 
 
 def test_an_m10_section_is_declared_in_the_order():
@@ -100,17 +99,17 @@ def test_an_m10_section_is_declared_in_the_order():
 @pytest.mark.parametrize("unreadable", ["Mx", "TBD", "m10", "M10a"])
 def test_a_milestone_that_is_neither_an_id_nor_a_dash_is_refused_by_name(unreadable):
     text = (
-        f"# E12 — Wide ids\n\n### SF-42 — Unreadable\n**Milestone** {unreadable} · **Team** solo\n"
+        f"# E12 — Wide ids\n\n### RS-42 — Unreadable\n**Milestone** {unreadable} · **Team** solo\n"
     )
-    with pytest.raises(IndexRefused, match=r"E12\.md line 3: SF-42 .*never counted as cancelled"):
+    with pytest.raises(IndexRefused, match=r"E12\.md line 3: RS-42 .*never counted as cancelled"):
         read_epic("E12.md", text)
 
 
-# --- W94 / Ruling 188: the refusal names its whole population ----------------
+# --- the refusal names its whole population ----------------
 
 
 def test_a_document_with_four_unreadable_rows_names_all_four():
-    # ⛔ The defect this row exists for: the reader fixed the row that was
+    # ⛔ The case this guards: the reader fixed the row that was
     # named, re-ran, and was told about the next one — four times.
     with pytest.raises(IndexRefused) as refused:
         read_epic("E09.md", FOUR_BAD_ROWS)
@@ -142,7 +141,7 @@ def test_reading_several_documents_names_every_one_that_cannot_be_read():
         read_epics(
             (
                 ("E01.md", plans.EPIC_ONE),
-                ("E08.md", "### SF-30 — No title above it\n**Milestone** M1\n"),
+                ("E08.md", "### RS-30 — No title above it\n**Milestone** M1\n"),
                 ("E09.md", FOUR_BAD_ROWS),
             )
         )
@@ -153,7 +152,7 @@ def test_reading_several_documents_names_every_one_that_cannot_be_read():
 
 
 def test_reading_several_documents_where_one_fails_reads_exactly_as_one_would():
-    unreadable = ("E08.md", "### SF-30 — No title above it\n**Milestone** M1\n")
+    unreadable = ("E08.md", "### RS-30 — No title above it\n**Milestone** M1\n")
     with pytest.raises(IndexRefused) as several:
         read_epics((("E01.md", plans.EPIC_ONE), unreadable))
     with pytest.raises(IndexRefused) as alone:
@@ -166,7 +165,7 @@ def test_reading_several_readable_documents_gives_them_all_back():
     assert [epic.epic for epic in read] == ["E01", "E05"]
 
 
-# --- W92: the `Owns` cell is read VERBATIM, and nothing here interprets it ---
+# --- the `Owns` cell is read VERBATIM, and nothing here interprets it ---
 
 
 def test_the_owns_cell_is_carried_onto_the_capability_it_declares():
@@ -177,7 +176,7 @@ def test_the_owns_cell_is_carried_onto_the_capability_it_declares():
 
 
 def test_a_row_that_declares_no_owns_cell_carries_an_empty_one_and_is_not_refused():
-    text = "# E09 — Delivery\n\n### SF-90 — A row with no Owns\n**Milestone** M1 · **Team** solo\n"
+    text = "# E09 — Delivery\n\n### RS-90 — A row with no Owns\n**Milestone** M1 · **Team** solo\n"
     assert read_epic("E09.md", text).capabilities[0].owns == ""
 
 
@@ -191,4 +190,4 @@ def test_this_module_forms_no_opinion_about_the_side_a_row_is_delivered_on():
 def test_the_epics_preamble_is_carried_so_a_component_can_be_read_off_it():
     epic = read_epic("E01.md", plans.EPIC_ONE)
     assert epic.preamble.startswith("# E01 — Core contracts")
-    assert "### SF-01" not in epic.preamble
+    assert "### RS-01" not in epic.preamble

@@ -13,8 +13,8 @@ module it has no other business with — the same seam `archive/errors.py` has.
 An address whose arity disagrees with the corpus raises `address`'s `AddressError`,
 because that call is the arity *comparison* and `address` owns it outright; the
 container map only supplies the address it declared. ⛔ Every other rule of
-SF-01's applied here — what a slug is, what an ordinal is — is **converted**,
-because the rule is SF-01's but the document is this contract's.
+`studyforge.address`'s applied here — what a slug is, what an ordinal is — is **converted**,
+because the rule is `studyforge.address`'s but the document is this contract's.
 
 ⚠️ `PersonalDataLeak` from `archive.scrub` is not wrapped either: R7's refusal
 is louder than a format error, and a caller writing `except ContainerError:
@@ -27,7 +27,7 @@ the tuple is not here: `fields` and `document` both import this one, and giving
 it two imports of its own would put them in a module that has no other business
 with either.
 
-⭐ **The tuple exists because this paragraph was read PARTIALLY** (`W208`).
+⭐ **The tuple exists because this paragraph was read PARTIALLY**.
 `cli/plan/derive.py` caught `PersonalDataLeak` and not `AddressError` — the
 second pass-through applied and the first missed, which is how you can tell it
 was read and half-copied rather than never read.

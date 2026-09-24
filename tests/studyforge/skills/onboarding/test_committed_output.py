@@ -1,10 +1,10 @@
-"""W242's acceptance, end to end: an onboarded `sibling` corpus built into itself stays classified.
+"""End to end: an onboarded `sibling` corpus built into itself stays classified.
 
-⛔ **`INT-06/7` and `/8`, reproduced on a synthetic shape rather than on the
-corpus that found them (R1):** a repository whose root ignore file may not
-change, pages written beside the material, and a media file committed with
-them. ⭐ Nothing here is hand-declared: `onboard` writes the manifest, and
-`validate` recognises the build's output by asking the plan (R19).
+⛔ **On a synthetic shape rather than on a real corpus (R1):** a repository
+whose root ignore file may not change, pages written beside the material, and
+a media file committed with them. ⭐ Nothing here is hand-declared: `onboard`
+writes the manifest, and `validate` recognises the build's output by asking
+the plan (R19).
 """
 
 from __future__ import annotations
@@ -37,7 +37,7 @@ WHY_ROOT_IGNORE = "the repository's own declaration to git, never material it te
 def _is_media(where: str) -> bool:
     """Whether a committed path is one of a unit's images.
 
-    ⛔ **Asked by SEGMENT, never as a name suffix** (`W323`). This read
+    ⛔ **Asked by SEGMENT, never as a name suffix**. This read
     `".images/" in where`, which was the `sibling` profile's shape until the
     media moved under `study/<kind>/<stem>/` — and a predicate that matches
     nothing turns both cases below green while judging no media at all.
@@ -58,7 +58,7 @@ def _files(root: Path) -> set[str]:
 def onboarded(tmp_path: Path) -> Path:
     """Material, an archive and a root ignore file under git, onboarded `sibling`.
 
-    ⭐ **Public, and `test_nondestructive` takes it** (`W331`): the generated R3
+    ⭐ **Public, and `test_nondestructive` takes it**: the generated R3
     check is asserted by being RUN, and this is the one fabricated corpus in
     this package that a build writes output into. ⛔ Never a second copy of it.
     """
@@ -67,7 +67,7 @@ def onboarded(tmp_path: Path) -> Path:
     shutil.copytree(FIXTURES / SHAPE / "archive", root / "archive")
     for container in (root / "archive").rglob("container.json"):
         declared = json.loads(container.read_text("utf-8"))
-        # ⛔ Through the map's one reader of `origin` (`W109`), never taken raw.
+        # ⛔ Through the map's one reader of `origin`, never taken raw.
         for record in [declared, *declared["units"]]:
             origin, _section = optional_origin(record.get("origin"), "origin", container.name)
             (root / origin).parent.mkdir(parents=True, exist_ok=True)
@@ -76,7 +76,7 @@ def onboarded(tmp_path: Path) -> Path:
     for exclusion in document["content"]["exclude"]:
         (root / exclusion["path"]).write_text("# Aggregate\n", encoding="utf-8")
     # ⭐ The repository's own ignore file, declared the way a person declares it
-    # in the draft (W239 carries the block through).
+    # in the draft (onboarding carries the block through).
     document["content"]["not_material"] = [{"glob": ".gitignore", "why": WHY_ROOT_IGNORE}]
     onboard({**document, "placement": "sibling"}, framework_commit=corpora.COMMIT).write(root)
     return root
@@ -113,7 +113,7 @@ def test_a_sibling_build_classifies_every_page_and_media_file_it_commits(tmp_pat
     assert _findings(built, RULE_UNCLASSIFIED, RULE_CONTESTED) == [], population
     assert _findings(built) == _findings(unbuilt), "the build added a finding to its own corpus"
     assert _digest(root / ".gitignore") == ignore_before
-    # ⭐ `W425`: the generated root carries one, and it is about the framework's
+    # ⭐ The generated root carries one, and it is about the framework's
     # own discovery cache — never the corpus's pages or media, which are what a
     # clone reads. R3's root ignore file is untouched, asserted above.
     generated = (root / ".studyforge" / ".gitignore").read_text(encoding="utf-8")

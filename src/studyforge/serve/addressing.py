@@ -15,7 +15,7 @@ by one string.
     source = CorporaContent({"depth2-demo": CorpusContent(corpus)}, depths)
 
 **Depends on.** `address` for the parse and every key, `archive.scrub` for R7's
-gate on each contents document before it is decoded (W7), `contents` for that
+gate on each contents document before it is decoded, `contents` for that
 document's name, `serve.routes.content` for the `ContentSource` seam, and
 `serve.withheld` for what marks every quiz no file may carry.
 ⛔ No key is composed here: `Address.unit_key` spells it, and `parse_unit_key`
@@ -33,8 +33,7 @@ the other corpus, whose depth it happens to match.
 `parse_unit_key` refuses every spelling `Address.unit_key` would not write
 (`unit-1`, `unit-001`, a capital, a trailing separator), so a unit is reachable
 under one URL only. ⚠️ **That refusal is the address package's and is not
-re-checked here**: a second check was planted out during this row and nothing
-failed, because nothing it could catch reaches it. A unit reachable under two
+re-checked here**: nothing a second check could catch reaches it. A unit reachable under two
 spellings would have two strong validators for one document in the content namespace.
 
 ⚠️ **No URL segment is decoded.** A slug cannot hold `%`, so an encoded
@@ -133,6 +132,6 @@ class CorporaContent:
 
 
 def _decoded(text: str) -> object:
-    """Gate one corpus's contents document, then decode it. ⛔ Never the other order (W7)."""
+    """Gate one corpus's contents document, then decode it. ⛔ Never the other order."""
     assert_clean(text, TOC_FILENAME)
     return json.loads(text)

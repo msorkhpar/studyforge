@@ -10,11 +10,10 @@ over every corpus-relative directory the editor will bind, before rendering.
 **Depends on.** `corpus.placement` and `exercise.bundle.layout` for the one
 spelling of each keyed directory. ⛔ No I/O and nothing source-specific (R1).
 
-⭐ **Split out of `onboard` at this seam** (R11, `W465`): that module reached its
-400-line bound when the key check joined the derivation, and both answer one
+⭐ **Split out of `onboard` at this seam** (R11): both answer one
 question — what the editor may see.
 
-## ⛔ NO QUIZ BUNDLE IS BOUND INTO THE EDITOR (`W452/1`)
+## ⛔ NO QUIZ BUNDLE IS BOUND INTO THE EDITOR
 
 ⛔ **A quiz's key never leaves the local server** (the user's ruling,
 2026-09-23), and the editor is another process, on another origin, in which a

@@ -63,8 +63,8 @@ def test_a_bool_is_not_an_ordinal_even_though_python_says_it_is_an_int(value):
 
 
 def test_the_message_names_the_field_and_the_type_but_not_the_value():
-    # ⛔ Ruling 14, and this assertion is the inversion of the one it
-    # replaces: the type branch fires on whatever a caller passed where an
+    # ⛔ A refusal never echoes the value (R7): the type branch fires on
+    # whatever a caller passed where an
     # ordinal was wanted — including a path — so it names the field and the
     # TYPE, never the payload.
     with pytest.raises(AddressError) as raised:

@@ -23,16 +23,14 @@ in `components`. This module is the index over what they produced.
 **Depends on.** `dataclasses` and this package's `components` and `refusal`.
 ⛔ Nothing else, ever — and in particular **not the filesystem**: this module
 is handed data and gives back text, so the caller names the documents. A
-module that went looking for `docs/tasks/` would be a framework module that
+module that went looking for a plan directory would be a framework module that
 knows where a plan lives, and the next repository's plan does not live there.
 
-## ⛔ Why this exists at all, measured on the filing side
+## ⛔ Why this exists at all
 
-⚠️ **An integration wrote a delivery plan by hand and derived the
-capability→milestone map by reading thirteen epic documents** — which is
-exactly the cost R14's context budgets exist to prevent, paid again by every
-integration, and stale the moment an epic moves. ⭐ **Cost measured where it
-was paid: 18 rows of a hand-written plan.**
+⚠️ **A plan written by hand derives the capability→milestone map by reading
+every epic document** — a cost paid again by every integration, and stale the
+moment an epic moves.
 
 ⛔ **A hand-written index would be that same defect one layer up** (R19: the
 consuming half is generated, never hand-authored), which is why this module is
@@ -50,18 +48,17 @@ typed a second time here, and never retyped by the next repository (R19).
 
 ## ⛔ `of` names every capability it cannot place, never the first one
 
-⚠️ **Ruling 188** (`W94`). A build over thirteen epic documents that refused
-the first id it could not place made the number of rounds it takes to fix the
-epics unknowable, and each round is the whole generation. ⭐ **So the nested
-walk gathers and the refusal is raised once, after it** — and a single
-violation reads exactly as it read before, so nothing that was already right
-moved.
+⚠️ **A refusal names its whole population** (R6). A build that refused the
+first id it could not place would make the number of runs it takes to fix the
+epics unknowable, and each run is the whole generation. ⭐ **So the nested
+walk gathers and the refusal is raised once, after it**, and a single
+violation reads as a one-item refusal.
 
-## ⭐ A column that would say the same thing in every row says nothing (`W92`)
+## ⭐ A column that would say the same thing in every row says nothing
 
 ⛔ So the side column is rendered only when at least one row is not `HERE`. A
-plan whose pin document declares nothing beyond itself renders exactly the
-four columns it rendered before — the distinction does not apply there, and a
+plan whose pin document declares nothing beyond itself renders four
+columns — the distinction does not apply there, and a
 fifth column of one repeated value is a column nobody reads. ⚠️ What the three
 values MEAN, and why the column exists at all, is `components`'.
 
@@ -116,7 +113,7 @@ class Capability:
     epic: str
     depends_on: tuple[str, ...]
     #: ⛔ The `Owns` cell VERBATIM, as `epics` read it, and never interpreted
-    #: here: what it says about a row's side is `components`' reading (`W92`).
+    #: here: what it says about a row's side is `components`' reading (R1).
     owns: str = ""
 
     def row(self, delivered: str | None) -> str:
@@ -140,7 +137,7 @@ class Epic:
     capabilities: tuple[Capability, ...]
     cancelled: tuple[str, ...]
     #: Everything before the first task heading, carried so `components` can
-    #: read the component an epic's prose rows are delivered inside (`W92`).
+    #: read the component an epic's prose rows are delivered inside.
     preamble: str = ""
 
 
@@ -167,10 +164,10 @@ class Index:
         ⛔ `sequence` is required: an index with no declared order would fall
         back to id order without saying so, which is the defect it removes.
         ⛔ `components` is required for the same kind of reason: an index that
-        defaulted to *everything is this framework's* would state the thing
-        `W92` was filed about, and state it silently.
+        defaulted to *everything is this framework's* would make the false
+        statement the side column exists to stop, and make it silently.
 
-        ⛔ **Ruling 188:** the walk gathers and refuses once. Epics carrying
+        ⛔ **R6:** the walk gathers and refuses once. Epics carrying
         four misplaced capabilities are refused with four reasons, because
         otherwise the reader learns there were four by running it four times.
         """
@@ -282,7 +279,7 @@ class Index:
             "read to find out: *when does capability X become available?***",
             "",
             "⛔ **Derived from the epic documents, never transcribed from them.** "
-            "A hand-edit here is a finding against the delivery skill (R19), not "
+            "A hand-edit here is a finding against the delivery skill, not "
             "a fix — it is reverted by the next regeneration.",
             "",
             self._derivation(),
@@ -315,7 +312,7 @@ class Index:
             f"names a path here; `{ELSEWHERE}` is one whose `Owns` — or whose epic's "
             f"preamble — reaches a component this workspace pins somewhere else; "
             f"`{UNDECLARED}` is a row that names no path at all, so ⚠️ **nothing in the "
-            "documents says**. ⛔ A corpus states nothing about the last two (`W92`)."
+            "documents says**. ⛔ A corpus states nothing about the last two."
         )
 
     def _derivation(self) -> str:

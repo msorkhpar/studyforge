@@ -1,4 +1,4 @@
-"""Mirror of `tools/quality/docstrings.py` (R12)."""
+"""Mirror of `tests/floor/docstrings.py` (R12)."""
 
 from __future__ import annotations
 

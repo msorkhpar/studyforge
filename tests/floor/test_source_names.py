@@ -1,4 +1,4 @@
-"""Mirror of `tools/quality/source_names.py` (R12).
+"""Mirror of `tests/floor/source_names.py` (R12).
 
 ⭐ **Every positive here is paired with the legitimate use it is one word
 from.** A check that fires on `an ISO date` or on `a Java package segment`
@@ -16,11 +16,10 @@ from tests.floor.source_names import (
 )
 from tests.support import repository_root
 
-#: One spelling per registry entry, plus the spellings the reviewer's grep
-#: missed. ⚠️ The last two are the whole reason this is a module rather than a
-#: seventh alternative in a shell pattern: measured 2026-09-09, rubric §7c
-#: found 7 hits in `src/` and this registry found 19, and every one of the
-#: twelve extra was a corpus named in English rather than by its slug.
+#: One spelling per registry entry, plus the spellings a slug grep misses.
+#: ⚠️ The last two are the whole reason this is a module rather than one more
+#: alternative in a shell pattern: a corpus named in English rather than by
+#: its slug.
 NAMES_A_SOURCE = [
     "extracted from CodeSignal's own material",
     "the senior-java tutorial ships 168 graders",

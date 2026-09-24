@@ -13,13 +13,13 @@ blocks for one.
 **Depends on.** `json`, `os`, `shutil`, `subprocess`, `tempfile`, `time`,
 `pathlib` — the standard library, and nothing else.
 
-## ⛔ `W312` — a launch leaves nothing behind, and its last words outlive it
+## ⛔ A launch leaves nothing behind, and its last words outlive it
 
 ⛔ **Every launch makes a fresh profile under the system temp directory, and
-until `W312` nothing ever removed one.** A profile carries the browser's own
-caches, the temp filesystem is quota-limited, and when it filled every shell on
-the host exited `1` with no output. ⭐ **`close()` now removes the profile, and
-so does a launch that fails part-way** — `__init__` hands whatever it had
+`close()` removes it.** A profile carries the browser's own caches, the temp
+filesystem is quota-limited, and a full one makes every shell on the host exit
+`1` with no output. ⭐ **A launch that fails part-way removes its profile too** — `__init__` hands
+whatever it had
 already opened to `close()` before re-raising.
 
 ⭐ **The diagnostics are read BEFORE the directory goes.** `browser.log` lives
@@ -28,19 +28,16 @@ writing, keeps it, and `diagnostics()` answers from that copy afterwards. ⛔ A
 cleanup that deleted the only evidence of why a launch failed would trade one
 silent failure for another.
 
-## ⛔ `W397` — a tab is closed by whoever opened it, and a silent browser fails
+## ⛔ A tab is closed by whoever opened it, and a silent browser fails
 
-⛔ **Two defects, one symptom.** `page()` opened a tab per check and nothing ever
-closed one, so a session's tabs accumulated as operating-system processes until
-the image could start no more renderers. ⚠️ **MEASURED by the register in the
-pinned image: 190 processes, dozens of them Chrome renderers, at 0.1% CPU.**
-⭐ `page()` now records the target behind each session and `close_page()` closes
-it; `live_pages()` is how a check counts what is still open.
+⛔ **A tab is a set of operating-system processes**, so a session whose tabs
+are never closed leaves the image unable to start another renderer. ⭐ `page()`
+records the target behind each session and `close_page()` closes it;
+`live_pages()` is how a check counts what is still open.
 
-⛔ **And the wait had no floor under it.** `call` computed a deadline and looped
-on it, but the loop body blocked in `os.read` on a live pipe — so a browser that
-was UP AND SILENT was never given up on, and `"no answer in 30s"` was
-unreachable. ⭐ `_receive` now waits with `select` until the SAME deadline, so a
+⛔ **And every wait has a floor under it.** A loop that blocks in `os.read` on a
+live pipe never gives up on a browser that is UP AND SILENT, whatever deadline
+it computed. ⭐ `_receive` waits with `select` until the call's deadline, so a
 browser that stops answering FAILS the check instead of hanging the suite.
 ⚠️ `docker/dev/check`'s outer bound stays where it is: it catches a hang
 anywhere, and this catches this one with a verdict attached.
@@ -132,7 +129,7 @@ def _remove_profile(profile: str) -> None:
 
     ⛔ Raises `BrowserError` when the directory survives every attempt, so a
     profile left behind is a failure somebody reads rather than a quota that
-    fills in silence (`W312`).
+    fills in silence.
     """
     for _attempt in range(REMOVAL_ATTEMPTS):
         shutil.rmtree(profile, ignore_errors=True)
@@ -179,18 +176,16 @@ class Browser:
     def __init__(self, binary: str, profile_root: str | None = None) -> None:
         """Launch `binary` headless with a throwaway profile.
 
-        ⛔ **A launch that fails part-way leaves nothing behind** (`W312`): the
+        ⛔ **A launch that fails part-way leaves nothing behind**: the
         profile exists from the first line, so every later step runs under a
         handler that gives what was opened to `close()` and re-raises.
 
-        ⭐ **`profile_root` is `W419`, and it is a parameter rather than a
-        convenience.** `test_browser.py` needs every launch IT makes to land
-        somewhere it can glob, and before this argument the only way to say so
-        was to point `tempfile.tempdir` at a directory — ⛔ **which is
-        PROCESS-WIDE**, so under `-n auto` anything else tearing down in the
-        same xdist worker fell inside that test's assertion window and reddened
-        a row with nothing wrong with it (`W404/6`). ⚠️ A caller naming its own
-        directory cannot reach another caller at all.
+        ⭐ **`profile_root` is a parameter rather than a convenience.**
+        `test_browser.py` needs every launch IT makes to land somewhere it can
+        glob, and the alternative — pointing `tempfile.tempdir` at a directory —
+        ⛔ **is PROCESS-WIDE**, so under `-n auto` anything else tearing down in
+        the same xdist worker would fall inside that test's assertion window.
+        ⚠️ A caller naming its own directory cannot reach another caller at all.
         """
         self.binary = binary
         # ⛔ A fresh profile per launch, under `profile_root` when one is named
@@ -298,9 +293,9 @@ class Browser:
     def page(self) -> str:
         """Open a tab, attach to it, and return the session id calls are addressed with.
 
-        ⛔ **Whoever calls this owns `close_page`** (`W397`). A tab is a set of
+        ⛔ **Whoever calls this owns `close_page`**. A tab is a set of
         operating-system processes, not a handle, and a session that opens one
-        per check and closes none ends where the register found this one.
+        per check and closes none ends with an image that cannot start a renderer.
         """
         self._discover_targets()
         target = self.call("Target.createTarget", {"url": "about:blank"})["targetId"]
@@ -312,14 +307,13 @@ class Browser:
     def close_page(self, session: str) -> None:
         """Close the tab `session` addresses, and RETURN ONLY ONCE IT IS GONE.
 
-        ⛔ **Waiting is the whole of `W397/3`, and it is not tidiness.**
-        `Target.closeTarget` is answered when the browser has ACCEPTED the
-        close, not when the tab is destroyed — ⚠️ **MEASURED in the pinned
-        image: the target is still listed for 10-13 ms on an idle machine and
-        for 26-100 ms under 24 competing processes.** ⛔ So a caller that read
-        `Target.getTargets` after this returned read a count that included tabs
-        the browser was still destroying, and the number it got depended on how
-        busy the machine was. ⭐ Waiting for the browser's OWN
+        ⛔ **Waiting is the point, and it is not tidiness.** `Target.closeTarget`
+        is answered when the browser has ACCEPTED the close, not when the tab is
+        destroyed — ⚠️ in the pinned image the target stays listed for roughly
+        10 ms idle and up to 100 ms under load. ⛔ So a caller reading
+        `Target.getTargets` straight after the close would count tabs the
+        browser is still destroying, by a number that depends on the load. ⭐ Waiting for the
+        browser's OWN
         `Target.targetDestroyed` makes every count taken afterwards correct by
         construction, rather than correct when the machine happens to be quiet.
 
@@ -370,7 +364,7 @@ class Browser:
 
         ⭐ Asked of the BROWSER rather than of this object's bookkeeping, so a
         count taken over many checks measures the processes and not the
-        intention (`W397`).
+        intention.
         """
         targets = self.call("Target.getTargets")["targetInfos"]
         return [info["targetId"] for info in targets if info.get("type") == "page"]
@@ -378,7 +372,7 @@ class Browser:
     def _receive(self, deadline: float, complaint: str) -> dict:
         """Read one NUL-delimited message, giving up at `deadline`.
 
-        ⛔ **The bound is on the READ, not only on the loop around it** (`W397`).
+        ⛔ **The bound is on the READ, not only on the loop around it**.
         This blocked in `os.read` on a live pipe, so a browser that was up and
         silent was waited on forever and every caller's deadline was dead code.
         ⭐ `select` waits until the same instant the caller named, and `complaint`
@@ -428,7 +422,7 @@ class Browser:
     def close(self) -> None:
         """Stop the browser, whatever state it is in, and remove its profile.
 
-        ⛔ **Order is the point** (`W312`): the browser is stopped first so its
+        ⛔ **Order is the point**: the browser is stopped first so its
         last words are written, they are read second, and only then does the
         directory holding them go. ⭐ Safe on a half-made launch and safe twice.
         """

@@ -45,7 +45,7 @@ NETWORK = (
 
 @pytest.fixture(params=CASES, ids=lambda build: build().name)
 def case(request):
-    """Each FND-04 fixture, built the way a build would."""
+    """Each framework fixture corpus, built the way a build would."""
     return request.param()
 
 
@@ -62,7 +62,7 @@ def test_render_returns_bytes():
 
 
 def test_both_fixtures_render_against_their_golden_files(case):
-    # ⛔ E03's acceptance. A golden that moved without a deliberate change to the
+    # ⛔ The rendering acceptance. A golden that moved without a deliberate change to the
     # renderer is the R10 failure; regenerate with
     # `python3 -m tests.studyforge.render.page.pages` once you know which change
     # you made.
@@ -136,7 +136,7 @@ def test_the_public_surface_is_what_the_contract_says():
 def cross_package_reaches(root=None) -> list[str]:
     """Every import of this package, from outside it, that `__all__` does not cover.
 
-    ⛔ **The whole of `SF-27/1` in one function.** Two spellings are a reach:
+    ⛔ **The whole rule in one function.** Two spellings are a reach:
     naming a submodule (`from studyforge.render.page.text import escape`), and
     naming the package but importing something `__all__` does not carry (`from
     studyforge.render.page import navigation`) — the second is the one that
@@ -191,8 +191,8 @@ def cross_package_importers(root=None) -> list[str]:
 
 
 def test_every_cross_package_import_of_this_package_names_something_on_its_surface():
-    # ⛔ `SF-27/1`, made unrepresentable rather than listed. A list of callers is
-    # not the remedy: the next renderer is `SF-14`, and a contract re-opened by
+    # ⛔ Made unrepresentable rather than listed. A list of callers is not the
+    # remedy: a contract re-opened by
     # its third private importer is a contract nobody is defending.
     importers = cross_package_importers()
     # ⭐ The inhabitation assertion, before the claim: a sweep with
@@ -245,8 +245,8 @@ def test_the_sweep_above_would_notice(tmp_path):
 
 
 def test_the_bar_is_reachable_from_the_surface_that_publishes_its_argument():
-    # ⭐ `W76`'s decision, asserted: `Links` was published and `between_units`
-    # was not, so the surface carried the argument and hid the call.
+    # ⭐ The surface carries both the argument (`Links`) and the call
+    # (`between_units`).
     assert "between_units" in page.__all__
     links = page.Links(next=page.Link("../unit-03/x.unit.html", "Watching it run"))
     assert page.between_units(links) == page.between_units(links)

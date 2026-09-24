@@ -1,4 +1,4 @@
-"""`AX-09` — what a Submit reported, drawn in the panel, in a browser.
+"""What a Submit reported, drawn in the panel, in a browser.
 
 ⛔ **WHY THIS NEEDS A BROWSER.** *"A Submit shows the breakdown, naming each
 failed edge case"* is a claim about a page that has just finished a run: the
@@ -9,7 +9,7 @@ cases Python rendered. ⭐ A text can read the script — and
 establish that the reader is shown *edge cases 1 of 2* rather than nothing.
 
 ⛔ **AND THE CHANNEL IS THE SUBJECT.** A built page may name no API and no origin
-(R8, `W370`), so the state namespace is out of reach and the run's stream is the
+(R8), so the state namespace is out of reach and the run's stream is the
 only thing the server already hands this page. ⚠️ **So the scripted run says
 exactly what `serve.routes.breakdown` says**, in the place `routes.runs.Stream`
 says it — just before the exit line — and a check that fetched the breakdown
@@ -50,7 +50,7 @@ CORPUS = "depth2"
 #: so every relative asset link the framework wrote resolves unchanged.
 PAGE = "a-breakdown.unit.html"
 
-#: A record that declares what it is checked IN (`AX-00`): one main ask and two
+#: A record that declares what it is checked IN: one main ask and two
 #: edges, each with the sentence a reader is shown.
 CASES = (
     {"id": "test_greets", "kind": "main", "says": "It greets the person named."},
@@ -117,7 +117,7 @@ def tree(tmp_path_factory: pytest.TempPathFactory) -> site.Site:
 def panel(open_page: OpenPage, tree: site.Site) -> Iterator[tuple[OpenPage, served.Served]]:
     """The page on a SERVED origin, where Submit exists at all.
 
-    ⛔ **`open_page` and never a tab of this module's own** (`W397`), for
+    ⛔ **`open_page` and never a tab of this module's own**, for
     `test_practice_quiz`'s reason: the browser's own verdict is reached in
     `conftest.py`, which is the one place licensed to reach it.
     """
@@ -175,7 +175,7 @@ def test_a_passing_submit_shows_every_case_passed(panel):
 
 
 def test_the_breakdown_is_a_report_and_the_run_s_own_word_is_untouched(panel):
-    # ⛔ **The clause this row is measured by.** A reader shown *edge cases 1 of
+    # ⛔ **The clause this module is measured by.** A reader shown *edge cases 1 of
     # 2* is looking at an INCOMPLETE practice and not at a failed one: the run
     # exited zero, so the status line still says the run passed, and the two
     # sentences stand side by side saying different things on purpose.
@@ -208,7 +208,7 @@ def test_a_case_line_is_never_left_standing_in_the_reader_s_own_output(panel):
 
 
 def test_a_breakdown_of_a_different_practice_is_shown_as_nothing(panel):
-    # ⛔ `AX-02`, *For dependents*: a corpus regenerated after a Submit can change
+    # ⛔ A corpus regenerated after a Submit can change
     # the case map under a reader, and a breakdown whose population does not
     # match the panel's is not *edge cases 1 of 2* — it is a breakdown of a
     # different practice. ⭐ Shown as NOTHING rather than as a partial count.

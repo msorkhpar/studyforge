@@ -1,4 +1,4 @@
-"""The container-map format (SF-05).
+"""The container-map format.
 
 ⚠️ The home-path material is **assembled at run time** rather than written as
 a literal: this file is swept by the repository hygiene check like every other
@@ -147,7 +147,7 @@ def test_the_editorial_keys_are_named_and_are_two_things():
 
 
 def test_a_declared_practice_count_is_preserved_verbatim():
-    # ⛔ SF-25 checks the declaration against what is on disk. A reader that
+    # ⛔ `validate` checks the declaration against what is on disk. A reader that
     # corrected it here would delete the disagreement that check exists to
     # find.
     assert built().unit(2).practices == 2
@@ -160,14 +160,14 @@ def test_a_declared_practice_count_is_preserved_verbatim():
 
 
 def test_an_address_whose_arity_disagrees_with_levels_is_refused():
-    # ⚠️ Raises SF-01's `AddressError`, following the manifest's precedent
-    # exactly: the arity *comparison* is SF-01's and it owns it outright.
+    # ⚠️ Raises the address package's `AddressError`, following the manifest's precedent
+    # exactly: the arity *comparison* is the address package's and it owns it outright.
     with pytest.raises(AddressError, match="segment"):
         built(address=["basics", "getting-started"])
 
 
 def test_a_variant_the_corpus_does_not_declare_is_refused():
-    # ⛔ W19: the refusal names the closed set, never the value it was handed.
+    # ⛔ The refusal names the closed set, never the value it was handed.
     message = refusal(variant="java")
     assert "java" not in message
     assert "['prose']" in message
@@ -224,7 +224,7 @@ def test_a_missing_unit_is_named_against_what_is_declared():
 
 
 # --------------------------------------------------------------------------
-# R9 — SF-33's guard, and this contract's own set
+# R9 — the version guard, and this contract's own set
 # --------------------------------------------------------------------------
 
 
@@ -337,7 +337,7 @@ def test_a_document_that_is_not_an_object_is_refused(text):
 
 def test_the_reader_s_numbering_and_the_filename_s_are_named_apart():
     # ⚠️ Two answers to "what is this unit called", and the fix is to say which
-    # is which. `numbering` is what a reader sees — `7`. SF-03's `label_of` is
+    # is which. `numbering` is what a reader sees — `7`. Placement's `label_of` is
     # the filename component — `unit-07`. ⭐ One rule with two fallbacks: when a
     # label is present they are identical and both *are* the label.
     plain = built().unit(1)
@@ -392,14 +392,13 @@ def test_a_label_that_is_present_but_not_text_is_refused(label):
 )
 def test_a_label_that_could_not_become_a_filename_is_refused_at_entry(label):
     # ⛔ **The seam taking `label`, closed where it opens.** A label becomes
-    # part of a generated filename (SF-03's `label_of`), which refuses exactly
+    # part of a generated filename (placement's `label_of`), which refuses exactly
     # these. A map that accepted `a/b` would produce a corpus that **validates
     # and then fails at render** — a milestone later, in another package, with
     # nothing between the two saying why.
-    # ⛔ **Ruling 8:** the last five of these passed both guards while the rule
-    # was a forbidden list, and `"` and `:` break the `file://` floor. The rule
-    # is now a permitted set, so the list below is a regression suite rather
-    # than the definition.
+    # ⛔ **A permitted set (R8):** the last five of these pass a forbidden list,
+    # and `"` and `:` break the `file://` floor. The rule is a permitted set,
+    # so the list below is a regression suite rather than the definition.
     # ⭐ The negative control is in `test_fields.py`, where `4.4.1`, `vii` and
     # `01` are all accepted: the constraint is a character class, not a slug.
     message = refusal(units=[{"n": 1, "title": "a", "practices": 0, "label": label}])
@@ -421,7 +420,7 @@ def test_an_absent_label_is_not_a_refusal():
 
 #: Every key a real `course-map.json` carries, and where it goes.
 #: **Measured** over the extraction source's 285 maps and 1290 unit entries;
-#: the counts are in `docs/tasks/handoffs/SF-05.md`. ⛔ The source tree is not
+#: the counts were taken once and are not repeated here. ⛔ The source tree is not
 #: read from here — its path is an absolute home path (R7) and a consumer's
 #: task never cites one (R20) — so what is pinned is the *shape*.
 COURSE_MAP_KEYS = {
@@ -505,7 +504,7 @@ def test_a_real_course_map_loads_after_mechanical_renaming():
 
 
 def test_no_field_is_lost():
-    # ⛔ E01's acceptance. `folder` and `url_slug` are the two the generalised
+    # ⛔ No source field is lost. `folder` and `url_slug` are the two the generalised
     # shape as drafted dropped; both have a home, and this asserts every key of
     # the real shape does.
     assert set(COURSE_MAP_KEYS) == set(SAMPLE)
@@ -517,9 +516,8 @@ def test_no_field_is_lost():
 
 
 def test_folder_is_origin_and_is_not_derivable_from_the_titles():
-    # ⛔ **FND-04 recorded that `folder` "is exactly what `address` already is,
-    # so it is subsumed". Measured over all 116 maps that carry one: 0 are
-    # derivable from the titles.** They are truncated and carry disambiguating
+    # ⛔ **`folder` is not `address` restated: over the 116 maps that carry
+    # one, none is derivable from the titles.** They are truncated and carry disambiguating
     # suffixes, because a site's own URL scheme is not a function of its
     # titles — the same reason a page's name may not come from a source
     # filename (R1). This sample is one of the real ones, shape for shape.

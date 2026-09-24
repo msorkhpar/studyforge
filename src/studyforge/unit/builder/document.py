@@ -29,21 +29,20 @@ zero and must not render as it.
 
 ## ⛔ Provenance is `built_from`, and the name was ruled
 
-⚠️ **Ruling 51: `source` stays a corpus id**, and the served array may not be
+⚠️ **`source` stays a corpus id (R4)**, and the served array may not be
 called `sources`, `source` or `origin` — the extraction source uses `source` for
 a fetched address, and one word meaning two things is how the two levels get
 confused exactly where they meet.
 
-⭐ **No path is recorded, for the reason `workspace.json` records none**: an
+⭐ **No path is recorded**, because a path is a fact about one disk: an
 entry names the variant, kind and ordinal that identify the document within
 this unit, and the unit's own `address` is on the document above it. A location
 is a fact about a disk; this is a fact about the corpus.
 
 ## ⚠️ The next seam in this module, named before it is needed
 
-⛔ **Do not pre-split it.** This file has the least headroom in the package —
-⚠️ **measured at 182 lines, where the survey that proposed it predicted ~290**
-— and when it needs a seam the division is already known: `practices` is asked
+⛔ **Do not pre-split it.** When this file needs a seam the division is
+already known: `practices` is asked
 by the **page** — *is there more to come?* — and `built_from` by **re-ingest
 detection** — *did the material change under us?* Two questions, two consumers,
 already two constants.
@@ -70,7 +69,7 @@ from studyforge.unit.errors import ContentError, describe
 #: 2 — the served document's shape. ⛔ Registered in the spec's R9 table as
 #: `unit.json` / `api`, and bumped rather than widened.
 #:
-#: ⚠️ **`2` is `W215`: a section carries its `attachments`.** ⛔ Bumped rather
+#: ⚠️ **`2` is the version in which a section carries its `attachments`.** ⛔ Bumped rather
 #: than widened because `unit.served` refuses a shape it does not know, and the
 #: two answers it must not conflate are *"this document was written before
 #: sections carried attachments"* and *"this unit has no companion files"* —

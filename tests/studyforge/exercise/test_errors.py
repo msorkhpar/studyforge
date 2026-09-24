@@ -5,7 +5,7 @@ from studyforge.exercise import errors as module
 
 
 def test_it_is_a_value_error():
-    # ⚠️ Following SF-01's split and the two contracts either side of this one:
+    # ⚠️ Following the address package's split and the two contracts either side of this one:
     # an exercise is a value read from a document, so it fails the way a
     # manifest and an authored overlay fail.
     assert issubclass(ExerciseError, ValueError)

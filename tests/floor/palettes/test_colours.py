@@ -1,9 +1,9 @@
 """Mirror of `tests/floor/palettes/colours.py` (R12).
 
 ⛔ **The reason this module exists at all is asserted here**, not only stated in
-its docstring: the paper the user ACCEPTED is a near-white, HSL calls it
+its docstring: the site's paper is a near-white, HSL calls it
 saturated, and chroma does not. A bound written in saturation would have refused
-the remedy on its first run.
+that paper on its first run.
 """
 
 from __future__ import annotations

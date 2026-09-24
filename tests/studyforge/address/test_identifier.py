@@ -48,7 +48,7 @@ def test_every_conversion_starts_from_a_real_slug(slug, expected):
 
 @pytest.mark.parametrize("left,right", MUST_NOT_COLLIDE)
 def test_two_different_slugs_never_share_an_identifier(left, right):
-    # ⛔ SF-01's acceptance: two slugs differing only by a leading digit yield
+    # ⛔ The package's acceptance: two slugs differing only by a leading digit yield
     # different identifiers. The `c01-a` rows go further — they are why the
     # prefix is `_` and not a letter.
     assert left != right

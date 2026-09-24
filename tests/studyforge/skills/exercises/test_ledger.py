@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/skills/exercises/ledger.py` (R12) — `AX-07`'s first half.
+"""Mirror of `src/studyforge/skills/exercises/ledger.py` (R12) — the planning pass's first half.
 
 **What it asserts.** That every fenced example and every test file a source
 carries is in the ledger, that the gate-facing view is the `Mapping[str, str]`

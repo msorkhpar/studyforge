@@ -1,9 +1,9 @@
 """Mirror of `src/studyforge/generate/units.py` (R12).
 
-⭐ **Both `FND-04` fixtures, and the golden plan they already have.** The
+⭐ **Both framework fixture corpora, and the golden plan they already have.** The
 `create …unit.html` lines in `tests/fixtures/golden/*.plan.txt` are what
 `studyforge plan` says a build will write; this module asserts the unit-page
-pass writes exactly those and no others, which is the unit half of Ruling 99's
+pass writes exactly those and no others, which is the unit half of the plan-and-build
 path-for-path clause.
 """
 
@@ -47,7 +47,7 @@ def test_every_page_the_build_names_is_a_file_it_actually_wrote(tmp_path, name):
 def test_the_body_is_the_renderers_own_and_not_a_second_spelling(tmp_path):
     """⭐ The real caller and the harness that stood in for it render one body.
 
-    ⚠️ The chrome is the difference and it is the point of this row: the harness
+    ⚠️ The chrome is the difference: the harness
     renders with no bar and no trail, so what must agree byte for byte is
     everything between them. ⭐ Compared by removing the two chrome regions from
     both sides rather than by re-rendering, so this cannot pass by the two sides

@@ -1,8 +1,7 @@
 """Mirror of `generate.media.references` (R12) — a reading of a document, and of no disk.
 
 ⛔ **A SPLIT AT A SEAM, and the seam is the source module's own entry point**
-(R11, Ruling 261): `test_media.py` reached the 600-line ceiling when `W215`'s
-attachments landed in it. ⭐ The line taken is the one `generate.media` already
+(R11). ⭐ The line taken is the one `generate.media` already
 draws — *"`references(document)` when only what a page will reach for is
 wanted"* — so what the PASS does to a disk stays in `test_media.py`, and what a
 page will reach for, which opens no file at all, is here.
@@ -40,7 +39,7 @@ def test_references_answers_from_the_document_and_touches_nothing(tmp_path):
 
 
 def test_the_attachments_a_section_declares_are_among_what_the_page_reaches_for():
-    """⛔ `W215`: the page links them, so this pass copies them — and in reading order."""
+    """⛔ The page links them, so this pass copies them — and in reading order."""
     document = {
         "sections": [
             {
@@ -80,8 +79,7 @@ def test_every_block_type_the_vocabulary_gives_a_file_has_a_directory_to_go_in()
     be discovered by a reader meeting a broken image.
 
     ⚠️ **It does not distinguish the derivation from a hardcoded pair today**,
-    because the two agree at this ref — see the survivor recorded in this row's
-    handoff.
+    because the two agree at this ref — a known surviving plant.
     """
     for name in MEDIA_BLOCKS:
         found = list(references({"sections": [{"blocks": [{"type": name, "src": FIGURE}]}]}))

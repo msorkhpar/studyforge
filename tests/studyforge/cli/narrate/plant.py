@@ -1,4 +1,4 @@
-"""The plants `W218`'s tests assert against: a narrated corpus, and a DEAD record entry in it.
+"""The plants the prune tests assert against: a narrated corpus, and a DEAD record entry in it.
 
 ⛔ **A dead entry is planted, never inferred.** It is filed under a unit the walk
 DOES read, beside that unit's real clips and under the record's own
@@ -73,7 +73,7 @@ def plant_dead_entry(
     return dead_id, where
 
 
-#: The depth1 lesson and the words `reword` changes in it (`W226`).
+#: The depth1 lesson and the words `reword` changes in it.
 LESSON = "archive/depth-one/raw/prose/unit-01/lesson-1.json"
 WORDS = ("one breath", "a single breath")
 
@@ -89,7 +89,7 @@ def reword(root: Path) -> None:
 def edit_one_paragraph(root: Path) -> str:
     """Re-word the lesson's one paragraph AND re-digest it; return the paragraph's speech id.
 
-    ⭐ `W457`: unlike `reword`, the archive stays valid, so the only thing wrong
+    ⭐ Unlike `reword`, the archive stays valid, so the only thing wrong
     with the corpus afterwards is that one clip says the old words.
     """
     lesson = root / LESSON

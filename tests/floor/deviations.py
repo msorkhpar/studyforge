@@ -1,8 +1,7 @@
 r"""The producer-half deviations this tree carries, DECLARED with the ground of each.
 
-⭐ **The product floor's copy of `tools/quality/deviations.py`.** It stays on the main line
-when the tooling leaves, so the product's own rule keeps running; while both exist,
-`tests/test_floor_twins.py` holds its code to the original's, docstrings aside.
+⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
+checkout, and depends on nothing outside it.
 
 **What it does.** Holds `DECLARED`: for each package that some other package reaches
 past, the names reached past and the ground the exemption stands on. ⛔ It is DATA and
@@ -11,31 +10,28 @@ an undeclared deviation and a declaration whose deviation is gone are each a fin
 
 **How you use it.** `from tests.floor.deviations import DECLARED, Declaration`, or
 reach both through `tests.floor.surfaces`, which re-exports them so a caller needs one
-import. ⛔ Adding an entry to quiet a red is declaring a defect, not fixing one (`W199`).
+import. ⛔ Adding an entry to quiet a red is declaring a defect, not fixing one.
 
 **Depends on.** `dataclasses`, and nothing else — ⛔ deliberately nothing from this
 package. The seam runs ONE WAY: `surfaces` imports this module and this module imports
 nothing back, so the data cannot come to depend on the reading over it.
 
-## ⛔ WHY IT IS A MODULE OF ITS OWN (Ruling 261 — a ceiling is not a budget)
+## ⛔ WHY IT IS A MODULE OF ITS OWN (R11 — a ceiling is not a budget)
 
-⚠️ **MEASURED: `surfaces.py` reached `423` of R11's `400` when this table landed in it.**
-⭐ The split is the one `reach.py` already took when its grammar outgrew it: the READING
-stays with the check, and the DECLARATION it reads becomes a sibling. ⛔ The alternative
-was a size exception, which would have bought one round and left the next editor the same
-choice on a worse file.
+⚠️ **In `surfaces.py` this table would take it past R11's `400`.** ⭐ The split is the
+one `reach.py` takes too: the READING stays with the check, and the DECLARATION it reads
+becomes a sibling. ⛔ The alternative is a size exception, which leaves the next editor
+the same choice on a worse file.
 
-## ⭐ THE POPULATION, AND WHY IT IS BIGGER THAN THE ROW THAT NAMED IT
+## ⭐ THE POPULATION, AND HOW IT IS MEASURED
 
-⛔ **MEASURED at `2827409` with `surfaces.reaches` itself rather than with a grep.**
-⚠️ Two earlier readings took this population as five packages and then as their
-remainder; both were taken before `validate`'s names were closed, and NEITHER counted a
-package that declares no `__all__` at all — which is where most of this table now sits.
-⭐ That is the whole reason it was measured again rather than the figure inherited.
+⛔ **Measured with `surfaces.reaches` itself rather than with a grep**, because a grep
+misses a package that declares no `__all__` at all — which is where most of this table
+sits.
 
 ⛔ **The two grounds are different remedies and are kept apart deliberately.** A package
 with a surface is one line from compliance. A package with NO surface needs a surface,
-and giving it one costs a ruling per name that collides with one of its own modules —
+and giving it one costs a decision per name that collides with one of its own modules —
 the shape `validate`'s five needed, and not something a sweep may do to seven packages
 in passing.
 """
@@ -54,13 +50,13 @@ class Declaration:
 
 
 #: ⭐ The ground for a package that HAS a surface and is reached past anyway. The remedy
-#: is one line on that package's `__all__`, and this is `W199/3`'s own population.
+#: is one line on that package's `__all__`.
 REACHED_PAST = "on a surface that exists; the remedy is one line on that package's __all__"
 
 #: ⛔ The ground for a package that declares NO `__all__`. Every name it shares is
-#: off-surface by construction, so the remedy is a surface with a ruling per colliding
+#: off-surface by construction, so the remedy is a surface with a decision per colliding
 #: name — the shape `validate`'s five needed — and never a line in this table.
-NO_SURFACE = "the package declares no __all__ at all, so a surface is a row, not a line"
+NO_SURFACE = "the package declares no __all__ at all, so a surface is its own change, not a line"
 
 #: ⛔ **Closed at the ref above.** A pair missing from here is a finding, and a pair here
 #: that the tree no longer has is a finding too — see `surfaces._stale`.

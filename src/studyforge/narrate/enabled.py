@@ -17,23 +17,22 @@ floor, C5); whether narration is WANTED is this one's.
 
 ## ⛔ ONE PREDICATE, SO "NARRATION OFF" HAS ONE MEANING EVERYWHERE
 
-⭐ **The user ruled narration optional per corpus and per run (2026-09-23)**:
-*"it should be optional and while serving or even while caputring the matterial
-skills should ask if user is interested in the narrition or not"*. Four stages
+⭐ **Narration is optional, per corpus and per run**, and the skills ask about
+it at capture and at serve. Four stages
 read clips: `validate` judges whether they are current, `build` links them,
 `serve` answers them and the build-and-serve skill reports them. ⚠️ Private
 answers to *is it off?* would drift the way readers of one record always have,
 and the symptom would be a `validate` that reports stale clips for a corpus whose
-site carries no player. ⭐ So each stage asks here (`W457` minted it, `W460` gave
-it the corpus's answer).
+site carries no player. ⭐ So each stage asks here, and here reads the
+corpus's answer.
 
 ## ⭐ THE ORDER: THIS RUN'S ANSWER, THEN THE CORPUS'S, THEN ON
 
 1. `asked` — the run's own `--narration` / `--no-narration` — wins whenever it
    was given, either way.
-2. ⭐ **The corpus's recorded choice**: `corpus.json`'s `narration` (`W460`,
-   `corpus_api: 5`), which the onboarding skill asks the author for.
-3. Otherwise ON — ⭐ the behaviour every corpus had before the ruling: a manifest
+2. ⭐ **The corpus's recorded choice**: `corpus.json`'s `narration`
+   (`corpus_api: 5`), which the onboarding skill asks the author for.
+3. Otherwise ON — ⭐ the default: a manifest
    that says nothing, or that cannot be read, is voiced. ⛔ An unreadable manifest
    is not this predicate's to report: `validate` and `build` refuse it in its own
    words, and a second reason here would name the same defect twice.
@@ -63,6 +62,6 @@ def declared(root: Path | str) -> bool:
     try:
         return load(Path(root) / MANIFEST_FILENAME).narration
     except PersonalDataLeak:
-        raise  # ⛔ R7's refusal is never swallowed (Ruling 58).
+        raise  # ⛔ R7's refusal is never swallowed.
     except RAISES:
         return True

@@ -24,20 +24,20 @@ form of "unanswered" a command can actually have.
 ⛔ **Exit codes are usable from a script** and mean one thing each: `0` the
 whole site was written, `1` a path was refused — something that is not this
 build's own output already existed and was left alone (R3), or the plan found
-a path two artifacts claim and nothing was written (`W254`), or the corpus's
-media crosses a limit `corpus.json` declares (`W314`) — `2` the tool could not
+a path two artifacts claim and nothing was written, or the corpus's
+media crosses a limit `corpus.json` declares — `2` the tool could not
 run at all.
 ⚠️ The third is `validate`'s own, imported rather than respelled. ⭐ **A rebuild
 that replaced only its own previous answer exits `0`** — otherwise *edit a
 lesson, build again* would be a failure to every script that ran it.
 
-## ⭐ `--no-narration` builds the reading floor and keeps every clip (`W460`)
+## ⭐ `--no-narration` builds the reading floor and keeps every clip
 
-⭐ Narration is optional (the user's ruling, 2026-09-23). `--narration` /
+⭐ Narration is optional. `--narration` /
 `--no-narration` override `corpus.json`'s `narration` for this build; off renders
 no player and copies no clip, touches none, and prints `SILENT` once.
 
-## ⛔ A crossed media limit stops the build and says so (`W314`, §5)
+## ⛔ A crossed media limit stops the build and says so (§5)
 
 ⭐ **Asked twice, of the one measurement and the one verdict** — `plan_for`'s
 `MediaProjection.verdict`, stopped on by `corpus.media.require_committable`,
@@ -70,14 +70,14 @@ from studyforge.validate.cli import UNUSABLE
 from studyforge.validate.paths import RULE_DUPLICATE_PATH
 from studyforge.validate.report import INVALID
 
-#: What a build with narration off says (`W460`). ⭐ Not a warning: the reading
+#: What a build with narration off says. ⭐ Not a warning: the reading
 #: floor is complete, so this states a choice and what it left alone (R3).
 SILENT = (
     "narration  off: no player and no clip on any page; every recorded clip is "
     "kept where it is, and a build with narration on plays it again"
 )
 
-#: What a stopped build says it stopped on, before its consequence (`W314`).
+#: What a stopped build says it stopped on, before its consequence.
 OVER = "the corpus's generated media is not committable under corpus.json's media policy"
 
 
@@ -130,7 +130,7 @@ def main(argv: list[str] | None = None, out=None) -> int:
     plan = plan_for(root)
     claimed = [r for r in plan.refusals if r.rule == RULE_DUPLICATE_PATH]
     if claimed:
-        # ⛔ `W254`, clause 3: refused from the plan BEFORE anything is written,
+        # ⛔ Refused from the plan BEFORE anything is written,
         # naming both claimants, never resolved by whichever is written last.
         for refusal in claimed:
             print(refusal.line(), file=stream)
@@ -146,11 +146,11 @@ def main(argv: list[str] | None = None, out=None) -> int:
         print(f"build refused: {OVER}, so nothing was written", file=stream)
         return INVALID
     try:
-        # ⭐ `W460`: the one predicate (`narrate.narration_on`) answers for this run.
+        # ⭐ The one predicate (`narrate.narration_on`) answers for this run.
         voiced = narration_on(root, asked=arguments.narration)
         written = write_site(root, Path(arguments.out), narration=voiced)
     except RAISES as refusal:
-        # ⛔ **The package's own tuple, never a list retyped here** (`W212`).
+        # ⛔ **The package's own tuple, never a list retyped here**.
         # Catching `BuildError` alone let `PersonalDataLeak` out as a traceback
         # naming absolute paths (R7). ⛔ The message alone, with no path
         # prepended: each refusal already names the record it refused, and a

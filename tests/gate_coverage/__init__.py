@@ -1,4 +1,4 @@
-"""W7: every module that decodes a document calls the personal-data gate.
+"""Every module that decodes a document calls the personal-data gate (R7).
 
 ⛔ **A claim about the tree, not about `scrub.py`'s behaviour** — which is why
 it is here and not in `tests/studyforge/archive/test_scrub.py`. That file tests
@@ -21,9 +21,7 @@ implicit.** Readers exist outside it, and that reads as though the remedy were
 a wider scan; it is not. ⭐ **They are two trees under
 two answers, not one hole** — see `GATED_TREES`, which this package asserts is
 total over the repository so that a *third* tree cannot appear unnamed.
-⚠️ The tooling that built the framework was a third tree with its own gate
-until it left the main line for the `archive/process` branch; its row left with
-it. ⛔ **`tests/fixture_checks/corpus.py`
+⛔ **`tests/fixture_checks/corpus.py`
 stays ungated deliberately, to keep its oracle independent** — an oracle
 that calls the code under test agrees with its bugs — **and the cost is bounded
 rather than waved: it decodes only the §1e fixture trees this repository itself
@@ -36,7 +34,7 @@ ships, no user data and no corpus the framework did not author.**
 | `__init__` | ⛔ **the bound** — `GATED_TREES`, `SCAN_ROOT`, and this contract |
 | `tell` | how a reader is recognised: the origin walk, and the gate's name |
 | `probes` | the shapes the tell was decided on, and both superseded spellings |
-| `test_coverage` | ⛔ **the claim** — W7's assertion, and the bound's totality |
+| `test_coverage` | ⛔ **the claim** — the gate assertion, and the bound's totality |
 | `test_tell` | the tell's acceptance: the tell against every probe, three ways |
 
 ⛔ **This package was split at 600 of 600, and splitting a gate is
@@ -58,27 +56,25 @@ HOME = "/" + "home/jane"
 # from either side: the catch was correct and the raise never came.
 #
 # ⭐ **So the reader set is derived, never listed.** A hand-maintained list of
-# readers is exactly how this went missing, and adding a sixth entry to one is
-# how it would go missing again. `document_readers` asks the tree instead.
+# readers misses the reader nobody remembered to add. `document_readers` asks the tree instead.
 #
 # ⚠️ **This is not the same assertion as the one-implementation check**, and
 # the two were deliberately not fused. *"One implementation exists"* and *"every
 # reader calls it"* are different claims, and each alone leaves a hole the other
-# closes: the first alone permits a reader that calls nothing — `corpus.json`; W7
-# alone is satisfied by a reader calling the **weaker copy** — today's
-# `tests/fixture_checks`.
+# closes: the first alone permits a reader that calls nothing; the second alone
+# is satisfied by a reader calling a **weaker copy** of the gate.
 
 #: ⛔ **The scan's bound, named.** Every tree in this repository that holds a
 #: document reader, mapped to the R7 gate that covers it — `None` where a tree
 #: is ungated *on purpose*. ⭐ The point is not the scan; it is that the scan's
-#: root is a **choice among three**, and until now that choice was made by a
-#: string in three test bodies and defended nowhere.
+#: root is a **choice among the trees named here**, and that choice is
+#: defended here rather than by a string in each test body.
 #:
 #: ⚠️ This map is asserted **total** over the repository's Python below, which
-#: is the half that has teeth: a fourth tree of readers — a new top-level
+#: is the half that has teeth: a third tree of readers — a new top-level
 #: package, a script directory — cannot arrive without either a gate named here
 #: or a red test. ⛔ Widening `SCAN_ROOT` is not the way to satisfy it (the
-#: tooling may not import the framework), and neither is deleting a row.
+#: `tests` tree is an independent oracle), and neither is deleting a row.
 GATED_TREES: dict[str, str | None] = {
     # ⭐ What this file measures, and the only row whose gate is `GATE`.
     "src/studyforge": "studyforge.archive.scrub.assert_clean",

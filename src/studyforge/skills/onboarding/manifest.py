@@ -14,15 +14,15 @@ and the standard library. ⛔ Nothing source-specific (R1), and nothing from
 `skills.adapter`: the globs arrive as an argument, because a promoter that
 knew what an adapter looks like would have to be edited for the second one.
 
-## ⛔ The hole this closes, and it was measured rather than predicted
+## ⛔ What this closes
 
-`SK-02/1`: scaffolding an adapter into a clean corpus and running
-`studyforge validate` gives `NOT valid: 8 finding(s)` — one `unclassified` per
+Scaffolding an adapter into a clean corpus and running
+`studyforge validate` with no declaration gives `NOT valid: 8 finding(s)` — one `unclassified` per
 generated file — and `content.exclude` **cannot** say it, because `exclude`
 matches by exact path equality and means *material withheld from the reader*,
 which code is not. ⭐ `content.not_material` is the vocabulary and the scaffold
-already computes the globs; ⛔ **nothing wrote them into the manifest, so a
-person copied two lines**, which is R19's *anything a second source would have
+already computes the globs; ⛔ **left out of the manifest, a person would copy
+them by hand**, which is R19's *anything a second source would have
 to retype*. This function is where they land.
 
 ## ⛔ What it refuses to invent
@@ -53,10 +53,10 @@ of the manifest schema, so omission is the declared path rather than a workaroun
 `media` block a **person** put in the draft is theirs and survives — the rule
 is that this generator adds nothing, not that it discards declarations.
 
-⛔ **So does a drafted `content.not_material`** (`INT06-1`, measured: it was
-dropped, and a corpus's own declarations could not be generated). The draft's
+⛔ **So does a drafted `content.not_material`** (dropping it would leave a
+corpus's own declarations impossible to generate). The draft's
 entries come first as written, then the generated globs. ⭐ **An entry whose
-`why` is `None` is one reconnaissance proposed with its reason open** (`W249`):
+`why` is `None` is one reconnaissance proposed with its reason open**:
 it is paired from `reasons`, keyed by its glob, and every glob still open is
 named in one refusal. ⛔ **A glob on both
 sides is refused, never resolved by precedence**: the manifest refuses a
@@ -82,7 +82,7 @@ from studyforge.corpus.manifest import (
 from studyforge.version import check as check_version
 
 #: The `corpus_api` each named key first became legal in, READ from the manifest
-#: package's own map (`W467`): reconnaissance's proposal and the tests ask them.
+#: package's own map: reconnaissance's proposal and the tests ask them.
 #: ⛔ `promote` asks the whole map, never these three.
 NOT_MATERIAL_API = KEY_VERSIONS[("content", "not_material")]
 NARRATION_API = KEY_VERSIONS[(None, "narration")]
@@ -92,9 +92,9 @@ ONBOARDING_DOC_API = KEY_VERSIONS[(None, "onboarding_doc")]
 #: set: every other key is either required, or present because the draft said
 #: so. ⛔ **Nothing here is ever invented** — `media` is absent from this list
 #: because it is absent from the draft, and an absent `media` block is a
-#: *stated* default of the manifest schema (ruled 2026-09-09). A generator that
+#: *stated* default of the manifest schema. A generator that
 #: wrote one out would freeze the footprint limits' names on every corpus,
-#: including the ones with no media at all. ⭐ `runtimes` is here (`W350/1`): an
+#: including the ones with no media at all. ⭐ `runtimes` is here: an
 #: empty list says what an absent key says, and would raise the version for nothing.
 OPTIONAL_KEYS = ("media", "permitted_edits", "runtimes")
 
@@ -160,9 +160,9 @@ def _api_for(draft: Mapping[str, object], document: Mapping[str, object]) -> int
     """Return the version to write: never below the draft's, never above what is needed.
 
     ⛔ **R9's membership test is `studyforge.version`'s, never a second copy
-    here** (SF-33). What this module decides is only which version the *data*
+    here**. What this module decides is only which version the *data*
     needs, and ⭐ **that is the manifest's own `KEY_VERSIONS`, asked of every key
-    the document carries** (`W467`) — the gate `parse` refuses by, read the same
+    the document carries** — the gate `parse` refuses by, read the same
     way, so no key a version adds can be written under a version that refuses it.
     """
     asked = check_version(
@@ -242,7 +242,7 @@ def _drafted_not_material(
 ) -> list[object]:
     """Return a person's `not_material` entries as written, refusing any glob also generated.
 
-    ⛔ **Never resolved by precedence** (`INT06-1`): keeping either reason would
+    ⛔ **Never resolved by precedence:** keeping either reason would
     be choosing one audit over the other, which is the repeat the manifest
     refuses. ⭐ The glob is quoted because it equals a generated one, so it is
     never a path from somebody's machine (R7); a reason is never quoted.
@@ -334,7 +334,7 @@ def _exclude_of(drafted: object, reasons: Mapping[str, str]) -> list[dict[str, s
 def _not_material_of(entries: Declarations) -> tuple[dict[str, str], ...]:
     """Merge every producer's globs, refusing a glob two of them declare.
 
-    ⛔ **Never resolved by precedence** (`INT06-1/4`, `W242`). The manifest
+    ⛔ **Never resolved by precedence.** The manifest
     refuses a repeated glob as two audits, and keeping the first reason is
     choosing one of them — which `_drafted_not_material` already refuses
     between a draft and a generator. ⭐ Keyed by producer, a refusal names both
@@ -378,6 +378,6 @@ def _refuse_unreadable(document: Mapping[str, object]) -> None:
     try:
         parse(render(document))
     except PersonalDataLeak:
-        raise  # ⛔ R7's refusal is never translated into `PromotionRefused` (Ruling 58).
+        raise  # ⛔ R7's refusal is never translated into `PromotionRefused`.
     except RAISES as exc:
         raise PromotionRefused(f"the promoted manifest would not parse: {exc}") from None

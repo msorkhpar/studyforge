@@ -18,14 +18,14 @@ escaping and the href gate, and `render.pageassets` for the two hooks a row
 carries. ⛔ Not on `contents`, and not on any peer renderer: a rail arrives as
 **plain values a caller built**, exactly as a trail and a bar do.
 
-## ⛔ Why this region exists — the route between two courses was the root index
+## ⛔ Why this region exists — without it the route between two courses is the root index
 
-⚠️ **Measured before this module: a unit page carried three `<nav>` regions and
-not one href in any of them reached a page in another container.** The bar
+⚠️ **A unit page's other three `<nav>` regions never reach a page in another
+container.** The bar
 points at the previous and next units *inside one container*; the trail points
 up at that container and at the root index; the outline points into the page
-itself. ⭐ So the only way from one course to another was back through the root
-index — two clicks and a lost place, on every crossing.
+itself. ⭐ So without the rail the only way from one course to another is back
+through the root index — two clicks and a lost place, on every crossing.
 
 ## ⛔ It degrades to NOTHING below two containers, and that is asserted
 
@@ -44,7 +44,7 @@ that revealed the rest with a click handler, would be a rail whose whole subject
 have. ⛔ `render.index.disclosure` makes this argument first and this module
 follows it rather than restating it.
 
-## ⛔ Ruling 164 here: this region is CHROME, so a refused href drops the LINK
+## ⛔ This region is CHROME, so a refused href drops the LINK
 
 ⚠️ **The row survives and the anchor does not**, which is the trail's reading
 rather than the two lists' — and for the trail's reason. ⭐ A container or a
@@ -62,7 +62,7 @@ listing** (`render.container.listing`), and `read-mark.js` resolves a mark with
 put two elements under one id on that page, and the mark would light whichever
 one the document happened to hold first. ⛔ So the rail is not deep-linkable.
 
-⭐ **It still shows what the reader marked (`W368`)**: a unit row carries its key
+⭐ **It still shows what the reader marked**: a unit row carries its key
 in `data-unit` — the attribute the read-mark control already carries, which is a
 **script** hook and so is spelled here rather than published
 (`render.page.mark` says why) — and `progress-view.js` sets the published
@@ -71,7 +71,7 @@ never derived from an href or a position here: a row handed none carries none.
 ⚠️ The mark itself is set at read time and emitted by nothing, so a built page
 is byte-identical whoever opens it (R10).
 
-⭐ **And a screen reader is told (`W383`)**: a keyed row carries, inside what it
+⭐ **And a screen reader is told**: a keyed row carries, inside what it
 links, the words `templates/read-state.html` holds — the same file both lists
 fill — emitted `hidden` and shown by `progress-view.js` only on a row the store
 holds. ⛔ The tick stays decorative CSS and the words stay off the screen, so
@@ -93,7 +93,7 @@ from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute, inline, safe_href
 from studyforge.render.pageassets import SURFACE_HOOKS
 
-#: The region's wrapper. ⛔ A file, not an f-string (R13, `SF-34`): it carries
+#: The region's wrapper. ⛔ A file, not an f-string (R13): it carries
 #: the `aria-label`, which is a product string every corpus has to live with.
 RAIL_TEMPLATE = "rail.html"
 
@@ -149,7 +149,7 @@ class RailUnit:
     unit can be read, so the row declares which.
 
     ⭐ `key` is the unit's key, which is what a read mark is stored under; `''`
-    emits no key and the row can then never show a mark (`W368`).
+    emits no key and the row can then never show a mark.
     """
 
     title: str
@@ -205,7 +205,7 @@ def _unit(unit: RailUnit, said: str) -> str:
     """Return one unit's row, linked unless it is the page the reader is on.
 
     ⭐ A keyed row ends with `said`, the hidden words a read row speaks; a row
-    with no key can never be marked, so it carries none (`W383`).
+    with no key can never be marked, so it carries none.
     """
     body = _body(_numbering(unit), unit.title) + (said if unit.key else "")
     return (
@@ -219,7 +219,7 @@ def _link(body: str, href: str | None, current: bool) -> str:
     """Return `body` wrapped in an anchor, or `body` alone when there is nowhere to go.
 
     ⛔ The row survives a refused or absent href and the **anchor** is what drops
-    — see this module's reading of Ruling 164. ⚠️ A current row is never linked
+    — see this module's reading of drop-in-chrome. ⚠️ A current row is never linked
     whatever href it was handed, because a page that links to itself is a way to
     get nowhere; `page.navigation.breadcrumb` refuses the same link for the same
     reason.

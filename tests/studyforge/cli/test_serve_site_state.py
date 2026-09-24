@@ -1,8 +1,6 @@
-"""Mirror of `src/studyforge/cli/serve.py`'s `--site` namespaces (R12) — `W380`.
+"""Mirror of `src/studyforge/cli/serve.py`'s `--site` namespaces (R12).
 
-⭐ Closing `W371/1` and `W371/2`.
-
-⭐ **The row's settling clauses, each both ways, over a real socket**: both forms of the
+⭐ **Each clause both ways, over a real socket**: both forms of the
 verb take their namespaces from ONE constructor, `serve.instance.namespaces_of`, and a
 site served with `--site` answers `state` as the root form does — a practice a run
 recorded is read back, and a unit whose page the SITE lacks is reported absent, because

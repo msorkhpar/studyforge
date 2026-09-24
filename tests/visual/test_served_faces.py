@@ -23,7 +23,7 @@ every reading the harness took.
   document exists, so a violation raised while the stylesheet parses is counted.
 
 ⚠️ **A test that only reads the header string is a proxy and does not settle
-this** (the row's own words). What is asserted here is what the BROWSER did.
+this.** What is asserted here is what the BROWSER did.
 """
 
 from __future__ import annotations

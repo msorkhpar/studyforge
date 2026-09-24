@@ -39,13 +39,13 @@ from tests.support import git, init_repository, repository_root, run
 #: hangs turns a failing test into a stalled build.
 TIMEOUT = 180
 
-#: A date the hand-written reader records that is NOT the run's (`W257`).
+#: A date the hand-written reader records that is NOT the run's.
 READER_DATE = "1999-12-31"
 
 #: The directory a repository ignores, planted where a copy must not take it.
 IGNORED = "scratch"
 
-#: Where a nested repository is planted, beneath the material (`W271`).
+#: Where a nested repository is planted, beneath the material.
 NESTED = "src/vendored"
 
 #: Runs the GENERATED `test_emit`'s own `_copy` and prints what arrived and
@@ -104,7 +104,7 @@ def _scaffolded(root):
     corpora.write(root)
     made = scaffold(plan_for(parse((root / "corpus.json").read_text(encoding="utf-8"))))
     made.write(root)
-    # ⭐ `SK-02/1`: the adapter's own files are code, not material, so the
+    # ⭐ The adapter's own files are code, not material, so the
     # manifest has to say so or `validate` reports every one of them. The globs
     # come from the scaffold — nothing here is retyped (R19).
     corpora.classify(root, made.not_material)
@@ -214,7 +214,7 @@ def test_nothing_reaches_the_target_path_when_an_emission_breaks_part_way(tmp_pa
 
 
 def test_every_container_map_carries_the_runs_date_whatever_the_reader_recorded(tmp_path):
-    # ⛔ W257 clause 1 (INT-09/3), over a GENERATED emit. The reader records a
+    # ⛔ Over a GENERATED emit. The reader records a
     # date that is not the run's, so a map that kept it would disagree with the
     # documents beneath it. The date is applied after the reader.
     root = tmp_path / "corpus"
@@ -238,9 +238,9 @@ def test_every_container_map_carries_the_runs_date_whatever_the_reader_recorded(
 
 
 def test_the_generated_copy_leaves_out_a_directory_the_repository_ignores(tmp_path):
-    # ⛔ W257 clause 2 (INT-09/7). A working tree ignores `scratch/`, and the
+    # ⛔ A working tree ignores `scratch/`, and the
     # generated `test_emit` must not carry it into its copy, nor `.git`, nor the
-    # archive. ⭐ The answer is git's, through W28's one reader.
+    # archive. ⭐ The answer is git's, through the one ignore reader.
     root = tmp_path / "corpus"
     made = _scaffolded(root)
     _written(root, made)
@@ -257,7 +257,7 @@ def test_the_generated_copy_leaves_out_a_directory_the_repository_ignores(tmp_pa
 
 
 def test_outside_a_working_tree_nothing_is_declared_ignored_and_the_copy_says_so(tmp_path):
-    # ⚠️ W257: a corpus that is not a git working tree (a `git archive` export)
+    # ⚠️ A corpus that is not a git working tree (a `git archive` export)
     # has no declaration to read. An export holds only what was tracked, so
     # "ignored" means nothing there: the copy takes every file but the archive,
     # and warns rather than looking like a copy that asked.
@@ -273,7 +273,7 @@ def test_outside_a_working_tree_nothing_is_declared_ignored_and_the_copy_says_so
 
 
 def test_the_generated_copy_keeps_a_nested_store_and_leaves_out_only_the_roots_own(tmp_path):
-    # ⛔ W271 clause 1 (W259/1): `SKIP_DIRS` at the corpus root only, as `validate`
+    # ⛔ `SKIP_DIRS` at the corpus root only, as `validate`
     # asks it. A nested store is copied, so `validate` meets it in the copy.
     root = tmp_path / "corpus"
     made = _scaffolded(root)
@@ -300,7 +300,7 @@ def test_outside_a_working_tree_a_nested_store_is_copied_too(tmp_path):
 
 
 def test_a_nested_store_turns_the_generated_test_emit_red_by_validates_own_rule(tmp_path):
-    # ⛔ W271 clause 2, both ways: the root's own store reads clean, and a nested
+    # ⛔ Both ways: the root's own store reads clean, and a nested
     # one fails `test_emit` by `validate`'s rule name, never by a name typed here.
     root = tmp_path / "corpus"
     made = _scaffolded(root)

@@ -22,15 +22,14 @@ gate and never arrives.
 48 of them.** ⛔ That is not the probe being wrong — it is the probe's stated
 coverage limit, recorded in `tests/emission/__init__.py` and now closed from
 the other side. ⭐ **A check that knows what it cannot see is what let this be
-built at all;** the finding was in W1's handoff before the code was.
+built at all;** the limit was written down before the code was.
 
 ## ⛔ Two poisons, because one of them is protected by luck
 
 **`POISON`** is a home path, and most readers now gate it: `assert_clean` runs
 over the whole document first, refuses it, and the field's own message never
-runs. ⚠️ **That is protection by shape list, not by construction** — Ruling 17
-measured exactly this, 4 of 10 poison shapes coming back clean *because the
-gate's list happened to name them*.
+runs. ⚠️ **That is protection by shape list, not by construction**: a poison
+shape comes back clean *because the gate's list happens to name it*.
 
 **`ESCAPING`** is an absolute path with nothing personal in it — a build
 directory on a shared machine. ⛔ The gate does not refuse it, so it reaches

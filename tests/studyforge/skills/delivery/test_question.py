@@ -11,7 +11,7 @@ def question(**overrides: object) -> Question:
     fields: dict[str, object] = {
         "number": 1,
         "asks": "does placement re-read its own output?",
-        "routed_at": "SF-31",
+        "routed_at": "RS-31",
         "blocks": ("C-02",),
         "rerun": "python3 -m pytest tests/studyforge/cli/plan",
     }
@@ -61,8 +61,8 @@ def test_an_answer_stamped_at_the_current_ref_can_be_acted_on():
 
 
 def test_a_stale_answer_does_not_come_back_with_a_warning_it_does_not_come_back():
-    # ⚠️ Measured on the filing side: three of twelve questions closed between
-    # two rounds a day apart, one of them because a merged schema changed.
+    # ⚠️ A question can close because the framework moved, with nothing having
+    # moved in the material, so an answer at another ref does not come back.
     settled = question().settled("no", at="8146bdb")
     assert not settled.is_current("83f767e")
     with pytest.raises(QuestionRefused, match="Re-run before acting"):

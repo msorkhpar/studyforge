@@ -29,7 +29,7 @@ def a_page(tmp_path, name: str, which: int = 0) -> tuple[str, str]:
 
 
 def hrefs_in(body: str) -> list[str]:
-    # ⚠️ An in-page fragment is not a page the build writes: since `W362` every
+    # ⚠️ An in-page fragment is not a page the build writes: every
     # page opens with a skip link to its own `#content`.
     return [href for href in re.findall(r'href="([^"]*)"', body) if not href.startswith("#")]
 
@@ -75,7 +75,7 @@ def test_a_container_is_called_by_the_corpus_own_deepest_word(tmp_path):
 
     identity = re.search(r"<h1>[^<]*</h1>\s*<p>([^<]*)</p>", body)
     assert identity is not None, "the page carries R4's identity line"
-    # ⚠️ `W362`: the line is a sentence now (`2 units in this module`), so the
+    # ⚠️ The line is a sentence (`2 units in this module`), so the
     # corpus's word is found in it rather than read off its front.
     assert re.search(r"\bmodule\b", identity.group(1))
     assert "section" not in identity.group(1)
@@ -84,9 +84,8 @@ def test_a_container_is_called_by_the_corpus_own_deepest_word(tmp_path):
 def test_a_container_map_shallower_than_the_corpus_is_refused_before_it_gets_here():
     """⭐ The premise that makes `levels[-1]` the only reachable word.
 
-    ⛔ Measured rather than assumed: a plant swapping `levels[-1]` for
-    `levels[depth - 1]` was GREEN on both fixtures, because a container address
-    is always exactly `manifest.depth` deep. ⚠️ This is what makes that true, and
+    ⛔ `levels[-1]` and `levels[depth - 1]` are the same word, because a
+    container address is always exactly `manifest.depth` deep. ⚠️ This is what makes that true, and
     it is a behaviour rather than a convention — if it stops holding, the two
     spellings diverge and this test is where that is noticed.
     """
@@ -103,7 +102,7 @@ def test_a_container_map_shallower_than_the_corpus_is_refused_before_it_gets_her
     document["address"] = document["address"][:1]
 
     # ⚠️ `AddressError` and not `ContainerError`, which the container package's
-    # contract does not name as something `parse` raises — `SF-28/1`.
+    # contract does not name as something `parse` raises.
     with pytest.raises(AddressError):
         parse_container(json.dumps(document), where, corpus.manifest)
 

@@ -12,7 +12,7 @@ from studyforge.corpus import placement
 from tests.support import assert_package_contract
 
 #: The whole public surface, spelled out. ⚠️ Duplicated from `__all__` on
-#: purpose, following SF-01.
+#: purpose, following the address package.
 PUBLIC_SURFACE = frozenset(
     {
         "ARCHIVE_DIRNAME",
@@ -69,7 +69,7 @@ PUBLIC_SURFACE = frozenset(
 )
 
 #: Modules that would let this package touch a disk. ⛔ It answers "where would
-#: this go"; whether anything is there is SF-04's question, and `studyforge
+#: this go"; whether anything is there is discovery's question, and `studyforge
 #: plan` exists because the answer is computable before a file is written.
 FILESYSTEM_MODULES = frozenset({"os", "shutil", "glob", "tempfile", "fileinput", "zipfile"})
 

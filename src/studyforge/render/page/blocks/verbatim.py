@@ -14,7 +14,7 @@ refuses to do one keystroke away.
 # ⛔ This module is small on purpose, and the reason is that its failure is silent
 
 ⚠️ **Two block types are byte-identical in shape and have opposite rules about
-the same field.** Measured, in `archive/markdown/leaf.py`:
+the same field.** In `archive/markdown/leaf.py`:
 
 - `read_paragraph` returns `{"type": "para", "text": …}`
 - `read_html` returns `{"type": "html", "text": …}`
@@ -37,7 +37,7 @@ no class), so a class name cannot tell them apart either.
 ⚠️ **The specific way this arrives** is by deciding escaping from the *text*
 rather than from the declared *type* — `if text.lstrip().startswith("<")` inside
 a generic block renderer, written by somebody reasonably trying to be helpful.
-⛔ **That is exactly the promise `SF-07` declined CommonMark's type-7 raw-HTML
+⛔ **That is exactly the promise the archive parser declined CommonMark's type-7 raw-HTML
 rule to keep** — *an unknown tag on its own line stays a paragraph, because a
 lesson teaching HTML must keep it* — and the page renderer is its only enforcer.
 

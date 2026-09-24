@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/skills/exercises/loop.py` (R12) — the budget, the retry, the report.
 
-**What it asserts.** `AX-08`'s Acceptance on the re-authoring loop: a planted
+**What it asserts.** The re-authoring loop: a planted
 gate failure is re-authored inside the budget; a plant that cannot clear
 exhausts the budget and is reported rather than shipped, naming the page, the
 exercise, the gate, the case and the run's last output; and a retry that drops
@@ -161,8 +161,7 @@ def test_no_gate_budget_or_option_can_be_handed_to_the_loop(function):
     assert isinstance(ATTEMPTS, int) and ATTEMPTS >= 2, "a budget with no room for a retry"
 
 
-# ⛔ W437: a unit may already carry practices — the first corpus's
-# `iso-fundamentals` units 2, 3 and 4 each carry a bundled `practice-1` — and
+# ⛔ A unit may already carry practices — a bundled `practice-1`, say — and
 # an authored exercise numbered from 1 would collide with it. ⭐ What a unit
 # carries is READ off its archive, never declared, and authoring numbers after it.
 

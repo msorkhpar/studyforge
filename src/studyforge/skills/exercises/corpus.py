@@ -21,7 +21,7 @@ for R7. Standard library only.
 
 ## ⛔ THE LEDGER IS TAKEN ONCE, BEFORE ANY EXERCISE IS GATED
 
-⭐ **`AX-07`'s one ordering constraint.** `G5` and `Q5` ask the ledger about an
+⭐ **The one ordering constraint.** `G5` and `Q5` ask the ledger about an
 origin *during* the gate run, and the accounting closes over the same object at
 the end, so the two cannot disagree about what the source was.
 
@@ -45,7 +45,7 @@ plan is not re-authored**, so a model is never asked again for work already
 proven, and what it said the first time stays. A ledger entry whose bytes are
 unchanged keeps the reason it was given. ⚠️ **A unit whose page moved is
 refused, naming its directory**: its bundles were proven against material that
-has changed, and rewriting them is what R3 forbids.
+has changed, and generation never rewrites what it did not write.
 """
 
 from __future__ import annotations
@@ -360,6 +360,6 @@ def _moved(unit: str, where: str, why: str) -> AuthoringError:
     """Return the refusal for a unit whose committed exercises may not be rewritten (R3)."""
     return AuthoringError(
         f"{where}: the unit at '{unit}' {why}. Its exercises were proven against that "
-        f"material, and rewriting them is what R3 forbids. Remove '{unit}' from the "
+        f"material, and generation never rewrites what it did not write. Remove '{unit}' from the "
         f"corpus and run the pass again: the ledger keeps every other page's rows."
     )

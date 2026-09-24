@@ -29,7 +29,7 @@ from types import ModuleType
 CONTRACT_PARTS = ("What it does", "How you use it", "Depends on")
 
 #: A contract shorter than this is a label. Higher than the repository-wide
-#: floor in `tools.quality.config`, because that floor applies to every module
+#: floor in `tests.floor.config`, because that floor applies to every module
 #: and this applies only to the packages spec §3.2 names, which are the ones a
 #: consumer meets first.
 MIN_CONTRACT_CHARS = 200
@@ -73,7 +73,7 @@ def git() -> str:
     """The absolute path to git, or a failed assertion saying why it matters.
 
     ⛔ Asserted rather than skipped. The checks that use it — the ignore rules
-    that keep FND-04's golden fixtures trackable, and the index rules —
+    that keep the golden fixtures trackable, and the index rules —
     guard states whose failure is *silent* on a fresh clone. A skip there would
     look green and guard nothing.
     """
@@ -152,13 +152,13 @@ def tracked_files(patterns: tuple[str, ...], root: Path | None = None) -> list[s
     reads the **index**, so a module written and not yet `git add`ed is
     invisible. ⭐ That is correct for the question a *committed verdict* asks —
     *is this repository clean* — and wrong for *does my working tree pass right
-    now*, which is `tools.quality`'s, is answered over `git check-ignore` so a
+    now*, which is the product floor's, is answered over `git check-ignore` so a
     brand-new unadded file **is** caught, and is a different instrument on
-    purpose (review rubric §2e).
+    purpose.
 
     ⚠️ **Two guards, in the body and before any caller counts anything.** An
     instrument that cannot find its subject must raise rather than report the
-    subject clean (`W61`'s reading 3, Ruling 128); and a tracked file missing
+    subject clean; and a tracked file missing
     from the working tree is refused rather than skipped, because an unstaged
     deletion would otherwise narrow the population in silence.
 
@@ -223,15 +223,13 @@ def imports_module(path: Path, module: str) -> bool:
     return False
 
 
-#: Ruling 47's shared evidence: the one table both personal-data gates are
-#: measured against. ⛔ Shared as **data**, never as code — `tools/quality` may
-#: not import the framework, so the two sides read the table and
+#: The shared evidence: the one table both personal-data gates are measured
+#: against (R7). ⛔ Shared as **data**, never as code — the floor may not
+#: import the framework, so the two sides read the table and
 #: each asserts only its own column.
 #:
-#: ⭐ The product reads its OWN copy of the table, so the suite runs with
-#: no process document present. The convention `docs/conventions/personal-data-shapes.md`
-#: still carries it for the tooling, and `tests/test_process_twins.py` refuses the two
-#: tables differing by one row while both exist.
+#: ⭐ The table lives in the suite itself, so the suite runs with no process
+#: document present.
 SHAPE_VOCABULARY = "tests/harness/personal-data-shapes.json"
 
 

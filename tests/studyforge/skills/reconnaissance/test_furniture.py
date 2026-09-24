@@ -1,10 +1,10 @@
-"""Mirror of `src/studyforge/skills/reconnaissance/furniture.py` (R12, W249, `INT-07/2`).
+"""Mirror of `src/studyforge/skills/reconnaissance/furniture.py` (R12).
 
 ⭐ The draft proposes the `not_material` globs and leaves every reason open.
 ⛔ Asserted both ways: a furnished source drafts its globs, and a control with
 no furniture drafts none. The manifest reader judges, and onboarding is the collision
 check, never a restatement of it.
-⛔ `W269`: a file a declared glob covers is never re-proposed, and a proposal that
+⛔ A file a declared glob covers is never re-proposed, and a proposal that
 stands down says so by name. Both asserted both ways.
 """
 
@@ -40,7 +40,7 @@ def test_a_furnished_source_drafts_a_glob_for_everything_no_include_reads(tmp_pa
     assert proposal["corpus_api"] == 2
 
 
-def test_sf02_leaves_nothing_unclassified_once_a_person_gives_the_reasons(tmp_path):
+def test_the_manifest_reader_leaves_nothing_unclassified_once_a_person_gives_the_reasons(tmp_path):
     root = sources.furnished(tmp_path / "c")
     content = parse(json.dumps(sources.settled(survey(root).proposal))).content
     judged = [path.relative_to(root).as_posix() for path in source_files(root).files]
@@ -50,7 +50,7 @@ def test_sf02_leaves_nothing_unclassified_once_a_person_gives_the_reasons(tmp_pa
     assert Classification.CONTESTED not in verdicts.values(), verdicts
 
 
-def test_every_reason_is_left_open_and_sf02_refuses_the_draft_until_one_is_given(tmp_path):
+def test_every_reason_is_left_open_and_the_draft_is_refused_until_one_is_given(tmp_path):
     proposal = survey(sources.furnished(tmp_path / "c")).proposal
     assert all(entry["why"] is None for entry in proposal["content"]["not_material"])
     open_reasons = sources.settled(proposal)
@@ -78,7 +78,7 @@ def test_onboarding_takes_the_draft_and_a_resurvey_re_proposes_nothing_it_declar
     made.write(root)
 
     again = survey(root).proposal
-    # ⛔ `W269`, `INT-10/2`: the written manifest's globs cover every file, so none returns.
+    # ⛔ The written manifest's globs cover every file, so none returns.
     assert globs(again) == []
     # ⭐ Onboarding still takes the re-survey's draft, and `promote` refuses a drafted glob equal
     # to a generated one, so this is the collision check, asked of the owner.
@@ -92,7 +92,7 @@ def test_onboarding_takes_the_draft_and_a_resurvey_re_proposes_nothing_it_declar
 
 
 def test_an_onboarding_record_carrying_a_home_path_is_refused_as_itself(tmp_path):
-    # ⛔ R7, W7: the record is a list of paths, the shape a home directory arrives
+    # ⛔ R7: the record is a list of paths, the shape a home directory arrives
     # in, so it is gated before a field is read. ⚠️ A placeholder, split so the
     # literal never sits in this file whole.
     root = sources.furnished(tmp_path / "c")
@@ -131,7 +131,7 @@ def test_a_directory_holding_a_read_file_is_never_swept_by_a_directory_glob(tmp_
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W269`, `INT-10/2`: a file a declared glob covers is never re-proposed
+# ⛔ A file a declared glob covers is never re-proposed
 # --------------------------------------------------------------------------
 
 
@@ -181,7 +181,7 @@ def test_a_manifest_carrying_a_home_path_is_refused_as_itself(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W269`, `INT-10/1`: a proposal that stands down says so by name
+# ⛔ A proposal that stands down says so by name
 # --------------------------------------------------------------------------
 
 

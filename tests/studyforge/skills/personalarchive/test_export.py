@@ -5,7 +5,7 @@ test fails if a practice key, a progress field or a store path reaches it, or if
 member carries an R7 shape. The owner archive of the same corpus carries every one of
 those progress tokens, so each assertion has been shown capable of red.
 
-⛔ **No file reaches a sharing archive unjudged (`W235`).** The register's `cover.bin` is
+⛔ **No file reaches a sharing archive unjudged.** The planted `cover.bin` is
 refused by name, a corpus narrated by the framework's own stage still exports with every
 clip judged and carried, a file under a clip's name is judged like any other, and an owner
 archive carries a file that is not text unread, as before.

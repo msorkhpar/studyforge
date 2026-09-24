@@ -41,7 +41,7 @@ def test_an_older_api_is_refused_rather_than_read(older):
     # ⛔ "Written before sections carried a video" and "this unit has no video"
     # are different answers; a reader that conflated them would render a unit
     # as silent because the build that wrote it did not know about audio.
-    # ⚠️ `API - 1` is the shipped predecessor — `W215` bumped this contract for
+    # ⚠️ `API - 1` is the predecessor — this contract's version moved for
     # `attachments`, and a document written under the version before it is
     # refused rather than migrated (R9).
     stale = document()
@@ -51,7 +51,7 @@ def test_an_older_api_is_refused_rather_than_read(older):
 
 
 def test_a_served_document_carrying_personal_data_is_refused():
-    # ⛔ Ruling 50: `validate` is optional, so a serve-time reader assuming it
+    # ⛔ `validate` is optional, so a serve-time reader assuming it
     # ran trusts a promise nobody made. This is the last boundary before a
     # browser.
     leaky = document()

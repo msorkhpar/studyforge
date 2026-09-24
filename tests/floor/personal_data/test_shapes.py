@@ -1,4 +1,4 @@
-"""Mirror of `tools/quality/personal_data/shapes.py` (R12).
+"""Mirror of `tests/floor/personal_data/shapes.py` (R12).
 
 ⛔ **Not one real identifier appears in this file**, and not one personal-data
 shape is written as a literal. The shapes are assembled from fragments at run
@@ -89,10 +89,9 @@ def test_a_real_looking_domain_is_still_a_finding():
 
 
 def test_the_one_character_local_part_false_positive_does_not_fire():
-    # ⚠️ The measured case, and the reason the local part must be two
-    # characters. `docs/tasks/E02-content-pipeline.md` and
-    # `docs/conventions/review-rubric.md` both discuss `\n@router.get` being
-    # address-shaped, and E02 writes it BOTH escaped and bare — so no
+    # ⚠️ The reason the local part must be two characters. Prose about
+    # serialisation discusses `\n@router.get` being address-shaped, and writes
+    # it BOTH escaped and bare — so no
     # lookbehind for a backslash reaches both. What they have in common is a
     # one-character local part.
     assert shape_matches(r"serialised as `...\n@router.get(...)`") == []
@@ -105,8 +104,8 @@ def test_a_filename_ending_in_local_is_not_a_hostname():
 
 
 def test_home_and_tilde_references_are_deliberately_not_flagged():
-    # ⛔ A reference is not a value, and `CLAUDE.md` names the environment
-    # variable as the *sanctioned* way to carry a real one in shipped code. A
+    # ⛔ A reference is not a value, and an environment
+    # variable is the *sanctioned* way to carry a real one in shipped code. A
     # check that flagged these would be telling people not to use the safe
     # form. Measured: 6 hits on this tree, every one a document explaining R7.
     assert shape_matches('HOME_DIR="$HOME/cache"') == []
@@ -189,7 +188,7 @@ def test_the_allow_list_is_DERIVED_from_the_shared_vocabulary_and_never_typed():
     # ⛔ One vocabulary, two policies. The shipped constant must BE what
     #    the builder returns, or somebody has re-typed the list here and the two
     #    halves can drift again. ⭐ The cross-side plant is in
-    #    `tools/tests/test_reserved_addresses.py`; this is this arm's half.
+    #    `tests/floor/test_reserved_addresses.py`; this is this arm's half.
     assert ALLOWED_ADDRESS.pattern == build_allowed_address().pattern
     vocabulary = (*reserved.RESERVED_TLDS, *reserved.RESERVED_DOMAINS)
     assert vocabulary, "the vocabulary is empty, so every assertion below is free"
@@ -218,7 +217,7 @@ DOCUMENTS_ABOUT_THE_SHAPES = (
 
 
 def test_the_documents_that_quote_the_shapes_are_swept_and_clean():
-    # ⭐ The ruling, pinned. `docs/` is swept **in full** and no file is
+    # ⭐ The rule, pinned. `docs/` is swept **in full** and no file is
     # exempt: exempting one stops sweeping it for real leaks, and prose about
     # R7 is exactly where a real home path gets pasted by accident. What makes
     # that survivable is the placeholder convention — a shape written as
@@ -231,7 +230,7 @@ def test_the_documents_that_quote_the_shapes_are_swept_and_clean():
     offenders = []
     for name in DOCUMENTS_ABOUT_THE_SHAPES:
         text = config.read_text(root / name)
-        assert text is not None, f"{name} is missing; the ruling has moved"
+        assert text is not None, f"{name} is missing; the rule has moved"
         offenders += [f"{name}:{line}: {shape}" for line, shape in shape_matches(text)]
     assert offenders == []
 
@@ -249,7 +248,7 @@ def test_every_shape_is_a_pattern_holding_no_value():
 
 
 # --------------------------------------------------------------------------
-# Ruling 47 — this sweep's column of the shared shape vocabulary
+# One vocabulary, two policies — this sweep's column of the shared shape vocabulary
 # --------------------------------------------------------------------------
 
 VOCABULARY = personal_data_shapes()
@@ -259,11 +258,11 @@ BY_SHAPE = [pytest.param(row, id=row["shape"]) for row in VOCABULARY]
 @pytest.mark.parametrize("row", BY_SHAPE)
 def test_this_sweep_does_what_the_shared_table_says(row):
     # ⛔ **One shape vocabulary, two policies.** This check and
-    # `archive.scrub` are ruled to have different subjects — this one may
+    # `archive.scrub` have different subjects — this one may
     # derive the machine's identity and keeps an allow-list, that one may know
     # nothing — ⛔ and that never justified differing in what they
-    # *recognise*. ⚠️ The tooling may not import the framework, so the two
-    # sides share the table at `docs/conventions/personal-data-shapes.md` and
+    # *recognise*. ⚠️ This floor may not import the framework, so the two
+    # sides share the table at `tests/harness/personal-data-shapes.json` and
     # each asserts only its own column. This module reads no framework code.
     did = "report" if shape_matches(row["example"]) else "ignore"
     assert did == row["quality"], row["shape"]

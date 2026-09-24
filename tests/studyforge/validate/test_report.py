@@ -1,4 +1,4 @@
-"""What a run found, and — just as loudly — what it could not check (SF-25).
+"""What a run found, and — just as loudly — what it could not check.
 
 ⭐ The line between a `Finding` and an `Unchecked` is where the design lives.
 Every test here is about that line, or about the promise that neither of them

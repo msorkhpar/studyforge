@@ -18,23 +18,20 @@ writes (`skills.execution.instance`).
 safe container name. ⛔ Nothing source-specific (R1), and no process: this reads
 one small file under the corpus root.
 
-## ⛔ WHY A SECOND INSTANCE NEEDS THIS AT ALL (`ISO-33/4`, `ISO-33/5`, `AX-11/2`)
+## ⛔ WHY A SECOND INSTANCE NEEDS THIS AT ALL
 
-⚠️ The generated compose file carried the editor's host port and the runner's
-`container_name` as literals, and `serve` found both containers by `source`
-alone. So a second checkout of one corpus — the verification a pin advance
-needs, beside the reader's live site — could not come up without an override
-file, and could not be served against its own runner without substituting the
-lookup in-process. ⭐ **Now each of the four is a compose interpolation whose
-default is the value it always had**, and the value an instance chose is
+⚠️ A second checkout of one corpus — the verification a pin advance needs,
+beside the reader's live site — must come up without an override file and be
+served against its own runner. ⭐ **So each of the four is a compose
+interpolation whose default is the fixed value**, and the value an instance chose is
 recorded here, in the file its compose command reads, which is also the file
 this module reads. ⛔ **One record, two readers — never two spellings.**
 
 ## ⭐ AN INSTANCE THAT RECORDED NOTHING IS THE ONE IT ALWAYS WAS
 
-An absent file, or an absent key, answers the default — the names every corpus
-has had since `W416` — so a corpus generated before this module is served
-exactly as before. ⚠️ **A value that is not one safe container name is read as
+An absent file, or an absent key, answers the default — the fixed names a corpus
+without this file uses — so such a corpus is served exactly as it always
+is. ⚠️ **A value that is not one safe container name is read as
 absent, not raised**: every probe that uses a name also checks that the
 container binds THIS corpus root (`EditorProbe`, `ModeProbe`), so a default that
 reaches another checkout's container finds it is not this one's and answers
@@ -154,13 +151,15 @@ def checked(values: Mapping[str, str]) -> dict[str, str]:
     if not port.isdecimal() or int(port) not in PORTS:
         raise RunRefused(
             f"{EDITOR_PORT} must be a whole port number from {PORTS.start} to {PORTS.stop - 1}; "
-            "the value is not reproduced here (R7)"
+            "the value is not reproduced here, since a refusal never quotes a value that "
+            "may be personal"
         )
     for one in (PROJECT, EDITOR_NAME, RUNNER_NAME):
         if _name(values[one]) is None:
             raise RunRefused(
                 f"{one} must be one word of ASCII letters, digits, '.', '_' and '-', not "
-                "beginning '-'; the value is not reproduced here (R7)"
+                "beginning '-'; the value is not reproduced here, since a refusal never "
+                "quotes a value that may be personal"
             )
     if PROJECT_NAME.match(values[PROJECT]) is None:
         raise RunRefused(

@@ -36,7 +36,7 @@ def write(root, relative, size):
 
 
 def test_the_footprint_is_read_from_the_files_that_are_actually_there(tmp_path):
-    # ⛔ SF-32's acceptance: *the verdict is derived from the files actually on
+    # ⛔ the media policy's acceptance: *the verdict is derived from the files actually on
     # disk, not from a prediction.* No rate, no unit count, no multiplication.
     write(tmp_path, "unit-01.audio/u-1-s1-abcd1234.mp3", 300)
     write(tmp_path, "unit-01.audio/u-1-s2-abcd5678.mp3", 700)
@@ -196,12 +196,12 @@ def test_a_file_exactly_at_a_limit_is_not_over_it():
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W311` — every clip the narration record locates is weighed
+# ⛔ Every clip the narration record locates is weighed
 # --------------------------------------------------------------------------
 
 TREE = profile_for("tree")
 DECLARED = TREE.unit(ADDRESS, 1, "Getting started")
-#: A unit the corpus once declared and no longer does: its directory is still on disk.
+#: A unit the corpus does not declare whose directory is still on disk.
 REMOVED = TREE.unit(Address.of("basics", "02-removed"), 2, "Removed")
 SETTINGS = Conditions(voice="voice-a", fmt="mp3", provides=3, chunk_chars=320)
 
@@ -232,7 +232,7 @@ def a_corpus(root, *, with_removed_unit):
 @pytest.mark.parametrize(
     ("with_removed_unit", "total", "refuses"), [(True, 1000, True), (False, 100, False)]
 )
-def test_W311_a_clip_in_a_removed_units_directory_is_weighed_both_ways(
+def test_a_clip_in_a_removed_units_directory_is_weighed_both_ways(
     tmp_path, with_removed_unit, total, refuses
 ):
     # ⛔ The settling clause, both ways (R12): the removed unit's clip is on disk and
@@ -244,7 +244,7 @@ def test_W311_a_clip_in_a_removed_units_directory_is_weighed_both_ways(
     assert verdict_for(policy, footprint).refuses is refuses
 
 
-def test_W311_a_superseded_clip_outside_every_declared_directory_is_weighed(tmp_path):
+def test_a_superseded_clip_outside_every_declared_directory_is_weighed(tmp_path):
     write(tmp_path, DECLARED.audio / "u1-s1-aaaa.mp3", 100)
     write(tmp_path, REMOVED.audio / "u1-s1-old.mp3", 40)
     older = (Superseded("u1-s1-old.mp3", REMOVED.audio.as_posix()),)
@@ -257,7 +257,7 @@ def test_W311_a_superseded_clip_outside_every_declared_directory_is_weighed(tmp_
     assert footprint.count == 2  # ⛔ the declared clip both paths reach is counted once
 
 
-def test_W311_only_what_the_record_locates_is_added_and_an_absent_clip_weighs_nothing(tmp_path):
+def test_only_what_the_record_locates_is_added_and_an_absent_clip_weighs_nothing(tmp_path):
     # ⭐ The record locates; the walk is not widened to guess. An unrecorded file in a
     # removed unit's directory is not reached, and a recorded clip not on disk is not
     # an under-count, so it is not named either.
@@ -267,7 +267,7 @@ def test_W311_only_what_the_record_locates_is_added_and_an_absent_clip_weighs_no
     assert (footprint.total_bytes, footprint.unweighed) == (0, ())
 
 
-def test_W311_a_clip_the_record_cannot_locate_is_named_unless_a_weighed_directory_holds_it(
+def test_a_clip_the_record_cannot_locate_is_named_unless_a_weighed_directory_holds_it(
     tmp_path,
 ):
     # ⛔ Never a silent under-count: a version-1 entry carries no directory.
@@ -282,15 +282,15 @@ def test_W311_a_clip_the_record_cannot_locate_is_named_unless_a_weighed_director
     assert said.startswith("u2-s1's clip u2-s1-bbbb.mp3")
 
 
-def test_W311_an_unreadable_record_refuses_the_reading(tmp_path):
+def test_an_unreadable_record_refuses_the_reading(tmp_path):
     write(tmp_path, DECLARED.audio / "u1-s1-aaaa.mp3", 100)
     state_file(tmp_path).write_text("{", encoding="utf-8")
     with pytest.raises(MediaError, match="narration record cannot be read"):
         measure(tmp_path, [DECLARED])
 
 
-def test_W311_plan_reads_the_widened_footprint_without_a_measurement_of_its_own(tmp_path):
-    # ⭐ `W287` routed `plan` through `measure`; the widening reaches it untouched.
+def test_plan_reads_the_widened_footprint_without_a_measurement_of_its_own(tmp_path):
+    # ⭐ `plan` goes through `measure`, so the widening reaches it untouched.
     import json
     import shutil
 

@@ -2,7 +2,7 @@
 
 ⭐ **The container page's acceptance, clause by clause.** Everything here is about the
 container page as a whole: the goldens, the `file://` floor, R4's block, R10's
-stability, and the clause nothing else can check — that `SF-04` discovers these
+stability, and the clause nothing else can check — that discovery finds these
 pages **by identity**. The seams themselves are asserted in the module each one
 belongs to.
 """
@@ -42,7 +42,7 @@ _ADDRESSES = re.compile(r'(?:href|src)="([^"]*)"')
 
 @pytest.fixture(params=cases(), ids=lambda case: case.name)
 def case(request):
-    """Each container of each FND-04 fixture, built the way a build would."""
+    """Each container of each framework fixture corpus, built the way a build would."""
     return request.param
 
 
@@ -58,7 +58,7 @@ def test_render_returns_bytes():
 
 
 def test_every_container_renders_against_its_golden_file(case):
-    # ⛔ E03's acceptance. A golden that moved without a deliberate change to the
+    # ⛔ The rendering acceptance. A golden that moved without a deliberate change to the
     # renderer is the R10 failure; regenerate with
     # `python3 -m tests.studyforge.render.container.containers` once you know
     # which change you made.
@@ -89,7 +89,7 @@ def test_the_identity_block_reads_back_as_this_container(case):
 
 
 def test_the_depth_one_fixture_renders_exactly_one_container_page():
-    # ⭐ E03's acceptance: "a depth-1 fixture renders one container page", and
+    # ⭐ The rendering acceptance: "a depth-1 fixture renders one container page", and
     # the count is derived from the fixture rather than asserted against a
     # literal this test would own.
     depth1 = fixture_cases("depth1")
@@ -143,7 +143,7 @@ def test_every_unit_the_page_links_is_addressed_from_this_page(case):
 
 
 def test_a_scan_discovers_every_container_page_by_identity(tmp_path):
-    # ⛔ E03's acceptance: "SF-04 discovers them by identity." The pages are
+    # ⛔ The rendering acceptance: "discovery finds them by identity." The pages are
     # written where placement says, the real scan walks the tree, and what comes
     # back is compared against the addresses the maps declare.
     depths = {}
@@ -166,7 +166,7 @@ def test_the_two_fixtures_use_two_different_placement_profiles():
     # ⚠️ The unasserted neighbour, named: the goldens above prove the renderer
     # under the profiles the fixtures happen to declare. This is the assertion that they are two — a
     # pair of `tree` corpora would have left `sibling`'s bare-filename href, the
-    # shape `W57` was about, untested here.
+    # shape, untested here.
     declared = {name: fixture_manifest(name).placement for name in ("depth1", "depth2")}
     assert declared == {"depth1": "tree", "depth2": "sibling"}
 

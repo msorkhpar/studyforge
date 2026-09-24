@@ -18,19 +18,17 @@ one — the direction is one-way, so a stage stays runnable as
 ## ⛔ A verb is resolved when it is DISPATCHED, not when this module loads
 
 ⭐ `import studyforge.cli.<anything>` runs this package, so a module-level import
-of every verb's entry point made importing one verb load all of them (`W223/1`).
+of every verb's entry point made importing one verb load all of them.
 ⭐ A `Verb` carries a `load` function, a plain import statement in a body, and
 `Verb.run` calls it when read. ⚠️ It is an IMPORT STATEMENT and never a module
 reached by name: `tests/harness/test_isolation.py` refuses `importlib` in
 framework source (R1). ⛔ **A loader registers nothing: `VERBS` is the only
-place a verb is named** (`SF-40`), and `run` is the same callable object the
+place a verb is named**, and `run` is the same callable object the
 verb's module defines.
 
-⚠️ **`W293` left one verb loaded anyway and `W320` removed it.** `UNUSABLE` was
-imported from `validate.cli`, so importing the command loaded the validator —
-the property held for four verbs of five, and the mirror had to hold `validate`
-exempt. ⭐ The constant now lives in `studyforge.exitcodes`, which is no verb's,
-so **importing this module loads no verb at all** and the exemption is gone.
+⚠️ **The shared exit code is no verb's.** `UNUSABLE` lives in
+`studyforge.exitcodes`, not in `validate.cli`, so **importing this module loads
+no verb at all** and the mirror holds no verb exempt.
 
 ## ⛔ A verb is registered here only when it can be RUN
 
@@ -115,9 +113,10 @@ def _check() -> Callable[..., int]:
 
 #: ⛔ **The registered table.** Ordered as a reader meets them: check the
 #: archive, ask what a build would write, narrate it, write it, serve it, then
-#: check a unit's file the reader edited (`SF-44`).
-#: ⭐ `narrate` precedes `build` because clips are a build's INPUT (`E09` § W202
-#: answer 3), and `serve` follows `build` because it serves what a build wrote.
+#: check a unit's file the reader edited.
+#: ⭐ `narrate` precedes `build` because clips are a build's INPUT (a build
+#: only copies what `narrate` recorded), and `serve` follows `build` because
+#: it serves what a build wrote.
 VERBS: Mapping[str, Verb] = {
     verb.name: verb
     for verb in (

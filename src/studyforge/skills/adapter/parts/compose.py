@@ -14,7 +14,7 @@ package's `__init__` would be imported by the modules that package imports.
 ## ⚠️ Why a generated module is composed rather than pasted
 
 ⛔ **A contract inside a string literal is a contract no rule reaches.**
-`tools.quality` reads this repository's modules; nothing reads a module that
+The quality floor reads this repository's modules; nothing reads a module that
 does not exist yet. So the four pieces are keyword-only, all four are checked,
 and a generated module that would ship without a `Depends on` line raises here
 — in the framework's own suite — rather than being noticed by whoever reviews
@@ -64,7 +64,7 @@ def module(*, summary: str, does: str, uses: str, depends: str, body: Iterable[s
         ("depends", depends),
     ):
         if not isinstance(piece, str) or not piece.strip():
-            raise ValueError(f"a generated module needs a {name}; R17 is not optional")
+            raise ValueError(f"a generated module needs a {name}; it must state its contract")
     head = [
         f"{DQ}{summary}",
         "",

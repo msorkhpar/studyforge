@@ -13,7 +13,7 @@ def seen(root):
 
 
 def test_a_prose_only_corpus_reports_no_runnable_code_and_no_graders(tmp_path):
-    # ⭐ E11's named acceptance, and it is a **finished verdict** rather than a
+    # ⭐ The skill's named acceptance, and it is a **finished verdict** rather than a
     # blank section: a corpus with no graders is complete at the reading floor,
     # not short (§11.0, C5).
     verdicts = [
@@ -57,7 +57,7 @@ def test_non_prose_files_with_no_build_are_asked_about(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ W329: the framework's own generated half is not this corpus's capability
+# ⛔ The framework's own generated half is not this corpus's capability
 # --------------------------------------------------------------------------
 
 #: What onboarding generates into a corpus that has no graders of its own.

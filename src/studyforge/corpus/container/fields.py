@@ -7,10 +7,8 @@ each of them in a message that names the field and the fault.
 **How you use it.** `required_text`, `optional_text`, `optional_path`,
 `optional_origin`, `optional_slug`, `optional_label`, and
 `is_filename_component` for the one permitted-set rule a filename component
-obeys. ⭐ `said` is gone: it is
-`studyforge.describe.describe`, which now carries the one behaviour this
-module had that the extraction had lost — **an empty string is named as
-one** (W17).
+obeys. ⭐ A value is described by `studyforge.describe.describe`, which names
+**an empty string as one**.
 
 **Depends on.** `studyforge.address` for what a slug is,
 `studyforge.sourcepath` for what a source path is, `studyforge.describe` for
@@ -20,16 +18,16 @@ how a value is named, and this package's `errors`.
 this module refuses most often is `origin`, and **the one shape being refused
 there is precisely the shape that carries a home directory** — so a message
 quoting it would copy personal data into a log *from the check that exists to
-catch it* (R7). SF-03 measured that on its own first attempt.
+catch it* (R7).
 
-⭐ **The rule has one home and this module no longer keeps a copy.** It kept
-the third one, and the three disagreed about integers, booleans and the empty
-string — none of it decided by anybody, all of it what a third copy does.
+⭐ **The rule has one home and this module keeps no copy**: copies of it
+disagree about integers, booleans and the empty string, and nobody decides
+which.
 
-⚠️ **Twice over, now.** `optional_path` also kept its own spelling of what a
-source path may be, and `placement.profile.origin_directory` kept another; the
-two forbidden lists disagreed and the gap between them was reachable (Ruling
-44). Both now ask `studyforge.sourcepath`, which states the permitted set
+⚠️ **The same holds for paths.** `optional_path` and
+`placement.profile.origin_directory` both ask `studyforge.sourcepath`, because
+two forbidden lists disagree and the gap between them is reachable; it states
+the permitted set
 instead. ⭐ Each package keeps its own error type and its own sentence — the
 rule is `sourcepath`'s, the document is this contract's.
 """
@@ -43,28 +41,26 @@ from studyforge.describe import describe as said
 from studyforge.sourcepath import SOURCE_PATH_DESCRIBED, source_path_fault
 
 #: The characters a generated filename component may carry — **a permitted
-#: set, and deliberately not a forbidden one (Ruling 8)**.
+#: set, and deliberately not a forbidden one**.
 #:
 #: ⛔ A forbidden list is an **open set and cannot be finished**: every
 #: character nobody thought of is permitted by default, so it is wrong the
-#: moment it is written and stays wrong silently. This module carried one
-#: (`"/\\ \t\n\r"`), re-typed by hand in `placement.names`, and it was wrong
-#: in duplicate past two reviews and a gate. Measured 2026-09-09 on the merged
-#: tree, **seven shapes passed both copies into a filename**: a vertical tab, a
+#: moment it is written and stays wrong silently. A list such as
+#: `"/\\ \t\n\r"` passes **seven shapes into a filename**: a vertical tab, a
 #: form feed, a non-breaking space, U+2028, `"`, `:` and `*`. Two of those —
-#: `:` and `"` — break the `file://` floor (R8), so the open set was not a
+#: `:` and `"` — break the `file://` floor (R8), so an open set is not a
 #: tidiness question.
 #:
 #: ⭐ **Derived from `is_slug`, never re-typed.** The permitted class is *what a
 #: slug accepts*, plus `.` so `4.4.1` passes — and it is computed by asking, so
 #: a second spelling of the slug rule cannot exist here to drift from the
-#: first. ⛔ A constant exported and then re-typed is what this replaces; a
-#: constant *derived* cannot be re-typed at all. `tests/.../test_fields.py`
+#: first. ⛔ A constant exported can be re-typed; a constant *derived* cannot
+#: be re-typed at all. `tests/.../test_fields.py`
 #: pins the resulting set literally, so a change to `is_slug` is a decision
 #: somebody makes rather than one that arrives.
 #:
-#: ⚠️ **The derivation itself now lives once, in `address.slug`**, and this is
-#: `SLUG_PERMITTED | {"."}`. W1 needed the same set to describe a slug fault
+#: ⚠️ **The derivation itself lives once, in `address.slug`**, and this is
+#: `SLUG_PERMITTED | {"."}`. A refusal needs the same set to describe a slug fault
 #: without reproducing the value; two copies of one *computation* is the same
 #: defect as two copies of one constant, one step earlier.
 #:
@@ -91,7 +87,7 @@ FILENAME_PERMITTED_DESCRIBED = (
     "lowercase ASCII letters, digits, and . or -, beginning with a letter or digit"
 )
 
-#: The two keys an object `origin` carries (Ruling 92). ⛔ Exactly these, both
+#: The two keys an object `origin` carries. ⛔ Exactly these, both
 #: required: a `path` alone is the string form written the long way, and a
 #: `section` alone is a region of nothing. ⚠️ Neither is a *unit* key — the
 #: object is the value of `origin`, so `UNIT_KEYS` is unchanged.
@@ -148,7 +144,7 @@ def optional_path(value: object, what: str, where: str) -> str | None:
 
     ⛔ The one shape being refused here is precisely the shape that carries a
     home directory, so a refusal quoting the value would copy personal data
-    into a log from the check that exists to catch it (R7, measured by SF-03).
+    into a log from the check that exists to catch it (R7).
     The message describes the fault and names the field.
     """
     if value is None:
@@ -177,7 +173,7 @@ def optional_origin(value: object, what: str, where: str) -> tuple[str | None, s
     the first half whichever shape was written.
 
     ⛔ **A region is bounded by a heading, so `section` is the exact text of
-    one** (Ruling 92). A line range would couple the manifest to a file's byte
+    one**. A line range would couple the manifest to a file's byte
     layout and an anchor would couple it to a renderer's slug rules; the
     heading is the only bound `validate` can find without the Markdown reader,
     which is the independence `check_completeness` is built on.
@@ -196,7 +192,8 @@ def _region(value: dict, what: str, where: str) -> tuple[str, str]:
             f"{where} declares {what} as an object that is not a region; a region is "
             f"{list(ORIGIN_KEYS)}, both required. A path alone is the string form "
             f"written the long way, and a section alone is a region of nothing. "
-            f"The keys are not reproduced here (R7)."
+            f"The keys are not reproduced here, since a refusal never quotes a value that may be "
+            f"personal."
         )
     path = optional_path(value["path"], f"{what} path", where)
     if path is None:
@@ -212,8 +209,8 @@ def optional_slug(value: object, what: str, where: str) -> str | None:
     ⚠️ Required to be a slug, and that is measured rather than assumed: of the
     extraction source's **1290** unit entries, **0** carry a `url_slug` that is
     not one. ⛔ Converted to a `ContainerError` rather than allowed to escape as
-    SF-01's `AddressError`, following the manifest's precedent exactly — the
-    rule is SF-01's, the document is this contract's.
+    `studyforge.address`'s `AddressError`, following the manifest's precedent exactly — the
+    rule is `studyforge.address`'s, the document is this contract's.
     """
     if value is None:
         return None
@@ -228,7 +225,7 @@ def optional_label(value: object, what: str, where: str) -> str | None:
     """Read a unit's own display numbering, or absent.
 
     ⛔ Refused unless it is a usable filename component, because it becomes
-    one downstream (SF-03's `label_of`). ⛔ The refusal names the **permitted**
+    one downstream (`placement.names.label_of`). ⛔ The refusal names the **permitted**
     class and never reproduces the value: a label is read straight out of a
     file somebody else wrote, and describing rather than echoing is this
     module's whole job.
@@ -246,6 +243,6 @@ def optional_label(value: object, what: str, where: str) -> str | None:
             f"{where} declares {what} as text that cannot become part of a filename. "
             f"A label may carry only {FILENAME_PERMITTED_DESCRIBED}. Accepted here, "
             f"it would validate and then fail at render. It is not reproduced, "
-            f"because a declared field is read out of a file somebody else wrote (R7)."
+            f"because a declared field is read out of a file somebody else wrote."
         )
     return text

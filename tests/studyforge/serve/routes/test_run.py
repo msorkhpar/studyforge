@@ -66,7 +66,7 @@ def settle(condition, within: float = 15.0) -> bool:
     return False
 
 
-# --- registration (W230) ----------------------------------------------------
+# --- registration ----------------------------------------------------
 
 
 def test_instance_of_registers_run_as_the_one_writer_and_it_runs(root):
@@ -272,7 +272,7 @@ def test_anything_but_a_declared_practice_and_mode_starts_nothing(root, path, st
 
 
 class RunOnly:
-    """The corpus's own documents, except unit 1's workspace names no test (`W357`'s shape)."""
+    """The corpus's own documents, except unit 1's workspace names no test (a file with no test)."""
 
     def __init__(self, source):
         self.source = source
@@ -299,7 +299,7 @@ class RunOnly:
 
 
 def test_a_workspace_that_names_no_test_offers_run_and_refuses_submit(root):
-    # ⭐ `W357`: a file with no test carries `main_path` and `run_command` alone. Taken
+    # ⭐ A file with no test carries `main_path` and `run_command` alone. Taken
     # through a stand-in source because this base's archive reader refuses that record;
     # the route reads the generated document either way.
     spy = Spy()
@@ -315,7 +315,7 @@ def test_a_workspace_that_names_no_test_offers_run_and_refuses_submit(root):
 
 
 def test_run_on_the_file_with_no_test_follows_whether_its_record_names_a_command(root):
-    # ⭐ Holds on both shapes of unit 3: no workspace at all (before `W357`), or a
+    # ⭐ Holds on both shapes of unit 3: no workspace at all (before), or a
     # workspace naming only its run command (after) — Run starts exactly when it does.
     spy = Spy()
     runs, discovered = runs_over(root, runner=spy)
@@ -391,7 +391,7 @@ def test_the_index_names_the_modes_and_the_endpoints_and_a_post_to_it_is_405(roo
     assert posted[0] == 405
 
 
-# --- where a running editor is (`W416`) -------------------------------------
+# --- where a running editor is -------------------------------------
 
 #: An editor that is up. ⚠️ The folder is a made-up container path: the probe
 #: reads the real one back out of the container and never composes one.
@@ -427,20 +427,20 @@ def test_one_probe_is_kept_per_corpus_so_a_page_does_not_fork_docker_per_fetch(r
         fetch(server, "/api/v1/run/")
         fetch(server, "/api/v1/run/")
     # ⭐ ONE probe, KEPT — that is the whole economy, because a fork happens
-    # inside a probe and its TTL bounds how often. ⛔ **Still two after `W427`**:
-    # the frame policy READS this probe and never asks it (`W427`), so composing
+    # inside a probe and its TTL bounds how often. ⛔ **Still two with a frame policy**:
+    # the frame policy READS this probe and never asks it, so composing
     # a policy on every response adds no fork at all.
     assert len(editors.made) == 1 and editors.made[0].asked == 2
 
 
 def test_the_response_that_publishes_an_editor_also_admits_framing_it(root):
-    # ⛔ **`W427`, and `W416/2` is why it is asserted on ONE response.** Framing is
+    # ⛔ **Asserted on ONE response, because framing has two halves.** Framing is
     # two-sided: the index may say where the editor is while this server's own
     # `frame-src` forbids embedding it, which is exactly what shipped.
     live, discovered = runs_over(root, editor=StubEditors(UP))
     with serving(live, discovered) as server:
         # ⭐ The index ASKS, so this one response both learns the editor and is
-        # served under the policy that ask composed (`W427`).
+        # served under the policy that ask composed.
         _, headers, raw = fetch(server, "/api/v1/run/")
     published = json.loads(raw)[run.EDITOR]
     policy = dict(item.split(" ", 1) for item in headers["content-security-policy"].split("; "))
@@ -451,7 +451,7 @@ def test_the_response_that_publishes_an_editor_also_admits_framing_it(root):
 
 
 def test_composing_a_frame_policy_reads_the_probe_and_never_asks_it(root):
-    # ⛔ **Spec §8.3** (`W427`): `origins()` is on the path of EVERY response, so a
+    # ⛔ **Spec §8.3**: `origins()` is on the path of EVERY response, so a
     # version that asked would fork `docker` to render a static page. The host arm
     # in `tests/studyforge/cli/test_serve_process.py` is what measures this on a
     # real process against a decoy socket; this is its unit-level twin.
@@ -471,7 +471,7 @@ def test_the_probe_an_instance_makes_asks_docker_about_the_compose_container(roo
     assert probe.source_root == corpus.root
 
 
-# --- one practice's two windows (`W429`) ------------------------------------
+# --- one practice's two windows ------------------------------------
 
 
 def settings_in(root) -> Path:
@@ -488,7 +488,7 @@ def ask_editor(root, unit=1, editor=None, path=None):
 
 
 def test_the_index_says_how_to_address_one_practices_files_and_not_only_a_folder(root):
-    # ⭐ `W416` published `{origin, folder}` and a folder cannot say which of two
+    # ⭐ `{origin, folder}` alone cannot say which of two
     # windows shows which file. ⛔ The template is the route's own spelling,
     # composed from the namespace and the word — never retyped.
     published = index_of(root)["practice_editor"]
@@ -502,9 +502,9 @@ def test_a_practice_answers_a_url_for_each_of_its_two_windows(root):
     assert status == 200
     main, test = answered["main"], answered["test"]
     # ⭐ The WHOLE document, so a key that appeared or vanished is red here.
-    # ⚠️ Compared as a document rather than key by key because `W109` holds
-    # `origin` to one reader across `src/` and `tests/`, and a subscript of it
-    # would be a second one (`AX-05` resolved the same clash the same way).
+    # ⚠️ Compared as a document rather than key by key because `origin` has
+    # one reader across `src/` and `tests/`, and a subscript of it would be a
+    # second one.
     assert answered == {
         "api": API_VERSION,
         "resource": "run-editor",
@@ -567,7 +567,7 @@ def test_a_settings_file_this_framework_did_not_write_is_a_409_and_is_left_alone
 
 def test_a_practice_with_no_file_to_open_is_a_409_and_no_window(root):
     # ⛔ A quiz carries questions in place of a workspace: no file, no window,
-    # no Run and no Submit (`AX-05`). ⭐ Read here as the shape it is — a
+    # no Run and no Submit. ⭐ Read here as the shape it is — a
     # workspace naming no `main_path` — because that is what the route sees.
     live, discovered = runs_over(root, editor=StubEditors(UP))
     answered = run.editor(live, discovered.corpora[0], {"run_command": ["true"]})

@@ -13,7 +13,7 @@ and never re-derives placement.
 **Depends on.** `corpus.placement` for the generated root, and the standard
 library. ⛔ Never `record` or `incremental`: both import this, one way.
 
-## ⛔ Why the record carries a directory (`W226`, `W218/1`)
+## ⛔ Why the record carries a directory
 
 ⚠️ **A unit's audio directory is placement's answer to declarations that can
 change** — ordinal, title, origin, label. A record that kept only a filename

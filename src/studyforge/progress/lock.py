@@ -13,8 +13,8 @@ is the caller; nothing else in the framework should need to be.
 ## ⛔ Why not `threading.Lock`, which the extraction source used
 
 It protects nothing against a second **process**. That was safe there because
-one server owned the file; here `SK-06` merges progress from outside the
-server and a build may run while a site is served (E05, SF-21).
+one server owned the file; here the personal archive merges progress from outside
+the server and a build may run while a site is served (§8.5).
 
 ## ⭐ What it guarantees, and where
 

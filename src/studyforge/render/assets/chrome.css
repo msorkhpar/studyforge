@@ -271,8 +271,8 @@ span[data-kind="read-state"] {
 
 /* --- the rail beside the column ------------------------------------------ */
 
-/* ⛔ THE USER'S WORDS: a left bar, flush to the window's edge, fixed while the
-   page scrolls. ⭐ Three rules of CSS over the same bytes, asked for by the
+/* ⛔ A left bar, flush to the window's edge, fixed while the page scrolls.
+   ⭐ Three rules of CSS over the same bytes, asked for by the
    page that HAS the region (`:has()`), so the root index gets no empty track.
    The reading column is what is left of the viewport (`1fr`), and the prose
    inside it keeps `--measure` (`reading.css`).
@@ -295,32 +295,23 @@ span[data-kind="read-state"] {
    is back in the one column above the content. The block is the page's own
    aside: it is sticky and scrolls itself, as the rail does.
 
-   ⛔ ONE SHAPE THAT WORKS ON EVERY DISPLAY. ⚠️ The user has
-   now read three of them. A shell ceilinged at `110rem` WITH `margin-left: 0`
-   was pinned left and left a dead band down the right of their window —
-   *"the paragraph texts are not using the full width"*. Releasing the ceiling
-   answered that and opened the other failure: the three tracks grew with the
-   screen and the reading column ran away from the prose inside it —
-   *"the width is too wide. Find a common ground for different displays. maybe
-   if the display is too big having the menu and content in the middle by
-   forcing a max width or something."*
+   ⛔ ONE SHAPE THAT WORKS ON EVERY DISPLAY. A shell pinned left leaves a dead
+   band down the right of a wide window, and an unbounded one grows the reading
+   column away from the prose inside it.
 
    ⭐ SO THE SHELL IS BOUNDED AND CENTRED, WHICH IS ONE SHAPE AND NOT TWO.
    `max-width: var(--page-max)` with `margin-inline: auto`: below the ceiling
-   the margins resolve to nothing and the page fills the window exactly as the
-   released shape did, and above it the same declaration holds the shell at the
+   the margins resolve to nothing and the page fills the window, and above it the same declaration holds the shell at the
    ceiling with EQUAL margins either side. ⛔ There is no width at which one
    side has room the other does not — which is what a dead band IS — and the
    rail, the reading column and the outline are all inside the shell, so the
    reader's menu centres with the reading rather than clinging to the glass.
 
-   ⛔ THE CEILING IS BACK ON THE SHELL AND THE BOUND ON `> main` IS GONE, which
-   is a removal rather than an oversight: with the shell held at `--page-max`
-   the surface can never reach it, so a second declaration of the same token
-   would be a ceiling that never bites and a reader would have two places to
-   look. ⭐ The token's argument — why `110rem` and not `100` or `120` — is in
-   `palette.css` beside the declaration, measured from the first corpus's own
-   code blocks.
+   ⛔ THE CEILING IS ON THE SHELL AND `> main` CARRIES NO BOUND: with the shell
+   held at `--page-max` the surface can never reach it, so a second declaration
+   of the same token would be a ceiling that never bites and a reader would have
+   two places to look. ⭐ The token's argument — why `110rem` and not `100` or
+   `120` — is in `palette.css` beside the declaration.
 
    ⚠️ THE INSET IS WRITTEN OUT RATHER THAN LEFT TO `auto`, AND THIS IS WHY.
    `margin-inline: auto` would centre the shell and say nothing a second rule

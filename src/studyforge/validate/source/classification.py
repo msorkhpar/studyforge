@@ -2,7 +2,7 @@ r"""What the corpus says each of its files is — material, output, or nothing.
 
 **What it does.** Refuses a file the manifest classifies as neither included
 nor excluded, one it classifies as both, and one it INCLUDES that no unit's
-origin names (`W266`).
+origin names.
 
 **How you use it.** `check_unclassified(walk)`, yielding `Finding`s and
 `Unchecked`s like every other check. What it judges is `enumeration`'s
@@ -63,11 +63,11 @@ RULE_CONTESTED = "contested"
 RULE_IGNORE_DECLARATION = "ignore-declaration"
 
 #: ⛔ A repository's store nested inside the corpus — a vendored repository or
-#: a submodule checkout — refused by name, never skipped and never scanned
-#: (`W259`). Its own rule id, because the fix is not a `content` pattern.
+#: a submodule checkout — refused by name, never skipped and never scanned.
+#: Its own rule id, because the fix is not a `content` pattern.
 RULE_NESTED_REPOSITORY = "nested-repository"
 
-#: ⛔ `W266`: a file the manifest INCLUDES that no UNIT's `origin` names, so no unit reads it —
+#: ⛔ A file the manifest INCLUDES that no UNIT's `origin` names, so no unit reads it —
 #: an aggregate un-excluded, or a stray. ⚠️ A container's `origin` PLACES its page and reads
 #: nothing. Judged over this scan only, while a unit origin is on disk (`origin-missing`).
 RULE_INCLUDED_UNREAD = "included-unread"
@@ -181,7 +181,7 @@ def _read_by_origins(walk: Walk) -> frozenset[Path]:
     Empty when no named file is on disk (`origin-missing`'s answer) or a map did not parse.
     """
     maps = [held.container for held in walk.containers]
-    # ⭐ **Both origins** (`W428`): a unit's practice may be read from a file of
+    # ⭐ **Both origins**: a unit's practice may be read from a file of
     # its own, and that file is read by that unit exactly as its prose file is.
     named = {walk.root / u.origin for c in maps for u in c.units if u.origin}
     named |= {walk.root / u.practice_origin for c in maps for u in c.units if u.practice_origin}

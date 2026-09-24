@@ -43,7 +43,7 @@ from tests.studyforge.skills.buildserve.running import (
 
 SERVED = ["step validate exit 0", "step build exit 0", "step serve exit 0"]
 
-#: ⭐ `W381`: what the skill prints for an exercised corpus, by what the probe answers.
+#: ⭐ What the skill prints for an exercised corpus, by what the probe answers.
 #: ⛔ `host` is a state of the SERVED SITE, so it is expected beside the narration state.
 BY_MODE = [(HOST, ["narration", "host"]), (CONTAINER, ["narration"])]
 
@@ -106,8 +106,8 @@ def test_no_exercises_and_no_narration_is_a_valid_site_and_both_states_are_repor
 def test_an_exercised_corpus_is_served_with_execution_and_says_where_a_run_executes(
     name, mode, expected, tmp_path, monkeypatch
 ):
-    # ⭐ `W371`, closing `SF-22/2`: the skill serves `--site`, which now registers `run`.
-    # ⭐ `W381`'s ruling (a), both ways: execution is offered either way, so what the
+    # ⭐ The skill serves `--site`, which registers `run`.
+    # ⭐ Both ways: execution is offered either way, so what the
     # skill prints follows the probe alone — `host` on a `HOST` answer, and nothing on
     # a `CONTAINER` one, because a run inside the runner is short of nothing.
     probe = Answering(mode)
@@ -123,11 +123,11 @@ def test_an_exercised_corpus_is_served_with_execution_and_says_where_a_run_execu
 
 @pytest.mark.parametrize("name", EXERCISED)
 def test_exercises_served_with_no_execution_report_no_exercise_state(name, tmp_path, monkeypatch):
-    # ⛔ The other way: the state follows what the serving process OFFERS. `W381`'s
-    # ruling (b) retired `toolchain` — no served form can lack the `run` namespace — so
+    # ⛔ The other way: the state follows what the serving process OFFERS. There is
+    # no `toolchain` state — no served form can lack the `run` namespace — so
     # a serve that registers none prints NO exercise state, and still serves the floor.
     # ⛔ And where a run would execute is moot when none can, so the probe is not asked.
-    # ⭐ `W386`: planted through the verb's named seam, and the plant must be REACHED.
+    # ⭐ Planted through the verb's named seam, and the plant must be REACHED.
     offered = []
     probe = Answering(HOST)
     monkeypatch.setattr(serve_verb, "site_namespaces", lambda *given: offered.append(given) or {})
@@ -143,15 +143,15 @@ def test_exercises_served_with_no_execution_report_no_exercise_state(name, tmp_p
 
 
 def test_the_seam_is_named_for_what_it_returns_and_the_private_name_is_gone():
-    # ⭐ `W386`, closing `W380/1`: the seam returns `state` as well as `run`, so it is
-    # named for the namespaces, and a plant at the old private name binds nothing.
+    # ⭐ The seam returns `state` as well as `run`, so it is named for the
+    # namespaces, and a plant at a private `_execution` name binds nothing.
     assert callable(serve_verb.site_namespaces)
     assert not hasattr(serve_verb, "_execution")
 
 
 def test_a_site_the_skill_serves_answers_run_and_submit(tmp_path):
-    # ⭐ The row's clause end to end: the runnable corpus, through the skill, in host mode.
-    # ⭐ `W381`: the one reading taken with `execute`'s OWN probe and no plant. No runner
+    # ⭐ End to end: the runnable corpus, through the skill, in host mode.
+    # ⭐ The one reading taken with `execute`'s OWN probe and no plant. No runner
     # container is mounted over a corpus this test copied under `tmp_path`, so the run
     # below really does execute here — and the skill says so.
     root = fixture_copy(tmp_path)
@@ -218,7 +218,7 @@ def test_running_it_again_over_its_own_site_serves_again(tmp_path):
 
 
 def test_a_corpus_whose_clips_say_old_words_stops_at_validate_when_not_narrating(tmp_path):
-    # ⭐ `W457`: the stale clip is a RED `validate`, so the skill builds nothing quietly.
+    # ⭐ The stale clip is a RED `validate`, so the skill builds nothing quietly.
     root = narrated(tmp_path)
     edit_one_paragraph(root)
     out = directory(tmp_path)
@@ -230,7 +230,7 @@ def test_a_corpus_whose_clips_say_old_words_stops_at_validate_when_not_narrating
 
 
 def test_asked_to_narrate_the_skill_re_makes_the_stale_clip_rather_than_stopping(tmp_path):
-    # ⛔ `W457`: validating with narration on would stop the one run that fixes it.
+    # ⛔ Validating with narration on would stop the one run that fixes it.
     root = narrated(tmp_path)
     edited = edit_one_paragraph(root)
     with narration_service() as (url, fake):

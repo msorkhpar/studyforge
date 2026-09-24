@@ -1,13 +1,13 @@
-"""Building a corpus on disk, so a check can be shown to bite (SF-25).
+"""Building a corpus on disk, so a check can be shown to bite.
 
-⭐ **FND-04's fixtures are archive-only**, and the two checks that read the
+⭐ **the fixture corpora's fixtures are archive-only**, and the two checks that read the
 material need material. Rather than teach `tests/fixture_checks/` about source
 files — its "exactly one rule" invariant is defined over the checks *that*
 package knows, so a corpus violating a rule only `validate` can see cannot live
 in `tests/fixtures/invalid/` — these corpora are built in a temporary tree by
 the tests that need them.
 
-⛔ Nothing here is a fixture in the FND-04 sense: they are inputs to negative
+⛔ Nothing here is a fixture in the fixture corpora sense: they are inputs to negative
 controls, and each one exists to make a named check fail.
 """
 
@@ -66,7 +66,7 @@ def unit_entry(n, *, practices=0, origin=None, title="Unit", practice_origin=Non
         entry["origin"] = origin
     if practice_origin is not None:
         # ⚠️ A unit whose practice comes from a file of its own needs
-        # `container_api` 3 (`W428`), exactly as a region needs 2.
+        # `container_api` 3, exactly as a region needs 2.
         entry["practice_origin"] = practice_origin
     return entry
 
@@ -151,7 +151,7 @@ def practised(
     declare_practice_origin=True,
     write_practice_document=True,
 ) -> Path:
-    """One unit whose lesson and practice come from two files (`W428`).
+    """One unit whose lesson and practice come from two files.
 
     ⛔ The four switches are what the negative controls need: a practice whose
     origin is **not** declared, a practice document that is **not** written,
@@ -266,7 +266,7 @@ def _lesson(address, n, title):
 
 
 def mirrored(root: Path) -> Path:
-    """Two containers whose units share ordinals and titles, every origin in `src/` (`W254`)."""
+    """Two containers whose units share ordinals and titles, every origin in `src/`."""
     manifest = {**MANIFEST, "placement": "sibling"}
     containers, documents = {}, {}
     for letter, segment in (("a", "first"), ("b", "second")):
@@ -287,7 +287,7 @@ def mirrored(root: Path) -> Path:
 def repeated_label(root: Path) -> Path:
     """One container whose two units record one label and one title, in one directory.
 
-    ⛔ The one collision a unit's container cannot separate under `sibling` (`W254`):
+    ⛔ The one collision a unit's container cannot separate under `sibling`:
     both units are named `first.1-shared`, so `validate`, `plan` and a build refuse it.
     """
     manifest = {**MANIFEST, "placement": "sibling"}

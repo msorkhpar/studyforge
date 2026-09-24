@@ -29,7 +29,7 @@ inside it.
 ## ⛔ Two populations, and the second is asserted as a SUBSET
 
 ⚠️ **A census derived from what the tree EMITS is blind to what the tree can
-AUTHOR but does not yet emit** (Ruling 192). A stylesheet part that no bundle
+AUTHOR but does not yet emit**. A stylesheet part that no bundle
 includes, or a template no renderer fills, carries its control byte invisibly
 until the day something starts emitting it — and that day is the day nobody is
 looking. ⭐ So `authorable()` is collected too, from the framework's **own**

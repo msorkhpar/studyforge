@@ -1,14 +1,14 @@
-"""`W333` in a real browser: the index and a unit page start in the same place.
+"""The index and a unit page start in the same place, in a real browser.
 
-⛔ **THE ROW IS A CROSSING, AND THAT IS WHY IT NEEDS TWO PAGES AT ONE VIEWPORT.**
+⛔ **THE SUBJECT IS A CROSSING, AND THAT IS WHY IT NEEDS TWO PAGES AT ONE VIEWPORT.**
 Every clause the package already carries reads ONE page — the rail's edge, the
 rail's scroll, the column's share, the row the masthead sizes. ⭐ **The defect
 here is invisible to all of them, because each of the two pages is defensible
-alone:** `W328` made the page WITH a rail flush left and wide, and the page
-WITHOUT one — the root index, whose own body IS the tree — kept the centred,
-measure-derived cap the column section declares. ⛔ **A reader clicking a unit
-out of the index saw the whole page slide to the left edge and widen, and the
-wider they had opened the window the further it slid.**
+alone:** a page WITH a rail flush left and wide beside a page WITHOUT one — the
+root index, whose own body IS the tree — under the centred, measure-derived cap
+the column section declares. ⛔ **A reader clicking a unit out of such an index
+sees the whole page slide to the left edge and widen, and the wider the window
+the further it slides.**
 
 ## ⛔ Which box each reading measured is named in the reading itself
 
@@ -33,16 +33,16 @@ produced it.
 jump in where the content starts"*, and it is asserted as a **comparison between
 two real pages of one built site at one viewport** — and, for the half that says
 it is a shape rather than a coincidence of one width, as the same comparison
-repeated at three. ⛔ No layout figure is written down here. ⚠️ **Since `W388`
-stage 4 the shell is CENTRED above a ceiling**, so a clause that read one page
-against ITSELF at two widths would now be asserting that the page never moves —
-which is a different row's claim and one this row's own title never made.
+repeated at three. ⛔ No layout figure is written down here. ⚠️ **The shell is
+CENTRED above a ceiling**, so a clause that read one page against ITSELF at two
+widths would be asserting that the page never moves — which is not this
+module's claim.
 
-## ⛔ Asserted the other way, on the shape that shipped
+## ⛔ Asserted the other way, on the shape without the rule
 
-⚠️ A control that has only ever seen the repaired stylesheet has not been shown
+⚠️ A control that has only ever seen the correct stylesheet has not been shown
 to notice the defect it exists for. ⭐ A second tree is built with
-this row's one rule cut back out of its own generated stylesheet; the settling
+the one rule cut back out of its own generated stylesheet; the settling
 clauses are asserted to FAIL on it, and the narrow readings are asserted to be
 IDENTICAL on it — which is how *"the narrow page is unchanged"* is measured
 rather than promised.
@@ -63,11 +63,12 @@ from tests.visual.page import NARROW, WIDE, OpenPage
 
 #: The fixture corpus this module builds. ⛔ More than one container, because the
 #: rail is absent below two and the site would then have only one page kind —
-#: which is a corpus this row cannot be exhibited on at all.
+#: which is a corpus the crossing cannot be exhibited on at all.
 CORPUS = "depth2"
 
-#: The fixture corpus whose pages carry NO rail. ⛔ Since `W388` the root index
-#: carries one too, so the page kind this row's second half is about — a page the
+#: The fixture corpus whose pages carry NO rail. ⛔ The root index of a corpus
+#: with two containers carries one too, so the page kind this module's second
+#: half is about — a page the
 #: wide shape does not lay out as a grid — is only produced by a corpus with ONE
 #: container, where the rail is below `RAIL_MINIMUM` and no page has it.
 RAILLESS_CORPUS = "depth1"
@@ -86,9 +87,9 @@ TOUCHING = 0.5
 #: wide reading would have been the weakest point on the curve.
 WIDER = (2560, WIDE[1])
 
-#: This row's whole product change, as it stands in the generated stylesheet.
+#: The rule under test, as it stands in the generated stylesheet.
 #: ⛔ The control cuts exactly this out of a BUILT tree, so what the clauses are
-#: refuted against is the layout that actually shipped.
+#: refuted against is the layout without it.
 SHIPPED_WITHOUT = (
     '  body:not(:has(nav[aria-label="Containers"])) {\n'
     "    margin-left: max(0px, (100% - var(--page-max)) / 2);\n  }\n\n",
@@ -122,7 +123,7 @@ GEOMETRY = """
 class Crossing:
     """Two built sites: the pages a reader crosses between, and a page with no rail.
 
-    ⚠️ `railless` is a page of a ONE-container corpus (`W388`): a build of this
+    ⚠️ `railless` is a page of a ONE-container corpus: a build of this
     module's own corpus now gives every page kind a rail, including the index,
     so the railless shape has to be exhibited on a corpus that has no crossing
     to offer rather than on the index.
@@ -143,12 +144,11 @@ class Crossing:
 def _build(root: Path) -> Crossing:
     """Build the committed fixture corpus the way a build builds it.
 
-    ⛔ **`write_site` and not the page fixtures.** The two kinds this row is
+    ⛔ **`write_site` and not the page fixtures.** The two kinds this module is
     about are told apart by whether the renderer was handed a rail, and only a
-    real build decides that — measured: the harness's own
-    container fixtures render WITHOUT one while a build gives every container
-    page a rail, so a tree assembled from them would have disagreed with the site
-    a reader opens about which pages this row even touches.
+    real build decides that: the harness's own container fixtures render
+    WITHOUT one while a build gives every container page a rail, so a tree
+    assembled from them would disagree with the site a reader opens.
 
     ⚠️ The corpus is copied before it is read, so nothing is written into the
     repository's own fixtures by a test run.
@@ -185,11 +185,11 @@ def _build(root: Path) -> Crossing:
 
 
 def _revert(built: Crossing) -> None:
-    """Cut this row's one rule back out of both built trees' own stylesheets.
+    """Cut the one rule back out of both built trees' own stylesheets.
 
-    ⚠️ Both, since `W388`: the control compares the railless corpus's page with
-    this corpus's unit page, and a rule cut out of one tree only would be a
-    comparison between the shape that shipped and the shape that did not.
+    ⚠️ Both: the control compares the railless corpus's page with this
+    corpus's unit page, and a rule cut out of one tree only would compare the
+    shape with the rule against the shape without it.
     """
     for root in (built.root, built.railless_root):
         sheets = [
@@ -197,7 +197,7 @@ def _revert(built: Crossing) -> None:
             for sheet in sorted(root.rglob("*.css"))
             if SHIPPED_WITHOUT[0] in sheet.read_text(encoding="utf-8")
         ]
-        assert len(sheets) == 1, f"{len(sheets)} built stylesheets carry this row's rule, not one"
+        assert len(sheets) == 1, f"{len(sheets)} built stylesheets carry the rule, not one"
         written = sheets[0].read_text(encoding="utf-8")
         assert written.count(SHIPPED_WITHOUT[0]) == 1, "the rule is written more than once"
         sheets[0].write_text(written.replace(*SHIPPED_WITHOUT), encoding="utf-8")
@@ -211,7 +211,7 @@ def crossing(tmp_path_factory: pytest.TempPathFactory) -> Crossing:
 
 @pytest.fixture(scope="session")
 def as_shipped(tmp_path_factory: pytest.TempPathFactory) -> Crossing:
-    """The same site with this row's rule removed — the defect itself."""
+    """The same site with the rule removed — the defect itself."""
     built = _build(tmp_path_factory.mktemp("visual-page-start-shipped"))
     _revert(built)
     return built
@@ -235,7 +235,7 @@ def layout(open_page: OpenPage) -> Iterator[object]:
 def test_the_two_page_kinds_this_row_is_about_are_both_in_the_built_tree(
     layout, crossing: Crossing
 ) -> None:
-    """⛔ A fixture too small to exhibit the defect is how `W326` shipped.
+    """⛔ A fixture too small to exhibit the defect passes over it.
 
     ⭐ What makes this one big enough is not a unit count: it is that the build
     emits BOTH shapes — a page the wide rule lays out as a grid beside a rail,
@@ -254,11 +254,11 @@ def test_the_two_page_kinds_this_row_is_about_are_both_in_the_built_tree(
     )
     assert unit["body computed display"] == "grid", (
         "the unit page is not in the two-column shape at the wide width, so the "
-        f"rule this row sits beside is not in force: {unit['body computed display']}"
+        f"rule this module sits beside is not in force: {unit['body computed display']}"
     )
     assert index["rail border box"] is not None, (
         "the root index of a corpus with two containers carries no rail, which "
-        "`W388` says it must: the reader's left menu is gone from the first page"
+        "it must: the reader's left menu is gone from the first page"
     )
     assert alone["rail border box"] is None, (
         "the one-container corpus's page carries a rail, so this tree holds no "
@@ -280,12 +280,12 @@ def test_a_container_page_carries_the_rail_so_the_index_is_the_page_this_row_mov
     without one. ⛔ That is asserted here because the visual package's own
     container fixtures render without a rail, and a reader of this
     module would otherwise have two incompatible answers to *which pages does
-    this row move*.
+    the rule move*.
     """
     container = layout(crossing.container, WIDE)
 
     assert container["rail border box"] is not None, (
-        "a built container page carries no rail, so this row moves more page "
+        "a built container page carries no rail, so the rule moves more page "
         "kinds than the index and its clauses are measured on the wrong pair"
     )
 
@@ -314,7 +314,7 @@ def test_the_computed_left_margin_is_the_same_on_both_page_kinds(
 
 
 def test_the_index_and_a_unit_page_start_in_the_same_place(layout, crossing: Crossing) -> None:
-    """⛔ The row, as a comparison between two real pages at one viewport.
+    """⛔ The crossing, as a comparison between two real pages at one viewport.
 
     ⭐ **`body`'s border box left edge**, on the page a reader leaves and the page
     they arrive at. ⚠️ Never against a number typed here: a site that moved both
@@ -360,21 +360,16 @@ def test_the_page_with_no_rail_starts_where_the_page_with_one_starts_at_every_wi
 ) -> None:
     """⛔ The same comparison as above, at three widths instead of one.
 
-    ⭐ This is the half that says the repair is a shape rather than a coincidence
-    of one viewport: before this row the index's left edge was a function of the
-    viewport while a unit page's was not, so a reader who widened their window
-    watched one of the two page kinds walk away from the other.
+    ⭐ This is the half that says the layout is a shape rather than a coincidence
+    of one viewport: an index whose left edge is a function of the viewport
+    while a unit page's is not walks away from the unit page as a reader widens
+    the window.
 
-    ⛔ **`W388` STAGE 4 RESTATED THIS CLAUSE AND THE RESTATEMENT IS STRICTLY
-    STRONGER.** It read *"the page with no rail does not MOVE when the window
-    widens"*, compared with itself — which was a PROXY for the row's real clause
-    and was only ever equivalent to it while the page with a rail was pinned to
-    the window's left edge. ⚠️ The shell is bounded and centred now, on the
-    user's instruction (*"if the display is too big having the menu and content
-    in the middle"*), so above the ceiling BOTH kinds move — together, which is
-    the thing this row is about. ⭐ Compared with the other page kind at each
-    width, the clause says what its own title says and cannot be satisfied by a
-    page that simply never moves.
+    ⛔ **Compared with the other page kind, never with itself.** The shell is
+    bounded and centred, so above the ceiling BOTH kinds move — together, which
+    is the property. ⭐ Compared with the other page kind at each width, the
+    clause says what its own title says and cannot be satisfied by a page that
+    simply never moves.
     """
     for name, width in (("the narrow width", NARROW), ("the wide width", WIDE), ("wider", WIDER)):
         railless = layout(crossing.railless, width)
@@ -420,13 +415,13 @@ def test_the_content_of_the_page_with_no_rail_starts_where_it_always_did(
 def test_the_page_with_no_rail_reserves_no_track_for_the_rail_it_does_not_carry(
     layout, crossing: Crossing
 ) -> None:
-    """⛔ The shape this row refused, asserted rather than left in prose.
+    """⛔ The shape this layout refuses, asserted rather than left in prose.
 
     ⚠️ Lining the index's masthead up with a unit page's would have meant giving
     the index the rail's empty column — which `chrome.css`'s `:has()` condition
     exists to prevent, and which would make the index's own content jump by a
-    rail's width as the reader widened the window: this row's defect moved from
-    the click to the resize. ⭐ The computed `display` and the computed gutter are
+    rail's width as the reader widened the window: the defect moved from the
+    click to the resize. ⭐ The computed `display` and the computed gutter are
     both read, because the track and the inset are two different ways to get it.
     """
     wide = layout(crossing.railless, WIDE)
@@ -441,13 +436,13 @@ def test_the_page_with_no_rail_reserves_no_track_for_the_rail_it_does_not_carry(
     )
 
 
-# --- the negative control: the clauses go red on the shape that shipped -----
+# --- the negative control: the clauses go red without the rule -------------
 
 
 def test_the_settling_clause_fails_on_the_shape_that_shipped(layout, as_shipped: Crossing) -> None:
-    """⛔ The control, and it is this row's ACTUAL defect rather than an impression.
+    """⛔ The control, and it is the ACTUAL defect rather than an impression.
 
-    ⭐ The same build with this row's one rule cut out of its generated
+    ⭐ The same build with the one rule cut out of its generated
     stylesheet: the two page kinds must then disagree about where the page starts,
     at BOTH wide widths, and the disagreement must be larger at the wider one —
     which is the property that made this a layout that moves rather than an offset
@@ -460,12 +455,12 @@ def test_the_settling_clause_fails_on_the_shape_that_shipped(layout, as_shipped:
         gaps.append(alone["body border box"]["left"] - unit["body border box"]["left"])
 
     assert all(gap > TOUCHING for gap in gaps), (
-        "the two page kinds already agree without this row's rule, so the "
+        "the two page kinds already agree without the rule, so the "
         f"control is not the defect this module exists for: {gaps}"
     )
     assert gaps[1] > gaps[0], (
         "the disagreement does not grow with the window on the shape that "
-        f"shipped, so the control is not the layout this row was opened over: {gaps}"
+        f"shipped, so the control is not the defect's layout: {gaps}"
     )
 
 
@@ -476,7 +471,7 @@ def test_the_narrow_page_is_the_same_layout_it_was_before_this_row(
 
     ⚠️ *"Below the threshold there is only one shape, and that must STAY true; a
     fix that changes the narrow page has broken something."* ⭐ So the narrow
-    readings are taken on BOTH trees — the one this row ships and the one with its
+    readings are taken on BOTH trees — the built one and the one with the
     rule cut out — and asserted identical, on both page kinds. A rule that had
     leaked out of the threshold reds here.
     """

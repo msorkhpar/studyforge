@@ -1,16 +1,17 @@
-"""`W417` — the practice panel read with a keyboard, in a browser, on a SERVED origin.
+"""The practice panel read with a keyboard, in a browser, on a SERVED origin.
 
-⛔ **The reading `SF-24` could not take, and said so** (`SF-24/5`). That row
-asserted the panel's STRUCTURE — real `<button>`s, `type="button"`, `tabindex`
-on the scrolling output, a `role="status"` live region, and a focus handoff
-argued in `practice.js` — and could assert nothing about its BEHAVIOUR, because
-the controls exist only where `window.studyforge.run.available()` is true and
-the whole harness opened `file://`. ⭐ `served.py` is the origin; this module is
+⛔ **A reading of BEHAVIOUR, which a reading of the markup cannot take.** The
+renderer's tests assert the panel's STRUCTURE — real `<button>`s,
+`type="button"`, `tabindex` on the scrolling output, a `role="status"` live
+region, and a focus handoff argued in `practice.js` — and nothing about how it
+behaves, because the controls exist only where
+`window.studyforge.run.available()` is true, which `file://` never is. ⭐ `served.py` is the origin;
+this module is
 the reading.
 
-⚠️ **`QA-02`'s acceptance is what makes this a precondition rather than a
-neighbour**: *"full keyboard traversal of a unit page, including the practice
-panel"*. A traversal that never sees Run, Submit, Stop or the output region has
+⚠️ **Full keyboard traversal of a unit page includes the practice panel**, so
+this is a precondition rather than a neighbour. A traversal that never sees Run, Submit, Stop or
+the output region has
 not traversed the panel — it has traversed the page the panel is hidden on.
 
 ⛔ **Every control is driven by a real key event**, never `element.click()`:
@@ -42,7 +43,7 @@ from tests.visual.page import SCHEMES, OpenPage
 #: The panel's region, spelled once. ⛔ `data-practice` and never `data-section`:
 #: `templates/section.html` carries a CORPUS's own key in `data-section` (R1), so
 #: a corpus with a section called `practice` would otherwise be read as the
-#: framework's panel (`SF-24`'s decision, and its *For dependents* hands it here).
+#: framework's panel.
 PANEL_SELECTOR = "section[data-practice]"
 
 #: How many presses a traversal of this page takes before giving up. ⚠️ Larger
@@ -202,7 +203,7 @@ def test_a_file_shows_the_offline_note_and_a_served_page_shows_the_controls(
     """⛔ Both origins, in one check, because each is the other's control.
 
     ⭐ Over `file://` the panel must show the offline note and NO buttons —
-    *that is the state, not a defect* (`SF-24/5`), and nothing is disabled
+    *that is the state, not a defect*, and nothing is disabled
     there either. ⛔ Over a served origin the same bytes must show Run and
     Submit and hide the note, or every clause below would be reading a page
     whose controls were never unhidden and would pass over an empty set.
@@ -233,7 +234,7 @@ def test_a_file_shows_the_offline_note_and_a_served_page_shows_the_controls(
 def test_every_control_the_panel_offers_is_reached_by_tab_in_document_order(
     open_page: OpenPage, origin: served.Served
 ) -> None:
-    """⭐ `W417` clause 2, the tab order: the panel is part of the page's focus ring."""
+    """⭐ The tab order: the panel is part of the page's focus ring."""
     open_page.open(origin.url(_case()))
     offered = _acts(_state(open_page))
     assert offered, "the panel offered nothing, so this traversal asserts nothing"
@@ -280,7 +281,7 @@ def test_a_page_whose_controls_are_out_of_the_focus_ring_fails_the_traversal(
 def test_pressing_run_with_the_keyboard_hands_focus_to_stop_and_hands_it_back(
     open_page: OpenPage, origin: served.Served
 ) -> None:
-    """⛔ `W417` clause 2, the focus handoff — the reading `practice.js` argued for.
+    """⛔ The focus handoff — the reading `practice.js` argues for.
 
     ⚠️ **The failure this catches is silent and specific.** A button that is
     disabled or hidden while it holds focus drops focus to the document, and a
@@ -337,15 +338,13 @@ def test_the_control_that_goes_away_takes_focus_with_it_out_of_the_panel(
     """⛔ The mechanism the two hand-backs above exist for, read rather than believed.
 
     ⭐ **This is the control under them.** `practice.js`'s own sentence is
-    *"focus follows the control that goes away"*, and until this reading that
-    was an argument in a comment: if a control that vanished left focus where
-    it was, both checks above would pass with no hand-back in the script at all.
+    *"focus follows the control that goes away"*, and without this reading that
+    is an argument in a comment: if a control that vanished left focus where it
+    was, both checks above would pass with no hand-back in the script at all.
 
-    ⛔ **HIDING and not disabling, and the difference was MEASURED rather than
-    chosen.** A first draft disabled the focused Stop, which drops focus to the
-    document on this host's engine and does NOT on the one the pinned image
-    carries — ⚠️ **so the check asserted a property of the BROWSER and read RED
-    in the one environment Ruling 40 makes authoritative.** ⭐ Hiding is what
+    ⛔ **HIDING and not disabling.** Disabling the focused Stop drops focus to
+    the document on some engines and not on others — ⚠️ **so a check built on
+    it would assert a property of the BROWSER.** ⭐ Hiding is what
     `live(false)` actually does to Stop when a run ends, and a hidden element is
     out of the focus flow in every engine.
     """
@@ -369,7 +368,7 @@ def test_the_control_that_goes_away_takes_focus_with_it_out_of_the_panel(
 def test_the_run_is_announced_in_a_live_region_that_never_takes_focus(
     open_page: OpenPage, origin: served.Served
 ) -> None:
-    """⛔ `W417` clause 2, the live region: what a screen reader is told, and what moves.
+    """⛔ The live region: what a screen reader is told, and what moves.
 
     ⭐ **An announcement is not a focus move**, and the two failures are
     opposite: a region that is not live says nothing at all, and a region that
@@ -429,8 +428,8 @@ def test_the_output_region_is_written_to_and_becomes_reachable_by_tab(
     # ⚠️ The wire's own last line is in the transcript too, because the client
     # hands EVERY line to `onLine` and reads the verdict off the last of them.
     # ⛔ Asserted as it is rather than as it might be preferred: this module
-    # reads the panel, and what the reader sees there is a finding for `QA-02`'s
-    # handoff, never a behaviour changed from a test.
+    # reads the panel, and what the reader sees there is never a behaviour
+    # changed from a test.
     assert served.EXIT_LINE.format(verdict="0") in after["output"]["text"]
     landed = [step["tag"] for step in open_page.trail(PRESSES)]
     assert "PRE" in landed, f"the output region is not in the focus ring after a run: {landed}"
@@ -443,7 +442,7 @@ def test_the_output_region_is_written_to_and_becomes_reachable_by_tab(
 def test_every_control_in_the_panel_shows_a_visible_focus_ring_in_both_themes(
     open_page: OpenPage, origin: served.Served, scheme: str
 ) -> None:
-    """⛔ `QA-02`: a focus ring that is invisible in dark is no ring — now on the panel too."""
+    """⛔ A focus ring that is invisible in dark is no ring — on the panel too."""
     open_page.open(origin.url(_case()), scheme=scheme)
     offered = _acts(_state(open_page))
     invisible = [
@@ -458,12 +457,11 @@ def test_every_control_in_the_panel_shows_a_visible_focus_ring_in_both_themes(
 def test_every_word_the_panel_paints_clears_aa_in_both_themes(
     open_page: OpenPage, origin: served.Served, scheme: str
 ) -> None:
-    """⛔ `QA-02`'s contrast clause over text no `file://` reading could see.
+    """⛔ The contrast clause over text no `file://` reading can see.
 
-    ⚠️ **The buttons' own words are the gap this closes.** They ship `hidden`,
-    `theme.text_elements` skips what is not painted, and so the panel's controls
-    contributed nothing to the element census — for every reading this harness
-    had ever taken.
+    ⚠️ **The buttons' own words are what this reads.** They ship `hidden`,
+    `theme.text_elements` skips what is not painted, and so over `file://` the
+    panel's controls contribute nothing to the element census.
     """
     open_page.open(origin.url(_case()), scheme=scheme)
     failures = []

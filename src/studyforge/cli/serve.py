@@ -4,8 +4,7 @@ r"""The `serve` verb: the CLI stage that starts what `studyforge.serve` built.
 corpus under the root it is given (`serve.discovery`), checks that each holds
 every page it declares, binds `serve.instance` on loopback and serves until it is
 stopped. Given `--site`, it serves that one built directory for the one corpus
-at the root instead — with state, Run and Submit, as the root form has them
-(`W371`, `W380`).
+at the root instead — with state, Run and Submit, as the root form has them.
 Serving the bytes is `studyforge.serve`'s; ⛔ this module is its caller and never
 a second author of it.
 
@@ -17,7 +16,7 @@ a second author of it.
     studyforge build <corpus-root> --out <directory>
     studyforge serve <corpus-root> --site <directory> [--port N]
 
-    studyforge serve <root> --no-narration                 # no voice (`W460`)
+    studyforge serve <root> --no-narration                 # no voice
 
 `main(argv) -> int` is the callable the dispatcher registers. Ctrl-C (or
 `SIGTERM`) stops it and exits `0`. ⚠️ `started=` hands the bound server to a
@@ -29,16 +28,16 @@ caller before serving begins, which is how a test stops the verb in-process.
 the corpus, `progress` for the store's one spelling, `validate` for the exit
 codes, and `argparse`. ⛔ Nothing here knows any source (R1).
 
-## ⭐ `--no-narration` serves the reading floor and edits no page (`W460`)
+## ⭐ `--no-narration` serves the reading floor and edits no page
 
-⭐ The user's ruling, 2026-09-23: narration is optional. A corpus is served
+⭐ Narration is optional. A corpus is served
 without it when `--no-narration` is given or its `corpus.json` says
 `narration: false`; `--narration` voices it over that answer. ⛔ The player is in a
 built page's bytes, so a site built WITH narration is refused, each page named,
 exactly as an unbuilt page is (exit `1`), and every clip under the served root is
 refused by path. `cli.unvoiced` holds all three answers and argues the choice.
 
-## ⛔ With no `--site`, NO CONFIGURED PATH (`W230`)
+## ⛔ With no `--site`, NO CONFIGURED PATH
 
 ⭐ **The root is the only input**: every `corpus.json` under it is a corpus, each
 is served from where it sits, and one instance answers them all — content, state
@@ -50,7 +49,7 @@ takes `--out` with no default, so a site can live outside its corpus, and only a
 named directory reaches that. It names one directory for one corpus and adds no
 mount beside the root's.
 
-## ⛔ `--site` answers state, Run and Submit (`W371`, `W380`)
+## ⛔ `--site` answers state, Run and Submit
 
 ⭐ **Both forms take their namespaces from ONE constructor,
 `serve.instance.namespaces_of`**, and their writers from its `WRITERS`: the
@@ -62,7 +61,7 @@ it is built (`serve.instance.site_discovery`); ⛔ nothing is written into the
 site, and no discovery cache is written into the corpus root. Tested in
 `tests/studyforge/cli/test_serve_site_run.py` and `test_serve_site_state.py`.
 ⭐ `site_namespaces` is where the verb takes them, and the one name a test
-replaces to serve a site that offers no execution (`W386`).
+replaces to serve a site that offers no execution.
 
 ## ⛔ The site is BUILT first, and it never needs this command
 
@@ -85,7 +84,7 @@ naming one, this module imports no Docker client and starts no process, and a
 socket the environment points at is never connected to — each asserted, in
 `tests/studyforge/cli/test_serve.py` and `test_serve_process.py`.
 
-⚠️ **`private=` names the reader's progress store** (`SF-21`) by its resolved
+⚠️ **`private=` names the reader's progress store** by its resolved
 path, so a `--site` that sits over the corpus's generated root still cannot
 serve the record, which the static mount's own prefix check reads relative to
 the site root and would not see.
@@ -246,7 +245,7 @@ def _serve_root(
     say: Callable[[str], None],
     started: Callable[[ServingServer], None] | None,
 ) -> int:
-    """Serve every corpus discovered under the root, with no configured path (`W230`)."""
+    """Serve every corpus discovered under the root, with no configured path."""
     if not Path(arguments.root).is_dir():
         say(f"{arguments.root}: not a directory")
         return UNUSABLE
@@ -333,10 +332,10 @@ def _unbuilt(corpus: object, site: Path) -> list[str]:
 def site_namespaces(discovered: Discovered, content: CorpusContent) -> dict:
     """Return the `--site` form's namespaces: the root form's constructor, over one corpus.
 
-    ⭐ `serve.instance.namespaces_of` builds them in both forms (`W380`) — `state`, and
+    ⭐ `serve.instance.namespaces_of` builds them in both forms — `state`, and
     `run` with the progress it records — and `WRITERS` names which of them write.
-    ⭐ **This is the verb's one NAMED SEAM for what a `--site` serve registers**
-    (`W386`, closing `W380/1`): the build-and-serve skill's test replaces it to serve
+    ⭐ **This is the verb's one NAMED SEAM for what a `--site` serve registers**:
+    the build-and-serve skill's test replaces it to serve
     a site with no execution, and the verb registers as writers only the members of
     `WRITERS` it returned.
     """

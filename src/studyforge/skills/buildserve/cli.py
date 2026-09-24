@@ -1,7 +1,7 @@
 """The skill's command line: the arguments `python3 -m studyforge.skills.buildserve` takes.
 
 **What it does.** Parses a corpus root, a required `--out`, an optional
-`--voice`, `--service`, `--port` and `--narration` / `--no-narration` (`W460`: the
+`--voice`, `--service`, `--port` and `--narration` / `--no-narration` (the
 user's answer to whether the site speaks), and hands them to `build_and_serve`.
 
 **How you use it.** `main(argv) -> int`, and `python3 -m studyforge.skills.buildserve`.
@@ -19,7 +19,7 @@ import argparse
 
 from studyforge.skills.buildserve.run import build_and_serve
 
-#: How the skill is invoked. ⛔ Not a verb: `SF-40`'s table is the only minter of those.
+#: How the skill is invoked. ⛔ Not a verb: the CLI's verb table is the only minter of those.
 PROG = "python3 -m studyforge.skills.buildserve"
 
 

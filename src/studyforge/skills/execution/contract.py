@@ -27,7 +27,7 @@ second implementation of the thing this one is supposed to be a reader of.
 `require` raises and names the key path it wanted. ⛔ **That refusal is the
 finding's evidence, and answering it by writing the value into this package is
 the exact defect R19 forbids** — the component's contract would have stopped
-being sufficient and nothing would say so. ⭐ `TC-05`'s acceptance says
+being sufficient and nothing would say so. ⭐ Spec §8.1 says
 `consuming.json` is sufficient to generate a working compose file with no other
 input; this package is where that is demonstrated rather than asserted, and a
 `require` that fires is the demonstration failing out loud.
@@ -82,8 +82,8 @@ from studyforge.skills.buildserve import narration
 CONSUMING = "consuming.json"
 
 #: The component whose editor image this skill renders a compose file for.
-#: ⭐ A component of this framework, never a source (R1) — `workspace.json`
-#: pins it as a sibling checkout, exactly as it pins the narration service.
+#: ⭐ A component of this framework, never a source (R1): a client
+#: installs or builds it beside the framework, as it does the narration service.
 EDITOR_COMPONENT = "code-server-toolchain"
 
 #: ⛔ The `consuming_api` this renderer knows the shape of.
@@ -178,7 +178,7 @@ def require(document: Mapping[str, object], *path: str) -> object:
         raise ContractRefused(
             f"the contract carries no {scrub('.'.join(path))}. ⛔ This renderer needs it "
             f"and will not invent it: that key is a finding against the component "
-            f"that publishes {CONSUMING}, not a value to write into this skill (R19)"
+            f"that publishes {CONSUMING}, not a value to write into this skill"
         )
     return found
 
@@ -274,6 +274,6 @@ def _version(
     if found < held or (exact and found != held):
         raise ContractRefused(
             f"{scrub(where)} declares {field} {found} and this renderer was written "
-            f"against {held}. ⛔ Nothing is migrated (R9): re-pin the component, or "
+            f"against {held}. ⛔ Nothing is migrated: re-pin the component, or "
             f"read its contract and move the recorded number in one commit"
         )

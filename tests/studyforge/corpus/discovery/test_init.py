@@ -9,7 +9,7 @@ from studyforge.corpus import discovery
 from tests.support import assert_package_contract, repository_root
 
 #: The whole public surface, spelled out. ⚠️ Duplicated from `__all__` on
-#: purpose, following SF-01: a test that read `__all__` and then asserted the
+#: purpose, following the address package: a test that read `__all__` and then asserted the
 #: same thing would assert nothing.
 PUBLIC_SURFACE = frozenset(
     {
@@ -76,9 +76,8 @@ def test_nothing_downstream_is_imported_anywhere_in_the_package():
 
 
 def test_every_module_carries_a_contract_and_stays_under_the_ceiling():
-    # ⛔ R11, and Ruling 100: an `Owns` cell naming a `.py` file is a
-    # prediction about size, not a licence to exceed the ceiling. `SF-04`'s
-    # cell named `corpus/discovery.py`; the package is what R11 asks for.
+    # ⛔ R11: a planned single module is a prediction about size, not a licence
+    # to exceed the ceiling, and the package is what R11 asks for.
     for path in package_modules():
         source = path.read_text("utf-8")
         assert ast.get_docstring(ast.parse(source)), path.name

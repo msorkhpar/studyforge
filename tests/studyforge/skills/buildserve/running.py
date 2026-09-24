@@ -28,7 +28,7 @@ from tests.studyforge.cli.narrate.service import FakeService
 #: How a built page names a clip, relative to the page.
 AUDIO = re.compile(r'\baudio="([^"]+)"')
 
-#: The `FND-04` fixtures, split on the manifest's own flag.
+#: The framework's fixture corpora, split on the manifest's own flag.
 EXERCISED = tuple(name for name in VALID if load(FIXTURES / name / MANIFEST_FILENAME).exercises)
 UNEXERCISED = tuple(name for name in VALID if name not in EXERCISED)
 

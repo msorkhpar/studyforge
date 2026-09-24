@@ -1,9 +1,9 @@
 """Mirror of `src/studyforge/generate/site.py` (R12).
 
-⭐ **Ruling 99's clause, run rather than asserted, for the HTML it covers.**
+⭐ **The plan-and-build agreement, run rather than asserted, for the HTML it covers.**
 `studyforge plan`'s committed goldens say every path a build creates; this module
 diffs the `.html` half of them against what `write_site` actually wrote, on both
-`FND-04` fixtures. ⛔ The expected list is READ from the golden, never retyped.
+framework fixture corpora. ⛔ The expected list is READ from the golden, never retyped.
 """
 
 from __future__ import annotations
@@ -24,10 +24,10 @@ from tests.studyforge.generate.corpora import (
 )
 
 #: Every local reference a page makes, absolute URLs and mail links excluded.
-#: ⚠️ **`poster` is in here and it was not before `SF-37`.** A `<video poster="…">`
+#: ⚠️ **`poster` is in here.** A `<video poster="…">`
 #: addresses a file exactly as a `src` does; the Acceptance's wording — *"every
-#: `src` and `href`"* — was written before anything emitted one, and measured at
-#: this ref `depth2` emits a poster. Left out, one media reference per deck is
+#: `src` and `href`"* — does not name it, and `depth2` emits a poster. Left out, one media
+#: reference per deck is
 #: invisible to every check in this module.
 REFERENCE = re.compile(r'(?:src|href|poster)="([^"]*)"')
 
@@ -45,7 +45,7 @@ def landing(page, reference: str):
 
 
 # --------------------------------------------------------------------------
-# ⛔ Ruling 99 — the plan and the build agree, path for path
+# ⛔ The plan and the build agree, path for path
 # --------------------------------------------------------------------------
 
 
@@ -73,11 +73,11 @@ def test_nothing_on_disk_afterwards_is_a_path_the_plan_did_not_declare(tmp_path,
 
 @pytest.mark.parametrize("name", BOTH)
 def test_every_directory_the_build_makes_is_one_the_plan_declared_and_holds_a_file(tmp_path, name):
-    """⛔ Ruling 99 over the plan's `create <dir>/` lines, which are the media ones.
+    """⛔ The agreement over the plan's `create <dir>/` lines, which are the media ones.
 
-    ⭐ **W268 narrowed the other half**: a declared media directory is minted
+    ⭐ **The other half is narrower**: a declared media directory is minted
     only when a copy fills it. So every one on disk is declared, and none is
-    empty. ⚠️ `plan` still lists one per kind per unit; W267 makes it agree.
+    empty. ⚠️ `plan` lists one per kind per unit, and says which a build makes.
     """
     written = write_site(FIXTURES / name, tmp_path)
     corpus = read_corpus(FIXTURES / name)
@@ -97,7 +97,7 @@ def test_every_directory_the_build_makes_is_one_the_plan_declared_and_holds_a_fi
 
 @pytest.mark.parametrize("name", BOTH)
 def test_a_built_site_holds_no_empty_directory(tmp_path, name):
-    # ⛔ W268 clause 1, over the whole site: git cannot track an empty directory.
+    # ⛔ Over the whole site: git cannot track an empty directory.
     write_site(FIXTURES / name, tmp_path)
 
     empty = [path for path in tmp_path.rglob("*") if path.is_dir() and not any(path.iterdir())]
@@ -107,11 +107,11 @@ def test_a_built_site_holds_no_empty_directory(tmp_path, name):
 
 @pytest.mark.parametrize("name", BOTH)
 def test_no_page_reaches_into_a_media_directory_the_build_did_not_make(tmp_path, name):
-    """⛔ W268: a unit with no media still loads offline, because nothing addresses one.
+    """⛔ A unit with no media still loads offline, because nothing addresses one.
 
     ⭐ Every `src`, `href` and `poster` a page emits into a media directory lands
     in a directory that exists. ⚠️ Except a file the build NAMED missing, which
-    dangles with or without its directory and is `SF-37`'s, below.
+    dangles with or without its directory and is checked below.
     """
     written = write_site(FIXTURES / name, tmp_path)
     missing = {(tmp_path / path).resolve() for path in written.missing}
@@ -129,7 +129,7 @@ def test_no_page_reaches_into_a_media_directory_the_build_did_not_make(tmp_path,
 
 @pytest.mark.parametrize("name", BOTH)
 def test_the_committed_golden_still_matches_what_plan_says_at_this_ref(name):
-    """⛔ Ruling 99's second half: a plan and a build that drifted together would pass one diff.
+    """⛔ The agreement's second half: a plan and a build that drifted together would pass one diff.
 
     ⭐ So the half of the golden this module reads — its `create` lines — is
     re-derived from `cli.plan`'s public surface here, rather than trusted. If the
@@ -154,7 +154,7 @@ def test_no_reference_between_pages_or_to_the_bundle_dangles(tmp_path, name):
     ⚠️ **Media is excluded HERE and nowhere else now.** This clause is about the
     site holding together — a reader can get from any page to any other and to
     the bundle — and it was true before the media copy existed and stays true
-    independently of it. ⭐ Media's own clause is `SF-37`'s, below, and it is
+    independently of it. ⭐ Media's own clause is below, and it is
     asserted over the whole population rather than as an exception carved here.
     """
     write_site(FIXTURES / name, tmp_path)
@@ -185,12 +185,11 @@ def dangling_in(out) -> set:
 
 
 def test_the_media_bearing_fixture_emits_no_reference_that_dangles(tmp_path):
-    """⛔ `SF-37`'s Acceptance, verbatim, on the fixture it names.
+    """⛔ Every media reference resolves, on the fixture that has media.
 
     ⭐ *"Every `src` and `href` a built page emits resolves to a file the build
     wrote"* — and after the copy the population it is asserted over is **empty**,
-    which is the strongest form the clause has. ⚠️ The `SF-28` test this replaces
-    asserted the opposite and said it would go red the day this landed.
+    which is the strongest form the clause has.
     """
     written = write_site(FIXTURES / "depth1", tmp_path)
 

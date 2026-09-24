@@ -5,7 +5,7 @@ own rules set — R7 (no personal data reaches a tracked file), R11 (the size ce
 module has its mirrored test), R17 (every module states its contract), R1 (framework source
 names no corpus), the producer half of a package's surface (a name one package takes from
 another is on the owner's `__all__`), the rejected palettes (spec §8.4: no shipped theme is an
-identity the user rejected), and the standard-library style layer. Exit code, not
+rejected identity), and the standard-library style layer. Exit code, not
 advice: `python3 -m tests.floor` returns 1 when anything is found.
 
 **How you use it.**
@@ -23,13 +23,10 @@ checkout with no network and no install.
 spec enumerates package by package, and a lint tool is not on that list: under `src/` the
 ceiling check would become importable, versioned API (R9) that consumers depend on. Under
 `tests/` it travels with the product's suite, is never packaged, and still runs on every
-checkout of the main line — including one where the tooling that built the framework is gone.
+checkout, with nothing beside it.
 
-⭐ **Every check here was copied from the tooling that built the framework, never re-written.**
-The copies were held code-for-code to their originals until the tooling left the main line for
-the `archive/process` branch; from then on these are the only copies. ⚠️ The checks that
-policed the PROCESS — the board, the register, rows, handoffs, rulings, rounds, the plan's
-graph — are not here and never will be: they left with the tooling.
+⚠️ **Every check here is about the PRODUCT's tree.** A check about how the work
+was organised has no place in the product's floor.
 """
 
 from __future__ import annotations

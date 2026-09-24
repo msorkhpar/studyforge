@@ -19,7 +19,7 @@ A `sharing` export never calls the progress reader. The store's own directory is
 pruned from the material walk for both kinds. `test_export.py` asserts that no
 practice key, no progress field and no planted identity reaches a sharing archive.
 
-## ⛔ No file reaches a sharing archive unjudged (`SK-06/3`)
+## ⛔ No file reaches a sharing archive unjudged
 
 `layout.gate` answers whether it read a file as text. For a sharing archive, a `False`
 sends the file to `layout.judge_bytes`, and the report counts every file judged that

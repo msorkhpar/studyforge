@@ -10,20 +10,21 @@ the directory `corpus.placement` names for that unit's audio.
 transport; `cli.main` builds the real one.
 
 **Depends on.** `generate.declarations` for the corpus walk and `unit_location`,
-the one derivation of where a unit's artifacts go, which the page also asks
-(`W222`); `unit.builder` for each unit's served document, `narrate.speakable`
+the one derivation of where a unit's artifacts go, which the page also asks;
+`unit.builder` for each unit's served document, `narrate.speakable`
 for its speech units, `narrate.synth` for the pass, `narrate.answers`
 for the client's shape, and `cli.narrate.disclosure` for the dead-entry count.
 ⛔ Not `narrate.client` or `narrate.wire`: the dispatcher imports this module
-for every verb, so the client is `cli.main`'s to import when it runs (`W223`).
+for every verb, so the client is `cli.main`'s to import when it runs.
 ⛔ It names no source (R1) and composes no path (R4).
 
 ## ⛔ `probe()` is called HERE, exactly once, and never per unit
 
-⭐ `NS-05` and `SF-17` both leave the probe to the caller: a corpus probes once
-and every unit is synthesised under the one answer. ⛔ An unchanged re-run
-therefore sends that one `GET /healthz` and nothing else — the probe is how the
-pass learns whether the deployment's conditions moved, so it cannot be skipped.
+⭐ The narration service and `narrate.synth` both leave the probe to the caller:
+a corpus probes once and every unit is synthesised under the one answer. ⛔ An
+unchanged re-run therefore sends that one `GET /healthz` and nothing else — the
+probe is how the pass learns whether the deployment's conditions moved, so it
+cannot be skipped.
 
 ## ⛔ The order is what makes a refusal cost nothing
 
@@ -35,9 +36,9 @@ pass learns whether the deployment's conditions moved, so it cannot be skipped.
 4. Units are synthesised in declared order. A service that goes away part-way
    stops the stage with every earlier clip placed and recorded.
 
-## ⛔ `narrate` DELETES NOTHING, and says what it would have to (`E09` § W193)
+## ⛔ `narrate` DELETES NOTHING, and says what it would have to (R3, R6)
 
-⭐ **Answer 4's disclosure is `Narrated.dead`**: the record entries whose speech
+⭐ **The dead-entry disclosure is `Narrated.dead`**: the record entries whose speech
 id this walk did not produce, counted before the probe so an absent service
 still reports it. ⛔ **Nothing on this path removes a file or an entry** —
 `synthesise` merges into the record (answer 2), and the prune is
@@ -81,11 +82,11 @@ class Narrated:
     health: Health
     units: tuple[tuple[str, Synthesis], ...] = ()
     stopped: str | None = None
-    #: ⭐ W193 answer 4: record entries the walk did not produce, sorted.
+    #: ⭐ The dead-entry disclosure: record entries the walk did not produce, sorted.
     dead: tuple[str, ...] = ()
     #: Declared units the walk had no material for — ⛔ non-empty means partial.
     unwalked: tuple[str, ...] = ()
-    #: ⭐ `W226`: clips the record names as superseded, counted when the run returns.
+    #: ⭐ Clips the record names as superseded, counted when the run returns.
     superseded: tuple[tuple[str, object], ...] = ()
 
     @property
@@ -156,7 +157,7 @@ def narrate_corpus(
 
     ⛔ Raises `BuildError` for a corpus it cannot read and `StateError` for a
     record it cannot read, both before any request. `PersonalDataLeak` travels
-    through untouched (Ruling 58).
+    through untouched.
     """
     work, walk = survey(root)
     record = state_file(root)

@@ -1,4 +1,4 @@
-"""An authored practice is not read against the unit's source (`W444`).
+"""An authored practice is not read against the unit's source.
 
 ⛔ **The corpus here is read against REAL source files**, which is the half the
 authored-exercise fixtures in `tests/studyforge/validate/test_exercises.py` never
@@ -26,7 +26,7 @@ from tests.studyforge.exercise.bundle import bundles
 from tests.studyforge.validate import corpora
 
 #: ⭐ The manifest an authored corpus declares: its bundles and workspaces are
-#: `not_material` (`AX-04/2`), and the material is `src/*.md`.
+#: `not_material`, and the material is `src/*.md`.
 MANIFEST = {
     **corpora.MANIFEST,
     "corpus_api": 2,
@@ -51,7 +51,7 @@ BLOCKS_TWO = [
 ]
 
 #: Where each authored practice lands: `(unit, ordinal)`. ⭐ Ordinal 2 beside the
-#: source's own practice-1, and ordinal 1 on a unit with none (`W437`).
+#: source's own practice-1, and ordinal 1 on a unit with none.
 AUTHORED = ((1, 2), (2, 1))
 
 
@@ -132,9 +132,8 @@ def short_reads(report) -> list:
 
 
 def test_an_archive_with_authored_practices_beside_the_sources_own_validates_clean(tmp_path):
-    # ⭐ WHAT SETTLES IT 1. Before `W444` this archive read two short-reads, one
-    # per unit that received an authored practice, each over by the layout's
-    # three headings — as read on the first corpus.
+    # ⭐ Counting the authored practices would read two short-reads here, one
+    # per unit that received one, each over by the layout's three headings.
     root, _ = authored_corpus(tmp_path / "c")
     report = validate(root)
     assert report.findings == (), report.lines()
@@ -153,9 +152,9 @@ def test_the_authored_documents_carry_headings_the_check_would_otherwise_count(t
 
 
 def test_a_lesson_that_lost_a_heading_beside_an_authored_practice_is_still_refused(tmp_path):
-    # ⭐ WHAT SETTLES IT 2, on the unit with NO practice origin — the unit whose
-    # lesson bucket the authored practice used to land in, where a lost
-    # heading could have been papered over by the practice's three.
+    # ⭐ On the unit with NO practice origin — the unit whose lesson bucket an
+    # authored practice would land in if counted, where a lost heading could be
+    # papered over by the practice's three.
     root, _ = authored_corpus(tmp_path / "c", blocks_two=BLOCKS_TWO[:2])
     found = short_reads(validate(root))
     assert [where for where, _ in found] == ["demo/unit-02"]
@@ -164,7 +163,7 @@ def test_a_lesson_that_lost_a_heading_beside_an_authored_practice_is_still_refus
 
 
 def test_a_source_practice_that_lost_a_heading_beside_an_authored_one_is_still_refused(tmp_path):
-    # ⭐ WHAT SETTLES IT 2, on the practice side: the source's own practice is
+    # ⭐ On the practice side: the source's own practice is
     # read against its `practice_origin`, and the authored practice-2 on the
     # same unit neither hides the loss nor inflates the count.
     root, _ = authored_corpus(tmp_path / "c", practice_blocks=corpora.PRACTICE_BLOCKS[:2])

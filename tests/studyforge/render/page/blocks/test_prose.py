@@ -60,7 +60,7 @@ def test_a_list_item_is_inline_prose():
 
 
 def test_a_nested_list_renders_as_a_list_inside_its_parent_item():
-    # ⛔ W258: never its parent's text, and its parts stay in reading order.
+    # ⛔ Never its parent's text, and its parts stay in reading order.
     klass = SURFACE_CLASSES["list"]
     nested = {"type": "list", "ordered": True, "items": ["x", "<y>"]}
     block = {"type": "list", "ordered": False, "items": [["a", nested, "b"], "c"]}
@@ -71,7 +71,7 @@ def test_a_nested_list_renders_as_a_list_inside_its_parent_item():
 
 
 def test_an_ordered_list_opens_at_the_number_its_author_started_at():
-    # ⛔ W264, from the source: a step list continued after a code block.
+    # ⛔ From the source: a step list continued after a code block.
     klass = SURFACE_CLASSES["list"]
     continued = parse("1. one\n\n```\nx\n```\n\n2. two\n")[2]
     assert render(continued) == f'<ol class="{klass}" start="2"><li>two</li></ol>'
@@ -132,7 +132,7 @@ def test_a_disclosure_takes_the_published_class():
 
 
 def test_not_one_class_name_is_typed_in_this_module():
-    # ⛔ `W9`, made structural. Every class this module emits comes from the
+    # ⛔ Made structural: every class this module emits comes from the
     # published surface, so it cannot invent a name the stylesheet does not
     # target — which is the failure that renders a complete, unstyled page with
     # no error anywhere.

@@ -32,10 +32,9 @@ the caller's.
 
 ## ⛔ WHY THE SKILL RUNS IT RATHER THAN THE READER TYPING ITS OUTPUT
 
-⚠️ The first corpus measured the gap twice: nothing generated recorded the tag
-the corpus's primed runner build produced, and once that was recorded, nothing
-recorded the editor's, so the tag a site's editor ran was known only to the
-running environment and a switch-over had to take it from a person. ⭐ A tag is
+⚠️ Unrecorded, the tags a corpus's primed runner and editor builds produce are
+known only to the running environment, and a switch-over would have to take
+them from a person. ⭐ A tag is
 a function of the build's inputs (the contract says so), so the only honest way
 to hold one is to ask the build for it and write down what it answered.
 ⛔ **A hand-edit to either file is a finding against this skill**, exactly as
@@ -44,7 +43,7 @@ for every other file it writes.
 ## ⭐ THE EDITOR'S TAG IS ASKED EXACTLY AS THE READER'S DOCUMENT BUILDS IT
 
 ⭐ **From `provides` 3 the contract declares `editor.prime` as it declares the
-runner's** (`W466`), so the editor's tag is asked with the same prime flagged,
+runner's**, so the editor's tag is asked with the same prime flagged,
 and `EXECUTION.md` prints the editor's build with it: the tag recorded is the
 tag the printed, primed build produces. ⚠️ A contract that declares no editor
 prime is read as it stands: the editor is asked, printed and recorded unprimed.
@@ -145,7 +144,8 @@ def _asked(ask: Ask, command: list[str], component: Path, repository: str, block
     if code != 0:
         raise ExecutionRefused(
             f"the component's {block}.image.tag_from exited {code}; its output is not "
-            f"reproduced here (R7). Run it in the pinned checkout to read why"
+            f"reproduced here, since it can carry a home path. Run it in the pinned "
+            f"checkout to read why"
         )
     tag = printed.strip()
     if not _one_tag(tag, repository):
@@ -172,7 +172,8 @@ def text(variable: str, tag: str, *, image: str = "runner") -> str:
     if holds is None:
         raise ExecutionRefused(
             f"an environment file is recorded for one of {sorted(WHAT_IT_HOLDS)} and for "
-            f"no other image; the one asked for is not reproduced here (R7)"
+            f"no other image; the one asked for is not reproduced here, since a refusal never "
+            f"quotes a value that may be personal"
         )
     return f"# {GENERATED}\n{holds}{variable}={tag}\n"
 

@@ -5,7 +5,7 @@ hyphen is not and a leading digit is not: `16-streams-api` → `_16_streams_api`
 
 **How you use it.** `identifier(slug)` for one segment. ⛔ It returns a
 *segment*, never a dotted package and never a path — joining them is the
-caller's, because how they join is a placement decision (SF-03) and this
+caller's, because how they join is a placement decision (§5) and this
 package knows nothing about where anything lives (R1, R4).
 
 **Depends on.** `slug` and `errors`. Nothing else, and deliberately nothing

@@ -1,4 +1,4 @@
-"""Mirror of `tools/quality/report.py` (R12).
+"""Mirror of `tests/floor/report.py` (R12).
 
 ⭐ **The skip census's end-to-end arms run a CHILD pytest** through the repository's own root
 `conftest.py`, because the disclosure is a line in a run's summary and a line nobody
@@ -83,8 +83,9 @@ def test_a_population_carries_its_paths_and_the_walk_that_found_them():
 
 
 def test_a_tracked_figure_says_what_its_walk_did_not_read_whether_or_not_it_fired():
-    # ⛔ A figure states its denominator, and that is why the sentence is not fired-only: an office
-    # believing a green over its own unstaged handoff needs to read `0`, and a
+    # ⛔ A figure states its denominator, and that is why the sentence is not
+    # fired-only: a developer believing a green over their own unstaged
+    # document needs to read `0`, and a
     # sentence that appears only when something was missed never gives it one.
     quiet = unread_caveat(DocumentPopulation((Path("a.md"),), TRACKED_WALK))
     loud = unread_caveat(DocumentPopulation((Path("a.md"),), TRACKED_WALK, 3))
@@ -196,7 +197,7 @@ def test_a_run_with_skips_prints_a_NON_EMPTY_population_and_its_exit_does_not_mo
 
 
 def test_the_REAL_sibling_assertions_with_the_workspace_absent_print_a_NON_EMPTY_one(tmp_path):
-    # ⭐ The row's own population: the Java corpus absent, as it is in the pinned container,
+    # ⭐ The real population: the Java corpus absent, as it is in the pinned container,
     # made absent HERE by pointing the workspace at an empty harness-minted directory.
     module = "tests/studyforge/corpus/placement/test_corpora.py"
     result = _pytest(["-q", module], repository_root(), STUDYFORGE_WORKSPACE=str(tmp_path))

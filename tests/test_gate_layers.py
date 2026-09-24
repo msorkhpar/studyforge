@@ -1,10 +1,9 @@
 r"""The layers between a home directory and disk, named, and each one asserted.
 
-⛔ **Ruling 44's real subject.** The personal-data gate's permitted set is *"all
+⛔ **The real subject.** The personal-data gate's permitted set is *"all
 text that is not personal data"*, which nobody can write down, so its forbidden
-list is **forced and known-incomplete by construction**. Two unforeseen entries
-were found in it; a third was found while measuring those two. That is simply
-what an open set does, and ⛔ the answer to it is never a longer list — it is
+list is **forced and known-incomplete by construction**. An open set always has
+entries nobody foresaw, and ⛔ the answer to it is never a longer list — it is
 **defence in depth, every layer asserted, because no layer is sufficient.**
 
 ⭐ **So this module is the matrix and not another list.** It states, for every
@@ -24,7 +23,7 @@ above, and in text this framework writes they are rewritten by the layer below,
 but in **free text a source authored** they reach disk. ⛔ That is not an
 oversight — `/export/home/<name>/x` and `/var/lib/home/cache/x` are the same
 shape, and a gate that refused the first would refuse the second, which is the
-`assert_clean`-refuses-a-legitimate-corpus failure the pattern set is ruled
+`assert_clean`-refuses-a-legitimate-corpus failure the pattern set is built
 against. If it is ever to close, it closes with a *declaration* (the residual
 class in `scrub`'s contract), not with a fourth regex.
 """
@@ -45,9 +44,8 @@ ADDRESS = Address(("demo",))
 
 REFUSES, PASSES, REWRITES, KEEPS = "refuses", "passes", "rewrites", "keeps"
 
-#: `(name, spelling, (path field, the gate, the scrubber))`. ⭐ Measured
-#: 2026-09-09 in the pinned image; every cell below is what the code did, and
-#: the test is what makes it stay that.
+#: `(name, spelling, (path field, the gate, the scrubber))`. ⭐ Every cell
+#: below is what the code does, and the test is what makes it stay that.
 MATRIX = (
     ("POSIX home path", f"{HOME}/material/README.md", (REFUSES, REFUSES, REWRITES)),
     ("macOS home path", f"{USERS}/material/README.md", (REFUSES, REFUSES, REWRITES)),
@@ -80,8 +78,8 @@ def _path_field(value: str) -> str:
         placement = PASSES
     except PlacementError:
         placement = REFUSES
-    # ⛔ Finding 3, closed structurally. These two used to keep separate
-    # forbidden lists that disagreed, and `C:/Users/<name>/x` fell in the gap.
+    # ⛔ Closed structurally: two separate forbidden lists would disagree, and a
+    # value like `C:/Users/<name>/x` would fall in the gap.
     assert reader == placement, (value, reader, placement)
     return reader
 

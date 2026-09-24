@@ -11,35 +11,21 @@ framework so a caller never needs a pattern.
 
 ## ⛔ This module holds no patterns, and that is the whole of it
 
-⚠️ **It used to hold three, and they were the weaker of two copies — in the one
-place where personal-data-shaped content is *permitted*.** Measured against
-`studyforge.archive.scrub`, which the archive itself uses:
+⚠️ **A second copy of the patterns drifts weaker than the first, and here it
+would guard the one place where personal-data-shaped content is *permitted*.**
+A copy easily misses a bare home directory, the macOS spelling, one inside a
+shell command, or a leak in a **dict key**, while `studyforge.archive.scrub`,
+which the archive itself uses, catches all of them. ⭐ *Do not re-derive the
+patterns; one owner holds them.*
 
-| shape | the copy that was here | `scrub.leaks` |
-|---|---|---|
-| a bare home directory | ⛔ **missed** — its pattern required a trailing `/` | caught |
-| a home directory with a file beneath | caught | caught |
-| the macOS spelling, bare | ⛔ **missed** | caught |
-| one inside a shell command | ⛔ **missed** | caught |
-| a leak in a **dict key** | ⛔ **missed** — `strings_in` walks `values()` | caught |
+⭐ **Borrowed, never reconciled.** Reconciling two lists produces a third list.
+`tests/test_fixture_consistency.py` asserts this module defines no pattern of
+its own, which makes a second copy unrepresentable rather than merely
+discouraged.
 
-⛔ **Three of four, plus the keys.** And rubric §1a had already ruled this shape
-— *"do not re-derive the patterns; `tools/quality/` owns them"*, a duplication
-this project has refused five times — but nobody had swept for a **third** copy.
-There was one, it was already weaker, and it was guarding rubric §1e's fixture
-exception.
-
-⭐ **Deleted rather than reconciled.** Reconciling two lists produces a third
-list. `tests/test_fixture_consistency.py` asserts this module defines no pattern
-of its own, which is what makes a **fourth** copy unrepresentable rather than
-merely discouraged.
-
-⚠️ **One behaviour changed with the deletion, and it is a correction.** This
-module claimed *"any address is wrong content whether or not it is
-deliverable, so there is no allow-list at all"* — but the gate it is supposed to
-mirror skips each shape's **own placeholder** by identity, so the claim was
-already untrue of the thing being checked. A fixture checker that is stricter
-than the gate reports failures the build will not have.
+⚠️ **The gate skips each shape's own placeholder by identity, and so does this
+module.** A fixture checker that is stricter than the gate reports failures the
+build will not have.
 """
 
 from __future__ import annotations

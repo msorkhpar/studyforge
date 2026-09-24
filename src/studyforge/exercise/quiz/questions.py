@@ -30,7 +30,7 @@ true by construction — and then *"a question with two keyed options is
 refused"* would be a clause no document could ever fail, which is a gate that
 measures nothing. ⭐ **So each option says whether it is correct**, and **no
 keyed option** and **two keyed options** are each a document this module
-refuses, which is `AX-05`'s Acceptance and `AX-06`'s gate Q4.
+refuses, and the authoring gate Q4 refuses both again.
 
 ## ⛔ Every option carries its one sentence, right or wrong
 
@@ -65,7 +65,7 @@ question nothing can check was built from the page it is attached to.
 
 ⚠️ **`origin`'s rule is imported, never re-spelled**: `cases.origin_in` hands
 the value to `fields.optional_origin`, the tree's one reader of that key
-(`W109`), and this module reads the key nowhere else.
+(so one shape has one reading), and this module reads the key nowhere else.
 """
 
 from __future__ import annotations
@@ -96,12 +96,12 @@ KEYED_OPTIONS = 1
 #: reader cannot be wrong — which is a practice that completes itself.
 MINIMUM_OPTIONS = 2
 
-#: What a question's or an option's `id` may be. ⛔ A permitted set (Ruling 8),
+#: What a question's or an option's `id` may be. ⛔ A permitted set,
 #: and NARROWER than `cases.CASE_ID` on purpose: a case id is compared byte for
 #: byte with what somebody else's test report spells, while this one is ours —
 #: an authoring skill writes it and the reader's own state is filed under it,
 #: so it is a plain token with nothing in it that needs quoting anywhere.
-#: ⚠️ Anchored `\A…\Z`, so a value ending in a newline is refused (`AX-00/1`).
+#: ⚠️ Anchored `\A…\Z`, so a value ending in a newline is refused.
 QUIZ_ID = re.compile(r"\A[A-Za-z0-9][A-Za-z0-9._-]*\Z")
 
 #: Said in a refusal instead of the value (R7): the message tells an author
@@ -190,7 +190,8 @@ def questions_of(value: object, where: str) -> tuple[Question, ...]:
         where,
         "'questions' names {count} id more than once. A reader's answer is "
         "filed under the question's id, so a repeated id is one answer "
-        "standing for two questions. The ids are not reproduced here (R7).",
+        "standing for two questions. The ids are not reproduced here, since a refusal never "
+        "quotes a value that may be personal.",
     )
     return questions
 
@@ -266,7 +267,8 @@ def _options(value: object, where: str) -> tuple[Option, ...]:
         where,
         "a question names {count} option id more than once. A reader's answer "
         "names the option by its id, so a repeated id is an answer that means "
-        "two things. The ids are not reproduced here (R7).",
+        "two things. The ids are not reproduced here, since a refusal never quotes a value that "
+        "may be personal.",
     )
     _require_distinct(
         [normalised(option.text) for option in options],
@@ -274,7 +276,8 @@ def _options(value: object, where: str) -> tuple[Option, ...]:
         "a question offers {count} option that is identical to another after "
         "normalisation. Two options that say the same thing are one answer "
         "offered twice, and a reader who picks the wrong copy of the right "
-        "words is marked wrong. The text is not reproduced here (R7).",
+        "words is marked wrong. The text is not reproduced here, since a refusal never quotes a "
+        "value that may be personal.",
     )
     _require_the_key(options, where)
     return options
@@ -339,7 +342,7 @@ def _id(value: object, whose: str, where: str) -> str:
     if not isinstance(value, str) or not QUIZ_ID.match(value):
         raise ExerciseError(
             f"{where}: {whose} 'id' must be {QUIZ_ID_PERMITTED}. The value is not "
-            f"reproduced here (R7)."
+            f"reproduced here, since a refusal never quotes a value that may be personal."
         )
     return value
 

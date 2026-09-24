@@ -7,9 +7,9 @@ contents document the whole site is navigated by — all of it in memory.
 **How you use it.** `read_corpus(root)` for the lot; `sources(root)` when only
 the unit walk is wanted; `unit_location(corpus, source)` and
 `declared_location(corpus, container, unit)` for where one unit's artifacts go
-— ⛔ each takes the unit **whole**, so no caller spells its label (`W290`).
+— ⛔ each takes the unit **whole**, so no caller spells its label.
 `BuildError` is the only exception any of it raises,
-**except** `PersonalDataLeak`, which travels through untranslated (Ruling 58) —
+**except** `PersonalDataLeak`, which travels through untranslated —
 the package's `RAISES` is the pair.
 
 **Depends on.** `corpus.manifest`, `corpus.container` and `corpus.placement`
@@ -22,7 +22,7 @@ archive.
 ⚠️ **Nothing in `corpus.placement` says where `toc.json` and `status.json` go**,
 and `studyforge plan`'s committed goldens do not enumerate them — so a build
 that wrote them would create two paths the plan never declared and fail
-Ruling 99's path-for-path clause on both fixtures. ⭐ The tree is therefore a
+R3's path-for-path clause on both fixtures. ⭐ The tree is therefore a
 **value** here, consumed by the index and the navigation join in the same
 process. ⛔ Where the two documents finally sit is a placement decision, and
 this module does not take it.
@@ -116,7 +116,7 @@ class Corpus:
     #: default owns nothing**, so a `Corpus` assembled by hand gets R3's floor
     #: rather than a licence; `read_corpus` is what fills it.
     footprint: Footprint = Footprint()
-    #: Whether this build voices the corpus (`W460`): `corpus.json`'s
+    #: Whether this build voices the corpus: `corpus.json`'s
     #: `narration`, or a run's override of it (`generate.narration.voiced`).
     #: ⭐ **`True` by default**, so a `Corpus` assembled by hand builds as
     #: every corpus did before the key: a record's clips play.
@@ -201,10 +201,9 @@ def _sources(
 def unit_location(corpus: Corpus, source: UnitSource) -> UnitLocations:
     """Where one unit WITH MATERIAL puts its artifacts, asked of the corpus's own profile.
 
-    ⛔ **It takes the unit WHOLE** (`W290`). Every caller used to spell five
-    arguments out of a `UnitSource` it already held, so *dropping* one — the
-    label — stayed writable at four call sites and was caught only by a RED
-    test. ⭐ There is nothing left to drop: the source carries its own
+    ⛔ **It takes the unit WHOLE**, so no caller spells arguments out of a
+    `UnitSource` it already holds and none can drop one. ⭐ There is nothing to
+    drop: the source carries its own
     address, ordinal, title, origin and label, and this is the one place they
     are read off it.
     """
@@ -221,8 +220,8 @@ def unit_location(corpus: Corpus, source: UnitSource) -> UnitLocations:
 def declared_location(corpus: Corpus, container: Container, unit: Unit) -> UnitLocations:
     """Where one unit its container DECLARES puts its artifacts — material or not.
 
-    ⛔ **The same derivation, asked of a DECLARATION rather than of material**
-    (`W290`). The container page links every unit it declares and the media
+    ⛔ **The same derivation, asked of a DECLARATION rather than of material**.
+    The container page links every unit it declares and the media
     pass asks about every declared directory; neither has a `UnitSource` for a
     unit this machine has no material for, because `_sources` skips those.
     ⭐ Both arguments are whole objects, so no call site spells a label here
@@ -273,9 +272,9 @@ def read_manifest(root: Path | str) -> Manifest:
     try:
         return parse_manifest(text, MANIFEST_FILENAME)
     except PersonalDataLeak:
-        raise  # ⛔ R7's refusal is never translated into `BuildError` (Ruling 58).
+        raise  # ⛔ R7's refusal is never translated into `BuildError`.
     except MANIFEST_RAISES as error:
-        # ⭐ The reader's own tuple (`W213`): a member it gains arrives here.
+        # ⭐ The reader's own tuple: a member it gains arrives here.
         raise BuildError(str(error)) from None
 
 
@@ -294,11 +293,11 @@ def containers(root: Path | str, manifest: Manifest) -> tuple[tuple[str, Contain
         try:
             held.append((where, parse_container(text, where, manifest)))
         except PersonalDataLeak:
-            raise  # ⛔ R7's refusal is never translated into `BuildError` (Ruling 58).
+            raise  # ⛔ R7's refusal is never translated into `BuildError`.
         except CONTAINER_RAISES as error:
             # ⭐ What `corpus.container` lets out is its `RAISES`, stated in its
-            # package contract (`W208`); every member but the leak above becomes
-            # this package's refusal, so a wrong-depth map refuses (`W212`).
+            # package contract; every member but the leak above becomes
+            # this package's refusal, so a wrong-depth map refuses.
             raise BuildError(f"{where}: {error}") from None
     return tuple(held)
 

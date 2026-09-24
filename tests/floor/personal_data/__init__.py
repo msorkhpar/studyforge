@@ -1,8 +1,7 @@
 """R7 at the repository boundary: no personal data reaches a tracked file.
 
-⭐ **The product floor's copy of `tools/quality/personal_data/__init__.py`.** It stays on the
-main line when the tooling leaves, so the product's own rule keeps running; while both
-exist, `tests/test_floor_twins.py` holds its code to the original's, docstrings aside.
+⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
+checkout, and depends on nothing outside it.
 
 **What it does.** Sweeps every text file in the tree for personal-data
 **shapes** — an absolute home path, an email address, an local hostname, a
@@ -18,17 +17,17 @@ the sweep is already tree-wide, so a new rule reaches every file in one pass.
 **Depends on.** `config` for the tree, `report` for the finding shape, and the
 standard library. ⛔ Nothing that holds a value.
 
-⚠️ **This is not SF-08, and the difference is the subject.** `archive/`'s gate
+⚠️ **This is not the archive's gate, and the difference is the subject.** `archive/`'s gate
 refuses strings entering **an archive**; this refuses strings entering **the
 repository**. A corpus can be clean and the repository still leak, through a
-Dockerfile, a task document or a test fixture — and `CLAUDE.md` records that R7
-has already been violated here once, in this repository's own documents. The
+Dockerfile, a document or a test fixture, none of which an archive gate ever
+reads. The
 two also differ on placeholders: an unreachable address identifies nobody and
 is *encouraged* here, while in generated study material it is wrong content
 whatever its TLD.
 
-**A package rather than a module, and it is the ceiling's own doing.** It
-reached 406 lines against R11's 400 and split along the seam it already had:
+**A package rather than a module, because of the size ceiling.** It is split
+along its own seams, so each part stays under R11's 400 lines:
 
 - `shapes` — the patterns, and the tree sweep. Where a new rule goes.
 - `registry` — the bounded exception, and what keeps it bounded.

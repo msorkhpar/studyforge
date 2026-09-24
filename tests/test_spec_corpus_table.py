@@ -1,4 +1,4 @@
-"""The spec's corpus table, read against the corpora a named workspace holds (`W339`).
+"""The spec's corpus table, read against the corpora a named workspace holds.
 
 Mirrors no source module. ⭐ It answers a clause no unit test can: *a row of the
 spec's corpus table that contradicts a committed corpus's manifest is caught
@@ -7,9 +7,9 @@ rather than read.*
 ## ⛔ Why the table is worth an instrument
 
 ⚠️ **A planner reads that table's *Graders* column to decide whether a corpus
-enters the execution track** (spec §11.0, C5). It named a file as one corpus's
-graders for rounds after the user ruled that file out (`Q5`), because nothing
-read the table against anything. ⭐ **The manifest is the corpus's own
+enters the execution track** (spec §11.0, C5). A table that nothing reads can
+name a file as a corpus's graders long after that file is ruled out. ⭐ **The manifest is the
+corpus's own
 declaration**, and `exercises: false` says it sets no graded work — so a row
 claiming graders for that corpus is a claim the corpus refutes.
 
@@ -23,7 +23,7 @@ claiming graders for that corpus is a claim the corpus refutes.
   is a real third state (§7, C5) — so the converse would refuse a true row.
 - ⚠️ **A sibling that is not named is not read**, and the sweep SKIPS SAYING
   SO when it could read no manifest at all — a clean clone, and the pinned
-  image, where only the checkout is mounted (Ruling 204). ⭐ The refusal half is held on a
+  image, where only the checkout is mounted. ⭐ The refusal half is held on a
   synthetic table below, so the image still proves the instrument can go red.
 """
 
@@ -143,7 +143,7 @@ def test_the_table_is_found_and_every_row_has_a_graders_cell():
 
 # --- the refusal, held on a synthetic table -----------------------------------
 
-#: One corpus's row, as the spec carried it before `W339`, and as it reads now.
+#: One corpus's row, once claiming graders and once denying them.
 CLAIMED = "| X | 1 | 3 | no build file | prose scenarios in `Scenarios.md` |"
 DENIED = "| X | 1 | 3 | no build file | **none** — amended below |"
 

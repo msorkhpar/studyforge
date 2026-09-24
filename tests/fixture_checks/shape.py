@@ -56,9 +56,9 @@ def check_document_shape(path, document, where):
 def check_blocks(document, where):
     """Every block is a named type with its fields, then only the optional keys it names.
 
-    ⛔ **`W282`: read by `validate`'s own reader** (`validate.blocks.block_problems`), called
+    ⛔ **Read by `validate`'s own reader** (`validate.blocks.block_problems`), called
     through its module, so the fixture check and `validate` decide a block's type, its keys,
-    a list's items and `start`, at every depth, through ONE function (`W263`).
+    a list's items and `start`, at every depth, through ONE function.
     """
     for at, what in block_shapes.block_problems(document["blocks"]):
         yield "vocabulary", f"{where} {at} {what}"

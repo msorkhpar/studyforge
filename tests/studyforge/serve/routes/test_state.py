@@ -4,7 +4,7 @@
 addresses route correctly at depth 1 and depth 2"*; *"state is derived from the filesystem, never
 from a record of
 intent — a claim that something exists with nothing on disk shows up as the
-disagreement it is"*. ⭐ **E05 SF-21**: a read mark is never a pass, and a run never
+disagreement it is"*. ⭐ **The progress store**: a read mark is never a pass, and a run never
 completes a practice.
 """
 
@@ -308,8 +308,8 @@ def test_the_index_names_every_corpus_where_it_sits_and_the_report(workspace):
 
 
 def test_the_submit_breakdown_is_published_beside_the_verdict_and_is_never_one(workspace):
-    # ⛔ `AX-02/3`, closed here: the recorded breakdown reached the progress
-    # document and stopped there, so nothing on the wire carried it. ⭐ Both
+    # ⛔ The recorded breakdown travels from the progress document onto the
+    # wire. ⭐ Both
     # directions — a run with a breakdown publishes the map, and one without
     # publishes `None` rather than `{}`, because absent and empty are different
     # claims and the record refuses an empty map.
@@ -327,5 +327,5 @@ def test_the_submit_breakdown_is_published_beside_the_verdict_and_is_never_one(w
     said = reported()
     assert said["cases"] == broken
     # ⛔ **And it is a REPORT and never a second verdict**: this Submit exited
-    # zero with a failed edge, and `passed` says so unchanged (`AX-02`).
+    # zero with a failed edge, and `passed` says so unchanged.
     assert said["passed"] is True

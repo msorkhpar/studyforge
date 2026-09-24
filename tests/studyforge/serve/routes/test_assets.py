@@ -208,7 +208,7 @@ def test_a_private_file_is_404_and_the_default_names_nothing_private(site):
 
 
 def test_a_site_root_inside_a_corpus_generated_directory_never_serves_the_record(site):
-    # ⛔ `SF-39/4`: served from the corpus's generated directory, the store sits at the
+    # ⛔ Served from the corpus's generated directory, the store sits at the
     # root's first level rather than its second, and no `private=` is passed here.
     generated = site / ".studyforge"
     record = generated / "progress" / "progress.json"
@@ -226,7 +226,7 @@ def test_a_site_root_inside_a_corpus_generated_directory_never_serves_the_record
 
 
 def test_a_generated_directory_beside_a_manifest_resolves_and_nowhere_else(site):
-    # ⭐ `W230`, `SF-19b/2`: a root holding several corpora puts each one's generated
+    # ⭐ A root holding several corpora puts each one's generated
     # directory one level down. Beside a `corpus.json` it serves; the same tree with
     # no manifest beside it is refused, and the store inside it is refused either way.
     corpus, bare = site / "corpus", site / "bare"

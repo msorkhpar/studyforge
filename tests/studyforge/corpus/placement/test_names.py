@@ -94,9 +94,8 @@ def test_a_title_that_slugifies_to_nothing_is_refused_and_blamed_on_the_corpus(t
         unit_stem(1, title)
 
 
-#: ⛔ **The seven shapes that passed both guards into a filename**, measured
-#: 2026-09-09 on the merged tree, plus the five the old forbidden list did
-#: catch. ⚠️ `:` and `"` break the `file://` floor, so this list is an R8
+#: ⛔ **Seven shapes a forbidden list passes into a filename**, plus five it
+#: catches. ⚠️ `:` and `"` break the `file://` floor, so this list is an R8
 #: regression suite and not a tidiness one.
 UNUSABLE = [
     "a/b",
@@ -120,7 +119,7 @@ UNUSABLE = [
 #: directory.
 UNUSABLE_STARTS = ["..", ".", ".hidden", "-x", "-"]
 
-#: ⚠️ Refused by Ruling 8's class and accepted by the forbidden list it
+#: ⚠️ Refused by the permitted class and accepted by the forbidden list it
 #: replaced. `A` and `a` are one filename on a case-insensitive filesystem, and
 #: `sibling` puts twenty units in one directory.
 UNUSABLE_CASE = ["A", "VII", "Part2", "unit_07"]
@@ -134,7 +133,7 @@ def test_a_label_that_is_not_usable_text_is_refused(label):
 
 @pytest.mark.parametrize("label", UNUSABLE + UNUSABLE_STARTS + UNUSABLE_CASE)
 def test_a_label_that_could_not_become_a_filename_is_refused(label):
-    # ⛔ **Ruling 8.** This was a forbidden list — an open set, which cannot be
+    # ⛔ **A permitted set (R8).** This was a forbidden list — an open set, which cannot be
     # finished — and the seven shapes after the newline in `UNUSABLE` are the
     # ones it did not contain. Adding the carriage return would have fixed one
     # of thirteen. The permitted set fixes the class.
@@ -144,9 +143,8 @@ def test_a_label_that_could_not_become_a_filename_is_refused(label):
 
 @pytest.mark.parametrize("label", UNUSABLE + UNUSABLE_STARTS + UNUSABLE_CASE)
 def test_the_map_and_the_filename_guard_agree_on_every_one_of_them(label):
-    # ⚠️ **Diff two enforcements whenever two modules enforce one rule.** The
-    # defect this replaces was not the missing character; it was that a rule
-    # with two spellings had drifted, and nothing asked whether it had.
+    # ⚠️ **Diff two enforcements whenever two modules enforce one rule**: a
+    # rule with two spellings drifts, and nothing else asks whether it has.
     with pytest.raises(ContainerError):
         fields.optional_label(label, "label", "container.json")
 
@@ -164,10 +162,9 @@ def test_a_label_a_real_corpus_would_record_is_accepted(label):
 
 
 def test_the_two_guards_are_one_predicate_and_not_two_spellings():
-    # ⭐ **Asserted on identity, not on text.** The previous version of this
-    # test compared two character classes and passed while they disagreed,
-    # because it compared the subset it happened to think of. There is now one
-    # function, and both sides are asked to be it.
+    # ⭐ **Asserted on identity, not on text.** Comparing two character classes
+    # passes while they disagree, because it compares the subset somebody
+    # thought of. There is one function, and both sides are asked to be it.
     assert names.is_filename_component is fields.is_filename_component
 
     # ⛔ And `label_of` carries no second class of its own: no membership test
@@ -206,9 +203,9 @@ def test_anything_accepted_survives_a_file_url_untouched():
 
 
 def test_a_refusal_never_reproduces_the_label_it_refuses():
-    # ⛔ R7, rubric §1f. A label is read straight out of a file somebody else
+    # ⛔ R7. A label is read straight out of a file somebody else
     # wrote, so it can be an absolute path — and this refusal fires ON that
-    # value. ⚠️ It survived two reviews and a merge gate.
+    # value.
     leak = "/" + "home/somebody/material"
     with pytest.raises(PlacementError) as raised:
         label_of(1, leak)
@@ -228,9 +225,7 @@ def test_the_refusal_names_the_permitted_class_rather_than_a_forbidden_one():
 
 
 def test_a_container_title_is_described_and_not_reproduced_either():
-    # ⛔ §1f, found by reading every other raise in the same file after fixing
-    # one — which is the sweep the clause now requires, and is how this one
-    # surfaced rather than waiting for a third review to find it.
+    # ⛔ R7: every raise in the file is read, not only the one a test names.
     # ⚠️ The set of titles that slugify to nothing is not "punctuation": it is
     # **every title with no ASCII alphanumerics**, so this branch fires on the
     # whole of any non-Latin corpus, and echoing it reproduced free text a
@@ -288,7 +283,7 @@ def test_the_default_label_this_module_mints_is_itself_a_usable_component():
 
 # --------------------------------------------------------------------------
 # ⛔ the archive segments: one spelling each, and every reader reads it
-#    (`INT-06/6` for the root, `W199` for `raw/`)
+#    (the root, and `raw/`)
 # --------------------------------------------------------------------------
 
 #: Every `src/` module holding a non-docstring literal with the archive root as a path
@@ -302,21 +297,20 @@ ARCHIVE_SPELLINGS = {
 }
 
 #: Every `src/` module holding a non-docstring literal with the `raw/` segment as a path
-#: segment, and how many. ⛔ **One home, and no second site at all** (`W199`): the segment
+#: segment, and how many. ⛔ **One home, and no second site at all**: the segment
 #: was minted twice — `ARCHIVE_ROOT_NAME` in `validate.corpus`, off that package's surface,
 #: and `RAW_DIR` in the adapter `Layout` — so the archive's writer and its reader each held
 #: their own copy of the one directory they must agree about.
 RAW_SPELLINGS = {"src/studyforge/corpus/placement/names.py": 1}
 
 #: Every `src/` module holding a non-docstring literal with the `study/` segment as a path
-#: segment, and how many. ⛔ **One home** (`W323`, clause 4): the segment is the geography
+#: segment, and how many. ⛔ **One home**: the segment is the geography
 #: of every artifact the `sibling` profile places, and a build, a test or a skill that
-#: composed a second copy of it would place files the plan does not declare — which is
-#: `W322`'s subject, and this row was required not to create a new instance of it.
+#: composed a second copy of it would place files the plan does not declare.
 STUDY_SPELLINGS = {"src/studyforge/corpus/placement/names.py": 1}
 
 #: Every `src/` module that MINTS the `units/` segment — a name bound to the bare literal
-#: and joined into a path. ⛔ **One home** (`W298`): it was minted here and again as
+#: and joined into a path. ⛔ **One home**: it was minted here and again as
 #: `UNITS_DIR` in the adapter `Layout`, so the archive's writer and the site's placer each
 #: held a private copy of a segment their own contracts require to agree.
 UNITS_MINTS = {"src/studyforge/corpus/placement/names.py": ("UNITS_DIRNAME",)}
@@ -333,7 +327,7 @@ UNITS_MINTS = {"src/studyforge/corpus/placement/names.py": ("UNITS_DIRNAME",)}
 #:   separator and names a route rather than a directory.
 #:
 #: ⚠️ Asserted as a SUBSET, not an equality: a new JSON key naming `units` is ordinary
-#: work, and a census that red on one would teach the next office to edit the census.
+#: work, and a census that red on one would teach the next author to edit the census.
 UNITS_SPELT_BUT_NOT_MINTED = frozenset(
     {
         "src/studyforge/contents/entries.py",
@@ -377,8 +371,7 @@ def segment_spellings(segment: str) -> dict[str, int]:
 def path_segment_mints(segment: str) -> dict[str, tuple[str, ...]]:
     """Every `src/` MINT of `segment` as a directory name, by module.
 
-    ⛔ **A mint is not a literal, and `W298` is the row that needed the
-    difference.** `segment_spellings` above counts literals, which is right for
+    ⛔ **A mint is not a literal.** `segment_spellings` above counts literals, which is right for
     `archive` and `raw` and wrong for `units`: that word is also a JSON key, an
     error label and a URL prefix, so counting literals reds six modules that
     mint no directory at all.
@@ -394,7 +387,7 @@ def path_segment_mints(segment: str) -> dict[str, tuple[str, ...]]:
     - the bare segment used directly as a join operand, `x / "units"`.
 
     ⛔ **A BINDING is deliberately not a mint.** `UNITS_DIR = UNITS_DIRNAME`
-    binds a value it does not create, which is the shape `W199` ruled keeps an
+    binds a value it does not create, which is the shape that keeps an
     adapter's vocabulary on its own surface (R19); `UNITS_DIR = "units"` creates
     a second one, and only the second is counted.
 
@@ -448,18 +441,17 @@ def path_segment_mints(segment: str) -> dict[str, tuple[str, ...]]:
 
 
 def test_the_units_segment_is_minted_once_in_src():
-    # ⛔ `W298`, received as `W199/1`. `UNITS_DIR` in the adapter `Layout` and
-    # `UNITS_DIRNAME` here held one value twice: the archive's writer and the
-    # generated site's placer each kept a private copy of a segment `tree`'s own
-    # contract says must agree segment for segment.
+    # ⛔ The archive's writer and the generated site's placer must not each
+    # keep a private copy of a segment `tree`'s own contract says must agree
+    # segment for segment: `UNITS_DIR` in the adapter `Layout` binds this one.
     found = path_segment_mints(UNITS_DIRNAME)
     print(f"units mints in src/: {sum(len(n) for n in found.values())} in {len(found)} module(s)")
     assert found == UNITS_MINTS, f"a second mint, or the one home lost: {found}"
 
 
 def test_the_mint_instrument_tells_a_directory_name_from_a_json_key():
-    # ⛔ **The clause `W298` owes, asserted rather than claimed.** `W199` closed
-    # `raw` with a spelled-once scan and that instrument does NOT transfer: run
+    # ⛔ **Asserted rather than claimed.** `raw` is held by a spelled-once
+    # scan, and that instrument does NOT transfer: run
     # over `units` it reads a JSON key, an error label and a URL prefix as
     # defects. ⭐ This asserts the discriminator both ways — the scan still SEES
     # every one of those modules, and counts none of them as a mint.
@@ -478,7 +470,7 @@ def test_the_mint_instrument_tells_a_directory_name_from_a_json_key():
 
 
 def test_the_archive_root_is_spelled_once_in_src():
-    # ⛔ `INT-06/6`: three constants and one composition let `plan` print a root
+    # ⛔ Three constants and one composition let `plan` print a root
     # `validate`, a build and the layout never read. The population is printed.
     found = segment_spellings(ARCHIVE_DIRNAME)
     print(f"archive-root literals in src/: {sum(found.values())} in {len(found)} module(s)")
@@ -486,7 +478,7 @@ def test_the_archive_root_is_spelled_once_in_src():
 
 
 def test_the_declared_sibling_subdirectory_is_spelled_once_in_src():
-    # ⛔ `W323`, clause 4: the geography lives in ONE place. Every path under
+    # ⛔ The geography lives in ONE place. Every path under
     # `sibling` carries this segment, and every consumer gets it by asking the
     # profile — so `src/` holds the mint and not one further spelling.
     found = segment_spellings(STUDY_DIRNAME)
@@ -495,7 +487,7 @@ def test_the_declared_sibling_subdirectory_is_spelled_once_in_src():
 
 
 def test_the_raw_segment_is_spelled_once_in_src():
-    # ⛔ `W199`: two constants, in the two modules that must agree — the walk
+    # ⛔ Two constants, in the two modules that must agree — the walk
     # `validate` runs and the layout an adapter writes to. ⭐ Neither compared
     # itself against the other, so the fork was invisible until a reader counted.
     found = segment_spellings(RAW_DIRNAME)

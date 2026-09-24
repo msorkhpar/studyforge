@@ -37,7 +37,7 @@ def test_an_empty_list_is_refused_naming_the_key():
         variants_of([], "corpus.json")
 
 
-def test_slugs_are_sf01_s_and_a_refusal_arrives_as_this_package_s_error():
+def test_slugs_are_the_address_package_s_and_a_refusal_arrives_as_this_package_s_error():
     assert variants_of(["java", "2nd"], "corpus.json") == ("java", "2nd")
     assert slug_of("demo", "source") == "demo"
     with pytest.raises(ManifestError):
@@ -53,7 +53,7 @@ def test_exercises_is_a_real_bool_and_nothing_that_looks_like_one(value):
 
 @pytest.mark.parametrize("value", [0, "off", "false", None])
 def test_narration_is_a_real_bool_and_nothing_that_looks_like_one(value):
-    # ⭐ `W460`: the author's answer, recorded as they gave it.
+    # ⭐ The author's answer, recorded as they gave it.
     assert narration_of(False, "corpus.json") is False
     assert narration_of(True, "corpus.json") is True
     with pytest.raises(ManifestError, match="'narration' must be true or false"):

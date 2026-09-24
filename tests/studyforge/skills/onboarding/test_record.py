@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/skills/onboarding/record.py` (R12).
 
-⭐ **W256 (`INT-09/1`), asserted both ways:** the record marks the one module a
+⭐ **Asserted both ways:** the record marks the one module a
 person writes and carries no digest for it, so an edit there reads clean after
 a regenerate — and every generated file whose bytes differ is still named.
 """
@@ -147,7 +147,7 @@ def test_every_generated_file_whose_bytes_differ_from_the_record_is_named(tmp_pa
 
 
 def test_the_record_is_read_through_the_personal_data_gate(tmp_path):
-    # ⛔ R7 (W249): a record is a list of paths, the shape a home directory
+    # ⛔ R7: a record is a list of paths, the shape a home directory
     # arrives in. The planted path is expanded, never typed.
     root, _ = _written(tmp_path)
     record = _record(root)
@@ -203,7 +203,7 @@ def test_uninstall_keeps_the_persons_module_when_its_stub_cannot_be_derived(tmp_
 
 
 # --------------------------------------------------------------------------
-# ⛔ W345, generalised by W353: a regenerate never claims a file a person wrote
+# ⛔ A regenerate never claims a file a person wrote
 # --------------------------------------------------------------------------
 
 
@@ -225,7 +225,7 @@ def test_an_ignore_file_the_record_does_not_list_is_refused_by_name(tmp_path):
 
 
 def test_a_file_of_any_other_name_the_record_does_not_list_is_refused_too(tmp_path):
-    # ⛔ W353 clause 1: not only ignore files.
+    # ⛔ Not only ignore files.
     root, made = _written(tmp_path)
     (root / "notes").mkdir()
     (root / "notes/keep.txt").write_text("mine\n", encoding="utf-8")

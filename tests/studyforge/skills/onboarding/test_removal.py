@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/skills/onboarding/removal.py` (R12).
 
-⭐ Moved here with `uninstall` when `W313` split it out of `onboard.py`; the
+⭐ `uninstall` lives in its own module, apart from `onboard.py`; the
 record-shape cases stay beside the record in `test_record.py`.
 """
 

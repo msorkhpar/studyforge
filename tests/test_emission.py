@@ -1,4 +1,4 @@
-"""§1f as a build failure: no refusal in `studyforge` reproduces what it refused.
+"""No echo (R7) as a build failure: no refusal in `studyforge` reproduces what it refused.
 
 The machinery is `tests/emission/`; this module is what fails the suite on it.
 
@@ -61,7 +61,7 @@ def defined():
 
 
 def test_no_refusal_reproduces_the_value_it_refused(found):
-    # ⛔ Rubric §1f, and the whole of W2. A branch that fires *because* a value
+    # ⛔ A refusal never echoes the value (R7). A branch that fires *because* a value
     # is not a slug, not an ordinal, not a member of a closed set, is exactly
     # the branch an absolute path arrives at — so quoting it takes the one
     # input guaranteed to carry a home directory and puts it in a log.
@@ -70,7 +70,7 @@ def test_no_refusal_reproduces_the_value_it_refused(found):
 
 def test_no_refusal_reproduces_a_directory_it_was_handed(found):
     # ⛔ The half that makes `where=` and `what=` an exclusion by construction
-    # rather than nineteen allow-list entries (Ruling 13, condition 3). Every
+    # rather than nineteen allow-list entries. Every
     # entry point that turns a `Path` into a `where` passes `path.name`; four
     # docstrings said so and nothing tested it. This does.
     assert found.path_echoes == [], "\n" + found.report()
@@ -156,8 +156,7 @@ def unprobed(walked: Mapping[str, int], owed: Iterable[str]) -> list[str]:
 
 
 def test_the_sweep_reaches_every_module_the_package_ships(found, defined):
-    # ⛔ **The floor is the tree.** This is the assertion the three typed
-    # lower bounds used to stand in for, and the difference is that it cannot
+    # ⛔ **The floor is the tree.** Unlike a typed lower bound, this cannot
     # be satisfied by a sweep that has quietly narrowed: a package that stops
     # being walked is named here the moment it stops, whatever the totals say.
     #
@@ -182,7 +181,7 @@ def test_every_module_that_defines_a_callable_has_one_probed(found, defined):
 
 
 def test_the_sweep_probed_parameters_and_paths_of_what_it_walked(found):
-    # ⚠️ Ruling 13, condition 1: a check reports its coverage. ⭐ Inhabitance
+    # ⚠️ A check reports its coverage. ⭐ Inhabitance
     # only — what each arm probes *per callable* is asserted
     # exactly, below, on callables whose arithmetic is knowable, rather than
     # against a whole-tree total nobody can derive without taking the census
@@ -257,8 +256,8 @@ def test_the_poison_is_synthetic(found):
 
 def test_the_check_catches_a_refusal_that_quotes_its_value():
     # ⛔ An assertion that a mechanism refuses something is worthless until you
-    # have watched it pass without the mechanism. This builds the exact defect
-    # W1 removed and drives it through the census machinery itself — not
+    # have watched it pass without the mechanism. This builds a refusal that
+    # quotes its value and drives it through the census machinery itself — not
     # through a re-implementation of the comparison.
     def refuse_loudly(value: str, what: str = "a field") -> str:
         raise ValueError(f"{what} is not acceptable: {value!r}")
@@ -279,7 +278,7 @@ def test_a_refusal_that_names_only_the_field_is_not_reported():
 
 
 def test_a_label_parameter_is_not_poisoned_at_all():
-    # ⛔ Ruling 13, condition 3, asserted rather than described: `where` and
+    # ⛔ Asserted rather than described: `where` and
     # `what` are the framework's own label for the record and the field, and a
     # refusal exists to name them. Reproducing one is correct behaviour.
     def name_the_record(value: str, where: str) -> str:
@@ -316,8 +315,8 @@ def test_every_path_parameter_is_handed_an_absolute_path_of_its_own():
 
 
 def test_the_fix_this_check_guards_is_the_one_that_is_in_place():
-    # ⭐ Ruling 14 and Ruling 17, pinned at the site with the most leverage in
-    # the tree: `require_slug` is two lines that seven emission sites were,
+    # ⭐ Pinned at the site with the most leverage in the tree: `require_slug` is two lines that
+    # seven emission sites were,
     # seen through their callers. The diagnosis survives; the value does not.
     with pytest.raises(AddressError) as raised:
         require_slug(POISON, "identity 'corpus'")

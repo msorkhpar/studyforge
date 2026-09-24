@@ -9,7 +9,7 @@ spelling the root has in the run's mode; `gate(raw)` per line.
 **Depends on.** `re`, and `studyforge.archive.scrub` — ⛔ the one personal-data
 gate, never a second pattern set.
 
-## ⭐ Why relative, in BOTH modes (`TC-00/6`)
+## ⭐ Why relative, in BOTH modes
 
 A build prints absolute paths. The same run prints `/work/practice/x.py` in the
 runner container and the host's own path on the host — so *"both modes produce

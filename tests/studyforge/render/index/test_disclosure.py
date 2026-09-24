@@ -1,6 +1,7 @@
 """Mirror of `src/studyforge/render/index/disclosure.py` (R12).
 
-⭐ **Ruling 164's fork, the anchors, and the escaping** — the seams the page as a
+⭐ **The href fork (drop in chrome, raise in content), the anchors, and the escaping** — the seams
+the page as a
 whole cannot tell apart from a page that happened to look right.
 """
 
@@ -43,7 +44,7 @@ def test_the_tree_is_labelled_with_this_frameworks_own_structural_word():
 
 
 def test_a_refused_href_raises_rather_than_dropping_the_row():
-    # ⛔ Ruling 164. This page is nothing but this tree, so a silently dropped
+    # ⛔ Content raises. This page is nothing but this tree, so a silently dropped
     # anchor is every title present, nothing logged, and not one unit openable
     # from the page a reader lands on first.
     for refused in ("javascript:alert(1)", "x:alert(1)", "/rooted/page.html", "data:text/html,x"):

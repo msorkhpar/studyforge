@@ -23,7 +23,7 @@ SLATE = "Cool slate with teal-green and amber"
 SATURATED = "A saturated brand colour as the page ground"
 GRADIENT = "A purple-to-blue gradient"
 
-#: ⭐ The look the user ACCEPTED on 2026-09-19, as a stylesheet: cool slate
+#: ⭐ The ACCEPTED look, as a stylesheet: cool slate
 #: neutrals, ONE loud accent, no green. ⛔ It shares its ground band with the
 #: rejected slate row, and that is exactly why it is here.
 ACCEPTED = """

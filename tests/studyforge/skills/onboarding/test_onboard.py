@@ -29,7 +29,7 @@ def _made(**changes):
 
 
 def _media_ignores(made):
-    """The ignore files the media policy asked for: every one but `W345`'s bytecode files."""
+    """The ignore files the media policy asked for: every one but the bytecode files."""
     bytecode = bytecode_ignores(made.paths)
     return [w for w in made.paths if w.rsplit("/", 1)[-1] == ".gitignore" and w not in bytecode]
 
@@ -54,8 +54,8 @@ def test_exactly_one_file_is_a_persons():
 
 
 def test_the_adapters_globs_are_in_the_manifest_without_anybody_copying_them():
-    # ⛔ SK-02/1: today a person copies two lines out of a report. Here the
-    # scaffold's own globs are already in the document that gets written.
+    # ⛔ No person copies lines out of a report: the scaffold's own globs are
+    # already in the document that gets written.
     made = _made()
     manifest = parse(next(item.text for item in made.files if item.where == artifacts.MANIFEST))
 
@@ -71,7 +71,7 @@ def _notes_draft(*entries):
 
 
 def test_a_persons_not_material_block_survives_onboarding():
-    # ⛔ INT06-1, on the shape of the defect: a draft carrying a block, onboarded.
+    # ⛔ A draft carrying a block, onboarded.
     made = onboard(_notes_draft(corpora.NOTES), framework_commit=corpora.COMMIT)
     manifest = parse(next(item.text for item in made.files if item.where == artifacts.MANIFEST))
 
@@ -166,8 +166,8 @@ def _both_writers(made):
 
 @pytest.mark.parametrize("writer", ["onboarding", "scaffold"])
 def test_both_writers_keep_an_edited_hand_written_module_on_a_regenerate(tmp_path, writer):
-    # ⛔ W265 (`W257/2`): the two writers once disagreed on this fixture. One
-    # refused the whole write, the other kept the file.
+    # ⛔ Both writers must agree on this fixture: each keeps the file, and
+    # neither refuses the whole write.
     root = corpora.material(tmp_path / "corpus")
     made = _made()
     made.write(root)
@@ -202,7 +202,7 @@ def test_both_writers_refuse_a_first_write_over_the_hand_written_module_by_name(
 
 
 def test_running_it_twice_produces_the_same_bytes():
-    # ⭐ E11's acceptance: re-running changes nothing.
+    # ⭐ The skill's acceptance: re-running changes nothing.
     first = {item.where: item.text for item in _made().files}
     second = {item.where: item.text for item in _made().files}
 
@@ -278,15 +278,15 @@ def test_the_pin_is_refused_before_anything_is_planned():
 
 
 # --------------------------------------------------------------------------
-# ⛔ W242: a build's output is committed; ignore rules live in a file inside
+# ⛔ A build's output is committed; ignore rules live in a file inside
 # the generated root, or nowhere
 # --------------------------------------------------------------------------
 
 
 @pytest.mark.parametrize("placement", ["tree", "sibling"])
 def test_with_media_committed_the_one_ignore_file_is_the_frameworks_own(placement, tmp_path):
-    # ⛔ `W242` still holds for the CORPUS: no page, no clip and no index is
-    # ignored when media is committed. ⭐ `W425` is the exception and it is not
+    # ⛔ For the CORPUS: no page, no clip and no index is
+    # ignored when media is committed. ⭐ The one exception is not
     # the corpus's — the discovery cache `studyforge serve` writes, and the
     # file hides itself because a clone has no use for either.
     made = _made(placement=placement)
@@ -308,7 +308,7 @@ def test_media_that_is_not_committed_is_ignored_from_inside_the_generated_root(t
     assert _media_ignores(made) == [".studyforge/.gitignore"]
     assert not (root / ".gitignore").exists()
     assert is_ignored(".studyforge/course/units/unit-01/audio/c.mp3", cwd=root)
-    # ⭐ `W425`: the cache is covered here too, and this file does NOT hide
+    # ⭐ The cache is covered here too, and this file does NOT hide
     # itself — a clone has to read the media rules it also carries.
     assert is_ignored(".studyforge/site.json", cwd=root)
     assert not is_ignored(".studyforge/.gitignore", cwd=root)
@@ -319,11 +319,11 @@ def test_media_that_is_not_committed_under_sibling_is_refused_before_anything_is
     with pytest.raises(OnboardingRefused) as refused:
         _made(placement="sibling", media={"commit": "never"})
 
-    assert "R3" in str(refused.value)
+    assert "is never edited" in str(refused.value)
 
 
 # --------------------------------------------------------------------------
-# ⛔ W283: re-onboarding keeps every not_material glob the manifest declares
+# ⛔ Re-onboarding keeps every not_material glob the manifest declares
 # --------------------------------------------------------------------------
 
 #: A second person's glob after `corpora.NOTES`, so the ORDER is asserted too.
@@ -357,7 +357,7 @@ def test_only_onboardings_write_writes_corpus_json_and_the_scaffolds_regenerate_
 
 
 def test_a_re_onboarding_from_a_resurvey_draft_keeps_every_declared_glob_byte_for_byte(tmp_path):
-    # ⛔ Clause 1, the witness: a re-survey drafts no glob the manifest covers (W269),
+    # ⛔ Clause 1, the witness: a re-survey drafts no glob the manifest covers,
     # so the draft carries none. The manifest is regenerated byte-identical.
     root, before = _onboarded(tmp_path)
 
@@ -438,7 +438,7 @@ def test_a_manifest_that_does_not_parse_is_refused_by_name_rather_than_overwritt
 
 
 # --------------------------------------------------------------------------
-# ⛔ W442: what is written never depends on which checkout wrote it (R10)
+# ⛔ What is written never depends on which checkout wrote it (R10)
 # --------------------------------------------------------------------------
 
 
@@ -488,7 +488,7 @@ def test_no_root_named_writes_into_a_worktree_rather_than_being_refused(tmp_path
 
 
 def test_a_worktree_anywhere_is_written_and_names_no_path_to_the_framework(tmp_path):
-    # ⚠️ The shape `W321` could only refuse. ⭐ The library is installed, so
+    # ⚠️ A worktree anywhere on disk. ⭐ The library is installed, so
     # where the checkout sits does not enter what is written.
     main = tmp_path / "here" / "corpus"
     corpora.linked_worktree(tmp_path / "here")

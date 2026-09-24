@@ -3,7 +3,7 @@ r"""Delivery planning: the product owner for an integration.
 **What it does.** Turns *"convert this repository"* into an ordered backlog of
 tasks that each end in something a person can be **shown**, with acceptance
 the framework can **evaluate**, gated against a **generated** capability index
-rather than against thirteen epic documents.
+rather than against every epic document.
 
 **How you use it.** Through `SKILL.md` beside this file, which is the
 procedure. This package is what the skill *calls*:
@@ -38,10 +38,10 @@ path anybody names, so a planner needs no checkout.
 
 | Module | ⛔ What it will not let a plan say |
 |---|---|
-| `epics` | that a row is unreadable, or that thirteen documents are worth one refusal |
+| `epics` | that a row is unreadable, or that many documents are worth one refusal |
 | `components` | that a side is guessed, or that a fourth value joins the three that are read |
 | `capability` | that ids sort to the order, or that a row nobody delivers here is ours to explain |
-| `refusal` | ⭐ nothing — it is the FORM the rest take once they found several (Ruling 188) |
+| `refusal` | ⭐ nothing — it is the FORM the rest take once they found several (R6) |
 | `task` | that a task ends in a layer, or that a clause is decided by nobody |
 | `terminal` | that a corpus finishes somewhere, leaving later rows of THIS side unaccounted for |
 | `backlog` | that a milestone waits on framework work it has not declared a gate for |
@@ -58,10 +58,9 @@ inside one. ⭐ A planner is the one place where a source-specific shortcut
 would look most reasonable — *"for a corpus of this kind, do this"* — and it
 is the one place where it would be copied by every integration that followed.
 
-⚠️ **That sentence originally carried a corpus's name as its example, and the
-check in this package's own test suite is what found it** — which is the shape
-of the defect exactly: the naming looked like illustration rather than
-knowledge, and R1's prose form is where source-specific knowledge accumulates.
+⚠️ **A corpus's name used as an example is the same defect**: naming looks like
+illustration rather than knowledge, and R1's prose form is where
+source-specific knowledge accumulates. This package's own test suite checks it.
 """
 
 from __future__ import annotations
@@ -141,7 +140,7 @@ def capability_index(
     `(name, text)` pair whose `### M<n> — <name>` sections declare the order
     milestones run in; `pins` is the TEXT of the document pinning this
     workspace's components, which is what lets the index say ⭐ *not this
-    side* (`W92`). ⭐ The one call the procedure's first step makes.
+    side* (R1). ⭐ The one call the procedure's first step makes.
     ⛔ The caller names them all — this package does not know where a plan
     lives, and the next repository's does not live where this one's does.
     ⛔ `pins` is required and never defaulted: a plan with no component but

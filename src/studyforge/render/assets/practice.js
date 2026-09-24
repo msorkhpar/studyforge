@@ -3,7 +3,7 @@
    ⛔ **This file draws; it never talks to the API.** Everything it sends goes
    through `window.studyforge.run` — `available()`, `start(corpus, practice,
    mode, onLine)`, `stop()` — which the SERVING PROCESS adds to the page it
-   answers (`E05` § how a served page loads the run client). ⭐ That is the whole
+   answers (`serve.routes.assets` says how). ⭐ That is the whole
    reason this part can live in a built site at all: a built text that named the
    API, the serving origin or the client file is a defect R8's floor reads
    (`tests/studyforge/cli/serving.py`), and there is no such name below.
@@ -148,8 +148,8 @@
      ⛔ **A frame is never moved to another parent.** An `iframe` REPARENTED IN
      THE DOM RELOADS, so nothing below appends, removes or replaces a node.
 
-     ⛔ **THE SCROLL POSITION IS REMEMBERED AND PUT BACK INSTANTLY** (measured
-     and argued where the rule is, in `practice.css`).
+     ⛔ **THE SCROLL POSITION IS REMEMBERED AND PUT BACK INSTANTLY** (argued
+     where the rule is, in `practice.css`).
 
      ⛔ **No keyboard exit would make this a trap.** A real button, focus into
      the expanded practice and back on restore, Escape on the DOCUMENT (focus
@@ -170,8 +170,8 @@
       (open ? panel : button).focus({ preventScroll: true });
       /* ⛔ **`'instant'` is the repair, not a flourish**: `reset.css` sets
          `scroll-behavior: smooth`, so a plain `scrollTo` ANIMATES and the page
-         is still gliding when whatever looks at it next does. ⚠️ **The glide IS
-         the defect** — measured at 2px by a merge gate and at 306px here. */
+         is still gliding when whatever looks at it next does, anywhere from a
+         couple of pixels to the panel's whole height away. */
       if (!open) { window.scrollTo({ top: was, left: 0, behavior: 'instant' }); }
     }
 
@@ -275,9 +275,8 @@
        Stop, a disabled element drops focus to the document AT ONCE, and the
        run then settles a moment later with focus already on `<body>` — so the
        question *did the panel have focus?* answers no and the keyboard reader
-       is left at the top of the page. ⚠️ **Measured in a browser, in the
-       first reading this panel ever had on a served origin**; the ordinary
-       end-of-run path was correct and only this one was not. */
+       is left at the top of the page. ⚠️ The ordinary end-of-run path does
+       not have this problem; only Stop does. */
     var handedBack = false;
 
     /* ⚠️ Asked BEFORE the control is disabled or hidden, never after: a

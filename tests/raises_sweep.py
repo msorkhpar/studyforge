@@ -5,7 +5,7 @@ floor and the plants live in
 [`test_raises_convention.py`](test_raises_convention.py), and the seam between
 the two is why this file exists: ⚠️ **the derivation grew past R11's test ceiling
 when the floor learned to survive a move, and the split is at the line
-where reading the tree stops and judging it starts** (Ruling 261).
+where reading the tree stops and judging it starts**.
 
 ⭐ What is derived here, and why each derivation rather than a typed list:
 
@@ -162,7 +162,7 @@ class Population:
     canonical: dict[str, str]
     #: Canonical name → the reader names a caller may wrap in a `try`.
     readers: dict[str, frozenset[str]]
-    #: ⭐ `(defining module, name)` of every reader → its canonical name (`W470/1`).
+    #: ⭐ `(defining module, name)` of every reader → its canonical name.
     #: A caller may import a reader from the module that DEFINES it rather than
     #: from the package surface — `from studyforge.generate.declarations import
     #: read_corpus` — and that caller is the package's caller all the same.
@@ -201,10 +201,10 @@ def population(src: Path) -> Population:
 def _defining_package(module: str, name: str, subject: Population) -> str | None:
     """The canonical package whose reader `from module import name` binds, or None.
 
-    ⛔ **Resolved by what the name IS, never by how the import spells it**
-    (`W470/1`): the sweep that matched only an exporter's own name missed every
-    caller importing the reader from its defining submodule, and a sliced tuple
-    around such a call survived it. ⚠️ A module absent from the real tree — a
+    ⛔ **Resolved by what the name IS, never by how the import spells it**: a
+    sweep that matched only an exporter's own name would miss every caller
+    importing the reader from its defining submodule, and a sliced tuple around
+    such a call would pass it. ⚠️ A module absent from the real tree — a
     plant's split-out file — is not imported and binds nothing here.
     """
     if not module.startswith("studyforge.") or importlib.util.find_spec(module) is None:

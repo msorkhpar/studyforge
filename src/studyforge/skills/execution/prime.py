@@ -15,9 +15,9 @@ names. ⛔ It reads the corpus and writes nothing, and it names no source (R1):
 every filename below belongs to a *build tool*, a *language* or the
 *framework's own exercise layout*, never to any corpus.
 
-## ⛔ THE PRIME IS THE COMPONENT'S LAYOUT, AND ITS NAMES ARE THE CONTRACT'S (`W440`)
+## ⛔ THE PRIME IS THE COMPONENT'S LAYOUT, AND ITS NAMES ARE THE CONTRACT'S
 
-⚠️ **Measured, `W436/1`:** a prime holding the corpus's files at their
+⚠️ **Measured:** a prime holding the corpus's files at their
 corpus-relative paths is REFUSED by the runner's build (exit 2), because the
 component warms **one project directory per seeded tool** and nothing else at
 the top. ⭐ **So each project is copied to `<tool>/…`, re-rooted at its own
@@ -32,7 +32,7 @@ build file expects it.
 
 ## ⛔ THE PRIME IS THE CORPUS'S OWN BUILD, NEVER THE SUM OF ITS EXERCISES'
 
-⚠️ **An authored exercise carries a build role** (`W436`): a `pom.xml` in its
+⚠️ **An authored exercise carries a build role**: a `pom.xml` in its
 bundle, and a copy of it laid into the reader's workspace. ⛔ **Neither is the
 corpus's declared build**, and matching build files at any depth would sweep
 every one into the prime. ⭐ So the bundle directory is never read from, and

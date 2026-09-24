@@ -1,4 +1,4 @@
-"""The archive's one exception type (SF-06)."""
+"""The archive's one exception type."""
 
 import json
 
@@ -60,7 +60,7 @@ def test_a_leak_is_not_an_archive_error():
 
 
 def test_a_version_refusal_arrives_as_an_archive_error_not_a_version_error():
-    # ⭐ Each contract keeps its own front door: SF-33's guard is handed
+    # ⭐ Each contract keeps its own front door: the version guard is handed
     # `error=ArchiveError`, so the shared check does not leak a shared type.
     assert not issubclass(ArchiveError, VersionError)
     with pytest.raises(ArchiveError):

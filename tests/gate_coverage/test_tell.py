@@ -1,6 +1,6 @@
 """The origin tell's acceptance: against every probe shape, three ways.
 
-⛔ The ruling was decided by what each retired spelling got *wrong*, so both
+⛔ The spelling is chosen by what each retired spelling gets *wrong*, so both
 are run here rather than described. ⚠️ A control that cannot be run is a claim.
 """
 
@@ -10,10 +10,10 @@ import pytest
 
 from tests.gate_coverage import SCAN_ROOT
 from tests.gate_coverage.probes import (
+    BY_NAME_SPELLING,
+    MEASURED_SHAPES,
+    NARROWED_SPELLING,
     PROBES,
-    RULING_57,
-    SF10_SPELLING,
-    W7_SPELLING,
     _token_tell,
 )
 from tests.gate_coverage.tell import GATE, _calls, decodes, document_readers, import_origins
@@ -30,7 +30,7 @@ def test_resolving_origins_finds_the_same_readers_the_token_tell_found():
     by_token = {
         path
         for path in root.rglob("*.py")
-        if _token_tell(path.read_text(encoding="utf-8"), SF10_SPELLING)
+        if _token_tell(path.read_text(encoding="utf-8"), NARROWED_SPELLING)
     }
     assert by_origin == by_token, {
         "only by origin": sorted(str(p.relative_to(root)) for p in by_origin - by_token),
@@ -48,15 +48,15 @@ def test_every_probe_shape_is_classified_by_its_origin(label):
 
 
 def test_the_shipped_spelling_missed_two_genuine_readers():
-    # ⛔ **The control that decided the ruling, run.** `from json import load`
+    # ⛔ **The deciding control, run.** `from json import load`
     # and `import json as j` are real decodes of somebody else's document, and
     # `("loads", "json.load")` cannot see either. ⚠️ Nothing in `src/` is
-    # written either way *today*, which is why this was next and not urgent —
-    # and why the miss would have been silent when it arrived.
+    # written either way *today*, which is why the miss would be silent when
+    # it arrives.
     missed = sorted(
         label
         for label, (source, is_reader) in PROBES.items()
-        if label[0] in RULING_57 and is_reader and not _token_tell(source, SF10_SPELLING)
+        if label[0] in MEASURED_SHAPES and is_reader and not _token_tell(source, NARROWED_SPELLING)
     )
     assert missed == [
         "D from json import load / load",
@@ -66,14 +66,14 @@ def test_the_shipped_spelling_missed_two_genuine_readers():
         assert decodes(PROBES[label][0]) is True
 
 
-def test_w7s_first_spelling_read_delegation_as_decoding():
+def test_the_by_name_spelling_reads_delegation_as_decoding():
     # ⛔ The other half of the same control, and the false positive that
     # produced the origin tell in the first place: `("loads", "load")` sees
     # `archive.document.load` and cannot tell it from `json.load`.
     flagged = sorted(
         label
         for label, (source, is_reader) in PROBES.items()
-        if label[0] in RULING_57 and not is_reader and _token_tell(source, W7_SPELLING)
+        if label[0] in MEASURED_SHAPES and not is_reader and _token_tell(source, BY_NAME_SPELLING)
     )
     assert flagged == [
         "F from archive.document import load / load",
@@ -87,13 +87,13 @@ def test_a_shadowed_import_is_asked_rather_than_assumed_away():
     # ⛔ **The one row where this file chooses the noisier answer, on purpose.**
     # `J` imports `json`'s `load` and then binds the same name to something
     # else, so what `load(path)` means depends on which binding wins at run
-    # time. ⭐ W7 asks whether a module that *might* decode has gated; the cost
+    # time. ⭐ This check asks whether a module that *might* decode has gated; the cost
     # of asking is one argued false positive, and the cost of not asking is the
     # silence the origin tell was written against. ⚠️ Both token spellings miss it.
     source, _ = PROBES["J from json import load, then shadowed"]
     assert decodes(source) is True
-    assert _token_tell(source, SF10_SPELLING) is False
-    assert _token_tell(source, W7_SPELLING) is True
+    assert _token_tell(source, NARROWED_SPELLING) is False
+    assert _token_tell(source, BY_NAME_SPELLING) is True
 
     # ⭐ And the control on the control: with no `json` import above it, the
     # very same `def load` names only itself and nothing is asked.
@@ -101,9 +101,9 @@ def test_a_shadowed_import_is_asked_rather_than_assumed_away():
 
 
 def test_a_module_that_only_delegates_to_a_gated_reader_is_not_a_reader(tmp_path):
-    # ⛔ **The case W7 never argued over, asserted so the narrowing is not a
-    # hole somebody widens later.** A module that calls another module's gated
-    # loader decodes nothing; Ruling 50 forbids it re-asking the gate, and the
+    # ⛔ **Delegation, asserted so the narrowing is not a hole somebody widens
+    # later.** A module that calls another module's gated loader decodes nothing;
+    # one read path never re-asks the gate (R7), and the
     # first such module in the tree is `unit/builder/material.py`.
     delegating = tmp_path / "composer.py"
     delegating.write_text(PROBES["F from archive.document import load / load"][0], encoding="utf-8")
@@ -120,7 +120,7 @@ def test_a_module_that_decodes_with_json_load_is_still_a_reader(tmp_path):
 
 
 def test_an_import_binds_the_name_it_actually_binds():
-    # ⛔ The map is the ruling, so it is asserted directly rather than only
+    # ⛔ The map is the rule, so it is asserted directly rather than only
     # through its consequences. ⚠️ `import a.b.c` binds `a`; `import a.b as x`
     # binds `x` to `a.b`. Getting that backwards loses a dotted chain whole.
     tree = ast.parse(

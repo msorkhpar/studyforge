@@ -28,7 +28,7 @@ finding.**
 ⚠️ **The measurement that made this skill exist.** Scaffolding an adapter into
 a clean corpus and running `studyforge validate` gave `NOT valid: 8 finding(s)`
 — one `unclassified` per generated file — and closing it meant a person copying
-two lines out of a report into `corpus.json` (`SK-02/1`). ⛔ **Two lines is
+two lines out of a report into `corpus.json`. ⛔ **Two lines is
 still retyping**, and a second source pays it again. This skill writes them.
 
 ---
@@ -49,7 +49,7 @@ You need three things, and nothing else:
 ⛔ **The pin is the INSTALLED library**. This skill reads the version
 of the `studyforge` this Python imports and writes it into the corpus's pin
 beside the commit that library was built from, which a wheel carries and says
-itself (`W467`). ⛔ **Never a path**, relative or absolute: a path carries somebody's
+itself. ⛔ **Never a path**, relative or absolute: a path carries somebody's
 home directory (R7), and a sibling checkout is a development arrangement a
 stranger with the installed library does not have.
 
@@ -67,7 +67,7 @@ question, of the same library, from inside the corpus:
 python3 -m studyforge.skills.onboarding.verify .
 ```
 
-⭐ **The version and the commit are both verified** (`W467`). A wheel built
+⭐ **The version and the commit are both verified.** A wheel built
 from a clone carries the commit it was built from, so `onboard(draft)` pins it
 without being told, and a `framework_commit` naming another is refused by name.
 ⚠️ **A source tree or an editable install carries none**: there, pass
@@ -75,8 +75,8 @@ without being told, and a `framework_commit` naming another is refused by name.
 commit assertion, saying why, rather than passing it. ⛔ A library whose version
 cannot be read is refused by name, and nothing is written.
 
-⛔ **A corpus onboarded before this — its pin names a framework checkout beside
-it (`"where": "sibling"`) — keeps working until it re-onboards**: its committed
+⛔ **A corpus whose pin names a framework checkout beside it (`"where":
+"sibling"`) keeps working until it re-onboards**: its committed
 stubs and pin test do not import this library. ⭐ Its next regenerate must
 re-pin, from the installed library: `reonboard('.', framework_commit=<the
 commit the library was built from>)`. Without `framework_commit` that
@@ -104,16 +104,13 @@ only a person knows why.
 still has none, at once.** A corpus that excludes nothing needs no mapping and
 onboards unattended.
 
-⭐ **The same mapping settles a proposed `not_material` glob** (`W249`).
+⭐ **The same mapping settles a proposed `not_material` glob**.
 Reconnaissance drafts each with `"why": null`; `promote` pairs it by glob and
 names every glob still open in one refusal. A reason already written is kept.
 
 ⭐ **Then ask the author whether they want narration, and record the answer in
-the draft.** The user's ruling, 2026-09-23: *"it should be optional and while
-serving or even while caputring the matterial skills should ask if user is
-interested in the narrition or not. Somebody might wants to just cover the
-course wihtout voices as mentioned the voice might be cgenerated but still not
-serving them would be an option"*. Ask it plainly — *"Do you want this course
+the draft.** Narration is optional: a reader may want the course without
+voices, and generated clips may still go unserved. Ask it plainly — *"Do you want this course
 narrated, or read without voices?"* — and write what they said:
 
 ```python
@@ -161,12 +158,12 @@ rewritten). ⭐ **`git status` afterwards shows additions and nothing else** —
 plus whatever the manifest's own `permitted_edits` declares, which is the only
 form an edit may take and is checked by a test this skill generates.
 
-⛔ **That generated check answers R3, and not `git status`** (`W331`). ⚠️ **It
-answered `git status` until this row, and so it went RED on a CORRECT run**: a
+⛔ **That generated check answers R3, and not `git status`**. ⚠️ **A check
+that answers `git status` goes RED on a CORRECT run**: a
 re-build replaces the pages an earlier build wrote, and `git add` turns a file
 that never existed into an `A ` entry rather than a `??` one — both read as
-*"an existing file changed"*. ⭐ **It went green the moment the work was
-committed, which is the proof it was measuring committing.** ⛔ **The verdict may
+*"an existing file changed"*. ⭐ **It goes green the moment the work is
+committed, which is the proof it measures committing.** ⛔ **The verdict may
 not move between uncommitted, staged and committed**, so it now reads two things
 and neither is the tree's dirtiness:
 
@@ -178,7 +175,7 @@ and neither is the tree's dirtiness:
 - ⭐ **the tree, through that same declaration.** Both status letters are read
   and a rename's origin is taken from its own field; an ADDITION is never a
   breach, and what is left must be named by the plan, by
-  `.studyforge/installed.json` (`W329`) or by `permitted_edits` — or sit inside
+  `.studyforge/installed.json` or by `permitted_edits` — or sit inside
   `.studyforge/`, which `studyforge.validate.source.SKIP_DIRS` already declares
   is this tool's directory and never the corpus's material.
 
@@ -188,14 +185,14 @@ invisible to it. ⭐ That is why the first reading exists and why it comes first
 
 ⛔ **`permitted_edits` may never name** the repository's root ignore file, any
 version-control configuration, or a file R3 reads as content — **repository-root
-documentation included, whatever `content` classifies it as** (`W278`). ⭐ The one
+documentation included, whatever `content` classifies it as** (R3). ⭐ The one
 predicate is `studyforge.corpus.manifest.edits.reads_as_content`, the stems it reads
 as root documentation are `studyforge.corpus.manifest.edits.ROOT_DOCUMENTATION`, and
 all three are refused by `studyforge.corpus.manifest.edits.parse_edits`. ⛔ Read the
 names there: this skill keeps no copy, and a draft declaring one is refused by name.
 
 ⛔ **A corpus already onboarded is RE-onboarded from what it records, never
-re-surveyed and never hand-edited** (`W439`). ⭐ Its `corpus.json` and its pin are
+re-surveyed and never hand-edited** (R19). ⭐ Its `corpus.json` and its pin are
 the draft — every answer a person already settled — and a change enters as data:
 
 ```
@@ -205,18 +202,18 @@ python3 -c "from studyforge.skills.onboarding import hand_edited, reonboard; \
 ```
 
 - ⭐ **`not_material` is only the globs you ADD.** Each one the manifest already
-  declares is kept byte for byte, in its order, with its reason (`W283`), and each
+  declares is kept byte for byte, in its order, with its reason, and each
   one a generator owns is derived again — ⛔ **so none is retyped**, and one that
   is retyped is refused by name as a collision.
 - ⭐ **`settle` names a recorded answer you mean to change** — `{"exercises": True}`
   when a corpus starts authoring, or `{"narration": False}` when the author
-  decides to read without voices (`W460`), or `{"onboarding_doc": "docs/archive/ONBOARDING.md"}`
-  to keep the reader document somewhere other than the root (`false` for none, `W461`).
+  decides to read without voices, or `{"onboarding_doc": "docs/archive/ONBOARDING.md"}`
+  to keep the reader document somewhere other than the root (`false` for none).
   ⭐ The copy at its old place is removed while it is byte for byte what was
   generated; one you edited refuses the regenerate by name, writing nothing, until
-  you move it or restore it (`W467`).
+  you move it or restore it.
   ⛔ Any answer it does not name that would move is
-  still refused by name (`W329`, below); `content` is never settled here, because a
+  still refused by name (below); `content` is never settled here, because a
   new content shape is a new onboarding.
 - ⭐ **`framework_commit` re-pins**, to the library running `reonboard`. Without it
   the recorded pin and its skills are kept — ⛔ only while the pin names the
@@ -226,11 +223,11 @@ python3 -c "from studyforge.skills.onboarding import hand_edited, reonboard; \
   `hand_edited` names as `.studyforge/pin.json`.
 - ⛔ **`hand_edited('.')` printing `[]` is the proof**, and a `corpus.json` edited in
   an editor fails it: `.studyforge/installed.json` digests the manifest as generated.
-  ⛔ **A generated file moved or deleted by hand fails it too** (`W461`): each one
+  ⛔ **A generated file moved or deleted by hand fails it too**: each one
   missing from where the record puts it is a sentence saying so and what to do.
-  ⭐ An ignore file that hides itself is one machine's own (`W425`), so a fresh
+  ⭐ An ignore file that hides itself is one machine's own, so a fresh
   clone lacks it and it is never reported.
-- ⭐ **The reader document goes where `corpus.json` says** (`onboarding_doc`, `W461`),
+- ⭐ **The reader document goes where `corpus.json` says** (`onboarding_doc`),
   and every generated line that points at it points there. ⛔ **Never move it by
   hand**: the next regenerate writes it back at the recorded place. Settle the key
   instead; a copy already moved to that place unchanged is rewritten in place,
@@ -238,14 +235,14 @@ python3 -c "from studyforge.skills.onboarding import hand_edited, reonboard; \
 
 ⚠️ **Why not `survey('.')`**: on an onboarded corpus it reads this framework's own
 generated half as material and proposes answers the manifest does not record
-(`W329`), so every regenerate from it is a string of refusals. ⭐ Underneath,
+(R19), so every regenerate from it is a string of refusals. ⭐ Underneath,
 `reonboard` is `onboard(recorded draft, existing=<its text>)` —
 `existing=` stays the mechanism for a caller that builds its own draft, and
 `write(..., regenerate=True)` refuses by name, writing nothing, when that draft
 would still drop a declared glob.
 
 ⛔ **And a second run of this whole procedure writes the SAME `corpus.json`, byte
-for byte, or refuses by name** (`W329`). ⚠️ **It did neither**: a re-survey read
+for byte, or refuses by name** (R10). ⚠️ **A re-survey once did neither**: it read
 this framework's own generated half as the corpus's material, so it counted the
 scaffold's `tests/**/test_*.py` as graders and this skill wrote `exercises: true`
 — three lines below its own report printing `graded practices  no`, with no
@@ -258,24 +255,23 @@ would move. ⛔ **A reading that disagrees with a recorded answer is a question,
 never a rewrite.**
 
 ⛔ **And a regenerate never takes a file of yours at a path a later framework
-generates** (`W353`). A generated path already on disk that
+generates** (R3). A generated path already on disk that
 `.studyforge/installed.json` does not list as generated is refused by name, and
 nothing is written — ⚠️ even when its bytes are what the framework would write,
 because adopting it would be silent. ⭐ Move each named file aside, regenerate,
 and keep what was yours outside the generated paths. ⚠️ The one exception is a
 generated file MOVED: bytes whose digest the record holds for a generated path
-that is now empty are the framework's, byte for byte, and are rewritten in place
-(`W461`).
+that is now empty are the framework's, byte for byte, and are rewritten in place.
 
 What lands, and why each one exists:
 
 | what | why it is generated rather than typed |
 |---|---|
 | `corpus.json` | the draft promoted, with **every generated file already declared `content.not_material`** |
-| the adapter package and its suite | the adapter skill's scaffold, wired in — one file that is yours and every other one generated; ⛔ how many is the scaffold's own listing (`scaffold(...).lines()`, the adapter skill's step 1), never a number typed here (`W345`) |
+| the adapter package and its suite | the adapter skill's scaffold, wired in — one file that is yours and every other one generated; ⛔ how many is the scaffold's own listing (`scaffold(...).lines()`, the adapter skill's step 1), never a number typed here |
 | `.studyforge/pin.json` and the skill stubs | the installed library's version and the commit it was built from, and thin pointers that carry both and name the command that prints each procedure from the installed package |
-| `tests/` — two checks | R3's assertion, read from what a build declares it writes and from the tree through that same declaration, with this corpus's edits baked in; and the pin check — the installed library is the pinned version and build, ships every stubbed skill, and no stub has drifted. ⭐ Each runs with no test runner, `python3 tests/<its name>.py`, as well as under pytest (`W467`) |
-| the reader document, `ONBOARDING.md` unless `onboarding_doc` places it elsewhere or turns it off | what a reader gets, read off the corpus's own declarations, with commands that run from a fresh clone (`W313`) — and **no live figure**: where the corpus stands is a command it prints, because nothing rewrites a generated document when narrating or re-ingesting moves the answer (`W332`) |
+| `tests/` — two checks | R3's assertion, read from what a build declares it writes and from the tree through that same declaration, with this corpus's edits baked in; and the pin check — the installed library is the pinned version and build, ships every stubbed skill, and no stub has drifted. ⭐ Each runs with no test runner, `python3 tests/<its name>.py`, as well as under pytest |
+| the reader document, `ONBOARDING.md` unless `onboarding_doc` places it elsewhere or turns it off | what a reader gets, read off the corpus's own declarations, with commands that run from a fresh clone — and **no live figure**: where the corpus stands is a command it prints, because nothing rewrites a generated document when narrating or re-ingesting moves the answer |
 | `.studyforge/installed.json` | what step 6 undoes, a digest per generated file, and the one module that is yours, marked `hand_written` with no digest |
 
 ### 4. Write the one file that is a person's
@@ -288,15 +284,14 @@ python3 -m pytest tests -q          # ⛔ it fails, and the failure is the speci
 other file in the corpus is downstream of it and is generated.
 
 ⛔ **That command leaves the corpus valid, and this skill is what makes that
-true** (`W329`). ⚠️ **Measured**: it writes `tests/__pycache__/*.pyc`, the
-manifest this skill generated declared `tests/*.py`, and so the step this page
-commands left `studyforge validate` exiting 1 on bytecode. ⭐ **Settled as
+true**. ⚠️ It writes `tests/__pycache__/*.pyc`, which a manifest declaring only
+`tests/*.py` would leave unaccounted for. ⭐ **Settled as
 manifest data** — the generated glob is `tests/**`, which covers what the
 generated tests produce — **never by telling you to clean up after a step you
 were told to run.** `ingest/**` and `tests/ingest/**` always read this way.
 
 ⭐ **The install record marks it `hand_written` and keeps no digest of it**, so
-a regenerate neither rewrites what you wrote nor records it (`INT-09/1`).
+a regenerate neither rewrites what you wrote nor records it.
 ⛔ `hand_edited(root)` names every **generated** file whose bytes differ from
 the record, and never yours: an empty list is R19 checked, not assumed. ⭐ It
 also reports, one sentence each, every file the **execution** skill wrote that
@@ -313,7 +308,7 @@ studyforge validate .
 ⭐ **Exit 0 is the whole agreement.** ⛔ Not a shape somebody agreed looked
 right — the same rule the adapter skill is written against.
 
-⛔ **Nothing here has to be regenerated afterwards, and that is `W332`'s fix.**
+⛔ **Nothing here has to be regenerated afterwards.**
 The reader document states **no** figure: how many units this corpus has, how many
 are narrated and whether any needs a container are read on demand, by the
 command that document prints, which reads the archive and the narration record
@@ -323,14 +318,12 @@ as they are at the moment it is typed:
 python3 -m studyforge.skills.onboarding .
 ```
 
-⚠️ **`W313` put those figures INTO the document and nothing refreshed them.**
-⛔ Measured on the first corpus: it said *narrated: 0 of 38* while every unit
-page carried audio, because narrating writes the narration record and no verb
-rewrites a generated document. ⭐ **A count is a fact, and a fact in a generated
-document can only be kept freshly wrong; a pointer resolves when it is read**
-(Ruling 161). ⛔ **So the old instruction to re-run step 3 is GONE rather than
-repeated louder** — an instruction that has to be remembered after every
-narration is the defect, not the remedy.
+⚠️ **Figures written INTO the document are never refreshed**: narrating writes
+the narration record, and no verb rewrites a generated document. ⭐ **A count is
+a fact, and a fact in a generated document can only be kept freshly wrong; a
+pointer resolves when it is read** (R19). ⛔ So nothing here asks you to re-run
+step 3 after narrating: an instruction that has to be remembered after every
+narration would be a defect, not a remedy.
 
 **Consumer-side modules:** `ingest`
 
@@ -365,11 +358,9 @@ uninstall refuses: it is removed only while it is still the stub.
 ### 7. ⛔ Write the findings log — the run is not done until it exists
 
 ⛔ **Exit 0 at step 5 says the archive is valid. It does not say what this run
-found, and a run that found things and wrote them nowhere is not done** (`W346`).
-⚠️ **Measured on the first conversion:** no step obliged a log, so its
-milestone's whole deliverable was rebuilt by hand a milestone later from commit
-bodies — ⛔ **and two of its seven numbered findings existed only in a hand-back
-message and were found in no ref at all.**
+found, and a run that found things and wrote them nowhere is not done** (R19).
+⚠️ **A finding carried only in a hand-back message is lost with the message**,
+and a run with no log leaves its findings to be rebuilt by hand.
 
 ⭐ **The log lives at `.studyforge/findings.md`**, the one place this procedure
 names for it, and `studyforge.skills.delivery.LOG` spells it. `.studyforge/` is

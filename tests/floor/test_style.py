@@ -1,4 +1,4 @@
-"""Mirror of `tools/quality/style.py` (R12).
+"""Mirror of `tests/floor/style.py` (R12).
 
 ⚠️ Every offending sample here is *built* from escapes rather than written as a
 literal line, because a literal trailing space or tab in this file would be

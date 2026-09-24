@@ -1,8 +1,8 @@
-"""`AX-09` — a quiz shows its questions, the SERVER grades them, and nothing runs.
+"""A quiz shows its questions, the SERVER grades them, and nothing runs.
 
-⛔ **THE USER'S RULING, 2026-09-23**: *"a test with the correct answer
-residing on the server side. When user answers it will get validated and result
-will be returned to the user with explanation if needed"*. ⭐ So this module
+⛔ **A quiz's answer key lives on the local study server and never in the page**:
+a reader's answer is sent there, checked, and the verdict comes back with the
+chosen option's explanation. ⭐ So this module
 takes its readings in TWO places, and the difference between them is the
 subject:
 
@@ -15,9 +15,8 @@ subject:
   a right answer and a wrong answer each show the SERVER's verdict and the chosen
   option's sentence, and the network log shows the grading request.
 
-⚠️ **Superseded, and said so rather than silently rewritten:** until that ruling
-this module opened the page as a FILE and graded there, because the key shipped in the
-page. That reading is now the negative one.
+⚠️ **Grading over `file://` is the negative reading**: a page that could grade
+without a server would be carrying its key.
 
 ⛔ **WHY THIS NEEDS A BROWSER.** Whether a reader who chooses an answer is told
 the right thing about it is a runtime identity: the radios, the request, the
@@ -51,8 +50,8 @@ SETTLE = 15.0
 #: What the page is asked for, once it has settled.
 #:
 #: ⛔ **`acts` and `frames` are counted over the WHOLE DOCUMENT and not over the
-#: quiz**: a plant that emitted a Run button BESIDE the quiz section left a
-#: scoped version of this reading GREEN (measured, `AX-09`).
+#: quiz**: a Run button emitted BESIDE the quiz section would leave a scoped
+#: version of this reading GREEN.
 STATE = """
 (() => {
   const quiz = document.querySelector('section[data-practice-quiz]');
@@ -274,10 +273,10 @@ NUMBERING = """
 
 @pytest.mark.parametrize("where", ["as_file", "served"])
 def test_each_questions_number_sits_beside_its_stem_and_not_its_first_option(where, request):
-    # ⛔ The corpus office's finding F9: the list's own MARKER sits on the list
-    # item's first LINE BOX, and a `<legend>` is laid out in its fieldset's
-    # border rather than as a line — so the number landed beside the FIRST
-    # OPTION. ⭐ The number is now the legend's own `::before`, drawn at the
+    # ⛔ The list's own MARKER sits on the list item's first LINE BOX, and a
+    # `<legend>` is laid out in its fieldset's border rather than as a line — so
+    # a list marker lands beside the FIRST OPTION. ⭐ The number is the legend's
+    # own `::before`, drawn at the
     # start of the stem's line, and the item draws no marker at all.
     page = request.getfixturevalue(where)
     for one in page.evaluate(NUMBERING):

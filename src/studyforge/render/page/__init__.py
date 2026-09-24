@@ -76,7 +76,7 @@ that is not this framework's own structure comes out of the document.
 unescaped. ⛔ **Decide escaping from the *text* rather than from the declared
 *type* and a tag-shaped paragraph is consumed as markup: the page renders, is
 well-formed, carries every other word, `validate` passes, nothing logs — and the
-sentence is gone.** ⭐ That is the promise `SF-07` declined CommonMark's type-7
+sentence is gone.** ⭐ That is the promise the archive parser declined CommonMark's type-7
 raw-HTML rule to keep, and this package is its only enforcer. See
 `blocks/verbatim.py`, which exists so the answer to *which types are raw?* is
 `ls` rather than reading branches.
@@ -90,19 +90,19 @@ disagree about a class name produce a page that renders, carries every word, and
 is unstyled — with no error anywhere — and this package cannot reach that state
 by typing a name, because it does not type one.
 
-## ⛔ What is on this surface, and what deliberately is not (`W76`)
+## ⛔ What is on this surface, and what deliberately is not
 
-⛔ **The sentence beside `__all__` used to be a promise; it is a test now.**
+⛔ **The sentence beside `__all__` is a test, not a promise.**
 `test_every_cross_package_import_of_this_package_names_something_on_its_surface`
 sweeps every module under `src/studyforge` that is not part of this package and
 fails on any import that reaches past `__all__` — so the next renderer cannot
 re-open the hole, rather than being asked not to.
 
 ⛔ **The escaping routine and the href gate are NOT here.** They were, they were
-private, and `render.container` imported them past this contract anyway
-(`SF-27/1`). They live in **`render.markup`** now, a sibling package, because
+private, and `render.container` imported them past this contract anyway.
+They live in **`render.markup`** now, a sibling package, because
 three peer renderers need them — this one, `render.container`, and
-`render/index/` (`SF-14`) — and a name three peers share is not one peer's to
+`render/index/` — and a name three peers share is not one peer's to
 own. ⭐ Exactly the shape of `render.pageassets`, which is where those same
 peers already take their class names and asset filenames from.
 
@@ -118,8 +118,8 @@ trail also reaches `render` and `compose` as an argument, because a page that
 renders the region only when somebody calls the region's own function is a page
 whose chrome depends on which entry point a build used.
 
-⭐ **`RailContainer`, `RailUnit` and `rail` are here on it a third time**
-(`W324`), and `render.container` is why the function had to join them: a
+⭐ **`RailContainer`, `RailUnit` and `rail` are here on it a third time**,
+and `render.container` is why the function had to join them: a
 container page carries this region too, and it takes it from this surface rather
 than from inside the package — the shape `between_units` already has.
 """

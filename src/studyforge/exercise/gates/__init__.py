@@ -43,11 +43,11 @@ container exists.
 | `runs` | what one run of the tests reported, and the `Attempt` seam |
 | `evidence` | every run a suite needs, derived from the exercise's own cases |
 | `code` | `G1`–`G5`, and the `code` family |
-| `quiz` | ⭐ a SUB-PACKAGE (`AX-06`): `Q1`–`Q5`, the `quiz` family, and its own contract |
+| `quiz` | ⭐ a SUB-PACKAGE: `Q1`–`Q5`, the `quiz` family, and its own contract |
 
 ## ⭐ THE SEAM — a second gate family shares this record and edits nothing here
 
-⛔ **`AX-06` creates `gates/quiz/` inside this package and writes `Q1`–`Q5`
+⛔ **The quiz family lives in `gates/quiz/` inside this package and writes `Q1`–`Q5`
 into THIS record**, rather than opening a second one. Three properties make
 that work, and each is asserted rather than promised:
 
@@ -75,13 +75,13 @@ are model judgements taken once at authoring and shipped, so they carry a
 prompt and an outcome that no mechanical gate has. ⛔ Nothing here reads
 `recorded` to decide anything: `held` is the verdict.
 
-⛔ **What `AX-06` does NOT touch**: `families.py`, `record.py`, `digests.py`
+⛔ **What the quiz family does NOT touch**: `families.py`, `record.py`, `digests.py`
 and `runs.py` take no edit at all, and every completeness rule, refusal and
 write-order reaches `Q1`–`Q5` from the moment they register.
 
 ## ⛔ NO GATE CAN BE DISABLED, SKIPPED OR WEAKENED BY CONFIGURATION
 
-⭐ **`E14`'s third property, and it is structural in four places rather than
+⭐ **R5's honesty as gates, and it is structural in four places rather than
 stated in one:**
 
 - ⛔ **`code.check` takes no options** and returns all five verdicts, always. A
@@ -99,9 +99,9 @@ stated in one:**
 ## ⭐ WHAT IS NOT HERE, AND WHOSE IT IS
 
 ⛔ **Running anything.** The suite is handed its runs (`runs.Attempt`), and
-wiring that to the pinned runner image is the authoring skill's (`AX-08`).
-⛔ **The bundle on disk** and `validate`'s arm over this record are `AX-04`'s —
-`digests.drifted` is the reading that arm takes. ⛔ **The ledger** is `AX-07`'s;
+wiring that to the pinned runner image is the authoring skill's.
+⛔ **The bundle on disk** and `validate`'s arm over this record are `bundle`'s —
+`digests.drifted` is the reading that arm takes. ⛔ **The ledger** is the exercises skill's;
 `G5` reads it as a mapping of source path to digest and knows nothing else
 about it.
 """
@@ -166,7 +166,7 @@ from studyforge.exercise.gates.runs import (
 
 #: ⛔ The package's whole public surface. A consumer that has to import
 #: `studyforge.exercise.gates.code` directly is a consumer this contract
-#: failed — `docs/conventions/module-structure.md` calls `__init__.py` the
+#: failed — R17 makes the package's `__init__.py` its
 #: contract, and this is what it says.
 __all__ = [
     "ALGORITHMS",

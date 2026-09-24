@@ -36,17 +36,17 @@ statement differently needs no change here.
 2. ⛔ **An advisory grader is labelled** (R5). A reader must be able to tell
    *"the tests that ship with this material passed"* from *"something generated
    locally passed"*, and the two sentences are two template files.
-3. ⛔ **A QUIZ renders its questions and NO run affordance** (`AX-05`,
-   `AX-09`). It carries questions in place of a workspace: no file, no editor
+3. ⛔ **A QUIZ renders its questions and NO run affordance** (§7).
+   It carries questions in place of a workspace: no file, no editor
    window, no Run and no Submit — ⚠️ **and not disabled ones**, which is the
    same rule a reading-only unit gets below. ⭐ Its surface is
    `page.quiz`'s; this module chooses between the two and renders the label.
 4. ⛔ **A reading-only unit shows NO practice control — not a disabled one.**
    A dead button is a promise the page cannot keep. A section with no
    `workspace` gets no panel at all, and Submit is emitted only where the
-   record names a test command (`W357`).
+   record names a test command.
 
-## ⛔ The maximise is GEOMETRY, and the panel emits only its control (`W431`)
+## ⛔ The maximise is GEOMETRY, and the panel emits only its control
 
 ⛔ **The reader asked for a way to give the practice the whole viewport** — the
 code, the tests, Run and Submit — and the panel already carries every one of
@@ -83,7 +83,7 @@ string arithmetic here and no second format anywhere on the page. ⚠️ A key
 spelled twice and differing by one character simply never matches anything, with
 nothing failing anywhere; that is the defect `progress.keys` records paying for.
 
-## ⛔ The page names no API, no origin and no client file (R8, `W370`)
+## ⛔ The page names no API, no origin and no client file (R8)
 
 ⭐ The panel reads `window.studyforge.run` and nothing else. The execution
 client is added to a served page by the **serving process**
@@ -92,15 +92,15 @@ built text that named the client would be a defect R8's floor reads
 (`tests/studyforge/cli/serving.py`). ⚠️ Over `file://` the object is absent, the
 controls stay hidden, and the panel says why.
 
-## ⭐ THE BREAKDOWN IS DECLARED HERE AND READ BACK BY THE SCRIPT (`AX-09`)
+## ⭐ THE BREAKDOWN IS DECLARED HERE AND READ BACK BY THE SCRIPT
 
-⛔ **The counts are DERIVED and never recorded** (`AX-02`): what a run reports
+⛔ **The counts are DERIVED and never recorded**: what a run reports
 is `{case id: did it pass}`, and *main ask*, *edge cases n/m* and each failed
 edge's sentence are all that map joined with the `cases` the record declares.
 ⭐ So this module emits every declared case once — its id, its kind and its
 `says`, which is the corpus's own text (R1) — and `practice.js` marks them with
 what the run said. ⚠️ **The panel never fetches anything**: a built page may
-name no API and no origin (R8, `W370`), so the verdicts arrive on the run's own
+name no API and no origin (R8), so the verdicts arrive on the run's own
 stream, said by `serve.routes.breakdown`.
 
 ⛔ **A reader shown *edge cases 2/3* is looking at an INCOMPLETE practice, not
@@ -112,7 +112,7 @@ definition of a pass.
 ⚠️ `exercise.bundle.emit` ships it as a **`disclosure` block** under the
 lesson, so `page.blocks.prose` draws it as a real `<details>`: closed until the
 reader asks, openable with scripting off entirely, and reachable before a first
-Submit because nothing gates it (the user's ruling, spec §7 §8). ⛔ **There is
+Submit because nothing gates it (spec §7 §8). ⛔ **There is
 nothing for this module to add and adding one would be the second copy** — a
 region here would be a second place the reference could be withheld from.
 """
@@ -140,7 +140,7 @@ PANEL_TEMPLATE = "practice-panel.html"
 
 #: The two windows, and the tab that reaches each. ⭐ The Tests tab is emitted
 #: only where the record NAMES a test — the same honesty Submit already gets
-#: (`W357`): a tab over a file the material does not have is a dead control.
+#:: a tab over a file the material does not have is a dead control.
 #: ⛔ The tablist ships hidden; it is shown only where a running editor answered.
 TABS_TEMPLATE = "practice-tabs.html"
 TESTS_TAB_TEMPLATE = "practice-tab-tests.html"
@@ -150,8 +150,8 @@ TESTS_TAB_TEMPLATE = "practice-tab-tests.html"
 #: under is spelled once, in the package that owns it.
 ACT_TEMPLATES = {RUN: "practice-run.html", TEST: "practice-submit.html"}
 
-#: `what this record IS -> the sentence a reader is shown` (spec §7 §9, the
-#: user's ruling of 2026-09-19). ⛔ **Four cases and four files** (R13), keyed on
+#: `what this record IS -> the sentence a reader is shown` (spec §7 §9). ⛔ **Four cases and four
+#: files** (R13), keyed on
 #: the record's own PREDICATES and never on `provenance` or `trust`, so neither
 #: R5 key can reach the page through this mapping — and no `data-*` attribute
 #: carries one either, which is what stops the words leaking back through a
@@ -193,7 +193,7 @@ def render(section: dict, document: dict, placement: Placement) -> str:
     exercise = _exercise(workspace)
     key = key_of(document, section)
     if exercise.is_quiz:
-        # ⛔ **A quiz is not work at a file** (`AX-05`): it carries questions in
+        # ⛔ **A quiz is not work at a file**: it carries questions in
         # place of a workspace, so there is no file to name, nothing to open in
         # an editor, no command to Run and no grader to Submit to. ⭐ The two
         # shapes share this one surface and this one renders its questions with
@@ -231,7 +231,7 @@ def key_of(document: dict, section: dict) -> str:
         # ⛔ **`progress.RAISES` is named WHOLE** (`tests/test_raises_convention.py`):
         # a handler that listed one member would stop naming the tuple the day
         # that package widens it, and the symptom is an exception nobody catches.
-        # ⛔ **And `PersonalDataLeak` still travels through as itself** (Ruling 58):
+        # ⛔ **And `PersonalDataLeak` still travels through as itself**:
         # a caller rendering a site catches `PageError` per unit and carries on,
         # and an R7 refusal folded into that family would be logged as one more
         # page that did not render, with the leak the thing nobody looked at.
@@ -251,10 +251,10 @@ def controls(exercise: Exercise) -> str:
     """Return the acts this workspace can actually perform, in a stated order.
 
     ⛔ **Run is always offered and Submit only where a test command is named**
-    (`W357`, and `serve.routes.run` answers `409` for the other case): a record
+    (and `serve.routes.run` answers `409` for the other case): a record
     carries `main_path` and `run_command` or it is not a record, while the
     grader half is written whole or not at all. ⚠️ Offering a Submit that can
-    only fail is the dead button this row exists to refuse.
+    only fail is a dead button.
     """
     acts = [RUN] if exercise.test_command is None else [RUN, TEST]
     return "".join(templates.fill(ACT_TEMPLATES[act], mode=act) for act in acts)
@@ -263,7 +263,7 @@ def controls(exercise: Exercise) -> str:
 def tabs(exercise: Exercise) -> str:
     """Return the tablist over this practice's two editor windows.
 
-    ⭐ **Two windows of ONE editor, never a split pane** (`W429`): the file a
+    ⭐ **Two windows of ONE editor, never a split pane**: the file a
     reader may type in and the file that judges it are two different acts of
     reading, and standing them side by side halves the width of both.
 
@@ -293,7 +293,7 @@ def label_of(exercise: Exercise) -> str:
 
     ⛔ **Asked of the record's own predicates.** `is_quiz` comes first because a
     quiz's `graded` is `False` — `graded` means *a grader runs*, and a quiz's
-    key checks it without one (`AX-05`, *For dependents*).
+    key checks it without one (*For dependents*).
     """
     if exercise.is_quiz:
         return "quiz"

@@ -7,8 +7,8 @@ about one path: **included**, **excluded**, **not material**, **contested** or
 **unclassified**?
 
 **How you use it.** `policy.classify("src/whole-series.md")`. ⛔ It takes a
-path and does no I/O; enumerating a source root is `studyforge validate`'s job
-(SF-25), and refusing the unclassified ones is its verdict.
+path and does no I/O; enumerating a source root is `studyforge validate`'s job,
+and refusing the unclassified ones is its verdict.
 
 **Depends on.** `pathlib.PurePosixPath` for glob semantics — a pure path
 object that never touches a disk — and `errors`. ⛔ **Nothing from `parse`**,
@@ -23,11 +23,10 @@ match both, and when it does it is withheld.
 ## ⛔ The third state, and why it takes globs where an exclusion takes a path
 
 ⛔ **Two states are not enough, because a real repository is mostly a third.**
-Measured against one, 2026-09-10: of 141 files, 38 were included, 3 excluded
-and **100 unclassified — and only 3 of the hundred were material withheld from
-anybody**. The rest were a licence, ignore files, an editor's workspace, a
-generated cache. Filing those under `exclude` makes every `why` a small lie
-and makes an audit nobody reads.
+In a typical one, most files are **neither included nor excluded, and few of
+those are material withheld from anybody**. The rest are a licence, ignore
+files, an editor's workspace, a generated cache. Filing those under `exclude`
+makes every `why` a small lie and makes an audit nobody reads.
 
 ⭐ **The three states are about whether a file's prose is read into the
 archive**, never about materiality in the abstract: `include` reads it in,
@@ -42,10 +41,9 @@ because the two audits are about different harms: a new member of an
 exclusion's set is a new withholding and needs its own reason, and a new
 member of a `not_material` glob's set is only a harm if it is **actually
 material** — which is caught per file, against a real tree, as `CONTESTED`.
-⛔ **The category also cannot be enumerated file by file:** writing the finding
-that produced this field took the count from 100 to 101, because the new entry
-was the file containing it. ⭐ **`X1` is not weakened, and its domain is now
-stated** — an inclusion needs no justification, and every declaration that the
+⛔ **The category also cannot be enumerated file by file:** writing down the
+list adds a file the list does not name. ⭐ **`X1` is not weakened, and its
+domain is stated** — an inclusion needs no justification, and every declaration that the
 framework will *not* read a file needs one.
 """
 

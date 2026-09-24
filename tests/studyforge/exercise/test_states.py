@@ -63,7 +63,7 @@ def test_the_state_is_not_a_field_anybody_writes():
 
 
 def test_a_practice_whose_record_names_a_file_and_no_grader_is_ungraded():
-    # ⭐ `W357`: the unit names its file, and nothing checks it. ⛔ The key's
+    # ⭐ the untested unit: the unit names its file, and nothing checks it. ⛔ The key's
     # presence is no longer the graded state; the grader's is.
     record = {"main_path": RECORD["main_path"], "run_command": RECORD["run_command"]}
     assert state_of({"kind": "practice", "blocks": PROMPT, "exercise": record}) == UNGRADED
@@ -103,10 +103,10 @@ def test_a_passing_grader_run_on_a_graded_exercise_completes_it():
 
 
 def test_an_ungraded_exercise_cannot_complete_a_practice():
-    # ⛔ E06's named acceptance. An ungraded exercise has nothing that could
+    # ⛔ A named acceptance. An ungraded exercise has nothing that could
     # pass; a reader works it and it completes nothing.
     assert completes_practice(UNGRADED, TEST, passed=True) is False
-    # ⭐ `W357`: including one that names its file.
+    # ⭐ the untested unit: including one that names its file.
     record = {"main_path": RECORD["main_path"], "run_command": RECORD["run_command"]}
     named = state_of({"kind": "practice", "blocks": PROMPT, "exercise": record})
     assert completes_practice(named, TEST, passed=True) is False
@@ -118,8 +118,7 @@ def test_a_unit_with_no_exercise_cannot_complete_a_practice():
 
 def test_a_run_never_completes_a_practice_however_well_it_went():
     # ⛔ **Run and Submit are different acts.** A program that printed
-    # successfully has demonstrated nothing about its tests — inherited
-    # verbatim from the extraction source's progress rules, not negotiable.
+    # successfully has demonstrated nothing about its tests — not negotiable.
     assert completes_practice(GRADED, RUN, passed=True) is False
 
 

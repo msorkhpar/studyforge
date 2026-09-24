@@ -3,7 +3,7 @@
 ⭐ **What this module holds that `test_text.py` cannot.** `test_text.py` asks
 whether the functions are right; this asks whether there is exactly **one** of
 each of them in the framework and whether a consumer can reach them without
-naming a submodule — which is `W76`'s whole subject and `SF-27/1`'s finding.
+naming a submodule (R17).
 """
 
 from __future__ import annotations
@@ -68,7 +68,7 @@ MODULES = (fragment, text)
 def test_the_public_surface_is_exactly_the_module_s_public_names():
     # ⭐ Derived on both sides rather than typed on one: a name added to `text`
     # and forgotten on `__all__` fails here instead of being discovered by the
-    # next renderer, which is `SF-27/1` arriving a second time.
+    # next renderer.
     # ⚠️ Imported modules and `from __future__` flags are what a module's
     # namespace carries besides its own names; neither is a surface.
     public = {
@@ -91,9 +91,8 @@ def test_every_exported_name_is_the_module_s_own_object():
 
 
 def test_the_framework_defines_each_primitive_exactly_once():
-    # ⛔ `SF-27/1`'s second measurement, now asserted rather than reported:
-    # "there is no other home … a second escaper would be Ruling 20's deleted
-    # duplicate, arriving again."
+    # ⛔ There is no other home: a second escaper would be a duplicate of the
+    # one this package owns.
     defining = modules_defining(ONE_OF_EACH)
     # ⭐ The inhabitation assertion, before the claim: a sweep that
     # found nothing at all would pass the line below just as loudly.

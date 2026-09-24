@@ -17,7 +17,7 @@ def test_a_composed_module_parses_and_says_it_is_generated():
     )
 
     ast.parse(text)
-    assert "R19" in text
+    assert "rather than a fix" in text
     assert "onboarding" in text
 
 

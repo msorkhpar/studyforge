@@ -13,7 +13,7 @@ is where the framework's execution starts them — and `time`.
 
 ## ⛔ The runner never starts, stops or builds a container
 
-⭐ **Ruled (round 112, `TC-00`'s answer 6): the READER starts the runner
+⭐ **Decided (spec §8.3): the READER starts the runner
 container** with `code-server-toolchain`'s documented run line, and this module
 only ASKS. A probe is `docker inspect`, which reads; the run itself is
 `docker exec`, which reaches in from outside. ⛔ **The Docker socket is never

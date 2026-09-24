@@ -8,7 +8,7 @@ staged beside the file and renamed over it.
 manifest's `len(levels)`; `record_run(address, ordinal, section, mode=...,
 exit_code=..., commands=..., when=..., cases=...)` after a run; `read()`,
 `entry(...)` and `unit_entries(...)` to report. ⭐ `cases` is one Submit's
-breakdown and is omitted by every caller that has none (`AX-02`).
+breakdown and is omitted by every caller that has none.
 
 **Depends on.** `studyforge.corpus.placement` for `GENERATED_ROOT`,
 `studyforge.archive.scrub` for R7, `studyforge.address`, and this package's
@@ -144,7 +144,7 @@ class Progress:
 
         ⭐ `cases` is this run's breakdown — one verdict per declared case — or
         `None` for every run that produced none. ⛔ **It is a report and never
-        a pass rule** (`AX-02`): `is_pass` is untouched by it, and the
+        a pass rule**: `is_pass` is untouched by it, and the
         rendered document is gated for R7 with it in, like everything else.
         """
         key = practice_key(self._at_depth(address), ordinal, section)

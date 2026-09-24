@@ -26,12 +26,9 @@ studyforge validate <corpus-root>   # 0, or a named list of what is wrong
 > agent executes a fence.
 
 ⭐ Everything in this procedure exists to make that command reachable by
-somebody who has never read the framework's internals. **Measured at
-`f816454`:** `validate` runs **12 checks** — 8 about the archive alone, 2 about
-placement, 2 about the source — and can report **23 distinct rule ids**.
-⚠️ **Dated, and stale** (`W257`): both counts have grown since `f816454`. They
-stand as that reading and are not restated, because a count of files that keep
-moving is only freshly wrong in a document nothing re-measures (Ruling 163).
+somebody who has never read the framework's internals. `validate` runs checks
+about the archive alone, about placement and about the source, and each can
+report its own rule ids. A count is not carried here, because it moves.
 ⭐ The checks are `studyforge.validate.CHECKS`, and this prints their number at
 the ref you are reading:
 
@@ -39,7 +36,7 @@ the ref you are reading:
 python3 -c "import studyforge.validate as v; print(len(v.CHECKS), 'checks')"
 ```
 
-⚠️ Rule ids have no public registry to count from (`W257/1`). `validate`
+⚠️ Rule ids have no public registry to count from. `validate`
 reports every one of them in a single run, so there is never a reason to fix
 one problem per invocation.
 
@@ -69,7 +66,7 @@ recorded, and disagreeing with it silently.
 Read that listing before you agree to it: it is the whole shape of the work.
 ⛔ **This page types no count of it** — the listing above is the count, at the
 ref you run it at, and a number written here went stale the moment the scaffold
-gained a file (`W345`).
+gained a file.
 
 ### 2. Answer the execution question by reading it, not by deciding it
 
@@ -89,7 +86,7 @@ made.write(corpus_root)  # ⛔ refuses rather than overwriting anything
 ```
 
 ⛔ **Never compute an archive path by hand.** `studyforge.skills.adapter.Layout`
-is the only thing that knows the layout, and the reason is measured: the tree
+is the only thing that knows the layout, and the reason is structural: the tree
 is five joins deep and four of them fail *silently* when they are wrong.
 
 **There are four places an adapter writes, and this is all of them:**
@@ -112,7 +109,7 @@ python3 -c "from studyforge.skills.adapter import archive_tree; print(archive_tr
 missing* — at the reader, not at the writer, and only after everything else
 looks fine.
 
-#### ⛔ The fourth line is the one adapters get wrong, and nothing used to say it
+#### ⛔ The fourth line is the one adapters get wrong
 
 ⭐ **A unit's OWN files go in `units/unit-NN/`, beside `raw/` and never inside a
 variant.** `raw/` is per *variant* and holds documents; this one is per *unit*
@@ -163,7 +160,7 @@ corpus and is already written.
 Two rules, and both are §6:
 
 - ⛔ **An address is recorded, never derived.** Do not slugify a title to get
-  one. **Measured on one real corpus: 157 of 1,290 units (12.2%) are served at
+  one. **In one real corpus, 157 of 1,290 units (12.2%) are served at
   a slug their title does not produce** — so a title-derived address is not
   merely fragile, it is wrong for one unit in eight before anybody notices.
 - ⭐ **`origin` is verbatim, and it is not decoration.** It is the relative path
@@ -217,9 +214,8 @@ python3 -m <package> <corpus-root>
 
 ⛔ **Declare the adapter itself, or the first run reports every file of it.**
 
-⚠️ **Measured 2026-09-10, at `corpus_api: 1`:** scaffolding an eight-file
-adapter into a clean corpus and validating produced **8 `unclassified` findings
-— one per file — and `NOT valid`.** ⭐ Correctly: the adapter is code this
+⚠️ **A scaffolded adapter that the manifest does not declare is reported file
+by file, as `unclassified`, and the corpus is `NOT valid`.** ⭐ Correctly: the adapter is code this
 corpus is *built with*, and a manifest that said nothing about it left it
 unaccounted for, which is how a corpus is read twice or not at all.
 
@@ -234,7 +230,7 @@ made.not_material  # ({"glob": "ingest/**", "why": ...}, {"glob": "tests/ingest/
   Customisation enters as manifest data (R19) — and *produced* data is the only
   kind that does not go stale when this skill's file list changes.
 - ⚠️ **Two globs, not eight paths.** `content.exclude` matches by **exact path
-  equality** — **measured:** `{"path": "ingest"}` classifies nothing at all —
+  equality** — `{"path": "ingest"}` classifies nothing at all —
   and `exclude` means *material withheld*, which the adapter is not.
 - ⛔ **At `corpus_api: 1` there is no third state**, so a v1 manifest can only
   say this in `exclude`, one exact path at a time, in the wrong words. That is
@@ -252,9 +248,8 @@ cannot judge whether the archive is the material. What goes with it:
   signal that the next corpus will need the same hand-edit.
 
 ⛔ **And every one of those is WRITTEN, into the findings log, before the run is
-declared done — never carried only in a hand-back message** (`W346`). ⚠️ Two of
-the first conversion's seven numbered findings lived only in a message and were
-found in no ref afterwards. ⭐ **The log's place, its form and the command that
+declared done — never carried only in a hand-back message**, which is lost with
+the message. ⭐ **The log's place, its form and the command that
 refuses a run without one are the onboarding skill's step 7**; each entry asks
 *could a skill have generated this?*, and a diff against the scaffold answers
 `yes` by construction.
@@ -267,12 +262,12 @@ refuses a run without one are the onboarding skill's step 7**; each entry asks
   (R19). `write(..., regenerate=True)` rewrites every generated file the
   scaffold lists and **keeps the one you wrote, untouched** — so re-scaffolding after the framework
   moves is an ordinary, safe thing to do. ⭐ Onboarding's `write` follows the
-  same rule, `write_files`, so the two paths cannot disagree (`W265`).
+  same rule, `write_files`, so the two paths cannot disagree.
 - ⛔ **Never write into the source repository beyond the archive** (R3), and
   never beyond what `permitted_edits` declares.
 - ⛔ **`permitted_edits` may never name** the repository's root ignore file, any
   version-control configuration, or a file R3 reads as content — **repository-root
-  documentation included, whatever `content` classifies it as** (`W278`). ⭐ The
+  documentation included, whatever `content` classifies it as** (R3). ⭐ The
   one predicate is `studyforge.corpus.manifest.edits.reads_as_content`, the stems
   it reads as root documentation are `studyforge.corpus.manifest.edits.ROOT_DOCUMENTATION`,
   and all three are refused by `studyforge.corpus.manifest.edits.parse_edits`.
@@ -297,17 +292,13 @@ refuses a run without one are the onboarding skill's step 7**; each entry asks
 *rule* and point here; they do not restate the numbers, and — R1 — they name no
 corpus at all.
 
-### A1 — what `validate` judges, measured at `f816454`
+### A1 — what `validate` judges
 
-| | count | what they are |
-|---|---|---|
-| checks | **12** | 8 structure, 2 paths, 2 source |
-| rule ids | **23** | every distinct way one run can say *no* |
-| block types | **11** | the closed vocabulary a document body is made of |
-
-⚠️ **Dated, and stale** (`W257`): the checks and rule-ids rows are the reading
-at `f816454` and are not re-taken here. The fence under *The rule that governs
-every judgement below* prints the check count at the ref you are reading.
+| | what they are |
+|---|---|
+| checks | structure, paths and source; the fence under *The rule that governs every judgement below* prints how many |
+| rule ids | every distinct way one run can say *no* |
+| block types | **11**: the closed vocabulary a document body is made of |
 
 ⭐ **The two halves are not substitutes.** The structure checks compare the
 archive against itself — a digest against the blocks it was taken from — and
@@ -316,13 +307,13 @@ agree by construction where a construct was never recognised at all. The
 only ones that can see material that went missing between the file and the
 archive.
 
-### A2 — the three formats, and the version each is at
+### A2 — the three formats, and the versions this build reads
 
-| document | key | at `f816454` | this build reads |
-|---|---|---|---|
-| `corpus.json` | `corpus_api` | **2** | 1 and 2 |
-| `container.json` | `container_api` | **2** | 1 and 2 |
-| `unit-NN/<kind>-N.json` | `raw_api` | **1** | 1 |
+| document | key | the set this build reads |
+|---|---|---|
+| `corpus.json` | `corpus_api` | `studyforge.corpus.manifest.KNOWN_CORPUS_API` |
+| `container.json` | `container_api` | `studyforge.corpus.container.KNOWN_CONTAINER_API` |
+| `unit-NN/<kind>-N.json` | `raw_api` | `studyforge.archive.document.KNOWN_RAW_API` |
 
 ⚠️ **A version gate checks the type before the value** (R9). `True in {1}` and
 `1.0 in {1}` are both true in Python, so a JSON `true` passes a naive
@@ -357,7 +348,7 @@ not.
 
 ⛔ **The whole file set, and how many there are, is the scaffold's own listing
 — step 1's fence — never this table.** ⭐ The table names the modules and what
-each is for; the scaffold also writes files that are not modules (`W345`), and a
+each is for; the scaffold also writes files that are not modules, and a
 count typed here would undercount them.
 
 ```text

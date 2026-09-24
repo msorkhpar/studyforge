@@ -1,10 +1,10 @@
-"""The incremental pass (SF-17's Acceptance, R4, R6).
+"""The incremental pass (R4, R6).
 
 ⛔ **The headline clause is *"re-running with no content change writes nothing
 AND REQUESTS NOTHING"*, so it is asserted over two populations at once** — the
 `Sent` list the transport was handed, and the bytes of every file under the
 corpus root. ⭐ Neither is the run's own report: a report saying *"0 synthesised"*
-over stale clips is the exact failure this row names.
+over stale clips is the exact failure asserted against.
 
 ⭐ **Every emptiness assertion has a positive control beside it.** An empty
 request list is also what an unwired recorder returns, and an unchanged tree is
@@ -15,9 +15,9 @@ change, a `provides` bump and a `chunk_chars` change each leave every filename
 byte-identical, so each is asserted with the filenames pinned equal first.
 
 ⚠️ **The page half of *"every `<audio>` source resolves to a file on disk, both
-directions"* is NOT asserted here.** Nothing on this branch emits an audio source
-onto a page; the narration player lands the emitter. What is asserted is the half this row
-owns — record ↔ disk, both ways — plus the round-trip through `parse_clip_name`
+directions"* is NOT asserted here.** The page renderer emits an audio source onto a
+page. What is asserted here is the synthesis half — record ↔ disk, both ways — plus the round-trip
+through `parse_clip_name`
 that the renderer reads the href back through.
 """
 
@@ -222,8 +222,7 @@ def named_by_record(root: Path, state: Path) -> set:
 
 
 def test_a_rewording_keeps_the_old_clip_and_the_record_still_names_every_clip(tmp_path):
-    # ⛔ W226 clause 4 (answer 2): nothing is deleted. ⛔ W218/2: measured at
-    # `9421b02` as 3 clips on disk against 2 named; now the record names all 3.
+    # ⛔ Nothing is deleted, and the record names every clip on disk: all 3.
     into, state = first_pass(tmp_path)
     edited = (UNITS[0], unit("u2", "the second sentence, reworded"))
     client, _recorder, _into, _state = build(tmp_path, *job("u2"))
@@ -238,7 +237,7 @@ def test_a_rewording_keeps_the_old_clip_and_the_record_still_names_every_clip(tm
 
 
 def test_every_recorded_clip_is_a_file_located_from_the_record_alone(tmp_path):
-    # ⛔ W226 clause 2: no placement is asked; the record says where.
+    # ⛔ No placement is asked; the record says where.
     _into, state = first_pass(tmp_path)
     named = named_by_record(tmp_path, state)
     assert len(named) == len(UNITS)
@@ -259,7 +258,7 @@ def test_rewording_back_makes_the_earlier_clip_current_again(tmp_path):
 
 
 def test_a_unit_whose_directory_moved_supersedes_its_clips_in_the_old_one(tmp_path):
-    # ⛔ W218/1 at the pass: a renumbered or renamed unit's old clips stay named.
+    # ⛔ At the pass: a renumbered or renamed unit's old clips stay named.
     into, state = first_pass(tmp_path)
     moved = tmp_path / "renamed" / "audio"
     client, _recorder, _into, _state = build(tmp_path, *job("u1", "u2"))
@@ -310,8 +309,8 @@ def test_a_version_1_entry_no_run_can_place_is_kept_and_not_dropped(tmp_path):
 
 
 def test_a_record_from_before_the_model_was_a_condition_is_stale_and_drops_nothing(tmp_path):
-    # ⛔ W223's MUST-NOT: an older record reads, never as current, and loses no
-    # entry. Its fingerprints are rewritten exactly as the writer before `W223`
+    # ⛔ An older record reads, never as current, and loses no
+    # entry. Its fingerprints are rewritten exactly as the writer before `engine_model`
     # took them: over the conditions document with no `engine_model` key.
     third = unit("u3", "a third sentence")
     into, state = first_pass(tmp_path, units=(*UNITS, third))
@@ -403,7 +402,7 @@ def test_a_clip_missing_from_disk_is_stale_even_though_the_record_agrees(tmp_pat
 
 
 # --------------------------------------------------------------------------
-# ⛔ Both directions this row owns, and the round-trip the renderer reads
+# ⛔ Both directions synthesis owns, and the round-trip the renderer reads
 # --------------------------------------------------------------------------
 
 
@@ -421,7 +420,7 @@ def test_the_record_and_the_disk_agree_in_both_directions(tmp_path):
 def test_every_recorded_filename_parses_back_to_the_speech_id_it_is_filed_under(tmp_path):
     # ⭐ The page emits the href onto the page and reads it back through
     # `parse_clip_name`. This is that round-trip asserted at the record, which
-    # is the half of it this row owns.
+    # is the half of it synthesis owns.
     _into, state = first_pass(tmp_path)
     for speech_id, clip in read_state(state).clips.items():
         parsed, _fingerprint = parse_clip_name(Path(clip.filename).stem)
@@ -505,8 +504,8 @@ def test_an_unreadable_record_stops_before_a_single_request(tmp_path):
 
 
 def test_the_engine_is_recorded_and_is_not_compared(tmp_path):
-    # ⚠️ On a cache hit `engine` is the FIRST synthesis's, not what is deployed
-    # (`NS-05`), so comparing it would re-synthesise a corpus against a fact no
+    # ⚠️ On a cache hit `engine` is the FIRST synthesis's, not what is deployed,
+    # so comparing it would re-synthesise a corpus against a fact no
     # probe reports.
     into, state = first_pass(tmp_path)
     recorded = dict(read_state(state).clips)
@@ -538,7 +537,7 @@ def test_an_empty_plan_reaches_no_batch_at_all():
 
 
 def test_the_media_directory_is_the_placement_answer_rooted_and_differs_between_profiles(tmp_path):
-    # W222: `audio_dir` roots the unit's one placement answer and composes nothing.
+    # `audio_dir` roots the unit's one placement answer and composes nothing.
     address = Address(("course", "module"))
     for label in (None, "7b"):
         asked = {}

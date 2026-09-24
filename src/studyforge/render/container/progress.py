@@ -1,7 +1,7 @@
 """Where the reader is in a course: the progress line, the strip and the Up next slip.
 
 **What it does.** Returns the markup the root index and a container page carry
-above their lists (`W362`, the plan's §6): a progress line with its numbers at
+above their lists (the plan's §6): a progress line with its numbers at
 zero, an optional segmented strip sized by each group's units, the Up next
 slip, and, on the index, the filter with its two expand controls.
 
@@ -83,7 +83,7 @@ def up_next(title: str, href: str | None) -> str:
 
 
 def finder() -> str:
-    """Return the filter and its two controls (the brief's §3), shipped hidden."""
+    """Return the filter and its two controls , shipped hidden."""
     return (
         '<form role="search" aria-label="Filter units" hidden>'
         '<input type="search" name="filter" placeholder="Filter units…" '

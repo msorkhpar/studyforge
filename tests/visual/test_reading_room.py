@@ -1,15 +1,14 @@
-"""`W388` and `W369` in a real browser: a page somebody can read for hours.
+"""A page somebody can read for hours, read in a real browser.
 
-⛔ **THE ROW IS THE USER'S OWN READING OF A BUILT SITE**: *"the colors are super
-tiring… a set of colors that I can read the document for hours without feeling
-pain in my eyes or brain"*, *"keep left menu even in the first page"*, *"the
-narration at bottom also might be better to be 100% width but not the buttons to
-become big"*, *"the content itself is very limited in width"*.
+⛔ **The subject is a reading room**: colours a reader can read for hours
+without strain, the containers rail on every page including the first, a
+narration bar the width of the content whose buttons do not grow with it, and a
+reading column that uses a wide window.
 
 ⭐ **Every clause here is a LIVE reading of a laid-out page**, taken through the
 browser after the cascade, the media query and the custom properties have all
 resolved — the class of defect no assertion over a stylesheet can see, and the
-reason `tests/visual/` exists (`W98`, `SF-34`).
+reason `tests/visual/` exists.
 
 ⛔ **Each clause is asserted BOTH WAYS (R12).** The arithmetic every clause uses
 is a module-level function of a *reading*, and each one is handed a planted
@@ -17,23 +16,21 @@ reading — the palette that shipped, a button stretched to its row, the narrow
 measure, an aside left in the column — which it must reject by name. ⚠️ A check
 that has only ever seen the repaired page has not been shown to notice anything.
 
-## ⛔ Why the band has a FLOOR as well as a ceiling, and why stage 1's was wrong
+## ⛔ Why the band has a FLOOR as well as a ceiling
 
-⚠️ **Stage 1 answered the row with one band of 4.5:1–9.0:1 for every ink, and
-the user read the result and called it "too dim and maybe too warm".** ⭐ Stage 2
-sets the bands from the USER'S OWN route-planner page, the one they said this
-site is worse than: its body ink measures 12.14:1, its quieter ink 8.33:1 and
-its faintest 5.59:1, on a ground that is neither white nor black. ⛔ So each ink
-has its own band around the reading of the ink it corresponds to, the ceiling
-stays (near-black ink on near-white paper is the other failure), and BOTH bounds
-are refuted here: a planted 1:1 reading, a planted black-on-white reading, and
-the two palettes that actually shipped.
+⚠️ **One band of 4.5:1–9.0:1 for every ink reads as too dim.** ⭐ The bands are
+set from a reference page that reads comfortably for hours: its body ink
+measures 12.14:1, its quieter ink 8.33:1 and its faintest 5.59:1, on a ground
+that is neither white nor black. ⛔ So each ink has its own band around the
+reading of the ink it corresponds to, the ceiling stays (near-black ink on
+near-white paper is the other failure), and BOTH bounds are refuted here: a
+planted 1:1 reading, a planted black-on-white reading, and a too-bright and a
+too-dim palette.
 
 ## ⛔ The reader chooses the theme, and this module reads both of them
 
-⚠️ **The user, 2026-09-19: *"have the both dark and light themes in studyforge as
-well"*.** The palette has carried both since `W362`; until stage 2 nothing on
-the page could ask for one. ⭐ The readings below drive the real control in a
+⭐ The palette carries a light and a dark theme, and the page offers the reader
+the choice. The readings below drive the real control in a
 real browser: choosing dark on a light system paints the dark ground and
 survives a reload, and with nothing stored the system setting still wins.
 """
@@ -65,26 +62,22 @@ WIDER = (1600, WIDE[1])
 TOUCHING = 0.5
 
 #: `token -> (floor, ceiling)` for each ink that carries running text. ⛔ The
-#: bounds are the user's own reference page's three readings with room either
-#: side — see this module's docstring — and NOT WCAG AA, which stage 1 used as
-#: the floor and shipped a page the user called dim. ⚠️ Every bound is a
-#: contrast ratio and none of them is a colour.
+#: bounds are the reference page's three readings with room either side — see
+#: this module's docstring — and NOT WCAG AA, whose floor alone admits a page
+#: that reads as dim. ⚠️ Every bound is a contrast ratio and none of them is a
+#: colour.
 BANDS = {"--fg": (10.0, 14.0), "--fg-soft": (6.5, 10.0), "--muted": (4.5, 7.0)}
 
-#: How long a line of running prose may be, in characters. ⛔ The row asks for a
-#: measure *argued from line length in characters*: below this a wide window is
+#: How long a line of running prose may be, in characters. ⛔ The measure is
+#: *argued from line length in characters*: below this a wide window is
 #: wasted, above it the eye loses the line it is tracking back to.
 #:
-#: ⚠️ **`LONGEST_LINE` MOVED FROM 100 TO 110 AT `W388` STAGE 4, TOGETHER WITH
-#: THE CAP AND NOT BEHIND IT** — `W388/13` said these two numbers move together
-#: or not at all, and this is the row that moves them. ⭐ The ground is the
-#: user's fourth reading: they asked twice for more width and quoted
-#: `main p, main li { max-width: var(--measure); }` as the cut. ⛔ 110 is not a
-#: loosening to admit a cap somebody liked — it is where tracking back to the
-#: start of the next line fails — and `--measure` was COUNTED against it
-#: afterwards: `80ch` puts the first corpus's worst paragraph at about 109 and
-#: `82ch` at about 112 (the counts are recorded in `palette.css`). ⭐ So the
-#: bound picked the cap, rather than the cap moving the bound.
+#: ⚠️ **`LONGEST_LINE` and the `--measure` cap move together or not at all.**
+#: ⛔ 110 is where tracking back to the start of the next line fails, and
+#: `--measure` is COUNTED against it: `80ch` puts the first corpus's worst
+#: paragraph at about 109 and `82ch` at about 112 (the counts are recorded in
+#: `palette.css`). ⭐ So the bound picks the cap, rather than the cap moving the
+#: bound.
 SHORTEST_LINE = 75
 LONGEST_LINE = 110
 
@@ -130,9 +123,8 @@ LONGEST_PROSE_LINE = """
     /* ⛔ A paragraph with no boxes is not a line anybody reads, and it cannot be
        measured either: every range inside a `hidden` element reports the same
        zero rectangle, so the loop below never sees a line break and counts the
-       WHOLE paragraph as one line. ⚠️ MEASURED when `SF-24`'s practice panel put
-       the first hidden `<p>` inside `main`: a 269-character reading, from a
-       sentence no reader had been shown (`SF-24/3`). */
+       WHOLE paragraph as one line: a hidden `<p>` in the practice panel would read
+       as a line of a few hundred characters that no reader is shown. */
     if (!p.getClientRects().length) continue;
     const node = p.firstChild;
     if (!node || node.nodeType !== 3) continue;
@@ -168,9 +160,8 @@ def outside_the_band(ratios: dict[str, float]) -> list[str]:
     """Which inks are outside the band named after them, as sentences.
 
     ⛔ One function for both bounds and for all three inks: a check that only
-    ever asserted a floor is the check `W362`'s palette passed while being
-    painful to read, and a check that only ever asserted a ceiling is the one
-    stage 1's passed while being too dim to read.
+    ever asserted a floor passes a palette that is painful to read, and a check
+    that only ever asserted a ceiling passes one too dim to read.
     """
     astray = []
     for token, ratio in sorted(ratios.items()):
@@ -183,7 +174,7 @@ def outside_the_band(ratios: dict[str, float]) -> list[str]:
 def extreme(colour: str) -> bool:
     """Whether a resolved colour is pure black or pure white.
 
-    ⛔ The row's own words — text is never pure white on dark and never pure
+    ⛔ Text is never pure white on dark and never pure
     black on light — and it is a statement about the colour, not about a ratio.
     """
     channels = [int(part) for part in contrast.parse(colour)[:3]]
@@ -198,8 +189,8 @@ def beside(one: dict, other: dict) -> bool:
 def grown(narrow: list[dict], wide: list[dict]) -> list[str]:
     """Which of the transport's controls are bigger in the wide window than the narrow one.
 
-    ⛔ The user's clause in one sentence: the bar spans the content and the
-    BUTTONS do not grow with it.
+    ⛔ The clause in one sentence: the bar spans the content and the BUTTONS do
+    not grow with it.
     """
     return [
         f"control {index} is {big['width']:.2f}px wide against {small['width']:.2f}px"
@@ -211,12 +202,12 @@ def grown(narrow: list[dict], wide: list[dict]) -> list[str]:
 def unpainted(controls: list[dict]) -> list[str]:
     """Which of the transport's controls have no box at all, as sentences.
 
-    ⛔ **The zero-box blindness, swept for by `QA-02` and found here.** `grown`
+    ⛔ **The zero-box blindness.** `grown`
     compares a control's box at one width against its box at another, and a
     `hidden` element reports `0 × 0` at EVERY width — so a transport that had
     stopped being revealed at all would satisfy *"the buttons did not grow"*
-    for every control, at every width, forever. ⚠️ The population check below
-    read `json.dumps(controls)` truthy, which a list of zero boxes is.
+    for every control, at every width, forever. ⚠️ A population check that read
+    `json.dumps(controls)` truthy would pass a list of zero boxes.
 
     ⭐ Asserted as a box and not as a `hidden` attribute: `content-visibility`,
     `display: none` on an ancestor and a zero-height clip all read the same to a
@@ -259,7 +250,7 @@ def wide_unit(open_page: OpenPage, built_site: site.Site) -> dict:
 def test_body_text_sits_in_the_band_this_row_asks_for(
     open_page: OpenPage, built_site: site.Site, scheme: str, case: str
 ) -> None:
-    """⛔ `W388` clause 1, measured through the browser in both themes.
+    """⛔ The contrast bands, measured through the browser in both themes.
 
     ⭐ The inks the page actually reads in — the body ink, the quieter one and
     the faintest — against the ground they sit on, as the browser resolved them.
@@ -279,7 +270,7 @@ def test_body_text_sits_in_the_band_this_row_asks_for(
 def test_the_ink_is_never_pure_black_or_pure_white(
     open_page: OpenPage, built_site: site.Site, scheme: str
 ) -> None:
-    """⛔ The row's second sentence, asserted on the resolved colours themselves."""
+    """⛔ No pure black or pure white, asserted on the resolved colours themselves."""
     open_page.resize(*WIDER)
     open_page.open(built_site.url(UNIT_PAGE), scheme=scheme)
     resolved = theme.resolve(open_page)
@@ -288,12 +279,11 @@ def test_the_ink_is_never_pure_black_or_pure_white(
 
 
 def test_the_band_catches_a_reading_at_either_bound() -> None:
-    """⛔ Both ways, and both bounds: the shipped palette failed the ceiling.
+    """⛔ Both ways, and both bounds.
 
-    ⭐ 15.3:1 is near-white chalk on the green board this row was opened over,
-    7.33:1 is stage 1's own body ink — the reading the user called dim — and 1:1
-    is the harness's own `contrast` damage. Each is caught by the same function,
-    and the user's own reference page's three readings are not.
+    ⭐ 15.3:1 is near-white chalk on a dark green board, 7.33:1 is a body ink
+    that reads as dim, and 1:1 is the harness's own `contrast` damage. Each is
+    caught by the same function, and the reference page's three readings are not.
     """
     assert outside_the_band({"--fg": 15.3}) == ["--fg is 15.30:1, outside 10.0:1–14.0:1"]
     assert outside_the_band({"--fg": 7.33}) == ["--fg is 7.33:1, outside 10.0:1–14.0:1"]
@@ -310,7 +300,7 @@ def test_a_planted_pure_ink_is_caught() -> None:
 
 
 def test_the_first_page_carries_the_rail(open_page: OpenPage, built_site: site.Site) -> None:
-    """⛔ The user's words: *"keep left menu even in the first page"*.
+    """⛔ The containers rail is on the first page too.
 
     ⭐ Read off the laid-out index rather than its markup: a region emitted and
     then laid out under the fold, or behind the tree, is not a left menu.
@@ -329,8 +319,8 @@ def test_the_first_page_carries_the_rail(open_page: OpenPage, built_site: site.S
     # — not beside the list alone. The index's rail is as tall as the courses it
     # names, and the list starts below a masthead that now also carries the
     # theme control, so on a short corpus the two boxes need not overlap at all
-    # while the rail is exactly where the user asked for it. ⛔ The reading that
-    # compared it with the list alone passed on the height of a heading.
+    # while the rail is exactly where it belongs. ⛔ A reading that compared it
+    # with the list alone would pass or fail on the height of a heading.
     column = {
         "top": reading["header"]["top"],
         "bottom": reading["surface"]["bottom"],
@@ -351,7 +341,7 @@ def test_the_rail_beside_reading_catches_a_rail_under_the_content() -> None:
 def test_the_rail_on_the_first_page_reaches_the_other_containers(
     open_page: OpenPage, built_site: site.Site
 ) -> None:
-    """⭐ A menu that reaches nothing is not the region the user asked for."""
+    """⭐ A menu that reaches nothing is not a containers rail."""
     open_page.resize(*WIDER)
     open_page.open(built_site.url(INDEX_PAGE))
     hrefs = open_page.evaluate(
@@ -379,7 +369,7 @@ def test_the_first_page_folds_the_rail_back_into_the_column_when_the_window_is_n
 
 
 def test_the_transport_spans_the_whole_content(wide_unit: dict) -> None:
-    """⛔ The user's words: the narration bar is the width of the content."""
+    """⛔ The narration bar is the width of the content."""
     assert spans_the_content(wide_unit), (
         f"the transport is {wide_unit['player']['width']:.2f}px wide beside a "
         f"{wide_unit['surface']['width']:.2f}px reading column, starting at "
@@ -400,7 +390,7 @@ def test_the_transports_buttons_do_not_grow_with_it(
     blind = unpainted(narrow) + unpainted(wide_unit["controls"])
     assert not blind, (
         "the transport's controls are not painted at one of these widths, so the "
-        f"comparison below is between two empty boxes (`SF-24/3`): {blind}"
+        f"comparison below is between two empty boxes: {blind}"
     )
     bigger = grown(narrow, wide_unit["controls"])
     assert not bigger, "the transport's controls grow with its width: " + ", ".join(bigger)
@@ -455,7 +445,7 @@ def test_a_line_of_prose_is_the_length_this_row_argues_for(
 def test_the_narrow_measure_that_shipped_is_caught_by_the_same_reading(
     open_page: OpenPage, built_site: site.Site
 ) -> None:
-    """⭐ Both ways, with the column cut back to a measure this row rejects.
+    """⭐ Both ways, with the column cut back to a measure this module rejects.
 
     ⚠️ The override is set on the page itself rather than on a damaged tree,
     because the reading under test is the laid-out line and not the stylesheet.
@@ -485,7 +475,7 @@ def test_the_units_outline_sits_beside_the_reading_and_not_above_it(wide_unit: d
 def test_the_first_pages_explanation_sits_beside_the_list(
     open_page: OpenPage, built_site: site.Site
 ) -> None:
-    """⛔ `W369` clause 1: a wide window uses its width for the secondary facts."""
+    """⛔ A wide window uses its width for the secondary facts."""
     open_page.resize(*WIDER)
     open_page.open(built_site.url(INDEX_PAGE))
     reading = dict(open_page.evaluate(BOXES))  # type: ignore[arg-type]
@@ -519,13 +509,13 @@ def test_the_beside_reading_tells_the_two_placements_apart() -> None:
     assert not beside({"top": 10.0, "bottom": 99.0}, column)
 
 
-# --- clause 5 and `W369` clause 2 -------------------------------------------
+# --- the masthead, the trail and a resting page --------------------------------
 
 
 def test_nothing_is_lit_before_the_reader_starts_narration(
     open_page: OpenPage, built_site: site.Site
 ) -> None:
-    """⛔ `W369` clause 2, in the browser: a resting page shows no highlight."""
+    """⛔ In the browser: a resting page shows no highlight."""
     open_page.resize(*WIDER)
     open_page.open(built_site.url(UNIT_PAGE))
     assert int(open_page.evaluate(SPEAKING)) == 0  # type: ignore[arg-type]
@@ -540,7 +530,7 @@ def test_pressing_play_is_what_lights_a_passage(open_page: OpenPage, built_site:
 
 
 def test_the_masthead_prints_no_bare_kind_label(open_page: OpenPage, built_site: site.Site) -> None:
-    """⛔ `W388` clause 5: nothing under the title but the title and its trail."""
+    """⛔ Nothing under the title but the title and its trail."""
     open_page.resize(*WIDER)
     open_page.open(built_site.url(UNIT_PAGE))
     lines = open_page.evaluate(
@@ -550,7 +540,7 @@ def test_the_masthead_prints_no_bare_kind_label(open_page: OpenPage, built_site:
 
 
 def test_the_trail_names_each_level_once(open_page: OpenPage, built_site: site.Site) -> None:
-    """⛔ `W388` clause 5's first half, read off the laid-out trail."""
+    """⛔ Each level named once, read off the laid-out trail."""
     open_page.resize(*WIDER)
     open_page.open(built_site.url(UNIT_PAGE))
     crumbs = [

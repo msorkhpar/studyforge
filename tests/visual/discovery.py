@@ -13,30 +13,26 @@ prints at the end of *every* suite run, browser or no browser.
 
 ## ⛔ The evidence state this harness claims, and which run it claims it from
 
-⭐ **`QA-03/1` IS CLOSED: `W36` put a browser in the pinned image**, pinned by
-version AND checksum the way `docker/dev/Dockerfile` pins its base image and its
-Node.js. ⛔ So a run **inside the image** is `pinned green` — the engine that
-produced the reading is named in a file, and a rebuild gets the same one.
+⭐ **The pinned dev image carries a browser**, pinned by version AND checksum
+the way `docker/dev/Dockerfile` pins its base image and its Node.js. ⛔ So a run
+**inside the image** is `pinned green` — the engine that produced the reading is
+named in a file, and a rebuild gets the same one.
 
 ⛔ **A run on a host is not, and this module refuses to let one claim it.** The
-engine there is whatever the machine happened to have, so a contrast ratio or a
+engine there is whatever the machine happens to have, so a contrast ratio or a
 focus order measured on it is measured against something no file records. ⚠️ It
-is not `host-verified` either, and claiming that would be an abuse of the row:
-the rubric §4b bounds `host-verified` by *the image is right to exclude the
-subject*, and this image is not — it now **includes** it.
+is not `host-verified` either: that state is for a subject the image is right to
+exclude, and this image **includes** it.
 
 ⭐ **Therefore `report_line()` says which of the two a run was**, keyed on the
 image's own `STUDYFORGE_DEV_CONTAINER` marker, so a review quotes the line
-rather than deciding for itself. ⛔ **The history is recorded because the gap
-was real and expensive**: from `QA-03` until `W36` these clauses were
-`unpinned green` and 57 of their checks did not run in the image at all.
+rather than deciding for itself.
 
 ## ⛔ Absence is loud, counted, and can be made fatal
 
-⚠️ **`SF-01` was approved on a host run whose two skips nobody read**, and this
-wave the container's eight skips and the host's eight were found to be disjoint
-sets. A skip nobody reads is this project's most repeated defect, so this
-harness does three things instead of one:
+⚠️ **A skip nobody reads is a check that silently did not run**, and a host and
+the container can skip disjoint sets. So this harness does three things instead
+of one:
 
 1. every skipped check names **what is missing and how to supply it**;
 2. `conftest.py` prints `report_line()` in the terminal summary of **every**
@@ -44,28 +40,26 @@ harness does three things instead of one:
 3. `STUDYFORGE_VISUAL=required` turns absence into a **failure**, so a reviewer
    or a CI job that wants the guarantee can demand it in one word.
 
-## ⛔ `W128` — the three variables that reach a VERDICT here are DECLARED
+## ⛔ The three variables that reach a VERDICT here are DECLARED
 
-⛔ **A committed verdict may not depend on the host's environment SILENTLY**
-(Ruling 225's environment half, named by Ruling 263 and partitioned by
-Ruling 269). ⭐ **The unit is *the distinct `STUDYFORGE_*` names
-`tests/visual/` reads*, never a bare count**, and they partition in two:
+⛔ **A committed verdict may not depend on the host's environment SILENTLY.**
+⭐ **The unit is *the distinct `STUDYFORGE_*` names `tests/visual/` reads*,
+never a bare count**, and they partition in two:
 
 | name | what it decides | partition |
 |---|---|---|
 | `STUDYFORGE_VISUAL` | absence is a FAILURE or a SKIP | ⛔ **a verdict** |
 | `STUDYFORGE_VISUAL_BROWSER` | WHICH engine produced every reading | ⛔ **a verdict** |
-| `STUDYFORGE_DEV_CONTAINER` | ADMISSIBILITY, Ruling 40 | ⛔ **a verdict** |
+| `STUDYFORGE_DEV_CONTAINER` | ADMISSIBILITY: pinned or not (R15) | ⛔ **a verdict** |
 | `STUDYFORGE_VISUAL_CAPTURES` | where the PNGs land | ⭐ an artifact only |
 
-⭐ **The remedy is NOT removing `STUDYFORGE_VISUAL=required`** — that variable is
-the whole of how this harness refuses to be a check that cannot fail. ⛔ **It is
-that `environment_declaration()` PRINTS all three, in force, at the end of every
-run**, so a green reading carries the environment it was taken in instead of
-leaving a reader to assume one — exactly as Ruling 204 lets a SKIP be admissible
-when it says so. ⚠️ **The partition itself is asserted over a fixture in
-`test_host_environment.py`, which is also where the licence for the one ambient
-reader is stated.**
+⭐ **`STUDYFORGE_VISUAL=required` stays** — that variable is the whole of how this
+harness refuses to be a check that cannot fail. ⛔ **`environment_declaration()`
+PRINTS all three, in force, at the end of every run**, so a green reading
+carries the environment it was taken in instead of leaving a reader to assume
+one, and a SKIP is admissible because it says so. ⚠️ **The partition itself is
+asserted over a fixture in `test_host_environment.py`, which is also where the
+licence for the one ambient reader is stated.**
 """
 
 from __future__ import annotations
@@ -121,7 +115,7 @@ class State:
     #: `PATH` supplying it. ⚠️ **A BOOLEAN and never the value**: that variable
     #: holds a path, and a path is somebody's home directory (R7). ⭐ It is what
     #: lets `reason` stop saying *"`$STUDYFORGE_VISUAL_BROWSER` is unset"* on a
-    #: run where it was set and named something unusable — see `W128/1`.
+    #: run where it was set and named something unusable.
     named: bool = False
 
     @property
@@ -137,29 +131,24 @@ class State:
         remedy is a reason the next reader has to re-derive, which is how a
         skip becomes invisible.
 
-        ⚠️ **One line, and that is a measurement rather than a preference.** In
-        the pinned image this reason is printed 55 times by `-rs`, and the first
-        draft ran to five lines — 275 lines of identical prose above the eight
-        pre-existing skips, which is a way of hiding them. ⭐ The long form is
-        printed **once**, by `report_line`, at the end of every run.
+        ⚠️ **One line.** In the pinned image this reason is printed once per
+        skipped check by `-rs`, and a five-line reason would bury the other
+        skips under identical prose. ⭐ The long form is printed **once**, by
+        `report_line`, at the end of every run.
 
-        ⛔ **Two branches, because one of them used to be FALSE** (`W128/1`).
-        The unnamed branch's wording is unchanged; the named branch exists
-        because a run with `$STUDYFORGE_VISUAL_BROWSER` set to something this
-        machine cannot run printed *"… and `$STUDYFORGE_VISUAL_BROWSER` is
-        unset"* beside 123 skips it had itself caused. ⚠️ **The variable's VALUE
-        is still never printed — it is a path (R7).**
+        ⛔ **Two branches**: a run with `$STUDYFORGE_VISUAL_BROWSER` set to
+        something this machine cannot run must not say the variable is unset.
+        ⚠️ **The variable's VALUE is never printed — it is a path (R7).**
         """
         if self.named:
             return (
                 f"no browser: ${BINARY_VARIABLE} is set and names one this machine cannot "
-                f"run — QA-03/1 is closed and the pinned image has one, so see the "
-                f"harness line below"
+                f"run — the pinned dev image has one, so see the harness line below"
             )
         return (
             f"no browser: PATH has none of {self.searched[0]}… and "
-            f"${BINARY_VARIABLE} is unset — QA-03/1 is closed and the pinned image "
-            f"has one, so see the harness line below"
+            f"${BINARY_VARIABLE} is unset — the pinned dev image has one, so see the "
+            f"harness line below"
         )
 
     @property
@@ -169,7 +158,7 @@ class State:
             f"searched PATH for {', '.join(self.searched)} and read "
             f"${BINARY_VARIABLE}. Install a Chromium-family browser, or name one in "
             f"${BINARY_VARIABLE}. ⭐ The pinned dev image HAS one — run "
-            f"`docker/dev/check` and these checks run there (W36, QA-03/1 closed). "
+            f"`docker/dev/check` and these checks run there. "
             f"Set ${DEMAND_VARIABLE}={DEMAND_VALUE} to fail instead of skipping."
         )
 
@@ -187,9 +176,9 @@ def state() -> State:
 def demand_is_in_force() -> bool:
     """Whether this run demanded a browser — the ONE site that reads `$STUDYFORGE_VISUAL`.
 
-    ⛔ **One reader, deliberately** (`W128`). ⚠️ The comparison used to be
-    written out at its single call site, and `environment_declaration()` needs
-    the same answer; a second spelling of it is how a run comes to PRINT *"absence
+    ⛔ **One reader, deliberately**: `require_browser()` and
+    `environment_declaration()` need the same answer, and a second spelling of it is how a run
+    comes to PRINT *"absence
     is a SKIP"* while `require_browser()` FAILS.
 
     ⭐ **Exact, never merely truthy** — `STUDYFORGE_VISUAL=0` reads as *off* and
@@ -213,7 +202,7 @@ def require_browser() -> str:
 
 
 def evidence_state() -> str:
-    """Which of the rubric §4b states a run of this harness may claim.
+    """Which evidence state a run of this harness may claim.
 
     ⛔ **Keyed on the image's marker and not on the browser's presence**, which
     is the whole of the distinction: a host that happens to have Chrome
@@ -221,20 +210,20 @@ def evidence_state() -> str:
     the engine that produced them is named by nothing a rebuild can consult.
 
     ⭐ Inside the pinned image the same readings are `pinned green`, because
-    `W36` records the browser's version and its checksum in
-    `docker/dev/Dockerfile` and `sha256sum --check --strict` refuses anything
-    else. That is the state Ruling 40 asks a reading to be taken in.
+    `docker/dev/Dockerfile` records the browser's version and its checksum and
+    `sha256sum --check --strict` refuses anything else. That is the state a
+    reading is taken in to count (R15).
     """
     if os.environ.get(CONTAINER_VARIABLE, "").strip() == "1":
-        return "pinned (version and checksum in docker/dev/Dockerfile — W36)"
+        return "pinned (version and checksum in docker/dev/Dockerfile)"
     return "unpinned (this host's browser, pinned by nothing — the image's is)"
 
 
 def environment_declaration() -> str:
     """Every environment variable that reaches a VERDICT here, with the state in force.
 
-    ⛔ **`W128`: the defect was never that `$STUDYFORGE_VISUAL` exists — it is
-    that a verdict depended on it SILENTLY.** ⭐ This is the line that makes the
+    ⛔ **What matters is not that `$STUDYFORGE_VISUAL` exists but that no
+    verdict depends on it SILENTLY.** ⭐ This is the line that makes the
     dependence DECLARED, and it names all three of the verdict-reaching
     partition so that a reading quoted into a record carries the environment it
     was taken in rather than the one its reader assumed.
@@ -268,9 +257,9 @@ def environment_declaration() -> str:
 def report_line(skipped: int | None = None) -> str:
     """The one sentence the whole suite prints about this harness, run or not.
 
-    ⛔ **It carries `environment_declaration()` on BOTH branches** (`W128`). A
-    green run that does not say whether absence would have been fatal is the
-    silent dependence this row exists to close.
+    ⛔ **It carries `environment_declaration()` on BOTH branches**. A
+    green run that does not say whether absence would have been fatal depends
+    on the environment silently.
     """
     current = state()
     declaration = environment_declaration()

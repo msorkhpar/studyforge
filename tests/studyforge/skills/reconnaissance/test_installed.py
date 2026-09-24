@@ -1,4 +1,4 @@
-"""What the framework generated here, read from the corpus's own record (`W329`)."""
+"""What the framework generated here, read from the corpus's own record."""
 
 from __future__ import annotations
 

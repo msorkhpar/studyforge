@@ -34,9 +34,8 @@ so would be the theatre R5 forbids.
 1. The corpus, already onboarded — `corpus.json` exists and
    `studyforge validate` is clean. That is the other skill's job
    (`studyforge.skills.onboarding`), and this one refuses to run before it.
-2. `code-server-toolchain`, **checked out as a sibling at the commit
-   `workspace.json` pins**. ⛔ Never a submodule and never vendored: nothing in
-   this project is pushed to a remote, so a submodule URL has no legal form.
+2. `code-server-toolchain`, **installed or built beside the framework**, at the
+   version you use. ⛔ Never vendored into the corpus.
 3. Docker on the host, for step 4 onwards. Steps 1–3 touch no daemon.
 
 ---
@@ -87,9 +86,8 @@ at.
     )
 
 ⭐ **Where the two texts come from:** each is the `consuming.json` at the root
-of that sibling, **read at the commit `workspace.json` pins** — `git show
-<commit>:consuming.json` in the sibling's checkout, or the file in an export of
-that commit — and never a working tree that has moved past its pin.
+of that component, **read at the version you installed or built** — never a
+newer working tree than the images you run.
 `narration_text` is optional: without it the reader's document says nothing
 about narration and the narration contract's rulings are not asserted.
 
@@ -179,8 +177,7 @@ with no build file, and a build with no source or no test in it. ⚠️ **That
 refusal is the whole point of the step** — it is the difference between an
 unprimed image and an image that says it is primed.
 
-⛔ **The prime is in the component's layout, and its names are the contract's
-(`W440`).** The component warms **one project directory per seeded tool** and
+⛔ **The prime is in the component's layout, and its names are the contract's.** The component warms **one project directory per seeded tool** and
 refuses anything else at the prime's top. So each tool the corpus declares and
 `runner.prime.seeds` names gets `prime/<tool>/`, holding the corpus's own
 build **re-rooted at its build file's directory**: the shallowest directory
@@ -208,7 +205,7 @@ the corpus's data (R1):
   no repository and no absolute path is ever written into the corpus.
 - ⭐ **The runner's prime.** The image is built with `--prime` from a build
   that declares every dependency the exercises' build roles name, so the
-  image's seed holds them (`W390`) and the tool finds them with no flag.
+  image's seed holds them and the tool finds them with no flag.
 
 ⚠️ **Nothing checks the two agree except the gates, and that is enough:** the
 authoring skill runs every gate in the pinned runner image, so an exercise

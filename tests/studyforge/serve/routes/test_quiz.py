@@ -170,7 +170,7 @@ def test_grading_records_nothing_and_writes_nothing(server, corpus):
 
 
 def test_the_route_imports_nothing_that_runs_reaches_or_asks_anything():
-    # ⛔ No model, no network, no container (the ruling; spec §8.3). ⭐ Read off
+    # ⛔ No model, no network, no container (spec §8.3). ⭐ Read off
     # the module's own imports, because a promise in a docstring is not a
     # property of the code.
     tree = ast.parse(inspect.getsource(quiz))

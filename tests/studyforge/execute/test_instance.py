@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/execute/instance.py` (R12) — the names a checkout recorded.
 
-⭐ `W465`: a second instance of one corpus is found by what IT recorded, and a
+⭐ a second instance of one corpus is found by what IT recorded, and a
 checkout that recorded nothing is found exactly as before.
 """
 

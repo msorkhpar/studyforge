@@ -1,7 +1,7 @@
 """Mirror of `src/studyforge/skills/delivery/components.py` (R12).
 
 ⛔ What the pin document SAYS, and the reading it is turned into: which side
-delivers a row (`W92`). ⚠️ What the index does with that reading — the column,
+delivers a row. ⚠️ What the index does with that reading — the column,
 the legend, the derivation — is asserted next door, in `test_capability.py`.
 """
 

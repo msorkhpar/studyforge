@@ -7,7 +7,7 @@ population *"writes nothing"* is about. ⭐ Each emptiness has a positive contro
 beside it, because an unwired recorder and a snapshot compared with itself are
 empty too.
 
-⛔ Every case copies a `FND-04` fixture into `tmp_path`; nothing under
+⛔ Every case copies a fixture corpus into `tmp_path`; nothing under
 `tests/fixtures/` is ever written.
 """
 
@@ -129,7 +129,7 @@ def test_a_provides_bump_asks_for_every_clip_again(tmp_path):
 
 
 def test_an_unchanged_model_asks_for_nothing(tmp_path):
-    # ⛔ W223, the first way (R12): the SAME model reported again is no change.
+    # ⛔ The SAME model reported again is no change.
     root = a_corpus(tmp_path, "depth1")
     run(root, FakeService(engine_model="kokoro"))
     before = files(root)
@@ -141,7 +141,7 @@ def test_an_unchanged_model_asks_for_nothing(tmp_path):
 
 
 def test_a_model_change_asks_for_every_clip_again(tmp_path):
-    # ⛔ W223 clause 1 (`SF-42/2`): `engine_model` is in the service's content
+    # ⛔ `engine_model` is in the service's content
     # address and `/healthz` reports it. Asserted over the ids the transport was
     # handed, never over the report.
     root = a_corpus(tmp_path, "depth1")
@@ -231,7 +231,7 @@ def test_a_failed_segment_is_reported_and_leaves_no_clip(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ W193 answer 4: the disclosure — a PLANTED entry, and the count that moves
+# ⛔ The disclosure — a PLANTED entry, and the count that moves
 # --------------------------------------------------------------------------
 
 
@@ -245,7 +245,7 @@ def test_a_planted_dead_entry_moves_the_disclosed_count_from_zero_to_one(tmp_pat
 
 
 def test_a_reworded_passage_moves_the_superseded_count_from_zero_to_one(tmp_path):
-    # ⛔ W226: the kept clip is disclosed, read off the record when the run returns.
+    # ⛔ The kept clip is disclosed, read off the record when the run returns.
     root = narrated(tmp_path)
     assert run(root, FakeService()).superseded == (), "the control: a clean corpus discloses none"
     reword(root)
@@ -273,7 +273,7 @@ def test_a_walk_that_missed_a_declared_unit_names_it_and_deletes_nothing(tmp_pat
 
 
 # --------------------------------------------------------------------------
-# ⛔ W222: ONE derivation of a unit's audio directory, its label included
+# ⛔ ONE derivation of a unit's audio directory, its label included
 # --------------------------------------------------------------------------
 
 LABEL = "lab"
@@ -292,7 +292,7 @@ def moved(root: Path) -> tuple[Path, Path, Path]:
     """The labelled unit's audio directory without and with its label, and its page."""
     corpus = read_corpus(root)
     source = next(item for item in corpus.units if item.label == LABEL)
-    # ⭐ `W290`: the label is moved on the SOURCE, because that is where the one
+    # ⭐ The label is moved on the SOURCE, because that is where the one
     # derivation reads it from — a call site cannot spell it any more.
     at = {label: unit_location(corpus, replace(source, label=label)) for label in (None, LABEL)}
     assert at[None].audio != at[LABEL].audio, "the label moved nothing; this would be vacuous"

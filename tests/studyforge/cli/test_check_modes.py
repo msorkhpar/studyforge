@@ -1,4 +1,4 @@
-"""The `check` verb takes `SF-20`'s mode: the runner container when it is up, the host otherwise.
+"""The `check` verb takes the runner's mode: the runner container when it is up, the host otherwise.
 
 ⭐ **The verb chooses no mode.** It hands the runner the corpus's container name
 (`execute.container_for`) and the runner probes. So the same file checked in either mode
@@ -69,7 +69,7 @@ def test_the_runner_is_handed_the_corpus_container_and_takes_host_when_it_is_not
 
 
 def test_a_second_checkout_is_checked_in_the_runner_it_recorded(stage):
-    """⭐ `W465/3`: `check` in a second checkout names that checkout's runner, not `source`'s."""
+    """⭐ `check` in a second checkout names that checkout's runner, not `source`'s."""
     root, _, _ = stage
     target = root / instance.INSTANCE_FILE
     target.parent.mkdir(parents=True, exist_ok=True)

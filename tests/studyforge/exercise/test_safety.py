@@ -115,7 +115,7 @@ def test_a_path_refusal_never_reproduces_the_path():
 
 
 def test_nor_does_it_reproduce_a_windows_home_path():
-    # ⚠️ The shape SF-25's poison table measured the personal-data gate
+    # ⚠️ The shape `validate`'s poison table shows the personal-data gate
     # missing. Refused here by structure, so the gate never has to name it.
     message = refuse(require_path, "C:\\Users\\janedoe\\Main.java", "main_path", WHERE)
     assert "janedoe" not in message
@@ -215,7 +215,7 @@ def test_the_permitted_set_is_stated_rather_than_a_pasted_regex():
 
 
 # --------------------------------------------------------------------------
-# ⛔ a line ending is outside the permitted set (W434)
+# ⛔ a line ending is outside the permitted set
 # --------------------------------------------------------------------------
 
 #: ⛔ Python's `$` matches BEFORE a trailing newline, so a pattern anchored

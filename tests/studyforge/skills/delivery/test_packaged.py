@@ -40,8 +40,8 @@ from tests.support import repository_root
 #: The shipped index, as a path inside the `studyforge` package.
 SHIPPED = PurePosixPath("skills/delivery") / packaged.NAME
 
-#: The SHA-256 of the shipped index: the generator's output over the epics before their task
-#: text moved to the archive branch, read byte-identical to a regeneration there.
+#: The SHA-256 of the shipped index: the generator's output over the epics as they stand on the
+#: `archive/process` branch, byte-identical to a regeneration there.
 FROZEN = "4bdf1cf988fca989f0d222d655052595004b3d796455cab508200ce935b7d009"
 
 

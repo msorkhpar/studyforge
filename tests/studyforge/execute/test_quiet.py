@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/execute/quiet.py` (R12): `SF-29`'s acceptance, each clause both ways.
+"""Mirror of `src/studyforge/execute/quiet.py` (R12): quiet mode, each clause both ways.
 
 ⭐ **The input is real output** (`transcripts.py` says where each line came
 from). ⚠️ **Two inputs here are NOT captures, and each says so where it is
@@ -197,7 +197,7 @@ def test_mavens_own_stack_trace_survives_intact_blank_line_and_all():
 
 
 def test_every_frame_of_a_gradle_trace_survives_not_only_the_readers():
-    """⚠️ The extraction source kept one frame of these six. The epic says intact."""
+    """⚠️ All six frames survive: a stack trace is kept intact."""
     frames = [line for line in GRADLE_FAILURE if line.lstrip().startswith("at ")]
     assert len(frames) == 6
     assert [line for line in shown(GRADLE_FAILURE, GRADLE) if line in frames] == frames

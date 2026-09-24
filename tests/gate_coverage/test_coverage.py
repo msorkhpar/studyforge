@@ -1,4 +1,4 @@
-"""W7's claim and the scan's bound: the assertions this gate exists to make.
+"""The gate claim and the scan's bound: the assertions this gate exists to make.
 
 ⛔ Every reader under `SCAN_ROOT` calls the gate, `GATED_TREES` is total over
 the repository, and both are watched passing without their mechanism.
@@ -38,10 +38,10 @@ def tracked_python_modules(root: Path | None = None) -> list[Path]:
     every reader in this repository live in a named, gated tree"* — a claim
     about the repository, whose contents are its tracked contents, and which is
     still true of a file the moment it is added. ⛔ They do **not** ask *"does
-    my working tree pass right now"*; that question is `tools.quality`'s, it is
-    answered over `git check-ignore` precisely so that a brand-new unadded file
-    is caught (in `tools/quality/config.py`), and it is a different
-    instrument on purpose.
+    my working tree pass right now"*; that question is the product floor's
+    (`python3 -m tests.floor`), answered over `git check-ignore` precisely so
+    that a brand-new unadded file is caught (in `tests/floor/config.py`), and
+    it is a different instrument on purpose.
 
     ⚠️ **A tracked module absent from the working tree is refused, not
     skipped** — an unstaged deletion would otherwise narrow this population by
@@ -85,7 +85,7 @@ def tracked_readers(tree: str = "", root: Path | None = None) -> list[Path]:
 
 
 def test_every_document_reader_calls_the_gate():
-    # ⛔ W7. The assertion that makes an ungated reader unrepresentable rather
+    # ⛔ The assertion that makes an ungated reader unrepresentable rather
     # than merely discouraged — and the reason the fix is not "add a call".
     #
     # ⚠️ **This one keeps the disk walk, and the asymmetry with the two
@@ -100,15 +100,12 @@ def test_every_document_reader_calls_the_gate():
         for path in document_readers(root)
         if GATE not in _calls(path)
     )
-    assert offenders == [], (
-        f"these modules decode a document and never gate it (R7, W7): {offenders}"
-    )
+    assert offenders == [], f"these modules decode a document and never gate it (R7): {offenders}"
 
 
 def test_the_reader_scan_is_not_vacuous():
     # ⭐ Both directions. A scanner that found no readers would pass the test
-    # above forever, so this asserts it really does see the module W7 was
-    # opened against.
+    # above forever, so this asserts it really does see the manifest reader.
     root = repository_root() / SCAN_ROOT
     found = {str(path.relative_to(root)) for path in document_readers(root)}
     assert "corpus/manifest/document.py" in found
@@ -119,7 +116,7 @@ def test_the_scan_root_is_the_one_tree_this_gate_covers():
     # ⛔ **The bound, half one.** `SCAN_ROOT` was a literal repeated in three
     # test bodies and justified nowhere; now it is a row of `GATED_TREES`, and
     # it must be *the* row whose gate is the one this file looks for. ⭐ Swapping
-    # the root to `tools` — the fix a reader outside it seems to ask for — is not
+    # the root to `tests` — the fix a reader outside it seems to ask for — is not
     # a one-word edit that keeps the suite green: it contradicts this line.
     assert SCAN_ROOT in GATED_TREES
     assert GATED_TREES[SCAN_ROOT] is not None
@@ -135,7 +132,7 @@ def test_the_scan_root_is_the_one_tree_this_gate_covers():
 def test_no_fourth_tree_of_readers_exists_unnamed():
     # ⛔ **The bound, half two, and the half with teeth.** The bound is not
     # "`src/studyforge` is where we look"; it is "`src/studyforge` is one of
-    # exactly three trees that decode anything, and the other two have their own
+    # exactly two trees that decode anything, and the other has its own
     # answer". ⚠️ That second clause is about the whole repository, so it is
     # measured over the whole repository — a new package or script directory
     # that decodes arrives as a failure naming itself, not as a silent hole.
@@ -146,11 +143,9 @@ def test_no_fourth_tree_of_readers_exists_unnamed():
     #     tracked_readers()                                # the whole population
     #     {t: len(tracked_readers(t)) for t in GATED_TREES}          # per tree
     #
-    # ⛔ **44 at `ad27ed2`, decomposing 11 `src/studyforge` + 3 `tools` + 30
-    # `tests`** — ⚠️ ~~*37 at `ddddd05`: 8, 3, 26*~~ and ~~*26: 6, 2, 18*~~
-    # before that, which is what this comment said until the package split
-    # measured it. It was true at `4f2fbf8` and nobody re-ran it, which is the
-    # exact failure stating the command prevents.
+    # ⚠️ No count is written here: a figure copied into a comment is true at
+    # one commit and silently false after the next split, and the command
+    # above derives it at any commit.
     # ⭐ The assertion below never read the number, so the drift was silent
     # rather than red — the decomposition is checked by
     # `test_every_named_tree_is_populated_so_the_bound_is_not_vacuous`, whose
@@ -158,15 +153,9 @@ def test_no_fourth_tree_of_readers_exists_unnamed():
     # failure and a *shrink* still is.
     #
     # ⛔ **`tracked_readers()`, not `document_readers(repository_root())`.**
-    # ⚠️ The disk walk read **88** here in a worktree carrying a second checkout
-    # under `.scratch/`, and `git status --porcelain` printed nothing. ⭐ The
-    # two instruments agreed exactly — 44, and 11/3/30 — in a clean checkout of
-    # `ad27ed2`, which is the measurement that says this swap de-biased the
-    # population rather than narrowing it.
-    #
-    # ⛔ An earlier report's "three" counted a set it never stated (ungated
-    # readers outside `src/studyforge` that are not test modules); the raw tell
-    # finds 33 outside it at this ref, and both are true of different sets.
+    # ⚠️ A disk walk reads a second checkout nested under `.scratch/` as this
+    # repository's, while `git status --porcelain` prints nothing; the tracked
+    # set is this repository's contents and nothing else.
     root = repository_root()
     homeless = sorted(
         str(path.relative_to(root))
@@ -175,7 +164,7 @@ def test_no_fourth_tree_of_readers_exists_unnamed():
     )
     assert homeless == [], (
         "these modules decode a document from a tree GATED_TREES does not name; "
-        f"name the tree and its R7 gate rather than widening SCAN_ROOT (Ruling 67): {homeless}"
+        f"name the tree and its R7 gate rather than widening SCAN_ROOT (R7): {homeless}"
     )
 
 
@@ -187,9 +176,9 @@ def test_every_named_tree_is_populated_so_the_bound_is_not_vacuous():
     # part moved.
     #
     # ⛔ **Over the tracked set, for the reason above the sibling test.**
-    # ⚠️ This is the half that went red on the nested checkout — `assert 44 ==
-    # 88`, because the *sum* was measured over three trees and the *total* over
-    # a disk holding two repositories.
+    # ⚠️ This is the half that goes red on a nested checkout, because the
+    # *sum* is measured over the named trees and a disk *total* over a disk
+    # holding two repositories.
     root = repository_root()
     per_tree = {tree: len(tracked_readers(tree)) for tree in GATED_TREES}
     assert all((root / tree).is_dir() for tree in GATED_TREES), per_tree
@@ -203,7 +192,7 @@ def test_every_named_tree_is_populated_so_the_bound_is_not_vacuous():
     # keeps every assertion above true: the counts stay positive, the
     # decomposition still sums, and no tree becomes homeless because every
     # tracked `.py` in this repository already lives in a named tree.
-    # ⭐ So: the module W7 was opened against is *in* the set, and the set is a
+    # ⭐ So: the manifest reader is *in* the set, and the set is a
     # **strict** subset of what git tracks.
     readers = {str(path.relative_to(root)) for path in tracked_readers()}
     assert "src/studyforge/corpus/manifest/document.py" in readers, sorted(readers)
@@ -310,8 +299,8 @@ def test_the_tracked_population_ignores_a_nested_checkout_and_still_catches_a_pl
 
 
 def test_the_reader_scan_catches_a_reader_that_gates_nothing(tmp_path):
-    # ⛔ Watch it pass without the mechanism. This is `corpus.json`
-    # as it was until W7 — a real reader, correct in every other way.
+    # ⛔ Watch it pass without the mechanism: a real reader, correct in every
+    # other way, that gates nothing.
     ungated = tmp_path / "reader.py"
     ungated.write_text(
         "import json\n\n\ndef parse(text):\n    return json.loads(text)\n",
@@ -348,12 +337,11 @@ def test_the_gate_is_seen_however_the_module_reaches_for_it(tmp_path):
 
 
 def test_the_manifest_front_door_refuses_a_leak_end_to_end():
-    # ⭐ W7's own defect, driven the way `studyforge validate` meets it: a
+    # ⭐ The manifest's own case, driven the way `studyforge validate` meets it: a
     # decoded `corpus.json` whose free authored `title` carries a home path.
     #
-    # ⛔ **Ruling 58, W27: refused as a `PersonalDataLeak` and NOT as a
-    # `ManifestError`.** This test asserted the opposite until W27, and the
-    # assertion it made was the fail-open: `ManifestError` exists so a caller
+    # ⛔ **Refused as a `PersonalDataLeak` and NOT as a `ManifestError` (R7).**
+    # The opposite is the fail-open: `ManifestError` exists so a caller
     # walking a corpus catches one type per file and continues, so an R7
     # refusal inside that family is logged as one more manifest that would not
     # read and the walk finishes green. ⭐ `not isinstance` is the load-bearing

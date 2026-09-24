@@ -56,13 +56,12 @@
 
   /* ⛔ THE BOOT CACHE, AND IT IS A DIFFERENT STORAGE AREA ON PURPOSE.
      ⚠️ `page.html` carries a synchronous boot in the `<head>` so a
-     reader who chose a theme is not shown the other one for a frame. That boot
-     ran against `localStorage`, and it is the EARLIEST a document can touch
-     that area: a document that binds it before the previous page's write has
+     reader who chose a theme is not shown the other one for a frame. A boot is
+     the EARLIEST a document can touch a storage area, so it must not read
+     `localStorage`: a document that binds it before the previous page's write has
      been committed keeps a snapshot WITHOUT that write, for its whole life.
-     ⛔ Measured on one host at `-n 16`: a mark written on one page was missing
-     on the next in 14 of 35 runs; with the boot not touching `localStorage`,
-     0 of 10. ⛔ And it is not cosmetic — the reader then marks the page they
+     ⛔ Under load a mark written on one page is then missing on the next in a
+     large share of runs. ⛔ And it is not cosmetic — the reader then marks the page they
      are on, `writeMarks` composes the record from the stale set, and the
      earlier mark is gone.
 
@@ -171,8 +170,7 @@
 
   /* Whether this is something the control could show a reader, and a bound
      rather than a grammar. ⚠️ Written as a loop over code points rather than
-     as a character class: the class is where this went wrong once already,
-     because a HYPHEN inside one is a range operator or a literal depending
+     as a character class, because a HYPHEN inside one is a range operator or a literal depending
      on where it sits — and every slug this framework mints is hyphenated,
      so a class that swallowed `-` would discard every key there is.
      ⛔ Refused: anything at or below a space (every ASCII control and every

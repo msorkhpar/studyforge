@@ -28,7 +28,7 @@ def test_a_heading_and_a_bare_numbered_line_are_both_possible_labels():
 
 
 def test_label_never_reads_a_line_carrying_a_link():
-    # ⚠️ W250: whether a linked HEADING is a label is decided by its position,
+    # ⚠️ Whether a linked HEADING is a label is decided by its position,
     # in `choose` (`test_regions.py`), never by this syntactic reader.
     assert label("- [1. Chapter](src/1.md)") is None
     assert label("# [Test cases](TestCases.md)") is None

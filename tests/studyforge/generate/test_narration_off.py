@@ -1,10 +1,8 @@
-"""Mirror of `src/studyforge/generate/narration.py`'s `W460` half: narration is optional.
+"""Mirror of `src/studyforge/generate/narration.py`'s optional half: narration is optional.
 
-⭐ **The user's ruling, 2026-09-23:** *"it should be optional … Somebody might
-wants to just cover the course wihtout voices as mentioned the voice might be
-cgenerated but still not serving them would be an option"*.
+⭐ A corpus may be read without voices, even when clips were generated.
 
-What is proved here, through the build, over both `FND-04` fixtures with a
+What is proved here, through the build, over both framework fixture corpora with a
 record and a clip per speech unit on disk:
 
 - off, from `corpus.json` or from a run's override, builds **the reading floor

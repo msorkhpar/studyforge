@@ -19,10 +19,10 @@ this module opens no file, no socket and no container.
 ## ⭐ R1 PERMITS THIS, AND IT IS WORTH SAYING WHY
 
 R1 is that the framework knows nothing about any **source**. `narrate-service`
-is not a source: it is one of this framework's own components, pinned beside it
-by `workspace.json`, and this framework's narration client was written against
+is not a source: it is one of this framework's own components, installed or built
+beside it, and this framework's narration client was written against
 its contract. ⛔ A skill that would not name it leaves an operator to discover
-that narration exists at all — which is the defect this module closes.
+that narration exists at all.
 
 ## ⛔ THIS SKILL STARTS NO CONTAINER, AND THE RULE IS NOT THIS SKILL'S
 
@@ -53,7 +53,7 @@ from __future__ import annotations
 from studyforge.cli.narrate.cli import DEFAULT_SERVICE
 
 #: The component that synthesises narration. ⭐ A component of this framework,
-#: never a source (R1) — `workspace.json` pins it as a sibling checkout.
+#: never a source (R1): a client installs or builds it beside the framework.
 COMPONENT = "narrate-service"
 
 #: Where it answers. ⛔ Imported, never respelled: `studyforge narrate`'s own

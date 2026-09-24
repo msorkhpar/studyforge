@@ -43,7 +43,7 @@ def footprint(*sizes):
 
 
 def test_a_corpus_under_the_limits_commits_its_media(tmp_path):
-    # ⭐ SF-32's first acceptance clause, in the half this module can assert:
+    # ⭐ the media policy's first acceptance clause, in the half this module can assert:
     # the verdict is *commit*, and the ignore rules do not cover the media —
     # so a clone carries the clips and plays them with nothing running (R8).
     verdict = verdict_for(DEFAULT_MEDIA, footprint(1000, 2000))
@@ -182,7 +182,7 @@ def test_auto_with_no_measurement_is_refused():
 
 
 def test_changing_a_limit_changes_the_verdict_and_nothing_else():
-    # ⭐ SF-32's last acceptance clause. One field moves; the commit answer,
+    # ⭐ the media policy's last acceptance clause. One field moves; the commit answer,
     # the ignore rules and the measurement do not.
     measured = footprint(900)
     tight = MediaPolicy(commit="auto", max_total_bytes=100, max_file_bytes=100)
@@ -208,7 +208,7 @@ def test_this_module_names_no_host_and_no_forge():
 
 
 def test_the_frozen_field_names_are_the_manifest_field_names():
-    # ⛔ Ruling 104: the two names are frozen, and a crossing reports against
+    # ⛔ The two names are frozen, and a crossing reports against
     # the field a person edits. Read off the policy rather than retyped.
     for limit in (LIMIT_TOTAL, LIMIT_FILE):
         assert hasattr(DEFAULT_MEDIA, limit)
@@ -219,7 +219,7 @@ def test_a_verdict_reports_what_was_measured():
     assert "300 byte(s) in 2 file(s)" in verdict.report()
 
 
-def test_W311_what_the_reading_could_not_weigh_is_reported_by_name_and_only_then():
+def test_what_the_reading_could_not_weigh_is_reported_by_name_and_only_then():
     # ⛔ Both ways: a footprint that names an unweighed clip says so beside the
     # total, and one that weighed everything prints no such line.
     said = "u2-s1's clip u2-s1-bbbb.mp3: the narration record carries no directory for it"
@@ -257,7 +257,7 @@ def test_a_corpus_under_the_count_ceiling_commits_and_does_not_refuse():
 
 
 def test_a_corpus_over_the_count_ceiling_refuses_naming_the_count():
-    # ⛔ **The half of SF-32's acceptance that could not happen**: *"the file
+    # ⛔ **The half of the media policy's acceptance that could not happen**: *"the file
     # **or count** responsible"*. There was no count limit to cross.
     policy = MediaPolicy(commit="auto", max_files=20, **ROOMY_BYTES)
     verdict = verdict_for(policy, footprint(*MANY_SMALL))

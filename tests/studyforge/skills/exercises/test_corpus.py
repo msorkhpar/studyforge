@@ -1,10 +1,10 @@
 """Mirror of `src/studyforge/skills/exercises/corpus.py` (R12) — the whole pass, read end to end.
 
-**What it asserts.** `AX-08`'s Acceptance, clause by clause, on a corpus whose
+**What it asserts.** The whole pass, clause by clause, on a corpus whose
 pages carry each of spec §7 §1's three source cases and a prose page that gets
 a quiz: each ships a gate-cleared exercise; every exercise is
-`generated`/`advisory`; a grader-less source gets exercises, which is what
-supersedes the old refusal of a grader-less source; the pass writes only inside the corpus and only
+`generated`/`advisory`; a grader-less source gets exercises; the pass writes
+only inside the corpus and only
 additively (R3); and re-running it with nothing changed rewrites nothing (R10).
 
 ⭐ **One real pass, taken once per module**: the runs are real `pytest`
@@ -125,7 +125,7 @@ def test_every_exercise_it_writes_is_generated_and_advisory(corpus):
         assert (bundle.provenance, bundle.trust) == ("generated", "advisory")
 
 
-def test_it_supersedes_sk04_s_refusal_of_a_grader_less_source(corpus):
+def test_it_supersedes_the_refusal_of_a_grader_less_source(corpus):
     # ⛔ Onboarding once refused a source that ships no grader. Run on two of
     # them — one with an example and one with nothing at all — and each ships
     # a gate-cleared exercise instead of a refusal.
@@ -212,7 +212,7 @@ def test_an_existing_file_with_other_bytes_refuses_the_whole_pass_before_any_wri
     (tmp_path / blocking).parent.mkdir(parents=True)
     (tmp_path / blocking).write_text("# the reader's own work\n", encoding="utf-8")
     before = snapshot(tmp_path)
-    with pytest.raises(AuthoringError, match="R3"):
+    with pytest.raises(AuthoringError, match="non-destructive"):
         author_corpus(
             tmp_path,
             source="demo",
@@ -226,7 +226,7 @@ def test_an_existing_file_with_other_bytes_refuses_the_whole_pass_before_any_wri
     assert snapshot(tmp_path) == before, "the pass wrote some files before refusing"
 
 
-#: A minor aspect, carried by the short reason the user's refinement words.
+#: A minor aspect, carried by a short reason.
 TONE = Aspect(
     "tone", "a shout is loud", ("section:How to shout",), reason="incidental detail, not practised"
 )

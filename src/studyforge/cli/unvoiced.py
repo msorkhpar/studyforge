@@ -1,10 +1,10 @@
-r"""Narration off, as the `build` and `serve` verbs honour it (`W460`).
+r"""Narration off, as the `build` and `serve` verbs honour it.
 
 **What it does.** Answers the two questions a verb asks once a run has left
 narration out: which built pages still carry narration (`voiced_pages`), and
 which files under a served root are narration clips that must not be served
 (`unvoiced_clips`). ⛔ **Whether a run leaves it out is not asked here**: that is
-`narrate.narration_on`, the one predicate every stage asks (`W457`, `W460`).
+`narrate.narration_on`, the one predicate every stage asks.
 
 **How you use it.**
 
@@ -17,12 +17,11 @@ which files under a served root are narration clips that must not be served
 attribute a narrated element carries. ⛔ Read at startup, never per request:
 `serve` renders nothing at request time and this adds nothing to it.
 
-## ⛔ The user's ruling, 2026-09-23
+## ⛔ Narration is optional
 
-*"it should be optional and while serving or even while caputring the matterial
-skills should ask if user is interested in the narrition or not. Somebody might
-wants to just cover the course wihtout voices as mentioned the voice might be
-cgenerated but still not serving them would be an option"*.
+A reader may cover a course without voices: the skills ask about narration when
+the material is captured and when it is served, and clips that were generated
+may still go unserved.
 
 ## ⭐ Why serve REFUSES a narrated build rather than editing it on the way out
 
@@ -31,7 +30,7 @@ written by `build`, and R8 makes the built page the product — it opens over
 `file://` with no server. ⚠️ A serve that stripped the player per request would
 be a second author of the page and would answer differently from the file on
 disk; one that only withheld the clips would serve a player whose every passage
-fails, which is the broken-narration state (`W202`) and the opposite of the
+fails, which is the broken-narration state and the opposite of the
 reading floor. ⭐ **So `serve --no-narration` over a site built with narration
 refuses, naming each page and the command that fixes it**, exactly as it
 refuses a page nobody built. ⭐ And it withholds every clip under the root it

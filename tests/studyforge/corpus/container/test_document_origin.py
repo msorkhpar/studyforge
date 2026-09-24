@@ -1,4 +1,4 @@
-"""`container_api: 2` — an `origin` that names a region (SF-36, Ruling 92).
+"""`container_api: 2` — an `origin` that names a region.
 
 ⛔ **A sibling of `test_document.py` rather than an addition to it.** That
 module is 598 lines against R11's 600 test ceiling and is queued to be split; a row
@@ -7,8 +7,7 @@ queued task. ⚠️ The two assertions it already carried about the version set
 were **corrected in place**, at the same line count, because they built their
 expectations out of `CONTAINER_API` itself.
 
-⭐ **Every version here is a literal.** `KNOWN_CONTAINER_API == {CONTAINER_API}`
-was true before this task and after it; a set spelled out of the constant it
+⭐ **Every version here is a literal.** A set spelled out of the constant it
 accompanies cannot fail when the constant moves.
 """
 
@@ -73,14 +72,13 @@ def refusal(**overrides):
 
 
 # --------------------------------------------------------------------------
-# ⛔ the version this task mints — `container_api`, and not `corpus_api`
+# ⛔ the version a region needs — `container_api`, and not `corpus_api`
 # --------------------------------------------------------------------------
 
 
 def test_a_region_is_read_by_the_version_this_build_writes():
-    # ⚠️ **Corrected in place when `W428` minted 3**, exactly as this module's
-    # own docstring records the previous correction: the assertion is that a
-    # region is still read, and the version it is read at is a literal.
+    # ⚠️ The assertion is that a region is still read, and the version it is
+    # read at is a literal.
     assert CONTAINER_API == 3
     assert 2 in KNOWN_CONTAINER_API
 
@@ -201,7 +199,7 @@ def test_section_is_not_a_unit_key():
 
 
 def test_seventeen_units_may_share_one_path_with_seventeen_sections():
-    # ⭐ `F21` in miniature, and the reason the version exists.
+    # ⭐ Many units sharing one file, in miniature, and the reason the version exists.
     made = built(
         units=[
             {

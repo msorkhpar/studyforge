@@ -1,54 +1,38 @@
-"""`W128`'s SWEEP: no VERDICT in this package is reached from the HOST's environment silently.
+"""No VERDICT in this package is reached from the HOST's environment silently.
 
-⛔ **RULING 225'S OTHER HALF.** ⭐ `W119` closed the git-shaped half — no test in
-`tools/tests/quality/board/` may take its POPULATION from the host — and NARROWED
-the class rather than discharging it (Ruling 263). ⚠️ **The residue is a different
-mechanism in a different package: an environment variable crossing the host
-boundary into `tests/visual/`, where the guard `W119` shipped reads git calls and
-cannot see one.**
+⛔ **No verdict may depend on the host silently (R15).** ⭐ A git call that takes
+its population from the host is one way a verdict can; ⚠️ **this module guards a
+different mechanism: an environment variable crossing the host boundary into
+`tests/visual/`, which a guard that reads git calls cannot see.**
 
-## ⛔ THE UNIT, NAMED, AND NEVER A BARE COUNT (Ruling 269)
+## ⛔ THE UNIT, NAMED, AND NEVER A BARE COUNT
 
 ⛔ **The subject is *the distinct `STUDYFORGE_*` names that `tests/visual/`
-reads*.** ⚠️ **A bare `3` or `4` cannot identify which population is meant** —
-`docker/dev/check`'s own `STUDYFORGE_*` set went `5 → 7` in the very wave that
-ruled on this, and Ruling 263's `3` was *right in MAGNITUDE and WRONG IN
-MEMBERSHIP*. ⭐ **So `POPULATION` below names every one, with the FUNCTION that
-reads it, and the partition is asserted over the code rather than over this
-prose.**
+reads*.** ⚠️ **A bare `3` or `4` cannot identify which population is meant**: a
+count can be right in MAGNITUDE and wrong in MEMBERSHIP. ⭐ **So `POPULATION`
+below names every one, with the FUNCTION that reads it, and the partition is
+asserted over the code rather than over this prose.**
 
 ## ⛔ WHAT THIS IS NOT: a removal of `STUDYFORGE_VISUAL=required`
 
 ⭐ **That variable is the whole of how the harness refuses to be a check that
-cannot fail, and it is untouched.** ⛔ **The defect is that a verdict DEPENDED on
-it silently**, so the remedy has exactly two arms and every verdict-reaching name
-takes one of them:
+cannot fail.** ⛔ **What is forbidden is a verdict depending on it silently**, so
+there are exactly two arms and every verdict-reaching name takes one of them:
 
 | arm | what it means | where |
 |---|---|---|
 | ⭐ **FIXTURE** | the TEST decides the environment | `pinned_environment` |
 | ⭐ **LICENCE** | it may read the host and SAYS SO | `conftest.py` |
 
-⚠️ **A NAMED module with a STATED licence, never a pattern** —
-`LIVE_ROOT_READERS` in `tools/tests/quality/board/test_host_population.py` is the
-prior art and this is its shape.
+⚠️ **A NAMED module with a STATED licence, never a pattern** — a list of named
+readers, each with its licence, is the shape.
 
-## ⛔ THE LIVE INSTANCE THIS CLOSES, MEASURED AT THIS BRANCH'S BASE
+## ⛔ The shape of the defect this sweep refuses
 
-⭐ **MEASURED at `270296d` in the pinned container, ROLE `wt/dev2`, one variable
-changed and nothing else:**
-
-```text
-STUDYFORGE_VISUAL unset       5561 passed, 15 skipped     exit 0
-STUDYFORGE_VISUAL=required    1 failed, 5560 passed       exit 1
-  FAILED tests/visual/test_discovery.py::
-         test_a_missing_browser_skips_with_a_reason_that_names_the_remedy
-```
-
-⛔ **That test fakes the browser's ABSENCE and then let the HOST decide whether
-absence skips or fails** — `W124/5`, `W115/4`, and `docker/dev/compose.yaml`
-records the same reading from the other side. ⚠️ **Pre-existing, not a
-regression, and the class rather than one bug.**
+⭐ A test that fakes the browser's ABSENCE and then lets the HOST decide whether
+absence skips or fails passes with `STUDYFORGE_VISUAL` unset and fails with
+`STUDYFORGE_VISUAL=required`, on the same tree. ⚠️ It is a class rather than one
+bug, which is why the guard below is a sweep and not a fix to one test.
 """
 
 from __future__ import annotations
@@ -74,10 +58,10 @@ POPULATION = {
     "STUDYFORGE_VISUAL_CAPTURES": "conftest.capture_dir",
 }
 
-#: ⛔ **The three that reach a VERDICT, and it is NOT Ruling 263's three**
-#: (Ruling 269). ⚠️ `STUDYFORGE_DEV_CONTAINER` is the STRONGEST member rather
+#: ⛔ **The three that reach a VERDICT**.
+#: ⚠️ `STUDYFORGE_DEV_CONTAINER` is the STRONGEST member rather
 #: than an afterthought: it decides `evidence_state()`, which is the
-#: ADMISSIBILITY of every reading this harness takes (Ruling 40).
+#: ADMISSIBILITY of every reading this harness takes.
 VERDICT_REACHING = (
     "STUDYFORGE_VISUAL",
     "STUDYFORGE_VISUAL_BROWSER",
@@ -85,8 +69,8 @@ VERDICT_REACHING = (
 )
 
 #: ⭐ **The one that reaches an ARTIFACT and no verdict**: its only effect is
-#: where the PNGs land. ⛔ Ruling 263's three INCLUDED it, which is half of why
-#: the declared set was wrong in both directions.
+#: where the PNGs land. ⛔ A declared set that included it would be wrong
+#: in the other direction.
 ARTIFACT_ONLY = ("STUDYFORGE_VISUAL_CAPTURES",)
 
 #: ⛔ **The module that DEFINES the readings, excluded from the ambient sweep
@@ -97,8 +81,8 @@ DEFINES_THE_READINGS = ("discovery.py",)
 #: ⛔ **The ONE module licensed to hand the AMBIENT environment to a verdict
 #: function, and the licence is stated rather than assumed.** ⭐ `conftest.py`'s
 #: `browser` fixture and `pytest_terminal_summary` ARE the harness: the verdict
-#: they can reach is a SKIP or a FAILURE that names itself and its remedy
-#: (Ruling 204), the count of what did not run is printed, and the environment in
+#: they can reach is a SKIP or a FAILURE that names itself and its remedy,
+#: the count of what did not run is printed, and the environment in
 #: force is printed beside it. ⚠️ **Nothing there can turn a silent non-run into
 #: a green reading** — which is the property `LIVE_ROOT_READERS` states for the
 #: git half, in the same form.
@@ -171,7 +155,7 @@ def _environment_reads(node: ast.AST, bindings: dict[str, str], where: str) -> d
     time, a read through `os.getenv`, and a read in a module this package
     imports rather than contains. ⛔ **Nothing in this package does any of the
     four, and that is a measurement rather than a hope** — a guard claiming a
-    reach it has not got is this row's own defect wearing a different hat.
+    reach it has not got is the defect it guards against.
     """
     found: dict[str, str] = {}
     for child in ast.iter_child_nodes(node):
@@ -204,18 +188,17 @@ def _pytest_runs_it(node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
 
     ⛔ **The distinction is load-bearing.** ⚠️ A plain module-level helper cannot
     request a fixture — it is called with arguments by its neighbours — so
-    demanding one of `test_init.py`'s `_line_for(state)` would be the
-    fires-on-correct-work class this package has already met five times.
+    demanding one of `test_init.py`'s `_line_for(state)` would be a check
+    that fires on correct work.
     ⭐ **A helper CONTRIBUTES REACH and is never itself the offender; the function
     pytest runs is the one that owes the fixture.**
 
-    ⛔ **BOTH decorator spellings, and the first draft read only one** — see
-    `W128/2`. ⚠️ `@pytest.fixture` is an `ast.Name`/`ast.Attribute` and
-    `@pytest.fixture(scope="session")` is an `ast.Call`, so a predicate that took
-    the dotted spelling of the node itself scored `conftest.browser` — the
-    LICENSED positive row, and the most important fixture in the package — as
-    something pytest does not run. ⭐ **Caught by PLANTING the guard, not by
-    reading it.**
+    ⛔ **BOTH decorator spellings.** ⚠️ `@pytest.fixture` is an
+    `ast.Name`/`ast.Attribute` and `@pytest.fixture(scope="session")` is an
+    `ast.Call`, so a predicate that took the dotted spelling of the node itself
+    would score `conftest.browser` — the LICENSED positive row, and the most
+    important fixture in the package — as something pytest does not run. ⭐ **The
+    plant below holds both spellings.**
     """
     if node.name.startswith(("test_", "pytest_")):
         return True
@@ -266,7 +249,7 @@ def _sources(only: str = "*.py") -> dict[str, str]:
 
 
 def test_every_environment_variable_this_package_reads_is_DECLARED_and_PARTITIONED() -> None:
-    """⛔ The population is measured from the code, never inherited from a row.
+    """⛔ The population is measured from the code, never inherited from prose.
 
     ⭐ **Red four ways**: a new `STUDYFORGE_*` name, a name that stops being
     read, a read that MOVES into another function, and a second reader of a name
@@ -280,13 +263,13 @@ def test_every_environment_variable_this_package_reads_is_DECLARED_and_PARTITION
             assert variable not in measured, (
                 f"⛔ {variable} is read by BOTH {measured.get(variable)} and {where}. "
                 f"One reader per variable: a second spelling of the same decision is how "
-                f"a run PRINTS one verdict and ACTS on another (W128)."
+                f"a run PRINTS one verdict and ACTS on another."
             )
             measured[variable] = where
     assert measured == POPULATION, (
         f"⛔ this package reads {sorted(measured)} and declares {sorted(POPULATION)}. "
         f"A committed verdict may not depend on the host's environment SILENTLY "
-        f"(Ruling 225, Ruling 263): declare the name here, put it in VERDICT_REACHING "
+        f"(R15): declare the name here, put it in VERDICT_REACHING "
         f"or ARTIFACT_ONLY, and — if it reaches a verdict — name it in "
         f"discovery.environment_declaration() so every run prints the value in force."
     )
@@ -302,10 +285,9 @@ def test_the_partition_is_TOTAL_and_DISJOINT_over_the_declared_population() -> N
         "STUDYFORGE_VISUAL_BROWSER",
         "STUDYFORGE_DEV_CONTAINER",
     }, (
-        "⭐ Ruling 269's verdict-reaching subset of the distinct STUDYFORGE_* names "
-        "tests/visual/ reads — named by its MEMBERS and never by a count, and it is "
-        "NOT Ruling 263's three (which omitted the container marker and included the "
-        "capture directory)"
+        "⭐ the verdict-reaching subset of the distinct STUDYFORGE_* names "
+        "tests/visual/ reads — named by its MEMBERS and never by a count: it "
+        "includes the container marker and excludes the capture directory"
     )
 
 
@@ -358,7 +340,7 @@ def test_STUDYFORGE_VISUAL_BROWSER_reaches_its_verdict_in_BOTH_directions(
 def test_STUDYFORGE_DEV_CONTAINER_reaches_the_ADMISSIBILITY_verdict_in_BOTH_directions(
     pinned_environment, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """⛔ The STRONGEST member: it decides what Ruling 40 lets a reading CLAIM."""
+    """⛔ The STRONGEST member: it decides what evidence state a reading may CLAIM."""
     assert discovery.evidence_state().startswith("unpinned")
     monkeypatch.setenv(discovery.CONTAINER_VARIABLE, "1")
     assert discovery.evidence_state().startswith("pinned")
@@ -397,7 +379,7 @@ def test_the_ARTIFACT_ONLY_variable_reaches_NO_verdict_and_that_is_the_CONTROL(
 def test_every_VERDICT_REACHING_name_is_PRINTED_by_the_line_every_run_writes(
     pinned_environment, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """⛔ The LICENCE arm: the dependence is admissible because the run SAYS it (Ruling 204).
+    """⛔ The LICENCE arm: the dependence is admissible because the run SAYS it.
 
     ⭐ Asserted over the whole cross-product, so the declaration cannot be right
     on this machine's combination and wrong on the other seven.
@@ -447,7 +429,7 @@ def test_the_declaration_prints_a_STATE_and_never_a_PATH(
 
     ⚠️ The value is built at run time from an obvious placeholder account, because
     spelling a home-shaped path as one literal would be a finding against this
-    very file — the same device `W119` used for its own plant.
+    very file.
     """
     home_shaped = "/" + "home" + "/" + "jane-doe" + "/engines/chromium"
     monkeypatch.setenv(discovery.BINARY_VARIABLE, home_shaped)
@@ -462,7 +444,7 @@ def test_the_declaration_prints_a_STATE_and_never_a_PATH(
 
 
 def test_no_TEST_in_this_package_lets_the_AMBIENT_environment_reach_a_VERDICT() -> None:
-    """⛔ `W128`'s enforcement arm — the guard that would have caught `W124/5`.
+    """⛔ The enforcement arm: no test lets the ambient environment reach a verdict.
 
     ⭐ **The population is every module in this package EXCEPT the one that
     DEFINES the readings**, which is named in `DEFINES_THE_READINGS` and reads
@@ -483,9 +465,9 @@ def test_no_TEST_in_this_package_lets_the_AMBIENT_environment_reach_a_VERDICT() 
     }
     assert sorted(reading) == sorted(AMBIENT_ENVIRONMENT_READERS), (
         f"⛔ {reading} reach a verdict from the AMBIENT environment. A committed "
-        f"verdict may not depend on the host's environment (Ruling 225's environment "
-        f"half, Ruling 263): at 270296d one such test read a SKIP with "
-        f"$STUDYFORGE_VISUAL unset and a FAILURE with it set, on the same tree. "
+        f"verdict may not depend on the host's environment (R15): such a test reads "
+        f"a SKIP with $STUDYFORGE_VISUAL unset and a FAILURE with it set, on the same "
+        f"tree. "
         f"⭐ Request the `{PINNING_FIXTURE}` fixture and decide the environment, or "
         f"state a licence here the way {AMBIENT_ENVIRONMENT_READERS[0]} does."
     )
@@ -511,7 +493,7 @@ def test_the_AMBIENT_guard_is_PLANTED_in_both_directions_and_the_two_readings_DI
     innocent = "def test_x():\n    assert 1 == 1\n"
     assert _uncontrolled_verdict_callers(direct) == ["test_x"]
     assert _uncontrolled_verdict_callers(fixture) == ["browser"]
-    assert _uncontrolled_verdict_callers(called) == ["browser"], "⛔ W128/2: the CALL spelling"
+    assert _uncontrolled_verdict_callers(called) == ["browser"], "⛔ the CALL spelling"
     assert _uncontrolled_verdict_callers(hook) == ["pytest_terminal_summary"]
     assert _uncontrolled_verdict_callers(helper) == ["test_x"], "⭐ reach, one level"
     assert _uncontrolled_verdict_callers(controlled) == []
@@ -538,12 +520,11 @@ def test_the_ENVIRONMENT_sweep_is_PLANTED_in_both_directions() -> None:
 
 
 def test_the_count_of_what_DID_NOT_RUN_spans_every_outcome_that_reaches_no_verdict() -> None:
-    """⛔ `W128/4`: the same defect, arriving in the COUNT rather than in a test.
+    """⛔ The same defect, arriving in the COUNT rather than in a test.
 
-    ⭐ **MEASURED at `270296d` in the pinned container, one variable changed:**
-    browserless with `$STUDYFORGE_VISUAL` unset, 123 checks SKIP and the line
-    read *"123 visual check(s) DID NOT RUN"*; with `=required` the same 123
-    become fixture ERRORS and the line read **`0`**. ⚠️ **A loudness mechanism
+    ⭐ Browserless with `$STUDYFORGE_VISUAL` unset, the checks SKIP and the line
+    says how many DID NOT RUN; with `=required` the same checks become fixture
+    ERRORS, and a count of skips alone would read **`0`**. ⚠️ **A loudness mechanism
     that reads `0` when nothing ran reports the opposite of the truth.**
 
     ⭐ Asserted over a fixture rather than over a run, so it holds on a machine

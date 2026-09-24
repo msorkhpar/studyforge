@@ -117,7 +117,7 @@ def test_a_stopped_or_timed_out_run_is_recorded_by_its_word(word):
     assert verdict(handle, f"--- exit {word} ---") == word
 
 
-# --- ⛔ `W430`: the record the frame policy composes from does NOT expire -----
+# --- ⛔ The record the frame policy composes from does NOT expire -----
 #
 # ⛔ **Every reading below CROSSES `EDITOR_TTL`, and that is the point of the
 # row.** A `frame-src` read straight through `EditorProbe.known()` named the
@@ -156,9 +156,9 @@ def real_probes(docker, now, ttl: float = EDITOR_TTL):
 
 
 def test_an_origin_outlives_the_real_probes_own_cache_going_cold_under_it(root, tmp_path):
-    # ⛔ **THE reading of this row, against the REAL probe.** What expires here
-    # is the cache the policy used to read through, not a stub's imitation of
-    # one — so the boundary crossed is `EDITOR_TTL`'s own.
+    # ⛔ **Against the REAL probe.** What expires here is the probe's own cache,
+    # which the policy does not read through, not a stub's imitation of one — so the boundary
+    # crossed is `EDITOR_TTL`'s own.
     now = [100.0]
     answer = "\n".join(("true", "port\t127.0.0.1\t8443", f"mount\t{root}\t/w/sources"))
     live, _ = runs_over(root, editor=real_probes(fake_docker(tmp_path, answer), now))
@@ -190,7 +190,7 @@ def test_a_page_served_long_after_the_ask_still_names_the_editor_on_the_wire(roo
 
 def test_the_practice_editor_route_fills_the_record_the_policy_composes_from(root):
     # ⭐ A panel asks for its OWN practice's windows, which is an explicitly
-    # requested route and may fork (`W427`, `W429`). ⛔ So a reader who never
+    # requested route and may fork. ⛔ So a reader who never
     # loaded the index still gets a policy that admits the editor they were just
     # handed — and it is still admitted once that ask has aged out.
     editors = StubEditors(UP)
@@ -203,7 +203,7 @@ def test_the_practice_editor_route_fills_the_record_the_policy_composes_from(roo
 
 
 # --------------------------------------------------------------------------
-# `AX-02` — a Submit is recorded with its breakdown, and a Run never is
+# A Submit is recorded with its breakdown, and a Run never is
 # --------------------------------------------------------------------------
 
 ASK = "test_the_greeting_names_who_it_greets"
@@ -250,7 +250,7 @@ def test_a_submit_records_one_verdict_per_declared_case(root):
 
 
 def test_the_pass_rule_is_untouched_by_a_breakdown_that_is_incomplete(root):
-    # ⛔ AX-02's one clause: the grader exited zero, so the practice passed —
+    # ⛔ The grader exited zero, so the practice passed —
     # the unnamed edge is a REPORT about the run and never a second verdict.
     plant_breakdown(root)
     _, recorded = submitted(root)
@@ -284,7 +284,7 @@ def test_a_submit_that_wrote_no_report_records_no_breakdown_and_says_nothing(roo
 
 
 def test_a_report_the_run_did_not_write_is_refused_on_the_stream_and_not_recorded(root):
-    """⛔ The stale clause, end to end, and the reason this task takes a clock.
+    """⛔ The stale clause, end to end, and the reason this module takes a clock.
 
     ⚠️ **The previous Submit's report is AGED rather than left at the instant
     the first run wrote it**, because `report.CLOCK_SLACK` is two seconds wide
@@ -337,7 +337,7 @@ def test_a_practice_neither_bind_holds_has_no_editor(root):
 
 
 # --------------------------------------------------------------------------
-# ⭐ `W465`: THIS checkout's containers, and a run's output never carries a key
+# ⭐ THIS checkout's containers, and a run's output never carries a key
 # --------------------------------------------------------------------------
 
 

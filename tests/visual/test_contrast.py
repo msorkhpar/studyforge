@@ -19,7 +19,7 @@ cannot see a token the dark block forgot or a rule that overrode one.
    covered only what the fixtures paint would have said so in no way at all.
 
 ⚠️ `palette.UNPAINTED` tokens have no ratio because nothing paints with them.
-That is `QA-03/2`, a finding about the palette, and not a hole here.
+That is a fact about the palette, and not a hole here.
 """
 
 from __future__ import annotations
@@ -39,12 +39,11 @@ MEASURED_TOKENS = tuple(
 def readings(browser, built_site: site.Site) -> dict:
     """One pass over both themes and every page kind, reused by every check below.
 
-    ⛔ **Every page kind since `W98`, and that is what makes clause 2 total over
-    `SF-34`'s chrome.** Four of the six regions — the between-units bar, the
-    practice panel, a container's unit listing and the root index's disclosure
-    tree — were painted by `chrome.css` and read by nothing here, because the
-    harness wrote no page that carried one. ⚠️ `SF-34`'s Acceptance row 2(b) is
-    the clause that was part-Blocked on it.
+    ⛔ **Every page kind, and that is what makes clause 2 total over the
+    chrome.** Four of the six regions — the between-units bar, the practice
+    panel, a container's unit listing and the root index's disclosure tree —
+    appear only on some page kinds, and a harness that wrote no page carrying
+    one would read nothing of them.
 
     ⭐ A module-scoped reading because launching a browser and laying out four
     pages to answer one question at a time turns a two-second check into a
@@ -55,7 +54,7 @@ def readings(browser, built_site: site.Site) -> dict:
     `ScopeMismatch`, and the shape that hides the error is to widen `open_page`
     — which would then leak one test's navigation into the next.
 
-    ⛔ **Opening its own tab means CLOSING its own tab** (`W397`), which is what
+    ⛔ **Opening its own tab means CLOSING its own tab**, which is what
     the `with` is for: a tab left open here outlives this module and costs the
     session a renderer process for the rest of the run.
     """

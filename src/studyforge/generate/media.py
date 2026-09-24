@@ -2,7 +2,7 @@ r"""The files a page shows or hands over — put where the page looks for them.
 
 **What it does.** Copies each file a built page references from the archive
 into the media directory the page addresses, minting that directory and no
-other: a kind a unit has no files of gets no directory (`W268`).
+other: a kind a unit has no files of gets no directory.
 
 **How you use it.** `write_media(root, into)` for a corpus root;
 `unit_media(corpus, into)` when the declarations have already been read;
@@ -15,14 +15,12 @@ for where the copy goes, `sourcepath` for what a reference may be, and
 `unit.builder` for the document a page is rendered from. ⛔ It names no
 source (R1).
 
-## ⛔ Why this row exists: the renderer copies nothing, and said so
+## ⛔ Why this pass exists: the renderer copies nothing
 
 ⚠️ `render.page` emits `<img src="images/diagram.svg">` — the **placed** copy,
-whose directory the placement profile chose — and puts no file there. Measured:
-until this pass existed, `depth1`'s one figure rendered as the
-broken-image glyph with its `alt` text wrapped under a correctly styled caption,
-and **no test could see it**, because the renderer's own checks resolve hrefs
-against a tree those tests write.
+whose directory the placement profile chose — and puts no file there. Without
+this pass a figure renders as the broken-image glyph, and the renderer's own
+checks cannot see it, because they resolve hrefs against a tree they write.
 
 ## ⛔ The destination is ASKED, and the population is the RENDERER's
 
@@ -32,8 +30,8 @@ construction rather than by two modules spelling `images/` the same way.
 
 ⚠️ **The three rules this module re-derives are `render.page`'s and are not on
 its `__all__`** — what a remote reference looks like, which directory a block
-type's file was placed in, and that only the basename survives. Ruling 101's
-table: a name that is not on the owner's surface is not shared, so it is
+type's file was placed in, and that only the basename survives. One exported home
+(R21): a name that is not on the owner's surface is not shared, so it is
 re-derived and **pinned behaviourally** — `tests/studyforge/generate/test_site.py`
 asserts that every reference a built page emits resolves to a file this pass
 wrote, on both fixtures. ⛔ A re-derivation that disagreed with the renderer
@@ -48,23 +46,22 @@ anywhere. ⭐ **So the reference goes into `Written.missing` and the build carri
 on.** Stopping would refuse to build a corpus that is legally incomplete; and
 whether a build stops or drains is not this module's decision.
 
-## ⛔ An ATTACHMENT is copied because the page LINKS it (`W215`)
+## ⛔ An ATTACHMENT is copied because the page LINKS it
 
 ⚠️ Spec C4's companion files — a dataset a lesson loads, a notebook — are
 declared in the archive and shown by no block. ⭐ They are copied on exactly the
 same ground as every other file here: **the page emitted a reference to them**,
 `render.page.section` linked them, and this pass follows what a page emits. ⛔
-The order matters and is Ruling 99's: `studyforge plan` declares the directory,
+The order matters and is R3's: `studyforge plan` declares the directory,
 the renderer emits the link, and this copies into it — a copy with no plan line
-breaks the agreement, and bytes no page links are a footprint `SF-32` weighs and
+breaks the agreement, and bytes no page links are a footprint the media limit weighs and
 a reader can never reach.
 
-## ⛔ A unit gets a media directory only for a kind it has files of (`W268`)
+## ⛔ A unit gets a media directory only for a kind it has files of
 
-⚠️ **This pass used to mint every declared directory for every declared unit**,
-so a corpus with no media got one empty directory per kind per unit, and git
-cannot track an empty directory: a built checkout differed from its clone. ⭐ A
-directory is now minted only when a copy fills it. ⛔ **Every declared
+⚠️ **Git cannot track an empty directory**, so a directory minted for every
+declared unit would make a built checkout differ from its clone. ⭐ A directory
+is minted only when a copy fills it. ⛔ **Every declared
 directory is still asked about** (`writing.stand`), so a reader's file standing
 where one belongs is named whether or not anything would fill it (R3), and a
 directory an earlier build left on disk is never removed.
@@ -151,7 +148,7 @@ def unit_media(corpus: Corpus, into: Path | str) -> Written:
                 missing.append(target)
                 continue
             planned.append((target, origin))
-    # ⛔ W268: minted only where a copy lands; every declared one is still asked.
+    # ⛔ A media directory is minted only where a copy lands; every declared one is still asked.
     filled = {target.parent for target, _ in planned}
     for at in _declared(corpus):
         for directory in at.directories:
@@ -193,7 +190,7 @@ def references(document: dict) -> Iterator[Reference]:
 
 
 def _attachments(attachments: object) -> Iterator[Reference]:
-    """Yield every companion file this section's page links (`W215`, spec C4).
+    """Yield every companion file this section's page links (spec C4).
 
     ⛔ **`local` and never `remote`**: `remote` is the address the source served,
     kept so a re-fetch is possible from the document alone, and nothing on the

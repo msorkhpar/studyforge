@@ -1,4 +1,4 @@
-"""Corpora for the contents tests: both FND-04 fixtures, and small synthetic ones.
+"""Corpora for the contents tests: both fixture corpora, and small synthetic ones.
 
 ⛔ **Imported, never copied.** Five test modules build the same two fixture
 corpora, and five spellings of "read every container map under this root" is
@@ -21,7 +21,7 @@ from studyforge.corpus.manifest import MANIFEST_FILENAME, Manifest
 from studyforge.corpus.manifest import parse as parse_manifest
 from tests.support import repository_root
 
-#: Where the two FND-04 fixture corpora sit.
+#: Where the two fixture corpora sit.
 FIXTURES = repository_root() / "tests" / "fixtures"
 
 #: The archive's spelling in the fixtures — `validate.corpus.ARCHIVE_DIR`'s
@@ -31,7 +31,7 @@ ARCHIVE_DIR = "archive"
 
 
 def fixture_manifest(name: str) -> Manifest:
-    """The manifest of one FND-04 fixture corpus — `depth1` or `depth2`."""
+    """The manifest of one fixture corpus — `depth1` or `depth2`."""
     root = FIXTURES / name
     return parse_manifest((root / MANIFEST_FILENAME).read_text(encoding="utf-8"))
 
@@ -53,7 +53,7 @@ def fixture_containers(name: str) -> tuple[Container, ...]:
 
 
 def fixture_contents(name: str) -> Contents:
-    """The stable contents of one FND-04 fixture corpus."""
+    """The stable contents of one fixture corpus."""
     return build(fixture_manifest(name), fixture_containers(name))
 
 

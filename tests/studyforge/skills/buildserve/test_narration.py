@@ -31,9 +31,8 @@ SKILL = Path(narration.__file__).parent / "SKILL.md"
 def declared() -> sibling.Reading:
     """The component's own `consuming.json`, **read at its checked-out commit**.
 
-    ⛔ `W404`: this used to read whatever sat in the sibling's working tree, so a
-    staged file on no ref read as the contract and the green result reproduced on
-    no other host. ⭐ The reading now says which of the three things happened —
+    ⛔ A staged file on no ref is not the contract, and a result read off a working
+    tree reproduces on no other host. ⭐ The reading says which of the three things happened —
     read at a commit, read from a working tree and therefore LOCAL, or absent —
     and the cases below skip on anything but the first, quoting the sentence.
 
@@ -62,7 +61,7 @@ def test_the_recorded_promise_is_the_one_that_component_declares():
     reading = declared()
     if not reading.committed:
         # ⛔ A LOCAL reading is skipped rather than believed: it would green here
-        # and red on any other checkout of the same commit (`W404`).
+        # and red on any other checkout of the same commit.
         pytest.skip(
             f"{narration.COMPONENT}'s {narration.CONTRACT[0]} was not read at "
             f"a commit: {reading.source}"
@@ -73,7 +72,7 @@ def test_the_recorded_promise_is_the_one_that_component_declares():
 
 
 def test_a_reading_that_is_not_at_a_commit_is_never_believed(tmp_path):
-    """⭐ The skip above is a decision, so it is asserted in both directions (`W404`)."""
+    """⭐ The skip above is a decision, so it is asserted in both directions."""
     local = sibling.read_directory(tmp_path, narration.CONTRACT[0])
     (tmp_path / narration.CONTRACT[0]).write_text('{"provides": 99}', encoding="utf-8")
     found = sibling.read_directory(tmp_path, narration.CONTRACT[0])

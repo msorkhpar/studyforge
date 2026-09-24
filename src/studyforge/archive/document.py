@@ -2,7 +2,7 @@ r"""The archive document: what an ingested unit *is* on disk (spec §6).
 
 **What it does.** Owns the format and nothing else — builds one document,
 renders it to the exact bytes that reach disk, and reads one back. ⛔ Where
-the file goes is placement's decision (SF-03) and stays there.
+the file goes is placement's decision (§5) and stays there.
 
 **How you use it.** `build(...)` for a document, `render(document)` for its
 bytes, `parse(text, where)` and `load(path)` to read one. Every entry point
@@ -26,7 +26,7 @@ to a page.
   Either would make the one signal it exists for worthless.
 - **An unknown `raw_api` is refused, never migrated in place** (R9). A
   migration that runs because something merely wanted to render a page
-  rewrites the record of what was ingested. ⛔ The test is SF-33's; this
+  rewrites the record of what was ingested. ⛔ The test is `version`'s; this
   module owns only `KNOWN_RAW_API`, because which versions the archive speaks
   is this contract's business and the check is nobody's twice.
 - **Every string is gated, and the gate refuses** (R7). Rewriting an archive
@@ -85,7 +85,7 @@ from studyforge.version import check as check_version
 RAW_API = 1
 
 #: The versions this build reads. ⛔ The membership test is `studyforge.
-#: version`'s, not this module's (SF-33); what lives here is the set.
+#: version`'s, not this module's; what lives here is the set.
 KNOWN_RAW_API = frozenset({RAW_API})
 
 #: The document's key order, which is the reading order and is also what
@@ -129,13 +129,13 @@ KNOWN_KEYS = frozenset(DOCUMENT_KEYS) | frozenset(OPTIONAL_KEYS)
 VIDEO_KEYS = ("src", "poster", "mime", "remote", "poster_remote")
 
 #: What ONE entry of `assets` or `attachments` says, in the order it is written
-#: — ⭐ **one entry vocabulary and not two** (`FND-04/4`). ⚠️ `local` is the
+#: — ⭐ **one entry vocabulary and not two**. ⚠️ `local` is the
 #: file's path inside the unit's own archive directory and is the only half a
 #: page may address; `remote` is provenance, the address the source served, and
 #: is never rendered, exactly as a `video` record's is.
 #:
 #: ⛔ **The two lists differ in what they are FOR, not in what they hold**
-#: (`W215`, spec C4): an **asset** is a file some block already shows, so the
+#: (spec C4): an **asset** is a file some block already shows, so the
 #: page reaches it through that block's `src`; an **attachment** is a companion
 #: file no block names — a dataset a lesson loads, a notebook — and the page
 #: links it for download. ⭐ That is why the served section carries the
@@ -185,9 +185,9 @@ def build(
 ) -> dict:
     """Assemble one archive document — every gate run, nothing written.
 
-    ⚠️ `address` is the container's address as SF-01 defines it and reaches
+    ⚠️ `address` is the container's address as `studyforge.address` defines it and reaches
     the file as a JSON array of slugs. ⛔ It is not a path: where the document
-    lands is placement's decision (R2, SF-03), and an address that carried a
+    lands is placement's decision (R2, §5), and an address that carried a
     directory separator would have made the two the same thing.
     """
     if kind not in KINDS:
@@ -260,11 +260,10 @@ def parse(text: str, where: str) -> dict:
 
     ## ⛔ A key this format does not define is refused, not carried
 
-    ⚠️ **Measured 2026-09-09, before this check existed:** a document carrying a
-    top-level `"exercise"` object validated **green — 0 findings, 0 unchecked
-    claims**. `content_sha256` covers `blocks` and nothing else, so an unknown
-    sibling key disturbs no digest and no count, and nothing asked whether it
-    was a key at all.
+    ⚠️ **Without this check** a document carrying an unknown top-level object
+    validates **green — 0 findings, 0 unchecked claims**. `content_sha256`
+    covers `blocks` and nothing else, so an unknown sibling key disturbs no
+    digest and no count.
 
     ⭐ **Tolerating an unknown key means tolerating a typo in a known one**, and
     a misspelled `exercise` is a grader the reader is never offered while the
@@ -287,7 +286,7 @@ def parse(text: str, where: str) -> dict:
     consumer.
 
     ⭐ **So the guarantee is made in two places that are not this one**, and
-    `W297` closed the gap between them: `blocks.counts_of` refuses a non-object
+    and together they leave no gap: `blocks.counts_of` refuses a non-object
     top-level block by name on the way IN through `build`; `blocks.read_layout`
     refuses it on the way OUT, so no reader of a parsed document reaches `.get`
     on a string; and `validate.blocks.block_problems` is the full §6 reading a

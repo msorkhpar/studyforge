@@ -4,7 +4,7 @@
 client first on `PATH` must see no call from the gate, and none from any check in
 `tests/docker/` run unflagged in a child session.
 
-⛔ **Flagged, a reason that says WARM on a cold cache is the defect this row must not
+⛔ **Flagged, a reason that says WARM on a cold cache is the defect this gate must not
 introduce, and one that says COLD on a warm cache is the defect it repairs.** So the pure
 half feeds `skip_reason` every state, and the live half, flagged only, makes ONE scratch
 checkout cold and then warm and requires `probe` to read each.
@@ -289,7 +289,7 @@ def test_one_scratch_checkout_reads_cold_then_warm_off_check_s_own_identity(tmp_
     for name in inputs:
         shutil.copy2(repository_root() / name, root / name)
     requirements = root / DEV / "requirements.txt"
-    requirements.write_text(f"{requirements.read_text('utf-8')}# W162 {uuid.uuid4().hex}\n")
+    requirements.write_text(f"{requirements.read_text('utf-8')}# probe {uuid.uuid4().hex}\n")
     cold = probe(root, docker)
     assert cold.state == COLD and cold.image, f"inputs no daemon holds read as {cold}"
     created = run([docker, "create", "--network", "none", base, "true"], cwd=tmp_path)

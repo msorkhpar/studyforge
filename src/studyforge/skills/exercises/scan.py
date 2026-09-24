@@ -22,7 +22,7 @@ can say which headings enclose a *fence*, because neither records where a fence
 is. ⭐ So the shared thing is the grammar and the new thing is the traversal,
 which is the split that leaves one definition of each in the tree.
 
-## ⛔ THE MARKDOWN READER IS NOT USED, AND THAT IS `SF-36`'s REASON
+## ⛔ THE MARKDOWN READER IS NOT USED, AND THAT IS THE REGION RULE'S REASON
 
 ⚠️ **The ledger exists to say what the SOURCE carries.** A scan built on
 `archive.markdown` would agree with the parser by construction and could never
@@ -126,7 +126,7 @@ def _push(stack: list[tuple[int, str]], seen: list[str], line: str) -> None:
     """Fold one line into the heading chain, popping every heading it closes.
 
     ⛔ **A heading closes every heading of its own depth or deeper**, which is
-    Ruling 92's region boundary read from the other end: what remains on the
+    a heading-bounded region's boundary read from the other end: what remains on the
     stack is exactly the set of regions the next fence sits inside.
     """
     heading = HEADING_LINE.match(line)

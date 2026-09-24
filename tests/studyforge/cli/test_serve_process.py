@@ -68,7 +68,7 @@ class Running:
 def launched(root, site, environment=None):
     """`python3 -m studyforge.cli serve …` on port `0`; yield it once it is listening.
 
-    ⭐ `site=None` is the no-configured-path form (`W230`): the root and a port only.
+    ⭐ `site=None` is the no-configured-path form: the root and a port only.
     """
     chosen = [] if site is None else ["--site", str(site)]
     with subprocess.Popen(  # noqa: S603 - fixed argv, no shell
@@ -176,7 +176,7 @@ def test_the_reader_waits_on_the_stream_and_never_on_a_clock():
     # ⛔ A sleep standing in for the read passes whenever the machine is fast.
     assert "sleep" not in called(ast.parse(inspect.getsource(ProcessOutput))), "the reader sleeps"
     found = scopes()
-    assert len(found) == 4, f"the population is {sorted(found)}, not the four `W237` names"
+    assert len(found) == 4, f"the population is {sorted(found)}, not the four named scopes"
     for where, node in found.items():
         named = called(node)
         assert named, f"{where} parsed to no calls, so the check read nothing"

@@ -45,7 +45,7 @@ finding; it is never a hand-edit to generated output.
 
 ⛔ **An unknown `corpus_api` is refused, never migrated at read time** (R9),
 and the test itself is `studyforge.version`'s — this package owns the *set* of
-versions it speaks, not the check (SF-33).
+versions it speaks, not the check.
 ⛔ **A file matching none of `include`, `exclude` and `not_material` is
 unclassified**, and that is a refusal at validate time, not a shrug — silence
 is the failure C2 describes. ⚠️ **A file matching `include` *and*
@@ -99,12 +99,12 @@ from studyforge.corpus.manifest.runtimes import (
 )
 
 #: ⛔ **What `parse`, `load` and `from_document` let out, as a tuple a caller
-#: catches** (`W213`), rather than the paragraph in `errors.py` it replaces.
-#: `ManifestError`, plus `PersonalDataLeak`, which Ruling 58 forbids wrapping.
+#: catches**, rather than a paragraph in `errors.py` a caller retypes.
+#: `ManifestError`, plus `PersonalDataLeak`, which is never wrapped (R7).
 #:
-#: ⚠️ **`AddressError` is NOT a member, and that is measured, not forgotten.**
+#: ⚠️ **`AddressError` is NOT a member, deliberately.**
 #: `errors.py` names it as a pass-through of `Manifest.parse_key`, which no
-#: reader calls; `parse` translates SF-01's slug refusal in `fields.slug_of`. A
+#: reader calls; `parse` translates `studyforge.address`'s slug refusal in `fields.slug_of`. A
 #: caller of `parse_key` catches `AddressError` itself.
 #:
 #: ⛔ **Adding a member costs a fixture**: `tests/studyforge/corpus/manifest/`

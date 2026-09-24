@@ -41,7 +41,7 @@ the cache was rewritten; and what the ignore file beside it had to say.
 
 ## ⛔ The cache is ignored where it sits, and this is where that is ensured
 
-⭐ **`W425`.** The cache is written into somebody's repository by the act of
+⭐ **The cache is ignored, never committed.** It is written into somebody's repository by the act of
 serving it, and nothing reads it back — `scan` runs on every call and its
 result is what is returned — so a corpus that committed it would carry a file
 no clone uses and go dirty for doing the one thing the tool is for. ⛔ So
@@ -109,9 +109,8 @@ def assemble(
     report.append(f"the discovery cache is {verdict}; the scan is the authority either way")
     if verdict == FRESH:
         # ⛔ **Ensured on the fresh path too, and that is not belt and braces**
-        # (`W425`): a corpus whose cache is fresh is rewritten by nothing, so
-        # the one moment the rule could be written would never come — which is
-        # exactly the state the first corpus was measured in.
+        #: a corpus whose cache is fresh is rewritten by nothing, so
+        # the one moment the rule could be written would never come.
         report.extend(cache_module.ensure_ignored(path))
         return Discovery(site, verdict, False, tuple(report))
 

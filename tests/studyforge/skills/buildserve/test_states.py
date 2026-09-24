@@ -1,7 +1,7 @@
 """Mirror of `src/studyforge/skills/buildserve/states.py` (R12).
 
 ⛔ The derivations are asserted over the verbs' own answers: the plan the plan
-verb derives for each `FND-04` fixture, and the narrate report's own sentence.
+verb derives for each fixture corpus, and the narrate report's own sentence.
 """
 
 from __future__ import annotations
@@ -116,7 +116,7 @@ def test_the_unfinished_one_names_the_component_and_the_finished_one_asks_for_no
 
 
 def test_only_the_finished_silent_state_reads_like_the_exercise_state():
-    # ⛔ The defect measured: a silent corpus reported beside `exercises`, whose
+    # ⛔ A silent corpus is reported beside `exercises`, whose
     # whole point is that it IS finished. Only one of the two may read that way.
     for finished in (NOTHING_TO_NARRATE, NO_EXERCISES):
         assert finished.works.startswith("everything:") and "(C5)" in finished.works
@@ -136,7 +136,7 @@ class Asked:
 
 
 def test_the_exercise_state_follows_the_manifest_the_serving_process_and_the_probe():
-    # ⭐ `W381` (a), both ways: offered execution on the HOST is `host`; in the
+    # ⭐ Both ways: offered execution on the HOST is `host`; in the
     # runner container it is no state at all.
     served = ("content", EXECUTION_NAMESPACE)
     assert exercise_states(True, served, Asked(HOST)) == (HOST_EXECUTION,)
@@ -156,10 +156,10 @@ def test_the_probe_is_asked_only_when_a_run_could_happen():
     assert probe.asked == 1
 
 
-def test_the_host_state_says_what_the_ruling_says():
-    # ⭐ Round 125's wording: where it runs, what it lacks, that everything works,
-    # and (`W466`) the remedy names the corpus's own EXECUTION.md command, which
-    # reads both recorded tags, never the component's README.
+def test_the_host_state_says_where_it_runs_what_it_lacks_and_how_to_start_it():
+    # ⭐ Where it runs, what it lacks, that everything works, and the remedy
+    # names the corpus's own EXECUTION.md command, which reads both recorded
+    # tags, never the component's README.
     assert HOST_EXECUTION.name == "host"
     assert "execute on this host, without the runner's isolation" in HOST_EXECUTION.missing
     assert HOST_EXECUTION.works.startswith("everything:")
@@ -188,7 +188,7 @@ def test_the_probe_is_executes_own_and_asks_what_a_run_asks(tmp_path):
 
 
 def test_no_served_form_lacks_execution_so_the_toolchain_state_is_gone():
-    # ⭐ `W381` (b): the condition measured, then its consequence. Both forms of
+    # ⭐ The condition measured, then its consequence. Both forms of
     # `serve` take their namespaces from `namespaces_of`, and it always offers `run`.
     from studyforge.serve import Discovered, namespaces_of
 
@@ -199,7 +199,7 @@ def test_no_served_form_lacks_execution_so_the_toolchain_state_is_gone():
 
 
 def test_the_execution_namespace_is_the_frameworks_one_spelling_and_the_route_registers_it():
-    # ⭐ `SK-03/3`, closed by the run route: the skill holds no spelling of its own — it is the
+    # ⭐ The skill holds no spelling of its own — it is the
     # run route's `NAMESPACE`, the very object `serve.instance.instance_of` registers.
     from studyforge.serve import instance
     from studyforge.serve.routes import run
@@ -216,7 +216,7 @@ def test_a_state_is_data_and_not_an_exception():
 
 
 def test_the_probe_names_the_runner_this_checkout_recorded(tmp_path):
-    """⭐ `W465/3`: a second checkout's probe asks about ITS runner, never the first's."""
+    """⭐ a second checkout's probe asks about ITS runner, never the first's."""
     target = tmp_path / instance.INSTANCE_FILE
     target.parent.mkdir(parents=True)
     values = dict(instance.defaults("some-corpus", port=8443))

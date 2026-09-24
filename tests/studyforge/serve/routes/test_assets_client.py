@@ -1,4 +1,4 @@
-"""The one way a served page gets the run client (`W370`, `SF-24`).
+"""The one way a served page gets the run client.
 
 ⛔ Part of `src/studyforge/serve/routes/assets.py`'s mirror (R12), kept in its
 own module because it is its own clause and `test_assets.py` is already at the

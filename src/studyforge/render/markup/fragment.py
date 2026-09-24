@@ -13,7 +13,7 @@ addresses it. Every renderer that links to a place on a page asks this module.
 
 **Depends on.** Nothing at all. ⛔ Not on `page`, not on `index`: both of them
 compose fragments, and `render.index` imports `render.page`, so a composer on
-either one is a composer the other cannot reach without a cycle (`SF-15/1`).
+either one is a composer the other cannot reach without a cycle.
 
 ## ⛔ Ask, never compose
 
@@ -21,8 +21,8 @@ either one is a composer the other cannot reach without a cycle (`SF-15/1`).
 it links to**, correct until the day one of them is escaped or prefixed and
 silently wrong from then on. ⭐ This was two definitions — `render.index` and
 `render.page.navigation` each held a `FRAGMENT = "#"` and said the other one was
-the same character for the same reason — and `W107` moved both here, the sibling
-package `W76` created for exactly the case of a name several renderers need.
+the same character for the same reason — so both moved here, the sibling
+package that exists for exactly the case of a name several renderers need.
 
 ⛔ **The composer does not escape.** A key is escaped where it is put into an
 attribute, by the caller, exactly as every other href is; a composer that also

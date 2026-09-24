@@ -1,4 +1,4 @@
-"""The quiz sub-package's contract and public surface (`AX-05`)."""
+"""The quiz sub-package's contract and public surface."""
 
 from __future__ import annotations
 
@@ -43,7 +43,7 @@ def test_the_public_surface_is_declared_and_complete():
 
 
 def test_everything_the_record_takes_from_here_is_on_that_surface():
-    # ⛔ `W199/3`'s producer half, asserted where the consumer is a sibling
+    # ⛔ The producer half of the export rule, asserted where the consumer is a sibling
     # module: `exercise.record` reads this sub-package, and a name it takes
     # that is not exported is a surface this contract failed to declare.
     taken = ("QUESTIONS", "QUIZ_KEYS", "questions_document", "questions_in", "require_no_questions")
@@ -51,7 +51,7 @@ def test_everything_the_record_takes_from_here_is_on_that_surface():
 
 
 def test_the_quiz_is_reachable_without_naming_a_module_inside_it():
-    # ⭐ The import surface a dependent uses (`AX-06`, `AX-09`): the package,
+    # ⭐ The import surface a dependent uses: the package,
     # never `studyforge.exercise.quiz.questions`.
     assert quiz.grade is not None and quiz.completes is not None
     assert exercise.QUIZ in exercise.EXERCISE_KINDS

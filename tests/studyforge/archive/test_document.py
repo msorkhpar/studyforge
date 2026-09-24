@@ -1,4 +1,4 @@
-"""The archive document format (SF-06).
+"""The archive document format.
 
 ⚠️ The home-path material is **assembled at run time** rather than written as
 a literal: this file is swept by the repository hygiene check like every other
@@ -78,9 +78,9 @@ BASE = {
 #: refuse an R7 leak and a user-authoritative exercise — so a fixture declared
 #: to break any of the four is a fixture this module is not entitled to read.
 #:
-#: ⚠️ **Naming them gained five documents.** This used to say `depth1, depth2`,
-#: which dropped every invalid corpus including the four that break nothing
-#: this module asserts. ⛔ `by directory name` is not a reason.
+#: ⚠️ **Named, not listed by directory**: a list of `depth1, depth2` would drop
+#: every invalid corpus, including the four that break nothing this module
+#: asserts. ⛔ `by directory name` is not a reason.
 ASSERTED = {"counts", "digest", "personal-data", "exercise-trust"}
 
 
@@ -138,11 +138,11 @@ def test_the_key_order_is_what_reaches_disk():
     assert tuple(order) == DOCUMENT_KEYS
 
 
-def test_W289_a_non_object_block_is_refused_through_the_builder_and_never_raises():
-    # ⛔ `W282/1`, from the side `W282` could not reach: `check_counts` filters
-    # to object blocks first, and the builder calls `counts_of` unfiltered — so
-    # `AttributeError` used to travel out of `build`, naming a TYPE and never
-    # the block. ⭐ The positive direction first, or the refusal proves nothing.
+def test_a_non_object_block_is_refused_through_the_builder_and_never_raises():
+    # ⛔ `check_counts` filters to object blocks first, and the builder calls
+    # `counts_of` unfiltered, so `counts_of` itself must refuse by name rather
+    # than let an `AttributeError` out of `build` naming a TYPE and never the
+    # block. ⭐ The positive direction first, or the refusal proves nothing.
     assert build(**BASE)["counts"]["paras"] == 1
 
     with pytest.raises(ArchiveError) as raised:
@@ -155,9 +155,9 @@ def test_W289_a_non_object_block_is_refused_through_the_builder_and_never_raises
 def test_optional_keys_are_appended_after_the_digest():
     # ⛔ So adding one cannot disturb `content_sha256`, and a document written
     # before a key existed still renders what it always did.
-    # ⚠️ Built as a **practice**: `exercise` joined `OPTIONAL_KEYS` with the exercise package and
-    # belongs to a practice document, so asserting "every optional key, in
-    # order" now needs the one document kind that may carry all of them.
+    # ⚠️ Built as a **practice**: `exercise` belongs to a practice document, so
+    # asserting "every optional key, in order" needs the one document kind
+    # that may carry all of them.
     document = build(
         **{**BASE, "kind": "practice"},
         starting_code="x",
@@ -243,7 +243,7 @@ def test_the_version_refusal_says_it_is_not_a_migration():
 
 
 def test_this_module_owns_the_set_and_not_the_check():
-    # ⛔ SF-33 ships a tree test that fails any module rolling its own
+    # ⛔ `studyforge.version` ships a tree test that fails any module rolling its own
     # membership test. This is the same rule asserted from the other side.
     assert KNOWN_RAW_API == frozenset({RAW_API})
     source = (repository_root() / "src/studyforge/archive/document.py").read_text(encoding="utf-8")

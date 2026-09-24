@@ -9,7 +9,7 @@ registry a manifest's `placement` name is looked up in.
 
 ## A third profile is added without changing any consumer
 
-⭐ That is SF-03's acceptance, and it is what the registry is for. A profile is
+⭐ That is placement's acceptance, and it is what the registry is for. A profile is
 a `Profile` subclass with a `name`, registered with `register()`; every
 consumer asks `profile_for(manifest.placement)` and none of them names a
 profile. ⛔ There is no `if placement == "tree"` anywhere in this package or
@@ -18,8 +18,8 @@ downstream of it, and `test_profile` asserts that of the whole of `src/`.
 ## The seam with `corpus.manifest`, drawn deliberately
 
 ⚠️ `corpus.manifest.PLACEMENT_PROFILES` lists **the names a manifest may
-declare**; this registry holds **what each one does**. The CTO judged that
-correct as written — they are different questions, and a manifest must be able
+declare**; this registry holds **what each one does**. They are different
+questions, and a manifest must be able
 to refuse an unknown name without importing a placement engine. ⛔ But they
 must not drift, so `test_profile` asserts the two sets are equal and fails a
 profile registered here that a manifest may not name.
@@ -32,13 +32,13 @@ honest difference: `sibling` exists so the reader's own directories gain a page
 beside the file they already know, not so a corpus's archive is scattered
 through it.
 
-⛔ **The archive is the one shared artifact NOT under the generated root**
-(`INT-06/6`). It is the adapter's output (R2), and `validate`, the adapter's
+⛔ **The archive is the one shared artifact NOT under the generated root**.
+It is the adapter's output (R2), and `validate`, the adapter's
 definition of done, reads it at `names.ARCHIVE_DIRNAME` beside `corpus.json`.
-`corpus()` once composed `.studyforge/archive` from that name, so `plan` printed a
-root nothing read, and a malformed map there validated clean.
+Composing `.studyforge/archive` from that name would make `plan` print a root
+nothing reads, where a malformed map validates clean.
 
-## Ignore lines are a profile's answer, not a caller's guess (Ruling 91)
+## Ignore lines are a profile's answer, not a caller's guess
 
 ⛔ **`studyforge plan` must print the ignore lines its
 profile requires**, and R1 forbids the caller reaching that by asking which
@@ -46,31 +46,29 @@ profile it has. So the profile answers — `ignore_file`, and `output_globs` for
 what is committed instead. `cli.plan` and the onboarding skill are the callers.
 
 ⛔ **A build's output is committed, and the only generated ignore rules about
-the CORPUS are the media policy's** (`W242`, `INT-06/7` and `/8`). §5's
+the CORPUS are the media policy's**. §5's
 *regenerable is not the same as available* holds for the page that plays a clip
 as much as for the clip: a clone that ignores its pages has no reading floor,
 and one that ignores only the bundle has pages that render unstyled with no
-error. ⚠️ The pages, the root index and the discovery cache were once ignored
-here, and under `sibling` those rules had no home R3 allows and matched
-`*.html` and `*.json`.
+error. ⚠️ Under `sibling`, rules ignoring the pages and the root index would
+have no home R3 allows and would match `*.html` and `*.json`.
 
-## ⛔ The discovery cache is the one build output that IS ignored (`W425`)
+## ⛔ The discovery cache is the one build output that IS ignored
 
-⚠️ **This dates `W242/1`'s clause naming `site.json` among the committed
-output, and the reason is structural rather than a preference.** Every other
-artifact in that list is read by somebody: a reader opens the pages and the
-index, and a page loads the bundle. ⛔ **Nothing reads the cache.**
-`corpus.discovery.assemble` scans on every call and returns the scan — there is
-no branch on which a cached `Site` is handed back — so a clone that carries the
-cache gains exactly nothing, while every reader who serves the corpus gets a
-modified file for doing the one thing the tool is for. ⭐ **Measured on the
-first corpus, 2026-09-20: `tools.workspace verify` refused the workspace within
-a minute of a serve**, on `.studyforge/site.json` alone.
+⚠️ **`site.json` is not among the committed output, and the reason is structural
+rather than a preference.** Every other artifact in that list is read by
+somebody: a reader opens the pages and the index, and a page loads the bundle. ⛔
+**Nothing reads the cache.** `corpus.discovery.assemble` scans on every call and
+returns the scan — there is no branch on which a cached `Site` is handed back —
+so a clone that carries the cache gains exactly nothing, while every reader who
+serves the corpus gets a modified file for doing the one thing the tool is for.
+⭐ **A workspace pin check refuses the workspace within a minute of a serve**
+if the cache is tracked, on `.studyforge/site.json` alone.
 
 ⛔ **The home is a `.gitignore` inside the generated directory the rules are
 about, never the repository root** (R3). A profile whose media **no one**
 generated directory encloses has no home — whether nothing encloses it or one
-directory per source directory does (`W323`) — and `ignore_file` raises rather
+directory per source directory does — and `ignore_file` raises rather
 than hand a caller rules nothing may hold.
 
 ⭐ **What is committed is recognised instead, by `validate` asking the plan**
@@ -113,20 +111,20 @@ GENERATED_IGNORE_HOME = PurePosixPath(GENERATED_ROOT, IGNORE_FILENAME)
 
 #: ⛔ **The rules covering what this framework writes into the generated root
 #: for ONE MACHINE and never for a commit** — the discovery cache, and the name
-#: it is staged under while it is written (`W425`). ⭐ Minted here because two
+#: it is staged under while it is written. ⭐ Minted here because two
 #: writers put them in one file: a corpus's generated ignore file, below, and
 #: `corpus.discovery.cache`, which ensures them the moment it writes the cache
 #: into a corpus onboarded before they existed.
 CACHE_IGNORE_LINES = (SITE_CACHE_FILENAME, SITE_CACHE_FILENAME + STAGING_SUFFIX)
 
 #: ⛔ **The line by which an ignore file hides ITSELF, and it is written into
-#: exactly one shape of file** (`W425`): one carrying nothing but
+#: exactly one shape of file**: one carrying nothing but
 #: `CACHE_IGNORE_LINES`. ⭐ Such a file is this machine's own — the same
 #: judgement `progress.store` makes about the directory it records into — so it
-#: never enters a commit, and a corpus onboarded before this rule existed goes
-#: clean the first time it is served rather than trading one untracked file for
-#: another. ⚠️ **A file that also carries the corpus's media policy is the
-#: opposite and must NOT hide itself**: a clone has to read those rules or the
+#: never enters a commit, and a corpus that has no such file yet goes clean the
+#: first time it is served rather than trading one untracked file for another.
+#: ⚠️ **A file that also carries the corpus's media policy is the opposite and
+#: must NOT hide itself**: a clone has to read those rules or the
 #: media it regenerates reads as dirt, so that file is committed.
 SELF_IGNORE_LINE = IGNORE_FILENAME
 
@@ -184,7 +182,7 @@ class Profile:
         ⛔ Answered by every subclass. A home is inside a directory this
         framework generates, and it is ONE file — so a profile whose media is
         enclosed by one generated directory per source directory has none,
-        as much as one whose media is enclosed by nothing at all (`W323`).
+        as much as one whose media is enclosed by nothing at all.
         """
         raise NotImplementedError
 
@@ -197,15 +195,15 @@ class Profile:
 
         ⛔ **Only the corpus's OWN media is ever ignored here, and it is
         committed by default**, so the default answer is empty. Pages, the root
-        index and the bundle are what a clone reads (§5, `W242`). ⚠️ **The
-        discovery cache is no longer among them** — `ignore_file`, and `W425`.
+        index and the bundle are what a clone reads (§5). ⚠️ **The
+        discovery cache is no longer among them** — see `ignore_file`.
         """
         return self.media_ignore_lines() if media else ()
 
     def ignore_file(self, *, media: bool) -> IgnoreFile:
         """Return the ignore file a corpus requires inside the generated root.
 
-        ⛔ **There is always one** (`W425`), and that is the change: this
+        ⛔ **There is always one**, and that is the change: this
         framework writes its own discovery cache into every corpus it serves,
         so every corpus needs the rule covering it, and a rule a corpus would
         have to add by hand is a hole in the skills (R19).
@@ -230,7 +228,7 @@ class Profile:
                 f"the corpus's media policy does not commit generated media, and placement "
                 f"{self.name!r} has no ignore file that may hold the rules: no single "
                 f"directory this framework generates encloses its media, and the repository's "
-                f"root ignore file is never edited (R3). Commit the media, or choose a "
+                f"root ignore file is never edited. Commit the media, or choose a "
                 f"placement whose media lives under {GENERATED_ROOT}/"
             )
         return IgnoreFile(home=home, lines=(*CACHE_IGNORE_LINES, *lines))
@@ -306,10 +304,9 @@ def origin_directory(origin: object, address: Address, what: str = "artifact") -
     # data into a build log, from the check that exists to catch it. Name the
     # fault and the record, and let the integrator look at the one named.
     #
-    # ⚠️ The predicate is `sourcepath`'s and not this module's. It used to be
-    # `is_absolute() or ".." in parts` here and a different forbidden list in
-    # `container.fields.optional_path`, and the gap between the two lists was
-    # reachable by `C:/Users/<name>/x`, which neither refused (Ruling 44).
+    # ⚠️ The predicate is `sourcepath`'s and not this module's: a local
+    # `is_absolute() or ".." in parts` and a different forbidden list elsewhere
+    # leave a gap, such as `C:/Users/<name>/x`, that neither refuses.
     fault = source_path_fault(origin)
     if fault is not None:
         raise PlacementError(
@@ -325,7 +322,7 @@ def cache_ignore_lines() -> tuple[str, ...]:
     ⛔ **The self-ignore line is part of the answer and not an afterthought.**
     A file carrying only machine-local rules is itself machine-local: written
     without it, the first serve of an already-onboarded corpus would trade one
-    untracked file for another and `tools.workspace verify` would still refuse
-    the workspace (`W425`, measured on the first corpus).
+    untracked file for another and a workspace pin check would still refuse
+    the workspace.
     """
     return (*CACHE_IGNORE_LINES, SELF_IGNORE_LINE)

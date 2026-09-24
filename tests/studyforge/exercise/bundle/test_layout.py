@@ -1,4 +1,4 @@
-"""The two roots an authored exercise occupies, and the closed file set (`AX-04`)."""
+"""The two roots an authored exercise occupies, and the closed file set."""
 
 from __future__ import annotations
 
@@ -64,7 +64,7 @@ def test_a_role_the_shape_does_not_know_is_refused():
 
 
 def test_a_plant_is_filed_by_position_and_never_by_case_id():
-    # ⛔ `AX-03/4`: a valid case id permits '/' and ':', so one spelled as a
+    # ⛔ A valid case id permits '/' and ':', so one spelled as a
     # path segment could put a plant outside its own bundle. The position is
     # what reaches the path; the id reaches the gate record's role.
     cases = (
@@ -120,7 +120,7 @@ def test_a_complete_bundle_holds_only_what_the_shape_permits(tmp_path):
 
 
 def test_a_committed_run_report_is_named(tmp_path):
-    # ⛔ `AX-03/1`: a JUnit report carries the machine's hostname, and a corpus
+    # ⛔ A JUnit report carries the machine's hostname, and a corpus
     # repository is where this repository's personal-data gate never looks.
     where = bundles.write_bundle(tmp_path)
     (tmp_path / where.bundle / "report.xml").write_text("<testsuite/>", encoding="utf-8")
@@ -134,7 +134,7 @@ def test_a_file_under_an_unknown_directory_is_named(tmp_path):
     assert unpermitted(tmp_path, where) == ("output/out.xml",)
 
 
-# ⭐ `W436`: the build role widened the set by one directory, and `AX-03/1`'s
+# ⭐ The build role adds one directory to the set, and the hostname rule's
 # reason survives it.
 
 
@@ -164,7 +164,7 @@ def test_a_run_output_path_is_one_under_the_directory_and_nothing_else():
 
 
 def test_the_one_ignore_line_names_the_run_output_directory_at_any_depth():
-    # ⭐ `ISO-M10/4`: one git pattern, written once — a trailing slash matches a
+    # ⭐ One git pattern, written once — a trailing slash matches a
     # directory of that name at any depth below the ignore file.
     assert RUN_OUTPUT_IGNORE == f"{RUN_OUTPUT_DIRNAME}/"
     assert "/" not in RUN_OUTPUT_IGNORE[:-1]

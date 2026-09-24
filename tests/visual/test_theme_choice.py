@@ -1,10 +1,9 @@
-"""`W388` stage 2 in a real browser: the reader's own choice of theme.
+"""The reader's own choice of theme, in a real browser.
 
-⛔ **THE USER, 2026-09-19:** *"have the both dark and light themes in studyforge
-as well"*. `palette.css` has carried both since `W362` and has guarded
-`[data-theme="light"]` and `[data-theme="dark"]` since then; until this row
-nothing on the page wrote either, so a reader whose machine said light could not
-read the dark page at all.
+⛔ **Both a light and a dark theme, chosen by the reader.** `palette.css` carries
+both and guards `[data-theme="light"]` and `[data-theme="dark"]`; the page's
+control writes one of them, so a reader whose machine says light can still read
+the dark page.
 
 ⭐ **Every clause here drives the REAL control in a real browser**, over
 `file://` with no server, because that is the only place the answer is worth
@@ -55,7 +54,7 @@ INDEX_PAGE = f"{CORPUS}-index"
 #: it so the two modules cannot disagree about which layout they are judging.
 WIDER = (1600, WIDE[1])
 
-# --- the reader chooses the theme (the user, 2026-09-19) ---------------------
+# --- the reader chooses the theme ---------------------------------------------
 
 #: The control, its buttons, and the one attribute the palette guards on.
 THEME_CONTROL = '[data-section="theme"]'
@@ -118,7 +117,7 @@ def no_choice(open_page: OpenPage, built_site: site.Site) -> Iterator[OpenPage]:
 def test_the_theme_control_is_on_every_page_kind(
     no_choice: OpenPage, built_site: site.Site, case: str
 ) -> None:
-    """⛔ The user's clause: both themes are reachable, from wherever they are."""
+    """⛔ Both themes are reachable, from wherever the reader is."""
     no_choice.open(built_site.url(case), scheme="light")
     reading = no_choice.evaluate(CONTROL_READING)
     assert reading is not None, f"{case} carries no theme control"
@@ -223,7 +222,7 @@ def test_with_scripts_off_the_control_is_not_shown_and_the_system_still_decides(
     assert darkness(open_page) > dark
 
 
-# --- `W388` stage 5: what the head boot may touch, read in the browser -------
+# --- what the head boot may touch, read in the browser ------------------------
 
 
 #: The key the store composes for the head boot's cache, and the expression that
@@ -232,7 +231,7 @@ def test_with_scripts_off_the_control_is_not_shown_and_the_system_still_decides(
 #: `test_theme.py`'s, against both source files.
 BOOT_CACHE = "sessionStorage.getItem('studyforge.boot.theme.v1')"
 
-#: ⛔ **An ORDERING instrument, and it is the point of `W388` stage 5.** It
+#: ⛔ **An ORDERING instrument, and it is the point of this section.** It
 #: replaces each storage accessor with one that records `document.readyState`
 #: the FIRST time that area's property is read — and delegates, so nothing about
 #: the page changes and no area is bound by the instrument itself. ⚠️ Installed
@@ -281,17 +280,14 @@ def test_choosing_a_theme_caches_it_where_the_head_boot_can_read_it(
 def test_the_head_never_binds_the_store_the_readers_marks_live_in(
     open_page: OpenPage, built_site: site.Site
 ) -> None:
-    """⛔ **`W388` stage 5's settling clause, as an ORDER rather than a delay.**
+    """⛔ **The head never binds `localStorage`, read as an ORDER rather than a delay.**
 
-    ⚠️ **The defect this exists for, measured rather than described.** The boot
-    stage 2 shipped read the display record out of `localStorage` in the
-    `<head>` — the earliest a document can touch that area. A document that
-    binds it before the previous page's write has been committed keeps a
-    snapshot WITHOUT that write, for its whole life; the reader then presses
-    *Mark as read* and the record is rewritten from the stale set, destroying
-    the earlier mark. ⛔ On this host at `-n 16` a mark written on one page was
-    missing on the next in 14 of 35 runs, and in 0 of 25 once the boot stopped
-    touching that area.
+    ⚠️ **The defect this exists for.** A boot that reads the display record out
+    of `localStorage` in the `<head>` binds that area at the earliest moment a
+    document can. A document that binds it before the previous page's write has
+    been committed keeps a snapshot WITHOUT that write, for its whole life; the
+    reader then presses *Mark as read* and the record is rewritten from the
+    stale set, destroying the earlier mark — under load, often.
 
     ⭐ **So the clause is about WHEN, and it is exact.** `document.readyState`
     is `loading` while the parser is in the head and `interactive` by the time a
@@ -318,8 +314,8 @@ def test_the_head_never_binds_the_store_the_readers_marks_live_in(
     )
     assert touched["localStorage"] != "loading", (
         "the durable store the reader's marks live in is bound while the head "
-        "is still parsing, which is the ordering that cost a mark in 14 of 35 "
-        f"measured runs: {touched}"
+        "is still parsing, which is the ordering that loses a reader's marks: "
+        f"{touched}"
     )
     assert touched.get("sessionStorage") == "loading", (
         "the area read in the head is not the boot cache, so the flash the boot "

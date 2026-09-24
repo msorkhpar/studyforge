@@ -1,23 +1,20 @@
-"""A non-object block reaches no `.get` on the READ path either (`W297`).
+"""A non-object block reaches no `.get` on the READ path either.
 
 ⛔ **A module of its own rather than a section of `test_blocks.py`, and R11 is the
-reason** (Ruling 261: the answer to a module at its ceiling is a SPLIT, not a
-shorter comment). That module stood at 517 lines against the 600-line test ceiling,
-and this row's assertions would have left it three lines from the wall — headroom
-the next office to touch the block vocabulary would have had to pay for.
+reason**: the answer to a module near its ceiling is a SPLIT, not a shorter comment.
 
 ⭐ **The subject is also genuinely its own**: `test_blocks.py` asserts the
 VOCABULARY and the BUILD path's guard; this asserts what happens to a document that
 was never built here — one a hand or an adapter wrote and `parse` read off disk.
 
-## ⛔ What `W289` closed, and what it left open one function away
+## ⛔ The builder refuses, and so must the reader
 
-⚠️ `W289` made `archive.blocks.counts_of` refuse a non-object block by name through
+⚠️ `archive.blocks.counts_of` refuses a non-object block by name through
 `archive.document.build`. ⛔ **But nothing BUILDS a hand-written document.** It is
 parsed, and `parse` checks the key set and the version and never a block's SHAPE —
-so `read_layout` still walked into `tail[0].get("type")` unguarded.
+so `read_layout` must guard `tail[0].get("type")` itself.
 
-⛔ **MEASURED at `5fca2ea`**, `read_layout` over the document these tests build:
+⛔ `read_layout` over the document these tests build, three ways, without the guard:
 
 ```text
 A: read_layout, hand-written        AttributeError: 'str' object has no attribute 'get'
@@ -47,7 +44,7 @@ from studyforge.archive.document import RAW_API, parse
 from studyforge.archive.errors import ArchiveError
 
 #: Everything `json.loads` can produce where a block belongs, but an object.
-#: ⛔ Closed on the *domain* rather than on taste (`module-structure.md`): JSON has
+#: ⛔ Closed on the *domain* rather than on taste (a closed set, R6): JSON has
 #: six value kinds and five of them are here, so the shape nobody thought of cannot
 #: be the one that gets through. ⚠️ Spelled again rather than imported from
 #: `test_blocks.py`: a test module importing another test module's fixtures couples
@@ -80,8 +77,8 @@ FENCE_AT = len(practice()["blocks"]) - 1
 
 
 @pytest.mark.parametrize("block", NOT_OBJECTS)
-def test_W297_a_non_object_block_is_refused_by_name_through_read_layout(block):
-    # ⛔ The refusal `build` has given since `W289`, now given by the reader too.
+def test_a_non_object_block_is_refused_by_name_through_read_layout(block):
+    # ⛔ The refusal `build` gives, given by the reader too.
     # ⭐ `ArchiveError` is a `ValueError`, so an `AttributeError` escaping here
     # FAILS this test rather than passing it — which is what makes the assertion
     # an instrument and not a restatement of the fix.
@@ -94,8 +91,8 @@ def test_W297_a_non_object_block_is_refused_by_name_through_read_layout(block):
 
 
 @pytest.mark.parametrize("at", range(FENCE_AT + 1))
-def test_W297_the_guard_runs_before_the_layout_is_read_and_not_only_at_the_fence(at):
-    # ⛔ **The neighbour, asserted rather than assumed** (`module-structure.md`: a
+def test_the_guard_runs_before_the_layout_is_read_and_not_only_at_the_fence(at):
+    # ⛔ **The neighbour, asserted rather than assumed** (a
     # demonstrated guarantee lends its credibility to the undemonstrated thing
     # beside it). `tail[0]` was the read that CRASHED — but `_is_h2` merely returns
     # False for a non-object, so guarding only the fence would leave every other
@@ -112,8 +109,8 @@ def test_W297_the_guard_runs_before_the_layout_is_read_and_not_only_at_the_fence
     assert "a block is an object with a type" in str(raised.value)
 
 
-def test_W297_the_read_path_refuses_what_the_builder_already_refuses():
-    # ⛔ **The whole of `W297`, taken through the door such a document actually
+def test_the_read_path_refuses_what_the_builder_already_refuses():
+    # ⛔ **The whole guard, taken through the door such a document actually
     # arrives by.** Not `build`: nothing builds a hand-written or adapter-written
     # document. ⭐ So this parses one off its own text and then reads it, which is
     # exactly what a consumer of an adapter's archive does.
@@ -125,7 +122,7 @@ def test_W297_the_read_path_refuses_what_the_builder_already_refuses():
     assert f"blocks[{FENCE_AT}]" in str(raised.value)
 
 
-def test_W297_parse_accepts_it_and_that_is_the_boundary_not_an_oversight():
+def test_parse_accepts_it_and_that_is_the_boundary_not_an_oversight():
     # ⚠️ **Named so the division of labour is readable.** `parse` answers four
     # questions and shape is not among them — `validate` imports `archive`, so
     # `parse` cannot ask `validate.blocks` without the archive depending on its own
@@ -136,7 +133,7 @@ def test_W297_parse_accepts_it_and_that_is_the_boundary_not_an_oversight():
     assert accepted["blocks"][FENCE_AT] == "x"
 
 
-def test_W297_a_practice_of_objects_still_reads_its_layout_unchanged():
+def test_a_practice_of_objects_still_reads_its_layout_unchanged():
     # ⭐ The positive direction, or every refusal above is satisfied by a
     # `read_layout` that refuses everything.
     layout = read_layout(practice(), "practice-1.json")
@@ -148,7 +145,7 @@ def test_W297_a_practice_of_objects_still_reads_its_layout_unchanged():
     assert layout.starting_lang == "java"
 
 
-def test_W297_a_practice_that_is_merely_not_laid_out_still_gets_its_own_refusal():
+def test_a_practice_that_is_merely_not_laid_out_still_gets_its_own_refusal():
     # ⛔ **The two refusals must not collapse into one.** A practice whose blocks
     # are all objects but carry the wrong headings is R6's "looking finished while
     # being short", and it must still be told which three headings it owes — not
@@ -162,7 +159,7 @@ def test_W297_a_practice_that_is_merely_not_laid_out_still_gets_its_own_refusal(
         assert heading in message
 
 
-def test_W297_a_lesson_is_not_this_functions_business_however_its_blocks_are_shaped():
+def test_a_lesson_is_not_this_functions_business_however_its_blocks_are_shaped():
     # ⚠️ **The boundary, named so it is not read as an oversight.** `read_layout`
     # asks what a PRACTICE's parts are; a lesson has none, so its `kind` returns
     # before any block is reached and nothing is refused. ⛔ A malformed block in a

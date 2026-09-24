@@ -10,7 +10,7 @@ licence beside a face.
 
 **Depends on.** `base64`, `hashlib`, and `source` for the bytes.
 
-## ⭐ Why these three (`W362`, the plan's §5)
+## ⭐ Why these three (the plan's §5)
 
 Charis and Andika come from SIL's literacy work, faces drawn for people
 learning to read, and learning is the one subject every studyforge site shares.
@@ -25,7 +25,7 @@ release's own file, byte for byte. `test_faces` recomputes every sha256 below
 against the bytes on disk. ⚠️ Base64 is an encoding of those bytes, not a
 modification of the font software.
 
-## ⛔ Base64 in the stylesheet, never a relative `url()` (the register's D3)
+## ⛔ Base64 in the stylesheet, never a relative `url()`
 
 A page below the site root would load a face from a parent directory, and
 Firefox under its default strict file-origin policy refuses a `file://` font
@@ -57,7 +57,7 @@ from studyforge.render.pageassets.source import data
 
 @dataclass(frozen=True, slots=True)
 class Archive:
-    """One upstream release archive, as the register fetched and pinned it."""
+    """One upstream release archive, as fetched and pinned."""
 
     family: str
     release: str
@@ -173,7 +173,7 @@ LICENCE_PINS = {
 HEADER = (
     "/* Faces: Charis and Andika (SIL Global) and JetBrains Mono, SIL Open Font\n"
     "   License 1.1; each licence ships beside its files in the asset directory.\n"
-    "   Embedded unmodified as base64 so no page requests a font (R8). */\n"
+    "   Embedded unmodified as base64 so no page requests a font. */\n"
 )
 
 
@@ -195,7 +195,7 @@ def rule(face: Face) -> str:
     """Return one `@font-face` rule carrying `face` as a base64 `data:` URI.
 
     ⛔ Refuses a file whose bytes no longer match its pin: a face that changed
-    on disk is not the face the register fetched, and shipping it would be
+    on disk is not the face that was pinned, and shipping it would be
     shipping an unrecorded modification.
     """
     content = data(face.name)

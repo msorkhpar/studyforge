@@ -9,10 +9,10 @@ copy is a second answer to "what is a fence".
 
 **Depends on.** `re`. Nothing in this package, so it can be read first.
 
-⚠️ **The comments are the deliverable as much as the expressions are.** Most
-of these were corrected after a real document was misread, and the correction
-is only followable if what broke is written beside it. A bare pattern invites
-somebody to "simplify" it back to the version that lost a lesson.
+⚠️ **The comments are the deliverable as much as the expressions are.** Each
+pattern's comment says what real material it must read and what a simpler
+pattern would misread, because a bare pattern invites somebody to "simplify"
+it into one that misreads that material.
 """
 
 from __future__ import annotations
@@ -44,13 +44,13 @@ UNORDERED = re.compile(r"^ {0,3}[-*] (.*)$")
 #: `)` as well as `.`: CommonMark allows both and authors use both.
 ORDERED = re.compile(r"^ {0,3}\d+[.)] (.*)$")
 
-#: ⛔ The same two markers at ANY indent, and only ever asked INSIDE a list
-#: (`W258`). Bounded at three, a nested item written four spaces under its
+#: ⛔ The same two markers at ANY indent, and only ever asked INSIDE a list.
+#: Bounded at three, a nested item written four spaces under its
 #: parent matched nothing and folded into the parent as literal `- …` text.
 NESTED_UNORDERED = re.compile(r"^ *[-*] (.*)$")
 NESTED_ORDERED = re.compile(r"^ *\d+[.)] (.*)$")
 
-#: ⭐ The number an ordered marker carries, at any indent (`W264`). Asked only of
+#: ⭐ The number an ordered marker carries, at any indent. Asked only of
 #: a line one of the ordered patterns above already matched.
 ORDERED_NUMBER = re.compile(r"^ *(\d+)[.)] ")
 
@@ -73,7 +73,7 @@ MEDIA_EMBED = re.compile(
 )
 
 #: ⛔ The SOURCE inside a media embed is content, not markup. Dropping the
-#: wrapper whole once left a reader looking at "watch the video below" above
+#: wrapper whole leaves a reader looking at "watch the video below" above
 #: nothing.
 EMBED_SRC = re.compile(
     r"^<(?:source|iframe|embed)\b[^>]*\bsrc=[\"\']([^\"\']+)[\"\']",

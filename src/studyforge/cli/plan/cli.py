@@ -12,7 +12,7 @@ cannot disagree about what the command does.
 
 ⛔ **Exit codes are usable from a script** and mean one thing each: `0` a plan
 was produced, `1` some of the corpus could not be planned — or the media measured
-on disk crosses a limit `corpus.json` declares (`W314`, §5) — `2` the tool could
+on disk crosses a limit `corpus.json` declares (§5) — `2` the tool could
 not run at all. ⚠️ The third is `validate`'s own, imported rather than
 respelled — a script that cannot tell *"your corpus is broken"* from *"you
 gave me a directory that does not exist"* treats one as the other, and CI goes

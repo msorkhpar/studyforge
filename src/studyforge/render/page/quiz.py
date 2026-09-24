@@ -5,7 +5,7 @@ is `quiz` — the stem, the options, the control that sends the reader's choices
 to be graded, and the sentence saying a page opened as a file cannot have them
 checked. ⛔ **No editor, no Run and no Submit, and not disabled ones either**: a
 quiz has no file to open, no command to run and no grader to submit to, so every
-one of those would be a dead control (`SF-24`'s standing rule, `W429`, `W431`).
+one of those would be a dead control (the page never shows a control it cannot honour).
 
 **How you use it.** `quiz.render(exercise, key=…, corpus=…, grader=…)` returns
 the section's markup; `page.practice.render` calls it for a quiz and emits its
@@ -17,18 +17,15 @@ own `Question` and `Option`, never a second reading of the shape — plus
 needed a server to RENDER would fail the `file://` floor (R8). The page renders
 there; it simply cannot have its answers checked there, and says so.
 
-## ⛔ THE KEY IS NOT IN THE PAGE — THE USER'S RULING, 2026-09-23
+## ⛔ THE KEY IS NOT IN THE PAGE
 
-> *"the quiz itself again should not require an online or agent check for the
-> answer user provided. It will be just a test with the correct answer residing
-> on the server side. When user answers it will get validated and result will be
-> returned to the user with explanation if needed"*
+⭐ A quiz's correct answer resides on the server: a reader's answers are
+validated there, with no online or agent check, and the result comes back with
+its explanation.
 
-⛔ **An option is emitted as its id and its words, and NOTHING ELSE.** Until
-that ruling each option carried `data-practice-correct` and its own sentence in
-`data-practice-says`, and the page graded itself; ⚠️ that stance — *"an offline
-page cannot hide the answer it grades with"* — is **superseded**, not argued
-with: the page no longer grades. ⭐ The local study server does
+⛔ **An option is emitted as its id and its words, and NOTHING ELSE.** No
+correctness flag and no per-option sentence: the page does not grade. ⭐ The
+local study server does
 (`serve.routes.quiz`), reading the key from the unit's own document on disk, and
 answers each choice with the chosen option's sentence.
 `tests/studyforge/render/page/test_quiz.py` reads every key and every sentence
@@ -54,7 +51,7 @@ so there is no second place a token of that vocabulary could reach the page.
 this framework's own words about its own control, and they live in the
 **templates** — the same two-sided spelling every hook on this page has, because
 markup and script cannot import one another and the Python side is the single
-source for what is emitted (`W431`).
+source for what is emitted.
 """
 
 from __future__ import annotations

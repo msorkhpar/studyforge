@@ -90,7 +90,7 @@ def _generated_beside(scaffolded):
 
 
 def test_regenerate_rewrites_the_generated_files_and_keeps_the_one_that_is_yours(tmp_path):
-    # ⛔ W265: after step 4 the hand-written module always exists, so refusing
+    # ⛔ After step 4 the hand-written module always exists, so refusing
     # on it would refuse every regenerate, and overwriting it is R19 broken.
     scaffolded = made()
     scaffolded.write(tmp_path)
@@ -152,7 +152,7 @@ def test_regenerate_writes_the_stub_when_the_hand_written_module_is_absent(tmp_p
 
 
 def test_the_scaffold_declares_its_own_files_not_material(tmp_path):
-    # ⛔ `SK-02/1`: every file a scaffold writes is code the corpus is built
+    # ⛔ Every file a scaffold writes is code the corpus is built
     # with, so a manifest that says nothing leaves all eight `unclassified` —
     # and R19 says the remedy arrives as data rather than as instructions.
     scaffolded = made()
@@ -207,7 +207,7 @@ def test_the_report_says_what_done_is():
 
 
 # --------------------------------------------------------------------------
-# ⛔ W345: every directory the scaffold puts Python in ignores its own bytecode
+# ⛔ Every directory the scaffold puts Python in ignores its own bytecode
 # --------------------------------------------------------------------------
 
 
@@ -236,7 +236,7 @@ def test_a_directory_with_no_module_gets_no_ignore_file():
 
 
 def test_a_module_at_the_repository_root_never_gets_the_root_ignore_file():
-    # ⛔ R3 and W278: the root ignore file is a source file, never generated.
+    # ⛔ R3: the root ignore file is a source file, never generated.
     assert bytecode_ignores(["setup.py"]) == ()
     assert bytecode_ignores(["setup.py", "pkg/a.py"]) == (f"pkg/{IGNORE_FILE}",)
 
@@ -269,7 +269,7 @@ def test_each_ignore_file_is_built_at_the_first_step_that_puts_python_there():
 
 
 def test_the_ignore_files_add_no_glob_the_manifest_must_carry():
-    # ⭐ They land in directories the scaffold already declares, so a corpus
-    # onboarded before W345 carries every glob they need.
+    # ⭐ They land in directories the scaffold already declares, so an
+    # onboarded corpus already carries every glob they need.
     without = Scaffold(plan=made().plan, files=made().files[: len(PARTS)])
     assert made().not_material == without.not_material

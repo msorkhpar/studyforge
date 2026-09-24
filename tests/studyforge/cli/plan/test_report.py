@@ -167,14 +167,14 @@ def test_a_creation_is_not_narration_unless_it_says_so_and_its_line_is_unchanged
 
 
 def test_an_ignore_line_names_the_file_that_holds_it():
-    # ⛔ INT-06/8: a rule with no named file is a rule pasted into the root
+    # ⛔ A rule with no named file is a rule pasted into the root
     # ignore file, which R3 forbids however declared.
     lines = a_plan(ignore=("**/audio/",), ignore_home=".studyforge/.gitignore").lines()
     assert "ignore **/audio/  in .studyforge/.gitignore" in lines
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W267`: a path's verb says who writes it and whether it is there
+# ⛔ A path's verb says who writes it and whether it is there
 # --------------------------------------------------------------------------
 
 
@@ -196,7 +196,7 @@ def test_a_path_a_build_does_not_write_is_never_a_create_and_names_what_does():
     assert claimed.line().endswith("a build creates it only when it copies a file into it")
 
 
-def test_W288_a_superseded_clip_is_its_own_line_counted_and_never_a_path():
+def test_a_superseded_clip_is_its_own_line_counted_and_never_a_path():
     clip = SupersededClip("u/audio/u.intro.b1-0123abcd.mp3", "u.intro.b1")
     copy = Creation("u/audio/u.intro.b1-feedbeef.mp3", "copy")
     plan = a_plan(creations=(copy,), superseded=(clip,))

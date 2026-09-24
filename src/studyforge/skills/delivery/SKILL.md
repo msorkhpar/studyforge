@@ -57,19 +57,23 @@ the index carry a `delivered in` column: a capability whose `Owns` reaches a
 component pinned somewhere else is ⭐ **not this framework's to deliver**, and
 one whose `Owns` names no path at all is ⚠️ **undeclared** — nothing in the
 documents says. ⛔ Neither is a capability this corpus explains away in step 3
-(`W92`), and the statement there refuses a `why` for one. ⭐ **No component is
+(R1), and the statement there refuses a `why` for one. ⭐ **No component is
 ever named in what is rendered** (R1); the distinction is structural.
 
 ⭐ **The index answers one question and it is the only question a planner has
 about the framework: *when does capability X become available?*** It is
-**generated** from the epic documents and is regenerable — a reviewer
-regenerates it and gets identical bytes.
+**generated** from the epic documents, never hand-edited (R19). ⚠️ **On the main
+line it is frozen**: the epics' task text it was generated from lives on the
+branch `archive/process`, so the package's tests pin the shipped file's SHA-256
+digest and any change to its bytes fails. A deliberate regeneration runs
+`capability_index(...)` over the epics, the task index and the pin document as
+they stand on `archive/process`, and updates the pinned digest in the same
+commit.
 
 ⛔ **Reading the epics directly is the defect this step exists to stop.** A
-capability→milestone map derived by reading every epic document is the cost
-R14's budgets exist to prevent, it is paid again by every integration, and it
-is stale the moment an epic moves. ⚠️ **Measured on the filing side: 18 rows of
-a hand-written plan.**
+capability→milestone map derived by reading every epic document is a cost
+the index exists to prevent, it is paid again by every integration, and it
+is stale the moment an epic moves.
 
 ⛔ **A hand-edit to the index is a finding against this skill** (R19). If the
 index cannot say something a planner needs, the *generator* is missing a
@@ -99,7 +103,7 @@ The coverage is checked against the index, not against the planner's memory.
 ⭐ A capability delivered inside a component pinned somewhere else, and one
 the documents place nowhere at all, come back on the checked statement and are
 rendered by side — named and counted, with no `why`. ⚠️ **Writing a `why` for
-one of them is refused** (`W92`): this corpus may be the very thing that
+one of them is refused**: this corpus may be the very thing that
 delivers it, so *"it never reaches it"* is a sentence with no true form.
 
 ### 3. Cut the backlog — ⛔ each task ends in something demonstrable
@@ -205,12 +209,12 @@ is the worst of the three, because it publishes a limit somebody is about to
 remove.
 
 ⭐ **The sort starts from the run's findings log, never from commit bodies or a
-message** (`W346`). The conversion wrote it at `.studyforge/findings.md` —
+message** (R19). The conversion wrote it at `.studyforge/findings.md` —
 `LOG` — and every entry already carries, as its slot, the question the
 paragraph above turns on: *could a skill have generated this?* ⭐ **`yes`
 routes to a skill as a finding against a task, `no` is a candidate entry, and
 `open` is the sort still owed.**
-The shape a finished sort takes is the catalogue's own *`QA-04` sort* section:
+The shape a finished sort takes is the catalogue's own *sort* section:
 every finding, a verdict, and why — the refusals written beside the adoptions.
 
 ```

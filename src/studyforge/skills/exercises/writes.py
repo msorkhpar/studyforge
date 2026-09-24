@@ -68,7 +68,7 @@ def commit(
         raise AuthoringError(
             f"{where}: {len(rewritten)} file(s) this pass would write are already in the "
             f"corpus with different contents, the first at '{rewritten[0]}'. Generation "
-            f"is non-destructive (R3): nothing was written, and no existing file is "
+            f"is non-destructive: nothing was written, and no existing file is "
             f"rewritten to make room."
         )
     written, kept = [], []

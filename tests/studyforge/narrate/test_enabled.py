@@ -24,7 +24,7 @@ def test_the_run_is_keyword_only(tmp_path):
 
 
 def _declaring(root, narration):
-    """A corpus root whose `corpus.json` records `narration` (`W460`)."""
+    """A corpus root whose `corpus.json` records `narration`."""
     import json
     import shutil
 
@@ -44,7 +44,7 @@ def _declaring(root, narration):
 def test_the_corpus_s_recorded_answer_decides_when_the_run_asked_nothing(
     tmp_path, recorded, asked, on
 ):
-    # ⭐ `W460`: step 2 of the order — `corpus.json`'s `narration`.
+    # ⭐ Step 2 of the order — `corpus.json`'s `narration`.
     assert narration_on(_declaring(tmp_path / "c", recorded), asked=asked) is on
 
 

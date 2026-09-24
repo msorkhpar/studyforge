@@ -117,7 +117,7 @@ def test_the_contents_document_is_built_and_never_written(tmp_path):
 
     ⚠️ `toc.json` and `status.json` are values this package hands to the shipped
     index assembler. Writing them would create two paths `studyforge plan` never
-    declared — failing Ruling 99's path-for-path clause — at a location
+    declared — failing the plan's path-for-path agreement — at a location
     `CorpusLocations` does not name. ⭐ When placement grows one, this test is
     replaced by one asserting the two files are written.
     """
@@ -173,20 +173,16 @@ def test_a_prose_corpus_builds_units_that_declare_zero_rather_than_nothing(tmp_p
 # --------------------------------------------------------------------------
 
 #: ⭐ The unit the `depth2` fixture gives an overlay, addressed the way a build
-#: addresses one. ⛔ Not a path: composing one here is the very thing `W198`
+#: addresses one. ⛔ Not a path: composing one here is the very thing the marker
 #: removed from `src/`, and a test that did it would be the next consumer to
 #: invent a second place.
 OVERLAID = (["basics", "01-getting-started"], 1)
 
 
 def test_the_address_of_an_authored_overlay_is_asked_for_and_never_composed():
-    """⭐ `W198`'s inversion of the marker below, and the direction it now points.
+    """⭐ The address of an authored overlay exists.
 
-    ⛔ **This assertion used to read `not hasattr(Layout, "content")`** — the
-    premise that no module in `src/` said where an overlay sits, asserted so
-    the hole could not close silently. ⭐ It has closed, so the same fact is
-    asserted the other way round: the address exists, and it answers the file
-    the fixture actually carries.
+    ⭐ `Layout.content` answers the file the fixture actually carries.
 
     ⚠️ The fixture is read through `is_file`, not through a path spelled here:
     a literal compared against a literal agrees with itself, whereas a file
@@ -208,7 +204,7 @@ def test_the_address_of_an_authored_overlay_is_asked_for_and_never_composed():
 def test_an_authored_overlay_is_still_not_applied_although_its_address_is_declared():
     """⚠️ The half of the marker that has NOT closed, kept rather than deleted.
 
-    ⭐ `W198` clause 4: whether an overlay is applied is a separate question,
+    ⭐ Whether an overlay is applied is a separate question,
     and v1's honest answer is *none is*. ⛔ So the build is still asserted to
     serve the unit without its overlay, and this test fails the day something
     applies one — which is when somebody must have decided what applying means.
@@ -234,11 +230,10 @@ def test_an_authored_overlay_is_still_not_applied_although_its_address_is_declar
 
 
 def test_this_package_says_the_address_is_declared_and_the_verb_is_not():
-    """⛔ `W198` clause 4 again, read against the prose a maintainer meets first.
+    """⛔ The same, read against the prose a maintainer meets first.
 
-    ⚠️ The paragraph in `generate.units` claimed nothing in `src/` declared the
-    overlay's place. That is false now, and a false sentence beside a true test
-    is the failure this asserts against.
+    ⚠️ `generate.units` must not claim the overlay's place is undeclared: a
+    false sentence beside a true test is the failure this asserts against.
     """
     from studyforge.generate import units
 
@@ -260,7 +255,7 @@ def test_nothing_under_tests_is_disturbed_by_a_copy(tmp_path):
 
 
 def test_a_container_map_whose_address_is_the_wrong_depth_refuses_as_a_BuildError(tmp_path):
-    """⚠️ `SF-28/1`: `corpus.container.parse` lets an `AddressError` out.
+    """⚠️ `corpus.container.parse` lets an `AddressError` out.
 
     ⛔ This package promises one exception, so it catches that one too. The
     refusal names the record and never a path (R7).
@@ -282,7 +277,7 @@ def test_a_container_map_whose_address_is_the_wrong_depth_refuses_as_a_BuildErro
 
 @pytest.mark.parametrize("target", ["corpus.json", "container.json"])
 def test_a_leak_travels_through_as_itself_and_never_as_a_BuildError(tmp_path, target):
-    """⛔ Ruling 58: the tuple is caught, and its R7 member is re-raised untranslated."""
+    """⛔ The tuple is caught, and its R7 member is re-raised untranslated."""
     import json
 
     from studyforge.archive.scrub import PersonalDataLeak
@@ -297,11 +292,11 @@ def test_a_leak_travels_through_as_itself_and_never_as_a_BuildError(tmp_path, ta
 
 
 # --------------------------------------------------------------------------
-# ⛔ W290 — a placement call takes the unit WHOLE, so no call site spells a label
+# ⛔ A placement call takes the unit WHOLE, so no call site spells a label
 # --------------------------------------------------------------------------
 
 #: ⛔ The two derivations, and how many WHOLE objects each takes. A CLOSED set
-#: (`module-structure.md`): a third derivation is refused by this sweep rather
+#: (R6): a third derivation is refused by this sweep rather
 #: than admitted to the tree in silence.
 DERIVATIONS = {"unit_location": 2, "declared_location": 3}
 
@@ -360,15 +355,15 @@ def test_both_derivations_are_really_called_in_the_tree():
 
 
 @pytest.mark.parametrize("case", framework_modules(), ids=lambda case: case[0])
-def test_W290_no_call_site_spells_a_units_arguments_out_of_it(case):
+def test_no_call_site_spells_a_units_arguments_out_of_it(case):
     where, source = case
     assert spelled_calls(source, where) == []
 
 
-def test_W290_a_planted_call_that_drops_the_label_is_named_by_this_sweep():
+def test_a_planted_call_that_drops_the_label_is_named_by_this_sweep():
     # ⛔ The other direction, and what makes the sweep above an instrument
-    # rather than a wish: this is the OLD spelling with `label` dropped, which
-    # is exactly what stayed writable at four call sites until this row.
+    # rather than a wish: this is a spelling with `label` dropped, which the
+    # sweep must name.
     planted = (
         "at = unit_location(corpus, source.container.address, source.ordinal,\n"
         "                   source.title, origin=source.origin)\n"
@@ -380,7 +375,7 @@ def test_W290_a_planted_call_that_drops_the_label_is_named_by_this_sweep():
     assert named[0].startswith("planted.py:1 unit_location"), named
 
 
-def test_W290_a_planted_declared_call_that_drops_the_label_is_named_too():
+def test_a_planted_declared_call_that_drops_the_label_is_named_too():
     planted = "target = declared_location(corpus, container.address, unit.n, unit.title)\n"
 
     named = spelled_calls(planted, "planted.py")
@@ -389,7 +384,7 @@ def test_W290_a_planted_declared_call_that_drops_the_label_is_named_too():
     assert "declared_location" in named[0], named
 
 
-def test_W290_the_derivation_takes_the_source_whole_and_honours_its_label():
+def test_the_derivation_takes_the_source_whole_and_honours_its_label():
     corpus = read_corpus(FIXTURES / "depth2")
     source = corpus.units[0]
 
@@ -408,9 +403,9 @@ def test_W290_the_derivation_takes_the_source_whole_and_honours_its_label():
     assert unit_location(corpus, relabelled) != unit_location(corpus, source)
 
 
-def test_W290_the_old_spelling_cannot_be_written_at_all():
-    # ⛔ *Unwritable*, not merely RED. The five arguments a call site used to
-    # compose are not parameters any more, so dropping one is a `TypeError` at
+def test_the_old_spelling_cannot_be_written_at_all():
+    # ⛔ *Unwritable*, not merely RED. The five arguments a call site would
+    # compose are not parameters, so dropping one is a `TypeError` at
     # the call rather than a page linking beside the file the build wrote.
     corpus = read_corpus(FIXTURES / "depth2")
     source = corpus.units[0]
@@ -425,7 +420,7 @@ def test_W290_the_old_spelling_cannot_be_written_at_all():
         )
 
 
-def test_W290_declared_location_takes_both_objects_whole_and_agrees_about_material():
+def test_declared_location_takes_both_objects_whole_and_agrees_about_material():
     # ⭐ The two spellings are one derivation, so a unit that HAS material is
     # placed identically whether it is reached as a source or as a declaration.
     # ⛔ A disagreement here is a container page anchored beside the real page.

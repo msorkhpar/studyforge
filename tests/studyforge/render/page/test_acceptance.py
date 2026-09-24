@@ -1,7 +1,7 @@
 """The trail's acceptance, asserted rather than described.
 
 ⛔ **Not a mirror of any one module** (R12 is one-way): these are the clauses
-`E03-rendering.md` states for the task as a whole, and each one names the
+the rendering design states for the trail as a whole, and each one names the
 instrument that would fail it.
 
 | Clause | Instrument |
@@ -51,7 +51,7 @@ from tests.studyforge.render.page.sites import (
 
 @pytest.fixture(params=sorted(FIXTURES), ids=sorted(FIXTURES))
 def site(request, tmp_path) -> Site:
-    """Each `FND-04` fixture, generated as a site."""
+    """Each framework fixture corpus, generated as a site."""
     return a_site(request.param, tmp_path)
 
 
@@ -119,9 +119,7 @@ def test_the_walk_crosses_a_container_boundary_and_the_fixture_has_one_to_cross(
 
 def test_the_fixtures_cross_each_kind_of_boundary_counted_apart(tmp_path):
     # ⛔ **The inhabitation row for the clause as a whole, one count per kind**
-    # ⚠️ It used to be one total, `{"depth1": 0, "depth2": 1}`, and
-    # that `1` was the compound crossing alone — so the module-only half was
-    # absent and the total could not say so. ⭐ Measured since: `depth2`
+    # ⚠️ One total would hide a missing kind behind a count. ⭐ `depth2`
     # changes the module inside one section once and both levels once.
     counted = {name: crossings(a_site(name, tmp_path / name)) for name in sorted(FIXTURES)}
     assert counted == {"depth1": {}, "depth2": {"module": 1, "section+module": 1}}, counted
@@ -252,7 +250,7 @@ def test_the_trail_marks_the_page_the_reader_is_on_and_does_not_link_it(site):
 
 
 def test_the_corpus_crumb_is_the_one_step_of_the_trail_that_is_a_link(site):
-    # ⚠️ **`SF-14/3`, measured from this side.** `contents.Group` carries no
+    # ⚠️ **Read from this side.** `contents.Group` carries no
     # container page name, so a trail built from the two contents documents can
     # link the corpus and the unit's own page and NOTHING IN BETWEEN. ⭐ The
     # crumbs are still listed, which is what makes the gap visible.
@@ -282,7 +280,7 @@ def test_the_generated_site_is_inhabited_and_so_is_every_pages_reference_list(si
 
 
 def test_no_link_in_the_generated_site_dangles(site):
-    # ⛔ **The fourth clause, and the one the task exists to be able to state.**
+    # ⛔ **The fourth clause, and the one the trail exists to be able to state.**
     # Reading 1, live: every local reference on every generated page, followed
     # the way a browser would follow it.
     assert dangling_in(site) == [], site.name
@@ -339,7 +337,7 @@ def test_the_link_check_is_green_over_a_subject_that_cannot_match_and_the_guard_
 def test_the_whole_site_is_byte_for_byte_identical_when_generated_twice(tmp_path):
     # ⛔ **R10 in the form §2d asks for**: the generator is run twice into two
     # directories and the trees are compared, rather than one function being
-    # called twice. ⚠️ The bar and the trail are the two regions this task adds,
+    # called twice. ⚠️ The bar and the trail are the two regions under test,
     # and both are built by iterating — a set or a directory listing anywhere
     # under them would show up here and nowhere else.
     for name in sorted(FIXTURES):

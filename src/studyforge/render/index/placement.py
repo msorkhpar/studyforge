@@ -15,7 +15,7 @@ stylesheet, its script, and one per unit page it lists.
 
 **Depends on.** `corpus.placement` for what a location is and for the one
 relative-href computation, and `render.pageassets` for the two shared
-filenames. ⛔ No filesystem: whether anything is there is `SF-04`'s question.
+filenames. ⛔ No filesystem: whether anything is there is discovery's question.
 
 ## ⭐ One field, because the root index is the page that needs no address
 

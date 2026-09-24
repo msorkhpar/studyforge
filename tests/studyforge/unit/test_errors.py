@@ -14,7 +14,7 @@ from studyforge.unit import (
 
 
 def test_a_content_error_is_a_value_error():
-    # ⚠️ SF-01's split as `corpus.manifest` reads it: an overlay is a value
+    # ⚠️ The address package's split as `corpus.manifest` reads it: an overlay is a value
     # read from a document, so both halves fail the same way.
     assert issubclass(ContentError, ValueError)
 

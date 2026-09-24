@@ -28,15 +28,15 @@ else entirely, and `listing` **raises** on it rather than dropping the anchor.
 
 ⭐ **That is the one place this page deliberately differs from the between-units
 bar.** `page.navigation._link` drops a refused slot, because chrome that cannot
-be followed is worse than chrome that is not there — and `SF-13/1` measured what
-that costs when the refusal is wrong: 6 of 13 slots gone, with nothing raised.
+be followed is worse than chrome that is not there — and when the refusal is
+wrong, slots are gone with nothing raised.
 ⛔ **Here the links are not chrome, they are the page**, so a silent drop would
 turn a module's contents into an unclickable list with no error anywhere.
 
 ## ⛔ No href is composed here, and none is stored either
 
 ⚠️ `Item.href` arrives already answered, because only the study order knows the
-path arithmetic — `SF-13`'s *"no href is stored, because there is no single
+path arithmetic — the study order's *"no href is stored, because there is no single
 correct one"*, one layer out. ⭐ The caller asks `relative_href(container page,
 unit page)`; a renderer that spelled the shape would be correct under `tree` and
 silently wrong under `sibling`.

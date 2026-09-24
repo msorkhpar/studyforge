@@ -1,11 +1,9 @@
-"""`W328` in a real browser: the rail is flush left and fixed, and the column uses the page.
+"""The rail is flush left and fixed, and the column uses the page, in a real browser.
 
-⛔ **THE ROW IS A USER REQUIREMENT AND IT IS QUOTED, because every clause below
-is one half of it:**
-
-> the left panel shou go all the way to the left side and be fixed. the context
-> panel should be dynamic using more content of the page than longer scroll than
-> needed.
+⛔ **Two requirements, and every clause below is one half of them:** the rail
+goes all the way to the window's left edge and stays there while the page
+scrolls, and the content column grows with the window instead of making the page
+longer than it needs to be.
 
 ⭐ **A RAIL TALLER THAN THE WINDOW IS THE FIXTURE THIS MODULE EXISTS FOR.** A
 rail that no longer scrolls with the page is a rail whose last containers are
@@ -25,12 +23,12 @@ reading below is taken with `getBoundingClientRect()` — the **border box**, in
 its **padding box**, and are the pair that says whether anything is past its
 fold. ⭐ The element each one was read from is named in the failure message.
 
-## ⛔ Asserted the other way, on the tree that shipped
+## ⛔ Asserted the other way, on a tree with the wrong shape
 
-⚠️ A control that has only ever seen the repaired stylesheet has not been shown
-to notice the defect it exists for. ⭐ A third tree is built with the
-wide shape rewritten back to what `W326` merged — the centred cap, the constant
-track, no sticky — and the three settling clauses are asserted to FAIL on it.
+⚠️ A control that has only ever seen the correct stylesheet has not been shown
+to notice the defect it exists for. ⭐ A third tree is built with the wide shape
+rewritten to a centred cap, a constant track and no sticky, and the three
+settling clauses are asserted to FAIL on it.
 """
 
 from __future__ import annotations
@@ -68,32 +66,31 @@ TOUCHING = 0.5
 
 #: A second wide viewport, wider than `WIDE`. ⭐ Clause 2 is *"a function of the
 #: viewport"*, and a function is shown by two points on it, never by one reading
-#: and an argument. ⚠️ Since `W388` stage 4 this width is ABOVE the ceiling
-#: `--page-max` declares, so the pair reads the function on the stretch where it
+#: and an argument. ⚠️ This width is ABOVE the ceiling `--page-max`
+#: declares, so the pair reads the function on the stretch where it
 #: still rises — which is the stretch a reader's own screen is on.
 WIDER = (1920, WIDE[1])
 
-#: The wide shape as it stands, and as `W326` merged it — the control rewrites
-#: the first into the second in a BUILT tree's own stylesheet, so what the
-#: clauses below are refuted against is this row's actual defect.
+#: The wide shape as it stands, and the centred shape it must not be — the
+#: control rewrites the first into the second in a BUILT tree's own stylesheet,
+#: so what the clauses below are refuted against is the real defect.
 SHIPPED = (
     (
         "grid-template-columns: var(--rail) minmax(0, 1fr);",
         "grid-template-columns: var(--rail) minmax(0, calc(var(--measure) + 2 * var(--gutter)));",
     ),
     (
-        # ⚠️ Since `W388` stage 4 the wide page carries `--page-max` on `body`
-        # again and CENTRES under it, so the text rewritten here is that pair;
-        # the shape it is rewritten back to is still `W326`'s.
+        # ⚠️ The wide page carries `--page-max` on `body` and CENTRES under it,
+        # so the text rewritten here is that pair.
         "max-width: var(--page-max);\n"
         "    margin-left: max(0px, (100% - var(--page-max)) / 2);\n"
         "    padding-left: 0;",
         "max-width: min(var(--page-max), calc(var(--rail) + var(--measure) + 5 * var(--gutter)));",
     ),
     (
-        # ⚠️ The rail's own block, named by `grid-column: 1`: since `W388` the
-        # aside in column 3 sticks and scrolls by the same four declarations,
-        # and a pattern that matched both would rewrite a region this row is
+        # ⚠️ The rail's own block, named by `grid-column: 1`: the aside in
+        # column 3 sticks and scrolls by the same four declarations, and a
+        # pattern that matched both would rewrite a region this module is
         # not about — and the control then asserts nothing about the rail.
         "grid-column: 1;\n    grid-row: 1 / span 10;\n    align-self: start;\n"
         "    position: sticky;\n    top: 0;\n    max-height: 100vh;\n    overflow-y: auto;\n",
@@ -187,7 +184,7 @@ def _build(root: Path) -> TallCorpus:
     """Widen the fixture corpus under `root` and build the whole site from it.
 
     ⛔ **The page every clause opens is the LONGEST one the corpus builds**, and
-    that is a choice rather than an arbitrary first unit: the *"and be fixed"*
+    that is a choice rather than an arbitrary first unit: the *stays fixed*
     clause is taken after scrolling to the foot of the page, and a page that fits
     the window has no foot to scroll to. ⚠️ Read as the largest built unit page by
     byte size — measured off the tree, so it follows a fixture that changes.
@@ -206,7 +203,7 @@ def _build(root: Path) -> TallCorpus:
 
 
 def _revert(built: TallCorpus) -> None:
-    """Put the wide shape `W326` merged back into a built tree's own stylesheet."""
+    """Put the centred wide shape into a built tree's own stylesheet."""
     sheets = [
         sheet
         for sheet in sorted(built.root.rglob("*.css"))
@@ -228,7 +225,7 @@ def tall(tmp_path_factory: pytest.TempPathFactory) -> TallCorpus:
 
 @pytest.fixture(scope="session")
 def as_shipped(tmp_path_factory: pytest.TempPathFactory) -> TallCorpus:
-    """The same tree with the wide shape `W326` merged — the defect itself."""
+    """The same tree with the centred wide shape — the defect itself."""
     built = _build(tmp_path_factory.mktemp("visual-rail-fixed-shipped"))
     _revert(built)
     return built
@@ -259,16 +256,16 @@ def geometry(open_page: OpenPage) -> Iterator[object]:
 
 
 def test_the_rail_starts_at_the_windows_own_left_edge(geometry, tall: TallCorpus) -> None:
-    """⛔ *"the left panel shou go all the way to the left side"*, read as pixels.
+    """⛔ The rail goes all the way to the window's left side, read as pixels.
 
-    ⚠️ **Flush means the WINDOW's left edge and never the layout's.** Before this
-    row the page was capped and centred at a width no window matched, so the rail
-    — the first grid track — started wherever centring had put it, and on a wide
-    screen that was a long way in. ⭐ Both boxes are asserted, because a page
+    ⚠️ **Flush means the WINDOW's left edge and never the layout's.** A page
+    capped and centred at a width no window matches puts the rail — the first
+    grid track — wherever centring put it, and on a wide screen that is a long
+    way in. ⭐ Both boxes are asserted, because a page
     flush left with a rail inset inside it is the same defect one element along.
 
-    ⛔ **Taken at `WIDE`, which is BELOW the ceiling `W388` stage 4 gave the
-    shell, and that is the point rather than a convenience.** The shell centres
+    ⛔ **Taken at `WIDE`, which is BELOW the shell's ceiling, and that is the
+    point rather than a convenience.** The shell centres
     only where a window has room past the ceiling; at every width a reader's
     laptop opens, `auto` resolves to nothing and this clause is the page.
     ⚠️ Where the rail sits once the shell does centre is
@@ -290,10 +287,10 @@ def test_the_rail_starts_at_the_windows_own_left_edge(geometry, tall: TallCorpus
 def test_the_reading_column_still_clears_the_rail_at_the_wide_width(
     geometry, tall: TallCorpus
 ) -> None:
-    """⛔ `W325`'s clause re-taken, and the hazard a flush rail creates.
+    """⛔ The column clears the rail, and the hazard a flush rail creates.
 
     ⚠️ **A rail taken out of flow orphans the column**: the prose lays out under
-    it and the reader loses the left of every line. ⭐ That is why this row is
+    it and the reader loses the left of every line. ⭐ That is why the rail is
     `position: sticky` and not `position: fixed` — the rail keeps its grid track,
     so the column clears it by construction rather than by a matching inset.
     """
@@ -312,7 +309,7 @@ def test_the_reading_column_still_clears_the_rail_at_the_wide_width(
 def test_the_rail_is_still_at_the_top_of_the_window_at_the_foot_of_a_long_page(
     geometry, tall: TallCorpus
 ) -> None:
-    """⛔ *"and be fixed"*, and it is measured at the one place it can fail.
+    """⛔ The rail stays fixed, measured at the one place it can fail.
 
     ⭐ **At the BOTTOM of the page**, because at the top every rail looks fixed.
     ⚠️ The reading is the rail's border box top in VIEWPORT coordinates after the
@@ -430,12 +427,11 @@ def test_the_part_of_the_rail_past_the_fold_can_be_reached(
 
 
 def test_the_reading_column_widens_with_the_window(geometry, tall: TallCorpus) -> None:
-    """⛔ *"the context panel should be dynamic using more content of the page"*.
+    """⛔ The content column grows with the window.
 
     ⭐ **Two points on the function, never one reading and an argument.** The same
     page is opened at two wide viewports and the reading surface's border box is
-    compared; a constant track gives the same number twice, which is exactly what
-    shipped.
+    compared; a constant track gives the same number twice.
     """
     narrower = geometry(tall, WIDE)
     wider = geometry(tall, WIDER)
@@ -457,17 +453,17 @@ def test_the_reading_column_widens_with_the_window(geometry, tall: TallCorpus) -
 def test_the_dynamic_column_is_still_bounded_on_a_screen_nobody_has(
     open_page: OpenPage, tall: TallCorpus
 ) -> None:
-    """⚠️ **An unbounded column is this row's own way of going wrong.**
+    """⚠️ **An unbounded column is this layout's own way of going wrong.**
 
     ⛔ A table or a code block across a whole 4K display is the full-bleed defect
     the column section was written against. ⭐ The ceiling is read off the page —
     a probe element given `width: var(--page-max)` — rather than written here, so
     a palette that moves it moves this clause with it.
 
-    ⛔ **`W388` stage 4 settled WHERE the ceiling is and what happens above it.**
-    Stage 2 held `body` at the ceiling and pinned it left, which put a dead strip
-    down one side; stage 3 released the bound and let the tracks grow without
-    limit. ⭐ The shell carries the ceiling again and CENTRES under it, so the
+    ⛔ **Where the ceiling is, and what happens above it.** A shell held at the
+    ceiling and pinned left puts a dead strip down one side, and a shell with no
+    bound lets the tracks grow without limit. ⭐ The shell carries the ceiling
+    and CENTRES under it, so the
     element a wide table and a long line of code are in stops growing, and what
     the window has past the ceiling is split evenly rather than left on one side.
     """
@@ -511,7 +507,7 @@ def test_the_dynamic_column_is_still_bounded_on_a_screen_nobody_has(
 def test_at_the_narrow_width_the_page_keeps_its_gutter_and_the_rail_is_a_card(
     geometry, tall: TallCorpus
 ) -> None:
-    """⛔ **Every declaration this row added is inside the one width threshold.**
+    """⛔ **Every wide-shape declaration is inside the one width threshold.**
 
     ⚠️ A phone gets the card above the reading surface, a page with gutters on
     both sides, and nothing sticky. ⭐ The flush-left rule is the one most likely
@@ -541,18 +537,18 @@ def test_at_the_narrow_width_the_page_keeps_its_gutter_and_the_rail_is_a_card(
     )
 
 
-# --- the negative control: the same clauses, on the tree that shipped -------
+# --- the negative control: the same clauses, on the centred wide shape -------
 
 
 def test_the_three_settling_clauses_fail_on_the_wide_shape_that_shipped(
     geometry, as_shipped: TallCorpus
 ) -> None:
-    """⛔ The control, and it is this row's ACTUAL defect rather than an impression.
+    """⛔ The control, and it is the ACTUAL defect rather than an impression.
 
     ⭐ The same build, with the wide shape rewritten in its own stylesheet back to
     the centred cap, the constant track and no sticky. ⚠️ All three are asserted
     to go red — not one — because each alone has a passing shape that is not the
-    repair: a flush rail that scrolls away, a fixed rail floating in from the
+    right shape: a flush rail that scrolls away, a fixed rail floating in from the
     edge, and either of those beside a column that is still a constant.
     """
     flush = geometry(as_shipped, WIDE)

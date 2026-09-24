@@ -142,7 +142,7 @@ PINNING = re.compile(r"^\s*(?:-\w+-)?(transform|filter|will-change|perspective|c
 
 
 def test_no_authored_stylesheet_makes_a_containing_block_for_a_fixed_descendant():
-    # ⛔ **A PROPERTY the maximised practice panel depends on** (`W431`).
+    # ⛔ **A PROPERTY the maximised practice panel depends on**.
     # `practice.css` expands the panel with `position: fixed`, which answers to
     # the VIEWPORT only while nothing above it makes a containing block: one
     # `transform`, `filter`, `will-change`, `perspective` or `contain` anywhere

@@ -13,17 +13,16 @@ its own sentence — ⭐ the rule is this module's, the document is the caller's
 
 ## ⛔ This enumerates the legal, and that is the whole design
 
-⚠️ **Two readers used to spell this rule twice and they did not agree.**
-`container.fields.optional_path` refused `startswith("/")`, `startswith("~")`
-and `".." in parts`; `placement.profile.origin_directory` refused
-`PurePosixPath.is_absolute()` and `".." in parts`. Both are forbidden lists,
-both are open sets, and the gap between them was reachable: measured
-2026-09-09, `C:/Users/<name>/material/README.md` is refused by *neither*
-predicate — no leading slash, no tilde, no `..`, and `is_absolute()` is
-`False` because a drive letter means nothing to POSIX — and
-`\\host\home\<name>\README.md` is refused by neither either. ⛔ Two overlapping
-forbidden lists cannot be reconciled by adding entries to both; **the fix is
-to state the permitted set instead, which has an end.**
+⚠️ **Two readers spelling this rule twice do not agree.** A reader refusing
+`startswith("/")`, `startswith("~")` and `".." in parts`, and another refusing
+`PurePosixPath.is_absolute()` and `".." in parts`, are both forbidden lists,
+both open sets, and the gap between them is reachable:
+`C:/Users/<name>/material/README.md` is refused by *neither* predicate — no
+leading slash, no tilde, no `..`, and `is_absolute()` is `False` because a
+drive letter means nothing to POSIX — and `\\host\home\<name>\README.md` is
+refused by neither either. ⛔ Two overlapping forbidden lists cannot be
+reconciled by adding entries to both; **the answer is to state the permitted
+set instead, which has an end.**
 
 A source path is legal when **every one of these holds**:
 
@@ -37,12 +36,10 @@ A source path is legal when **every one of these holds**:
 | no segment carries `:` | `C:/Users/<name>/x`, `file:///x` |
 | no segment carries `#` | `TestCases.md#3. Card issuance` |
 
-⛔ **The fragment row is Ruling 92's, and it removes a shape that was accepted
-and meant nothing.** `TestCases.md#…` named a region of a file before a region
-was declarable; nothing ever read the part after the `#`, so it *"validates and
-then fails at render, except it never fails"* — the unit was silently read as
-the whole file. ⭐ **A region is now declared as `{path, section}`** and this
-rule is what stops the old spelling coming back. ⚠️ **It also refuses a real
+⛔ **The fragment row refuses a shape that means nothing.** Nothing reads the
+part after a `#` in `TestCases.md#…`, so the unit would silently be read as
+the whole file. ⭐ **A region is declared as `{path, section}`**, and this rule
+keeps the fragment spelling out. ⚠️ **It also refuses a real
 POSIX filename containing `#`**, on the same terms as the two rows above it.
 
 ⭐ **The last three narrow the legal set below what POSIX permits, deliberately.**
@@ -99,7 +96,7 @@ def source_path_fault(value: str) -> str | None:
         if ":" in part:
             return "a path carrying a drive letter or scheme"
         if "#" in part:
-            # ⛔ Ruling 92. A fragment is a *region*, and a region is declared
+            # ⛔ A fragment is a *region*, and a region is declared
             # as an object with its own `section`. Left legal here, the old
             # spelling keeps validating and keeps meaning nothing.
             return "a path carrying a fragment"

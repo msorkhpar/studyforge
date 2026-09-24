@@ -24,9 +24,8 @@ source-specific (R1), and no process.
 
 ⭐ **Two readers need the same four values** — compose, which interpolates
 them, and `serve`, which probes and execs into the containers they name. A
-value typed into one command reaches the first and not the second, which is
-exactly the defect this row removes (`ISO-33/5`): a second runner that
-`serve` could not be pointed at. ⭐ One file both read cannot come apart.
+value typed into one command reaches the first and not the second, which would
+leave a second runner that `serve` cannot be pointed at. ⭐ One file both read cannot come apart.
 
 ## ⛔ THE BIND IS NOT A VALUE
 
@@ -78,7 +77,7 @@ def record_instance(
     target = root / INSTANCE_ENV
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(made, encoding="utf-8")
-    # ⭐ Stamped as `record_runner` stamps its file (`W466`): a value recorded
+    # ⭐ Stamped as `record_runner` stamps its file: a value recorded
     # here is the skill's own write, so the hand-edit check does not name it.
     written.stamp(root, [INSTANCE_ENV])
     return INSTANCE_ENV

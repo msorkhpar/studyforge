@@ -13,11 +13,10 @@ import pytest
 
 from tests.harness import streams
 
-#: Floors on coverage, not counts. ⚠️ Measured 2026-09-10 at `5e608bfc`: **12**
-#: emitted streams — the 10 goldens plus the two composed assets — and **28**
-#: authorable sources: 15 templates and 13 asset parts. ⚠️ Thirteen of fifteen
-#: files in `render/assets/`: the two licences are not parts, because nothing
-#: composes them into a page. ⛔ Lower bounds, so adding a template is not a
+#: Floors on coverage, not counts: the emitted streams — the goldens plus the
+#: composed assets — and the authorable sources, templates and asset parts.
+#: ⚠️ A licence in `render/assets/` is not a part, because nothing composes it
+#: into a page. ⛔ Lower bounds, so adding a template is not a
 #: failing test; losing one is.
 LEAST_EMITTED = 12
 LEAST_AUTHORABLE = 28
@@ -51,14 +50,14 @@ def test_nothing_the_tree_emits_carries_a_control_character(emitted):
 
 
 def test_nothing_that_can_be_authored_into_a_stream_carries_one_either(authorable):
-    # ⚠️ The second population (Ruling 192): a control byte in a template no
+    # ⚠️ The second population: a control byte in a template no
     # renderer fills yet, or an asset part no bundle includes yet, is invisible to
     # the emitted census until the day something starts emitting it.
     assert streams.offenders(authorable) == []
 
 
 def test_every_authorable_source_is_inside_what_is_scanned(emitted, authorable):
-    # ⛔ Ruling 192's direction: the SUBSET, never the equality. An emitted stream
+    # ⛔ The direction: the SUBSET, never the equality. An emitted stream
     # has no single authorable source — a bundle is several parts, a page is a
     # template plus a document — so equality would fail for a reason that is not a
     # defect. `authorable ⊄ scanned` is the only direction that can hide a file.

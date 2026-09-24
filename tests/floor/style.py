@@ -1,8 +1,7 @@
 """The standard-library half of lint and format: the checks that always run.
 
-⭐ **The product floor's copy of `tools/quality/style.py`.** It stays on the main line when
-the tooling leaves, so the product's own rule keeps running; while both exist,
-`tests/test_floor_twins.py` holds its code to the original's, docstrings aside.
+⭐ **Part of the product's own floor**, which `python3 -m tests.floor` runs from any
+checkout, and depends on nothing outside it.
 
 **What it does.** Fails a Python file with CRLF line endings, a tab used for
 indentation, trailing whitespace, a missing or doubled final newline, or a

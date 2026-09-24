@@ -23,7 +23,7 @@ unknown type **raises**, and `test_script.py` asserts `SPEECH_OF` covers
 `BLOCK_TYPES` exactly, so the twelfth row of the vocabulary cannot land without
 somebody deciding what it sounds like.
 
-## ⛔ A fence is not narrated, whatever its language (Ruling 93)
+## ⛔ A fence is not narrated, whatever its language
 
 ⭐ **One caption, at any length**, so the voice never goes silent and a listener can
 never mistake "done with this section" for "the voice froze". ⛔ And **no field
@@ -67,15 +67,15 @@ figure renumbers only the blocks after it.
 
 ## ⛔ The gate runs here, on every string, regardless of what ran upstream (R7)
 
-⛔ **It runs at BOTH ends of the transform, and that is measured rather than
-cautious.** A plant put a local hostname — one of the four shapes the gate's own
-vocabulary recognises — into a list item and it was **admitted**: `split_identifier`
-had already respaced the machine-name shape — a host followed by the `.local`
-suffix — into two words, destroying the dot the gate's pattern anchors on.
+⛔ **It runs at BOTH ends of the transform.** A local hostname — one of the four
+shapes the gate's own vocabulary recognises — in a list item would otherwise be
+**admitted**: `split_identifier` respaces the machine-name shape — a host
+followed by the `.local` suffix — into two words, destroying the dot the gate's
+pattern anchors on.
 ⭐ So `_spoken` gates the **source** string and `_emit` gates the **derived**
 one, and `test_script.py` asserts every refusing row of
-`docs/conventions/personal-data-shapes.md` through every carrier this module has —
-Ruling 144's emitter-and-gate pair, where both halves are this module's own.
+the personal-data shape table through every carrier this module has — an
+emitter and its gate read as a pair (R7), both halves this module's own.
 
 ⭐ **It refuses; it does not scrub.** `scrub` is for words this framework wrote —
 a log line, a path in a report. A spoken string is derived from **the source's**
@@ -83,7 +83,7 @@ words, and rewriting one into a placeholder would mean an mp3 that quietly says
 something the material does not, with nobody knowing personal data had ever been
 there. ⚠️ `archive.scrub`'s own contract rules it: *scrub our words, refuse the
 source's*. ⛔ So `PersonalDataLeak` travels out of here as itself and is never
-translated into `SpeakableError` (Ruling 58).
+translated into `SpeakableError`.
 """
 
 from __future__ import annotations
@@ -228,13 +228,13 @@ def _one_block(
 def _spoken(value: object, where: str) -> str:
     """Return `value` spoken, having gated it BEFORE the transform as well as after.
 
-    ⛔ **The transform must not be able to launder a leak, and this is measured rather
-    than feared.** A plant put a local hostname — one of the four shapes the gate's own
-    vocabulary recognises — into a list item, and it was **admitted**: the identifier
-    splitter had already respaced the machine-name shape — a host followed by
-    the `.local` suffix — into two words, destroying the dot the gate anchors on.
+    ⛔ **The transform must not be able to launder a leak.** A local hostname — one of
+    the four shapes the gate's own vocabulary recognises — in a list item would
+    otherwise be **admitted**: the identifier splitter respaces the machine-name
+    shape — a host followed by the `.local` suffix — into two words, destroying
+    the dot the gate anchors on.
     ⭐ So the source string is gated here and the derived string again in
-    `_emit` — Ruling 144's rule that an emitter and its
+    `_emit` — R7's rule that an emitter and its
     gate are read as a pair, with the pair being this module's own two ends.
     """
     assert_clean(value, where)
@@ -275,7 +275,7 @@ _STOPS = (".", ":", ";", ",", "!", "?")
 def _item_words(item: object, where: str) -> str:
     """Return one item's words: its parts in reading order, a nested list item by item.
 
-    ⛔ **A nested list is spoken INSIDE its parent item's clip (`W258`)**, each of
+    ⛔ **A nested list is spoken INSIDE its parent item's clip**, each of
     its items numbered aloud when that list is ordered. ⭐ That keeps the speech-id
     grammar as it is — a list's items are the only thing addressed below a block,
     and one level of them — and the page puts the audio on the parent `<li>`,

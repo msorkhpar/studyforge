@@ -52,7 +52,7 @@ page ships.
 
 ## ⛔ Substitution fails in **both** directions
 
-⭐ E03 asks that *an unfilled placeholder must fail, never reach the page as a
+⭐ The rendering design asks that *an unfilled placeholder must fail, never reach the page as a
 literal*, and `Template.substitute` already does that half. ⚠️ **The other half
 is silent and is the one that outlives an edit:** a value passed for a
 placeholder the template no longer has is ignored, so a slot deleted from the

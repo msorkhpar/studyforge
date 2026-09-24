@@ -1,4 +1,4 @@
-"""Reading one declared field, and refusing it without reproducing it (SF-05).
+"""Reading one declared field, and refusing it without reproducing it.
 
 ⚠️ The home-path material is assembled at run time rather than written as a
 literal; this file is swept by the repository hygiene check like every other.
@@ -60,8 +60,8 @@ def test_optional_path_accepts_a_location_inside_the_source():
 
 
 #: Every spelling of "not a location inside the source", with the fault the
-#: reader names it by. ⭐ The last three are Ruling 44's, and **none of them
-#: was refused by the forbidden list this reader used to keep** — no leading
+#: reader names it by. ⭐ **None of the last three is refused by a forbidden
+#: list of home-path shapes** — no leading
 #: slash, no tilde, no `..`, and `PurePosixPath.is_absolute()` is `False` for
 #: both of the last two. That is what an open set does, and it is why the rule
 #: moved to `studyforge.sourcepath` and became a permitted set.
@@ -79,10 +79,9 @@ NOT_A_SOURCE_PATH = [
 
 @pytest.mark.parametrize(("value", "fault"), NOT_A_SOURCE_PATH)
 def test_optional_path_refuses_everything_that_is_not_a_source_path(value, fault):
-    # ⚠️ The message used to be "an absolute or escaping path" for every one
-    # of these — a forbidden list read aloud, and three of these eight rows
-    # were not on it. It now names the fault, which is what an adapter author
-    # can act on without being told the value back.
+    # ⚠️ The message names the fault, not "an absolute or escaping path" for
+    # every one, which is what an adapter author can act on without being told
+    # the value back.
     with pytest.raises(ContainerError, match=fault):
         optional_path(value, "origin", WHERE)
 
@@ -91,7 +90,7 @@ def test_optional_path_refuses_everything_that_is_not_a_source_path(value, fault
 def test_and_never_quotes_it(value):
     # ⛔ **The one shape being refused here is precisely the shape that carries
     # a home directory**, so a refusal quoting it would copy personal data into
-    # a log from the check that exists to catch it (R7). SF-03 measured that on
+    # a log from the check that exists to catch it (R7). placement measured that on
     # its own first attempt; this module is where the care lives so that a new
     # field reader cannot forget it.
     with pytest.raises(ContainerError) as raised:
@@ -132,13 +131,11 @@ def test_optional_slug_requires_a_slug():
 def test_said_describes_a_value_by_its_type(value, described):
     # ⭐ The same rule `studyforge.version._said` set: name the type, never
     # print an unexpected payload into a message that lands in a log.
-    # ⛔ W17: `said` **is** `studyforge.describe.describe` now, imported under
-    # this module's name for its callers. Two entries moved when the three
-    # copies were reconciled — `3` is quoted, because an integer cannot carry
-    # an identifier and a refusal that will not say `unit 4` is unactionable;
-    # and a non-empty string is `a str`, because "text" said less. ⭐ What this
-    # module had and the others lacked — an **empty string** named as one —
-    # survived, and it is above.
+    # ⛔ `said` **is** `studyforge.describe.describe`, imported under this
+    # module's name for its callers. `3` is quoted, because an integer cannot
+    # carry an identifier and a refusal that will not say `unit 4` is
+    # unactionable; a non-empty string is `a str`, because "text" says less;
+    # and an **empty string** is named as one, above.
     assert said(value) == described
 
 
@@ -151,9 +148,9 @@ def test_said_never_reproduces_a_payload():
 def test_optional_label_accepts_a_corpus_s_own_numbering():
     # ⭐ Not a slug: a label is presentation, and `4.4.1`, `vii` and `01` are
     # all things real material calls a unit.
-    # ⚠️ `§4`, `A` and `unit_07` are NOT among them any more, and that is
-    # Ruling 8's cost stated honestly: a permitted set admits less than a
-    # forbidden list did. A corpus whose numbering is not in the class records
+    # ⚠️ `§4`, `A` and `unit_07` are NOT among them, and that is a
+    # permitted set's cost stated honestly: a permitted set admits less than a
+    # forbidden list. A corpus whose numbering is not in the class records
     # one that is and keeps the original in its **title**, which is under no
     # filename constraint at all.
     for label in ("4.4.1", "vii", "1-2", "01", "s1", "c1", "1"):
@@ -161,8 +158,8 @@ def test_optional_label_accepts_a_corpus_s_own_numbering():
     assert optional_label(None, "label", WHERE) is None
 
 
-#: ⛔ **Measured 2026-09-09 on the merged tree: seven of these thirteen passed
-#: both this guard and SF-03's `label_of` into a filename.** They are here as a
+#: ⛔ **Seven of these thirteen pass a forbidden list into a filename.** They
+#: are here as a
 #: regression suite, not as a longer blacklist — the rule below is a permitted
 #: set, and these are how it is checked.
 UNUSABLE = [
@@ -187,7 +184,7 @@ UNUSABLE = [
 
 @pytest.mark.parametrize("label", UNUSABLE)
 def test_optional_label_refuses_what_could_not_become_a_filename(label):
-    # ⛔ **The seam, closed where it opens.** SF-03's `label_of` refuses these
+    # ⛔ **The seam, closed where it opens.** Placement's `label_of` refuses these
     # too. A map that accepted one would produce a corpus that validates and
     # then fails at render — a milestone later, in another package, with
     # nothing in between saying why.
@@ -197,7 +194,7 @@ def test_optional_label_refuses_what_could_not_become_a_filename(label):
 
 @pytest.mark.parametrize("label", ["a/b", "4 4 1", f"{HOME}/x"])
 def test_and_the_refusal_never_reproduces_the_label(label):
-    # ⛔ Rubric §1f, the emission clause: every refusal in this module describes
+    # ⛔ R7, the emission clause: every refusal in this module describes
     # a fault rather than echoing a value read out of somebody else's file.
     with pytest.raises(ContainerError) as raised:
         optional_label(label, "label", WHERE)
@@ -207,13 +204,13 @@ def test_and_the_refusal_never_reproduces_the_label(label):
 
 def test_the_refusal_states_the_permitted_class():
     # ⭐ A closed statement an author can act on. A forbidden class can only
-    # ever be a partial one, which is Ruling 8 in one sentence.
+    # ever be a partial one, which is R8 in one sentence.
     with pytest.raises(ContainerError, match=FILENAME_PERMITTED_DESCRIBED):
         optional_label("a b", "label", WHERE)
 
 
 def test_the_rule_is_a_permitted_set_and_not_a_forbidden_list():
-    # ⛔ **Ruling 8, asserted rather than described.** A forbidden list is an
+    # ⛔ **A permitted set (R8), asserted rather than described.** A forbidden list is an
     # open set: it is checkable only against characters somebody thought of. A
     # permitted set is checkable against *everything*, so this test can sweep
     # the whole of Latin-1 plus a sample of what lies beyond it and know the
@@ -240,7 +237,7 @@ def test_every_accepted_label_survives_a_file_url_untouched():
 
 @pytest.mark.parametrize("label", ["A", "VII", "Part2", "unit_07"])
 def test_an_uppercase_or_underscored_label_is_refused(label):
-    # ⚠️ **Ruling 8's cost, and the reason it is worth paying.** `A` and `a`
+    # ⚠️ **A permitted set's cost, and the reason it is worth paying.** `A` and `a`
     # are one filename on a case-insensitive filesystem, and the `sibling`
     # profile places twenty units in a single directory — so an uppercase label
     # is a collision this framework would generate and then fail to detect on
@@ -261,7 +258,7 @@ def test_the_permitted_class_is_the_slug_class_and_is_not_re_typed():
 
 
 # --------------------------------------------------------------------------
-# ⛔ SF-36 / Ruling 92 — `origin` reads as a whole file or as a region
+# ⛔ `origin` reads as a whole file or as a region
 # --------------------------------------------------------------------------
 
 REGION = {"path": "TestCases.md", "section": "3. Card issuance"}
@@ -323,7 +320,7 @@ def test_a_region_whose_section_is_not_text_is_refused(section):
 
 def test_the_path_rules_still_apply_inside_the_object():
     # ⭐ The rule is `studyforge.sourcepath`'s and the object form does not get
-    # its own copy of it — which is the defect Ruling 44 removed.
+    # its own copy of it: two copies of a path rule drift apart.
     with pytest.raises(ContainerError, match="absolute path"):
         optional_origin(
             {"path": HOME + "/TestCases.md", "section": "3. Card issuance"},
@@ -337,15 +334,15 @@ def test_the_path_rules_still_apply_inside_the_object():
     ["TestCases.md#3. Card issuance", {"path": "T.md#a", "section": "3. Card issuance"}],
 )
 def test_a_fragment_is_refused_in_both_shapes(value):
-    # ⛔ Ruling 92: accepted before this task and meaningless — nothing read
-    # the part after the `#`, so the unit silently became the whole file.
+    # ⛔ Meaningless — nothing reads the part after the `#`, so the unit
+    # would silently become the whole file.
     with pytest.raises(ContainerError, match="fragment"):
         optional_origin(value, "unit 3 origin", WHERE)
 
 
 def test_a_refusal_never_reproduces_the_origin_it_read():
     # ⛔ The one shape being refused here is precisely the shape that carries a
-    # home directory (R7, measured by SF-03).
+    # home directory (R7).
     with pytest.raises(ContainerError) as raised:
         optional_origin(
             {"path": HOME + "/TestCases.md", "section": "3. Card issuance"},

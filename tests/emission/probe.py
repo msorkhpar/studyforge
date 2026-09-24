@@ -44,7 +44,7 @@ POISON_DIRECTORY = "/" + "home/example/material"
 POISON_ROOT = "/" + "home/example"
 
 #: ⛔ **The parameters a refusal exists to reproduce, excluded by construction
-#: rather than by an allow-list** (Ruling 13, condition 3).
+#: rather than by an allow-list**.
 #:
 #: `where` and `what` are not caller data. They are this framework's own label
 #: for the record being refused and the field inside it — *"corpus.json"*,
@@ -338,7 +338,7 @@ def _probe_strings(
         if raised is None:
             # ⭐ Not a blind spot. A predicate or a constructor that validates
             # nothing on this parameter has no refusal to emit, so there is
-            # nothing here for §1f to be wrong about.
+            # nothing here for the no-echo rule to be wrong about.
             found.accepted += 1
         elif POISON in str(raised):
             found.echoes.append(Echo(where, label, str(raised)))

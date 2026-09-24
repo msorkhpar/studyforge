@@ -34,7 +34,7 @@ and this module never joins one.
 
 ⚠️ `audio/<clip>.mp3` is the `tree` profile's answer. Under `sibling` the same
 clip is `audio/<stem>/<clip>.mp3`, because many units share one `study/`
-directory there (`W323`). ⛔ **The invariant that survives every profile is *relative to the page*,
+directory there. ⛔ **The invariant that survives every profile is *relative to the page*,
 not the literal string** — a renderer that spelled `audio/` would be correct
 under one profile and silently wrong under the other, and the page would render
 either way.
@@ -43,11 +43,10 @@ either way.
 
 ⛔ **The page renderer mints no speech id** — `html.py`'s own docstring is explicit that
 *"two numbering schemes that agree today are exactly the coupling that breaks
-silently tomorrow"*, and `SF-16` owns the derivation at M3. ⚠️ But *the name of
+silently tomorrow"*, and narration owns the derivation. ⚠️ But *the name of
 the attribute* is a contract with two sides and only one of them exists yet,
-which is exactly the shape `identity.py` was landed early to avoid: *a
-definition arriving after its first writer is a definition two tasks each guess
-at differently.*
+and *a definition arriving after its first writer is a definition two writers
+each guess at differently.*
 
 ⭐ **So the attribute is named, and nothing here writes one.** The player
 and `page.document`'s player region both take the spelling from this constant,
@@ -158,7 +157,7 @@ def media_kind(block_type: str) -> str:
     """
     kind = "images" if block_type == "image" else block_type
     if kind not in UNIT_MEDIA_DIRNAMES:
-        # ⛔ The offending name is DESCRIBED, never echoed (R7, rubric §1f).
+        # ⛔ The offending name is DESCRIBED, never echoed (R7, R6).
         # This branch fires precisely because the value is not one of a closed
         # set — which is the branch an absolute path arrives at — and this
         # function runs over every media block in a corpus, into a log.

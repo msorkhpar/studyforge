@@ -13,59 +13,54 @@ file set can be read back before anything is on disk.
 refusal a misplaced reader document gets). ⛔ No I/O, and nothing
 source-specific (R1).
 
-## ⛔ This document states no live count, and that is `W332`'s whole fix
+## ⛔ This document states no live count
 
-⚠️ **`W313` made it state the corpus's real state, read through the build's own
-readers, and NOTHING REFRESHED IT.** ⛔ Measured on the first corpus: the
-document a reader opens first said *narrated: 0 of 38* while every unit page
-carried audio, because `studyforge narrate` writes the narration record and no
-verb rewrites a generated document.
+⚠️ **Nothing refreshes a generated document**: `studyforge narrate` writes the
+narration record and no verb rewrites the reader's document, so a count stated
+there (*narrated: 0 of 38*) would stay while every unit page gained audio.
 
 ⭐ **A count is a fact, and a fact in a file that only a regeneration rewrites
-can only be kept freshly wrong** — the property this repository's own
-`CLAUDE.md` was rewritten over (Ruling 161). ⭐ **A POINTER resolves when it is
+can only be kept freshly wrong.** ⭐ **A POINTER resolves when it is
 read.** So this prints the invocation that reads the standing
 (`cli.main`, rendered by `standing.lines`) and never the standing itself, and
 `reader_document` is a pure function of the manifest: regenerating it after a
 narration changes nothing, because there was nothing to go stale.
 
-## ⛔ The reader document goes where the corpus says (`W461`)
+## ⛔ The reader document goes where the corpus says
 
-⚠️ **Measured at a corpus** (`ISO-32/1`): the user ruled that its reader
-document moves to an archive, the corpus moved it, and the next regenerate
-would have written it back at the root, because its path was a name fixed here.
-⭐ **`onboarding_doc` in `corpus.json` places it, or turns it off** (R1, R19):
+⚠️ **A corpus may keep its reader document somewhere other than the root**,
+and a regenerate must not write it back there, so its path is not a name fixed
+here. ⭐ **`onboarding_doc` in `corpus.json` places it, or turns it off** (R1, R19):
 `READER_DOC` is only the default, and the glob, the path and the pin check's
 pointer all follow the manifest.
 
-## ⛔ R3's generated check is `nondestructive`'s, not this module's (`W331`)
+## ⛔ R3's generated check is `nondestructive`'s, not this module's
 
 ⚠️ **This module renders what a person reads; that one renders what a machine
-checks**, and the check moved there when it grew — `pin` already keeps its own
-generated check beside the document it is about. ⭐ `TESTS_DIR` and `EDITS_TEST`
-went with it, so the check and the directory it lands in cannot be moved apart,
+checks** — `pin` keeps its own generated check beside the document it is
+about in the same way. ⭐ `TESTS_DIR` and `EDITS_TEST`
+live there too, so the check and the directory it lands in cannot be moved apart,
 and the dependency runs one way.
 
 ## ⛔ An ignore rule goes inside the directory it is about
 
 ⚠️ **R3 forbids an edit to a source repository's root ignore file, however
-declared** — and tooling has already done exactly that once in this project,
-unrequested, in the one repository where R3 is absolute (`W15`). ⭐ So any rule
+declared**. ⭐ So any rule
 this skill needs for a generated directory goes in a `.gitignore` written
 *inside* that directory, which needs no edit to anything that already exists.
 
-⭐ **`W345` applies it to what this skill generates.** Every directory a
+⭐ **This skill applies it to what it generates.** Every directory a
 generated Python module lands in gets its own `.gitignore` naming the bytecode
 running it writes — which can carry an absolute path (R7), and which nothing
-before this ignored, because a corpus's root ignore file is written for its own
+else ignores, because a corpus's root ignore file is written for its own
 language. ⛔ **Derived from the `.py` paths, never listed**, and never at the
 root: a module there would need the root file, so the scaffold's
 `bytecode_ignores` places none. ⭐ One rule for both writers, so the adapter's
 directories and this skill's `tests/` cannot be given two different files.
 
-⛔ **And nothing is ignored that the media policy does not say to.** `SF-32`'s
-verdict is that media is committed by default, and so is every page a build
-writes (`W242`); when a corpus outgrows that, the report says so and names the
+⛔ **And nothing is ignored that the media policy does not say to.** The media
+policy's verdict is that media is committed by default, and so is every page a build
+writes; when a corpus outgrows that, the report says so and names the
 two ways forward. **The manifest says what happens, and a person changes the
 manifest** — a skill that silently flipped the policy would be deciding a
 corpus's git history for it. ⭐ What a build commits is recognised by
@@ -110,7 +105,7 @@ MANIFEST = MANIFEST_FILENAME
 #: about the adapter. ⭐ `TESTS_DIR` and `EDITS_TEST` are `nondestructive`'s.
 PIN_TEST = f"{TESTS_DIR}/test_framework_pin.py"
 
-#: What a reader opens first, where a corpus that says nothing gets it. ⛔ `W461`:
+#: What a reader opens first, where a corpus that says nothing gets it. ⛔ It is
 #: **a default, never the place** — `onboarding_doc` in `corpus.json` moves it or
 #: turns it off, and `own_not_material` and `paths` follow what it says.
 READER_DOC = ONBOARDING_DOC
@@ -123,9 +118,9 @@ WHY_PIN = (
     "wrote: this corpus's own bookkeeping, never material it teaches."
 )
 WHY_TESTS = (
-    "the checks onboarding generated to hold this corpus to R3 and to its "
-    "framework pin, and whatever running them writes beside them: code the "
-    "corpus is audited with, not material."
+    "the checks onboarding generated to hold this corpus to leaving its own "
+    "files untouched and to its framework pin, and whatever running them writes "
+    "beside them: code the corpus is audited with, not material."
 )
 WHY_READER = (
     "the onboarding report, written from this corpus's own declarations and "
@@ -135,7 +130,7 @@ WHY_READER = (
 #: The globs this skill's output needs wherever the reader document goes.
 _FIXED = (
     {"glob": f"{PIN_DIR}/**", "why": WHY_PIN},
-    # ⛔ `W329`: the whole directory, never `tests/*.py`. `SKILL.md` step 4
+    # ⛔ The whole directory, never `tests/*.py`. `SKILL.md` step 4
     # commands `python3 -m pytest tests`, which writes `tests/__pycache__/*.pyc`
     # — and under the narrower glob that bytecode was `unclassified`, so the
     # skill's own commanded step left the corpus failing `studyforge validate`.
@@ -154,7 +149,7 @@ def own_not_material(reader: str | None = READER_DOC) -> tuple[dict[str, str], .
     statement about the document making it, and it is the one path the source
     walk never offers for classification anyway.
 
-    ⭐ `W461`: the reader document's glob is its path, from `onboarding_doc`, and
+    ⭐ The reader document's glob is its path, from `onboarding_doc`, and
     there is none when the corpus has no reader document. ⚠️ `WHY_READER` is what
     marks that entry as this skill's wherever it sits, so a regenerate that moves
     the document drops the old glob rather than keeping it as a person's.
@@ -182,7 +177,7 @@ def paths(skills: Sequence[str] = SKILLS, reader: str | None = READER_DOC) -> tu
 
 
 def placed(manifest: Manifest, taken: Sequence[str]) -> str | None:
-    """Return where the reader document goes (`W461`), or `None` for none.
+    """Return where the reader document goes, or `None` for none.
 
     ⛔ A place another writer owns, one of `taken` or under the framework's own
     directory or the archive's, is refused by name before anything is planned.
@@ -214,7 +209,7 @@ def reader_document(
     """Return what a reader is told: the declarations, where to read the state, how to run it.
 
     ⚠️ **Composed line by line rather than filled into one markup blob** (R13).
-    ⛔ **It states no live figure** (`W332`): where the corpus stands moves after
+    ⛔ **It states no live figure**: where the corpus stands moves after
     this is written and nothing rewrites it, so the document prints the command
     that reads it. ⭐ **A pure function of the manifest and the pin** — no root,
     no reading, and nothing here that a later `studyforge narrate` can make untrue.
@@ -229,7 +224,7 @@ def reader_document(
         "",
         "This repository was onboarded by `studyforge`. Everything below is",
         "generated from `corpus.json` and from what the build reads — edit the",
-        "manifest, not this file (R19).",
+        "manifest, not this file: a regeneration writes over it.",
         "",
         "## What this corpus declares",
         "",
@@ -256,7 +251,7 @@ def reader_document(
 def _stands(run: str) -> list[str]:
     """Point at the command that reads the state, instead of freezing its answer here.
 
-    ⛔ **No figure** (`W332`). Narrating a corpus moves how many units are
+    ⛔ **No figure**. Narrating a corpus moves how many units are
     narrated, and re-ingesting moves how many there are; neither rewrites this
     file, so a number printed here would be right only until the next verb ran.
     ⭐ The command below reads the corpus as it is at the moment it is typed.

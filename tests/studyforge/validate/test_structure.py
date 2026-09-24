@@ -1,4 +1,4 @@
-"""Checks about the archive alone (SF-25).
+"""Checks about the archive alone.
 
 ⭐ Every check here has a **negative control**: the same corpus with the defect
 removed is clean. A validator that passes everything and a gate nobody calls
@@ -156,8 +156,7 @@ def test_a_matching_practice_count_is_not_reported(tmp_path):
 def test_a_refused_document_is_not_reported_as_a_missing_unit(tmp_path):
     # ⭐ **One defect must not become two findings.** A document the R7 gate
     # refuses is not an absent unit, and reporting it as one sends the reader
-    # after the wrong problem. Measured: the personal-data fixture produced
-    # two rules until this distinction existed.
+    # after the wrong problem.
     root = corpora.one_unit(tmp_path / "c")
     path = root / "archive/demo/raw/prose/unit-01/lesson-1.json"
     document = json.loads(path.read_text(encoding="utf-8"))

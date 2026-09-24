@@ -16,7 +16,7 @@ def test_states_its_contract():
 
 
 def test_the_surface_is_what_the_package_exports_and_nothing_reaches_past_it():
-    """Ruling 101's producer half: every name a consumer needs is on `__all__`."""
+    """The producer half of one exported home (R21): every name a consumer needs is on `__all__`."""
     assert set(generate.__all__) == {
         "BuildError",
         "Corpus",
@@ -61,7 +61,7 @@ def test_the_surface_is_what_the_package_exports_and_nothing_reaches_past_it():
 
 
 def test_the_package_declares_no_command():
-    """⛔ Not a subcommand and not a flag — registering one is `SF-28`'s alone.
+    """⛔ Not a subcommand and not a flag — registering one is the CLI's alone.
 
     ⭐ Asserted rather than remembered. The floor's own caveat sweep reads
     `pyproject.toml`, so a `__main__` added here would give the framework a
@@ -75,7 +75,7 @@ def test_the_package_declares_no_command():
 
 
 # --------------------------------------------------------------------------
-# `RAISES` — the tuple a command catches (`W212`)
+# `RAISES` — the tuple a command catches
 # --------------------------------------------------------------------------
 
 #: ⛔ Assembled rather than written whole (R7's sweep reads this file).

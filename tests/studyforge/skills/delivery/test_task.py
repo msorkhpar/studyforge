@@ -86,15 +86,15 @@ def test_a_commanded_clause_renders_its_command():
 
 
 def test_a_tasks_dependencies_split_into_framework_and_corpus():
-    known = frozenset({"SF-01", "SF-02"})
-    task = plans.reading_task(depends_on=("C-01", "SF-02"))
-    assert task.framework_dependencies(known) == ("SF-02",)
+    known = frozenset({"RS-01", "RS-02"})
+    task = plans.reading_task(depends_on=("C-01", "RS-02"))
+    assert task.framework_dependencies(known) == ("RS-02",)
     assert task.corpus_dependencies(known) == ("C-01",)
 
 
 def test_the_two_halves_partition_every_dependency():
-    known = frozenset({"SF-01"})
-    task = plans.reading_task(depends_on=("SF-01", "C-01", "C-02"))
+    known = frozenset({"RS-01"})
+    task = plans.reading_task(depends_on=("RS-01", "C-01", "C-02"))
     both = task.framework_dependencies(known) + task.corpus_dependencies(known)
     assert sorted(both) == sorted(task.depends_on)
 

@@ -15,7 +15,7 @@ from tests.studyforge.skills.adapter import corpora
 def files():
     """The generated test modules, rendered for the walkthrough corpus.
 
-    ⚠️ Modules only: the directory also carries its bytecode ignore file (`W345`).
+    ⚠️ Modules only: the directory also carries its bytecode ignore file.
     """
     made = scaffold(plan_for(parse(json.dumps(corpora.MANIFEST))))
     return {
@@ -61,8 +61,8 @@ def test_the_emission_test_never_writes_into_the_corpus_it_reads():
 
 
 def test_the_working_copy_asks_the_one_ignore_reader_and_keeps_no_list():
-    # ⛔ W257 (INT-09/7): what a copy leaves behind is the repository's answer,
-    # read through W28's one reader. A pattern list beside it is a second
+    # ⛔ What a copy leaves behind is the repository's answer,
+    # read through the one ignore reader. A pattern list beside it is a second
     # reader that is wrong for the first scratch directory it does not name.
     text = files()["tests/ingest/test_emit.py"]
     assert repository_ignores.__name__ in _imported_from_validate_source(text)
@@ -72,7 +72,7 @@ def test_the_working_copy_asks_the_one_ignore_reader_and_keeps_no_list():
 
 
 def test_the_emission_test_holds_every_container_to_its_documents_date():
-    # ⛔ W257 (INT-09/3): the generated suite carries the property, so a
+    # ⛔ The generated suite carries the property, so a
     # regenerated corpus inherits it (R19).
     text = files()["tests/ingest/test_emit.py"]
     assert "def test_every_container_is_dated_with_its_documents(tmp_path):" in text
@@ -109,7 +109,7 @@ def _imported_from_validate_source(text: str) -> str:
 
 
 def test_the_copy_takes_validates_root_rule_and_types_no_store_name():
-    # ⛔ W271, one rule: what a copy leaves out by name is `validate`'s own `SKIP_DIRS`,
+    # ⛔ One rule: what a copy leaves out by name is `validate`'s own `SKIP_DIRS`,
     # at the corpus root only, and a nested store is `validate`'s own `source_files`
     # answer. A name typed into the template would be a second copy that drifts.
     text = files()["tests/ingest/test_emit.py"]

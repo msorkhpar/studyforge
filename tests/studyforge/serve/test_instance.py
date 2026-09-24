@@ -132,7 +132,7 @@ def test_a_root_with_no_corpus_is_refused_before_a_socket_exists(tmp_path):
 
 
 def test_an_instance_of_one_discovery_serves_every_corpus_it_found(tmp_path):
-    # ⭐ The half the verb calls (`W230`): the same wiring as `make_instance`, from a
+    # ⭐ The half the verb calls: the same wiring as `make_instance`, from a
     # discovery already taken, and nothing is re-scanned to build it.
     workspace = a_workspace(tmp_path)
     discovered = discover(workspace)
@@ -174,7 +174,7 @@ def test_a_site_discovery_scans_the_site_writes_nothing_and_reports_nothing(tmp_
     discovered = site_discovery(corpus, root, site)
     (served,) = discovered.corpora
     assert (digests(site), digests(root)) == before
-    # ⭐ `W385`: the plain `ServedCorpus`, its record at the root and its scan at the site.
+    # ⭐ The plain `ServedCorpus`, its record at the root and its scan at the site.
     assert type(served) is ServedCorpus and discovered.report == ()
     assert (served.root, served.scan_root, discovered.root) == (root, site, root)
     assert served.progress().directory == store_dir(root)
@@ -186,7 +186,7 @@ def test_a_site_discovery_scans_the_site_writes_nothing_and_reports_nothing(tmp_
     assert not served.rescan().units
 
 
-# --- the frame policy an instance serves (`W427`) ---------------------------
+# --- the frame policy an instance serves ---------------------------
 
 #: An editor that is up. ⚠️ The folder is a made-up container path; the probe
 #: reads the real one out of the container and never composes one.
@@ -196,11 +196,11 @@ UP = Editor(origin="http://127.0.0.1:8443", folder="/w/sources")
 class StubEditors:
     """A probe factory and its probe in one: answers `UP`, forks nothing.
 
-    ⛔ **`known()` answers only after `editor()` has been asked** (`W427`), because
+    ⛔ **`known()` answers only after `editor()` has been asked**, because
     that is what a real probe's cache does and it is the property the frame policy
     rests on: composing a policy asks nothing, so a cold instance frames nothing.
 
-    ⛔ **And it EXPIRES** (`W430`, `expire()`): the real cache goes cold again
+    ⛔ **And it EXPIRES** (`expire()`): the real cache goes cold again
     `EDITOR_TTL` seconds after the ask, and a stub that modelled only *cold
     until asked* could not tell a policy that LASTS from one that lapses.
     """
@@ -254,8 +254,8 @@ def test_an_instance_with_no_editor_up_serves_frame_src_none(tmp_path):
 
 
 def test_a_served_page_may_frame_exactly_the_editor_the_run_index_publishes(tmp_path):
-    # ⛔ **The two halves, read off ONE instance** — `W416/2`'s lesson: measuring
-    # one side of framing proved nothing. Here the index says where the editor
+    # ⛔ **The two halves, read off ONE instance** — measuring one side of
+    # framing proves nothing. Here the index says where the editor
     # is and the served header says the page may embed it, or the frame is dead.
     # ⭐ The index is asked FIRST, because the index is the reader that may ask.
     server = instance_of(discover(a_workspace(tmp_path)), port=0)
@@ -272,7 +272,7 @@ def test_a_served_page_may_frame_exactly_the_editor_the_run_index_publishes(tmp_
 
 
 def test_a_page_served_before_anything_asked_frames_nothing_and_forks_nothing(tmp_path):
-    # ⛔ **Spec §8.3, and it is the whole shape of `W427`.** `frame-src` is composed
+    # ⛔ **Spec §8.3, and it is the whole shape of the frame policy.** `frame-src` is composed
     # on EVERY response, so composing it may not ASK: a version that did would fork
     # `docker` to render a static page, putting a subprocess on the critical path
     # of every request. ⭐ A cold instance frames nothing; the run index warms it.
@@ -292,12 +292,11 @@ def test_a_page_served_before_anything_asked_frames_nothing_and_forks_nothing(tm
 
 
 def test_a_page_served_after_the_reading_expires_still_frames_the_editor(tmp_path):
-    # ⛔ **`W430`, on the real instance wiring, ACROSS the TTL boundary.** The
-    # policy used to be read through `EditorProbe.known()`, which goes cold
-    # `EDITOR_TTL` seconds after the ask — so a served `frame-src` named the
-    # editor for ten seconds and `'none'` from then on, and a reader was
-    # essentially never inside that window. ⚠️ **A reading that does not cross
-    # the boundary is not a reading of this**, which is how it shipped.
+    # ⛔ **On the real instance wiring, ACROSS the TTL boundary.** The policy
+    # is not read through `EditorProbe.known()`, which goes cold `EDITOR_TTL`
+    # seconds after the ask, so a served `frame-src` keeps naming the editor
+    # after that. ⚠️ **A reading that does not cross the boundary is not a
+    # reading of this.**
     editors = StubEditors(UP)
     server = instance_of(discover(a_workspace(tmp_path)), port=0)
     server.namespaces[run.NAMESPACE].live.editor = editors
@@ -327,13 +326,13 @@ def test_the_policy_and_the_index_are_read_off_the_one_runs_and_one_probe(tmp_pa
 
 
 def test_a_site_form_seam_that_registers_no_run_namespace_frames_nothing(tmp_path):
-    # ⛔ `W386`'s replaceable seam: no execution means no editor, and a policy
+    # ⛔ The replaceable seam: no execution means no editor, and a policy
     # naming one would be a widening nobody asked for.
     assert frames_for({}) is None
 
 
 def test_a_page_reached_by_another_host_is_not_given_the_editor_and_is_told_why(tmp_path):
-    # ⛔ **The trap this row was warned about, and it is silent without this.** An
+    # ⛔ **A trap that is silent without this.** An
     # editor authenticates with a `SameSite=Lax` cookie; a PORT is not part of a
     # site but a HOSTNAME is, so a page at `localhost` framing one at `127.0.0.1`
     # is cross-site, the cookie is withheld, and the frame shows a login form that
@@ -343,7 +342,7 @@ def test_a_page_reached_by_another_host_is_not_given_the_editor_and_is_told_why(
     server = instance_of(discover(a_workspace(tmp_path)), port=0, log=lines.append)
     server.namespaces[run.NAMESPACE].live.editor = StubEditors(UP)
     with instance_serving(server):
-        fetch(server, f"/api/v1/{run.NAMESPACE}/")  # the one reader that may ask (`W427`)
+        fetch(server, f"/api/v1/{run.NAMESPACE}/")  # the one reader that may ask
         matched = fetch(server, "/depth1/index.html")[1]
         crossed = fetch(server, "/depth1/index.html", host="localhost")[1]
         again = fetch(server, "/depth1/index.html", host="localhost")[1]

@@ -15,7 +15,7 @@ archive is valid, `1` it is not, `2` the tool could not run at all. A script
 that cannot tell "invalid" from "you gave me a directory that does not exist"
 will treat one as the other, and CI will go green on a typo.
 
-⚠️ **`2` is DEFINED in `studyforge.exitcodes` and re-exported here** (`W320`).
+⚠️ **`2` is DEFINED in `studyforge.exitcodes` and re-exported here**.
 ⭐ It is the one of the three that is not a verdict about an archive, and the
 dispatcher plus five modules under `cli/` already needed it; while it was
 defined here, importing the installed command loaded this verb. ⛔ Nothing was

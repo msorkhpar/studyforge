@@ -1,17 +1,16 @@
-r"""`W443`: *Before you author* on `docs/authoring/exercises.md` is runnable as written.
+r"""*Before you author* on `docs/authoring/exercises.md` is runnable as written.
 
 **What it asserts.** Every step a first reader takes before the pass: the
 `validate` command they can actually run, the manifest change as a `reonboard`
 call that is RUN (on a corpus declaring none of its trees, and on one that
-already declares one with its own reason, the case that was refused), the
-refusal's advice, the ignore file and its constant, and the build role and
+already declares one with its own reason), the refusal's advice, the ignore file and its constant,
+and the build role and
 prime a library needs. ⛔ Each name is read off the code, never typed here.
 
 ## ⚠️ Why this is a module of its own
 
-⭐ `tests/test_authoring_exercises.py` reached its 600-line ceiling (R11), and
-the remedy is a split at a named seam, never a trim. ⛔
-**The seam:** that module reads the **authoring procedure** — the pass, its
+⭐ Beside `tests/test_authoring_exercises.py`, at a named seam, so both stay
+inside R11. ⛔ **The seam:** that module reads the **authoring procedure** — the pass, its
 drafts, its gates and what it writes — and this one reads the **corpus's
 readiness** for it: the section a reader finishes before the pass is called.
 """
@@ -38,9 +37,9 @@ from tests.test_authoring_exercises import BEFORE, DRAWN, PAGE, guide
 def manifest_step() -> tuple[str, list[dict[str, str]], dict[str, object]]:
     """The *Before you author* fence that changes the manifest, its trees and its `settle`.
 
-    ⛔ `W439`: the manifest is generated, so the guide's step is a call to the
-    onboarding skill and never a fragment to paste into `corpus.json`. ⭐ `W443`:
-    the call passes only the trees the manifest does not declare yet, so the
+    ⛔ The manifest is generated, so the guide's step is a call to the
+    onboarding skill and never a fragment to paste into `corpus.json`. ⭐ The
+    call passes only the trees the manifest does not declare yet, so the
     trees are the literal the fence filters, read off its `trees = [...]`.
     """
     for body in fences(section(guide(), BEFORE), "python"):
@@ -80,8 +79,8 @@ def test_the_guide_hands_the_reader_no_manifest_fragment_to_paste():
     assert not pasted, f"{PAGE} shows a manifest fragment to type by hand: {pasted}"
 
 
-#: ⭐ `W443`: a corpus that ALREADY declares one of the guide's trees, with a
-#: reason of its own — the first corpus's shape, on which the fence was refused.
+#: ⭐ A corpus that ALREADY declares one of the guide's trees, with a reason of
+#: its own.
 OWN_REASON = {"glob": f"{BUNDLES_DIRNAME}/**", "why": "this corpus's own reason for the tree"}
 
 
@@ -104,7 +103,7 @@ def test_the_guides_manifest_step_run_on_an_onboarded_corpus_leaves_nothing_hand
 ):
     # ⭐ The fence is RUN, not read: the path it names is the fixture's, and
     # everything else is the guide's own text. ⛔ `declares-one` is the case
-    # that was REFUSED at `0e1dfca2`: its own entry must survive byte for byte.
+    # that must not be refused: its own entry must survive byte for byte.
     from studyforge.skills.onboarding import hand_edited
 
     root = _onboarded(tmp_path, declared)
@@ -123,9 +122,9 @@ def test_the_guides_manifest_step_run_on_an_onboarded_corpus_leaves_nothing_hand
 
 
 def test_the_refusal_for_a_declared_tree_advises_what_a_reader_can_do(tmp_path):
-    # ⛔ `W443`: passed unfiltered, the guide's trees are refused on a corpus that
-    # declares one — and the refusal's advice must be the step that works.
-    # "settle one" could not be followed: `settle` refuses every `content` key.
+    # ⛔ Passed unfiltered, the guide's trees are refused on a corpus that
+    # declares one — and the refusal's advice must be the step that works, never
+    # "settle one": `settle` refuses every `content` key.
     from studyforge.skills.onboarding import reonboard
     from studyforge.skills.onboarding.record import OnboardingRefused
 
@@ -141,7 +140,7 @@ def test_the_refusal_for_a_declared_tree_advises_what_a_reader_can_do(tmp_path):
     assert "the refusal tells you to leave it out" in " ".join(section(guide(), BEFORE).split())
 
 
-def test_the_hand_typed_entries_the_guide_once_prescribed_are_named(tmp_path):
+def test_hand_typed_not_material_entries_are_named(tmp_path):
     # ⛔ The negative: the same entries typed into `corpus.json`, as the struck
     # sentence said to, are an R19 finding the moment they land.
     from studyforge.skills.onboarding import hand_edited
@@ -165,7 +164,7 @@ def step(number: int) -> str:
 
 
 def test_step_one_is_the_command_that_runs_from_a_checkout(tmp_path):
-    # ⭐ `W443`: the command is RUN as the guide spells it, with the guide's own
+    # ⭐ The command is RUN as the guide spells it, with the guide's own
     # PYTHONPATH line, from outside the checkout — a console script is not assumed.
     import os
     import subprocess
@@ -190,8 +189,8 @@ def test_step_one_is_the_command_that_runs_from_a_checkout(tmp_path):
 
 
 def test_step_four_names_the_ignore_file_and_the_constant_and_the_line_ignores_a_run(tmp_path):
-    # ⛔ `W443`: step 4 said "add an ignore rule" and cited a `report.xml` beside
-    # the tests, false since `W436`. The file, the constant and its line are the code's.
+    # ⛔ Step 4's file, constant and line are read off the code, never a
+    # `report.xml` beside the tests.
     import subprocess
 
     from studyforge.corpus.placement.names import IGNORE_FILENAME
@@ -214,7 +213,7 @@ def test_step_four_names_the_ignore_file_and_the_constant_and_the_line_ignores_a
 
 
 def test_step_five_points_at_the_build_role_and_the_prime_in_the_merged_shape():
-    # ⭐ `W443` against `W436` and `W440`: each name the step gives is read off the code.
+    # ⭐ Each name the step gives is read off the code.
     from studyforge.corpus.manifest import MANIFEST_KEYS
     from studyforge.exercise.bundle import BUILD
     from studyforge.skills.execution.onboard import PRIME_DIR, READER_DOC

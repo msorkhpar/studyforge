@@ -1,4 +1,4 @@
-"""The block vocabulary and a practice's layout (SF-06).
+"""The block vocabulary and a practice's layout.
 
 ⭐ **This module spells the block types out, and is cleared by the same rule
 that clears every other module: it imports the vocabulary from the module that
@@ -7,9 +7,9 @@ derived its expectation from the thing under test would assert nothing — and
 the check does not need to know that, because the rule is about *deriving from
 one source of truth*, not about *not spelling*.
 
-⚠️ **The allow-list is empty and should stay that way.** It would have grown
-by one entry the day the page assets landed a class-name table and by three more later,
-and a path allow-list is a list of files nobody re-examines.
+⚠️ **The allow-list is empty and should stay that way.** A path allow-list
+grows with every table a module spells, and it is a list of files nobody
+re-examines.
 """
 
 import ast
@@ -83,9 +83,8 @@ def test_the_vocabulary_is_eleven_types_in_counts_order():
 
 
 def test_every_derived_view_comes_from_the_same_rows():
-    # ⭐ The consolidation, asserted rather than described: four things that
-    # used to be four literals are four readings of one list, so they cannot
-    # fall out of step.
+    # ⭐ Asserted rather than described: four views are four readings of one
+    # list, so they cannot fall out of step.
     assert tuple(COUNT_KEYS.values()) == BLOCK_TYPES
     assert tuple(BLOCK_FIELDS) == BLOCK_TYPES
     assert tuple(BY_NAME) == BLOCK_TYPES
@@ -132,8 +131,8 @@ VOCABULARY_MODULE = "studyforge.archive.blocks"
 #: ⭐ **Empty, and that is the result.** The rule is about *importing*, not
 #: about being on a list: a module that takes the vocabulary from its owner may
 #: spell as much of it as it likes, because what it spells is checked against
-#: the source of truth. A path allow-list would have grown by one entry the day
-#: the page assets landed and by three more later — see this module's docstring.
+#: the source of truth. A path allow-list would grow with every such module —
+#: see this module's docstring.
 SPELLERS: tuple[str, ...] = ()
 
 
@@ -164,7 +163,7 @@ def copies(root: Path) -> list[str]:
     ⛔ **The rule is not "no module may spell four vocabulary names".** That
     would have been narrowed to definitions to let `surface.py` through, and a
     genuine fifth copy that happened to be a mapping would have stopped being
-    caught. The rule is the one SF-33's guard already uses: *a literal
+    caught. The rule is the one the version guard already uses: *a literal
     collection of four or more vocabulary names in a module that does not
     import the vocabulary.*
     """
@@ -180,9 +179,9 @@ def copies(root: Path) -> list[str]:
 
 
 def test_there_is_exactly_one_block_type_list():
-    # ⛔ SF-06's acceptance, and it is a test rather than a comment asking
-    # people not to write one. Four copies existed: the reader's tuple, the
-    # fixture checker's count keys, its block fields and its container tuple.
+    # ⛔ A test rather than a comment asking people not to write one. A copy
+    # would sit in a reader's tuple, a fixture checker's count keys, its
+    # block fields or its container tuple.
     # Two copies of a contract is the defect this project has diagnosed four
     # times, and a vocabulary that disagrees with its own checker means the
     # gate and the parser have different ideas of what a document may hold.
@@ -197,13 +196,13 @@ def written(tmp_path: Path, name: str, body: str) -> Path:
     return path
 
 
-#: A module shaped like the four this task consolidated.
+#: A module shaped like a copy of the vocabulary.
 COPY = 'BLOCK_TYPES = ("heading", "para", "code", "table")\n'
 
 
 def test_that_check_catches_a_copy_that_did_not_come_from_the_owner(tmp_path):
-    # ⭐ The scanner is asserted against a module shaped like the ones this task
-    # consolidated, so "no offenders" is a result and not an artefact of the
+    # ⭐ The scanner is asserted against a module shaped like a copy of the
+    # vocabulary, so "no offenders" is a result and not an artefact of the
     # scanner seeing nothing.
     written(tmp_path, "vocabulary.py", COPY)
     assert copies(tmp_path) == ["src/vocabulary.py"]
@@ -211,7 +210,7 @@ def test_that_check_catches_a_copy_that_did_not_come_from_the_owner(tmp_path):
 
 def test_and_clears_the_same_module_once_it_derives_from_the_owner(tmp_path):
     # ⭐ The other direction, and the one the rule turns on: identical literal,
-    # cleared — because now it is checked against the source of truth rather
+    # cleared — because it is checked against the source of truth rather
     # than competing with it. ⛔ This is what makes the rule about *deriving*
     # rather than about *not spelling*, which is the distinction a narrowing to
     # definitions would have lost.
@@ -408,7 +407,7 @@ def test_the_real_practice_fixtures_are_laid_out():
 
 
 def test_an_item_without_a_nested_list_is_its_one_string_part():
-    # ⛔ W258: an unnested item is unchanged, so every list before it reads alike.
+    # ⛔ An unnested item is unchanged, so every list before it reads alike.
     assert item_parts("one") == ["one"]
 
 
@@ -427,7 +426,7 @@ def test_a_nested_list_is_not_a_block_in_reading_order():
 
 
 def test_start_is_the_one_optional_key_and_only_a_list_carries_it():
-    # ⛔ W264: an optional key sits after a block's fields, so the fields keep
+    # ⛔ An optional key sits after a block's fields, so the fields keep
     # their order and a block without it is unchanged.
     assert BLOCK_OPTIONAL == {name: (("start",) if name == "list" else ()) for name in BLOCK_TYPES}
 
@@ -441,7 +440,7 @@ def test_a_lists_start_is_one_unless_it_records_a_number(block, start):
 
 
 def test_a_committed_ordered_list_with_no_start_keeps_its_documents_digest():
-    # ⛔ W264: the fixture's recorded digest was taken before `start` existed.
+    # ⛔ The fixture's recorded digest carries no `start` key.
     path = repository_root() / (
         "tests/fixtures/depth2/archive/basics/01-getting-started/raw/java/unit-01/lesson-1.json"
     )
@@ -453,21 +452,21 @@ def test_a_committed_ordered_list_with_no_start_keeps_its_documents_digest():
 
 
 # --------------------------------------------------------------------------
-# ⛔ W289 — a block that is not an object is refused BY NAME, never `.get`-ed
+# ⛔ A block that is not an object is refused BY NAME, never `.get`-ed
 # --------------------------------------------------------------------------
 
 #: Everything `json.loads` can produce where a block belongs, but an object.
-#: ⛔ Closed on the *domain* rather than on taste (`module-structure.md`): JSON
+#: ⛔ Closed on the *domain* rather than on taste (a closed set, R6): JSON
 #: has six value kinds and five of them are here, so the shape nobody thought
 #: of cannot be the one that gets through.
 NOT_OBJECTS = ("a string", 7, 1.5, True, None, ["nested"])
 
 
 @pytest.mark.parametrize("block", NOT_OBJECTS)
-def test_W289_a_non_object_block_reaches_no_get_and_is_refused_by_name(block):
-    # ⛔ This used to raise `AttributeError`, which names a TYPE where the
-    # reader needs an INDEX. ⭐ `ArchiveError` is a `ValueError`, so an
-    # `AttributeError` escaping here FAILS this test rather than passing it —
+def test_a_non_object_block_reaches_no_get_and_is_refused_by_name(block):
+    # ⛔ `AttributeError` would name a TYPE where the reader needs an INDEX.
+    # ⭐ `ArchiveError` is a `ValueError`, so an `AttributeError` escaping here
+    # FAILS this test rather than passing it —
     # which is what makes the assertion an instrument and not a restatement.
     with pytest.raises(ArchiveError) as raised:
         counts_of([{"type": "para", "text": "one"}, block])
@@ -476,7 +475,7 @@ def test_W289_a_non_object_block_reaches_no_get_and_is_refused_by_name(block):
     assert "a block is an object with a type" in str(raised.value)
 
 
-def test_W289_the_counts_of_a_document_of_objects_are_unchanged():
+def test_the_counts_of_a_document_of_objects_are_unchanged():
     # ⭐ The positive direction. Without it the refusal above is satisfied by a
     # `counts_of` that refuses everything.
     counted = counts_of([{"type": "para", "text": "one"}, {"type": "rule"}])
@@ -486,7 +485,7 @@ def test_W289_the_counts_of_a_document_of_objects_are_unchanged():
     assert counted["rules"] == 1
 
 
-def test_W289_the_refusal_describes_the_value_and_never_quotes_a_string():
+def test_the_refusal_describes_the_value_and_never_quotes_a_string():
     # ⚠️ R7: a refusal names what a value IS, never what it SAYS — `describe`'s
     # `SAFE_TO_QUOTE` is `(int,)`, so a block that is a string is *"a str"*.
     words = "the material's own sentence"
@@ -498,7 +497,7 @@ def test_W289_the_refusal_describes_the_value_and_never_quotes_a_string():
     assert "a str" in str(raised.value)
 
 
-def test_W289_the_caller_names_the_document_the_refusal_belongs_to():
+def test_the_caller_names_the_document_the_refusal_belongs_to():
     # ⭐ `where` is the document's own, spelled as `assert_clean`'s is, so the
     # builder's refusal says which FILE as well as which block.
     with pytest.raises(ArchiveError) as raised:
@@ -507,7 +506,7 @@ def test_W289_the_caller_names_the_document_the_refusal_belongs_to():
     assert "solo/unit-1/lesson-1 blocks[0]" in str(raised.value)
 
 
-def test_W289_a_non_object_block_inside_a_container_is_not_this_functions_business():
+def test_a_non_object_block_inside_a_container_is_not_this_functions_business():
     # ⚠️ The boundary, asserted so it is not read as an oversight: `counts_of`
     # counts TOP-LEVEL blocks, so a malformed block inside a quote is
     # `validate.blocks`'s to name and this function neither counts nor refuses

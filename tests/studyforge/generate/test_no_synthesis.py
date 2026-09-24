@@ -1,7 +1,7 @@
-"""⛔ A BUILD NEVER SYNTHESISES — `SF-38`'s Acceptance, as a property of the tree.
+"""⛔ A BUILD NEVER SYNTHESISES — as a property of the tree.
 
 Mirrors no source module: it is about what `src/studyforge/generate/` may reach,
-which is a boundary rather than a function. ⭐ `W202`'s answer 3 settles it —
+which is a boundary rather than a function. ⭐ A build only copies clips `narrate` recorded —
 *a build never synthesises and never probes the service; the narration record and
 its clips are INPUTS, like the archive* — and `studyforge narrate` is
 the verb that produces them.
@@ -72,7 +72,7 @@ def test_the_population_this_sweep_runs_over_is_inhabited():
 
 @pytest.mark.parametrize("case", build_modules(), ids=lambda case: case[0])
 def test_no_build_module_imports_the_synthesis_client(case):
-    # ⛔ `W202` answer 3. That import is the SHAPE of a build that synthesises,
+    # ⛔ That import is the SHAPE of a build that synthesises,
     # and the symptom of allowing it is a build that reaches a network — which
     # R8's whole floor is written against.
     path, source = case

@@ -1,20 +1,17 @@
-"""`W392`: the UI convention's rejected-palette table, READ over the stylesheets we ship.
+"""The spec's rejected-palette table, READ over the stylesheets we ship.
 
 **What it does.** Puts the document's side (`rejected`) and the tree's side
 (`shipped`) together and answers one question: is any theme this framework ships
-an identity the spec's §8.4 table REJECTS (moved there from the UI convention
-by `REL-08`)? ⛔ **The convention
-already listed *warm cream + serif display + terracotta*, a repaint shipped the
-first half of it, and the user rejected it for exactly that reason (`W388/4`)** —
-the list was right and nothing read it.
+an identity the spec's §8.4 table REJECTS? ⛔ **A list nothing reads cannot
+stop a repaint that ships the first half of *warm cream + serif display +
+terracotta*** — so the table is read, not only written.
 
-⭐ **Copied, code for code, from the tooling that built the framework** when that tooling left
-the main line: the spec now holds the table, so the check that reads it is the product's.
+⭐ **The spec holds the table, so the check that reads it is the product's.**
 
 **How you use it.** `check_rejected_palettes(root)` is registered in
 `tests.floor.CHECKS` and fails the floor once per shipped theme that matches a
 rejected row; `palette_census(root)` is registered in `NOTICES` and prints the
-denominator on every run (Ruling 48). `matched` is the predicate both channels
+denominator on every run. `matched` is the predicate both channels
 share.
 
 **Depends on.** `rejected` and `shipped` beside it, `tests.floor.report` for
@@ -24,13 +21,13 @@ the answer, and `pathlib`.
 
 ⚠️ **It reads COLOUR and nothing else.** A serif display face, the card kit,
 pill tags and an eyebrow label are §2 tells no hue can see. ⭐ So the census says
-so in its own line (FND-07): green here is *no rejected PALETTE is shipped*, and
+so in its own line: green here is *no rejected PALETTE is shipped*, and
 never *§2 is met*.
 
 ## ⛔ THE ROW IS THE UNIT AND THE CONJUNCTION IS THE INSTRUMENT
 
-⭐ **Cool slate is what the user ACCEPTED; slate WITH teal-green AND amber is
-what they rejected.** ⛔ A row that fired on one part would refuse the accepted
+⭐ **Cool slate is the site's identity; slate WITH teal-green AND amber is a
+rejected one.** ⛔ A row that fired on one part would refuse the site's own
 identity, so every part must hold in ONE theme, and the parts written on one
 role must be met inside ONE group of that role — one gradient, or that theme's
 colours for a token role.
@@ -39,8 +36,7 @@ colours for a token role.
 
 ⛔ **An identity stops being refused only when its ROW LEAVES THE TABLE**, which
 is the same edit as changing the rule. ⭐ There is no allow-list here and no flag:
-the instrument and the convention cannot come apart, which is the whole of what
-`W392` asks for.
+the instrument and the table cannot come apart.
 """
 
 from __future__ import annotations
@@ -105,7 +101,7 @@ def check_rejected_palettes(root: Path) -> list[Finding]:
                     f"{signature.name!r}, which `{UI_CONVENTION}` REJECTS "
                     f"({signature.ground}). Every part of its signature is present here: "
                     f"{'; '.join(one.text for one in signature.parts)}. Change the palette, "
-                    f"or take the rejection out of that table with the user's own words for "
+                    f"or take the rejection out of that table with the reason "
                     f"why — never leave the two disagreeing.",
                 )
             )

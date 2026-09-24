@@ -12,18 +12,16 @@ taken at, so that acting on a stale answer is a refusal rather than a habit.
     q = Question(1, "does placement re-read its own output?",
                  routed_at="AB-31", blocks=("C-02",),
                  rerun="python3 -m pytest tests/studyforge/cli/plan")
-    q = q.settled("no, since W28", at="8146bdb")
+    q = q.settled("no, since the source walk asks git", at="8146bdb")
     q.is_current("8146bdb")     # True — safe to act on
 
 **Depends on.** `dataclasses`. ⛔ Nothing else.
 
-## ⛔ A question is not a soft finding, and no skill defined one until this
-one
+## ⛔ A question is not a soft finding
 
-⚠️ **Named by the filing side as the highest-value item on their branch**, and
-it had no home: a finding says *the framework could not do X*, and a question
+⚠️ A finding says *the framework could not do X*, and a question
 says *I could not tell whether it can*. ⛔ Routing the second as the first
-produces a framework task for something that was already true, and routing it
+produces a framework task for something that is already true, and routing it
 as prose produces nothing at all.
 
 ## ⭐ The re-run is the field that makes it a question rather than a doubt
@@ -35,9 +33,8 @@ question is a silent guess one layer down.
 
 ## ⚠️ And it decays against a framework that moves, not against the material
 
-⛔ **Measured on the filing side: three of twelve open questions closed
-between two rounds a day apart, one of them because a merged schema
-changed** — with nothing having moved in the material. ⭐ **So an answer
+⛔ **An open question can close because the framework changed**, a schema
+merged or a contract moved, with nothing having moved in the material. ⭐ **So an answer
 carries the ref it was taken at**, and `is_current` is what a reader checks
 before acting. ⚠️ A question answered against a ref that is no longer current
 is an answer about a framework that no longer exists.

@@ -1,75 +1,57 @@
 """The tree this harness opens, and whether it reaches what it claims to judge.
 
-⛔ **Machinery, not a sixth acceptance clause** — `test_init.py` names it as such.
-The five clauses each ask a question *about a page*; this module asks whether the
-pages exist at all, which is the question `W98` was: the harness judged **two** of
-`SF-34`'s chrome regions and reported nothing about the other four.
+⛔ **Machinery, not an acceptance clause** — `test_init.py` names it as such.
+The clauses each ask a question *about a page*; this module asks whether the
+pages exist at all: a harness that opens too few page kinds judges a few of the
+chrome regions and reports nothing about the rest.
 
 ## ⛔ Why a census and not a comment
 
-⚠️ **The blindness was invisible from inside every check that had it.** Every
-contrast assertion, every focus traversal and every request log passed — over a
-population that carried a masthead and an outline and no bar, no practice panel,
-no unit listing and no contents tree. ⭐ Nothing went red, nothing was skipped,
-and the harness line said `RAN`. So the only thing that can keep this fixed is a
-check whose own failure is *"this tree cannot reach region N"*.
+⚠️ **That blindness is invisible from inside every check that has it.** Every
+contrast assertion, every focus traversal and every request log passes over a
+population that carries a masthead and an outline and no bar, no practice panel,
+no unit listing and no contents tree. ⭐ Nothing goes red, nothing is skipped,
+and the harness line says `RAN`. So the only thing that keeps the population
+whole is a check whose own failure is *"this tree cannot reach region N"*.
 
-## ⛔ Why the column check is the one `W98` exists for, and what it refuses to say
+## ⛔ Why the column check compares two live measurements
 
-⭐ **`--measure: 80ch` resolves against THE ELEMENT'S OWN FONT.** `SF-34`
-measured one correct declaration producing three different columns — 800 px,
-715.7 px, 680.3 px — and ⛔ **no assertion over a stylesheet can see it**,
-because every declaration involved is identical and right.
+⭐ **`--measure: 80ch` resolves against THE ELEMENT'S OWN FONT.** One correct
+declaration can produce three different columns — 800 px, 715.7 px, 680.3 px —
+and ⛔ **no assertion over a stylesheet can see it**, because every declaration
+involved is identical and right.
 
 ⛔ **What this module asserts is an EQUALITY between two measurements taken in the
 same run** — each region's column against the reading surface's — rather than a
 resolved width against a recorded number. ⭐ It is invariant under any font the
-image ships and still fails the moment a region resolves a measure of its own.
+image ships, needs no figure re-measured when the font pin moves, and still
+fails the moment a region resolves a measure of its own.
 
-⚠️ **When `W98` wrote that clause, an undeclared font was also a reason for it:**
-`fonts-liberation` then arrived unconstrained from the base image's Debian
-snapshot, so a px figure here would have been a recorded
-value with an undeclared font behind it. ⛔ **That reason is GONE — `W124` landed
-and the font is pinned by version and checksum in `docker/dev/Dockerfile`** — and
-the clause is kept anyway, because an equality between two live measurements is
-the stronger assertion on its own terms: it needs no figure to be re-measured
-when the pin is next moved forward.
+## ⛔ Why the column check names a WIDTH, and what it excludes at one of them
 
-## ⛔ Why the column check now names a WIDTH, and what it excludes at one of them
-
-⚠️ **`W325` gave the page two shapes.** The containers rail sits BESIDE the
-reading column where a viewport has room for one and folds back INTO it where it
-has not — so *"every chrome region resolves the reading surface's column"* is
-true of every region at one width and of every region but that one at the other.
+⚠️ **The page has two shapes.** The containers rail sits BESIDE the reading
+column where a viewport has room for one and folds back INTO it where it has
+not — so *"every chrome region resolves the reading surface's column"* is true
+of every region at one width and of every region but that one at the other.
 
 ⛔ **The answer is a width-scoped exclusion and never an unconditional one.** The
 wide check states its width instead of inheriting the launch window's, drops the
 rail by name, and the narrow check runs the same arithmetic over the population
 with **nothing** taken out. ⭐ So the region excluded at one width is compared at
-the other, which is what keeps the exclusion from being the silent hole `W98`
-was.
+the other, and the exclusion is never a silent hole.
 
-## ⭐ The one question this module still cannot ask — ⛔ THE GATE IS NOW OPEN
+## ⭐ The one question this module cannot ask
 
 ⚠️ **Nothing here asserts that the reading column is the measure the palette
 declares.** The equality below catches a region resolving a column of its *own*;
 it cannot catch every region, the reading surface included, resolving the *wrong*
 one — `--measure: 80ch` against a font that changed under the image.
 
-⛔ **`W124` WAS THAT ASSERTION'S GATE AND HAS LANDED, AND `W124` DELIBERATELY DID
-NOT WRITE IT.** ⭐ The reason is scope and it is recorded in
-`docs/tasks/handoffs/W124.md`: that row's own argument says *"the font is what
-`W98` needs"*, and pinning an input is a different act from authoring an
-acceptance clause over it. ⚠️ **The assertion that goes here needs things `W124`
-neither measured nor owns** — a recorded px figure per page kind and viewport, a
-looseness statement of its own, and a negative control that
-reds when a face is swapped under the image, which means building a second image
-to prove it can fail. ⛔ **A row that quietly grew all of that would be the scope
-creep this project treats as worse than leaving work undone, so it is ROUTED as a
-finding for the PO to mint rather than written here.**
-
-⭐ Stated rather than left as a silence, so the next reader knows the blocker is
-gone and that what remains is a row, not an oversight.
+⚠️ **That assertion needs things the font pin does not carry** — a recorded px
+figure per page kind and viewport, a looseness statement of its own, and a
+negative control that reds when a face is swapped under the image, which means
+building a second image to prove it can fail. It is stated here so the gap is
+read as a known limit rather than an oversight.
 """
 
 from __future__ import annotations
@@ -87,15 +69,15 @@ from tests.visual.page import NARROW, WIDE, OpenPage
 READING_SURFACE = "main#content"
 
 #: The one chrome-ruled region that is NOT compared against the reading surface,
-#: and why. ⛔ `body` **is** the column the others sit inside (`PO-22/6`, note
-#: (d)), so comparing it with `main` compares a box with the box within it — it
+#: and why. ⛔ `body` **is** the column the others sit inside, so comparing it with `main` compares
+#: a box with the box within it — it
 #: measures 880 px against main's 840 because the gutter is the difference.
 #: ⭐ Named here rather than filtered out by a rule, and asserted to be a member
 #: of the population, so it cannot become a silent hole if the table is rewritten.
 THE_COLUMN_ITSELF = "body"
 
 #: The one chrome-ruled region that is not compared against the reading surface
-#: **at the wide width**, and why. ⛔ `W325` put the containers rail BESIDE the
+#: **at the wide width**, and why. ⛔ The containers rail sits BESIDE the
 #: column rather than above it, so at a viewport with room for one it resolves
 #: `--rail` and not the column — deliberately, and it is the only region that
 #: does. ⭐ **The exclusion is not a hole, because it is width-scoped:** the same
@@ -105,7 +87,7 @@ THE_COLUMN_ITSELF = "body"
 THE_RAIL_BESIDE_THE_COLUMN = 'nav[aria-label="Containers"]'
 
 #: The regions a wide window puts in the ASIDE, on the far side of the column
-#: (`W388`, folding `W369`): a unit's outline and the index's explanation. ⛔
+#: a unit's outline and the index's explanation. ⛔
 #: Excluded at `WIDE` for the rail's reason and re-admitted at `NARROW` by the
 #: same check, where both are back in the one column above the content.
 THE_ASIDE_BESIDE_THE_COLUMN = (
@@ -116,9 +98,8 @@ THE_ASIDE_BESIDE_THE_COLUMN = (
 #: How far two columns may differ and still be the same column, in CSS pixels.
 #: ⛔ **Not a font threshold**, which is why it needs no recorded font: both sides of
 #: the comparison are measured in the same run under the same font, so a font
-#: change moves them together. ⭐ It is here only for subpixel layout — measured
-#: in the pinned image at `f71c566` every pair is equal to the hundredth of a
-#: pixel, over seven pages.
+#: change moves them together. ⭐ It is here only for subpixel layout: in the
+#: pinned image every pair is equal to the hundredth of a pixel, over seven pages.
 SAME_COLUMN = 0.5
 
 #: How many elements a region may contribute before this check stops reporting
@@ -142,7 +123,7 @@ def _census(page: OpenPage, regions: tuple[str, ...]) -> dict[str, int]:
 def _columns(page: OpenPage, regions: tuple[str, ...]) -> list[list]:
     """`[selector, width]` for every laid-out element of every named region.
 
-    ⛔ Zero-width elements are dropped and the drop is the point: `SF-30`'s
+    ⛔ Zero-width elements are dropped and the drop is the point: the
     read-mark control ships `hidden`, so with scripts off it has no box at all
     and a width comparison against it would be a comparison with nothing.
     """
@@ -160,7 +141,7 @@ def _columns(page: OpenPage, regions: tuple[str, ...]) -> list[list]:
 
 
 def test_the_region_population_is_inhabited_and_is_the_disposition_tables() -> None:
-    """⭐ The population comes from `SF-34`'s table and is non-empty.
+    """⭐ The population comes from the disposition table and is non-empty.
 
     ⛔ A totality claim over an empty set is the most convincing check
     in the repository and says nothing at all.
@@ -191,7 +172,7 @@ def test_the_region_population_is_inhabited_and_is_the_disposition_tables() -> N
 def test_the_harness_writes_every_page_kind_the_framework_renders() -> None:
     """⛔ Three renderers, three kinds, and the tree carries one of each.
 
-    ⚠️ The defect this forbids is the one `W98` was: a harness whose population
+    ⚠️ The defect this forbids is a harness whose population
     is *the page kind somebody happened to start with*, which reads as complete
     because every check over it passes.
     """
@@ -228,7 +209,7 @@ def test_every_stylesheet_damage_is_a_declared_damage() -> None:
 def test_every_chrome_region_the_table_rules_is_in_the_tree_this_harness_opens(
     open_page: OpenPage, built_site: site.Site
 ) -> None:
-    """⛔ `W98`'s whole subject: the census, in full, before the verdict.
+    """⛔ The census, in full, before the verdict.
 
     ⭐ Reported per page and then as a union, because *which* page carries a
     region is the fact a reader needs when one goes missing — and the union is
@@ -293,15 +274,15 @@ def _adrift(open_page: OpenPage, compared: tuple[str, ...], case: str) -> list[s
 def test_every_chrome_region_resolves_the_same_column_as_the_reading_surface(
     open_page: OpenPage, built_site: site.Site, case: str
 ) -> None:
-    """⭐ The class `W98` exists for, and the one no stylesheet assertion can see.
+    """⭐ The class of defect no stylesheet assertion can see.
 
     ⛔ A per-region bound written in `ch` resolves against that region's **own**
     inherited font, so one correct declaration produces as many columns as there
     are fonts on the page. ⚠️ This is an equality between two live measurements
     and never a px figure from a file — see this module's docstring.
 
-    ⛔ **`W325` took the containers rail OUT of this population and put the width
-    IN.** The rail is now beside the column at a wide viewport, so it resolves
+    ⛔ **The containers rail is OUT of this population and the width is
+    IN.** The rail is beside the column at a wide viewport, so it resolves
     `--rail` by design; the width is set here rather than inherited from the
     launch window so that *"wide"* is a stated fact about this reading, and the
     check below re-admits the rail at the narrow width, where it folds back in.
@@ -325,10 +306,10 @@ def test_every_chrome_region_resolves_the_same_column_as_the_reading_surface(
 def test_at_a_narrow_viewport_every_chrome_region_including_the_rail_is_the_column(
     open_page: OpenPage, built_site: site.Site, case: str
 ) -> None:
-    """⛔ `W325`'s degradation clause, and the other half of the exclusion above.
+    """⛔ The rail's degradation clause, and the other half of the exclusion above.
 
     ⚠️ **A rail squeezed against prose is the failure this forbids**, and the
-    shape chosen instead is the card `W324` shipped — the region back in the one
+    shape chosen instead is the card — the region back in the one
     column, above the reading surface. ⭐ So the assertion is not a new one: it is
     the SAME equality, over the population with nothing taken out of it.
 
@@ -350,7 +331,7 @@ def test_at_a_narrow_viewport_every_chrome_region_including_the_rail_is_the_colu
 def test_the_column_check_notices_a_region_given_a_measure_of_its_own(
     open_page: OpenPage, damaged_sites: dict[str, site.Site]
 ) -> None:
-    """⛔ Negative control, and it is `SF-34`'s defect reproduced rather than described.
+    """⛔ Negative control: a region with a column of its own, reproduced rather than described.
 
     ⭐ The `column` tree gives one region `max-width` in `ch` and changes nothing
     else — no class, no colour, no markup. ⚠️ Every other check in this package
@@ -376,5 +357,5 @@ def test_the_column_check_notices_a_region_given_a_measure_of_its_own(
         ]
     assert all(caught.values()), (
         f"a tree in which one region carries its own column measured {caught} — "
-        "this harness cannot see the failure SF-34 is judged on"
+        "this harness cannot see the failure the chrome stylesheet is judged on"
     )

@@ -113,7 +113,7 @@ def test_parse_key_supplies_this_corpus_s_depth():
 
 
 @pytest.mark.parametrize("key", ["basics", "a/b/c", "a/b/c/d"])
-def test_a_key_of_the_wrong_arity_is_refused_by_sf01_and_not_by_this_module(key):
+def test_a_key_of_the_wrong_arity_is_refused_by_the_address_package_and_not_by_this_module(key):
     # ⚠️ The boundary, asserted rather than described: the refusal is an
     # `AddressError`. ⛔ A second arity check here with a different message is
     # how two tasks come to disagree about which is authoritative.
@@ -132,7 +132,7 @@ def test_the_same_key_is_right_at_one_depth_and_wrong_at_another():
 
 @pytest.mark.parametrize("api", [0, 7, 99, "1", 1.0, None, True])
 def test_an_unknown_corpus_api_is_refused(api):
-    # ⚠️ `7` is where `6` used to sit, which is where `5`, `4`, `3` and `2` sat. ⛔ Each
+    # ⚠️ `7` is one above the top of the known set. ⛔ Each
     # widening of the known set moves this case up by one rather than dropping
     # it: the refusal one degree above the top of the range is the one that
     # goes quiet first.
@@ -273,16 +273,15 @@ def test_variants_are_slugs_because_each_names_an_archive_partition():
 
 
 def test_a_variant_may_begin_with_a_digit_because_a_slug_may():
-    # ⚠️ Written the other way round first, and the fixture was wrong rather
-    # than the model: SF-01 accepts a leading digit in a slug and repairs it
+    # ⚠️ The address package accepts a leading digit in a slug and repairs it
     # only where the slug has to become a code identifier. A variant never
     # does, so `01-java` is a legal partition name.
     assert manifest(variants=["01-java"]).variants == ("01-java",)
 
 
-def test_a_slug_refusal_from_sf01_arrives_as_this_package_s_error():
+def test_a_slug_refusal_from_the_address_package_arrives_as_this_package_s_error():
     # ⛔ `errors.ManifestError` promises one type from reading a manifest, and
-    # a `variants` entry is checked by SF-01's rule. A caller reading
+    # a `variants` entry is checked by the address package's rule. A caller reading
     # `corpus.json` should not have to know that.
     with pytest.raises(ManifestError, match="variants"):
         manifest(variants=["Java"])
@@ -345,7 +344,7 @@ def test_absent_and_empty_permitted_edits_both_mean_nothing_is_declared():
 
 
 def test_a_declared_edit_is_what_ops05_asks_about():
-    # ⛔ `OPS-05` reads the declaration; it never hardcodes a corpus's
+    # ⛔ the non-destructive check reads the declaration; it never hardcodes a corpus's
     # exception. The Java repo's pom line is one entry in a list.
     built = manifest(
         permitted_edits=[
@@ -438,7 +437,7 @@ def test_the_depth1_fixture_declares_the_aggregate_it_withholds():
     assert "twice" in built.content.why_excluded("depth-one/ALL.md")
 
 
-#: ⛔ **The declared divergence, with its `why`** — the `personal-data-shapes.md`
+#: ⛔ **The declared divergence, with its `why`** — the shape table's
 #: precedent, not a fresh mechanism. Exactly one invalid corpus does *not* have
 #: a readable manifest, and it says so here rather than by being absent from a
 #: hand-written list.
@@ -449,14 +448,12 @@ WITHOUT_A_VALID_MANIFEST = {
     ),
 }
 
-#: FND-04's invalid fixtures whose fault is elsewhere, **derived** from the
+#: The invalid fixture corpora whose fault is elsewhere, **derived** from the
 #: declaration rather than listed.
 #:
-#: ⚠️ **This was a hand-written four and the tree had grown to seven.**
-#: `count-mismatch` and `user-authoritative` both carry a perfectly readable
-#: manifest and both landed in `INVALID_CORPORA` without reaching this list —
-#: silently, exactly as predicted, in the second of the two places the
-#: scope was not looking. ⛔ Deriving it is what makes an eighth impossible.
+#: ⚠️ **Derived, not hand-written**: a hand-written list misses a new invalid
+#: corpus that carries a perfectly readable manifest, silently. ⛔ Deriving it
+#: is what makes that impossible.
 FIXTURES_WITH_A_VALID_MANIFEST = sorted(set(INVALID_CORPORA) - set(WITHOUT_A_VALID_MANIFEST))
 
 

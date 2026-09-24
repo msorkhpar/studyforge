@@ -30,15 +30,15 @@ EPIC_ONE = """# E01 — Core contracts
 
 Prose the walk must not read as a task.
 
-### SF-01 — Logical address model
+### RS-01 — Logical address model
 **Milestone** M1 · **Depends on** — · **Team** solo
 **Owns** `address/`
 **Context** ~10k
 
 Definition.
 
-### SF-02 — Corpus manifest ⭐ SHOUTING THAT IS NOT PART OF THE NAME
-**Milestone** **M2** (step 2.1) · **Depends on** SF-01 · **Team** pair
+### RS-02 — Corpus manifest ⭐ SHOUTING THAT IS NOT PART OF THE NAME
+**Milestone** **M2** (step 2.1) · **Depends on** RS-01 · **Team** pair
 **Owns** `corpus/manifest/`
 **Context** ~10k
 
@@ -51,12 +51,12 @@ It has no declaration line, so the walk passes over it.
 
 EPIC_TWO = """# E05 — Serving and execution
 
-### SF-20 — Command runner
-**Milestone** **M5** · **Depends on** SF-02 · **Team** solo
+### RS-20 — Command runner
+**Milestone** **M5** · **Depends on** RS-02 · **Team** solo
 **Owns** `execute/`
 **Context** ~10k
 
-### SF-99 — ⛔ CANCELLED 2026-09-10
+### RS-99 — ⛔ CANCELLED 2026-09-10
 **Milestone** — · **Depends on** — · **Team** —
 """
 
@@ -80,7 +80,7 @@ SEQUENCE = """# A task index
 
 
 #: A pin document declaring one component that is not this one, and the epic
-#: that owns inside it. ⭐ `W92`'s distinction APPLIES over this pair.
+#: that owns inside it. ⭐ The side distinction APPLIES over this pair.
 PINS = """{
   "workspace_api": 1,
   "components": [
@@ -98,31 +98,31 @@ NO_PINS = """{
 
 EPIC_ELSEWHERE = """# E12 — A shared component
 
-### TC-00 — The runner image
+### TV-00 — The runner image
 **Milestone** M5 · **Depends on** — · **Team** solo
 **Owns** `elsewhere-component/docker/` — the image
 **Context** ~10k
 
-### TC-01 — A row that declares no path at all
-**Milestone** M5 · **Depends on** TC-00 · **Team** solo
+### TV-01 — A row that declares no path at all
+**Milestone** M5 · **Depends on** TV-00 · **Team** solo
 **Owns** the release record
 **Context** ~5k
 """
 
 
 #: ⛔ `M10` declared BEFORE `M9`: neither a lexical sort (`M1`, `M10`, `M2`,
-#: `M9`) nor a numeric one reproduces the declared order (`W247`).
+#: `M9`) nor a numeric one reproduces the declared order.
 WIDE_SEQUENCE = "### M1 — One\n### M2 — Two\n### M10 — Ten\n### M9 — Nine\n"
 
-#: The epic that goes with it: two-digit milestone ids, read as ids (`W247`).
+#: The epic that goes with it: two-digit milestone ids, read as ids.
 WIDE_EPIC = """# E12 — Wide ids
 
-### SF-40 — Lands at ten
+### RS-40 — Lands at ten
 **Milestone** **M10** · **Depends on** — · **Team** solo
 **Owns** `wide/ten.py`
 
-### SF-41 — Lands at nine
-**Milestone** M9 · **Depends on** SF-40 · **Team** solo
+### RS-41 — Lands at nine
+**Milestone** M9 · **Depends on** RS-40 · **Team** solo
 **Owns** `wide/nine.py`
 """
 
@@ -160,7 +160,7 @@ def sided_index() -> Index:
 
 
 def wide_index() -> Index:
-    """The `W247` index: milestone ids of two digits, in their declared order."""
+    """The two-digit index: milestone ids of two digits, in their declared order."""
     return Index.of(
         (read_epic("E12.md", WIDE_EPIC),),
         read_sequence("README.md", WIDE_SEQUENCE),
@@ -173,7 +173,7 @@ def terminal() -> Terminal:
     return Terminal(
         milestone="M2",
         evidence=("0 runnable units", "0 graders anywhere in the repository"),
-        unused=(Unused("SF-20", "no unit asks the reader to run anything"),),
+        unused=(Unused("RS-20", "no unit asks the reader to run anything"),),
     )
 
 
@@ -199,7 +199,7 @@ def backlog(**overrides: object) -> Backlog:
                 id="C1",
                 name="the material reads",
                 gated_by="M1",
-                tasks=(reading_task("C-01", depends_on=("SF-01",)),),
+                tasks=(reading_task("C-01", depends_on=("RS-01",)),),
             ),
             Milestone(
                 id="C2",
@@ -208,7 +208,7 @@ def backlog(**overrides: object) -> Backlog:
                 tasks=(
                     reading_task(
                         "C-02",
-                        depends_on=("C-01", "SF-02"),
+                        depends_on=("C-01", "RS-02"),
                         owns=(),
                         evidence="a re-run of the generator that changes no byte",
                         effort=4,

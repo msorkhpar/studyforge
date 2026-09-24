@@ -1,8 +1,8 @@
 """The reader of the sibling's runner declaration — `container.py`, with no Docker and no sibling.
 
 ⭐ **Why this exists.** `container.py` is test support, but it is also the
-framework's only reader of how the runner image is RUN, and until `W401` it got
-that by parsing the sibling's README prose. A reader of data needs its own
+framework's only reader of how the runner image is RUN, and it reads the
+sibling's declaration, never its README prose. A reader of data needs its own
 reading asserted both ways — a declaration it accepts, and each way one can be
 wrong — or the skip that hides a broken sibling looks exactly like the skip that
 means "no Docker here".
@@ -113,7 +113,7 @@ def test_a_contract_with_no_runner_block_says_the_shape_is_not_data(tmp_path):
     assert "not data" in container.declaration_reason(root)
 
 
-# --- ⛔ where the contract was READ from, which is `W404`'s whole subject ------------
+# --- ⛔ where the contract was READ from -------------------------------------------
 
 
 def a_local_reading(tmp_path) -> sibling.Reading:
@@ -123,7 +123,7 @@ def a_local_reading(tmp_path) -> sibling.Reading:
 
 
 def test_a_contract_read_off_a_working_tree_is_refused_when_the_sibling_was_ours_to_find(tmp_path):
-    # ⛔ MEASURED (`W404`): mid-merge, a STAGED `consuming.json` on no ref read
+    # ⛔ Mid-merge, a STAGED `consuming.json` on no ref read
     # as present and went green — on this host only. The contract below is
     # perfectly valid; what is refused is WHERE it came from.
     reading = a_local_reading(tmp_path)
@@ -251,7 +251,7 @@ def test_the_exec_template_is_filled_from_the_declaration():
 
 
 def test_this_module_reads_the_contract_and_parses_no_prose():
-    """`W401`: the README is documentation again, not an interface."""
+    """The README is documentation, not an interface."""
     source = MODULE.read_text(encoding="utf-8")
     body = source.split('"""', 2)[2]
     assert "README" not in body, "the run shape is read from the declaration, never from prose"
@@ -261,7 +261,7 @@ def test_this_module_reads_the_contract_and_parses_no_prose():
 def test_the_real_sibling_declares_a_shape_this_can_render():
     reason = container.declaration_reason()
     if reason is not None:
-        # ⭐ `W404`: a working-tree-only contract lands here too, and the skip
+        # ⭐ A working-tree-only contract lands here too, and the skip
         # says so rather than letting an unreproducible reading go green.
         pytest.skip(reason)
     assert container.contract_reading().committed

@@ -40,7 +40,7 @@ as that root sees them. ⛔ `emit` refuses any argument naming a path outside
 this exercise's own workspace, which is the property the workspace-relative
 values get for free.
 
-## ⭐ `build` NAMES THE BUILD ROLE'S FILES, AND IS OPTIONAL (`W436`)
+## ⭐ `build` NAMES THE BUILD ROLE'S FILES, AND IS OPTIONAL
 
 ⭐ **An exercise whose tests need nothing but the language declares no
 `build`**, and its document is exactly what it was before. One whose tests
@@ -51,14 +51,14 @@ may not sit in the run-output directory, which a run overwrites.
 
 ## ⛔ THE REPORT'S PATH IS IN THE WORKSPACE, NEVER IN THE BUNDLE
 
-⚠️ **`AX-03/1`, and it is answered structurally in two places.** A JUnit report
+⚠️ **No run report is committed, and that is answered in two places.** A JUnit report
 carries the machine's hostname, and a bundle that could name one as its own
 file is a bundle somebody commits one into. ⭐ Here the path is workspace-
 relative, so it cannot address the bundle at all; in `layout.unpermitted` the
 bundle's file set is closed, so one that arrived by hand is named by
 `studyforge validate`.
 
-⭐ **And it is inside `layout.RUN_OUTPUT_DIRNAME`** (`ISO-M10/4`): one
+⭐ **And it is inside `layout.RUN_OUTPUT_DIRNAME`**: one
 convention for every exercise, so the corpus's ignore rule is one line
 written once rather than one per exercise.
 """
@@ -119,7 +119,7 @@ BUNDLE_KEYS = (
 #: The keys a bundle may leave out. ⚠️ `trust` is exactly the record's own
 #: exception, for the reason `unit.trust` gives: a field an author fills in to
 #: say the obvious is a field an author fills in wrongly. ⭐ `build` is absent
-#: for an exercise whose tests need nothing but the language (`W436`).
+#: for an exercise whose tests need nothing but the language.
 OPTIONAL_KEYS = ("trust", "build")
 
 
@@ -164,7 +164,7 @@ def bundle_of(value: object, where: str) -> Bundle:
     """Read one bundle document, refusing every way it can be wrong.
 
     ⛔ **An unknown key is refused rather than ignored**, for the archive
-    document's own measured reason: tolerating an unknown key is tolerating a
+    document's own reason: tolerating an unknown key is tolerating a
     typo in a known one, and a typo'd `test_file` is a grader nothing runs
     while the corpus validates green.
     """
@@ -288,7 +288,7 @@ def _origin(document: dict, where: str) -> Origin:
     """Read the origin, refusing a bundle that declares none.
 
     ⛔ **Required here where the record leaves it optional**, and that is
-    `E14`'s first property rather than a preference: `G5` resolves an authored
+    spec §7's *nothing the source has is lost* rather than a preference: `G5` resolves an authored
     exercise's origin against the source ledger, so an authored exercise with
     no origin is material the ledger cannot account for.
     """
@@ -314,7 +314,7 @@ def _require_derivable(bundle: Bundle, where: str) -> None:
 
 
 def _require_report_in_workspace(bundle: Bundle, where: str) -> None:
-    """Refuse a report path that is not the reader's workspace's (`AX-03/1`).
+    """Refuse a report path that is not the reader's workspace's.
 
     ⛔ **A run's report is a run ARTIFACT and never a bundle input.** It carries
     the machine's hostname (R7), so a bundle able to name one as its own file is
@@ -327,7 +327,7 @@ def _require_report_in_workspace(bundle: Bundle, where: str) -> None:
             f"{where}: the report's path is inside '{RUN_OUTPUT_DIRNAME}/', the one "
             f"directory every run artifact of an exercise lands in, and this one is "
             f"not. One convention is what lets a corpus ignore every run's report "
-            f"with one line instead of one per exercise (ISO-M10/4)."
+            f"with one line instead of one per exercise."
         )
 
 

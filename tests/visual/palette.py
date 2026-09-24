@@ -19,9 +19,10 @@ with itself and not with the stylesheet.
 ⚠️ *"Contrast for every palette token in both themes"* is not one check, because
 the tokens do not all have the same job. `--fg` is text and has a ratio; `--rule`
 is a hairline and has no text on it; `--hl-bg` belongs to a narration highlight
-that **does not exist until M3**. ⛔ Left implicit, a check that walks "every
-token" quietly covers the third of them it can reach and reports success for all
-of them — which is the shape of defect this whole task exists to catch.
+that **is painted only while narration plays**. ⛔ Left implicit, a check that
+walks "every token" quietly covers the part of them it can reach and reports
+success for all of them — which is the shape of defect this module exists to
+catch.
 
 ⭐ **So every token names its own coverage, the ledger is asserted total, and a
 token that nothing can reach yet says so with the milestone that will reach it.**
@@ -65,10 +66,10 @@ _COLOUR = re.compile(r"^(#[0-9a-f]{3,8}|rgba?\(|hsla?\(|color\()", re.IGNORECASE
 #: numeric literal — measured through the browser's own resolution of both
 #: tokens, never from a number typed here.
 #:
-#: ⭐ **Four rows moved out of `UNPAINTED` in `SF-34`** — `--surface-2`,
-#: `--accent-soft`, `--practice` and `--practice-soft`, which `QA-03/2` reported
-#: as ownerless and `render/assets/chrome.css` now paints. ⚠️ **The move was
-#: forced, and that is the feature:** `test_the_unpainted_rows_are_derived_from_
+#: ⭐ **A row leaves `UNPAINTED` only when a stylesheet paints with it** — as
+#: `--surface-2`, `--accent-soft`, `--practice` and `--practice-soft` have, which
+#: `render/assets/chrome.css` paints. ⚠️ **The move is forced, and that is the
+#: feature:** `test_the_unpainted_rows_are_derived_from_
 #: the_stylesheets_not_believed` fails the moment a stylesheet paints with a row
 #: the ledger calls unpainted, so painting one cannot happen without somebody
 #: saying which ground its contrast is taken against. ⛔ The row is reclassified,
@@ -79,7 +80,7 @@ LEDGER: dict[str, tuple[str, str | None, str]] = {
     "--surface-2": (
         SURFACE,
         None,
-        "the chrome ground: the outline card, and a row's hover in either list (SF-34)",
+        "the chrome ground: the outline card, and a row's hover in either list",
     ),
     "--fg": (MEASURED, "--bg", "body text, headings, list items"),
     "--fg-soft": (MEASURED, "--bg", "quotes and secondary prose"),
@@ -90,17 +91,17 @@ LEDGER: dict[str, tuple[str, str | None, str]] = {
     "--accent-soft": (
         SURFACE,
         None,
-        "the ground of a numbering or level chip beside a unit's title (SF-34)",
+        "the ground of a numbering or level chip beside a unit's title",
     ),
     "--practice": (
         MEASURED,
         "--practice-soft",
-        "the practice panel's heading and the edge that marks it off (SF-34)",
+        "the practice panel's heading and the edge that marks it off",
     ),
     "--practice-soft": (
         SURFACE,
         None,
-        "the practice panel's own ground — the 'more to come' panel (SF-34)",
+        "the practice panel's own ground — the 'more to come' panel",
     ),
     "--code-bg": (SURFACE, None, "the ground every syntax colour is measured against"),
     "--code-fg": (MEASURED, "--code-bg", "code text no highlighter claimed"),
@@ -115,47 +116,44 @@ LEDGER: dict[str, tuple[str, str | None, str]] = {
         SURFACE,
         None,
         "the ground of the passage being spoken — `narration.css` paints it, and "
-        "`--hl-fg` is the text measured against it (SF-18)",
+        "`--hl-fg` is the text measured against it",
     ),
     "--hl-bar": (
         STRUCTURAL,
         None,
-        "`#fill`, the bar inside `#track`; it is a length made visible and no text "
-        "ever sits on it (SF-18)",
+        "`#fill`, the bar inside `#track`; it is a length made visible and no text ever sits on it",
     ),
-    "--hl-fg": (MEASURED, "--hl-bg", "the words of the passage being spoken (SF-18)"),
+    "--hl-fg": (MEASURED, "--hl-bg", "the words of the passage being spoken"),
     "--hl-code": (
         STRUCTURAL,
         None,
         "a translucent wash laid OVER a code block inside a lit passage; the ground "
         "underneath stays `--code-bg`, deliberately, because the seven syntax ratios "
-        "were measured against it and repainting it would invalidate all of them (SF-18)",
+        "were measured against it and repainting it would invalidate all of them",
     ),
     "--panel": (
         SURFACE,
         None,
         "the narration transport's own ground — `footer#player`, the one region "
-        "`chrome.css` deferred (SF-18, SF-12/3)",
+        "`chrome.css` deferred",
     ),
     "--focus": (STRUCTURAL, None, "the focus ring; `test_keyboard` asserts it is visible"),
     "--sign": (
         SURFACE,
         None,
-        "the Up next slip's ground — the ONE filled area of the sign colour on a page "
-        "(`W362`); `--sign-ink` is the text measured against it",
+        "the Up next slip's ground — the ONE filled area of the sign colour on a page; "
+        "`--sign-ink` is the text measured against it",
     ),
-    "--sign-ink": (MEASURED, "--sign", "the Up next slip's words and its tab (`W362`)"),
+    "--sign-ink": (MEASURED, "--sign", "the Up next slip's words and its tab"),
     "--margin": (
         STRUCTURAL,
         None,
-        "the pale margin rule down every page (`W362`); structure, never a signal, and "
-        "no text sits on it",
+        "the pale margin rule down every page; structure, never a signal, and no text sits on it",
     ),
     "--done": (
         STRUCTURAL,
         None,
-        "a read unit's solid tick box (`W362`); a mark, taken at 3:1 against `--bg` by "
-        "`test_identity`",
+        "a read unit's solid tick box; a mark, taken at 3:1 against `--bg` by `test_identity`",
     ),
 }
 

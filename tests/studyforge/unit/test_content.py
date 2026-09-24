@@ -56,7 +56,7 @@ def refusal(**overrides) -> str:
 def leak(**overrides) -> str:
     """The message of an R7 refusal, which is **not** a `ContentError`.
 
-    ⛔ Ruling 58: `PersonalDataLeak` travels through this package as itself, so
+    ⛔ `PersonalDataLeak` travels through this package as itself, so
     a test that wanted `refusal(...)` here would be asserting the defect. ⭐ The
     two helpers exist side by side precisely so the distinction is visible in
     every test that uses one of them.
@@ -71,8 +71,8 @@ def leak(**overrides) -> str:
 
 
 def test_the_overlay_is_versioned_and_the_key_is_content_api():
-    # ⭐ Minted because R9's enumeration was written from the
-    # generating side and this is the one document the framework only reads.
+    # ⭐ Versioned although this is the one document the framework only reads,
+    # because R9 applies to it too.
     # ⛔ R21: silence was not an option, so this is a decision.
     assert "content_api" in OVERLAY_KEYS
     assert overlay().content_api == CONTENT_API
@@ -86,8 +86,8 @@ def test_an_unknown_content_api_is_refused_and_never_migrated(declared):
 
 
 def test_the_version_is_checked_through_the_shared_guard_and_not_a_local_copy():
-    # ⚠️ SF-33 ships a tree test that fails any module rolling its own
-    # membership test; this asserts the message that guard produces.
+    # ⚠️ `studyforge.version` ships a tree test that fails any module rolling
+    # its own membership test; this asserts the message that guard produces.
     assert "this build speaks content_api [1]" in refusal(content_api=99)
 
 
@@ -96,7 +96,7 @@ def test_the_file_it_lives_in_has_one_spelling():
 
 
 def test_the_contract_names_its_address_and_says_v1_applies_no_overlay():
-    """⛔ `W198`: R21 asks where a contract LIVES, and this one now answers twice.
+    """⛔ R21 asks where a contract LIVES, and this one answers twice.
 
     ⭐ The `File` row is the contract's shape; the `Address` row is the one
     thing that resolves it against a corpus, and it points at `Layout` rather
@@ -121,11 +121,10 @@ def test_the_address_is_a_list_of_slugs():
 
 @pytest.mark.parametrize("address", [["Basics", "01-getting-started"], ["Getting Started"]])
 def test_an_address_spelled_as_titles_is_refused_rather_than_slugified(address):
-    # ⛔ §6: an address is recorded, never derived. The extraction source let
-    # an overlay spell its address as titles and slugified them to compare —
-    # measured on that catalog, 157 of 1,290 units are served at a slug their
-    # title does not produce, so that comparison accepts an overlay filed
-    # under the wrong unit one time in eight.
+    # ⛔ §6: an address is recorded, never derived. An overlay whose address is
+    # titles slugified to compare would be filed under the wrong unit about one
+    # time in eight, because a real catalogue serves that share of its units at
+    # a slug their title does not produce.
     with pytest.raises((ContentError, AddressError)):
         overlay(address=address)
 
@@ -235,7 +234,7 @@ def test_a_section_with_no_heading_is_refused(heading):
 
 
 def test_a_block_type_the_vocabulary_does_not_name_is_refused():
-    # ⛔ The type list is imported from SF-06, never restated: a block
+    # ⛔ The type list is imported from `archive.blocks`, never restated: a block
     # vocabulary with two definitions is two answers to what a page may hold.
     sections = [{**BASE["sections"][0], "blocks": [{"type": "callout", "text": "x"}]}]
     assert "the block vocabulary does not name" in refusal(sections=sections)
@@ -284,15 +283,14 @@ def test_a_missing_overlay_is_refused_with_its_name_and_no_absolute_path(tmp_pat
 
 
 def test_the_shared_fixture_parses_under_this_module():
-    # ⚠️ The fixture MOVED for this: it carried no `content_api`, because
-    # FND-04 followed R9's enumeration literally and shipped the overlay
-    # unversioned, flagging it. Fixtures serve the contract, never the reverse.
+    # ⚠️ The fixture carries a `content_api`, because R9 versions the overlay
+    # like every other contract. Fixtures serve the contract, never the reverse.
     built = load(FIXTURE, 2)
     assert built.keys == ("shared", "java", "practice-java")
     assert built.content_api == CONTENT_API
 
 
-# --- no refusal emits what it refuses (R7, rubric §1f) ---------------------
+# --- no refusal emits what it refuses (R7) ---------------------
 
 
 @pytest.mark.parametrize(
@@ -320,7 +318,7 @@ def test_the_shared_fixture_parses_under_this_module():
     ],
 )
 def test_no_refusal_reproduces_a_value_from_the_authored_file(overrides):
-    # ⛔ Rubric §1f, the emission clause: every R7 check before it asked whether
+    # ⛔ R7, the emission clause: every R7 check before it asked whether
     # an identifier reached a FILE, and none asked whether the code would write
     # one into a LOG. This module reads the one file a person edits by hand, so
     # any string in it can be an absolute path — and each of these is a branch
@@ -330,7 +328,7 @@ def test_no_refusal_reproduces_a_value_from_the_authored_file(overrides):
     # which is the right answer; what this asserts is that the message never
     # carries the value, whichever branch produced it.
     #
-    # ⛔ **Two types, named** (Ruling 58). The gate's refusals are
+    # ⛔ **Two types, named**. The gate's refusals are
     # `PersonalDataLeak` and travel through this package rather than joining
     # its family; `{"title": 4}` is the one case here that is genuinely a
     # `ContentError`. ⚠️ A bare `Exception` would have covered both and said
@@ -351,13 +349,13 @@ def test_a_refusal_still_says_enough_to_act_on():
 
 
 def test_the_personal_data_gate_is_invoked_over_the_whole_document():
-    # ⛔ SF-08's call-site clause: assert the gate IS invoked, not that the
+    # ⛔ The call-site clause (R7): assert the gate IS invoked, not that the
     # data happens to be clean. ⭐ The leak is placed in a section `heading` —
     # a field this module validates only for non-emptiness, so no per-field
     # check here can see it. Only a whole-document sweep can, and if the sweep
     # were removed this test would go green with the leak still on the page.
     #
-    # ⛔ **Ruling 58: the refusal is a `PersonalDataLeak`, not a
+    # ⛔ **The refusal is a `PersonalDataLeak`, not a
     # `ContentError`.** `leak()` asserts that, and it is the assertion that
     # matters: a caller walking a corpus catches `ContentError` per unit and
     # continues, so an R7 refusal in that family finishes the walk green.

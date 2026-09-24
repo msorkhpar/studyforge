@@ -70,7 +70,7 @@ def test_a_replaced_path_is_named_with_the_reason_it_was_allowed():
 
 
 def test_a_replaced_path_is_not_also_reported_as_written():
-    """⛔ Ruling 99: one line per path, or the diff against `plan` counts twice."""
+    """⛔ One line per path, or the diff against `plan` counts twice."""
     printed = lines(written(pages=["index.html", "a.unit.html"], replaced=["index.html"]), "i", "o")
 
     assert "wrote index.html" not in printed

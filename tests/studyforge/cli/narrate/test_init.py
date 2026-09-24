@@ -23,12 +23,12 @@ def test_the_verb_is_registered_in_the_one_table_against_this_main():
 
 
 def test_the_verb_precedes_build_in_the_table():
-    # ⛔ `E09` § W202 answer 3: clips are a build's input, so narrate comes first.
+    # ⛔ Clips are a build's input, so narrate comes first.
     names = list(VERBS)
     assert names.index("narrate") < names.index("build")
 
 
 def test_the_package_lives_in_cli_and_not_inside_narrate():
-    # ⛔ `narrate/` is `SF-16`'s and `SF-17`'s; this row is their caller.
+    # ⛔ `narrate/` speaks and synthesises; this package is its caller.
     assert (repository_root() / "src/studyforge/cli/narrate/__init__.py").is_file()
     assert not (repository_root() / "src/studyforge/narrate/cli").exists()

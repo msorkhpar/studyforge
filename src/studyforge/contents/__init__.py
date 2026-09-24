@@ -117,7 +117,7 @@ from studyforge.contents.tree import build
 
 #: ⛔ The package's whole public surface. A consumer that has to import
 #: `studyforge.contents.order` directly is a consumer this contract failed —
-#: `docs/conventions/module-structure.md` calls `__init__.py` the contract.
+#: a package's `__init__.py` is its contract (R17).
 __all__ = [
     "ENTRY_KEYS",
     "GROUP_CHILD_KEY",

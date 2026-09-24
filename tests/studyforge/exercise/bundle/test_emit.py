@@ -1,4 +1,4 @@
-"""The emission an adapter calls, and the workspace it creates (`AX-04`)."""
+"""The emission an adapter calls, and the workspace it creates."""
 
 from __future__ import annotations
 
@@ -196,7 +196,7 @@ def test_the_same_emission_serves_a_second_source_with_no_framework_change(tmp_p
     assert write(tmp_path, emission, "emission") == emission.paths
 
 
-# ⭐ `W436`: the build role reaches the reader's workspace, byte for byte.
+# ⭐ The build role reaches the reader's workspace, byte for byte.
 
 
 def test_a_declared_build_file_is_laid_into_the_workspace_beside_the_readers_files(tmp_path):

@@ -1,7 +1,7 @@
 """Mirror of `src/studyforge/address/__init__.py` (R12).
 
 What lives here is the package as a whole: its contract, its public surface,
-and the one property SF-01's acceptance states negatively — that it knows
+and the one property the package's acceptance states negatively — that it knows
 nothing about files.
 """
 
@@ -71,7 +71,7 @@ def test_states_its_contract():
 
 
 def test_no_filesystem_import_anywhere_in_the_package():
-    # SF-01's acceptance, stated negatively because that is how R1 and R4 are
+    # The package's acceptance, stated negatively because that is how R1 and R4 are
     # stated: an address is an identity, and where it lives is somebody else's
     # answer. A single `from pathlib import Path` here would make it this
     # package's answer instead, and nothing downstream would notice.

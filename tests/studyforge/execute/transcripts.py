@@ -9,7 +9,7 @@ runner does.
 - `MAVEN_PASS`: ⭐ **the PINNED toolchain.** Maven 3.9.16 with the plugins
   its default bindings pick (resources 3.4.0, compiler 3.15.0, surefire 3.5.4)
   on the pinned Java (Temurin 25.0.4). It is `code-server-toolchain`'s own
-  recording build (`build.py --record-maven`, 2026-09-18), which runs
+  recording build (`build.py --record-maven`), which runs
   `mvn -B -C -ntp … test` on the component's Maven smoke project,
   `docker/minimal/smoke/maven`, unmodified. That build writes its log to the
   component's untracked work directory. Edits: the build log's step and
@@ -24,13 +24,11 @@ runner does.
   then throws an exception with a cause. No edits.
 - `JAVAC_ERROR`: javac 26.0.1 on one source file with an undefined name.
   No edits.
-- `GRADLE_FAILURE`: ported from the extraction source's filter test, where
-  it is a reader's own paste. Edit: the report path, as `scrub` rewrites it.
+- `GRADLE_FAILURE`: a reader's own paste. Edit: the report path, as `scrub` rewrites it.
 
-⚠️ **Not captured, and why.** The runner image cannot be built
-here (the dispatch allows no pulls), and this host's Maven caches lack jars
-the pinned plugins need (surefire's JUnit provider among them). So **no real
-`mvn test` run with a compile error or a failing test exists in this
+⚠️ **Not captured, and why.** A real `mvn test` run with a compile error or
+a failing test needs the runner image or a Maven cache holding the pinned
+plugins' jars (surefire's JUnit provider among them), so **none exists in this
 module.** An offline Maven on an empty repository fails before any plugin
 runs. That failure is real, and it is what `MAVEN_OFFLINE` and
 `MAVEN_OFFLINE_TRACE` are. ⭐ `test_quiet_image.py` takes the missing

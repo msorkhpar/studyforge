@@ -1,7 +1,6 @@
-"""The rejected identities, READ OUT of the UI convention's own table (`W392`).
+"""The rejected identities, READ OUT of the spec's own table (§8.4).
 
-**What it does.** Reads the two tables the spec's §8.4 writes (`REL-08` moved them there from
-`docs/conventions/ui-design.md`) —
+**What it does.** Reads the two tables the spec's §8.4 writes —
 the roles and the tokens that carry them, and the rejected identities as
 conjunctions of bands over hue, chroma and light — and returns them as data.
 ⛔ **The document is the authority and this module is only its reader:** a sixth
@@ -17,8 +16,8 @@ and `table` for the grammar underneath them.
 
 ## ⛔ A ROW IS A CONJUNCTION
 
-⭐ **Cool slate is what the user ACCEPTED; slate WITH teal-green AND amber is
-what they rejected.** ⛔ So a row is every part at once, and a reader that
+⭐ **Cool slate is the site's identity; slate WITH teal-green AND amber is a
+rejected one.** ⛔ So a row is every part at once, and a reader that
 returned its parts separately would be describing a different rule from the one
 the document states.
 
@@ -27,8 +26,7 @@ the document states.
 ⛔ A malformed band is not silently widened and a half-read row is not kept:
 the row leaves the population. ⭐ **And that is safe only because the mirror
 asserts THIS repository's rows all parse** — a table somebody breaks turns the
-suite red rather than turning the check into a green that reads nothing
-(Ruling 48).
+suite red rather than turning the check into a green that reads nothing.
 """
 
 from __future__ import annotations
@@ -41,10 +39,9 @@ from tests.floor import config
 from tests.floor.palettes.colours import Colour
 
 #: The document that carries the table. ⛔ One named document, not a walk: the
-#: document is the authority, and a second copy of it would be the defect
-#: `W392` exists over. ⭐ `REL-08` moved the tables from the UI convention into
-#: the spec's §8.4, the product's home for what a rendered page is held to; the
-#: name is kept so every reader of it follows without an edit.
+#: document is the authority, and a second copy of it could disagree with it.
+#: ⭐ The tables live in the spec's §8.4, the product's home for what a rendered
+#: page is held to.
 UI_CONVENTION = "docs/specs/2026-09-08-studyforge-v1-design.md"
 
 #: The one role that is NOT carried by a token, named here because a document
@@ -52,8 +49,7 @@ UI_CONVENTION = "docs/specs/2026-09-08-studyforge-v1-design.md"
 GRADIENT_ROLE = "gradient stop"
 
 #: The two tables, located by the header cells they carry rather than by a
-#: heading or a line number — the way `test_rubric_exit_code_forms.py` finds the
-#: block it reads.
+#: heading or a line number, so a table survives a heading's rewording.
 ROLE_HEADER = ("Role", "Read from")
 SIGNATURE_HEADER = ("Rejected identity", "Every part must be present", "Why")
 

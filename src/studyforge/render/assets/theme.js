@@ -1,11 +1,9 @@
 /* The reader's choice of theme: light, dark, or whatever their system says.
 
-   ⛔ **The user asked for BOTH THEMES to be reachable from the page**
-   (2026-09-19: *"have the both dark and light themes in
-   studyforge as well"*). `palette.css` carried both, behind the guards
-   `[data-theme="light"]` and `[data-theme="dark"]`, but nothing wrote
-   either, so a reader whose system said light could not read the
-   dark page at all.
+   ⛔ **BOTH THEMES ARE REACHABLE FROM THE PAGE.** `palette.css` carries both,
+   behind the guards `[data-theme="light"]` and `[data-theme="dark"]`, and this
+   control writes one of them, so a reader whose system says light can still
+   read the dark page.
 
    ⛔ **THREE STATES, AND THE THIRD IS THE DEFAULT.** *System* is not the same
    answer as *light*: a reader whose machine turns dark at sunset wants the page
@@ -36,19 +34,16 @@
    painted.
 
    ⛔ **AND THAT BOOT READS `sessionStorage`, NEVER `localStorage`, WHICH IS
-   A MEASURED DEFECT RATHER THAN A PREFERENCE.** The boot
-   as it first shipped read the display record out of `localStorage` in the
-   `<head>` — the document's FIRST touch of that area, far earlier than any
-   build before it. ⚠️ Measured on this host at `-n 16`: with that boot, a mark
-   written on one page and read on the next was MISSING in 14 of 35 runs; with
-   the same branch and the boot not touching `localStorage`, 0 of 10; on the
-   release tip, which carries no boot at all, 0 of 10. ⛔ A document that binds
+   A CORRECTNESS RULE RATHER THAN A PREFERENCE.** A boot in the `<head>` is the
+   document's FIRST touch of whatever storage it reads, and a boot reading
+   `localStorage` there loses marks under load: a mark written on one page is
+   missing on the next in a large share of runs. ⛔ A document that binds
    the area before the previous document's write has been committed gets a
    snapshot WITHOUT it, and that snapshot is what it keeps: the value was still
    missing a second later. ⛔ **The harm is not cosmetic** — the reader then
    presses *Mark as read* on that page, `writeMarks` composes the new record
-   from the stale set, and the earlier mark is destroyed. A record reading
-   `{"version":1,"read":[]}` after two marks is what the measurement caught.
+   from the stale set, and the earlier mark is destroyed: two marks can end as
+   `{"version":1,"read":[]}`.
 
    ⭐ **So the boot reads a CACHE in `sessionStorage`, which is a different
    storage area and binds nothing in `localStorage`.** ⛔ The cache is the

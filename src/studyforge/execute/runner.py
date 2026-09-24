@@ -26,14 +26,14 @@ beside it.
 | output | `/work` made relative, then scrubbed | the root made relative, then scrubbed |
 | stop, timeout | the run's tree by its token, then the client | the command's process group |
 
-⛔ **The runner never starts, stops or builds a container** (round 112's
-ruling on `TC-00`'s answer 6): the reader starts it, and a stop here ends the
+⛔ **The runner never starts, stops or builds a container** (spec §8.3's
+seam): the reader starts it, and a stop here ends the
 RUN's processes inside it, never the container. ⛔ **No socket is mounted
 anywhere** (spec §8.3): the host's `docker` CLI reaches in from outside.
 
 ## ⭐ `RUN_ENVIRONMENT` — decided here, the same in both modes
 
-- `PYTHONDONTWRITEBYTECODE=1` (`W352/3`): a grader imports the file under test,
+- `PYTHONDONTWRITEBYTECODE=1`: a grader imports the file under test,
   and Python would write `__pycache__/` beside it — into the reader's tree,
   which a run must leave as it found it.
 - `PYTHONUNBUFFERED=1`: a Python program writing to a pipe buffers its output
@@ -41,15 +41,15 @@ anywhere** (spec §8.3): the host's `docker` CLI reaches in from outside.
   and stdout and stderr would interleave differently from a terminal.
 
 ⚠️ **Both reach a Python program only.** A JVM or a Node build that writes a
-cache into the tree is not stopped by them, and that is `W353`'s class and a
+cache into the tree is not stopped by them, and that class of write is a
 corpus's ignore rules, not this module's.
 
 ## Why stderr is joined INSIDE the container
 
-⚠️ **Measured, not assumed:** `docker exec` without a terminal carries stdout
-and stderr as two streams, and the client writes each to its own descriptor —
-so a program's `out, err, out` arrived here as `out, out, err`, and the host's
-single pipe did not. ⭐ So the join happens where the program runs: `sh -c
+⚠️ `docker exec` without a terminal carries stdout and stderr as two streams,
+and the client writes each to its own descriptor — so a program's
+`out, err, out` arrives here as `out, out, err`, where the host's single pipe
+keeps the order. ⭐ So the join happens where the program runs: `sh -c
 MERGE_STDERR sh <argv…>` points the program's stderr at its stdout and then
 `exec`s it — the argv as positional arguments, verbatim, and the same process
 (the run token and the kill reach it unchanged). ⛔ A terminal (`-t`) would
@@ -59,8 +59,8 @@ program's output, not the same one.
 ## Why a run token inside the container
 
 ⚠️ **`docker exec` forwards no signal**: killing the local client leaves the
-command running inside the container (the extraction source recorded exactly
-this and let a bare `pytest` finish on its own). ⭐ So each run carries
+command running inside the container, where a bare `pytest` finishes on its
+own. ⭐ So each run carries
 `STUDYFORGE_RUN=<a fresh random token>` in its environment, every child inherits
 it, and a stop or timeout runs `KILL_BY_TOKEN` inside the container — a fixed
 `sh` program of this module's, taking the token and a signal name as arguments,

@@ -21,18 +21,19 @@ as `studyforge build` makes them name `--out`. `--format` defaults to `mp3`,
 the one format the service's contract offers; `--service` defaults to the
 loopback address that component publishes.
 
-## ⛔ `--prune` is its own request, and EXCLUSIVE with `--voice` (`W218`)
+## ⛔ `--prune` is its own request, and EXCLUSIVE with `--voice`
 
 ⭐ One of the two is required and the parser refuses both, so a run that
-synthesises cannot prune and a prune cannot synthesise (`E09` § W193 answers
-2 and 3). ⛔ **The prune branch builds no client**, so it can make no request.
+synthesises cannot prune and a prune cannot synthesise (R3: narration deletes
+nothing except through an explicit prune). ⛔ **The prune branch builds no
+client**, so it can make no request.
 
-⛔ **Order is `narrate` then `build`** (`E09` § W202 answer 3). A build never
+⛔ **Order is `narrate` then `build`** (a build only copies clips). A build never
 synthesises; this is the only verb that probes the service or writes clips.
 
 ⛔ **No traceback for anything a person can cause by typing**: a missing root,
 an unreadable corpus or record, and an absent service each print a sentence
-and exit `2`. ⚠️ `PersonalDataLeak` is deliberately NOT caught (Ruling 58).
+and exit `2`. ⚠️ `PersonalDataLeak` is deliberately NOT caught.
 """
 
 from __future__ import annotations
@@ -109,11 +110,11 @@ def main(argv: list[str] | None = None, out=None) -> int:
         return UNUSABLE
     try:
         if arguments.prune:
-            # ⛔ No client on this branch: a prune makes no request (`W218`).
+            # ⛔ No client on this branch: a prune makes no request.
             pruned = prune_corpus(root)
             report, code = prune_lines(pruned, arguments.root), prune_exit_code(pruned)
         else:
-            # ⛔ Imported HERE and never at module level (`W223`, `W224/4`): the
+            # ⛔ Imported HERE and never at module level: the
             # dispatcher imports every verb, so a module-level import put the HTTP
             # client in every `studyforge.cli.*` import, `cli/plan` included.
             from studyforge.narrate.client import NarrateClient

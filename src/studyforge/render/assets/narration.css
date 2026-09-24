@@ -19,8 +19,8 @@
 
    ⚠️ `data-speaking` is this part's and `narration.js`'s, and it is deliberately
    NOT in `pageassets.SURFACE_HOOKS`. `data-marked` is published because
-   `chrome.css` paints a state `read-mark.js` writes — two offices, two ends of
-   one spelling. Here both ends are one task's, and publishing a hook nobody else
+   `chrome.css` paints a state `read-mark.js` writes — two parts, two ends of
+   one spelling. Here both ends are one feature's, and publishing a hook nobody else
    may reach would oblige a contract that has no second side.
 
    ⚠️ Loaded after `code-highlight.css` and before the vendored `plyr.css`: the
@@ -199,8 +199,8 @@ footer#player #play:hover:enabled { background: var(--fg-soft); }
 /* ⛔ THE ONE NOTICE THIS PART PAINTS, AND IT IS NOT ON EVERY PAGE. A corpus that
    was never narrated is COMPLETE rather than short (spec §7 C5, §11.0), so it
    carries nothing at all; this region exists only when the narration record
-   PROMISED a clip that is not on disk — which used to render identically to
-   never having been narrated.
+   PROMISED a clip that is not on disk, so that case never renders identically
+   to never having been narrated.
 
    ⚠️ It is `chrome.css`'s eighth region and is DEFERRED there for the reason
    `footer#player` is: both are the transport's, both are painted here, and that
