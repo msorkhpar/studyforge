@@ -19,21 +19,23 @@ flag the command does not offer, or leaves a shipped skill unplaced.
 ⭐ **Author line declared:** every commit on this branch is `dev2 <dev2@example.invalid>`, passed
 with `git -c`. ⛔ Nothing was written to any git config, no remote was added, nothing was pushed or
 merged. The user's `:8770` serve, containers and the ISO checkouts were not touched; the one image
-this task created is the pinned dev image `docker/dev/check` rebuilt because `README.md` is one of
+this task created is the pinned dev image `docker/dev/check` rebuilt because [`README.md`](../../../README.md) is one of
 its hashed inputs.
 
-## ⛔ The user ruling this task carries: `ONBOARDING.md` leaves the main line
+## ⛔ The user ruling this task carries: [`ONBOARDING.md`](../../../ONBOARDING.md) leaves the main line
 
-⭐ **User ruling, 2026-09-23 (`W438/2`)** overrides the epic's *"The tracked `ONBOARDING.md` is NOT
+⭐ **User ruling, 2026-09-23 (`W438/2`)** overrides the epic's *"The tracked [`ONBOARDING.md`](../../../ONBOARDING.md) is NOT
 this task's"*: [`ONBOARDING.md`](../../../ONBOARDING.md) moves to the archive branch. ⛔ **`REL-10`
 moves it, not this task**, and this task did not touch it. What this task did instead: the README
-neither links nor relies on it, and `ONBOARDING.md` is in `tests/test_readme.py`'s
+neither links nor relies on it, and [`ONBOARDING.md`](../../../ONBOARDING.md) is in `tests/test_readme.py`'s
 `LEAVES_THE_MAIN_LINE`, so a link to it fails the suite.
 
 ## Gates
 
-⛔ Each gate run bare from `studyforge-wt/dev2` at `d8632412` (the README and the test; this handoff
-adds no code), output to a scratch file and `$?` read on the next line — never through a pipe.
+⛔ Each gate run bare from `studyforge-wt/dev2` at the tip carrying this handoff, output to a scratch
+file and `$?` read on the next line — never through a pipe. ⚠️ A first floor run over this handoff
+was RED on bare citations of tracked documents (Ruling 285(b)); written as pointers, then every gate
+re-run.
 
 | gate | environment | reading |
 |---|---|---|
@@ -50,8 +52,8 @@ adds no code), output to a scratch file and `$?` read on the next line — never
 Its four readings at `d8632412`, all GREEN:
 
 - **every link resolves, anchors included, and none leaves the repository or reaches what leaves
-  the main line** — `docs/tasks/`, `docs/conventions/`, `tools/`, `docs/capability-index.md`,
-  `ONBOARDING.md`;
+  the main line** — `docs/tasks/`, `docs/conventions/`, `tools/`, [`docs/capability-index.md`](../../capability-index.md),
+  [`ONBOARDING.md`](../../../ONBOARDING.md);
 - **every fenced `studyforge` line names a verb `python3 -m studyforge.cli --help` lists**, and
   every flag on it appears in that verb's own `--help` (both asked of a real interpreter);
   every fenced `python3 -m studyforge…` form names a module that runs (a package only with a
@@ -65,10 +67,10 @@ Its four readings at `d8632412`, all GREEN:
 missing row, in memory), so the instrument is shown failing inside the suite, not only once here.
 
 ⭐ **The plant, on the real file**, restored from a working-tree copy with `md5sum -c` (`W143`).
-Three violations planted in `README.md`: a link to `docs/tasks/BOARD.md`, a fenced
+Three violations planted in [`README.md`](../../../README.md): a link to [`docs/tasks/BOARD.md`](../BOARD.md), a fenced
 `studyforge publish site`, and the `personalarchive` row deleted. `git diff README.md` was printed
 BEFORE the run was read. `python3 -m pytest tests/test_readme.py -q`: RED, exit 1 — the three
-acceptance tests failed, each naming its plant (*"links 'docs/tasks/BOARD.md', which leaves the
+acceptance tests failed, each naming its plant (the board link, *"which leaves the
 main line"*; *"`studyforge --help` offers no verb 'publish'"*; *"the shipped skill
 `personalarchive` is placed at no step"*), and the two in-memory negatives that build on the live
 text moved with them. Restored: `README.md: OK`, `MD5_EXIT=0`, porcelain clean, the module GREEN,
@@ -136,7 +138,7 @@ defect this task can close):
 - ⭐ **`delivery` is step 0, optional**: it plans a conversion rather than producing one, and a
   person converting their own notes need not run it. The step cell must be non-empty, so it is
   placed rather than footnoted.
-- ⭐ **Skill links go to the tree's `SKILL.md`, and the README names the locator command beside
+- ⭐ **Skill links go to each skill's document in the tree, and the README names the locator command beside
   them** (`REL-04/2`'s suggestion), so the reader with only the installed library is not
   stranded.
 - ⭐ **The components are named, never linked**: a link out of this repository cannot resolve, and
@@ -147,7 +149,7 @@ defect this task can close):
 
 ## Surprises
 
-- ⚠️ **`README.md` is a hashed input of the dev image** (`docker/dev/check`'s `INPUTS`, and
+- ⚠️ **[`README.md`](../../../README.md) is a hashed input of the dev image** (`docker/dev/check`'s `INPUTS`, and
   `pyproject.toml`'s `readme`), so this edit moves the dev image's tag; the first gate run rebuilt
   it. Expected, and harmless, but every README edit costs a rebuild.
 - ⚠️ **The previous README said *"Status: planned, not built … No framework code exists yet"*** and
@@ -160,8 +162,8 @@ defect this task can close):
 |---|---|---|---|
 | `REL-07/1` | `[local]` | [`execution`'s `SKILL.md`](../../../src/studyforge/skills/execution/SKILL.md) *Before you start*, [`buildserve`'s `SKILL.md`](../../../src/studyforge/skills/buildserve/SKILL.md) narration table | ⚠️ **Both still describe the components as siblings pinned by `workspace.json`**, a development arrangement (R18) a stranger with the installed library does not have, and neither says how a stranger obtains a component. `REL-13` (each component's README as a stranger's reading list) and the skills' owner; the README says only "a separate repository … from its own checkout" |
 | `REL-07/2` | `[local]` | [`docs/authoring/examples.md`](../../authoring/examples.md), example A's plan | ⚠️ **The quoted plan summary is stale**: it says `20 path(s) to create, 0 file(s) to edit, 0 ignore line(s)`; the command prints `6 path(s) to create … 3 ignore line(s)` at `d8632412`. `test_authoring_reference` does not read that sentence. The authoring reference's owner |
-| `REL-07/3` | `[local]` | `tools/tests/quality/test_pointers.py`, `test_a_pointer_to_a_directory_resolves` | ⚠️ Its comment says the tree carries one directory pointer, `README.md` → `docs/conventions/`. That link is gone; the test builds its own fixture and still passes. Tooling, leaves with `REL-10` |
-| `REL-07/4` | `[local]` | [`CLAUDE.md`](../../../CLAUDE.md) | ⚠️ Still names `docs/capability-index.md` and `docs/conventions/` as instruments (`REL-06/1`, the README half now closed). `REL-11` owns it |
+| `REL-07/3` | `[local]` | `tools/tests/quality/test_pointers.py`, `test_a_pointer_to_a_directory_resolves` | ⚠️ Its comment says the tree carries one directory pointer, [`README.md`](../../../README.md) → `docs/conventions/`. That link is gone; the test builds its own fixture and still passes. Tooling, leaves with `REL-10` |
+| `REL-07/4` | `[local]` | [`CLAUDE.md`](../../../CLAUDE.md) | ⚠️ Still names [`docs/capability-index.md`](../../capability-index.md) and `docs/conventions/` as instruments (`REL-06/1`, the README half now closed). `REL-11` owns it |
 
 ## For dependents
 
@@ -169,7 +171,7 @@ defect this task can close):
   branch under the user's `W438/2` ruling; nothing on the main line links it after this merge.
   `tests/test_readme.py` imports nothing from `tools/` and stays. If `docker/dev/` leaves, delete
   the README's last *Images* bullet in the same commit.
-- ⭐ **`REL-11` (the light board):** `docs/capability-index.md` is already on the README's forbidden
+- ⭐ **`REL-11` (the light board):** [`docs/capability-index.md`](../../capability-index.md) is already on the README's forbidden
   list, so removing it breaks nothing here.
 - ⭐ **`REL-14` (the close):** the README's install and first-run block is the walk to repeat from a
   clean clone of the main line; every link from the README reaches only the README,
