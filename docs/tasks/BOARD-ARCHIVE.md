@@ -31946,3 +31946,13 @@ container each time.
 ### ⚠️ In flight
 
 ⭐ **`REL-07`**, **`REL-08`**, **`REL-09`**; ⭐ **`ISO-29`** on the corpus.
+
+## PO round 176
+
+⭐ **`ISO-29` DONE and DEPLOYED — the corpus pinned at `0799d0a`** (framework `39f12d4e` in the corpus, source-identical to `de1ea776`): every `ISO-28` finding fixed across 9 pages, 8 proof runs, no heading moved, 8 exercises re-gated with no shortfall, the ledger kept (220 entries, none dropped). ⭐ **Read on the LIVE `:8770`:** jpos-server unit 5 carries the routing it claims, its editor opens and its starter Submits RED. ⚠️ **Disclosed:** src/7's field 56 layout is the commonly documented 1993 one and jPOS's packager confirms its length and type; ⛔ **no text of the standard was quoted for its subfield order.**
+
+⭐ **`AX-11` DISPATCHED — `M10`'s acceptance, step 10.5**, on `wt/dev4`. ⚠️ **Read under the rulings that postdate its text:** the quiz is graded by the local study server with no container and no network (`W451`, the user's ruling), and *"the reading floor is byte-unchanged"* is read as **authoring changed no reading page built from the same source** — the user's "fix them" rounds changed the source on purpose.
+
+### ⚠️ In flight
+
+⭐ **`AX-11`**; ⭐ **`REL-07`**, **`REL-08`**, **`REL-09`**.

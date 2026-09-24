@@ -82,6 +82,7 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 | `REL-07` | Developer 2 | `docs/REL-07-the-readme-is-the-whole-reading-list` @ `wt/dev2` | 0 @ `39f12d4e` | `in-progress` — `M11` step 11.4 |
 | `REL-08` | Developer 3 | `docs/REL-08-rubric-and-conventions-sorted` @ `wt/dev3` | 0 @ `39f12d4e` | `in-progress` — `M11` step 11.4 |
 | `REL-09` | Developer 1 | `docs/REL-09-process-ids-leave-the-product-prose` @ `wt/dev1` | 0 @ `39f12d4e` | `in-progress` — `M11` step 11.4 |
+| `AX-11` | Developer 4 | `docs/AX-11-m10-acceptance-read` @ `wt/dev4` | 0 @ `f3bfc486` | `in-progress` — `M10` step 10.5 |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
