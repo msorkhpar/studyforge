@@ -41,7 +41,9 @@ runner is the caller's.
 | `drafts` | the page, the three source cases, the brief, the two draft shapes, and no retreat |
 | `gating` | one draft staged, run through the caller's runner, and answered by every gate |
 | `loop` | one page: planned, drafted, gated, re-drafted inside the budget, reported |
-| `corpus` | the whole pass: the ledger once, every page, the reasons, the additive commit |
+| `merge` | one pass's ledger merged into the committed one, and the delta it reports |
+| `writes` | the additive commit: every file checked against the tree before any is written |
+| `corpus` | the whole pass: the ledger once, every page, the reasons, the merge and the commit |
 
 ⚠️ **`AX-07`'s `Owns` named `ledger.py` as one module and R11 refused it at 502
 lines**, and `AX-08`'s loop is four modules for the same reason: the remedy
@@ -101,7 +103,6 @@ from studyforge.skills.exercises.corpus import (
     Authored,
     Covered,
     author_corpus,
-    commit,
 )
 from studyforge.skills.exercises.drafts import (
     ATTEMPTS,
@@ -159,6 +160,7 @@ from studyforge.skills.exercises.loop import (
     plan_page,
     require_after_carried,
 )
+from studyforge.skills.exercises.merge import Delta, ledger_rows, merged, row_key, source_key
 from studyforge.skills.exercises.plan import (
     ADVANCED,
     CORE,
@@ -178,6 +180,7 @@ from studyforge.skills.exercises.plan import (
     shortfall_document,
 )
 from studyforge.skills.exercises.scan import Fence, Scan, scan
+from studyforge.skills.exercises.writes import commit
 
 #: ⛔ The package's whole public surface. A consumer that has to import
 #: `studyforge.skills.exercises.ledger` directly is a consumer this contract
@@ -228,6 +231,7 @@ __all__ = [
     "Brief",
     "CodeDraft",
     "Covered",
+    "Delta",
     "Entry",
     "Fence",
     "Gated",
@@ -259,6 +263,8 @@ __all__ = [
     "json_bytes",
     "key_of",
     "ledger_document",
+    "ledger_rows",
+    "merged",
     "page_entries",
     "plan_document",
     "plan_for",
@@ -269,10 +275,12 @@ __all__ = [
     "require_no_retreat",
     "require_page",
     "require_read",
+    "row_key",
     "scan",
     "shortfall",
     "shortfall_document",
     "source_case",
+    "source_key",
     "take",
     "words_of",
 ]

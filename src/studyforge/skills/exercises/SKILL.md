@@ -183,9 +183,11 @@ authored.bare  # every page left with nothing shipped (R6)
 3. `shortfall` checks that what shipped plus what was refused equals the plan.
 4. Every ledger entry nothing shipped accounts for gets a written reason, and
    `account` refuses an entry with neither.
-5. Every file is checked against the tree **before any is written**, then the
-   bundles, the reader's workspace files, each unit's coverage report and the
-   ledger are created.
+5. The accounted ledger is merged into the committed one: rows for files this
+   pass did not read are kept (`W456`).
+6. Every file is checked against the tree **before any is written**, then the
+   bundles, the reader's workspace files and each unit's coverage report are
+   created, and the merged ledger is written.
 
 ## ⛔ When a gate refuses
 
@@ -232,8 +234,19 @@ entry keeps the reason it was given while its bytes are unchanged.
 
 ⚠️ **A page whose source changed is refused, naming its unit's directory.**
 Its bundles were proven against material that has moved, and rewriting them
-is exactly what R3 forbids. Remove that directory and `exercises/ledger.json`
-from the corpus, and run the pass again.
+is exactly what R3 forbids. Remove that directory from the corpus, and run
+the pass again. ⛔ **Never remove `exercises/ledger.json`** to get past a
+refusal: it holds every other page's rows.
+
+⭐ **A pass over part of a corpus owns only the files it read** (`W456`). The
+ledger is one file for the whole corpus, and it is the one file a pass
+rewrites: the rows of the files handed in as `material` and `graders` are
+replaced, and every other row is kept byte for byte, so containers can be
+passed one at a time in any order. A row leaves only when its file is gone.
+`authored.ledger` reports every row as `kept`, `added`, `changed` or
+`dropped`; read it after every pass, and treat a `dropped` row whose page you
+did not delete as a defect. `studyforge validate` refuses a ledger that no
+longer accounts for a page the corpus carries (`ledger-unaccounted`).
 
 ## What this skill does not do
 

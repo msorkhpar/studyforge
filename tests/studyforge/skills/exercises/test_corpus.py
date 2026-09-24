@@ -272,3 +272,107 @@ def test_each_brief_carries_the_aspects_its_planned_exercise_checks(corpus):
     for brief in briefs:
         expected = sorted(ASPECTS[brief.page.path], key=lambda aspect: aspect.id)
         assert list(brief.aspects) == expected, brief.page.path
+
+
+def _container_pass(root, pages, key):
+    """One pass over ONE container: its pages, and only the files those pages are."""
+    group = [page for page in pages if page.address.key == key]
+    material = sorted({page.path for page in group})
+    graders = sorted({grader for page in group for grader in page.graders})
+    return author_corpus(
+        root,
+        source="demo",
+        material=material,
+        graders=graders,
+        pages=group,
+        author=Scripted(CLEAN),
+        judge=Judging(),
+        runner=Running(),
+    )
+
+
+def _ledger(root):
+    return json.loads((root / LEDGER_PATH).read_text(encoding="utf-8"))
+
+
+def _rows(document, paths):
+    return [list(row.items()) for row in document["entries"] if row["path"] in paths]
+
+
+#: ⭐ The two containers of the fixture corpus, and the files each one's pass reads.
+KATA = ("checks/test_greeting.py", "lessons/basket.md", "lessons/greeting.md", "lessons/shout.md")
+NOTES = ("notes/gauge.md",)
+
+
+@pytest.mark.parametrize("order", [("kata", "notes"), ("notes", "kata")])
+def test_a_pass_over_one_container_keeps_every_row_of_the_other_byte_for_byte(tmp_path, order):
+    """⛔ `W456`: `ISO-M10/11`'s shape — two containers, passed one at a time."""
+    _, _, pages = write_corpus(tmp_path)
+    first, second = order
+    _container_pass(tmp_path, pages, first)
+    before = _ledger(tmp_path)
+    owned = KATA if first == "kata" else NOTES
+    assert _rows(before, owned) or first == "notes", "the first pass wrote no rows to keep"
+    authored = _container_pass(tmp_path, pages, second)
+    after = _ledger(tmp_path)
+    assert _rows(after, owned) == _rows(before, owned), "a row the pass did not read moved"
+    assert [s for s in after["sources"] if s["path"] in owned] == [
+        s for s in before["sources"] if s["path"] in owned
+    ]
+    assert {e["path"] for e in after["entries"]} >= {"lessons/greeting.md", "lessons/shout.md"}
+    assert authored.ledger.dropped == () and authored.ledger.changed == ()
+    kept = {key.split(":")[1] for key in authored.ledger.kept}
+    assert kept == set(owned), "the delta does not name what the pass kept"
+
+
+def test_passes_in_either_order_write_the_ledger_one_whole_pass_writes(tmp_path):
+    """⭐ Order-free: container by container is the same bytes as all at once (R10)."""
+    ledgers = []
+    for name, order in (("forward", ("kata", "notes")), ("backward", ("notes", "kata"))):
+        root = tmp_path / name
+        root.mkdir()
+        _, _, pages = write_corpus(root)
+        for key in order:
+            _container_pass(root, pages, key)
+        ledgers.append((root / LEDGER_PATH).read_bytes())
+    whole = tmp_path / "whole"
+    whole.mkdir()
+    material, graders, pages = write_corpus(whole)
+    author_corpus(
+        whole,
+        source="demo",
+        material=[path for path in material if path != "lessons/extra.md"],
+        graders=graders,
+        pages=pages,
+        author=Scripted(CLEAN),
+        judge=Judging(),
+        runner=Running(),
+    )
+    assert ledgers[0] == ledgers[1] == (whole / LEDGER_PATH).read_bytes()
+
+
+def test_a_pass_over_one_page_keeps_the_exercise_another_page_s_rows_are_built_on(tmp_path):
+    """⛔ The same files read, a different page handed in: no built-on row is re-excused."""
+    material, graders, pages = write_corpus(tmp_path)
+    arguments = dict(source="demo", material=material, graders=graders, judge=Judging())
+    author_corpus(tmp_path, pages=pages[:2], author=Scripted(CLEAN), runner=Running(), **arguments)
+    before = _ledger(tmp_path)
+    author = Scripted(CLEAN)
+    again = author_corpus(tmp_path, pages=pages[2:3], author=author, runner=Running(), **arguments)
+    after = _ledger(tmp_path)
+    built = ("lessons/greeting.md", "lessons/shout.md", "checks/test_greeting.py")
+    assert _rows(after, built) == _rows(before, built), "a built-on row was re-excused"
+    assert {entry.path for entry in author.excused}.isdisjoint(built)
+    assert again.ledger.dropped == ()
+
+
+def test_a_row_leaves_the_ledger_only_when_its_page_is_gone(tmp_path):
+    _, _, pages = write_corpus(tmp_path)
+    _container_pass(tmp_path, pages, "notes")
+    _container_pass(tmp_path, pages, "kata")
+    (tmp_path / "notes/gauge.md").unlink()
+    assert not (tmp_path / "notes/gauge.md").exists()
+    authored = _container_pass(tmp_path, pages, "kata")
+    assert authored.ledger.dropped == ("source:notes/gauge.md",)
+    assert authored.ledger.added == () and authored.ledger.changed == ()
+    assert "notes/gauge.md" not in {row["path"] for row in _ledger(tmp_path)["sources"]}

@@ -147,6 +147,8 @@ the same shape.
 | `bundle-digest` | a file the gate record was taken over has changed since, or is gone |
 | `bundle-contents` | the exercise's bundle holds a file its shape does not permit — a run's report in a bundle is the one to watch, because it carries the machine's hostname |
 | `practice-ordinals` | a page's practices are not numbered `1..n` |
+| `ledger` | `exercises/ledger.json` is there and will not read as a ledger this build wrote |
+| `ledger-unaccounted` | `exercises/ledger.json` is there and does not account for a page your corpus carries: a unit's `origin` (or a page a `coverage.json` names) the ledger never read, a fenced example on it with no row, a declared grader with no row, or a row naming neither an exercise nor a reason (or both). Judged only while a ledger is committed and the page is on disk |
 | `nothing-compared` | after a build (unchecked, not a finding): the before-snapshot held no file, so nothing was compared |
 
 ---
