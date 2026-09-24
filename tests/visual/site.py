@@ -172,6 +172,9 @@ def build(root: Path, damage: str | None = None) -> Site:
     if damage is not None and damage not in DAMAGE:
         raise ValueError(f"no such damage {damage!r}; declared: {sorted(DAMAGE)}")
     written: dict[str, str] = dict(pageassets.written_files())
+    # ⭐ What a build with its clips on disk writes beside the bundle: the unit
+    # pages carry the transport, and it comes up only where this says `present`.
+    written[pageassets.CLIPS_NAME] = pageassets.clips_script(pageassets.PRESENT).decode("ascii")
     if damage in STYLESHEET_DAMAGE:
         written[pageassets.STYLESHEET_NAME] = STYLESHEET_DAMAGE[damage](
             written[pageassets.STYLESHEET_NAME]

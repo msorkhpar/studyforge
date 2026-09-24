@@ -173,4 +173,10 @@ ACCEPTANCE = {
     #: have no script, and what is read is the framed document's behaviour.
     "keeps the page where the reader opened it, top or anchor, while an editor "
     "frame takes focus as it starts, and still lets a click focus it": "test_practice_focus",
+    #: ⭐ The clip-presence clause, a row of its own because it reads the CONSOLE,
+    #: which no row above reads, and does so over `file://` AND the real `serve`:
+    #: a failed load is an error in both, and the page must avoid it in both.
+    "hides every narration control on a page whose clips are absent, with a console "
+    "free of errors and warnings over file:// and served, and plays them once "
+    "restored with no rebuild": "test_narration_clips",
 }

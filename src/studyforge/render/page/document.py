@@ -171,7 +171,7 @@ def compose(
             # own `<h1>` is a narrated passage when the material supplied it —
             # and a page whose only spoken line is its title must still be able
             # to play it.
-            player=_region(player(attributes + body, narration)),
+            player=_region(player(attributes + body, narration, clips=placement.clips())),
             nav=_region(navigation.between_units(links)),
         )
         + TRAILING_NEWLINE
@@ -317,8 +317,10 @@ def _practices(number: int) -> str:
     return f"{number} practice is" if number == 1 else f"{number} practices are"
 
 
-def player(body: str, narration: Narration = SILENT) -> str:
+def player(body: str, narration: Narration = SILENT, *, clips: str) -> str:
     """Return the narration transport, or `''` when this page has nothing to play.
+
+    ⭐ `clips` addresses `pageassets.CLIPS_NAME` (are the clips on disk?); ⛔ never blank.
 
     ⛔ **Derived from the body, never from a document field** — see this
     module's docstring for why the gate is here rather than in a key this module
@@ -327,13 +329,15 @@ def player(body: str, narration: Narration = SILENT) -> str:
     promised clip that is not on disk emits an *empty* `AUDIO_ATTRIBUTE`, so the
     body carries the attribute and the transport arrives with no new gate.
 
-    ⚠️ The gap notice rides inside this region rather than in a slot of its own,
-    so a page can never say *"some narration is missing"* with no transport to
-    say it about.
+    ⚠️ The gap notice rides inside this region rather than in a slot of its own, so
+    a page can never say *"some narration is missing"* with no transport to say it about.
     """
     if AUDIO_ATTRIBUTE not in body:
         return ""
-    return templates.fill(PLAYER_TEMPLATE, gap=_region(narration_gap(narration)))
+    if not clips.strip():
+        raise PageError("a narrated page was given no address for its clip signal")
+    gap = _region(narration_gap(narration))
+    return templates.fill(PLAYER_TEMPLATE, gap=gap, clips=escape_attribute(clips))
 
 
 def narration_gap(narration: Narration) -> str:

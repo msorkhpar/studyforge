@@ -1055,6 +1055,14 @@ What it reads, and the choices in it:
 
 **Serves.** `R8`
 
+### A served site with no icon answers the icon request with no content
+
+**Decision.** `serve.routes.assets` answers a request for the root `FAVICON` with `204` when the site has none, and serves the file when it has one; every other missing path is still `404`.
+
+**Why.** A browser asks every served origin for the icon unprompted, no page names one, and a `404` is an error in the reader's console on every served page.
+
+**Serves.** `R8`
+
 ## Narration
 
 ### Narration lights nothing until the reader starts it, and a missing clip says so once
@@ -1064,6 +1072,14 @@ What it reads, and the choices in it:
 **Why.** A lit passage on an untouched page looks like a selection, and a missing clip must fail loudly without the two signals overwriting each other.
 
 **Serves.** `R6`
+
+### A page learns whether its clips are on disk from a script that is always there
+
+**Decision.** A narrated page links `render.pageassets.CLIPS_NAME` in the shared asset directory ahead of the bundle, and `render/assets/narration.js` shows the transport and binds its clicks and keys only when that script says the clips are present (`render.pageassets.clips`, whose bodies are `PRESENT`, `ABSENT` and `RELEASED`). A build writes `PRESENT` or `ABSENT` from the disk (`generate.narration.clip_signal`) and never replaces `RELEASED`, which the release pack writes; the restore writes `PRESENT`. Served, `serve.clips` answers the same path from the disk as it is, with `no-store`, and rewrites nothing. When no clip the record names is on disk (`generate.narration.clips_on_disk`), every page links the clips its record names and names no gap, so a restore is heard without a rebuild.
+
+**Why.** A request for a file that is not there is a console error over `file://` and served alike, so a page cannot probe a clip. A site committed from the author's disk must not tell a fresh checkout that its clips are there.
+
+**Serves.** `R8`, `R6`
 
 ### The media footprint weighs every clip the narration record locates
 

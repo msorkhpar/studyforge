@@ -50,7 +50,7 @@ from pathlib import Path, PurePosixPath
 from studyforge.corpus.placement import relative_href
 from studyforge.generate.containers import page_paths
 from studyforge.generate.declarations import Corpus, read_corpus, unit_location
-from studyforge.generate.narration import narrated, narration_for
+from studyforge.generate.narration import clips_on_disk, narrated, narration_for
 from studyforge.generate.navigation import bar, index_href, rail, trail
 from studyforge.generate.writing import Written, place
 from studyforge.render.page import Placement, render
@@ -86,6 +86,7 @@ def unit_bodies(corpus: Corpus) -> Iterator[tuple[PurePosixPath, bytes]]:
     unreadable record stops the pass before anything reaches disk.
     """
     state = narrated(corpus)
+    on_disk = clips_on_disk(corpus, state)
     shared = corpus.shared
     absent = corpus.absent
     above = page_paths(corpus)
@@ -103,7 +104,7 @@ def unit_bodies(corpus: Corpus) -> Iterator[tuple[PurePosixPath, bytes]]:
                 index_href(corpus.contents, source.key),
                 {key: relative_href(at.page, page) for key, page in above.items()},
             ),
-            narration_for(corpus, source, at, document, placement, state),
+            narration_for(corpus, source, at, document, placement, state, on_disk=on_disk),
             rail(
                 corpus.contents,
                 at.page,

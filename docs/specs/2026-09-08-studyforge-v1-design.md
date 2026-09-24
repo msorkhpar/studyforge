@@ -894,7 +894,10 @@ corpus whose clips were synthesised may still be served silent.
   answer; a draft that carried none writes no key.
 - ⭐ **Absent means voiced**: a unit's page plays the clips its narration record
   locates, and a clip the record promises and the disk does not have is reported
-  on the page.
+  on the page — ⭐ **unless no clip is on disk at all**. Then the clips are a
+  download nobody has taken (§5, on delivery): every page links the clips its
+  record names, reports none of them missing, and shows no narration control
+  until they arrive.
 - ⛔ **`false` is the reading floor exactly, whatever the record says**: a build
   reads no record, renders every page with no player and no gap notice, and
   copies no clip. ⛔ **Nothing is deleted, moved or rewritten** (R3): the record and
@@ -975,7 +978,8 @@ my-java-course/
   index.html                                   the root index
   corpus.json
   archive/<address>/raw/java/unit-NN/lesson-1.json   the archive (§6)
-  .studyforge/assets/                          the shared stylesheet, script, faces and player
+  .studyforge/assets/                          the shared stylesheet, script, faces and player,
+                                               and narration-clips.js: whether the clips are here
   16-streams-api/
     README.md                                  untouched
     README_4.4.1.md                            untouched
@@ -1040,6 +1044,29 @@ moves the same bytes to the same paths. ⚠️ CodeSignal proved this in reverse
 when its media left git for release assets, the layout on disk did not move and
 every page still addressed a clip as plain `audio/<clip>.mp3` — which is the only
 reason that change was a script rather than a re-render of every page.
+
+⭐ **A page learns whether its clips arrived without asking for a clip.** A
+request for a file that is not there is an error in the browser's console, over
+`file://` and served alike, and a site whose clips are a download is often
+opened before anyone has fetched them. ⛔ So a narrated page never probes a clip:
+it links `.studyforge/assets/narration-clips.js`, a script that is always there,
+and shows its narration controls — the transport and the passages that answer a
+click — only when that script says `present`. The script says one of three
+things, and what writes it is what moved the clips:
+
+| writer | says |
+|---|---|
+| a build | `present` or `absent`, from the disk; ⛔ never over `released` |
+| the release pack, as the clips become a download | `released` |
+| the restore, once the clips are back in place | `present` |
+
+⛔ **A build never turns `released` into `present`**: the author who packed the
+clips still has them on disk, and a site committed from that disk must tell a
+fresh checkout they are not there. ⭐ **Served, the server answers the same
+request from the disk as it is at that moment** and rewrites nothing, so a
+served page is right whoever last wrote the file. ⭐ Because a page built with no
+clip on disk already links every clip, a restore is heard on the next page load,
+with no rebuild.
 
 ### Generated media and pages are committed
 

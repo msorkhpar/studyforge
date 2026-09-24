@@ -13,6 +13,7 @@ from studyforge.serve.routes import assets as assets_module
 from studyforge.serve.routes.assets import (
     ASSET_CACHE,
     DEFAULT_CONTENT_TYPE,
+    FAVICON,
     MAX_PATH,
     nothing_private,
     resolve,
@@ -298,3 +299,19 @@ def test_media_is_never_read_for_a_key(site):
     request = Request("GET", "/.studyforge/clip.mp3", {})
     response = serve(site, request, "/.studyforge/clip.mp3", withheld=asked.append)
     assert (response.status, asked) == (200, [])
+
+
+def test_a_site_with_no_icon_answers_the_browser_s_icon_request_with_no_content(site):
+    # ⛔ A browser asks every origin for `/favicon.ico` unprompted, and a `404` is
+    # an error in the reader's console on every served page.
+    answer = get(site, FAVICON)
+    assert answer.status == 204 and answer.body == b""
+
+
+def test_a_site_that_has_an_icon_serves_it(site):
+    (site / "favicon.ico").write_bytes(b"\x00\x00\x01\x00")
+    assert get(site, FAVICON).status == 200
+
+
+def test_only_the_root_icon_is_answered_with_no_content(site):
+    assert get(site, "/units/favicon.ico").status == 404

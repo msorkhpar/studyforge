@@ -12,6 +12,9 @@ from studyforge.render.page.errors import PageError
 from studyforge.render.page.narration import SILENT, Narration
 from tests.studyforge.render.page.pages import depth1_unit_02, sample_placement
 
+#: How a page addresses the clip signal, for a call that composes no page.
+CLIPS = "../.studyforge/assets/narration-clips.js"
+
 
 def a_document(**overrides) -> dict:
     """A served unit document, minimal but shaped exactly as the builder writes one."""
@@ -124,7 +127,7 @@ def test_a_unit_with_no_practices_block_shows_no_panel():
 def test_the_player_is_absent_when_the_body_carries_no_audio():
     # ⛔ The page renderer mints no speech id and writes no audio attribute, so
     # a page without narration carries no transport for nothing.
-    assert document_module.player("<p>no audio here</p>") == ""
+    assert document_module.player("<p>no audio here</p>", clips=CLIPS) == ""
     assert '<footer id="player"' not in compose()
 
 
@@ -132,7 +135,7 @@ def test_the_player_appears_the_moment_the_body_carries_audio():
     # ⭐ The negative control run negatively: when narration writes the attribute the transport
     # arrives with it.
     body = f'<p {AUDIO_ATTRIBUTE}="audio/a-1.mp3">spoken</p>'
-    markup = document_module.player(body)
+    markup = document_module.player(body, clips=CLIPS)
     # ⛔ `hidden` is part of the opening tag and is the player's: the transport ships
     # hidden and `narration.js` unhides it once there is something behind it, the
     # way `read-mark.html` ships its control hidden. With scripting off a reader
@@ -140,6 +143,26 @@ def test_the_player_appears_the_moment_the_body_carries_audio():
     # row's own "no dead control".
     assert markup.startswith('<footer id="player" hidden>')
     assert '<audio id="narrator"' in markup
+
+
+def test_the_player_links_the_clip_signal_ahead_of_the_bundle():
+    # ⛔ The page learns whether its clips are on disk from this script and from
+    # no clip: it is linked with the transport, deferred, and before the bundle's
+    # own deferred script, so it has run when `narration.js` looks.
+    where = sample_placement()
+    narration = Narration.of({("prose", (0,), None): "a-11111111.mp3"}, where)
+    page = document_module.compose(a_document(), where, narration=narration)
+    tag = f'<script src="{where.clips()}" defer></script>'
+    assert AUDIO_ATTRIBUTE in page, "⛔ born vacuous: the page must carry a narrated passage"
+    assert page.count(tag) == 1
+    assert page.index(tag) < page.index(f'<script src="{where.script()}" defer>')
+
+
+def test_the_player_refuses_a_blank_clip_signal_address():
+    # ⛔ An empty `src` loads the page itself as a script, which is a failed parse
+    # in the console on every narrated page.
+    with pytest.raises(PageError):
+        document_module.player(f'<p {AUDIO_ATTRIBUTE}="audio/a-1.mp3">x</p>', clips=" ")
 
 
 def test_a_page_that_was_promised_nothing_carries_no_gap_panel():
@@ -167,7 +190,7 @@ def test_the_gap_notice_rides_inside_the_players_own_region():
     # say it about — and so no eighth skeleton slot had to be minted for it.
     narration = Narration.of({}, sample_placement(), missing=[("s", (0,), None)])
     body = f'<p {AUDIO_ATTRIBUTE}="">spoken, and not on disk</p>'
-    markup = document_module.player(body, narration)
+    markup = document_module.player(body, narration, clips=CLIPS)
     assert markup.index("narration-gap") < markup.index('<footer id="player"')
 
 
@@ -176,7 +199,7 @@ def test_a_body_with_no_audio_at_all_takes_neither_the_player_nor_the_notice():
     # body, so a caller naming gaps for a page that emitted no attribute gets
     # neither half rather than a notice about a transport that is not there.
     narration = Narration.of({}, sample_placement(), missing=[("s", (0,), None)])
-    assert document_module.player("<p>no audio here</p>", narration) == ""
+    assert document_module.player("<p>no audio here</p>", narration, clips=CLIPS) == ""
 
 
 def test_the_panel_tells_the_reader_which_of_the_two_states_this_is():
