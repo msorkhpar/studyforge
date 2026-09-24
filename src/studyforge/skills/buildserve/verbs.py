@@ -32,9 +32,9 @@ class NotAVerb(ValueError):
     """An argument list whose first word is no registered verb. ⛔ It never echoes the word."""
 
 
-def validate(corpus: str) -> list[str]:
-    """Return the arguments that validate one corpus."""
-    return ["validate", corpus]
+def validate(corpus: str, *, narration: bool | None = None) -> list[str]:
+    """Return the arguments that validate one corpus, with narration off if `narration` is False."""
+    return ["validate", corpus] + (["--no-narration"] if narration is False else [])
 
 
 def narrate(corpus: str, voice: str, service: str | None = None) -> list[str]:

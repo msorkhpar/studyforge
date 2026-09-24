@@ -15,9 +15,11 @@ import studyforge.skills.buildserve.run as skill_run
 from studyforge.execute import CONTAINER, HOST
 from studyforge.serve.routes.run import RUN, TEST
 from studyforge.skills.buildserve.states import EXECUTION_NAMESPACE
+from studyforge.validate import validate
 from studyforge.validate.cli import UNUSABLE
 from studyforge.validate.report import INVALID, OK
 from tests.fixture_checks import FIXTURES, VALID
+from tests.studyforge.cli.narrate.plant import edit_one_paragraph, narrated
 from tests.studyforge.cli.narrate.service import VOICE
 from tests.studyforge.cli.serving import floor, missing_media, pages_of, served_page
 from tests.studyforge.execute.runnable import fixture_copy
@@ -213,3 +215,29 @@ def test_running_it_again_over_its_own_site_serves_again(tmp_path):
     code, said = run_once(FIXTURES / "depth1", out)
     assert code == OK, said
     assert steps(said) == SERVED
+
+
+def test_a_corpus_whose_clips_say_old_words_stops_at_validate_when_not_narrating(tmp_path):
+    # ⭐ `W457`: the stale clip is a RED `validate`, so the skill builds nothing quietly.
+    root = narrated(tmp_path)
+    edit_one_paragraph(root)
+    out = directory(tmp_path)
+    code, said = run_once(root, out)
+    assert code == INVALID
+    assert steps(said) == [f"step validate exit {INVALID}"]
+    assert "[narration-stale]" in said
+    assert files_under(out) == set()
+
+
+def test_asked_to_narrate_the_skill_re_makes_the_stale_clip_rather_than_stopping(tmp_path):
+    # ⛔ `W457`: validating with narration on would stop the one run that fixes it.
+    root = narrated(tmp_path)
+    edited = edit_one_paragraph(root)
+    with narration_service() as (url, fake):
+        with skill_running(root, directory(tmp_path), voice=VOICE, service=url) as running:
+            pass
+    said = running.said()
+    assert running.code == [OK], said
+    assert steps(said)[:2] == ["step validate exit 0", "step narrate exit 0"]
+    assert fake.submitted == [edited]
+    assert validate(root).ok

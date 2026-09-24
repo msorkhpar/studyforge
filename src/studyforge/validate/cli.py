@@ -49,6 +49,17 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument("root", help="the corpus root — the directory holding corpus.json")
+    parser.add_argument(
+        "--no-narration",
+        dest="narration",
+        action="store_const",
+        const=False,
+        default=None,
+        help=(
+            "judge the archive with narration off for this run: no clip is checked "
+            "against the words its paragraph says now"
+        ),
+    )
     return parser
 
 
@@ -64,7 +75,7 @@ def main(argv: list[str] | None = None, out=None) -> int:
         # (R7): a report is the most-pasted artifact this tool produces.
         print(f"{arguments.root}: not a directory", file=stream)
         return UNUSABLE
-    report = validate(root)
+    report = validate(root, narration=arguments.narration)
     for line in report.lines():
         print(line, file=stream)
     return report.exit_code if report.exit_code in (OK, INVALID) else INVALID

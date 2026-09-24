@@ -15,6 +15,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from studyforge.archive.document import content_sha256
 from studyforge.cli.narrate.stage import narrate_corpus
 from studyforge.narrate.client import NarrateClient
 from studyforge.narrate.synth import state_file
@@ -83,6 +84,23 @@ def reword(root: Path) -> None:
     text = lesson.read_text(encoding="utf-8")
     assert WORDS[0] in text, "the fixture paragraph moved; this re-wording would change nothing"
     lesson.write_text(text.replace(*WORDS), encoding="utf-8")
+
+
+def edit_one_paragraph(root: Path) -> str:
+    """Re-word the lesson's one paragraph AND re-digest it; return the paragraph's speech id.
+
+    ⭐ `W457`: unlike `reword`, the archive stays valid, so the only thing wrong
+    with the corpus afterwards is that one clip says the old words.
+    """
+    lesson = root / LESSON
+    document = json.loads(lesson.read_text(encoding="utf-8"))
+    paragraphs = [block for block in document["blocks"] if block["type"] == "para"]
+    assert len(paragraphs) == 1 and WORDS[0] in paragraphs[0]["text"], "the fixture moved"
+    paragraphs[0]["text"] = paragraphs[0]["text"].replace(*WORDS)
+    document["content_sha256"] = content_sha256(document["blocks"])
+    lesson.write_text(json.dumps(document, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    index = document["blocks"].index(paragraphs[0])
+    return f"depth-one--unit-01.prose.b{index + 1}"
 
 
 def unlocate(root: Path) -> None:

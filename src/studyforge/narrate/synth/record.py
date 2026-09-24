@@ -185,6 +185,8 @@ class State:
 
     clips: Mapping[str, Clip]
     present: bool = True
+    #: The voice the record's top-level conditions name, or `None` (`W457`: what to re-run).
+    voice: str | None = None
 
 
 def state_file(root: Path | str) -> Path:
@@ -232,14 +234,12 @@ def read_state(path: Path | str) -> State:
         raise StateError(f"{where} is not readable as JSON") from None
     if not isinstance(payload, dict):
         raise StateError(f"{where} holds {describe(payload)}, not an object")
-    check(
-        "narration_api",
-        payload.get("narration_api"),
-        KNOWN_NARRATION_API,
-        where=where,
-        error=StateError,
-    )
-    return State(clips=_clips_of(payload.get("clips"), where))
+    api = payload.get("narration_api")
+    check("narration_api", api, KNOWN_NARRATION_API, where=where, error=StateError)
+    said = payload.get("conditions")
+    voice = said.get("voice") if isinstance(said, dict) else None
+    voice = voice if isinstance(voice, str) and voice.strip() else None
+    return State(clips=_clips_of(payload.get("clips"), where), voice=voice)
 
 
 def _clips_of(entries: object, where: str) -> dict[str, Clip]:
