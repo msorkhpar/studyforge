@@ -1933,48 +1933,54 @@ stays green. A harness that arranges the world conveniently proves nothing.
 
 ## 9. The skills layer — what is actually being built
 
-R16. The pipeline is the means; **the skills are the product.** The end state
-is that somebody points a skill at material they care about — a course site, a
-book, a paper collection, a repository of exercises, their own notes — and gets
-this format back, then keeps it as a durable personal record they can review,
-re-run and extend.
+R16. The pipeline is the means; **the skills are the product.** Somebody points a
+skill at material they care about — a course site, a book, a paper collection, a
+repository of exercises, their own notes — and gets this format back, then keeps
+it as a durable personal record they can review, re-run and extend.
 
 The division between them is the same seam as everywhere else (R2): one
-understands *a source*, the rest are source-agnostic.
+understands *a source*, the rest are source-agnostic. Each skill is a `SKILL.md`
+procedure shipped in the framework's package, with whatever executable support
+it calls beside it.
 
-- **Reconnaissance.** Given arbitrary material, work out its shape: how deep
-  the hierarchy is, what the units are, whether there are variants, whether
-  anything is runnable, whether any grader ships with it. Produces a draft
-  `corpus.json` and an honest report of what it could not determine. This is
-  the only skill that reasons about unfamiliar material.
-- **Adapter authoring.** Scaffold an adapter for that shape, against
-  `studyforge validate` as the definition of done — so the skill's output is
-  checkable by machine rather than by opinion.
+- **Reconnaissance.** Given arbitrary material, work out its shape: how deep the
+  hierarchy is, what the units are, whether there are variants, whether anything
+  is runnable and which runtimes it needs, whether any grader ships with it, and
+  whether any file duplicates another (C2). Produces a draft `corpus.json` and an
+  honest report of what it could not determine. This is the only skill that
+  reasons about unfamiliar material.
+- **Adapter authoring.** Scaffold an adapter for that shape — a package layout, a
+  test tree and an audit command, with the archive's paths computed by the
+  framework — against `studyforge validate` as the definition of done, so the
+  skill's output is checkable by machine rather than by opinion.
 - **Corpus onboarding.** R19's realisation: take a repository from nothing to a
-  serving study site. It writes the manifest, the adapter package and its tests,
-  the ignore rules, the compose file, the toolchain selection and its prime
-  project, the build entry point, the non-destructive assertion and the reader's
-  documentation — and it writes an **uninstall** that reverses every edit it
-  made. ⭐ **The one manual step is: add the framework, run this skill.**
-  Everything after that is generated, and anything a second source has to type
-  by hand is a defect in this skill.
-- **Build and serve.** One invocation from raw material to a running site:
-  ingest, validate, unit documents, pages, narration, contents, exercises.
+  corpus this framework can build. It writes the manifest, the adapter package
+  and its tests, the ignore rules, the non-destructive assertion, the framework
+  pin and its skill stubs, and the reader's document — and it writes an
+  **uninstall** that reverses every edit it made. It asks the author whether the
+  corpus is narrated. ⭐ **The one manual step is: install the framework, run this
+  skill.** Anything a second source has to type by hand is a defect in this skill.
+- **Execution onboarding.** For a corpus whose material is runnable: the compose
+  file for the runner and the browser editor, the runner image's selection from
+  the declared runtimes, and the prime project — all rendered from
+  `code-server-toolchain`'s `consuming.json` (§8.1). ⭐ **Most corpora never run
+  this skill, and that is the design** (§11.0).
+- **Authoring exercises.** Plan every page by its aspects, author the exercises
+  and quizzes its material supports, run the gates over each, and commit what
+  clears them as bundles, with the ledger and the coverage report (§7).
+- **Build and serve.** One invocation from a corpus to a running site: validate,
+  narrate when asked, build into a directory the owner names, and serve it.
 - **Delivery planning.** The product owner for an integration: turns *"convert
   this repository"* into an ordered backlog whose every task ends in something a
   person can be shown, with acceptance the framework itself can evaluate. It
   runs in the target repository, and ⛔ **its only channel is this framework** —
   it may ask questions, and it may file findings, but it may not patch (§12) and
-  it may not read the extraction source (R20). It maintains the **integration
+  it may not read the extraction source (R20). It feeds the **integration
   catalogue**, below.
 - **Personal archive.** Export and re-import a corpus *with its progress* —
   code, practices, examples and what the reader has completed — so the record
   survives a machine, and a corpus can be handed to somebody else without its
   owner's progress leaking with it (R7).
-
-**What this buys the Java repo:** it is built by the same skills anyone else
-would use, so if the skills are awkward there, they are awkward everywhere.
-The Java corpus is the proving ground, not a special case.
 
 ### A skill precedes the artifact it produces
 
@@ -1986,62 +1992,56 @@ test of it is the second source, which is precisely where it must not fail.
 So the skills divide by what they actually are:
 
 - **Skills that are how an artifact comes to exist** — reconnaissance, adapter
-  authoring, corpus onboarding, and the authoring reference they point at.
-  These land **before** the first corpus is built, and the Java corpus is their
-  **first output** rather than their input.
+  authoring, corpus onboarding, and the authoring reference they point at. These
+  come **before** a corpus is built, and a corpus is their output rather than
+  their input.
 - **Wrappers over entry points that already work** — build-and-serve, exercise
-  derivation, personal archive. These genuinely cannot precede what they wrap,
-  and they land last.
+  authoring, personal archive. These genuinely cannot precede what they wrap.
 
-⚠️ **The cost is real and is accepted:** the first three are written before
-anybody knows what a second adapter looks like. The answer is that they start
-deliberately minimal and grow — a skill that scaffolds a package layout, a test
-tree and an audit command, and leaves the source-specific reading to be filled
-in, is buildable early and is already what its definition asks for. The
-alternative is worse: a corpus built by hand, and skills written afterwards to
-claim they produced it.
+⚠️ **A skill that starts minimal is still a skill.** One that scaffolds a package
+layout, a test tree and an audit command, and leaves the source-specific reading
+to be filled in, is already what its definition asks for. The alternative is
+worse: a corpus built by hand, and skills written afterwards to claim they
+produced it.
 
 ### The integration catalogue
 
 R20 says a consumer never reads the repository this framework was extracted
 from. That is only honest if what a consumer would have gone looking for is
-**here** — so the framework carries a catalogue of what goes wrong when material
-meets it, written for somebody planning work rather than somebody writing code:
-a plausible short parse that raises nothing; a corpus carrying the same material
-twice; a hierarchy encoded in filenames; an exercise with no grader, which is
-not "no exercise"; media that outgrows a git remote; an address derived from a
-title, which sends one link in eight nowhere.
+**here** — so the framework carries [a catalogue](../integration-catalogue.md)
+of what goes wrong when material meets it, written for somebody planning work
+rather than somebody writing code: a plausible short parse that raises nothing;
+a corpus carrying the same material twice; a hierarchy encoded in filenames; an
+exercise with no grader, which is not "no exercise"; media that outgrows a git
+remote; an address derived from a title.
 
 ⭐ **It is a growing asset, not a founding document.** Each integration's
 findings (§12) are distilled back into it, so the next integration starts
 further along than the last. ⚠️ **This is the mechanism by which the framework
 gets better at being adopted**, as distinct from getting better at rendering
-pages — and without it, every new consumer re-derives the same lessons from a
-moving repository and the expertise lives nowhere.
+pages.
 
 ### How a consumer obtains the skills
 
-R18 settles the distribution: the framework is **pinned**, never copied, because
-a copied skill is a fork that a framework fix never reaches. ⚠️ **Pinned, not
-submoduled** — R18's 2026-09-09 amendment removes submodules, so the framework is
-present as a **sibling checkout at a recorded commit** and the parent's pin file
-is what records which one. The load-bearing half is unchanged: ⛔ never vendored,
-never copied, never forked.
-
-But there is a real tension worth naming, because it is where copying starts:
-**a pin is a commit, while skill discovery is path-based** — a skill has to be
-findable at a path inside the repository the agent is working in.
+The framework is **installed as a library, and pinned**, never copied, because a
+copied skill is a fork that a framework fix never reaches (R18). ⚠️ **A pin is a
+version, while skill discovery is path-based** — a skill has to be findable at a
+path inside the repository the agent is working in.
 
 ⭐ **The pin is the authority; the discoverable path is a generated pointer.**
-Onboarding writes thin **skill stubs** into the target repository that name the
-pinned framework's skill and delegate to it, carrying the pinned version and
-nothing else. ⛔ **A stub that has drifted from its pin is a build failure** —
-that is what stops a stub becoming a fork by accretion. It is the same shape as
-pinning a published image tag rather than forking a Dockerfile.
+Onboarding writes `.studyforge/pin.json` — the installed library's version and
+the commit it was built from — and a thin **skill stub** per skill into the
+corpus. A stub names its skill, the pin it was written at, and the command that
+prints the procedure from the installed package; ⛔ **it carries no path at all.**
+⛔ **A stub that has drifted from its pin is a build failure**: the generated
+`test_framework_pin.py` fails when a stub names another pin, or when the library
+the corpus's Python imports is not the pinned version. That is what stops a stub
+becoming a fork by accretion — the same shape as pinning a published image tag
+rather than forking a Dockerfile.
 
-⭐ **AMENDED 2026-09-23 — a page that hands a reader a command declares the modules it
-does not own.** Carried from the commanded-pages convention when the conventions were
-archived. Every `docs/authoring/` page and every shipped `SKILL.md` that gives a
+### A page that hands a reader a command declares the modules it does not own
+
+Every `docs/authoring/` page and every shipped `SKILL.md` that gives a
 `python3 -m` command is one population, and ⛔ **a commanded module must run in this
 repository unless the page declares that it belongs to the consumer.** The declaration
 is a line of its own whose backticked tokens are the modules, in one spelling:
@@ -2054,11 +2054,12 @@ This fence is the one place the spelling is written down, and a page that uses i
 this document beside it. The authoring suite's reader — `DECLARES_CONSUMER_SIDE` in
 `tests/authoring/support.py` — is the authority on that spelling: a page that disagrees
 with the reader is the defect, and `tests/test_consumer_side_contract.py` fails when the
-fence and the reader drift apart. ⛔ **The exemption belongs to the page that declares it**, so a module declared
-consumer-side on one page earns nothing on another. ⭐ **Why a declaration and not a
-list:** a list of exempt modules kept beside the checker is a second copy no page's
-reader can see, and a skill that sends a stranger to run a module absent from the
-repository they are standing in is a first-run failure the stranger cannot diagnose.
+fence and the reader drift apart. ⛔ **The exemption belongs to the page that declares
+it**, so a module declared consumer-side on one page earns nothing on another. ⭐ **Why a
+declaration and not a list:** a list of exempt modules kept beside the checker is a
+second copy no page's reader can see, and a skill that sends a stranger to run a module
+absent from the repository they are standing in is a first-run failure the stranger
+cannot diagnose.
 
 ---
 
