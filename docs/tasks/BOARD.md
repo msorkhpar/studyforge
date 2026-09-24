@@ -64,7 +64,7 @@ one does.**
 | **M10 step 10.3** | ✅ CLOSED — `AX-07`, `AX-08`, `AX-09`, `AX-10` | `e72b28b7` | [record](BOARD-ARCHIVE.md#po-round-150) |
 | **M10 step 10.4** | ✅ CLOSED — the corpus rows `ISO-18`…`ISO-31` | `e456e77` corpus | [record](BOARD-ARCHIVE.md#po-round-178) |
 | **M10 step 10.5** | ✅ CLOSED — `AX-11` | `779f2aef` | [record](BOARD-ARCHIVE.md#po-round-178) |
-| **M11** — it is release-ready | ⏳ **OPEN — round 159**; ⛔ **nothing moves before 11.5** | — | [the open](BOARD-ARCHIVE.md#po-round-159) |
+| **M11** — it is release-ready | ⏳ **OPEN — round 159**; ⭐ **step 11.5 OPEN — round 179** | — | [the open](BOARD-ARCHIVE.md#po-round-159) |
 | **M11 step 11.1** | ✅ CLOSED — `REL-01` | `af7711b3` | [record](BOARD-ARCHIVE.md#po-round-160) |
 | **M11 step 11.2** | ✅ CLOSED — `REL-02`, `REL-03` | `bed97114` | [record](BOARD-ARCHIVE.md#po-round-161) |
 | **M11 step 11.3** | ✅ CLOSED — `REL-04`, `REL-05`, `REL-06` | `06075ff0` | [record](BOARD-ARCHIVE.md#po-round-163) |
@@ -82,10 +82,8 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W457` | Developer 1 | `fix/W457-validate-reports-stale-narration` @ `wt/dev1` | 0 @ `f6f8aae8` | `in-progress` |
-| `W458` | Developer 2 | `fix/W458-the-focus-test-waits-on-events` @ `wt/dev2` | 0 @ `f6f8aae8` | `in-progress` |
-| `W459` | Developer 3 | `fix/W459-no-user-reads-a-process-id` @ `wt/dev3` | 0 @ `f6f8aae8` | `in-progress` — `M11` |
 | `W460` | Developer 5 | `feat/W460-narration-is-optional` @ `wt/dev5` | 0 @ `f6f8aae8` | `in-progress` |
+| `REL-13` | Developer 4 | `docs/REL-13-handoff` @ `wt/dev4`; `chore/REL-13-release-ready` in each sibling | 0 @ `090dc4ca` | `in-progress` — `M11` step 11.5 |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -648,9 +646,9 @@ else.**
 | W454 | The editor image still carries and starts the Copilot CLI (user ruling: remove it) | framework agent | ✅ done — `65c3851` toolchain | [`rows/W454.md`](rows/W454.md) |
 | W455 | The practice editor wears code-server's stock theme, not the site's code colours (user request) | framework agent | ✅ done — `b1649f6b` | [`rows/W455.md`](rows/W455.md) |
 | W456 | An authoring pass over one container rewrites the corpus-wide ledger and silently drops every other container's entries | framework agent | ✅ done — `de1ea776` | [`rows/W456.md`](rows/W456.md) |
-| W457 | A changed paragraph keeps playing its old narration, and nothing reports the stale clip | framework agent | `in-progress` — ⛔ found on the user's question | [`rows/W457.md`](rows/W457.md) |
-| W458 | A browser focus test fails at random under parallel load and blocks merges | framework agent | `in-progress` | [`rows/W458.md`](rows/W458.md) |
-| W459 | Refusals a user reads cite process ids, and the decisions file lacks today's product decisions | framework agent | `in-progress` — `M11` | [`rows/W459.md`](rows/W459.md) |
+| W457 | A changed paragraph keeps playing its old narration, and nothing reports the stale clip | framework agent | ✅ done — `090dc4ca` | [`rows/W457.md`](rows/W457.md) |
+| W458 | A browser focus test fails at random under parallel load and blocks merges | framework agent | ✅ done — `692fa6d2` | [`rows/W458.md`](rows/W458.md) |
+| W459 | Refusals a user reads cite process ids, and the decisions file lacks today's product decisions | framework agent | ✅ done — `59299974` | [`rows/W459.md`](rows/W459.md) |
 | W460 | Narration is optional: the skills ask at capture and at serve, and generated clips can go unserved (user ruling) | framework agent | `in-progress` — ⛔ USER RULING | [`rows/W460.md`](rows/W460.md) |
 <!-- /register -->
 

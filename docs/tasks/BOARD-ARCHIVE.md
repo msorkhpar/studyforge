@@ -31986,3 +31986,92 @@ container each time.
 ### ⚠️ In flight
 
 ⭐ **`W457`**–**`W460`**.
+
+
+## PO round 179
+
+⭐ **Three rows DONE, each re-read by a register plant at a seam the office did not use:**
+- ⭐ **`W459`** merged `59299974` — no refusal a user reads cites an id the decisions file does not alias, and `docs/decisions.md` gains seven entries for today's product decisions. ⭐ **Plant:** an unaliased id in `serve/routes/quiz.py` → RED.
+- ⭐ **`W458`** merged `692fa6d2` — the focus test's flake was its stand-in editor keeping whichever keystroke report arrived last; no product code changed. ⭐ **Plant:** the stand-in keeping the lowest number → RED; five clean parallel runs GREEN.
+- ⭐ **`W457`** merged `090dc4ca` — `studyforge validate` reports narration whose words have moved, and names the command that fixes it; `narration_on` is the one seam `W460` reads. ⭐ **Plants:** narration off by default, and the join never marking words moved → each RED.
+
+⚠️ **`W457`'s first merge was REFUSED by the very flake `W458` fixes**, and one earlier refusal of this round's predecessor was the shared `/tmp` quota; both re-ran GREEN.
+
+⭐ **`M11` step 11.5 OPENS on its two edges that wait on nothing in flight:** **`REL-13`** (the siblings release-ready) on `wt/dev4`, and **`ISO-32`** on the corpus's integration office (re-onboard on the installed library, `ONBOARDING.md` to the corpus's archive per the user's ruling). ⛔ **Both PREPARE branch pruning and `main`'s advance and do neither** — the user's word in the morning. ⚠️ **`REL-10` waits for `W460`**, because the cut moves the tooling every in-flight branch merges through.
+
+### ⚠️ In flight
+
+⭐ **`W460`**; ⭐ **`REL-13`**; ⭐ **`ISO-32`** on the corpus.
+
+### W459 — Refusals a user reads cite process ids, and the decisions file lacks today's product decisions
+
+⛔ **`REL-09/1` and `REL-09/6`:** refusal messages a USER reads still cite process ids —
+`W453`, `W456` inside f-strings in `skills/exercises/aspects.py`, `skills/exercises/corpus.py`
+and `validate/ledger.py` — and `docs/decisions.md` holds no entry for decisions taken
+after `REL-01` (`W445`–`W456`, among them **the user's ruling that a quiz's key never
+leaves the server**). `REL-09` could not touch either: one is code, one is not its file.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **No string a user can read** — a refusal, a finding, a CLI message — **cites a row,
+   round or ruling id** that is not an alias in `docs/decisions.md`; ⭐ each carries its
+   reason or a spec rule. Read with `REL-01`'s command over string literals under `src/`.
+2. ⭐ **`docs/decisions.md` gains an entry for each product decision since `REL-01`** —
+   per-practice editor locks, the served quiz key, planning by important ideas, the
+   ledger's merge — in its own form, each citing where the rule now lives.
+3. ⭐ **Tests that assert the old wording move with it**; no logic changes.
+
+⭐ **Surface:** those three modules' messages, their tests, `docs/decisions.md`.
+
+[the mint](#po-round-177)
+
+### W458 — A browser focus test fails at random under parallel load and blocks merges
+
+⛔ **`tests/visual/test_practice_focus.py` fails intermittently under parallel load** —
+`W456`'s office saw it once (`W456/6`) and the register's own round-176 merge gate was
+REFUSED on it once (`test_a_readers_click_into_the_frame_focuses_it_and_what_they_type_arrives`),
+each passing on its own and on a re-run. ⛔ **A gate that goes RED at random is a gate
+people learn to re-run**, which is how a real failure gets waved through.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **The cause is FOUND and named** — a timing assumption, a shared resource between
+   xdist workers, a focus race in the stand-in editor — read by reproducing it under load,
+   not guessed.
+2. ⭐ **The test waits on an EVENT, never a sleep**, and still fails when the behaviour it
+   guards breaks (`W449`'s focus rule): planted back and RED.
+3. ⭐ **Measured stable**: the module GREEN in a loop of runs under `-n auto` alongside the
+   full suite's load, the count stated, with the flake reproduced on the current code first.
+
+⭐ **Surface:** `tests/visual/test_practice_focus.py`, `tests/visual/editor_standin.py`.
+
+[the mint](#po-round-177)
+
+### W457 — A changed paragraph keeps playing its old narration, and nothing reports the stale clip
+
+⛔ **Found on the USER's question, 2026-09-23** — *"After updating the texts and examples
+did we need to update any of the voice text to speeches?"* — ⭐ **measured by the
+register:** three content-fix rounds on the first corpus changed about 62 prose lines
+and 6 headings across 13 pages, and ⛔ **every changed paragraph kept PLAYING ITS OLD
+CLIP.** `narrate.playable` joins on the speech id, marks the clip `stale`
+(`WORDS_MOVED`) and resolves it anyway; ⛔ **`validate`, `plan` and the build all read
+clean**, so nothing a reader or an office runs could see it.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`studyforge validate` reports every narrated speech unit whose clip was made
+   from words the unit no longer says** — a finding naming the unit, on a corpus with a
+   record; ⭐ a corpus with NO record stays quiet (the reading floor is complete without
+   narration, C5).
+2. ⭐ **The finding says what to run** (`studyforge narrate … --voice <the record's
+   voice>`) and never reproduces the text (R7).
+3. ⭐ **A stale clip is not silently played as if current**: the office decides and
+   argues whether the page marks it (the renderer's third state) or keeps playing with
+   the build reporting it — ⛔ never both silent.
+4. ⭐ **Proved on a fixture**: narrate, edit one paragraph, and `validate` goes RED naming
+   it — with the current code as the positive control (GREEN over the stale clip);
+   planted back and RED.
+
+⭐ **Surface:** `validate`, `narrate/playable.py`, possibly `render/page/narration.py`.
+
+[the mint](#po-round-177)
