@@ -22,7 +22,7 @@ and on nothing inside either component but its `consuming.json` (R18).
 |---|---|
 | `contract` | one component's `consuming.json`, read — and the refusal that is a finding |
 | `toolchain` | which runtimes an image carries, and the two commands for it |
-| `rulings` | spec §8.1's four rulings and §8.3's, asserted against a block |
+| `rulings` | spec §8.1's four compose rules and §8.3's, asserted against a block |
 | `emit` | the smallest deterministic YAML a generated compose file needs |
 | `composefile` | one contract block to one compose service, and the file around it |
 | `runnerservice` | the runner a Submit execs into, as the compose file's second service |

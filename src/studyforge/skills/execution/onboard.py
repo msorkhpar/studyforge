@@ -26,7 +26,7 @@ Docker dependency in front of somebody converting a book (spec §11.0).
 
 ## ⭐ WHICH DIRECTORY IS BOUND IS DERIVED, AND THE DERIVATION IS THE RULING
 
-⚠️ **§8.1 ruling 2: only the sources are mounted — not the repository.** The
+⚠️ **§8.1: only the sources are mounted — not the repository.** The
 manifest carries no key naming the directory an editor binds, so it is derived
 from `content.include`'s own common root, which is the corpus's own statement
 about where its material lives.
@@ -151,12 +151,12 @@ class Execution:
 
 
 def source_root(manifest: Manifest) -> str:
-    """Return the directory an editor binds, from `content.include` (ruling 2)."""
+    """Return the directory an editor binds, from `content.include` (§8.1: the sources alone)."""
     roots = [_root_of(one) for one in manifest.content.include]
     if not roots or not all(roots):
         raise ExecutionRefused(
-            "this corpus's content.include names the repository root, so §8.1 ruling 2 "
-            "leaves no directory to mount: only the sources are mounted, never the "
+            "this corpus's content.include names the repository root, so §8.1 leaves "
+            "no directory to mount: only the sources are mounted, never the "
             "repository. Declare material under a directory, or add a manifest key that "
             "names the one an editor binds"
         )
@@ -165,8 +165,8 @@ def source_root(manifest: Manifest) -> str:
         shared = _common(shared, PurePosixPath(one))
     if not shared.parts:
         raise ExecutionRefused(
-            "this corpus's content.include globs share no directory, so §8.1 ruling 2 "
-            "would mount the repository to reach them all. Declare them under one "
+            "this corpus's content.include globs share no directory, so reaching them all "
+            "would mount the repository, and §8.1 mounts only the sources. Declare them under one "
             "directory, or add a manifest key that names the one an editor binds"
         )
     return shared.as_posix()

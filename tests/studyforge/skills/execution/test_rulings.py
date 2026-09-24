@@ -37,13 +37,13 @@ def test_ruling_1_a_port_published_on_every_interface_is_reported(bind):
     block = editor()
     block["ports"][0]["host_bind"] = bind
     found = rulings.findings(block, name="editor")
-    assert len(found) == 1 and "ruling 1" in found[0]
+    assert len(found) == 1 and "to loopback only" in found[0]
 
 
 def test_ruling_1_is_also_reported_when_the_contract_says_so_in_its_own_flag():
     block = editor()
     block["ports"][0]["publish_on_all_interfaces"] = True
-    assert any("ruling 1" in one for one in rulings.findings(block, name="editor"))
+    assert any("to loopback only" in one for one in rulings.findings(block, name="editor"))
 
 
 def test_ruling_1_reaches_the_narration_block_too():
@@ -51,33 +51,33 @@ def test_ruling_1_reaches_the_narration_block_too():
     # it is to be fixed rather than copied, so it is on trial here as well.
     block = narration_contract()["service"]
     block["ports"][0]["host_bind"] = "0.0.0.0"
-    assert any("ruling 1" in one for one in rulings.findings(block, name="narrate"))
+    assert any("to loopback only" in one for one in rulings.findings(block, name="narrate"))
 
 
 @pytest.mark.parametrize("host_path", rulings.NEVER_BOUND)
 def test_ruling_2_a_bind_of_the_repository_or_a_home_is_reported(host_path):
     block = editor()
     block["mounts"][0]["host_path"] = host_path
-    assert any("ruling 2" in one for one in rulings.findings(block, name="editor"))
+    assert any("only the sources" in one for one in rulings.findings(block, name="editor"))
 
 
 def test_ruling_2_a_second_per_project_bind_is_reported():
     block = editor()
     block["mounts"].append(copy.deepcopy(block["mounts"][0]))
-    found = [one for one in rulings.findings(block, name="editor") if "ruling 2" in one]
+    found = [one for one in rulings.findings(block, name="editor") if "only the sources" in one]
     assert found and "2 per-project binds" in found[0]
 
 
 def test_ruling_2_no_per_project_bind_at_all_is_reported():
     block = editor()
     block["mounts"][0]["per_project"] = False
-    assert any("ruling 2" in one for one in rulings.findings(block, name="editor"))
+    assert any("only the sources" in one for one in rulings.findings(block, name="editor"))
 
 
 def test_ruling_3_a_block_that_binds_and_names_no_uid_is_reported():
     block = editor()
     del block["runs_as"]["compose_value"]
-    assert any("ruling 3" in one for one in rulings.findings(block, name="editor"))
+    assert any("uid:gid" in one for one in rulings.findings(block, name="editor"))
 
 
 def test_ruling_3_does_not_fire_on_a_block_that_binds_nothing():
@@ -91,13 +91,13 @@ def test_ruling_3_does_not_fire_on_a_block_that_binds_nothing():
 def test_ruling_3_accepts_a_run_value_where_a_block_is_consumed_by_a_run_line():
     block = editor()
     block["runs_as"] = {"user": "coder", "run_value": "$(id -u):$(id -g)"}
-    assert not [one for one in rulings.findings(block, name="editor") if "ruling 3" in one]
+    assert not [one for one in rulings.findings(block, name="editor") if "uid:gid" in one]
 
 
 def test_ruling_4_a_bind_that_need_not_exist_first_is_reported():
     block = editor()
     block["mounts"][0]["must_exist_before_start"] = False
-    found = [one for one in rulings.findings(block, name="editor") if "ruling 4" in one]
+    found = [one for one in rulings.findings(block, name="editor") if "before the start" in one]
     assert found and "root-owned" in found[0]
 
 

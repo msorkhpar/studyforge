@@ -119,7 +119,7 @@ run in the browser and what a graded practice runs in the runner.
 
 `composefile.render(...)` writes one service per component block it is given,
 and every value in it is read out of a contract. It refuses to emit a file that
-breaks any of spec §8.1's four rulings, and §8.3's socket rule besides:
+breaks any of spec §8.1's four compose rules, and §8.3's socket rule besides:
 
 | ruling | what the renderer does | what it refuses |
 |---|---|---|
@@ -141,7 +141,7 @@ differ per host"* are both true at once.
   the directory `emit` places them in (`corpus.placement.PRACTICE_DIRNAME`),
   which is not under the sources' common root. It is bound at the contract's
   workspace root under its own name, read from that one spelling
-  (`onboard.workspaces_bind`), and named in ruling 4's list. ⚠️ An editor that
+  (`onboard.workspaces_bind`), and named in the list of bind sources that exist first. ⚠️ An editor that
   binds the sources alone can open no practice file: the frame gets no URL.
 - ⭐ **The runner a Submit execs into is the second service**
   (`runnerservice`), every value read from the contract's `runner` block: the
