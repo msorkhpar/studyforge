@@ -31934,3 +31934,15 @@ container each time.
 - ⚠️ **Findings carried** in `ISO-28`'s handoff — smaller content gaps (an LMK file the page never explains, a packager XML no fence provides, a routing claim no participant implements, two unconfirmed codes on src/6).
 
 ⚠️ **Nothing in flight.** ⭐ **`M10`'s remaining row is `AX-11`, its acceptance.**
+
+## PO round 175
+
+⛔ **USER RULING, 2026-09-23, on `ISO-28`'s findings: "yeah fix them"** — ⭐ **`ISO-29`** on the corpus's integration office: every remaining content gap in the tutorial, each confirmed, fixed in the page's voice and proved offline; ⭐ an unverifiable standard value is reworded rather than asserted.
+
+⭐ **`M11` step 11.4 DISPATCHED** — `W453` has landed, which is what held it: **`REL-07`** (the README) on `wt/dev2`, **`REL-08`** (the rubric and conventions sorted) on `wt/dev3`, **`REL-09`** (process ids leave the product's prose) on `wt/dev1`. ⭐ **The user's `W438/2` ruling reaches `REL-07`: `ONBOARDING.md` goes to the archive branch** (moved by `REL-10`), so the README is written as the whole reading list without it.
+
+⚠️ **`AX-11` waits for `ISO-29`**, because it reads the corpus `ISO-29` changes.
+
+### ⚠️ In flight
+
+⭐ **`REL-07`**, **`REL-08`**, **`REL-09`**; ⭐ **`ISO-29`** on the corpus.
