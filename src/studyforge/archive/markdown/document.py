@@ -95,8 +95,8 @@ def parse(text: str, *, lang_default: str = "") -> list[dict]:
 
 # ⛔ `BLOCK_TYPES` and `CONTAINER_TYPES` live in `studyforge.archive.blocks`,
 # not here, and this package's `__init__` re-exports them from there. They were defined here first
-# and were right about the *set*; SF-06 consolidated the four copies of that
-# contract into one row per type, and the reader is now a consumer of it.
+# and were right about the *set*; the four copies of that contract became
+# one row per type, and the reader is now a consumer of it.
 #
 # ⚠️ One thing changed in the move: the order. This tuple had `list` before
 # `table`, and a document's `counts` object — which reaches disk — has

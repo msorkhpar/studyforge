@@ -7,8 +7,8 @@ about one path: **included**, **excluded**, **not material**, **contested** or
 **unclassified**?
 
 **How you use it.** `policy.classify("src/whole-series.md")`. ⛔ It takes a
-path and does no I/O; enumerating a source root is `studyforge validate`'s job
-(SF-25), and refusing the unclassified ones is its verdict.
+path and does no I/O; enumerating a source root is `studyforge validate`'s job,
+and refusing the unclassified ones is its verdict.
 
 **Depends on.** `pathlib.PurePosixPath` for glob semantics — a pure path
 object that never touches a disk — and `errors`. ⛔ **Nothing from `parse`**,

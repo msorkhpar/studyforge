@@ -186,7 +186,7 @@ def _ordinal_of(name: str, key: str) -> int:
     """Return the ordinal a `unit-NN` name carries, or raise naming the fault.
 
     ⚠️ **`key` is quoted in the second refusal and described in the first, and
-    the asymmetry is the rule rather than an oversight** (R7, rubric §1f). By
+    the asymmetry is the rule rather than an oversight** (R7). By
     the time the second one fires, `name` has been proved to be
     `unit-<digits>` and the address before it has been proved to be slugs — so
     the whole key is this framework's own vocabulary. Before that proof it is

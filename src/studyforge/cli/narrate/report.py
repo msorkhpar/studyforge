@@ -45,11 +45,11 @@ RETRY = "the job stopped early; running this command again asks only for what is
 #: What a clip placed under another format says.
 UNSETTLED = "the service answered in another format; this unit will be asked for again"
 
-#: ⭐ `E09` § W193 answer 4 — printed on EVERY run, zero included, so an absent
+#: ⭐ The dead-entry disclosure — printed on EVERY run, zero included, so an absent
 #: line is a disclosure that did not run rather than a corpus with none.
 DEAD = "record entries name a speech id this corpus did not produce; --prune deletes their clips"
 
-#: ⭐ `W226`: printed on every run, zero included, beside the dead count.
+#: ⭐ Printed on every run, zero included, beside the dead count.
 SUPERSEDED = (
     "clips an earlier wording or directory wrote are still named by the record; "
     "--prune deletes them"
@@ -61,7 +61,7 @@ PARTIAL = (
     "until every declared unit is read"
 )
 
-#: ⛔ W193 answer 3: a partial walk refuses BY NAME, and before a file is touched.
+#: ⛔ A partial walk refuses BY NAME, and before a file is touched.
 REFUSED = "nothing was deleted: these declared units have no material, so the walk is partial"
 
 

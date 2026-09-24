@@ -19,10 +19,10 @@ time and its result is what is returned, so there is no code path on which a
 cache is believed over the tree. ⭐ **This module's job is the narrower one: to
 be able to say that the file on disk no longer matches.**
 
-## ⛔ The signal is content, never a clock and never the filesystem (Ruling 18)
+## ⛔ The signal is content, never a clock and never the filesystem
 
 ⚠️ **`mtime` is not used here and must not be added**, and the argument is
-measured rather than felt. Ruling 18, 2026-09-09: an mtime verdict and a
+measured rather than felt. Measured 2026-09-09: an mtime verdict and a
 content verdict disagreed **in opposite directions at once**; re-measured 33
 minutes later the mtime verdict flipped FAIL→PASS while nothing in the tree had
 moved; and ⛔ **`git worktree add` resets every mtime**, so an mtime signal

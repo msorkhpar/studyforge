@@ -1,22 +1,22 @@
 """The plain fields of `corpus.json`: `source`, `title`, `levels`, `variants`, two flags, a place.
 
-⭐ The flags are `exercises` and `narration` (`W460`); the place is
-`onboarding_doc` (`W461`).
+⭐ The flags are `exercises` and `narration`; the place is
+`onboarding_doc`.
 
 **What it does.** Validates one top-level value each, and raises this
 package's `ManifestError` naming the key it read.
 
 ⚠️ **One function per key, and the key is spelled inside it**, never passed
 in: a key a caller supplies is caller data, and a refusal that quotes caller
-data is rubric §1f's echo.
+data is an R7 echo.
 
 **How you use it.** `document.from_document` calls these; nothing else does.
 ⛔ They are the manifest's own field rules, not a general validator.
 
 **Depends on.** `studyforge.address` for what a slug is, and `errors`.
 
-⭐ **Split from `document.py` at the seam between the document and its fields**
-(`W350`, Ruling 261): the `runtimes` key took `document.py` past R11's bound,
+⭐ **Split from `document.py` at the seam between the document and its fields**:
+the `runtimes` key took `document.py` past R11's bound,
 and the field rules are the part that reads one value and knows nothing of the
 document's version, its keys or its gate.
 """
@@ -30,7 +30,7 @@ from studyforge.corpus.manifest.errors import ManifestError
 from studyforge.describe import describe
 
 #: Where onboarding writes the document a reader opens first, when the corpus
-#: says nothing (`W461`). ⭐ A **stated** default, so every corpus onboarded before
+#: says nothing. ⭐ A **stated** default, so every corpus onboarded before
 #: the key existed reads exactly as it did.
 ONBOARDING_DOC = "ONBOARDING.md"
 
@@ -72,16 +72,16 @@ def variants_of(value: object, where: str) -> tuple[str, ...]:
 
 
 def slug_of(value: object, what: str) -> str:
-    """SF-01's slug rule, raised as this package's error.
+    """`studyforge.address`'s slug rule, raised as this package's error.
 
     ⛔ `errors.ManifestError` promises that reading a manifest raises one
-    type. SF-01 owns what a slug **is**, so the rule is imported rather than
+    type. `studyforge.address` owns what a slug **is**, so the rule is imported rather than
     restated — but a caller reading `corpus.json` should not have to know that
     a bad `source` fails through a different package, so the refusal is
-    re-raised here with SF-01's message intact.
+    re-raised here with `studyforge.address`'s message intact.
 
     ⚠️ `Manifest.parse_key` deliberately does **not** do this: that is the
-    arity *comparison*, which SF-01 owns outright, and its `AddressError` is
+    arity *comparison*, which `studyforge.address` owns outright, and its `AddressError` is
     the honest answer.
     """
     try:
@@ -109,7 +109,7 @@ def exercises_of(value: object, where: str) -> bool:
 
 
 def narration_of(value: object, where: str) -> bool:
-    """`narration`: whether this corpus is voiced, as a real bool (`W460`).
+    """`narration`: whether this corpus is voiced, as a real bool.
 
     ⭐ The author's answer to the onboarding skill's question, recorded where
     every later stage already reads. ⛔ Not `"off"`, not `0`: the refusal
@@ -121,7 +121,7 @@ def narration_of(value: object, where: str) -> bool:
 
 
 def onboarding_doc_of(value: object, where: str) -> str | None:
-    """`onboarding_doc`: where the onboarding reader document goes, or `None` for none (`W461`).
+    """`onboarding_doc`: where the onboarding reader document goes, or `None` for none.
 
     ⭐ **A path relative to the corpus root, spelled the one way**: no `.` or
     `..` segment, no leading `/`, no glob character, and ending `.md`, because it

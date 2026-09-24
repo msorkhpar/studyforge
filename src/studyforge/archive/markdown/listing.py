@@ -13,7 +13,7 @@ appends.
 `document`: a list's fenced code is read directly rather than by recursing, so
 this module cannot loop back into the dispatcher. It recurses only into itself.
 
-## ⛔ A nested list is a nested list (`W258`), never text folded into its parent
+## ⛔ A nested list is a nested list, never text folded into its parent
 
 ⚠️ **This reader used to fold a nested item into its parent, marker and all**,
 on the argument that the block model was flat. The words survived and the
@@ -28,7 +28,7 @@ file continues an item with a paragraph **after** its nested list and then
 opens a second one. A single text-and-list pair would have to refuse that file,
 which reads today, or fold the paragraph ahead of the list it follows.
 
-## ⛔ An ordered list keeps the number it starts at (`W264`)
+## ⛔ An ordered list keeps the number it starts at
 
 ⭐ An author who continues a step list after a code block writes `2.`, and the
 reader used to record only that the list was ordered, so the page and the

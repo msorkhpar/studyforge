@@ -6,13 +6,13 @@ insertion and its reason — and refuses the three targets no declaration can
 make legal.
 
 **How you use it.** `parse_edits(value, content)` while parsing a manifest;
-`edit.reversal` to describe the undo. ⛔ **`OPS-05` reads the declaration**; it
+`edit.reversal` to describe the undo. ⛔ **`validate.nondestructive` reads the declaration**; it
 never hardcodes a corpus's exception. The first consuming corpus's additive
 `<module>practice</module>` line in its root build file is one entry in this
 list, not a special case in the framework.
 
 **Depends on.** `content` (for the third prohibition — see below) and
-`errors`. No filesystem: whether the declared edit *happened* is `OPS-05`'s
+`errors`. No filesystem: whether the declared edit *happened* is `validate.nondestructive`'s
 question, not this module's.
 
 ⭐ **An empty list is the normal case**, and it is the one a purely additive
@@ -36,13 +36,13 @@ R3 names them, and this module refuses each **however declared**:
    `permitted_edits` is `[]` and its `README.md` is material, so the check
    holds it there structurally rather than by anyone remembering.
 
-   ⛔ **`W278`: content is a property of the file in its repository**, not of
+   ⛔ **Content is a property of the file in its repository**, not of
    the site's policy. **Repository-root documentation** — a root `README`,
    `LICENSE`, `LICENCE` or `COPYING`, of any suffix — is content its readers
    read whatever `content` classifies it as, so a corpus that declares its root
    `README.md` `not_material` still may not declare an edit to it.
    `reads_as_content` is the ONE predicate: this module refuses a declaration by
-   it, and `OPS-05` refuses a declared change by it.
+   it, and `validate.nondestructive` refuses a declared change by it.
 
 ## The reverse of every declared edit is recorded
 
@@ -83,7 +83,7 @@ VCS_DIRECTORIES = frozenset({".git", ".hg", ".svn"})
 #: directory is how a corpus ignores generated output instead.
 IGNORE_NAMES = frozenset({".gitignore", ".hgignore"})
 
-#: ⛔ `W278`: repository-root documentation, by exact stem and in any case. A file
+#: ⛔ Repository-root documentation, by exact stem and in any case. A file
 #: the repository's own readers read as its content, whatever the site calls it.
 ROOT_DOCUMENTATION = frozenset({"readme", "license", "licence", "copying"})
 
@@ -121,7 +121,7 @@ class PermittedEdit:
 
         ⛔ Additive by construction: the only kind is an inserted line, so the
         only reversal is that line removed. A declared edit that proves not to
-        be additive is `OPS-05`'s failure to detect, not this module's to
+        be additive is `validate.nondestructive`'s failure to detect, not this module's to
         express.
         """
         return Reversal(self.path, "remove-line", self.content)
@@ -130,8 +130,8 @@ class PermittedEdit:
 def reads_as_content(path: str, content: ContentPolicy) -> str:
     """Return why R3 reads `path` as content, `BY_POLICY` or `BY_CONVENTION`, or `""`.
 
-    ⛔ The ONE predicate for R3's third category (`W278`): the parser refuses a
-    declaration by it, and `OPS-05`'s check refuses a declared change by it.
+    ⛔ The ONE predicate for R3's third category: the parser refuses a
+    declaration by it, and `validate.nondestructive` refuses a declared change by it.
     """
     if content.classify(path) in (Classification.INCLUDED, Classification.CONTESTED):
         return BY_POLICY
@@ -199,7 +199,7 @@ def _reject_forbidden_target(edit: PermittedEdit, content: ContentPolicy) -> Non
     """Refuse the three targets R3 never permits, however they are declared."""
     path = PurePosixPath(edit.path)
     if edit.path.startswith("/") or ".." in path.parts:
-        # ⛔ The twin of `content._reject_absolute`, and the same W19 fix: this
+        # ⛔ The twin of `content._reject_absolute`, and the same rule: this
         # branch fires *because* the value is an absolute or escaping path, so
         # quoting it is the leak the check exists to prevent.
         raise ManifestError(
@@ -208,7 +208,7 @@ def _reject_forbidden_target(edit: PermittedEdit, content: ContentPolicy) -> Non
             f"because that shape is where a home directory lives"
         )
     if len(path.parts) == 1 and path.name in IGNORE_NAMES:
-        # ⭐ Safe to name, and this is the distinction W19 turns on: by here the
+        # ⭐ Safe to name, and this is the distinction that rule turns on: by here the
         # value is one path component **and a member of `IGNORE_NAMES`** — this
         # framework's own closed vocabulary, not the caller's text.
         raise ManifestError(
@@ -232,10 +232,10 @@ def _reject_forbidden_target(edit: PermittedEdit, content: ContentPolicy) -> Non
             "as content, and this corpus's 'content' includes it"
         )
     if reason == BY_CONVENTION:
-        # ⭐ Safe to name (W19): one path component whose stem is in this framework's
+        # ⭐ Safe to name: one path component whose stem is in this framework's
         # own closed vocabulary, `ROOT_DOCUMENTATION`.
         raise ManifestError(
             f"permitted_edits may never name {path.name!r}: it is repository-root "
             f"documentation, which the repository's own readers read as content whatever "
-            f"'content' classifies it as for the site (R3, W278)"
+            f"'content' classifies it as for the site (R3)"
         )

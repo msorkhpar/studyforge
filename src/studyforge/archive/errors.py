@@ -5,7 +5,7 @@ a caller catches one type rather than five.
 
 **How you use it.** Catch `ArchiveError`. ⛔ Reading or building an archive
 document raises it and nothing else — including where the rule being applied
-is somebody else's, as an address that is not a slug is (SF-01's), because a
+is somebody else's, as an address that is not a slug is (`studyforge.address`'s), because a
 caller reading a file wants one answer to *"can I use this?"*.
 
 **Depends on.** Nothing. ⭐ That is the point of a separate module: both
@@ -16,7 +16,7 @@ other import a module it otherwise has no business knowing. The same reason
 ⚠️ **Two exceptions travel through, deliberately.** `PersonalDataLeak` from
 `archive.scrub` is **not** wrapped: R7's refusal is louder than a format
 error and a caller that catches `ArchiveError` should not accidentally
-swallow a leak. `VersionError` never appears because SF-33's guard is handed
+swallow a leak. `VersionError` never appears because `version`'s guard is handed
 `error=ArchiveError` — each contract keeps its own front door.
 
 ⚠️ **`ValueError`, following the manifest's precedent.** A document error is

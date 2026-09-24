@@ -60,11 +60,11 @@ RUN_CLIENT = re.compile(
 
 REFERENCE = re.compile(r"""(?:src|href)\s*=\s*["']([^"']*)["']""")
 
-#: ⛔ `W370`: what a SERVING PROCESS adds to the page it answers, and the ONE way
-#: a page ever gets the execution client (`SF-24`, `E05` § how a served page
-#: loads the run client). ⚠️ A built text that names it is a floor defect above;
-#: a SERVED page that does not carry it is an instance offering Run and Submit
-#: the page cannot reach. ⭐ Both directions, one constant.
+#: ⛔ What a SERVING PROCESS adds to the page it answers, and the ONE way a page
+#: ever gets the execution client (§8.3). ⚠️ A built text that names it is a
+#: floor defect above; a SERVED page that does not carry it is an instance
+#: offering Run and Submit the page cannot reach. ⭐ Both directions, one
+#: constant.
 CLIENT_TAG = f'<script src="{CLIENT_PATH}" defer></script>'.encode()
 
 

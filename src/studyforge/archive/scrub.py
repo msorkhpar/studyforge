@@ -39,13 +39,13 @@ that test and they are all that ship:
 | email address | an address in captured material came from a signed-in session |
 | bearer token | a credential minted for whoever authenticated |
 
-⚠️ **The fourth arrived by Ruling 47 and it was drift, not a new idea.** The
+⚠️ **The fourth arrived late and it was drift, not a new idea.** The
 repository hygiene check has always swept `<host>.local` and this gate
 never did — ⛔ and a machine name is personal data in an archive document
 exactly as much as in a source file. ⭐ *One shape vocabulary, two policies*:
 the two checks may differ in what they **do** and may not differ in what they
-**recognise** without saying why. `docs/conventions/personal-data-shapes.md`
-is that table, and every divergence left in it carries a reason.
+**recognise** without saying why. The shared shape table is data both sides
+assert against, and every divergence left in it carries a reason.
 
 ⛔ **No payment-card pattern.** One designed shape's material carries 96 card-shaped
 digit strings because a test PAN is the *subject of the lesson*; a gate that
@@ -64,7 +64,7 @@ Deriving this machine's account name and comparing would be a gate whose
 verdict differs by machine, and `assert_clean` is half of what `studyforge
 validate` promises an adapter (R2). A contract that says "valid here, invalid
 there" is not a contract. ⚠️ This is where this gate and the repository
-hygiene check (`tools/quality/personal_data`) part company hardest: that one
+hygiene check (`tests.floor.personal_data`) part company hardest: that one
 is a local development check, so a machine-specific verdict is exactly what it
 wants. **The two gates have different subjects and neither imports the
 other's patterns.**
@@ -76,7 +76,7 @@ profiles, contract fields, slugs, **and a path inside the source** all have an
 end, and each of those is enforced by enumerating what is permitted. ⛔ **This
 gate has no such set.** Its permitted set is *"all text that is not personal
 data"*, which nobody can write down, so its forbidden list is forced and is
-**known-incomplete by construction**. Ruling 44 found two unforeseen entries
+**known-incomplete by construction**. Two unforeseen entries were found
 in it, which is simply what an open set does — and the answer to that is never
 a longer list.
 
@@ -176,7 +176,7 @@ SHAPES: tuple[tuple[str, re.Pattern[str], str], ...] = (
         "local hostname",
         # ⛔ The mDNS suffix, and the trailing guard keeps `settings.local.json`
         # — a filename, not a host — out of it. Word for word the repository
-        # hygiene check's pattern, because Ruling 47 is that the two gates
+        # hygiene check's pattern, because the two gates must
         # share a vocabulary; the placeholder is this module's own.
         re.compile(r"(?<![\w.])[A-Za-z0-9-]+\.local(?![\w.])"),
         HOSTNAME_PLACEHOLDER,
@@ -208,8 +208,8 @@ SHAPES: tuple[tuple[str, re.Pattern[str], str], ...] = (
 #: ⛔ **Every entry here is a shape that cannot be told from a benign one.**
 #: `/export/home/<name>/x` is a home directory and `/var/lib/home/cache/x` is
 #: not, and **nothing about their shape separates them** — which is why the
-#: gate must not be the layer that protects a path. Ruling 44 ruled the first
-#: of those a live hole; it is closed for every field a reader types as a path
+#: gate must not be the layer that protects a path. The first of those is
+#: a live hole; it is closed for every field a reader types as a path
 #: (`studyforge.sourcepath`), and it is closed for text this framework emits
 #: (here). It stays open for free text a source authored, and that residual is
 #: stated rather than left to be discovered.

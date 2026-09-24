@@ -22,8 +22,8 @@ framework.
 ⚠️ That reasoning does **not** generalise to a document reader. "This file is
 not an archive I can read" is not a bad argument; it is a bad file, and
 `Exception` is right for it. Two different failure kinds, two different bases —
-see `docs/tasks/handoffs/SF-01.md`, which proposes this split as a precedent
-rather than assuming it.
+and the split is a precedent other packages follow rather than a rule this
+one assumes.
 """
 
 from __future__ import annotations
@@ -36,7 +36,7 @@ class AddressError(ValueError):
     "invalid" either.** Both halves are required and this sentence used to
     mandate the first of them: it said the message *"names the offending value
     with `!r`"*, which is how every address segment, identity field and unit
-    ordinal in the framework came to inherit an R7 echo (Ruling 14, W1).
+    ordinal in the framework came to inherit an R7 echo.
 
     ⚠️ **Fixing the code and leaving this sentence would have been worse than
     fixing neither.** The next author to touch `slug.py` would have read the

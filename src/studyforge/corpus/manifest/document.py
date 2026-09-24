@@ -33,12 +33,12 @@ source's `LANGUAGES` tuple was.
 
 **This module declares it.** `levels` names the container levels, and
 `len(levels)` is the corpus's depth. ⛔ **It does not check an address against
-that depth** — SF-01 owns the comparison, and a second check here with a
+that depth** — `studyforge.address` owns the comparison, and a second check here with a
 different message is how two tasks come to disagree about which is
 authoritative.
 
 ⭐ `Manifest.parse_key(key)` is where the two halves meet: it supplies this
-manifest's depth to SF-01's `parse_key`, so no caller ever writes
+manifest's depth to `studyforge.address`'s `parse_key`, so no caller ever writes
 `parse_key(key, len(manifest.levels))` and no caller ever gets it wrong.
 """
 
@@ -77,10 +77,10 @@ MANIFEST_FILENAME = "corpus.json"
 #: because something merely wanted to render a page rewrites the record of
 #: what was ingested.
 #:
-#: ⭐ **`2` added `content.not_material`** (Ruling 90), ⭐ **`3` added
-#: `media.max_files`** (`W207`), ⭐ **`4` added `runtimes`** (`W350`), ⭐ **`5`
-#: added `narration`** (`W460`, the user's ruling of 2026-09-23) and ⭐ **`6` added
-#: `onboarding_doc`** (`W461`), and no
+#: ⭐ **`2` added `content.not_material`**, ⭐ **`3` added
+#: `media.max_files`**, ⭐ **`4` added `runtimes`**, ⭐ **`5`
+#: added `narration`** (the user's ruling of 2026-09-23) and ⭐ **`6` added
+#: `onboarding_doc`**, and no
 #: bump is about old manifests — each key is optional and an absent one has a
 #: stated default, so every `1` still parses. ⛔ **A bump is about a manifest
 #: that *uses* the key being unreadable to an older build**, which reports an
@@ -106,7 +106,7 @@ KNOWN_CORPUS_API = frozenset({1, 2, 3, 4, 5, 6})
 #: note warned about**: the gate would have been complete for one block and
 #: silently absent for the rest.
 #:
-#: ⛔ **A TOP-LEVEL key is keyed under the block `None`** (`TC-00/2`): the map
+#: ⛔ **A TOP-LEVEL key is keyed under the block `None`**: the map
 #: read nested keys only, so a top-level key with no entry here would have
 #: parsed under any version.
 #:
@@ -122,7 +122,7 @@ KEY_VERSIONS: dict[tuple[str | None, str], int] = {
     (None, "onboarding_doc"): 6,
 }
 
-#: The placement profiles that may be declared. ⚠️ **SF-03 owns the profiles;
+#: The placement profiles that may be declared. ⚠️ **`placement.profile` owns the profiles;
 #: this is only the set a manifest may name**, and the two must not drift.
 #: This constant is where a third profile is registered, beside its
 #: definition in `corpus.placement`.
@@ -173,11 +173,11 @@ class Manifest:
     permitted_edits: tuple[PermittedEdit, ...] = field(default=())
     #: Sorted names from `runtimes.RUNTIMES`; empty is *no runner* (§7, C5).
     runtimes: tuple[str, ...] = NO_RUNTIMES
-    #: Whether a build and a serve voice this corpus (`W460`). ⭐ **Absent is
+    #: Whether a build and a serve voice this corpus. ⭐ **Absent is
     #: `True`**, which is every corpus's behaviour before the key existed: a
     #: record's clips play. `False` is the reading floor exactly — never short.
     narration: bool = True
-    #: Where onboarding writes its reader document, root-relative (`W461`).
+    #: Where onboarding writes its reader document, root-relative.
     #: ⭐ **Absent is `ONBOARDING.md` at the root**, as before the key; `None`
     #: (declared `false`) is no reader document at all.
     onboarding_doc: str | None = ONBOARDING_DOC
@@ -185,7 +185,7 @@ class Manifest:
 
     @property
     def depth(self) -> int:
-        """How many container levels this corpus has — SF-01's arity, declared here."""
+        """How many container levels this corpus has — the address arity, declared here."""
         return len(self.levels)
 
     def parse_key(self, key: str) -> Address:
@@ -201,7 +201,7 @@ class Manifest:
     def allows_edit_to(self, path: str) -> bool:
         """Whether this corpus declared an edit to `path` (R3).
 
-        ⛔ `OPS-05` asks this rather than knowing any corpus's exception.
+        ⛔ `validate.nondestructive` asks this rather than knowing any corpus's exception.
         """
         return any(edit.path == path for edit in self.permitted_edits)
 
@@ -235,8 +235,8 @@ def load(path: str | Path) -> Manifest:
 def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
     """Build a `Manifest` from an already-parsed object.
 
-    ⛔ **The personal-data gate runs over the whole decoded document** (R7,
-    SF-08), before any field is read. ⚠️ **It was missing entirely until W7**,
+    ⛔ **The personal-data gate runs over the whole decoded document** (R7),
+    before any field is read. ⚠️ **It was once missing entirely**,
     and the shape of that miss is worth keeping: `studyforge validate` was
     already wired to report a leak here, the archive and the container map and
     the overlay all gated, and `corpus.json` — **the corpus's front door** —
@@ -285,11 +285,11 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
 def _gate(document: dict, where: str) -> None:
     """Refuse a manifest carrying personal data, naming the shape and not the value.
 
-    ⛔ **`PersonalDataLeak` is raised as itself, not translated** (Ruling 58,
-    rubric §1d). ⚠️ This docstring used to say it was *"Converted to
-    `ManifestError`, following `unit.content._gate` **exactly**"* — and that
-    sentence is the defect's propagation vector, because a module citing a
-    neighbour as its justification is how one translating site became three.
+    ⛔ **`PersonalDataLeak` is raised as itself, not translated** (R7). ⚠️ This
+    docstring used to say it was *"Converted to `ManifestError`, following
+    `unit.content._gate` **exactly**"* — and that sentence is the defect's
+    propagation vector, because a module citing a neighbour as its justification
+    is how one translating site became three.
     ⭐ The counter-argument it recorded — *a promise with one exception is not
     a promise* — is answered where it belongs: `manifest/errors.py` names what
     crosses, rather than swallowing it.
@@ -307,7 +307,7 @@ def _check_version(document: dict, where: str) -> int:
 
     ⛔ The test itself is `studyforge.version`'s, not this module's. It was
     written here first and was correct here; R9 versions **six** contracts,
-    and the second copy is the one people forget (SF-33). What stays here is
+    and the second copy is the one people forget. What stays here is
     the set — `KNOWN_CORPUS_API` — because which versions a manifest may
     declare is this contract's business and nobody else's.
 

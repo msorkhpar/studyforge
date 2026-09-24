@@ -14,7 +14,7 @@ this is *may this grader claim to be the source's*. `exercise` consumes it and R
 enforces it, and putting both in one module would file the exercise-trust rule
 under naming.
 
-## ⛔ `authoritative` ⟹ `bundled`, stated positively (Ruling 35)
+## ⛔ `authoritative` ⟹ `bundled`, stated positively
 
 ⛔ **Only a test that came with the source may claim to be the source's.** R5
 was written for a source whose grader is hidden and ungettable, so a test
@@ -32,7 +32,7 @@ reader wrote could declare itself the source's own. Nothing raised. ⭐ The
 replacement is the same rule stated from the other side: `MAY_BE_AUTHORITATIVE`
 is a closed set of one, and **a provenance nobody has decided about is
 non-authoritative automatically** rather than by somebody remembering to add a
-row. *Enumerate the legal, never the illegal* — `docs/conventions/module-structure.md`.
+row. *Enumerate the legal, never the illegal* (R5, R6).
 
 ⚠️ **`trust` defaults from `provenance` rather than being required**, because
 the default is right in every case and a field an author must fill in to say
@@ -62,7 +62,7 @@ DEFAULT_TRUST = {
 
 #: ⛔ The provenances that may claim `authoritative`, stated as data so a test
 #: can assert the rule rather than the message. ⭐ **The legal set, not the
-#: illegal one** (Ruling 35): a fourth provenance added to `PROVENANCE` is
+#: illegal one** (R5): a fourth provenance added to `PROVENANCE` is
 #: refused `authoritative` on the day it is added, without anybody deciding —
 #: which is the opposite of what the forbidden-pair list did.
 MAY_BE_AUTHORITATIVE = ("bundled",)

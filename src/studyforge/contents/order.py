@@ -135,7 +135,7 @@ def neighbours(contents: Contents, key: str) -> Neighbours:
     # ⛔ The count, never the list: a corpus has up to four figures of these
     # and a refusal nobody can read is a refusal nobody acts on (R6).
     #
-    # ⛔ **And the key is DESCRIBED, never echoed** (R7, rubric §1f). This
+    # ⛔ **And the key is DESCRIBED, never echoed** (R7). This
     # branch fires precisely because the value was not a unit key, which is the
     # branch an absolute path arrives at — so quoting it would take the one
     # input guaranteed to carry a home directory and put it in a log.

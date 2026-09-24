@@ -23,7 +23,7 @@ def test_the_verb_is_registered_in_the_one_table_against_this_main():
 
 
 def test_the_verb_precedes_build_in_the_table():
-    # ⛔ `E09` § W202 answer 3: clips are a build's input, so narrate comes first.
+    # ⛔ Clips are a build's input, so narrate comes first.
     names = list(VERBS)
     assert names.index("narrate") < names.index("build")
 

@@ -22,7 +22,7 @@ serves), `exercise` for the record and the completion rule, `execute` to run
 anything, `progress` to record a grader run, `archive.scrub` for R7, and
 `argparse`. ⛔ Nothing here knows any source (R1).
 
-## The two decisions, stated before code (`SF-44`'s handoff, *Decisions*)
+## The two decisions, stated before code
 
 - ⭐ **(a) A file with no test runs its program** (`run_command`, from the
   document), then says no test checks it, and exits `0` whatever the program
@@ -42,7 +42,7 @@ nothing runs. The runner checks the argv again (`execute.commands`). ⛔ There i
 no option that takes a command, an argument for the program, or an environment
 variable.
 
-## ⭐ Graded is the grader's presence (`W357/1`)
+## ⭐ Graded is the grader's presence
 
 Read from `Exercise.graded`, never from `workspace` being non-null. An ungraded
 unit's `workspace` is `{main_path, run_command}`, which is not null.
@@ -51,7 +51,7 @@ unit's `workspace` is `{main_path, run_command}`, which is not null.
 
 The runner's lines pass its `LineGate`: relative to the source root, then
 scrubbed. This module's own lines, including the reader's argument echoed in a
-refusal, pass `scrub`. ⭐ **Unfiltered**: `SF-29`'s filter is for the page. A
+refusal, pass `scrub`. ⭐ **Unfiltered**: the run output's filter is for the page. A
 reader in a terminal sees what the build printed.
 
 ⛔ **Exit codes:** `0` the test passed, or the file has no test; `1` the test

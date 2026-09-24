@@ -3,7 +3,7 @@
 ⚠️ **This file is swept by the repository hygiene check like every other
 tracked file**, and that check has no allow-list for home paths. So the
 home-path and token material below is **assembled at run time** rather than
-written as a literal — the run-time form of the trick `tools/quality/
+written as a literal — the run-time form of the trick `tests/floor/
 personal_data/shapes.py` uses in prose, where the shape is written
 `/home/<name>` so a document about the rule stays both swept and clean.
 ⛔ Nothing here came from any real machine, account or person.
@@ -465,12 +465,12 @@ def test_the_gate_does_not_import_the_repository_gates_patterns():
     ["jane.doe@example.invalid", "contact@example.org", "someone@localhost.test"],
 )
 def test_the_two_gates_disagree_about_an_unreachable_address(address):
-    # ⚠️ Not a defect. `tools/quality/personal_data` allows every one of these
+    # ⚠️ Not a defect. `tests.floor.personal_data` allows every one of these
     # because `CLAUDE.md` positively instructs authors to write them and a
     # check that fired on the sanctioned placeholder would be telling people
     # not to use the safe form. **In an archive an address is wrong content
     # whether or not it is deliverable.** Mirrored from the other side by
-    # `tools/tests/quality/personal_data/test_registry.py`.
+    # `tests/floor/personal_data/test_registry.py`.
     assert shape_in(f"mail {address} for help") == "email address"
 
 
@@ -535,7 +535,7 @@ def test_every_other_fixture_document_passes_the_gate():
 
 
 # --------------------------------------------------------------------------
-# The other boundary: build output on its way to a stream (E05)
+# The other boundary: build output on its way to a stream (§8.3)
 # --------------------------------------------------------------------------
 
 

@@ -26,7 +26,7 @@ clause; it is the clause**, and the type is tested before the value.
 ⚠️ **How many contracts R9 versions is `CONTRACT_FIELDS` below, and it is not
 restated here.** This paragraph used to enumerate six; two tasks appended in
 one round and it would have said six while the tuple said eight. ⛔ A list
-written twice is a list that disagrees with itself (ruled round 15, where the
+written twice is a list that disagrees with itself (the
 spec's own copy was retired for the same reason).
 
 ⭐ The argument stands however many there are: one independent membership test
@@ -57,7 +57,7 @@ from studyforge.describe import describe
 #: The fields R9 versions, for the tree check in `tests/studyforge/
 #: test_version.py` that refuses a second implementation. ⭐ `identity_api`
 #: joined it the day its contract was minted, and so did `content_api`,
-#: `site_api`, ⭐ **`toc_api`**, and ⭐ **`narration_api`** (Ruling 351) — which is the
+#: `site_api`, ⭐ **`toc_api`**, and ⭐ **`narration_api`** (R21) — which is the
 #: convention this line asks for: a task that versions a new contract
 #: registers it here in the same commit, or the guard cannot see it.
 #:
@@ -75,7 +75,7 @@ from studyforge.describe import describe
 #: spoke one half and not the other could join a pair it does not understand.
 #:
 #: ⚠️ **`site_api` is registered here and is read through `is_supported`, not
-#: through `check`** (Ruling 95). It is the one member of this tuple whose
+#: through `check`** (R9). It is the one member of this tuple whose
 #: contract does **not** raise on an unknown version: the discovery cache is
 #: derived and rebuildable, so R9's refusal is spent by discarding the document
 #: whole and re-deriving it rather than by stopping. ⛔ Nothing is migrated,
@@ -138,7 +138,7 @@ def check(
     reader of most of these messages is an integrator hand-writing the file.
 
     ⛔ **`contract` must be one of `CONTRACT_FIELDS`, and that is a gate rather
-    than a note** (W2, Ruling 13). This module's own convention already said a
+    than a note** (R9). This module's own convention already said a
     task that versions a new contract registers it in that tuple *in the same
     commit*; until now the only thing holding the convention was a tree test
     that a caller outside `src/` never runs. ⭐ Making the unregistered name
@@ -175,7 +175,7 @@ def _said(contract: str, declared: object) -> str:
     than reproduced into the message (R7).
 
     ⭐ **This is now `studyforge.describe` with the contract's name in front of
-    it** (W17). It used to be the third copy of that rule and the only one that
+    it** (R7). It used to be the third copy of that rule and the only one that
     said *"a bool"*; ⛔ the argument above is why `describe` says *"a bool"*
     too, rather than why this module keeps its own answer. **The disagreement
     was resolved in favour of the copy that had made the case.**

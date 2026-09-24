@@ -19,7 +19,7 @@ as a finding rather than reached across a package boundary for.
 ## ⛔ The gate runs on the WRITE path too, and it runs before the `mkdir`
 
 ⭐ **Both readers already gate what they decode; this is the other direction,
-asserted independently.** The conventions' own rule for a defence that cannot
+asserted independently.** R7's rule for a defence that cannot
 enumerate its legal set is *every layer asserted, because no layer is
 sufficient* — and the read gate is not sufficient here: a `Contents` can be
 **built in memory** from a container map, a test, or a caller's own value and
@@ -43,7 +43,7 @@ WRITING_SUFFIX = ".writing"
 def write(path: Path | str, text: str) -> None:
     """Write `text` to `path`, atomically as far as the filesystem allows.
 
-    ⛔ Raises `PersonalDataLeak` — as itself, never re-typed (Ruling 58) —
+    ⛔ Raises `PersonalDataLeak` — as itself, never re-typed (R7) —
     before touching the filesystem, if what is about to be written carries
     personal data (R7).
     """

@@ -421,7 +421,7 @@ def test_an_absent_label_is_not_a_refusal():
 
 #: Every key a real `course-map.json` carries, and where it goes.
 #: **Measured** over the extraction source's 285 maps and 1290 unit entries;
-#: the counts are in `docs/tasks/handoffs/SF-05.md`. ⛔ The source tree is not
+#: the counts were taken once and are not repeated here. ⛔ The source tree is not
 #: read from here — its path is an absolute home path (R7) and a consumer's
 #: task never cites one (R20) — so what is pinned is the *shape*.
 COURSE_MAP_KEYS = {
@@ -505,7 +505,7 @@ def test_a_real_course_map_loads_after_mechanical_renaming():
 
 
 def test_no_field_is_lost():
-    # ⛔ E01's acceptance. `folder` and `url_slug` are the two the generalised
+    # ⛔ No source field is lost. `folder` and `url_slug` are the two the generalised
     # shape as drafted dropped; both have a home, and this asserts every key of
     # the real shape does.
     assert set(COURSE_MAP_KEYS) == set(SAMPLE)

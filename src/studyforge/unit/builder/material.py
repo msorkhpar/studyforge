@@ -10,7 +10,7 @@ anything that does not belong with the rest, and hands back the reading order.
 
 ## ⛔ The gate runs here, and it is not a second gate
 
-⚠️ **Ruling 50: do not re-ask within one read path; do gate at every trust
+⚠️ **Do not re-ask within one read path; do gate at every trust
 boundary.** Reading a file off disk **is** a trust boundary, so every document
 goes through `archive.document.load` — which version-checks it, refuses an
 unknown key, and runs the personal-data gate. ⭐ **By delegation, so there is no

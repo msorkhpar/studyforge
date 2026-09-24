@@ -1,10 +1,10 @@
-r"""Narration off, as the `build` and `serve` verbs honour it (`W460`).
+r"""Narration off, as the `build` and `serve` verbs honour it.
 
 **What it does.** Answers the two questions a verb asks once a run has left
 narration out: which built pages still carry narration (`voiced_pages`), and
 which files under a served root are narration clips that must not be served
 (`unvoiced_clips`). ⛔ **Whether a run leaves it out is not asked here**: that is
-`narrate.narration_on`, the one predicate every stage asks (`W457`, `W460`).
+`narrate.narration_on`, the one predicate every stage asks.
 
 **How you use it.**
 
@@ -31,7 +31,7 @@ written by `build`, and R8 makes the built page the product — it opens over
 `file://` with no server. ⚠️ A serve that stripped the player per request would
 be a second author of the page and would answer differently from the file on
 disk; one that only withheld the clips would serve a player whose every passage
-fails, which is the broken-narration state (`W202`) and the opposite of the
+fails, which is the broken-narration state and the opposite of the
 reading floor. ⭐ **So `serve --no-narration` over a site built with narration
 refuses, naming each page and the command that fixes it**, exactly as it
 refuses a page nobody built. ⭐ And it withholds every clip under the root it

@@ -24,7 +24,7 @@ locations type, `studyforge.describe`, and this package's `errors` and
 nothing.** A projection at a rate is `cli/plan/report.py`'s, in its own
 wording; this is the reading of the disk, which is the one a commit decision may
 rest on. ⭐ **`studyforge plan` prints this reading too, by calling `measure`**
-(`W287`) — it takes no measurement of its own, so there is one number and not
+— it takes no measurement of its own, so there is one number and not
 two that could disagree. ⛔ The extraction source's push became impossible
 because the only number anybody had was an estimate that nobody had ever
 compared against a disk.
@@ -39,7 +39,7 @@ population is the property that makes the verdict mean anything**: a footprint
 that weighed less than the ignore rules covered would clear a limit by not
 looking.
 
-## ⛔ The declared directories are not the whole population (`W311`)
+## ⛔ The declared directories are not the whole population
 
 ⚠️ **A clip the narration record locates outside every declared directory** —
 a removed or relabelled unit's old directory, a superseded clip — is on disk
@@ -97,7 +97,7 @@ class MediaFootprint:
     #: ⛔ Ordered by relative posix path, so two machines report the same
     #: footprint in the same order (R10).
     files: tuple[MediaFile, ...] = ()
-    #: ⛔ `W311`: one sentence per recorded clip this reading could not weigh,
+    #: ⛔ One sentence per recorded clip this reading could not weigh,
     #: naming its speech id and why. Empty when every located clip was weighed.
     unweighed: tuple[str, ...] = ()
 
@@ -110,7 +110,7 @@ class MediaFootprint:
     def count(self) -> int:
         """How many generated media files there are.
 
-        ⭐ **`max_files` reads it** (`W207`) — the limit a corpus of many small
+        ⭐ **`max_files` reads it** — the limit a corpus of many small
         clips crosses while both byte ceilings are still under. ⚠️ It was
         recorded here before any limit read it, on the ground that a file count
         is the third thing a host bounds; that forecast is now discharged.
@@ -155,7 +155,7 @@ def measure_directories(
 ) -> MediaFootprint:
     """Weigh every file under each of `directories`, and every recorded clip, under `root`.
 
-    ⛔ **`W311`: the narration record's clips are weighed wherever it locates
+    ⛔ **The narration record's clips are weighed wherever it locates
     them**, not only where `directories` reach, and a clip it cannot locate is
     named in `unweighed`. Raises `MediaError` when the record cannot be read.
 
@@ -187,7 +187,7 @@ def measure_directories(
 def _root(root: object) -> Path:
     """Return the corpus root as a directory, or refuse without echoing it.
 
-    ⛔ **DESCRIBED, never echoed** (R7, rubric §1f). The root is an absolute
+    ⛔ **DESCRIBED, never echoed** (R7). The root is an absolute
     path on somebody's machine, and this refusal is the one a misconfigured
     build prints into a log.
     """

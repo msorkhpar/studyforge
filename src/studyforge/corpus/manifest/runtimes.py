@@ -9,7 +9,7 @@ closed vocabulary and held sorted.
 
 **Depends on.** `errors`.
 
-⭐ **The vocabulary is spelled ONCE, here** (`W350`), and the package exports
+⭐ **The vocabulary is spelled ONCE, here**, and the package exports
 it rather than any caller restating it. ⛔ **Its home is its own module,
 never `document.py`**, which sat near its R11 bound: the key is a
 split at the seam `media` already cut, one optional block per module.
@@ -18,7 +18,7 @@ split at the seam `media` already cut, one optional block per module.
 
 A corpus says *which* runtimes; the runner image's pin file says *which
 version*. ⛔ A version here would be a second place a version is chosen, which
-the runner image's epic forbids — so an entry is a bare name and nothing else.
+the runner image forbids — so an entry is a bare name and nothing else.
 
 ## ⭐ Absent means none, and none is a complete answer
 

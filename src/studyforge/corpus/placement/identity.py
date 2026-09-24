@@ -4,12 +4,12 @@
 and reads it back.
 
 **How you use it.** `render(Identity(...))` gives the markup the page renderer embeds;
-`parse(html)` gives it back, which is what SF-04's scan does with every file it
+`parse(html)` gives it back, which is what `corpus.discovery`'s scan does with every file it
 finds.
 
 **Depends on.** `studyforge.address`, `studyforge.version`, and `errors`.
 
-## Why it is here and not in SF-04
+## Why it is here and not in `corpus.discovery`
 
 ⭐ **The page renderer writes it; discovery reads it.** A definition arriving after
 its first writer is a definition two tasks each guess at differently — so it is
@@ -59,7 +59,7 @@ KNOWN_IDENTITY_API = frozenset({IDENTITY_API})
 IDENTITY_ELEMENT_ID = "studyforge-identity"
 IDENTITY_MIME = "application/json"
 
-#: The one pattern SF-04 needs. ⚠️ Deliberately tolerant of attribute order
+#: The one pattern `corpus.discovery` needs. ⚠️ Deliberately tolerant of attribute order
 #: and whitespace, because it reads files this build may not have written.
 IDENTITY_PATTERN = re.compile(
     r"<script[^>]*\bid=[\"']" + re.escape(IDENTITY_ELEMENT_ID) + r"[\"'][^>]*>(.*?)</script>",
@@ -127,7 +127,7 @@ def parse(html: str, depth: int, where: str = "artifact") -> Identity:
     """Return the `Identity` embedded in `html`, or raise naming the file.
 
     `depth` is the corpus's declared depth, supplied so the address is checked
-    against it — SF-01 owns that comparison and this module does not restate
+    against it — `studyforge.address` owns that comparison and this module does not restate
     it.
 
     ⛔ An artifact with no identity block is **reported by name**, never
@@ -148,7 +148,7 @@ def parse(html: str, depth: int, where: str = "artifact") -> Identity:
 def from_document(document: object, depth: int, where: str = "artifact") -> Identity:
     """Build an `Identity` from an already-parsed block.
 
-    ⛔ **Gated like every other document reader** (W7). ⚠️ It is tempting to
+    ⛔ **Gated like every other document reader**. ⚠️ It is tempting to
     argue this one is exempt because the framework wrote the block it reads —
     but `parse`'s own contract says it reads *"files this build may not have
     written"*, which is the whole reason `IDENTITY_PATTERN` tolerates
@@ -158,7 +158,7 @@ def from_document(document: object, depth: int, where: str = "artifact") -> Iden
     if not isinstance(document, dict):
         raise PlacementError(f"{where}'s identity block is not an object")
     # ⛔ **`PersonalDataLeak` travels through as itself, not translated**
-    # (Ruling 58, rubric §1d). `PlacementError` exists so a caller sweeping a
+    # (R7). `PlacementError` exists so a caller sweeping a
     # site catches one type per artifact and carries on; an R7 refusal inside
     # that family would be logged as one more file that could not be placed,
     # and the leak would be the thing nobody looked at. ⭐ See
@@ -190,19 +190,20 @@ def _address_of(segments: object, depth: int, where: str) -> Address:
 
     ⛔ **Built from the segments, never from a joined key.** Joining first let
     a `TypeError` escape on three malformed shapes — a list of ints, a list
-    with a `None` in it, a nested list — and this function is on the path SF-04
+    with a `None` in it, a nested list — and this function is on the path `corpus.discovery`
     walks over **every file in a site**. A caller reading a thousand artifacts
     must be able to catch one type.
 
     ⚠️ **Reading a document raises `PlacementError`, including for arity.**
-    SF-01 still owns what a slug is and what an address of the wrong depth is;
+    `studyforge.address` still owns what a slug is and what an address of the wrong depth is;
     what changes is the front door. The delegation belongs where a *caller asks
     a question* — `Manifest.parse_key` — not where this package *reads a file*.
 
-    ⛔ **And the refusal names the position, never the segment** (R7, rubric
-    §1f). SF-01's own message echoes the value, which is right when a caller
-    passed a literal and wrong here: this reads a file somebody else wrote, so
-    the offending segment can be an absolute path — and this function runs over
+    ⛔ **And the refusal names the position, never the segment** (R7).
+    `studyforge.address`'s own message echoes the value, which is right when a
+    caller passed a literal and wrong here: this reads a file somebody else
+    wrote, so the offending segment can be an absolute path — and this function
+    runs over
     **every artifact in a site**, into a log.
     """
     if not isinstance(segments, list):

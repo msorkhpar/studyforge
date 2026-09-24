@@ -10,7 +10,7 @@ disk, and projected when a rate is given — against the corpus's own limits.
     studyforge plan <repo>            # python3 -m studyforge.cli.plan <repo>
 
     from studyforge.cli.plan import plan_for
-    plan_for(root).paths              # what onboarding renders and OPS-05 asserts
+    plan_for(root).paths              # what onboarding renders and `check_untouched` asserts
 
 **Depends on.** `corpus.manifest`, `corpus.container`, `corpus.placement`, and
 `validate` for the three names both commands must spell the same way. ⛔ It
@@ -35,7 +35,7 @@ was malformed would be answering `validate`'s question with `plan`'s exit code.
 The archive seam has `studyforge validate`; the runtime seam has each shared
 component's consuming contract; **placement had nothing.** A consumer had to
 write ignore rules, declare `permitted_edits` (R3) and reason about what would
-land in their repository with no way to ask, while `SF-03` already computed
+land in their repository with no way to ask, while `corpus.placement` already computed
 every bit of it. ⭐ And a person reads this before letting a tool loose in a
 repository they care about — **an onboarding somebody cannot preview is one
 they are right not to run.**

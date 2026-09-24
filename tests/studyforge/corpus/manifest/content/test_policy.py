@@ -132,7 +132,7 @@ def test_the_third_state_matches_the_whole_path_too():
 
 def test_the_three_states_spell_themselves_the_way_a_manifest_reads():
     # ⚠️ **Nothing reads `.value` today** — every consumer compares members by
-    # identity, measured across `src/` and `tools/` at `ddddd05`. ⭐ So this
+    # identity, measured across `src/`. ⭐ So this
     # pins a *vocabulary*, not a behaviour: the hyphen in `not-material` is a
     # decision, and `unclassified`/`contested` are the same two strings
     # `validate.source.classification` keeps as `RULE_*` constants of its own.

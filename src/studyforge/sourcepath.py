@@ -37,7 +37,7 @@ A source path is legal when **every one of these holds**:
 | no segment carries `:` | `C:/Users/<name>/x`, `file:///x` |
 | no segment carries `#` | `TestCases.md#3. Card issuance` |
 
-⛔ **The fragment row is Ruling 92's, and it removes a shape that was accepted
+⛔ **The fragment row removes a shape that was accepted
 and meant nothing.** `TestCases.md#…` named a region of a file before a region
 was declarable; nothing ever read the part after the `#`, so it *"validates and
 then fails at render, except it never fails"* — the unit was silently read as
@@ -99,7 +99,7 @@ def source_path_fault(value: str) -> str | None:
         if ":" in part:
             return "a path carrying a drive letter or scheme"
         if "#" in part:
-            # ⛔ Ruling 92. A fragment is a *region*, and a region is declared
+            # ⛔ A fragment is a *region*, and a region is declared
             # as an object with its own `section`. Left legal here, the old
             # spelling keeps validating and keeps meaning nothing.
             return "a path carrying a fragment"

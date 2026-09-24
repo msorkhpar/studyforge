@@ -44,13 +44,13 @@ UNORDERED = re.compile(r"^ {0,3}[-*] (.*)$")
 #: `)` as well as `.`: CommonMark allows both and authors use both.
 ORDERED = re.compile(r"^ {0,3}\d+[.)] (.*)$")
 
-#: ⛔ The same two markers at ANY indent, and only ever asked INSIDE a list
-#: (`W258`). Bounded at three, a nested item written four spaces under its
+#: ⛔ The same two markers at ANY indent, and only ever asked INSIDE a list.
+#: Bounded at three, a nested item written four spaces under its
 #: parent matched nothing and folded into the parent as literal `- …` text.
 NESTED_UNORDERED = re.compile(r"^ *[-*] (.*)$")
 NESTED_ORDERED = re.compile(r"^ *\d+[.)] (.*)$")
 
-#: ⭐ The number an ordered marker carries, at any indent (`W264`). Asked only of
+#: ⭐ The number an ordered marker carries, at any indent. Asked only of
 #: a line one of the ordered patterns above already matched.
 ORDERED_NUMBER = re.compile(r"^ *(\d+)[.)] ")
 

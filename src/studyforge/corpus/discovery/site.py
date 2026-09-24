@@ -134,7 +134,7 @@ class Site:
         ⛔ **`site_api` is not here**, and its absence is the design. This
         object is the *content* signal; the version key is the *schema* signal,
         and a document that mixed them would make one number answer two
-        questions — which is the trap Ruling 95 names.
+        questions — which is the trap a disposable, digest-checked cache avoids (R9, R10).
         """
         return {
             "artifacts": [found.document for found in sorted(self.artifacts, key=_by_path)],

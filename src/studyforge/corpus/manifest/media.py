@@ -19,14 +19,14 @@ anything.
 accident.** The extraction source reached **11.42 GiB of pack against a ~5 GB
 soft limit, with one file at 150.9 MiB against a hard 100 MiB per-file block**
 — and found out when the push became *impossible*, after the history already
-held the blob. So the policy is manifest data, the footprint is measured
-(SF-32), and a corpus that crosses its limits **stops and says so**, naming the
+held the blob. So the policy is manifest data, the footprint is measured,
+and a corpus that crosses its limits **stops and says so**, naming the
 number and the limit. ⛔ It never silently switches to ignoring media, which
 would produce clones that are silent with no error, and it never silently
 keeps committing.
 
 ⛔ **The two byte-limit field names are CONFIRMED and FROZEN, and the rename
-once offered is CLOSED** — Ruling 104. ⚠️ The
+once offered is CLOSED** (R9). ⚠️ The
 paragraph that stood here still described that window as open long after it
 had shut, which is how a stale offer gets taken up by somebody moving fast.
 

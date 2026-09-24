@@ -29,7 +29,7 @@ neither block nor rendered media (C4).
 **The modules.** `blocks` is the vocabulary — what a block may be, once.
 `document` is the format: `build` assembles and gates, `render` writes the
 exact bytes, `parse` and `load` read one back. `markdown` is the strict reader
-(SF-07), `scrub` is the gate (SF-08), and `errors` holds the one exception
+(§6), `scrub` is the gate (R7), and `errors` holds the one exception
 both halves of the format raise.
 
 ⭐ **`blocks` is the single block-type list, and it is a contract rather than

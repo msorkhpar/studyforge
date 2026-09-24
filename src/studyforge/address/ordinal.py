@@ -8,7 +8,7 @@ wherever a unit needs naming.
 
 **Depends on.** `errors` and `studyforge.describe`. Nothing else.
 
-⛔ **No refusal here reproduces the value** (R7, rubric §1f, Ruling 14). The
+⛔ **No refusal here reproduces the value** (R7). The
 type branch fires on whatever a caller passed where an ordinal was wanted —
 including a path — so it names the **type** and not the payload. ⭐ The range
 branch does quote, and that is not an inconsistency: by then the value is an

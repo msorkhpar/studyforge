@@ -15,8 +15,8 @@ this package's `site` and `errors`.
 | | |
 |---|---|
 | **File** | `.studyforge/site.json` — `SITE_CACHE_FILENAME`, which already existed |
-| **Version key** | `site_api` — ⭐ **minted here** (Ruling 95) |
-| **Producer** | ⛔ **`SF-04`, and nothing else ever writes it** |
+| **Version key** | `site_api` — ⭐ **minted here** |
+| **Producer** | ⛔ **`corpus.discovery`, and nothing else ever writes it** |
 
 ⭐ **`unit.content`'s `content_api` is the worked example for the MECHANICS**: the key
 is registered in `version.CONTRACT_FIELDS` in the same commit that mints it, or
@@ -77,7 +77,7 @@ from studyforge.corpus.placement import (
 from studyforge.describe import describe
 from studyforge.version import is_supported
 
-#: R9's key for this contract. ⭐ Minted by SF-04; registered in
+#: R9's key for this contract. ⭐ Registered in
 #: `version.CONTRACT_FIELDS` in the same commit, per that tuple's own
 #: convention.
 SITE_API = 1
@@ -91,7 +91,7 @@ SITE_KEYS = ("site_api", "scan_sha256", "artifacts", "unidentified")
 #: is a cache that reads as absent, which is a rebuild; a cache half-overwritten
 #: in place is a cache that reads as *present and wrong*.
 #: ⛔ `placement`'s, never a second literal: the ignore rule written beside the
-#: cache has to cover exactly this name (`W425`).
+#: cache has to cover exactly this name.
 WRITING_SUFFIX = STAGING_SUFFIX
 
 
@@ -165,7 +165,7 @@ def write(path: Path | str, site: Site) -> tuple[str, ...]:
     impossible; a torn `*.writing` file reads as absent, which is a rebuild.
 
     ⭐ **Returns what the ignore file beside the cache had to say** — the lines
-    R6 asks a caller to report (`W425`). The ignore file is ensured *here*,
+    R6 asks a caller to report. The ignore file is ensured *here*,
     where the cache is written, because that is the one moment that cannot be
     skipped: a corpus onboarded before this rule existed is covered the first
     time somebody serves it, without anything being regenerated.
@@ -321,7 +321,7 @@ def _from_text(text: str, where: str) -> Cached:
         return Cached(where, fault="is not valid JSON")
     if not isinstance(decoded, dict):
         return Cached(where, fault="is not a JSON object")
-    # ⛔ **The gate runs over the whole decoded document** (R7, W7). This file
+    # ⛔ **The gate runs over the whole decoded document** (R7). This file
     # is generated, but it is generated into a repository somebody clones, and
     # it is the one document in this contract a person can hand-edit without
     # anything noticing — which is exactly the case the gate exists for.

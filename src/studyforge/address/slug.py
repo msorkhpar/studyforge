@@ -13,7 +13,7 @@ that an address is *recorded, never derived*.
 **Depends on.** `re`, `errors` and `studyforge.describe`. No filesystem, no
 corpus, no manifest.
 
-## ⛔ Why no refusal here reproduces the value (R7, rubric §1f, Ruling 14)
+## ⛔ Why no refusal here reproduces the value (R7)
 
 ⚠️ **The branch fires *because* the value is not a slug — which is precisely
 when it may be an absolute path.** A refusal that quoted it would take the one
@@ -100,8 +100,8 @@ def is_slug(value: object) -> bool:
 
 
 #: The characters a slug may carry. ⭐ **Derived from `is_slug`, never
-#: re-typed** (Ruling 8, and Ruling 12's endorsement of deriving over
-#: exporting): the permitted class is *what a slug accepts*, asked rather than
+#: re-typed** (R8: a permitted set is derived from its predicate, never
+#: exported as a second list): the permitted class is *what a slug accepts*, asked rather than
 #: restated, so a second spelling of the rule cannot exist here to drift from
 #: the first. ⚠️ `corpus.container.fields` derives its filename class from
 #: this same constant for exactly that reason.
@@ -110,7 +110,7 @@ SLUG_PERMITTED = frozenset(
 )
 
 #: How a refusal names that class. ⛔ Stated once: two callers describing one
-#: class two ways is the defect round 15 found in a neighbouring package.
+#: class two ways is a defect a neighbouring package once had.
 SLUG_PERMITTED_DESCRIBED = "lowercase ASCII letters, digits and hyphens"
 
 

@@ -11,7 +11,7 @@ a `ManifestError`.
 
 **Depends on.** `policy` for the objects it builds, `errors` for the exception
 **and** for `_escape` — the one phrase R7 lets a refusal say about a path
-(Ruling 135) — and `studyforge.describe` for the shape it reports back.
+— and `studyforge.describe` for the shape it reports back.
 ⛔ **Nothing here is
 imported by `policy`**, which is the package's seam.
 
@@ -56,7 +56,7 @@ from studyforge.describe import describe, describe_keys
 #: Minimum characters of reason on an exclusion, and on a `not_material`
 #: entry. ⛔ Not a quality bar — it only stops `"why": "n/a"` from being a way
 #: through the gate, which is the same argument and the same number
-#: `tools.quality.config` already uses for a size exception. Two rules, one
+#: the size floor already asks of a size exception's reason. Two rules, one
 #: precedent.
 MIN_WHY_CHARS = 20
 
@@ -123,7 +123,7 @@ def _exclude_of(value: dict) -> tuple[Exclusion, ...]:
                 f"one reason cannot explain a set whose membership changes"
             )
         if path in seen:
-            # ⛔ Both positions, never the path (W19). The reader has the file
+            # ⛔ Both positions, never the path. The reader has the file
             # in front of them; what they cannot see is which other entry
             # collides, and two reasons for one exclusion is the actual defect.
             raise ManifestError(
@@ -169,8 +169,8 @@ def _not_material_of(value: dict) -> tuple[NotMaterial, ...]:
         _reject_absolute(glob, f"{where}.glob")
         _reject_loose_glob(glob, f"{where}.glob")
         if glob in seen:
-            # ⛔ Both positions, never the pattern — the exclusion twin's rule
-            # (W19), for the twin's reason.
+            # ⛔ Both positions, never the pattern — the exclusion twin's rule,
+            # for the twin's reason.
             raise ManifestError(
                 f"{where}.glob is already declared by content.not_material[{seen[glob]}]; "
                 f"two reasons for one declaration is two audits and no record of which held"
@@ -231,9 +231,9 @@ def _reject_absolute(pattern: str, where: str) -> None:
     """Refuse a path that escapes the source root — and never quote it (R7).
 
     ⛔ **This branch fires *because* the value is an absolute or escaping path,
-    which is precisely when it carries a home directory.** It quoted the value
-    until W19: the check written to keep a path out of the corpus put it in the
-    log instead. ⚠️ **Worse than the site W1 fixed** — `require_slug` fired on
+    which is precisely when it carries a home directory.** It once quoted the
+    value: the check written to keep a path out of the corpus put it in the
+    log instead. ⚠️ **Worse than the slug refusal's echo** — `require_slug` fired on
     "not a slug", which is only *sometimes* a path; this one tests
     `startswith("/")`.
 

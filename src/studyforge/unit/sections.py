@@ -20,15 +20,15 @@ structural, and an explicit `key` is the author's escape hatch.
 ## The key is required to be a slug — it is never *made* into one
 
 ⛔ **`require_slug`, never `slugify`**, and this is the ASCII-collision
-question arriving inside this package rather than at an adapter's door. SF-01's
-finding was that a component which slugifies owes itself a collision check the
+question arriving inside this package rather than at an adapter's door. A
+component which slugifies owes itself a collision check the
 framework cannot make; the answer here is to remove the slugification instead.
 
 ⭐ **It costs nothing, because every input is already a slug.** `variants` are
 validated as slugs by `corpus.manifest`, so deriving `<variant>` is the
 *identity function* and cannot collide however the corpus spells its variants.
 The only remaining input is an explicit `key`, and refusing a non-slug there is
-SF-01's own precedent: *a title passed where a slug is required raises; it does
+`studyforge.address`'s own precedent: *a title passed where a slug is required raises; it does
 not slugify for you*.
 
 ⚠️ **Contrast §6's rule for addresses — recorded, never derived.** A section key
@@ -113,10 +113,10 @@ def derived_section_key(variant: object, archive_kind: object, index: int) -> st
 def _legal(value: object, what: str) -> str:
     """Return `value` if it is already a slug, or raise saying which field.
 
-    ⛔ **SF-01's rule, this package's message.** `require_slug` quotes the
+    ⛔ **`studyforge.address`'s rule, this package's message.** `require_slug` quotes the
     value it refuses, which is right where a caller passed a literal and wrong
     here: these values come from a file a person edits, so one of them can be
-    an absolute path (R7, rubric §1f).
+    an absolute path (R7).
     """
     if not isinstance(value, str) or not value:
         raise ContentError(f"{what} must be a non-empty str, got {describe(value)}")

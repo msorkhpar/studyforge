@@ -106,8 +106,8 @@ def scan(root: Path | str, depths: Mapping[str, int]) -> Site:
         try:
             found = _identity_of(path, where, depths)
         except DiscoveryError as fault:
-            # ⛔ `PersonalDataLeak` is NOT caught here and never will be
-            # (Ruling 58). It is not a `DiscoveryError`, so it travels as
+            # ⛔ `PersonalDataLeak` is NOT caught here and never will be.
+            # It is not a `DiscoveryError`, so it travels as
             # itself and stops the scan; filed among these it would read as
             # one more page that could not be identified.
             unidentified.append(Unidentified(relative, str(fault)))
@@ -124,7 +124,7 @@ def pages(root: Path | str) -> tuple[Path, ...]:
     """
     root = Path(root)
     if not root.is_dir():
-        # ⛔ The root is DESCRIBED and never echoed (R7, rubric §1f): it is an
+        # ⛔ The root is DESCRIBED and never echoed (R7): it is an
         # absolute path on somebody's machine, and this refusal is the one a
         # misconfigured server prints into a log.
         raise DiscoveryError(
@@ -143,7 +143,7 @@ def _identity_of(path: Path, where: str, depths: Mapping[str, int]) -> identity.
     """Return what one page says it is, or raise `DiscoveryError` naming the page.
 
     ⛔ **The gate runs on the decoded block before anything is read out of it**
-    (R7, W7). This module decodes a document somebody else's build may have
+    (R7). This module decodes a document somebody else's build may have
     written, and the field this module reaches for first — `corpus` — is read
     *before* `identity.from_document` gets its own chance to gate.
     """

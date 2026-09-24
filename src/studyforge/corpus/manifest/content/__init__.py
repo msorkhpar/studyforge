@@ -8,7 +8,7 @@ one path: **included**, **excluded**, **not material**, **contested** or
 
 **How you use it.** `parse_content(document["content"])`, then
 `policy.classify("src/whole-series.md")`. ⛔ Classifying takes a path and does
-no I/O; enumerating a source root is `studyforge validate`'s job (SF-25), and
+no I/O; enumerating a source root is `studyforge validate`'s job, and
 refusing the unclassified ones is its verdict.
 
 **Depends on.** `errors`, `studyforge.describe`, and `pathlib.PurePosixPath`
@@ -54,7 +54,7 @@ from studyforge.corpus.manifest.content.policy import (
 
 #: ⛔ The package's whole public surface. A consumer that has to import
 #: `studyforge.corpus.manifest.content.parse` directly is a consumer this
-#: contract failed (Ruling 101).
+#: contract failed.
 __all__ = [
     "MIN_WHY_CHARS",
     "WILDCARDS",

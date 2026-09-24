@@ -73,8 +73,8 @@ from studyforge.corpus.media.errors import MediaError
 from studyforge.corpus.media.footprint import MediaFootprint
 from studyforge.corpus.placement import Profile
 
-#: The manifest field names a crossing is reported against. ⛔ Frozen under R9
-#: (Ruling 104): they are written by fixtures and read by a shipped command
+#: The manifest field names a crossing is reported against. ⛔ Frozen under R9:
+#: they are written by fixtures and read by a shipped command
 #: whose output is a committed golden, so renaming one is a migration.
 LIMIT_TOTAL = "max_total_bytes"
 LIMIT_FILE = "max_file_bytes"
@@ -82,7 +82,7 @@ LIMIT_FILE = "max_file_bytes"
 #: ⚠️ **Spelled `LIMIT_COUNT`, not `LIMIT_FILES`.** One letter would have been
 #: the whole difference between the per-file byte ceiling and the file-count
 #: ceiling, on adjacent lines. ⛔ The manifest field it names is `max_files`.
-#: ⚠️ **Not frozen by Ruling 104**, which froze the two above; it is new here
+#: ⚠️ **Not frozen under R9**, which froze the two above; it is new here
 #: and R9 versions it instead — `corpus_api: 3`.
 LIMIT_COUNT = "max_files"
 
@@ -177,7 +177,7 @@ class MediaVerdict:
             f"media measured  {self.footprint.total_bytes} byte(s) in "
             f"{self.footprint.count} file(s)"
         )
-        # ⛔ `W311`: what the reading could not weigh is said by name, before any
+        # ⛔ What the reading could not weigh is said by name, before any
         # crossing, so a fitting total is never read as the whole corpus.
         out.extend(f"media unweighed  {said}" for said in self.footprint.unweighed)
         if not self.refuses:

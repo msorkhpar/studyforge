@@ -201,7 +201,7 @@ def _entry(profile: Profile, container: Container, ordinal: int) -> Entry:
         # ⛔ Re-typed, not re-worded: `placement` owns what a page may be
         # called and re-spelling its sentence here would be two descriptions
         # of one rule. ⚠️ `PersonalDataLeak` is deliberately not in this pair
-        # and travels through as itself (Ruling 58).
+        # and travels through as itself (R7).
         raise ContentsError(
             f"{container.address.key} unit {unit.n} has no place in this corpus: {error}"
         ) from None

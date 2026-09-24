@@ -42,7 +42,7 @@ half-state, and a single-variant container cannot express it.
 
 ## `origin` is provenance, and it lives **here** and not in the archive
 
-⭐ **Ruled, closing FND-04's open condition.** `origin` says where in the
+⭐ **Ruled.** `origin` says where in the
 source a container and each of its units came from. It is in the container map
 and ⛔ **not** in the archive document, because two places to look for one fact
 is the defect this project keeps diagnosing — and the archive document already
@@ -54,7 +54,7 @@ extraction source's equivalent field — `folder` — is present in **116 of 285
 maps. A required `origin` would refuse the other 169 and take V2-03's
 migration harness with them.
 
-⛔ **`folder` is `origin`, and it is not `address`.** FND-04 recorded that
+⛔ **`folder` is `origin`, and it is not `address`.** It was once argued that
 `folder` "is exactly what `address` already is, so it is subsumed"; measured
 against all 116, **0 are derivable from the titles**. They are truncated and
 carry disambiguating suffixes — `…-and-beyond-in-kotlin` where slugifying the
@@ -64,14 +64,14 @@ page's name may not be taken from a source filename. So `folder` has a home
 here, and the field it needed already existed.
 
 ⛔ **A placement profile that needs it must say so and fail loudly when it is
-absent** (SF-03). `sibling` does: one designed shape's directories are flat while
+absent**. `sibling` does: one designed shape's directories are flat while
 its address is two levels, so the directory comes from `origin` and the
 address is *only* identity — a profile using the address for both would create
 new directories beside the material, which is what R3 forbids.
 
 ## ⭐ An `origin` may name a **region** of a file — `container_api: 2`
 
-⛔ **Ruled: Ruling 92, on a real corpus.** A fourth container holds **17** units
+⛔ **Ruled on a real corpus.** A fourth container holds **17** units
 that are regions of one file. `origin` named a whole file, so all seventeen
 declared the same one and `check_completeness` compared each of them against
 that file's **361** headings — ⚠️ *sixteen false short reads, or a check
@@ -113,8 +113,8 @@ other consumer that wants a location are untouched.
 ## ⭐ A unit's PRACTICE may come from a file of its own — `container_api: 3`
 
 ⛔ **Ruled by the user, on the first corpus:** *"the practices should be as part
-of each topic page not a separate UI after the entire chapter"* (2026-09-21,
-`W428`). A practice belongs on the page it practises, which makes it a
+of each topic page not a separate UI after the entire chapter"* (2026-09-21).
+A practice belongs on the page it practises, which makes it a
 `practice` document of that unit.
 
 ⚠️ **The obstacle was never the renderer** — a unit page already renders every
@@ -159,9 +159,9 @@ cannot legalise it either.
   and the contents tree read, and a practice that changed where its unit's page
   went would move the page a reader is already reading.
 
-⭐ **The check is run twice, never relaxed** (`W428`, and it is the clause the
-row was given): a unit declaring `practice_origin` is compared **per origin** —
-its lessons against `origin`, its practices against `practice_origin` — and
+⭐ **The check is run twice, never relaxed** (R6): a unit declaring
+`practice_origin` is compared
+**per origin** — its lessons against `origin`, its practices against `practice_origin` — and
 **both buckets exist whether or not a document landed in them**, so a
 `practice_origin` no practice document reads is a short read rather than a file
 nobody counted.
@@ -179,7 +179,7 @@ filename would have to know which corpus it was reading (R1).
 into an ordinal — R4's argument about paths, applied to numbering.
 
 ⭐ **Taken now rather than at M6**, deliberately. §4's YAGNI refuses
-flexibility *nobody has asked for*; SF-03 measured a corpus that needs this,
+flexibility *nobody has asked for*; a measured corpus needs this, and placement
 built the consumer, and pinned it against §5's worked example. And R9 makes
 the alternative expensive in a way that is not symmetric: adding a field later
 is a `container_api` bump, and every map written under the old version is
@@ -214,11 +214,11 @@ from studyforge.corpus.container.fields import ORIGIN_KEYS, is_filename_componen
 #:
 #: ⚠️ `errors.py`'s contract argues for THREE exceptions, not one: its own
 #: `ContainerError`, plus two deliberate pass-throughs it declines to wrap —
-#: `AddressError`, because the arity comparison is SF-01's outright, and
+#: `AddressError`, because the arity comparison is `studyforge.address`'s outright, and
 #: `PersonalDataLeak`, because R7's refusal must not be swallowed by a caller
 #: writing `except ContainerError: skip_this_file()`.
 #:
-#: ⛔ **It is a tuple here because prose was not enough** (`W208`). A caller
+#: ⛔ **It is a tuple here because prose was not enough**. A caller
 #: retyped that paragraph's members and got two of the three, so a wrong-depth
 #: container map crashed `studyforge plan` — the command whose whole contract
 #: is that nothing raises. ⭐ A caller now catches `container.RAISES` and cannot

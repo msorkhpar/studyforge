@@ -8,28 +8,28 @@ container and unit under the corpus's own profile, and collects the result.
 project the media footprint at a rate as well as measure it.
 
 **Depends on.** `corpus.manifest`, `corpus.container`, `corpus.placement` (which
-also says where the archive is: the plan reads maps from the root it prints,
-`INT-06/6`), `corpus.media` for the reading of the disk, `cli.plan.report`,
+also says where the archive is: the plan reads maps from the root it prints),
+`corpus.media` for the reading of the disk, `cli.plan.report`,
 `cli.plan.recorded` for the narration record, and `narrate.speakable` for a
 unit's token. ⛔ It opens three kinds of file and no others, and no unit document.
 
-## ⛔ The narration record is a plan input (`W224`, `W288`)
+## ⛔ The narration record is a plan input
 
 ⭐ `cli.plan.recorded` reads it and says which clips the record locates in each
 declared unit's audio directory; this module names one copy line per clip, at
 that directory — asked of placement — and names each superseded clip beside
 the paths, never among them.
 
-## ⛔ The footprint is MEASURED, never guessed (`W287`)
+## ⛔ The footprint is MEASURED, never guessed
 
 ⭐ For a policy that weighs its media, the declared units' media directories and
 every clip the narration record locates are weighed by `corpus.media.measure`,
 the one measurement a commit decision rests on, which stats files and opens
 none. ⛔ A reading that is refused is said, with its reason, rather than printed
-as zero. ⛔ **A limit the reading crosses is a refusal** (`W314`, §5 *stops and
+as zero. ⛔ **A limit the reading crosses is a refusal** (§5 *stops and
 says so*), asked of `corpus.media.verdict_for` through `MediaProjection`.
 
-## ⛔ A path on disk is never a `create` (`W267`)
+## ⛔ A path on disk is never a `create`
 
 ⭐ Each named path is asked whether it is already at the corpus root, by
 `os.path.lexists` and never by opening it, so the plan still writes and reads
@@ -44,7 +44,7 @@ first defect would make an integrator fix one problem per run against 166
 units, which is the same argument `validate.Report.of` makes about draining
 every check.
 
-## ⛔ Two artifacts claiming one path are a REFUSAL (`W254`)
+## ⛔ Two artifacts claiming one path are a REFUSAL
 
 ⚠️ This module once printed the pair as two `create` lines beside `0 refusal(s)`,
 deferring to `validate`, and a build then replaced one page with the other in
@@ -87,7 +87,7 @@ from studyforge.validate.report import Finding
 #: What a clip's line says about when a build writes it.
 CLIP_COPY = "a build into any other output copies it there"
 
-#: ⭐ `W267`: who writes the paths a build into the corpus root does not.
+#: ⭐ Who writes the paths a build into the corpus root does not.
 ADAPTER = "an adapter"
 SERVE = "`studyforge serve`"
 NARRATE = "`studyforge narrate`"
@@ -98,7 +98,7 @@ def plan_for(root: Path | str, *, bytes_per_unit: int | None = None) -> Plan:
 
     `bytes_per_unit` is the media projection's rate. ⭐ **A parameter rather
     than a constant**, so a person asking *"would 200 MB a unit still fit?"* can
-    ask it. ⛔ Absent or present, the media on disk is measured (`W287`).
+    ask it. ⛔ Absent or present, the media on disk is measured.
     """
     root = Path(root)
     manifest, refusals = _manifest(root)
@@ -108,7 +108,7 @@ def plan_for(root: Path | str, *, bytes_per_unit: int | None = None) -> Plan:
     held, unreadable = _containers(root, manifest, profile)
     refusals += unreadable
     refusals += _claimed_twice(root, manifest, held)
-    # ⭐ `W460`: a corpus that is not voiced reads no record, exactly as a build
+    # ⭐ A corpus that is not voiced reads no record, exactly as a build
     # of it does (`generate.narration.narrated`), so the plan names no clip copy.
     record = read_record(root) if manifest.narration else Recorded()
     refusals += record.refusals
@@ -177,8 +177,8 @@ def _ignore_file(
 ) -> IgnoreFile | None:
     """Return the ignore file the media policy requires, or record why none may hold it.
 
-    ⛔ **Asked of the profile, and its home is printed with every line**
-    (`INT-06/8`): a rule with no named file is a rule somebody pastes into the
+    ⛔ **Asked of the profile, and its home is printed with every line**:
+    a rule with no named file is a rule somebody pastes into the
     root ignore file, which R3 forbids however declared.
     """
     try:
@@ -226,8 +226,8 @@ def _manifest(root: Path) -> tuple[Manifest | None, list[Refusal]]:
     try:
         return parse_manifest(text, MANIFEST_FILENAME), []
     except MANIFEST_RAISES as error:
-        # ⛔ **The reader's own tuple** (`W213`), which was a retyped pair here.
-        # It includes `PersonalDataLeak`, untranslated (Ruling 58): its message
+        # ⛔ **The reader's own tuple**, which was a retyped pair here.
+        # It includes `PersonalDataLeak`, untranslated: its message
         # says it is a leak, so a plan does not report it as a parse error.
         return None, [Refusal(MANIFEST_FILENAME, str(error))]
 
@@ -248,7 +248,7 @@ def _containers(
         try:
             held.append((where, parse_container(text, where, manifest)))
         except CONTAINER_RAISES as error:
-            # ⛔ **The reader's own tuple, never a list retyped here** (`W208`).
+            # ⛔ **The reader's own tuple, never a list retyped here**.
             # This site caught `ContainerError` and `PersonalDataLeak` and
             # missed `AddressError`, which `container`'s contract argues for in
             # the same paragraph — so a container map whose address was the

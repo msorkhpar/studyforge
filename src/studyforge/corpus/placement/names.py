@@ -36,8 +36,8 @@ it is tempting to read `4.4.1` out of that filename. ⛔ Three reasons not to:
 ⭐ **So the default label is the unit's own ordinal** — `unit-07` — and
 `label=` is the seam. A corpus's own display numbering is *data*: the day an
 adapter records it, it is passed here and §5's example is reproduced
-**exactly, with no change to this module**. See `docs/tasks/handoffs/SF-03.md`,
-which routes that field to the archive contract.
+**exactly, with no change to this module**. That field belongs to the
+archive contract.
 """
 
 from __future__ import annotations
@@ -68,7 +68,7 @@ SITE_CACHE_FILENAME = "site.json"
 IGNORE_FILENAME = ".gitignore"
 
 #: ⛔ **What a file in the generated root is called while it is being written,
-#: and its ONE spelling (`W425`).** ⚠️ It is not decoration: `discovery.cache`
+#: and its ONE spelling.** ⚠️ It is not decoration: `discovery.cache`
 #: stages the cache under this name and the ignore rules written beside the
 #: cache have to cover the same name, or a crash mid-write leaves a corpus
 #: dirty on a file nothing ignores. Minted here so the writer and the rule
@@ -80,19 +80,19 @@ STAGING_SUFFIX = ".writing"
 #: eight modules each carrying their own `"audio"` is how the extraction source
 #: came to have half a pipeline looking in the old place.
 ASSETS_DIRNAME = "assets"
-#: ⛔ **The archive root, and its ONE spelling (`INT-06/6`).** At the corpus root beside
+#: ⛔ **The archive root, and its ONE spelling.** At the corpus root beside
 #: `corpus.json`, never under `.studyforge/`: `validate`, `plan`, a build and the adapter
 #: `Layout` all read it from here, and `test_names` fails on a second literal in `src/`.
 ARCHIVE_DIRNAME = "archive"
 #: ⛔ **The directory under a container that holds its documents, by variant, and
-#: its ONE spelling (`W199`).** §6's layout is `<archive-root>/<address>/raw/<variant>/
+#: its ONE spelling.** §6's layout is `<archive-root>/<address>/raw/<variant>/
 #: unit-NN/`: `validate` walks it and the adapter `Layout` writes it, so it was minted
 #: twice — `ARCHIVE_ROOT_NAME` in `validate.corpus` and `RAW_DIR` in the adapter layout,
-#: neither on a package surface. ⚠️ One variant per container (SF-05), so this is a
+#: neither on a package surface. ⚠️ One variant per container, so this is a
 #: single directory and not a search.
 RAW_DIRNAME = "raw"
 #: ⛔ **The directory holding what one unit OWNS — its media, its attachments and the
-#: authored overlay — and its ONE spelling (`W298`).** ⚠️ It names a segment in TWO trees
+#: authored overlay — and its ONE spelling.** ⚠️ It names a segment in TWO trees
 #: and they are required to agree: the archive's `<address>/units/unit-NN/`, which
 #: `skills.adapter.Layout.unit_files` writes and both `validate.source.membership` and a
 #: build read, and the generated site's, which `tree` places. ⭐ `tree`'s own contract is
@@ -106,8 +106,8 @@ AUDIO_DIRNAME = "audio"
 IMAGES_DIRNAME = "images"
 VIDEO_DIRNAME = "video"
 PRACTICE_DIRNAME = "practice"
-#: ⛔ **The files a unit page LINKS rather than shows, and its ONE spelling
-#: (`W215`).** ⚠️ Spec C4's attachment class — a dataset a lesson loads, a
+#: ⛔ **The files a unit page LINKS rather than shows, and its ONE spelling.**
+#: ⚠️ Spec C4's attachment class — a dataset a lesson loads, a
 #: notebook, a sample document — is neither prose nor inline media, so it is
 #: placed like media and reaches the reader as a download. ⭐ Spelled exactly as
 #: the archive document's own `attachments` key, so the field, the served
@@ -116,7 +116,7 @@ PRACTICE_DIRNAME = "practice"
 ATTACHMENTS_DIRNAME = "attachments"
 
 #: ⛔ **The subdirectory a generated artifact lands in when it is placed beside
-#: the material, and its ONE spelling (`W323`).** ⚠️ A profile that writes
+#: the material, and its ONE spelling.** ⚠️ A profile that writes
 #: *into* the reader's own directories has to write somewhere in them, and
 #: "loose beside the source file" was that somewhere until this name existed:
 #: measured on the first corpus, one source directory held 38 sources, 38 pages
@@ -161,7 +161,7 @@ def unit_stem(ordinal: int, title: str, label: str | None = None) -> str:
 def contained_stem(address: Address, ordinal: int, title: str, label: str | None = None) -> str:
     """Return `<segment>.<segment>.<label>-<title-slug>`: the stem with its container in front.
 
-    ⛔ **`W254`, clause 1: a unit's name is a function of its own identity, and
+    ⛔ **A unit's name is a function of its own identity, and
     its container is part of that identity.** Where many units share a
     directory, `unit_stem` alone gives two containers' units one name as soon
     as their ordinals and titles mirror. Measured on a real corpus: 5 pairs,
@@ -190,7 +190,8 @@ def label_of(ordinal: int, label: str | None = None) -> str:
     `"/\\ \t\n"`, a copy of the map's that was missing the carriage return.
     Adding the carriage return would have been the wrong fix twice over:
 
-    1. **Ruling 8.** A forbidden list is an open set and cannot be finished.
+    1. **A permitted set, never a forbidden one (R8).** A forbidden list is an
+       open set and cannot be finished.
        Measured 2026-09-09 on the merged tree, **seven further shapes passed
        both guards into a filename** — a vertical tab, a form feed, a
        non-breaking space, U+2028, `"`, `:` and `*` — and `:` and `"` break
@@ -208,7 +209,7 @@ def label_of(ordinal: int, label: str | None = None) -> str:
     """
     if label is None:
         return unit_name(ordinal)
-    # ⛔ R7, rubric §1f: a label is read straight out of a file somebody else
+    # ⛔ R7: a label is read straight out of a file somebody else
     # wrote, so a refusal names the type and the permitted class, never the
     # value. Naming what is *permitted* is also the more useful message — it
     # tells an author what to write, where echoing the label only shows them

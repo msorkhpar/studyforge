@@ -5,35 +5,35 @@ caller catches one type rather than six — and carries `_escape`, the sanctione
 way to say *how* a path left the source root without repeating the path.
 
 **How you use it.** Catch `ManifestError`. Every rule this package applies
-raises it — including where the rule is SF-01's, as a `source` or a `variants`
+raises it — including where the rule is `studyforge.address`'s, as a `source` or a `variants`
 entry that is not a slug is — and none of them repairs a value quietly (R6).
 
 ⛔ In particular, an unknown `corpus_api` raises rather than being migrated: a
 migration that runs because something merely wanted to render a page rewrites
 the record of what was ingested (R9).
 
-⭐ **Why `_escape` lives here** (Ruling 135, `W40/1`). Two refusals need it and
+⭐ **Why `_escape` lives here**. Two refusals need it and
 they are in different packages: `content.parse._reject_absolute` and
-`edits._reject_forbidden_target`, which W19 unified onto one function rather
+`edits._reject_forbidden_target`, which share one function rather
 than two copies. It was `content`'s, and `edits` reached past that package's
-`__all__` for a private name — the surface Ruling 101's table calls wrong. ⛔ It
+`__all__` for a private name — a surface R21 calls wrong. ⛔ It
 did **not** become public to fix that: it answers *"how does this path leave the
 root"*, which is neither package's subject, and exporting a private name to
 satisfy a table is how a surface grows by accident. ⭐ Its subject is this
 module's own — `ManifestError` already states the rule that the value is never
-echoed (R7, Ruling 14), and `_escape` is what a refusal says instead. The
+echoed (R7), and `_escape` is what a refusal says instead. The
 underscore is accurate at the scope that matters: nothing outside
 `studyforge.corpus.manifest` names it, and nothing may.
 
 ⚠️ **Two exceptions travel through, deliberately**, and this docstring used to
 name only one.
 
-1. `Manifest.parse_key` raises SF-01's `AddressError`, because that call is the
-   arity *comparison* and SF-01 owns it outright — the manifest is only
+1. `Manifest.parse_key` raises `studyforge.address`'s `AddressError`, because that call is the
+   arity *comparison* and `studyforge.address` owns it outright — the manifest is only
    supplying the depth it declared. Reading the document is this package's
    answer; checking an address against it is not.
-2. ⛔ **`PersonalDataLeak` from `archive.scrub` is not wrapped** (Ruling 58,
-   rubric §1d). This family exists so a caller walking a corpus catches one
+2. ⛔ **`PersonalDataLeak` from `archive.scrub` is not wrapped** (R7). This
+   family exists so a caller walking a corpus catches one
    type per file, reports it and continues; an R7 refusal inside it would be
    logged as one more manifest that would not read, and the walk would finish
    green about the one thing R7 exists to make loud. ⭐ It is already
@@ -46,14 +46,14 @@ name only one.
 it** — which is the whole answer to *"a promise with one exception is not a
 promise"*.
 
-⛔ **A caller of `parse` catches `manifest.RAISES`, not this paragraph**
-(`W213`). ⚠️ Item 1 is `parse_key`'s and not `parse`'s, which is exactly the
+⛔ **A caller of `parse` catches `manifest.RAISES`, not this paragraph**.
+⚠️ Item 1 is `parse_key`'s and not `parse`'s, which is exactly the
 distinction a reader of this paragraph gets wrong; the tuple states it. It is
 in the package contract and not here because this module depends on nothing.
 
 **Depends on.** Nothing.
 
-⚠️ **`ValueError`, following SF-01's proposed precedent** — a *value* error
+⚠️ **`ValueError`, following `studyforge.address`'s proposed precedent** — a *value* error
 ("you handed me something I cannot accept") subclasses `ValueError`; a
 *document* error ("this file is not one I can read") subclasses `Exception`.
 A manifest is a value read from a document, and both halves fail the same way
@@ -67,10 +67,10 @@ from __future__ import annotations
 class ManifestError(ValueError):
     """A `corpus.json` this build will not accept.
 
-    ⛔ **The message names the field, and the accepted values where a closed
-    set was expected — never the offending value itself** (R7, rubric §1f,
-    Ruling 14). It never formats an exception object into itself either, which
-    would carry an absolute path into a log.
+    ⛔ **The message names the field, and the accepted values where a closed set
+    was expected — never the offending value itself** (R7). It never formats an
+    exception object into itself either, which would carry an absolute path into
+    a log.
 
     ⚠️ **This sentence used to say the opposite**, and that is the finding
     worth keeping: it *mandated* the echo, so a fix to the code without a fix

@@ -29,7 +29,7 @@ zero and must not render as it.
 
 ## ⛔ Provenance is `built_from`, and the name was ruled
 
-⚠️ **Ruling 51: `source` stays a corpus id**, and the served array may not be
+⚠️ **`source` stays a corpus id (R4)**, and the served array may not be
 called `sources`, `source` or `origin` — the extraction source uses `source` for
 a fetched address, and one word meaning two things is how the two levels get
 confused exactly where they meet.
@@ -70,7 +70,7 @@ from studyforge.unit.errors import ContentError, describe
 #: 2 — the served document's shape. ⛔ Registered in the spec's R9 table as
 #: `unit.json` / `api`, and bumped rather than widened.
 #:
-#: ⚠️ **`2` is `W215`: a section carries its `attachments`.** ⛔ Bumped rather
+#: ⚠️ **`2` is the version in which a section carries its `attachments`.** ⛔ Bumped rather
 #: than widened because `unit.served` refuses a shape it does not know, and the
 #: two answers it must not conflate are *"this document was written before
 #: sections carried attachments"* and *"this unit has no companion files"* —

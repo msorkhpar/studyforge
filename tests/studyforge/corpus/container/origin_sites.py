@@ -31,7 +31,7 @@ literal collection, and a `studyforge` constant imported by name or through a
 module (so `for key in UNIT_KEYS` is an access). ⛔ **A dict display is not an
 access** — it cannot read a field — so declaring every one would be an exemption
 list that grows with every fixture and stops being believed (the argument
-`tools/quality/mirror.py` makes for its own one-way rule).
+`tests/floor/mirror.py` makes for its own one-way rule).
 
 ⛔ **Stated survivors, each planted in the test**: a key passed in as
 a parameter, a whole document unpacked with `**`, a key found by iterating

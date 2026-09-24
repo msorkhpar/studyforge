@@ -38,9 +38,9 @@ SITE = Site((UNIT,), (Unidentified(PurePosixPath("orphan.unit.html"), "carries n
 def dirty(root):
     """What `git status` has to say about `root`, untracked files included.
 
-    ⭐ **The question `tools.workspace verify` asks**, asked here of a
+    ⭐ **The question a workspace pin check asks**, asked here of a
     throwaway repository: a corpus that is served and is still clean is the
-    whole of `W425`, and it is not answerable by looking at the ignore file's
+    whole of the rule, and it is not answerable by looking at the ignore file's
     text.
     """
     environment = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
@@ -127,7 +127,7 @@ def test_write_creates_the_directory_and_leaves_no_staging_file(tmp_path):
 
 
 def test_the_cache_is_ignored_by_git_the_first_time_it_is_written(tmp_path):
-    # ⭐ The whole row, measured the way `tools.workspace verify` measures it:
+    # ⭐ The whole rule, measured the way a workspace pin check measures it:
     # a repository that is clean, serves, and is still clean.
     repository = init_repository(tmp_path)
     cache_module.write(repository / GENERATED_ROOT / SITE_CACHE_FILENAME, SITE)

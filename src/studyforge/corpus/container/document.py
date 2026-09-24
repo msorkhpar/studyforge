@@ -27,13 +27,13 @@ from studyforge.version import check as check_version
 
 #: The document format version, and what a generator writes today. ⚠️ Bumped
 #: when a reader of the old shape would be *wrong* rather than merely
-#: incomplete — ⭐ **2 is Ruling 92's**, the version at which a unit's `origin`
-#: may name a region of a file rather than a whole one; ⭐ **3 is `W428`'s**,
-#: at which a unit's practice may be read from a file of its own.
+#: incomplete — ⭐ **2 is the version at which a unit's `origin`
+#: may name a region of a file rather than a whole one**; ⭐ **3 is the one
+#: at which a unit's practice may be read from a file of its own**.
 CONTAINER_API = 3
 
 #: The versions this build reads. ⛔ The membership test is
-#: `studyforge.version`'s (SF-33); what lives here is the set. ⭐ **Spelled as
+#: `studyforge.version`'s; what lives here is the set. ⭐ **Spelled as
 #: literals rather than derived from `CONTAINER_API`**: a set built out of the
 #: constant it is meant to accompany moves whenever that constant does, and an
 #: assertion about it can only prove self-consistency.
@@ -45,14 +45,14 @@ CONTAINER_API = 3
 #: the v2 shape may not call itself v1, and a v3 shape may not call itself v2.
 KNOWN_CONTAINER_API = frozenset({1, 2, 3})
 
-#: ⛔ The version at which a unit's `origin` may be an object naming a region
-#: (Ruling 92). A build that does not speak this version must be **unable** to
+#: ⛔ The version at which a unit's `origin` may be an object naming a region.
+#: A build that does not speak this version must be **unable** to
 #: read a map that uses the shape — otherwise the version is decorative and
 #: an old reader silently takes seventeen regions for seventeen whole files.
 REGION_ORIGIN_API = 2
 
 #: ⛔ The version at which a unit may declare `practice_origin` — a **second**
-#: source file holding its `practice` documents (`W428`). ⚠️ Guarded for the
+#: source file holding its `practice` documents. ⚠️ Guarded for the
 #: reason a region is: a build that cannot see the key counts both files'
 #: headings against one of them and reports a short read on a complete corpus.
 PRACTICE_ORIGIN_API = 3
@@ -77,7 +77,7 @@ CONTAINER_KEYS = (
 #:
 #: ⭐ **`origin` carries two shapes and remains one key.** A string is a whole
 #: file; an object — `fields.ORIGIN_KEYS`, `{"path": …, "section": …}` — is the
-#: region of a file that opens at that heading (Ruling 92). ⛔ `section` is
+#: region of a file that opens at that heading. ⛔ `section` is
 #: therefore **not** a unit key and does not appear here.
 #:
 #: ⭐ **`origin` and `url_slug` are both provenance and neither is redundant.**
@@ -102,7 +102,7 @@ EDITORIAL_KEYS = ("title", "titles", "note")
 class Unit:
     """One unit as its container declares it.
 
-    `practices` is the **declared** count, preserved verbatim: SF-25 checks it
+    `practices` is the **declared** count, preserved verbatim: `validate` checks it
     against what is actually on disk, and a reader that corrected it here
     would delete the disagreement that check exists to find.
     """
@@ -116,10 +116,10 @@ class Unit:
     #: is the region opening at that heading and ending at the next heading of
     #: the same or shallower depth. ⛔ `origin` stays a plain path either way,
     #: because every other consumer of it wants a path — `origin_directory`
-    #: takes `.parent` of one, and media placement is unaffected (Ruling 92).
+    #: takes `.parent` of one, and media placement is unaffected.
     origin_section: str | None = None
     #: ⭐ **Where this unit's `practice` documents came from, when that is a
-    #: file of its own** (`W428`). `None` means they came from `origin`, which
+    #: file of its own**. `None` means they came from `origin`, which
     #: is the common case and every map written before `container_api` 3.
     practice_origin: str | None = None
     #: The region half of `practice_origin`, as `origin_section` is `origin`'s.
@@ -132,7 +132,7 @@ class Unit:
     def numbering(self) -> str:
         """Return this unit's numbering **as a reader sees it**: `4.4.1`, or `7`.
 
-        ⚠️ **Not the filename component**, which is SF-03's `label_of` and
+        ⚠️ **Not the filename component**, which is `placement.names.label_of` and
         gives `unit-07` where this gives `7`. The two are one rule with two
         fallbacks: when a label is present they are identical and it *is* the
         label; when it is absent, a filename wants a prefixed, zero-padded,
@@ -365,7 +365,7 @@ def _unit(entry: object, where: str) -> Unit:
         n = require_ordinal(entry.get("n"), f"{where} unit ordinal")
     except AddressError:
         # ⛔ Converted rather than allowed to escape, and not only for
-        # consistency: SF-01's message formats the value with `!r`, and this
+        # consistency: `studyforge.address`'s message formats the value with `!r`, and this
         # one is read straight out of a file somebody else wrote (R7).
         raise ContainerError(
             f"{where} has a unit whose ordinal is {fields.said(entry.get('n'))}; "
@@ -375,7 +375,7 @@ def _unit(entry: object, where: str) -> Unit:
     if not isinstance(practices, int) or isinstance(practices, bool) or practices < 0:
         raise ContainerError(
             f"{where} unit {n} declares a practice count that is not a whole number. "
-            f"It is preserved verbatim for SF-25 to check against reality, so it is "
+            f"It is preserved verbatim for `validate` to check against reality, so it is "
             f"never corrected here."
         )
     origin, section = fields.optional_origin(entry.get("origin"), f"unit {n} origin", where)

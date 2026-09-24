@@ -5,10 +5,10 @@ superseded clip, a refusal, the media projection, and the plan itself — and
 renders each as one greppable line.
 
 **How you use it.** `derive.plan_for` builds these; `cli.main` prints
-`Plan.lines()`; onboarding and `OPS-05` read `Plan.paths` rather than the text.
+`Plan.lines()`; onboarding and `validate.nondestructive` read `Plan.paths`, not the text.
 
 **Depends on.** `corpus.manifest` for the edit record it reports, and
-`cli.plan.media` for the `media` lines, which are their own module since `W314`.
+`cli.plan.media` for the `media` lines, which are their own module.
 ⛔ No filesystem: this module knows what a plan says, never how one was found out —
 `derive` takes the reading and hands it here.
 
@@ -20,15 +20,15 @@ and diffable by path. ⛔ **The verbs are a closed set** — `plan`, `placement`
 `ignore`, `media`, `refuse` — because the whole point is that a consumer can read this
 without a parser and a person can read it without a consumer.
 
-## ⛔ A path's verb says who writes it and whether it is there (`W267`)
+## ⛔ A path's verb says who writes it and whether it is there
 
 A path on disk is never a `create`: the build writes it again (`replace`), or
 does not (`keep`). A path the build does not write is never a `create` either:
 a unit's media directory is `claim`ed, since a build creates it only when it
-copies a file into it (`W268`), and a path another command writes is `expect`ed,
+copies a file into it, and a path another command writes is `expect`ed,
 naming that command. ⭐ `Plan.paths` still names every path, whatever its verb.
 
-⛔ **A superseded clip is none of those, and is not in `Plan.paths`** (`W288`): it
+⛔ **A superseded clip is none of those, and is not in `Plan.paths`**: it
 is on disk, `studyforge narrate` wrote it, and no build ever copies or replaces
 it, so a build's footprint taken from `Plan.paths` must never own it.
 
@@ -47,14 +47,14 @@ from studyforge.corpus.container import CONTAINER_FILENAME
 from studyforge.corpus.manifest import MANIFEST_FILENAME, PermittedEdit
 from studyforge.validate.report import INVALID, OK
 
-#: ⛔ `W267`: the verbs a named path is printed with, by who writes it and whether it is there.
+#: ⛔ The verbs a named path is printed with, by who writes it and whether it is there.
 CREATE, REPLACE, KEEP, CLAIM, EXPECT = "create", "replace", "keep", "claim", "expect"
 CREATION_VERBS = (CREATE, REPLACE, KEEP, CLAIM, EXPECT)
 
-#: What a `claim` line says: `W268`'s rule, which a plan cannot decide without the unit documents.
+#: What a `claim` line says: the copy rule, which a plan cannot decide without the unit documents.
 WHEN_FILLED = "a build creates it only when it copies a file into it"
 
-#: ⛔ `W288`: the verb a clip the record names as superseded is printed with, never a creation's.
+#: ⛔ The verb a clip the record names as superseded is printed with, never a creation's.
 SUPERSEDED = "superseded"
 
 
@@ -68,11 +68,11 @@ class Creation:
     #: `studyforge narrate` wrote there that a build copies into another output.
     #: ⛔ Carried as data so no reader recovers it from a directory's name.
     narration: bool = False
-    #: ⭐ `W267`: the command that writes it when a build does not. Empty means a build does.
+    #: ⭐ The command that writes it when a build does not. Empty means a build does.
     writer: str = ""
-    #: ⭐ `W267`, `W268`: a unit's media directory, made only when a file is copied into it.
+    #: ⭐ A unit's media directory, made only when a file is copied into it.
     when_filled: bool = False
-    #: ⭐ `W267`: whether the path was on disk at the corpus root when the plan was taken.
+    #: ⭐ Whether the path was on disk at the corpus root when the plan was taken.
     present: bool = False
 
     @property
@@ -96,7 +96,7 @@ class Creation:
 
 @dataclass(frozen=True, slots=True)
 class SupersededClip:
-    """One clip an earlier wording or directory wrote, still at the corpus root (`W288`).
+    """One clip an earlier wording or directory wrote, still at the corpus root.
 
     ⛔ **Never a `Creation`.** A build does not copy it into any output and does
     not write it at the root, so it is named beside the paths, never among them.
@@ -124,7 +124,7 @@ class Refusal:
     integrator who reads a short plan as a small one is exactly the reader
     this command exists for.
 
-    ⛔ **`W314`: a limit the measured media crossed is a refusal too**, one per
+    ⛔ **A limit the measured media crossed is a refusal too**, one per
     crossing, at `corpus.json` — the file a person edits to answer it (§5). The
     corpus as it stands cannot be committed as planned, so the plan exits `1`.
     """
@@ -132,7 +132,7 @@ class Refusal:
     where: str
     why: str
     #: The `validate` rule this refusal is, when it is one. ⭐ A build reads it
-    #: to refuse a path two artifacts claim (`W254`) without parsing a sentence.
+    #: to refuse a path two artifacts claim without parsing a sentence.
     rule: str | None = None
 
     def line(self) -> str:
@@ -160,16 +160,16 @@ class Plan:
     refusals: tuple[Refusal, ...] = ()
     #: The file inside a generated directory that holds `ignore`, relative to
     #: the corpus root. ⛔ Never the root ignore file (R3); None when `ignore`
-    #: is empty, which it is whenever media is committed (`W242`).
+    #: is empty, which it is whenever media is committed.
     ignore_home: str | None = None
-    #: ⛔ `W288`: clips the record names as superseded. Never in `paths`.
+    #: ⛔ Clips the record names as superseded. Never in `paths`.
     superseded: tuple[SupersededClip, ...] = ()
 
     @property
     def paths(self) -> tuple[str, ...]:
         """Every path to be created, in the order the plan prints them.
 
-        ⭐ What `OPS-05` compares a finished build against and what the
+        ⭐ What `validate.nondestructive` compares a finished build against and what the
         onboarding skill renders from — both take this rather than re-parsing the text.
         """
         return tuple(creation.path for creation in self.creations)
@@ -178,7 +178,7 @@ class Plan:
     def exit_code(self) -> int:
         """`0` when the whole corpus could be planned, `1` when any of it could not.
 
-        ⛔ A crossed media limit is among `refusals` (`W314`), so it exits `1` here.
+        ⛔ A crossed media limit is among `refusals`, so it exits `1` here.
         """
         return INVALID if self.refusals else OK
 

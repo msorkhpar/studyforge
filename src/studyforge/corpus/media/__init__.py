@@ -21,7 +21,7 @@ source-specific and no host named anywhere (R1).
 
 ## ⛔ Committed by default, and the default has a ceiling
 
-⭐ **Generated media is committed** (SF-17), because *regenerable is not the
+⭐ **Generated media is committed**, because *regenerable is not the
 same as available*: a clone that carries its own audio speaks with no synthesis
 service, no GPU and no network, which is what R8 is for. ⛔ **That default
 holds until a corpus is too big for it, and this package is what knows the
@@ -42,7 +42,7 @@ touching a page, because §5 rules delivery orthogonal to placement.
 | Module | Owns |
 |---|---|
 | `footprint` | the walk and the reading — `MediaFile`, `MediaFootprint`, `measure` |
-| `recorded` | the clips the narration record locates, which the reading also weighs (`W311`) |
+| `recorded` | the clips the narration record locates, which the reading also weighs |
 | `verdict` | the decision — `Crossing`, `MediaVerdict`, `verdict_for`, `ignore_lines` |
 | `errors` | `MediaError`, the only exception raised here |
 
@@ -50,12 +50,12 @@ touching a page, because §5 rules delivery orthogonal to placement.
 apart.** A *projected* footprint is `cli/plan/report.py`'s, taken at a rate
 before the bytes exist, so the question can be asked before the gigabytes are
 on disk; the *measured* one is this package's, and it is the only number a
-commit decision may rest on. ⭐ **`studyforge plan` prints both** (`W287`): the
+commit decision may rest on. ⭐ **`studyforge plan` prints both**: the
 measured line is `measure` and `verdict_for` asked from here, never a second
 measurement, so the plan reads whatever population this package weighs.
 
-⛔ **The population is wider than the declared units' media directories**
-(`W311`): the declared units' media directories, and every
+⛔ **The population is wider than the declared units' media directories**:
+the declared units' media directories, and every
 clip the narration record locates under the corpus root. A recorded clip that
 cannot be located is named in `MediaFootprint.unweighed`, never dropped.
 """

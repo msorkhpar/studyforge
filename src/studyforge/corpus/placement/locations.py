@@ -9,7 +9,7 @@ the page renderer writes to them, and `href_from` turns two of them into a link.
 
 **Depends on.** `names` and `errors`. ⛔ No filesystem: every path here is a
 `PurePosixPath` **relative to the source root**, and whether it exists is
-SF-04's question.
+`corpus.discovery`'s question.
 
 ⛔ **Relative to the source root, always, and never absolute.** An absolute
 path in a plan or a page carries the user's home directory (R7), and a corpus
@@ -46,7 +46,7 @@ class UnitLocations:
     images: PurePosixPath
     video: PurePosixPath
     practice: PurePosixPath
-    #: ⭐ `W215`: the files the page LINKS rather than shows — spec C4's
+    #: ⭐ The files the page LINKS rather than shows — spec C4's
     #: attachments. ⚠️ One field per kind, each named exactly as its directory
     #: is, because `media_dir` asks for one by that name.
     attachments: PurePosixPath
@@ -55,7 +55,7 @@ class UnitLocations:
     def directories(self) -> tuple[PurePosixPath, ...]:
         """The directories a build creates for this unit, in a stated order.
 
-        ⛔ **Asked kind by kind, never listed a second time** (`W215`). The
+        ⛔ **Asked kind by kind, never listed a second time**. The
         footprint weighs exactly these and a profile's ignore rules cover
         exactly `UNIT_MEDIA_DIRNAMES`; a kind that reached one list and not the
         other would be a limit cleared by not looking, which is the property
@@ -112,7 +112,7 @@ class CorpusLocations:
 
 
 #: The first line of every ignore file a profile answers with. ⚠️ It no longer
-#: names the media policy as the file's only source: since `W425` the file also
+#: names the media policy as the file's only source: the file also
 #: carries the rules for this framework's own caches, and a corpus with media
 #: committed has a file that carries nothing else.
 IGNORE_HEADER = "# Written by studyforge. Regenerate, never edit."
@@ -142,7 +142,7 @@ def relative_href(from_page: PurePosixPath, to_target: PurePosixPath) -> str:
     server and break the moment the page was opened from a file.
     """
     # ⛔ The refusal DESCRIBES the offending path and never formats it in
-    # (R7, rubric §1f). This branch fires precisely because the value is
+    # (R7). This branch fires precisely because the value is
     # absolute, so echoing it would emit a home directory out of the check
     # written to prevent one — the same defect `origin_directory` argues
     # against three modules away, and it was here the whole time.

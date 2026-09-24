@@ -21,7 +21,7 @@ carries a real name, *because a scan reads names* — and an `index.html` is
 neither unique in a listing nor distinguishable from the root index. So one
 file per unit is renamed by a migration, and nothing else moves. The task
 document's "byte-identically" is true of the directories and false of that one
-filename; see `docs/tasks/handoffs/SF-03.md`.
+filename.
 
 ⚠️ **`tree` needs no `origin`.** A corpus whose container map records none can
 still be placed this way, which is what makes it the profile for material that
