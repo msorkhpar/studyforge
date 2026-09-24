@@ -59,10 +59,12 @@ output**, and the answer to it does not move when a file is staged.
    rewrite, a removal, a rename's origin — must be declared by the plan, by the
    install record, by `permitted_edits`, by sitting inside the
    framework's own directory at the corpus root, which `validate`'s
-   `source.SKIP_DIRS` already declares is this tool's and not the corpus's, or
-   by being the execution skill's own output (`execution.generated_here`) —
-   which puts its reader's document at the corpus ROOT, outside that directory,
-   so a regenerate would otherwise read as a breach until it was committed.
+   `source.SKIP_DIRS` already declares is this tool's and not the corpus's, by
+   sitting inside the corpus's adapter (`skills.adapter.PACKAGE`), which a
+   person edits and no build writes, or by being the execution skill's own
+   output (`execution.generated_here`) — which puts its reader's document at
+   the corpus ROOT, outside that directory, so a regenerate would otherwise
+   read as a breach until it was committed.
 
 ⚠️ **What the second reading cannot do, said rather than implied:** once a
 change is committed the tree no longer holds it, so an undeclared rewrite that
@@ -126,6 +128,7 @@ def edits_test(manifest: Manifest) -> str:
             "from studyforge.cli.plan import plan_for",
             "from studyforge.corpus.manifest import MANIFEST_FILENAME, parse",
             "from studyforge.corpus.manifest.edits import reads_as_content",
+            "from studyforge.skills.adapter.plan import PACKAGE",
             "from studyforge.skills.execution import generated_here",
             "from studyforge.skills.reconnaissance.installed import generated",
         ],
@@ -160,6 +163,12 @@ def _declarations(permitted: list[str]) -> list[str]:
         "#: corpus's material, so what changes inside it is the framework's own",
         "#: writing — the narration record, the site cache, the pin.",
         f"FRAMEWORK_DIR = {PIN_DIR + '/'!r}",
+        "",
+        "#: The corpus's adapter, at the one directory the framework fixes for it.",
+        "#: A person edits it (its reading step, its practice data) and no build",
+        "#: writes it, so an uncommitted change there is the corpus's own work,",
+        "#: never generation's.",
+        "ADAPTER_DIR = PACKAGE + '/'",
         "",
         "#: Said, never assumed, when the plan will not say what a build writes.",
         "UNPLANNABLE = (",
@@ -214,7 +223,8 @@ def _readers() -> list[str]:
         "    files = {where for where in plan.paths if not where.endswith('/')}",
         "    files |= generated(root)",
         "    files |= set(PERMITTED)",
-        "    under = (FRAMEWORK_DIR, *(w for w in plan.paths if w.endswith('/')))",
+        "    planned = [where for where in plan.paths if where.endswith('/')]",
+        "    under = (FRAMEWORK_DIR, ADAPTER_DIR, *planned)",
         "    return sorted(",
         "        {",
         "            where",

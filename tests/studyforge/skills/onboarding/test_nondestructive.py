@@ -30,6 +30,7 @@ from studyforge.cli.plan import plan_for
 from studyforge.corpus.manifest import parse
 from studyforge.generate import write_site
 from studyforge.narrate.client import NarrateClient
+from studyforge.skills.adapter.plan import PACKAGE
 from studyforge.skills.execution import onboard as execution
 from studyforge.skills.onboarding import EDITS_TEST, artifacts
 from studyforge.skills.onboarding.manifest import promote, render
@@ -406,3 +407,25 @@ def test_a_reader_document_the_skill_did_not_write_is_still_the_corpus_own(tmp_p
 
     assert ran.returncode != 0, ran.stdout
     assert execution.READER_DOC in ran.stdout, ran.stdout
+
+
+# ---------------------------------------------------------------------------
+# The corpus's adapter, which a person edits and no build writes.
+# ---------------------------------------------------------------------------
+
+
+def test_an_uncommitted_change_to_the_corpus_adapter_is_its_own_work(tmp_path):
+    # ⭐ The adapter sits at the one directory the framework fixes for it, and a
+    # person changes its data (a practice's trust, say) before regenerating.
+    # ⛔ That read as an undeclared rewrite until somebody committed it.
+    root = _rebuilt(tmp_path)
+    adapter = root / PACKAGE / "practices.py"
+    adapter.parent.mkdir(exist_ok=True)
+    adapter.write_text("TRUST = 'authoritative'\n", encoding="utf-8")
+    _settle(root, COMMITTED)
+    adapter.write_text("TRUST = 'advisory'\n", encoding="utf-8")
+    assert f"{PACKAGE}/practices.py" in _replacements(root), "nothing was rewritten: vacuous"
+
+    ran = _check(root)
+
+    assert ran.returncode == 0, ran.stdout + ran.stderr
