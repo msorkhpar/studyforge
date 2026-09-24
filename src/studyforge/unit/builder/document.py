@@ -34,7 +34,7 @@ called `sources`, `source` or `origin` — the extraction source uses `source` f
 a fetched address, and one word meaning two things is how the two levels get
 confused exactly where they meet.
 
-⭐ **No path is recorded, for the reason `workspace.json` records none**: an
+⭐ **No path is recorded**, because a path is a fact about one disk: an
 entry names the variant, kind and ordinal that identify the document within
 this unit, and the unit's own `address` is on the document above it. A location
 is a fact about a disk; this is a fact about the corpus.

@@ -23,7 +23,7 @@ in `components`. This module is the index over what they produced.
 **Depends on.** `dataclasses` and this package's `components` and `refusal`.
 ⛔ Nothing else, ever — and in particular **not the filesystem**: this module
 is handed data and gives back text, so the caller names the documents. A
-module that went looking for `docs/tasks/` would be a framework module that
+module that went looking for a plan directory would be a framework module that
 knows where a plan lives, and the next repository's plan does not live there.
 
 ## ⛔ Why this exists at all

@@ -126,7 +126,7 @@ import re
 from collections.abc import Callable, Iterator
 
 #: What `scrub` writes in place of each shape. ⭐ Every one is a documented
-#: placeholder from `CLAUDE.md` or an obvious redaction, so a scrubbed line
+#: placeholder (`example.invalid`, `Jane Doe`) or an obvious redaction, so a scrubbed line
 #: reads as *deliberately* anonymous rather than as a plausible other value.
 #:
 #: ⭐ **Two of the three are chosen not to match the shape they replace**, so
@@ -247,8 +247,8 @@ SCRUBBED: tuple[tuple[str, re.Pattern[str], str], ...] = SHAPES + ALSO_SCRUBBED
 
 # ⛔ There is no allow-list here, and its absence is the ruling. The
 # repository hygiene check exempts unreachable addresses — `example.com`,
-# RFC 2606's reserved TLDs — because `CLAUDE.md` positively instructs authors
-# to write them and a check that fired on the sanctioned placeholder would be
+# RFC 2606's reserved TLDs — because authors are told to write them as
+# placeholders and a check that fired on the sanctioned placeholder would be
 # telling people not to use the safe form. **In an archive an address is wrong
 # content whether or not it is deliverable**: nothing in captured material
 # should carry one, and a corpus that legitimately does is the residual class

@@ -82,8 +82,8 @@ from studyforge.skills.buildserve import narration
 CONSUMING = "consuming.json"
 
 #: The component whose editor image this skill renders a compose file for.
-#: ⭐ A component of this framework, never a source (R1) — `workspace.json`
-#: pins it as a sibling checkout, exactly as it pins the narration service.
+#: ⭐ A component of this framework, never a source (R1): a client
+#: installs or builds it beside the framework, as it does the narration service.
 EDITOR_COMPONENT = "code-server-toolchain"
 
 #: ⛔ The `consuming_api` this renderer knows the shape of.

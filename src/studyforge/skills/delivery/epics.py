@@ -17,7 +17,7 @@ which is everything any document says about whose work a row is (R1) —
 
 **Depends on.** `re` and this package's `capability` and `refusal`. ⛔ Nothing
 else, ever — and in particular **not the filesystem**: a module that went
-looking for `docs/tasks/` would be a framework module that knows where a plan
+looking for a plan directory would be a framework module that knows where a plan
 lives, and the next repository's plan does not live there.
 
 ## ⭐ The parse is mechanical, and the mechanism is the point

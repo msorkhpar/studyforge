@@ -104,8 +104,8 @@ def test_a_filename_ending_in_local_is_not_a_hostname():
 
 
 def test_home_and_tilde_references_are_deliberately_not_flagged():
-    # ⛔ A reference is not a value, and `CLAUDE.md` names the environment
-    # variable as the *sanctioned* way to carry a real one in shipped code. A
+    # ⛔ A reference is not a value, and an environment
+    # variable is the *sanctioned* way to carry a real one in shipped code. A
     # check that flagged these would be telling people not to use the safe
     # form. Measured: 6 hits on this tree, every one a document explaining R7.
     assert shape_matches('HOME_DIR="$HOME/cache"') == []

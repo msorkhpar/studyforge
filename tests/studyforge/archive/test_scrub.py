@@ -10,7 +10,7 @@ personal_data/shapes.py` uses in prose, where the shape is written
 
 ⭐ The email material needs no such care, and that is the point of
 `test_the_two_gates_disagree_about_an_unreachable_address`: `example.invalid`
-is what `CLAUDE.md` tells authors to write, the hygiene check allows it, and
+is what authors are told to write, the hygiene check allows it, and
 **this** gate refuses it.
 """
 
@@ -463,7 +463,7 @@ def test_the_gate_does_not_import_the_repository_gates_patterns():
 )
 def test_the_two_gates_disagree_about_an_unreachable_address(address):
     # ⚠️ Not a defect. `tests.floor.personal_data` allows every one of these
-    # because `CLAUDE.md` positively instructs authors to write them and a
+    # because authors are told to write them as placeholders, and a
     # check that fired on the sanctioned placeholder would be telling people
     # not to use the safe form. **In an archive an address is wrong content
     # whether or not it is deliverable.** Mirrored from the other side by

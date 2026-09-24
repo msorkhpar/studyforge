@@ -34,9 +34,8 @@ so would be the theatre R5 forbids.
 1. The corpus, already onboarded — `corpus.json` exists and
    `studyforge validate` is clean. That is the other skill's job
    (`studyforge.skills.onboarding`), and this one refuses to run before it.
-2. `code-server-toolchain`, **checked out as a sibling at the commit
-   `workspace.json` pins**. ⛔ Never a submodule and never vendored: nothing in
-   this project is pushed to a remote, so a submodule URL has no legal form.
+2. `code-server-toolchain`, **installed or built beside the framework**, at the
+   version you use. ⛔ Never vendored into the corpus.
 3. Docker on the host, for step 4 onwards. Steps 1–3 touch no daemon.
 
 ---
@@ -87,9 +86,8 @@ at.
     )
 
 ⭐ **Where the two texts come from:** each is the `consuming.json` at the root
-of that sibling, **read at the commit `workspace.json` pins** — `git show
-<commit>:consuming.json` in the sibling's checkout, or the file in an export of
-that commit — and never a working tree that has moved past its pin.
+of that component, **read at the version you installed or built** — never a
+newer working tree than the images you run.
 `narration_text` is optional: without it the reader's document says nothing
 about narration and the narration contract's rulings are not asserted.
 

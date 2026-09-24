@@ -41,8 +41,8 @@ RULE_SHAPE = "personal-data"
 #: writing, a gate that fires on correct code just gets switched off.
 #:
 #: - ⛔ **`$HOME` and `~/` are NOT flagged.** They are references, not values,
-#:   and `CLAUDE.md` names the environment variable as the *sanctioned* way to
-#:   carry a real value in shipped code. A check that flagged them would be
+#:   and an environment variable is the *sanctioned* way to carry a real value
+#:   in shipped code. A check that flagged them would be
 #:   telling people not to use the safe form. Measured: 6 hits on this tree,
 #:   every one a document explaining the rule.
 #: - ⛔ **`/root/` is NOT flagged.** It is the same path on every machine and

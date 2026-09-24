@@ -31,8 +31,8 @@ a prediction and never from a rule about any one repository.
 ## ⛔ What this package does NOT do
 
 ⚠️ **It does not implement extraction.** Packing media into release assets and
-restoring it is real work with real traps and is deliberately out of v1
-(`docs/tasks/v2-backlog.md`, V2-14). ⭐ This is the **awareness**: measure,
+restoring it is real work with real traps and is deliberately out of v1.
+⭐ This is the **awareness**: measure,
 compare, report, and produce the right ignore rules for whichever answer
 applies. When extraction is built it plugs in behind this decision without
 touching a page, because §5 rules delivery orthogonal to placement.

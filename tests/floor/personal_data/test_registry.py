@@ -70,7 +70,7 @@ def test_this_gate_and_the_archive_gate_disagree_about_the_fixture_s_address():
     # The fixture's address is `…@example.invalid`: an RFC 2606 reserved TLD,
     # deliberately unreachable. **This** gate is repository hygiene, and an
     # address that can reach nobody identifies nobody, so it is allowed here —
-    # `CLAUDE.md` positively instructs authors to write such placeholders.
+    # authors are told to write such placeholders.
     # ⛔ **The archive gate's subject is the archive**, where any address is wrong content
     # whether or not it is deliverable, and `tests/test_fixture_consistency.py`
     # carries the stricter rule with no allow-list at all.

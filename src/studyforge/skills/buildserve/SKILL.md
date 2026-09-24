@@ -43,7 +43,7 @@ that component is silent no matter how it is built.**
 
 | the question | the answer |
 |---|---|
-| what provides narration | the `narrate-service` component, pinned beside this one in `workspace.json` |
+| what provides narration | the `narrate-service` component, installed or built beside this one |
 | where it answers | `http://127.0.0.1:8870` — ⛔ loopback, never an interface anyone else can reach |
 | how it is started | from **its own** checkout, by you, following its `README.md`. ⛔ Never by this skill |
 | what a caller may rely on | its `provides` promise, which this framework's narration client was built against: **`3`** |
