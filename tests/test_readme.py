@@ -133,11 +133,14 @@ def link_faults(text: str) -> list[str]:
         where = f"{README}:{number + 1} links {target!r}"
         relative, anchor = _resolve(target)
         path = repository_root() / relative
+        # ⭐ Asked BEFORE existence: what left the main line is gone from it, and the
+        #    reader deserves the reason rather than a bare "nothing is there".
+        if any(relative == gone or relative.startswith(gone) for gone in LEAVES_THE_MAIN_LINE):
+            faults.append(f"{where}, which leaves the main line")
+            continue
         if not path.exists():
             faults.append(f"{where}, and nothing is there")
             continue
-        if any(relative == gone or relative.startswith(gone) for gone in LEAVES_THE_MAIN_LINE):
-            faults.append(f"{where}, which leaves the main line")
         if anchor:
             heads = _anchors(path.read_text(encoding="utf-8")) if path.is_file() else set()
             if anchor not in heads:
@@ -307,11 +310,12 @@ def test_the_readme_sends_the_reader_to_every_authoring_page():
 
 
 def test_a_link_into_what_leaves_the_main_line_is_refused():
-    # ⚠️ Both plants name paths that still EXIST on the main line: a path already gone
-    #    is refused as dangling first, which would prove the other check.
+    # ⚠️ Neither plant exists on the main line, so each must be refused for WHY it is
+    #    gone rather than merely as dangling.
     planted = _text() + "\n[the board](docs/tasks/BOARD.md) [the plan](docs/tasks/README.md)\n"
     faults = link_faults(planted)
     assert sum("leaves the main line" in fault for fault in faults) == 2, faults
+    assert not any("nothing is there" in fault for fault in faults), faults
 
 
 def test_a_dangling_link_and_a_missing_anchor_are_refused():

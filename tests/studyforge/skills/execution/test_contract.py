@@ -10,7 +10,6 @@ that votes.
 from __future__ import annotations
 
 import json
-import os
 from pathlib import Path
 
 import pytest
@@ -18,14 +17,12 @@ import pytest
 from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.skills.buildserve import narration
 from studyforge.skills.execution import contract
-from tests.harness.workspace import DEV_CONTAINER, workspace_root
-from tests.harness.workspace import read as read_workspace
+from tests.harness.workspace import absence, sibling
 from tests.studyforge.skills.execution.contracts import (
     CONTAINER_USER,
     HOME,
     editor_text,
 )
-from tests.support import repository_root
 
 #: An account name this contract never declares as its own. ⚠️ Composed rather
 #: than written, for the reason `contracts.py` states.
@@ -43,15 +40,14 @@ def loaded(**moved: object):
 
 
 def declared() -> dict | None:
-    """The real component's `consuming.json`, or `None` where none is readable."""
-    if os.environ.get(DEV_CONTAINER):
-        return None
-    root = repository_root()
-    for component in read_workspace(root):
-        if component.name == contract.EDITOR_COMPONENT:
-            where = component.directory(workspace_root(root), root) / contract.CONSUMING
-            return json.loads(where.read_text(encoding="utf-8")) if where.is_file() else None
-    return None
+    """The real component's `consuming.json`, or `None` where none is readable.
+
+    ⭐ The checkout is found through `STUDYFORGE_WORKSPACE` alone, so a clean clone
+    and the pinned image both answer `None` and the cases below skip saying so.
+    """
+    checkout = sibling(contract.EDITOR_COMPONENT)
+    where = checkout / contract.CONSUMING if checkout is not None else None
+    return json.loads(where.read_text(encoding="utf-8")) if where and where.is_file() else None
 
 
 # --------------------------------------------------------------------------
@@ -197,11 +193,12 @@ def test_a_block_list_is_refused_when_its_entries_are_not_objects():
 # --------------------------------------------------------------------------
 
 
-def test_the_component_is_the_one_the_workspace_pins():
-    if os.environ.get(DEV_CONTAINER):
-        pytest.skip("the pinned image mounts one directory, so no sibling can be resolved")
-    named = [component.name for component in read_workspace(repository_root())]
-    assert contract.EDITOR_COMPONENT in named, named
+def test_the_component_is_a_checkout_of_that_name_in_the_named_workspace():
+    # ⭐ Found by its name, so a renamed component goes RED wherever the workspace is named.
+    checkout = sibling(contract.EDITOR_COMPONENT)
+    if checkout is None:
+        pytest.skip(absence(contract.EDITOR_COMPONENT))
+    assert (checkout / contract.CONSUMING).is_file()
 
 
 def test_the_recorded_promise_is_one_that_component_can_satisfy():

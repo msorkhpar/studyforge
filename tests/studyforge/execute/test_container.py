@@ -19,7 +19,8 @@ from pathlib import Path
 
 import pytest
 
-from tests.harness import pinned
+from tests.harness import sibling
+from tests.harness.workspace import WORKSPACE_ENV
 from tests.studyforge.execute import container
 
 MODULE = Path(container.__file__)
@@ -115,53 +116,57 @@ def test_a_contract_with_no_runner_block_says_the_shape_is_not_data(tmp_path):
 # --- ⛔ where the contract was READ from, which is `W404`'s whole subject ------------
 
 
-def a_local_reading(tmp_path) -> pinned.Reading:
+def a_local_reading(tmp_path) -> sibling.Reading:
     """A well-formed contract that was read from a working tree and says so."""
     a_contract(tmp_path)
-    return pinned.read_directory(tmp_path, container.CONTRACT)
+    return sibling.read_directory(tmp_path, container.CONTRACT)
 
 
-def test_a_contract_read_off_a_working_tree_is_refused_when_the_pin_was_ours_to_use(tmp_path):
+def test_a_contract_read_off_a_working_tree_is_refused_when_the_sibling_was_ours_to_find(tmp_path):
     # ⛔ MEASURED (`W404`): mid-merge, a STAGED `consuming.json` on no ref read
     # as present and went green — on this host only. The contract below is
     # perfectly valid; what is refused is WHERE it came from.
     reading = a_local_reading(tmp_path)
-    reason = container.reason_for(reading, must_be_pinned=True)
+    reason = container.reason_for(reading, must_be_committed=True)
     assert reason is not None
     assert "LOCAL" in reason and container.SIBLING in reason
 
 
 def test_the_same_reading_is_accepted_when_the_caller_named_the_directory(tmp_path):
     # ⭐ The other direction, and it is why the refusal is a parameter rather
-    # than a rule: no pin covers a directory somebody handed in, so there is no
-    # pin for that reading to fail to be at.
+    # than a rule: no commit covers a directory somebody handed in, so there is
+    # no commit for that reading to fail to be at.
     reading = a_local_reading(tmp_path)
-    assert container.reason_for(reading, must_be_pinned=False) is None
+    assert container.reason_for(reading, must_be_committed=False) is None
 
 
-def test_a_directory_the_caller_named_is_read_and_never_demanded_to_be_pinned(tmp_path):
+def test_a_directory_the_caller_named_is_read_and_never_demanded_to_be_committed(tmp_path):
     root = a_contract(tmp_path)
     assert container.contract_reading(root).working_tree
     assert container.declaration_reason(root) is None
 
 
 def test_an_absent_sibling_is_an_answer_carrying_its_sentence_rather_than_a_crash(tmp_path):
-    # ⭐ The pinned image's case: one directory is mounted, so no sibling
-    # resolves at all. It must stay a named skip, in both policies.
-    absent = pinned.read_directory(tmp_path, container.CONTRACT)
+    # ⭐ A clean clone's case, and the pinned image's: no sibling is named, so
+    # none resolves at all. It must stay a named skip, in both policies.
+    absent = sibling.read_directory(tmp_path, container.CONTRACT)
     assert absent.absent
     for demanded in (True, False):
-        reason = container.reason_for(absent, must_be_pinned=demanded)
+        reason = container.reason_for(absent, must_be_committed=demanded)
         assert "not reachable" in reason and absent.source in reason
 
 
-def test_the_real_sibling_is_resolved_through_the_pin_file_and_not_by_path(tmp_path):
+def test_the_real_sibling_is_found_through_the_variable_and_never_by_path(monkeypatch):
     # ⛔ No `root`: this is the resolution the runner cases actually use, and it
-    # must go through `workspace.json` rather than joining a path onto a parent.
+    # goes through `STUDYFORGE_WORKSPACE` rather than joining a path onto a parent.
     reading = container.contract_reading()
-    assert reading.state in pinned.STATES
+    assert reading.state in sibling.STATES
     # ⛔ R7: this sentence lands in skip messages, so it carries no path.
     assert str(Path(container.__file__).parent) not in reading.source
+    # ⭐ Unset, nothing is guessed: the sibling is absent and the sentence names the variable.
+    monkeypatch.delenv(WORKSPACE_ENV, raising=False)
+    unset = container.contract_reading()
+    assert unset.absent and WORKSPACE_ENV in unset.source
 
 
 # --- the run it renders --------------------------------------------------------------
@@ -259,7 +264,7 @@ def test_the_real_sibling_declares_a_shape_this_can_render():
         # ⭐ `W404`: a working-tree-only contract lands here too, and the skip
         # says so rather than letting an unreproducible reading go green.
         pytest.skip(reason)
-    assert container.contract_reading().pinned
+    assert container.contract_reading().committed
     runner = container.declaration()
     argv = container.run_argv(runner, name="sf20-probe", source_root="/sources", tag="an-image")
     assert argv[:2] == ["docker", "run"]

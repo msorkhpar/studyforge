@@ -8,7 +8,6 @@ corpus rather than of a call.
 from __future__ import annotations
 
 import json
-import os
 import re
 from pathlib import Path
 
@@ -21,15 +20,9 @@ from studyforge.corpus.placement import identity, profile_for, registered
 from tests.fixture_checks import FIXTURES as FIXTURE_ROOT
 from tests.fixture_checks import fixture_paths
 
-# ⛔ **The SHIPPED resolver, imported rather than re-derived**.
-# This module answered *"where do the sibling components live?"* with its own
-# `repository_root().parent` — the **third** copy of a rule this repository
-# ships once, and the only one of the three whose absent branch neither skipped
-# nor failed. ⚠️ Imported from `__main__` because that is where the rule and
-# its explanation live, and where `tools/tests/workspace/test_main.py` already
-# imports it from: a **fourth** home would be this defect again, one directory
-# over.
-from tests.harness.workspace import workspace_root as shipped_workspace_root
+# ⭐ **The one resolver, imported rather than re-derived**: a sibling checkout is
+# found through `STUDYFORGE_WORKSPACE` and nothing else.
+from tests.harness.workspace import WORKSPACE_ENV, sibling
 from tests.support import repository_root
 
 #: ⛔ **What this module's sweeps assert, as a rule id**, never a directory. Placing a
@@ -58,32 +51,8 @@ def test_the_fixture_set_is_read_from_the_declaration():
     assert "invalid/bad-corpus-api" not in FIXTURES
 
 
-#: Env override for a workspace the shipped resolver cannot reach — a container
-#: mount, or a synthetic tree in a plant. ⛔ **Not for a worktree**: the shipped
-#: resolver was measured to answer correctly from one.
-WORKSPACE_ENV = "STUDYFORGE_WORKSPACE"
-
 #: The corpus SF-03's acceptance names by name.
 JAVA_CORPUS = "Claude-senior-java-engineer"
-
-
-def workspace_root() -> Path:
-    """Where sibling repositories live, as `tests.harness.workspace` already computes it.
-
-    ⛔ **The derivation is NOT repeated here.** This module answered
-    `repository_root().parent`, which is a **worktree's** parent — and agents
-    work in worktrees, so the corpus below was absent on a tree that had it
-    sitting right beside it. ⭐ The shipped resolver reads
-    `git rev-parse --git-common-dir`, which names the **main** checkout.
-
-    ⚠️ The override still wins, because it is an instruction rather than a
-    derivation: it is how a caller points these checks at a tree the resolver
-    cannot see from where it is running.
-    """
-    override = os.environ.get(WORKSPACE_ENV)
-    if override:
-        return Path(override).expanduser()
-    return shipped_workspace_root(repository_root())
 
 
 def containers(fixture):
@@ -184,8 +153,8 @@ def java_modules():
     no caller of this may turn it into a stand-in without saying so.
     ⛔ R3: read-only, and nothing is written there.
     """
-    root = workspace_root() / JAVA_CORPUS
-    if not root.is_dir():
+    root = sibling(JAVA_CORPUS)
+    if root is None:
         return {}
     found = {}
     for module in sorted(path for path in root.iterdir() if path.is_dir()):
@@ -209,10 +178,9 @@ def the_java_corpus_or_skip():
     modules = java_modules()
     if not modules:
         pytest.skip(
-            f"{JAVA_CORPUS} is not checked out beside this repository, so this "
-            f"clause is proved of no corpus here (set {WORKSPACE_ENV} to point at "
-            f"the workspace root); the synthetic stand-in of the same shape is "
-            f"placed by its own case, which says it is synthetic"
+            f"{JAVA_CORPUS} is not checked out in a workspace {WORKSPACE_ENV} names, so "
+            f"this clause is proved of no corpus here; the synthetic stand-in of the "
+            f"same shape is placed by its own case, which says it is synthetic"
         )
     return modules
 

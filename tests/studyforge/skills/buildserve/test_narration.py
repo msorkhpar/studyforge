@@ -10,16 +10,15 @@ their absence.
 from __future__ import annotations
 
 import json
-import os
 from pathlib import Path
 
 import pytest
 
 from studyforge.cli.narrate.cli import DEFAULT_SERVICE
 from studyforge.skills.buildserve import narration
-from tests.harness import pinned
-from tests.harness.workspace import DEV_CONTAINER, read
-from tests.support import repository_root
+from tests.harness import sibling
+from tests.harness.workspace import absence
+from tests.harness.workspace import sibling as checkout
 
 #: Every path the component's API publishes. ⛔ Typed HERE and nowhere in `src/`:
 #: this file's whole job is to assert that no skill repeats them.
@@ -29,22 +28,20 @@ ROUTES = ("/healthz", "/v1/voices", "/v1/speech", "/v1/jobs", "/v1/artifacts")
 SKILL = Path(narration.__file__).parent / "SKILL.md"
 
 
-def declared() -> pinned.Reading:
-    """The component's own `consuming.json`, **read at the commit the pin names**.
+def declared() -> sibling.Reading:
+    """The component's own `consuming.json`, **read at its checked-out commit**.
 
     ⛔ `W404`: this used to read whatever sat in the sibling's working tree, so a
     staged file on no ref read as the contract and the green result reproduced on
     no other host. ⭐ The reading now says which of the three things happened —
-    read at the pin, read from a working tree and therefore LOCAL, or absent —
+    read at a commit, read from a working tree and therefore LOCAL, or absent —
     and the cases below skip on anything but the first, quoting the sentence.
 
-    ⚠️ The pinned image mounts exactly one directory, so every sibling is absent
-    in there and reporting one absent would be a well-formed wrong answer. That
-    is the `ABSENT` state, and it arrives as a sentence rather than a crash.
+    ⚠️ The checkout is found through `STUDYFORGE_WORKSPACE` alone, so a clean
+    clone and the pinned image both read it ABSENT, as a sentence rather than a
+    crash.
     """
-    return pinned.read_sibling(
-        narration.COMPONENT, narration.CONTRACT[0], repository_root=repository_root()
-    )
+    return sibling.read_sibling(narration.COMPONENT, narration.CONTRACT[0])
 
 
 def test_the_address_is_the_verbs_own_default_and_is_loopback():
@@ -54,37 +51,36 @@ def test_the_address_is_the_verbs_own_default_and_is_loopback():
     assert narration.ADDRESS.startswith("http://127.0.0.1:")
 
 
-def test_the_component_is_the_one_the_workspace_pins():
-    # ⭐ Read from the pin file, so a renamed component goes RED here.
-    if os.environ.get(DEV_CONTAINER):
-        pytest.skip("the pinned image mounts one directory, so no sibling can be resolved")
-    named = [component.name for component in read(repository_root())]
-    assert narration.COMPONENT in named, named
+def test_the_component_is_a_checkout_of_that_name_in_the_named_workspace():
+    # ⭐ Found by its name, so a renamed component goes RED wherever the workspace is named.
+    if checkout(narration.COMPONENT) is None:
+        pytest.skip(absence(narration.COMPONENT))
+    assert (checkout(narration.COMPONENT) / narration.CONTRACT[0]).is_file()
 
 
 def test_the_recorded_promise_is_the_one_that_component_declares():
     reading = declared()
-    if not reading.pinned:
+    if not reading.committed:
         # ⛔ A LOCAL reading is skipped rather than believed: it would green here
-        # and red on any other checkout of the same pin file (`W404`).
+        # and red on any other checkout of the same commit (`W404`).
         pytest.skip(
             f"{narration.COMPONENT}'s {narration.CONTRACT[0]} was not read at "
-            f"its pin: {reading.source}"
+            f"a commit: {reading.source}"
         )
     # ⛔ Its own API asks every caller to record the promise it built against and
     # refuses a mismatch rather than migrating it, so a bump must be read, not guessed.
     assert narration.PROMISE == json.loads(reading.text)["provides"]
 
 
-def test_a_reading_that_is_not_at_the_pin_is_never_believed(tmp_path):
+def test_a_reading_that_is_not_at_a_commit_is_never_believed(tmp_path):
     """⭐ The skip above is a decision, so it is asserted in both directions (`W404`)."""
-    local = pinned.read_directory(tmp_path, narration.CONTRACT[0])
+    local = sibling.read_directory(tmp_path, narration.CONTRACT[0])
     (tmp_path / narration.CONTRACT[0]).write_text('{"provides": 99}', encoding="utf-8")
-    found = pinned.read_directory(tmp_path, narration.CONTRACT[0])
-    assert local.absent and not local.pinned
-    # ⛔ A contract that is only on disk is readable and still not pinned — the
+    found = sibling.read_directory(tmp_path, narration.CONTRACT[0])
+    assert local.absent and not local.committed
+    # ⛔ A contract that is only on disk is readable and still not committed — the
     # exact shape that read as green while existing on no ref.
-    assert found.working_tree and not found.pinned
+    assert found.working_tree and not found.committed
     assert json.loads(found.text)["provides"] == 99
 
 

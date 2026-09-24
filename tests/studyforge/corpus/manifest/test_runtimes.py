@@ -23,8 +23,7 @@ from studyforge.corpus.manifest import (
     from_document,
     parse_runtimes,
 )
-from tests.harness.workspace import git, holds, read
-from tests.studyforge.corpus.placement.test_corpora import WORKSPACE_ENV, workspace_root
+from tests.harness import sibling
 from tests.support import repository_root
 
 #: A manifest that may declare runtimes: it sets exercises, at the version
@@ -228,17 +227,9 @@ def unpinned(vocabulary: tuple[str, ...], pins: dict) -> list[str]:
     return sorted(set(vocabulary) - set(pins.get("runtimes", {})))
 
 
-def pinned_runtimes() -> dict | None:
-    """The runner's `pins.json` at its PINNED commit, or `None` when unreadable."""
-    for component in read(repository_root()):
-        if component.name != RUNNER or not component.present:
-            continue
-        checkout = workspace_root() / component.name
-        if not checkout.is_dir() or not holds(checkout, component.commit):
-            return None
-        shown = git(checkout, "show", f"{component.commit}:{PINS}")
-        return json.loads(shown.stdout) if shown.returncode == 0 else None
-    return None
+def pinned_runtimes() -> sibling.Reading:
+    """The runner's `pins.json` at its checked-out commit, and what it was read from."""
+    return sibling.read_sibling(RUNNER, PINS)
 
 
 def test_the_agreement_instrument_can_go_red():
@@ -247,11 +238,11 @@ def test_the_agreement_instrument_can_go_red():
 
 
 def test_every_declarable_runtime_is_pinned_by_the_runner_image():
-    pins = pinned_runtimes()
-    if pins is None:
+    reading = pinned_runtimes()
+    if not reading.committed:
         pytest.skip(
-            f"{RUNNER}'s {PINS} could not be read at its pinned commit here, so the "
-            f"vocabulary is proved against no pin file; set {WORKSPACE_ENV} to point at "
-            f"the workspace root. The refusal is held on synthetic pins above"
+            f"{RUNNER}'s {PINS} was not read at a commit here ({reading.source}), so the "
+            f"vocabulary is proved against no pin file. The refusal is held on synthetic "
+            f"pins above"
         )
-    assert unpinned(RUNTIMES, pins) == []
+    assert unpinned(RUNTIMES, json.loads(reading.text)) == []
