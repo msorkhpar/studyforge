@@ -5,8 +5,10 @@ checkout, and depends on nothing outside it.
 
 **What it does.** Fails a source module over 400 physical lines and a test
 module over 600, unless the module's own docstring carries a justification in
-one of R11's two admissible forms — a **design claim** (why splitting would
-be worse) or a **deferral** naming the task that splits the module.
+R11's one admissible form: a **design claim**, why splitting would be worse.
+⛔ A justification that promises later work, by naming a work item or in so
+many words, is refused (`size-deferral`): it reads to a stranger as permanent
+and names nothing they can act on. A module that should be split is split.
 
 **How you use it.** `check_sizes(repo_root)` returns findings. The opt-out is
 `Size exception:` as a line of the module's FIRST docstring; the justification
@@ -15,13 +17,9 @@ is that line and the lines that follow it up to the next blank one, and
 string, case included — R11 spells it once, and every reader looks for exactly
 that token, so anything else would pass one reader and fail another.
 
-⛔ **A deferral's row id goes on the marker line**. An id that wrapped onto
-the next line would vanish from every reader of the marker, and the deferral
-would print as a permanent design claim — the one reading that makes it
-un-retirable. So the whole justification is read, and an id found anywhere
-*but* the marker line is
-refused rather than silently accepted, because the sweep's reader and this
-one must agree about what the line says.
+⛔ **The whole justification is read, not the marker line.** A promise that
+wrapped onto the next line is refused exactly as one on the marker line is,
+because what a reason says must not depend on where its author pressed return.
 
 **Depends on.** `ast` and `config`. Deliberately not on a parser that has to
 run the module: a file too broken to import is still a file whose length can
@@ -64,18 +62,13 @@ from tests.floor.report import Finding
 
 RULE = "size"
 RULE_JUSTIFICATION = "size-justification"
-RULE_EXCEPTION_ID = "size-exception-id"
+RULE_DEFERRAL = "size-deferral"
 
-#: The remedy, and it names BOTH admissible forms. ⛔ A remedy naming only the
-#: design claim would instruct a developer to write the inadmissible thing
-#: whenever the deferral is the form the case needs.
-BOTH_FORMS = (
-    "The size ceiling admits two forms and no third. A design claim: "
-    f"`{config.SIZE_EXCEPTION_MARKER} <why splitting would be worse>`, which "
-    "is permanent. Or a deferral: "
-    f"`{config.SIZE_EXCEPTION_MARKER} <TASK-ID> splits this module`, plus why "
-    "not in this task, which the named row retires by deleting the line. The "
-    "task id goes on the marker line, where this check reads it."
+#: The remedy, and the one admissible form it names.
+DESIGN_FORM = (
+    "The size ceiling admits one form: a design claim, "
+    f"`{config.SIZE_EXCEPTION_MARKER} <why splitting would be worse>`, and never "
+    "a promise of later work. A module that should be split is split."
 )
 
 #: The non-Python source languages the framework ships, read under `src/` only.
@@ -169,8 +162,8 @@ def size_exception(docstring: str | None) -> str | None:
     ⛔ The whole of it, not the marker line. A justification is English and
     English wraps; a reader that stopped at the line break would make the
     visible reason a function of where the author happened to press return,
-    which both hides a deferral's row id and refuses a long reason for being
-    short.
+    which both hides a promise written below the marker line and refuses a
+    long reason for being short.
 
     Continuation lines are joined with a single space, so the result reads as
     the sentence it is and can be printed on one line by a sweep. An empty or
@@ -184,31 +177,24 @@ def size_exception(docstring: str | None) -> str | None:
     return " ".join(part for part in lines if part).strip()
 
 
-def size_exception_marker_line(docstring: str | None) -> str | None:
-    """Return only what the marker line itself carries, or None if absent.
+def promises(text: str | None) -> list[str]:
+    """What in `text` promises later work: each work item and deferral word, in order, once.
 
-    Exists for one question: is the deferral's row id on the marker line,
-    where it must be? ⛔ Not a general-purpose reader — `size_exception` is that,
-    and a caller wanting the reason wants the whole reason.
-    """
-    lines = justification_lines(docstring)
-    return None if lines is None else lines[0]
-
-
-def row_ids(text: str | None) -> list[str]:
-    """Every task id named in `text`, in order of appearance, deduplicated.
-
-    ⛔ Whether the task is still open is not asked here and cannot be: this
-    package reads the tree and nothing that plans work on it (see
-    `config.ROW_ID`). A deferral pointing at a finished task needs a human who
-    can tell an open task from a closed one.
+    ⛔ Whether a named item is open is not asked and cannot be: a design claim
+    names no work at all, so any item named is a refusal.
     """
     if not text:
         return []
+    found = sorted(
+        [
+            *((m.start(), m.group()) for m in config.WORK_ITEM_ID.finditer(text)),
+            *((m.start(), m.group()) for m in config.DEFERRAL_WORDS.finditer(text)),
+        ]
+    )
     seen: list[str] = []
-    for match in config.ROW_ID.findall(text):
-        if match not in seen:
-            seen.append(match)
+    for _, word in found:
+        if word not in seen:
+            seen.append(word)
     return seen
 
 
@@ -277,7 +263,7 @@ def check_sizes(root: Path) -> list[Finding]:
                     rule=RULE,
                     message=(
                         f"{lines} lines, ceiling {ceiling}. Split it into a package, or "
-                        f"add a justification to the module docstring. {BOTH_FORMS}"
+                        f"add a justification to the module docstring. {DESIGN_FORM}"
                     ),
                 )
             )
@@ -291,23 +277,22 @@ def check_sizes(root: Path) -> list[Finding]:
                         f"{lines} lines, ceiling {ceiling}, and the "
                         f"`{config.SIZE_EXCEPTION_MARKER}` justification gives "
                         f"{len(reason)} characters of reason "
-                        f"({config.MIN_JUSTIFICATION_CHARS} required). {BOTH_FORMS}"
+                        f"({config.MIN_JUSTIFICATION_CHARS} required). {DESIGN_FORM}"
                     ),
                 )
             )
-        elif row_ids(reason) and not row_ids(size_exception_marker_line(docstring)):
-            named = ", ".join(row_ids(reason))
+        elif promises(reason):
+            named = ", ".join(promises(reason))
             findings.append(
                 Finding(
                     path=relative,
                     line=1,
-                    rule=RULE_EXCEPTION_ID,
+                    rule=RULE_DEFERRAL,
                     message=(
                         f"{lines} lines, ceiling {ceiling}, and the "
-                        f"`{config.SIZE_EXCEPTION_MARKER}` justification names {named} "
-                        f"but not on the marker line, so a reader of that line sees "
-                        f"this deferral with no id and it reads as permanent. Move the "
-                        f"row id onto the marker line. {BOTH_FORMS}"
+                        f"`{config.SIZE_EXCEPTION_MARKER}` justification promises later "
+                        f"work ({named}), which reads to a stranger as permanent. "
+                        f"{DESIGN_FORM}"
                     ),
                 )
             )

@@ -432,8 +432,9 @@ reader of the module meets it; and it says why splitting would be *worse* — a 
 too short to be one is reported as none. ⛔ **It is refused whenever the honest answer
 to the isolation question is no**: a justification is not a licence. ⛔ **It is a
 design claim and only a design claim**: never a promise that later work will split the
-module, which reads to a stranger as permanent and names nothing they can find. A module
-that should be split is split. An exception left in a module that is now under its
+module, which reads to a stranger as permanent and names nothing they can find. The
+floor's size check refuses one (`size-deferral`), whether it names a work item or says so
+in words, anywhere in the justification. A module that should be split is split. An exception left in a module that is now under its
 ceiling is stale and is removed. ⚠️ A stylesheet, a
 script or a template has no docstring and so no opt-out: its remedy is a split at a
 named seam.
