@@ -20,6 +20,7 @@ the rule.
 | `classification` | ⭐ what the corpus says its files **are** — material, output, or neither |
 | `enumeration` | ⭐ what the corpus root **holds**, which `classification` judges |
 | `completeness` | ⭐ what one file **contains**, counted without the parser that read it |
+| `curriculum` | ⭐ whether the tree still says what `corpus.json`'s `curriculum` declares |
 | `membership` | ⭐ what the archive root holds, and what the archive declares and does not hold |
 
 ## ⛔ Why the seam is here
@@ -63,6 +64,7 @@ from studyforge.validate.source.completeness import (
     RULE_SHORT_READ,
     check_completeness,
 )
+from studyforge.validate.source.curriculum import RULE_CURRICULUM, check_curriculum
 from studyforge.validate.source.enumeration import (
     IGNORE_TIMEOUT,
     REPOSITORY_STORE,
@@ -79,15 +81,16 @@ from studyforge.validate.source.membership import (
     check_declared_files,
 )
 
-#: The four checks, in the order a report reads best — what the archive root
+#: The five checks, in the order a report reads best — what the archive root
 #: holds, then what the archive SAYS it holds and does not, then what the files
-#: beside it **are**, then what one **contains**.
+#: beside it **are**, then whether they are filed as declared, then what one **contains**.
 #: ⛔ `validate.run` splices this tuple into its own, so the order here is the
 #: order in the report.
 CHECKS = (
     check_archive_members,
     check_declared_files,
     check_unclassified,
+    check_curriculum,
     check_completeness,
 )
 
@@ -104,6 +107,7 @@ __all__ = [
     "REPOSITORY_STORE",
     "RULE_ARCHIVE_STRAY",
     "RULE_CONTESTED",
+    "RULE_CURRICULUM",
     "RULE_IGNORE_DECLARATION",
     "RULE_INCLUDED_UNREAD",
     "RULE_MEDIA_MISSING",
@@ -118,6 +122,7 @@ __all__ = [
     "archive_members",
     "check_archive_members",
     "check_completeness",
+    "check_curriculum",
     "check_declared_files",
     "check_unclassified",
     "repository_ignores",

@@ -18,8 +18,9 @@ way when the manifest declares its groups:
     counted(root, manifest)               # {address key: n}, or None
 
 **Depends on.** `corpus.manifest` for the declaration and the content policy,
-`corpus.container` for `Unit`, and reconnaissance's `record.read` for the
-record. ⛔ Nothing source-specific (R1): every fact arrives in `corpus.json`.
+`corpus.container` for `Unit`, reconnaissance's `record.read` for the record,
+and `validate.source.source_files` for which files exist, deferred (`_included`).
+⛔ Nothing source-specific (R1): every fact arrives in `corpus.json`.
 
 ## ⭐ One reader detects and files, so the two are one act (`F6`)
 
@@ -46,19 +47,13 @@ never by a title (R7): the refusal is pasted before it is read.
 
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass
 from pathlib import Path
 
 from studyforge.address import Address
 from studyforge.corpus.container import Unit
 from studyforge.corpus.manifest import Classification, Manifest, prefix_of
-from studyforge.corpus.placement import ARCHIVE_DIRNAME
 from studyforge.skills.reconnaissance import read
-
-#: What a walk of the corpus never enters at its root: the repository's store,
-#: this framework's own files, and the archive an adapter writes.
-NOT_WALKED = (".git", ".studyforge", ARCHIVE_DIRNAME)
 
 
 class CurriculumDisagrees(ValueError):
@@ -78,11 +73,15 @@ class Filed:
     units: tuple[Unit, ...]
 
 
-def filed(root: Path, manifest: Manifest) -> tuple[Filed, ...]:
-    """Return every declared group with its units, or refuse naming every disagreement."""
+def filed(root: Path, manifest: Manifest, *, included: set[str] | None = None) -> tuple[Filed, ...]:
+    """Return every declared group with its units, or refuse naming every disagreement.
+
+    ⭐ `included` is the root-relative files the content policy includes, for a
+    caller that already enumerated them (`validate`); absent, they are read here.
+    """
     curriculum = _declared(manifest)
     root = Path(root)
-    included = _included(root, manifest)
+    included = _included(root, manifest) if included is None else included
     record = _record(root, curriculum.record, included)
     labels = [each.label for each in curriculum.containers]
     if record.groups != labels:
@@ -224,14 +223,19 @@ def _cross_checked(found, prefixes, included: set[str]) -> list[str]:
 
 
 def _included(root: Path, manifest: Manifest) -> set[str]:
-    """Every file on disk the manifest's content policy includes, root-relative."""
-    found = set()
-    for here, directories, files in os.walk(root):
-        if Path(here) == root:
-            # ⭐ Pruned rather than filtered, so a repository's store is never walked.
-            directories[:] = [name for name in directories if name not in NOT_WALKED]
-        for name in files:
-            relative = (Path(here) / name).relative_to(root).as_posix()
-            if manifest.content.classify(relative) is Classification.INCLUDED:
-                found.add(relative)
-    return found
+    """Every file on disk the manifest's content policy includes, root-relative.
+
+    ⭐ **The population `validate` judges**: `validate.source.source_files`, which
+    reads the repository's own ignore rules and sets aside what a build writes.
+    So the adapter's filing and `validate`'s check can never disagree about which
+    files exist. ⚠️ Imported here rather than at module scope: `validate` reads
+    this package's `Layout`, and a top-level import would be a cycle.
+    """
+    from studyforge.validate.source import source_files
+
+    included = set()
+    for path in source_files(root).files:
+        relative = path.relative_to(root).as_posix()
+        if manifest.content.classify(relative) is Classification.INCLUDED:
+            included.add(relative)
+    return included

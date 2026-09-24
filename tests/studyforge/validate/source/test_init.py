@@ -15,7 +15,13 @@ from pathlib import Path
 import pytest
 
 from studyforge.validate import source
-from studyforge.validate.source import classification, completeness, enumeration, membership
+from studyforge.validate.source import (
+    classification,
+    completeness,
+    curriculum,
+    enumeration,
+    membership,
+)
 from tests.support import assert_package_contract, repository_root
 
 #: The package on disk, as the guard below walks it.
@@ -69,6 +75,7 @@ def test_the_checks_run_in_the_order_the_report_reads_best():
         source.check_archive_members,
         source.check_declared_files,
         source.check_unclassified,
+        source.check_curriculum,
         source.check_completeness,
     )
 
@@ -81,7 +88,7 @@ def test_every_rule_id_the_package_can_emit_is_on_its_surface():
     # `contested`, each its own rather than folded into `unclassified`.
     declared = {
         name
-        for module in (classification, completeness, enumeration, membership)
+        for module in (classification, completeness, curriculum, enumeration, membership)
         for name in vars(module)
         if name.startswith("RULE_")
     }
@@ -94,10 +101,12 @@ def test_the_seam_holds_and_neither_half_imports_the_other():
     # If one half ever reaches for the other the seam has moved and the two
     # test modules stop naming what they cover.
     # ⭐ `classification` reads `enumeration`, the walk it judges, and that is the
-    # ONE edge inside the package. Nothing reads `classification`; `enumeration` reads none.
+    # ONE edge inside the package, and `curriculum` reads it the same way, for the same
+    # population. Nothing reads `classification`; `enumeration` reads none.
     edges = {
         classification: {enumeration},
         completeness: set(),
+        curriculum: {enumeration},
         enumeration: set(),
         membership: set(),
     }
@@ -123,6 +132,7 @@ def test_no_module_in_this_package_reaches_for_the_markdown_reader():
         f"{PACKAGE}/__init__.py",
         f"{PACKAGE}/classification.py",
         f"{PACKAGE}/completeness.py",
+        f"{PACKAGE}/curriculum.py",
         f"{PACKAGE}/enumeration.py",
         f"{PACKAGE}/membership.py",
     }

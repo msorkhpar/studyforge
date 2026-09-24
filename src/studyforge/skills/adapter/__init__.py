@@ -16,7 +16,9 @@ which is the procedure. This package is what the skill *calls*:
     made.write(corpus_root)
 
 **Depends on.** `corpus`, `archive` and `address` — the three formats an
-adapter writes. ⛔ Not on `validate`, and not on any adapter (R1, R2).
+adapter writes. ⛔ Not on any adapter (R1, R2), and not on `validate`'s checks:
+the one edge is `curriculum`'s deferred read of `validate.source.source_files`,
+so a declared filing and `validate` judge the same files.
 
 ## ⛔ The seam is on disk, and this package does not move it
 
