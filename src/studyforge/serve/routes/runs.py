@@ -12,9 +12,8 @@ is last; `Outcome` records it, with a Submit's case breakdown beside it.
 **How you use it.** `serve.routes.run` claims the slot with `Runs.claim`, and answers
 with `Response(200, headers, stream=Stream(runs, live, Outcome(...)))`.
 
-**Depends on.** `execute` for the handle and the exit line's words, `progress` for the
-record, `routes.breakdown` for a Submit's per-case verdicts, `archive.scrub` for the
-wire, and `serve.discovery` / `serve.routes.content`.
+**Depends on.** `execute` (the handle, the exit line, the recorded names), `progress`,
+`routes.breakdown` for a Submit's cases, `archive.scrub` and `serve.withheld` for the wire.
 
 ## ⭐ A Submit is recorded with its breakdown, which is never a verdict (`AX-02`)
 
@@ -69,8 +68,8 @@ the readers a reader's own client asks for — the run index and the practice-ed
 ## ⛔ Output is gated on the wire
 
 Every line `execute` yields is already relative to the source root and scrubbed; it is
-scrubbed again as it is written, because the response is where it leaves the process
-(R7), and `scrub` is idempotent.
+scrubbed again as it is written, where it leaves the process (R7; `scrub` is idempotent),
+⛔ after `withheld.OutputGate` has replaced any line carrying a served quiz's key (`W465`).
 """
 
 from __future__ import annotations
@@ -90,11 +89,10 @@ from studyforge.execute import (
     EditorProbe,
     RunHandle,
     Runner,
-    container_for,
-    editor_container_for,
     exit_line,
     open_url,
     practice_folder,
+    recorded,
     write_settings,
 )
 from studyforge.progress import CASES_KEY
@@ -102,6 +100,7 @@ from studyforge.progress import RAISES as PROGRESS_RAISES
 from studyforge.serve.discovery import Discovered, ServedCorpus
 from studyforge.serve.routes.breakdown import fold
 from studyforge.serve.routes.content import ContentSource
+from studyforge.serve.withheld import OutputGate, marks_of
 
 #: The line said, just before the exit line, when the store refused the outcome.
 NOT_RECORDED = "--- the outcome could not be recorded ---"
@@ -111,13 +110,13 @@ EditorFor = Callable[[ServedCorpus], EditorProbe]
 
 
 def runner_for(corpus: ServedCorpus) -> Runner:
-    """Return the corpus's runner: its root, and the container its reader may have up."""
-    return Runner(corpus.root, container_for(corpus.source))
+    """Return the corpus's runner: its root, and the container THIS checkout recorded (`W465`)."""
+    return Runner(corpus.root, recorded(corpus.root, corpus.source).runner)
 
 
 def editor_for(corpus: ServedCorpus) -> EditorProbe:
-    """Return the probe for the corpus's editor: its root, and the name compose gives one."""
-    return EditorProbe(corpus.root, editor_container_for(corpus.source))
+    """Return the probe for the corpus's editor: its root, and the name this checkout recorded."""
+    return EditorProbe(corpus.root, recorded(corpus.root, corpus.source).editor)
 
 
 @dataclass(frozen=True, slots=True)
@@ -339,6 +338,7 @@ class Stream:
         self._live = live
         self._outcome = outcome
         self._lines = live.handle.lines()
+        self._gate = OutputGate(marks_of(runs.sources.get(outcome.corpus.source)))
         self._chunks = self._generate()
         self._recorded = False
         self._finished = False
@@ -368,7 +368,7 @@ class Stream:
                     self._recorded = True
                     for said in self._outcome.record(verdict(handle, line)):
                         yield (said + "\n").encode("utf-8")
-                yield (scrub(line.rstrip("\n")) + "\n").encode("utf-8")
+                yield (scrub(self._gate(line.rstrip("\n"))) + "\n").encode("utf-8")
         finally:
             self._finish()
 

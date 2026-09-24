@@ -47,6 +47,12 @@ places workspaces by (`workspaces_bind`), and the sources stay where they were.
 (`runnerservice`), started by the reader's one compose command — never by the
 serving process (§8.3) — from the tag `record` writes into `RUNNER_ENV`.
 
+## ⭐ A SECOND INSTANCE, AND NO KEY IN THE EDITOR (`W465`)
+
+⭐ `write` defaults the four values `INSTANCE_ENV` records and never overwrites
+a recorded one (`instance.record_instance`); `binds.unkeyed` refuses any
+editor bind that reaches a quiz's key.
+
 ## ⛔ RE-RUNNING CHANGES NOTHING, AND A HAND-EDIT IS REPORTED
 
 ⭐ The same manifest and contracts render the same bytes, so `write` is
@@ -63,8 +69,10 @@ from pathlib import Path, PurePosixPath
 
 from studyforge.corpus.manifest import Manifest
 from studyforge.corpus.placement import PRACTICE_DIRNAME
+from studyforge.execute import instance
 from studyforge.skills.execution import composefile, contract, reader, runnerservice, toolchain
 from studyforge.skills.execution import written as record_of
+from studyforge.skills.execution.binds import ExecutionRefused, source_root, unkeyed
 from studyforge.skills.execution.prime import Prime, PrimeRefused, prime_for
 from studyforge.skills.execution.toolchain import DIRECTORY_SLOT
 
@@ -90,6 +98,10 @@ RUNNER_ENV = f"{DIRECTORY}/runner.env"
 #: writes (`record.record_editor`). ⭐ Beside the runner's and in its shape, so
 #: the tag a site's editor runs is the corpus's record and not a person's memory.
 EDITOR_ENV = f"{DIRECTORY}/editor.env"
+
+#: The file the same command reads THIS instance's project, editor port and
+#: container names from, which `serve` reads too (`execute.instance`).
+INSTANCE_ENV = instance.INSTANCE_FILE
 
 #: What a reader opens first.
 READER_DOC = "EXECUTION.md"
@@ -122,13 +134,6 @@ NOT_MATERIAL = (
     {"glob": READER_DOC, "why": WHY_READER},
 )
 
-#: Characters that make a path component a pattern rather than a directory.
-GLOB_CHARACTERS = "*?[]"
-
-
-class ExecutionRefused(ValueError):
-    """A corpus this skill will not generate execution artifacts for, and why."""
-
 
 @dataclass(frozen=True, slots=True)
 class Execution:
@@ -143,32 +148,12 @@ class Execution:
     primed: Prime | None = None
     #: The runner's compose service and how its tag is computed.
     runner: runnerservice.Runner | None = None
+    #: `(variable, default)` for each value `INSTANCE_ENV` records, in order.
+    instance: tuple[tuple[str, str], ...] = ()
 
     def paths(self) -> tuple[str, ...]:
         """Every path this skill occupies, in the order it writes them."""
         return tuple([where for where, _ in self.files] + [where for where, _ in self.copies])
-
-
-def source_root(manifest: Manifest) -> str:
-    """Return the directory an editor binds, from `content.include` (§8.1: the sources alone)."""
-    roots = [_root_of(one) for one in manifest.content.include]
-    if not roots or not all(roots):
-        raise ExecutionRefused(
-            "this corpus's content.include names the repository root, so §8.1 leaves "
-            "no directory to mount: only the sources are mounted, never the "
-            "repository. Declare material under a directory, or add a manifest key that "
-            "names the one an editor binds"
-        )
-    shared = PurePosixPath(roots[0])
-    for one in roots[1:]:
-        shared = _common(shared, PurePosixPath(one))
-    if not shared.parts:
-        raise ExecutionRefused(
-            "this corpus's content.include globs share no directory, so reaching them all "
-            "would mount the repository, and §8.1 mounts only the sources. Declare them under one "
-            "directory, or add a manifest key that names the one an editor binds"
-        )
-    return shared.as_posix()
 
 
 def generate(
@@ -193,6 +178,8 @@ def generate(
         raise contract.ContractRefused("the contract's editor must be an object")
     selection = toolchain.select(manifest.runtimes, editor)
     sources = source_root(manifest)
+    workspaces = workspaces_bind(block, sources)
+    unkeyed(sources, *(() if workspaces is None else (workspaces[0],)))
     # ⭐ The prime is selected for what the image will CARRY, not for everything
     # the corpus declared: an image without a runtime cannot compile a specimen
     # in it, and the withheld ones are named in the reader's document instead.
@@ -201,16 +188,21 @@ def generate(
     primed = _primed(root, selection.carried, seeded)
     flag = _prime_flag(editor) if primed.projects else None
     editor_flag = selection.primed_by(f"<this corpus>/{PRIME_DIR}") if flag else None
-    workspaces = workspaces_bind(block, sources)
+    names = instance.defaults(manifest.source, port=composefile.per_project_port(block))
+    names[instance.PROJECT] = project or names[instance.PROJECT]
     runner = runnerservice.plan(
         editor,
         source=manifest.source,
         root=_from_compose(""),
         runtimes=manifest.runtimes,
         runs_as=_runs_as(block),
+        name_variable=instance.RUNNER_NAME,
     )
+    names[instance.RUNNER_NAME] = runner.name
     compose = composefile.render(
-        project=project or f"studyforge-{manifest.source}",
+        project=composefile.interpolated(instance.PROJECT, names[instance.PROJECT]),
+        container_name=composefile.interpolated(instance.EDITOR_NAME, names[instance.EDITOR_NAME]),
+        port_variable=instance.EDITOR_PORT,
         editor=block,
         image=selection.image_value,
         sources=_from_compose(sources),
@@ -226,6 +218,7 @@ def generate(
         compose_file=COMPOSE_FILE,
         runner_env=RUNNER_ENV,
         editor_env=EDITOR_ENV,
+        instance_env=INSTANCE_ENV,
         selection=selection,
         primed=primed,
         block=block,
@@ -248,6 +241,7 @@ def generate(
         selection=selection,
         primed=primed,
         runner=runner,
+        instance=tuple(names.items()),
     )
 
 
@@ -293,6 +287,10 @@ def write(execution: Execution, root: Path) -> tuple[str, ...]:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((root / origin).read_bytes())
         written.append(where)
+    if execution.runnable and not (root / INSTANCE_ENV).exists():
+        made = instance.text(dict(execution.instance), header=f"# {GENERATED}\n")
+        (root / INSTANCE_ENV).write_text(made, encoding="utf-8")
+        written.append(INSTANCE_ENV)
     if written:
         record_of.stamp(root, written)
     return tuple(written)
@@ -366,28 +364,3 @@ def _prime_flag(editor: Mapping[str, object]) -> str:
 def _from_compose(sources: str) -> str:
     """Return `sources` as the compose file at `COMPOSE_FILE` reaches it; `""` is the root."""
     return "/".join([".."] * len(PurePosixPath(DIRECTORY).parts) + ([sources] if sources else []))
-
-
-def _root_of(pattern: str) -> str:
-    """Return one include glob's directory prefix, up to its first pattern part.
-
-    ⚠️ A glob with no pattern part names a FILE, so its directory is what is
-    taken — a corpus that includes one file by name has still said where its
-    material lives.
-    """
-    kept: list[str] = []
-    for part in PurePosixPath(pattern).parts:
-        if any(one in part for one in GLOB_CHARACTERS):
-            return "/".join(kept)
-        kept.append(part)
-    return "/".join(kept[:-1])
-
-
-def _common(first: PurePosixPath, second: PurePosixPath) -> PurePosixPath:
-    """Return the longest directory both paths share."""
-    shared = []
-    for one, other in zip(first.parts, second.parts, strict=False):
-        if one != other:
-            break
-        shared.append(one)
-    return PurePosixPath(*shared)

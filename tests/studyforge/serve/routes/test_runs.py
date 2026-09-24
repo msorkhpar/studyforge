@@ -12,12 +12,21 @@ import time
 
 import pytest
 
-from studyforge.execute import EDITOR_TTL, Editor, EditorProbe, editor_container_for, exit_line
+from studyforge.execute import (
+    EDITOR_TTL,
+    Editor,
+    EditorProbe,
+    editor_container_for,
+    exit_line,
+    instance,
+)
 from studyforge.serve.response import Request
 from studyforge.serve.routes import run
-from studyforge.serve.routes.runs import verdict
+from studyforge.serve.routes.runs import editor_for, runner_for, verdict
+from studyforge.serve.withheld import WITHHELD_LINE, marks_in
 from tests.studyforge.execute.runnable import RAW
 from tests.studyforge.execute.test_mode import fake_docker
+from tests.studyforge.serve.routes.quizzing import QUESTIONS
 from tests.studyforge.serve.routes.running import (
     SOURCE,
     StubEditors,
@@ -325,3 +334,48 @@ def test_a_practice_neither_bind_holds_has_no_editor(root):
     only = Editor(origin=EDITOR_ORIGIN, folder="/w/sources", base="sources")
     live, discovered = runs_over(root, editor=StubEditors(only))
     assert live.practice_editor(discovered.corpora[0], "practice/passes/greet.py", None) is None
+
+
+# --------------------------------------------------------------------------
+# ⭐ `W465`: THIS checkout's containers, and a run's output never carries a key
+# --------------------------------------------------------------------------
+
+
+def test_serve_finds_the_runner_and_the_editor_this_checkout_recorded(root):
+    _, discovered = runs_over(root)
+    corpus = discovered.corpora[0]
+    assert editor_for(corpus).container == editor_container_for(SOURCE)
+    target = corpus.root / instance.INSTANCE_FILE
+    target.parent.mkdir(parents=True, exist_ok=True)
+    values = dict(
+        instance.defaults(SOURCE, port=8443),
+        **{instance.EDITOR_NAME: "second-editor", instance.RUNNER_NAME: "second-runner"},
+    )
+    target.write_text(instance.text(values, header=""), encoding="utf-8")
+    assert editor_for(corpus).container == "second-editor"
+    assert runner_for(corpus).container == "second-runner"
+
+
+class KeyedContent:
+    """The real content source, saying it serves the quiz `QUESTIONS` marks."""
+
+    def __init__(self, real) -> None:
+        self.real = real
+
+    def __getattr__(self, name):
+        return getattr(self.real, name)
+
+    def withheld(self):
+        return marks_in({"sections": [{"workspace": {"questions": QUESTIONS}}]})
+
+
+def test_a_run_that_prints_a_bundle_hands_the_reader_no_key(root):
+    printed = json.dumps({"questions": QUESTIONS}, indent=2).splitlines()
+    runs, _ = runs_over(root, runner=stub_runner(StubHandle(printed)))
+    runs.sources[SOURCE] = KeyedContent(runs.sources[SOURCE])
+    response = started(runs)
+    body = b"".join(response.stream).decode("utf-8")
+    response.stream.close()
+    assert '"correct"' not in body and WITHHELD_LINE in body
+    assert all(option["says"] not in body for one in QUESTIONS for option in one["options"])
+    assert body.endswith(exit_line(0) + "\n")
