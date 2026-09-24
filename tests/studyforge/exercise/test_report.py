@@ -1,4 +1,4 @@
-"""`AX-01`'s Acceptance: folding a run's JUnit report through the record's cases.
+"""The per-case verdicts: folding a run's JUnit report through the record's cases.
 
 ⭐ **The five clauses are five separate readings**, each with its own test: a
 report folds to *main* plus *edge n/m*; a test the case map does not name is
@@ -132,7 +132,7 @@ def refuse(root: Path, text: str, declared: str = DIRECTORY, **changes) -> str:
 
 
 # --------------------------------------------------------------------------
-# ⭐ the Acceptance: a report folds to main plus edge n/m
+# ⭐ A report folds to main plus edge n/m
 # --------------------------------------------------------------------------
 
 
@@ -215,7 +215,7 @@ def test_a_case_that_failed_in_any_file_did_not_pass(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⭐ the Acceptance: a test the case map does not name is refused
+# ⭐ A test the case map does not name is refused
 # --------------------------------------------------------------------------
 
 
@@ -251,7 +251,7 @@ def test_one_test_that_two_cases_each_claim_is_refused(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ the Acceptance: a stale report is refused, and never read
+# ⛔ A stale report is refused, and never read
 # --------------------------------------------------------------------------
 
 
@@ -313,7 +313,7 @@ def test_a_report_written_inside_the_clock_slack_is_not_stale(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ the Acceptance: a malformed report is a named failure
+# ⛔ A malformed report is a named failure
 # --------------------------------------------------------------------------
 
 
@@ -341,7 +341,7 @@ def test_a_testcase_that_names_no_test_is_a_named_failure(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⭐ the Acceptance: a run that wrote no report is no breakdown and no error
+# ⭐ A run that wrote no report is no breakdown and no error
 # --------------------------------------------------------------------------
 
 
@@ -395,7 +395,7 @@ def test_a_format_this_build_cannot_read_is_refused(tmp_path):
 
 
 def test_a_breakdown_answers_per_case_for_whoever_records_it(tmp_path):
-    """⭐ `AX-02` records the breakdown, so it reads the cases and their verdicts, not the prose."""
+    """⭐ The breakdown is recorded, so it reads the cases and their verdicts, not the prose."""
     breakdown = run(tmp_path, surefire((ASK, PASS), (SHORT, FAILURE), (EMPTY, PASS)))
     assert tuple(case.id for case in breakdown.cases) == (ASK, SHORT, EMPTY)
     assert tuple(breakdown.passed(case) for case in breakdown.cases) == (True, False, True)

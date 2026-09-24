@@ -2,7 +2,7 @@
 
 ⭐ **The record is the artifact `studyforge validate` re-reads** (spec §7 §10),
 so what is asserted here is what a bundle can and cannot claim about itself.
-⛔ **The seam `AX-06` inherits is asserted too**: a second family's gates are
+⛔ **The seam the quiz gates use is asserted too**: a second family's gates are
 required, accepted and ordered by this module without a line of it knowing what
 a quiz is — proved by registering one and reading a record that carries both.
 """
@@ -177,7 +177,7 @@ def test_a_cited_passage_may_name_a_whole_file():
 
 
 def test_a_second_family_shares_this_record_and_edits_nothing_here():
-    # ⭐ THE SEAM `AX-06` INHERITS, asserted by doing it: a family registered
+    # ⭐ THE SEAM the quiz gates USE, asserted by doing it: a family registered
     # from outside this package is required, accepted and ordered by `record`,
     # which has never heard of it.
     family = register(Family("zz-example", ("X1", "X2")))

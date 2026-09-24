@@ -117,8 +117,7 @@ def check_declared_files(walk: Walk) -> Iterator[Finding]:
 
     ⛔ **`local` resolves against the unit's own directory and nowhere else**
     (`archive.document`), so this asks `Layout.unit_files` for the directory
-    rather than composing one — the composing is what was found every reader
-    of this location doing.
+    rather than composing one, so no reader of this location composes its own.
     """
     if walk.manifest is None:  # pragma: no cover - the walk stops without one
         return

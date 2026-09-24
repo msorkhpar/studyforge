@@ -53,9 +53,8 @@ writes both back**, following `trust`'s ruling that a defaulted field which
 disappears when it is obvious cannot be told from one nobody wrote.
 
 ⚠️ **The cost, stated:** a quiz document that omits them round-trips to one
-that carries them. ⛔ That is affordable here and was not for `kind`, and the
-difference is measured rather than argued: the installed base of quiz records
-is **zero**, so no document in existence is re-rendered by this choice (R10).
+that carries them. ⛔ That is affordable here and not for `kind`: a quiz
+record always carries them, so no document is re-rendered by this choice (R10).
 """
 
 from __future__ import annotations

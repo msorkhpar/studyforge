@@ -1,11 +1,11 @@
-"""`W436`'s reading: an exercise whose tests import a library, graded in the REAL runner.
+"""The build role, read live: an exercise whose tests import a library, graded in the REAL runner.
 
 ⭐ **The row's first clause, read the only way it can be:** a bundle whose
 tests import a library the JDK does not carry is emitted into a corpus, the
 reader's container is started over it from the sibling's own declaration
 (`--network none`, the reader's uid, the source root alone), the record's
 `test_command` runs through `execute.Runner` in container mode, and the report
-it leaves is folded into `AX-01`'s per-case verdicts.
+it leaves is folded into the per-case verdicts.
 
 ⛔ **And both ways** (R12): the same exercise in a runner primed WITHOUT the
 library fails naming it; in a runner with no prime at all it fails naming what
@@ -13,11 +13,11 @@ it could not resolve offline; and the corpus it ran over holds no jar and a
 build file naming no repository — so the channel is the only thing that could
 have resolved it.
 
-⭐ **Opt-in, because it builds images.** `STUDYFORGE_RUNNER_BUILDS=1` consents
-to the sibling's own build (which pulls its pinned inputs, as `W390`'s reading
-did); without it, without Docker, or without the sibling at its pin, every case
-SKIPS and says which. ⛔ The pinned dev image carries no Docker, so this is a
-HOST reading, and it must be taken holding the shared container lock.
+⭐ **Opt-in, because it builds images.** `STUDYFORGE_RUNNER_BUILDS=1` consents to the
+sibling's own build (which pulls its pinned inputs); without it, without Docker, or
+without the sibling at its pin, every case SKIPS and says which. ⛔ The pinned dev image
+carries no Docker, so this is a HOST reading, and it must be taken holding the shared
+container lock.
 """
 
 from __future__ import annotations
@@ -171,7 +171,7 @@ def test_the_same_exercise_without_its_build_role_fails_in_the_primed_runner(ima
 
 
 def test_a_run_leaves_its_output_where_the_one_ignore_line_reaches(images, tmp_path):
-    # ⭐ `ISO-M10/4`: everything the run wrote into the reader's workspace is
+    # ⭐ Everything the run wrote into the reader's workspace is
     # under the run-output directory, so one ignore line covers all of it.
     root = tmp_path / "corpus"
     bundle, exercise = corpus(root)

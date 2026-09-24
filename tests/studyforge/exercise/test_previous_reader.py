@@ -1,8 +1,8 @@
 """The two-directional compatibility reading, taken WITH the previous reader.
 
-⛔ **`AX-00`'s last Acceptance clause is a claim about a reader that no longer
-exists in the tree**: *a record written before this task still reads unchanged,
-and a document carrying the new keys is refused by the previous reader.*
+⛔ **The case keys' compatibility claim is about a reader that is not in the
+tree**: *a record without the case keys still reads unchanged, and a document
+carrying them is refused by the previous release's reader.*
 ⚠️ **So it cannot be asserted from here.** A test that imported today's
 `EXERCISE_KEYS` and reasoned about what an older build *would* have done would
 be an assertion ABOUT the previous reader, and the half that matters — the
@@ -11,14 +11,14 @@ refusal — is exactly the half such a test cannot take.
 ⭐ **The previous reader is therefore RUN.** Its source is read out of git at
 the ref below and imported as its own module, beside today's, and both are
 asked the same questions in the same run. ⛔ The ref is pinned and named, not
-resolved from `HEAD`: it is the release tip `AX-00` was cut at, so this reading
-goes on being the reading it was taken as after this branch merges.
+resolved from `HEAD`: it is the previous release's tip, so this reading does not
+move with the tree.
 
 ⚠️ **The instrument is checked before it is believed** — a loaded module that
 was silently today's would pass every refusal test for the wrong reason, which
 is a no-op plant wearing a green tick. `test_the_reader_loaded_is_genuinely_the
 _previous_one` is that check, and the negative control beside it is that the
-same module still READS a record written before this task.
+same module still READS a record without the case keys.
 
 ⛔ Mirrors no source module (R12 is one-way), because its subject is two
 versions of one and not either of them.
@@ -44,9 +44,9 @@ from studyforge.exercise import to_document as write
 from tests.fixture_checks import fixture_paths
 from tests.support import git, repository_root, run
 
-#: ⛔ The ref this reading is taken against: the release tip `AX-00` was cut
-#: at, the close of `M7`. ⚠️ Pinned rather than derived — `HEAD` moves with this
-#: branch, and a "previous" reader that follows the work is no control at all.
+#: ⛔ The ref this reading is taken against: the previous release's tip. ⚠️ Pinned rather
+#: than derived — `HEAD` moves with the tree, and a "previous" reader that follows the
+#: work is no control at all.
 PREVIOUS = "9806710e"
 
 #: The module the previous reader lives in, at that ref.
@@ -54,7 +54,7 @@ SOURCE = "src/studyforge/exercise/record.py"
 
 WHERE = "kata/raw/python/unit-01/practice-1"
 
-#: A record as the tree wrote them before `AX-00`: the graded shape, whole.
+#: A record in the graded shape, whole, with no case keys.
 BEFORE = {
     "main_path": "practice/basics-01/src/main/java/Greeter.java",
     "test_path": "practice/basics-01/src/test/java/GreeterTest.java",
@@ -86,7 +86,7 @@ AFTER = {
     ],
 }
 
-#: ⭐ A whole quiz as `AX-05` shipped it — the shape the previous reader cannot
+#: ⭐ A whole quiz as the quiz shape shipped it — the shape the previous reader cannot
 #: read at all, since `questions` is not a key it defines and `kind` is not
 #: either. ⚠️ Its own round trip is `tests/studyforge/exercise/quiz/`; what is
 #: taken here is only the two-directional reading.
@@ -99,7 +99,7 @@ ASSERTED = {"exercise-trust"}
 
 
 def committed_records():
-    """Every record this repository committed before `AX-00`, with where it lives."""
+    """Every record this repository commits without case keys, with where it lives."""
     found = []
     for where, path in fixture_paths(asserting=ASSERTED, within="/raw/"):
         document = json.loads(path.read_text(encoding="utf-8"))
@@ -183,7 +183,7 @@ def test_and_it_is_a_working_reader_not_a_broken_one(previous):
 def test_a_document_carrying_a_new_key_is_refused_by_the_previous_reader(previous, key):
     # ⛔ This is what lets the contract land with no version bump: an older
     # build refuses the new shape rather than misreading it — spec §7's own
-    # test, applied to `AX-00` (`W357`, and §6 before it).
+    # test, applied to the case keys (§6).
     message = refused_by(previous, {**BEFORE, key: AFTER[key]})
     assert key in message, "the previous reader refused without naming the key"
 
@@ -204,7 +204,7 @@ def test_a_new_key_on_a_practice_document_is_refused_by_the_previous_reader(prev
 #: ⚠️ The breakdown is one group because it is written whole or not at all, so
 #: `cases` alone is refused by BOTH readers — for different reasons, which is
 #: why it is not the shape this claim is taken on. ⛔ **`questions` is absent
-#: deliberately and that is not an omission**: `AX-05` made it a key only a
+#: deliberately and that is not an omission**: the quiz shape makes it a key only a
 #: QUIZ may carry, so on `BEFORE`'s shape today's reader refuses it too. Its
 #: arm of this claim is the quiz test below, on a whole quiz record.
 ACCEPTED = [("kind",), BREAKDOWN_KEYS, ("origin",)]
@@ -221,7 +221,7 @@ def test_and_todays_reader_accepts_each_of_them(previous, keys):
 
 
 def test_a_whole_quiz_is_refused_by_the_previous_reader_and_read_by_todays(previous):
-    # ⛔ `AX-05`'s half of the same two-directional claim, taken on the shape
+    # ⛔ The quiz shape's half of the same two-directional claim, taken on the shape
     # that key exists for rather than on a code record wearing it. ⚠️ The
     # previous reader refuses it for the key it cannot read; today's reads it
     # and knows what it is.
@@ -232,7 +232,7 @@ def test_a_whole_quiz_is_refused_by_the_previous_reader_and_read_by_todays(previ
 
 
 # --------------------------------------------------------------------------
-# ⭐ a record written before this task reads unchanged — every committed one
+# ⭐ a record without the case keys reads unchanged — every committed one
 # --------------------------------------------------------------------------
 
 
@@ -240,7 +240,7 @@ def test_the_sweep_has_a_population_to_read():
     # ⛔ Every test below is a comparison, and an empty population
     # satisfies all of them. ⚠️ The five are the depth-2 graded fixture, the
     # execution fixture's three graded units and its ungraded one — the three
-    # shapes `M7` shipped, which `AX-00` may not change.
+    # shapes the previous reader reads, which the case keys may not change.
     assert len(COMMITTED) >= 5, [where for where, _ in COMMITTED]
     # ⚠️ And inhabited by both shapes, or the sweep below would be a claim
     # about graded records alone.

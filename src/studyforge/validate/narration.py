@@ -18,11 +18,10 @@ check's tuple — ⚠️ **only while narration is on** (`narrate.enabled`), whi
 
 ## ⛔ WHY `validate`, WHEN THE JOIN ALREADY KNEW
 
-⚠️ **Measured on the first corpus**: three content-fix rounds
-changed prose on thirteen pages and every changed paragraph kept playing its
-old clip. `narrate.playable` marked each one stale and resolved it anyway,
-which is right for the page (see below), and ⛔ **nothing any person or office
-runs printed the list** — `validate`, `plan` and the build all read clean.
+⚠️ **A paragraph whose prose changed keeps playing its old clip.**
+`narrate.playable` marks it stale and resolves it anyway, which is right for
+the page (see below), and ⛔ **nothing else a person runs prints the list** —
+`plan` and the build both read clean.
 ⭐ `validate` is the definition of done an author already runs, so the list
 lands where it is read.
 

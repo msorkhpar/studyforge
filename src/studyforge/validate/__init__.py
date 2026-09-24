@@ -47,13 +47,12 @@ is on the first package's `__all__`, or the two packages do not share it, and
 ## ⛔ `headings` is a CALLABLE here, and `validate.headings` is still the MODULE
 
 ⚠️ **The export shadows the submodule attribute, and that is a decision rather
-than an oversight**. ⭐ **It is this project's standing shape, not a
-novelty:** measured at `5fca2ea`, twelve `(package, name)` pairs in `src/`
-already export a callable whose name is one of that package's own modules —
-`address.identifier`, `contents.order` and `skills.reconnaissance.survey`
-among them. ⛔ **Refusing it here would make this package the exception and
-would leave `skills.reconnaissance` reaching past this surface permanently**,
-which is the defect one exported home prevents.
+than an oversight**. ⭐ **It is this project's standing shape, not a novelty:** a
+dozen `(package, name)` pairs in `src/` export a callable whose name is one of
+that package's own modules — `address.identifier`, `contents.order` and
+`skills.reconnaissance.survey` among them. ⛔ **Refusing it here would make this
+package the exception and would leave `skills.reconnaissance` reaching past this
+surface permanently**, which is the defect one exported home prevents.
 
 ⭐ **Nothing is hidden by it.** `from studyforge.validate.headings import
 count_headings, region` still resolves: the binding rebinds this PACKAGE's

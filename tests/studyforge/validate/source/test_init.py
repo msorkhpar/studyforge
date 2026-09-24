@@ -1,11 +1,10 @@
 """Mirror of `src/studyforge/validate/source/__init__.py` (R12).
 
 ⛔ **The guard the whole package rests on lives here, and that is the point of
-the split rather than an accident of it.** It used to name one file. A guard
-that names one file in a package of three is a guard the next submodule walks
-straight past, so it is derived from the package directory instead — and the
-derivation asserts its own inhabitation, because a sweep over an empty set
-passes.
+the split rather than an accident of it.** A guard that names one file in a
+package of three is a guard the next submodule walks straight past, so it is
+derived from the package directory instead — and the derivation asserts its own
+inhabitation, because a sweep over an empty set passes.
 """
 
 from __future__ import annotations
@@ -63,9 +62,9 @@ def test_the_checks_run_in_the_order_the_report_reads_best():
     # ⛔ The order, not the membership: what the files *are* is reported before
     # what one of them *contains*, and `validate.run` splices this tuple in as
     # it stands.
-    # ⭐ The archive root first (`W248`): a stray there is not material beside it,
+    # ⭐ The archive root first: a stray there is not material beside it,
     # and what the archive DECLARES and does not hold is the same question from
-    # the other end (`W214`), so the two sit together and before the material.
+    # the other end, so the two sit together and before the material.
     assert source.CHECKS == (
         source.check_archive_members,
         source.check_declared_files,
@@ -78,8 +77,8 @@ def test_every_rule_id_the_package_can_emit_is_on_its_surface():
     # ⚠️ A script filters a report by rule id and needs the constant rather
     # than the string. ⛔ **Derived from the two halves rather than re-typed**,
     # so the next rule id added to either one is exported or this fails —
-    # which is the failure mode, `ignore-declaration` and `contested` both
-    # having been minted rather than folded into `unclassified`.
+    # which is the failure mode for a rule such as `ignore-declaration` or
+    # `contested`, each its own rather than folded into `unclassified`.
     declared = {
         name
         for module in (classification, completeness, enumeration, membership)

@@ -17,10 +17,10 @@ read, and what a page's fences are. Standard library only.
 
 ## ⛔ WHY `validate` AND NOT ONLY THE PASS
 
-⚠️ **The corpus office read a ledger that had lost a whole container's rows as
-0 findings.** `exercises/ledger.json` is one file per corpus, and the pass that
-rewrote it with one container's entries was the very thing that should have
-known better — so the proof that *nothing is lost* cannot live only in the
+⚠️ **A ledger can lose a whole container's rows and still read as 0
+findings.** `exercises/ledger.json` is one file per corpus, and a pass that
+rewrites it with one container's entries is the very thing that should know
+better — so the proof that *nothing is lost* cannot live only in the
 writer. ⭐ This check reads the ledger against what the corpus DECLARES, which
 no pass can narrow: every unit's `origin` in every container map, and every
 page and grader a committed coverage report names.

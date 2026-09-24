@@ -74,8 +74,8 @@ def test_the_public_surface_is_declared_and_complete():
 
 
 def test_everything_a_second_gate_family_needs_is_on_that_surface():
-    # ⛔ `W199/3`'s producer half, for the consumer this package was shaped
-    # around: `AX-06` registers a family, writes verdicts and cited passages
+    # ⛔ The producer half of the export rule, for the consumer this package was shaped
+    # around: the quiz gates register a family, writes verdicts and cited passages
     # into this record, and must never have to import a module inside here.
     taken = ("Family", "register", "Verdict", "GateRecord", "Cited", "Input", "ORIGIN_ROLE")
     assert set(taken) <= set(gates.__all__)
@@ -105,7 +105,7 @@ def test_nothing_in_the_package_imports_execute_or_starts_a_process():
 
 
 def test_the_package_is_reachable_without_naming_a_module_inside_it():
-    # ⭐ The import surface `AX-04`, `AX-06` and `AX-08` use: the package,
+    # ⭐ The import surface the authoring skill and the quiz gates use: the package,
     # never `studyforge.exercise.gates.code`.
     assert gates.check is not None and gates.record_of is not None
     assert gates.CODE.gates == (gates.G1, gates.G2, gates.G3, gates.G4, gates.G5)

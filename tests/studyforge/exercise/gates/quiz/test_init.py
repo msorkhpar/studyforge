@@ -1,8 +1,8 @@
-"""The quiz gates' contract, its public surface, and the one line it added outside itself.
+"""The quiz gates' contract, its public surface, and the one line it adds outside itself.
 
-⛔ **`AX-03` left the seam with a bound on it — *`families.py`, `record.py`,
-`digests.py` and `runs.py` take NO edit*.** ⭐ That bound is read here against
-the tree rather than promised in prose, at the ref this branch is taken on.
+⛔ **The gate framework's seam carries a bound — *`families.py`, `record.py`,
+`digests.py` and `runs.py` never name the quiz family*.** ⭐ That bound is read
+here against the tree rather than promised in prose.
 """
 
 from __future__ import annotations
@@ -65,7 +65,7 @@ def test_the_parent_package_names_this_sub_package_in_its_own_table():
 
 
 def test_the_sub_package_is_reachable_without_naming_a_module_inside_it():
-    # ⭐ The import surface `AX-04`, `AX-07` and `AX-08` use: the sub-package,
+    # ⭐ The import surface the authoring skill uses: the sub-package,
     # never `studyforge.exercise.gates.quiz.judged`.
     assert quiz.check_quiz is not None and quiz.question_digest is not None
     assert quiz.QUIZ.gates == (quiz.Q1, quiz.Q2, quiz.Q3, quiz.Q4, quiz.Q5)
@@ -92,9 +92,8 @@ def test_nothing_here_imports_execute_starts_a_process_or_reaches_the_filesystem
 
 
 def test_the_seam_is_used_rather_than_widened():
-    # ⛔ `AX-03`'s own bound, MEASURED against the tree at this ref: the four
-    # modules it named are byte-identical to the ref this branch was cut at,
-    # and the only file of that package this branch touches is its contract.
+    # ⛔ The gate framework's own bound, read off the tree: the modules it
+    # names exist, and none of them names the quiz sub-package.
     package = repository_root() / "src" / "studyforge" / "exercise" / "gates"
     untouched = ("families.py", "record.py", "digests.py", "runs.py", "evidence.py", "code.py")
     for name in untouched:

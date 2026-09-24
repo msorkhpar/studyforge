@@ -1,25 +1,22 @@
-"""Two artifacts must not want the same path (SF-25).
+"""Two artifacts must not want the same path.
 
 ⭐ Every check here has a **negative control**: the same corpus with the one
 difference removed is clean, so each test shows the check biting on the thing
 it names and on nothing else.
 
-⚠️ **These collisions are all measured green on real material** — the Java
-corpus's 45 modules and 166 units collide nowhere — which is the argument for
-the check rather than against it. The first corpus to hit one would otherwise
-find out by overwriting a page.
+⚠️ **Real material rarely collides**, which is the argument for the check
+rather than against it: the first corpus to hit one would otherwise find out
+by overwriting a page.
 
 ⭐ **The last section is not a check but a pin.** `_collision` quotes the
 placed path with `!r`, which is only safe because the value it is given has
 already been refused if it is not a location inside the source. That is
-provenance (Ruling 17), and the architecture is right — ⛔ but a pointer is
+provenance, and the architecture is right — ⛔ but a pointer is
 only better than a copy if the far end holds, and nothing recorded that this
 consumer depended on it.
 
-⚠️ **Ruling 44 moved the far end while this pin was watching, which is what a
-pin is for.** The guarantee used to live only in `container.fields`, two
-packages away; it is now `studyforge.sourcepath`, asked by that reader *and* by
-`placement.origin_directory` — the call `paths.py` itself makes. So the second
+⚠️ **The far end is `studyforge.sourcepath`,** asked by `container.fields`
+*and* by `placement.origin_directory` — the call `paths.py` itself makes. So the second
 test below asserts the refusal rather than the leak, and a third holds the
 channel open on a legal path so the pair cannot pass vacuously.
 """
@@ -46,8 +43,8 @@ from tests.support import repository_root
 
 
 def test_two_units_in_different_containers_sharing_a_directory_are_named_apart(tmp_path):
-    # ⭐ `W254`: same origin directory, same ordinal, same title slug. This once
-    # claimed one page; a `sibling` name now carries its container's address.
+    # ⭐ Same origin directory, same ordinal, same title slug: a `sibling` name
+    # carries its container's address, so the two are two pages.
     root = corpora.two_containers(
         tmp_path / "c",
         placement="sibling",
@@ -85,7 +82,7 @@ def test_and_the_same_corpus_with_one_title_changed_is_clean(tmp_path):
 
 
 def test_two_container_pages_may_claim_one_path(tmp_path):
-    # ⚠️ SF-03's corpus-wide test places units only; a container page is the
+    # ⚠️ The placement package's corpus-wide test places units only; a container page is the
     # half it does not cover. Two origins in one directory and two deepest
     # titles that slugify alike collide the same way.
     root = corpora.two_containers(
@@ -100,20 +97,16 @@ def test_two_container_pages_may_claim_one_path(tmp_path):
 
 
 def test_titles_that_slugify_alike_produce_one_name(tmp_path):
-    # ⭐ **A review finding — with its example corrected by measurement.**
-    # It was said `slugify` *deletes* accented characters, so `Café` and `Cafe`
-    # are one slug. ⛔ Measured 2026-09-09 in the pinned image, that is **not
-    # what it does**: an accent is a non-alphanumeric, so it collapses to a
-    # *separator* — `slugify('Café') == 'caf'` and `slugify('Cafe') == 'cafe'`,
-    # which do **not** collide.
+    # ⭐ `slugify` does **not** delete an accented character: an accent is a
+    # non-alphanumeric, so it collapses to a *separator* — `slugify('Café') == 'caf'`
+    # and `slugify('Cafe') == 'cafe'`, which do **not** collide.
     #
     # ⚠️ The collision class is real and **wider** than accents: any two titles
     # whose non-alphanumerics collapse to the same separator run are one name.
     # `'Streams: an API'` and `'Streams, an API'` both slugify to
-    # `'streams-an-api'` — measured, and far likelier in real material than an
-    # accent. ⛔ Which is the argument for checking the **path set** rather than
-    # any one cause: the set catches every cause, including the one the ruling
-    # got wrong.
+    # `'streams-an-api'` — far likelier in real material than an accent.
+    # ⛔ Which is the argument for checking the **path set** rather than any one
+    # cause: the set catches every cause.
     root = corpora.two_containers(
         tmp_path / "c",
         placement="sibling",
@@ -352,14 +345,11 @@ def test_a_home_rooted_origin_is_refused_at_the_reader_and_reaches_no_finding(tm
     # because `corpus.container.fields.optional_path` refused this value two
     # packages earlier — a **pointer** to a guarantee rather than a copy of
     # it, and a pointer is only better than a copy if the far end holds.
-    # ⛔ Nothing downstream recorded that the pointer was load-bearing, and
-    # that is measurable rather than rhetorical: dropping `~` from
-    # `optional_path` and relaxing that field reader's own two `~/corpus`
-    # cases — which is exactly what a *deliberate* relaxation looks like —
-    # left **2181 passed, 8 skipped and nothing else red** (measured
-    # 2026-09-09, pinned image). A green suite and a leaking report, with no
-    # test anywhere naming the consumer that was relying on it. This one does,
-    # so read it before you loosen the field reader.
+    # ⛔ Dropping `~` from `optional_path` and relaxing that field reader's
+    # own two `~/corpus` cases — exactly what a *deliberate* relaxation looks
+    # like — would leave every other test green and a report leaking. This test
+    # names the consumer relying on it, so read it before you loosen the field
+    # reader.
     assert not list(leaks(HOME_ROOTED_ORIGIN, "origin")), (
         "the R7 gate now sees a tilde, so this pair no longer measures "
         "optional_path — choose a shape the gate does not see, or retire it"
@@ -374,13 +364,9 @@ def test_a_home_rooted_origin_is_refused_at_the_reader_and_reaches_no_finding(tm
 
 
 def test_and_the_same_origin_past_that_reader_is_refused_by_placement_unquoted(tmp_path):
-    # ⚠️ **This test used to assert the opposite, and its own instruction is
-    # why it now says this.** It read: *"if this half ever fails, somebody
-    # added a guard downstream and the safety argument has moved — read the
-    # new guard and rewrite this pair against it."* Ruling 44 moved it. The
-    # same value handed to this module directly is now refused **here**,
+    # ⚠️ The same value handed to this module directly is refused **here**,
     # because `origin_directory` asks `studyforge.sourcepath` the same
-    # question the field reader asks, so `_collision` can no longer be reached
+    # question the field reader asks, so `_collision` cannot be reached
     # with a path that is not source-relative.
     # ⛔ Still not a re-check inside `paths.py`: the guard is in the call
     # `paths.py` already makes, which is where it belongs.
@@ -415,9 +401,8 @@ def test_and_the_collision_line_still_quotes_a_path_it_is_given(tmp_path):
 @pytest.mark.parametrize("name", sorted(registered()))
 def test_the_check_runs_under_every_registered_profile(tmp_path, name):
     # ⭐ The check asks the profile where things go; it does not know which
-    # profiles there are. ⛔ The predecessor's version *skipped* `tree` with an
-    # `Unchecked` naming the profile, so a third profile registered tomorrow
-    # would have been skipped too and nobody would have been told which.
+    # profiles there are. ⛔ Skipping a profile with an `Unchecked` would skip
+    # a third profile registered tomorrow too, and nobody would be told which.
     root = corpora.two_containers(
         tmp_path / "c",
         placement=name,
@@ -432,10 +417,10 @@ def test_the_check_runs_under_every_registered_profile(tmp_path, name):
 
 
 def test_this_module_s_subject_branches_on_no_profile_name():
-    # ⛔ The predecessor's version compared `manifest.placement` against
-    # `'sibling'` and `test_nothing_downstream_branches_on_a_profile_name`
-    # failed on it. Asserted here too, at the module it applies to, so the
-    # failure lands next to the code rather than in another package's suite.
+    # ⛔ Comparing `manifest.placement` against `'sibling'` would fail
+    # `test_nothing_downstream_branches_on_a_profile_name`. Asserted here too, at the
+    # module it applies to, so the failure lands next to the code rather than in another
+    # package's suite.
     source = (repository_root() / "src/studyforge/validate/paths.py").read_text("utf-8")
     names = set(registered())
     for node in ast.walk(ast.parse(source)):

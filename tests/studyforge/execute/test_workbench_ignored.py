@@ -1,10 +1,10 @@
-"""Mirror of `src/studyforge/execute/workbench.py`, `W435`: a served corpus stays clean.
+"""Mirror of `src/studyforge/execute/workbench.py`: a served corpus stays clean.
 
 ⭐ **Measured the way a workspace check measures it** — a throwaway git
 repository shaped like a corpus, a practice's settings written into it, and
 `git status` asked what it sees. ⛔ The text of the ignore file is never the
 evidence on its own: a rule that reads right and ignores nothing is exactly the
-defect this row was minted over.
+defect this guards against.
 
 ⚠️ **Both directions.** The framework's own three files vanish from `git
 status`; a `.vscode/` the source or the reader already carries keeps every file
@@ -30,7 +30,7 @@ from studyforge.execute.workbench import (
 )
 from tests.support import git, init_repository, is_ignored, run
 
-#: Where a corpus's editor folder sits, as the first corpus has it.
+#: Where a corpus's editor folder sits.
 BASE = "practice"
 INSIDE_MAIN = "bitmap/Bitmap.java"
 INSIDE_TEST = "bitmap/BitmapTest.java"

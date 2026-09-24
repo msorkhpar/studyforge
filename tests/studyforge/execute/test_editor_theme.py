@@ -31,7 +31,7 @@ from studyforge.execute.workbench import (
 )
 from studyforge.render.pageassets import text
 
-#: ⭐ The families the user's screenshot compares, by the Prism class that
+#: ⭐ The token families a reader compares, by the Prism class that
 #: names each on the page — and the TextMate scope the editor's grammar gives
 #: the same thing in the corpus's language.
 FAMILIES = {

@@ -158,7 +158,7 @@ def test_a_failed_gate_cannot_be_dropped_to_make_a_record_clear():
 
     # ⛔ And flipping the answer instead is not a way through either: the
     # record then says something the gate never said, which is the drift a
-    # digest over the inputs is there to catch (`AX-04`).
+    # digest over the inputs is there to catch.
     flipped = record_document(failed)
     for entry in flipped["gates"]:
         entry["held"] = True

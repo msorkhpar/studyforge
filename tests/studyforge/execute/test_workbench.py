@@ -123,10 +123,10 @@ def test_the_test_is_deliberately_left_read_only():
 
 
 def test_the_module_says_which_scope_can_lift_the_lock_it_writes():
-    # ⛔ This is a MEASUREMENT rather than a caution. `files.readonlyExclude`
+    # ⛔ `files.readonlyExclude`
     # is an object setting and VS Code MERGES object settings across scopes, so a
     # USER-scope entry naming the test file is merged into the workspace value this
-    # module writes and the test becomes writable. Measured in a real session:
+    # module writes and the test becomes writable. In a real session
     # {"Main.java": True} became {"MainTest.java": True, "Main.java": True} after one
     # ConfigurationTarget.Global write. ⚠️ No key here can prevent that — the editor
     # image's confinement of the command surface is what does — so the module has to
@@ -169,9 +169,8 @@ def test_the_workbench_is_closed_around_the_one_file():
     # dropped from the set is a red test here and not a silent reopening.
     written = settings(INSIDE_MAIN, INSIDE_TEST)
     assert CLOSED and all(written[key] == value for key, value in CLOSED.items())
-    # ⚠️ `commandCenter` joined this list on a USER REPORT, not on a review:
-    # the title bar's search box stayed reachable through W432 and W433 because
-    # no key in this set named it, and the reader used it (2026-09-22).
+    # ⚠️ `commandCenter` is in this list because the title bar's search box is
+    # reachable unless a key names it.
     for surface in (
         "activityBar",
         "statusBar",
@@ -192,7 +191,7 @@ def test_the_practice_file_does_not_scroll_past_its_last_line():
 
 
 def test_the_chat_pane_is_hidden_by_a_setting_and_the_explorer_is_not():
-    # ⛔ W432, and it is the asymmetry that matters rather than the key. The
+    # ⛔ It is the asymmetry that matters rather than the key. The
     # SECONDARY side bar is the chat pane and a setting names its default
     # visibility; the PRIMARY side bar is the Explorer and NO setting names its
     # visibility at all — it is workbench UI state, which is the whole reason
@@ -202,7 +201,7 @@ def test_the_chat_pane_is_hidden_by_a_setting_and_the_explorer_is_not():
     written = settings(INSIDE_MAIN, INSIDE_TEST)
     assert written["workbench.secondarySideBar.defaultVisibility"] == "hidden"
     assert not [key for key in CLOSED if "sideBar." in key and "secondary" not in key.lower()], (
-        "a primary side bar visibility setting appeared; W432's belt can stop being only a belt"
+        "a primary side bar visibility setting appeared; the belt can stop being only a belt"
     )
 
 
@@ -285,7 +284,7 @@ def test_the_marker_is_one_of_the_keys_this_module_itself_writes(tmp_path):
 def test_nothing_is_left_beside_the_settings_file(tmp_path):
     # ⭐ Replaced atomically, so a workbench never reads half a settings file —
     # and the temporary it is replaced from does not survive the write.
-    # ⚠️ The ignore file beside it is `W435`'s and is asserted in
+    # ⚠️ The ignore file beside it is asserted in
     # `test_workbench_ignored.py`; what must NOT be here is the staging file.
     # ⭐ The staging DIRECTORY stays, empty — each write's temporary
     # inside it is its own and is gone once it has been moved into place.

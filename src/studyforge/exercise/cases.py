@@ -27,8 +27,7 @@ refused it — which is the instrument working.
 ⚠️ **The direction of the dependency is stated rather than left to be
 inferred:** `exercise` imports `corpus.container`, and nothing in `corpus`
 imports `exercise`. ⭐ The alternative — a leaf module both packages ask, the
-shape `sourcepath` and `describe` already have — is the better home for it and
-is a finding, not this task's diff.
+shape `sourcepath` and `describe` already have — would be the better home for it.
 
 ## ⛔ Why this is a module and not four more functions in `record`
 
@@ -66,15 +65,14 @@ half a claim is not a lesser exercise, it is a claim somebody half wrote.
 ## ⛔ `code` is the default and it is NOT written out
 
 ⚠️ **The one place this module departs from `trust`'s ruling**, which writes a
-defaulted field anyway so that it cannot be told from one nobody wrote.
-⭐ **The difference is the installed base.** `trust` is defaulted inside a half
-that is already being written whole, so writing it costs one key on records
-that were being written anyway. Every `exercise` record ever written is `code`,
-so writing that token would re-render every archive document in existence —
-which is the cost the ungraded record refused to pay for a version bump, under R10, for this
-same reason. ⭐ **An absent `kind` is unambiguous precisely because `code` is
-the only kind that has ever existed**, which is the claim a defaulted `trust`
-could not make.
+defaulted field anyway so that it cannot be told from one nobody wrote. ⭐ **The
+difference is the installed base.** `trust` is defaulted inside a half that is
+already being written whole, so writing it costs one key on records that were
+being written anyway. Every `exercise` record ever written is `code`, so writing
+that token would re-render every archive document in existence — which is a
+version bump's cost under R10. ⭐ **An absent `kind` is unambiguous precisely
+because every record written without it is `code`**, which is the claim a
+defaulted `trust` could not make.
 
 ## ⛔ Every set here is closed, and each one is enumerable
 

@@ -1,6 +1,6 @@
 """Digests: what a reading was taken over, and whether the file under it has moved.
 
-⭐ **`AX-04`'s `validate` arm is `drifted`**, and `AX-03`'s Acceptance clause
+⭐ **Bundle authoring's `validate` arm is `drifted`**, and the gate framework's acceptance clause
 *"a bundle clearing every gate produces a record whose digests match the files
 beside it"* is the first case here — asserted in both directions, because a
 drift detector that answers the same before and after has detected nothing.
@@ -85,7 +85,7 @@ def test_a_path_outside_the_bundle_never_becomes_an_input(tmp_path):
 
 
 def test_the_role_set_is_open_and_the_role_shape_is_closed():
-    # ⭐ The half `AX-06` extends: a role this task never heard of is carried,
+    # ⭐ The half the quiz gates extend: a role this module never heard of is carried,
     # and one a record could not print is refused.
     assert require_role("question:3", WHERE) == "question:3"
     assert require_role("plant:test_an_empty_list_totals_zero", WHERE)

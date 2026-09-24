@@ -31,8 +31,8 @@ become five perfectly valid tokens.
 ⭐ The token pattern is then belt to that brace. It carries no metacharacter
 and no whitespace, so a value that somehow reached `sh -c` anyway is still one
 word. ⛔ It is a permitted set, never a forbidden list, because a
-forbidden list is an open set and cannot be finished — measured, when seven
-further shapes walked through one.
+forbidden list is an open set and cannot be finished: every shape nobody
+listed walks through it.
 
 ## A path is relative, stays inside the workspace, and cannot become a flag
 
@@ -41,10 +41,9 @@ refused. The first three put files outside the workspace (R3's prohibition
 reached by accident); the fourth is the one that looks harmless — a file named
 `-rf` handed to a command as an argument is an option, not a path.
 
-⚠️ **An *argument* may not be absolute either**, and that rule was found by a
-test rather than designed: `SAFE_ARGUMENT` permits `/`, because a real command
-carries `-pl practice/basics-01` — so `/home/<name>/run.sh` passed it. See
-`_is_rooted`; the reason it is refused is only partly R7.
+⚠️ **An *argument* may not be absolute either**: `SAFE_ARGUMENT` permits `/`,
+because a real command carries `-pl practice/basics-01`, so
+`/home/<name>/run.sh` passes it. See `_is_rooted`; the reason it is refused is only partly R7.
 """
 
 from __future__ import annotations
@@ -141,7 +140,7 @@ def _is_rooted(token: str) -> bool:
 
     ⛔ **Refused, and not only for R7.** `/home/<name>/run.sh` in a command is
     a home directory written into an archive — and the gate that would catch
-    it is a shape list, which was measured being lucky 4 times in 10. But
+    it is a shape list, which catches only the shapes it names. But
     `/usr/bin/mvn` carries no identifier and is refused too: a command runs in
     a **pinned toolchain image** (spec §8.1) where the program is on `PATH`, so
     an absolute path is a fact about the machine that wrote the record rather
@@ -167,7 +166,7 @@ def _is_drive_qualified(value: str) -> bool:
     r"""Return whether this is `C:\…` — absolute on a platform we do not target.
 
     ⚠️ Cheap, and it earns its place: `C:\Users\<name>\…` is a home path the
-    personal-data gate's shape list does not recognise, measured in the ingestion
-    poison table. Refusing the shape here means the gate never has to.
+    personal-data gate's shape list does not recognise. Refusing the shape here
+    means the gate never has to.
     """
     return len(value) > 1 and value[1] == ":" and value[0].isalpha()

@@ -1,10 +1,10 @@
-"""A graded exercise whose tests import a library the JDK does not carry (`W436`).
+"""A graded exercise whose tests import a library the JDK does not carry.
 
 ⭐ **The dependency is BUILT HERE, never downloaded.** `tiny` is one class
 compiled and jarred inside the runner image this module is handed, with no
-network, and the only way it reaches a graded run is the channel `W436`
+network, and the only way it reaches a graded run is the channel the build role
 declares: the exercise's build role names it, and the runner's prime carries
-it (`W390`). ⛔ **No jar is ever written into the corpus**, and the exercise's
+it. ⛔ **No jar is ever written into the corpus**, and the exercise's
 own build file names no repository, so nothing else could resolve it.
 
 ⭐ **Two primes, one fact apart.** `write_prime(directory, jar)` warms the
@@ -16,7 +16,7 @@ happened to fetch.
 ⚠️ **The fixture's prime stands in for Maven Central with a `file:` repository
 inside the prime directory**, because the dependency exists nowhere else. It is
 read once, by the image build's warm, and never by a graded run: the seed the
-warm leaves carries no record of where a file came from (`W390`).
+warm leaves carries no record of where a file came from.
 
 ⛔ **Every image tag is ASKED of the sibling** through the argv its contract
 declares, and never typed: the tag is a function of the build's inputs.
@@ -164,7 +164,7 @@ def write_prime(directory: Path, jar: bytes | None) -> Path:
     """A prime in the component's own shape (`DIR/maven/`); with the library when `jar` is given.
 
     ⚠️ A prime must compile a real source and run a real test, or the warm
-    refuses it (`TC-03`), so each one's source uses what its build declares.
+    refuses it, so each one's source uses what its build declares.
     """
     maven = directory / "maven"
     expression = 'org.example.w436.tiny.Greeting.of("prime")' if jar else '"Hello, prime"'

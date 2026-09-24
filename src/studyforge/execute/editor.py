@@ -358,7 +358,7 @@ def _within(mounted: str, source_root: Path) -> str | None:
 
     ⭐ `""` is the root itself — a real answer, and the one `Path.relative_to`
     spells `.`. ⛔ `None` is *not this corpus*, which is a different thing and
-    is why this does not answer a bool any more (it once said only whether).
+    is why this answers more than a bool.
     """
     if not mounted:
         return None

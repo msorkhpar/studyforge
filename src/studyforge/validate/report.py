@@ -55,14 +55,12 @@ class Finding:
 
     ## ⛔ R7 is the *raiser's* guarantee, and this class does not scrub
 
-    ⚠️ **The promise this docstring used to make was false, and measuring it is
-    what found that out.** It said `message` never quotes a value. But half of
-    `validate`'s findings are not written here — they are `str(error)` from a
-    refusal raised upstream, and **6 of 10 poison shapes driven end-to-end
-    reproduced an identifier in a report line** (CTO, 2026-09-09; the probe is
-    `tests/.../test_run.py::test_no_identifier_reaches_a_report_line`). The 4
-    that were clean were clean because the personal-data gate's **shape list**
-    happened to name them, not because anything here refused.
+    ⚠️ **`message` is not promised to quote no value.** Half of `validate`'s
+    findings are not written here — they are `str(error)` from a refusal raised
+    upstream, and an upstream `{value!r}` reaches a report line through them
+    (`tests/.../test_run.py::test_no_identifier_reaches_a_report_line` drives
+    that end to end). The personal-data gate's **shape list** catches only the
+    shapes it names; nothing here refuses.
 
     ⭐ **The boundary is upstream (R7) and it does not move here.** A
     scrub in this class would silence every leak *in the one report anybody

@@ -1,23 +1,21 @@
-"""`SF-29`'s decisive clauses read against REAL `mvn test` output, in the runner image.
+"""Quiet mode's decisive clauses read against REAL `mvn test` output, in the runner image.
 
-⭐ **Opt-in, exactly as `SF-20`'s container cases are** (`container.py`):
+⭐ **Opt-in, exactly as the runner's container cases are** (`container.py`):
 `STUDYFORGE_RUNNER_IMAGE=<tag>` names a runner image built with
 `--runtimes java,maven`. Without one, or without Docker, every case SKIPS and
-says why. ⚠️ **No runner image could be built where these were written**, so these cases
-have not yet run. They are the readings `transcripts.py` could not capture:
+says why. They are the readings `transcripts.py` could not capture:
 a compile error and a failing test's stack trace, from the pinned Maven.
 
 ⭐ **The input is the component's own Maven smoke project**, read from the
 sibling at run time and copied, never edited in place. It has three states:
 clean, the test plant its `smoke.json` declares, and a compile plant. The
-command is `smoke.json`'s, run through `SF-20`'s `Runner` in container mode,
+command is `smoke.json`'s, run through the `Runner` in container mode,
 with only `-q` removed. Quiet mode is the filtering this module exists to
 replace, so it cannot be the input.
 
 ⛔ **An image whose label does not declare `maven` is REFUSED — every case
-SKIPS, naming the label it read** (`W374`). These cases once passed against a
-`python` image that held Maven only because its build was wrong; what an image
-happens to hold is not what it declares, and only the declaration is read.
+SKIPS, naming the label it read**. What an image happens to hold is not what
+it declares, and only the declaration is read.
 """
 
 from __future__ import annotations

@@ -17,26 +17,23 @@ package**: `classification` reads this one, never the other way round.
 ⭐ **The repository already says which of its files are generated, and
 `source_files` asks it.** Spec §11.2 clause 11 named `git status` from the
 start; the code simply never implemented the definition it had been given, and
-`SKIP_DIRS` was the shape of the gap — five names, two of which
-(`node_modules`, `__pycache__`) were the framework knowing about two
-ecosystems, which is R1 with the sign flipped.
+A framework-kept list of directory names to skip (`node_modules`,
+`__pycache__`) is the framework knowing about ecosystems, which is R1 with the
+sign flipped.
 
-⚠️ **Measured against a real corpus, 2026-09-10:** of 159 files the walk
-enumerated, **100 were the repository's own declared output** and every one was
-reported as unclassified material. ⛔ **The three that were genuinely material
-withheld from the reader were filed among a hundred that were never material at
-all**, which is an audit nobody reads — the exact failure `content.exclude`'s
-mandatory `why` exists to prevent, reached from the other side.
+⚠️ **A real corpus's walk can be mostly its own declared output**, and
+reporting all of it as unclassified material files the few genuinely withheld
+files among a hundred that were never material — an audit nobody reads, the
+exact failure `content.exclude`'s mandatory `why` exists to prevent.
 
-⚠️ **And the number has no fixed point.** The same generated directory held 79
-files, then 91, then 96 within one day, so a framework carrying its own
-exclusion list is a framework that is wrong again tomorrow. The declaration
+⚠️ **And the number has no fixed point.** A generated directory grows by the
+hour, so a framework carrying its own exclusion list is wrong again tomorrow. The declaration
 moves with the corpus because it belongs to the corpus.
 
 ## ⛔ A build's own output is recognised from the plan, not ignored and not declared
 
-⭐ **A build's pages and media are committed** (§5), so git no longer
-declares them output. `studyforge plan` already enumerates them from this
+⭐ **A build's pages and media are committed** (§5), so git does not
+declare them output. `studyforge plan` already enumerates them from this
 corpus's declarations, so the scan asks it: a planned file is recognised by
 its exact path, and everything under a planned directory is recognised with it.
 ⚠️ No glob. The manifest refuses a leading-wildcard
@@ -73,11 +70,9 @@ REPOSITORY_STORE = ".git"
 #: is skipped at the corpus root only, and `membership` refuses each file
 #: beneath it that is not an archive member. A source's own nested `archive/`
 #: is material.
-#: Two more names once sat here —
-#: `node_modules` and `__pycache__` — and they were the framework knowing about
-#: two ecosystems it was told nothing about (R1). A list of other people's
-#: build directories is wrong for the first corpus that uses a third ecosystem,
-#: and right for the second two only by luck.
+#: No ecosystem's directory (`node_modules`, `__pycache__`) is here: that would
+#: be the framework knowing about ecosystems it was told nothing about (R1), and
+#: wrong for any corpus that uses another.
 SKIP_DIRS = (".git", ".studyforge")
 
 #: How long git is given to answer. ⚠️ A validator that hangs is worse than one
@@ -157,8 +152,7 @@ def _generated_output(root: Path, candidates: list[Path]) -> frozenset[Path] | N
     nothing, and the caller says so.
 
     ⚠️ **The import is deferred, for `generate.footprint`'s reason:** `cli`
-    imports the dispatcher, which imports this package. The enumeration used to
-    live inside a command, and no other package could reach it there.
+    imports the dispatcher, which imports this package.
     """
     from studyforge.cli.plan import plan_for
 
@@ -215,7 +209,7 @@ def repository_ignores(root: Path, candidates: list[Path]) -> frozenset[Path] | 
     somebody else's repository.
 
     ⛔ **`None` means "not answered", and it is not the same as "nothing is
-    ignored".** Fail-open is what this task exists to remove: the caller turns
+    ignored".** Fail-open is what this refuses: the caller turns
     `None` into an `Unchecked`, loudly and counted, exactly as an absent source
     tree is reported. An empty frozenset means git answered "none of them".
 

@@ -1,4 +1,4 @@
-"""`bundle.json`: what an authored exercise declares about itself (`AX-04`)."""
+"""`bundle.json`: what an authored exercise declares about itself."""
 
 from __future__ import annotations
 
@@ -125,7 +125,7 @@ def test_a_command_that_is_a_shell_line_is_refused():
         bundle_of(bundles.document(test_command="pytest; rm -rf ~"), "bundle.json")
 
 
-# ⭐ `W436`: the build role, and the one report convention.
+# ⭐ The build role, and the one report convention.
 
 
 def test_a_bundle_with_no_build_role_reads_and_writes_exactly_as_before():

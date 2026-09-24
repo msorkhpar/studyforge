@@ -1,4 +1,4 @@
-"""The whole of `validate`, against the committed fixtures (SF-25)."""
+"""The whole of `validate`, against the committed fixtures."""
 
 import json
 from pathlib import Path
@@ -13,16 +13,15 @@ from tests.support import repository_root
 
 FIXTURES = Path("tests/fixtures")
 
-#: FND-04's invalid corpora, and the one rule **this tool** reports for each.
+#: the fixture corpora's invalid corpora, and the one rule **this tool** reports for each.
 #:
 #: ⛔ **The values are written out and the keys are not.** That package's rule
 #: ids are its own checker's — `ordinal-gap` is this tool's `container`, and
 #: `corpus-api` is its `manifest` — and two checkers with different subjects
 #: must be allowed to disagree about the *name* of a rule. ⚠️ They may not
-#: disagree about **which fixtures exist**, and this used to: it carried five
-#: of the seven, and `count-mismatch` and `user-authoritative` had landed in
-#: `INVALID_CORPORA` without ever reaching here. ⛔ That is the defect naming fixtures by
-#: declared rule exists to prevent, and `test_every_declared_corpus_is_exercised` closes it.
+#: disagree about **which fixtures exist**: a fixture in `INVALID_CORPORA` that
+#: never reaches here is the defect naming fixtures by declared rule exists to
+#: prevent, and `test_every_declared_corpus_is_exercised` closes it.
 INVALID = {
     "bad-corpus-api": "manifest",
     "address-directory-mismatch": "address-directory",
@@ -53,7 +52,7 @@ def test_a_valid_corpus_passes(name):
     # ⛔ **Read from `VALID`, not written out.** It carried two names while the
     # declaration carried three, which is `test_every_declared_corpus_is_exercised`'s
     # defect pointed at the other half of the set: a valid fixture added to
-    # `VALID` would have been checked by FND-04's own checker and never by this
+    # `VALID` would have been checked by the fixture corpora's own checker and never by this
     # tool. ⚠️ Only the *names* are shared — the rule vocabulary above stays
     # this tool's own, and the assertion beside it says so.
     report = validate(fixture(name))
@@ -63,7 +62,7 @@ def test_a_valid_corpus_passes(name):
 
 @pytest.mark.parametrize(("name", "rule"), sorted(INVALID.items()))
 def test_each_invalid_corpus_fails_on_exactly_its_one_rule(name, rule):
-    # ⚠️ **Exactly one.** FND-04 built each of these to break a single rule and
+    # ⚠️ **Exactly one.** the fixture corpora built each of these to break a single rule and
     # two of its tests hold that property structurally. A validator reporting
     # two here is a finding about the validator or about the fixture, and the
     # first time this ran it was the validator: a document refused by the R7
@@ -101,7 +100,7 @@ def test_the_check_list_is_one_list():
 
 
 # --------------------------------------------------------------------------
-# The completeness check — the one this task exists for
+# The completeness check
 # --------------------------------------------------------------------------
 
 
@@ -112,7 +111,7 @@ def test_a_corpus_whose_source_is_present_is_checked_against_it(tmp_path):
 
 
 def test_a_construct_the_parser_silently_skipped_is_caught(tmp_path):
-    # ⭐ **The fixture this task exists for.** Every other check passes: the
+    # ⭐ **The completeness fixture.** Every other check passes: the
     # digest matches its blocks, the counts match its blocks, the address
     # matches its directory, the version is known and the gate is clean. The
     # source carries a third heading the archive does not, and only a count
@@ -173,21 +172,16 @@ POISON_SHAPES = {
     "tmp path": "/tmp/build-janedoe-1000/corpus",
 }
 
-#: ⭐ **Empty, and it stayed empty by announcing its own obsolescence.** Six of
-#: these ten shapes leaked when this test was written — all through one
-#: `{value!r}` in `address.require_slug` — and each was marked
-#: `xfail(strict=True)` against W1, the branch that owed the fix.
+#: ⭐ **Empty: no shape is owed.** A shape that leaks goes in this table, and
+#: its case is marked `xfail(strict=True)` until the raising reader is fixed.
 #:
-#: ⛔ `strict` is what made the emptying compulsory rather than optional.
-#: Measured on this branch's rebase onto merged W1: **6 failed, 1930 passed** —
-#: six strict XPASSes and nothing else, which is the table saying it is no
-#: longer describing anything. ⚠️ A non-strict xfail would have gone quietly
-#: green and outlived the defect it described.
+#: ⛔ `strict` makes emptying the table compulsory: a fixed shape turns into a
+#: strict XPASS, which fails. ⚠️ A non-strict xfail would go quietly green and
+#: outlive the defect it described.
 #:
-#: ⭐ And it proved something W2 could not: W1's fix is per-function, and these
-#: six passing is the fix holding **through a composed pipeline** — a bad file
-#: on disk, through the walk, the reader and the report (§10b's vantage-point
-#: argument). Keep the table; a new shape that leaks goes in it the same way.
+#: ⭐ Each reader is fixed per function, and these cases passing is the fix
+#: holding **through a composed pipeline** — a bad file on disk, through the
+#: walk, the reader and the report (§10b's vantage-point argument).
 OWED_TO_W1: tuple[str, ...] = ()
 
 
@@ -203,8 +197,8 @@ def poisoned(shape):
             pytest.mark.xfail(
                 strict=True,
                 reason=(
-                    f"{shape}: R7 echo owed to a named branch. Delete this entry from "
-                    f"OWED_TO_W1 when that branch merges; strict makes that compulsory."
+                    f"{shape}: R7 echo owed to a fix. Delete this entry from "
+                    f"OWED_TO_W1 when the fix lands; strict makes that compulsory."
                 ),
             )
         ]
@@ -216,13 +210,13 @@ def poisoned(shape):
 
 @pytest.mark.parametrize(("shape", "poison"), [poisoned(s) for s in sorted(POISON_SHAPES)])
 def test_no_identifier_reaches_a_report_line(tmp_path, shape, poison):
-    # ⛔ **The vantage point W2 does not have** (§10b, third instance). W2 asks
-    # each function whether it echoes; this asks what a *composed pipeline*
+    # ⛔ **The vantage point a per-function test does not have** (§10b). That
+    # asks each function whether it echoes; this asks what a *composed pipeline*
     # prints given a bad file on disk, which is the only question an integrator
-    # actually asks. Ruling 13: trust enforced nowhere is not trust.
+    # actually asks. Trust enforced nowhere is not trust (R7).
     #
     # ⚠️ Asserted on the identifier, never on the sentence — the address
-    # refusals' wording changes on W1's branch and this must survive that.
+    # refusals' wording may change and this must survive that.
     root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
     path = root / "archive/demo/container.json"
     document = json.loads(path.read_text(encoding="utf-8"))
@@ -246,7 +240,7 @@ def test_the_poison_table_is_still_a_table(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ no archive is not a valid archive (`INT-06/5`)
+# ⛔ no archive is not a valid archive
 # --------------------------------------------------------------------------
 
 

@@ -1,6 +1,6 @@
 """`G1`–`G5`, read over real runs of a real exercise — one planted defect per gate.
 
-⛔ **`AX-03`'s Acceptance, and its first half is the NEGATIVE CONTROL**: the
+⛔ **The gate framework's acceptance, and its first half is the NEGATIVE CONTROL**: the
 same bundle with nothing planted reads every gate GREEN, in this same module,
 off the same machinery. ⚠️ A plant whose reading is indistinguishable from the
 control has controlled nothing, so every case below **asserts the planted state
@@ -8,7 +8,7 @@ exists and prints it** before it reads a single gate.
 
 ⭐ **Nothing here is stubbed.** Each reading comes out of five real `pytest`
 processes over files on disk, and each plant is a real edit to one of them —
-[`workspace.py`](workspace.py) says why and what it measured.
+[`workspace.py`](workspace.py) says why.
 
 ## ⚠️ Four plants are isolated and the fifth is not, and that is stated
 

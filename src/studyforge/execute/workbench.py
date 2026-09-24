@@ -56,7 +56,7 @@ attempt to enforce it.
 this module's, and is not a detail**. ⚠️ `files.readonlyExclude` is an
 **object** setting, and VS Code **merges** object settings across scopes, so a
 USER-scope entry is merged INTO the workspace value written here rather than
-being shadowed by it. ⭐ **Measured, in a real session on code-server 4.137.0:**
+being shadowed by it. ⭐ **In a real session on code-server 4.137.0:**
 the workspace value `{"Main.java": True}` became
 `{"MainTest.java": True, "Main.java": True}` after one
 `ConfigurationTarget.Global` write, and the editor's own user settings file
@@ -117,14 +117,14 @@ parse would raise on an ordinary one.
 ⭐ **Replaced whole, atomically**: a temporary file beside it and one `replace`,
 so a reader's workbench never reads half a settings file. ⛔ **Each write's
 temporary is its OWN**, made in a staging directory beside it: two
-writes that shared one staging name moved it out from under each other, and the
-second one was refused.
+writes that shared one staging name would move it out from under each other,
+and the second would be refused.
 
 ## ⛔ The settings never enter the corpus's commits
 
 ⚠️ That folder is inside the CORPUS's own tree, so the file is a machine-local
-artifact written into a source repository — a non-destructive breach (R3), and a
-served corpus used to go dirty the first time a reader opened a practice.
+artifact written into a source repository — a non-destructive breach (R3) that
+would leave a served corpus dirty the first time a reader opened a practice.
 ⭐ **The fix is an ignore file INSIDE the directory written into, never the
 repository's root one and never a local exclude (R3):** `.vscode/.gitignore`,
 naming the settings file, its staging directory and itself — ⛔ **NAMES, never
@@ -229,9 +229,8 @@ CLOSED: dict[str, object] = {
     "workbench.editor.editorActionsLocation": "hidden",
     "workbench.layoutControl.enabled": False,
     # ⛔ The command centre is the "sources" box and the back/forward arrows in
-    # the title bar, and it survived every round of this lockdown because no
-    # other key names it. ⚠️ A reader reported reaching it (2026-09-22) after
-    # the palette had already been confined: it is a SECOND route to Go to File.
+    # the title bar, and no other key names it. ⚠️ It is a SECOND route to Go
+    # to File, open even when the palette is confined.
     "window.commandCenter": False,
     "workbench.startupEditor": "none",
     "window.menuBarVisibility": "hidden",
@@ -239,7 +238,7 @@ CLOSED: dict[str, object] = {
     "editor.minimap.enabled": False,
     # ⭐ A practice file ends where its last line ends. The default scrolls a
     # whole viewport of empty space past the closing brace, which reads as "the
-    # file continues" in a panel the reader cannot resize (user, 2026-09-22).
+    # file continues" in a panel the reader cannot resize.
     "editor.scrollBeyondLastLine": False,
     "explorer.openEditors.visible": 0,
     "workbench.tips.enabled": False,

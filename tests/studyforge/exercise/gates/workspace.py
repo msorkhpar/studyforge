@@ -1,6 +1,6 @@
 """A real authored exercise on disk, whose tests are really run — so a plant's effect is real.
 
-⛔ **`AX-03`'s Acceptance is *each gate refuses its planted defect*, and a plant
+⛔ **The gate framework's acceptance is *each gate refuses its planted defect*, and a plant
 is not a plant until its effect is OBSERVED.** ⭐ So nothing here stubs a run:
 every reading a gate is given comes out of a real `pytest` process over real
 files, and each plant is a real edit to one of those files. ⚠️ A stubbed

@@ -1,4 +1,4 @@
-"""`SF-20`'s acceptance, every clause in BOTH modes — host, and a REAL runner container.
+"""The runner's acceptance, every clause in BOTH modes — host, and a REAL runner container.
 
 ⭐ **Each test is parametrized over the two modes.** Host mode always runs.
 Container mode runs when `STUDYFORGE_RUNNER_IMAGE` names the runner image and
@@ -213,7 +213,7 @@ def test_the_comparison_can_tell_two_units_apart(stage, mode):
     )
 
 
-# --- a run leaves the tree as it found it (`W352/3`) ---------------------------------
+# --- a run leaves the tree as it found it ---------------------------------
 
 
 def test_a_run_writes_no_bytecode_into_the_tree(stage, mode):

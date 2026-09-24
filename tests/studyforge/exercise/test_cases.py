@@ -1,6 +1,6 @@
-"""The case vocabulary, and the record's reading of the four keys `AX-00` adds.
+"""The case vocabulary, and the record's reading of the four case keys.
 
-⭐ **`AX-00`'s Acceptance is here** except its last clause, which is a reading
+⭐ **The case record's acceptance is here** except its last clause, which is a reading
 taken with the **previous** reader and lives in `test_previous_reader.py`:
 `cases`, `report`, `origin` and `kind` round-trip; a case map on an ungraded
 record is refused, naming the key; an unknown case kind is refused; an unknown
@@ -51,7 +51,7 @@ from studyforge.exercise import (
 
 WHERE = "iso/02-parsing/unit-02/practice-1"
 
-#: The ungraded shape `W357` left: the reader's file, and how it runs.
+#: The ungraded shape: the reader's file, and how it runs.
 UNGRADED = {
     "main_path": "practice/iso-02/src/main/java/Parser.java",
     "run_command": ["mvn", "-q", "-pl", "practice/iso-02", "compile"],
@@ -78,11 +78,11 @@ CASES = [
 REPORT = {"format": JUNIT, "path": "practice/iso-02/target/surefire-reports"}
 ORIGIN = {"path": "docs/02-parsing.md", "section": "Parsing the MTI"}
 
-#: The whole `AX-00` record: graded, authored, with a breakdown and an origin.
+#: The whole case record: graded, authored, with a breakdown and an origin.
 AUTHORED = {**UNGRADED, **GRADER, "cases": CASES, "report": REPORT, "origin": ORIGIN}
 
-#: ⭐ The least a quiz may carry (`AX-05`). Named here so the seam test below
-#: reads one shape rather than re-deriving it; the questions' own Acceptance is
+#: ⭐ The least a quiz may carry. Named here so the seam test below
+#: reads one shape rather than re-deriving it; the questions' own tests are
 #: in `tests/studyforge/exercise/quiz/`.
 QUESTIONS = [
     {
@@ -116,7 +116,7 @@ def case(**changes):
 
 
 # --------------------------------------------------------------------------
-# ⭐ the Acceptance: the four keys round-trip
+# ⭐ The four keys round-trip
 # --------------------------------------------------------------------------
 
 
@@ -137,20 +137,20 @@ def test_the_four_keys_round_trip_through_the_record():
     assert again == AUTHORED, "a written record is not the one that was read"
     # ⚠️ Every key but `kind`, which this record does not carry — it is `code`,
     # and the default is not written out — and `questions`, which only a QUIZ
-    # carries (`AX-05`). The rest are in the record's own order, appended after
-    # the six `W357` left.
+    # carries. The rest are in the record's own order, appended after
+    # the six an untested unit's record carries.
     written = tuple(key for key in EXERCISE_KEYS if key not in ("kind", "questions"))
     assert tuple(again) == written, "the authored keys are not in the record's order"
     assert from_document(again, WHERE) == exercise
 
 
 def test_the_quiz_token_now_selects_a_shape_and_not_a_label():
-    # ⭐ RESTATED by `AX-05`, and strictly stronger. `AX-00` asserted here that
+    # ⭐ Stated for the quiz shape too, and strictly stronger: this asserts that
     # a record may SAY it is a quiz; a quiz now has a shape, so the same
     # document — a workspace wearing the token — is refused, and the token
-    # reads back off the record `AX-05` gave it.
+    # reads back off the record the quiz shape gives it.
     # ⚠️ The quiz's own round trip lives in `tests/studyforge/exercise/quiz/`,
-    # with the rest of its Acceptance; what is asserted here is the seam.
+    # with the rest of its tests; what is asserted here is the seam.
     message = refuse(from_document, record(kind=QUIZ), WHERE)
     assert "main_path" in message, "a workspace on a quiz was not named"
     quiz = from_document({"kind": QUIZ, "questions": QUESTIONS}, WHERE)
@@ -159,7 +159,7 @@ def test_the_quiz_token_now_selects_a_shape_and_not_a_label():
 
 
 def test_an_origin_may_be_a_whole_file_and_keeps_the_shape_it_was_written_in():
-    # ⭐ `SF-36`'s two shapes: a path is the string form, a region is the
+    # ⭐ An origin's two shapes: a path is the string form, a region is the
     # object. ⛔ Neither is rewritten into the other, because a corpus declared
     # one of them and only the corpus knows which it meant.
     written = record(origin="docs/02-parsing.md")
@@ -181,9 +181,9 @@ def test_an_ungraded_record_may_still_say_what_it_was_built_from():
 
 def test_the_authored_keys_are_appended_never_inserted():
     # ⛔ R10: a record that gains a `kind` must not reorder what was already on
-    # disk, so the four keys sit after the six `W357` left, in this order.
+    # disk, so the four keys sit after the six an untested unit's record carries, in this order.
     assert EXERCISE_KEYS[-len(AUTHORED_KEYS) :] == AUTHORED_KEYS
-    # ⭐ Restated by `AX-05`, which appended its own key after the four rather
+    # ⭐ The quiz shape's own key sits after the four rather
     # than inserting one among them.
     assert AUTHORED_KEYS == ("kind", *BREAKDOWN_KEYS, "origin", "questions")
 
@@ -219,7 +219,7 @@ def test_a_record_with_no_kind_is_a_code_exercise():
 
 def test_the_keys_written_follow_the_shape_never_which_values_are_none():
     # ⛔ The dataclass is frozen, not validated. One built with a breakdown and
-    # no grader must not write half a claim to disk — `W357`'s argument, and
+    # no grader must not write half a claim to disk — the untested unit's argument, and
     # the same test one key further on.
     stray = Exercise(
         "practice/hello.py",
@@ -238,7 +238,7 @@ def test_the_keys_written_follow_the_shape_never_which_values_are_none():
 
 
 # --------------------------------------------------------------------------
-# ⛔ the Acceptance: a breakdown on an ungraded record is refused, by name
+# ⛔ A breakdown on an ungraded record is refused, by name
 # --------------------------------------------------------------------------
 
 
@@ -270,7 +270,7 @@ def test_a_graded_record_need_not_carry_a_breakdown_at_all():
 
 
 # --------------------------------------------------------------------------
-# ⛔ the Acceptance: an unknown kind is refused, on the exercise and on a case
+# ⛔ An unknown kind is refused, on the exercise and on a case
 # --------------------------------------------------------------------------
 
 
@@ -407,7 +407,7 @@ def test_the_report_round_trips_in_its_own_key_order():
 @pytest.mark.parametrize("format_", ["console", "junit-xml", "JUnit", "", None, 1])
 def test_a_format_this_build_cannot_read_is_refused(format_):
     # ⛔ Closed, and console output is deliberately not in it: the quiet run
-    # modes rewrite that stream by design (`AX-01`).
+    # modes rewrite that stream by design.
     message = refuse(report_of, {**REPORT, "format": format_}, WHERE)
     assert str(list(REPORT_FORMATS)) in message
 
@@ -430,7 +430,7 @@ def test_a_report_path_meets_the_same_safety_as_the_workspace(path):
 
 
 def test_the_shape_is_sf_36s_and_this_package_does_not_spell_it_again(monkeypatch):
-    # ⛔ `origin` has ONE reader in this tree (`W109`), so this asserts the
+    # ⛔ `origin` has ONE reader in this tree, so this asserts the
     # verdict comes from THERE — by delegation, never by comparing a copied
     # tuple, which is the shape `record`'s own R5 test settled on.
     called = []
@@ -502,7 +502,7 @@ def test_an_origin_outside_the_source_is_refused_without_quoting_it(path):
 
 
 def test_an_origin_fragment_is_refused_because_a_region_is_an_object():
-    # ⛔ Ruling 92, inherited: left legal, the old spelling keeps validating
+    # ⛔ Left legal, the old spelling keeps validating
     # and keeps meaning nothing.
     assert refuse(origin_in, {"origin": "docs/02-parsing.md#parsing-the-mti"}, WHERE)
     assert origin_document(origin_in({"origin": ORIGIN}, WHERE)) == ORIGIN

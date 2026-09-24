@@ -183,7 +183,7 @@ def test_q3s_recorded_keys_name_the_option_as_well_as_the_question():
 def test_a_quiz_that_asks_nothing_holds_no_judged_gate():
     # ⛔ `all(())` is true, so a quiz whose questions were all dropped would
     # otherwise clear every judged gate it owed a reading for — and it owed
-    # none. `AX-03` paid a red gate for this shape.
+    # none.
     _, taken = clean()
     for gate in (Q1, Q2, Q3):
         read = judged_gate(gate, (), taken)

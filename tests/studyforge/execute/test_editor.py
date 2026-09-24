@@ -186,7 +186,7 @@ def test_a_negative_is_cached_too_so_a_page_never_forks_docker_per_tick(tmp_path
     assert asks(tmp_path) == 1
 
 
-# --- `known()`: the reader that may not fork (`W427`, spec §8.3) -------------
+# --- `known()`: the reader that may not fork (spec §8.3) -----------------------
 
 
 def test_a_cold_probe_knows_nothing_and_asks_nobody_to_find_out(tmp_path, root):
@@ -239,7 +239,7 @@ def test_nothing_here_ever_starts_stops_or_enters_a_container(tmp_path, root):
     assert argv(tmp_path).endswith(f"-- {NAME}")
 
 
-# --- `W429`: a FILE, not only a folder --------------------------------------
+# --- a FILE, not only a folder ---------------------------------------------
 
 
 def test_the_mounted_base_is_what_turns_a_records_path_into_a_file(tmp_path, root):

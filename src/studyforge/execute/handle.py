@@ -77,7 +77,7 @@ class RunHandle:
 
     ⭐ Starting the first command here makes "a run is live" true from the moment
     `Runner.start` returns, so a server can refuse a second run without racing a
-    lazy generator (the extraction source's design, kept).
+    lazy generator.
     """
 
     def __init__(

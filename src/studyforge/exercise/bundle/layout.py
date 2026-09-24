@@ -33,9 +33,8 @@ archive path. ⛔ The bundle **records** that identity as well, and
 
 ## ⛔ THE READER'S FILE IS NOT THE STARTER, AND THAT IS WHY THERE ARE TWO ROOTS
 
-⚠️ **Measured against the alternative rather than preferred:** if the reader
-edited the bundle's own starter, the gate record's digest of that starter would
-drift the moment anybody did the exercise, and `studyforge validate` would
+⚠️ **If the reader edited the bundle's own starter, the gate record's digest of that starter would
+drift the moment anybody did the exercise**, and `studyforge validate` would
 report every worked corpus as broken. ⭐ So the bundle holds the **pristine**
 starter and `emit` writes a copy into the workspace; the record's `main_path`
 names the copy. ⛔ Every file the gate record digests is therefore one no reader

@@ -23,16 +23,14 @@ compute the same page path, and neither call had any way to know.
 
 ⛔ **So the check is the whole path set, not the addresses.** Two distinct
 titles can be one name, and that is invisible in the source and in the address.
-⚠️ **The mechanism was first named wrongly, and measuring it found that:**
-it was said `slugify` *deletes* an accented character, so `café` and `cafe` are one
-slug. Measured 2026-09-09 in the pinned image, `slugify('café') == 'caf'` and
-`slugify('cafe') == 'cafe'` — an accent is a non-alphanumeric, so it collapses
-to a **separator**, and those two do not collide at all. ⭐ The real class is
+⚠️ **`slugify` does not delete an accented character:** `slugify('café') ==
+'caf'` and `slugify('cafe') == 'cafe'` — an accent is a non-alphanumeric, so it
+collapses to a **separator**, and those two do not collide at all. ⭐ The real class is
 wider than accents: any two titles whose non-alphanumerics collapse to the same
 separator run are one name, so `'Streams: an API'` and `'Streams, an API'` both
 give `streams-an-api`. ⛔ Which is the argument for checking the *set* rather
-than any one cause — the set catches every cause, including the one the ruling
-described wrongly.
+than any one cause — the set catches every cause, including one nobody has
+named.
 
 ⚠️ The placement package's corpus-wide test places units only;
 container pages are the half it does not cover, and two containers whose
@@ -41,13 +39,12 @@ same way.
 
 ## ⛔ It names no profile
 
-⚠️ **The predecessor's version compared `manifest.placement` against the string
-`'sibling'`, and `test_nothing_downstream_branches_on_a_profile_name` failed
-on it** — measured, not argued. A registry that coexists with `if placement ==
-"…"` has already failed, and the third profile somebody registers would silently
-skip the check. So this module asks the profile where things go and compares
-what comes back; a profile with no collisions produces a set with no
-duplicates, and the check costs nothing on it.
+⚠️ **Comparing `manifest.placement` against the string `'sibling'` would fail
+`test_nothing_downstream_branches_on_a_profile_name`.** A registry that coexists
+with `if placement == "…"` has already failed, and the third profile somebody
+registers would silently skip the check. So this module asks the profile where
+things go and compares what comes back; a profile with no collisions produces a
+set with no duplicates, and the check costs nothing on it.
 
 ## `origin` is a file, and this is the only place that is checkable
 

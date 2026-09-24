@@ -139,9 +139,8 @@ def grade(questions: tuple[Question, ...], answers: object) -> Verdict:
 def completes(questions: tuple[Question, ...], answers: object) -> bool:
     """⛔ May these answers complete the practice? Only every question, answered correctly.
 
-    ⚠️ **This is the quiz's completion rule and it is not
-    `states.completes_practice`**, which answers for a RUN and is untouched by
-    this task. A quiz produces no run, so the two never answer the same
+    ⚠️ **This is the quiz's completion rule and it is not `states.completes_practice`**,
+    which answers for a RUN. A quiz produces no run, so the two never answer the same
     question about the same practice.
     """
     return grade(questions, answers).complete

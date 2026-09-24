@@ -24,9 +24,9 @@ the most-pasted artifact this tool produces.
 ## ⛔ This module forwards refusals, and it does not scrub them
 
 ⚠️ Six of the findings here are `str(error)` from a reader that refused, and a
-refusal's R7-cleanliness is **that reader's** guarantee. Measured 2026-09-09:
-6 of 10 poison shapes reached a report line through this forwarding, all six
-through one `{value!r}` upstream. ⭐ The raising reader fixes it rather than this one,
+refusal's R7-cleanliness is **that reader's** guarantee: one `{value!r}`
+upstream would reach a report line through this forwarding. ⭐ The raising
+reader keeps it clean rather than this one,
 because a scrub in the one report anybody reads would hide the same echo in
 every traceback and every other caller — and `test_run` measures the
 composition end to end so the trust is enforced somewhere.
@@ -154,7 +154,6 @@ def _no_archive(walk: Walk) -> Finding:
     input whose absence is itself a validated fact, like the source tree an
     archive ships without (R2). The archive is not such an input: it is what
     `validate` judges, so "valid" over no archive is a verdict with no subject.
-    An integration measured exactly that at exit 0.
     """
     state = "holds no container map" if (walk.root / ARCHIVE_DIRNAME).is_dir() else "is absent"
     return Finding(

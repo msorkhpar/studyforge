@@ -19,13 +19,11 @@ the questions; the page grades them with the two functions here.
 `exercise.errors` for the one exception, and `unit.trust` for R5's rule.
 ⛔ **Nothing else, ever** — see *no compiler, no container* below.
 
-## ⭐ WHY THIS EXISTS, AND WHY IT IS NOT A V2 BACKLOG
+## ⭐ WHY THIS EXISTS
 
-⛔ **Ruled by the user, 2026-09-19: the quiz shape is IN `M10`** (spec §7 §7).
-⚠️ **It was proposed for a v2 backlog and the user said no.** Most teaching
-material is not code — a history book, a standards walkthrough, a prose
-tutorial — and deferring this would have left all of it at the reading floor
-indefinitely, activating no reader at all.
+⭐ **Most teaching material is not code** (spec §7 §7) — a history book, a
+standards walkthrough, a prose tutorial — and without this shape all of it
+would stay at the reading floor, with no practice for a reader at all.
 
 ## ⛔ NO COMPILER, NO CONTAINER, NO NETWORK AND NO MODEL
 

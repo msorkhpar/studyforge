@@ -127,7 +127,7 @@ def require_advisory(exercise: Exercise, where: str) -> None:
 
     ⚠️ **The pair is compared whole**, so `generated` beside a `trust` somebody
     widened is refused as readily as `authoritative` itself — a forbidden-pair
-    list is the shape that failed open once already.
+    list fails open on a pair nobody listed.
     """
     pair = (exercise.provenance, exercise.trust)
     if pair != (QUIZ_PROVENANCE, QUIZ_TRUST):

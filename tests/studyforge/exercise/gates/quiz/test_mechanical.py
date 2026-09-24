@@ -1,6 +1,6 @@
 """`Q4` and `Q5`: the two gates anybody holding the bundle can re-take, refusing real plants.
 
-⛔ **`AX-06`'s Acceptance, verbatim:** *`Q4` and `Q5` refuse their planted
+⛔ **The quiz gates' acceptance:** *`Q4` and `Q5` refuse their planted
 defects mechanically — two keyed options, a duplicate option, a missing
 sentence, an `origin` whose digest drifted.* ⭐ Each is a real edit to the
 quiz's own material or to the page's bytes, each is asserted present and

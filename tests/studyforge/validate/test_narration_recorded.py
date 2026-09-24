@@ -1,6 +1,6 @@
-"""`validate` over a corpus whose `corpus.json` records narration off (`W460`), via `W457`.
+"""`validate` over a corpus whose `corpus.json` records narration off.
 
-⭐ The user's ruling, 2026-09-23: narration is optional. A corpus that recorded
+⭐ Narration is optional. A corpus that recorded
 *no* judges no clip, stale or not, because `validate` asks the one predicate
 (`narrate.narration_on`) and the predicate reads the recorded answer. ⛔ Nothing
 here calls a silenced corpus short.

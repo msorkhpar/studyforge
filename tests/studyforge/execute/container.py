@@ -13,14 +13,13 @@ at the declared workspace, the declared network mode, an init, the reader's
 uid:gid, no port, no socket. ⛔ The runner itself starts nothing; this is the
 test standing in for the reader.
 
-## ⛔ Why this reads DATA and no longer parses the README (`W401`, `TC-05/3`)
+## ⛔ Why this reads DATA and never parses the README
 
-This module used to find the sibling's `docker run` line in its README, join its
-shell continuations and substitute three placeholders into it. That made a
-paragraph of prose an interface: a consumer of the runner image had to re-derive
-its run shape by parsing English, and a rewording of the sentence was a silent
-break. The runner now declares its shape the way the editor does, and this reads
-the declaration. The README's line still exists for a person to copy, and the
+Parsing the sibling's `docker run` line out of its README would make a
+paragraph of prose an interface: a consumer of the runner image would re-derive
+its run shape by parsing English, and a rewording of the sentence would be a
+silent break. The runner declares its shape the way the editor does, and this
+reads the declaration. The README's line still exists for a person to copy, and the
 sibling's own tests assert it is what the block renders.
 
 ⭐ **`PROMISE` is the `provides` this was built against** (R9), the way
@@ -30,7 +29,7 @@ that promises less is REFUSED rather than migrated: the cases skip and say so.
 Dockerfile, not its `consuming/` modules, not its README.
 
 ⛔ **Every invocation that reaches this module must hold the shared container
-lock** (the office rules): it is taken around the pytest run, not in here, so
+lock**: it is taken around the pytest run, not in here, so
 one gate is one lock.
 
 ## ⛔ THE CONTRACT IS READ AT A COMMIT, NEVER OFF A WORKING TREE (`W404`)

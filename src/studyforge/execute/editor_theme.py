@@ -40,14 +40,14 @@ light blue.
 
 ⭐ `window.autoDetectColorScheme` makes the workbench follow
 `prefers-color-scheme` **as its own document sees it**, and in an iframe that is
-the colour scheme of the iframe ELEMENT in the page — which the page's
-`:root` sets from the reader's choice (`color-scheme: light dark` when they chose
+the colour scheme of the iframe ELEMENT in the page — which the page's `:root`
+sets from the reader's choice (`color-scheme: light dark` when they chose
 nothing, `dark` or `light` when they did). ⭐ So the editor matches the page for
-all three states without the page telling it anything. Measured on the host's
-Chrome 149: an iframe under `color-scheme: dark` reads dark, and one given
-`color-scheme: light` reads light, whatever the system says. ⚠️ Each theme's
-colours are scoped to its base (`[Visual Studio Light]`, `[Visual Studio Dark]`), so one settings
-file carries both.
+all three states without the page telling it anything. In Chrome an iframe under
+`color-scheme: dark` reads dark, and one given `color-scheme: light` reads
+light, whatever the system says. ⚠️ Each theme's colours are scoped to its base
+(`[Visual Studio Light]`, `[Visual Studio Dark]`), so one settings file carries
+both.
 
 ⭐ **The bases are the workbench's plainest pair, `Visual Studio Light` and
 `Visual Studio Dark`** (`BASES`), and the reason is MEASURED. ⛔ A customization

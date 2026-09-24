@@ -1,6 +1,6 @@
 """The `quiz` family: registered by import, ordered by the registry, and unweakenable.
 
-⭐ **`AX-03` left a seam and this is the reading that says it was used rather
+⭐ **The gate framework has a seam and this is the reading that says it is used rather
 than widened**: the family exists because `family.py` was imported, the record
 requires all five from that moment, and not one line of `families.py`,
 `record.py`, `digests.py` or `runs.py` was edited to make it so.

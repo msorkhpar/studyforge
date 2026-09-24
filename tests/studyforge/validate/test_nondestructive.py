@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/validate/nondestructive.py` (R12) — OPS-05's Acceptance.
+"""Mirror of `src/studyforge/validate/nondestructive.py` (R12): the non-destructive check.
 
 ⛔ Every tree here is a copy under `tmp_path`: a fixture corpus from
 `tests/fixtures/`, built into its own root the way a sibling-placed corpus is.
@@ -361,7 +361,7 @@ def test_the_verdict_follows_the_declaration_and_not_the_file_name(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W278`: a declared edit to repository-root documentation, whatever content says
+# ⛔ A declared edit to repository-root documentation, whatever content says
 # --------------------------------------------------------------------------
 
 #: ⛔ ISO's shape, built for the test: the root README is `not_material` for the site.

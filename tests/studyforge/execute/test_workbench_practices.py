@@ -10,7 +10,7 @@ constant: the folders differ, opening one leaves the other's lock byte for byte
 as it was, and two writes at once — two practices, or one practice twice — both
 land. ⛔ **The concurrency is FORCED, not hoped for**: every settings write is
 held at the moment before its `replace` until the other has reached the same
-point, which is exactly the interleaving that refused the user's panel.
+point, which is exactly the interleaving that would refuse a reader's panel.
 """
 
 from __future__ import annotations
@@ -42,10 +42,10 @@ EDITOR = Editor(
     others=(("practice", "/w/practice"),),
 )
 
-#: A flat practice, as `M7`'s are: its source and its test side by side.
+#: A flat practice: its source and its test side by side.
 FLAT = ("practice/bitmap/Bitmap.java", "practice/bitmap/BitmapTest.java")
 
-#: An authored Maven practice, as the pilot's are, and its build file.
+#: An authored Maven practice, and its build file.
 UNIT = "practice/fundamentals/prose/unit-15"
 MAVEN = (
     f"{UNIT}/practice-1/src/main/java/com/example/Check.java",
@@ -62,7 +62,7 @@ def pom(number: int) -> str:
 
 
 def command(number: int) -> tuple[str, ...]:
-    """The pilot's own shape of a test command: only `pom.xml` is a file."""
+    """An authored practice's shape of a test command: only `pom.xml` is a file."""
     return ("mvn", "-o", "-q", "-f", pom(number), "test")
 
 
@@ -210,7 +210,7 @@ def at_once(*writes) -> list[BaseException]:
 def test_the_same_practice_asked_twice_at_once_is_written_twice(root, forced):
     # ⛔ The plant this file exists for: with ONE staging name, both writes
     # stage into the same file, the first `replace` moves it away, and the
-    # second is refused — the user's `409`.
+    # second is refused — a `409` for the reader.
     where = practice_folder(EDITOR, *FLAT, root=root)
     folder, main, test = root / where.base, where.inside(FLAT[0]), where.inside(FLAT[1])
     assert at_once(*[lambda: write_settings(folder, main, test)] * 2) == []

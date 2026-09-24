@@ -1,6 +1,6 @@
 """The suite: five verdicts always, one shared record, and no path to `authoritative`.
 
-⛔ **`AX-06`'s last two Acceptance clauses are read here:** *no gate is
+⛔ **The quiz gates' last two acceptance clauses are read here:** *no gate is
 configurable off*, and *a quiz that cleared every gate is
 `generated`/`advisory`, and asserting `authoritative` anywhere in the chain
 fails.* ⭐ The second is taken at every height the chain has — the practice
@@ -206,7 +206,7 @@ def test_a_hand_built_exercise_claiming_authoritative_is_refused_by_the_suite():
 
 
 def test_every_widening_of_the_pair_is_refused_and_not_only_authoritative():
-    # ⛔ A forbidden-pair list is the shape that failed open once (Ruling 35),
+    # ⛔ A forbidden-pair list fails open on a pair nobody listed,
     # so the pair is compared WHOLE: `generated` beside a widened trust is
     # refused exactly as `authoritative` is.
     for provenance in (*PROVENANCE, None):

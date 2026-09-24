@@ -12,8 +12,8 @@ name. Both yield `Finding`s and `Unchecked`s.
 for what a heading is and where a region ends, `validate.corpus`,
 `validate.report`. ⛔ **Not `archive.markdown`**, ever — and
 `tests/studyforge/validate/source/test_init.py` asserts that of **every**
-module in this package rather than of one, because the module the guard used
-to name is no longer the only place the rule could be broken.
+module in this package rather than of one, because any of them could break
+the rule.
 
 | module | what it answers |
 |---|---|
@@ -22,20 +22,13 @@ to name is no longer the only place the rule could be broken.
 | `completeness` | ⭐ what one file **contains**, counted without the parser that read it |
 | `membership` | ⭐ what the archive root holds, and what the archive declares and does not hold |
 
-## ⛔ Why the seam is here, and it was measured rather than chosen
+## ⛔ Why the seam is here
 
-⭐ **Two tasks a week apart drew it independently.** One landed entirely on the
-classification side — the third state, and the corpus's own declaration of
-what is generated output. The other landed entirely on the completeness side —
-regions, sections, and the two rule ids a section needs. ⚠️ **Neither borrowed
-a line from the other**; the single place they collided was a shared insertion
-anchor for their rule constants.
-
-⛔ **And the residue is genuinely two things, which is a measurement and not an
-opinion.** The heading machinery had already moved out to `validate.headings`
-— 134 lines gone — and the remaining module still **grew**, 377 lines to 425.
-⭐ A module that sheds a whole concern and comes back larger is not one module
-that needs tidying.
+⭐ **Classification and completeness are two concerns.** Classification is the
+third state and the corpus's own declaration of what is generated output;
+completeness is regions, sections and the two rule ids a section needs.
+⚠️ **Neither uses a line of the other**, and the heading machinery they share
+lives in `validate.headings`.
 
 ⭐ **Nothing crosses the seam.** No name defined in `classification` is read by
 `completeness` or the other way round; what they share is `Walk`, `Finding`

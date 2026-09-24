@@ -42,10 +42,9 @@ first:
 
 - **the exit line.** The page reads the run's verdict off it.
 - **a stack trace**, frame by frame: `at …` frames, `Caused by:`,
-  `Suppressed:`, `... N more`, and `Exception in thread`. ⚠️ This departs from
-  the extraction source's filter, which kept only frames naming its own
-  package (R1 forbids knowing that name). The epic says a stack trace
-  survives INTACT. A trimmed trace is a claim about which frames matter, and
+  `Suppressed:`, `... N more`, and `Exception in thread`. ⚠️ No frame is
+  kept or dropped by the package it names (R1 forbids knowing that name): a
+  stack trace survives INTACT. A trimmed trace is a claim about which frames matter, and
   that claim is wrong exactly when the reader's bug is somewhere unexpected.
 - **a toolchain's `signal`**, checked before its `noise`: a Maven `[ERROR]`,
   a test tally, a Gradle compile error. These are lines that could look like
@@ -60,12 +59,10 @@ line come first.
 
 ## ⚠️ What this module does not do, deliberately
 
-- It never rewrites a line. The extraction source trimmed paths here. The
-  runner's `LineGate` owns that now, for every line, before this module sees
-  any of them.
-- It knows no corpus's output markers. The extraction source kept a block
-  between its own harness's `--- output of` markers. R1 forbids that name.
-  Here a program's lines survive because no rule names them.
+- It never rewrites a line. The runner's `LineGate` trims paths, for every
+  line, before this module sees any of them.
+- It knows no corpus's output markers: R1 forbids naming one. A program's
+  lines survive because no rule names them.
 - It never collapses blank lines. A program's blank line is its output.
 """
 
@@ -161,12 +158,9 @@ MAVEN = Toolchain(
     ),
 )
 
-#: ⭐ Gradle, ported from the extraction source's filter, whose transcript was a
-#: reader's own paste. Its reader-frame and output-marker rules are not
-#: ported (R1, and a trace survives intact), and neither is its rule for
-#: `… STANDARD_OUT`: that rule dropped the header only because the source's
-#: own harness labelled the output again, and here the header is the only
-#: label a test's output has.
+#: ⭐ Gradle. No rule names a reader's frames or output markers (R1, and a
+#: trace survives intact), and a `… STANDARD_OUT` header is kept, because it
+#: is the only label a test's output has.
 GRADLE = Toolchain(
     name="gradle",
     always_noise=(

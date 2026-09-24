@@ -101,7 +101,7 @@ def test_a_container_name_that_is_not_one_word_is_refused(name):
 
 @pytest.mark.parametrize("ending", ["\n", "\r\n", "\r"])
 def test_a_trailing_line_ending_is_refused_by_every_check_here(ending):
-    # ⛔ W434. `require_container` reads `SAFE_SEGMENT` directly and never
+    # ⛔ `require_container` reads `SAFE_SEGMENT` directly and never
     # re-checks, so the pattern's anchor is this module's whole defence. Each
     # value is legal without its ending — the negative control is asserted.
     assert require_container("runner") == "runner"

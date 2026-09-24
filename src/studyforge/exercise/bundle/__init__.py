@@ -40,19 +40,18 @@ every source-specific fact arrives as the bundle's own data.
 
 ## ⛔ TWO ROOTS, BECAUSE THE READER'S FILE IS NOT THE STARTER
 
-⭐ **The bundle holds the pristine material and the workspace holds the
-reader's copy**, both derived from the identity the archive document already
-carries. ⚠️ **The alternative was measured rather than dismissed:** with one
-root, the gate record's digest of the starter would drift the moment anybody
-did the exercise, and `studyforge validate` would report every worked corpus as
-broken. ⛔ So every file a gate record digests is one no reader touches, which
-is what keeps *"every shipped exercise's gate record verifies against
-the files beside it"* true after the corpus has been used.
+⭐ **The bundle holds the pristine material and the workspace holds the reader's
+copy**, both derived from the identity the archive document already carries. ⚠️
+**With one root**, the gate record's digest of the starter would drift the
+moment anybody did the exercise, and `studyforge validate` would report every
+worked corpus as broken. ⛔ So every file a gate record digests is one no reader
+touches, which is what keeps *"every shipped exercise's gate record verifies
+against the files beside it"* true after the corpus has been used.
 
 ## ⛔ A BUNDLE'S FILE SET IS CLOSED, SO NO RUN REPORT IS COMMITTED
 
 ⚠️ **A JUnit report carries the machine's HOSTNAME** — `pytest --junit-xml`
-and surefire both write `hostname="…"`, as measured — and a corpus
+and surefire both write `hostname="…"` — and a corpus
 repository is where **this** repository's personal-data gate never looks (R7).
 ⛔ **The remedy is mechanical in two places rather than a sentence in a
 guide:** a bundle may hold `bundle.json`, `statement.md`, `gates.json` and the

@@ -81,8 +81,8 @@ it — spec §7 §7's requirement, which `quiz`'s own contract argues.
 
 ## ⛔ Unknown keys are refused
 
-⭐ **Measured, 2026-09-09: before this, an archive document carrying an unknown
-top-level `exercise` object validated green — 0 findings, 0 unchecked claims** —
+⭐ **Without this, an archive document carrying an unknown top-level
+`exercise` object would validate green — 0 findings, 0 unchecked claims** —
 because `content_sha256` is taken over `blocks` and an unknown sibling key is
 not a block. ⚠️ Tolerating an unknown key means tolerating a **typo** in it, and
 a typo'd `exercise` is a grader that is invisible while the corpus passes. The
@@ -240,7 +240,7 @@ def from_document(value: object, where: str) -> Exercise:
     kind = kind_of(value["kind"], where) if "kind" in value else DEFAULT_KIND
     if kind == QUIZ:
         # ⛔ Every rule a quiz obeys is `exercise.quiz`'s, R5's narrowing
-        # included; this branch chooses the shape and nothing else.
+        # included; this branch of the reader chooses the shape and nothing else.
         provenance, trust = quiz.require_quiz_shape(value, where)
         return Exercise(None, None, None, None, provenance, trust, **_authored(value, QUIZ, where))
     quiz.require_no_questions(value, where)

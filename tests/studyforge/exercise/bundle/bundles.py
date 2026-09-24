@@ -1,4 +1,4 @@
-"""One real authored exercise on disk, so every check can be shown to bite (`AX-04`).
+"""One real authored exercise on disk, so every check can be shown to bite.
 
 ⛔ **Nothing here is stubbed.** A bundle these functions write is a directory
 with real files in it, and a gate record written over it is digested from those
@@ -44,11 +44,11 @@ REFERENCE = "def build(fields):\n    return sum(1 << (64 - n) for n in fields)\n
 TESTS = "def test_builds():\n    pass\n\n\ndef test_empty():\n    pass\n"
 PLANT = "def build(fields):\n    return 1\n"
 
-#: What a build file of this fixture holds (`W436`). ⚠️ Not a real tool's file:
+#: What a build file of this fixture holds. ⚠️ Not a real tool's file:
 #: the framework never reads one, so its bytes only have to arrive intact.
 BUILD_TEXT = "[build]\nrequires = ['placeholder']\n"
 
-#: The five gates `AX-03` declares for the `code` family, all held.
+#: The five gates the gate framework declares for the `code` family, all held.
 HELD = ("G1", "G2", "G3", "G4", "G5")
 
 

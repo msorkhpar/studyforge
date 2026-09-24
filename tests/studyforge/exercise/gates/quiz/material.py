@@ -1,6 +1,6 @@
 """A real prose page, a real quiz written from it, and every plant as a real edit to one of them.
 
-⛔ **`AX-06`'s Acceptance is *`Q4` and `Q5` refuse their planted defects
+⛔ **The quiz gates' acceptance is *`Q4` and `Q5` refuse their planted defects
 mechanically*, and a plant is not a plant until its effect is OBSERVED.** ⭐ So
 nothing here is a value typed into a verdict: every reading a gate is given
 comes out of a page whose bytes exist, a quiz built from that page, and a
@@ -65,7 +65,7 @@ an older writer sent, and parses it wrongly.
 
 #: ⛔ The plants, each named by what it BREAKS and never by the gate it is
 #: expected to break: a plant named after its gate is a plant nobody checked
-#: the effect of. ⭐ `AX-03`'s rule, kept.
+#: the effect of. ⭐ The gate framework's rule.
 NONE = "no plant"
 TWO_KEYS = "a second option is keyed correct"
 DUPLICATE_OPTION = "two options say the same thing after normalisation"
@@ -151,7 +151,7 @@ def built(documents: list[dict]) -> tuple[Question, ...]:
     validated.
 
     ⚠️ **`origin` is read through `cases.origin_in` and never subscripted**:
-    `W109` holds that key to one reader across `src/` and `tests/`, and a
+    the one-reader rule holds that key to one reader across `src/` and `tests/`, and a
     second site reading it is what that instrument exists to refuse.
     """
     return tuple(
@@ -204,7 +204,7 @@ def page(plant: str) -> bytes:
 
 
 def ledger(plant: str = NONE) -> dict[str, str]:
-    """What the source ledger says this page digests to NOW (`AX-07`'s one question)."""
+    """What the source ledger says this page digests to NOW (its one question)."""
     return {PAGE_PATH: digest_of_bytes(page(plant))}
 
 

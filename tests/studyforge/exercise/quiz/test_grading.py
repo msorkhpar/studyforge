@@ -1,6 +1,6 @@
 """The grading rule: all-correct completes, one wrong does not, and nothing is fetched.
 
-⛔ **`AX-05`'s Acceptance, on `depth1`'s own quiz.** The two readings that are
+⛔ **The quiz shape's acceptance, on `depth1`'s own quiz.** The two readings that are
 easy to fake are taken by OBSERVATION rather than by assertion: the "no
 compiler, no container, no network, no model" clause is read with the
 filesystem, the network and `subprocess` made unusable, and the closed import
@@ -89,7 +89,7 @@ def close_every_way_out(monkeypatch):
 
 
 # --------------------------------------------------------------------------
-# ⭐ the Acceptance: all-correct completes, one wrong does not
+# ⭐ All-correct completes, one wrong does not
 # --------------------------------------------------------------------------
 
 

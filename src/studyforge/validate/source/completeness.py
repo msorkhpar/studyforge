@@ -23,14 +23,12 @@ everything the source contained?"* — the two readings come from the same
 place, so a construct the parser never recognised is absent from both, the
 counts agree, and nothing raises.
 
-⚠️ The extraction source met exactly this shape: a guard compared section
-containers against regex-derived pairs from the same regex family, a section
-written in a shape neither recognised was missing from both, `5 == 5`, and
-five lessons lost a section in one wave with nothing failing.
+⚠️ A guard that compares section containers against pairs derived by the same
+regex family misses a section written in a shape neither recognises: it is
+absent from both, `5 == 5`, and the lesson loses a section with nothing failing.
 
-⚠️ **studyforge is more exposed than that, not less.** The extraction source
-has two independent readings of every lesson and refuses a disagreement
-between them. An adapter reading Markdown directly has **one**. And C3
+⚠️ **An adapter reading Markdown directly has only one reading of a lesson**,
+so nothing disagrees for it. And C3
 establishes the realistic failure: raw HTML in real Markdown yields a short,
 well-formed, entirely plausible unit rather than an error.
 
@@ -68,12 +66,12 @@ that would otherwise be a hole: a `practice_origin` whose unit holds no
 practice document compares its headings against **zero** and reads as the
 short read it is, rather than as a file nobody counted.
 
-## ⛔ An AUTHORED practice was never in the source, so it is not counted against it
+## ⛔ An AUTHORED practice is not in the source, so it is not counted against it
 
 ⭐ **An authored practice is left out.** A practice whose exercise is `generated` was emitted from a
 **bundle** (spec §7): its blocks are the bundle's statement and the
 practice layout's headings, not a reading of any source file. Summing them
-into the unit's buckets reported a short read on every unit that received one.
+into the unit's buckets would report a short read on every unit that received one.
 ⛔ **So it is left out, and it is decided by what the document IS** — the
 `provenance` its own `exercise` record carries, which `validate.corpus` has
 already parsed — **never by its ordinal, its path or its bundle's place on

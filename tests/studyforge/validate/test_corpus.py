@@ -1,4 +1,4 @@
-"""Walking a corpus on disk, and refusing rather than raising (SF-25).
+"""Walking a corpus on disk, and refusing rather than raising.
 
 ⭐ **The rule this module exists to hold: a refusal met while reading is a
 finding, not an exception.** `validate` reports every problem in one run (R6),
@@ -124,9 +124,8 @@ def test_a_refused_document_still_knows_which_unit_it_claimed(tmp_path):
 
 
 def test_a_document_the_personal_data_gate_refuses_is_recorded_too(tmp_path):
-    # ⭐ This is the defect the predecessor found: the gate refused a document
-    # and a downstream check then reported the unit *missing* — one defect
-    # wearing two names.
+    # ⭐ The gate refuses a document, and a downstream check must not then
+    # report the unit *missing* — that is one defect wearing two names.
     root = corpora.one_unit(tmp_path / "c")
     path = root / ARCHIVE_DIR / "demo/raw/prose/unit-01/lesson-1.json"
     document = json.loads(path.read_text(encoding="utf-8"))
@@ -142,8 +141,8 @@ def test_a_container_map_carrying_a_home_path_is_filed_as_personal_data_too(tmp_
     # ⭐ The third arm, asserted so *"is it reachable?"* is answered by a test
     # rather than by reading `container/errors.py` and believing it.
     # `corpus/container/document.py` calls `assert_clean` bare and never
-    # translated, so this arm was live before W27 and is live after — and the
-    # only way to know that without guessing is to drive it.
+    # translates, so this arm is live — and the only way to know that without
+    # guessing is to drive it.
     root = corpora.one_unit(tmp_path / "c")
     path = root / ARCHIVE_DIR / "demo/container.json"
     document = json.loads(path.read_text(encoding="utf-8"))
@@ -157,18 +156,16 @@ def test_a_container_map_carrying_a_home_path_is_filed_as_personal_data_too(tmp_
 def test_a_manifest_carrying_a_home_path_is_filed_as_personal_data_not_as_a_manifest_defect(
     tmp_path,
 ):
-    # ⛔ **Ruling 58's dead arm, made reachable.** `_manifest` catches
-    # `ManifestError` and **then** `PersonalDataLeak`. While
+    # ⛔ **The personal-data arm, reachable.** `_manifest` catches
+    # `ManifestError` and **then** `PersonalDataLeak`. If
     # `corpus/manifest/document._gate` translated the leak into
-    # `ManifestError`, the first arm always won and the second could never
-    # fire — so a home path in `corpus.json`, the single loudest thing R7
-    # exists to catch, was filed under `manifest`: an R7 leak reported as a
-    # formatting defect. ⭐ *"The catch was correct and the raise never came."*
+    # `ManifestError`, the first arm would always win and a home path in
+    # `corpus.json`, the single loudest thing R7 exists to catch, would be
+    # filed under `manifest`: an R7 leak reported as a formatting defect.
     #
-    # ⚠️ **This test fails on the pre-W27 tree**, which is the only reason to
-    # trust it: it reports `['manifest']` there and `['personal-data']` here.
-    # A test asserting merely that *some* finding was raised would have passed
-    # on both and proved nothing.
+    # ⚠️ **So the rule is asserted, not only that a finding was raised**:
+    # `['manifest']` would be the translated reading, `['personal-data']` is
+    # the right one.
     #
     # ⛔ The manifest is poisoned after the corpus is built, because
     # `corpora.write` parses what it writes and the gate would refuse it there.
@@ -216,7 +213,7 @@ def test_the_walk_reads_each_file_exactly_once(tmp_path, monkeypatch):
 
 def test_a_container_map_at_the_wrong_depth_is_a_container_finding_not_an_exception(tmp_path):
     # ⛔ `AddressError` from the arity comparison, a member of the reader's
-    # `RAISES` that is not the leak: it is filed under `container` (`W213`).
+    # `RAISES` that is not the leak: it is filed under `container`.
     root = corpora.one_unit(tmp_path / "c")
     path = root / ARCHIVE_DIR / "demo/container.json"
     document = json.loads(path.read_text(encoding="utf-8"))

@@ -117,7 +117,7 @@ def test_the_finding_never_reproduces_the_text(tmp_path):
 
 
 def test_narration_off_for_the_run_judges_no_clip(tmp_path):
-    # ⭐ W460's seam: `narrate.enabled.narration_on` is asked, and off is quiet.
+    # ⭐ The narration switch's seam: `narrate.enabled.narration_on` is asked, and off is quiet.
     root = narrated(tmp_path)
     edit_one_paragraph(root)
     assert ours(validate(root, narration=False)) == []

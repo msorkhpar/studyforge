@@ -164,7 +164,7 @@ def bundle_of(value: object, where: str) -> Bundle:
     """Read one bundle document, refusing every way it can be wrong.
 
     ⛔ **An unknown key is refused rather than ignored**, for the archive
-    document's own measured reason: tolerating an unknown key is tolerating a
+    document's own reason: tolerating an unknown key is tolerating a
     typo in a known one, and a typo'd `test_file` is a grader nothing runs
     while the corpus validates green.
     """

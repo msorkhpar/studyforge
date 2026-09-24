@@ -39,7 +39,7 @@ def refuse(written):
 
 
 # --------------------------------------------------------------------------
-# ⭐ the Acceptance: a quiz record round-trips
+# ⭐ A quiz record round-trips
 # --------------------------------------------------------------------------
 
 
@@ -70,7 +70,7 @@ def test_a_quiz_that_omits_its_provenance_is_written_back_carrying_it():
 
 def test_a_records_own_origin_is_the_one_key_a_quiz_may_omit():
     # ⛔ Read through the RECORD and through whole-document comparison, never by
-    # subscripting that key: `W109` holds `origin` to ONE reader across `src/`
+    # subscripting that key: the one-reader rule holds `origin` to ONE reader across `src/`
     # and `tests/`, and a test that reached for it would be a second one.
     bare = record(provenance=QUIZ_PROVENANCE, trust=QUIZ_TRUST)
     assert from_document(bare, WHERE).origin is None
@@ -105,7 +105,7 @@ def test_a_quiz_asking_nothing_is_refused():
 
 
 def test_a_quiz_names_no_test_path_so_nothing_a_run_does_completes_it():
-    # ⛔ Spec §7 §7: a quiz produces no run. `states` is untouched by `AX-05`,
+    # ⛔ Spec §7 §7: a quiz produces no run. `states` is untouched by the quiz shape,
     # and this is the reading that says so at the record layer.
     exercise = from_document(record(), WHERE)
     assert exercise.graded is False
@@ -115,13 +115,13 @@ def test_a_quiz_names_no_test_path_so_nothing_a_run_does_completes_it():
 
 def test_a_breakdown_on_a_quiz_is_still_refused_beside_no_grader():
     # ⚠️ `cases` and `report` report what a test RUN found, and a quiz has no
-    # run. ⛔ `AX-00`'s refusal is relied on here, not relaxed.
+    # run. ⛔ The case record's refusal is relied on here, not relaxed.
     cases = [{"id": "T#t", "kind": "main", "says": "It reads."}]
     assert "cases" in refuse(record(cases=cases))
 
 
 # --------------------------------------------------------------------------
-# ⛔ R5: a quiz is never the source's own grader (Acceptance)
+# ⛔ R5: a quiz is never the source's own grader
 # --------------------------------------------------------------------------
 
 

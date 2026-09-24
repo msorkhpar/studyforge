@@ -20,7 +20,7 @@ is absent rather than trusting this sentence.
 may not come from it. An *anchor* — `TestCases.md#card-issuance` — would: a
 slug is a renderer's rule about how it names a heading, and reading one back
 means agreeing with a renderer about the answer. ⚠️ A **line range** is
-parser-independent too and was refused for a different reason: it is brittle
+parser-independent too and is refused for a different reason: it is brittle
 against an upstream file that grows a paragraph, and these corpora are living
 repositories.
 
