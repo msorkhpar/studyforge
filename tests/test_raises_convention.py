@@ -63,9 +63,10 @@ from tests.raises_sweep import (
 REACH = {
     "studyforge.corpus.container": 3,
     # ⚠️ The floor moves with each new site (`reonboard.recorded_draft`,
-    # `narrate.enabled.declared`): one below the count, the deleted-outright plant
-    # finds that many left and DOES NOT RAISE.
-    "studyforge.corpus.manifest": 9,
+    # `narrate.enabled.declared`, `narrate.release.volumes.require_released_policy`):
+    # one below the count, the deleted-outright plant finds that many left and
+    # DOES NOT RAISE.
+    "studyforge.corpus.manifest": 10,
     # ⚠️ It counts `validate.narration`'s site, and `cli/serve.py` and `cli/check.py`,
     # which import `read_corpus` from `generate.declarations`, the module that defines it.
     "studyforge.generate": 6,
