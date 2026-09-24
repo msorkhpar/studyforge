@@ -36,7 +36,7 @@ module is a reading of `code-server`.
 
 from __future__ import annotations
 
-import time
+import json
 from collections.abc import Iterator
 
 import pytest
@@ -164,6 +164,31 @@ AT_REST = """
 """
 
 
+#: Resolves with the first rest `AT_REST` recorded with `<label>` focused and in view:
+#: at once when that glide has already ended, otherwise on the `scrollend` that ends it.
+#: ⚠️ `AT_REST`'s listener was added first, so it has recorded a rest before `seen` reads.
+GLIDED_TO = """
+new Promise((done, fail) => {
+  const label = <label>;
+  const found = () => (window.studyforgeRest || []).find((r) => r.label === label && r.inView);
+  if (found()) { done(found()); return; }
+  const ceiling = setTimeout(() => {
+    document.removeEventListener('scrollend', seen);
+    fail(new Error('the page never came to rest with ' + JSON.stringify(label)
+      + ' in view; it came to rest ' + JSON.stringify(window.studyforgeRest)));
+  }, <ceiling>);
+  function seen() {
+    const rest = found();
+    if (!rest) return;
+    clearTimeout(ceiling);
+    document.removeEventListener('scrollend', seen);
+    done(rest);
+  }
+  document.addEventListener('scrollend', seen);
+})
+"""
+
+
 @pytest.fixture
 def origin(built_site: site.Site) -> Iterator[served.Served]:
     """One loopback origin over the built tree, bound for this check alone."""
@@ -191,21 +216,14 @@ def _frames(reading: dict, field: str) -> list:
 def _glided_to(page: OpenPage, label: str) -> dict:
     """Wait until the glide that reaching `label` started has finished, and return where.
 
-    ⛔ Polled and bounded like `_until`, and on the browser's OWN end-of-scroll
-    signal rather than on a guess about how long a glide lasts: a fixed sleep
-    is a check that is slow alone and still wrong under load.
+    ⛔ An EVENT wait, in the page: `GLIDED_TO` resolves on the browser's own
+    `scrollend`, or at once when the glide has already ended, and rejects at a
+    ceiling naming what it waited for. A fixed sleep is a check that is slow alone
+    and still wrong under load, and a polling tick is a sleep by another name.
     """
-    deadline = time.monotonic() + SETTLE
-    rests: list = []
-    while time.monotonic() < deadline:
-        rests = list(page.evaluate("window.studyforgeRest") or [])  # type: ignore[call-overload]
-        for rest in rests:
-            if rest["label"] == label and rest["inView"]:
-                return dict(rest)
-        time.sleep(0.05)
-    raise AssertionError(
-        f"the page never came to rest with {label!r} in view; it came to rest {rests}"
-    )
+    wait = GLIDED_TO.replace("<label>", json.dumps(label))
+    wait = wait.replace("<ceiling>", str(int(SETTLE * 1000)))
+    return dict(page.evaluate(wait))  # type: ignore[call-overload]
 
 
 def _survived(reading: dict, what: str) -> None:
