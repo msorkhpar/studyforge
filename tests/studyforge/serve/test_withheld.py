@@ -9,12 +9,15 @@ from __future__ import annotations
 
 import html
 import json
+import re
 
 import pytest
 
 from studyforge.serve.withheld import (
     MIN_WORDS,
+    WITHHELD_LINE,
     Marks,
+    OutputGate,
     carries,
     marks_in,
     marks_of,
@@ -156,3 +159,54 @@ def test_refused_by_asks_the_source_on_every_file_and_never_captures_it() -> Non
 def test_a_source_that_cannot_say_withholds_nothing() -> None:
     assert marks_of(object()) == Marks()
     assert not refused_by(object())(b'{"id": "q-1", "correct": true}')
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W465`: a run's output, line by line — the run route's half of `W452/1`
+# --------------------------------------------------------------------------
+
+
+def printed_bundle() -> list[str]:
+    """A quiz bundle as a program printing it would: pretty, one field per line."""
+    bundle = {"exercise": {"kind": "quiz", "questions": QUESTIONS}}
+    return json.dumps(bundle, indent=2).splitlines()
+
+
+def test_a_printed_bundle_reaches_the_reader_with_no_key_and_no_sentence() -> None:
+    gate = OutputGate(SERVED)
+    shown = "\n".join(gate(line) for line in printed_bundle())
+    assert not re.search(r'"correct"\s*:', shown), "a key line reached the wire"
+    for sentence in sentences():
+        assert sentence not in shown and json.dumps(sentence)[1:-1] not in shown
+    assert WITHHELD_LINE in shown
+    # ⭐ What is not a key still reads: each question id and each option's words.
+    for question in QUESTIONS:
+        assert f'"{question["id"]}"' in shown
+        for option in question["options"]:
+            assert option["text"] in shown
+
+
+def test_a_key_line_is_withheld_once_a_served_question_has_been_named() -> None:
+    gate = OutputGate(SERVED)
+    assert gate('    "correct": true,') == '    "correct": true,'
+    assert gate('  "id": "q-1",') == '  "id": "q-1",'
+    assert gate('    "correct": true,') == WITHHELD_LINE
+
+
+@pytest.mark.parametrize(
+    "line",
+    [
+        '{"cases": [{"input": [2, 3], "expected": 5, "correct": true}]}',
+        "Tests run: 3, Failures: 0, Errors: 0, Skipped: 0",
+        "the correct answer is five",
+        "--- exit 0 ---",
+    ],
+)
+def test_a_program_that_names_no_served_quiz_reads_unchanged(line: str) -> None:
+    gate = OutputGate(SERVED)
+    assert gate(line) == line
+
+
+def test_a_gate_over_an_instance_serving_no_quiz_passes_everything() -> None:
+    gate = OutputGate(Marks())
+    assert [gate(line) for line in printed_bundle()] == printed_bundle()

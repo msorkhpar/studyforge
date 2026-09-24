@@ -21,12 +21,14 @@ one is refused by name rather than filled in from memory (R19).
 is how *"sufficient from the contract alone"* and *"the uid differs per host"*
 are both true of one file at once.
 
-⚠️ **The one exception is the published host port, and it is a finding rather
-than an exception.** `ports[].per_project` is `true` while that entry declares
-no environment variable and no compose value — unlike `image` and `runs_as`,
-which both declare one — so the rendered file carries the contract's declared
-host port literally and two corpora on one host collide. ⛔ **`SK-09/4`, a
-finding against the component's contract; the remedy is a key there.**
+⭐ **The published host port is one of them** (`W465`): a `per_project` port is
+`127.0.0.1:${STUDYFORGE_EDITOR_PORT:-<the contract's host>}:<container>`, so a
+second instance of one corpus publishes its own port and an instance that
+recorded none publishes the one it always did. ⛔ **Only the PORT is
+interpolated**: the contract's `host_bind` is written literally, so no recorded
+value can widen the bind. ⚠️ The variable's NAME is the framework's
+(`execute.instance`), because `serve` reads the same record; the contract's
+entry still declares none (`SK-09/4`), and the default is its `host`.
 
 ## ⛔ THE RULINGS ARE CHECKED BEFORE ANYTHING IS EMITTED
 
@@ -91,12 +93,16 @@ def service(
     sources: str,
     volumes: Sequence[str] = (),
     binds: Sequence[tuple[str, str]] = (),
+    container_name: str | None = None,
+    port_variable: str | None = None,
 ) -> dict[str, object]:
     """One compose service, every value of it read out of `block`.
 
     ⭐ `binds` are further `(host, container)` binds of the corpus's own
     directories — the practice workspaces — each writable and each
-    named in ruling 4's footer beside the sources.
+    named in ruling 4's footer beside the sources. ⭐ `container_name` is
+    written as given (an interpolation, `W465`); `port_variable` names the
+    variable a `per_project` port's host side is interpolated from.
     """
     broken = rulings.findings(block, name=name)
     if broken:
@@ -105,13 +111,15 @@ def service(
             f"against: {'; '.join(broken)}"
         )
     built: dict[str, object] = {"image": image}
+    if container_name is not None:
+        built["container_name"] = container_name
     built[str(require(block, "runs_as", "compose_key"))] = require(
         block, "runs_as", "compose_value"
     )
     filesystem = optional(block, "filesystem", "compose_key")
     if isinstance(filesystem, str) and filesystem:
         built[filesystem] = require(block, "filesystem", "compose_value")
-    built["ports"] = [_published(entry) for entry in blocks(block, "ports")]
+    built["ports"] = _ports(block, port_variable)
     environment = _environment(block)
     if environment:
         built["environment"] = environment
@@ -143,12 +151,16 @@ def render(
     checked: Sequence[tuple[str, Mapping[str, object]]] = (),
     binds: Sequence[tuple[str, str]] = (),
     runner: tuple[str, Mapping[str, object]] | None = None,
+    container_name: str | None = None,
+    port_variable: str | None = None,
 ) -> str:
     """Return the whole compose file, as the bytes a corpus keeps.
 
     ⭐ `checked` is every other component block whose rulings are asserted and
     whose service is **not** rendered — see the module contract. ⭐ `runner` is
     `(service name, mapping)` as `runnerservice.plan` rendered it.
+    ⭐ `project`, `container_name` and `port_variable` are written as given, so
+    the caller hands in interpolations with their defaults (`W465`).
     """
     for other, block in checked:
         broken = rulings.findings(block, name=other)
@@ -161,7 +173,14 @@ def render(
     mounts = kept(editor, volumes)
     services: dict[str, object] = {
         "editor": service(
-            editor, name="editor", image=image, sources=sources, volumes=volumes, binds=binds
+            editor,
+            name="editor",
+            image=image,
+            sources=sources,
+            volumes=volumes,
+            binds=binds,
+            container_name=container_name,
+            port_variable=port_variable,
         )
     }
     if runner is not None:
@@ -227,8 +246,44 @@ def must_exist_first(
     return declared + tuple(also)
 
 
-def _published(entry: Mapping[str, object]) -> str:
-    """One published port, bound to the host address the contract names."""
+def interpolated(variable: str, default: object) -> str:
+    """Return compose's `${VARIABLE:-default}`: the recorded value, or the one it always was."""
+    return f"${{{variable}:-{default}}}"
+
+
+def per_project_port(block: Mapping[str, object]) -> int:
+    """Return the host port the block's one `per_project` port entry declares."""
+    for entry in blocks(block, "ports"):
+        if entry.get("per_project") is True and _whole(entry.get("host")):
+            return int(str(entry["host"]))
+    raise ContractRefused("the editor block declares no per-project host port")
+
+
+def _ports(block: Mapping[str, object], variable: str | None) -> list[str]:
+    """Every published port; a `per_project` one's host side from `variable` when given.
+
+    ⛔ **One variable holds one port**, so a block declaring two per-project
+    ports is refused rather than publishing both on one recorded number.
+    """
+    entries = blocks(block, "ports")
+    per_project = [entry for entry in entries if entry.get("per_project") is True]
+    if variable is not None and len(per_project) > 1:
+        raise ComposeRefused(
+            f"the block declares {len(per_project)} per-project ports and one recorded "
+            f"variable, {variable}, holds one"
+        )
+    return [
+        _published(entry, variable if entry.get("per_project") is True else None)
+        for entry in entries
+    ]
+
+
+def _published(entry: Mapping[str, object], variable: str | None = None) -> str:
+    """One published port, bound to the host address the contract names.
+
+    ⛔ The address is the contract's, written literally, whatever `variable`
+    is: only the port number is ever interpolated.
+    """
     host, inside = entry.get("host"), entry.get("container")
     if not _whole(host) or not _whole(inside):
         raise ContractRefused(
@@ -237,7 +292,8 @@ def _published(entry: Mapping[str, object]) -> str:
         )
     protocol = entry.get("protocol", "tcp")
     suffix = "" if protocol == "tcp" else f"/{protocol}"
-    return f"{entry.get('host_bind')}:{host}:{inside}{suffix}"
+    published = host if variable is None else interpolated(variable, host)
+    return f"{entry.get('host_bind')}:{published}:{inside}{suffix}"
 
 
 def _environment(block: Mapping[str, object]) -> dict[str, object]:

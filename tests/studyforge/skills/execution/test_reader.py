@@ -35,10 +35,17 @@ def test_one_command_brings_up_both_reading_both_recorded_tags(tmp_path):
     text = document(tmp_path)
     command = (
         f"docker compose --env-file {skill.RUNNER_ENV} --env-file {skill.EDITOR_ENV} "
-        f"-f {skill.COMPOSE_FILE} up -d --wait"
+        f"--env-file {skill.INSTANCE_ENV} -f {skill.COMPOSE_FILE} up -d --wait"
     )
     assert command in text
     assert text.count("docker compose") == 1
+
+
+def test_the_instance_file_is_named_with_what_it_holds_and_who_reads_it(tmp_path):
+    """⭐ `W465`: the reader is told a second checkout records its own four values."""
+    text = document(tmp_path)
+    assert f"`{skill.INSTANCE_ENV}` holds this checkout's compose project" in text
+    assert "the study server finds the containers by" in text
 
 
 def test_the_runner_and_where_it_comes_from_are_named(tmp_path):

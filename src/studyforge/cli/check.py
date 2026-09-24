@@ -70,7 +70,7 @@ from datetime import UTC, datetime
 from pathlib import Path, PurePosixPath
 
 from studyforge.archive.scrub import PersonalDataLeak, scrub
-from studyforge.execute import EXIT_STOPPED, EXIT_TIMEOUT, Runner, RunRefused, container_for
+from studyforge.execute import EXIT_STOPPED, EXIT_TIMEOUT, Runner, RunRefused, recorded
 from studyforge.execute import exit_line as spell_exit
 from studyforge.exercise import Exercise, ExerciseError, from_document
 from studyforge.exitcodes import UNUSABLE
@@ -192,7 +192,8 @@ def _check(
     """Run the one command the practice's record names, and report it."""
     exercise = practice.exercise
     try:
-        runner = runner_for(corpus.root, container_for(corpus.manifest.source))
+        # ⭐ THIS checkout's runner, by the name it recorded (`W465`), never `source` alone.
+        runner = runner_for(corpus.root, recorded(corpus.root, corpus.manifest.source).runner)
         command = exercise.test_command if exercise.graded else exercise.run_command
         state = f"graded ({exercise.trust})" if exercise.graded else "ungraded"
         say(f"check {exercise.main_path}  practice {practice.key}  {state}  mode {runner.mode()}")

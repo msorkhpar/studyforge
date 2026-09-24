@@ -82,6 +82,7 @@ from studyforge.execute.commands import (
 from studyforge.execute.editor import EDITOR_TTL, Editor, EditorProbe
 from studyforge.execute.errors import RunRefused
 from studyforge.execute.handle import EXIT_STOPPED, EXIT_TIMEOUT, RunHandle, exit_line
+from studyforge.execute.instance import INSTANCE_FILE, Names, recorded
 from studyforge.execute.mode import CONTAINER, HOST, MODES, WORKDIR_IN_CONTAINER, ModeProbe
 from studyforge.execute.output import LineGate
 from studyforge.execute.quiet import TOOLCHAINS, Quiet, Toolchain, filter_lines, select
@@ -106,6 +107,7 @@ __all__ = [
     "EXIT_STOPPED",
     "EXIT_TIMEOUT",
     "HOST",
+    "INSTANCE_FILE",
     "MAIN_KEY",
     "MODES",
     "ROOT_DIR",
@@ -119,6 +121,7 @@ __all__ = [
     "EditorProbe",
     "LineGate",
     "ModeProbe",
+    "Names",
     "Quiet",
     "RunHandle",
     "RunRefused",
@@ -131,6 +134,7 @@ __all__ = [
     "filter_lines",
     "open_url",
     "practice_folder",
+    "recorded",
     "require_commands",
     "require_container",
     "require_workdir",

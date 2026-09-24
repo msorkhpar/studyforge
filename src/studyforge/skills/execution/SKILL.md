@@ -132,7 +132,16 @@ breaks any of spec §8.1's four compose rules, and §8.3's socket rule besides:
 ⭐ **Per-project values arrive as compose interpolations with defaults**, so the
 rendered file is complete with no argument and still adapts to the host it is on.
 That is how *"sufficient from the contract alone"* and *"the port and the uid
-differ per host"* are both true at once.
+differ per host"* are both true at once. ⭐ **The project name, the editor's
+host port and both container names are among them** (`STUDYFORGE_PROJECT`,
+`STUDYFORGE_EDITOR_PORT`, `STUDYFORGE_EDITOR_NAME`, `STUDYFORGE_RUNNER_NAME`),
+each defaulting to the value it always had; ⛔ the loopback address stays
+literal, so only the port number is ever interpolated.
+
+⛔ **No editor bind reaches a quiz's key.** `binds.unkeyed` refuses a sources
+or workspaces directory that is, holds or sits inside the bundles' or the
+archive's directory: the key never leaves the local server, and the editor is a
+process a reader opens any bound file in.
 
 ⛔ **The file has TWO services, and the editor binds TWO directories:**
 
@@ -256,6 +265,14 @@ in. The `ask` in `record`'s own docstring is one that works.
 both calls — when the component's pin, the prime or the host's architecture
 moves.
 
+⭐ **This checkout's instance** — its compose project, the editor's host port
+and both container names — is `.studyforge/execution/instance.env`. `write`
+records the defaults there when nothing is recorded, and never overwrites it.
+A SECOND checkout of the same corpus on one host records its own four, which
+the compose command and the study server both read:
+
+    record_instance(execution, corpus, project=..., port=..., editor=..., runner=...)
+
 ### 6. Build the images and bring both up — one command
 
 Run the runner's and the editor's `built_by` argv **from the component's
@@ -267,6 +284,7 @@ it. Then, from the corpus root:
 
     docker compose --env-file .studyforge/execution/runner.env \
       --env-file .studyforge/execution/editor.env \
+      --env-file .studyforge/execution/instance.env \
       -f .studyforge/execution/compose.yaml up -d --wait
 
 ⭐ That one command starts the editor AND the runner, each from the tag the
@@ -288,6 +306,7 @@ running it runs `docker compose`, and the study server never holds the socket.
 | `.studyforge/execution/runner.env` | the primed runner's tag, as the component printed it (step 5a) |
 | `.studyforge/execution/editor.env` | the editor's tag, primed as the contract declares, as the component printed it (step 5a) |
 | `.studyforge/execution/written.json` | every file above and its digest, so a hand-edit to one is reported (step 5) |
+| `.studyforge/execution/instance.env` | this checkout's project, editor port and container names (step 5a) |
 | `.studyforge/execution/toolchain.json` | the selection: the set, what is carried, what is not and why, and the two argv |
 | `.studyforge/execution/prime/<tool>/…` | one project per seeded tool: the corpus's own build, source and test, re-rooted at the build |
 | `EXECUTION.md` | what a reader opens first: what to build, what to run, and what this corpus declared |

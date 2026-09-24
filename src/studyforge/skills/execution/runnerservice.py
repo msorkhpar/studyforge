@@ -20,6 +20,12 @@ finds the container and `execute.mode` stops falling back to the host. ⚠️ Tw
 spellings of one name is the defect where they differ by a character and every
 run silently goes to the host; the skill's tests hold the two equal.
 
+⭐ **Written as an interpolation with that name as its default** (`W465`):
+`container_name: ${STUDYFORGE_RUNNER_NAME:-studyforge-runner-<source>}`, so a
+second instance of one corpus records its own runner's name and `serve` reads it
+from the same record (`execute.instance`). ⭐ `Runner.name` is the DEFAULT —
+what an instance that recorded nothing runs.
+
 ## ⛔ THE SERVING PROCESS IS NOT HERE, AND NEITHER IS THE SOCKET
 
 ⭐ **The reader's `docker compose` starts this container, never `serve`** (spec
@@ -87,8 +93,13 @@ def plan(
     root: str,
     runtimes: tuple[str, ...],
     runs_as: Mapping[str, object],
+    name_variable: str | None = None,
 ) -> Runner:
-    """Return the runner service for corpus `source`, whose root compose reaches at `root`."""
+    """Return the runner service for corpus `source`, whose root compose reaches at `root`.
+
+    ⭐ `name_variable`, when given, is the variable the container's name is
+    interpolated from, with the contract's name as its default.
+    """
     block = require(document, SERVICE)
     if not isinstance(block, Mapping):
         raise ContractRefused("the contract's runner must be an object")
@@ -102,7 +113,7 @@ def plan(
     name = container_name(block, source)
     built: dict[str, object] = {
         "image": f"${{{selection.image_env}:?{_why_unset(selection.image_env)}}}",
-        "container_name": name,
+        "container_name": name if name_variable is None else f"${{{name_variable}:-{name}}}",
         str(require(runs_as, "compose_key")): require(runs_as, "compose_value"),
     }
     if optional(block, "init", "enabled") is True:

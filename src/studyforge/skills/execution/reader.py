@@ -37,6 +37,7 @@ def document(
     compose_file: str,
     runner_env: str,
     editor_env: str,
+    instance_env: str,
     selection: toolchain.Selection,
     primed: Prime,
     block: Mapping[str, object],
@@ -93,13 +94,18 @@ def document(
         "## Bring it up",
         "",
         "```",
-        f"docker compose --env-file {runner_env} --env-file {editor_env} -f {compose_file} "
-        "up -d --wait",
+        f"docker compose --env-file {runner_env} --env-file {editor_env} "
+        f"--env-file {instance_env} -f {compose_file} up -d --wait",
         "```",
         "",
         "⛔ That one command starts the editor AND the runner, each from the tag the",
         "corpus recorded. The study server never starts either and never holds the",
         "Docker socket (§8.3).",
+        "",
+        f"⭐ `{instance_env}` holds this checkout's compose project, the editor's host",
+        "port and both container names; the study server finds the containers by",
+        "the same file. A second checkout of this corpus on one host records its own",
+        "four with the skill's record step, and runs beside this one.",
         "",
     ]
     first = composefile.must_exist_first(

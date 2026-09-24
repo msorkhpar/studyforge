@@ -31,6 +31,7 @@ OUTPUTS = (
     execution.READER_DOC,
     execution.RUNNER_ENV,
     execution.EDITOR_ENV,
+    execution.INSTANCE_ENV,
 )
 
 

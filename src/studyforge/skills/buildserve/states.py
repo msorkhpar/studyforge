@@ -16,7 +16,7 @@ manifest's `exercises` flag, the namespaces the serving process offers, and
 sentence is never respelled, `serve.routes.run.NAMESPACE` for the execution
 namespace's one spelling, `validate.report.OK`, and this package's
 `narration` for what provides narration and how to have it, and
-`studyforge.execute` for `ModeProbe`, `container_for` and `HOST` — the one
+`studyforge.execute` for `ModeProbe`, `recorded` and `HOST` — the one
 definition of where a run executes, imported and never copied (`W381`). ⛔ It
 reads answers and opens nothing; the one question it asks is that probe's, which
 reads (`docker inspect`) and never starts, stops or enters a container.
@@ -77,7 +77,8 @@ from typing import Protocol
 
 import studyforge.serve.routes.run as run
 from studyforge.cli.narrate.report import NO_SERVICE
-from studyforge.execute import HOST, ModeProbe, container_for
+from studyforge.execute import HOST, ModeProbe
+from studyforge.execute import recorded as recorded_names
 from studyforge.skills.buildserve import narration
 from studyforge.validate.report import OK
 
@@ -207,10 +208,11 @@ def probe_for(root: Path | str, source: str) -> ModeProbe:
     """Return `execute`'s own probe for corpus `source` at `root`.
 
     ⭐ The same container name and root the served instance's runner is built
-    from (`serve.routes.runs.runner_for`), so the skill asks the question a run
-    asks. ⛔ Nothing is asked until `mode()`.
+    from (`serve.routes.runs.runner_for`): the name THIS checkout recorded
+    (`W465`), so the skill asks the question a run asks. ⛔ Nothing is asked until `mode()`.
     """
-    return ModeProbe(Path(root).absolute(), container_for(source))
+    where = Path(root).absolute()
+    return ModeProbe(where, recorded_names(where, source).runner)
 
 
 def recorded(plan: object) -> bool:

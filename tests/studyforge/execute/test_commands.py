@@ -73,24 +73,24 @@ def test_the_container_is_named_for_its_corpus_as_the_readers_run_line_names_it(
 
 
 def test_the_editor_container_is_the_one_the_generated_compose_file_brings_up(tmp_path):
-    """⭐ The convention and the file that realises it, read together (`W416`).
+    """⭐ The name the framework looks a running editor up by, read in the file (`W416`).
 
-    ⚠️ Compose derives a container's name as `<project>-<service>-<index>`, and
-    what this asserts is the two halves this repository owns — the project
-    `skills.execution` names and the one service it renders — against the one
-    name the framework looks a running editor up by. ⛔ **The derivation itself
-    is Compose's and cannot be read in this gate**, which has no Docker: it is a
-    host reading, in `W416`'s handoff, and taken against this same spelling.
+    ⭐ **Declared now, not derived** (`W465`): the editor service carries a
+    `container_name` interpolation whose default is this spelling, and the
+    project's default is still the one whose `<project>-editor-1` it was, so an
+    instance that recorded nothing is called exactly what it always was.
     """
     document = manifest_document()
     generated = onboard.generate(
         parse(json.dumps(document)), editor_text=editor_text(), root=corpus(tmp_path)
     )
     text = dict(generated.files)[onboard.COMPOSE_FILE]
-    project = re.search(r"^name: (\S+)$", text, flags=re.MULTILINE)
-    services = re.findall(r"^  (\S+):$", text.split("services:", 1)[1], flags=re.MULTILINE)
-    assert project is not None and services
-    assert editor_container_for(document["source"]) == f"{project.group(1)}-{services[0]}-1"
+    project = re.search(r'^name: "\$\{STUDYFORGE_PROJECT:-(\S+)\}"$', text, flags=re.MULTILINE)
+    editor = text.split("\n  editor:\n", 1)[1].split("\n  runner:\n", 1)[0]
+    named = re.search(r'container_name: "\$\{STUDYFORGE_EDITOR_NAME:-(\S+)\}"', editor)
+    assert project is not None and named is not None
+    assert editor_container_for(document["source"]) == named.group(1)
+    assert named.group(1) == f"{project.group(1)}-editor-1"
 
 
 @pytest.mark.parametrize("name", ["two words", "-flag", "a;b", "", None, "a/b"])

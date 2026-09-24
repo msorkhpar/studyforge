@@ -158,7 +158,8 @@ def test_write_puts_every_path_on_disk_and_the_copies_are_byte_identical(tmp_pat
     root = corpus(tmp_path)
     result = skill.generate(manifest(), editor_text=editor_text(), root=root)
     written = skill.write(result, root)
-    assert set(written) == set(result.paths())
+    # ⭐ Plus the instance's defaults, which a fresh checkout has not recorded yet (`W465`).
+    assert set(written) == {*result.paths(), skill.INSTANCE_ENV}
     for where, origin in result.copies:
         assert (root / where).read_bytes() == (root / origin).read_bytes()
 
@@ -315,10 +316,13 @@ def test_the_runner_comes_up_with_the_editor_under_the_names_execute_looks_for(t
     made_ = made(tmp_path)
     text = dict(made_.files)[skill.COMPOSE_FILE]
     assert "\n  runner:\n" in text
-    assert f"container_name: {container_for('demo')}" in text
+    # ⭐ Each name is an interpolation whose default is the one `execute` has
+    # always looked for (`W465`); the editor's is declared, not compose's own.
+    assert f'container_name: "${{STUDYFORGE_RUNNER_NAME:-{container_for("demo")}}}"' in text
     assert made_.runner is not None and made_.runner.name == container_for("demo")
-    # ⭐ The editor's name is compose's own: `<project>-<service>-1`.
-    assert "name: studyforge-demo\n" in text and "\n  editor:\n" in text
+    assert 'name: "${STUDYFORGE_PROJECT:-studyforge-demo}"\n' in text
+    assert "\n  editor:\n" in text
+    assert f'container_name: "${{STUDYFORGE_EDITOR_NAME:-{editor_container_for("demo")}}}"' in text
     assert editor_container_for("demo") == "studyforge-demo-editor-1"
     assert '"../..:/work"' in text
 

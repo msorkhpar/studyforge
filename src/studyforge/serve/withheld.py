@@ -7,7 +7,9 @@ two ways a document leaves this process:
 - `redacted(document)` — a unit document with every quiz option cut down to its
   id and its words, which is what the content namespace answers;
 - `carries(body, marks)` — whether a file's bytes hold a served quiz's key or one
-  of its sentences, which is what the static mount refuses.
+  of its sentences, which is what the static mount refuses;
+- `OutputGate(marks)` — a run's output, line by line, with a line that carries
+  either replaced by `WITHHELD_LINE` (`W465`, the run route's half of `W452/1`).
 
 **How you use it.**
 
@@ -207,3 +209,36 @@ def refused_by(source: object) -> Callable[[bytes], bool]:
     added or edited while the instance serves is withheld from then on.
     """
     return lambda body: carries(body, marks_of(source))
+
+
+#: What a run's output says in place of a line that carries a key or a sentence.
+WITHHELD_LINE = "--- a line is withheld here: it carries a quiz's key ---"
+
+
+class OutputGate:
+    """A run's output, one line at a time, never carrying a served quiz's key (`W465`).
+
+    ⛔ **A run's output is whatever a corpus program prints** (`W452/1`), and the
+    runner binds the whole corpus root — so a program that prints a bundle
+    would hand the reader its key through the run route. ⭐ Each line is
+    read as `carries` reads a file, and ⛔ **a line is judged with the run's
+    earlier lines behind it**: a pretty-printed bundle puts the question id and
+    the key on different lines, so once a served question id has been printed,
+    every later line spelling a key is withheld too. ⚠️ A key printed BEFORE any
+    question id of its quiz is not detected — the order the bundle's own shape
+    never takes — and neither is anything `carries` cannot read.
+    """
+
+    def __init__(self, marks: Marks) -> None:
+        """Hold the marks of the quizzes this instance serves; no id has been printed yet."""
+        self.marks = marks
+        self.named = False
+
+    def __call__(self, line: str) -> str:
+        """Return `line`, or `WITHHELD_LINE` when it carries a key or a sentence."""
+        keyed = KEY_PATTERN.search(line) is not None
+        named = any(f'"{one}"' in line for one in self.marks.questions)
+        self.named = self.named or named
+        if (keyed and self.named) or carries(line.encode("utf-8"), self.marks):
+            return WITHHELD_LINE
+        return line

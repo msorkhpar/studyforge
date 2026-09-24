@@ -30,6 +30,8 @@ and on nothing inside either component but its `consuming.json` (R18).
 | `record` | the runner's and the editor's tags, asked of the component and written for compose |
 | `written` | every file this skill wrote and its digest, so a hand-edit to one is reported |
 | `prime` | the corpus's own build, source and test, as one project per seeded tool |
+| `binds` | which directories the editor binds, and the keyed ones it never may |
+| `instance` | this checkout's project, editor port and container names, recorded |
 | `onboard` | the whole of it, and the empty answer for a corpus that is not runnable |
 
 ## ⛔ SEPARATED FROM ONBOARDING, AND THE SEPARATION IS THE POINT
@@ -62,11 +64,13 @@ from studyforge.skills.execution.contract import (
     ContractRefused,
     read,
 )
+from studyforge.skills.execution.instance import record_instance
 from studyforge.skills.execution.onboard import (
     COMPOSE_FILE,
     DIRECTORY,
     EDITOR_ENV,
     GENERATED,
+    INSTANCE_ENV,
     NOT_MATERIAL,
     PRIME_DIR,
     READER_DOC,
@@ -96,6 +100,7 @@ __all__ = [
     "EDITOR_COMPONENT",
     "EDITOR_PROMISE",
     "GENERATED",
+    "INSTANCE_ENV",
     "NARRATION_API",
     "NARRATION_COMPONENT",
     "NARRATION_PROMISE",
@@ -123,6 +128,7 @@ __all__ = [
     "prime_for",
     "read",
     "record_editor",
+    "record_instance",
     "record_runner",
     "render",
     "select",
