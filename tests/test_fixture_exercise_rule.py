@@ -28,7 +28,7 @@ from tests.fixture_checks.exercise import check_exercise
 ROOT = Path(__file__).resolve().parent.parent
 SPEC = ROOT / "docs" / "specs" / "2026-09-08-studyforge-v1-design.md"
 #: §7's subsection for the record, as a heading.
-HEADING = "### A file with no test (`W357`)"
+HEADING = "### A file with no test"
 #: ⭐ The guide cites the spec as a file, never by a deep anchor: an anchor is
 #: a heading's spelling, which moves whenever the spec is edited.
 ANCHOR = "](../specs/2026-09-08-studyforge-v1-design.md)"
