@@ -581,13 +581,23 @@ What it reads, and the choices in it:
 
 ### The framework pin records the installed library's version and commit, never a path
 
-**Decision.** `.studyforge/pin.json`, rendered by `studyforge.skills.onboarding.pin` (`pin_api` 2), records `framework: "studyforge"`, `where: "installed"`, the installed library's `version`, the forty-hex `commit` it was built from, and the stubbed skills. Both values are checked by shape and never quoted back in a refusal. Each skill stub under `.studyforge/skills/` names the pinned commit and version and points at `python3 -m studyforge.skills.documents <skill>` and `python3 -m studyforge.skills.onboarding.verify .`, never at a path. The generated `test_framework_pin.py` fails when a stub and the pin disagree, when the library the corpus's Python imports is not the pinned version, or when the framework is a submodule. `reonboard` refuses to keep a pin whose version differs from the running library, or a pin that predates the installed form, until it is re-pinned with `framework_commit`. Because nothing generated carries a path, a regenerate from a linked worktree writes the same bytes as one from the main checkout.
+**Decision.** `.studyforge/pin.json`, rendered by `studyforge.skills.onboarding.pin` (`pin_api` 2), records `framework: "studyforge"`, `where: "installed"`, the installed library's `version`, the forty-hex `commit` it was built from, and the stubbed skills. Both values are checked by shape and never quoted back in a refusal. Each skill stub under `.studyforge/skills/` names the pinned commit and version and points at `python3 -m studyforge.skills.documents <skill>` and `python3 -m studyforge.skills.onboarding.verify .`, never at a path. The generated `test_framework_pin.py` fails when a stub and the pin disagree, when the library the corpus's Python imports is not the pinned version or build, or when the framework is a submodule. `reonboard` refuses to keep a pin whose version or commit differs from the running library's, or a pin that predates the installed form, until it is re-pinned with `framework_commit`. Because nothing generated carries a path, a regenerate from a linked worktree writes the same bytes as one from the main checkout.
 
 **Why.** A person converting their own material installs the library rather than keeping a framework checkout beside the corpus, so a pin must name the library and verify its version. A copied procedure ages silently, which the pointer and its drift check prevent, and output that depends on which checkout ran the skill breaks reproducibility.
 
 **Serves.** `R10`, `R18`, `R7`
 
 **Aliases.** `INT-14/1`, `ISO-M10/1`, `W270`, `W286`, `W321`, `W442`
+
+### The pin names the installed wheel's own commit, and it is verified
+
+**Decision.** A wheel built from the framework carries a `COMMIT` stamp: `setup.py` writes `studyforge/COMMIT` at build time, holding the forty-hex commit of the git checkout the wheel is built from, and refuses to build from anything that is not the top of a git checkout. `studyforge.skills.onboarding.library.commit()` reads it back, and answers `None` for an editable or source-tree install, which cannot say its commit. `onboard` pins that commit without being told (`library.built_from`); a `framework_commit` a caller names is accepted only when the library has no stamp, and refused when it differs from the stamp. `python3 -m studyforge.skills.onboarding.verify` and `reonboard` (`skills.onboarding.reonboard`) refuse a pin that names another commit than the one the running library was built from, and the generated `test_framework_pin.py` asserts the same.
+
+**Why.** Every build of one version shares its version number, so the commit is what tells two libraries apart, and a commit typed by an operator is a claim the library can check for itself.
+
+**Serves.** `R10`, `R19`
+
+**Aliases.**
 
 ### Re-onboarding keeps every answer the corpus already records
 
@@ -639,13 +649,13 @@ What it reads, and the choices in it:
 
 **Aliases.** `W331`, `W331/2`, `W278`
 
-### The execution skill keeps its own record of what it wrote
+### Execution-generated files are guarded as onboarding's are
 
-**Decision.** `execution.write` and both record steps stamp each file they write, with its digest, in `.studyforge/execution/written.json`. Onboarding's `hand_edited` reads that record beside its own install record and names, in a sentence, each execution file whose bytes moved or that is gone. The stamp merges, sorts and carries no clock, so running the skill again over an unchanged corpus rewrites no byte. Onboarding's install record is not extended: a re-onboard rewrites it and `uninstall` undoes it, and neither is the execution skill's to trigger.
+**Decision.** `.studyforge/execution/written.json` (`studyforge.skills.execution.written`, `written_api` 1) records the digest of every file the execution skill writes: `write` and the two record steps (`record_runner`, `record_editor`) stamp what they put on disk. Entries are sorted by path and carry no clock, a stamp merges into the record rather than replacing it, and the record does not list itself. Onboarding's `hand_edited` includes the execution record's report, so one check names every generated file of either skill that was edited or is missing. The record sits under the skill's own directory, which the corpus already declares not material, so no manifest changes.
 
-**Why.** A wrong tag planted in `editor.env` was caught by nothing, because the execution skill's outputs were outside the only record the hand-edit check read.
+**Why.** A hand-edit to a generated file is a finding (R19), and a file no record lists cannot be found edited. Each writer keeps its own record because onboarding's is rewritten by every re-onboard and undone by `uninstall`, neither of which is the execution skill's to trigger.
 
-**Serves.** `R19`
+**Serves.** `R19`, `R10`
 
 **Aliases.** `W466`, `PO-188/1`
 
