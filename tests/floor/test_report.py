@@ -203,4 +203,4 @@ def test_the_REAL_sibling_assertions_with_the_workspace_absent_print_a_NON_EMPTY
     assert result.returncode == 0, result.stdout + result.stderr
     lines = _disclosure(result.stdout)
     assert not lines[0].startswith(f"{UNREACHABLE}: 0 "), lines
-    assert any("is not checked out beside this repository" in line for line in lines[1:]), lines
+    assert any("is not checked out in a workspace" in line for line in lines[1:]), lines

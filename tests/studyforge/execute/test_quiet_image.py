@@ -25,23 +25,25 @@ from __future__ import annotations
 import json
 import shutil
 import subprocess
+from pathlib import Path
 
 import pytest
 
 from studyforge.execute import CONTAINER, Runner, exit_line
 from studyforge.execute.quiet import MAVEN, filter_lines
 from tests.studyforge.execute import container
-from tests.support import repository_root
 
 COMPILE_PLANT = {"file": "src/main/java/smoke/Adder.java", "from": "a + b", "to": "a + c"}
 #: The label `code-server-toolchain`'s build writes: the declared set, space-separated.
 RUNTIMES_LABEL = "org.studyforge.runner.runtimes"
 
 
-def smoke_project():
-    from tests.harness.workspace import workspace_root
+def smoke_project() -> Path | None:
+    """The sibling's Maven smoke project, or `None` when no workspace names the sibling."""
+    from tests.harness.workspace import sibling
 
-    return workspace_root(repository_root()) / container.SIBLING / "docker/minimal/smoke/maven"
+    checkout = sibling(container.SIBLING)
+    return checkout / "docker/minimal/smoke/maven" if checkout is not None else None
 
 
 def declared_runtimes(image: str) -> str | None:
@@ -68,7 +70,7 @@ def undeclared_reason(label: str | None) -> str | None:
 
 
 def reason_to_skip() -> str | None:
-    if not (smoke_project() / "smoke.json").is_file():
+    if smoke_project() is None or not (smoke_project() / "smoke.json").is_file():
         return f"the sibling {container.SIBLING}'s Maven smoke project is not reachable"
     return container.skip_reason() or undeclared_reason(declared_runtimes(container.image()))
 

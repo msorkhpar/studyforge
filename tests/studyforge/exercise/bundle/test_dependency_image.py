@@ -36,7 +36,7 @@ from studyforge.exercise import of as exercise_of
 from studyforge.exercise.bundle import RUN_OUTPUT_DIRNAME, emit, write
 from tests.studyforge.execute import container
 from tests.studyforge.exercise.bundle import dependency
-from tests.support import repository_root, tool_on_path
+from tests.support import tool_on_path
 
 #: The consent this module needs before it builds an image.
 CONSENT = "STUDYFORGE_RUNNER_BUILDS"
@@ -52,9 +52,12 @@ def reason_to_skip() -> str | None:
 
 
 def sibling() -> Path:
-    from tests.harness.workspace import workspace_root
+    """The sibling's checkout. ⭐ `reason_to_skip` has already found it, or this never runs."""
+    from tests.harness.workspace import sibling as checkout
 
-    return workspace_root(repository_root()) / container.SIBLING
+    found = checkout(container.SIBLING)
+    assert found is not None, "the declaration was read, so the checkout was named"
+    return found
 
 
 @pytest.fixture(scope="module")

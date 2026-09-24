@@ -1,7 +1,7 @@
-"""The spec's corpus table, read against the corpora this workspace pins (`W339`).
+"""The spec's corpus table, read against the corpora a named workspace holds (`W339`).
 
 Mirrors no source module. ⭐ It answers a clause no unit test can: *a row of the
-spec's corpus table that contradicts a pinned corpus's manifest is caught
+spec's corpus table that contradicts a committed corpus's manifest is caught
 rather than read.*
 
 ## ⛔ Why the table is worth an instrument
@@ -15,15 +15,15 @@ claiming graders for that corpus is a claim the corpus refutes.
 
 ## ⚠️ What it reads, and what it does not
 
-- ⭐ **The manifest at the PINNED commit**, through `git show`, never the
-  sibling's working tree: the pin is what this workspace says it builds with,
-  and a checkout on another branch is not the workspace. ⛔ Read-only (R3).
+- ⭐ **The manifest at the checkout's COMMIT**, through `git cat-file`, never the
+  sibling's working tree: a file on no ref reproduces on no other host. The
+  checkouts are the ones `STUDYFORGE_WORKSPACE` names. ⛔ Read-only (R3).
 - ⛔ **Only one direction is asserted**: `exercises: false` ⇒ the cell claims no
   graders. ⚠️ `exercises: true` does not imply graders — an ungraded exercise
   is a real third state (§7, C5) — so the converse would refuse a true row.
-- ⚠️ **A sibling that is not on disk is not read**, and the sweep SKIPS SAYING
-  SO when it could read no manifest at all — which is the pinned image, where
-  only the checkout is mounted (Ruling 204). ⭐ The refusal half is held on a
+- ⚠️ **A sibling that is not named is not read**, and the sweep SKIPS SAYING
+  SO when it could read no manifest at all — a clean clone, and the pinned
+  image, where only the checkout is mounted (Ruling 204). ⭐ The refusal half is held on a
   synthetic table below, so the image still proves the instrument can go red.
 """
 
@@ -34,8 +34,8 @@ from pathlib import Path
 
 import pytest
 
-from tests.harness.workspace import git, holds, read
-from tests.studyforge.corpus.placement.test_corpora import WORKSPACE_ENV, workspace_root
+from tests.harness import sibling
+from tests.harness.workspace import SAFE_NAME, WORKSPACE_ENV, workspace_root
 from tests.support import repository_root
 
 #: The document the table lives in.
@@ -94,34 +94,34 @@ def contradictions(rows: dict[str, dict[str, str]], manifests: dict[str, dict]) 
     for name, manifest in sorted(manifests.items()):
         row = rows.get(name)
         if row is None:
-            found.append(f"{name} is pinned with a manifest and the spec's table has no row for it")
+            found.append(f"{name} commits a manifest and the spec's table has no row for it")
         elif manifest.get("exercises") is False and not claims_no_graders(row[GRADERS]):
             found.append(
-                f"{name}: the table's {GRADERS} cell claims graders and the pinned manifest "
+                f"{name}: the table's {GRADERS} cell claims graders and the committed manifest "
                 f"declares exercises: false"
             )
     return found
 
 
-def pinned_manifests() -> tuple[dict[str, dict], list[str]]:
-    """`({name: manifest}, [unread name])` for every present sibling component.
+def committed_manifests() -> tuple[dict[str, dict], list[str]]:
+    """`({name: manifest}, [unread name])` for every checkout in the named workspace.
 
-    ⭐ A component whose pinned commit carries no manifest is not a corpus yet
-    and is neither: it has nothing to contradict. ⚠️ One that is not on disk,
-    or does not hold its pinned commit, is UNREAD and named as such.
+    ⭐ A checkout whose commit carries no manifest is not a corpus and is neither:
+    it has nothing to contradict. ⚠️ One whose manifest is only in its working
+    tree is UNREAD and named as such, because that reading reproduces nowhere.
     """
-    workspace = workspace_root()
+    root = workspace_root()
     manifests, unread = {}, []
-    for component in read(repository_root()):
-        if component.where != "sibling" or not component.present:
+    if root is None or not root.is_dir():
+        return manifests, unread
+    for checkout in sorted(path for path in root.iterdir() if path.is_dir()):
+        if not SAFE_NAME.match(checkout.name):
             continue
-        checkout = workspace / component.name
-        if not checkout.is_dir() or not holds(checkout, component.commit):
-            unread.append(component.name)
-            continue
-        shown = git(checkout, "show", f"{component.commit}:{MANIFEST}")
-        if shown.returncode == 0:
-            manifests[component.name] = json.loads(shown.stdout)
+        reading = sibling.read_sibling(checkout.name, MANIFEST)
+        if reading.committed:
+            manifests[checkout.name] = json.loads(reading.text)
+        elif reading.working_tree:
+            unread.append(checkout.name)
     return manifests, unread
 
 
@@ -168,19 +168,20 @@ def test_a_row_claiming_graders_is_not_refused_when_the_manifest_sets_work():
     assert contradictions(synthetic(DENIED), runnable) == []
 
 
-def test_a_pinned_corpus_the_table_does_not_name_is_refused():
+def test_a_committed_corpus_the_table_does_not_name_is_refused():
     assert contradictions(synthetic(DENIED), {"Y": {"exercises": False}})
 
 
-# --- the real table against the real pins ------------------------------------
+# --- the real table against the real corpora ----------------------------------
 
 
-def test_the_spec_table_agrees_with_every_pinned_corpus_manifest():
-    manifests, unread = pinned_manifests()
+def test_the_spec_table_agrees_with_every_committed_corpus_manifest():
+    manifests, unread = committed_manifests()
     if not manifests:
         pytest.skip(
-            f"no pinned corpus manifest could be read here (unread: {unread}), so the "
-            f"spec's table is proved against no corpus; set {WORKSPACE_ENV} to point at "
-            f"the workspace root. The refusal is held on the synthetic table above"
+            f"no committed corpus manifest could be read here (unread: {unread}), so the "
+            f"spec's table is proved against no corpus; set {WORKSPACE_ENV} to the "
+            f"directory the corpus checkouts sit in. The refusal is held on the "
+            f"synthetic table above"
         )
     assert contradictions(spec_rows(), manifests) == []
