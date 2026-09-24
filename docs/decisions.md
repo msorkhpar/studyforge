@@ -1065,6 +1065,14 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`
 
+### A page learns whether its clips are on disk from a script that is always there
+
+**Decision.** A narrated page links `render.pageassets.CLIPS_NAME` in the shared asset directory ahead of the bundle, and `render/assets/narration.js` shows the transport and binds its clicks and keys only when that script says the clips are present (`render.pageassets.clips`, whose bodies are `PRESENT`, `ABSENT` and `RELEASED`). A build writes `PRESENT` or `ABSENT` from the disk (`generate.narration.clip_signal`) and never replaces `RELEASED`, which the release pack writes; the restore writes `PRESENT`. Served, `serve.clips` answers the same path from the disk as it is, with `no-store`, and rewrites nothing. When no clip the record names is on disk (`generate.narration.clips_on_disk`), every page links the clips its record names and names no gap, so a restore is heard without a rebuild.
+
+**Why.** A request for a file that is not there is a console error over `file://` and served alike, so a page cannot probe a clip. A site committed from the author's disk must not tell a fresh checkout that its clips are there.
+
+**Serves.** `R8`, `R6`
+
 ### The media footprint weighs every clip the narration record locates
 
 **Decision.** `corpus.media.footprint` adds to its walk of the declared units' media directories every clip the narration record places anywhere (read by `corpus.media.recorded`), counting a clip both reach once; a recorded clip it cannot locate is named in `MediaFootprint.unweighed` rather than dropped. It reads placement from the record and never re-derives it.

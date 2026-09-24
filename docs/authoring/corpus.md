@@ -265,6 +265,18 @@ longer says those words. Neither changes its exit code.
 and tells you to build again with `--no-narration`, because the player is part
 of each page.
 
+**When the clips are not on disk, a page shows no narration control.** That is
+the normal state of a fresh clone whose clips are a separate download. The page
+finds out from `.studyforge/assets/narration-clips.js`, a small script the build
+writes next to the stylesheet, and never by asking for a clip, so the browser's
+console stays clean. A page built with no clip on disk still links every clip
+its narration record names, so once the clips are restored into place, and the
+restore has set that script to `present`, the next page load plays them without
+a rebuild. Served, `studyforge serve` checks the disk itself on every page load.
+A build never changes the script from `released`, which is what packing the
+clips for release sets, so a site you commit after packing still tells a fresh
+clone that its clips have to be fetched.
+
 ---
 
 ## `onboarding_doc` — where the reader document goes

@@ -112,7 +112,11 @@ so steps 2 and 6 ask. Your answer at onboarding is `corpus.json`'s
 `--no-narration` to override it for one run. A site without narration has no
 player and no "missing" notice, and it is complete: practices, quizzes,
 progress and contents are unchanged, and clips already on disk are kept, so
-turning narration back on plays them without synthesising anything.
+turning narration back on plays them without synthesising anything. A narrated
+site whose clips are not on disk yet, such as a fresh clone whose clips are a
+separate download, shows no narration control and keeps the browser's console
+clean. Once the clips are restored, the next page load plays them with no
+rebuild.
 
 ## The authoring reference
 
