@@ -1,14 +1,9 @@
 # Worked examples
 
 **Two complete corpora, both in this repository, both of which you can run the
-commands against right now.**
-
-⚠️ **Two that are walked through here, not two that exist.** The repository's
-valid fixture corpora are whichever `tests/fixture_checks`' `VALID` names, and
-`tests/fixtures/README.md` describes each; a third one carries a property this
-page has nothing to teach about — two units generated from one source file —
-and adding a column for it would make this page about the fixture set rather
-than about authoring a corpus.
+commands against right now.** The commands below are run from the root of your
+framework checkout. `tests/fixtures/` holds other corpora for the framework's
+own tests; these two are the ones to copy from.
 
 **They are deliberately the two ends of the range.** One is a repository-shaped
 source with two container levels, graded practices and a declared edit to a
@@ -17,8 +12,7 @@ all.
 
 **The flat one is here because a reference that only demonstrates the
 complicated case teaches people that the simple case is unsupported.** It is
-not. Two of the four source shapes this framework was designed against are
-depth 1.
+not: depth 1 is fully supported.
 
 | | **A — flat prose** | **B — a repository with exercises** |
 |---|---|---|
@@ -54,7 +48,7 @@ depth 1.
     "exclude": [
       {
         "path": "depth-one/ALL.md",
-        "why": "whole-series aggregate: an ordered concatenation of 01, 02 and 03, digest-identical to them joined (C2). Ingesting it would read every unit twice."
+        "why": "whole-series aggregate: an ordered concatenation of 01, 02 and 03, identical to them joined. Ingesting it would read every unit twice."
       }
     ]
   },
@@ -63,8 +57,8 @@ depth 1.
 ```
 
 **Read what it does *not* say.** No `media` block — the defaults apply and a
-corpus with no media declares nothing. No `not_material` — this one predates
-that key, which is why its `corpus_api` is `1` and not `2`; both are read.
+corpus with no media declares nothing. No `not_material`, so `corpus_api` `1`
+is enough; a manifest may declare the lowest version its keys need.
 `permitted_edits` is empty, which is the ordinary case and a pass.
 
 **`exercises: false` is the interesting field.** This corpus is finished. It
@@ -93,7 +87,7 @@ tests/fixtures/depth1/
 **Check it:**
 
 ```
-python3 -m studyforge.validate tests/fixtures/depth1
+studyforge validate tests/fixtures/depth1
 ```
 
 ```
@@ -110,11 +104,11 @@ says it could not put those questions rather than passing them.
 **See what a build would create:**
 
 ```
-python3 -m studyforge.cli.plan tests/fixtures/depth1
+studyforge plan tests/fixtures/depth1
 ```
 
-Its last line is the summary: `plan: 20 path(s) to create, 0 file(s) to edit,
-0 ignore line(s), 0 refusal(s)`. **Zero files to edit** — that is
+Its last line, `plan:`, counts each kind of line above it, and one of its
+counts is `0 file(s) to edit`. **Zero files to edit** — that is
 `permitted_edits: []` read back to you.
 
 ---
@@ -148,7 +142,7 @@ Its last line is the summary: `plan: 20 path(s) to create, 0 file(s) to edit,
       "kind": "insert-line",
       "anchor": "<modules>",
       "content": "  <module>practice</module>",
-      "why": "Maven compiles only what sits on a source root (spec §7)."
+      "why": "Maven compiles only what sits on a source root, so the generated practice module has to be listed."
     }
   ]
 }
@@ -192,11 +186,19 @@ check 1, and a mismatch is the `address-directory` rule.
 **Check it:**
 
 ```
-python3 -m studyforge.validate tests/fixtures/depth2
+studyforge validate tests/fixtures/depth2
 ```
 
 **Exit `0`, zero findings, the same three unchecked claims** — for the same
 reason, and with different counts, because this corpus declares more origins.
+
+```
+studyforge plan tests/fixtures/depth2
+```
+
+**This plan counts `1 file(s) to edit`**, and its `edit pom.xml` lines give the
+anchor, the line added, the reason and how the edit is undone. Its pages are
+created under each module's own `study/` directory.
 
 ---
 
@@ -220,9 +222,7 @@ write a line of adapter code.
 
 **They are fixtures, and that is deliberate.** Every invariant they claim is
 stated in `tests/fixture_checks/` and asserted by
-`tests/test_fixture_consistency.py`, so an example on this page that stopped
-being true of the shipped code would fail a test rather than mislead you.
-
-**The larger worked example this page was planned around — a full course
-repository — does not exist yet.** When it does it will be a third example
-here, not a replacement for either of these.
+`tests/test_fixture_consistency.py`, and this page's manifests, trees and
+output are compared with them by `tests/test_authoring_reference.py`, so an
+example on this page that stopped being true of the shipped code would fail a
+test rather than mislead you.

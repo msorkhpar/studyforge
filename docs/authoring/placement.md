@@ -35,9 +35,8 @@ the framework rather than promised.
 ## What gets created
 
 **Both trees below are drawn by the placement code itself**, one line per path
-it places, for one container holding one unit. Nothing here is typed out: if a
-build would put a file somewhere else, these fences say somewhere else, and the
-test that reads this page fails until they do.
+it places, for one container holding one unit, and a test compares them with
+what placement computes.
 
 Four substitutions, and every other character is literal: **`<address>`** is as
 many directories or name parts as your corpus declares levels — the shape is the
@@ -91,9 +90,9 @@ go; a build creates it only when it copies a file into it.
 **Under `sibling` the media is one directory per kind, with the unit one level
 down.** Many units share one `study/`, so the kind is what the listing shows
 and the unit's own name discriminates inside it. **The cost is stated rather
-than hidden:** one unit's artifacts no longer sort as one run, so deleting a
+than hidden:** one unit's artifacts do not sort as one run, so deleting a
 unit is a page plus one directory per kind — which is why nothing composes
-those paths and everything asks for them.
+those paths and everything asks placement for them.
 
 **Every generated page has a real name and is never `index.html`.** Names come
 from the unit's own numbering and title, so a directory listing is readable and
@@ -102,8 +101,8 @@ index.
 
 **The name comes from the unit's identity, never from your source filename** —
 and under `sibling` it carries the container's address in front, because two
-containers whose numbering mirrors each other can share one directory and once
-claimed one path between them.
+containers whose numbering mirrors each other can share one directory and would
+otherwise claim one path between them.
 
 ---
 
@@ -143,25 +142,28 @@ what is about to happen to your repository without knowing every path the build
 will create.** So placement is askable before it is exercised:
 
 ```
-python3 -m studyforge.cli.plan <your-repository>
+studyforge plan <your-repository>
 ```
 
-It reads the manifest alone — nothing is generated — and prints:
+It reads the manifest and the container maps alone — nothing is generated and
+no file of your material is opened — and prints, line by line:
 
-- every path that will be **created**, with what it is;
-- every existing file that will be **edited**, and the declared reason;
-- the **ignore lines** your corpus requires, each with the file inside the
-  generated root that holds it. With media committed the only rules are the
-  ones covering **this framework's own discovery cache**, which `studyforge
-  serve` writes into your repository and nothing ever reads back — you do not
-  add those by hand, and a corpus that is served stays clean;
-- the **media policy** in force and the limits it will stop at;
+- every path a build will **create**, with what it is;
+- every media directory it **claims**: one a build creates only when it copies
+  a file into it;
+- what it **keeps** and what it **expects** from another command: the archive
+  your adapter writes, and the discovery cache `studyforge serve` writes;
+- every existing file that will be **edited**, with the declared reason and how
+  the edit is undone;
+- the **ignore** lines your corpus requires, each with the file that holds it.
+  The discovery cache's lines live in `.studyforge/.gitignore`, which is
+  written for you, so you add nothing by hand;
+- the **media** policy in force, the limits it will stop at, and what is on
+  disk already;
 - a final `plan:` line, which counts each kind of line above it.
 
-**⚠️ The list above is what `plan` is for, not a transcript of its output.**
-Run it and read the real thing: it names paths this page draws as placeholders,
-at your own addresses, and it distinguishes a directory it **claims** — one a
-build creates only when it copies a file into it — from a path it **creates**.
+**Run it and read the real output:** it names paths this page draws as
+placeholders, at your own addresses.
 
 **Run this at step 3, before you write a line of adapter code.** It is the
 cheapest way to find out that your manifest says something you did not mean.
@@ -174,10 +176,9 @@ cheapest way to find out that your manifest says something you did not mean.
 relative to the page that references it, and that address is the same whether
 the file was generated locally, committed, or restored from somewhere else.
 
-**This was proved in reverse, expensively.** When 11.7 GiB of media left git
-for release assets on one corpus, the layout on disk did not move and every
-page still addressed a clip as plain `audio/<clip>.mp3` — which is the only
-reason that change was a script instead of a re-render of 1,290 pages.
+**So how a file is delivered can change without touching a page.** Whether
+the clips are committed, regenerated, or restored from an archive, a page
+addresses each one by the same path relative to itself.
 
 ---
 
@@ -185,5 +186,5 @@ reason that change was a script instead of a re-render of 1,290 pages.
 
 - [Exercises](exercises.md) — the other manifest field that changes what gets
   built.
-- [Worked examples](examples.md) — one corpus of each profile, with the plan
-  output for both.
+- [Worked examples](examples.md) — one corpus of each profile, and the plan
+  command for both.

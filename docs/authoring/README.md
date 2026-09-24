@@ -6,8 +6,8 @@ study site you can read offline, keep, and come back to.** This is the
 reference for doing that.
 
 **It assumes you have not read the design spec and do not intend to.** Nothing
-below asks you to. Where a rule exists because of something expensive that was
-learned, the reason is stated here in one sentence rather than cited.
+below asks you to. Where the reason for a rule helps you follow it, the reason
+is stated here in a sentence rather than cited.
 
 ---
 
@@ -19,7 +19,7 @@ it. Producing those two things is the whole of your job, and one command tells
 you whether you have done it:
 
 ```
-python3 -m studyforge.validate <your-repository>
+studyforge validate <your-repository>
 ```
 
 It exits `0` and says `valid`, or it exits `1` and names — by address, by file,
@@ -29,11 +29,11 @@ by rule — every single thing that is wrong. Not the first thing. Every thing.
 no plugin to write, no framework API your code has to call. If it exits `0`,
 you are done, and nobody's opinion enters into it.
 
-> **A note on the command's spelling.** Both spellings run the same code.
-> `studyforge validate` is the installed command; `python3 -m
-> studyforge.validate` reaches it from a checkout you have not installed, and
-> that is the form this reference uses so every command here works before you
-> install anything. See [What `validate` checks](validate.md) for the rest.
+> **The commands on these pages are the installed `studyforge` command**, which
+> the repository's root README tells you how to install. Without an install,
+> `python3 -m studyforge.validate` runs the same code from a checkout whose
+> `src/` directory is on `PYTHONPATH`. See [What `validate` checks](validate.md)
+> for the rest.
 
 ---
 
@@ -72,9 +72,9 @@ remembers where you got to is a complete product. See
 [Exercises](exercises.md).
 
 **3. An address is recorded, never computed from a title.** Slugifying a title
-to get a URL looks obviously fine and is measured wrong: on one real catalogue
-of 1,290 units, 157 of them — one in eight — are served at a slug their title
-does not produce. See [What an adapter must produce](archive.md).
+to get a URL looks obviously fine and is wrong in practice: real catalogues
+serve many units at a slug their title does not produce. See
+[What an adapter must produce](archive.md).
 
 **4. You say where the output goes.** Under one generated root, or in a
 `study/` directory beside each source file it came from. It is a field in the
@@ -90,23 +90,21 @@ rewrite leaves nobody knowing the data was there.
 
 ## If something here is wrong
 
-**The claims a machine can check are checked against the shipped code**, by
-`tests/test_authoring_reference.py` and `tests/test_authoring_geography.py`,
-and the file-only exercise record on [Exercises](exercises.md) by
-`tests/test_fixture_exercise_rule.py`, and the authoring procedure on that page by
-`tests/test_authoring_exercises.py` — the key lists, the vocabularies, the check names, the rule ids, the exit codes,
-the two worked examples, which are validated rather than described, and the two
-trees on [Placement](placement.md), which the placement code draws rather than
-this reference describing them. One of those that stops being true fails a test
-rather than misleading you, and this section may not name an instrument that
-does not read these pages.
+**The claims a machine can check are checked against the shipped code.** The
+key lists, the vocabularies, the check names, the rule ids and the exit codes
+are read by `tests/test_authoring_reference.py`, which also validates the two
+worked examples rather than trusting their description. The two trees on
+[Placement](placement.md) are drawn by the placement code, and the plan counts
+[Worked examples](examples.md) quotes are printed by `studyforge plan`; both are
+compared by `tests/test_authoring_geography.py`. On [Exercises](exercises.md), the
+authoring procedure is read by `tests/test_authoring_exercises.py`, the steps
+before you author are run by `tests/test_authoring_before_you_author.py`, and
+the file-only exercise record is read by `tests/test_fixture_exercise_rule.py`.
+Every link on these pages is resolved by `tests/test_readme.py`. A claim of
+that kind that stops being true fails a test rather than misleading you.
 
-**The prose around them is not checked, and this page used to say it was.** The
-reasons, the figures quoted inside a sentence, the advice about what to do
-first — those are read by people. The sentence you are reading replaced one
-claiming *every factual claim on these pages* was checked, which was not true
-of the largest thing on these pages a reader acts on: the trees above were
-wrong about where a build puts a page, and nothing read them.
+**The prose around them is not checked.** The reasons and the advice about
+what to do first are read by people, not by a test.
 
 **So if you followed this and got stuck, or found a sentence that is not
 true**, the gap is a defect in this reference and is worth reporting as one.

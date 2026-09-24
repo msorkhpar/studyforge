@@ -106,17 +106,13 @@ documents in this checkout.
 Step 3's done condition is the agreement: if `studyforge validate` exits `0`,
 the framework accepts the corpus, and nothing else is asked of you.
 
-**Narration is optional.** In the words of the ruling that made it so: *"it should
-be optional and while serving or even while caputring the matterial skills should
-ask if user is interested in the narrition or not. Somebody might wants to just
-cover the course wihtout voices as mentioned the voice might be cgenerated but
-still not serving them would be an option"*. Steps 2 and 6 ask. Your answer at
-onboarding is `corpus.json`'s `narration`, and `studyforge build` and
-`studyforge serve` take `--narration` / `--no-narration` to override it for one
-run. A site without narration has no player and no "missing" notice, and it is
-complete: practices, quizzes, progress and contents are unchanged, and clips
-already on disk are kept, so turning narration back on plays them without
-synthesising anything.
+**Narration is optional.** Some readers want the material without a voice,
+so steps 2 and 6 ask. Your answer at onboarding is `corpus.json`'s
+`narration`, and `studyforge build` and `studyforge serve` take `--narration` /
+`--no-narration` to override it for one run. A site without narration has no
+player and no "missing" notice, and it is complete: practices, quizzes,
+progress and contents are unchanged, and clips already on disk are kept, so
+turning narration back on plays them without synthesising anything.
 
 ## The authoring reference
 
@@ -143,8 +139,8 @@ engine, is pinned by digest, never by a moving name.
 - **Narration** comes from the `narrate-service` component, a separate
   repository. You build and start it from its own checkout, following its own
   README; it answers on `127.0.0.1:8870`, which is where `studyforge narrate`
-  looks. Its first start pulls its pinned engine image and downloads a speech
-  model. After that, nothing leaves your machine.
+  looks. Its first start pulls its engine image, pinned by digest. After that,
+  nothing leaves your machine.
 - **Runnable practices** use the `code-server-toolchain` component, also a
   separate repository, which builds two images: the runner that grades
   submissions and the browser editor. Each is tagged from its build inputs, and
@@ -159,7 +155,7 @@ engine, is pinned by digest, never by a moving name.
 ## The design behind it
 
 - [The design specification](docs/specs/2026-09-08-studyforge-v1-design.md):
-  the governing rules, R1 to R21, that the skills and the reference cite.
+  what the framework is, the rules it keeps, and why.
 - [Decisions](docs/decisions.md): each decision that still shapes the product,
   with its reason in a sentence.
 

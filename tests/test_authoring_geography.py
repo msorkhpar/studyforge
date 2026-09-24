@@ -279,24 +279,56 @@ def instruments_named() -> set[str]:
     return named
 
 
+def _page_openers(tree: ast.Module, opens: frozenset[str]) -> frozenset[str]:
+    """The module's own top-level functions whose body names one of `opens`."""
+    return frozenset(
+        node.name
+        for node in tree.body
+        if isinstance(node, ast.FunctionDef)
+        and any(isinstance(n, ast.Name) and n.id in opens for n in ast.walk(node))
+    )
+
+
 def instruments_that_read_a_page() -> set[str]:
     """Every suite module that opens a page of the reference, derived from its imports.
 
     ⛔ Derived, never listed: a module added to the suite that reads these pages
     joins this set by importing an accessor, and the index fails until it says
-    so. ⚠️ Parsed rather than imported — importing every test module here would
-    run their collection-time derivations a second time — and parsed rather than
-    grepped, because the one import that matters spans five lines.
+    so. ⭐ **Or by importing a reader's own opener**: a module that takes
+    another suite module's function which opens a page reads that page too, so
+    the set is closed over such imports until it stops growing. ⚠️ Parsed rather
+    than imported — importing every test module here would run their
+    collection-time derivations a second time — and parsed rather than grepped,
+    because the one import that matters spans five lines.
     """
     root = repository_root()
-    found = set()
-    for path in sorted(Path(root / "tests").glob("test_*.py")):
-        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-        for node in ast.walk(tree):
-            if not isinstance(node, ast.ImportFrom) or node.module != SUPPORT:
+    trees = {
+        f"tests.{path.stem}": (
+            str(path.relative_to(root)),
+            ast.parse(path.read_text(encoding="utf-8"), filename=str(path)),
+        )
+        for path in sorted(Path(root / "tests").glob("test_*.py"))
+    }
+    #: What each module offers that opens a page: the accessors, then each reader's openers.
+    openers: dict[str, frozenset[str]] = {SUPPORT: frozenset(READS_A_PAGE)}
+    found: set[str] = set()
+    grew = True
+    while grew:
+        grew = False
+        for module, (relative, tree) in trees.items():
+            bound = frozenset(
+                alias.asname or alias.name
+                for node in ast.walk(tree)
+                if isinstance(node, ast.ImportFrom) and node.module in openers
+                for alias in node.names
+                if alias.name in openers[node.module]
+            )
+            if not bound:
                 continue
-            if any(alias.name in READS_A_PAGE for alias in node.names):
-                found.add(str(path.relative_to(root)))
+            found.add(relative)
+            offers = _page_openers(tree, bound)
+            if openers.get(module) != offers:
+                openers[module], grew = offers, True
     assert found, "no suite module reads a page of the reference; the derivation is broken"
     return found
 
@@ -322,3 +354,51 @@ def test_the_index_says_what_is_not_checked():
     # reads exactly like a page that never claimed it.
     said = section(document("README.md"), INDEX_SECTION)
     assert "not checked" in said, f"{AUTHORING}/README.md no longer says what is unchecked"
+
+
+# --- the plan counts the worked examples quote --------------------------------
+
+#: The worked examples, and the page that quotes what `studyforge plan` prints for them.
+EXAMPLES_PAGE = "examples.md"
+EXAMPLE_ROOTS = ("tests/fixtures/depth1", "tests/fixtures/depth2")
+
+#: The count of files to edit, as the `plan:` summary line prints it.
+EDIT_COUNT = re.compile(r"\b\d+ file\(s\) to edit\b")
+
+
+def edit_count_printed(root: str) -> str:
+    """The `N file(s) to edit` count `studyforge plan <root>` prints on its summary line."""
+    import io
+
+    from studyforge.cli.plan import main
+
+    said = io.StringIO()
+    assert main([str(repository_root() / root)], out=said) == 0, said.getvalue()
+    (summary,) = [line for line in said.getvalue().splitlines() if line.startswith("plan:")]
+    (count,) = EDIT_COUNT.findall(summary)
+    return count
+
+
+def edit_count_faults(text: str) -> list[str]:
+    """Every `N file(s) to edit` the page quotes that no example's plan prints, and the reverse."""
+    quoted = set(re.findall(r"`(\d+ file\(s\) to edit)`", text))
+    printed = {edit_count_printed(root) for root in EXAMPLE_ROOTS}
+    faults = [f"the page quotes `{q}`, which no example's plan prints" for q in quoted - printed]
+    faults += [
+        f"the page never quotes `{p}`, which an example's plan prints" for p in printed - quoted
+    ]
+    return sorted(faults)
+
+
+def test_the_edit_counts_the_examples_quote_are_what_plan_prints():
+    # ⭐ Each count is `permitted_edits` read back by the real command; the page
+    # quotes the count and nothing else of the summary, so only it is compared.
+    assert edit_count_faults(document(EXAMPLES_PAGE)) == []
+
+
+def test_a_planted_edit_count_turns_its_check_red():
+    planted = document(EXAMPLES_PAGE).replace("`1 file(s) to edit`", "`2 file(s) to edit`")
+    assert planted != document(EXAMPLES_PAGE), "the plant replaced nothing"
+    faults = edit_count_faults(planted)
+    assert any("`2 file(s) to edit`" in fault for fault in faults), faults
+    assert any("never quotes `1 file(s) to edit`" in fault for fault in faults), faults

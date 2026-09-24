@@ -46,7 +46,7 @@ claim basics/01-getting-started/study/video/basics.01-getting-started.unit-03-wa
 create index.html  the root index
 edit pom.xml  insert-line after '<modules>'
 edit pom.xml  adds '  <module>practice</module>'
-edit pom.xml  why Maven compiles only what sits on a source root (spec §7).
+edit pom.xml  why Maven compiles only what sits on a source root, so the generated practice module has to be listed.
 edit pom.xml  undo remove-line '  <module>practice</module>' from pom.xml
 ignore site.json  in .studyforge/.gitignore
 ignore site.json.writing  in .studyforge/.gitignore
