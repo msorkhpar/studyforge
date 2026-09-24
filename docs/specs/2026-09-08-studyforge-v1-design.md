@@ -1552,287 +1552,240 @@ authored work: a shortfall is reported, not engineered away.**
 ## 8. Inherited technical apparatus
 
 CodeSignal solved a number of problems the hard way, and the solutions are
-recorded here because **every one of them was measured, and none is obvious
-from the outside.** Re-deriving any of them is waste; changing one without
-knowing why it is that way is a regression.
+recorded here because **none of them is obvious from the outside.** Re-deriving
+any of them is waste; changing one without knowing why it is that way is a
+regression.
 
-⚠️ **CodeSignal is a live repository, and every measurement of it in these
-documents is a snapshot with a date.** In the 32 hours after this spec was
-frozen it took ~55 commits and 12,568 insertions across 108 files, and three of
-the modules this project ports grew by up to 21%. Treat every line count, file
-count and percentage here as **as of 2026-09-08** and as an estimate by the time
-you read it. ⭐ **A task re-measures its own port surface at start rather than
-inheriting a number, and ports from HEAD** — fixes that landed after the freeze
-are free if you port current source and are re-derived at full cost if you port
-the snapshot.
+### 8.1 The code-server toolchain — its own repository
 
-### 8.1 The code-server toolchain image — its own repository
+The toolchain is a **standalone repository**, `code-server-toolchain`, that
+publishes two images and describes both in its `consuming.json` (R18):
 
-The embedded IDE is the single most reusable asset in the project and becomes
-a **standalone repository**, `code-server-toolchain`. The seam:
+- **the runner** — the runtimes a corpus declares (§4's `runtimes`) and nothing
+  else, idling offline, for a reader's graded runs. ⭐ **The reader starts it**,
+  with the source root alone mounted at `/work`, `--network none`, no port and no
+  socket; the framework only probes that it is up and runs commands in it (§8.3).
+- **the editor** — a browser editor (code-server) over the same runtimes, opened
+  from a practice beside the page.
 
-| Shared — lives in the image repo | Per-project — lives in the consuming repo |
+⭐ **One file chooses every runtime version**, the component's `pins.json`, which
+pins its base image by digest; both images take their versions from it and
+neither may choose one of its own. A runner image's tag is computed from the
+declared runtime set, the architecture and a hash of every build input, so a
+corpus's compose file names exactly the image its declaration builds.
+
+| Shared — lives in the component | Per-project — generated into the corpus (§9) |
 |---|---|
-| `Dockerfile`, `entrypoint.sh` | `docker-compose.yml` |
-| the workbench lockdown extension | **mounts** — which paths, which read-only |
-| seed settings and keybindings | container name, port binding, password env |
-| toolchain selection and pinning | the `prime/` project supplied at build time |
-| extension list and verification | uid/gid mapping to the repository's owner |
+| `Dockerfile`s, entrypoint, build scripts | the compose file |
+| the practice-focus lockdown extension | **mounts** — which paths, which read-only |
+| seed settings and keybindings | container name and port binding |
+| runtime selection and pinning | the prime project supplied at build time |
+| extension list and verification | uid:gid mapping to the repository's owner |
 
-What the image already gets right, and must keep getting right:
+What the images must keep getting right:
 
-- ⚠️ **Version-pinning and SHA-256 verification are a TARGET here, not an
-  inherited property.** Three archive downloads are verified today (Gradle,
-  Kotlin, Node) — but `eclipse-temurin:26-jdk`, `ghcr.io/astral-sh/uv:latest`
-  and `codercom/code-server:latest` are all floating `:latest` tags, and
-  `apt-get`, `uv python install`, `npm install -g` and every marketplace
-  extension id are unpinned. **A `:latest` base image means the image is not
-  reproducible (R10)**, so `TC-01` must *reach* this state rather than preserve
-  it, and "functionally identical to CodeSignal's" is not sufficient acceptance.
-- **Extensions are installed at build time into a directory in the image**,
-  not onto a volume, so an image upgrade always carries them — and the build
-  **verifies the installed list and fails on a missing id**, with a documented
-  fallback where a marketplace may stop serving one.
+- **Extensions are installed at build time into a directory in the image**, not
+  onto a volume, so an image upgrade always carries them — and the build
+  **verifies the installed list and fails on a missing id**.
 - **PATH is set twice, deliberately.** `ENV` reaches non-login shells; the
   integrated terminal starts bash as a *login* shell and `/etc/profile` then
   overwrites PATH, silently dropping everything under `/opt` — so a tool works
-  under `docker exec` and is "command not found" in the terminal. A
-  `profile.d` script fixes it.
-- **The build cache is primed by building a real trivial project.** `prime/`
-  copies the consuming repository's wrapper and build files with one minimal
-  source and test per language, so the first offline build needs no download.
-  The sources must be *real*: a `NO-SOURCE` compile task never resolves the
-  compiler classpath, so an empty prime silently primes nothing. Version
-  guards fail the build if `prime/` and the image's pinned versions disagree.
-- **The lockdown extension is packaged as a `.vsix` and installed**, never
-  copied into the extensions directory — the workbench reads `extensions.json`
-  and never scans, so a copied folder is present, correct and silently never
-  loaded.
+  under `docker exec` and is "command not found" in the terminal. A `profile.d`
+  script fixes it.
+- **The build cache is primed by building a real trivial project.** The prime
+  project carries one minimal source and test per language, so the first offline
+  build needs no download. The sources must be *real*: a compile task with no
+  source never resolves the compiler classpath, so an empty prime silently primes
+  nothing. An exercise's own build dependencies are warmed into the prime from the
+  same declaration, so a graded run resolves them with no network.
+- **The lockdown extension is packaged as a `.vsix` and installed**, never copied
+  into the extensions directory — the workbench reads `extensions.json` and never
+  scans, so a copied folder is present, correct and silently never loaded.
 - **Named-volume mount points are created in the image, owned by the runtime
-  uid.** Docker creates a missing mount point root-owned, which leaves the
-  server unable to write its own config.
+  uid.** Docker creates a missing mount point root-owned, which leaves the server
+  unable to write its own config.
 - **`ENTRYPOINT` and `CMD` are both re-declared**, because the base image bakes
   arguments that a compose `command:` would otherwise be appended to.
 
-And what the *compose* side gets right, which stays per-project:
+And what the compose side gets right, which stays per-project:
 
-- ⚠️ **Loopback-only port binding, never `0.0.0.0`** — an unencrypted IDE with
-  a shell. Also a **target, not a preserved property**: the editor honours it,
-  but the synthesis service is published on all interfaces today, contradicting
-  its own compose file's header. `TC-05` and `OPS-03` fix it rather than copy
-  it.
+- ⛔ **Loopback-only port binding, never `0.0.0.0`.** The editor runs with **no
+  password**, which is safe only because it binds to `127.0.0.1`: loopback is the
+  whole of its access control, and widening the bind is a decision to put an
+  unauthenticated shell on the network, which requires restoring authentication.
 - **Only the sources are mounted** — not the repository, not `$HOME`.
 - **The container runs as the repository owner's uid:gid**, so files it creates
   are not root-owned on the host.
-- **A bind source must exist on the host before the container starts**, or
-  docker creates it root-owned and the writer can never write it. ⭐ **The
-  general form: every bind source exists before the start — where another
-  service in the project creates one, the editor is gated on that service's
-  health check; where the project creates it itself, it is created before the
-  containers come up.** ⚠️ **`TC-05/5`, corrected 2026-09-19 (`W400`): this
-  bullet used to say *"the backend creates it and the container waits on the
-  backend's health check"*, which describes a two-service project — and a
-  corpus served by this framework has no backend service in the editor's own
-  compose file.** ⭐ **The per-mount and ordering keys that carry the general
-  form live in `code-server-toolchain`'s consuming contract, which `TC-05`
-  owns; this section states the ruling, not the shape of one project.**
+- **Every bind source exists before the containers start**, or docker creates it
+  root-owned and the writer can never write it: where another service creates one,
+  the editor waits on that service's health check; where the project creates it,
+  it is created before the containers come up. The per-mount and ordering keys
+  live in the component's consuming contract.
 
-#### ⛔ AMENDED PO round 74 — the browser editor comes after the framework milestone (user direction, 2026-09-12)
-
-> *"We can even move the code-server to when after we are a framework! Because that functionallity is needed mostly for when exercises are in the picture. We can still have a dockerfile to run code in Java, Kotlin, Python, and Nodejs and maybe even shell and sql using an in memory database or whatver that course requires without the need of having the code-server to be deployed or shown in the web to client. Client still can run things in their terminal update the file and run them by a command which then will be run against that unit test associated with the file if there is any."*
-
-1. ⭐ **The execution track opens with a RUNNER IMAGE, not an editor** (`TC-00`, `M5`): pinned, no IDE, never served. ⛔ **The user's list is a requirement — Java, Kotlin, Python, Node.js, and possibly shell and SQL against an in-memory database, or whatever the course requires — and R1 makes the set a corpus gets MANIFEST DATA.**
-2. ⭐ **The reader runs a unit's test from their own terminal** (`SF-44`, `M5`). ⛔ **A file with no test is not a failure** (§7, C5).
-3. ⭐ **This section's image, the editor, lands at `M7`, and every measured property above binds it then.** ⛔ **§8.3 is untouched: the Docker socket is never mounted into the serving process.**
-
-⭐ **Ruled by the register as reversible, because the words do not decide it:** the terminal command and graded Submit both take `SF-20`'s two modes as §8.3 already states them — the runner container when it is up, the host otherwise, with identical observable behaviour.
+⭐ **A corpus with runnable material needs the runner, not the editor.** The reader
+can edit a file in their own editor and run `studyforge check` from a terminal
+(§7); the browser editor is an addition for the practice beside the page. ⛔
+**§8.3 binds both: the Docker socket is never mounted into the serving process.**
 
 ### 8.2 The narration service — its own repository
 
-Narration gets the same treatment as the IDE, and for the same reasons:
-`narrate-service` becomes a standalone repository exposing a **batch synthesis
-API over HTTP**, containerised, with the engine behind an adapter.
+Narration gets the same treatment as the toolchain: `narrate-service` is a
+standalone repository exposing a **synthesis API over HTTP**, containerised, with
+the engine behind an adapter, published on `127.0.0.1` only.
 
 | Shared — lives in the service repo | Per-project — lives in the consumer |
 |---|---|
-| the batch job API and its manifest format | which segments to synthesise |
+| the job API and its manifest format | which segments to synthesise |
 | engine adapters and the voice catalogue | voice selection for the corpus |
 | containerisation, CPU and GPU variants | **where the files land** (R4) |
 | content-addressed caching | the personal-data gate |
 | the optional agent-callable adapter | incremental regeneration policy |
 
-Four decisions, three of them corrections to what exists today:
-
-- **The unit of work is a batch of keyed segments, not one blob.** ⚠️ An earlier
-  draft of this section said today's client sends one request per unit and gets
-  one mp3 back. **That was wrong** — it has always looped one HTTP request per
-  *speech unit*, which is why the conclusion still holds and the premise needed
-  correcting. The page's highlight sync needs **one clip per speech unit**
-  (§8.4), so the API takes a list of `{id, text}` and returns one artifact per
-  id plus a manifest. A batch rather than a request per segment because a corpus
-  is thousands of segments, and per-request overhead is the difference between
-  minutes and hours. ⛔ **THE BATCH API ARRIVES IN TWO STEPS, and this paragraph
-  describes the FINISHED shape rather than the first one.** ⭐ The service is
-  stood up behind a single-utterance route first; the batch route and its
-  content-addressed cache land after it, and `E13` carries the split and which
-  task owns which half. ⚠️ **Written here because `E13` sends a taker to this
-  section FIRST, so a reader of this paragraph alone would build the whole batch
-  API in the task that only stands the service up** (`NS-01/1`, settled in code
-  by `NS-02`; this sentence is the remainder Ruling 335 leaves to this register).
-- **The service never writes into a corpus.** It returns artifacts for the
-  caller to fetch and place through the placement policy. A synthesis service
-  that knew where a study site keeps its audio would be a second authority on
-  layout, which is precisely what R4 removes.
-- **⛔ The gate runs client-side, before the request** — never in the service.
-  This is carried from today's implementation and the reasoning is worth
-  restating: **an mp3 that speaks an account identifier is personal data on
-  disk that cannot be grepped for afterwards.** The service is a third party
-  from the framework's point of view; ungated text must never reach it (R7).
-- **The engine is pluggable and must not require particular hardware.**
-  Today's deployment pins a GPU build for one specific card generation and
-  reserves every NVIDIA device on the host. That is fine as *a* deployment and
-  unacceptable as *the* deployment (R15): the service ships a CPU path that
-  works anywhere, with GPU as an opt-in profile.
-
-Two properties of the current implementation carry over unchanged because they
-are already right: **chunking is the service's job** — the endpoint accepts a
-very long input and splits internally, so no client keeps stitching logic — and
-**writes are atomic**, landing in a temporary sibling and being renamed, so an
-interrupted run never leaves a truncated file that looks finished.
+- **The unit of work is a batch of keyed segments, not one blob.** The page's
+  highlight sync needs **one clip per speech unit** (§8.4), so a job takes a list
+  of `{id, text}` and returns one artifact per id plus a manifest. A batch rather
+  than a request per segment, because a corpus is thousands of segments and
+  per-request overhead is the difference between minutes and hours. A
+  single-utterance route stands beside it for one-off use.
+- **The service never writes into a corpus.** It returns artifacts for the caller
+  to fetch and place through the placement policy. A synthesis service that knew
+  where a study site keeps its audio would be a second authority on layout, which
+  is precisely what R4 removes.
+- ⛔ **The personal-data gate runs client-side, before the request** — never in the
+  service. **An mp3 that speaks an account identifier is personal data on disk
+  that cannot be grepped for afterwards.** The service is a third party from the
+  framework's point of view; ungated text never reaches it (R7), and the gate is
+  asserted on what was *sent*, not on what was written.
+- **The engine is pluggable and requires no particular hardware.** The service
+  ships a CPU path that works anywhere, with GPU as an opt-in profile (R15).
+- **Chunking is the service's job** — it accepts a very long input and splits
+  internally, so no client keeps stitching logic — and **writes are atomic**,
+  landing in a temporary sibling and being renamed, so an interrupted run never
+  leaves a truncated file that looks finished.
 
 ⚠️ **Synthesised audio is the one carve-out from R10's byte-for-byte clause.** A
-speech model is not guaranteed to emit identical bytes for identical input, so
-audio is not byte-for-byte reproducible the way generated HTML is. It is instead
-**content-addressed and cached**: a segment whose text and voice parameters are
-unchanged is never re-synthesised, and the manifest records the address. R10
-continues to apply in full to every other generated artifact.
+speech model is not guaranteed to emit identical bytes for identical input. Audio
+is instead **content-addressed and cached**: a segment whose text and voice are
+unchanged is never re-synthesised. R10 applies in full to every other generated
+artifact.
+
+**`studyforge narrate <root> --voice <voice>`** is the framework's side: it
+submits a corpus's speech units, places the clips beside the material, and
+records in `.studyforge/narration.json` the conditions each clip was synthesised
+under — the voice, the engine and the service's promise. ⭐ **A re-run with
+nothing changed requests nothing**, and a change of voice or engine re-requests
+every clip it made stale. `studyforge narrate <root> --prune` deletes the clips
+of record entries the corpus no longer produces, over a walk of the whole corpus.
 
 ### A clip's filename carries a digest of the words it says
 
 ⛔ **A narration clip is named `<speech-id>-<8 hex of sha256(spoken text)>`.** It
-is minted by **one** function — the speakable contract, which already owns both
-what is said and what it is called — and both the renderer that links the clip
-and the client that places it go through it. A second minter is a page asking
-for a file the placer never wrote, with no symptom but silence.
+is minted by **one** function — the speakable contract, which owns both what is
+said and what it is called — and both the renderer that links the clip and the
+client that places it go through it. A second minter is a page asking for a file
+the placer never wrote, with no symptom but silence.
 
-The obvious alternative was to keep a plain positional name and decide currency
-with a *check* — a sidecar manifest of content addresses, or a re-submission to
-the service, whose cache is content-addressed anyway and would decline the work.
-Both were rejected, and the reason is the failure they permit: ⛔ **a check can
-be skipped, and the skip is silent.** CodeSignal's synthesis runner decided a
-clip was current by whether the file existed. When its catalog was re-captured,
-**619 clips went on speaking the previous wording** and 442 more were orphaned
-by documents that had changed shape — the run reported *"0 synthesised"* and
-every gate was green. Nothing distinguishes a correct incremental run from that
-one by inspection.
+The obvious alternative is a plain positional name and a *check* for currency — a
+sidecar manifest, or a re-submission to the service. ⛔ **A check can be skipped,
+and the skip is silent**: a runner that decides a clip is current by whether the
+file exists goes on playing the previous wording after a re-capture, reports
+*"0 synthesised"*, and every gate is green. Nothing distinguishes a correct
+incremental run from that one by inspection.
 
 ⭐ **The digest makes it structural rather than checked.** Change the spoken text
 and the name changes; the page then links a clip that is not on disk, and the
-client synthesises it. **A stale clip cannot be addressed.** It needs no
-discipline, survives a stage being run on its own, and survives a
-re-implementation.
+client synthesises it. **A stale clip cannot be addressed.**
 
-⚠️ **The speech id stays positional, and this is not a reversal of that.** The id
-is what a *structure* edit must not renumber, so that retitling a section does
-not orphan a unit's audio. The digest is what a *text* edit must change. They
-answer different questions and the filename carries both.
+⚠️ **The speech id stays positional.** The id is what a *structure* edit must not
+renumber, so that retitling a section does not orphan a unit's audio; the digest
+is what a *text* edit must change. They answer different questions and the
+filename carries both. ⚠️ **This is not the shared-asset case** R10 rules
+hash-free: the page is already rewritten whenever its text changes, in the same
+generator run.
 
-⚠️ **This is not the shared-asset case** R10 rules hash-free. That objection is
-about a stylesheet linked by every page, where a digest means rewriting the
-whole corpus for a colour change. Here the page is already rewritten whenever
-the text changes — in the same generator run.
+⚠️ **The old clip stays on disk under its old digest, playable by nothing**, until
+a prune deletes what the corpus's documents no longer name — ⛔ **only for units
+the run actually read**, never on behalf of one it skipped. **What it costs:** a
+prose edit renames one file and synthesises one segment — the segment the author
+just changed.
 
-⚠️ **The old clip stays on disk under its old digest, playable by nothing.**
-Reconciliation deletes what a unit's document no longer names, and ⛔ **only for
-the units the run actually read** — never on behalf of one it skipped.
+### 8.3 Where execution runs
 
-**What it costs:** a prose edit renames a file, so an incremental build writes an
-audio file it would otherwise have kept. That is one synthesis of one segment —
-the segment the author just changed — and the service's content-addressed cache
-means an unchanged segment is still never re-synthesised.
-
-### 8.3 Where execution runs — the resolved question
-
-**The problem.** R15 wants reproducible execution. The Run/Submit route and
-E08's gates must invoke a pinned Maven toolchain. The obvious reading — put the
-server in a container too — requires mounting the Docker socket into it, and a
-socket inside a network-listening process is root-equivalent access to the host.
-
-**What CodeSignal actually does**, which is the evidence that settled this: it
-**refuses** that trade. Its compose file states plainly that *no docker socket
-is mounted anywhere*; the study server runs with `network_mode: host` and is
-started with `--no-docker`, taking its toolchain from the host PATH. The
-`docker exec` mode exists in its runner and **the shipped deployment does not
-exercise it.** So the path studyforge depends on is, today, untested in anger.
+**The problem.** R15 wants reproducible execution, so Run, Submit and the
+authoring gates invoke a pinned toolchain. The obvious reading — put the server
+in a container too — requires mounting the Docker socket into it, and a socket
+inside a network-listening process is root-equivalent access to the host.
 
 **The ruling.**
 
-1. **The toolchain is containerised; the serving process is not.** Maven, the
-   JDK and their caches are pinned in the image (§8.1) — that is where
-   reproducibility actually lives. The server is a standard-library HTTP
-   process with no dependencies, so a container adds nothing to it.
+1. **The toolchain is containerised; the serving process is not.** The runtimes
+   and their caches are pinned in the runner image (§8.1) — that is where
+   reproducibility lives. The server is a standard-library HTTP process with no
+   dependencies, so a container adds nothing to it.
 2. ⛔ **The Docker socket is never mounted into the serving process.** Not as a
-   convenience, not behind a flag, not "only locally". This is the single
-   non-negotiable in this section.
-3. **Execution crosses into the container from outside it.** The runner, which
-   is the only package permitted to start a process (SF-20), invokes the
-   toolchain container from the host. Commands come from a generated document
-   on disk; nothing a client sends becomes a command.
-4. **The `docker exec` path must be proven, not assumed.** It is the one
-   inherited mechanism with no deployment behind it. `SF-20`'s acceptance —
-   *"both modes produce identical observable behaviour"* — is therefore a real
-   test to write, not a formality to restate.
-5. **If full containerisation is ever required**, the answer is a separate
+   convenience, not behind a flag, not "only locally".
+3. **Execution crosses into the container from outside it.** `execute`, the only
+   package that runs a corpus's commands, probes whether the corpus's runner
+   container is up and runs `docker exec` into it with the command's argv
+   verbatim; when it is not up, it runs the same argv on the host. ⭐ **Both modes
+   have identical observable behaviour** — the merged output streamed line by
+   line, every line relative to the source root and scrubbed (R7), and exactly
+   one exit line — and that is asserted, not assumed. ⛔ The runner never starts,
+   stops or builds a container. Commands come from a generated document on disk;
+   **nothing a client sends becomes a command.**
+4. **If full containerisation is ever required**, the answer is a separate
    execution broker owning the toolchain, which the server posts jobs to — the
-   same shape as the narration service (§8.2). It is not in v1 scope, and it is
-   recorded here so nobody reaches for the socket instead.
+   same shape as the narration service (§8.2) — and never the socket.
 
 **What this costs the reader:** the host needs Python (standard library only)
 and a Docker CLI. Nothing else. The toolchain, its caches and every pinned
 version stay in the image.
 
-### 8.4 What carries over from CodeSignal essentially unchanged
+### 8.4 The reading surface
 
-These are proven surfaces. v1 generalises their addressing and changes nothing
-else. Re-deriving them would be waste.
+These are proven surfaces, generalised in their addressing and otherwise kept.
 
-- **Reading page** — serif reading column, shared `unit.css`/`unit.js` with
-  deliberately unhashed names, browser-side Prism highlighting (never
-  build-time), light/dark palette with every token defined in both themes.
+- **Reading page** — a serif reading column; one shared stylesheet and one shared
+  script, `page.css` and `page.js`, with deliberately unhashed names (R10);
+  browser-side Prism highlighting, never build-time; light and dark palettes with
+  every token defined in both themes, and a control that lets the reader choose
+  light, dark or their system's setting.
 - **Narration** — positional (never content-derived) speech **ids**, display text
   and spoken text as two renderings of one list, clip-level highlight sync. The
-  clip **filename** adds a content digest, for the reason ruled in §8.2; whether
-  the clips are committed is a manifest policy, ruled in §5.
-- **Video** — vendored Plyr with `loadSprite:false`; nothing may reach the
-  network. Unused by the Java source, kept because the contract is generic.
-- **Table of contents** — `toc.json` (stable, reproducible) and `status.json`
-  (local, volatile) as two documents, so a consumer can cache one and poll the
-  other. Generalised from fixed nesting to `len(levels)`.
-- **Backend** — `/api/v1/content` (cacheable, strong ETag) vs `/api/v1/state`
-  (never cached) vs `/api/v1/assets` (Range, weak ETag); loopback only;
-  cross-site requests refused.
-- **Runner** — `docker exec` into the toolchain container when up, host `bash`
-  otherwise; line-by-line streaming; one exit line; every line scrubbed.
-- **Progress** — see below: it is two records, not one.
+  clip **filename** adds a content digest (§8.2); whether clips are committed is
+  the manifest's media policy (§5); whether a corpus is voiced at all is its
+  `narration` key (§4).
+- **Video** — vendored Plyr with its icon sprite substituted rather than fetched;
+  nothing may reach the network.
+- **Table of contents** — the contents document (stable, reproducible) and the
+  local status (volatile) as two documents, so a consumer can cache one and poll
+  the other, at any declared depth. ⛔ **The root index fetches nothing at
+  runtime**: `fetch` of a sibling file is refused over `file://`, there being no
+  origin to ask, so its contents data is delivered into the page at generation
+  time.
+- **Backend** — `/api/v1/content` (cacheable, strong ETag) and `/api/v1/state`
+  (never cached, derived from the filesystem on every request) as two namespaces
+  with opposite caching rules; `/api/v1/assets` (Range, weak ETag);
+  `/api/v1/run` for Run and Submit and `/api/v1/quiz` for quiz checking. ⛔ The
+  server binds loopback only, refuses a non-loopback peer, refuses a `Host` that
+  is not a loopback name, and refuses cross-site requests.
+- **Runner** — `docker exec` into the runner container when it is up, the host
+  otherwise; line-by-line streaming; one exit line; every line scrubbed (§8.3).
+- **Progress** — two records, not one (§8.5).
 
 ⛔ **A fence with no info string renders as plain text, and the renderer never
-guesses a language** (`Q7`, ruled at PO round 107; landed by `W347`). ⚠️ A guess is a
-silent wrong highlight, which is worse than no highlight. ⭐ A `code` block
-whose `lang` is empty carries no highlighter class and the caption `code`
-(`render/page/blocks/figure.py`).
+guesses a language.** A guess is a silent wrong highlight, which is worse than no
+highlight. A `code` block whose `lang` is empty carries no highlighter class and
+the caption `code`. ⭐ The vendored Prism bundle declares its languages, and a
+fence in an undeclared language falls back to plain text and says so.
 
-⭐ **AMENDED 2026-09-23 — the reading room's identity, and the palettes it may never
-ship.** Carried from the UI design convention when the conventions were archived. That
-convention held a whole design brief; what a rendered page is held to belongs here,
-beside the reading page it governs, and the brief's process advice to a designer does
-not.
+#### The reading room's identity
 
-⭐ **One framework identity, and a per-corpus theme that defaults to it.** Every
-studyforge site shares one look, drawn from the subject every such site shares —
-reading and study — and a corpus may declare its own theme as manifest data (R19),
-chosen from its own subject. ⛔ **It is built to be read for hours, so it is judged on a
-real generated page**, light and dark and at phone width, with its contrast computed
-rather than eyeballed, and what is reported is what was seen.
+⭐ **One framework identity.** Every studyforge site shares one look, drawn from
+the subject every such site shares — reading and study. ⛔ **It is built to be read
+for hours, so it is judged on a real generated page**, light and dark and at phone
+width, with its contrast computed rather than eyeballed, and what is reported is
+what was seen.
 
 - ⛔ **Colour is a role-named token and nothing else.** Every colour is a CSS custom
   property named by its role — ground, raised surface, ink and its quieter inks, rule,
@@ -1843,10 +1796,12 @@ rather than eyeballed, and what is reported is what was seen.
   ⛔ A saturated colour never grounds a whole page; it belongs on one element.
 - ⛔ **Contrast is computed and reported**: body text at least 4.5:1 against its actual
   background, large text and non-text marks at least 3:1.
-- ⭐ **Faces are vendored font files loaded by a relative `@font-face`, pinned by digest
-  with their licence beside them, and SIL OFL faces only** — ⛔ never a CDN, because a
-  generated page opens from `file://` with no network (R8). A face has a reason to be
-  there; a bare system stack or one of the generic defaults is not a choice.
+- ⭐ **Faces are vendored SIL Open Font License files, pinned by digest with their
+  licence beside them, and embedded in the stylesheet** — ⛔ never a CDN and never a
+  relative `url()`, because a generated page opens from `file://` with no network
+  (R8), and a browser's file-origin policy refuses a font outside the page's own
+  directory. Charis sets the prose, Andika the headings, navigation and controls, and
+  JetBrains Mono code and nothing else.
 - ⭐ **Structure encodes information.** Numbering only where order is real, dividers
   only between things that are separate, one bold element carrying the identity with
   everything around it quiet, prose at a readable measure, and a page that stacks at
@@ -1869,25 +1824,23 @@ rather than eyeballed, and what is reported is what was seen.
   a stripe down a card's edge, and gradient washes or badges that tell the reader
   nothing.
 
-⭐ **The rejected palettes are data, and the floor reads them.** A list of rejected
-palettes written as prose was right, was read by nothing, and a repaint's first stage
-shipped half of one. So the tells that can be read off a colour are the two tables
-below, which the palette check reads over every stylesheet the framework ships: a
-rejected identity that returns is a floor finding, by name. ⛔ **The tables are the
-authority and the check is only their reader**, so a new rejected identity is a row
-added here, with no code change. ⚠️ **A green check means *no rejected palette is
-shipped*, never *the identity is met*** — a face, the card kit or an eyebrow label is a
-tell no hue can see.
+⭐ **The rejected palettes are data, and the floor reads them.** The tells that can be
+read off a colour are the two tables below, which the palette check reads over every
+stylesheet the framework ships: a rejected identity that returns is a floor finding,
+by name. ⛔ **The tables are the authority and the check is only their reader**, so a
+new rejected identity is a row added here, with no code change. ⚠️ **A green check
+means *no rejected palette is shipped*, never *the identity is met*** — a face, the
+card kit or an eyebrow label is a tell no hue can see.
 
 Every colour is read as three measures: **hue** in degrees; **chroma**, `max − min` of
 its channels over 255, in percent; and **light**, `(max + min) / 2` over 255, in
 percent. ⛔ **Chroma and not HSL saturation, deliberately**: a near-white paper with a
 one-step tint reports a saturation near 40% and a chroma near 3%, so a bound written in
-saturation would refuse the paper that was accepted. ⭐ **A row's parts are joined by
-`+`, and every part must hold in one theme** — light and dark are read apart, each over
-the tokens it defines — with the parts on one role met by that theme's colours for it.
+saturation would refuse an accepted paper. ⭐ **A row's parts are joined by `+`, and
+every part must hold in one theme** — light and dark are read apart, each over the
+tokens it defines — with the parts on one role met by that theme's colours for it.
 ⛔ **The conjunction is the instrument**: cool slate alone is the accepted identity, and
-it is the triple that was rejected, so a row that fired on one part would refuse the
+it is the triple that is rejected, so a row that fired on one part would refuse the
 accepted identity on its first run.
 
 | Role | Read from |
@@ -1901,34 +1854,27 @@ accepted identity on its first run.
 
 | Rejected identity | Every part must be present | Why |
 |---|---|---|
-| Warm cream and terracotta | `ground: hue 20-70, light >= 85, chroma >= 3` + `accent: hue 5-32, chroma >= 25, light 25-65` | the first tell of generated design, and the one a repaint's first stage shipped |
+| Warm cream and terracotta | `ground: hue 20-70, light >= 85, chroma >= 3` + `accent: hue 5-32, chroma >= 25, light 25-65` | the commonest tell of generated design |
 | Near-black ground, acid-green accent | `ground: light <= 12` + `accent: hue 75-165, chroma >= 45` | a tinted near-black standing in for a dark ground, where a real mid-dark with character is asked for |
 | Near-black ground, vermilion accent | `ground: light <= 12` + `accent: hue 0-20, chroma >= 45` | the same tell's other accent |
-| Cool slate with teal-green and amber | `ground: hue 190-250, chroma <= 20` + `accent: hue 150-190, chroma >= 20` + `accent: hue 35-60, chroma >= 30` | the user's own rejection — *"very generic and repetitive between the designs you always generate"*. ⛔ It is the TRIPLE: the slate alone is accepted |
-| A saturated brand colour as the page ground | `ground: chroma >= 30` | a full guide-sign-green ground was rejected outright |
+| Cool slate with teal-green and amber | `ground: hue 190-250, chroma <= 20` + `accent: hue 150-190, chroma >= 20` + `accent: hue 35-60, chroma >= 30` | generic and repetitive between generated designs. ⛔ It is the TRIPLE: the slate alone is accepted |
+| A saturated brand colour as the page ground | `ground: chroma >= 30` | a saturated colour grounding a whole page |
 | A purple-to-blue gradient | `gradient stop: hue 258-300, chroma >= 20` + `gradient stop: hue 200-255, chroma >= 20` | a generated-design tell, read where a gradient actually is |
 
-#### ⭐ What the user ACCEPTED, 2026-09-19
+⭐ **The rejected table is half of what a repaint needs, and the other half is the
+accepted identity:**
 
-⛔ **The rejected table is half of what a repaint needs, and the other half is what was
-accepted** — six refusals do not say what to build.
-
-| Part | What was accepted |
+| Part | The identity |
 |---|---|
 | neutrals | a cool slate scale, ground through rule, in both themes |
 | the accent | ONE loud accent, live where it means *next* or *you are here*, and nowhere else |
-| green | ⛔ **none in the identity** — *"I am not a fan of green"* |
+| green | ⛔ **none in the identity** |
 | themes | both, each designed, with the reader able to choose between them and the system |
-| ink | the quieter inks in separate contrast bands — one band for all three is what *"too dim"* named |
+| ink | the quieter inks in separate contrast bands, so none of them reads too dim |
 
-⭐ **Two reference pages of the user's own were named as the standard**: their
-documentation reference, for the slate scale and the ink bands, and their route
-planner, for the one loud accent and the contrast it holds. ⛔ **They are named in words
-and nothing else** — neither page's location, bytes, palette nor screenshot enters this
-repository, so nothing here can go stale against them, and a repaint that needs one
-asks the user for it. ⚠️ **The no-green bound is not read by the palette check**: it is a
-rule over the shipped tokens rather than a rejected identity, and the reading room's
-own palette tests hold it.
+⚠️ **The no-green bound is not read by the palette check**: it is a rule over the
+shipped tokens rather than a rejected identity, and the reading surface's own palette
+tests hold it.
 
 ### 8.5 Progress is two records
 
@@ -1940,27 +1886,21 @@ needs no server, no grader and no origin, so under R8 it must exist without one:
 it lives in the browser's local storage, and the site says plainly that it is
 **one browser, one machine, not in the repository, and gone with site data.**
 
-A **practice pass** is a fact established by a grader run. A grader run required
-the runner, which required the server, so the record is written where the fact
-was established: the git-ignored JSON file, read-validate-modify-write under a
-lock, atomic replace, `first_passed_at` set once and never moved.
+A **practice pass** is a fact established by a grader run. A grader run requires
+the runner, which requires the server, so the record is written where the fact
+was established: the corpus's git-ignored `.studyforge/progress/progress.json`,
+read-validate-modify-write under a lock, atomic replace, `first_passed_at` set once
+and never moved. A Submit's breakdown rides beside its verdict and is never a
+second rule for a pass.
 
 ⛔ **The obvious alternative — one store — fails in both directions.** Put
 everything in local storage and a pass becomes a claim by a client that the
-server cannot check, lost with site data and not worth restoring. Put everything
-server-side and R8's floor means a reader who only ever double-clicks a page has
-no record at all.
-
-⚠️ **The motivation was CodeSignal's and is temporary; the requirement is ours
-and is structural.** CodeSignal reached this because it happens to have no
-practices to submit — a state of one corpus that could change tomorrow.
-`studyforge` reaches it because **§7 admits three exercise states and two of
-them can never complete anything**, and R8 says a server is never a prerequisite
-for reading. ⭐ **It binds hardest on exactly the sources this framework exists
-to serve.** The Java repo, with 168 graders paired 1:1, is the exception; an
-arbitrary repository ships no graders at all, so every unit in it is `none` or
-`ungraded` — and a server-side-only store would record *nothing whatever* for
-the entire corpus.
+server cannot check, lost with site data. Put everything server-side and R8's
+floor means a reader who only ever double-clicks a page has no record at all. ⭐
+**It binds hardest on exactly the sources this framework exists to serve**: §7
+admits three exercise states and two of them can never complete anything, so a
+server-side-only store would record nothing whatever for a corpus with no
+graders.
 
 ⛔ **A read mark is an explicit act.** Never inferred from scrolling, from the
 narration reaching the end, or from a page having been opened. Inference marks a
@@ -1976,16 +1916,18 @@ client's read mark; it may **never** treat one as a pass.
 and it turns the personal-archive merge into an ordering problem rather than a
 set union.
 
-⛔ **Local storage is touched in exactly one source file**, which defines the
-store and is shared by the unit page, the container page and the index. Two
-implementations are the key-disagreement failure above, reached by another road.
+⛔ **Durable browser storage is touched in exactly one source file**,
+`study-progress.js`, which defines the store and is shared by the unit page, the
+container page and the index; the reader's display preferences are a record of
+their own inside it, so a preference that fails to parse cannot take every mark
+with it. Two implementations are the key-disagreement failure above, reached by
+another road.
 
 ⚠️ **A shared script is concatenated ahead of every file that uses it, and the
 order is asserted against the real composed bundle** — never against a test
-harness's own concatenation. CodeSignal placed its store *after* the page script
-that read it at startup; the guard skipped, the setting silently never came
-back, **the suite stayed green**, and it was found only by loading a page in a
-browser. A harness that arranges the world conveniently proves nothing.
+harness's own concatenation. A store placed *after* the page script that reads it
+at startup skips its guard, the setting silently never comes back, and the suite
+stays green. A harness that arranges the world conveniently proves nothing.
 
 ---
 
