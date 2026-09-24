@@ -898,70 +898,75 @@ one a purely additive source keeps.
 
 ## 5. Placement and discovery
 
-The single largest departure from CodeSignal, which prescribes one tree.
+**Placement is a policy**, declared per corpus, mapping an address to physical
+locations. Two profiles ship:
 
-**Placement is a policy**, declared per source, mapping an address to physical
-locations. Two profiles ship in v1:
+| Profile | Where a unit's page and its files go |
+|---|---|
+| `tree` | under one generated root, `.studyforge/`, in directories that spell the address, with `units/unit-NN/` below the container |
+| `sibling` | in a `study/` directory beside the source file the unit was generated from |
 
-- `tree` — CodeSignal's existing shape. All output under one generated root.
-- `sibling` — output lands in a declared `study/` directory **beside the source
-  file it was generated from**.
+`tree` is for material with no layout worth preserving. `sibling` is for a
+repository whose layout the reader already knows, which R3 forbids
+restructuring:
 
-The Java repo uses `sibling`, because the material already has a layout the
-reader knows and R3 forbids restructuring it:
-
-```
-Claude-senior-java-engineer/
-  index.html                                     generated root index
-  .studyforge/assets/                            shared css, js, prism, plyr
-  archive/<address>/raw/java/unit-NN/lesson-1.json  the archive, beside corpus.json (§6)
-  .studyforge/site.json                          discovery cache
+```text
+my-java-course/
+  index.html                                   the root index
+  corpus.json
+  archive/<address>/raw/java/unit-NN/lesson-1.json   the archive (§6)
+  .studyforge/assets/                          the shared stylesheet, script, faces and player
   16-streams-api/
-    README.md                                    UNTOUCHED
-    README_4.4.1.md                              UNTOUCHED
+    README.md                                  untouched
+    README_4.4.1.md                            untouched
     study/
-      streams-api.section.html                   module page
-      basics.16-streams-api.4.4.1-introduction-to-the-streams-api.unit.html
-      audio/basics.16-streams-api.4.4.1-introduction-to-the-streams-api/*.mp3
-      practice/basics.16-streams-api.4.4.1-introduction-to-the-streams-api/
+      streams-api.section.html                 the container's page
+      basics.16-streams-api.unit-02-introduction-to-the-streams-api.unit.html
+      audio/basics.16-streams-api.unit-02-introduction-to-the-streams-api/
+      practice/basics.16-streams-api.unit-02-introduction-to-the-streams-api/
 ```
 
-⛔ **AMENDED PO round 76 — the archive root is `archive/`, beside `corpus.json`, under
-every profile** (`W241`, `INT-06/6`). ⚠️ **This example once read `.studyforge/archive/`:
-`plan` printed that root and nothing read it.** ⭐ **§6's `<archive-root>` is this directory.**
+- ⭐ **The archive root is `archive/`, beside `corpus.json`, under every profile.**
+- ⭐ **Under `sibling`, everything generated lands in one `study/` directory beside
+  its source file, never loose in that directory.** A source directory gains
+  exactly one name; its media sits one directory per kind under `study/`, with the
+  unit's stem below that, so many units can share one `study/`. The only
+  generated file at the corpus root is `index.html`.
+- ⭐ **Every generated page carries a real name, never `index.html`.** A scanner
+  reads names and a reader browses directories, and an `index.html` is neither
+  unique in a listing nor distinguishable from the root index. A unit's name is
+  its label — the corpus's own numbering where the container map records one,
+  otherwise `unit-NN` — and its title's slug; a container page is named from its
+  deepest title.
+- ⛔ **Under `sibling`, a unit's page and media names begin with its container's
+  address, dot-joined** (`basics.16-streams-api.` above, for a unit at
+  `basics/16-streams-api`). Where many units share a directory, numbering and
+  title alone are not unique: two containers whose series mirror each other would
+  give two units one name. A slug carries no `.` and depth is uniform, so two
+  containers never share a name. What one container still repeats (one label,
+  one title) is refused by name, by `validate`, `plan` and a build.
 
-⛔ **AMENDED (`W323`, a user requirement) — under `sibling` every generated
-artifact lands in a `study/` directory beside its source file, never loose in
-that directory.** ⚠️ **This example once put the page and a per-unit
-`<stem>.audio/` directly beside the `README`s**, which measured on the first
-corpus as 38 sources, 38 pages and 38 media directories interleaved in one
-listing, and put a page and a media directory at the **repository root** for
-every source file that sat there. ⭐ **The only generated file at the corpus
-root is `index.html`**; the media sits one directory per kind under `study/`,
-with the unit's stem below that, so a source directory gains exactly one name.
+**Where a build writes is the corpus owner's decision.** `studyforge build`
+takes `--out` with no default, and `studyforge serve --site` serves what it
+wrote; a default would answer by convention what only the owner can. A build
+into the corpus root lays the site out exactly as the placement profile says.
 
-**Every generated page carries a real name, never `index.html`.** Names come
-from the unit's own numbering and title, so they are human-readable in a
-directory listing and unambiguous to a scanner.
+**Discovery replaces path inference.** The server scans a root for
+`*.unit.html` and `*.section.html`, reads each file's embedded identity block,
+and assembles the site from what it finds. Consequences, all intended:
 
-⛔ **AMENDED (`W254`): under `sibling`, a unit's page and media names begin with
-its container's address, dot-joined** (`basics.16-streams-api.` above, for a
-unit at `basics/16-streams-api`). ⚠️ **Numbering and title alone were not
-unique:** two containers whose series mirror each other in one directory gave
-two units one name. A slug carries no `.` and depth is uniform, so two
-containers never share a name. What one container still repeats (one label,
-one title) is refused by name, by `validate`, `plan` and a build.
-
-**Discovery replaces path inference.** At startup the server scans the source
-root for `*.unit.html` and `*.section.html`, reads each file's embedded
-identity block, and assembles the site from what it finds. `site.json` is a
-cache of that scan, never the authority. Consequences, all intended:
-
-- The framework does not care where artifacts are; a source may place them
-  anywhere the reader finds natural.
+- The framework does not care where artifacts are; a corpus may place them
+  wherever the reader finds natural.
 - A moved or renamed artifact still identifies itself correctly.
-- A stale cache is detectable rather than silently wrong.
-- Two sources with different placement profiles are served by one server.
+- Two corpora with different placement profiles are served by one server.
+
+⛔ **`site.json` is a cache of that scan, never the authority.** The scan runs
+every time and its result is what is returned; no branch hands back a cached
+site. A stale cache is detectable by a content digest recorded in it, never by a
+modification time. ⭐ **The cache is this machine's, and it is ignored where it
+sits**: the framework writes an ignore file inside `.studyforge/` for it, never
+a line in the repository's root ignore file (R3), so serving a corpus leaves its
+working tree unmodified.
 
 Assets and audio resolve **relative to the page that references them**, so a
 unit page opened directly from `file://` works with no server and no rewriting
@@ -970,54 +975,45 @@ unit page opened directly from `file://` works with no server and no rewriting
 ⛔ **Delivery is orthogonal to placement, and an href never encodes how a file
 arrived.** A generated artifact is addressed relative to the page that
 references it, and that address is the same whether the file was generated
-locally, committed, or restored from somewhere else. Any future delivery
-mechanism moves the same bytes to the same paths. ⚠️ CodeSignal proved this in
-reverse, expensively: when 11.7 GiB of media left git for release assets, **the
-layout on disk did not move and every page still addressed a clip as plain
-`audio/<clip>.mp3`** — which is the only reason that change was a script rather
-than a re-render of 1,290 pages.
+locally, committed, or restored from somewhere else. Any delivery mechanism
+moves the same bytes to the same paths. ⚠️ CodeSignal proved this in reverse:
+when its media left git for release assets, the layout on disk did not move and
+every page still addressed a clip as plain `audio/<clip>.mp3` — which is the only
+reason that change was a script rather than a re-render of every page.
 
-**Generated media is committed by default.** ⭐ *Regenerable is not the same as
+### Generated media and pages are committed
+
+⭐ **Generated media is committed by default.** *Regenerable is not the same as
 available*: a clone that carries its own audio speaks with no synthesis service,
-no GPU and no network, and that is what R8 is for. A corpus that ignores its
-media asks every reader to stand up a service before they can hear anything.
-
-⭐ **A build's output is committed too: its pages, the root index and the asset bundle**
-(PO round 78, `W242/1`). The same argument holds: a clone that ignores its pages has no reading
-floor. ⛔ **So the only generated ignore rules ABOUT THE CORPUS are the media policy's, written
-inside the generated directory they are about and never in the root ignore file (R3).**
-⚠️ This dates Ruling 91's first half, which declared `sibling` output in `.gitignore`.
-
-⛔ **`site.json` was in that list and is not any more** (`W425`, PO round 132; measured
-2026-09-20 on the first corpus). ⚠️ **The argument does not reach it, and the difference is
-structural rather than a preference:** every other artifact in the list is READ by somebody — a
-reader opens the pages and the index, a page loads the bundle — and **nothing reads the cache**.
-`corpus.discovery.assemble` scans on every call and returns the scan; no branch hands back a
-cached `Site`. ⛔ So a clone carrying the cache gains nothing, while every reader who serves the
-corpus gets a modified file **for doing the one thing the tool is for**: `tools.workspace verify`
-refused the workspace within a minute of a serve, on `.studyforge/site.json` alone. ⭐ **So the
-cache is ignored where it sits**, by the same mechanism the progress store uses one directory
-over — an ignore file INSIDE the generated directory, never the repository's root one — and the
-rule is written by the framework rather than by a hand-added line per corpus (R19).
+no GPU and no network, and that is what R8 is for. ⭐ **A build's pages, the root
+index and the asset bundle are committed too**, for the same reason: a clone that
+ignores its pages has no reading floor. ⛔ **So the only generated ignore rules
+about a corpus are the media policy's and the machine-local ones**, written inside
+the generated directory they are about and never in the root ignore file (R3).
 
 ⛔ **The default has a ceiling, and crossing it is a decision, not an accident.**
-Narration is the largest thing this framework generates, and a corpus can
-outgrow what a git remote will take: CodeSignal reached **11.42 GiB of pack
-against a ~5 GB soft limit, with one file at 150.9 MiB against a hard 100 MiB
-per-file block** — and found out when the push became *impossible*, after the
-history already held the blob. So the policy is manifest data, the footprint is
-**measured**, and a corpus that crosses its limits **stops and says so**, naming
-the number and the limit. ⛔ It never silently switches to ignoring media, which
-would produce clones that are silent with no error, and it never silently keeps
-committing.
+Narration is the largest thing this framework generates, and a corpus can outgrow
+what a git remote will take — a repository limit of a few gigabytes, a per-file
+block of 100 MiB — and find out only when a push becomes impossible, after the
+history already holds the blob. So the policy is manifest data:
 
-⚠️ **Extraction — packing media out of git and restoring it — is deliberately
-not built in v1.** No source in scope needs it, and building a delivery
-mechanism for a problem nobody has is how a framework acquires machinery it
-cannot justify. What v1 builds is the **awareness**: the policy, the
-measurement, and the honest refusal. Because delivery is orthogonal to
-placement, the mechanism plugs in later behind the same decision without
-touching a single page.
+| `media` key | Meaning |
+|---|---|
+| `commit` | `auto` (the default) commits while the media fits and stops when it does not; `always` commits whatever the size; `never` is a corpus that holds its media elsewhere |
+| `max_total_bytes` | the total ceiling, `auto` only; defaults to 5 GB |
+| `max_file_bytes` | the per-file ceiling, `auto` only; defaults to 100 MiB |
+| `max_files` | the file-count ceiling, `auto` only; **no default** — unstated means unbounded, and the count is measured and reported either way |
+
+The footprint is **measured**, by `studyforge plan` and again by a build after it
+copies media, and a corpus that crosses a limit **stops and says so**, naming the
+number and the limit, and the build exits `1`. ⛔ It never silently switches to
+ignoring media, which would produce clones that are silent with no error, and it
+never silently keeps committing.
+
+⚠️ **Packing media out of git and restoring it is not built.** What the framework
+builds is the **awareness**: the policy, the measurement, and the honest refusal.
+Because delivery is orthogonal to placement, a mechanism can plug in behind the
+same decision without touching a single page.
 
 ### The placement dry-run
 
@@ -1025,16 +1021,19 @@ A consumer cannot write its ignore rules, declare its `permitted_edits` (R3) or
 review an onboarding without knowing every path the framework will create. So
 placement is **askable before it is exercised**:
 
-```
-studyforge plan <repo>
+```text
+studyforge plan <root>
 ```
 
-emits, from the manifest alone and before anything is generated, the complete
-set of paths that will be created, the set of existing files that will be
-edited, and the declared reason for each. It is what the onboarding skill
-renders ignore rules from, what the non-destructive check asserts against, and
-what lets a person read what is about to happen to their repository before it
-happens. The placement policy already computes all of it; nothing exposed it.
+prints, from the manifest and the container maps alone and before anything is
+generated, every path a build will create or replace, every directory it claims
+for media, every path it expects another command to write, the files it will
+edit and the declared reason for each, the ignore lines it needs, and the media
+policy with its measured footprint. It is what the onboarding skill renders
+ignore rules from, what the non-destructive check asserts against, and what lets
+a person read what is about to happen to their repository before it happens.
+⛔ **The plan and the build agree path for path**, and that agreement is
+asserted (R3).
 
 ---
 
