@@ -195,8 +195,16 @@ def test_the_spec_table_agrees_with_every_committed_corpus_manifest():
 
 def test_a_named_workspace_holding_no_corpus_fails_and_an_unnamed_one_skips(tmp_path, monkeypatch):
     monkeypatch.setenv(WORKSPACE_ENV, str(tmp_path))
-    with pytest.raises(AssertionError):
+    try:
         test_the_spec_table_agrees_with_every_committed_corpus_manifest()
+    except AssertionError:
+        pass
+    except pytest.skip.Exception:
+        # ⛔ Caught here, because a skip raised through this test would read
+        # as a skip and never as the failure it is.
+        pytest.fail(f"a named {WORKSPACE_ENV} holding no corpus skipped the table")
+    else:
+        pytest.fail(f"a named {WORKSPACE_ENV} holding no corpus passed the table")
     monkeypatch.delenv(WORKSPACE_ENV)
     with pytest.raises(pytest.skip.Exception, match=WORKSPACE_ENV):
         test_the_spec_table_agrees_with_every_committed_corpus_manifest()
