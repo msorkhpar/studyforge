@@ -57,6 +57,7 @@ from __future__ import annotations
 import re
 from collections.abc import Sequence
 
+from studyforge.corpus.manifest import ONBOARDING_DOC
 from studyforge.describe import describe
 from studyforge.skills.onboarding.compose import module
 
@@ -155,13 +156,17 @@ def stub_paths(skills: Sequence[str] = SKILLS) -> tuple[str, ...]:
     return tuple(f"{STUB_DIR}/{name}.md" for name in known(skills))
 
 
-def pin_test(skills: Sequence[str] = SKILLS) -> str:
+def pin_test(skills: Sequence[str] = SKILLS, reader: str | None = ONBOARDING_DOC) -> str:
     """Return the drift check: the pin, the installed library, every stub agreeing, no submodule.
 
     ⭐ **It asks the library the corpus's Python imports**, through that
     library's own `version()` and `documents.names()` — so an installed wheel
     answers from its distribution metadata, and a missing library is a
     sentence rather than a collection error.
+
+    ⛔ `W461`: **`reader` is where the reader document is, as the manifest
+    places it**, and the sentence points there, or says how itself when the
+    corpus has none. A fixed name pointed at a file the corpus had moved.
     """
     return module(
         summary="The framework pin, the installed library, and the stubs that must agree.",
@@ -191,7 +196,7 @@ def pin_test(skills: Sequence[str] = SKILLS) -> str:
             "    except ImportError:",
             "        raise AssertionError(",
             "            FRAMEWORK + ' is not installed in the Python running these checks; '",
-            "            'install the pinned version (ONBOARDING.md says how)'",
+            f"            {_how_to_install(reader)!r}",
             "        ) from None",
             "    return library, documents",
             "",
@@ -253,6 +258,13 @@ def pin_test(skills: Sequence[str] = SKILLS) -> str:
             "    )",
         ],
     )
+
+
+def _how_to_install(reader: str | None) -> str:
+    """Say where the install is explained: the reader document, or the one sentence of it."""
+    if reader is None:
+        return "install the pinned version: a wheel built from the framework at the pinned commit"
+    return f"install the pinned version ({reader} says how)"
 
 
 def check_commit(commit: object) -> str:

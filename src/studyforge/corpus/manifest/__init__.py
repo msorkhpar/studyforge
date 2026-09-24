@@ -3,8 +3,8 @@
 **What it does.** Owns the manifest: its version, the corpus's identity, the
 container levels that fix its depth, its variants, its placement profile, what
 counts as its content, whether it commits its media, the runtimes its material
-needs, whether it is narrated, and the enumerated set of existing files it may
-add to.
+needs, whether it is narrated, where onboarding's reader document goes, and the
+enumerated set of existing files it may add to.
 
 **How you use it.** `load(path)` or `parse(text)`; then ask the `Manifest`.
 
@@ -17,6 +17,7 @@ add to.
     manifest.media.commits               # True — 'auto' commits
     manifest.runtimes                    # () — absent means no runner (§7, C5)
     manifest.narration                   # True — absent means voiced; False is the floor
+    manifest.onboarding_doc              # 'ONBOARDING.md' — absent; None when declared false
     manifest.allows_edit_to("pom.xml")   # R3's declaration, asked not assumed
 
 **Depends on.** `studyforge.address`, `studyforge.version` for the R9 gate,
@@ -82,6 +83,7 @@ from studyforge.corpus.manifest.edits import (
     parse_edits,
 )
 from studyforge.corpus.manifest.errors import ManifestError
+from studyforge.corpus.manifest.fields import ONBOARDING_DOC
 from studyforge.corpus.manifest.media import (
     COMMIT_MODES,
     DEFAULT_MEDIA,
@@ -121,6 +123,7 @@ __all__ = [
     "MANIFEST_KEYS",
     "MIN_WHY_CHARS",
     "NO_RUNTIMES",
+    "ONBOARDING_DOC",
     "PLACEMENT_PROFILES",
     "RAISES",
     "REQUIRED_KEYS",

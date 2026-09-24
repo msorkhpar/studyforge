@@ -58,7 +58,7 @@ below.
 
 | Key | | What it says |
 |---|---|---|
-| `corpus_api` | **required** | Which version of this format the file speaks. An unknown value is **refused**, never quietly migrated. This build reads `1` to `5`; `2` added `content.not_material`, `3` added `media.max_files`, `4` added `runtimes` and `5` added `narration` |
+| `corpus_api` | **required** | Which version of this format the file speaks. An unknown value is **refused**, never quietly migrated. This build reads `1` to `6`; `2` added `content.not_material`, `3` added `media.max_files`, `4` added `runtimes`, `5` added `narration` and `6` added `onboarding_doc` |
 | `source` | **required** | An id for the corpus — a short stable name. **Not a URL to fetch from** |
 | `title` | **required** | What the reader sees at the top of the site |
 | `levels` | **required** | Names your container levels, and by its length fixes the depth of every address |
@@ -66,6 +66,7 @@ below.
 | `exercises` | **required** | Whether this corpus is on the execution track at all. `false` is an answer |
 | `runtimes` | *optional* | Which runtimes your material's commands need, by name. Absent means none, and a corpus with none needs no runner |
 | `narration` | *optional* | Whether the site speaks. `false` is a site with no voice: no player, no clip served, nothing called missing. Absent means narrated whenever clips are recorded |
+| `onboarding_doc` | *optional* | Where onboarding writes the document a reader opens first, as a path inside the corpus ending `.md`, or `false` for none. Absent means `ONBOARDING.md` at the root |
 | `placement` | **required** | `tree` or `sibling` |
 | `content` | **required** | Which of your files are read in, which are deliberately not, and which are not prose at all |
 | `media` | *optional* | Whether generated narration is committed, and the limits past which the build stops. A corpus with no media declares nothing |
@@ -263,6 +264,33 @@ with narration on plays the same clips again without synthesising anything.
 `studyforge serve --no-narration` refuses a site that was built with narration
 and tells you to build again with `--no-narration`, because the player is part
 of each page.
+
+---
+
+## `onboarding_doc` — where the reader document goes
+
+Onboarding writes one document for a person opening your repository: what the
+corpus declares and the commands that run it from a fresh clone. **By default it
+is `ONBOARDING.md` at the root.** Say somewhere else, or say you want none.
+**Needs `corpus_api: 6`.**
+
+```json
+{ "onboarding_doc": "docs/archive/ONBOARDING.md" }
+```
+
+- **A path** is relative to the corpus root and ends `.md`: no leading `/`, no
+  `.` or `..` segment, no glob character. It may not be a path onboarding
+  already writes, or lie under `.studyforge/` or the archive directory.
+- **`false`** writes no reader document. The generated pin check then says how
+  to install the library itself rather than naming a file.
+- **Leave it out** and it is `ONBOARDING.md` at the root, as before the key.
+
+**Moving the file by hand is not how you move it.** The next re-onboarding
+writes it back where the manifest says, and `hand_edited` reports the gap until
+then. Declare the place, then re-onboard with
+`reonboard('.', settle={"onboarding_doc": "docs/archive/ONBOARDING.md"})`:
+the document is written there, nothing is written at the root, and a copy you
+already moved there unchanged is rewritten in place rather than refused.
 
 ---
 

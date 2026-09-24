@@ -8,8 +8,9 @@ scaffold. Every renderer is a pure function from data to text, so the whole
 file set can be read back before anything is on disk.
 
 **Depends on.** `studyforge.corpus.manifest` for what a manifest says,
-`skills.adapter` for the adapter's package name, plus this package's `pin` and
-`nondestructive` (for where R3's generated check lands). ⛔ No I/O, and nothing
+`skills.adapter` for the adapter's package name, plus this package's `pin`,
+`nondestructive` (for where R3's generated check lands) and `record` (for the
+refusal a misplaced reader document gets). ⛔ No I/O, and nothing
 source-specific (R1).
 
 ## ⛔ This document states no live count, and that is `W332`'s whole fix
@@ -27,6 +28,15 @@ read.** So this prints the invocation that reads the standing
 (`cli.main`, rendered by `standing.lines`) and never the standing itself, and
 `reader_document` is a pure function of the manifest: regenerating it after a
 narration changes nothing, because there was nothing to go stale.
+
+## ⛔ The reader document goes where the corpus says (`W461`)
+
+⚠️ **Measured at a corpus** (`ISO-32/1`): the user ruled that its reader
+document moves to an archive, the corpus moved it, and the next regenerate
+would have written it back at the root, because its path was a name fixed here.
+⭐ **`onboarding_doc` in `corpus.json` places it, or turns it off** (R1, R19):
+`READER_DOC` is only the default, and the glob, the path and the pin check's
+pointer all follow the manifest.
 
 ## ⛔ R3's generated check is `nondestructive`'s, not this module's (`W331`)
 
@@ -76,7 +86,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from pathlib import PurePosixPath
 
-from studyforge.corpus.manifest import MANIFEST_FILENAME, Manifest
+from studyforge.corpus.manifest import MANIFEST_FILENAME, ONBOARDING_DOC, Manifest
 from studyforge.skills.adapter import bytecode_ignores, plan_for
 from studyforge.skills.onboarding.nondestructive import EDITS_TEST, TESTS_DIR
 from studyforge.skills.onboarding.pin import (
@@ -89,6 +99,7 @@ from studyforge.skills.onboarding.pin import (
     VERIFY,
     stub_paths,
 )
+from studyforge.skills.onboarding.record import OnboardingRefused
 
 #: The manifest's filename, re-exported so a reader of `onboard` does not have
 #: to know which module owns it.
@@ -99,8 +110,10 @@ MANIFEST = MANIFEST_FILENAME
 #: about the adapter. ⭐ `TESTS_DIR` and `EDITS_TEST` are `nondestructive`'s.
 PIN_TEST = f"{TESTS_DIR}/test_framework_pin.py"
 
-#: What a reader opens first.
-READER_DOC = "ONBOARDING.md"
+#: What a reader opens first, where a corpus that says nothing gets it. ⛔ `W461`:
+#: **a default, never the place** — `onboarding_doc` in `corpus.json` moves it or
+#: turns it off, and `own_not_material` and `paths` follow what it says.
+READER_DOC = ONBOARDING_DOC
 
 #: Why none of this is material. ⚠️ Each is long enough to clear the manifest's
 #: own minimum, because a reason the document refuses is a reason the
@@ -119,11 +132,8 @@ WHY_READER = (
     "regenerated rather than edited."
 )
 
-#: Every glob this skill's own output needs, with the reason each one gives.
-#: ⛔ **`corpus.json` is absent on purpose**: a manifest classifying itself is a
-#: statement about the document making it, and it is the one path the source
-#: walk never offers for classification anyway.
-NOT_MATERIAL = (
+#: The globs this skill's output needs wherever the reader document goes.
+_FIXED = (
     {"glob": f"{PIN_DIR}/**", "why": WHY_PIN},
     # ⛔ `W329`: the whole directory, never `tests/*.py`. `SKILL.md` step 4
     # commands `python3 -m pytest tests`, which writes `tests/__pycache__/*.pyc`
@@ -134,11 +144,30 @@ NOT_MATERIAL = (
     # this skill told them to run. ⚠️ `ingest/**` and `tests/ingest/**` already
     # read this way; this directory was the one exception.
     {"glob": f"{TESTS_DIR}/**", "why": WHY_TESTS},
-    {"glob": READER_DOC, "why": WHY_READER},
 )
 
 
-def paths(skills: Sequence[str] = SKILLS) -> tuple[str, ...]:
+def own_not_material(reader: str | None = READER_DOC) -> tuple[dict[str, str], ...]:
+    """Every glob this skill's own output needs, with the reason each one gives.
+
+    ⛔ **`corpus.json` is absent on purpose**: a manifest classifying itself is a
+    statement about the document making it, and it is the one path the source
+    walk never offers for classification anyway.
+
+    ⭐ `W461`: the reader document's glob is its path, from `onboarding_doc`, and
+    there is none when the corpus has no reader document. ⚠️ `WHY_READER` is what
+    marks that entry as this skill's wherever it sits, so a regenerate that moves
+    the document drops the old glob rather than keeping it as a person's.
+    """
+    reads = () if reader is None else ({"glob": reader, "why": WHY_READER},)
+    return (*_FIXED, *reads)
+
+
+#: The globs a corpus that says nothing about its reader document gets.
+NOT_MATERIAL = own_not_material()
+
+
+def paths(skills: Sequence[str] = SKILLS, reader: str | None = READER_DOC) -> tuple[str, ...]:
     """Every path this skill occupies, in the order onboarding writes them."""
     return (
         MANIFEST,
@@ -147,9 +176,26 @@ def paths(skills: Sequence[str] = SKILLS) -> tuple[str, ...]:
         *bytecode_ignores((EDITS_TEST, PIN_TEST)),
         EDITS_TEST,
         PIN_TEST,
-        READER_DOC,
+        *(() if reader is None else (reader,)),
         RECORD_FILE,
     )
+
+
+def placed(manifest: Manifest, taken: Sequence[str]) -> str | None:
+    """Return where the reader document goes (`W461`), or `None` for none.
+
+    ⛔ A place another writer owns, one of `taken` or under the framework's own
+    directory or the archive's, is refused by name before anything is planned.
+    """
+    reader = manifest.onboarding_doc
+    under = (f"{PIN_DIR}/", f"{plan_for(manifest).archive_dir}/")
+    if reader is not None and (reader in {*taken, *paths(reader=None)} or reader.startswith(under)):
+        raise OnboardingRefused(
+            f"{MANIFEST} places the reader document (onboarding_doc) at a path onboarding "
+            f"already writes, or under {list(under)}; nothing was written. Choose a path "
+            f"of its own, or false for no reader document"
+        )
+    return reader
 
 
 def classified(where: str, entries: Sequence[Mapping[str, str]] = NOT_MATERIAL) -> bool:

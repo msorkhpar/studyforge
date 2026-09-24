@@ -208,17 +208,28 @@ python3 -c "from studyforge.skills.onboarding import hand_edited, reonboard; \
   is retyped is refused by name as a collision.
 - ⭐ **`settle` names a recorded answer you mean to change** — `{"exercises": True}`
   when a corpus starts authoring, or `{"narration": False}` when the author
-  decides to read without voices (`W460`). ⛔ Any answer it does not name that would move is
+  decides to read without voices (`W460`), or `{"onboarding_doc": "docs/archive/ONBOARDING.md"}`
+  to keep the reader document somewhere other than the root (`false` for none, `W461`).
+  ⛔ Any answer it does not name that would move is
   still refused by name (`W329`, below); `content` is never settled here, because a
   new content shape is a new onboarding.
 - ⭐ **`framework_commit` re-pins**, to the library running `reonboard`. Without it
   the recorded pin and its skills are kept — ⛔ only while the pin names the
-  version running, and never for a pin that predates the installed library. ⛔ **The pin, every stub and `ONBOARDING.md` move together or not at all**:
+  version running, and never for a pin that predates the installed library. ⛔ **The pin, every stub and the reader document move together or not at all**:
   a pin advanced by hand leaves the stubs behind, which the generated
   `test_framework_pin.py` refuses (`test_no_stub_has_drifted_from_the_pin`) and
   `hand_edited` names as `.studyforge/pin.json`.
 - ⛔ **`hand_edited('.')` printing `[]` is the proof**, and a `corpus.json` edited in
   an editor fails it: `.studyforge/installed.json` digests the manifest as generated.
+  ⛔ **A generated file moved or deleted by hand fails it too** (`W461`): each one
+  missing from where the record puts it is a sentence saying so and what to do.
+  ⭐ An ignore file that hides itself is one machine's own (`W425`), so a fresh
+  clone lacks it and it is never reported.
+- ⭐ **The reader document goes where `corpus.json` says** (`onboarding_doc`, `W461`),
+  and every generated line that points at it points there. ⛔ **Never move it by
+  hand**: the next regenerate writes it back at the recorded place. Settle the key
+  instead; a copy already moved to that place unchanged is rewritten in place,
+  and nothing is written at the root.
 
 ⚠️ **Why not `survey('.')`**: on an onboarded corpus it reads this framework's own
 generated half as material and proposes answers the manifest does not record
@@ -246,7 +257,10 @@ generates** (`W353`). A generated path already on disk that
 `.studyforge/installed.json` does not list as generated is refused by name, and
 nothing is written — ⚠️ even when its bytes are what the framework would write,
 because adopting it would be silent. ⭐ Move each named file aside, regenerate,
-and keep what was yours outside the generated paths.
+and keep what was yours outside the generated paths. ⚠️ The one exception is a
+generated file MOVED: bytes whose digest the record holds for a generated path
+that is now empty are the framework's, byte for byte, and are rewritten in place
+(`W461`).
 
 What lands, and why each one exists:
 
@@ -256,7 +270,7 @@ What lands, and why each one exists:
 | the adapter package and its suite | the adapter skill's scaffold, wired in — one file that is yours and every other one generated; ⛔ how many is the scaffold's own listing (`scaffold(...).lines()`, the adapter skill's step 1), never a number typed here (`W345`) |
 | `.studyforge/pin.json` and the skill stubs | the installed library's version and the commit it was built from, and thin pointers that carry both and name the command that prints each procedure from the installed package |
 | `tests/` — two checks | R3's assertion, read from what a build declares it writes and from the tree through that same declaration, with this corpus's edits baked in; and the pin check — the installed library is the pinned version, ships every stubbed skill, and no stub has drifted |
-| `ONBOARDING.md` | what a reader gets, read off the corpus's own declarations, with commands that run from a fresh clone (`W313`) — and **no live figure**: where the corpus stands is a command it prints, because nothing rewrites a generated document when narrating or re-ingesting moves the answer (`W332`) |
+| the reader document, `ONBOARDING.md` unless `onboarding_doc` places it elsewhere or turns it off | what a reader gets, read off the corpus's own declarations, with commands that run from a fresh clone (`W313`) — and **no live figure**: where the corpus stands is a command it prints, because nothing rewrites a generated document when narrating or re-ingesting moves the answer (`W332`) |
 | `.studyforge/installed.json` | what step 6 undoes, a digest per generated file, and the one module that is yours, marked `hand_written` with no digest |
 
 ### 4. Write the one file that is a person's
@@ -292,7 +306,7 @@ studyforge validate .
 right — the same rule the adapter skill is written against.
 
 ⛔ **Nothing here has to be regenerated afterwards, and that is `W332`'s fix.**
-`ONBOARDING.md` states **no** figure: how many units this corpus has, how many
+The reader document states **no** figure: how many units this corpus has, how many
 are narrated and whether any needs a container are read on demand, by the
 command that document prints, which reads the archive and the narration record
 as they are at the moment it is typed:

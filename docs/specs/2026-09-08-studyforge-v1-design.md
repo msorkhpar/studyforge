@@ -1005,7 +1005,7 @@ for the vocabulary found only one corpus's choices.
 
 | Key | | Notes |
 |---|---|---|
-| `corpus_api` | **required** | R9's version key. An unknown value is refused, never migrated. ⭐ **`2` added `content.not_material`** (ruling 90), ⭐ **`3` added `media.max_files`** (`W207`) and ⭐ **`4` added `runtimes`** (`W350`) and ⭐ **`5` added `narration`** (`W460`, amended 2026-09-23); this build reads `1` to `5` |
+| `corpus_api` | **required** | R9's version key. An unknown value is refused, never migrated. ⭐ **`2` added `content.not_material`** (ruling 90), ⭐ **`3` added `media.max_files`** (`W207`) and ⭐ **`4` added `runtimes`** (`W350`), ⭐ **`5` added `narration`** (`W460`, amended 2026-09-23) and ⭐ **`6` added `onboarding_doc`** (`W461`); this build reads `1` to `6` |
 | `source` | **required** | ⛔ **A corpus id, not a fetch URL** (ruling 51) |
 | `title` | **required** | |
 | `levels` | **required** | Names the *container* levels and fixes the depth |
@@ -1013,6 +1013,7 @@ for the vocabulary found only one corpus's choices.
 | `exercises` | **required** | §7's gate onto the execution track |
 | `runtimes` | *optional* | Names, never versions, from a closed vocabulary. ⛔ **Absent means none: no runner, complete at the reading floor** (§7, C5) |
 | `narration` | *optional* | Whether a build and a serve voice the corpus (`W460`). ⭐ **Absent means voiced whenever clips are recorded**; ⛔ **`false` is the reading floor exactly, complete and never short** (C5) |
+| `onboarding_doc` | *optional* | Where onboarding writes its reader document (`W461`): a corpus-relative `.md` path, or `false` for none. ⭐ **Absent means `ONBOARDING.md` at the root**; ⛔ a fixed name was a branch nobody could move (R1, R19) |
 | `placement` | **required** | |
 | `content` | **required** | `include` is plain globs; every `exclude` and every `not_material` entry carries its `why` |
 | `media` | *optional* | Defaulted. ⛔ **A corpus with no media declares nothing** |

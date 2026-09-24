@@ -32,6 +32,7 @@ PUBLIC_SURFACE = frozenset(
         "MANIFEST_KEYS",
         "MIN_WHY_CHARS",
         "NO_RUNTIMES",
+        "ONBOARDING_DOC",
         "PLACEMENT_PROFILES",
         "RAISES",
         "REQUIRED_KEYS",

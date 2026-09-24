@@ -130,16 +130,16 @@ def test_the_same_key_is_right_at_one_depth_and_wrong_at_another():
 # --- R9: an unknown version is refused, never migrated ----------------------
 
 
-@pytest.mark.parametrize("api", [0, 6, 99, "1", 1.0, None, True])
+@pytest.mark.parametrize("api", [0, 7, 99, "1", 1.0, None, True])
 def test_an_unknown_corpus_api_is_refused(api):
-    # ⚠️ `6` is where `5` used to sit, which is where `4`, `3` and `2` sat. ⛔ Each
+    # ⚠️ `7` is where `6` used to sit, which is where `5`, `4`, `3` and `2` sat. ⛔ Each
     # widening of the known set moves this case up by one rather than dropping
     # it: the refusal one degree above the top of the range is the one that
     # goes quiet first.
     assert "corpus_api" in refusal(corpus_api=api)
 
 
-@pytest.mark.parametrize("api", [1, 2, 3, 4, 5])
+@pytest.mark.parametrize("api", [1, 2, 3, 4, 5, 6])
 def test_every_version_this_build_speaks_is_accepted(api):
     # ⭐ Literal numbers, never `KNOWN_CORPUS_API`: an assertion that reads the
     # set it is meant to pin passes whatever the set becomes.
@@ -151,7 +151,7 @@ def test_a_manifest_reports_the_version_it_declared_and_not_this_build_s():
     # one number this was true by coincidence, because the default and the
     # only legal value were the same number.
     assert manifest(corpus_api=1).corpus_api == 1
-    assert CORPUS_API == 5
+    assert CORPUS_API == 6
 
 
 #: A `content` block using the key that `corpus_api` 2 added.
