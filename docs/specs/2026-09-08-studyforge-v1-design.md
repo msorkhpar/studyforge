@@ -623,82 +623,62 @@ reads back through its own reader is registered here and versioned all the same.
 
 ### 3.1 The workspace
 
-Five repositories, each with its own remote, composed as submodules of one
-parent so a single checkout is a complete system (R18):
+The system is several repositories, each consumed through a published contract
+and never copied into another (R18):
 
+```text
+studyforge/                 the framework: a library, its command, and the skills (§9)
+code-server-toolchain/      the runner and editor images (§8.1)
+narrate-service/            the synthesis service (§8.2)
+<corpus>/                   one repository of material, per corpus
+  corpus.json               the manifest (§4)
+  archive/                  what the corpus's adapter writes (§6)
+  exercises/                authored exercise bundles, where the corpus has them (§7)
+  .studyforge/              what the framework generates and records for it
 ```
-learning-workspace/               the parent — thin: docs, compose, scripts
-  studyforge/                     submodule — the framework
-  code-server-toolchain/          submodule — the IDE image (§8.1)
-  narrate-service/                submodule — synthesis (§8.2)
-  corpora/
-    java-senior/                  submodule — consumer 1, built in v1
-    codesignal/                   submodule — added at v2 convergence
-```
 
-The parent holds almost no code. What it holds is **the combination**: which
-commit of each component works with which, plus the compose files and scripts
-that run them together. That pin is the artifact — a component is pinned,
-never vendored, copied or forked into another (R18).
-
-Two consequences worth stating up front, because both are first-run failures:
-a plain clone yields empty submodule directories and must recurse; and a change
-to a component is **two commits** — one in the component, one in the parent
-recording the new pin. Neither is a defect; both need documenting (FND-05).
+A corpus installs the framework as a library into the Python that runs its
+checks, and records the version it installed in `.studyforge/pin.json` (R18).
+It reaches the images and the service only through what their `consuming.json`
+promises. ⭐ **A change to a component is released by that component**, and a
+consumer moves to it by re-pinning: the pin is what captures which combination
+of components a working configuration used, which is what makes R9's
+per-contract versioning hold *across* repositories rather than only inside them.
 
 ### 3.2 Inside the framework
 
 Every unit below is a **package** of focused modules, not a file (R11). The
-tree names responsibilities; the modules inside each are the owning task's to
-draw, subject to the size ceiling.
+tree names responsibilities; each package's `__init__.py` states its contract
+(R17).
 
-```
-studyforge/
-  src/studyforge/
-    version.py   the R9 gate: one implementation of "is this a version I speak"
-    address/     logical N-segment address, keys, slugs, identifiers
-    corpus/      manifest · container map · placement profiles · discovery
-    archive/     the archive document · block vocabulary · Markdown reader
+```text
+src/studyforge/
+  version.py     the R9 gate: one implementation of "is this a version I speak"
+  describe.py    how a refusal names a value without reproducing it (R7)
+  address/       logical N-segment address, keys, slugs, identifiers
+  corpus/        manifest · container map · placement profiles · discovery · media policy
+  archive/       the archive document · block vocabulary · Markdown reader
                  · the personal-data gate
-    unit/        the served unit document · authored overlay · section keys
-    contents/    table of contents and local status, as data
-    render/      page renderer · root index · templates/ · assets/
-    narrate/     speakable contract · synthesis
-    serve/       app · content, state, assets and run routes · security
-                 · caching.  A package precisely because it replaces a
-                 2,743-line file (R11)
-    execute/     the command runner — the only process-spawning package
-    progress/    the reader's local record
-    exercise/    workspace and trust contract
-    validate/    the CLI that defines "a valid archive"
-    cli/         build, serve, plan, reconcile — the framework's entry points
-    skills/      the authoring and conversion skills (§9)
-  tests/         mirrors src/ package for package (R12)
-  docker/        dev, test and serve images (R15)
-
-Claude-senior-java-engineer/      consumer 1 — built in v1
-  ingest/         curriculum · lessons · sources · emit · audit
-  exercise/       body-blanking · the two gates
-  practice/       generated exercise sources (additive Maven module)
-  docker/ docker-compose.yml
-  index.html  .studyforge/{assets,archive,site.json}
-  00-base/ 01-java-basics/ ... 45-java-persistence/   UNCHANGED
-
-code-server-toolchain/            shared, its own repo (§8.1)
-  Dockerfile entrypoint.sh
-  lockdown/         the practice-focus workbench extension
-  seed/             default settings and keybindings
-  prime/            build-time cache-warming contract
-
-CodeSignal/                       untouched in v1; converges in v2
+  unit/          the served unit document · authored overlay · section keys · trust
+  contents/      table of contents and local status, as data
+  generate/      one corpus's whole site, written in one pass
+  render/        page renderer · container pages · root index · templates/ · assets/
+  narrate/       speakable contract · the synthesis client and its record
+  serve/         app · content, state, assets, run and quiz routes · security · caching
+  execute/       the command runner — the only package that runs a corpus's commands
+  progress/      the reader's record of practice passes
+  exercise/      the exercise record, its states, the bundle, the gates, quizzes
+  validate/      what "a valid archive" means, and the command that decides it
+  cli/           validate, plan, narrate, build, serve, check — the command's verbs
+  skills/        the authoring and conversion skills (§9)
+tests/           mirrors src/ package for package (R12), plus the floor
+docker/          the development image the gates run in (R15)
 ```
 
 **Dependency direction is one-way.** `studyforge` never imports a consumer. A
 consumer never imports `studyforge` internals — it writes an archive and
-invokes the CLI.
+invokes the command, or runs a skill.
 
-⭐ **AMENDED 2026-09-23 — standard library only, declared and imported.** Carried from
-the module-structure convention and the review rubric when they were archived.
 ⛔ **Framework source imports nothing outside the standard library and itself, and
 `pyproject.toml` declares no runtime dependency** — the reader's host needs Python and
 a Docker CLI and nothing else (§8.3). ⚠️ The declaration and the code can disagree, so
