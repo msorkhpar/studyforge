@@ -21,7 +21,14 @@ import stat
 import pytest
 
 from studyforge.cli.narrate import cli
-from studyforge.narrate.release import RESTORE_PS1, RESTORE_SH, SIGNAL, read_sums
+from studyforge.narrate.release import (
+    CLIP_SUMS,
+    RESTORE_PS1,
+    RESTORE_SH,
+    SIGNAL,
+    VOLUME_SUMS,
+    read_sums,
+)
 from studyforge.render.pageassets import RELEASED, clips_state
 from tests.studyforge.cli.narrate.plant import narrated
 from tests.support import git, init_repository, run
@@ -70,6 +77,8 @@ def test_pack_writes_the_volumes_and_the_scripts_and_says_what_to_type_next(
         assert f"wrote   {where}" in said
     assert "narration-2.0.0" in (corpus / RESTORE_SH).read_text(encoding="utf-8")
     assert f"wrote   {SIGNAL}" in said
+    assert f"wrote   {VOLUME_SUMS}" in said and f"wrote   {CLIP_SUMS}" in said
+    assert (corpus / VOLUME_SUMS).read_bytes() == (tmp_path / "release" / "SHA256SUMS").read_bytes()
     assert clips_state((corpus / SIGNAL).read_bytes()) == RELEASED
     assert "publish studyforge narrate depth1 --publish release --tag narration-2.0.0" in said
     assert str(tmp_path) not in said

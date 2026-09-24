@@ -42,7 +42,6 @@ joining them in name order gives the zip back and any unzip tool reads it.
 
 from __future__ import annotations
 
-import shutil
 import zipfile
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
@@ -95,6 +94,8 @@ class Packed:
     volumes: tuple[Volume, ...]
     clips: int
     clip_bytes: int
+    #: `(member path, sha256)` for every clip, in member order: what a restore checks.
+    clip_sums: tuple[tuple[str, str], ...] = ()
 
     @property
     def assets(self) -> tuple[str, ...]:
@@ -164,7 +165,7 @@ def pack(root: Path | str, out: Path | str, *, part_bytes: int = PART_BYTES) -> 
     _clear(target)
     zipped = target / WRITING
     try:
-        _write_zip(zipped, clips)
+        clip_sums = _write_zip(zipped, clips)
         volumes = _split(zipped, target, part_bytes)
     finally:
         zipped.unlink(missing_ok=True)
@@ -173,6 +174,7 @@ def pack(root: Path | str, out: Path | str, *, part_bytes: int = PART_BYTES) -> 
         volumes=volumes,
         clips=len(clips),
         clip_bytes=sum(file.stat().st_size for _, file in clips),
+        clip_sums=clip_sums,
     )
 
 
@@ -213,8 +215,9 @@ def _clear(target: Path) -> None:
         path.unlink()
 
 
-def _write_zip(zipped: Path, clips: tuple[tuple[str, Path], ...]) -> None:
-    """Write every clip into one stored zip, in the order given, with fixed metadata."""
+def _write_zip(zipped: Path, clips: tuple[tuple[str, Path], ...]) -> tuple[tuple[str, str], ...]:
+    """Write every clip into one stored zip with fixed metadata; return each clip's SHA-256."""
+    sums: list[tuple[str, str]] = []
     with zipfile.ZipFile(zipped, "w", compression=zipfile.ZIP_STORED) as archive:
         for member, file in clips:
             info = zipfile.ZipInfo(member, date_time=STAMP)
@@ -222,8 +225,13 @@ def _write_zip(zipped: Path, clips: tuple[tuple[str, Path], ...]) -> None:
             info.create_system = 3
             info.external_attr = MODE
             info.file_size = file.stat().st_size
+            running = Running()
             with file.open("rb") as source, archive.open(info, "w") as sink:
-                shutil.copyfileobj(source, sink, CHUNK)
+                while block := source.read(CHUNK):
+                    sink.write(block)
+                    running.update(block)
+            sums.append((member, running.hex()))
+    return tuple(sums)
 
 
 def _split(zipped: Path, target: Path, part_bytes: int) -> tuple[Volume, ...]:

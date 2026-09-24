@@ -22,16 +22,21 @@ real release host by mistake fails instead of leaving.
 
 from __future__ import annotations
 
+import hashlib
 import os
 import subprocess
+import zipfile
 from dataclasses import dataclass
 from pathlib import Path
 
 from studyforge.narrate.release import (
     RESTORE_SH,
     SIGNAL,
+    SUMS,
+    VOLUME_SUMS,
     clips_of,
     pack,
+    write_release_record,
     write_scripts,
     write_signal,
 )
@@ -60,8 +65,9 @@ def prepared(tmp_path: Path, *, part_bytes: int = 1500, name: str = "depth1") ->
     """Narrate, pack and write the scripts; then delete every clip the pack carried."""
     root = narrated(tmp_path, name)
     release = tmp_path / "release"
-    pack(root, release, part_bytes=part_bytes)
+    packed = pack(root, release, part_bytes=part_bytes)
     write_scripts(root, TAG)
+    write_release_record(root, (release / SUMS).read_text(encoding="utf-8"), packed.clip_sums)
     write_signal(root)
     clips = {member: file.read_bytes() for member, file in clips_of(root)}
     for member in clips:
@@ -76,6 +82,34 @@ def restored(corpus: Prepared) -> dict[str, bytes | None]:
     return {
         member: (corpus.root / member).read_bytes() if (corpus.root / member).is_file() else None
         for member in corpus.clips
+    }
+
+
+def forge_release(corpus: Prepared, members: dict[str, bytes], *, committed: bool) -> None:
+    """Replace the release with ONE volume holding `members`, and a `SHA256SUMS` that matches it.
+
+    ⭐ The release checks itself, as a wrong tag or a replaced asset would. With
+    `committed`, the corpus's own committed volume digests are made to match it too,
+    so only the guards past the volume check stand between it and the corpus.
+    """
+    for path in corpus.release.iterdir():
+        path.unlink()
+    volume = corpus.release / "narration.zip.000"
+    with zipfile.ZipFile(volume, "w", compression=zipfile.ZIP_STORED) as archive:
+        for name, body in members.items():
+            archive.writestr(zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0)), body)
+    sums = f"{hashlib.sha256(volume.read_bytes()).hexdigest()}  narration.zip.000\n"
+    (corpus.release / SUMS).write_text(sums, encoding="utf-8")
+    if committed:
+        (corpus.root / VOLUME_SUMS).write_text(sums, encoding="utf-8")
+
+
+def files_of(root: Path) -> dict[str, bytes]:
+    """Every file under `root` but the restore's own download directory, by relative path."""
+    return {
+        path.relative_to(root).as_posix(): path.read_bytes()
+        for path in sorted(root.rglob("*"))
+        if path.is_file() and DOWNLOADS not in path.relative_to(root).as_posix()
     }
 
 

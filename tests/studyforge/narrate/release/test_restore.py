@@ -18,7 +18,13 @@ environment `restoring.environment` closes. ⛔ No request leaves this machine.
 - ⭐ **The clip signal says `present` only after every clip is in place**: a
   restore that is refused, or whose extraction fails, leaves it `released`.
 
-Plants: `plant_a_corrupt_volume` flips one byte of one served volume.
+- ⛔ **Only the clips the corpus committed are ever written**: a volume whose
+  members are not exactly `clips.sha256`'s paths, a release whose volumes are not
+  the committed ones, and clips whose bytes are not the committed ones are each
+  refused, with the corpus byte-identical and the signal still `released`.
+
+Plants: `plant_a_corrupt_volume` flips one byte of one served volume, and
+`restoring.forge_release` stands in for a wrong or replaced release.
 """
 
 from __future__ import annotations
@@ -30,10 +36,13 @@ from pathlib import Path
 
 import pytest
 
+from studyforge.narrate.release import VOLUME_SUMS
 from studyforge.render.pageassets import PRESENT, RELEASED
 from tests.studyforge.narrate.release.restoring import (
     DOWNLOADS,
     environment,
+    files_of,
+    forge_release,
     prepared,
     restore,
     restored,
@@ -144,8 +153,9 @@ def test_gh_is_asked_for_the_repository_the_checkouts_origin_names(tmp_path):
     assert done.returncode == 0, done.stderr
     assert restored(corpus) == corpus.clips
     asked = log.read_text(encoding="utf-8").splitlines()
-    assert asked[0].startswith(f"release download {TAG} --repo {OWNER_REPO} --pattern SHA256SUMS")
-    assert len(asked) == 1 + len(list(corpus.release.glob("narration.zip.*")))
+    first = f"release download {TAG} --repo {OWNER_REPO} --pattern narration.zip.000"
+    assert asked[0].startswith(first)
+    assert len(asked) == len(list(corpus.release.glob("narration.zip.*")))
 
 
 def test_volumes_on_this_disk_are_read_in_place_and_never_deleted(tmp_path):
@@ -274,3 +284,66 @@ def test_a_restore_without_unzip_extracts_with_python(tmp_path):
 
     assert done.returncode == 0, done.stderr
     assert restored(corpus) == corpus.clips
+
+
+# --------------------------------------------------------------------------
+# ⛔ A release is checked against what THIS corpus committed, member by member
+# --------------------------------------------------------------------------
+
+
+def test_a_volume_carrying_the_manifest_and_an_escape_is_refused_and_the_corpus_is_untouched(
+    tmp_path,
+):
+    # ⛔ The register's reading: a volume the corpus's committed digests accept,
+    # whose members are `corpus.json` and `../x`, must not rewrite anything.
+    corpus = prepared(tmp_path)
+    forge_release(corpus, {"corpus.json": b"{}", "../ESCAPED.txt": b"out"}, committed=True)
+    before = files_of(corpus.root)
+
+    done = restore(corpus, environment(corpus, NARRATION_LOCAL_DIR=str(corpus.release)))
+
+    assert done.returncode != 0
+    assert "not this corpus's clips" in done.stderr
+    assert files_of(corpus.root) == before
+    assert not (tmp_path / "ESCAPED.txt").exists()
+    assert signal(corpus) == RELEASED
+
+
+def test_another_corpus_release_with_its_own_matching_sums_is_refused_at_the_volumes(tmp_path):
+    # One volume on both sides, so the refusal is the digest's and not a missing part.
+    corpus = prepared(tmp_path, part_bytes=10_000_000)
+    forge_release(corpus, {path: b"another corpus" for path in corpus.clips}, committed=False)
+    before = files_of(corpus.root)
+
+    done = restore(corpus, environment(corpus, NARRATION_LOCAL_DIR=str(corpus.release)))
+
+    assert done.returncode != 0
+    assert "checksum mismatch on narration.zip.000" in done.stderr
+    assert files_of(corpus.root) == before
+    assert signal(corpus) == RELEASED
+
+
+def test_clips_whose_bytes_are_not_the_committed_ones_are_refused_before_any_is_placed(tmp_path):
+    # ⭐ The committed volume digests were made to agree, so the per-clip digests
+    # checked in staging are the guard that answers.
+    corpus = prepared(tmp_path)
+    forge_release(corpus, {path: b"another corpus" for path in corpus.clips}, committed=True)
+    before = files_of(corpus.root)
+
+    done = restore(corpus, environment(corpus, NARRATION_LOCAL_DIR=str(corpus.release)))
+
+    assert done.returncode != 0
+    assert "is not the clip this corpus packed" in done.stderr
+    assert files_of(corpus.root) == before
+    assert not (corpus.root / DOWNLOADS / "staging").exists()
+    assert signal(corpus) == RELEASED
+
+
+def test_a_corpus_that_committed_no_release_record_fetches_nothing(tmp_path):
+    corpus = prepared(tmp_path)
+    (corpus.root / VOLUME_SUMS).unlink()
+
+    done = restore(corpus, environment(corpus, NARRATION_LOCAL_DIR=str(corpus.release)))
+
+    assert done.returncode != 0
+    assert "no record of a packed release" in done.stderr

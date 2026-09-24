@@ -29,12 +29,16 @@ corpus root, so nothing printed carries a home directory (R7).
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from studyforge.narrate.release import (
+    SUMS,
     PackRefused,
     PublishRefused,
     pack,
     plan_publish,
     valid_tag,
+    write_release_record,
     write_scripts,
     write_signal,
 )
@@ -54,7 +58,7 @@ DRY_RUN = (
 )
 
 #: What a pack says the owner does next.
-NEXT = "next    commit the four files written above, then read the publish dry run below"
+NEXT = "next    commit the files written above, then read the publish dry run below"
 
 
 def pack_command(root: str, out: str, tag: str) -> tuple[list[str], int]:
@@ -65,7 +69,12 @@ def pack_command(root: str, out: str, tag: str) -> tuple[list[str], int]:
         packed = pack(root, out)
     except PackRefused as refused:
         return [f"refused {refused}"], INVALID
-    written = (*write_scripts(root, tag), write_signal(root, RELEASED))
+    sums = (Path(out) / SUMS).read_text(encoding="utf-8")
+    written = (
+        *write_scripts(root, tag),
+        *write_release_record(root, sums, packed.clip_sums),
+        write_signal(root, RELEASED),
+    )
     lines = [
         f"packed  {packed.clips} clip(s), {packed.clip_bytes} byte(s), "
         f"into {len(packed.volumes)} volume(s) in {out}",

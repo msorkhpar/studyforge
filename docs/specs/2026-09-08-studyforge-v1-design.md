@@ -1120,9 +1120,14 @@ decision without touching a page:
   repository is read from the checkout's `origin` when the script runs, and a
   placeholder is the default. A restore downloads the volumes (the public
   download address, or for a private repository the API by asset id with
-  `GITHUB_TOKEN` or an authenticated `gh`), **checks every volume before
-  anything is joined**, extracts each clip to `<corpus root>/<where>/<filename>`
-  as the record names it, and deletes the downloads. The token is read from the
+  `GITHUB_TOKEN` or an authenticated `gh`), **checks every volume against the
+  digests the pack committed beside the scripts** (never only against the
+  release's own `SHA256SUMS`, which proves a download intact and not that the
+  release belongs to this corpus), refuses a zip whose members are not exactly
+  the committed `clips.sha256` paths, extracts into a staging directory, checks
+  each clip's committed digest, moves each to `<corpus root>/<where>/<filename>`
+  as the record names it, and deletes the downloads. ⛔ A restore writes no file
+  that is not one of the corpus's clips, and a refusal leaves the corpus as it was. The token is read from the
   environment and never written or printed. A second run gives the same tree.
 - ⭐ **The pack sets the clip signal to `released`** and **the restore sets it to
   `present` as its very last step** (`.studyforge/assets/narration-clips.js`,

@@ -9,8 +9,11 @@
 #
 # Narration is optional: the site is complete without it, and this script is
 # only for a reader who wants the voice. It downloads the release's volumes,
-# checks each against SHA256SUMS, joins them, extracts the clips into the
-# directories this corpus's pages play them from, deletes the downloaded
+# checks each against the SHA256SUMS this corpus committed beside this script,
+# joins them, refuses them unless their files are exactly the clips named in
+# clips.sha256 beside it, extracts those into a staging directory, checks each
+# clip's digest, moves each into the directory this corpus's pages play it
+# from, deletes the downloaded
 # volumes, and last marks the clips present for the pages. Running it again
 # gives the same tree. A site built into another directory than this corpus's
 # root has its own copies: build it again after restoring.
@@ -126,23 +129,45 @@ fetch() {                       # fetch <name>: into PARTS, unless it is there a
   mv -f "$dest.partial" "$dest" && [ -s "$dest" ]
 }
 
-extract() {                     # extract <zip> into ROOT, stamping each clip with now
+listing() {                     # listing <zip>: every member name, one per line
   if has unzip; then
-    unzip -qq -o -DD "$1" -d "$ROOT"
+    unzip -Z1 "$1"
   else
-    python3 -m zipfile -e "$1" "$ROOT"
+    python3 -c 'import sys, zipfile; print("\n".join(zipfile.ZipFile(sys.argv[1]).namelist()))' "$1"
   fi
 }
 
+extract() {                     # extract <zip> <dir>, stamping each file with now
+  if has unzip; then
+    unzip -qq -o -DD "$1" -d "$2"
+  else
+    python3 -m zipfile -e "$1" "$2"
+  fi
+}
+
+# The release is checked against what THIS corpus committed when it was packed,
+# never only against itself: a checksum file from the same release proves the
+# download intact, not that the release belongs here.
+KEPT_SUMS="$HERE/$SUMS"
+KEPT_CLIPS="$HERE/clips.sha256"
+[ -s "$KEPT_SUMS" ] && [ -s "$KEPT_CLIPS" ] \
+  || die "this corpus carries no record of a packed release; nothing was fetched"
+while IFS= read -r line; do
+  path=${line#*  }
+  case "$path" in
+    "" | /* | ../* | */../* | */.. | .. | *\\*)
+      die "clips.sha256 names a path outside this corpus" ;;
+  esac
+done < "$KEPT_CLIPS"
+
+STAGE=""
+unstage() { [ -n "$STAGE" ] && rm -rf "$STAGE"; STAGE=""; }
+refuse() { unstage; die "$*"; }
+
 PARTS="${LOCAL_DIR:-$WORK}"
 [ -n "$LOCAL_DIR" ] || mkdir -p "$WORK" || die "cannot create the download directory"
-if ! fetch "$SUMS"; then
-  rmdir "$WORK" 2>/dev/null
-  die "no $SUMS for ${REPO:-this corpus} at $TAG; for a private repository export \
-GITHUB_TOKEN or run gh auth login, or set NARRATION_LOCAL_DIR to volumes on this disk"
-fi
 
-parts=$(awk '{ print $2 }' "$PARTS/$SUMS" | LC_ALL=C sort)
+parts=$(awk '{ print $2 }' "$KEPT_SUMS" | LC_ALL=C sort)
 [ -n "$parts" ] || die "$SUMS names no volume"
 count=0
 for part in $parts; do
@@ -155,17 +180,22 @@ done
 say "narration: $count volume(s) at $TAG"
 
 for part in $parts; do
-  fetch "$part" || die "could not get $part"
+  if ! fetch "$part"; then
+    rmdir "$WORK" 2>/dev/null
+    die "could not get $part of ${REPO:-this corpus} at $TAG; for a private repository \
+export GITHUB_TOKEN or run gh auth login, or set NARRATION_LOCAL_DIR to volumes on this disk"
+  fi
 done
 
-# Every volume is checked BEFORE anything is joined or extracted: a truncated
-# download that is merely concatenated extracts most of the way and leaves a
-# tree that looks complete and is not.
+# Every volume is checked BEFORE anything is joined or extracted, against the
+# digests this corpus committed: a truncated download, or a release of another
+# corpus or another pack, is refused here.
 for part in $parts; do
-  want=$(awk -v n="$part" '$2 == n { print $1; exit }' "$PARTS/$SUMS")
+  want=$(awk -v n="$part" '$2 == n { print $1; exit }' "$KEPT_SUMS")
   if [ "$(sha_of "$PARTS/$part")" != "$want" ]; then
     [ -n "$LOCAL_DIR" ] || rm -f "$WORK/$part"
-    die "checksum mismatch on $part; nothing was extracted. Run again to download it afresh"
+    die "checksum mismatch on $part: it is not the volume this corpus packed. Nothing was \
+extracted. Run again to download it afresh"
   fi
 done
 say "narration: checksums ok"
@@ -181,11 +211,40 @@ done
 # emptied: a NARRATION_LOCAL_DIR is the reader's own, not a cache made here.
 if [ -z "$LOCAL_DIR" ] && [ -z "$KEEP" ]; then
   for part in $parts; do rm -f "$WORK/$part"; done
-  rm -f "$WORK/$SUMS"
 fi
 
-extract "$joined" || die "extracting the clips failed"
+# Every member must be a clip this corpus committed, by exactly its path, and
+# nothing else: a member the record does not name is refused before anything is
+# extracted, so a restore never writes a file that is not one of its clips.
+want=$(awk '{ print substr($0, 67) }' "$KEPT_CLIPS" | LC_ALL=C sort)
+have=$(listing "$joined" | LC_ALL=C sort) || { rm -f "$joined"; die "the volumes are not a zip"; }
+if [ "$have" != "$want" ]; then
+  rm -f "$joined"
+  die "the volumes hold files that are not this corpus's clips; nothing was extracted"
+fi
+
+# Extracted into a staging directory first, each file checked against its
+# committed digest, and only then moved into place.
+STAGE="$WORK/staging"
+rm -rf "$STAGE"
+mkdir -p "$STAGE" || refuse "cannot create the staging directory"
+extract "$joined" "$STAGE" || { rm -f "$joined"; refuse "extracting the clips failed"; }
 rm -f "$joined"
+while IFS= read -r line; do
+  digest=${line%%  *}
+  path=${line#*  }
+  staged="$STAGE/$path"
+  [ -f "$staged" ] && [ ! -L "$staged" ] || refuse "the volumes lack $path; nothing was placed"
+  [ "$(sha_of "$staged")" = "$digest" ] || refuse "$path is not the clip this corpus packed"
+  [ ! -d "$ROOT/$path" ] && [ ! -L "$ROOT/$path" ] \
+    || refuse "$path is taken by something that is not a clip; nothing was placed"
+done < "$KEPT_CLIPS"
+while IFS= read -r line; do
+  path=${line#*  }
+  mkdir -p "$(dirname "$ROOT/$path")" && mv -f "$STAGE/$path" "$ROOT/$path" \
+    || refuse "placing the clips failed at $path"
+done < "$KEPT_CLIPS"
+unstage
 say "narration: restored into this corpus's audio directories"
 
 # rmdir, never a recursive delete: the directory goes only when it is empty.

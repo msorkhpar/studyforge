@@ -21,7 +21,15 @@ from pathlib import Path
 
 import pytest
 
-from studyforge.narrate.release import SIGNAL, pack, write_scripts, write_signal
+from studyforge.narrate.release import (
+    CLIP_SUMS,
+    SIGNAL,
+    VOLUME_SUMS,
+    pack,
+    write_release_record,
+    write_scripts,
+    write_signal,
+)
 from studyforge.narrate.release.publish import (
     NOTES,
     TITLE,
@@ -54,8 +62,9 @@ def packed(tmp_path: Path, tag: str = TAG) -> tuple[Path, Path]:
     """A narrated fixture with an origin, packed in several volumes under `tag`."""
     root = with_origin(narrated(tmp_path))
     out = tmp_path / "release"
-    pack(root, out, part_bytes=2048)
+    made = pack(root, out, part_bytes=2048)
     write_scripts(root, tag)
+    write_release_record(root, (out / SUMS).read_text(encoding="utf-8"), made.clip_sums)
     write_signal(root)
     return root, out
 
@@ -191,3 +200,21 @@ def test_a_corpus_in_a_subdirectory_reads_the_checkout_above_it(tmp_path):
     main = with_origin(tmp_path / "main")
     (main / "course").mkdir()
     assert repository_of(main / "course") == REPO
+
+
+def test_a_release_whose_sums_are_not_the_committed_ones_is_refused(tmp_path):
+    # ⛔ Every restore trusts only the committed digests, so it would refuse this release.
+    root, out = packed(tmp_path)
+    (root / VOLUME_SUMS).write_text(f"{'0' * 64}  narration.zip.000\n", encoding="utf-8")
+
+    with pytest.raises(PublishRefused, match="is not this release's SHA256SUMS"):
+        plan_publish(root, out, TAG)
+
+
+def test_a_committed_clip_list_the_record_no_longer_matches_is_refused(tmp_path):
+    root, out = packed(tmp_path)
+    listed = root / CLIP_SUMS
+    listed.write_text("".join(listed.read_text(encoding="utf-8").splitlines(True)[1:]), "utf-8")
+
+    with pytest.raises(PublishRefused, match="does not name the clips"):
+        plan_publish(root, out, TAG)

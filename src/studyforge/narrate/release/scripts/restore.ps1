@@ -10,8 +10,11 @@
 
   Narration is optional: the site is complete without it, and this script is
   only for a reader who wants the voice. It downloads the release's volumes,
-  checks each against SHA256SUMS, joins them, extracts the clips into the
-  directories this corpus's pages play them from, deletes the downloaded
+  checks each against the SHA256SUMS this corpus committed beside this script,
+  joins them, refuses them unless their files are exactly the clips named in
+  clips.sha256 beside it, extracts those into a staging directory, checks each
+  clip's digest, moves each into the directory this corpus's pages play it
+  from, deletes the downloaded
   volumes, and last marks the clips present for the pages. Running it again
   gives the same tree. A site built into another directory than this corpus's
   root has its own copies: build it again after restoring.
@@ -125,17 +128,17 @@ function Get-Asset([string] $Name) {
     return (Test-Present $dest)
 }
 
-if (-not $LocalDir) { New-Item -ItemType Directory -Force -Path $Work | Out-Null }
-if (-not (Get-Asset $Sums)) {
-    if (Test-Path -LiteralPath $Work) {
-        Remove-Item -LiteralPath $Work -ErrorAction SilentlyContinue
-    }
-    Fail ("no $Sums for this corpus at $Tag; for a private repository set GITHUB_TOKEN " +
-        "or run gh auth login, or pass -LocalDir with volumes on this disk")
+# The release is checked against what THIS corpus committed when it was packed,
+# never only against itself: a checksum file from the same release proves the
+# download intact, not that the release belongs here.
+$keptSums = Join-Path $Here $Sums
+$keptClips = Join-Path $Here 'clips.sha256'
+if (-not ((Test-Present $keptSums) -and (Test-Present $keptClips))) {
+    Fail 'this corpus carries no record of a packed release; nothing was fetched'
 }
 
 $sumsByName = @{}
-foreach ($line in Get-Content -LiteralPath (Join-Path $Parts $Sums)) {
+foreach ($line in Get-Content -LiteralPath $keptSums) {
     if ($line -match '^([0-9a-f]{64})  (\S+)$') {
         $digest, $name = $Matches[1], $Matches[2]
         if ($name -notmatch "^$([regex]::Escape($Volume))\.\d{3}$") {
@@ -148,21 +151,39 @@ foreach ($line in Get-Content -LiteralPath (Join-Path $Parts $Sums)) {
 }
 $names = @($sumsByName.Keys | Sort-Object)
 if ($names.Count -eq 0) { Fail "$Sums names no volume" }
+
+$clipSums = [ordered]@{}
+foreach ($line in Get-Content -LiteralPath $keptClips) {
+    if ($line -notmatch '^([0-9a-f]{64})  (.+)$') {
+        Fail 'clips.sha256 holds a line that names no clip'
+    }
+    $digest, $path = $Matches[1], $Matches[2]
+    $segments = $path -split '/'
+    $outside = $path.StartsWith('/') -or $path.Contains('\')
+    if ($outside -or ($segments -contains '..') -or ($segments -contains '')) {
+        Fail 'clips.sha256 names a path outside this corpus'
+    }
+    $clipSums[$path] = $digest
+}
 Write-Host "narration: $($names.Count) volume(s) at $Tag"
 
+if (-not $LocalDir) { New-Item -ItemType Directory -Force -Path $Work | Out-Null }
 foreach ($name in $names) {
-    if (-not (Get-Asset $name)) { Fail "could not get $name" }
+    if (-not (Get-Asset $name)) {
+        Fail ("could not get $name at $Tag; for a private repository set GITHUB_TOKEN " +
+            "or run gh auth login, or pass -LocalDir with volumes on this disk")
+    }
 }
 
-# Every volume is checked BEFORE anything is joined or extracted: a truncated
-# download that is merely concatenated extracts most of the way and leaves a
-# tree that looks complete and is not.
+# Every volume is checked BEFORE anything is joined or extracted, against the
+# digests this corpus committed.
 foreach ($name in $names) {
     $path = Join-Path $Parts $name
     $actual = (Get-FileHash -Algorithm SHA256 -LiteralPath $path).Hash.ToLowerInvariant()
     if ($actual -ne $sumsByName[$name]) {
         if (-not $LocalDir) { Remove-Item -Force -LiteralPath $path -ErrorAction SilentlyContinue }
-        Fail "checksum mismatch on $name; nothing was extracted. Run again to download it afresh"
+        Fail ("checksum mismatch on ${name}: it is not the volume this corpus packed. " +
+            'Nothing was extracted. Run again to download it afresh')
     }
 }
 Write-Host 'narration: checksums ok'
@@ -183,31 +204,62 @@ if (-not $LocalDir -and -not $KeepDownloads) {
     foreach ($name in $names) {
         Remove-Item -Force -LiteralPath (Join-Path $Work $name) -ErrorAction SilentlyContinue
     }
-    Remove-Item -Force -LiteralPath (Join-Path $Work $Sums) -ErrorAction SilentlyContinue
 }
 
-# Not Expand-Archive: it refuses to overwrite and is slow on large archives.
-# Each entry is checked to land under the corpus root, and stamped with now.
+# Every member must be a clip this corpus committed, by exactly its path, and
+# nothing else, checked before anything is extracted. Then each is extracted into
+# a staging directory, checked against its committed digest, and only then moved.
+$stage = Join-Path $Work 'staging'
+function Remove-Stage {
+    if (Test-Path -LiteralPath $stage) { Remove-Item -Recurse -Force -LiteralPath $stage }
+}
 Add-Type -AssemblyName System.IO.Compression.FileSystem
-$separator = [System.IO.Path]::DirectorySeparatorChar
-$rootFull = [System.IO.Path]::GetFullPath($Root).TrimEnd('\', '/') + $separator
 $archive = [System.IO.Compression.ZipFile]::OpenRead($joined)
 try {
+    $members = @($archive.Entries | ForEach-Object { $_.FullName } | Sort-Object)
+    $wanted = @($clipSums.Keys | Sort-Object)
+    if (($members -join "`n") -cne ($wanted -join "`n")) {
+        $archive.Dispose(); $archive = $null
+        Remove-Item -Force -LiteralPath $joined
+        Fail "the volumes hold files that are not this corpus's clips; nothing was extracted"
+    }
+    Remove-Stage
     foreach ($entry in $archive.Entries) {
-        if (-not $entry.Name) { continue }
-        $target = [System.IO.Path]::GetFullPath((Join-Path $Root $entry.FullName))
-        if (-not $target.StartsWith($rootFull, [System.StringComparison]::Ordinal)) {
-            Fail 'the archive names a path outside this corpus; nothing more was extracted'
-        }
+        $target = Join-Path $stage $entry.FullName
         $dir = Split-Path -Parent $target
         if (-not (Test-Path -LiteralPath $dir)) {
             New-Item -ItemType Directory -Force -Path $dir | Out-Null
         }
         [System.IO.Compression.ZipFileExtensions]::ExtractToFile($entry, $target, $true)
-        (Get-Item -LiteralPath $target).LastWriteTime = Get-Date
     }
-} finally { $archive.Dispose() }
+} finally { if ($archive) { $archive.Dispose() } }
 Remove-Item -Force -LiteralPath $joined
+
+foreach ($path in $clipSums.Keys) {
+    $staged = Join-Path $stage $path
+    $actual = (Get-FileHash -Algorithm SHA256 -LiteralPath $staged).Hash.ToLowerInvariant()
+    if ($actual -ne $clipSums[$path]) {
+        Remove-Stage
+        Fail "$path is not the clip this corpus packed; nothing was placed"
+    }
+    $placed = Join-Path $Root $path
+    $taken = (Test-Path -LiteralPath $placed) -and
+        -not (Test-Path -LiteralPath $placed -PathType Leaf)
+    if ($taken) {
+        Remove-Stage
+        Fail "$path is taken by something that is not a clip; nothing was placed"
+    }
+}
+foreach ($path in $clipSums.Keys) {
+    $placed = Join-Path $Root $path
+    $dir = Split-Path -Parent $placed
+    if (-not (Test-Path -LiteralPath $dir)) {
+        New-Item -ItemType Directory -Force -Path $dir | Out-Null
+    }
+    Move-Item -Force -LiteralPath (Join-Path $stage $path) -Destination $placed
+    (Get-Item -LiteralPath $placed).LastWriteTime = Get-Date
+}
+Remove-Stage
 Write-Host "narration: restored into this corpus's audio directories"
 
 # Removed only when empty: anything this script did not put there survives.

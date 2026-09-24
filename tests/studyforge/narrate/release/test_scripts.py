@@ -22,6 +22,7 @@ import pytest
 from studyforge.corpus.placement import profile_for, registered
 from studyforge.narrate.release import scripts
 from studyforge.narrate.release.scripts import (
+    CLIP_SUMS,
     DEFAULT_TAG,
     IGNORE_FILE,
     PRESENT_MARK,
@@ -32,8 +33,10 @@ from studyforge.narrate.release.scripts import (
     SIGNAL,
     SIGNAL_MARK,
     TAG_MARK,
+    VOLUME_SUMS,
     restore_scripts,
     valid_tag,
+    write_release_record,
     write_scripts,
     write_signal,
 )
@@ -168,3 +171,15 @@ def test_both_shipped_scripts_are_package_data():
     for path in sorted(SCRIPT_DIR.iterdir()):
         shipped = PurePosixPath(path.relative_to(package).as_posix())
         assert any(shipped.full_match(pattern) for pattern in patterns), shipped
+
+
+def test_the_release_record_commits_the_volume_sums_and_every_clip_sorted(tmp_path):
+    sums = f"{'a' * 64}  narration.zip.000\n"
+    clips = (("b/two.mp3", "2" * 64), ("a/one.mp3", "1" * 64))
+
+    assert write_release_record(tmp_path, sums, clips) == (VOLUME_SUMS, CLIP_SUMS)
+
+    assert (tmp_path / VOLUME_SUMS).read_text(encoding="utf-8") == sums
+    assert (tmp_path / CLIP_SUMS).read_text(encoding="utf-8") == (
+        f"{'1' * 64}  a/one.mp3\n{'2' * 64}  b/two.mp3\n"
+    )

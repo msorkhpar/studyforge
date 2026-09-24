@@ -204,8 +204,11 @@ when a push is refused.
 With `commit` set to `never`, `studyforge narrate <root> --pack <dir>` packs
 every clip the narration record locates into stored zip volumes of at most
 999 MB, with a `SHA256SUMS`, in a directory outside the corpus, and writes two
-restore scripts into `.studyforge/narration-release/`, and sets
-`.studyforge/assets/narration-clips.js` to `released`. Commit both.
+restore scripts into `.studyforge/narration-release/` with the volumes' digests
+and a `clips.sha256` naming every clip, and sets
+`.studyforge/assets/narration-clips.js` to `released`. Commit all of it: a
+restore trusts only these committed digests, so it refuses a wrong or replaced
+release and never writes a file that is not one of the corpus's clips.
 `studyforge narrate <root> --publish <dir>` is a dry run: it checks every
 volume and prints the one `gh release create` command that attaches them to a
 release of the checkout's `origin`, under the tag (`--tag`, default

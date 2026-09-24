@@ -33,6 +33,13 @@ its common directory) and accepts only a GitHub remote naming `<owner>/<repo>`.
 which is what keeps an account name out of every committed file. ⚠️ A `url`
 rewritten by an `insteadOf` rule is read as written.
 
+## ⛔ The corpus committed this pack
+
+⭐ A restore trusts only the digests the corpus committed next to its scripts
+(`scripts.VOLUME_SUMS`, `scripts.CLIP_SUMS`). ⛔ So a publish refuses a release
+directory whose `SHA256SUMS` is not the committed one, and a committed clip list
+the narration record no longer matches.
+
 ## ⛔ The corpus says its clips are released
 
 ⭐ The pack writes `released` into the clip signal (`scripts.SIGNAL`) and a
@@ -55,8 +62,14 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
 from studyforge.checksum import Unreadable, file_sha256
-from studyforge.narrate.release.scripts import SIGNAL, restore_scripts, valid_tag
-from studyforge.narrate.release.volumes import SUMS, PackRefused, read_sums
+from studyforge.narrate.release.scripts import (
+    CLIP_SUMS,
+    SIGNAL,
+    VOLUME_SUMS,
+    restore_scripts,
+    valid_tag,
+)
+from studyforge.narrate.release.volumes import SUMS, PackRefused, clips_of, read_sums
 from studyforge.render.pageassets import RELEASED, clips_state
 
 #: The release's title, as the release page shows it.
@@ -156,6 +169,7 @@ def plan_publish(root: Path | str, out: Path | str, tag: str) -> Publish:
         sums = read_sums(directory)
     except PackRefused as refused:
         raise PublishRefused(str(refused)) from None
+    _record_agrees(Path(root), directory)
     assets: list[tuple[str, int, str]] = []
     for name, want in sorted(sums.items()):
         file = directory / name
@@ -184,6 +198,40 @@ def _scripts_agree(root: Path, tag: str) -> None:
                 f"the corpus's {where} was not written for tag {tag}; run "
                 f"`studyforge narrate <root> --pack <dir> --tag {tag}` first, and commit it"
             )
+
+
+def _record_agrees(root: Path, directory: Path) -> None:
+    """Refuse unless the corpus committed THIS pack: its volume digests and its clips.
+
+    ⛔ A restore trusts only what the corpus committed, so a release whose
+    `SHA256SUMS` differs from the committed one would be refused by every reader,
+    and a committed clip list the record no longer matches would restore clips no
+    page plays.
+    """
+    try:
+        kept = (root / PurePosixPath(VOLUME_SUMS)).read_bytes()
+        listed = (root / PurePosixPath(CLIP_SUMS)).read_text(encoding="utf-8")
+        released = (directory / SUMS).read_bytes()
+    except OSError, UnicodeDecodeError:
+        raise PublishRefused(
+            f"the corpus does not carry {VOLUME_SUMS} and {CLIP_SUMS} from this pack; "
+            f"run --pack again and commit them"
+        ) from None
+    if kept != released:
+        raise PublishRefused(
+            f"the corpus's {VOLUME_SUMS} is not this release's {SUMS}, so every restore "
+            f"would refuse it; run --pack again and commit it"
+        )
+    paths = sorted(line.partition("  ")[2] for line in listed.splitlines())
+    try:
+        recorded = sorted(member for member, _ in clips_of(root))
+    except PackRefused as refused:
+        raise PublishRefused(str(refused)) from None
+    if paths != recorded:
+        raise PublishRefused(
+            f"the corpus's {CLIP_SUMS} does not name the clips its narration record names "
+            f"now; run --pack again and commit it"
+        )
 
 
 def _signal_released(root: Path) -> None:

@@ -38,13 +38,16 @@ from __future__ import annotations
 
 from studyforge.narrate.release.publish import Publish, PublishRefused, plan_publish
 from studyforge.narrate.release.scripts import (
+    CLIP_SUMS,
     DEFAULT_TAG,
     RELEASE_DIR,
     RESTORE_PS1,
     RESTORE_SH,
     SIGNAL,
+    VOLUME_SUMS,
     restore_scripts,
     valid_tag,
+    write_release_record,
     write_scripts,
     write_signal,
 )
@@ -61,6 +64,7 @@ from studyforge.narrate.release.volumes import (
 
 #: ⛔ The package's whole public surface.
 __all__ = [
+    "CLIP_SUMS",
     "DEFAULT_TAG",
     "PART_BYTES",
     "RELEASE_DIR",
@@ -69,6 +73,7 @@ __all__ = [
     "SIGNAL",
     "SUMS",
     "VOLUME",
+    "VOLUME_SUMS",
     "PackRefused",
     "Packed",
     "Publish",
@@ -79,6 +84,7 @@ __all__ = [
     "read_sums",
     "restore_scripts",
     "valid_tag",
+    "write_release_record",
     "write_scripts",
     "write_signal",
 ]

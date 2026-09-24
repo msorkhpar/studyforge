@@ -45,6 +45,18 @@ token is read from the environment only, handed to curl on its standard input
 and never printed. `tests/studyforge/narrate/release/test_scripts.py` renders
 both files and asserts no account, token or home path is in either.
 
+## ⛔ A release is checked against what THIS corpus committed
+
+⚠️ A `SHA256SUMS` fetched from the release proves only that the download is
+intact, not that the release belongs to this corpus: a wrong tag or a replaced
+asset would pass it. ⭐ So the pack commits `VOLUME_SUMS` (the volumes' digests)
+and `CLIP_SUMS` (every clip's path and digest) beside the scripts, and a restore
+fetches only the volumes `VOLUME_SUMS` names, refuses any whose digest differs,
+refuses a zip whose members are not exactly the paths `CLIP_SUMS` names, extracts
+into a staging directory, checks every staged clip's digest, and only then moves
+each clip to its path. ⛔ A restore never writes a file that is not a clip this
+corpus committed, and a refusal leaves the corpus and the signal as they were.
+
 ## ⭐ The download directory is ignored where it lives
 
 The scripts download into `.studyforge/narration-release/download/`, and an
@@ -67,6 +79,11 @@ RELEASE_DIR = f"{GENERATED_ROOT}/narration-release"
 #: The two scripts, relative to the corpus root.
 RESTORE_SH = f"{RELEASE_DIR}/restore.sh"
 RESTORE_PS1 = f"{RELEASE_DIR}/restore.ps1"
+
+#: What the pack commits beside them, so a restore checks a release against THIS
+#: corpus and not only against itself: the volumes' digests, and every clip's.
+VOLUME_SUMS = f"{RELEASE_DIR}/SHA256SUMS"
+CLIP_SUMS = f"{RELEASE_DIR}/clips.sha256"
 
 #: The ignore file beside them, and the directory it keeps out of git.
 IGNORE_FILE = f"{RELEASE_DIR}/.gitignore"
@@ -143,6 +160,28 @@ def write_signal(root: Path | str, state: str = RELEASED) -> str:
     writing.write_bytes(clips_script(state))
     writing.replace(target)
     return SIGNAL
+
+
+def render_clip_sums(clip_sums: tuple[tuple[str, str], ...]) -> str:
+    """Return the committed per-clip manifest: `<sha256>  <path>` per clip, sorted by path."""
+    return "".join(f"{digest}  {member}\n" for member, digest in sorted(clip_sums))
+
+
+def write_release_record(
+    root: Path | str, volume_sums: str, clip_sums: tuple[tuple[str, str], ...]
+) -> tuple[str, ...]:
+    """Commit what a restore checks a release against; return the two paths written.
+
+    ⭐ `volume_sums` is the release's own `SHA256SUMS` text, kept here so a restore
+    fetches only volumes whose digests THIS corpus recorded, and `clip_sums` names
+    every clip a restore may place, with its digest.
+    """
+    written = {VOLUME_SUMS: volume_sums, CLIP_SUMS: render_clip_sums(clip_sums)}
+    for where, text in written.items():
+        path = Path(root) / PurePosixPath(where)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8", newline="\n")
+    return tuple(written)
 
 
 def _render(name: str, tag: str) -> str:

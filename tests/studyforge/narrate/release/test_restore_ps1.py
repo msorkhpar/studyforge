@@ -9,7 +9,10 @@ invoking user, with no identity passed in, and is removed when it exits.
 - ⭐ volumes on disk restore every clip byte for byte and are left in place;
 - ⭐ a public and a private release served by `stand_in.StandIn` on loopback
   restore every clip, the private one by asset id with the token as a header;
-- ⛔ a corrupt volume is refused and nothing is extracted.
+- ⛔ a corrupt volume is refused and nothing is extracted;
+- ⛔ a volume whose members are not the committed clips, another corpus's release,
+  and clips whose bytes are not the committed ones are each refused, with the
+  corpus byte-identical and the signal still `released`.
 
 Plants: `test_restore.plant_a_corrupt_volume`.
 """
@@ -24,7 +27,14 @@ import pytest
 
 from studyforge.narrate.release import RESTORE_PS1
 from studyforge.render.pageassets import PRESENT, RELEASED
-from tests.studyforge.narrate.release.restoring import DEAD_PROXY, prepared, restored, signal
+from tests.studyforge.narrate.release.restoring import (
+    DEAD_PROXY,
+    files_of,
+    forge_release,
+    prepared,
+    restored,
+    signal,
+)
 from tests.studyforge.narrate.release.stand_in import OWNER_REPO, TOKEN, StandIn
 from tests.studyforge.narrate.release.test_restore import plant_a_corrupt_volume
 from tests.support import tool_on_path
@@ -145,4 +155,51 @@ def test_a_corrupt_volume_is_refused_and_nothing_is_extracted(tmp_path):
     assert done.returncode != 0
     assert "checksum mismatch on narration.zip.001" in done.stdout + done.stderr
     assert set(restored(corpus).values()) == {None}
+    assert signal(corpus) == RELEASED
+
+
+def local(tmp_path: Path, corpus):
+    """Run the corpus's `restore.ps1` over the release directory on disk."""
+    return pwsh(tmp_path, ["-File", script(tmp_path, corpus), "-LocalDir", f"{WORK}/release"], {})
+
+
+def test_a_volume_carrying_the_manifest_and_an_escape_is_refused_and_the_corpus_is_untouched(
+    tmp_path,
+):
+    corpus = prepared(tmp_path)
+    forge_release(corpus, {"corpus.json": b"{}", "../ESCAPED.txt": b"out"}, committed=True)
+    before = files_of(corpus.root)
+
+    done = local(tmp_path, corpus)
+
+    assert done.returncode != 0
+    assert "not this corpus's clips" in done.stdout + done.stderr
+    assert files_of(corpus.root) == before
+    assert not (tmp_path / "ESCAPED.txt").exists()
+    assert signal(corpus) == RELEASED
+
+
+def test_another_corpus_release_with_its_own_matching_sums_is_refused_at_the_volumes(tmp_path):
+    corpus = prepared(tmp_path, part_bytes=10_000_000)
+    forge_release(corpus, {path: b"another corpus" for path in corpus.clips}, committed=False)
+    before = files_of(corpus.root)
+
+    done = local(tmp_path, corpus)
+
+    assert done.returncode != 0
+    assert "checksum mismatch on narration.zip.000" in done.stdout + done.stderr
+    assert files_of(corpus.root) == before
+    assert signal(corpus) == RELEASED
+
+
+def test_clips_whose_bytes_are_not_the_committed_ones_are_refused_before_any_is_placed(tmp_path):
+    corpus = prepared(tmp_path)
+    forge_release(corpus, {path: b"another corpus" for path in corpus.clips}, committed=True)
+    before = files_of(corpus.root)
+
+    done = local(tmp_path, corpus)
+
+    assert done.returncode != 0
+    assert "is not the clip this corpus packed" in done.stdout + done.stderr
+    assert files_of(corpus.root) == before
     assert signal(corpus) == RELEASED
