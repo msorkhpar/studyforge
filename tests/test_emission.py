@@ -2,7 +2,7 @@
 
 The machinery is `tests/emission/`; this module is what fails the suite on it.
 
-⛔ **Its coverage claim is measured against the package on disk** (`W216`). The
+⛔ **Its coverage claim is measured against the package on disk**. The
 sweep records which modules it reached; that record is compared with what `src/`
 ships — ⭐ never with a bound somebody typed on a day that has since passed,
 which is a guard that reads as one and cannot fall.
@@ -44,8 +44,8 @@ def package_root() -> Path:
 def found():
     # ⛔ **No `chdir` here, and that is the containment having moved, not gone.**
     # Every call the census makes now runs in a directory the harness mints and
-    # can write nowhere else (`tests/emission/containment.py`, `W217`) — which
-    # also keeps `SF-17/11`'s relative `Path("alpha")` out of the checkout.
+    # can write nowhere else (`tests/emission/containment.py`) — which
+    # also keeps a filled relative `Path("alpha")` out of the checkout.
     return census(PACKAGE)
 
 
@@ -77,15 +77,15 @@ def test_no_refusal_reproduces_a_directory_it_was_handed(found):
 
 
 def test_no_call_writes_anywhere_the_harness_does_not_own(found):
-    # ⛔ `W217`. The population is every audited write to any path, not one
-    # directory: a guard scoped to `/home` would be `W209`'s repository scoping
-    # one level out. An escape is refused as well as reported, so this failing
-    # never leaves the file behind.
+    # ⛔ The population is every audited write to any path, not one
+    # directory: a guard scoped to `/home` would repeat the old defect of
+    # guarding only the repository, one level out. An escape is refused as
+    # well as reported, so this failing never leaves the file behind.
     assert found.contained.escapes == [], "\n" + found.report()
 
 
 def test_the_containment_saw_the_writers_it_contains(found):
-    # ⛔ Ruling 191. The framework has public writers, and the census hands
+    # ⛔ A control is inhabited. The framework has public writers, and the census hands
     # them the poison; an armed hook that counted none of those refusals has
     # stood down, and would pass the test above forever.
     assert found.contained.refused > 0, found.report()
@@ -104,8 +104,7 @@ def defined_on_disk(root: Path, package: str) -> dict[str, list[str]]:
     introspecting; this one parses the files. A package that drops out of the
     walk, or a walk that silently returns less of the tree, moves one and not
     the other — ⭐ where a floor typed on a past day moves with neither, which
-    is how three of them came to sit several times under what they guarded
-    (`W209/5`, and `W151`'s family).
+    is how three of them came to sit several times under what they guarded.
 
     ⚠️ **Definitions only.** A name a package's `__init__` re-exports is an
     import here and not a `def` — the same exclusion `public_callables` makes,
@@ -157,12 +156,12 @@ def unprobed(walked: Mapping[str, int], owed: Iterable[str]) -> list[str]:
 
 
 def test_the_sweep_reaches_every_module_the_package_ships(found, defined):
-    # ⛔ **W216: the floor is the tree.** This is the assertion the three typed
+    # ⛔ **The floor is the tree.** This is the assertion the three typed
     # lower bounds used to stand in for, and the difference is that it cannot
     # be satisfied by a sweep that has quietly narrowed: a package that stops
     # being walked is named here the moment it stops, whatever the totals say.
     #
-    # ⚠️ Ruling 191, and it is the first line for a reason: the population is
+    # ⚠️ Inhabited first, and it is the first line for a reason: the population is
     # asserted inhabited, so a derivation that found no modules — an empty
     # directory, a rename nobody followed — fails instead of passing vacuously.
     assert defined, f"no module read from {package_root().name}; there is no population"
@@ -184,7 +183,7 @@ def test_every_module_that_defines_a_callable_has_one_probed(found, defined):
 
 def test_the_sweep_probed_parameters_and_paths_of_what_it_walked(found):
     # ⚠️ Ruling 13, condition 1: a check reports its coverage. ⭐ Inhabitance
-    # only (Ruling 191) — what each arm probes *per callable* is asserted
+    # only — what each arm probes *per callable* is asserted
     # exactly, below, on callables whose arithmetic is knowable, rather than
     # against a whole-tree total nobody can derive without taking the census
     # a second time.
@@ -198,7 +197,7 @@ def test_the_sweep_probed_parameters_and_paths_of_what_it_walked(found):
 
 
 def test_a_module_that_leaves_the_sweeps_reach_turns_this_red(found, defined):
-    # ⛔ Ruling 11 and Ruling 124. The guard is watched failing, and it is
+    # ⛔ The guard is watched failing, and it is
     # driven through the same comparison the live assertion makes rather than
     # through a re-implementation of it. The module dropped is taken from the
     # derived population, so nothing here is a name typed by hand either.
@@ -222,7 +221,7 @@ def test_a_module_added_to_the_tree_is_owed_a_probe_at_once(tmp_path):
     # ⭐ The other half of "derived": the population is read off the tree, so a
     # module nobody has told this file about is an obligation the moment it
     # lands — where a typed floor buys silence until somebody remembers it.
-    # ⚠️ Planted in a copy the test mints; never in the checkout (`W143`).
+    # ⚠️ Planted in a copy the test mints; never in the checkout.
     root = tmp_path / PACKAGE
     (root / "deeper").mkdir(parents=True)
     (root / "__init__.py").write_text('"""A package."""\n', encoding="utf-8")
@@ -252,7 +251,7 @@ def test_the_poison_is_synthetic(found):
 
 
 # --------------------------------------------------------------------------
-# Ruling 11: watch it fail without the mechanism
+# Watch it fail without the mechanism
 # --------------------------------------------------------------------------
 
 
@@ -290,7 +289,7 @@ def test_a_label_parameter_is_not_poisoned_at_all():
 
 
 def test_each_data_parameter_is_probed_alone_and_then_all_of_them_together():
-    # ⭐ **What replaces a typed floor on the parameter total** (`W216`): the
+    # ⭐ **What replaces a typed floor on the parameter total**: the
     # arithmetic asserted where it is knowable exactly. Two data parameters are
     # two single probes plus the all-at-once pass; `what` is a label and is not
     # probed at all. ⛔ An arm that stopped making the combination would fail
@@ -343,8 +342,8 @@ def test_every_module_of_the_framework_is_walked():
 
 
 def test_the_filler_really_does_hand_a_writer_a_relative_path(tmp_path):
-    # ⛔ THE PLANT, and it is `SF-17/11` reduced to its shape rather than a
-    # story about it. `out` is a `Path` and `note` is the only `str`, so
+    # ⛔ THE PLANT: a writer filled with a relative path, reduced to its shape
+    # rather than a story about it. `out` is a `Path` and `note` is the only `str`, so
     # `_probe_strings` poisons `note` and FILLS `out` — with `Path("alpha")`,
     # which resolves against the working directory.
     #

@@ -1,4 +1,4 @@
-r"""Ruling 151, made sweepable: no framework Acceptance rests on a count of a corpus we do not own.
+r"""Made sweepable: no framework Acceptance rests on a count of a corpus we do not own.
 
 ⛔ **The rule.** A framework task's `Acceptance` may not contain a clause whose
 subject is a reading taken inside a **consumer** repository. R20 makes the
@@ -6,8 +6,8 @@ extraction one-way, so a framework close may not be gated on a measurement only
 the integration agent can take.
 
 ⚠️ **Why it needed an instrument rather than another split.** The class was
-closed on its third instance and its live population was **four**: `SF-27`,
-`SF-14`, `SF-15` and `SF-07` — found only when somebody swept by hand. A ruled
+closed on its third instance and its live population was **four** task
+Acceptances — found only when somebody swept by hand. A ruled
 class discharged instance-by-instance is a ruling that has become guidance.
 
 ## ⭐ What the sweep measures, and where the population comes from
@@ -37,7 +37,7 @@ assumed* is the shape of most clauses here.
   repository holds.
 - **Arm B — a total quantifier over a consumer corpus.** *all/every/each/entire*
   applied to a clause that names a consumer corpus by role. ⭐ This arm exists
-  because a plant must be adversarial to the **search term** (Ruling 140): a
+  because a plant must be adversarial to the **search term**: a
   sweep that only knows how to find a number finds the compliant half of its own
   population the moment somebody writes the same claim without one.
 
@@ -53,10 +53,9 @@ the shape `tests/test_shape_vocabulary.py` uses for the same problem.
    units"* — is caught by arm B only if the clause also names its corpus.
 2. ⚠️ A clause that names a consumer corpus with **no** magnitude and **no**
    total quantifier — *"Serves the Java corpus discovered at startup"* — is not
-   refused here. Whether Ruling 151 reaches that wider shape is a question for
-   the office that owns the ruling; it is filed as a finding, with the deriving
-   command, in `docs/tasks/handoffs/W70.md`, and is deliberately **not** decided
-   by widening a predicate in a test module.
+   refused here. Whether the rule reaches that wider shape is an open question,
+   and it is deliberately **not** decided by widening a predicate in a test
+   module.
 """
 
 from __future__ import annotations
@@ -71,13 +70,13 @@ from tests.support import repository_root
 MARKER = "**Acceptance.**"
 
 #: The framework agent owns these epics; the integration agent owns `E07`,
-#: `E08` and what survives of `E09` (`CLAUDE.md`, *Two agents*). ⛔ Ruling 151
+#: `E08` and what survives of `E09` (`CLAUDE.md`, *Two agents*). ⛔ The rule
 #: binds a **framework** task's Acceptance — an integration row's clause is
 #: read inside a consumer repository because that is where its work happens.
 #: ⭐ `E14` joins the framework side with `W389`: the authoring skill, its gates and
 #: the record they write are this framework's, and only the corpus's own authored
 #: material is the integration agent's (`README.md`, *Working as two agents*).
-#: ⭐ `E15` joins it with `W438`: the release cleanup of this repository and of the
+#: ⭐ `E15` joins it too: the release cleanup of this repository and of the
 #: two shared components is this framework's; the corpus's own cleanup is rows in
 #: that repository, never a task in the epic.
 FRAMEWORK_EPICS = (
@@ -99,7 +98,7 @@ INTEGRATION_EPICS = ("E07", "E08", "E09")
 
 #: The consumer corpora, named by ROLE rather than by path (R20). ⛔ The
 #: extraction source is deliberately absent: reading inside it is what an
-#: extraction task does, and Ruling 151's subject is the consumer side.
+#: extraction task does, and this rule's subject is the consumer side.
 CONSUMER_CORPUS_TERMS = (
     "java corpus",
     "java lesson",
@@ -266,7 +265,7 @@ REPLACEMENTS = (
 
 
 def test_every_epic_document_is_assigned_to_exactly_one_side() -> None:
-    # ⛔ Ruling 151 binds framework Acceptances only, so the split decides who
+    # ⛔ The rule binds framework Acceptances only, so the split decides who
     # is swept. A new epic document must not land silently on either side.
     on_disk = {path.name[:3] for path in (repository_root() / "docs" / "tasks").glob("E*.md")}
     assert set(FRAMEWORK_EPICS) & set(INTEGRATION_EPICS) == set()
@@ -274,7 +273,7 @@ def test_every_epic_document_is_assigned_to_exactly_one_side() -> None:
 
 
 def test_the_population_is_inhabited_on_both_sides_and_in_every_epic() -> None:
-    # ⛔ Ruling 48: every assertion below is satisfied by an empty population.
+    # ⛔ Every assertion below is satisfied by an empty population.
     # A parser that stopped matching `**Acceptance.**` would turn this whole
     # module green, which is the failure it exists to make impossible.
     assert len(FRAMEWORK_CLAUSES) >= 250, len(FRAMEWORK_CLAUSES)
@@ -317,7 +316,7 @@ def test_a_tail_magnitude_is_a_citation_only_where_a_reason_is_written_down() ->
 
 
 def test_every_declared_tail_citation_is_still_in_the_documents() -> None:
-    # ⛔ Ruling 155's other half: a declaration that has outlived its subject is
+    # ⛔ A declaration that has outlived its subject is
     # a rule nobody is following. A citation removed from the documents must be
     # removed from the table too.
     live = {found for clause in FRAMEWORK_CLAUSES for found in magnitudes(clause.tail)}
@@ -335,7 +334,7 @@ def test_and_accepts_the_framework_halves_that_replaced_them(task: str, clause: 
 
 
 def test_a_violation_that_names_no_number_is_still_refused() -> None:
-    # ⛔ Ruling 140: the plant is adversarial to the SEARCH TERM. Every one of
+    # ⛔ The plant is adversarial to the SEARCH TERM. Every one of
     # the four real instances carried a digit, so a sweep built only from them
     # can find only the half of its population that spells the count out.
     planted = "Renders every Java lesson with working deep links into collapsed sections."
@@ -357,8 +356,8 @@ def test_a_restated_clause_leaves_the_population_while_its_text_stays_in_the_doc
     # ⭐ The discriminator, and it needs no marker vocabulary: the PO's
     # disposition moves the clause out of the `**Acceptance.**` paragraph and
     # into a struck quotation, so the sweep stops seeing it while a reader does
-    # not. ⛔ `SF-07` is RESTATED AS DELIVERED (Ruling 166) and `SF-27`,
-    # `SF-14`, `SF-15` are SPLIT (Ruling 151) — four dispositions, one
+    # not. ⛔ One of the four was RESTATED AS DELIVERED and three were SPLIT —
+    # four dispositions, one
     # mechanical consequence, which is why the sweep does not have to tell a
     # restatement from a split at all.
     tasks = repository_root() / "docs" / "tasks"
@@ -378,7 +377,7 @@ def test_a_restated_clause_leaves_the_population_while_its_text_stays_in_the_doc
 
 
 def test_the_integration_epics_are_out_of_scope_and_read_differently_from_a_pass() -> None:
-    # ⛔ Ruling 123's third reading: a subject that CANNOT match. `E07`-`E09`
+    # ⛔ A subject that CANNOT match. `E07`-`E09`
     # are full of exactly the shape the sweep refuses — that is what an
     # integration row is for — and the reading it produces for them must not
     # be the reading it produces for a clean framework sweep. ⭐ A pass prints
@@ -393,7 +392,7 @@ def test_the_integration_epics_are_out_of_scope_and_read_differently_from_a_pass
         print(f"  out of scope {where} {found}")
     assert len(out_of_scope) >= 5, out_of_scope
     assert all(clause.epic in INTEGRATION_EPICS for clause in INTEGRATION_CLAUSES)
-    # ⛔ Ruling 146: the two row counts are asserted against the population
+    # ⛔ The two row counts are asserted against the population
     # declared before the loop, so a clause cannot fall between the sides.
     # ⚠️ NOT a second copy of the sweep's own verdict: this row failing when a
     # framework violation is planted would make its reading indistinguishable

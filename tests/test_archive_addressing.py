@@ -1,7 +1,7 @@
 """No test spells an archive address — the three sites `W322` received, and the instrument.
 
-⛔ **`W198` removed the composition from `src/`; three test sites kept it**
-(`W198/4`, `W198/5`, `W298/2`), so the one contract had a single producer in
+⛔ **`W198` removed the composition from `src/`; three test sites kept it**,
+so the one contract had a single producer in
 `src/` and three in `tests/`. ⚠️ A test that invents an address is a build that
 invents it, one register over: it passes for exactly as long as the constant is
 what the test happens to say, and goes silently wrong the day the constant
@@ -12,7 +12,7 @@ moves — without anything going RED to say so.
 
 * ⛔ none of them **joins** a segment or a filename `src/` owns — asserted by
   reading their own syntax, and the instrument is watched catching a planted
-  one (Ruling 11);
+  one;
 * ⭐ each of them **follows** the owner: the overlay pattern and the unit's home
   are re-derived when `CONTENT_FILENAME` or the `units/` segment moves;
 * ⛔ and the walk that uses them is asserted to **find** the overlay the
@@ -140,7 +140,7 @@ def test_a_named_site_joins_no_segment_the_framework_owns(where):
 
 
 def test_the_instrument_catches_a_spelling_put_back():
-    # ⭐ Ruling 11 on the guard itself: an assertion that a mechanism refuses
+    # ⭐ On the guard itself: an assertion that a mechanism refuses
     # something is worth nothing until it has been watched passing without it.
     # ⚠️ Each of these is one of the three shapes the sites actually held.
     put_back = (

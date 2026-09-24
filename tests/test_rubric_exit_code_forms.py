@@ -1,21 +1,21 @@
-r"""Ruling 241's two FORMS, read out of the rubric and asserted SOUND (`W304`).
+r"""The rubric's two exit-code FORMS, read out of the rubric and asserted SOUND.
 
-⛔ **The defect this exists to stop, and it is not the one the row alleged.**
-`W304` was opened against the rubric's floor snippet on the reading that `$?`
-after a pipeline is `tail`'s. ⭐ **It is not, THERE:** the line sits in Ruling
-241's own `FORM 1` and the line above it is `set -o pipefail`, which makes `$?`
-the PIPELINE's status. The row's excerpt quoted the pipeline line **detached
+⛔ **The defect this exists to stop, and it is not the one first alleged.**
+The rubric's floor snippet was charged on the reading that `$?` after a
+pipeline is `tail`'s. ⭐ **It is not, THERE:** the line sits in the FORM
+block's own `FORM 1` and the line above it is `set -o pipefail`, which makes `$?`
+the PIPELINE's status. The charge quoted the pipeline line **detached
 from the line that binds it**, and the detachment is what produced the charge.
 
 ⚠️ **So the real defect is that the binding was detachable**, and this module is
 what makes losing it loud: if `set -o pipefail` is ever dropped, moved below the
 pipeline, or split into another fence, `FORM 1` silently becomes the very defect
-Ruling 241 mints — green in every other instrument, because a snippet that is
+the FORM block exists to prevent — green in every other instrument, because a snippet that is
 only READ is never run.
 
 ## ⛔ THE COUNTER-EXAMPLE IS EXEMPT BY A PROPERTY IT CARRIES, NEVER BY LINE NUMBER
 
-⭐ **Ruling 76's block deliberately contains the WRONG construction as teaching
+⭐ **The counter-example block deliberately contains the WRONG construction as teaching
 material**, and says so in its own trailing comment. ⛔ **An office working from
 *"fix the `$?`-after-pipeline sites"* would delete the example that teaches the
 trap, and the page would get WORSE while every gate stayed green.** ⚠️ So the
@@ -25,13 +25,13 @@ somebody "corrects" it.
 
 ## ⛔ THE BOUND, STATED: TWO BLOCKS, AND THIS IS NOT A LINT RULE OVER PROSE
 
-⛔ **This reads exactly the two fenced blocks Ruling 241 owns** — its FORM block
+⛔ **This reads exactly two fenced blocks** — the FORM block
 and the counter-example it annotates — each located by text it carries and each
 asserted UNIQUE. ⭐ **It is deliberately NOT a sweep over every shell snippet in
 the document.** ⚠️ The rubric contains wrong snippets on purpose, as warnings; a
 checker that could not tell a warning from an instruction would refuse the
 document for teaching, which is a worse defect than the one it would catch.
-⛔ **The wider population is a FINDING in `W304`'s handoff, not a rule here.**
+⛔ **The wider population is a finding, not a rule here.**
 """
 
 from __future__ import annotations
@@ -41,7 +41,7 @@ import pytest
 from tests.support import repository_root
 
 #: The document carrying both blocks. ⚠️ A path rather than a pointer: this is a
-#: test, and Ruling 285(b) binds a handoff's citations, not a constant.
+#: test, and the pointer rule binds a handoff's citations, not a constant.
 RUBRIC = "docs/conventions/review-rubric.md"
 
 #: ⛔ The FORM block, located by what it CALLS ITSELF rather than by a line
@@ -52,7 +52,7 @@ FORM_MARKERS = ("FORM 1", "FORM 2")
 PIPEFAIL = "set -o pipefail"
 
 #: ⛔ The counter-example's own description of itself, which is what exempts it.
-#: ⭐ Ruling 76's block exists to SHOW the trap, and this is the text in which it
+#: ⭐ The counter-example block exists to SHOW the trap, and this is the text in which it
 #: says so. A "correction" that removed the wrongness would remove this too.
 WARNS = "this is tail's exit"
 
@@ -86,7 +86,7 @@ def _sole(blocks: list[list[str]], predicate, what: str) -> list[str]:
 
 
 def form_block() -> list[str]:
-    """Ruling 241's FORM block — the one naming both forms."""
+    """The rubric's FORM block — the one naming both forms."""
     return _sole(
         fenced_blocks(rubric()),
         lambda block: all(any(marker in line for line in block) for marker in FORM_MARKERS),
@@ -95,7 +95,7 @@ def form_block() -> list[str]:
 
 
 def counter_example_block() -> list[str]:
-    """Ruling 76's block, which carries the WRONG construction on purpose."""
+    """The counter-example block, which carries the WRONG construction on purpose."""
     return _sole(
         fenced_blocks(rubric()),
         lambda block: any(WARNS in line for line in block),
@@ -139,7 +139,7 @@ DETACHED = ['python3 -m tools.quality | tail -4; echo "FLOOR_EXIT=$?"']
 def test_the_predicate_reads_a_pipeline_exit_and_refuses_what_is_not_one():
     # ⭐ The positive direction, and three negatives. Without these the module
     # below could be asserting a property of a predicate that answers `False`
-    # to everything — Ruling 191's family at the level of a helper.
+    # to everything — a vacuous control at the level of a helper.
     assert reads_exit_after_pipeline('python3 -m tools.quality | tail -4; echo "E=$?"')
     assert not reads_exit_after_pipeline('echo "PYTEST_EXIT=$?"'), "FORM 2 is not a pipeline read"
     assert not reads_exit_after_pipeline("python3 -m tools.quality | tail -4"), "no $? at all"
@@ -148,7 +148,7 @@ def test_the_predicate_reads_a_pipeline_exit_and_refuses_what_is_not_one():
 
 def test_a_form_that_keeps_its_binding_is_accepted_and_one_that_loses_it_is_refused():
     # ⛔ **THE PLANT, in the instrument's own terms.** `DETACHED` is FORM 1 with
-    # exactly one line removed — the line `W304`'s excerpt omitted — and the
+    # exactly one line removed — the line the detached charge omitted — and the
     # reader must call that out rather than agree with it.
     assert bound_lines(BOUND) and not unbound_lines(BOUND), "the bound form must be accepted"
     assert unbound_lines(DETACHED) and not bound_lines(DETACHED), (
@@ -161,7 +161,7 @@ def test_a_form_that_keeps_its_binding_is_accepted_and_one_that_loses_it_is_refu
 
 
 def test_the_form_block_actually_contains_a_pipeline_exit_read():
-    # ⛔ **INHABITATION, and it is not decoration** (Rulings 124, 191). Every
+    # ⛔ **INHABITATION, and it is not decoration**. Every
     # assertion below is vacuously true of a block that stopped containing the
     # construction, and a green from an empty population is the pass reading
     # this project has been burned by more than once.
@@ -174,8 +174,8 @@ def test_the_form_block_actually_contains_a_pipeline_exit_read():
 
 
 def test_form_one_pipeline_is_bound_by_pipefail_in_its_own_fence():
-    # ⛔ **THE WHOLE OF `W304`.** Unbound, this line IS the defect Ruling 241
-    # mints — and it would be green in every other instrument, because a snippet
+    # ⛔ **THE WHOLE POINT.** Unbound, this line IS the defect the FORM block
+    # exists to prevent — and it would be green in every other instrument, because a snippet
     # that is only read is never run.
     block = form_block()
     assert not unbound_lines(block), (

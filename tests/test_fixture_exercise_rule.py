@@ -99,7 +99,7 @@ def test_the_section_both_documents_cite_is_in_the_spec():
     assert HEADING in SPEC.read_text(encoding="utf-8").splitlines()
 
 
-#: ⭐ `REL-02`: each document is READ inside the test, never at collection, so a checkout
+#: ⭐ Each document is READ inside the test, never at collection, so a checkout
 #: without the epic still collects this file; the `e06` case is declared process in
 #: `tests/harness/process.py` and the guide's case is the product's.
 CITING = {

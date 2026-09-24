@@ -1,4 +1,4 @@
-"""SK-05: every claim in `docs/authoring/` is true of the shipped code, checked.
+"""Every claim in `docs/authoring/` is true of the shipped code, checked.
 
 The reference is written for somebody converting their own material who has
 never read the spec and does not intend to. That reader has no way to notice a
@@ -417,14 +417,15 @@ def test_the_shape_table_agrees_with_the_two_corpora_it_describes():
 
 
 def test_no_fence_anywhere_offers_a_console_script_that_does_not_exist():
-    # ⛔ Ruling 157: SF-40 registered `[project.scripts]`, and this check was
-    # CONVERTED rather than deleted. The blanket refusal — no fenced line may
-    # begin `studyforge ` — became a derivation: a fenced line may give the
+    # ⛔ SF-40 registered `[project.scripts]`, and this check was CONVERTED
+    # rather than deleted: a check with a scheduled expiry is converted, not
+    # dropped. The blanket refusal — no fenced line may begin `studyforge ` —
+    # became a derivation: a fenced line may give the
     # installed command with a verb the tree registers, and may not give one it
     # does not.
     #
     # ⚠️ The NAME is kept although the predicate changed: frozen records cite
-    # it, and a record is annotated, never edited (Ruling 106).
+    # it, and a record is annotated, never edited.
     pages = commanded_pages()
     assert_both_halves_reached(pages)
     assert_fenced_commands_are_registered(pages)
@@ -440,7 +441,7 @@ def test_some_fence_actually_offers_the_installed_command():
 
 
 def test_a_fence_naming_an_unregistered_verb_fails():
-    # ⛔ Rulings 124 and 348: the pass condition is the MOVED exit code. The
+    # ⛔ The pass condition is the MOVED exit code. The
     # planted page is the future state the converted check has to refuse, and
     # `frobnicate` is not a verb any table registers.
     command = sorted(registered_verbs())[0]
@@ -471,8 +472,7 @@ def test_every_command_the_reference_gives_names_a_module_that_can_be_run():
     # `__main__`, sends them to a traceback on the first page they read.
     #
     # ⚠️ The NAME is kept although the population is now every commanded page:
-    # five frozen records cite it by name (`SK-05`, `W61`, CTO round 41, the
-    # archive twice) and a record is annotated, never edited (Ruling 106).
+    # frozen records cite it by name, and a record is annotated, never edited.
     assert_both_halves_reached(commanded_pages())
     wanted = must_run()
     assert wanted, "every commanded module was exempted; this check is vacuous"
@@ -487,7 +487,7 @@ def test_every_command_the_reference_gives_names_a_module_that_can_be_run():
 def test_the_placeholder_exemption_swallows_only_a_complete_substitution(token):
     """⛔ Ruling 156 clause 2 — the placeholder skip is ASSERTED INHABITED.
 
-    Ruling 124's form B: parametrized over the derivation, so an empty
+    Parametrized over the derivation, so an empty
     placeholder class SKIPS and lands in the skip census a reviewer reads out
     loud, rather than passing. An exemption that swallows nothing and an
     exemption that swallows a real module name print the same green.
@@ -513,11 +513,11 @@ def test_every_consumer_side_declaration_is_earned_and_still_bites(token):
     above, the one thing a declared exemption must never be able to do.
 
     ⭐ **This is also where the SIBLING question is answered, and it is answered
-    by assertion rather than by assumption.** ⛔ **A worktree carries no sibling
-    component** (Ruling 159), so `ingest` — which the corpus repository owns —
-    is absent here and must STAY absent: the second assertion is exactly the
-    statement that this check's reading does not depend on whether a sibling is
-    on disk. ⚠️ **Nothing in this whole population reads outside this
+    by assertion rather than by assumption.** ⛔ **A sibling component may be
+    absent** (the pinned image mounts only the checkout), so `ingest` — which
+    the corpus repository owns — is absent here and must STAY absent: the second
+    assertion is exactly the statement that this check's reading does not depend
+    on whether a sibling is on disk. ⚠️ **Nothing in this whole population reads outside this
     repository**: the pages are `docs/authoring/` and `src/**/SKILL.md`, and
     `run_bare()` scrubs `PYTHONPATH` and runs at this repository's own root.
     """
@@ -558,13 +558,13 @@ def test_the_reader_s_bare_shell_cannot_run_the_framework_and_that_gap_is_w75_s(
 
     ⛔ **So the set asserted here is non-empty, every member resolves under the
     declared path, and that is the defect rather than the design.** ⚠️ **The gap
-    is `W75`'s to close, not this row's to assert away.** ⭐ **When `W75` lands,
-    this row goes RED and is CONVERTED — the bare-shell reading becomes the
-    assertion and the row above folds into it** (Ruling 157: a check with a
-    scheduled expiry is an acceptance condition on the task that expires it).
+    is the install's to close, not this row's to assert away.** ⭐ **When a bare
+    shell can run them, this row goes RED and is CONVERTED — the bare-shell reading becomes the
+    assertion and the row above folds into it** (a check with a scheduled
+    expiry is an acceptance condition on the task that expires it).
 
-    ⭐ **CONVERTED WHERE THE GAP IS CLOSED, and not deleted (`W211`).** Where the
-    bare interpreter has `studyforge` INSTALLED — the pinned image, since `W211`'s
+    ⭐ **CONVERTED WHERE THE GAP IS CLOSED, and not deleted.** Where the
+    bare interpreter has `studyforge` INSTALLED — the pinned image, since its
     editable install — the bare-shell reading IS the assertion: every commanded
     module runs. ⛔ Where nothing is installed the pin stands exactly as it was.
     The branch is keyed on the install, never on which machine this is.

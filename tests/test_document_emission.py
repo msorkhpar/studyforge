@@ -107,7 +107,7 @@ def readers() -> list[Reader]:
         # share that version key, and both are readers — ⚠️ the derived guard
         # below found only the first of them, because it looks for
         # `from_document` by name and the local half's reader is
-        # `from_status_document` (`SF-13/3`).
+        # `from_status_document`.
         Reader(
             "toc.json",
             lambda d: toc.from_document(d, "toc.json"),
@@ -147,14 +147,14 @@ def test_no_reader_reproduces_a_field_it_refused(found):
 
 
 def test_no_reader_writes_anywhere_the_harness_does_not_own(found):
-    # ⛔ `W217/5`, the other half of `W217`'s reading arriving here. A document
+    # ⛔ The containment the emission sweep runs in, arriving here. A document
     # reader is a parser, and *it writes nothing* was a property nobody had
     # measured until this census ran inside the same containment the
     # per-callable sweep already used. An escape is refused as well as
     # reported, so this failing never leaves the file behind.
     #
-    # ⚠️ No inhabitance floor beside it, deliberately — Ruling 191 asks for one
-    # where the population exists, and a reader that parses is not expected to
+    # ⚠️ No inhabitance floor beside it, deliberately — a control states its
+    # population where one exists, and a reader that parses is not expected to
     # produce a refused write. What keeps this arm from being vacuous is the
     # plant below, which drives a real write through this exact machinery.
     assert found.contained.escapes == [], "\n" + found.report()
@@ -214,14 +214,14 @@ def test_every_module_that_reads_a_document_is_probed(readers):
         f"{missing}. Add a Reader above, or say here why the module has no "
         "fields to poison."
     )
-    # ⚠️ Ruling 48: the table is asserted to be inhabited *and* to have grown
+    # ⚠️ The table is asserted to be inhabited *and* to have grown
     # with the tree — a count that nobody updates is a count that stops meaning
     # anything, and the derived check above is what says which readers are owed.
     assert len(readers) == len(covered) - 1, "one reader per covered module, bar markdown"
 
 
 # --------------------------------------------------------------------------
-# Ruling 11: watch it fail without the mechanism
+# Watch it fail without the mechanism
 # --------------------------------------------------------------------------
 
 
@@ -236,7 +236,7 @@ def test_the_probe_catches_a_reader_that_quotes_a_field():
 
 
 def test_the_containment_catches_a_reader_that_writes_where_it_chooses(tmp_path):
-    # ⛔ Ruling 11, and the plant the arm above is worth nothing without: a
+    # ⛔ Watched failing: the plant the arm above is worth nothing without: a
     # reader that writes to a path of its own choosing is reported by name, and
     # the write does not land. ⚠️ The path is one the test mints, so what is
     # demonstrated is the containment refusing rather than the checkout's luck.

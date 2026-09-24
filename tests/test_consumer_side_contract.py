@@ -1,4 +1,4 @@
-"""W117: the consumer-side declaration has ONE home, and each of its sites points at it.
+"""The consumer-side declaration has ONE home, and each of its sites points at it.
 
 **What it asserts.** `docs/conventions/commanded-pages.md` declares the spelling
 once, in a `text` fence. The shipped reader, `DECLARES_CONSUMER_SIDE` in
@@ -29,7 +29,7 @@ HOME = "docs/conventions/commanded-pages.md"
 READER = "tests/authoring/support.py"
 
 #: Where a third site could appear. ⛔ The record directories are left out on
-#: purpose: a frozen record is annotated, never edited (Ruling 106).
+#: purpose: a frozen record is annotated, never edited.
 SWEPT = ("src", "tests", "tools", "docs/conventions", "docs/authoring")
 
 #: The declaring fence in the home: a bold label ending in a colon, then a placeholder.

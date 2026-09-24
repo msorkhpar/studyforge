@@ -134,14 +134,14 @@ def spec_rows() -> dict[str, dict[str, str]]:
 
 
 def test_the_table_is_found_and_every_row_has_a_graders_cell():
-    # ⛔ Ruling 48: a table that parsed to nothing would pass every sweep below
+    # ⛔ A table that parsed to nothing would pass every sweep below
     # by never running.
     rows = spec_rows()
     assert rows, f"no table under {TABLE_HEADING!r} in {SPEC}"
     assert all(row.get(GRADERS) for row in rows.values()), rows
 
 
-# --- the refusal, held on a synthetic table (Ruling 191) ---------------------
+# --- the refusal, held on a synthetic table -----------------------------------
 
 #: One corpus's row, as the spec carried it before `W339`, and as it reads now.
 CLAIMED = "| X | 1 | 3 | no build file | prose scenarios in `Scenarios.md` |"

@@ -1,6 +1,6 @@
-"""`W395`: the mint-collision rule, read OUT of `delivery-flow.md` and asserted both ways.
+"""The mint-collision rule, read OUT of `delivery-flow.md` and asserted both ways.
 
-⛔ **The defect it answers, measured as `W381/2`:** two rows minted in ONE round
+⛔ **The defect it answers:** two rows minted in ONE round
 contradicted each other — one row's clause kept a test of a state the other
 row's ruling removed — and the collision surfaced only when the second office
 ran the first's tests. ⭐ **The rule cannot be a checker**: whether one clause
@@ -15,9 +15,9 @@ of the live section is refused by the same predicate that accepts the live one �
 so a rule quietly softened to *the register may order them* turns this red
 instead of reading green over half a rule.
 
-⭐ **Why a test at all for a document.** `W381/2`'s cost was an office-round, and
-the sentence that prevents it is one nobody runs. A clause that nothing reads is
-the exact failure `W392` is open for one directory over.
+⭐ **Why a test at all for a document.** The collision's cost was an office-round,
+and the sentence that prevents it is one nobody runs. A clause that nothing reads
+is a rule that quietly stops holding.
 """
 
 from __future__ import annotations
@@ -83,7 +83,7 @@ def slug(heading: str) -> str:
 
 
 def test_the_document_carries_the_rule_exactly_once():
-    # ⛔ Ruling 48: an absent heading returns "", and "" states no obligation —
+    # ⛔ An absent heading returns "", and "" states no obligation —
     # so this assertion is what keeps every one below from passing over nothing.
     assert section(document()), f"{DOCUMENT} does not carry the mint-collision rule"
 
@@ -101,7 +101,7 @@ def test_a_rule_with_ONE_obligation_removed_is_REFUSED(obligation):
 
 
 def test_the_rule_names_TWO_remedies_and_not_one():
-    # ⭐ The half that `W381/2` actually needed: an office reads its own row, so
+    # ⭐ The half the collision actually needed: an office reads its own row, so
     # a note written only where the removal happens reaches nobody.
     text = section(document())
     assert stated(text) >= {"both rows carry it", "or the register orders them"}

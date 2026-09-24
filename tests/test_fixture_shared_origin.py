@@ -1,4 +1,4 @@
-"""Two units, one source file — the property `Q23` asked about and `W95` built.
+"""Two units, one source file — the property `Q23` asked about.
 
 **What it asserts.** That some valid fixture corpus declares two units whose
 `origin.path` is *the same path*, and that this is therefore a corpus on which a
@@ -142,7 +142,7 @@ def groups() -> tuple[tuple[str, str, tuple[Unit, ...]], ...]:
     ⭐ **Derived over the declaration, never over a directory name.** Which
     corpora exist is `VALID`'s to say, so a fixture dropped from the
     declaration empties this list and the parametrized tests below **skip**
-    rather than pass (Ruling 48). The pin that the list is non-empty is a test
+    rather than pass. The pin that the list is non-empty is a test
     of its own, immediately after the derivation.
     """
     found: list[tuple[str, str, tuple[Unit, ...]]] = []
@@ -189,7 +189,7 @@ def test_the_shared_origin_corpus_is_a_member_of_the_declared_valid_set():
 
 
 def test_some_valid_fixture_corpus_declares_two_units_on_one_origin_path():
-    # ⛔ **Ruling 48.** Every assertion below is parametrized over `GROUPS`, and
+    # ⛔ **A denominator.** Every assertion below is parametrized over `GROUPS`, and
     # an empty `GROUPS` would skip all of them in silence. This is the one
     # assertion that reds instead.
     assert GROUPS, (
@@ -288,7 +288,7 @@ def test_the_path_derived_key_space_is_smaller_exactly_where_a_file_is_shared(na
 
 
 def test_the_corpora_with_nothing_to_catch_are_a_populated_control():
-    """⛔ **Ruling 191: a control prints the size of its population before its verdict.**
+    """⛔ **A control prints the size of its population before its verdict.**
 
     *"No group here"* read off an **empty** population returns the same value as
     *"no group here"* read off a real one — ⛔ and for a control that is green
@@ -372,7 +372,7 @@ def container_versions() -> dict[str, set[int]]:
 
 def test_the_fixture_set_gives_each_origin_shape_an_input():
     # ⛔ A whole-file `origin` and a region `origin` are two code paths, and the
-    # README's own argument for SF-10's two overlay shapes applies: each needs
+    # README's own argument for the unit page's two overlay shapes applies: each needs
     # an input. ⚠️ Pinned per corpus, so a fixture silently downgraded to
     # version 1 — which would drop the region shape out of the set entirely —
     # reds here rather than in whatever reads it next.

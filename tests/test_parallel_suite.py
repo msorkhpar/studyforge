@@ -1,4 +1,4 @@
-"""`W364` clause 3: the root `conftest.py`'s plugins still tell the truth under `pytest -n`.
+"""The root `conftest.py`'s plugins still tell the truth under `pytest -n`.
 
 ⭐ **Every end-to-end arm runs a CHILD pytest in a throwaway git repository whose
 `conftest.py` is a byte copy of the REAL root one**, so the hook under test is the shipped
@@ -11,9 +11,9 @@ browser-free module of THIS checkout's `tests/visual/` in both forms, because th
 compare is printed by that directory's own conftest, which a byte copy would not exercise.
 
 ⚠️ **The parallel arms need `pytest-xdist`**, which the pinned image carries and a host may
-not; there they SKIP with a reason that names it — a disclosure, never a pass (Ruling 328).
+not; there they SKIP with a reason that names it — a disclosure, never a pass.
 
-⭐ **`W382`: a child imports the framework FROM THE CHECKOUT, on the host as in the image.**
+⭐ **A child imports the framework FROM THE CHECKOUT, on the host as in the image.**
 The image's editable install points at the mounted checkout's `src/`; the host installs
 nothing, so a child whose path held only the repository root could not import `studyforge`
 wherever the copied conftest reached `tests/visual/` — measured red under a bare `-n 2`.
@@ -97,7 +97,7 @@ def _pytest(
     )
 
 
-# --- `W382`: where a child finds the framework --------------------------------------
+# --- Where a child finds the framework ----------------------------------------------
 
 
 def test_a_CHILD_imports_the_framework_from_THIS_CHECKOUT_outside_it(tmp_path):
@@ -212,7 +212,7 @@ def test_the_VISUAL_harness_line_is_printed_ONCE_and_IDENTICALLY_in_both_forms(t
     assert lines["parallel"] == lines["serial"], lines
 
 
-#: ⭐ `REL-02`: a PRODUCT test file that reaches no visual test, so the control holds in a
+#: ⭐ A PRODUCT test file that reaches no visual test, so the control holds in a
 #: checkout without the tooling (it named one of the tooling's own tests until then).
 NO_VISUAL = "tests/harness/test_skipped.py"
 

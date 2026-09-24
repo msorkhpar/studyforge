@@ -1,6 +1,6 @@
-"""Ruling 46's seam: a sweep declares what it asserts, and a red names the declaration.
+"""The sweep seam: a sweep declares what it asserts, and a red names the declaration.
 
-⭐ **Moved here by `FND-09`**, from `tests/studyforge/archive/test_blocks.py`,
+⭐ **Moved here** from `tests/studyforge/archive/test_blocks.py`,
 which was at 567 of its 600 lines and is where the seam could not grow. The
 helper's subject is the *fixture tree*, not the block vocabulary, and nothing
 about these assertions was ever about blocks.
@@ -38,7 +38,7 @@ def swept(asserting):
 
 
 # --------------------------------------------------------------------------
-# ⛔ Ruling 46 — a sweep declares what it asserts
+# ⛔ A sweep declares what it asserts
 # --------------------------------------------------------------------------
 
 
@@ -56,7 +56,7 @@ def test_a_sweep_excludes_exactly_the_fixtures_declared_to_violate_what_it_asser
 
 
 def test_naming_two_rules_excludes_both_and_nothing_else():
-    # ⚠️ The reason Ruling 46 takes a **set**: a sweep asserting two properties
+    # ⚠️ The reason the declaration is a **set**: a sweep asserting two properties
     # excludes the fixtures declared against either, and a single id would
     # under-exclude at exactly the grain the directory over-excludes.
     assert swept({"counts", "digest"}) == swept(()) - {"count-mismatch", "digest-mismatch"}
@@ -82,7 +82,7 @@ def test_nine_declared_documents_are_swept_that_a_directory_exclusion_would_drop
 def test_a_sweep_must_say_what_it_asserts():
     # ⭐ No default, deliberately. A default is what let the last two versions
     # of this helper be wrong without anybody choosing anything.
-    # ⛔ **The control the move had to survive** (`FND-09` acceptance 2).
+    # ⛔ **The control the move had to survive.**
     with pytest.raises(TypeError):
         list(archive_documents())
     with pytest.raises(TypeError):
@@ -92,7 +92,7 @@ def test_a_sweep_must_say_what_it_asserts():
 
 
 def test_the_exclusion_is_read_from_the_declaration_and_not_from_a_directory():
-    # ⭐ The four lines Ruling 46 is, asserted directly rather than through a
+    # ⭐ The seam's four lines, asserted directly rather than through a
     # sweep, so the seam's own primitive has a test that names it.
     assert excluded_by(()) == set()
     assert excluded_by({"counts"}) == {"count-mismatch"}
@@ -131,7 +131,7 @@ def test_a_valid_fixture_is_named_and_nothing_more():
 def test_every_path_the_seam_yields_arrives_attributed():
     # ⛔ **Forgetting is not a thing a call site can do.** The attribution is
     # the yielded value, not a check a sweep must remember to call — so a
-    # migrated sweep gets it whether or not its author read Ruling 46.
+    # migrated sweep gets it whether or not its author read the seam.
     for where, path in fixture_paths(asserting=()):
         assert where == sweeping(path)
         if declaring(path) is not None:
@@ -166,7 +166,7 @@ def test_the_declaration_is_read_from_the_dict_and_not_from_violation_md():
 
 
 # --------------------------------------------------------------------------
-# ⛔ Ruling 48 — the coverage number, because `0` with no denominator is `0 = 0`
+# ⛔ The coverage number, because `0` with no denominator is `0 = 0`
 # --------------------------------------------------------------------------
 
 
@@ -216,7 +216,7 @@ def test_a_coverage_reads_as_a_sentence():
 
 
 def test_the_enforcers_are_named_in_the_code_and_state_why():
-    # ⛔ `FND-09` acceptance 4: never silently left behind. Each is the
+    # ⛔ Never silently left behind. Each is the
     # enforcer of the declaration this seam reads, so routing it through the
     # seam would have it assert `INVALID_CORPORA` against itself.
     assert set(ENFORCERS) == {

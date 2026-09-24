@@ -7,10 +7,10 @@ nothing — ⛔ and that never justified differing in what they **recognise**.
 They had drifted, and nobody noticed for eleven rounds because nothing
 compared them.
 
-⚠️ Ruling 31 forbids the tool from importing the framework, so the two sides
+⚠️ The tooling may not import the framework, so the two sides
 share **evidence, not code**: `docs/conventions/personal-data-shapes.md` holds
 one table — read here through the product's copy of it, `tests/support.py`'s
-`SHAPE_VOCABULARY` (`REL-02`) — this module asserts the `gate` and `scrub` columns of it, and
+`SHAPE_VOCABULARY` — this module asserts the `gate` and `scrub` columns of it, and
 `tools/tests/quality/personal_data/test_shapes.py` asserts the `quality`
 column. Neither module imports the other's subject.
 """
@@ -50,7 +50,7 @@ def test_every_divergence_carries_a_reason():
 
 
 def test_the_table_is_inhabited_and_holds_both_verdicts():
-    # ⛔ **Ruling 48.** Every test above is a comparison, and a table that
+    # ⛔ **A denominator.** Every test above is a comparison, and a table that
     # emptied would satisfy all of them: no rows, no mismatches, green.
     # ⚠️ Both verdicts must appear in each column too — a table of nothing but
     # `pass` would be satisfied by a gate that had been deleted.

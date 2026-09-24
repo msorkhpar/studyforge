@@ -2,8 +2,8 @@
 
 `docs/conventions/module-structure.md` says a package whose reader lets another
 package's exception through exports that set as `RAISES`, and a caller catches
-the tuple rather than retyping its members. This is what enforces it, and `W219`
-rebuilt it because the version it replaces was narrow twice.
+the tuple rather than retyping its members. This is what enforces it, rebuilt
+because the version it replaces was narrow twice.
 
 ⛔ **The population was a typed map of two `corpus.*` packages.** ⭐ It is now
 DERIVED — by [`raises_sweep.py`](raises_sweep.py) — from every module that
@@ -12,7 +12,7 @@ are inside the sweep without anybody remembering to add them, and so is the
 next one.
 
 ⛔ **The predicate walked handler NAMES, so `except RAISES[:1]` passed it.** ⚠️
-Four plants did exactly that and survived (`W212/2`); each died only on the
+Four plants did exactly that and survived; each died only on the
 caller's own behavioural test. ⭐ A handler now names the tuple only by naming
 it WHOLE — a bare `RAISES`, `RAISES` starred into a tuple literal, or a
 module-level alias built from one of those. A subscript is a narrowed tuple and
@@ -61,7 +61,7 @@ from tests.raises_sweep import (
 #: ⭐ The reach this sweep must not lose: how many catch sites name each subject
 #: package's tuple. ⛔ A FLOOR, so a NEW caller is expected and needs no edit
 #: here, while a caller that stops being found is the silent narrowing this
-#: exists to catch (Ruling 124). ⚠️ **A site's path and function name are absent
+#: exists to catch. ⚠️ **A site's path and function name are absent
 #: on purpose** — a declared split changes both without changing reach, and the
 #: floor that pinned them read `W313`'s move as a loss.
 REACH = {
@@ -70,13 +70,13 @@ REACH = {
     # plant found 7 left and DID NOT RAISE — the floor moves with the site, as `SF-24`'s did.
     "studyforge.corpus.manifest": 8,
     "studyforge.generate": 3,
-    # ⚠️ `SF-22`: the run route's parse of a practice key is the first site naming
+    # ⚠️ The run route's parse of a practice key is the first site naming
     # `progress.RAISES`, and a subject with NO floor here fails the deleted-outright
-    # plant below, whatever the note above says of a new caller (`SF-22/5`).
+    # plant below, whatever the note above says of a new caller.
     # ⚠️ `SF-24` RAISED it to 2 and had to: the practice panel mints the same key on
     # the page, and with a floor of 1 the deleted-outright plant found 1 site left,
     # read it as not short, and DID NOT RAISE. ⛔ So the floor moves with the second
-    # site — which is the other half of `SF-22/5` and not a new rule. ⚠️ `W451` RAISED
+    # site — which is the other half of that plant and not a new rule. ⚠️ It was RAISED
     # it to 3 for the same reason: the quiz route parses the same key.
     "studyforge.progress": 3,
     "studyforge.serve": 1,
@@ -105,7 +105,7 @@ def assert_every_catch_names_its_tuple(sites: dict[str, CatchSite]) -> None:
 
 
 def test_the_population_is_derived_from_the_tree_and_is_inhabited():
-    # ⛔ Ruling 124: a check over a derived population states its inhabitation,
+    # ⛔ A check over a derived population states its inhabitation,
     # or its green is not a reading. A derivation that found no exporter, or
     # found exporters with no readers, would pass the sweep below in silence.
     src = source_root()
@@ -138,7 +138,7 @@ def test_every_catch_around_a_reader_names_that_package_s_own_tuple():
 
 def test_a_handler_names_the_tuple_only_by_naming_it_whole():
     # ⛔ The predicate itself, both ways. `RAISES[:1]` is the plant that survived
-    # the instrument this replaces (`W212/2`); it must read as naming nothing.
+    # the instrument this replaces; it must read as naming nothing.
     bound = {"RAISES": frozenset({"studyforge.corpus.manifest"})}
     named = {"studyforge.corpus.manifest"}
     forms = (
@@ -181,7 +181,7 @@ def test_a_widened_alias_carries_the_tuple_and_a_narrowed_one_does_not():
 def _copy_of(into: Path) -> Path:
     """The tree, copied where a plant may edit it.
 
-    ⛔ `W229`: no bytecode cache travels with a plant. Nothing here imports the
+    ⛔ No bytecode cache travels with a plant. Nothing here imports the
     copy — the sweep reads it — and an inherited `__pycache__` would still be a
     second, stale answer to what the tree says.
     """
@@ -291,7 +291,7 @@ def test_the_unplanted_copy_reads_green(tmp_path):
 
 
 def test_a_narrowed_tuple_fails_the_sweep(tmp_path):
-    # ⛔ Rulings 124 and 348: the pass condition is the MOVED exit code, not a
+    # ⛔ The pass condition is the MOVED exit code, not a
     # string in a report. `RAISES[:1]` in a real handler is the plant that
     # SURVIVED the instrument this replaces; here it must turn it red.
     subject = population(source_root())

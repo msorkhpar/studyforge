@@ -10,7 +10,7 @@ prime a library needs. ⛔ Each name is read off the code, never typed here.
 ## ⚠️ Why this is a module of its own
 
 ⭐ `tests/test_authoring_exercises.py` reached its 600-line ceiling (R11), and
-the remedy is a split at a named seam, never a trim (`W117/2`, `W330`). ⛔
+the remedy is a split at a named seam, never a trim. ⛔
 **The seam:** that module reads the **authoring procedure** — the pass, its
 drafts, its gates and what it writes — and this one reads the **corpus's
 readiness** for it: the section a reader finishes before the pass is called.

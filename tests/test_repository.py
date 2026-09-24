@@ -53,7 +53,7 @@ def test_no_source_module_imports_a_third_party_package():
     # imported, which is the half that goes wrong silently.
     #
     # ⛔ **Asked of `tests.harness.isolation`, not walked here.** The walk this
-    # test used to carry and the one SF-26 needed for R1's import form are the
+    # test used to carry and the one the harness needed for R1's import form are the
     # same eleven lines against the same closed set, and this file's neighbour
     # `tests/support.py` states the rule: a block repeated between test modules is
     # extracted and imported, because the copies drift silently while each keeps
@@ -134,7 +134,7 @@ SCOPED = ("--force-exclude", "--")
 #: of the same class, so each gate names its own population here.
 LINT_POPULATION = ("*.py",)
 
-#: ⛔ **`ruff format`'s subject is WIDER, and this is `CTO-64/1`.**
+#: ⛔ **`ruff format`'s subject is WIDER.**
 #: `pyproject.toml` sets `docstring-code-format = true`, so ruff 0.16.6 formats
 #: the python blocks inside markdown as well as `.py` files — and **29 tracked
 #: `.md` carry a python fence**, so the subject is live rather than theoretical.
@@ -145,7 +145,7 @@ LINT_POPULATION = ("*.py",)
 #: SAME subjects** — so there is no trade-off here, and a `*.py`-only format gate
 #: simply DROPS 344 files and goes blind to every python block in every document.
 #:
-#: ⛔ **Both arms were planted** (Ruling 191): a mis-formatted python block in a
+#: ⛔ **Both arms were planted**: a mis-formatted python block in a
 #: tracked `.md` makes the disk form and this population exit `1` and the
 #: `*.py`-only form exit `0` — it MISSES; mis-formatting a `.py` as well makes the
 #: `*.py`-only form exit `1`, which is the control proving it is blind to
@@ -159,15 +159,15 @@ def test_ruff_lint_is_clean_where_ruff_exists():
     # extra rather than passing quietly. Where ruff is present — FND-03's
     # image is the obvious place — it runs for real.
     #
-    # ⛔ **Over what git TRACKS, never `.`** (`W142`, and Ruling 80's own clause —
-    # *a floor check's verdict may not depend on untracked state*). `ruff check .`
+    # ⛔ **Over what git TRACKS, never `.`** — *a floor check's verdict may not
+    # depend on untracked state*. `ruff check .`
     # walks the DISK, so an untracked scratch module at the repository root turns
     # a CORRECT tree red: measured by two offices, and it failed three innocent
     # branches in one wave under a reviewer who had measured it that same hour.
     #
-    # ⚠️ **The working-tree reading is not deleted, it is demoted** (Ruling 183's
-    # standing form): `tools/quality/lint.py`'s NOTICE still walks the disk, still
-    # names the scratch file's findings, and by Rulings 77 and 78 can never fail a
+    # ⚠️ **The working-tree reading is not deleted, it is demoted**:
+    # `tools/quality/lint.py`'s NOTICE still walks the disk, still
+    # names the scratch file's findings, and as a notice can never fail a
     # build. ⭐ A reviewer still learns their scratch file is dirty — as a notice,
     # and not as three branches failing.
     ruff = tool_on_path("ruff")
@@ -204,19 +204,19 @@ def declared_target() -> str:
 
 
 def test_the_formatter_target_is_declared_once_and_follows_requires_python():
-    # ⛔ `W116`, Ruling 210. Deleting the declaration leaves every ruff gate GREEN,
+    # ⛔ One declared target. Deleting the declaration leaves every ruff gate GREEN,
     # because ruff then INFERS the same target from `requires-python` — so the
     # inference is invisible to the format gate, and this is the check that sees it.
     ruff_table = pyproject()["tool"]["ruff"]
     assert ruff_table.get("target-version") == declared_target(), (
         "[tool.ruff] target-version must be declared and equal requires-python's floor"
     )
-    # ⚠️ A per-file override is a second target held more quietly (`W196`, refusal 2).
+    # ⚠️ A per-file override is a second target held more quietly.
     assert "per-file-target-version" not in ruff_table
 
 
 def test_every_formatted_directory_resolves_the_declared_target():
-    # ⛔ `W116`: the declaration counts only if every formatter run READS it. A
+    # ⛔ The declaration counts only if every formatter run READS it. A
     # `ruff.toml` or `.ruff.toml` anywhere on disk wins over `pyproject.toml` for its
     # subtree, even untracked, so ruff itself is asked, once per directory the format
     # gate formats. ⭐ Failures name the directory only, never ruff's absolute
@@ -261,7 +261,7 @@ def test_every_formatted_directory_resolves_the_declared_target():
 
 
 def test_the_format_population_covers_python_blocks_in_documents(tmp_path):
-    # ⛔ **`CTO-64/1`, made permanent** (R12). The measurement that produced
+    # ⛔ **The wider format subject, made permanent** (R12). The measurement that produced
     # `FORMAT_POPULATION` lives in a reviewer's terminal and in a constant's
     # comment; this is the part that goes red if someone narrows the gate again.
     #
@@ -302,10 +302,10 @@ def test_the_format_population_covers_python_blocks_in_documents(tmp_path):
 
 
 def test_the_lint_verdict_is_taken_over_tracked_content_in_both_directions(tmp_path):
-    # ⛔ **R12's both directions, and both arms are INHABITED** (Ruling 191).
+    # ⛔ **R12's both directions, and both arms are INHABITED**.
     # The plant lives in a throwaway repository rather than in this one: a
     # control that can only be written by writing into the tree it measures is
-    # not a control (Ruling 11).
+    # not a control.
     #
     # ⚠️ **The middle assertion is the one that keeps this honest.** It runs the
     # disk-walking form in the same directory and requires it to go RED — so the
