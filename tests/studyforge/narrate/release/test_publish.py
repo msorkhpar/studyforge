@@ -5,8 +5,9 @@
   with no GitHub origin is refused;
 - the dry run lists every volume with its real size and digest, then the one
   `gh release create` command, which parses back to exactly its argv;
-- ⛔ a volume that no longer matches `SHA256SUMS`, a missing volume, and
-  restore scripts written for another tag or edited by hand are each refused;
+- ⛔ a volume that no longer matches `SHA256SUMS`, a missing volume, restore
+  scripts written for another tag or edited by hand, and a clip signal that
+  does not say `released` are each refused;
 - ⛔ planning a publish starts no process: `subprocess` is made to refuse, and
   the plan is still made.
 """
@@ -20,7 +21,7 @@ from pathlib import Path
 
 import pytest
 
-from studyforge.narrate.release import pack, write_scripts
+from studyforge.narrate.release import SIGNAL, pack, write_scripts, write_signal
 from studyforge.narrate.release.publish import (
     NOTES,
     TITLE,
@@ -29,6 +30,7 @@ from studyforge.narrate.release.publish import (
     repository_of,
 )
 from studyforge.narrate.release.volumes import SUMS
+from studyforge.render.pageassets import ABSENT, PRESENT
 from tests.studyforge.cli.narrate.plant import narrated
 from tests.support import git, init_repository, run
 
@@ -54,6 +56,7 @@ def packed(tmp_path: Path, tag: str = TAG) -> tuple[Path, Path]:
     out = tmp_path / "release"
     pack(root, out, part_bytes=2048)
     write_scripts(root, tag)
+    write_signal(root)
     return root, out
 
 
@@ -129,6 +132,19 @@ def test_restore_scripts_written_for_another_tag_are_refused(tmp_path):
     root, out = packed(tmp_path, tag="narration-0.9.0")
 
     with pytest.raises(PublishRefused, match=f"not written for tag {TAG}"):
+        plan_publish(root, out, TAG)
+
+
+@pytest.mark.parametrize("state", [PRESENT, ABSENT, None])
+def test_a_clip_signal_that_does_not_say_released_is_refused(tmp_path, state):
+    # ⛔ A committed `present` would tell every fresh checkout its clips are there.
+    root, out = packed(tmp_path)
+    if state is None:
+        (root / SIGNAL).unlink()
+    else:
+        write_signal(root, state)
+
+    with pytest.raises(PublishRefused, match="does not say released"):
         plan_publish(root, out, TAG)
 
 

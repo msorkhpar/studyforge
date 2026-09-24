@@ -11,8 +11,10 @@
   Narration is optional: the site is complete without it, and this script is
   only for a reader who wants the voice. It downloads the release's volumes,
   checks each against SHA256SUMS, joins them, extracts the clips into the
-  directories this corpus's pages play them from, and deletes the downloaded
-  volumes. Running it again gives the same tree.
+  directories this corpus's pages play them from, deletes the downloaded
+  volumes, and last marks the clips present for the pages. Running it again
+  gives the same tree. A site built into another directory than this corpus's
+  root has its own copies: build it again after restoring.
 
   In a clone whose origin is the repository on GitHub this needs no argument:
   the repository is read from that remote and the tag is the one the clips were
@@ -214,4 +216,16 @@ if ((Test-Path -LiteralPath $Work) -and -not (Get-ChildItem -Force -LiteralPath 
 } elseif (Test-Path -LiteralPath $Work) {
     Write-Host "narration: volumes kept in $Work; remove it when you are done"
 }
+
+# LAST: tell the pages the clips are here. Written only once every clip is in
+# place, and whole, so an interrupted restore never says present.
+$signal = Join-Path $Root '@SIGNAL@'
+$signalDir = Split-Path -Parent $signal
+if (-not (Test-Path -LiteralPath $signalDir)) {
+    New-Item -ItemType Directory -Force -Path $signalDir | Out-Null
+}
+$line = '@PRESENT_LINE@' + "`n"
+[System.IO.File]::WriteAllBytes("$signal.writing", [System.Text.Encoding]::ASCII.GetBytes($line))
+Move-Item -Force -LiteralPath "$signal.writing" -Destination $signal
+Write-Host 'narration: the pages will play the clips from their next load'
 exit 0

@@ -204,7 +204,8 @@ when a push is refused.
 With `commit` set to `never`, `studyforge narrate <root> --pack <dir>` packs
 every clip the narration record locates into stored zip volumes of at most
 999 MB, with a `SHA256SUMS`, in a directory outside the corpus, and writes two
-restore scripts into `.studyforge/narration-release/`. Commit the scripts.
+restore scripts into `.studyforge/narration-release/`, and sets
+`.studyforge/assets/narration-clips.js` to `released`. Commit both.
 `studyforge narrate <root> --publish <dir>` is a dry run: it checks every
 volume and prints the one `gh release create` command that attaches them to a
 release of the checkout's `origin`, under the tag (`--tag`, default
@@ -212,7 +213,9 @@ release of the checkout's `origin`, under the tag (`--tag`, default
 your own `gh` login. A reader
 runs `sh .studyforge/narration-release/restore.sh` (or `restore.ps1`) from a
 clone: each clip lands where the narration record says, the volumes are
-checked before anything is extracted, and the downloads are deleted.
+checked before anything is extracted, the downloads are deleted, and last the
+script is set to `present`, so the next page load plays the clips. A site you
+built into another `--out` keeps its own copies: build it again after a restore.
 Narration stays optional: a clone that never restores has a complete site.
 
 ---

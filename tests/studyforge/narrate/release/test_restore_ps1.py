@@ -23,7 +23,8 @@ from pathlib import Path
 import pytest
 
 from studyforge.narrate.release import RESTORE_PS1
-from tests.studyforge.narrate.release.restoring import DEAD_PROXY, prepared, restored
+from studyforge.render.pageassets import PRESENT, RELEASED
+from tests.studyforge.narrate.release.restoring import DEAD_PROXY, prepared, restored, signal
 from tests.studyforge.narrate.release.stand_in import OWNER_REPO, TOKEN, StandIn
 from tests.studyforge.narrate.release.test_restore import plant_a_corrupt_volume
 from tests.support import tool_on_path
@@ -106,6 +107,7 @@ def test_volumes_on_disk_restore_every_clip_and_are_left_in_place(tmp_path):
     assert done.returncode == 0, done.stdout + done.stderr
     assert restored(corpus) == corpus.clips
     assert sorted(path.name for path in corpus.release.iterdir()) == before
+    assert signal(corpus) == PRESENT
 
 
 @pytest.mark.parametrize("private", [False, True], ids=["public", "private"])
@@ -124,6 +126,7 @@ def test_a_release_restores_every_clip_and_leaves_no_download(tmp_path, private)
     assert restored(corpus) == corpus.clips
     assert TOKEN not in done.stdout + done.stderr
     assert not (corpus.root / ".studyforge/narration-release/download").exists()
+    assert signal(corpus) == PRESENT
     if private:
         assert all(TOKEN not in path for _, path, _ in host.requests)
         assert any("/releases/assets/" in path for _, path, _ in host.requests)
@@ -142,3 +145,4 @@ def test_a_corrupt_volume_is_refused_and_nothing_is_extracted(tmp_path):
     assert done.returncode != 0
     assert "checksum mismatch on narration.zip.001" in done.stdout + done.stderr
     assert set(restored(corpus).values()) == {None}
+    assert signal(corpus) == RELEASED

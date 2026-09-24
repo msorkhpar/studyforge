@@ -22,6 +22,8 @@ def test_a_voiced_corpus_that_does_not_commit_its_clips_is_given_both_restores()
     assert f"`sh {RESTORE_SH}`" in text
     assert f"`powershell -File {RESTORE_PS1}`" in text
     assert "GITHUB_TOKEN" in text
+    # ⭐ A site built into another directory is not reached by a restore into the root.
+    assert "build it again after restoring" in text
 
 
 def test_the_restore_is_never_a_fenced_line():

@@ -1,7 +1,8 @@
 r"""`--pack` and `--publish`: the narrate verb's two release requests, and what each prints.
 
 **What it does.** `pack_command` packs a corpus's recorded clips into release
-volumes, writes the restore scripts into the corpus, and prints what it wrote
+volumes, writes the restore scripts into the corpus and marks its clips
+`released` for the pages, and prints what it wrote
 and the dry run to type next. `publish_command` is that dry run: it checks a
 release directory and the corpus's scripts and prints every asset and the one
 `gh release create` command the owner runs to upload them.
@@ -10,7 +11,8 @@ release directory and the corpus's scripts and prints every asset and the one
 <dir> --tag <tag>`, then `studyforge narrate <root> --publish <dir> --tag
 <tag>`. Each function returns `(lines, exit code)`.
 
-**Depends on.** `narrate.release` for the work, and `validate` for the exit
+**Depends on.** `narrate.release` for the work, `render.pageassets` for the
+clip signal's `released`, and `validate` for the exit
 codes. ⛔ Neither request builds a narration client, reaches the service,
 starts a process or uploads anything.
 
@@ -34,7 +36,9 @@ from studyforge.narrate.release import (
     plan_publish,
     valid_tag,
     write_scripts,
+    write_signal,
 )
+from studyforge.render.pageassets import RELEASED
 from studyforge.validate.report import INVALID, OK
 
 #: What a tag no script may carry is told.
@@ -61,7 +65,7 @@ def pack_command(root: str, out: str, tag: str) -> tuple[list[str], int]:
         packed = pack(root, out)
     except PackRefused as refused:
         return [f"refused {refused}"], INVALID
-    written = write_scripts(root, tag)
+    written = (*write_scripts(root, tag), write_signal(root, RELEASED))
     lines = [
         f"packed  {packed.clips} clip(s), {packed.clip_bytes} byte(s), "
         f"into {len(packed.volumes)} volume(s) in {out}",

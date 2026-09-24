@@ -1124,8 +1124,14 @@ decision without touching a page:
   anything is joined**, extracts each clip to `<corpus root>/<where>/<filename>`
   as the record names it, and deletes the downloads. The token is read from the
   environment and never written or printed. A second run gives the same tree.
+- ⭐ **The pack sets the clip signal to `released`** and **the restore sets it to
+  `present` as its very last step** (`.studyforge/assets/narration-clips.js`,
+  §8.4), so an interrupted restore never claims the clips arrived. A site built
+  into another `--out` holds its own copies and its own signal, and is built
+  again after a restore.
 - ⛔ **The upload is the owner's.** `studyforge narrate <root> --publish <dir>
-  --tag <tag>` is a dry run: it checks every volume against `SHA256SUMS`, reads
+  --tag <tag>` is a dry run: it checks every volume against `SHA256SUMS`,
+  refuses a clip signal that does not say `released`, reads
   the repository from the checkout's git configuration, and prints the one
   `gh release create` command, which the owner runs with their own `gh` login.
   ⛔ The framework starts no process for it and uploads nothing (§8.3).

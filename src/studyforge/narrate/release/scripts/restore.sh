@@ -10,8 +10,10 @@
 # Narration is optional: the site is complete without it, and this script is
 # only for a reader who wants the voice. It downloads the release's volumes,
 # checks each against SHA256SUMS, joins them, extracts the clips into the
-# directories this corpus's pages play them from, and deletes the downloaded
-# volumes. Running it again gives the same tree.
+# directories this corpus's pages play them from, deletes the downloaded
+# volumes, and last marks the clips present for the pages. Running it again
+# gives the same tree. A site built into another directory than this corpus's
+# root has its own copies: build it again after restoring.
 #
 # In a clone whose `origin` is the repository on GitHub this needs no setting:
 # the repository is read from that remote and the tag is the one the clips were
@@ -188,4 +190,12 @@ say "narration: restored into this corpus's audio directories"
 if [ -d "$WORK" ] && ! rmdir "$WORK" 2>/dev/null; then
   say "narration: volumes kept in $WORK; remove it when you are done"
 fi
+
+# LAST: tell the pages the clips are here. Written only once every clip is in
+# place, and whole, so an interrupted restore never says present.
+signal="$ROOT/@SIGNAL@"
+mkdir -p "$(dirname "$signal")" || die "cannot write the clip signal"
+printf '%s\n' '@PRESENT_LINE@' > "$signal.writing" && mv -f "$signal.writing" "$signal" \
+  || die "cannot write the clip signal"
+say "narration: the pages will play the clips from their next load"
 exit 0

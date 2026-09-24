@@ -1,8 +1,10 @@
 """A packed corpus whose clips are gone, and a restore run against it with a closed environment.
 
 **What it does.** `prepared(tmp_path)` narrates a fixture copy, packs it into a
-release directory beside it, writes its restore scripts, remembers every clip's
-bytes and deletes the clips: a clone of a corpus that does not commit its media.
+release directory beside it, writes its restore scripts and marks its clips
+`released`, remembers every clip's bytes and deletes the clips: a clone of a
+corpus that does not commit its media. `signal(prepared)` reads what its clip
+signal tells the pages.
 `restore(prepared, env)` runs the generated `restore.sh` from that corpus with
 an environment built here and nowhere else.
 
@@ -25,7 +27,15 @@ import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
-from studyforge.narrate.release import RESTORE_SH, clips_of, pack, write_scripts
+from studyforge.narrate.release import (
+    RESTORE_SH,
+    SIGNAL,
+    clips_of,
+    pack,
+    write_scripts,
+    write_signal,
+)
+from studyforge.render.pageassets import clips_state
 from tests.studyforge.cli.narrate.plant import narrated
 from tests.studyforge.narrate.release.stand_in import TAG
 
@@ -52,6 +62,7 @@ def prepared(tmp_path: Path, *, part_bytes: int = 1500, name: str = "depth1") ->
     release = tmp_path / "release"
     pack(root, release, part_bytes=part_bytes)
     write_scripts(root, TAG)
+    write_signal(root)
     clips = {member: file.read_bytes() for member, file in clips_of(root)}
     for member in clips:
         (root / member).unlink()
@@ -66,6 +77,12 @@ def restored(corpus: Prepared) -> dict[str, bytes | None]:
         member: (corpus.root / member).read_bytes() if (corpus.root / member).is_file() else None
         for member in corpus.clips
     }
+
+
+def signal(corpus: Prepared) -> str | None:
+    """What the corpus's clip signal tells its pages now, or `None` for no signal."""
+    path = corpus.root / SIGNAL
+    return clips_state(path.read_bytes()) if path.is_file() else None
 
 
 def environment(corpus: Prepared, path: str | None = None, **given: str) -> dict[str, str]:

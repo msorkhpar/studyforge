@@ -64,5 +64,7 @@ def narration_section(manifest: Manifest) -> list[str]:
         "its checksum, puts each clip where its page plays it, and deletes the",
         f"downloaded volumes; on Windows, `powershell -File {RESTORE_PS1}` does",
         "the same. A private repository needs `GITHUB_TOKEN` set, or `gh auth login`.",
+        "The next page load plays them, with no rebuild. A site you built into",
+        "another directory keeps its own copies: build it again after restoring.",
         "",
     ]
