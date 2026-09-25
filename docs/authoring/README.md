@@ -84,7 +84,9 @@ manifest and nothing downstream cares which you chose. See
 **5. Personal data is refused, not scrubbed.** An absolute home path, an email,
 an account id — anything that reaches an archive document is a hard refusal
 naming the field it was in. Nothing is silently rewritten, because a silent
-rewrite leaves nobody knowing the data was there.
+rewrite leaves nobody knowing the data was there. A lesson's sample passes when
+it reaches nobody: an address on a reserved domain, and the placeholder home
+path under the account `user` ([the archive](archive.md#no-personal-data-reaches-an-archive)).
 
 ---
 

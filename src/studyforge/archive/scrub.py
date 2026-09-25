@@ -11,7 +11,7 @@ boundary; it takes a decoded string or a whole decoded document and raises
 `leaks(value, where)` when a caller wants every finding rather than the first
 — `studyforge validate` reports, it does not raise.
 
-**Depends on.** `re`, and nothing else. ⛔ Deliberately not on `os`, `pwd`,
+**Depends on.** `re` and `archive.samples`, and nothing else. ⛔ Not on `os`, `pwd`,
 `socket`, `getpass` or `subprocess`: this gate must hold no value and read no
 environment, and `test_scrub.py` asserts that of this module's imports.
 
@@ -98,6 +98,13 @@ here**, because `/export/home/<name>/x` and `/var/lib/home/cache/x` are the
 same shape. It is closed for every path field and for our own output, and the
 residual is stated here.
 
+## Sample data passes: reserved domains and one placeholder home
+
+⭐ **A lesson's sample is not a leak when it is unreachable by construction.**
+An address on a reserved domain and the placeholder home path pass, and nothing
+else does; `studyforge.archive.samples` states both forms and why the gate
+still holds no value and reads no environment.
+
 ## The residual class is specified, not built
 
 A second source could legitimately carry a shape this gate owns — a lesson
@@ -125,6 +132,8 @@ from __future__ import annotations
 import re
 from collections.abc import Callable, Iterator
 
+from studyforge.archive.samples import admitted
+
 #: What `scrub` writes in place of each shape. ⭐ Every one is a documented
 #: placeholder (`example.invalid`, `Jane Doe`) or an obvious redaction, so a scrubbed line
 #: reads as *deliberately* anonymous rather than as a plausible other value.
@@ -137,7 +146,7 @@ from collections.abc import Callable, Iterator
 #: shape, so that placeholder trips its own pattern — measured, on this
 #: sentence, which had to be rewritten to say so. The email placeholder
 #: cannot be chosen that way — every well-formed placeholder address is
-#: address-shaped — and it is the one hole, documented below.
+#: address-shaped — so it sits on a reserved domain, which the gate admits.
 HOME_PATH_PLACEHOLDER = "/path/to/project"
 EMAIL_PLACEHOLDER = "contact@example.com"
 TOKEN_PLACEHOLDER = "Bearer <redacted>"
@@ -245,22 +254,6 @@ ALSO_SCRUBBED: tuple[tuple[str, re.Pattern[str], str], ...] = (
 #: never drift into disagreeing about a shape they share.
 SCRUBBED: tuple[tuple[str, re.Pattern[str], str], ...] = SHAPES + ALSO_SCRUBBED
 
-# ⛔ There is no allow-list here, and its absence is the ruling. The
-# repository hygiene check exempts unreachable addresses — `example.com`,
-# RFC 2606's reserved TLDs — because authors are told to write them as
-# placeholders and a check that fired on the sanctioned placeholder would be
-# telling people not to use the safe form. **In an archive an address is wrong
-# content whether or not it is deliverable**: nothing in captured material
-# should carry one, and a corpus that legitimately does is the residual class
-# above, answered by a declaration rather than by a pattern.
-#
-# The single exemption is each shape's own placeholder, skipped by identity so
-# that `assert_clean(scrub(text))` can pass at all — and after the choice of
-# placeholders above only the email one is reachable. ⚠️ It is a real hole,
-# and it is why `tests/fixtures/invalid/personal-data/` uses a different
-# address: a fixture written with the scrubber's own replacement value would
-# not be refused, and the negative fixture would be protecting an empty box.
-
 
 class PersonalDataLeak(Exception):
     """Personal data reached a boundary that refuses it (R7).
@@ -294,11 +287,11 @@ def shape_in(text: str) -> str | None:
 
     ⛔ Returns the *name* of what matched and never the matched text, so the
     value has nowhere to escape to. A match equal to that shape's own
-    placeholder is not a leak.
+    placeholder, or sample data `samples.admitted` names, is not a leak.
     """
     for name, pattern, placeholder in SHAPES:
         for match in pattern.finditer(text or ""):
-            if match.group(0) == placeholder:
+            if match.group(0) == placeholder or admitted(name, match.group(0)):
                 continue
             return name
     return None

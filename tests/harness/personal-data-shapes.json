@@ -17,9 +17,19 @@
   {"shape": "bearer token", "spelling": ["header: Bearer ", "eyJhbGciOiJIUzI1NiJ9"],
    "gate": "refuse", "scrub": "rewrite", "quality": "report"},
 
-  {"shape": "email address", "spelling": ["write to jane.doe", "@example.invalid"],
-   "gate": "refuse", "scrub": "rewrite", "quality": "ignore",
-   "why": "The quality sweep exempts addresses that are unreachable by construction, because authors are told to write them as placeholders and a check firing on the sanctioned placeholder tells people not to use the safe form. The framework gate has no allow-list at all: in captured material an address is wrong content whether or not it is deliverable, and a corpus that legitimately carries one is answered by a manifest declaration rather than by a pattern."},
+  {"shape": "email address", "spelling": ["write to jane.doe", "@mailhost.org"],
+   "gate": "refuse", "scrub": "rewrite", "quality": "report"},
+
+  {"shape": "look-alike registrable email address", "spelling": ["write to bob", "@test.com"],
+   "gate": "refuse", "scrub": "rewrite", "quality": "report"},
+
+  {"shape": "email address on a reserved domain", "spelling": ["write to jane.doe", "@example.invalid"],
+   "gate": "pass", "scrub": "rewrite", "quality": "ignore",
+   "why": "An address under an RFC 2606 or RFC 6761 reserved name can be delivered nowhere, so it identifies nobody, and it is how documentation and a lesson's sample data are told to write one. Both refusing gates let it through from the one reserved vocabulary; the scrubber still rewrites it, because in our own output any address is replaced by the placeholder and that costs one log line."},
+
+  {"shape": "placeholder home path", "spelling": ["/", "home/user/documents/file.txt"],
+   "gate": "pass", "scrub": "rewrite", "quality": "report",
+   "why": "A lesson's sample writes a home directory the way documentation does, under an account called user, which names nobody; the archive gate admits exactly that segment so the sample survives verbatim. The hygiene sweep keeps reporting it because this repository's own files write a placeholder path as /path/to/project, and the scrubber rewrites it in our own output like any home path."},
 
   {"shape": "home under a longer prefix", "spelling": ["/export/", "home/jane/x.md"],
    "gate": "pass", "scrub": "rewrite", "quality": "ignore",

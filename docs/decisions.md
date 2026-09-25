@@ -131,6 +131,14 @@ What it reads, and the choices in it:
 
 **Serves.** `R7`
 
+### The personal-data gate admits sample data on reserved domains and one placeholder home path
+
+**Decision.** `studyforge.archive.samples` names the sample data the archive gate in `studyforge.archive.scrub` lets through: an email address whose domain is one of `RESERVED_DOMAINS` (RFC 2606) or sits under one, or sits under one of `RESERVED_TLDS` (RFC 6761), and the home path `SAMPLE_HOME`, whose account segment is exactly `user`. `admitted` decides from the matched text alone. Every other match is refused as before, including an address on any registrable domain, every other account segment, the macOS and tilde spellings, local hostnames and tokens. The reserved names are the same tuples as the hygiene check's `tests.floor.reserved_addresses`, and `tests/test_shape_vocabulary.py` asserts them equal. `scrub` still rewrites every address and home path in text the framework writes.
+
+**Why.** Teaching material writes addresses and home directories in its examples, and the safe way to write one is on a domain or under an account that reaches nobody. Refusing those refused the safe form and blocked a whole corpus, while an address on a real domain or a real account name must still stop the write.
+
+**Serves.** `R7`
+
 ### Every module that decodes a document calls the personal-data gate
 
 **Decision.** Any module in `src/studyforge` that decodes a document, whether the manifest, a container map, a cache, a progress store or an answer from the narration service, runs `studyforge.archive.scrub.assert_clean` over the decoded document. The set of readers is derived from the tree by `tests/gate_coverage/test_coverage.py`, never kept as a list, and that test also checks that its scan finds readers at all.

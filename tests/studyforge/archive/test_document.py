@@ -30,7 +30,7 @@ from tests.fixture_checks import coverage, fixture_paths
 from tests.support import repository_root
 
 HOME = "/" + "home/jane"
-EMAIL = "jane.doe@example.invalid"
+EMAIL = "jane.doe@" + "mailhost.org"
 
 FIXTURES = Path("tests/fixtures")
 LEAKING = FIXTURES / "invalid/personal-data/archive/solo/raw/prose/unit-01/lesson-1.json"

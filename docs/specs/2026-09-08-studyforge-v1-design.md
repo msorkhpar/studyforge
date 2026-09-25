@@ -309,6 +309,17 @@ that the outcome never depends on somebody noticing.
   table whose every row read *refuse* would be satisfied by gates that refused
   everything — and every spelling is stored as fragments, because a real shape written
   whole into the table would be a finding against the table.
+- ⭐ **A lesson's sample data passes when it is unreachable by construction.** The
+  archive gate admits two forms and no others: an email address whose domain is
+  reserved (RFC 2606's `example.com`, `example.net`, `example.org` and names under
+  them; any name under RFC 6761's `.example`, `.invalid`, `.test` or `.localhost`),
+  and the placeholder home path, whose account segment is exactly `user` (a slash,
+  `home`, a slash, `user`, then anything). ⛔ Everything that identifies a user or a
+  machine is still refused: an address on a registrable domain however sample-like
+  (`test.com`, `example.co`), every other account segment, the macOS and tilde
+  spellings, every local hostname and every token. The admission reads only the
+  matched text, so the verdict is the same on every machine, and the reserved names
+  are the hygiene sweep's own list, asserted equal.
 - ⛔ **A gate's false positive on ordinary source is a defect in the gate.** An author
   who renames a field to get past R7 pays a real cost and leaves no trace, and a checker
   people rename fields around is on its way to being switched off. ⚠️ The shape known to
@@ -316,8 +327,8 @@ that the outcome never depends on somebody noticing.
   the end of an expression; its lookahead is narrowed in both gates together.
 - ⭐ **A sanctioned negative fixture is the one place a personal-data shape is
   required**, because a gate needs an input to refuse. It is legal only while all five
-  hold: the value is fabricated and unreachable (an RFC 2606 reserved domain, a user
-  who is obviously nobody); it is traceable to nobody on any machine; it lives in one
+  hold: the value is fabricated and unreachable (a home path under an account that is
+  obviously nobody's and is not the admitted placeholder); it is traceable to nobody on any machine; it lives in one
   named directory whose purpose is to be refused, with a file beside it naming the rule
   and what the gate should say; tests assert both directions — nothing else in the
   fixture tree carries the shape, and the sanctioned value really does trip the gate —

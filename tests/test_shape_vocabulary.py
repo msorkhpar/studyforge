@@ -15,6 +15,8 @@ column. Neither module imports the other's subject.
 
 import pytest
 
+import tests.floor.reserved_addresses as floor_reserved
+from studyforge.archive import samples
 from studyforge.archive.scrub import scrub, shape_in
 from tests.support import personal_data_shapes, shapes_agree
 
@@ -66,3 +68,13 @@ def test_no_row_writes_its_shape_whole():
     # somebody from "tidying" them into one string.
     for row in VOCABULARY:
         assert len(row["spelling"]) >= 2, row["shape"]
+
+
+def test_both_gates_hold_one_reserved_vocabulary():
+    # ⛔ The archive gate may not import the floor, so it holds its own copy of
+    # the reserved names; this is what stops the copy drifting. A name only one
+    # side held would be an address one gate admits and the other refuses.
+    assert samples.RESERVED_TLDS == floor_reserved.RESERVED_TLDS
+    assert samples.RESERVED_DOMAINS == floor_reserved.RESERVED_DOMAINS
+    for domain in ("example.invalid", "sub.example.org", "test.com", "example.co"):
+        assert samples.is_reserved(domain) == floor_reserved.is_reserved(domain), domain

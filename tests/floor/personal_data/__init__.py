@@ -22,9 +22,9 @@ refuses strings entering **an archive**; this refuses strings entering **the
 repository**. A corpus can be clean and the repository still leak, through a
 Dockerfile, a document or a test fixture, none of which an archive gate ever
 reads. The
-two also differ on placeholders: an unreachable address identifies nobody and
-is *encouraged* here, while in generated study material it is wrong content
-whatever its TLD.
+two agree on unreachable addresses: one identifies nobody, and both let it
+through. They differ on the placeholder home path, which the archive gate
+admits in a lesson's sample and this sweep still reports.
 
 **A package rather than a module, because of the size ceiling.** It is split
 along its own seams, so each part stays under R11's 400 lines:
