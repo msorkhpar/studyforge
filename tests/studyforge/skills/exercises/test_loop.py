@@ -300,3 +300,18 @@ def test_a_quiz_no_aspect_names_or_a_quiz_on_a_quiz_page_is_refused(tmp_path):
     with pytest.raises(AuthoringError, match="only a 'code' page may"):
         _again(tmp_path, material, graders, [on_a_quiz], {})
     assert author.briefs == [], "a refused page was drafted"
+
+
+def test_naming_a_quiz_on_a_unit_already_authored_is_refused_as_moved(tmp_path):
+    # ⛔ The same aspects and the same plan, and one exercise now a quiz: the
+    # committed code bundle was never a quiz, so the unit is refused by name.
+    material, graders, pages = write_corpus(tmp_path)
+    page = mixed(pages[GREETING])
+    unnamed = replace(page, quiz=None)
+    script = {page.path: [greeting_and_its_quiz]}
+    _, authored = _again(tmp_path, material, graders, [unnamed], script)
+    assert len(authored.pages[0].shipped) == 2, "both exercises should ship as code"
+    before = snapshot(tmp_path)
+    with pytest.raises(AuthoringError, match="unit-01.*has since moved"):
+        _again(tmp_path, material, graders, [page], script)
+    assert snapshot(tmp_path) == before, "a refused pass wrote something"
