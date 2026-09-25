@@ -326,3 +326,37 @@ def test_every_file_under_the_prime_that_this_selection_does_not_copy_is_stale(t
         put(tmp_path / where, "x\n")
     assert prime.stale_in(tmp_path, "p", {"p/maven/pom.xml"}) == ("p/maven/src/Old.java",)
     assert prime.stale_in(tmp_path, "absent", set()) == ()
+
+
+def test_a_linked_directory_in_the_prime_is_named_as_a_link_and_never_walked(tmp_path):
+    put(tmp_path / "src/Lesson.java", "class Lesson {}\n")
+    put(tmp_path / "p/maven/pom.xml", "x\n")
+    (tmp_path / "p/maven/src").symlink_to(tmp_path / "src", target_is_directory=True)
+    (tmp_path / "p/maven/pom-link.xml").symlink_to(tmp_path / "src/Lesson.java")
+    stale = prime.stale_in(tmp_path, "p", {"p/maven/pom.xml", "p/maven/pom-link.xml"})
+    assert stale == ("p/maven/pom-link.xml", "p/maven/src"), "a link is stale, kept or not"
+
+
+def test_a_prime_that_is_itself_a_link_is_never_walked(tmp_path):
+    put(tmp_path / "src/Lesson.java", "class Lesson {}\n")
+    (tmp_path / ".studyforge/execution").mkdir(parents=True)
+    (tmp_path / ".studyforge/execution/prime").symlink_to(
+        tmp_path / "src", target_is_directory=True
+    )
+    assert prime.stale_in(tmp_path, ".studyforge/execution/prime", set()) == ()
+
+
+def test_a_prime_reached_through_a_link_is_named_and_a_plain_one_is_not(tmp_path):
+    where = ".studyforge/execution/prime"
+    assert prime.linked(tmp_path, where) is None, "an absent prime is written, not refused"
+    (tmp_path / where).mkdir(parents=True)
+    assert prime.linked(tmp_path, where) is None
+    other = tmp_path / "elsewhere"
+    other.mkdir()
+    (tmp_path / ".studyforge/execution/prime").rmdir()
+    (tmp_path / ".studyforge/execution").rename(other / "execution")
+    (tmp_path / ".studyforge/execution").symlink_to(other / "execution", target_is_directory=True)
+    why = prime.linked(tmp_path, where)
+    assert why is not None and why.startswith(".studyforge/execution is a symbolic link")
+    assert str(tmp_path) not in why, "the refusal names no host path"
+    assert prime.linked(tmp_path, ".studyforge/../outside") is not None

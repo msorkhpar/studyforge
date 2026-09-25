@@ -84,7 +84,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from studyforge.corpus.manifest import SOURCE_SUFFIXES
 from studyforge.corpus.placement import PRACTICE_DIRNAME
@@ -185,15 +185,53 @@ def prime_for(root: Path, runtimes: Sequence[str], *, seeded: Sequence[str] = ()
 
 
 def stale_in(root: Path, directory: str, kept: set[str]) -> tuple[str, ...]:
-    """Every file under `directory` that is not in `kept`, corpus-relative and sorted.
+    """Every entry under `directory` a write removes, corpus-relative and sorted.
 
     ⛔ **A prime is regenerated whole.** A file an earlier selection copied and
     this one does not would still be handed to the build, which would compile
     what nobody selected, so onboarding's write removes each one this names.
+    ⛔ **A link is never followed**: a linked directory is not descended into,
+    and a link — to a file or a directory, kept or not — is named as itself, so
+    removing it removes the link and never what it points at. The skill writes
+    only files here, so any link is stale.
     """
-    held = sorted(path for path in (root / directory).rglob("*") if path.is_file())
-    found = (path.relative_to(root).as_posix() for path in held)
-    return tuple(one for one in found if one not in kept)
+    top = root / directory
+    if top.is_symlink() or not top.is_dir():
+        return ()
+    found, queue = [], [top]
+    while queue:
+        for path in queue.pop().iterdir():
+            if path.is_dir() and not path.is_symlink():
+                queue.append(path)
+                continue
+            where = path.relative_to(root).as_posix()
+            if path.is_symlink() or where not in kept:
+                found.append(where)
+    return tuple(sorted(found))
+
+
+def linked(root: Path, directory: str) -> str | None:
+    """Why `directory` is not a plain directory of the corpus's own bookkeeping, or `None`.
+
+    ⛔ **A write prunes the prime, so the prime must be where it says it is.** A
+    link at the prime or at any directory above it (below the corpus root) would
+    turn a removal into the removal of the author's own files, so it is refused
+    before anything is touched, as is a path that resolves outside its first
+    directory.
+    """
+    here = root
+    for part in PurePosixPath(directory).parts:
+        here = here / part
+        if here.is_symlink():
+            where = here.relative_to(root).as_posix()
+            return (
+                f"{where} is a symbolic link, and this skill writes and prunes its prime "
+                "only inside the corpus's own bookkeeping; replace the link with a directory"
+            )
+    first = PurePosixPath(directory).parts[0]
+    if not (root / directory).resolve().is_relative_to((root / first).resolve()):
+        return f"{directory} resolves outside {first}, so it is not written"
+    return None
 
 
 def _files(root: Path) -> tuple[tuple[str, int], ...]:

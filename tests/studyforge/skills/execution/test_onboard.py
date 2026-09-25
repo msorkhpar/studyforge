@@ -195,6 +195,34 @@ def test_a_prime_file_an_earlier_selection_copied_is_removed_and_dropped_from_th
     assert (root / skill.PRIME_DIR / "maven/pom.xml").is_file()
 
 
+def test_a_linked_prime_is_refused_before_anything_is_touched(tmp_path):
+    root = corpus(tmp_path)
+    lesson = root / "sources/app/src/main/java/demo/Demo.java"
+    before = lesson.read_bytes()
+    (root / skill.PRIME_DIR).parent.mkdir(parents=True, exist_ok=True)
+    (root / skill.PRIME_DIR).symlink_to(lesson.parent, target_is_directory=True)
+    result = skill.generate(manifest(), editor_text=editor_text(), root=root)
+    with pytest.raises(skill.ExecutionRefused, match="is a symbolic link"):
+        skill.write(result, root)
+    assert lesson.read_bytes() == before, "the author's file is never pruned"
+    assert not (root / skill.COMPOSE_FILE).exists(), "nothing was written"
+
+
+def test_a_link_inside_the_prime_is_removed_as_a_link_before_anything_is_written_through_it(
+    tmp_path,
+):
+    root = corpus(tmp_path / "corpus")
+    victim = tmp_path / "victim"
+    victim.mkdir()
+    (victim / "mine.txt").write_text("the author's\n", encoding="utf-8")
+    (root / skill.PRIME_DIR).mkdir(parents=True)
+    (root / skill.PRIME_DIR / "maven").symlink_to(victim, target_is_directory=True)
+    skill.write(skill.generate(manifest(), editor_text=editor_text(), root=root), root)
+    assert sorted(one.name for one in victim.iterdir()) == ["mine.txt"], "nothing went through it"
+    held = root / skill.PRIME_DIR / "maven"
+    assert held.is_dir() and not held.is_symlink() and (held / "pom.xml").is_file()
+
+
 def test_a_reader_document_somebody_else_wrote_is_refused_rather_than_overwritten(tmp_path):
     root = corpus(tmp_path)
     (root / skill.READER_DOC).write_text("mine, and hand-written\n", encoding="utf-8")

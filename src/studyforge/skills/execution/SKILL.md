@@ -209,6 +209,12 @@ no directory, and a corpus that declares none gets no prime at all.
   named by the component's warmer, and it does not fail the prime.
 - ⭐ **A regenerated prime replaces the old one whole**: a file an earlier
   selection copied and this one does not is removed (`prime.stale_in`).
+- ⛔ **The prime is never reached through a link.** `write` refuses, before
+  touching anything, a prime directory that is a symbolic link, or has one
+  above it below the corpus root, or resolves outside `.studyforge`
+  (`prime.linked`): pruning through a link would delete the author's files.
+  A link inside the prime is removed as a link, never followed, and before
+  anything is written.
 
 - ⛔ **Two builds for one tool at the same depth are refused**, naming both.
   The component warms one project per tool: make the rest its modules.
