@@ -87,23 +87,145 @@ def headings(text: str) -> list[Heading]:
     line inside a fence is a comment in Python, Ruby, shell and YAML; counting
     those would make this check fire on correct output, and a check that fires
     on correct output is a check somebody turns off.
+
+    ⛔ **And list-aware, because a fence inside a list item is measured from
+    the item.** An item's content starts at its content column, so a fence
+    opener written four spaces in under `1. ` is one space into that item and
+    opens a fence, where at the top level four spaces is indented code and
+    opens nothing. ⚠️ Reading every fence from column zero would take that opener
+    for text, pair the next two fences the wrong way round, and count a heading
+    inside a fence while skipping one outside it. ⭐ So the scan keeps the
+    content columns of the items it is inside (`_Items`), and a fence or a
+    heading is matched relative to the innermost one — the reading a standard
+    CommonMark parser takes.
     """
     found: list[Heading] = []
-    fence: str | None = None
-    for line in text.splitlines():
-        marker = FENCE.match(line)
-        if marker is not None:
-            if fence is None:
-                fence = marker.group(1)[0]
-            elif marker.group(1)[0] == fence:
-                fence = None
-            continue
+    fence: _Fence | None = None
+    items = _Items()
+    for raw in text.splitlines():
+        line = raw.expandtabs(TAB)
         if fence is not None:
+            if fence.holds(line):
+                if fence.closed_by(line):
+                    fence = None
+                continue
+            # ⛔ A line left of the item the fence sits in ends the item, and the fence with it.
+            fence = None
+        if not line.strip():
+            items.blank()
             continue
-        match = HEADING_LINE.match(line)
+        column = items.enter(line)
+        rest = line[column:]
+        marker = LIST_MARKER.match(rest)
+        if marker is not None and not THEMATIC.match(rest):
+            column = items.open(column, marker)
+            rest = line[column:] if len(line) > column else ""
+        opened = FENCE.match(rest)
+        if opened is not None:
+            fence = _Fence(opened.group(1)[0], len(opened.group(1)), column)
+            items.structural()
+            continue
+        match = HEADING_LINE.match(rest)
         if match is not None:
             found.append(Heading(len(match.group(1)), (match.group(2) or "").strip()))
+            items.structural()
+            continue
+        items.paragraph()
     return found
+
+
+#: How many columns a tab advances to, as CommonMark reads indentation.
+TAB = 4
+
+#: A list marker and the spaces after it: a bullet, or up to nine digits and `.`
+#: or `)`. ⛔ At most three spaces in, measured from the enclosing item.
+LIST_MARKER = re.compile(r"^( {0,3})([-*+]|\d{1,9}[.)])( +|$)")
+
+#: A thematic break, which `- - -` and `* * *` would otherwise read as a marker.
+THEMATIC = re.compile(r"^ {0,3}([-*_])(?: *\1){2,} *$")
+
+#: A closing fence: nothing after its run but spaces.
+CLOSING = re.compile(r"^ {0,3}(`{3,}|~{3,}) *$")
+
+
+@dataclass(slots=True)
+class _Fence:
+    """An open fence: its character, its length, and the column of the item it sits in."""
+
+    char: str
+    length: int
+    column: int
+
+    def holds(self, line: str) -> bool:
+        """Whether `line` is still inside the item this fence sits in."""
+        return not line.strip() or _indent(line) >= self.column
+
+    def closed_by(self, line: str) -> bool:
+        """Whether `line` closes this fence: the same character, at least as many."""
+        closing = CLOSING.match(line[self.column :])
+        return (
+            closing is not None
+            and closing.group(1)[0] == self.char
+            and len(closing.group(1)) >= self.length
+        )
+
+
+class _Items:
+    """The content columns of the list items a line is inside, outermost first.
+
+    ⭐ Only what decides where a fence or a heading starts is kept: an item
+    stays open while its lines are indented to its content, a blank line does
+    not close it, and an unindented line straight after its paragraph is that
+    paragraph's lazy continuation rather than the item's end.
+    """
+
+    def __init__(self) -> None:
+        self.columns: list[int] = []
+        self.in_paragraph = False
+
+    def enter(self, line: str) -> int:
+        """Leave every item `line` sits left of, and return the column it is read from."""
+        indent = _indent(line)
+        lazy = self.in_paragraph and not _starts_block(line)
+        while self.columns and indent < self.columns[-1] and not lazy:
+            self.columns.pop()
+        return min(indent, self.columns[-1]) if self.columns else 0
+
+    def open(self, column: int, marker: re.Match) -> int:
+        """Open an item at `marker`, found at `column`, and return its content column."""
+        spaces = len(marker.group(3))
+        width = len(marker.group(1)) + len(marker.group(2))
+        # ⚠️ Five or more spaces after a marker is one space and indented code.
+        inner = column + width + (spaces if 1 <= spaces <= 4 else 1)
+        while self.columns and self.columns[-1] >= inner:
+            self.columns.pop()
+        self.columns.append(inner)
+        self.in_paragraph = False
+        return inner
+
+    def blank(self) -> None:
+        self.in_paragraph = False
+
+    def structural(self) -> None:
+        self.in_paragraph = False
+
+    def paragraph(self) -> None:
+        self.in_paragraph = True
+
+
+def _indent(line: str) -> int:
+    return len(line) - len(line.lstrip(" "))
+
+
+def _starts_block(line: str) -> bool:
+    """Whether `line` opens a block of its own, and so cannot continue a paragraph lazily."""
+    head = line.lstrip(" ")
+    return bool(
+        FENCE.match(head)
+        or HEADING_LINE.match(head)
+        or THEMATIC.match(head)
+        or LIST_MARKER.match(head)
+    )
 
 
 def count_headings(text: str) -> int:
