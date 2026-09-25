@@ -114,6 +114,16 @@ def test_one_practices_windows_are_asked_for_by_corpus_and_key_and_nothing_else(
     assert "answer && answer.main && answer.main.url ? answer : null" in asking
 
 
+def test_a_practices_windows_are_asked_only_of_an_editor_the_index_names():
+    # ⛔ With the editor stopped, a post for a practice no editor holds would be
+    # a `404` in the reader's console on every practice opened.
+    body = uncommented()
+    asking = body[body.index("function practice(corpus, key)") : body.index("var CODE = ")]
+    assert "return editor(corpus).then(function (up) {" in asking
+    assert "if (!up) { return null; }" in asking
+    assert asking.index("if (!up) { return null; }") < asking.index("method: 'POST'")
+
+
 def test_a_code_file_is_selected_by_its_path_and_refused_before_any_request_when_unsafe():
     # ⛔ The path only SELECTS a file: each segment is checked here, and the
     # server reads the command from the corpus's declared build tool.

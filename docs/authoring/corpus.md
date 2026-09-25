@@ -239,8 +239,7 @@ With `commit` set to `never`, `studyforge narrate <root> --pack <dir>` packs
 every clip the narration record locates into stored zip volumes of at most
 999 MB, with a `SHA256SUMS`, in a directory outside the corpus, and writes two
 restore scripts into `.studyforge/narration-release/` with the volumes' digests
-and a `clips.sha256` naming every clip, and sets
-`.studyforge/assets/narration-clips.js` to `released`. Commit all of it: a
+and a `clips.sha256` naming every clip. Commit all of it: a
 restore trusts only these committed digests, so it refuses a wrong or replaced
 release and never writes a file that is not one of the corpus's clips.
 `studyforge narrate <root> --publish <dir>` is a dry run: it checks every
@@ -326,15 +325,15 @@ of each page.
 
 **When the clips are not on disk, a page shows no narration control.** That is
 the normal state of a fresh clone whose clips are a separate download. The page
-finds out from `.studyforge/assets/narration-clips.js`, a small script the build
-writes next to the stylesheet, and never by asking for a clip, so the browser's
-console stays clean. A page built with no clip on disk still links every clip
-its narration record names, so once the clips are restored into place, and the
-restore has set that script to `present`, the next page load plays them without
-a rebuild. Served, `studyforge serve` checks the disk itself on every page load.
-A build never changes the script from `released`, which is what packing the
-clips for release sets, so a site you commit after packing still tells a fresh
-clone that its clips have to be fetched.
+finds out by asking for its first clip, once: if that clip does not load, it
+asks for no other clip and hides every narration control. That one request is
+one error line in the browser's console, `404` served or `ERR_FILE_NOT_FOUND`
+over `file://`. A page built with no clip on disk still links every clip its
+narration record names, so once the clips are restored into place the next page
+load plays them without a rebuild, opened as files or served alike. A site
+built by an earlier version may still hold `.studyforge/assets/narration-clips.js`,
+which no page reads any more: the build names it on a `retired` line and leaves
+it, so delete it and commit the deletion.
 
 ---
 

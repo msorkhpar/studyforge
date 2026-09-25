@@ -57,6 +57,7 @@ under test here is the **region**.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from functools import cache
 from pathlib import Path, PurePosixPath
@@ -104,6 +105,18 @@ OWN_COLUMN_MEASURE = "40ch"
 #: *the unit pages* asks for this value rather than matching on a name, because a
 #: fixture's name is a corpus's text and the kind is this framework's.
 UNIT = "unit"
+
+#: One silent MPEG-1 Layer III frame (128 kbit/s, 44.1 kHz): a header and zeroed
+#: side information, which decodes to silence. ⭐ A real clip rather than marker
+#: bytes: a page asks its first clip and shows narration only when it loads,
+#: and a clip that will not decode is its own error in the console.
+FRAME = bytes.fromhex("fffb9064") + bytes(417 - 4)
+
+#: Frames per planted clip: about half a second.
+FRAMES = 20
+
+#: A narrated passage's clip, as the page carries it.
+AUDIO_HREF = re.compile(r'data-audio="([^"]+)"')
 CONTAINER = "container"
 INDEX = "index"
 
@@ -172,9 +185,6 @@ def build(root: Path, damage: str | None = None) -> Site:
     if damage is not None and damage not in DAMAGE:
         raise ValueError(f"no such damage {damage!r}; declared: {sorted(DAMAGE)}")
     written: dict[str, str] = dict(pageassets.written_files())
-    # ⭐ What a build with its clips on disk writes beside the bundle: the unit
-    # pages carry the transport, and it comes up only where this says `present`.
-    written[pageassets.CLIPS_NAME] = pageassets.clips_script(pageassets.PRESENT).decode("ascii")
     if damage in STYLESHEET_DAMAGE:
         written[pageassets.STYLESHEET_NAME] = STYLESHEET_DAMAGE[damage](
             written[pageassets.STYLESHEET_NAME]
@@ -183,6 +193,12 @@ def build(root: Path, damage: str | None = None) -> Site:
         page = root / str(built.page)
         page.parent.mkdir(parents=True, exist_ok=True)
         page.write_bytes(_damage_page(built.body, damage))
+        # ⭐ What a build with its clips on disk has beside a narrated page: the
+        # clips it names, so its first clip loads and the transport comes up.
+        for href in AUDIO_HREF.findall(built.body.decode("utf-8")):
+            clip = page.parent / href
+            clip.parent.mkdir(parents=True, exist_ok=True)
+            clip.write_bytes(FRAME * FRAMES)
     # ⛔ One enumeration, sorted: several page kinds share one asset directory,
     # and a set walked in iteration order would write the same files in an order
     # that differs between runs (R10).

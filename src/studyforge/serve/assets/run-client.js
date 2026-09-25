@@ -155,19 +155,26 @@
      ⛔ **`editor` stands where a mode stands and is not one of `MODES`**: it
      starts nothing. ⚠️ Anything but an answer — no editor, no such practice, a
      workspace that could not be prepared — is `null`, never an error a reader
-     sees, and the page then shows the sentence it already ships. */
+     sees, and the page then shows the sentence it already ships.
+
+     ⛔ **Asked only of an editor the index says is up.** With none, nothing is
+     posted: a `404` for a practice no editor holds would be an error in the
+     reader's console on every practice opened while the editor is stopped. */
   function practice(corpus, key) {
     if (!available()) { return refused('no-origin'); }
     if (!CORPUS.test(corpus) || !KEY.test(key)) { return refused('practice'); }
-    return fetch(BASE + corpus + '/' + EDITOR + '/' + key, {
-      method: 'POST',
-      cache: 'no-store',
-      credentials: 'same-origin'
-    }).then(function (response) {
-      return response.ok ? response.json() : null;
-    }).then(function (answer) {
-      return answer && answer.main && answer.main.url ? answer : null;
-    }, function () { return null; });
+    return editor(corpus).then(function (up) {
+      if (!up) { return null; }
+      return fetch(BASE + corpus + '/' + EDITOR + '/' + key, {
+        method: 'POST',
+        cache: 'no-store',
+        credentials: 'same-origin'
+      }).then(function (response) {
+        return response.ok ? response.json() : null;
+      }).then(function (answer) {
+        return answer && answer.main && answer.main.url ? answer : null;
+      }, function () { return null; });
+    });
   }
 
   /* ⭐ A LESSON'S CODE FILE: its two windows, and its test's run. The path is

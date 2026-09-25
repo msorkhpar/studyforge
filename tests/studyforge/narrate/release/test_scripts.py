@@ -19,28 +19,22 @@ from pathlib import Path, PurePosixPath
 
 import pytest
 
-from studyforge.corpus.placement import profile_for, registered
 from studyforge.narrate.release import scripts
 from studyforge.narrate.release.scripts import (
     CLIP_SUMS,
     DEFAULT_TAG,
     IGNORE_FILE,
-    PRESENT_MARK,
     RELEASE_DIR,
     RESTORE_PS1,
     RESTORE_SH,
     SCRIPT_DIR,
-    SIGNAL,
-    SIGNAL_MARK,
     TAG_MARK,
     VOLUME_SUMS,
     restore_scripts,
     valid_tag,
     write_release_record,
     write_scripts,
-    write_signal,
 )
-from studyforge.render.pageassets import CLIPS_NAME, PRESENT, RELEASED, clips_script, clips_state
 from tests.floor.personal_data.identity import identifiers
 from tests.floor.personal_data.shapes import shape_matches
 from tests.support import repository_root, tool_on_path
@@ -53,38 +47,22 @@ def test_the_scripts_sit_in_the_generated_root_and_are_found_from_there():
         assert PurePosixPath(where).parent == PurePosixPath(RELEASE_DIR)
 
 
-def test_the_tag_and_the_signal_are_the_only_things_filled_in():
+def test_the_tag_is_the_only_thing_filled_in():
     rendered = restore_scripts("media-2.0.1")
-    present = clips_script(PRESENT).decode("ascii").rstrip("\n")
     for name, where in (("restore.sh", RESTORE_SH), ("restore.ps1", RESTORE_PS1)):
         shipped = (SCRIPT_DIR / name).read_text(encoding="utf-8")
-        for mark in (TAG_MARK, SIGNAL_MARK, PRESENT_MARK):
-            assert shipped.count(mark) == 1, (name, mark)
-            assert mark not in rendered[where]
-        expected = (
-            shipped.replace(TAG_MARK, "media-2.0.1")
-            .replace(SIGNAL_MARK, SIGNAL)
-            .replace(PRESENT_MARK, present)
-        )
-        assert rendered[where] == expected
+        assert shipped.count(TAG_MARK) == 1, name
+        assert TAG_MARK not in rendered[where]
+        assert rendered[where] == shipped.replace(TAG_MARK, "media-2.0.1")
 
 
-def test_the_signal_is_the_shared_asset_directorys_under_every_profile():
-    for name in registered():
-        assert SIGNAL == (profile_for(name).corpus().assets / CLIPS_NAME).as_posix()
-
-
-def test_the_present_line_the_scripts_write_is_the_renderers_own():
-    line = clips_script(PRESENT).decode("ascii")
+def test_a_restore_restores_clips_and_writes_nothing_about_them():
+    # ⛔ The page asks its first clip itself: no restore tells it anything, so
+    # nothing it wrote could go stale when the clips move again.
     for where in (RESTORE_SH, RESTORE_PS1):
-        assert line.rstrip("\n") in restore_scripts()[where]
-    assert clips_state(line.encode("ascii")) == PRESENT
-
-
-def test_the_pack_marks_the_clips_released_and_writes_it_whole(tmp_path):
-    assert write_signal(tmp_path) == SIGNAL
-    assert (tmp_path / SIGNAL).read_bytes() == clips_script(RELEASED)
-    assert [path.name for path in (tmp_path / SIGNAL).parent.iterdir()] == [CLIPS_NAME]
+        text = restore_scripts()[where]
+        assert "narration-clips" not in text, where
+        assert "signal" not in text.lower(), where
 
 
 def test_the_default_tag_is_versioned():

@@ -64,6 +64,7 @@ request that did would get the same `404` a key outside a real corpus gets.
 from __future__ import annotations
 
 import contextlib
+import re
 import threading
 from collections.abc import Iterator
 from dataclasses import dataclass, field
@@ -168,6 +169,11 @@ class ScriptedRuns:
         #: Where this practice's two editor windows are, or `None` for no
         #: editor at all — which is what an ordinary origin here answers.
         self.windows: dict[str, dict[str, str]] | None = None
+        #: ⭐ Where the index says each served corpus's editor is, by the
+        #: `data-corpus` its pages carry — empty for no editor, which is what an
+        #: ordinary origin here answers. ⛔ A page asks an editor's windows only
+        #: of an editor the index names, so windows without this are never asked.
+        self.editors: dict[str, dict[str, str]] = {}
         #: ⭐ What the SERVER says about the run just before the exit line, which
         #: is where `routes.runs.Outcome.record`'s own lines go and
         #: the only channel a built page has for a breakdown (R8).
@@ -184,7 +190,8 @@ class ScriptedRuns:
             if rest == CLIENT:
                 headers = (("Content-Type", SCRIPT_TYPE), ("Cache-Control", NO_STORE))
                 return Response(200, headers, CLIENT_FILE.read_bytes())
-            return json_response(200, {"resource": "run-index", "modes": ["run", "test"]})
+            index = {"resource": "run-index", "modes": ["run", "test"], EDITOR: self.editors}
+            return json_response(200, index)
         if request.method != "POST":
             return error(405, "a run is started by POST")
         if rest == STOP:
@@ -254,6 +261,14 @@ class Served:
         return f"{self.origin}/{self.built.path(case).relative_to(self.root).as_posix()}"
 
 
+def _corpora(root: Path) -> tuple[str, ...]:
+    """Every `data-corpus` a page under `root` carries: the names a page asks the index for."""
+    found: set[str] = set()
+    for page in root.rglob("*.html"):
+        found |= set(re.findall(r'data-corpus="([^"]+)"', page.read_text(encoding="utf-8")))
+    return tuple(sorted(found))
+
+
 @contextlib.contextmanager
 def serving(
     built: site.Site,
@@ -318,6 +333,8 @@ def serving(
         admitted.append(editor or held.origin)
         main, test = (f"{editor}/main", f"{editor}/test") if editor else WINDOW_URLS
         runs.windows = {"main": {"url": main}, "test": {"url": test}}
+        where = {"origin": editor or held.origin, "folder": "/work"}
+        runs.editors = {name: dict(where) for name in _corpora(built.root / corpus)}
     thread = threading.Thread(target=held.server.serve_forever, daemon=True)
     thread.start()
     try:

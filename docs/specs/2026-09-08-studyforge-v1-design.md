@@ -1004,8 +1004,7 @@ my-java-course/
   index.html                                   the root index
   corpus.json
   archive/<address>/raw/java/unit-NN/lesson-1.json   the archive (§6)
-  .studyforge/assets/                          the shared stylesheet, script, faces and player,
-                                               and narration-clips.js: whether the clips are here
+  .studyforge/assets/                          the shared stylesheet, script, faces and player
   16-streams-api/
     README.md                                  untouched
     README_4.4.1.md                            untouched
@@ -1071,28 +1070,25 @@ when its media left git for release assets, the layout on disk did not move and
 every page still addressed a clip as plain `audio/<clip>.mp3` — which is the only
 reason that change was a script rather than a re-render of every page.
 
-⭐ **A page learns whether its clips arrived without asking for a clip.** A
-request for a file that is not there is an error in the browser's console, over
-`file://` and served alike, and a site whose clips are a download is often
-opened before anyone has fetched them. ⛔ So a narrated page never probes a clip:
-it links `.studyforge/assets/narration-clips.js`, a script that is always there,
-and shows its narration controls — the transport and the passages that answer a
-click — only when that script says `present`. The script says one of three
-things, and what writes it is what moved the clips:
+⭐ **A page learns whether its clips arrived by asking its first clip, once.**
+The user's direction (2026-09-25): *"It should be all in the UI."* A file that
+said whether the clips were here went stale whenever anything but its writer
+moved them: a site packed for release said the clips were a download on the
+author's own disk, with every clip there. ⛔ So nothing written beside the
+pages says it. A narrated page loads the metadata of its first clip, in an
+element that plays nothing (`narration-probe.js`):
 
-| writer | says |
-|---|---|
-| a build | `present` or `absent`, from the disk; ⛔ never over `released` |
-| the release pack, as the clips become a download | `released` |
-| the restore, once the clips are back in place | `present` |
+- it loads: the transport and the passages that answer a click are shown;
+- it fails — not found, a network error, or a clip the browser cannot decode —
+  and the page stops there: **no other clip is requested**, and every narration
+  control stays hidden.
 
-⛔ **A build never turns `released` into `present`**: the author who packed the
-clips still has them on disk, and a site committed from that disk must tell a
-fresh checkout they are not there. ⭐ **Served, the server answers the same
-request from the disk as it is at that moment** and rewrites nothing, so a
-served page is right whoever last wrote the file. ⭐ Because a page built with no
-clip on disk already links every clip, a restore is heard on the next page load,
-with no rebuild.
+⚠️ That one failed request is one error line in the browser's console, `404`
+served or `ERR_FILE_NOT_FOUND` over `file://`, and it is accepted as the price
+of asking. ⭐ Because a page built with no clip on disk already links every
+clip, a restore is heard on the next page load, with no rebuild, opened as files
+or served alike. ⚠️ Plain `file://` use is best effort, not a design
+constraint: sites are published served.
 
 ### Generated media and pages are committed
 
@@ -1136,7 +1132,7 @@ decision without touching a page:
   no attributes of the machine), and a clip the record promises and the disk
   lacks is refused before anything is written. ⛔ **Only a corpus whose
   `media.commit` is `never` is packed**: one that commits its clips already
-  hands every clone the clips, and a pack would mark them `released`.
+  hands every clone the clips, and a release of them is a copy nobody needs.
 - **The pack writes two restore scripts into the corpus**,
   `.studyforge/narration-release/restore.sh` and `restore.ps1`, with the tag
   filled in and nothing else. ⛔ **No account name is in either**: the
@@ -1152,14 +1148,11 @@ decision without touching a page:
   as the record names it, and deletes the downloads. ⛔ A restore writes no file
   that is not one of the corpus's clips, and a refusal leaves the corpus as it was. The token is read from the
   environment and never written or printed. A second run gives the same tree.
-- ⭐ **The pack sets the clip signal to `released`** and **the restore sets it to
-  `present` as its very last step** (`.studyforge/assets/narration-clips.js`,
-  §8.4), so an interrupted restore never claims the clips arrived. A site built
-  into another `--out` holds its own copies and its own signal, and is built
-  again after a restore.
+- ⭐ **A restore restores clips and writes nothing else**: a page asks its first
+  clip itself (§8.4), so the next page load hears them. A site built into
+  another `--out` holds its own copies, and is built again after a restore.
 - ⛔ **The upload is the owner's.** `studyforge narrate <root> --publish <dir>
-  --tag <tag>` is a dry run: it checks every volume against `SHA256SUMS`,
-  refuses a clip signal that does not say `released`, reads
+  --tag <tag>` is a dry run: it checks every volume against `SHA256SUMS`, reads
   the repository from the checkout's git configuration, and prints the one
   `gh release create` command, which the owner runs with their own `gh` login.
   ⛔ The framework starts no process for it and uploads nothing (§8.3). A tag's

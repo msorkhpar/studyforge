@@ -205,6 +205,9 @@ TRANSPORT_STATE = """
       .map((el) => el.id),
     speaking: document.querySelectorAll('[data-speaking]').length,
     said: said,
+    face: Array.from(player.querySelectorAll('#play [data-state]'))
+      .filter((s) => s.checkVisibility())
+      .map((s) => s.getAttribute('data-state')),
     focus: active ? active.id : ''
   };
 })()
@@ -265,11 +268,11 @@ def test_the_narration_transport_answers_the_keyboard_and_keeps_focus_where_it_w
     """⛔ Reaching a control is not operating it, and only one of the two is asserted above.
 
     ⭐ **Both directions in one reading**: before the press nothing is lit and
-    the live region says nothing; after it something is lit and the region says
-    which state the transport reached. ⚠️ This fixture ships no audio on disk,
-    so what it reaches is the *no clip here* state — which is exactly the state
-    a reader meets on a corpus that was never narrated, and it is announced
-    rather than silent.
+    the live region says nothing; after it a passage is lit and the transport
+    says which state it reached — the play control's own name turns to
+    *Pause narration*, or the live region says why it could not start. ⭐ The
+    fixture ships a clip for every narrated passage, because a page shows its
+    transport only once its first clip loads.
 
     ⛔ **Focus must not move.** A transport that re-rendered itself and dropped
     focus would return a keyboard reader to the top of the page on every press.
@@ -290,7 +293,7 @@ def test_the_narration_transport_answers_the_keyboard_and_keeps_focus_where_it_w
 
     open_page.press(" ")
     after = _until_announced(open_page)
-    assert after["speaking"] == 1, "pressing play with the keyboard lit no passage"
+    assert after["speaking"] >= 1, "pressing play with the keyboard lit no passage"
     assert after["focus"] == "play", f"the press moved focus to {after['focus']!r}"
 
 
@@ -298,15 +301,16 @@ def _until_announced(page: OpenPage) -> dict:
     """Poll the transport until its live region says something, or fail saying so.
 
     ⚠️ **Polled, because the state is reached asynchronously**: the element asks
-    for a clip, the request fails, and only then does the transport say which
-    state it is in. ⛔ A reading taken on the press itself is a reading taken
-    before the answer and would report *"it announced nothing"* about a
-    transport that announces correctly a moment later.
+    for a clip, and only once the browser answers does the transport say which
+    state it is in — playing, on the control's own face, or a sentence. ⛔ A
+    reading taken on the press itself is a reading taken before the answer,
+    and would report *"it announced nothing"* about a transport that announces
+    correctly a moment later.
     """
     deadline = time.monotonic() + ANNOUNCE_TIMEOUT
     reading = _transport(page)
     while time.monotonic() < deadline:
-        if reading["said"]:
+        if reading["said"] or reading["face"] == ["playing"]:
             return reading
         time.sleep(0.05)
         reading = _transport(page)

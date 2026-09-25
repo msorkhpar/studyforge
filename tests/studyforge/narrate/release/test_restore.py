@@ -15,13 +15,13 @@ environment `restoring.environment` closes. ⛔ No request leaves this machine.
 - ⭐ **Idempotent**: a second run gives the same tree.
 - ⛔ **A corrupt volume is refused** before anything is extracted, and a run
   after the release is repaired fetches only what it refused.
-- ⭐ **The clip signal says `present` only after every clip is in place**: a
-  restore that is refused, or whose extraction fails, leaves it `released`.
+- ⭐ **A restore writes clips and nothing else**: no run, whole, refused or
+  failed, writes the retired clip signal; a page asks its first clip itself.
 
 - ⛔ **Only the clips the corpus committed are ever written**: a volume whose
   members are not exactly `clips.sha256`'s paths, a release whose volumes are not
   the committed ones, and clips whose bytes are not the committed ones are each
-  refused, with the corpus byte-identical and the signal still `released`.
+  refused, with the corpus byte-identical and no clip signal written.
 
 Plants: `plant_a_corrupt_volume` flips one byte of one served volume, and
 `restoring.forge_release` stands in for a wrong or replaced release.
@@ -37,7 +37,6 @@ from pathlib import Path
 import pytest
 
 from studyforge.narrate.release import VOLUME_SUMS
-from studyforge.render.pageassets import PRESENT, RELEASED
 from tests.studyforge.narrate.release.restoring import (
     DOWNLOADS,
     environment,
@@ -91,7 +90,7 @@ def test_a_public_release_restores_every_clip_byte_for_byte_and_leaves_no_downlo
     assert not (corpus.root / DOWNLOADS).exists()
     assert "checksums ok" in done.stdout
     assert all(path.startswith(f"/{OWNER_REPO}/releases/download/") for _, path, _ in host.requests)
-    assert signal(corpus) == PRESENT
+    assert signal(corpus) is None
 
 
 def test_a_private_release_is_read_by_asset_id_and_the_token_goes_nowhere_but_a_header(
@@ -168,7 +167,7 @@ def test_volumes_on_this_disk_are_read_in_place_and_never_deleted(tmp_path):
     assert restored(corpus) == corpus.clips
     assert everything_under(corpus.release) == before
     assert not (corpus.root / DOWNLOADS).exists()
-    assert signal(corpus) == PRESENT
+    assert signal(corpus) is None
 
 
 def test_a_second_restore_gives_the_same_tree(tmp_path):
@@ -204,7 +203,7 @@ def test_a_corrupt_volume_is_refused_before_anything_is_extracted(tmp_path):
     assert refused.returncode != 0
     assert "checksum mismatch on narration.zip.001" in refused.stderr
     assert set(after_refusal.values()) == {None}, "a refused run extracted clips"
-    assert told_after_refusal == RELEASED, "a refused run told the pages the clips are here"
+    assert told_after_refusal is None, "a refused run wrote a clip signal"
     assert "narration.zip.001" not in downloaded, "the refused volume was kept to be reused"
     assert "narration.zip" not in downloaded, "the volumes were joined before they were checked"
     assert repaired.returncode == 0, repaired.stderr
@@ -226,9 +225,9 @@ def test_a_corrupt_volume_on_this_disk_is_refused_and_left_where_it_is(tmp_path)
     assert everything_under(corpus.release) == before
 
 
-def test_a_restore_whose_extraction_fails_never_says_present(tmp_path):
-    # ⛔ The signal is the LAST write: one audio directory the restore cannot write
-    # into stops it after the checks, and the pages must still be told `released`.
+def test_a_restore_whose_extraction_fails_writes_no_clip_signal(tmp_path):
+    # ⛔ One audio directory the restore cannot write into stops it after the
+    # checks, and nothing but clips was ever going to be written.
     corpus = prepared(tmp_path)
     blocked = (corpus.root / next(iter(corpus.clips))).parent
     blocked.chmod(0o555)
@@ -239,7 +238,7 @@ def test_a_restore_whose_extraction_fails_never_says_present(tmp_path):
 
     assert done.returncode != 0
     assert "checksums ok" in done.stdout
-    assert signal(corpus) == RELEASED
+    assert signal(corpus) is None
 
 
 @pytest.mark.parametrize("shell", ["bash", "dash"])
@@ -306,7 +305,7 @@ def test_a_volume_carrying_the_manifest_and_an_escape_is_refused_and_the_corpus_
     assert "not this corpus's clips" in done.stderr
     assert files_of(corpus.root) == before
     assert not (tmp_path / "ESCAPED.txt").exists()
-    assert signal(corpus) == RELEASED
+    assert signal(corpus) is None
 
 
 def test_another_corpus_release_with_its_own_matching_sums_is_refused_at_the_volumes(tmp_path):
@@ -320,7 +319,7 @@ def test_another_corpus_release_with_its_own_matching_sums_is_refused_at_the_vol
     assert done.returncode != 0
     assert "checksum mismatch on narration.zip.000" in done.stderr
     assert files_of(corpus.root) == before
-    assert signal(corpus) == RELEASED
+    assert signal(corpus) is None
 
 
 def test_clips_whose_bytes_are_not_the_committed_ones_are_refused_before_any_is_placed(tmp_path):
@@ -336,7 +335,7 @@ def test_clips_whose_bytes_are_not_the_committed_ones_are_refused_before_any_is_
     assert "is not the clip this corpus packed" in done.stderr
     assert files_of(corpus.root) == before
     assert not (corpus.root / DOWNLOADS / "staging").exists()
-    assert signal(corpus) == RELEASED
+    assert signal(corpus) is None
 
 
 def test_a_corpus_that_committed_no_release_record_fetches_nothing(tmp_path):
