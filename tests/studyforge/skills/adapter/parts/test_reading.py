@@ -63,3 +63,25 @@ def test_it_tells_the_reader_that_an_address_is_recorded_not_derived():
 
 def test_the_source_side_count_is_told_not_to_read_the_archive():
     assert "never from the archive" in read_module()
+
+
+def test_it_names_the_shipped_markdown_reader_and_where_an_address_comes_from():
+    # ⭐ A Markdown corpus writes no reader of its own, and a hand-written
+    # `containers` is told where `Address` lives rather than searching for it.
+    text = read_module()
+    assert "studyforge.archive.markdown.parse(text)" in text
+    assert "`studyforge.address` for the `Address`" in text
+
+
+def test_a_filed_read_names_the_markdown_reader_and_takes_titles_and_origin_from_the_filing():
+    declared = {
+        **corpora.MANIFEST,
+        "corpus_api": 7,
+        "variants": ["prose"],
+        "curriculum": {"record": "README.md", "containers": [{"label": "A", "address": "a"}]},
+    }
+    made = scaffold(plan_for(parse(json.dumps(declared))))
+    text = next(item.text for item in made.files if item.where.endswith("read.py"))
+
+    assert "studyforge.archive.markdown.parse(text)" in text
+    assert "titles=group.titles" in text and "origin=group.origin" in text
