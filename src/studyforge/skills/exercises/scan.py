@@ -138,7 +138,7 @@ class _Listing:
         self.blank = False
 
     def fenced(self) -> None:
-        """A fence just closed: the item it sat in goes on."""
+        """Record that a fence just closed, so the item it sat in goes on."""
         self.blank = False
 
 

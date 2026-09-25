@@ -169,7 +169,9 @@ def plan_for(
     """
     named = _tier(tier, where)
     held, zero = require_aspects(aspects, nothing_checkable, where)
-    names = _ordered({aspect.exercise for aspect in held if aspect.exercise is not None}, order, where)
+    names = _ordered(
+        {aspect.exercise for aspect in held if aspect.exercise is not None}, order, where
+    )
     exercises = tuple(
         Planned(
             slot=slot,
