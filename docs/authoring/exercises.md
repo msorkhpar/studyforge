@@ -1066,6 +1066,11 @@ new draft whose starter or tests differ would otherwise land on the old
 workspace files, and the pass refuses any file that exists with different
 bytes.
 
+**Your archive still holds the practices you deleted** until the adapter runs
+again, and that is fine: the pass counts only the source's own practices, never
+one an earlier pass generated, so the unit's exercises are numbered as they
+were the first time.
+
 ### Then the adapter, then `validate`
 
 **The pass writes no practice document. Your adapter does.** If you

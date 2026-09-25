@@ -45,7 +45,10 @@ already keyed to. ⛔ **Renumbering the source's practice is refused for the
 reason above**, so authored exercises number AFTER it. ⭐ `carried_practices`
 READS what the unit carries through `unit.builder.read`, the reader a build
 uses, at the directory `Layout` computes — ⛔ never a declared offset, which
-would be a second copy that goes stale. ⛔ And `require_after_carried` refuses
+would be a second copy that goes stale. ⛔ **Only the source's own practices
+count**: one an earlier authoring pass generated is not carried, so a unit
+authored again after its bundles are removed numbers from where the source's
+own practices end. ⛔ And `require_after_carried` refuses
 a page whose authored ordinals repeat or skip past what it carries, naming the
 practice, before anything is committed.
 
@@ -77,12 +80,13 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from pathlib import Path
 
-from studyforge.exercise import CODE, ExerciseError
+from studyforge.exercise import CODE, ExerciseError, from_document
 from studyforge.exercise.bundle import Places, require_no_gap
 from studyforge.skills.adapter import Layout
 from studyforge.skills.exercises.aspects import AspectError, require_read
 from studyforge.skills.exercises.drafts import (
     ATTEMPTS,
+    AUTHORED_PROVENANCE,
     Author,
     AuthoringError,
     Brief,
@@ -215,9 +219,32 @@ def carried_practices(root: Path | str, page: Page, where: str) -> tuple[int, ..
             f"{where}: the unit's archived documents will not read, so what it already "
             f"carries cannot be counted. {error}"
         ) from None
-    found = tuple(document["ordinal"] for document in material.of_kind(PRACTICE))
+    found = tuple(
+        document["ordinal"]
+        for document in material.of_kind(PRACTICE)
+        if not _authored_earlier(document, where)
+    )
     try:
         return require_no_gap(found, f"{where}: the practices the unit's archive carries")
+    except ExerciseError as error:
+        raise AuthoringError(str(error)) from None
+
+
+def _authored_earlier(document: dict, where: str) -> bool:
+    """Whether an archived practice is one an earlier authoring pass generated.
+
+    ⛔ **Only the source's own practices are carried.** An authored practice
+    reaches the archive when an adapter emits its bundle, and it stays there
+    after its bundle is removed to be authored again — counted, it would number
+    the new exercises after a practice that no longer exists. ⭐ Read off the
+    record's own provenance through `exercise.from_document`, the one reader,
+    so a quiz whose record leaves provenance out reads as the `generated` it is.
+    """
+    record = document.get("exercise")
+    if record is None:
+        return False
+    try:
+        return from_document(record, where).provenance == AUTHORED_PROVENANCE
     except ExerciseError as error:
         raise AuthoringError(str(error)) from None
 

@@ -717,7 +717,7 @@ What it reads, and the choices in it:
 
 ### Authored practices are numbered after those a unit already carries
 
-**Decision.** The authoring loop (`studyforge.skills.exercises.loop`) reads which practices a unit's archive already holds (`carried_practices`, through `unit.builder.read` at the directory `Layout` computes) and numbers the first authored exercise after them, with no declared offset. Ordinals are handed out as exercises ship, so a refused exercise leaves no gap. The source's own practices are never renumbered or rewritten. `require_after_carried` refuses by name an authored number that would repeat or skip past an existing one before anything is written.
+**Decision.** The authoring loop (`studyforge.skills.exercises.loop`) reads which practices a unit's archive already holds (`carried_practices`, through `unit.builder.read` at the directory `Layout` computes) and numbers the first authored exercise after them, with no declared offset. Only the source's own practices are counted: a practice whose record is `generated` came from an earlier authoring pass and is not carried, so a unit authored again while its archive still holds the old practices numbers as it did the first time. Ordinals are handed out as exercises ship, so a refused exercise leaves no gap. The source's own practices are never renumbered or rewritten. `require_after_carried` refuses by name an authored number that would repeat or skip past an existing one before anything is written.
 
 **Why.** A reader's progress is keyed to a practice's ordinal, so a source's own practice must survive authoring unchanged and a page must never have a gap.
 

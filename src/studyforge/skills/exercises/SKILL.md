@@ -217,7 +217,10 @@ read), and the last run's output, made relative to the run and scrubbed (R7).
 ⛔ **`M` follows the practices the unit already carries**. A unit
 whose archive holds `practice-1` from the source gets its first authored
 exercise at `practice-2`. The pass reads what the unit carries from its
-archive, so you declare no offset. The source's practice is never renumbered
+archive, so you declare no offset. ⛔ Only the source's own practices count:
+one an earlier pass generated is not carried, so a unit authored again after
+its bundles are removed numbers from where the source's practices end, even
+while its archive still holds the old ones. The source's practice is never renumbered
 or rewritten, and an authored exercise that would repeat or skip past one is
 refused by the practice's name before anything is written.
 
