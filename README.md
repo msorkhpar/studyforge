@@ -189,7 +189,9 @@ engine, is pinned by digest, never by a moving name.
   submissions and the browser editor. Each is tagged from its build inputs, and
   its build script prints that tag without building. The `execution` skill asks
   for the tag, records it in your corpus, and writes the one `docker compose`
-  command that starts both.
+  command that starts both. With them up, a lesson's link to one of your code
+  files opens in the editor beside its test, from a copy of your code, and the
+  test runs there; your own files are never written.
 - **The framework's own build environment** is `docker/dev/check` in this
   checkout. It builds an image tagged from the content of its inputs and runs
   the framework's test suite inside it. You need it only to change the

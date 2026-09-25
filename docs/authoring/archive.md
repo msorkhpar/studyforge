@@ -120,7 +120,10 @@ numbered `2.2` in the unit, or in its container, by its words in double quotes
 (`Section "Bitmaps"`). A quiz's
 question, options and explanations follow the same rules, and a link to another
 unit's file keeps a fragment that names one of that unit's headings. `validate`
-reports a link that leads nowhere as `link-unresolved`, naming the unit.
+reports a link that leads nowhere as `link-unresolved`, naming the unit. A link
+to a code file your declared `runtimes` write opens, on a served page whose
+editor is running, in the editor beside its test, from a copy of your code; with
+no editor it is the file's plain view, and the page says why.
 
 ---
 
