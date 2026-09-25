@@ -324,3 +324,40 @@ def test_opening_a_practice_closes_an_expanded_code_example(
     )
     open_page.open_practice(0)
     assert open_page.evaluate("document.querySelector('details[data-code-example]').open") is False
+
+
+def test_with_no_editor_a_practice_says_why_and_asks_nothing_that_fails(
+    open_page: OpenPage, tree: site.Site
+) -> None:
+    # ⭐ The user's direction: the page learns what works from the server's API.
+    # ⛔ With no editor named in the index, opening a practice asks for no
+    # editor window — a `404` for one would be an error in the reader's console
+    # — and the panel shows the sentence it ships.
+    with served.serving(tree, CORPUS) as running:
+        open_page.browser.call("Log.enable", session=open_page.session)
+        open_page.open(_url(running))
+        _open_card(open_page, "practice-java")
+        time.sleep(1.0)
+        says = open_page.evaluate(
+            "(() => { const p = document.querySelector("
+            "'section[data-practice][data-workspace-open] [data-practice-part=\"no-editor\"]');"
+            " return !!p && p.checkVisibility(); })()"
+        )
+        frames = _state(open_page)["frames"]
+        asked = [one for one in running.runs.asked if "/editor/" in one]
+        failed = [
+            str(event["params"]["entry"].get("text", ""))
+            + " "
+            + str(event["params"]["entry"].get("url", ""))
+            for event in open_page.browser.events
+            if event.get("method") == "Log.entryAdded"
+            and event["params"]["entry"].get("level") in ("error", "warning")
+            # ⚠️ This harness registers no `state` namespace, so the card's
+            # record answers `404` here; a real instance answers it.
+            and "/api/v1/state/" not in str(event["params"]["entry"].get("url", ""))
+        ]
+    assert running.runs.asked, "⛔ born vacuous: the page asked the run namespace nothing"
+    assert says is True, "the panel does not say why there is no editor"
+    assert frames == 0
+    assert asked == [], f"the page asked an editor the index does not name: {asked}"
+    assert failed == [], f"the console is not clean: {failed}"
