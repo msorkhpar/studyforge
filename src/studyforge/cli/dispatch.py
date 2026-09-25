@@ -105,6 +105,12 @@ def _serve() -> Callable[..., int]:
     return main
 
 
+def _preflight() -> Callable[..., int]:
+    from studyforge.cli.preflight import main
+
+    return main
+
+
 def _check() -> Callable[..., int]:
     from studyforge.cli.check import main
 
@@ -112,8 +118,8 @@ def _check() -> Callable[..., int]:
 
 
 #: ⛔ **The registered table.** Ordered as a reader meets them: check the
-#: archive, ask what a build would write, narrate it, write it, serve it, then
-#: check a unit's file the reader edited.
+#: archive, ask what a build would write, narrate it, write it, serve it, check
+#: the instance it is served with, then check a unit's file the reader edited.
 #: ⭐ `narrate` precedes `build` because clips are a build's INPUT (a build
 #: only copies what `narrate` recorded), and `serve` follows `build` because
 #: it serves what a build wrote.
@@ -125,6 +131,7 @@ VERBS: Mapping[str, Verb] = {
         Verb("narrate", "synthesise a corpus's clips from a narration service", _narrate),
         Verb("build", "write the site for one corpus into a directory you name", _build),
         Verb("serve", "serve a built site on loopback, adding the content API", _serve),
+        Verb("preflight", "check a corpus's instance.env before it is brought up", _preflight),
         Verb("check", "run the test for a unit's file you edited, or its program if none", _check),
     )
 }

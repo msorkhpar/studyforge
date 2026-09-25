@@ -283,7 +283,7 @@ an edit to the corpus's root ignore file (R3).
 nothing**: the same manifest and the same contract render the same bytes.
 
 ⛔ **A hand-edit to any of these files is a finding against this skill, not a
-fix** (R19). It is reverted the next time somebody runs step 5, and a tool that
+fix** (R19) — ⭐ all but `instance.env`, which is the publisher's (step 5a). It is reverted the next time somebody runs step 5, and a tool that
 eats your changes is a tool nobody runs twice. ⭐ **It is also REPORTED:**
 `write` and step 5a record each file's digest in
 `.studyforge/execution/written.json`, and onboarding's `hand_edited` names, in
@@ -334,16 +334,28 @@ moves.
 
 ⭐ **This checkout's instance** — its compose project, the editor's and the
 study server's host ports and the three container names — is
-`.studyforge/execution/instance.env`, **the one place a port is set**. `write`
-records the defaults there when nothing is recorded, and never overwrites it.
-A SECOND checkout of the same corpus on one host records its own, which the
-compose command and the study server both read:
+`.studyforge/execution/instance.env`, **the one place a port is set, and the
+publisher's file**. `write` writes the defaults there once, when there is no
+file, and never overwrites it; ⭐ from then on a port set there BY HAND is never
+a hand-edit finding (`written.PUBLISHERS`: the file is not recorded).
+`record_instance` is the CHECKED way to change it — it keeps every value it is
+not handed. A SECOND checkout of the same corpus on one host sets its own,
+which the compose command and the study server both read:
 
     record_instance(execution, corpus, project=..., port=..., editor=..., runner=...,
                     site_port=..., site=...)
 
-⛔ The two ports must differ, and each is a whole number from 1024 up; the
-loopback address beside each stays literal in the compose file.
+⛔ **A value that cannot work is refused by its name**, never reported as an edit
+(`execute.preflight`): a port outside 1–65535, the editor's and the site's
+ports equal, a container or project name compose would refuse, a key the file
+does not carry (one that tries to set a bind is told why: the loopback address
+stays literal in the compose file, and widening it needs the editor's
+authentication), and a compose file publishing off loopback while the editor
+runs `--auth=none`. ⭐ `studyforge serve` refuses before it binds, and the
+compose file's `preflight` service (`studyforge preflight /corpus`, in the
+site's image, read-only, no network) runs before every other service, each of
+which `depends_on` it with `required: false` — so before a site image is
+staged, the editor and the runner start as they always did.
 
 ### 5b. Stage the study server's image — from the library the corpus pinned
 
@@ -379,10 +391,9 @@ it. Then, from the corpus root:
 ⭐ That one command starts the study server, the editor AND the runner, each
 from the tag the corpus recorded — nobody sets an image variable by hand. Open
 the site on `127.0.0.1:<STUDYFORGE_SITE_PORT>`; a Run, a Submit and an example's
-test then run in the runner, through its run service. ⭐ To move a port, record
-it with `record_instance` (step 5a), which rewrites `instance.env`, and run the
-same command again: nothing is rebuilt. ⚠️ A hand-edit to `instance.env` works
-for compose, but the hand-edit check reports it, as for every file this skill writes.
+test then run in the runner, through its run service. ⭐ To move a port, set
+it in `instance.env` by hand or with `record_instance` (step 5a), and run the
+same command again: nothing is rebuilt, and neither way is a hand-edit finding.
 
 ⛔ **Every port is published on `127.0.0.1` alone.** The editor carries no
 password because loopback is its whole access control: a reader who widens
@@ -413,7 +424,7 @@ container — never holds the socket.
 | `.studyforge/execution/runner.env` | the primed runner's tag, as the component printed it (step 5a) |
 | `.studyforge/execution/editor.env` | the editor's tag, primed as the contract declares, as the component printed it (step 5a) |
 | `.studyforge/execution/written.json` | every file above and its digest, so a hand-edit to one is reported (step 5) |
-| `.studyforge/execution/instance.env` | this checkout's project, site and editor ports and container names: the one place a port is set (step 5a) |
+| `.studyforge/execution/instance.env` | this checkout's project, site and editor ports and container names: the one place a port is set, the publisher's file, written once and never recorded as the skill's (step 5a) |
 | `.studyforge/execution/toolchain.json` | the selection: the set, what is carried, what is not and why, and the two argv |
 | `.studyforge/execution/prime/<tool>/…` | one project per seeded tool: the corpus's own build, and each module's source and test with what they name, re-rooted at the build |
 | `EXECUTION.md` | what a reader opens first: what to build, what to run, and what this corpus declared |

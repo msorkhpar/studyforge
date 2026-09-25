@@ -19,21 +19,17 @@ a second author of it.
     studyforge serve <root> --no-narration                 # no voice
     studyforge serve /corpus --published --port N          # inside the course's compose
 
-`main(argv) -> int` is the callable the dispatcher registers. Ctrl-C (or
-`SIGTERM`) stops it and exits `0`. ⚠️ `started=` hands the bound server to a
-caller before serving begins, which is how a test stops the verb in-process.
+`main(argv) -> int` is the dispatcher's callable. Ctrl-C (or `SIGTERM`) exits `0`.
+⚠️ `started=` hands the bound server to a caller, so a test can stop the verb.
 
-**Depends on.** `serve.instance` and `serve.discovery` for a root, and
-`serve.instance`'s namespaces and one-corpus discovery, `serve.app` and
-`serve.routes.content` for `--site`, `generate.declarations` for
-the corpus, `progress` for the store's one spelling, `validate` for the exit
-codes, and `argparse`. ⛔ Nothing here knows any source (R1).
+**Depends on.** `serve` (discovery, the instance, the app, content),
+`generate.declarations`, `progress`, `validate` for the exit codes, and
+`argparse`. ⛔ Nothing here knows any source (R1).
 
 ## ⭐ `--no-narration` serves the reading floor and edits no page
 
-⭐ Narration is optional. A corpus is served
-without it when `--no-narration` is given or its `corpus.json` says
-`narration: false`; `--narration` voices it over that answer. ⛔ The player is in a
+⭐ Narration is optional: off with `--no-narration` or `narration: false` in
+`corpus.json`; `--narration` voices it over that answer. ⛔ The player is in a
 built page's bytes, so a site built WITH narration is refused, each page named,
 exactly as an unbuilt page is (exit `1`), and every clip under the served root is
 refused by path. `cli.unvoiced` holds all three answers and argues the choice.
@@ -73,9 +69,9 @@ directory, no servable or readable corpus, a port it cannot listen on.
 Spec §8.3. Not behind a flag, not "only locally": the parser offers no option
 naming one, this module imports no Docker client and starts no process, and a
 socket the environment points at is never connected to — each asserted, in
-`tests/studyforge/cli/test_serve.py` and `test_serve_process.py`. ⭐ `--published`
-is the form a course's compose runs: it reaches the runner over the compose
-network's internal side (`serve.published`), and is refused outside a container.
+`tests/studyforge/cli/test_serve.py` and `test_serve_process.py`. ⭐ `--published`,
+the compose's form, reaches the runner over its internal network and is refused
+outside a container; ⛔ both forms refuse an `instance.env` value that cannot work.
 
 ⚠️ **`private=` names the reader's progress store** by its resolved path, so a
 `--site` over the corpus's generated root still cannot serve the record, which
@@ -109,9 +105,10 @@ from studyforge.serve import (
     Discovered,
     client_for,
     frames_for,
+    instance_refusal,
     namespaces_of,
+    prepared,
     site_discovery,
-    start_published,
 )
 from studyforge.serve import RAISES as REFUSED
 from studyforge.serve.app import DEFAULT_PORT, ServingServer, make_server
@@ -211,6 +208,9 @@ def main(
     except RAISES as refusal:
         say(str(refusal))
         return UNUSABLE
+    if refused := instance_refusal(root):  # ⭐ the publisher's instance.env, by key
+        say(refused)
+        return UNUSABLE
     unbuilt = _unbuilt(corpus, site)
     if unbuilt:
         for page in unbuilt:
@@ -287,7 +287,7 @@ def _serve_root(
         return INVALID
     clips = unvoiced_clips(served.root for served in silent)
     try:
-        config = start_published(os.environ, discovered.corpora) if arguments.published else None
+        config = prepared(os.environ, discovered.corpora, arguments.published)
     except PUBLISH_REFUSED as refusal:
         say(str(refusal))
         return UNUSABLE

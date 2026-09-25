@@ -1231,6 +1231,14 @@ What it reads, and the choices in it:
 
 **Serves.** `R8`, `R15`
 
+### `instance.env` is the publisher's file, and a value that cannot work is refused by name
+
+**Decision.** The execution skill writes `.studyforge/execution/instance.env` once with defaults and never overwrites it. `skills.execution.written.PUBLISHERS` keeps it out of the skill's record: `stamp` never records it and drops an entry an older record kept, and `hand_edited` never reads one. So a port set there by hand is not a finding. `record_instance` keeps every value the file holds that it is not handed. `execute.preflight.problems(root)` gives one sentence per value that cannot work, each naming its key and never quoting the value: a port outside 1–65535 (`instance.PORTS`, widened from 1024), the editor's and the site's ports equal, a container or project name compose would refuse, a `STUDYFORGE_` key the file does not carry (one naming a bind is told that widening needs the editor's authentication), and a compose file that publishes off loopback while the editor runs `--auth=none`. `studyforge serve` refuses before it binds, in the root, `--site` and `--published` forms, for every corpus that declares a runner. The compose file's `preflight` service runs the new `studyforge preflight /corpus` verb from the site's image, read-only and with no network, and the site, editor and runner `depends_on` it with `condition: service_completed_successfully, required: false`, so an unstaged corpus still brings the editor and the runner up.
+
+**Why.** The user's direction is that configuration follows the port the user set, and a publisher sets ports in a text file. A generated-file finding for doing so punished the intended use, while a value that cannot work was only discovered as a failed bind. The check belongs where the value is used, and it names the key.
+
+**Serves.** `R6`, `R7`, `R10`
+
 ## Narration
 
 ### A heading the page withholds is not spoken

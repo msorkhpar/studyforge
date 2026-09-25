@@ -122,3 +122,19 @@ def test_an_editor_with_no_per_project_port_is_refused():
 
 def test_the_default_site_port_is_the_one_serve_listens_on_by_default():
     assert names.DEFAULT_SITE_PORT == DEFAULT_PORT
+
+
+def test_a_preflight_checks_the_publishers_values_before_every_other_service(text):
+    check = service_block(text, siteservice.PREFLIGHT)
+    assert re.search(r"command:\n\s+- preflight\n\s+- /corpus\n", check)
+    assert '"../..:/corpus:ro"' in check, "the preflight reads the corpus and writes nothing"
+    assert 'network_mode: "none"' in check or "network_mode: none" in check
+    assert re.search(r"profiles:\n\s+- site\n", check)
+    for name in ("editor", "runner", "site"):
+        gated = service_block(text, name)
+        assert re.search(
+            r"depends_on:\n\s+preflight:\n\s+condition: service_completed_successfully\n"
+            r"\s+required: false\n",
+            gated,
+        ), name
+    assert "depends_on" not in check

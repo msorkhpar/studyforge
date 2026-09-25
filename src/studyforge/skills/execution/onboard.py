@@ -236,7 +236,7 @@ def generate(
         checked=_checked(narration_text),
         binds=tuple((_from_compose(directory), inside) for directory, inside in extra),
         runner=(runnerservice.SERVICE, runner.service),
-        published=(site.services, site.networks),
+        published=(site.services, site.networks, site.gate),
     )
     document = reader.document(
         manifest,
@@ -297,7 +297,7 @@ def write(execution: Execution, root: Path) -> tuple[str, ...]:
     planned = [(where, text.encode("utf-8")) for where, text in execution.files]
     planned += [(where, (root / origin).read_bytes()) for where, origin in execution.copies]
     if execution.runnable and not (root / INSTANCE_ENV).exists():
-        made = instance.text(dict(execution.instance), header=f"# {GENERATED}\n")
+        made = instance.text(dict(execution.instance), header=instance.PUBLISHER_HEADER)
         planned.append((INSTANCE_ENV, made.encode("utf-8")))
     if execution.runnable and not (root / SITE_ENV).exists():
         planned.append((SITE_ENV, f"# {GENERATED}\n{siteservice.UNSTAGED}".encode()))

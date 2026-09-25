@@ -1939,8 +1939,11 @@ inside a network-listening process is root-equivalent access to the host.
    ⭐ The service asks for no credential: its one other member is the process
    entitled to ask, and a secret both containers read from one corpus guards
    nothing the list does not. ⛔ Every published port binds `127.0.0.1`, and
-   ports are set in one place, the corpus's instance record; a page learns the
-   editor's address from the study server's API, never from a built file.
+   ports are set in one place, the corpus's instance record, which is the
+   publisher's file: written once, never overwritten, never a hand-edit, and
+   every value in it that cannot work is refused by name by the study server
+   and by the compose file's preflight before anything starts. A page learns
+   the editor's address from the study server's API, never from a built file.
    Widening a bind means restoring the editor's authentication first.
 
 **What this costs the reader:** the host needs Python (standard library only)

@@ -59,7 +59,7 @@ from studyforge.serve.instance import (
     site_discovery,
 )
 from studyforge.serve.published import REFUSED as PUBLISH_REFUSED
-from studyforge.serve.published import start_published
+from studyforge.serve.published import instance_refusal, prepared, start_published
 from studyforge.serve.security import LOOPBACK
 
 #: ⛔ What `discovery.discover` and `instance.make_instance` let out.
@@ -71,7 +71,8 @@ from studyforge.serve.security import LOOPBACK
 #: mount the one path the execution client is served at, so a served page gets it
 #: and a built page still names nothing (R8).
 #: ⭐ `start_published`, `PUBLISH_REFUSED` and `LOOPBACK` are shared with its
-#: `--published` form: the compose's config, its refusals, and the address it opens.
+#: `--published` form: the compose's config, its refusals, and the address it opens;
+#: `prepared` and `instance_refusal` check the publisher's `instance.env` in every form.
 __all__ = [
     "CLIENT",
     "LOOPBACK",
@@ -83,6 +84,8 @@ __all__ = [
     "client_for",
     "frames_for",
     "namespaces_of",
+    "instance_refusal",
+    "prepared",
     "site_discovery",
     "start_published",
 ]

@@ -37,6 +37,15 @@ to a page through the run index, so no built file names a port (R8).
 ⭐ The site listens on the same port inside its container that it publishes, so
 the `Host` a browser sends is the one `serve` admits.
 
+## ⛔ THE PUBLISHER'S VALUES ARE CHECKED BEFORE ANYTHING STARTS
+
+⭐ `instance.env` is the publisher's file, so the `preflight` service runs
+`studyforge preflight /corpus` first, from the site's image, with the corpus
+read-only and no network, and every other service `depends_on` it completing.
+⭐ The dependency is `required: false`: before a site image is staged the
+profile is off, the preflight does not exist, and the editor and the runner
+start as they always did. A bad value is then refused by `studyforge serve`.
+
 ## ⛔ LOOPBACK ONLY, WRITTEN LITERALLY
 
 ⭐ The site's port is published on the editor's own `host_bind` — the
@@ -57,6 +66,10 @@ from studyforge.skills.execution.contract import ContractRefused, blocks, option
 
 #: The compose service the study server is.
 SERVICE = "site"
+
+#: The one-shot service that checks the publisher's `instance.env` before the
+#: others start (`studyforge preflight`), in the site's profile and image.
+PREFLIGHT = "preflight"
 
 #: The editor's compose service, which the site asks for its health by name.
 EDITOR_SERVICE = "editor"
@@ -97,6 +110,8 @@ class Site:
     services: tuple[tuple[str, Mapping[str, object]], ...]
     #: The compose file's top-level `networks`.
     networks: Mapping[str, Mapping[str, object]]
+    #: The `depends_on` every other service carries: the preflight, when it runs.
+    gate: Mapping[str, Mapping[str, object]]
 
 
 def plan(
@@ -141,9 +156,20 @@ def plan(
     reached["command"] = ["perl", SCRIPT_INSIDE]
     reached["volumes"] = [*list(reached.get("volumes", [])), f"./{SCRIPT_FILE}:{SCRIPT_INSIDE}:ro"]
     reached["networks"] = [NETWORK]
+    owner = str(require(block, "runs_as", "compose_key"))
+    check: dict[str, object] = {
+        "image": site["image"],
+        "profiles": [SERVICE],
+        owner: site[owner],
+        "command": ["preflight", CORPUS],
+        "volumes": [f"../..:{CORPUS}:ro"],
+        "network_mode": "none",
+        "restart": require(block, "restart"),
+    }
     return Site(
-        services=((SERVICE, site), (runner[0], reached)),
+        services=((PREFLIGHT, check), (SERVICE, site), (runner[0], reached)),
         networks={NETWORK: {"internal": True}},
+        gate={PREFLIGHT: {"condition": "service_completed_successfully", "required": False}},
     )
 
 

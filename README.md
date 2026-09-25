@@ -118,9 +118,13 @@ docker compose --env-file .studyforge/execution/runner.env \
 
 - **Every port is set in one place**, `.studyforge/execution/instance.env`:
   `STUDYFORGE_SITE_PORT` for the site and `STUDYFORGE_EDITOR_PORT` for the
-  editor. Change one with the `execution` skill's record step, which rewrites
-  that file, and run the command again. A page learns the editor's address
-  from the study server's API, never from a built file, so nothing is rebuilt.
+  editor. The file is yours: set a port there by hand, or with the `execution`
+  skill's record step, and run the command again. No regeneration writes over
+  it. A value that cannot work — a port outside 1–65535, one port for two
+  services, a key the file does not carry — is refused by name, by
+  `studyforge serve` and by the compose file's `preflight` service, before
+  anything starts. A page learns the editor's address from the study server's
+  API, never from a built file, so nothing is rebuilt.
 - **Every port is published on `127.0.0.1` alone.** The editor has no password
   because loopback is its whole access control. If you widen either bind,
   restore the editor's authentication first.
