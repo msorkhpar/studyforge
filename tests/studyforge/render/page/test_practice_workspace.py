@@ -160,10 +160,9 @@ def test_an_open_practice_is_named_in_the_address_and_opens_again_from_it():
     # after the reader opened a practice: the address is what brings them back
     # to it. ⛔ `replaceState`, so Back leaves the page as it always did.
     body = behaviour()
-    assert (
-        "history.replaceState(history.state, '', location.pathname + location.search + hash);"
-        in body
-    )
+    assert "history.replaceState(state, '', location.pathname + location.search + hash);" in body
+    assert "var state = Object.assign({}, history.state || {});" in body
+    assert "state[WAS] = hash ? was : null;" in body
     assert "pushState" not in body
     opening = body[body.index("function open(index)") : body.index("function close()")]
     assert "address('#' + one.section.id);" in opening
@@ -175,6 +174,11 @@ def test_an_open_practice_is_named_in_the_address_and_opens_again_from_it():
     # ⭐ Close then returns the reader to the card: `was` is set AFTER `open`,
     # which would otherwise keep the fragment's own scroll.
     assert reopening.index("open(index);") < reopening.index("was = ")
+    # ⭐ And where the reader was, kept on the entry, wins over the card.
+    assert reopening.index("var kept = history.state && history.state[WAS];") < reopening.index(
+        "open(index);"
+    )
+    assert "was = typeof kept === 'number'" in reopening
 
 
 def test_the_page_under_the_workspace_is_inert_while_it_is_up_and_only_then():

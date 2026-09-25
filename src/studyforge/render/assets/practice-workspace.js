@@ -106,9 +106,15 @@
   var was = 0;
 
   /* The address with no fragment, and with an open practice's own. */
+  /* ⭐ Where the reader was rides on this history entry's own state, beside
+     whatever else it holds, so the one reload brings Close back to it too. */
+  var WAS = 'studyforgeWorkspace';
+
   function address(hash) {
     try {
-      history.replaceState(history.state, '', location.pathname + location.search + hash);
+      var state = Object.assign({}, history.state || {});
+      state[WAS] = hash ? was : null;
+      history.replaceState(state, '', location.pathname + location.search + hash);
     } catch (ignored) { return; }
   }
 
@@ -209,12 +215,15 @@
   });
 
   /* ⭐ A practice named in the address opens at once, and Close then returns
-     the reader to its card, which is where they would have chosen it. */
+     the reader to where the entry's state says they were — or, with none, to
+     the practice's card, which is where they would have chosen it. */
   practices.forEach(function (one, index) {
     if (location.hash !== '#' + one.section.id) { return; }
+    var kept = history.state && history.state[WAS];
     open(index);
     var box = one.card.getBoundingClientRect();
-    was = Math.max(0, box.top + (window.pageYOffset || 0) - window.innerHeight / 3);
+    was = typeof kept === 'number'
+      ? kept : Math.max(0, box.top + (window.pageYOffset || 0) - window.innerHeight / 3);
   });
 
   /* --- the status: the reader's own record, asked of the served origin ---- */
