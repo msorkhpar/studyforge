@@ -32,21 +32,24 @@ def document(tmp_path, *, narration: bool = False, **moved: object) -> str:
     return dict(made.files)[skill.READER_DOC]
 
 
-def test_one_command_brings_up_both_reading_both_recorded_tags(tmp_path):
+def test_one_command_brings_up_all_three_reading_every_recorded_tag(tmp_path):
     text = document(tmp_path)
     command = (
         f"docker compose --env-file {skill.RUNNER_ENV} --env-file {skill.EDITOR_ENV} "
-        f"--env-file {skill.INSTANCE_ENV} -f {skill.COMPOSE_FILE} up -d --wait"
+        f"--env-file {skill.INSTANCE_ENV} --env-file {skill.SITE_ENV} "
+        f"-f {skill.COMPOSE_FILE} up -d --wait"
     )
     assert command in text
     assert text.count("docker compose") == 1
 
 
 def test_the_instance_file_is_named_with_what_it_holds_and_who_reads_it(tmp_path):
-    """⭐ the reader is told a second checkout records its own four values."""
+    """⭐ the reader is told the file is the one place a port is set, and what widening costs."""
     text = document(tmp_path)
-    assert f"`{skill.INSTANCE_ENV}` holds this checkout's compose project" in text
-    assert "the study server finds the containers by" in text
+    assert f"`{skill.INSTANCE_ENV}` is the one place a port is set" in text
+    assert "a page learns the editor's address from the study server" in text
+    assert "restoring the editor's authentication first" in text
+    assert "`studyforge serve <root>`) stays the" in text
 
 
 def test_the_runner_and_where_it_comes_from_are_named(tmp_path):

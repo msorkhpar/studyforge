@@ -1,16 +1,17 @@
-r"""A second instance of one corpus on one host: its four values, recorded by the skill.
+r"""A second instance of one corpus on one host: its values, recorded by the skill.
 
-**What it does.** Writes `INSTANCE_ENV` — the compose project, the editor's host
-port and the editor's and the runner's container names — for one checkout of a
+**What it does.** Writes `INSTANCE_ENV` — the compose project, the editor's and
+the study server's host ports and the three container names — for one checkout of a
 corpus, each value checked, every one it is not handed kept at the value the
 corpus has always used.
 
 **How you use it.** After `onboard.write` (which records the defaults when
 nothing is recorded yet), a checkout that must run BESIDE another records its
-own four:
+own:
 
     record_instance(execution, root, project="studyforge-iso-second",
-                    port=18443, editor="iso-second-editor", runner="iso-second-runner")
+                    port=18443, editor="iso-second-editor", runner="iso-second-runner",
+                    site_port=18444, site="iso-second-site")
 
 Then the corpus's one compose command, as `EXECUTION.md` prints it, brings that
 checkout's containers up under its own names and port, and `serve` over that
@@ -22,7 +23,7 @@ source-specific (R1), and no process.
 
 ## ⛔ WHY IT IS RECORDED RATHER THAN TYPED ON A COMMAND LINE
 
-⭐ **Two readers need the same four values** — compose, which interpolates
+⭐ **Two readers need the same values** — compose, which interpolates
 them, and `serve`, which probes and execs into the containers they name. A
 value typed into one command reaches the first and not the second, which would
 leave a second runner that `serve` cannot be pointed at. ⭐ One file both read cannot come apart.
@@ -58,8 +59,10 @@ def record_instance(
     port: int | None = None,
     editor: str | None = None,
     runner: str | None = None,
+    site_port: int | None = None,
+    site: str | None = None,
 ) -> str:
-    """Record this checkout's four values under `root`, and return the path written."""
+    """Record this checkout's values under `root`, and return the path written."""
     if not execution.runnable or not execution.instance:
         raise ExecutionRefused("this corpus declares no runtime, so there is no instance to record")
     values = dict(execution.instance)
@@ -68,6 +71,8 @@ def record_instance(
         instance.EDITOR_PORT: None if port is None else str(port),
         instance.EDITOR_NAME: editor,
         instance.RUNNER_NAME: runner,
+        instance.SITE_PORT: None if site_port is None else str(site_port),
+        instance.SITE_NAME: site,
     }
     values.update({one: value for one, value in chosen.items() if value is not None})
     try:

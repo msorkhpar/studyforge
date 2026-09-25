@@ -69,6 +69,10 @@ from urllib.parse import urlsplit
 #: reader's disk and has no authentication anywhere in it.
 LOOPBACK = "127.0.0.1"
 
+#: What the published form binds INSIDE its container. ⛔ Never on a host: the
+#: `--published` form refuses to start outside a container (`cli/serve.py`).
+PUBLISHED_BIND = "0.0.0.0"
+
 #: Peer addresses answered at all.
 LOOPBACK_PEERS = frozenset({"127.0.0.1", "::1", "::ffff:127.0.0.1"})
 
@@ -221,8 +225,16 @@ REFUSED_SITE = "cross-site requests are refused"
 REFUSED_ORIGIN = "cross-origin requests are refused"
 
 
-def require_loopback(host: str) -> None:
-    """Raise `ValueError` unless `host` is the one address this server binds."""
+def require_loopback(host: str, *, published: bool = False) -> None:
+    """Raise `ValueError` unless `host` is the one address this server binds.
+
+    ⭐ `published` admits `PUBLISHED_BIND` too, and only the `--published` form
+    passes it: that form refuses to start outside a container, where every
+    interface is the container's own and the compose file publishes the port on
+    `127.0.0.1` alone.
+    """
+    if published and host == PUBLISHED_BIND:
+        return
     if host != LOOPBACK:
         raise ValueError(f"this server binds {LOOPBACK} only")
 
@@ -254,10 +266,19 @@ def origin_allowed(header: str | None, allowed: frozenset[str] = ALLOWED_HOSTS) 
 
 
 def refusal(
-    peer: str, headers: Mapping[str, str], allowed: frozenset[str] = ALLOWED_HOSTS
+    peer: str,
+    headers: Mapping[str, str],
+    allowed: frozenset[str] = ALLOWED_HOSTS,
+    peers: frozenset[str] | None = LOOPBACK_PEERS,
 ) -> str | None:
-    """Return `None` for a local same-site request, else the refusal's message."""
-    if peer not in LOOPBACK_PEERS:
+    """Return `None` for a local same-site request, else the refusal's message.
+
+    ⭐ `peers=None` is the published form's (`PUBLISHED_BIND`): inside its own
+    container the server's peer is the compose network's gateway, and the
+    loopback bind it stands for is the compose file's `127.0.0.1:` port. ⛔ The
+    `Host`, `Sec-Fetch-Site` and `Origin` checks are unchanged either way.
+    """
+    if peers is not None and peer not in peers:
         return REFUSED_PEER
     if not host_allowed(headers.get("Host"), allowed):
         return REFUSED_HOST

@@ -17,6 +17,7 @@ a second author of it.
     studyforge serve <corpus-root> --site <directory> [--port N]
 
     studyforge serve <root> --no-narration                 # no voice
+    studyforge serve /corpus --published --port N          # inside the course's compose
 
 `main(argv) -> int` is the callable the dispatcher registers. Ctrl-C (or
 `SIGTERM`) stops it and exits `0`. ⚠️ `started=` hands the bound server to a
@@ -39,60 +40,52 @@ refused by path. `cli.unvoiced` holds all three answers and argues the choice.
 
 ## ⛔ With no `--site`, NO CONFIGURED PATH
 
-⭐ **The root is the only input**: every `corpus.json` under it is a corpus, each
-is served from where it sits, and one instance answers them all — content, state
-and pages. ⛔ There is no list of mounts to give it: the manifests on disk are
-the list. Tested in `tests/studyforge/cli/test_serve_root.py`.
+⭐ **The root is the only input**: every `corpus.json` under it is a corpus,
+served where it sits by one instance. ⛔ The manifests on disk are the list of
+mounts. Tested in `tests/studyforge/cli/test_serve_root.py`.
 
-⚠️ **`--site` stays, as an override for ONE corpus built somewhere else.** `build`
-takes `--out` with no default, so a site can live outside its corpus, and only a
-named directory reaches that. It names one directory for one corpus and adds no
-mount beside the root's.
+⚠️ **`--site` stays, as an override for ONE corpus built somewhere else** (`build`
+takes `--out` with no default); it adds no mount beside the root's.
 
 ## ⛔ `--site` answers state, Run and Submit
 
 ⭐ **Both forms take their namespaces from ONE constructor,
-`serve.instance.namespaces_of`**, and their writers from its `WRITERS`: the
-build-and-serve skill always serves `--site`, and a site that registered `run`
-but not `state` recorded a run's progress it could not read back. A run's command
-is read from the corpus's unit documents and its outcome is recorded in the
-corpus's own progress store, which `state` reads, and the site is scanned where
-it is built (`serve.instance.site_discovery`); ⛔ nothing is written into the
-site, and no discovery cache is written into the corpus root. Tested in
-`tests/studyforge/cli/test_serve_site_run.py` and `test_serve_site_state.py`.
-⭐ `site_namespaces` is where the verb takes them, and the one name a test
+`serve.instance.namespaces_of`**, and their writers from its `WRITERS`: a site
+that registered `run` but not `state` recorded progress it could not read back.
+The site is scanned where it is built (`serve.instance.site_discovery`); ⛔
+nothing is written into it. Tested in `tests/studyforge/cli/test_serve_site_run.py`
+and `test_serve_site_state.py`. ⭐ `site_namespaces` is the one name a test
 replaces to serve a site that offers no execution.
 
 ## ⛔ The site is BUILT first, and it never needs this command
 
-⭐ **R8: a built site opens over `file://` with no server.** A served origin
-adds the API; it is never a prerequisite for reading. So this verb serves what
-`studyforge build` wrote and writes nothing into it, and `--site` has no default
-for the reason `build`'s `--out` is: where a build writes is the corpus owner's
-decision. `tests/studyforge/cli/test_serve_floor.py` asserts the floor rather
-than assuming it.
+⭐ **R8: a built site opens over `file://` with no server**, so this verb serves
+what `studyforge build` wrote and writes nothing into it, and `--site` has no
+default, as `build`'s `--out` has none. `tests/studyforge/cli/test_serve_floor.py`
+asserts the floor rather than assuming it.
 
-⛔ **Exit codes are `build`'s**: `0` served and stopped cleanly, `1` a corpus
-declares a page nobody built (each named; nothing is bound), `2` the tool could
-not run — a missing directory, no servable corpus, an unreadable corpus, a port
-it cannot listen on.
+⛔ **Exit codes are `build`'s**: `0` stopped cleanly, `1` a declared page nobody
+built (each named; nothing bound), `2` the tool could not run — a missing
+directory, no servable or readable corpus, a port it cannot listen on.
 
 ## ⛔ The Docker socket is never mounted into, or reachable from, this process
 
 Spec §8.3. Not behind a flag, not "only locally": the parser offers no option
 naming one, this module imports no Docker client and starts no process, and a
 socket the environment points at is never connected to — each asserted, in
-`tests/studyforge/cli/test_serve.py` and `test_serve_process.py`.
+`tests/studyforge/cli/test_serve.py` and `test_serve_process.py`. ⭐ `--published`
+is the form a course's compose runs: it reaches the runner over the compose
+network's internal side (`serve.published`), and is refused outside a container.
 
-⚠️ **`private=` names the reader's progress store** by its resolved
-path, so a `--site` that sits over the corpus's generated root still cannot
-serve the record, which the static mount's own prefix check reads relative to
-the site root and would not see.
+⚠️ **`private=` names the reader's progress store** by its resolved path, so a
+`--site` over the corpus's generated root still cannot serve the record, which
+the static mount's prefix check, relative to the site root, would not see.
 """
 
 from __future__ import annotations
 
 import argparse
+import os
 import signal
 import threading
 from collections.abc import Callable
@@ -121,7 +114,10 @@ from studyforge.serve import (
 from studyforge.serve.app import DEFAULT_PORT, ServingServer, make_server
 from studyforge.serve.discovery import discover
 from studyforge.serve.instance import instance_of
+from studyforge.serve.published import REFUSED as PUBLISH_REFUSED
+from studyforge.serve.published import start_published
 from studyforge.serve.routes.content import CorpusContent
+from studyforge.serve.security import LOOPBACK
 from studyforge.validate.cli import UNUSABLE
 from studyforge.validate.report import INVALID, OK
 
@@ -168,6 +164,14 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument(
+        "--published",
+        action="store_true",
+        help=(
+            "serve from inside the course's compose: every address of this container, "
+            "the editor and the run service as the compose declared them. Refused elsewhere"
+        ),
+    )
+    parser.add_argument(
         "--port",
         type=_port,
         default=DEFAULT_PORT,
@@ -191,6 +195,9 @@ def main(
         print(line, file=stream, flush=True)
 
     arguments = build_parser().parse_args(argv)
+    if arguments.published and arguments.site is not None:
+        say("--published serves a root, never --site")
+        return UNUSABLE
     if arguments.site is None:
         return _serve_root(arguments, say, started)
     root, site = Path(arguments.root), Path(arguments.site)
@@ -280,10 +287,18 @@ def _serve_root(
         return INVALID
     clips = unvoiced_clips(served.root for served in silent)
     try:
-        server = instance_of(discovered, port=arguments.port, log=say, private=clips)
+        config = start_published(os.environ, discovered.corpora) if arguments.published else None
+    except PUBLISH_REFUSED as refusal:
+        say(str(refusal))
+        return UNUSABLE
+    try:
+        server = instance_of(
+            discovered, port=arguments.port, log=say, private=clips, published=config
+        )
     except OSError as refusal:
         return _could_not_listen(arguments.port, refusal, say)
     host, port = server.server_address[:2]
+    host = host if config is None else LOOPBACK  # ⭐ the compose publishes it there alone
     # ⭐ The listening line is FIRST, as in the `--site` form: a caller reads the port off it.
     say(f"serve http://{host}:{port}/  root {arguments.root}")
     for served in discovered.corpora:

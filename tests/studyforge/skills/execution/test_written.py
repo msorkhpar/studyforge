@@ -31,7 +31,10 @@ OUTPUTS = (
     execution.RUNNER_ENV,
     execution.EDITOR_ENV,
     execution.INSTANCE_ENV,
+    execution.SITE_ENV,
     f"{execution.CODE_COPY}/.gitignore",
+    f"{execution.DIRECTORY}/runservice.pl",
+    f"{execution.DIRECTORY}/allowed/.gitignore",
 )
 
 

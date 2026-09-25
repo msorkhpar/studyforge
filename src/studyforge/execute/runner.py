@@ -10,7 +10,11 @@ relative to the source root, in either mode.
     handle = runner.start([exercise.run_command, exercise.test_command])
     for line in handle.lines(): ...
 
-`container=None` runs on the host, always.
+`container=None` runs on the host, always. ⭐ `service=Service(...)` runs in
+the runner through its run service instead (`remote`), which is how a study
+server published with one compose reaches it without the Docker socket; it
+never falls back to the host, since the host there is the study server's own
+container.
 
 **Depends on.** `subprocess` and `os` — ⭐ `execute` is the only package that
 runs a corpus's commands — plus `commands`, `mode`, `output` and `handle`
@@ -84,9 +88,14 @@ from studyforge.execute.commands import (
     require_container,
     require_workdir,
 )
+from studyforge.execute.errors import RunRefused
 from studyforge.execute.handle import RunHandle
 from studyforge.execute.mode import CONTAINER, DOCKER, WORKDIR_IN_CONTAINER, ModeProbe
 from studyforge.execute.output import LineGate
+from studyforge.execute.remote import RemoteLauncher, Service, ServiceProbe
+
+#: The mode a run takes through the runner's run service.
+SERVICE = "service"
 
 #: What every run's environment carries, in both modes.
 RUN_ENVIRONMENT = {"PYTHONDONTWRITEBYTECODE": "1", "PYTHONUNBUFFERED": "1"}
@@ -236,6 +245,7 @@ class Runner:
         timeout: float = DEFAULT_TIMEOUT,
         grace: float = GRACE,
         probe: ModeProbe | None = None,
+        service: Service | None = None,
     ) -> None:
         """Check the container name; the mode is asked per run, through `probe`."""
         self.source_root = Path(source_root).absolute()
@@ -244,9 +254,20 @@ class Runner:
         self.timeout = timeout
         self.grace = grace
         self.probe = probe or ModeProbe(self.source_root, self.container, docker=docker)
+        self.service = service
+        self.service_probe = None if service is None else ServiceProbe(service)
 
     def mode(self) -> str:
-        """`CONTAINER` or `HOST`, as the next run would take it."""
+        """`SERVICE`, `CONTAINER` or `HOST`, as the next run would take it.
+
+        ⛔ **A runner given a service never answers `HOST`**: published, the
+        host is the study server's container, which has no toolchain and must
+        never run a reader's code. A service that does not answer refuses the run.
+        """
+        if self.service_probe is not None:
+            if not self.service_probe.up():
+                raise RunRefused("the runner's run service is not answering; is the compose up?")
+            return SERVICE
         return self.probe.mode()
 
     def start(self, commands: object, cwd: object = ROOT_DIR) -> RunHandle:
@@ -259,12 +280,16 @@ class Runner:
         checked = require_commands(commands)
         directory = require_workdir(cwd)
         mode = self.mode()
-        if mode == CONTAINER:
-            assert self.container is not None
-            launcher: HostLauncher | ContainerLauncher = ContainerLauncher(
-                self.container, directory, self.docker
+        if mode == SERVICE:
+            assert self.service is not None
+            launcher: HostLauncher | ContainerLauncher | RemoteLauncher = RemoteLauncher(
+                self.service, directory
             )
             roots: Iterable[str] = (WORKDIR_IN_CONTAINER,)
+        elif mode == CONTAINER:
+            assert self.container is not None
+            launcher = ContainerLauncher(self.container, directory, self.docker)
+            roots = (WORKDIR_IN_CONTAINER,)
         else:
             launcher = HostLauncher(self.source_root, directory)
             roots = (str(self.source_root), str(self.source_root.resolve()))

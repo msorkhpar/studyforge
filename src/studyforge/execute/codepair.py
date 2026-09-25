@@ -181,6 +181,29 @@ def test_command(
     return [*argv, "test", f"-Dtest={_stem(found.test)}", "-Dsurefire.failIfNoSpecifiedTests=false"]
 
 
+def test_commands(root: Path, runtimes: tuple[str, ...] | list[str]) -> list[list[str]]:
+    """Return the argv that runs each test file the copy holds, every one a command may run.
+
+    ⭐ **The run service's allowlist reads this** (`serve.published`): a test's
+    command names its build module and its own stem and never its source, so
+    each test is asked for on its own and no text is read. ⚠️ Code too large to
+    copy runs no test, exactly as the served example then opens nothing.
+    """
+    try:
+        files = code_files(Path(root))
+    except CodeRefused:
+        return []
+    found = []
+    for path in files:
+        if is_code(path, runtimes) and is_a_test(path):
+            module = module_of(files, path, runtimes)
+            opened = Pair(opened=path, source=None, test=path, module=module)
+            argv = test_command(root, opened, runtimes)
+            if argv is not None:
+                found.append(argv)
+    return found
+
+
 def _by_name(path: str, candidates: list[str], stem: str | None) -> str | None:
     """Return the candidate named `stem` (any, when `None`) nearest `path`, or `None`."""
     named = [one for one in candidates if stem is None or _stem(one) == stem]

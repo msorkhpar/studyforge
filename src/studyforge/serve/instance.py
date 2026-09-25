@@ -74,6 +74,7 @@ from studyforge.archive.scrub import scrub
 from studyforge.corpus.discovery import assemble
 from studyforge.corpus.discovery import scan_sha256 as digest_of
 from studyforge.generate import Corpus
+from studyforge.serve import published as serve_published
 from studyforge.serve.addressing import CorporaContent
 from studyforge.serve.app import DEFAULT_PORT, Frames, ServingServer, make_server
 from studyforge.serve.discovery import Discovered, ServedCorpus, discover
@@ -113,15 +114,18 @@ def instance_of(
     port: int = DEFAULT_PORT,
     log: Callable[[str], None] | None = None,
     private: Callable[[Path], bool] | None = None,
+    published: serve_published.Published | None = None,
 ) -> ServingServer:
     """Return a server wired to serve every corpus one discovery found, from its root.
 
     ⭐ `private` is the static mount's refusal by path, for what the verb decided is
     not served — narration clips a run left out; `None` refuses nothing
-    beyond what the mount already refuses.
+    beyond what the mount already refuses. ⭐ `published` is what a published
+    compose declared (`serve.published`): the server then binds inside its own
+    container and reaches the runner and the editor as declared.
     """
     sources = {served.source: CorpusContent(served.corpus) for served in discovered.corpora}
-    namespaces = namespaces_of(discovered, sources)
+    namespaces = namespaces_of(discovered, sources, published)
     return make_server(
         discovered.root,
         CorporaContent(sources, discovered.depths),
@@ -131,6 +135,7 @@ def instance_of(
         writers=WRITERS,
         client=client_for(namespaces),
         frames=frames_for(namespaces),
+        published=published is not None,
         **({} if private is None else {"private": private}),
     )
 
@@ -157,15 +162,27 @@ class RunNamespace:
         return run.route(self.live, request, rest)
 
 
-def namespaces_of(discovered: Discovered, sources: dict[str, CorpusContent]) -> dict:
+def namespaces_of(
+    discovered: Discovered,
+    sources: dict[str, CorpusContent],
+    published: serve_published.Published | None = None,
+) -> dict:
     """Return the `state` and `run` namespaces over `discovered`, for either form.
 
     ⭐ `sources` maps each served corpus's `source` to the content its unit
     documents are read from, which is where a run reads its command.
     """
+    seams = (
+        {}
+        if published is None
+        else {
+            "runner": serve_published.runner_for(published),
+            "editor": serve_published.editor_for(published),
+        }
+    )
     return {
         state.NAMESPACE: partial(state.route, discovered),
-        run.NAMESPACE: RunNamespace(runs.Runs(discovered, sources)),
+        run.NAMESPACE: RunNamespace(runs.Runs(discovered, sources, **seams)),
     }
 
 

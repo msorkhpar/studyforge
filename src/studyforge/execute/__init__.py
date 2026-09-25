@@ -83,7 +83,7 @@ from studyforge.execute.browser import (
     capture_page,
     find_browser,
 )
-from studyforge.execute.codepair import Pair, is_code, pair, pairing, test_command
+from studyforge.execute.codepair import Pair, is_code, pair, pairing, test_command, test_commands
 from studyforge.execute.codetree import CODE_COPY, IGNORE_TEXT, CodeRefused, in_copy, sync
 from studyforge.execute.commands import (
     CONTAINER_PREFIX,
@@ -102,8 +102,18 @@ from studyforge.execute.handle import EXIT_STOPPED, EXIT_TIMEOUT, RunHandle, exi
 from studyforge.execute.instance import INSTANCE_FILE, Names, recorded
 from studyforge.execute.mode import CONTAINER, HOST, MODES, WORKDIR_IN_CONTAINER, ModeProbe
 from studyforge.execute.output import LineGate
+from studyforge.execute.published import (
+    ALLOWED_DIR,
+    ALLOWED_FILE,
+    ALLOWED_IGNORE,
+    DeclaredEditorProbe,
+    Published,
+    from_environment,
+    write_allowed,
+)
 from studyforge.execute.quiet import TOOLCHAINS, Quiet, Toolchain, filter_lines, select
-from studyforge.execute.runner import RUN_ENVIRONMENT, Runner
+from studyforge.execute.remote import SERVICE_PORT, Service
+from studyforge.execute.runner import RUN_ENVIRONMENT, SERVICE, Runner
 from studyforge.execute.workbench import (
     MAIN_KEY,
     SETTINGS_DIR,
@@ -117,6 +127,9 @@ from studyforge.execute.workbench import (
 )
 
 __all__ = [
+    "ALLOWED_DIR",
+    "ALLOWED_FILE",
+    "ALLOWED_IGNORE",
     "BROWSER_NAMES",
     "BUILD_FILES",
     "CODE_COPY",
@@ -132,15 +145,18 @@ __all__ = [
     "MAIN_KEY",
     "MODES",
     "ROOT_DIR",
-    "SKIPPED",
     "RUN_ENVIRONMENT",
+    "SERVICE",
+    "SERVICE_PORT",
     "SETTINGS_DIR",
     "SETTINGS_FILE",
+    "SKIPPED",
     "TEST_KEY",
     "TOOLCHAINS",
     "WORKDIR_IN_CONTAINER",
     "BrowserProfile",
     "CodeRefused",
+    "DeclaredEditorProbe",
     "Editor",
     "EditorProbe",
     "LineGate",
@@ -148,10 +164,12 @@ __all__ = [
     "Names",
     "PageSeen",
     "Pair",
+    "Published",
     "Quiet",
     "RunHandle",
     "RunRefused",
     "Runner",
+    "Service",
     "Toolchain",
     "WorkbenchRefused",
     "capture_page",
@@ -160,6 +178,7 @@ __all__ = [
     "exit_line",
     "filter_lines",
     "find_browser",
+    "from_environment",
     "in_copy",
     "is_a_test",
     "is_code",
@@ -176,5 +195,7 @@ __all__ = [
     "source_suffixes",
     "sync",
     "test_command",
+    "test_commands",
+    "write_allowed",
     "write_settings",
 ]

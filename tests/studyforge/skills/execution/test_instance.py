@@ -70,7 +70,14 @@ def test_a_second_instance_records_its_own_four_and_serve_reads_the_same(tmp_pat
     made, root = generated(tmp_path)
     onboard.write(made, root)
     written = record_instance(
-        made, root, project="demo-second", port=18443, editor="second-ed", runner="second-run"
+        made,
+        root,
+        project="demo-second",
+        port=18443,
+        editor="second-ed",
+        runner="second-run",
+        site_port=18444,
+        site="second-site",
     )
     assert written == onboard.INSTANCE_ENV
     assert names.read(root) == {
@@ -78,6 +85,8 @@ def test_a_second_instance_records_its_own_four_and_serve_reads_the_same(tmp_pat
         names.EDITOR_PORT: "18443",
         names.EDITOR_NAME: "second-ed",
         names.RUNNER_NAME: "second-run",
+        names.SITE_PORT: "18444",
+        names.SITE_NAME: "second-site",
     }
     assert names.recorded(root, "demo") == names.Names("second-run", "second-ed")
 
@@ -89,7 +98,16 @@ def test_a_value_it_is_not_handed_keeps_its_default(tmp_path):
 
 
 @pytest.mark.parametrize(
-    "choice", [{"port": 80}, {"project": "Not-Lower"}, {"runner": "a;b"}, {"editor": ""}]
+    "choice",
+    [
+        {"port": 80},
+        {"project": "Not-Lower"},
+        {"runner": "a;b"},
+        {"editor": ""},
+        {"site_port": 80},
+        {"site": "a b"},
+        {"site_port": 8443},
+    ],
 )
 def test_a_value_compose_or_the_bind_would_misread_is_refused(tmp_path, choice):
     made, root = generated(tmp_path)
