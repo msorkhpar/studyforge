@@ -65,6 +65,7 @@ from studyforge.unit.builder import derived as derived_shape
 from studyforge.unit.builder.material import Material
 from studyforge.unit.content import Overlay
 from studyforge.unit.errors import ContentError, describe
+from studyforge.unit.outline import without_outline_number
 
 #: 2 — the served document's shape. ⛔ Registered in the spec's R9 table as
 #: `unit.json` / `api`, and bumped rather than widened.
@@ -126,7 +127,7 @@ def build(
         "address": list(first["address"]),
         "variant": material.variant,
         "unit": material.unit,
-        "title": _title(title, overlay, first),
+        "title": without_outline_number(_title(title, overlay, first)),
         "practices": _practices(material, declared_practices),
         "sections": list(sections),
         "built_from": _built_from(material),

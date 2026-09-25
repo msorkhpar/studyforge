@@ -91,7 +91,7 @@ from collections.abc import Sequence
 from studyforge.render import templates
 from studyforge.render.container import progress
 from studyforge.render.index import disclosure
-from studyforge.render.index.entries import Document, Section
+from studyforge.render.index.entries import Document
 from studyforge.render.index.placement import Placement
 from studyforge.render.markup import escape, escape_attribute
 from studyforge.render.page import PageError, RailContainer
@@ -184,16 +184,6 @@ ABOUT = (
 )
 
 
-def leaves(sections: tuple[Section, ...]) -> list[Section]:
-    """Every group that holds units directly, in reading order — the strip's segments."""
-    found: list[Section] = []
-    for section in sections:
-        if section.items:
-            found.append(section)
-        found += leaves(section.sections)
-    return found
-
-
 def head(document: Document) -> str:
     """Return what comes above the tree: progress, Up next and the filter.
 
@@ -203,9 +193,14 @@ def head(document: Document) -> str:
     everything = [
         item for section in document.sections for item in disclosure.readable_items(section)
     ]
+    # ⛔ One segment per TOP-LEVEL group, sized by every readable unit under it.
+    # ⚠️ A segment per deepest group would put every module of a large course
+    # in one row. The outermost groups are the course's own sections, so the
+    # strip says what the tree below it says first, and a module is one click
+    # further, in its section.
     segments = [
-        (group.key, group.title, len([item for item in group.items if item.href is not None]))
-        for group in leaves(document.sections)
+        (group.key, group.title, len(disclosure.readable_items(group)))
+        for group in document.sections
     ]
     segments = [segment for segment in segments if segment[2]]
     first = everything[0] if everything else None

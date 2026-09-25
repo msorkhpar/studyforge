@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 
 from studyforge.archive.markdown import parse
-from studyforge.render.page.blocks import prose
+from studyforge.render.page.blocks import figure, prose
 from studyforge.render.pageassets import SURFACE_CLASSES, SURFACE_HOOKS
 
 
@@ -67,6 +67,16 @@ def test_a_nested_list_renders_as_a_list_inside_its_parent_item():
     assert render(block) == (
         f'<ul class="{klass}"><li>a<ol class="{klass}"><li>x</li><li>&lt;y&gt;</li></ol>b</li>'
         f"<li>c</li></ul>"
+    )
+
+
+def test_a_code_part_renders_as_the_code_figure_inside_its_item():
+    # ⛔ the snippet sits in its step, and the sentence after it stays there.
+    klass = SURFACE_CLASSES["list"]
+    snippet = {"type": "code", "lang": "java", "text": "a != b"}
+    block = {"type": "list", "ordered": True, "items": [["Compare:", snippet, "then <stop>."]]}
+    assert render(block) == (
+        f'<ol class="{klass}"><li>Compare:{figure.render(snippet, 0)}then &lt;stop&gt;.</li></ol>'
     )
 
 

@@ -39,6 +39,7 @@ from __future__ import annotations
 from studyforge.archive.blocks import BLOCK_TYPES, item_parts, list_start
 from studyforge.render.markup import escape, escape_attribute, inline
 from studyforge.render.page.anchors import block_anchor, heading_level
+from studyforge.render.page.blocks import figure
 from studyforge.render.page.narration import SILENT, Narration
 from studyforge.render.pageassets import SURFACE_HOOKS, class_for
 
@@ -119,19 +120,24 @@ def _list_element(block: dict, items: str) -> str:
 
 
 def _item(item: object) -> str:
-    """One item's parts in reading order: text as inline prose, a nested list as a list.
+    """One item's parts in reading order: text as inline prose, a block as itself.
 
-    ⛔ **A nested list is rendered as a nested list**, never as its
-    parent's text. ⚠️ Its items carry **no audio attribute**: a nested item is
-    spoken inside its parent item's clip (`narrate.speakable.script`), so the
-    highlight sits on the parent `<li>`, which holds the nested list.
+    ⛔ **A nested list is rendered as a nested list, and a code block as the
+    same figure a top-level fence gets**, never as its parent's text. ⚠️ Neither
+    carries an **audio attribute**: a part is spoken inside its parent item's
+    clip (`narrate.speakable.script`), so the highlight sits on the parent
+    `<li>`, which holds it.
     """
-    return "".join(
-        _list_element(part, "".join(f"<li>{_item(sub)}</li>" for sub in part.get("items") or ()))
-        if isinstance(part, dict)
-        else inline(part)
-        for part in item_parts(item)
-    )
+    return "".join(_part(part) for part in item_parts(item))
+
+
+def _part(part: object) -> str:
+    """One part of an item: text, a nested list, or a code figure."""
+    if not isinstance(part, dict):
+        return inline(part)
+    if part.get("type") == "code":
+        return figure.render(part, 0)
+    return _list_element(part, "".join(f"<li>{_item(sub)}</li>" for sub in part.get("items") or ()))
 
 
 def _table(block, position, section, children, path, narration) -> str:

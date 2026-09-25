@@ -7,7 +7,7 @@ where it sits every block spec §6 does not admit, at any depth, and
 | the block | ⛔ the expectation, written BEFORE the run |
 |---|---|
 | every shape §6 admits, nested lists and `start` included | clean in both |
-| an item that is neither a string nor an array of strings and lists | `document`, exit `1`, named |
+| an item neither a string nor an array of strings, lists and code | `document`, exit `1`, named |
 | the same, inside a quote and a nested list | named at its full depth |
 | `start` that is not an integer (a string, a boolean, a float) | named; `0` is admitted |
 | a key out of order or unknown | named |
@@ -44,6 +44,9 @@ ADMITTED = [
     ),
     {"type": "quote", "blocks": [_list(["quoted"])]},
     _list([]),
+    # ⭐ A code block inside an item, and inside a nested item.
+    _list([["Return:", {"type": "code", "lang": "java", "text": "int[] a;"}, "then read it."]]),
+    _list([["a", _list([["b", {"type": "code", "lang": "", "text": "x"}]])]]),
     # ⭐ Every other type with exactly its fields, and containers at depth.
     {"type": "heading", "level": 2, "text": "A heading"},
     {"type": "code", "lang": "python", "text": "x = 1"},
@@ -68,6 +71,14 @@ MALFORMED = {
     "a paragraph inside an item's array": (
         [_list([["a", {"type": "para", "text": "x"}]])],
         "blocks[0].items[0][1]",
+    ),
+    "a table inside an item's array": (
+        [_list([["a", {"type": "table", "headers": [], "rows": []}]])],
+        "blocks[0].items[0][1]",
+    ),
+    "a code part missing its lang": (
+        [_list([["a", {"type": "code", "text": "x"}]])],
+        "blocks[0].items[0][1] has keys",
     ),
     "items that are not an array": ([_list("a")], "blocks[0].items"),
     "a bad item at depth": (

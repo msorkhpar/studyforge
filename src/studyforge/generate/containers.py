@@ -43,6 +43,7 @@ from studyforge.generate.writing import Written, place
 from studyforge.render.container import Document, Item, PageError
 from studyforge.render.container import Placement as ContainerPlacement
 from studyforge.render.container import render as render_container
+from studyforge.unit import listed_numbering, without_outline_number
 
 
 def container_pages(corpus: Corpus, into: Path | str) -> Written:
@@ -113,14 +114,14 @@ def _document(corpus: Corpus, container: Container, at: ContainerLocations) -> D
     try:
         return Document(
             address=container.address,
-            title=container.titles[-1],
+            title=without_outline_number(container.titles[-1]),
             variant=container.variant,
             level=corpus.manifest.levels[-1],
             note=container.note,
             items=tuple(
                 Item(
-                    numbering=unit.numbering,
-                    title=unit.title,
+                    numbering=listed_numbering(unit.numbering, unit.n),
+                    title=without_outline_number(unit.title),
                     href=_href(corpus, container, unit, at)
                     if container.address.unit_key(unit.n) in present
                     else None,

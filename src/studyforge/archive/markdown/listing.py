@@ -1,13 +1,12 @@
-"""The list reader — the one that returns several blocks.
+"""The list reader.
 
 **What it does.** Accumulates consecutive items of the same kind into one
 `list` block, reads a marker indented under an item as that item's **nested
-list**, folds continuation lines into the item above, and returns any fenced
-code an item carried as blocks **after** the list.
+list**, folds continuation lines into the item above, and keeps any fenced
+code an item carries **inside that item**, as one of its parts.
 
-**How you use it.** `read_list(lines, start)` returns `(blocks, next_index)` —
-a list of blocks, not one, which is why the dispatcher extends rather than
-appends.
+**How you use it.** `read_list(lines, start)` returns `(blocks, next_index)`,
+where `blocks` holds the one `list` block; the dispatcher extends by it.
 
 **Depends on.** `patterns`, `scan` and `leaf.read_code`. ⛔ Not on
 `document`: a list's fenced code is read directly rather than by recursing, so
@@ -26,6 +25,14 @@ same rule applied again, and an unnested list is a plain string.
 paragraph **after** its nested list and then opens a second one. A single
 text-and-list pair would have to refuse that file, or fold the paragraph ahead
 of the list it follows.
+
+## ⛔ An item's code stays in the item
+
+⚠️ **Closing the list around a fence detaches the sentence after it**: a step,
+its snippet and the line explaining the snippet are one item, and a reader that
+emitted the fence after the list turned that line into a paragraph of nothing.
+⭐ So a fence indented under an item is a `code` part of it (spec §6,
+`archive.blocks.ITEM_BLOCKS`), and text after it is the next part.
 
 ## ⛔ An ordered list keeps the number it starts at
 
@@ -50,10 +57,8 @@ def read_list(lines: list[str], start: int):
     following line that is not an item of the same kind, whether or not a blank
     line came first, leaving that blank line for the dispatcher to skip.
     """
-    block, attached, index = _read(lines, start, None)
-    # ⭐ The code follows the WHOLE list, a nested item's code included: a
-    # reader looking at the rendered page sees the list then the snippet.
-    return [block, *attached], index
+    block, index = _read(lines, start, None)
+    return [block], index
 
 
 def marker_of(line: str) -> tuple[bool, str] | None:
@@ -74,7 +79,7 @@ def marker_of(line: str) -> tuple[bool, str] | None:
 
 
 def _read(lines: list[str], start: int, floor: int | None):
-    """Return `(list block, attached code, next_index)` for one list at `start`.
+    """Return `(list block, next_index)` for one list at `start`.
 
     `floor` is the indent of the item this list is nested under, or None at the
     top level: a marker at or left of it belongs to an ancestor and ends this
@@ -87,7 +92,6 @@ def _read(lines: list[str], start: int, floor: int | None):
     # the list's own indent, not any marker at all.
     base = scan.indent_of(lines[start])
     items: list = []
-    attached: list[dict] = []
     index = start
     total = len(lines)
     # ⛔ Whether the current item still has a paragraph OPEN. A lazy
@@ -109,9 +113,8 @@ def _read(lines: list[str], start: int, floor: int | None):
             open_para = True
             continue
         if found is not None and items:
-            nested, carried, index = _read(lines, index, base)
+            nested, index = _read(lines, index, base)
             _nest(items, nested)
-            attached.extend(carried)
             open_para = False
             continue
         # ⛔ A fence on the line STRAIGHT AFTER an item, with no blank line
@@ -122,7 +125,7 @@ def _read(lines: list[str], start: int, floor: int | None):
         # otherwise be asked about a line that opens a block.
         if items and patterns.INDENTED_FENCE.match(line):
             block, index = read_code(lines, index, "", indent=depth)
-            attached.append(block)
+            _nest(items, block)
             open_para = False
             continue
         # ⛔ CommonMark's LAZY CONTINUATION: a non-blank line straight after an
@@ -156,7 +159,8 @@ def _read(lines: list[str], start: int, floor: int | None):
             # without this it reads as paragraphs that also split the list.
             if patterns.INDENTED_FENCE.match(lines[probe]):
                 block, index = read_code(lines, probe, "", indent=reach)
-                attached.append(block)
+                _nest(items, block)
+                open_para = False
                 continue
             # ⛔ Anything else INDENTED under an item is a continuation
             # paragraph of it — unless this list is nested and the paragraph
@@ -172,11 +176,11 @@ def _read(lines: list[str], start: int, floor: int | None):
     block: dict = {"type": "list", "ordered": ordered, "items": items}
     if number is not None and int(number.group(1)) != 1:
         block["start"] = int(number.group(1))
-    return block, attached, index
+    return block, index
 
 
 def _nest(items: list, nested: dict) -> None:
-    """Append a nested list to the current item's parts, in reading order.
+    """Append a nested list or a code block to the current item's parts, in reading order.
 
     ⭐ An item with no text of its own (`- ` and then a nested list) keeps no
     empty text part: a part is something the author wrote.
@@ -189,7 +193,7 @@ def _nest(items: list, nested: dict) -> None:
 def _extend(items: list, text: str) -> None:
     """Continue the current item's text — its last text part, or a new one after a list.
 
-    ⛔ Text written AFTER a nested list is a new part after it, never folded
+    ⛔ Text written AFTER a nested list or a code block is a new part after it, never folded
     into the text before it: that would move the words ahead of the list they
     follow, which is the structure this reader exists to keep.
     """

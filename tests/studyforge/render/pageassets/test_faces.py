@@ -123,3 +123,18 @@ def test_a_name_that_is_not_a_face_is_refused():
         data("palette.css")
     with pytest.raises(AssetError):
         faces.licence_for_face("palette.css")
+
+
+def _mono_rules(css: str) -> list[str]:
+    """Every rule body in `css` that sets the mono face."""
+    return [body for body in re.findall(r"\{([^{}]*)\}", css) if "var(--font-mono)" in body]
+
+
+def test_every_rule_that_sets_code_in_the_mono_face_draws_no_ligature():
+    # ⛔ JetBrains Mono joins `!=` into a not-equal sign, which misleads in
+    # code. Every rule setting the face turns ligatures off, contextual ones included.
+    rules = _mono_rules(stylesheet())
+    assert len(rules) >= 4, rules
+    for body in rules:
+        assert "font-variant-ligatures: none" in body, body
+        assert '"calt" 0' in body, body

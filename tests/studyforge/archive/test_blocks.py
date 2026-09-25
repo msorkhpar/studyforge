@@ -26,6 +26,7 @@ from studyforge.archive.blocks import (
     BY_NAME,
     CONTAINER_TYPES,
     COUNT_KEYS,
+    ITEM_BLOCKS,
     LESSON_HEADING,
     STARTING_CODE_HEADING,
     STATEMENT_HEADING,
@@ -416,6 +417,20 @@ def test_an_item_with_a_nested_list_is_its_parts_in_reading_order():
     item = ["before", nested, "after"]
     assert item_parts(item) == ["before", nested, "after"]
     assert item_parts(item) is not item
+
+
+def test_an_item_may_hold_a_code_block_as_one_of_its_parts():
+    # ⛔ a step, its snippet and the sentence after it are one item.
+    snippet = {"type": "code", "lang": "java", "text": "int[] a;"}
+    assert ITEM_BLOCKS == ("code", "list")
+    assert item_parts(["Return:", snippet, "then read it."]) == [
+        "Return:",
+        snippet,
+        "then read it.",
+    ]
+    block = {"type": "list", "ordered": True, "items": [["Return:", snippet]]}
+    assert counts_of([block])["code"] == 0
+    assert list(walk([block])) == [block]
 
 
 def test_a_nested_list_is_not_a_block_in_reading_order():

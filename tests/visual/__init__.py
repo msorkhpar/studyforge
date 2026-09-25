@@ -179,4 +179,10 @@ ACCEPTANCE = {
     "hides every narration control on a page whose clips are absent, with a console "
     "free of errors and warnings over file:// and served, and plays them once "
     "restored with no rebuild": "test_narration_clips",
+    #: ⭐ The scale clause, a row of its own because its CORPUS is the subject: a
+    #: strip of sixty groups and a rail title longer than the rail are shapes no
+    #: committed fixture has, and the operator is read as a picture, which no row
+    #: above takes of code.
+    "fits the progress strip of a course of sixty groups and a rail title with no "
+    "break inside the column, and draws code's operators without ligatures": "test_scale",
 }

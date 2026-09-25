@@ -92,6 +92,15 @@ source. It needs `container_api: 3`, and the rule for when to use it is in
 judgement stops.** `title`, `titles` and `note` are the fields a person may
 have corrected by hand; they are round-tripped rather than rewritten.
 
+**Record a title as the source writes it, outline number and all.** The site
+lists and orders every unit itself, so a leading outline number such as
+`5.1.1.1 ` or `3.2.1. ` is left off every title and heading a reader is shown or
+hears, on every corpus. A number that is part of the words (`Java 21 features`,
+`ISO 8583 messages`) is kept. Do not strip it yourself: `origin.section` is
+matched against the heading exactly as the file writes it. A unit's `label` may
+be its outline number (`4.2.4`): it keeps the unit's identity and order and names
+its page file, and a listing shows the unit's place in its container instead.
+
 ---
 
 ## The unit document
@@ -182,6 +191,20 @@ list is a contract, not a convenience.**
 
 **`quote` and `disclosure` hold other blocks**, so anything that walks a
 document recurses on that property rather than naming those two by hand.
+
+**A list item is a string, or an array of its parts in reading order**: runs of
+text, nested `list` blocks, and `code` blocks. Keep a step's snippet inside its
+step, and the sentence after the snippet after it in the same item:
+
+```json
+{"type": "list", "ordered": true, "items": [
+  ["Return an array:", {"type": "code", "lang": "java", "text": "int[] pair();"}, "Then read both values."],
+  "Return an object."
+]}
+```
+
+A list whose numbering carries on after a code block written *between* items
+records the number it starts at as `start`.
 
 **`html` exists because real material contains raw markup**, and a reader that
 raised on anything it did not recognise would stop an ingest dead.

@@ -71,6 +71,7 @@ DECLARED: dict[str, Declaration] = {
                 "BLOCK_OPTIONAL",
                 "BLOCK_TYPES",
                 "CONTAINER_TYPES",
+                "ITEM_BLOCKS",
                 "KINDS",
                 "LESSON_HEADING",
                 "MEDIA_ENTRY_KEYS",

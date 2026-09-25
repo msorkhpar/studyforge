@@ -78,6 +78,60 @@ def test_a_hash_inside_a_fence_is_not_a_heading():
     assert headings("# One\n\n```python\n# not a heading\n```\n") == [Heading(1, "One")]
 
 
+#: ⛔ Measured on a real course, in miniature: an item's fence opener
+#: written four spaces in under `1. `, its body and closer three in. CommonMark
+#: reads the opener one space into the item, so the fence holds the `#` comment
+#: and the heading after the list is a heading. The counts are CommonMark's,
+#: taken by hand, and were checked against a CommonMark parser.
+ITEM_FENCE = """# Returning several values
+
+1. Return an array:
+    ```java
+   # not a heading
+   int[] pair() { return new int[]{1, 2}; }
+   ```
+
+2. Return an object:
+   ```java
+   # still not a heading
+   ```
+
+## Key points
+
+Done.
+"""
+
+
+def test_a_fence_opened_four_spaces_in_under_an_item_is_that_items_fence():
+    assert headings(ITEM_FENCE) == [
+        Heading(1, "Returning several values"),
+        Heading(2, "Key points"),
+    ]
+
+
+@pytest.mark.parametrize(
+    ("text", "count"),
+    [
+        # ⭐ The same fence at the top level is indented code: its `#` line is a heading.
+        ("    ```\n# a heading\n", 1),
+        # ⭐ A nested item's fence, measured from the nested item.
+        ("- a\n  - b\n      ```\n      # comment\n      ```\n# after\n", 1),
+        # ⛔ A line left of the item ends the item and its fence with it.
+        ("1. a\n   ```\n# heading\n", 1),
+        # ⭐ A blank line does not close the item the fence opens in.
+        ("1. a\n\n    ```\n    # comment\n    ```\n", 0),
+        # ⭐ A lazy line keeps the item open, so the next indented fence is still its own.
+        ("1. a\nlazy\n    ```\n    # comment\n    ```\n", 0),
+        # ⛔ A thematic break is not a list marker.
+        ("- - -\n    ```\n# heading\n", 1),
+        # ⭐ A tilde fence is closed only by tildes, measured from the item as well.
+        ("- a\n    ~~~\n  # comment\n  ```\n  ~~~\n# after\n", 1),
+    ],
+)
+def test_a_list_item_measures_its_fences_as_commonmark_does(text, count):
+    assert count_headings(text) == count
+
+
 def test_the_count_is_the_length_of_the_scan():
     assert count_headings(SHARED) == 9
 

@@ -147,7 +147,7 @@ before it, `check_untouched` after — which reports in the same shape.
 | `curriculum-disagrees` | `corpus.json` declares `curriculum.containers` and the tree says otherwise: the record is missing, its group labels are not the declared ones in the declared order, an ordinal is out of place, or a declared file-name prefix disagrees with where the record files a unit. Every disagreement is named in one finding. A file your repository ignores is not counted |
 | `ignore-declaration` | your repository's own declaration of what is generated output could not be read — it is not a git working tree, or git is absent — so everything beside the archive was scanned as material |
 | `nested-repository` | another repository's store — a `.git` directory or a submodule's `.git` file — sits beneath the corpus root and your repository does not declare it as output. Only the root's own `.git` and `.studyforge` are skipped; a nested `.studyforge` is scanned as material |
-| `short-read` | a source file was read, but not all of it |
+| `short-read` | a source file was read, but not all of it: its heading lines, counted outside fenced code as a CommonMark reader counts them, with a fence inside a list item measured from that item, outnumber or undercount the archive's headings |
 | `origin-missing` | a unit's declared `origin` file is not present |
 | `origin-section-missing` | an `origin` names a section its file does not carry |
 | `origin-section-ambiguous` | an `origin` names a section its file carries more than once |

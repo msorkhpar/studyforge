@@ -221,7 +221,12 @@ section[aria-label="Progress"] ol {
   list-style: none;
 }
 
-section[aria-label="Progress"] li { flex: var(--units, 1) 1 0; min-width: .9rem; }
+/* ⛔ The floor keeps a one-unit group visible, and gives way to an equal share
+   of the row when the segments outnumber the room for it: nothing overflows. */
+section[aria-label="Progress"] li {
+  flex: var(--units, 1) 1 0;
+  min-width: min(.9rem, calc(100% / var(--segments, 1) - 3px));
+}
 
 section[aria-label="Progress"] li > a {
   display: block;

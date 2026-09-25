@@ -65,8 +65,15 @@ a:hover { text-decoration-color: currentColor; }
 ul.items, ol.items { margin: 0 0 1.1rem; padding-left: 1.5rem; }
 ul.items li, ol.items li { margin: .35rem 0; padding-left: .2rem; }
 
+/* ⛔ CODE DRAWS NO LIGATURE. JetBrains Mono joins `!=` into one not-equal
+   sign and `->` into an arrow, which reads as a different operator in a
+   language where `!=` is two characters the reader must type. Every rule that
+   sets the mono face turns them off, and the editor's `editor.fontLigatures`
+   is off to match. */
 code {
   font-family: var(--font-mono);
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
   font-size: .84em;
   background: var(--code-bg);
   border-radius: var(--radius-tight);
@@ -150,6 +157,8 @@ figure.code figcaption .unhighlighted { flex: 0 0 auto; font-style: italic; }
 figure.code pre {
   margin: 0;
   font-family: var(--font-mono);
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
   padding: .7rem 1rem 1rem;
   overflow-x: auto;
   font-size: .82rem;

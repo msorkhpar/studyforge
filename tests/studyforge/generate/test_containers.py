@@ -7,6 +7,7 @@ pass writes exactly those.
 
 from __future__ import annotations
 
+import json
 import re
 
 import pytest
@@ -15,6 +16,7 @@ from studyforge.generate import container_pages, page_paths, read_corpus
 from tests.studyforge.generate.corpora import (
     BOTH,
     FIXTURES,
+    a_corpus,
     an_output,
     planned,
     with_a_unit_missing,
@@ -181,3 +183,24 @@ def test_a_directory_where_a_container_page_belongs_is_still_named_and_left_alon
     assert written.refused == first.pages
     assert written.pages == ()
     assert (out / first.pages[0]).is_dir()
+
+
+def test_a_container_page_lists_titles_and_places_without_the_sources_outline_numbers(tmp_path):
+    # ⛔ The map keeps `1.1` and `1.1.2` as recorded; the page shows the words and the place.
+    root = a_corpus(tmp_path, "depth2")
+    path = root / "archive" / "basics" / "01-getting-started" / "container.json"
+    document = json.loads(path.read_text(encoding="utf-8"))
+    document["titles"][-1] = "1.1 Getting Started"
+    document["units"][1]["title"] = "1.1.2 Fields and constructors"
+    document["units"][1]["label"] = "1.1.2"
+    path.write_text(json.dumps(document, indent=2), encoding="utf-8")
+    out = an_output(tmp_path)
+    written = container_pages(read_corpus(root), out)
+    page = next(at for at in written.pages if "getting" in str(at))
+    body = (out / page).read_text(encoding="utf-8")
+
+    assert "<h1>Getting Started</h1>" in body
+    # ⚠️ The page's FILE keeps the label: an href is an address, not reading.
+    shown = re.sub(r'href="[^"]*"', "", body)
+    assert "Fields and constructors" in shown and "1.1.2" not in shown and "1.1 " not in shown
+    assert re.search(r'data-kind="numbering">2</span> Fields and constructors', body)

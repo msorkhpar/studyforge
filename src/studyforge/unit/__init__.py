@@ -31,6 +31,7 @@ no-overlay path is never the one discovered late.
 | `content` | `content.json` — the authored overlay, and the only file a person edits |
 | `sections` | the section-key vocabulary: `shared`, `<variant>`, `practice-<variant>` |
 | `trust` | where a grader came from and what it may claim (R5) |
+| `outline` | the source's own outline number, left off every title and heading a reader is served |
 | `errors` | `ContentError`, the only exception any of it raises |
 
 ⛔ **`content_api` is minted here** (R21): the overlay lives at
@@ -64,6 +65,7 @@ from studyforge.unit.content import (
     parse,
 )
 from studyforge.unit.errors import ContentError
+from studyforge.unit.outline import listed_numbering, without_outline_number
 from studyforge.unit.sections import (
     KIND_OF,
     KINDS_WITH_A_LANG,
@@ -104,7 +106,9 @@ __all__ = [
     "check_test_record",
     "derived_section_key",
     "from_document",
+    "listed_numbering",
     "load",
     "parse",
     "section_key",
+    "without_outline_number",
 ]

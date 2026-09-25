@@ -133,7 +133,7 @@ from studyforge.render.page.document import compose
 from studyforge.render.page.errors import PageError
 from studyforge.render.page.narration import SILENT, Narration
 from studyforge.render.page.navigation import Crumb, Link, Links, between_units, breadcrumb
-from studyforge.render.page.rail import RailContainer, RailUnit
+from studyforge.render.page.rail import RailContainer, RailGroup, RailUnit
 from studyforge.render.page.rail import render as rail
 
 #: What a page is written as. ⛔ Stated once: a page written as anything else is
@@ -153,6 +153,7 @@ __all__ = [
     "PageError",
     "Placement",
     "RailContainer",
+    "RailGroup",
     "RailUnit",
     "between_units",
     "breadcrumb",
