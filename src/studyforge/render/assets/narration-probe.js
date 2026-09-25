@@ -30,10 +30,9 @@
 
   window.studyforge.probeClip = function (source, heard) {
     var probe = new Audio();
-    var settled = false;
+    /* ⛔ Answered once: both listeners go at the first answer, so a later
+       event from the same element can never call `heard`. */
     function settle(loaded) {
-      if (settled) { return; }
-      settled = true;
       probe.removeEventListener('loadedmetadata', found);
       probe.removeEventListener('error', lost);
       if (loaded) { heard(); }
