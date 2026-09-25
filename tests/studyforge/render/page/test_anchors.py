@@ -72,6 +72,38 @@ def test_the_outline_lists_sections_only_when_there_is_more_than_one():
     assert 1 not in levels
 
 
+def practice(key: str, title: str) -> dict:
+    """A practice section, laid out under the archive's three headings."""
+    return {
+        "key": key,
+        "kind": "practice",
+        "heading": title,
+        "blocks": [
+            {"type": "heading", "level": 2, "text": "Problem statement"},
+            {"type": "para", "text": "p"},
+            {"type": "heading", "level": 2, "text": "Lesson"},
+            {"type": "heading", "level": 2, "text": "Starting code"},
+            {"type": "code", "lang": "java", "text": "//"},
+        ],
+    }
+
+
+def test_a_practice_is_one_line_of_the_outline_its_title():
+    # ⭐ W496: seven practices gave the outline twenty-eight lines, twenty-one of
+    # them one of three words. A practice is found by its title.
+    practices = [practice("practice-java", "Reverse"), practice("practice-java-2", "Round")]
+    found = anchors.entries({"sections": [*TWO_SECTIONS["sections"], *practices]})
+    assert [(level, label) for level, label, _ in found] == [
+        (1, "Before you start"),
+        (1, "Your first class"),
+        (2, "A"),
+        (3, "B"),
+        (1, "Reverse"),
+        (1, "Round"),
+    ]
+    assert found[-1][2] == "#" + anchors.section_anchor("practice-java-2")
+
+
 def test_the_outline_stops_at_level_three():
     # ⚠️ Level 4 and below turn a rail that can be scanned in one glance into a
     # second document.

@@ -28,7 +28,7 @@ from collections.abc import Iterator
 from pathlib import Path
 
 from studyforge.address import parse_unit_key
-from studyforge.archive.document import render
+from studyforge.archive.document import build, render
 from studyforge.generate import read_corpus, write_site
 from studyforge.progress import practice_key
 from studyforge.serve.app import ServingServer
@@ -36,6 +36,7 @@ from studyforge.serve.discovery import discover
 from studyforge.serve.instance import instance_of
 from studyforge.serve.routes.content import CorpusContent
 from studyforge.unit import served
+from tests.studyforge.execute.runnable import RAW, fixture_copy
 from tests.studyforge.exercise.quiz.depth1 import fixture_root, practice_document, question
 
 #: The unit the quiz is attached to, as the content namespace keys it.
@@ -167,3 +168,63 @@ def served_instance(root: Path) -> Iterator[ServingServer]:
         server.shutdown()
         server.server_close()
         thread.join(timeout=5)
+
+
+# ⭐ W496: one unit carrying a code practice AND a quiz — the runnable fixture's
+# first unit, whose code practice runs on the host, with a quiz added after it.
+
+#: The unit the quiz joins, and where its document is written in the copy.
+MIXED_UNIT = "kata/unit-01"
+MIXED_DOCUMENT = RAW / "unit-01" / "practice-2.json"
+
+#: The quiz's one question, written from the unit's own page.
+MIXED_QUESTION = {
+    "id": "q-1",
+    "stem": "What does the page's grader say about the file as shipped?",
+    "options": [
+        {"id": "a", "text": "Its test passes", "correct": True, "says": "The lesson says so."},
+        {"id": "b", "text": "Its test fails", "correct": False, "says": "That is unit 2."},
+    ],
+    "origin": {"path": "kata/01-greeting.md", "section": "Lesson: A test that passes"},
+}
+
+
+def mixed_corpus(where: Path) -> Path:
+    """Copy the runnable fixture, give unit 1 a quiz after its code practice, build it."""
+    root = fixture_copy(where)
+    container = root / "archive" / "kata" / "container.json"
+    declared = json.loads(container.read_text(encoding="utf-8"))
+    declared["units"][0]["practices"] = 2
+    container.write_text(json.dumps(declared, indent=2) + "\n", encoding="utf-8")
+    code = json.loads((root / RAW / "unit-01" / "practice-1.json").read_text(encoding="utf-8"))
+    document = build(
+        source=code["source"],
+        address=code["address"],
+        variant=code["variant"],
+        unit=1,
+        kind="practice",
+        ordinal=2,
+        ingested=code["ingested"],
+        title="Check yourself: greeting",
+        blocks=[
+            {"type": "heading", "level": 2, "text": "Check yourself"},
+            {"type": "para", "text": "One question on what this page has just taught."},
+        ],
+        exercise={"kind": "quiz", "questions": [MIXED_QUESTION]},
+    )
+    (root / MIXED_DOCUMENT).write_text(render(document), encoding="utf-8")
+    write_site(root, root)
+    return root
+
+
+def practices_of(root: Path, unit: str) -> dict[str, str]:
+    """`{'code' | 'quiz': practice key}` for one unit, read off its generated document."""
+    document = served.parse(CorpusContent(read_corpus(root)).unit(unit) or "", "unit.json")
+    address, ordinal = parse_unit_key(unit, len(document["address"]))
+    return {
+        "quiz" if part["workspace"].get("kind") == "quiz" else "code": practice_key(
+            address, ordinal, part["key"]
+        )
+        for part in document["sections"]
+        if part.get("kind") == "practice"
+    }

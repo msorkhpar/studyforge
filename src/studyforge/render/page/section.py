@@ -11,8 +11,9 @@ narrated deck the archive filed against it, and the companion files it declares
     markup = section.render(document["sections"][0], placement)
 
 **Depends on.** `page.blocks` for the blocks, `page.assets` for where the deck's
-file sits, `page.anchors` for the wrapper's anchor, `render.templates` for
-the markup, and `page.errors`.
+file sits, `page.anchors` for the wrapper's anchor, `archive.blocks` for the
+word a practice's lesson heading says, `render.templates` for the markup, and
+`page.errors`.
 
 ## ⛔ The wrapper shows its heading only when the material carries none
 
@@ -50,6 +51,16 @@ position, so every anchor and every clip after it is addressed exactly as before
 ⭐ **Only the opening section.** A later section's first heading sits nowhere
 near the page's title and is that section's own name, which is what separates it
 from the section above it.
+
+## ⛔ A practice renders no empty heading
+
+⚠️ **An exercise authored with no lesson beside it still carries the layout's
+`## Lesson`**, and under it only its worked solution, a closed disclosure — so
+every such practice showed a heading over nothing. ⭐ `bare_lesson` names that
+heading — a practice's level-2 lesson heading with nothing but disclosures
+before the next level-2 heading — and it is withheld exactly as the title is:
+from the output, never from the walk. ⛔ A lesson heading over any lesson
+block renders as it always did, and no other section kind is asked.
 
 ## ⛔ The section's identity is `data-section`, and it is the key, not the title
 
@@ -92,6 +103,7 @@ open, which is the one thing R8 forbids outright.
 
 from __future__ import annotations
 
+from studyforge.archive.blocks import LESSON_HEADING
 from studyforge.corpus.placement import ATTACHMENTS_DIRNAME
 from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute
@@ -100,6 +112,10 @@ from studyforge.render.page.anchors import TITLE_POSITION, section_anchor
 from studyforge.render.page.assets import Placement, filename
 from studyforge.render.page.errors import PageError
 from studyforge.render.page.narration import SILENT, Narration
+
+#: The section kind a practice is rendered under. ⛔ The archive's word, the one
+#: `page.practice.PRACTICE` selects its panel on.
+PRACTICE = "practice"
 
 #: The unit media directory a section's own deck was placed in.
 DECK_KIND = "video"
@@ -137,6 +153,10 @@ def render(
     key = section.get("key")
     contents = list(section.get("blocks") or ())
     withheld = (TITLE_POSITION,) if heads_page else ()
+    if section.get("kind") == PRACTICE and (bare := bare_lesson(contents)) is not None:
+        # ⛔ A practice's lesson heading over nothing but its worked solution is
+        # an empty heading: withheld, never renumbered (`blocks.render_all`).
+        withheld = (*withheld, bare)
     body = blocks.render_all(
         contents, placement=placement, section=key, narration=narration, omit=withheld
     )
@@ -152,6 +172,39 @@ def render(
     deck = _deck(section.get("video"), placement)
     files = _attachments(section.get("attachments"), placement)
     return blocks.JOIN.join(part for part in (deck, wrapper, files) if part)
+
+
+def bare_lesson(blocks: list) -> int | None:
+    """Return the position of a practice's lesson heading that heads no lesson, or `None`.
+
+    ⭐ The heading is the archive's (`LESSON_HEADING`, or it followed by `: `
+    and a title) at level 2, and what it heads runs to the next level-2
+    heading. ⛔ It is bare when that run holds nothing but disclosures — the
+    worked solution is the exercise's, not a lesson — and absent otherwise.
+    """
+    for position, block in enumerate(blocks):
+        if not _is_h2(block) or not _says_lesson(block.get("text")):
+            continue
+        run = []
+        for held in blocks[position + 1 :]:
+            if _is_h2(held):
+                break
+            run.append(held)
+        bare = all(isinstance(one, dict) and one.get("type") == "disclosure" for one in run)
+        return position if bare else None
+    return None
+
+
+def _is_h2(block: object) -> bool:
+    """Answer whether a block is a level-2 heading."""
+    return isinstance(block, dict) and block.get("type") == "heading" and block.get("level") == 2
+
+
+def _says_lesson(text: object) -> bool:
+    """Answer whether a heading's text is the practice layout's lesson heading."""
+    return isinstance(text, str) and (
+        text == LESSON_HEADING or text.startswith(f"{LESSON_HEADING}: ")
+    )
 
 
 def _attachments(attachments: object, placement: Placement) -> str:

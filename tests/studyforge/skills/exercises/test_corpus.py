@@ -268,12 +268,12 @@ def test_a_unit_planned_under_the_withdrawn_band_is_refused_by_its_plan_api(tmp_
 @pytest.mark.parametrize(
     ("key", "declared", "says"),
     [
-        ("coverage_api", 2, "coverage_api 2"),
+        ("coverage_api", 3, "coverage_api 3"),
         ("coverage_api", True, "coverage_api as a bool"),
         ("coverage_api", None, "no coverage_api"),
         ("plan_api", 2.0, "plan_api"),
     ],
-    ids=["coverage-2", "coverage-true", "coverage-absent", "plan-float"],
+    ids=["coverage-3", "coverage-true", "coverage-absent", "plan-float"],
 )
 def test_a_report_whose_version_this_build_does_not_read_is_refused(tmp_path, key, declared, says):
     """⛔ Every version a committed report carries is read through `version.check`."""
@@ -293,6 +293,24 @@ def test_a_report_whose_version_this_build_does_not_read_is_refused(tmp_path, ke
     with pytest.raises(AuthoringError, match=says):
         author_corpus(tmp_path, source="demo", judge=judge, runner=runner, **arguments)
     assert snapshot(tmp_path) == before, "a refused pass wrote something"
+
+
+def test_a_report_written_before_a_page_could_name_a_quiz_is_still_kept(tmp_path):
+    """⭐ W496: `coverage_api` 1 is read as a page that named no quiz, so a unit
+    authored before a code page could carry one is kept, never authored again."""
+    material, graders, pages = write_corpus(tmp_path)
+    arguments = dict(material=material, graders=graders, pages=pages[1:2], judge=Judging())
+    author_corpus(tmp_path, source="demo", author=Scripted(CLEAN), runner=Running(), **arguments)
+    report = tmp_path / "exercises/kata/python/unit-02/coverage.json"
+    document = json.loads(report.read_text(encoding="utf-8"))
+    assert (document["coverage_api"], document["quiz"]) == (2, None)
+    del document["quiz"]
+    document["coverage_api"] = 1
+    report.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+    before = snapshot(tmp_path)
+    author = Scripted(CLEAN)
+    again = author_corpus(tmp_path, source="demo", author=author, runner=Running(), **arguments)
+    assert author.briefs == [] and again.written == () and snapshot(tmp_path) == before
 
 
 def test_each_brief_carries_the_aspects_its_planned_exercise_checks(corpus):

@@ -16,19 +16,24 @@ from __future__ import annotations
 
 import inspect
 import json
+from dataclasses import replace
 
 import pytest
 
 from studyforge.archive.document import build, render
+from studyforge.exercise import CODE, QUIZ
+from studyforge.exercise.bundle import BUNDLE_FILENAME
 from studyforge.skills.adapter import Layout
 from studyforge.skills.exercises import (
     ATTEMPTS,
+    QUIZ_DOCUMENT,
     AuthoringError,
     author_corpus,
     author_page,
     carried_practices,
     gate_code,
     gate_quiz,
+    quiz_of,
     require_after_carried,
     take,
 )
@@ -42,9 +47,11 @@ from tests.studyforge.skills.exercises.authoring import (
     gauge_keyed_twice,
     gauge_that_deletes_a_question,
     greeting,
+    greeting_and_its_quiz,
     greeting_that_drops_its_edge,
     greeting_whose_plant_handles_its_edge,
     greeting_with_a_vacuous_ask,
+    mixed,
     snapshot,
     write_corpus,
 )
@@ -242,3 +249,54 @@ def test_an_authored_ordinal_that_collides_or_leaves_a_gap_is_refused_by_name(
     with pytest.raises(AuthoringError, match=says):
         require_after_carried(carried, shipped, "p")
     assert require_after_carried(carried, (len(carried) + 1,), "p") is None
+
+
+# ⭐ W496: a unit may carry code practices AND a quiz. The quiz is one planned
+# exercise of the code page, named by `Page.quiz`, drafted after the code.
+
+
+def test_a_code_page_carries_its_quiz_after_its_code(tmp_path):
+    material, graders, pages = write_corpus(tmp_path)
+    page = mixed(pages[GREETING])
+    author, authored = _again(
+        tmp_path, material, graders, [page], {page.path: [greeting_and_its_quiz]}
+    )
+    assert authored.shortfalls == () and authored.bare == ()
+    # ⭐ Asked for code first and the quiz last, each by the brief's own kind.
+    assert [(brief.kind, brief.name) for brief in author.briefs] == [
+        (CODE, "greet"),
+        (QUIZ, "check"),
+    ]
+    (covered,) = authored.pages
+    code, asked = (tmp_path / bundle for bundle in covered.shipped)
+    assert (code / BUNDLE_FILENAME).is_file() and not (code / QUIZ_DOCUMENT).exists()
+    assert asked.name == "practice-2" and not (asked / BUNDLE_FILENAME).exists()
+    quiz = quiz_of(
+        json.loads((asked / QUIZ_DOCUMENT).read_text(encoding="utf-8")), covered.shipped[1]
+    )
+    assert quiz.exercise.is_quiz and quiz.places.ordinal == 2
+    # ⛔ The quiz's key lives in its bundle, never in a workspace a reader is handed.
+    workspace = tmp_path / "practice" / "kata" / "python" / "unit-01"
+    assert [one.name for one in sorted(workspace.iterdir())] == ["practice-1"]
+    (report,) = tmp_path.glob("exercises/**/coverage.json")
+    written = json.loads(report.read_text(encoding="utf-8"))
+    assert (written["kind"], written["quiz"]) == (CODE, "check")
+    # ⭐ R10: a re-run with nothing changed asks nobody and writes nothing.
+    after = snapshot(tmp_path)
+    again, rerun = _again(tmp_path, material, graders, [page], {page.path: [greeting_and_its_quiz]})
+    assert again.briefs == [] and rerun.written == () and snapshot(tmp_path) == after
+
+
+def test_a_quiz_no_aspect_names_or_a_quiz_on_a_quiz_page_is_refused(tmp_path):
+    material, graders, pages = write_corpus(tmp_path)
+    ledger = take(tmp_path, material, graders, "the ledger")
+    author = Scripted({})
+    unplanned = replace(pages[GREETING], quiz="check")
+    with pytest.raises(AuthoringError, match="names a quiz that no aspect"):
+        author_page(
+            unplanned, ledger, author, Judging(), Running(), source="d", where="p", carried=()
+        )
+    on_a_quiz = replace(pages[GAUGE], quiz="notes")
+    with pytest.raises(AuthoringError, match="only a 'code' page may"):
+        _again(tmp_path, material, graders, [on_a_quiz], {})
+    assert author.briefs == [], "a refused page was drafted"

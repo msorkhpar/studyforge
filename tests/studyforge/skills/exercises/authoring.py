@@ -385,6 +385,44 @@ def gauge_that_deletes_a_question(brief: Brief) -> QuizDraft:
     return QuizDraft(title="Field notes", questions=gauge_questions()[1:])
 
 
+#: ⭐ The idea on the greeting page a test cannot observe, so a quiz checks it:
+#: the aspect a code page's `quiz` names (W496).
+NAMED_ON_THE_PAGE = Aspect(
+    "defined-once",
+    "the function is defined once and called by name",
+    ("section:The function",),
+    exercise="check",
+)
+
+
+def greeting_quiz(brief: Brief) -> QuizDraft:
+    """The quiz a code page carries beside its code: one question from its own passage."""
+    return QuizDraft(
+        title="Check yourself: greeting",
+        questions=(
+            Question(
+                id="q-name",
+                stem="How does the page's greeting know who it greets?",
+                options=(
+                    _option("a", "It is handed the name", True, "The function takes `who`."),
+                    _option("b", "It reads a file", False, "The page's function reads nothing."),
+                ),
+                origin=Origin("lessons/greeting.md", "The function"),
+            ),
+        ),
+    )
+
+
+def greeting_and_its_quiz(brief: Brief) -> CodeDraft | QuizDraft:
+    """⭐ The author of a mixed page: code where the brief asks for code, else the quiz."""
+    return greeting(brief) if brief.kind == CODE else greeting_quiz(brief)
+
+
+def mixed(page: Page) -> Page:
+    """The greeting page with the aspect a quiz checks, and the quiz named."""
+    return replace(page, aspects=(*page.aspects, NAMED_ON_THE_PAGE), quiz="check")
+
+
 #: The whole corpus, authored cleanly on the first attempt.
 CLEAN = {
     "lessons/greeting.md": [greeting],

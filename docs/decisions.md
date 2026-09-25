@@ -805,6 +805,14 @@ What it reads, and the choices in it:
 
 **Serves.** `R1`
 
+### A practice is one line of the page's outline and shows no empty heading
+
+**Decision.** `render.page.anchors.entries` gives a practice section one outline line, its title, and none of its layout headings. `render.page.section.bare_lesson` finds a practice's lesson heading with nothing but disclosures under it, and `render.page.section` withholds it. The heading keeps its position, so every anchor and clip after it is addressed as before, and a lesson heading over lesson material still renders.
+
+**Why.** An authored exercise has no lesson, yet its layout carries `## Lesson` over only its worked solution, and a page of seven practices gave its outline twenty-eight lines, twenty-one of them one of three words.
+
+**Serves.** `R1`
+
 ### A read mark shows on the rail and is spoken to assistive technology
 
 **Decision.** In `render.page.rail`, each unit row carries the unit key as `data-unit`, never as an `id`, because the container listing already uses the key as an id. At read time, `progress-view.js` sets `data-marked` on the rows the store holds, and CSS ends those rows in a tick. Every keyed row in the rail and in both lists carries the words from `templates/read-state.html`. They are emitted `hidden`, shown on read rows, and kept visually hidden but in the accessibility tree by `chrome.css`.
@@ -1148,6 +1156,14 @@ What it reads, and the choices in it:
 **Decision.** A page's plan lists its aspects, the important ideas it teaches that a reader could be checked on, read from its prose and its code. Each aspect is checked by a named exercise or quiz question, or carries a written reason. One exercise may check several related aspects and is preferred over several small unrelated ones. Trivia such as dates is carried by a reason, a quiz asks few questions, and zero exercises is a valid plan for a page with nothing checkable. The count is neither a ceiling set by prose length nor a quota. `skills.exercises.aspects` refuses an aspect with no outcome or with two, and two aspects that state one idea; `skills.exercises.plan` turns aspects into the plan (`PLAN_API`); and `skills.exercises.corpus` refuses a report whose `coverage_api` or `plan_api` this build does not read, both through `studyforge.version.check`, so the unit is planned again. Spec §7 (part 4) states the rule.
 
 **Why.** A count set by prose length leaves most of a code-heavy page's examples unpractised, and an aspect nobody accounted for is how a thin plan hides; writing each aspect's outcome down makes the judgement reviewable.
+
+**Serves.** `R6`
+
+### A code page may carry one quiz beside its code exercises
+
+**Decision.** `skills.exercises.drafts.Page.quiz` names the one planned exercise on a `code` page that a quiz checks. `Brief.kind` says which kind of draft each brief asks for, `skills.exercises.loop` drafts the page's code exercises first and the quiz last so it takes the unit's last ordinal, and the unit's coverage report records the name under `quiz` (`coverage_api` 2, with a version-1 report read as naming none). Only a `code` page may name a quiz, and only a name its aspects give. The quiz is gated, committed and served like any quiz, so its key stays on the local study server.
+
+**Why.** A lesson page with code also teaches ideas no test can observe, and a unit that could carry only one kind of exercise left those ideas with a reason where a short quiz belongs.
 
 **Serves.** `R6`
 

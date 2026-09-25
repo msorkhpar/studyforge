@@ -104,6 +104,16 @@ nothing, because there is nothing to move; and only the section that OPENS the
 page is asked, because a later section's first heading is that section's own
 name.
 
+## ⛔ A practice is ONE line of the outline, its title
+
+⚠️ **A practice's layout is three headings** — the statement, the lesson and
+the starting code — and each is the same word on every practice. ⭐ Listed,
+a page with seven practices gave the outline twenty-eight lines, twenty-one of
+them one of three words. ⛔ So a practice section contributes its own entry,
+the practice's title, and none of its headings: they are still on the page and
+still anchored, and the outline is where a reader finds the practice, not its
+parts.
+
 ## The outline stops at level 3
 
 ⚠️ Level 4 and below are sub-points within a topic. Listing them turns a rail
@@ -119,6 +129,10 @@ from studyforge.render import templates
 from studyforge.render.markup import anchor, escape_attribute, inline
 from studyforge.render.page.errors import PageError
 from studyforge.unit import heading_anchor
+
+#: The section kind whose headings earn no line of their own (see above). ⛔ The
+#: archive's word, the one `page.practice.PRACTICE` selects its panel on.
+PRACTICE = "practice"
 
 #: Deepest heading level that earns a line in the outline.
 OUTLINE_MAX_LEVEL = 3
@@ -159,8 +173,9 @@ def entries(document: dict) -> tuple[tuple[int, str, str], ...]:
     A section contributes one level-1 entry — ⚠️ **only on a page that has more
     than one**, because a lone section's name is already the page's title and
     listing it says nothing — and one entry per heading shallow enough to earn a
-    line. ⭐ Every entry points at an anchor this page actually emitted, because
-    both come from the same walk.
+    line, ⛔ except a practice, which is its level-1 entry alone. ⭐ Every entry
+    points at an anchor this page actually emitted, because both come from the
+    same walk.
     """
     sections = list(document.get("sections") or ())
     out: list[tuple[int, str, str]] = []
@@ -169,6 +184,8 @@ def entries(document: dict) -> tuple[tuple[int, str, str], ...]:
         key = section.get("key")
         if len(sections) > 1:
             out.append((1, str(section.get("heading") or key or ""), anchor(section_anchor(key))))
+        if section.get("kind") == PRACTICE:
+            continue
         for position, block in enumerate(section.get("blocks") or ()):
             # ⛔ The block the page is HEADED by is not a line in the page's own
             # contents: a list whose first entry is the title above it says

@@ -20,11 +20,16 @@ import pytest
 from studyforge.progress import Progress
 from studyforge.serve.routes import quiz
 from tests.studyforge.serve.routes.quizzing import (
+    KEY_ATTRIBUTE,
     KEYED,
+    MIXED_QUESTION,
+    MIXED_UNIT,
     QUESTIONS,
     WRONG,
     grade_path,
+    mixed_corpus,
     practice_of,
+    practices_of,
     quiz_corpus,
     says,
     served_instance,
@@ -156,6 +161,29 @@ def test_a_practice_that_is_not_a_quiz_is_not_graded_here(tmp_path):
         status, _, body = fetch(server, f"/api/v1/quiz/{SOURCE}/{key(1)}/q-1=a", method="POST")
     assert status == 409
     assert quiz.NOT_A_QUIZ in json.loads(body)["error"]
+
+
+def test_a_unit_with_code_and_a_quiz_serves_both_and_its_page_holds_no_key(tmp_path):
+    # ⭐ W496: one unit, its code practice first and its quiz after it. The
+    # practice runs, and the quiz is answered through the server alone.
+    from tests.studyforge.serve.routes.running import SOURCE, post
+
+    root = mixed_corpus(tmp_path)
+    keys = practices_of(root, MIXED_UNIT)
+    (page,) = root.rglob("*unit-01-*.unit.html")
+    text = page.read_text(encoding="utf-8")
+    assert f'data-practice="{keys["code"]}"' in text, "the code practice's panel is missing"
+    assert f'data-practice-quiz="{keys["quiz"]}"' in text, "the quiz is missing"
+    # ⛔ The key stays on the server: no correctness, and no option's sentence.
+    assert not KEY_ATTRIBUTE.search(text) and '"correct"' not in text
+    assert not [o["says"] for o in MIXED_QUESTION["options"] if o["says"] in text]
+    with served_instance(root) as server:
+        ran = post(server, f"/api/v1/run/{SOURCE}/run/{keys['code']}")
+        right = fetch(server, grade_path(SOURCE, keys["quiz"], {"q-1": "a"}), method="POST")
+        wrong = fetch(server, grade_path(SOURCE, keys["quiz"], {"q-1": "b"}), method="POST")
+    assert (ran[0], ran[2].splitlines()) == (200, ["Hello, reader", "--- exit 0 ---"])
+    assert right[0] == 200 and json.loads(right[2])["complete"] is True
+    assert wrong[0] == 200 and json.loads(wrong[2])["complete"] is False
 
 
 def test_grading_records_nothing_and_writes_nothing(server, corpus):
