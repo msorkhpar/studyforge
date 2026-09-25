@@ -100,8 +100,9 @@ Q2_PROMPT = (
     "met. Pick an option only when the wording itself singles it out: it is longer "
     "or more specific than the others, it repeats words from the stem, the others "
     "carry absolute terms such as 'always' or 'never', the stem's grammar fits it "
-    "alone, or it restates the stem. Otherwise answer 'none'. Say which cue decided "
-    "it, or that none did."
+    "alone, or it restates the stem. A cue decides only when it clearly singles out "
+    "one option over every other; a weak cue, or one another option shares, decides "
+    "nothing. Otherwise answer 'none'. Say which cue decided it, or that none did."
 )
 
 #: How a cited passage names the question it was written from: `question:<id>`.

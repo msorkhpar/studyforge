@@ -711,7 +711,8 @@ def judge(brief, questions):
 **`Q2` looks for a giveaway, not for knowledge.** Its reader sees the stem and
 the options, never the page, and is asked `Q2_PROMPT` word for word: answer from
 the wording alone, with no knowledge of the subject, and say *none* unless the
-wording itself singles out an option. `page_free` takes what it answered
+wording itself clearly singles out one option (a weak cue, or one two options
+share, decides nothing). `page_free` takes what it answered
 (`picked` is an option's id, or `None` for *none*) and the cue it named, and
 decides `held`: *none* or a wrong option holds. A `Q2` judgement taken under
 another prompt, or without its reason, is refused. The cue is quoted in the
