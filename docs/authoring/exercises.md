@@ -355,7 +355,7 @@ every gate for its kind, and a record of that proof ships beside it.
   case's test catches the one mistake it names), `G4` (every test maps to one
   case) and `G5` (the material it cites is still what the source says).
 - **A quiz passes five different gates:** `Q1` (the page contains the answer),
-  `Q2` (you cannot guess the answer without the page), `Q3` (the page rules out
+  `Q2` (the question's wording does not give the answer away), `Q3` (the page rules out
   every wrong option), `Q4` (exactly one option is keyed, and every option says
   why) and `Q5` (every question cites a passage the source still has).
 
@@ -668,14 +668,24 @@ question, and one `Q3` per wrong option. Each is taken over
 judgement taken over its old wording:
 
 ```python
-from studyforge.exercise.gates.quiz import Q1, Q2, Q3, WHOLE_QUESTION, Judgement, question_digest
+from studyforge.exercise.gates.quiz import (
+    Q1,
+    Q2_PROMPT,
+    Q3,
+    WHOLE_QUESTION,
+    Judgement,
+    page_free,
+    question_digest,
+)
 
 
 def judge(brief, questions):
     taken = []
     for question in questions:
         over = question_digest(question)
-        asked = [(Q1, WHOLE_QUESTION), (Q2, WHOLE_QUESTION)]
+        free = ask_a_page_free_reader(Q2_PROMPT, question.stem, question.options)
+        taken.append(page_free(question, free.picked, free.because, free.taken_by))
+        asked = [(Q1, WHOLE_QUESTION)]
         asked += [(Q3, option.id) for option in question.options if not option.correct]
         for gate, option in asked:
             reading = ask_an_independent_pass(gate, brief.page, question, option)
@@ -694,9 +704,21 @@ def judge(brief, questions):
     return tuple(taken)
 ```
 
-`ask_an_independent_pass` is yours to write. **`held` is the verdict.** A pass
-that answered badly is recorded with `held=False`, and no sentence in `outcome`
-can change that. The worked corpus's `Judging` class holds every judgement, so
+`ask_an_independent_pass` and `ask_a_page_free_reader` are yours to write.
+**`held` is the verdict.** A pass that answered badly is recorded with
+`held=False`, and no sentence in `outcome` can change that.
+
+**`Q2` looks for a giveaway, not for knowledge.** Its reader sees the stem and
+the options, never the page, and is asked `Q2_PROMPT` word for word: answer from
+the wording alone, with no knowledge of the subject, and say *none* unless the
+wording itself singles out an option. `page_free` takes what it answered
+(`picked` is an option's id, or `None` for *none*) and the cue it named, and
+decides `held`: *none* or a wrong option holds. A `Q2` judgement taken under
+another prompt, or without its reason, is refused. The cue is quoted in the
+refusal, so the next attempt's brief says what gave the key away. A correct
+question on a well-known subject passes as long as its wording does not
+betray it: write options of like length and grammar, and do not repeat the
+stem in the key. The worked corpus's `Judging` class holds every judgement, so
 its tests exercise the pass rather than a model.
 
 ### A quiz beside a page's code
@@ -872,7 +894,7 @@ other entry nothing names.
 | gate | what must hold | what it proves |
 |---|---|---|
 | `Q1` | an independent pass given the page and the question picks the key | the page contains the answer |
-| `Q2` | the same pass, given the question but not the page, does not | the question tests this page, not general knowledge |
+| `Q2` | a reader given only the question's wording, and no knowledge of the subject, answers *none* or a wrong option | the key is not given away by the wording |
 | `Q3` | a passage of the page rules out every wrong option | no distractor is a trick |
 | `Q4` | exactly one option is keyed, the options are distinct, and every option has its sentence | the reader is told why, whatever they chose |
 | `Q5` | every question's passage still has the digest the ledger read | the question is built from the page |

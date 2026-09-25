@@ -1167,6 +1167,14 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`
 
+### Quiz gate Q2 refuses a giveaway, not a question a knowledgeable reader can answer
+
+**Decision.** `Q2`'s page-free reader is asked `exercise.gates.quiz.Q2_PROMPT`: answer from the question's stem and options alone, with no knowledge of the subject, and say *none* unless the wording itself singles out an option (an option longer or more specific than the rest, words repeated from the stem, absolute terms in the others, grammar only it fits, or an option restating the stem). `exercise.gates.quiz.page_free` turns the reader's pick and its cue into the judgement and decides `held`: the reading holds on *none* or a wrong option. `exercise.gates.quiz.judged` refuses a `Q2` judgement taken under any other prompt or without a `because`, quotes that reason in a refused verdict, which is what the next attempt's brief carries, and records `rule` (`Q2_RULE`) first in every `Q2` verdict. `Q1` and `Q3` are unchanged.
+
+**Why.** A reader allowed to use what it knows picked the key of every correct question about an important idea in a well-known subject, so no quiz could ship on such a course; and a retry briefed without the reader's reason could only resend the same draft.
+
+**Serves.** `R5`
+
 ### An authoring pass never drops a ledger row it did not read
 
 **Decision.** The corpus's one exercise ledger is merged, not rewritten: `skills.exercises.merge` keeps every committed row for a page the pass did not read while that page is still on disk, and reports what was kept, added, changed and dropped, where a dropped row is always one whose page is gone. `validate.ledger` refuses a committed ledger that stops accounting for a material page, meaning a fenced example or declared grader that is neither the basis of an exercise nor given a written reason; it re-scans the page on disk rather than trusting the ledger. A unit's page that no pass has been handed, and that no coverage report names, is pending rather than unaccounted: `validate` reports the pending pages by module as one unchecked claim (`ledger-pending`), and the first pass that reads a page ends it. A page a coverage report names stays a finding when the ledger no longer reads it.

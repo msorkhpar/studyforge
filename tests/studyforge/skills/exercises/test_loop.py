@@ -39,7 +39,9 @@ from studyforge.skills.exercises import (
 )
 from tests.studyforge.skills.exercises.authoring import (
     BLANK,
+    GIVEAWAY,
     GREETS,
+    GivingAway,
     Judging,
     Running,
     Scripted,
@@ -61,13 +63,13 @@ from tests.studyforge.skills.exercises.authoring import pages as fixture_pages
 GREETING, GAUGE = 0, 3
 
 
-def _pass(root, pages, script):
+def _pass(root, pages, script, judge=None):
     """Write the corpus under `root` and run one pass over `pages` with this script."""
     material, graders, _ = write_corpus(root)
-    return _again(root, material, graders, pages, script)
+    return _again(root, material, graders, pages, script, judge)
 
 
-def _again(root, material, graders, pages, script):
+def _again(root, material, graders, pages, script, judge=None):
     """Run one pass over a corpus already on disk."""
     author = Scripted(script)
     authored = author_corpus(
@@ -77,7 +79,7 @@ def _again(root, material, graders, pages, script):
         graders=graders,
         pages=pages,
         author=author,
-        judge=Judging(),
+        judge=Judging() if judge is None else judge,
         runner=Running(),
     )
     return author, authored
@@ -146,6 +148,33 @@ def test_a_quiz_defect_is_re_authored_and_a_deleted_question_is_refused(tmp_path
     deleted = {pages[GAUGE].path: [gauge_keyed_twice, gauge_that_deletes_a_question]}
     with pytest.raises(AuthoringError, match="drops 1 question"):
         _pass(tmp_path / "deleted", pages[GAUGE : GAUGE + 1], deleted)
+
+
+def test_a_retry_after_a_q2_giveaway_is_briefed_with_the_reader_s_reason(tmp_path):
+    # ⛔ A Q2 refusal is never answered by re-asking with the same brief: the
+    # retry carries the cue the page-free reader named.
+    pages = fixture_pages()
+    judge = GivingAway(times=1)
+    author, authored = _pass(
+        tmp_path, pages[GAUGE : GAUGE + 1], {pages[GAUGE].path: [gauge]}, judge
+    )
+    first, second = author.briefs
+    print("refused on the retry:", [(v.id, v.says) for v in second.refused])
+    assert judge.calls == 2 and authored.shortfalls == ()
+    assert first.refused == () and [verdict.id for verdict in second.refused] == ["Q2"]
+    assert GIVEAWAY in second.refused[0].says, "the retry was not told which cue gave it away"
+    assert first != second
+
+
+def test_a_quiz_every_reading_gives_away_is_reported_with_the_reason(tmp_path):
+    pages = fixture_pages()
+    script = {pages[GAUGE].path: [gauge]}
+    author, authored = _pass(tmp_path, pages[GAUGE : GAUGE + 1], script, GivingAway(ATTEMPTS))
+    assert len(author.briefs) == ATTEMPTS
+    assert all(GIVEAWAY in brief.refused[0].says for brief in author.briefs[1:])
+    ((_, missed),) = authored.shortfalls
+    print(missed.gate, missed.says)
+    assert missed.gate == "Q2" and GIVEAWAY in missed.says
 
 
 def test_a_page_whose_gates_have_nothing_to_run_them_is_refused(tmp_path):

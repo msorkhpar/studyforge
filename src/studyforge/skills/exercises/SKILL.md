@@ -134,7 +134,12 @@ test-file pattern.
   shipped accounts for.
 - **`judge(brief, questions)`** returns the `Q1`–`Q3` judgements for a quiz.
   One `Q1` and one `Q2` per question, one `Q3` per wrong option, each taken
-  over `question_digest(question)`.
+  over `question_digest(question)`. ⭐ **`Q2` looks for a giveaway**: its
+  reader gets the stem and options, never the page, and is asked `Q2_PROMPT`
+  word for word, to answer from the wording alone and say *none* unless it
+  singles out an option. Build that judgement with `page_free(question,
+  picked, because, taken_by)`, which decides `held`. ⛔ A `Q2` judgement under
+  another prompt or with no `because` is refused.
 - **`runner(root, command)`** runs one test command from `root` in the pinned
   runner image and returns a `Ran`: its exit code and its output. The gate
   suite stages every run in a fresh directory, so nothing a run leaves behind
@@ -192,7 +197,9 @@ authored.bare  # every page left with nothing shipped (R6)
 
 ⭐ **The exercise is re-authored within `ATTEMPTS`, a fixed budget no caller
 can widen.** The brief for the retry carries every refusing verdict and the
-last run's output.
+last run's output. ⭐ A refused `Q2` quotes the cue its reader named (the
+longest option, a word repeated from the stem), so re-author the wording it
+names rather than re-sending the draft.
 
 ⛔ **Never by loosening a gate, dropping a case or deleting a question.** No
 gate takes an option. A retry that drops a case id or a question id the

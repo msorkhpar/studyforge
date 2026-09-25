@@ -37,11 +37,12 @@ import dataclasses
 from studyforge.exercise import Exercise, of, origin_in
 from studyforge.exercise.gates import digest_of_bytes
 from studyforge.exercise.gates.quiz import (
+    PICKED_NONE,
     Q1,
-    Q2,
     Q3,
     WHOLE_QUESTION,
     Judgement,
+    page_free,
     question_digest,
 )
 from studyforge.exercise.quiz import Option, Question
@@ -208,6 +209,10 @@ def ledger(plant: str = NONE) -> dict[str, str]:
     return {PAGE_PATH: digest_of_bytes(page(plant))}
 
 
+#: What the page-free reader says of a question whose wording decides nothing.
+NO_CUE = "no cue in the wording singles out an option"
+
+
 def judgements(questions: tuple[Question, ...]) -> tuple[Judgement, ...]:
     """Every `Q1`–`Q3` judgement this quiz owes, each taken over the question in hand.
 
@@ -231,15 +236,11 @@ def judgements(questions: tuple[Question, ...]) -> tuple[Judgement, ...]:
             )
         )
         taken.append(
-            Judgement(
-                gate=Q2,
-                question=question.id,
-                option=WHOLE_QUESTION,
-                prompt="given this question and its options but NOT the page, which is keyed?",
-                taken_by="the same pass, with the page withheld",
-                outcome="did not pick the keyed option",
-                held=True,
-                over=over,
+            page_free(
+                question,
+                PICKED_NONE,
+                NO_CUE,
+                "an independent reader, given the question's text alone",
             )
         )
         taken += [
