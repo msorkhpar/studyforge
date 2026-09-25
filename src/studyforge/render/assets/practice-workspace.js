@@ -21,10 +21,12 @@
    second. This file never touches a frame.
 
    ⛔ **The status is the reader's own record, never the page's.** A card's
-   status words are markup, hidden; they are shown only where the SERVED client
-   answers what the reader's progress record holds (`studyforge.run.practices`),
-   and read again when a run in the workspace settles. ⭐ Over `file://` there is
-   no record to ask, and a card says nothing rather than something wrong.
+   status words are markup, hidden. A code card's are shown only where the
+   SERVED client answers what the reader's progress record holds
+   (`studyforge.run.practices`); a quiz card's from the reader's browser store
+   (`studyforge.progress`), where the quiz page records a pass — served or over
+   `file://`. Both are read again when a run or a quiz settles. ⭐ Where there
+   is no record to ask, a card says nothing rather than something wrong.
 
    ⛔ **Close returns the reader to where they were**: the scroll position read
    when the workspace opened is put back `instant` — `reset.css` makes every
@@ -59,6 +61,27 @@
   /* The mark an open section and panel carry, and the one the document carries
      while the workspace is up. ⛔ Also read by `practice-editor.js`. */
   var OPEN = 'data-workspace-open';
+
+  /* ⭐ A quiz opens in ONE column: its intro above its questions, its check
+     and explanations below — there is no editor to set beside it. The mark on
+     the document chooses the column geometry, and `INTRO` carries the intro's
+     height so the questions start under it (`practice-workspace.css`). */
+  var KIND = 'data-practice-kind';
+  var QUIZ_OPEN = 'data-workspace-quiz';
+  var INTRO = '--workspace-intro';
+
+  function isQuiz(one) { return one.card.getAttribute(KIND) === 'quiz'; }
+
+  function column(one) {
+    var root = document.documentElement;
+    if (!one || !isQuiz(one)) {
+      root.removeAttribute(QUIZ_OPEN);
+      root.style.removeProperty(INTRO);
+      return;
+    }
+    root.setAttribute(QUIZ_OPEN, '');
+    root.style.setProperty(INTRO, Math.ceil(one.section.getBoundingClientRect().height) + 'px');
+  }
   var LIVE = 'data-practices-live';
 
   /* What the workspace says to the editor, and what a run says back. */
@@ -158,6 +181,7 @@
     var one = practices[current];
     say(CLOSED, one);
     each(one, false);
+    column(null);
     wake();
   }
 
@@ -173,6 +197,7 @@
     act('next').hidden = index === practices.length - 1;
     shell.hidden = false;
     document.documentElement.setAttribute(OPEN, '');
+    column(one);
     still(one);
     one.section.scrollTop = 0;
     part('title').focus({ preventScroll: true });
@@ -213,6 +238,7 @@
   document.addEventListener('keydown', function (event) {
     if (current >= 0 && event.key === ESCAPE) { close(); }
   });
+  window.addEventListener('resize', function () { if (current >= 0) { column(practices[current]); } });
 
   /* ⭐ A practice named in the address opens at once, and Close then returns
      the reader to where the entry's state says they were — or, with none, to
@@ -226,10 +252,13 @@
       ? kept : Math.max(0, box.top + (window.pageYOffset || 0) - window.innerHeight / 3);
   });
 
-  /* --- the status: the reader's own record, asked of the served origin ---- */
+  /* --- the status: the reader's own record ------------------------------ */
+  /* ⭐ A code practice's pass is the served origin's (a run established it);
+     a quiz's is the reader's browser store, where the quiz page kept it (the
+     user's ruling: nothing about a quiz is a server's). */
   var run = window.studyforge && window.studyforge.run;
   var asks = run && run.available() && run.practices;
-
+  var store = window.studyforge && window.studyforge.progress;
   function paint(card, passed) {
     var slot = card.querySelector(STATE);
     if (!slot) { return; }
@@ -241,11 +270,19 @@
     slot.hidden = false;
   }
 
-  /* ⭐ One question per page: the cards share a unit, so its record is read once
-     and each card is painted from the answer. ⛔ An answer that is not one — no
-     record, no such unit, a server that could not say — paints nothing. */
-  function refresh() {
-    if (!asks) { return; }
+  /* ⭐ One question per page for the code cards: they share a unit, so its
+     record is read once. ⛔ An answer that is not one — no record, no such
+     unit, a server that could not say — paints nothing. A quiz card is read
+     from the store, served or not; with no store it says nothing. ⛔ A quiz's
+     own settling asks the server nothing: answering a quiz makes no request. */
+  function refresh(event) {
+    practices.forEach(function (one) {
+      if (isQuiz(one) && store && store.supported()) {
+        paint(one.card, store.passedQuiz(one.card.getAttribute(CARD_KEY) || ''));
+      }
+    });
+    var quizzed = !!event && event.target.hasAttribute('data-practice-quiz');
+    if (!asks || quizzed) { return; }
     var first = practices[0].card;
     var key = first.getAttribute(CARD_KEY) || '';
     var unit = key.slice(0, key.lastIndexOf('/'));
@@ -253,7 +290,7 @@
       if (!held) { return; }
       practices.forEach(function (one) {
         var own = one.card.getAttribute(CARD_KEY) || '';
-        if (one.card.querySelector(STATE)) {
+        if (!isQuiz(one) && one.card.querySelector(STATE)) {
           paint(one.card, held[own.slice(own.lastIndexOf('/') + 1)] === true);
         }
       });

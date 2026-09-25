@@ -51,14 +51,14 @@ that was satisfiable. Text too large to gate is refused, never served ungated.
 — the reader's own record is the first. It answers `404`, as does every refusal,
 so a prober never learns which guess was interesting.
 
-## ⛔ A file carrying a quiz's key or sentence is REFUSED
+## ⛔ A file carrying a quiz's key or sentence is REFUSED — unless it is a page
 
-⭐ **What the site serves never carries a quiz's key.** A corpus built into its own root (`build .
---out .`) puts the archive's
-`practice-M.json` and the bundle's `tests/quiz.json` under the served root, so
-`withheld` is asked of every text — and of every file of an unknown type, which
-is where an editor's backup or a `.yaml` copy lands — before anything else is
-answered, a `304` included, and a file it names answers the one `404`.
+⭐ **A quiz's key lives only in the page it grades** (the user's ruling of
+2026-09-25), so a page is served whole. ⛔ **Every other file carrying one is
+refused**: a corpus built into its own root puts the archive's `practice-M.json`
+and the bundle's `tests/quiz.json` under the served root, so `withheld` is asked
+of every other text — and every file of an unknown type, where an editor's
+backup lands — before anything is answered, a `304` included: `404`.
 ⭐ **The default withholds nothing**: what a file may not carry is decided by the
 quizzes an instance SERVES, and `serve.app` hands both mounts that predicate.
 ⚠️ Media is not read, and an unknown-type file over `GATE_MAX_BYTES` is served
@@ -181,6 +181,9 @@ Private = Callable[[Path], bool]
 
 #: Whether a file's bytes carry what a site never serves.
 Withheld = Callable[[bytes], bool]
+
+#: ⭐ The one type `withheld` never reads: a page, where a quiz's key lives.
+PAGE_TYPE = CONTENT_TYPES[".html"]
 
 #: ⛔ **The reader's progress record, which is never content**. It sits
 #: at `<generated root>/progress/` beside the pages a `tree` profile writes, so the
@@ -340,7 +343,7 @@ def serve(
             body = target.read_bytes() if stat.st_size <= GATE_MAX_BYTES else None
         except OSError:
             return _not_found()
-        if body is not None and withheld(body):
+        if body is not None and ctype != PAGE_TYPE and withheld(body):
             return _not_found()
     added = client if client and ctype == CONTENT_TYPES[".html"] else None
     etag = client_etag(weak_etag(stat)) if added else weak_etag(stat)

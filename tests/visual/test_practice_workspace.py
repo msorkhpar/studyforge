@@ -159,8 +159,12 @@ def _act(page: OpenPage, name: str) -> None:
     page.press("Enter")
 
 
-def _laid_out(reading: dict, shape: str) -> None:
-    """The statement and the panel, side by side at a desktop and stacked on a phone."""
+def _laid_out(reading: dict, shape: str, *, quiz: bool = False) -> None:
+    """The statement and the panel, side by side at a desktop and stacked on a phone.
+
+    ⭐ A quiz is one column at every width: its intro above its questions, the
+    same width, so no pane is left holding one line.
+    """
     statement, panel, bar = reading["statementBox"], reading["panelBox"], reading["bar"]
     width, height = reading["viewport"]["w"], reading["viewport"]["h"]
     assert statement and panel and bar, f"the workspace shows no statement or no panel: {reading}"
@@ -168,7 +172,11 @@ def _laid_out(reading: dict, shape: str) -> None:
         f"the statement is not under the bar: {reading}"
     )
     assert panel["bottom"] <= height + 1 and statement["bottom"] <= height + 1
-    if shape == "desktop":
+    if quiz:
+        assert statement["bottom"] <= panel["top"] + 1, f"not one column: {reading}"
+        assert abs(statement["left"] - panel["left"]) <= 1, f"not one column: {reading}"
+        assert abs(statement["width"] - panel["width"]) <= 1, f"not one column: {reading}"
+    elif shape == "desktop":
         assert statement["right"] <= panel["left"] + 1, f"not side by side: {reading}"
         assert abs(panel["top"] - bar["bottom"]) <= 1 and panel["right"] >= width - 1
     else:
@@ -233,7 +241,7 @@ def test_next_opens_the_next_practice_and_the_quiz_is_one_of_them(
     quiz = _until(open_page, lambda r: r["statement"] == "s-practice-quiz", "opened the quiz")
     assert quiz["frames"] == 0, "the quiz kept an editor frame it has no use for"
     assert quiz["previous"] and not quiz["next"]
-    _laid_out(quiz, shape)
+    _laid_out(quiz, shape, quiz=True)
 
 
 @pytest.mark.parametrize("shape", WIDTHS)

@@ -138,8 +138,8 @@ def test_a_unit_document_this_build_does_not_recognise_is_422(broken):
 
 
 def test_a_quiz_is_served_without_its_key_and_the_source_still_holds_it(tmp_path):
-    """⛔ The route withholds; `CorpusContent.unit`, which the quiz route grades
-    from, does not — the redaction is on the way out and nowhere else."""
+    """⛔ The route withholds; `CorpusContent.unit`, which a run reads its
+    command from, does not — the redaction is on the way out and nowhere else."""
     content = CorpusContent(read_corpus(quiz_corpus(tmp_path)))
     served = json.dumps(answer(get(content, f"units/{QUIZ_UNIT}"))["document"])
     held = content.unit(QUIZ_UNIT) or ""

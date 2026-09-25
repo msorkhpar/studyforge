@@ -31,13 +31,13 @@ guarantee a `304` makes.
 
 ## ⛔ A quiz's key and sentences are WITHHELD
 
-⭐ **A quiz's correct answer lives on the SERVER side**, so a unit document is answered with every
-quiz option cut down to its id
-and its words (`serve.withheld.redacted`). ⛔ The quiz route reads the key from
-`ContentSource.unit`, which is NOT redacted — the redaction is this route's, on
-the way out. ⭐ `CorpusContent.withheld` names every sentence and question id its quizzes carry,
-both as served and as the archive wrote them, which is what the static mount
-refuses a file for.
+⭐ **A quiz's key lives only in the page it grades** (the user's ruling,
+2026-09-25), so a unit document is answered with every quiz option cut down to
+its id and its words (`serve.withheld.redacted`). ⛔ `ContentSource.unit` is NOT
+redacted — the build renders the page's key from it — and the redaction is this
+route's, on the way out. ⭐ `CorpusContent.withheld` names every sentence and
+question id its quizzes carry, both as served and as the archive wrote them,
+which is what the static mount refuses a file other than a page for.
 
 ## ⛔ Every document is gated on the way out
 
@@ -134,9 +134,9 @@ class CorpusContent:
     def withheld(self) -> Marks:
         """Return every option sentence and question id of every quiz in this corpus's units.
 
-        ⭐ **Read through `unit` — the same reader the quiz route grades from** — so
-        what is withheld is what is graded. ⚠️ Cached against the size and mtime of
-        every file in every unit's directory, re-read when one moves: a quiz
+        ⭐ **Read through `unit` — the same reader the build renders a quiz's key
+        from** — so what is withheld is what a page grades with. ⚠️ Cached against
+        the size and mtime of every file in every unit's directory, re-read when one moves: a quiz
         edited while served is withheld from its next request on.
         """
         stamp = tuple(_stamp(source.directory) for source in self._units.values())

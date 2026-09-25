@@ -231,7 +231,7 @@ What it reads, and the choices in it:
 
 ### A practice is named by its progress key verbatim
 
-**Decision.** `studyforge.progress.practice_key` is the only composer of a practice key. The page (`render.page.practice`) writes it into the markup, the page scripts and run client pass the string unchanged, and the run and quiz routes in `studyforge.serve.routes` parse it with `progress.parse_practice_key` at the corpus's depth and record the outcome under what they parsed.
+**Decision.** `studyforge.progress.practice_key` is the only composer of a practice key. The page (`render.page.practice`) writes it into the markup, the page scripts and run client pass the string unchanged, and the run route in `studyforge.serve.routes` parses it with `progress.parse_practice_key` at the corpus's depth and record the outcome under what they parsed.
 
 **Why.** A key composed a second time could drift from the one the state namespace reads back.
 
@@ -1159,13 +1159,13 @@ What it reads, and the choices in it:
 
 **Serves.** `R4`
 
-### A quiz's key never leaves the local study server
+### A quiz's key lives in the page it grades, and the browser grades it
 
-**Decision.** No built page, no page asset and no other response of the serving process carries which option of a quiz is correct or any option's sentence. The key stays in the practice document on disk. The page (`render/assets/practice-quiz.js`) sends the reader's choices to `serve.routes.quiz`, which grades them with the framework's one rule, `exercise.quiz.grading.grade`, and returns only the sentence for the option the reader chose. `serve.withheld` redacts quiz options from the content namespace's unit documents and makes the static mount refuse a file that carries a served quiz's key. Over `file://` a quiz shows its questions and says it needs the local study server to check them. Spec §7 (part 7) states the rule.
+**Decision.** The user reversed the earlier ruling that kept a quiz's key on the local study server (2026-09-25). `render.page.quiz` writes each quiz's key, the right option per question and every option's sentence, into one JSON data script inside that quiz's section. The shared script `render/assets/practice-quiz.js` holds no key and grades from that block in the browser, over `file://` and served alike, with no request. It shows the chosen option's sentence and completes the quiz only when every question is right. A completed quiz is kept as passed in the reader's browser store (`render/assets/study-progress.js`, beside the read marks), and its card reads its status from there (`render/assets/practice-workspace.js`). The serve quiz route and the run client's quiz call are removed. `exercise.quiz.grading` stays as the rule's reference, and the browser tests read the page's grading against it. `serve.withheld` still redacts quiz options from the content namespace's unit documents, and the static mount and a run's output still refuse the key everywhere except a page.
 
-**Why.** A key that the page or a published URL delivers can simply be read, so the quiz would check nothing.
+**Why.** The user ruled that nothing about a quiz is a server function. The key still lives only in the one page that grades it, so no other page, shared asset or served file hands it out.
 
-**Serves.** `R5`
+**Serves.** `R5, R8`
 
 ### A page's exercises are planned by the important ideas it teaches
 
@@ -1177,7 +1177,7 @@ What it reads, and the choices in it:
 
 ### A code page may carry one quiz beside its code exercises
 
-**Decision.** `skills.exercises.drafts.Page.quiz` names the one planned exercise on a `code` page that a quiz checks. `Brief.kind` says which kind of draft each brief asks for, `skills.exercises.loop` drafts the page's code exercises first and the quiz last so it takes the unit's last ordinal, and the unit's coverage report records the name under `quiz` (`coverage_api` 2, with a version-1 report read as naming none). Only a `code` page may name a quiz, and only a name its aspects give. The quiz is gated, committed and served like any quiz, so its key stays on the local study server.
+**Decision.** `skills.exercises.drafts.Page.quiz` names the one planned exercise on a `code` page that a quiz checks. `Brief.kind` says which kind of draft each brief asks for, `skills.exercises.loop` drafts the page's code exercises first and the quiz last so it takes the unit's last ordinal, and the unit's coverage report records the name under `quiz` (`coverage_api` 2, with a version-1 report read as naming none). Only a `code` page may name a quiz, and only a name its aspects give. The quiz is gated, committed and served like any quiz, so its key lives only in its own page's key block.
 
 **Why.** A lesson page with code also teaches ideas no test can observe, and a unit that could carry only one kind of exercise left those ideas with a reason where a short quiz belongs.
 

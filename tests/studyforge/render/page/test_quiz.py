@@ -13,14 +13,13 @@ import re
 
 from studyforge.exercise import from_document
 from studyforge.render import templates
-from studyforge.render.markup import escape_attribute
+from studyforge.render.markup import escape_attribute, inline
 from studyforge.render.page import practice, quiz
 from studyforge.render.pageassets import ASSET_DIR
 from tests.studyforge.render.page.pages import sample_placement
 from tests.studyforge.render.page.test_practice import QUIZ, SHIPPED, document, panel, section
 from tests.studyforge.serve.routes.quizzing import (
     KEY_ATTRIBUTE,
-    PRACTICE_DOCUMENT,
     built_texts,
     page_of,
     quiz_corpus,
@@ -61,65 +60,85 @@ def test_every_question_carries_its_stem_and_every_option_its_words():
             assert f'data-practice-option="{option["id"]}"' in said
 
 
-def test_no_option_carries_the_key_or_its_sentence():
-    # ⛔ The correct answer resides on the SERVER. ⭐ Every sentence and every spelling of the key
-    # is read for,
-    # escaped and raw, because either one on the page tells a reader which
-    # option is right before they choose. ⚠️ The positive control — the same
-    # needles FOUND in the record this page was rendered from — is what makes
-    # an absence here a reading rather than a typo in the needle.
+def key_block(said: str) -> dict:
+    """The quiz's one key block, read back as the JSON it is."""
+    found = re.findall(
+        r'<script type="application/json" data-practice-part="key">(.*?)</script>', said, re.S
+    )
+    assert len(found) == 1, f"{len(found)} key blocks in one quiz"
+    return json.loads(found[0])
+
+
+def test_the_quiz_carries_its_own_key_in_one_data_block_and_no_option_carries_it():
+    # ⭐ The user's ruling: the key lives in the page it grades, in a script
+    # local to it. ⛔ Only in that block: an option carries its id and words,
+    # and neither its correctness nor its sentence — or a stylesheet or a screen
+    # reader could say it before the reader chose.
     said = markup()
-    record = json.dumps(QUIZ)
+    assert key_block(said) == {
+        question["id"]: {
+            "key": next(o["id"] for o in question["options"] if o["correct"]),
+            "says": {o["id"]: inline(o["says"]) for o in question["options"]},
+        }
+        for question in QUIZ["questions"]
+    }
+    outside = re.sub(r"<script type=\"application/json\".*?</script>", "", said, flags=re.S)
     for question in QUIZ["questions"]:
         for option in question["options"]:
-            assert option["says"] in record
-            assert option["says"] not in said, option["says"]
-            assert escape_attribute(option["says"]) not in said, option["says"]
-    for spelling in ("correct", "data-practice-says"):
-        assert spelling not in said.replace("answered correctly", ""), spelling
+            assert option["says"] not in outside, option["says"]
+    assert "data-practice-correct" not in said and "data-practice-says" not in said
 
 
-def test_no_built_page_or_asset_carries_a_key_or_a_sentence(tmp_path):
-    # ⛔ The server-held key's first clause, read on the BUILT prose fixture — every page and
-    # every asset the build wrote, because a key that leaked into a script, a
-    # stylesheet or a JSON island is missed by a reading of one page's markup.
-    # ⭐ Positive control, in the same test: every needle IS in the practice
-    # document on disk, which is where the server reads it — so an absence below
-    # is a reading and not a needle nobody could find.
+def test_a_sentence_can_never_close_the_key_block():
+    # ⛔ The key block is JSON inside an HTML element: a sentence carrying
+    # `</script>` would end the element and open whatever followed. ⭐ Written
+    # as `\u` escapes, and read back as itself.
+    hostile = "It ends </script><script>alert(1)</script> & starts <b>"
+    record = json.loads(json.dumps(QUIZ))
+    record["questions"][0]["options"][0]["says"] = hostile
+    said = markup(record)
+    block = said[said.index('data-practice-part="key">') :]
+    block = block[: block.index("</script>")]
+    assert "<" not in block.split(">", 1)[1] and "&" not in block
+    first = record["questions"][0]
+    # ⭐ Read back, it is the sentence as the prose renderer makes it: escaped.
+    assert key_block(said)[first["id"]]["says"][first["options"][0]["id"]] == inline(hostile)
+    assert "<script>" not in inline(hostile)
+
+
+def test_the_key_of_one_quiz_is_in_its_own_page_and_no_other_file_the_build_wrote(tmp_path):
+    # ⛔ The register's ruling: the key lives ONLY in the page it grades —
+    # never in a shared asset, never in another page. Read on the BUILT prose
+    # fixture, every file the build wrote. ⭐ Positive control in the same test:
+    # every sentence IS in the quiz's own page, so an absence elsewhere is a
+    # reading and not a needle nobody could find.
     root = quiz_corpus(tmp_path)
     texts = built_texts(root)
     page = page_of(root).relative_to(root).as_posix()
     assert "data-practice-quiz" in texts[page], "the quiz is not on the built page at all"
-    record = (root / PRACTICE_DOCUMENT).read_text(encoding="utf-8")
-    assert '"correct": true' in record
     for sentence in sentences():
-        assert sentence in record, sentence
-        leaked = [
+        holders = sorted(
             path
             for path, text in texts.items()
-            if sentence in text or escape_attribute(sentence) in text
-        ]
-        assert leaked == [], f"{sentence!r} is in {leaked}"
-    # ⚠️ `"correct":` and never `"correct"`: the stylesheet's own
-    # `[data-practice-verdict="correct"]` is the SERVER's verdict drawn, not a key.
-    keyed = [
-        path for path, text in texts.items() if KEY_ATTRIBUTE.search(text) or JSON_KEY.search(text)
-    ]
-    assert keyed == [], f"a key is spelled in {keyed}"
+            if sentence in text
+            or escape_attribute(sentence) in text
+            or json.dumps(sentence)[1:-1] in text
+        )
+        assert holders == [page], f"{sentence!r} is in {holders}"
+    keyed = [path for path, text in texts.items() if KEY_ATTRIBUTE.search(text)]
+    assert keyed == [], f"a key is spelled as an attribute in {keyed}"
 
 
-def test_over_a_file_the_quiz_says_it_needs_the_study_server_and_offers_no_check():
-    # ⭐ The default for an unserved page: the mechanism Run and Submit use — the
-    # `offline` sentence ships showing and the controls ship `hidden`, and only
-    # a served client unhides them. ⛔ The wording is the panel's own, so a
-    # reader is told the same thing about both shapes.
+def test_with_no_script_the_quiz_says_so_and_offers_no_check():
+    # ⭐ A quiz is graded by the page's script, over `file://` and served alike.
+    # With no script, the `offline` sentence ships showing and the controls ship
+    # `hidden`; the script swaps them. ⛔ It names no server: none is needed.
     said = markup()
     assert '<p data-practice-part="controls" hidden>' in said
     offline = re.search(r'<p data-practice-part="offline">([^<]*)</p>', said)
-    assert offline is not None, "the quiz does not say what a file page cannot do"
-    panel_words = templates.template("practice-panel.html").template
-    for shared in ("need", "the local study server. This page was opened as a file"):
-        assert shared in offline.group(1) and shared in panel_words, shared
+    assert offline is not None, "the quiz does not say what it needs"
+    assert "script" in offline.group(1)
+    assert "server" not in offline.group(1)
 
 
 def test_a_quiz_shows_no_run_no_submit_no_editor_and_no_disabled_one_either():
@@ -215,51 +234,43 @@ def behaviour() -> str:
     return re.sub(r"/\*.*?\*/", "", SCRIPT.read_text(encoding="utf-8"), flags=re.DOTALL)
 
 
-def test_the_quiz_is_graded_by_the_served_client_and_never_by_the_page():
-    # ⛔ Spec §7, amended 2026-09-23: the page holds no key, so it
-    # cannot grade — it asks `window.studyforge.quiz`, which only a SERVING
-    # process adds to a page, and only where that client says an origin can
-    # answer. ⚠️ It names no API and fetches nothing itself: R8's floor reads a
-    # built page that names the API as a defect, and the client is the one file
-    # that may.
+def test_the_quiz_is_graded_in_the_page_from_its_own_key_with_no_request():
+    # ⭐ The user's ruling: nothing about a quiz is a server function. ⛔ So the
+    # script asks no client and no origin, and makes no request of any kind.
     body = behaviour()
-    assert "window.studyforge.quiz" in body
-    assert "client.available()" in body
-    assert "client.grade(" in body
-    for word in ("studyforge.run", "fetch(", "XMLHttpRequest", "/api", "-correct", "-says"):
+    assert "JSON.parse(block.textContent)" in body
+    assert "part(quiz, 'key')" in body
+    for word in ("studyforge.run", "studyforge.quiz", "fetch(", "XMLHttpRequest", "sendBeacon",
+                 "/api", "available()"):  # fmt: skip
         assert word not in body, word
 
 
-def test_the_quiz_writes_nothing_to_browser_storage():
-    # ⛔ A second, weaker record of *did this complete?* is the second answer
-    # `practice.js` refuses to keep for a run. ⚠️ Recording a quiz's completion
-    # is a decision about the reader's own state and belongs to the row that
-    # takes it, not to the panel.
+def test_a_passed_quiz_is_kept_in_the_readers_store_and_nothing_else_is():
+    # ⭐ Clause 3: a quiz card keeps *passed* across a reload, held in the
+    # browser — through the store's one writer, never by this file itself.
     body = behaviour()
+    assert (
+        "if (complete && store) { store.passQuiz(quiz.getAttribute('data-practice-quiz')); }"
+        in body
+    )
     for word in ("localStorage", "sessionStorage", "indexedDB", "document.cookie"):
         assert word not in body, word
 
 
-def test_completion_is_the_servers_word_and_the_page_never_re_derives_it():
-    # ⛔ `exercise.quiz.completes` is applied ONCE, in Python, by the route; the
-    # page shows `complete` and never adds verdicts up itself — a second
-    # spelling of the rule in a file that cannot import the first. ⚠️ The count
-    # is said in every other case, so a reader is never told only that they are
-    # not finished.
+def test_complete_is_every_question_answered_right_and_nothing_less():
+    # ⛔ The rule `exercise.quiz.completes` states: no pass mark, no partial
+    # credit. ⚠️ The count is said in every other case.
     body = behaviour()
-    assert "verdict.complete === true" in body
-    assert "words(status, COMPLETE)" in body
+    assert "var complete = questions.length > 0 && right === questions.length;" in body
+    assert "var right = answer === entry.key;" in body
     assert "'{right}'" in body and "'{asked}'" in body
-    assert "questions.length" not in body
 
 
-def test_an_unanswered_question_shows_nothing_and_only_the_latest_answer_draws():
-    # ⛔ A question the verdict says nobody answered shows no sentence; and a
-    # verdict for answers the reader has since changed never lands on the page.
+def test_an_unanswered_question_shows_nothing_and_the_chosen_options_sentence_shows():
     body = behaviour()
-    assert "!row || !row.answered" in body
+    assert "if (answer === undefined || !hasSaid) {" in body
+    assert "entry.says[answer]" in body
     assert 'input[type="radio"]:checked' in body
-    assert "ticket === asked" in body
 
 
 def test_every_word_the_quiz_says_is_read_off_the_markup():
@@ -271,10 +282,24 @@ def test_every_word_the_quiz_says_is_read_off_the_markup():
         "Not this one.",
         "Choose an answer first.",
         "answered correctly",
-        "Checking",
-        "did not check",
-        "study server",
+        "not running",
     ):
         assert said not in body, said
     for template in ("practice-question.html", "practice-quiz.html"):
         assert templates.template(template).template != ""
+
+
+def test_inline_code_in_a_stem_an_option_and_a_sentence_renders_as_code():
+    # ⛔ The Java pilot's quiz showed "`switch`" with its backticks. ⭐ A stem, an
+    # option and a sentence go through the prose's own inline renderer.
+    record = json.loads(json.dumps(QUIZ))
+    first = record["questions"][0]
+    first["stem"] = "Which types may a `switch` take?"
+    first["options"][0]["text"] = "an `int` and its wrapper"
+    first["options"][0]["says"] = "A `switch` takes `int`, never `long`."
+    said = markup(record)
+    assert "Which types may a <code>switch</code> take?" in said
+    assert "an <code>int</code> and its wrapper" in said
+    assert "`" not in said.split('data-practice-part="key">')[0]
+    says = key_block(said)[first["id"]]["says"][first["options"][0]["id"]]
+    assert says == "A <code>switch</code> takes <code>int</code>, never <code>long</code>."

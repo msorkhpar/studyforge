@@ -28,8 +28,10 @@ RAW_COLOUR_EXEMPTIONS = {"video-player.css": {"#000", "#fff"}}
 #: not the palette's to define. ⛔ By prefix and stated one at a time, so the
 #: exemption cannot quietly widen into "any token nobody defined". ⚠️ `--units`
 #: and `--segments` are written by the renderer into the strip's own markup: a
-#: count the build knows, never a colour, a measure or a font.
-SET_BY_SCRIPT = ("--plyr", "--progress", "--read", "--units", "--segments")
+#: count the build knows, never a colour, a measure or a font. ⚠️
+#: `--workspace-intro` is a quiz intro's measured height, set by
+#: `practice-workspace.js` while the workspace is up.
+SET_BY_SCRIPT = ("--plyr", "--progress", "--read", "--units", "--segments", "--workspace-intro")
 
 COLOUR = re.compile(r"#[0-9a-fA-F]{3,8}\b|\brgba?\([^)]*\)")
 DEFINED = re.compile(r"^\s*(--[\w-]+)\s*:", re.MULTILINE)

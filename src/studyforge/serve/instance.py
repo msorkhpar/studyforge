@@ -9,11 +9,11 @@ mount is the served root itself.
 ⭐ **Both forms of the verb register their namespaces HERE, in `namespaces_of`,
 and nowhere else**: `instance_of` calls it over
 every corpus a discovery found, and `cli/serve.py`'s `--site` form calls it over
-the one corpus it serves, so a served site answers `state`, `run` and `quiz` as a
+the one corpus it serves, so a served site answers `state` and `run` as a
 served root does. `site_discovery` is the one-corpus discovery the `--site` form
-hands it. `run` and `quiz` are the writer namespaces — a run's starts and its stop
-are `POST`, and so is grading a quiz — and `WRITERS` names
-them, so no caller spells the writers itself.
+hands it. `run` is the writer namespace — a run's starts and its stop are
+`POST` — and `WRITERS` names it, so no caller spells the writers itself. ⛔ No
+quiz namespace: a quiz is graded in its own page (the user's ruling, 2026-09-25).
 ⚠️ The `serve` verb calls `discover` and `instance_of` and never `make_instance`,
 so a namespace registered only in `make_instance` would never be served.
 ⛔ Every corpus's progress store is refused by `routes.assets` on any path.
@@ -78,12 +78,13 @@ from studyforge.serve.addressing import CorporaContent
 from studyforge.serve.app import DEFAULT_PORT, Frames, ServingServer, make_server
 from studyforge.serve.discovery import Discovered, ServedCorpus, discover
 from studyforge.serve.response import Request, Response
-from studyforge.serve.routes import quiz, run, runs, state
+from studyforge.serve.routes import run, runs, state
 from studyforge.serve.routes.content import CorpusContent
 
-#: The namespaces that also answer `POST`: `run`, and `quiz`, whose grading is
-#: an act a prefetch must never take.
-WRITERS = (run.NAMESPACE, quiz.NAMESPACE)
+#: The namespaces that also answer `POST`: `run`, whose starts and stop are acts
+#: a prefetch must never take. ⛔ A quiz is not among them: it is graded in its
+#: own page, and nothing about it is a server's (the user's ruling, 2026-09-25).
+WRITERS = (run.NAMESPACE,)
 
 #: ⭐ Where a served page's execution client is fetched from —
 #: `serve.routes.run`'s own spelling, taken and never re-composed. ⛔ Handed to
@@ -157,16 +158,14 @@ class RunNamespace:
 
 
 def namespaces_of(discovered: Discovered, sources: dict[str, CorpusContent]) -> dict:
-    """Return the `state`, `run` and `quiz` namespaces over `discovered`, for either form.
+    """Return the `state` and `run` namespaces over `discovered`, for either form.
 
     ⭐ `sources` maps each served corpus's `source` to the content its unit
-    documents are read from, which is where a run reads its command and where
-    the quiz namespace reads a quiz's key.
+    documents are read from, which is where a run reads its command.
     """
     return {
         state.NAMESPACE: partial(state.route, discovered),
         run.NAMESPACE: RunNamespace(runs.Runs(discovered, sources)),
-        quiz.NAMESPACE: partial(quiz.route, discovered, sources),
     }
 
 

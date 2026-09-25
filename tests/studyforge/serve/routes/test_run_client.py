@@ -81,15 +81,15 @@ def test_a_start_is_a_post_with_no_body_and_nothing_else_is_sent():
     # POST that SELECTS; the index — a GET, because asking what this instance
     # offers is a read; and one practice's editor windows, a POST
     # because preparing that practice's workspace settings WRITES.
-    # ⭐ And a fifth, since the server grades quizzes: grading a quiz, a POST that selects a quiz
-    # and carries the reader's choices in its PATH (`test_quiz_client.py`).
-    # ⭐ And a sixth, since a lesson's code opens in the editor: one code file's
+    # ⛔ No request grades a quiz: a quiz is graded in its own page.
+    # ⭐ And a fifth, since a lesson's code opens in the editor: one code file's
     # windows, a POST because it prepares their settings. Its test's run is
     # the acts' own streamed POST, so it adds no request of its own.
-    # ⭐ And a seventh, since a lesson's practices are cards with a status: one
+    # ⭐ And a sixth, since a lesson's practices are cards with a status: one
     # unit's state, a GET, because asking what the reader's record holds is a read.
-    assert body.count("fetch(") == 7
-    assert body.count("method: 'POST'") == 5
+    assert body.count("fetch(") == 6
+    assert body.count("method: 'POST'") == 4
+    assert "quiz" not in body
     assert "body:" not in body and "JSON.stringify" not in body
     assert "XMLHttpRequest" not in body and "sendBeacon" not in body
 
@@ -171,11 +171,11 @@ def test_it_draws_nothing_and_types_no_word_a_reader_sees():
 def test_over_a_file_it_is_not_available_and_sends_nothing():
     # ⛔ R8: `file://` has no origin. EVERY entry point asks `available()` first
     # — the two acts, where a running editor is, and one practice's
-    # two editor windows — and grading a quiz, and a code file's windows and its test,
-    # and one unit's practice status.
+    # two editor windows — and a code file's windows and its test, and one
+    # unit's practice status.
     body = uncommented()
     assert "location.protocol === 'http:'" in body
-    assert body.count("if (!available())") == 8
+    assert body.count("if (!available())") == 7
 
 
 def test_a_refusal_is_a_rejection_naming_what_was_refused_before_any_request():

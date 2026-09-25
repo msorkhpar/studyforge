@@ -140,7 +140,7 @@ literal, so only the port number is ever interpolated.
 
 ⛔ **No editor bind reaches a quiz's key.** `binds.unkeyed` refuses a sources
 or workspaces directory that is, holds or sits inside the bundles' or the
-archive's directory: the key never leaves the local server, and the editor is a
+archive's directory: the key lives only in the page it grades, and the editor is a
 process a reader opens any bound file in.
 
 ⛔ **The file has TWO services, and the editor binds its sources and two more directories:**

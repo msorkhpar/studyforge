@@ -29,12 +29,14 @@ every practice is still readable over `file://` with nothing running (R8).
 
 ## ⛔ THE STATUS IS THE READER'S OWN RECORD, NEVER THE PAGE'S
 
-⭐ A card carries its status slot hidden, with both of its words in the markup;
-the script shows it only where the served origin answers what the reader's
-progress record says. ⛔ A built page says nothing about any reader, so it is
-byte-identical whoever opens it (R10). ⚠️ **A quiz and an ungraded practice
-carry no slot**: neither is completed by a run, so the record could only ever
-say *not started*.
+⭐ A card carries its status slot hidden, with both of its words in the markup,
+and says which record it is read from (`data-practice-kind`): a code
+practice's from the served origin's progress record, where a run established
+it; a quiz's from the reader's browser store, where the quiz page recorded it —
+nothing about a quiz is a server's (the user's ruling). ⛔ A built page says
+nothing about any reader, so it is byte-identical whoever opens it (R10).
+⚠️ **An ungraded practice carries no slot**: nothing completes it, so the
+record could only ever say *not started*.
 
 ## ⛔ ONE ENTRY IN THE OUTLINE FOR THE LIST, AND ONE PER CARD
 
@@ -64,6 +66,11 @@ STATE_TEMPLATE = "practice-state.html"
 
 #: The one workspace every card opens in.
 WORKSPACE_TEMPLATE = "practice-workspace.html"
+
+#: What a card says its practice is, so its status is read from the right record:
+#: a quiz's from the reader's browser store, a code practice's from the server.
+QUIZ_KIND = "quiz"
+CODE_KIND = "code"
 
 #: What separates two cards, and two concepts.
 JOIN = "\n"
@@ -96,13 +103,15 @@ def region(document: dict, placement: Placement) -> str:
 def card(section: dict, document: dict, placement: Placement, unit: object) -> str:
     """Return one practice's card: its title, what it practises, and its status slot."""
     exercise = _exercise(section)
-    graded = exercise is not None and not exercise.is_quiz and exercise.test_command is not None
+    quiz = exercise is not None and exercise.is_quiz
+    graded = quiz or (exercise is not None and exercise.test_command is not None)
     return templates.fill(
         CARD_TEMPLATE,
         id=escape_attribute(anchors.card_anchor(section.get("key"))),
         section=escape_attribute(anchors.section_anchor(section.get("key"))),
         key=escape_attribute(practice_module.key_of(document, section)),
         corpus=escape_attribute(placement.corpus),
+        kind=QUIZ_KIND if quiz else CODE_KIND,
         anchor=escape_attribute(anchors.section_anchor(section.get("key"))),
         title=inline(anchors.practice_title(section, unit)),
         concepts=_region(concepts(exercise)),

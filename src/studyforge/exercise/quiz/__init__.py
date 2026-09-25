@@ -6,7 +6,9 @@ correct and one sentence per option — and the rule that grades a reader's
 answers against that key.
 
 **How you use it.** `exercise.of` reads a `kind: "quiz"` record and hands you
-the questions; the page grades them with the two functions here.
+the questions. ⭐ The page grades in the browser, from the key its own page
+carries (`render/assets/practice-quiz.js`); the two functions here are the
+rule it implements, and the browser tests read the page against them.
 
     from studyforge.exercise import of
     from studyforge.exercise.quiz import completes, grade

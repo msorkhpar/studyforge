@@ -2,8 +2,9 @@
 
 **What it does.** Holds the routes `app` dispatches to by the first path segment
 after `/api/v1/`: `content` (what a unit *is*), `assets` (the bytes), `state` (what this machine
-has, never cached), `run` (Run and Submit, streamed and recorded) and `quiz` (a quiz
-graded against the key the page never holds).
+has, never cached) and `run` (Run and Submit, streamed and recorded). ⛔ No
+`quiz`: a quiz is graded in its own page, and nothing about it is a server
+function (the user's ruling, 2026-09-25).
 
 **How you use it.** Each module exposes `route(..., request, rest)` returning a
 `serve.response.Response`; `app` binds the first arguments and registers it under

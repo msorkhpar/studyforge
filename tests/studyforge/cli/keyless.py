@@ -98,7 +98,7 @@ def files_under(served: Path) -> list[str]:
 def endpoints(layout: Layout, qualified: bool) -> list[str]:
     """Every `GET` endpoint of every namespace, over every unit of both corpora."""
     found = ["/api", "/api/v1", "/api/v1/content/toc", "/api/v1/state/", "/api/v1/run/"]
-    found += ["/api/v1/run/client.js", "/api/v1/quiz/"]
+    found += ["/api/v1/run/client.js"]
     for root in (layout.quiz, layout.runnable) if qualified else (layout.quiz,):
         corpus = read_corpus(root)
         source = corpus.manifest.source

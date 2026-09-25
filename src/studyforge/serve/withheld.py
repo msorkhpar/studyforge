@@ -1,4 +1,4 @@
-r"""Withheld: a quiz's key and its sentences never leave the serving process.
+r"""Withheld: a quiz's key and its sentences leave the serving process only in its own page.
 
 **What it does.** Says what of a quiz the SITE may never serve — which option is
 keyed (`correct`) and each option's sentence (`says`) — and applies that on the
@@ -23,15 +23,15 @@ two ways a document leaves this process:
 so `routes.content` and `routes.assets` can both use it and neither imports the
 other.
 
-## ⛔ THE KEY STAYS ON THE SERVER
+## ⭐ THE KEY LIVES IN THE PAGE IT GRADES, AND NOWHERE ELSE THE SITE SERVES
 
-⭐ **A quiz's correct answer resides on the SERVER side, and the reader's answers
-are validated there.** ⛔ **What the SITE serves never carries the key**, except the
-grading route's answer for the option the reader chose (`routes.quiz`). No built
-page carries the key; ⛔ **this module closes the URLs a page never loads but a
-reader can type**: the unit
-document on the content namespace, the archive's `practice-M.json`, the bundle's
-`tests/quiz.json`, and any other file under the served root that repeats them.
+⭐ **The user's ruling (2026-09-25), reversing the key kept on the server**: a
+quiz's answers and sentences live in a script local to the page that grades
+it, and the browser grades. ⛔ **So the one served file that may carry a key
+is a page** — `routes.assets` never asks this module about one — and **this
+module closes every other URL**: the unit document on the content namespace,
+the archive's `practice-M.json`, the bundle's `tests/quiz.json`, any other
+file under the served root that repeats them, and a run's output.
 
 ## ⭐ Why redact one surface and refuse the other
 
@@ -46,8 +46,8 @@ content source every form already hands it.
 ## ⛔ What `carries` reads, and what it cannot
 
 1. ⭐ **The key, structurally — and ONLY beside a quiz this instance serves**: a
-   JSON `"correct": true|false` pair, or a `data-…-correct` attribute (a page
-   from a build before the key left the page), in a file that ALSO names one of the served
+   JSON `"correct": true|false` pair, or a `data-…-correct` attribute, in a
+   file that ALSO names one of the served
    quizzes' question ids, quoted (`"q-1"`). ⛔ **Either half alone withholds
    nothing**: a question id is on every quiz page
    and is no secret, and a `"correct"` field with no quiz id is some other
@@ -63,9 +63,9 @@ content source every form already hands it.
    than `MIN_WORDS` words is not searched for**: a sentence as short as
    *"Right."* would withhold every page that happens to say it.
 
-⚠️ **Fail closed is deliberate.** A page from an OLD build carries the key in its
-attributes and answers `404` here until the corpus is rebuilt — a page that
-would hand out the key is not served at all.
+⚠️ **A page is not read here at all**, so a page that carried ANOTHER page's
+key would be served: that is a build's property, asserted where pages are
+rendered (`tests/studyforge/render/page/test_quiz.py`), never a served one.
 
 ⛔ **The files on disk are never touched** (R3): a reader who holds the corpus
 checkout can open the bundle, and the rule is about what the SITE serves.
@@ -143,8 +143,8 @@ def marks_in(document: object) -> Marks:
 def redacted(document: object) -> object:
     """Return `document` with every quiz option's key and sentence removed.
 
-    ⛔ **A copy**: the document handed in is not changed, so a caller reading the
-    key from the same document (the quiz route) still grades.
+    ⛔ **A copy**: the document handed in is not changed, so a caller that reads
+    the same document for another purpose still has its whole record.
     """
     answered = copy.deepcopy(document)
     for option in quiz_options(answered):

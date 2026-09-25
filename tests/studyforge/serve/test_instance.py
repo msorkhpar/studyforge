@@ -25,7 +25,7 @@ from studyforge.serve.instance import (
     namespaces_of,
     site_discovery,
 )
-from studyforge.serve.routes import quiz, run, state
+from studyforge.serve.routes import run, state
 from studyforge.serve.routes.content import CorpusContent
 from tests.studyforge.cli.serving import digests
 from tests.studyforge.generate.corpora import BOTH
@@ -154,8 +154,9 @@ def test_the_root_form_registers_what_the_one_constructor_builds_and_its_writers
     discovered = discover(a_workspace(tmp_path))
     sources = {served.source: CorpusContent(served.corpus) for served in discovered.corpora}
     built = namespaces_of(discovered, sources)
-    assert set(built) == {state.NAMESPACE, run.NAMESPACE, quiz.NAMESPACE}
-    assert WRITERS == (run.NAMESPACE, quiz.NAMESPACE)
+    # ⛔ No quiz namespace: a quiz is graded in its own page.
+    assert set(built) == {state.NAMESPACE, run.NAMESPACE}
+    assert WRITERS == (run.NAMESPACE,)
     server = instance_of(discovered, port=0)
     try:
         assert {state.NAMESPACE, run.NAMESPACE} <= set(server.namespaces)
