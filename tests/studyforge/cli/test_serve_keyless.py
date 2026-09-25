@@ -1,8 +1,8 @@
-"""The serving process never hands out a quiz's key, in either form of `serve`.
+"""The serving process hands out a quiz's key only in the page that grades it, in every form.
 
-⛔ **A quiz's correct answer resides on the SERVER side.**
-What the site serves never carries the key or an option's sentence, except the grading
-route's answer for the option the reader chose.
+⭐ **The user's ruling (2026-09-25): a quiz's answers live in a script local to its
+own page, and nothing about a quiz is a server function.** So the one response that
+carries a key is that quiz's own page, and there is no quiz route at all.
 
 ⭐ **Read over every form the verb has**: the root form over a root holding the quiz
 corpus built into itself and the runnable corpus beside it; `--site .`, the corpus
@@ -10,7 +10,7 @@ built into its own root as ISO is (`F10`); and `--site` over a site built elsewh
 ⭐ **The population is every file under the served root, at the static mount AND
 under `/api/v1/assets/`, plus every endpoint of every namespace** (`keyless.py`).
 
-⭐ **And what must not move, does not**: the quiz still grades, a code practice's
+⭐ **And what must not move, does not**: a code practice's
 files and unit document are served exactly as before, every reference a built page
 makes is still answered, and nothing on disk changes (R3).
 """
@@ -42,8 +42,8 @@ from tests.studyforge.cli.serving import REFERENCE, digests, served_page, verb_r
 from tests.studyforge.serve.routes.quizzing import (
     QUESTIONS,
     UNIT,
+    page_of,
     practice_of,
-    sentences,
     source_of,
 )
 from tests.studyforge.serve.serving import fetch
@@ -89,15 +89,25 @@ def population(form: str, shape: Layout, served_root: Path) -> list[str]:
     return [*files, *(f"/api/v1/assets{path}" for path in files), *endpoints(shape, form == "root")]
 
 
+def own_page(paths: list[str], shape: Layout) -> list[str]:
+    """The paths, at both mounts, of the one page that grades the quiz."""
+    name = page_of(shape.quiz).name
+    return sorted(path for path in paths if path.endswith("/" + name))
+
+
 @pytest.mark.parametrize("form", FORMS)
-def test_no_response_to_any_path_carries_a_key_or_a_sentence(built, form: str) -> None:
+def test_no_response_but_the_quizs_own_page_carries_a_key_or_a_sentence(built, form) -> None:
     shape, site = built
     argv, served_root = argv_and_root(form, shape, site)
     paths = population(form, shape, served_root)
     before = material(shape.root)
     with verb_running(argv) as serving:
         found = leaks(serving.server, paths, acts(shape))
-    assert found == []
+    carrying = sorted(line.split(" ")[1] for line in found)
+    # ⭐ The page carries its own key, at the static mount and under the assets
+    # namespace — and ⛔ nothing else the instance answers does.
+    assert own_page(paths, shape) and carrying == own_page(paths, shape), found
+    assert all(line.startswith("GET ") and " -> 200 " in line for line in found), found
     assert len(paths) > 20, "the population shrank: nothing was read"
     assert material(shape.root) == before, "serving changed a corpus file on disk (R3)"
 
@@ -120,22 +130,21 @@ def test_every_file_carrying_the_quiz_is_in_the_population_and_refused(built, fo
 
 
 @pytest.mark.parametrize("form", FORMS)
-def test_the_grading_route_answers_the_chosen_option_and_no_other(built, form) -> None:
+def test_there_is_no_quiz_route_to_answer_to(built, form) -> None:
+    # ⛔ Nothing about a quiz is a server function: the path the old client
+    # posted answers to is no namespace at all.
     shape, site = built
     argv, _ = argv_and_root(form, shape, site)
     source, practice = source_of(shape.quiz), practice_of(shape.quiz)
+    question = QUESTIONS[0]
+    path = f"/api/v1/quiz/{source}/{practice}/{question['id']}={question['options'][0]['id']}"
     with verb_running(argv) as serving:
         origin = {"Origin": f"http://127.0.0.1:{serving.server.server_address[1]}"}
-        for question in QUESTIONS:
-            for option in question["options"]:
-                path = f"/api/v1/quiz/{source}/{practice}/{question['id']}={option['id']}"
-                status, _, body = fetch(serving.server, path, origin, "POST")
-                verdict = json.loads(body)
-                assert status == 200
-                row = next(one for one in verdict["questions"] if one["id"] == question["id"])
-                assert (row["correct"], row["says"]) == (option["correct"], option["says"])
-                others = [one for one in sentences() if one != option["says"]]
-                assert [one for one in others if one in body.decode()] == []
+        # ⭐ A POST to a namespace that does not write is refused before any
+        # route is asked (`405`); a GET finds no namespace at all (`404`).
+        assert fetch(serving.server, path, origin, "POST")[0] == 405
+        assert fetch(serving.server, "/api/v1/quiz/")[0] == 404
+        assert fetch(serving.server, path)[0] == 404
 
 
 def test_the_content_unit_keeps_its_questions_and_their_words(built) -> None:
@@ -223,19 +232,18 @@ def test_a_quiz_edited_while_served_is_withheld_from_its_next_request(tmp_path) 
         assert fetch(serving.server, "/docs/fresh.md")[0] == 404
 
 
-def test_a_page_that_carries_its_quiz_key_is_refused_whole(tmp_path) -> None:
-    """⚠️ Fail closed: a page that carries the key in its attributes is not served at
-    all until the corpus is rebuilt, so a rebuild comes BEFORE a restart."""
-    shape = layout(tmp_path / "old")
-    old = shape.quiz / "old.unit.html"
-    old.write_text(
+def test_a_page_is_served_whole_with_the_key_it_grades_with(tmp_path) -> None:
+    """⭐ The key lives in the page it grades, so a page is never refused for carrying one."""
+    shape = layout(tmp_path / "page")
+    page = shape.quiz / "a.unit.html"
+    body = (
         '<html><head></head><fieldset data-practice-question="q-1">'
-        '<li data-practice-correct="true">a</li></fieldset></html>',
-        "utf-8",
+        '<li data-practice-correct="true">a</li></fieldset></html>'
     )
+    page.write_text(body, "utf-8")
     with verb_running([str(shape.quiz), "--site", str(shape.quiz), "--port", "0"]) as serving:
-        assert fetch(serving.server, "/old.unit.html")[0] == 404
-        assert fetch(serving.server, "/index.html")[0] == 200
+        status, _, served_body = fetch(serving.server, "/a.unit.html")
+        assert status == 200 and b'data-practice-correct="true"' in served_body
 
 
 #: A code practice's own data: a `"correct"` field that belongs to no quiz (the review's case).

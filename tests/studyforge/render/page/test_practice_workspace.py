@@ -196,3 +196,32 @@ def test_the_page_under_the_workspace_is_inert_while_it_is_up_and_only_then():
     assert (
         'role="dialog" aria-modal="true"' in templates.template("practice-workspace.html").template
     )
+
+
+def test_a_quiz_cards_status_is_read_from_the_readers_store_and_a_code_cards_from_the_server():
+    # ⭐ The user's ruling: nothing about a quiz is a server's, so a quiz card
+    # reads the browser store, served or not; ⛔ and the server's answer never
+    # paints a quiz card.
+    body = behaviour()
+    refreshing = body[body.index("function refresh()") :]
+    assert "if (isQuiz(one) && store && store.supported()) {" in refreshing
+    assert "paint(one.card, store.passedQuiz(one.card.getAttribute(CARD_KEY) || ''));" in refreshing
+    assert refreshing.index("store.passedQuiz") < refreshing.index("if (!asks) { return; }")
+    assert "if (!isQuiz(one) && one.card.querySelector(STATE)) {" in refreshing
+
+
+def test_a_quiz_opens_in_one_column_and_a_code_practice_keeps_the_split():
+    body = behaviour()
+    opening = body[body.index("function open(index)") : body.index("function close()")]
+    assert "column(one);" in opening
+    columning = body[body.index("function column(one)") : body.index("function each(")]
+    assert "if (!one || !isQuiz(one)) {" in columning
+    assert "root.setAttribute(QUIZ_OPEN, '');" in columning
+    assert columning.index("root.setAttribute(QUIZ_OPEN, '');") < columning.index(
+        "getBoundingClientRect"
+    )
+    assert (
+        "column(null);" in body[body.index("function leave()") : body.index("function open(index)")]
+    )
+    style = re.sub(r"/\*.*?\*/", "", STYLE.read_text(encoding="utf-8"), flags=re.DOTALL)
+    assert "top: calc(3.25rem + var(--workspace-intro, 0px));" in style

@@ -74,10 +74,11 @@ REACH = {
     # ⚠️ The run route's parse of a practice key is the first site naming
     # `progress.RAISES`, and a subject with NO floor here fails the deleted-outright
     # plant below, whatever the note above says of a new caller.
-    # ⚠️ The practice panel and the quiz route parse the same key, so the floor
-    # counts all three sites: a floor one short lets the deleted-outright plant
-    # find a site left, read it as not short, and NOT RAISE.
-    "studyforge.progress": 3,
+    # ⚠️ The practice panel parses the same key, so the floor counts both
+    # sites: a floor one short lets the deleted-outright plant find a site left,
+    # read it as not short, and NOT RAISE. (A quiz is graded in its page, so no
+    # quiz route parses one.)
+    "studyforge.progress": 2,
     "studyforge.serve": 1,
 }
 

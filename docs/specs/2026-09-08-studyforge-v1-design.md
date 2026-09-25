@@ -14,7 +14,7 @@ Decisions that shape the code but are not rules of the design are in
 `studyforge` turns **any body of teaching material** into a local, offline study
 site: a reading page per unit, narrated, navigable, with a table of contents,
 progress tracking, and — where the material supports it — practices with real
-graders or quizzes checked by the local study server.
+graders or quizzes checked in the page itself.
 
 It is extracted from the CodeSignal study system, which proved every one of
 these surfaces against real material. What CodeSignal did for one source,
@@ -699,7 +699,7 @@ src/studyforge/
   generate/      one corpus's whole site, written in one pass
   render/        page renderer · container pages · root index · templates/ · assets/
   narrate/       speakable contract · the synthesis client and its record
-  serve/         app · content, state, assets, run and quiz routes · security · caching
+  serve/         app · content, state, assets and run routes · security · caching
   execute/       the command runner — the only package that runs a corpus's commands
   progress/      the reader's record of practice passes
   exercise/      the exercise record, its states, the bundle, the gates, quizzes
@@ -1642,22 +1642,22 @@ test can observe; the ideas no test can observe (a compile-time rule, how an
 expression parses) are checked by one short quiz on the same unit, after its code
 practices. ⛔ A unit is not limited to one kind of exercise.
 
-⭐ **The local study server grades a quiz, and the key never reaches the page.**
+⭐ **A quiz is graded in its own page, and nothing about it is a server function**
+(the user's ruling, 2026-09-25, reversing the key kept on the local study server).
 
-- ⛔ **No built page and no asset a page loads carries a quiz's key or any per-option
-  sentence.** The key stays in the practice document on disk, which is server-side
-  material, and the content route withholds it.
-- ⭐ **The page sends what the reader chose to `serve`'s quiz route**, which reads the
-  key from the unit's document and answers, per question, right or wrong **with the
-  chosen option's sentence** — never the keyed option's, so a wrong answer is
-  explained rather than corrected. ⛔ **No model, no network and no container: a fixed
-  comparison**, and the route imports nothing that could start a process or reach a
-  socket (§8.3). It sits behind `serve`'s guards like every other route.
+- ⭐ **The page carries its own key**: which option of each question is right and
+  every option's sentence, in a data script local to that quiz's section. ⛔ **Only
+  there**: never in a shared asset, never in another page, never in the unit
+  document the content route answers, and never in any other file the site serves.
+- ⭐ **The browser grades**, the same over `file://` and served, with no request:
+  per question, right or wrong **with the chosen option's sentence** — never the
+  keyed option's, so a wrong answer is explained rather than corrected.
 - ⭐ **Completion keeps its meaning**: a quiz completes only when every question is
-  answered correctly, decided by the framework's one grading rule. ⛔ **Never a run
-  verdict** — the pass rule for a run is untouched, and a quiz produces no run.
-- ⭐ **Over `file://` a quiz shows its questions and options and says checking them
-  needs the local study server**, exactly as Run and Submit do.
+  answered correctly. ⛔ **Never a run verdict** — the pass rule for a run is
+  untouched, and a quiz produces no run. ⭐ A completed quiz is kept as passed in the
+  reader's own browser record, where the read marks are (§8.5), and its card says so.
+- ⚠️ **The key is readable by anyone who reads the page**, which the ruling accepts:
+  a quiz checks a reader who wants to be checked.
 
 ⭐ **The honesty gates for a quiz.** A compiler cannot back these, so the gates are
 different and their difference is stated rather than smoothed over:
@@ -2050,7 +2050,7 @@ These are proven surfaces, generalised in their addressing and otherwise kept.
 - **Backend** — `/api/v1/content` (cacheable, strong ETag) and `/api/v1/state`
   (never cached, derived from the filesystem on every request) as two namespaces
   with opposite caching rules; `/api/v1/assets` (Range, weak ETag);
-  `/api/v1/run` for Run and Submit and `/api/v1/quiz` for quiz checking. ⛔ The
+  `/api/v1/run` for Run and Submit. ⛔ No quiz route: a quiz is graded in its page. ⛔ The
   server binds loopback only, refuses a non-loopback peer, refuses a `Host` that
   is not a loopback name, and refuses cross-site requests.
 - **Runner** — `docker exec` into the runner container when it is up, the host
@@ -2184,6 +2184,11 @@ was established: the corpus's git-ignored `.studyforge/progress/progress.json`,
 read-validate-modify-write under a lock, atomic replace, `first_passed_at` set once
 and never moved. A Submit's breakdown rides beside its verdict and is never a
 second rule for a pass.
+
+A **quiz pass** is kept with the read marks, in the browser's local storage: a
+quiz is graded in its own page, with no server (§7), so its pass is established
+in the browser and recorded there. ⛔ It is never a practice pass and never
+written to the server's record, and it is gone with site data like a mark.
 
 ⛔ **The obvious alternative — one store — fails in both directions.** Put
 everything in local storage and a pass becomes a claim by a client that the

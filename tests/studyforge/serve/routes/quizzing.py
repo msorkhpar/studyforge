@@ -1,4 +1,4 @@
-"""Shared by the quiz route's tests: the prose fixture with a quiz in it, built and served.
+"""Shared by the quiz's tests: the prose fixture with a quiz in it, built and served.
 
 ⭐ **The corpus is the fixture `depth1/` — the prose fixture, the corpus the quiz
 shape exists for — COPIED, with one practice document added**. ⛔ The
@@ -144,12 +144,6 @@ def built_texts(root: Path) -> dict[str, str]:
         for path in found
         if path.is_file()
     }
-
-
-def grade_path(source: str, practice: str, answers: dict[str, str]) -> str:
-    """The grading endpoint for `answers`, spelled as the served client spells it."""
-    chosen = "".join(f"/{question}={option}" for question, option in answers.items())
-    return f"/api/v1/quiz/{source}/{practice}{chosen}"
 
 
 #: What an attribute carrying an option's correctness looks like in any spelling.

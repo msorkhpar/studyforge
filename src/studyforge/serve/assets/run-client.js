@@ -8,11 +8,11 @@
 
    ⭐ **A client and nothing else.** It publishes `studyforge.run` — `available`,
    `start`, `stop`, `editor`, `practice`, `code`, `codeTest`, `practices` — and
-   `studyforge.quiz` — `available`,
-   `grade` (below) — and draws nothing: the practice panel that puts Run and
+   draws nothing: the practice panel that puts Run and
    Submit in front of a reader is the page's own. ⛔ A control this file
    drew where no panel exists would be a dead button, and a dead button is
-   a promise the page cannot keep.
+   a promise the page cannot keep. ⛔ **Nothing here grades a quiz**: a quiz is
+   graded in its own page, with no request (the user's ruling, 2026-09-25).
 
    ⛔ **Nothing this sends becomes a command** (spec §8.3, rule 3). A start is
    a `POST` to `/api/v1/run/<corpus>/<mode>/<practice>` with NO body: the path
@@ -222,39 +222,6 @@
       .then(function (answer) { return answer.stopped === true; });
   }
 
-  /* ⭐ A QUIZ IS GRADED HERE TOO, AND IT IS NOT A RUN. The key never reaches
-     the page: what the reader chose is
-     sent to `/api/v1/quiz/<corpus>/<practice>/<question>=<option>/…` and the
-     server answers the verdict — right or wrong per question, the CHOSEN
-     option's sentence, the count, and whether the quiz is complete. ⛔ It is
-     published as `studyforge.quiz` and not under `run`: it starts nothing,
-     records nothing, and produces no run. ⚠️ It lives in this file because
-     this is the ONE script a serving process adds to a page, and a
-     second insertion would be a second place a built page could learn it is
-     being served. ⛔ The answers travel in the PATH because a request body is
-     discarded by the server, unread — so a question or option id that is not
-     `QUIZ_ID`'s shape is refused here, before any request. */
-  var QUIZ_BASE = '/api/v1/quiz/';
-  var CHOSE = '=';
-  var QUIZ_ID = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
-
-  function grade(corpus, practice, answers) {
-    if (!available()) { return refused('no-origin'); }
-    if (!CORPUS.test(corpus) || !KEY.test(practice)) { return refused('practice'); }
-    var segments = [];
-    var ids = Object.keys(answers || {});
-    for (var at = 0; at < ids.length; at += 1) {
-      var option = answers[ids[at]];
-      if (!QUIZ_ID.test(ids[at]) || typeof option !== 'string' || !QUIZ_ID.test(option)) {
-        return refused('answer');
-      }
-      segments.push(ids[at] + CHOSE + option);
-    }
-    var path = QUIZ_BASE + corpus + '/' + practice + (segments.length ? '/' + segments.join('/') : '');
-    return fetch(path, { method: 'POST', cache: 'no-store', credentials: 'same-origin' })
-      .then(function (response) { return response.ok ? response.json() : refused(response.status); });
-  }
-
   /* ⭐ WHAT THE READER'S OWN RECORD SAYS OF A UNIT'S PRACTICES — `{ section key:
      passed }` — read from the state namespace, which reads the progress record
      on this machine (spec §8.5). ⛔ Asked, never cached, and never written: a
@@ -282,7 +249,6 @@
   }
 
   window.studyforge = window.studyforge || {};
-  window.studyforge.quiz = { available: available, grade: grade };
   window.studyforge.run = {
     available: available,
     start: start,

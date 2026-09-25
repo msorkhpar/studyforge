@@ -242,13 +242,14 @@ def test_the_store_is_the_one_part_that_does():
     assert "localStorage" in uncommented(STORE)
 
 
-def test_the_two_records_are_two_keys_and_each_carries_its_version():
-    # ⛔ Two versioned keys, never one record: the marks and the reader's display
-    # preferences have different shapes and different lifetimes, and losing every
-    # mark because a preference failed to parse would be absurd.
+def test_each_record_is_its_own_key_and_each_carries_its_version():
+    # ⛔ Versioned keys, never one record: the marks, the reader's display
+    # preferences and the quizzes they passed have different shapes and
+    # lifetimes, and losing every mark because a preference failed to parse
+    # would be absurd.
     keys = sorted(set(re.findall(r"'(studyforge\.[a-z]+\.v\d+)'", uncommented(STORE))))
-    assert len(keys) == 2, f"the store keeps {keys}"
-    assert len({key.rsplit(".", 1)[0] for key in keys}) == 2, "two names, not one name twice"
+    assert keys == ["studyforge.display.v1", "studyforge.quizzes.v1", "studyforge.read.v1"], keys
+    assert len({key.rsplit(".", 1)[0] for key in keys}) == 3, "three names, not one name twice"
     for key in keys:
         assert re.search(r"\.v\d+$", key), f"{key} carries no version"
 

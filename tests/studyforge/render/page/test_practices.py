@@ -83,9 +83,11 @@ def test_a_card_lists_what_its_record_says_it_practises_and_nothing_where_it_say
     assert 'data-practices-part="concepts"' not in silent
 
 
-def test_only_a_graded_code_practice_carries_a_status_slot_and_it_ships_saying_nothing():
+def test_a_graded_practice_and_a_quiz_carry_a_status_slot_that_ships_saying_nothing():
     # ⛔ The status is the reader's own record: the slot ships HIDDEN, with both
-    # words, so a built page says nothing about any reader (R10).
+    # words, so a built page says nothing about any reader (R10). ⭐ A card says
+    # which record it is read from: a quiz's from the reader's browser store,
+    # a code practice's from the server.
     graded, ungraded, quiz = cards(
         page(
             section(key="practice-a"),
@@ -93,12 +95,14 @@ def test_only_a_graded_code_practice_carries_a_status_slot_and_it_ships_saying_n
             section(key="practice-c", workspace=QUIZ),
         )
     )
-    assert templates.fill(practices.STATE_TEMPLATE) in graded
-    assert '<p data-practices-part="state" hidden>' in graded
-    # ⚠️ A quiz and an ungraded practice are completed by no run, so the record
-    # could only ever say *not started* — they carry no slot at all.
+    for card in (graded, quiz):
+        assert templates.fill(practices.STATE_TEMPLATE) in card
+        assert '<p data-practices-part="state" hidden>' in card
+    assert 'data-practice-kind="code"' in graded and 'data-practice-kind="code"' in ungraded
+    assert 'data-practice-kind="quiz"' in quiz
+    # ⚠️ An ungraded practice is completed by nothing, so the record could only
+    # ever say *not started* — it carries no slot at all.
     assert 'data-practices-part="state"' not in ungraded
-    assert 'data-practices-part="state"' not in quiz
 
 
 def test_no_card_carries_a_quiz_answer():

@@ -1,11 +1,11 @@
-r"""The quiz panel: the questions and what may be answered — and never which answer is right.
+r"""The quiz panel: the questions, what may be answered, and the key this page grades with.
 
 **What it does.** Renders the reader-facing surface of an exercise whose `kind`
-is `quiz` — the stem, the options, the control that sends the reader's choices
-to be graded, and the sentence saying a page opened as a file cannot have them
-checked. ⛔ **No editor, no Run and no Submit, and not disabled ones either**: a
-quiz has no file to open, no command to run and no grader to submit to, so every
-one of those would be a dead control (the page never shows a control it cannot honour).
+is `quiz` — the stem, the options, the control that grades the reader's choices,
+and the page's own key: which option is right and each option's sentence, as a
+data script inside the quiz's section. ⛔ **No editor, no Run and no Submit, and
+not disabled ones either**: a quiz has no file to open, no command to run and no
+grader to submit to (the page never shows a control it cannot honour).
 
 **How you use it.** `quiz.render(exercise, key=…, corpus=…, grader=…)` returns
 the section's markup; `page.practice.render` calls it for a quiz and emits its
@@ -13,53 +13,53 @@ own panel for everything else.
 
 **Depends on.** `studyforge.exercise.quiz` for what a question IS — the record's
 own `Question` and `Option`, never a second reading of the shape — plus
-`render.templates` and `render.markup`. ⛔ **Not on `serve`**: a page that
-needed a server to RENDER would fail the `file://` floor (R8). The page renders
-there; it simply cannot have its answers checked there, and says so.
+`render.templates` and `render.markup`. ⛔ **Not on `serve`**: nothing about a
+quiz is a server function.
 
-## ⛔ THE KEY IS NOT IN THE PAGE
+## ⭐ THE KEY LIVES IN THE PAGE IT GRADES (the user's ruling, 2026-09-25)
 
-⭐ A quiz's correct answer resides on the server: a reader's answers are
-validated there, with no online or agent check, and the result comes back with
-its explanation.
+⭐ *"Let the quiz answers remain in the html file as part of a js function
+localized to that page. Don't add it as a server functionality."* This reverses
+the ruling that kept the key on the local study server. ⭐ So each quiz carries
+its key in ONE `<script type="application/json">` inside its own section:
+`{question id: {"key": option id, "says": {option id: sentence}}}`, and
+`practice-quiz.js` — the shared script, which holds no key — grades from it in
+the browser, the same over `file://` and served, with no request.
 
-⛔ **An option is emitted as its id and its words, and NOTHING ELSE.** No
-correctness flag and no per-option sentence: the page does not grade. ⭐ The
-local study server does
-(`serve.routes.quiz`), reading the key from the unit's own document on disk, and
-answers each choice with the chosen option's sentence.
-`tests/studyforge/render/page/test_quiz.py` reads every key and every sentence
-out of the rendered bytes and requires none of them there.
+⛔ **Only in this page**: never in a shared asset (`page.js` holds the rule and
+no answer), never in another unit's page, and never in the unit document the
+content namespace answers (`serve.withheld.redacted`).
 
-⭐ **Over `file://` the questions and options still show** and a reader can
-still choose; the Check control ships `hidden` and the `offline` sentence ships
-showing — the mechanism the code panel's Run and Submit already use — and
-`practice-quiz.js` swaps the two only where the served client says an origin can
-answer.
+⚠️ **Data, not code.** The JSON block is inert: a served page's script policy
+admits no inline code, and a data block needs no admitting. Its text is JSON
+with `<`, `>` and `&` written as `\u` escapes, so no sentence can close the
+element it sits in.
 
 ## ⛔ R5's VOCABULARY IS NOT HERE EITHER
 
 ⚠️ `provenance` and `trust` are the framework's internal words and a reader is
 never shown one (spec §7 §9). ⭐ The label this section carries arrives already
-rendered, from `page.practice`'s one mapping over the record's own predicates —
-so there is no second place a token of that vocabulary could reach the page.
+rendered, from `page.practice`'s one mapping over the record's own predicates.
 
 ## ⭐ The words a reader reads are the CORPUS's; the words about them are OURS
 
-⛔ A stem and an option come out of the document and are escaped as text (R1).
-⚠️ *Right.*, *Not this one.*, the counting sentence and the offline sentence are
-this framework's own words about its own control, and they live in the
-**templates** — the same two-sided spelling every hook on this page has, because
-markup and script cannot import one another and the Python side is the single
-source for what is emitted.
+⛔ A stem, an option and a sentence come out of the document (R1). ⭐ A stem
+and an option go through the prose's own inline renderer (`markup.inline`), so
+`` `int` `` reads as code exactly as it does in the lesson, and every other
+character is escaped. ⚠️ *Right.*,
+*Not this one.*, the counting sentence and the no-script sentence are this
+framework's own words about its own control, and they live in the
+**templates**.
 """
 
 from __future__ import annotations
 
+import json
+
 from studyforge.exercise import Exercise
 from studyforge.exercise.quiz import Option, Question
 from studyforge.render import templates
-from studyforge.render.markup import escape, escape_attribute
+from studyforge.render.markup import escape_attribute, inline
 
 #: The whole section: the questions, the control that grades them and the line
 #: that says what it made of them — one element with attributes, so a file (R13).
@@ -91,6 +91,7 @@ def render(exercise: Exercise, *, key: str, corpus: str, grader: str) -> str:
         corpus=escape_attribute(corpus),
         grader=grader,
         questions=questions(exercise.questions, key),
+        answers=answers(exercise.questions),
     )
 
 
@@ -116,22 +117,46 @@ def question(asked: Question, key: str) -> str:
     return templates.fill(
         QUESTION_TEMPLATE,
         id=escape_attribute(asked.id),
-        stem=escape(asked.stem),
+        stem=inline(asked.stem),
         options="".join(option(one, f"{key}:{asked.id}") + JOIN for one in asked.options),
     )
 
 
 def option(offered: Option, name: str) -> str:
-    """Return one answer: its id and its words, and nothing that says whether it is right.
+    """Return one answer: its id and its words.
 
-    ⛔ **`offered.correct` and `offered.says` are never read here**: the
-    first IS the key and the second tells a reader which option it is, so either
-    one in the markup is the key in the page. ⭐ Both reach a reader only from
-    the server's verdict, and only for the option they chose.
+    ⭐ Whether it is right, and its sentence, are in the quiz's one key block
+    (`answers`), read by the script that grades — never on the option itself,
+    where a stylesheet or a screen reader could say it before the reader chose.
     """
     return templates.fill(
         OPTION_TEMPLATE,
         id=escape_attribute(offered.id),
         name=escape_attribute(name),
-        text=escape(offered.text),
+        text=inline(offered.text),
     )
+
+
+#: What `<`, `>` and `&` become inside the key block, so no sentence can close
+#: the `<script>` element or open another. ⭐ JSON reads each back as itself.
+SCRIPT_SAFE = {"<": "\\u003c", ">": "\\u003e", "&": "\\u0026"}
+
+
+def answers(asked: tuple[Question, ...]) -> str:
+    """Return this quiz's key as the text of its data block, in the record's order.
+
+    ⭐ `{question id: {"key": the right option's id, "says": {option id: sentence}}}`,
+    each sentence already rendered by `markup.inline` — escaped, with its inline
+    code as code — so the script inserts markup this build made and nothing else.
+    ⛔ Written with a fixed separator and in the record's own order, so the same
+    quiz gives the same bytes every build (R10).
+    """
+    document = {
+        one.id: {
+            "key": next(option.id for option in one.options if option.correct),
+            "says": {option.id: inline(option.says) for option in one.options},
+        }
+        for one in asked
+    }
+    text = json.dumps(document, ensure_ascii=False, separators=(",", ":"))
+    return "".join(SCRIPT_SAFE.get(char, char) for char in text)

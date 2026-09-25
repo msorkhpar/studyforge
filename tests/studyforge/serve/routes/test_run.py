@@ -23,7 +23,7 @@ from studyforge.execute import Editor, EditorProbe, editor_container_for, workbe
 from studyforge.progress import IGNORE_FILENAME, store_dir
 from studyforge.serve.instance import instance_of
 from studyforge.serve.response import API_VERSION, Request
-from studyforge.serve.routes import quiz, run
+from studyforge.serve.routes import run
 from studyforge.serve.routes.runs import NOT_RECORDED, editor_for
 from studyforge.serve.routes.state import corpus_state
 from tests.studyforge.execute.runnable import FOREIGN_HOME
@@ -74,7 +74,7 @@ def test_instance_of_registers_run_as_the_one_writer_and_it_runs(root):
     server = instance_of(discovered, port=0)
     try:
         assert run.NAMESPACE in server.namespaces
-        assert server.writers == frozenset({run.NAMESPACE, quiz.NAMESPACE})
+        assert server.writers == frozenset({run.NAMESPACE})
         thread = threading.Thread(target=server.serve_forever, daemon=True)
         thread.start()
         status, _, body = post(server, start_path(1, run.RUN))

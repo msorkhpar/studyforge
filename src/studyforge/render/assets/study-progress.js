@@ -6,13 +6,17 @@
    reader's own assertion and needs nobody's agreement to be true. ⚠️ The
    served half is a different fact: a PASS is established by a grader run and
    is written where it was established (spec §8.5). ⛔ **A read mark is
-   never a pass**, and nothing here can produce one — this file has no notion
-   of a practice, a grader or a result at all.
+   never a pass**, and nothing here can produce a run's pass — this file knows
+   no grader and no run, and a quiz's pass is only kept here, never judged.
 
    ⛔ **An explicit act, never inferred.** Nothing here observes scrolling, the
    narration reaching the end, or the page having been opened. The store is
    written when the reader presses the control and at no other time. A record
    the reader cannot trust is worse than none.
+
+   ⭐ **A third record holds the quizzes the reader has answered wholly right**:
+   a quiz is graded in its own page, and nothing about it is a server's, so
+   its pass is the reader's own, like a mark. ⛔ It is never a run's pass.
 
    ⛔ **Two records, never one.** The marks and the reader's display
    preferences have different shapes and different lifetimes, so they are two
@@ -53,6 +57,8 @@
      the reader's browser put it. */
   var MARKS_KEY = 'studyforge.read.v1';
   var DISPLAY_KEY = 'studyforge.display.v1';
+  /* ⭐ The third record: the quizzes this reader has answered wholly right. */
+  var QUIZZES_KEY = 'studyforge.quizzes.v1';
 
   /* ⛔ THE BOOT CACHE, AND IT IS A DIFFERENT STORAGE AREA ON PURPOSE.
      ⚠️ `page.html` carries a synchronous boot in the `<head>` so a
@@ -78,6 +84,7 @@
      and a reader whose two machines disagree is the normal case. */
   var RECORD_VERSION = 1;
   var MARKS_FIELD = 'read';
+  var PASSED_FIELD = 'passed';
   var DISPLAY_FIELD = 'display';
 
   /* How long a thing this will keep. ⚠️ A bound rather than a grammar: the
@@ -221,6 +228,31 @@
     return writeMarks(marks().filter(function (held) { return held !== key; }));
   }
 
+  /* ⭐ **A quiz passed, by its practice key** — the same machinery as the
+     marks, over its own key. ⛔ A quiz is graded in its page and the server
+     records nothing about it (the user's ruling), so its pass is the reader's
+     own record, kept where the read marks are; it is never a RUN's pass. */
+  function passes() {
+    var held = record(QUIZZES_KEY);
+    var listed = held && Array.isArray(held[PASSED_FIELD]) ? held[PASSED_FIELD] : [];
+    return listed.filter(function (entry, at) {
+      return usable(entry) && listed.indexOf(entry) === at;
+    }).sort();
+  }
+
+  function passedQuiz(key) {
+    return usable(key) && passes().indexOf(key) !== -1;
+  }
+
+  function passQuiz(key) {
+    if (!usable(key)) { return false; }
+    var kept = passes();
+    if (kept.indexOf(key) === -1) { kept.push(key); }
+    var body = { version: RECORD_VERSION };
+    body[PASSED_FIELD] = kept.sort();
+    return keep(QUIZZES_KEY, body);
+  }
+
   /* The second record, and it is deliberately the same machinery over a
      different key — never the same record with a second field in it. */
   function preferences() {
@@ -256,6 +288,9 @@
   window.studyforge.progress = {
     MARKS_KEY: MARKS_KEY,
     DISPLAY_KEY: DISPLAY_KEY,
+    QUIZZES_KEY: QUIZZES_KEY,
+    passedQuiz: passedQuiz,
+    passQuiz: passQuiz,
     supported: function () { return backed !== null; },
     marks: marks,
     marked: marked,

@@ -5,7 +5,11 @@ verdict — one row per question, the sentence for whatever was chosen, and the
 one predicate that says the quiz is complete.
 
 **How you use it.** `grade(questions, answers)` returns a `Verdict`;
-`completes(questions, answers)` is the predicate on its own.
+`completes(questions, answers)` is the predicate on its own. ⭐ **The rule's
+reference**: a reader's quiz is graded in the browser, from the key its page
+carries (`render/assets/practice-quiz.js`, the user's ruling of 2026-09-25),
+and `tests/visual/test_practice_quiz.py` reads the page's verdicts against
+this module's.
 
 **Depends on.** `questions` for what a question is, and **nothing else**. ⛔ Not
 the filesystem, not `subprocess`, not the network, not `serve`, not a model,
