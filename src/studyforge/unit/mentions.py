@@ -83,8 +83,8 @@ container, whose outline the source numbered as one. ⭐ A number that is a
 unit's label is that unit's, as above, whatever else it could be.
 
 ⭐ **The heading's words are served in double quotes**, and the author's word
-`section` keeps its case, so a title such as `ISO-8583:2003` reads as a name
-inside the sentence: `Section "ISO-8583:2003" lists …`. On the page the quotes
+`section` keeps its case, so a title such as `Part 2: Encoding` reads as a
+name inside the sentence: `Section "Part 2: Encoding" lists …`. On the page the quotes
 sit outside the link; in a quiz's plain words they are the only mark. ⚠️
 Narration speaks the served words with the quotes in them: the engine reads a
 quote as punctuation and voices no word for it.
