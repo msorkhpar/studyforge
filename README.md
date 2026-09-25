@@ -37,11 +37,18 @@ python3 -m venv .venv
 . .venv/bin/activate
 python3 -m pip wheel ./studyforge --no-deps -w wheels
 python3 -m pip install --no-index wheels/studyforge-*.whl
+python3 -m pip install pytest==9.1.1 iniconfig==2.3.0 packaging==26.3 pluggy==1.6.0 Pygments==2.21.0
 ```
 
 Building the wheel fetches the build backend (`setuptools`) from the package
 index once; installing it fetches nothing. Keep the wheel: it is what you
 install into any other Python you convert material with.
+
+The last line installs `pytest`, which the library does not need and the skills
+do: onboarding generates tests for your corpus, and the onboarding and adapter
+skills run them with `python3 -m pytest`. It is pinned, with everything it
+needs, to the versions the framework's own tests run under, and fetched from
+the package index once.
 
 Check that it worked:
 
@@ -66,14 +73,21 @@ studyforge validate studyforge/tests/fixtures/depth1
 studyforge plan studyforge/tests/fixtures/depth1
 mkdir site
 studyforge build studyforge/tests/fixtures/depth1 --out site
+mkdir shots
+python3 -m studyforge.look site --out shots
 studyforge serve studyforge/tests/fixtures/depth1 --site site
 ```
 
 `validate` exits `0` and names the three claims it could not check, because
 this example carries its archive but not the source files it was written from.
 `plan` lists every path a build would write before it writes one. `build`
-writes the site into `site/`, and `serve` prints a loopback address to open in
-a browser (port 8765 unless you pass `--port`). Stop it with Ctrl-C.
+writes the site into `site/`. `python3 -m studyforge.look` opens the root
+index, a container page and a unit page in a headless Chromium-family browser
+already on your machine (Chrome, Chromium or `chrome-headless-shell`), and
+writes a screenshot and the rendered DOM of each into `shots/`, which must be
+outside the site; `--all` takes every page, and `--browser` names a browser
+your `PATH` does not reach. `serve` prints a loopback address to open in a
+browser (port 8765 unless you pass `--port`). Stop it with Ctrl-C.
 
 Both examples, and why each looks the way it does, are walked through in
 [Worked examples](docs/authoring/examples.md).

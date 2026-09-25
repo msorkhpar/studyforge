@@ -280,6 +280,9 @@ What lands, and why each one exists:
 python3 -m pytest tests -q          # ⛔ it fails, and the failure is the specification
 ```
 
+⭐ `pytest` is the one tool here the library does not carry; the framework's
+install route installs it, pinned.
+
 ⭐ **`made.hand_written` names it** — `ingest/read.py`, three functions. Every
 other file in the corpus is downstream of it and is generated.
 
