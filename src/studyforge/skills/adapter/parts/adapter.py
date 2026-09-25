@@ -75,7 +75,8 @@ def _surface(plan: Plan) -> str:
 
 #: ⭐ The practices step of `emit.py`, generated only for a corpus that declares
 #: exercises: every exercise the authoring pass committed joins its unit there,
-#: so `read.documents` returns the source's own material only (`M9-6` F8).
+#: so `read.documents` returns the source's own material only. ⚠️ Measured: a
+#: hand-written practice reader stopped at the first quiz.
 _JOINS_DOES = (
     " ⭐ Every exercise the authoring pass committed under `exercises/` joins its "
     "unit as a practice document here (`studyforge.skills.adapter.practices`), "

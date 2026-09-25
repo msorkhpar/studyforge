@@ -19,7 +19,7 @@ authors, and nothing here writes a file.
 
 ## ⭐ THE SCAFFOLD CARRIES THE PRACTICES, SO `read.py` NEVER DOES
 
-⚠️ **Measured on a real course (`M9-6` F8):** the scaffold had no step for
+⚠️ **Measured on a real course:** the scaffold had no step for
 practice documents, so the course's person wrote one into `read.py`. It read
 code bundles only and stopped at the first ordinal with no `bundle.json`, so a
 quiz would have ended the count and every exercise after it was lost. ⭐ A
@@ -36,7 +36,7 @@ is left as it is — its unit already counts it. ⛔ A document at that ordinal
 carrying ANY other record is a collision: the source's own practice and an
 authored one would share a number, and the run refuses naming the bundle.
 
-## ⛔ AUTHORED PRACTICES NUMBER AFTER THE SOURCE'S OWN, WITH NO GAP (`W437`)
+## ⛔ AUTHORED PRACTICES NUMBER AFTER THE SOURCE'S OWN, WITH NO GAP
 
 ⭐ After joining, a unit's practice documents must be numbered 1 to its count
 with none missing. ⚠️ Otherwise `validate`'s practice-count check would refuse
@@ -263,7 +263,7 @@ def _require_cleared(base: Path, places: Places, where: str) -> None:
     if not record.clears:
         raise PracticeRefused(
             f"'{where}' ships a gate record in which not every gate held. A shortfall "
-            f"is reported, never emitted (R6): re-author the exercise."
+            f"is reported, never emitted: re-author the exercise."
         )
     moved = drifted(base / places.bundle, record.inputs, places.bundle)
     if moved:
