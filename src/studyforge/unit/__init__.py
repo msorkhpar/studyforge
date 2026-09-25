@@ -32,6 +32,7 @@ no-overlay path is never the one discovered late.
 | `sections` | the section-key vocabulary: `shared`, `<variant>`, `practice-<variant>` |
 | `trust` | where a grader came from and what it may claim (R5) |
 | `outline` | the source's own outline number, left off every title and heading a reader is served |
+| `mentions` | a mention of another unit of the corpus, served as that unit's title and page |
 | `errors` | `ContentError`, the only exception any of it raises |
 
 ⛔ **`content_api` is minted here** (R21): the overlay lives at

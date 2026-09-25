@@ -142,7 +142,11 @@ def unit_media(corpus: Corpus, into: Path | str) -> Written:
     planned: list[tuple[PurePosixPath, Path]] = []
     for source in corpus.units:
         home = layout.unit_files(source.container.address, source.ordinal)
-        document = build_unit(source.directory, declared_practices=source.declared_practices)
+        document = build_unit(
+            source.directory,
+            declared_practices=source.declared_practices,
+            mentions=source.mentions,
+        )
         for target, origin in _copies(source, unit_location(corpus, source), home, document):
             if not origin.is_file():
                 missing.append(target)

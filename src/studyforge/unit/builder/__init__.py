@@ -61,6 +61,7 @@ from studyforge.unit.builder.document import (
 from studyforge.unit.builder.material import KIND_ORDER, Material, NoMaterial, read
 from studyforge.unit.builder.parts import SECTION_KEYS
 from studyforge.unit.content import Overlay
+from studyforge.unit.mentions import Mentions
 
 __all__ = [
     "API",
@@ -85,6 +86,7 @@ def build_unit(
     overlay: Overlay | None = None,
     declared_practices: int | None = None,
     title: str | None = None,
+    mentions: Mentions | None = None,
 ) -> dict:
     """Read one unit's material off disk and build its served document.
 
@@ -97,4 +99,5 @@ def build_unit(
         overlay=overlay,
         declared_practices=declared_practices,
         title=title,
+        mentions=mentions,
     )

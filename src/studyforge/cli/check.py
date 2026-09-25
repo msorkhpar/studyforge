@@ -268,7 +268,11 @@ def _practices(corpus: Corpus) -> Iterator[Practice]:
     for unit in corpus.units:
         try:
             text = render_unit(
-                build_unit(unit.directory, declared_practices=unit.declared_practices)
+                build_unit(
+                    unit.directory,
+                    declared_practices=unit.declared_practices,
+                    mentions=unit.mentions,
+                )
             )
         except NoMaterial:
             continue

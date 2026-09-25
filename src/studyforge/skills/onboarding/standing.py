@@ -161,4 +161,8 @@ def lines(standing: Standing) -> list[str]:
 
 def _document(source: UnitSource) -> dict:
     """Build one unit's served document exactly as the page pass does."""
-    return build_unit(source.directory, declared_practices=source.declared_practices)
+    return build_unit(
+        source.directory,
+        declared_practices=source.declared_practices,
+        mentions=source.mentions,
+    )

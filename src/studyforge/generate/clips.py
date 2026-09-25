@@ -96,7 +96,11 @@ def unit_clips(corpus: Corpus, into: Path | str) -> Written:
     stale: list[PurePosixPath] = []
     for source in corpus.units:
         at = unit_location(corpus, source)
-        document = build_unit(source.directory, declared_practices=source.declared_practices)
+        document = build_unit(
+            source.directory,
+            declared_practices=source.declared_practices,
+            mentions=source.mentions,
+        )
         probed, playing = heard(corpus, source, at, document, state)
         audio = at.media_dir(AUDIO_DIRNAME)
         for name in sorted({_one_file(name) for name in playing.filenames.values()}):

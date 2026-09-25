@@ -116,7 +116,11 @@ class CorpusContent:
         if source is None:
             return None
         try:
-            document = build_unit(source.directory, declared_practices=source.declared_practices)
+            document = build_unit(
+                source.directory,
+                declared_practices=source.declared_practices,
+                mentions=source.mentions,
+            )
         except NoMaterial:
             return None
         return render_unit(document)
