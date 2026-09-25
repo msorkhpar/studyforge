@@ -424,13 +424,15 @@ def test_a_module_sits_inside_its_sections_disclosure():
     assert advanced.index("Going further") < advanced.index("</details></li></ol></details>")
 
 
-def test_the_section_holding_the_reader_is_open_and_marked_and_the_others_are_not():
+def test_the_section_holding_the_reader_is_open_and_the_others_are_not():
     markup = rail(SECTIONED)
     opened = re.findall(
-        r'<li( aria-current="true")?><details( open)?><summary>(?:<span[^>]*>[^<]*</span> )?(\w+)',
+        r"<li><details( open)?><summary>(?:<span[^>]*>[^<]*</span> )?(\w+)",
         markup,
     )
-    assert opened == [(' aria-current="true"', " open", "Basics"), ("", "", "Advanced")]
+    assert opened == [(" open", "Basics"), ("", "Advanced")]
+    # ⛔ The container stays the one row that says the reader is in it.
+    assert markup.count('aria-current="true"') == 1
 
 
 def test_a_section_row_is_a_label_with_no_link_and_no_readable_state():

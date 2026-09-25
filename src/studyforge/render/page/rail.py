@@ -234,14 +234,14 @@ def _rows(containers: tuple[RailContainer, ...], depth: int, said: str) -> str:
 def _group(group: RailGroup, containers: tuple[RailContainer, ...], depth: int, said: str) -> str:
     """Return one group as a disclosure holding its containers, open when it holds the reader.
 
-    ⚠️ **No link and no readable attribute**: no page is written above a
-    container, so the summary is a label and nothing else.
+    ⚠️ **No link, no readable attribute and no `aria-current`**: no page is
+    written above a container, so the summary is a label and nothing else, and
+    the container the reader is in stays the one row that says so.
     """
     current = any(container.current for container in containers)
     summary = _body(_level(group), group.title)
     return (
-        f"<li{CURRENT_CONTAINER if current else ''}>"
-        f"<details{OPEN if current else ''}><summary>{summary}</summary>"
+        f"<li><details{OPEN if current else ''}><summary>{summary}</summary>"
         f"<ol>{_rows(containers, depth + 1, said)}</ol></details></li>"
     )
 

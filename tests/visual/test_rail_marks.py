@@ -34,9 +34,10 @@ from tests.visual.page import OpenPage
 #: The fixture corpus with more than one container, so a rail is emitted.
 CORPUS = "depth2"
 
-#: The region under test and its keyed rows, as `chrome.css` spells them.
+#: The region under test and its unit rows: a nested row that holds no
+#: disclosure, since a container row and a group row each hold one.
 RAIL = 'nav[aria-label="Containers"]'
-ROWS = RAIL + " li li"
+ROWS = RAIL + " li li:not(:has(> details))"
 
 #: What `chrome.css` draws on a marked rail row (`\2713`), as the computed
 #: `content` of the pseudo-element reads back.
