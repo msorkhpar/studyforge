@@ -8,24 +8,31 @@ It reports; it decides nothing and refuses nothing.
 the file carries them, every heading it carries outside a fence, and whether
 the file ended inside a fence.
 
-**Depends on.** `dataclasses`, and `studyforge.validate.headings` for
-`HEADING_LINE` and `FENCE`. ⛔ **Nothing else, and never `archive.markdown`** —
-see below. Standard library only.
+**Depends on.** `dataclasses`, `studyforge.validate.headings` for
+`HEADING_LINE`, and `studyforge.archive.markdown.fences` and `.patterns` for
+what a fence is and where a list item runs. ⛔ **Never the archive reader's
+parser** — see below. Standard library only.
 
-## ⛔ IT BORROWS THE TWO PATTERNS AND NOT THE WALK
+## ⛔ IT BORROWS THE GRAMMAR AND NOT THE WALK
 
-⭐ **`validate.headings` owns what a heading is and what a fence is**, so this
-module imports both patterns rather than writing a second pair that could drift
-from them. ⚠️ **What it cannot borrow is the WALK**: `headings()` skips fenced
-regions by design and `region()` answers about one named section, and neither
-can say which headings enclose a *fence*, because neither records where a fence
-is. ⭐ So the shared thing is the grammar and the new thing is the traversal,
-which is the split that leaves one definition of each in the tree.
+⭐ **`archive.markdown.fences` owns where a fence opens and where it closes**,
+and the archive reader reads its fences by the same module, so the ledger reads
+every fence the archive reader reads — ⚠️ measured: a pattern of the ledger's
+own (three spaces at most) missed five examples indented under list items in
+one course and refused a page whose fence the archive reader accepted.
+⭐ **`validate.headings` owns what a heading is.** What neither can lend is the
+WALK: which headings enclose a fence. So the shared thing is the grammar and the
+new thing is the traversal, which leaves one definition of each in the tree.
 
-## ⛔ THE MARKDOWN READER IS NOT USED, AND THAT IS THE REGION RULE'S REASON
+⚠️ **A list item is followed the way the archive reader follows one**: it opens
+at a list marker, runs through lines indented under it, lazy continuation and
+blank lines, and ends at a heading, or at an unindented line after a blank one
+that is not another item. Inside it a fence may be indented any distance.
+
+## ⛔ THE MARKDOWN PARSER IS NOT USED, AND THAT IS THE REGION RULE'S REASON
 
 ⚠️ **The ledger exists to say what the SOURCE carries.** A scan built on
-`archive.markdown` would agree with the parser by construction and could never
+the archive's parser would agree with it by construction and could never
 report an example the parser dropped — ⛔ which is precisely the failure
 *nothing is lost* is written to catch.
 
@@ -37,19 +44,18 @@ file ending inside a fence is a real fault, and the sentence that names it
 belongs to the module that knows what the file was being read *for* — so
 `unclosed` travels, and `ledger.take` is what raises.
 
-## ⚠️ A CLOSING FENCE IS THE SAME CHARACTER, WHICH IS WHAT `validate.headings` SAYS
+## ⚠️ A FENCE IS BACKTICKS, BECAUSE THAT IS THE ONLY FENCE THE ARCHIVE KEEPS
 
-⭐ **Followed deliberately rather than corrected to CommonMark's length rule.**
-Two modules walking one file with two ideas of where a fence ends is the drift
-this whole arrangement exists to avoid; ⛔ a marker of the *other* character
-inside an open fence is body text here, because it is body text to a reader.
+⛔ A `~~~` run is not a fence to the archive reader, so it is not one here:
+counting it would ask an exercise of an example no page renders as code.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 
-from studyforge.validate.headings import FENCE, HEADING_LINE
+from studyforge.archive.markdown import fences, patterns
+from studyforge.validate.headings import HEADING_LINE
 
 
 @dataclass(frozen=True, slots=True)
@@ -88,32 +94,58 @@ def scan(text: str) -> Scan:
     found: list[Fence] = []
     seen: list[str] = []
     stack: list[tuple[int, str]] = []
-    marker_char: str | None = None
-    opened: tuple[tuple[str, ...], str | None] = ((), None)
+    opened: fences.Opened | None = None
+    context: tuple[tuple[str, ...], str | None] = ((), None)
     body: list[str] = []
+    listing = _Listing()
     for line in text.splitlines():
-        marker = FENCE.match(line)
-        run = marker.group(1) if marker is not None else ""
-        if marker_char is None:
-            if marker is not None:
-                marker_char = run[0]
-                opened = (tuple(name for _, name in stack), _language(line, run))
+        if opened is None:
+            opened = fences.opening(line, in_list=listing.inside)
+            if opened is not None:
+                context = (tuple(name for _, name in stack), _language(opened.info))
                 body = []
             else:
+                listing.step(line)
                 _push(stack, seen, line)
             continue
-        if run[:1] == marker_char:
-            marker_char = None
-            found.append(_fence(len(found) + 1, opened, body))
+        if fences.closes(line, opened):
+            opened = None
+            found.append(_fence(len(found) + 1, context, body))
+            listing.fenced()
             continue
         body.append(line)
-    return Scan(tuple(found), tuple(seen), marker_char is not None)
+    return Scan(tuple(found), tuple(seen), opened is not None)
 
 
-def _language(line: str, run: str) -> str | None:
+class _Listing:
+    """Whether the line being read continues a list item, as the archive reader follows one."""
+
+    def __init__(self) -> None:
+        self.inside = False
+        self.blank = False
+
+    def step(self, line: str) -> None:
+        """Fold one line read outside a fence into the list state."""
+        if not line.strip():
+            self.blank = True
+            return
+        if patterns.THEMATIC.match(line) or HEADING_LINE.match(line):
+            self.inside = False
+        elif patterns.UNORDERED.match(line) or patterns.ORDERED.match(line):
+            self.inside = True
+        elif self.inside and self.blank and not line[:1].isspace():
+            self.inside = False
+        self.blank = False
+
+    def fenced(self) -> None:
+        """A fence just closed: the item it sat in goes on."""
+        self.blank = False
+
+
+def _language(info: str) -> str | None:
     """Return the fence's info word, or `None` where it opens with none."""
-    info = line.lstrip()[len(run) :].strip().split()
-    return info[0] if info else None
+    words = info.strip().split()
+    return words[0] if words else None
 
 
 def _fence(ordinal: int, opened: tuple[tuple[str, ...], str | None], body: list[str]) -> Fence:
