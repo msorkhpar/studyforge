@@ -233,10 +233,10 @@ def test_an_in_page_anchor_links_the_heading_it_names(tmp_path, written, linked)
     ("written", "named"),
     [
         # ⭐ The unit's own heading: its words, an in-page link.
-        ("Section 2.2 describes it.", "Section [Bitmaps](#prose-b1) describes it."),
-        ("as in section\n2.2.", "as in section\n[Bitmaps](#prose-b1)."),
+        ("Section 2.2 describes it.", 'Section "[Bitmaps](#prose-b1)" describes it.'),
+        ("as in section\n2.2.", 'as in section\n"[Bitmaps](#prose-b1)".'),
         # ⭐ Exactly one heading of the container, on another page.
-        ("Section 2.1 calls them", "Section [The MTI](u4.html#prose-b0) calls them"),
+        ("Section 2.1 calls them", 'Section "[The MTI](u4.html#prose-b0)" calls them'),
         # ⛔ A unit's label is that unit, whatever heading it also numbers.
         ("section 3.2.1 first", "section *Creating custom exceptions* first"),
         # ⛔ No `section` before it, or a number no heading carries: kept.
@@ -252,7 +252,7 @@ def test_a_heading_s_number_after_section_is_served_as_its_words(tmp_path, writt
 def test_the_unit_s_own_references_are_served_with_no_corpus_at_all():
     # ⭐ The default names nothing of the corpus and still knows its own headings.
     assert served(Mentions(), "Section 2.2 and [i](#introduction)") == (
-        "Section [Bitmaps](#prose-b1) and [i](#prose-b2)"
+        'Section "[Bitmaps](#prose-b1)" and [i](#prose-b2)'
     )
 
 
@@ -352,10 +352,10 @@ def test_a_quiz_s_stem_options_and_sentences_are_served_as_plain_words(tmp_path)
     assert question["options"] == [
         {
             "id": "a",
-            "text": "What section Bitmaps says",
+            "text": 'What section "Bitmaps" says',
             "correct": True,
             "says": (
-                "Section Bitmaps lists it, and section The MTI calls them so; "
+                'Section "Bitmaps" lists it, and section "The MTI" calls them so; '
                 "see Checked vs. unchecked."
             ),
         },
@@ -374,8 +374,8 @@ def test_a_quiz_s_words_carry_no_markup(tmp_path):
     (served,) = on_disk(tmp_path).sections([section], OWN)
     (question,) = served["workspace"]["questions"]
     assert question["stem"] == "Why Checked vs. unchecked?"
-    assert question["options"][0]["text"] == "section Bitmaps"
-    assert question["options"][0]["says"] == "Section The MTI and [x](#introduction)."
+    assert question["options"][0]["text"] == 'section "Bitmaps"'
+    assert question["options"][0]["says"] == 'Section "The MTI" and [x](#introduction).'
 
 
 # --- a site outside the corpus root counts what it cannot reach -------------

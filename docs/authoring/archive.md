@@ -116,7 +116,8 @@ as the source writes it as well: a link to a file of your repository
 (`src/main/java/…/Types.java`) is read from the unit's `origin` and linked where
 the file is, an in-page link to one of the source's own headings
 (`#introduction`) links that heading, and `section 2.2` names the heading
-numbered `2.2` in the unit, or in its container, by its words. A quiz's
+numbered `2.2` in the unit, or in its container, by its words in double quotes
+(`Section "Bitmaps"`). A quiz's
 question, options and explanations follow the same rules, and a link to another
 unit's file keeps a fragment that names one of that unit's headings. `validate`
 reports a link that leads nowhere as `link-unresolved`, naming the unit.

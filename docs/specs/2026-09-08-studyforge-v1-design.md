@@ -1963,8 +1963,10 @@ These are proven surfaces, generalised in their addressing and otherwise kept.
   own anchor (`#introduction`) links the id the page gives that heading, and
   `section 2.2`, where `2.2` is the outline number of one of the unit's own
   headings, or else of exactly one heading of its container, is shown and
-  narrated as that heading's words, linking it. A quiz's stem, options and
-  per-option sentences follow the same rules as plain words, on the page and in
+  narrated as that heading's words in double quotes, linking it, the quotes
+  outside the link and the author's word `section` kept as written
+  (`Section "Bitmaps" describes it`). A quiz's stem, options and
+  per-option sentences follow the same rules as plain words, quotes included, on the page and in
   what the grading route answers. A link to another unit's source file keeps
   its fragment when the fragment names a heading of that unit, and lands on it.
   ⚠️ A site written anywhere but the corpus root cannot reach a corpus file, so

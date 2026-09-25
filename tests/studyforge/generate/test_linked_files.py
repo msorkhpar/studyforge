@@ -73,8 +73,9 @@ def test_a_site_built_into_its_corpus_leads_every_link_somewhere(tmp_path, place
     assert sorted(path.name for path in root.rglob("Types.java")) == ["Types.java"]
     assert "Types.java" in first
     # ⭐ The number is served as the heading's words, linking its page and heading.
-    assert "Section <a href=" in first
-    assert ">Two</a> goes on." in first
+    # ⭐ In double quotes, outside the link, the author's `Section` kept.
+    assert "Section &quot;<a href=" in first
+    assert ">Two</a>&quot; goes on." in first
 
 
 @pytest.mark.parametrize("placement", ["tree", "sibling"])

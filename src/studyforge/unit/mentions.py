@@ -18,7 +18,8 @@ another unit of the same corpus reads as that unit and leads to its page:
   page gives that heading (`unit.headings`);
 - `section 2.2`, where `2.2` is the outline number of one of the unit's own
   headings, or of exactly one heading of its container, is served as that
-  heading's words, linking the heading;
+  heading's words in double quotes, linking the heading (`Section "Bitmaps"`),
+  the quotes outside the link;
 - a quiz's stem, options and per-option sentences follow the same rules, as
   plain words (`Mentions.words`): the page escapes them as text, and the
   grading route answers a sentence as it is served.
@@ -80,6 +81,13 @@ number, so a bare number is never a heading. `section 2.2` is, when `2.2` is
 one of the unit's own headings, or else exactly one heading of the unit's
 container, whose outline the source numbered as one. ⭐ A number that is a
 unit's label is that unit's, as above, whatever else it could be.
+
+⭐ **The heading's words are served in double quotes**, and the author's word
+`section` keeps its case, so a title such as `ISO-8583:2003` reads as a name
+inside the sentence: `Section "ISO-8583:2003" lists …`. On the page the quotes
+sit outside the link; in a quiz's plain words they are the only mark. ⚠️
+Narration speaks the served words with the quotes in them: the engine reads a
+quote as punctuation and voices no word for it.
 """
 
 from __future__ import annotations
@@ -295,9 +303,9 @@ class Mentions:
         if heading is None or not _labelled(heading.text):
             return None
         if plain:
-            return heading.text
+            return f'"{heading.text}"'
         where = "" if page == self.page else relative_href(self.page, page)
-        return f"[{heading.text}]({where}{heading.reference})"
+        return f'"[{heading.text}]({where}{heading.reference})"'
 
     def _link(self, label: str, href: str) -> str:
         if href.startswith("#"):

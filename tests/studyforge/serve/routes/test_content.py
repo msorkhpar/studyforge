@@ -186,9 +186,10 @@ def test_a_sentence_naming_a_heading_is_graded_served_and_withheld_as_written(tm
         practice.read_text("utf-8").replace(sentences()[0], written), encoding="utf-8"
     )
     content = CorpusContent(read_corpus(root))
-    spoken = "Section What a triple is names the three parts of a triple."
-    assert spoken in (content.unit(QUIZ_UNIT) or "")
-    assert written not in (content.unit(QUIZ_UNIT) or "")
+    spoken = 'Section "What a triple is" names the three parts of a triple.'
+    held = json.dumps(json.loads(content.unit(QUIZ_UNIT) or "null"))
+    assert json.dumps(spoken) in held
+    assert json.dumps(written) not in held
     assert {written, spoken} <= content.withheld().sentences
     # ⭐ Narration speaks a section's blocks and never a quiz's words, in either spelling.
     said = " ".join(unit.speak for unit in speakable_of(json.loads(content.unit(QUIZ_UNIT))).units)
