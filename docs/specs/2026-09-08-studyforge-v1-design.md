@@ -2000,7 +2000,8 @@ These are proven surfaces, generalised in their addressing and otherwise kept.
   the source its text names most**, inside the file's own build module, either
   way round; a tie is no partner, and the file opens alone. ⛔ **The author's
   tree is never written**: both windows open a copy of the corpus's code
-  (`.studyforge/execution/code`, ignored but for its own ignore file), a run
+  (`.studyforge/execution/code`, ignored but for its own ignore file, holding
+  no `corpus.json` and no bookkeeping, so it is never a second corpus), a run
   happens in that copy, and the panel says so. ⭐ The copy is refreshed on
   every open and run, newer wins, so a reader's change survives until the
   author changes the file. ⛔ **A file the refresh writes is stamped with the

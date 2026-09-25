@@ -63,6 +63,13 @@ keeps compiling. ⚠️ Output directories and dot-directories inside the copy �
 - ⛔ **No symlink**, followed or not: it can name anything on the host.
 - The practice workspaces, which are the practices' and are bound by the
   editor already.
+- ⛔ **No manifest** (`corpus.json`), at any depth. ⚠️ **Measured:** a corpus
+  whose material sits at its root had its own `corpus.json` mirrored into the
+  copy, and `serve`'s next start found two corpora with one source and refused
+  to start (exit 2). ⭐ The copy is the corpus's CODE, never the corpus: no
+  manifest and no `.studyforge` bookkeeping (a dot-directory, never walked).
+  ⭐ A manifest an earlier sync left in the copy is removed by the next one, as
+  any file the copy holds and the sync does not want.
 
 ⭐ **A copy larger than `MAX_BYTES` or `MAX_FILES` is refused** rather than
 made: a corpus whose "code" is a media library is not one a reader's click
@@ -75,6 +82,7 @@ import os
 import shutil
 from pathlib import Path
 
+from studyforge.corpus.manifest import MANIFEST_FILENAME
 from studyforge.corpus.placement.names import ARCHIVE_DIRNAME, PRACTICE_DIRNAME
 from studyforge.execute.conventions import SKIPPED
 from studyforge.exercise.bundle.layout import BUNDLES_DIRNAME
@@ -128,7 +136,9 @@ def code_files(root: Path) -> dict[str, Path]:
         names[:] = sorted(name for name in names if _walked(name, top=top))
         for name in sorted(files):
             path = here / name
-            if name.startswith(".") or path.is_symlink() or not path.is_file():
+            if name.startswith(".") or name == MANIFEST_FILENAME or path.is_symlink():
+                continue
+            if not path.is_file():
                 continue
             total += path.stat().st_size
             found[path.relative_to(root).as_posix()] = path
