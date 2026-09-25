@@ -15,7 +15,7 @@ from studyforge.corpus.placement import (
     profile_for,
     unit_stem,
 )
-from studyforge.corpus.placement.names import contained_stem
+from studyforge.corpus.placement.names import UNCOMMITTED_DIRNAMES, contained_stem
 from studyforge.corpus.placement.sibling import SiblingProfile
 
 SIBLING = profile_for("sibling")
@@ -183,7 +183,8 @@ def test_the_media_globs_match_the_directories_this_profile_actually_mints():
     for line in lines:
         assert line.startswith(f"{STUDY_DIRNAME}/") and line.endswith("/")
     kinds = [line.split("/")[1] for line in lines]
-    assert kinds == list(UNIT_MEDIA_DIRNAMES)
+    # ⛔ The clips and nothing else: every other kind is committed under any policy.
+    assert kinds == list(UNCOMMITTED_DIRNAMES) == ["audio"]
     for kind in kinds:
         # ⛔ The rule matches the directory that actually holds the clips: the
         # kind's own directory under `study/`, whose children are the stems.

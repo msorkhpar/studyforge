@@ -91,9 +91,10 @@ LIMIT_COUNT = "max_files"
 #: that there is a decision to take; a refusal with no way forward is a wall.
 #: ⛔ Neither of them is *"the build quietly picks one"*.
 WAYS_FORWARD = (
-    "declare media.commit 'never' in corpus.json and deliver this media outside the "
-    "repository — an href never encodes how a file arrived (§5), so the pages do not "
-    "change and a reader who has the media still hears it",
+    "declare media.commit 'never' in corpus.json and deliver the narration clips outside "
+    "the repository as release volumes — an href never encodes how a file arrived (§5), "
+    "so the pages do not change and a reader who restores the clips still hears them; "
+    "images, video and attachments copy the archive's own files and stay committed",
     "raise the limit in corpus.json, if the place this repository is pushed to accepts "
     "what was measured — the limits are the corpus's own declaration, not this "
     "framework's",

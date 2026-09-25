@@ -20,6 +20,7 @@ from studyforge.corpus.placement import (
     GENERATED_ROOT,
     SELF_IGNORE_LINE,
     SITE_CACHE_FILENAME,
+    UNIT_MEDIA_DIRNAMES,
     ContainerLocations,
     PlacementError,
     Profile,
@@ -29,6 +30,7 @@ from studyforge.corpus.placement import (
     register,
     registered,
 )
+from studyforge.corpus.placement.names import UNCOMMITTED_DIRNAMES
 from tests.support import init_repository, is_ignored, repository_root
 
 ADDRESS = Address.of("basics", "16-streams-api")
@@ -353,3 +355,29 @@ def test_no_rule_a_profile_writes_ignores_a_page_json_or_the_archive(name, tmp_p
 
 def test_the_two_shipped_profiles_do_not_ignore_media_the_same_way():
     assert profile_for("tree").media_ignore_lines() != profile_for("sibling").media_ignore_lines()
+
+
+@pytest.mark.parametrize("name", registered())
+def test_media_never_ignores_the_clips_and_no_other_media_kind(name, tmp_path):
+    """⛔ `media.commit: never` keeps the clips out of git, and nothing a clone reads.
+
+    ⭐ Asked of git, one file per kind in the unit's own directories. Images,
+    video and attachments are copies of files the archive commits, and a
+    committed page reaches for them. ⚠️ A profile with no home for the rules
+    (`sibling`) never writes them, so there is nothing of its to ask git.
+    """
+    profile = profile_for(name)
+    if profile.ignore_home() is None:
+        pytest.skip(f"{name} has no home for media rules, which its own test covers")
+    repository = init_repository(tmp_path / name)
+    wanted = profile.ignore_file(media=True)
+    home = repository / wanted.home
+    home.parent.mkdir(parents=True, exist_ok=True)
+    home.write_text(wanted.text(), encoding="utf-8")
+    at = profile.unit(ADDRESS, 1, TITLE, origin=ORIGIN)
+    ignored = {
+        kind
+        for kind in UNIT_MEDIA_DIRNAMES
+        if is_ignored((at.media_dir(kind) / "f.bin").as_posix(), cwd=repository)
+    }
+    assert ignored == set(UNCOMMITTED_DIRNAMES) == {"audio"}

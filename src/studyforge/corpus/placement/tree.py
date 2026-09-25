@@ -36,7 +36,7 @@ from studyforge.corpus.placement.names import (
     AUDIO_DIRNAME,
     IMAGES_DIRNAME,
     PRACTICE_DIRNAME,
-    UNIT_MEDIA_DIRNAMES,
+    UNCOMMITTED_DIRNAMES,
     UNITS_DIRNAME,
     VIDEO_DIRNAME,
     container_page_name,
@@ -83,16 +83,16 @@ class TreeProfile(Profile):
         return ContainerLocations(page=self.container_dir(address) / container_page_name(titles))
 
     def media_ignore_lines(self) -> tuple[str, ...]:
-        """`**/audio/` and its siblings, one per kind, in the generated root's own ignore file.
+        """`**/audio/`, the clips' directory, in the generated root's own ignore file.
 
-        ⛔ **Scoped by where they live, and that is not tidiness.** Every name
-        here — every kind, `audio` first — is a word a real repository uses
-        for its own material; an unanchored `audio/` in the
-        root ignore file would tell git to ignore the corpus's own recordings.
-        These lines live in `ignore_home`, so git applies them below
-        `.studyforge/` and nowhere else.
+        ⛔ **The clips and nothing else** (`UNCOMMITTED_DIRNAMES` says why each
+        other kind is committed). ⛔ **Scoped by where it lives, and that is not
+        tidiness.** `audio` is a word a real repository uses for its own
+        material; an unanchored `audio/` in the root ignore file would tell git
+        to ignore the corpus's own recordings. The line lives in `ignore_home`,
+        so git applies it below `.studyforge/` and nowhere else.
         """
-        return tuple(f"**/{kind}/" for kind in UNIT_MEDIA_DIRNAMES)
+        return tuple(f"**/{kind}/" for kind in UNCOMMITTED_DIRNAMES)
 
     def ignore_home(self) -> PurePosixPath:
         """`.studyforge/.gitignore`: every clip this profile places is below the generated root."""

@@ -1102,7 +1102,7 @@ history already holds the blob. So the policy is manifest data:
 
 | `media` key | Meaning |
 |---|---|
-| `commit` | `auto` (the default) commits while the media fits and stops when it does not; `always` commits whatever the size; `never` is a corpus that holds its media elsewhere |
+| `commit` | `auto` (the default) commits while the media fits and stops when it does not; `always` commits whatever the size; `never` is a corpus that holds its narration clips elsewhere: only the clips' `audio/` directories are ignored, and the copies of images, video and attachments a page shows stay committed, because they copy files the archive commits |
 | `max_total_bytes` | the total ceiling, `auto` only; defaults to 5 GB |
 | `max_file_bytes` | the per-file ceiling, `auto` only; defaults to 100 MiB |
 | `max_files` | the file-count ceiling, `auto` only; **no default** — unstated means unbounded, and the count is measured and reported either way |

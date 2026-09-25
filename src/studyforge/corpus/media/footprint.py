@@ -33,11 +33,11 @@ compared against a disk.
 
 ⚠️ **A fifth media kind must not leave this walk quietly weighing four.** The
 directories come from `UnitLocations.directories`, which is derived from
-`UNIT_MEDIA_DIRNAMES` — the same tuple `Profile.media_ignore_lines` covers. ⭐
-**That the measured population and the ignored population are the same
-population is the property that makes the verdict mean anything**: a footprint
-that weighed less than the ignore rules covered would clear a limit by not
-looking.
+`UNIT_MEDIA_DIRNAMES`, every kind `auto` commits. ⭐ **That the measured
+population and the committed population are the same population is the property
+that makes the verdict mean anything**: a footprint that weighed less than a
+commit carries would clear a limit by not looking. ⚠️ `never` is not weighed,
+and it ignores only the clips (`placement.names.UNCOMMITTED_DIRNAMES`).
 
 ## ⛔ The declared directories are not the whole population
 
