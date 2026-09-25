@@ -194,6 +194,28 @@ holding one of that tool's build files, every build file under it, and the
 smallest real source and test inside it. A tool the contract does not seed gets
 no directory, and a corpus that declares none gets no prime at all.
 
+- ⭐ **A multi-module build is primed as a build.** Each module — each
+  directory under the build that holds one of the tool's build files — gets its
+  own smallest source and test (`specimens.per_module`), and each carries every
+  file of the build it names, so the module compiles: a name resolves in its
+  own module first, and in another module only when the file also names that
+  file's directory, as its import does. ⚠️ Measured: the smallest pair across a
+  whole 46-module build sat in two modules and did not compile together.
+- ⭐ **A module that carries no code is primed through its build file**, never
+  refused: the component's warmer resolves what that file declares whether or
+  not the module compiles anything. Only a BUILD with no source or no test at
+  all is refused.
+- ⚠️ **A test that fails in the corpus's own build is the corpus's finding**,
+  named by the component's warmer, and it does not fail the prime.
+- ⭐ **A regenerated prime replaces the old one whole**: a file an earlier
+  selection copied and this one does not is removed (`prime.stale_in`).
+- ⛔ **The prime is never reached through a link.** `write` refuses, before
+  touching anything, a prime directory that is a symbolic link, or has one
+  above it below the corpus root, or resolves outside `.studyforge`
+  (`prime.linked`): pruning through a link would delete the author's files.
+  A link inside the prime is removed as a link, never followed, and before
+  anything is written.
+
 - ⛔ **Two builds for one tool at the same depth are refused**, naming both.
   The component warms one project per tool: make the rest its modules.
 - ⛔ **An exercise is never part of the prime.** Nothing under `exercises/` is
@@ -324,7 +346,7 @@ running it runs `docker compose`, and the study server never holds the socket.
 | `.studyforge/execution/written.json` | every file above and its digest, so a hand-edit to one is reported (step 5) |
 | `.studyforge/execution/instance.env` | this checkout's project, editor port and container names (step 5a) |
 | `.studyforge/execution/toolchain.json` | the selection: the set, what is carried, what is not and why, and the two argv |
-| `.studyforge/execution/prime/<tool>/…` | one project per seeded tool: the corpus's own build, source and test, re-rooted at the build |
+| `.studyforge/execution/prime/<tool>/…` | one project per seeded tool: the corpus's own build, and each module's source and test with what they name, re-rooted at the build |
 | `EXECUTION.md` | what a reader opens first: what to build, what to run, and what this corpus declared |
 
 ⭐ Every one of them is **generated**, and this skill declares each as

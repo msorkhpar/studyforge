@@ -76,12 +76,15 @@ def stamp(root: Path, paths: Iterable[str]) -> str:
     """Record the digest now on disk for each of `paths`, keep every other entry, and return where.
 
     ⭐ Called right after the files are written, so the digest is what the
-    skill wrote. A path that is not a file is dropped rather than recorded.
+    skill wrote. A path that is not a file is dropped from the record, so a
+    file the skill removed is no longer read as one it wrote.
     """
     listed = {entry["where"]: entry["sha256"] for entry in entries(root)}
     for where in paths:
         digest = _digest(root / where)
-        if digest is not None and where != RECORD:
+        if digest is None:
+            listed.pop(where, None)
+        elif where != RECORD:
             listed[where] = digest
     document = {
         "written_api": WRITTEN_API,

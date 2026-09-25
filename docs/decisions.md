@@ -653,9 +653,9 @@ What it reads, and the choices in it:
 
 ### The prime is one project per seeded tool, taken from the corpus's own build
 
-**Decision.** `studyforge.skills.execution.prime` copies the corpus's own build into `prime/<tool>/` for each tool that both the component seeds and the corpus declares. Each copy is re-rooted at the tool's shallowest build-file directory and holds every build file under it plus the smallest real source and test. The tool names come from the contract's `runner.prime.seeds` map. Exercise bundles and reader workspaces are never read from. A seeded tool with no build file, or a build with no source or no test, is refused by name; a corpus that declares no seeded tool gets an empty prime.
+**Decision.** `studyforge.skills.execution.prime` copies the corpus's own build into `prime/<tool>/` for each tool that both the component seeds and the corpus declares. Each copy is re-rooted at the tool's shallowest build-file directory and holds every build file under it plus, for each module of that build, the module's smallest real source and test and every file of the build they name (`studyforge.skills.execution.specimens`). A module that carries no code is primed through its build file and never refused. A regenerated prime replaces the old one whole. The tool names come from the contract's `runner.prime.seeds` map. Exercise bundles and reader workspaces are never read from. A seeded tool with no build file, or a build with no source or no test, is refused by name; a corpus that declares no seeded tool gets an empty prime.
 
-**Why.** The runner's build refuses anything else at the prime's top level, and an empty or foreign prime warms nothing while appearing to succeed.
+**Why.** The runner's build refuses anything else at the prime's top level, and an empty or foreign prime warms nothing while appearing to succeed. The smallest source and test across a whole multi-module build can sit in two modules and not compile together, so each module is primed with its own.
 
 **Serves.** `R15`, `R19`
 
