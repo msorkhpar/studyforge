@@ -10,6 +10,8 @@ from pathlib import Path
 
 import pytest
 
+from studyforge.address import Address
+from studyforge.corpus.placement import profile_for, registered
 from studyforge.render.pageassets import ABSENT, CLIPS_NAME, PRESENT, RELEASED, clips_script
 from studyforge.serve.clips import holds_a_clip, is_signal, told
 from studyforge.serve.response import NO_STORE, Request
@@ -19,6 +21,14 @@ from studyforge.serve.routes.assets import serve
 CLIP = "basics--unit-01.prose.b1-0123abcd.mp3"
 
 SIGNAL = f"/.studyforge/assets/{CLIPS_NAME}"
+
+ADDRESS = Address.of("basics", "01-getting-started")
+
+
+def placed_audio(profile: str) -> Path:
+    """Where `profile` puts a unit's clips, relative to the served root (TREE and FLAT alike)."""
+    origin = "01-getting-started/README.md" if profile == "sibling" else None
+    return Path(profile_for(profile).unit(ADDRESS, 1, "Your first class", origin=origin).audio)
 
 
 def nothing_private(path: Path) -> bool:
@@ -46,12 +56,34 @@ def test_the_signal_is_recognised_by_where_it_sits_and_nothing_else(tmp_path):
 
 
 @pytest.mark.parametrize("where", ["src/study/audio/basics.unit-01", "basics/unit-01/audio"])
-def test_a_clip_in_either_profile_s_audio_directory_is_found(tmp_path, where):
+def test_a_clip_in_an_audio_directory_anywhere_in_the_source_is_found(tmp_path, where):
     directory = tmp_path / where
     directory.mkdir(parents=True)
     assert not holds_a_clip(tmp_path, nothing_private)
     (directory / CLIP).write_bytes(b"x")
     assert holds_a_clip(tmp_path, nothing_private)
+
+
+@pytest.mark.parametrize("profile", registered())
+def test_a_clip_where_each_placement_puts_it_is_found(tmp_path, profile):
+    # ⭐ `tree` puts every clip under `.studyforge/`, a dot-directory: the look must
+    # still reach it, or a served tree-placed course hides its own narration.
+    root = a_site(tmp_path)
+    directory = root / placed_audio(profile)
+    directory.mkdir(parents=True, exist_ok=True)
+    assert get(root).body == clips_script(ABSENT)
+    (directory / CLIP).write_bytes(b"x")
+    assert holds_a_clip(root, nothing_private)
+    assert get(root).body == clips_script(PRESENT), f"a clip placed by {profile!r} was not heard"
+
+
+@pytest.mark.parametrize("profile", registered())
+def test_a_withheld_clip_where_each_placement_puts_it_does_not_count(tmp_path, profile):
+    root = a_site(tmp_path)
+    directory = root / placed_audio(profile)
+    directory.mkdir(parents=True, exist_ok=True)
+    (directory / CLIP).write_bytes(b"x")
+    assert get(root, private=lambda path: path.suffix == ".mp3").body == clips_script(ABSENT)
 
 
 @pytest.mark.parametrize(
@@ -60,6 +92,8 @@ def test_a_clip_in_either_profile_s_audio_directory_is_found(tmp_path, where):
         "src/study/audio/basics.unit-01/notes.mp3",  # not a clip's name
         "src/study/media/" + CLIP,  # not an audio directory
         ".git/audio/" + CLIP,  # under a dot-directory
+        ".sdkman/candidates/audio/" + CLIP,  # under a dot-directory no placement writes
+        "src/.studyforge/audio/" + CLIP,  # a generated root's name, but not the site's own
     ],
 )
 def test_nothing_but_a_clip_in_an_audio_directory_counts(tmp_path, where):
