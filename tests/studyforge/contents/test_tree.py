@@ -166,3 +166,25 @@ def test_the_page_recorded_for_a_unit_is_the_one_its_profile_chose():
     sibling = fixture_contents("depth2")
     assert order(tree)[0].page.as_posix().startswith(".studyforge/")
     assert order(sibling)[0].page.as_posix().startswith("advanced/02-going-further/")
+
+
+def test_every_title_is_listed_without_the_sources_own_outline_number():
+    # ⛔ The contents list and order the units themselves; the container map keeps the number.
+    manifest = depth2_manifest()
+    container = a_container(
+        manifest,
+        ("java", "basics"),
+        ("1. Java Fundamentals", "1.1 Variables and Types"),
+        units=[
+            {"n": 1, "title": "1.1.1 Primitive Data Types"},
+            {"n": 2, "title": "Java 21 features"},
+        ],
+    )
+    contents = build(manifest, [container])
+    group = contents.groups[0]
+    assert (group.title, group.groups[0].title) == ("Java Fundamentals", "Variables and Types")
+    assert [entry.title for entry in group.groups[0].entries] == [
+        "Primitive Data Types",
+        "Java 21 features",
+    ]
+    assert container.units[0].title == "1.1.1 Primitive Data Types"
