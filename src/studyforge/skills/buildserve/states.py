@@ -264,12 +264,14 @@ def exercise_states(
 
     ⭐ `host` holds when the served instance offers execution and the probe answers
     `HOST` for a corpus that declares no runner; `runner` holds instead for one
-    that declares it, whose runs then go nowhere. ⛔ The probe is asked only then: a corpus with no exercises, or a
-    server offering no execution, runs nothing, so where it would run is moot.
+    that declares it, whose runs then go nowhere. ⛔ The probe is asked only then:
+    a corpus with no exercises, or a server offering no execution, runs nothing,
+    so where it would run is moot.
     """
     if not declared:
         return (NO_EXERCISES,)
     if EXECUTION_NAMESPACE in set(namespaces) and probe.mode() == HOST:
         root = getattr(probe, "source_root", None)
-        return (RUNNER_DOWN,) if root is not None and declares_runner(root) else (HOST_EXECUTION,)
+        declared = root is not None and declares_runner(root)
+        return (RUNNER_DOWN,) if declared else (HOST_EXECUTION,)
     return ()

@@ -28,7 +28,6 @@ from tests.studyforge.serve.routes.running import (
 )
 from tests.studyforge.serve.serving import fetch
 
-
 #: Where this interpreter lives, which a host run finds `python3` in.
 PYTHON_DIR = Path(sys.executable).parent
 
