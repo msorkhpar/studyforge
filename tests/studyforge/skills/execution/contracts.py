@@ -244,3 +244,20 @@ def corpus(root: Path, *, java: bool = True) -> Path:
             "package demo;\nclass DemoTest { void one() {} }\n", encoding="utf-8"
         )
     return root
+
+
+def made_runnable(root: Path, **changes: object):
+    """Re-onboard `root` declaring a runtime, as the procedure does before the execution skill.
+
+    ⭐ A runtime the synthetic editor carries and nothing seeds, so no prime is
+    needed. ⛔ Through onboarding's own `reonboard`, never by writing
+    `corpus.json` here: onboarding owns the manifest, records its digest, and
+    declares the execution skill's files for a corpus that declares runtimes.
+    """
+    from studyforge.corpus.manifest import parse
+    from studyforge.skills.onboarding import reonboard
+    from tests.studyforge.skills.onboarding.corpora import COMMIT
+
+    settle = {"runtimes": ["python"], "exercises": True, **changes}
+    reonboard(root, settle=settle, framework_commit=COMMIT).write(root, regenerate=True)
+    return parse((root / "corpus.json").read_text(encoding="utf-8"))

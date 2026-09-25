@@ -57,10 +57,10 @@ editor bind that reaches a quiz's key.
 
 ## ⛔ RE-RUNNING CHANGES NOTHING, AND A HAND-EDIT IS REPORTED
 
-⭐ The same manifest and contracts render the same bytes, so `write` is
-idempotent (R10). ⛔ **A hand-edit to a file this writes is a finding, not a
-fix** (R19): `written` records each file's digest, and onboarding's
-`hand_edited` names the one whose bytes moved.
+⭐ The same inputs render the same bytes (R10). ⛔ A hand-edit is a finding
+(R19): `written` records each digest, and `hand_edited` names a moved one.
+⭐ `write` makes every directory the compose file binds, and refuses a manifest
+that does not declare its files (`declared`), so `validate` stays clean.
 """
 
 from __future__ import annotations
@@ -70,11 +70,17 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
 from studyforge.corpus.manifest import Manifest
-from studyforge.corpus.placement import PRACTICE_DIRNAME
 from studyforge.execute import CODE_COPY, IGNORE_TEXT, instance
 from studyforge.skills.execution import composefile, contract, reader, runnerservice, toolchain
 from studyforge.skills.execution import written as record_of
-from studyforge.skills.execution.binds import ExecutionRefused, code_bind, source_root, unkeyed
+from studyforge.skills.execution.binds import (
+    ExecutionRefused,
+    code_bind,
+    source_root,
+    unkeyed,
+    workspaces_bind,
+)
+from studyforge.skills.execution.declared import refuse_undeclared
 from studyforge.skills.execution.prime import Prime, PrimeRefused, linked, prime_for, stale_in
 from studyforge.skills.execution.toolchain import DIRECTORY_SLOT
 
@@ -160,6 +166,8 @@ class Execution:
     runner: runnerservice.Runner | None = None
     #: `(variable, default)` for each value `INSTANCE_ENV` records, in order.
     instance: tuple[tuple[str, str], ...] = ()
+    #: Every corpus-relative directory the compose file binds, which `write` makes.
+    bound: tuple[str, ...] = ()
 
     def paths(self) -> tuple[str, ...]:
         """Every path this skill occupies, in the order it writes them."""
@@ -255,30 +263,8 @@ def generate(
         primed=primed,
         runner=runner,
         instance=tuple(names.items()),
+        bound=tuple(one for one in (sources, *(where for where, _ in extra)) if one),
     )
-
-
-def workspaces_bind(block: Mapping[str, object], sources: str) -> tuple[str, str] | None:
-    """Return `(corpus-relative dir, container path)` for the practice workspaces, or `None`.
-
-    ⭐ **Read FROM where `emit` places them** — `PRACTICE_DIRNAME`, the one
-    spelling `exercise.bundle.Places.workspace` and the adapter's own practices
-    share — ⛔ never a second spelling of it. It sits inside the
-    contract's workspace root, beside the sources, under its own name.
-    ⭐ `None` when the sources already hold it: a second bind of what the first
-    shows is two windows onto one directory.
-    """
-    if PurePosixPath(PRACTICE_DIRNAME).is_relative_to(PurePosixPath(sources)):
-        return None
-    root = contract.require(block, "workspace", "container_path")
-    inside = f"{str(root).rstrip('/')}/{PRACTICE_DIRNAME}"
-    taken = {str(entry.get("container_path")) for entry in contract.blocks(block, "mounts")}
-    if inside in taken:
-        raise ExecutionRefused(
-            "the contract already mounts something where the practice workspaces would go, "
-            "and this skill will not shadow it"
-        )
-    return PRACTICE_DIRNAME, inside
 
 
 def write(execution: Execution, root: Path) -> tuple[str, ...]:
@@ -292,6 +278,7 @@ def write(execution: Execution, root: Path) -> tuple[str, ...]:
     """
     if execution.runnable and (why := linked(root, PRIME_DIR)) is not None:
         raise ExecutionRefused(why)
+    refuse_undeclared(root, [where for where, _ in execution.files])
     if READER_DOC in dict(execution.files) and _is_somebody_elses(root, READER_DOC):
         raise ExecutionRefused(
             "this corpus already carries a reader's document that this skill did not "
@@ -307,6 +294,8 @@ def write(execution: Execution, root: Path) -> tuple[str, ...]:
     stale = stale_in(root, PRIME_DIR, kept) if execution.runnable else ()
     for where in stale:
         (root / where).unlink()
+    for directory in execution.bound:  # ⛔ §8.1: a missing bind source is made root-owned
+        (root / directory).mkdir(parents=True, exist_ok=True)
     for where, data in planned:
         target = root / where
         target.parent.mkdir(parents=True, exist_ok=True)

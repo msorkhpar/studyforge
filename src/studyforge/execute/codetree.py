@@ -28,9 +28,23 @@ in every checkout, as a bind source must before `compose up` (spec §8.1).
 ## ⭐ Newer wins, so a reader's own change survives until the author's changes
 
 ⭐ **A file is copied when the copy lacks it or the author's is NEWER**, and
-`copy2` carries the author's modification time across. So a file a reader
-edited in the editor is newer than the author's and is kept, and a file the
-author changed since is newer than the copy and replaces it. ⛔ A file the copy
+the copy it writes is stamped with the time of the sync, never the author's.
+So a file a reader edited in the editor is newer than the author's and is
+kept, and a file the author changed since is newer than the copy and replaces
+it.
+
+## ⛔ A written file is newer than anything built from what it replaced
+
+⚠️ **Measured on a Maven build:** a reader edited a test, ran it (the edit
+compiled), then brought the author's file back by deleting theirs. A copy
+carrying the author's OLDER modification time was older than the class the
+edit had compiled to, so Maven never recompiled, and every later run reported
+the edit's result for code no longer there. ⭐ **So a file the sync writes is
+stamped now**: every incremental build — Maven, Gradle, make — decides by
+comparing a source's time with its output's, so a source newer than anything
+built before it is recompiled by every one of them. ⛔ That is chosen over
+deleting the affected build output, which would mean knowing where each
+tool puts what (R1), and would miss a tool nobody taught it. ⛔ A file the copy
 holds and the author's tree no longer does is removed, so a deleted test never
 keeps compiling. ⚠️ Output directories and dot-directories inside the copy —
 `target/`, the editor's `.vscode/` — are the copy's own and are never removed.
@@ -185,7 +199,7 @@ def _copy_if_newer(source: Path, target: Path) -> None:
     target.parent.mkdir(parents=True, exist_ok=True)
     staging = target.with_name(f"{STAGING_PREFIX}{target.name}")
     try:
-        shutil.copy2(source, staging)
+        shutil.copy(source, staging)  # ⭐ its bytes and mode; its time is now
         os.replace(staging, target)
     finally:
         staging.unlink(missing_ok=True)

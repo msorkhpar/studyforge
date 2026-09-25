@@ -278,7 +278,7 @@ What lands, and why each one exists:
 
 | what | why it is generated rather than typed |
 |---|---|
-| `corpus.json` | the draft promoted, with **every generated file already declared `content.not_material`** |
+| `corpus.json` | the draft promoted, with **every generated file already declared `content.not_material`** — the execution skill's too, for a corpus that declares `runtimes`, since that skill never writes the manifest |
 | the adapter package and its suite | the adapter skill's scaffold, wired in — one file that is yours and every other one generated; ⛔ how many is the scaffold's own listing (`scaffold(...).lines()`, the adapter skill's step 1), never a number typed here |
 | `.studyforge/pin.json` and the skill stubs | the installed library's version and the commit it was built from, and thin pointers that carry both and name the command that prints each procedure from the installed package |
 | `tests/` — two checks | R3's assertion, read from what a build declares it writes and from the tree through that same declaration, with this corpus's edits baked in; and the pin check — the installed library is the pinned version and build, ships every stubbed skill, and no stub has drifted. ⭐ Each runs with no test runner, `python3 tests/<its name>.py`, as well as under pytest |

@@ -31,8 +31,10 @@ so would be the theatre R5 forbids.
 
 ## Before you start
 
-1. The corpus, already onboarded — `corpus.json` exists and
-   `studyforge validate` is clean. That is the other skill's job
+1. The corpus, already onboarded with its `runtimes` declared —
+   `corpus.json` exists, declares this skill's files not material (onboarding
+   does that for a corpus that declares runtimes), and `studyforge validate` is
+   clean. That is the other skill's job
    (`studyforge.skills.onboarding`), and this one refuses to run before it.
 2. `code-server-toolchain`, **installed or built beside the framework**, at the
    version you use. ⛔ Never vendored into the corpus.
@@ -148,7 +150,9 @@ process a reader opens any bound file in.
   the directory `emit` places them in (`corpus.placement.PRACTICE_DIRNAME`),
   which is not under the sources' common root. It is bound at the contract's
   workspace root under its own name, read from that one spelling
-  (`onboard.workspaces_bind`), and named in the list of bind sources that exist first. ⚠️ An editor that
+  (`binds.workspaces_bind`), and named in the list of bind sources that exist first.
+  ⭐ `write` makes every directory the compose file binds (`Execution.bound`),
+  so a corpus with no practices yet still starts with none made by hand. ⚠️ An editor that
   binds the sources alone can open no practice file: the frame gets no URL.
 - ⭐ **The editor binds the copy of the corpus's code too**
   (`binds.code_bind`), at the contract's workspace root under the name `code`:
@@ -349,10 +353,16 @@ running it runs `docker compose`, and the study server never holds the socket.
 | `.studyforge/execution/prime/<tool>/…` | one project per seeded tool: the corpus's own build, and each module's source and test with what they name, re-rooted at the build |
 | `EXECUTION.md` | what a reader opens first: what to build, what to run, and what this corpus declared |
 
-⭐ Every one of them is **generated**, and this skill declares each as
+⭐ Every one of them is **generated**, and each is declared
 `content.not_material` so `studyforge validate` is clean the moment they exist.
-⛔ An artifact added without a glob is a RED test here rather than an
-`unclassified` finding in somebody's repository.
+⛔ **Onboarding writes those globs, not this skill**: onboarding owns
+`corpus.json` and records its digest, so it declares this skill's `NOT_MATERIAL`
+for every corpus whose manifest declares `runtimes` — run `reonboard` with
+`runtimes` settled before this skill. ⛔ **`write` refuses a manifest that does
+not declare them** (`declared.refuse_undeclared`), naming each path and that
+remedy, before its first byte, rather than leave `validate` RED. An artifact
+added without a glob is a RED test here rather than an `unclassified` finding
+in somebody's repository.
 
 ---
 
