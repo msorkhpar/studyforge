@@ -313,7 +313,7 @@ def test_a_folder_that_cannot_be_written_is_refused_saying_so(tmp_path):
 
 
 def test_a_file_that_opens_with_nothing_editable_excludes_nothing_back_out():
-    # ⭐ W490: a lesson's test whose source was not found opens alone, and
+    # ⭐ A lesson's test whose source was not found opens alone, and
     # nothing in its window is the reader's to change.
     written = settings("p/ATest.java", None, editable=False)
     assert written[READONLY_INCLUDE] == {EVERYTHING: True}

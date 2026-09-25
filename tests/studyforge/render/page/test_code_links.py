@@ -47,7 +47,7 @@ def test_it_follows_the_practice_editor_in_the_bundle_which_is_what_lets_it_find
 
 
 def test_a_link_opens_the_editor_only_once_the_editor_is_up_and_otherwise_is_followed():
-    # ⛔ The plain view is W488's and is never broken: no editor, no answer,
+    # ⛔ The plain view is never broken: no editor, no answer,
     # an error — each follows the link.
     body = behaviour()
     assert body.index("run.editor(corpus).then") < body.index("document.addEventListener('click'")

@@ -17,14 +17,14 @@ a page renders over `file://`, and this names no API, no origin and no port
 
 ## ⭐ Which link is code is read from the page's own geometry
 
-⭐ **A link to a corpus file is written relative to the page by `unit.mentions`
-(W488)**, and the page knows where it sits, so the file is the link resolved
+⭐ **A link to a corpus file is written relative to the page by
+`unit.mentions`**, and the page knows where it sits, so the file is the link resolved
 from the page. It is code when it stays inside the corpus, stays outside the
 generated directory — a page, a clip or an asset is never code — and ends in a
 suffix the corpus's declared runtimes write (`Placement.code`, which is `()` for
 a page that does not sit beside the corpus's files, and for a corpus that
 declares no runtime). ⛔ **The link is left exactly as it is**: its href is
-W488's plain file view, which is what it opens whenever the editor does not.
+the file's plain view, which is what it opens whenever the editor does not.
 
 ⚠️ **The anchor is found by the one shape `render.markup.text` writes**,
 `<a href="…" rel="noopener noreferrer">`, over text in which every literal

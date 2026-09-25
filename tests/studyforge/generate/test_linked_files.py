@@ -140,7 +140,7 @@ def _declares_java(root: Path) -> None:
 
 @pytest.mark.parametrize("placement", ["tree", "sibling"])
 def test_a_link_to_the_corpus_s_code_is_marked_and_its_page_carries_the_panel(tmp_path, placement):
-    # ⭐ W490: the link keeps W488's href — the plain view — and names its file.
+    # ⭐ The link keeps its href — the plain view — and names its file.
     root = linked(tmp_path, placement, GOOD)
     _declares_java(root)
     write_site(root, root, narration=False)

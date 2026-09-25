@@ -48,7 +48,7 @@ of it but the file it selected.
 
 ⭐ No editor, a file that is not code, a copy that cannot be made — each is a
 `404` or a `409` the page answers by following the link to the file's plain
-view, which is W488's and is never broken.
+view, which is never broken.
 """
 
 from __future__ import annotations

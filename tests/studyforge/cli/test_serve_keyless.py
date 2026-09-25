@@ -22,8 +22,10 @@ from pathlib import Path
 
 import pytest
 
+from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.corpus.placement.profile import GENERATED_ROOT
 from studyforge.generate import read_corpus, write_site
+from studyforge.serve.routes.assets import GATED_TYPES, content_type_for
 from studyforge.serve.routes.content import CorpusContent
 from studyforge.unit import served
 from tests.studyforge.cli.keyless import (
@@ -150,9 +152,26 @@ def test_the_content_unit_keeps_its_questions_and_their_words(built) -> None:
         ]
 
 
+def refused_as_text(path: str, disk: bytes) -> bool:
+    """Whether the static route answers `path` as gated text that carries personal data.
+
+    ⭐ A code file is TEXT, so a lesson's link to one is a view rather than a
+    download, and text passes the personal-data gate (R7): the execute suite's
+    `talk.py` plant carries a home directory on purpose, and is refused.
+    """
+    if not content_type_for(Path(path)).startswith(GATED_TYPES):
+        return False
+    try:
+        assert_clean(disk.decode("utf-8", errors="replace"), path)
+    except PersonalDataLeak:
+        return True
+    return False
+
+
 def test_a_code_practice_is_served_exactly_as_before(built) -> None:
     """⭐ Spec §7 §8: the reference solution is ALWAYS available — every file of the
-    runnable corpus answers its own bytes, and every unit document is unredacted."""
+    runnable corpus answers its own bytes, and every unit document is unredacted —
+    save text carrying personal data, which the gate refuses (R7)."""
     shape, _ = built
     corpus = read_corpus(shape.runnable)
     source = corpus.manifest.source
@@ -161,6 +180,9 @@ def test_a_code_practice_is_served_exactly_as_before(built) -> None:
         for path in filter(mounted, files_under(shape.runnable)):
             disk = (shape.runnable / path.lstrip("/")).read_bytes()
             status, _, body = fetch(serving.server, f"/runnable{path}")
+            if refused_as_text(path, disk):
+                assert status == 500 and b"gate" in body, path
+                continue
             expected = served_page(disk) if path.endswith(".html") else disk
             assert (status, body) == (200, expected), path
         for unit in corpus.units:

@@ -28,7 +28,7 @@ def link(href: str, words: str = "Types.java") -> str:
 def test_a_link_to_a_code_file_is_marked_with_its_corpus_relative_path():
     body, found = code.mark(link(f"{UP}m/src/test/java/p/TypesTest.java"), JAVA)
     assert found == ("m/src/test/java/p/TypesTest.java",)
-    assert f'href="{UP}m/src/test/java/p/TypesTest.java"' in body, "the href is W488's, kept"
+    assert f'href="{UP}m/src/test/java/p/TypesTest.java"' in body, "the plain view's href is kept"
     assert 'data-code-path="m/src/test/java/p/TypesTest.java"' in body
 
 

@@ -2,7 +2,7 @@
 
    ⭐ **A link the build marked** (`data-code-path`, `render/page/code.py`)
    names a code file of the corpus, and its href is the file's plain view
-   (W488). Served, with the corpus's editor up, a click opens the file in the
+   (`unit.mentions`). Served, with the corpus's editor up, a click opens the file in the
    page's code panel instead: the source and its test in two windows of ONE
    editor, and a Run that runs the test. ⛔ **Anything short of that follows the
    link**: no server, no editor, a file the server will not open — the plain
@@ -96,22 +96,26 @@
 
   /* ⚠️ A COLD instance's page is reloaded once, by `frames.reloadWhenBlocked`,
      when its frame policy blocked the first frame — and a reload forgets the
-     click. ⭐ So the file asked for is kept for this tab until it is drawn, and
-     a page that was just reloaded opens it again. ⛔ Only a reload reopens it,
-     and a store that cannot be used is no store: the reader clicks again. */
-  var REOPEN = 'studyforge.code.reopen.v1';
+     click. ⭐ So the file asked for rides on this history entry's own state,
+     which a reload keeps and nothing else reads, until it is drawn; a page that
+     was just reloaded opens it again. ⛔ Not the browser's store: that is
+     `study-progress.js`'s alone. ⛔ Only a reload reopens it, and a history
+     that cannot carry it is no history: the reader clicks again. */
+  var REOPEN = 'studyforgeCode';
 
   function remember(path) {
     try {
-      if (path) { sessionStorage.setItem(REOPEN, path); } else { sessionStorage.removeItem(REOPEN); }
+      var state = {};
+      state[REOPEN] = path || null;
+      history.replaceState(state, '');
     } catch (ignored) { return; }
   }
 
   function reopened() {
     try {
       var timing = performance.getEntriesByType('navigation');
-      var path = sessionStorage.getItem(REOPEN);
-      sessionStorage.removeItem(REOPEN);
+      var path = history.state && history.state[REOPEN];
+      remember(null);
       return timing.length && timing[0].type === 'reload' ? path : null;
     } catch (ignored) { return null; }
   }

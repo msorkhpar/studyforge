@@ -39,6 +39,7 @@ PUBLIC_SURFACE = frozenset(
         "REQUIRED_KEYS",
         "REQUIRES_JAVA",
         "RUNTIMES",
+        "SOURCE_SUFFIXES",
         "Classification",
         "ContentPolicy",
         "Curriculum",
@@ -58,6 +59,7 @@ PUBLIC_SURFACE = frozenset(
         "parse_edits",
         "parse_media",
         "parse_runtimes",
+        "source_suffixes",
         "prefix_of",
         "versions_needed",
     }

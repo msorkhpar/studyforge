@@ -319,7 +319,7 @@ def test_only_the_root_icon_is_answered_with_no_content(site):
 
 @pytest.mark.parametrize("name", ["Types.java", "Main.kt", "greet.py", "run.sh", "query.sql"])
 def test_a_code_file_is_served_as_text_the_browser_shows_never_a_download(name):
-    # ⭐ W490: a lesson's link to its code falls back to this plain view, so
+    # ⭐ A lesson's link to its code falls back to this plain view, so
     # it must be a view: text, gated like every text, never opaque bytes.
     from pathlib import Path
 
