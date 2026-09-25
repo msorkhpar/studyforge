@@ -68,7 +68,7 @@ from studyforge.contents.errors import ContentsError
 from studyforge.corpus.container import Container
 from studyforge.corpus.manifest import Manifest
 from studyforge.corpus.placement import PlacementError, Profile, profile_for
-from studyforge.unit import without_outline_number
+from studyforge.unit import listed_numbering, without_outline_number
 
 
 def build(manifest: Manifest, containers: Iterable[Container]) -> Contents:
@@ -213,7 +213,7 @@ def _entry(profile: Profile, container: Container, ordinal: int) -> Entry:
         address=container.address,
         ordinal=unit.n,
         title=without_outline_number(unit.title),
-        numbering=unit.numbering,
+        numbering=listed_numbering(unit.numbering, unit.n),
         page=where.page,
         practices=unit.practices,
     )

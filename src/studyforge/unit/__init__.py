@@ -65,7 +65,7 @@ from studyforge.unit.content import (
     parse,
 )
 from studyforge.unit.errors import ContentError
-from studyforge.unit.outline import without_outline_number
+from studyforge.unit.outline import listed_numbering, without_outline_number
 from studyforge.unit.sections import (
     KIND_OF,
     KINDS_WITH_A_LANG,
@@ -106,6 +106,7 @@ __all__ = [
     "check_test_record",
     "derived_section_key",
     "from_document",
+    "listed_numbering",
     "load",
     "parse",
     "section_key",

@@ -5,7 +5,8 @@ r"""The source's own outline number, left off every title and heading a reader i
 block in a run of blocks, and leaves every other word alone.
 
 **How you use it.** `without_outline_number(text)` for one string;
-`headings_without_outline_numbers(blocks)` for a section's blocks. The served
+`headings_without_outline_numbers(blocks)` for a section's blocks, and
+`listed_numbering(numbering, ordinal)` for the chip a listing shows. The served
 unit builder applies both to what it serves, and the contents tree to every
 title it lists, so the page, its chrome and its narration all read the same
 words.
@@ -23,6 +24,10 @@ archive records what the source says, `origin.section` is matched against the
 heading as the file writes it, and a container map's titles are records. Only
 what a reader is SERVED leaves it off, which is a rule this framework applies
 to every corpus rather than a setting a corpus chooses.
+
+⚠️ **A page's file name keeps it.** The file name is built from the recorded
+label or ordinal, and it is an address rather than something a reader reads:
+renaming every page of every corpus would move its links for no reader's gain.
 
 ## ⛔ A number that is part of the words is never touched
 
@@ -69,6 +74,25 @@ def without_outline_number(text: str) -> str:
     if unstopped and number.count(".") + 1 == QUANTITY_PARTS and match.group("next").islower():
         return text
     return text[match.end() :]
+
+
+#: A label that is an outline number and nothing else: dotted, or closed by a stop.
+OUTLINE_LABEL = re.compile(r"^\d{1,3}(?:\.\d{1,3})+\.?$|^\d{1,3}\.$")
+
+
+def listed_numbering(numbering: str, ordinal: int) -> str:
+    """Return what a listing shows beside a unit: its place, never the source's outline number.
+
+    ⭐ **The label keeps the number, and the listing does not show it.** A
+    container map records a unit's `label` as the source numbers it (`4.2.4`),
+    and that record still orders the unit and names its page file. What a
+    reader sees beside the title is the unit's place in its container
+    (`ordinal`), because the listing is the site's own contents. ⛔ A label
+    that is not an outline number (`7`, `A`, `Appendix`) is shown as recorded.
+    """
+    if isinstance(numbering, str) and OUTLINE_LABEL.match(numbering):
+        return str(ordinal)
+    return numbering
 
 
 def headings_without_outline_numbers(blocks: object) -> object:

@@ -9,7 +9,11 @@ from __future__ import annotations
 import pytest
 
 from studyforge.unit.builder import Material, build
-from studyforge.unit.outline import headings_without_outline_numbers, without_outline_number
+from studyforge.unit.outline import (
+    headings_without_outline_numbers,
+    listed_numbering,
+    without_outline_number,
+)
 
 #: `(as the source writes it, as a reader is served it)`.
 NUMBERED = [
@@ -110,3 +114,19 @@ def test_the_narration_is_made_from_the_heading_without_its_number():
         ],
     }
     assert clip_name(speakable_of(numbered).units[0]) != clip_name(units[0])
+
+
+@pytest.mark.parametrize(
+    ("label", "ordinal", "listed"),
+    [
+        ("4.2.4", 3, "3"),
+        ("6.6.1.1", 5, "5"),
+        ("3.", 1, "1"),
+        ("7", 7, "7"),
+        ("A", 1, "A"),
+        ("Appendix", 9, "Appendix"),
+    ],
+)
+def test_a_listing_shows_a_units_place_and_never_an_outline_label(label, ordinal, listed):
+    # ⭐ The label keeps the number for order and the file name; the listing does not show it.
+    assert listed_numbering(label, ordinal) == listed

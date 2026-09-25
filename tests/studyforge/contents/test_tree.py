@@ -176,8 +176,8 @@ def test_every_title_is_listed_without_the_sources_own_outline_number():
         ("java", "basics"),
         ("1. Java Fundamentals", "1.1 Variables and Types"),
         units=[
-            {"n": 1, "title": "1.1.1 Primitive Data Types"},
-            {"n": 2, "title": "Java 21 features"},
+            {"n": 1, "title": "1.1.1 Primitive Data Types", "label": "1.1.1"},
+            {"n": 2, "title": "Java 21 features", "label": "7"},
         ],
     )
     contents = build(manifest, [container])
@@ -187,4 +187,9 @@ def test_every_title_is_listed_without_the_sources_own_outline_number():
         "Primitive Data Types",
         "Java 21 features",
     ]
-    assert container.units[0].title == "1.1.1 Primitive Data Types"
+    # ⭐ The listing shows a unit's place; a label that is not an outline number is kept.
+    assert [entry.numbering for entry in group.groups[0].entries] == ["1", "7"]
+    assert (container.units[0].title, container.units[0].label) == (
+        "1.1.1 Primitive Data Types",
+        "1.1.1",
+    )

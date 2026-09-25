@@ -36,6 +36,7 @@ PUBLIC_SURFACE = frozenset(
         "load",
         "parse",
         "section_key",
+        "listed_numbering",
         "without_outline_number",
     }
 )
