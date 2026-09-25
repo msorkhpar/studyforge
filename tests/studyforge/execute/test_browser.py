@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from studyforge.execute import browser
@@ -29,9 +31,46 @@ def test_a_named_browser_is_used_when_it_runs_and_refused_when_it_does_not(tmp_p
 
 
 @pytest.mark.parametrize(("uid", "sandboxed"), [(0, False), (1000, True)])
-def test_the_sandbox_is_off_as_root_and_only_as_root(tmp_path, monkeypatch, uid, sandboxed):
+def test_the_sandbox_is_off_as_root_and_on_otherwise(tmp_path, monkeypatch, uid, sandboxed):
     monkeypatch.setattr(browser.os, "geteuid", lambda: uid)
-    assert ("--no-sandbox" not in browser._flags(tmp_path)) is sandboxed
+    site = built(tmp_path)
+    binary = stand_in(tmp_path)
+    with BrowserProfile() as profile:
+        seen = capture_page(
+            binary, profile, site / "index.html", tmp_path / "a.png", tmp_path / "a.dom.html"
+        )
+    assert seen.ok and seen.detail == "rendered"
+    launches = Path(f"{binary}.args").read_text(encoding="utf-8").splitlines()
+    assert len(launches) == 2
+    assert all(("--no-sandbox" not in line) is sandboxed for line in launches)
+
+
+def test_a_sandbox_this_machine_cannot_start_is_retried_without_it_and_said(tmp_path, monkeypatch):
+    # ⚠️ In a container without user namespaces the browser dies by a signal
+    # before drawing anything; the second attempt runs without its sandbox.
+    monkeypatch.setattr(browser.os, "geteuid", lambda: 1000)
+    site = built(tmp_path)
+    with BrowserProfile() as profile:
+        seen = capture_page(
+            stand_in(tmp_path, die="sandboxed"),
+            profile,
+            site / "index.html",
+            tmp_path / "a.png",
+            tmp_path / "a.dom.html",
+        )
+    assert seen.ok and seen.detail == browser.UNSANDBOXED
+
+
+def test_a_browser_a_signal_always_ends_is_reported_not_retried_forever(tmp_path, monkeypatch):
+    monkeypatch.setattr(browser.os, "geteuid", lambda: 1000)
+    site = built(tmp_path)
+    binary = stand_in(tmp_path, die="always")
+    with BrowserProfile() as profile:
+        seen = capture_page(
+            binary, profile, site / "index.html", tmp_path / "a.png", tmp_path / "a.dom.html"
+        )
+    assert not seen.ok and browser.SIGNALLED in seen.detail
+    assert len(Path(f"{binary}.args").read_text(encoding="utf-8").splitlines()) == 2
 
 
 def test_the_profile_is_gone_when_the_look_ends(tmp_path):

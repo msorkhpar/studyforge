@@ -45,8 +45,12 @@ def a_browser() -> str:
 #: `--dump-dom`, and exit with the code it was made with. `{png}` is the file's
 #: bytes: a real PNG signature, or not.
 STAND_IN = """#!{python}
-import sys
+import os, signal, sys
 args = sys.argv[1:]
+with open(sys.argv[0] + ".args", "a") as log:
+    log.write(" ".join(args) + "\\n")
+if {die!r} == "always" or ({die!r} == "sandboxed" and "--no-sandbox" not in args):
+    os.kill(os.getpid(), signal.SIGTRAP)
 shot = next((a.split("=", 1)[1] for a in args if a.startswith("--screenshot=")), None)
 if shot:
     open(shot, "wb").write({png!r})
@@ -59,9 +63,15 @@ sys.exit({exit})
 PNG = b"\x89PNG\r\n\x1a\n" + b"stand-in"
 
 
-def stand_in(tmp_path: Path, *, exit: int = 0, png: bytes = PNG) -> str:
-    """Write an executable that answers the two flags a look uses; return its path."""
+def stand_in(tmp_path: Path, *, exit: int = 0, png: bytes = PNG, die: str = "") -> str:
+    """Write an executable that answers the two flags a look uses; return its path.
+
+    `die` is `"sandboxed"` for a browser whose sandbox cannot start here, which
+    a signal ends unless `--no-sandbox` is passed, and `"always"` for one a
+    signal ends whatever it is given. Every launch's flags land in `<path>.args`.
+    """
     path = tmp_path / "stand-in-browser"
-    path.write_text(STAND_IN.format(python=sys.executable, png=png, exit=exit), "utf-8")
+    text = STAND_IN.format(python=sys.executable, png=png, exit=exit, die=die)
+    path.write_text(text, "utf-8")
     path.chmod(0o755)
     return str(path)

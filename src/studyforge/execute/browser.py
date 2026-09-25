@@ -31,11 +31,13 @@ issues no request of its own (R8), so a look reaches no network. ⭐ The profile
 a fresh temporary directory, removed on the way out whether the look succeeded
 or not.
 
-## ⚠️ As root, the browser's sandbox is off
+## ⚠️ The browser's sandbox is on wherever this machine can provide it
 
-A Chromium-family browser refuses to start as root with its sandbox on, which is
-how a container runs it. ⭐ So `--no-sandbox` is passed as root and only as root.
-The pages are the reader's own built site, opened with the network off.
+A Chromium-family browser refuses to start as root with its sandbox on, and in a
+container without user namespaces it dies by a signal before drawing anything.
+⭐ So `--no-sandbox` is passed as root, and a launch that a signal ended is
+tried once more without the sandbox; a page captured that way says so on its
+line. The pages are the reader's own built site, opened with the network off.
 
 ## ⛔ The browser's words are not echoed
 
@@ -123,14 +125,38 @@ class PageSeen:
 
 
 def capture_page(binary: str, profile: Path, page: Path, png: Path, dom: Path) -> PageSeen:
-    """Screenshot `page` into `png` and write its DOM into `dom`, then check both."""
+    """Screenshot `page` into `png` and write its DOM into `dom`, then check both.
+
+    ⚠️ Sandboxed first unless running as root; a launch a signal ended is taken
+    once more without the sandbox, and the answer says so.
+    """
+    sandboxed = not _root()
+    seen = _capture(binary, profile, page, png, dom, sandboxed)
+    if sandboxed and not seen.ok and SIGNALLED in seen.detail:
+        again = _capture(binary, profile, page, png, dom, sandboxed=False)
+        return PageSeen(True, UNSANDBOXED) if again.ok else again
+    return seen
+
+
+#: What a failure ended by a signal says, which is how a sandbox that cannot start ends.
+SIGNALLED = "was ended by signal"
+
+#: What a page captured without the browser's sandbox says on its line.
+UNSANDBOXED = "rendered, without the browser's sandbox, which this machine cannot provide"
+
+
+def _capture(
+    binary: str, profile: Path, page: Path, png: Path, dom: Path, sandboxed: bool
+) -> PageSeen:
+    """One attempt at both captures, with the sandbox on or off."""
     url = page.resolve().as_uri()
-    _, failed = _launch([binary, *_flags(profile), f"--screenshot={png}", url])
+    flags = _flags(profile, sandboxed)
+    _, failed = _launch([binary, *flags, f"--screenshot={png}", url])
     if failed is not None:
         return PageSeen(False, f"the screenshot launch {failed}")
     if not png.is_file() or not png.read_bytes().startswith(PNG_SIGNATURE):
         return PageSeen(False, "the browser exited 0 and wrote no PNG")
-    text, failed = _launch([binary, *_flags(profile), "--dump-dom", url])
+    text, failed = _launch([binary, *flags, "--dump-dom", url])
     if failed is not None:
         return PageSeen(False, f"the DOM launch {failed}")
     if "<body" not in text:
@@ -139,10 +165,14 @@ def capture_page(binary: str, profile: Path, page: Path, png: Path, dom: Path) -
     return PageSeen(True, "rendered")
 
 
-def _flags(profile: Path) -> list[str]:
-    """Every launch's flags, with the profile, and `--no-sandbox` as root only."""
-    root = hasattr(os, "geteuid") and os.geteuid() == 0
-    return [*FLAGS, f"--user-data-dir={profile}", *(["--no-sandbox"] if root else [])]
+def _root() -> bool:
+    """Whether this process runs as root, where the browser refuses its sandbox."""
+    return hasattr(os, "geteuid") and os.geteuid() == 0
+
+
+def _flags(profile: Path, sandboxed: bool) -> list[str]:
+    """Every launch's flags, with the profile, and `--no-sandbox` when it is off."""
+    return [*FLAGS, f"--user-data-dir={profile}", *([] if sandboxed else ["--no-sandbox"])]
 
 
 def _launch(argv: list[str]) -> tuple[str, str | None]:
@@ -160,6 +190,8 @@ def _launch(argv: list[str]) -> tuple[str, str | None]:
         return "", f"did not finish within {LAUNCH_TIMEOUT} s"
     except OSError:
         return "", "did not start"
+    if done.returncode < 0:
+        return "", f"{SIGNALLED} {-done.returncode}"
     if done.returncode != 0:
         return "", f"exited {done.returncode}"
     return done.stdout, None
