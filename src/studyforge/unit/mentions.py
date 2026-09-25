@@ -8,7 +8,8 @@ another unit of the same corpus reads as that unit and leads to its page:
 - a link whose label is such a number (`[3.2.4](README_3.2.4.md)`) keeps its
   link and shows the title instead of the number;
 - a link to the source file a unit was read from (`README_3.2.4.md`,
-  `../11-try-catch/README_3.1.3.md`) links that unit's generated page;
+  `../11-try-catch/README_3.1.3.md`) links that unit's generated page, at the
+  heading its fragment names (`README_3.2.4.md#rules`);
 - a link label that opens with its target's number (`[7.3.2.1. LocalDate](…)`)
   loses the number;
 - a link to any other file of the corpus (`src/main/java/…/Types.java`) is
@@ -17,16 +18,20 @@ another unit of the same corpus reads as that unit and leads to its page:
   page gives that heading (`unit.headings`);
 - `section 2.2`, where `2.2` is the outline number of one of the unit's own
   headings, or of exactly one heading of its container, is served as that
-  heading's words, linking the heading.
+  heading's words, linking the heading;
+- a quiz's stem, options and per-option sentences follow the same rules, as
+  plain words (`Mentions.words`): the page escapes them as text, and the
+  grading route answers a sentence as it is served.
 
 **How you use it.** `generate.declarations` builds one `Mentions` per unit
 (`Mentions.of(...)`, `Mentions.numbered(...)`) and hands it to
 `build_unit(mentions=...)`, and the builder serves
 `mentions.sections(sections, found)`, `found` being the headings it read before
-they lost their numbers. ⭐ Every consumer of a served unit
-(the page, the narration, validate's narration check, the server's content
-route) builds it through that one call, so the page and its clips say the same
-words.
+they lost their numbers. ⭐ Every consumer of a served unit (the page, the
+narration, validate's narration check, the server's content route and its
+quiz grading) builds it through that one call, so the page, its clips and a
+quiz's answer say the same words. `mentions.unreached(sections)` counts the
+corpus-file links a page outside the corpus root cannot keep.
 
 **Depends on.** `re`, `archive.blocks` for the vocabulary, `unit.headings` for
 what a unit's headings are called, and `corpus.placement.relative_href` for the
@@ -48,8 +53,12 @@ two-part label (`3.2`) is replaced only inside a link's label, because
 `Java 1.4` or `JDBC 4.2` sitting in a sentence is far likelier to be a version
 than a reference, and a wrong title in a sentence is worse than a number.
 
-⚠️ **A link's fragment is dropped.** It names an anchor of the SOURCE file,
-and the generated page keys its headings itself.
+⚠️ **A link's fragment is kept only when it names a heading of the target
+unit.** It names an anchor of the SOURCE file, and the generated page keys its
+headings itself, so the fragment is looked up among the target's headings as
+its source's host spells them (`unit.headings.by_slug`) and served as the id
+that page gives the heading. A fragment that names none is dropped, and the
+link lands at the top of the page.
 
 ## ⭐ A file the author links is linked where it is
 
@@ -57,9 +66,12 @@ and the generated page keys its headings itself.
 it stays where the author put it. A relative link is read from the unit's
 recorded origin, and when that names a regular file under the corpus root it is
 addressed from the page, on every placement profile, so it resolves over
-`file://` and when served. ⚠️ A link that climbs out of the corpus, or names
-a file that is not there, keeps its href, and `validate`'s `link-unresolved`
-names the unit that carries it: it is never served broken without a word.
+`file://` and when served. ⚠️ Only a page in a site written into the corpus
+root reaches the file (`beside`). Anywhere else the link keeps the author's
+href, and `unreached` counts it so the build can say so. ⚠️ A link that climbs
+out of the corpus, or names a file that is not there, keeps its href, and
+`validate`'s `link-unresolved` names the unit that carries it: it is never
+served broken without a word.
 
 ## ⛔ A heading number is taken only after the word `section`
 
@@ -73,6 +85,7 @@ unit's label is that unit's, as above, whatever else it could be.
 from __future__ import annotations
 
 import re
+from collections.abc import Callable
 from dataclasses import dataclass, field, replace
 from pathlib import Path, PurePosixPath
 from urllib.parse import unquote
@@ -85,10 +98,16 @@ from studyforge.unit.outline import without_outline_number
 
 @dataclass(frozen=True, slots=True)
 class Target:
-    """One unit another unit may name: its served title and its page, from the source root."""
+    """One unit another unit may name: its served title, its page and its headings' anchors.
+
+    ⭐ `anchors` maps each anchor its source file's host renders to the link
+    its page gives that heading (`unit.headings.by_slug`), so a link to the
+    unit's file with a fragment lands on the heading it names.
+    """
 
     title: str
     page: PurePosixPath
+    anchors: dict[str, str] = field(default_factory=dict)
 
 
 #: The two markers a reference can sit in or next to, as the archive writes them.
@@ -112,9 +131,10 @@ class Mentions:
 
     ⭐ `labels`, `origins` and `root` are shared by every unit of a corpus,
     `numbers` by every unit of a container; `origin` and `page` are this unit's.
-    `own` and `anchors` are its headings, which `sections` reads. The default
-    names nothing of the corpus, so a unit built with no mentions serves only
-    its references to itself.
+    `own` and `anchors` are its headings, which `sections` reads. `beside` says
+    the page sits in a site written into the corpus root, the one place a
+    corpus file is reached from. The default names nothing of the corpus, so a
+    unit built with no mentions serves only its references to itself.
     """
 
     labels: dict[str, Target] = field(default_factory=dict)
@@ -125,12 +145,13 @@ class Mentions:
     root: Path | None = None
     own: dict[str, Heading] = field(default_factory=dict)
     anchors: dict[str, str] = field(default_factory=dict)
+    beside: bool = True
 
     @staticmethod
     def of(
-        units: tuple[tuple[str | None, str | None, str, PurePosixPath], ...],
+        units: tuple[tuple[str | None, str | None, str, PurePosixPath, tuple[Heading, ...]], ...],
     ) -> tuple[dict[str, Target], dict[str, Target]]:
-        """Index `(label, origin, title, page)` rows by label and by origin.
+        """Index `(label, origin, title, page, headings)` rows by label and by origin.
 
         ⛔ A label two units share names neither of them: a number that could be
         either is left as the source wrote it.
@@ -138,8 +159,8 @@ class Mentions:
         labels: dict[str, Target] = {}
         shared: set[str] = set()
         origins: dict[str, Target] = {}
-        for label, origin, title, page in units:
-            target = Target(without_outline_number(title), page)
+        for label, origin, title, page, held in units:
+            target = Target(without_outline_number(title), page, by_slug(held))
             if isinstance(label, str) and label:
                 key = label.rstrip(".")
                 if key in labels:
@@ -173,12 +194,74 @@ class Mentions:
         is served in the words a reader is served.
         """
         served = replace(self, own=by_number(found), anchors=by_slug(found))
-        return [
-            {**section, "blocks": served.served(section.get("blocks"))}
-            if isinstance(section, dict)
-            else section
-            for section in sections
-        ]
+        return [served._section(section) for section in sections]
+
+    def unreached(self, sections: list) -> int:
+        """Count the links to a corpus file in `sections` that this page does not link.
+
+        ⭐ Read from the sections as the archive wrote them, so it counts exactly
+        the links `served` would address from a page beside the files. ⛔ `0` for
+        a page that sits in a site written into the corpus root: it keeps them.
+        """
+        if self.beside:
+            return 0
+        found: list[str] = []
+
+        def links(value: object) -> object:
+            if isinstance(value, str):
+                found.extend(
+                    match["href"]
+                    for match in _MARKERS.finditer(value)
+                    if match.group("label") is not None and self._corpus_file(match["href"])
+                )
+            return value
+
+        for section in sections:
+            if isinstance(section, dict):
+                self._walk(section.get("blocks"), links)
+        return len(found)
+
+    def _section(self, section: object) -> object:
+        """One section with its prose served, and its quiz's words, if it carries one."""
+        if not isinstance(section, dict):
+            return section
+        served = {**section, "blocks": self.served(section.get("blocks"))}
+        workspace = section.get("workspace")
+        if isinstance(workspace, dict) and isinstance(workspace.get(QUESTIONS), list):
+            served["workspace"] = {
+                **workspace,
+                QUESTIONS: [self._question(one) for one in workspace[QUESTIONS]],
+            }
+        return served
+
+    def _question(self, question: object) -> object:
+        """One quiz question with its stem and every option's words served as plain words."""
+        if not isinstance(question, dict):
+            return question
+        served = {**question, **self._words(question, QUESTION_WORDS)}
+        if isinstance(question.get(OPTIONS), list):
+            served[OPTIONS] = [
+                {**option, **self._words(option, OPTION_WORDS)}
+                if isinstance(option, dict)
+                else option
+                for option in question[OPTIONS]
+            ]
+        return served
+
+    def _words(self, record: dict, keys: tuple[str, ...]) -> dict:
+        return {key: self.words(record[key]) for key in keys if key in record}
+
+    def words(self, value: object) -> object:
+        """Return one run of plain text with its mentions served as words; a non-string as it came.
+
+        ⭐ The rules `text` keeps, for text the page escapes rather than reads as
+        markup (a quiz's stem, options and sentences): a unit's label is its
+        title, and `section 2.2` is the heading's words, with no emphasis and no
+        link, because neither would be one there.
+        """
+        if not isinstance(value, str):
+            return value
+        return self._bare(value, plain=True)
 
     def served(self, blocks: object) -> object:
         """Return `blocks` with every reference served as what it names; a copy.
@@ -188,7 +271,7 @@ class Mentions:
         names = (self.labels, self.origins, self.numbers, self.own, self.anchors)
         if not isinstance(blocks, list) or not (any(names) or self.root is not None):
             return blocks
-        return [self._block(block) for block in blocks]
+        return self._walk(blocks, self.text)
 
     def text(self, value: object) -> object:
         """Return one run of prose with its mentions served; a non-string as it came."""
@@ -204,49 +287,54 @@ class Mentions:
         out.append(self._bare(value[position:]))
         return "".join(out)
 
-    def _block(self, block: object) -> object:
+    def _walk(self, blocks: object, text: _Text) -> object:
+        """Return `blocks` with every prose run passed through `text`; a copy."""
+        if not isinstance(blocks, list):
+            return blocks
+        return [self._block(block, text) for block in blocks]
+
+    def _block(self, block: object, text: _Text) -> object:
         if not isinstance(block, dict):
             return block
         kind = block.get("type")
         if kind in ("heading", "para"):
-            return {**block, "text": self.text(block.get("text"))}
+            return {**block, "text": text(block.get("text"))}
         if kind == "list":
-            return {**block, "items": self._items(block.get("items"))}
+            return {**block, "items": self._items(block.get("items"), text)}
         if kind == "table":
             return {
                 **block,
-                "headers": self._row(block.get("headers")),
-                "rows": [self._row(row) for row in block.get("rows") or []],
+                "headers": _row(block.get("headers"), text),
+                "rows": [_row(row, text) for row in block.get("rows") or []],
             }
         if kind in CONTAINER_TYPES:
-            served = {**block, "blocks": self.served(block.get("blocks"))}
+            served = {**block, "blocks": self._walk(block.get("blocks"), text)}
             if "summary" in block:
-                served["summary"] = self.text(block.get("summary"))
+                served["summary"] = text(block.get("summary"))
             return served
         return block
 
-    def _items(self, items: object) -> object:
+    def _items(self, items: object, text: _Text) -> object:
         if not isinstance(items, list):
             return items
         return [
-            [self._block(part) if isinstance(part, dict) else self.text(part) for part in item]
+            [self._block(part, text) if isinstance(part, dict) else text(part) for part in item]
             if isinstance(item, list)
-            else self.text(item)
+            else text(item)
             for item in items
         ]
 
-    def _row(self, row: object) -> object:
-        return [self.text(cell) for cell in row] if isinstance(row, list) else row
-
-    def _bare(self, text: str) -> str:
+    def _bare(self, text: str, *, plain: bool = False) -> str:
         def named(match: re.Match[str]) -> str:
             target = self.labels.get(match.group(0))
-            return match.group(0) if target is None else f"*{target.title}*"
+            if target is None:
+                return match.group(0)
+            return target.title if plain else f"*{target.title}*"
 
         out: list[str] = []
         position = 0
         for match in _SECTION.finditer(text):
-            heading = self._heading(match.group(0))
+            heading = self._heading(match.group(0), plain=plain)
             if heading is not None:
                 out.append(_BARE.sub(named, text[position : match.start()]))
                 out.append(heading)
@@ -254,8 +342,8 @@ class Mentions:
         out.append(_BARE.sub(named, text[position:]))
         return "".join(out)
 
-    def _heading(self, number: str) -> str | None:
-        """Return the link a heading's number is served as, or `None` to leave it."""
+    def _heading(self, number: str, *, plain: bool = False) -> str | None:
+        """Return the link a heading's number is served as, its words when `plain`, or `None`."""
         if number in self.labels:
             return None
         heading, page = self.own.get(number), self.page
@@ -265,6 +353,8 @@ class Mentions:
                 return None
         if heading is None or not _labelled(heading.text):
             return None
+        if plain:
+            return heading.text
         where = "" if page == self.page else relative_href(self.page, page)
         return f"[{heading.text}]({where}{heading.reference})"
 
@@ -283,10 +373,19 @@ class Mentions:
                 label = label[leading.end() :]
         if target is None or self.page is None:
             return f"[{label}]({self._file(href) or href})"
-        return f"[{label}]({relative_href(self.page, target.page)})"
+        return f"[{label}]({relative_href(self.page, target.page)}{_fragment(href, target)})"
 
     def _file(self, href: str) -> str | None:
-        """Return how the page addresses the corpus file `href` names, or `None` when none."""
+        """Return how the page addresses the corpus file `href` names, or `None` when none.
+
+        ⛔ `None` too for a page that is not `beside` the files: it keeps the href.
+        """
+        return self._corpus_file(href) if self.beside else None
+
+    def _corpus_file(self, href: str) -> str | None:
+        """Return how a page beside the files addresses the corpus file `href` names."""
+        if href.startswith("#") or self._linked(href) is not None:
+            return None
         path = re.split(r"[?#]", href, maxsplit=1)[0]
         if self.origin is None or self.page is None or self.root is None:
             return None
@@ -311,6 +410,30 @@ class Mentions:
 
 #: An href that carries a scheme, and so names no file of the corpus.
 _SCHEME = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:")
+
+#: What a walk hands every prose run to.
+_Text = Callable[[object], object]
+
+#: Where a quiz record keeps its questions and a question its options, and the
+#: keys of each whose value is words a reader is shown (`exercise.quiz`'s
+#: `QUESTION_KEYS` and `OPTION_KEYS`). ⛔ `correct` and `id` are not words.
+QUESTIONS = "questions"
+OPTIONS = "options"
+QUESTION_WORDS = ("stem",)
+OPTION_WORDS = ("text", "says")
+
+
+def _row(row: object, text: _Text) -> object:
+    return [text(cell) for cell in row] if isinstance(row, list) else row
+
+
+def _fragment(href: str, target: Target) -> str:
+    """Return the link to the heading of `target` that `href`'s fragment names, or `""`."""
+    _, mark, fragment = href.partition("#")
+    if not mark:
+        return ""
+    named = unquote(fragment)
+    return target.anchors.get(named) or target.anchors.get(named.lower()) or ""
 
 
 def _labelled(text: str) -> bool:

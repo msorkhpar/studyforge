@@ -9,7 +9,8 @@ copies nothing: the clips already sit where the pages look.
 **How you use it.** `write_clips(root, into)` for a corpus root;
 `unit_clips(corpus, into)` when the declarations have been read;
 `for_output(corpus, into)` for the corpus whose footprint a build into `into`
-uses — at the corpus root it owns no clip.
+uses — at the corpus root it owns no clip, anywhere else it links no corpus
+file — and `files_unreached(corpus)` for the corpus-file links that leaves.
 
 **Depends on.** `generate.narration` for what a page plays and where its clips
 were probed, `generate.declarations`, `generate.writing` for R3,
@@ -62,7 +63,8 @@ from studyforge.generate.narration import heard, narrated
 from studyforge.generate.writing import Written, copy, same_root
 from studyforge.narrate.playable import NOT_ON_DISK
 from studyforge.narrate.speakable.naming import SpeakableError, parse_clip_name
-from studyforge.unit.builder import build_unit
+from studyforge.unit import ContentError
+from studyforge.unit.builder import build_unit, unit_sections
 
 
 def write_clips(root: Path | str, into: Path | str) -> Written:
@@ -90,14 +92,36 @@ def files_unlinked(corpus: Corpus) -> Corpus:
 
     ⛔ A corpus file is linked where the author put it, which a page reaches
     only when the site is written into the corpus root. Anywhere else the link
-    keeps the href the author wrote.
+    keeps the href the author wrote, and `files_unreached` names it.
     """
     return replace(
         corpus,
         units=tuple(
-            replace(source, mentions=replace(source.mentions, root=None)) for source in corpus.units
+            replace(source, mentions=replace(source.mentions, beside=False))
+            for source in corpus.units
         ),
     )
+
+
+def files_unreached(corpus: Corpus) -> Written:
+    """Name, by its page, every link to a corpus file this build's pages cannot reach.
+
+    ⭐ One `unreached` entry per link, so the report counts them by unit.
+    ⛔ Empty for a site written into the corpus root, which links every one,
+    and nothing is copied or linked upward for any other: the report says
+    where a build keeps them. A unit whose material will not read names none
+    here; its page pass reports it.
+    """
+    found: list[PurePosixPath] = []
+    for source in corpus.units:
+        if source.mentions.beside:
+            continue
+        try:
+            count = source.mentions.unreached(list(unit_sections(source.directory)))
+        except ContentError:
+            continue
+        found += [unit_location(corpus, source).page] * count
+    return Written(unreached=tuple(found))
 
 
 def unit_clips(corpus: Corpus, into: Path | str) -> Written:

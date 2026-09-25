@@ -250,7 +250,7 @@ def test_a_heading_s_own_number_is_never_served_as_a_mention_of_its_unit():
     from studyforge.unit.mentions import Mentions
 
     labels, origins = Mentions.of(
-        (("1.1.1", "a.md", "Primitive data types", PurePosixPath("a.html")),)
+        (("1.1.1", "a.md", "Primitive data types", PurePosixPath("a.html"), ()),)
     )
     document = _document("1.1.1 Primitive Data Types", "1.1.1 Primitive Data Types")
     served = build(Material((document,)), mentions=Mentions(labels, origins))

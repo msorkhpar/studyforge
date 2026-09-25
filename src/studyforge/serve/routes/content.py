@@ -36,7 +36,8 @@ quiz option cut down to its id
 and its words (`serve.withheld.redacted`). ⛔ The quiz route reads the key from
 `ContentSource.unit`, which is NOT redacted — the redaction is this route's, on
 the way out. ⭐ `CorpusContent.withheld` names every sentence and question id its quizzes carry,
-which is what the static mount refuses a file for.
+both as served and as the archive wrote them, which is what the static mount
+refuses a file for.
 
 ## ⛔ Every document is gated on the way out
 
@@ -59,6 +60,7 @@ from studyforge.serve.response import JSON_TYPE, Request, Response, envelope, er
 from studyforge.serve.withheld import Marks, marks_in, redacted
 from studyforge.unit import served
 from studyforge.unit.builder import NoMaterial, build_unit
+from studyforge.unit.builder import read as read_material
 from studyforge.unit.builder import render as render_unit
 from studyforge.unit.errors import ContentError
 
@@ -156,9 +158,22 @@ class CorpusContent:
         """
         try:
             text = self.unit(key)
-            return Marks() if text is None else marks_in(json.loads(text))
+            if text is None:
+                return Marks()
+            return marks_in(json.loads(text)) | _as_written(self._units[key].directory)
         except ContentError, OSError, ValueError:
             return Marks()
+
+
+def _as_written(directory: Path) -> Marks:
+    """One unit's quiz marks as its archive writes them, before a mention is served.
+
+    ⭐ The served document says `section 1.2.3` in a heading's words
+    (`unit.mentions`), so a file quoting the sentence as the archive wrote it
+    would carry neither served spelling. Both spellings are withheld.
+    """
+    documents = read_material(directory).documents
+    return marks_in({"sections": [{"workspace": one.get("exercise")} for one in documents]})
 
 
 def _stamp(directory: Path) -> tuple:

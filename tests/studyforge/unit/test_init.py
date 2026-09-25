@@ -77,7 +77,17 @@ def test_every_exported_name_is_reachable_from_the_package(name):
 
 
 def test_the_package_imports_nothing_outside_the_standard_library_and_itself():
-    allowed = {"studyforge", "dataclasses", "json", "pathlib", "re", "urllib", "__future__"}
+    # ⭐ `collections` for `collections.abc.Callable`: a walk hands each prose run on.
+    allowed = {
+        "studyforge",
+        "collections",
+        "dataclasses",
+        "json",
+        "pathlib",
+        "re",
+        "urllib",
+        "__future__",
+    }
     offenders = [
         f"{path.name}: {name}"
         for path in package_modules()

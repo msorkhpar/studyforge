@@ -80,6 +80,7 @@ __all__ = [
     "read",
     "render",
     "unit_headings",
+    "unit_sections",
 ]
 
 
@@ -89,7 +90,15 @@ def unit_headings(unit_directory: Path | str) -> tuple[Heading, ...]:
     ⭐ The sections `build` serves, before their headings lose their numbers,
     so another unit's `section 2.2` names the heading this unit's page shows.
     """
-    return headings(derived_sections(read(unit_directory)))
+    return headings(unit_sections(unit_directory))
+
+
+def unit_sections(unit_directory: Path | str) -> tuple[dict, ...]:
+    """Read one unit's material off disk and return the sections `build` serves, unserved.
+
+    ⭐ What `Mentions.unreached` counts in: the prose as the archive wrote it.
+    """
+    return derived_sections(read(unit_directory))
 
 
 def build_unit(

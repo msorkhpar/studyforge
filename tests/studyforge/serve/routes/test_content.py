@@ -8,6 +8,7 @@ import pytest
 
 from studyforge.contents.document import to_document
 from studyforge.generate.declarations import read_corpus
+from studyforge.narrate.speakable import speakable_of
 from studyforge.serve.caching import strong_etag
 from studyforge.serve.response import Request
 from studyforge.serve.routes.content import (
@@ -164,3 +165,32 @@ def test_withheld_names_every_sentence_and_is_re_read_when_a_unit_file_moves(tmp
 
 def test_a_corpus_with_no_quiz_withholds_no_sentence():
     assert CorpusContent(read_corpus(FIXTURES / "depth2")).withheld() == Marks()
+
+
+def test_a_sentence_naming_a_heading_is_graded_served_and_withheld_as_written(tmp_path):
+    # ⭐ A quiz's sentence follows the page's mention rules (`unit.mentions`), so
+    # the grading route answers it in the heading's words. ⛔ And the sentence as
+    # the archive wrote it is still withheld: a file quoting it carries neither
+    # served spelling.
+    root = quiz_corpus(tmp_path)
+    lesson = root / PRACTICE_DOCUMENT.with_name("lesson-1.json")
+    lesson.write_text(
+        lesson.read_text("utf-8").replace(
+            '"text": "What a triple is"', '"text": "1.1 What a triple is"'
+        ),
+        encoding="utf-8",
+    )
+    practice = root / PRACTICE_DOCUMENT
+    written = "Section 1.1 names the three parts of a triple."
+    practice.write_text(
+        practice.read_text("utf-8").replace(sentences()[0], written), encoding="utf-8"
+    )
+    content = CorpusContent(read_corpus(root))
+    spoken = "Section What a triple is names the three parts of a triple."
+    assert spoken in (content.unit(QUIZ_UNIT) or "")
+    assert written not in (content.unit(QUIZ_UNIT) or "")
+    assert {written, spoken} <= content.withheld().sentences
+    # ⭐ Narration speaks a section's blocks and never a quiz's words, in either spelling.
+    said = " ".join(unit.speak for unit in speakable_of(json.loads(content.unit(QUIZ_UNIT))).units)
+    assert "names the three parts" not in said
+    assert "What a triple is" in said

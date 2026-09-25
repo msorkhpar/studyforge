@@ -14,6 +14,19 @@ import pytest
 from studyforge.unit.headings import headings
 from studyforge.unit.mentions import Mentions
 
+#: The headings of unit 3.2.4, as its page shows them and its source's host anchors them.
+TARGET = headings(
+    [
+        {
+            "key": "prose",
+            "blocks": [
+                {"type": "para", "text": "Opening."},
+                {"type": "heading", "level": 2, "text": "3.2.4.1. Choosing a kind"},
+            ],
+        }
+    ]
+)
+
 #: `(label, origin, title, page)`: three units of one container, and one of another.
 UNITS = (
     ("3.2.1", "12-custom/README_3.2.1.md", "3.2.1. Creating custom exceptions", "s/12/u1.html"),
@@ -25,7 +38,10 @@ UNITS = (
 
 def mentions(origin: str = "12-custom/README_3.2.1.md", page: str = "s/12/u1.html") -> Mentions:
     labels, origins = Mentions.of(
-        tuple((label, at, title, PurePosixPath(to)) for label, at, title, to in UNITS)
+        tuple(
+            (label, at, title, PurePosixPath(to), TARGET if label == "3.2.4" else ())
+            for label, at, title, to in UNITS
+        )
     )
     return Mentions(labels, origins, origin, PurePosixPath(page))
 
@@ -70,8 +86,8 @@ def test_a_number_or_link_that_names_no_unit_is_kept(written):
 def test_a_label_two_units_share_names_neither():
     labels, _ = Mentions.of(
         (
-            ("1.1.1", "a.md", "One", PurePosixPath("a.html")),
-            ("1.1.1", "b.md", "Other", PurePosixPath("b.html")),
+            ("1.1.1", "a.md", "One", PurePosixPath("a.html"), ()),
+            ("1.1.1", "b.md", "Other", PurePosixPath("b.html"), ()),
         )
     )
     assert labels == {}
@@ -245,3 +261,132 @@ def test_a_number_two_headings_of_the_container_share_names_neither():
         ((PurePosixPath("a.html"), OTHER), (PurePosixPath("b.html"), OTHER))
     )
     assert numbered == {}
+
+
+# --- a link to another unit's file keeps the heading its fragment names -----
+
+
+@pytest.mark.parametrize(
+    ("origin", "written", "linked", "page"),
+    [
+        # ⭐ The source host's anchor, as written and as served, lands on the heading.
+        (
+            "12-custom/README_3.2.1.md",
+            "[kinds](README_3.2.4.md#3241-choosing-a-kind)",
+            "[kinds](u4.html#prose-b1)",
+            "s/12/u1.html",
+        ),
+        (
+            "12-custom/README_3.2.1.md",
+            "[3.2.4](./README_3.2.4.md#Choosing-a-kind)",
+            "[Checked vs. unchecked](u4.html#prose-b1)",
+            "s/12/u1.html",
+        ),
+        (
+            "11-try/README_3.1.3.md",
+            "[kinds](../12-custom/README_3.2.4.md#choosing-a-kind)",
+            "[kinds](../12/u4.html#prose-b1)",
+            "s/11/u3.html",
+        ),
+        # ⛔ A fragment that names no heading of the target is dropped.
+        (
+            "12-custom/README_3.2.1.md",
+            "[r](README_3.2.4.md#nowhere)",
+            "[r](u4.html)",
+            "s/12/u1.html",
+        ),
+        # ⛔ Another unit's heading is not the target's.
+        (
+            "12-custom/README_3.2.1.md",
+            "[r](../11-try/README_3.1.3.md#choosing-a-kind)",
+            "[r](../11/u3.html)",
+            "s/12/u1.html",
+        ),
+    ],
+)
+def test_a_link_to_a_unit_s_file_keeps_the_heading_its_fragment_names(
+    origin, written, linked, page
+):
+    assert mentions(origin=origin, page=page).text(written) == linked
+
+
+# --- a quiz's words follow the page's rules, as plain words -----------------
+
+
+def quiz_section(stem: str, text: str, says: str) -> dict:
+    """A practice section whose workspace is a one-question quiz."""
+    return {
+        "key": "practice-1",
+        "blocks": [{"type": "para", "text": "Check yourself."}],
+        "workspace": {
+            "kind": "quiz",
+            "questions": [
+                {
+                    "id": "q-1",
+                    "stem": stem,
+                    "options": [
+                        {"id": "a", "text": text, "correct": True, "says": says},
+                        {"id": "b", "text": "No", "correct": False, "says": "Not in 3.2.4."},
+                    ],
+                    "origin": {"path": "src/1.md", "section": "2.2. Bitmaps"},
+                }
+            ],
+        },
+    }
+
+
+def test_a_quiz_s_stem_options_and_sentences_are_served_as_plain_words(tmp_path):
+    section = quiz_section(
+        "What does 3.2.4 say?",
+        "What section 2.2 says",
+        "Section 2.2 lists it, and section 2.1 calls them so; see 3.2.4.",
+    )
+    (served,) = on_disk(tmp_path).sections([section], OWN)
+    (question,) = served["workspace"]["questions"]
+    assert question["stem"] == "What does Checked vs. unchecked say?"
+    assert question["options"] == [
+        {
+            "id": "a",
+            "text": "What section Bitmaps says",
+            "correct": True,
+            "says": (
+                "Section Bitmaps lists it, and section The MTI calls them so; "
+                "see Checked vs. unchecked."
+            ),
+        },
+        {"id": "b", "text": "No", "correct": False, "says": "Not in Checked vs. unchecked."},
+    ]
+    # ⛔ What is not words is kept: the id, the key and the passage it came from.
+    assert question["id"] == "q-1"
+    assert question["origin"] == {"path": "src/1.md", "section": "2.2. Bitmaps"}
+    # ⭐ A copy: the archive's record is never edited.
+    assert section["workspace"]["questions"][0]["stem"] == "What does 3.2.4 say?"
+
+
+def test_a_quiz_s_words_carry_no_markup(tmp_path):
+    # ⛔ The page escapes a quiz's words as text: a link or an emphasis would be printed.
+    section = quiz_section("Why 3.2.4?", "section 2.2", "Section 2.1 and [x](#introduction).")
+    (served,) = on_disk(tmp_path).sections([section], OWN)
+    (question,) = served["workspace"]["questions"]
+    assert question["stem"] == "Why Checked vs. unchecked?"
+    assert question["options"][0]["text"] == "section Bitmaps"
+    assert question["options"][0]["says"] == "Section The MTI and [x](#introduction)."
+
+
+# --- a site outside the corpus root counts what it cannot reach -------------
+
+
+def test_a_page_outside_the_corpus_root_counts_the_file_links_it_cannot_reach(tmp_path):
+    text = (
+        "[T](src/main/Types.java), [n](../shared/notes.txt), [gone](src/main/Gone.java), "
+        "[u](README_3.2.4.md), [i](#introduction) and [w](https://example.invalid/x)"
+    )
+    sections = [{"key": "prose", "blocks": [{"type": "para", "text": text}]}]
+    away = replace(on_disk(tmp_path), beside=False)
+    assert away.unreached(sections) == 2
+    # ⭐ It keeps the author's href for them, and serves the rest as before.
+    assert served(away, "[T](src/main/Types.java) [u](README_3.2.4.md)") == (
+        "[T](src/main/Types.java) [u](u4.html)"
+    )
+    # ⭐ Beside the files, it reaches every one and counts none.
+    assert on_disk(tmp_path).unreached(sections) == 0
