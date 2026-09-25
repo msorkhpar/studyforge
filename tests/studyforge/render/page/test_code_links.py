@@ -50,7 +50,7 @@ def test_an_example_is_wired_only_once_the_editor_is_up():
     # ⛔ Until then an entry is its lines and the built sentence: every link is followed.
     body = behaviour()
     up = body[body.index("Promise.all([run.editor(entries[0].corpus), runnable])") :]
-    assert up.index("if (!found || !both[1]) { return; }") < up.index("wire(entry);")
+    assert up.index("if (!found) { return; }") < up.index("wire(entry);")
     assert "addEventListener('toggle'" in body[body.index("function wire(entry)") :]
 
 
@@ -88,17 +88,30 @@ def test_a_modified_click_is_left_to_the_browser():
 def test_the_copy_sentence_replaces_the_plain_one_only_for_an_editor_that_is_up():
     body = behaviour()
     up = body[body.index("Promise.all([run.editor(entries[0].corpus), runnable])") :]
-    assert up.index("if (!found || !both[1]) { return; }") < up.index(
-        "show(part(entry, 'copy'), true);"
-    )
+    assert up.index("if (!found) { return; }") < up.index("show(part(entry, 'copy'), true);")
 
 
-def test_a_corpus_whose_declared_runner_is_down_keeps_every_example_plain():
-    # ⛔ A declared runner that is down runs no test, so no example opens its editor
-    # and no Run tests is offered: the built plain view stands. A server too old
-    # to say is taken as runnable, as before.
+def test_a_runner_that_is_down_never_keeps_an_up_editor_from_opening_the_files():
+    # ⭐ The editor is one service and the runner another: the runner's answer
+    # never gates the wiring, so with the editor up every entry still opens it.
     body = behaviour()
+    up = body[body.index("Promise.all([run.editor(entries[0].corpus), runnable])") :]
+    gate = up[: up.index("wire(entry);")]
+    assert "both[1]" in gate
+    assert "return" not in gate.split("if (!found) { return; }", 1)[1], "only the editor gates"
+    # A server too old to say is taken as runnable, as before.
     assert "run.runnable ? run.runnable(entries[0].corpus) : Promise.resolve(true)" in body
+
+
+def test_a_runner_that_is_down_withholds_run_tests_and_names_the_runner():
+    body = behaviour()
+    up = body[body.index("Promise.all([run.editor(entries[0].corpus), runnable])") :]
+    assert "runs = !!both[1];" in up
+    assert "show(part(entry, 'no-runner'), !runs);" in up
+    # ⛔ The controls are shown only for a runner that is up, and a click is refused without one.
+    draw = body[body.index("function draw(") : body.index("function load(entry)")]
+    assert "show(part(entry, 'controls'), !!where.runs && runs);" in draw
+    assert "if (!where || !where.runs || !runs) { return; }" in body
 
 
 def test_it_never_claims_or_enforces_read_only():
@@ -110,4 +123,4 @@ def test_it_never_claims_or_enforces_read_only():
 def test_the_test_is_run_by_the_file_the_server_named_and_never_composed_here():
     body = behaviour()
     assert "run.codeTest(entry.corpus, where.runs, function (line) {" in body
-    assert "if (!where || !where.runs) { return; }" in body
+    assert "if (!where || !where.runs || !runs) { return; }" in body

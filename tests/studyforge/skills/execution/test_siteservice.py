@@ -138,3 +138,13 @@ def test_a_preflight_checks_the_publishers_values_before_every_other_service(tex
             gated,
         ), name
     assert "depends_on" not in check
+
+
+def test_the_site_is_healthy_only_once_its_published_route_answers(text):
+    # ⭐ `up --wait` reads this: a running process is not an answering site.
+    site = service_block(text, "site")
+    port = f"${{{names.SITE_PORT}:-{names.DEFAULT_SITE_PORT}}}"
+    probe = f"urllib.request.urlopen('http://127.0.0.1:{port}/', timeout=2)"
+    assert re.search(r"healthcheck:\n\s+test:\n\s+- CMD\n\s+- python3\n\s+- -c\n", site), site
+    assert probe in site
+    assert re.search(r"start_interval: \"?1s\"?\n", site)

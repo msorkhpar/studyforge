@@ -54,7 +54,10 @@ it has. ⛔ **Nothing is loaded as built**: the editor's frames are empty slots
 ⭐ **Built, an entry's note is one sentence**: each file opens as plain text,
 because the course's editor is not running here — and how to start it. ⭐
 **Served with the editor up**, `code-links.js` shows the sentence saying the
-editor opens a COPY of the code instead. ⛔ **The words are framework
+editor opens a COPY of the code instead; ⭐ with the editor up and the
+course's declared runner down, the editor still opens the files and the entry
+shows the RUNNER's sentence in place of Run tests, so each note names the one
+service that is missing. ⛔ **The words are framework
 structure** (R1): this framework's, in `EXAMPLE_TEMPLATE`, never the material's.
 """
 

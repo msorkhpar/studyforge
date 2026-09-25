@@ -46,6 +46,14 @@ read-only and no network, and every other service `depends_on` it completing.
 profile is off, the preflight does not exist, and the editor and the runner
 start as they always did. A bad value is then refused by `studyforge serve`.
 
+## ⭐ THE SITE IS HEALTHY ONLY ONCE ITS PAGE ANSWERS
+
+⭐ The site's healthcheck asks the published route itself — the course's page
+at `/`, on the port it publishes — from inside the container, so `up --wait`
+reports the site healthy only once a reader's first request is answered.
+⛔ A running process is not an answering site: the server discovers the corpus
+and writes the runner's allowlist before it listens.
+
 ## ⛔ LOOPBACK ONLY, WRITTEN LITERALLY
 
 ⭐ The site's port is published on the editor's own `host_bind` — the
@@ -114,6 +122,26 @@ class Site:
     gate: Mapping[str, Mapping[str, object]]
 
 
+#: The route the site's healthcheck asks: the course's own page, which a reader opens first.
+HEALTH_ROUTE = "/"
+
+
+def answered(port: str) -> dict[str, object]:
+    """Return the site's healthcheck: healthy only once `HEALTH_ROUTE` answers on `port`."""
+    probe = (
+        "import urllib.request; "
+        f"urllib.request.urlopen('http://127.0.0.1:{port}{HEALTH_ROUTE}', timeout=2)"
+    )
+    return {
+        "test": ["CMD", "python3", "-c", probe],
+        "interval": "30s",
+        "timeout": "5s",
+        "retries": 3,
+        "start_period": "60s",
+        "start_interval": "1s",
+    }
+
+
 def plan(
     block: Mapping[str, object],
     *,
@@ -148,6 +176,7 @@ def plan(
             published.RUN_SERVICE: runner[0],
             "PYTHONDONTWRITEBYTECODE": "1",
         },
+        "healthcheck": answered(port),
         "volumes": [f"../..:{CORPUS}"],
         "networks": ["default", NETWORK],
         "restart": require(block, "restart"),
