@@ -807,7 +807,7 @@ What it reads, and the choices in it:
 
 ### A practice is one line of the page's outline and shows no empty heading
 
-**Decision.** `render.page.anchors.entries` gives a practice section one outline line, its title, and none of its layout headings; the title is the heading its material opens with when it states one above the layout (`practice_title`), and its recorded heading otherwise. `render.page.section.bare_lesson` finds a practice's lesson heading with nothing but disclosures under it, and `render.page.section` withholds it. The heading keeps its position, so every anchor and clip after it is addressed as before, and a lesson heading over lesson material still renders.
+**Decision.** `render.page.anchors.entries` gives a practice section one outline line, its title, and none of its layout headings; the title is its recorded heading or, where that only repeats the unit's title, the heading its material opens with (`practice_title`). `render.page.section.bare_lesson` finds a practice's lesson heading with nothing but disclosures under it, and `render.page.section` withholds it. The heading keeps its position, so every anchor and clip after it is addressed as before, and a lesson heading over lesson material still renders.
 
 **Why.** An authored exercise has no lesson, yet its layout carries `## Lesson` over only its worked solution, and a page of seven practices gave its outline twenty-eight lines, twenty-one of them one of three words.
 

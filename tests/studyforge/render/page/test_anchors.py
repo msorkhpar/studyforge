@@ -104,15 +104,19 @@ def test_a_practice_is_one_line_of_the_outline_its_title():
     assert found[-1][2] == "#" + anchors.section_anchor("practice-java-2")
 
 
-def test_a_practice_that_states_its_own_title_is_listed_by_it():
-    # ⭐ A source's practice may open with its own heading above the layout, and
-    # its recorded heading is then only the unit's title.
-    own = practice("practice-java", "Your first class")
+def test_a_practice_recorded_under_the_units_title_is_listed_by_its_own_heading():
+    # ⭐ A source's practice may record the unit's title as its heading while its
+    # material opens with its own; a quiz whose material opens with a generic
+    # heading keeps the title it recorded.
+    own = practice("practice-java", "Adding up")
     own["blocks"] = [{"type": "heading", "level": 3, "text": "Practice: Greeter"}, *own["blocks"]]
-    found = anchors.entries({"sections": [TWO_SECTIONS["sections"][0], own]})
-    assert [(level, label) for level, label, _ in found] == [
+    quiz = practice("practice-java-2", "Check yourself: greeting")
+    quiz["blocks"] = [{"type": "heading", "level": 2, "text": "Check yourself"}]
+    document = {"title": "Adding up", "sections": [TWO_SECTIONS["sections"][0], own, quiz]}
+    assert [(level, label) for level, label, _ in anchors.entries(document)] == [
         (1, "Before you start"),
         (1, "Practice: Greeter"),
+        (1, "Check yourself: greeting"),
     ]
 
 
