@@ -226,7 +226,7 @@ def _new(practice: Practice, documents: list[dict]) -> bool:
             raise PracticeRefused(
                 f"'{practice.places.bundle}' is practice {ordinal} of its unit, and "
                 f"read.documents already returns a different practice at that ordinal. "
-                f"An authored exercise numbers after the source's own (W437); re-run "
+                f"An authored exercise numbers after the source's own; re-run "
                 f"the authoring pass so it numbers from the next free ordinal."
             )
     return True
@@ -245,7 +245,7 @@ def _require_numbered(documents: list[dict], container, unit) -> None:
         raise PracticeRefused(
             f"unit {unit.n} of '{container.address.key}' carries {unit.practices} "
             f"practice(s), so its practices must be numbered {wanted}, and they are "
-            f"numbered {have}. A gap is a lost exercise, and a repeat overwrites one (W437)."
+            f"numbered {have}. A gap is a lost exercise, and a repeat overwrites one."
         )
 
 

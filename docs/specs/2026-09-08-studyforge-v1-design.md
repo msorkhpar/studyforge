@@ -1571,7 +1571,10 @@ and every test file the source carries is an entry, and each entry is either the
 basis of at least one exercise — named by that exercise's `origin` — or carried with a
 written reason it is not. ⛔ **An entry with neither is refused** (R6), and
 `studyforge validate` re-scans every material page against the committed ledger, so
-a ledger that lost a page's rows is a finding rather than a quiet pass.
+a ledger that lost a page's rows is a finding rather than a quiet pass. ⭐ **A page
+no pass has been handed yet is *pending*, not lost**: a course authored one module at
+a time validates clean between passes, with the pending pages reported by module as
+an unchecked claim, and the first pass that reads a page ends its pending state.
 
 #### 4. How many exercises a page gets follows the page
 

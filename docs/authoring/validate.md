@@ -112,7 +112,7 @@ file in both.
 
 ---
 
-## The forty-eight rule ids
+## The forty-nine rule ids
 
 **Every finding carries one**, so a script can filter a report by rule rather
 than by matching on message text. ⚠️ **Six are not emitted by `studyforge
@@ -166,7 +166,8 @@ before it, `check_untouched` after — which reports in the same shape.
 | `derivation-shortfall` | a derivation record is there and one of its two gates did not hold |
 | `derivation-digest` | a file the derivation record was taken over has changed since, or is gone |
 | `ledger` | `exercises/ledger.json` is there and will not read as a ledger this build wrote |
-| `ledger-unaccounted` | `exercises/ledger.json` is there and does not account for a page your corpus carries: a unit's `origin` (or a page a `coverage.json` names) the ledger never read, a fenced example on it with no row, a declared grader with no row, or a row naming neither an exercise nor a reason (or both). Judged only while a ledger is committed and the page is on disk |
+| `ledger-unaccounted` | `exercises/ledger.json` is there and does not account for a page your corpus carries: a page a `coverage.json` names that the ledger no longer reads, a fenced example on a read page with no row, a declared grader with no row, or a row naming neither an exercise nor a reason (or both). Judged only while a ledger is committed and the page is on disk |
+| `ledger-pending` | (unchecked, not a finding): units' pages that no authoring pass has been given yet, counted by module. The first pass that reads a page ends its pending state |
 | `link-unresolved` | a relative link on a unit's page leads nowhere: it climbs out of the corpus, is rooted, names a file the corpus does not hold, or names an anchor that is no heading of the page. A link to a corpus file is read from the unit's `origin`, and a source anchor (`#introduction`) as the heading it names, so what is left is what a reader would click and find nothing. The finding names the unit and the link's words, never its href |
 | `narration-stale` | a narrated paragraph's clip was made from words it no longer says, so the page plays the old words. The finding names the speech unit and the command to run, `studyforge narrate <corpus-root> --voice <the record's voice>`, and quotes no text. Judged only while a narration record is committed and narration is on |
 | `narration-record` | `.studyforge/narration.json` is there and cannot be read, so no clip is judged — the build refuses the same record |

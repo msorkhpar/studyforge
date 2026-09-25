@@ -82,6 +82,12 @@ is one important idea a reader could be checked on: an `id`, one sentence
 exactly one ending — the `exercise` that checks it, or the `reason` nothing
 does. The plan is one exercise per distinct `exercise` name.
 
+⭐ **Exercises ship in the order you give them.** Set `Page.order` to every
+planned exercise name, each once, in teaching order: the first gets the unit's
+next free ordinal. Without it the plan keeps name order. ⛔ Never prefix names
+(`p01-…`) to steer the order, and an `order` that misses or repeats a name is
+refused.
+
 - **Important ideas, not facts.** A date, a name or an incidental number is
   not an aspect. The idea it illustrates may be; a version the page depends on
   may be.
@@ -210,6 +216,12 @@ already there with the same bytes is left alone. A file that is there with
 different bytes stops the whole pass, **before anything is written**, and the
 refusal names it.
 
+⛔ **A file the corpus's git would ignore stops the pass, before anything is
+written.** A bundle file that `git add` leaves out is an exercise the
+repository never holds. The refusal names the first ignored file. Un-ignore it
+in the corpus, for example `!build/` in `exercises/.gitignore` when the course
+ignores `build/`, and run the pass again.
+
 ⭐ **Re-running with nothing changed rewrites nothing** (R10). A unit whose
 recorded coverage matches its page's digests and its plan is not re-authored,
 so the author, the judge and the runner are never called for it. A ledger
@@ -228,13 +240,29 @@ replaced, and every other row is kept byte for byte, so containers can be
 passed one at a time in any order. A row leaves only when its file is gone.
 `authored.ledger` reports every row as `kept`, `added`, `changed` or
 `dropped`; read it after every pass, and treat a `dropped` row whose page you
-did not delete as a defect. `studyforge validate` refuses a ledger that no
-longer accounts for a page the corpus carries (`ledger-unaccounted`).
+did not delete as a defect.
+
+⭐ **A page no pass has been handed yet is pending, not a finding.** Author a
+course one module at a time and `studyforge validate` stays clean between the
+passes: it reports one `ledger-pending` line with the count of pending pages
+by module, and the first pass that reads a page ends its pending state. ⛔ It
+refuses a ledger that lost a page a pass already authored, which a coverage
+report names (`ledger-unaccounted`). ⚠️ Pending is not an excuse: an `excuse`
+is a reason no exercise is built, and it stays that reason.
+
+⭐ **The ledger reads a page's fences as the archive reader does**, with one
+grammar (`archive.markdown.fences`). An example is a backtick fence at up to
+three spaces, or at any indent inside a list item, closed by a backtick line
+at least as long and at most three spaces deeper than its opener. A `~~~` run
+is not a fence, because the archive keeps none. So `example:<path>:<n>`
+counts exactly the code blocks the page shows.
 
 ## What this skill does not do
 
-- ⛔ **It writes no practice document.** The adapter emits `practice-M.json`
-  from each bundle (R2). `emit` is called here only to stage the gate runs.
+- ⛔ **It writes no practice document.** The adapter's generated `emit.py`
+  joins each committed bundle, code or quiz, to its unit as `practice-M.json`
+  (`skills.adapter.practices`, R2). `emit` is called here only to stage the
+  gate runs.
 - ⛔ **It runs no container itself.** The runner is yours, and it runs in
   the pinned runner image.
 - ⛔ **It never lowers a bar to meet a count.** The plan is a ceiling (R6).
