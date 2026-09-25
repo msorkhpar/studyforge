@@ -70,9 +70,32 @@ def test_a_record_without_groups_is_declared_as_where_the_curriculum_lives(tmp_p
     assert proposal["curriculum"] == {"record": "README.md"}
 
 
-def test_a_two_level_record_declares_its_place_and_leaves_the_groups_to_its_adapter(tmp_path):
-    proposal = survey(sources.nested_sections(tmp_path / "c")).proposal
-    assert proposal["curriculum"] == {"record": "README.md"}
+def test_a_two_level_record_with_linked_modules_drafts_its_groups_and_the_linked_level(tmp_path):
+    # ⭐ Sections as bare lines, and each module a list entry linking its own page
+    # with its units beneath: the sections are the groups, the modules are linked.
+    found = survey(sources.nested_sections(tmp_path / "c"))
+
+    assert found.proposal["curriculum"] == {
+        "record": "README.md",
+        "containers": [
+            {"label": "Foundations", "address": "foundations"},
+            {"label": "Design", "address": "design"},
+        ],
+        "linked": "module",
+    }
+    assert found.proposal["corpus_api"] == KEY_VERSIONS[("curriculum", "linked")]
+    assert any("linked entries" in u.question for u in found.uncertainties)
+
+
+def test_a_two_level_record_without_the_linked_shape_leaves_the_groups_to_its_adapter(tmp_path):
+    # ⛔ One module entry with no unit beneath it: the shape is not everywhere,
+    # so nothing is drafted and the filing stays the adapter's.
+    root = sources.nested_sections(tmp_path / "c")
+    record = root / "README.md"
+    text = record.read_text(encoding="utf-8")
+    record.write_text(text.replace("2. Design", "- [1.9. Empty](11-basics/README.md)\n\n2. Design"))
+
+    assert survey(root).proposal["curriculum"] == {"record": "README.md"}
 
 
 def test_labels_that_would_share_an_address_draft_no_groups_and_ask(tmp_path):

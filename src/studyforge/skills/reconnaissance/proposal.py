@@ -62,13 +62,19 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterator
-from pathlib import PurePosixPath
 
 from studyforge.address import slugify as slug_of
+from studyforge.corpus.manifest.content import EACH_DIRECTORY_API, each_directory
 from studyforge.skills.onboarding import NOT_MATERIAL_API  # the owner's version for the key
 from studyforge.skills.reconnaissance.capability import Capability
-from studyforge.skills.reconnaissance.curriculum import CURRICULUM_API, declare
+from studyforge.skills.reconnaissance.curriculum import (
+    CURRICULUM_API,
+    LINKED_API,
+    declare,
+    heads_of,
+)
 from studyforge.skills.reconnaissance.furniture import Furniture, propose
+from studyforge.skills.reconnaissance.include import patterns
 from studyforge.skills.reconnaissance.inventory import Inventory
 from studyforge.skills.reconnaissance.record import Record
 from studyforge.skills.reconnaissance.report import Uncertainty
@@ -114,10 +120,12 @@ def draft(
     """Return `(draft manifest, what it had to guess)`."""
     open_questions: list[Uncertainty] = []
     levels = _levels(record, open_questions)
-    include, exclude = _content(inventory, record)
+    linked = heads_of(inventory, record) if len(levels) == 2 else None
+    pages = [head.target for head in linked.heads] if linked else []
+    include, exclude = patterns(inventory, record, pages)
     furniture = propose(inventory.root, include, exclude)
     runtimes = evidenced(capability)
-    curriculum, asked = declare(record, inventory, len(levels))
+    curriculum, asked = declare(record, inventory, levels, linked)
     content: dict[str, object] = {"include": include, "exclude": exclude}
     if furniture.entries:
         content["not_material"] = [dict(entry) for entry in furniture.entries]
@@ -126,6 +134,8 @@ def draft(
             NOT_MATERIAL_API if furniture.entries else 1,
             runtimes.api,
             CURRICULUM_API if curriculum else 1,
+            LINKED_API if curriculum and "linked" in curriculum else 1,
+            EACH_DIRECTORY_API if any(each_directory(g) for g in furniture.globs) else 1,
         ),
         "source": _source(record),
         "title": _title(record, inventory),
@@ -237,41 +247,6 @@ def _title(record: Record | None, inventory: Inventory) -> str:
     return inventory.root.resolve().name
 
 
-def _content(inventory: Inventory, record: Record | None) -> tuple[list[str], list[str]]:
-    """Return what to read and what to leave out, as patterns a person can check.
-
-    ⛔ **An include glob never matches the curriculum record.** The record sits
-    beside the units it lists often enough — a root `README.md` linking a root
-    chapter — and a directory wildcard over it makes the record a unit. So a
-    directory whose wildcard would catch the record is listed file by file.
-    ⚠️ The record is still not *declared* anything here; what it is stays a
-    person's question.
-    """
-    if record is None:
-        directories = sorted(
-            {
-                PurePosixPath(p.relative_to(inventory.root)).parent.as_posix()
-                for p in inventory.material
-            }
-        )
-        return [f"{d}/*.md" if d != "." else "*.md" for d in directories], []
-    listed = {PurePosixPath(target) for target in record.order}
-    patterns = sorted({_pattern(target, record.path) for target in listed})
-    everything = {p.relative_to(inventory.root).as_posix() for p in inventory.material}
-    unlisted = everything - set(record.order) - {record.path.as_posix()}
-    # ⛔ Withheld only where an include would read it; the rest is `furniture`'s.
-    return patterns, sorted(
-        where for where in unlisted if any(PurePosixPath(where).full_match(p) for p in patterns)
-    )
-
-
-def _pattern(target: PurePosixPath, record: PurePosixPath) -> str:
-    """Return the directory wildcard for `target`, or `target` itself if it would catch `record`."""
-    parent = target.parent.as_posix()
-    wildcard = f"{parent}/*{target.suffix}" if parent != "." else f"*{target.suffix}"
-    return target.as_posix() if PurePosixPath(record).full_match(wildcard) else wildcard
-
-
 def _placement(inventory: Inventory, capability: Capability) -> str:
     """`sibling` where the reader already knows the layout, `tree` otherwise."""
     return "sibling" if capability.source_files or not inventory.flat else "tree"
@@ -318,7 +293,9 @@ def _choices(
         settles_it=(
             "'sibling' puts each page in a 'study' directory beside the file it "
             "was made from, which is right when a reader already knows the layout;"
-            " 'tree' puts everything under one generated root"
+            " 'tree' puts every page under one generated root, '.studyforge/'. "
+            "Under either, corpus.json, the archive, the adapter, its tests and "
+            "the reader document stay at the corpus root"
         ),
     )
     if record is not None:

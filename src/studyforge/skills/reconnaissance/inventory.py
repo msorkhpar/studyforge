@@ -239,7 +239,10 @@ def prefix_groups(names: list[str]) -> dict[str, list[str]]:
 def observe(inventory: Inventory) -> Iterator[Observation | Uncertainty]:
     """Report the tree, and the one thing about it that needs a person."""
     yield Observation("material files", str(len(inventory.material)))
-    yield Observation("directories holding material", str(len(inventory.directories)))
+    # ⚠️ The directories a material file sits in, not every directory walked: a
+    # module's source tree holds no material and is no answer to this question.
+    holding = {path.parent for path in inventory.material}
+    yield Observation("directories holding material", str(len(holding)))
     yield Observation("deepest nesting of a material file", str(inventory.depth))
     # ⭐ Said out loud, because a reader comparing two surveys of one
     # corpus needs to know which of them was reading the framework's own output.
