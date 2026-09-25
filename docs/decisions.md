@@ -847,9 +847,9 @@ What it reads, and the choices in it:
 
 ### The source's outline number is left off what a reader is served
 
-**Decision.** `studyforge.unit.outline.without_outline_number` removes a leading outline number from a title or heading, and `studyforge.unit.outline.headings_without_outline_numbers` from every heading block. The served unit builder (`studyforge.unit.builder.parts`) applies them to what a page and its narration are made from, and `studyforge.contents.tree` to every title the contents list. The archive and the container maps keep the number, and a page's place is still named from the recorded title.
+**Decision.** `studyforge.unit.outline.without_outline_number` removes a leading outline number from a title or heading, and `studyforge.unit.outline.headings_without_outline_numbers` from every heading block. The served unit builder (`studyforge.unit.builder.parts`) applies them to what a page and its narration are made from, and `studyforge.contents.tree` and `studyforge.generate.containers` to every title the contents and a container page list. `studyforge.unit.outline.listed_numbering` shows a unit whose `label` is an outline number by its place in its container. The archive and the container maps keep the number, the label keeps ordering the unit, and a page's file name is still built from the recorded label and title, so no page moves.
 
-**Why.** The site lists and orders every unit itself, so the source's own numbering beside it is a second numbering on the page and four spoken numbers before a heading. It is one rule for every corpus rather than a manifest setting, because no reader is served by the duplicate, and the rule is narrow enough to keep a number that is part of the words.
+**Why.** The site lists and orders every unit itself, so the source's own numbering beside it is a second numbering on the page and four spoken numbers before a heading. It is one rule for every corpus rather than a manifest setting, because no reader is served by the duplicate, and the rule is narrow enough to keep a number that is part of the words. A file name is an address rather than something a reader reads, and renaming every page would move its links.
 
 **Serves.** `R1`
 
@@ -879,7 +879,7 @@ What it reads, and the choices in it:
 
 ### The index strip and the rail keep the corpus's groups
 
-**Decision.** The index's progress strip has one segment per top-level group (`studyforge.render.index.document.head`), and its markup says how many segments share the row so a segment's floor gives way before the row overflows. The rail lists each container inside the groups above it (`studyforge.render.page.rail.RailGroup`, from `studyforge.generate.navigation.rail`).
+**Decision.** The index's progress strip has one segment per top-level group (`studyforge.render.index.document.head`), and its markup says how many segments share the row so a segment's floor gives way before the row overflows. The rail lists each container inside the groups above it (`studyforge.render.page.rail.RailGroup`, from `studyforge.generate.navigation.rail`), and breaks a word that is longer than its row (`render/assets/chrome.css`).
 
 **Why.** A course filed in sections of modules otherwise draws one strip segment and one rail row per module, and at dozens of modules the strip overflows its column and the rail loses the sections the index shows.
 

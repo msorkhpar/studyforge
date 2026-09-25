@@ -1936,9 +1936,11 @@ These are proven surfaces, generalised in their addressing and otherwise kept.
   leading dotted number or a leading number closed by a stop, each part at most
   three digits, followed by a space, and it keeps a two-part number with no stop
   when a lower-case word follows it (`1.5 million`). ⭐ The archive and the
-  container maps keep the number, as recorded, and a page's place is still named
-  from the recorded title. A clip is named by a digest of its words, so a heading
-  that loses its number is a new clip.
+  container maps keep the number, as recorded: a unit's `label` keeps it for
+  identity and order, and a page's file name is still built from the recorded
+  label and title, so no page moves. A listing shows a unit whose label is an
+  outline number by its place in its container instead. A clip is named by a
+  digest of its words, so a heading that loses its number is a new clip.
 - **Table of contents** — the contents document (stable, reproducible) and the
   local status (volatile) as two documents, so a consumer can cache one and poll
   the other, at any declared depth. ⛔ **The root index fetches nothing at
@@ -1990,7 +1992,8 @@ what was seen.
 - ⭐ **Structure encodes information.** Numbering only where order is real, dividers
   only between things that are separate, groups kept where the corpus has them — the
   index's progress strip has one segment per top-level group and never overflows its
-  column, and the rail lists each container inside the groups above it — one bold element carrying the identity with
+  column, and the rail lists each container inside the groups above it and wraps a
+  title with no break in it — one bold element carrying the identity with
   everything around it quiet, prose at a readable measure, and a page that stacks at
   phone width with no horizontal scroll.
 - ⛔ **Motion answers an action and never holds content hostage**: it animates

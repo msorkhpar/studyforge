@@ -97,7 +97,9 @@ lists and orders every unit itself, so a leading outline number such as
 `5.1.1.1 ` or `3.2.1. ` is left off every title and heading a reader is shown or
 hears, on every corpus. A number that is part of the words (`Java 21 features`,
 `ISO 8583 messages`) is kept. Do not strip it yourself: `origin.section` is
-matched against the heading exactly as the file writes it.
+matched against the heading exactly as the file writes it. A unit's `label` may
+be its outline number (`4.2.4`): it keeps the unit's identity and order and names
+its page file, and a listing shows the unit's place in its container instead.
 
 ---
 
