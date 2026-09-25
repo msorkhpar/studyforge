@@ -152,8 +152,7 @@ def test_a_stop_ends_the_run_and_every_process_it_started(work, service):
     assert handle.stop()
     assert list(handle.lines())[-1] == exit_line("stopped")
     assert time.monotonic() - began < 5
-    left = subprocess.run(["pgrep", "-f", "sleep 30"], capture_output=True, text=True).stdout
-    mine = [pid for pid in left.split() if _in(work, pid)]
+    mine = [pid for pid in _sleeping() if _in(work, pid)]
     assert mine == [], "a stopped run left a process behind"
 
 
@@ -173,6 +172,18 @@ def test_the_probe_is_believed_for_its_ttl(work, service):
     assert probe.up()
     probe.service = Service("127.0.0.1", 1)
     assert probe.up(), "an answer inside its TTL is believed, not asked again"
+
+
+def _sleeping() -> list[str]:
+    """Every process whose command line is `sleep 30`, read off `/proc` (no `pgrep` needed)."""
+    found = []
+    for entry in Path("/proc").iterdir():
+        try:
+            if entry.name.isdigit() and (entry / "cmdline").read_bytes() == b"sleep\x0030\x00":
+                found.append(entry.name)
+        except OSError:
+            continue
+    return found
 
 
 def _in(work: Path, pid: str) -> bool:
