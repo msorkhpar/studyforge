@@ -6,9 +6,9 @@ record-shape cases stay beside the record in `test_record.py`.
 
 from __future__ import annotations
 
-import importlib.util
 import json
 import py_compile
+import sys
 from pathlib import Path
 
 import pytest
@@ -71,8 +71,16 @@ def test_uninstall_refuses_a_record_shape_this_build_does_not_read(tmp_path):
 
 
 def _compiled(root, where: str) -> str:
-    """Compile one module the way running it does, and return its bytecode's path."""
-    target = Path(importlib.util.cache_from_source(str(root / where)))
+    """Compile one module where running it writes, and return its bytecode's path.
+
+    ⚠️ Spelled out rather than `importlib.util.cache_from_source`, which honours
+    `PYTHONPYCACHEPREFIX` and so answers a directory outside the corpus in an
+    environment that sets it; the corpus-side `__pycache__` is the case here.
+    """
+    module = Path(where)
+    target = (
+        root / module.parent / "__pycache__" / f"{module.stem}.{sys.implementation.cache_tag}.pyc"
+    )
     py_compile.compile(str(root / where), cfile=str(target), doraise=True)
     return target.relative_to(root).as_posix()
 
