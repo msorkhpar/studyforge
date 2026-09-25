@@ -71,6 +71,36 @@ SHARED_KEY = "shared"
 PRACTICE_PREFIX = "practice"
 
 
+#: What a heading's anchor puts between its section's key and its position.
+#: ⛔ Spelled here, beside the key it extends: the page mints the id from it
+#: (`render.page.anchors.block_anchor`) and `unit.headings` links to it, so the two
+#: cannot disagree about where a heading is.
+BLOCK_INFIX = "-b"
+
+
+def heading_anchor(key: str, position: int) -> str:
+    """Return the id a page gives the block at `position` of the section keyed `key`.
+
+    ⭐ Structural, never textual: `java`, 3 gives `java-b3`, whatever the
+    heading says. ⚠️ Only a block of the section's own run has one; a heading
+    nested in a quote is addressed by nothing.
+    """
+    return f"{key}{BLOCK_INFIX}{position}"
+
+
+def heading_reference(key: str, position: int) -> str:
+    """Return how the page's own prose links that heading: `java`, 3 gives `#java-b3`.
+
+    ⛔ **The served document's one fragment composer.** This package may not
+    reach for a renderer, so it cannot ask `render.markup.anchor`, and a served
+    link to a heading of the page (`unit.headings`) is composed here and nowhere
+    else in it. ⭐ It composes the same reference `anchor` does, of the id
+    `heading_anchor` spells, and `tests/studyforge/render/markup/test_fragment.py`
+    holds both to that.
+    """
+    return f"#{heading_anchor(key, position)}"
+
+
 def section_key(kind: object, variant: object = None, key: object = None) -> str:
     """Return the stable key of one section.
 

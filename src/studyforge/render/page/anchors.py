@@ -11,7 +11,8 @@ the in-page outline from the document being rendered.
     anchors.block_anchor("practice-java", 3)    # 'practice-java-b3'
     anchors.outline(document)                   # markup, or ''
 
-**Depends on.** `address` for the slug rule, `render.templates` for the outline's
+**Depends on.** `address` for the slug rule, `unit.sections` for the one
+spelling of a heading's anchor, `render.templates` for the outline's
 wrapper, `render.markup` for escaping and for the one fragment composer, and
 `page.errors`. ⛔ Not on `contents`: the outline is derived from the one document
 being rendered, never from `toc.json`. ⛔ Not on `render.index` either, which
@@ -117,6 +118,7 @@ from studyforge.address import is_slug
 from studyforge.render import templates
 from studyforge.render.markup import anchor, escape_attribute, inline
 from studyforge.render.page.errors import PageError
+from studyforge.unit import heading_anchor
 
 #: Deepest heading level that earns a line in the outline.
 OUTLINE_MAX_LEVEL = 3
@@ -138,9 +140,6 @@ OUTLINE_TEMPLATE = "outline.html"
 #: collide with a block anchor, which always reads `<key>-b<n>`.
 SECTION_PREFIX = "s-"
 
-#: What a block's anchor puts between the section key and the position.
-BLOCK_INFIX = "-b"
-
 
 def section_anchor(key: object) -> str:
     """Return the DOM id of a whole section: `practice-java` -> `s-practice-java`."""
@@ -151,7 +150,7 @@ def block_anchor(section_key: object, position: int) -> str:
     """Return the DOM id of one addressable block: `java`, 3 -> `java-b3`."""
     if not isinstance(position, int) or isinstance(position, bool) or position < 0:
         raise PageError("a block's position on its page is 0 or more")
-    return f"{_slug(section_key, 'a section key')}{BLOCK_INFIX}{position}"
+    return heading_anchor(_slug(section_key, "a section key"), position)
 
 
 def entries(document: dict) -> tuple[tuple[int, str, str], ...]:

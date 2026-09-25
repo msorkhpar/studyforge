@@ -26,6 +26,8 @@ import pytest
 
 from studyforge.render import index, markup, page
 from studyforge.render.markup import FRAGMENT, anchor, fragment
+from studyforge.unit import heading_anchor
+from studyforge.unit.sections import heading_reference
 from tests.support import repository_root
 
 #: Where the sweeps look. ⛔ `src/` only: a test that READS a page splits a
@@ -34,6 +36,12 @@ SOURCE_ROOT = repository_root() / "src" / "studyforge"
 
 #: The one place a fragment may be composed from a literal, relative to the root.
 HOME = "render/markup/"
+
+#: ⛔ The one composer outside `HOME`, and why: the served unit document links a
+#: heading of its own page, and `unit` may not import a renderer
+#: (`tests/studyforge/unit/test_init.py`). Its composer is one function, held to
+#: `anchor`'s answer below.
+SERVED = "unit/sections.py"
 
 #: The names `HOME` owns, which nothing outside it defines or publishes.
 NAMES = ("FRAGMENT", "anchor")
@@ -61,7 +69,7 @@ def fragment_literals(root: Path | None = None) -> tuple[list[str], int]:
     swept = 0
     for path in sorted(base.rglob("*.py")):
         where = path.relative_to(base).as_posix()
-        if where.startswith(HOME):
+        if where.startswith(HOME) or (root is None and where == SERVED):
             continue
         swept += 1
         found += [f"{where}:{line}" for line in _composing(ast.parse(path.read_text("utf-8")))]
@@ -124,6 +132,22 @@ def test_the_composer_puts_the_fragment_character_before_the_id_and_nothing_else
     assert FRAGMENT == "#"
     assert anchor("s-java") == "#s-java"
     assert anchor("a/unit-01") == "#a/unit-01"
+
+
+def test_the_served_document_s_composer_gives_the_page_s_own_reference():
+    assert heading_reference("prose", 3) == anchor(heading_anchor("prose", 3)) == "#prose-b3"
+
+
+def test_the_served_document_s_composer_is_one_function_in_one_module():
+    body = ast.parse((SOURCE_ROOT / SERVED).read_text("utf-8"))
+    (composer,) = [
+        node
+        for node in body.body
+        if isinstance(node, ast.FunctionDef) and node.name == "heading_reference"
+    ]
+    lines = _composing(body)
+    assert len(lines) == 1, lines
+    assert composer.lineno <= lines[0] <= composer.end_lineno
 
 
 def test_the_composer_does_not_escape_because_its_caller_does():

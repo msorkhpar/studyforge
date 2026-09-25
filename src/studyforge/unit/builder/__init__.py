@@ -49,6 +49,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from studyforge.unit.builder.derived import sections as derived_sections
 from studyforge.unit.builder.document import (
     API,
     BUILT_FROM_KEYS,
@@ -61,6 +62,7 @@ from studyforge.unit.builder.document import (
 from studyforge.unit.builder.material import KIND_ORDER, Material, NoMaterial, read
 from studyforge.unit.builder.parts import SECTION_KEYS
 from studyforge.unit.content import Overlay
+from studyforge.unit.headings import Heading, headings
 from studyforge.unit.mentions import Mentions
 
 __all__ = [
@@ -77,7 +79,17 @@ __all__ = [
     "build_unit",
     "read",
     "render",
+    "unit_headings",
 ]
+
+
+def unit_headings(unit_directory: Path | str) -> tuple[Heading, ...]:
+    """Read one unit's material off disk and index its headings, numbers and all.
+
+    ⭐ The sections `build` serves, before their headings lose their numbers,
+    so another unit's `section 2.2` names the heading this unit's page shows.
+    """
+    return headings(derived_sections(read(unit_directory)))
 
 
 def build_unit(

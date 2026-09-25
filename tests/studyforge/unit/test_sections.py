@@ -12,6 +12,7 @@ from studyforge.unit import (
     derived_section_key,
     section_key,
 )
+from studyforge.unit.sections import heading_anchor, heading_reference
 
 # --- a key never comes from a heading ---------------------------------------
 
@@ -144,3 +145,12 @@ def test_a_derived_key_and_an_authored_one_agree_for_the_same_section():
     # media come to disagree; the derived form routes through the authored one.
     assert derived_section_key("java", "lesson", 0) == section_key("lang", "java")
     assert derived_section_key("java", "practice", 0) == section_key("practice", "java")
+
+
+# --- a heading's id and the link to it --------------------------------------
+
+
+def test_a_heading_s_id_and_link_are_its_section_key_and_position():
+    # ⭐ The id the page gives the block, and the reference the served prose links it by.
+    assert heading_anchor("prose", 3) == "prose-b3"
+    assert heading_reference("practice-java-2", 0) == "#practice-java-2-b0"

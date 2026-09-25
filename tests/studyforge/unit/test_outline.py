@@ -12,6 +12,7 @@ from studyforge.unit.builder import Material, build
 from studyforge.unit.outline import (
     headings_without_outline_numbers,
     listed_numbering,
+    outline_number,
     without_outline_number,
 )
 
@@ -204,3 +205,55 @@ def test_a_paragraph_that_is_only_an_outline_is_served_as_a_list_of_its_entries(
 def test_any_other_paragraph_keeps_every_character(written):
     blocks = [{"type": "para", "text": written}]
     assert headings_without_outline_numbers(blocks) == blocks
+
+
+@pytest.mark.parametrize(
+    ("heading", "number"),
+    [
+        ("2.2. Bitmaps", "2.2"),
+        ("5.1.1.1 Thread states", "5.1.1.1"),
+        ("1. Card Issuance", "1"),
+        ("10.7.2 — ORM frameworks", "10.7.2"),
+        # ⛔ Only a number the served heading lost: one that is part of the words is none.
+        ("Java 21 features", None),
+        ("1.5 million requests", None),
+        ("Bitmaps", None),
+        (None, None),
+    ],
+)
+def test_the_number_a_heading_loses_is_what_names_it(heading, number):
+    assert outline_number(heading) == number
+
+
+def test_a_sentence_names_a_heading_by_the_number_it_lost_and_is_served_its_words():
+    # ⭐ Read before the number leaves, served after: the page and its narration agree.
+    from studyforge.narrate.speakable import speakable_of
+
+    document = _document("2. Structure", "2.2. Bitmaps")
+    document["blocks"].append({"type": "para", "text": "Section 2.2 describes it."})
+    served = build(Material((document,)))
+    assert served["sections"][0]["blocks"] == [
+        {"type": "heading", "level": 1, "text": "Bitmaps"},
+        {"type": "para", "text": "Section [Bitmaps](#java-b0) describes it."},
+    ]
+    assert [unit.speak for unit in speakable_of(served).units] == [
+        "Bitmaps",
+        "Section Bitmaps describes it.",
+    ]
+
+
+def test_a_heading_s_own_number_is_never_served_as_a_mention_of_its_unit():
+    # ⛔ The number leaves BEFORE the mentions are served: a unit whose label is its
+    # heading's number is headed by its words, never by its title and then its words.
+    from pathlib import PurePosixPath
+
+    from studyforge.unit.mentions import Mentions
+
+    labels, origins = Mentions.of(
+        (("1.1.1", "a.md", "Primitive data types", PurePosixPath("a.html")),)
+    )
+    document = _document("1.1.1 Primitive Data Types", "1.1.1 Primitive Data Types")
+    served = build(Material((document,)), mentions=Mentions(labels, origins))
+    assert served["sections"][0]["blocks"] == [
+        {"type": "heading", "level": 1, "text": "Primitive Data Types"}
+    ]

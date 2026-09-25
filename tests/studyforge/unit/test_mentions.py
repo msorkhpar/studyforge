@@ -6,10 +6,12 @@ href built from the module's own index would move with it.
 
 from __future__ import annotations
 
+from dataclasses import replace
 from pathlib import PurePosixPath
 
 import pytest
 
+from studyforge.unit.headings import headings
 from studyforge.unit.mentions import Mentions
 
 #: `(label, origin, title, page)`: three units of one container, and one of another.
@@ -120,3 +122,126 @@ def test_every_prose_field_at_any_depth_is_served_and_code_is_not():
 def test_mentions_that_name_nothing_serve_the_blocks_as_they_came():
     blocks = [{"type": "para", "text": "see 3.2.4"}]
     assert Mentions().served(blocks) is blocks
+
+
+# --- a file, an anchor and a heading the prose links ------------------------
+
+#: A unit's own headings, read before their numbers left, as `unit.builder` reads them.
+OWN = headings(
+    [
+        {
+            "key": "prose",
+            "blocks": [
+                {"type": "heading", "level": 1, "text": "3.2.1 Creating custom exceptions"},
+                {"type": "heading", "level": 2, "text": "2.2. Bitmaps"},
+                {"type": "heading", "level": 2, "text": "Introduction"},
+            ],
+        }
+    ]
+)
+
+#: Another unit's headings in the same container, and its page.
+OTHER = headings(
+    [{"key": "prose", "blocks": [{"type": "heading", "level": 3, "text": "2.1. The MTI"}]}]
+)
+
+
+def on_disk(tmp_path, page: str = "s/12/u1.html") -> Mentions:
+    """The unit, its container's headings and a corpus root holding two files."""
+    for where in ("12-custom/src/main/Types.java", "shared/notes.txt"):
+        (tmp_path / where).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / where).write_text("x\n", encoding="utf-8")
+    numbered = Mentions.numbered(((PurePosixPath("s/12/u4.html"), OTHER),))
+    return replace(mentions(page=page), numbers=numbered, root=tmp_path)
+
+
+def served(value: Mentions, text: str) -> str:
+    """One paragraph served by `Mentions.sections`, as the builder serves it."""
+    sections = [{"key": "prose", "blocks": [{"type": "para", "text": text}]}]
+    return value.sections(sections, OWN)[0]["blocks"][0]["text"]
+
+
+@pytest.mark.parametrize(
+    ("page", "written", "linked"),
+    [
+        # ⭐ Read from the unit's origin, addressed from wherever the page sits.
+        ("s/12/u1.html", "[T](src/main/Types.java)", "[T](../../12-custom/src/main/Types.java)"),
+        ("12-custom/u1.html", "[T](src/main/Types.java)", "[T](src/main/Types.java)"),
+        (
+            "12-custom/study/u1.html",
+            "[T](./src/main/Types.java#L3)",
+            "[T](../src/main/Types.java#L3)",
+        ),
+        ("s/12/u1.html", "[n](../shared/notes.txt)", "[n](../../shared/notes.txt)"),
+    ],
+)
+def test_a_link_to_a_file_of_the_corpus_is_addressed_from_the_page(tmp_path, page, written, linked):
+    assert served(on_disk(tmp_path, page), written) == linked
+
+
+@pytest.mark.parametrize(
+    "written",
+    [
+        "[gone](src/main/Gone.java)",
+        "[out](../../elsewhere/Types.java)",
+        "[rooted](/12-custom/src/main/Types.java)",
+        "[a directory](src/main)",
+        "[web](https://example.invalid/src/main/Types.java)",
+    ],
+)
+def test_a_link_to_no_file_of_the_corpus_keeps_its_href(tmp_path, written):
+    assert served(on_disk(tmp_path), written) == written
+
+
+def test_with_no_root_no_file_is_linked(tmp_path):
+    # ⛔ A site written anywhere but the corpus root keeps the author's href.
+    assert served(replace(on_disk(tmp_path), root=None), "[T](src/main/Types.java)") == (
+        "[T](src/main/Types.java)"
+    )
+
+
+@pytest.mark.parametrize(
+    ("written", "linked"),
+    [
+        ("[Intro](#introduction)", "[Intro](#prose-b2)"),
+        ("[Bitmaps](#22-bitmaps)", "[Bitmaps](#prose-b1)"),
+        ("[Bitmaps](#Bitmaps)", "[Bitmaps](#prose-b1)"),
+        ("[none](#nowhere)", "[none](#nowhere)"),
+    ],
+)
+def test_an_in_page_anchor_links_the_heading_it_names(tmp_path, written, linked):
+    assert served(on_disk(tmp_path), written) == linked
+
+
+@pytest.mark.parametrize(
+    ("written", "named"),
+    [
+        # ⭐ The unit's own heading: its words, an in-page link.
+        ("Section 2.2 describes it.", "Section [Bitmaps](#prose-b1) describes it."),
+        ("as in section\n2.2.", "as in section\n[Bitmaps](#prose-b1)."),
+        # ⭐ Exactly one heading of the container, on another page.
+        ("Section 2.1 calls them", "Section [The MTI](u4.html#prose-b0) calls them"),
+        # ⛔ A unit's label is that unit, whatever heading it also numbers.
+        ("section 3.2.1 first", "section *Creating custom exceptions* first"),
+        # ⛔ No `section` before it, or a number no heading carries: kept.
+        ("jPOS 2.2 and 2.1", "jPOS 2.2 and 2.1"),
+        ("Subsection 2.2 and section 9.9", "Subsection 2.2 and section 9.9"),
+        ("JLS (Section 12.4.2)", "JLS (Section 12.4.2)"),
+    ],
+)
+def test_a_heading_s_number_after_section_is_served_as_its_words(tmp_path, written, named):
+    assert served(on_disk(tmp_path), written) == named
+
+
+def test_the_unit_s_own_references_are_served_with_no_corpus_at_all():
+    # ⭐ The default names nothing of the corpus and still knows its own headings.
+    assert served(Mentions(), "Section 2.2 and [i](#introduction)") == (
+        "Section [Bitmaps](#prose-b1) and [i](#prose-b2)"
+    )
+
+
+def test_a_number_two_headings_of_the_container_share_names_neither():
+    numbered = Mentions.numbered(
+        ((PurePosixPath("a.html"), OTHER), (PurePosixPath("b.html"), OTHER))
+    )
+    assert numbered == {}

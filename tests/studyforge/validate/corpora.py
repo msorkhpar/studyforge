@@ -304,3 +304,60 @@ def repeated_label(root: Path) -> Path:
             for n in (1, 2)
         },
     )
+
+
+#: What unit 1 says: every kind of link, each leading somewhere or nowhere.
+LINKED = (
+    "Read [the types](code/Types.java), [the next unit](two.md) and "
+    "[the introduction](#11-one); Section 1.2 goes on. "
+    "[gone](code/Gone.java), [out](../../outside.txt), [rooted](/etc/hosts), "
+    "[nowhere](#no-such-heading) and [a site](https://example.invalid/x)."
+)
+
+
+def linked(tmp_path: Path, placement: str = "tree", text: str = LINKED) -> Path:
+    """Two units of one container, their sources, and one file the first links.
+
+    ⭐ Written under `tmp_path / placement`, so both profiles fit in one test.
+    """
+    common = {
+        "source": "demo",
+        "address": ["demo"],
+        "variant": "prose",
+        "kind": "lesson",
+        "ordinal": 1,
+        "ingested": "2026-01-05",
+    }
+    return write(
+        tmp_path / placement,
+        manifest={**MANIFEST, "placement": placement},
+        containers={
+            "demo": container(
+                [unit_entry(1, origin="src/one.md"), unit_entry(2, origin="src/two.md")],
+                origin="src/README.md",
+            )
+        },
+        documents={
+            "demo/raw/prose/unit-01/lesson-1.json": {
+                **common,
+                "unit": 1,
+                "title": "Unit 1",
+                "blocks": [
+                    {"type": "heading", "level": 1, "text": "1.1 One"},
+                    {"type": "para", "text": text},
+                ],
+            },
+            "demo/raw/prose/unit-02/lesson-1.json": {
+                **common,
+                "unit": 2,
+                "title": "Unit 2",
+                "blocks": [{"type": "heading", "level": 1, "text": "1.2 Two"}],
+            },
+        },
+        sources={
+            "src/README.md": "# Demo\n",
+            "src/one.md": "# 1.1 One\n",
+            "src/two.md": "# 1.2 Two\n",
+            "src/code/Types.java": "class Types {}\n",
+        },
+    )

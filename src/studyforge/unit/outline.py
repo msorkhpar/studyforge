@@ -7,7 +7,9 @@ item; serves a paragraph that is only an outline as a list of its entries; and
 leaves every other word alone.
 
 **How you use it.** `without_outline_number(text)` for one string;
-`headings_without_outline_numbers(blocks)` for a section's blocks, and
+`outline_number(text)` for the number it takes off, which `unit.headings`
+indexes a heading by; `headings_without_outline_numbers(blocks)` for a
+section's blocks, and
 `listed_numbering(numbering, ordinal)` for the chip a listing shows. The served
 unit builder applies both to what it serves, and the contents tree to every
 title it lists, so the page, its chrome and its narration all read the same
@@ -119,6 +121,18 @@ def without_outline_number(text: str) -> str:
     if unstopped and number.count(".") + 1 == QUANTITY_PARTS and _counts(text[match.end() :]):
         return text
     return text[match.end() :]
+
+
+def outline_number(text: object) -> str | None:
+    """Return the outline number `without_outline_number` takes off `text`, stop and all dropped.
+
+    ⭐ `2.2. Bitmaps` gives `2.2`; a heading it leaves whole (`Java 21`,
+    `1.5 million`) gives `None`, so a number is only ever the one a reader lost.
+    """
+    if not isinstance(text, str) or without_outline_number(text) == text:
+        return None
+    match = OUTLINE_NUMBER.match(text)
+    return None if match is None else match.group("number").rstrip(".")
 
 
 def _counts(words: str) -> bool:

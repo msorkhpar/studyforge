@@ -7,7 +7,18 @@ optional overlay, and renders it to the exact bytes that reach disk.
 returns the document; `render(document)` is its bytes.
 
 **Depends on.** `builder.material`, `builder.derived`, `builder.authored`,
-`archive.document` for the one canonical serialisation.
+`unit.mentions` and `unit.outline` for what the prose names and the numbers it
+loses, and `archive.document` for the one canonical serialisation.
+
+## ⛔ The headings are read BEFORE the outline numbers leave
+
+⭐ A sentence names a heading by the number the source wrote in front of it
+(`Section 2.2 describes it`), so `unit.headings` reads the headings with their
+numbers first. Then `headings_without_outline_numbers` takes the numbers off,
+and only then does `Mentions.sections` serve every reference, so a mention
+is served in the words a reader reads and a heading's own number is never
+taken for a mention. ⚠️ Taking a number off never adds or removes a block, so
+every heading keeps the position its page's id is minted from.
 
 ## ⛔ It is generated, byte-for-byte, and never hand-edited
 
@@ -65,8 +76,9 @@ from studyforge.unit.builder import derived as derived_shape
 from studyforge.unit.builder.material import Material
 from studyforge.unit.content import Overlay
 from studyforge.unit.errors import ContentError, describe
+from studyforge.unit.headings import headings
 from studyforge.unit.mentions import Mentions
-from studyforge.unit.outline import without_outline_number
+from studyforge.unit.outline import headings_without_outline_numbers, without_outline_number
 
 #: 2 — the served document's shape. ⛔ Registered in the spec's R9 table as
 #: `unit.json` / `api`, and bumped rather than widened.
@@ -117,7 +129,8 @@ def build(
     """Assemble one served unit document from what was ingested and what was authored.
 
     ⭐ `mentions` serves every mention of another unit of the corpus as that
-    unit (`unit.mentions`); without it the blocks are served as recorded.
+    unit, and every link to a file of the corpus from the page (`unit.mentions`);
+    without it only the unit's references to itself are served.
     """
     first = material.documents[0]
     if overlay is not None:
@@ -135,16 +148,23 @@ def build(
         "unit": material.unit,
         "title": without_outline_number(_title(title, overlay, first)),
         "practices": _practices(material, declared_practices),
-        "sections": [_mentioned(section, mentions) for section in sections],
+        "sections": _served(sections, mentions),
         "built_from": _built_from(material),
     }
 
 
-def _mentioned(section: dict, mentions: Mentions | None) -> dict:
-    """Return one section with its mentions of other units served as those units."""
-    if mentions is None:
-        return section
-    return {**section, "blocks": mentions.served(section.get("blocks"))}
+def _served(sections: tuple[dict, ...], mentions: Mentions | None) -> list[dict]:
+    """Return the sections without their outline numbers, and with every reference served.
+
+    ⭐ With no `mentions` the unit still serves its references to itself: an
+    in-page anchor and a mention of its own heading need nothing of the corpus.
+    """
+    found = headings(sections)
+    stripped = [
+        {**section, "blocks": headings_without_outline_numbers(section.get("blocks"))}
+        for section in sections
+    ]
+    return (mentions or Mentions()).sections(stripped, found)
 
 
 def render(document: dict) -> str:

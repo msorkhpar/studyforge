@@ -10,17 +10,27 @@ another unit of the same corpus reads as that unit and leads to its page:
 - a link to the source file a unit was read from (`README_3.2.4.md`,
   `../11-try-catch/README_3.1.3.md`) links that unit's generated page;
 - a link label that opens with its target's number (`[7.3.2.1. LocalDate](…)`)
-  loses the number.
+  loses the number;
+- a link to any other file of the corpus (`src/main/java/…/Types.java`) is
+  addressed from the page, which sits somewhere else than the source did;
+- an in-page link to the source's own anchor (`#introduction`) links the id the
+  page gives that heading (`unit.headings`);
+- `section 2.2`, where `2.2` is the outline number of one of the unit's own
+  headings, or of exactly one heading of its container, is served as that
+  heading's words, linking the heading.
 
 **How you use it.** `generate.declarations` builds one `Mentions` per unit
-(`Mentions.of(...)`) and hands it to `build_unit(mentions=...)`, and the
-builder serves `mentions.served(blocks)`. ⭐ Every consumer of a served unit
+(`Mentions.of(...)`, `Mentions.numbered(...)`) and hands it to
+`build_unit(mentions=...)`, and the builder serves
+`mentions.sections(sections, found)`, `found` being the headings it read before
+they lost their numbers. ⭐ Every consumer of a served unit
 (the page, the narration, validate's narration check, the server's content
 route) builds it through that one call, so the page and its clips say the same
 words.
 
-**Depends on.** `re`, `archive.blocks` for the vocabulary, and
-`corpus.placement.relative_href` for the one way a page addresses another.
+**Depends on.** `re`, `archive.blocks` for the vocabulary, `unit.headings` for
+what a unit's headings are called, and `corpus.placement.relative_href` for the
+one way a page addresses another file.
 ⛔ Not on `render`: the inline markers read here are the archive's own
 (`[label](href)` and a backtick span), and this module only decides which words
 and which href the served document carries.
@@ -40,16 +50,36 @@ than a reference, and a wrong title in a sentence is worse than a number.
 
 ⚠️ **A link's fragment is dropped.** It names an anchor of the SOURCE file,
 and the generated page keys its headings itself.
+
+## ⭐ A file the author links is linked where it is
+
+⛔ **Nothing is copied and nothing is dropped.** The file is the author's, and
+it stays where the author put it. A relative link is read from the unit's
+recorded origin, and when that names a regular file under the corpus root it is
+addressed from the page, on every placement profile, so it resolves over
+`file://` and when served. ⚠️ A link that climbs out of the corpus, or names
+a file that is not there, keeps its href, and `validate`'s `link-unresolved`
+names the unit that carries it: it is never served broken without a word.
+
+## ⛔ A heading number is taken only after the word `section`
+
+⚠️ A version (`2.1.7`) and a standard's year (`8583:1987`) sit in the sentences a heading's
+number, so a bare number is never a heading. `section 2.2` is, when `2.2` is
+one of the unit's own headings, or else exactly one heading of the unit's
+container, whose outline the source numbered as one. ⭐ A number that is a
+unit's label is that unit's, as above, whatever else it could be.
 """
 
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
-from pathlib import PurePosixPath
+from dataclasses import dataclass, field, replace
+from pathlib import Path, PurePosixPath
+from urllib.parse import unquote
 
 from studyforge.archive.blocks import CONTAINER_TYPES
 from studyforge.corpus.placement import relative_href
+from studyforge.unit.headings import Heading, by_number, by_slug
 from studyforge.unit.outline import without_outline_number
 
 
@@ -69,6 +99,9 @@ _MARKERS = re.compile(r"`[^`]+`|\[(?P<label>[^\]\n]+)\]\((?P<href>[^)\s]*)\)")
 #: A bare dotted number standing on its own: three parts or more.
 _BARE = re.compile(r"(?<![\w.§/-])\d{1,3}(?:\.\d{1,3}){2,}(?![\w]|\.\d)")
 
+#: A heading's outline number, after the word `section` and one space.
+_SECTION = re.compile(r"(?<=\b[Ss]ection[ \t\n])\d{1,3}(?:\.\d{1,3})+(?![\w]|\.\d)")
+
 #: A link label's opening number, with its stop, then a space.
 _LEADING = re.compile(r"^(?P<number>\d{1,3}(?:\.\d{1,3})+)\.?[ \t]+(?=\S)")
 
@@ -77,15 +110,21 @@ _LEADING = re.compile(r"^(?P<number>\d{1,3}(?:\.\d{1,3})+)\.?[ \t]+(?=\S)")
 class Mentions:
     """The corpus's units as ONE unit may name them, and that unit's own place.
 
-    ⭐ `labels` and `origins` are shared by every unit of a corpus; `origin` and
-    `page` are this unit's. The default names nothing, so a unit built with no
-    mentions is served exactly as before.
+    ⭐ `labels`, `origins` and `root` are shared by every unit of a corpus,
+    `numbers` by every unit of a container; `origin` and `page` are this unit's.
+    `own` and `anchors` are its headings, which `sections` reads. The default
+    names nothing of the corpus, so a unit built with no mentions serves only
+    its references to itself.
     """
 
     labels: dict[str, Target] = field(default_factory=dict)
     origins: dict[str, Target] = field(default_factory=dict)
     origin: str | None = None
     page: PurePosixPath | None = None
+    numbers: dict[str, tuple[Heading, PurePosixPath]] = field(default_factory=dict)
+    root: Path | None = None
+    own: dict[str, Heading] = field(default_factory=dict)
+    anchors: dict[str, str] = field(default_factory=dict)
 
     @staticmethod
     def of(
@@ -110,9 +149,44 @@ class Mentions:
                 origins[_normal(origin)] = target
         return {key: value for key, value in labels.items() if key not in shared}, origins
 
+    @staticmethod
+    def numbered(
+        units: tuple[tuple[PurePosixPath, tuple[Heading, ...]], ...],
+    ) -> dict[str, tuple[Heading, PurePosixPath]]:
+        """Index one container's `(page, headings)` rows by outline number.
+
+        ⛔ A number two headings of the container share names neither of them.
+        """
+        found = tuple((heading, page) for page, held in units for heading in held)
+        unique = by_number(tuple(heading for heading, _ in found))
+        return {
+            number: (heading, page)
+            for heading, page in found
+            if (number := heading.number) is not None and unique.get(number) is heading
+        }
+
+    def sections(self, sections: list, found: tuple[Heading, ...]) -> list:
+        """Return `sections` with every reference served, `found` being their headings.
+
+        ⚠️ `found` is read from the sections BEFORE their outline numbers left
+        (`unit.headings.headings`), and `sections` are served after: a mention
+        is served in the words a reader is served.
+        """
+        served = replace(self, own=by_number(found), anchors=by_slug(found))
+        return [
+            {**section, "blocks": served.served(section.get("blocks"))}
+            if isinstance(section, dict)
+            else section
+            for section in sections
+        ]
+
     def served(self, blocks: object) -> object:
-        """Return `blocks` with every reference to a unit served as that unit; a copy."""
-        if not (self.labels or self.origins) or not isinstance(blocks, list):
+        """Return `blocks` with every reference served as what it names; a copy.
+
+        ⭐ A value that names nothing returns `blocks` itself.
+        """
+        names = (self.labels, self.origins, self.numbers, self.own, self.anchors)
+        if not isinstance(blocks, list) or not (any(names) or self.root is not None):
             return blocks
         return [self._block(block) for block in blocks]
 
@@ -169,9 +243,36 @@ class Mentions:
             target = self.labels.get(match.group(0))
             return match.group(0) if target is None else f"*{target.title}*"
 
-        return _BARE.sub(named, text)
+        out: list[str] = []
+        position = 0
+        for match in _SECTION.finditer(text):
+            heading = self._heading(match.group(0))
+            if heading is not None:
+                out.append(_BARE.sub(named, text[position : match.start()]))
+                out.append(heading)
+                position = match.end()
+        out.append(_BARE.sub(named, text[position:]))
+        return "".join(out)
+
+    def _heading(self, number: str) -> str | None:
+        """Return the link a heading's number is served as, or `None` to leave it."""
+        if number in self.labels:
+            return None
+        heading, page = self.own.get(number), self.page
+        if heading is None:
+            heading, page = self.numbers.get(number, (None, None))
+            if page is None or self.page is None or page == self.page:
+                return None
+        if heading is None or not _labelled(heading.text):
+            return None
+        where = "" if page == self.page else relative_href(self.page, page)
+        return f"[{heading.text}]({where}{heading.reference})"
 
     def _link(self, label: str, href: str) -> str:
+        if href.startswith("#"):
+            named = unquote(href[1:])
+            reference = self.anchors.get(named) or self.anchors.get(named.lower())
+            return f"[{label}]({reference or href})"
         target = self._linked(href)
         named = self.labels.get(label.strip().rstrip("."))
         if named is not None and (target is None or named is target):
@@ -181,8 +282,24 @@ class Mentions:
             if leading is not None and self.labels.get(leading.group("number")) is target:
                 label = label[leading.end() :]
         if target is None or self.page is None:
-            return f"[{label}]({href})"
+            return f"[{label}]({self._file(href) or href})"
         return f"[{label}]({relative_href(self.page, target.page)})"
+
+    def _file(self, href: str) -> str | None:
+        """Return how the page addresses the corpus file `href` names, or `None` when none."""
+        path = re.split(r"[?#]", href, maxsplit=1)[0]
+        if self.origin is None or self.page is None or self.root is None:
+            return None
+        if not path or _SCHEME.match(href) or href.startswith("/"):
+            return None
+        walked = _normal(f"{PurePosixPath(self.origin).parent}/{path}")
+        if not walked or walked.split("/", 1)[0] == "..":
+            return None
+        root = self.root.resolve()
+        found = (root / unquote(walked)).resolve()
+        if not found.is_relative_to(root) or not found.is_file():
+            return None
+        return relative_href(self.page, PurePosixPath(walked)) + href[len(path) :]
 
     def _linked(self, href: str) -> Target | None:
         """Return the unit whose source file `href` names, read from this unit's own origin."""
@@ -194,6 +311,11 @@ class Mentions:
 
 #: An href that carries a scheme, and so names no file of the corpus.
 _SCHEME = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:")
+
+
+def _labelled(text: str) -> bool:
+    """Whether a heading's words can stand as a link's label, as the archive writes one."""
+    return bool(text) and not any(mark in text for mark in "[]\n")
 
 
 def _normal(path: str) -> str:
