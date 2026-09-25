@@ -41,6 +41,14 @@ not re-run the record step.
 
 ⛔ **The record does not list itself**, for the reason onboarding's does not: a
 file that had to hold its own digest could never be written.
+
+## ⭐ `instance.env` IS THE PUBLISHER'S FILE, AND NEVER A HAND-EDIT
+
+⭐ The skill writes `instance.env` once, with defaults, and a publisher sets
+ports in it by hand (`PUBLISHERS`). ⛔ So it is never recorded here, an entry an
+older record holds for it is dropped at the next stamp and never read, and a
+value that cannot work is refused by name where it is used
+(`execute.instance.problems`), not reported as an edit.
 """
 
 from __future__ import annotations
@@ -51,11 +59,16 @@ from collections.abc import Iterable
 from pathlib import Path, PurePosixPath
 
 from studyforge.archive.scrub import assert_clean
+from studyforge.execute.instance import INSTANCE_FILE
 from studyforge.version import check as check_version
 
 #: Where the record lives. ⭐ Under the skill's own directory, so the glob the
 #: skill already declares not-material covers it and no manifest changes.
 RECORD = ".studyforge/execution/written.json"
+
+#: ⭐ The files the skill writes once and the publisher owns after that: never
+#: recorded, never a hand-edit.
+PUBLISHERS = frozenset({INSTANCE_FILE})
 
 #: The version of the record's own shape.
 WRITTEN_API = 1
@@ -79,10 +92,10 @@ def stamp(root: Path, paths: Iterable[str]) -> str:
     skill wrote. A path that is not a file is dropped from the record, so a
     file the skill removed is no longer read as one it wrote.
     """
-    listed = {entry["where"]: entry["sha256"] for entry in entries(root)}
+    listed = {e["where"]: e["sha256"] for e in entries(root) if e["where"] not in PUBLISHERS}
     for where in paths:
         digest = _digest(root / where)
-        if digest is None:
+        if digest is None or where in PUBLISHERS:
             listed.pop(where, None)
         elif where != RECORD:
             listed[where] = digest
@@ -155,7 +168,7 @@ def _inside(where: object) -> bool:
 def hand_edited(root: Path | str) -> list[str]:
     """Say, one sentence per file, which of the skill's files were edited, then which are gone."""
     root = Path(root)
-    listed = entries(root)
+    listed = [entry for entry in entries(root) if entry["where"] not in PUBLISHERS]
     edited = [
         f"{entry['where']} was edited by hand: {RECORD} holds the digest the execution "
         f"skill wrote there, and the bytes there now are not it. {REMEDY}"

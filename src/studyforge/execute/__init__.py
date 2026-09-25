@@ -102,6 +102,8 @@ from studyforge.execute.handle import EXIT_STOPPED, EXIT_TIMEOUT, RunHandle, exi
 from studyforge.execute.instance import INSTANCE_FILE, Names, declares_runner, recorded
 from studyforge.execute.mode import CONTAINER, HOST, MODES, WORKDIR_IN_CONTAINER, ModeProbe
 from studyforge.execute.output import LineGate
+from studyforge.execute.preflight import problems as instance_problems
+from studyforge.execute.preflight import refuse as refuse_instance
 from studyforge.execute.published import (
     ALLOWED_DIR,
     ALLOWED_FILE,
@@ -182,6 +184,7 @@ __all__ = [
     "find_browser",
     "from_environment",
     "in_copy",
+    "instance_problems",
     "is_a_test",
     "is_code",
     "open_url",
@@ -189,6 +192,7 @@ __all__ = [
     "pairing",
     "practice_folder",
     "recorded",
+    "refuse_instance",
     "require_commands",
     "require_container",
     "require_workdir",

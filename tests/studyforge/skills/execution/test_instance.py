@@ -100,11 +100,11 @@ def test_a_value_it_is_not_handed_keeps_its_default(tmp_path):
 @pytest.mark.parametrize(
     "choice",
     [
-        {"port": 80},
+        {"port": 70000},
         {"project": "Not-Lower"},
         {"runner": "a;b"},
         {"editor": ""},
-        {"site_port": 80},
+        {"site_port": 0},
         {"site": "a b"},
         {"site_port": 8443},
     ],
@@ -144,12 +144,54 @@ def test_each_default_is_read_from_the_contract_whose_field_keeps_its_meaning(tm
     assert dict(made.instance)[names.RUNNER_NAME] == "lab-demo"
 
 
-def test_a_recorded_second_instance_is_no_hand_edit_and_an_edit_to_it_is(tmp_path):
-    """⭐ `record_instance` stamps what it writes, as `record_runner` does."""
+def test_the_publishers_file_is_never_a_hand_edit_however_it_is_changed(tmp_path):
+    """⭐ `instance.env` is the publisher's: recorded or set by hand, never a finding."""
     made, root = generated(tmp_path)
     onboard.write(made, root)
     record_instance(made, root, project="demo-second", port=18443)
     assert written.hand_edited(root) == []
     target = root / onboard.INSTANCE_ENV
-    target.write_text(target.read_text(encoding="utf-8") + "# edited\n", encoding="utf-8")
-    assert [one.split(" ", 1)[0] for one in written.hand_edited(root)] == [onboard.INSTANCE_ENV]
+    text = target.read_text(encoding="utf-8")
+    target.write_text(text.replace("STUDYFORGE_SITE_PORT=8765", "STUDYFORGE_SITE_PORT=18504"))
+    assert written.hand_edited(root) == []
+    assert onboard.INSTANCE_ENV not in {entry["where"] for entry in written.entries(root)}
+
+
+def test_a_regeneration_keeps_every_value_the_publisher_set(tmp_path):
+    made, root = generated(tmp_path)
+    onboard.write(made, root)
+    target = root / onboard.INSTANCE_ENV
+    edited = target.read_text(encoding="utf-8").replace(
+        "STUDYFORGE_SITE_PORT=8765", "STUDYFORGE_SITE_PORT=18504"
+    )
+    target.write_text(edited, encoding="utf-8")
+    onboard.write(generated(tmp_path / "again")[0], root)
+    assert target.read_text(encoding="utf-8") == edited
+    assert written.hand_edited(root) == []
+
+
+def test_the_record_step_keeps_what_the_publisher_set_and_changes_only_what_it_is_handed(
+    tmp_path,
+):
+    made, root = generated(tmp_path)
+    onboard.write(made, root)
+    target = root / onboard.INSTANCE_ENV
+    target.write_text(
+        target.read_text(encoding="utf-8").replace(
+            "STUDYFORGE_SITE_PORT=8765", "STUDYFORGE_SITE_PORT=18504"
+        ),
+        encoding="utf-8",
+    )
+    record_instance(made, root, port=18443)
+    values = names.read(root)
+    assert values[names.SITE_PORT] == "18504" and values[names.EDITOR_PORT] == "18443"
+
+
+def test_an_older_record_that_listed_the_file_no_longer_reads_it_as_edited(tmp_path):
+    made, root = generated(tmp_path)
+    onboard.write(made, root)
+    record = root / written.RECORD
+    document = json.loads(record.read_text(encoding="utf-8"))
+    document["files"].append({"where": onboard.INSTANCE_ENV, "sha256": "0" * 64})
+    record.write_text(json.dumps(document), encoding="utf-8")
+    assert written.hand_edited(root) == []

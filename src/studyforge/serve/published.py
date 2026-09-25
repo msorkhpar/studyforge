@@ -38,7 +38,10 @@ from studyforge.execute import (
     Published,
     Runner,
     RunRefused,
+    declares_runner,
     from_environment,
+    instance_problems,
+    refuse_instance,
     test_commands,
     write_allowed,
 )
@@ -81,6 +84,27 @@ def published_config(environ: Mapping[str, str], markers: Sequence[str] | None =
     if config is None or config.service is None:
         raise RunRefused("--published needs the run service its compose file declares")
     return config
+
+
+def instance_refusal(root: Path) -> str | None:
+    """Return why this corpus's instance cannot be served, naming each key, or `None`."""
+    found = instance_problems(root) if declares_runner(root) else []
+    return "the instance cannot be served: " + "; ".join(found) if found else None
+
+
+def prepared(
+    environ: Mapping[str, str], corpora: Iterable[ServedCorpus], published: bool
+) -> Published | None:
+    """Refuse an instance that cannot work, by name; then start the published form if asked.
+
+    ⭐ Both forms of `serve`: every corpus that declares a runner has its
+    publisher's `instance.env` checked before anything binds (`execute.preflight`).
+    """
+    corpora = list(corpora)
+    for corpus in corpora:
+        if declares_runner(corpus.root):
+            refuse_instance(corpus.root)
+    return start_published(environ, corpora) if published else None
 
 
 def start_published(environ: Mapping[str, str], corpora: Iterable[ServedCorpus]) -> Published:

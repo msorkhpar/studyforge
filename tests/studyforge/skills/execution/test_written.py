@@ -24,13 +24,14 @@ from tests.studyforge.skills.onboarding.test_committed_output import onboarded
 
 #: Every file the execution skill writes for a corpus that declares a runtime
 #: nothing seeds, which is what the onboarded corpus below declares.
+#: ⭐ Every file the skill writes and records. `INSTANCE_ENV` is not one: it is
+#: the publisher's file (`written.PUBLISHERS`), written once and never a hand-edit.
 OUTPUTS = (
     execution.COMPOSE_FILE,
     execution.TOOLCHAIN_FILE,
     execution.READER_DOC,
     execution.RUNNER_ENV,
     execution.EDITOR_ENV,
-    execution.INSTANCE_ENV,
     execution.SITE_ENV,
     f"{execution.CODE_COPY}/.gitignore",
     f"{execution.DIRECTORY}/runservice.pl",

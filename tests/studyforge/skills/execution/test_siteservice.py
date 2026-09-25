@@ -122,3 +122,29 @@ def test_an_editor_with_no_per_project_port_is_refused():
 
 def test_the_default_site_port_is_the_one_serve_listens_on_by_default():
     assert names.DEFAULT_SITE_PORT == DEFAULT_PORT
+
+
+def test_a_preflight_checks_the_publishers_values_before_every_other_service(text):
+    check = service_block(text, siteservice.PREFLIGHT)
+    assert re.search(r"command:\n\s+- preflight\n\s+- /corpus\n", check)
+    assert '"../..:/corpus:ro"' in check, "the preflight reads the corpus and writes nothing"
+    assert 'network_mode: "none"' in check or "network_mode: none" in check
+    assert re.search(r"profiles:\n\s+- site\n", check)
+    for name in ("editor", "runner", "site"):
+        gated = service_block(text, name)
+        assert re.search(
+            r"depends_on:\n\s+preflight:\n\s+condition: service_completed_successfully\n"
+            r'\s+required: "\$\{STUDYFORGE_PREFLIGHT:-false\}"\n',
+            gated,
+        ), name
+    assert "depends_on" not in check
+
+
+def test_the_site_is_healthy_only_once_its_published_route_answers(text):
+    # ⭐ `up --wait` reads this: a running process is not an answering site.
+    site = service_block(text, "site")
+    port = f"${{{names.SITE_PORT}:-{names.DEFAULT_SITE_PORT}}}"
+    probe = f"urllib.request.urlopen('http://127.0.0.1:{port}/', timeout=2)"
+    assert re.search(r"healthcheck:\n\s+test:\n\s+- CMD\n\s+- python3\n\s+- -c\n", site), site
+    assert probe in site
+    assert re.search(r"start_interval: \"?1s\"?\n", site)

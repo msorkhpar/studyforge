@@ -68,8 +68,8 @@ def test_the_file_holds_every_variable_once_and_reads_back_as_written():
     [
         # ⛔ The bind is not a value: an address in the port is refused.
         (instance.EDITOR_PORT, "0.0.0.0:8443"),
-        (instance.EDITOR_PORT, "80"),
         (instance.EDITOR_PORT, "70000"),
+        (instance.EDITOR_PORT, "0"),
         (instance.EDITOR_PORT, "8443 "),
         (instance.EDITOR_NAME, "two words"),
         (instance.RUNNER_NAME, "a/b"),
@@ -81,6 +81,13 @@ def test_a_value_compose_would_read_otherwise_is_refused(variable, value):
     values = dict(second(), **{variable: value})
     with pytest.raises(RunRefused):
         instance.text(values, header="")
+
+
+def test_a_low_port_a_publisher_chooses_is_recorded():
+    # ⭐ Every TCP port is a port: the ruling refuses only what cannot work.
+    assert "STUDYFORGE_EDITOR_PORT=80\n" in instance.text(
+        dict(second(), **{instance.EDITOR_PORT: "80"}), header=""
+    )
 
 
 def test_a_record_missing_a_variable_is_refused():

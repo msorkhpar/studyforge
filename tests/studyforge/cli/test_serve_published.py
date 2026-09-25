@@ -55,3 +55,44 @@ def test_inside_a_container_with_no_run_service_it_is_refused(root, monkeypatch,
 def test_beside_site_it_is_refused(root):
     code, out = said([str(root), "--site", str(root), "--published"])
     assert code == UNUSABLE and "--published serves a root" in out
+
+
+# --------------------------------------------------------------------------
+# ⛔ The publisher's instance.env: a value that cannot work is refused by name
+# --------------------------------------------------------------------------
+
+
+def declared_with(root, **values):
+    """Declare the corpus's runner and write the publisher's instance.env with `values`."""
+    from studyforge.execute.instance import COMPOSE_FILE, INSTANCE_FILE
+
+    (root / COMPOSE_FILE).parent.mkdir(parents=True, exist_ok=True)
+    (root / COMPOSE_FILE).write_text("services: {}\n", encoding="utf-8")
+    lines = "".join(f"{key}={value}\n" for key, value in values.items())
+    (root / INSTANCE_FILE).write_text(lines, encoding="utf-8")
+    return root
+
+
+def test_the_root_form_refuses_a_bad_port_by_its_key_before_anything_binds(root):
+    declared_with(root, STUDYFORGE_EDITOR_PORT="18505", STUDYFORGE_SITE_PORT="70000")
+    code, out = said([str(root.parent), "--port", "0"])
+    assert code == UNUSABLE
+    assert "STUDYFORGE_SITE_PORT must be a whole port number" in out
+
+
+def test_the_site_form_refuses_one_port_for_two_services_by_name(root):
+    declared_with(root, STUDYFORGE_EDITOR_PORT="18505", STUDYFORGE_SITE_PORT="18505")
+    code, out = said([str(root), "--site", str(root), "--port", "0"])
+    assert code == UNUSABLE
+    assert "STUDYFORGE_EDITOR_PORT and STUDYFORGE_SITE_PORT name one port" in out
+
+
+def test_a_corpus_that_declares_no_runner_is_not_asked(root):
+    from studyforge.execute.instance import INSTANCE_FILE
+    from studyforge.serve import instance_refusal
+
+    (root / INSTANCE_FILE).parent.mkdir(parents=True, exist_ok=True)
+    (root / INSTANCE_FILE).write_text("STUDYFORGE_SITE_PORT=0\n", encoding="utf-8")
+    assert instance_refusal(root) is None, "a corpus with no runner declared is served as before"
+    declared_with(root, STUDYFORGE_SITE_PORT="0")
+    assert "STUDYFORGE_SITE_PORT" in instance_refusal(root)

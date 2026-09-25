@@ -136,6 +136,12 @@ def test_as_built_an_entry_loads_nothing_and_says_why_each_file_is_plain_text():
     assert "because the course's editor is not running here" in plain
     copy = entry.split('data-code-part="copy"', 1)[1].split(">", 1)[0]
     assert "hidden" in copy
+    # ⭐ The runner's sentence names the runner, and is hidden until the served
+    # page finds the editor up and the runner down.
+    no_runner = entry.split('data-code-part="no-runner"', 1)[1].split("</p>", 1)[0]
+    assert "hidden" in no_runner.split(">", 1)[0]
+    assert "runner is not running here" in no_runner
+    assert "the editor still opens each file" in no_runner
     assert "copy of the course's code" in entry and "never changed" in entry
     assert ">Run tests</button>" in entry
     # ⛔ The page names no API, no origin and no port (R8).

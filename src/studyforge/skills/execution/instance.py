@@ -2,8 +2,13 @@ r"""A second instance of one corpus on one host: its values, recorded by the ski
 
 **What it does.** Writes `INSTANCE_ENV` — the compose project, the editor's and
 the study server's host ports and the three container names — for one checkout of a
-corpus, each value checked, every one it is not handed kept at the value the
-corpus has always used.
+corpus, each value checked. ⭐ Every value it is not handed keeps what the file
+already holds, or the default when the file holds none.
+
+⭐ **`INSTANCE_ENV` is the publisher's file.** This is the CHECKED way to change
+it; setting a port there by hand is just as legitimate, is never a hand-edit
+finding (`written.PUBLISHERS`), and a value that cannot work is refused by name
+by `serve` and by the compose preflight (`execute.instance.problems`).
 
 **How you use it.** After `onboard.write` (which records the defaults when
 nothing is recorded yet), a checkout that must run BESIDE another records its
@@ -44,7 +49,6 @@ from studyforge.execute import instance
 from studyforge.execute.errors import RunRefused
 from studyforge.skills.execution import written
 from studyforge.skills.execution.onboard import (
-    GENERATED,
     INSTANCE_ENV,
     Execution,
     ExecutionRefused,
@@ -65,7 +69,8 @@ def record_instance(
     """Record this checkout's values under `root`, and return the path written."""
     if not execution.runnable or not execution.instance:
         raise ExecutionRefused("this corpus declares no runtime, so there is no instance to record")
-    values = dict(execution.instance)
+    # ⭐ The publisher's file: what it already holds is kept, and only what is handed changes.
+    values = {**dict(execution.instance), **instance.read(root)}
     chosen = {
         instance.PROJECT: project,
         instance.EDITOR_PORT: None if port is None else str(port),
@@ -76,13 +81,13 @@ def record_instance(
     }
     values.update({one: value for one, value in chosen.items() if value is not None})
     try:
-        made = instance.text(values, header=f"# {GENERATED}\n")
+        made = instance.text(values, header=instance.PUBLISHER_HEADER)
     except RunRefused as refusal:
         raise ExecutionRefused(str(refusal)) from None
     target = root / INSTANCE_ENV
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(made, encoding="utf-8")
-    # ⭐ Stamped as `record_runner` stamps its file: a value recorded
-    # here is the skill's own write, so the hand-edit check does not name it.
+    # ⭐ The publisher's file is never recorded as the skill's (`written.PUBLISHERS`);
+    # the stamp only drops an entry an older record kept for it.
     written.stamp(root, [INSTANCE_ENV])
     return INSTANCE_ENV

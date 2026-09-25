@@ -96,12 +96,19 @@ DEFAULT_SITE_PORT = 8765
 #: The study server's container name, `source` in its slot.
 SITE_CONTAINER_TEMPLATE = "studyforge-site-{source}"
 
+#: The header the file is written under. ⭐ It says whose file it is.
+PUBLISHER_HEADER = (
+    "# Written once by studyforge's execution skill, with defaults; from then on this\n"
+    "# file is yours, and no regeneration writes over it. Set the ports here by hand,\n"
+    "# or with the skill's record step, which checks every value first.\n"
+)
+
 #: What the file says it holds, written under the caller's header.
 HOLDS = (
     "# This instance's compose project, host ports and container names: the one\n"
-    "# place a port is set. The defaults are what every instance of this corpus is\n"
-    "# called; a second instance on one host records its own with the execution\n"
-    "# skill's record step.\n"
+    "# place a port is set. Each is checked before anything is served: a port\n"
+    "# outside 1-65535, one port for two services, or a name that is not one word\n"
+    "# is refused by `studyforge serve` and by the compose preflight, by its name.\n"
 )
 
 #: The compose project a corpus that chose none is brought up under.
@@ -110,9 +117,10 @@ PROJECT_PREFIX = "studyforge-"
 #: What compose accepts as a project name.
 PROJECT_NAME = re.compile(r"\A[a-z0-9][a-z0-9_-]*\Z")
 
-#: The ports a recorded value may name. ⛔ Not below 1024: a published port
-#: there needs a privilege this component never asks for.
-PORTS = range(1024, 65536)
+#: The ports a recorded value may name: every TCP port there is. ⭐ A publisher
+#: may choose a low port; the daemon publishes it and the site's container
+#: binds it, since Docker leaves unprivileged ports open from 0 inside one.
+PORTS = range(1, 65536)
 
 
 @dataclass(frozen=True, slots=True)
@@ -191,29 +199,44 @@ def checked(values: Mapping[str, str]) -> dict[str, str]:
     missing = [one for one in REQUIRED if one not in values]
     if missing:
         raise RunRefused(f"an instance records every one of {list(REQUIRED)}; missing {missing}")
+    found = problems_in(values)
+    if found:
+        raise RunRefused("; ".join(found))
+    return {one: values[one] for one in VARIABLES if one in values}
+
+
+def problems_in(values: Mapping[str, str]) -> list[str]:
+    """Return one sentence, naming its key, for every value here that cannot work.
+
+    ⭐ Every present value is checked and every problem said — the one sentence
+    a publisher needs per key — and an absent value is compose's default, fine.
+    """
+    found = []
     for one in (port for port in PORT_VARIABLES if port in values):
         port = values[one]
         if not port.isdecimal() or int(port) not in PORTS:
-            raise RunRefused(
+            found.append(
                 f"{one} must be a whole port number from {PORTS.start} to {PORTS.stop - 1}; "
                 "the value is not reproduced here, since a refusal never quotes a value that "
                 "may be personal"
             )
-    if values[EDITOR_PORT] == values.get(SITE_PORT):
-        raise RunRefused(f"{EDITOR_PORT} and {SITE_PORT} must be two ports, not one")
+    if EDITOR_PORT in values and values[EDITOR_PORT] == values.get(SITE_PORT):
+        found.append(
+            f"{EDITOR_PORT} and {SITE_PORT} name one port: two services cannot both publish it"
+        )
     for one in (name for name in (PROJECT, EDITOR_NAME, RUNNER_NAME, SITE_NAME) if name in values):
         if _name(values[one]) is None:
-            raise RunRefused(
+            found.append(
                 f"{one} must be one word of ASCII letters, digits, '.', '_' and '-', not "
                 "beginning '-'; the value is not reproduced here, since a refusal never "
                 "quotes a value that may be personal"
             )
-    if PROJECT_NAME.match(values[PROJECT]) is None:
-        raise RunRefused(
+    if PROJECT in values and PROJECT_NAME.match(values[PROJECT]) is None:
+        found.append(
             f"{PROJECT} must be lower-case letters, digits, '-' and '_', beginning with a "
             "letter or a digit: compose refuses any other project name"
         )
-    return {one: values[one] for one in VARIABLES if one in values}
+    return found
 
 
 def text(values: Mapping[str, str], *, header: str) -> str:

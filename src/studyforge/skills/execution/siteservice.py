@@ -37,6 +37,27 @@ to a page through the run index, so no built file names a port (R8).
 ⭐ The site listens on the same port inside its container that it publishes, so
 the `Host` a browser sends is the one `serve` admits.
 
+## ⛔ THE PUBLISHER'S VALUES ARE CHECKED BEFORE ANYTHING STARTS
+
+⭐ `instance.env` is the publisher's file, so the `preflight` service runs
+`studyforge preflight /corpus` first, from the site's image, with the corpus
+read-only and no network, and every other service `depends_on` it completing.
+⭐ The dependency is `required: ${STUDYFORGE_PREFLIGHT:-false}`: before a site
+image is staged the profile is off, the preflight does not exist, and the editor
+and the runner start as they always did — a bad value is then refused by
+`studyforge serve`. ⛔ Once staged, `SITE_ENV_NAME` sets it `true`, because a
+failed OPTIONAL dependency is only a warning to compose, which then starts every
+service anyway; a required one stops them all, with the preflight's sentence in
+its log.
+
+## ⭐ THE SITE IS HEALTHY ONLY ONCE ITS PAGE ANSWERS
+
+⭐ The site's healthcheck asks the published route itself — the course's page
+at `/`, on the port it publishes — from inside the container, so `up --wait`
+reports the site healthy only once a reader's first request is answered.
+⛔ A running process is not an answering site: the server discovers the corpus
+and writes the runner's allowlist before it listens.
+
 ## ⛔ LOOPBACK ONLY, WRITTEN LITERALLY
 
 ⭐ The site's port is published on the editor's own `host_bind` — the
@@ -58,6 +79,10 @@ from studyforge.skills.execution.contract import ContractRefused, blocks, option
 #: The compose service the study server is.
 SERVICE = "site"
 
+#: The one-shot service that checks the publisher's `instance.env` before the
+#: others start (`studyforge preflight`), in the site's profile and image.
+PREFLIGHT = "preflight"
+
 #: The editor's compose service, which the site asks for its health by name.
 EDITOR_SERVICE = "editor"
 
@@ -75,6 +100,9 @@ SCRIPT_FILE = "runservice.pl"
 
 #: The site image's variable, recorded by the execution skill's site step.
 IMAGE = "STUDYFORGE_SITE_IMAGE"
+
+#: The variable that makes the preflight a gate: `true` once an image is staged.
+GATED = "STUDYFORGE_PREFLIGHT"
 
 #: The file the corpus's one compose command reads the site's image from, beside it.
 SITE_ENV_NAME = "site.env"
@@ -97,6 +125,28 @@ class Site:
     services: tuple[tuple[str, Mapping[str, object]], ...]
     #: The compose file's top-level `networks`.
     networks: Mapping[str, Mapping[str, object]]
+    #: The `depends_on` every other service carries: the preflight, when it runs.
+    gate: Mapping[str, Mapping[str, object]]
+
+
+#: The route the site's healthcheck asks: the course's own page, which a reader opens first.
+HEALTH_ROUTE = "/"
+
+
+def answered(port: str) -> dict[str, object]:
+    """Return the site's healthcheck: healthy only once `HEALTH_ROUTE` answers on `port`."""
+    probe = (
+        "import urllib.request; "
+        f"urllib.request.urlopen('http://127.0.0.1:{port}{HEALTH_ROUTE}', timeout=2)"
+    )
+    return {
+        "test": ["CMD", "python3", "-c", probe],
+        "interval": "30s",
+        "timeout": "5s",
+        "retries": 3,
+        "start_period": "60s",
+        "start_interval": "1s",
+    }
 
 
 def plan(
@@ -133,6 +183,7 @@ def plan(
             published.RUN_SERVICE: runner[0],
             "PYTHONDONTWRITEBYTECODE": "1",
         },
+        "healthcheck": answered(port),
         "volumes": [f"../..:{CORPUS}"],
         "networks": ["default", NETWORK],
         "restart": require(block, "restart"),
@@ -141,9 +192,25 @@ def plan(
     reached["command"] = ["perl", SCRIPT_INSIDE]
     reached["volumes"] = [*list(reached.get("volumes", [])), f"./{SCRIPT_FILE}:{SCRIPT_INSIDE}:ro"]
     reached["networks"] = [NETWORK]
+    owner = str(require(block, "runs_as", "compose_key"))
+    check: dict[str, object] = {
+        "image": site["image"],
+        "profiles": [SERVICE],
+        owner: site[owner],
+        "command": ["preflight", CORPUS],
+        "volumes": [f"../..:{CORPUS}:ro"],
+        "network_mode": "none",
+        "restart": require(block, "restart"),
+    }
     return Site(
-        services=((SERVICE, site), (runner[0], reached)),
+        services=((PREFLIGHT, check), (SERVICE, site), (runner[0], reached)),
         networks={NETWORK: {"internal": True}},
+        gate={
+            PREFLIGHT: {
+                "condition": "service_completed_successfully",
+                "required": f"${{{GATED}:-false}}",
+            }
+        },
     )
 
 

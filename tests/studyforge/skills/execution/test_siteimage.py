@@ -55,6 +55,9 @@ def test_staging_copies_the_library_writes_the_build_and_records_the_tag(tmp_pat
     assert staged.tag.startswith(f"{siteimage.REPOSITORY}:{VERSION}-")
     env = (root / SITE_ENV).read_text(encoding="utf-8")
     assert f"STUDYFORGE_SITE_IMAGE={staged.tag}\n" in env and "COMPOSE_PROFILES=site\n" in env
+    # ⛔ Staged, the preflight is a REQUIRED dependency: an optional one that fails
+    # is only a warning to compose, which then starts every service anyway.
+    assert "STUDYFORGE_PREFLIGHT=true\n" in env
     assert staged.argv == (
         "docker",
         "build",
