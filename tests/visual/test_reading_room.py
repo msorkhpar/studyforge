@@ -186,6 +186,14 @@ def beside(one: dict, other: dict) -> bool:
     return one["top"] < other["bottom"] - TOUCHING and other["top"] < one["bottom"] - TOUCHING
 
 
+def column(*boxes: dict) -> dict:
+    """The vertical extent the given boxes span together, as one box."""
+    return {
+        "top": min(box["top"] for box in boxes),
+        "bottom": max(box["bottom"] for box in boxes),
+    }
+
+
 def grown(narrow: list[dict], wide: list[dict]) -> list[str]:
     """Which of the transport's controls are bigger in the wide window than the narrow one.
 
@@ -469,7 +477,10 @@ def test_the_units_outline_sits_beside_the_reading_and_not_above_it(wide_unit: d
         f"the outline starts at {outline['left']:.2f}px, inside the reading "
         f"column that ends at {wide_unit['surface']['right']:.2f}px"
     )
-    assert beside(outline, wide_unit["surface"])
+    # ⚠️ Beside the COLUMN the page reads down — its header, then its content —
+    # and not only beside the content: the outline starts at the column's top,
+    # so a short one sits wholly beside the header, and it is still beside.
+    assert beside(outline, column(wide_unit["header"], wide_unit["surface"]))
 
 
 def test_the_first_pages_explanation_sits_beside_the_list(

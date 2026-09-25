@@ -386,7 +386,7 @@ def gauge_that_deletes_a_question(brief: Brief) -> QuizDraft:
 
 
 #: ⭐ The idea on the greeting page a test cannot observe, so a quiz checks it:
-#: the aspect a code page's `quiz` names (W496).
+#: the aspect a code page's `quiz` names.
 NAMED_ON_THE_PAGE = Aspect(
     "defined-once",
     "the function is defined once and called by name",

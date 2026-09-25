@@ -297,8 +297,8 @@ def require_draft(
     wanted = CodeDraft if asked == CODE else QuizDraft
     if not isinstance(draft, wanted):
         raise AuthoringError(
-            f"{where}: the page '{page.path}' was asked for a {asked!r} exercise and the "
-            f"author answered with something that is not a {wanted.__name__}."
+            f"{where}: the page '{page.path}' was asked for a {wanted.__name__} and the "
+            f"author answered with something that is not one."
         )
     return draft
 

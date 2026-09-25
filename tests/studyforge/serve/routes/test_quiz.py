@@ -164,7 +164,7 @@ def test_a_practice_that_is_not_a_quiz_is_not_graded_here(tmp_path):
 
 
 def test_a_unit_with_code_and_a_quiz_serves_both_and_its_page_holds_no_key(tmp_path):
-    # ⭐ W496: one unit, its code practice first and its quiz after it. The
+    # ⭐ One unit, its code practice first and its quiz after it. The
     # practice runs, and the quiz is answered through the server alone.
     from tests.studyforge.serve.routes.running import SOURCE, post
 

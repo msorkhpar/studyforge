@@ -89,7 +89,7 @@ def practice(key: str, title: str) -> dict:
 
 
 def test_a_practice_is_one_line_of_the_outline_its_title():
-    # ⭐ W496: seven practices gave the outline twenty-eight lines, twenty-one of
+    # ⭐ Seven practices gave the outline twenty-eight lines, twenty-one of
     # them one of three words. A practice is found by its title.
     practices = [practice("practice-java", "Reverse"), practice("practice-java-2", "Round")]
     found = anchors.entries({"sections": [*TWO_SECTIONS["sections"], *practices]})

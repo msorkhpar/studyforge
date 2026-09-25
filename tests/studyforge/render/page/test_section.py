@@ -265,7 +265,7 @@ def test_a_withheld_heading_leaves_the_section_labelled_by_the_page():
 
 
 # --------------------------------------------------------------------------
-# A practice renders no empty heading (W496)
+# A practice renders no empty heading
 # --------------------------------------------------------------------------
 
 

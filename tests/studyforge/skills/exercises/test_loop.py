@@ -251,7 +251,7 @@ def test_an_authored_ordinal_that_collides_or_leaves_a_gap_is_refused_by_name(
     assert require_after_carried(carried, (len(carried) + 1,), "p") is None
 
 
-# ⭐ W496: a unit may carry code practices AND a quiz. The quiz is one planned
+# ⭐ A unit may carry code practices AND a quiz. The quiz is one planned
 # exercise of the code page, named by `Page.quiz`, drafted after the code.
 
 

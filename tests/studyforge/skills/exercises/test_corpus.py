@@ -296,7 +296,7 @@ def test_a_report_whose_version_this_build_does_not_read_is_refused(tmp_path, ke
 
 
 def test_a_report_written_before_a_page_could_name_a_quiz_is_still_kept(tmp_path):
-    """⭐ W496: `coverage_api` 1 is read as a page that named no quiz, so a unit
+    """⭐ `coverage_api` 1 is read as a page that named no quiz, so a unit
     authored before a code page could carry one is kept, never authored again."""
     material, graders, pages = write_corpus(tmp_path)
     arguments = dict(material=material, graders=graders, pages=pages[1:2], judge=Judging())

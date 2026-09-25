@@ -170,7 +170,7 @@ def served_instance(root: Path) -> Iterator[ServingServer]:
         thread.join(timeout=5)
 
 
-# ⭐ W496: one unit carrying a code practice AND a quiz — the runnable fixture's
+# ⭐ One unit carrying a code practice AND a quiz — the runnable fixture's
 # first unit, whose code practice runs on the host, with a quiz added after it.
 
 #: The unit the quiz joins, and where its document is written in the copy.
