@@ -188,6 +188,8 @@ def test_a_page_is_handed_the_code_suffixes_only_where_it_sits_beside_the_files(
         ),
     )
     handed = []
-    monkeypatch.setattr(units, "render", lambda document, placement, *rest: handed.append(placement))
+    monkeypatch.setattr(
+        units, "render", lambda document, placement, *rest: handed.append(placement)
+    )
     list(units.unit_bodies(corpus))
     assert {placement.code for placement in handed} == ({(".java",)} if beside else {()})
