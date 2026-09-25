@@ -1955,7 +1955,17 @@ These are proven surfaces, generalised in their addressing and otherwise kept.
   (`see 3.2.4`) is shown and narrated as that unit's title, and a link to the
   source file a unit was read from (`README_3.2.4.md`) links the unit's page,
   its label shown as the title. A number that names no unit of the corpus is
-  kept. ⭐ The archive and the
+  kept. ⭐ **Every other link leads where its author meant.** A relative link
+  is read from the unit's `origin`, and a link to a regular file under the
+  corpus root is addressed from the page, on every placement profile, when the
+  site is written into the corpus root. ⛔ The file is the author's: nothing is
+  copied beside the page and nothing is dropped. An in-page link to the source's
+  own anchor (`#introduction`) links the id the page gives that heading, and
+  `section 2.2`, where `2.2` is the outline number of one of the unit's own
+  headings, or else of exactly one heading of its container, is shown and
+  narrated as that heading's words, linking it. ⚠️ A link that climbs out of the
+  corpus, is rooted, names a file that is not there or an anchor that is no
+  heading keeps its href, and `validate`'s `link-unresolved` names the unit. ⭐ The archive and the
   container maps keep the number, as recorded: a unit's `label` keeps it for
   identity and order, and a page's file name is still built from the recorded
   label and title, so no page moves. A listing shows a unit whose label is an

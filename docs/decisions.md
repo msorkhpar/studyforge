@@ -877,6 +877,14 @@ What it reads, and the choices in it:
 
 **Serves.** `R1`, `R8`
 
+### Every link on a page leads where its author meant
+
+**Decision.** `studyforge.unit.mentions.Mentions` reads a relative link from the unit's recorded `origin` and, when it names a regular file under the corpus root, addresses that file from the page with `studyforge.corpus.placement.relative_href`. `studyforge.unit.headings` indexes a unit's headings, before they lose their numbers, by the anchor a Markdown host renders for them and by their outline number, each with the id its page gives it (`studyforge.unit.sections.heading_anchor`). An in-page link to a source anchor links that id, and `section 2.2` is served as the heading's words, linking it: the unit's own heading first, else the one heading of its container that carries the number (`Mentions.numbered`). A site written anywhere but the corpus root links no corpus file (`studyforge.generate.clips.files_unlinked`). `studyforge.validate.links` builds each unit as a build does and reports every link left leading nowhere as `link-unresolved`, naming the unit.
+
+**Why.** A page sits somewhere else than the source it was read from, so a link kept verbatim leads nowhere. The file is the author's, so it is linked where it is, never copied beside the page and never dropped. A heading's number leaves the page, so a sentence that names it by the number names nothing. The word `section` is required because a version or a standard's year sits in the same sentences, and a container is the scope because a source numbers one outline per series. The served unit document composes the link to its own heading in one function (`studyforge.unit.sections.heading_reference`), because the unit package may not reach for the renderer's composer.
+
+**Serves.** `R1`, `R6`, `R8`
+
 ### A list item holds its code
 
 **Decision.** A list item's parts may be `code` blocks as well as text and nested lists (`studyforge.archive.blocks.ITEM_BLOCKS`). The Markdown reader (`studyforge.archive.markdown.listing`) keeps an item's fence inside the item, `studyforge.validate.blocks` admits the part, the page renders it as the code figure inside its `<li>`, and the item's clip speaks its caption.
