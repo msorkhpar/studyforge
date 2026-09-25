@@ -183,8 +183,8 @@ def _linked(root: Path, curriculum, record) -> tuple[Filed, ...]:
         linked = split_linked(lines, curriculum.record, record.entries, record.labels)
     except NotLinked as refused:
         raise CurriculumDisagrees(
-            f"corpus.json declares curriculum.linked, and {refused}. Settle it by "
-            f"correcting the record, or by dropping 'linked'"
+            f"corpus.json declares curriculum.linked, and in {curriculum.record}, {refused}. "
+            f"Settle it by correcting the record, or by dropping 'linked'"
         ) from None
     by_label = {declared.label: declared for declared in curriculum.containers}
     found = []

@@ -52,7 +52,9 @@ from studyforge.skills.reconnaissance.record import (
 class NotLinked(ValueError):
     """The record does not open containers with linked entries, and where it shows.
 
-    ⛔ Names a record line and a count, never a title (R7).
+    ⛔ Names a record line and a count, never a title and never the record's
+    path (R7): a path handed to a public function may be anybody's, and the
+    caller already knows which record it passed.
     """
 
 
@@ -93,11 +95,11 @@ def split_linked(
     their groups assigned, and `labels` its group labels with their lines.
     """
     if not labels or not entries:
-        raise NotLinked(f"{record} has no group labels with entries beneath them")
+        raise NotLinked("the record has no group labels with entries beneath them")
     first, last = labels[0][0], max(entry.line for entry in entries)
     candidates = list(_linked_lines(lines, record, first, last))
     if not candidates:
-        raise NotLinked(f"{record} has no linked list entry beneath its first group label")
+        raise NotLinked("the record has no linked list entry beneath its first group label")
     indent = min(depth for _, depth, _ in candidates)
     heads = [
         _head(lines, record, number, target, labels)
@@ -112,18 +114,18 @@ def split_linked(
         owner = next((h for h in reversed(heads) if h.line < entry.line), None)
         if owner is None or _label_between(labels, owner.line, entry.line):
             raise NotLinked(
-                f"{record} line {entry.line} is an entry beneath a group label and above "
+                f"record line {entry.line} is an entry beneath a group label and above "
                 f"any linked entry, so no container holds it"
             )
         if _indent(lines[entry.line - 1]) <= indent:
             raise NotLinked(
-                f"{record} line {entry.line} is an entry at the linked entries' own indent"
+                f"record line {entry.line} is an entry at the linked entries' own indent"
             )
         units[owner.line].append(entry)
     empty = [head.line for head in heads if not units[head.line]]
     if empty:
         raise NotLinked(
-            f"{record} has {len(empty)} linked entr(ies) with no unit indented beneath them, "
+            f"the record has {len(empty)} linked entr(ies) with no unit indented beneath them, "
             f"first at line {empty[0]}"
         )
     return Linked(tuple(heads), {line: tuple(found) for line, found in units.items()})
@@ -153,7 +155,7 @@ def _head(lines, record: str, number: int, target: str, labels) -> Head:
     group = next(text for at, text in reversed(labels) if at < number)
     if not PurePosixPath(target).parent.name:
         raise NotLinked(
-            f"{record} line {number} links a file at the corpus root, so no directory "
+            f"record line {number} links a file at the corpus root, so no directory "
             f"name records the container's address"
         )
     return Head(number, target, title, ordinal, group)
