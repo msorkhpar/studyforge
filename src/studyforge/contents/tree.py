@@ -12,7 +12,10 @@ is (spec §6).
 
 **Depends on.** `studyforge.address`, `studyforge.corpus.manifest`,
 `studyforge.corpus.container` and `studyforge.corpus.placement` for the page
-each unit's artifacts occupy. ⛔ Not on `corpus.discovery`: what a *scan* found
+each unit's artifacts occupy, and `studyforge.unit.outline`: every title is
+listed without the source's own outline number, which the contents replace.
+⚠️ A page's place is still named from the title as recorded, so no address or
+filename moves. ⛔ Not on `corpus.discovery`: what a *scan* found
 is the local document's business, and mixing the two here is precisely how a
 table of contents ends up short by the units nobody has generated yet.
 
@@ -65,6 +68,7 @@ from studyforge.contents.errors import ContentsError
 from studyforge.corpus.container import Container
 from studyforge.corpus.manifest import Manifest
 from studyforge.corpus.placement import PlacementError, Profile, profile_for
+from studyforge.unit import without_outline_number
 
 
 def build(manifest: Manifest, containers: Iterable[Container]) -> Contents:
@@ -172,7 +176,7 @@ def _group(
         "level": level,
         "segment": segment,
         "key": _key(here),
-        "title": titles[here],
+        "title": without_outline_number(titles[here]),
     }
     if len(here) < manifest.depth:
         return Group(**shared, groups=_groups(manifest, profile, held, titles, here))
@@ -208,7 +212,7 @@ def _entry(profile: Profile, container: Container, ordinal: int) -> Entry:
     return Entry(
         address=container.address,
         ordinal=unit.n,
-        title=unit.title,
+        title=without_outline_number(unit.title),
         numbering=unit.numbering,
         page=where.page,
         practices=unit.practices,
