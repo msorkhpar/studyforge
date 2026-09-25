@@ -64,6 +64,18 @@ def test_an_entry_above_the_first_linked_entry_of_its_group_is_refused(tmp_path)
         linked_of(root)
 
 
+def test_an_entry_under_a_later_label_is_never_held_by_the_label_before_it(tmp_path):
+    # ⛔ The last linked entry above belongs to another group: a unit between a
+    # label and that label's first linked entry is held by no container.
+    root = rewritten(
+        sources.nested_sections(tmp_path / "c"),
+        "2. Design\n\n",
+        "2. Design\n\n    - [2.0.1. Stray](21-objects/README_2.1.1.md)\n",
+    )
+    with pytest.raises(NotLinked, match="above any linked entry"):
+        linked_of(root)
+
+
 def test_a_linked_entry_with_no_unit_beneath_it_is_refused(tmp_path):
     root = rewritten(
         sources.nested_sections(tmp_path / "c"),
