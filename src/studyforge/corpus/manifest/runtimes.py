@@ -6,6 +6,7 @@ closed vocabulary and held sorted.
 
 **How you use it.** `parse_runtimes(value, exercises=…)`; an absent key yields
 `NO_RUNTIMES`, the empty tuple, so no caller ever asks "did they declare one?".
+`source_suffixes(runtimes)` is every suffix a declared set's code is written in.
 
 **Depends on.** `errors`.
 
@@ -56,6 +57,22 @@ from studyforge.describe import describe
 #: still declarable, because the declaration is what lets a build assert it.
 RUNTIMES = ("gradle", "java", "kotlin", "maven", "node", "python", "shell", "sqlite")
 
+#: The source suffixes a declared **runtime** writes, by that runtime's name.
+#: ⛔ **Keyed on `runtimes`, never on `variants`** — and the distinction is the
+#: defect §4 records: a single module-level map that answered both *"can this be
+#: filed here?"* and *"can we run it?"* left eight SQL courses unfileable. ⭐
+#: `runtimes` is the declaration that IS about running (§7), so a map keyed on it
+#: derives nothing from a filing key; it is `SOURCE_SUFFIXES`, not `LANGUAGES`,
+#: for that reason (`tests/studyforge/corpus/manifest/test_document.py`).
+SOURCE_SUFFIXES: dict[str, tuple[str, ...]] = {
+    "java": (".java",),
+    "kotlin": (".kt",),
+    "node": (".js", ".mjs", ".cjs", ".ts"),
+    "python": (".py",),
+    "shell": (".sh", ".bash"),
+    "sqlite": (".sql",),
+}
+
 #: The build tools and the language that run on a JVM: each is refused without
 #: `java` beside it in the same list.
 REQUIRES_JAVA = ("gradle", "kotlin", "maven")
@@ -96,3 +113,8 @@ def parse_runtimes(value: object, *, exercises: bool, present: bool = True) -> t
             f"nothing is inferred — declare 'java' beside it"
         )
     return tuple(sorted(value))
+
+
+def source_suffixes(runtimes: tuple[str, ...] | list[str]) -> tuple[str, ...]:
+    """Return every source suffix the declared `runtimes` write, sorted, once each."""
+    return tuple(sorted({one for name in runtimes for one in SOURCE_SUFFIXES.get(name, ())}))

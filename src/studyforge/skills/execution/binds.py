@@ -1,14 +1,26 @@
 r"""Which of a corpus's directories the editor binds, and the ones it never may.
 
 **What it does.** Derives the sources directory an editor binds from the
-manifest's own `content.include` (spec §8.1: the sources alone), and refuses any bind
-that reaches a directory holding a quiz's key.
+manifest's own `content.include` (spec §8.1: the sources alone), adds the copy
+of the corpus's code a lesson's code links open, and refuses any bind that
+reaches a directory holding a quiz's key.
 
-**How you use it.** `source_root(manifest)` for the directory; `unkeyed(*binds)`
-over every corpus-relative directory the editor will bind, before rendering.
+**How you use it.** `source_root(manifest)` for the directory; `code_bind(block,
+sources)` for the copy's bind beside it; `unkeyed(*binds)` over every
+corpus-relative directory the editor will bind, before rendering.
 
 **Depends on.** `corpus.placement` and `exercise.bundle.layout` for the one
-spelling of each keyed directory. ⛔ No I/O and nothing source-specific (R1).
+spelling of each keyed directory, `execute.codetree` for where the copy is, and
+`contract` for where the editor keeps its workspace. ⛔ No I/O and nothing
+source-specific (R1).
+
+## ⭐ MATERIAL AT THE ROOT BINDS THE COPY, NEVER THE REPOSITORY
+
+⚠️ §8.1 mounts the sources and never the repository, so a corpus whose material
+sits at its root — a course whose lessons are `*/README_*.md` beside their
+modules — has no directory of its own to bind. ⭐ **It binds the copy of its
+code** (`execute.codetree`), which is exactly its code, lives in its own
+bookkeeping and is the one tree a run may write into.
 
 ⭐ **Split out of `onboard` at this seam** (R11): both answer one
 question — what the editor may see.
@@ -31,11 +43,14 @@ copy is refused, and the run route's output is gated the same way.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from pathlib import PurePosixPath
 
 from studyforge.corpus.manifest import Manifest
 from studyforge.corpus.placement import ARCHIVE_DIRNAME
+from studyforge.execute.codetree import CODE_COPY
 from studyforge.exercise.bundle.layout import BUNDLES_DIRNAME
+from studyforge.skills.execution.contract import blocks, require
 
 #: Characters that make a path component a pattern rather than a directory.
 GLOB_CHARACTERS = "*?[]"
@@ -49,25 +64,39 @@ class ExecutionRefused(ValueError):
 
 
 def source_root(manifest: Manifest) -> str:
-    """Return the directory an editor binds, from `content.include` (§8.1: the sources alone)."""
+    """Return the directory an editor binds, from `content.include` (§8.1: the sources alone).
+
+    ⭐ **A corpus whose material sits at the repository root binds the COPY of
+    its code** (`execute.CODE_COPY`): no directory of its own is the sources
+    without being the repository, and the copy is the corpus's code and nothing
+    else, in its own bookkeeping.
+    """
     roots = [_root_of(one) for one in manifest.content.include]
     if not roots or not all(roots):
-        raise ExecutionRefused(
-            "this corpus's content.include names the repository root, so §8.1 leaves "
-            "no directory to mount: only the sources are mounted, never the "
-            "repository. Declare material under a directory, or add a manifest key that "
-            "names the one an editor binds"
-        )
+        return CODE_COPY
     shared = PurePosixPath(roots[0])
     for one in roots[1:]:
         shared = _common(shared, PurePosixPath(one))
-    if not shared.parts:
+    return shared.as_posix() if shared.parts else CODE_COPY
+
+
+def code_bind(block: Mapping[str, object], sources: str) -> tuple[str, str] | None:
+    """Return `(corpus-relative dir, container path)` for the copy of the code, or `None`.
+
+    ⭐ **The editor opens a lesson's code from the copy**, so it binds the copy
+    beside the sources, at the contract's workspace root under the copy's own
+    last name. `None` when the sources already are, or hold, the copy.
+    """
+    if PurePosixPath(CODE_COPY).is_relative_to(PurePosixPath(sources)):
+        return None
+    root = require(block, "workspace", "container_path")
+    inside = f"{str(root).rstrip('/')}/{PurePosixPath(CODE_COPY).name}"
+    if inside in {str(entry.get("container_path")) for entry in blocks(block, "mounts")}:
         raise ExecutionRefused(
-            "this corpus's content.include globs share no directory, so reaching them all "
-            "would mount the repository, and §8.1 mounts only the sources. Declare them under one "
-            "directory, or add a manifest key that names the one an editor binds"
+            "the contract already mounts something where the copy of the code would go, "
+            "and this skill will not shadow it"
         )
-    return shared.as_posix()
+    return CODE_COPY, inside
 
 
 def unkeyed(*binds: str) -> None:

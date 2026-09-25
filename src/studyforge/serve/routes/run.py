@@ -12,6 +12,9 @@ r"""The run namespace: Run and Submit — a practice's own command, streamed and
   the outcome in the corpus's progress store when the stream ends;
 - `POST <corpus>/editor/<practice key>` → `run-editor`: prepares that practice's
   workspace settings and answers the URL of each of its two editor windows;
+- `POST <corpus>/code/<path>` and `POST <corpus>/code-test/<path>` → a
+  lesson's code file in the editor beside its partner, and its test's run in
+  the copy of the code — `routes.code`'s;
 - `POST stop` → stops the live run, which then ends `--- exit stopped ---` and is
   recorded as stopped.
 
@@ -19,10 +22,11 @@ r"""The run namespace: Run and Submit — a practice's own command, streamed and
 `partial(route, runs)` under `NAMESPACE`, with `NAMESPACE` among `app`'s writers.
 
 **Depends on.** `execute` — ⭐ the ONLY way this route runs anything —
-through `routes.runs` and its `RunRefused`; `exercise` for the two acts, `progress`
-for the key, `unit.served` for the document, and `serve.response`. ⛔ This module and
-`routes.runs` are the only ones in `serve` that import `execute`, and `execute` never
-imports `serve`.
+through `routes.runs` and its `RunRefused`; `routes.code` for a lesson's code;
+`exercise` for the two acts, `progress` for the key, `unit.served` for the
+document, and `serve.response`. ⛔ This module, `routes.runs` and `routes.code`
+are the only ones in `serve` that import `execute`, and `execute` never imports
+`serve`.
 
 ## ⛔ Nothing a client sends becomes a command (spec §8.3, rule 3)
 
@@ -133,6 +137,7 @@ from studyforge.serve.response import (
     error,
     json_response,
 )
+from studyforge.serve.routes import code
 from studyforge.serve.routes.content import ContentSource
 from studyforge.serve.routes.runs import Live, Outcome, Runs, Stream
 from studyforge.unit import served
@@ -220,6 +225,9 @@ def index(runs: Runs) -> dict:
         # practice's two windows, which is the only thing that can open two
         # different files in two windows of one code-server.
         "practice_editor": f"{API_PREFIX}/{NAMESPACE}/{{corpus}}/{EDITOR}/{{practice}}",
+        # ⭐ A lesson's link to a code file: its two windows, and its test's run.
+        "code": f"{API_PREFIX}/{NAMESPACE}/{{corpus}}/{code.CODE}/{{path}}",
+        "code_test": f"{API_PREFIX}/{NAMESPACE}/{{corpus}}/{code.CODE_TEST}/{{path}}",
         "client": CLIENT_PATH,
         EDITOR: runs.editors(),
         "live": None
@@ -241,6 +249,8 @@ def start(runs: Runs, rest: str) -> Response:
     corpus = runs.discovered.by_source.get(name)
     if corpus is None or name not in runs.sources:
         return error(404, NO_SUCH_CORPUS if tail else NO_SUCH_RUN)
+    if mode in code.ACTS:
+        return code.route(runs, corpus, mode, key)
     if mode != EDITOR and mode not in MODES:
         return error(404, NO_SUCH_MODE)
     try:

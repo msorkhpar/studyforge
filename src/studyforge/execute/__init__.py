@@ -38,6 +38,9 @@ web-facing process ends up holding the socket that spec §8.3 forbids it.
 | `mode` | `ModeProbe`: is the runner container up over this root, cached briefly |
 | `editor` | `EditorProbe`: where a running editor is, what it opens and what it holds |
 | `workbench` | one practice's window URLs and the workspace settings it is read under |
+| `conventions` | what a build tool and a language call their build files, sources and tests |
+| `codetree` | the copy of a corpus's code its editor opens and its runner tests |
+| `codepair` | a code file's source and test, and the command that runs that test in the copy |
 | `output` | `LineGate`: every line relative to the source root, then scrubbed |
 | `quiet` | the output filter: the declared build tool's own lines go, a failure never |
 | `commands` | what the runner will start, checked before any process exists |
@@ -80,6 +83,8 @@ from studyforge.execute.browser import (
     capture_page,
     find_browser,
 )
+from studyforge.execute.codepair import Pair, is_code, pair, test_command
+from studyforge.execute.codetree import CODE_COPY, IGNORE_TEXT, CodeRefused, in_copy, sync
 from studyforge.execute.commands import (
     CONTAINER_PREFIX,
     EDITOR_CONTAINER_TEMPLATE,
@@ -90,6 +95,7 @@ from studyforge.execute.commands import (
     require_container,
     require_workdir,
 )
+from studyforge.execute.conventions import BUILD_FILES, SKIPPED, is_a_test, source_suffixes
 from studyforge.execute.editor import EDITOR_TTL, Editor, EditorProbe
 from studyforge.execute.errors import RunRefused
 from studyforge.execute.handle import EXIT_STOPPED, EXIT_TIMEOUT, RunHandle, exit_line
@@ -112,6 +118,8 @@ from studyforge.execute.workbench import (
 
 __all__ = [
     "BROWSER_NAMES",
+    "BUILD_FILES",
+    "CODE_COPY",
     "CONTAINER",
     "CONTAINER_PREFIX",
     "EDITOR_CONTAINER_TEMPLATE",
@@ -119,10 +127,12 @@ __all__ = [
     "EXIT_STOPPED",
     "EXIT_TIMEOUT",
     "HOST",
+    "IGNORE_TEXT",
     "INSTANCE_FILE",
     "MAIN_KEY",
     "MODES",
     "ROOT_DIR",
+    "SKIPPED",
     "RUN_ENVIRONMENT",
     "SETTINGS_DIR",
     "SETTINGS_FILE",
@@ -130,12 +140,14 @@ __all__ = [
     "TOOLCHAINS",
     "WORKDIR_IN_CONTAINER",
     "BrowserProfile",
+    "CodeRefused",
     "Editor",
     "EditorProbe",
     "LineGate",
     "ModeProbe",
     "Names",
     "PageSeen",
+    "Pair",
     "Quiet",
     "RunHandle",
     "RunRefused",
@@ -148,7 +160,11 @@ __all__ = [
     "exit_line",
     "filter_lines",
     "find_browser",
+    "in_copy",
+    "is_a_test",
+    "is_code",
     "open_url",
+    "pair",
     "practice_folder",
     "recorded",
     "require_commands",
@@ -156,5 +172,8 @@ __all__ = [
     "require_workdir",
     "select",
     "settings",
+    "source_suffixes",
+    "sync",
+    "test_command",
     "write_settings",
 ]

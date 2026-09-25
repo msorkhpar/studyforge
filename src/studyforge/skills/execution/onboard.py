@@ -31,10 +31,12 @@ manifest carries no key naming the directory an editor binds, so it is derived
 from `content.include`'s own common root, which is the corpus's own statement
 about where its material lives.
 
-⛔ **A corpus whose material is at the repository root is REFUSED**, because
-there is then no directory to bind that is not the repository. ⚠️ **The
-remedy is a manifest key, and it is a finding rather than a default written
-in here** (R19).
+⭐ **A corpus whose material is at the repository root binds the copy of its
+code** (`binds.source_root`), because there is then no directory of its own to
+bind that is not the repository. ⭐ Every other corpus binds the copy beside
+its sources (`binds.code_bind`): a lesson's link to a code file opens it there,
+and the copy's one committed file is written here so the directory exists
+before the start.
 
 ## ⭐ THE EDITOR SEES EVERY PRACTICE, AND THE RUNNER COMES UP WITH IT
 
@@ -69,10 +71,10 @@ from pathlib import Path, PurePosixPath
 
 from studyforge.corpus.manifest import Manifest
 from studyforge.corpus.placement import PRACTICE_DIRNAME
-from studyforge.execute import instance
+from studyforge.execute import CODE_COPY, IGNORE_TEXT, instance
 from studyforge.skills.execution import composefile, contract, reader, runnerservice, toolchain
 from studyforge.skills.execution import written as record_of
-from studyforge.skills.execution.binds import ExecutionRefused, source_root, unkeyed
+from studyforge.skills.execution.binds import ExecutionRefused, code_bind, source_root, unkeyed
 from studyforge.skills.execution.prime import Prime, PrimeRefused, prime_for
 from studyforge.skills.execution.toolchain import DIRECTORY_SLOT
 
@@ -187,7 +189,8 @@ def generate(
     selection = toolchain.select(manifest.runtimes, editor)
     sources = source_root(manifest)
     workspaces = workspaces_bind(block, sources)
-    unkeyed(sources, *(() if workspaces is None else (workspaces[0],)))
+    extra = tuple(one for one in (workspaces, code_bind(block, sources)) if one is not None)
+    unkeyed(sources, *(directory for directory, _ in extra))
     # ⭐ The prime is selected for what the image will CARRY, not for everything
     # the corpus declared: an image without a runtime cannot compile a specimen
     # in it, and the withheld ones are named in the reader's document instead.
@@ -217,7 +220,7 @@ def generate(
         runtimes=manifest.runtimes,
         seeds=seeds if isinstance(seeds, Mapping) else None,
         checked=_checked(narration_text),
-        binds=() if workspaces is None else ((_from_compose(workspaces[0]), workspaces[1]),),
+        binds=tuple((_from_compose(directory), inside) for directory, inside in extra),
         runner=(runnerservice.SERVICE, runner.service),
     )
     document = reader.document(
@@ -232,6 +235,7 @@ def generate(
         block=block,
         sources=sources,
         workspaces=None if workspaces is None else workspaces[0],
+        code=CODE_COPY,
         runner=runner,
         narration_text=narration_text,
         seeds=seeds,
@@ -243,6 +247,7 @@ def generate(
         files=(
             (COMPOSE_FILE, compose),
             (TOOLCHAIN_FILE, selection.render()),
+            (f"{CODE_COPY}/.gitignore", IGNORE_TEXT),
             (READER_DOC, document),
         ),
         copies=tuple((f"{PRIME_DIR}/{inside}", origin) for inside, origin in primed.copies()),

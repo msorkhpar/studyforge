@@ -23,7 +23,7 @@ from studyforge.address import parse_unit_key
 from studyforge.progress import practice_key
 from studyforge.render.pageassets import ASSET_DIR, script
 from studyforge.serve.response import API_PREFIX
-from studyforge.serve.routes import run
+from studyforge.serve.routes import code, run
 from tests.studyforge.serve.routes.running import runs_over, served_copy, serving
 from tests.studyforge.serve.serving import fetch
 
@@ -83,8 +83,11 @@ def test_a_start_is_a_post_with_no_body_and_nothing_else_is_sent():
     # because preparing that practice's workspace settings WRITES.
     # ⭐ And a fifth, since the server grades quizzes: grading a quiz, a POST that selects a quiz
     # and carries the reader's choices in its PATH (`test_quiz_client.py`).
-    assert body.count("fetch(") == 5
-    assert body.count("method: 'POST'") == 4
+    # ⭐ And a sixth, since a lesson's code opens in the editor: one code file's
+    # windows, a POST because it prepares their settings. Its test's run is
+    # the acts' own streamed POST, so it adds no request of its own.
+    assert body.count("fetch(") == 6
+    assert body.count("method: 'POST'") == 5
     assert "body:" not in body and "JSON.stringify" not in body
     assert "XMLHttpRequest" not in body and "sendBeacon" not in body
 
@@ -107,6 +110,19 @@ def test_one_practices_windows_are_asked_for_by_corpus_and_key_and_nothing_else(
     # then shows the sentence it already ships.
     assert "response.ok ? response.json() : null" in asking
     assert "answer && answer.main && answer.main.url ? answer : null" in asking
+
+
+def test_a_code_file_is_selected_by_its_path_and_refused_before_any_request_when_unsafe():
+    # ⛔ The path only SELECTS a file: each segment is checked here, and the
+    # server reads the command from the corpus's declared build tool.
+    body = uncommented()
+    asking = body[body.index("function code(corpus, path)") :]
+    assert "BASE + corpus + '/' + CODE + '/' + encoded" in asking
+    assert "answer && answer.main && answer.main.url ? answer : null" in asking
+    testing = body[body.index("function codeTest(corpus, path, onLine)") :]
+    assert "streamed(BASE + corpus + '/' + CODE_TEST + '/' + encoded, onLine)" in testing
+    assert "parts[at] === '.' || parts[at] === '..'" in body
+    assert constant("CODE") == f"'{code.CODE}'" and constant("CODE_TEST") == f"'{code.CODE_TEST}'"
 
 
 def test_the_practice_key_is_used_verbatim_never_composed_split_or_encoded():
@@ -153,10 +169,10 @@ def test_it_draws_nothing_and_types_no_word_a_reader_sees():
 def test_over_a_file_it_is_not_available_and_sends_nothing():
     # ⛔ R8: `file://` has no origin. EVERY entry point asks `available()` first
     # — the two acts, where a running editor is, and one practice's
-    # two editor windows — and grading a quiz.
+    # two editor windows — and grading a quiz, and a code file's windows and its test.
     body = uncommented()
     assert "location.protocol === 'http:'" in body
-    assert body.count("if (!available())") == 5
+    assert body.count("if (!available())") == 7
 
 
 def test_a_refusal_is_a_rejection_naming_what_was_refused_before_any_request():

@@ -141,7 +141,7 @@ or workspaces directory that is, holds or sits inside the bundles' or the
 archive's directory: the key never leaves the local server, and the editor is a
 process a reader opens any bound file in.
 
-⛔ **The file has TWO services, and the editor binds TWO directories:**
+⛔ **The file has TWO services, and the editor binds its sources and two more directories:**
 
 - ⭐ **The editor binds the practice workspaces beside the sources.** Every
   practice workspace — the source's own and every authored one — lives under
@@ -150,6 +150,15 @@ process a reader opens any bound file in.
   workspace root under its own name, read from that one spelling
   (`onboard.workspaces_bind`), and named in the list of bind sources that exist first. ⚠️ An editor that
   binds the sources alone can open no practice file: the frame gets no URL.
+- ⭐ **The editor binds the copy of the corpus's code too**
+  (`binds.code_bind`), at the contract's workspace root under the name `code`:
+  a lesson's link to a code file opens there, beside its test, and the test
+  runs there, so the author's files are never what a run writes into. ⭐ The
+  skill writes the copy's one committed file, an ignore file that ignores
+  everything else in it, so the directory exists in every checkout before the
+  start. ⭐ **A corpus whose material sits at its root** has no directory of its
+  own that is not the repository, so the copy IS its sources bind
+  (`binds.source_root`).
 - ⭐ **The runner a Submit execs into is the second service**
   (`runnerservice`), every value read from the contract's `runner` block: the
   container name is `runner.run.name_template` with the corpus's `source` in its

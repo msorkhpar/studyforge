@@ -16,7 +16,7 @@ import pytest
 
 from studyforge.address import Address
 from studyforge.corpus.manifest import parse
-from studyforge.execute import container_for, editor_container_for
+from studyforge.execute import CODE_COPY, IGNORE_TEXT, container_for, editor_container_for
 from studyforge.exercise.bundle import Places
 from studyforge.skills.execution import onboard as skill
 from studyforge.skills.execution import written as record_of
@@ -271,16 +271,26 @@ def test_an_include_naming_one_file_still_says_where_the_material_lives():
     assert skill.source_root(one) == "docs"
 
 
-def test_material_at_the_repository_root_is_refused_as_more_than_the_sources():
-    # ⛔ There is then no directory to bind that is not the repository, and
-    # §8.1 mounts only the sources. Reported, never defaulted.
-    with pytest.raises(skill.ExecutionRefused, match="only the sources"):
-        skill.source_root(manifest(content={"include": ["*.md"], "exclude": []}))
+def test_material_at_the_repository_root_binds_the_copy_of_its_code_never_the_repository():
+    # ⛔ There is then no directory of its own to bind that is not the repository,
+    # and §8.1 mounts only the sources: the copy of the code is what is bound.
+    assert skill.source_root(manifest(content={"include": ["*.md"], "exclude": []})) == CODE_COPY
+    assert skill.source_root(manifest(content={"include": ["*/README_*.md"]})) == CODE_COPY
 
 
-def test_globs_that_share_no_directory_are_refused_rather_than_widened():
-    with pytest.raises(skill.ExecutionRefused, match="only the sources"):
-        skill.source_root(manifest(content={"include": ["a/*.md", "b/*.md"], "exclude": []}))
+def test_globs_that_share_no_directory_bind_the_copy_rather_than_widen():
+    found = skill.source_root(manifest(content={"include": ["a/*.md", "b/*.md"], "exclude": []}))
+    assert found == CODE_COPY
+
+
+def test_a_corpus_at_its_root_binds_the_copy_once_and_writes_its_ignore_file(tmp_path):
+    document = manifest_document(content={"include": ["*/README_*.md"], "exclude": []})
+    made = skill.generate(
+        parse(json.dumps(document)), editor_text=editor_text(), root=corpus(tmp_path)
+    )
+    text = dict(made.files)[skill.COMPOSE_FILE]
+    assert text.count("../../.studyforge/execution/code:") == 1
+    assert dict(made.files)[f"{CODE_COPY}/.gitignore"] == IGNORE_TEXT
 
 
 def test_the_compose_file_reaches_the_sources_from_where_it_sits(tmp_path):

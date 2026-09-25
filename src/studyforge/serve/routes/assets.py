@@ -96,6 +96,7 @@ from pathlib import Path
 from urllib.parse import unquote
 
 from studyforge.archive.scrub import PersonalDataLeak, assert_clean
+from studyforge.corpus.manifest import SOURCE_SUFFIXES
 from studyforge.corpus.manifest.document import MANIFEST_FILENAME
 from studyforge.corpus.placement.profile import GENERATED_ROOT
 from studyforge.progress import store_dir
@@ -147,7 +148,11 @@ GATED_TYPES = ("text/", "application/json", "image/svg+xml")
 
 #: By extension, from a fixed table: `mimetypes` reads system files and varies by
 #: machine. An unknown extension is opaque bytes, which `nosniff` makes inert.
+#: ⭐ A code file of any declarable runtime is TEXT, so a lesson's link to one is
+#: a plain view the browser shows rather than a download (W490's fallback);
+#: every entry spelled below wins over that, so `.js` stays a script.
 CONTENT_TYPES = {
+    **dict.fromkeys(sorted({one for kind in SOURCE_SUFFIXES.values() for one in kind}), TEXT_TYPE),
     ".html": "text/html; charset=utf-8",
     ".css": "text/css; charset=utf-8",
     ".js": "text/javascript; charset=utf-8",

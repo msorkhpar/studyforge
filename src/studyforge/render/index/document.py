@@ -113,6 +113,7 @@ TRAILING_NEWLINE = "\n"
 #: whose heading is a name rather than a block has no anchor to carry.
 EMPTY_SLOTS = (
     "breadcrumb",
+    "code",
     "headingattributes",
     "identity",
     "mark",

@@ -344,6 +344,12 @@
     }, function () { return null; });
   }
 
+  /* ⭐ The frame and its one reload are PUBLISHED, so a lesson's code panel
+     (`code-links.js`) builds its windows with the same focus guard and the
+     same remedy for a cold instance, rather than a second copy of either. */
+  window.studyforge = window.studyforge || {};
+  window.studyforge.frames = { frame: frame, reloadWhenBlocked: reloadWhenBlocked };
+
   var panels = [].slice.call(document.querySelectorAll(PANEL));
   if (!panels.length) { return; }
   var run = window.studyforge && window.studyforge.run;

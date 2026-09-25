@@ -310,3 +310,12 @@ def test_a_folder_that_cannot_be_written_is_refused_saying_so(tmp_path):
     # ⛔ And the message carries no absolute path: it runs into a serving
     # process's log (R7).
     assert str(tmp_path) not in str(refusal.value)
+
+
+def test_a_file_that_opens_with_nothing_editable_excludes_nothing_back_out():
+    # ⭐ W490: a lesson's test whose source was not found opens alone, and
+    # nothing in its window is the reader's to change.
+    written = settings("p/ATest.java", None, editable=False)
+    assert written[READONLY_INCLUDE] == {EVERYTHING: True}
+    assert written[READONLY_EXCLUDE] == {}
+    assert settings("p/A.java", None)[READONLY_EXCLUDE] == {"p/A.java": True}

@@ -10,10 +10,12 @@ actually compiles.
 `Prime.copies()` is every `(path in the prime, corpus-relative path)` pair a
 generator copies.
 
-**Depends on.** `pathlib`, `describe`, and the exercise layout's two directory
-names. ⛔ It reads the corpus and writes nothing, and it names no source (R1):
-every filename below belongs to a *build tool*, a *language* or the
-*framework's own exercise layout*, never to any corpus.
+**Depends on.** `pathlib`, `describe`, the exercise layout's two directory
+names, and `execute.conventions` for every build file, source suffix, skipped
+directory and test shape it selects by. ⛔ It reads the corpus and writes
+nothing, and it names no source (R1): every filename it selects by belongs to a
+*build tool*, a *language* or the *framework's own exercise layout*, never to
+any corpus.
 
 ## ⛔ THE PRIME IS THE COMPONENT'S LAYOUT, AND ITS NAMES ARE THE CONTRACT'S
 
@@ -79,83 +81,11 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
+from studyforge.corpus.manifest import SOURCE_SUFFIXES
 from studyforge.corpus.placement import PRACTICE_DIRNAME
 from studyforge.describe import describe
+from studyforge.execute import BUILD_FILES, SKIPPED, is_a_test
 from studyforge.exercise.bundle import BUNDLE_FILENAME, BUNDLES_DIRNAME
-
-#: A build tool's own files, by that tool's own names. ⛔ Names a *tool* chose,
-#: never names a corpus chose (R1). A runtime absent here brings no build file.
-BUILD_FILES: dict[str, tuple[str, ...]] = {
-    "maven": ("pom.xml", ".mvn/wrapper/maven-wrapper.properties", "mvnw", "mvnw.cmd"),
-    "gradle": (
-        "build.gradle",
-        "build.gradle.kts",
-        "settings.gradle",
-        "settings.gradle.kts",
-        "gradle.properties",
-        "gradlew",
-        "gradlew.bat",
-        "gradle/wrapper/gradle-wrapper.properties",
-        "gradle/wrapper/gradle-wrapper.jar",
-        "gradle/verification-metadata.xml",
-        "gradle/libs.versions.toml",
-    ),
-    "node": ("package.json", "package-lock.json", "npm-shrinkwrap.json"),
-    "python": ("pyproject.toml", "requirements.txt", "setup.cfg", "setup.py"),
-}
-
-#: The source suffixes a declared **runtime** writes, by that runtime's name.
-#: ⛔ **Keyed on `corpus.json`'s `runtimes`, never on its `variants`** — and the
-#: distinction is the defect §4 records: a single module-level map that answered
-#: both *"can this be filed here?"* and *"can we run it?"* left eight SQL
-#: courses unfileable. ⭐ `runtimes` is the declaration that IS about running
-#: (§7), so a map keyed on it derives nothing from a filing key.
-#:
-#: ⚠️ **It is `SOURCE_SUFFIXES` and not `LANGUAGES` for that reason**, and
-#: `tests/studyforge/corpus/manifest/test_document.py` holds the name: the
-#: spelling it refuses is the spelling the original defect had.
-SOURCE_SUFFIXES: dict[str, tuple[str, ...]] = {
-    "java": (".java",),
-    "kotlin": (".kt",),
-    "node": (".js", ".mjs", ".cjs", ".ts"),
-    "python": (".py",),
-    "shell": (".sh", ".bash"),
-    "sqlite": (".sql",),
-}
-
-#: Directory names a prime never selects out of: build output, caches and
-#: version control. ⚠️ A specimen taken from `build/` is a copy of a copy, and
-#: one taken from a dependency tree is not this corpus's code at all.
-SKIPPED = (
-    ".git",
-    ".gradle",
-    ".idea",
-    ".mvn",
-    ".studyforge",
-    ".venv",
-    "__pycache__",
-    "bin",
-    "build",
-    "dist",
-    "graphify-out",
-    "node_modules",
-    "out",
-    "target",
-    "venv",
-)
-
-#: How a path says it holds a test. ⭐ Two independent signals, because the two
-#: conventions are genuinely different: a directory in the JVM and Go worlds, a
-#: filename stem nearly everywhere else.
-TEST_DIRECTORIES = ("test", "tests", "spec", "specs")
-
-#: Stem shapes a test file takes. ⛔ Compared case-sensitively on the suffix
-#: forms and case-insensitively on nothing: `Test` is a Java convention and
-#: `test_` a Python one, and conflating them matches ordinary prose modules.
-TEST_STEMS = ("Test", "Tests", "_test", ".test", "Spec", ".spec", "_spec")
-
-#: The prefix a test stem may carry instead.
-TEST_PREFIX = "test_"
 
 
 class PrimeRefused(ValueError):
@@ -248,15 +178,6 @@ def prime_for(root: Path, runtimes: Sequence[str], *, seeded: Sequence[str] = ()
             "primes nothing while appearing to succeed (§8.1): " + "; ".join(missing)
         )
     return Prime(projects=tuple(one for one in found if one is not None))
-
-
-def is_a_test(where: str) -> bool:
-    """Whether a corpus-relative path is a test, by directory or by stem."""
-    parts = where.split("/")
-    if any(part.lower() in TEST_DIRECTORIES for part in parts[:-1]):
-        return True
-    stem = parts[-1].rsplit(".", 1)[0]
-    return stem.startswith(TEST_PREFIX) or any(stem.endswith(one) for one in TEST_STEMS)
 
 
 def _files(root: Path) -> tuple[tuple[str, int], ...]:

@@ -309,8 +309,10 @@ def authority(editor: Editor) -> str:
     return rest.rstrip("/")
 
 
-def settings(main: str, test: str | None) -> dict[str, object]:
+def settings(main: str, test: str | None, *, editable: bool = True) -> dict[str, object]:
     """Return the workspace settings for one practice, as the decoded object.
+
+    ⭐ `editable=False` excludes nothing back out: every file is read-only.
 
     `main` and `test` are relative to the OPENED FOLDER — what
     `Editor.inside` answers — because that is what the workbench resolves a
@@ -321,7 +323,7 @@ def settings(main: str, test: str | None) -> dict[str, object]:
         MAIN_KEY: main,
         TEST_KEY: test or "",
         READONLY_INCLUDE: {EVERYTHING: True},
-        READONLY_EXCLUDE: {main: True},
+        READONLY_EXCLUDE: {main: True} if editable else {},
         "files.hotExit": HOT_EXIT,
         "files.autoSave": AUTO_SAVE,
         **CLOSED,
@@ -329,7 +331,7 @@ def settings(main: str, test: str | None) -> dict[str, object]:
     }
 
 
-def write_settings(folder: Path, main: str, test: str | None) -> Path:
+def write_settings(folder: Path, main: str, test: str | None, *, editable: bool = True) -> Path:
     """Write one practice's workspace settings into `folder`, and return the file.
 
     `folder` is the HOST side of the editor's bind mount. Raises
@@ -340,7 +342,7 @@ def write_settings(folder: Path, main: str, test: str | None) -> Path:
     _require_ours(target)
     temporary = None
     try:
-        body = json.dumps(settings(main, test), indent=2, sort_keys=True) + "\n"
+        body = json.dumps(settings(main, test, editable=editable), indent=2, sort_keys=True) + "\n"
         (target.parent / STAGING_DIR).mkdir(parents=True, exist_ok=True)
         _ensure_ignored(target.parent / IGNORE_FILE)
         # ⛔ This write's OWN name: a shared one is moved away by one

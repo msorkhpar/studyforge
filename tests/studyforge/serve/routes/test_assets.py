@@ -315,3 +315,20 @@ def test_a_site_that_has_an_icon_serves_it(site):
 
 def test_only_the_root_icon_is_answered_with_no_content(site):
     assert get(site, "/units/favicon.ico").status == 404
+
+
+@pytest.mark.parametrize("name", ["Types.java", "Main.kt", "greet.py", "run.sh", "query.sql"])
+def test_a_code_file_is_served_as_text_the_browser_shows_never_a_download(name):
+    # ⭐ W490: a lesson's link to its code falls back to this plain view, so
+    # it must be a view: text, gated like every text, never opaque bytes.
+    from pathlib import Path
+
+    kind = assets_module.content_type_for(Path(name))
+    assert kind == assets_module.CONTENT_TYPES[".txt"]
+    assert kind.startswith(assets_module.GATED_TYPES)
+
+
+def test_a_script_stays_a_script_though_node_writes_it():
+    from pathlib import Path
+
+    assert assets_module.content_type_for(Path("page.js")).startswith("text/javascript")
