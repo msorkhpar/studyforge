@@ -40,6 +40,8 @@ def corpus(root: Path) -> Path:
         ".env": "SECRET=1\n",
         ".git/config": "[core]\n",
         ".studyforge/site.json": "{}\n",
+        "corpus.json": '{"source": "demo"}\n',
+        "m/corpus.json": '{"source": "nested"}\n',
     }.items():
         (root / where).parent.mkdir(parents=True, exist_ok=True)
         (root / where).write_text(text, encoding="utf-8")
@@ -63,6 +65,8 @@ def test_the_copy_mirrors_the_code_and_nothing_else(tmp_path):
         ".env",
         ".git/config",
         ".studyforge/site.json",
+        "corpus.json",
+        "m/corpus.json",
     ],
 )
 def test_no_key_no_output_no_dot_file_and_no_practice_is_ever_copied(tmp_path, never):
@@ -125,6 +129,15 @@ def test_a_file_the_author_removed_leaves_the_copy_but_output_and_settings_stay(
     assert (copy / "m/target/surefire-reports/TEST-p.TypesTest.xml").is_file()
     assert (copy / "m/.vscode/settings.json").is_file()
     assert (copy / ".gitignore").read_text(encoding="utf-8") == IGNORE_TEXT
+
+
+def test_a_manifest_an_earlier_sync_left_in_the_copy_is_removed(tmp_path):
+    root = corpus(tmp_path)
+    copy = sync(root)
+    (copy / "corpus.json").write_text('{"source": "demo"}\n', encoding="utf-8")
+    sync(root)
+    assert not (copy / "corpus.json").exists(), "serve would find two corpora with one source"
+    assert (root / "corpus.json").is_file(), "the author's manifest is never touched"
 
 
 def test_a_missing_copy_directory_is_refused_rather_than_made(tmp_path):

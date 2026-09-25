@@ -47,6 +47,16 @@ it unset. ⛔ **A site `build --out` wrote elsewhere is scanned THERE**, never i
 the corpus root, which holds no page: the `--site` form names it
 (`serve.instance.site_discovery`), and no subclass overrides `rescan` to say so.
 
+## ⛔ Nothing under a corpus's own `.studyforge/` is a corpus
+
+⚠️ **Measured:** the execution skill's copy of a corpus's code sits under
+`.studyforge/execution/code/`, and while it mirrored a root-level corpus's
+`corpus.json`, a restart found two corpora with one source and refused (exit 2).
+⭐ **A manifest below a `.studyforge/` directory whose parent holds a manifest is
+the framework's own bookkeeping and is never counted**, whatever wrote it — so
+neither this rule nor the copy's own refusal to carry a manifest
+(`execute.codetree`) is the only thing standing between a copy and a dead site.
+
 ## ⛔ Two corpora with one `source` refuse the instance
 
 A URL addresses a corpus by its `source`, so two with the same one would put two
@@ -70,6 +80,7 @@ from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.corpus.discovery import Discovery, Site, assemble, cache_path, scan
 from studyforge.corpus.discovery import scan_sha256 as digest_of
 from studyforge.corpus.manifest import MANIFEST_FILENAME
+from studyforge.corpus.placement import GENERATED_ROOT
 from studyforge.generate import RAISES as BUILD_RAISES
 from studyforge.generate import Corpus, read_corpus
 from studyforge.progress import Progress
@@ -159,14 +170,27 @@ class Discovered:
 
 
 def manifests(root: Path | str) -> tuple[Path, ...]:
-    """Every `corpus.json` under `root`, sorted by its posix path relative to it (R10)."""
+    """Every `corpus.json` under `root`, sorted by its posix path relative to it (R10).
+
+    ⛔ Never one under a corpus's own `GENERATED_ROOT` (`_bookkeeping`).
+    """
     root = Path(root)
     found = {
         path.relative_to(root).as_posix(): path
         for path in root.rglob(MANIFEST_FILENAME)
-        if path.is_file()
+        if path.is_file() and not _bookkeeping(root, path)
     }
     return tuple(found[key] for key in sorted(found))
+
+
+def _bookkeeping(root: Path, manifest: Path) -> bool:
+    """Whether `manifest` sits below a `GENERATED_ROOT` whose parent holds a manifest."""
+    here = root
+    for part in manifest.parent.relative_to(root).parts:
+        if part == GENERATED_ROOT and (here / MANIFEST_FILENAME).is_file():
+            return True
+        here = here / part
+    return False
 
 
 def discover(root: Path | str) -> Discovered:

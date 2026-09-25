@@ -174,3 +174,34 @@ def test_a_discovered_corpus_is_scanned_at_its_root_unless_a_scan_root_is_given(
     write_site(root, site)
     assert present(elsewhere.rescan(), elsewhere.source) == present(served.rescan(), served.source)
     assert elsewhere.progress().directory == served.progress().directory
+
+
+def test_a_manifest_under_a_corpus_s_own_bookkeeping_is_never_a_corpus(tmp_path):
+    # ⚠️ Measured: the code copy once mirrored a root-level corpus's manifest,
+    # and a restart refused two corpora with one source.
+    root = a_workspace(tmp_path, ("depth2",)) / "depth2"
+    planted = root / ".studyforge/execution/code" / MANIFEST_FILENAME
+    planted.parent.mkdir(parents=True)
+    shutil.copy(root / MANIFEST_FILENAME, planted)
+    found = discover(root)
+    assert [served.relative.as_posix() for served in found.corpora] == ["."]
+    assert planted not in manifests(root)
+
+
+def test_a_bookkeeping_name_with_no_corpus_above_it_is_an_ordinary_directory(tmp_path):
+    # ⛔ The control: only a corpus's OWN `.studyforge/` is skipped.
+    for relative in (".studyforge/one/corpus.json", "a/.studyforge/two/corpus.json"):
+        (tmp_path / relative).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / relative).write_text("{}\n", encoding="utf-8")
+    listed = [path.relative_to(tmp_path).as_posix() for path in manifests(tmp_path)]
+    assert listed == [".studyforge/one/corpus.json", "a/.studyforge/two/corpus.json"]
+
+
+def test_a_corpus_below_the_served_root_has_its_bookkeeping_skipped_too(tmp_path):
+    workspace = a_workspace(tmp_path)
+    for name in BOTH:
+        planted = workspace / name / ".studyforge/execution/code" / MANIFEST_FILENAME
+        planted.parent.mkdir(parents=True)
+        shutil.copy(workspace / name / MANIFEST_FILENAME, planted)
+    found = discover(workspace)
+    assert [served.relative.as_posix() for served in found.corpora] == list(BOTH)
