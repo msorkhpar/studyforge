@@ -37,9 +37,11 @@ modules or it does not arrive.
 `routes.run` (Run and Submit), registered in `instance.instance_of` as the one
 namespace `app` answers `POST` under, and `app`'s streamed response.
 
-⛔ **`routes.run` is the one module here that imports `execute`** — the runner, which
-starts every process; no module of this package starts one or imports a library that
-does (asserted in `tests/studyforge/serve/test_init.py`).
+⛔ **Only the run namespace's modules and `published` import `execute`** — the
+runner, which starts every process; no module of this package starts one or imports
+a library that does (asserted in `tests/studyforge/serve/test_init.py`).
+⭐ `published` is the form a course's compose runs: its runner reaches the runner
+container's run service over the compose network, never the Docker socket.
 
 ⚠️ `discovery` reads a corpus through `generate`'s `read_corpus`, the one reader of
 a corpus's declarations, which is why `generate` is named above.
@@ -56,6 +58,9 @@ from studyforge.serve.instance import (
     namespaces_of,
     site_discovery,
 )
+from studyforge.serve.published import REFUSED as PUBLISH_REFUSED
+from studyforge.serve.published import start_published
+from studyforge.serve.security import LOOPBACK
 
 #: ⛔ What `discovery.discover` and `instance.make_instance` let out.
 #: ⭐ `Discovered` and `ServedCorpus` are shared with `cli.serve`, whose `--site` form
@@ -65,8 +70,12 @@ from studyforge.serve.instance import (
 #: ⭐ `CLIENT` and `client_for` are shared for the same reason: both forms hand the static
 #: mount the one path the execution client is served at, so a served page gets it
 #: and a built page still names nothing (R8).
+#: ⭐ `start_published`, `PUBLISH_REFUSED` and `LOOPBACK` are shared with its
+#: `--published` form: the compose's config, its refusals, and the address it opens.
 __all__ = [
     "CLIENT",
+    "LOOPBACK",
+    "PUBLISH_REFUSED",
     "RAISES",
     "WRITERS",
     "Discovered",
@@ -75,4 +84,5 @@ __all__ = [
     "frames_for",
     "namespaces_of",
     "site_discovery",
+    "start_published",
 ]

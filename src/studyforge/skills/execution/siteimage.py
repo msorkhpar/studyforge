@@ -66,7 +66,7 @@ REPOSITORY = "studyforge-site"
 #: The profile the site service is in, which `SITE_ENV` turns on once recorded.
 PROFILE = SERVICE
 
-#: The build file, named apart from any component's own (R18 reads none of theirs).
+#: The build file, named apart from any component's own, none of which this skill reads.
 BUILD_FILE = "site.containerfile"
 
 #: What is never copied: bytecode the running Python left.

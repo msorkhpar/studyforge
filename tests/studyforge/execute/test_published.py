@@ -26,7 +26,7 @@ from studyforge.execute.published import (
 
 DECLARED = {
     EDITOR_ORIGIN: "http://127.0.0.1:18505/",
-    EDITOR_BINDS: "practice=/home/coder/repo/practice;code=/home/coder/repo/sources",
+    EDITOR_BINDS: "practice=/r/practice;code=/r/sources",
     EDITOR_HEALTH: "http://editor:8080/healthz",
     RUN_SERVICE: "runner",
 }
@@ -61,8 +61,8 @@ def test_the_four_values_are_read_as_declared():
     assert config is not None
     assert config.origin == "http://127.0.0.1:18505"
     assert config.binds == (
-        ("practice", "/home/coder/repo/practice"),
-        ("code", "/home/coder/repo/sources"),
+        ("practice", "/r/practice"),
+        ("code", "/r/sources"),
     )
     assert config.health == "http://editor:8080/healthz"
     assert config.service == Service("runner", 7123)
