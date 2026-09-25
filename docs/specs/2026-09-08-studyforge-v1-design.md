@@ -1803,7 +1803,7 @@ And what the compose side gets right, which stays per-project:
   unauthenticated shell on the network, which requires restoring authentication.
 - **Only the sources are mounted** — not the repository, not `$HOME`. ⭐ The
   editor binds the copy of the corpus's code too, which a lesson's code links
-  open (§8.4's code panel), and a corpus whose material sits at its root binds
+  open (§8.4's code examples), and a corpus whose material sits at its root binds
   that copy as its sources, since it has no directory of its own that is not
   the repository.
 - **The container runs as the repository owner's uid:gid**, so files it creates
@@ -1997,20 +1997,26 @@ These are proven surfaces, generalised in their addressing and otherwise kept.
   digest of its words, so a heading that loses its number is a new clip.
 - **A lesson's own code opens in the editor, beside its test** (the user's
   ruling of 2026-09-25). A link to a corpus file whose suffix a declared runtime
-  writes is marked with the file's corpus-relative path, and its page carries
-  one code panel, after `<main>`, which ships saying why the link opens the file
-  as plain text: the course's editor is not running here, and how to start it.
-  ⭐ **Served, with the corpus's editor up**, a click opens the file in that
-  panel instead: the source and the test that tests it, two windows of the
-  editor the corpus already runs (the practice's own mechanism: one probe, one
-  frame, one lock — the source editable, the test not), and a Run that runs the
-  test and streams it. ⭐ **A test is found by its source's name, and else by
+  writes is marked with the file's corpus-relative path. ⭐ **A list of such
+  links is the page's code examples, and each example opens in place** (the
+  user's ruling of 2026-09-25): one collapsed entry per example — a source and
+  its paired test — named for its source, each item kept whole inside its
+  entry so the list's speech units say what they said. As built, an entry says
+  why each file opens as plain text: the course's editor is not running here,
+  and how to start it. ⭐ **Served, with the corpus's editor up**, expanding an
+  entry opens the example right there, with **Source | Test** tabs and **Run
+  tests**: two windows of the editor the corpus already runs (the practice's own
+  mechanism: one probe, one frame, one lock — the source editable, the test
+  not), and a Run that runs the test and streams it. ⛔ **Nothing loads until
+  an entry is expanded, one entry at most is live** — expanding another closes
+  the first and removes its windows — **and the page is never scrolled**; a
+  source with no test, or a test with no source, is its own entry with one tab. ⭐ **A test is found by its source's name, and else by
   the source its text names most**, inside the file's own build module, either
   way round; a tie is no partner, and the file opens alone. ⛔ **The author's
   tree is never written**: both windows open a copy of the corpus's code
   (`.studyforge/execution/code`, ignored but for its own ignore file, holding
   no `corpus.json` and no bookkeeping, so it is never a second corpus), a run
-  happens in that copy, and the panel says so. ⭐ The copy is refreshed on
+  happens in that copy, and the entry says so. ⭐ The copy is refreshed on
   every open and run, newer wins, so a reader's change survives until the
   author changes the file. ⛔ **A file the refresh writes is stamped with the
   time of the refresh**, never the author's, so it is newer than anything built

@@ -344,7 +344,7 @@
     }, function () { return null; });
   }
 
-  /* ⭐ The frame and its one reload are PUBLISHED, so a lesson's code panel
+  /* ⭐ The frame and its one reload are PUBLISHED, so a lesson's code examples
      (`code-links.js`) builds its windows with the same focus guard and the
      same remedy for a cold instance, rather than a second copy of either. */
   window.studyforge = window.studyforge || {};
