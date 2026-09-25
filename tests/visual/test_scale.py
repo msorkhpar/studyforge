@@ -1,4 +1,4 @@
-"""The page at scale, in a real browser: the progress strip fits, and code draws no ligature.
+"""The page at scale, in a real browser: the strip and the rail fit, and code draws no ligature.
 
 ⛔ **A course of sixty top-level groups is the reading, and no committed fixture
 has one.** The strip gives each top-level group one segment with a floor under it,
@@ -55,9 +55,11 @@ STRIP_READING = f"""(() => {{
 
 #: The control: every segment given the one-size floor, with no share of the row.
 ONE_SIZE_FLOOR = (
-    f"document.querySelectorAll('{STRIP} > li')"
-    ".forEach(li => li.style.minWidth = '.9rem');"
+    f"document.querySelectorAll('{STRIP} > li').forEach(li => li.style.minWidth = '.9rem');"
 )
+
+#: The rail, as `chrome.css` targets it.
+RAIL = 'nav[aria-label="Containers"]'
 
 #: How far a laid-out edge may sit past another and still be touching.
 TOUCHING = 1.0
@@ -164,3 +166,58 @@ def test_code_draws_its_operator_as_the_characters_and_the_control_draws_a_ligat
     pictures = _operator(open_page, url)
     assert pictures["on"] != pictures["off"], "no ligature drawn even when forced on: blind"
     assert pictures["shipped"] == pictures["off"], "the shipped page draws `!=` joined"
+
+
+#: A rail row's title with a word longer than the rail, written into the first
+#: container row. ⚠️ Its words are measured, never its box: text runs out of a
+#: box that stays the rail's width.
+UNBROKEN = "Using AbstractQueuedSynchronizer.ConditionObject"
+
+#: Where the rail's rows end, against the rail itself, with the unbroken title in.
+RAIL_READING = f"""(() => {{
+  const rail = document.querySelector('{RAIL}');
+  if (!rail) return null;
+  const summary = rail.querySelector('li details > summary');
+  summary.textContent = '{UNBROKEN}';
+  const edge = rail.getBoundingClientRect().right;
+  const words = document.createRange();
+  words.selectNodeContents(summary);
+  const right = Math.max(...[...words.getClientRects()].map(r => r.right));
+  return {{right: right, rail: edge}};
+}})()"""
+
+#: The control: the rail's rows may not break a word.
+NO_BREAK = f"document.querySelector('{RAIL}').style.overflowWrap = 'normal';"
+
+
+def _rail(open_page: OpenPage, url: str, control: str = "") -> dict:
+    open_page.resize(*WIDE)
+    open_page.open(url)
+    if control:
+        open_page.evaluate(control)
+    reading = open_page.evaluate(RAIL_READING)
+    assert reading is not None, "the page carries no rail, so this reads nothing"
+    return reading
+
+
+def _railed(built_site) -> str:
+    """A unit page of the fixture tree that carries the rail."""
+    return built_site.url(
+        next(
+            built.name
+            for built in site.pages_built()
+            if built.kind == site.UNIT and b'<nav aria-label="Containers">' in built.body
+        )
+    )
+
+
+def test_a_rail_title_with_no_break_wraps_inside_the_rail(open_page, built_site):
+    reading = _rail(open_page, _railed(built_site))
+    assert reading["right"] <= reading["rail"] + TOUCHING, reading
+
+
+def test_the_control_a_rail_that_breaks_no_word_runs_out_of_it(open_page, built_site):
+    reading = _rail(open_page, _railed(built_site), NO_BREAK)
+    assert reading["right"] > reading["rail"] + TOUCHING, (
+        f"the unbroken title fits without a break, so the clause above is blind: {reading}"
+    )
