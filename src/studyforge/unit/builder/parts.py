@@ -52,7 +52,7 @@ from __future__ import annotations
 from studyforge.archive.document import MEDIA_ENTRY_KEYS, VIDEO_KEYS
 from studyforge.exercise import of as exercise_of
 from studyforge.exercise import to_document as exercise_document
-from studyforge.unit.outline import headings_without_outline_numbers, without_outline_number
+from studyforge.unit.outline import without_outline_number
 
 #: A served section's keys, in the order they are written (R10).
 SECTION_KEYS = ("key", "kind", "heading", "blocks", "video", "workspace", "attachments")
@@ -67,15 +67,18 @@ def section(*, key: str, kind: str, heading: str, blocks: list, document: dict) 
     things this build adds either way are `video` and `workspace`, which is the
     exact promise `unit.content.DERIVED_FIELDS` makes from the other side.
 
-    ⛔ **The heading and every heading block are served without the source's
-    outline number** (`unit.outline`): the site lists and orders the units
-    itself, and the page and its narration read these same words.
+    ⛔ **The heading is served without the source's outline number**
+    (`unit.outline`): the site lists and orders the units itself. ⚠️ **The
+    blocks keep theirs here**, because a sentence that names a heading names it
+    by that number (`unit.headings`); `builder.document` takes them off every
+    heading block once the references are served, so the page and its narration
+    still read the same words.
     """
     return {
         "key": key,
         "kind": kind,
         "heading": without_outline_number(heading),
-        "blocks": headings_without_outline_numbers(list(blocks or [])),
+        "blocks": list(blocks or []),
         "video": video_of(document),
         "workspace": workspace_of(document, key),
         "attachments": attachments_of(document),

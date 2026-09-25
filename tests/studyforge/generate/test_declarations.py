@@ -18,7 +18,9 @@ from studyforge.generate import (
     sources,
     unit_location,
 )
+from studyforge.generate.clips import files_unlinked
 from tests.studyforge.generate.corpora import FIXTURES, a_corpus, with_a_unit_missing
+from tests.studyforge.validate.corpora import linked
 from tests.support import repository_root
 
 # --------------------------------------------------------------------------
@@ -462,3 +464,24 @@ def test_every_unit_is_handed_the_corpus_it_may_mention_and_its_own_page(tmp_pat
     assert first.mentions.text("[next](02-reading-a-small-graph.md)") == (
         "[next](../unit-02/unit-02-reading-a-small-graph.unit.html)"
     )
+
+
+def test_every_unit_is_handed_the_corpus_root_and_its_container_s_headings(tmp_path):
+    # ⭐ Numbered by the headings each unit's page shows, one index per container.
+    root = linked(tmp_path)
+    corpus = read_corpus(root)
+    first, second = corpus.units
+    assert first.mentions.root == second.mentions.root == root
+    assert first.mentions.numbers is second.mentions.numbers
+    assert {
+        number: (heading.text, page.name)
+        for number, (heading, page) in first.mentions.numbers.items()
+    } == {
+        "1.1": ("One", "unit-01-unit-1.unit.html"),
+        "1.2": ("Two", "unit-02-unit-2.unit.html"),
+    }
+
+
+def test_a_site_written_elsewhere_links_no_corpus_file(tmp_path):
+    corpus = files_unlinked(read_corpus(linked(tmp_path)))
+    assert {source.mentions.root for source in corpus.units} == {None}

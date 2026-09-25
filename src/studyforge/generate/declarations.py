@@ -57,7 +57,8 @@ from studyforge.corpus.placement import (
 )
 from studyforge.generate.footprint import Footprint, footprint_for
 from studyforge.skills.adapter import Layout
-from studyforge.unit import Mentions
+from studyforge.unit import ContentError, Heading, Mentions
+from studyforge.unit.builder import unit_headings
 
 
 class BuildError(ValueError):
@@ -202,7 +203,7 @@ def _sources(
                 )
             )
             pages.append(_page(profile, container.address, unit))
-    return _mentioning(tuple(found), tuple(pages))
+    return _mentioning(root, tuple(found), tuple(pages))
 
 
 def _page(profile: Profile, address: Address, unit: Unit) -> PurePosixPath:
@@ -216,12 +217,13 @@ def _page(profile: Profile, address: Address, unit: Unit) -> PurePosixPath:
 
 
 def _mentioning(
-    found: tuple[UnitSource, ...], pages: tuple[PurePosixPath, ...]
+    root: Path, found: tuple[UnitSource, ...], pages: tuple[PurePosixPath, ...]
 ) -> tuple[UnitSource, ...]:
-    """Hand every unit the corpus's units as it may name them, and its own place.
+    """Hand every unit the corpus's units and its container's headings as it may name them.
 
     ⭐ One index for the corpus, so the page and every other consumer of a served
-    unit resolve a reference the same way.
+    unit resolve a reference the same way. ⚠️ A unit whose material will not
+    read offers no heading here: building it raises, where it is reported.
     """
     labels, origins = Mentions.of(
         tuple(
@@ -229,13 +231,32 @@ def _mentioning(
             for source, page in zip(found, pages, strict=True)
         )
     )
+    held: dict[str, list[tuple[PurePosixPath, tuple[Heading, ...]]]] = {}
+    for source, page in zip(found, pages, strict=True):
+        held.setdefault(source.container.address.key, []).append((page, _headings(source)))
+    numbers = {key: Mentions.numbered(tuple(rows)) for key, rows in held.items()}
     return tuple(
         replace(
             source,
-            mentions=Mentions(labels, origins, source.origin, page),
+            mentions=Mentions(
+                labels,
+                origins,
+                source.origin,
+                page,
+                numbers=numbers[source.container.address.key],
+                root=root,
+            ),
         )
         for source, page in zip(found, pages, strict=True)
     )
+
+
+def _headings(source: UnitSource) -> tuple[Heading, ...]:
+    """One unit's headings as its prose names them, or none when its material will not read."""
+    try:
+        return unit_headings(source.directory)
+    except ContentError:
+        return ()
 
 
 def unit_location(corpus: Corpus, source: UnitSource) -> UnitLocations:

@@ -111,7 +111,13 @@ its page file, and a listing shows the unit's place in its container instead.
 Leave a mention of another unit as the source writes it too, a number such as
 `see 3.2.4` or a link to the file another unit was read from: when the number is
 a unit's `label`, or the link names the file in a unit's `origin`, the page and
-its narration say that unit's title and link its page.
+its narration say that unit's title and link its page. Leave every other link
+as the source writes it as well: a link to a file of your repository
+(`src/main/java/…/Types.java`) is read from the unit's `origin` and linked where
+the file is, an in-page link to one of the source's own headings
+(`#introduction`) links that heading, and `section 2.2` names the heading
+numbered `2.2` in the unit, or in its container, by its words. `validate`
+reports a link that leads nowhere as `link-unresolved`, naming the unit.
 
 ---
 

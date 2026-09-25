@@ -67,9 +67,10 @@ REACH = {
     # one below the count, the deleted-outright plant finds that many left and
     # DOES NOT RAISE.
     "studyforge.corpus.manifest": 10,
-    # ⚠️ It counts `validate.narration`'s site, and `cli/serve.py` and `cli/check.py`,
-    # which import `read_corpus` from `generate.declarations`, the module that defines it.
-    "studyforge.generate": 6,
+    # ⚠️ It counts `validate.narration`'s and `validate.links`'s sites, and `cli/serve.py`
+    # and `cli/check.py`, which import `read_corpus` from `generate.declarations`, the
+    # module that defines it.
+    "studyforge.generate": 7,
     # ⚠️ The run route's parse of a practice key is the first site naming
     # `progress.RAISES`, and a subject with NO floor here fails the deleted-outright
     # plant below, whatever the note above says of a new caller.

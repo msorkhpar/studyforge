@@ -32,7 +32,8 @@ no-overlay path is never the one discovered late.
 | `sections` | the section-key vocabulary: `shared`, `<variant>`, `practice-<variant>` |
 | `trust` | where a grader came from and what it may claim (R5) |
 | `outline` | the source's own outline number, left off every title and heading a reader is served |
-| `mentions` | a mention of another unit of the corpus, served as that unit's title and page |
+| `headings` | a unit's headings by source anchor and outline number, with their page ids |
+| `mentions` | a mention of another unit, a file or a heading, served as what it names |
 | `errors` | `ContentError`, the only exception any of it raises |
 
 ⛔ **`content_api` is minted here** (R21): the overlay lives at
@@ -66,6 +67,7 @@ from studyforge.unit.content import (
     parse,
 )
 from studyforge.unit.errors import ContentError
+from studyforge.unit.headings import Heading, headings
 from studyforge.unit.mentions import Mentions
 from studyforge.unit.outline import listed_numbering, without_outline_number
 from studyforge.unit.sections import (
@@ -75,6 +77,7 @@ from studyforge.unit.sections import (
     SECTION_KINDS,
     SHARED_KEY,
     derived_section_key,
+    heading_anchor,
     section_key,
 )
 from studyforge.unit.trust import (
@@ -103,12 +106,15 @@ __all__ = [
     "SHARED_KEY",
     "TRUST",
     "ContentError",
+    "Heading",
     "Mentions",
     "Overlay",
     "Section",
     "check_test_record",
     "derived_section_key",
     "from_document",
+    "heading_anchor",
+    "headings",
     "listed_numbering",
     "load",
     "parse",

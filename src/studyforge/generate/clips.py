@@ -76,10 +76,28 @@ def for_output(corpus: Corpus, into: Path | str) -> Corpus:
 
     ⛔ **At the corpus root no clip is the build's own**: every clip there is
     narrate's, beside the material, and a rebuild must leave its bytes alone.
+    ⚠️ **Anywhere else no page links a corpus file** (`files_unlinked`): the
+    file stays where its author put it, and only a site written beside it
+    reaches it.
     """
     if same_root(Path(into), corpus.root):
         return replace(corpus, footprint=corpus.footprint.without_clips())
-    return corpus
+    return files_unlinked(corpus)
+
+
+def files_unlinked(corpus: Corpus) -> Corpus:
+    """Return `corpus` with no unit linking a corpus file: a site written somewhere else.
+
+    ⛔ A corpus file is linked where the author put it, which a page reaches
+    only when the site is written into the corpus root. Anywhere else the link
+    keeps the href the author wrote.
+    """
+    return replace(
+        corpus,
+        units=tuple(
+            replace(source, mentions=replace(source.mentions, root=None)) for source in corpus.units
+        ),
+    )
 
 
 def unit_clips(corpus: Corpus, into: Path | str) -> Written:

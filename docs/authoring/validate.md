@@ -54,7 +54,7 @@ pretend to be.
 
 ---
 
-## The twenty-three checks
+## The twenty-four checks
 
 **One list, in the order a report reads best.** The answer to *what does the
 checker check* is this table and nothing else.
@@ -83,21 +83,22 @@ checker check* is this table and nothing else.
 | 20 | `check_practice_ordinals` | are a page's practices numbered `1..n`, with no gap? |
 | 21 | `check_derivations` | does every `authoritative` grader ship the record of the two gates it was derived through, naming its own files, and did both hold? |
 | 22 | `check_ledger_accounts` | where `exercises/ledger.json` is committed, does it still account for every page the corpus carries — every fence on it and every declared grader, each by an exercise or a written reason? |
-| 23 | `check_narration_current` | where `.studyforge/narration.json` is committed and narration is on, was every clip a page plays made from the words its paragraph says now? |
+| 23 | `check_links_resolve` | does every relative link on a unit's page lead to a file of the corpus, a unit's page or a heading of that page, from where the page sits? |
+| 24 | `check_narration_current` | where `.studyforge/narration.json` is committed and narration is on, was every clip a page plays made from the words its paragraph says now? |
 
 **Checks 1–9 are about the archive alone**, 10 and 11 about placement, 12 and
 13 about the archive root's own files — what sits there unaccounted for, and
 what the archive accounts for and does not hold — 14 to 16 about your
 source repository, 17–20 and 22 about the authored exercises a corpus commits,
-21 about the graders that claim to be your material's own, and 23 about its
-narration.
+21 about the graders that claim to be your material's own, 23 about the links
+its pages carry, and 24 about its narration.
 **Checks 14 and 16 are the ones that cannot be
 made by recounting the parser's own output** — a completeness check that
 recounted what the parser produced would agree with itself by construction and
 catch nothing.
 
 **Checks 17–20 fire only on a `generated` grader, check 21 only on an
-`authoritative` one, and check 22 only on a committed ledger. Check 23 fires only
+`authoritative` one, and check 22 only on a committed ledger. Check 24 fires only
 on a committed narration record**, and not at all with `--no-narration`: a corpus
 with no narration is complete without it.
 A grader that shipped with your material is `bundled`. It is `authoritative` only
@@ -111,7 +112,7 @@ file in both.
 
 ---
 
-## The forty-seven rule ids
+## The forty-eight rule ids
 
 **Every finding carries one**, so a script can filter a report by rule rather
 than by matching on message text. ⚠️ **Six are not emitted by `studyforge
@@ -166,6 +167,7 @@ before it, `check_untouched` after — which reports in the same shape.
 | `derivation-digest` | a file the derivation record was taken over has changed since, or is gone |
 | `ledger` | `exercises/ledger.json` is there and will not read as a ledger this build wrote |
 | `ledger-unaccounted` | `exercises/ledger.json` is there and does not account for a page your corpus carries: a unit's `origin` (or a page a `coverage.json` names) the ledger never read, a fenced example on it with no row, a declared grader with no row, or a row naming neither an exercise nor a reason (or both). Judged only while a ledger is committed and the page is on disk |
+| `link-unresolved` | a relative link on a unit's page leads nowhere: it climbs out of the corpus, is rooted, names a file the corpus does not hold, or names an anchor that is no heading of the page. A link to a corpus file is read from the unit's `origin`, and a source anchor (`#introduction`) as the heading it names, so what is left is what a reader would click and find nothing. The finding names the unit and the link's words, never its href |
 | `narration-stale` | a narrated paragraph's clip was made from words it no longer says, so the page plays the old words. The finding names the speech unit and the command to run, `studyforge narrate <corpus-root> --voice <the record's voice>`, and quotes no text. Judged only while a narration record is committed and narration is on |
 | `narration-record` | `.studyforge/narration.json` is there and cannot be read, so no clip is judged — the build refuses the same record |
 | `nothing-compared` | after a build (unchecked, not a finding): the before-snapshot held no file, so nothing was compared |
