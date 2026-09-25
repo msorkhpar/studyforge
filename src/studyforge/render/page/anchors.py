@@ -112,7 +112,9 @@ a page with seven practices gave the outline twenty-eight lines, twenty-one of
 them one of three words. ⛔ So a practice section contributes its own entry,
 the practice's title, and none of its headings: they are still on the page and
 still anchored, and the outline is where a reader finds the practice, not its
-parts.
+parts. ⭐ The title is the heading a practice's material opens with when it
+states one above its layout (`practice_title`), and its recorded heading
+otherwise.
 
 ## The outline stops at level 3
 
@@ -125,6 +127,7 @@ that disagrees with the first is worse than no rail.
 from __future__ import annotations
 
 from studyforge.address import is_slug
+from studyforge.archive.blocks import STATEMENT_HEADING
 from studyforge.render import templates
 from studyforge.render.markup import anchor, escape_attribute, inline
 from studyforge.render.page.errors import PageError
@@ -182,9 +185,12 @@ def entries(document: dict) -> tuple[tuple[int, str, str], ...]:
     promoted = title_heading(document)
     for index, section in enumerate(sections):
         key = section.get("key")
+        practice = section.get("kind") == PRACTICE
         if len(sections) > 1:
-            out.append((1, str(section.get("heading") or key or ""), anchor(section_anchor(key))))
-        if section.get("kind") == PRACTICE:
+            label = practice_title(section) if practice else None
+            label = label or str(section.get("heading") or key or "")
+            out.append((1, label, anchor(section_anchor(key))))
+        if practice:
             continue
         for position, block in enumerate(section.get("blocks") or ()):
             # ⛔ The block the page is HEADED by is not a line in the page's own
@@ -200,6 +206,22 @@ def entries(document: dict) -> tuple[tuple[int, str, str], ...]:
                 continue
             out.append((level, str(block.get("text") or ""), anchor(block_anchor(key, position))))
     return tuple(out)
+
+
+def practice_title(section: dict) -> str | None:
+    """Return the title a practice's material opens with, or `None` when it opens with its layout.
+
+    ⭐ **A practice the source wrote may state its own title** in a heading
+    above the layout (*"Practice: Building the primary bitmap"*), where the
+    section's recorded heading is only the unit's title; that heading is the
+    practice's one outline line. ⛔ An authored exercise opens with the layout's
+    statement heading, which names no practice, so it is listed by its recorded
+    heading.
+    """
+    opening = _leading_heading(section)
+    if opening is None or opening.get("text") == STATEMENT_HEADING:
+        return None
+    return str(opening.get("text"))
 
 
 def title_heading(document: dict) -> dict | None:

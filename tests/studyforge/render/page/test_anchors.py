@@ -104,6 +104,18 @@ def test_a_practice_is_one_line_of_the_outline_its_title():
     assert found[-1][2] == "#" + anchors.section_anchor("practice-java-2")
 
 
+def test_a_practice_that_states_its_own_title_is_listed_by_it():
+    # ⭐ A source's practice may open with its own heading above the layout, and
+    # its recorded heading is then only the unit's title.
+    own = practice("practice-java", "Your first class")
+    own["blocks"] = [{"type": "heading", "level": 3, "text": "Practice: Greeter"}, *own["blocks"]]
+    found = anchors.entries({"sections": [TWO_SECTIONS["sections"][0], own]})
+    assert [(level, label) for level, label, _ in found] == [
+        (1, "Before you start"),
+        (1, "Practice: Greeter"),
+    ]
+
+
 def test_the_outline_stops_at_level_three():
     # ⚠️ Level 4 and below turn a rail that can be scanned in one glance into a
     # second document.
