@@ -66,13 +66,10 @@ def test_a_manifest_that_does_not_declare_the_skill_s_files_is_refused_and_nothi
     assert not (root / PRACTICE_DIRNAME).exists()
 
 
-def test_a_corpus_with_no_manifest_on_disk_and_a_path_validate_never_walks_are_not_refused(
-    tmp_path,
-):
+def test_a_corpus_with_no_manifest_on_disk_is_not_refused_and_one_with_is_asked(tmp_path):
     assert declared.undeclared(tmp_path, ["EXECUTION.md"]) == ()
     root = onboarded(tmp_path / "onboarded")
-    assert declared.undeclared(root, [execution.COMPOSE_FILE]) == ()
-    assert declared.undeclared(root, ["EXECUTION.md"]) == ("EXECUTION.md",)
+    assert declared.undeclared(root, [execution.COMPOSE_FILE, "EXECUTION.md"]) == ("EXECUTION.md",)
 
 
 def test_the_control_validate_does_see_an_undeclared_reader_document(tmp_path):

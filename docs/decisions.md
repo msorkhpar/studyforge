@@ -661,7 +661,7 @@ What it reads, and the choices in it:
 
 ### Onboarding declares the execution skill's files, and that skill's first write leaves `validate` clean
 
-**Decision.** `studyforge.skills.onboarding.onboard` declares `studyforge.skills.execution.NOT_MATERIAL` as a third producer's `content.not_material` whenever the manifest declares `runtimes`, and none otherwise. The execution skill never writes `corpus.json`; its `write` refuses, before its first byte, a manifest on disk that does not declare each file it writes where `validate` walks (`studyforge.skills.execution.declared`), naming each path and re-onboarding as the remedy. `write` also makes every directory the compose file binds (`Execution.bound`).
+**Decision.** `studyforge.skills.onboarding.onboard` declares `studyforge.skills.execution.NOT_MATERIAL` as a third producer's `content.not_material` whenever the manifest declares `runtimes`, and none otherwise. The execution skill never writes `corpus.json`; its `write` refuses, before its first byte, a manifest on disk that does not declare each file it writes (`studyforge.skills.execution.declared`), naming each path and re-onboarding as the remedy. `write` also makes every directory the compose file binds (`Execution.bound`).
 
 **Why.** The execution skill's `EXECUTION.md` sits at the corpus root, and nothing declared it, so `validate` read RED on a runnable corpus's first write. Onboarding owns `corpus.json` and records its digest, so a second writer of the manifest would read as a hand-edit. A bind source docker has to create is created root-owned, and a corpus with no practices had no `practice/` directory to bind.
 
