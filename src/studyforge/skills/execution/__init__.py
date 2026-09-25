@@ -75,6 +75,7 @@ from studyforge.skills.execution.onboard import (
     PRIME_DIR,
     READER_DOC,
     RUNNER_ENV,
+    SITE_ENV,
     TOOLCHAIN_FILE,
     Execution,
     ExecutionRefused,
@@ -89,6 +90,7 @@ from studyforge.skills.execution.prime import Prime, PrimeRefused, Project, Spec
 from studyforge.skills.execution.record import record_editor, record_runner
 from studyforge.skills.execution.rulings import findings
 from studyforge.skills.execution.runnerservice import Runner, RunnerRefused
+from studyforge.skills.execution.siteimage import Staged, stage_site
 from studyforge.skills.execution.toolchain import Selection, select
 
 __all__ = [
@@ -108,6 +110,7 @@ __all__ = [
     "PRIME_DIR",
     "READER_DOC",
     "RUNNER_ENV",
+    "SITE_ENV",
     "TOOLCHAIN_FILE",
     "ComposeRefused",
     "ContractRefused",
@@ -120,6 +123,7 @@ __all__ = [
     "RunnerRefused",
     "Selection",
     "Specimen",
+    "Staged",
     "classified",
     "findings",
     "generate",
@@ -133,6 +137,7 @@ __all__ = [
     "render",
     "select",
     "source_root",
+    "stage_site",
     "workspaces_bind",
     "write",
 ]

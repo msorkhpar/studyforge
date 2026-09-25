@@ -1906,27 +1906,45 @@ inside a network-listening process is root-equivalent access to the host.
 
 **The ruling.**
 
-1. **The toolchain is containerised; the serving process is not.** The runtimes
-   and their caches are pinned in the runner image (§8.1) — that is where
-   reproducibility lives. The server is a standard-library HTTP process with no
-   dependencies, so a container adds nothing to it.
+1. **The toolchain is containerised; the serving process need not be.** The
+   runtimes and their caches are pinned in the runner image (§8.1) — that is
+   where reproducibility lives. The server is a standard-library HTTP process
+   with no dependencies: on the host it is the development path, and a course
+   is published with it in a container of its own (point 5).
 2. ⛔ **The Docker socket is never mounted into the serving process.** Not as a
    convenience, not behind a flag, not "only locally".
 3. **Execution crosses into the container from outside it.** `execute`, the only
    package that runs a corpus's commands, probes whether the corpus's runner
    container is up and runs `docker exec` into it with the command's argv
-   verbatim; when it is not up, it runs the same argv on the host. ⭐ **Both modes
+   verbatim. ⛔ **A corpus whose execution files declare its runner never falls
+   back to the host**: with that runner down, nothing runs, the run index says
+   so (`runnable`), and a page hides Run, Submit and Run tests with the sentence
+   saying why, as it does for an editor that is not up. Only a corpus that
+   declares no runner runs the same argv on the host. ⭐ **Both modes
    have identical observable behaviour** — the merged output streamed line by
    line, every line relative to the source root and scrubbed (R7), and exactly
    one exit line — and that is asserted, not assumed. ⛔ The runner never starts,
    stops or builds a container. Commands come from a generated document on disk;
    **nothing a client sends becomes a command.**
-4. **If full containerisation is ever required**, the answer is a separate
-   execution broker owning the toolchain, which the server posts jobs to — the
-   same shape as the narration service (§8.2) — and never the socket.
+4. **Full containerisation takes a broker owning the toolchain**, which the
+   server posts jobs to — the same shape as the narration service (§8.2) — and
+   never the socket.
+5. **A course is published with one compose, and that broker is the runner's
+   run service.** One compose file runs the study server, the editor and the
+   runner. ⛔ The study server holds no socket: it reaches the runner over an
+   internal network that only the two of them join, where the runner offers a
+   minimal run service, publishes no port, and runs only an argv the corpus's
+   records name — a list the study server rewrites from those records before
+   every run. The editor, which hands a person a shell, is not on that network.
+   ⭐ The service asks for no credential: its one other member is the process
+   entitled to ask, and a secret both containers read from one corpus guards
+   nothing the list does not. ⛔ Every published port binds `127.0.0.1`, and
+   ports are set in one place, the corpus's instance record; a page learns the
+   editor's address from the study server's API, never from a built file.
+   Widening a bind means restoring the editor's authentication first.
 
 **What this costs the reader:** the host needs Python (standard library only)
-and a Docker CLI. Nothing else. The toolchain, its caches and every pinned
+and a Docker CLI — published, only the Docker CLI. Nothing else. The toolchain, its caches and every pinned
 version stay in the image.
 
 ### 8.4 The reading surface

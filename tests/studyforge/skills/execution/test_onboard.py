@@ -159,8 +159,9 @@ def test_write_puts_every_path_on_disk_and_the_copies_are_byte_identical(tmp_pat
     root = corpus(tmp_path)
     result = skill.generate(manifest(), editor_text=editor_text(), root=root)
     written = skill.write(result, root)
-    # ⭐ Plus the instance's defaults, which a fresh checkout has not recorded yet.
-    assert set(written) == {*result.paths(), skill.INSTANCE_ENV}
+    # ⭐ Plus the instance's defaults and the unstaged site record, which a fresh
+    # checkout has not recorded yet.
+    assert set(written) == {*result.paths(), skill.INSTANCE_ENV, skill.SITE_ENV}
     for where, origin in result.copies:
         assert (root / where).read_bytes() == (root / origin).read_bytes()
 

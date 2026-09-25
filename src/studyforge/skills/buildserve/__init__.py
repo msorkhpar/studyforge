@@ -61,6 +61,7 @@ from studyforge.skills.buildserve.states import (
     NO_NARRATION_SERVICE,
     NOT_NARRATED,
     NOTHING_TO_NARRATE,
+    RUNNER_DOWN,
     PartialState,
     exercise_states,
     narration_states,
@@ -72,6 +73,7 @@ from studyforge.skills.buildserve.states import (
 __all__ = [
     "EXECUTION_NAMESPACE",
     "HOST_EXECUTION",
+    "RUNNER_DOWN",
     "KNOWN",
     "NARRATION_INCOMPLETE",
     "NOTHING_TO_NARRATE",

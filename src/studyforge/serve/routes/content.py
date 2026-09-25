@@ -56,7 +56,7 @@ from typing import Protocol
 from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.contents import document as contents_document
 from studyforge.serve.caching import not_modified, strong_etag
-from studyforge.serve.response import JSON_TYPE, Request, Response, envelope, error
+from studyforge.serve.response import API_PREFIX, JSON_TYPE, Request, Response, envelope, error
 from studyforge.serve.withheld import Marks, marks_in, redacted
 from studyforge.unit import served
 from studyforge.unit.builder import NoMaterial, build_unit
@@ -188,6 +188,20 @@ def _stamp(directory: Path) -> tuple:
 def _size_and_time(path: Path) -> tuple[int, int]:
     stat = path.stat()
     return stat.st_size, stat.st_mtime_ns
+
+
+def version_document(namespaces: object, own: tuple[str, ...]) -> dict:
+    """Return what `/api/v1` says: the namespaces served and which of them cache."""
+    return {
+        "resource": "api-version",
+        "namespaces": sorted(namespaces),
+        "cacheable": [f"{API_PREFIX}/{name}/" for name in own],
+        "endpoints": {
+            "toc": f"{API_PREFIX}/content/{TOC}",
+            "unit": f"{API_PREFIX}/content/{UNITS}{{key}}",
+            "asset": f"{API_PREFIX}/assets/{{path}}",
+        },
+    }
 
 
 def route(source: ContentSource, request: Request, rest: str) -> Response:

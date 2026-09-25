@@ -10,7 +10,11 @@ relative to the source root, in either mode.
     handle = runner.start([exercise.run_command, exercise.test_command])
     for line in handle.lines(): ...
 
-`container=None` runs on the host, always.
+`container=None` runs on the host, always. ⭐ `service=Service(...)` runs in
+the runner through its run service instead (`remote`), which is how a study
+server published with one compose reaches it without the Docker socket; it
+never falls back to the host, since the host there is the study server's own
+container.
 
 **Depends on.** `subprocess` and `os` — ⭐ `execute` is the only package that
 runs a corpus's commands — plus `commands`, `mode`, `output` and `handle`
@@ -84,9 +88,20 @@ from studyforge.execute.commands import (
     require_container,
     require_workdir,
 )
+from studyforge.execute.errors import RunRefused
 from studyforge.execute.handle import RunHandle
-from studyforge.execute.mode import CONTAINER, DOCKER, WORKDIR_IN_CONTAINER, ModeProbe
+from studyforge.execute.mode import CONTAINER, DOCKER, HOST, WORKDIR_IN_CONTAINER, ModeProbe
 from studyforge.execute.output import LineGate
+from studyforge.execute.remote import RemoteLauncher, Service, ServiceProbe
+
+#: The mode a run takes through the runner's run service.
+SERVICE = "service"
+
+#: Why a corpus that declares its runner runs nothing while it is down.
+RUNNER_DOWN = (
+    "this course's runner is not running, and its code runs nowhere else; start it with "
+    'the one command under "Bring it up" in its EXECUTION.md'
+)
 
 #: What every run's environment carries, in both modes.
 RUN_ENVIRONMENT = {"PYTHONDONTWRITEBYTECODE": "1", "PYTHONUNBUFFERED": "1"}
@@ -236,18 +251,40 @@ class Runner:
         timeout: float = DEFAULT_TIMEOUT,
         grace: float = GRACE,
         probe: ModeProbe | None = None,
+        service: Service | None = None,
+        required: bool = False,
     ) -> None:
-        """Check the container name; the mode is asked per run, through `probe`."""
+        """Check the container name; the mode is asked per run, through `probe`.
+
+        ⛔ `required` is a corpus that DECLARES its runner (`instance.declares_runner`):
+        its runs never fall back to the host, and a runner that is not up refuses them.
+        """
         self.source_root = Path(source_root).absolute()
         self.container = None if container is None else require_container(container)
         self.docker = docker
         self.timeout = timeout
         self.grace = grace
         self.probe = probe or ModeProbe(self.source_root, self.container, docker=docker)
+        self.service = service
+        self.service_probe = None if service is None else ServiceProbe(service)
+        self.required = required or service is not None
 
     def mode(self) -> str:
-        """`CONTAINER` or `HOST`, as the next run would take it."""
-        return self.probe.mode()
+        """`SERVICE`, `CONTAINER` or `HOST`, as the next run would take it.
+
+        ⛔ **A required runner never answers `HOST`** — one given a service, or
+        one its corpus declares: the host is not where that corpus's code runs
+        (published, it is the study server's own container, with no toolchain).
+        A runner that is not up refuses the run, and the run index says so.
+        """
+        if self.service_probe is not None:
+            if not self.service_probe.up():
+                raise RunRefused("the runner's run service is not answering; is the compose up?")
+            return SERVICE
+        mode = self.probe.mode()
+        if mode == HOST and self.required:
+            raise RunRefused(RUNNER_DOWN)
+        return mode
 
     def start(self, commands: object, cwd: object = ROOT_DIR) -> RunHandle:
         """Run `commands` in order from `cwd`; the first is started before this returns.
@@ -259,12 +296,16 @@ class Runner:
         checked = require_commands(commands)
         directory = require_workdir(cwd)
         mode = self.mode()
-        if mode == CONTAINER:
-            assert self.container is not None
-            launcher: HostLauncher | ContainerLauncher = ContainerLauncher(
-                self.container, directory, self.docker
+        if mode == SERVICE:
+            assert self.service is not None
+            launcher: HostLauncher | ContainerLauncher | RemoteLauncher = RemoteLauncher(
+                self.service, directory
             )
             roots: Iterable[str] = (WORKDIR_IN_CONTAINER,)
+        elif mode == CONTAINER:
+            assert self.container is not None
+            launcher = ContainerLauncher(self.container, directory, self.docker)
+            roots = (WORKDIR_IN_CONTAINER,)
         else:
             launcher = HostLauncher(self.source_root, directory)
             roots = (str(self.source_root), str(self.source_root.resolve()))

@@ -7,7 +7,7 @@
    an origin that can answer it.
 
    ⭐ **A client and nothing else.** It publishes `studyforge.run` — `available`,
-   `start`, `stop`, `editor`, `practice`, `code`, `codeTest`, `practices` — and
+   `start`, `stop`, `editor`, `runnable`, `practice`, `code`, `codeTest`, `practices` — and
    draws nothing: the practice panel that puts Run and
    Submit in front of a reader is the page's own. ⛔ A control this file
    drew where no panel exists would be a dead button, and a dead button is
@@ -138,6 +138,20 @@
     });
   }
 
+  /* Whether this corpus can run code now. ⛔ `false` only where the index says
+     so: a corpus that declares its runner while that runner is down runs
+     nothing, and the page then offers no Run, Submit or Run tests. ⭐ An index
+     that cannot be read, or an older server that says nothing, is `true`: the
+     page offers what it always offered, and a refused run says why. */
+  function runnable(corpus) {
+    if (!available()) { return refused('no-origin'); }
+    if (!CORPUS.test(corpus)) { return refused('corpus'); }
+    return asked().then(function (answer) {
+      var said = answer && answer.runnable;
+      return !(said && said[corpus] === false);
+    });
+  }
+
   /* One practice's two editor windows: where each is, and the workspace
      settings they are read under, prepared by the server on the way.
 
@@ -261,6 +275,7 @@
     start: start,
     stop: stop,
     editor: editor,
+    runnable: runnable,
     practice: practice,
     code: code,
     codeTest: codeTest,

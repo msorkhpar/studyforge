@@ -2,8 +2,9 @@ r"""Which containers belong to THIS checkout of a corpus: the names its instance
 
 **What it does.** Reads the one file a corpus's execution onboarding keeps for
 the values that differ between two instances of one corpus on one host — the
-compose project, the editor's host port, and the editor's and the runner's
-container names — and answers the two names `serve` looks its containers up by.
+compose project, the editor's and the study server's host ports, and the
+editor's, the runner's and the study server's container names — and answers
+the two names `serve` looks its containers up by.
 
 **How you use it.**
 
@@ -22,7 +23,7 @@ one small file under the corpus root.
 
 ⚠️ A second checkout of one corpus — the verification a pin advance needs,
 beside the reader's live site — must come up without an override file and be
-served against its own runner. ⭐ **So each of the four is a compose
+served against its own runner. ⭐ **So each of them is a compose
 interpolation whose default is the fixed value**, and the value an instance chose is
 recorded here, in the file its compose command reads, which is also the file
 this module reads. ⛔ **One record, two readers — never two spellings.**
@@ -45,7 +46,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
-from studyforge.execute.commands import container_for, editor_container_for
+from studyforge.execute.commands import container_for, editor_container_for, require_container
 from studyforge.execute.errors import RunRefused
 from studyforge.exercise import SAFE_SEGMENT
 
@@ -53,6 +54,11 @@ from studyforge.exercise import SAFE_SEGMENT
 #: Beside the two tag files under the execution skill's directory, and read by
 #: the reader's compose command with them (`skills.execution.onboard`).
 INSTANCE_FILE = ".studyforge/execution/instance.env"
+
+#: ⛔ **The compose file the execution skill writes, and its ONE spelling here.** A
+#: corpus holding it DECLARES a runner, and a run of it never falls back to the host
+#: (`Runner(required=True)`): its code runs in that runner or not at all.
+COMPOSE_FILE = ".studyforge/execution/compose.yaml"
 
 #: The compose project: what the file's `name:` interpolates, so a second
 #: instance's volumes, network and service identities are its own.
@@ -65,14 +71,37 @@ EDITOR_NAME = "STUDYFORGE_EDITOR_NAME"
 #: The runner's `container_name`, which a Run or a Submit execs into.
 RUNNER_NAME = "STUDYFORGE_RUNNER_NAME"
 
+#: The study server's published host port, when a course is published with one
+#: compose. ⛔ The PORT only, as for the editor's.
+SITE_PORT = "STUDYFORGE_SITE_PORT"
+
+#: The study server's `container_name` in that compose.
+SITE_NAME = "STUDYFORGE_SITE_NAME"
+
 #: Every variable the file holds, in the order it is written.
-VARIABLES = (PROJECT, EDITOR_PORT, EDITOR_NAME, RUNNER_NAME)
+VARIABLES = (PROJECT, EDITOR_PORT, EDITOR_NAME, RUNNER_NAME, SITE_PORT, SITE_NAME)
+
+#: The four every instance records. ⭐ The study server's two are optional: a
+#: file that predates them is read as it stands, compose's defaults filling in.
+REQUIRED = VARIABLES[:4]
+
+#: The ports an instance must record. ⭐ Each is checked as one.
+PORT_VARIABLES = (EDITOR_PORT, SITE_PORT)
+
+#: The port a published study server listens on when an instance recorded none:
+#: the one `serve` listens on when given none (`serve.app.DEFAULT_PORT`, held equal
+#: by a test, since this package may not import the server).
+DEFAULT_SITE_PORT = 8765
+
+#: The study server's container name, `source` in its slot.
+SITE_CONTAINER_TEMPLATE = "studyforge-site-{source}"
 
 #: What the file says it holds, written under the caller's header.
 HOLDS = (
-    "# This instance's compose project, editor host port and container names. The\n"
-    "# defaults are what every instance of this corpus is called; a second instance\n"
-    "# on one host records its own four with the execution skill's record step.\n"
+    "# This instance's compose project, host ports and container names: the one\n"
+    "# place a port is set. The defaults are what every instance of this corpus is\n"
+    "# called; a second instance on one host records its own with the execution\n"
+    "# skill's record step.\n"
 )
 
 #: The compose project a corpus that chose none is brought up under.
@@ -94,9 +123,19 @@ class Names:
     editor: str
 
 
+def declares_runner(root: Path) -> bool:
+    """Whether the corpus at `root` declares a runner: its execution files are written."""
+    return (Path(root) / COMPOSE_FILE).is_file()
+
+
 def project_for(source: str) -> str:
     """Return the compose project an instance of `source` that chose none runs under."""
     return PROJECT_PREFIX + source
+
+
+def site_container_for(source: str) -> str:
+    """Name the study server's container a course published with one compose runs."""
+    return require_container(SITE_CONTAINER_TEMPLATE.format(source=source))
 
 
 def defaults(source: str, *, port: int) -> dict[str, str]:
@@ -107,6 +146,11 @@ def defaults(source: str, *, port: int) -> dict[str, str]:
         EDITOR_NAME: editor_container_for(source),
         RUNNER_NAME: container_for(source),
     }
+
+
+def site_defaults(source: str) -> dict[str, str]:
+    """Return the study server's two values an instance of `source` that chose none has."""
+    return {SITE_PORT: str(DEFAULT_SITE_PORT), SITE_NAME: site_container_for(source)}
 
 
 def recorded(root: Path, source: str) -> Names:
@@ -144,17 +188,20 @@ def checked(values: Mapping[str, str]) -> dict[str, str]:
     that is not a whole number in `PORTS` could carry an address, and a name
     that is not one safe word could carry anything. Neither is reproduced (R7).
     """
-    missing = [one for one in VARIABLES if one not in values]
+    missing = [one for one in REQUIRED if one not in values]
     if missing:
-        raise RunRefused(f"an instance records every one of {list(VARIABLES)}; missing {missing}")
-    port = values[EDITOR_PORT]
-    if not port.isdecimal() or int(port) not in PORTS:
-        raise RunRefused(
-            f"{EDITOR_PORT} must be a whole port number from {PORTS.start} to {PORTS.stop - 1}; "
-            "the value is not reproduced here, since a refusal never quotes a value that "
-            "may be personal"
-        )
-    for one in (PROJECT, EDITOR_NAME, RUNNER_NAME):
+        raise RunRefused(f"an instance records every one of {list(REQUIRED)}; missing {missing}")
+    for one in (port for port in PORT_VARIABLES if port in values):
+        port = values[one]
+        if not port.isdecimal() or int(port) not in PORTS:
+            raise RunRefused(
+                f"{one} must be a whole port number from {PORTS.start} to {PORTS.stop - 1}; "
+                "the value is not reproduced here, since a refusal never quotes a value that "
+                "may be personal"
+            )
+    if values[EDITOR_PORT] == values.get(SITE_PORT):
+        raise RunRefused(f"{EDITOR_PORT} and {SITE_PORT} must be two ports, not one")
+    for one in (name for name in (PROJECT, EDITOR_NAME, RUNNER_NAME, SITE_NAME) if name in values):
         if _name(values[one]) is None:
             raise RunRefused(
                 f"{one} must be one word of ASCII letters, digits, '.', '_' and '-', not "
@@ -166,13 +213,13 @@ def checked(values: Mapping[str, str]) -> dict[str, str]:
             f"{PROJECT} must be lower-case letters, digits, '-' and '_', beginning with a "
             "letter or a digit: compose refuses any other project name"
         )
-    return {one: values[one] for one in VARIABLES}
+    return {one: values[one] for one in VARIABLES if one in values}
 
 
 def text(values: Mapping[str, str], *, header: str) -> str:
     """Return the instance file's bytes: `header`, what it holds, then each variable."""
     kept = checked(values)
-    return header + HOLDS + "".join(f"{one}={kept[one]}\n" for one in VARIABLES)
+    return header + HOLDS + "".join(f"{one}={value}\n" for one, value in kept.items())
 
 
 def _name(value: str | None) -> str | None:

@@ -153,12 +153,15 @@ def render(
     runner: tuple[str, Mapping[str, object]] | None = None,
     container_name: str | None = None,
     port_variable: str | None = None,
+    published: tuple[Sequence[tuple[str, Mapping[str, object]]], Mapping[str, object]] = ((), {}),
 ) -> str:
     """Return the whole compose file, as the bytes a corpus keeps.
 
     ⭐ `checked` is every other component block whose rulings are asserted and
     whose service is **not** rendered — see the module contract. ⭐ `runner` is
-    `(service name, mapping)` as `runnerservice.plan` rendered it.
+    `(service name, mapping)` as `runnerservice.plan` rendered it. ⭐ `published`
+    is `(services, networks)` as `siteservice.plan` rendered them: each service
+    is placed after, in place of one of the same name, and the networks declared.
     ⭐ `project`, `container_name` and `port_variable` are written as given, so
     the caller hands in interpolations with their defaults.
     """
@@ -185,7 +188,10 @@ def render(
     }
     if runner is not None:
         services[runner[0]] = dict(runner[1])
+    services.update((name, dict(mapping)) for name, mapping in published[0])
     document: dict[str, object] = {"name": project, "services": services}
+    if published[1]:
+        document["networks"] = dict(published[1])
     named = sorted({str(entry["volume"]) for entry in mounts if entry.get("volume")})
     if named:
         document["volumes"] = {one: {} for one in named}

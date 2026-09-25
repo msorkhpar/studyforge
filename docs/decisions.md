@@ -1215,6 +1215,22 @@ What it reads, and the choices in it:
 
 **Serves.** `R8`
 
+### A course publishes with one compose, and the runner answers only the site
+
+**Decision.** The execution skill's compose file (`skills.execution.siteservice`) carries a third service, `site`: the installed library's `serve /corpus --published`, published on the editor's own loopback bind at `STUDYFORGE_SITE_PORT`, the same port inside and out. The runner leaves `network_mode: none` for a network declared `internal`, which only the site and the runner join, and runs the run service (`execute/assets/runservice.pl`, written beside the compose file and mounted read-only) in place of its idle command; it still publishes no port. The service reads NUL-framed requests and `exec`s an argv only when that exact working directory and argv are in `.studyforge/execution/allowed/runs`, which `serve.published` rewrites from the corpus's records (each practice's run and test commands and each example's test command) before every run; a stop signals every process carrying the run's token. `serve --published` refuses outside a container, binds its container's every address, and drops the peer check, which compose's `127.0.0.1:` publish stands for; the `Host`, `Sec-Fetch-Site` and `Origin` checks are unchanged. The page learns the editor's origin from the run index as before (`STUDYFORGE_EDITOR_ORIGIN`, a loopback origin or a refusal). Ports live in `instance.env` alone. The site's image is staged by `siteimage.stage_site` from the installed library, refused unless its version and wheel commit are the corpus's pin, on a base pulled by digest, and recorded with the `site` profile in `site.env`, so a corpus with no staged image brings up the editor and the runner alone.
+
+**Why.** The user publishes a course with one compose, and the only way to run a reader's code from a containerised server without the Docker socket is to ask the container that already runs it. A credential on that network would be a secret both containers read from the same corpus; the allowlist is what bounds the request, and the editor, which gives a person a shell, is kept off the network. Perl is the one interpreter every Debian-based runner image is certain to carry, so the toolchain's images are untouched.
+
+**Serves.** `R7`, `R8`, `R10`, `R15`
+
+### A corpus that declares its runner never runs on the host
+
+**Decision.** `execute.Runner(required=True)` never answers `HOST`: with its runner down, `mode()` raises `RunRefused`, and a run is refused. `serve.routes.runs.runner_for` makes a corpus's runner required when its execution files are written (`execute.declares_runner`, which reads for `.studyforge/execution/compose.yaml`), and a runner given the run service is always required. The run index publishes `runnable`, `{source: bool}`, from one runner per corpus held by `serve.routes.reachable`, and it asks only a required runner. `run-client.js` publishes `runnable(corpus)`, which is `false` only where the index says so. `practice.js` shows Run and Submit only where it reads `true`, and otherwise shows the panel's `no-runner` sentence. `code-links.js` opens an example in the editor only with the editor up and the corpus runnable, and otherwise leaves the plain view. The build-and-serve skill prints a `runner` state in place of `host` for such a corpus.
+
+**Why.** With the runner stopped, the host fallback ran a course's code where its toolchain is not. On Java it printed `mvn: … could not be started`, exit 127. Published with one compose, the host is the study server's container. Running course code on the host was never what a reader asked for; the host remains the answer only for a corpus that declares no runner.
+
+**Serves.** `R8`, `R15`
+
 ## Narration
 
 ### A heading the page withholds is not spoken

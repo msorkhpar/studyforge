@@ -134,7 +134,8 @@ rendered file is complete with no argument and still adapts to the host it is on
 That is how *"sufficient from the contract alone"* and *"the port and the uid
 differ per host"* are both true at once. ⭐ **The project name, the editor's
 host port and both container names are among them** (`STUDYFORGE_PROJECT`,
-`STUDYFORGE_EDITOR_PORT`, `STUDYFORGE_EDITOR_NAME`, `STUDYFORGE_RUNNER_NAME`),
+`STUDYFORGE_EDITOR_PORT`, `STUDYFORGE_EDITOR_NAME`, `STUDYFORGE_RUNNER_NAME`, and
+the study server's `STUDYFORGE_SITE_PORT` and `STUDYFORGE_SITE_NAME`),
 each defaulting to the value it always had; ⛔ the loopback address stays
 literal, so only the port number is ever interpolated.
 
@@ -143,7 +144,7 @@ or workspaces directory that is, holds or sits inside the bundles' or the
 archive's directory: the key lives only in the page it grades, and the editor is a
 process a reader opens any bound file in.
 
-⛔ **The file has TWO services, and the editor binds its sources and two more directories:**
+⛔ **The file has THREE services, and the editor binds its sources and two more directories:**
 
 - ⭐ **The editor binds the practice workspaces beside the sources.** Every
   practice workspace — the source's own and every authored one — lives under
@@ -170,6 +171,30 @@ process a reader opens any bound file in.
   corpus's root bound where `runner.mounts` says; its network mode, its init and
   its restart policy. ⛔ **Its image is `${<runner.image.env_var>:?…}` and never
   a tag**, which step 5a records.
+- ⭐ **The study server is the third service** (`siteservice`), the installed
+  library's `serve /corpus --published`, published on the editor's own
+  loopback bind at `STUDYFORGE_SITE_PORT` — the same port inside and out, so the
+  `Host` a browser sends is one `serve` admits. It is told the editor's browser
+  origin (`http://127.0.0.1:${STUDYFORGE_EDITOR_PORT}`), the editor's binds and
+  health URL, and the runner's service name, and hands the origin to a page
+  through its run index: no built file names a port. ⭐ Its image is
+  `${STUDYFORGE_SITE_IMAGE:-}` in the `site` profile, which step 5b's record turns
+  on, so a corpus with no staged image still brings up the other two.
+- ⛔ **The site reaches the runner over the compose network's internal side, and
+  never through the Docker socket.** The runner leaves `network_mode: none` for
+  the `runs` network, declared `internal: true` (no route out, as `none` had
+  none), which only the site and the runner join; the editor, which hands a
+  person a shell, stays off it. The runner runs the run service
+  (`runservice.pl`, written beside the compose file and mounted read-only) in
+  place of its idle command, still publishes no port, and runs only the argv
+  in `.studyforge/execution/allowed/runs`, which the study server rewrites from
+  the corpus's records before every run.
+- ⚠️ **The run service asks for no credential, and this is why that is enough:**
+  the only other member of its network is the site, the one process that may
+  ask for a run at all; what it may ask for is an argv the records already name,
+  run in the container where a reader's code already runs. A shared secret
+  would be read from the same corpus by both containers, so it would guard
+  nothing the allowlist does not.
 
 ### 4. Build the prime project
 
@@ -307,15 +332,36 @@ in. The `ask` in `record`'s own docstring is one that works.
 both calls — when the component's pin, the prime or the host's architecture
 moves.
 
-⭐ **This checkout's instance** — its compose project, the editor's host port
-and both container names — is `.studyforge/execution/instance.env`. `write`
+⭐ **This checkout's instance** — its compose project, the editor's and the
+study server's host ports and the three container names — is
+`.studyforge/execution/instance.env`, **the one place a port is set**. `write`
 records the defaults there when nothing is recorded, and never overwrites it.
-A SECOND checkout of the same corpus on one host records its own four, which
-the compose command and the study server both read:
+A SECOND checkout of the same corpus on one host records its own, which the
+compose command and the study server both read:
 
-    record_instance(execution, corpus, project=..., port=..., editor=..., runner=...)
+    record_instance(execution, corpus, project=..., port=..., editor=..., runner=...,
+                    site_port=..., site=...)
 
-### 6. Build the images and bring both up — one command
+⛔ The two ports must differ, and each is a whole number from 1024 up; the
+loopback address beside each stays literal in the compose file.
+
+### 5b. Stage the study server's image — from the library the corpus pinned
+
+    from studyforge.skills.execution import stage_site
+
+    staged = stage_site(corpus)            # Staged(tag, argv, written)
+
+`stage_site` checks that the library this Python imports is the one
+`.studyforge/pin.json` names — its version AND the commit its wheel was built
+from — and ⛔ refuses otherwise, and refuses a source tree, which carries no
+commit. It copies that library into `.studyforge/execution/site/library/`
+(ignored), writes the build file beside it on a base pulled by digest, and
+records `STUDYFORGE_SITE_IMAGE=<tag>` and the `site` profile in
+`.studyforge/execution/site.env`. ⭐ The tag is a digest of exactly those
+bytes. Run `staged.argv` from the corpus root: it is the one `docker build`.
+Re-run 5b when the library or the pin moves.
+
+### 6. Build the images and bring all three up — one command
 
 Run the runner's and the editor's `built_by` argv **from the component's
 checkout** — each with the flag its block declares (`runner.prime.declared_by`,
@@ -327,16 +373,31 @@ it. Then, from the corpus root:
     docker compose --env-file .studyforge/execution/runner.env \
       --env-file .studyforge/execution/editor.env \
       --env-file .studyforge/execution/instance.env \
+      --env-file .studyforge/execution/site.env \
       -f .studyforge/execution/compose.yaml up -d --wait
 
-⭐ That one command starts the editor AND the runner, each from the tag the
-corpus recorded — nobody sets an image variable by hand. Confirm the editor
-answers the health path the contract names; a Submit then runs in the runner rather
-than on the host.
+⭐ That one command starts the study server, the editor AND the runner, each
+from the tag the corpus recorded — nobody sets an image variable by hand. Open
+the site on `127.0.0.1:<STUDYFORGE_SITE_PORT>`; a Run, a Submit and an example's
+test then run in the runner, through its run service. ⭐ To move a port, record
+it with `record_instance` (step 5a), which rewrites `instance.env`, and run the
+same command again: nothing is rebuilt. ⚠️ A hand-edit to `instance.env` works
+for compose, but the hand-edit check reports it, as for every file this skill writes.
+
+⛔ **Every port is published on `127.0.0.1` alone.** The editor carries no
+password because loopback is its whole access control: a reader who widens
+either bind must restore the editor's authentication first.
+
+⭐ **Serving on the host stays the development path**: `studyforge serve <root>`
+finds the same editor and runner by `instance.env` and reaches the runner with
+`docker exec`, as it always has. ⛔ A corpus with these files declares its runner,
+so its code never falls back to the host: with the runner down, nothing runs, and
+each page hides Run, Submit and Run tests and says why.
 
 ⛔ **The framework never starts a container for you** (§8.3). Not behind a flag,
 not "only locally". This skill writes a compose file and a document; the person
-running it runs `docker compose`, and the study server never holds the socket.
+running it runs `docker compose`, and the study server — on the host or in its
+container — never holds the socket.
 
 ---
 
@@ -344,11 +405,15 @@ running it runs `docker compose`, and the study server never holds the socket.
 
 | path | what it is |
 |---|---|
-| `.studyforge/execution/compose.yaml` | the compose file, rendered from the contracts: the editor and the runner |
+| `.studyforge/execution/compose.yaml` | the compose file, rendered from the contracts: the study server, the editor and the runner |
+| `.studyforge/execution/runservice.pl` | the runner's run service, mounted read-only into it (step 3) |
+| `.studyforge/execution/allowed/.gitignore` | keeps the run service's allowlist, which the study server writes, out of the repository |
+| `.studyforge/execution/site.env` | the study server's image and the profile that brings it up (step 5b) |
+| `.studyforge/execution/site/site.containerfile` | the study server's build, on a base pulled by digest; the library copy beside it is ignored (step 5b) |
 | `.studyforge/execution/runner.env` | the primed runner's tag, as the component printed it (step 5a) |
 | `.studyforge/execution/editor.env` | the editor's tag, primed as the contract declares, as the component printed it (step 5a) |
 | `.studyforge/execution/written.json` | every file above and its digest, so a hand-edit to one is reported (step 5) |
-| `.studyforge/execution/instance.env` | this checkout's project, editor port and container names (step 5a) |
+| `.studyforge/execution/instance.env` | this checkout's project, site and editor ports and container names: the one place a port is set (step 5a) |
 | `.studyforge/execution/toolchain.json` | the selection: the set, what is carried, what is not and why, and the two argv |
 | `.studyforge/execution/prime/<tool>/…` | one project per seeded tool: the corpus's own build, and each module's source and test with what they name, re-rooted at the build |
 | `EXECUTION.md` | what a reader opens first: what to build, what to run, and what this corpus declared |
@@ -370,7 +435,7 @@ in somebody's repository.
 
 - ⛔ **It starts nothing.** No daemon, no socket, no `docker` invocation. The
   one process step 5a needs — the component's own `tag_from` — is handed in by
-  the caller.
+  the caller, and step 5b returns its one build's argv for the caller to run.
 - ⛔ **It does not name a source.** Not one runtime, path or version in this
   package comes from knowing which corpus is being converted (R1).
 - ⛔ **It does not copy the component's API.** Not a route, not a port number,

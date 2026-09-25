@@ -22,17 +22,14 @@ a test-mode run exits zero, and a breakdown is a REPORT about that run. ⭐ **Th
 its clock and what a refusal says are [`routes.breakdown`](breakdown.py)'s**, which
 says why it is a module; this one holds the two values and writes what comes back.
 
-⭐ **Split from `routes.run`** (R11): that module is what a request selects and where
-the command is read from; this one is what a started run IS until it ends. ⛔ Neither
-takes a command from anywhere but the unit document.
+⭐ **Split from `routes.run`** (R11): that module is what a request selects; this one is
+what a started run IS until it ends. ⛔ Neither takes a command but the unit document's.
 
 ## One run at a time, and every run ends recorded
 
-A reader has one workspace, so a second start while one is live is refused. Whatever
-ends a stream — the last line, `stop`, a timeout, or a page that hung up (`app` cancels
-the stream, which stops the run) — the outcome is recorded: the status, `timeout` or
-`stopped`. ⚠️ A status a signal produced (a negative one) is recorded as `128 + n`, the
-shell's convention, because the record takes statuses of `0` or more.
+A second start while one is live is refused. Whatever ends a stream — the last line,
+`stop`, a timeout, or a page that hung up (`app` cancels it) — the outcome is recorded:
+the status, `timeout` or `stopped`. ⚠️ A signal's status is recorded as `128 + n`.
 
 ## ⛔ The frame policy's record of origins does NOT expire
 
@@ -55,8 +52,7 @@ it lets a page frame ANY local service, on any port, forever. ⭐ This record na
 ports an editor for THIS source root was discovered on, and a widening is argued rather
 than defaulted into.
 
-⚠️ **Forgetting is not offered.** The record is dropped when the process ends, and a
-cold instance frames nothing: the run index and the practice-editor route fill it.
+⚠️ **Forgetting is not offered**: a cold instance frames nothing until the index fills it.
 
 ## ⛔ Output is filtered, then gated on the wire
 
@@ -85,6 +81,7 @@ from studyforge.execute import (
     Quiet,
     RunHandle,
     Runner,
+    declares_runner,
     exit_line,
     open_url,
     practice_folder,
@@ -97,6 +94,7 @@ from studyforge.progress import RAISES as PROGRESS_RAISES
 from studyforge.serve.discovery import Discovered, ServedCorpus
 from studyforge.serve.routes.breakdown import fold
 from studyforge.serve.routes.content import ContentSource
+from studyforge.serve.routes.reachable import Reachable
 from studyforge.serve.withheld import OutputGate, marks_of
 
 #: The line said, just before the exit line, when the store refused the outcome.
@@ -107,8 +105,9 @@ EditorFor = Callable[[ServedCorpus], EditorProbe]
 
 
 def runner_for(corpus: ServedCorpus) -> Runner:
-    """Return the corpus's runner: its root, and the container THIS checkout recorded."""
-    return Runner(corpus.root, recorded(corpus.root, corpus.source).runner)
+    """Return the corpus's runner, by the name THIS checkout recorded; required if declared."""
+    name = recorded(corpus.root, corpus.source).runner
+    return Runner(corpus.root, name, required=declares_runner(corpus.root))
 
 
 def editor_for(corpus: ServedCorpus) -> EditorProbe:
@@ -146,6 +145,7 @@ class Runs:
         self._lock = threading.Lock()
         self._probes_lock = threading.Lock()
         self._probes: dict[str, EditorProbe] = {}
+        self.reachable = Reachable(runner)  # ⭐ the index's `runnable`, one runner each
         #: ⛔ Every editor origin this instance has EVER discovered, which is what the
         #: frame policy composes from and which never expires (the module
         #: docstring carries the ground). Emptied only by the process ending.

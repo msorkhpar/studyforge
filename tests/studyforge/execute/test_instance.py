@@ -88,3 +88,14 @@ def test_a_record_missing_a_variable_is_refused():
     del values[instance.RUNNER_NAME]
     with pytest.raises(RunRefused, match="missing"):
         instance.checked(values)
+
+
+def test_a_corpus_declares_its_runner_by_the_compose_file_the_skill_writes(tmp_path):
+    from studyforge.execute.instance import COMPOSE_FILE, declares_runner
+    from studyforge.skills.execution import COMPOSE_FILE as WRITTEN
+
+    assert COMPOSE_FILE == WRITTEN, "one spelling of the file both sides read"
+    assert not declares_runner(tmp_path)
+    (tmp_path / COMPOSE_FILE).parent.mkdir(parents=True)
+    (tmp_path / COMPOSE_FILE).write_text("services: {}\n", encoding="utf-8")
+    assert declares_runner(tmp_path)

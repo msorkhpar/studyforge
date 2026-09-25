@@ -70,6 +70,9 @@ from studyforge.serve.response import (
 from studyforge.serve.routes import assets, content
 from studyforge.serve.security import (
     ALLOWED_HOSTS,
+    LOOPBACK,
+    LOOPBACK_PEERS,
+    PUBLISHED_BIND,
     SECURITY_HEADERS,
     refusal,
     require_loopback,
@@ -116,9 +119,11 @@ class ServingServer(ThreadingHTTPServer):
         writers: Collection[str] = (),
         client: str | None = None,
         frames: Frames | None = None,
+        published: bool = False,
     ) -> None:
         """Validate everything, then bind; a refused argument never leaves a socket open."""
-        require_loopback(address[0])
+        require_loopback(address[0], published=published)
+        self.peers = None if published else LOOPBACK_PEERS
         root = Path(site_root)
         if not root.is_dir():
             raise ValueError("the served root is not a directory")
@@ -155,6 +160,10 @@ class ServingServer(ThreadingHTTPServer):
             return SECURITY_HEADERS
         return response_headers(self.frames(), host, self.log, self._withheld)
 
+    def gate(self, peer: str, headers: Mapping[str, str]) -> str | None:
+        """Return `security.refusal`'s answer for one request to this server."""
+        return refusal(peer, headers, self.allowed_hosts, self.peers)
+
     def log(self, message: str) -> None:
         """Hand one scrubbed line to the caller's log, or drop it when there is none."""
         if self._log is not None:
@@ -179,7 +188,7 @@ class ServingServer(ThreadingHTTPServer):
         if path.rstrip("/") == API_ROOT:
             return json_response(200, {"resource": "api", "versions": [f"v{API_VERSION}"]})
         if path.rstrip("/") == API_PREFIX:
-            return json_response(200, _version_document(self.namespaces))
+            return json_response(200, content.version_document(self.namespaces, OWN_NAMESPACES))
         if path.startswith(API_PREFIX + "/"):
             name, _, rest = path[len(API_PREFIX) + 1 :].partition("/")
             found = self.namespaces.get(name)
@@ -199,10 +208,11 @@ def make_server(
     writers: Collection[str] = (),
     client: str | None = None,
     frames: Frames | None = None,
+    published: bool = False,
 ) -> ServingServer:
-    """Build a bound, not-yet-serving server on `127.0.0.1`; `port=0` picks a free one."""
+    """Build a bound, not-yet-serving server on `127.0.0.1` (`published`: its container's)."""
     return ServingServer(
-        ("127.0.0.1", port),
+        (PUBLISHED_BIND if published else LOOPBACK, port),
         site_root,
         source,
         namespaces=namespaces,
@@ -211,21 +221,8 @@ def make_server(
         writers=writers,
         client=client,
         frames=frames,
+        published=published,
     )
-
-
-def _version_document(namespaces: Mapping[str, Route]) -> dict:
-    """Return what `/api/v1` says: the namespaces served and which of them cache."""
-    return {
-        "resource": "api-version",
-        "namespaces": sorted(namespaces),
-        "cacheable": [f"{API_PREFIX}/{name}/" for name in OWN_NAMESPACES],
-        "endpoints": {
-            "toc": f"{API_PREFIX}/content/{content.TOC}",
-            "unit": f"{API_PREFIX}/content/{content.UNITS}{{key}}",
-            "asset": f"{API_PREFIX}/assets/{{path}}",
-        },
-    }
 
 
 class _Handler(BaseHTTPRequestHandler):
@@ -242,7 +239,7 @@ class _Handler(BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:
         """Answer a `GET` (and, through it, a `HEAD`)."""
-        refused = refusal(self.client_address[0], self.headers, self.server.allowed_hosts)
+        refused = self.server.gate(self.client_address[0], self.headers)
         if refused is not None:
             self._write(error(403, refused), close=True)
             return
@@ -253,7 +250,7 @@ class _Handler(BaseHTTPRequestHandler):
     def do_POST(self) -> None:
         """Answer a `POST` under a writer namespace, after the gate; `405` anywhere else."""
         path = urlsplit(self.path).path
-        refused = refusal(self.client_address[0], self.headers, self.server.allowed_hosts)
+        refused = self.server.gate(self.client_address[0], self.headers)
         if refused is not None or self.server.writer(path) is None:
             self._unsupported()
             return
@@ -286,7 +283,7 @@ class _Handler(BaseHTTPRequestHandler):
 
     def _unsupported(self) -> None:
         """Answer any other method `405`, after the same gate."""
-        refused = refusal(self.client_address[0], self.headers, self.server.allowed_hosts)
+        refused = self.server.gate(self.client_address[0], self.headers)
         answer = error(403, refused) if refused else error(405, "method not allowed")
         headers = answer.headers if refused else (*answer.headers, ("Allow", "GET, HEAD"))
         self._write(Response(answer.status, headers, answer.body), close=True)

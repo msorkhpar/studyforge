@@ -180,12 +180,12 @@ def test_it_draws_nothing_and_types_no_word_a_reader_sees():
 
 def test_over_a_file_it_is_not_available_and_sends_nothing():
     # ⛔ R8: `file://` has no origin. EVERY entry point asks `available()` first
-    # — the two acts, where a running editor is, and one practice's
-    # two editor windows — and a code file's windows and its test, and one
-    # unit's practice status.
+    # — the two acts, where a running editor is, whether the corpus can run
+    # code, and one practice's two editor windows — and a code file's windows
+    # and its test, and one unit's practice status.
     body = uncommented()
     assert "location.protocol === 'http:'" in body
-    assert body.count("if (!available())") == 7
+    assert body.count("if (!available())") == 8
 
 
 def test_a_refusal_is_a_rejection_naming_what_was_refused_before_any_request():

@@ -49,8 +49,8 @@ def test_it_follows_the_practice_editor_in_the_bundle_which_is_what_lets_it_find
 def test_an_example_is_wired_only_once_the_editor_is_up():
     # ⛔ Until then an entry is its lines and the built sentence: every link is followed.
     body = behaviour()
-    up = body[body.index("run.editor(entries[0].corpus).then") :]
-    assert up.index("if (!found) { return; }") < up.index("wire(entry);")
+    up = body[body.index("Promise.all([run.editor(entries[0].corpus), runnable])") :]
+    assert up.index("if (!found || !both[1]) { return; }") < up.index("wire(entry);")
     assert "addEventListener('toggle'" in body[body.index("function wire(entry)") :]
 
 
@@ -87,8 +87,18 @@ def test_a_modified_click_is_left_to_the_browser():
 
 def test_the_copy_sentence_replaces_the_plain_one_only_for_an_editor_that_is_up():
     body = behaviour()
-    up = body[body.index("run.editor(entries[0].corpus).then") :]
-    assert up.index("if (!found) { return; }") < up.index("show(part(entry, 'copy'), true);")
+    up = body[body.index("Promise.all([run.editor(entries[0].corpus), runnable])") :]
+    assert up.index("if (!found || !both[1]) { return; }") < up.index(
+        "show(part(entry, 'copy'), true);"
+    )
+
+
+def test_a_corpus_whose_declared_runner_is_down_keeps_every_example_plain():
+    # ⛔ A declared runner that is down runs no test, so no example opens its editor
+    # and no Run tests is offered: the built plain view stands. A server too old
+    # to say is taken as runnable, as before.
+    body = behaviour()
+    assert "run.runnable ? run.runnable(entries[0].corpus) : Promise.resolve(true)" in body
 
 
 def test_it_never_claims_or_enforces_read_only():

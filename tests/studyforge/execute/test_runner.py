@@ -19,7 +19,15 @@ from pathlib import Path
 import pytest
 
 from studyforge import execute
-from studyforge.execute import CONTAINER, HOST, RUN_ENVIRONMENT, Runner, RunRefused, exit_line
+from studyforge.execute import (
+    CONTAINER,
+    HOST,
+    RUN_ENVIRONMENT,
+    RUNNER_DOWN,
+    Runner,
+    RunRefused,
+    exit_line,
+)
 from studyforge.execute.runner import KILL_BY_TOKEN, MERGE_STDERR, RUN_TOKEN
 from tests.studyforge.execute.runnable import alive, gone
 from tests.studyforge.execute.test_mode import calls, fake_docker
@@ -105,6 +113,30 @@ def test_host_mode_carries_the_run_environment(root, monkeypatch):
     )
     lines = list(Runner(root).start([["python3", "env.py"]]).lines())
     assert lines[:-1] == [RUN_ENVIRONMENT[key] for key in sorted(RUN_ENVIRONMENT)]
+
+
+def test_a_required_runner_that_is_down_refuses_and_never_runs_on_the_host(tmp_path, root):
+    # ⛔ A corpus that declares its runner: its code runs there or nowhere.
+    docker = fake_docker(tmp_path, "false ")
+    planted = root / "planted"
+    runner = Runner(root, NAME, docker=str(docker), required=True)
+    with pytest.raises(RunRefused) as refused:
+        runner.mode()
+    assert str(refused.value) == RUNNER_DOWN
+    with pytest.raises(RunRefused):
+        runner.start([["touch", "planted"]])
+    assert not planted.exists(), "a declared runner's run fell back to the host"
+
+
+def test_a_required_runner_that_is_up_runs_in_it(tmp_path, root):
+    docker = fake_docker(tmp_path, f"true {root}")
+    assert Runner(root, NAME, docker=str(docker), required=True).mode() == CONTAINER
+
+
+def test_a_runner_not_required_still_falls_back_to_the_host(tmp_path, root):
+    # ⭐ Only a corpus that declares no runner: the host is its one place to run.
+    docker = fake_docker(tmp_path, "false ")
+    assert Runner(root, NAME, docker=str(docker)).mode() == HOST
 
 
 def test_no_container_named_is_host_mode(root):

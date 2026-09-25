@@ -19,48 +19,42 @@ practice workspaces are. ⛔ Nothing source-specific (R1).
 no editor, no prime — and §7's C5 says such a corpus is **complete at the
 reading floor**, not short of something.
 
-⛔ **So the result is empty: no path, no file, no warning, no stub.** A
-generator that emitted a broken compose file rather than say *"your corpus
-never asked for one"* would be the theatre R5 forbids, and it would put a
-Docker dependency in front of somebody converting a book (spec §11.0).
+⛔ **So the result is empty: no path, no file, no warning, no stub.** A broken
+compose file in place of *"your corpus never asked for one"* is the theatre R5
+forbids, a Docker dependency in front of somebody converting a book (§11.0).
 
 ## ⭐ WHICH DIRECTORY IS BOUND IS DERIVED, AND THE DERIVATION IS THE RULING
 
-⚠️ **§8.1: only the sources are mounted — not the repository.** The
-manifest carries no key naming the directory an editor binds, so it is derived
-from `content.include`'s own common root, which is the corpus's own statement
-about where its material lives.
+⚠️ **§8.1: only the sources are mounted — not the repository.** No manifest
+key names the editor's directory, so it is derived from `content.include`'s
+common root, the corpus's own statement of where its material lives.
 
 ⭐ **A corpus whose material is at the repository root binds the copy of its
-code** (`binds.source_root`), because there is then no directory of its own to
-bind that is not the repository. ⭐ Every other corpus binds the copy beside
-its sources (`binds.code_bind`): a lesson's link to a code file opens it there,
-and the copy's one committed file is written here so the directory exists
-before the start.
+code** (`binds.source_root`): it has no directory of its own but the repository.
+⭐ Every other corpus binds the copy beside its sources (`binds.code_bind`): a
+lesson's link to a code file opens it there, and the copy's one committed file
+is written here so the directory exists before the start.
 
-## ⭐ THE EDITOR SEES EVERY PRACTICE, AND THE RUNNER COMES UP WITH IT
+## ⭐ THE EDITOR SEES EVERY PRACTICE, AND THE RUNNER AND THE SITE COME UP WITH IT
 
-⛔ **Every practice workspace — the source's own and every authored one — lives
-under `PRACTICE_DIRNAME`**, which is not under the sources' common root, so a
-generated editor that bound the sources alone could open no practice file.
-⭐ So the editor binds that directory too, read from the one spelling `emit`
-places workspaces by (`workspaces_bind`), and the sources stay where they were.
-⭐ **The runner a Submit execs into is the file's second service**
-(`runnerservice`), started by the reader's one compose command — never by the
-serving process (§8.3) — from the tag `record` writes into `RUNNER_ENV`.
+⛔ **Every practice workspace lives under `PRACTICE_DIRNAME`**, not under the
+sources' common root, so the editor binds that directory too (`workspaces_bind`).
+⭐ **The runner is the file's second service** (`runnerservice`), and **the study
+server its third** (`siteservice`): one compose command brings up all three,
+the site reaching the runner's run service on an internal network — never the
+Docker socket (§8.3) — once `siteimage` staged its image into `SITE_ENV`.
 
 ## ⭐ A SECOND INSTANCE, AND NO KEY IN THE EDITOR
 
-⭐ `write` defaults the four values `INSTANCE_ENV` records and never overwrites
-a recorded one (`instance.record_instance`); `binds.unkeyed` refuses any
-editor bind that reaches a quiz's key.
+⭐ `write` defaults the values `INSTANCE_ENV` records — the one place a port is
+set — and never overwrites a recorded one (`instance.record_instance`);
+`binds.unkeyed` refuses any editor bind that reaches a quiz's key.
 
 ## ⛔ RE-RUNNING CHANGES NOTHING, AND A HAND-EDIT IS REPORTED
 
-⭐ The same inputs render the same bytes (R10). ⛔ A hand-edit is a finding
-(R19): `written` records each digest, and `hand_edited` names a moved one.
-⭐ `write` makes every directory the compose file binds, and refuses a manifest
-that does not declare its files (`declared`), so `validate` stays clean.
+⭐ Same inputs, same bytes (R10). ⛔ A hand-edit is a finding (R19): `written`
+records each digest. ⭐ `write` makes every directory the compose file binds,
+and refuses a manifest that does not declare its files (`declared`).
 """
 
 from __future__ import annotations
@@ -70,8 +64,15 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
 from studyforge.corpus.manifest import Manifest
-from studyforge.execute import CODE_COPY, IGNORE_TEXT, instance
-from studyforge.skills.execution import composefile, contract, reader, runnerservice, toolchain
+from studyforge.execute import ALLOWED_IGNORE, CODE_COPY, IGNORE_TEXT, instance
+from studyforge.skills.execution import (
+    composefile,
+    contract,
+    reader,
+    runnerservice,
+    siteservice,
+    toolchain,
+)
 from studyforge.skills.execution import written as record_of
 from studyforge.skills.execution.binds import (
     ExecutionRefused,
@@ -84,9 +85,8 @@ from studyforge.skills.execution.declared import refuse_undeclared
 from studyforge.skills.execution.prime import Prime, PrimeRefused, linked, prime_for, stale_in
 from studyforge.skills.execution.toolchain import DIRECTORY_SLOT
 
-#: Where everything this skill generates lives. ⭐ Under the corpus's own
-#: bookkeeping directory, never beside its material: every byte here is
-#: generated and R3 keeps the corpus's own files untouched.
+#: Where everything this skill generates lives. ⭐ Under the corpus's own bookkeeping
+#: directory, never beside its material (R3 keeps the corpus's own files untouched).
 DIRECTORY = ".studyforge/execution"
 
 #: The compose file a reader brings up.
@@ -102,14 +102,14 @@ PRIME_DIR = f"{DIRECTORY}/prime"
 #: skill's record step writes (`record.record_runner`).
 RUNNER_ENV = f"{DIRECTORY}/runner.env"
 
-#: The file the same command reads the editor's tag from, which the same step
-#: writes (`record.record_editor`). ⭐ Beside the runner's and in its shape, so
-#: the tag a site's editor runs is the corpus's record and not a person's memory.
+#: The file the same command reads the editor's tag from (`record.record_editor`).
 EDITOR_ENV = f"{DIRECTORY}/editor.env"
 
-#: The file the same command reads THIS instance's project, editor port and
-#: container names from, which `serve` reads too (`execute.instance`).
+#: THIS instance's project, ports and names, which `serve` reads too (`execute.instance`).
 INSTANCE_ENV = instance.INSTANCE_FILE
+
+#: The study server's image and profile, written by `siteimage.stage_site`.
+SITE_ENV = f"{DIRECTORY}/{siteservice.SITE_ENV_NAME}"
 
 #: What a reader opens first.
 READER_DOC = "EXECUTION.md"
@@ -125,10 +125,8 @@ MARK = "⛔ Generated by studyforge execution onboarding."
 #: skill's (`_is_somebody_elses`), which is how a hand-written one is never
 #: silently overwritten.
 GENERATED = (
-    f"{MARK} A hand-edit here is a "
-    "finding against that skill rather than a fix, and the next regeneration "
-    "writes over it; change corpus.json "
-    "and regenerate."
+    f"{MARK} A hand-edit here is a finding against that skill rather than a fix, and "
+    "the next regeneration writes over it; change corpus.json and regenerate."
 )
 
 #: Why none of this is material. ⚠️ Long enough to clear the manifest's own
@@ -208,6 +206,7 @@ def generate(
     flag = _prime_flag(editor) if primed.projects else None
     editor_flag = selection.primed_by(f"<this corpus>/{PRIME_DIR}") if flag else None
     names = instance.defaults(manifest.source, port=composefile.per_project_port(block))
+    names.update(instance.site_defaults(manifest.source))
     names[instance.PROJECT] = project or names[instance.PROJECT]
     runner = runnerservice.plan(
         editor,
@@ -218,6 +217,13 @@ def generate(
         name_variable=instance.RUNNER_NAME,
     )
     names[instance.RUNNER_NAME] = runner.name
+    site = siteservice.plan(
+        block,
+        source=manifest.source,
+        sources=sources,
+        extra=extra,
+        runner=(runnerservice.SERVICE, runner.service),
+    )
     compose = composefile.render(
         project=composefile.interpolated(instance.PROJECT, names[instance.PROJECT]),
         container_name=composefile.interpolated(instance.EDITOR_NAME, names[instance.EDITOR_NAME]),
@@ -230,6 +236,7 @@ def generate(
         checked=_checked(narration_text),
         binds=tuple((_from_compose(directory), inside) for directory, inside in extra),
         runner=(runnerservice.SERVICE, runner.service),
+        published=(site.services, site.networks),
     )
     document = reader.document(
         manifest,
@@ -238,6 +245,7 @@ def generate(
         runner_env=RUNNER_ENV,
         editor_env=EDITOR_ENV,
         instance_env=INSTANCE_ENV,
+        site_env=SITE_ENV,
         selection=selection,
         primed=primed,
         block=block,
@@ -256,6 +264,7 @@ def generate(
             (COMPOSE_FILE, compose),
             (TOOLCHAIN_FILE, selection.render()),
             (f"{CODE_COPY}/.gitignore", IGNORE_TEXT),
+            *siteservice.files(DIRECTORY, ALLOWED_IGNORE),
             (READER_DOC, document),
         ),
         copies=tuple((f"{PRIME_DIR}/{inside}", origin) for inside, origin in primed.copies()),
@@ -290,6 +299,8 @@ def write(execution: Execution, root: Path) -> tuple[str, ...]:
     if execution.runnable and not (root / INSTANCE_ENV).exists():
         made = instance.text(dict(execution.instance), header=f"# {GENERATED}\n")
         planned.append((INSTANCE_ENV, made.encode("utf-8")))
+    if execution.runnable and not (root / SITE_ENV).exists():
+        planned.append((SITE_ENV, f"# {GENERATED}\n{siteservice.UNSTAGED}".encode()))
     kept = {where for where, _ in execution.copies}
     stale = stale_in(root, PRIME_DIR, kept) if execution.runnable else ()
     for where in stale:

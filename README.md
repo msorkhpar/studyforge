@@ -97,6 +97,38 @@ browser (port 8765 unless you pass `--port`). Stop it with Ctrl-C.
 Both examples, and why each looks the way it does, are walked through in
 [Worked examples](docs/authoring/examples.md).
 
+### Publishing a course: one compose
+
+`studyforge serve` on the host is the development path. A course is published
+with one `docker compose`, which runs the study server, the browser editor and
+the runner together. For a corpus with runnable material, the `execution`
+skill ([step 4](#converting-your-own-material-the-skills-in-order)) writes the
+compose file and stages the study server's image from the installed library,
+refusing a library that is not the one the corpus pinned. You build that image
+once, and then one command, printed in the corpus's `EXECUTION.md`, brings up
+all three:
+
+```sh
+docker compose --env-file .studyforge/execution/runner.env \
+  --env-file .studyforge/execution/editor.env \
+  --env-file .studyforge/execution/instance.env \
+  --env-file .studyforge/execution/site.env \
+  -f .studyforge/execution/compose.yaml up -d --wait
+```
+
+- **Every port is set in one place**, `.studyforge/execution/instance.env`:
+  `STUDYFORGE_SITE_PORT` for the site and `STUDYFORGE_EDITOR_PORT` for the
+  editor. Change one with the `execution` skill's record step, which rewrites
+  that file, and run the command again. A page learns the editor's address
+  from the study server's API, never from a built file, so nothing is rebuilt.
+- **Every port is published on `127.0.0.1` alone.** The editor has no password
+  because loopback is its whole access control. If you widen either bind,
+  restore the editor's authentication first.
+- **The study server never holds the Docker socket.** It reaches the runner
+  over an internal network that only the two of them join, and the runner
+  publishes no port. The runner runs only the commands your corpus's records
+  name: a practice's Run and Submit, and each example's test.
+
 ## Converting your own material: the skills, in order
 
 Each skill is a document you, or an agent working for you, follow in the
@@ -117,7 +149,7 @@ documents in this checkout.
 | 1 | `reconnaissance` — [source reconnaissance](src/studyforge/skills/reconnaissance/SKILL.md) | Surveys material nobody has read yet: how deep it is, what a unit is, what repeats, whether anything runs | you hold a draft manifest and the questions only you can answer |
 | 2 | `onboarding` — [corpus onboarding](src/studyforge/skills/onboarding/SKILL.md) | Asks whether you want narration, then turns the settled draft into `corpus.json` and writes everything around it: the adapter scaffold and its tests, the skill stubs, the pin to the installed library | the one file that is yours is named, and every other file is generated |
 | 3 | `adapter` — [adapter authoring](src/studyforge/skills/adapter/SKILL.md) | Writes that one file, the adapter's reading step, and emits the archive | `studyforge validate` exits `0` |
-| 4 | `execution` — [execution onboarding](src/studyforge/skills/execution/SKILL.md) | Only for runnable material: selects a toolchain and writes the compose file for the browser editor and the runner | the runner's tag is recorded; a corpus that declares no runtime skips this step and is not short |
+| 4 | `execution` — [execution onboarding](src/studyforge/skills/execution/SKILL.md) | Only for runnable material: selects a toolchain and writes the one compose file for the study server, the browser editor and the runner | the runner's tag is recorded and the site's image staged; a corpus that declares no runtime skips this step and is not short |
 | 5 | `exercises` — [authoring exercises](src/studyforge/skills/exercises/SKILL.md) | Authors each page's exercises once, runs every gate over them, and commits what clears | every page has what its material supports, and every shortfall is reported |
 | 6 | `buildserve` — [build and serve](src/studyforge/skills/buildserve/SKILL.md) | Asks whether you want narration for this run, then validates, narrates if you ask, builds the site and serves it on loopback; `--no-narration` serves no voice and deletes no clip | the site answers, and every partial state is named |
 | 7 | `personalarchive` — [personal archive](src/studyforge/skills/personalarchive/SKILL.md) | Exports the corpus to one file, with your progress or without it, and imports it on another machine | the file imports where you take it |
@@ -176,9 +208,12 @@ Every image the framework and its components use is built on your machine from
 a checkout and addressed by a tag. What a build pulls, a base image or an
 engine, is pinned by digest, never by a moving name.
 
-- **The study site runs in no container.** `studyforge build` and
-  `studyforge serve` are ordinary processes on your machine, standard library
-  only, and the serving process is never given the Docker socket.
+- **The study site** is built by `studyforge build`, an ordinary process on
+  your machine, standard library only. Published, it is served from an image
+  the `execution` skill stages from the installed library at the corpus's pin,
+  on a base pulled by digest; on the host, `studyforge serve` is the same code
+  as an ordinary process. Either way the serving process is never given the
+  Docker socket.
 - **Narration** comes from the `narrate-service` component, a separate
   repository. You build and start it from its own checkout, following its own
   README; it answers on `127.0.0.1:8870`, which is where `studyforge narrate`
@@ -189,7 +224,7 @@ engine, is pinned by digest, never by a moving name.
   submissions and the browser editor. Each is tagged from its build inputs, and
   its build script prints that tag without building. The `execution` skill asks
   for the tag, records it in your corpus, and writes the one `docker compose`
-  command that starts both. With them up, a lesson's link to one of your code
+  command that starts both, and the study server with them. With them up, a lesson's link to one of your code
   files opens in the editor beside its test, from a copy of your code, and the
   test runs there; your own files are never written.
 - **The framework's own build environment** is `docker/dev/check` in this
