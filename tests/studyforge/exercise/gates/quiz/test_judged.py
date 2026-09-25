@@ -22,6 +22,8 @@ from studyforge.exercise.gates.quiz import (
     JUDGED_FIELDS,
     Q1,
     Q2,
+    Q2_PROMPT,
+    Q2_RULE,
     Q3,
     Q4,
     WHOLE_QUESTION,
@@ -247,3 +249,40 @@ def test_the_digest_is_taken_over_the_whole_question_and_not_only_its_stem():
     # ⭐ And it is stable: two takings of one question are the same bytes (R10).
     again = material.built(material.planted(material.NONE))
     assert question_digest(questions[0]) == question_digest(again[0])
+
+
+# ⭐ `Q2` guards against a GIVEAWAY: its reading is taken under `Q2_PROMPT` and
+# says why, and its verdict names the rule's version.
+
+
+def test_a_q2_reading_taken_under_another_prompt_is_refused():
+    _, taken = clean()
+    free = next(entry for entry in taken if entry.gate == Q2)
+    retired = "Without the page, from general knowledge alone, which option is correct?"
+    planted = dataclasses.replace(free, prompt=retired)
+    print("prompt:", planted.prompt)
+    assert planted.prompt != Q2_PROMPT
+    with pytest.raises(ExerciseError, match="not Q2_PROMPT"):
+        require_judgements((planted,), WHERE)
+    # ⛔ And only Q2's prompt is fixed: Q1 and Q3 still record their own words.
+    assert require_judgements(taken, WHERE) == taken
+
+
+@pytest.mark.parametrize("because", ["", "  "])
+def test_a_q2_reading_that_does_not_say_why_is_refused(because):
+    _, taken = clean()
+    free = next(entry for entry in taken if entry.gate == Q2)
+    with pytest.raises(ExerciseError, match="'because' is required"):
+        require_judgements((dataclasses.replace(free, because=because),), WHERE)
+    with pytest.raises(ExerciseError, match="'because' is text"):
+        require_judgements((dataclasses.replace(free, because=None),), WHERE)
+
+
+def test_a_q2_verdict_names_the_rule_s_version_and_the_reader_s_reason():
+    questions, taken = clean()
+    recorded = judged_gate(Q2, questions, taken).recorded
+    print(recorded[0])
+    assert recorded[0] == ("rule", Q2_RULE)
+    assert dict(recorded)["because:q-1"] == material.NO_CUE
+    for gate in (Q1, Q3):
+        assert "rule" not in dict(judged_gate(gate, questions, taken).recorded)

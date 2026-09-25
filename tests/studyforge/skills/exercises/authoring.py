@@ -27,7 +27,16 @@ from pathlib import Path
 
 from studyforge.address import Address
 from studyforge.exercise import CODE, EDGE, MAIN, QUIZ, Case, Origin
-from studyforge.exercise.gates.quiz import Q1, Q2, Q3, WHOLE_QUESTION, Judgement, question_digest
+from studyforge.exercise.gates.quiz import (
+    PICKED_NONE,
+    Q1,
+    Q2,
+    Q3,
+    WHOLE_QUESTION,
+    Judgement,
+    page_free,
+    question_digest,
+)
 from studyforge.exercise.quiz import Option, Question
 from studyforge.skills.exercises import (
     CORE,
@@ -452,6 +461,10 @@ class Scripted:
         return BECAUSE
 
 
+#: What the scripted page-free reader says when the wording decides nothing.
+NO_CUE = "no cue in the wording singles out an option"
+
+
 class Judging:
     """The independent pass's stand-in: every judgement taken, held, over the question as asked."""
 
@@ -464,12 +477,44 @@ class Judging:
         taken = []
         for question in questions:
             over = question_digest(question)
-            for gate in (Q1, Q2):
-                taken.append(_judged(gate, question.id, WHOLE_QUESTION, over))
+            taken.append(_judged(Q1, question.id, WHOLE_QUESTION, over))
+            taken.append(page_free(question, PICKED_NONE, NO_CUE, "a scripted stand-in"))
             for option in question.options:
                 if not option.correct:
                     taken.append(_judged(Q3, question.id, option.id, over))
         return tuple(taken)
+
+
+#: ⛔ The cue a page-free reader names when a question gives its key away.
+GIVEAWAY = "the keyed option is the longest and restates the stem"
+
+
+class GivingAway(Judging):
+    """⛔ A planted `Q2` refusal: for its first `times` calls, the page-free reader picks the key.
+
+    ⭐ The reason it gives is `GIVEAWAY`, which a retry's brief must carry.
+    """
+
+    def __init__(self, times: int) -> None:
+        super().__init__()
+        self.times = times
+
+    def __call__(self, brief: Brief, questions: tuple[Question, ...]) -> tuple[Judgement, ...]:
+        """Every judgement held, but `Q2` picks the key while the plant lasts."""
+        taken = super().__call__(brief, questions)
+        if self.calls > self.times:
+            return taken
+        asked = {question.id: question for question in questions}
+        return tuple(
+            page_free(asked[entry.question], _key_of(asked[entry.question]), GIVEAWAY, "a stand-in")
+            if entry.gate == Q2
+            else entry
+            for entry in taken
+        )
+
+
+def _key_of(question: Question) -> str:
+    return next(option.id for option in question.options if option.correct)
 
 
 def _judged(gate: str, question: str, option: str, over: str) -> Judgement:

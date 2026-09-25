@@ -209,7 +209,10 @@ class Judge(Protocol):
     """The independent pass a quiz's `Q1`–`Q3` are taken by — ⛔ never the author."""
 
     def __call__(self, brief: Brief, questions: tuple[Question, ...]) -> tuple[Judgement, ...]:
-        """Return one judgement per question for `Q1` and `Q2`, one per wrong option for `Q3`."""
+        """Return one judgement per question for `Q1` and `Q2`, one per wrong option for `Q3`.
+
+        ⭐ `Q2` is `quiz.page_free`'s reading of a reader asked `Q2_PROMPT`.
+        """
 
 
 def words_of(text: str) -> int:
