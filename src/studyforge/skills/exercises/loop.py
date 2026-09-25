@@ -77,6 +77,7 @@ is returned.
 
 from __future__ import annotations
 
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, replace
 from pathlib import Path
 
@@ -196,8 +197,19 @@ def drafting_order(page: Page, plan: Plan) -> tuple[Planned, ...]:
     ⭐ Ordinals are handed out as exercises ship, so this order is the order a
     reader meets them on the page. ⛔ Slots are not renumbered.
     """
-    code = tuple(planned for planned in plan.exercises if planned.name != page.quiz)
-    return code + tuple(planned for planned in plan.exercises if planned.name == page.quiz)
+    return quiz_last(plan.exercises, page.quiz, lambda planned: planned.name)
+
+
+def quiz_last[T](items: Iterable[T], quiz: str | None, name: Callable[[T], str]) -> tuple[T, ...]:
+    """Return `items` in drafting order: every one not named `quiz`, then the one that is.
+
+    ⭐ **The one spelling of the order**, so what a coverage report shipped can
+    be read back against its plan (`practised`) by the rule that shipped it.
+    """
+    held = tuple(items)
+    return tuple(one for one in held if name(one) != quiz) + tuple(
+        one for one in held if name(one) == quiz
+    )
 
 
 def carried_practices(root: Path | str, page: Page, where: str) -> tuple[int, ...]:

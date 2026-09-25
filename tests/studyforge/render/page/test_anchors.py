@@ -88,9 +88,10 @@ def practice(key: str, title: str) -> dict:
     }
 
 
-def test_a_practice_is_one_line_of_the_outline_its_title():
-    # ⭐ Seven practices gave the outline twenty-eight lines, twenty-one of
-    # them one of three words. A practice is found by its title.
+def test_a_lesson_s_practices_are_one_list_in_the_outline_each_by_its_title():
+    # ⭐ Seven practices gave the outline twenty-eight lines, twenty-one of them
+    # one of three words. The practices are one list, and each is found by its
+    # title, pointing at its card.
     practices = [practice("practice-java", "Reverse"), practice("practice-java-2", "Round")]
     found = anchors.entries({"sections": [*TWO_SECTIONS["sections"], *practices]})
     assert [(level, label) for level, label, _ in found] == [
@@ -98,10 +99,12 @@ def test_a_practice_is_one_line_of_the_outline_its_title():
         (1, "Your first class"),
         (2, "A"),
         (3, "B"),
-        (1, "Reverse"),
-        (1, "Round"),
+        (1, "Practice (2)"),
+        (2, "Reverse"),
+        (2, "Round"),
     ]
-    assert found[-1][2] == "#" + anchors.section_anchor("practice-java-2")
+    assert found[-3][2] == "#" + anchors.PRACTICES_ANCHOR
+    assert found[-1][2] == "#" + anchors.card_anchor("practice-java-2")
 
 
 def test_a_practice_recorded_under_the_units_title_is_listed_by_its_own_heading():
@@ -115,8 +118,9 @@ def test_a_practice_recorded_under_the_units_title_is_listed_by_its_own_heading(
     document = {"title": "Adding up", "sections": [TWO_SECTIONS["sections"][0], own, quiz]}
     assert [(level, label) for level, label, _ in anchors.entries(document)] == [
         (1, "Before you start"),
-        (1, "Practice: Greeter"),
-        (1, "Check yourself: greeting"),
+        (1, "Practice (2)"),
+        (2, "Practice: Greeter"),
+        (2, "Check yourself: greeting"),
     ]
 
 

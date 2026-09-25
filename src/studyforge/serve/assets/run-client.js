@@ -7,7 +7,7 @@
    an origin that can answer it.
 
    ⭐ **A client and nothing else.** It publishes `studyforge.run` — `available`,
-   `start`, `stop`, `editor`, `practice`, `code`, `codeTest` — and
+   `start`, `stop`, `editor`, `practice`, `code`, `codeTest`, `practices` — and
    `studyforge.quiz` — `available`,
    `grade` (below) — and draws nothing: the practice panel that puts Run and
    Submit in front of a reader is the page's own. ⛔ A control this file
@@ -255,6 +255,32 @@
       .then(function (response) { return response.ok ? response.json() : refused(response.status); });
   }
 
+  /* ⭐ WHAT THE READER'S OWN RECORD SAYS OF A UNIT'S PRACTICES — `{ section key:
+     passed }` — read from the state namespace, which reads the progress record
+     on this machine (spec §8.5). ⛔ Asked, never cached, and never written: a
+     pass is recorded by the server when a Submit exits 0, and nothing here can
+     say one. ⚠️ Anything but an answer is `null`, and a card then says nothing
+     rather than something wrong. The unit is named by its key, verbatim, and a
+     key that is not one is refused before any request. */
+  var STATE_BASE = '/api/v1/state/';
+  var UNITS = '/units/';
+
+  function practices(corpus, unit) {
+    if (!available()) { return refused('no-origin'); }
+    if (!CORPUS.test(corpus) || !KEY.test(unit)) { return refused('unit'); }
+    return fetch(STATE_BASE + corpus + UNITS + unit, { cache: 'no-store', credentials: 'same-origin' })
+      .then(function (response) { return response.ok ? response.json() : null; })
+      .then(function (answer) {
+        var held = answer && answer.practices;
+        if (!held || typeof held !== 'object') { return null; }
+        var passed = {};
+        Object.keys(held).forEach(function (section) {
+          passed[section] = !!held[section] && held[section].passed === true;
+        });
+        return passed;
+      }, function () { return null; });
+  }
+
   window.studyforge = window.studyforge || {};
   window.studyforge.quiz = { available: available, grade: grade };
   window.studyforge.run = {
@@ -265,6 +291,7 @@
     practice: practice,
     code: code,
     codeTest: codeTest,
+    practices: practices,
     modes: MODES.slice()
   };
 })();

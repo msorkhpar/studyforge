@@ -104,16 +104,16 @@ nothing, because there is nothing to move; and only the section that OPENS the
 page is asked, because a later section's first heading is that section's own
 name.
 
-## ⛔ A practice is ONE line of the outline, its title
+## ⛔ A lesson's practices are ONE list in the outline, each by its title
 
 ⚠️ **A practice's layout is three headings** — the statement, the lesson and
 the starting code — and each is the same word on every practice. ⭐ Listed,
 a page with seven practices gave the outline twenty-eight lines, twenty-one of
-them one of three words. ⛔ So a practice section contributes its own entry,
-the practice's title, and none of its headings: they are still on the page and
-still anchored, and the outline is where a reader finds the practice, not its
-parts. ⭐ The title is its recorded heading, or, where that only repeats the
-unit's title, the heading its material opens with (`practice_title`).
+them one of three words. ⛔ So the practices are listed once, as *Practice
+(n)*, with each practice under it by its title — pointing at its CARD, where a
+reader chooses it (`page.practices`) — and none of their headings. ⭐ The
+title is its recorded heading, or, where that only repeats the unit's title,
+the heading its material opens with (`practice_title`).
 
 ## The outline stops at level 3
 
@@ -134,6 +134,15 @@ from studyforge.unit import heading_anchor
 #: The section kind whose headings earn no line of their own (see above). ⛔ The
 #: archive's word, the one `page.practice.PRACTICE` selects its panel on.
 PRACTICE = "practice"
+
+#: The practice list's own anchor, and what a practice's card's anchor is prefixed
+#: with. ⛔ Neither can collide: a section's anchor is `s-…` and a block's ends
+#: `-b<n>`.
+PRACTICES_ANCHOR = "practices"
+CARD_PREFIX = "card-"
+
+#: The practice list's heading, *Practice (n)* (R13).
+PRACTICES_TITLE_TEMPLATE = "practices-title.html"
 
 #: Deepest heading level that earns a line in the outline.
 OUTLINE_MAX_LEVEL = 3
@@ -156,6 +165,16 @@ OUTLINE_TEMPLATE = "outline.html"
 SECTION_PREFIX = "s-"
 
 
+def card_anchor(key: object) -> str:
+    """Return the DOM id of a practice's card: `practice-java` -> `card-practice-java`."""
+    return CARD_PREFIX + _slug(key, "a section key")
+
+
+def practices_title(count: int) -> str:
+    """Return the practice list's heading: *Practice (n)*, in the template's words (R13)."""
+    return templates.fill(PRACTICES_TITLE_TEMPLATE, count=str(count))
+
+
 def section_anchor(key: object) -> str:
     """Return the DOM id of a whole section: `practice-java` -> `s-practice-java`."""
     return SECTION_PREFIX + _slug(key, "a section key")
@@ -174,23 +193,26 @@ def entries(document: dict) -> tuple[tuple[int, str, str], ...]:
     A section contributes one level-1 entry — ⚠️ **only on a page that has more
     than one**, because a lone section's name is already the page's title and
     listing it says nothing — and one entry per heading shallow enough to earn a
-    line, ⛔ except a practice, which is its level-1 entry alone. ⭐ Every entry
+    line. ⛔ A lesson's practices are one level-1 entry, *Practice (n)*, and
+    one level-2 entry per practice, its title, pointing at its card. ⭐ Every entry
     points at an anchor this page actually emitted, because both come from the
     same walk.
     """
     sections = list(document.get("sections") or ())
     out: list[tuple[int, str, str]] = []
     promoted = title_heading(document)
+    practices = [s for s in sections if isinstance(s, dict) and s.get("kind") == PRACTICE]
     for index, section in enumerate(sections):
         key = section.get("key")
-        practice = section.get("kind") == PRACTICE
-        if len(sections) > 1:
-            label = str(section.get("heading") or key or "")
-            if practice:
-                label = practice_title(section, document.get("title"))
-            out.append((1, label, anchor(section_anchor(key))))
-        if practice:
+        if section.get("kind") == PRACTICE:
+            # ⭐ The list once, then each practice by its title, pointing at its card.
+            if section is practices[0]:
+                out.append((1, practices_title(len(practices)), anchor(PRACTICES_ANCHOR)))
+            label = practice_title(section, document.get("title"))
+            out.append((2, label, anchor(card_anchor(key))))
             continue
+        if len(sections) > 1:
+            out.append((1, str(section.get("heading") or key or ""), anchor(section_anchor(key))))
         for position, block in enumerate(section.get("blocks") or ()):
             # ⛔ The block the page is HEADED by is not a line in the page's own
             # contents: a list whose first entry is the title above it says

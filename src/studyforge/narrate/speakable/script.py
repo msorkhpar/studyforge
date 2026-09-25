@@ -88,6 +88,8 @@ translated into `SpeakableError`.
 
 from __future__ import annotations
 
+from collections.abc import Container
+
 from studyforge.archive.blocks import BLOCK_TYPES, CONTAINER_TYPES, item_parts, list_start, walk
 from studyforge.archive.scrub import assert_clean
 from studyforge.narrate.speakable.naming import speech_id
@@ -175,16 +177,24 @@ def code_caption(lang: object) -> str:
 
 
 def units_of(
-    unit: str, section_key: str, blocks: object, path: tuple[int, ...] = ()
+    unit: str,
+    section_key: str,
+    blocks: object,
+    path: tuple[int, ...] = (),
+    omit: Container[int] = (),
 ) -> tuple[tuple[SpeechUnit, ...], int]:
     """Return one section's ordered speech units and the count of blocks withheld.
 
     `unit` is a flattened unit token, `section_key` the served section's key, and
     `path` the positions already walked into — empty for a section's own blocks.
+    ⛔ `omit` is the positions the page does not show, which are not spoken; like
+    the page's own `omit`, it renumbers nothing.
     """
     spoken: list[SpeechUnit] = []
     withheld = 0
     for index, block in enumerate(blocks if isinstance(blocks, list) else []):
+        if index in omit:
+            continue
         here = (*path, index)
         kind = block.get("type") if isinstance(block, dict) else None
         rule = SPEECH_OF.get(kind if isinstance(kind, str) else "")

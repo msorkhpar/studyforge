@@ -52,7 +52,7 @@ def test_a_quiz_record_round_trips():
 
 
 def test_a_quiz_writes_its_keys_in_the_records_own_order():
-    written = to_document(from_document(record(origin=PAGE), WHERE))
+    written = to_document(from_document(record(origin=PAGE, concepts=["an idea"]), WHERE))
     assert tuple(written) == tuple(key for key in EXERCISE_KEYS if key in QUIZ_KEYS)
     assert set(QUIZ_KEYS) <= set(EXERCISE_KEYS), "a quiz key the record does not define"
 

@@ -1952,6 +1952,20 @@ These are proven surfaces, generalised in their addressing and otherwise kept.
   `narration` key (§4).
 - **Video** — vendored Plyr with its icon sprite substituted rather than fetched;
   nothing may reach the network.
+- **A lesson's practices are one list, worked one at a time in a workspace**
+  (the user's ruling). The page lists them as one **Practice (n)** section of
+  titled cards, each saying what it practises (the record's `concepts`, §7)
+  and, served, its status from the reader's own progress record — never the
+  page's. Opening a card gives one full-screen workspace per page: the
+  statement on the left, always visible and scrolled on its own, the editor
+  with Run and Submit and their output on the right, Previous and Next between
+  the lesson's practices, and Close, which returns the reader to where they
+  were; at phone width the two stack. A quiz is a card too, answered through
+  the server as before, and a worked solution stays behind its closed
+  disclosure. ⛔ **No editor loads until a practice is opened, and one at
+  most**, and nothing on the page is moved to build the workspace: an editor
+  frame that is moved reloads. With no script every practice stays readable
+  under the list.
 - ⛔ **The source's own outline number is not served.** A title or heading the
   source writes as `5.1.1.1 Thread states`, `3.2.1. Batch processing` or `10.7.2 —
   ORM frameworks` is shown and narrated as its words alone, on the page, in its

@@ -1,9 +1,8 @@
 r"""The practice panel: the reader-facing surface of one graded or ungraded exercise.
 
-**What it does.** Renders the controls that sit under a practice section's
-statement — where the reader's file is, the editor slot and its two tabs, the
-control that maximises the panel, Run and Submit, the streamed result, and the
-label saying what a pass here is worth.
+**What it does.** Renders the controls a practice is worked with — where the
+reader's file is, the editor slot and its two tabs, Run and Submit, the streamed
+result, and the label saying what a pass here is worth.
 
 **How you use it.** `practice.render(section, document, placement)` returns the
 panel's markup, or `''` for a section that sets no work; `page.document` joins
@@ -46,23 +45,14 @@ statement differently needs no change here.
    `workspace` gets no panel at all, and Submit is emitted only where the
    record names a test command.
 
-## ⛔ The maximise is GEOMETRY, and the panel emits only its control
+## ⭐ The panel is shown in the page's one workspace
 
-⛔ **The reader asked for a way to give the practice the whole viewport** — the
-code, the tests, Run and Submit — and the panel already carries every one of
-them. ⭐ So this module emits one more real `<button>` and nothing else: which
-part of the page is large is `practice.css`'s, and the attribute that says so is
-`practice.js`'s.
-
-⚠️ **Both of the control's words are HERE**, in the template — the one it ships
-showing and the one it carries for the other state — because the Python side is
-the single source for what is emitted, and a label spelled in the script too
-would be a second place for it to drift.
-
-⛔ **It ships `hidden`, like the controls beside it.** Over `file://` the panel
-is one sentence, and a control that makes a sentence full-screen is the dead
-button this module refuses everywhere else. ⚠️ **A quiz renders no panel**, so
-it cannot carry this control either — asserted, not assumed.
+⭐ A lesson's practices are listed as cards (`page.practices`), and a card opens
+its practice in the one workspace the page carries: the statement on the left,
+this panel on the right. ⛔ **The panel is not moved there**, and nothing in it
+is re-rendered: `practice-workspace.js` shows it in the workspace's geometry,
+so the editor frame it builds on opening never changes parent — a frame moved
+to another parent reloads.
 
 ## ⛔ R5's keys never reach the page
 

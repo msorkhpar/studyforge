@@ -32,6 +32,7 @@ PUBLIC_SURFACE = frozenset(
         "Mentions",
         "Overlay",
         "Section",
+        "bare_lesson",
         "check_test_record",
         "derived_section_key",
         "from_document",

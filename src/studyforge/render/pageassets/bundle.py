@@ -73,6 +73,11 @@ from studyforge.render.pageassets.source import text
 #: reach the other's element and the order between them settles nothing but
 #: where a reader of the bundle finds them.
 #:
+#: ⭐ `practice-workspace.css` follows `practice-quiz.css`, and ⛔ that order is
+#: load-bearing: it lays an open practice's section and panel over the viewport,
+#: overriding the margin, padding and border the two parts above gave them, and
+#: at equal specificity the last rule wins.
+#:
 #: ⛔ `narration.css` sits after `code-highlight.css` and before the vendored
 #: parts, and both halves of that are meaning too. It comes *after* the
 #: highlight because the narration highlight washes over the inside of a code
@@ -91,6 +96,7 @@ STYLE_PARTS = (
     "notes.css",
     "practice.css",
     "practice-quiz.css",
+    "practice-workspace.css",
     "code-highlight.css",
     "narration.css",
     "plyr.css",
@@ -138,6 +144,13 @@ STYLE_PARTS = (
 #: the local study server grades a quiz and the page holds no key (spec §7 §7). ⚠️ They are before
 #: `read-mark.js` because that part's LAST-ness is the property being kept.
 #:
+#: ⭐ `practice-workspace.js` follows `practice-quiz.js`: it hides every practice
+#: under the list and shows the one a card opens. It follows the three parts it
+#: talks to — by events on the document, never by a name one of them defines —
+#: so the order between them settles nothing, and it is stated rather than
+#: left to the alphabet. ⚠️ Before `read-mark.js` because that part's
+#: LAST-ness is the property being kept.
+#:
 #: ⭐ `code-links.js` FOLLOWS `practice-editor.js`, and that order is load-bearing:
 #: it builds its windows with the frame and the one reload that part publishes
 #: (`window.studyforge.frames`), so after it is the only place it finds them.
@@ -160,6 +173,7 @@ SCRIPT_PARTS = (
     "practice.js",
     "practice-editor.js",
     "practice-quiz.js",
+    "practice-workspace.js",
     "code-links.js",
     "progress-view.js",
     "read-mark.js",

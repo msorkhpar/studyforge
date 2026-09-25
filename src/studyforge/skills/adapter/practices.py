@@ -61,7 +61,13 @@ from studyforge.archive.document import build
 from studyforge.archive.scrub import assert_clean
 from studyforge.exercise.bundle import BUNDLE_FILENAME, BUNDLES_DIRNAME, Places, bundle_of, emit
 from studyforge.exercise.gates import drifted, record_of
-from studyforge.skills.exercises import QUIZ_DOCUMENT, QuizRefused, quiz_of
+from studyforge.skills.exercises import (
+    QUIZ_DOCUMENT,
+    AuthoringError,
+    QuizRefused,
+    practised,
+    quiz_of,
+)
 
 #: ⚠️ The date and source an emission is taken with. The generated `emit.py`
 #: rebuilds every document with the run's own, so neither reaches the archive.
@@ -192,6 +198,7 @@ def _code(base: Path, where: str) -> Practice:
             f"'{where}' emits a document the archive cannot carry whole: rebuilt from "
             f"{list(BUILD_FIELDS)} it differs from the framework's emission."
         )
+    fields["exercise"] = _with_concepts(base, bundle.places, fields["exercise"])
     return Practice(bundle.places, fields)
 
 
@@ -210,10 +217,33 @@ def _quiz(base: Path, path: Path, where: str) -> Practice:
         "ordinal": quiz.places.ordinal,
         "title": quiz.title,
         "blocks": [dict(block) for block in QUIZ_BLOCKS],
-        "exercise": quiz.record,
+        "exercise": _with_concepts(base, quiz.places, dict(quiz.record)),
     }
     build(source=PLACEHOLDER_SOURCE, ingested=PLACEHOLDER_DATE, **fields)
     return Practice(quiz.places, fields)
+
+
+def _with_concepts(base: Path, places: Places, record: dict) -> dict:
+    """Return `record` carrying what its unit's plan gave it to check, when a report says.
+
+    ⭐ Read by `practised` off the committed coverage report, so a card shows
+    what the exercise practises without a renderer reaching into authoring
+    material. ⛔ A report that will not read refuses the run, naming it.
+    """
+    try:
+        concepts = practised(base, places)
+    except AuthoringError as refused:
+        raise PracticeRefused(str(refused)) from None
+    return record if concepts is None else {**record, "concepts": list(concepts)}
+
+
+def _same_record(one: object, other: dict) -> bool:
+    """Whether two records are one exercise, whatever each says it practises."""
+    if not isinstance(one, dict):
+        return False
+    return {k: v for k, v in one.items() if k != "concepts"} == {
+        k: v for k, v in other.items() if k != "concepts"
+    }
 
 
 def _new(practice: Practice, documents: list[dict]) -> bool:
@@ -221,7 +251,7 @@ def _new(practice: Practice, documents: list[dict]) -> bool:
     ordinal = practice.places.ordinal
     for one in _practices_of(documents, practice.places.unit):
         if one.get("ordinal") == ordinal:
-            if one.get("exercise") == practice.fields["exercise"]:
+            if _same_record(one.get("exercise"), practice.fields["exercise"]):
                 return False
             raise PracticeRefused(
                 f"'{practice.places.bundle}' is practice {ordinal} of its unit, and "

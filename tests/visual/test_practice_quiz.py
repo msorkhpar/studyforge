@@ -143,6 +143,7 @@ def origin(corpus: Path):
 def as_file(open_page: OpenPage, corpus: Path) -> OpenPage:
     """The harness's own tab, on the quiz page opened as a double-clicked file."""
     open_page.open("file://" + str(page_of(corpus)))
+    open_page.open_practice()
     return open_page
 
 
@@ -150,6 +151,7 @@ def as_file(open_page: OpenPage, corpus: Path) -> OpenPage:
 def served(open_page: OpenPage, origin: str) -> OpenPage:
     """The harness's own tab, on the SAME built page read through the study server."""
     open_page.open(origin)
+    open_page.open_practice()
     return open_page
 
 

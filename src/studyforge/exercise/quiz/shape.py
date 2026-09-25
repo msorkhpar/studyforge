@@ -73,7 +73,7 @@ QUESTIONS = "questions"
 #: absent because they are facts about what a test RUN reports, and a quiz
 #: produces no run — `record` already refuses them beside no grader, and that
 #: refusal is the case vocabulary's own rule rather than something to relax here.
-QUIZ_KEYS = ("provenance", "trust", "kind", "origin", QUESTIONS)
+QUIZ_KEYS = ("provenance", "trust", "kind", "origin", QUESTIONS, "concepts")
 
 #: ⛔ The one a quiz record must carry. `kind` is what selected this shape, and
 #: everything else is defaulted or optional.

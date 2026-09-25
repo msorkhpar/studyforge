@@ -74,6 +74,7 @@ from studyforge.narrate.speakable.script import (
     units_of,
 )
 from studyforge.narrate.speakable.voice import URL_PHRASE, spoken_text
+from studyforge.unit import bare_lesson
 
 #: ⛔ The package's whole public surface. A consumer reaching past this into a
 #: module is a consumer this contract failed.
@@ -107,6 +108,10 @@ __all__ = [
 ]
 
 
+#: The served section kind a practice is, in the unit document's own word.
+PRACTICE = "practice"
+
+
 def speakable_of(document: dict) -> Speakable:
     """Return one served unit document's whole script, in reading order.
 
@@ -130,10 +135,24 @@ def speakable_of(document: dict) -> Speakable:
     for section in sections:
         key = _section_key(section, seen)
         seen.add(key)
-        found, held = units_of(unit, key, section.get("blocks"))
+        blocks = section.get("blocks")
+        found, held = units_of(unit, key, blocks, omit=_not_shown(section, blocks))
         spoken += found
         withheld += held
     return Speakable(unit_key=unit_key_of(unit), units=tuple(spoken), withheld=withheld)
+
+
+def _not_shown(section: dict, blocks: object) -> tuple[int, ...]:
+    """Return the positions of a section the page withholds, which are never spoken.
+
+    ⭐ A practice's lesson heading over nothing but its worked solution: the page
+    leaves it off (`unit.bare_lesson`, the one rule both read), so a clip of it
+    would be one nothing plays.
+    """
+    if section.get("kind") != PRACTICE or not isinstance(blocks, list):
+        return ()
+    bare = bare_lesson(blocks)
+    return () if bare is None else (bare,)
 
 
 def by_position(units: tuple[SpeechUnit, ...]) -> dict:

@@ -55,6 +55,8 @@ reading floor, which is a whole product for prose material.
 |---|---|
 | `states` | the three states, the two acts, and what may complete a practice |
 | `record` | `Exercise`, and reading one out of a practice document |
+| `keys` | the record's key order, and the refusals of its shape |
+| `concepts` | what an exercise practises, as the reader is told it on its card |
 | `cases` | the case vocabulary: `kind`, `cases`, `report` and `origin` |
 | `report` | folding a run's JUnit report through those cases into a breakdown |
 | `quiz` | the quiz: its questions, its key, and the rule that grades them |
@@ -139,12 +141,14 @@ from studyforge.exercise.cases import (
     report_of,
 )
 from studyforge.exercise.errors import ExerciseError
-from studyforge.exercise.record import (
+from studyforge.exercise.keys import (
     AUTHORED_KEYS,
     DEFAULTED_KEYS,
     EXERCISE_KEYS,
     GRADER_KEYS,
     REQUIRED_KEYS,
+)
+from studyforge.exercise.record import (
     Exercise,
     from_document,
     of,

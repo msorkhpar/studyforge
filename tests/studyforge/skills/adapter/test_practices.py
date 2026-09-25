@@ -27,6 +27,7 @@ from studyforge.corpus.container import Container, Unit
 from studyforge.corpus.manifest import parse
 from studyforge.skills.adapter import plan_for, scaffold
 from studyforge.skills.adapter.practices import QUIZ_BLOCKS, PracticeRefused, authored
+from studyforge.skills.exercises import practised
 from studyforge.validate import validate
 from tests.studyforge.skills.adapter import corpora as adapter_corpora
 from tests.studyforge.validate.test_ledger import UNITS, a_corpus, a_pass
@@ -93,6 +94,30 @@ def test_a_practice_the_reader_already_carries_is_kept_not_doubled(committed):
     assert sum(1 for one in found if one["kind"] == "practice") == 1
 
 
+def test_every_authored_practice_says_what_its_plan_gave_it_to_check(committed):
+    # ⭐ A card tells a reader what a practice practises before they open it, and
+    # the words are the plan's own, read off the unit's committed report.
+    held = authored(committed)
+    for pages in held.pages.values():
+        for practice in pages:
+            record = practice.fields["exercise"]
+            assert record["concepts"], practice.places.bundle
+            assert tuple(record["concepts"]) == practised(committed, practice.places)
+
+
+def test_a_practice_carried_before_it_said_what_it_practises_is_kept_not_a_collision(committed):
+    # ⚠️ A corpus ingested before the key carries the same exercise WITHOUT it:
+    # that is the same practice, not a different one at the same ordinal.
+    held = authored(committed)
+    notes = _container(*NOTES, (1,), practices=1)
+    fields = held.pages[("notes", "prose", 1)][0].fields
+    older = {k: v for k, v in fields["exercise"].items() if k != "concepts"}
+    carried = [*_lessons(notes), {**fields, "exercise": older}]
+    joined, found = held.joined(notes, carried)
+    assert [unit.practices for unit in joined.units] == [1]
+    assert sum(1 for one in found if one["kind"] == "practice") == 1
+
+
 def test_a_different_practice_at_an_authored_ordinal_is_a_collision_refused_by_name(committed):
     held = authored(committed)
     notes = _container(*NOTES, (1,), practices=1)
@@ -138,6 +163,13 @@ def test_a_bundle_without_its_gate_record_is_refused_by_name(committed, tmp_path
     with pytest.raises(
         PracticeRefused, match="'exercises/kata/python/unit-02/practice-1' ships no"
     ):
+        authored(root)
+
+
+def test_a_coverage_report_that_will_not_read_refuses_the_run_by_name(committed, tmp_path):
+    root = _copied(committed, tmp_path)
+    (root / "exercises/kata/python/unit-02/coverage.json").write_text("{", encoding="utf-8")
+    with pytest.raises(PracticeRefused, match="coverage report of 'exercises/kata/python/unit-02'"):
         authored(root)
 
 

@@ -351,3 +351,22 @@ class OpenPage:
                 break
             seen.append(here)
         return seen
+
+    def open_practice(self, index: int = 0) -> None:
+        """Open the page's practice card number `index` in its workspace, and wait for it.
+
+        ⭐ **A practice is worked in the page's workspace** (the user's ruling):
+        its statement and panel are hidden under the *Practice (n)* list until
+        a card opens them, so a reading of the panel opens one first. ⚠️ The
+        card's link is followed with `click()` — opening is not what these
+        readings are about, and `test_practice_workspace.py` opens by keyboard.
+        """
+        opened = self.evaluate(
+            "(() => { const links = document.querySelectorAll("
+            "'a[data-practices-part=\"open\"]');"
+            f" const link = links[{int(index)}]; if (!link) return false;"
+            " link.click();"
+            " return document.documentElement.hasAttribute('data-workspace-open'); })()"
+        )
+        if opened is not True:
+            raise AssertionError(f"practice card {index} did not open the workspace")

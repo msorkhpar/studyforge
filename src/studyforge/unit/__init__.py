@@ -71,6 +71,7 @@ from studyforge.unit.errors import ContentError
 from studyforge.unit.headings import Heading, headings
 from studyforge.unit.mentions import Mentions
 from studyforge.unit.outline import listed_numbering, without_outline_number
+from studyforge.unit.practice import bare_lesson
 from studyforge.unit.sections import (
     KIND_OF,
     KINDS_WITH_A_LANG,
@@ -111,6 +112,7 @@ __all__ = [
     "Mentions",
     "Overlay",
     "Section",
+    "bare_lesson",
     "check_test_record",
     "derived_section_key",
     "from_document",

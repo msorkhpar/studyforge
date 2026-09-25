@@ -8,8 +8,9 @@ document, refuses every way it can be wrong, and writes it back byte-stably.
 is the round trip.
 
 **Depends on.** `safety` for the four workspace values, **`cases` for the
-vocabulary the four authored keys are written in**, `states` for the
-key whose presence is the graded state, and **`unit.trust` for R5's rule**.
+vocabulary the four authored keys are written in**, `keys` for the record's
+key order and the refusals of its shape, `concepts` for what an exercise
+practises, and **`unit.trust` for R5's rule**.
 
 ## ⛔ R5's rule is imported, never re-spelled
 
@@ -70,6 +71,12 @@ argument is `cases`'s docstring, which owns it.
 same seam `cases` sits on. ⚠️ A quiz names no `test_path`, so no RUN completes
 it — spec §7 §7's requirement, which `quiz`'s own contract argues.
 
+## ⭐ `concepts` says what an exercise practises, on either shape
+
+⭐ The plan's own sentences, written where the plan is known and read by the
+page's card (`exercise.concepts` argues it). ⛔ Appended and optional like the
+authored keys, so a record written before it round-trips unchanged.
+
 ## ⛔ Unknown keys are refused
 
 ⭐ **Without this, an archive document carrying an unknown top-level
@@ -85,7 +92,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from studyforge.describe import describe_keys
 from studyforge.exercise import quiz
 from studyforge.exercise.cases import (
     BREAKDOWN_KEYS,
@@ -102,46 +108,19 @@ from studyforge.exercise.cases import (
     report_document,
     report_of,
 )
+from studyforge.exercise.concepts import CONCEPTS, concepts_in
 from studyforge.exercise.errors import ExerciseError
+from studyforge.exercise.keys import (
+    AUTHORED_KEYS,
+    EXERCISE_KEYS,
+    REQUIRED_KEYS,
+    require_known_keys,
+    require_present,
+)
 from studyforge.exercise.safety import require_command, require_path
 from studyforge.exercise.states import EXERCISE_KEY, GRADER_KEY
 from studyforge.unit.errors import ContentError
 from studyforge.unit.trust import check_test_record
-
-#: The record's key order, which is the order it is written in. ⛔ Serialised
-#: `sort_keys=False` by the document that holds it, so this tuple is the format
-#: (R10).
-EXERCISE_KEYS = (
-    "main_path",
-    "test_path",
-    "run_command",
-    "test_command",
-    "provenance",
-    "trust",
-    "kind",
-    "cases",
-    "report",
-    "origin",
-    quiz.QUESTIONS,
-)
-
-#: The keys every record carries: the reader's file, and how it runs. ⭐ Also
-#: the whole of an ungraded record, in `EXERCISE_KEYS` order.
-REQUIRED_KEYS = ("main_path", "run_command")
-
-#: The grader half: written whole, or not at all. ⛔ `GRADER_KEY` first, because
-#: its presence is the graded state (`states`).
-GRADER_KEYS = (GRADER_KEY, "test_command", "provenance", "trust")
-
-#: The keys a grader need not carry. ⚠️ Exactly one, and `unit.trust` owns the
-#: reason.
-DEFAULTED_KEYS = ("trust",)
-
-#: ⭐ The keys the cases and the quiz add, in `EXERCISE_KEYS` order. ⛔ **Written
-#: only where the record carries them**, which is what keeps every document
-#: written before them byte-identical through a round trip (R10).
-#: `BREAKDOWN_KEYS` is `cases`'s and `QUESTIONS` is `quiz`'s, with their reasons.
-AUTHORED_KEYS = ("kind", *BREAKDOWN_KEYS, "origin", quiz.QUESTIONS)
 
 
 @dataclass(frozen=True, slots=True)
@@ -173,6 +152,8 @@ class Exercise:
     report: Report | None = None
     origin: Origin | None = None
     questions: tuple[quiz.Question, ...] | None = None
+    #: ⭐ What it practises, in the plan's order (`exercise.concepts`).
+    concepts: tuple[str, ...] | None = None
 
     @property
     def graded(self) -> bool:
@@ -238,7 +219,7 @@ def from_document(value: object, where: str) -> Exercise:
             f"{where}: 'exercise' must be a JSON object; the value is not reproduced here, since "
             f"a refusal never quotes a value that may be personal"
         )
-    _require_known_keys(value, where)
+    require_known_keys(value, where)
     kind = kind_of(value["kind"], where) if "kind" in value else DEFAULT_KIND
     if kind == QUIZ:
         # ⛔ Every rule a quiz obeys is `exercise.quiz`'s, R5's narrowing
@@ -246,7 +227,7 @@ def from_document(value: object, where: str) -> Exercise:
         provenance, trust = quiz.require_quiz_shape(value, where)
         return Exercise(None, None, None, None, provenance, trust, **_authored(value, QUIZ, where))
     quiz.require_no_questions(value, where)
-    _require_present(value, where)
+    require_present(value, where)
     authored = _authored(value, kind, where)
     main_path = require_path(value.get("main_path"), "main_path", where)
     run_command = require_command(value.get("run_command"), "run_command", where)
@@ -293,16 +274,19 @@ def to_document(exercise: Exercise) -> dict:
         "report": report_document(exercise.report) if exercise.report else None,
         "origin": origin_document(exercise.origin) if exercise.origin else None,
         quiz.QUESTIONS: quiz.questions_document(exercise.questions or ()),
+        CONCEPTS: list(exercise.concepts or ()),
     }
     return {key: values[key] for key in _written_keys(exercise)}
 
 
 def _written_keys(exercise: Exercise) -> tuple[str, ...]:
     """Which keys this record writes — chosen by its shape, never by which values are `None`."""
+    concepts = {CONCEPTS} if exercise.concepts is not None else set()
     if exercise.is_quiz:
         carried = set(quiz.QUIZ_KEYS) - (set() if exercise.origin else {"origin"})
+        carried = (carried - {CONCEPTS}) | concepts
         return tuple(key for key in EXERCISE_KEYS if key in carried)
-    carried = set()
+    carried = set(concepts)
     if exercise.kind != DEFAULT_KIND:
         carried.add("kind")
     if exercise.breaks_down:
@@ -311,61 +295,6 @@ def _written_keys(exercise: Exercise) -> tuple[str, ...]:
         carried.add("origin")
     shape = set(EXERCISE_KEYS if exercise.graded else REQUIRED_KEYS) - set(AUTHORED_KEYS)
     return tuple(key for key in EXERCISE_KEYS if key in shape or key in carried)
-
-
-def _require_known_keys(value: dict, where: str) -> None:
-    """Refuse a key the record does not define — because a typo is one."""
-    unknown = [key for key in value if key not in EXERCISE_KEYS]
-    if unknown:
-        raise ExerciseError(
-            f"{where}: 'exercise' carries {len(unknown)} key(s) the record does "
-            f"not define, {describe_keys(unknown)}. The record is {list(EXERCISE_KEYS)}. "
-            f"A key nothing reads is how a misspelled field becomes a grader "
-            f"nobody is offered while the corpus validates green."
-        )
-
-
-def _require_present(value: dict, where: str) -> None:
-    """Refuse a record with no file, and a grader written in part."""
-    missing = [key for key in REQUIRED_KEYS if key not in value]
-    if missing:
-        raise ExerciseError(
-            f"{where}: 'exercise' is missing {missing}. Every record names the "
-            f"reader's file and how it runs; a practice that names no file "
-            f"writes no 'exercise' key at all."
-        )
-    if any(key in value for key in GRADER_KEYS):
-        missing = [key for key in GRADER_KEYS if key not in DEFAULTED_KEYS and key not in value]
-        if missing:
-            raise ExerciseError(
-                f"{where}: 'exercise' names part of a grader and is missing {missing}. "
-                f"A grader is {list(GRADER_KEYS)}, written whole with only 'trust' "
-                f"defaulted — or none of them, for a file with no test, which is "
-                f"§7's ungraded state."
-            )
-    _require_whole_breakdown(value, where)
-
-
-def _require_whole_breakdown(value: dict, where: str) -> None:
-    """Refuse a breakdown beside no grader, and one written in part — naming the key."""
-    named = [key for key in BREAKDOWN_KEYS if key in value]
-    if not named:
-        return
-    if GRADER_KEY not in value:
-        raise ExerciseError(
-            f"{where}: 'exercise' names {named} on a record with no grader. Both "
-            f"are facts about what a grader reports, and a breakdown of a run "
-            f"that cannot happen is one no reader is ever shown. An ungraded "
-            f"record carries 'origin' and neither of these."
-        )
-    missing = [key for key in BREAKDOWN_KEYS if key not in value]
-    if missing:
-        raise ExerciseError(
-            f"{where}: 'exercise' names part of a breakdown and is missing "
-            f"{missing}. A breakdown is {list(BREAKDOWN_KEYS)}, written whole: "
-            f"'cases' with no 'report' names tests nothing can be read from, and "
-            f"a 'report' with no 'cases' is a file nothing folds through."
-        )
 
 
 def _authored(value: dict, kind: str, where: str) -> dict:
@@ -379,6 +308,7 @@ def _authored(value: dict, kind: str, where: str) -> dict:
         "report": report_of(value["report"], where) if "report" in value else None,
         "origin": origin_in(value, where),
         quiz.QUESTIONS: quiz.questions_in(value, where),
+        CONCEPTS: concepts_in(value, where),
     }
 
 
