@@ -328,11 +328,16 @@ def quiz_section(stem: str, text: str, says: str) -> dict:
                         {"id": "a", "text": text, "correct": True, "says": says},
                         {"id": "b", "text": "No", "correct": False, "says": "Not in 3.2.4."},
                     ],
-                    "origin": {"path": "src/1.md", "section": "2.2. Bitmaps"},
+                    **quiz_passage(),
                 }
             ],
         },
     }
+
+
+def quiz_passage() -> dict:
+    """The passage a question came from: never words, so never served."""
+    return {"origin": {"path": "src/1.md", "section": "2.2. Bitmaps"}}
 
 
 def test_a_quiz_s_stem_options_and_sentences_are_served_as_plain_words(tmp_path):
@@ -357,8 +362,8 @@ def test_a_quiz_s_stem_options_and_sentences_are_served_as_plain_words(tmp_path)
         {"id": "b", "text": "No", "correct": False, "says": "Not in Checked vs. unchecked."},
     ]
     # ⛔ What is not words is kept: the id, the key and the passage it came from.
-    assert question["id"] == "q-1"
-    assert question["origin"] == {"path": "src/1.md", "section": "2.2. Bitmaps"}
+    kept = {name: value for name, value in question.items() if name not in ("stem", "options")}
+    assert kept == {"id": "q-1", **quiz_passage()}
     # ⭐ A copy: the archive's record is never edited.
     assert section["workspace"]["questions"][0]["stem"] == "What does 3.2.4 say?"
 
