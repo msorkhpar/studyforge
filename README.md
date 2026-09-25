@@ -81,7 +81,11 @@ studyforge serve studyforge/tests/fixtures/depth1 --site site
 `validate` exits `0` and names the three claims it could not check, because
 this example carries its archive but not the source files it was written from.
 `plan` lists every path a build would write before it writes one. `build`
-writes the site into `site/`. `python3 -m studyforge.look` opens the root
+writes the site into `site/`. A site written anywhere but the corpus root cannot
+reach a file of the corpus that a lesson links, such as a source file beside it,
+so `build` prints an `unreached` line counting those links and one per unit
+that carries them. This example links none. Build with `--out` set to the corpus
+root to keep them. `python3 -m studyforge.look` opens the root
 index, a container page and a unit page in a headless Chromium-family browser
 already on your machine (Chrome, Chromium or `chrome-headless-shell`), and
 writes a screenshot and the rendered DOM of each into `shots/`, which must be

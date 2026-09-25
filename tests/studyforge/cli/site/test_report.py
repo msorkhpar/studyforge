@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import PurePosixPath
 
-from studyforge.cli.site.report import ALREADY_THERE, REBUILT, exit_code, lines
+from studyforge.cli.site.report import ALREADY_THERE, REBUILT, UNREACHED, exit_code, lines
 from studyforge.generate import Written
 from studyforge.validate.report import INVALID, OK
 
@@ -86,3 +86,26 @@ def test_a_rebuild_and_a_refusal_are_reported_side_by_side():
     assert f"replace index.html  {REBUILT}" in printed
     assert f"refuse notes.txt  {ALREADY_THERE}" in printed
     assert exit_code(record) == INVALID
+
+
+# --------------------------------------------------------------------------
+# ⭐ a site written outside the corpus root names the links it cannot keep
+# --------------------------------------------------------------------------
+
+
+def test_the_unreached_links_are_counted_then_named_by_their_unit_s_page():
+    printed = lines(
+        written(unreached=["b/two.unit.html", "a/one.unit.html", "b/two.unit.html"]), "c", "s"
+    )
+    assert printed[1:] == [
+        f"unreached 3 links in 2 units  {UNREACHED}",
+        "unreached a/one.unit.html  1 link",
+        "unreached b/two.unit.html  2 links",
+    ]
+    # ⭐ The line says where a build keeps them.
+    assert "--out at the corpus root" in UNREACHED
+
+
+def test_an_unreached_link_changes_no_exit_and_a_site_with_none_prints_none():
+    assert exit_code(written(unreached=["a.unit.html"])) == OK
+    assert not [line for line in lines(written(pages=["a.html"]), "c", "s") if "unreached" in line]

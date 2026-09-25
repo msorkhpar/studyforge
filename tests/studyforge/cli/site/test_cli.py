@@ -410,3 +410,19 @@ def test_an_unreadable_narration_record_never_lets_a_build_exit_zero(tmp_path):
     assert code != OK
     assert "narration record" in printed
     assert list(out.iterdir()) == []
+
+
+def test_a_build_outside_the_corpus_root_names_the_file_links_it_cannot_keep(tmp_path):
+    # ⭐ The README's first run builds into `site/`: a corpus-file link is named
+    # there, by its unit's page, and a build into the corpus root names none.
+    root = corpora.linked(tmp_path, "tree", corpora.LINKED.split(" [gone]")[0])
+    site = tmp_path / "site"
+    site.mkdir()
+    code, printed = invoke(str(root), "--out", str(site), "--no-narration")
+    assert code == OK
+    said = [line for line in printed.splitlines() if line.startswith("unreached ")]
+    assert said[0].startswith("unreached 1 link in 1 unit  ")
+    assert said[1].endswith(".unit.html  1 link")
+    code, printed = invoke(str(root), "--out", str(root), "--no-narration")
+    assert code == OK
+    assert "unreached " not in printed

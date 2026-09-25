@@ -219,21 +219,22 @@ def _page(profile: Profile, address: Address, unit: Unit) -> PurePosixPath:
 def _mentioning(
     root: Path, found: tuple[UnitSource, ...], pages: tuple[PurePosixPath, ...]
 ) -> tuple[UnitSource, ...]:
-    """Hand every unit the corpus's units and its container's headings as it may name them.
+    """Hand every unit the corpus's units, their headings and its container's, as it may name them.
 
     ⭐ One index for the corpus, so the page and every other consumer of a served
     unit resolve a reference the same way. ⚠️ A unit whose material will not
     read offers no heading here: building it raises, where it is reported.
     """
+    read = tuple(_headings(source) for source in found)
     labels, origins = Mentions.of(
         tuple(
-            (source.label, source.origin, source.title, page)
-            for source, page in zip(found, pages, strict=True)
+            (source.label, source.origin, source.title, page, own)
+            for source, page, own in zip(found, pages, read, strict=True)
         )
     )
     held: dict[str, list[tuple[PurePosixPath, tuple[Heading, ...]]]] = {}
-    for source, page in zip(found, pages, strict=True):
-        held.setdefault(source.container.address.key, []).append((page, _headings(source)))
+    for source, page, own in zip(found, pages, read, strict=True):
+        held.setdefault(source.container.address.key, []).append((page, own))
     numbers = {key: Mentions.numbered(tuple(rows)) for key, rows in held.items()}
     return tuple(
         replace(

@@ -6,7 +6,9 @@ reads.
 
 **How you use it.** `lines(written, root, into)` renders the report, ⭐ with a
 `stale` line per clip that plays moved words and an `unlinked` line per clip an
-earlier narrated build left under `--out`, neither changing the exit;
+earlier narrated build left under `--out`, and the `unreached` lines of a site
+written outside the corpus root (how many corpus-file links it cannot reach, and
+on which unit's page), none of them changing the exit;
 `exit_code(written)` is `0` when nothing was refused and `1` when anything was.
 ⚠️ **A replaced path is not a refusal**: a rebuild that overwrote only its own
 previous output exits `0`, which is what makes *build, edit a lesson, build
@@ -63,6 +65,15 @@ UNLINKED = (
 )
 
 
+#: What a site written outside the corpus root says of its corpus-file links.
+#: ⭐ It names where a build keeps them. ⛔ Nothing is copied and nothing links
+#: upward out of the site, so the report is the whole of the answer.
+UNREACHED = (
+    "a link to a file of the corpus leads nowhere from a site written outside the "
+    "corpus root; a build with --out at the corpus root keeps it"
+)
+
+
 def exit_code(written: Written) -> int:
     """`0` when the whole site was written, `1` when any path was refused."""
     return INVALID if written.refused else OK
@@ -89,4 +100,26 @@ def lines(written: Written, root: str, into: str) -> list[str]:
     ]
     out += [f"stale {path}  {STALE}" for path in sorted(str(path) for path in written.stale)]
     out += [f"unlinked {path}  {UNLINKED}" for path in sorted(str(p) for p in written.unlinked)]
-    return out
+    return out + unreached(written)
+
+
+def unreached(written: Written) -> list[str]:
+    """Return how many corpus-file links this site cannot reach, then one line per unit.
+
+    ⭐ The first line counts them all and the units they are in; each unit's line
+    names its page, relative to the output root, and its own count.
+    """
+    counted: dict[str, int] = {}
+    for path in written.unreached:
+        counted[str(path)] = counted.get(str(path), 0) + 1
+    if not counted:
+        return []
+    total = sum(counted.values())
+    head = (
+        f"unreached {total} {'link' if total == 1 else 'links'} in "
+        f"{len(counted)} {'unit' if len(counted) == 1 else 'units'}  {UNREACHED}"
+    )
+    return [head] + [
+        f"unreached {page}  {count} {'link' if count == 1 else 'links'}"
+        for page, count in sorted(counted.items())
+    ]

@@ -17,6 +17,7 @@ corpus root (`generate.clips`).
     written.replaced   # every path that held this build's own previous answer
     written.refused    # every other target on disk, left byte-for-byte alone
     written.missing    # every file the material names and the archive has not
+    written.unreached  # a page, once per corpus-file link it cannot reach from here
 
 **Depends on.** `generate.declarations`, `.units`, `.containers`, `.navigation`
 and `.writing`, plus `contents` for the local status and `render.index` for the
@@ -64,7 +65,7 @@ from __future__ import annotations
 from pathlib import Path, PurePosixPath
 
 from studyforge.contents import status
-from studyforge.generate.clips import for_output, unit_clips
+from studyforge.generate.clips import files_unreached, for_output, unit_clips
 from studyforge.generate.containers import container_pages, page_paths
 from studyforge.generate.declarations import Corpus, read_corpus
 from studyforge.generate.media import unit_media
@@ -97,6 +98,7 @@ def write_site(root: Path | str, into: Path | str, *, narration: bool | None = N
         + unit_media(corpus, into)
         + unit_clips(corpus, into)
         + clip_signal(corpus, into)
+        + files_unreached(corpus)
     )
 
 

@@ -140,6 +140,10 @@ class Written:
     #: links. ⛔ Reported, never acted on: nothing is deleted.
     stale: tuple[PurePosixPath, ...] = ()
     unlinked: tuple[PurePosixPath, ...] = ()
+    #: ⭐ One entry per link to a corpus file that a page of a site written
+    #: outside the corpus root cannot reach, naming that page. ⛔ Reported,
+    #: never acted on: no file is copied and no link climbs out of the site.
+    unreached: tuple[PurePosixPath, ...] = ()
 
     def __add__(self, other: Written) -> Written:
         """Two passes' records, in the order the passes ran."""
@@ -154,6 +158,7 @@ class Written:
             replaced=self.replaced + other.replaced,
             stale=self.stale + other.stale,
             unlinked=self.unlinked + other.unlinked,
+            unreached=self.unreached + other.unreached,
         )
 
     @property

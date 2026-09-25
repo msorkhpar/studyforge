@@ -483,5 +483,16 @@ def test_every_unit_is_handed_the_corpus_root_and_its_container_s_headings(tmp_p
 
 
 def test_a_site_written_elsewhere_links_no_corpus_file(tmp_path):
-    corpus = files_unlinked(read_corpus(linked(tmp_path)))
-    assert {source.mentions.root for source in corpus.units} == {None}
+    root = linked(tmp_path)
+    corpus = files_unlinked(read_corpus(root))
+    # ⭐ Every unit sits away from the files, and still knows the root to count them.
+    assert {source.mentions.beside for source in corpus.units} == {False}
+    assert {source.mentions.root for source in corpus.units} == {root}
+    assert {source.mentions.beside for source in read_corpus(root).units} == {True}
+
+
+def test_a_unit_s_headings_are_named_by_a_link_to_its_file(tmp_path):
+    # ⭐ Each unit's own headings go with it, so a link to its file keeps its heading.
+    corpus = read_corpus(linked(tmp_path))
+    target = corpus.units[0].mentions.origins["src/two.md"]
+    assert target.anchors == {"12-two": "#prose-b0", "two": "#prose-b0"}

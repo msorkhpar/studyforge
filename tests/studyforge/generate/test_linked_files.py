@@ -73,8 +73,9 @@ def test_a_site_built_into_its_corpus_leads_every_link_somewhere(tmp_path, place
     assert sorted(path.name for path in root.rglob("Types.java")) == ["Types.java"]
     assert "Types.java" in first
     # ⭐ The number is served as the heading's words, linking its page and heading.
-    assert "Section <a href=" in first
-    assert ">Two</a> goes on." in first
+    # ⭐ In double quotes, outside the link, the author's `Section` kept.
+    assert "Section &quot;<a href=" in first
+    assert ">Two</a>&quot; goes on." in first
 
 
 @pytest.mark.parametrize("placement", ["tree", "sibling"])
@@ -91,6 +92,39 @@ def test_a_site_written_elsewhere_keeps_the_author_s_href(tmp_path):
     # ⛔ The file is reached only from beside it; anywhere else the href is the author's.
     root = linked(tmp_path, "tree", GOOD)
     out = an_output(tmp_path)
-    write_site(root, out, narration=False)
+    written = write_site(root, out, narration=False)
     (page, _) = sorted(out.rglob("*.unit.html"))
     assert 'href="code/Types.java"' in page.read_text(encoding="utf-8")
+    # ⭐ And the build names the page whose link it could not keep, once per link.
+    assert [out / str(path) for path in written.unreached] == [page]
+    # ⛔ Nothing was copied beside the page, and nothing links upward out of the site.
+    assert not list(out.rglob("Types.java"))
+    body = page.read_text(encoding="utf-8")
+    assert [ref for ref in _read_text(body) if "Types.java" in ref] == ["code/Types.java"]
+
+
+@pytest.mark.parametrize("placement", ["tree", "sibling"])
+def test_a_site_written_into_its_corpus_reaches_every_file_and_names_none(tmp_path, placement):
+    root = linked(tmp_path, placement, GOOD)
+    assert write_site(root, root, narration=False).unreached == ()
+
+
+@pytest.mark.parametrize("placement", ["tree", "sibling"])
+def test_a_link_to_another_unit_s_file_lands_on_the_heading_it_names(tmp_path, placement):
+    # ⭐ `two.md#12-two` is unit 2's source and its heading `1.2 Two`: the link
+    # keeps the heading, and the crawl checks the id is on the page it lands on.
+    root = linked(tmp_path, placement, "See [two's heading](two.md#12-two) and [top](two.md#no).")
+    write_site(root, root, narration=False)
+    assert unresolved(root) == []
+    first = sorted(root.rglob("*.unit.html"))[0].read_text(encoding="utf-8")
+    # ⭐ The prose's two links come first; the page's own navigation follows.
+    heading, top = [ref for ref in _read_text(first) if ".unit.html" in ref][:2]
+    assert heading.endswith(".unit.html#prose-b0")
+    # ⛔ A fragment that names no heading of the target is dropped: the top of its page.
+    assert top.endswith(".unit.html")
+
+
+def _read_text(body: str) -> list[str]:
+    found = _Links()
+    found.feed(body)
+    return [ref for ref in found.refs if not ref.startswith(("#", "http"))]

@@ -234,11 +234,12 @@ def test_a_sentence_names_a_heading_by_the_number_it_lost_and_is_served_its_word
     served = build(Material((document,)))
     assert served["sections"][0]["blocks"] == [
         {"type": "heading", "level": 1, "text": "Bitmaps"},
-        {"type": "para", "text": "Section [Bitmaps](#java-b0) describes it."},
+        {"type": "para", "text": 'Section "[Bitmaps](#java-b0)" describes it.'},
     ]
     assert [unit.speak for unit in speakable_of(served).units] == [
         "Bitmaps",
-        "Section Bitmaps describes it.",
+        # ⭐ The quotes are the served words' own; the engine voices them as punctuation.
+        'Section "Bitmaps" describes it.',
     ]
 
 
@@ -250,7 +251,7 @@ def test_a_heading_s_own_number_is_never_served_as_a_mention_of_its_unit():
     from studyforge.unit.mentions import Mentions
 
     labels, origins = Mentions.of(
-        (("1.1.1", "a.md", "Primitive data types", PurePosixPath("a.html")),)
+        (("1.1.1", "a.md", "Primitive data types", PurePosixPath("a.html"), ()),)
     )
     document = _document("1.1.1 Primitive Data Types", "1.1.1 Primitive Data Types")
     served = build(Material((document,)), mentions=Mentions(labels, origins))
