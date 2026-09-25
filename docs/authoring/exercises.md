@@ -699,6 +699,47 @@ that answered badly is recorded with `held=False`, and no sentence in `outcome`
 can change that. The worked corpus's `Judging` class holds every judgement, so
 its tests exercise the pass rather than a model.
 
+### A quiz beside a page's code
+
+**A lesson page with code usually also teaches ideas no test can observe**: a
+compile-time rule, how an expression is parsed, a claim about timing. A short
+quiz checks those. ⭐ So a `code` page may carry one quiz as well as its code
+exercises. Give those aspects one exercise name of their own, and name it on
+the page as `quiz`:
+
+```python
+from studyforge.address import Address
+from studyforge.skills.exercises import CORE, Aspect, Page
+
+parses = Aspect(
+    "precedence",
+    "unary ! binds tighter than the binary operators",
+    ("section:Logical Operators",),
+    exercise="check",
+)
+operators = Page(
+    path="01-java-basics/README_1.1.4.md",
+    address=Address(["01-java-fundamentals", "01-java-basics"]),
+    variant="prose",
+    unit=4,
+    kind="code",
+    aspects=(*code_aspects, parses),
+    tier=CORE,
+    quiz="check",
+)
+```
+
+**The quiz is drafted after the page's code exercises**, so it takes the unit's
+last ordinal and sits at the end of the page. Its brief says `kind` `quiz`, and
+it is gated by `Q1`–`Q5` like any quiz. It is committed as a quiz's
+`tests/quiz.json`. The unit keeps one `coverage.json`, which records the name
+under `quiz`. ⛔ Only a `code` page may name a quiz, and the name must be one
+its aspects give. Anything else is refused before an author is asked.
+
+⚠️ **Naming a quiz on a unit already authored changes its plan**, so the pass
+refuses the unit as it refuses any page whose plan moved. Delete the unit's
+directories under `exercises/` and `practice/`, then run the pass again.
+
 ---
 
 ## The plan
@@ -912,12 +953,13 @@ print("pages with nothing shipped:", authored.bare)
 **You supply three things:**
 
 - **`author`**: an object with two methods. `draft(brief)` returns a
-  `CodeDraft` for a `code` page or a `QuizDraft` for a `quiz` page.
+  `CodeDraft` when `brief.kind` is `code` and a `QuizDraft` when it is
+  `quiz`: a `quiz` page's exercises, or the one quiz a `code` page names.
   `excuse(entry)` returns the one sentence saying why no exercise was built
   from a ledger entry. In real use a model writes the drafts. The worked
   corpus's `Scripted` returns drafts it was given ahead of time.
 - **`judge`**: the independent pass for `Q1`–`Q3`, shown above. Only a corpus
-  with a quiz page needs one.
+  with a quiz needs one.
 - **`runner`**: a callable `runner(root, command)` that runs one test command
   from `root` and returns a `Ran`: its exit code and its output. **It runs in
   the pinned runner image.** Each run happens in a fresh directory, so nothing
@@ -935,6 +977,7 @@ exercise:**
 | `page` | the `Page` you described |
 | `case` | the page's source case, read from the ledger |
 | `slot` | which of the plan's exercises this is |
+| `name` | that planned exercise's name. It says `brief.kind`: `quiz` for the quiz a code page names, the page's own kind otherwise |
 | `aspects` | the aspects the plan gave this exercise to check. Write the exercise so it practises them |
 | `places` | where the exercise will sit if it ships. Its commands go under `places.workspace` |
 | `attempt` | which attempt this is, counted from 1 |
@@ -974,7 +1017,7 @@ left with nothing shipped.
 | `exercises/<address>/<variant>/unit-NN/practice-M/gates.json` | its gate record |
 | `exercises/<address>/<variant>/unit-NN/practice-M/tests/quiz.json` | a quiz's own document, with its record under `exercise` |
 | `practice/<address>/<variant>/unit-NN/practice-M/` | the reader's workspace: the starter and the tests |
-| `exercises/<address>/<variant>/unit-NN/coverage.json` | the unit's plan (every aspect and how it ended), what shipped, and every shortfall |
+| `exercises/<address>/<variant>/unit-NN/coverage.json` | the unit's plan (every aspect and how it ended), the quiz a code page names, what shipped, and every shortfall |
 | `exercises/ledger.json` | the ledger, with every entry accounted for |
 
 **Exercises on a page are numbered `1..n` in the order they ship.** An exercise
@@ -1022,6 +1065,11 @@ reason that no exercise is built from an entry, and it stays that reason.
 new draft whose starter or tests differ would otherwise land on the old
 workspace files, and the pass refuses any file that exists with different
 bytes.
+
+**Your archive still holds the practices you deleted** until the adapter runs
+again, and that is fine: the pass counts only the source's own practices, never
+one an earlier pass generated, so the unit's exercises are numbered as they
+were the first time.
 
 ### Then the adapter, then `validate`
 

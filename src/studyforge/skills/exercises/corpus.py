@@ -74,12 +74,16 @@ COVERAGE_FILENAME = "coverage.json"
 #: The source ledger, at the root of the bundles' tree.
 LEDGER_PATH = f"{BUNDLES_DIRNAME}/ledger.json"
 
-#: The coverage report's version, and its key order (R10).
-COVERAGE_API = 1
+#: The coverage report's version, and its key order (R10). ⚠️ **2** added
+#: `quiz`, the planned exercise a quiz checks on a code page. ⭐ A version-1
+#: report is still read, as a page that named no quiz, so a unit authored
+#: before it is kept rather than authored again (`COVERAGE_READ`).
+COVERAGE_API = 2
 COVERAGE_KEYS = (
     "coverage_api",
     "page",
     "kind",
+    "quiz",
     "case",
     "digests",
     "plan",
@@ -87,6 +91,9 @@ COVERAGE_KEYS = (
     "accounts",
     "shortfalls",
 )
+
+#: ⭐ The coverage reports this build reads back: every one it has written.
+COVERAGE_READ = (1, COVERAGE_API)
 
 #: The keys of one named shortfall in a coverage report, in write order.
 SHORTFALL_REPORT_KEYS = ("slot", "gate", "says", "output")
@@ -177,6 +184,7 @@ def author_corpus(
             "coverage_api": COVERAGE_API,
             "page": page.path,
             "kind": page.kind,
+            "quiz": page.quiz,
             "case": outcome.case,
             "digests": fingerprint,
             "plan": plan_document(outcome.plan),
@@ -246,19 +254,20 @@ def _reused(
     """
     written = recorded.get("plan")
     versions = (
-        ("coverage_api", recorded.get("coverage_api"), COVERAGE_API),
-        ("plan_api", written.get("plan_api") if isinstance(written, dict) else None, PLAN_API),
+        ("coverage_api", recorded.get("coverage_api"), COVERAGE_READ),
+        ("plan_api", written.get("plan_api") if isinstance(written, dict) else None, (PLAN_API,)),
     )
     for contract, declared, speaks in versions:
         try:
             check_version(
-                contract, declared, (speaks,), where="its coverage report", error=AuthoringError
+                contract, declared, speaks, where="its coverage report", error=AuthoringError
             )
         except AuthoringError as refused:
             raise _moved(unit, where, f"cannot be kept: {refused}") from None
     same = (
         recorded.get("page") == page.path
         and recorded.get("kind") == page.kind
+        and recorded.get("quiz") == page.quiz
         and recorded.get("digests") == fingerprint
         and recorded.get("plan") == plan
     )

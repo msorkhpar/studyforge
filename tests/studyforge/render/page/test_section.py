@@ -262,3 +262,66 @@ def test_a_withheld_heading_leaves_the_section_labelled_by_the_page():
     markup = section_module.render(opening(), sample_placement(), heads_page=True)
     assert 'data-label="Testing"' in markup
     assert "<h2>Testing</h2>" not in markup
+
+
+# --------------------------------------------------------------------------
+# A practice renders no empty heading
+# --------------------------------------------------------------------------
+
+
+def exercise(lesson: list) -> dict:
+    """A practice section laid out as an authored exercise emits it, with `lesson`."""
+    return headed(
+        key="practice-prose",
+        kind="practice",
+        heading="Reverse the digits",
+        blocks=[
+            {"type": "heading", "level": 2, "text": "Problem statement"},
+            {"type": "para", "text": "Reverse them."},
+            {"type": "heading", "level": 2, "text": "Lesson"},
+            *lesson,
+            {
+                "type": "disclosure",
+                "summary": "Show a worked solution",
+                "open": False,
+                "blocks": [{"type": "code", "lang": "java", "text": "return 0;"}],
+            },
+            {"type": "heading", "level": 2, "text": "Starting code"},
+            {"type": "code", "lang": "java", "text": "throw null;"},
+        ],
+    )
+
+
+def test_a_practice_with_no_lesson_renders_no_lesson_heading():
+    markup = render(exercise([]))
+    assert ">Lesson<" not in markup, "the empty heading is still on the page"
+    assert 'id="practice-prose-b2"' not in markup
+    # ⛔ Withheld, never renumbered: the solution and the headings around it keep
+    # their positions, and so their anchors and their clips.
+    assert ">Problem statement<" in markup and 'id="practice-prose-b0"' in markup
+    assert "Show a worked solution" in markup
+    assert ">Starting code<" in markup and 'id="practice-prose-b4"' in markup
+
+
+def test_a_practice_with_a_lesson_keeps_its_heading():
+    markup = render(exercise([{"type": "para", "text": "Here is how."}]))
+    assert ">Lesson<" in markup and 'id="practice-prose-b2"' in markup
+
+
+def test_a_lesson_section_s_heading_of_that_word_is_never_withheld():
+    # ⛔ Only a practice's layout is read: a lesson may have a section called Lesson.
+    markup = render(exercise([]) | {"kind": "lang", "key": "java"})
+    assert ">Lesson<" in markup
+
+
+def test_bare_lesson_reads_only_a_level_two_lesson_heading_over_disclosures():
+    blocks = exercise([])["blocks"]
+    assert section_module.bare_lesson(blocks) == 2
+    titled = [*blocks[:2], {**blocks[2], "text": "Lesson: Streams"}, *blocks[3:]]
+    assert section_module.bare_lesson(titled) == 2
+    assert section_module.bare_lesson([*blocks[:3], *blocks[4:]]) == 2, "an empty run is bare"
+    over = exercise([{"type": "para", "text": "Here is how."}])["blocks"]
+    assert section_module.bare_lesson(over) is None
+    deeper = [*blocks[:2], {**blocks[2], "level": 3}, *blocks[3:]]
+    assert section_module.bare_lesson(deeper) is None
+    assert section_module.bare_lesson([]) is None

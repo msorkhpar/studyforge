@@ -60,14 +60,24 @@ the page's kind as `quiz`, and you author questions from its passages. An
 **independent pass** takes the `Q1`–`Q3` judgements over each question. Its
 judge is a separate function, never the author grading its own work.
 
+⭐ **A code page may carry one quiz as well.** A lesson with code usually also
+teaches ideas no test can observe: a compile-time rule, how an expression is
+parsed, a claim about timing. Give those aspects one exercise name, and name it
+on the page as `quiz`. That exercise is drafted as a `QuizDraft`
+(`brief.kind` is `quiz`), after the page's code exercises, so it takes the
+unit's last ordinal. ⛔ Only a `code` page names a quiz, and the name must be
+one its aspects give. Do not reason such an idea away with *"the framework
+gives a unit one kind of exercise"*: it no longer does.
+
 ## The procedure
 
 ### 1. Read each page, and write down what you read
 
 For each page you want exercises for, build one `Page`. It gives the material
 file, the unit it becomes (address, variant, unit number), its kind (`code` or
-`quiz`), the test files the corpus declares for it, its `aspects` and a `tier`
-(`introductory`, `core` or `advanced`).
+`quiz`), the test files the corpus declares for it, its `aspects`, a `tier`
+(`introductory`, `core` or `advanced`) and, on a `code` page, the `quiz` it
+carries, if any.
 
 #### ⛔ Plan by the page's important ideas
 
@@ -115,7 +125,7 @@ test-file pattern.
 ### 2. Write the author, the judge and the runner
 
 - **`author.draft(brief)`** answers one `Brief` with a `CodeDraft` or a
-  `QuizDraft`. The brief carries the page, its case, its ledger entries,
+  `QuizDraft`, whichever `brief.kind` names. The brief carries the page, its case, its ledger entries,
   which of the planned exercises this is, the aspects it must check, where
   its bundle and its workspace will be, and, on a retry, the previous draft, every gate that refused it
   and the last run's output.
@@ -201,13 +211,16 @@ read), and the last run's output, made relative to the run and scrubbed (R7).
 | `exercises/<address>/<variant>/unit-NN/practice-M/` | one bundle, in `exercise.bundle`'s shape, with `gates.json` beside it |
 | `…/practice-M/tests/quiz.json` | a quiz's own document: its identity and its record |
 | `practice/<address>/<variant>/unit-NN/practice-M/` | the reader's starter and tests, from `emit` |
-| `exercises/<address>/<variant>/unit-NN/coverage.json` | the unit's plan (every aspect and how it ended), what shipped, and every shortfall |
+| `exercises/<address>/<variant>/unit-NN/coverage.json` | the unit's plan (every aspect and how it ended), the quiz a code page names, what shipped, and every shortfall |
 | `exercises/ledger.json` | the source ledger, every entry accounted for |
 
 ⛔ **`M` follows the practices the unit already carries**. A unit
 whose archive holds `practice-1` from the source gets its first authored
 exercise at `practice-2`. The pass reads what the unit carries from its
-archive, so you declare no offset. The source's practice is never renumbered
+archive, so you declare no offset. ⛔ Only the source's own practices count:
+one an earlier pass generated is not carried, so a unit authored again after
+its bundles are removed numbers from where the source's practices end, even
+while its archive still holds the old ones. The source's practice is never renumbered
 or rewritten, and an authored exercise that would repeat or skip past one is
 refused by the practice's name before anything is written.
 

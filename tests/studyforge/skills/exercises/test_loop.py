@@ -16,19 +16,24 @@ from __future__ import annotations
 
 import inspect
 import json
+from dataclasses import replace
 
 import pytest
 
 from studyforge.archive.document import build, render
+from studyforge.exercise import CODE, QUIZ
+from studyforge.exercise.bundle import BUNDLE_FILENAME
 from studyforge.skills.adapter import Layout
 from studyforge.skills.exercises import (
     ATTEMPTS,
+    QUIZ_DOCUMENT,
     AuthoringError,
     author_corpus,
     author_page,
     carried_practices,
     gate_code,
     gate_quiz,
+    quiz_of,
     require_after_carried,
     take,
 )
@@ -42,9 +47,11 @@ from tests.studyforge.skills.exercises.authoring import (
     gauge_keyed_twice,
     gauge_that_deletes_a_question,
     greeting,
+    greeting_and_its_quiz,
     greeting_that_drops_its_edge,
     greeting_whose_plant_handles_its_edge,
     greeting_with_a_vacuous_ask,
+    mixed,
     snapshot,
     write_corpus,
 )
@@ -166,10 +173,32 @@ def test_no_gate_budget_or_option_can_be_handed_to_the_loop(function):
 # carries is READ off its archive, never declared, and authoring numbers after it.
 
 
-def _carry(root, page, ordinals):
-    """Archive a practice for each ordinal on the page's unit, as ingestion would."""
+#: ⭐ A practice an earlier authoring pass generated, as an adapter archives it:
+#: a quiz, whose record leaves its provenance to be read as `generated`.
+GENERATED = {
+    "kind": "quiz",
+    "questions": [
+        {
+            "id": "q-1",
+            "stem": "What does the greeting name?",
+            "options": [
+                {"id": "a", "text": "Who it greets", "correct": True, "says": "It names them."},
+                {"id": "b", "text": "The time", "correct": False, "says": "No clock is read."},
+            ],
+            "origin": {"path": "lessons/greeting.md", "section": "The function"},
+        }
+    ],
+}
+
+
+def _carry(root, page, ordinals, generated=()):
+    """Archive a practice for each ordinal on the page's unit, as ingestion would.
+
+    ⭐ An ordinal in `generated` is archived as an earlier authoring pass left it.
+    """
     written = []
     for ordinal in ordinals:
+        extra = {"exercise": GENERATED} if ordinal in generated else {}
         document = build(
             source="demo",
             address=page.address,
@@ -180,6 +209,7 @@ def _carry(root, page, ordinals):
             ingested="2026-01-05",
             title=f"The source's own practice {ordinal}",
             blocks=[{"type": "para", "text": "A practice the source shipped."}],
+            **extra,
         )
         path = Layout(root).document(page.address, page.variant, page.unit, "practice", ordinal)
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -242,3 +272,103 @@ def test_an_authored_ordinal_that_collides_or_leaves_a_gap_is_refused_by_name(
     with pytest.raises(AuthoringError, match=says):
         require_after_carried(carried, shipped, "p")
     assert require_after_carried(carried, (len(carried) + 1,), "p") is None
+
+
+# ⭐ A unit may carry code practices AND a quiz. The quiz is one planned
+# exercise of the code page, named by `Page.quiz`, drafted after the code.
+
+
+def test_a_code_page_carries_its_quiz_after_its_code(tmp_path):
+    material, graders, pages = write_corpus(tmp_path)
+    page = mixed(pages[GREETING])
+    author, authored = _again(
+        tmp_path, material, graders, [page], {page.path: [greeting_and_its_quiz]}
+    )
+    assert authored.shortfalls == () and authored.bare == ()
+    # ⭐ Asked for code first and the quiz last, each by the brief's own kind.
+    assert [(brief.kind, brief.name) for brief in author.briefs] == [
+        (CODE, "greet"),
+        (QUIZ, "check"),
+    ]
+    (covered,) = authored.pages
+    code, asked = (tmp_path / bundle for bundle in covered.shipped)
+    assert (code / BUNDLE_FILENAME).is_file() and not (code / QUIZ_DOCUMENT).exists()
+    assert asked.name == "practice-2" and not (asked / BUNDLE_FILENAME).exists()
+    quiz = quiz_of(
+        json.loads((asked / QUIZ_DOCUMENT).read_text(encoding="utf-8")), covered.shipped[1]
+    )
+    assert quiz.exercise.is_quiz and quiz.places.ordinal == 2
+    # ⛔ The quiz's key lives in its bundle, never in a workspace a reader is handed.
+    workspace = tmp_path / "practice" / "kata" / "python" / "unit-01"
+    assert [one.name for one in sorted(workspace.iterdir())] == ["practice-1"]
+    (report,) = tmp_path.glob("exercises/**/coverage.json")
+    written = json.loads(report.read_text(encoding="utf-8"))
+    assert (written["kind"], written["quiz"]) == (CODE, "check")
+    # ⭐ R10: a re-run with nothing changed asks nobody and writes nothing.
+    after = snapshot(tmp_path)
+    again, rerun = _again(tmp_path, material, graders, [page], {page.path: [greeting_and_its_quiz]})
+    assert again.briefs == [] and rerun.written == () and snapshot(tmp_path) == after
+
+
+def test_a_quiz_no_aspect_names_or_a_quiz_on_a_quiz_page_is_refused(tmp_path):
+    material, graders, pages = write_corpus(tmp_path)
+    ledger = take(tmp_path, material, graders, "the ledger")
+    author = Scripted({})
+    unplanned = replace(pages[GREETING], quiz="check")
+    with pytest.raises(AuthoringError, match="names a quiz that no aspect"):
+        author_page(
+            unplanned, ledger, author, Judging(), Running(), source="d", where="p", carried=()
+        )
+    on_a_quiz = replace(pages[GAUGE], quiz="notes")
+    with pytest.raises(AuthoringError, match="only a 'code' page may"):
+        _again(tmp_path, material, graders, [on_a_quiz], {})
+    assert author.briefs == [], "a refused page was drafted"
+
+
+def test_naming_a_quiz_on_a_unit_already_authored_is_refused_as_moved(tmp_path):
+    # ⛔ The same aspects and the same plan, and one exercise now a quiz: the
+    # committed code bundle was never a quiz, so the unit is refused by name.
+    material, graders, pages = write_corpus(tmp_path)
+    page = mixed(pages[GREETING])
+    unnamed = replace(page, quiz=None)
+    script = {page.path: [greeting_and_its_quiz]}
+    _, authored = _again(tmp_path, material, graders, [unnamed], script)
+    assert len(authored.pages[0].shipped) == 2, "both exercises should ship as code"
+    before = snapshot(tmp_path)
+    with pytest.raises(AuthoringError, match="unit-01.*has since moved"):
+        _again(tmp_path, material, graders, [page], script)
+    assert snapshot(tmp_path) == before, "a refused pass wrote something"
+
+
+def test_a_practice_an_earlier_pass_generated_is_never_carried(tmp_path):
+    # ⛔ Ruled: only the source's own practices are carried. A unit authored
+    # again after its bundles were removed still has the old authored practice
+    # in its archive, and it must not push the new exercises past it.
+    page = fixture_pages()[GREETING]
+    _carry(tmp_path, page, (1, 2), generated=(2,))
+    assert carried_practices(tmp_path, page, "p") == (1,)
+
+
+def test_a_unit_authored_again_numbers_from_the_source_s_own_practices(tmp_path):
+    material, graders, pages = write_corpus(tmp_path)
+    _carry(tmp_path, pages[GREETING], (1,), generated=(1,))
+    _, authored = _again(tmp_path, material, graders, pages[:1], {pages[0].path: [greeting]})
+    (covered,) = authored.pages
+    assert covered.shipped and covered.shipped[0].endswith("/practice-1"), covered.shipped
+
+
+def test_the_author_s_order_sets_the_plan_and_the_quiz_is_still_drafted_last(tmp_path):
+    # ⭐ The page's `order` is the plan's teaching order; the quiz it names is
+    # drafted after every code exercise wherever the order puts it.
+    material, graders, pages = write_corpus(tmp_path)
+    page = replace(mixed(pages[GREETING]), order=("check", "greet"))
+    ledger = take(tmp_path, material, graders, "the ledger")
+    author = Scripted({page.path: [greeting_and_its_quiz]})
+    outcome = author_page(
+        page, ledger, author, Judging(), Running(), source="demo", where="p", carried=()
+    )
+    assert [planned.name for planned in outcome.plan.exercises] == ["check", "greet"]
+    assert [(brief.kind, brief.places.ordinal) for brief in author.briefs] == [
+        (CODE, 1),
+        (QUIZ, 2),
+    ]

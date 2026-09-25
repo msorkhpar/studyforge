@@ -80,9 +80,9 @@ def test_a_page_the_ledger_did_not_read_is_refused(tmp_path):
 
 def test_a_draft_of_the_wrong_kind_is_refused(tmp_path):
     _, pages = _ledger(tmp_path)
-    with pytest.raises(AuthoringError, match="not a CodeDraft"):
+    with pytest.raises(AuthoringError, match="asked for a CodeDraft"):
         require_draft(pages[0], gauge(_brief(pages[0])), "p")
-    with pytest.raises(AuthoringError, match="not a QuizDraft"):
+    with pytest.raises(AuthoringError, match="asked for a QuizDraft"):
         require_draft(pages[3], greeting(_brief(pages[3])), "p")
 
 

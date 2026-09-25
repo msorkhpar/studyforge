@@ -104,6 +104,17 @@ nothing, because there is nothing to move; and only the section that OPENS the
 page is asked, because a later section's first heading is that section's own
 name.
 
+## ⛔ A practice is ONE line of the outline, its title
+
+⚠️ **A practice's layout is three headings** — the statement, the lesson and
+the starting code — and each is the same word on every practice. ⭐ Listed,
+a page with seven practices gave the outline twenty-eight lines, twenty-one of
+them one of three words. ⛔ So a practice section contributes its own entry,
+the practice's title, and none of its headings: they are still on the page and
+still anchored, and the outline is where a reader finds the practice, not its
+parts. ⭐ The title is its recorded heading, or, where that only repeats the
+unit's title, the heading its material opens with (`practice_title`).
+
 ## The outline stops at level 3
 
 ⚠️ Level 4 and below are sub-points within a topic. Listing them turns a rail
@@ -119,6 +130,10 @@ from studyforge.render import templates
 from studyforge.render.markup import anchor, escape_attribute, inline
 from studyforge.render.page.errors import PageError
 from studyforge.unit import heading_anchor
+
+#: The section kind whose headings earn no line of their own (see above). ⛔ The
+#: archive's word, the one `page.practice.PRACTICE` selects its panel on.
+PRACTICE = "practice"
 
 #: Deepest heading level that earns a line in the outline.
 OUTLINE_MAX_LEVEL = 3
@@ -159,16 +174,23 @@ def entries(document: dict) -> tuple[tuple[int, str, str], ...]:
     A section contributes one level-1 entry — ⚠️ **only on a page that has more
     than one**, because a lone section's name is already the page's title and
     listing it says nothing — and one entry per heading shallow enough to earn a
-    line. ⭐ Every entry points at an anchor this page actually emitted, because
-    both come from the same walk.
+    line, ⛔ except a practice, which is its level-1 entry alone. ⭐ Every entry
+    points at an anchor this page actually emitted, because both come from the
+    same walk.
     """
     sections = list(document.get("sections") or ())
     out: list[tuple[int, str, str]] = []
     promoted = title_heading(document)
     for index, section in enumerate(sections):
         key = section.get("key")
+        practice = section.get("kind") == PRACTICE
         if len(sections) > 1:
-            out.append((1, str(section.get("heading") or key or ""), anchor(section_anchor(key))))
+            label = str(section.get("heading") or key or "")
+            if practice:
+                label = practice_title(section, document.get("title"))
+            out.append((1, label, anchor(section_anchor(key))))
+        if practice:
+            continue
         for position, block in enumerate(section.get("blocks") or ()):
             # ⛔ The block the page is HEADED by is not a line in the page's own
             # contents: a list whose first entry is the title above it says
@@ -183,6 +205,22 @@ def entries(document: dict) -> tuple[tuple[int, str, str], ...]:
                 continue
             out.append((level, str(block.get("text") or ""), anchor(block_anchor(key, position))))
     return tuple(out)
+
+
+def practice_title(section: dict, unit_title: object) -> str:
+    """Return the one outline line a practice section is listed by.
+
+    ⭐ **Its recorded heading**, the practice's title — ⚠️ unless that heading
+    only repeats the unit's title, as a source's own practice may record it,
+    while its material opens with a heading of its own (*"Practice: Building the
+    primary bitmap"*): then that heading names the practice. ⛔ Textual only in
+    the way `_says` is, stripped and nothing cleverer.
+    """
+    recorded = str(section.get("heading") or section.get("key") or "")
+    opening = _leading_heading(section)
+    if opening is not None and _says(recorded, unit_title):
+        return str(opening.get("text"))
+    return recorded
 
 
 def title_heading(document: dict) -> dict | None:

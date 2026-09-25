@@ -1637,6 +1637,11 @@ keyed as correct, one sentence per option saying why it is right or wrong, and a
 quiz ones, from the same ledger: each question is written from one passage, and the
 passage is recorded by address, not paraphrased into the question's provenance.
 
+⭐ **A page with code may carry a quiz too.** A lesson's code practices check what a
+test can observe; the ideas no test can observe (a compile-time rule, how an
+expression parses) are checked by one short quiz on the same unit, after its code
+practices. ⛔ A unit is not limited to one kind of exercise.
+
 ⭐ **The local study server grades a quiz, and the key never reaches the page.**
 
 - ⛔ **No built page and no asset a page loads carries a quiz's key or any per-option

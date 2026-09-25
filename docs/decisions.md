@@ -717,7 +717,7 @@ What it reads, and the choices in it:
 
 ### Authored practices are numbered after those a unit already carries
 
-**Decision.** The authoring loop (`studyforge.skills.exercises.loop`) reads which practices a unit's archive already holds (`carried_practices`, through `unit.builder.read` at the directory `Layout` computes) and numbers the first authored exercise after them, with no declared offset. Ordinals are handed out as exercises ship, so a refused exercise leaves no gap. The source's own practices are never renumbered or rewritten. `require_after_carried` refuses by name an authored number that would repeat or skip past an existing one before anything is written.
+**Decision.** The authoring loop (`studyforge.skills.exercises.loop`) reads which practices a unit's archive already holds (`carried_practices`, through `unit.builder.read` at the directory `Layout` computes) and numbers the first authored exercise after them, with no declared offset. Only the source's own practices are counted: a practice whose record is `generated` came from an earlier authoring pass and is not carried, so a unit authored again while its archive still holds the old practices numbers as it did the first time. Ordinals are handed out as exercises ship, so a refused exercise leaves no gap. The source's own practices are never renumbered or rewritten. `require_after_carried` refuses by name an authored number that would repeat or skip past an existing one before anything is written.
 
 **Why.** A reader's progress is keyed to a practice's ordinal, so a source's own practice must survive authoring unchanged and a page must never have a gap.
 
@@ -802,6 +802,14 @@ What it reads, and the choices in it:
 **Decision.** `render.page.anchors.title_heading` can promote the first block of the opening section when that block is a heading. It promotes it when nothing else in the section stands at its declared level, or when its text matches the unit's title. A promoted heading becomes the page's `<h1>` (`render.page.document`). It keeps its anchor and narration clip, and `render.page.section` withholds it from the body and from the outline. The unit's own title still names the unit in the `<title>`, the trail, the contents and the bar. When the material states no title, the page is headed by the unit title.
 
 **Why.** A page that prints both the unit title and the material's first heading shows its title twice. Promoting the heading instead of deleting it keeps every bookmark and audio passage addressed as before.
+
+**Serves.** `R1`
+
+### A practice is one line of the page's outline and shows no empty heading
+
+**Decision.** `render.page.anchors.entries` gives a practice section one outline line, its title, and none of its layout headings; the title is its recorded heading or, where that only repeats the unit's title, the heading its material opens with (`practice_title`). `render.page.section.bare_lesson` finds a practice's lesson heading with nothing but disclosures under it, and `render.page.section` withholds it. The heading keeps its position, so every anchor and clip after it is addressed as before, and a lesson heading over lesson material still renders.
+
+**Why.** An authored exercise has no lesson, yet its layout carries `## Lesson` over only its worked solution, and a page of seven practices gave its outline twenty-eight lines, twenty-one of them one of three words.
 
 **Serves.** `R1`
 
@@ -1148,6 +1156,14 @@ What it reads, and the choices in it:
 **Decision.** A page's plan lists its aspects, the important ideas it teaches that a reader could be checked on, read from its prose and its code. Each aspect is checked by a named exercise or quiz question, or carries a written reason. One exercise may check several related aspects and is preferred over several small unrelated ones. Trivia such as dates is carried by a reason, a quiz asks few questions, and zero exercises is a valid plan for a page with nothing checkable. The count is neither a ceiling set by prose length nor a quota. `skills.exercises.aspects` refuses an aspect with no outcome or with two, and two aspects that state one idea; `skills.exercises.plan` turns aspects into the plan (`PLAN_API`); and `skills.exercises.corpus` refuses a report whose `coverage_api` or `plan_api` this build does not read, both through `studyforge.version.check`, so the unit is planned again. Spec §7 (part 4) states the rule.
 
 **Why.** A count set by prose length leaves most of a code-heavy page's examples unpractised, and an aspect nobody accounted for is how a thin plan hides; writing each aspect's outcome down makes the judgement reviewable.
+
+**Serves.** `R6`
+
+### A code page may carry one quiz beside its code exercises
+
+**Decision.** `skills.exercises.drafts.Page.quiz` names the one planned exercise on a `code` page that a quiz checks. `Brief.kind` says which kind of draft each brief asks for, `skills.exercises.loop` drafts the page's code exercises first and the quiz last so it takes the unit's last ordinal, and the unit's coverage report records the name under `quiz` (`coverage_api` 2, with a version-1 report read as naming none). Only a `code` page may name a quiz, and only a name its aspects give. The quiz is gated, committed and served like any quiz, so its key stays on the local study server.
+
+**Why.** A lesson page with code also teaches ideas no test can observe, and a unit that could carry only one kind of exercise left those ideas with a reason where a short quiz belongs.
 
 **Serves.** `R6`
 

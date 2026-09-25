@@ -45,7 +45,10 @@ already keyed to. ⛔ **Renumbering the source's practice is refused for the
 reason above**, so authored exercises number AFTER it. ⭐ `carried_practices`
 READS what the unit carries through `unit.builder.read`, the reader a build
 uses, at the directory `Layout` computes — ⛔ never a declared offset, which
-would be a second copy that goes stale. ⛔ And `require_after_carried` refuses
+would be a second copy that goes stale. ⛔ **Only the source's own practices
+count**: one an earlier authoring pass generated is not carried, so a unit
+authored again after its bundles are removed numbers from where the source's
+own practices end. ⛔ And `require_after_carried` refuses
 a page whose authored ordinals repeat or skip past what it carries, naming the
 practice, before anything is committed.
 
@@ -54,6 +57,16 @@ practice, before anything is committed.
 ⭐ Each planned exercise's brief carries the aspects the plan gave it to check,
 so the author drafts against what the page teaches rather than against a
 count. ⛔ `plan_page` refuses an aspect whose basis the page does not carry.
+
+## ⭐ A CODE PAGE'S QUIZ IS DRAFTED LAST, SO IT TAKES THE UNIT'S LAST ORDINAL
+
+⭐ **A page that names a `quiz` gets its code exercises first and its quiz
+after them**, so the questions sit at the end of the page, after the work,
+where a reader checks what they have read. ⛔ Only the ORDER of drafting moves:
+each planned exercise keeps its slot, the plan is the one `plan_for` wrote, and
+the brief's `name` says which kind of draft is asked for (`Brief.kind`).
+⛔ `plan_page` refuses a `quiz` no aspect names, so a page cannot declare a
+quiz it never plans.
 
 ## ⛔ THE PLAN IS A CEILING, AND `shortfall` IS ASKED EVERY TIME
 
@@ -67,12 +80,13 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from pathlib import Path
 
-from studyforge.exercise import CODE, ExerciseError
+from studyforge.exercise import CODE, ExerciseError, from_document
 from studyforge.exercise.bundle import Places, require_no_gap
 from studyforge.skills.adapter import Layout
 from studyforge.skills.exercises.aspects import AspectError, require_read
 from studyforge.skills.exercises.drafts import (
     ATTEMPTS,
+    AUTHORED_PROVENANCE,
     Author,
     AuthoringError,
     Brief,
@@ -87,7 +101,7 @@ from studyforge.skills.exercises.drafts import (
 )
 from studyforge.skills.exercises.gating import Gated, Runner, gate_code, gate_quiz
 from studyforge.skills.exercises.ledger import Ledger, key_of
-from studyforge.skills.exercises.plan import Plan, Refusal, plan_for, shortfall
+from studyforge.skills.exercises.plan import Plan, Planned, Refusal, plan_for, shortfall
 from studyforge.unit.builder import NoMaterial, read
 from studyforge.unit.errors import ContentError
 
@@ -138,10 +152,12 @@ def author_page(
     entries = page_entries(page, ledger)
     shipped: list[Gated] = []
     missed: list[Shortfall] = []
-    for planned in plan.exercises:
+    for planned in drafting_order(page, plan):
         slot = planned.slot
         places = Places(page.address, page.variant, page.unit, len(carried) + len(shipped) + 1)
-        first = Brief(page, case, slot, places, 1, entries, plan.checked_by(planned))
+        first = Brief(
+            page, case, slot, places, 1, entries, plan.checked_by(planned), name=planned.name
+        )
         gated, refused = _one(first, ledger, author, judge, runner, source, f"{where}, {slot}")
         if gated is not None:
             shipped.append(gated)
@@ -165,7 +181,23 @@ def plan_page(page: Page, ledger: Ledger, where: str) -> Plan:
         require_read(plan.aspects, map(key_of, page_entries(page, ledger)), headings, where)
     except AspectError as error:
         raise AuthoringError(str(error)) from None
+    if page.quiz is not None and page.quiz not in {planned.name for planned in plan.exercises}:
+        raise AuthoringError(
+            f"{where}: the page '{page.path}' names a quiz that no aspect is checked by. "
+            f"A quiz is planned like every exercise, by the aspects that name it, so "
+            f"one no aspect names would ship questions about nothing the page planned."
+        )
     return plan
+
+
+def drafting_order(page: Page, plan: Plan) -> tuple[Planned, ...]:
+    """Return the plan's exercises in the order they are drafted: code first, the quiz last.
+
+    ⭐ Ordinals are handed out as exercises ship, so this order is the order a
+    reader meets them on the page. ⛔ Slots are not renumbered.
+    """
+    code = tuple(planned for planned in plan.exercises if planned.name != page.quiz)
+    return code + tuple(planned for planned in plan.exercises if planned.name == page.quiz)
 
 
 def carried_practices(root: Path | str, page: Page, where: str) -> tuple[int, ...]:
@@ -187,9 +219,32 @@ def carried_practices(root: Path | str, page: Page, where: str) -> tuple[int, ..
             f"{where}: the unit's archived documents will not read, so what it already "
             f"carries cannot be counted. {error}"
         ) from None
-    found = tuple(document["ordinal"] for document in material.of_kind(PRACTICE))
+    found = tuple(
+        document["ordinal"]
+        for document in material.of_kind(PRACTICE)
+        if not _authored_earlier(document, where)
+    )
     try:
         return require_no_gap(found, f"{where}: the practices the unit's archive carries")
+    except ExerciseError as error:
+        raise AuthoringError(str(error)) from None
+
+
+def _authored_earlier(document: dict, where: str) -> bool:
+    """Whether an archived practice is one an earlier authoring pass generated.
+
+    ⛔ **Only the source's own practices are carried.** An authored practice
+    reaches the archive when an adapter emits its bundle, and it stays there
+    after its bundle is removed to be authored again — counted, it would number
+    the new exercises after a practice that no longer exists. ⭐ Read off the
+    record's own provenance through `exercise.from_document`, the one reader,
+    so a quiz whose record leaves provenance out reads as the `generated` it is.
+    """
+    record = document.get("exercise")
+    if record is None:
+        return False
+    try:
+        return from_document(record, where).provenance == AUTHORED_PROVENANCE
     except ExerciseError as error:
         raise AuthoringError(str(error)) from None
 
@@ -240,7 +295,7 @@ def _one(
             refused=gated.refused if gated is not None else (),
             output=gated.output if gated is not None else "",
         )
-        draft = require_draft(brief.page, author.draft(current), where)
+        draft = require_draft(brief.page, author.draft(current), where, brief.kind)
         if previous is not None:
             require_no_retreat(previous, draft, where)
         gated = _gate(draft, current, ledger, judge, runner, source, where)
@@ -261,7 +316,7 @@ def _gate(
     where: str,
 ) -> Gated:
     """Send a draft to its kind's gates, refusing a pass that brought nothing to run them with."""
-    if brief.page.kind == CODE:
+    if brief.kind == CODE:
         if runner is None:
             raise _missing("runner", brief, where)
         return gate_code(draft, brief, ledger, runner, source=source, where=where)
@@ -273,7 +328,7 @@ def _gate(
 def _missing(what: str, brief: Brief, where: str) -> AuthoringError:
     """Return the refusal for a page whose gates cannot be read with what the pass has."""
     return AuthoringError(
-        f"{where}: the page '{brief.page.path}' is a {brief.page.kind!r} page and the "
+        f"{where}: the page '{brief.page.path}' plans a {brief.kind!r} exercise and the "
         f"pass was handed no {what}. Its gates cannot be read without one, and a gate "
         f"that is not read is not a gate that held."
     )
