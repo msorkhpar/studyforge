@@ -34,6 +34,7 @@ no-overlay path is never the one discovered late.
 | `outline` | the source's own outline number, left off every title and heading a reader is served |
 | `headings` | a unit's headings by source anchor and outline number, with their page ids |
 | `mentions` | a mention of another unit, a file or a heading, served as what it names |
+| `prose` | every run of words a unit shows, in its blocks and its quiz, walked as a copy |
 | `errors` | `ContentError`, the only exception any of it raises |
 
 ⛔ **`content_api` is minted here** (R21): the overlay lives at

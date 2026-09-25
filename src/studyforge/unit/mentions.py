@@ -33,9 +33,9 @@ quiz grading) builds it through that one call, so the page, its clips and a
 quiz's answer say the same words. `mentions.unreached(sections)` counts the
 corpus-file links a page outside the corpus root cannot keep.
 
-**Depends on.** `re`, `archive.blocks` for the vocabulary, `unit.headings` for
-what a unit's headings are called, and `corpus.placement.relative_href` for the
-one way a page addresses another file.
+**Depends on.** `re`, `unit.prose` for every run of words a unit shows,
+`unit.headings` for what a unit's headings are called, and
+`corpus.placement.relative_href` for the one way a page addresses another file.
 ⛔ Not on `render`: the inline markers read here are the archive's own
 (`[label](href)` and a backtick span), and this module only decides which words
 and which href the served document carries.
@@ -85,15 +85,14 @@ unit's label is that unit's, as above, whatever else it could be.
 from __future__ import annotations
 
 import re
-from collections.abc import Callable
 from dataclasses import dataclass, field, replace
 from pathlib import Path, PurePosixPath
 from urllib.parse import unquote
 
-from studyforge.archive.blocks import CONTAINER_TYPES
 from studyforge.corpus.placement import relative_href
 from studyforge.unit.headings import Heading, by_number, by_slug
 from studyforge.unit.outline import without_outline_number
+from studyforge.unit.prose import quiz, walk
 
 
 @dataclass(frozen=True, slots=True)
@@ -218,7 +217,7 @@ class Mentions:
 
         for section in sections:
             if isinstance(section, dict):
-                self._walk(section.get("blocks"), links)
+                walk(section.get("blocks"), links)
         return len(found)
 
     def _section(self, section: object) -> object:
@@ -226,30 +225,9 @@ class Mentions:
         if not isinstance(section, dict):
             return section
         served = {**section, "blocks": self.served(section.get("blocks"))}
-        workspace = section.get("workspace")
-        if isinstance(workspace, dict) and isinstance(workspace.get(QUESTIONS), list):
-            served["workspace"] = {
-                **workspace,
-                QUESTIONS: [self._question(one) for one in workspace[QUESTIONS]],
-            }
+        if "workspace" in section:
+            served["workspace"] = quiz(section["workspace"], self.words)
         return served
-
-    def _question(self, question: object) -> object:
-        """One quiz question with its stem and every option's words served as plain words."""
-        if not isinstance(question, dict):
-            return question
-        served = {**question, **self._words(question, QUESTION_WORDS)}
-        if isinstance(question.get(OPTIONS), list):
-            served[OPTIONS] = [
-                {**option, **self._words(option, OPTION_WORDS)}
-                if isinstance(option, dict)
-                else option
-                for option in question[OPTIONS]
-            ]
-        return served
-
-    def _words(self, record: dict, keys: tuple[str, ...]) -> dict:
-        return {key: self.words(record[key]) for key in keys if key in record}
 
     def words(self, value: object) -> object:
         """Return one run of plain text with its mentions served as words; a non-string as it came.
@@ -271,7 +249,7 @@ class Mentions:
         names = (self.labels, self.origins, self.numbers, self.own, self.anchors)
         if not isinstance(blocks, list) or not (any(names) or self.root is not None):
             return blocks
-        return self._walk(blocks, self.text)
+        return walk(blocks, self.text)
 
     def text(self, value: object) -> object:
         """Return one run of prose with its mentions served; a non-string as it came."""
@@ -286,43 +264,6 @@ class Mentions:
             position = match.end()
         out.append(self._bare(value[position:]))
         return "".join(out)
-
-    def _walk(self, blocks: object, text: _Text) -> object:
-        """Return `blocks` with every prose run passed through `text`; a copy."""
-        if not isinstance(blocks, list):
-            return blocks
-        return [self._block(block, text) for block in blocks]
-
-    def _block(self, block: object, text: _Text) -> object:
-        if not isinstance(block, dict):
-            return block
-        kind = block.get("type")
-        if kind in ("heading", "para"):
-            return {**block, "text": text(block.get("text"))}
-        if kind == "list":
-            return {**block, "items": self._items(block.get("items"), text)}
-        if kind == "table":
-            return {
-                **block,
-                "headers": _row(block.get("headers"), text),
-                "rows": [_row(row, text) for row in block.get("rows") or []],
-            }
-        if kind in CONTAINER_TYPES:
-            served = {**block, "blocks": self._walk(block.get("blocks"), text)}
-            if "summary" in block:
-                served["summary"] = text(block.get("summary"))
-            return served
-        return block
-
-    def _items(self, items: object, text: _Text) -> object:
-        if not isinstance(items, list):
-            return items
-        return [
-            [self._block(part, text) if isinstance(part, dict) else text(part) for part in item]
-            if isinstance(item, list)
-            else text(item)
-            for item in items
-        ]
 
     def _bare(self, text: str, *, plain: bool = False) -> str:
         def named(match: re.Match[str]) -> str:
@@ -410,21 +351,6 @@ class Mentions:
 
 #: An href that carries a scheme, and so names no file of the corpus.
 _SCHEME = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:")
-
-#: What a walk hands every prose run to.
-_Text = Callable[[object], object]
-
-#: Where a quiz record keeps its questions and a question its options, and the
-#: keys of each whose value is words a reader is shown (`exercise.quiz`'s
-#: `QUESTION_KEYS` and `OPTION_KEYS`). ⛔ `correct` and `id` are not words.
-QUESTIONS = "questions"
-OPTIONS = "options"
-QUESTION_WORDS = ("stem",)
-OPTION_WORDS = ("text", "says")
-
-
-def _row(row: object, text: _Text) -> object:
-    return [text(cell) for cell in row] if isinstance(row, list) else row
 
 
 def _fragment(href: str, target: Target) -> str:
