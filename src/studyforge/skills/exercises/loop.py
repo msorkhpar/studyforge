@@ -161,7 +161,7 @@ def plan_page(page: Page, ledger: Ledger, where: str) -> Plan:
     """
     headings = next((s.sections for s in ledger.sources if s.path == page.path), ())
     try:
-        plan = plan_for(page.aspects, page.tier, where, page.nothing_checkable)
+        plan = plan_for(page.aspects, page.tier, where, page.nothing_checkable, page.order)
         require_read(plan.aspects, map(key_of, page_entries(page, ledger)), headings, where)
     except AspectError as error:
         raise AuthoringError(str(error)) from None

@@ -9,8 +9,21 @@ overwrite a file with other bytes.
 
     written, kept = commit(root, files, "the authoring pass", replaces=(LEDGER_PATH,))
 
-**Depends on.** `drafts` for the refusal and `studyforge.exercise` for the
-rule a corpus-root path obeys. Standard library only.
+**Depends on.** `drafts` for the refusal, `studyforge.exercise` for the
+rule a corpus-root path obeys, and `validate.source.repository_ignores`, the
+one ignore reader, for what git would leave out. Standard library only.
+
+## ⛔ A FILE GIT WOULD LEAVE OUT REFUSES THE PASS
+
+⚠️ **Measured on a Java course:** every bundle's build role sits under
+`build/`, which the course's own `.gitignore` — like most Java and Gradle
+repositories' — ignores, so `git add` left all 23 `build/pom.xml` out and
+nothing noticed: the pass and `validate` both read the working tree. ⭐ So
+before a byte is written, every path the pass would leave in the tree is put to
+git; one it ignores refuses the whole pass, naming it and the remedy — a
+negation in the corpus's own `exercises/.gitignore`. ⚠️ Where git does not
+answer (no git, or not a repository), nothing can be checked and nothing is
+refused.
 
 ## ⛔ ONE NAMED EXCEPTION, AND IT IS THE LEDGER'S
 
@@ -71,6 +84,7 @@ def commit(
             f"is non-destructive: nothing was written, and no existing file is "
             f"rewritten to make room."
         )
+    _refuse_ignored(root, tuple(wanted), where)
     written, kept = [], []
     for path, data in wanted.items():
         target = root / path
@@ -81,6 +95,23 @@ def commit(
         target.write_bytes(data)
         written.append(path)
     return tuple(written), tuple(kept)
+
+
+def _refuse_ignored(root: Path, paths: tuple[str, ...], where: str) -> None:
+    """⛔ Refuse, before a byte is written, a pass whose file git would leave out."""
+    from studyforge.validate.source import repository_ignores
+
+    ignored = repository_ignores(root, [root / path for path in paths])
+    if not ignored:
+        return
+    names = sorted(one.relative_to(root).as_posix() for one in ignored)
+    raise AuthoringError(
+        f"{where}: {len(names)} file(s) this pass would write are ignored by the "
+        f"corpus's git, the first '{names[0]}', so a commit would leave them out and the "
+        f"exercise would not survive a clone. Nothing was written. Un-ignore them in the "
+        f"corpus's own ignore file (a '!' line in {names[0].split('/', 1)[0]}/.gitignore, "
+        f"for example '!build/'), then run the pass again."
+    )
 
 
 def _same(path: Path, data: bytes) -> bool:

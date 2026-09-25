@@ -20,7 +20,12 @@ import pytest
 from studyforge.archive.markdown import parse
 from studyforge.skills.exercises import LEDGER_PATH, author_corpus
 from studyforge.validate import validate
-from studyforge.validate.ledger import RULE_LEDGER, RULE_LEDGER_UNACCOUNTED, RULE_PERSONAL_DATA
+from studyforge.validate.ledger import (
+    RULE_LEDGER,
+    RULE_LEDGER_PENDING,
+    RULE_LEDGER_UNACCOUNTED,
+    RULE_PERSONAL_DATA,
+)
 from tests.studyforge.skills.exercises.authoring import (
     CLEAN,
     PAGES,
@@ -116,6 +121,24 @@ def test_a_corpus_authored_container_by_container_validates_clean(authored):
 def test_a_corpus_with_no_ledger_is_not_this_check_s(tmp_path):
     a_corpus(tmp_path)
     assert not (tmp_path / LEDGER_PATH).exists()
+    assert validate(tmp_path).findings == ()
+
+
+def _pending(root):
+    return [item for item in validate(root).unchecked if item.rule == RULE_LEDGER_PENDING]
+
+
+def test_a_page_no_pass_was_handed_is_pending_named_by_module_and_never_a_finding(tmp_path):
+    """⭐ A course authored one module at a time reads clean between the passes."""
+    pages = a_corpus(tmp_path)
+    a_pass(tmp_path, pages, "kata")
+    report = validate(tmp_path)
+    assert report.findings == (), [f.message for f in report.findings]
+    (pending,) = _pending(tmp_path)
+    assert "1 material page(s) are pending" in pending.why
+    assert "By module: notes (1)" in pending.why
+    a_pass(tmp_path, pages, "notes")
+    assert _pending(tmp_path) == [], "the first pass that reads a page ends its pending state"
     assert validate(tmp_path).findings == ()
 
 

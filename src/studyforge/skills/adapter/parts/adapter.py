@@ -73,6 +73,30 @@ def _surface(plan: Plan) -> str:
     )
 
 
+#: ⭐ The practices step of `emit.py`, generated only for a corpus that declares
+#: exercises: every exercise the authoring pass committed joins its unit there,
+#: so `read.documents` returns the source's own material only. ⚠️ Measured: a
+#: hand-written practice reader stopped at the first quiz.
+_JOINS_DOES = (
+    " ⭐ Every exercise the authoring pass committed under `exercises/` joins its "
+    "unit as a practice document here (`studyforge.skills.adapter.practices`), "
+    "so `read` never reads one."
+)
+_JOINS_IMPORT = ["from studyforge.skills.adapter.practices import authored"]
+_JOINS_READ = [
+    "    # ⭐ The exercises the authoring pass committed join their units here, so",
+    "    # `read.documents` returns the source's own material only.",
+    "    practices = authored(root)",
+]
+_JOINS_EACH = [
+    "        container, found = practices.joined(",
+    "            container, read.documents(root, container)",
+    "        )",
+]
+_READS_EACH = ["        found = read.documents(root, container)"]
+_JOINS_FINISH = ["    practices.finish()"]
+
+
 def _emit(plan: Plan) -> str:
     """Everything downstream of reading: build, stage, move. Generated whole."""
     return module(
@@ -81,7 +105,7 @@ def _emit(plan: Plan) -> str:
             "Takes what `read` returned and writes every container map and every archive "
             "document at the paths `studyforge validate` walks. ⛔ Nothing reaches the "
             "destination until every file has been built, and every map and document of one "
-            "run carries that run's one `ingested`."
+            "run carries that run's one `ingested`." + _JOINS_DOES * plan.exercises
         ),
         uses="`emit(root, ingested='YYYY-MM-DD')` returns the paths it wrote, sorted.",
         depends=(
@@ -101,6 +125,7 @@ def _emit(plan: Plan) -> str:
             "from studyforge.corpus.manifest import MANIFEST_FILENAME",
             "from studyforge.corpus.manifest import load as load_manifest",
             "from studyforge.skills.adapter import Layout, plan_for",
+            *_JOINS_IMPORT * plan.exercises,
             "",
             f"from {plan.package} import read",
             "",
@@ -133,14 +158,16 @@ def _emit(plan: Plan) -> str:
             "    if layout.staging.exists():",
             "        shutil.rmtree(layout.staging)",
             "    written = []",
+            *_JOINS_READ * plan.exercises,
             "    for reading in read.containers(root):",
             "        # ⛔ One run, one date. The run's `ingested` is applied AFTER",
             "        # `read`, never handed to it, so whatever date `read` recorded is replaced",
             "        # and a map can never disagree with the documents beneath it.",
             "        container = dataclasses.replace(reading, ingested=ingested)",
+            *(_JOINS_EACH if plan.exercises else _READS_EACH),
             "        written.append(_write(staging.container_map(container.address),",
             "                              render_map(container), staging))",
-            "        for fields in read.documents(root, container):",
+            "        for fields in found:",
             "            document = build(source=plan.source, ingested=ingested, **fields)",
             "            where = staging.document(",
             '                document["address"],',
@@ -150,6 +177,7 @@ def _emit(plan: Plan) -> str:
             '                document["ordinal"],',
             "            )",
             "            written.append(_write(where, render_document(document), staging))",
+            *_JOINS_FINISH * plan.exercises,
             "    if not written:",
             "        shutil.rmtree(layout.staging, ignore_errors=True)",
             "        raise EmitRefused(",

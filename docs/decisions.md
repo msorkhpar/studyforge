@@ -725,7 +725,7 @@ What it reads, and the choices in it:
 
 ### An origin names a source file or one heading region of it
 
-**Decision.** An exercise's origin, or a ledger entry, is a path or a path plus section (`studyforge.skills.exercises.accounting`, `exercises.ledger`). A region is a heading and everything under it up to the next heading of the same or shallower depth, and a section that is missing or appears twice is refused. A source path carrying a fragment is refused, so ledger keys (`ledger.key_of`) use `:` as their separator. The ledger scan (`exercises.scan`) reads the source Markdown bytes itself, borrowing only the heading and fence patterns of `validate.headings`, rather than going through the archive's Markdown parser.
+**Decision.** An exercise's origin, or a ledger entry, is a path or a path plus section (`studyforge.skills.exercises.accounting`, `exercises.ledger`). A region is a heading and everything under it up to the next heading of the same or shallower depth, and a section that is missing or appears twice is refused. A source path carrying a fragment is refused, so ledger keys (`ledger.key_of`) use `:` as their separator. The ledger scan (`exercises.scan`) reads the source Markdown bytes itself, borrowing the heading patterns of `validate.headings` and the one fence grammar of `archive.markdown.fences`, rather than going through the archive's Markdown parser. The archive reader closes its fences with the same grammar, so the two agree on every fence, including one indented inside a list item, and a `~~~` run is a fence to neither.
 
 **Why.** The ledger has to report what the source carries, including anything the parser drops.
 
@@ -1153,7 +1153,7 @@ What it reads, and the choices in it:
 
 ### An authoring pass never drops a ledger row it did not read
 
-**Decision.** The corpus's one exercise ledger is merged, not rewritten: `skills.exercises.merge` keeps every committed row for a page the pass did not read while that page is still on disk, and reports what was kept, added, changed and dropped, where a dropped row is always one whose page is gone. `validate.ledger` refuses a committed ledger that stops accounting for a material page, meaning a fenced example or declared grader that is neither the basis of an exercise nor given a written reason; it re-scans the page on disk rather than trusting the ledger.
+**Decision.** The corpus's one exercise ledger is merged, not rewritten: `skills.exercises.merge` keeps every committed row for a page the pass did not read while that page is still on disk, and reports what was kept, added, changed and dropped, where a dropped row is always one whose page is gone. `validate.ledger` refuses a committed ledger that stops accounting for a material page, meaning a fenced example or declared grader that is neither the basis of an exercise nor given a written reason; it re-scans the page on disk rather than trusting the ledger. A unit's page that no pass has been handed, and that no coverage report names, is pending rather than unaccounted: `validate` reports the pending pages by module as one unchecked claim (`ledger-pending`), and the first pass that reads a page ends it. A page a coverage report names stays a finding when the ledger no longer reads it.
 
 **Why.** The ledger is one file for the whole corpus, so a pass over part of the corpus must not own all of it, and the proof that nothing is lost cannot live only in the writer.
 
@@ -1355,3 +1355,10 @@ What it reads, and the choices in it:
 
 **Serves.** `R18`, `R7`
 
+### An authoring pass refuses a file git would leave out, and keeps the author's order
+
+**Decision.** Before it writes anything, `skills.exercises.writes.commit` asks the corpus's git, through `validate.source.repository_ignores`, whether any file the pass would write is ignored, and refuses the pass naming the first one. A page's exercises ship in the order its `Page.order` gives, which must name every planned exercise once; with no order the plan keeps sorted name order, so a unit already authored plans the same exercises as before. For a corpus declaring exercises, the adapter scaffold's generated `emit.py` joins every committed bundle, code or quiz, to its unit through `skills.adapter.practices`, raising the unit's practice count; a practice the hand-written reader already returns with the same exercise record is kept rather than doubled, and a collision or gap refuses the run.
+
+**Why.** On a real course a `build/` ignore rule hid every bundle's build file from `git add` and nothing noticed, teaching order was steered by name prefixes, and the one hand-written practice reader stopped at the first quiz.
+
+**Serves.** `R3`, `R6`, `R19`

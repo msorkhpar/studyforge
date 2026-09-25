@@ -191,6 +191,16 @@ returns the blocks, and raises `MarkdownError` naming what it cannot hold.
 on each unit's `origin`. ⭐ `Address`, which a hand-written `containers`
 needs, is `studyforge.address.Address`.
 
+⛔ **`documents` returns the source's own material, never an authored
+exercise.** For a corpus that declares `exercises: true`, the generated
+`emit.py` reads every bundle the exercises skill committed under `exercises/`,
+code and quiz alike, checks each against its gate record, and joins it to its
+unit as a practice document, raising the unit's practice count
+(`studyforge.skills.adapter.practices`). A practice `documents` already returns
+with that bundle's exact record is kept, not doubled; any other practice at
+that ordinal, a gap in a unit's practices, or an exercise no container declares
+refuses the run by name.
+
 ⚠️ **Report what you cannot read; never drop it** (R6). A block the reader does
 not recognise is absent from the digest *and* from the counts, so nothing
 downstream can notice it went missing. The block vocabulary is closed at **11
@@ -377,7 +387,7 @@ count typed here would undercount them.
 ```text
 <package>/__init__.py     the contract, and what done means
 <package>/read.py         ⛔ YOURS. Three steps: containers, documents, the count
-<package>/emit.py         build beside the destination, then move (§6)
+<package>/emit.py         join the authored practices, build beside the destination, move (§6)
 <package>/audit.py        the source-side count validate cannot make
 <package>/__main__.py     one command, and its exit code is the answer
 tests/<package>/test_read.py    run this first; the failure is the specification
