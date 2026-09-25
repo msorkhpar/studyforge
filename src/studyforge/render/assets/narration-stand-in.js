@@ -29,8 +29,12 @@
      entry), and each step climbs one level, so a page can never loop here. */
   var LEVELS = 8;
 
+  /* ⚠️ `checkVisibility` where the browser has it: the inside of a closed
+     `details` keeps its boxes (it is hidden by `content-visibility`), so a
+     count of boxes alone calls it shown. */
   function shown(element) {
-    return !!element && element.getClientRects().length > 0;
+    if (!element) { return false; }
+    return element.checkVisibility ? element.checkVisibility() : element.getClientRects().length > 0;
   }
 
   function standIn(passage) {

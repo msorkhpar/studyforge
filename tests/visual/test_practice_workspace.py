@@ -260,3 +260,59 @@ def test_close_returns_the_reader_to_the_card_with_no_editor_left(
     assert after["frames"] == 0 and after["shown"] == []
     assert after["y"] == before, f"Close left the page at {after['y']}, not {before}"
     assert open_page.focused()["label"] == "#s-practice-shout", "focus did not return to the card"
+
+
+# --- narration's stand-in for a passage the page is not showing (W497/2) -----
+
+#: Where `window.studyforge.standIn` puts a passage, by what it is: its own id,
+#: its tag, and the card it names. ⭐ The real part, asked in the real page.
+STAND_IN = """
+((selector) => {
+  const passage = document.querySelector(selector);
+  const at = window.studyforge.standIn(passage);
+  return at ? {tag: at.tagName, card: at.getAttribute('data-practice-card')} : null;
+})
+"""
+
+
+def _stand_in(page: OpenPage, selector: str) -> dict | None:
+    return page.evaluate(f"({STAND_IN})({selector!r})")  # type: ignore[return-value]
+
+
+def test_a_passage_in_a_practice_under_the_list_stands_in_as_its_card(
+    open_page: OpenPage, tree: site.Site
+) -> None:
+    open_page.open(tree.url("depth2-unit-01").rsplit("/", 1)[0] + "/" + PAGE)
+    statement = "#s-practice-shout p"
+    assert _stand_in(open_page, statement) == {"tag": "LI", "card": "s-practice-shout"}
+    # ⭐ Opened, the practice is its own place.
+    open_page.open_practice(1)
+    assert _stand_in(open_page, statement) is None
+
+
+def test_a_passage_in_a_closed_entry_stands_in_as_its_summary_and_nothing_opens(
+    open_page: OpenPage, tree: site.Site
+) -> None:
+    open_page.open(tree.url("depth2-unit-01").rsplit("/", 1)[0] + "/" + PAGE)
+    open_page.open_practice(0)
+    # ⭐ The practice's own hint: a closed disclosure with a passage inside it.
+    open_page.evaluate(
+        "document.querySelector('#s-practice-java details p').setAttribute('id', 'inside')"
+    )
+    assert _stand_in(open_page, "#inside") == {"tag": "SUMMARY", "card": None}
+    assert open_page.evaluate("document.querySelector('#s-practice-java details').open") is False
+
+
+def test_opening_a_practice_closes_an_expanded_code_example(
+    open_page: OpenPage, tree: site.Site
+) -> None:
+    # ⛔ One editor on the page at most: an expanded example is closed by an
+    # attribute, and `code-links.js` drops its frames on the toggle.
+    open_page.open(tree.url("depth2-unit-01").rsplit("/", 1)[0] + "/" + PAGE)
+    open_page.evaluate(
+        "(() => { const d = document.createElement('details');"
+        " d.setAttribute('data-code-example', ''); d.open = true;"
+        " document.querySelector('main').prepend(d); })()"
+    )
+    open_page.open_practice(0)
+    assert open_page.evaluate("document.querySelector('details[data-code-example]').open") is False
