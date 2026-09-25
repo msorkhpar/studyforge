@@ -13,9 +13,10 @@ binds; a publisher may run it by hand too.
 
 `main(argv) -> int` is the callable the dispatcher registers.
 
-**Depends on.** `execute.preflight` for every check, `archive.scrub` for R7,
-`validate` for the exit codes, and `argparse`. ⛔ Nothing here knows any source
-(R1), and nothing is started: two files are read.
+**Depends on.** `execute.preflight` for every check, `archive.scrub` so a
+printed path names no home, `validate` for the exit codes, and `argparse`.
+⛔ Nothing here knows any source or material, and nothing is started: two files
+are read.
 
 ⛔ **Exit codes:** `0` every value can work; `1` at least one cannot, each
 named; `2` the root is not a directory.

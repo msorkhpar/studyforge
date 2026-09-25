@@ -23,7 +23,7 @@ process and no socket: two small files are read.
 ⭐ A publisher sets ports in `instance.env` by hand, and that is never a
 hand-edit (`skills.execution.written.PUBLISHERS`). ⛔ So what protects a reader
 from a value that cannot work is this check, where the value is USED, and it
-says which key and why — never the value, which may be personal (R7).
+says which key and why — never the value, which may be personal.
 
 ## ⛔ A WIDER BIND NEEDS THE EDITOR'S AUTHENTICATION
 
