@@ -202,11 +202,14 @@
     });
   }
 
-  /* ⭐ Only an editor that is UP makes an entry open the editor; until then
-     each entry is its lines and the built sentence, and every link is the
-     file's plain view. */
-  run.editor(entries[0].corpus).then(function (found) {
-    if (!found) { return; }
+  /* ⭐ Only an editor that is UP, over a corpus that can run code now, makes an
+     entry open the editor; until then each entry is its lines and the built
+     sentence, and every link is the file's plain view. ⛔ A declared runner
+     that is down runs no test, so it offers no Run tests either. */
+  var runnable = run.runnable ? run.runnable(entries[0].corpus) : Promise.resolve(true);
+  Promise.all([run.editor(entries[0].corpus), runnable]).then(function (both) {
+    var found = both[0];
+    if (!found || !both[1]) { return; }
     entries.forEach(function (entry) {
       show(part(entry, 'plain'), false);
       show(part(entry, 'copy'), true);

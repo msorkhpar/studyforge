@@ -1223,6 +1223,14 @@ What it reads, and the choices in it:
 
 **Serves.** `R7`, `R8`, `R10`, `R15`
 
+### A corpus that declares its runner never runs on the host
+
+**Decision.** `execute.Runner(required=True)` never answers `HOST`: with its runner down, `mode()` raises `RunRefused`, and a run is refused. `serve.routes.runs.runner_for` makes a corpus's runner required when its execution files are written (`execute.declares_runner`, which reads for `.studyforge/execution/compose.yaml`), and a runner given the run service is always required. The run index publishes `runnable`, `{source: bool}`, from one runner per corpus held by `serve.routes.reachable`, and it asks only a required runner. `run-client.js` publishes `runnable(corpus)`, which is `false` only where the index says so. `practice.js` shows Run and Submit only where it reads `true`, and otherwise shows the panel's `no-runner` sentence. `code-links.js` opens an example in the editor only with the editor up and the corpus runnable, and otherwise leaves the plain view. The build-and-serve skill prints a `runner` state in place of `host` for such a corpus.
+
+**Why.** With the runner stopped, the host fallback ran a course's code where its toolchain is not. On Java it printed `mvn: … could not be started`, exit 127. Published with one compose, the host is the study server's container. Running course code on the host was never what a reader asked for; the host remains the answer only for a corpus that declares no runner.
+
+**Serves.** `R8`, `R15`
+
 ## Narration
 
 ### A heading the page withholds is not spoken

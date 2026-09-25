@@ -55,6 +55,11 @@ from studyforge.exercise import SAFE_SEGMENT
 #: the reader's compose command with them (`skills.execution.onboard`).
 INSTANCE_FILE = ".studyforge/execution/instance.env"
 
+#: ⛔ **The compose file the execution skill writes, and its ONE spelling here.** A
+#: corpus holding it DECLARES a runner, and a run of it never falls back to the host
+#: (`Runner(required=True)`): its code runs in that runner or not at all.
+COMPOSE_FILE = ".studyforge/execution/compose.yaml"
+
 #: The compose project: what the file's `name:` interpolates, so a second
 #: instance's volumes, network and service identities are its own.
 PROJECT = "STUDYFORGE_PROJECT"
@@ -116,6 +121,11 @@ class Names:
 
     runner: str
     editor: str
+
+
+def declares_runner(root: Path) -> bool:
+    """Whether the corpus at `root` declares a runner: its execution files are written."""
+    return (Path(root) / COMPOSE_FILE).is_file()
 
 
 def project_for(source: str) -> str:

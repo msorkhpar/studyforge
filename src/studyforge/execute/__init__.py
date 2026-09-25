@@ -99,7 +99,7 @@ from studyforge.execute.conventions import BUILD_FILES, SKIPPED, is_a_test, sour
 from studyforge.execute.editor import EDITOR_TTL, Editor, EditorProbe
 from studyforge.execute.errors import RunRefused
 from studyforge.execute.handle import EXIT_STOPPED, EXIT_TIMEOUT, RunHandle, exit_line
-from studyforge.execute.instance import INSTANCE_FILE, Names, recorded
+from studyforge.execute.instance import INSTANCE_FILE, Names, declares_runner, recorded
 from studyforge.execute.mode import CONTAINER, HOST, MODES, WORKDIR_IN_CONTAINER, ModeProbe
 from studyforge.execute.output import LineGate
 from studyforge.execute.published import (
@@ -113,7 +113,7 @@ from studyforge.execute.published import (
 )
 from studyforge.execute.quiet import TOOLCHAINS, Quiet, Toolchain, filter_lines, select
 from studyforge.execute.remote import SERVICE_PORT, Service
-from studyforge.execute.runner import RUN_ENVIRONMENT, SERVICE, Runner
+from studyforge.execute.runner import RUN_ENVIRONMENT, RUNNER_DOWN, SERVICE, Runner
 from studyforge.execute.workbench import (
     MAIN_KEY,
     SETTINGS_DIR,
@@ -145,6 +145,7 @@ __all__ = [
     "MAIN_KEY",
     "MODES",
     "ROOT_DIR",
+    "RUNNER_DOWN",
     "RUN_ENVIRONMENT",
     "SERVICE",
     "SERVICE_PORT",
@@ -174,6 +175,7 @@ __all__ = [
     "WorkbenchRefused",
     "capture_page",
     "container_for",
+    "declares_runner",
     "editor_container_for",
     "exit_line",
     "filter_lines",

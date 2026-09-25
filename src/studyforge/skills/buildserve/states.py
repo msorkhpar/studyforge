@@ -75,7 +75,7 @@ from typing import Protocol
 
 import studyforge.serve.routes.run as run
 from studyforge.cli.narrate.report import NO_SERVICE
-from studyforge.execute import HOST, ModeProbe
+from studyforge.execute import HOST, ModeProbe, declares_runner
 from studyforge.execute import recorded as recorded_names
 from studyforge.skills.buildserve import narration
 from studyforge.validate.report import OK
@@ -182,6 +182,17 @@ HOST_EXECUTION = PartialState(
     f"this corpus's {START_DOCUMENT}, run from the corpus's root, then serve again",
 )
 
+#: ⛔ A corpus that DECLARES its runner never runs on the host
+#: (`execute.Runner(required=True)`), so with that runner down nothing runs, and
+#: the page offers no Run, Submit or Run tests. The remedy is the same command.
+RUNNER_DOWN = PartialState(
+    "runner",
+    "this corpus declares its runner and it is not up over this corpus, so Run, Submit "
+    "and an example's test run nowhere; each page hides them and says why",
+    f"everything but running code: {READING_FLOOR}",
+    HOST_EXECUTION.remedy,
+)
+
 #: ⭐ Every state, in the order the skill prints them.
 KNOWN = (
     NOT_NARRATED,
@@ -190,6 +201,7 @@ KNOWN = (
     NARRATION_INCOMPLETE,
     NO_EXERCISES,
     HOST_EXECUTION,
+    RUNNER_DOWN,
 )
 
 
@@ -251,11 +263,13 @@ def exercise_states(
     """Return the exercise states, from the manifest flag, the server and the probe.
 
     ⭐ `host` holds when the served instance offers execution and the probe answers
-    `HOST`. ⛔ The probe is asked only then: a corpus with no exercises, or a
+    `HOST` for a corpus that declares no runner; `runner` holds instead for one
+    that declares it, whose runs then go nowhere. ⛔ The probe is asked only then: a corpus with no exercises, or a
     server offering no execution, runs nothing, so where it would run is moot.
     """
     if not declared:
         return (NO_EXERCISES,)
     if EXECUTION_NAMESPACE in set(namespaces) and probe.mode() == HOST:
-        return (HOST_EXECUTION,)
+        root = getattr(probe, "source_root", None)
+        return (RUNNER_DOWN,) if root is not None and declares_runner(root) else (HOST_EXECUTION,)
     return ()

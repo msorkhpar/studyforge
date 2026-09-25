@@ -323,6 +323,22 @@ def test_the_controls_and_the_editor_ship_hidden_and_the_offline_note_does_not()
     assert re.search(r'<p data-practice-part="offline">', markup)
 
 
+def test_a_declared_runner_that_is_down_is_said_and_the_controls_stay_hidden():
+    # ⛔ A corpus that declares its runner never runs on the host, so with that
+    # runner down the page offers no Run or Submit and says why, naming the
+    # corpus's own command. ⭐ The sentence ships hidden; the script shows it.
+    markup = panel()
+    sentence = re.search(r'<p data-practice-part="no-runner" hidden>([^<]*)</p>', markup)
+    assert sentence, "the panel ships no sentence for a runner that is down"
+    assert 'the one command under "Bring it up"' in sentence.group(1)
+    assert "EXECUTION.md" in sentence.group(1)
+    body = behaviour()
+    gate = body[body.index("run.runnable ? run.runnable(corpus) : Promise.resolve(true)") :]
+    assert gate.index("show(controls, ok);") < gate.index("var stop = null;")
+    assert "show(part(panel, 'no-runner'), !ok);" in gate
+    assert "show(controls, true);\n    var stop" not in body, "the controls are shown unasked"
+
+
 def test_the_two_tabs_ship_hidden_and_name_the_two_windows():
     # ⭐ The reader's own file and the test that judges it, as two tabs
     # over two windows of ONE editor — never a split pane, which halves the

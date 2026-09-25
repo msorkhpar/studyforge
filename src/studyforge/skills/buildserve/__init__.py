@@ -55,6 +55,7 @@ from studyforge.skills.buildserve.run import build_and_serve
 from studyforge.skills.buildserve.states import (
     EXECUTION_NAMESPACE,
     HOST_EXECUTION,
+    RUNNER_DOWN,
     KNOWN,
     NARRATION_INCOMPLETE,
     NO_EXERCISES,
@@ -72,6 +73,7 @@ from studyforge.skills.buildserve.states import (
 __all__ = [
     "EXECUTION_NAMESPACE",
     "HOST_EXECUTION",
+    "RUNNER_DOWN",
     "KNOWN",
     "NARRATION_INCOMPLETE",
     "NOTHING_TO_NARRATE",

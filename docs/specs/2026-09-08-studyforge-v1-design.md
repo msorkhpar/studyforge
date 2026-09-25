@@ -1916,7 +1916,11 @@ inside a network-listening process is root-equivalent access to the host.
 3. **Execution crosses into the container from outside it.** `execute`, the only
    package that runs a corpus's commands, probes whether the corpus's runner
    container is up and runs `docker exec` into it with the command's argv
-   verbatim; when it is not up, it runs the same argv on the host. ⭐ **Both modes
+   verbatim. ⛔ **A corpus whose execution files declare its runner never falls
+   back to the host**: with that runner down, nothing runs, the run index says
+   so (`runnable`), and a page hides Run, Submit and Run tests with the sentence
+   saying why, as it does for an editor that is not up. Only a corpus that
+   declares no runner runs the same argv on the host. ⭐ **Both modes
    have identical observable behaviour** — the merged output streamed line by
    line, every line relative to the source root and scrubbed (R7), and exactly
    one exit line — and that is asserted, not assumed. ⛔ The runner never starts,

@@ -56,11 +56,14 @@ THIS_ROW = frozenset(
     }
 )
 
-#: ⛔ The four modules of this package that may import the runner: the
-#: namespace and, split from it at its seams, what a started run is and a
-#: lesson's code in the editor, and the published form's runner and editor.
+#: ⛔ The five modules of this package that may import the runner: the
+#: namespace and, split from it at its seams, what a started run is, a
+#: lesson's code in the editor and whether a corpus can run now, and the
+#: published form's runner and editor.
 EXECUTE = "studyforge.execute"
-RUNNER_IMPORTERS = frozenset({"routes/run.py", "routes/runs.py", "routes/code.py", "published.py"})
+RUNNER_IMPORTERS = frozenset(
+    {"routes/run.py", "routes/runs.py", "routes/code.py", "routes/reachable.py", "published.py"}
+)
 
 
 def _docstrings(tree: ast.Module) -> set[int]:

@@ -3,7 +3,8 @@ r"""The run namespace: Run and Submit — a practice's own command, streamed and
 **What it does.** Answers under `/api/v1/run/`:
 
 - `GET` (empty) → `run-index`: the modes, the two endpoints, where each corpus's
-  editor is if one is up, and the live run if any;
+  editor is if one is up, whether each corpus can run code now (`runnable`), and the
+  live run if any;
 - `GET client.js` → the page's execution client, `serve/assets/run-client.js`,
   which publishes `studyforge.run` (`available`, `start`, `stop`, `editor`) and
   draws nothing;
@@ -230,6 +231,9 @@ def index(runs: Runs) -> dict:
         "code_test": f"{API_PREFIX}/{NAMESPACE}/{{corpus}}/{code.CODE_TEST}/{{path}}",
         "client": CLIENT_PATH,
         EDITOR: runs.editors(),
+        # ⭐ Whether each corpus can run code now: `False` is a declared runner that is
+        # down, and a page then offers no Run, Submit or Run tests, and says why.
+        "runnable": runs.reachable.runnable(runs.discovered.corpora),
         "live": None
         if live is None
         else {"corpus": live.corpus, "practice": live.practice, "mode": live.mode},

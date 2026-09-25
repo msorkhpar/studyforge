@@ -390,7 +390,9 @@ either bind must restore the editor's authentication first.
 
 ⭐ **Serving on the host stays the development path**: `studyforge serve <root>`
 finds the same editor and runner by `instance.env` and reaches the runner with
-`docker exec`, as it always has.
+`docker exec`, as it always has. ⛔ A corpus with these files declares its runner,
+so its code never falls back to the host: with the runner down, nothing runs, and
+each page hides Run, Submit and Run tests and says why.
 
 ⛔ **The framework never starts a container for you** (§8.3). Not behind a flag,
 not "only locally". This skill writes a compose file and a document; the person

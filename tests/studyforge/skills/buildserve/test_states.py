@@ -15,6 +15,7 @@ import pytest
 from studyforge.cli.narrate import report
 from studyforge.cli.plan import plan_for
 from studyforge.execute import CONTAINER, HOST, instance
+from studyforge.execute.instance import COMPOSE_FILE
 from studyforge.skills.buildserve import narration, states
 from studyforge.skills.buildserve.states import (
     EXECUTION_NAMESPACE,
@@ -25,6 +26,7 @@ from studyforge.skills.buildserve.states import (
     NO_NARRATION_SERVICE,
     NOT_NARRATED,
     NOTHING_TO_NARRATE,
+    RUNNER_DOWN,
     PartialState,
     exercise_states,
     narration_states,
@@ -143,6 +145,22 @@ def test_the_exercise_state_follows_the_manifest_the_serving_process_and_the_pro
     assert exercise_states(True, served, Asked(CONTAINER)) == ()
     assert exercise_states(False, (), Asked(HOST)) == (NO_EXERCISES,)
     assert exercise_states(False, served, Asked(HOST)) == (NO_EXERCISES,)
+
+
+def test_a_corpus_that_declares_its_runner_is_runner_down_and_never_host(tmp_path):
+    # ⛔ Its code never falls back to the host, so a HOST answer is `runner`:
+    # nothing runs, and the remedy is the same command.
+    (tmp_path / COMPOSE_FILE).parent.mkdir(parents=True)
+    (tmp_path / COMPOSE_FILE).write_text("services: {}\n", encoding="utf-8")
+    probe = Asked(HOST)
+    probe.source_root = tmp_path
+    served = ("content", EXECUTION_NAMESPACE)
+    assert exercise_states(True, served, probe) == (RUNNER_DOWN,)
+    assert RUNNER_DOWN.name == "runner" and RUNNER_DOWN.remedy == HOST_EXECUTION.remedy
+    assert "run nowhere" in RUNNER_DOWN.missing
+    undeclared = Asked(HOST)
+    undeclared.source_root = tmp_path / "elsewhere"
+    assert exercise_states(True, served, undeclared) == (HOST_EXECUTION,)
 
 
 def test_the_probe_is_asked_only_when_a_run_could_happen():

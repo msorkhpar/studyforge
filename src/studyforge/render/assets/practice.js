@@ -209,7 +209,14 @@
        row exists to refuse. ⚠️ What FILLS it is `practice-editor.js`'s. */
     show(part(panel, 'offline'), false);
     show(part(panel, 'editor'), true);
-    show(controls, true);
+    /* ⛔ The controls are shown only where the index says this corpus can run
+       code now: a corpus whose runner is declared and down runs nothing, so it
+       gets the sentence saying why instead of a button that would be refused. */
+    var asking = run.runnable ? run.runnable(corpus) : Promise.resolve(true);
+    asking.then(function (ok) {
+      show(controls, ok);
+      show(part(panel, 'no-runner'), !ok);
+    }, function () { show(controls, true); });
 
     var stop = null;
     var starters = [];

@@ -144,7 +144,8 @@ consequence (R6, R8):
 | `narration-service` | `--voice` given and no service answered | new clips | the reading floor, and clips recorded earlier |
 | `narration-incomplete` | the narration run placed only some clips | the clips it did not place | the reading floor, and every clip it placed |
 | `exercises` | the corpus declares no exercises | nothing to Run or Submit | everything: a corpus with no graders is complete, not short (C5) |
-| `host` | exercises are declared, the site offers execution, and no runner container is up over this corpus | the runner's isolation: Run and Submit execute on this host, with whatever toolchain it has | everything |
+| `host` | exercises are declared, the site offers execution, the corpus declares no runner, and no runner container is up over it | the runner's isolation: Run and Submit execute on this host, with whatever toolchain it has | everything |
+| `runner` | the same, for a corpus whose execution files declare its runner | running code: Run, Submit and an example's test run nowhere, and each page hides them and says why | everything but running code |
 
 ⭐ **Narration off is not in this table, because it is not a partial state.** With
 `--no-narration`, or a `corpus.json` whose `narration` is `false`, the skill prints
@@ -155,7 +156,10 @@ user chose the reading floor, and it is complete.
 `studyforge serve --site` this skill runs registers the run namespace.
 ⚠️ **What the skill reports is WHERE a run executes**: it asks the
 framework's own mode probe whether the corpus's runner container is up over the
-corpus root. When it is not, `host` is printed: a reader's code runs on this host,
+corpus root. When it is not, a corpus that declares its runner (its execution files
+are written) prints `runner`: ⛔ its code never falls back to the host, so nothing
+runs until the runner is up, and each page hides Run, Submit and Run tests and says
+why. A corpus that declares none prints `host`: a reader's code runs on this host,
 without the runner's isolation. Its `remedy` line says what to do: start the runner
 and the editor with the one command under "Bring it up" in the corpus's own
 `EXECUTION.md`, run from the corpus's root, then serve again. ⭐ That command reads

@@ -90,12 +90,18 @@ from studyforge.execute.commands import (
 )
 from studyforge.execute.errors import RunRefused
 from studyforge.execute.handle import RunHandle
-from studyforge.execute.mode import CONTAINER, DOCKER, WORKDIR_IN_CONTAINER, ModeProbe
+from studyforge.execute.mode import CONTAINER, DOCKER, HOST, WORKDIR_IN_CONTAINER, ModeProbe
 from studyforge.execute.output import LineGate
 from studyforge.execute.remote import RemoteLauncher, Service, ServiceProbe
 
 #: The mode a run takes through the runner's run service.
 SERVICE = "service"
+
+#: Why a corpus that declares its runner runs nothing while it is down.
+RUNNER_DOWN = (
+    "this course's runner is not running, and its code runs nowhere else; start it with "
+    'the one command under "Bring it up" in its EXECUTION.md'
+)
 
 #: What every run's environment carries, in both modes.
 RUN_ENVIRONMENT = {"PYTHONDONTWRITEBYTECODE": "1", "PYTHONUNBUFFERED": "1"}
@@ -246,8 +252,13 @@ class Runner:
         grace: float = GRACE,
         probe: ModeProbe | None = None,
         service: Service | None = None,
+        required: bool = False,
     ) -> None:
-        """Check the container name; the mode is asked per run, through `probe`."""
+        """Check the container name; the mode is asked per run, through `probe`.
+
+        ⛔ `required` is a corpus that DECLARES its runner (`instance.declares_runner`):
+        its runs never fall back to the host, and a runner that is not up refuses them.
+        """
         self.source_root = Path(source_root).absolute()
         self.container = None if container is None else require_container(container)
         self.docker = docker
@@ -256,19 +267,24 @@ class Runner:
         self.probe = probe or ModeProbe(self.source_root, self.container, docker=docker)
         self.service = service
         self.service_probe = None if service is None else ServiceProbe(service)
+        self.required = required or service is not None
 
     def mode(self) -> str:
         """`SERVICE`, `CONTAINER` or `HOST`, as the next run would take it.
 
-        ⛔ **A runner given a service never answers `HOST`**: published, the
-        host is the study server's container, which has no toolchain and must
-        never run a reader's code. A service that does not answer refuses the run.
+        ⛔ **A required runner never answers `HOST`** — one given a service, or
+        one its corpus declares: the host is not where that corpus's code runs
+        (published, it is the study server's own container, with no toolchain).
+        A runner that is not up refuses the run, and the run index says so.
         """
         if self.service_probe is not None:
             if not self.service_probe.up():
                 raise RunRefused("the runner's run service is not answering; is the compose up?")
             return SERVICE
-        return self.probe.mode()
+        mode = self.probe.mode()
+        if mode == HOST and self.required:
+            raise RunRefused(RUNNER_DOWN)
+        return mode
 
     def start(self, commands: object, cwd: object = ROOT_DIR) -> RunHandle:
         """Run `commands` in order from `cwd`; the first is started before this returns.
