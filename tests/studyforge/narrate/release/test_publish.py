@@ -5,9 +5,8 @@
   with no GitHub origin is refused;
 - the dry run lists every volume with its real size and digest, then the one
   `gh release create` command, which parses back to exactly its argv;
-- ⛔ a volume that no longer matches `SHA256SUMS`, a missing volume, restore
-  scripts written for another tag or edited by hand, and a clip signal that
-  does not say `released` are each refused;
+- ⛔ a volume that no longer matches `SHA256SUMS`, a missing volume, and restore
+  scripts written for another tag or edited by hand are each refused;
 - ⛔ planning a publish starts no process: `subprocess` is made to refuse, and
   the plan is still made.
 """
@@ -24,13 +23,11 @@ import pytest
 
 from studyforge.narrate.release import (
     CLIP_SUMS,
-    SIGNAL,
     VOLUME_SUMS,
     pack,
     scripts,
     write_release_record,
     write_scripts,
-    write_signal,
 )
 from studyforge.narrate.release.publish import (
     NOTES,
@@ -40,7 +37,6 @@ from studyforge.narrate.release.publish import (
     repository_of,
 )
 from studyforge.narrate.release.volumes import SUMS
-from studyforge.render.pageassets import ABSENT, PRESENT
 from tests.studyforge.cli.narrate.plant import released_corpus
 from tests.support import git, init_repository, run
 
@@ -67,7 +63,6 @@ def packed(tmp_path: Path, tag: str = TAG) -> tuple[Path, Path]:
     made = pack(root, out, part_bytes=2048)
     write_scripts(root, tag)
     write_release_record(root, (out / SUMS).read_text(encoding="utf-8"), made.clip_sums)
-    write_signal(root)
     return root, out
 
 
@@ -146,17 +141,16 @@ def test_restore_scripts_written_for_another_tag_are_refused(tmp_path):
         plan_publish(root, out, TAG)
 
 
-@pytest.mark.parametrize("state", [PRESENT, ABSENT, None])
-def test_a_clip_signal_that_does_not_say_released_is_refused(tmp_path, state):
-    # ⛔ A committed `present` would tell every fresh checkout its clips are there.
+def test_a_publish_asks_nothing_of_a_file_that_says_whether_the_clips_are_here(tmp_path):
+    # ⭐ A page asks its first clip itself, so a corpus with no such file — and
+    # one still carrying an old one — plans the same publish.
     root, out = packed(tmp_path)
-    if state is None:
-        (root / SIGNAL).unlink()
-    else:
-        write_signal(root, state)
-
-    with pytest.raises(PublishRefused, match="does not say released"):
-        plan_publish(root, out, TAG)
+    assert not (root / ".studyforge" / "assets" / "narration-clips.js").exists()
+    plain = plan_publish(root, out, TAG)
+    stale = root / ".studyforge" / "assets" / "narration-clips.js"
+    stale.parent.mkdir(parents=True, exist_ok=True)
+    stale.write_text('window.studyforge.clips = "present";\n', encoding="utf-8")
+    assert plan_publish(root, out, TAG).argv == plain.argv
 
 
 def test_a_corpus_whose_policy_now_commits_its_clips_is_refused(tmp_path):

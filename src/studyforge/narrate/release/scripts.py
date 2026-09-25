@@ -1,31 +1,27 @@
 r"""The restore scripts a packed corpus carries, rendered for the tag its clips are under.
 
 **What it does.** Renders `restore.sh` and `restore.ps1` from the two files
-shipped in `scripts/` beside this module, with the release tag and the clip
-signal filled in, and writes them, with an ignore file for their download
-directory, into the corpus's `.studyforge/narration-release/`. `write_signal`
-writes the script a narrated page reads to learn whether its clips are here.
+shipped in `scripts/` beside this module, with the release tag filled in, and
+writes them, with an ignore file for their download directory, into the
+corpus's `.studyforge/narration-release/`.
 
 **How you use it.** `restore_scripts(tag)` returns `{path: text}` for every
 file, paths relative to the corpus root; `write_scripts(root, tag)` writes
 them and returns the paths. `valid_tag(tag)` answers whether a tag may be
-written into a script at all. `write_signal(root)` marks the clips `released`.
+written into a script at all.
 
-**Depends on.** `corpus.placement` for the generated root and the shared asset
-directory, `render.pageassets` for the clip signal's name and bodies, and the
-standard library. ⛔ Nothing here reads a remote, an account or a home
-directory: the values filled in are the tag and the signal, and the repository
-is read by the script itself from the checkout's `origin` when it runs.
+**Depends on.** `corpus.placement` for the generated root, and the standard
+library. ⛔ Nothing here reads a remote, an account or a home directory: the
+one value filled in is the tag, and the repository is read by the script itself
+from the checkout's `origin` when it runs.
 
-## ⭐ The clip signal: `released` at the pack, `present` at the restore
+## ⭐ A restore restores clips, and writes nothing else
 
-A narrated page shows its narration controls only when `SIGNAL` says `present`.
-The pack writes `released` (`write_signal`), and a build never undoes it; each
-restore script writes the `present` line as its very last step, after every
-clip is extracted, so an interrupted restore never claims the clips arrived.
-⚠️ A site built into another directory than the corpus root has its own signal
-and its own copies of the clips: a restore does not reach it, and building it
-again after the restore does.
+A narrated page asks its first clip itself (`narration-probe.js`), so nothing
+has to tell it the clips arrived: the next page load hears them. ⚠️ A site
+built into another directory than the corpus root has its own copies of the
+clips: a restore does not reach it, and building it again after the restore
+does.
 
 ## ⛔ Where a restore puts the clips
 
@@ -55,7 +51,7 @@ fetches only the volumes `VOLUME_SUMS` names, refuses any whose digest differs,
 refuses a zip whose members are not exactly the paths `CLIP_SUMS` names, extracts
 into a staging directory, checks every staged clip's digest, and only then moves
 each clip to its path. ⛔ A restore never writes a file that is not a clip this
-corpus committed, and a refusal leaves the corpus and the signal as they were.
+corpus committed, and a refusal leaves the corpus as it was.
 
 ## ⭐ The download directory is ignored where it lives
 
@@ -70,8 +66,7 @@ from __future__ import annotations
 import re
 from pathlib import Path, PurePosixPath
 
-from studyforge.corpus.placement import ASSETS_DIRNAME, GENERATED_ROOT
-from studyforge.render.pageassets import CLIPS_NAME, PRESENT, RELEASED, clips_script
+from studyforge.corpus.placement import GENERATED_ROOT
 
 #: Where the scripts live in a corpus, relative to its root.
 RELEASE_DIR = f"{GENERATED_ROOT}/narration-release"
@@ -92,16 +87,8 @@ DOWNLOAD_DIRNAME = "download"
 #: The release tag every script defaults to unless it is told another.
 DEFAULT_TAG = "narration-1.0.0"
 
-#: The script a narrated page reads to learn whether its clips are on disk, relative
-#: to the corpus root: the shared asset directory, the same under every profile.
-SIGNAL = f"{GENERATED_ROOT}/{ASSETS_DIRNAME}/{CLIPS_NAME}"
-
 #: What stands in a shipped script where the tag goes.
 TAG_MARK = "@TAG@"
-
-#: What stands where the signal's path goes, and where its `present` line goes.
-SIGNAL_MARK = "@SIGNAL@"
-PRESENT_MARK = "@PRESENT_LINE@"
 
 #: The shipped scripts, beside this module.
 SCRIPT_DIR = Path(__file__).resolve().parent / "scripts"
@@ -144,22 +131,6 @@ def write_scripts(root: Path | str, tag: str = DEFAULT_TAG) -> tuple[str, ...]:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text, encoding="utf-8", newline="\n")
     return tuple(files)
-
-
-def write_signal(root: Path | str, state: str = RELEASED) -> str:
-    """Write the clip signal's body for `state` into the corpus at `root`; return its path.
-
-    ⭐ The pack writes `RELEASED` once the clips are volumes, so a site committed
-    after packing tells a fresh checkout its clips have to be fetched; only the
-    restore writes `PRESENT`. The body is `render.pageassets.clips_script`'s, never
-    typed here, and it is written whole or not at all.
-    """
-    target = Path(root) / PurePosixPath(SIGNAL)
-    target.parent.mkdir(parents=True, exist_ok=True)
-    writing = target.with_name(f"{target.name}.writing")
-    writing.write_bytes(clips_script(state))
-    writing.replace(target)
-    return SIGNAL
 
 
 def render_clip_sums(clip_sums: tuple[tuple[str, str], ...]) -> str:
@@ -209,8 +180,7 @@ def tag_written(where: str, text: str) -> str | None:
 def _render(name: str, tag: str) -> str:
     """Return one shipped script with its marks filled in. ⛔ Each mark is there exactly once."""
     text = (SCRIPT_DIR / name).read_text(encoding="utf-8")
-    present = clips_script(PRESENT).decode("ascii").rstrip("\n")
-    for mark, value in ((TAG_MARK, tag), (SIGNAL_MARK, SIGNAL), (PRESENT_MARK, present)):
+    for mark, value in ((TAG_MARK, tag),):
         if text.count(mark) != 1:
             raise ValueError(f"the shipped {name} does not carry the place of {mark} exactly once")
         text = text.replace(mark, value)

@@ -170,7 +170,7 @@ def compose(
             # own `<h1>` is a narrated passage when the material supplied it —
             # and a page whose only spoken line is its title must still be able
             # to play it.
-            player=_region(player(attributes + body, narration, clips=placement.clips())),
+            player=_region(player(attributes + body, narration)),
             nav=_region(navigation.between_units(links)),
         )
         + TRAILING_NEWLINE
@@ -316,10 +316,11 @@ def _practices(number: int) -> str:
     return f"{number} practice is" if number == 1 else f"{number} practices are"
 
 
-def player(body: str, narration: Narration = SILENT, *, clips: str) -> str:
+def player(body: str, narration: Narration = SILENT) -> str:
     """Return the narration transport, or `''` when this page has nothing to play.
 
-    ⭐ `clips` addresses `pageassets.CLIPS_NAME` (are the clips on disk?); ⛔ never blank.
+    ⭐ Whether its clips are here is the page's own question, asked of its
+    first clip in the browser (`narration-probe.js`), and never a file's.
 
     ⛔ **Derived from the body, never from a document field** — see this
     module's docstring for why the gate is here rather than in a key this module
@@ -333,10 +334,8 @@ def player(body: str, narration: Narration = SILENT, *, clips: str) -> str:
     """
     if AUDIO_ATTRIBUTE not in body:
         return ""
-    if not clips.strip():
-        raise PageError("a narrated page was given no address for its clip signal")
     gap = _region(narration_gap(narration))
-    return templates.fill(PLAYER_TEMPLATE, gap=gap, clips=escape_attribute(clips))
+    return templates.fill(PLAYER_TEMPLATE, gap=gap)
 
 
 def narration_gap(narration: Narration) -> str:

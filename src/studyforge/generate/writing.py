@@ -144,6 +144,10 @@ class Written:
     #: outside the corpus root cannot reach, naming that page. ⛔ Reported,
     #: never acted on: no file is copied and no link climbs out of the site.
     unreached: tuple[PurePosixPath, ...] = ()
+    #: ⭐ A file an earlier build wrote that no page of this framework reads any
+    #: more (`generate.site.RETIRED`). ⛔ Reported, never acted on: nothing is
+    #: deleted, and the report says how a person removes it.
+    retired: tuple[PurePosixPath, ...] = ()
 
     def __add__(self, other: Written) -> Written:
         """Two passes' records, in the order the passes ran."""
@@ -159,6 +163,7 @@ class Written:
             stale=self.stale + other.stale,
             unlinked=self.unlinked + other.unlinked,
             unreached=self.unreached + other.unreached,
+            retired=self.retired + other.retired,
         )
 
     @property

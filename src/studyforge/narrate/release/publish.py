@@ -1,8 +1,7 @@
 r"""What publishing a packed release takes: a dry run, and the one command its owner runs.
 
 **What it does.** Checks a release directory against its `SHA256SUMS`, checks
-that the corpus carries the restore scripts written for the tag and a clip
-signal that says `released`, reads the
+that the corpus carries the restore scripts written for the tag, reads the
 repository from the checkout's `origin` remote, and returns the `gh release
 create` command that attaches the volumes and the manifest to a release under
 that tag. It prints; it runs nothing.
@@ -13,8 +12,7 @@ run's report. `studyforge narrate <root> --publish <dir> --tag <tag>` is the
 command a person types, and the last line it prints is the one they run.
 
 **Depends on.** `narrate.release.volumes` for the manifest,
-`narrate.release.scripts` for the scripts a tag renders, `render.pageassets` to
-read the clip signal, `checksum` for each
+`narrate.release.scripts` for the scripts a tag renders, `checksum` for each
 volume's digest, and the standard library. ⛔ It starts no process and opens no
 socket: spec §8.3 keeps process starts in `execute`, and a publish is the owner's.
 
@@ -40,13 +38,11 @@ rewritten by an `insteadOf` rule is read as written.
 directory whose `SHA256SUMS` is not the committed one, and a committed clip list
 the narration record no longer matches.
 
-## ⛔ The corpus keeps its clips out of git, and says they are released
+## ⛔ The corpus keeps its clips out of git
 
 ⭐ A publish refuses a corpus whose policy commits its clips, as the pack does
-(`volumes.require_released_policy`). The pack writes `released` into the clip
-signal (`scripts.SIGNAL`) and a build never undoes it. ⛔ A publish refuses
-any other answer: a corpus whose clips are a download must not commit a signal
-that tells a fresh checkout they are present.
+(`volumes.require_released_policy`). ⭐ Nothing tells a page whether its clips
+were restored: a page asks its first clip itself (`narration-probe.js`).
 
 ## ⛔ The scripts and the release agree on the tag
 
@@ -76,7 +72,6 @@ from pathlib import Path, PurePosixPath
 from studyforge.checksum import Unreadable, file_sha256
 from studyforge.narrate.release.scripts import (
     CLIP_SUMS,
-    SIGNAL,
     VOLUME_SUMS,
     restore_scripts,
     tag_written,
@@ -89,7 +84,6 @@ from studyforge.narrate.release.volumes import (
     read_sums,
     require_released_policy,
 )
-from studyforge.render.pageassets import RELEASED, clips_state
 
 #: The release's title, as the release page shows it.
 TITLE = "Narration"
@@ -210,7 +204,6 @@ def plan_publish(root: Path | str, out: Path | str, tag: str) -> Publish:
     except PackRefused as refused:
         raise PublishRefused(str(refused)) from None
     _scripts_agree(Path(root), tag)
-    _signal_released(Path(root))
     # ⛔ As typed, never resolved: the report names what was asked for, not a home (R7).
     directory = Path(out)
     try:
@@ -285,26 +278,6 @@ def _record_agrees(root: Path, directory: Path) -> None:
         raise PublishRefused(
             f"the corpus's {CLIP_SUMS} does not name the clips its narration record names "
             f"now; run --pack again and commit it"
-        )
-
-
-def _signal_released(root: Path) -> None:
-    """Refuse unless the corpus's clip signal says `released`.
-
-    ⛔ A signal saying `present` (say, rebuilt after it was deleted, with the clips
-    still on the author's disk) would be committed, and every fresh checkout of a
-    corpus whose clips are a download would be told they are there.
-    """
-    path = root / PurePosixPath(SIGNAL)
-    try:
-        said = clips_state(path.read_bytes()) if path.is_file() else None
-    except OSError:
-        said = None
-    if said != RELEASED:
-        raise PublishRefused(
-            f"the corpus's {SIGNAL} does not say {RELEASED}, so a fresh checkout would not "
-            f"be told its clips have to be fetched; run --pack again, which writes it, and "
-            f"commit it"
         )
 
 

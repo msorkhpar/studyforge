@@ -10,21 +10,12 @@ gate before it leaves; binary media is streamed.
 function — ⛔ **one resolver, never two**, because two are two traversal surfaces.
 
 **Depends on.** `archive.scrub`, `corpus.placement.profile` for the generated
-directory's name, `serve.caching`, `serve.response`, `serve.withheld` for a
-quiz's key, and `serve.clips` for the one file answered from the disk rather than
-from its bytes.
+directory's name, `serve.caching`, `serve.response`, and `serve.withheld` for a
+quiz's key.
 
 ⭐ **A missing `/favicon.ico` is `204`, not `404`**: a browser asks every origin for
 it unprompted, a page names no icon, and a `404` is an error in the reader's
 console on every served page.
-
-## ⭐ One file is answered, not served: the clip signal
-
-A narrated page links `render.pageassets.CLIPS_NAME` to learn whether its clips
-are on disk. ⭐ Once that path has resolved like any other, the answer is the
-disk's state now (`serve.clips.told`), `no-store`, so a served page is right
-after a restore or a deletion with no build between. ⛔ The file itself is never
-rewritten.
 
 ## ⛔ `resolve` is the whole traversal control, and its order is the control
 
@@ -101,8 +92,7 @@ from studyforge.corpus.manifest.document import MANIFEST_FILENAME
 from studyforge.corpus.placement.profile import GENERATED_ROOT
 from studyforge.progress import store_dir
 from studyforge.serve.caching import UNSATISFIABLE, WHOLE, not_modified, parse_range, weak_etag
-from studyforge.serve.clips import is_signal, told
-from studyforge.serve.response import NO_STORE, TEXT_TYPE, Request, Response
+from studyforge.serve.response import TEXT_TYPE, Request, Response
 
 #: Assets revalidate every time; a `304` costs one `stat`, and one read of a text
 #: or unknown-type file, which `withheld` is asked of first.
@@ -330,8 +320,6 @@ def serve(
         return Response(204, ())
     if target is None or private(target):
         return _not_found()
-    if is_signal(target):
-        return _signal(told(target, private))
     try:
         stat = target.stat()
     except OSError:
@@ -381,17 +369,6 @@ def _text(body: bytes | None, ctype: str, validators: tuple, client: str | None)
     except PersonalDataLeak:
         return Response(500, (("Content-Type", TEXT_TYPE),), b"asset failed the gate\n")
     headers = (("Content-Type", ctype), *validators, ("Accept-Ranges", "none"))
-    return Response(200, headers, body)
-
-
-def _signal(body: bytes) -> Response:
-    """Answer the clip signal with the disk's state now, never cached (`serve.clips`).
-
-    ⭐ Only a signal the site HAS is answered: the file must resolve first, so a
-    site built before the signal existed still gets its `404`. ⛔ `no-store` and
-    no validator, as `state` answers: the clips move underneath the page.
-    """
-    headers = (("Content-Type", CONTENT_TYPES[".js"]), ("Cache-Control", NO_STORE))
     return Response(200, headers, body)
 
 

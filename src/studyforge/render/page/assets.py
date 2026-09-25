@@ -69,7 +69,7 @@ from studyforge.corpus.placement import (
 )
 from studyforge.describe import describe
 from studyforge.render.page.errors import PageError
-from studyforge.render.pageassets import CLIPS_NAME, SCRIPT_NAME, STYLESHEET_NAME
+from studyforge.render.pageassets import SCRIPT_NAME, STYLESHEET_NAME
 from studyforge.sourcepath import SOURCE_PATH_DESCRIBED, source_path_fault
 
 #: The attribute a narrated element carries. ⛔ Written by narration and by
@@ -112,10 +112,6 @@ class Placement:
     def script(self) -> str:
         """How this page addresses the shared script."""
         return self._shared_asset(SCRIPT_NAME)
-
-    def clips(self) -> str:
-        """How this page addresses the script that says whether its clips are on disk."""
-        return self._shared_asset(CLIPS_NAME)
 
     def media(self, kind: str, source: object) -> str:
         """How this page addresses one of its own media files.

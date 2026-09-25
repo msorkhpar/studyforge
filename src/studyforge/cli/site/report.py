@@ -65,6 +65,13 @@ UNLINKED = (
 )
 
 
+#: What a file an earlier build wrote and no page reads any more gets.
+RETIRED = (
+    "an earlier build wrote this file and no page reads it any more; nothing was "
+    "deleted. Delete it, and commit the deletion, to be rid of it"
+)
+
+
 #: What a site written outside the corpus root says of its corpus-file links.
 #: ⭐ It names where a build keeps them. ⛔ Nothing is copied and nothing links
 #: upward out of the site, so the report is the whole of the answer.
@@ -100,6 +107,7 @@ def lines(written: Written, root: str, into: str) -> list[str]:
     ]
     out += [f"stale {path}  {STALE}" for path in sorted(str(path) for path in written.stale)]
     out += [f"unlinked {path}  {UNLINKED}" for path in sorted(str(p) for p in written.unlinked)]
+    out += [f"retired {path}  {RETIRED}" for path in sorted(str(p) for p in written.retired)]
     return out + unreached(written)
 
 

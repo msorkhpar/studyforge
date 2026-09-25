@@ -27,11 +27,10 @@ state `narrate.playable` already names. Restoring adds the voice and nothing els
 
 ⭐ A restore writes each clip at `<corpus root>/<where>/<filename>`, the record's
 own entry: the directory `studyforge narrate` wrote it into, which is the unit's
-audio directory under the corpus's placement profile. Last, it writes `present`
-into the clip signal, `.studyforge/assets/narration-clips.js`, which the pack
-set to `released`, so a site built at the corpus root plays the clips on its
-next page load with no rebuild. A site built into another directory has its own
-copies and its own signal, and is built again after a restore.
+audio directory under the corpus's placement profile, and writes nothing else.
+A page asks its first clip itself, so a site built at the corpus root plays the
+clips on its next page load with no rebuild. A site built into another
+directory has its own copies, and is built again after a restore.
 """
 
 from __future__ import annotations
@@ -43,13 +42,11 @@ from studyforge.narrate.release.scripts import (
     RELEASE_DIR,
     RESTORE_PS1,
     RESTORE_SH,
-    SIGNAL,
     VOLUME_SUMS,
     restore_scripts,
     valid_tag,
     write_release_record,
     write_scripts,
-    write_signal,
 )
 from studyforge.narrate.release.volumes import (
     PART_BYTES,
@@ -71,7 +68,6 @@ __all__ = [
     "RELEASE_DIR",
     "RESTORE_PS1",
     "RESTORE_SH",
-    "SIGNAL",
     "SUMS",
     "VOLUME",
     "VOLUME_SUMS",
@@ -88,5 +84,4 @@ __all__ = [
     "valid_tag",
     "write_release_record",
     "write_scripts",
-    "write_signal",
 ]

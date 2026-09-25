@@ -37,7 +37,7 @@ import subprocess
 import pytest
 
 from studyforge.render import templates
-from studyforge.render.pageassets import ABSENT, PRESENT, RELEASED, text
+from studyforge.render.pageassets import text
 
 #: Set by `docker/dev/Dockerfile`. ⭐ Its presence means "this run is the one
 #: that certifies a result", which is what turns an absent runtime from a skip
@@ -45,10 +45,17 @@ from studyforge.render.pageassets import ABSENT, PRESENT, RELEASED, text
 DEV_CONTAINER = "STUDYFORGE_DEV_CONTAINER"
 
 #: The part under test and the markup it is the other side of. ⛔ The stand-in
-#: part is loaded FIRST, as the bundle orders it: `narration.js` reads what it
-#: defines with no guard (`pageassets.bundle`).
+#: and the probe are loaded FIRST, as the bundle orders them: `narration.js`
+#: reads what they define with no guard (`pageassets.bundle`).
 PART = "narration.js"
 STAND_IN = "narration-stand-in.js"
+PROBE = "narration-probe.js"
+
+#: What the page's first clip does when it is asked: it loads, it fails (not
+#: found, a network error, a decode error), or it never answers.
+LOADS = "loads"
+FAILS = "fails"
+SILENT = "never"
 PLAYER = "player.html"
 
 #: The stub DOM, and the harness that drives one scenario through it.
@@ -183,17 +190,37 @@ const documentStub = {
   fire(name, event) { body.fire(name, event); },
 };
 
-/* ⭐ What `pageassets.CLIPS_NAME` said before the bundle ran: `null` is a page
-   whose signal never ran at all. */
+/* ⭐ The probe's own element: every one `new Audio()` makes is kept, with the
+   one source it was given, so a reading counts the clips the page ASKED for. */
+const probes = [];
+class Probe {
+  constructor() { this.listeners = {}; this.src = undefined; probes.push(this); }
+  addEventListener(name, fn) { (this.listeners[name] = this.listeners[name] || []).push(fn); }
+  removeEventListener(name, fn) {
+    this.listeners[name] = (this.listeners[name] || []).filter(one => one !== fn);
+  }
+  fire(name) { (this.listeners[name] || []).slice().forEach(fn => fn({ target: this })); }
+}
+
 global.window = { matchMedia: () => ({ matches: false }) };
-if (spec.clips !== null) { global.window.studyforge = { clips: spec.clips }; }
+global.Audio = Probe;
 global.document = documentStub;
 
 eval(fs.readFileSync(process.argv[2], 'utf8'));
 
+/* ⭐ How the first clip answers, and then — as a real element would not, but
+   a careless part might listen for — the other answer too. */
+probes.forEach(one => {
+  if (spec.probe === 'loads') { one.fire('loadedmetadata'); one.fire('error'); }
+  if (spec.probe === 'fails') { one.fire('error'); one.fire('loadedmetadata'); }
+});
+
+let prevented = 0;
 function keys() {
   return (spec.keys || []).forEach(key => {
-    documentStub.fire('keydown', { key, target: { tagName: 'BODY' }, preventDefault() {} });
+    documentStub.fire('keydown', {
+      key, target: { tagName: 'BODY' }, preventDefault() { prevented += 1; },
+    });
   });
 }
 
@@ -256,6 +283,9 @@ setTimeout(function () {
     disabled: ['previous', 'play', 'next', 'speed'].map(id => byId[id].disabled),
     scrolled: passages.map(el => el.scrolled),
     early: early,
+    asked: probes.map(one => one.src === undefined ? null : one.src),
+    preload: probes.map(one => one.preload === undefined ? null : one.preload),
+    prevented: prevented,
   }));
 }, 0);
 """
@@ -296,11 +326,11 @@ def run(tmp_path, **spec):
     """Drive one scenario through the real part and return what the page ended up as."""
     spec.setdefault("passages", THREE)
     spec.setdefault("player", templates.template(PLAYER).template)
-    spec.setdefault("clips", PRESENT)
+    spec.setdefault("probe", LOADS)
     driver = tmp_path / "drive.js"
     driver.write_text(DRIVER, encoding="utf-8")
     part = tmp_path / PART
-    part.write_text(text(STAND_IN) + "\n" + text(PART), encoding="utf-8")
+    part.write_text("\n".join(text(one) for one in (STAND_IN, PROBE, PART)), encoding="utf-8")
     request = tmp_path / "spec.json"
     request.write_text(json.dumps(spec), encoding="utf-8")
     result = subprocess.run(  # noqa: S603 - fixed argv, no shell
@@ -421,15 +451,12 @@ def test_a_clip_that_is_not_on_disk_says_so_instead_of_pretending(tmp_path):
     assert reading["face"] == ["paused"]
 
 
-def test_a_unit_with_no_audio_at_all_states_it_and_leaves_no_dead_control(tmp_path):
-    # ⛔ The same clause at the whole unit: the renderer wrote the attribute and
-    # synthesis produced nothing. ⚠️ The controls are DISABLED and the reason is
-    # SHOWN — hiding the transport would be honest about the control and silent
-    # about the cause.
+def test_a_unit_with_no_clip_to_ask_for_asks_nothing_and_shows_nothing(tmp_path):
+    # ⛔ The renderer wrote the attribute and synthesis produced nothing: there
+    # is no first clip to ask, so nothing is asked and no control is shown.
     reading = run(tmp_path, passages=["", "", ""])
-    assert reading["saying"] == ["none"]
-    assert reading["disabled"] == [True, True, True, True]
-    assert reading["hidden"] is False
+    assert reading["hidden"] is True
+    assert reading["asked"] == []
 
 
 def test_a_browser_that_refuses_to_start_audio_is_a_stated_state_and_not_an_error(tmp_path):
@@ -485,23 +512,36 @@ def test_space_plays_and_the_arrows_move(tmp_path):
     assert right_then_left["speaking"] == ["true", None, None]
 
 
-# --- the clips are not on disk ----------------------------------------------
+# --- the first clip is asked, once ------------------------------------------
 
 
-@pytest.mark.parametrize("told", [ABSENT, RELEASED, None])
-def test_a_page_whose_clips_are_absent_keeps_every_control_hidden_and_inert(tmp_path, told):
-    # ⛔ The page learned it from the signal, and it binds nothing: the transport
-    # stays hidden, a passage does not answer a click, and no key starts a clip.
-    # ⭐ `None` is a page whose signal never ran, which must read as absent.
+@pytest.mark.parametrize("answer", [FAILS, SILENT])
+def test_a_page_whose_first_clip_does_not_load_asks_no_other_and_stays_hidden_and_inert(
+    tmp_path, answer
+):
+    # ⛔ The user's direction: the page asks its first clip once and, when it
+    # does not load, asks nothing more — the transport stays hidden, a passage
+    # does not answer a click, and no key starts a clip or is taken from the page.
     for action, extra in (("play", {}), ("clickSecond", {}), ("keys", {"keys": [" "]})):
-        reading = run(tmp_path, clips=told, action=action, **extra)
+        reading = run(tmp_path, probe=answer, action=action, **extra)
+        assert reading["asked"] == [THREE[0]], action
         assert reading["hidden"] is True, action
         assert reading["src"] is None and reading["plays"] == 0, action
         assert reading["speaking"] == [None, None, None], action
+        assert reading["prevented"] == 0, action
 
 
-def test_the_same_page_with_its_clips_present_comes_up(tmp_path):
+def test_the_same_page_whose_first_clip_loads_comes_up(tmp_path):
     # ⭐ The negative control of the case above, on the same passages.
-    reading = run(tmp_path, clips=PRESENT, action="clickSecond")
+    reading = run(tmp_path, probe=LOADS, action="clickSecond")
+    assert reading["asked"] == [THREE[0]]
+    assert reading["preload"] == ["metadata"]
     assert reading["hidden"] is False
     assert reading["src"] == THREE[1]
+
+
+def test_the_clip_asked_is_the_first_one_the_page_can_play(tmp_path):
+    # ⭐ A passage with no source is skipped, as the transport skips it.
+    reading = run(tmp_path, passages=["", THREE[1], THREE[2]])
+    assert reading["asked"] == [THREE[1]]
+    assert reading["hidden"] is False
