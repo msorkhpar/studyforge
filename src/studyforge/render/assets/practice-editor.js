@@ -17,8 +17,8 @@
    development environment with a shell, and opening a reading page is not
    consent to run one. The slot carries the sentence saying it is not running
    and how to start it, so a reader sees a statement rather than a blank frame —
-   ⭐ and when the server answers where this practice's two windows are, the
-   frames replace that sentence. ⛔ **Every URL is the SERVER's
+   ⭐ and when the server answers where this practice's two windows are, one
+   frame replaces that sentence, and each tab points it at its own window. ⛔ **Every URL is the SERVER's
    answer, never a name in this file**: a built page may name no origin and no
    port (R8), the editor's host port is per-project, and the absolute path a
    window opens is a path inside somebody else's container.
@@ -66,10 +66,16 @@
   var TAB = 'data-practice-tab';
   var FRAME = 'data-practice-frame';
 
-  /* The two windows, and what each frame is called to a screen reader. ⚠️ These
+  /* ⭐ What the workspace says when it opens and closes a practice, raised on
+     the practice's panel, and the mark an open panel carries
+     (`practice-workspace.js`). */
+  var OPENED = 'studyforge:practice-opened';
+  var CLOSED = 'studyforge:practice-closed';
+  var OPEN = 'data-workspace-open';
+
+  /* The two windows, and what the frame is called to a screen reader. ⚠️ These
      are the framework's own words for its own controls, not the material's
      (R1) — the same status the panel's 'Running…' and 'Passed.' already have. */
-  var WINDOWS = ['main', 'test'];
   var TITLES = { main: 'Your code', test: 'Tests' };
 
   /* The directive a blocked editor frame is refused by, in the browser's own
@@ -259,24 +265,21 @@
     });
   }
 
-  /* ⭐ **Two frames of ONE editor, one visible at a time — never a split pane.**
-     The file a reader may type in and the file that judges it are two different
-     acts of reading, and standing them side by side halves the width of both.
+  /* ⭐ **Two windows of ONE editor, in ONE frame — never a split pane, and never
+     two frames.** The file a reader may type in and the file that judges it are
+     two different acts of reading; a tab picks which one the frame shows.
 
-     ⛔ **Each frame's URL is the SERVER's answer and is never built here**: the
+     ⛔ **One frame, because a page holds one editor at most** (the user's
+     ruling): a second workbench is a second language server, so the Tests tab
+     points the same frame at the other window's URL rather than building one.
+
+     ⛔ **Each window's URL is the SERVER's answer and is never built here**: the
      window's own URL is the only thing that can point two windows of one editor
      at two different files, because an extension cannot read its own window's
-     query string and both windows share one workspace settings file.
-
-     ⛔ **The TESTS frame is built LAZILY, on the first click of its tab.** A
-     second workbench is a second language server, and a reader who never opens
-     the tests should never pay for one. */
+     query string and both windows share one workspace settings file. */
   function windows(panel, where) {
-    var slots = {};
-    WINDOWS.forEach(function (name) {
-      slots[name] = panel.querySelector('[' + FRAME + '="' + name + '"]');
-    });
-    if (!slots.main) { return; }
+    var slot = panel.querySelector('[' + FRAME + '="main"]');
+    if (!slot) { return; }
     var tested = !!(where.test && where.test.url);
     var buttons = [].slice.call(panel.querySelectorAll('[' + TAB + ']')).filter(
       function (button) {
@@ -285,7 +288,7 @@
         return keep;
       }
     );
-    var lazy = false;
+    var built = null;
 
     function select(name) {
       buttons.forEach(function (button) {
@@ -293,17 +296,20 @@
         button.setAttribute('aria-selected', mine ? 'true' : 'false');
         button.tabIndex = mine ? 0 : -1;
       });
-      WINDOWS.forEach(function (one) { show(slots[one], one === name && !!slots[one]); });
-      if (name === 'test' && !lazy && tested) {
-        lazy = true;
-        frame(slots.test, where.test.url, TITLES.test);
+      var url = where[name].url;
+      if (!built) {
+        frame(slot, url, TITLES[name]);
+        built = slot.lastElementChild;
+      } else if (built.src !== url) {
+        built.title = TITLES[name];
+        built.src = url;
       }
+      show(slot, true);
     }
 
     /* ⛔ BEFORE the frame is added, because the violation it listens for is
        raised by adding it. */
     reloadWhenBlocked(where.main.url);
-    frame(slots.main, where.main.url, TITLES.main);
     buttons.forEach(function (button) {
       button.addEventListener('click', function () { select(button.getAttribute(TAB)); });
       /* ⚠️ Arrow keys move between tabs, which is what a tablist is announced
@@ -325,23 +331,45 @@
     show(part(panel, 'no-editor'), false);
   }
 
-  /* ⭐ Fill the editor slot when the server says where THIS PRACTICE's two
-     windows are, and leave the sentence standing when it does not. ⛔ Frames are
-     added only for an editor that is already up over this corpus's own files and
-     that actually holds this practice's file — the server decides both, this
-     asks.
+  /* ⭐ **Nothing is asked until the reader opens this practice** (the user's
+     ruling: no editor loads until a practice is opened), and the frame goes
+     when it is closed or another is opened — so the page holds one at most.
+     ⛔ Frames are added only for an editor that is already up over this
+     corpus's own files and that actually holds this practice's file — the
+     server decides both, this asks.
 
      ⚠️ **Asked for, never assumed.** A site BUILT by one version of this
      framework may be SERVED by another, and the client is the serving process's;
      a panel that called a function an older client does not publish would take
      the whole editor slot down with it. */
-  function ask(panel, run) {
+  var asking = 0;
+
+  function open(panel, run) {
     var key = panel.getAttribute(KEY);
     var corpus = panel.getAttribute(CORPUS);
     if (!key || !corpus || !run.practice) { return; }
+    var mine = asking += 1;
     run.practice(corpus, key).then(function (where) {
+      /* ⛔ A reader who moved on before the answer came gets no frame here. */
+      if (mine !== asking || !panel.hasAttribute(OPEN)) { return; }
       if (where && where.main && where.main.url) { windows(panel, where); }
     }, function () { return null; });
+  }
+
+  /* ⭐ The panel goes back to what it shipped as: no frame, the sentence
+     standing, the tablist hidden. ⚠️ A clone of each tab replaces it, which is
+     the one way to drop the listeners the last opening added. */
+  function close(panel) {
+    asking += 1;
+    var slot = panel.querySelector('[' + FRAME + '="main"]');
+    if (slot) { while (slot.firstChild) { slot.removeChild(slot.firstChild); } show(slot, false); }
+    [].slice.call(panel.querySelectorAll('[' + TAB + ']')).forEach(function (button) {
+      var fresh = button.cloneNode(true);
+      fresh.hidden = false;
+      button.parentNode.replaceChild(fresh, button);
+    });
+    show(part(panel, 'tabs'), false);
+    show(part(panel, 'no-editor'), true);
   }
 
   /* ⭐ The frame and its one reload are PUBLISHED, so a lesson's code examples
@@ -350,9 +378,12 @@
   window.studyforge = window.studyforge || {};
   window.studyforge.frames = { frame: frame, reloadWhenBlocked: reloadWhenBlocked };
 
-  var panels = [].slice.call(document.querySelectorAll(PANEL));
-  if (!panels.length) { return; }
   var run = window.studyforge && window.studyforge.run;
   if (!run || !run.available()) { return; }
-  panels.forEach(function (panel) { ask(panel, run); });
+  document.addEventListener(OPENED, function (event) {
+    if (event.target.matches && event.target.matches(PANEL)) { open(event.target, run); }
+  });
+  document.addEventListener(CLOSED, function (event) {
+    if (event.target.matches && event.target.matches(PANEL)) { close(event.target); }
+  });
 }());

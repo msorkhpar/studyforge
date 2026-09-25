@@ -196,10 +196,16 @@ exercise.** For a corpus that declares `exercises: true`, the generated
 `emit.py` reads every bundle the exercises skill committed under `exercises/`,
 code and quiz alike, checks each against its gate record, and joins it to its
 unit as a practice document, raising the unit's practice count
-(`studyforge.skills.adapter.practices`). A practice `documents` already returns
-with that bundle's exact record is kept, not doubled; any other practice at
-that ordinal, a gap in a unit's practices, or an exercise no container declares
-refuses the run by name.
+(`studyforge.skills.adapter.practices`). ⭐ Each record gains `concepts`, what
+the exercise practises, read off its unit's `coverage.json`
+(`studyforge.skills.exercises.practised`) — the words its card shows; a report
+that will not read, or whose shipped list does not pair with its plan, refuses
+the run by name. A practice `documents` already returns with that bundle's
+record — `concepts` aside — is kept, not doubled; any other practice at that
+ordinal, a gap in a unit's practices, or an exercise no container declares
+refuses the run by name. ⚠️ **An adapter that joins practices its own way**
+writes `concepts` by calling `practised(root, places)` for each bundle, or its
+cards say nothing about what each practice practises.
 
 ⚠️ **Report what you cannot read; never drop it** (R6). A block the reader does
 not recognise is absent from the digest *and* from the counts, so nothing

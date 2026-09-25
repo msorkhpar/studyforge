@@ -142,12 +142,13 @@ PINNING = re.compile(r"^\s*(?:-\w+-)?(transform|filter|will-change|perspective|c
 
 
 def test_no_authored_stylesheet_makes_a_containing_block_for_a_fixed_descendant():
-    # ⛔ **A PROPERTY the maximised practice panel depends on**.
-    # `practice.css` expands the panel with `position: fixed`, which answers to
-    # the VIEWPORT only while nothing above it makes a containing block: one
-    # `transform`, `filter`, `will-change`, `perspective` or `contain` anywhere
-    # on an ancestor pins the panel to that box instead — and the practice then
-    # expands to the width of the reading column with nothing failing anywhere.
+    # ⛔ **A PROPERTY the practice workspace depends on**.
+    # `practice-workspace.css` lays an open practice over the page with
+    # `position: fixed`, which answers to the VIEWPORT only while nothing above
+    # it makes a containing block: one `transform`, `filter`, `will-change`,
+    # `perspective` or `contain` anywhere on an ancestor pins the workspace to
+    # that box instead — and it then opens at the width of the reading column
+    # with nothing failing anywhere.
     #
     # ⚠️ **VENDORED parts are excluded and the reason is stated.** Plyr's
     # transport and the classes Prism writes inside a `<code>` style their own
@@ -164,5 +165,5 @@ def test_no_authored_stylesheet_makes_a_containing_block_for_a_fixed_descendant(
             guilty[name] = found
     assert not guilty, (
         f"a stylesheet over the practice panel creates a containing block: {guilty} — "
-        "the maximised panel would size to that box instead of the viewport"
+        "the workspace would size to that box instead of the viewport"
     )

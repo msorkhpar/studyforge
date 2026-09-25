@@ -106,6 +106,7 @@ PUBLIC_SURFACE = frozenset(
         "plan_document",
         "plan_for",
         "plan_page",
+        "practised",
         "quiz_of",
         "require_after_carried",
         "require_aspects",

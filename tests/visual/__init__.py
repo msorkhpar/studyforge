@@ -144,8 +144,8 @@ ACCEPTANCE = {
     #: only while a page is running — a text can read the script and cannot read
     #: either. ⚠️ It needs what no other clause here needs: an origin that
     #: answers the practice-editor route, so there is a frame to not move.
-    "maximises the practice to the viewport and restores it, keeping every "
-    "control, a live run and both editor windows unreloaded": "test_practice_maximise",
+    "lists a lesson's practices as titled cards and opens each in one full-screen "
+    "workspace, at desktop and phone width, with one editor at most": "test_practice_workspace",
     #: ⭐ A row of its own because its ORIGIN is the subject: the two panel
     #: clauses need a server, and this one is only a reading if there is none.
     #: ⛔ *A quiz page shows questions, grades them, and shows no run

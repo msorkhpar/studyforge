@@ -304,12 +304,10 @@ def test_every_control_is_a_real_button_and_the_output_is_reachable_by_keyboard(
     # same rule rather than exempted from it — a tab that was a styled `div`
     # would be announced as nothing in a `role="tablist"` that promises tabs.
     assert tabs and set(tabs) == {"button"}
-    # ⛔ **Counted over every `<button>` the panel emits, and not over the two
-    # families above**: the maximise control is neither an act nor a
-    # tab, so a sum of those two would have stopped covering the panel on the
-    # day it was added — with nothing failing.
+    # ⛔ **Counted over every `<button>` the panel emits**, so a control that is
+    # neither an act nor a tab is held to the rule too.
     buttons = re.findall(r"<button\b[^>]*>", markup)
-    assert len(buttons) > len(acts) + len(tabs)
+    assert len(buttons) == len(acts) + len(tabs)
     assert markup.count('type="button"') == len(buttons)
     assert re.search(r'<pre[^>]*data-practice-part="output"[^>]*tabindex="0"', markup)
     assert 'role="status"' in markup and 'aria-live="polite"' in markup
@@ -327,15 +325,17 @@ def test_the_controls_and_the_editor_ship_hidden_and_the_offline_note_does_not()
 
 def test_the_two_tabs_ship_hidden_and_name_the_two_windows():
     # ⭐ The reader's own file and the test that judges it, as two tabs
-    # over two frames of ONE editor — never a split pane, which halves the
+    # over two windows of ONE editor — never a split pane, which halves the
     # width of both. ⛔ Hidden in the built page: there is no editor to show
     # until a served origin says there is one.
     markup = panel()
     assert re.search(r'<div data-practice-part="tabs" role="tablist"[^>]*hidden', markup)
     assert re.search(r'<button[^>]*data-practice-tab="main"[^>]*aria-selected="true"', markup)
     assert re.search(r'<button[^>]*data-practice-tab="test"[^>]*aria-selected="false"', markup)
+    # ⛔ ONE frame slot: the two windows take turns in one frame, so a page
+    # never holds more than one editor.
+    assert markup.count("data-practice-frame=") == 1
     assert re.search(r'<div data-practice-frame="main" hidden></div>', markup)
-    assert re.search(r'<div data-practice-frame="test" hidden></div>', markup)
 
 
 def test_the_tests_tab_is_emitted_only_where_the_record_names_a_test():
@@ -362,7 +362,7 @@ def test_a_quiz_shows_its_questions_and_no_run_affordance_at_all():
         assert dead not in quiz, dead
         assert dead in code or dead == "<iframe", dead
     # ⛔ And the panel's own attribute is NOT on it: a quiz is its own section,
-    # so nothing keyed on `data-practice` — the run, the maximise, the output —
+    # so nothing keyed on `data-practice` — the run, the output —
     # can reach it by accident.
     assert "<section data-practice=" not in quiz
     assert "<section data-practice=" in code
@@ -442,7 +442,7 @@ def test_the_panel_is_outside_the_section_so_it_is_not_in_the_outline():
     outline = anchors.outline(depth2_unit_01().document)
     assert outline
     assert "data-practice=" not in outline
-    assert "Work on this practice" not in outline
+    assert "Problem statement" not in outline
 
 
 def test_the_same_document_renders_identical_bytes(tmp_path):
@@ -459,100 +459,3 @@ def test_a_real_fixture_unit_carries_the_panel_its_archive_declares():
     page = case.render().decode("utf-8")
     assert "<section data-practice=" in page
     assert 'data-corpus="depth2-demo"' in page
-
-
-# --- ⛔ The control that gives the practice the whole viewport --------
-
-
-def test_the_panel_ships_one_maximise_control_hidden_and_a_quiz_ships_none():
-    # ⛔ One control gives the code, the tests and the Run and Submit buttons
-    # the whole window.
-    # ⭐ Hidden in the built page for the reason every other control is: over
-    # `file://` this panel is one sentence, and a control that makes a sentence
-    # full-screen is the dead button this module refuses everywhere else.
-    markup = panel()
-    assert re.search(r'<button[^>]*data-practice-part="expand"[^>]*hidden>', markup), (
-        "the panel ships no maximise control, or ships it already showing"
-    )
-    assert markup.count('data-practice-part="expand"') == 1
-    assert 'aria-expanded="false"' in markup
-    # ⛔ A quiz renders NO PANEL, so it cannot carry this control
-    # either — asserted against the very same section, both ways round.
-    assert 'data-practice-part="expand"' not in panel(sections=[section(workspace=QUIZ)])
-
-
-def test_both_of_the_maximise_control_s_words_are_the_template_s():
-    # ⛔ The button shows one word and CARRIES the other, because the Python
-    # side is the single source for what is emitted — a label spelled in the
-    # script as well would be a second place for it to drift, and the drift is
-    # silent: the control would simply stop changing what it says.
-    markup = panel()
-    control = re.search(r"<button[^>]*data-practice-part=\"expand\"[^>]*>([^<]*)</button>", markup)
-    assert control and control.group(1).strip()
-    assert re.search(r'data-practice-label="[^"]+"', markup)
-    assert 'data-practice-label=""' not in markup
-
-
-def test_the_panel_itself_can_take_focus_so_the_expansion_has_somewhere_to_put_it():
-    # ⛔ A full-viewport surface with no keyboard exit is a trap, and the first
-    # half of the remedy is that focus can be MOVED INTO the expanded practice
-    # at all. ⚠️ `-1`, so the panel is reachable by script and never a stop a
-    # keyboard reader has to Tab through on an ordinary page.
-    assert re.search(r'<section data-practice="[^"]*"[^>]*tabindex="-1"', panel())
-
-
-def test_the_panel_expands_by_its_own_attribute_and_moves_no_frame():
-    # ⛔ **THE clause the maximise control is measured by.** The two
-    # windows are `iframe`s, and an `iframe` MOVED TO ANOTHER PARENT RELOADS —
-    # the reader's unsaved buffer is gone and the code-server session restarts.
-    # ⭐ So the expansion is one attribute on the section, and the region that
-    # sets it reaches for no node-moving call at all.
-    body = behaviour()
-    region = body[body.index("function maximise(panel)") : body.index("function breakdown(panel)")]
-    assert "panel.setAttribute(EXPANDED, '')" in region
-    assert "panel.removeAttribute(EXPANDED)" in region
-    for move in ("appendChild", "insertBefore", "replaceChild", "removeChild", "cloneNode"):
-        assert move not in region, move
-    # ⛔ And the whole file appends exactly ONE node anywhere — one line of the
-    # program's own output — so there is no second place a frame could be moved
-    # from. ⚠️ Read over the file and not over the region, because a reparent
-    # written in `wire` would satisfy the clause above. ⭐ The frame's own
-    # append left with `practice-editor.js`, and the count here fell
-    # from two to one saying so.
-    assert body.count("appendChild") == 1  # one output line, and nothing else
-    assert "output.appendChild(document.createTextNode(line" in body
-
-
-def test_the_restore_puts_the_page_back_where_it_was_rather_than_leaving_it():
-    # ⛔ Two things move the page: `position: fixed` shortens the document so the browser CLAMPS
-    # a scroll that no longer fits, and `reset.css`'s `scroll-behavior: smooth`
-    # makes every scroll — including the one `focus()` starts — an ANIMATION
-    # that is still running when the next reader of the page looks. ⭐ So the
-    # position is read BEFORE the panel leaves flow, written back AFTER it is
-    # returned to it, `instant` so nothing is mid-glide, and `preventScroll` so
-    # focus is not a second thing deciding where the page is.
-    body = behaviour()
-    region = body[body.index("function maximise(panel)") : body.index("function breakdown(panel)")]
-    assert "if (open) { was = window.pageYOffset || 0; }" in region
-    assert "window.scrollTo({ top: was, left: 0, behavior: 'instant' })" in region
-    assert region.count("window.scrollTo") == 1
-    assert "focus({ preventScroll: true })" in region
-    # ⛔ Read BEFORE the panel is taken out of flow, or the reading is already
-    # the clamped one — the whole defect in one ordering.
-    assert region.index("was = window.pageYOffset") < region.index("panel.setAttribute(EXPANDED")
-    # ⛔ And written back AFTER it is put back in flow, or the page cannot hold
-    # a position the document is still too short for.
-    assert region.index("panel.removeAttribute(EXPANDED)") < region.index("window.scrollTo")
-
-
-def test_the_expanded_practice_is_escapable_and_focus_goes_both_ways():
-    # ⛔ A real button, focus into
-    # the expanded practice and back to the control on restore, and Escape
-    # restores. ⚠️ Escape is read on the DOCUMENT because focus may rest on
-    # `<body>` — and a key pressed inside the editor frame never reaches this
-    # document at all, which is right: Escape means something in an editor.
-    body = behaviour()
-    assert "var ESCAPE = 'Escape';" in body
-    assert "document.addEventListener('keydown'" in body
-    assert "if (wide && event.key === ESCAPE) { set(false); }" in body
-    assert "(open ? panel : button).focus({ preventScroll: true });" in body

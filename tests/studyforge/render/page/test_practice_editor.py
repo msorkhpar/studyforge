@@ -83,47 +83,72 @@ def test_the_two_frames_are_built_from_urls_the_server_answered_and_from_nothing
     assert "127.0.0.1" not in body and "localhost" not in body and "http://" not in body
 
 
-def test_the_two_frames_take_two_different_urls_and_neither_is_the_other_s():
+def test_each_window_is_shown_from_its_own_url_and_neither_is_the_other_s():
     # ⛔ **THE property the whole URL design exists for.** One window shows the
     # reader's file and the other shows the test, and the ONLY thing that can
     # tell two windows of one code-server apart is each window's own URL — an
     # extension cannot read its own window's query string, and both windows
-    # share one workspace settings file. ⚠️ So a panel that built both frames
+    # share one workspace settings file. ⚠️ So a panel that showed both tabs
     # from ONE url would look entirely correct and show the same file twice.
     body = behaviour()
-    built = re.findall(r"frame\(slots\.(\w+), (where\.\w+\.url), TITLES\.(\w+)\)", body)
-    assert sorted(built) == [
-        ("main", "where.main.url", "main"),
-        ("test", "where.test.url", "test"),
-    ], built
+    selecting = body[
+        body.index("function select(name)") : body.index("function select(name)") + 600
+    ]
+    assert "var url = where[name].url;" in selecting
+    assert "frame(slot, url, TITLES[name]);" in selecting
+    assert "built.src = url;" in selecting
 
 
-def test_the_tests_frame_is_built_lazily_on_the_first_click_of_its_tab():
-    # ⭐ A second workbench is a second language server. A reader who never
-    # opens the tests never pays for one — so the test frame is built inside
-    # `select`, behind the once-only latch, and never beside the main one.
+def test_one_practice_holds_one_frame_and_a_tab_changes_what_it_shows():
+    # ⛔ The user's ruling: **one editor at most**. A second workbench is a
+    # second language server, so the Tests tab does not build a second frame
+    # beside the reader's file: it points the ONE frame at the test's window.
     #
-    # ⛔ **The COUNT is the half that checks anything.** Asserting only that the
-    # lazy call is inside `select` is satisfied by a build that ALSO builds the
-    # frame eagerly beside the main one.
+    # ⛔ **The COUNT is the half that checks anything**: one call that builds a
+    # frame in the whole of `windows`, behind the latch that says none is built.
     body = behaviour()
-    region = body[body.index("function windows(panel, where)") : body.index("function ask(")]
-    assert region.count("frame(slots.test") == 1
-    assert region.count("frame(slots.main") == 1
-    selecting = region[region.index("function select(name)") : region.index("frame(slots.main")]
-    assert "if (name === 'test' && !lazy && tested)" in selecting
-    assert "lazy = true;" in selecting
-    assert "frame(slots.test" in selecting
-    # ⛔ And the main frame is built OUTSIDE `select`, at once: the reader's own
-    # file is what the panel is for.
-    assert "frame(slots.main" not in selecting
+    region = body[body.index("function windows(panel, where)") : body.index("var asking = 0;")]
+    assert region.count("frame(") == 1
+    assert "if (!built) {" in region
+    assert region.index("if (!built) {") < region.index("frame(")
+    assert "slots.test" not in region
 
 
 def test_the_sentence_stands_until_a_frame_replaces_it():
     body = behaviour()
     filling = body[body.index("function windows(panel, where)") :]
     assert "show(part(panel, 'no-editor'), false)" in filling
-    assert filling.index("frame(slots.main") < filling.index("'no-editor'")
+    assert filling.index("select('main')") < filling.index("'no-editor'")
+
+
+def test_nothing_is_asked_until_a_practice_is_opened_and_its_frame_goes_when_it_closes():
+    # ⭐ The user's ruling: **no editor loads until a practice is opened**. The
+    # one place the server is asked for a practice's windows is `open`, and the
+    # one caller of `open` is the workspace's `studyforge:practice-opened`.
+    body = behaviour()
+    assert body.count("run.practice(corpus, key)") == 1
+    assert body.count("open(event.target, run)") == 1
+    assert "document.addEventListener(OPENED, function (event) {" in body
+    assert "document.addEventListener(CLOSED, function (event) {" in body
+    assert "var OPENED = 'studyforge:practice-opened';" in body
+    assert "var CLOSED = 'studyforge:practice-closed';" in body
+    # ⛔ No ask on load: nothing calls `open` or `windows` outside a listener.
+    tail = body[body.index("window.studyforge.frames = {") :]
+    assert tail.count("open(") == 1 and "windows(" not in tail
+    # ⛔ Closing empties the slot and puts the sentence back.
+    closing = body[body.index("function close(panel)") : body.index("window.studyforge.frames")]
+    assert "slot.removeChild(slot.firstChild)" in closing
+    assert "show(part(panel, 'no-editor'), true);" in closing
+
+
+def test_an_answer_that_arrives_after_the_reader_moved_on_builds_nothing():
+    # ⚠️ The ask is a round trip: a reader who closes, or opens the next
+    # practice, before it answers must not get a frame in a panel no one sees.
+    body = behaviour()
+    opening = body[body.index("function open(panel, run)") : body.index("function close(panel)")]
+    assert "if (mine !== asking || !panel.hasAttribute(OPEN)) { return; }" in opening
+    assert opening.index("!panel.hasAttribute(OPEN)") < opening.index("windows(panel, where)")
+    assert "asking += 1;" in body[body.index("function close(panel)") :]
 
 
 def test_the_tablist_is_shown_only_where_there_are_two_windows_to_choose_between():
@@ -189,7 +214,7 @@ def test_the_listener_is_installed_before_the_frame_that_raises_the_violation():
     # ⛔ A listener added AFTER the frame would miss the only event it exists
     # for, and nothing anywhere would fail.
     body = behaviour()
-    assert body.index("reloadWhenBlocked(where.main.url)") < body.index("frame(slots.main")
+    assert body.index("reloadWhenBlocked(where.main.url)") < body.index("select('main');")
 
 
 # ⛔ A frame never keeps focus the reader did not give it, and the

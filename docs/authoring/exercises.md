@@ -137,7 +137,7 @@ the adapter writes it — because the adapter is the only thing that knows what
 your build command is or where a grader came from.
 
 **Every key the record defines is below, in the order it is written.** Most
-records carry the first six and nothing else; the last five arrive with an
+records carry the first six and nothing else; the last six arrive with an
 exercise somebody authored for this site.
 
 **This fence is the key list and not a record to copy.** Two of the keys in it
@@ -164,7 +164,8 @@ further down.
     ],
     "report": {"format": "junit", "path": "practice/basics-01/target/surefire-reports"},
     "origin": {"path": "docs/01-getting-started.md", "section": "Greeting a caller"},
-    "questions": []
+    "questions": [],
+    "concepts": ["A greeting is built from the name it is given."]
   }
 }
 ```
@@ -182,7 +183,7 @@ came from — `bundled`, `generated` or `user` — and `trust` is either
 the other four are the grader**, and the grader is written whole or not at all
 (`trust` alone may be left out, and is then defaulted from `provenance`).
 
-### The last five: what an authored exercise says
+### The last six: what an authored exercise says
 
 **`kind` is `code` or `quiz`**, and `code` is what a record with no `kind`
 means. **Write it only where it is not `code`**: the framework writes that
@@ -206,6 +207,14 @@ a grader**, so it is the one of these an *ungraded* record may carry.
 
 **`questions` is a quiz's, and only a quiz's.** Writing it on any other record
 is a refusal; see *A practice for material that is not code* below.
+
+**`concepts` is what the exercise practises**: a list of sentences, one per
+idea, shown on the exercise's card in the page's *Practice (n)* list before a
+reader opens it. It may appear on a code record or a quiz, and is left out
+where there is nothing to say. **You do not write it by hand**: a scaffolded
+adapter writes it from the unit's `coverage.json`, one sentence for each
+aspect the plan gave that exercise to check. An empty list, or anything but
+sentences, is refused.
 
 **The breakdown is a report, never a second definition of a pass.** A practice
 completes when every case passes.

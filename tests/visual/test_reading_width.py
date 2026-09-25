@@ -410,9 +410,15 @@ MEASURED_DISCLOSURE = (
 
 
 def code_widths(open_page: OpenPage, url: str, width: int, plant: str = "") -> dict:
-    """Open one page at one width, plant a rule on it, and read both figures."""
+    """Open one page at one width, plant a rule on it, and read both figures.
+
+    ⚠️ **With scripts off**: the fixture's one disclosure is a practice's, and a
+    script hides every practice under its *Practice (n)* list until a card opens
+    it in the workspace. With none, the practice stands in the reading column —
+    which is the layout this clause is about — laid out by the same stylesheet.
+    """
     open_page.resize(width, HEIGHT)
-    open_page.open(url)
+    open_page.open(url, scripts=False)
     if plant:
         open_page.evaluate(plant)
     reading = open_page.evaluate(SOLUTION_AND_FLOW)

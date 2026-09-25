@@ -123,6 +123,7 @@ def panel(open_page: OpenPage, tree: site.Site) -> Iterator[tuple[OpenPage, serv
     """
     with served.serving(tree, CORPUS) as origin:
         open_page.open(f"{origin.origin}/{_where(tree)}")
+        open_page.open_practice()
         yield open_page, origin
 
 

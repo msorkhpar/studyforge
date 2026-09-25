@@ -312,16 +312,3 @@ def test_a_lesson_section_s_heading_of_that_word_is_never_withheld():
     # ⛔ Only a practice's layout is read: a lesson may have a section called Lesson.
     markup = render(exercise([]) | {"kind": "lang", "key": "java"})
     assert ">Lesson<" in markup
-
-
-def test_bare_lesson_reads_only_a_level_two_lesson_heading_over_disclosures():
-    blocks = exercise([])["blocks"]
-    assert section_module.bare_lesson(blocks) == 2
-    titled = [*blocks[:2], {**blocks[2], "text": "Lesson: Streams"}, *blocks[3:]]
-    assert section_module.bare_lesson(titled) == 2
-    assert section_module.bare_lesson([*blocks[:3], *blocks[4:]]) == 2, "an empty run is bare"
-    over = exercise([{"type": "para", "text": "Here is how."}])["blocks"]
-    assert section_module.bare_lesson(over) is None
-    deeper = [*blocks[:2], {**blocks[2], "level": 3}, *blocks[3:]]
-    assert section_module.bare_lesson(deeper) is None
-    assert section_module.bare_lesson([]) is None

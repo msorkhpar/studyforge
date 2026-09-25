@@ -78,6 +78,7 @@ from studyforge.render.page import anchors, navigation
 from studyforge.render.page import code as code_region
 from studyforge.render.page import mark as mark_region
 from studyforge.render.page import practice as practice_region
+from studyforge.render.page import practices as practices_region
 from studyforge.render.page import rail as rail_region
 from studyforge.render.page import section as section_module
 from studyforge.render.page.anchors import TITLE_POSITION
@@ -143,11 +144,12 @@ def compose(
     sections = _sections(document)
     heads = anchors.title_heading(document) is not None
     attributes = heading_attributes(document, narration)
-    parts = JOIN.join(
+    parts = [
         _part(section, placement, narration, document, heads_page=heads and index == 0)
         for index, section in enumerate(sections)
-    )
-    body = code_region.examples(*code_region.mark(parts, placement), placement)
+    ]
+    joined = practices_region.joined(parts, sections, document, placement)
+    body = code_region.examples(*code_region.mark(joined, placement), placement)
     return (
         templates.fill(
             SKELETON,

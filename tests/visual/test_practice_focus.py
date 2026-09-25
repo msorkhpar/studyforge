@@ -106,17 +106,23 @@ new Promise((done, fail) => {
 })
 """.replace("__CEILING__", str(CEILING_MS)).replace("__FRAMES__", str(REST_FRAMES))
 
-#: The page's own reading: where it is, what holds focus, where the frame is.
+#: The page's own reading: where it is, what holds focus, where the frame is,
+#: and how far the open practice's panel — the workspace's right half, which
+#: scrolls inside itself — has been scrolled.
 STATE = """
 (() => {
   const frame = document.querySelector('[data-practice-frame="main"] iframe');
+  const panel = document.querySelector('section[data-practice]');
   const active = document.activeElement;
   const box = frame ? frame.getBoundingClientRect() : null;
+  const held = panel ? panel.getBoundingClientRect() : null;
   return {
     y: window.scrollY,
     active: active ? active.tagName : '',
-    frame: box ? { top: Math.round(box.top + window.scrollY), x: box.left + box.width / 2,
+    frame: box ? { top: Math.round(box.top), bottom: Math.round(box.bottom),
+                   x: box.left + box.width / 2,
                    y: box.top + Math.min(40, box.height / 2) } : null,
+    panel: held ? { bottom: Math.round(held.bottom), scrolled: panel.scrollTop } : null,
     height: window.innerHeight
   };
 })()
@@ -162,66 +168,65 @@ def _after_the_steals(page: OpenPage, editor: editor_standin.StandIn) -> dict:
 
 
 def _below_the_fold(reading: dict) -> None:
-    assert reading["frame"]["top"] > reading["height"], (
-        f"the editor frame is in view at the top ({reading}), so a still page proves nothing"
+    """⛔ The precondition: the frame is not wholly in its panel's view, so a steal would scroll."""
+    assert reading["frame"] and reading["frame"]["bottom"] > reading["panel"]["bottom"], (
+        f"the editor frame is wholly in view ({reading}), so a still panel proves nothing"
     )
 
 
-def test_a_page_opened_at_its_top_stays_there_while_the_editor_takes_focus(
+def _scroll_to_the_list(page: OpenPage) -> float:
+    """Scroll the page so the *Practice (n)* list is in view, and return where it is."""
+    return float(
+        page.evaluate(  # type: ignore[arg-type]
+            "(() => { const list = document.querySelector('section[data-practices]');"
+            " window.scrollTo({top: list.getBoundingClientRect().top + window.scrollY - 40,"
+            " behavior: 'instant'}); return window.scrollY; })()"
+        )
+    )
+
+
+def test_opening_a_practice_moves_nothing_while_the_editor_takes_focus(
     open_page: OpenPage, framing: served.Served, editor: editor_standin.StandIn
 ) -> None:
     _open(open_page, framing.url(CASE))
     assert open_page.evaluate("document.hasFocus()"), "the page's window is not focused"
+    where = _scroll_to_the_list(open_page)
+    open_page.open_practice()
     reading = _after_the_steals(open_page, editor)
     _below_the_fold(reading)
-    assert reading["y"] == 0, f"the page moved to {reading['y']} on its own"
+    assert reading["y"] == where, (
+        f"the page under the workspace moved from {where} to {reading['y']}"
+    )
+    assert reading["panel"]["scrolled"] == 0, f"the panel scrolled on its own: {reading}"
     assert reading["active"] != "IFRAME", "the editor frame kept focus the reader never gave it"
 
 
-def test_a_page_opened_at_an_anchor_stays_at_the_anchor(
+def test_closing_the_workspace_returns_the_reader_to_the_card_they_opened(
     open_page: OpenPage, framing: served.Served, editor: editor_standin.StandIn
 ) -> None:
+    # ⛔ Close returns the reader to the same place in the lesson (the user's
+    # ruling), after the editor has had its whole say.
     _open(open_page, framing.url(CASE))
-    # ⛔ An anchor from which the editor is OUT of view, chosen from the layout
-    # and never from where the page happens to be: that is the moved quantity.
-    anchor = open_page.evaluate(
-        "(() => { const panel = document.querySelector('section[data-practice]');"
-        " const top = panel.getBoundingClientRect().top + window.scrollY;"
-        " const found = Array.from(document.querySelectorAll('main [id]')).find((e) => {"
-        "   const t = e.getBoundingClientRect().top + window.scrollY;"
-        "   return t > 100 && t + window.innerHeight + 100 < top; });"
-        " return found ? found.id : null; })()"
+    where = _scroll_to_the_list(open_page)
+    open_page.open_practice()
+    _after_the_steals(open_page, editor)
+    open_page.press("Escape")
+    reading = _at_rest(open_page)
+    assert reading["y"] == where, f"Close left the page at {reading['y']}, not {where}"
+    assert reading["frame"] is None, "the editor frame outlived the practice it was built for"
+    focused = open_page.focused()
+    assert focused["tag"] == "A" and focused["label"].startswith("#s-"), (
+        f"focus went to {focused}, not back to the card that was opened"
     )
-    assert anchor, "the fixture page has no anchor far enough above its practice to open at"
-    # ⚠️ Through a blank document: a hash change alone is a same-document
-    # navigation, which fires no load and would reuse the frames already there.
-    open_page.open("about:blank")
-    with editor.lock:
-        editor.focused = 0
-    _open(open_page, f"{framing.url(CASE)}#{anchor}")
-    # ⭐ Where a fragment navigation LEAVES its target: the page's scroll padding
-    # and its own scroll margin below the top. ⚠️ Not read at load: the page
-    # glides to the anchor, so a reading taken then is a point on the way.
-    padding = "parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0"
-    target = f"document.getElementById({anchor!r})"
-    margin = f"parseFloat(getComputedStyle({target}).scrollMarginTop) || 0"
-    rested = open_page.evaluate(f"({padding}) + ({margin})")
-    reading = _after_the_steals(open_page, editor)
-    now = open_page.evaluate(f"document.getElementById({anchor!r}).getBoundingClientRect().top")
-    moved = abs(float(now) - float(rested))  # type: ignore[arg-type]
-    assert moved <= 1, f"the anchor moved from {rested} to {now}"
-    assert reading["active"] != "IFRAME", "the editor frame kept focus the reader never gave it"
 
 
 def test_a_readers_click_into_the_frame_focuses_it_and_what_they_type_arrives(
     open_page: OpenPage, framing: served.Served, editor: editor_standin.StandIn
 ) -> None:
     _open(open_page, framing.url(CASE))
-    reading = _after_the_steals(open_page, editor)
-    # ⭐ The reader scrolls to the editor THEMSELVES, and then points and clicks.
-    open_page.evaluate(
-        f"window.scrollTo({{top: {reading['frame']['top'] - 40}, behavior: 'instant'}})"
-    )
+    open_page.open_practice()
+    _after_the_steals(open_page, editor)
+    # ⭐ The reader points at the editor in the workspace, and clicks.
     target = _state(open_page)["frame"]
     call = open_page.browser.call
     for step in range(5):

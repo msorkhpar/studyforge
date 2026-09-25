@@ -84,6 +84,7 @@ AFTER = {
             "origin": "docs/01-getting-started.md",
         }
     ],
+    "concepts": ["A greeter returns a greeting."],
 }
 
 #: ⭐ A whole quiz as the quiz shape shipped it — the shape the previous reader cannot

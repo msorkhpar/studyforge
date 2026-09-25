@@ -805,13 +805,29 @@ What it reads, and the choices in it:
 
 **Serves.** `R1`
 
-### A practice is one line of the page's outline and shows no empty heading
+### A lesson's practices are one Practice (n) list, each card by its title
 
-**Decision.** `render.page.anchors.entries` gives a practice section one outline line, its title, and none of its layout headings; the title is its recorded heading or, where that only repeats the unit's title, the heading its material opens with (`practice_title`). `render.page.section.bare_lesson` finds a practice's lesson heading with nothing but disclosures under it, and `render.page.section` withholds it. The heading keeps its position, so every anchor and clip after it is addressed as before, and a lesson heading over lesson material still renders.
+**Decision.** `render.page.practices` renders a unit's practices as one **Practice (n)** section of cards, placed before the first practice. Each card carries the practice's title, what it practises, and, for a graded code practice, a status slot. `render.page.anchors.entries` lists **Practice (n)** once, with each practice under it by its title, pointing at its card. The title is the practice's recorded heading or, where that only repeats the unit's title, the heading its material opens with (`practice_title`). `unit.bare_lesson` finds a practice's lesson heading with nothing but disclosures under it, and `render.page.section` withholds it. The heading keeps its position, so every anchor and clip after it is addressed as before, and a lesson heading over lesson material still renders.
 
-**Why.** An authored exercise has no lesson, yet its layout carries `## Lesson` over only its worked solution, and a page of seven practices gave its outline twenty-eight lines, twenty-one of them one of three words.
+**Why.** Seven practices laid out one after another repeated the same three headings and a panel each, and gave the reader no view of what the lesson asks. An authored exercise has no lesson, yet its layout carries `## Lesson` over only its worked solution.
 
 **Serves.** `R1`
+
+### What an exercise practises rides in its record
+
+**Decision.** An exercise record may carry `concepts`, a non-empty list of sentences (`exercise.concepts`), on a code record or a quiz. It is appended to the record's keys and written only where carried. The scaffolded adapter's join (`skills.adapter.practices`) writes it from the unit's coverage report through `skills.exercises.practised`, which pairs each shipped bundle with its planned exercise by the drafting order that shipped it (`loop.quiz_last`) and refuses a report whose counts do not pair. Two records that differ only in `concepts` are the same practice.
+
+**Why.** A reader choosing from a list needs to know what each practice practises, and the plan already says it. Carrying it in the record keeps the renderer away from authoring material, and a record written before the key round-trips unchanged.
+
+**Serves.** `R1, R10`
+
+### A card's status is the reader's own record
+
+**Decision.** A card's status slot ships hidden with both of its words (`templates/practice-state.html`). `practice-workspace.js` shows it only where the served client answers from the unit-state route (`practices` in `src/studyforge/serve/assets/run-client.js`) what the reader's progress record holds, and reads it again when a run settles. A quiz and an ungraded practice carry no slot.
+
+**Why.** A built page says nothing about any reader, so it is byte-identical whoever opens it. A practice no run completes could only ever read *not started*.
+
+**Serves.** `R8, R10`
 
 ### A read mark shows on the rail and is spoken to assistive technology
 
@@ -829,13 +845,13 @@ What it reads, and the choices in it:
 
 **Serves.** `R8`
 
-### Maximising the practice panel changes geometry only
+### A practice opens in one full-screen workspace, and nothing moves
 
-**Decision.** The maximise control is one real button in `templates/practice-panel.html`. It carries both of its labels and is emitted hidden. `practice.js` shows it where the panel is live and toggles the panel's state attribute (Escape also restores). `practice.css` then gives the panel the viewport without moving it in the document. The scroll position is remembered on maximise and restored instantly on return.
+**Decision.** A page with practices carries one workspace (`templates/practice-workspace.html`): a bar with the practice's title, **Previous**, **Next** and **Close**. Opening a card hides every other practice and marks the chosen practice's section and panel `data-workspace-open`; `practice-workspace.css` then lays the statement over the left of the viewport and the panel over the right, each scrolling inside itself, stacked statement over editor at phone width. No node is moved, copied or rebuilt. Close, or Escape, puts the scroll position back instantly and returns focus to the card. With no script, every practice stays readable under the list.
 
-**Why.** Moving the panel elsewhere in the document would disturb the editor frames, and a reader who restores the panel must land where they were.
+**Why.** An `iframe` moved to another parent reloads and loses the reader's work, and a reader who closes the workspace must land where they were.
 
-**Serves.** No spec rule: a practice-panel UI decision.
+**Serves.** `R8`
 
 ### The page never shows a control it cannot honour
 
@@ -1055,11 +1071,11 @@ What it reads, and the choices in it:
 
 **Serves.** `R8`
 
-### A practice opens as two windows of one editor
+### A practice opens as two windows of one editor, in one frame
 
-**Decision.** A code practice shows the file to edit and its test as two tabs, each a frame of the same editor opened at a URL the server provides (`execute.workbench.open_url`, answered by `serve.routes.runs.Runs.practice_editor`), one visible at a time and never a split pane (`render/assets/practice-editor.js`). The tablist is shown only when the practice names a test. Preparing the windows writes the practice's workspace settings and starts nothing: `execute.workbench` imports no process module.
+**Decision.** A code practice shows the file to edit and its test as two tabs of one frame of the editor; each tab points the frame at its own URL, which the server provides (`execute.workbench.open_url`, answered by `serve.routes.runs.Runs.practice_editor`). The tablist is shown only when the practice names a test. `practice-editor.js` asks for the windows only when the workspace opens a practice, and drops the frame when it closes or another opens, so a page holds one editor frame at most and none until a practice is opened. Preparing the windows writes the practice's workspace settings and starts nothing: `execute.workbench` imports no process module.
 
-**Why.** Side by side halves the width of both files, and a window's own URL is the only thing that can tell two windows of one editor apart, because both share one workspace settings file.
+**Why.** An editor is a full development environment; loading one per practice, or one before the reader asks, costs a language server nobody is using. A window's own URL is the only thing that can tell two windows of one editor apart, because both share one workspace settings file.
 
 **Serves.** `R8`
 
@@ -1200,6 +1216,22 @@ What it reads, and the choices in it:
 **Serves.** `R8`
 
 ## Narration
+
+### A heading the page withholds is not spoken
+
+**Decision.** `narrate.speakable.speakable_of` skips the position `unit.bare_lesson` names in a practice section, the same rule `render.page.section` withholds it by, and renumbers nothing.
+
+**Why.** A clip for a heading the page does not show is a clip nothing plays.
+
+**Serves.** `R1`
+
+### A passage the page is not showing is highlighted at its stand-in
+
+**Decision.** When narration reaches a passage with no box, `narration-stand-in.js` names where the reader can see it: the summary of the closed entry that holds it (a code example or a disclosure), or the card of a practice kept under its *Practice (n)* list. `narration.js` marks that stand-in `data-speaking` beside the passage and scrolls to it. The entry is not opened.
+
+**Why.** Opening a code example loads a full editor, which only a reader's own hand may start, and a quieter narration-only opening would be a second state `code-links.js` had to tell apart. A highlight on a hidden element shows the reader nothing.
+
+**Serves.** `R1, R8`
 
 ### Narration lights nothing until the reader starts it, and a missing clip says so once
 

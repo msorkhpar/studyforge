@@ -23,7 +23,7 @@ from studyforge.address import parse_unit_key
 from studyforge.progress import practice_key
 from studyforge.render.pageassets import ASSET_DIR, script
 from studyforge.serve.response import API_PREFIX
-from studyforge.serve.routes import code, run
+from studyforge.serve.routes import code, run, state
 from tests.studyforge.serve.routes.running import runs_over, served_copy, serving
 from tests.studyforge.serve.serving import fetch
 
@@ -86,7 +86,9 @@ def test_a_start_is_a_post_with_no_body_and_nothing_else_is_sent():
     # ⭐ And a sixth, since a lesson's code opens in the editor: one code file's
     # windows, a POST because it prepares their settings. Its test's run is
     # the acts' own streamed POST, so it adds no request of its own.
-    assert body.count("fetch(") == 6
+    # ⭐ And a seventh, since a lesson's practices are cards with a status: one
+    # unit's state, a GET, because asking what the reader's record holds is a read.
+    assert body.count("fetch(") == 7
     assert body.count("method: 'POST'") == 5
     assert "body:" not in body and "JSON.stringify" not in body
     assert "XMLHttpRequest" not in body and "sendBeacon" not in body
@@ -169,10 +171,11 @@ def test_it_draws_nothing_and_types_no_word_a_reader_sees():
 def test_over_a_file_it_is_not_available_and_sends_nothing():
     # ⛔ R8: `file://` has no origin. EVERY entry point asks `available()` first
     # — the two acts, where a running editor is, and one practice's
-    # two editor windows — and grading a quiz, and a code file's windows and its test.
+    # two editor windows — and grading a quiz, and a code file's windows and its test,
+    # and one unit's practice status.
     body = uncommented()
     assert "location.protocol === 'http:'" in body
-    assert body.count("if (!available())") == 7
+    assert body.count("if (!available())") == 8
 
 
 def test_a_refusal_is_a_rejection_naming_what_was_refused_before_any_request():
@@ -219,3 +222,19 @@ def test_it_neither_builds_an_editor_url_nor_starts_one():
     body = uncommented()
     for word in ("iframe", "?folder=", "docker", "spawn"):
         assert word not in body, word
+
+
+def test_a_units_practice_status_is_read_from_the_state_route_and_nothing_else():
+    # ⛔ The status a card shows is the READER'S OWN RECORD: the one unit-state
+    # route, a GET that is never cached, and only the `passed` of each practice
+    # comes back — anything else is `null`, which paints nothing.
+    body = uncommented()
+    asking = body[body.index("function practices(corpus, unit)") :]
+    asking = asking[: asking.index("window.studyforge =")]
+    assert constant("STATE_BASE") == f"'{API_PREFIX}/{state.NAMESPACE}/'"
+    assert constant("UNITS") == f"'/{state.UNITS}'"
+    assert "fetch(STATE_BASE + corpus + UNITS + unit, { cache: 'no-store'" in asking
+    assert "method:" not in asking
+    assert "held[section].passed === true" in asking
+    assert "!CORPUS.test(corpus) || !KEY.test(unit)" in asking
+    assert "practices: practices," in body

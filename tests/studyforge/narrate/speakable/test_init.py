@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import copy
 import re
+from dataclasses import replace
 from pathlib import PurePosixPath
 
 import pytest
@@ -27,6 +28,7 @@ from studyforge.narrate.speakable.records import SpeakableError
 from studyforge.render.page import AUDIO_ATTRIBUTE
 from studyforge.unit import content
 from studyforge.unit.builder import build_unit
+from tests.studyforge.render.page import pages as render_pages
 from tests.support import assert_package_contract, repository_root
 
 FIXTURES = repository_root() / "tests" / "fixtures"
@@ -405,3 +407,47 @@ def test_the_surface_names_every_disposition_a_consumer_might_branch_on():
     assert len(set(speakable.__all__)) == len(speakable.__all__)
     missing = sorted(name for name in speakable.__all__ if not hasattr(speakable, name))
     assert missing == []
+
+
+# --------------------------------------------------------------------------
+# ⛔ What the page withholds is not spoken
+# --------------------------------------------------------------------------
+
+
+def bare_lesson_case():
+    """The depth-2 case, its practice's lesson run cut to one disclosure: a bare heading."""
+    case = render_pages.depth2_unit_01()
+    document = copy.deepcopy(case.document)
+    practice = next(one for one in document["sections"] if one["kind"] == "practice")
+    blocks = practice["blocks"]
+    lesson = next(i for i, one in enumerate(blocks) if one.get("text", "").startswith("Lesson"))
+    disclosure = next(one for one in blocks if one["type"] == "disclosure")
+    blocks[lesson + 1] = copy.deepcopy(disclosure)
+    return replace(case, document=document), practice["key"], lesson
+
+
+def test_a_practice_lesson_heading_the_page_withholds_gets_no_speech_unit():
+    # ⛔ The page leaves a lesson heading over nothing but the worked solution
+    # off (`unit.bare_lesson`); a speech unit for it is a clip nothing plays.
+    case, key, lesson = bare_lesson_case()
+    document = case.document
+    spoken = [one for one in speakable_of(document).units if one.section == key]
+    assert (lesson,) not in [one.block_path for one in spoken]
+    # ⭐ Nothing is renumbered: the block after the run keeps its own position.
+    assert (lesson + 2,) in [one.block_path for one in spoken]
+    # ⭐ The negative control: the unedited heading heads a lesson and is spoken.
+    whole = render_pages.depth2_unit_01().document
+    assert (lesson,) in [one.block_path for one in speakable_of(whole).units if one.section == key]
+
+
+def test_every_unit_spoken_in_a_practice_is_one_its_page_plays():
+    # ⛔ Both directions, on the page itself: a build hands the renderer a clip
+    # for every spoken unit, and the practice's section plays exactly those.
+    case, key, _lesson = bare_lesson_case()
+    document = case.document
+    page = case.render().decode("utf-8")
+    start = page.index(f'data-section="{key}"')
+    region = page[start : page.index("</section>", start)]
+    played = sorted(PurePosixPath(href).stem for href in AUDIO_VALUES.findall(region))
+    spoken = sorted(clip_name(one) for one in speakable_of(document).units if one.section == key)
+    assert played and played == spoken

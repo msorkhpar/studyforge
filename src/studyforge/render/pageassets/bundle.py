@@ -73,6 +73,11 @@ from studyforge.render.pageassets.source import text
 #: reach the other's element and the order between them settles nothing but
 #: where a reader of the bundle finds them.
 #:
+#: ⭐ `practice-workspace.css` follows `practice-quiz.css`, and ⛔ that order is
+#: load-bearing: it lays an open practice's section and panel over the viewport,
+#: overriding the margin, padding and border the two parts above gave them, and
+#: at equal specificity the last rule wins.
+#:
 #: ⭐ `code-examples.css` follows the practice parts: a lesson's examples wear
 #: the practice panel's measure and tokens, reached by their own attribute, so
 #: no rule of either reaches the other's element; it sits before
@@ -96,6 +101,7 @@ STYLE_PARTS = (
     "notes.css",
     "practice.css",
     "practice-quiz.css",
+    "practice-workspace.css",
     "code-examples.css",
     "code-highlight.css",
     "narration.css",
@@ -127,6 +133,11 @@ STYLE_PARTS = (
 #: `read-mark.js` because that part's LAST-ness is the property being kept, and
 #: after `video-player.js` so the two media parts read together.
 #:
+#: ⛔ `narration-stand-in.js` PRECEDES `narration.js`, and that is load-bearing:
+#: it defines `window.studyforge.standIn`, which `narration.js` reads with no
+#: existence guard at startup — so a wrong order fails loudly, as the store's
+#: does, rather than lighting a hidden passage.
+#:
 #: ⭐ `practice.js` needs no library and no store: it draws the panel
 #: and reaches the API only through `window.studyforge.run`, which the SERVING
 #: PROCESS adds to the page it answers — so a built page names no client and no
@@ -143,6 +154,13 @@ STYLE_PARTS = (
 #: `window.studyforge.quiz` — not `.run` — whether an origin exists, because
 #: the local study server grades a quiz and the page holds no key (spec §7 §7). ⚠️ They are before
 #: `read-mark.js` because that part's LAST-ness is the property being kept.
+#:
+#: ⭐ `practice-workspace.js` follows `practice-quiz.js`: it hides every practice
+#: under the list and shows the one a card opens. It follows the three parts it
+#: talks to — by events on the document, never by a name one of them defines —
+#: so the order between them settles nothing, and it is stated rather than
+#: left to the alphabet. ⚠️ Before `read-mark.js` because that part's
+#: LAST-ness is the property being kept.
 #:
 #: ⭐ `code-links.js` FOLLOWS `practice-editor.js`, and that order is load-bearing:
 #: it builds its windows with the frame and the one reload that part publishes
@@ -162,10 +180,12 @@ SCRIPT_PARTS = (
     "theme.js",
     "copy-code.js",
     "video-player.js",
+    "narration-stand-in.js",
     "narration.js",
     "practice.js",
     "practice-editor.js",
     "practice-quiz.js",
+    "practice-workspace.js",
     "code-links.js",
     "progress-view.js",
     "read-mark.js",

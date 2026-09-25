@@ -104,21 +104,11 @@ PANEL_STATE = """
       inPanel: !!active && panel.contains(active),
       isStatus: !!active && active === status
     },
-    expanded: panel.hasAttribute('data-practice-expanded'),
     box: (() => {
       const box = panel.getBoundingClientRect();
       return { w: box.width, h: box.height, top: box.top, left: box.left };
     })(),
     viewport: { w: window.innerWidth, h: window.innerHeight, scrolled: window.scrollY },
-    maximise: (() => {
-      const control = part('expand');
-      if (!control) return null;
-      return {
-        label: control.textContent.trim(),
-        says: control.getAttribute('aria-expanded'),
-        visible: control.checkVisibility()
-      };
-    })(),
     frames: Array.from(panel.querySelectorAll('iframe')).map((frame) => ({
       slot: frame.parentElement ? frame.parentElement.getAttribute('data-practice-frame') : null,
       ready: !!frame.contentDocument && frame.contentDocument.readyState === 'complete',
@@ -209,6 +199,7 @@ def test_a_file_shows_the_offline_note_and_a_served_page_shows_the_controls(
     whose controls were never unhidden and would pass over an empty set.
     """
     open_page.open(built_site.url(_case()))
+    open_page.open_practice()
     as_a_file = _state(open_page)
     assert not as_a_file["controls"], "a page opened from a file offered Run and Submit"
     assert as_a_file["offline"], "a page opened from a file did not say why it cannot run"
@@ -219,6 +210,7 @@ def test_a_file_shows_the_offline_note_and_a_served_page_shows_the_controls(
     )
 
     open_page.open(origin.url(_case()))
+    open_page.open_practice()
     as_served = _state(open_page)
     assert as_served["controls"], "a served page did not unhide the panel's controls"
     assert not as_served["offline"], "a served page still says running needs a server"
@@ -236,6 +228,7 @@ def test_every_control_the_panel_offers_is_reached_by_tab_in_document_order(
 ) -> None:
     """⭐ The tab order: the panel is part of the page's focus ring."""
     open_page.open(origin.url(_case()))
+    open_page.open_practice()
     offered = _acts(_state(open_page))
     assert offered, "the panel offered nothing, so this traversal asserts nothing"
     reached = [step["label"] for step in open_page.trail(PRESSES)]
@@ -248,6 +241,7 @@ def test_the_panel_s_controls_are_real_buttons_the_keyboard_can_land_on(
 ) -> None:
     """⛔ Read from the element focus LANDED on, never from the markup alone."""
     open_page.open(origin.url(_case()))
+    open_page.open_practice()
     here = _tab_to(open_page, "Run")
     assert here["tag"] == "BUTTON", f"Tab landed on a {here['tag']} where Run should be"
     kinds = {act["label"]: (act["tag"], act["type"]) for act in _state(open_page)["acts"]}
@@ -267,6 +261,7 @@ def test_a_page_whose_controls_are_out_of_the_focus_ring_fails_the_traversal(
     """
     with served.serving(damaged_sites["keyboard"]) as broken:
         open_page.open(broken.url(_case()))
+        open_page.open_practice()
         offered = _acts(_state(open_page))
         assert offered, "the control page unhid no controls either, so it proves nothing"
         reached = [step["label"] for step in open_page.trail(PRESSES)]
@@ -290,6 +285,7 @@ def test_pressing_run_with_the_keyboard_hands_focus_to_stop_and_hands_it_back(
     it back to the button that was pressed.
     """
     open_page.open(origin.url(_case()))
+    open_page.open_practice()
     _tab_to(open_page, "Run")
     open_page.press("Enter")
 
@@ -319,6 +315,7 @@ def test_stop_is_pressable_by_keyboard_and_ends_the_run_it_stops(
 ) -> None:
     """⭐ The third act, reached the only way a keyboard reader reaches it: the handoff."""
     open_page.open(origin.url(_case()))
+    open_page.open_practice()
     _tab_to(open_page, "Run")
     open_page.press("Enter")
     assert origin.runs.started.wait(SETTLE), "pressing Run with the keyboard started no run"
@@ -349,6 +346,7 @@ def test_the_control_that_goes_away_takes_focus_with_it_out_of_the_panel(
     out of the focus flow in every engine.
     """
     open_page.open(origin.url(_case()))
+    open_page.open_practice()
     _tab_to(open_page, "Run")
     open_page.press("Enter")
     assert origin.runs.started.wait(SETTLE), "pressing Run with the keyboard started no run"
@@ -375,6 +373,7 @@ def test_the_run_is_announced_in_a_live_region_that_never_takes_focus(
     took focus would drag a reader out of the controls on every state change.
     """
     open_page.open(origin.url(_case()))
+    open_page.open_practice()
     at_rest = _state(open_page)
     assert at_rest["status"]["role"] == "status", "the panel's status is not a status region"
     assert at_rest["status"]["live"] == "polite", "the status region is not announced politely"
@@ -412,6 +411,7 @@ def test_the_output_region_is_written_to_and_becomes_reachable_by_tab(
     output and `tabindex="0"` puts it in the ring, which is what this reads.
     """
     open_page.open(origin.url(_case()))
+    open_page.open_practice()
     before = _state(open_page)
     assert not before["output"]["visible"], "the output region was showing before any run"
     assert before["output"]["tabindex"] == "0", "the output region is not focusable at all"
@@ -444,6 +444,7 @@ def test_every_control_in_the_panel_shows_a_visible_focus_ring_in_both_themes(
 ) -> None:
     """⛔ A focus ring that is invisible in dark is no ring — on the panel too."""
     open_page.open(origin.url(_case()), scheme=scheme)
+    open_page.open_practice()
     offered = _acts(_state(open_page))
     invisible = [
         f"{step['label']}: outline {step['outline']}"
@@ -464,6 +465,7 @@ def test_every_word_the_panel_paints_clears_aa_in_both_themes(
     panel's controls contribute nothing to the element census.
     """
     open_page.open(origin.url(_case()), scheme=scheme)
+    open_page.open_practice()
     failures = []
     for element in theme.text_elements(open_page):
         ratio = contrast.ratio(contrast.parse(element["colour"]), contrast.parse(element["ground"]))
@@ -484,6 +486,7 @@ def test_the_panel_s_contrast_check_fails_on_a_stylesheet_whose_text_matches_its
         worst = {}
         for scheme in SCHEMES:
             open_page.open(broken.url(_case()), scheme=scheme)
+            open_page.open_practice()
             assert _state(open_page)["controls"], "the control page unhid no controls"
             worst[scheme] = min(
                 contrast.ratio(contrast.parse(el["colour"]), contrast.parse(el["ground"]))
