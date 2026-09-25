@@ -280,7 +280,7 @@ span[data-kind="read-state"] {
    The reading column is what is left of the viewport (`1fr`), and the prose
    inside it keeps `--measure` (`reading.css`).
 
-   ⛔ The rail spans eleven rows because `page.html` declares eleven top-level
+   ⛔ The rail spans ten rows because `page.html` declares ten top-level
    positions inside `<body>`: a negative line would count from the end of the
    EXPLICIT grid, which has columns only. The unit mirror reads this number
    back against the skeleton. Sticky and not fixed, with `max-height: 100vh` and
@@ -358,7 +358,7 @@ span[data-kind="read-state"] {
 
   body > nav[aria-label="Containers"] {
     grid-column: 1;
-    grid-row: 1 / span 11;
+    grid-row: 1 / span 10;
     align-self: start;
     position: sticky;
     top: 0;
@@ -374,7 +374,7 @@ span[data-kind="read-state"] {
   body:has(nav[aria-label="Containers"]) > nav[aria-label="Outline"],
   body:has(nav[aria-label="Containers"]) > section[aria-label="About this site"] {
     grid-column: 3;
-    grid-row: 1 / span 11;
+    grid-row: 1 / span 10;
     align-self: start;
     position: sticky;
     top: 0;

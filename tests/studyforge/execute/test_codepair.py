@@ -13,6 +13,7 @@ import pytest
 
 from studyforge.execute import CODE_COPY, is_code, pair
 from studyforge.execute import test_command as command_for
+from studyforge.execute.codepair import pair_in, pairing
 from studyforge.exercise import require_command
 
 JAVA = ("java", "maven")
@@ -132,3 +133,31 @@ def test_no_test_or_no_known_tool_is_no_command(tmp_path):
     assert command_for(root, pair(root, f"{MAIN}/Alone.java", JAVA), JAVA) is None
     found = pair(root, f"{TESTS}/TypesTest.java", ("java", "gradle"))
     assert command_for(root, found, ("java", "gradle")) is None
+
+
+def test_a_build_s_pairing_answers_as_pair_does_walking_the_code_once(tmp_path, monkeypatch):
+    from studyforge.execute import codepair
+
+    root = corpus(tmp_path)
+    walks = []
+    walked = codepair.code_files
+    monkeypatch.setattr(codepair, "code_files", lambda where: walks.append(1) or walked(where))
+    answer = pairing(root, JAVA)
+    for path in (
+        f"{TESTS}/AutoboxingPerformanceTest.java",
+        f"{MAIN}/Types.java",
+        f"{MAIN}/Alone.java",
+    ):
+        assert answer(path) == pair_in(walked(root), path, JAVA)
+    assert answer("README_1.1.md") is None
+    assert len(walks) == 1
+
+
+def test_code_too_large_to_copy_pairs_nothing(tmp_path, monkeypatch):
+    from studyforge.execute import codepair
+
+    def refused(where):
+        raise codepair.CodeRefused("too large")
+
+    monkeypatch.setattr(codepair, "code_files", refused)
+    assert pairing(corpus(tmp_path), JAVA)(f"{MAIN}/Types.java") is None

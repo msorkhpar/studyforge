@@ -92,9 +92,9 @@ SHIPPED = (
         # column 3 sticks and scrolls by the same four declarations, and a
         # pattern that matched both would rewrite a region this module is
         # not about — and the control then asserts nothing about the rail.
-        "grid-column: 1;\n    grid-row: 1 / span 11;\n    align-self: start;\n"
+        "grid-column: 1;\n    grid-row: 1 / span 10;\n    align-self: start;\n"
         "    position: sticky;\n    top: 0;\n    max-height: 100vh;\n    overflow-y: auto;\n",
-        "grid-column: 1;\n    grid-row: 1 / span 11;\n    align-self: start;\n",
+        "grid-column: 1;\n    grid-row: 1 / span 10;\n    align-self: start;\n",
     ),
 )
 

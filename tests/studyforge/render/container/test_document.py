@@ -71,10 +71,8 @@ def test_the_empty_slots_are_the_ones_a_container_page_has_no_answer_for():
     # ⭐ `headingattributes`: a unit page's `<h1>` carries the anchor of the
     # heading it was promoted from, and a container page is headed by a NAME,
     # which has no block and so no anchor to carry.
-    # ⭐ `code`: a lesson's code panel is a UNIT's — a container page links no code.
     assert document_module.EMPTY_SLOTS == (
         "breadcrumb",
-        "code",
         "headingattributes",
         "mark",
         "outline",

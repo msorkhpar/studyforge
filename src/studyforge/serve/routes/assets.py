@@ -149,7 +149,7 @@ GATED_TYPES = ("text/", "application/json", "image/svg+xml")
 #: By extension, from a fixed table: `mimetypes` reads system files and varies by
 #: machine. An unknown extension is opaque bytes, which `nosniff` makes inert.
 #: ⭐ A code file of any declarable runtime is TEXT, so a lesson's link to one is
-#: a plain view the browser shows rather than a download (the code panel's fallback);
+#: a plain view the browser shows rather than a download (a code example's fallback);
 #: every entry spelled below wins over that, so `.js` stays a script.
 CONTENT_TYPES = {
     **dict.fromkeys(sorted({one for kind in SOURCE_SUFFIXES.values() for one in kind}), TEXT_TYPE),

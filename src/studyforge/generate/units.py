@@ -14,8 +14,9 @@ decision this module does not take.
 for the join — the bar, the trail and the rail across containers —
 `generate.containers` for where a crumb and a rail row point, `generate.writing`
 for R3, `generate.narration` for what each page plays, `unit.builder` for the
-document, `render.page` for the bytes and `execute.conventions` for which
-suffixes are the corpus's code. ⛔ It names no source (R1).
+document, `render.page` for the bytes, `execute.conventions` for which
+suffixes are the corpus's code and `execute.codepair` for which source a test
+stands beside. ⛔ It names no source (R1).
 
 ## ⛔ Why this module exists
 
@@ -45,11 +46,11 @@ is why the address is asked for rather than composed.
 
 from __future__ import annotations
 
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from pathlib import Path, PurePosixPath
 
 from studyforge.corpus.placement import relative_href
-from studyforge.execute.conventions import source_suffixes
+from studyforge.execute import is_a_test, pairing, source_suffixes
 from studyforge.generate.containers import page_paths
 from studyforge.generate.declarations import Corpus, read_corpus, unit_location
 from studyforge.generate.narration import clips_on_disk, narrated, narration_for
@@ -94,6 +95,8 @@ def unit_bodies(corpus: Corpus) -> Iterator[tuple[PurePosixPath, bytes]]:
     above = page_paths(corpus)
     # ⭐ The code a lesson may link: what the declared runtimes write (`page.code`).
     code = source_suffixes(corpus.manifest.runtimes)
+    # ⭐ Which source a linked test stands beside: the corpus's code walked once.
+    pairs = _pairs(corpus) if code else None
     for source in corpus.units:
         at = unit_location(corpus, source)
         document = build_unit(
@@ -106,6 +109,7 @@ def unit_bodies(corpus: Corpus) -> Iterator[tuple[PurePosixPath, bytes]]:
             unit=at,
             shared=shared,
             code=code if source.mentions.beside else (),
+            pairing=pairs if source.mentions.beside else None,
         )
         body = render(
             document,
@@ -128,3 +132,21 @@ def unit_bodies(corpus: Corpus) -> Iterator[tuple[PurePosixPath, bytes]]:
             ),
         )
         yield at.page, body
+
+
+def _pairs(corpus: Corpus) -> Callable[[str], tuple[str | None, str | None]]:
+    """Answer, for one code file, the source and the test it stands between.
+
+    ⭐ `execute.pair`'s own answer, so an example's entry is the pair the served
+    editor opens. ⚠️ A file it cannot pair is its own entry, a test or a source
+    by its name.
+    """
+    found = pairing(corpus.root, corpus.manifest.runtimes)
+
+    def answer(path: str) -> tuple[str | None, str | None]:
+        pair = found(path)
+        if pair is None:
+            return (None, path) if is_a_test(path) else (path, None)
+        return pair.source, pair.test
+
+    return answer

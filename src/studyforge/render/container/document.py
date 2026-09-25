@@ -95,7 +95,7 @@ TRAILING_NEWLINE = "\n"
 #: ⚠️ `headingattributes` is one of them: the unit page promotes its material's own
 #: opening heading into the `<h1>` and anchors it there, and a page
 #: whose heading is a name rather than a block has no anchor to carry.
-EMPTY_SLOTS = ("breadcrumb", "code", "headingattributes", "mark", "outline", "pending", "player")
+EMPTY_SLOTS = ("breadcrumb", "headingattributes", "mark", "outline", "pending", "player")
 
 
 def compose(
