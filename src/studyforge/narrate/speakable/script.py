@@ -276,7 +276,8 @@ def _item_words(item: object, where: str) -> str:
     """Return one item's words: its parts in reading order, a nested list item by item.
 
     ⛔ **A nested list is spoken INSIDE its parent item's clip**, each of
-    its items numbered aloud when that list is ordered. ⭐ That keeps the speech-id
+    its items numbered aloud when that list is ordered, and a code part is its
+    one caption there, exactly as a top-level fence is. ⭐ That keeps the speech-id
     grammar as it is — a list's items are the only thing addressed below a block,
     and one level of them — and the page puts the audio on the parent `<li>`,
     which holds the nested list. ⚠️ A plain string item says exactly what it said
@@ -286,6 +287,10 @@ def _item_words(item: object, where: str) -> str:
     for part in item_parts(item):
         if not isinstance(part, dict):
             said.append(_spoken(part, where))
+            continue
+        if part.get("type") == "code":
+            # ⛔ A code part says what a top-level fence says: its one caption.
+            said.append(_block_speech(part, "code", where))
             continue
         nested = part.get("items")
         for position, sub in enumerate(nested if isinstance(nested, list) else []):

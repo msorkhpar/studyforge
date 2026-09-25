@@ -137,6 +137,15 @@ def test_a_nested_list_is_spoken_inside_its_parent_items_clip():
     ]
 
 
+def test_a_code_part_is_its_one_caption_inside_its_items_clip():
+    # ⛔ an item's code says what a top-level fence says, and nothing more.
+    snippet = {"type": "code", "lang": "java", "text": "int[] a;"}
+    block = {"type": "list", "ordered": True, "items": [["Return:", snippet, "then read it."]]}
+    assert [words for _id, words in said([block])] == [
+        f"First, Return: {code_caption('java')} then read it."
+    ]
+
+
 def test_an_ordered_list_counts_aloud_from_the_number_its_author_started_at():
     # ⛔ From the source: the continued step list says "Second", not "First".
     continued = parse("1. one\n\n```\nx\n```\n\n2. two\n3. three\n")[2]

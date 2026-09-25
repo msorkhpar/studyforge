@@ -3,8 +3,8 @@ r"""Every block's shape, read once for `validate` and for the fixture check.
 **What it does.** Walks every block, into container blocks and into list items, and names
 where one breaks spec §6: a block that is not an object, a type not in `BLOCK_TYPES`, keys
 that are not its fields then only its `BLOCK_OPTIONAL` keys, and for a `list` block an item
-that is neither a string nor an array of strings and whole lists, or a `start` that is not
-an integer.
+that is neither a string nor an array of strings and whole blocks of an `ITEM_BLOCKS` type
+(a nested list or a code block), or a `start` that is not an integer.
 
 **How you use it.** `block_problems(blocks)` yields `(where, what)` pairs, and
 `check_block_shapes(walk)` yields them as `document` findings. ⛔ `tests/fixture_checks` calls
@@ -21,7 +21,13 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 
-from studyforge.archive.blocks import BLOCK_FIELDS, BLOCK_OPTIONAL, BLOCK_TYPES, CONTAINER_TYPES
+from studyforge.archive.blocks import (
+    BLOCK_FIELDS,
+    BLOCK_OPTIONAL,
+    BLOCK_TYPES,
+    CONTAINER_TYPES,
+    ITEM_BLOCKS,
+)
 from studyforge.describe import describe
 from studyforge.validate.corpus import RULE_DOCUMENT, Walk
 from studyforge.validate.report import Finding
@@ -74,14 +80,18 @@ def _item(item: object, at: str) -> Iterator[tuple[str, str]]:
     if isinstance(item, str):
         return
     if not isinstance(item, list):
-        yield at, f"is {describe(item)}; an item is a string, or an array of strings and lists"
+        yield at, f"is {describe(item)}; an item is a string, or an array of strings and blocks"
         return
     for number, part in enumerate(item):
         here = f"{at}[{number}]"
-        if isinstance(part, dict) and part.get("type") == LIST:
+        if isinstance(part, dict) and part.get("type") in ITEM_BLOCKS:
             yield from _block(part, here)
         elif not isinstance(part, str):
-            yield here, f"is {describe(part)}; a part of an item is a string or a whole list block"
+            yield (
+                here,
+                f"is {describe(part)}; a part of an item is a string or a whole block "
+                f"of a type in {list(ITEM_BLOCKS)}",
+            )
 
 
 def check_block_shapes(walk: Walk) -> Iterator[Finding]:

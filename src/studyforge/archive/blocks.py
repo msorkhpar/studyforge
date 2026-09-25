@@ -112,20 +112,32 @@ COUNT_KEYS = {block.count_key: block.name for block in BLOCKS}
 BLOCK_FIELDS = {block.name: block.fields for block in BLOCKS}
 
 
+#: The block types a list item may hold as a PART, in vocabulary order: a
+#: nested list, and a code block. ⭐ One line, so what an item may hold is
+#: answered once for the reader, the validator, the page and the narration.
+ITEM_BLOCKS = ("code", "list")
+
+
 def item_parts(item: object) -> list:
-    """Return one list item's parts in reading order: text strings and nested `list` blocks.
+    """Return one list item's parts in reading order: text strings and whole blocks.
 
     ⛔ **What a list item is (spec §6).** A string when it holds no
-    nested list — every list without nesting is written as it always was — and
+    block — every plain list is written as it always was — and
     otherwise an ARRAY of its parts in the order the author wrote them: runs of
-    text, and whole `list` blocks, whose items follow this same rule. ⚠️ An
+    text, and whole blocks of the types `ITEM_BLOCKS` names — a nested `list`,
+    whose items follow this same rule, or a `code` block. ⚠️ An
     array and not `{"text", "list"}`, because material continues an item with a
-    paragraph AFTER its nested list and then opens another, and a pair could
-    only refuse that or reorder it.
+    paragraph AFTER its nested list or its code and then opens another, and a
+    pair could only refuse that or reorder it.
+
+    ⭐ **A code block inside an item stays inside it.** Material writes a step,
+    its snippet, and the sentence after the snippet as one item; closing the
+    list around the code detaches that sentence from its step.
 
     ⭐ **Not a twelfth block type and not a `raw_api` change**: `list` keeps its
-    three fields and its count key, and a document with no nested list reads
-    exactly as it did. ⚠️ A nested list is part of its item, not a block in
+    three fields and its count key, and a document with no block in an item reads
+    exactly as it did; an older build refuses the new shape by name rather than
+    misreading it. ⚠️ A part is part of its item, not a block in
     reading order, so `counts_of` does not count it and `walk` does not yield
     it; a consumer wanting every string walks the values, as `assert_clean`
     does. Every consumer reads an item through this function, so what an item

@@ -56,21 +56,37 @@ def test_a_blank_line_then_a_fence_ends_the_list():
     assert [block["type"] for block in blocks("- one\n\n```py\nx = 1\n```\n")] == ["list", "code"]
 
 
+def code(text: str, lang: str = "bash") -> dict:
+    """A code block as the reader writes one."""
+    return {"type": "code", "lang": lang, "text": text}
+
+
 def test_a_fence_inside_a_list_item_keeps_the_list_whole():
     # ⛔ How setup steps are written. Without this the list ends at item 1 and
     # the fence, the next item and the closing paragraph all become top-level.
     text = "1. Create a project:\n   ```bash\n   gradle init\n   ```\n2. Then build it.\n"
     parsed = blocks(text)
-    assert [block["type"] for block in parsed] == ["list", "code"]
-    assert parsed[0]["items"] == ["Create a project:", "Then build it."]
-    assert parsed[1]["text"] == "gradle init"
+    assert [block["type"] for block in parsed] == ["list"]
+    assert parsed[0]["items"] == [["Create a project:", code("gradle init")], "Then build it."]
 
 
 def test_a_fence_indented_under_an_item_after_a_blank_line_still_belongs_to_it():
     text = "1. Step one\n\n    ```bash\n    make\n    ```\n\n2. Step two\n"
     parsed = blocks(text)
-    assert parsed[0]["items"] == ["Step one", "Step two"]
-    assert parsed[1] == {"type": "code", "lang": "bash", "text": "make"}
+    assert parsed == [
+        {"type": "list", "ordered": True, "items": [["Step one", code("make")], "Step two"]}
+    ]
+
+
+@pytest.mark.parametrize("gap", ["", "\n"])
+def test_the_text_after_an_items_code_stays_in_that_item(gap):
+    # ⛔ The sentence after the snippet explains the snippet: a reader that
+    # closed the list around the fence made it a paragraph of nothing.
+    text = f"1. Return an array:\n   ```java\n   int[] a;\n   ```\n{gap}   Then read it.\n2. Next\n"
+    assert blocks(text)[0]["items"] == [
+        ["Return an array:", code("int[] a;", "java"), "Then read it."],
+        "Next",
+    ]
 
 
 def test_a_list_whose_fence_never_closes_still_raises():
@@ -219,15 +235,14 @@ def test_a_continuation_paragraph_under_a_nested_item_continues_that_item():
     ]
 
 
-def test_a_fence_under_a_nested_item_still_follows_the_whole_list():
+def test_a_fence_under_a_nested_item_stays_in_the_nested_item():
     text = "1. Step\n   - sub\n\n     ```bash\n     make\n     ```\n2. Next\n"
     parsed = blocks(text)
-    assert [block["type"] for block in parsed] == ["list", "code"]
+    assert [block["type"] for block in parsed] == ["list"]
     assert parsed[0]["items"] == [
-        ["Step", {"type": "list", "ordered": False, "items": ["sub"]}],
+        ["Step", {"type": "list", "ordered": False, "items": [["sub", code("make")]]}],
         "Next",
     ]
-    assert parsed[1]["text"] == "make"
 
 
 def test_an_indented_marker_outside_any_list_is_still_not_a_list():
@@ -246,18 +261,19 @@ def test_an_unindented_line_after_an_items_fence_ends_the_list():
     # after an item's fence is a new paragraph.
     text = "1. Step:\n   ```bash\n   make\n   ```\nNote: version 5.9.3\n"
     parsed = blocks(text)
-    assert [block["type"] for block in parsed] == ["list", "code", "para"]
-    assert parsed[2]["text"] == "Note: version 5.9.3"
+    assert [block["type"] for block in parsed] == ["list", "para"]
+    assert parsed[0]["items"] == [["Step:", code("make")]]
+    assert parsed[1]["text"] == "Note: version 5.9.3"
 
 
-def test_the_code_follows_the_whole_list():
+def test_each_item_keeps_its_own_code():
     text = "1. one\n   ```py\n   a\n   ```\n2. two\n   ```py\n   b\n   ```\n"
     parsed = blocks(text)
-    assert [block["type"] for block in parsed] == ["list", "code", "code"]
-    assert parsed[0]["items"] == ["one", "two"]
+    assert [block["type"] for block in parsed] == ["list"]
+    assert parsed[0]["items"] == [["one", code("a", "py")], ["two", code("b", "py")]]
 
 
-def test_read_list_returns_several_blocks_and_where_it_stopped():
+def test_read_list_returns_its_list_block_and_where_it_stopped():
     lines = ["- one", "- two", "", "after"]
     made, index = read_list(lines, 0)
     assert made == [{"type": "list", "ordered": False, "items": ["one", "two"]}]

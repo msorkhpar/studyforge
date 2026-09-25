@@ -82,8 +82,8 @@ def parse(text: str, *, lang_default: str = "") -> list[dict]:
         elif kind == "table":
             block, index = table.read_table(lines, index)
         elif kind == "list":
-            # ⚠️ The one handler returning SEVERAL blocks: an item can carry a
-            # fenced code block, which follows the list rather than nesting.
+            # ⭐ An item's fenced code is a part of that item (spec §6), so
+            # the list reader returns the one list block it read.
             made, index = listing.read_list(lines, index)
             blocks.extend(made)
             continue
