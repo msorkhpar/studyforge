@@ -236,3 +236,14 @@ def test_the_observed_partition_is_the_manifests_own_prefix_rule():
         if prefix != "?"
         for name in found
     )
+
+
+def test_directories_holding_material_counts_where_material_sits_and_nothing_else(tmp_path):
+    # ⛔ A module's source tree holds no material; counted, it made a corpus of
+    # material one directory deep report hundreds of directories holding some.
+    root = sources.nested_sections(tmp_path / "c")
+    for module in ("11-basics", "21-objects"):
+        sources.write(root, {f"{module}/src/main/java/a/b/App.java": "class App {}\n"})
+
+    measured = {i.what: i.measured for i in observe(take(root)) if isinstance(i, Observation)}
+    assert measured["directories holding material"] == "3"  # the root and two modules

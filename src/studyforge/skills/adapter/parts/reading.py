@@ -52,6 +52,10 @@ _DOCUMENTS = [
     "    A construct the reader does not recognise is reported, never dropped: a",
     "    dropped block is absent from the digest and from the counts alike, so",
     "    nothing downstream can notice it went missing.",
+    "",
+    "    ⭐ **Markdown material has a reader already**:",
+    "    `studyforge.archive.markdown.parse(text)` returns the blocks, and raises",
+    "    `MarkdownError` naming what it cannot hold rather than dropping it.",
     '    """',
     "    raise NotImplementedError(",
     "        UNWRITTEN.format(",
@@ -88,7 +92,9 @@ def _read(plan: Plan) -> str:
             "carrying the refusal's own message, and pass when the archive validates."
         ),
         depends=(
-            "`studyforge.corpus.container` for the `Container` and `Unit` shapes. "
+            "`studyforge.corpus.container` for the `Container` and `Unit` shapes, "
+            "`studyforge.address` for the `Address` a container is filed at, and "
+            "`studyforge.archive.markdown` for reading Markdown into blocks. "
             "⚠️ Add whatever this source needs — this is the one module where a "
             "source-specific import belongs."
         ),
@@ -163,8 +169,9 @@ def _declared(plan: Plan) -> str:
         depends=(
             "`studyforge.corpus.manifest` for the declaration, "
             "`studyforge.skills.adapter.curriculum` for the filing and the name count, and "
-            "`studyforge.corpus.container` for `Container`. ⚠️ Add whatever `documents` "
-            "needs to read this source's material."
+            "`studyforge.corpus.container` for `Container`. ⭐ "
+            "`studyforge.archive.markdown` reads Markdown into blocks for `documents`; "
+            "⚠️ add whatever else it needs to read this source's material."
         ),
         body=[
             "",
@@ -197,11 +204,11 @@ def _declared(plan: Plan) -> str:
             "    return [",
             "        Container(",
             "            address=group.address,",
-            "            titles=(group.label,),",
+            "            titles=group.titles,",
             "            variant=VARIANT,",
             '            ingested="1970-01-01",',
             "            units=group.units,",
-            "            origin=manifest.curriculum.record,",
+            "            origin=group.origin,",
             "        )",
             "        for group in filed(root, manifest)",
             "    ]",
@@ -212,8 +219,10 @@ def _declared(plan: Plan) -> str:
             '    """Return `{address key: unit count}` counted from the names on disk, or None.',
             "",
             "    ⭐ **The second reading**: every included file carrying a declared prefix,",
-            "    taken without the record. ⚠️ `None` while a declared group has no prefix,",
-            "    and the audit then reports an unchecked claim — count that group here.",
+            "    or under a linked level, every included file in each linked file's",
+            "    directory, taken without the record. ⚠️ `None` while a declared group",
+            "    has no prefix, and the audit then reports an unchecked claim — count",
+            "    that group here.",
             '    """',
             "    return counted(Path(root), load(Path(root) / MANIFEST_FILENAME))",
         ],

@@ -43,6 +43,22 @@ declaration doing its job.
 bracket class matching three root files because a fourth happens to begin with
 another letter encodes the collision rather than the intent, and a `why` must
 be true of everything its glob matches, including what nobody has written yet.
+
+## ⭐ Rule 1b — one fixed name in each directory at the root
+
+⚠️ **A repository of many uniform modules** keeps the same scaffolding in every
+one of them: a build file, a source tree. Rule 1a alone makes that one
+declaration per module, each with its own copy of one reason, and a module
+added later is unclassified until somebody copies the reason again.
+
+⭐ **So a leading `*/` is admitted where a fixed name follows it**: `*/pom.xml`
+is every root directory's `pom.xml`, and `*/src/**` everything under every root
+directory's `src/`. What stands after the `*/` is judged by rule 1a, so
+`*/*.md` and `*/**` are still refused. ⭐ The reason stays true of a file nobody
+has written yet, because what it names is the fixed name, and a directory added
+later has that name for the same reason. ⛔ Material swept by one is `CONTESTED`
+against `include`, never silently lost. The form is `corpus_api` 8's
+(`EACH_DIRECTORY_API`), because a build that predates it refuses it.
 """
 
 from __future__ import annotations
@@ -64,6 +80,13 @@ MIN_WHY_CHARS = 20
 #: once because two checks ask the same question of a string: an exclusion
 #: refuses all of them, and rule 1a asks where the first one falls.
 WILDCARDS = ("*", "?", "[")
+
+#: Rule 1b's leading segment: one directory at the root, whatever its name.
+_EACH_DIRECTORY = "*/"
+
+#: The `corpus_api` that admits rule 1b. ⚠️ A form, not a key: the manifest's
+#: version gate asks `each_directory` of every `not_material` glob.
+EACH_DIRECTORY_API = 8
 
 
 def parse_content(value: object) -> ContentPolicy:
@@ -196,17 +219,32 @@ def _reject_loose_glob(glob: str, where: str) -> None:
     ⚠️ The pattern is not quoted back: the actionable half is which rule was
     broken, and the author has what they wrote in front of them.
     """
-    cut = min((glob.find(wildcard) for wildcard in WILDCARDS if wildcard in glob), default=-1)
+    judged = glob[len(_EACH_DIRECTORY) :] if each_directory(glob) else glob
+    cut = min((judged.find(wildcard) for wildcard in WILDCARDS if wildcard in judged), default=-1)
     if cut < 0:
         return
-    if not glob[:cut].endswith("/"):
+    if not judged[:cut].endswith("/"):
         raise ManifestError(
             f"{where} puts a wildcard where no directory precedes it. A not_material "
-            f"entry is an exact path, or a wildcard under a directory that is itself "
-            f"entirely not material; a pattern whose correctness depends on which files "
+            f"entry is an exact path, a wildcard under a directory that is itself "
+            f"entirely not material, or either of those behind a leading '*/' naming "
+            f"the same fixed name in every root directory (corpus_api "
+            f"{EACH_DIRECTORY_API}); a pattern whose correctness depends on which files "
             f"happen not to exist silences the unclassified check for a file nobody has "
             f"considered yet"
         )
+
+
+def each_directory(glob: str) -> bool:
+    """Whether `glob` is rule 1b's form: a leading `*/`, then a fixed name.
+
+    ⛔ The segment after the `*/` carries no wildcard, so `*/*.md` is not this
+    form and is judged, and refused, by rule 1a as a whole.
+    """
+    if not glob.startswith(_EACH_DIRECTORY):
+        return False
+    head = glob[len(_EACH_DIRECTORY) :].split("/", 1)[0]
+    return bool(head) and not any(wildcard in head for wildcard in WILDCARDS)
 
 
 def _why_of(why: object, where: str, *, says: str, noun: str) -> str:

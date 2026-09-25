@@ -41,8 +41,10 @@ guess for an ingest to make.
 from __future__ import annotations
 
 from studyforge.corpus.manifest.content.parse import (
+    EACH_DIRECTORY_API,
     MIN_WHY_CHARS,
     WILDCARDS,
+    each_directory,
     parse_content,
 )
 from studyforge.corpus.manifest.content.policy import (
@@ -56,11 +58,13 @@ from studyforge.corpus.manifest.content.policy import (
 #: `studyforge.corpus.manifest.content.parse` directly is a consumer this
 #: contract failed.
 __all__ = [
+    "EACH_DIRECTORY_API",
     "MIN_WHY_CHARS",
     "WILDCARDS",
     "Classification",
     "ContentPolicy",
     "Exclusion",
     "NotMaterial",
+    "each_directory",
     "parse_content",
 ]

@@ -329,3 +329,18 @@ def test_a_document_inside_the_root_still_returns_the_record_it_did_before(tmp_p
     assert found.path.as_posix() == "README.md"
     assert len(found.entries) == 19
     assert found.title == "A Prose Course"
+
+
+def test_every_group_is_named_and_none_is_cut_from_the_list(tmp_path):
+    # ⛔ A list cut short without saying so reads as the whole grouping.
+    files, listing = {}, []
+    for n in range(1, 7):
+        files[f"src/{n}.md"] = sources.unit(f"Part {n}")
+        listing += [f"# Part {n}", "", f"- [{n}. Part {n}](src/{n}.md)", ""]
+    files["README.md"] = "\n".join(listing)
+    root = sources.write(tmp_path / "c", files)
+
+    tree = take(root)
+    measured = {i.what: i.measured for i in observe(find(tree), tree) if hasattr(i, "measured")}
+    assert measured["groups it expresses"].startswith("6 ")
+    assert all(f"'Part {n}'" in measured["groups it expresses"] for n in range(1, 7))

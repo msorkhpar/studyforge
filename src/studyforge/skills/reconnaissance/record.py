@@ -127,6 +127,8 @@ class Record:
     containers: list[Regions] = field(default_factory=list)
     #: Linked files at a label's position NOT proposed as containers, with why.
     uncut: list[Regions] = field(default_factory=list)
+    #: The group labels with their record lines, for a reader of positions (`linked`).
+    labels: list[tuple[int, str]] = field(default_factory=list)
 
     @property
     def order(self) -> list[str]:
@@ -212,6 +214,7 @@ def read(path: Path, root: Path, targets: set[str]) -> Record | None:
         title=_document_title(lines),
         containers=[linked[head.target] for head in containers],
         uncut=uncut,
+        labels=list(labels),
     )
 
 
@@ -322,7 +325,9 @@ def observe(record: Record | None, inventory: Inventory) -> Iterator[Observation
     yield Observation("curriculum recorded in", record.path.as_posix())
     yield Observation("region of that document", f"lines {record.first_line}-{record.last_line}")
     yield Observation("units it names, in order", str(len(record.entries)))
-    yield Observation("groups it expresses", f"{len(record.groups)} {record.groups[:4]}")
+    # ⛔ Every label, never the first few: a list cut short without saying so
+    # reads as the whole grouping.
+    yield Observation("groups it expresses", f"{len(record.groups)} {record.groups}")
     yield Observation(
         "entry shapes", ", ".join(f"{n} {shape}" for shape, n in sorted(record.forms.items()))
     )

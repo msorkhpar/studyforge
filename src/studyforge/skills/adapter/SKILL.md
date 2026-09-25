@@ -178,6 +178,19 @@ at its declared address, and refuses when the record, or a declared filename
 prefix, disagrees with the tree. ⛔ **Change the filing in `corpus.json`, never
 in `read.py`.** Only `documents` is yours.
 
+⭐ **A record whose last level is a linked entry** (a module linking its own
+contents page, with its units indented beneath it) is filed the same way when
+`corpus.json` declares `curriculum.linked` (`corpus_api` 8): one container per
+linked entry, at its group's address followed by the name of the directory
+holding the page it links, and `expected_units` counts the included files in
+that directory. ⛔ No part of that filing is written by hand.
+
+⭐ **Markdown material has a reader already**: `studyforge.archive.markdown.parse(text)`
+returns the blocks, and raises `MarkdownError` naming what it cannot hold.
+`documents` for a Markdown corpus is one loop over `container.units` calling it
+on each unit's `origin`. ⭐ `Address`, which a hand-written `containers`
+needs, is `studyforge.address.Address`.
+
 ⚠️ **Report what you cannot read; never drop it** (R6). A block the reader does
 not recognise is absent from the digest *and* from the counts, so nothing
 downstream can notice it went missing. The block vocabulary is closed at **11

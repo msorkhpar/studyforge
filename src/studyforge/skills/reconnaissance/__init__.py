@@ -61,6 +61,8 @@ does **not** generalise.
 | `record` | which document records the curriculum, and what it says |
 | `duplication` | is any of this material here twice |
 | `regions` | is a file the record links cut into sub-file units |
+| `linked` | does the record open each container of its last level with a linked entry |
+| `include` | which patterns read the record's units, and none of the pages it only links |
 | `capability` | is anything runnable, does a grader ship with it |
 | `runtimes` | which runtimes the material evidences, drafted beside `exercises` |
 | `furniture` | what the draft reads nowhere, as `not_material` globs with open reasons |
@@ -76,6 +78,7 @@ from studyforge.skills.reconnaissance.capability import Capability, assess
 from studyforge.skills.reconnaissance.duplication import Aggregate, Structural
 from studyforge.skills.reconnaissance.errors import ReconnaissanceRefused
 from studyforge.skills.reconnaissance.inventory import Inventory, prefix_groups, take
+from studyforge.skills.reconnaissance.linked import Linked, NotLinked, split_linked
 from studyforge.skills.reconnaissance.proposal import draft
 from studyforge.skills.reconnaissance.record import Entry, Record, find, read
 from studyforge.skills.reconnaissance.report import Observation, Survey, Uncertainty
@@ -88,6 +91,8 @@ __all__ = [
     "Capability",
     "Entry",
     "Inventory",
+    "Linked",
+    "NotLinked",
     "Observation",
     "ReconnaissanceRefused",
     "Record",
@@ -99,6 +104,7 @@ __all__ = [
     "find",
     "prefix_groups",
     "read",
+    "split_linked",
     "survey",
     "take",
 ]

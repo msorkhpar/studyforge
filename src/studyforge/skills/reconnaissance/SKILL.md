@@ -63,6 +63,14 @@ when the names disagree, so it never files anything. Every address is a
 proposal and is asked about, because §6 records an address and never derives
 one.
 
+⭐ **A two-level record whose modules are linked entries is drafted whole.**
+Where the labels are sections and, beneath each, every module is a list entry
+linking its own contents page with its units indented under it, the draft
+declares the sections as the groups and `curriculum.linked` names the last
+level, so the adapter files every module without a line written by hand.
+The linked pages are not units: no include reads them, and they are proposed
+`not_material`. ⛔ A record that has the shape only in part drafts no `linked`.
+
 ⚠️ If nothing records the curriculum, **say so and stop guessing.** Do not sort
 filenames and move on — see step 4.
 
@@ -153,7 +161,11 @@ whether the corpus finishes at the reading floor or enters the execution track.
 
 ⭐ **A graded corpus's draft declares the `runtimes` its material evidences**
 — a build file or a source suffix, each from a closed map, and `java`
-beside any name that runs on a JVM. ⛔ **Never a runtime nothing evidences**,
+beside any name that runs on a JVM. ⚠️ **A source file inside a build's tree
+evidences only a language that build builds**: a `.py` among the notes of a
+Maven repository proposes no `python`, and the question names it as set aside.
+A file no build holds evidences what its suffix says, and a build says nothing
+about a shell script or a database file. ⛔ **Never a runtime nothing evidences**,
 never the key for prose, and never beside `exercises: false`: evidence there is
 one question instead. A draft carrying the key declares `corpus_api` 4, the
 version the reader requires for it, and every drafted runtime is asked about.
@@ -166,8 +178,13 @@ names are the corpus's own, and this skill cannot know them.
 
 ⛔ **A field the draft fills is filled with a value the manifest parser accepts.** `source`
 is the slug of the curriculum record's title and `variants` is `["prose"]`,
-both asked about; no include glob matches the curriculum record — a directory
-whose wildcard would catch it is listed file by file.
+both asked about; no include glob matches the curriculum record or a page a
+linked entry links — a directory whose wildcard would catch one narrows to the
+stem its units share up to a separator (`README_*.md`), and failing that is
+listed file by file. Where every such directory at the root narrows alike, one
+`*/` pattern reads them all. ⛔ An entry above the record's first group label is
+not drafted as material: the survey names it, and the adapter's filing would
+refuse it.
 
 ⛔ **`source` never depends on the directory surveyed.** A worktree, a
 clone and an archive of one commit draft one `source`. Nothing is read from
@@ -178,7 +195,10 @@ yours.** Only a file an include reads is proposed for `exclude`. Every
 other file `validate` will classify gets a glob with `"why": null`, and so do
 the record and the root's furniture. Nothing onboarding recorded writing is
 proposed, so no glob collides with onboarding's. Give each reason to `promote`
-in `reasons`, keyed by its glob.
+in `reasons`, keyed by its glob. ⭐ The same fixed name proposed in two or more
+root directories, a module's `pom.xml` or its `src/**`, is proposed once as
+`*/pom.xml` or `*/src/**` (`corpus_api` 8), so a repository of uniform modules
+needs one reason per kind of file, not one per module.
 
 ### 9. ⛔ On a corpus this framework already onboarded, survey the corpus
 

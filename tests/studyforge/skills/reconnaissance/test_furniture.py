@@ -217,3 +217,41 @@ def test_control_a_root_that_is_its_own_git_working_tree_does_not_stand_down(tmp
     init_repository(root)
     assert propose(root, ["*.md"], []).stands_down is None
     assert stood_down(root) == []
+
+
+def _modules(root, *names):
+    """Write modules that each carry a lesson, a build file and a source tree."""
+    files = {}
+    for name in names:
+        files[f"{name}/lesson.md"] = sources.unit(name)
+        files[f"{name}/pom.xml"] = "<project/>\n"
+        files[f"{name}/src/main/App.java"] = "class App {}\n"
+    return sources.write(root, files)
+
+
+def test_the_same_name_in_every_module_is_proposed_once(tmp_path):
+    # ⭐ One reason per kind of file, not one per module (rule 1b, `corpus_api` 8).
+    root = init_repository(_modules(tmp_path / "c", "01-one", "02-two", "03-three"))
+
+    proposed = propose(root, ["*/lesson.md"], ())
+
+    assert proposed.globs == ["*/pom.xml", "*/src/**"]
+
+
+def test_a_name_one_module_alone_carries_stays_that_module_s(tmp_path):
+    root = _modules(tmp_path / "c", "01-one", "02-two")
+    sources.write(root, {"01-one/NOTES.txt": "notes\n"})
+    init_repository(root)
+
+    assert "01-one/NOTES.txt" in propose(root, ["*/lesson.md"], ()).globs
+
+
+def test_no_name_is_folded_where_the_fold_would_reach_a_file_that_is_read(tmp_path):
+    # ⛔ `*/pom.xml` would also match a file an include reads, so each stays its own.
+    root = init_repository(_modules(tmp_path / "c", "01-one", "02-two"))
+
+    proposed = propose(root, ["*/lesson.md", "03-read/pom.xml"], ())
+    assert proposed.globs == ["*/pom.xml", "*/src/**"]
+    sources.write(root, {"03-read/pom.xml": "<project/>\n"})
+    proposed = propose(root, ["*/lesson.md", "03-read/pom.xml"], ())
+    assert proposed.globs == ["*/src/**", "01-one/pom.xml", "02-two/pom.xml"]

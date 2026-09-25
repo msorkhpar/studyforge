@@ -6,8 +6,9 @@ proposed address, and a group's filename prefix wherever the names on disk
 partition the units exactly as the record groups them — and asks about every
 part of it a person has to settle.
 
-**How you use it.** `proposal.draft` calls `declare(record, inventory)`, which
-returns `(block or None, uncertainties)`.
+**How you use it.** `proposal.draft` calls `heads_of(inventory, record)`, then
+`declare(record, inventory, levels, linked)`, which returns
+`(block or None, uncertainties)`.
 
 **Depends on.** `record`, `inventory`, `report`, `studyforge.address` for what
 a slug is, and `corpus.manifest` for what a prefix is and the version the key
@@ -35,6 +36,11 @@ a detection that goes stale is a refusal rather than a memory.
   source"*. So a group gets a prefix only when every unit it lists
   carries that one prefix, no other group's units carry it, and no other
   material file does. ⭐ A partial agreement drafts no prefix and says so.
+- ⭐ **A linked level is drafted where the record has one** (`linked.split_linked`):
+  in a two-level draft whose record opens each module with a linked list
+  entry beneath a label, the labels are drafted as the groups one level up and
+  `linked` names the last level, so no filing is written by hand. ⛔ A record
+  that only partly has the shape drafts no `linked` and says why.
 """
 
 from __future__ import annotations
@@ -42,21 +48,40 @@ from __future__ import annotations
 from studyforge.address import slugify
 from studyforge.corpus.manifest import KEY_VERSIONS, prefix_of
 from studyforge.skills.reconnaissance.inventory import Inventory
+from studyforge.skills.reconnaissance.linked import Linked, NotLinked, split_linked
 from studyforge.skills.reconnaissance.record import Record
 from studyforge.skills.reconnaissance.report import Uncertainty
 
 #: The `corpus_api` a draft carrying the block declares, read from the
 #: manifest's own map so the two cannot drift.
 CURRICULUM_API = KEY_VERSIONS[(None, "curriculum")]
+LINKED_API = KEY_VERSIONS[("curriculum", "linked")]
+
+
+def heads_of(inventory: Inventory, record: Record | None) -> Linked | None:
+    """Return the record's linked level, or `None` when it does not have that shape."""
+    if record is None or not record.groups:
+        return None
+    try:
+        lines = (inventory.root / record.path).read_text(encoding="utf-8").splitlines()
+        return split_linked(lines, record.path.as_posix(), record.entries, record.labels)
+    except OSError, UnicodeDecodeError, NotLinked:
+        return None
 
 
 def declare(
-    record: Record | None, inventory: Inventory, depth: int
+    record: Record | None,
+    inventory: Inventory,
+    levels: list[str],
+    linked: Linked | None = None,
 ) -> tuple[dict | None, list[Uncertainty]]:
     """Return the draft's `curriculum` block and every question it leaves open."""
     if record is None:
         return None, []
     block: dict[str, object] = {"record": record.path.as_posix()}
+    depth = len(levels)
+    if linked is not None and depth == 2:
+        return _linked(block, record, linked, levels)
     if depth != 1 or not record.groups:
         # ⭐ Where the curriculum lives is still a finding worth writing down.
         return block, [_where(block)]
@@ -70,6 +95,39 @@ def declare(
         for label, address in zip(record.groups, addresses, strict=True)
     ]
     return block, [_where(block), _addresses(addresses), _prefixes(record, prefixes)]
+
+
+def _linked(
+    block: dict, record: Record, linked: Linked, levels: list[str]
+) -> tuple[dict, list[Uncertainty]]:
+    """Draft the labels one level up, with `linked` naming the last level."""
+    addresses = [slugify(label) for label in record.groups]
+    if not all(addresses) or len(set(addresses)) != len(addresses):
+        return block, [_where(block), _unaddressed(record)]
+    block["containers"] = [
+        {"label": label, "address": address}
+        for label, address in zip(record.groups, addresses, strict=True)
+    ]
+    block["linked"] = levels[-1]
+    return block, [
+        _where(block),
+        _addresses(addresses),
+        Uncertainty(
+            question=(
+                f"does each of the {len(linked.heads)} linked entries beneath the "
+                f"{len(record.groups)} labels open one {levels[-1]}?"
+            ),
+            why=(
+                "each is a list entry linking a page, with units indented beneath it; its "
+                "address is the label's followed by the name of the directory holding that "
+                "page, and the page itself is not drafted as material"
+            ),
+            settles_it=(
+                "confirm, or drop 'linked' and file the units in read.py; the adapter "
+                "refuses a record that stops having this shape"
+            ),
+        ),
+    ]
 
 
 def _agreed(record: Record, inventory: Inventory) -> dict[str, str]:

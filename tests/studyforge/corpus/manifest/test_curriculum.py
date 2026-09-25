@@ -189,3 +189,54 @@ def test_a_repeated_label_address_or_prefix_is_refused(field):
 )
 def test_a_group_missing_or_mis_stating_a_field_is_refused(group):
     assert "curriculum.containers[0]" in refusal({"record": "README.md", "containers": [group]})
+
+
+# --- a linked level -----------------------------------------------------------
+
+#: Sections as the record's labels, one level up, and modules opened by linked entries.
+LINKED = {
+    "record": "README.md",
+    "containers": [{"label": "Basics", "address": "basics"}],
+    "linked": "module",
+}
+TWO_LEVELS = {"corpus_api": 8, "levels": ["section", "module"]}
+
+
+def test_a_linked_level_declares_its_groups_one_level_up():
+    curriculum = parsed(LINKED, **TWO_LEVELS).curriculum
+    assert curriculum.linked == "module"
+    assert curriculum.containers[0].address == Address.of("basics")
+
+
+def test_linked_is_corpus_api_8s():
+    assert KEY_VERSIONS[("curriculum", "linked")] == 8
+    message = refusal(LINKED, corpus_api=7, levels=["section", "module"])
+    assert "corpus_api 7" in message and "corpus_api 8" in message
+
+
+@pytest.mark.parametrize(
+    ("linked", "levels"),
+    [("section", ["section", "module"]), ("module", ["module"]), (True, ["section", "module"])],
+    ids=["not-the-last-level", "depth-1", "not-a-name"],
+)
+def test_linked_names_the_last_of_two_levels_or_more(linked, levels):
+    message = refusal({**LINKED, "linked": linked}, corpus_api=8, levels=levels)
+    assert "must name the last of 'levels'" in message
+
+
+def test_a_linked_level_needs_its_groups():
+    message = refusal({"record": "README.md", "linked": "module"}, **TWO_LEVELS)
+    assert "needs 'curriculum.containers'" in message
+
+
+def test_a_group_under_a_linked_level_declares_no_prefix():
+    containers = [{"label": "Basics", "address": "basics", "prefix": "b"}]
+    message = refusal({**LINKED, "containers": containers}, **TWO_LEVELS)
+    assert "declares no 'prefix'" in message
+
+
+def test_an_address_written_as_a_list_is_refused_naming_the_key_form():
+    # ⭐ `container.json` writes a list; this block writes the key.
+    containers = [{"label": "Basics", "address": ["basics", "intro"]}]
+    message = refusal({"record": "README.md", "containers": containers}, **TWO_LEVELS)
+    assert "joined by '/'" in message and "'a/b'" in message

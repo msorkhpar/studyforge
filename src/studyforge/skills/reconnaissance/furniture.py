@@ -35,6 +35,15 @@ record, a licence and an ignore file all fall out of that one rule.
 A glob is `D/**` for the shallowest directory `D` holding nothing included,
 excluded or written by onboarding. Otherwise it is the file's exact path.
 
+## ⭐ One glob for the same name in every module
+
+⚠️ **A repository of uniform modules keeps the same scaffolding in each**: a
+build file, a source tree. Proposed one per module, it is one reason to type
+per module. ⭐ So where two or more root directories are proposed the same
+fixed name, `D/pom.xml` or `D/src/**`, one `*/pom.xml` or `*/src/**` is
+proposed instead (the manifest's rule 1b, `corpus_api` 8), provided it matches
+no file the draft reads, a declared glob covers or onboarding wrote.
+
 ## ⛔ Onboarding's footprint is never proposed
 
 Paths listed in onboarding's record are declared by onboarding's own generated
@@ -74,6 +83,7 @@ from pathlib import Path, PurePosixPath
 
 from studyforge.archive.scrub import assert_clean
 from studyforge.corpus.manifest import MANIFEST_FILENAME
+from studyforge.corpus.manifest.content import WILDCARDS, each_directory
 from studyforge.skills.reconnaissance.installed import generated
 from studyforge.validate.source import source_files
 
@@ -136,7 +146,7 @@ def propose(root: Path | str, include: Sequence[str], exclude: Iterable[str]) ->
     occupied = read | covered | generated(root)
     held = {parent.as_posix() for where in occupied for parent in PurePosixPath(where).parents}
     left = [where for where in seen if where not in occupied]
-    globs = sorted({_glob(where, held) for where in left})
+    globs = _each_directory(sorted({_glob(where, held) for where in left}), occupied)
     return Furniture(
         entries=tuple({"glob": glob, "why": OPEN_REASON} for glob in globs),
         judged=len(seen),
@@ -154,6 +164,28 @@ def _glob(where: str, held: set[str]) -> str:
         if directory not in held:
             return f"{directory}/**"
     return where
+
+
+def _each_directory(globs: list[str], occupied: set[str]) -> list[str]:
+    """Fold `D/name` proposed for two or more root directories into one `*/name`.
+
+    ⛔ Only rule 1b's form (`each_directory`), and only where the folded glob
+    matches nothing a declaration already owns: then it reads exactly the files
+    the proposals it replaces would, and any a module added later would.
+    """
+    by_name: dict[str, list[str]] = {}
+    for glob in globs:
+        head, _, name = glob.partition("/")
+        if name and not any(mark in head for mark in WILDCARDS):
+            by_name.setdefault(name, []).append(glob)
+    out = set(globs)
+    for name, grouped in by_name.items():
+        folded = f"*/{name}"
+        if len(grouped) < 2 or not each_directory(folded):
+            continue
+        if not any(PurePosixPath(where).full_match(folded) for where in occupied):
+            out = (out - set(grouped)) | {folded}
+    return sorted(out)
 
 
 def _declared(root: Path) -> tuple[str, ...]:

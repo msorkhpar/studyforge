@@ -9,6 +9,7 @@ from __future__ import annotations
 import pytest
 
 from studyforge.corpus.manifest import MIN_WHY_CHARS, ManifestError, NotMaterial, parse_content
+from studyforge.corpus.manifest.content import each_directory
 from tests.studyforge.corpus.manifest.content.policies import WHY, policy, scaffolding
 
 #: ⭐ The three worked examples of `not_material`, copied rather than paraphrased. Rule 1a
@@ -129,6 +130,31 @@ def test_a_wildcard_inside_a_directory_name_is_refused():
     # prefix of `docs/study*/x.md` is not a directory anybody declared.
     with pytest.raises(ManifestError, match="wildcard where no directory precedes it"):
         scaffolding(("docs/study*/x.md", WHY))
+
+
+# --- rule 1b: one fixed name in each directory at the root ------------------
+
+
+@pytest.mark.parametrize("glob", ["*/pom.xml", "*/src/**", "*/build/*.gradle", "*/README.md"])
+def test_a_fixed_name_in_each_root_directory_is_accepted(glob):
+    assert scaffolding((glob, WHY)).not_material == (NotMaterial(glob, WHY),)
+    assert each_directory(glob)
+
+
+@pytest.mark.parametrize("glob", ["*/*.md", "*/**", "*/*", "*/", "**/pom.xml", "*x/pom.xml"])
+def test_a_leading_directory_wildcard_with_no_fixed_name_after_it_is_refused(glob):
+    # ⛔ What follows the `*/` is judged by rule 1a, so the form widens nothing
+    # but "the same fixed name in every module".
+    with pytest.raises(ManifestError, match="wildcard where no directory precedes it"):
+        scaffolding((glob, WHY))
+    assert not each_directory(glob)
+
+
+def test_the_fixed_name_is_matched_one_directory_down_and_nowhere_else():
+    declared = scaffolding(("*/pom.xml", WHY))
+    assert declared.classify("module-a/pom.xml").value == "not-material"
+    assert declared.classify("pom.xml").value == "unclassified"
+    assert declared.classify("module-a/nested/pom.xml").value == "unclassified"
 
 
 def test_the_rule_1a_refusal_does_not_reproduce_the_pattern():

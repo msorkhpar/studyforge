@@ -78,6 +78,7 @@ from studyforge.corpus.manifest import (
     RAISES,
     REQUIRED_KEYS,
     parse,
+    versions_needed,
 )
 from studyforge.version import check as check_version
 
@@ -180,13 +181,11 @@ def _api_for(draft: Mapping[str, object], document: Mapping[str, object]) -> int
 
 
 def _needed(document: Mapping[str, object]) -> list[int]:
-    """Every version a key the document carries needs, and `1` for the document itself."""
-    needed = [1]
-    for (block, key), version in KEY_VERSIONS.items():
-        holder = document if block is None else document.get(block)
-        if isinstance(holder, dict) and key in holder:
-            needed.append(version)
-    return needed
+    """Every version a key or form the document carries needs, and `1` for the document itself.
+
+    ⭐ `versions_needed` is the manifest's own answer, the one `parse` refuses by.
+    """
+    return [1, *(version for _, version in versions_needed(document))]
 
 
 def _refuse_unknown_keys(draft: Mapping[str, object]) -> None:

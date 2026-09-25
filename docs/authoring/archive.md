@@ -44,6 +44,14 @@ address, and the unit count taken from the file names. Reading each unit's
 material into blocks is then the only part you write, and a change to the
 filing is made in `corpus.json`, never in the adapter
 ([`curriculum`](corpus.md#curriculum--where-your-reading-order-is-recorded)).
+That holds for a record whose modules are linked entries too, once
+`curriculum.linked` says so.
+
+**If your material is Markdown, the reader is already written.**
+`studyforge.archive.markdown.parse(text)` returns a document's blocks in the
+vocabulary below, and raises `MarkdownError` naming any construct it cannot
+hold rather than dropping it. `documents` is then one loop over the
+container's units, parsing the file each unit's `origin` names.
 
 ---
 
@@ -60,13 +68,13 @@ detectable failure rather than a silently shorter site.
   "titles": ["Basics", "Getting Started"],
   "variant": "java",
   "ingested": "2026-09-10",
-  "origin": "basics/01-getting-started/README.md",
+  "origin": "basics/01-getting-started/contents.md",
   "units": [
     {
       "n": 1,
       "title": "What a build tool is for",
       "practices": 1,
-      "origin": "basics/01-getting-started/README_1.md"
+      "origin": "basics/01-getting-started/build-tools.md"
     }
   ]
 }

@@ -12,6 +12,7 @@ import json
 import pytest
 
 from studyforge.corpus.manifest import KEY_VERSIONS, ManifestError, parse
+from studyforge.corpus.manifest.content import EACH_DIRECTORY_API
 from studyforge.skills.onboarding import artifacts, hand_edited, onboard, reonboard
 from studyforge.skills.onboarding.manifest import promote, render
 from tests.studyforge.skills.onboarding import corpora
@@ -23,6 +24,15 @@ DRAFTS = {
     (None, "narration"): {**corpora.DRAFT, "narration": False},
     (None, "onboarding_doc"): {**corpora.DRAFT, "onboarding_doc": "docs/reader.md"},
     (None, "curriculum"): {**corpora.DRAFT, "curriculum": {"record": "README.md"}},
+    ("curriculum", "linked"): {
+        **corpora.DRAFT,
+        "levels": ["section", "module"],
+        "curriculum": {
+            "record": "README.md",
+            "containers": [{"label": "Basics", "address": "basics"}],
+            "linked": "module",
+        },
+    },
 }
 
 
@@ -74,3 +84,21 @@ def test_a_settle_that_needs_a_newer_version_is_written_under_it(tmp_path, settl
     assert {name: written[name] for name in settle} == settle
     assert written["corpus_api"] == KEY_VERSIONS[key]
     assert hand_edited(root) == []
+
+
+def test_a_glob_in_every_root_directory_is_written_under_the_version_that_admits_it():
+    # ⭐ A form, not a key: `*/name` under `content.not_material`, which a build
+    # before `corpus_api` 8 refuses as a loose glob and blames on the corpus.
+    reason = "each module's build file, written once for every module"
+    drafted = {
+        **corpora.DRAFT,
+        "content": {
+            **corpora.DRAFT["content"],
+            "not_material": [{"glob": "*/pom.xml", "why": reason}],
+        },
+    }
+    document = promote(drafted)
+
+    assert document["corpus_api"] == EACH_DIRECTORY_API == 8
+    with pytest.raises(ManifestError, match="corpus_api 8"):
+        parse(render({**document, "corpus_api": 7}))

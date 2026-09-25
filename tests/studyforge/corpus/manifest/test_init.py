@@ -59,6 +59,7 @@ PUBLIC_SURFACE = frozenset(
         "parse_media",
         "parse_runtimes",
         "prefix_of",
+        "versions_needed",
     }
 )
 

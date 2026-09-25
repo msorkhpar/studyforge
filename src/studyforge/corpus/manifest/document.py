@@ -50,7 +50,12 @@ from pathlib import Path
 
 from studyforge.address import Address, parse_key
 from studyforge.archive.scrub import assert_clean
-from studyforge.corpus.manifest.content import ContentPolicy, parse_content
+from studyforge.corpus.manifest.content import (
+    EACH_DIRECTORY_API,
+    ContentPolicy,
+    each_directory,
+    parse_content,
+)
 from studyforge.corpus.manifest.curriculum import Curriculum, parse_curriculum
 from studyforge.corpus.manifest.edits import PermittedEdit, parse_edits
 from studyforge.corpus.manifest.errors import ManifestError
@@ -81,7 +86,8 @@ MANIFEST_FILENAME = "corpus.json"
 #: ⭐ **`2` added `content.not_material`**, ⭐ **`3` added
 #: `media.max_files`**, ⭐ **`4` added `runtimes`**, ⭐ **`5`
 #: added `narration`**, ⭐ **`6` added `onboarding_doc`** and
-#: ⭐ **`7` added `curriculum`**, and no
+#: ⭐ **`7` added `curriculum`**, ⭐ **`8` added `curriculum.linked` and
+#: the `*/name` form of a `not_material` glob**, and no
 #: bump is about old manifests — each key is optional and an absent one has a
 #: stated default, so every `1` still parses. ⛔ **A bump is about a manifest
 #: that *uses* the key being unreadable to an older build**, which reports an
@@ -92,8 +98,8 @@ MANIFEST_FILENAME = "corpus.json"
 #: `CORPUS_API`.** A set built as `{1, CORPUS_API}` silently stops speaking
 #: `2` on the day somebody writes `3`, and the refusal for an unknown version
 #: has to stay exactly as sharp as it is for `6` today.
-CORPUS_API = 7
-KNOWN_CORPUS_API = frozenset({1, 2, 3, 4, 5, 6, 7})
+CORPUS_API = 8
+KNOWN_CORPUS_API = frozenset({1, 2, 3, 4, 5, 6, 7, 8})
 
 #: The `corpus_api` each key added after version 1 requires, keyed by the block
 #: it lives under and its name.
@@ -120,6 +126,7 @@ KEY_VERSIONS: dict[tuple[str | None, str], int] = {
     (None, "narration"): 5,
     (None, "onboarding_doc"): 6,
     (None, "curriculum"): 7,
+    ("curriculum", "linked"): 8,
 }
 
 #: The placement profiles that may be declared. ⚠️ **`placement.profile` owns the profiles;
@@ -284,7 +291,7 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
         narration=narration_of(document.get("narration", True), where),
         onboarding_doc=onboarding_doc_of(document.get("onboarding_doc", ONBOARDING_DOC), where),
         curriculum=(
-            parse_curriculum(document["curriculum"], where, len(levels))
+            parse_curriculum(document["curriculum"], where, len(levels), levels=levels)
             if "curriculum" in document
             else None
         ),
@@ -346,11 +353,7 @@ def _check_key_versions(document: dict, corpus_api: int, where: str) -> None:
     under `media` would have shipped ungated and the omission would have looked
     exactly like a decision.
     """
-    for (block, key), needed in KEY_VERSIONS.items():
-        declared = document if block is None else document.get(block)
-        if not isinstance(declared, dict) or key not in declared:
-            continue
-        name = key if block is None else f"{block}.{key}"
+    for name, needed in versions_needed(document):
         if corpus_api < needed:
             raise ManifestError(
                 f"{where} declares corpus_api {corpus_api} and uses '{name}', "
@@ -358,6 +361,32 @@ def _check_key_versions(document: dict, corpus_api: int, where: str) -> None:
                 f"version is what tells an older build it cannot read this manifest, "
                 f"and it is never inferred from the keys present."
             )
+
+
+def versions_needed(document: dict) -> list[tuple[str, int]]:
+    """Every key and form `document` uses that a later version added, with that version.
+
+    ⭐ **One answer for the gate and for the writer**: `parse` refuses by it
+    and onboarding's `promote` writes the version it needs, so no key or form a
+    version adds can be written under a version that refuses it.
+    ⚠️ A form is not a key: rule 1b's `*/name` glob is a value under
+    `content.not_material`, and an older build refuses it just the same.
+    """
+    needed = []
+    for (block, key), version in KEY_VERSIONS.items():
+        declared = document if block is None else document.get(block)
+        if isinstance(declared, dict) and key in declared:
+            needed.append((key if block is None else f"{block}.{key}", version))
+    content = document.get("content")
+    entries = content.get("not_material") if isinstance(content, dict) else None
+    if isinstance(entries, list) and any(
+        isinstance(entry, dict)
+        and isinstance(entry.get("glob"), str)
+        and each_directory(entry["glob"])
+        for entry in entries
+    ):
+        needed.append(("content.not_material */<name>", EACH_DIRECTORY_API))
+    return needed
 
 
 def _placement_of(value: object, where: str) -> str:

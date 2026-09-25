@@ -5,7 +5,8 @@ naming every one at once, when any generated file changed or the person's module
 is no longer the stub the written manifest scaffolds.
 
 **How you use it.** `uninstall(root)`, re-exported by the package as step 6 of
-`SKILL.md`. Returns the paths removed, sorted.
+`SKILL.md`. Returns the paths removed, sorted, with the bytecode compiled from
+a removed module among them.
 
 **Depends on.** `record` for what was written and its digests, `skills.adapter`
 to re-derive the stub, and `corpus.manifest` to read the written manifest.
@@ -20,7 +21,7 @@ on disk and only its record is read.
 from __future__ import annotations
 
 from collections.abc import Sequence
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from studyforge.corpus.manifest import RAISES, parse
 from studyforge.skills.adapter import plan_for, scaffold
@@ -51,6 +52,7 @@ def uninstall(root: Path | str) -> list[str]:
         if path.exists():
             path.unlink()
             removed.append(where)
+    removed += _bytecode(root, removed)
     _prune(root, removed)
     return sorted(removed)
 
@@ -94,6 +96,27 @@ def _kept(changed: Sequence[str], filled: Sequence[str]) -> str:
     if filled:
         parts.append(f"{len(filled)} file(s) of yours are no longer the stub: {filled}")
     return f"{'; '.join(parts)}. Nothing was removed. Move what you want to keep, then run again"
+
+
+def _bytecode(root: Path, removed: Sequence[str]) -> list[str]:
+    """Remove the bytecode compiled from a module this uninstall removed, and name it.
+
+    ⭐ **Only a module's own**: `__pycache__/<module>.<tag>.pyc` beside a
+    removed `<module>.py`. Running the generated tests, as step 4 commands,
+    writes these, and leaving them would leave a directory nobody wrote.
+    ⛔ Bytecode of a module this uninstall did not remove is somebody's, and stays.
+    """
+    gone = []
+    for where in removed:
+        module = PurePosixPath(where)
+        if module.suffix != ".py":
+            continue
+        cache = root / module.parent / "__pycache__"
+        for compiled in sorted(cache.glob(f"{module.stem}.*.pyc")) if cache.is_dir() else ():
+            if compiled.name.split(".", 1)[0] == module.stem:
+                compiled.unlink()
+                gone.append(compiled.relative_to(root).as_posix())
+    return gone
 
 
 def _prune(root: Path, removed: Sequence[str]) -> None:

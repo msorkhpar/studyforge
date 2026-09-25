@@ -7,6 +7,7 @@ import json
 from studyforge.address import slugify as sf01_slugify
 from studyforge.corpus.manifest import Classification, parse
 from studyforge.skills.reconnaissance import assess, draft, find, survey, take
+from studyforge.skills.reconnaissance.curriculum import heads_of
 from studyforge.skills.reconnaissance.proposal import slugify
 from tests.studyforge.skills.reconnaissance import sources
 from tests.support import git, run
@@ -198,7 +199,13 @@ def test_no_include_glob_matches_the_curriculum_record(tmp_path):
         assert content.classify(record.path.as_posix()) is Classification.NOT_MATERIAL, (
             build.__name__
         )
-        assert all(content.classify(t) is Classification.INCLUDED for t in record.order)
+        # ⭐ Every unit the record lists; a linked entry's page opens a container
+        # and is not a unit, so no include reads it.
+        linked = heads_of(take(root), record)
+        pages = {head.target for head in linked.heads} if linked else set()
+        units = [t for t in record.order if t not in pages]
+        assert all(content.classify(t) is Classification.INCLUDED for t in units)
+        assert not any(content.classify(t) is Classification.INCLUDED for t in pages)
 
 
 def test_a_record_no_wildcard_catches_keeps_directory_globs(tmp_path):

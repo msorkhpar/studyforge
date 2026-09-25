@@ -46,12 +46,14 @@ def test_the_public_surface_is_what_a_consumer_needs_and_no_more():
     # ⛔ One exported home (R21): a name a second package needs is on this
     # list, and reaching past it for one that is not is the deviation.
     assert content.__all__ == [
+        "EACH_DIRECTORY_API",
         "MIN_WHY_CHARS",
         "WILDCARDS",
         "Classification",
         "ContentPolicy",
         "Exclusion",
         "NotMaterial",
+        "each_directory",
         "parse_content",
     ]
     for name in content.__all__:
