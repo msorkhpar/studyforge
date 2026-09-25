@@ -14,7 +14,8 @@ decision this module does not take.
 for the join — the bar, the trail and the rail across containers —
 `generate.containers` for where a crumb and a rail row point, `generate.writing`
 for R3, `generate.narration` for what each page plays, `unit.builder` for the
-document and `render.page` for the bytes. ⛔ It names no source (R1).
+document, `render.page` for the bytes and `execute.conventions` for which
+suffixes are the corpus's code. ⛔ It names no source (R1).
 
 ## ⛔ Why this module exists
 
@@ -48,6 +49,7 @@ from collections.abc import Iterator
 from pathlib import Path, PurePosixPath
 
 from studyforge.corpus.placement import relative_href
+from studyforge.execute.conventions import source_suffixes
 from studyforge.generate.containers import page_paths
 from studyforge.generate.declarations import Corpus, read_corpus, unit_location
 from studyforge.generate.narration import clips_on_disk, narrated, narration_for
@@ -90,6 +92,8 @@ def unit_bodies(corpus: Corpus) -> Iterator[tuple[PurePosixPath, bytes]]:
     shared = corpus.shared
     absent = corpus.absent
     above = page_paths(corpus)
+    # ⭐ The code a lesson may link: what the declared runtimes write (`page.code`).
+    code = source_suffixes(corpus.manifest.runtimes)
     for source in corpus.units:
         at = unit_location(corpus, source)
         document = build_unit(
@@ -97,7 +101,12 @@ def unit_bodies(corpus: Corpus) -> Iterator[tuple[PurePosixPath, bytes]]:
             declared_practices=source.declared_practices,
             mentions=source.mentions,
         )
-        placement = Placement(corpus=corpus.manifest.source, unit=at, shared=shared)
+        placement = Placement(
+            corpus=corpus.manifest.source,
+            unit=at,
+            shared=shared,
+            code=code if source.mentions.beside else (),
+        )
         body = render(
             document,
             placement,

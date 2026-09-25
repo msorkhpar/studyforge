@@ -9,8 +9,8 @@ sweep that shares it.
 
 ⭐ **The run route narrows the second arm, and says so rather than loosening it.** `serve`
 depends on `execute` — the runner, the one package that runs a corpus's commands —
-through `routes/run.py` and `routes/runs.py` and nowhere else. So the fresh interpreter
-imports `execute` FIRST and then asks what importing `serve` loaded on top of it:
+through `routes/run.py`, `routes/runs.py` and `routes/code.py` and nowhere else. So the
+fresh interpreter imports `execute` FIRST and then asks what importing `serve` loaded on top of it:
 nothing. ⛔ The other reading is taken too — without that pre-import the same instrument
 DOES see the process library `execute` brings — and a fourth test pins the importers.
 """
@@ -56,10 +56,11 @@ THIS_ROW = frozenset(
     }
 )
 
-#: ⛔ The two modules of this package that may import the runner: the
-#: namespace and, split from it at its seam, what a started run is.
+#: ⛔ The three modules of this package that may import the runner: the
+#: namespace and, split from it at its seams, what a started run is and a
+#: lesson's code in the editor.
 EXECUTE = "studyforge.execute"
-RUNNER_IMPORTERS = frozenset({"routes/run.py", "routes/runs.py"})
+RUNNER_IMPORTERS = frozenset({"routes/run.py", "routes/runs.py", "routes/code.py"})
 
 
 def _docstrings(tree: ast.Module) -> set[int]:

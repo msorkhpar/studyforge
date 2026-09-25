@@ -86,15 +86,20 @@ REMOTE_MARK = "://"
 class Placement:
     """Where one page sits, and where everything it links sits.
 
-    ⭐ Three fields and no profile: the profile has already answered by the time
+    ⭐ Locations and no profile: the profile has already answered by the time
     a page is rendered, so the renderer holds locations rather than the engine
     that computed them — which is what keeps `page/` free of any branch on a
     profile name.
+
+    ⭐ `code` is the source suffixes the corpus's declared runtimes write, for a
+    page that sits beside the corpus's files — `()` everywhere else — so a link
+    to one of its code files can open in the editor (`page.code`).
     """
 
     corpus: str
     unit: UnitLocations
     shared: CorpusLocations
+    code: tuple[str, ...] = ()
 
     def stylesheet(self) -> str:
         """How this page addresses the shared stylesheet."""

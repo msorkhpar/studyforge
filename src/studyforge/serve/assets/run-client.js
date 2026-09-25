@@ -7,7 +7,8 @@
    an origin that can answer it.
 
    ⭐ **A client and nothing else.** It publishes `studyforge.run` — `available`,
-   `start`, `stop`, `editor`, `practice` — and `studyforge.quiz` — `available`,
+   `start`, `stop`, `editor`, `practice`, `code`, `codeTest` — and
+   `studyforge.quiz` — `available`,
    `grade` (below) — and draws nothing: the practice panel that puts Run and
    Submit in front of a reader is the page's own. ⛔ A control this file
    drew where no panel exists would be a dead button, and a dead button is
@@ -74,12 +75,18 @@
     if (!available()) { return refused('no-origin'); }
     if (MODES.indexOf(mode) === -1) { return refused('mode'); }
     if (!CORPUS.test(corpus) || !KEY.test(practice)) { return refused('practice'); }
+    return streamed(BASE + corpus + '/' + mode + '/' + practice, onLine);
+  }
+
+  /* POST to `url` and hand each line of the body to `onLine` as it arrives;
+     resolve with the verdict the last line spells. */
+  function streamed(url, onLine) {
     var last = null;
     var each = function (line) {
       last = line;
       if (onLine) { onLine(line); }
     };
-    return fetch(BASE + corpus + '/' + mode + '/' + practice, {
+    return fetch(url, {
       method: 'POST',
       cache: 'no-store',
       credentials: 'same-origin'
@@ -163,6 +170,51 @@
     }, function () { return null; });
   }
 
+  /* ⭐ A LESSON'S CODE FILE: its two windows, and its test's run. The path is
+     the corpus-relative one the page carries on the link, and it only SELECTS a
+     file: the server pairs it, copies the code, and reads the command from the
+     corpus's declared build tool (spec §8.3, rule 3). ⛔ A path that is not
+     segments of letters, digits, `.`, `_` and `-` — none of them `.` or `..`,
+     none opening with `-` — is refused here, before any request; one that is
+     needs no encoding, and is sent as the page carries it. */
+  var CODE = 'code';
+  var CODE_TEST = 'code-test';
+  var SEGMENT = /^(?!-)[A-Za-z0-9._-]+$/;
+
+  function codePath(path) {
+    var parts = String(path || '').split('/');
+    for (var at = 0; at < parts.length; at += 1) {
+      if (!SEGMENT.test(parts[at]) || parts[at] === '.' || parts[at] === '..') { return null; }
+    }
+    return parts.join('/');
+  }
+
+  /* Where one code file's windows are — `{ main, test, opened, runs }` — or
+     null. ⚠️ Anything but an answer is null: the page then follows the link to
+     the file's plain view, which is never broken. */
+  function code(corpus, path) {
+    if (!available()) { return refused('no-origin'); }
+    var encoded = codePath(path);
+    if (!CORPUS.test(corpus) || encoded === null) { return refused('code'); }
+    return fetch(BASE + corpus + '/' + CODE + '/' + encoded, {
+      method: 'POST',
+      cache: 'no-store',
+      credentials: 'same-origin'
+    }).then(function (response) {
+      return response.ok ? response.json() : null;
+    }).then(function (answer) {
+      return answer && answer.main && answer.main.url ? answer : null;
+    }, function () { return null; });
+  }
+
+  /* Run the test `path` names, in the copy of the code, streamed like a run. */
+  function codeTest(corpus, path, onLine) {
+    if (!available()) { return refused('no-origin'); }
+    var encoded = codePath(path);
+    if (!CORPUS.test(corpus) || encoded === null) { return refused('code'); }
+    return streamed(BASE + corpus + '/' + CODE_TEST + '/' + encoded, onLine);
+  }
+
   function stop() {
     if (!available()) { return refused('no-origin'); }
     return fetch(BASE + STOP, { method: 'POST', cache: 'no-store', credentials: 'same-origin' })
@@ -211,6 +263,8 @@
     stop: stop,
     editor: editor,
     practice: practice,
+    code: code,
+    codeTest: codeTest,
     modes: MODES.slice()
   };
 })();

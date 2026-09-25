@@ -56,6 +56,6 @@ def test_the_generated_editor_binds_no_keyed_directory(tmp_path):
         for line in editor.splitlines()
         if line.startswith('      - "../')
     ]
-    assert hosts == ["../../sources", "../../practice"]
+    assert hosts == ["../../sources", "../../practice", "../../.studyforge/execution/code"]
     for host in hosts:
         binds.unkeyed(host.removeprefix("../../"))

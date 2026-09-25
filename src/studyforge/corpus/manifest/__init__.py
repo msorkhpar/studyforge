@@ -105,7 +105,9 @@ from studyforge.corpus.manifest.runtimes import (
     NO_RUNTIMES,
     REQUIRES_JAVA,
     RUNTIMES,
+    SOURCE_SUFFIXES,
     parse_runtimes,
+    source_suffixes,
 )
 
 #: ⛔ **What `parse`, `load` and `from_document` let out, as a tuple a caller
@@ -141,6 +143,7 @@ __all__ = [
     "REQUIRED_KEYS",
     "REQUIRES_JAVA",
     "RUNTIMES",
+    "SOURCE_SUFFIXES",
     "Classification",
     "ContentPolicy",
     "Curriculum",
@@ -160,6 +163,7 @@ __all__ = [
     "parse_edits",
     "parse_media",
     "parse_runtimes",
+    "source_suffixes",
     "prefix_of",
     "versions_needed",
 ]

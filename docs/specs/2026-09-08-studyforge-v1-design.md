@@ -1790,7 +1790,11 @@ And what the compose side gets right, which stays per-project:
   password**, which is safe only because it binds to `127.0.0.1`: loopback is the
   whole of its access control, and widening the bind is a decision to put an
   unauthenticated shell on the network, which requires restoring authentication.
-- **Only the sources are mounted** — not the repository, not `$HOME`.
+- **Only the sources are mounted** — not the repository, not `$HOME`. ⭐ The
+  editor binds the copy of the corpus's code too, which a lesson's code links
+  open (§8.4's code panel), and a corpus whose material sits at its root binds
+  that copy as its sources, since it has no directory of its own that is not
+  the repository.
 - **The container runs as the repository owner's uid:gid**, so files it creates
   are not root-owned on the host.
 - **Every bind source exists before the containers start**, or docker creates it
@@ -1980,6 +1984,28 @@ These are proven surfaces, generalised in their addressing and otherwise kept.
   label and title, so no page moves. A listing shows a unit whose label is an
   outline number by its place in its container instead. A clip is named by a
   digest of its words, so a heading that loses its number is a new clip.
+- **A lesson's own code opens in the editor, beside its test** (the user's
+  ruling of 2026-09-25). A link to a corpus file whose suffix a declared runtime
+  writes is marked with the file's corpus-relative path, and its page carries
+  one code panel, after `<main>`, which ships saying why the link opens the file
+  as plain text: the course's editor is not running here, and how to start it.
+  ⭐ **Served, with the corpus's editor up**, a click opens the file in that
+  panel instead: the source and the test that tests it, two windows of the
+  editor the corpus already runs (the practice's own mechanism: one probe, one
+  frame, one lock — the source editable, the test not), and a Run that runs the
+  test and streams it. ⭐ **A test is found by its source's name, and else by
+  the source its text names most**, inside the file's own build module, either
+  way round; a tie is no partner, and the file opens alone. ⛔ **The author's
+  tree is never written**: both windows open a copy of the corpus's code
+  (`.studyforge/execution/code`, ignored but for its own ignore file), a run
+  happens in that copy, and the panel says so. ⭐ The copy is refreshed on
+  every open and run, newer wins, so a reader's change survives until the
+  author changes the file. ⛔ **With no editor, and wherever the editor cannot
+  open the file, the link is followed**: the static route serves a code file as
+  text, so the fallback is a plain view and never a download. ⚠️ Only a build
+  tool with a measured command runs a test (Maven, offline, in the runner);
+  another opens the files and offers no Run. A lesson's test run is recorded
+  nowhere: it is no practice.
 - **Table of contents** — the contents document (stable, reproducible) and the
   local status (volatile) as two documents, so a consumer can cache one and poll
   the other, at any declared depth. ⛔ **The root index fetches nothing at

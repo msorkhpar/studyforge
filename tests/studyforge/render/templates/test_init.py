@@ -51,6 +51,7 @@ ONE_LINE = (
 #: template cannot be added without somebody deciding which kind it is.
 MULTI_LINE = (
     "attachments.html",
+    "code-panel.html",
     "page.html",
     "section.html",
     "pending-practices.html",

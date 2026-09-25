@@ -10,6 +10,7 @@ this is the build's end of the same promise.
 from __future__ import annotations
 
 import html.parser
+import json
 import re
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
@@ -128,3 +129,67 @@ def _read_text(body: str) -> list[str]:
     found = _Links()
     found.feed(body)
     return [ref for ref in found.refs if not ref.startswith(("#", "http"))]
+
+
+def _declares_java(root: Path) -> None:
+    manifest = root / "corpus.json"
+    document = json.loads(manifest.read_text(encoding="utf-8"))
+    document.update(corpus_api=max(document["corpus_api"], 4), exercises=True, runtimes=["java"])
+    manifest.write_text(json.dumps(document), encoding="utf-8")
+
+
+@pytest.mark.parametrize("placement", ["tree", "sibling"])
+def test_a_link_to_the_corpus_s_code_is_marked_and_its_page_carries_the_panel(tmp_path, placement):
+    # ⭐ The link keeps its href — the plain view — and names its file.
+    root = linked(tmp_path, placement, GOOD)
+    _declares_java(root)
+    write_site(root, root, narration=False)
+    first, second = sorted(root.rglob("*.unit.html"))
+    body = first.read_text(encoding="utf-8")
+    assert 'data-code-path="src/code/Types.java"' in body
+    assert body.count("<section data-code ") == 1
+    assert "<section data-code " not in second.read_text(encoding="utf-8")
+    assert unresolved(root) == []
+
+
+def test_a_site_written_elsewhere_marks_no_link_it_could_not_keep(tmp_path):
+    root = linked(tmp_path, "tree", GOOD)
+    _declares_java(root)
+    out = an_output(tmp_path)
+    write_site(root, out, narration=False)
+    (page, _) = sorted(out.rglob("*.unit.html"))
+    assert "data-code" not in page.read_text(encoding="utf-8")
+
+
+def test_a_corpus_that_declares_no_runtime_marks_nothing(tmp_path):
+    root = linked(tmp_path, "tree", GOOD)
+    write_site(root, root, narration=False)
+    assert not [p for p in root.rglob("*.unit.html") if "data-code" in p.read_text("utf-8")]
+
+
+@pytest.mark.parametrize("beside", [True, False])
+def test_a_page_is_handed_the_code_suffixes_only_where_it_sits_beside_the_files(
+    tmp_path, monkeypatch, beside
+):
+    # ⛔ A page away from the corpus's files cannot open them, so it is handed
+    # no suffix to mark by, whatever its links would resolve to from there.
+    from dataclasses import replace
+
+    from studyforge.generate import units
+    from studyforge.generate.declarations import read_corpus
+
+    root = linked(tmp_path, "tree", GOOD)
+    _declares_java(root)
+    corpus = read_corpus(root)
+    corpus = replace(
+        corpus,
+        units=tuple(
+            replace(one, mentions=replace(one.mentions, beside=beside)) for one in corpus.units
+        ),
+    )
+    handed = []
+    monkeypatch.setattr(
+        units, "render", lambda document, placement, *rest: handed.append(placement)
+    )
+    list(units.unit_bodies(corpus))
+    assert {placement.code for placement in handed} == ({(".java",)} if beside else {()})

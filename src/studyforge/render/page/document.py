@@ -6,9 +6,9 @@ regions a particular page may or may not carry.
 **How you use it.** `compose(document, placement, links)` returns the page's
 text; `page.render` is the public entry point and turns it into bytes.
 
-**Depends on.** `render.templates` for the markup, `page.section`,
-`page.anchors`, `page.navigation`, `page.assets`, `corpus.placement.identity` for R4's block,
-and `page.errors`.
+**Depends on.** `render.templates` for the markup, `page.section`, `page.anchors`,
+`page.navigation`, `page.assets`, `page.code`, `corpus.placement.identity` for
+R4's block, and `page.errors`.
 
 ## ⛔ This module *is* the format (R10)
 
@@ -39,17 +39,16 @@ something*. When this file crosses R11's 400 it divides into `document.py` and
 
 ⚠️ **A source document states what it is in its first heading**, and this page
 states what it is in its `<h1>` — and printing both is the title read twice.
-⭐ So the two are
-one statement: `page.anchors.title_heading` names the block, this module prints
-it as the page's heading, and `page.section` withholds it from the body.
+⭐ So the two are one statement: `page.anchors.title_heading` names the block,
+this module prints it as the page's heading, and `page.section` withholds it.
 
 ⛔ **The unit's own title still names the unit everywhere else** — the `<title>`,
-R4's identity block, the trail, the contents and the bar between units. ⚠️ Those
-name the *unit*, which is a fact about the corpus; the `<h1>` names the *page*,
-and when the material has written that line already there is no reason to write
-a second one over it. ⭐ A unit whose material states no title is headed by the
-unit's title exactly as before, and that is the common case for an authored
-corpus.
+R4's identity block, the trail, the contents and the bar between units: those
+name the *unit*, and the `<h1>` names the *page*. ⭐ A unit whose material
+states no title is headed by the unit's title, the common authored case.
+
+⭐ **A lesson's links to its own code are marked, and the panel they open in
+follows `<main>`** (`page.code`); a page that links no code is unchanged.
 
 ## ⛔ The player is *derived*, not declared — and that is the answer to a real tension
 
@@ -60,14 +59,10 @@ no speech id and writes no audio attribute.
 
 ⭐ **So the player's gate reads what the page actually emitted**: a page carries
 a player when its body carries `assets.AUDIO_ATTRIBUTE`, and nothing else.
-Without narration that is never true and the region is absent; with it the
-player appears. ⚠️ **No document field holds a gate**, which a declared version
-of this would require.
+⚠️ **No document field holds a gate.**
 
-⚠️ **The stated consequence:** a page's bytes change when a corpus gains
-narration. ⛔ That is a product change — a reading floor gaining a narrator —
-not a regression: R10 pins that *a rerun is identical*, never that a page is
-frozen across such a change.
+⚠️ **So a page's bytes change when a corpus gains narration**: a product
+change, not a regression — R10 pins that *a rerun is identical*.
 """
 
 from __future__ import annotations
@@ -80,6 +75,7 @@ from studyforge.corpus.placement import identity as identity_block
 from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute, inline
 from studyforge.render.page import anchors, navigation
+from studyforge.render.page import code as code_region
 from studyforge.render.page import mark as mark_region
 from studyforge.render.page import practice as practice_region
 from studyforge.render.page import rail as rail_region
@@ -147,9 +143,12 @@ def compose(
     sections = _sections(document)
     heads = anchors.title_heading(document) is not None
     attributes = heading_attributes(document, narration)
-    body = JOIN.join(
-        _part(section, placement, narration, document, heads_page=heads and index == 0)
-        for index, section in enumerate(sections)
+    body, linked = code_region.mark(
+        JOIN.join(
+            _part(section, placement, narration, document, heads_page=heads and index == 0)
+            for index, section in enumerate(sections)
+        ),
+        placement,
     )
     return (
         templates.fill(
@@ -165,6 +164,7 @@ def compose(
             rail=_region(rail_region.render(rail)),
             outline=_region(anchors.outline(document)),
             body=body,
+            code=_region(code_region.render(linked, placement)),
             pending=_region(pending(document)),
             mark=_region(mark_region.render(document)),
             # ⛔ The heading is part of what the gate reads, because the page's

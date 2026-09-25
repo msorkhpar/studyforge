@@ -32,6 +32,7 @@ OUTPUTS = (
     execution.RUNNER_ENV,
     execution.EDITOR_ENV,
     execution.INSTANCE_ENV,
+    f"{execution.CODE_COPY}/.gitignore",
 )
 
 

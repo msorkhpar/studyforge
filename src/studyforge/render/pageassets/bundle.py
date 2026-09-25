@@ -138,6 +138,12 @@ STYLE_PARTS = (
 #: the local study server grades a quiz and the page holds no key (spec §7 §7). ⚠️ They are before
 #: `read-mark.js` because that part's LAST-ness is the property being kept.
 #:
+#: ⭐ `code-links.js` FOLLOWS `practice-editor.js`, and that order is load-bearing:
+#: it builds its windows with the frame and the one reload that part publishes
+#: (`window.studyforge.frames`), so after it is the only place it finds them.
+#: ⚠️ It is before `read-mark.js` because that part's LAST-ness is the property
+#: being kept.
+#:
 #: ⭐ `theme.js` reads and writes the store's DISPLAY record,
 #: so it follows `study-progress.js` for the same reason `progress-view.js`
 #: does; it sits before `read-mark.js` because that part's LAST-ness is the
@@ -154,6 +160,7 @@ SCRIPT_PARTS = (
     "practice.js",
     "practice-editor.js",
     "practice-quiz.js",
+    "code-links.js",
     "progress-view.js",
     "read-mark.js",
 )

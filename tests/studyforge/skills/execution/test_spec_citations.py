@@ -18,7 +18,7 @@ from pathlib import Path
 import pytest
 
 import studyforge.skills.execution as package
-from studyforge.skills.execution import onboard, rulings
+from studyforge.skills.execution import binds, onboard, rulings
 from tests.studyforge.skills.execution.contracts import editor_contract
 
 ROOT = Path(__file__).resolve().parents[4]
@@ -86,11 +86,10 @@ def test_every_compose_refusal_names_its_rule_in_words():
         assert "§8.1" in one or "§8.3" in one
 
 
-def test_the_source_root_refusals_name_the_rule_in_words():
-    from tests.studyforge.skills.execution.test_onboard import manifest
-
-    for include in (["*.md"], ["a/*.md", "b/*.md"]):
-        with pytest.raises(onboard.ExecutionRefused) as refused:
-            onboard.source_root(manifest(content={"include": include, "exclude": []}))
-        assert not NUMBERED_RULING.search(str(refused.value))
-        assert "§8.1" in str(refused.value) and "only the sources" in str(refused.value)
+def test_the_code_bind_refusal_names_no_numbered_ruling():
+    block = editor_contract()["editor"]
+    root = block["workspace"]["container_path"].rstrip("/")
+    block["mounts"].append({"container_path": f"{root}/code"})
+    with pytest.raises(onboard.ExecutionRefused) as refused:
+        binds.code_bind(block, "sources")
+    assert not NUMBERED_RULING.search(str(refused.value))

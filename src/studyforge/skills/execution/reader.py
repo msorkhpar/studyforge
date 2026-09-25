@@ -44,6 +44,7 @@ def document(
     sources: str,
     workspaces: str | None,
     runner: Runner,
+    code: str | None = None,
     narration_text: str | None,
     seeds: object,
     flag: str | None,
@@ -65,6 +66,12 @@ def document(
     ]
     if workspaces is not None:
         lines.append(f"- the practice workspaces the editor binds too: `{workspaces}`")
+    also = tuple(one for one in (workspaces, code) if one is not None and one != sources)
+    if code is not None:
+        lines.append(
+            f"- the copy of the corpus's code, which a lesson's code links open and a "
+            f"test runs in, so the author's files are never written: `{code}`"
+        )
     lines += [
         f"- the image the component builds: `{selection.image_env}`",
         f"- the runner a Submit runs in: `{runner.name}`, from `{runner.selection.image_env}`",
@@ -108,9 +115,7 @@ def document(
         "four with the skill's record step, and runs beside this one.",
         "",
     ]
-    first = composefile.must_exist_first(
-        block, volumes, sources, also=() if workspaces is None else (workspaces,)
-    )
+    first = composefile.must_exist_first(block, volumes, sources, also=also)
     if first:
         lines += [
             "⛔ These exist on the host before the start (§8.1), or docker",

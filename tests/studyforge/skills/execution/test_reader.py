@@ -11,6 +11,7 @@ from __future__ import annotations
 import json
 
 from studyforge.corpus.manifest import parse
+from studyforge.execute import CODE_COPY
 from studyforge.skills.execution import onboard as skill
 from tests.studyforge.skills.execution.contracts import (
     corpus,
@@ -92,3 +93,12 @@ def test_sources_that_hold_the_practice_workspaces_name_no_second_bind(tmp_path)
 def test_narration_is_pointed_at_and_never_rendered(tmp_path):
     text = document(tmp_path, narration=True)
     assert "## Narration" in text and "- `compose.yaml`" in text
+
+
+def test_the_document_names_the_copy_of_the_code_and_asks_for_it_before_the_start(tmp_path):
+    made = skill.generate(
+        parse(json.dumps(manifest_document())), editor_text=editor_text(), root=corpus(tmp_path)
+    )
+    text = dict(made.files)[skill.READER_DOC]
+    assert f"the author's files are never written: `{CODE_COPY}`" in text
+    assert f"- `{CODE_COPY}`" in text.split("exist on the host before the start", 1)[1]
