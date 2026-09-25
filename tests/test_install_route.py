@@ -5,8 +5,7 @@ Every `python3 -m <module>` a skill or an authoring page gives is either the
 framework's own, the standard library's, the corpus's own (declared
 consumer-side by the page that names it), or installed by a `pip install` line in
 the README's install fence. ⛔ A module that is none of these fails a stranger on
-first use with `No module named …`, which is how `pytest` was found missing
-(`M9-1` F6).
+first use with `No module named …`, which is how `pytest` was once found missing.
 
 **And what it installs is pinned to the framework's own pins.** Every requirement
 on those lines is `name==version`, and the version is the one

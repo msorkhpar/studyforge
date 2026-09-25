@@ -1,5 +1,8 @@
 """The command runner — the only package in the framework that runs a corpus's commands.
 
+⛔ It is also the only package that starts a process at all (spec §8.3): the
+headless browser `studyforge.look` opens built pages in is launched here too.
+
 **What it does.** Runs a corpus's commands — a unit's run and test commands,
 read from its generated document — inside the corpus's runner container when
 the reader has it up, and on the host otherwise, streaming the merged output
@@ -38,6 +41,7 @@ web-facing process ends up holding the socket that spec §8.3 forbids it.
 | `output` | `LineGate`: every line relative to the source root, then scrubbed |
 | `quiet` | the output filter: the declared build tool's own lines go, a failure never |
 | `commands` | what the runner will start, checked before any process exists |
+| `browser` | a headless browser this machine has, asked for one page's screenshot and DOM |
 | `errors` | `RunRefused`, the one exception |
 
 ## The seam: the reader starts the runner
@@ -69,6 +73,13 @@ terminal does not.
 
 from __future__ import annotations
 
+from studyforge.execute.browser import (
+    BROWSER_NAMES,
+    BrowserProfile,
+    PageSeen,
+    capture_page,
+    find_browser,
+)
 from studyforge.execute.commands import (
     CONTAINER_PREFIX,
     EDITOR_CONTAINER_TEMPLATE,
@@ -100,6 +111,7 @@ from studyforge.execute.workbench import (
 )
 
 __all__ = [
+    "BROWSER_NAMES",
     "CONTAINER",
     "CONTAINER_PREFIX",
     "EDITOR_CONTAINER_TEMPLATE",
@@ -117,21 +129,25 @@ __all__ = [
     "TEST_KEY",
     "TOOLCHAINS",
     "WORKDIR_IN_CONTAINER",
+    "BrowserProfile",
     "Editor",
     "EditorProbe",
     "LineGate",
     "ModeProbe",
     "Names",
+    "PageSeen",
     "Quiet",
     "RunHandle",
     "RunRefused",
     "Runner",
     "Toolchain",
     "WorkbenchRefused",
+    "capture_page",
     "container_for",
     "editor_container_for",
     "exit_line",
     "filter_lines",
+    "find_browser",
     "open_url",
     "practice_folder",
     "recorded",

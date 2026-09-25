@@ -1,20 +1,28 @@
 """A headless browser this machine already has, asked for a picture and the DOM of one page.
 
 **What it does.** Finds a Chromium-family browser — the one named, or the first
-of `CANDIDATES` on `PATH` — and runs it headless over one page's `file://`
+of `BROWSER_NAMES` on `PATH` — and runs it headless over one page's `file://`
 address twice: once for a screenshot, once for the DOM as the page's own scripts
 left it. Every launch shares one throwaway profile, removed when the look ends.
 
 **How you use it.**
 
-    binary = find(None)                      # or find("/path/to/chrome")
-    with Profile() as profile:
-        seen = capture(binary, profile, page_path, png, dom)
+    binary = find_browser(None)              # or find_browser("/path/to/chrome")
+    with BrowserProfile() as profile:
+        seen = capture_page(binary, profile, page_path, png, dom)
         seen.ok, seen.detail
 
 **Depends on.** `shutil`, `subprocess`, `tempfile` and `os`: the standard
 library. ⛔ No driver library and no protocol client: the browser's own
 `--screenshot` and `--dump-dom` flags are the whole interface.
+
+## ⛔ Why a browser launch lives in the runner's package
+
+Spec §8.3 keeps every process the framework starts in `execute`, so the one
+place process starts are audited stays one place. ⭐ `studyforge.look` hands the
+launch here rather than starting a process itself. ⛔ It is not a run: no
+corpus command reaches it, its argv is this module's fixed flags around a page
+address, and it never touches a container.
 
 ## ⛔ Nothing leaves the machine, and nothing is left behind
 
@@ -46,7 +54,7 @@ from pathlib import Path
 
 #: The names looked for on `PATH`, in order. ⛔ Chromium-family only: the two
 #: flags this module relies on are theirs.
-CANDIDATES = (
+BROWSER_NAMES = (
     "chrome-headless-shell",
     "headless-shell",
     "chromium",
@@ -86,14 +94,14 @@ FLAGS = (
 )
 
 
-def find(named: str | None) -> str | None:
+def find_browser(named: str | None) -> str | None:
     """Return the browser to run: `named` when it runs, else the first candidate on `PATH`."""
     if named:
         return shutil.which(named) or (named if os.access(named, os.X_OK) else None)
-    return next((path for path in map(shutil.which, CANDIDATES) if path), None)
+    return next((path for path in map(shutil.which, BROWSER_NAMES) if path), None)
 
 
-class Profile:
+class BrowserProfile:
     """A throwaway browser profile directory, removed when the `with` block ends."""
 
     def __enter__(self) -> Path:
@@ -107,28 +115,28 @@ class Profile:
 
 
 @dataclass(frozen=True, slots=True)
-class Seen:
+class PageSeen:
     """What one page's look produced: whether both captures worked, and why not."""
 
     ok: bool
     detail: str
 
 
-def capture(binary: str, profile: Path, page: Path, png: Path, dom: Path) -> Seen:
+def capture_page(binary: str, profile: Path, page: Path, png: Path, dom: Path) -> PageSeen:
     """Screenshot `page` into `png` and write its DOM into `dom`, then check both."""
     url = page.resolve().as_uri()
     _, failed = _launch([binary, *_flags(profile), f"--screenshot={png}", url])
     if failed is not None:
-        return Seen(False, f"the screenshot launch {failed}")
+        return PageSeen(False, f"the screenshot launch {failed}")
     if not png.is_file() or not png.read_bytes().startswith(PNG_SIGNATURE):
-        return Seen(False, "the browser exited 0 and wrote no PNG")
+        return PageSeen(False, "the browser exited 0 and wrote no PNG")
     text, failed = _launch([binary, *_flags(profile), "--dump-dom", url])
     if failed is not None:
-        return Seen(False, f"the DOM launch {failed}")
+        return PageSeen(False, f"the DOM launch {failed}")
     if "<body" not in text:
-        return Seen(False, "the DOM the browser printed has no body")
+        return PageSeen(False, "the DOM the browser printed has no body")
     dom.write_text(text, encoding="utf-8")
-    return Seen(True, "rendered")
+    return PageSeen(True, "rendered")
 
 
 def _flags(profile: Path) -> list[str]:
@@ -146,7 +154,7 @@ def _launch(argv: list[str]) -> tuple[str, str | None]:
             text=True,
             timeout=LAUNCH_TIMEOUT,
             check=False,
-            stdin=subprocess.DEVNULL,
+            input="",
         )
     except subprocess.TimeoutExpired:
         return "", f"did not finish within {LAUNCH_TIMEOUT} s"

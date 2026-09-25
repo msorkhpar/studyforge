@@ -16,7 +16,8 @@ Exit `0` when every page rendered, `1` when one did not, and `UNUSABLE` when the
 look could not start: no browser, no site, or an output directory that is missing
 or inside the site.
 
-**Depends on.** This package's `pages` and `browser`, and `studyforge.exitcodes`.
+**Depends on.** This package's `pages`, `studyforge.execute` for the browser
+launch (spec §8.3 keeps every process start there), and `studyforge.exitcodes`.
 ⛔ Nothing else in the framework: a look reads files a build already wrote.
 
 ## ⛔ A look writes nothing into the site
@@ -38,8 +39,8 @@ import argparse
 import sys
 from pathlib import Path
 
+from studyforge.execute import BROWSER_NAMES, BrowserProfile, capture_page, find_browser
 from studyforge.exitcodes import UNUSABLE
-from studyforge.look.browser import CANDIDATES, Profile, capture, find
 from studyforge.look.pages import LookRefused, choose, outputs
 
 __all__ = ["NOT_RENDERED", "main"]
@@ -59,10 +60,10 @@ def main(argv: list[str]) -> int:
         print(f"look: {refusal}", file=sys.stderr)
         return UNUSABLE
     failed = 0
-    with Profile() as profile:
+    with BrowserProfile() as profile:
         for n, page in enumerate(chosen, 1):
             png, dom = outputs(out, n, page)
-            seen = capture(binary, profile, site / page, png, dom)
+            seen = capture_page(binary, profile, site / page, png, dom)
             failed += not seen.ok
             where = f"{png.name} and {dom.name}" if seen.ok else seen.detail
             print(f"{'looked' if seen.ok else 'FAILED'} {page}: {where}")
@@ -81,9 +82,9 @@ def _ready(site: Path, out: Path, named: str | None) -> str:
             "the --out directory is inside the site, and a look writes nothing into a site; "
             "name a directory outside it"
         )
-    binary = find(named)
+    binary = find_browser(named)
     if binary is None:
-        looked = "the --browser given" if named else f"PATH for {', '.join(CANDIDATES)}"
+        looked = "the --browser given" if named else f"PATH for {', '.join(BROWSER_NAMES)}"
         raise LookRefused(
             f"no Chromium-family browser found: searched {looked}. Pass --browser with the "
             f"path to one, or run `studyforge serve` and open its address in your own browser"

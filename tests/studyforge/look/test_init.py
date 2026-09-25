@@ -6,9 +6,9 @@ from pathlib import Path
 
 import pytest
 
+from studyforge.execute import BROWSER_NAMES
 from studyforge.exitcodes import UNUSABLE
 from studyforge.look import NOT_RENDERED, main
-from studyforge.look.browser import CANDIDATES
 from tests.studyforge.look.sites import built, stand_in
 
 
@@ -64,5 +64,5 @@ def test_no_browser_names_what_was_searched_and_both_ways_forward(tmp_path, caps
     site = built(tmp_path)
     assert main([str(site), "--out", str(tmp_path)]) == UNUSABLE
     said = capsys.readouterr().err
-    assert all(name in said for name in CANDIDATES)
+    assert all(name in said for name in BROWSER_NAMES)
     assert "--browser" in said and "studyforge serve" in said
