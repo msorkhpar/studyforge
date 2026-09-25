@@ -481,7 +481,7 @@ def quiz_unit(where) -> dict:
 def test_a_quizs_questions_and_sentences_are_never_spoken_and_nothing_spoken_has_a_backtick(
     tmp_path,
 ):
-    # ⛔ Narration never speaks an explanation (W500) — nor a stem or an
+    # ⛔ Narration never speaks an explanation — nor a stem or an
     # option: they are the workspace's, and a clip of one would read the reader
     # the question before they chose. ⭐ The practice's own intro IS spoken, so
     # the absence is a reading; and its inline code is read without backticks.

@@ -128,11 +128,16 @@ def graded(state: dict) -> bool:
 
 
 def asked_since(page: OpenPage, mark: int) -> list[str]:
-    """Every request the page issued after event `mark` — the network log's reading."""
+    """Every request the page issued after event `mark` — the network log's reading.
+
+    ⚠️ The browser's own late ask for the origin's icon is not the page's, and
+    it lands whenever the browser gets to it: it is left out by its path alone.
+    """
     return [
         event["params"]["request"]["url"]
         for event in page.browser.events[mark:]
         if event.get("method") == "Network.requestWillBeSent"
+        and not event["params"]["request"]["url"].endswith("/favicon.ico")
     ]
 
 

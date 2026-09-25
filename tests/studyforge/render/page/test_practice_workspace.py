@@ -111,7 +111,7 @@ def test_the_status_is_asked_of_the_readers_record_and_painted_only_from_its_ans
     assert "if (!held) { return; }" in body
     assert "document.addEventListener(SETTLED, refresh);" in body
     assert "var asks = run && run.available() && run.practices;" in body
-    assert "if (!asks) { return; }" in body
+    assert "if (!asks || quizzed) { return; }" in body
 
 
 def test_what_it_selects_is_what_the_page_emits():
@@ -203,11 +203,11 @@ def test_a_quiz_cards_status_is_read_from_the_readers_store_and_a_code_cards_fro
     # reads the browser store, served or not; ⛔ and the server's answer never
     # paints a quiz card.
     body = behaviour()
-    refreshing = body[body.index("function refresh()") :]
+    refreshing = body[body.index("function refresh(event)") :]
     assert "if (isQuiz(one) && store && store.supported()) {" in refreshing
     assert "paint(one.card, store.passedQuiz(one.card.getAttribute(CARD_KEY) || ''));" in refreshing
     assert refreshing.index("store.passedQuiz") < refreshing.index("if (!asks || quizzed) {")
-    # ⛔ The quiz's own settling asks the server nothing (W500: no request).
+    # ⛔ The quiz's own settling asks the server nothing: answering makes no request.
     assert "var quizzed = !!event && event.target.hasAttribute('data-practice-quiz');" in refreshing
     assert "if (!isQuiz(one) && one.card.querySelector(STATE)) {" in refreshing
 
