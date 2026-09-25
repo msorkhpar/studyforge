@@ -168,7 +168,11 @@ def test_command(
     """Return the argv that runs `found`'s test in the copy, or `None` when none is known."""
     if found.test is None or MAVEN not in runtimes:
         return None
-    files = code_files(Path(root))
+    return _test_argv(code_files(Path(root)), found)
+
+
+def _test_argv(files: dict[str, Path], found: Pair) -> list[str] | None:
+    """Return the Maven argv that runs `found`'s test among `files`, or `None`."""
     if _pom(found.module) not in files:
         return None
     reactor = found.module
@@ -189,6 +193,8 @@ def test_commands(root: Path, runtimes: tuple[str, ...] | list[str]) -> list[lis
     each test is asked for on its own and no text is read. ⚠️ Code too large to
     copy runs no test, exactly as the served example then opens nothing.
     """
+    if MAVEN not in runtimes:
+        return []
     try:
         files = code_files(Path(root))
     except CodeRefused:
@@ -198,7 +204,7 @@ def test_commands(root: Path, runtimes: tuple[str, ...] | list[str]) -> list[lis
         if is_code(path, runtimes) and is_a_test(path):
             module = module_of(files, path, runtimes)
             opened = Pair(opened=path, source=None, test=path, module=module)
-            argv = test_command(root, opened, runtimes)
+            argv = _test_argv(files, opened)  # ⭐ one walk for every test, not one each
             if argv is not None:
                 found.append(argv)
     return found
