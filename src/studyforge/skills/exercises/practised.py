@@ -54,15 +54,13 @@ def practised(root: Path | str, places: Places) -> tuple[str, ...] | None:
         return None
     try:
         report = json.loads(path.read_text(encoding="utf-8"))
-        assert_clean(report, where)
+    except OSError, UnicodeDecodeError, ValueError:
+        raise _unreadable(where) from None
+    assert_clean(report, where)
+    try:
         plan = report["plan"]
-        check(
-            "coverage_api",
-            report.get("coverage_api"),
-            COVERAGE_READ,
-            where=where,
-            error=AuthoringError,
-        )
+        check("coverage_api", report.get("coverage_api"), COVERAGE_READ, where=where,
+              error=AuthoringError)  # fmt: skip
         check("plan_api", plan.get("plan_api"), (PLAN_API,), where=where, error=AuthoringError)
         says = {aspect["id"]: aspect["says"] for aspect in plan["aspects"]}
         missed = {entry["slot"] for entry in report.get("shortfalls", ())}
@@ -71,8 +69,8 @@ def practised(root: Path | str, places: Places) -> tuple[str, ...] | None:
         bundles = list(report["shipped"])
     except AuthoringError:
         raise
-    except OSError, UnicodeDecodeError, ValueError, KeyError, TypeError, AttributeError:
-        raise AuthoringError(f"{where} will not read, so what it planned cannot be said.") from None
+    except ValueError, KeyError, TypeError, AttributeError:
+        raise _unreadable(where) from None
     if len(bundles) != len(shipped):
         raise AuthoringError(
             f"{where} lists {len(bundles)} shipped exercise(s) against {len(shipped)} its "
@@ -82,3 +80,8 @@ def practised(root: Path | str, places: Places) -> tuple[str, ...] | None:
         if bundle == places.bundle:
             return tuple(says[aspect] for aspect in planned["aspects"])
     return None
+
+
+def _unreadable(where: str) -> AuthoringError:
+    """Return the refusal of a report that will not read as one."""
+    return AuthoringError(f"{where} will not read, so what it planned cannot be said.")
