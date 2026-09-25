@@ -42,7 +42,7 @@ bare `3.2.1` with nothing after it keep every character. ⚠️ A two-part numbe
 with no closing stop, followed by a word that counts or measures, reads as a
 quantity (`1.5 million requests`, `3.5 seconds`) and is kept too.
 
-⛔ **What the next word LOOKS like decides nothing.** `8.1 jPOS Logging`,
+⛔ **What the next word LOOKS like decides nothing.** `8.1 iOS builds`,
 `4.2 var`, `2.3 java.util.function`, `8.1 "quoted"` and `8.1 (optional)` all
 lose their number: a heading's first word is often an identifier, and an
 identifier starts however its language spells it. Only the closed list of

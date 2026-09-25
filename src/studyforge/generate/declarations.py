@@ -57,7 +57,7 @@ from studyforge.corpus.placement import (
 )
 from studyforge.generate.footprint import Footprint, footprint_for
 from studyforge.skills.adapter import Layout
-from studyforge.unit.mentions import Mentions
+from studyforge.unit import Mentions
 
 
 class BuildError(ValueError):

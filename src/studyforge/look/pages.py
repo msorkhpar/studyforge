@@ -21,7 +21,7 @@ library's HTML parser for the links. ⛔ Not on `render`,
 
 ⭐ **The built site is what its root index reaches.** A site is often a corpus
 root, and a corpus root also holds git-ignored scratch, a plant or an old build
-under another name, each of them a file with a page's suffix (ISO-37/3). So
+under another name, each of them a file with a page's suffix. So
 `--all` follows the links from the root index, page to page, and looks at a
 discovered page only when a link reaches it, or when every page it links is
 one a link reaches (a flat corpus's container page, which nothing links). A

@@ -26,7 +26,7 @@ NUMBERED = [
     ("1. Card Issuance and Activation", "Card Issuance and Activation"),
     ("15. [Troubleshooting](src/15.md)", "[Troubleshooting](src/15.md)"),
     ("4.4: Streams", "Streams"),
-    # ⛔ Whatever the next word looks like (ISO-37/1): lower case, code, punctuation, a quote.
+    # ⛔ Whatever the next word looks like: lower case, code, punctuation, a quote.
     ("8.1 jPOS Logging Framework", "jPOS Logging Framework"),
     ("2.3 var", "var"),
     ("2.3.1 var", "var"),

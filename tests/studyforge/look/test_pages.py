@@ -35,7 +35,7 @@ def test_every_page_is_the_root_index_then_discoverys_own_population(tmp_path):
     [".scratch/r10/chrome/plant.unit.html", ".scratch/r16/tree.section.html", "stray.unit.html"],
 )
 def test_every_page_is_only_the_pages_the_root_index_reaches(tmp_path, stray):
-    # ⛔ ISO-37/3: a corpus root also holds ignored scratch and pages no link reaches.
+    # ⛔ A corpus root also holds ignored scratch and pages no link reaches.
     site = built(tmp_path)
     kind = "." + ".".join(stray.rsplit(".", 2)[-2:])
     copied = next(page for page in site_pages(site) if page.name.endswith(kind))

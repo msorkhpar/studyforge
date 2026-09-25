@@ -66,6 +66,7 @@ from studyforge.unit.content import (
     parse,
 )
 from studyforge.unit.errors import ContentError
+from studyforge.unit.mentions import Mentions
 from studyforge.unit.outline import listed_numbering, without_outline_number
 from studyforge.unit.sections import (
     KIND_OF,
@@ -102,6 +103,7 @@ __all__ = [
     "SHARED_KEY",
     "TRUST",
     "ContentError",
+    "Mentions",
     "Overlay",
     "Section",
     "check_test_record",

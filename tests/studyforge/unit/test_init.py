@@ -28,6 +28,7 @@ PUBLIC_SURFACE = frozenset(
         "SHARED_KEY",
         "TRUST",
         "ContentError",
+        "Mentions",
         "Overlay",
         "Section",
         "check_test_record",
