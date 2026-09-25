@@ -239,6 +239,19 @@ never the value.
 **Any string in hand-written material can be an absolute path.** This is not a
 check you run at the end; it is a gate every string passes on the way in.
 
+**Sample data in a lesson passes when it reaches nobody.** Write a sample
+address on a reserved domain and a sample home directory under the account
+`user`, and the gate lets them through verbatim:
+
+| passes | refused |
+|---|---|
+| `alice@example.com`, `ops@mail.example.org`, `x@example.net` | an address on any registrable domain, including `test.com`, `b.com` and `example.co` |
+| an address under `.example`, `.invalid`, `.test` or `.localhost` | an address under `.local`, and any local hostname |
+| the home path `/home/` followed by the account `user`, and anything below it | any other account after `/home/`, any account after `/Users/`, a tilde followed by a name |
+
+Nothing else is admitted, and there is no manifest switch: a sample on a real
+domain is edited to a reserved one.
+
 ---
 
 ## Re-reading material that changed

@@ -370,10 +370,10 @@ def test_the_personal_data_gate_is_invoked_over_the_whole_document():
 def test_the_gate_sees_a_leak_inside_a_block_that_nothing_else_reads():
     # The same argument one level deeper: block TEXT is never inspected here,
     # only a block's `type`. A leak in it is invisible to every other check.
-    # ⚠️ Not `contact@example.com`: that is the documented PLACEHOLDER the
-    # gate deliberately allows, so using it would have made this test pass
-    # with no gate at all.
-    found = "j.doe" + "@corp.invalid"
+    # ⚠️ Not an address on a reserved domain: the gate deliberately allows
+    # those as sample data, so using one would have made this test pass with
+    # no gate at all.
+    found = "j.doe" + "@" + "mailhost.org"
     sections = [
         {"kind": "shared", "heading": "S", "blocks": [{"type": "para", "text": f"mail {found}"}]}
     ]

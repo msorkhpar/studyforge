@@ -8,10 +8,10 @@ personal_data/shapes.py` uses in prose, where the shape is written
 `/home/<name>` so a document about the rule stays both swept and clean.
 ⛔ Nothing here came from any real machine, account or person.
 
-⭐ The email material needs no such care, and that is the point of
-`test_the_two_gates_disagree_about_an_unreachable_address`: `example.invalid`
-is what authors are told to write, the hygiene check allows it, and
-**this** gate refuses it.
+⭐ The refused email material is on a registrable domain, assembled the same
+way: an address on a reserved domain is sample data both gates let through
+(`test_the_two_gates_agree_about_an_unreachable_address`, and
+`test_samples.py` for the admission itself).
 """
 
 import ast
@@ -42,7 +42,7 @@ HOME = "/" + "home/jane"
 TILDE_USER = "~" + "jane"
 USERS_HOME = "/" + "Users/jane"
 BEARER = "Bearer " + "eyJhbGciOiJIUzI1NiJ9"
-EMAIL = "jane.doe@example.invalid"
+EMAIL = "jane.doe@" + "mailhost.org"
 
 FIXTURE = Path("tests/fixtures/invalid/personal-data")
 LEAKING_DOCUMENT = FIXTURE / "archive/solo/raw/prose/unit-01/lesson-1.json"
@@ -439,8 +439,9 @@ def test_the_gate_reads_no_environment():
         if isinstance(node, ast.Import):
             imported.update(alias.name.split(".")[0] for alias in node.names)
         elif isinstance(node, ast.ImportFrom) and node.module:
-            imported.add(node.module.split(".")[0])
-    assert imported == {"__future__", "re", "collections"}
+            imported.add(node.module)
+    # The one framework import is `archive.samples`, which imports nothing.
+    assert imported == {"__future__", "re", "collections.abc", "studyforge.archive.samples"}
 
 
 def test_the_gate_does_not_import_the_repository_gates_patterns():
@@ -453,7 +454,7 @@ def test_the_gate_does_not_import_the_repository_gates_patterns():
 
 
 # --------------------------------------------------------------------------
-# No allow-list: where this gate and the repository gate part company
+# Reserved domains: where this gate and the repository gate agree
 # --------------------------------------------------------------------------
 
 
@@ -461,23 +462,19 @@ def test_the_gate_does_not_import_the_repository_gates_patterns():
     "address",
     ["jane.doe@example.invalid", "contact@example.org", "someone@localhost.test"],
 )
-def test_the_two_gates_disagree_about_an_unreachable_address(address):
-    # ⚠️ Not a defect. `tests.floor.personal_data` allows every one of these
-    # because authors are told to write them as placeholders, and a
-    # check that fired on the sanctioned placeholder would be telling people
-    # not to use the safe form. **In an archive an address is wrong content
-    # whether or not it is deliverable.** Mirrored from the other side by
+def test_the_two_gates_agree_about_an_unreachable_address(address):
+    # ⭐ An address that can reach nobody identifies nobody, and it is how a
+    # lesson's sample is told to write one, so this gate lets it through as
+    # `tests.floor.personal_data` does. Mirrored from the other side by
     # `tests/floor/personal_data/test_registry.py`.
-    assert shape_in(f"mail {address} for help") == "email address"
+    assert shape_in(f"mail {address} for help") is None
 
 
-def test_only_the_scrubbers_own_placeholder_passes():
-    # ⚠️ A real hole, stated rather than hidden: the exemption exists so that
-    # `assert_clean(scrub(text))` can pass at all. It is skipped by identity —
-    # one string — not by a domain rule, and it is why the negative fixture
-    # deliberately uses a different address.
+def test_the_scrubbers_own_placeholder_passes_and_a_look_alike_does_not():
+    # The placeholder is on a reserved domain, so `assert_clean(scrub(text))`
+    # holds; a registrable domain that begins with the same letters is refused.
     assert shape_in(f"write to {EMAIL_PLACEHOLDER}") is None
-    assert shape_in("write to contact@example.com.co") == "email address"
+    assert shape_in("write to contact@" + "example.com.co") == "email address"
 
 
 # --------------------------------------------------------------------------
@@ -491,9 +488,9 @@ def test_the_negative_fixture_is_refused_at_the_archive_boundary():
     assert "lesson-1.json.blocks[1].text" in str(raised.value)
 
 
-def test_the_negative_fixture_is_refused_on_both_of_its_shapes():
-    # ⚠️ Both, and that is the whole disagreement in one fixture: the hygiene
-    # sweep reports only its home path, because its address is unreachable.
+def test_the_negative_fixture_carries_both_shapes_and_is_refused_on_its_home_path():
+    # ⚠️ Both shapes are present and only the home path is refused: its address
+    # is on a reserved domain, which both gates admit as sample data.
     para = fixture_document()["blocks"][1]["text"]
     # ⛔ Each pattern asked separately, rather than by removing the first
     # match from the text: writing the home path out to strip it would put
@@ -502,6 +499,7 @@ def test_the_negative_fixture_is_refused_on_both_of_its_shapes():
         "home path",
         "email address",
     ]
+    assert shape_in(para) == "home path"
     assert shape_in(scrub(para)) is None
 
 

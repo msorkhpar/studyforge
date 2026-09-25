@@ -52,7 +52,7 @@ SOURCE = Path(inspect.getfile(client_module))
 HOME = "/" + "home/jane"
 BEARER = "Bearer " + "eyJhbGciOiJIUzI1NiJ9"
 HOSTNAME = "somebox" + ".local"
-EMAIL = "jane.doe@example.invalid"
+EMAIL = "jane.doe@" + "mailhost.org"
 LEAKS = (HOME, BEARER, HOSTNAME, EMAIL)
 
 ADDRESS_A = "a" * 64

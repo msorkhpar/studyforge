@@ -63,20 +63,14 @@ def test_the_real_sanctioned_directory_really_does_carry_the_shapes():
     assert "home path" in sanctioned_shapes()
 
 
-def test_this_gate_and_the_archive_gate_disagree_about_the_fixture_s_address():
-    # ⚠️ Not a defect — the two gates have different subjects, and this pins
-    # the difference so a later edit cannot erase it by accident.
-    #
+def test_this_gate_and_the_archive_gate_agree_about_the_fixture_s_address():
     # The fixture's address is `…@example.invalid`: an RFC 2606 reserved TLD,
-    # deliberately unreachable. **This** gate is repository hygiene, and an
-    # address that can reach nobody identifies nobody, so it is allowed here —
-    # authors are told to write such placeholders.
-    # ⛔ **The archive gate's subject is the archive**, where any address is wrong content
-    # whether or not it is deliverable, and `tests/test_fixture_consistency.py`
-    # carries the stricter rule with no allow-list at all.
+    # deliberately unreachable. An address that can reach nobody identifies
+    # nobody, so it is allowed here, and the archive gate admits it as a
+    # lesson's sample data too (`studyforge.archive.samples`).
     #
-    # So the fixture trips this sweep on its home path and not on its email,
-    # and it must keep tripping the archive gate on both.
+    # So the fixture trips this sweep, and the archive gate, on its home path
+    # and not on its email.
     assert "email address" not in sanctioned_shapes()
 
 

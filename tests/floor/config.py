@@ -137,7 +137,7 @@ EXCLUDED_DIRS = ("tests/fixtures", *TOOL_OUTPUT_DIRS)
 #: refuse, and it is bounded by tests rather than by a reviewer's memory.
 #:
 #: Every value inside one of these is fabricated and unreachable — an RFC 2606
-#: reserved TLD, a documented placeholder home path — and each directory says
+#: reserved TLD, a home path under an account nobody has — and each directory says
 #: so in a `VIOLATION.md` beside the data. Adding an entry here is how a sixth
 #: negative fixture becomes legal, and the shape sweep in `tests.floor.personal_data`
 #: fails if one appears without it.
