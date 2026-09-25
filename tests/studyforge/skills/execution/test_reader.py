@@ -47,7 +47,8 @@ def test_the_instance_file_is_named_with_what_it_holds_and_who_reads_it(tmp_path
     """⭐ the reader is told the file is the one place a port is set, and what widening costs."""
     text = document(tmp_path)
     assert f"`{skill.INSTANCE_ENV}` is the one place a port is set" in text
-    assert "a page learns the editor's address from the study server" in text
+    assert "learns the editor's address from the study server" in text
+    assert "Change one with the" in text
     assert "restoring the editor's authentication first" in text
     assert "`studyforge serve <root>`) stays the" in text
 

@@ -31,6 +31,7 @@ import json
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from pathlib import Path
 
+from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.execute import (
     DeclaredEditorProbe,
     EditorProbe,
@@ -131,10 +132,15 @@ def editor_for(config: Published) -> Callable[[ServedCorpus], DeclaredEditorProb
 
 
 def _commands(path: Path) -> list[list[str]]:
-    """Return the commands one practice document's record names; an unreadable one names none."""
+    """Return the commands one practice document's record names; an unreadable one names none.
+
+    ⛔ Gated like every document the framework decodes (R7): a document carrying
+    personal data names no command, and nothing of it reaches the list.
+    """
     try:
         document = json.loads(path.read_text(encoding="utf-8"))
-    except OSError, UnicodeDecodeError, ValueError:
+        assert_clean(document, path.name)
+    except OSError, UnicodeDecodeError, ValueError, PersonalDataLeak:
         return []
     exercise = document.get("exercise") if isinstance(document, dict) else None
     if not isinstance(exercise, dict):

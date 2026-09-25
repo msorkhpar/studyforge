@@ -379,8 +379,10 @@ it. Then, from the corpus root:
 ⭐ That one command starts the study server, the editor AND the runner, each
 from the tag the corpus recorded — nobody sets an image variable by hand. Open
 the site on `127.0.0.1:<STUDYFORGE_SITE_PORT>`; a Run, a Submit and an example's
-test then run in the runner, through its run service. ⭐ To move a port, change
-it in `instance.env` and run the same command again: nothing is rebuilt.
+test then run in the runner, through its run service. ⭐ To move a port, record
+it with `record_instance` (step 5a), which rewrites `instance.env`, and run the
+same command again: nothing is rebuilt. ⚠️ A hand-edit to `instance.env` works
+for compose, but the hand-edit check reports it, as for every file this skill writes.
 
 ⛔ **Every port is published on `127.0.0.1` alone.** The editor carries no
 password because loopback is its whole access control: a reader who widens

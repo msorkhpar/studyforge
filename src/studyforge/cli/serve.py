@@ -102,7 +102,6 @@ from studyforge.generate import RAISES
 from studyforge.generate.declarations import read_corpus
 from studyforge.narrate import narration_on
 from studyforge.progress import store_dir
-from studyforge.serve import RAISES as REFUSED
 from studyforge.serve import (
     LOOPBACK,
     PUBLISH_REFUSED,
@@ -114,6 +113,7 @@ from studyforge.serve import (
     site_discovery,
     start_published,
 )
+from studyforge.serve import RAISES as REFUSED
 from studyforge.serve.app import DEFAULT_PORT, ServingServer, make_server
 from studyforge.serve.discovery import discover
 from studyforge.serve.instance import instance_of
