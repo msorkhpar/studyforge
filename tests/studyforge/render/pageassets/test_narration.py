@@ -216,12 +216,14 @@ def test_the_transport_ships_hidden_and_the_script_is_what_unhides_it():
     assert "player.hidden = false" in uncommented(PART)
 
 
-def test_a_unit_with_nothing_to_play_disables_the_controls_rather_than_hiding_the_reason():
-    # ⚠️ Hiding the transport in that case would be honest about the control and
-    # silent about the cause. The stated message and disabled controls say both.
+def test_a_unit_whose_clips_all_fail_after_the_first_was_heard_says_so_and_disables():
+    # ⚠️ The transport came up, so hiding it now would be honest about the
+    # control and silent about the cause. The stated message and disabled
+    # controls say both.
     body = uncommented(PART)
     assert "disabled = true" in body
-    assert "say(NONE)" in body
+    assert "say(anyPlayable() ? MISSING : NONE);" in body
+    assert "if (!anyPlayable()) { disable(); }" in body
 
 
 # --- the keyboard contract the template promises -----------------------------

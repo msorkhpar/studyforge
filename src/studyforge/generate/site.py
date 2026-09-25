@@ -69,7 +69,7 @@ from studyforge.generate.clips import files_unreached, for_output, unit_clips
 from studyforge.generate.containers import container_pages, page_paths
 from studyforge.generate.declarations import Corpus, read_corpus
 from studyforge.generate.media import unit_media
-from studyforge.generate.narration import clip_signal, voiced
+from studyforge.generate.narration import voiced
 from studyforge.generate.navigation import rail
 from studyforge.generate.units import unit_pages
 from studyforge.generate.writing import Written, place
@@ -97,9 +97,30 @@ def write_site(root: Path | str, into: Path | str, *, narration: bool | None = N
         + assets(corpus, into)
         + unit_media(corpus, into)
         + unit_clips(corpus, into)
-        + clip_signal(corpus, into)
         + files_unreached(corpus)
+        + retired(corpus, into)
     )
+
+
+#: Files an earlier build wrote into the shared asset directory that no page
+#: reads any more. ⭐ `narration-clips.js` told a page whether its clips were
+#: here, and went stale whenever anything but its writer moved them; a page now
+#: asks its first clip itself (`narration-probe.js`).
+RETIRED = ("narration-clips.js",)
+
+
+def retired(corpus: Corpus, into: Path | str) -> Written:
+    """Name each retired file an earlier build left in this site's shared asset directory.
+
+    ⛔ **Named, never deleted** (R3): the report says how a person removes it,
+    as it does for a clip no page links.
+    """
+    found = [
+        corpus.shared.assets / name
+        for name in RETIRED
+        if (Path(into) / Path(str(corpus.shared.assets / name))).is_file()
+    ]
+    return Written(retired=tuple(found))
 
 
 def root_index(corpus: Corpus, into: Path | str) -> Written:

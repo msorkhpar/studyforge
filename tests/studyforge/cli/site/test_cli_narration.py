@@ -12,11 +12,11 @@ import json
 import pytest
 
 from studyforge.cli.site.cli import SILENT, build_parser, main
-from studyforge.cli.site.report import STALE, UNLINKED
+from studyforge.cli.site.report import RETIRED, STALE, UNLINKED
 from studyforge.validate.report import OK
 from tests.studyforge.cli.narrate.plant import edit_one_paragraph, narrated
 from tests.studyforge.generate.corpora import a_corpus, an_output
-from tests.studyforge.generate.test_narration import PLAYER, narrate
+from tests.studyforge.generate.test_narration import PLAYER, RETIRED_SIGNAL, narrate
 from tests.studyforge.validate.test_narration import stale_by_join
 
 
@@ -100,6 +100,23 @@ def test_a_build_with_narration_off_names_each_clip_an_earlier_build_left_and_ke
     assert [line.split()[1] for line in unlinked] == copied
     assert all(line.endswith(UNLINKED) for line in unlinked)
     assert _clips(out) == copied, "a build deleted a clip"
+
+
+def test_a_build_names_the_retired_clip_signal_an_earlier_build_left_and_keeps_it(tmp_path):
+    # ⭐ A page asks its first clip itself, so the file that once told it whether
+    # the clips were here is read by nothing: named, with how to remove it, and
+    # kept (R3). ⛔ A build into a tree without it names nothing.
+    root = a_corpus(tmp_path, "depth1")
+    narrate(root)
+    assert not [line for line in _said(root, root) if line.startswith("retired ")]
+    left = root / RETIRED_SIGNAL
+    left.write_text('window.studyforge.clips = "released";\n', encoding="utf-8")
+
+    retired = [line for line in _said(root, root) if line.startswith("retired ")]
+
+    assert [line.split()[1] for line in retired] == [RETIRED_SIGNAL.as_posix()]
+    assert retired[0].endswith(RETIRED)
+    assert left.is_file(), "a build deleted a file"
 
 
 @pytest.mark.parametrize("where", ["fresh", "root"])

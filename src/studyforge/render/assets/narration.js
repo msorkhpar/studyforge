@@ -22,8 +22,8 @@
    ⛔ **Progressive enhancement, and the transport ships HIDDEN.** With scripting
    off, a reader is shown nothing rather than a Play button that cannot play —
    a control that does nothing is a dead control, and none is shown. ⭐ The same
-   holds when the clips are not on disk: the transport stays hidden, and this
-   file learns it without requesting a clip (see `CLIPS` below).
+   holds when the clips are not here: the page's FIRST clip is asked once
+   (`narration-probe.js`), and only a clip that loads unhides the transport.
 
    ⭐ **It degrades honestly, in three named states** (R6). A passage whose clip
    is not on disk says so and stops rather than pretending; a unit with no usable
@@ -79,18 +79,6 @@
   var audio = document.getElementById(NARRATOR);
   if (!player || !audio) { return; }
 
-  /* ⛔ **Whether the clips are on disk is asked of a script that is always
-     there, never of a clip.** `templates/player.html` links
-     `pageassets.CLIPS_NAME` ahead of this bundle, and it says `present` only
-     where a build found clips or a restore put them back. ⚠️ A request for a
-     clip that is not there is an error in the console, over `file://` and
-     served alike, and a site whose clips are a download nobody has taken is the
-     normal case. ⭐ So anything but `present` leaves the transport hidden and
-     binds nothing: no button, no passage that answers a click, no key. */
-  var CLIPS = 'present';
-  var told = window.studyforge && window.studyforge.clips;
-  if (told !== CLIPS) { return; }
-
   /* ⛔ THE WHOLE DOCUMENT, NOT `#content`. A unit page is headed by its
      material's own opening heading, and that heading sits in the `<header>`
      above the content — it is a narrated passage like every other one. Scoped to
@@ -129,6 +117,11 @@
 
   var at = firstPlayable();
   var reduced = quiet();
+
+  /* ⛔ Nothing plays, and no key or click is answered, until the first clip
+     was heard (`narration-probe.js`): a page whose clips are not here asks for
+     exactly one, and Space still scrolls it. */
+  var heard = false;
 
   function faces(holder) {
     var found = {};
@@ -278,7 +271,7 @@
   }
 
   function begin(index, scroll) {
-    if (index === -1 || !playable[index]) { return; }
+    if (!heard || index === -1 || !playable[index]) { return; }
     load(index);
     say(null);
     showFace(PLAYING);
@@ -356,7 +349,7 @@
   var TYPING = { INPUT: true, TEXTAREA: true, SELECT: true, BUTTON: true, OPTION: true };
 
   document.addEventListener('keydown', function (event) {
-    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) { return; }
+    if (!heard || event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) { return; }
     var target = event.target;
     if (target && (TYPING[target.tagName] || target.isContentEditable)) { return; }
     if (event.key === ' ' || event.key === 'Spacebar') {
@@ -377,24 +370,18 @@
     });
   }
 
-  /* ⛔ The transport is unhidden only once there is something behind it, and the
-     unit with nothing to play says so with its controls off rather than showing
-     three buttons that do nothing. */
+  /* ⛔ The transport is unhidden only once its first clip was heard. A unit
+     with no clip to ask for asks nothing and shows nothing. ⭐ The first
+     passage is where narration WILL start, and the transport's own line says
+     so; nothing on the page is lit until the reader starts it. */
   showFace(PAUSED);
-  if (anyPlayable()) {
-    /* ⛔ The first passage is where narration WILL start, and the
-       transport's own line says so; nothing on the page is lit until the
-       reader starts it. `load` lights a passage, and only a press reaches it. */
-    at = firstPlayable();
-    label();
-    progress();
-    say(null);
-  } else {
-    at = -1;
-    label();
-    progress();
-    say(NONE);
-    disable();
-  }
-  player.hidden = false;
+  at = firstPlayable();
+  if (at === -1) { return; }
+  label();
+  progress();
+  say(null);
+  window.studyforge.probeClip(passages[at].getAttribute(SOURCE), function () {
+    heard = true;
+    player.hidden = false;
+  });
 }());

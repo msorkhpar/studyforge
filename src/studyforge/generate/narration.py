@@ -19,13 +19,11 @@ calls while it renders; a page pass never reads the record itself.
 `voiced(corpus, choice)` is a run's override of the corpus's own choice.
 `heard(...)` is the join both the page and `generate.clips` ask, so the clip a
 build copies is the clip the page addresses. `clips_on_disk(corpus, state)` says
-whether any recorded clip is on disk, and `clip_signal(corpus, into)` writes the
-script a narrated page reads to learn it (`render.pageassets.CLIPS_NAME`).
+whether any recorded clip is on disk.
 
 **Depends on.** `narrate.playable` for the join, `narrate.synth` for where the
 record lives, how it is read and where a unit's clips were placed,
-`render.page` for `Narration`, `render.pageassets` for the clip signal's name and
-bodies, and `generate.units` for the page pass (deferred:
+`render.page` for `Narration`, and `generate.units` for the page pass (deferred:
 `units` imports this module). Not `narrate.client` and not `synthesise`
 (a build never synthesises), asserted by `tests/studyforge/generate/test_no_synthesis.py`.
 
@@ -59,15 +57,11 @@ page that called every passage *missing* would be complaining about a choice.
 (`clips_on_disk`), each page links every clip the record names for it, the
 disk unconsulted: `NOT_ON_DISK` is not a gap, and `NOT_PLACED` and `MISFILED`,
 which are faults in the record, still are. ⭐ The page then learns whether the
-clips arrived from `clip_signal`'s script, so a restore after the build is heard
-without a rebuild. ⛔ **With any clip on disk, the three states are exactly as
-above**: a clip missing beside others is a gap the page names.
-
-⛔ **`clip_signal` never turns `RELEASED` into `PRESENT`.** The release pack
-writes `RELEASED` when the clips become a download, and the author who packed
-them still has them on disk, so a build that trusted that disk would commit a
-site telling every fresh checkout its clips are there. Only the restore says
-`PRESENT` over `RELEASED` (`render.pageassets.clips` has the table).
+clips arrived by asking its first clip in the browser (`narration-probe.js`),
+so a restore after the build is heard without a rebuild, and nothing the build
+writes can go stale when the clips move. ⛔ **With any clip on disk, the three
+states are exactly as above**: a clip missing beside others is a gap the page
+names.
 
 ## Where the disk is probed: the page's own directory
 
@@ -104,14 +98,6 @@ from studyforge.generate.writing import Written, place
 from studyforge.narrate.playable import MISFILED, NOT_ON_DISK, NOT_PLACED, Playable, playable_of
 from studyforge.narrate.synth import State, StateError, audio_dir, read_state, state_file
 from studyforge.render.page import SILENT, Narration, Placement
-from studyforge.render.pageassets import (
-    ABSENT,
-    CLIPS_NAME,
-    PRESENT,
-    RELEASED,
-    clips_script,
-    clips_state,
-)
 
 #: The silent states that are a promise the disk did not keep. `NOT_RECORDED`
 #: is deliberately absent: see this module's contract.
@@ -220,35 +206,6 @@ def clips_on_disk(corpus: Corpus, state: State) -> bool:
     return False
 
 
-def clip_signal(corpus: Corpus, into: Path | str, *, unmoved: bool = False) -> Written:
-    """Write the script a narrated page reads to learn whether its clips are on disk.
-
-    ⭐ `PRESENT` or `ABSENT` from `clips_on_disk`, except that a `RELEASED` answer
-    already there is written again unchanged. ⛔ A corpus that is not narrated
-    gets none: its pages link no transport. It goes through `writing.place`, so
-    a file the build does not own is refused and left alone (R3). ⭐ `unmoved`
-    is `write_narration`'s rule: a file already holding the answer is not opened.
-    """
-    state = narrated(corpus)
-    if not state.present:
-        return Written()
-    out = Path(into)
-    at = corpus.shared.assets / CLIPS_NAME
-    told = PRESENT if clips_on_disk(corpus, state) else ABSENT
-    target = out / Path(str(at))
-    if target.is_file() and not target.is_symlink():
-        if clips_state(target.read_bytes()) == RELEASED:
-            told = RELEASED
-    body = clips_script(told)
-    if unmoved and corpus.footprint.owns(at) and _holds(target, body):
-        return Written()
-    written: list[PurePosixPath] = []
-    refused: list[PurePosixPath] = []
-    replaced: list[PurePosixPath] = []
-    place(out, at, body, written, refused, replaced, footprint=corpus.footprint)
-    return Written(assets=tuple(written), refused=tuple(refused), replaced=tuple(replaced))
-
-
 def heard(
     corpus: Corpus, source: UnitSource, at: UnitLocations, document: dict, state: State
 ) -> tuple[Path, Playable]:
@@ -284,8 +241,7 @@ def write_narration(root: Path | str, into: Path | str) -> Renarrated:
             continue
         place(out, at, body, written, refused, replaced, footprint=corpus.footprint)
     pages = Written(pages=tuple(written), refused=tuple(refused), replaced=tuple(replaced))
-    signal = clip_signal(corpus, out, unmoved=True)
-    return Renarrated(pages + unit_clips(corpus, out) + signal, tuple(unchanged))
+    return Renarrated(pages + unit_clips(corpus, out), tuple(unchanged))
 
 
 def _holds(target: Path, body: bytes) -> bool:

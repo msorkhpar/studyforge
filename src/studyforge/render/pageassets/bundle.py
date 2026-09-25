@@ -138,6 +138,10 @@ STYLE_PARTS = (
 #: existence guard at startup — so a wrong order fails loudly, as the store's
 #: does, rather than lighting a hidden passage.
 #:
+#: ⛔ `narration-probe.js` PRECEDES `narration.js` for the same reason: it
+#: defines `window.studyforge.probeClip`, which `narration.js` calls with no
+#: existence guard to ask its first clip once.
+#:
 #: ⭐ `practice.js` needs no library and no store: it draws the panel
 #: and reaches the API only through `window.studyforge.run`, which the SERVING
 #: PROCESS adds to the page it answers — so a built page names no client and no
@@ -180,6 +184,7 @@ SCRIPT_PARTS = (
     "copy-code.js",
     "video-player.js",
     "narration-stand-in.js",
+    "narration-probe.js",
     "narration.js",
     "practice.js",
     "practice-editor.js",

@@ -15,9 +15,7 @@ from tests.support import assert_package_contract
 #: names in it exist would pass whatever the module happened to export.
 PUBLIC_SURFACE = frozenset(
     {
-        "ABSENT",
         "ASSET_DIR",
-        "CLIPS_NAME",
         "HEADER_CHARS",
         "HEADER_MARKERS",
         "HOOK_CLASSES",
@@ -25,13 +23,10 @@ PUBLIC_SURFACE = frozenset(
         "LICENCE_SUFFIX",
         "PART_SUFFIXES",
         "PLAIN",
-        "PRESENT",
-        "RELEASED",
         "SCRIPT_NAME",
         "SCRIPT_PARTS",
         "SPRITE_PART",
         "SPRITE_PLACEHOLDER",
-        "STATES",
         "STYLESHEET_NAME",
         "STYLE_PARTS",
         "SURFACE_CLASSES",
@@ -39,8 +34,6 @@ PUBLIC_SURFACE = frozenset(
         "VENDORED",
         "AssetError",
         "class_for",
-        "clips_script",
-        "clips_state",
         "compose",
         "falls_back",
         "grammar_for",

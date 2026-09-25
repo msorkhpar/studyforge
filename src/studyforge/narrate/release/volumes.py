@@ -20,8 +20,7 @@ source (R1) and composes no layout (R4): every path comes from the record.
 ⭐ A release is how a corpus whose `corpus.json` says `media.commit: never`
 delivers its clips. ⛔ A corpus whose policy commits them is REFUSED before
 anything is written (`require_released_policy`): its checkout already carries
-the clips, and the pack would mark them `released`, so its unserved pages would
-hide narration a clone already holds.
+the clips, so a release of them would be a second copy nobody needs.
 
 ## ⛔ The population is the record's, never a directory walk
 
@@ -138,8 +137,7 @@ def require_released_policy(root: Path | str) -> None:
     if policy.commits:
         raise PackRefused(
             f"this corpus's {MANIFEST_FILENAME} commits its clips (media.commit "
-            f"'{policy.commit}'), so every checkout already carries them, and a pack "
-            f"would mark them released and hide narration a clone holds; a release is "
+            f"'{policy.commit}'), so every checkout already carries them; a release is "
             f"for a corpus that declares media.commit 'never'"
         )
 

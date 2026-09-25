@@ -224,18 +224,15 @@ studyforge narrate <corpus-root> --publish <dir> --tag narration-1.0.0
   directory outside the corpus, and writes the two restore scripts into
   `.studyforge/narration-release/`, beside the volumes' `SHA256SUMS` and a
   `clips.sha256` naming every clip and its digest: a restore trusts only these
-  committed files, so a wrong or replaced release is refused. It also sets
-  `.studyforge/assets/narration-clips.js` to `released`, so a site committed
-  after packing tells a fresh clone that its clips have to be fetched; a build
-  never undoes that. The same corpus packs to the same bytes. It refuses,
+  committed files, so a wrong or replaced release is refused. The same corpus
+  packs to the same bytes. It refuses,
   naming how many, when a clip the record promises is not on disk. ⛔ It
   refuses a corpus whose `corpus.json` commits its clips (`media.commit`
   `auto` or `always`, or none declared): its clones already carry them. Only
   `never` packs.
 - Commit everything the pack wrote into the corpus: a reader runs the scripts from a clone.
 - `--publish` is the dry run. It checks every volume against `SHA256SUMS`, the
-  scripts against the tag, and that `narration-clips.js` says `released`
-  (it refuses `present`), reads the repository from the checkout's
+  scripts against the tag, reads the repository from the checkout's
   `origin`, and prints each asset and, last, the one `gh release create`
   command that uploads them. ⛔ It uploads nothing. Hand that command to the
   owner; ⛔ never run it for them.
@@ -251,9 +248,10 @@ studyforge narrate <corpus-root> --publish <dir> --tag narration-1.0.0
 A reader restores with `sh .studyforge/narration-release/restore.sh`, or
 `restore.ps1` beside it in PowerShell. Each clip lands at the place the
 narration record names, `<corpus root>/<where>/<filename>`, which is the unit's
-audio directory, the downloaded volumes are deleted, and last
-`narration-clips.js` is set to `present`, so the next page load plays the clips
-with no rebuild. A site built into another directory than the corpus root has
+audio directory, and the downloaded volumes are deleted. Nothing else is
+written: a page asks its first clip itself, so the next page load plays the
+clips with no rebuild, and a page whose first clip is not there asks for no
+other clip and hides its narration. A site built into another directory than the corpus root has
 its own copies: build it again after the restore. ⭐ Narration stays optional:
 a reader who never restores has a complete site.
 

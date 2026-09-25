@@ -12,7 +12,7 @@ invoking user, with no identity passed in, and is removed when it exits.
 - ⛔ a corrupt volume is refused and nothing is extracted;
 - ⛔ a volume whose members are not the committed clips, another corpus's release,
   and clips whose bytes are not the committed ones are each refused, with the
-  corpus byte-identical and the signal still `released`.
+  corpus byte-identical and no clip signal written.
 
 Plants: `test_restore.plant_a_corrupt_volume`.
 """
@@ -26,7 +26,6 @@ from pathlib import Path
 import pytest
 
 from studyforge.narrate.release import RESTORE_PS1
-from studyforge.render.pageassets import PRESENT, RELEASED
 from tests.studyforge.narrate.release.restoring import (
     DEAD_PROXY,
     files_of,
@@ -117,7 +116,7 @@ def test_volumes_on_disk_restore_every_clip_and_are_left_in_place(tmp_path):
     assert done.returncode == 0, done.stdout + done.stderr
     assert restored(corpus) == corpus.clips
     assert sorted(path.name for path in corpus.release.iterdir()) == before
-    assert signal(corpus) == PRESENT
+    assert signal(corpus) is None
 
 
 @pytest.mark.parametrize("private", [False, True], ids=["public", "private"])
@@ -136,7 +135,7 @@ def test_a_release_restores_every_clip_and_leaves_no_download(tmp_path, private)
     assert restored(corpus) == corpus.clips
     assert TOKEN not in done.stdout + done.stderr
     assert not (corpus.root / ".studyforge/narration-release/download").exists()
-    assert signal(corpus) == PRESENT
+    assert signal(corpus) is None
     if private:
         assert all(TOKEN not in path for _, path, _ in host.requests)
         assert any("/releases/assets/" in path for _, path, _ in host.requests)
@@ -155,7 +154,7 @@ def test_a_corrupt_volume_is_refused_and_nothing_is_extracted(tmp_path):
     assert done.returncode != 0
     assert "checksum mismatch on narration.zip.001" in done.stdout + done.stderr
     assert set(restored(corpus).values()) == {None}
-    assert signal(corpus) == RELEASED
+    assert signal(corpus) is None
 
 
 def local(tmp_path: Path, corpus):
@@ -176,7 +175,7 @@ def test_a_volume_carrying_the_manifest_and_an_escape_is_refused_and_the_corpus_
     assert "not this corpus's clips" in done.stdout + done.stderr
     assert files_of(corpus.root) == before
     assert not (tmp_path / "ESCAPED.txt").exists()
-    assert signal(corpus) == RELEASED
+    assert signal(corpus) is None
 
 
 def test_another_corpus_release_with_its_own_matching_sums_is_refused_at_the_volumes(tmp_path):
@@ -189,7 +188,7 @@ def test_another_corpus_release_with_its_own_matching_sums_is_refused_at_the_vol
     assert done.returncode != 0
     assert "checksum mismatch on narration.zip.000" in done.stdout + done.stderr
     assert files_of(corpus.root) == before
-    assert signal(corpus) == RELEASED
+    assert signal(corpus) is None
 
 
 def test_clips_whose_bytes_are_not_the_committed_ones_are_refused_before_any_is_placed(tmp_path):
@@ -202,4 +201,4 @@ def test_clips_whose_bytes_are_not_the_committed_ones_are_refused_before_any_is_
     assert done.returncode != 0
     assert "is not the clip this corpus packed" in done.stdout + done.stderr
     assert files_of(corpus.root) == before
-    assert signal(corpus) == RELEASED
+    assert signal(corpus) is None
