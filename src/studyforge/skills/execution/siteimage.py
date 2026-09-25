@@ -45,7 +45,7 @@ from pathlib import Path
 from studyforge.skills.execution import written
 from studyforge.skills.execution.binds import ExecutionRefused
 from studyforge.skills.execution.onboard import DIRECTORY, GENERATED, SITE_ENV
-from studyforge.skills.execution.siteservice import IMAGE, SERVICE
+from studyforge.skills.execution.siteservice import GATED, IMAGE, SERVICE
 from studyforge.skills.onboarding import library
 
 #: Where the image's build context is staged, under the skill's own directory.
@@ -138,12 +138,13 @@ def copied(package: Path, target: Path) -> int:
 
 
 def site_env(tag: str, commit: str) -> str:
-    """Return `SITE_ENV`'s bytes: the image, and the profile that brings the site up."""
+    """Return `SITE_ENV`'s bytes: the image, the profile that brings the site up, the gate."""
     return (
         f"# {GENERATED}\n"
         f"# The study server's image, staged from the library built from {commit}.\n"
         f"{IMAGE}={tag}\n"
         f"COMPOSE_PROFILES={PROFILE}\n"
+        f"{GATED}=true\n"
     )
 
 

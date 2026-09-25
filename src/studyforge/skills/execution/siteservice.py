@@ -42,9 +42,13 @@ the `Host` a browser sends is the one `serve` admits.
 ⭐ `instance.env` is the publisher's file, so the `preflight` service runs
 `studyforge preflight /corpus` first, from the site's image, with the corpus
 read-only and no network, and every other service `depends_on` it completing.
-⭐ The dependency is `required: false`: before a site image is staged the
-profile is off, the preflight does not exist, and the editor and the runner
-start as they always did. A bad value is then refused by `studyforge serve`.
+⭐ The dependency is `required: ${STUDYFORGE_PREFLIGHT:-false}`: before a site
+image is staged the profile is off, the preflight does not exist, and the editor
+and the runner start as they always did — a bad value is then refused by
+`studyforge serve`. ⛔ Once staged, `SITE_ENV_NAME` sets it `true`, because a
+failed OPTIONAL dependency is only a warning to compose, which then starts every
+service anyway; a required one stops them all, with the preflight's sentence in
+its log.
 
 ## ⭐ THE SITE IS HEALTHY ONLY ONCE ITS PAGE ANSWERS
 
@@ -96,6 +100,9 @@ SCRIPT_FILE = "runservice.pl"
 
 #: The site image's variable, recorded by the execution skill's site step.
 IMAGE = "STUDYFORGE_SITE_IMAGE"
+
+#: The variable that makes the preflight a gate: `true` once an image is staged.
+GATED = "STUDYFORGE_PREFLIGHT"
 
 #: The file the corpus's one compose command reads the site's image from, beside it.
 SITE_ENV_NAME = "site.env"
@@ -198,7 +205,12 @@ def plan(
     return Site(
         services=((PREFLIGHT, check), (SERVICE, site), (runner[0], reached)),
         networks={NETWORK: {"internal": True}},
-        gate={PREFLIGHT: {"condition": "service_completed_successfully", "required": False}},
+        gate={
+            PREFLIGHT: {
+                "condition": "service_completed_successfully",
+                "required": f"${{{GATED}:-false}}",
+            }
+        },
     )
 
 

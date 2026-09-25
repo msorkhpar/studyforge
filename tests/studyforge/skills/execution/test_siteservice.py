@@ -134,7 +134,7 @@ def test_a_preflight_checks_the_publishers_values_before_every_other_service(tex
         gated = service_block(text, name)
         assert re.search(
             r"depends_on:\n\s+preflight:\n\s+condition: service_completed_successfully\n"
-            r"\s+required: false\n",
+            r'\s+required: "\$\{STUDYFORGE_PREFLIGHT:-false\}"\n',
             gated,
         ), name
     assert "depends_on" not in check

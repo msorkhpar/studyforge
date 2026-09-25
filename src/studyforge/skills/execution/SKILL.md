@@ -354,8 +354,11 @@ authentication), and a compose file publishing off loopback while the editor
 runs `--auth=none`. ⭐ `studyforge serve` refuses before it binds, and the
 compose file's `preflight` service (`studyforge preflight /corpus`, in the
 site's image, read-only, no network) runs before every other service, each of
-which `depends_on` it with `required: false` — so before a site image is
-staged, the editor and the runner start as they always did.
+which `depends_on` it with `required: ${STUDYFORGE_PREFLIGHT:-false}`. Before a
+site image is staged the editor and the runner start as they always did; the
+staged `site.env` sets it `true`, because compose only warns about a failed
+OPTIONAL dependency and starts every service anyway. ⭐ The site's healthcheck
+asks its own page, so `up --wait` reports it healthy only once it answers.
 
 ### 5b. Stage the study server's image — from the library the corpus pinned
 
