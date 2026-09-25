@@ -76,7 +76,6 @@ def dev_pins() -> dict[str, str]:
 def unprovided(fenced: str) -> list[str]:
     """Every module the documents command that the install route leaves out."""
     provided = set(pins(installed_requirements(fenced)))
-    owners = importlib.metadata.packages_distributions()
     missing = []
     for module in sorted(must_run()):
         top = module.split(".")[0]
@@ -84,9 +83,17 @@ def unprovided(fenced: str) -> list[str]:
             continue
         if top == "pip" and "python3 -m venv" in fenced:
             continue
-        if not {_normal(name) for name in owners.get(top, [top])} & provided:
+        if _normal(_distribution(top)) not in provided:
             missing.append(module)
     return missing
+
+
+def _distribution(top: str) -> str:
+    """The distribution a top-level module is installed by, or its own name when none is."""
+    try:
+        return importlib.metadata.distribution(top).metadata["Name"] or top
+    except importlib.metadata.PackageNotFoundError:
+        return top
 
 
 def _normal(name: str) -> str:
