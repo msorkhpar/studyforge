@@ -6,7 +6,10 @@ record-shape cases stay beside the record in `test_record.py`.
 
 from __future__ import annotations
 
+import importlib.util
 import json
+import py_compile
+from pathlib import Path
 
 import pytest
 
@@ -65,3 +68,40 @@ def test_uninstall_refuses_a_record_shape_this_build_does_not_read(tmp_path):
         uninstall(root)
 
     assert str(INSTALLED_API) in str(refused.value)
+
+
+def _compiled(root, where: str) -> str:
+    """Compile one module the way running it does, and return its bytecode's path."""
+    target = Path(importlib.util.cache_from_source(str(root / where)))
+    py_compile.compile(str(root / where), cfile=str(target), doraise=True)
+    return target.relative_to(root).as_posix()
+
+
+def test_uninstall_takes_the_bytecode_of_the_modules_it_removes(tmp_path):
+    # ⛔ Running the generated tests, as step 4 commands, compiles them; an
+    # uninstall that left their bytecode left directories nobody wrote.
+    root = corpora.material(tmp_path / "corpus")
+    before = sorted(path.relative_to(root).as_posix() for path in root.rglob("*"))
+    made = _made()
+    made.write(root)
+    modules = [item.where for item in made.files if item.where.endswith(".py")]
+    compiled = [_compiled(root, where) for where in modules]
+
+    removed = uninstall(root)
+
+    assert set(compiled) <= set(removed)
+    assert sorted(path.relative_to(root).as_posix() for path in root.rglob("*")) == before
+
+
+def test_uninstall_leaves_the_bytecode_of_a_module_it_did_not_write(tmp_path):
+    root = corpora.material(tmp_path / "corpus")
+    made = _made()
+    made.write(root)
+    where = next(item.where for item in made.files if item.where.startswith("tests/"))
+    mine = Path(where).parent / "__pycache__" / "mine.cpython-314.pyc"
+    (root / mine).parent.mkdir(parents=True, exist_ok=True)
+    (root / mine).write_bytes(b"not yours")
+
+    uninstall(root)
+
+    assert (root / mine).read_bytes() == b"not yours"
