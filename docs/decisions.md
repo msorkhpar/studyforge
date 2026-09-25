@@ -845,6 +845,46 @@ What it reads, and the choices in it:
 
 **Serves.** `R1`
 
+### The source's outline number is left off what a reader is served
+
+**Decision.** `studyforge.unit.outline.without_outline_number` removes a leading outline number from a title or heading, and `studyforge.unit.outline.headings_without_outline_numbers` from every heading block. The served unit builder (`studyforge.unit.builder.parts`) applies them to what a page and its narration are made from, and `studyforge.contents.tree` to every title the contents list. The archive and the container maps keep the number, and a page's place is still named from the recorded title.
+
+**Why.** The site lists and orders every unit itself, so the source's own numbering beside it is a second numbering on the page and four spoken numbers before a heading. It is one rule for every corpus rather than a manifest setting, because no reader is served by the duplicate, and the rule is narrow enough to keep a number that is part of the words.
+
+**Serves.** `R1`
+
+### A list item holds its code
+
+**Decision.** A list item's parts may be `code` blocks as well as text and nested lists (`studyforge.archive.blocks.ITEM_BLOCKS`). The Markdown reader (`studyforge.archive.markdown.listing`) keeps an item's fence inside the item, `studyforge.validate.blocks` admits the part, the page renders it as the code figure inside its `<li>`, and the item's clip speaks its caption.
+
+**Why.** A step, its snippet and the sentence after the snippet are one item in real material, and closing the list around the code detaches that sentence from its step.
+
+**Serves.** `R6`
+
+### The heading count measures a fence inside a list item from the item
+
+**Decision.** `studyforge.validate.headings.headings` keeps the content columns of the list items a line sits in and matches a fence or a heading relative to the innermost one, as CommonMark does.
+
+**Why.** A fence opened four spaces in under `1. ` is inside that item. Read from column zero it is text, and the fences after it pair the wrong way round, so the count disagrees with the parser on correct output.
+
+**Serves.** `R6`
+
+### Code draws no ligature
+
+**Decision.** Every stylesheet rule that sets the code face also sets `font-variant-ligatures: none` and turns off contextual alternates (`render/assets/reading.css`, `render/assets/practice.css`).
+
+**Why.** JetBrains Mono draws `!=` as a not-equal sign and `->` as an arrow, which reads as a different operator in code the reader must type. The practice editor turns its ligatures off too, so the page and the editor draw code alike.
+
+**Serves.** No spec rule: a reading-surface choice.
+
+### The index strip and the rail keep the corpus's groups
+
+**Decision.** The index's progress strip has one segment per top-level group (`studyforge.render.index.document.head`), and its markup says how many segments share the row so a segment's floor gives way before the row overflows. The rail lists each container inside the groups above it (`studyforge.render.page.rail.RailGroup`, from `studyforge.generate.navigation.rail`).
+
+**Why.** A course filed in sections of modules otherwise draws one strip segment and one rail row per module, and at dozens of modules the strip overflows its column and the rail loses the sections the index shows.
+
+**Serves.** No spec rule: a reading-surface choice.
+
 ## Serving, execution and exercises
 
 ### A Submit's breakdown is keyed by case id and read only from the run's own report

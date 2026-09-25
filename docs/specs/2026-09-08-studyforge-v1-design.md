@@ -1250,9 +1250,12 @@ a `raw_api` change: `heading`, `para`, `code`, `table`, `list`, `image`,
 blocks; every walker recurses on that property rather than naming the two.
 
 - ⭐ **A list item is a string, or an array of its parts in reading order** — runs
-  of text and whole nested `list` blocks, whose items follow the same rule. A
-  nested list is part of its item, not a block in reading order, so `counts` does
-  not count it.
+  of text, whole nested `list` blocks, whose items follow the same rule, and whole
+  `code` blocks. A part is part of its item, not a block in reading order, so
+  `counts` does not count it. ⭐ A step, its snippet and the sentence after the
+  snippet stay one item: closing the list around the code would detach that
+  sentence. The page shows the code inside the item, and the item's clip speaks
+  the code's one caption where the code sits.
 - ⭐ **An ordered list keeps the number it starts at**: a `list` may carry `start`
   after its three fields, written only when the list is ordered and does not
   start at `1`. The page opens the list at it and the narration counts from it.
@@ -1924,6 +1927,18 @@ These are proven surfaces, generalised in their addressing and otherwise kept.
   `narration` key (§4).
 - **Video** — vendored Plyr with its icon sprite substituted rather than fetched;
   nothing may reach the network.
+- ⛔ **The source's own outline number is not served.** A title or heading the
+  source writes as `5.1.1.1 Thread states`, `3.2.1. Batch processing` or `10.7.2 —
+  ORM frameworks` is shown and narrated as its words alone, on the page, in its
+  chrome and in the contents, because the site lists and orders everything
+  itself. It is a rule the framework applies to every corpus, not a manifest
+  setting. ⛔ A number that is part of the words is kept: the rule takes only a
+  leading dotted number or a leading number closed by a stop, each part at most
+  three digits, followed by a space, and it keeps a two-part number with no stop
+  when a lower-case word follows it (`1.5 million`). ⭐ The archive and the
+  container maps keep the number, as recorded, and a page's place is still named
+  from the recorded title. A clip is named by a digest of its words, so a heading
+  that loses its number is a new clip.
 - **Table of contents** — the contents document (stable, reproducible) and the
   local status (volatile) as two documents, so a consumer can cache one and poll
   the other, at any declared depth. ⛔ **The root index fetches nothing at
@@ -1968,9 +1983,14 @@ what was seen.
   relative `url()`, because a generated page opens from `file://` with no network
   (R8), and a browser's file-origin policy refuses a font outside the page's own
   directory. Charis sets the prose, Andika the headings, navigation and controls, and
-  JetBrains Mono code and nothing else.
+  JetBrains Mono code and nothing else. ⛔ **Code draws no ligature**: `!=` joined
+  into a not-equal sign reads as a different operator, so every rule that sets the
+  code face turns ligatures off, and the practice editor's `editor.fontLigatures` is
+  off so the two still draw code alike.
 - ⭐ **Structure encodes information.** Numbering only where order is real, dividers
-  only between things that are separate, one bold element carrying the identity with
+  only between things that are separate, groups kept where the corpus has them — the
+  index's progress strip has one segment per top-level group and never overflows its
+  column, and the rail lists each container inside the groups above it — one bold element carrying the identity with
   everything around it quiet, prose at a readable measure, and a page that stacks at
   phone width with no horizontal scroll.
 - ⛔ **Motion answers an action and never holds content hostage**: it animates
