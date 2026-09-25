@@ -31,6 +31,23 @@ agree — never as the source"*. So `prefix` decides nothing: it is a
 second partition of the same files, and the adapter refuses when the two
 partitions differ, in either direction.
 
+## ⭐ A linked level: the record's own entries open the last level's containers
+
+⚠️ **Some records write a level as a linked entry, not a label.** A section is
+a bare line, and under it each module is a list entry linking the module's own
+contents page, with the module's units indented beneath it. Declaring one
+group per module is refused, because the record's labels are the sections, and
+declaring the sections alone files every module's units into one container.
+
+⭐ **`linked` names the last of `levels`, and says the record opens each of its
+containers with a linked entry.** The declared `containers` are then the
+record's labels at the level above it, and each linked entry beneath a label
+is one container of the last level, filed at the label's address followed by
+the name of the directory holding the file it links. ⛔ That name is written in
+the record, so the address is still recorded and never derived (§6). The
+adapter skill's `curriculum.filed` reads it and refuses a record that does not
+have this shape.
+
 ## ⭐ What a prefix is, and why it may carry no digit
 
 A file's name carries prefix `p` when its stem is exactly `p` followed by a
@@ -54,7 +71,7 @@ from studyforge.describe import describe
 
 #: The keys a `curriculum` block may carry, and the ones each group may carry.
 #: ⛔ Closed sets: an unknown key is refused, never ignored (R9).
-CURRICULUM_KEYS = ("record", "containers")
+CURRICULUM_KEYS = ("record", "containers", "linked")
 CONTAINER_KEYS = ("label", "address", "prefix")
 
 #: A stem that is a prefix and a number, and nothing else.
@@ -80,6 +97,10 @@ class Curriculum:
     record: str
     #: Its groups, in the order the record writes them; empty when undeclared.
     containers: tuple[DeclaredContainer, ...] = ()
+    #: The last level's name when the record opens each of its containers with
+    #: a linked entry beneath a group, else `None`. ⭐ The groups are then
+    #: declared one level up, and each linked entry adds the last segment.
+    linked: str | None = None
 
     @property
     def prefixes(self) -> dict[str, DeclaredContainer]:
@@ -93,24 +114,58 @@ def prefix_of(path: str) -> str | None:
     return match.group("prefix") if match is not None else None
 
 
-def parse_curriculum(value: object, where: str, depth: int) -> Curriculum:
+def parse_curriculum(
+    value: object, where: str, depth: int, *, levels: tuple[str, ...] = ()
+) -> Curriculum:
     """Return the declaration, refusing anything it does not state exactly.
 
     ⛔ **Each address is checked against this corpus's depth here**, where the
     levels are known, so no reader of the declaration meets an address the
-    manifest could not have filed.
+    manifest could not have filed. ⭐ Under `linked` a group's address is one
+    level short, because the linked entry supplies the last segment.
     """
     if not isinstance(value, dict):
         raise ManifestError(
             f"{where} 'curriculum' must be an object with 'record' and optionally "
-            f"'containers', got {describe(value)}"
+            f"'containers' and 'linked', got {describe(value)}"
         )
     _closed(value, CURRICULUM_KEYS, "curriculum", where)
     if "record" not in value:
         raise ManifestError(f"{where} 'curriculum' must name its 'record'")
     record = _record_of(value["record"], where)
-    containers = _containers_of(value.get("containers", []), where, depth)
-    return Curriculum(record=record, containers=containers)
+    linked = _linked_of(value, where, depth, levels)
+    containers = _containers_of(value.get("containers", []), where, depth - 1 if linked else depth)
+    if linked and any(each.prefix is not None for each in containers):
+        # ⛔ A prefix checks the units of the group it is declared on, and under
+        # `linked` those are filed one level further down, in several containers.
+        raise ManifestError(
+            f"{where} 'curriculum.linked' files each group's units into the containers "
+            f"its linked entries open, so a group declares no 'prefix'"
+        )
+    return Curriculum(record=record, containers=containers, linked=linked)
+
+
+def _linked_of(value: dict, where: str, depth: int, levels: tuple[str, ...]) -> str | None:
+    """Return the linked level's name, refusing one that is not the last of `levels`.
+
+    ⛔ Only the last level can be linked, a depth-1 corpus has no level above it
+    to hold the groups, and a linked level with no declared groups has nothing
+    to be linked beneath.
+    """
+    if "linked" not in value:
+        return None
+    linked = value["linked"]
+    if depth < 2 or not levels or linked != levels[-1]:
+        raise ManifestError(
+            f"{where} 'curriculum.linked' must name the last of 'levels', in a corpus of "
+            f"two levels or more, got {describe(linked)}"
+        )
+    if not value.get("containers"):
+        raise ManifestError(
+            f"{where} 'curriculum.linked' needs 'curriculum.containers': the record's "
+            f"groups one level up, under which each linked entry opens a container"
+        )
+    return linked
 
 
 def _record_of(value: object, where: str) -> str:
@@ -173,7 +228,12 @@ def _container_of(entry: object, where: str, depth: int) -> DeclaredContainer:
     try:
         address = parse_key(entry.get("address"), depth)
     except AddressError as exc:
-        raise ManifestError(f"{where} 'address': {exc}") from None
+        # ⭐ The form is named, because `container.json` writes an address as a
+        # list and this block writes it as the key a URL and a folder share.
+        raise ManifestError(
+            f"{where} 'address': {exc}. Write it as one key, {depth} segment(s) joined "
+            f"by '/', such as {'/'.join(['a', 'b', 'c'][:depth])!r}"
+        ) from None
     return DeclaredContainer(
         label=label, address=address, prefix=_prefix_of(entry.get("prefix"), where)
     )

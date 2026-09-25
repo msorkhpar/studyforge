@@ -85,6 +85,7 @@ from studyforge.corpus.manifest.document import (
     from_document,
     load,
     parse,
+    versions_needed,
 )
 from studyforge.corpus.manifest.edits import (
     EDIT_KINDS,
@@ -160,4 +161,5 @@ __all__ = [
     "parse_media",
     "parse_runtimes",
     "prefix_of",
+    "versions_needed",
 ]
