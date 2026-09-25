@@ -73,7 +73,7 @@ from studyforge.corpus.placement.names import (
     IMAGES_DIRNAME,
     PRACTICE_DIRNAME,
     STUDY_DIRNAME,
-    UNIT_MEDIA_DIRNAMES,
+    UNCOMMITTED_DIRNAMES,
     UNIT_SUFFIX,
     VIDEO_DIRNAME,
     contained_stem,
@@ -119,7 +119,10 @@ class SiblingProfile(Profile):
         )
 
     def media_ignore_lines(self) -> tuple[str, ...]:
-        """`study/audio/` and its siblings, one per kind, unanchored because the material is.
+        """`study/audio/`, the clips' directory, unanchored because the material is.
+
+        ⛔ **The clips and nothing else**, as under `tree`: `UNCOMMITTED_DIRNAMES`
+        says why each other kind is committed.
 
         ⭐ **This is the cheapest half of a profile's ignore answer (R3).** Under this profile the
         generated names are the unit's own stem, so a corpus cannot enumerate
@@ -139,7 +142,7 @@ class SiblingProfile(Profile):
         ⛔ **These lines have no home** (`ignore_home`), so they are only ever
         refused by `ignore_file`, never written.
         """
-        return tuple(f"{STUDY_DIRNAME}/{kind}/" for kind in UNIT_MEDIA_DIRNAMES)
+        return tuple(f"{STUDY_DIRNAME}/{kind}/" for kind in UNCOMMITTED_DIRNAMES)
 
     def ignore_home(self) -> None:
         """None: this profile's media is enclosed by many generated directories, not one.

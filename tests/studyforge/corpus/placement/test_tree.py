@@ -99,10 +99,11 @@ def test_the_media_globs_are_scoped_under_the_generated_root_by_where_they_live(
     assert TREE.ignore_home().parts == (GENERATED_ROOT, ".gitignore")
 
 
-def test_there_is_one_media_glob_per_media_kind():
-    from studyforge.corpus.placement import UNIT_MEDIA_DIRNAMES
+def test_the_only_media_glob_is_the_clips_directory():
+    # ⛔ `media.commit: never` keeps the narration clips out of git and nothing
+    # else: images, video and attachments are copies of files the archive commits,
+    # and a clone reading the committed pages needs them.
+    from studyforge.corpus.placement.names import UNCOMMITTED_DIRNAMES
 
-    lines = TREE.media_ignore_lines()
-    assert len(lines) == len(UNIT_MEDIA_DIRNAMES)
-    for kind in UNIT_MEDIA_DIRNAMES:
-        assert any(f"/{kind}/" in line for line in lines)
+    assert UNCOMMITTED_DIRNAMES == ("audio",)
+    assert TREE.media_ignore_lines() == ("**/audio/",)

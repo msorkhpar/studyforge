@@ -200,6 +200,13 @@ sit under the limits git hosting commonly imposes, about 5 GB for a repository
 and 100 MiB for a single file, so a corpus finds out at build time rather than
 when a push is refused.
 
+**`never` keeps the clips out of git, and nothing else.** The generated
+`.studyforge/.gitignore` then covers each unit's `audio/` directory. The copies
+of images, video and attachments a page shows stay committed, because they are
+copies of files your archive commits and a clone's pages reach for them.
+[Placement](placement.md) lists every media directory and whether it is
+committed.
+
 **A corpus that does not commit its clips publishes them as release volumes.**
 With `commit` set to `never`, `studyforge narrate <root> --pack <dir>` packs
 every clip the narration record locates into stored zip volumes of at most

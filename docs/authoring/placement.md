@@ -87,6 +87,21 @@ exactly one generated file, `index.html`.
 `studyforge plan` names it, because that is where a clip or an attachment would
 go; a build creates it only when it copies a file into it.
 
+**What each media directory holds, and whether it is committed:**
+
+| directory | what it holds | committed |
+|---|---|---|
+| `audio/` | the narration clips `studyforge narrate` synthesised | yes, unless `corpus.json` sets `media.commit` to `never`: then it is the one directory the generated ignore file covers, and the clips reach a clone as release volumes |
+| `images/` | copies of the images the archive holds for the unit | always |
+| `video/` | copies of the unit's video files and posters the archive holds | always |
+| `attachments/` | copies of the files the unit's page offers as downloads | always |
+| `practice/` | nothing yet: it is claimed, and no build writes into it | nothing to commit |
+
+**Only the clips can be left out.** Images, video and attachments are byte
+copies of files your archive already commits, so git stores each one once, and
+a clone reads committed pages that reach for them. Ignoring them would break
+every figure and download in a clone, and no release restores them.
+
 **Under `sibling` the media is one directory per kind, with the unit one level
 down.** Many units share one `study/`, so the kind is what the listing shows
 and the unit's own name discriminates inside it. **The cost is stated rather

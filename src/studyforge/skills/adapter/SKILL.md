@@ -142,6 +142,9 @@ capture that named its media and deliberately did not fetch it says so with
 python3 -m pytest tests/<package>
 ```
 
+⭐ `pytest` comes from the framework's install route, pinned; the library does not
+carry it.
+
 ⭐ **This is the highest-value step and the one most often skipped.** The suite
 fails, and the failure is the specification: it names what `read.containers`
 must return, what `read.documents` must return, and that the audit's source-side

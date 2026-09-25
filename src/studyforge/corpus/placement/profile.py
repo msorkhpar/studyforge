@@ -167,7 +167,10 @@ class Profile:
         raise NotImplementedError
 
     def media_ignore_lines(self) -> tuple[str, ...]:
-        """Return the lines covering the per-unit media directories this profile mints.
+        """Return the lines covering the per-unit clip directories this profile mints.
+
+        ⛔ Only `names.UNCOMMITTED_DIRNAMES`: a policy that does not commit media
+        keeps its narration clips out of git, and every other kind stays committed.
 
         ⛔ Answered by every subclass, like `unit` and `container`, and for the
         same reason: a profile that puts media somewhere new and inherited a
@@ -194,7 +197,7 @@ class Profile:
         corpus's `media` policy inverted, and the caller passes it rather than
         this method reading a manifest.
 
-        ⛔ **Only the corpus's OWN media is ever ignored here, and it is
+        ⛔ **Only the corpus's OWN clips are ever ignored here, and they are
         committed by default**, so the default answer is empty. Pages, the root
         index and the bundle are what a clone reads (§5). ⚠️ **The
         discovery cache is no longer among them** — see `ignore_file`.

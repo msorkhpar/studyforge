@@ -139,6 +139,24 @@ UNIT_MEDIA_DIRNAMES = (
     ATTACHMENTS_DIRNAME,
 )
 
+#: ⛔ **The per-unit directories `media.commit: never` keeps out of git, and it
+#: is ONE: the narration clips.** What each kind holds decides it:
+#:
+#: - `audio/` holds clips `studyforge narrate` synthesised. They are the one
+#:   kind the framework generates, the one a corpus outgrows git with, and the
+#:   one a release volume carries back to a clone (`narrate.release`).
+#: - `images/`, `video/` and `attachments/` hold byte copies of files the
+#:   archive keeps under its own `units/unit-NN/`, which the corpus commits. A
+#:   clone reads the committed pages, so ignoring these copies would leave every
+#:   figure broken and every download missing, and no release restores them.
+#:   Git stores identical bytes once, so committing a copy adds no pack weight.
+#: - `practice/` is claimed and never written by a build: a practice is part of
+#:   the unit's page. Nothing there needs a rule.
+#:
+#: ⚠️ `UNIT_MEDIA_DIRNAMES` stays the population `auto` weighs, because under
+#: `auto` every kind is committed.
+UNCOMMITTED_DIRNAMES = (AUDIO_DIRNAME,)
+
 
 def unit_stem(ordinal: int, title: str, label: str | None = None) -> str:
     """Return `<label>-<title-slug>` — the stem every artifact of one unit shares.
