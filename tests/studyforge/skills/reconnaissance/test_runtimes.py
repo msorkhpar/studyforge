@@ -39,6 +39,12 @@ def corpus(root, extra):
 
 
 PYTHON = {"pyproject.toml": "[project]\n", "code/a.py": "A = 1\n", "tests/test_a.py": "pass\n"}
+#: A graded Maven build: its sources, and a test that is a grader.
+JAVA_GRADED = {
+    "pom.xml": "<project/>\n",
+    "src/main/java/A.java": "class A {}\n",
+    "src/test/java/ATest.java": "class ATest {}\n",
+}
 KOTLIN = {
     "build.gradle.kts": "\n",
     "src/main/kotlin/A.kt": "class A\n",
@@ -128,12 +134,42 @@ SCAFFOLD = {"tests/test_non_destructive.py": "pass\n", "ingest/read.py": "pass\n
 def test_generated_python_the_record_names_is_not_evidence(tmp_path):
     root = sources.onboarded(sources.runnable(tmp_path / "c"), SCAFFOLD)
     assert drafted(root)[0]["runtimes"] == ["java", "maven"]
+    assert propose(assess(take(root))).set_aside == {}
 
 
-def test_the_same_files_unrecorded_ARE_evidence_so_the_clause_above_measures_something(
+def test_the_same_files_unrecorded_ARE_read_so_the_clause_above_measures_something(
     tmp_path,
 ):
+    # ⭐ Unrecorded, they are the corpus's own Python under its Maven build: read,
+    # and set aside by name because the build holding them builds no Python.
     root = sources.write(sources.runnable(tmp_path / "c"), SCAFFOLD)
+    assert drafted(root)[0]["runtimes"] == ["java", "maven"]
+    assert sorted(propose(assess(take(root))).set_aside["python"]) == sorted(SCAFFOLD)
+
+
+# --------------------------------------------------------------------------
+# ⛔ a source file a build holds evidences only what that build builds
+# --------------------------------------------------------------------------
+
+
+def test_a_python_file_under_a_maven_build_is_set_aside_and_named(tmp_path):
+    notes = {"docs/notes/reader.py": "pass\n", "scripts/check.sh": "true\n"}
+    root = corpus(tmp_path / "c", {**JAVA_GRADED, **notes})
+    manifest, asked = drafted(root)
+
+    assert manifest["runtimes"] == ["java", "maven", "shell"]
+    [question] = asked_about_runtimes(asked)
+    assert "set aside" in question.why and "docs/notes/reader.py" in question.why
+
+
+def test_a_python_file_no_build_holds_is_still_evidence(tmp_path):
+    root = corpus(tmp_path / "c", {"code/a.py": "A = 1\n", "tests/test_a.py": "pass\n"})
+    assert drafted(root)[0]["runtimes"] == ["python"]
+
+
+def test_a_python_file_under_its_own_build_inside_a_maven_repository_is_evidence(tmp_path):
+    tools = {"tools/pyproject.toml": "[project]\n", "tools/run.py": "pass\n"}
+    root = corpus(tmp_path / "c", {**JAVA_GRADED, **tools})
     assert drafted(root)[0]["runtimes"] == ["java", "maven", "python"]
 
 

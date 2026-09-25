@@ -161,7 +161,11 @@ whether the corpus finishes at the reading floor or enters the execution track.
 
 ⭐ **A graded corpus's draft declares the `runtimes` its material evidences**
 — a build file or a source suffix, each from a closed map, and `java`
-beside any name that runs on a JVM. ⛔ **Never a runtime nothing evidences**,
+beside any name that runs on a JVM. ⚠️ **A source file inside a build's tree
+evidences only a language that build builds**: a `.py` among the notes of a
+Maven repository proposes no `python`, and the question names it as set aside.
+A file no build holds evidences what its suffix says, and a build says nothing
+about a shell script or a database file. ⛔ **Never a runtime nothing evidences**,
 never the key for prose, and never beside `exercises: false`: evidence there is
 one question instead. A draft carrying the key declares `corpus_api` 4, the
 version the reader requires for it, and every drafted runtime is asked about.

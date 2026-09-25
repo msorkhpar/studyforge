@@ -725,7 +725,7 @@ What it reads, and the choices in it:
 
 ### Reconnaissance drafts runtimes only from what the material evidences
 
-**Decision.** `studyforge.skills.reconnaissance.runtimes` drafts the `runtimes` key only for a graded corpus, from build files and source suffixes matched against closed maps (`BUILD_EVIDENCE`, `SOURCE_EVIDENCE`). It adds `java` beside any runtime in the manifest's `REQUIRES_JAVA`. A draft carrying the key declares `corpus_api` 4 so it reads back cleanly, and every drafted runtime is put to the person as a question; evidence in a corpus with no grader drafts no key and is asked about.
+**Decision.** `studyforge.skills.reconnaissance.runtimes` drafts the `runtimes` key only for a graded corpus, from build files and source suffixes matched against closed maps (`BUILD_EVIDENCE`, `SOURCE_EVIDENCE`). It adds `java` beside any runtime in the manifest's `REQUIRES_JAVA`. A source file under the nearest directory holding a build file it reads evidences a language only when that build builds it (`BUILDS`), so a Python file among a Maven repository's notes proposes no `python`; such a file is named in the runtimes question as set aside, and a build judges no shell script or database file. A draft carrying the key declares `corpus_api` 4 so it reads back cleanly, and every drafted runtime is put to the person as a question; evidence in a corpus with no grader drafts no key and is asked about.
 
 **Why.** A runtime nothing evidences would make the framework build and start containers a corpus never needs.
 

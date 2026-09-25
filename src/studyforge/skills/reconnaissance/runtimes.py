@@ -23,6 +23,19 @@ evidences nothing, and a build this skill recognises but no runtime in the
 vocabulary names is **asked about by name** rather than mapped to a near miss.
 ⭐ The cost of the closed map is one question, and the question is how it grows.
 
+## ⛔ A source file a build holds evidences only what that build builds
+
+⚠️ **Measured, and the reason this rule exists.** A course built by Maven kept
+a Python file among its conversion notes and a shell script among the author's
+tools, and the draft proposed `python` and `shell` beside `java` and `maven`,
+though no grader runs either. ⭐ So a source file inside a build's tree, under
+the nearest directory holding a build file this skill reads, evidences a
+runtime only when that build builds it (`BUILDS`): a `.java` under a `pom.xml`
+does, a `.py` under a `pom.xml` does not. ⚠️ Only a language some build builds
+is judged so; a build says nothing about a database file or a shell script. ⛔ **Set aside, never dropped**: the
+question beside the draft names every file set aside and why. A file no build
+holds, in a corpus of loose scripts, evidences what it always did.
+
 ## ⭐ Only a graded corpus declares any (§7)
 
 The manifest reader refuses `runtimes` beside `exercises: false`: a corpus that sets
@@ -90,6 +103,20 @@ SOURCE_EVIDENCE: dict[str, tuple[str, ...]] = {
 }
 
 
+#: What each runtime a build file evidences builds. ⛔ Closed, as the maps above
+#: are: a source file under a build that builds none of its runtimes is set aside.
+BUILDS: dict[str, tuple[str, ...]] = {
+    "maven": ("java", "kotlin"),
+    "gradle": ("java", "kotlin"),
+    "python": ("python",),
+    "node": ("node",),
+}
+
+
+#: Every runtime some build builds: the languages `BUILDS` judges.
+BUILT = frozenset(name for names in BUILDS.values() for name in names)
+
+
 @dataclass
 class Runtimes:
     """What the material evidences, and what the draft declares from it."""
@@ -100,6 +127,8 @@ class Runtimes:
     unnamed_builds: list[str] = field(default_factory=list)
     #: Whether a grader ships with the material, so the key may be declared.
     graded: bool = False
+    #: Source files a build holds that it does not build, and what each would evidence.
+    set_aside: dict[str, list[str]] = field(default_factory=dict)
 
     @property
     def names(self) -> tuple[str, ...]:
@@ -117,6 +146,11 @@ class Runtimes:
         unnamed = (
             f"; recognised but named by no runtime in {list(RUNTIMES)}: {self.unnamed_builds[:3]}"
             if self.unnamed_builds
+            else ""
+        ) + (
+            "; set aside, as the build that holds them builds no such source — "
+            + "; ".join(f"{name}: {where}" for name, where in sorted(self.set_aside.items()))
+            if self.set_aside
             else ""
         )
         if self.names:
@@ -151,15 +185,35 @@ class Runtimes:
 def propose(capability: Capability) -> Runtimes:
     """Return the runtimes `capability`'s files evidence, and whether they may be declared."""
     found = Runtimes(graded=capability.graded)
+    builds: dict[PurePosixPath, set[str]] = {}
     for where in capability.build_files:
         name = PurePosixPath(where).name
         if name in BUILD_EVIDENCE:
             _cite(found, BUILD_EVIDENCE[name], where)
+            built = builds.setdefault(PurePosixPath(where).parent, set())
+            built.update(b for r in BUILD_EVIDENCE[name] for b in BUILDS.get(r, ()))
         else:
             found.unnamed_builds.append(where)
     for where in capability.source_files + capability.test_files:
-        _cite(found, SOURCE_EVIDENCE.get(PurePosixPath(where).suffix.lower(), ()), where)
+        names = SOURCE_EVIDENCE.get(PurePosixPath(where).suffix.lower(), ())
+        built = _holding(PurePosixPath(where), builds)
+        # ⭐ Only a language some build builds is judged by the build holding it:
+        # a build says nothing about a database file or a shell script.
+        judged = [name for name in names if name in BUILT]
+        if built is None or not judged or any(name in built for name in judged):
+            _cite(found, names, where)
+        else:
+            for name in names:
+                found.set_aside.setdefault(name, []).append(where)
     return found
+
+
+def _holding(path: PurePosixPath, builds: dict[PurePosixPath, set[str]]) -> set[str] | None:
+    """Return what the nearest build above `path` builds, or `None` when no build holds it."""
+    for directory in path.parents:
+        if directory in builds:
+            return builds[directory]
+    return None
 
 
 def _cite(found: Runtimes, names: tuple[str, ...], where: str) -> None:
