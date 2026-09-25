@@ -10,8 +10,10 @@ writes the answer into the exercise record's `concepts`:
 
     practised(root, places)          # ('a negative index counts back', …) or None
 
-**Depends on.** This package's `corpus` for the report's name and the versions
-it is read at, and `loop.quiz_last` for the drafting order; `studyforge.version`.
+**Depends on.** `archive.scrub` for the personal-data gate every decoded
+document passes (R7), this package's `corpus` for the report's name and the
+versions it is read at, and `loop.quiz_last` for the drafting order;
+`studyforge.version`.
 Standard library otherwise. ⛔ No write.
 
 ## ⭐ THE REPORT NAMES WHAT SHIPPED, AND THE PLAN NAMES WHAT EACH CHECKS
@@ -29,6 +31,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from studyforge.archive.scrub import assert_clean
 from studyforge.exercise.bundle import Places
 from studyforge.skills.exercises.corpus import COVERAGE_FILENAME, COVERAGE_READ
 from studyforge.skills.exercises.drafts import AuthoringError
@@ -51,6 +54,7 @@ def practised(root: Path | str, places: Places) -> tuple[str, ...] | None:
         return None
     try:
         report = json.loads(path.read_text(encoding="utf-8"))
+        assert_clean(report, where)
         plan = report["plan"]
         check(
             "coverage_api",

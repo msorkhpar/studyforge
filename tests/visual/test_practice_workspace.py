@@ -262,7 +262,7 @@ def test_close_returns_the_reader_to_the_card_with_no_editor_left(
     assert open_page.focused()["label"] == "#s-practice-shout", "focus did not return to the card"
 
 
-# --- narration's stand-in for a passage the page is not showing (W497/2) -----
+# --- narration's stand-in for a passage the page is not showing -----
 
 #: Where `window.studyforge.standIn` puts a passage, by what it is: its own id,
 #: its tag, and the card it names. ⭐ The real part, asked in the real page.

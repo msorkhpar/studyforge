@@ -13,6 +13,7 @@ import json
 import pytest
 
 from studyforge.address import Address
+from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.exercise.bundle import Places
 from studyforge.skills.exercises import AuthoringError, practised
 from studyforge.skills.exercises.corpus import COVERAGE_API, COVERAGE_FILENAME
@@ -89,3 +90,17 @@ def test_a_report_that_will_not_read_is_refused_naming_the_unit(tmp_path, over):
     report(tmp_path, **over)
     with pytest.raises(AuthoringError, match="coverage report of 'exercises/demo/python/unit-01'"):
         practised(tmp_path, places(1))
+
+
+def test_a_report_carrying_personal_data_is_refused_by_the_gate_without_it(tmp_path):
+    # ⛔ R7: every decoded document passes the gate, and what a card would say
+    # is read straight off this one.
+    leaky = "voicebox" + ".local"
+    plan = {
+        **PLAN,
+        "aspects": [{**PLAN["aspects"][0], "says": f"ask {leaky}"}, *PLAN["aspects"][1:]],
+    }
+    report(tmp_path, plan=plan)
+    with pytest.raises(PersonalDataLeak) as refused:
+        practised(tmp_path, places(1))
+    assert leaky not in str(refused.value)
