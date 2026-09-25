@@ -85,7 +85,8 @@ writes the site into `site/`. `python3 -m studyforge.look` opens the root
 index, a container page and a unit page in a headless Chromium-family browser
 already on your machine (Chrome, Chromium or `chrome-headless-shell`), and
 writes a screenshot and the rendered DOM of each into `shots/`, which must be
-outside the site; `--all` takes every page, and `--browser` names a browser
+outside the site; `--all` takes every page the site links, never a stray page
+in scratch beside it, and `--browser` names a browser
 your `PATH` does not reach. `serve` prints a loopback address to open in a
 browser (port 8765 unless you pass `--port`). Stop it with Ctrl-C.
 

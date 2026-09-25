@@ -863,11 +863,19 @@ What it reads, and the choices in it:
 
 ### The source's outline number is left off what a reader is served
 
-**Decision.** `studyforge.unit.outline.without_outline_number` removes a leading outline number from a title or heading, and `studyforge.unit.outline.headings_without_outline_numbers` from every heading block. The served unit builder (`studyforge.unit.builder.parts`) applies them to what a page and its narration are made from, and `studyforge.contents.tree` and `studyforge.generate.containers` to every title the contents and a container page list. `studyforge.unit.outline.listed_numbering` shows a unit whose `label` is an outline number by its place in its container. The archive and the container maps keep the number, the label keeps ordering the unit, and a page's file name is still built from the recorded label and title, so no page moves.
+**Decision.** `studyforge.unit.outline.without_outline_number` removes a leading outline number from a title or heading whatever word follows it, and keeps a two-part number only before a word in `studyforge.unit.outline.QUANTITY_WORDS`. `studyforge.unit.outline.headings_without_outline_numbers` applies it to every heading block, takes an unmistakable number off the front of a list item (`studyforge.unit.outline.without_item_number`), and serves a paragraph that is only an outline as a list (`studyforge.unit.outline.outline_entries`). The served unit builder (`studyforge.unit.builder.parts`) applies them to what a page and its narration are made from, and `studyforge.contents.tree` and `studyforge.generate.containers` to every title the contents and a container page list. `studyforge.unit.outline.listed_numbering` shows a unit whose `label` is an outline number by its place in its container. The archive and the container maps keep the number, the label keeps ordering the unit, and a page's file name is still built from the recorded label and title, so no page moves.
 
 **Why.** The site lists and orders every unit itself, so the source's own numbering beside it is a second numbering on the page and four spoken numbers before a heading. It is one rule for every corpus rather than a manifest setting, because no reader is served by the duplicate, and the rule is narrow enough to keep a number that is part of the words. A file name is an address rather than something a reader reads, and renaming every page would move its links.
 
 **Serves.** `R1`
+
+### A mention of another unit is served as that unit
+
+**Decision.** `studyforge.generate.declarations` gives every unit a `studyforge.unit.mentions.Mentions`: the corpus's units by recorded label and by recorded origin, and the unit's own origin and page. `build_unit(mentions=...)` serves a dotted number of three parts or more that is exactly a label as that unit's title, a link to a unit's source file as a link to its page, and a link label that is, or opens with, its target's number as the title. Every consumer of a served unit passes the same value, so the page and its narration agree.
+
+**Why.** Once the headings lose the source's numbers, `see 3.2.4` names nothing a reader can find, and a link to `README_3.2.4.md` points at no file of the built site. Only what names a unit of this corpus is touched, so a JLS section, a version or a quantity keeps every character. A two-part number in a sentence is far likelier a version than a reference, so it is replaced only inside a link's label.
+
+**Serves.** `R1`, `R8`
 
 ### A list item holds its code
 
@@ -1293,7 +1301,7 @@ What it reads, and the choices in it:
 
 ### A reader looks at built pages with a browser the machine already has
 
-**Decision.** `python3 -m studyforge.look <site> --out <dir>` (`studyforge.look`) opens the root index, one container page and one unit page of a built site (`--all` for every page, `--page` for named ones) over `file://` in a Chromium-family browser found on `PATH` or named by `--browser`, and writes a screenshot and the rendered DOM of each into a directory outside the site, which it refuses when it is inside. The launch lives in `studyforge.execute.browser`, because spec §8.3 keeps every process start in `execute`; it drives the browser only through its own screenshot and DOM-dump flags, with background networking off and a throwaway profile removed afterwards, keeps the browser's sandbox on except as root or where a launch ends by a signal, when it tries once more without it and says so on the page's line, and never echoes the browser's output. With no browser it names what it searched and exits `2`. The build-and-serve skill names it, and the README's first run uses it.
+**Decision.** `python3 -m studyforge.look <site> --out <dir>` (`studyforge.look`) opens the root index, one container page and one unit page of a built site (`--all` for every page a link from the root index reaches, or that links only such pages, `--page` for named ones) over `file://` in a Chromium-family browser found on `PATH` or named by `--browser`, and writes a screenshot and the rendered DOM of each into a directory outside the site, which it refuses when it is inside. The launch lives in `studyforge.execute.browser`, because spec §8.3 keeps every process start in `execute`; it drives the browser only through its own screenshot and DOM-dump flags, with background networking off and a throwaway profile removed afterwards, keeps the browser's sandbox on except as root or where a launch ends by a signal, when it tries once more without it and says so on the page's line, and never echoes the browser's output. With no browser it names what it searched and exits `2`. The build-and-serve skill names it, and the README's first run uses it.
 
 **Why.** A stranger or an agent checking a build without a screen needs one command to see what a reader sees, and a command that installs a driver or writes into the corpus would cost more than the look is worth.
 

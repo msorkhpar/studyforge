@@ -30,6 +30,22 @@ def test_every_page_is_the_root_index_then_discoverys_own_population(tmp_path):
     assert len(found) == 4, "the flat fixture builds one container page and three unit pages"
 
 
+@pytest.mark.parametrize(
+    "stray",
+    [".scratch/r10/chrome/plant.unit.html", ".scratch/r16/tree.section.html", "stray.unit.html"],
+)
+def test_every_page_is_only_the_pages_the_root_index_reaches(tmp_path, stray):
+    # ⛔ A corpus root also holds ignored scratch and pages no link reaches.
+    site = built(tmp_path)
+    kind = "." + ".".join(stray.rsplit(".", 2)[-2:])
+    copied = next(page for page in site_pages(site) if page.name.endswith(kind))
+    (site / stray).parent.mkdir(parents=True, exist_ok=True)
+    (site / stray).write_bytes((site / copied).read_bytes())
+    assert PurePosixPath(stray) not in choose(site, (), every=True)
+    assert PurePosixPath(stray) not in choose(site, (), every=False)
+    assert len(choose(site, (), every=True)) == 5
+
+
 def test_a_named_page_is_looked_at_and_nothing_else(tmp_path):
     site = built(tmp_path)
     unit = site_pages(site)[-1]

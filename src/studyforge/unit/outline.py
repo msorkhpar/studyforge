@@ -2,7 +2,9 @@ r"""The source's own outline number, left off every title and heading a reader i
 
 **What it does.** Removes a leading outline number — `5.1.1.1 `, `3.2.1. `,
 `10.7.2 — `, `1. ` — from a title or a heading's text, and from every heading
-block in a run of blocks, and leaves every other word alone.
+block in a run of blocks; takes an unmistakable one off the front of a list
+item; serves a paragraph that is only an outline as a list of its entries; and
+leaves every other word alone.
 
 **How you use it.** `without_outline_number(text)` for one string;
 `headings_without_outline_numbers(blocks)` for a section's blocks, and
@@ -37,8 +39,15 @@ is either dotted (`3.2`, `3.2.1`, `3.2.1.`) or one number closed by a full stop
 the words, with an optional dash or colon between. ⭐ So `Java 21 features`,
 `ISO 8583 messages`, `Top 10 pitfalls`, `10 tips`, `2024 in review` and a
 bare `3.2.1` with nothing after it keep every character. ⚠️ A two-part number
-with no closing stop, followed by a lower-case word, reads as a quantity
-(`1.5 million requests`, `3.5 seconds`) and is kept too.
+with no closing stop, followed by a word that counts or measures, reads as a
+quantity (`1.5 million requests`, `3.5 seconds`) and is kept too.
+
+⛔ **What the next word LOOKS like decides nothing.** `8.1 iOS builds`,
+`4.2 var`, `2.3 java.util.function`, `8.1 "quoted"` and `8.1 (optional)` all
+lose their number: a heading's first word is often an identifier, and an
+identifier starts however its language spells it. Only the closed list of
+counting and measuring words below (`QUANTITY_WORDS`) keeps a two-part number,
+because that is what a decimal quantity is followed by.
 """
 
 from __future__ import annotations
@@ -51,11 +60,47 @@ from studyforge.archive.blocks import CONTAINER_TYPES
 #: ⛔ Dotted, or a single number closed by a stop; each part at most three digits.
 OUTLINE_NUMBER = re.compile(
     r"^(?P<number>\d{1,3}(?:\.\d{1,3})+(?P<stop>\.)?|\d{1,3}\.(?P<single>))"
-    r"(?:[ \t]*[—–:]|[ \t]+-)?[ \t]+(?=(?P<next>\S))"
+    r"(?:[ \t]*[—–:]|[ \t]+-)?[ \t]+(?=\S)"
 )
 
 #: How many dotted parts make a number that could be a quantity when unstopped.
 QUANTITY_PARTS = 2
+
+#: ⛔ The words after which an unstopped two-part number is a quantity and is kept.
+#: A closed list, matched exactly: any other next word, whatever its case, loses the number.
+QUANTITY_WORDS = frozenset(
+    {
+        "thousand",
+        "million",
+        "billion",
+        "trillion",
+        "percent",
+        "times",
+        "x",
+        "ms",
+        "milliseconds",
+        "seconds",
+        "second",
+        "minutes",
+        "minute",
+        "hours",
+        "hour",
+        "days",
+        "day",
+        "weeks",
+        "months",
+        "years",
+        "bytes",
+        "bits",
+        "kb",
+        "mb",
+        "gb",
+        "tb",
+    }
+)
+
+#: The next word, as `QUANTITY_WORDS` spells it: its leading run of letters.
+_WORD = re.compile(r"[A-Za-z]+")
 
 
 def without_outline_number(text: str) -> str:
@@ -71,9 +116,15 @@ def without_outline_number(text: str) -> str:
         return text
     number = match.group("number")
     unstopped = match.group("single") is None and match.group("stop") is None
-    if unstopped and number.count(".") + 1 == QUANTITY_PARTS and match.group("next").islower():
+    if unstopped and number.count(".") + 1 == QUANTITY_PARTS and _counts(text[match.end() :]):
         return text
     return text[match.end() :]
+
+
+def _counts(words: str) -> bool:
+    """Say whether `words` opens with a word that counts or measures."""
+    word = _WORD.match(words)
+    return word is not None and word.group() in QUANTITY_WORDS
 
 
 #: A label that is an outline number and nothing else: dotted, or closed by a stop.
@@ -96,7 +147,7 @@ def listed_numbering(numbering: str, ordinal: int) -> str:
 
 
 def headings_without_outline_numbers(blocks: object) -> object:
-    """Return `blocks` with every heading's outline number removed, at any depth.
+    """Return `blocks` with every heading's and list item's outline number removed, at any depth.
 
     ⭐ **A copy, never an edit**: the blocks are the archive's, and the served
     document is built beside them. A block that is not a heading and holds no
@@ -107,11 +158,81 @@ def headings_without_outline_numbers(blocks: object) -> object:
     return [_block(block) for block in blocks]
 
 
+#: A list item's opening outline number: unmistakably one, so at least three
+#: dotted parts or two closed by a stop, after an optional emphasis or link opener.
+ITEM_NUMBER = re.compile(
+    r"^(?P<opener>\*\*|__|\*|_|\[)?"
+    r"(?:\d{1,3}(?:\.\d{1,3}){2,}\.?|\d{1,3}\.\d{1,3}\.)[ \t]+(?=\S)"
+)
+
+
+def without_item_number(text: object) -> object:
+    """Return a list item's text with its opening outline number removed, or as it came.
+
+    ⭐ **An item is prose, so the shape is narrower than a heading's.** A
+    source's sub-lesson list (`**8.3.2.1. Extracting patterns** -- …`,
+    `[7.3.2.1. LocalDate](…)`) opens each item with the number of a heading it
+    stands for, and a reader is served neither. ⛔ Only a number no sentence
+    starts with is taken: three dotted parts or more, or two closed by a stop.
+    `1.5 million`, `2.0 is out` and `Java 21` keep every character.
+    """
+    if not isinstance(text, str):
+        return text
+    match = ITEM_NUMBER.match(text)
+    if match is None:
+        return text
+    return (match.group("opener") or "") + text[match.end() :]
+
+
+#: One entry of an outline written as a paragraph: a stopped dotted number, then words.
+_ENTRY = re.compile(r"(?:^|[ \t\n]+)(\d{1,3}(?:\.\d{1,3})+)\.[ \t]+(?=\S)")
+
+
+def outline_entries(text: object) -> list[str]:
+    """Return the entries of a paragraph that is only an outline, or `[]` for any other.
+
+    ⭐ **A source's outline, written as lines of a paragraph** (`7.2.1. Batch
+    processing` / `7.2.2. Clearing files` / …) reads, once its lines are joined,
+    as one run of numbers and words. It is served as a list of its entries, each
+    without its number. ⛔ Only when the paragraph OPENS with an entry, holds two
+    or more, and every number is a sibling of the first (`7.2.1.`, `7.2.2.`):
+    a sentence that mentions `3.2.1.` somewhere is never one.
+    """
+    if not isinstance(text, str):
+        return []
+    parts = _ENTRY.split(text)
+    numbers, words = parts[1::2], parts[2::2]
+    if parts[0] or len(numbers) < 2 or not all(word.strip() for word in words):
+        return []
+    parent = numbers[0].rsplit(".", 1)[0]
+    if any(number.rsplit(".", 1)[0] != parent for number in numbers):
+        return []
+    return [word.strip() for word in words]
+
+
 def _block(block: object) -> object:
     if not isinstance(block, dict):
         return block
     if block.get("type") == "heading":
         return {**block, "text": without_outline_number(block.get("text"))}
+    if block.get("type") == "list":
+        return {**block, "items": _items(block.get("items"))}
+    if block.get("type") == "para":
+        entries = outline_entries(block.get("text"))
+        if entries:
+            return {"type": "list", "ordered": False, "items": entries}
     if block.get("type") in CONTAINER_TYPES:
         return {**block, "blocks": headings_without_outline_numbers(block.get("blocks"))}
     return block
+
+
+def _items(items: object) -> object:
+    """Every item's opening number removed: a string item, or each text part of one."""
+    if not isinstance(items, list):
+        return items
+    return [
+        [without_item_number(part) if isinstance(part, str) else _block(part) for part in item]
+        if isinstance(item, list)
+        else without_item_number(item)
+        for item in items
+    ]

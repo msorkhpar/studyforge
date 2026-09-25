@@ -1944,8 +1944,18 @@ These are proven surfaces, generalised in their addressing and otherwise kept.
   itself. It is a rule the framework applies to every corpus, not a manifest
   setting. ⛔ A number that is part of the words is kept: the rule takes only a
   leading dotted number or a leading number closed by a stop, each part at most
-  three digits, followed by a space, and it keeps a two-part number with no stop
-  when a lower-case word follows it (`1.5 million`). ⭐ The archive and the
+  three digits, followed by a space, whatever the next word looks like
+  (`8.1 jPOS`, `2.3.1 var`, `4.2.4 java.util`). It keeps a two-part number with
+  no stop only when a word that counts or measures follows it (`1.5 million`,
+  `3.5 seconds`). A list item loses an opening number of three parts or more, or
+  of two closed by a stop, and a paragraph that is only an outline
+  (`7.2.1. Batch processing 7.2.2. Clearing files`) is served as a list of its
+  entries. ⭐ **A mention of another unit is served as that unit.** A dotted
+  number of three parts or more that is exactly a unit's recorded `label`
+  (`see 3.2.4`) is shown and narrated as that unit's title, and a link to the
+  source file a unit was read from (`README_3.2.4.md`) links the unit's page,
+  its label shown as the title. A number that names no unit of the corpus is
+  kept. ⭐ The archive and the
   container maps keep the number, as recorded: a unit's `label` keeps it for
   identity and order, and a page's file name is still built from the recorded
   label and title, so no page moves. A listing shows a unit whose label is an

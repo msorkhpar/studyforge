@@ -8,7 +8,7 @@ and says whether the browser rendered it.
 **How you use it.**
 
     python3 -m studyforge.look <site> --out <directory>            index, a container, a unit
-    python3 -m studyforge.look <site> --out <directory> --all      every page
+    python3 -m studyforge.look <site> --out <directory> --all      every page the index reaches
     python3 -m studyforge.look <site> --out <directory> --page index.html --page <page>
     python3 -m studyforge.look <site> --out <directory> --browser <path-to-chrome>
 
@@ -101,6 +101,10 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("site", help="the directory `studyforge build --out` wrote")
     parser.add_argument("--out", required=True, help="an existing directory outside the site")
     parser.add_argument("--page", action="append", help="a page, relative to the site; repeat")
-    parser.add_argument("--all", action="store_true", help="every page, not one of each kind")
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="every page a link from the root index reaches, not one of each kind",
+    )
     parser.add_argument("--browser", help="a Chromium-family browser to run, by path or name")
     return parser

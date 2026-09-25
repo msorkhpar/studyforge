@@ -102,7 +102,11 @@ def check_narration_current(walk: Walk) -> Iterator[Finding | Unchecked]:
     for source in corpus.units:
         at = _where(source.directory, walk.root, source.key)
         try:
-            document = build_unit(source.directory, declared_practices=source.declared_practices)
+            document = build_unit(
+                source.directory,
+                declared_practices=source.declared_practices,
+                mentions=source.mentions,
+            )
         except (*RAISES, ContentError, ArchiveError):
             # ⛔ A unit that will not build is another check's finding, not a clean one.
             yield Unchecked(RULE_NARRATION_STALE, at, "the unit did not build; no clip was judged")

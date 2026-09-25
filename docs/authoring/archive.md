@@ -108,6 +108,10 @@ hears, on every corpus. A number that is part of the words (`Java 21 features`,
 matched against the heading exactly as the file writes it. A unit's `label` may
 be its outline number (`4.2.4`): it keeps the unit's identity and order and names
 its page file, and a listing shows the unit's place in its container instead.
+Leave a mention of another unit as the source writes it too, a number such as
+`see 3.2.4` or a link to the file another unit was read from: when the number is
+a unit's `label`, or the link names the file in a unit's `origin`, the page and
+its narration say that unit's title and link its page.
 
 ---
 

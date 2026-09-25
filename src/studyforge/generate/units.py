@@ -92,7 +92,11 @@ def unit_bodies(corpus: Corpus) -> Iterator[tuple[PurePosixPath, bytes]]:
     above = page_paths(corpus)
     for source in corpus.units:
         at = unit_location(corpus, source)
-        document = build_unit(source.directory, declared_practices=source.declared_practices)
+        document = build_unit(
+            source.directory,
+            declared_practices=source.declared_practices,
+            mentions=source.mentions,
+        )
         placement = Placement(corpus=corpus.manifest.source, unit=at, shared=shared)
         body = render(
             document,

@@ -26,6 +26,18 @@ NUMBERED = [
     ("1. Card Issuance and Activation", "Card Issuance and Activation"),
     ("15. [Troubleshooting](src/15.md)", "[Troubleshooting](src/15.md)"),
     ("4.4: Streams", "Streams"),
+    # ⛔ Whatever the next word looks like: lower case, code, punctuation, a quote.
+    ("8.1 jPOS Logging Framework", "jPOS Logging Framework"),
+    ("2.3 var", "var"),
+    ("2.3.1 var", "var"),
+    ("4.2 java.util.function", "java.util.function"),
+    ("4.2.4 java.util.function interfaces", "java.util.function interfaces"),
+    ("7.1 record patterns", "record patterns"),
+    ("3.4 `switch` expressions", "`switch` expressions"),
+    ("5.2 (optional) Streams", "(optional) Streams"),
+    ('6.1 "Hello, world"', '"Hello, world"'),
+    ("9.3 @Override", "@Override"),
+    ("2.5 millionaire's problem", "millionaire's problem"),
 ]
 
 #: ⛔ A number that is part of the words, kept to the character.
@@ -39,6 +51,9 @@ KEPT = [
     "3.2.1",
     "1.5 million requests",
     "3.5 seconds of latency",
+    "2.5 times faster",
+    "1.5 x the heap",
+    "4.5 ms per call",
     "1234.5 Not an outline",
     "Card issuance",
     "",
@@ -130,3 +145,62 @@ def test_the_narration_is_made_from_the_heading_without_its_number():
 def test_a_listing_shows_a_units_place_and_never_an_outline_label(label, ordinal, listed):
     # ⭐ The label keeps the number for order and the file name; the listing does not show it.
     assert listed_numbering(label, ordinal) == listed
+
+
+@pytest.mark.parametrize(
+    ("written", "served"),
+    [
+        (
+            "**8.3.2.1. Extracting patterns** -- into utilities",
+            "**Extracting patterns** -- into utilities",
+        ),
+        ("[7.3.2.1. LocalDate](README_7.3.2.1.md)", "[LocalDate](README_7.3.2.1.md)"),
+        ("7.3.2 Overview", "Overview"),
+        ("2.1. Setup", "Setup"),
+    ],
+)
+def test_a_list_items_opening_outline_number_is_not_served(written, served):
+    blocks = [{"type": "list", "ordered": False, "items": [written, [written, "after"]]}]
+    assert headings_without_outline_numbers(blocks) == [
+        {"type": "list", "ordered": False, "items": [served, [served, "after"]]}
+    ]
+
+
+@pytest.mark.parametrize(
+    "written",
+    [
+        "1.5 million requests",
+        "100.0 and 100.00 are the same amount",
+        "2.0 is out",
+        "Java 21",
+        "1. first",
+    ],
+)
+def test_a_list_item_that_opens_with_a_number_of_its_words_is_kept(written):
+    blocks = [{"type": "list", "ordered": True, "items": [written]}]
+    assert headings_without_outline_numbers(blocks) == blocks
+
+
+def test_a_paragraph_that_is_only_an_outline_is_served_as_a_list_of_its_entries():
+    written = "7.2.1. Batch processing 7.2.2. Clearing files 7.2.3. Settlement between acquirers"
+    assert headings_without_outline_numbers([{"type": "para", "text": written}]) == [
+        {
+            "type": "list",
+            "ordered": False,
+            "items": ["Batch processing", "Clearing files", "Settlement between acquirers"],
+        }
+    ]
+
+
+@pytest.mark.parametrize(
+    "written",
+    [
+        "7.2.1. Batch processing",
+        "Read 7.2.1. Batch processing 7.2.2. Clearing files",
+        "7.2.1. Batch processing 7.3.1. Chargebacks",
+        "1. Compiler reordering: the JMM allows 2. more",
+    ],
+)
+def test_any_other_paragraph_keeps_every_character(written):
+    blocks = [{"type": "para", "text": written}]
+    assert headings_without_outline_numbers(blocks) == blocks

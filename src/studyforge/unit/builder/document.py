@@ -65,6 +65,7 @@ from studyforge.unit.builder import derived as derived_shape
 from studyforge.unit.builder.material import Material
 from studyforge.unit.content import Overlay
 from studyforge.unit.errors import ContentError, describe
+from studyforge.unit.mentions import Mentions
 from studyforge.unit.outline import without_outline_number
 
 #: 2 — the served document's shape. ⛔ Registered in the spec's R9 table as
@@ -111,8 +112,13 @@ def build(
     overlay: Overlay | None = None,
     declared_practices: int | None = None,
     title: str | None = None,
+    mentions: Mentions | None = None,
 ) -> dict:
-    """Assemble one served unit document from what was ingested and what was authored."""
+    """Assemble one served unit document from what was ingested and what was authored.
+
+    ⭐ `mentions` serves every mention of another unit of the corpus as that
+    unit (`unit.mentions`); without it the blocks are served as recorded.
+    """
     first = material.documents[0]
     if overlay is not None:
         _require_same_unit(overlay, material)
@@ -129,9 +135,16 @@ def build(
         "unit": material.unit,
         "title": without_outline_number(_title(title, overlay, first)),
         "practices": _practices(material, declared_practices),
-        "sections": list(sections),
+        "sections": [_mentioned(section, mentions) for section in sections],
         "built_from": _built_from(material),
     }
+
+
+def _mentioned(section: dict, mentions: Mentions | None) -> dict:
+    """Return one section with its mentions of other units served as those units."""
+    if mentions is None:
+        return section
+    return {**section, "blocks": mentions.served(section.get("blocks"))}
 
 
 def render(document: dict) -> str:

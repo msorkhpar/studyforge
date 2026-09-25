@@ -449,3 +449,16 @@ def test_declared_location_takes_both_objects_whole_and_agrees_about_material():
     # ⛔ The denominator, not `> 0`: every unit with material was
     # compared, rather than whichever one the walk reached first.
     assert seen == len(corpus.units)
+
+
+def test_every_unit_is_handed_the_corpus_it_may_mention_and_its_own_page(tmp_path):
+    # ⭐ One index per corpus: the page every consumer links is the page the build writes.
+    corpus = read_corpus(FIXTURES / "depth1")
+    for source in corpus.units:
+        assert source.mentions.origin == source.origin
+        assert source.mentions.page == unit_location(corpus, source).page
+    first, second = corpus.units[0], corpus.units[1]
+    assert first.mentions.origins is second.mentions.origins
+    assert first.mentions.text("[next](02-reading-a-small-graph.md)") == (
+        "[next](../unit-02/unit-02-reading-a-small-graph.unit.html)"
+    )

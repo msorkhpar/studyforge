@@ -36,8 +36,8 @@ read, and the report an integrator wants already exists one command earlier.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from pathlib import Path
+from dataclasses import dataclass, replace
+from pathlib import Path, PurePosixPath
 
 from studyforge.address import Address
 from studyforge.archive.scrub import PersonalDataLeak
@@ -57,6 +57,7 @@ from studyforge.corpus.placement import (
 )
 from studyforge.generate.footprint import Footprint, footprint_for
 from studyforge.skills.adapter import Layout
+from studyforge.unit import Mentions
 
 
 class BuildError(ValueError):
@@ -85,6 +86,9 @@ class UnitSource:
     label: str | None
     declared_practices: int | None
     directory: Path
+    #: ⭐ The corpus's other units as this one names them (`unit.mentions`),
+    #: for `build_unit(mentions=...)`. The default names nothing.
+    mentions: Mentions = Mentions()
 
     @property
     def key(self) -> str:
@@ -179,6 +183,8 @@ def _sources(
     """
     layout = Layout(root)
     found: list[UnitSource] = []
+    profile = profile_for(manifest.placement)
+    pages: list[PurePosixPath] = []
     for _, container in maps:
         for unit in container.units:
             directory = layout.unit_dir(container.address, container.variant, unit.n)
@@ -195,7 +201,41 @@ def _sources(
                     directory=directory,
                 )
             )
-    return tuple(found)
+            pages.append(_page(profile, container.address, unit))
+    return _mentioning(tuple(found), tuple(pages))
+
+
+def _page(profile: Profile, address: Address, unit: Unit) -> PurePosixPath:
+    """One unit's page, or refuse naming it: the one placement question, asked early."""
+    try:
+        return profile.unit(address, unit.n, unit.title, origin=unit.origin, label=unit.label).page
+    except PlacementError as error:
+        raise BuildError(
+            f"the unit {unit.n} declared at {address.key!r} cannot be placed: {error}"
+        ) from None
+
+
+def _mentioning(
+    found: tuple[UnitSource, ...], pages: tuple[PurePosixPath, ...]
+) -> tuple[UnitSource, ...]:
+    """Hand every unit the corpus's units as it may name them, and its own place.
+
+    ⭐ One index for the corpus, so the page and every other consumer of a served
+    unit resolve a reference the same way.
+    """
+    labels, origins = Mentions.of(
+        tuple(
+            (source.label, source.origin, source.title, page)
+            for source, page in zip(found, pages, strict=True)
+        )
+    )
+    return tuple(
+        replace(
+            source,
+            mentions=Mentions(labels, origins, source.origin, page),
+        )
+        for source, page in zip(found, pages, strict=True)
+    )
 
 
 def unit_location(corpus: Corpus, source: UnitSource) -> UnitLocations:

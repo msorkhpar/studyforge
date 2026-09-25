@@ -8,6 +8,7 @@ framework fixture corpora. ⛔ The expected list is READ from the golden, never 
 
 from __future__ import annotations
 
+import json
 import re
 
 import pytest
@@ -387,3 +388,20 @@ def test_a_pass_handed_a_corpus_with_no_footprint_still_refuses(tmp_path):
 
     assert second.pages == ()
     assert second.refused == (corpus.shared.root_index,)
+
+
+def test_a_link_to_another_units_source_file_links_that_units_page(tmp_path):
+    # ⭐ The source's `02-….md` names no file of the site; the unit's page does.
+    root = a_corpus(tmp_path, "depth1")
+    lesson = root / "archive/depth-one/raw/prose/unit-01/lesson-1.json"
+    document = json.loads(lesson.read_text("utf-8"))
+    document["blocks"][1]["text"] = "Read [the graph](02-reading-a-small-graph.md) next."
+    lesson.write_text(json.dumps(document), "utf-8")
+    out = tmp_path / "out"
+    out.mkdir()
+    write_site(root, out)
+    page = out / ".studyforge/depth-one/units/unit-01/unit-01-what-a-triple-is.unit.html"
+    href = "../unit-02/unit-02-reading-a-small-graph.unit.html"
+    assert f'<a href="{href}"' in page.read_text("utf-8")
+    assert (page.parent / href).is_file()
+    assert "02-reading-a-small-graph.md" not in page.read_text("utf-8")
