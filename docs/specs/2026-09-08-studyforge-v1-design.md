@@ -1963,7 +1963,14 @@ These are proven surfaces, generalised in their addressing and otherwise kept.
   own anchor (`#introduction`) links the id the page gives that heading, and
   `section 2.2`, where `2.2` is the outline number of one of the unit's own
   headings, or else of exactly one heading of its container, is shown and
-  narrated as that heading's words, linking it. ⚠️ A link that climbs out of the
+  narrated as that heading's words, linking it. A quiz's stem, options and
+  per-option sentences follow the same rules as plain words, on the page and in
+  what the grading route answers. A link to another unit's source file keeps
+  its fragment when the fragment names a heading of that unit, and lands on it.
+  ⚠️ A site written anywhere but the corpus root cannot reach a corpus file, so
+  `build` reports how many such links there are and on which unit's page, and
+  says a build into the corpus root keeps them; ⛔ it never copies the file and
+  never links upward out of the site. ⚠️ A link that climbs out of the
   corpus, is rooted, names a file that is not there or an anchor that is no
   heading keeps its href, and `validate`'s `link-unresolved` names the unit. ⭐ The archive and the
   container maps keep the number, as recorded: a unit's `label` keeps it for

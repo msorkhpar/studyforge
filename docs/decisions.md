@@ -885,6 +885,14 @@ What it reads, and the choices in it:
 
 **Serves.** `R1`, `R6`, `R8`
 
+### A quiz, another unit's heading and a site elsewhere follow the same link rules
+
+**Decision.** `studyforge.unit.mentions.Mentions` serves a quiz's `stem`, each option's `text` and its `says` by the page's mention rules, as plain words (`Mentions.words`): a unit's label is its title and `section 2.2` is the heading's words, with no emphasis and no link. A link to another unit's source file keeps its fragment when the fragment names one of that unit's headings, as its source's host anchors it (`Target.anchors`), and lands on the id that page gives it; any other fragment is dropped. A site written anywhere but the corpus root keeps each corpus-file link's href (`Mentions.beside`), and `studyforge.generate.clips.files_unreached` names each unit's page once per such link, which `studyforge build` prints as `unreached` lines: the total and the units first, then one line per page. `studyforge.serve.routes.content.CorpusContent.withheld` names a quiz's sentences both as served and as the archive wrote them.
+
+**Why.** The quiz's words are shown and graded after the heading numbers have left the page, so a number in them named nothing. The page escapes them as text, so markup would be printed. A fragment names a source anchor, which the target page no longer carries, and the container index already knows what each heading is called. A site written elsewhere cannot reach a file that stays where its author put it: copying it is forbidden, and a link upward would print directory names from outside the corpus into a page and fail under `serve --site`. So the build says what it could not keep and where a build keeps it. A sentence quoted as the archive wrote it must stay withheld after the served spelling changed.
+
+**Serves.** `R1`, `R3`, `R5`, `R7`, `R8`
+
 ### A list item holds its code
 
 **Decision.** A list item's parts may be `code` blocks as well as text and nested lists (`studyforge.archive.blocks.ITEM_BLOCKS`). The Markdown reader (`studyforge.archive.markdown.listing`) keeps an item's fence inside the item, `studyforge.validate.blocks` admits the part, the page renders it as the code figure inside its `<li>`, and the item's clip speaks its caption.
