@@ -273,14 +273,16 @@
   /* ⭐ One question per page for the code cards: they share a unit, so its
      record is read once. ⛔ An answer that is not one — no record, no such
      unit, a server that could not say — paints nothing. A quiz card is read
-     from the store, served or not; with no store it says nothing. */
-  function refresh() {
+     from the store, served or not; with no store it says nothing. ⛔ A quiz's
+     own settling asks the server nothing: answering a quiz makes no request. */
+  function refresh(event) {
     practices.forEach(function (one) {
       if (isQuiz(one) && store && store.supported()) {
         paint(one.card, store.passedQuiz(one.card.getAttribute(CARD_KEY) || ''));
       }
     });
-    if (!asks) { return; }
+    var quizzed = !!event && event.target.hasAttribute('data-practice-quiz');
+    if (!asks || quizzed) { return; }
     var first = practices[0].card;
     var key = first.getAttribute(CARD_KEY) || '';
     var unit = key.slice(0, key.lastIndexOf('/'));

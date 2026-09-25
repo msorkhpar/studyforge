@@ -1177,7 +1177,7 @@ What it reads, and the choices in it:
 
 ### A code page may carry one quiz beside its code exercises
 
-**Decision.** `skills.exercises.drafts.Page.quiz` names the one planned exercise on a `code` page that a quiz checks. `Brief.kind` says which kind of draft each brief asks for, `skills.exercises.loop` drafts the page's code exercises first and the quiz last so it takes the unit's last ordinal, and the unit's coverage report records the name under `quiz` (`coverage_api` 2, with a version-1 report read as naming none). Only a `code` page may name a quiz, and only a name its aspects give. The quiz is gated, committed and served like any quiz, so its key stays on the local study server.
+**Decision.** `skills.exercises.drafts.Page.quiz` names the one planned exercise on a `code` page that a quiz checks. `Brief.kind` says which kind of draft each brief asks for, `skills.exercises.loop` drafts the page's code exercises first and the quiz last so it takes the unit's last ordinal, and the unit's coverage report records the name under `quiz` (`coverage_api` 2, with a version-1 report read as naming none). Only a `code` page may name a quiz, and only a name its aspects give. The quiz is gated, committed and served like any quiz, so its key lives only in its own page's key block.
 
 **Why.** A lesson page with code also teaches ideas no test can observe, and a unit that could carry only one kind of exercise left those ideas with a reason where a short quiz belongs.
 

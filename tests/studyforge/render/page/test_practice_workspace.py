@@ -206,7 +206,9 @@ def test_a_quiz_cards_status_is_read_from_the_readers_store_and_a_code_cards_fro
     refreshing = body[body.index("function refresh()") :]
     assert "if (isQuiz(one) && store && store.supported()) {" in refreshing
     assert "paint(one.card, store.passedQuiz(one.card.getAttribute(CARD_KEY) || ''));" in refreshing
-    assert refreshing.index("store.passedQuiz") < refreshing.index("if (!asks) { return; }")
+    assert refreshing.index("store.passedQuiz") < refreshing.index("if (!asks || quizzed) {")
+    # ⛔ The quiz's own settling asks the server nothing (W500: no request).
+    assert "var quizzed = !!event && event.target.hasAttribute('data-practice-quiz');" in refreshing
     assert "if (!isQuiz(one) && one.card.querySelector(STATE)) {" in refreshing
 
 

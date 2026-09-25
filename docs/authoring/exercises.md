@@ -263,18 +263,18 @@ two are refused — **the options are distinct once case and spacing are
 normalised**, and **every option carries its sentence**, so the reader is told
 why whichever way they went.
 
-**The key is in the document you write, and never in the page a reader gets.**
-Write `correct` for every option, always. The built page shows each question and
-its options and nothing else; when the reader checks their answers, the local
-study server reads the key from your document and answers each question right or
-wrong with the sentence of the option the reader chose, so the key never
-reaches the reader's browser. The page puts its own *Right.* or *Not this one.*
+**The key is in the document you write, and the build copies it into that
+quiz's own page and nowhere else.** Write `correct` for every option, always.
+The built page shows each question and its options, and carries the key and
+every sentence in one data block local to the page; when the reader checks
+their answers, the page itself answers each question right or wrong with the
+sentence of the option the reader chose. The page puts its own *Right.* or *Not this one.*
 in front of that sentence, so do not open a sentence with a verdict of your
 own: say why, and leave the verdict to the page.
 
 **A quiz is graded by the framework with no compiler, no container, no network
-and no model** — a fixed comparison on the local study server. Opened as a file,
-the page shows the questions and says checking them needs that server. **It
+and no model** — a fixed comparison made in the page itself, the same opened as
+a file or served, and answering makes no request. **It
 completes only when every question is answered correctly**, and it produces no
 run: there is nothing to Run and nothing to Submit.
 

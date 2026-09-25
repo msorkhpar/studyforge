@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import copy
 import re
+import shutil
 from dataclasses import replace
 from pathlib import PurePosixPath
 
@@ -28,7 +29,9 @@ from studyforge.narrate.speakable.records import SpeakableError
 from studyforge.render.page import AUDIO_ATTRIBUTE
 from studyforge.unit import content
 from studyforge.unit.builder import build_unit
+from tests.studyforge.exercise.quiz.depth1 import fixture_root, practice_document, question
 from tests.studyforge.render.page import pages as render_pages
+from tests.studyforge.serve.routes.quizzing import PRACTICE_DOCUMENT, render
 from tests.support import assert_package_contract, repository_root
 
 FIXTURES = repository_root() / "tests" / "fixtures"
@@ -451,3 +454,47 @@ def test_every_unit_spoken_in_a_practice_is_one_its_page_plays():
     played = sorted(PurePosixPath(href).stem for href in AUDIO_VALUES.findall(region))
     spoken = sorted(clip_name(one) for one in speakable_of(document).units if one.section == key)
     assert played and played == spoken
+
+
+def quiz_unit(where) -> dict:
+    """`depth1`'s unit with a quiz whose stem, options and sentences carry inline code."""
+    root = where / "depth1"
+    shutil.copytree(fixture_root(), root)
+    coded = question(
+        stem="Which types may a `switch` take?",
+        options=[
+            {"id": "a", "text": "An `int` and its wrapper", "correct": True,
+             "says": "A `switch` takes an `int`, never a `long`."},
+            {"id": "b", "text": "Any `Object` at all", "correct": False,
+             "says": "Only `String` and the enums join the `int` family."},
+        ],
+    )  # fmt: skip
+    (root / PRACTICE_DOCUMENT).write_text(
+        render(practice_document(questions=[coded])), encoding="utf-8"
+    )
+    document = build_unit(root / PRACTICE_DOCUMENT.parent, declared_practices=1)
+    practice = next(one for one in document["sections"] if one.get("kind") == "practice")
+    practice["blocks"][1]["text"] = "Two questions on `switch` and the `int` family."
+    return document
+
+
+def test_a_quizs_questions_and_sentences_are_never_spoken_and_nothing_spoken_has_a_backtick(
+    tmp_path,
+):
+    # ⛔ Narration never speaks an explanation (W500) — nor a stem or an
+    # option: they are the workspace's, and a clip of one would read the reader
+    # the question before they chose. ⭐ The practice's own intro IS spoken, so
+    # the absence is a reading; and its inline code is read without backticks.
+    document = quiz_unit(tmp_path)
+    spoken = [one.speak for one in speakable_of(document).units]
+    assert "Check yourself" in spoken
+    assert any("switch" in said and "int" in said for said in spoken), spoken
+    questions = document["sections"][-1]["workspace"]["questions"]
+    quiz_words = [one["stem"] for one in questions] + [
+        part for one in questions for option in one["options"]
+        for part in (option["text"], option["says"])
+    ]  # fmt: skip
+    for words in quiz_words:
+        for said in spoken:
+            assert words not in said and words.replace("`", "") not in said, words
+    assert [said for said in spoken if "`" in said] == []

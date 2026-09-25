@@ -52,7 +52,7 @@ keeps compiling. ⚠️ Output directories and dot-directories inside the copy �
 ## ⛔ What is never copied
 
 - ⛔ **No quiz key.** The archive and the bundles hold a quiz's key, the key
-  never leaves the local server, and the editor is a process a reader opens
+  lives only in the page it grades, and the editor is a process a reader opens
   any file in — so neither directory is walked (`binds.unkeyed` holds the same
   line for a bind).
 - ⛔ **No dot-file and no dot-directory**: `.git`, an `.env` holding a

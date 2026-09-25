@@ -106,8 +106,8 @@ def test_a_graded_practice_and_a_quiz_carry_a_status_slot_that_ships_saying_noth
 
 
 def test_no_card_carries_a_quiz_answer():
-    # ⛔ The user's standing ruling: a quiz key lives on the local server, never
-    # in the page — and a card is a new place the page could leak one.
+    # ⛔ A quiz's key lives only in its own section's key block (the user's
+    # ruling, 2026-09-25) — and a card is a new place the page could leak one.
     quiz = cards(page(section(workspace=QUIZ)))[0]
     for word in ("correct", "The page says so.", "A type"):
         assert word not in quiz, word

@@ -27,8 +27,8 @@ question — what the editor may see.
 
 ## ⛔ NO QUIZ BUNDLE IS BOUND INTO THE EDITOR
 
-⛔ **A quiz's key never leaves the local server** (the user's ruling,
-2026-09-23), and the editor is another process, on another origin, in which a
+⛔ **A quiz's key lives only in the page it grades** (the user's ruling,
+2026-09-25), and the editor is another process, on another origin, in which a
 reader can open any file it binds. ⭐ So every directory the editor binds is
 checked against the two that hold a key — the bundles (`BUNDLES_DIRNAME`,
 whose `tests/quiz.json` is the key) and the archive (`ARCHIVE_DIRNAME`, whose
@@ -108,7 +108,7 @@ def unkeyed(*binds: str) -> None:
             if mine.is_relative_to(other) or other.is_relative_to(mine):
                 raise ExecutionRefused(
                     f"the editor would bind `{bind}`, which reaches `{keyed}/`, where a "
-                    "quiz's key is kept; the key never leaves the local server, so this "
+                    "quiz's key is kept; the key lives only in the page it grades, so this "
                     "skill binds no directory that reaches one. Keep the material outside it"
                 )
 

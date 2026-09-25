@@ -2417,9 +2417,9 @@ kept on disk (§4).
 **Checked practice for any subject.** ⭐ **A corpus whose subject admits no
 checkable coding task still gets checked practice — the quiz shape** (§7). A quiz
 needs no container, no network and no model, so it sits **on the reading floor**,
-not in the execution track; its answers are checked by the local study server,
-which holds the key the page never carries, and over `file://` a quiz shows its
-questions and says checking them needs that server.
+not in the execution track; its answers are checked in its own page, which
+carries its key in a script local to it, so a quiz is checked the same over
+`file://` and served, with no request.
 
 **The execution track — only where the material is runnable.** A workspace, Run
 and Submit, a pinned runner container, graded practices, and optionally the
