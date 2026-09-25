@@ -175,12 +175,38 @@ names the component, its address and what its first start fetches. A site that
 prints `narration-none` asked a service and was told there was nothing to say:
 that one is **done**, in exactly the sense `exercises` is.
 
-### 4. Stop it
+### 4. Look at the pages, when you cannot open a browser yourself
+
+An agent, or anyone checking a build without a screen, looks at the built pages
+with one command. ⭐ It needs no server: it opens the files the build wrote.
+
+```
+python3 -m studyforge.look <directory> --out <shots-directory>
+```
+
+It opens the root index, one container page and one unit page in a headless
+Chromium-family browser already on this machine (Chrome, Chromium or
+`chrome-headless-shell`, found on `PATH`, or the one `--browser` names). For each
+page it writes a screenshot, `NN-<page>.png`, and the DOM as the page's scripts
+left it, `NN-<page>.dom.html`, and prints one `looked` or `FAILED` line.
+`--all` looks at every page, and `--page <page>` (repeatable, relative to the
+site) at the ones you name. Read the pictures and the DOM: they show what a
+reader sees, which a passing build does not.
+
+- ⛔ `<shots-directory>` must exist and be **outside** the site. A look writes
+  nothing into a site, and a site is often the corpus root.
+- Exit `0` when every page rendered, `1` when one did not, `2` when it could not
+  start. ⭐ With no browser it names every name it searched and the two ways
+  forward: `--browser` with a path, or `studyforge serve` and your own browser.
+- ⚠️ It is a separate command, not a step the skill runs: the skill itself still
+  writes no file.
+
+### 5. Stop it
 
 Press Ctrl-C. The server prints `stopped` and exits `0`. ⭐ The site stays on
 disk and still opens without a server (R8).
 
-### 5. Publish the narration as release volumes, only when the owner asks
+### 6. Publish the narration as release volumes, only when the owner asks
 
 For a corpus that does not commit its clips (`media.commit` is `never`), the
 clips reach a reader as volumes attached to a release of the corpus's own

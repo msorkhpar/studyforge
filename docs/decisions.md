@@ -257,9 +257,9 @@ What it reads, and the choices in it:
 
 ### A placement profile answers which ignore lines a corpus needs
 
-**Decision.** `studyforge.corpus.placement.Profile.ignore_file(media=...)` returns an `IgnoreFile`, the one file that holds the rules and its lines; the caller passes whether generated media is ignored (the media policy inverted) and never asks which profile it has. The file is always `.studyforge/.gitignore` inside the generated root and always carries the discovery cache's machine-local lines; the media lines from the profile's `media_ignore_lines` are added only when the policy does not commit media. Under `tree` those lines are scoped by living below `.studyforge/`. Under `sibling` they are `study/<kind>/`, unanchored but carrying the profile's own `study/` segment so they could match only inside directories the framework writes; because there is one `study/` directory per source directory and no single file can hold them, `ignore_file` raises `PlacementError` instead of returning them, and the repository's root ignore file is never used.
+**Decision.** `studyforge.corpus.placement.Profile.ignore_file(media=...)` returns an `IgnoreFile`, the one file that holds the rules and its lines; the caller passes whether generated media is ignored (the media policy inverted) and never asks which profile it has. The file is always `.studyforge/.gitignore` inside the generated root and always carries the discovery cache's machine-local lines; the media lines from the profile's `media_ignore_lines` are added only when the policy does not commit media, and they cover the narration clips' directory alone (`placement.names.UNCOMMITTED_DIRNAMES`): images, video and attachments are copies of files the archive commits and stay committed, and nothing writes into `practice/`. Under `tree` that line is `**/audio/`, scoped by living below `.studyforge/`. Under `sibling` it is `study/audio/`, unanchored but carrying the profile's own `study/` segment so it could match only inside directories the framework writes; because there is one `study/` directory per source directory and no single file can hold it, `ignore_file` raises `PlacementError` instead of returning them, and the repository's root ignore file is never used.
 
-**Why.** A caller that asked which profile it has would be branching on placement, and only the profile knows where its media lands. A rule with no file inside a generated directory would end up in the repository's own root ignore file, which non-destructive generation forbids.
+**Why.** A caller that asked which profile it has would be branching on placement, and only the profile knows where its media lands. A clone reads the committed pages, so a rule over the copies they show would break every figure and download in it, and no release restores them. A rule with no file inside a generated directory would end up in the repository's own root ignore file, which non-destructive generation forbids.
 
 **Serves.** `R1`, `R3`, `R19`
 
@@ -1234,6 +1234,14 @@ What it reads, and the choices in it:
 **Why.** Leaked profiles and tabs make the harness hang, and counts taken before a tab is really gone depend on machine load and on parallel workers.
 
 **Serves.** `R10`
+
+### A reader looks at built pages with a browser the machine already has
+
+**Decision.** `python3 -m studyforge.look <site> --out <dir>` (`studyforge.look`) opens the root index, one container page and one unit page of a built site (`--all` for every page, `--page` for named ones) over `file://` in a Chromium-family browser found on `PATH` or named by `--browser`, and writes a screenshot and the rendered DOM of each into a directory outside the site, which it refuses when it is inside. It drives the browser only through its own screenshot and DOM-dump flags, with background networking off and a throwaway profile removed afterwards, passes `--no-sandbox` only as root, and never echoes the browser's output. With no browser it names what it searched and exits `2`. The build-and-serve skill names it, and the README's first run uses it.
+
+**Why.** A stranger or an agent checking a build without a screen needs one command to see what a reader sees, and a command that installs a driver or writes into the corpus would cost more than the look is worth.
+
+**Serves.** `R8`, `R3`, `R7`
 
 ### Authoring pages are checked against the shipped code, which is the authority
 
