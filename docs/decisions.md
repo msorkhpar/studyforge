@@ -603,6 +603,22 @@ What it reads, and the choices in it:
 
 **Serves.** `R19`, `R6`, `R9`
 
+### A record whose last level is a linked entry is filed from the manifest
+
+**Decision.** The manifest's `curriculum` block may name its last level in `linked` (`studyforge.corpus.manifest.curriculum`, read from `corpus_api` 8). The declared `containers` are then the record's labels one level up, and each list entry beneath a label that links a file, at the shallowest indent the curriculum uses, opens one container of the last level (`studyforge.skills.reconnaissance.linked.split_linked`). Its address is the label's address followed by the name of the directory holding the linked file, its titles are the label's and the entry's, its origin is the linked file, and its units are the entries indented beneath it, nested ones in their place, each keeping its written ordinal as its label. A written ordinal must be its place among its siblings, the entries at its depth under the same parent. The adapter skill files it (`studyforge.skills.adapter.curriculum.filed`), counts the included files in each linked file's directory as the audit's second reading (`studyforge.skills.adapter.curriculum.counted`), and `studyforge validate` reports a record that does not have the shape as `curriculum-disagrees`. Reconnaissance drafts `linked` for a two-level record that has the shape everywhere, includes no page a linked entry links (`studyforge.skills.reconnaissance.include.patterns`), and drafts no entry above the first label as material.
+
+**Why.** A course whose sections hold modules that each link their own contents page cannot be declared as groups: its labels are the sections, and declaring them alone files every module's units into one container. Without the key the filing was hand-written adapter code a second such course would retype (R19). The directory name is written in the record's own link, so the address is still recorded, never derived.
+
+**Serves.** `R19`, `R6`, `R9`
+
+### A not_material glob may name one fixed name in every root directory
+
+**Decision.** Beside an exact path and a wildcard under a declared directory, a `content.not_material` entry may be `*/` followed by a fixed name (`studyforge.corpus.manifest.content.parse.each_directory`), such as `*/pom.xml` or `*/src/**`, meaning that name in every directory at the corpus root. What follows the `*/` is judged by the same rule, so `*/*.md` and `*/**` are refused. The form needs `corpus_api` 8 (`studyforge.corpus.manifest.document.versions_needed`), which onboarding's `promote` writes when a draft uses it, and reconnaissance's furniture proposal (`studyforge.skills.reconnaissance.furniture.propose`) folds a name proposed in two or more root directories into one such glob when it matches nothing the draft reads.
+
+**Why.** A repository of uniform modules keeps the same scaffolding in each, and one entry per module is one copy of one reason per module, with a module added later unclassified until the reason is copied again. The reason stays true of a file nobody has written yet, because what it names is the fixed name; material swept by one is still refused as contested against `include`.
+
+**Serves.** `R19`, `R9`
+
 ### The survey and the scaffolded suite walk the corpus exactly as validate does
 
 **Decision.** Reconnaissance's inventory (`studyforge.skills.reconnaissance.inventory.take`) and the adapter's generated emission test (`studyforge.skills.adapter.parts.suite`) take their answers from the validator. They skip `SKIP_DIRS` only at the corpus root and get nested repository stores from `source_files(root).stores`. The survey never enters such a store and counts as the corpus's own only files `source_files` enumerates; the suite copies a store unchanged so the validator refuses it. The suite takes git's ignore rules from `repository_ignores`, the one ignore reader, asked once per directory, and keeps no list of names beyond its own output directories; outside a git working tree it copies everything but the archive and warns.

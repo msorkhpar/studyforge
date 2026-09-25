@@ -120,6 +120,15 @@ documents in this checkout.
 Step 3's done condition is the agreement: if `studyforge validate` exits `0`,
 the framework accepts the corpus, and nothing else is asked of you.
 
+**Most of the adapter is written for you.** Where your material records its
+order in one document, reconnaissance drafts `corpus.json`'s `curriculum` and
+the adapter files every unit from it, including a course whose sections hold
+modules that each link their own contents page (`curriculum.linked`). A
+repository of uniform modules declares each module's build file or source tree
+once, as `*/pom.xml` or `*/src/**`. Markdown is read into the archive by
+`studyforge.archive.markdown.parse`, so the one function left to you is a loop.
+[The manifest reference](docs/authoring/corpus.md) says how.
+
 **Narration is optional.** Some readers want the material without a voice,
 so steps 2 and 6 ask. Your answer at onboarding is `corpus.json`'s
 `narration`, and `studyforge build` and `studyforge serve` take `--narration` /

@@ -135,10 +135,22 @@ draft["narration"] = False  # "without voices"; True for "narrated"
 
 ### 2. Ask what will be written, before anything is on disk
 
+```python
+from studyforge.skills.onboarding import onboard
+from studyforge.skills.reconnaissance import survey
+
+draft = survey(".").proposal  # reconnaissance's draft, a dict, settled as step 1 says
+reasons = {"<a glob the draft proposed>": "<why it is not material, 20 characters or more>"}
+made = onboard(draft, reasons=reasons)
+print("\n".join(made.lines()))
 ```
-python3 -c "from studyforge.skills.onboarding import onboard; \
-  made = onboard(draft); print('\n'.join(made.lines()))"
-```
+
+⭐ **`draft` is `survey(".").proposal`**, the dict step 1 printed the report
+of, with the answers you settled written into it. ⛔ **`reasons` is not
+optional in practice**: every `not_material` glob the draft proposes carries
+`"why": null`, and `onboard` refuses, naming every glob still open, until
+`reasons` gives each one, keyed by the glob exactly as the draft spells it.
+The placeholder entry above stands for yours: one per open glob or excluded path.
 
 ⭐ Every path, its length, which step produced it, and **the one file that is
 yours**. ⛔ Read this before `write`, for the same reason `validate` reports
@@ -147,9 +159,8 @@ a time has been given a guessing game.
 
 ### 3. Write it — all of it, or none of it
 
-```
-python3 -c "from studyforge.skills.onboarding import onboard; \
-  onboard(draft).write('.')"
+```python
+made.write(".")
 ```
 
 ⛔ **It refuses rather than overwriting, and names every collision at once**
@@ -357,6 +368,11 @@ python3 -c "from studyforge.skills.onboarding import uninstall; \
 naming every changed file at once. ⭐ **A file you filled in is not silently
 destroyed**, which is why `ingest/read.py` is the usual reason a clean
 uninstall refuses: it is removed only while it is still the stub.
+
+⭐ **The bytecode running step 4 wrote goes with the modules it was compiled
+from**: a `__pycache__` file named for a module uninstall removed is removed
+too, and its directory with it once empty. Bytecode of any other module is
+left where it is.
 
 ### 7. ⛔ Write the findings log — the run is not done until it exists
 

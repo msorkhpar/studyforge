@@ -20,8 +20,8 @@ Nothing downstream cares which you chose.
 prints for you before you choose — not a description of it written here.
 
 **`sibling` is what makes "your files are never touched" liveable.** A reader
-who already knows their way around `16-streams-api/` finds the generated pages
-in `16-streams-api/study/`, one directory beside the file they came from — not
+who already knows their way around `chapter-3/` finds the generated pages
+in `chapter-3/study/`, one directory beside the file they came from — not
 in a parallel tree they now have to learn. **One directory, whatever the unit
 count**, so your own listing stays readable: that is the whole of what `study/`
 is for.
@@ -45,7 +45,9 @@ unless your adapter records a label; **`<title>`** is the slug of the unit's or
 the container's own title; **`<your-directory>`** is whatever directory your
 source file was in.
 
-Under `tree`, everything lives under one generated root:
+Under `tree`, every page, its media and the shared assets live under one
+generated root, `.studyforge/`; the root index and the archive sit at the corpus
+root, as they do under `sibling`:
 
 ```tree
 index.html                                                     the root index
@@ -82,6 +84,15 @@ archive/                                                       the adapter's, be
 `sibling`, `<your-directory>` keeps everything it already had and gains exactly
 one entry — `study/` — whatever the unit count, and the corpus root gains
 exactly one generated file, `index.html`.
+
+**What no profile places.** `corpus.json`, the adapter (`ingest/`), the checks
+onboarding generates (`tests/`) and the reader document are yours, beside the
+archive at the corpus root, under either profile. They are committed and
+`studyforge validate` classifies them. `.studyforge/` is the generated directory
+a build writes and a server serves, and `validate` does not read it as your
+files, so none of them can live there: onboarding refuses an `onboarding_doc`
+under it. Put the reader document where your own documents go, such as
+`docs/ONBOARDING.md`.
 
 **A media directory is claimed, not created.** It appears above, and
 `studyforge plan` names it, because that is where a clip or an attachment would

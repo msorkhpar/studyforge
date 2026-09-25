@@ -762,7 +762,7 @@ example is not where you learn what a manifest *may* carry. This list is.
 
 | Key | | Notes |
 |---|---|---|
-| `corpus_api` | **required** | R9's version key. An unknown value is refused, never migrated. ⭐ **`2` added `content.not_material`**, **`3` added `media.max_files`**, **`4` added `runtimes`**, **`5` added `narration`**, **`6` added `onboarding_doc`** and **`7` added `curriculum`**; this build reads `1` to `7`, and a key used under a version older than the one that added it is refused naming both numbers |
+| `corpus_api` | **required** | R9's version key. An unknown value is refused, never migrated. ⭐ **`2` added `content.not_material`**, **`3` added `media.max_files`**, **`4` added `runtimes`**, **`5` added `narration`**, **`6` added `onboarding_doc`**, **`7` added `curriculum`** and **`8` added `curriculum.linked` and the `*/name` form of a `not_material` glob**; this build reads `1` to `8`, and a key used under a version older than the one that added it is refused naming both numbers |
 | `source` | **required** | ⛔ **A corpus id, not a fetch URL** |
 | `title` | **required** | |
 | `levels` | **required** | Names the *container* levels and fixes the depth |
@@ -836,7 +836,11 @@ actually material** — which is caught per file, against a real tree:
   correctness depends on which files happen *not* to exist is refused, however
   exactly it matches today: `docs/studyforge/*` is a wildcard under a directory,
   `LICENSE` and `.gitignore` are exact paths, and `[CLR]*` is refused, because a
-  `why` cannot be true of a `CHANGELOG.md` nobody has written yet.
+  `why` cannot be true of a `CHANGELOG.md` nobody has written yet. ⭐ From
+  `corpus_api: 8` either may follow a leading `*/`, naming that fixed name in every
+  directory at the root (`*/pom.xml`, `*/src/**`): a repository of uniform modules
+  gives each kind of scaffolding one reason, not one per module, and what follows
+  the `*/` is judged by the same rule, so `*/*.md` is refused.
 - ⛔ **A file under the source root that matches none of the three is
   `unclassified`**, and `studyforge validate` names it and exits 1 (R6). A file
   that matches `include` and is then not ingested is also a failure. It follows
@@ -879,6 +883,12 @@ document records its reading order and grouping:
   repeated label, address or prefix is refused. Reconnaissance drafts the block,
   proposing addresses for a person to confirm, and writes a prefix only where the
   filenames partition the units exactly as the record does.
+- ⭐ **`linked`** (`corpus_api: 8`) names the last of `levels` when the record opens
+  each container of that level with a linked list entry beneath a label. The
+  declared groups are then the labels one level up; each linked entry is one
+  container, addressed by its label's address and the name of the directory holding
+  the file it links, with the entries indented beneath it as its units. The record
+  writes that directory name, so the address is still recorded.
 - ⭐ **Absent means no declared curriculum**, and the adapter files units as it
   always has.
 

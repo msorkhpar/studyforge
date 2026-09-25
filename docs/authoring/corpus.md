@@ -58,12 +58,12 @@ below.
 
 | Key | | What it says |
 |---|---|---|
-| `corpus_api` | **required** | Which version of this format the file speaks. An unknown value is **refused**, never quietly migrated. This build reads `1` to `7`. A key needs at least the version that introduced it: `2` for `content.not_material`, `3` for `media.max_files`, `4` for `runtimes`, `5` for `narration`, `6` for `onboarding_doc` and `7` for `curriculum` |
+| `corpus_api` | **required** | Which version of this format the file speaks. An unknown value is **refused**, never quietly migrated. This build reads `1` to `8`. A key needs at least the version that introduced it: `2` for `content.not_material`, `3` for `media.max_files`, `4` for `runtimes`, `5` for `narration`, `6` for `onboarding_doc`, `7` for `curriculum` and `8` for `curriculum.linked` and for a `not_material` glob that opens `*/` |
 | `source` | **required** | An id for the corpus — a short stable name. **Not a URL to fetch from** |
 | `title` | **required** | What the reader sees at the top of the site |
 | `levels` | **required** | Names your container levels, and by its length fixes the depth of every address |
 | `variants` | **required** | Filing and presentation only. A variant is *not* a thing that runs |
-| `curriculum` | *optional* | Which document records your reading order and grouping, the address each of its groups is filed at, and optionally the filename prefix each group's files carry, as a check. Absent means your adapter reads its record itself |
+| `curriculum` | *optional* | Which document records your reading order and grouping, the address each of its groups is filed at, optionally the filename prefix each group's files carry, as a check, and whether the record opens each container of your last level with a linked entry. Absent means your adapter reads its record itself |
 | `exercises` | **required** | Whether this corpus is on the execution track at all. `false` is an answer |
 | `runtimes` | *optional* | Which runtimes your material's commands need, by name. Absent means none, and a corpus with none needs no runner |
 | `narration` | *optional* | Whether the site speaks. `false` is a site with no voice: no player, no clip served, nothing called missing. Absent means narrated whenever clips are recorded |
@@ -139,6 +139,33 @@ something nobody declared.
 
 **Reasons have a floor.** A `why` shorter than 20 characters is refused, which
 is only there to stop `"why": "n/a"` from being a way through.
+
+### A `not_material` glob is a path, a directory's wildcard, or one name in every directory
+
+A `not_material` entry is an exact path (`LICENSE`), or a wildcard under a
+directory that is itself entirely not material (`scripts/**`). A wildcard with
+no directory in front of it, such as `*.xml`, is refused: its reason could not
+be true of a file nobody has written yet.
+
+**A repository of many uniform modules keeps the same scaffolding in each of
+them**, and saying so once per module is one copy of one reason per module.
+So one more form is accepted: `*/` followed by a fixed name, meaning that name
+in every directory at the root. **Needs `corpus_api: 8`.**
+
+```json
+{
+  "content": {
+    "not_material": [
+      { "glob": "*/pom.xml", "why": "each module's build file: it builds the examples and teaches nothing itself" },
+      { "glob": "*/src/**", "why": "each module's sources and tests: code the practices are built from, not prose to read" }
+    ]
+  }
+}
+```
+
+What follows the `*/` is judged like any other entry, so `*/*.md` and `*/**`
+are still refused. A material file one of these sweeps up is also matched by
+`include`, and that is refused as `contested`, so nothing is lost in silence.
 
 ---
 
@@ -368,9 +395,11 @@ That is the fragment; the rest of the file is as above.
   leading `/`, no `.` or `..` segment, no glob character. It may be the only key.
 - **`containers`** lists the record's groups in the record's order. `label` is
   the group's heading exactly as the record writes it, and `address` is where
-  that group is filed, one segment per level in `levels`. The units are the
-  record's entries under each label, numbered by their position; an ordinal the
-  record writes must match that position.
+  that group is filed, one segment per level in `levels`, **written as one key
+  joined by `/`**: `"basics/01-getting-started"` at depth 2, never the list
+  that `container.json` writes. The units are the record's entries under each
+  label, numbered by their position; an ordinal the record writes must match
+  that position.
 - **`prefix`** is optional, per group: the text before the number in the names
   of that group's files — `basics-` for `basics-3.md`, `s` for `s10.md`, the
   empty string for `10.md`. A prefix holds no digit, `/`, space or glob
@@ -385,8 +414,58 @@ counted.
 
 **Each label, address and prefix appears once.** The reconnaissance skill
 drafts this block from what it finds: the record, each group with a proposed
-address it asks you to confirm, and a prefix only where every file already
-agrees with the record.
+address it asks you to confirm, a prefix only where every file already agrees
+with the record, and `linked` only where the record opens every container of a
+two-level corpus with a linked entry.
+
+### `linked` — when the record opens each container with a link
+
+**Some records write the last level as linked entries rather than labels.** A
+section is a bare line, and under it each module is a list entry linking the
+module's own contents page, with the module's units indented beneath it:
+
+```
+1. Getting Started
+
+- [1.1. First Steps](01-first-steps/README.md)
+    - [1.1.1. Installing](01-first-steps/lesson_1.1.1.md)
+    - [1.1.2. Running](01-first-steps/lesson_1.1.2.md)
+- [1.2. Next Steps](02-next-steps/README.md)
+    - [1.2.1. Configuring](02-next-steps/lesson_1.2.1.md)
+```
+
+Declare the labels as the groups one level up, and name your last level in
+`linked`. **Needs `corpus_api: 8`.**
+
+```json
+{
+  "levels": ["section", "module"],
+  "curriculum": {
+    "record": "README.md",
+    "containers": [{ "label": "Getting Started", "address": "getting-started" }],
+    "linked": "module"
+  }
+}
+```
+
+- **Each linked entry opens one container** of the level `linked` names, which
+  must be the last of `levels`. Its address is the label's address followed by
+  the name of the directory holding the page it links, `getting-started/01-first-steps`
+  here, so that name has to be usable as an address segment. Its titles are the
+  label's and the entry's, and the linked page is its `origin`.
+- **Its units are the entries indented beneath it**, in the record's order. An
+  entry nested beneath another unit is a unit of the same container, in its
+  place, and every unit keeps the record's ordinal as its label, so `1.1.2.1`
+  still reads as nested. An ordinal must be its place among its siblings: the
+  entries at its depth under the same parent.
+- **The linked pages are not units.** Declare them `not_material`
+  (`*/README.md` here); an `include` that read them would be read by no unit.
+- **The count the audit checks** is the included files in each linked page's
+  directory, taken without the record.
+- **A record that does not have this shape everywhere is refused**: a unit
+  above a group's first linked entry, a linked entry with no unit beneath it,
+  or two containers linked from one directory. A group declares no `prefix`
+  under `linked`.
 
 **Leave it out and nothing changes.** Your adapter reads its record itself, as
 any adapter may.
