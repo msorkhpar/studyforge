@@ -183,6 +183,18 @@ def test_re_running_it_changes_nothing(tmp_path):
     assert after == before
 
 
+def test_a_prime_file_an_earlier_selection_copied_is_removed_and_dropped_from_the_record(tmp_path):
+    root = corpus(tmp_path)
+    old = f"{skill.PRIME_DIR}/maven/src/main/java/demo/Gone.java"
+    (root / old).parent.mkdir(parents=True, exist_ok=True)
+    (root / old).write_text("class Gone {}\n", encoding="utf-8")
+    record_of.stamp(root, [old])
+    skill.write(skill.generate(manifest(), editor_text=editor_text(), root=root), root)
+    assert not (root / old).exists(), "the build would compile what nobody selected"
+    assert old not in {entry["where"] for entry in record_of.entries(root)}
+    assert (root / skill.PRIME_DIR / "maven/pom.xml").is_file()
+
+
 def test_a_reader_document_somebody_else_wrote_is_refused_rather_than_overwritten(tmp_path):
     root = corpus(tmp_path)
     (root / skill.READER_DOC).write_text("mine, and hand-written\n", encoding="utf-8")

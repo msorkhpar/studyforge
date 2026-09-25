@@ -1773,7 +1773,10 @@ What the images must keep getting right:
   project carries one minimal source and test per language, so the first offline
   build needs no download. The sources must be *real*: a compile task with no
   source never resolves the compiler classpath, so an empty prime silently primes
-  nothing. An exercise's own build dependencies are warmed into the prime from the
+  nothing. A multi-module build is primed as a build: every module that carries
+  code gets its own smallest source and test, with each file of the build they
+  name, and a module with none is primed through its build file alone. A test
+  that fails in the corpus's own build is the corpus's finding, not the prime's. An exercise's own build dependencies are warmed into the prime from the
   same declaration, so a graded run resolves them with no network.
 - **The lockdown extension is packaged as a `.vsix` and installed**, never copied
   into the extensions directory — the workbench reads `extensions.json` and never

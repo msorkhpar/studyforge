@@ -12,7 +12,7 @@ from __future__ import annotations
 import pytest
 
 from studyforge.exercise.bundle import emit, write
-from studyforge.skills.execution import prime
+from studyforge.skills.execution import prime, specimens
 from tests.studyforge.exercise.bundle import dependency
 from tests.studyforge.skills.execution.contracts import corpus
 
@@ -145,7 +145,7 @@ def test_a_build_file_is_found_at_any_depth(tmp_path):
     ],
 )
 def test_these_paths_read_as_tests(where):
-    assert prime.is_a_test(where)
+    assert specimens.is_a_test(where)
 
 
 @pytest.mark.parametrize(
@@ -155,7 +155,7 @@ def test_these_paths_read_as_tests(where):
 def test_these_paths_do_not(where):
     # ⚠️ The negative control, and it is not decoration: a stem check that
     # matched `contest` or `latest` would select ordinary code as a test.
-    assert not prime.is_a_test(where)
+    assert not specimens.is_a_test(where)
 
 
 def test_a_root_that_is_not_a_path_is_refused_without_quoting_it(tmp_path):
@@ -265,3 +265,64 @@ def test_no_exercise_file_is_ever_a_specimen(tmp_path):
     for _, origin in made.copies():
         assert not origin.startswith((bundle.places.bundle, bundle.places.workspace)), origin
     assert made.specimens[0].source == "src/main/java/demo/Demo.java"
+
+
+def multi_module(root):
+    """A build of three modules under one root build file: two teach, one has nothing to compile."""
+    put(root / "pom.xml", "<project><modules><module>a</module></modules></project>\n")
+    for module in ("a", "b", "empty"):
+        put(root / module / "pom.xml", "<project/>\n")
+    put(root / "a/src/main/java/a/Tiny.java", "package a; class Tiny {}\n")
+    put(root / "a/src/main/java/a/Shape.java", "package a; class Shape { int sides; }\n")
+    put(root / "a/src/test/java/a/ShapeTest.java", "package a; class ShapeTest { Shape s; }\n")
+    put(root / "b/src/main/java/b/Longer.java", "package b; class Longer { int one; int two; }\n")
+    put(root / "b/src/test/java/b/LongerTest.java", "package b; class LongerTest { Longer l; }\n")
+    return root
+
+
+def test_a_multi_module_build_is_primed_as_a_build_module_by_module(tmp_path):
+    made = prime.prime_for(multi_module(tmp_path), ("java", "maven"), seeded=SEEDED)
+    (project,) = made.projects
+    assert project.root == ""
+    assert project.build_files == ("a/pom.xml", "b/pom.xml", "empty/pom.xml", "pom.xml")
+    by_module = {one.module: one for one in project.specimens}
+    assert sorted(by_module) == ["a", "b"], "every module that teaches gets its own specimen"
+    assert by_module["a"].files() == (
+        "a/src/main/java/a/Shape.java",
+        "a/src/main/java/a/Tiny.java",
+        "a/src/test/java/a/ShapeTest.java",
+    ), "the test is copied with the class it names, so the module compiles"
+    assert by_module["b"].files() == (
+        "b/src/main/java/b/Longer.java",
+        "b/src/test/java/b/LongerTest.java",
+    )
+
+
+def test_a_module_with_no_sources_is_primed_through_its_build_file_and_never_refused(tmp_path):
+    made = prime.prime_for(multi_module(tmp_path), ("java", "maven"), seeded=SEEDED)
+    assert ("maven/empty/pom.xml", "empty/pom.xml") in made.copies()
+    assert not any(one.module == "empty" for one in made.specimens)
+
+
+def test_the_document_names_each_specimens_module_and_what_it_carries(tmp_path):
+    made = prime.prime_for(multi_module(tmp_path), ("java", "maven"), seeded=SEEDED)
+    (project,) = made.document()["projects"]
+    first = project["specimens"][0]
+    assert first["module"] == "a"
+    assert first["support"] == ["a/src/main/java/a/Shape.java"]
+
+
+def test_a_single_module_build_copies_its_smallest_pair_and_nothing_they_do_not_name(tmp_path):
+    made = prime.prime_for(corpus(tmp_path), ("java", "maven"), seeded=SEEDED)
+    assert [pair[1] for pair in made.copies()] == [
+        "sources/app/pom.xml",
+        "sources/app/src/main/java/demo/Demo.java",
+        "sources/app/src/test/java/demo/DemoTest.java",
+    ]
+
+
+def test_every_file_under_the_prime_that_this_selection_does_not_copy_is_stale(tmp_path):
+    for where in ("p/maven/pom.xml", "p/maven/src/Old.java", "other/kept.txt"):
+        put(tmp_path / where, "x\n")
+    assert prime.stale_in(tmp_path, "p", {"p/maven/pom.xml"}) == ("p/maven/src/Old.java",)
+    assert prime.stale_in(tmp_path, "absent", set()) == ()

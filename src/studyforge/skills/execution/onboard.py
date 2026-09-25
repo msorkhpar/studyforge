@@ -75,7 +75,7 @@ from studyforge.execute import CODE_COPY, IGNORE_TEXT, instance
 from studyforge.skills.execution import composefile, contract, reader, runnerservice, toolchain
 from studyforge.skills.execution import written as record_of
 from studyforge.skills.execution.binds import ExecutionRefused, code_bind, source_root, unkeyed
-from studyforge.skills.execution.prime import Prime, PrimeRefused, prime_for
+from studyforge.skills.execution.prime import Prime, PrimeRefused, prime_for, stale_in
 from studyforge.skills.execution.toolchain import DIRECTORY_SLOT
 
 #: Where everything this skill generates lives. ⭐ Under the corpus's own
@@ -286,7 +286,8 @@ def write(execution: Execution, root: Path) -> tuple[str, ...]:
 
     ⛔ **All or nothing.** Every byte is rendered and every refusal is reached
     before the first file is written, so a refused write leaves every file it
-    would have written as it was.
+    would have written as it was. ⛔ A prime file this generation no longer
+    copies is removed (`prime.stale_in`), so the build is handed this prime.
     """
     if READER_DOC in dict(execution.files) and _is_somebody_elses(root, READER_DOC):
         raise ExecutionRefused(
@@ -299,13 +300,17 @@ def write(execution: Execution, root: Path) -> tuple[str, ...]:
     if execution.runnable and not (root / INSTANCE_ENV).exists():
         made = instance.text(dict(execution.instance), header=f"# {GENERATED}\n")
         planned.append((INSTANCE_ENV, made.encode("utf-8")))
+    kept = {where for where, _ in execution.copies}
+    stale = stale_in(root, PRIME_DIR, kept) if execution.runnable else ()
     for where, data in planned:
         target = root / where
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(data)
+    for where in stale:
+        (root / where).unlink()
     written = tuple(where for where, _ in planned)
     if written:
-        record_of.stamp(root, written)
+        record_of.stamp(root, (*written, *stale))
     return written
 
 

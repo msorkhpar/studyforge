@@ -114,6 +114,7 @@ def test_it_imports_no_third_party_package():
         "dataclasses",
         "hashlib",
         "pathlib",
+        "re",
     }
     for path in files(".py"):
         tree = ast.parse(path.read_text(encoding="utf-8"))

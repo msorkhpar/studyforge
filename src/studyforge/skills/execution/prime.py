@@ -2,17 +2,19 @@ r"""The prime — one project per seeded build tool, out of the corpus's own bui
 
 **What it does.** Finds, for each build tool the component seeds and the
 corpus declares, the corpus's **own** build — its shallowest build file's
-directory and every build file under it — and the smallest **real** source and
-test inside that build, so an image can be warmed with a project that
-actually compiles.
+directory and every build file under it — and, in each of that build's modules,
+the smallest **real** source and test with every file of the build they name
+(`specimens`), so an image can be warmed with a project that actually
+compiles: a multi-module build is primed as the build it is.
 
 **How you use it.** `prime_for(root, runtimes, seeded=…)` returns a `Prime`;
 `Prime.copies()` is every `(path in the prime, corpus-relative path)` pair a
 generator copies.
 
 **Depends on.** `pathlib`, `describe`, the exercise layout's two directory
-names, and `execute.conventions` for every build file, source suffix, skipped
-directory and test shape it selects by. ⛔ It reads the corpus and writes
+names, `specimens` for what each module copies and which file is a test, and
+`execute.conventions` for every build file, source suffix and skipped
+directory it selects by. ⛔ It reads the corpus and writes
 nothing, and it names no source (R1): every filename it selects by belongs to a
 *build tool*, a *language* or the *framework's own exercise layout*, never to
 any corpus.
@@ -50,7 +52,10 @@ reader's first offline build downloads the world, or fails with no network at
 all. Nothing says anything is wrong until then.
 
 ⭐ **So a seeded tool with no build file, or a build with no source or no test
-in it, is REFUSED by name.** That refusal is the step's whole point. ⚠️ A
+in it, is REFUSED by name.** That refusal is the step's whole point. ⭐ It is
+asked of the BUILD: a module of a multi-module build that carries nothing to
+compile is primed through its build file, which the component's warmer
+resolves whether or not the module compiles anything, and is never refused. ⚠️ A
 corpus that declares no seeded tool gets an EMPTY prime and no refusal: the
 component warms nothing for it, so there is nothing to prime.
 
@@ -77,28 +82,20 @@ own — and gets no project in the prime either.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
 from studyforge.corpus.manifest import SOURCE_SUFFIXES
 from studyforge.corpus.placement import PRACTICE_DIRNAME
 from studyforge.describe import describe
-from studyforge.execute import BUILD_FILES, SKIPPED, is_a_test
+from studyforge.execute import BUILD_FILES, SKIPPED
 from studyforge.exercise.bundle import BUNDLE_FILENAME, BUNDLES_DIRNAME
+from studyforge.skills.execution.specimens import Specimen, per_module
 
 
 class PrimeRefused(ValueError):
     """A prime that would prime nothing, and exactly what is missing from it."""
-
-
-@dataclass(frozen=True, slots=True)
-class Specimen:
-    """One language's real source and real test, as corpus-relative paths."""
-
-    language: str
-    source: str
-    test: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -121,7 +118,7 @@ class Project:
         """
         found = {*self.build_files}
         for specimen in self.specimens:
-            found.update({specimen.source, specimen.test})
+            found.update(specimen.files())
         cut = len(self.root) + 1 if self.root else 0
         return tuple(sorted((f"{self.tool}/{origin[cut:]}", origin) for origin in found))
 
@@ -155,7 +152,13 @@ class Prime:
                     "root": project.root,
                     "build_files": list(project.build_files),
                     "specimens": [
-                        {"language": one.language, "source": one.source, "test": one.test}
+                        {
+                            "language": one.language,
+                            "module": one.module,
+                            "source": one.source,
+                            "test": one.test,
+                            "support": list(one.support),
+                        }
                         for one in project.specimens
                     ],
                 }
@@ -170,14 +173,27 @@ def prime_for(root: Path, runtimes: Sequence[str], *, seeded: Sequence[str] = ()
         raise PrimeRefused(f"the corpus root must be a path, got {describe(root)}")
     declared = tuple(sorted({name for name in runtimes if isinstance(name, str)}))
     held = _files(root)
+    text = _reader(root)
     missing: list[str] = []
-    found = [_project(tool, declared, held, missing) for tool in declared if tool in seeded]
+    found = [_project(tool, declared, held, text, missing) for tool in declared if tool in seeded]
     if missing:
         raise PrimeRefused(
             "this corpus cannot be primed for what it declared, and an empty prime "
             "primes nothing while appearing to succeed (§8.1): " + "; ".join(missing)
         )
     return Prime(projects=tuple(one for one in found if one is not None))
+
+
+def stale_in(root: Path, directory: str, kept: set[str]) -> tuple[str, ...]:
+    """Every file under `directory` that is not in `kept`, corpus-relative and sorted.
+
+    ⛔ **A prime is regenerated whole.** A file an earlier selection copied and
+    this one does not would still be handed to the build, which would compile
+    what nobody selected, so onboarding's write removes each one this names.
+    """
+    held = sorted(path for path in (root / directory).rglob("*") if path.is_file())
+    found = (path.relative_to(root).as_posix() for path in held)
+    return tuple(one for one in found if one not in kept)
 
 
 def _files(root: Path) -> tuple[tuple[str, int], ...]:
@@ -214,6 +230,7 @@ def _project(
     tool: str,
     declared: Sequence[str],
     held: Sequence[tuple[str, int]],
+    text: Callable[[str], str],
     missing: list[str],
 ) -> Project | None:
     """One seeded tool's project out of the corpus's own build, or a reason why not.
@@ -245,11 +262,12 @@ def _project(
         return None
     base = shallowest[0]
     inside = [(where, size) for where, size in held if _under(where, base)]
+    modules = sorted(one for one in roots if one == base or _under(one, base))
     return Project(
         tool=tool,
         root=base,
         build_files=tuple(sorted(where for where in wanted if _under(where, base))),
-        specimens=_specimens(tool, base, declared, inside, missing),
+        specimens=_specimens(tool, base, declared, inside, modules, text, missing),
     )
 
 
@@ -281,13 +299,18 @@ def _specimens(
     base: str,
     declared: Sequence[str],
     held: Sequence[tuple[str, int]],
+    modules: Sequence[str],
+    text: Callable[[str], str],
     missing: list[str],
 ) -> tuple[Specimen, ...]:
-    """One real source and one real test per declared language inside the build.
+    """Each module's real source and real test per declared language, with what they name.
 
-    ⚠️ A declared language with no file in this build is not this build's
-    language and is passed over; one with a source and no test, or a test and
-    no source, is refused; and a build with no pair at all is refused, because
+    ⭐ **Chosen module by module** (`specimens`), so a multi-module build
+    compiles as the build it is, and a module with nothing in the language is
+    primed through its build file alone. ⚠️ A declared language with no file
+    in this build is not this build's language and is passed over; one with a
+    source and no test anywhere in the build, or a test and no source, is
+    refused; and a build with no source and no test at all is refused, because
     it would compile nothing.
     """
     found, before = [], len(missing)
@@ -296,13 +319,14 @@ def _specimens(
     for runtime in languages:
         suffixes = SOURCE_SUFFIXES[runtime]
         candidates = [(one, size) for one, size in held if one.endswith(suffixes) and size > 0]
-        source = _smallest(one for one in candidates if not is_a_test(one[0]))
-        test = _smallest(one for one in candidates if is_a_test(one[0]))
-        if source is not None and test is not None:
-            found.append(Specimen(language=runtime, source=source, test=test))
-        elif source is not None:
+        chosen = per_module(runtime, candidates, modules, text)
+        sources = any(one.source for one in chosen)
+        tests = any(one.test for one in chosen)
+        if sources and tests:
+            found.extend(chosen)
+        elif sources:
             missing.append(f"{runtime} is declared and {where} carries no test for it")
-        elif test is not None:
+        elif tests:
             missing.append(f"{runtime} is declared and {where} carries no source for it")
     if not found and len(missing) == before:
         missing.append(
@@ -312,7 +336,13 @@ def _specimens(
     return tuple(found)
 
 
-def _smallest(candidates) -> str | None:
-    """Return the smallest candidate, ties broken by path so there is one answer."""
-    ordered = sorted(candidates, key=lambda one: (one[1], one[0]))
-    return ordered[0][0] if ordered else None
+def _reader(root: Path) -> Callable[[str], str]:
+    """Return a reader of a corpus-relative file's text, each file read once."""
+    cache: dict[str, str] = {}
+
+    def text(where: str) -> str:
+        if where not in cache:
+            cache[where] = (root / where).read_text(encoding="utf-8", errors="replace")
+        return cache[where]
+
+    return text

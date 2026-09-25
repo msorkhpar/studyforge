@@ -12,14 +12,14 @@ from studyforge.execute.conventions import (
     source_suffixes,
 )
 from studyforge.execute.conventions import tested_stem as untested
-from studyforge.skills.execution import prime
+from studyforge.skills.execution import prime, specimens
 
 
 def test_the_prime_reads_the_same_spelling_and_keeps_none_of_its_own():
     # ⛔ Two spellings of one answer drift the day one learns a tool the other does not.
     for name in ("BUILD_FILES", "SKIPPED", "SOURCE_SUFFIXES"):
         assert getattr(prime, name) is getattr(conventions, name), name
-    assert prime.is_a_test is is_a_test
+    assert specimens.is_a_test is is_a_test
 
 
 def test_every_source_suffix_is_keyed_on_a_declarable_runtime():
