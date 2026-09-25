@@ -151,17 +151,27 @@ class Plan:
         return tuple(aspect for aspect in self.aspects if aspect.id in planned.aspects)
 
 
-def plan_for(aspects: object, tier: object, where: str, nothing_checkable: object = None) -> Plan:
+def plan_for(
+    aspects: object,
+    tier: object,
+    where: str,
+    nothing_checkable: object = None,
+    order: object = (),
+) -> Plan:
     """Plan one page from its aspects: one planned exercise per distinct name they give.
 
     ⛔ **The exercises are read off the aspects, never counted separately**, so
     an exercise that checks no aspect cannot be planned and an aspect cannot
-    be checked twice. ⭐ Aspects are held in id order and exercises in name
-    order, so the listing order an author used cannot move the plan (R10).
+    be checked twice. ⭐ Aspects are held in id order, and the exercises in
+    `order` — the author's teaching order, naming each planned exercise once —
+    or, where the author gives none, in name order, so the listing order of the
+    aspects cannot move the plan (R10).
     """
     named = _tier(tier, where)
     held, zero = require_aspects(aspects, nothing_checkable, where)
-    names = sorted({aspect.exercise for aspect in held if aspect.exercise is not None})
+    names = _ordered(
+        {aspect.exercise for aspect in held if aspect.exercise is not None}, order, where
+    )
     exercises = tuple(
         Planned(
             slot=slot,
@@ -171,6 +181,26 @@ def plan_for(aspects: object, tier: object, where: str, nothing_checkable: objec
         for slot, name in enumerate(names, start=1)
     )
     return Plan(named, held, exercises, zero)
+
+
+def _ordered(names: set[str], order: object, where: str) -> list[str]:
+    """Return the planned names in the author's order, or in name order when none is given.
+
+    ⚠️ **Measured:** with name order only, a course's author prefixed every
+    exercise `p01-`, `p02-` … to keep teaching order. ⛔ An order that does not
+    name each planned exercise exactly once is refused, never completed: a
+    name left out would be numbered by a rule the author did not choose.
+    """
+    if not isinstance(order, tuple) or not all(isinstance(one, str) for one in order):
+        raise PlanError(f"{where}: a page's exercise order is a tuple of exercise names.")
+    if not order:
+        return sorted(names)
+    if len(set(order)) != len(order) or set(order) != names:
+        raise PlanError(
+            f"{where}: the page's exercise order names {len(order)} exercise(s) and the "
+            f"aspects plan {len(names)}; an order names each planned exercise exactly once."
+        )
+    return list(order)
 
 
 def plan_document(plan: Plan) -> dict:

@@ -119,6 +119,8 @@ class Page:
     tier: str
     graders: tuple[str, ...] = ()
     nothing_checkable: str | None = None
+    #: ⭐ The page's exercise names in teaching order; `()` keeps name order.
+    order: tuple[str, ...] = ()
     quiz: str | None = None
 
     def kind_of(self, name: str) -> str:

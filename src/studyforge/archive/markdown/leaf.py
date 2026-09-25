@@ -25,7 +25,7 @@ from __future__ import annotations
 
 from html import unescape
 
-from studyforge.archive.markdown import patterns, scan
+from studyforge.archive.markdown import fences, patterns, scan
 from studyforge.archive.markdown.errors import MarkdownError
 
 
@@ -60,26 +60,14 @@ def read_code(lines: list[str], start: int, lang_default: str, indent: int | Non
     if indent is None:
         indent = len(match.group(1)) if match else 0
     ticks, info = (match.group(2), match.group(3)) if match else scan.fence_parts(lines[start])
-    fence_len = len(ticks)
     lang = info.strip().lower() or lang_default
-    # ⛔ CommonMark: a CLOSING fence may carry at most three spaces of indent
-    # MORE than the fence that opened it. Asking only "is this line all
-    # backticks" lets an indented ``` inside the code close the block early —
-    # everything after re-parses as alternating prose and code, and the
-    # document is refused naming a line far from the real problem.
-    #
-    # ⚠️ Relative to the opening fence, never to column zero: a fence written
-    # inside a list item legitimately opens at four spaces or more and must
-    # still be allowed to close at its own level.
-    base = indent
+    # ⛔ Where the fence closes is `fences.closes`'s, the one grammar the
+    # exercise ledger reads fences by too: at most three spaces of indent MORE
+    # than the opener, relative to it, so a fence inside a list item closes at
+    # its own level and an indented ``` inside the code never closes it early.
+    opened = fences.Opened(indent, len(ticks), info)
     for index in range(start + 1, len(lines)):
-        stripped = lines[index].strip()
-        if (
-            stripped
-            and all(char == "`" for char in stripped)
-            and len(stripped) >= fence_len
-            and scan.indent_of(lines[index]) <= base + 3
-        ):
+        if fences.closes(lines[index], opened):
             body = [scan.dedent(line, indent) for line in lines[start + 1 : index]]
             return {"type": "code", "lang": lang, "text": "\n".join(body)}, index + 1
     raise MarkdownError(

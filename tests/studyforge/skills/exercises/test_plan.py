@@ -218,3 +218,23 @@ def test_a_basis_the_page_does_not_carry_is_refused_when_the_page_is_planned(tmp
         stray = Aspect("stray", "a stray idea", (basis,), "field")
         with pytest.raises(AuthoringError, match="stray"):
             plan_page(dense_page((*DENSE_ASPECTS, stray)), ledger, "the plan")
+
+
+def test_the_author_s_order_numbers_the_exercises_without_name_prefixes():
+    """⭐ Teaching order is the author's to give, and a name carries no number."""
+    plan = plan_for(THREE, CORE, "the plan", order=("second", "first"))
+    assert [(p.slot, p.name) for p in plan.exercises] == [(1, "second"), (2, "first")]
+    assert plan_document(plan)["exercises"][0]["name"] == "second"
+
+
+def test_with_no_order_given_the_names_keep_their_order_as_before():
+    assert [p.name for p in plan_for(THREE, CORE, "the plan").exercises] == ["first", "second"]
+
+
+@pytest.mark.parametrize(
+    "order",
+    [("first",), ("first", "second", "third"), ("first", "first", "second"), ["second", "first"]],
+)
+def test_an_order_that_does_not_name_each_planned_exercise_once_is_refused(order):
+    with pytest.raises(PlanError, match="order"):
+        plan_for(THREE, CORE, "the plan", order=order)

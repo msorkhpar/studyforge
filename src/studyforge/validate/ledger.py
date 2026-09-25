@@ -1,10 +1,12 @@
 r"""Refuse a committed ledger that no longer accounts for a page the corpus carries.
 
 **What it does.** Where a corpus commits the authoring pass's ledger, requires
-it to account for every material page the corpus carries: the page is a file
+it to account for every material page a pass was handed: the page is a file
 the ledger read, each fenced example on it is a row that is the basis of an
 exercise or carries a written reason, and so is each test file a unit's
 coverage report declares as that page's grader. ⛔ Anything else is a finding.
+⭐ A material page NO pass has been handed is **pending**: reported, counted and
+named by module, and never a finding (`RULE_LEDGER_PENDING`).
 
 **How you use it.** `CHECKS`, which `validate.run` drains like every other
 check's tuple. Each function takes the `Walk` and yields `Finding`s.
@@ -39,6 +41,19 @@ module level here would make importing the skill first a cycle through this
 package's `__init__`. ⭐ The import is taken inside the check, as
 `validate.source.membership` takes `skills.adapter`.
 
+## ⭐ A PAGE NO PASS WAS HANDED IS PENDING, NOT UNACCOUNTED
+
+⚠️ **Measured on a course authored one module at a time:** after the first
+module's pass, every other page read as a finding (162 of them), and the one
+way to a clean read was an author's `excuse` per entry — a reason kept while the
+page's bytes are unchanged, so it outlived the authoring it deferred.
+⭐ **So a page is pending until the first pass reads it**, and that is a visible
+state and not a verdict: one `Unchecked` line counts the pages and names their
+modules. ⛔ **A page a pass DID author and the ledger no longer reads is still a
+finding**: its unit's committed coverage report names it, which is the evidence
+it was handed — so a ledger clobbered by a one-container pass still reads as
+the list of pages it lost, which is what this check exists for.
+
 ⛔ **Every check yields; none raises** (R6). ⭐ **Nothing happens without a
 ledger**: a corpus with no authored exercises validates exactly as before.
 """
@@ -53,13 +68,16 @@ from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.exercise.bundle import BUNDLES_DIRNAME
 from studyforge.sourcepath import is_source_path
 from studyforge.validate.corpus import Walk
-from studyforge.validate.report import Finding
+from studyforge.validate.report import Finding, Unchecked
 
 #: A committed ledger that will not read as a ledger this build wrote.
 RULE_LEDGER = "ledger"
 
 #: ⛔ A page, a fence or a declared grader the committed ledger does not account for.
 RULE_LEDGER_UNACCOUNTED = "ledger-unaccounted"
+
+#: ⭐ Material pages no authoring pass has been handed yet: a state, never a finding.
+RULE_LEDGER_PENDING = "ledger-pending"
 
 #: ⛔ A ledger or coverage report carrying personal data. ⚠️ `validate.corpus`'
 #: own spelling, because it is the same rule and two ids for one fact is two
@@ -68,7 +86,7 @@ RULE_PERSONAL_DATA = "personal-data"
 
 
 def check_ledger_accounts(walk: Walk) -> Iterator[Finding]:
-    """Every material page, its every fence and its every declared grader is accounted for.
+    """Every page a pass was handed, its every fence and its every grader is accounted for.
 
     ⭐ **One finding per page and per grader**, naming the first row missing,
     so a clobbered ledger reads as the list of pages it lost rather than as
@@ -82,17 +100,23 @@ def check_ledger_accounts(walk: Walk) -> Iterator[Finding]:
     rows = yield from _rows(path, LEDGER_PATH)
     if rows is None:
         return
-    pages, graders, leaks = _declared(walk)
+    pages, graders, authored, leaks = _declared(walk)
     yield from leaks
     read = {row["path"] for row in rows["sources"]}
     entries = _by_key(rows["entries"])
+    pending: list[str] = []
     for page in sorted(pages):
         if not (walk.root / page).is_file():
             continue
+        if page not in read and page not in authored:
+            pending.append(page)
+            continue
         if page not in read:
-            yield _unaccounted(page, "is a material page and the ledger never read it")
+            yield _unaccounted(page, "was authored and the ledger no longer reads it")
             continue
         yield from _fences(walk.root, page, entries)
+    if pending:
+        yield _pending(walk, pending)
     for grader in sorted(graders):
         said = _ending(entries.get(f"tests:{grader}"))
         if said is not None:
@@ -131,8 +155,8 @@ def _rows(path: Path, where: str):
     return None
 
 
-def _declared(walk: Walk) -> tuple[set[str], set[str], list[Finding]]:
-    """Return every material page and every declared grader the corpus names.
+def _declared(walk: Walk) -> tuple[set[str], set[str], set[str], list[Finding]]:
+    """Return every material page, every declared grader, and every page a report names.
 
     ⭐ **Pages**: each unit's `origin` in each container map, and each page a
     committed coverage report names. **Graders**: each file a coverage report
@@ -150,6 +174,7 @@ def _declared(walk: Walk) -> tuple[set[str], set[str], list[Finding]]:
         if unit.origin is not None
     }
     graders: set[str] = set()
+    authored: set[str] = set()
     leaks: list[Finding] = []
     for report in sorted(walk.root.glob(f"{BUNDLES_DIRNAME}/**/{COVERAGE_FILENAME}")):
         where = report.relative_to(walk.root).as_posix()
@@ -163,8 +188,9 @@ def _declared(walk: Walk) -> tuple[set[str], set[str], list[Finding]]:
         digests = document.get("digests")
         if is_source_path(page) and isinstance(digests, dict):
             pages.add(page)
+            authored.add(page)
             graders |= {path for path in digests if is_source_path(path) and path != page}
-    return pages, graders, leaks
+    return pages, graders, authored, leaks
 
 
 def _report(path: Path) -> dict:
@@ -214,6 +240,30 @@ def _ending(row: dict | None) -> str | None:
     if not built and not excused:
         return "names no exercise and no reason"
     return None
+
+
+def _pending(walk: Walk, pending: list[str]) -> Unchecked:
+    """One line counting the pages no pass has been handed, and naming their modules."""
+    from studyforge.skills.exercises import LEDGER_PATH
+
+    module = {
+        unit.origin: held.container.address.key
+        for held in walk.containers
+        for unit in held.container.units
+        if unit.origin is not None
+    }
+    counts: dict[str, int] = {}
+    for page in pending:
+        name = module.get(page, "a coverage report")
+        counts[name] = counts.get(name, 0) + 1
+    named = ", ".join(f"{name} ({count})" for name, count in sorted(counts.items()))
+    return Unchecked(
+        RULE_LEDGER_PENDING,
+        LEDGER_PATH,
+        f"{len(pending)} material page(s) are pending: no authoring pass has been handed "
+        f"them yet, so none is unaccounted. By module: {named}. The first pass that "
+        f"reads a page ends its pending state",
+    )
 
 
 def _unaccounted(path: str, why: str) -> Finding:

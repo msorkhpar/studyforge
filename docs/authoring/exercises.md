@@ -756,6 +756,12 @@ aspect ends one of two ways: a named exercise checks it, or a written reason
 says why nothing does.** The plan has one exercise for each distinct name the
 aspects give, and each exercise's brief lists the aspects it checks.
 
+**Exercises ship in the order you give them.** Set the page's `order` to every
+planned exercise name, each once, in teaching order. The first gets the unit's
+next free number. Without an `order`, the plan keeps the names in sorted order.
+Do not add prefixes such as `p01-` to names to control the order. An `order`
+that misses a name, or repeats one, is refused.
+
 **What makes a good aspect:**
 
 - **It matters to the page.** Dates, names and incidental numbers are not
@@ -817,7 +823,12 @@ exercise's `origin`, or carries a written reason why not.** An entry with
 neither is refused.
 
 - An example's key is `example:<path>:<n>`, where `<n>` counts the file's
-  fenced blocks from 1.
+  fenced blocks from 1. **The ledger reads fences exactly as the archive
+  reader does.** A fence is a run of backticks indented up to three spaces,
+  or indented any amount inside a list item. It closes on a line of backticks
+  at least as long, indented at most three spaces more than its opening line.
+  A `~~~` run is not a fence, because the archive keeps none. So `<n>` counts
+  exactly the code blocks the reader sees on the page.
 - A test file's key is `tests:<path>`.
 - **An `origin` naming a whole file accounts for every example in it. One
   naming a section accounts for every example under that heading.**
@@ -1017,6 +1028,12 @@ is checked before any is written. A file already there with the same bytes is
 left alone. One with different bytes stops the whole pass, names the first such
 file, and nothing is written.
 
+⛔ **A file your corpus's git would ignore also stops the pass, before anything
+is written.** `git add` would leave that file out, so your repository would
+never hold the exercise. The refusal names the first ignored file. A course
+that ignores `build/` also hides every bundle's `build/pom.xml`. Un-ignore it
+with a `!build/` line in `exercises/.gitignore`, then run the pass again.
+
 ⭐ **The ledger is the one file a pass rewrites, and it only ever adds.** It is
 one file for your whole corpus, so you can run the pass over one container at a
 time, in any order. A pass replaces the rows of the files you handed it as
@@ -1035,7 +1052,15 @@ Its exercises were proven against material that has since moved. To author it
 again, delete that unit's directory under `exercises/`, then run the pass
 again. ⛔ **Do not delete `exercises/ledger.json`**: the pass keeps every row
 for a file it did not read, so deleting the ledger loses every other page's
-rows, and `validate` then names each such page (`ledger-unaccounted`).
+rows, and `validate` then names each page a pass had authored
+(`ledger-unaccounted`).
+
+**You can author one container at a time, and `validate` stays clean between
+passes.** A page that no pass has been given yet is *pending*, not missing.
+`validate` lists one unchecked claim, `ledger-pending`, with the number of
+pending pages in each module. It is not a finding. The first pass that reads a
+page ends its pending state. Pending is not an excuse. An excuse is a written
+reason that no exercise is built from an entry, and it stays that reason.
 **Delete the unit's directory under `practice/` as well.** The refusal does not mention it, but a
 new draft whose starter or tests differ would otherwise land on the old
 workspace files, and the pass refuses any file that exists with different
@@ -1043,7 +1068,14 @@ bytes.
 
 ### Then the adapter, then `validate`
 
-**The pass writes no practice document. Your adapter does**, from each
+**The pass writes no practice document. Your adapter does.** If you
+scaffolded the adapter with the [adapter skill](../../src/studyforge/skills/adapter/SKILL.md)
+and your manifest says `exercises: true`, the generated `emit.py` already does
+it. It reads every committed bundle, code and quiz alike, through
+`studyforge.skills.adapter.practices`. It checks each one against its gate
+record, adds it to its unit as a practice document, and raises the unit's
+practice count. Your `read.documents` then returns only your source's own
+material. An adapter you wrote by hand builds each code practice from its
 bundle:
 
 ```python

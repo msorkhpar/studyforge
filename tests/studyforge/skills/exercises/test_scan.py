@@ -68,9 +68,64 @@ def test_a_marker_of_the_other_character_inside_an_open_fence_is_body():
     assert "still inside" in read.fences[0].body
 
 
-def test_a_tilde_fence_is_a_fence_and_takes_its_own_ordinal():
+def test_a_tilde_run_is_not_a_fence_because_the_archive_keeps_none():
     read = scan("~~~py\na\n~~~\n\n```py\nb\n```\n")
-    assert [fence.ordinal for fence in read.fences] == [1, 2]
+    assert [fence.body for fence in read.fences] == ["b\n"]
+
+
+#: A list whose items carry fences the way course material writes them: one
+#: indented four spaces under its item, one straight after an item, and one that
+#: opens at four spaces and closes at three.
+LISTED = """# Casting
+
+1. Widening is safe:
+
+    ```java
+    long wide = 1;
+    ```
+2. Narrowing wraps:
+   ```java
+   int narrow = (int) 2147483648L;
+   ```
+- A range check first:
+
+    ```java
+    if (value > Integer.MAX_VALUE) { throw new ArithmeticException(); }
+   ```
+
+After the list.
+
+    ```java
+    not a fence: four spaces at the top level is not a list item's
+    ```
+"""
+
+
+def test_a_fence_indented_inside_a_list_item_is_read_as_the_archive_reads_it():
+    read = scan(LISTED)
+    assert not read.unclosed, "a fence closing three spaces in closes one opened at four"
+    assert [fence.ordinal for fence in read.fences] == [1, 2, 3]
+    assert "long wide" in read.fences[0].body
+    assert "2147483648L" in read.fences[1].body
+    assert "MAX_VALUE" in read.fences[2].body
+    assert all(fence.sections == ("Casting",) for fence in read.fences)
+
+
+def test_the_scan_reads_exactly_the_code_blocks_the_archive_reader_reads():
+    """⭐ One grammar: the ledger's fences are the archive reader's code blocks."""
+    from studyforge.archive.markdown import parse
+
+    def code(blocks):
+        for block in blocks:
+            if not isinstance(block, dict):
+                continue
+            if block.get("type") == "code":
+                yield block["text"]
+            for item in block.get("items", ()):
+                yield from code(item if isinstance(item, list) else [item])
+
+    blocks = list(code(parse(LISTED)))
+    assert len(scan(LISTED).fences) == len(blocks) == 3
 
 
 def test_an_unclosed_fence_is_reported_and_not_raised():
