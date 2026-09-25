@@ -26,15 +26,15 @@ vocabulary names is **asked about by name** rather than mapped to a near miss.
 ## ⛔ A source file a build holds evidences only what that build builds
 
 ⚠️ **Measured, and the reason this rule exists.** A course built by Maven kept
-a Python file among its conversion notes and a shell script among the author's
-tools, and the draft proposed `python` and `shell` beside `java` and `maven`,
-though no grader runs either. ⭐ So a source file inside a build's tree, under
-the nearest directory holding a build file this skill reads, evidences a
-runtime only when that build builds it (`BUILDS`): a `.java` under a `pom.xml`
-does, a `.py` under a `pom.xml` does not. ⚠️ Only a language some build builds
-is judged so; a build says nothing about a database file or a shell script. ⛔ **Set aside, never dropped**: the
-question beside the draft names every file set aside and why. A file no build
-holds, in a corpus of loose scripts, evidences what it always did.
+a Python file among its conversion notes, and the draft proposed `python`
+beside `java` and `maven`, though no grader runs it. ⭐ So a source file inside
+a build's tree, under the nearest directory holding a build file this skill
+reads, evidences a runtime only when that build builds it (`BUILDS`): a `.java`
+under a `pom.xml` does, a `.py` under a `pom.xml` does not. ⚠️ Only a language
+some build builds is judged so; a build says nothing about a database file or a
+shell script. ⛔ **Set aside, never dropped**: the question beside the draft
+names every file set aside and why. A file no build holds, in a corpus of loose
+scripts, evidences what it always did.
 
 ## ⭐ Only a graded corpus declares any (§7)
 
