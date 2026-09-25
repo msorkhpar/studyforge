@@ -129,7 +129,8 @@
   function remember(index) {
     try {
       var state = {};
-      state[REOPEN] = typeof index === 'number' && index >= 0 ? index : null;
+      state[REOPEN] = typeof index === 'number' && index >= 0
+        ? { entry: index, x: window.scrollX, y: window.scrollY } : null;
       history.replaceState(state, '');
     } catch (ignored) { return; }
   }
@@ -137,11 +138,18 @@
   function reopened() {
     try {
       var timing = performance.getEntriesByType('navigation');
-      var index = history.state && history.state[REOPEN];
+      var kept = history.state && history.state[REOPEN];
       remember(null);
-      return timing.length && timing[0].type === 'reload' && typeof index === 'number'
-        ? entries[index] || null : null;
+      return timing.length && timing[0].type === 'reload' && kept && typeof kept.entry === 'number'
+        ? kept : null;
     } catch (ignored) { return null; }
+  }
+
+  /* ⭐ The reload put the page wherever the browser restored it, before the
+     entry reopened; the reader is put back exactly where they clicked, once.
+     ⛔ This is the one place the page is moved, and only to where it WAS. */
+  function putBack(kept) {
+    window.scrollTo({ left: kept.x, top: kept.y, behavior: 'instant' });
   }
 
   function wire(entry) {
@@ -204,8 +212,12 @@
       show(part(entry, 'copy'), true);
       wire(entry);
     });
-    var again = reopened();
-    if (again) { again.details.open = true; }
+    var kept = reopened();
+    var again = kept ? entries[kept.entry] || null : null;
+    if (again) {
+      again.details.open = true;
+      requestAnimationFrame(function () { putBack(kept); });
+    }
     entries.forEach(function (entry) {
       if (entry.details.open && !live) { load(entry); } else if (entry.details.open) {
         entry.details.open = false;

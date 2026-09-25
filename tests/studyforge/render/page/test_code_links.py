@@ -70,10 +70,14 @@ def test_one_example_at_most_is_live_and_expanding_another_closes_the_first():
     assert "if (mine !== asked || live !== entry || !entry.details.open) { return; }" in load
 
 
-def test_the_page_is_never_scrolled_to_an_example():
+def test_the_page_is_never_scrolled_to_an_example_and_a_reload_puts_it_back():
     body = behaviour()
-    for word in ("scrollIntoView", "scrollTo", ".focus("):
+    for word in ("scrollIntoView", ".focus("):
         assert word not in body, word
+    # ⛔ The one move: back to where the reader was when a cold reload moved the page.
+    assert body.count("scrollTo(") == 1
+    assert "{ entry: index, x: window.scrollX, y: window.scrollY }" in body
+    assert "requestAnimationFrame(function () { putBack(kept); });" in body
 
 
 def test_a_modified_click_is_left_to_the_browser():
