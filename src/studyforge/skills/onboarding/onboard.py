@@ -79,6 +79,7 @@ from studyforge.skills.adapter import (
     scaffold,
     write_files,
 )
+from studyforge.skills.execution import NOT_MATERIAL as EXECUTION_FILES
 from studyforge.skills.onboarding import artifacts, library, record, recorded
 from studyforge.skills.onboarding.manifest import promote, render
 from studyforge.skills.onboarding.nondestructive import edits_test
@@ -259,6 +260,7 @@ def onboard(
     declared = {
         "the adapter scaffold": made.not_material,
         "this skill's own files": artifacts.own_not_material(reader),
+        "the execution skill's files": EXECUTION_FILES if provisional.runtimes else (),
     }
     # ⛔ The reader's glob where an earlier run placed it is this skill's too.
     ours = {entry["glob"] for entry in kept if entry["why"] == artifacts.WHY_READER}

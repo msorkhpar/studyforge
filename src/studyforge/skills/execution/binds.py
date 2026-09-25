@@ -47,7 +47,7 @@ from collections.abc import Mapping
 from pathlib import PurePosixPath
 
 from studyforge.corpus.manifest import Manifest
-from studyforge.corpus.placement import ARCHIVE_DIRNAME
+from studyforge.corpus.placement import ARCHIVE_DIRNAME, PRACTICE_DIRNAME
 from studyforge.execute.codetree import CODE_COPY
 from studyforge.exercise.bundle.layout import BUNDLES_DIRNAME
 from studyforge.skills.execution.contract import blocks, require
@@ -136,3 +136,26 @@ def _common(first: PurePosixPath, second: PurePosixPath) -> PurePosixPath:
             break
         shared.append(one)
     return PurePosixPath(*shared)
+
+
+def workspaces_bind(block: Mapping[str, object], sources: str) -> tuple[str, str] | None:
+    """Return `(corpus-relative dir, container path)` for the practice workspaces, or `None`.
+
+    ⭐ **Read FROM where `emit` places them** — `PRACTICE_DIRNAME`, the one
+    spelling `exercise.bundle.Places.workspace` and the adapter's own practices
+    share — ⛔ never a second spelling of it. It sits inside the
+    contract's workspace root, beside the sources, under its own name.
+    ⭐ `None` when the sources already hold it: a second bind of what the first
+    shows is two windows onto one directory.
+    """
+    if PurePosixPath(PRACTICE_DIRNAME).is_relative_to(PurePosixPath(sources)):
+        return None
+    root = require(block, "workspace", "container_path")
+    inside = f"{str(root).rstrip('/')}/{PRACTICE_DIRNAME}"
+    taken = {str(entry.get("container_path")) for entry in blocks(block, "mounts")}
+    if inside in taken:
+        raise ExecutionRefused(
+            "the contract already mounts something where the practice workspaces would go, "
+            "and this skill will not shadow it"
+        )
+    return PRACTICE_DIRNAME, inside

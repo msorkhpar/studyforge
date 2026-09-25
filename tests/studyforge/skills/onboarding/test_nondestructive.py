@@ -37,7 +37,7 @@ from studyforge.skills.onboarding.manifest import promote, render
 from studyforge.skills.onboarding.nondestructive import edits_test
 from studyforge.skills.onboarding.pin import PIN_DIR
 from tests.studyforge.cli.narrate.service import BASE, FMT, VOICE, FakeService
-from tests.studyforge.skills.execution.contracts import editor_text
+from tests.studyforge.skills.execution.contracts import editor_text, made_runnable
 from tests.studyforge.skills.onboarding import corpora
 from tests.studyforge.skills.onboarding.test_committed_output import onboarded
 from tests.support import repository_root
@@ -369,11 +369,8 @@ def _execution_regenerate(root, title):
     declared in memory (one the synthetic editor carries and nothing seeds, so
     no prime is needed), and the title as the input that moved.
     """
-    document = json.loads((root / "corpus.json").read_text(encoding="utf-8"))
-    # `runtimes` arrived at corpus_api 4 and needs `exercises`, as the parser enforces.
-    document.update(runtimes=["python"], exercises=True, title=title)
-    document["corpus_api"] = max(document["corpus_api"], 4)
-    made = execution.generate(parse(json.dumps(document)), editor_text=editor_text(), root=root)
+    manifest = made_runnable(root, title=title)
+    made = execution.generate(manifest, editor_text=editor_text(), root=root)
     execution.write(made, root)
 
 

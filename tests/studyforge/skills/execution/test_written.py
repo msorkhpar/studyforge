@@ -15,11 +15,10 @@ from pathlib import Path
 
 import pytest
 
-from studyforge.corpus.manifest import parse
 from studyforge.skills.execution import onboard as execution
 from studyforge.skills.execution import record, written
 from studyforge.skills.onboarding import hand_edited
-from tests.studyforge.skills.execution.contracts import editor_text
+from tests.studyforge.skills.execution.contracts import editor_text, made_runnable
 from tests.studyforge.skills.execution.test_record import EDITOR_TAG, TAG, Asked
 from tests.studyforge.skills.onboarding.test_committed_output import onboarded
 
@@ -38,10 +37,7 @@ OUTPUTS = (
 
 def run_the_skill(root: Path, *, editor_tag: str = EDITOR_TAG) -> None:
     """Generate, write and record both tags over the onboarded corpus, as the procedure does."""
-    document = json.loads((root / "corpus.json").read_text(encoding="utf-8"))
-    document.update(runtimes=["python"], exercises=True)
-    document["corpus_api"] = max(document["corpus_api"], 4)
-    made = execution.generate(parse(json.dumps(document)), editor_text=editor_text(), root=root)
+    made = execution.generate(made_runnable(root), editor_text=editor_text(), root=root)
     execution.write(made, root)
     record.record_runner(made, root, root, ask=Asked(0, TAG))
     record.record_editor(made, root, root, ask=Asked(0, editor_tag))
@@ -113,10 +109,7 @@ def test_a_regenerate_writes_back_what_it_writes_and_still_reports_what_it_did_n
     for where in (execution.COMPOSE_FILE, execution.EDITOR_ENV):
         with (root / where).open("a", encoding="utf-8") as appended:
             appended.write("# mine\n")
-    document = json.loads((root / "corpus.json").read_text(encoding="utf-8"))
-    document.update(runtimes=["python"], exercises=True)
-    document["corpus_api"] = max(document["corpus_api"], 4)
-    made = execution.generate(parse(json.dumps(document)), editor_text=editor_text(), root=root)
+    made = execution.generate(made_runnable(root), editor_text=editor_text(), root=root)
     execution.write(made, root)
     assert [one.split(" ", 1)[0] for one in hand_edited(root)] == [execution.EDITOR_ENV]
     run_the_skill(root)

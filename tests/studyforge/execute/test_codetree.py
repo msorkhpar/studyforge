@@ -95,6 +95,23 @@ def test_a_reader_s_change_survives_until_the_author_changes_the_file(tmp_path):
     assert "author" in (copy / SOURCE).read_text(encoding="utf-8")
 
 
+def test_a_file_the_sync_writes_is_newer_than_what_was_built_from_the_one_it_replaced(tmp_path):
+    root = corpus(tmp_path)
+    authored = (root / TEST).stat().st_mtime - 100
+    os.utime(root / TEST, (authored, authored))
+    copy = sync(root)
+    (copy / TEST).write_text("class TypesTest { /* the reader's */ }\n", encoding="utf-8")
+    built = copy / "m/target/test-classes/p/TypesTest.class"
+    built.parent.mkdir(parents=True)
+    built.write_bytes(b"compiled from the reader's edit")
+    os.utime(built, (authored + 50, authored + 50))
+    (copy / TEST).unlink()
+    sync(root)
+    assert (copy / TEST).read_bytes() == (root / TEST).read_bytes()
+    assert (copy / TEST).stat().st_mtime_ns > built.stat().st_mtime_ns, "the build recompiles it"
+    assert (copy / TEST).stat().st_mtime_ns > (root / TEST).stat().st_mtime_ns
+
+
 def test_a_file_the_author_removed_leaves_the_copy_but_output_and_settings_stay(tmp_path):
     root = corpus(tmp_path)
     copy = sync(root)

@@ -2003,7 +2003,10 @@ These are proven surfaces, generalised in their addressing and otherwise kept.
   (`.studyforge/execution/code`, ignored but for its own ignore file), a run
   happens in that copy, and the panel says so. ⭐ The copy is refreshed on
   every open and run, newer wins, so a reader's change survives until the
-  author changes the file. ⛔ **With no editor, and wherever the editor cannot
+  author changes the file. ⛔ **A file the refresh writes is stamped with the
+  time of the refresh**, never the author's, so it is newer than anything built
+  from the file it replaced and every incremental build recompiles it; a copy
+  carrying the author's older time left a reader's undone edit compiled. ⛔ **With no editor, and wherever the editor cannot
   open the file, the link is followed**: the static route serves a code file as
   text, so the fallback is a plain view and never a download. ⚠️ Only a build
   tool with a measured command runs a test (Maven, offline, in the runner);
