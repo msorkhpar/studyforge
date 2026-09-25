@@ -53,6 +53,16 @@ obviously wrong — which is the trick question this gate exists to catch.
 
 ⭐ `Q1` and `Q2` are per QUESTION and say so by carrying an empty `option`.
 
+## ⛔ A `Q2` READING IS TAKEN UNDER `Q2_PROMPT`, AND SAYS WHY
+
+⚠️ **`Q2` guards against a giveaway** (`family.Q2_RULE`): its reader answers
+from the question's wording alone. ⛔ So a `Q2` judgement whose prompt is not
+`Q2_PROMPT` is refused, and so is one with no `because`, the cue the reader
+named or its word that none decided. ⭐ A refused `Q2` quotes that reason in
+its verdict, which is what a retry's brief carries: the author is told which
+cue gave the key away, never handed the same brief again. ⭐ Every `Q2` verdict
+records `rule` first, so the record names the rule's version.
+
 ## ⛔ WHAT A JUDGEMENT RECORDS, AND WHY NOTHING HERE READS IT TO DECIDE
 
 ⭐ **The prompt, the pass and the outcome** (what a judged gate must keep),
@@ -75,7 +85,7 @@ from dataclasses import dataclass
 from studyforge.describe import describe
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.gates.digests import digest_of_bytes, require_digest, require_role
-from studyforge.exercise.gates.quiz.family import JUDGED, Q1, Q2, Q3, verdict
+from studyforge.exercise.gates.quiz.family import JUDGED, Q1, Q2, Q2_PROMPT, Q2_RULE, Q3, verdict
 from studyforge.exercise.gates.record import Verdict
 from studyforge.exercise.quiz import Option, Question, questions_document
 
@@ -106,6 +116,9 @@ class Judgement:
     outcome: str
     held: bool
     over: str
+    #: ⭐ Why the reader answered as it did. Required on `Q2`: the cue that gave
+    #: the key away, or that none did. A retry's brief quotes it.
+    because: str = ""
 
 
 def question_digest(question: Question) -> str:
@@ -176,7 +189,7 @@ def judged_gate(
     found = {(entry.question, entry.option): entry for entry in taken if entry.gate == gate}
     findings = [sentence for pair in owed for sentence in _findings(gate, pair, found)]
     findings += _unowed(gate, owed, found)
-    recorded = tuple(
+    recorded = (() if gate != Q2 else (("rule", Q2_RULE),)) + tuple(
         written
         for key in (_key(pair) for pair in owed)
         if key in found
@@ -230,7 +243,8 @@ def _findings(
     if entry is None:
         return [f"{named} carries no {gate} judgement at all"]
     if not entry.held:
-        return [f"{named} was judged and {gate} did not hold: {entry.outcome}"]
+        why = f", because {entry.because}" if entry.because.strip() else ""
+        return [f"{named} was judged and {gate} did not hold: {entry.outcome}{why}"]
     if entry.over != question_digest(question):
         return [
             f"{named} has changed since its {gate} judgement was taken, so that "
@@ -272,12 +286,13 @@ def _names(question: Question, option: Option | None) -> str:
 def _recorded(entry: Judgement) -> tuple[tuple[str, str], ...]:
     """Write one judgement's prompt, pass, outcome and digest into the verdict's evidence."""
     tail = entry.question if entry.option == WHOLE_QUESTION else f"{entry.question}:{entry.option}"
-    return tuple(
+    written = tuple(
         (f"{field}:{tail}", value)
         for field, value in zip(
             JUDGED_FIELDS, (entry.prompt, entry.taken_by, entry.outcome, entry.over), strict=True
         )
     )
+    return written + (((f"because:{tail}", entry.because),) if entry.because.strip() else ())
 
 
 def _judgement(value: object, where: str) -> Judgement:
@@ -308,7 +323,31 @@ def _judgement(value: object, where: str) -> Judgement:
         )
     require_digest(value.over, f"{where}: a judgement's 'over'")
     _require_recorded(value, where)
+    if not isinstance(value.because, str):
+        raise ExerciseError(
+            f"{where}: a judgement's 'because' is text: why its reader answered as it "
+            f"did. The value is {describe(value.because)}."
+        )
+    if value.gate == Q2:
+        _require_page_free(value, where)
     return value
+
+
+def _require_page_free(value: Judgement, where: str) -> None:
+    """⛔ Refuse a `Q2` reading taken under another prompt, or one that does not say why."""
+    if value.prompt != Q2_PROMPT:
+        raise ExerciseError(
+            f"{where}: a Q2 judgement was taken under a prompt that is not Q2_PROMPT. "
+            f"Q2 ({Q2_RULE}) asks its reader to answer from the question's wording "
+            f"alone, so a reading taken any other way, such as from general knowledge, "
+            f"is a reading of another rule."
+        )
+    if not isinstance(value.because, str) or not value.because.strip():
+        raise ExerciseError(
+            f"{where}: a Q2 judgement's 'because' is required: the cue in the "
+            f"question's wording that decided the reading, or that none did. A retry "
+            f"after a refused Q2 is briefed with it."
+        )
 
 
 def _require_recorded(value: Judgement, where: str) -> None:

@@ -1,19 +1,21 @@
-r"""A lesson's links to its own code: marked, and the panel they open in.
+r"""A lesson's links to its own code: marked, and its examples drawn to open in place.
 
 **What it does.** Marks every link on a unit page that leads to a code file of
-the corpus with that file's corpus-relative path (`data-code-path`), and
-renders, once per page that has one, the panel such a file opens in — which
-says, as built, why the link opens the file as plain text.
+the corpus with that file's corpus-relative path (`data-code-path`), and turns
+a list of such links — a page's code examples — into one collapsed entry per
+example, a source and its paired test, named for its source. Expanded, served,
+an entry opens its example in the course's editor right there; as built, it
+says why each file opens as plain text.
 
-**How you use it.** `page.document` calls `body, paths = mark(body, placement)`
-over the page's rendered sections, and places `render(paths, placement)` after
-`<main>`; both are empty-handed for a page that links no code, which then
-renders byte for byte as it did.
+**How you use it.** `page.document` calls `body = examples(*mark(body,
+placement), placement)` over the page's rendered sections. A page that links no
+code, and a corpus with no pairing, render byte for byte as they did.
 
 **Depends on.** `corpus.placement` for the generated directory's name,
 `render.templates` and `render.markup`. ⛔ Not on `serve` and not on `execute`:
 a page renders over `file://`, and this names no API, no origin and no port
-(R8).
+(R8). ⭐ Which source a test stands beside is the build's answer
+(`Placement.pairing`), read from the corpus's files before the page is drawn.
 
 ## ⭐ Which link is code is read from the page's own geometry
 
@@ -31,16 +33,29 @@ the file's plain view, which is what it opens whenever the editor does not.
 character the material carried is escaped — so a `<a` inside a code block is
 `&lt;a` and is never read as a link.
 
-## ⛔ The panel says WHY as built, and the served page says the rest
+## ⭐ A list of code links is the page's examples, one entry per pair
 
-⭐ **Built, the panel is one sentence**: a code file opens as plain text,
-because the course's editor is not running here — and how to start it. That is
-true over `file://` and true on a served page whose corpus has no editor up, so
-it ships visible. ⭐ **Served with the editor up**, `code-links.js` hides it,
-shows the sentence saying the editor opens a COPY of the code, and opens each
-marked link in the panel's two windows. ⛔ **The panel is framework structure**
-(R1): its words are this framework's, in `CODE_TEMPLATE`, and never the
-material's.
+⚠️ **Measured on a real course:** a click on a code example opened a panel at
+the foot of the page, under every practice, and the page scrolled there. ⭐ So
+a list whose every item is one code link and a short label (`Test: …`) is drawn
+as the examples it is: each item joins the entry of the pair its file stands
+in, the entries follow the order their first item has, and each is a
+`<details>` named for its source — for its test where no source was found.
+⛔ **Each item keeps its own element, words and narration attribute**, inside
+its entry, so the list's speech units say what they said. ⚠️ Items of one pair
+that the list separates are drawn together, which moves the later one up.
+
+⭐ **An entry's tabs are its pair's**: `Source` and `Test`, or the one of them
+it has. ⛔ **Nothing is loaded as built**: the editor's frames are empty slots
+`code-links.js` fills when the entry is expanded, served, with the editor up.
+
+## ⛔ An entry says WHY as built, and the served page says the rest
+
+⭐ **Built, an entry's note is one sentence**: each file opens as plain text,
+because the course's editor is not running here — and how to start it. ⭐
+**Served with the editor up**, `code-links.js` shows the sentence saying the
+editor opens a COPY of the code instead. ⛔ **The words are framework
+structure** (R1): this framework's, in `EXAMPLE_TEMPLATE`, never the material's.
 """
 
 from __future__ import annotations
@@ -55,8 +70,14 @@ from studyforge.render import templates
 from studyforge.render.markup import escape_attribute
 from studyforge.render.page.assets import Placement
 
-#: The panel a page's code opens in.
-CODE_TEMPLATE = "code-panel.html"
+#: One example: a collapsed entry, its lines, and the slots its editor opens in.
+EXAMPLE_TEMPLATE = "code-example.html"
+
+#: The examples of one list, and the corpus they open in.
+EXAMPLES_TEMPLATE = "code-examples.html"
+
+#: The most words an example's line carries beside its link — a label, not prose.
+MAX_LABEL = 40
 
 #: The attribute a code link carries: the file's path, relative to the corpus.
 PATH_ATTRIBUTE = "data-code-path"
@@ -66,6 +87,16 @@ ANCHOR = re.compile(r'<a href="(?P<href>[^"]*)" rel="noopener noreferrer">')
 
 #: An href that carries a scheme, and so names no file of the corpus.
 SCHEME = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:")
+
+#: One flat list, as `blocks.prose` writes it. ⚠️ Non-greedy: a nested list
+#: ends the match early, and its items then fail `ITEM`, so it is left alone.
+LIST = re.compile(r'<(?P<tag>ul|ol) class="items"(?P<start>[^>]*)>(?P<items>.*?)</(?P=tag)>', re.S)
+
+#: One item that is a marked code link and a short label, and nothing else.
+ITEM = re.compile(
+    r'<li(?P<attributes>[^>]*)>(?P<before>[^<]*)<a href="[^"]*" rel="noopener noreferrer" '
+    rf'{PATH_ATTRIBUTE}="(?P<path>[^"]*)">[^<]*</a>(?P<after>[^<]*)</li>'
+)
 
 
 def mark(body: str, placement: Placement) -> tuple[str, tuple[str, ...]]:
@@ -106,8 +137,54 @@ def code_file(href: str, placement: Placement) -> str | None:
     return "/".join(walked)
 
 
-def render(paths: tuple[str, ...], placement: Placement) -> str:
-    """Return the panel a page's code opens in, or `''` for a page that links none."""
-    if not paths:
-        return ""
-    return templates.fill(CODE_TEMPLATE, corpus=escape_attribute(placement.corpus))
+def examples(body: str, paths: tuple[str, ...], placement: Placement) -> str:
+    """Return `body` with each list of code links drawn as its examples, one per pair."""
+    if not paths or placement.pairing is None:
+        return body
+    pairing = placement.pairing
+    return LIST.sub(lambda found: _examples(found, pairing, placement) or found.group(0), body)
+
+
+def _examples(found: re.Match[str], pairing, placement: Placement) -> str | None:
+    """Draw one list as its examples, or `None` when an item is anything but a code link."""
+    items = list(ITEM.finditer(found["items"]))
+    if not items or "".join(item.group(0) for item in items) != found["items"]:
+        return None
+    if any(len(unescape(item["before"] + item["after"]).strip()) > MAX_LABEL for item in items):
+        return None
+    entries: dict[tuple[str | None, str | None], list[re.Match[str]]] = {}
+    for item in items:
+        source, test = pairing(unescape(item["path"]))
+        entries.setdefault((source, test), []).append(item)
+    tag, start = found["tag"], found["start"]
+    drawn = "".join(
+        _entry(pair, lines, f'<{tag} class="items"{start}>', f"</{tag}>")
+        for pair, lines in entries.items()
+    )
+    return templates.fill(
+        EXAMPLES_TEMPLATE, corpus=escape_attribute(placement.corpus), entries=drawn
+    )
+
+
+def _entry(pair: tuple[str | None, str | None], lines, opening: str, closing: str) -> str:
+    """One example: named for its source, its lines, and a tab for each file it has."""
+    source, test = pair
+    first = unescape(lines[0]["path"])
+    named = PurePosixPath(source or test or first).name
+    windows = (
+        (("main", "Source"), ("test", "Test"))
+        if source and test
+        else ((("main", "Source" if source else "Test"),))
+    )
+    tabs = "".join(
+        f'<button type="button" role="tab" data-code-tab="{window}" '
+        f'aria-selected="{"true" if index == 0 else "false"}">{words}</button>'
+        for index, (window, words) in enumerate(windows)
+    )
+    return templates.fill(
+        EXAMPLE_TEMPLATE,
+        path=escape_attribute(first),
+        name=escape_attribute(named),
+        lines=opening + "".join(line.group(0) for line in lines) + closing,
+        tabs=tabs,
+    )

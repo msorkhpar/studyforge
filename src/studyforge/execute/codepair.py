@@ -58,10 +58,11 @@ from __future__ import annotations
 
 import re
 from collections import Counter
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
-from studyforge.execute.codetree import code_files, in_copy
+from studyforge.execute.codetree import CodeRefused, code_files, in_copy
 from studyforge.execute.conventions import (
     BUILD_FILES,
     is_a_test,
@@ -103,7 +104,34 @@ def is_code(path: str, runtimes: tuple[str, ...] | list[str]) -> bool:
 
 def pair(root: Path, path: str, runtimes: tuple[str, ...] | list[str]) -> Pair | None:
     """Return `path`'s pair, or `None` when it is not a code file the copy holds."""
-    files = code_files(Path(root))
+    return pair_in(code_files(Path(root)), path, runtimes)
+
+
+def pairing(root: Path, runtimes: tuple[str, ...] | list[str]) -> Callable[[str], Pair | None]:
+    """Return `pair` for one corpus, walking its code once and answering each file once.
+
+    ⭐ A build asks this for every file its pages link, so the corpus is walked
+    once per build rather than once per link. ⚠️ Code too large to copy pairs
+    nothing, exactly as the served editor then opens nothing.
+    """
+    try:
+        files = code_files(Path(root))
+    except CodeRefused:
+        files = {}
+    known: dict[str, Pair | None] = {}
+
+    def answer(path: str) -> Pair | None:
+        if path not in known:
+            known[path] = pair_in(files, path, runtimes)
+        return known[path]
+
+    return answer
+
+
+def pair_in(
+    files: dict[str, Path], path: str, runtimes: tuple[str, ...] | list[str]
+) -> Pair | None:
+    """Return `path`'s pair among `files` (`codetree.code_files`'s answer), or `None`."""
     if path not in files or not is_code(path, runtimes):
         return None
     module = module_of(files, path, runtimes)

@@ -57,6 +57,7 @@ have had to invent.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import PurePosixPath
 
@@ -93,13 +94,16 @@ class Placement:
 
     ⭐ `code` is the source suffixes the corpus's declared runtimes write, for a
     page that sits beside the corpus's files — `()` everywhere else — so a link
-    to one of its code files can open in the editor (`page.code`).
+    to one of its code files can open in the editor (`page.code`). ⭐ `pairing`
+    answers, for one such file, the source and the test it stands between, so a
+    list of the page's code is drawn one example per pair; `None` pairs nothing.
     """
 
     corpus: str
     unit: UnitLocations
     shared: CorpusLocations
     code: tuple[str, ...] = ()
+    pairing: Callable[[str], tuple[str | None, str | None]] | None = None
 
     def stylesheet(self) -> str:
         """How this page addresses the shared stylesheet."""

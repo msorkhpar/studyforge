@@ -1,112 +1,136 @@
-/* A lesson's links to its own code: opened in the course's editor, beside the test.
+/* A lesson's code examples: each one opens in the course's editor, in place.
 
-   ⭐ **A link the build marked** (`data-code-path`, `render/page/code.py`)
-   names a code file of the corpus, and its href is the file's plain view
-   (`unit.mentions`). Served, with the corpus's editor up, a click opens the file in the
-   page's code panel instead: the source and its test in two windows of ONE
-   editor, and a Run that runs the test. ⛔ **Anything short of that follows the
-   link**: no server, no editor, a file the server will not open — the plain
-   view is never broken, and the panel's built sentence says why.
+   ⭐ **An example is an entry the build drew** (`details[data-code-example]`,
+   `render/page/code.py`): a source and its paired test, named for the source,
+   with the page's own links to each file inside it. Served, with the corpus's
+   editor up, expanding the entry opens the example RIGHT THERE — the source
+   and the test in two windows of ONE editor, a tab for each, and a Run that
+   runs the test. ⛔ **Anything short of that leaves the entry as built**: no
+   server, no editor, a file the server will not open — each link is the file's
+   plain view, which is never broken, and the entry's sentence says why.
+
+   ⛔ **Nothing loads until an entry is expanded, and one entry at most is
+   live.** Expanding another closes the first, and a closed entry's frames are
+   removed, so a page never carries an example's editor it is not showing.
+
+   ⛔ **The page never moves.** No entry is scrolled to, and each window is
+   built by `window.studyforge.frames.frame`, which `practice-editor.js`
+   publishes — the focus guard that keeps a workbench from taking the reader's
+   focus or the page's position, and the one reload when a cold instance's
+   frame policy blocked the frame. ⛔ Neither is copied here.
 
    ⛔ **This file draws; it never talks to the API.** Everything it asks goes
    through `window.studyforge.run` — `editor`, `code`, `codeTest`, `stop` —
    which the SERVING PROCESS adds to the page it answers, so a built text names
    no API, no origin and no client file (R8).
 
-   ⭐ **The same frames as a practice.** Each window is built by
-   `window.studyforge.frames.frame`, which `practice-editor.js` publishes — the
-   same focus guard, so a workbench never takes the reader's focus or moves
-   the page — and the same one reload when a cold instance's frame policy
-   blocked the frame. ⛔ Neither is copied here.
-
-   ⭐ **The copy is said, not hidden**: the panel's second sentence, shown only
-   once the editor answered, tells the reader the editor opens a COPY of the
+   ⭐ **The copy is said, not hidden**: shown only once the editor answered,
+   each entry's second sentence tells the reader the editor opens a COPY of the
    code, where their changes and a run's output stay. */
 
 (function () {
   'use strict';
 
-  /* ⚠️ Spelled here and in `render/page/code.py` and `code-panel.html` — the
-     two-sided spelling every hook on this page has. The panel reuses the
-     practice panel's part names so `practice.css` draws both. */
-  var REGION = 'section[data-code]';
+  /* ⚠️ Spelled here and in `render/page/code.py`, `code-examples.html` and
+     `code-example.html` — the two-sided spelling every hook on this page has. */
+  var EXAMPLES = 'div[data-code-examples]';
+  var ENTRY = 'details[data-code-example]';
+  var OPEN = 'data-code-open';
   var CORPUS = 'data-corpus';
   var PATH = 'data-code-path';
-  var PART = 'data-practice-part';
-  var TAB = 'data-practice-tab';
-  var FRAME = 'data-practice-frame';
+  var PART = 'data-code-part';
+  var TAB = 'data-code-tab';
+  var FRAME = 'data-code-frame';
   var ACT = 'data-code-act';
   var WINDOWS = ['main', 'test'];
   var TITLES = { main: 'Source', test: 'Test' };
 
-  var region = document.querySelector(REGION);
-  if (!region) { return; }
+  var lists = [].slice.call(document.querySelectorAll(EXAMPLES));
+  if (!lists.length) { return; }
   var run = window.studyforge && window.studyforge.run;
   var frames = window.studyforge && window.studyforge.frames;
   if (!run || !run.available() || !run.code || !run.editor || !frames) { return; }
-  var corpus = region.getAttribute(CORPUS);
 
-  function part(name) { return region.querySelector('[' + PART + '="' + name + '"]'); }
-  function show(element, visible) { if (element) { element.hidden = !visible; } }
-
-  var buttons = [].slice.call(region.querySelectorAll('[' + TAB + ']'));
-  var slots = {};
-  WINDOWS.forEach(function (name) {
-    slots[name] = region.querySelector('[' + FRAME + '="' + name + '"]');
+  var entries = [];
+  lists.forEach(function (list) {
+    [].slice.call(list.querySelectorAll(ENTRY)).forEach(function (details) {
+      entries.push({ details: details, corpus: list.getAttribute(CORPUS), where: null, built: {} });
+    });
   });
-  var act = region.querySelector('[' + ACT + '="test"]');
-  var stop = region.querySelector('[' + ACT + '="stop"]');
-  var status = part('status');
-  var output = part('output');
-  var current = null;
-  var built = {};
 
-  function select(name) {
-    buttons.forEach(function (button) {
+  function part(entry, name) { return entry.details.querySelector('[' + PART + '="' + name + '"]'); }
+  function show(element, visible) { if (element) { element.hidden = !visible; } }
+  function tabs(entry) { return [].slice.call(entry.details.querySelectorAll('[' + TAB + ']')); }
+  function slot(entry, name) { return entry.details.querySelector('[' + FRAME + '="' + name + '"]'); }
+
+  /* ⭐ The one live example, and the one answer it is waiting for. */
+  var live = null;
+  var asked = 0;
+
+  function select(entry, name) {
+    tabs(entry).forEach(function (button) {
       var mine = button.getAttribute(TAB) === name;
       button.setAttribute('aria-selected', mine ? 'true' : 'false');
       button.tabIndex = mine ? 0 : -1;
     });
-    WINDOWS.forEach(function (one) { show(slots[one], one === name); });
-    if (!built[name] && current[name] && current[name].url) {
-      built[name] = true;
-      frames.frame(slots[name], current[name].url, TITLES[name]);
+    WINDOWS.forEach(function (one) { show(slot(entry, one), one === name); });
+    var where = entry.where;
+    if (where && !entry.built[name] && where[name] && where[name].url) {
+      entry.built[name] = true;
+      var named = tabs(entry).filter(function (button) {
+        return button.getAttribute(TAB) === name;
+      })[0];
+      frames.frame(slot(entry, name), where[name].url, named ? named.textContent : TITLES[name]);
     }
   }
 
-  /* ⭐ One pair at a time: a new click empties both windows and opens the new
-     pair, the file clicked in front. */
-  function draw(where) {
-    current = where;
-    built = {};
-    WINDOWS.forEach(function (name) { slots[name].textContent = ''; });
-    var both = !!(where.test && where.test.url);
-    buttons.forEach(function (button) { show(button, !!where[button.getAttribute(TAB)]); });
-    show(part('tabs'), both);
+  /* ⛔ Closing empties the windows: a closed entry holds no editor. */
+  function unload(entry) {
+    WINDOWS.forEach(function (name) { slot(entry, name).textContent = ''; });
+    entry.where = null;
+    entry.built = {};
+    show(part(entry, 'editor'), false);
+    show(part(entry, 'controls'), false);
+    part(entry, 'status').textContent = '';
+    show(part(entry, 'output'), false);
+    if (live === entry) { live = null; }
+  }
+
+  function draw(entry, where) {
+    entry.where = where;
+    entry.built = {};
     frames.reloadWhenBlocked(where.main.url);
-    show(part('editor'), true);
-    show(part('controls'), !!where.runs);
-    status.textContent = '';
-    show(output, false);
-    select(where.opened === 'test' && both ? 'test' : 'main');
+    show(part(entry, 'editor'), true);
+    show(part(entry, 'controls'), !!where.runs);
+    select(entry, 'main');
     setTimeout(function () { remember(null); }, 5000);
-    region.focus({ preventScroll: true });
-    region.scrollIntoView({ block: 'start' });
+  }
+
+  function load(entry) {
+    if (live === entry) { return; }
+    if (live) { var before = live; before.details.open = false; unload(before); }
+    live = entry;
+    var mine = ++asked;
+    remember(entries.indexOf(entry));
+    run.code(entry.corpus, entry.details.getAttribute(OPEN)).then(function (where) {
+      if (mine !== asked || live !== entry || !entry.details.open) { return; }
+      if (where) { draw(entry, where); } else { remember(null); }
+    }, function () { remember(null); });
   }
 
   /* ⚠️ A COLD instance's page is reloaded once, by `frames.reloadWhenBlocked`,
      when its frame policy blocked the first frame — and a reload forgets the
-     click. ⭐ So the file asked for rides on this history entry's own state,
+     expanded entry. ⭐ So the entry rides on this history entry's own state,
      which a reload keeps and nothing else reads, until it is drawn; a page that
      was just reloaded opens it again. ⛔ Not the browser's store: that is
-     `study-progress.js`'s alone. ⛔ Only a reload reopens it, and a history
-     that cannot carry it is no history: the reader clicks again. */
+     `study-progress.js`'s alone. */
   var REOPEN = 'studyforgeCode';
 
-  function remember(path) {
+  function remember(index) {
     try {
       var state = {};
-      state[REOPEN] = path || null;
+      state[REOPEN] = typeof index === 'number' && index >= 0
+        ? { entry: index, x: window.scrollX, y: window.scrollY } : null;
       history.replaceState(state, '');
     } catch (ignored) { return; }
   }
@@ -114,63 +138,90 @@
   function reopened() {
     try {
       var timing = performance.getEntriesByType('navigation');
-      var path = history.state && history.state[REOPEN];
+      var kept = history.state && history.state[REOPEN];
       remember(null);
-      return timing.length && timing[0].type === 'reload' ? path : null;
+      return timing.length && timing[0].type === 'reload' && kept && typeof kept.entry === 'number'
+        ? kept : null;
     } catch (ignored) { return null; }
   }
 
-  function open(path, href) {
-    var fallback = function () { remember(null); if (href) { location.href = href; } };
-    remember(path);
-    run.code(corpus, path).then(function (where) {
-      if (where) { draw(where); } else { fallback(); }
-    }, fallback);
+  /* ⭐ The reload put the page wherever the browser restored it, before the
+     entry reopened; the reader is put back exactly where they clicked, once.
+     ⛔ This is the one place the page is moved, and only to where it WAS. */
+  function putBack(kept) {
+    window.scrollTo({ left: kept.x, top: kept.y, behavior: 'instant' });
   }
 
-  buttons.forEach(function (button) {
-    button.addEventListener('click', function () {
-      if (current) { select(button.getAttribute(TAB)); }
+  function wire(entry) {
+    tabs(entry).forEach(function (button) {
+      button.addEventListener('click', function () {
+        if (entry.where) { select(entry, button.getAttribute(TAB)); }
+      });
     });
-  });
-
-  act.addEventListener('click', function () {
-    if (!current || !current.runs) { return; }
-    act.disabled = true;
-    show(stop, true);
-    output.textContent = '';
-    show(output, true);
-    status.textContent = 'Running the test…';
-    run.codeTest(corpus, current.runs, function (line) {
-      output.textContent += line + '\n';
-    }).then(function (verdict) {
-      status.textContent = verdict === 0 ? 'Passed.' : verdict === 'stopped' ? 'Stopped.'
-        : verdict === 'timeout' ? 'Timed out.' : 'Failed.';
-    }, function () {
-      status.textContent = 'The test could not be run.';
-    }).then(function () {
-      act.disabled = false;
-      show(stop, false);
+    var act = entry.details.querySelector('[' + ACT + '="test"]');
+    var stop = entry.details.querySelector('[' + ACT + '="stop"]');
+    act.addEventListener('click', function () {
+      var where = entry.where;
+      if (!where || !where.runs) { return; }
+      var status = part(entry, 'status');
+      var output = part(entry, 'output');
+      act.disabled = true;
+      show(stop, true);
+      output.textContent = '';
+      show(output, true);
+      status.textContent = 'Running the test…';
+      run.codeTest(entry.corpus, where.runs, function (line) {
+        output.textContent += line + '\n';
+      }).then(function (verdict) {
+        status.textContent = verdict === 0 ? 'Passed.' : verdict === 'stopped' ? 'Stopped.'
+          : verdict === 'timeout' ? 'Timed out.' : 'Failed.';
+      }, function () {
+        status.textContent = 'The test could not be run.';
+      }).then(function () {
+        act.disabled = false;
+        show(stop, false);
+      });
     });
-  });
-
-  stop.addEventListener('click', function () { run.stop(); });
-
-  /* ⭐ Only an editor that is UP turns the links into the panel; until then
-     every link is the plain view and the built sentence stands. */
-  run.editor(corpus).then(function (found) {
-    if (!found) { return; }
-    show(part('plain'), false);
-    show(part('copy'), true);
-    document.addEventListener('click', function (event) {
+    stop.addEventListener('click', function () { run.stop(); });
+    entry.details.addEventListener('toggle', function () {
+      if (entry.details.open) { load(entry); } else if (live === entry) { unload(entry); }
+    });
+    /* ⭐ A link inside an open entry shows its own file's window, in place. */
+    entry.details.addEventListener('click', function (event) {
       if (event.defaultPrevented || event.button !== 0) { return; }
       if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) { return; }
       var anchor = event.target.closest ? event.target.closest('a[' + PATH + ']') : null;
-      if (!anchor) { return; }
-      event.preventDefault();
-      open(anchor.getAttribute(PATH), anchor.href);
+      var where = entry.where;
+      if (!anchor || !where) { return; }
+      var path = anchor.getAttribute(PATH);
+      var name = where.test && where.test.file === path ? 'test' : 'main';
+      if (where[name] && where[name].file === path) {
+        event.preventDefault();
+        select(entry, name);
+      }
     });
-    var again = reopened();
-    if (again) { open(again, null); }
+  }
+
+  /* ⭐ Only an editor that is UP makes an entry open the editor; until then
+     each entry is its lines and the built sentence, and every link is the
+     file's plain view. */
+  run.editor(entries[0].corpus).then(function (found) {
+    if (!found) { return; }
+    entries.forEach(function (entry) {
+      show(part(entry, 'plain'), false);
+      show(part(entry, 'copy'), true);
+      wire(entry);
+    });
+    var kept = reopened();
+    var again = kept ? entries[kept.entry] || null : null;
+    if (again) {
+      again.details.open = true;
+      requestAnimationFrame(function () { putBack(kept); });
+    }
+    entries.forEach(function (entry) {
+      if (entry.details.open && !live) { load(entry); } else if (entry.details.open) {
+        entry.details.open = false;
+      }
+    });
   }, function () { return null; });
 }());

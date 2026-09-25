@@ -218,19 +218,22 @@
     }
   }
 
+  /* ⭐ A hidden passage is marked, and scrolled to, as its stand-in (`narration-stand-in.js`). */
+  var standIn = window.studyforge.standIn, standing = null;
+
   function highlight() {
     passages.forEach(function (passage, index) {
-      if (index === at) {
-        passage.setAttribute(SPEAKING, 'true');
-      } else {
-        passage.removeAttribute(SPEAKING);
-      }
+      if (index === at) { passage.setAttribute(SPEAKING, 'true'); } else { passage.removeAttribute(SPEAKING); }
     });
+    if (standing) { standing.removeAttribute(SPEAKING); }
+    standing = at === -1 ? null : standIn(passages[at]);
+    if (standing) { standing.setAttribute(SPEAKING, 'true'); }
   }
 
   function reveal(passage) {
-    if (!passage || !passage.scrollIntoView) { return; }
-    passage.scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' });
+    var target = passage && (standIn(passage) || passage);
+    if (!target || !target.scrollIntoView) { return; }
+    target.scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' });
   }
 
   /* ⛔ The one place `src` is assigned, and the value is the page's own. */

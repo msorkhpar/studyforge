@@ -114,11 +114,6 @@ REGIONS: dict[str, tuple[str, str]] = {
     ),
     # ⚠️ `data-practice`, never `data-section`: that one carries a CORPUS's key (R1).
     "section[data-practice]": (DEFERRED, "region 15, the practice panel — `practice.css`'s"),
-    "section[data-code]": (
-        DEFERRED,
-        "region 16, the panel a lesson's code opens in — `practice.css`'s, by the "
-        "practice panel's own parts",
-    ),
     'section[data-section="read-mark"]': (
         CHROME_RULED,
         "region 7, the reader's own mark-as-read control. ⚠️ It ships "
@@ -156,7 +151,6 @@ REGION_MARKERS = {
     'section[data-section="read-mark"]': r'<section data-section="read-mark"',
     'section[data-section="narration-gap"]': r'<section data-section="narration-gap"',
     "section[data-practice]": r"<section data-practice",
-    "section[data-code]": r"<section data-code",
     'section[aria-label="About this site"]': r'<section aria-label="About this site"',
     'section[aria-label="Progress"]': r'<section aria-label="Progress"',
     'form[role="search"]': r'<form role="search"',
@@ -184,7 +178,6 @@ SKELETON_SLOTS = {
     ),
     "outline": "region 2",
     "body": "the reading surface — `reading.css`, by the block vocabulary",
-    "code": "region 16, a lesson's code panel — the DEFERRED row above",
     "pending": "region 4",
     "mark": (
         "region 7, the read control. ⭐ A slot shows up here as soon as the "

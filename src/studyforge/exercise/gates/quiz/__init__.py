@@ -32,6 +32,7 @@ nothing here runs anything, and a quiz has nothing to run.
 |---|---|
 | `family` | `Q1`–`Q5`, the registration, and how a verdict and a cited role are spelt |
 | `judged` | `Q1`–`Q3`: what a shipped model judgement carries, and when it goes stale |
+| `giveaway` | `Q2`'s one reading: a page-free reader's pick, turned into its judgement |
 | `mechanical` | `Q4` and `Q5`: the two gates `validate` re-runs from the document |
 | `checks` | the suite — all five, in order, over an exercise that cannot be authoritative |
 
@@ -40,13 +41,16 @@ nothing here runs anything, and a quiz has nothing to run.
 | gate | what must hold |
 |---|---|
 | **Q1** answerable | a pass given the page and the question picks the key, twice alike |
-| **Q2** not free | the same pass, the page withheld, does NOT pick the key |
+| **Q2** not free | a reader of the wording alone says *none* or picks a wrong option |
 | **Q3** discriminating | every wrong option is refuted by a named passage of the page |
 | **Q4** key total, single | one option keyed, the options distinct, each with its sentence |
 | **Q5** origin | each `origin` still digests to what the source ledger has |
 
 ⭐ **What each one proves, in order:** the page really contains the answer; the
-question tests what this page taught rather than general knowledge; no
+key is not given away by the question's own wording (`Q2_RULE`: an option longer
+or more specific than the rest, words repeated from the stem, absolute terms,
+grammar, or an option restating the stem), and ⚠️ NOT that the subject is
+unknown to a reader who has studied it; no
 distractor is one nobody could rule out; the reader is told why whichever
 option they chose; and the question is built from the page it is attached to.
 
@@ -110,6 +114,8 @@ from studyforge.exercise.gates.quiz.family import (
     MECHANICAL,
     Q1,
     Q2,
+    Q2_PROMPT,
+    Q2_RULE,
     Q3,
     Q4,
     Q5,
@@ -118,6 +124,7 @@ from studyforge.exercise.gates.quiz.family import (
     cited_role,
     verdict,
 )
+from studyforge.exercise.gates.quiz.giveaway import PICKED_NONE, page_free
 from studyforge.exercise.gates.quiz.judged import (
     JUDGED_FIELDS,
     WHOLE_QUESTION,
@@ -140,10 +147,13 @@ __all__ = [
     "JUDGED",
     "JUDGED_FIELDS",
     "MECHANICAL",
+    "PICKED_NONE",
     "QUESTION_ROLE",
     "QUIZ",
     "Q1",
     "Q2",
+    "Q2_PROMPT",
+    "Q2_RULE",
     "Q3",
     "Q4",
     "Q5",
@@ -155,6 +165,7 @@ __all__ = [
     "judged_gate",
     "key_total_and_single",
     "origin_still_resolves",
+    "page_free",
     "question_digest",
     "require_advisory",
     "require_judgements",

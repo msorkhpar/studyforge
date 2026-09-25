@@ -78,6 +78,11 @@ from studyforge.render.pageassets.source import text
 #: overriding the margin, padding and border the two parts above gave them, and
 #: at equal specificity the last rule wins.
 #:
+#: ⭐ `code-examples.css` follows the practice parts: a lesson's examples wear
+#: the practice panel's measure and tokens, reached by their own attribute, so
+#: no rule of either reaches the other's element; it sits before
+#: `code-highlight.css`, which refines the inside of a code block and nothing here.
+#:
 #: ⛔ `narration.css` sits after `code-highlight.css` and before the vendored
 #: parts, and both halves of that are meaning too. It comes *after* the
 #: highlight because the narration highlight washes over the inside of a code
@@ -97,6 +102,7 @@ STYLE_PARTS = (
     "practice.css",
     "practice-quiz.css",
     "practice-workspace.css",
+    "code-examples.css",
     "code-highlight.css",
     "narration.css",
     "plyr.css",
@@ -126,6 +132,11 @@ STYLE_PARTS = (
 #: rather than left to the alphabet like every other entry here. It sits before
 #: `read-mark.js` because that part's LAST-ness is the property being kept, and
 #: after `video-player.js` so the two media parts read together.
+#:
+#: ⛔ `narration-stand-in.js` PRECEDES `narration.js`, and that is load-bearing:
+#: it defines `window.studyforge.standIn`, which `narration.js` reads with no
+#: existence guard at startup — so a wrong order fails loudly, as the store's
+#: does, rather than lighting a hidden passage.
 #:
 #: ⭐ `practice.js` needs no library and no store: it draws the panel
 #: and reaches the API only through `window.studyforge.run`, which the SERVING
@@ -169,6 +180,7 @@ SCRIPT_PARTS = (
     "theme.js",
     "copy-code.js",
     "video-player.js",
+    "narration-stand-in.js",
     "narration.js",
     "practice.js",
     "practice-editor.js",

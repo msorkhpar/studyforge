@@ -47,8 +47,8 @@ R4's identity block, the trail, the contents and the bar between units: those
 name the *unit*, and the `<h1>` names the *page*. ⭐ A unit whose material
 states no title is headed by the unit's title, the common authored case.
 
-⭐ **A lesson's links to its own code are marked, and the panel they open in
-follows `<main>`** (`page.code`); a page that links no code is unchanged.
+⭐ **A lesson's code links are marked, and a list of them is drawn as examples
+that open in place** (`page.code`); a page that links no code is unchanged.
 
 ## ⛔ The player is *derived*, not declared — and that is the answer to a real tension
 
@@ -149,7 +149,7 @@ def compose(
         for index, section in enumerate(sections)
     ]
     joined = practices_region.joined(parts, sections, document, placement)
-    body, linked = code_region.mark(joined, placement)
+    body = code_region.examples(*code_region.mark(joined, placement), placement)
     return (
         templates.fill(
             SKELETON,
@@ -164,7 +164,6 @@ def compose(
             rail=_region(rail_region.render(rail)),
             outline=_region(anchors.outline(document)),
             body=body,
-            code=_region(code_region.render(linked, placement)),
             pending=_region(pending(document)),
             mark=_region(mark_region.render(document)),
             # ⛔ The heading is part of what the gate reads, because the page's

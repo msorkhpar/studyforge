@@ -138,17 +138,47 @@ def _declares_java(root: Path) -> None:
     manifest.write_text(json.dumps(document), encoding="utf-8")
 
 
+#: A list of the unit's code, as a course writes one under "Code Examples".
+EXAMPLES = (
+    {"type": "heading", "level": 2, "text": "Code Examples"},
+    {
+        "type": "list",
+        "ordered": False,
+        "items": [
+            "Test: [UsageTest.java](code/UsageTest.java)",
+            "Source: [Types.java](code/Types.java)",
+            "Source: [Alone.java](code/Alone.java)",
+        ],
+    },
+)
+
+#: The test names its source only in its text, as a real course's does.
+FILES = {
+    "src/code/UsageTest.java": "class UsageTest { Types types = new Types(); }\n",
+    "src/code/Alone.java": "class Alone {}\n",
+}
+
+
 @pytest.mark.parametrize("placement", ["tree", "sibling"])
-def test_a_link_to_the_corpus_s_code_is_marked_and_its_page_carries_the_panel(tmp_path, placement):
-    # ⭐ The link keeps its href — the plain view — and names its file.
-    root = linked(tmp_path, placement, GOOD)
+def test_a_list_of_the_corpus_s_code_is_drawn_one_example_per_pair(tmp_path, placement):
+    # ⭐ The links keep their hrefs — the plain view — and each joins its pair's entry.
+    root = linked(tmp_path, placement, GOOD, more=EXAMPLES, files=FILES)
     _declares_java(root)
     write_site(root, root, narration=False)
     first, second = sorted(root.rglob("*.unit.html"))
     body = first.read_text(encoding="utf-8")
     assert 'data-code-path="src/code/Types.java"' in body
-    assert body.count("<section data-code ") == 1
-    assert "<section data-code " not in second.read_text(encoding="utf-8")
+    assert body.count("<div data-code-examples ") == 1
+    assert re.findall(r"<summary>([^<]*)</summary>", body.split("data-code-examples", 1)[1]) == [
+        "Types.java",
+        "Alone.java",
+    ]
+    types, alone = body.split("<details data-code-example ")[1:]
+    assert types.count("data-code-path=") == 2, "the test joins its source's entry"
+    assert types.count('role="tab"') == 2 and alone.count('role="tab"') == 1
+    # ⛔ The bottom panel is gone, and nothing is framed as built.
+    assert "<section data-code" not in body and "<iframe" not in body
+    assert "data-code-examples" not in second.read_text(encoding="utf-8")
     assert unresolved(root) == []
 
 
@@ -193,3 +223,4 @@ def test_a_page_is_handed_the_code_suffixes_only_where_it_sits_beside_the_files(
     )
     list(units.unit_bodies(corpus))
     assert {placement.code for placement in handed} == ({(".java",)} if beside else {()})
+    assert {placement.pairing is not None for placement in handed} == {beside}

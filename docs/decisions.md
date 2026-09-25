@@ -823,7 +823,7 @@ What it reads, and the choices in it:
 
 ### A card's status is the reader's own record
 
-**Decision.** A card's status slot ships hidden with both of its words (`templates/practice-state.html`). `practice-workspace.js` shows it only where the served client (`studyforge.run.practices`) answers from the unit-state route what the reader's progress record holds, and reads it again when a run settles. A quiz and an ungraded practice carry no slot.
+**Decision.** A card's status slot ships hidden with both of its words (`templates/practice-state.html`). `practice-workspace.js` shows it only where the served client answers from the unit-state route (`practices` in `src/studyforge/serve/assets/run-client.js`) what the reader's progress record holds, and reads it again when a run settles. A quiz and an ungraded practice carry no slot.
 
 **Why.** A built page says nothing about any reader, so it is byte-identical whoever opens it. A practice no run completes could only ever read *not started*.
 
@@ -927,9 +927,9 @@ What it reads, and the choices in it:
 
 ### A lesson's code opens in the editor, from a copy, beside its test
 
-**Decision.** `studyforge.render.page.code` marks each link on a unit page that resolves, from the page, to a corpus file outside the generated root whose suffix a declared runtime writes (`Placement.code`, from `corpus.manifest.runtimes.source_suffixes`, and `()` for a site written away from the corpus), and renders one panel after `<main>` whose built sentence says why the link is a plain view. Served, `code-links.js` opens a marked link in that panel when the run index says the corpus's editor is up, through the run namespace's `code` act (`studyforge.serve.routes.code.CODE`), which syncs the copy (`studyforge.execute.codetree.sync`), pairs the file (`studyforge.execute.codepair.pair`) and answers the two windows through the practice's own `practice_folder`, `open_url` and `write_settings`. Its `code-test` act (`studyforge.serve.routes.code.CODE_TEST`) runs `studyforge.execute.codepair.test_command` — Maven only, offline, `-pl <module> -am`, one test class — in the copy, streamed like a Submit and recorded nowhere. The execution skill binds the copy (`binds.code_bind`) and writes its one committed file, an ignore file. The copy carries no `corpus.json` at any depth and no dot-directory, so it is the corpus's code and never a second corpus. A file the sync writes is stamped with the time of the sync, never the author's (the standard library's plain copy, never the one that carries times across), so it is newer than any build output made from the file it replaced. The static route serves every runtime's code suffix as text. The frame and its one reload are the practice editor's, published as `window.studyforge.frames`; a click lost to that reload is reopened once from the history entry's own state, never from the browser's store.
+**Decision.** `studyforge.render.page.code` marks each link on a unit page that resolves, from the page, to a corpus file outside the generated root whose suffix a declared runtime writes (`Placement.code`, from `corpus.manifest.runtimes.source_suffixes`, and `()` for a site written away from the corpus), and draws a list whose every item is one such link and a short label as the page's examples: one `<details>` per pair, which the build reads with `studyforge.execute.codepair.pairing` (`Placement.pairing`), named for its source, each item kept whole inside it, and a built sentence saying why each file is a plain view. Served, `code-links.js` opens an example in place when it is expanded and the run index says the corpus's editor is up — one example at most, the page never scrolled — through the run namespace's `code` act (`studyforge.serve.routes.code.CODE`), which syncs the copy (`studyforge.execute.codetree.sync`), pairs the file (`studyforge.execute.codepair.pair`) and answers the two windows through the practice's own `practice_folder`, `open_url` and `write_settings`. Its `code-test` act (`studyforge.serve.routes.code.CODE_TEST`) runs `studyforge.execute.codepair.test_command` — Maven only, offline, `-pl <module> -am`, one test class — in the copy, streamed like a Submit and recorded nowhere. The execution skill binds the copy (`binds.code_bind`) and writes its one committed file, an ignore file. The copy carries no `corpus.json` at any depth and no dot-directory, so it is the corpus's code and never a second corpus. A file the sync writes is stamped with the time of the sync, never the author's (the standard library's plain copy, never the one that carries times across), so it is newer than any build output made from the file it replaced. The static route serves every runtime's code suffix as text. The frame and its one reload are the practice editor's, published as `window.studyforge.frames`; an example lost to that reload is reopened once, at the reader's own scroll position, from the history entry's own state, never from the browser's store.
 
-**Why.** The user ruled that a lesson's code opens in the course's editor beside its test and that the test can be run there. A second editor mechanism would be a second place for the lock, the focus guard and the frame policy to drift. A run writes build output, so it writes into a copy, and the author's `git status` stays clean. A copy carrying the author's older time was older than the class a reader's undone edit had compiled to, so Maven never recompiled it; stamping the copy is read by every incremental build tool, where deleting the affected output would need each tool's layout. A partner found by name, then by the source a test names most, is found for all but one of the 338 code files the Java course links, measured; that one test names two sources equally, and a tie opens alone rather than guessing.
+**Why.** The user ruled that a lesson's code opens in the course's editor beside its test and that the test can be run there, and then, from screenshots, that an example opens in place: a panel at the foot of the page moved the reader past every practice. A second editor mechanism would be a second place for the lock, the focus guard and the frame policy to drift. A run writes build output, so it writes into a copy, and the author's `git status` stays clean. A copy carrying the author's older time was older than the class a reader's undone edit had compiled to, so Maven never recompiled it; stamping the copy is read by every incremental build tool, where deleting the affected output would need each tool's layout. A partner found by name, then by the source a test names most, is found for all but one of the 338 code files the Java course links, measured; that one test names two sources equally, and a tie opens alone rather than guessing.
 
 **Serves.** `R1`, `R3`, `R8`, `R15`
 
@@ -1183,6 +1183,14 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`
 
+### Quiz gate Q2 refuses a giveaway, not a question a knowledgeable reader can answer
+
+**Decision.** `Q2`'s page-free reader is asked `exercise.gates.quiz.Q2_PROMPT`: answer from the question's stem and options alone, with no knowledge of the subject, and say *none* unless the wording itself singles out an option (an option longer or more specific than the rest, words repeated from the stem, absolute terms in the others, grammar only it fits, or an option restating the stem). `exercise.gates.quiz.page_free` turns the reader's pick and its cue into the judgement and decides `held`: the reading holds on *none* or a wrong option. `exercise.gates.quiz.judged` refuses a `Q2` judgement taken under any other prompt or without a `because`, quotes that reason in a refused verdict, which is what the next attempt's brief carries, and records `rule` (`Q2_RULE`) first in every `Q2` verdict. `Q1` and `Q3` are unchanged.
+
+**Why.** A reader allowed to use what it knows picked the key of every correct question about an important idea in a well-known subject, so no quiz could ship on such a course; and a retry briefed without the reader's reason could only resend the same draft.
+
+**Serves.** `R5`
+
 ### An authoring pass never drops a ledger row it did not read
 
 **Decision.** The corpus's one exercise ledger is merged, not rewritten: `skills.exercises.merge` keeps every committed row for a page the pass did not read while that page is still on disk, and reports what was kept, added, changed and dropped, where a dropped row is always one whose page is gone. `validate.ledger` refuses a committed ledger that stops accounting for a material page, meaning a fenced example or declared grader that is neither the basis of an exercise nor given a written reason; it re-scans the page on disk rather than trusting the ledger. A unit's page that no pass has been handed, and that no coverage report names, is pending rather than unaccounted: `validate` reports the pending pages by module as one unchecked claim (`ledger-pending`), and the first pass that reads a page ends it. A page a coverage report names stays a finding when the ledger no longer reads it.
@@ -1216,6 +1224,14 @@ What it reads, and the choices in it:
 **Why.** A clip for a heading the page does not show is a clip nothing plays.
 
 **Serves.** `R1`
+
+### A passage the page is not showing is highlighted at its stand-in
+
+**Decision.** When narration reaches a passage with no box, `narration-stand-in.js` names where the reader can see it: the summary of the closed entry that holds it (a code example or a disclosure), or the card of a practice kept under its *Practice (n)* list. `narration.js` marks that stand-in `data-speaking` beside the passage and scrolls to it. The entry is not opened.
+
+**Why.** Opening a code example loads a full editor, which only a reader's own hand may start, and a quieter narration-only opening would be a second state `code-links.js` had to tell apart. A highlight on a hidden element shows the reader nothing.
+
+**Serves.** `R1, R8`
 
 ### Narration lights nothing until the reader starts it, and a missing clip says so once
 

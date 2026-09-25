@@ -66,6 +66,7 @@
   var CLOSED = 'studyforge:practice-closed';
   var SETTLED = 'studyforge:practice-settled';
   var ESCAPE = 'Escape';
+  var EXAMPLE = 'details[data-code-example][open]';
 
   var region = document.querySelector(REGION);
   var shell = document.querySelector(WORKSPACE);
@@ -170,6 +171,9 @@
     one.section.scrollTop = 0;
     part('title').focus({ preventScroll: true });
     address('#' + one.section.id);
+    /* ⛔ One editor on the page at most: an expanded code example is closed —
+       an attribute, so nothing moves — and `code-links.js` drops its frames. */
+    [].slice.call(document.querySelectorAll(EXAMPLE)).forEach(function (entry) { entry.open = false; });
     say(OPENED, one);
   }
 

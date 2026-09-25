@@ -315,10 +315,13 @@ LINKED = (
 )
 
 
-def linked(tmp_path: Path, placement: str = "tree", text: str = LINKED) -> Path:
+def linked(
+    tmp_path: Path, placement: str = "tree", text: str = LINKED, more=(), files=None
+) -> Path:
     """Two units of one container, their sources, and one file the first links.
 
     ⭐ Written under `tmp_path / placement`, so both profiles fit in one test.
+    `more` is blocks unit 1 carries after its paragraph, and `files` more sources.
     """
     common = {
         "source": "demo",
@@ -345,6 +348,7 @@ def linked(tmp_path: Path, placement: str = "tree", text: str = LINKED) -> Path:
                 "blocks": [
                     {"type": "heading", "level": 1, "text": "1.1 One"},
                     {"type": "para", "text": text},
+                    *more,
                 ],
             },
             "demo/raw/prose/unit-02/lesson-1.json": {
@@ -359,5 +363,6 @@ def linked(tmp_path: Path, placement: str = "tree", text: str = LINKED) -> Path:
             "src/one.md": "# 1.1 One\n",
             "src/two.md": "# 1.2 Two\n",
             "src/code/Types.java": "class Types {}\n",
+            **(files or {}),
         },
     )

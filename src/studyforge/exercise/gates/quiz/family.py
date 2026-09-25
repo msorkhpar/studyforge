@@ -44,6 +44,14 @@ sub-package exists. ⛔ **Do not try to make that automatic:** there is no legal
 discovery mechanism in `src/`, because `tests/harness/test_isolation.py`'s
 run-time-import arm refuses one for the whole framework.
 
+## ⭐ `Q2`'S RULE IS DECLARED HERE, WITH ITS VERSION
+
+⚠️ **`Q2` guards against a giveaway, not against knowledge.** Its reader is
+told to answer from the question's wording alone (`Q2_PROMPT`), and `Q2` holds
+when that reader says *none* or picks a wrong option. ⭐ `Q2_RULE` names the
+version, and `judged` writes it into every `Q2` verdict's record, so a record
+says which rule its reading was taken under.
+
 ## ⛔ A CITED PASSAGE IS NAMED PER QUESTION, AND THAT IS WHY `Q5` CAN BE PER QUESTION
 
 ⚠️ **A quiz's questions are written one passage at a time**, so a single
@@ -75,6 +83,27 @@ MECHANICAL = (Q4, Q5)
 #: when it carries all five. ⛔ `families` holds the rules; this line is the
 #: whole of what makes `Q1`–`Q5` exist.
 QUIZ = register(Family("quiz", (*JUDGED, *MECHANICAL)))
+
+#: ⭐ **The version of the rule `Q2` is judged by**, written into every `Q2`
+#: verdict's record under `rule`. ⚠️ Version 2 guards against a GIVEAWAY — a key
+#: the question's own wording betrays — and no longer against a reader who
+#: knows the subject: on a well-known subject every correct question about an
+#: important idea is known, so version 1 refused them all.
+Q2_RULE = "Q2 v2: a giveaway, read from the question's own text alone"
+
+#: ⛔ **What the page-free reader is asked, word for word.** A `Q2` judgement
+#: taken under any other prompt is refused, so no judge can ask the retired
+#: question (*"from general knowledge"*) and ship it under this rule's name.
+Q2_PROMPT = (
+    "Answer ONLY from this question's own text: its stem and its options. Use no "
+    "knowledge of the subject at all; treat every term as a word you have never "
+    "met. Pick an option only when the wording itself singles it out: it is longer "
+    "or more specific than the others, it repeats words from the stem, the others "
+    "carry absolute terms such as 'always' or 'never', the stem's grammar fits it "
+    "alone, or it restates the stem. A cue decides only when it clearly singles out "
+    "one option over every other; a weak cue, or one another option shares, decides "
+    "nothing. Otherwise answer 'none'. Say which cue decided it, or that none did."
+)
 
 #: How a cited passage names the question it was written from: `question:<id>`.
 #: ⭐ Named here rather than in `mechanical` because the authoring helper and

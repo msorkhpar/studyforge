@@ -44,8 +44,11 @@ from studyforge.render.pageassets import ABSENT, PRESENT, RELEASED, text
 #: into a failure.
 DEV_CONTAINER = "STUDYFORGE_DEV_CONTAINER"
 
-#: The part under test and the markup it is the other side of.
+#: The part under test and the markup it is the other side of. ⛔ The stand-in
+#: part is loaded FIRST, as the bundle orders it: `narration.js` reads what it
+#: defines with no guard (`pageassets.bundle`).
 PART = "narration.js"
+STAND_IN = "narration-stand-in.js"
 PLAYER = "player.html"
 
 #: The stub DOM, and the harness that drives one scenario through it.
@@ -112,6 +115,11 @@ class El {
     (this.listeners[name] || []).forEach(fn => fn(Object.assign({ target: this }, event || {})));
   }
   scrollIntoView() { this.scrolled += 1; }
+  /* A box for what is shown and none for what is hidden, itself or above. */
+  getClientRects() {
+    for (let node = this; node; node = node.parent) { if (node.hidden) { return []; } }
+    return [{}];
+  }
 }
 
 /* The real template, parsed just far enough. ⛔ Attributes and nesting only —
@@ -292,7 +300,7 @@ def run(tmp_path, **spec):
     driver = tmp_path / "drive.js"
     driver.write_text(DRIVER, encoding="utf-8")
     part = tmp_path / PART
-    part.write_text(text(PART), encoding="utf-8")
+    part.write_text(text(STAND_IN) + "\n" + text(PART), encoding="utf-8")
     request = tmp_path / "spec.json"
     request.write_text(json.dumps(spec), encoding="utf-8")
     result = subprocess.run(  # noqa: S603 - fixed argv, no shell

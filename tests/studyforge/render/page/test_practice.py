@@ -362,7 +362,7 @@ def test_a_quiz_shows_its_questions_and_no_run_affordance_at_all():
         assert dead not in quiz, dead
         assert dead in code or dead == "<iframe", dead
     # ⛔ And the panel's own attribute is NOT on it: a quiz is its own section,
-    # so nothing keyed on `data-practice` — the run, the maximise, the output —
+    # so nothing keyed on `data-practice` — the run, the output —
     # can reach it by accident.
     assert "<section data-practice=" not in quiz
     assert "<section data-practice=" in code
