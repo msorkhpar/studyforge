@@ -7,6 +7,7 @@ place is known, and the build's end of it — a written page — is read in
 
 from __future__ import annotations
 
+import re
 from dataclasses import replace
 
 import pytest
@@ -61,7 +62,7 @@ def test_a_corpus_that_declares_no_code_marks_nothing_and_the_page_is_unchanged(
     # ⭐ The first corpus's case, and a site written away from its corpus's files.
     body = link(f"{UP}m/Types.java")
     assert code.mark(body, sample_placement()) == (body, ())
-    assert code.render((), sample_placement()) == ""
+    assert code.examples(body, (), sample_placement()) == body
 
 
 def test_a_link_inside_a_code_block_is_text_and_never_a_link():
@@ -69,15 +70,99 @@ def test_a_link_inside_a_code_block_is_text_and_never_a_link():
     assert code.mark(body, JAVA) == (body, ())
 
 
-def test_the_panel_ships_saying_why_the_file_is_plain_text_and_hides_the_copy_sentence():
-    panel = code.render(("m/Types.java",), JAVA)
-    assert '<section data-code data-corpus="demo"' in panel
-    plain = panel.split('data-practice-part="plain"', 1)[1].split("</p>", 1)[0]
+# --- the examples -----------------------------------------------------------------
+
+SOURCE = "m/src/main/java/p/Wrapper.java"
+TEST = "m/src/test/java/p/BoxingTest.java"
+ALONE = "m/src/test/java/p/AloneTest.java"
+
+#: The build's answer: the test names its source in its text only.
+PAIRS = {SOURCE: (SOURCE, TEST), TEST: (SOURCE, TEST), ALONE: (None, ALONE)}
+PAIRED = replace(JAVA, pairing=lambda path: PAIRS.get(path, (path, None)))
+
+
+def item(label: str, path: str, audio: str = "") -> str:
+    """One list item as `blocks.prose` writes it, narrated when `audio` is given."""
+    said = f' data-audio="{audio}"' if audio else ""
+    return f"<li{said}>{label}{link(f'{UP}{path}', path.rsplit('/', 1)[1])}</li>"
+
+
+def listed(*items: str) -> str:
+    return f'<ul class="items">{"".join(items)}</ul>'
+
+
+def drawn(body: str, placement=PAIRED) -> str:
+    return code.examples(*code.mark(body, placement), placement)
+
+
+def entries(page: str) -> list[str]:
+    return page.split("<details data-code-example ")[1:]
+
+
+def test_a_list_of_code_links_is_one_entry_per_pair_named_for_its_source():
+    page = drawn(listed(item("Test: ", TEST), item("Source: ", SOURCE), item("Test: ", ALONE)))
+    assert page.startswith('<div data-code-examples data-corpus="demo">')
+    assert re.findall(r"<summary>([^<]*)</summary>", page) == ["Wrapper.java", "AloneTest.java"]
+    pair, alone = entries(page)
+    assert f'data-code-open="{TEST}"' in pair, "it opens by the file its pair was read from"
+    assert re.findall(r'role="tab" data-code-tab="(\w+)"[^>]*>(\w+)<', pair) == [
+        ("main", "Source"),
+        ("test", "Test"),
+    ]
+    # ⭐ A test with no source is its own entry, with one tab that says so.
+    assert re.findall(r'data-code-tab="(\w+)"[^>]*>(\w+)<', alone) == [("main", "Test")]
+
+
+def test_every_item_keeps_its_element_its_words_and_its_narration():
+    # ⛔ The list's speech units say what they said: each item is carried whole.
+    lines = [item("Test: ", TEST, "a1"), item("Source: ", SOURCE, "a2")]
+    page = drawn(listed(*lines))
+    for line in lines:
+        assert code.mark(line, PAIRED)[0] in page
+    assert page.index('data-audio="a1"') < page.index('data-audio="a2"')
+
+
+def test_a_pair_the_list_separates_is_drawn_together_in_its_first_item_s_place():
+    page = drawn(listed(item("", TEST), item("", ALONE), item("", SOURCE)))
+    assert re.findall(r"<summary>([^<]*)</summary>", page) == ["Wrapper.java", "AloneTest.java"]
+
+
+def test_as_built_an_entry_loads_nothing_and_says_why_each_file_is_plain_text():
+    (entry,) = entries(drawn(listed(item("", SOURCE))))
+    assert "<iframe" not in entry and "src=" not in entry
+    assert '<div data-code-part="editor" hidden>' in entry
+    plain = entry.split('data-code-part="plain"', 1)[1].split("</p>", 1)[0]
     assert "hidden" not in plain.split(">", 1)[0]
     assert "because the course's editor is not running here" in plain
-    copy = panel.split('data-practice-part="copy"', 1)[1].split(">", 1)[0]
+    copy = entry.split('data-code-part="copy"', 1)[1].split(">", 1)[0]
     assert "hidden" in copy
-    assert "copy of the course's code" in panel and "never changed" in panel
+    assert "copy of the course's code" in entry and "never changed" in entry
+    assert ">Run tests</button>" in entry
     # ⛔ The page names no API, no origin and no port (R8).
-    assert "/api/" not in panel and "127.0.0.1" not in panel
-    assert placeholders(code.CODE_TEMPLATE) == frozenset({"corpus"})
+    assert "/api/" not in entry and "127.0.0.1" not in entry
+    assert placeholders(code.EXAMPLE_TEMPLATE) == frozenset({"path", "name", "lines", "tabs"})
+    assert placeholders(code.EXAMPLES_TEMPLATE) == frozenset({"corpus", "entries"})
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        pytest.param(
+            listed(item("", SOURCE)).replace(
+                "</li>", " and more words than a label ever carries, which is prose.</li>"
+            ),
+            id="prose",
+        ),
+        pytest.param(listed(item("", SOURCE), "<li>A line with no link.</li>"), id="no-link"),
+        pytest.param(listed(f"<li>{link(f'{UP}m/README.md', 'README')}</li>"), id="not-code"),
+        pytest.param(link(f"{UP}{SOURCE}"), id="inline"),
+    ],
+)
+def test_anything_but_a_list_of_code_links_is_left_as_it_is(body):
+    marked, paths = code.mark(body, PAIRED)
+    assert code.examples(marked, paths, PAIRED) == marked
+
+
+def test_a_corpus_with_no_pairing_draws_no_examples():
+    marked, paths = code.mark(listed(item("", SOURCE)), JAVA)
+    assert paths and code.examples(marked, paths, JAVA) == marked

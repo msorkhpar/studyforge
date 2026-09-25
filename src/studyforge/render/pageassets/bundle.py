@@ -73,6 +73,11 @@ from studyforge.render.pageassets.source import text
 #: reach the other's element and the order between them settles nothing but
 #: where a reader of the bundle finds them.
 #:
+#: ⭐ `code-examples.css` follows the practice parts: a lesson's examples wear
+#: the practice panel's measure and tokens, reached by their own attribute, so
+#: no rule of either reaches the other's element; it sits before
+#: `code-highlight.css`, which refines the inside of a code block and nothing here.
+#:
 #: ⛔ `narration.css` sits after `code-highlight.css` and before the vendored
 #: parts, and both halves of that are meaning too. It comes *after* the
 #: highlight because the narration highlight washes over the inside of a code
@@ -91,6 +96,7 @@ STYLE_PARTS = (
     "notes.css",
     "practice.css",
     "practice-quiz.css",
+    "code-examples.css",
     "code-highlight.css",
     "narration.css",
     "plyr.css",

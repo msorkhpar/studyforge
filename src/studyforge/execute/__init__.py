@@ -83,7 +83,7 @@ from studyforge.execute.browser import (
     capture_page,
     find_browser,
 )
-from studyforge.execute.codepair import Pair, is_code, pair, test_command
+from studyforge.execute.codepair import Pair, is_code, pair, pairing, test_command
 from studyforge.execute.codetree import CODE_COPY, IGNORE_TEXT, CodeRefused, in_copy, sync
 from studyforge.execute.commands import (
     CONTAINER_PREFIX,
@@ -165,6 +165,7 @@ __all__ = [
     "is_code",
     "open_url",
     "pair",
+    "pairing",
     "practice_folder",
     "recorded",
     "require_commands",
