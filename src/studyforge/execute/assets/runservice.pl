@@ -27,7 +27,8 @@ use warnings;
 use IO::Socket::INET;
 use POSIX qw(_exit dup2 setsid);
 
-my $PORT    = $ENV{STUDYFORGE_RUN_PORT} || 7123;
+my $PORT    = $ENV{STUDYFORGE_RUN_PORT} // 7123;
+my $BIND    = $ENV{STUDYFORGE_RUN_BIND} || '0.0.0.0';
 my $WORK    = $ENV{STUDYFORGE_RUN_WORK} || '/work';
 my $ALLOWED = "$WORK/.studyforge/execution/allowed/runs";
 my %SIGNALS = (TERM => 'TERM', KILL => 'KILL');
@@ -38,9 +39,9 @@ $SIG{CHLD} = 'IGNORE';
 $SIG{PIPE} = 'IGNORE';
 
 my $server = IO::Socket::INET->new(
-    LocalAddr => '0.0.0.0', LocalPort => $PORT, Listen => 16, ReuseAddr => 1, Proto => 'tcp',
+    LocalAddr => $BIND, LocalPort => $PORT, Listen => 16, ReuseAddr => 1, Proto => 'tcp',
 ) or die "run service: cannot listen on $PORT: $!\n";
-print STDERR "run service: listening on $PORT\n";
+print STDERR 'run service: listening on ' . $server->sockport . "\n";
 
 while (1) {
     my $client = $server->accept or next;
@@ -62,15 +63,25 @@ sub serve {
     my @fields = split /\x00/, $1, -1;
     pop @fields;
     my $kind = shift @fields // '';
-    if ($kind eq 'ping') { syswrite $client, "pong\n"; return }
-    if ($kind eq 'stop') { stop(@fields); syswrite $client, "stopped\n"; return }
+    if ($kind eq 'ping') { send_all($client, "pong\n"); return }
+    if ($kind eq 'stop') { stop(@fields); send_all($client, "stopped\n"); return }
     if ($kind eq 'run')  { run($client, @fields); return }
+}
+
+sub send_all {
+    my ($client, $bytes) = @_;
+    while (length $bytes) {
+        my $sent = syswrite $client, $bytes;
+        return 0 if !defined $sent;
+        substr($bytes, 0, $sent) = '';
+    }
+    return 1;
 }
 
 sub refuse {
     my ($client, $why) = @_;
     my $line = "run service: $why\n";
-    syswrite $client, 'O' . length($line) . "\n" . $line . "X126\n";
+    send_all($client, 'O' . length($line) . "\n" . $line . "X126\n");
 }
 
 sub allowed {
@@ -122,12 +133,11 @@ sub run {
         my $read = sysread($out, my $chunk, 65536);
         last if !$read;
         next if $gone;
-        my $sent = syswrite $client, 'O' . length($chunk) . "\n" . $chunk;
-        if (!defined $sent) { $gone = 1; stop($token, 'KILL') }
+        if (!send_all($client, 'O' . length($chunk) . "\n" . $chunk)) { $gone = 1; stop($token, 'KILL') }
     }
     waitpid($pid, 0);
     my $status = $? & 127 ? 128 + ($? & 127) : $? >> 8;
-    syswrite $client, "X$status\n" if !$gone;
+    send_all($client, "X$status\n") if !$gone;
 }
 
 sub stop {

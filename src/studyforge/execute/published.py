@@ -210,7 +210,7 @@ def _binds(text: str) -> tuple[tuple[str, str], ...]:
     found = []
     for entry in (one for one in text.split(";") if one.strip()):
         base, equals, folder = entry.partition("=")
-        base, folder = base.strip().strip("/"), folder.strip()
+        base, folder = base.strip(), folder.strip()
         parts = base.split("/")
         climbs = any(part in ("", ".", "..") for part in parts)
         if not equals or not folder.startswith("/") or climbs:

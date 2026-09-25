@@ -67,16 +67,14 @@ NOT_A_CONTAINER = (
 )
 
 
-def published_config(
-    environ: Mapping[str, str], markers: Sequence[str] = CONTAINER_MARKERS
-) -> Published:
+def published_config(environ: Mapping[str, str], markers: Sequence[str] | None = None) -> Published:
     """Return what the compose declared, or raise `RunRefused` outside a container or when bare.
 
     ⛔ The published form binds `0.0.0.0` and admits any peer, which is safe only
     because the compose file publishes that port on `127.0.0.1` alone; on a
     host, the same bind would be every interface, so it is refused there.
     """
-    if not any(Path(marker).exists() for marker in markers):
+    if not any(Path(marker).exists() for marker in markers or CONTAINER_MARKERS):
         raise RunRefused(NOT_A_CONTAINER)
     config = from_environment(environ)
     if config is None or config.service is None:

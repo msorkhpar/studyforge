@@ -8,6 +8,7 @@ import pytest
 
 from studyforge.serve.security import (
     CONTENT_POLICY,
+    PUBLISHED_BIND,
     REFUSED_HOST,
     REFUSED_ORIGIN,
     REFUSED_PEER,
@@ -77,6 +78,26 @@ def test_only_the_loopback_literal_may_be_bound(host):
     with pytest.raises(ValueError):
         require_loopback(host)
     require_loopback("127.0.0.1")
+
+
+@pytest.mark.parametrize("host", ["localhost", "::", "192.168.1.2", ""])
+def test_the_published_form_binds_its_containers_every_address_and_nothing_else(host):
+    require_loopback(PUBLISHED_BIND, published=True)
+    require_loopback("127.0.0.1", published=True)
+    with pytest.raises(ValueError):
+        require_loopback(host, published=True)
+
+
+@pytest.mark.parametrize("peer", ["172.18.0.1", "10.0.0.5"])
+def test_the_published_form_admits_its_gateway_peer_and_checks_everything_else(peer):
+    # ⭐ Inside its container the peer is the compose network's gateway; the
+    # port is published on 127.0.0.1 alone, so the peer check is compose's.
+    assert refusal(peer, headers(Host="127.0.0.1:18504"), peers=None) is None
+    assert refusal(peer, headers(Host="evil.example:18504"), peers=None) == REFUSED_HOST
+    assert refusal(peer, headers(Host="127.0.0.1", Sec_Fetch_Site="cross-site"), peers=None) == (
+        REFUSED_SITE
+    )
+    assert refusal(peer, headers(Host="127.0.0.1")) == REFUSED_PEER, "the default still checks"
 
 
 @pytest.mark.parametrize(
