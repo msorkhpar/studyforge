@@ -7,6 +7,8 @@ and its explanation in the aside slot.
 
 from __future__ import annotations
 
+import re
+
 import pytest
 
 from studyforge.render import templates
@@ -123,6 +125,17 @@ def test_the_body_opens_with_what_the_site_is_then_progress_then_up_next():
         body.index('<nav aria-label="Contents">'),
     ]
     assert order == sorted(order)
+
+
+def test_the_strip_has_one_segment_per_section_sized_by_every_unit_under_it():
+    # ⛔ The strip names the outermost groups, the tree's own first level,
+    # so a course of many modules still fits its column.
+    page = case("depth2").render().decode("utf-8")
+    strip = page.split('<ol aria-label="Progress by group"', 1)[1].split("</ol>", 1)[0]
+    assert re.findall(r'--units: (\d+)"><a href="#([^"]+)"', strip) == [
+        ("3", "advanced"),
+        ("2", "basics"),
+    ]
 
 
 def test_the_index_does_not_guess_where_the_material_comes_from():

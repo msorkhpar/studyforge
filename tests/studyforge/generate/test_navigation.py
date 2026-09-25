@@ -279,6 +279,25 @@ def test_the_rail_marks_the_container_and_the_unit_the_reader_is_on():
     ], "a unit outside the reader's own container was marked current"
 
 
+def test_each_container_of_a_sectioned_corpus_names_the_section_it_sits_in():
+    # ⛔ the rail groups a depth-2 corpus's modules under their sections.
+    _, _, listed = a_rail("depth2", "basics/01-getting-started/unit-01")
+    assert [
+        (container.title, [(group.key, group.title, group.level) for group in container.within])
+        for container in listed
+    ] == [
+        ("Going Further", [("advanced", "Advanced", "section")]),
+        ("Putting It Together", [("advanced", "Advanced", "section")]),
+        ("Getting Started", [("basics", "Basics", "section")]),
+    ]
+
+
+def test_a_depth_one_corpus_names_no_section_so_its_rail_stays_flat():
+    corpus = read_corpus(FIXTURES / "depth1")
+    listed = rail(corpus.contents, PurePosixPath("index.html"), page_paths(corpus))
+    assert [container.within for container in listed] == [()] * len(listed)
+
+
 def test_a_rail_asked_about_no_unit_marks_a_container_and_no_row_within_it():
     """⭐ The container page's shape: the reader is in the course, on no lesson."""
     corpus = read_corpus(FIXTURES / "depth2")

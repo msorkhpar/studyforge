@@ -54,6 +54,10 @@ def strip(segments: Sequence[tuple[str, str, int]]) -> str:
     reference page's strip, sized by real work. ⚠️ The size is a custom
     property in the markup, `--units`, written from counts the build already
     knows; no colour and no measure is typed here.
+
+    ⛔ **The strip never overflows its column.** `--segments` is how many
+    segments share it, so the stylesheet lets a segment's floor give way to an
+    equal share once the segments outnumber the room for their floors.
     """
     if len(segments) < 2:
         return ""
@@ -62,7 +66,7 @@ def strip(segments: Sequence[tuple[str, str, int]]) -> str:
         f"{inline(title)}</a></li>"
         for key, title, units in segments
     )
-    return f'<ol aria-label="Progress by group">{items}</ol>'
+    return f'<ol aria-label="Progress by group" style="--segments: {len(segments)}">{items}</ol>'
 
 
 def up_next(title: str, href: str | None) -> str:

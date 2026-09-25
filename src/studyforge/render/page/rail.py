@@ -160,6 +160,19 @@ class RailUnit:
 
 
 @dataclass(frozen=True, slots=True)
+class RailGroup:
+    """A level ABOVE the containers, as the rail groups them under it.
+
+    ⭐ `key` is what tells two groups apart — its address key — because two
+    sections may share a title; `level` is the corpus's own word for its depth.
+    """
+
+    title: str
+    level: str = ""
+    key: str = ""
+
+
+@dataclass(frozen=True, slots=True)
 class RailContainer:
     """One container as the rail lists it, with the units declared under it.
 
@@ -173,6 +186,8 @@ class RailContainer:
     href: str | None = None
     current: bool = False
     units: tuple[RailUnit, ...] = ()
+    #: ⭐ The groups this container sits in, outermost first; `()` at depth 1.
+    within: tuple[RailGroup, ...] = ()
 
 
 def render(containers: Sequence[RailContainer] | None) -> str:
@@ -184,8 +199,51 @@ def render(containers: Sequence[RailContainer] | None) -> str:
     if containers is None or len(containers) < RAIL_MINIMUM:
         return ""
     said = templates.fill(READ_STATE_TEMPLATE, kind=READ_STATE_KIND)
-    rows = "".join(_container(container, said) for container in containers)
-    return templates.fill(RAIL_TEMPLATE, containers=rows)
+    return templates.fill(RAIL_TEMPLATE, containers=_rows(tuple(containers), 0, said))
+
+
+def _rows(containers: tuple[RailContainer, ...], depth: int, said: str) -> str:
+    """Return the rows at one depth: each group holding its containers, or a container.
+
+    ⛔ **Sections group their modules.** A corpus filed in sections lists its
+    containers under the section they sit in, the way its index does, rather
+    than as one flat run of every module. ⭐ A container with no group at this
+    depth is its own row, so a depth-1 rail is one flat list of containers.
+    """
+    rows: list[str] = []
+    index = 0
+    while index < len(containers):
+        container = containers[index]
+        if len(container.within) <= depth:
+            rows.append(_container(container, said))
+            index += 1
+            continue
+        group = container.within[depth]
+        end = index
+        while (
+            end < len(containers)
+            and len(containers[end].within) > depth
+            and containers[end].within[depth].key == group.key
+        ):
+            end += 1
+        rows.append(_group(group, containers[index:end], depth, said))
+        index = end
+    return "".join(rows)
+
+
+def _group(group: RailGroup, containers: tuple[RailContainer, ...], depth: int, said: str) -> str:
+    """Return one group as a disclosure holding its containers, open when it holds the reader.
+
+    ⚠️ **No link and no readable attribute**: no page is written above a
+    container, so the summary is a label and nothing else.
+    """
+    current = any(container.current for container in containers)
+    summary = _body(_level(group), group.title)
+    return (
+        f"<li{CURRENT_CONTAINER if current else ''}>"
+        f"<details{OPEN if current else ''}><summary>{summary}</summary>"
+        f"<ol>{_rows(containers, depth + 1, said)}</ol></details></li>"
+    )
 
 
 def _container(container: RailContainer, said: str) -> str:
@@ -256,7 +314,7 @@ def _body(chip: str, title: str) -> str:
     return f"{chip}{inline(title)}"
 
 
-def _level(container: RailContainer) -> str:
+def _level(container: RailContainer | RailGroup) -> str:
     """Return the corpus's own word for this depth and its trailing space, or `''`.
 
     ⚠️ Empty for a corpus that names its levels with nothing, and the space goes

@@ -14,7 +14,7 @@ from dataclasses import replace
 import pytest
 
 from studyforge.render import templates
-from studyforge.render.page import RailContainer, RailUnit, rail
+from studyforge.render.page import RailContainer, RailGroup, RailUnit, rail
 from studyforge.render.pageassets import SURFACE_HOOKS
 
 #: The region as a selector, exactly as `chrome.css` and the disposition table
@@ -382,3 +382,63 @@ def test_the_rail_and_both_lists_say_it_with_the_one_string():
     for markup in (rail((TWO[0], replace(TWO[1], units=(keyed,)))), listed, index):
         assert markup.count(SAID) == 1
         assert "marked read" not in markup.replace(SAID, "")
+
+
+# --------------------------------------------------------------------------
+# ⛔ Sections group their modules
+# --------------------------------------------------------------------------
+
+BASICS = RailGroup(title="Basics", level="section", key="basics")
+ADVANCED = RailGroup(title="Advanced", level="section", key="advanced")
+
+#: A depth-2 rail: one module in `basics`, two in `advanced`, the reader in the first.
+SECTIONED = (
+    replace(TWO[0], within=(BASICS,)),
+    replace(TWO[1], within=(ADVANCED,)),
+    RailContainer(title="Putting it together", level="module", within=(ADVANCED,)),
+)
+
+
+def summaries(markup: str) -> list[str]:
+    """Every summary's visible words, in document order, chips and tags removed."""
+    return [
+        re.sub(r"<span[^>]*>[^<]*</span> ?|<[^>]+>", "", summary)
+        for summary in re.findall(r"<summary>(.*?)</summary>", markup)
+    ]
+
+
+def test_each_section_holds_its_own_modules_in_reading_order():
+    assert summaries(rail(SECTIONED)) == [
+        "Course contents",
+        "Basics",
+        "Getting started",
+        "Advanced",
+        "Going further",
+        "Putting it together",
+    ]
+
+
+def test_a_module_sits_inside_its_sections_disclosure():
+    markup = rail(SECTIONED)
+    advanced = markup[markup.index("Advanced") :]
+    assert advanced.index("Going further") < advanced.index("</details></li></ol></details>")
+
+
+def test_the_section_holding_the_reader_is_open_and_marked_and_the_others_are_not():
+    markup = rail(SECTIONED)
+    opened = re.findall(
+        r'<li( aria-current="true")?><details( open)?><summary>(?:<span[^>]*>[^<]*</span> )?(\w+)',
+        markup,
+    )
+    assert opened == [(' aria-current="true"', " open", "Basics"), ("", "", "Advanced")]
+
+
+def test_a_section_row_is_a_label_with_no_link_and_no_readable_state():
+    markup = rail(SECTIONED)
+    assert "<li><details><summary><span" in markup
+    assert markup.count(f"{SURFACE_HOOKS['readable']}=") == 3 + 3
+
+
+def test_containers_with_no_section_stay_the_flat_list_they_were():
+    assert rail(TWO) == rail(tuple(replace(container, within=()) for container in TWO))
+    assert summaries(rail(TWO)) == ["Course contents", "Getting started", "Going further"]

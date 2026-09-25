@@ -74,7 +74,7 @@ from studyforge.contents import Contents, Entry, Group, links, order
 from studyforge.corpus.placement import relative_href
 from studyforge.describe import describe
 from studyforge.generate.declarations import BuildError
-from studyforge.render.page import Crumb, Link, Links, RailContainer, RailUnit
+from studyforge.render.page import Crumb, Link, Links, RailContainer, RailGroup, RailUnit
 
 #: The two bar slots whose target is a neighbouring unit. ⛔ `index` is not one
 #: of them: it addresses the root index, which every corpus has.
@@ -185,8 +185,8 @@ def rail(
     at a page nobody wrote.
     """
     return tuple(
-        _rail_container(group, from_page, above, container, unit, absent)
-        for group in deepest(contents)
+        _rail_container(group, within, from_page, above, container, unit, absent)
+        for group, within in _deepest_within(contents)
     )
 
 
@@ -213,8 +213,30 @@ def _deepest(group: Group, found: list[Group]) -> None:
         _deepest(child, found)
 
 
+def _deepest_within(contents: Contents) -> tuple[tuple[Group, tuple[RailGroup, ...]], ...]:
+    """Each container in `deepest`'s order, with the groups above it, outermost first.
+
+    ⭐ The rail groups its containers under these, so a corpus filed in sections
+    lists its modules in their sections, as its index does.
+    """
+    found: list[tuple[Group, tuple[RailGroup, ...]]] = []
+
+    def walk(group: Group, above: tuple[RailGroup, ...]) -> None:
+        if not group.groups:
+            found.append((group, above))
+            return
+        here = (*above, RailGroup(title=group.title, level=group.level, key=group.key))
+        for child in group.groups:
+            walk(child, here)
+
+    for group in contents.groups:
+        walk(group, ())
+    return tuple(found)
+
+
 def _rail_container(
     group: Group,
+    within: tuple[RailGroup, ...],
     from_page: PurePosixPath,
     above: Mapping[str, PurePosixPath],
     container: str,
@@ -238,4 +260,5 @@ def _rail_container(
             )
             for entry in group.entries
         ),
+        within=within,
     )

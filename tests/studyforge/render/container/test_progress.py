@@ -30,6 +30,13 @@ def test_the_strip_is_one_link_per_group_sized_by_its_units_and_pointing_at_it()
     assert f'href="{anchor("basics")}"' in strip
 
 
+def test_the_strip_says_how_many_segments_share_its_row():
+    # ⛔ the stylesheet lets a segment's floor give way to an equal share of
+    # the row once the segments outnumber the room, so it never overflows.
+    segments = [(f"g{n}", f"Group {n}", 1) for n in range(45)]
+    assert '<ol aria-label="Progress by group" style="--segments: 45">' in progress.strip(segments)
+
+
 def test_a_course_of_one_group_draws_no_strip():
     # A strip of one segment says nothing the progress line has not said.
     assert progress.strip([("basics", "Basics", 4)]) == ""
