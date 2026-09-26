@@ -80,6 +80,15 @@ release volumes: `studyforge narrate <root> --pack <dir>` packs them and writes
 the restore scripts the reader runs from a clone. Decide it before the first
 clip is committed, because a clip committed once stays in the history.
 
+Project by characters of lesson prose, not by a slice of units. Narration
+speaks lesson prose only, so count the characters outside code, practices and
+quizzes, and scale the measured clips, seconds and bytes of a few units by
+that count. On one 166-lesson course, three units of small, median and large
+prose projected the whole run within a few percent on every measure. A slice
+taken from the first section projected the synthesis time about a fifth short,
+because the later material is longer: the opening of a course is rarely
+typical of it.
+
 ### A regeneration is a diff, and its reach is decided by layer, not size
 
 A framework change reaches a corpus only by regenerating the consuming half and
@@ -194,6 +203,105 @@ inside a code fence. A corpus can carry many fences of markup and no raw HTML
 at all. Any count of "files with HTML" that does not track fence state
 overstates what the renderer will meet, and planning block support on it plans
 for constructs the corpus does not use.
+
+### Sample addresses and hosts in lessons meet the personal-data gate
+
+Teaching material is full of sample data: an e-mail validator's test inputs,
+a CSV of users, a connection string. The personal-data gate refuses an address
+on any registrable domain, however obviously invented (a short two-letter
+domain is still somebody's), and it reads a name ending in *.local* as the
+machine that ran. It admits an address on a reserved documentation domain or
+under a reserved top-level name, as `studyforge.archive.samples` states. On
+one 166-lesson course this was 21 lines in 7 lessons. The remedy is a small
+edit in the source, before the first ingest: move each sample to a reserved
+domain, keep its local part, and change the expected output and the
+assertions that check it in the same commit. The same holds for a sample host
+in an authored practice.
+
+### Authoring practices is a review of the source
+
+Writing a graded practice for every idea a page teaches reads that page more
+closely than anyone has, and it runs the page's claims against a current
+runtime. On one course it found a page that says an API throws where its
+documentation says it does not, a comment that contradicts the code under it,
+two rules that a newer language release relaxes, and a page that links no
+test although its module has one. Plan for this: fix each error in the
+source, then re-author only the units whose graded idea or quiz key the fix
+touches. A fix in text that nothing grades moves no exercise.
+
+## Traps in a runnable corpus
+
+### The runner's language release is not the author's
+
+A course's own examples are usually written and tested on the release the
+author had. The runner is pinned to a current one, and the gap shows in three
+places:
+
+- **Libraries that instrument bytecode.** A mocking library supports only the
+  class-file versions its bytecode library knows. Upgrading the mocking
+  library can leave an older bytecode library in place, because another
+  dependency pulls it in nearer the root and the build tool's nearest-wins
+  resolution keeps it. Pin the bytecode library in the corpus's dependency
+  management, and give every practice's build the same pins: an offline
+  runner holds only what the corpus resolved, so a practice build that
+  resolves something else fails offline.
+- **Exception messages.** A test that compares a runtime exception's message
+  with a literal breaks when a release rewords it. Assert the type, or read
+  the expected message from the running release.
+- **Rules a release relaxes.** A lesson can state as permanent a rule a later
+  release lifts. A practice cannot grade it, and a quiz keyed on it is wrong
+  on the runner. Say which release the page teaches.
+
+Run every example test on the author's release and in the runner before
+authoring begins, and compare the per-module counts. Both runs green, with
+equal counts, is the evidence; one of them is not.
+
+### An offline runner holds the lifecycle it was primed with, and no more
+
+A runner primed by running the tests holds the plugins the test lifecycle
+needs. A later phase needs more: packaging a module needs its jar plugin,
+which the primed repository does not hold, so a full verify fails offline in
+the first module, while the test phase runs every test. Run in the runner
+what its own commands run. Prime a longer lifecycle deliberately if a reader
+is ever told to run it.
+
+### Java test behaviour that makes a practice's test lie
+
+The exercises documentation lists the silent passes every language has. Java
+practices met these as well, each on real material:
+
+- **A temporary-directory parameter changes the case id.** A JUnit test that
+  takes its temporary directory as a method parameter is reported with the
+  parameter's type in its name, so the case id the practice records does not
+  match the report. Create temporary files in the test body instead.
+- **Reflection order is not declaration order.** The order in which a class's
+  declared methods come back is unspecified, and a wrong solution that
+  ignores the declared order can pass because the order happened to match.
+  Grade an ordering with mirrored data: the same names in reversed orders.
+- **A parallel stream's split depends on the machine.** A wrong solution that
+  uses an unordered terminal operation, or a shared list, fails on a machine
+  with many cores and may pass on one with few. Re-prove such practices when
+  the runner's core count changes. On a sequential stream, *findAny* and
+  *findFirst* return the same element, so that swap is graded only on a
+  parallel stream.
+- **An identity map's equality compares values by reference.** A plant built
+  on an identity map fails a main case that compares whole maps by equality.
+  Write identity plants as an explicit reference lookup instead.
+- **Stripping indentation counts a blank last line.** A text block's indent
+  rule counts a closing line of spaces, so an input that ends with a line
+  terminator and spaces is stripped less than it looks.
+
+### A quiz reading is independent only of the wording it read
+
+A question's readings prove something only when the reader neither wrote the
+wording nor chose it. Rewording a question after a refusal, or after a source
+fix that moves its key, makes the earlier readings void, and a reader who does
+the rewording cannot supply the new ones: its readings are the author's. Take
+fresh readings from a reader outside the authoring, with the page-free reading
+first and the page only after it. A reader that hands the questions to
+sub-readers is several readers, not one. When the budget allows one reader per
+role, record that in the gate record, so a count of readings is never mistaken
+for a count of readers.
 
 ## Declaring what is not material
 
