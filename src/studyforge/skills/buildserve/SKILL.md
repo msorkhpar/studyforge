@@ -55,9 +55,9 @@ that component is silent no matter how it is built.**
 ⛔ **By register ruling, narration covers a lesson's prose only.** A practice,
 a code example and a quiz are shown and never spoken, and no caption stands in
 for a code example. ⭐ A corpus narrated before that ruling keeps every prose
-clip, because a speech id is the section key and the block's position; run
-`studyforge narrate <corpus-root> --prune` once to retire the practice and code
-clips no page plays any more.
+clip, because a speech id is the section key and the block's position; one
+run of `narrate` with `--prune` retires the practice and code clips no page
+plays any more.
 
 ### ⛔ This skill starts no container, and that is a rule rather than an omission
 
