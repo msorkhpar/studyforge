@@ -27,7 +27,7 @@ question — what the editor may see.
 
 ## ⛔ NO QUIZ BUNDLE IS BOUND INTO THE EDITOR
 
-⛔ **A quiz's key lives only in the page it grades** (the user's ruling,
+⛔ **A quiz's key lives only in the page it grades** (register ruling,
 2026-09-25), and the editor is another process, on another origin, in which a
 reader can open any file it binds. ⭐ So every directory the editor binds is
 checked against the two that hold a key — the bundles (`BUNDLES_DIRNAME`,

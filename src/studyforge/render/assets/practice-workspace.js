@@ -1,6 +1,6 @@
 /* A lesson's practices: the list of cards, and the one workspace a card opens in.
 
-   ⭐ **The user's ruling, whole.** A lesson's practices are one *Practice (n)*
+   ⭐ **The register ruling, whole.** A lesson's practices are one *Practice (n)*
    list of titled cards; opening a card gives a full-screen workspace — the
    problem statement on the left, always visible and scrollable, the editor, Run
    and Submit on the right, Previous and Next between the lesson's practices, and
@@ -254,8 +254,8 @@
 
   /* --- the status: the reader's own record ------------------------------ */
   /* ⭐ A code practice's pass is the served origin's (a run established it);
-     a quiz's is the reader's browser store, where the quiz page kept it (the
-     user's ruling: nothing about a quiz is a server's). */
+     a quiz's is the reader's browser store, where the quiz page kept it (register
+     ruling: nothing about a quiz is a server's). */
   var run = window.studyforge && window.studyforge.run;
   var asks = run && run.available() && run.practices;
   var store = window.studyforge && window.studyforge.progress;

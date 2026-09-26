@@ -26,8 +26,8 @@ only. ⛔ Not on any adapter and not on any source (R1).
 
 ## ⛔ THE COUNT IS SET BY COVERAGE, NOT BY LENGTH
 
-A page may get no practice, two, or more: the target is covering every aspect
-it teaches, not a minimum. ⚠️ **A length band would cap a code-dense page and
+A page may get no practice, two, or more: the count follows every aspect it
+teaches, never a minimum. ⚠️ **A length band would cap a code-dense page and
 ship most of its examples as a reason nobody weighed**, so ⭐ **there is no
 length ceiling**, and the tier does not move the count: it is recorded, and
 handed to the author with the page, because it says how hard each exercise is

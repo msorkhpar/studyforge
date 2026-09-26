@@ -204,7 +204,7 @@ def test_opening_a_practice_moves_nothing_while_the_editor_takes_focus(
 def test_closing_the_workspace_returns_the_reader_to_the_card_they_opened(
     open_page: OpenPage, framing: served.Served, editor: editor_standin.StandIn
 ) -> None:
-    # ⛔ Close returns the reader to the same place in the lesson (the user's
+    # ⛔ Close returns the reader to the same place in the lesson (register
     # ruling), after the editor has had its whole say.
     _open(open_page, framing.url(CASE))
     where = _scroll_to_the_list(open_page)

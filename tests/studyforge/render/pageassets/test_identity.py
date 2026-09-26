@@ -275,8 +275,8 @@ AT_REST = {"--rule": RULE_CHROMA, "--rule-strong": RULE_CHROMA, "--margin": RULE
 LIVE = ("--accent", "--sign", "--focus", "--hl-bar")
 
 #: The hue arc a colour is called green over, in degrees, and the chroma below
-#: which a hue is not worth naming. ⛔ THE USER, 2026-09-19: *"I am not a fan of
-#: green"*. Both reference pages use one — the route planner's guide-sign green
+#: which a hue is not worth naming. ⛔ REGISTER RULING, 2026-09-19: no green
+#: in the palette. Both reference pages use one — the route planner's guide-sign green
 #: and the documentation site's emerald — and it is the one thing taken from
 #: neither. ⚠️ Read over every colour token in both themes, not only the accent.
 GREEN = (70.0, 170.0)

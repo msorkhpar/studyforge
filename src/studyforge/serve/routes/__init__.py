@@ -4,7 +4,7 @@
 after `/api/v1/`: `content` (what a unit *is*), `assets` (the bytes), `state` (what this machine
 has, never cached) and `run` (Run and Submit, streamed and recorded). ⛔ No
 `quiz`: a quiz is graded in its own page, and nothing about it is a server
-function (the user's ruling, 2026-09-25).
+function (register ruling, 2026-09-25).
 
 **How you use it.** Each module exposes `route(..., request, rest)` returning a
 `serve.response.Response`; `app` binds the first arguments and registers it under

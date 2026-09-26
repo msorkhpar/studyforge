@@ -23,8 +23,8 @@ came from.
 
 ## ⛔ COVERAGE, NOT LENGTH
 
-A page may get no practice, two, or more: the target is covering every aspect
-it teaches, not a minimum.
+A page may get no practice, two, or more: the count follows every aspect it
+teaches, never a minimum.
 
 ⭐ **This module is that rule's accounting**, and it mirrors the ledger's on
 purpose (`accounting`): the ledger asks of every FILE entry *is it built on, or
@@ -42,13 +42,10 @@ or a reason. ⚠️ **The mechanical halves are the ones below, and they are all
 there is**: a basis that resolves, one ending per aspect, and no aspect
 stated twice.
 
-## ⛔ THE USER'S REFINEMENT, SAME DAY — IMPORTANT IDEAS, NOT EVERY FACT
+## ⛔ REGISTER RULING, SAME DAY — IMPORTANT IDEAS, NOT EVERY FACT
 
-> *"regarding the coverage don't over do it! at the same time we are not a
-> university that wants to grade the knowdlge! Sometimes a single practice might
-> cover better than 4 unrelated small practices. It's all about quality and the
-> importants ofthe text. Like for the first quiz the dates do not matter. The
-> version might matter. And for sure 4 questions were a lot"*
+Coverage is not exhaustive grading. It is measured by the ideas that matter in
+the text, and a quiz stays short (one or two questions).
 
 ⭐ **So an aspect is an idea that matters to the page, never a fact it
 mentions**: a date, a name or an incidental number is not an aspect, and the

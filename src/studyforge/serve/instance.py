@@ -13,7 +13,7 @@ the one corpus it serves, so a served site answers `state` and `run` as a
 served root does. `site_discovery` is the one-corpus discovery the `--site` form
 hands it. `run` is the writer namespace — a run's starts and its stop are
 `POST` — and `WRITERS` names it, so no caller spells the writers itself. ⛔ No
-quiz namespace: a quiz is graded in its own page (the user's ruling, 2026-09-25).
+quiz namespace: a quiz is graded in its own page (register ruling, 2026-09-25).
 ⚠️ The `serve` verb calls `discover` and `instance_of` and never `make_instance`,
 so a namespace registered only in `make_instance` would never be served.
 ⛔ Every corpus's progress store is refused by `routes.assets` on any path.
@@ -84,7 +84,7 @@ from studyforge.serve.routes.content import CorpusContent
 
 #: The namespaces that also answer `POST`: `run`, whose starts and stop are acts
 #: a prefetch must never take. ⛔ A quiz is not among them: it is graded in its
-#: own page, and nothing about it is a server's (the user's ruling, 2026-09-25).
+#: own page, and nothing about it is a server's (register ruling, 2026-09-25).
 WRITERS = (run.NAMESPACE,)
 
 #: ⭐ Where a served page's execution client is fetched from —

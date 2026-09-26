@@ -70,7 +70,7 @@ def key_block(said: str) -> dict:
 
 
 def test_the_quiz_carries_its_own_key_in_one_data_block_and_no_option_carries_it():
-    # ⭐ The user's ruling: the key lives in the page it grades, in a script
+    # ⭐ The register ruling: the key lives in the page it grades, in a script
     # local to it. ⛔ Only in that block: an option carries its id and words,
     # and neither its correctness nor its sentence — or a stylesheet or a screen
     # reader could say it before the reader chose.
@@ -235,7 +235,7 @@ def behaviour() -> str:
 
 
 def test_the_quiz_is_graded_in_the_page_from_its_own_key_with_no_request():
-    # ⭐ The user's ruling: nothing about a quiz is a server function. ⛔ So the
+    # ⭐ The register ruling: nothing about a quiz is a server function. ⛔ So the
     # script asks no client and no origin, and makes no request of any kind.
     body = behaviour()
     assert "JSON.parse(block.textContent)" in body
