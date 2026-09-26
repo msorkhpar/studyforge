@@ -32,6 +32,7 @@ from studyforge.narrate.speakable import (
     Speakable,
     SpeechUnit,
     parse_clip_name,
+    script,
     speakable_of,
     speech_id,
     unit_token,
@@ -49,6 +50,7 @@ from tests.studyforge.cli.narrate.plant import (
 )
 from tests.studyforge.cli.narrate.service import FMT, VOICE, FakeService, files, speech_ids
 from tests.studyforge.generate.corpora import BOTH, an_output
+from tests.studyforge.narrate.speakable.examples import with_code_examples
 from tests.support import repository_root
 
 
@@ -409,4 +411,47 @@ def test_a_prune_retires_the_practice_and_caption_clips_and_keeps_every_prose_cl
     assert sorted(parse_clip_name(path.stem)[0] for path in pruned.deleted) == retired
     assert pruned.held == ()
     for one, name in prose_files.items():
+        assert list(root.rglob(name)), f"the prose clip of {one} was deleted"
+
+
+# --------------------------------------------------------------------------
+# ⛔ The register ruling (a code-example panel is never narrated) retires through the prune
+# --------------------------------------------------------------------------
+
+
+def test_a_prune_retires_the_code_example_clips_and_the_heading_over_them_and_keeps_the_prose(
+    tmp_path, monkeypatch
+):
+    # ⭐ Every unit's first lesson ends in a code-examples list and more prose.
+    built = stage.build_unit
+    monkeypatch.setattr(
+        stage, "build_unit", lambda *args, **kwargs: with_code_examples(built(*args, **kwargs))
+    )
+    # ⭐ The script before the ruling: the same one with both of its new rules off.
+    with monkeypatch.context() as before_the_ruling:
+        before_the_ruling.setattr(script, "code_examples", lambda block: False)
+        before_the_ruling.setattr(script, "unheard_headings", lambda blocks, heard: [])
+        root = narrated(tmp_path, "depth2")
+    _, walk = stage.survey(root)
+    kept = sorted(walk.produced)
+    before = recorded(root)
+    retired = sorted(set(before) - set(kept))
+    # ⛔ The population: one heading and two items per unit, and nothing else.
+    assert retired and len(retired) == 3 * len(read_corpus(root).units)
+    assert {one.rpartition(".")[2] if ".i" in one else "heading" for one in retired} == {
+        "i1",
+        "i2",
+        "heading",
+    }
+    assert set(kept) < set(before), "a prose clip was never made; the control is vacuous"
+    record = record_of(root)["clips"]
+    kept_files = {one: record[one]["filename"] for one in kept}
+
+    pruned = prune_corpus(root)
+
+    assert recorded(root) == kept
+    assert sorted(pruned.forgotten) == retired
+    assert sorted(parse_clip_name(path.stem)[0] for path in pruned.deleted) == retired
+    assert pruned.held == ()
+    for one, name in kept_files.items():
         assert list(root.rglob(name)), f"the prose clip of {one} was deleted"

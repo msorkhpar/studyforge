@@ -2029,7 +2029,8 @@ These are proven surfaces, generalised in their addressing and otherwise kept.
   links is the page's code examples, and each example opens in place** (register
   ruling of 2026-09-25): one collapsed entry per example — a source and
   its paired test — named for its source, each item kept whole inside its
-  entry so the list's speech units say what they said. As built, an entry says
+  entry. The panel is a code example and is never narrated (register ruling):
+  its lines carry no clip. As built, an entry says
   why each file opens as plain text: the course's editor is not running here,
   and how to start it. ⭐ **Served, with the corpus's editor up**, expanding an
   entry opens the example right there, with **Source | Test** tabs and **Run

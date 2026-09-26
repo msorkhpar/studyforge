@@ -13,8 +13,10 @@ unit belonging to it.
 **Depends on.** `studyforge.address` for what a unit key is, `studyforge.archive`
 for the block vocabulary and the personal-data gate, and
 `studyforge.render.markup` for the one inline-marker parser (see `voice.py`'s
-contract for why that dependency is taken deliberately). ⛔ Not on `corpus`, not on
-`serve`, and nothing here knows where a clip lands (R4).
+contract for why that dependency is taken deliberately), and
+`corpus.manifest.SOURCE_SUFFIXES`, the framework's constant table of what a code
+file is called. ⛔ Nothing of a corpus is read, not `serve`, and nothing here
+knows where a clip lands (R4).
 
 ## ⛔ Displayed text and spoken text are two renderings of ONE list
 
@@ -47,7 +49,8 @@ carries. ⚠️ A practice is worked at, not listened to, and before the ruling
 its clips were most of a corpus's audio. ⭐ The page follows by construction:
 its narration is joined from these units (`narrate.playable`), so a practice
 part carries no audio attribute however old the record is. A code example is
-never spoken either, and `script.py` says why.
+never spoken either, and `script.py` says why; that includes a lesson's
+code-example panel, and a heading over nothing spoken.
 
 ⭐ **Skipping a section renumbers nothing.** A speech id is minted from the
 section's own key and the block's position inside it, so every lesson unit

@@ -1337,6 +1337,14 @@ What it reads, and the choices in it:
 
 **Serves.** No spec rule: a narration presentation choice.
 
+### A code-example panel is never spoken, nor the heading over it alone
+
+**Decision.** By register ruling (2026-09-26), a lesson's code-example panel is a code example and is never narrated. `narrate.speakable.panel.code_examples` gives no speech unit to a list whose every item is one link to a code file and a label of at most `MAX_LABEL` characters, the list `render.page.code` draws as the panel. A code file is one written in a suffix of `corpus.manifest.SOURCE_SUFFIXES`, the framework's whole table, so the script depends on the document alone and such a list is silent wherever its page is written. A heading whose blocks, up to the next heading of its level or above, hold such a list and nothing spoken is silent too (`panel.unheard_headings`); a heading over nothing but a fence keeps its words. `render.page.code` also drops any `data-audio` from the panel's lines, so no record puts audio inside `div[data-code-examples]`. Nothing is renumbered, and `narrate --prune` retires the panel and heading clips of a record narrated earlier.
+
+**Why.** The panel's lines name files; spoken, they are a list of filenames. A heading over the panel alone names only the panel. A heading over a fence names what the reader is looking at, and is often the one spoken trace of a worked example, so it stays.
+
+**Serves.** No spec rule: a narration presentation choice.
+
 ### Spoken text is gated before and after its transform
 
 **Decision.** `narrate.speakable.script` passes the source string and the derived spoken string through the personal-data gate, and refuses rather than scrubs.

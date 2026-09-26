@@ -12,6 +12,7 @@ from dataclasses import replace
 
 import pytest
 
+from studyforge.narrate.speakable import panel
 from studyforge.render.markup import inline
 from studyforge.render.page import code
 from studyforge.render.templates import placeholders
@@ -113,13 +114,15 @@ def test_a_list_of_code_links_is_one_entry_per_pair_named_for_its_source():
     assert re.findall(r'data-code-tab="(\w+)"[^>]*>(\w+)<', alone) == [("main", "Test")]
 
 
-def test_every_item_keeps_its_element_its_words_and_its_narration():
-    # ⛔ The list's speech units say what they said: each item is carried whole.
-    lines = [item("Test: ", TEST, "a1"), item("Source: ", SOURCE, "a2")]
-    page = drawn(listed(*lines))
-    for line in lines:
+def test_every_item_keeps_its_element_and_its_words_and_the_panel_carries_no_audio():
+    # ⛔ Register ruling: a code example is never narrated. The items are carried
+    # whole but for their audio, even where a record still names a clip for them.
+    lines = [item("Test: ", TEST, "a1"), item("Source: ", SOURCE, "")]
+    page = drawn(listed(*lines).replace("<li>", '<li data-audio="">'))
+    for line in (item("Test: ", TEST), item("Source: ", SOURCE)):
         assert code.mark(line, PAIRED)[0] in page
-    assert page.index('data-audio="a1"') < page.index('data-audio="a2"')
+    assert "data-audio" not in page
+    assert page.index(TEST) < page.index(SOURCE), "each item keeps its place"
 
 
 def test_a_pair_the_list_separates_is_drawn_together_in_its_first_item_s_place():
@@ -172,3 +175,10 @@ def test_anything_but_a_list_of_code_links_is_left_as_it_is(body):
 def test_a_corpus_with_no_pairing_draws_no_examples():
     marked, paths = code.mark(listed(item("", SOURCE)), JAVA)
     assert paths and code.examples(marked, paths, JAVA) == marked
+
+
+def test_the_label_the_page_draws_is_the_label_narration_silences():
+    # ⛔ One line, two readers (register ruling: a panel is never narrated): a
+    # longer label in the script would silence a list the page leaves plain,
+    # and a shorter one would speak a panel.
+    assert code.MAX_LABEL == panel.MAX_LABEL

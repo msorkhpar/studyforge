@@ -185,7 +185,10 @@ rebuild.
 **Narration speaks a lesson's prose only**, by register ruling: a practice, a
 code example and a quiz are shown and never spoken. A corpus narrated before
 that ruling keeps every prose clip as it is, and `studyforge narrate <root>
---prune` retires the practice and code clips no page plays any more.
+--prune` retires the practice and code clips no page plays any more. A lesson's
+*Code Examples* panel is a code example too, by a later register ruling: its
+source and test lines are never spoken, and neither is the heading over the
+panel when nothing spoken sits beside it.
 
 **Clips too large for git travel as release volumes.** A corpus whose
 `corpus.json` sets `media.commit` to `never` keeps its clips out of the
