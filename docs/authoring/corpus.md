@@ -294,6 +294,12 @@ still need nothing to run them.
 
 ## `narration` — whether the site speaks
 
+**What is spoken is a lesson's prose**, by register ruling: headings,
+paragraphs, list items, table rows and a disclosure's summary. A practice, a
+code example and a quiz are shown and never spoken, and no caption stands in
+for a code example. A corpus narrated before that ruling keeps every prose clip;
+`studyforge narrate <root> --prune` retires the clips no page plays any more.
+
 **Narration is optional.** Some readers want the material without a voice, and
 a site without one is complete. **Needs `corpus_api: 5`.**
 

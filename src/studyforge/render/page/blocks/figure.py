@@ -85,33 +85,29 @@ def render(
 ) -> str:
     """Render one figure. ⚠️ `position` and `children` are the shape.
 
-    ⛔ **Only a code figure is narrated** — `SPEECH_OF` calls an image and a video
-    `silent`, shown and never spoken. ⭐ All three still take `audio` and the
-    two that are silent `del` it, so the dispatch below stays one mapping with no
-    branch on which renderer wants what: a branch here is the drift `_RENDERERS`
-    exists to make impossible.
+    ⛔ **No figure is narrated** — `SPEECH_OF` calls a code listing, an image and a
+    video `silent`, shown and never spoken, so none of them carries an audio
+    attribute. ⭐ The code listing joined the other two under the register ruling
+    that narration covers a lesson's prose only.
     """
-    del position, children
-    return _RENDERERS[block["type"]](block, placement, narration.attribute(section, path))
+    del position, children, section, path, narration
+    return _RENDERERS[block["type"]](block, placement)
 
 
-def _code(block: dict, placement: Placement | None, audio: str) -> str:
+def _code(block: dict, placement: Placement | None) -> str:
     """One code listing, captioned with the language the archive recorded.
 
     ⛔ The copy button is **not** rendered. `copy-code.js` creates it, because a
     button written into the markup would sit there doing nothing with scripting
     off, and a control that does nothing is worse than no control.
 
-    ⚠️ **The clip is one CAPTION and not the listing read aloud**:
-    `SPEECH_OF` reduces a fence to a sentence, whatever its language. The
-    attribute goes on the whole `<figure>` because that is what the reader sees
-    lit while that sentence is spoken.
+    ⛔ **It is never narrated**, so the `<figure>` carries no audio attribute:
+    a fence yields no speech unit, and the caption here is shown, not spoken.
     """
     del placement
     language = (block.get("lang") or "").strip()
     return templates.fill(
         "code.html",
-        audio=audio,
         caption=escape(language or UNLABELLED_CODE),
         fallback=_fallback_note(language),
         language=f' class="language-{escape_attribute(grammar_for(language))}"' if language else "",
@@ -127,10 +123,8 @@ def _fallback_note(language: str) -> str:
     return f'<span class="{klass}">{escape(FALLBACK_NOTE)}</span>'
 
 
-def _image(block: dict, placement: Placement | None, audio: str) -> str:
+def _image(block: dict, placement: Placement | None) -> str:
     """One picture, sized in advance where the archive knew the width.
-
-    ⛔ `audio` is the shape and is never used: an image is `silent`.
 
     ⚠️ The width is passed through so the browser can reserve the box before the
     file arrives; without it a page of diagrams reflows as each one loads. ⛔
@@ -138,7 +132,6 @@ def _image(block: dict, placement: Placement | None, audio: str) -> str:
     unparseable is the archive saying it does not know, and inventing a number
     would be worse than letting the image size itself.
     """
-    del audio
     alt = str(block.get("alt") or "")
     return templates.fill(
         "image.html",
@@ -149,13 +142,8 @@ def _image(block: dict, placement: Placement | None, audio: str) -> str:
     )
 
 
-def _video(block: dict, placement: Placement | None, audio: str) -> str:
-    """Return a player when the file is on disk, a link when it never came down.
-
-    ⛔ `audio` is the shape and is never used: a video is `silent`, and the deck
-    speaks for itself.
-    """
-    del audio
+def _video(block: dict, placement: Placement | None) -> str:
+    """Return a player when the file is on disk, a link when it never came down."""
     title = str(block.get("title") or "").strip()
     if is_remote(block.get("src")):
         return templates.fill(

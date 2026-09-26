@@ -38,6 +38,22 @@ play the wrong audio. ⛔ **So the owed assertion is a cardinality —
 ⭐ And the negative belongs here because the minter is here: **two spoken units that
 differ only in their unit's `origin.section` mint different names.**
 
+## ⛔ Narration speaks a lesson's prose, and never a practice
+
+⭐ **Register ruling (2026-09-26): narration covers a lesson's prose only.** A
+section whose kind is `practice` yields no speech unit at all: not its
+statement, not its lesson heading, not its examples, and nothing its panel
+carries. ⚠️ A practice is worked at, not listened to, and before the ruling
+its clips were most of a corpus's audio. ⭐ The page follows by construction:
+its narration is joined from these units (`narrate.playable`), so a practice
+part carries no audio attribute however old the record is. A code example is
+never spoken either, and `script.py` says why.
+
+⭐ **Skipping a section renumbers nothing.** A speech id is minted from the
+section's own key and the block's position inside it, so every lesson unit
+keeps the id, and the clip, it had while practices were narrated; `narrate
+--prune` retires the practice clips no page speaks any more.
+
 ## ⚠️ Identifiers are always split, and there is no knob
 
 ⛔ **No manifest field selects how an identifier is pronounced.** The extraction
@@ -65,23 +81,13 @@ from studyforge.narrate.speakable.naming import (
     unit_token,
 )
 from studyforge.narrate.speakable.records import Speakable, SpeakableError, SpeechUnit
-from studyforge.narrate.speakable.script import (
-    CODE_CAPTION,
-    CODE_CAPTION_PLAIN,
-    SPEECH_OF,
-    code_caption,
-    ordinal_word,
-    units_of,
-)
+from studyforge.narrate.speakable.script import SPEECH_OF, ordinal_word, units_of
 from studyforge.narrate.speakable.voice import URL_PHRASE, spoken_text
-from studyforge.unit import bare_lesson
 
 #: ⛔ The package's whole public surface. A consumer reaching past this into a
 #: module is a consumer this contract failed.
 __all__ = [
     "BLOCK",
-    "CODE_CAPTION",
-    "CODE_CAPTION_PLAIN",
     "DIGEST_JOIN",
     "DIGEST_LENGTH",
     "SEGMENT",
@@ -95,7 +101,6 @@ __all__ = [
     "by_position",
     "clip_name",
     "clip_names",
-    "code_caption",
     "digest_of",
     "ordinal_word",
     "parse_clip_name",
@@ -122,6 +127,9 @@ def speakable_of(document: dict) -> Speakable:
     ⚠️ A repeated section key is refused rather than silently merged. Two sections
     sharing a key mint colliding ids, and the failure would surface much later as
     one clip playing under two paragraphs.
+
+    ⛔ A practice section yields nothing (see the module contract), and its key is
+    still checked: a practice whose key repeats a lesson's is the same defect.
     """
     if not isinstance(document, dict):
         raise SpeakableError("a speakable script is derived from a served unit document")
@@ -135,24 +143,12 @@ def speakable_of(document: dict) -> Speakable:
     for section in sections:
         key = _section_key(section, seen)
         seen.add(key)
-        blocks = section.get("blocks")
-        found, held = units_of(unit, key, blocks, omit=_not_shown(section, blocks))
+        if section.get("kind") == PRACTICE:
+            continue
+        found, held = units_of(unit, key, section.get("blocks"))
         spoken += found
         withheld += held
     return Speakable(unit_key=unit_key_of(unit), units=tuple(spoken), withheld=withheld)
-
-
-def _not_shown(section: dict, blocks: object) -> tuple[int, ...]:
-    """Return the positions of a section the page withholds, which are never spoken.
-
-    ⭐ A practice's lesson heading over nothing but its worked solution: the page
-    leaves it off (`unit.bare_lesson`, the one rule both read), so a clip of it
-    would be one nothing plays.
-    """
-    if section.get("kind") != PRACTICE or not isinstance(blocks, list):
-        return ()
-    bare = bare_lesson(blocks)
-    return () if bare is None else (bare,)
 
 
 def by_position(units: tuple[SpeechUnit, ...]) -> dict:

@@ -935,7 +935,7 @@ What it reads, and the choices in it:
 
 ### A list item holds its code
 
-**Decision.** A list item's parts may be `code` blocks as well as text and nested lists (`studyforge.archive.blocks.ITEM_BLOCKS`). The Markdown reader (`studyforge.archive.markdown.listing`) keeps an item's fence inside the item, `studyforge.validate.blocks` admits the part, the page renders it as the code figure inside its `<li>`, and the item's clip speaks its caption.
+**Decision.** A list item's parts may be `code` blocks as well as text and nested lists (`studyforge.archive.blocks.ITEM_BLOCKS`). The Markdown reader (`studyforge.archive.markdown.listing`) keeps an item's fence inside the item, `studyforge.validate.blocks` admits the part, the page renders it as the code figure inside its `<li>`, and the item's clip speaks the item's prose only.
 
 **Why.** A step, its snippet and the sentence after the snippet are one item in real material, and closing the list around the code detaches that sentence from its step.
 
@@ -1241,11 +1241,11 @@ What it reads, and the choices in it:
 
 ## Narration
 
-### A heading the page withholds is not spoken
+### A practice is never narrated
 
-**Decision.** `narrate.speakable.speakable_of` skips the position `unit.bare_lesson` names in a practice section, the same rule `render.page.section` withholds it by, and renumbers nothing.
+**Decision.** By register ruling (2026-09-26), narration covers a lesson's prose only. `narrate.speakable.speakable_of` yields no speech unit for a section whose kind is `practice`: not its statement, its lesson heading, its examples or anything its panel carries. `render.page.section` renders a practice with no narration, so none of its parts carries `data-audio` whatever the record holds. Skipping a section renumbers nothing, because a speech id is minted from the section's key and the block's position; `narrate --prune` retires the practice clips of a record narrated earlier.
 
-**Why.** A clip for a heading the page does not show is a clip nothing plays.
+**Why.** A practice is worked at, not listened to, and its clips were most of a corpus's audio.
 
 **Serves.** `R1`
 
@@ -1329,11 +1329,11 @@ What it reads, and the choices in it:
 
 **Serves.** `R6`
 
-### A fence is captioned, never read aloud
+### A fence is never spoken
 
-**Decision.** `narrate.speakable.script.code_caption` narrates a code fence as one short caption at any length and in any language, and there is no configuration listing languages that narrate.
+**Decision.** By the same register ruling, `narrate.speakable.script.SPEECH_OF` calls `code` `silent`: a fence yields no speech unit and no caption stands in for it, and a code part inside a list item adds nothing to that item's clip. A code figure carries no `data-audio`. There is no configuration listing languages that narrate. The fence's block position is still spent, so every prose unit keeps its speech id and its clip.
 
-**Why.** Code read aloud is noise, while a caption keeps the voice from falling silent.
+**Why.** Code read aloud is noise, and a caption announcing it is words the author did not write.
 
 **Serves.** No spec rule: a narration presentation choice.
 

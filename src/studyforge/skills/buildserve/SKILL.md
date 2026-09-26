@@ -50,6 +50,15 @@ that component is silent no matter how it is built.**
 | where the rest of its contract is | that component's own `consuming.json` and `docs/api.md` — ⛔ no route, header or field of its API is repeated here |
 | which voices exist | the catalogue in that component's `consuming.json`, and the route its `docs/api.md` names |
 
+### ⭐ What is spoken: a lesson's prose, and nothing else
+
+⛔ **By register ruling, narration covers a lesson's prose only.** A practice,
+a code example and a quiz are shown and never spoken, and no caption stands in
+for a code example. ⭐ A corpus narrated before that ruling keeps every prose
+clip, because a speech id is the section key and the block's position; run
+`studyforge narrate <corpus-root> --prune` once to retire the practice and code
+clips no page plays any more.
+
 ### ⛔ This skill starts no container, and that is a rule rather than an omission
 
 Spec §8.3: **the Docker socket is never mounted into the serving process** — not
