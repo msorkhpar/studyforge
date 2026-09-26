@@ -121,6 +121,13 @@ FLAKY_TEST = "one test disagrees with itself between runs"
 PLANT_SOLVES_ITS_EDGE = "the solution planted to ignore an edge handles it"
 UNMAPPED_TEST = "the tests carry one the case map does not name"
 DRIFTED_ORIGIN = "the source has changed since the exercise was built from it"
+STARTER_THROWS_WHAT_AN_EDGE_EXPECTS = "the starter raises the exception an edge's test expects"
+
+#: ⚠️ A starter that "is not written yet" by raising the very exception the
+#: negative-price edge expects: that edge's test passes on it, as a Java course measured.
+_STARTER_RAISING_VALUEERROR = """def total(prices):
+    raise ValueError("write me")
+"""
 
 #: The vacuous replacement for the main ask's test — ⭐ it passes on anything
 #: that imports, which is what makes it vacuous.
@@ -178,7 +185,7 @@ class Bundle:
         (root / "reports").mkdir(parents=True, exist_ok=True)
         (root / "work" / "statement.md").write_text(STATEMENT, encoding="utf-8")
         (root / "work" / "reference.py").write_text(REFERENCE, encoding="utf-8")
-        (root / "work" / "starter.py").write_text(STARTER, encoding="utf-8")
+        (root / "work" / "starter.py").write_text(self._starter(), encoding="utf-8")
         (root / "work" / "plant-empty.py").write_text(self._plant_empty(), encoding="utf-8")
         (root / "work" / "plant-negative.py").write_text(PLANT_NEGATIVE, encoding="utf-8")
         (root / "work" / "test_solution.py").write_text(self._tests(), encoding="utf-8")
@@ -270,10 +277,16 @@ class Bundle:
         """Which file stands in for the reader's answer, per role."""
         return {
             "reference": REFERENCE,
-            "starter": STARTER,
+            "starter": self._starter(),
             plant_role(EMPTY_EDGE): self._plant_empty(),
             plant_role(NEGATIVE_EDGE): PLANT_NEGATIVE,
         }
+
+    def _starter(self) -> str:
+        """The starter, or the one that raises what the negative-price edge expects."""
+        if self.plant == STARTER_THROWS_WHAT_AN_EDGE_EXPECTS:
+            return _STARTER_RAISING_VALUEERROR
+        return STARTER
 
     def _plant_empty(self) -> str:
         """⛔ Under `PLANT_SOLVES_ITS_EDGE` this is the reference: it solves the edge."""

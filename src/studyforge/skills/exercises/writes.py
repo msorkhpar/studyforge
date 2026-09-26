@@ -7,7 +7,8 @@ overwrite a file with other bytes.
 
 **How you use it.**
 
-    written, kept = commit(root, files, "the authoring pass", replaces=(LEDGER_PATH,))
+    with exclusive(root, "the authoring pass"):    # read, merge and write in turn
+        written, kept = commit(root, files, "the authoring pass", replaces=(LEDGER_PATH,))
 
 **Depends on.** `drafts` for the refusal, `studyforge.exercise` for the
 rule a corpus-root path obeys, and `validate.source.repository_ignores`, the
@@ -36,6 +37,19 @@ container was refused here, and the one way past the refusal — removing the
 ledger — lost every earlier container's rows. ⛔ A replaceable path holding a
 directory is still refused: a rewrite replaces a file and nothing else.
 
+## ⛔ TWO PASSES OVER ONE CORPUS TAKE TURNS AT THE LEDGER
+
+⚠️ **Measured on a Java course:** three passes ran at once in one worktree,
+each rewriting `exercises/ledger.json`. A pass reads the committed ledger,
+merges its rows in and writes it back, so a second pass that read it in
+between writes the first pass's rows away: a lost update. ⭐ `exclusive`
+holds an inter-process lock on the corpus root for that read, merge and write,
+so a second pass waits for the first to finish and then merges onto what it
+wrote. ⭐ The authoring and the gate runs stay concurrent; only the commit
+takes turns. ⛔ The lock is `fcntl.flock` on the root directory itself, so no
+lock file ever lands in the corpus, and a platform with no `flock` refuses
+rather than risking a lost row.
+
 ⚠️ **Split out of `corpus`** when the merge brought that module to
 R11's ceiling. The seam is the write: `corpus` decides what the pass produced,
 and this module decides whether the tree may take it.
@@ -43,11 +57,39 @@ and this module decides whether the tree may take it.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+import os
+from collections.abc import Iterator, Sequence
+from contextlib import contextmanager
 from pathlib import Path
 
 from studyforge.exercise import require_path
 from studyforge.skills.exercises.drafts import AuthoringError
+
+try:
+    import fcntl
+except ImportError:  # pragma: no cover - reached only off POSIX
+    fcntl = None
+
+
+@contextmanager
+def exclusive(root: Path, where: str) -> Iterator[None]:
+    """Hold the corpus's inter-process lock for the block, so passes commit in turn.
+
+    ⛔ Blocks without a timeout: a pass holds it for one read, one merge and
+    one write, so a wait that never ends is a stopped pass, and ending that
+    process releases the lock.
+    """
+    if fcntl is None:  # pragma: no cover - reached only off POSIX
+        raise AuthoringError(
+            f"{where}: this platform has no fcntl.flock, so a second pass over the "
+            f"corpus could write this one's ledger rows away; nothing was written."
+        )
+    descriptor = os.open(root, os.O_RDONLY)
+    try:
+        fcntl.flock(descriptor, fcntl.LOCK_EX)
+        yield
+    finally:
+        os.close(descriptor)
 
 
 def commit(

@@ -14,6 +14,8 @@ processes, and every clause below reads the tree that pass left.
 from __future__ import annotations
 
 import json
+import shutil
+import threading
 from dataclasses import replace
 
 import pytest
@@ -31,12 +33,14 @@ from studyforge.skills.exercises import (
     AuthoringError,
     author_corpus,
 )
+from studyforge.skills.exercises import corpus as the_pass
 from tests.studyforge.skills.exercises.authoring import (
     ASPECTS,
     CLEAN,
     Judging,
     Running,
     Scripted,
+    shout,
     snapshot,
     write_corpus,
 )
@@ -424,3 +428,85 @@ def test_a_row_leaves_the_ledger_only_when_its_page_is_gone(tmp_path):
     assert authored.ledger.dropped == ("source:notes/gauge.md",)
     assert authored.ledger.added == () and authored.ledger.changed == ()
     assert "notes/gauge.md" not in {row["path"] for row in _ledger(tmp_path)["sources"]}
+
+
+def test_one_shipped_unit_is_re_authored_by_removing_it_and_passing_its_page_alone(tmp_path):
+    """⭐ The supported way to change one shipped exercise, and only it."""
+    material, graders, pages = write_corpus(tmp_path)
+    arguments = dict(source="demo", judge=Judging(), runner=Running())
+    author_corpus(
+        tmp_path,
+        material=material,
+        graders=graders,
+        pages=pages,
+        author=Scripted(CLEAN),
+        **arguments,
+    )
+    unit = tmp_path / "exercises/kata/python/unit-02"
+    before = {k: v for k, v in snapshot(tmp_path).items() if "/unit-02/" not in k}
+
+    def fixed(brief):
+        return replace(shout(brief), title="Shout a word, fixed")
+
+    # ⛔ Unchanged page, fixed draft: without the removal it is reused unread (R10).
+    again = author_corpus(
+        tmp_path,
+        material=["lessons/shout.md"],
+        graders=[],
+        pages=[pages[1]],
+        author=Scripted({pages[1].path: [fixed]}),
+        **arguments,
+    )
+    assert again.written == (), "an unchanged page was re-authored without its removal"
+    shutil.rmtree(unit)
+    author_corpus(
+        tmp_path,
+        material=["lessons/shout.md"],
+        graders=[],
+        pages=[pages[1]],
+        author=Scripted({pages[1].path: [fixed]}),
+        **arguments,
+    )
+    (bundle,) = unit.glob("**/bundle.json")
+    assert json.loads(bundle.read_text(encoding="utf-8"))["title"] == "Shout a word, fixed"
+    after = {k: v for k, v in snapshot(tmp_path).items() if "/unit-02/" not in k}
+    assert after == before, "re-authoring one unit moved another unit's file or a ledger row"
+
+
+def test_two_passes_at_once_commit_in_turn_and_keep_each_other_s_rows(tmp_path, monkeypatch):
+    """⛔ A pass that read the ledger must not write a later pass's rows away."""
+    _, _, pages = write_corpus(tmp_path)
+    real_lock, real_read, second = the_pass.exclusive, the_pass._read, {}
+    at_the_lock = threading.Event()
+
+    def lock(root, where):
+        if threading.current_thread() is not threading.main_thread():
+            at_the_lock.set()
+        return real_lock(root, where)
+
+    def read(path, where):
+        prior = real_read(path, where)
+        if where == "the ledger" and "notes" not in second:
+            # ⭐ The race, forced: the kata pass has READ the ledger, and the
+            # notes pass now runs whole before the kata pass writes it back.
+            second["notes"] = threading.Thread(
+                target=lambda: _container_pass(tmp_path, pages, "notes"), daemon=True
+            )
+            second["notes"].start()
+            assert at_the_lock.wait(120), "the notes pass never reached its commit"
+            second["notes"].join(timeout=3)
+            print(
+                "the notes pass finished while the kata pass held the ledger:",
+                not second["notes"].is_alive(),
+            )
+        return prior
+
+    monkeypatch.setattr(the_pass, "exclusive", lock)
+    monkeypatch.setattr(the_pass, "_read", read)
+    _container_pass(tmp_path, pages, "kata")
+    second["notes"].join(timeout=120)
+    assert not second["notes"].is_alive(), "the notes pass never finished"
+    after = _ledger(tmp_path)
+    read_by = {source["path"] for source in after["sources"]}
+    print("the ledger's sources:", sorted(read_by))
+    assert set(KATA) | set(NOTES) <= read_by, "one pass wrote the other's rows away"

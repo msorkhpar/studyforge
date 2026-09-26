@@ -68,6 +68,15 @@ the brief's `name` says which kind of draft is asked for (`Brief.kind`).
 ⛔ `plan_page` refuses a `quiz` no aspect names, so a page cannot declare a
 quiz it never plans.
 
+## ⛔ A DRAFT CARRYING PERSONAL DATA IS ONE EXERCISE'S REFUSAL, NEVER THE PASS'S
+
+⚠️ **Measured on a Java course:** a statement naming a `.local` sample
+host raised R7's `PersonalDataLeak` from inside the gate run, and the whole
+pass stopped, losing fourteen other exercises' gate runs. ⭐ Now the leak is
+read as a refusal under `PERSONAL_DATA`: the retry is briefed with it, and a
+draft that still carries one ends as a `Shortfall` naming `personal-data` while the pass
+carries on. ⛔ The refusal names a shape and a place, never the matched text.
+
 ## ⛔ THE PLAN IS A CEILING, AND `shortfall` IS ASKED EVERY TIME
 
 ⭐ **Shipped plus refused must equal the plan**, and `plan.shortfall` — not a
@@ -81,8 +90,10 @@ from collections.abc import Callable, Iterable
 from dataclasses import dataclass, replace
 from pathlib import Path
 
+from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.exercise import CODE, ExerciseError, from_document
 from studyforge.exercise.bundle import Places, require_no_gap
+from studyforge.exercise.gates import Verdict
 from studyforge.skills.adapter import Layout
 from studyforge.skills.exercises.aspects import AspectError, require_read
 from studyforge.skills.exercises.drafts import (
@@ -102,7 +113,14 @@ from studyforge.skills.exercises.drafts import (
 )
 from studyforge.skills.exercises.gating import Gated, Runner, gate_code, gate_quiz
 from studyforge.skills.exercises.ledger import Ledger, key_of
-from studyforge.skills.exercises.plan import Plan, Planned, Refusal, plan_for, shortfall
+from studyforge.skills.exercises.plan import (
+    PERSONAL_DATA,
+    Plan,
+    Planned,
+    Refusal,
+    plan_for,
+    shortfall,
+)
 from studyforge.unit.builder import NoMaterial, read
 from studyforge.unit.errors import ContentError
 
@@ -298,24 +316,25 @@ def _one(
     finding, never against a blank page.
     """
     previous: CodeDraft | QuizDraft | None = None
-    gated: Gated | None = None
+    refused: tuple[Verdict, ...] = ()
+    output = ""
     for attempt in range(1, ATTEMPTS + 1):
-        current = replace(
-            brief,
-            attempt=attempt,
-            previous=previous,
-            refused=gated.refused if gated is not None else (),
-            output=gated.output if gated is not None else "",
-        )
+        current = replace(brief, attempt=attempt, previous=previous, refused=refused, output=output)
         draft = require_draft(brief.page, author.draft(current), where, brief.kind)
         if previous is not None:
             require_no_retreat(previous, draft, where)
-        gated = _gate(draft, current, ledger, judge, runner, source, where)
-        if gated.clears:
-            return gated, None
+        try:
+            gated = _gate(draft, current, ledger, judge, runner, source, where)
+        except PersonalDataLeak as leak:
+            # ⛔ R7 refuses THIS exercise, never the pass: the leak's message
+            # names a shape and a place, never the matched text.
+            refused, output = (Verdict(PERSONAL_DATA, PERSONAL_DATA, False, str(leak)),), ""
+        else:
+            if gated.clears:
+                return gated, None
+            refused, output = gated.refused, gated.output
         previous = draft
-    refused = gated.refused[0]
-    return None, Shortfall(brief.slot, refused.id, refused.says, gated.output)
+    return None, Shortfall(brief.slot, refused[0].id, refused[0].says, output)
 
 
 def _gate(

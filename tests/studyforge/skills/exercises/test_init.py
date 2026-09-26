@@ -43,6 +43,7 @@ PUBLIC_SURFACE = frozenset(
         "LEDGER_PATH",
         "NEITHER",
         "OUTPUT_LINES",
+        "PERSONAL_DATA",
         "PLANNED_KEYS",
         "PLAN_API",
         "PLAN_KEYS",

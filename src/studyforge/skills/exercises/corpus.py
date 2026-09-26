@@ -29,7 +29,8 @@ the end, so the two cannot disagree about what the source was.
 
 ⭐ **Every file is checked before any is written**, and a refusal never leaves
 half a pass in the tree. ⚠️ The ledger is the one file rewritten, and `merge`
-is why that is additive.
+is why that is additive. ⛔ Its read, merge and write happen under
+`writes.exclusive`, so two passes at once take turns and lose no row.
 
 ## ⛔ A PASS OVER PART OF A CORPUS OWNS ONLY WHAT IT READ
 
@@ -65,7 +66,7 @@ from studyforge.skills.exercises.ledger import Entry, Ledger, key_of, take
 from studyforge.skills.exercises.loop import Shortfall, author_page, carried_practices, plan_page
 from studyforge.skills.exercises.merge import Delta, merged
 from studyforge.skills.exercises.plan import PLAN_API, plan_document
-from studyforge.skills.exercises.writes import commit
+from studyforge.skills.exercises.writes import commit, exclusive
 from studyforge.version import check as check_version
 
 #: Each unit's coverage report, beside its bundles and never inside one.
@@ -207,13 +208,14 @@ def author_corpus(
                 reasoned=reasoned,
             )
         )
-    accounts = _elsewhere(base, ledger, {c.unit for c in covered}) | accounts
-    prior = _read(base / LEDGER_PATH, "the ledger")
-    reasons = _reasons(ledger, accounts, author, prior)
-    accounted = account(ledger, accounts, reasons, "the ledger")
-    document, delta = merged(base, prior, ledger_document(ledger, accounted), "the ledger")
-    files.append((LEDGER_PATH, _document_bytes(document, "the ledger")))
-    written, kept = commit(base, files, "the authoring pass", replaces=(LEDGER_PATH,))
+    with exclusive(base, "the authoring pass"):  # ⛔ a concurrent pass waits (`writes`)
+        accounts = _elsewhere(base, ledger, {c.unit for c in covered}) | accounts
+        prior = _read(base / LEDGER_PATH, "the ledger")
+        reasons = _reasons(ledger, accounts, author, prior)
+        accounted = account(ledger, accounts, reasons, "the ledger")
+        document, delta = merged(base, prior, ledger_document(ledger, accounted), "the ledger")
+        files.append((LEDGER_PATH, _document_bytes(document, "the ledger")))
+        written, kept = commit(base, files, "the authoring pass", replaces=(LEDGER_PATH,))
     return Authored(tuple(covered), written, kept, delta)
 
 

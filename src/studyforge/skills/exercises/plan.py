@@ -59,7 +59,9 @@ plans none with a reason per aspect. ⛔ **Zero is never reached silently.**
 ⚠️ **This is the half of spec §7 §11 a module can hold.** Re-authoring within a
 budget is the skill's; what this guarantees is that the arithmetic
 adds up: everything the plan allowed for either shipped or was refused by a
-gate that exists.
+gate that exists. ⭐ **One rule stands beside the gates: `PERSONAL_DATA`
+(R7)**, which refuses a draft before any gate can be read, so a draft that
+carries personal data is one exercise's shortfall and never the pass's stop.
 """
 
 from __future__ import annotations
@@ -81,6 +83,11 @@ PLAN_KEYS = ("plan_api", "tier", "count", "aspects", "exercises", "nothing_check
 
 #: The keys of one planned exercise, in write order (R10).
 PLANNED_KEYS = ("slot", "name", "aspects")
+
+#: ⛔ The rule a draft carrying personal data breaks. Not a gate: it refuses a
+#: draft before any gate is read, so it is the one name a shortfall may cite
+#: that no gate family declares.
+PERSONAL_DATA = "personal-data"
 
 #: The keys of one named shortfall, in write order (R10).
 SHORTFALL_KEYS = ("gate", "says")
@@ -281,7 +288,9 @@ def _require_gate(refusal: Refusal, where: str) -> None:
             f"{where}: a shortfall's 'says' is what the gate reported, and it must be "
             f"text. The value is {describe(refusal.says)}."
         )
-    if not isinstance(refusal.gate, str) or family_of(refusal.gate) is None:
+    if refusal.gate != PERSONAL_DATA and (
+        not isinstance(refusal.gate, str) or family_of(refusal.gate) is None
+    ):
         raise PlanError(
             f"{where}: a shortfall names the gate that refused the exercise, and no "
             f"registered gate family declares this one. The value is "
