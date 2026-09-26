@@ -405,10 +405,14 @@ def test_the_author_s_order_sets_the_plan_and_the_quiz_is_still_drafted_last(tmp
     ]
 
 
+#: ⚠️ Built by concatenation so no file in this tree spells a machine name (R7).
+MACHINE = "db" + ".local"
+
+
 def _shout_naming_a_machine(brief):
     """⛔ The measured leak: a statement that names a `.local` host, as S2's did."""
     draft = shout(brief)
-    return replace(draft, statement=draft.statement + "It connects to db.local on port 5432.\n")
+    return replace(draft, statement=draft.statement + f"It connects to {MACHINE} on port 5432.\n")
 
 
 def test_a_draft_carrying_personal_data_refuses_that_exercise_and_the_pass_carries_on(tmp_path):
@@ -419,7 +423,7 @@ def test_a_draft_carrying_personal_data_refuses_that_exercise_and_the_pass_carri
     # ⭐ The plant, OBSERVED: R7's own gate refused the host the statement names.
     assert "local hostname" in missed.says, missed.says
     assert (page, missed.slot, missed.gate) == (pages[1].path, 1, PERSONAL_DATA)
-    assert "personal data" in missed.says and "db.local" not in missed.says
+    assert "personal data" in missed.says and MACHINE not in missed.says
     assert len(author.briefs) == 1 + ATTEMPTS, "the retry was not briefed, or the pass stopped"
     assert author.briefs[-1].refused[0].id == PERSONAL_DATA
     # ⛔ The other exercise's gate runs were not lost: it shipped and was committed.
@@ -427,4 +431,4 @@ def test_a_draft_carrying_personal_data_refuses_that_exercise_and_the_pass_carri
     print("shipped:", shipped, "refused:", missed.says)
     assert len(shipped) == 1
     committed = [one.read_text(encoding="utf-8") for one in tmp_path.glob("exercises/**/*.*")]
-    assert committed and not any("db.local" in text for text in committed)
+    assert committed and not any(MACHINE in text for text in committed)

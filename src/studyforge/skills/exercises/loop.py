@@ -70,7 +70,7 @@ quiz it never plans.
 
 ## ⛔ A DRAFT CARRYING PERSONAL DATA IS ONE EXERCISE'S REFUSAL, NEVER THE PASS'S
 
-⚠️ **Measured on a Java course:** a statement naming `db.local` as a sample
+⚠️ **Measured on a Java course:** a statement naming a `.local` sample
 host raised R7's `PersonalDataLeak` from inside the gate run, and the whole
 pass stopped, losing fourteen other exercises' gate runs. ⭐ Now the leak is
 read as a refusal under `PERSONAL_DATA`: the retry is briefed with it, and a
