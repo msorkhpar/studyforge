@@ -34,12 +34,24 @@ from studyforge.execute import CONTAINER, Runner, exit_line
 from studyforge.exercise import breakdown_of
 from studyforge.exercise import of as exercise_of
 from studyforge.exercise.bundle import RUN_OUTPUT_DIRNAME, emit, write
+from tests.harness import engine
 from tests.studyforge.execute import container
 from tests.studyforge.exercise.bundle import dependency
 from tests.support import tool_on_path
 
 #: The consent this module needs before it builds an image.
 CONSENT = "STUDYFORGE_RUNNER_BUILDS"
+
+
+@pytest.fixture
+def tmp_path():
+    """⭐ Engine-visible, never the host's temporary directory (`tests.harness.engine`).
+
+    A container in this module binds the test's directory, and Docker Desktop shares
+    no host `/tmp` while Windows has none.
+    """
+    with engine.shared("w436") as where:
+        yield where
 
 
 def reason_to_skip() -> str | None:
@@ -69,7 +81,8 @@ def images(tmp_path_factory):
     runner = container.declaration()
     base = tmp_path_factory.mktemp("w436-images")
     bare = dependency.image_for(runner, sibling())
-    jar = dependency.build_library(base / "library", bare)
+    with engine.shared("w436-library") as library:
+        jar = dependency.build_library(library, bare)
     with_library = dependency.write_prime(base / "prime-with", jar)
     without_library = dependency.write_prime(base / "prime-without", None)
     return {

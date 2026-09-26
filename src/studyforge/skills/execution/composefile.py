@@ -208,6 +208,9 @@ def render(
             "the rendered file names the Docker socket; §8.3 mounts none into a serving "
             "process, not behind a flag and not only locally"
         )
+    unportable = rulings.bind_findings(services)
+    if unportable:
+        raise ComposeRefused(f"a bind would not run on another engine: {'; '.join(unportable)}")
     return text
 
 

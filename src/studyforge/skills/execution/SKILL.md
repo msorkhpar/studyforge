@@ -128,6 +128,14 @@ breaks any of spec §8.1's four compose rules, and §8.3's socket rule besides:
 | the container runs as the repository owner | emits the contract's own `user:` interpolation | a block that declares no way to set the uid |
 | a bind source exists before the start | names every mount that must exist first, in the file and in the reader's document | silence about one |
 | ⛔ §8.3 — no Docker socket | emits none, anywhere, under any key | a contract that declares one |
+| ⭐ any engine, Windows included | writes every bind relative to the compose file, and every other store as a named volume or a `tmpfs` | an absolute, drive-letter, home or backslash bind source (`rulings.bind_findings`) |
+
+⭐ **The file runs on Docker Desktop and on Windows** (a register direction).
+Docker Desktop shares no host `/tmp` and Windows has none, so nothing is ever
+mounted from a temporary directory, and a relative bind is the one form Compose
+resolves on every host. ⭐ Every `docker` the framework runs is the plain CLI
+with the caller's environment: `DOCKER_CONTEXT` (or the current context) picks
+the engine, and nothing switches it.
 
 ⭐ **Per-project values arrive as compose interpolations with defaults**, so the
 rendered file is complete with no argument and still adapts to the host it is on.

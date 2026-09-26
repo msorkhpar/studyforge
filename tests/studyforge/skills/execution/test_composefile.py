@@ -269,3 +269,26 @@ def test_a_runner_that_names_the_socket_is_refused_over_the_bytes():
     service = {"image": "x", "volumes": ["/var/run/docker.sock:/var/run/docker.sock"]}
     with pytest.raises(composefile.ComposeRefused, match="socket"):
         rendered(runner=("runner", service))
+
+
+# --------------------------------------------------------------------------
+# Any engine, Windows included: every bind is relative to the file
+# --------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "source",
+    ["/tmp/probe-sources", "/abs/sources", "C:\\corpus\\src", "C:/corpus/src", "..\\src"],
+)
+def test_a_bind_that_is_not_relative_to_the_file_is_refused(source):
+    with pytest.raises(composefile.ComposeRefused, match="not relative to the compose file"):
+        rendered(sources=source)
+    with pytest.raises(composefile.ComposeRefused, match="not relative to the compose file"):
+        rendered(binds=((source, PRACTICE[1]),))
+
+
+def test_relative_binds_and_named_volumes_pass():
+    relative = ["../../src:/x", "./runservice.pl:/y:ro", "editor-data:/z", "..:/w"]
+    services = {"a": {"volumes": relative}}
+    assert rulings.bind_findings(services) == []
+    assert rulings.bind_findings({"a": {"volumes": ["C:\\x:/y", "/tmp/x:/y"]}}) != []

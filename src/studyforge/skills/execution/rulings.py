@@ -35,9 +35,20 @@ rendered bytes:
 ⛔ **And §8.3: the Docker socket is never mounted into a serving process** —
 not behind a flag, not "only locally". ⚠️ A socket beside an IDE with a shell
 hands a reader's unreviewed code the host's daemon.
+
+⭐ **And every bind in the rendered file is written relative to the file**
+(`bind_findings`). The register's direction is that the compose file runs on
+any engine, Docker Desktop and Windows included: Docker Desktop shares no host
+`/tmp`, Windows has no `/tmp` and no POSIX root, and an absolute path written
+at build time is one machine's layout. ⛔ So a bind source that is absolute —
+POSIX, a drive letter, a UNC share or a home shorthand — or spelled with a
+backslash is refused; a named volume or a `tmpfs` is the store for anything
+that is not the corpus's own checkout.
 """
 
 from __future__ import annotations
+
+import re
 
 from collections.abc import Mapping
 
@@ -139,3 +150,37 @@ def _socket(block: Mapping[str, object], name: str) -> list[str]:
         for entry in blocks(block, "mounts")
         if names_a_socket(str(entry.get("host_path", "")))
     ]
+
+
+#: A Windows drive root (`C:\\`, `C:/`) at the start of a bind source.
+_DRIVE = re.compile(r"^[A-Za-z]:[\\/]")
+
+
+def bind_findings(services: Mapping[str, object]) -> list[str]:
+    """Every rendered bind whose host side is not written relative to the compose file.
+
+    ⭐ A source with no path separator and no leading dot is a named volume, and
+    passes; `./…` and `../…` are the corpus's own directories, and pass.
+    """
+    found = []
+    for name, service in services.items():
+        entries = service.get("volumes", []) if isinstance(service, Mapping) else []
+        for entry in entries if isinstance(entries, list) else []:
+            source = _source(str(entry))
+            if (
+                source.startswith(("/", "~", "\\", "$"))
+                or _DRIVE.match(source)
+                or "\\" in source
+            ):
+                found.append(
+                    f"the {scrub(str(name))} service binds {scrub(source)!r}, which is not "
+                    "relative to the compose file; it runs on no other machine or engine"
+                )
+    return found
+
+
+def _source(entry: str) -> str:
+    """The host side of a short-syntax volume entry, a drive letter kept whole."""
+    drive = _DRIVE.match(entry)
+    head, rest = (entry[:2], entry[2:]) if drive else ("", entry)
+    return head + rest.split(":", 1)[0]

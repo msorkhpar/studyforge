@@ -36,6 +36,7 @@ from tests.docker.devfiles import DEV, instructions, read
 from tests.docker.devgate import announced_image, announced_images, require_docker_run
 from tests.docker.test_dev_image_command import crossing, dockerfile
 from tests.docker.test_dev_provenance import joined
+from tests.harness import engine
 from tests.support import repository_root, run
 
 #: The variable `check` derives and `compose.yaml` requires.
@@ -53,6 +54,17 @@ HAND_BUILD = "docker build --build-context project=. docker/dev"
 
 
 # --- the predicates, each one fed a doctored copy below ---------------------
+
+
+@pytest.fixture
+def tmp_path():
+    """⭐ Engine-visible, never the host's temporary directory (`tests.harness.engine`).
+
+    A container in this module binds the test's directory, and Docker Desktop shares
+    no host `/tmp` while Windows has none.
+    """
+    with engine.shared("identity") as where:
+        yield where
 
 
 def image_declarations(compose: str) -> list[str]:

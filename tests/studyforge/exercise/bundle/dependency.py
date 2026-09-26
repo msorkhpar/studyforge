@@ -33,6 +33,7 @@ from pathlib import Path
 
 from studyforge.address import Address
 from studyforge.exercise.bundle import RUN_OUTPUT_DIRNAME, Bundle, Places, bundle_of
+from tests.harness import engine
 
 #: The declared set the runner is built for: the language and its build tool.
 RUNTIMES = "java,maven"
@@ -143,7 +144,7 @@ def build_library(directory: Path, image: str) -> bytes:
             "--user",
             f"{os.getuid()}:{os.getgid()}",
             "-v",
-            f"{directory}:/work",
+            f"{engine.bindable(directory)}:/work",
             "-w",
             "/work",
             image,

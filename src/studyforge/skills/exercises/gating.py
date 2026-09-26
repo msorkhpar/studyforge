@@ -34,7 +34,9 @@ the gate's behalf.
 ⭐ Each run gets its own temporary directory holding the tests and exactly one
 solution, laid out as the corpus root would see it. ⚠️ A run that left a file
 behind cannot reach the next one, and nothing is ever written into the corpus
-while its gates are being read.
+while its gates are being read. ⛔ The caller's runner copies that directory
+into its container and never binds it: Docker Desktop shares no host `/tmp`,
+and Windows has none.
 
 ## ⭐ A DRAFT'S BUILD ROLE IS STAGED INTO EVERY RUN
 

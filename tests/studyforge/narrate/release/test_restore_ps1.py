@@ -26,6 +26,7 @@ from pathlib import Path
 import pytest
 
 from studyforge.narrate.release import RESTORE_PS1
+from tests.harness import engine
 from tests.studyforge.narrate.release.restoring import (
     DEAD_PROXY,
     files_of,
@@ -51,6 +52,17 @@ PWSH_IMAGE = (
 WORK = "/work"
 
 
+@pytest.fixture
+def tmp_path():
+    """⭐ Engine-visible, never the host's temporary directory (`tests.harness.engine`).
+
+    A container in this module binds the test's directory, and Docker Desktop shares
+    no host `/tmp` while Windows has none.
+    """
+    with engine.shared("restore-ps1") as where:
+        yield where
+
+
 @pytest.fixture(autouse=True)
 def consented():
     """Skip unless the host reading was asked for and can run."""
@@ -71,7 +83,7 @@ def pwsh(tmp_path: Path, command: list[str], env: dict[str, str], network: str =
         "docker", "run", "--rm", "--pull", "never", "--network", network,
         "--user", f"{os.getuid()}:{os.getgid()}",
         "-e", "HOME=/tmp",
-        "-v", f"{tmp_path}:{WORK}",
+        "-v", f"{engine.bindable(tmp_path)}:{WORK}",
     ]  # fmt: skip
     if network != "none":
         # ⛔ A request that escaped the stand-in fails at a dead proxy instead of leaving.
