@@ -1,7 +1,8 @@
 r"""What each block type becomes as speech, and the walk that puts them in order.
 
 **What it does.** Decides, per block type, what the narrator says — prose read as
-written, a fence not at all, a list read item by item, a table read row
+written, a fence not at all, a list read item by item (a list of code examples
+not at all), a table read row
 by row, a disclosure's summary spoken and its body withheld — and walks one
 section's blocks into ordered `SpeechUnit`s.
 
@@ -10,8 +11,8 @@ section's blocks into ordered `SpeechUnit`s.
 separately testable phrasing decision.
 
 **Depends on.** `studyforge.archive.blocks` for the one block vocabulary and the
-one recursion over it, `studyforge.archive.scrub` for the gate, and this package's
-`naming`, `records` and `voice`.
+one recursion over it, `studyforge.archive.scrub` for the gate,
+and this package's `naming`, `panel`, `records` and `voice`.
 
 ## ⛔ The disposition table is CLOSED, and a twelfth block type fails the build
 
@@ -37,6 +38,17 @@ block sits and not how many units came before it — so a prose unit's id, and i
 clip, never depend on whether a fence beside it is spoken. ⭐ The escape hatch is the
 archive and it costs no field: a corpus that wants its steps narrated emits them
 as prose blocks rather than as fences, decided once at extraction (R1).
+
+## ⛔ A list of code examples is never spoken, and neither is the heading over it
+
+⭐ **Register ruling (2026-09-26): a lesson's code-example panel is a code
+example, and a code example is never narrated.** A list whose every item is one
+link to a code file and a short label (`Source: …`, `Test: …`) is the list the
+page draws as that panel (`render.page.code`), so it yields no unit — no item
+of it, whatever its words. `panel.py` says what such a list is.
+
+⭐ **A heading over a panel and nothing spoken is silent**, and keeps its
+position; `panel.py` says why a heading over a lone fence still speaks.
 
 ## ⛔ Narration speaks a disclosure's summary and stops. It never walks the body
 
@@ -87,6 +99,7 @@ from __future__ import annotations
 from studyforge.archive.blocks import BLOCK_TYPES, CONTAINER_TYPES, item_parts, list_start, walk
 from studyforge.archive.scrub import assert_clean
 from studyforge.narrate.speakable.naming import speech_id
+from studyforge.narrate.speakable.panel import code_examples, unheard_headings
 from studyforge.narrate.speakable.records import SpeakableError, SpeechUnit
 from studyforge.narrate.speakable.voice import spoken_text
 
@@ -152,10 +165,14 @@ def units_of(
 
     `unit` is a flattened unit token, `section_key` the served section's key, and
     `path` the positions already walked into — empty for a section's own blocks.
+
+    ⛔ A heading over a panel and nothing spoken says nothing (`panel.unheard_headings`),
+    and its words are gated all the same.
     """
-    spoken: list[SpeechUnit] = []
+    listed = blocks if isinstance(blocks, list) else []
+    said: list[list[SpeechUnit]] = []
     withheld = 0
-    for index, block in enumerate(blocks if isinstance(blocks, list) else []):
+    for index, block in enumerate(listed):
         here = (*path, index)
         kind = block.get("type") if isinstance(block, dict) else None
         rule = SPEECH_OF.get(kind if isinstance(kind, str) else "")
@@ -166,9 +183,11 @@ def units_of(
                 f"accident, so it is refused here instead"
             )
         found, held = _one_block(unit, section_key, block, kind, rule, here)
-        spoken += found
+        said.append(found)
         withheld += held
-    return tuple(spoken), withheld
+    for index in unheard_headings(listed, [bool(found) for found in said]):
+        said[index] = []
+    return tuple(unit for found in said for unit in found), withheld
 
 
 def _one_block(
@@ -215,7 +234,12 @@ def _spoken(value: object, where: str) -> str:
 def _items(
     unit: str, section_key: str, block: dict, path: tuple[int, ...], where: str
 ) -> list[SpeechUnit]:
-    """Return one unit per list item, each numbered aloud when the list is ordered."""
+    """Return one unit per list item, each numbered aloud when the list is ordered.
+
+    ⛔ A list of code examples says nothing at all (`code_examples`).
+    """
+    if code_examples(block):
+        return []
     ordered = bool(block.get("ordered"))
     items = block.get("items")
     said: list[SpeechUnit] = []

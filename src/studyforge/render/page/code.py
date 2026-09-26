@@ -41,9 +41,15 @@ a list whose every item is one code link and a short label (`Test: …`) is draw
 as the examples it is: each item joins the entry of the pair its file stands
 in, the entries follow the order their first item has, and each is a
 `<details>` named for its source — for its test where no source was found.
-⛔ **Each item keeps its own element, words and narration attribute**, inside
-its entry, so the list's speech units say what they said. ⚠️ Items of one pair
-that the list separates are drawn together, which moves the later one up.
+⭐ **Each item keeps its own element and words**, inside its entry. ⚠️ Items of
+one pair that the list separates are drawn together, which moves the later one
+up.
+
+⛔ **A panel is never narrated** (register ruling, 2026-09-26: a code example is
+never narrated). `narrate.speakable` gives such a list no speech unit, so its
+items have no clip to name; and the panel drops any audio attribute an item
+carries all the same, so no record, however old, puts one inside
+`div[data-code-examples]`.
 
 ⭐ **An entry's tabs are its pair's**: `Source` and `Test`, or the one of them
 it has. ⛔ **Nothing is loaded as built**: the editor's frames are empty slots
@@ -71,7 +77,7 @@ from urllib.parse import unquote
 from studyforge.corpus.placement.profile import GENERATED_ROOT
 from studyforge.render import templates
 from studyforge.render.markup import escape_attribute
-from studyforge.render.page.assets import Placement
+from studyforge.render.page.assets import AUDIO_ATTRIBUTE, Placement
 
 #: One example: a collapsed entry, its lines, and the slots its editor opens in.
 EXAMPLE_TEMPLATE = "code-example.html"
@@ -84,6 +90,9 @@ MAX_LABEL = 40
 
 #: The attribute a code link carries: the file's path, relative to the corpus.
 PATH_ATTRIBUTE = "data-code-path"
+
+#: The audio attribute a narrated item carries, which no line of a panel keeps.
+AUDIO = re.compile(rf' {AUDIO_ATTRIBUTE}="[^"]*"')
 
 #: The one shape `render.markup.text` writes an inline link in.
 ANCHOR = re.compile(r'<a href="(?P<href>[^"]*)" rel="noopener noreferrer">')
@@ -188,6 +197,6 @@ def _entry(pair: tuple[str | None, str | None], lines, opening: str, closing: st
         EXAMPLE_TEMPLATE,
         path=escape_attribute(first),
         name=escape_attribute(named),
-        lines=opening + "".join(line.group(0) for line in lines) + closing,
+        lines=opening + "".join(AUDIO.sub("", line.group(0)) for line in lines) + closing,
         tabs=tabs,
     )

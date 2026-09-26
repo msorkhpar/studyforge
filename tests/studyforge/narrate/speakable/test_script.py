@@ -392,3 +392,68 @@ def test_a_fence_nested_in_a_container_yields_no_speech_unit(container):
     assert (0, 1) not in [unit.block_path for unit in units]
     # ⭐ The control: the container's own speech is still there.
     assert units, f"the {container} said nothing at all; the reading is vacuous"
+
+
+# --------------------------------------------------------------------------
+# ⛔ A heading over nothing spoken is silent (the code-examples ruling)
+# --------------------------------------------------------------------------
+
+#: One source and one test line of a lesson's code examples, as the archive writes them.
+SOURCE_LINE = "Source: [Wrapper.java](../../m/src/main/java/p/Wrapper.java)"
+TEST_LINE = "Test: [WrapperTest.java](../../m/src/test/java/p/WrapperTest.java)"
+
+
+def listing(*items) -> dict:
+    return {"type": "list", "ordered": False, "items": list(items)}
+
+
+def test_a_heading_over_nothing_but_code_examples_is_silent():
+    blocks = [
+        {"type": "para", "text": "The lesson."},
+        {"type": "heading", "level": 2, "text": "Code Examples"},
+        listing(SOURCE_LINE, TEST_LINE),
+    ]
+    assert said(blocks) == [(f"{UNIT}.shared.b1", "The lesson.")]
+
+
+def test_a_silent_subheading_leaves_nothing_spoken_under_the_heading_above_it():
+    blocks = [
+        {"type": "heading", "level": 2, "text": "Code Examples"},
+        {"type": "heading", "level": 3, "text": "Wrapper"},
+        listing(SOURCE_LINE),
+        {"type": "heading", "level": 2, "text": "Afterwards"},
+        {"type": "para", "text": "More prose."},
+    ]
+    assert said(blocks) == [
+        (f"{UNIT}.shared.b4", "Afterwards"),
+        (f"{UNIT}.shared.b5", "More prose."),
+    ]
+
+
+def test_a_heading_over_examples_and_prose_still_speaks():
+    # ⭐ The control: something spoken under it, so it introduces something.
+    blocks = [
+        {"type": "heading", "level": 2, "text": "Code Examples"},
+        listing(SOURCE_LINE),
+        {"type": "para", "text": "Read the test first."},
+    ]
+    assert [identifier for identifier, _ in said(blocks)] == [
+        f"{UNIT}.shared.b1",
+        f"{UNIT}.shared.b3",
+    ]
+
+
+def test_a_heading_over_nothing_but_a_fence_or_nothing_at_all_still_speaks():
+    # ⭐ The control: silence under a heading is not enough; a panel must be there.
+    fence = {"type": "code", "lang": "java", "text": "class A {}"}
+    assert said([{"type": "heading", "level": 2, "text": "Example"}, fence]) == [
+        (f"{UNIT}.shared.b1", "Example")
+    ]
+    bare = [{"type": "heading", "level": 2, "text": "Alone"}]
+    assert said(bare) == [(f"{UNIT}.shared.b1", "Alone")]
+
+
+def test_a_silent_heading_is_still_gated_before_it_falls_silent():
+    heading = {"type": "heading", "level": 2, "text": f"See {HOME}/notes"}
+    with pytest.raises(PersonalDataLeak):
+        said([heading, listing(SOURCE_LINE)])
