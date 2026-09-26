@@ -9,6 +9,8 @@ reader's cue, which a refused `Q2` verdict quotes.
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 import pytest
 
 from studyforge.exercise import ExerciseError
@@ -92,3 +94,21 @@ def test_a_pick_the_question_does_not_offer_is_refused(picked):
 def test_a_reading_that_gives_no_reason_is_refused(because):
     with pytest.raises(ExerciseError, match="gives no reason"):
         page_free(questions()[0], PICKED_NONE, because, "an independent reader")
+
+
+@pytest.mark.parametrize("word", ["none", "None", " NONE "])
+def test_the_reader_s_word_none_is_read_as_picking_none(word):
+    # ⭐ M9-7 S2 F4: the word the prompt asks for is `PICKED_NONE`, not a refusal.
+    question = questions()[0]
+    entry = page_free(question, word, CUE, "an independent reader")
+    print(entry.outcome)
+    assert entry.held is True and "picked none" in entry.outcome
+
+
+def test_an_option_whose_id_is_none_is_still_that_option():
+    question = questions()[0]
+    renamed = tuple(
+        replace(option, id="none") if option.correct else option for option in question.options
+    )
+    entry = page_free(replace(question, options=renamed), "none", CUE, "an independent reader")
+    assert entry.held is False and "picked 'none'" in entry.outcome

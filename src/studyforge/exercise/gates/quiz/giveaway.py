@@ -20,6 +20,14 @@ stem and options, never the page, then writes what came back:
 and the question's digest, `studyforge.exercise.quiz` for what a question is,
 and `studyforge.exercise.errors` for the one exception. Standard library only.
 
+## ⭐ THE READER'S WORD "none" IS `PICKED_NONE`
+
+⚠️ **Measured on a Java course:** a judge that passed the reader's answer
+through as written handed over `"none"`, and it was refused as none of the
+question's options. ⭐ So the word `Q2_PROMPT` asks the reader for is read as
+`PICKED_NONE`, in any case and with surrounding space. ⛔ An option whose id
+is `"none"` is still that option.
+
 ## ⛔ THE READER DOES NOT DECIDE `held`; THE RULE DOES
 
 ⚠️ **A judge that wrote `held` itself could ship the retired rule under the new
@@ -39,14 +47,21 @@ from studyforge.exercise.quiz import Question
 #: ⭐ What a reader answers when the question's wording alone decides nothing.
 PICKED_NONE = None
 
+#: ⭐ The reader's own word for `PICKED_NONE`, which `Q2_PROMPT` asks for: a
+#: judge may hand it over as the reader wrote it, in any case.
+READER_NONE = "none"
+
 
 def page_free(question: Question, picked: str | None, because: str, taken_by: str) -> Judgement:
     """Return the `Q2` judgement for one page-free reading of `question`.
 
-    ⭐ `picked` is an option's id, or `None` for *none*. ⛔ `held` is read off
-    the rule: the reading holds unless it picked the key.
+    ⭐ `picked` is an option's id, or `None` for *none*; the reader's own word
+    `"none"`, in any case, is read as `None` unless an option has that id.
+    ⛔ `held` is read off the rule: the reading holds unless it picked the key.
     """
     offered = [option.id for option in question.options]
+    if isinstance(picked, str) and picked not in offered and picked.strip().lower() == READER_NONE:
+        picked = PICKED_NONE
     if picked is not PICKED_NONE and picked not in offered:
         raise ExerciseError(
             f"a page-free reading of {question.stem!r} picked an answer that is none of "
