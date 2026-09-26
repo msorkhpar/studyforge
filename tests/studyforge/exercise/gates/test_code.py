@@ -34,6 +34,7 @@ from tests.studyforge.exercise.gates.workspace import (
     MAIN_CASE,
     NEGATIVE_EDGE,
     PLANT_SOLVES_ITS_EDGE,
+    STARTER_THROWS_WHAT_AN_EDGE_EXPECTS,
     UNMAPPED_TEST,
     VACUOUS_TEST,
     WHERE,
@@ -81,6 +82,19 @@ def test_a_vacuous_test_is_refused_by_g2(tmp_path, capsys):
     assert reading.refused() == (G2,)
     assert MAIN_CASE.says in reading.verdict(G2).says
     assert capsys.readouterr().out
+
+
+def test_a_starter_raising_the_exception_an_edge_expects_is_refused_by_g2(tmp_path, capsys):
+    # ⭐ M9-7 S6 F4 said such a starter PASSES that edge. It does, and G2 sees
+    # it: every case must fail on the starter, so the exercise does not ship.
+    reading = Bundle(tmp_path, STARTER_THROWS_WHAT_AN_EDGE_EXPECTS).read()
+
+    starter = reading.evidence.of(STARTER, FIRST)
+    print("the starter run passed:", sorted(starter.passed_ids))
+    assert starter.passed(NEGATIVE_EDGE) and not starter.passed(MAIN_CASE)
+
+    assert reading.refused() == (G2,)
+    assert NEGATIVE_EDGE.says in reading.verdict(G2).says
 
 
 def test_a_flaky_test_is_refused_by_g1(tmp_path, capsys):
