@@ -431,7 +431,7 @@ def test_a_row_leaves_the_ledger_only_when_its_page_is_gone(tmp_path):
 
 
 def test_one_shipped_unit_is_re_authored_by_removing_it_and_passing_its_page_alone(tmp_path):
-    """⭐ M9-7 S1 F4: the supported way to change one shipped exercise, and only it."""
+    """⭐ The supported way to change one shipped exercise, and only it."""
     material, graders, pages = write_corpus(tmp_path)
     arguments = dict(source="demo", judge=Judging(), runner=Running())
     author_corpus(
@@ -474,7 +474,7 @@ def test_one_shipped_unit_is_re_authored_by_removing_it_and_passing_its_page_alo
 
 
 def test_two_passes_at_once_commit_in_turn_and_keep_each_other_s_rows(tmp_path, monkeypatch):
-    """⛔ M9-7 S6 F6: a pass that read the ledger must not write a later pass's rows away."""
+    """⛔ Measured on a Java course: a pass that read the ledger must not write a later pass's rows away."""
     _, _, pages = write_corpus(tmp_path)
     real_lock, real_read, second = the_pass.exclusive, the_pass._read, {}
     at_the_lock = threading.Event()

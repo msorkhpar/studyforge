@@ -124,7 +124,7 @@ DRIFTED_ORIGIN = "the source has changed since the exercise was built from it"
 STARTER_THROWS_WHAT_AN_EDGE_EXPECTS = "the starter raises the exception an edge's test expects"
 
 #: ⚠️ A starter that "is not written yet" by raising the very exception the
-#: negative-price edge expects: that edge's test passes on it (M9-7 S6 F4).
+#: negative-price edge expects: that edge's test passes on it, as a Java course measured.
 _STARTER_RAISING_VALUEERROR = """def total(prices):
     raise ValueError("write me")
 """

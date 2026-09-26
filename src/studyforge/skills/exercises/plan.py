@@ -87,7 +87,7 @@ PLANNED_KEYS = ("slot", "name", "aspects")
 #: ⛔ The rule a draft carrying personal data breaks. Not a gate: it refuses a
 #: draft before any gate is read, so it is the one name a shortfall may cite
 #: that no gate family declares.
-PERSONAL_DATA = "R7"
+PERSONAL_DATA = "personal-data"
 
 #: The keys of one named shortfall, in write order (R10).
 SHORTFALL_KEYS = ("gate", "says")

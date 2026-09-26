@@ -98,7 +98,7 @@ def test_a_reading_that_gives_no_reason_is_refused(because):
 
 @pytest.mark.parametrize("word", ["none", "None", " NONE "])
 def test_the_reader_s_word_none_is_read_as_picking_none(word):
-    # ⭐ M9-7 S2 F4: the word the prompt asks for is `PICKED_NONE`, not a refusal.
+    # ⭐ Measured on a Java course: the word the prompt asks for is `PICKED_NONE`, not a refusal.
     question = questions()[0]
     entry = page_free(question, word, CUE, "an independent reader")
     print(entry.outcome)

@@ -74,7 +74,7 @@ quiz it never plans.
 host raised R7's `PersonalDataLeak` from inside the gate run, and the whole
 pass stopped, losing fourteen other exercises' gate runs. ⭐ Now the leak is
 read as a refusal under `PERSONAL_DATA`: the retry is briefed with it, and a
-draft that still carries one ends as a `Shortfall` naming `R7` while the pass
+draft that still carries one ends as a `Shortfall` naming `personal-data` while the pass
 carries on. ⛔ The refusal names a shape and a place, never the matched text.
 
 ## ⛔ THE PLAN IS A CEILING, AND `shortfall` IS ASKED EVERY TIME

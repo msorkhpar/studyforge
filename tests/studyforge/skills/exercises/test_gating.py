@@ -213,7 +213,7 @@ def test_a_draft_with_no_build_role_ships_no_build_file_and_no_build_input(tmp_p
 
 
 def test_one_exercise_is_proven_alone_and_nothing_is_written_into_the_corpus(tmp_path):
-    """⭐ M9-7 S1 F3: one draft through every gate, with no pass over its module."""
+    """⭐ One draft through every gate, with no pass over its module."""
     material, graders, pages = write_corpus(tmp_path)
     page = pages[BASKET]
     ledger = take(tmp_path, material, graders, "the ledger")

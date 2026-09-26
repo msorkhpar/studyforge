@@ -268,9 +268,9 @@ read), and the last run's output, made relative to the run and scrubbed (R7).
 
 ⛔ **A draft carrying personal data is refused as that one exercise, and the
 pass carries on.** Every draft passes through R7's gate: a statement, starter
-or reference naming, say, a `.local` host is refused under `R7`
+or reference naming, say, a `.local` host is refused under `personal-data`
 (`PERSONAL_DATA`). The retry is briefed with the refusal, and a draft that
-still carries it ends as a shortfall naming `R7`. Use `example.org` names and
+still carries it ends as a shortfall naming `personal-data`. Use `example.org` names and
 placeholders in samples.
 
 ## Where it writes, and what it never touches
