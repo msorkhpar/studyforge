@@ -5,8 +5,9 @@ from __future__ import annotations
 import pytest
 
 from studyforge.archive.markdown import parse
-from studyforge.render.page.blocks import figure
+from studyforge.render.page.blocks import figure, render_all
 from studyforge.render.page.errors import PageError
+from studyforge.render.page.narration import Narration
 from studyforge.render.pageassets import PLAIN, SURFACE_HOOKS, highlighted_languages
 from tests.studyforge.render.page.pages import sample_placement
 
@@ -154,3 +155,33 @@ def test_a_media_path_that_escapes_the_corpus_is_refused_without_being_quoted():
 def test_a_media_block_naming_nothing_is_refused():
     with pytest.raises(PageError):
         render({"type": "image", "src": "", "alt": "", "width": None})
+
+
+# --------------------------------------------------------------------------
+# ⛔ A code figure carries no audio at any depth (narration is lesson prose only)
+# --------------------------------------------------------------------------
+
+NESTED_FENCE = {"type": "code", "lang": "java", "text": "class A {}"}
+
+#: A fence one container down, in each container type, with prose beside it.
+NESTED = {
+    "quote": {"type": "quote", "blocks": [{"type": "para", "text": "Quoted."}, NESTED_FENCE]},
+    "disclosure": {
+        "type": "disclosure",
+        "summary": "Show it",
+        "open": False,
+        "blocks": [{"type": "para", "text": "Hidden."}, NESTED_FENCE],
+    },
+}
+
+
+@pytest.mark.parametrize("container", sorted(NESTED))
+def test_a_nested_code_figure_carries_no_audio_even_when_a_record_names_a_clip_for_it(container):
+    # ⛔ A stale record naming a clip at the nested fence's position still puts
+    # no audio attribute on its figure. ⭐ The control: the same record's clip at
+    # the prose beside it IS on the page, so the Narration is read.
+    stale = {("shared", (0, 1), None): "stale-fence.mp3", ("shared", (0, 0), None): "prose.mp3"}
+    page = render_all([NESTED[container]], section="shared", narration=Narration(stale))
+    assert '<figure class="code">' in page
+    assert "stale-fence" not in page
+    assert "prose.mp3" in page

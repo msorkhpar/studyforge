@@ -361,3 +361,34 @@ def test_the_refusal_says_which_shape_and_never_what_matched():
             units_of(UNIT, "shared", [{"type": "para", "text": "".join(row["spelling"])}])
         assert row["shape"].split()[-1] in str(refused.value)
         assert "jane" not in str(refused.value)
+
+
+# --------------------------------------------------------------------------
+# ⛔ A fence is silent at any depth, not only at a section's top level
+# --------------------------------------------------------------------------
+
+NESTED_FENCE = {"type": "code", "lang": "java", "text": "class A {}"}
+
+#: A fence one container down, in each container type, with prose beside it.
+NESTED = {
+    "quote": {
+        "type": "quote",
+        "blocks": [{"type": "para", "text": "Quoted."}, NESTED_FENCE],
+    },
+    "disclosure": {
+        "type": "disclosure",
+        "summary": "Show it",
+        "open": False,
+        "blocks": [{"type": "para", "text": "Hidden."}, NESTED_FENCE],
+    },
+}
+
+
+@pytest.mark.parametrize("container", sorted(NESTED))
+def test_a_fence_nested_in_a_container_yields_no_speech_unit(container):
+    # ⛔ The register ruling: code is never spoken, whatever holds it.
+    units, _held = units_of(UNIT, "shared", [NESTED[container]])
+    assert [unit.block_path for unit in units if unit.kind == "code"] == []
+    assert (0, 1) not in [unit.block_path for unit in units]
+    # ⭐ The control: the container's own speech is still there.
+    assert units, f"the {container} said nothing at all; the reading is vacuous"
