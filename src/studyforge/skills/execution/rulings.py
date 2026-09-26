@@ -49,7 +49,6 @@ that is not the corpus's own checkout.
 from __future__ import annotations
 
 import re
-
 from collections.abc import Mapping
 
 from studyforge.archive.scrub import scrub
@@ -167,11 +166,7 @@ def bind_findings(services: Mapping[str, object]) -> list[str]:
         entries = service.get("volumes", []) if isinstance(service, Mapping) else []
         for entry in entries if isinstance(entries, list) else []:
             source = _source(str(entry))
-            if (
-                source.startswith(("/", "~", "\\", "$"))
-                or _DRIVE.match(source)
-                or "\\" in source
-            ):
+            if source.startswith(("/", "~", "\\", "$")) or _DRIVE.match(source) or "\\" in source:
                 found.append(
                     f"the {scrub(str(name))} service binds {scrub(source)!r}, which is not "
                     "relative to the compose file; it runs on no other machine or engine"
@@ -180,7 +175,7 @@ def bind_findings(services: Mapping[str, object]) -> list[str]:
 
 
 def _source(entry: str) -> str:
-    """The host side of a short-syntax volume entry, a drive letter kept whole."""
+    """Return the host side of a short-syntax volume entry, a drive letter kept whole."""
     drive = _DRIVE.match(entry)
     head, rest = (entry[:2], entry[2:]) if drive else ("", entry)
     return head + rest.split(":", 1)[0]
