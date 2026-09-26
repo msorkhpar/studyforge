@@ -138,12 +138,52 @@ test-file pattern.
   reader gets the stem and options, never the page, and is asked `Q2_PROMPT`
   word for word, to answer from the wording alone and say *none* unless it
   singles out an option. Build that judgement with `page_free(question,
-  picked, because, taken_by)`, which decides `held`. ⛔ A `Q2` judgement under
-  another prompt or with no `because` is refused.
+  picked, because, taken_by)`, which decides `held`. `picked` is an option's
+  id, or `PICKED_NONE` (`None`); the reader's own word `"none"`, in any case,
+  is read as `PICKED_NONE` too. ⛔ A `Q2` judgement under another prompt or
+  with no `because` is refused.
 - **`runner(root, command)`** runs one test command from `root` in the pinned
   runner image and returns a `Ran`: its exit code and its output. The gate
   suite stages every run in a fresh directory, so nothing a run leaves behind
   reaches the next one.
+
+#### ⛔ Write a draft the gates can prove
+
+- **A practice has exactly one main file.** `CodeDraft.main_file` is the one
+  file the starter, the reference and every plant replace. A hierarchy is
+  nested in it as static member types of one class, and a sealed type's
+  implicit `permits` come only from that file.
+
+  ```java
+  public class Shapes {
+      sealed interface Shape permits Circle, Square {}
+      record Circle(double r) implements Shape {}
+      record Square(double side) implements Shape {}
+  }
+  ```
+
+- **`G2`: every case fails on the starter**, structural and reflective cases
+  included. A constructor check, a `sealed` check or a reflection check must
+  fail there too: leave the starter's hierarchy unsealed, and reach what a
+  record generates for free through a starter method that is not written
+  yet. ⚠️ A starter that throws the exception an edge expects passes that
+  edge, and `G2` refuses the draft. Throw one no test expects, for example
+  `IllegalStateException` where an edge expects
+  `UnsupportedOperationException`.
+- **`G3`: every plant passes EVERY main case** and fails its own edge. A main
+  case must therefore give the same answer on every run: a threaded main case
+  must not race. ⛔ A rule the compiler enforces (constructor order, a static
+  call bound to its declared type, a diamond default) has no wrong solution
+  that compiles. It goes to the quiz, or to a reason.
+- **The idea a practice names is graded.** For each idea the statement
+  presents as the point, one edge's plant breaks exactly that idea, as the
+  subtle mistake a reader makes and never by deleting the code. Before you
+  draft, list each named idea beside its one-line wrong solution. An idea
+  no deterministic test can grade goes to the quiz or to a reason, and the
+  statement does not present it as a graded requirement.
+- ⭐ **Some wrong solutions pass tests that look complete.** Before you draft a
+  practice about equality, copying, immutability, time, text, numbers or
+  threads, read *What the gates cannot see* in `docs/authoring/exercises.md`.
 
 ⭐ **Commands are spelled from the corpus root**, and every path argument is
 inside the exercise's own workspace (`brief.places.workspace`), or `emit`
@@ -159,6 +199,21 @@ build (`skills.execution`, step 4a), so a build naming something the prime did
 not warm fails `G1` and does not ship.
 
 ### 3. Run the pass
+
+⭐ **Before the pass, take the two readings it cannot take for you:**
+
+1. **An adversary.** A reader other than the author writes subtle wrong
+   solutions for each practice, starting from the silent passes that
+   *What the gates cannot see* names. Fix every survivor that breaks its
+   statement: add the test that catches it, or correct the reference if the
+   reference is what breaks the statement. ⚠️ The gates prove only the plants
+   the author thought of. On one course, an adversary found 140 survivors in
+   101 practices that had all cleared `G1`–`G5`.
+2. **The quiz readings.** Take each quiz's `Q1`–`Q3` readings from
+   independent readers first, and have the judge return them. ⛔ A quiz gated
+   before its readings exist fails `Q1` and `Q2` on every attempt and uses up
+   `ATTEMPTS`. It then ships as a shortfall, and its page's examples are left
+   with no exercise and no excuse.
 
 ```python
 from studyforge.skills.exercises import author_corpus
@@ -211,6 +266,13 @@ coverage report names the page, which planned exercise it was, the gate, the
 gate's own sentence (which names each failing case by what the reader would
 read), and the last run's output, made relative to the run and scrubbed (R7).
 
+⛔ **A draft carrying personal data is refused as that one exercise, and the
+pass carries on.** Every draft passes through R7's gate: a statement, starter
+or reference naming, say, a `.local` host is refused under `R7`
+(`PERSONAL_DATA`). The retry is briefed with the refusal, and a draft that
+still carries it ends as a shortfall naming `R7`. Use `example.org` names and
+placeholders in samples.
+
 ## Where it writes, and what it never touches
 
 | path | what it holds |
@@ -252,6 +314,36 @@ Its bundles were proven against material that has moved, and rewriting them
 is exactly what R3 forbids. Remove that directory from the corpus, and run
 the pass again. ⛔ **Never remove `exercises/ledger.json`** to get past a
 refusal: it holds every other page's rows.
+
+⭐ **To change one exercise that already shipped, re-author its unit.** A
+fixed draft on an unchanged page is never read: the unit's coverage matches,
+so the pass reuses it (R10). Remove that unit's directory from the corpus with
+`git rm -r`, so the change is recorded and can be undone, then pass that page
+alone: `pages=[page]`, with its own file as `material` and its test files as
+`graders`. Every other unit and every other ledger row stays byte for byte.
+
+⭐ **To prove one exercise without a pass**, gate its draft directly. It stages
+every run outside the corpus and writes nothing:
+
+```python
+from studyforge.exercise.bundle import Places
+from studyforge.skills.exercises import Brief, gate_code, page_entries, source_case, take
+
+ledger = take(root, material, graders, "the ledger")
+places = Places(page.address, page.variant, page.unit, 1)
+case = source_case(page, ledger)
+brief = Brief(page, case, 1, places, 1, page_entries(page, ledger))
+gated = gate_code(draft, brief, ledger, runner, source="demo", where="one draft")
+gated.clears, gated.refused, gated.output
+```
+
+`author_page` does the same for one page's whole plan, and also writes
+nothing.
+
+⭐ **Two passes at once over one corpus are safe.** Each pass takes a lock on
+the corpus root to read, merge and write the ledger, so the second pass waits
+and then merges onto what the first one wrote. Authoring and gate runs still
+run side by side.
 
 ⭐ **A pass over part of a corpus owns only the files it read**. The
 ledger is one file for the whole corpus, and it is the one file a pass

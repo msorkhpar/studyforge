@@ -895,7 +895,7 @@ other entry nothing names.
 |---|---|---|
 | `G1` | every test passes on the reference solution, on two runs, the same way both times | it can be solved, and its tests are not flaky |
 | `G2` | **every** test fails on the starter | no test is vacuous |
-| `G3` | for each edge case, its plant passes the main ask and fails that edge | each edge test catches the one mistake it names |
+| `G3` | for each edge case, its plant passes every main case and fails that edge | each edge test catches the one mistake it names |
 | `G4` | every test the report names maps to one case, and every case is reported | the reader's breakdown is complete |
 | `G5` | the passage the exercise cites still has the digest the ledger read | it is built from what the source has |
 
@@ -921,6 +921,76 @@ is refused wherever it is read, because the quiz record itself refuses that.
 But `validate` does not re-run the tests, and it does not check `G5` or `Q5`
 against your source again. `Q1`–`Q3` can never be re-taken, which is why a
 quiz is always `generated` and `advisory`.
+
+---
+
+## What the gates cannot see
+
+**The gates prove the plants you wrote, and no others.** A wrong solution you
+did not think of can pass every test and ship. The cases below are the ones
+that did, on a real course. The skill asks for an adversary before the pass:
+a reader other than the author writes subtle wrong solutions, starting from
+this list, and every survivor that breaks its statement is fixed.
+
+### Equal, but not the same object
+
+When a practice teaches equality, copying or immutability, build the objects
+the tests compare **at run time**, so two equal values are two distinct
+objects.
+
+- ⚠️ A string literal is interned, `Integer.valueOf` caches -128 to 127, and a
+  constant is one shared instance. A test built from them compares an object
+  with itself, and a solution that returns its input, or copies nothing,
+  passes.
+- Use `new String(...)`, values outside the cache, or objects built by a
+  helper for each use.
+- ⭐ Ship a plant that returns the same instance, or shares a mutable part,
+  and check that the tests catch it.
+
+### The common silent passes
+
+- **`ZonedDateTime` compared with AssertJ `isEqualTo`.** It compares the
+  instant only, so the right moment in the wrong zone passes. Compare
+  `toString()`, or the zone and the local time as well. `equals`-based
+  assertions (`containsExactly`, `Optional.contains`) are not affected.
+- **The default locale, time zone or clock.** A solution that reads the
+  machine's default passes on your machine. Test under a default that
+  differs: a Turkish or German locale, a zone that is not UTC, a winter date.
+  Or pass the locale, zone or clock in explicitly.
+- **An unanchored regex.** `find()` where `matches()` was meant, or a pattern
+  with no `^` and `$`, accepts a valid value with other text around it. Test
+  one: `on 2024-03-15, late`.
+- **Boundaries and rounding.** Test both sides of every boundary, inclusive
+  and exclusive, and a value where rounding and truncation disagree.
+- **A shared mutable result.** A solution that returns its own internal list,
+  or one list to every caller, passes a test that reads the result once.
+  Change the result, then call again.
+- **A near-miss type.** A `Set` where a `List` was asked, or a `Long` for an
+  `Integer`, can pass a loose comparison.
+- **Test order through static state.** A test that changes a singleton, a
+  static counter or a cached formatter can make a later test pass or fail. Reset
+  that state before each test, or assert on the change rather than the total.
+  Where a plant's change could reach a later case, fix the order with
+  `@TestMethodOrder`. `G1` runs the reference twice, the same way both times,
+  so it cannot find this for you.
+
+### Threads
+
+- **Coordinate with latches, barriers or forced interleavings, never with
+  time.** A `sleep` that is long enough on a quiet machine is too short under
+  load.
+- ⚠️ **Polling `getState()` does not show reliably that a thread is blocked.**
+  The JVM blocks threads briefly for its own reasons, so a wrong solution can
+  pass. Read the lock owner and the waiting frames from `ThreadMXBean`
+  instead.
+- **Read the verdict before the bound expires, not after.** A holder and a
+  probe with equal bounds, or a check made after the timeout, let a plant
+  pass one run in ten.
+- **A main case must not race.** Every plant must pass every main case, so a
+  main case that races can fail a correct plant.
+- ⭐ **Prove each threaded plant fails 10 times out of 10**, and the reference
+  passes 10 times out of 10, before the pass. The pass runs each plant once,
+  so it cannot see a plant that fails only most of the time.
 
 ---
 

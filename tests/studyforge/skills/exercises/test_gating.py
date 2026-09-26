@@ -40,6 +40,7 @@ from studyforge.skills.exercises import (
     digests,
     gate_code,
     gate_quiz,
+    page_entries,
     source_case,
     take,
 )
@@ -49,6 +50,7 @@ from tests.studyforge.skills.exercises.authoring import (
     basket,
     gauge,
     gauge_questions,
+    snapshot,
     write_corpus,
 )
 
@@ -208,3 +210,27 @@ def test_a_draft_with_no_build_role_ships_no_build_file_and_no_build_input(tmp_p
     gated = gate_code(basket(brief), brief, ledger, Running(), source="demo", where="w")
     assert not any("/build/" in path for path, _ in gated.files)
     assert not any(one.role.startswith("build:") for one in gated.record.inputs)
+
+
+def test_one_exercise_is_proven_alone_and_nothing_is_written_into_the_corpus(tmp_path):
+    """⭐ M9-7 S1 F3: one draft through every gate, with no pass over its module."""
+    material, graders, pages = write_corpus(tmp_path)
+    page = pages[BASKET]
+    ledger = take(tmp_path, material, graders, "the ledger")
+    before = snapshot(tmp_path)
+    brief = Brief(
+        page,
+        source_case(page, ledger),
+        1,
+        Places(page.address, page.variant, page.unit, 1),
+        1,
+        page_entries(page, ledger),
+    )
+    gated = gate_code(basket(brief), brief, ledger, Running(), source="demo", where="one")
+    assert gated.clears, [verdict.says for verdict in gated.refused]
+    assert snapshot(tmp_path) == before, "proving one exercise wrote into the corpus"
+    planted = replace(
+        basket(brief), plants=dict.fromkeys(basket(brief).plants, basket(brief).reference)
+    )
+    refused = gate_code(planted, brief, ledger, Running(), source="demo", where="one")
+    assert [verdict.id for verdict in refused.refused] == ["G3"], "the proof cannot go RED"
