@@ -1,6 +1,6 @@
 """A lesson's practices as a list of cards, and the one workspace a card opens in.
 
-⭐ **The user's ruling, read in a browser at desktop and at phone width.** A
+⭐ **The register ruling, read in a browser at desktop and at phone width.** A
 lesson's practices are one *Practice (n)* list of titled cards; opening a card
 gives a full-screen workspace — the statement on the left, the editor on the
 right, stacked at phone width — with Previous, Next and Close; and no editor
@@ -329,7 +329,7 @@ def test_opening_a_practice_closes_an_expanded_code_example(
 def test_with_no_editor_a_practice_says_why_and_asks_nothing_that_fails(
     open_page: OpenPage, tree: site.Site
 ) -> None:
-    # ⭐ The user's direction: the page learns what works from the server's API.
+    # ⭐ The register direction: the page learns what works from the server's API.
     # ⛔ With no editor named in the index, opening a practice asks for no
     # editor window — a `404` for one would be an error in the reader's console
     # — and the panel shows the sentence it ships.

@@ -12,7 +12,7 @@
    Submit in front of a reader is the page's own. ⛔ A control this file
    drew where no panel exists would be a dead button, and a dead button is
    a promise the page cannot keep. ⛔ **Nothing here grades a quiz**: a quiz is
-   graded in its own page, with no request (the user's ruling, 2026-09-25).
+   graded in its own page, with no request (register ruling, 2026-09-25).
 
    ⛔ **Nothing this sends becomes a command** (spec §8.3, rule 3). A start is
    a `POST` to `/api/v1/run/<corpus>/<mode>/<practice>` with NO body: the path

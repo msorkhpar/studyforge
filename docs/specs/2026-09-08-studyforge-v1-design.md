@@ -1071,7 +1071,7 @@ every page still addressed a clip as plain `audio/<clip>.mp3` — which is the o
 reason that change was a script rather than a re-render of every page.
 
 ⭐ **A page learns whether its clips arrived by asking its first clip, once.**
-The user's direction (2026-09-25): *"It should be all in the UI."* A file that
+Register direction (2026-09-25): what works is found out in the UI. A file that
 said whether the clips were here went stale whenever anything but its writer
 moved them: a site packed for release said the clips were a download on the
 author's own disk, with every clip there. ⛔ So nothing written beside the
@@ -1636,7 +1636,7 @@ expression parses) are checked by one short quiz on the same unit, after its cod
 practices. ⛔ A unit is not limited to one kind of exercise.
 
 ⭐ **A quiz is graded in its own page, and nothing about it is a server function**
-(the user's ruling, 2026-09-25, reversing the key kept on the local study server).
+(register ruling, 2026-09-25, reversing the key kept on the local study server).
 
 - ⭐ **The page carries its own key**: which option of each question is right and
   every option's sentence, in a data script local to that quiz's section. ⛔ **Only
@@ -1967,7 +1967,7 @@ These are proven surfaces, generalised in their addressing and otherwise kept.
 - **Video** — vendored Plyr with its icon sprite substituted rather than fetched;
   nothing may reach the network.
 - **A lesson's practices are one list, worked one at a time in a workspace**
-  (the user's ruling). The page lists them as one **Practice (n)** section of
+  (register ruling). The page lists them as one **Practice (n)** section of
   titled cards, each saying what it practises (the record's `concepts`, §7)
   and, served, its status from the reader's own progress record — never the
   page's. Opening a card gives one full-screen workspace per page: the
@@ -2023,11 +2023,11 @@ These are proven surfaces, generalised in their addressing and otherwise kept.
   label and title, so no page moves. A listing shows a unit whose label is an
   outline number by its place in its container instead. A clip is named by a
   digest of its words, so a heading that loses its number is a new clip.
-- **A lesson's own code opens in the editor, beside its test** (the user's
+- **A lesson's own code opens in the editor, beside its test** (register
   ruling of 2026-09-25). A link to a corpus file whose suffix a declared runtime
   writes is marked with the file's corpus-relative path. ⭐ **A list of such
-  links is the page's code examples, and each example opens in place** (the
-  user's ruling of 2026-09-25): one collapsed entry per example — a source and
+  links is the page's code examples, and each example opens in place** (register
+  ruling of 2026-09-25): one collapsed entry per example — a source and
   its paired test — named for its source, each item kept whole inside its
   entry so the list's speech units say what they said. As built, an entry says
   why each file opens as plain text: the course's editor is not running here,

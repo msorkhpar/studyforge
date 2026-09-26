@@ -199,7 +199,7 @@ def test_the_page_under_the_workspace_is_inert_while_it_is_up_and_only_then():
 
 
 def test_a_quiz_cards_status_is_read_from_the_readers_store_and_a_code_cards_from_the_server():
-    # ⭐ The user's ruling: nothing about a quiz is a server's, so a quiz card
+    # ⭐ The register ruling: nothing about a quiz is a server's, so a quiz card
     # reads the browser store, served or not; ⛔ and the server's answer never
     # paints a quiz card.
     body = behaviour()

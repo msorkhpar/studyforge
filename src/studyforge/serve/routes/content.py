@@ -31,7 +31,7 @@ guarantee a `304` makes.
 
 ## ⛔ A quiz's key and sentences are WITHHELD
 
-⭐ **A quiz's key lives only in the page it grades** (the user's ruling,
+⭐ **A quiz's key lives only in the page it grades** (register ruling,
 2026-09-25), so a unit document is answered with every quiz option cut down to
 its id and its words (`serve.withheld.redacted`). ⛔ `ContentSource.unit` is NOT
 redacted — the build renders the page's key from it — and the redaction is this

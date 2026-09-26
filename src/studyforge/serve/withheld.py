@@ -25,7 +25,7 @@ other.
 
 ## ⭐ THE KEY LIVES IN THE PAGE IT GRADES, AND NOWHERE ELSE THE SITE SERVES
 
-⭐ **The user's ruling (2026-09-25), reversing the key kept on the server**: a
+⭐ **The register ruling (2026-09-25), reversing the key kept on the server**: a
 quiz's answers and sentences live in a script local to the page that grades
 it, and the browser grades. ⛔ **So the one served file that may carry a key
 is a page** — `routes.assets` never asks this module about one — and **this

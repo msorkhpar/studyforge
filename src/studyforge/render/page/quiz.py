@@ -16,10 +16,10 @@ own `Question` and `Option`, never a second reading of the shape — plus
 `render.templates` and `render.markup`. ⛔ **Not on `serve`**: nothing about a
 quiz is a server function.
 
-## ⭐ THE KEY LIVES IN THE PAGE IT GRADES (the user's ruling, 2026-09-25)
+## ⭐ THE KEY LIVES IN THE PAGE IT GRADES (register ruling, 2026-09-25)
 
-⭐ *"Let the quiz answers remain in the html file as part of a js function
-localized to that page. Don't add it as a server functionality."* This reverses
+⭐ A quiz's answers stay in the page's own markup, read by a script local to
+that page, and grading is never a server function. This reverses
 the ruling that kept the key on the local study server. ⭐ So each quiz carries
 its key in ONE `<script type="application/json">` inside its own section:
 `{question id: {"key": option id, "says": {option id: sentence}}}`, and

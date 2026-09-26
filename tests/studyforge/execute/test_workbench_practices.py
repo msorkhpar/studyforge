@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/execute/workbench.py`: each practice owns its editor lock.
 
-⛔ **The user's report**: a page with two practices answered one of them `409`,
+⛔ **The reported defect**: a page with two practices answered one of them `409`,
 and only the last-opened practice was editable. Both had one cause — every
 practice opened ONE folder, so they shared ONE settings file, whose lock names
 ONE file editable, written through ONE staging name.

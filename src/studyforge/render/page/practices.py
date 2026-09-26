@@ -15,7 +15,7 @@ in: a bar with the practice's title, **Previous**, **Next** and **Close**.
 for what a record says it practises and whether it can pass, and
 `render.templates` and `render.markup`. ⛔ Not on `serve` (R8).
 
-## ⭐ A LIST TO CHOOSE FROM, AND A WORKSPACE TO WORK IN (the user's ruling)
+## ⭐ A LIST TO CHOOSE FROM, AND A WORKSPACE TO WORK IN (register ruling)
 
 ⚠️ **Seven practices laid out one after another** repeated the same three
 headings and a panel per practice, and gave the reader no view of what the
@@ -33,7 +33,7 @@ every practice is still readable over `file://` with nothing running (R8).
 and says which record it is read from (`data-practice-kind`): a code
 practice's from the served origin's progress record, where a run established
 it; a quiz's from the reader's browser store, where the quiz page recorded it —
-nothing about a quiz is a server's (the user's ruling). ⛔ A built page says
+nothing about a quiz is a server's (register ruling). ⛔ A built page says
 nothing about any reader, so it is byte-identical whoever opens it (R10).
 ⚠️ **An ungraded practice carries no slot**: nothing completes it, so the
 record could only ever say *not started*.

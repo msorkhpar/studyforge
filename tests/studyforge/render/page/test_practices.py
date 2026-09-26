@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/render/page/practices.py` (R12).
 
-⭐ The user's ruling, read in the markup a page ships: a lesson's practices are
+⭐ The register ruling, read in the markup a page ships: a lesson's practices are
 one **Practice (n)** list of titled cards, each saying what it practises and
 carrying a slot for its status, and one workspace follows them. ⛔ Every
 clause is read both ways — present where it is owed, absent where it is not.
@@ -106,7 +106,7 @@ def test_a_graded_practice_and_a_quiz_carry_a_status_slot_that_ships_saying_noth
 
 
 def test_no_card_carries_a_quiz_answer():
-    # ⛔ A quiz's key lives only in its own section's key block (the user's
+    # ⛔ A quiz's key lives only in its own section's key block (register
     # ruling, 2026-09-25) — and a card is a new place the page could leak one.
     quiz = cards(page(section(workspace=QUIZ)))[0]
     for word in ("correct", "The page says so.", "A type"):

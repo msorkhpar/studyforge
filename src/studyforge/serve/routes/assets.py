@@ -44,7 +44,7 @@ so a prober never learns which guess was interesting.
 
 ## ⛔ A file carrying a quiz's key or sentence is REFUSED — unless it is a page
 
-⭐ **A quiz's key lives only in the page it grades** (the user's ruling of
+⭐ **A quiz's key lives only in the page it grades** (the register ruling of
 2026-09-25), so a page is served whole. ⛔ **Every other file carrying one is
 refused**: a corpus built into its own root puts the archive's `practice-M.json`
 and the bundle's `tests/quiz.json` under the served root, so `withheld` is asked

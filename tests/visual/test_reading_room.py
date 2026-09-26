@@ -389,7 +389,7 @@ def test_the_transport_spans_the_whole_content(wide_unit: dict) -> None:
 def test_the_transports_buttons_do_not_grow_with_it(
     open_page: OpenPage, built_site: site.Site, wide_unit: dict
 ) -> None:
-    """⛔ *"but not the buttons to become big"* — the same controls, both widths."""
+    """⛔ The bar widens but its buttons do not grow: the same controls, both widths."""
     open_page.resize(*WIDE)
     open_page.open(built_site.url(UNIT_PAGE))
     narrow = dict(open_page.evaluate(BOXES))["controls"]  # type: ignore[index]
