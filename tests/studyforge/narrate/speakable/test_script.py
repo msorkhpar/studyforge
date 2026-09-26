@@ -9,13 +9,7 @@ from studyforge.archive.markdown import parse
 from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.narrate.speakable.naming import SUB_MARKER
 from studyforge.narrate.speakable.records import SpeakableError
-from studyforge.narrate.speakable.script import (
-    CODE_CAPTION_PLAIN,
-    SPEECH_OF,
-    code_caption,
-    ordinal_word,
-    units_of,
-)
+from studyforge.narrate.speakable.script import SPEECH_OF, ordinal_word, units_of
 from tests.support import personal_data_shapes
 
 UNIT = "corpus--unit-01"
@@ -83,32 +77,22 @@ def test_prose_is_read_as_written_and_numbered_from_one():
     ]
 
 
-def test_a_fence_produces_a_caption_and_never_a_reading_of_the_code():
-    pairs = said([{"type": "code", "lang": "java", "text": "class A { void go() {} }"}])
-    assert pairs == [(f"{UNIT}.shared.b1", "Here's the java example below.")]
-    assert "class" not in pairs[0][1]
-
-
-def test_a_fence_is_not_narrated_whatever_its_language():
-    # ⛔ The steps are shown on the page and never read aloud.
+@pytest.mark.parametrize("lang", ["java", "gherkin", "", None, "sh -c 'x'"])
+def test_a_fence_yields_no_speech_unit_whatever_its_language(lang):
+    # ⛔ The register ruling: narration is lesson prose only. A fence says
+    # nothing, and no caption stands in for it.
     body = "Given a reading\nWhen it is written down\nThen the book agrees\n"
-    pairs = said([{"type": "code", "lang": "gherkin", "text": body}])
-    assert len(pairs) == 1
-    for word in ("Given", "When", "Then"):
-        assert word not in pairs[0][1]
+    assert said([{"type": "code", "lang": lang, "text": body}]) == []
+    assert SPEECH_OF["code"] == "silent"
 
 
-@pytest.mark.parametrize("lang", [None, "", "   ", 7, "a" * 40, "not one token", "sh -c 'x'"])
-def test_a_language_that_is_not_one_legible_token_gets_the_plain_caption(lang):
-    assert code_caption(lang) == CODE_CAPTION_PLAIN
-
-
-@pytest.mark.parametrize("lang", ["java", "sql", "c++", "c#", "objective-c", "f.sharp"])
-def test_a_legible_language_token_is_spoken_as_the_archive_recorded_it(lang):
-    # ⛔ There is deliberately no table of display names here: a module-level
-    # collection keyed on a language name is what the variant/capability tripwire
-    # refuses, and it would be a vocabulary the framework has no business holding.
-    assert lang in code_caption(lang)
+def test_prose_fence_prose_yields_exactly_the_two_prose_units_at_their_own_positions():
+    fence = {"type": "code", "lang": "java", "text": "class A { void go() {} }"}
+    blocks = [{"type": "para", "text": "Before it."}, fence, {"type": "para", "text": "After it."}]
+    assert said(blocks) == [
+        (f"{UNIT}.shared.b1", "Before it."),
+        (f"{UNIT}.shared.b3", "After it."),
+    ]
 
 
 def test_a_list_is_read_item_by_item_under_its_own_marker():
@@ -137,13 +121,13 @@ def test_a_nested_list_is_spoken_inside_its_parent_items_clip():
     ]
 
 
-def test_a_code_part_is_its_one_caption_inside_its_items_clip():
-    # ⛔ an item's code says what a top-level fence says, and nothing more.
+def test_a_list_item_holding_a_code_part_speaks_its_prose_only():
+    # ⛔ an item's code says what a top-level fence says: nothing at all.
     snippet = {"type": "code", "lang": "java", "text": "int[] a;"}
     block = {"type": "list", "ordered": True, "items": [["Return:", snippet, "then read it."]]}
-    assert [words for _id, words in said([block])] == [
-        f"First, Return: {code_caption('java')} then read it."
-    ]
+    assert [words for _id, words in said([block])] == ["First, Return: then read it."]
+    only_code = {"type": "list", "ordered": False, "items": [[snippet]]}
+    assert said([only_code]) == [], "an item that is only code says nothing"
 
 
 def test_an_ordered_list_counts_aloud_from_the_number_its_author_started_at():
@@ -336,7 +320,6 @@ CARRIERS = {
         "open": False,
         "blocks": [],
     },
-    "fence language": lambda text: {"type": "code", "lang": text, "text": "x"},
     "quoted paragraph": lambda text: {
         "type": "quote",
         "blocks": [{"type": "para", "text": text}],
@@ -351,7 +334,7 @@ def test_both_halves_of_the_shared_shape_vocabulary_are_inhabited():
     # ⛔ The populations, asserted before either property.
     assert len(REFUSED_SHAPES) >= 4, REFUSED_SHAPES
     assert len(ADMITTED_SHAPES) >= 4, ADMITTED_SHAPES
-    assert len(CARRIERS) == 10
+    assert len(CARRIERS) == 9
 
 
 @pytest.mark.parametrize("carrier", sorted(CARRIERS))
@@ -378,3 +361,34 @@ def test_the_refusal_says_which_shape_and_never_what_matched():
             units_of(UNIT, "shared", [{"type": "para", "text": "".join(row["spelling"])}])
         assert row["shape"].split()[-1] in str(refused.value)
         assert "jane" not in str(refused.value)
+
+
+# --------------------------------------------------------------------------
+# ⛔ A fence is silent at any depth, not only at a section's top level
+# --------------------------------------------------------------------------
+
+NESTED_FENCE = {"type": "code", "lang": "java", "text": "class A {}"}
+
+#: A fence one container down, in each container type, with prose beside it.
+NESTED = {
+    "quote": {
+        "type": "quote",
+        "blocks": [{"type": "para", "text": "Quoted."}, NESTED_FENCE],
+    },
+    "disclosure": {
+        "type": "disclosure",
+        "summary": "Show it",
+        "open": False,
+        "blocks": [{"type": "para", "text": "Hidden."}, NESTED_FENCE],
+    },
+}
+
+
+@pytest.mark.parametrize("container", sorted(NESTED))
+def test_a_fence_nested_in_a_container_yields_no_speech_unit(container):
+    # ⛔ The register ruling: code is never spoken, whatever holds it.
+    units, _held = units_of(UNIT, "shared", [NESTED[container]])
+    assert [unit.block_path for unit in units if unit.kind == "code"] == []
+    assert (0, 1) not in [unit.block_path for unit in units]
+    # ⭐ The control: the container's own speech is still there.
+    assert units, f"the {container} said nothing at all; the reading is vacuous"

@@ -182,6 +182,11 @@ separate download, shows no narration control and keeps the browser's console
 clean. Once the clips are restored, the next page load plays them with no
 rebuild.
 
+**Narration speaks a lesson's prose only**, by register ruling: a practice, a
+code example and a quiz are shown and never spoken. A corpus narrated before
+that ruling keeps every prose clip as it is, and `studyforge narrate <root>
+--prune` retires the practice and code clips no page plays any more.
+
 **Clips too large for git travel as release volumes.** A corpus whose
 `corpus.json` sets `media.commit` to `never` keeps its clips out of the
 repository. `studyforge narrate <root> --pack <dir>` packs them into volumes of

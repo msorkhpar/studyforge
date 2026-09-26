@@ -13,8 +13,8 @@ is separately testable and each encodes a measured decision.
 
 ## ⛔ Display and speech legitimately differ, and that is the design
 
-⭐ A URL is dropped, an identifier is respaced, a fenced method becomes one caption
-sentence. Because alignment is at **speech-unit granularity** rather than word
+⭐ A URL is dropped, an identifier is respaced, a fenced method is not spoken
+at all. Because alignment is at **speech-unit granularity** rather than word
 level, that difference never has to be reconciled word by word — which is the
 decision that makes narration tractable at all, and the reason word-level
 highlighting is out of scope rather than merely deferred.

@@ -10,7 +10,6 @@ from __future__ import annotations
 import copy
 import re
 import shutil
-from dataclasses import replace
 from pathlib import PurePosixPath
 
 import pytest
@@ -26,7 +25,8 @@ from studyforge.narrate.speakable import (
     unit_key_of,
 )
 from studyforge.narrate.speakable.records import SpeakableError
-from studyforge.render.page import AUDIO_ATTRIBUTE
+from studyforge.render.page import AUDIO_ATTRIBUTE, Narration
+from studyforge.render.page import render as render_page
 from studyforge.unit import content
 from studyforge.unit.builder import build_unit
 from tests.studyforge.exercise.quiz.depth1 import fixture_root, practice_document, question
@@ -288,17 +288,30 @@ def test_the_unit_key_the_ids_are_minted_from_is_the_logical_address():
 
 
 # --------------------------------------------------------------------------
-# ⭐ Acceptance 6 and 7 — a fence captions; a disclosure's summary is spoken alone
+# ⭐ Acceptance 6 and 7 — a fence says nothing; a disclosure's summary is spoken alone
 # --------------------------------------------------------------------------
 
 
-def test_a_code_block_produces_a_caption_and_not_a_reading_of_the_code():
-    said = speakable_of(depth1_unit_03())
-    captions = [unit.speak for unit in said.units if unit.kind == "code"]
-    assert captions, "the fixture has fences; none produced a caption"
-    for caption in captions:
-        assert caption.startswith("Here's the")
-        assert "<" not in caption and "{" not in caption
+def fence_positions(document: dict) -> list[tuple[str, tuple[int, ...], None]]:
+    """Every top-level fence of a document, as the position a unit of it would sit at."""
+    return [
+        (section["key"], (index,), None)
+        for section in document["sections"]
+        for index, block in enumerate(section["blocks"])
+        if block.get("type") == "code"
+    ]
+
+
+def test_no_fence_in_any_document_yields_a_speech_unit_or_a_caption():
+    # ⛔ The register ruling: narration is lesson prose only, so a code example is
+    # never spoken, and no caption stands in for it.
+    fences = [(name, one) for name, document in CASES for one in fence_positions(document)]
+    assert fences, "no fixture document holds a fence; the reading is vacuous"
+    for name, document in CASES:
+        units = speakable_of(document).units
+        assert [one.id for one in units if one.kind == "code"] == [], name
+        assert [one.speak for one in units if one.speak.startswith("Here's the")] == [], name
+        assert set(fence_positions(document)).isdisjoint(one.position for one in units), name
 
 
 def test_a_disclosures_summary_is_spoken_and_no_block_inside_it_has_an_id():
@@ -417,43 +430,92 @@ def test_the_surface_names_every_disposition_a_consumer_might_branch_on():
 # --------------------------------------------------------------------------
 
 
-def bare_lesson_case():
-    """The depth-2 case, its practice's lesson run cut to one disclosure: a bare heading."""
+def practice_keys(document: dict) -> list[str]:
+    """The keys of a document's practice sections."""
+    return [one["key"] for one in document["sections"] if one.get("kind") == "practice"]
+
+
+def test_a_practice_section_yields_no_speech_unit_and_the_lesson_beside_it_still_speaks():
+    # ⛔ The register ruling: a practice — its statement, its lesson heading, its
+    # examples, everything its panel carries — is never narrated.
+    document = depth2_unit_01()
+    practices = practice_keys(document)
+    held = [one for one in document["sections"] if one["key"] in practices]
+    assert held and all(one["blocks"] for one in held), "no practice with blocks to withhold"
+    units = speakable_of(document).units
+    assert [one.id for one in units if one.section in practices] == []
+    # ⭐ The negative control: the lesson section beside it is spoken.
+    assert [one for one in units if one.section not in practices]
+
+
+def test_the_rendered_practice_carries_no_audio_even_where_a_record_holds_its_clips():
+    # ⛔ A record narrated before the ruling still names practice and fence clips
+    # until a prune retires them; the page plays none of them.
     case = render_pages.depth2_unit_01()
-    document = copy.deepcopy(case.document)
-    practice = next(one for one in document["sections"] if one["kind"] == "practice")
-    blocks = practice["blocks"]
-    lesson = next(i for i, one in enumerate(blocks) if one.get("text", "").startswith("Lesson"))
-    disclosure = next(one for one in blocks if one["type"] == "disclosure")
-    blocks[lesson + 1] = copy.deepcopy(disclosure)
-    return replace(case, document=document), practice["key"], lesson
-
-
-def test_a_practice_lesson_heading_the_page_withholds_gets_no_speech_unit():
-    # ⛔ The page leaves a lesson heading over nothing but the worked solution
-    # off (`unit.bare_lesson`); a speech unit for it is a clip nothing plays.
-    case, key, lesson = bare_lesson_case()
     document = case.document
-    spoken = [one for one in speakable_of(document).units if one.section == key]
-    assert (lesson,) not in [one.block_path for one in spoken]
-    # ⭐ Nothing is renumbered: the block after the run keeps its own position.
-    assert (lesson + 2,) in [one.block_path for one in spoken]
-    # ⭐ The negative control: the unedited heading heads a lesson and is spoken.
-    whole = render_pages.depth2_unit_01().document
-    assert (lesson,) in [one.block_path for one in speakable_of(whole).units if one.section == key]
-
-
-def test_every_unit_spoken_in_a_practice_is_one_its_page_plays():
-    # ⛔ Both directions, on the page itself: a build hands the renderer a clip
-    # for every spoken unit, and the practice's section plays exactly those.
-    case, key, _lesson = bare_lesson_case()
-    document = case.document
-    page = case.render().decode("utf-8")
+    (key,) = practice_keys(document)
+    practice = next(one for one in document["sections"] if one["key"] == key)
+    stale = {
+        (key, (index,), None): f"stale-{index}.mp3" for index in range(len(practice["blocks"]))
+    }
+    stale |= {position: "stale-fence.mp3" for position in fence_positions(document)}
+    assert fence_positions(document), "the fixture has no fence; half of this is vacuous"
+    clips = dict(case.narration.hrefs) | stale
+    page = render_page(document, case.placement, narration=Narration.of(clips, case.placement))
+    page = page.decode("utf-8")
     start = page.index(f'data-section="{key}"')
     region = page[start : page.index("</section>", start)]
-    played = sorted(PurePosixPath(href).stem for href in AUDIO_VALUES.findall(region))
-    spoken = sorted(clip_name(one) for one in speakable_of(document).units if one.section == key)
-    assert played and played == spoken
+    assert AUDIO_VALUES.findall(region) == []
+    assert "stale-" not in page, "a stale practice or fence clip reached the page"
+    assert '<figure class="code">' in page, "the fence rendered without its plain figure"
+    # ⭐ The control: the lesson's own prose still plays.
+    assert AUDIO_VALUES.findall(page[:start])
+
+
+#: ⛔ What the pre-ruling script minted for `depth2_unit_01` — lesson prose, one
+#: captioned fence (`java.b3`), seven practice units and the shared section's
+#: heading — read off the minter at
+#: the commit before the register ruling. It is the BEFORE of the record.
+BEFORE_THE_RULING = (
+    "basics--01-getting-started--unit-01.java.b1-922d0d65",
+    "basics--01-getting-started--unit-01.java.b2-ea4a45f5",
+    "basics--01-getting-started--unit-01.java.b3-0f15b70c",
+    "basics--01-getting-started--unit-01.java.b4.i1-9817129b",
+    "basics--01-getting-started--unit-01.java.b4.i2-558a93ca",
+    "basics--01-getting-started--unit-01.java.b4.i3-82973017",
+    "basics--01-getting-started--unit-01.java.b5.b1-c9388ac2",
+    "basics--01-getting-started--unit-01.java.b5.b2.i1-22a76015",
+    "basics--01-getting-started--unit-01.java.b5.b2.i2-18f8c385",
+    "basics--01-getting-started--unit-01.practice-java.b1-ba35efbe",
+    "basics--01-getting-started--unit-01.practice-java.b2-45aa714f",
+    "basics--01-getting-started--unit-01.practice-java.b3-06032966",
+    "basics--01-getting-started--unit-01.practice-java.b4-ea1edee4",
+    "basics--01-getting-started--unit-01.practice-java.b5-ef2f80dc",
+    "basics--01-getting-started--unit-01.practice-java.b6-efa73569",
+    "basics--01-getting-started--unit-01.practice-java.b7-0f15b70c",
+    "basics--01-getting-started--unit-01.shared.b1-c396109f",
+)
+
+
+def test_surviving_prose_keeps_its_speech_id_and_digest_so_nothing_is_resynthesised():
+    # ⛔ A clip name is `<speech id>-<digest>`, so equal names are equal ids AND
+    # equal words: a corpus narrated before the ruling re-makes no prose clip.
+    document = depth2_unit_01()
+    after = clip_names(speakable_of(document).units)
+    assert after, "nothing is spoken at all; the reading is vacuous"
+    assert set(after) <= set(BEFORE_THE_RULING), sorted(set(after) - set(BEFORE_THE_RULING))
+    # ⭐ And what went away is exactly the practice and the fence, nothing else.
+    (key,) = practice_keys(document)
+    retired = sorted(set(BEFORE_THE_RULING) - set(after))
+    # A speech id is `<unit>.<section>.b<n>…`; a fence at block index i is `b<i+1>`.
+    fences = {f"{section}.b{path[0] + 1}" for section, path, _sub in fence_positions(document)}
+    below_unit = [parse_clip_name(name)[0].partition(".")[2] for name in BEFORE_THE_RULING]
+    assert retired == sorted(
+        name
+        for name, rest in zip(BEFORE_THE_RULING, below_unit, strict=True)
+        if rest.split(".")[0] == key or rest in fences
+    )
+    assert len(retired) == len(BEFORE_THE_RULING) - len(after) == 8
 
 
 def quiz_unit(where) -> dict:
@@ -473,8 +535,8 @@ def quiz_unit(where) -> dict:
         render(practice_document(questions=[coded])), encoding="utf-8"
     )
     document = build_unit(root / PRACTICE_DOCUMENT.parent, declared_practices=1)
-    practice = next(one for one in document["sections"] if one.get("kind") == "practice")
-    practice["blocks"][1]["text"] = "Two questions on `switch` and the `int` family."
+    lesson = next(one for one in document["sections"] if one.get("kind") != "practice")
+    lesson["blocks"][1]["text"] = "Two questions on `switch` and the `int` family."
     return document
 
 
@@ -483,11 +545,12 @@ def test_a_quizs_questions_and_sentences_are_never_spoken_and_nothing_spoken_has
 ):
     # ⛔ Narration never speaks an explanation — nor a stem or an
     # option: they are the workspace's, and a clip of one would read the reader
-    # the question before they chose. ⭐ The practice's own intro IS spoken, so
-    # the absence is a reading; and its inline code is read without backticks.
+    # the question before they chose. ⛔ Nor the practice's own intro: a practice
+    # is never narrated. ⭐ The lesson beside it IS spoken, so the absence is a
+    # reading; and its inline code is read without backticks.
     document = quiz_unit(tmp_path)
     spoken = [one.speak for one in speakable_of(document).units]
-    assert "Check yourself" in spoken
+    assert "Check yourself" not in spoken
     assert any("switch" in said and "int" in said for said in spoken), spoken
     questions = document["sections"][-1]["workspace"]["questions"]
     quiz_words = [one["stem"] for one in questions] + [

@@ -1258,7 +1258,7 @@ blocks; every walker recurses on that property rather than naming the two.
   `counts` does not count it. ⭐ A step, its snippet and the sentence after the
   snippet stay one item: closing the list around the code would detach that
   sentence. The page shows the code inside the item, and the item's clip speaks
-  the code's one caption where the code sits.
+  the item's prose only: code is never narrated.
 - ⭐ **An ordered list keeps the number it starts at**: a `list` may carry `start`
   after its three fields, written only when the list is ordered and does not
   start at `1`. The page opens the list at it and the narration counts from it.

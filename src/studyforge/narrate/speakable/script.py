@@ -1,13 +1,13 @@
 r"""What each block type becomes as speech, and the walk that puts them in order.
 
 **What it does.** Decides, per block type, what the narrator says — prose read as
-written, a fence reduced to one caption, a list read item by item, a table read row
+written, a fence not at all, a list read item by item, a table read row
 by row, a disclosure's summary spoken and its body withheld — and walks one
 section's blocks into ordered `SpeechUnit`s.
 
 **How you use it.** `units_of(unit, section_key, blocks)` returns
-`(units, withheld)` for one section. `ordinal_word` and `code_caption` are
-published because each is a separately testable phrasing decision.
+`(units, withheld)` for one section. `ordinal_word` is published because it is a
+separately testable phrasing decision.
 
 **Depends on.** `studyforge.archive.blocks` for the one block vocabulary and the
 one recursion over it, `studyforge.archive.scrub` for the gate, and this package's
@@ -23,24 +23,20 @@ unknown type **raises**, and `test_script.py` asserts `SPEECH_OF` covers
 `BLOCK_TYPES` exactly, so the twelfth row of the vocabulary cannot land without
 somebody deciding what it sounds like.
 
-## ⛔ A fence is not narrated, whatever its language
+## ⛔ A fence is never spoken — not its body, and not a caption for it
 
-⭐ **One caption, at any length**, so the voice never goes silent and a listener can
-never mistake "done with this section" for "the voice froze". ⛔ And **no field
-listing which languages narrate**: that would be a list of language names in the
-framework's configuration answering a question a fence already answers about
-itself, which is the defect §4 records verbatim — one list answering two questions.
-⭐ **The escape hatch is the archive and it costs no field**: a corpus that wants
-its steps narrated emits them as prose blocks rather than as fences, decided once
-at extraction by the side that knows the material, arriving as data (R1).
+⭐ **Register ruling (2026-09-26): narration covers a lesson's prose only.** A code
+example is shown and never narrated, so `SPEECH_OF` calls `code` `silent`, exactly
+as it calls an image silent, and a code part inside a list item adds nothing to
+that item's clip. ⛔ No sentence stands in for the fence either: a caption
+announcing the code below is words the author did not write, spoken over
+something the reader has to look at anyway.
 
-⚠️ **There is deliberately no table of display names for a fence's language.** The
-extraction source kept one — `java` → `Java`, `bash` → `shell` — and it cannot be
-ported: a module-level collection keyed on a language name is exactly what
-`test_no_module_maps_a_variant_to_a_capability` refuses, and it would be a second
-place the framework learns a vocabulary it has no business holding. ⭐ The recorded
-`lang` is spoken as recorded when it is a single legible token, and the plain
-caption is used otherwise.
+⚠️ **A silent fence still spends its position**, because a position is where a
+block sits and not how many units came before it — so a prose unit's id, and its
+clip, never depend on whether a fence beside it is spoken. ⭐ The escape hatch is the
+archive and it costs no field: a corpus that wants its steps narrated emits them
+as prose blocks rather than as fences, decided once at extraction (R1).
 
 ## ⛔ Narration speaks a disclosure's summary and stops. It never walks the body
 
@@ -88,28 +84,11 @@ translated into `SpeakableError`.
 
 from __future__ import annotations
 
-from collections.abc import Container
-
 from studyforge.archive.blocks import BLOCK_TYPES, CONTAINER_TYPES, item_parts, list_start, walk
 from studyforge.archive.scrub import assert_clean
 from studyforge.narrate.speakable.naming import speech_id
 from studyforge.narrate.speakable.records import SpeakableError, SpeechUnit
 from studyforge.narrate.speakable.voice import spoken_text
-
-#: What a fence is worth when its language is not one legible token.
-CODE_CAPTION_PLAIN = "Here's the code example below."
-
-#: What a fence is worth when it is. ⭐ The language is the archive's own recorded
-#: token, spoken as recorded — this module holds no vocabulary of its own.
-CODE_CAPTION = "Here's the {lang} example below."
-
-#: The shape a fence's `lang` must have to be spoken: one short token of letters,
-#: digits and the few marks a language name carries. ⛔ A closed class, because a
-#: fence's info string is free text and a long one read aloud is noise.
-LANG_PERMITTED = frozenset("abcdefghijklmnopqrstuvwxyz0123456789+#.-")
-
-#: How long a spoken language token may be.
-LANG_MAX = 20
 
 #: Spelled out, never a numeral: an engine reads "1." as a decimal. Past twentieth
 #: — never yet observed — an ordered item falls back to "Item 21,".
@@ -137,14 +116,14 @@ ORDINALS = (
 )
 
 #: ⛔ **The closed disposition table** — every block type, and what it sounds like.
-#: `prose` reads its `text`; `caption` reduces a fence to one sentence; `items` and
-#: `rows` address below block level; `silent` is shown and never spoken; `recurse`
+#: `prose` reads its `text`; `items` and `rows` address below block level;
+#: `silent` is shown and never spoken — a fence among them; `recurse`
 #: walks a container's children; `summary` speaks a container's label and withholds
 #: everything under it. ⚠️ Asserted total over `BLOCK_TYPES` by this module's test.
 SPEECH_OF = {
     "heading": "prose",
     "para": "prose",
-    "code": "caption",
+    "code": "silent",
     "table": "rows",
     "list": "items",
     "image": "silent",
@@ -163,38 +142,20 @@ def ordinal_word(position: int) -> str:
     return f"Item {position}"
 
 
-def code_caption(lang: object) -> str:
-    """Return the one sentence a fence is worth, whatever its length.
-
-    ⚠️ The language is spoken only when it is one legible token; anything else —
-    an empty info string, a long one, a shell incantation — gets the plain caption
-    rather than being read aloud.
-    """
-    token = lang.strip().lower() if isinstance(lang, str) else ""
-    if not token or len(token) > LANG_MAX or not LANG_PERMITTED.issuperset(token):
-        return CODE_CAPTION_PLAIN
-    return CODE_CAPTION.format(lang=token)
-
-
 def units_of(
     unit: str,
     section_key: str,
     blocks: object,
     path: tuple[int, ...] = (),
-    omit: Container[int] = (),
 ) -> tuple[tuple[SpeechUnit, ...], int]:
     """Return one section's ordered speech units and the count of blocks withheld.
 
     `unit` is a flattened unit token, `section_key` the served section's key, and
     `path` the positions already walked into — empty for a section's own blocks.
-    ⛔ `omit` is the positions the page does not show, which are not spoken; like
-    the page's own `omit`, it renumbers nothing.
     """
     spoken: list[SpeechUnit] = []
     withheld = 0
     for index, block in enumerate(blocks if isinstance(blocks, list) else []):
-        if index in omit:
-            continue
         here = (*path, index)
         kind = block.get("type") if isinstance(block, dict) else None
         rule = SPEECH_OF.get(kind if isinstance(kind, str) else "")
@@ -232,7 +193,7 @@ def _one_block(
         return _items(unit, section_key, block, path, where), 0
     if rule == "rows":
         return _rows(unit, section_key, block, path, where), 0
-    return _emit(unit, section_key, path, _block_speech(block, kind, where), kind), 0
+    return _emit(unit, section_key, path, _spoken(block.get("text"), where), kind), 0
 
 
 def _spoken(value: object, where: str) -> str:
@@ -249,18 +210,6 @@ def _spoken(value: object, where: str) -> str:
     """
     assert_clean(value, where)
     return spoken_text(value)
-
-
-def _block_speech(block: dict, kind: str, where: str) -> str:
-    """Return what one whole block says — a caption for a fence, its prose otherwise.
-
-    ⚠️ A fence's body is never spoken, and it is gated anyway: the `lang` reaches the
-    caption, and a block whose text never reaches a clip still reaches this module.
-    """
-    if kind == "code":
-        assert_clean(block.get("lang"), where)
-        return code_caption(block.get("lang"))
-    return _spoken(block.get("text"), where)
 
 
 def _items(
@@ -286,8 +235,8 @@ def _item_words(item: object, where: str) -> str:
     """Return one item's words: its parts in reading order, a nested list item by item.
 
     ⛔ **A nested list is spoken INSIDE its parent item's clip**, each of
-    its items numbered aloud when that list is ordered, and a code part is its
-    one caption there, exactly as a top-level fence is. ⭐ That keeps the speech-id
+    its items numbered aloud when that list is ordered, and a code part says
+    nothing there, exactly as a top-level fence says nothing. ⭐ That keeps the speech-id
     grammar as it is — a list's items are the only thing addressed below a block,
     and one level of them — and the page puts the audio on the parent `<li>`,
     which holds the nested list. ⚠️ A plain string item says exactly what it said
@@ -299,8 +248,7 @@ def _item_words(item: object, where: str) -> str:
             said.append(_spoken(part, where))
             continue
         if part.get("type") == "code":
-            # ⛔ A code part says what a top-level fence says: its one caption.
-            said.append(_block_speech(part, "code", where))
+            # ⛔ A code part says what a top-level fence says: nothing at all.
             continue
         nested = part.get("items")
         for position, sub in enumerate(nested if isinstance(nested, list) else []):

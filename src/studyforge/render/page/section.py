@@ -157,8 +157,11 @@ def render(
         # ⛔ A practice's lesson heading over nothing but its worked solution is
         # an empty heading: withheld, never renumbered (`blocks.render_all`).
         withheld = (*withheld, bare)
+    # ⛔ A practice is never narrated: whatever a record holds, its parts carry
+    # no audio attribute (the register ruling that narration is lesson prose only).
+    heard = SILENT if section.get("kind") == PRACTICE else narration
     body = blocks.render_all(
-        contents, placement=placement, section=key, narration=narration, omit=withheld
+        contents, placement=placement, section=key, narration=heard, omit=withheld
     )
     wrapper = templates.fill(
         "section.html",

@@ -12,10 +12,12 @@ from __future__ import annotations
 import ast
 import io
 import shutil
+from dataclasses import replace
 
 import pytest
 
-from studyforge.cli.narrate import cli
+from studyforge.address import Address
+from studyforge.cli.narrate import cli, stage
 from studyforge.cli.narrate.prune import (
     NOT_A_FILE,
     NOT_ITS_CLIP,
@@ -26,6 +28,14 @@ from studyforge.cli.narrate.prune import (
 from studyforge.cli.site.cli import main as build_main
 from studyforge.generate.declarations import read_corpus
 from studyforge.narrate import wire
+from studyforge.narrate.speakable import (
+    Speakable,
+    SpeechUnit,
+    parse_clip_name,
+    speakable_of,
+    speech_id,
+    unit_token,
+)
 from studyforge.narrate.synth import read_state, state_file
 from studyforge.validate.report import INVALID, OK
 from tests.studyforge.cli.narrate.plant import (
@@ -336,3 +346,67 @@ def test_a_dead_entry_whose_superseded_clip_is_held_is_kept_with_it(tmp_path):
 
     assert set(pruned.held) == {(dead, NOT_A_FILE), (dead, STILL_NAMES)}
     assert not clip.exists() and dead in recorded(root)
+
+
+# --------------------------------------------------------------------------
+# ⛔ The register ruling (narration is lesson prose only) retires through the prune
+# --------------------------------------------------------------------------
+
+#: The caption every fence was spoken as before the ruling, as a record still holds it.
+PRE_RULING_CAPTION = "Here's the code example below."
+
+
+def pre_ruling(document: dict) -> Speakable:
+    """The script as it was before the ruling: every practice block and every fence spoken.
+
+    ⭐ Today's units plus the ones the ruling retired, minted by the one minter at
+    the positions the old script gave them, so the record a pre-ruling narration
+    wrote is reproduced rather than imagined.
+    """
+    now = speakable_of(document)
+    token = unit_token(Address(document["address"]).unit_key(document["unit"]))
+    retired = []
+    for section in document["sections"]:
+        practice = section.get("kind") == "practice"
+        for index, block in enumerate(section["blocks"]):
+            if not practice and block.get("type") != "code":
+                continue
+            words = PRE_RULING_CAPTION if block.get("type") == "code" else f"Practice {index}."
+            retired.append(
+                SpeechUnit(
+                    id=speech_id(token, section["key"], (index,)),
+                    speak=words,
+                    section=section["key"],
+                    block_path=(index,),
+                    sub_index=None,
+                    kind=block.get("type"),
+                )
+            )
+    return replace(now, units=(*now.units, *retired))
+
+
+def test_a_prune_retires_the_practice_and_caption_clips_and_keeps_every_prose_clip(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setattr(stage, "speakable_of", pre_ruling)
+    root = narrated(tmp_path, "depth2")
+    monkeypatch.undo()
+    prose = speech_ids(root)
+    before = recorded(root)
+    retired = sorted(set(before) - set(prose))
+    # ⛔ The population: the pre-ruling record holds practice AND caption clips.
+    record = record_of(root)["clips"]
+    kinds = {"practice" if ".practice-" in one else "caption" for one in retired}
+    assert kinds == {"practice", "caption"}, kinds
+    assert set(prose) <= set(before), "a prose clip was never made; the control is vacuous"
+    prose_files = {one: record[one]["filename"] for one in prose}
+
+    pruned = prune_corpus(root)
+
+    # ⭐ The record says so: it now holds exactly the prose units, nothing else.
+    assert recorded(root) == prose
+    assert sorted(pruned.forgotten) == retired
+    assert sorted(parse_clip_name(path.stem)[0] for path in pruned.deleted) == retired
+    assert pruned.held == ()
+    for one, name in prose_files.items():
+        assert list(root.rglob(name)), f"the prose clip of {one} was deleted"
