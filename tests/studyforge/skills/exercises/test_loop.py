@@ -26,6 +26,7 @@ from studyforge.exercise.bundle import BUNDLE_FILENAME
 from studyforge.skills.adapter import Layout
 from studyforge.skills.exercises import (
     ATTEMPTS,
+    PERSONAL_DATA,
     QUIZ_DOCUMENT,
     AuthoringError,
     author_corpus,
@@ -54,6 +55,7 @@ from tests.studyforge.skills.exercises.authoring import (
     greeting_whose_plant_handles_its_edge,
     greeting_with_a_vacuous_ask,
     mixed,
+    shout,
     snapshot,
     write_corpus,
 )
@@ -401,3 +403,28 @@ def test_the_author_s_order_sets_the_plan_and_the_quiz_is_still_drafted_last(tmp
         (CODE, 1),
         (QUIZ, 2),
     ]
+
+
+def _shout_naming_a_machine(brief):
+    """⛔ The measured leak: a statement that names a `.local` host, as S2's did."""
+    draft = shout(brief)
+    return replace(draft, statement=draft.statement + "It connects to db.local on port 5432.\n")
+
+
+def test_a_draft_carrying_personal_data_refuses_that_exercise_and_the_pass_carries_on(tmp_path):
+    pages = fixture_pages()[:2]
+    script = {pages[0].path: [greeting], pages[1].path: [_shout_naming_a_machine]}
+    author, authored = _pass(tmp_path, pages, script)
+    ((page, missed),) = authored.shortfalls
+    # ⭐ The plant, OBSERVED: R7's own gate refused the host the statement names.
+    assert "local hostname" in missed.says, missed.says
+    assert (page, missed.slot, missed.gate) == (pages[1].path, 1, PERSONAL_DATA)
+    assert "personal data" in missed.says and "db.local" not in missed.says
+    assert len(author.briefs) == 1 + ATTEMPTS, "the retry was not briefed, or the pass stopped"
+    assert author.briefs[-1].refused[0].id == PERSONAL_DATA
+    # ⛔ The other exercise's gate runs were not lost: it shipped and was committed.
+    shipped = [path.parent.name for path in tmp_path.glob("exercises/**/bundle.json")]
+    print("shipped:", shipped, "refused:", missed.says)
+    assert len(shipped) == 1
+    committed = [one.read_text(encoding="utf-8") for one in tmp_path.glob("exercises/**/*.*")]
+    assert committed and not any("db.local" in text for text in committed)
