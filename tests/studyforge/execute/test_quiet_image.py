@@ -29,6 +29,7 @@ import pytest
 
 from studyforge.execute import CONTAINER, Runner, exit_line
 from studyforge.execute.quiet import MAVEN, filter_lines
+from tests.harness import engine
 from tests.studyforge.execute import container
 
 COMPILE_PLANT = {"file": "src/main/java/smoke/Adder.java", "from": "a + b", "to": "a + c"}
@@ -93,11 +94,13 @@ def maven_run(where, plant=None) -> list[str]:
 
 
 @pytest.fixture
-def raw(tmp_path):
+def raw():
     reason = reason_to_skip()
     if reason is not None:
         pytest.skip(reason)
-    return lambda plant=None: maven_run(tmp_path, plant)
+    # ⭐ Engine-visible, never the host's temporary directory (`tests.harness.engine`).
+    with engine.shared("quiet") as where:
+        yield lambda plant=None: maven_run(where, plant)
 
 
 def contiguous(block, lines) -> bool:

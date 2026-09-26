@@ -24,6 +24,7 @@ import time
 import pytest
 
 from studyforge.execute import CONTAINER, EXIT_STOPPED, EXIT_TIMEOUT, HOST, Runner, exit_line
+from tests.harness import engine
 from tests.studyforge.execute import container
 from tests.studyforge.execute.runnable import (
     FOREIGN_HOME,
@@ -41,16 +42,21 @@ from tests.studyforge.execute.runnable import (
 
 
 @pytest.fixture(scope="module")
-def stage(tmp_path_factory):
-    """One copy of the corpus, and — when the image is named — the reader's container over it."""
-    root = fixture_copy(tmp_path_factory.mktemp("sf20"))
-    reason = container.skip_reason()
-    name = None if reason else container.start(root)
-    try:
-        yield root, name, reason
-    finally:
-        if name is not None:
-            container.remove(name)
+def stage():
+    """One copy of the corpus, and — when the image is named — the reader's container over it.
+
+    ⭐ The copy is engine-visible (`tests.harness.engine`), never under the host's
+    temporary directory: Docker Desktop shares none, and Windows has none.
+    """
+    with engine.shared("sf20") as where:
+        root = fixture_copy(where)
+        reason = container.skip_reason()
+        name = None if reason else container.start(root)
+        try:
+            yield root, name, reason
+        finally:
+            if name is not None:
+                container.remove(name)
 
 
 @pytest.fixture(params=[HOST, CONTAINER])

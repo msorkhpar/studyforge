@@ -145,7 +145,11 @@ test-file pattern.
 - **`runner(root, command)`** runs one test command from `root` in the pinned
   runner image and returns a `Ran`: its exit code and its output. The gate
   suite stages every run in a fresh directory, so nothing a run leaves behind
-  reaches the next one.
+  reaches the next one. ⛔ **`root` is under the host's temporary directory:
+  never bind it.** Copy it into the container (`docker cp` into a container
+  you created, or a tar stream on `docker run -i`'s stdin) and read the output
+  back the same way. Docker Desktop shares no host `/tmp` and Windows has none,
+  and the runner must work on both (a register direction).
 
 #### ⛔ Write a draft the gates can prove
 

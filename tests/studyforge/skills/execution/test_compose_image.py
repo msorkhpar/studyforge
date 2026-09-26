@@ -30,6 +30,7 @@ import pytest
 from studyforge.corpus.manifest import parse
 from studyforge.execute import CONTAINER, ModeProbe, container_for
 from studyforge.skills.execution import onboard, record
+from tests.harness import engine
 from tests.studyforge.execute import container
 from tests.studyforge.exercise.bundle.test_dependency_image import CONSENT, sibling
 from tests.studyforge.skills.execution.contracts import manifest_document
@@ -38,6 +39,17 @@ from tests.support import tool_on_path
 
 #: A source no other reading on this host names, so its container name is its own.
 SOURCE = "w445-compose-reading"
+
+
+@pytest.fixture
+def tmp_path():
+    """⭐ Engine-visible, never the host's temporary directory (`tests.harness.engine`).
+
+    A container in this module binds the test's directory, and Docker Desktop shares
+    no host `/tmp` while Windows has none.
+    """
+    with engine.shared("compose") as where:
+        yield where
 
 
 def ask(command, cwd):

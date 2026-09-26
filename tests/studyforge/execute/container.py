@@ -63,7 +63,7 @@ import subprocess
 import uuid
 from pathlib import Path
 
-from tests.harness import sibling
+from tests.harness import engine, sibling
 from tests.support import tool_on_path
 
 IMAGE_VARIABLE = "STUDYFORGE_RUNNER_IMAGE"
@@ -175,7 +175,7 @@ def run_argv(
         if mount.get("kind") != "bind":
             continue
         suffix = ":ro" if mount.get("read_only") else ""
-        argv += ["-v", f"{source_root}:{mount['container_path']}{suffix}"]
+        argv += ["-v", f"{engine.bindable(source_root)}:{mount['container_path']}{suffix}"]
     argv.append(tag)
     argv += list(runner.get("command", []))
     return argv
