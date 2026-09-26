@@ -22,7 +22,6 @@ from studyforge.narrate.speakable import (
     speakable_of,
 )
 from studyforge.render.page import AUDIO_ATTRIBUTE, Narration
-from studyforge.render.page import code as page_code
 from studyforge.render.page import render as render_page
 from tests.studyforge.narrate.speakable import examples
 from tests.studyforge.narrate.speakable.test_init import depth2_unit_01
@@ -34,12 +33,6 @@ from tests.studyforge.narrate.speakable.test_script import (
     said,
 )
 from tests.studyforge.render.page import pages as render_pages
-
-
-def test_the_label_the_script_reads_is_the_label_the_page_draws():
-    # ⛔ One line, two readers: a longer label here would silence a list the
-    # page leaves plain, and a shorter one would speak a panel.
-    assert panel.MAX_LABEL == page_code.MAX_LABEL
 
 
 def test_every_suffix_a_runtime_writes_is_a_code_file():

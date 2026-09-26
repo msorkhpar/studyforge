@@ -12,6 +12,7 @@ from dataclasses import replace
 
 import pytest
 
+from studyforge.narrate.speakable import panel
 from studyforge.render.markup import inline
 from studyforge.render.page import code
 from studyforge.render.templates import placeholders
@@ -174,3 +175,10 @@ def test_anything_but_a_list_of_code_links_is_left_as_it_is(body):
 def test_a_corpus_with_no_pairing_draws_no_examples():
     marked, paths = code.mark(listed(item("", SOURCE)), JAVA)
     assert paths and code.examples(marked, paths, JAVA) == marked
+
+
+def test_the_label_the_page_draws_is_the_label_narration_silences():
+    # ⛔ One line, two readers (register ruling: a panel is never narrated): a
+    # longer label in the script would silence a list the page leaves plain,
+    # and a shorter one would speak a panel.
+    assert code.MAX_LABEL == panel.MAX_LABEL
