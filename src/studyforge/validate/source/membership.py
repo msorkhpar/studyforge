@@ -12,8 +12,7 @@ yielding `Finding`s like every other check. `archive_members(walk)` returns the
 member set on its own.
 
 **Depends on.** `validate.corpus` for what the archive reader read,
-`skills.adapter.Layout` for a unit's own files (deferred, `_unit_files` says
-why), `corpus.container`, `corpus.placement`, `address` for the first ordinal,
+`archive.layout.Layout` for a unit's own files, `corpus.container`, `corpus.placement`, `address` for the first ordinal,
 `sourcepath` for what a `local` may be, `validate.report`. ⛔ Nothing in this
 package's other three modules.
 
@@ -60,17 +59,14 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 from pathlib import Path, PurePosixPath
-from typing import TYPE_CHECKING
 
 from studyforge.address import FIRST_ORDINAL
+from studyforge.archive.layout import Layout
 from studyforge.corpus.container import CONTAINER_FILENAME
 from studyforge.corpus.placement import ARCHIVE_DIRNAME
 from studyforge.sourcepath import source_path_fault
 from studyforge.validate.corpus import Unit, Walk
 from studyforge.validate.report import Finding
-
-if TYPE_CHECKING:  # pragma: no cover - the import itself is deferred at runtime
-    from studyforge.skills.adapter import Layout
 
 #: ⛔ A file beneath the archive root that no reader reads.
 RULE_ARCHIVE_STRAY = "archive-stray"
@@ -121,8 +117,6 @@ def check_declared_files(walk: Walk) -> Iterator[Finding]:
     """
     if walk.manifest is None:  # pragma: no cover - the walk stops without one
         return
-    from studyforge.skills.adapter import Layout  # see `_unit_files`
-
     layout = Layout(walk.root)
     for unit in walk.units:
         if unit.document.get("media_skipped"):
@@ -202,14 +196,11 @@ def archive_members(walk: Walk) -> frozenset[Path]:
 def _unit_files(walk: Walk) -> frozenset[Path]:
     """Each declared unit's own directory, as the adapter's published layout places it.
 
-    ⚠️ **The import is deferred.** `skills.adapter`'s package imports its
-    scaffold and plan, and `validate` must stay importable before either.
-    ⭐ Asked of the address, as a build asks it (`generate.media`). A unit's
+    ⭐ `Layout` is `archive.layout`'s, which imports neither `validate` nor any
+    skill, so the import is an ordinary one. ⭐ Asked of the address, as a build asks it (`generate.media`). A unit's
     files beside a map held at another directory are strays, beside that map's
     `address-directory`, because no build reads them there either.
     """
-    from studyforge.skills.adapter import Layout
-
     layout = Layout(walk.root)
     return frozenset(
         layout.unit_files(held.container.address, unit.n)

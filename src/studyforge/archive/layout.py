@@ -25,6 +25,14 @@ which `content` joins and never spells.
 whether what was written is right, and a writer that imported its own judge
 would be checking itself.
 
+## ⭐ Why it lives in `archive` and not in the adapter skill
+
+⛔ **A build and the study server read the archive through this module**, and a
+learner's copy of a course carries the server with no skill in it
+(`studyforge.release`). ⭐ So the arithmetic is the archive's, and the adapter
+skill re-exports it unchanged: an adapter still takes its whole vocabulary from
+`studyforge.skills.adapter` (R19).
+
 ## ⛔ Why this is framework code and not four lines in every adapter
 
 ⚠️ R19: **anything a second source would have to retype is a hole in the
@@ -48,7 +56,7 @@ whole vocabulary arrives through this package (R19), so the skill keeps its
 own spelling on its own surface; what it may never keep is a second *value*.
 ⛔ Two instruments hold that: `tests/studyforge/corpus/placement/test_names.py`
 fails on a second `archive` or `raw` literal anywhere in `src/`, and
-`tests/studyforge/skills/adapter/test_layout.py` lays out a tree with this
+`tests/studyforge/archive/test_layout.py` lays out a tree with this
 module and asserts `validate` reads exactly the documents it wrote — ⚠️ a
 literal compared against the same literal would agree with itself.
 

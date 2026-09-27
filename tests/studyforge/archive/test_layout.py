@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/skills/adapter/layout.py` (R12)."""
+"""Mirror of `src/studyforge/archive/layout.py` (R12)."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ from studyforge.corpus.placement import (
     UNITS_DIRNAME,
     profile_for,
 )
-from studyforge.skills.adapter import (
+from studyforge.archive.layout import (
     ARCHIVE_DIR,
     RAW_DIR,
     TREE_ROOT,
@@ -89,7 +89,7 @@ def test_the_two_shipped_fixtures_keep_their_material_where_unit_files_says():
     contract's filename, so the one fixture pins both halves. ⛔ The
     filename is not spelled here either.
     """
-    fixtures = Path(__file__).resolve().parents[3] / "fixtures"
+    fixtures = Path(__file__).resolve().parents[2] / "fixtures"
 
     depth1 = Layout(fixtures / "depth1").unit_files(ADDRESS, 2)
     depth2 = Layout(fixtures / "depth2")
@@ -125,7 +125,7 @@ def test_the_overlays_filename_is_the_contracts_and_is_not_a_second_literal_here
     hand it to — what it has is one caller, `content`, and a name imported from
     the module that mints it beside `content_api`.
     """
-    from studyforge.skills.adapter import layout as module
+    from studyforge.archive import layout as module
 
     body = Path(module.__file__).read_text(encoding="utf-8")
 

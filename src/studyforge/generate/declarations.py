@@ -13,7 +13,7 @@ the unit walk is wanted; `unit_location(corpus, source)` and
 the package's `RAISES` is the pair.
 
 **Depends on.** `corpus.manifest`, `corpus.container` and `corpus.placement`
-for the declarations, `skills.adapter` for the archive's layout, and `contents`
+for the declarations, `archive.layout` for the archive's layout, and `contents`
 for the tree. ⛔ It names no source (R1) and it reads nothing outside the
 archive.
 
@@ -56,7 +56,7 @@ from studyforge.corpus.placement import (
     profile_for,
 )
 from studyforge.generate.footprint import Footprint, footprint_for
-from studyforge.skills.adapter import Layout
+from studyforge.archive.layout import Layout
 from studyforge.unit import ContentError, Heading, Mentions
 from studyforge.unit.builder import unit_headings
 

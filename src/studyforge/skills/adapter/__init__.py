@@ -55,7 +55,7 @@ say what it ingests.
 from __future__ import annotations
 
 from studyforge.skills.adapter.curriculum import CurriculumDisagrees, Filed, counted, filed
-from studyforge.skills.adapter.layout import (
+from studyforge.archive.layout import (
     ARCHIVE_DIR,
     RAW_DIR,
     TREE_ROOT,
