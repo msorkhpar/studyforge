@@ -97,7 +97,7 @@ def runner_starters() -> dict[str, str]:
 
 
 def test_every_module_that_starts_the_runner_stages_its_copy_through_the_engine_harness():
-    """⛔ pytest's `tmp_path` is under the host temporary directory; Docker Desktop cannot bind it."""
+    """⛔ pytest's `tmp_path` is under the host temporary directory, which Desktop cannot bind."""
     starters = runner_starters()
     assert "studyforge/execute/test_acceptance.py" in starters, "the sweep found no starter"
     staged_on_host = [
@@ -105,7 +105,7 @@ def test_every_module_that_starts_the_runner_stages_its_copy_through_the_engine_
         for path, text in starters.items()
         if "engine.shared(" not in text or re.search(r"\btmp_path(_factory)?\b", text)
     ]
-    assert staged_on_host == [], f"a runner started over a host temporary directory: {staged_on_host}"
+    assert staged_on_host == [], f"a runner started over a host temporary dir: {staged_on_host}"
 
 
 def test_every_runnable_container_case_names_the_runtime_it_needs():

@@ -119,7 +119,10 @@ def undeclared_reason(label: str | None, needs: str) -> str | None:
     """Why an image labelled `label` cannot run cases that need `needs`; `None` when it can."""
     wanted = f"set {IMAGE_VARIABLE} to a {SIBLING} runner built with --runtimes including {needs}"
     if label is None:
-        return f"the runner image carries no {RUNTIMES_LABEL} label, so it declares no {needs}: {wanted}"
+        return (
+            f"the runner image carries no {RUNTIMES_LABEL} label, so it declares no {needs}: "
+            f"{wanted}"
+        )
     if needs not in label.split():
         return f"the runner image declares '{label}', not {needs}: {wanted}"
     return None
