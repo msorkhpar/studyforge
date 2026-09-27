@@ -31,6 +31,7 @@ import pytest
 
 from tests.docker.devfiles import DEV, instructions, read
 from tests.docker.devgate import OPT_IN, base_image
+from tests.docker.test_dev_image_identity import hashed_inputs
 from tests.harness import engine
 from tests.studyforge.narrate.release.test_restore_ps1 import PWSH_IMAGE
 from tests.support import repository_root, tool_on_path
@@ -66,8 +67,7 @@ def identity_script(text: str) -> str:
 
 
 def test_the_twin_hashes_the_same_checkout_files_as_check():
-    inputs = [line for line in instructions("check").splitlines() if line.startswith("INPUTS=")]
-    assert inputs == [f'INPUTS="{twin_inputs()}"']
+    assert hashed_inputs(instructions("check")) == set(twin_inputs().split())
 
 
 def twin_inputs() -> str:
@@ -93,7 +93,7 @@ def test_the_twin_bounds_the_run_inside_the_container_as_check_does():
 
 
 def test_the_twin_sets_the_attestation_variable_unconditionally():
-    assert "$env:BUILDX_NO_DEFAULT_ATTESTATIONS = '1'" in twin().splitlines()
+    assert re.search(r"^\$env:BUILDX_NO_DEFAULT_ATTESTATIONS = '1'$", twin(), flags=re.MULTILINE)
 
 
 def test_the_twin_derives_the_identity_offline_read_only_over_the_same_listing():
