@@ -161,7 +161,7 @@ def _capture(
         return PageSeen(False, f"the DOM launch {failed}")
     if "<body" not in text:
         return PageSeen(False, "the DOM the browser printed has no body")
-    dom.write_text(text, encoding="utf-8")
+    dom.write_text(text, encoding="utf-8", newline="\n")
     return PageSeen(True, "rendered")
 
 

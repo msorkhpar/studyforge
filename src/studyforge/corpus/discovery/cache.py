@@ -175,7 +175,7 @@ def write(path: Path | str, site: Site) -> tuple[str, ...]:
     said = ensure_ignored(path)
     staged = path.with_name(path.name + WRITING_SUFFIX)
     try:
-        staged.write_text(render(site), encoding="utf-8")
+        staged.write_text(render(site), encoding="utf-8", newline="\n")
         os.replace(staged, path)
     finally:
         staged.unlink(missing_ok=True)
@@ -242,7 +242,7 @@ def ignore_text() -> str:
 def _write_ignore(ignore: Path) -> tuple[str, ...]:
     """Write the ignore file, reporting either what was written or why it was not."""
     try:
-        ignore.write_text(ignore_text(), encoding="utf-8")
+        ignore.write_text(ignore_text(), encoding="utf-8", newline="\n")
     except OSError as fault:
         # ⛔ `strerror`, never the exception: it renders with the absolute path (R7).
         return (f"{IGNORE_FILENAME} could not be written beside the cache: {fault.strerror}",)

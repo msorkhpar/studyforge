@@ -46,11 +46,12 @@ def stage():
     """One copy of the corpus, and — when the image is named — the reader's container over it.
 
     ⭐ The copy is engine-visible (`tests.harness.engine`), never under the host's
-    temporary directory: Docker Desktop shares none, and Windows has none.
+    temporary directory: Docker Desktop shares none, and Windows has none. ⭐ The
+    image must declare the fixture's runtime, or container mode skips naming it.
     """
     with engine.shared("sf20") as where:
         root = fixture_copy(where)
-        reason = container.skip_reason()
+        reason = container.skip_reason(needs=container.RUNNABLE_RUNTIME)
         name = None if reason else container.start(root)
         try:
             yield root, name, reason

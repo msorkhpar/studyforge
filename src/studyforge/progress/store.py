@@ -244,7 +244,7 @@ def _replace(path: Path, text: str) -> None:
     """Write `text` beside `path`, flush it to disk, and rename it over `path`."""
     staged = path.with_name(path.name + WRITING_SUFFIX)
     try:
-        with open(staged, "w", encoding="utf-8") as handle:
+        with open(staged, "w", encoding="utf-8", newline="\n") as handle:
             handle.write(text)
             handle.flush()
             os.fsync(handle.fileno())

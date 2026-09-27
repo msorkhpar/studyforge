@@ -71,6 +71,11 @@ SIBLING = "code-server-toolchain"
 #: The component's machine-readable contract, and the block this reads from it.
 CONTRACT = "consuming.json"
 BLOCK = "runner"
+#: The label the sibling's build writes on a runner image: its declared runtimes, space-separated.
+RUNTIMES_LABEL = "org.studyforge.runner.runtimes"
+#: The set a runner must declare for `tests/fixtures/runnable/`, whose practices are Python
+#: run by `python3` and `pytest`: the sibling's `python` runtime carries both.
+RUNNABLE_RUNTIME = "python"
 #: The schema version this understands, and the `provides` it was built against.
 CONSUMING_API = 1
 PROMISE = 2
@@ -81,15 +86,43 @@ def image() -> str | None:
     return os.environ.get(IMAGE_VARIABLE) or None
 
 
-def skip_reason() -> str | None:
-    """Why the container cases cannot run here, or `None` when they can."""
+def skip_reason(needs: str | None = None) -> str | None:
+    """Why the container cases cannot run here, or `None` when they can.
+
+    ⭐ `needs` is a runtime the cases run, read off the image's DECLARED set
+    (`RUNTIMES_LABEL`), never off what it happens to hold: an image that does not
+    declare it is refused by name, so a java-maven runner skips a Python case
+    rather than failing it with `python3: not found`.
+    """
     if image() is None:
         return f"no runner image named: set {IMAGE_VARIABLE} to a tag built by {SIBLING}"
     if tool_on_path("docker") is None:
         return "no docker CLI in this environment (the pinned dev image carries none)"
     if _docker("image", "inspect", image()).returncode != 0:
         return f"{IMAGE_VARIABLE} names an image this daemon does not hold"
+    if needs is not None:
+        missing = undeclared_reason(declared_runtimes(image()), needs)
+        if missing is not None:
+            return missing
     return declaration_reason()
+
+
+def declared_runtimes(tag: str) -> str | None:
+    """The image's declared-runtimes label, or `None` when it carries none."""
+    template = f'{{{{index .Config.Labels "{RUNTIMES_LABEL}"}}}}'
+    label = _docker("image", "inspect", "--format", template, tag)
+    text = label.stdout.strip()
+    return text if label.returncode == 0 and text and text != "<no value>" else None
+
+
+def undeclared_reason(label: str | None, needs: str) -> str | None:
+    """Why an image labelled `label` cannot run cases that need `needs`; `None` when it can."""
+    wanted = f"set {IMAGE_VARIABLE} to a {SIBLING} runner built with --runtimes including {needs}"
+    if label is None:
+        return f"the runner image carries no {RUNTIMES_LABEL} label, so it declares no {needs}: {wanted}"
+    if needs not in label.split():
+        return f"the runner image declares '{label}', not {needs}: {wanted}"
+    return None
 
 
 def contract_reading(root: Path | None = None) -> sibling.Reading:

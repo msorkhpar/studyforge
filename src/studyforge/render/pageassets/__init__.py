@@ -9,7 +9,7 @@ links.
     from studyforge.render.pageassets import written_files
 
     for name, body in written_files().items():
-        (out / name).write_text(body, encoding="utf-8")
+        (out / name).write_text(body, encoding="utf-8", newline="\n")
 
 **Depends on.** The standard library and `render/assets/`. ⛔ Nothing else in
 `studyforge`: assets know nothing about corpora, addresses or documents, and a

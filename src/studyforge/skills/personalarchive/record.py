@@ -70,7 +70,7 @@ def staged(text: str, depth: int) -> dict:
     with tempfile.TemporaryDirectory() as scratch:
         placed = store_dir(scratch) / PROGRESS_FILENAME
         placed.parent.mkdir(parents=True)
-        placed.write_text(text, encoding="utf-8")
+        placed.write_text(text, encoding="utf-8", newline="\n")
         return Progress(scratch, depth).read()
 
 
