@@ -22,7 +22,6 @@ from __future__ import annotations
 
 import json
 import shutil
-import subprocess
 from pathlib import Path
 
 import pytest
@@ -33,8 +32,6 @@ from tests.harness import engine
 from tests.studyforge.execute import container
 
 COMPILE_PLANT = {"file": "src/main/java/smoke/Adder.java", "from": "a + b", "to": "a + c"}
-#: The label `code-server-toolchain`'s build writes: the declared set, space-separated.
-RUNTIMES_LABEL = "org.studyforge.runner.runtimes"
 
 
 def smoke_project() -> Path | None:
@@ -45,33 +42,10 @@ def smoke_project() -> Path | None:
     return checkout / "docker/minimal/smoke/maven" if checkout is not None else None
 
 
-def declared_runtimes(image: str) -> str | None:
-    """The image's declared-runtimes label, or `None` when it carries none."""
-    template = f'{{{{index .Config.Labels "{RUNTIMES_LABEL}"}}}}'
-    inspected = subprocess.run(
-        ["docker", "image", "inspect", "--format", template, image],
-        stdin=subprocess.DEVNULL,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    label = inspected.stdout.strip()
-    return label if inspected.returncode == 0 and label and label != "<no value>" else None
-
-
-def undeclared_reason(label: str | None) -> str | None:
-    """Why an image labelled so cannot carry these cases; `None` when it declares `maven`."""
-    if label is None:
-        return f"the runner image carries no {RUNTIMES_LABEL} label, so it declares no maven"
-    if "maven" not in label.split():
-        return f"the runner image declares '{label}', not maven: build it with java,maven"
-    return None
-
-
 def reason_to_skip() -> str | None:
     if smoke_project() is None or not (smoke_project() / "smoke.json").is_file():
         return f"the sibling {container.SIBLING}'s Maven smoke project is not reachable"
-    return container.skip_reason() or undeclared_reason(declared_runtimes(container.image()))
+    return container.skip_reason(needs="maven")
 
 
 def maven_run(where, plant=None) -> list[str]:
@@ -140,11 +114,11 @@ def test_a_real_compile_error_survives_intact(raw):
 
 def test_an_image_that_does_not_declare_maven_is_refused_naming_its_label():
     for label in ("python", "java", "java node", "mavenrepo"):
-        reason = undeclared_reason(label)
+        reason = container.undeclared_reason(label, "maven")
         assert reason is not None and f"'{label}'" in reason and "maven" in reason
-    assert "no " + RUNTIMES_LABEL in undeclared_reason(None)
+    assert "no " + container.RUNTIMES_LABEL in container.undeclared_reason(None, "maven")
 
 
 def test_an_image_that_declares_maven_is_not_refused():
     for label in ("java maven", "gradle java kotlin maven node python sqlite"):
-        assert undeclared_reason(label) is None
+        assert container.undeclared_reason(label, "maven") is None

@@ -15,22 +15,29 @@ from __future__ import annotations
 import pytest
 
 from studyforge.execute import CONTAINER, HOST, Runner, instance
+from tests.harness import engine
 from tests.studyforge.cli.checking import FAILING, PASSING, UNTESTED, check, main_path
 from tests.studyforge.execute import container
 from tests.studyforge.execute.runnable import fixture_copy, host_environment_clean, observed
 
 
 @pytest.fixture(scope="module")
-def stage(tmp_path_factory):
-    """One copy of the corpus, and, when the image is named, the reader's container over it."""
-    root = fixture_copy(tmp_path_factory.mktemp("sf44"))
-    reason = container.skip_reason()
-    name = None if reason else container.start(root)
-    try:
-        yield root, name, reason
-    finally:
-        if name is not None:
-            container.remove(name)
+def stage():
+    """One copy of the corpus, and, when the image is named, the reader's container over it.
+
+    ⭐ The copy is engine-visible (`tests.harness.engine`), never under the host's
+    temporary directory: Docker Desktop shares none, and Windows has none. ⭐ The
+    image must declare the fixture's runtime, or container mode skips naming it.
+    """
+    with engine.shared("sf44") as where:
+        root = fixture_copy(where)
+        reason = container.skip_reason(needs=container.RUNNABLE_RUNTIME)
+        name = None if reason else container.start(root)
+        try:
+            yield root, name, reason
+        finally:
+            if name is not None:
+                container.remove(name)
 
 
 def checked_in(stage, mode: str, unit: int, monkeypatch):

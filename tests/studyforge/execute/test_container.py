@@ -15,6 +15,7 @@ module is green in the pinned image and on a host with no sibling checked out.
 from __future__ import annotations
 
 import json
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -271,3 +272,36 @@ def test_the_real_sibling_declares_a_shape_this_can_render():
     assert "--network" in argv and argv[argv.index("--network") + 1] == "none"
     assert f"/sources:{container.workspace_path(runner)}" in argv
     assert runner["docker_socket"] is False
+
+
+# --- an image that does not declare what the cases run is skipped by name ------------
+
+
+def an_image_declaring(monkeypatch, label: str | None) -> None:
+    """A named, held image whose runtimes label reads `label`, with no Docker touched."""
+
+    def docker(*arguments: str):
+        stdout = "<no value>" if label is None else label
+        return subprocess.CompletedProcess(["docker", *arguments], 0, stdout=stdout, stderr="")
+
+    monkeypatch.setenv(container.IMAGE_VARIABLE, "an-image")
+    monkeypatch.setattr(container, "tool_on_path", lambda _name: "docker")
+    monkeypatch.setattr(container, "_docker", docker)
+    monkeypatch.setattr(container, "declaration_reason", lambda: None)
+
+
+@pytest.mark.parametrize("label", ["java maven", None])
+def test_a_runner_that_does_not_declare_python_skips_the_runnable_cases_naming_it(
+    monkeypatch, label
+):
+    """⭐ A java-maven runner has no `python3`: the case skips saying so, never fails."""
+    an_image_declaring(monkeypatch, label)
+    reason = container.skip_reason(needs=container.RUNNABLE_RUNTIME)
+    assert reason is not None and "python" in reason and container.IMAGE_VARIABLE in reason
+
+
+def test_a_runner_that_declares_python_runs_the_runnable_cases(monkeypatch):
+    an_image_declaring(monkeypatch, "java maven python")
+    assert container.skip_reason(needs=container.RUNNABLE_RUNTIME) is None
+    an_image_declaring(monkeypatch, "java maven")
+    assert container.skip_reason() is None, "a case that needs nothing reads no label"

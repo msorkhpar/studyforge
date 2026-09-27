@@ -287,7 +287,7 @@ def write_files(
             continue
         path = root / item.where
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(item.text, encoding="utf-8")
+        path.write_text(item.text, encoding="utf-8", newline="\n")
         written.append(item.where)
     return written
 

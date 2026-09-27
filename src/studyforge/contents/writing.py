@@ -54,7 +54,7 @@ def write(path: Path | str, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     staged = path.with_name(path.name + WRITING_SUFFIX)
     try:
-        staged.write_text(text, encoding="utf-8")
+        staged.write_text(text, encoding="utf-8", newline="\n")
         os.replace(staged, path)
     finally:
         staged.unlink(missing_ok=True)

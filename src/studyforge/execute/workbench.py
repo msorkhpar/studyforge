@@ -348,7 +348,7 @@ def write_settings(folder: Path, main: str, test: str | None, *, editable: bool 
         # ⛔ This write's OWN name: a shared one is moved away by one
         # concurrent write from under the other, and the other is refused.
         handle, temporary = tempfile.mkstemp(dir=target.parent / STAGING_DIR, prefix=SETTINGS_FILE)
-        with os.fdopen(handle, "w", encoding="utf-8") as out:
+        with os.fdopen(handle, "w", encoding="utf-8", newline="\n") as out:
             out.write(body)
         os.replace(temporary, target)
         temporary = None
@@ -393,7 +393,7 @@ def _ensure_ignored(ignore: Path) -> None:
     it is. An `OSError` other than that one propagates to the caller's refusal.
     """
     try:
-        with ignore.open("x", encoding="utf-8") as out:
+        with ignore.open("x", encoding="utf-8", newline="\n") as out:
             out.write(IGNORE_TEXT)
     except FileExistsError:
         return
