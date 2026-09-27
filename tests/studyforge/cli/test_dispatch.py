@@ -236,7 +236,7 @@ def test_importing_the_plan_no_longer_loads_the_narrate_verb():
     # ⛔ `cli/plan` must not reach `cli.narrate` through the dispatcher. The
     # plan does reach narration's read side on its own.
     loaded = loaded_by("studyforge.cli.plan")
-    assert "studyforge.narrate.synth" in loaded
+    assert "studyforge.narrate.recorded" in loaded
     assert [name for name in loaded if name.startswith("studyforge.cli.narrate")] == []
 
 

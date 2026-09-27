@@ -1315,7 +1315,7 @@ What it reads, and the choices in it:
 
 ### The narration record names the conditions clips were made under
 
-**Decision.** `.studyforge/narration.json` records the conditions of synthesis (`narrate.synth.record.Conditions`): the voice, the format, the service's promise, the chunk size and the deployment's engine model as reported by the service's health answer, and a change to any of them makes clips stale. A clip's own engine fields are provenance and are not compared.
+**Decision.** `.studyforge/narration.json` records the conditions of synthesis (`narrate.recorded.record.Conditions`): the voice, the format, the service's promise, the chunk size and the deployment's engine model as reported by the service's health answer, and a change to any of them makes clips stale. A clip's own engine fields are provenance and are not compared.
 
 **Why.** A content-addressed filename captures the words but not the deployment settings that produced the audio.
 

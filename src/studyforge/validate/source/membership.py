@@ -12,9 +12,10 @@ yielding `Finding`s like every other check. `archive_members(walk)` returns the
 member set on its own.
 
 **Depends on.** `validate.corpus` for what the archive reader read,
-`archive.layout.Layout` for a unit's own files, `corpus.container`, `corpus.placement`, `address` for the first ordinal,
-`sourcepath` for what a `local` may be, `validate.report`. ⛔ Nothing in this
-package's other three modules.
+`archive.layout.Layout` for a unit's own files, `corpus.container`,
+`corpus.placement`, `address` for the first ordinal, `sourcepath` for what a
+`local` may be, `validate.report`. ⛔ Nothing in this package's other three
+modules.
 
 ## ⛔ A member is what the readers read, never a list kept here
 
@@ -197,9 +198,10 @@ def _unit_files(walk: Walk) -> frozenset[Path]:
     """Each declared unit's own directory, as the adapter's published layout places it.
 
     ⭐ `Layout` is `archive.layout`'s, which imports neither `validate` nor any
-    skill, so the import is an ordinary one. ⭐ Asked of the address, as a build asks it (`generate.media`). A unit's
-    files beside a map held at another directory are strays, beside that map's
-    `address-directory`, because no build reads them there either.
+    skill, so the import is an ordinary one. ⭐ Asked of the address, as a build
+    asks it (`generate.media`). A unit's files beside a map held at another
+    directory are strays, beside that map's `address-directory`, because no
+    build reads them there either.
     """
     layout = Layout(walk.root)
     return frozenset(

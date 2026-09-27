@@ -10,7 +10,7 @@ are the release, and the corpus keeps its clips where they are.
 returns the population without writing anything; `read_sums(out)` reads a
 checksum manifest back. `studyforge narrate <root> --pack <dir>` is the command.
 
-**Depends on.** `narrate.synth` for the record (`read_state`, `state_file`,
+**Depends on.** `narrate.recorded` for the record (`read_state`, `state_file`,
 `located`), `corpus.manifest` for the media policy, `checksum` for each
 volume's SHA-256, and the standard library (`zipfile`). ⛔ It names no
 source (R1) and composes no layout (R4): every path comes from the record.
@@ -56,7 +56,7 @@ from pathlib import Path, PurePosixPath
 from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.checksum import Running
 from studyforge.corpus.manifest import MANIFEST_FILENAME, RAISES, load
-from studyforge.narrate.synth import located, read_state, state_file
+from studyforge.narrate.recorded import located, read_state, state_file
 
 #: The most bytes one volume holds: at most 999 MB, inside a 2 GiB asset limit.
 PART_BYTES = 999_000_000

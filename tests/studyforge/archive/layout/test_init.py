@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/archive/layout.py` (R12)."""
+"""Mirror of `src/studyforge/archive/layout/__init__.py` (R12)."""
 
 from __future__ import annotations
 
@@ -9,15 +9,6 @@ import pytest
 from studyforge.address import Address, unit_name
 from studyforge.archive.document import KINDS, build
 from studyforge.archive.document import render as render_document
-from studyforge.corpus.container import CONTAINER_FILENAME, Container, Unit
-from studyforge.corpus.container import render as render_map
-from studyforge.corpus.manifest import MANIFEST_FILENAME
-from studyforge.corpus.placement import (
-    ARCHIVE_DIRNAME,
-    RAW_DIRNAME,
-    UNITS_DIRNAME,
-    profile_for,
-)
 from studyforge.archive.layout import (
     ARCHIVE_DIR,
     RAW_DIR,
@@ -27,6 +18,15 @@ from studyforge.archive.layout import (
     LayoutError,
     archive_tree,
     document_name,
+)
+from studyforge.corpus.container import CONTAINER_FILENAME, Container, Unit
+from studyforge.corpus.container import render as render_map
+from studyforge.corpus.manifest import MANIFEST_FILENAME
+from studyforge.corpus.placement import (
+    ARCHIVE_DIRNAME,
+    RAW_DIRNAME,
+    UNITS_DIRNAME,
+    profile_for,
 )
 from studyforge.unit.content import CONTENT_FILENAME
 from studyforge.validate.corpus import read as walk
@@ -89,7 +89,7 @@ def test_the_two_shipped_fixtures_keep_their_material_where_unit_files_says():
     contract's filename, so the one fixture pins both halves. ⛔ The
     filename is not spelled here either.
     """
-    fixtures = Path(__file__).resolve().parents[2] / "fixtures"
+    fixtures = Path(__file__).resolve().parents[3] / "fixtures"
 
     depth1 = Layout(fixtures / "depth1").unit_files(ADDRESS, 2)
     depth2 = Layout(fixtures / "depth2")

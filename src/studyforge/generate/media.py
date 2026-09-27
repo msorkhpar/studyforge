@@ -74,6 +74,7 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
 from studyforge.archive.blocks import BLOCK_FIELDS, walk
+from studyforge.archive.layout import Layout
 from studyforge.corpus.placement import (
     ATTACHMENTS_DIRNAME,
     IMAGES_DIRNAME,
@@ -90,7 +91,6 @@ from studyforge.generate.declarations import (
     unit_location,
 )
 from studyforge.generate.writing import Written, copy, mint, stand
-from studyforge.archive.layout import Layout
 from studyforge.sourcepath import SOURCE_PATH_DESCRIBED, source_path_fault
 from studyforge.unit.builder import build_unit
 

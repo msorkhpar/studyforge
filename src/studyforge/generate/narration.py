@@ -21,7 +21,7 @@ calls while it renders; a page pass never reads the record itself.
 build copies is the clip the page addresses. `clips_on_disk(corpus, state)` says
 whether any recorded clip is on disk.
 
-**Depends on.** `narrate.playable` for the join, `narrate.synth` for where the
+**Depends on.** `narrate.playable` for the join, `narrate.recorded` for where the
 record lives, how it is read and where a unit's clips were placed,
 `render.page` for `Narration`, and `generate.units` for the page pass (deferred:
 `units` imports this module). Not `narrate.client` and not `synthesise`
@@ -65,7 +65,7 @@ names.
 
 ## Where the disk is probed: the page's own directory
 
-The disk is probed at `synth.audio_dir(root, at)`, where `at` is this page's own
+The disk is probed at `recorded.audio_dir(root, at)`, where `at` is this page's own
 `unit_location`, the one derivation `narrate` places clips through as well. So a
 labelled unit's clips are where its page looks, and every href a
 page emits is answerable. A clip that is not there is a gap the page names;
@@ -96,7 +96,7 @@ from studyforge.generate.declarations import (
 )
 from studyforge.generate.writing import Written, place
 from studyforge.narrate.playable import MISFILED, NOT_ON_DISK, NOT_PLACED, Playable, playable_of
-from studyforge.narrate.synth import State, StateError, audio_dir, read_state, state_file
+from studyforge.narrate.recorded import State, StateError, audio_dir, read_state, state_file
 from studyforge.render.page import SILENT, Narration, Placement
 
 #: The silent states that are a promise the disk did not keep. `NOT_RECORDED`

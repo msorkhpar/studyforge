@@ -1,13 +1,13 @@
 r"""Which clip each narrated element plays — ⛔ joined on the SPEECH ID, never the position.
 
-**What it does.** Joins `speakable`'s speech units to `synth`'s regeneration record
+**What it does.** Joins `speakable`'s speech units to `recorded`'s regeneration record
 and returns the one mapping a page needs: `SpeechUnit.position -> filename`,
 plus a **named state** for every unit that has no clip to play.
 
 **How you use it.** ⭐ Read the record ONCE for the corpus, then ask per document:
 
     from studyforge.narrate.playable import playable_of
-    from studyforge.narrate.synth.record import read_state, state_file
+    from studyforge.narrate.recorded.record import read_state, state_file
 
     recorded = read_state(state_file(root))          # once per corpus
     playing = playable_of(document, recorded)        # once per page
@@ -20,7 +20,7 @@ exactly as it did before narration existed. ⛔ That is the ordinary case, not a
 error path.
 
 **Depends on.** `narrate.speakable` for the unit record and the clip-name
-parser, `narrate.synth.record` for the recorded state, and `describe`. ⛔ **Not
+parser, `narrate.recorded.record` for the recorded state, and `describe`. ⛔ **Not
 on `render`** — this module hands out filenames, and turning one into an href is
 `render.page.narration`'s through the placement policy (R4).
 
@@ -84,10 +84,10 @@ from pathlib import Path
 from types import MappingProxyType
 
 from studyforge.describe import describe
+from studyforge.narrate.recorded.record import State
 from studyforge.narrate.speakable import speakable_of
 from studyforge.narrate.speakable.naming import digest_of, parse_clip_name
 from studyforge.narrate.speakable.records import SpeakableError, SpeechUnit
-from studyforge.narrate.synth.record import State
 
 #: Where a narrated element sits: the served section's key, the block indices
 #: from that section down, and the item or row inside the block — or `None` for
@@ -185,7 +185,7 @@ def playable_of_units(
     callers want `playable_of` above.
 
     ⛔ `audio` is the directory those clips were placed in — the unit's placement
-    rooted by `synth.incremental.audio_dir`, never composed. When it
+    rooted by `recorded.audio_dir`, never composed. When it
     is `None` the disk is not consulted at all and a recorded clip is taken at
     its word, which keeps the pure path pure (R10).
 

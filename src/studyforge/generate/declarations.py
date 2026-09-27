@@ -40,6 +40,7 @@ from dataclasses import dataclass, replace
 from pathlib import Path, PurePosixPath
 
 from studyforge.address import Address
+from studyforge.archive.layout import Layout
 from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.contents import Contents, ContentsError, build, order
 from studyforge.corpus.container import CONTAINER_FILENAME, Container, Unit
@@ -56,7 +57,6 @@ from studyforge.corpus.placement import (
     profile_for,
 )
 from studyforge.generate.footprint import Footprint, footprint_for
-from studyforge.archive.layout import Layout
 from studyforge.unit import ContentError, Heading, Mentions
 from studyforge.unit.builder import unit_headings
 

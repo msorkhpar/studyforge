@@ -12,11 +12,13 @@ from pathlib import Path
 
 from studyforge.corpus.placement.names import AUDIO_DIRNAME
 from studyforge.corpus.placement.profile import GENERATED_ROOT
-from studyforge.narrate import synth
+from studyforge.narrate import recorded, synth
 from studyforge.version import CONTRACT_FIELDS
 
 PACKAGE = Path(synth.__file__).parent
-MODULES = sorted(PACKAGE.glob("*.py"))
+#: ⭐ The record half lives next door, in `narrate.recorded`, and is held here too.
+RECORDED = Path(recorded.__file__).parent
+MODULES = sorted(PACKAGE.glob("*.py")) + sorted(RECORDED.glob("*.py"))
 
 
 def code_constants(path: Path) -> set[str]:
@@ -37,10 +39,10 @@ def code_constants(path: Path) -> set[str]:
     }
 
 
-def test_the_package_has_the_three_modules_the_seam_names():
-    assert [path.name for path in MODULES] == [
+def test_the_seam_names_the_pass_here_and_the_record_next_door():
+    assert [path.name for path in sorted(PACKAGE.glob("*.py"))] == ["__init__.py", "incremental.py"]
+    assert [path.name for path in sorted(RECORDED.glob("*.py"))] == [
         "__init__.py",
-        "incremental.py",
         "location.py",
         "record.py",
     ]
@@ -54,8 +56,6 @@ def test_everything_the_package_exports_is_reachable_by_that_name():
     # `corpus/placement/__init__.py` is the precedent. Asserted as a set.
     assert set(synth.__all__) == {name for name in dir(synth) if not name.startswith("_")} - {
         "incremental",
-        "location",
-        "record",
         "studyforge",
     }
 
@@ -79,7 +79,7 @@ def test_no_module_in_the_package_names_version_control_or_an_exclusion_file():
 
 def test_that_scan_reads_the_package_and_would_see_the_word():
     # ⭐ The positive control: the population is non-empty and the pattern fires.
-    assert len(MODULES) == 4
+    assert len(MODULES) == 5
     assert re.search(r"(?i)\bignore\b", "an ignore file")
 
 
@@ -96,15 +96,14 @@ def test_no_module_spells_a_media_directory_or_the_generated_root_of_its_own():
 
 def test_the_scanner_that_says_so_can_see_a_string_at_all():
     # ⭐ The positive control for the test above.
-    assert synth.NARRATION_STATE_FILENAME in code_constants(PACKAGE / "record.py")
+    assert synth.NARRATION_STATE_FILENAME in code_constants(RECORDED / "record.py")
     assert synth.CLIP_ABSENT in code_constants(PACKAGE / "incremental.py")
 
 
 def test_the_record_half_does_not_import_the_pass_half():
     # ⛔ The seam runs one way. A report or a coverage tracker must be able to
     # read the contract without dragging a client in.
-    source = (PACKAGE / "record.py").read_text(encoding="utf-8")
+    source = (RECORDED / "record.py").read_text(encoding="utf-8")
     assert "incremental" not in source
-    assert "from studyforge.narrate.synth.record import" in (PACKAGE / "incremental.py").read_text(
-        encoding="utf-8"
-    )
+    incremental = (PACKAGE / "incremental.py").read_text(encoding="utf-8")
+    assert "from studyforge.narrate.recorded.record import" in incremental

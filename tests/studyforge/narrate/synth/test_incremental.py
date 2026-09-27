@@ -31,6 +31,15 @@ from studyforge.corpus.placement.names import AUDIO_DIRNAME
 from studyforge.corpus.placement.profile import profile_for
 from studyforge.narrate.answers import NarrationError
 from studyforge.narrate.client import NarrateClient
+from studyforge.narrate.recorded.location import Superseded, audio_dir, located
+from studyforge.narrate.recorded.record import (
+    Clip,
+    Conditions,
+    State,
+    StateError,
+    read_state,
+    state_file,
+)
 from studyforge.narrate.speakable.naming import digest_of, parse_clip_name
 from studyforge.narrate.speakable.records import SpeechUnit
 from studyforge.narrate.synth.incremental import (
@@ -38,20 +47,10 @@ from studyforge.narrate.synth.incremental import (
     CONDITIONS_MOVED,
     NO_RECORD,
     WORDS_MOVED,
-    audio_dir,
     batches,
     plan,
     synthesise,
     wanted_name,
-)
-from studyforge.narrate.synth.location import Superseded, located
-from studyforge.narrate.synth.record import (
-    Clip,
-    Conditions,
-    State,
-    StateError,
-    read_state,
-    state_file,
 )
 from studyforge.narrate.wire import Received, Sent
 

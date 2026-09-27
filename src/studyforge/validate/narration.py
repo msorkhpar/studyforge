@@ -14,7 +14,7 @@ check's tuple — ⚠️ **only while narration is on** (`narrate.enabled`), whi
 **Depends on.** `validate.corpus` for the root, `validate.report`,
 `archive.scrub` for the voice it prints, and — deferred, see below —
 `generate` for the build's own walk and join, `unit` for the unit builder and
-`narrate.synth` for the record.
+`narrate.recorded` for the record.
 
 ## ⛔ WHY `validate`, WHEN THE JOIN ALREADY KNEW
 
@@ -76,7 +76,7 @@ def check_narration_current(walk: Walk) -> Iterator[Finding | Unchecked]:
     block, so the paragraph is found without a word of it quoted.
     """
     from studyforge.generate import RAISES, heard, read_corpus, unit_location
-    from studyforge.narrate.synth import StateError, read_state, state_file
+    from studyforge.narrate.recorded import StateError, read_state, state_file
     from studyforge.unit.builder import build_unit
     from studyforge.unit.errors import ContentError
 

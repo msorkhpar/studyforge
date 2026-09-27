@@ -20,7 +20,7 @@ R6). Every clip is recorded with the directory it was written into, and a
 clip a re-wording replaces stays on disk as the entry's `superseded` until a
 prune, so a prune can reach it without scanning a directory.
 
-**Depends on.** `synth.record` — one way, never the reverse.
+**Depends on.** `narrate.recorded` — one way, never the reverse.
 """
 
 from __future__ import annotations
@@ -29,13 +29,10 @@ from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
 
-from studyforge.corpus.placement import AUDIO_DIRNAME, UnitLocations
 from studyforge.describe import describe
 from studyforge.narrate.answers import Narrator, place
-from studyforge.narrate.speakable.naming import clip_name
-from studyforge.narrate.speakable.records import SpeechUnit
-from studyforge.narrate.synth.location import Superseded, located, order, root_of, where_of
-from studyforge.narrate.synth.record import (
+from studyforge.narrate.recorded.location import Superseded, located, order, root_of, where_of
+from studyforge.narrate.recorded.record import (
     Clip,
     Conditions,
     State,
@@ -43,6 +40,8 @@ from studyforge.narrate.synth.record import (
     read_state,
     write_state,
 )
+from studyforge.narrate.speakable.naming import clip_name
+from studyforge.narrate.speakable.records import SpeechUnit
 
 #: ⚠️ The service caps a request body at 4 MiB and this client does not split
 #: for you. Counted in characters of speech, well under that cap once
@@ -54,22 +53,6 @@ NO_RECORD = "no record of this unit"
 WORDS_MOVED = "the wording or the format changed"
 CONDITIONS_MOVED = "the conditions changed"
 CLIP_ABSENT = "the clip is not on disk"
-
-
-def audio_dir(root: Path | str, locations: UnitLocations) -> Path:
-    """Return where one unit's clips go: its placement answer, rooted — ⛔ never composed here.
-
-    ⛔ **`locations` is the ONE derivation**, the unit's
-    `generate.declarations.unit_location`, which takes what `unit_stem` takes,
-    the label included. `narrate`, the build's read and the page hold that one
-    answer, so no stem is spelled here and no argument of it can be dropped here.
-
-    ⭐ The *"through the placement policy"* half of synthesis: a caller that
-    composed the media directory itself would be the second layout authority R4
-    removes, and that mistake is invisible under one of the two profiles, whose
-    media directory happens to sit where a hand-composed path would put it.
-    """
-    return Path(root) / Path(str(locations.media_dir(AUDIO_DIRNAME)))
 
 
 def wanted_name(unit: SpeechUnit, conditions: Conditions) -> str:
