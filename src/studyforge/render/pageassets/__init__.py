@@ -1,4 +1,4 @@
-"""The page's stylesheet and script: source files on disk, composed by code.
+r"""The page's stylesheet and script: source files on disk, composed by code.
 
 **What it does.** Owns `render/assets/` — the reading surface's CSS and JS as
 real files — and composes them into the two artefacts every generated page
