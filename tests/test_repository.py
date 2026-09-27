@@ -364,3 +364,27 @@ def test_the_lint_verdict_is_taken_over_tracked_content_in_both_directions(tmp_p
     assert now_tracked.returncode == 1, (
         "a TRACKED lint-dirty module did not turn the committed verdict red"
     )
+
+
+#: Files a Linux container or a POSIX shell reads as they are checked out.
+LF_ONLY = (
+    "docker/dev/check",
+    "docker/dev/Dockerfile",
+    "src/studyforge/execute/assets/runservice.pl",
+    "src/studyforge/narrate/release/scripts/restore.sh",
+    "src/studyforge/narrate/release/scripts/restore.ps1",
+)
+
+
+def test_every_file_a_container_or_a_shell_reads_is_checked_out_with_lf():
+    """⛔ Git for Windows checks text out CRLF by default, and `sh` reads `\\r` as a word."""
+    done = run([git(), "check-attr", "text", "eol", "--", *LF_ONLY], cwd=repository_root())
+    if done.returncode != 0:
+        pytest.skip("git cannot read this checkout's attributes here (no git directory)")
+    said = {
+        (path, key): value
+        for path, key, value in (line.split(": ") for line in done.stdout.splitlines())
+    }
+    for path in LF_ONLY:
+        assert said[(path, "eol")] == "lf", f"{path} is checked out with the host's line ends"
+        assert said[(path, "text")] in ("auto", "set"), f"{path} is not normalised as text"

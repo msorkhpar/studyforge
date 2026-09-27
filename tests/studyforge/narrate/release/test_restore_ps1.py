@@ -7,8 +7,12 @@ invoking user, with no identity passed in, and is removed when it exits.
 
 - ⭐ the script parses with no error under PowerShell's own parser;
 - ⭐ volumes on disk restore every clip byte for byte and are left in place;
-- ⭐ a public and a private release served by `stand_in.StandIn` on loopback
-  restore every clip, the private one by asset id with the token as a header;
+- ⭐ a public and a private release served by `stand_in.StandIn` restore every
+  clip, the private one by asset id with the token as a header. ⭐ The stand-in
+  runs in a container of its own (`STAND_IN_IMAGE`, pinned, never pulled here)
+  on an INTERNAL user network the restore's container joins, and is reached by
+  name: on Docker Desktop the host network is the engine VM's, so a stand-in on
+  the host's loopback is out of reach, and an internal network has no route out;
 - ⛔ a corrupt volume is refused and nothing is extracted;
 - ⛔ a volume whose members are not the committed clips, another corpus's release,
   and clips whose bytes are not the committed ones are each refused, with the
@@ -19,14 +23,20 @@ Plants: `test_restore.plant_a_corrupt_volume`.
 
 from __future__ import annotations
 
+import contextlib
 import os
+import shutil
 import subprocess
+import time
+import uuid
 from pathlib import Path
 
 import pytest
 
 from studyforge.narrate.release import RESTORE_PS1
+from studyforge.skills.execution.siteimage import BASE
 from tests.harness import engine
+from tests.studyforge.narrate.release import stand_in
 from tests.studyforge.narrate.release.restoring import (
     DEAD_PROXY,
     files_of,
@@ -35,7 +45,7 @@ from tests.studyforge.narrate.release.restoring import (
     restored,
     signal,
 )
-from tests.studyforge.narrate.release.stand_in import OWNER_REPO, TOKEN, StandIn
+from tests.studyforge.narrate.release.stand_in import OWNER_REPO, TAG, TOKEN
 from tests.studyforge.narrate.release.test_restore import plant_a_corrupt_volume
 from tests.support import tool_on_path
 
@@ -50,6 +60,13 @@ PWSH_IMAGE = (
 
 #: Where the test's directory is mounted inside the container.
 WORK = "/work"
+
+#: The stand-in's image: the site image's own pinned base, standard library only.
+STAND_IN_IMAGE = BASE
+
+#: The stand-in's name on the network, and the port it listens on there.
+STAND_IN_NAME = "stand-in"
+STAND_IN_PORT = 8080
 
 
 @pytest.fixture
@@ -81,13 +98,14 @@ def pwsh(tmp_path: Path, command: list[str], env: dict[str, str], network: str =
     """Run `pwsh` in the pinned image over `tmp_path`, as this user, and remove the container."""
     argv = [
         "docker", "run", "--rm", "--pull", "never", "--network", network,
-        "--user", f"{os.getuid()}:{os.getgid()}",
+        *engine.run_as(),
         "-e", "HOME=/tmp",
         "-v", f"{engine.bindable(tmp_path)}:{WORK}",
     ]  # fmt: skip
     if network != "none":
         # ⛔ A request that escaped the stand-in fails at a dead proxy instead of leaving.
-        env = {"HTTPS_PROXY": DEAD_PROXY, "HTTP_PROXY": DEAD_PROXY, "NO_PROXY": "127.0.0.1", **env}
+        proxy = {"HTTPS_PROXY": DEAD_PROXY, "HTTP_PROXY": DEAD_PROXY, "NO_PROXY": STAND_IN_NAME}
+        env = {**proxy, **env}
     for name, value in env.items():
         argv += ["-e", f"{name}={value}"]
     return subprocess.run(
@@ -96,6 +114,65 @@ def pwsh(tmp_path: Path, command: list[str], env: dict[str, str], network: str =
         text=True,
         timeout=300,
     )
+
+
+class Contained:
+    """A stand-in running in its own container: where it answers, and what it was asked."""
+
+    def __init__(self, log: Path) -> None:
+        self.log = log
+        self.api = f"http://{STAND_IN_NAME}:{STAND_IN_PORT}"
+
+    def base_url(self, tag: str = TAG) -> str:
+        return f"{self.api}/{OWNER_REPO}/releases/download/{tag}"
+
+    @property
+    def requests(self) -> list[tuple[str, str, dict[str, str]]]:
+        return stand_in.logged(self.log)
+
+
+@contextlib.contextmanager
+def contained(tmp_path: Path, release: Path, *, private: bool):
+    """The stand-in in its own container on a fresh internal network; yield `(network, it)`.
+
+    ⛔ Both are removed whatever happens.
+    """
+    present = subprocess.run(["docker", "image", "inspect", STAND_IN_IMAGE], capture_output=True)
+    if present.returncode != 0:
+        pytest.skip("the stand-in's pinned Python image is not on this engine; pull it by digest")
+    where = tmp_path / "stand-in"
+    where.mkdir()
+    shutil.copy(stand_in.__file__, where / "stand_in.py")
+    suffix = uuid.uuid4().hex[:12]
+    network, name = f"restore-ps1-{suffix}", f"restore-ps1-stand-in-{suffix}"
+    inside = f"{WORK}/{where.relative_to(tmp_path).as_posix()}"
+    served = f"{WORK}/{release.relative_to(tmp_path).as_posix()}"
+    created = ["docker", "network", "create", "--internal", network]
+    subprocess.run(created, capture_output=True, check=True)
+    try:
+        started = subprocess.run(
+            [
+                "docker", "run", "--detach", "--rm", "--pull", "never",
+                "--name", name, "--network", network, "--network-alias", STAND_IN_NAME,
+                *engine.run_as(),
+                "-v", f"{engine.bindable(tmp_path)}:{WORK}",
+                STAND_IN_IMAGE, "python3", f"{inside}/stand_in.py", served,
+                "--port", str(STAND_IN_PORT),
+                "--log", f"{inside}/requests.jsonl", "--ready", f"{inside}/ready",
+                *(["--private"] if private else []),
+            ],
+            capture_output=True,
+            text=True,
+        )  # fmt: skip
+        assert started.returncode == 0, started.stderr
+        deadline = time.monotonic() + 30
+        while not (where / "ready").exists():
+            assert time.monotonic() < deadline, "the contained stand-in never listened"
+            time.sleep(0.1)
+        yield network, Contained(where / "requests.jsonl")
+    finally:
+        subprocess.run(["docker", "rm", "--force", name], capture_output=True)
+        subprocess.run(["docker", "network", "rm", network], capture_output=True)
 
 
 def script(tmp_path: Path, corpus) -> str:
@@ -135,13 +212,13 @@ def test_volumes_on_disk_restore_every_clip_and_are_left_in_place(tmp_path):
 def test_a_release_restores_every_clip_and_leaves_no_download(tmp_path, private):
     corpus = prepared(tmp_path)
 
-    with StandIn(corpus.release, private=private) as host:
+    with contained(tmp_path, corpus.release, private=private) as (network, host):
         env = (
             {"NARRATION_REPO": OWNER_REPO, "NARRATION_API_URL": host.api, "GITHUB_TOKEN": TOKEN}
             if private
             else {"NARRATION_BASE_URL": host.base_url()}
         )
-        done = pwsh(tmp_path, ["-File", script(tmp_path, corpus)], env, network="host")
+        done = pwsh(tmp_path, ["-File", script(tmp_path, corpus)], env, network=network)
 
     assert done.returncode == 0, done.stdout + done.stderr
     assert restored(corpus) == corpus.clips

@@ -34,6 +34,8 @@ signals the process GROUP — the program and every child it started — rather
 than orphaning children. `SIGTERM` first; then, once the command's own process
 has gone or `grace` seconds have passed, `SIGKILL` to whatever of the group is
 left — a child that ignores `TERM` outlives the parent that obeyed it.
+⭐ On Windows the launcher makes the same two steps a console break to the
+command's process group and a kill of its whole tree (`runner`).
 Abandoning `lines()` (a client hung up) kills whatever is still alive, so a
 disconnected page cannot leave a build running for ten minutes.
 
@@ -47,6 +49,12 @@ import subprocess
 import threading
 from collections.abc import Callable, Iterator, Sequence
 from typing import Protocol
+
+#: ⭐ The two signals a stop sends, as numbers every host has. `SIGKILL` is a
+#: POSIX name that Windows lacks, so it is its number there; each launcher turns
+#: both into its own host's way of ending a tree (`runner._signal_group`).
+STOP = int(signal.SIGTERM)
+KILL = int(getattr(signal, "SIGKILL", 9))
 
 EXIT_TIMEOUT = "timeout"
 EXIT_STOPPED = "stopped"
@@ -179,14 +187,14 @@ class RunHandle:
             process = self._process
         if process is None:
             return
-        self._launcher.signal(process, signal.SIGTERM)
+        self._launcher.signal(process, STOP)
         try:
             process.wait(timeout=self._grace)
         except subprocess.TimeoutExpired:
             pass
         # ⛔ KILL whatever is left even when the leader obeyed TERM: a child that
         # ignores TERM outlives its parent, and the group outlives both.
-        self._launcher.signal(process, signal.SIGKILL)
+        self._launcher.signal(process, KILL)
 
     def _close(self) -> None:
         with self._lock:

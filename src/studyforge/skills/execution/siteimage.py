@@ -45,11 +45,11 @@ from pathlib import Path
 from studyforge.skills.execution import written
 from studyforge.skills.execution.binds import ExecutionRefused
 from studyforge.skills.execution.onboard import DIRECTORY, GENERATED, SITE_ENV
-from studyforge.skills.execution.siteservice import GATED, IMAGE, SERVICE
+from studyforge.skills.execution.siteservice import BUILD_CONTEXT, BUILD_FILE, GATED, IMAGE, SERVICE
 from studyforge.skills.onboarding import library
 
 #: Where the image's build context is staged, under the skill's own directory.
-SITE_DIR = f"{DIRECTORY}/site"
+SITE_DIR = f"{DIRECTORY}/{BUILD_CONTEXT}"
 
 #: The copy of the installed library inside that context.
 LIBRARY = "library"
@@ -65,9 +65,6 @@ REPOSITORY = "studyforge-site"
 
 #: The profile the site service is in, which `SITE_ENV` turns on once recorded.
 PROFILE = SERVICE
-
-#: The build file, named apart from any component's own, none of which this skill reads.
-BUILD_FILE = "site.containerfile"
 
 #: What is never copied: bytecode the running Python left.
 SKIPPED = ("__pycache__",)
@@ -103,10 +100,10 @@ def stage_site(root: Path, *, package: Path = library.PACKAGE) -> Staged:
     version, commit = _pinned_library(root, package)
     context = root / SITE_DIR
     copied(package, context / LIBRARY / package.name)
-    (context / BUILD_FILE).write_text(build_file(), encoding="utf-8")
-    (context / ".gitignore").write_text(IGNORE, encoding="utf-8")
+    (context / BUILD_FILE).write_text(build_file(), encoding="utf-8", newline="\n")
+    (context / ".gitignore").write_text(IGNORE, encoding="utf-8", newline="\n")
     tag = f"{REPOSITORY}:{version}-{digest(context)[:12]}"
-    (root / SITE_ENV).write_text(site_env(tag, commit), encoding="utf-8")
+    (root / SITE_ENV).write_text(site_env(tag, commit), encoding="utf-8", newline="\n")
     recorded = (f"{SITE_DIR}/{BUILD_FILE}", f"{SITE_DIR}/.gitignore", SITE_ENV)
     written.stamp(root, recorded)
     argv = ("docker", "build", "--file", f"{SITE_DIR}/{BUILD_FILE}", "--tag", tag, SITE_DIR)

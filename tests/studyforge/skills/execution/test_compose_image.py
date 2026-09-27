@@ -10,7 +10,9 @@ sibling's contract at its pin; ⛔ **no tag is typed** — the one compose comma
 - ⭐ `execute.ModeProbe` over the corpus root answers `container`, so a Submit
   runs in the runner rather than falling back to the host;
 - ⭐ the container is the one `execute.container_for` names, and it holds the
-  corpus's own files at the contract's workspace.
+  corpus's own files at the contract's workspace;
+- ⭐ it is known by its labels: with its bind's source respelled as Docker
+  Desktop for Windows reports one, the probe still answers this root.
 
 ⚠️ The editor is not started here: its image is the component's to build and
 this module builds none. ⭐ `EDITOR_IMAGE` is set to a placeholder only because
@@ -108,6 +110,20 @@ def test_the_one_generated_command_brings_up_the_runner_execute_finds(tmp_path):
         name = container_for(SOURCE)
         assert made.runner is not None and made.runner.name == name
         assert ModeProbe(root, name).mode() == CONTAINER
+        # ⭐ Known by its labels, not the engine's spelling of the bind: with every
+        # source rewritten as Docker Desktop for Windows reports one, still this root.
+        from studyforge.execute.mode import _INSPECT_FORMAT, up_from
+
+        state, working_dir, binds, *mounts = docker(
+            "inspect", "--format", _INSPECT_FORMAT, "--", name
+        ).stdout.split("\n")
+        vm = [
+            f"/run/desktop/mnt/host/c/path/to/project\t{line.partition(chr(9))[2]}"
+            for line in mounts
+            if line
+        ]
+        assert binds and working_dir, "the compose file's runner carries no labels"
+        assert up_from("\n".join([state, working_dir, binds, *vm]), root)
         workdir = json.loads(text)["runner"]["workspace"]["container_path"]
         held = docker("exec", name, "test", "-f", f"{workdir}/pom.xml")
         assert held.returncode == 0, held.stderr

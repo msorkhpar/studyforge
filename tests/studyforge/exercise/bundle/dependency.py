@@ -26,7 +26,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
 import re
 import subprocess
 from pathlib import Path
@@ -141,8 +140,7 @@ def build_library(directory: Path, image: str) -> bytes:
             "--rm",
             "--network",
             "none",
-            "--user",
-            f"{os.getuid()}:{os.getgid()}",
+            *engine.run_as(),
             "-v",
             f"{engine.bindable(directory)}:/work",
             "-w",

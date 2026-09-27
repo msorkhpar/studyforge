@@ -39,11 +39,11 @@ and `composefile.render` checks the whole file's bytes for one besides.
   so the interpolation is composed here from the block's own `env_var`: the
   compose syntax `${VAR:?why}` and nothing else. The remedy is a `compose_value`
   in the component's `runner.image`.
-- ⛔ **`runner.runs_as` declares a shell `run_value` (`$(id -u):$(id -g)`) and
-  no compose key or value**, which compose cannot evaluate. ⭐ The editor
-  block's `runs_as` IS that answer — *"the uid:gid that owns the mounted
-  sources"* — so it is read from there rather than typed. The remedy is a `compose_key`
-  and `compose_value` in the component's `runner.runs_as`.
+- ⭐ **`runner.runs_as` declares a shell `run_value` (`$(id -u):$(id -g)`)**,
+  which compose cannot evaluate, and from `provides: 4` a `compose_key` and
+  `compose_value` too, which are read when present. ⚠️ A contract that declares
+  none has its uid:gid read from the editor block's `runs_as`, which IS that
+  answer — *"the uid:gid that owns the mounted sources"* — rather than typed.
 """
 
 from __future__ import annotations
@@ -52,6 +52,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 
 from studyforge.archive.scrub import scrub
+from studyforge.execute import labels
 from studyforge.skills.execution import rulings, toolchain
 from studyforge.skills.execution.contract import ContractRefused, blocks, optional, require
 
@@ -111,6 +112,9 @@ def plan(
         )
     selection = toolchain.select(runtimes, document, block=SERVICE)
     name = container_name(block, source)
+    own = optional(block, "runs_as", default={})
+    if isinstance(own, Mapping) and own.get("compose_key") and own.get("compose_value"):
+        runs_as = own
     built: dict[str, object] = {
         "image": f"${{{selection.image_env}:?{_why_unset(selection.image_env)}}}",
         "container_name": name if name_variable is None else f"${{{name_variable}:-{name}}}",
@@ -125,6 +129,13 @@ def plan(
             "is a surface with no service behind it"
         )
     built["volumes"] = [_mounted(entry, root) for entry in blocks(block, "mounts")]
+    # ⭐ What each mount IS, so `execute.mode` matches this container by its
+    # destination on any engine, never by the engine's spelling of the source.
+    built["labels"] = {
+        labels.BINDS: labels.binds_text(
+            ("", str(require(entry, "container_path"))) for entry in blocks(block, "mounts")
+        )
+    }
     built["restart"] = require(block, "restart")
     flag = require(block, "prime", "declared_by")
     if not isinstance(flag, str):

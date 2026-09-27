@@ -135,7 +135,11 @@ Docker Desktop shares no host `/tmp` and Windows has none, so nothing is ever
 mounted from a temporary directory, and a relative bind is the one form Compose
 resolves on every host. ⭐ Every `docker` the framework runs is the plain CLI
 with the caller's environment: `DOCKER_CONTEXT` (or the current context) picks
-the engine, and nothing switches it.
+the engine, and nothing switches it. ⭐ The editor and the runner carry an
+`org.studyforge.binds` label saying which directory of the corpus each mount
+holds, so `studyforge serve` on the host knows them by that label and compose's
+own working-directory label, never by the engine's spelling of a bind's source,
+which on Docker Desktop for Windows is a path inside its VM (`execute.labels`).
 
 ⭐ **Per-project values arrive as compose interpolations with defaults**, so the
 rendered file is complete with no argument and still adapts to the host it is on.
@@ -382,6 +386,10 @@ commit. It copies that library into `.studyforge/execution/site/library/`
 records `STUDYFORGE_SITE_IMAGE=<tag>` and the `site` profile in
 `.studyforge/execution/site.env`. ⭐ The tag is a digest of exactly those
 bytes. Run `staged.argv` from the corpus root: it is the one `docker build`.
+⭐ The compose file's `site` service carries the same build (`context: ./site`),
+so step 6's command builds the image the first time it is brought up, and
+`EXECUTION.md` prints the same command ending `build site` for building it
+alone: compose reads the tag from `site.env`, and no shell reads it first.
 Re-run 5b when the library or the pin moves.
 
 ### 6. Build the images and bring all three up — one command
@@ -398,6 +406,19 @@ it. Then, from the corpus root:
       --env-file .studyforge/execution/instance.env \
       --env-file .studyforge/execution/site.env \
       -f .studyforge/execution/compose.yaml up -d --wait
+
+In PowerShell on Windows, the same command continues its lines with a backtick
+(`EXECUTION.md` prints it on one line, which runs unchanged in both):
+
+    docker compose --env-file .studyforge/execution/runner.env `
+      --env-file .studyforge/execution/editor.env `
+      --env-file .studyforge/execution/instance.env `
+      --env-file .studyforge/execution/site.env `
+      -f .studyforge/execution/compose.yaml up -d --wait
+
+⭐ **Every command this skill prints runs in PowerShell as in a POSIX shell**,
+so a course publishes and runs from Windows, on Docker Desktop. None carries a
+substitution, a variable or `id -u`; each value is in an env file compose reads.
 
 ⭐ That one command starts the study server, the editor AND the runner, each
 from the tag the corpus recorded — nobody sets an image variable by hand. Open

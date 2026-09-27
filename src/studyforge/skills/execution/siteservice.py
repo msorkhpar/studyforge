@@ -73,7 +73,7 @@ import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
-from studyforge.execute import instance, published
+from studyforge.execute import instance, labels, published
 from studyforge.skills.execution.contract import ContractRefused, blocks, optional, require
 
 #: The compose service the study server is.
@@ -107,6 +107,11 @@ GATED = "STUDYFORGE_PREFLIGHT"
 #: The file the corpus's one compose command reads the site's image from, beside it.
 SITE_ENV_NAME = "site.env"
 
+#: The site image's build context, relative to the compose file, and its build
+#: file inside it: where `siteimage.stage_site` stages the library.
+BUILD_CONTEXT = "site"
+BUILD_FILE = "site.containerfile"
+
 #: `SITE_ENV_NAME` before any image is staged: no profile, so no site is brought up.
 UNSTAGED = (
     "# No study server image is staged yet, so the compose command brings up the\n"
@@ -127,6 +132,9 @@ class Site:
     networks: Mapping[str, Mapping[str, object]]
     #: The `depends_on` every other service carries: the preflight, when it runs.
     gate: Mapping[str, Mapping[str, object]]
+    #: The editor's labels: its binds, `(corpus-relative directory, folder inside)`,
+    #: as `execute.labels` spells them, which the host's probe reads.
+    editor_labels: Mapping[str, str] | None = None
 
 
 #: The route the site's healthcheck asks: the course's own page, which a reader opens first.
@@ -171,6 +179,7 @@ def plan(
         # ⭐ Empty until staged: the site is in a profile `SITE_ENV_NAME` turns on
         # with the image, so an unstaged corpus still brings the other two up.
         "image": f"${{{IMAGE}:-}}",
+        "build": built(),
         "profiles": [SERVICE],
         "container_name": interpolated(instance.SITE_NAME, instance.site_container_for(source)),
         str(require(block, "runs_as", "compose_key")): require(block, "runs_as", "compose_value"),
@@ -211,7 +220,18 @@ def plan(
                 "required": f"${{{GATED}:-false}}",
             }
         },
+        editor_labels={labels.BINDS: labels.binds_text(binds)},
     )
+
+
+def built() -> dict[str, str]:
+    """Return the site's `build`: the staged context beside the compose file, and its build file.
+
+    ⭐ **So the site's image is built by the same compose command, on every shell.**
+    `docker compose … build site` reads the tag from `SITE_ENV_NAME` like `up` does,
+    and nothing has to be read out of a file by the shell first.
+    """
+    return {"context": f"./{BUILD_CONTEXT}", "dockerfile": BUILD_FILE}
 
 
 def files(directory: str, allowed_ignore: str) -> tuple[tuple[str, str], ...]:

@@ -18,6 +18,13 @@ document is the half that grew.
 This document sits at the corpus root and the compose file two directories
 down, and a path a reader cannot act on from where they are reading is not a
 remedy — so every path below is the corpus-relative one.
+
+## ⭐ ONE LINE, EVERY SHELL
+
+A publisher on Windows pastes these into PowerShell, so no printed command
+carries a substitution, a variable or a continuation: the study server's image
+is built by compose from `site.env` (`compose … build site`), never tagged by a
+value the shell read out of that file first.
 """
 
 from __future__ import annotations
@@ -25,7 +32,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 
 from studyforge.corpus.manifest import Manifest
-from studyforge.skills.execution import composefile, contract, toolchain
+from studyforge.skills.execution import composefile, contract, siteservice, toolchain
 from studyforge.skills.execution.prime import Prime
 from studyforge.skills.execution.runnerservice import Runner
 
@@ -54,6 +61,10 @@ def document(
     """Write the document a reader opens first, from declarations alone."""
     volumes = composefile.volumes_for(
         seeds if isinstance(seeds, Mapping) else None, manifest.runtimes
+    )
+    compose = (
+        f"docker compose --env-file {runner_env} --env-file {editor_env} "
+        f"--env-file {instance_env} --env-file {site_env} -f {compose_file}"
     )
     lines = [
         f"# Execution — {manifest.title}",
@@ -102,20 +113,21 @@ def document(
         "## Stage the study server's image",
         "",
         "⭐ The skill's site step (`siteimage.stage_site`) checks the installed library is",
-        f"the one this corpus pinned, stages it with its build file, writes `{site_env}`",
-        "and hands back the one build to run, from this corpus's root:",
+        f"the one this corpus pinned, stages it with its build file and writes `{site_env}`,",
+        'which names the image. The compose file builds it: the command under "Bring',
+        "it up\" builds it the first time, and this builds it alone, from this corpus's root:",
         "",
         "```",
-        "docker build --file .studyforge/execution/site/site.containerfile --tag "
-        f"\"$(sed -n 's/^STUDYFORGE_SITE_IMAGE=//p' {site_env})\" .studyforge/execution/site",
+        f"{compose} build {siteservice.SERVICE}",
         "```",
         "",
         "## Bring it up",
         "",
         "```",
-        f"docker compose --env-file {runner_env} --env-file {editor_env} "
-        f"--env-file {instance_env} --env-file {site_env} -f {compose_file} up -d --wait",
+        f"{compose} up -d --wait",
         "```",
+        "",
+        *SHELLS,
         "",
         "⛔ That one command starts the study server, the editor AND the runner, each",
         "from the tag the corpus recorded; before the site's image is staged it starts",
@@ -164,6 +176,15 @@ def document(
     if narration_text is not None:
         lines += _narration(narration_text)
     return "\n".join(lines)
+
+
+#: ⭐ **Why every command above is one line, and the same line on every shell.**
+SHELLS = (
+    "⭐ Each command above is one line with no shell syntax in it: no substitution, no",
+    "variable and no line continuation, so it runs as printed in PowerShell on Windows",
+    "and in any POSIX shell. Every value it needs is in the env files it names. Where",
+    "`python3` is not on a Windows `PATH`, `py -3` runs the same build line.",
+)
 
 
 def _with_prime(build: Sequence[str], flag: str | None) -> str:

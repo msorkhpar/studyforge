@@ -1450,3 +1450,11 @@ What it reads, and the choices in it:
 **Why.** On a real course a `build/` ignore rule hid every bundle's build file from `git add` and nothing noticed, teaching order was steered by name prefixes, and the one hand-written practice reader stopped at the first quiz.
 
 **Serves.** `R3`, `R6`, `R19`
+
+### A course publishes and runs from Windows
+
+**Decision.** Every command the execution skill prints in `EXECUTION.md` is one line with no shell syntax, so it runs as printed in PowerShell and in a POSIX shell: the study server's image is built by the compose file's own `site` build (`context: ./site`), reading its tag from `site.env`, and `up` builds it the first time. The editor and the runner carry an `org.studyforge.binds` label naming which corpus directory each mount holds, and `execute.mode` and `execute.editor` know a compose-started container by that label and by compose's `com.docker.compose.project.working_dir`, compared on the host, never by a mount's `Source`, which Docker Desktop for Windows spells inside its VM; an unlabelled container is still matched by its source. On Windows a host-mode run leads a new process group, a stop is a console break to it and a kill is `taskkill /T /F`. `docker/dev/check.ps1` is the PowerShell twin of `docker/dev/check`, held to the same image identity, bound and run. Docker-backed tests put no container on the host network and read no uid off `os`.
+
+**Why.** Docker Desktop reports bind sources, host networking and user ids differently from a Linux engine, and a course whose commands or probes assumed Linux ran on one kind of host only.
+
+**Serves.** `R15`, `R16`

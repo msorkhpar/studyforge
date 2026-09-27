@@ -86,7 +86,7 @@ def record_instance(
         raise ExecutionRefused(str(refusal)) from None
     target = root / INSTANCE_ENV
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(made, encoding="utf-8")
+    target.write_text(made, encoding="utf-8", newline="\n")
     # ⭐ The publisher's file is never recorded as the skill's (`written.PUBLISHERS`);
     # the stamp only drops an entry an older record kept for it.
     written.stamp(root, [INSTANCE_ENV])

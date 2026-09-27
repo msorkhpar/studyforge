@@ -161,7 +161,7 @@ def _written(root: Path, where: str, content: str) -> str:
     """Write one environment file under `root`, and return where."""
     target = root / where
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(content, encoding="utf-8")
+    target.write_text(content, encoding="utf-8", newline="\n")
     written.stamp(root, [where])
     return where
 

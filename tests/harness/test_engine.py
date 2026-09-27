@@ -14,6 +14,14 @@ import pytest
 
 from tests.harness import engine
 
+#: A container put on the host's network, in any spelling a test's argv takes.
+HOST_NETWORK = re.compile(
+    r'(?:"--network",\s*"host"|network\s*=\s*"host"|--network[ =]host\b|--net=host)'
+)
+
+#: A uid read straight off `os`, which Windows does not have.
+RAW_UID = re.compile(r"\bos\.get[ug]id\(\)")
+
 #: A `-v` / `--volume` argument built from a variable, in a test's argv list.
 BUILT_BIND = re.compile(r'"(?:-v|--volume)",\s*f"\{(?!engine\.bindable\()')
 
@@ -50,3 +58,28 @@ def test_every_bind_a_test_builds_from_a_variable_goes_through_bindable():
         if BUILT_BIND.search(path.read_text(encoding="utf-8"))
     ]
     assert found == [], f"a bind built without tests.harness.engine.bindable: {found}"
+
+
+def offenders(pattern: re.Pattern[str], *, skip: tuple[str, ...] = ()) -> list[str]:
+    tests = engine.ROOT / "tests"
+    return [
+        path.relative_to(tests).as_posix()
+        for path in sorted(tests.rglob("*.py"))
+        if path.relative_to(tests).as_posix() not in skip
+        and pattern.search(path.read_text(encoding="utf-8"))
+    ]
+
+
+def test_no_docker_backed_test_puts_a_container_on_the_host_network():
+    """⛔ Docker Desktop's host network is its VM's: a host-loopback stand-in is out of reach."""
+    assert offenders(HOST_NETWORK, skip=("harness/test_engine.py",)) == []
+
+
+def test_no_test_reads_a_uid_off_os_for_a_container():
+    """⛔ Windows has no `os.getuid`; `engine.run_as()` and `engine.host_user()` answer there."""
+    assert offenders(RAW_UID, skip=("harness/engine.py", "harness/test_engine.py")) == []
+
+
+def test_there_is_no_user_to_pass_where_the_host_has_no_uid(monkeypatch):
+    monkeypatch.delattr("os.getuid", raising=False)
+    assert engine.host_user() is None and engine.run_as() == []
