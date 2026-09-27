@@ -30,8 +30,18 @@ RAW_COLOUR_EXEMPTIONS = {"video-player.css": {"#000", "#fff"}}
 #: and `--segments` are written by the renderer into the strip's own markup: a
 #: count the build knows, never a colour, a measure or a font. ⚠️
 #: `--workspace-intro` is a quiz intro's measured height, set by
-#: `practice-workspace.js` while the workspace is up.
-SET_BY_SCRIPT = ("--plyr", "--progress", "--read", "--units", "--segments", "--workspace-intro")
+#: `practice-workspace.js` while the workspace is up; `--workspace-left` and
+#: `--workspace-report` are the reader's pane sizes, set by `practice-panes.js`.
+SET_BY_SCRIPT = (
+    "--plyr",
+    "--progress",
+    "--read",
+    "--units",
+    "--segments",
+    "--workspace-intro",
+    "--workspace-left",
+    "--workspace-report",
+)
 
 COLOUR = re.compile(r"#[0-9a-fA-F]{3,8}\b|\brgba?\([^)]*\)")
 DEFINED = re.compile(r"^\s*(--[\w-]+)\s*:", re.MULTILINE)

@@ -130,7 +130,9 @@ def test_the_workspace_ships_hidden_with_its_title_and_three_acts():
     assert shell.startswith('<div data-workspace role="dialog"')
     assert " hidden>" in shell.splitlines()[0]
     acts = re.findall(r'data-workspace-act="(\w+)"', shell)
-    assert acts == ["previous", "next", "close"]
+    # ⭐ The description's toggle before the title, and its edge after the bar
+    # (register ruling 2026-09-26): both ship hidden, with the divider.
+    assert acts == ["statement", "previous", "next", "close", "reopen"]
     assert 'data-workspace-part="title"' in shell
     # ⛔ Not an editor: the workspace ships no frame. One is added only when a
     # practice is opened (`practice-editor.js`).

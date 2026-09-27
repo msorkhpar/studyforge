@@ -71,6 +71,13 @@ KEYS = {
     #: a roving `tabindex` puts exactly one tab in the focus ring, so Tab
     #: reaches the selected one and an arrow moves between them.
     "ArrowRight": ("ArrowRight", 39, None),
+    #: ⭐ How a SEPARATOR is moved: the workspace's dividers take the arrows
+    #: along their own axis, and Home and End to their limits.
+    "ArrowLeft": ("ArrowLeft", 37, None),
+    "ArrowUp": ("ArrowUp", 38, None),
+    "ArrowDown": ("ArrowDown", 40, None),
+    "Home": ("Home", 36, None),
+    "End": ("End", 35, None),
 }
 
 #: How long a page may take to reach `readyState === "complete"`.

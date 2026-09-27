@@ -1974,7 +1974,10 @@ These are proven surfaces, generalised in their addressing and otherwise kept.
   statement on the left, always visible and scrolled on its own, the editor
   with Run and Submit and their output on the right, Previous and Next between
   the lesson's practices, and Close, which returns the reader to where they
-  were; at phone width the two stack. A quiz is a card too, answered through
+  were; at phone width the two stack. By register ruling (2026-09-26) the
+  reader drags the divider between the two sides, closes the statement so the
+  editor takes the width, and resizes or collapses the output under the
+  editor, each choice kept in their browser. A quiz is a card too, answered through
   the server as before, and a worked solution stays behind its closed
   disclosure. ⛔ **No editor loads until a practice is opened, and one at
   most**, and nothing on the page is moved to build the workspace: an editor

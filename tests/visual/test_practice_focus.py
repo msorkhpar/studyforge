@@ -56,8 +56,11 @@ CASE = "depth2-unit-01"
 
 #: A viewport short enough that the panel's editor is below the fold at the top.
 #: ⛔ Asserted in every check (`_below_the_fold`), because a frame already in
-#: view scrolls nothing and a still page would then prove nothing.
-SHORT = (1280, 360)
+#: view scrolls nothing and a still page would then prove nothing. ⚠️ The
+#: editor gives way to the panel's height down to its floor
+#: (`practice-panes.css`), so the viewport is short enough that the floor
+#: itself runs past the fold.
+SHORT = (1280, 280)
 
 #: How many consecutive painted frames the page must hold still to be at rest.
 #: ⭐ Frames, not milliseconds: a loaded machine paints fewer of them and the

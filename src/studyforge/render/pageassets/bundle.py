@@ -78,6 +78,10 @@ from studyforge.render.pageassets.source import text
 #: overriding the margin, padding and border the two parts above gave them, and
 #: at equal specificity the last rule wins.
 #:
+#: ⭐ `practice-panes.css` follows `practice-workspace.css` for that part's own
+#: reason: it refines the workspace's geometry — the description's width, the
+#: gutter its divider stands in, the report's height — and the last rule wins.
+#:
 #: ⭐ `code-examples.css` follows the practice parts: a lesson's examples wear
 #: the practice panel's measure and tokens, reached by their own attribute, so
 #: no rule of either reaches the other's element; it sits before
@@ -102,6 +106,7 @@ STYLE_PARTS = (
     "practice.css",
     "practice-quiz.css",
     "practice-workspace.css",
+    "practice-panes.css",
     "code-examples.css",
     "code-highlight.css",
     "narration.css",
@@ -165,6 +170,12 @@ STYLE_PARTS = (
 #: left to the alphabet. ⚠️ Before `read-mark.js` because that part's
 #: LAST-ness is the property being kept.
 #:
+#: ⭐ `practice-panes.js` follows `practice-workspace.js`: it shows the
+#: workspace's dividers and the report's bar, and paints once at start for a
+#: practice the address opened before it ran. It reads the store's display
+#: record, so it follows `study-progress.js` too; before `read-mark.js` for
+#: that part's LAST-ness.
+#:
 #: ⭐ `code-links.js` FOLLOWS `practice-editor.js`, and that order is load-bearing:
 #: it builds its windows with the frame and the one reload that part publishes
 #: (`window.studyforge.frames`), so after it is the only place it finds them.
@@ -190,6 +201,7 @@ SCRIPT_PARTS = (
     "practice-editor.js",
     "practice-quiz.js",
     "practice-workspace.js",
+    "practice-panes.js",
     "code-links.js",
     "progress-view.js",
     "read-mark.js",
