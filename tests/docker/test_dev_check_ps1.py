@@ -9,7 +9,8 @@ both texts, so one moving alone is a red.
 
 **Readings — opt-in.**
 
-- ⭐ `STUDYFORGE_PWSH_READING=1`: both wrappers run over one scratch copy of the
+- ⭐ `STUDYFORGE_DOCKER_TESTS=1` with `STUDYFORGE_PWSH_READING=1` (this directory
+  calls no docker on a default run): both wrappers run over one scratch copy of the
   build inputs with a FAKE `docker` that logs its argv and answers the identity:
   `check` on this host, the twin under the pinned PowerShell image
   (`test_restore_ps1.PWSH_IMAGE`, never pulled here). ⛔ The two must hand docker
@@ -152,8 +153,10 @@ def logged(log: Path, root: str) -> list[list[str]]:
 
 
 def test_both_wrappers_hand_docker_the_same_run():
-    if os.environ.get("STUDYFORGE_PWSH_READING") != "1":
-        pytest.skip("set STUDYFORGE_PWSH_READING=1 to run the twin in the pinned PowerShell")
+    if os.environ.get(OPT_IN) != "1" or os.environ.get("STUDYFORGE_PWSH_READING") != "1":
+        pytest.skip(
+            f"set {OPT_IN}=1 and STUDYFORGE_PWSH_READING=1 to run the twin in the pinned PowerShell"
+        )
     if tool_on_path("docker") is None:
         pytest.skip("no docker CLI in this environment")
     if subprocess.run(["docker", "image", "inspect", PWSH_IMAGE], capture_output=True).returncode:
