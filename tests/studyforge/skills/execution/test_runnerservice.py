@@ -112,3 +112,16 @@ def test_a_bind_that_is_not_the_source_root_slot_is_refused():
     mounts = [dict(runner_block()["mounts"][0], host_path="./elsewhere")]
     with pytest.raises(ContractRefused):
         planned(mounts=mounts)
+
+
+def test_the_runners_own_compose_user_is_read_when_the_contract_declares_one():
+    """⭐ A contract from `provides: 4` gives the runner a compose value of its own."""
+    own = {"compose_key": "user", "compose_value": "${EXAMPLE_UID:-2000}:${EXAMPLE_GID:-2000}"}
+    runs_as = {**runner_block()["runs_as"], **own}
+    assert planned(runs_as=runs_as).service["user"] == own["compose_value"]
+
+
+def test_the_labels_say_the_root_is_what_the_workspace_holds():
+    from studyforge.execute import labels
+
+    assert planned().service["labels"] == {labels.BINDS: "=/work"}

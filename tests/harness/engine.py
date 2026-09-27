@@ -22,6 +22,7 @@ repository's `.gitignore`, so nothing here reaches `git status`.
 from __future__ import annotations
 
 import contextlib
+import os
 import shutil
 import tempfile
 import uuid
@@ -69,3 +70,23 @@ def bindable(path: Path | str) -> str:
         "Desktop does not share and Windows does not have; take it from tests.harness.engine"
     )
     return str(path)
+
+
+def host_user() -> str | None:
+    """This host's `uid:gid`, or `None` where there is none (Windows has no `os.getuid`)."""
+    getuid = getattr(os, "getuid", None)
+    getgid = getattr(os, "getgid", None)
+    if getuid is None or getgid is None:
+        return None
+    return f"{getuid()}:{getgid()}"
+
+
+def run_as() -> list[str]:
+    """`docker run`'s `--user` for this host's user, or nothing where there is no uid.
+
+    ⭐ POSIX: the invoking uid:gid, so what a container writes into a bind is the
+    user's. Windows has no uid, and Docker Desktop hands a bind's files to the
+    Windows user whatever the container's uid, so the image's own user runs.
+    """
+    user = host_user()
+    return [] if user is None else ["--user", user]

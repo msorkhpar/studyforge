@@ -58,6 +58,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 
 from studyforge.execute.errors import RunRefused
+from studyforge.execute.handle import KILL
 
 #: The variable that marks a run's processes, as `runner.RUN_TOKEN` spells it.
 RUN_TOKEN = "STUDYFORGE_RUN"
@@ -177,7 +178,7 @@ class RemoteLauncher:
 
     def signal(self, process: RemoteProcess, signum: int) -> None:
         """Signal the run's tree in the runner; a `KILL` also hangs the connection up."""
-        name = "KILL" if signum == 9 else "TERM"
+        name = "KILL" if signum == KILL else "TERM"
         try:
             with _connect(self.service) as connection:
                 connection.sendall(request("stop", self.marker, name))

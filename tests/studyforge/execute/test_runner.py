@@ -28,9 +28,11 @@ from studyforge.execute import (
     RunRefused,
     exit_line,
 )
+from studyforge.execute import runner as runner_module
+from studyforge.execute.handle import KILL, STOP
 from studyforge.execute.runner import KILL_BY_TOKEN, MERGE_STDERR, RUN_TOKEN
 from tests.studyforge.execute.runnable import alive, gone
-from tests.studyforge.execute.test_mode import calls, fake_docker
+from tests.studyforge.execute.test_mode import answer, calls, fake_docker, up
 
 NAME = "studyforge-runner-kata"
 
@@ -43,7 +45,7 @@ def root(tmp_path) -> Path:
 
 
 def container_runner(tmp_path, root, **settings) -> Runner:
-    docker = fake_docker(tmp_path, f"true {root}")
+    docker = fake_docker(tmp_path, up(root))
     runner = Runner(root, NAME, docker=str(docker), **settings)
     assert runner.mode() == CONTAINER
     return runner
@@ -117,7 +119,7 @@ def test_host_mode_carries_the_run_environment(root, monkeypatch):
 
 def test_a_required_runner_that_is_down_refuses_and_never_runs_on_the_host(tmp_path, root):
     # ⛔ A corpus that declares its runner: its code runs there or nowhere.
-    docker = fake_docker(tmp_path, "false ")
+    docker = fake_docker(tmp_path, answer("false"))
     planted = root / "planted"
     runner = Runner(root, NAME, docker=str(docker), required=True)
     with pytest.raises(RunRefused) as refused:
@@ -129,13 +131,13 @@ def test_a_required_runner_that_is_down_refuses_and_never_runs_on_the_host(tmp_p
 
 
 def test_a_required_runner_that_is_up_runs_in_it(tmp_path, root):
-    docker = fake_docker(tmp_path, f"true {root}")
+    docker = fake_docker(tmp_path, up(root))
     assert Runner(root, NAME, docker=str(docker), required=True).mode() == CONTAINER
 
 
 def test_a_runner_not_required_still_falls_back_to_the_host(tmp_path, root):
     # ⭐ Only a corpus that declares no runner: the host is its one place to run.
-    docker = fake_docker(tmp_path, "false ")
+    docker = fake_docker(tmp_path, answer("false"))
     assert Runner(root, NAME, docker=str(docker)).mode() == HOST
 
 
@@ -148,7 +150,7 @@ def test_no_container_named_is_host_mode(root):
     [("python3 x.py", "."), ([["python3", "x.py;id"]], "."), ([["python3", "x.py"]], "/tmp")],
 )
 def test_a_refused_run_starts_nothing_and_asks_nothing(tmp_path, root, commands, cwd):
-    docker = fake_docker(tmp_path, f"true {root}")
+    docker = fake_docker(tmp_path, up(root))
     with pytest.raises(RunRefused):
         Runner(root, NAME, docker=str(docker)).start(commands, cwd)
     assert calls(tmp_path) == []
@@ -215,3 +217,105 @@ def test_without_the_merge_program_stderr_takes_its_own_stream():
     program = "import sys; print('b', file=sys.stderr)"
     apart = subprocess.run([sys.executable, "-c", program], capture_output=True, text=True)
     assert apart.stdout == "" and apart.stderr == "b\n"
+
+
+# ---------------------------------------------------------------------------
+# ⭐ Windows has no `killpg`, no session and no `SIGKILL`. These read the Windows
+# path on any host by setting `os.name`, with fake processes: nothing is started.
+
+
+class Leader:
+    """A started command's stand-in: records what it is sent."""
+
+    pid = 4242
+
+    def __init__(self, alive: bool = True) -> None:
+        self.alive = alive
+        self.sent: list[object] = []
+
+    def poll(self):
+        return None if self.alive else 0
+
+    def send_signal(self, signum) -> None:
+        self.sent.append(("signal", signum))
+
+    def kill(self) -> None:
+        self.sent.append(("kill", None))
+
+
+@pytest.fixture
+def windows(monkeypatch):
+    """This host as Windows: `os.name` is `nt`, and there is no `killpg` to call."""
+    monkeypatch.setattr(os, "name", "nt")
+    monkeypatch.delattr(os, "killpg", raising=False)
+    ran: list[list[str]] = []
+    monkeypatch.setattr(
+        runner_module.subprocess,
+        "run",
+        lambda argv, **_: ran.append(list(argv)) or subprocess.CompletedProcess(argv, 0),
+    )
+    return ran
+
+
+def test_on_windows_a_command_leads_a_new_process_group_not_a_session(windows):
+    assert runner_module._own_group() == {"creationflags": 0x00000200}
+
+
+def test_on_posix_a_command_leads_a_new_session():
+    assert runner_module._own_group() == {"start_new_session": True}
+
+
+def test_on_windows_a_stop_is_a_console_break_to_the_group(windows):
+    leader = Leader()
+    runner_module._signal_group(leader, STOP)
+    assert leader.sent == [("signal", runner_module.CTRL_BREAK)]
+    assert windows == []
+
+
+def test_on_windows_a_kill_ends_the_whole_tree_then_the_leader(windows):
+    leader = Leader()
+    runner_module._signal_group(leader, KILL)
+    assert windows == [["taskkill", "/T", "/F", "/PID", str(Leader.pid)]]
+    assert leader.sent == [("kill", None)]
+
+
+def test_on_windows_a_leader_already_gone_is_sent_no_break(windows):
+    leader = Leader(alive=False)
+    runner_module._signal_group(leader, STOP)
+    assert leader.sent == []
+
+
+def test_the_container_stop_names_its_signal_without_posix_names(tmp_path, root, monkeypatch):
+    """⛔ `signal.Signals(9)` does not exist on Windows; the name is the launcher's own."""
+    launcher = runner_module.ContainerLauncher(NAME, ".", docker=str(fake_docker(tmp_path, "")))
+    monkeypatch.setattr(runner_module, "_signal_group", lambda *_: None)
+    monkeypatch.delattr(runner_module.signal, "Signals")
+    launcher.signal(Leader(), KILL)
+    launcher.signal(Leader(), STOP)
+    stops = [call.split(" ")[-1] for call in calls(tmp_path) if call.startswith("exec ")]
+    assert stops == ["KILL", "TERM"]
+
+
+def test_a_stop_sends_stop_then_kill_on_a_host_with_no_sigkill(tmp_path, monkeypatch):
+    """⛔ Windows' `signal` has no `SIGKILL`: a stop must not reach for it."""
+    monkeypatch.delattr(runner_module.signal, "SIGKILL")
+    sent: list[int] = []
+
+    class Recording(execute.runner.HostLauncher):
+        def signal(self, process, signum):
+            sent.append(signum)
+            super().signal(process, signum)
+
+    handle = execute.RunHandle(
+        [[sys.executable, "-c", "import time; time.sleep(60)"]],
+        Recording(tmp_path, "."),
+        execute.LineGate([]),
+        mode=HOST,
+        timeout=30.0,
+        grace=0.2,
+    )
+    lines = handle.lines()
+    time.sleep(0.3)
+    assert handle.stop()
+    assert list(lines)[-1] == exit_line("stopped")
+    assert sent[:2] == [STOP, KILL]

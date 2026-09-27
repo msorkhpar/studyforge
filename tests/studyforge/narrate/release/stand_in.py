@@ -15,13 +15,25 @@ included, so a test reads what the script SENT.
         ...
     host.requests    # [(method, path, headers)]
 
-**Depends on.** `http.server` and `threading`. ⛔ Binds loopback only, on a
-port the kernel picks, and serves nothing outside `release`.
+⭐ **Or in a container of its own**, for a restore run in another container:
+
+    python3 stand_in.py <release> --port 8080 --log <file> --ready <file> [--private]
+
+binds every address of its container, appends each request to `--log` as one
+JSON line, and writes `--ready` once it listens. ⭐ A container on the same
+user network reaches it by name, on any engine: Docker Desktop's host network
+is its VM's, so a stand-in on the HOST's loopback is not reachable from there.
+
+**Depends on.** `http.server` and `threading`, and nothing outside the standard
+library, so it runs in a pinned Python image as it stands. ⛔ In-process it binds
+loopback only, on a port the kernel picks, and serves nothing outside `release`.
 """
 
 from __future__ import annotations
 
+import argparse
 import json
+import sys
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -40,14 +52,23 @@ FIRST_ID = 7001
 class StandIn:
     """One release directory served on loopback, public or private."""
 
-    def __init__(self, release: Path, *, private: bool = False, owner_repo: str = OWNER_REPO):
+    def __init__(
+        self,
+        release: Path,
+        *,
+        private: bool = False,
+        owner_repo: str = OWNER_REPO,
+        address: tuple[str, int] = ("127.0.0.1", 0),
+        log: Path | None = None,
+    ):
         self.release = Path(release)
         self.private = private
         self.owner_repo = owner_repo
+        self.log = log
         self.requests: list[tuple[str, str, dict[str, str]]] = []
         names = sorted(path.name for path in self.release.iterdir() if path.is_file())
         self.ids = {name: FIRST_ID + index for index, name in enumerate(names)}
-        self._server = ThreadingHTTPServer(("127.0.0.1", 0), self._handler())
+        self._server = ThreadingHTTPServer(address, self._handler())
         self._thread = threading.Thread(target=self._server.serve_forever, daemon=True)
 
     @property
@@ -83,7 +104,7 @@ class StandIn:
 
             def do_GET(self) -> None:
                 """Answer one GET the way a release host would."""
-                stand_in.requests.append(("GET", self.path, dict(self.headers.items())))
+                stand_in.recorded(("GET", self.path, dict(self.headers.items())))
                 status, headers, body = stand_in.answer(self.path, dict(self.headers.items()))
                 self.send_response(status)
                 for key, value in headers.items():
@@ -93,6 +114,13 @@ class StandIn:
                 self.wfile.write(body)
 
         return Handler
+
+    def recorded(self, request: tuple[str, str, dict[str, str]]) -> None:
+        """Keep one request, and append it to the log when there is one."""
+        self.requests.append(request)
+        if self.log is not None:
+            with self.log.open("a", encoding="utf-8") as log:
+                log.write(json.dumps(request) + "\n")
 
     def answer(self, path: str, headers: dict[str, str]) -> tuple[int, dict[str, str], bytes]:
         """Return `(status, headers, body)` for one request path."""
@@ -132,3 +160,34 @@ class StandIn:
             return 404, {}, b"Not Found"
         body = (self.release / name).read_bytes()
         return 200, {"Content-Type": "application/octet-stream"}, body
+
+
+def logged(log: Path) -> list[tuple[str, str, dict[str, str]]]:
+    """Return the requests a contained stand-in appended to `log`."""
+    if not log.exists():
+        return []
+    return [tuple(json.loads(line)) for line in log.read_text("utf-8").splitlines() if line]
+
+
+def main(argv: list[str]) -> int:
+    """Serve one release directory on every address of this container, until killed."""
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("release", type=Path)
+    parser.add_argument("--port", type=int, required=True)
+    parser.add_argument("--log", type=Path, required=True)
+    parser.add_argument("--ready", type=Path, required=True)
+    parser.add_argument("--private", action="store_true")
+    options = parser.parse_args(argv)
+    host = StandIn(
+        options.release,
+        private=options.private,
+        address=("0.0.0.0", options.port),
+        log=options.log,
+    )
+    options.ready.write_text(host.origin + "\n", encoding="utf-8")
+    host._server.serve_forever()
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

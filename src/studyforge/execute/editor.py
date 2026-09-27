@@ -64,6 +64,10 @@ answers the editor as seen through the bind that holds a path — its own folder
 its own base — and `None` for a path no bind holds. ⚠️ The index publishes the
 first bind by base, which a page only asks whether it has.
 
+⭐ **A compose-started editor is read by its labels** (`labels`), never by a
+mount's `Source`, which is the ENGINE's spelling (on Docker Desktop for Windows,
+a path inside its VM); an unlabelled container is still read by its source.
+
 ⭐ **One published host port, or no editor.** The container publishes the UI and
 nothing else, so a single host port IS the answer; several is a container this
 framework cannot tell the UI's port from, and guessing would embed a frame
@@ -88,12 +92,15 @@ noticed within that window.
 
 from __future__ import annotations
 
+import os
 import subprocess
 import threading
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
+
+from studyforge.execute import labels
 
 #: The CLI the probe invokes, found on `PATH`.
 DOCKER = "docker"
@@ -127,6 +134,7 @@ TRAVERSAL = (".", "..")
 #: is the same discipline every other failure to ask gets.
 PORT = "port"
 MOUNT = "mount"
+LABEL = "label"
 FIELD = "\t"
 
 #: One record per line: whether it runs, then every published binding, then
@@ -140,7 +148,16 @@ _INSPECT_FORMAT = (
     + FIELD
     + "{{.HostPort}}\n"
     "{{end}}{{end}}"
-    "{{range .Mounts}}" + MOUNT + FIELD + "{{.Source}}" + FIELD + "{{.Destination}}\n{{end}}"
+    "{{range .Mounts}}"
+    + MOUNT
+    + FIELD
+    + "{{.Source}}"
+    + FIELD
+    + "{{.Destination}}\n{{end}}"
+    + "".join(
+        f'{LABEL}{FIELD}{name}{FIELD}{{{{index .Config.Labels "{name}"}}}}\n'
+        for name in (labels.WORKING_DIR, labels.BINDS)
+    )
 )
 
 
@@ -303,22 +320,27 @@ class EditorProbe:
         return editor_from(answer.stdout, self.source_root)
 
 
-def editor_from(inspected: str, source_root: Path) -> Editor | None:
-    """Turn one `docker inspect` answer into an `Editor`, or `None`."""
+def editor_from(inspected: str, source_root: Path | str, *, path=os.path) -> Editor | None:
+    """Turn one `docker inspect` answer into an `Editor`, or `None`; `path` is the host's."""
     lines = inspected.splitlines()
     if not lines or lines[0].strip() != "true":
         return None
     bindings: list[tuple[str, str]] = []
-    mounts: list[tuple[str, str]] = []
+    sources: list[tuple[str, str]] = []
+    labelled: dict[str, str] = {}
     for line in lines[1:]:
         kind, _, rest = line.partition(FIELD)
         value, _, tail = rest.partition(FIELD)
         if kind == PORT and tail:
             bindings.append((value, tail))
         elif kind == MOUNT and tail:
-            base = _within(value, source_root)
-            if base is not None:
-                mounts.append((base, tail))
+            sources.append((value, tail))
+        elif kind == LABEL:
+            labelled[value] = tail.strip()
+    mounts = labels.held(sources, labelled, source_root, path=path)
+    if mounts is None:
+        within = ((_within(source, Path(source_root)), inside) for source, inside in sources)
+        mounts = [(base, inside) for base, inside in within if base is not None]
     published = {port for _, port in bindings}
     if len(published) != 1 or not mounts:
         return None

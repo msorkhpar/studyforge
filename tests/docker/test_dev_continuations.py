@@ -137,6 +137,11 @@ CLASSIFIED_BY_MODULE: dict[str, dict[str, str]] = {
         "announcement_prefix": "line-anchored",
         "base_image": "line-anchored",
     },
+    # ⭐ The PowerShell twin's module: the image's one `CMD`, and the fake client's log.
+    "test_dev_check_ps1.py": {
+        "logged": "not-dev-text",
+        "test_the_twin_defaults_to_the_image_s_own_command": "line-anchored",
+    },
     # ⭐ And this module is inside its own population, which is the point: an
     # instrument exempt from the rule it enforces is the defect one level up.
     "test_dev_continuations.py": {
@@ -159,7 +164,7 @@ CLASSIFIED: dict[str, str] = {
 #: functions own two each. ⛔ Declared separately from `CLASSIFIED` on purpose: a
 #: second site added inside an ALREADY-classified function would otherwise enter
 #: the suite unexamined, which is the shape of every defect this module is about.
-DECOMPOSITION_SITES = 38
+DECOMPOSITION_SITES = 40
 
 #: ⛔ **THE ANCHORS THE `line-anchored` VERDICT RESTS ON, per file.** Each is a
 #: prefix some site above matches against the start of a (stripped) line. ⚠️ `#` is

@@ -28,6 +28,13 @@ reader is not editing, and report a verdict about them. ⭐ So "up" means
 running **and** its `/work` mount's source is this source root; anything else
 is host mode, where the reader's files are the ones run.
 
+⭐ **"This root" is told by labels where the compose file started it**
+(`labels`): compose's host-side working directory names this checkout, and
+the skill's `org.studyforge.binds` says the root is what `/work` holds. ⛔ The
+mount's `Source` is the ENGINE's spelling, which on Docker Desktop for Windows
+is a path inside its VM, so it is compared only for a container that carries
+no such label — one started by hand — where the engine is the host's.
+
 ## Every failure to ask is HOST
 
 No `docker` binary, no such container, a daemon that hangs past
@@ -44,11 +51,14 @@ container the reader starts or stops is noticed within that window.
 
 from __future__ import annotations
 
+import os
 import subprocess
 import threading
 import time
 from collections.abc import Callable
 from pathlib import Path
+
+from studyforge.execute import labels
 
 CONTAINER = "container"
 HOST = "host"
@@ -66,10 +76,12 @@ MODE_TTL = 10.0
 #: How long `docker inspect` may take before the answer is `HOST`.
 INSPECT_TIMEOUT = 3.0
 
-#: One line: whether it runs, then the source of whatever is mounted at `/work`.
+#: Whether it runs; the two labels (`labels`); then every mount as source and destination.
 _INSPECT_FORMAT = (
-    '{{.State.Running}} {{range .Mounts}}{{if eq .Destination "' + WORKDIR_IN_CONTAINER + '"}}'
-    "{{.Source}}{{end}}{{end}}"
+    "{{.State.Running}}\n"
+    '{{index .Config.Labels "' + labels.WORKING_DIR + '"}}\n'
+    '{{index .Config.Labels "' + labels.BINDS + '"}}\n'
+    "{{range .Mounts}}{{.Source}}\t{{.Destination}}\n{{end}}"
 )
 
 
@@ -127,10 +139,34 @@ class ModeProbe:
             return False
         if answer.returncode != 0:
             return False
-        running, _, mounted = answer.stdout.strip().partition(" ")
+        return up_from(answer.stdout, self.source_root)
+
+
+def up_from(inspected: str, source_root: Path | str, *, path=os.path) -> bool:
+    """Whether one `docker inspect` answer is a running runner over this root at `/work`.
+
+    ⭐ Labelled (the compose file started it): compose's working directory is this
+    checkout's, the root is what `/work` holds, and `/work` is mounted. ⚠️ Not
+    labelled: the mount's source is this root, which holds where the engine
+    reports host paths. ⭐ `path` is the host's path module (`labels.this_checkout`).
+    """
+    lines = inspected.split("\n")
+    if len(lines) < 3 or lines[0].strip() != "true":
+        return False
+    working_dir, binds = lines[1].strip(), labels.binds_of(lines[2].strip())
+    mounts: dict[str, str] = {}
+    for line in lines[3:]:
+        source, tab, destination = line.partition("\t")
+        if tab:
+            mounts[destination] = source
+    if binds is not None:
         return (
-            running == "true" and bool(mounted) and _same_directory(Path(mounted), self.source_root)
+            labels.this_checkout(working_dir, source_root, path=path)
+            and ("", WORKDIR_IN_CONTAINER) in binds
+            and WORKDIR_IN_CONTAINER in mounts
         )
+    mounted = mounts.get(WORKDIR_IN_CONTAINER, "")
+    return bool(mounted) and _same_directory(Path(mounted), Path(source_root))
 
 
 def _same_directory(mounted: Path, source_root: Path) -> bool:

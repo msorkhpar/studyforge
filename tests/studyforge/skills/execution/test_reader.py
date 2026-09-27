@@ -40,7 +40,45 @@ def test_one_command_brings_up_all_three_reading_every_recorded_tag(tmp_path):
         f"-f {skill.COMPOSE_FILE} up -d --wait"
     )
     assert command in text
-    assert text.count("docker compose") == 1
+    assert text.count(" up -d --wait") == 1
+
+
+def fenced(text: str) -> list[str]:
+    """Every line inside a fenced block of the document."""
+    lines, inside = [], False
+    for line in text.splitlines():
+        if line.startswith("```"):
+            inside = not inside
+        elif inside:
+            lines.append(line)
+    return lines
+
+
+#: What makes a line one shell's and not another's: substitution or a variable,
+#: PowerShell's escape, a POSIX line continuation, a pipe, a sequence, `id`.
+SHELL_ONLY = ("$", "`", "|", ";", "&&", "id -u", "sed ")
+
+
+def test_every_printed_command_runs_as_printed_in_powershell_and_in_a_posix_shell(tmp_path):
+    """⛔ a Windows publisher pastes these into PowerShell; `$(sed …)` ran in sh alone."""
+    commands = fenced(document(tmp_path))
+    assert commands
+    for line in commands:
+        assert not line.rstrip().endswith("\\"), f"a line continuation: {line}"
+        found = [one for one in SHELL_ONLY if one in line]
+        assert not found, f"{found} is one shell's syntax: {line}"
+
+
+def test_the_site_image_is_built_by_the_same_compose_command_reading_the_same_files(tmp_path):
+    """⭐ The tag is read by compose from `site.env`, never by the shell out of a file."""
+    text = document(tmp_path)
+    compose = (
+        f"docker compose --env-file {skill.RUNNER_ENV} --env-file {skill.EDITOR_ENV} "
+        f"--env-file {skill.INSTANCE_ENV} --env-file {skill.SITE_ENV} -f {skill.COMPOSE_FILE}"
+    )
+    assert f"{compose} build site" in fenced(text)
+    assert f"{compose} up -d --wait" in fenced(text)
+    assert "PowerShell" in text
 
 
 def test_the_instance_file_is_named_with_what_it_holds_and_who_reads_it(tmp_path):

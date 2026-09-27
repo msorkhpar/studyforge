@@ -375,3 +375,84 @@ def test_an_editor_opened_on_a_directory_of_its_bind_is_that_folder_of_one_conta
 def test_a_directory_outside_the_bind_is_no_folder_at_all(directory):
     bind = Editor(origin="http://127.0.0.1:8443", folder="/w/practice", base="practice")
     assert bind.within(directory) is None
+
+
+# ---------------------------------------------------------------------------
+# ⭐ An editor the compose file started is read by its LABELS: which checkout it
+# is, and which directory each mount holds. Docker Desktop reports a bind's
+# source as a path inside its VM, which no host path equals.
+
+#: Docker Desktop for Windows' spelling of a bind's source.
+VM = "/run/desktop/mnt/host/c/path/to/project"
+
+#: The corpus root as `serve` holds it on that Windows host.
+WINDOWS_ROOT = r"C:\path\to\project"
+
+#: The skill's binds label for the sources and the practice workspaces.
+BINDS = "sources=/w/sources;practice=/w/practice"
+
+
+def label(name: str, value: object) -> str:
+    return f"label\t{name}\t{value}"
+
+
+def compose_started(working_dir: object, binds: str = BINDS) -> str:
+    """An editor compose started: its port, two VM-spelled mounts and both labels."""
+    from studyforge.execute import labels
+
+    return inspected(
+        "true",
+        port(),
+        mount(f"{VM}/sources", "/w/sources"),
+        mount(f"{VM}/practice", "/w/practice"),
+        label(labels.WORKING_DIR, working_dir),
+        label(labels.BINDS, binds),
+    )
+
+
+def test_a_compose_editor_on_windows_is_read_by_its_labels_and_never_its_vm_paths():
+    import ntpath
+
+    from studyforge.execute.editor import editor_from
+
+    found = editor_from(
+        compose_started(r"c:\path\to\PROJECT\.studyforge\execution"), WINDOWS_ROOT, path=ntpath
+    )
+    assert found == Editor(
+        origin="http://127.0.0.1:8443",
+        folder="/w/practice",
+        base="practice",
+        others=(("sources", "/w/sources"),),
+    )
+    assert found.holding("sources/app/Main.java").file("sources/app/Main.java") == (
+        "/w/sources/app/Main.java"
+    )
+
+
+def test_a_compose_editor_of_another_checkout_is_no_editor_on_windows():
+    import ntpath
+
+    from studyforge.execute.editor import editor_from
+
+    other = r"C:\path\to\other\.studyforge\execution"
+    assert editor_from(compose_started(other), WINDOWS_ROOT, path=ntpath) is None
+
+
+def test_a_labelled_bind_that_is_not_mounted_is_not_offered(tmp_path, root):
+    working_dir = root / ".studyforge" / "execution"
+    answer = compose_started(working_dir, binds=f"{BINDS};notes=/w/notes")
+    found = probe(tmp_path, root, answer).editor()
+    assert found is not None
+    assert "notes" not in {found.base, *(base for base, _ in found.others)}
+
+
+def test_a_labelled_editor_of_this_checkout_is_found_on_this_host(tmp_path, root):
+    found = probe(tmp_path, root, compose_started(root / ".studyforge" / "execution")).editor()
+    assert found is not None and found.base == "practice"
+
+
+@pytest.mark.parametrize("binds", ["/abs=/w/sources", "../up=/w/sources", "sources=relative"])
+def test_a_binds_label_that_does_not_parse_is_read_as_no_label(tmp_path, root, binds):
+    """⚠️ Then the source decides, and a VM path is not this root: no editor."""
+    answer = compose_started(root / ".studyforge" / "execution", binds=binds)
+    assert probe(tmp_path, root, answer).editor() is None

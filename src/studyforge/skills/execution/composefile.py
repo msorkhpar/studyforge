@@ -95,8 +95,12 @@ def service(
     binds: Sequence[tuple[str, str]] = (),
     container_name: str | None = None,
     port_variable: str | None = None,
+    labels: Mapping[str, str] | None = None,
 ) -> dict[str, object]:
     """One compose service, every value of it read out of `block`.
+
+    ⭐ `labels` are written as given: the framework's own, which say what each
+    mount is (`execute.labels`).
 
     ⭐ `binds` are further `(host, container)` binds of the corpus's own
     directories — the practice workspaces — each writable and each
@@ -113,6 +117,8 @@ def service(
     built: dict[str, object] = {"image": image}
     if container_name is not None:
         built["container_name"] = container_name
+    if labels:
+        built["labels"] = dict(labels)
     built[str(require(block, "runs_as", "compose_key"))] = require(
         block, "runs_as", "compose_value"
     )
@@ -154,17 +160,21 @@ def render(
     container_name: str | None = None,
     port_variable: str | None = None,
     published: tuple[
-        Sequence[tuple[str, Mapping[str, object]]], Mapping[str, object], Mapping[str, object]
-    ] = ((), {}, {}),
+        Sequence[tuple[str, Mapping[str, object]]],
+        Mapping[str, object],
+        Mapping[str, object],
+        Mapping[str, str] | None,
+    ] = ((), {}, {}, None),
 ) -> str:
     """Return the whole compose file, as the bytes a corpus keeps.
 
     ⭐ `checked` is every other component block whose rulings are asserted and
     whose service is **not** rendered — see the module contract. ⭐ `runner` is
     `(service name, mapping)` as `runnerservice.plan` rendered it. ⭐ `published`
-    is `(services, networks, gate)` as `siteservice.plan` rendered them: each
-    service is placed after, in place of one of the same name, the networks are
-    declared, and every other service `depends_on` the gate.
+    is `(services, networks, gate, editor labels)` as `siteservice.plan` rendered
+    them: each service is placed after, in place of one of the same name, the
+    networks are declared, every other service `depends_on` the gate, and the
+    editor carries the labels.
     ⭐ `project`, `container_name` and `port_variable` are written as given, so
     the caller hands in interpolations with their defaults.
     """
@@ -187,6 +197,7 @@ def render(
             binds=binds,
             container_name=container_name,
             port_variable=port_variable,
+            labels=published[3],
         )
     }
     if runner is not None:

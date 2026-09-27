@@ -40,6 +40,23 @@ python3 -m pip install --no-index wheels/studyforge-*.whl
 python3 -m pip install pytest==9.1.1 iniconfig==2.3.0 packaging==26.3 pluggy==1.6.0 Pygments==2.21.0
 ```
 
+In PowerShell on Windows, where the virtual environment keeps its scripts under
+`Scripts` and a command does not expand `*`, the same install is:
+
+```powershell
+git clone <this repository> studyforge
+py -3 -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip wheel ./studyforge --no-deps -w wheels
+python -m pip install --no-index --find-links wheels studyforge
+python -m pip install pytest==9.1.1 iniconfig==2.3.0 packaging==26.3 pluggy==1.6.0 Pygments==2.21.0
+```
+
+⭐ Every command in this document runs on Windows as on Linux and macOS (a
+register direction: a course publishes and runs from Windows, on Docker
+Desktop). Where a POSIX shell and PowerShell spell one differently, both forms
+are shown; elsewhere, `python3` is `python` in PowerShell.
+
 Building the wheel fetches the build backend (`setuptools`) from the package
 index once; installing it fetches nothing. Keep the wheel: it is what you
 install into any other Python you convert material with.
@@ -115,6 +132,20 @@ docker compose --env-file .studyforge/execution/runner.env \
   --env-file .studyforge/execution/site.env \
   -f .studyforge/execution/compose.yaml up -d --wait
 ```
+
+In PowerShell, a line continues with a backtick:
+
+```powershell
+docker compose --env-file .studyforge/execution/runner.env `
+  --env-file .studyforge/execution/editor.env `
+  --env-file .studyforge/execution/instance.env `
+  --env-file .studyforge/execution/site.env `
+  -f .studyforge/execution/compose.yaml up -d --wait
+```
+
+`EXECUTION.md` prints it on one line, with no shell syntax, so it runs as printed
+in either shell. The same command ending `build site` in place of `up -d --wait`
+builds the study server's image alone; `up` builds it the first time anyway.
 
 - **Every port is set in one place**, `.studyforge/execution/instance.env`:
   `STUDYFORGE_SITE_PORT` for the site and `STUDYFORGE_EDITOR_PORT` for the
@@ -240,8 +271,9 @@ engine, is pinned by digest, never by a moving name.
   files opens in the editor beside its test, from a copy of your code, and the
   test runs there; your own files are never written.
 - **The framework's own build environment** is `docker/dev/check` in this
-  checkout. It builds an image tagged from the content of its inputs and runs
-  the framework's test suite inside it. You need it only to change the
+  checkout, and `docker/dev/check.ps1` in PowerShell on Windows. Each builds an
+  image tagged from the content of its inputs and runs the framework's test
+  suite inside it. You need it only to change the
   framework, not to use it.
 
 ## The design behind it

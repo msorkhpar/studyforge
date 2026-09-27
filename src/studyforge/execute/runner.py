@@ -30,6 +30,12 @@ beside it.
 | output | `/work` made relative, then scrubbed | the root made relative, then scrubbed |
 | stop, timeout | the run's tree by its token, then the client | the command's process group |
 
+⭐ **On Windows the host mode keeps the same contract another way**: a command
+leads a new process GROUP (there are no sessions), a stop is a console break
+to that group, and a kill ends the whole tree with `taskkill /T /F` — there is
+no `killpg` and no `SIGKILL`, so both signals are the `handle` module's own
+numbers and each launcher turns them into its host's own way of ending a tree.
+
 ⛔ **The runner never starts, stops or builds a container** (spec §8.3's
 seam): the reader starts it, and a stop here ends the
 RUN's processes inside it, never the container. ⛔ **No socket is mounted
@@ -89,7 +95,7 @@ from studyforge.execute.commands import (
     require_workdir,
 )
 from studyforge.execute.errors import RunRefused
-from studyforge.execute.handle import RunHandle
+from studyforge.execute.handle import KILL, RunHandle
 from studyforge.execute.mode import CONTAINER, DOCKER, HOST, WORKDIR_IN_CONTAINER, ModeProbe
 from studyforge.execute.output import LineGate
 from studyforge.execute.remote import RemoteLauncher, Service, ServiceProbe
@@ -132,6 +138,29 @@ KILL_BY_TOKEN = (
 )
 
 
+#: ⭐ Windows' flag for a new process group, whose id is the leader's pid, which a
+#: console break reaches whole. The number where `subprocess` does not name it.
+NEW_PROCESS_GROUP = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0x00000200)
+
+#: Windows' console break, which a process group started with `NEW_PROCESS_GROUP`
+#: receives: its polite stop, as `SIGTERM` is POSIX's.
+CTRL_BREAK = getattr(signal, "CTRL_BREAK_EVENT", 1)
+
+#: Windows' tree kill: every process the leader started, then the leader.
+TREE_KILL = ("taskkill", "/T", "/F", "/PID")
+
+
+def _own_group() -> dict[str, object]:
+    """Return what starts a command as the leader of its own group, on this host.
+
+    ⛔ POSIX: a new session, which `os.killpg` reaches whole. ⭐ Windows has no
+    sessions or `killpg`; a new process group is the unit a console break reaches.
+    """
+    if os.name == "nt":
+        return {"creationflags": NEW_PROCESS_GROUP}
+    return {"start_new_session": True}
+
+
 def _pipe(argv: Sequence[str], **where: object) -> subprocess.Popen[str]:
     """Start `argv` in its own session, stdout and stderr merged, line-buffered text.
 
@@ -144,11 +173,11 @@ def _pipe(argv: Sequence[str], **where: object) -> subprocess.Popen[str]:
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
-        start_new_session=True,
         text=True,
         encoding="utf-8",
         errors="replace",
         bufsize=1,
+        **_own_group(),  # type: ignore[arg-type]
         **where,  # type: ignore[arg-type]
     )
     assert process.stdin is not None
@@ -157,10 +186,47 @@ def _pipe(argv: Sequence[str], **where: object) -> subprocess.Popen[str]:
 
 
 def _signal_group(process: subprocess.Popen[str], signum: int) -> None:
-    """Signal the group `process` leads. Gone already is not an error."""
+    """Signal the group `process` leads. Gone already is not an error.
+
+    ⭐ On Windows, where there is no `killpg`: `STOP` is a console break to the
+    group, and `KILL` ends the whole tree (`_end_tree`).
+    """
+    if os.name == "nt":
+        _end_tree(process, signum)
+        return
     try:
         os.killpg(process.pid, signum)
     except ProcessLookupError, PermissionError:
+        pass
+
+
+def _end_tree(process: subprocess.Popen[str], signum: int) -> None:
+    """Windows: break the group `process` leads, or kill its tree. Gone is not an error.
+
+    ⚠️ A break reaches only a group that shares a console; a group that does not
+    ignores it, and the `KILL` a stop always sends after the grace ends it.
+    """
+    if process.poll() is not None and signum != KILL:
+        return
+    if signum != KILL:
+        try:
+            process.send_signal(CTRL_BREAK)
+        except OSError, ValueError:
+            pass
+        return
+    try:
+        subprocess.run(
+            [*TREE_KILL, str(process.pid)],
+            input=b"",
+            capture_output=True,
+            timeout=KILL_TIMEOUT,
+            check=False,
+        )
+    except OSError, subprocess.SubprocessError:
+        pass
+    try:
+        process.kill()
+    except OSError:
         pass
 
 
@@ -227,7 +293,7 @@ class ContainerLauncher:
                     KILL_BY_TOKEN,
                     "sh",
                     self.marker,
-                    signal.Signals(signum).name.removeprefix("SIG"),
+                    "KILL" if signum == KILL else "TERM",
                 ],
                 input=b"",
                 capture_output=True,

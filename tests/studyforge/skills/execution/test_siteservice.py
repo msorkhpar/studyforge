@@ -8,13 +8,14 @@ internal network with no port and no socket, and the editor off that network.
 from __future__ import annotations
 
 import re
+from pathlib import PurePosixPath
 
 import pytest
 
 from studyforge.execute import instance as names
 from studyforge.execute import published
 from studyforge.serve.app import DEFAULT_PORT
-from studyforge.skills.execution import onboard, siteservice
+from studyforge.skills.execution import onboard, siteimage, siteservice
 from studyforge.skills.execution.contract import ContractRefused
 from tests.studyforge.skills.execution.contracts import editor_contract
 from tests.studyforge.skills.execution.test_instance import compose_of, generated
@@ -148,3 +149,40 @@ def test_the_site_is_healthy_only_once_its_published_route_answers(text):
     assert re.search(r"healthcheck:\n\s+test:\n\s+- CMD\n\s+- python3\n\s+- -c\n", site), site
     assert probe in site
     assert re.search(r"start_interval: \"?1s\"?\n", site)
+
+
+def test_the_site_is_built_by_compose_from_the_context_staging_writes(text):
+    """⛔ the build is compose's, so no shell reads the tag out of `site.env` first.
+
+    ⭐ The rendered context, resolved against the compose file's own directory, is
+    exactly where `siteimage.stage_site` writes the build file.
+    """
+    site = service_block(text, "site")
+    found = re.search(r"build:\n\s+context: (\S+)\n\s+dockerfile: (\S+)\n", site)
+    assert found, "the site renders no build of its own"
+    context, dockerfile = found.groups()
+    beside = PurePosixPath(onboard.COMPOSE_FILE).parent
+    resolved = beside / PurePosixPath(context.removeprefix("./")) / dockerfile
+    assert str(resolved) == f"{siteimage.SITE_DIR}/{siteimage.BUILD_FILE}"
+
+
+def label_of(block: str) -> str:
+    found = re.search(r"labels:\n\s+org\.studyforge\.binds: \"?([^\"\n]*)\"?\n", block)
+    assert found, "the service carries no binds label"
+    return found.group(1)
+
+
+def test_the_editor_is_labelled_with_the_binds_the_site_hands_a_page(text):
+    """⭐ The probe on the host and the site in its container read one set of binds."""
+    from studyforge.execute import labels
+
+    editor = labels.binds_of(label_of(service_block(text, "editor")))
+    site = service_block(text, "site")
+    handed = re.search(rf"{published.EDITOR_BINDS}: (\S+)\n", site)
+    assert handed and editor == published._binds(handed.group(1))
+
+
+def test_the_runner_is_labelled_as_holding_the_root_where_execute_runs(text):
+    from studyforge.execute import WORKDIR_IN_CONTAINER, labels
+
+    assert labels.binds_of(label_of(service_block(text, "runner"))) == (("", WORKDIR_IN_CONTAINER),)

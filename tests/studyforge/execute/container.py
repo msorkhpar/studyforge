@@ -170,7 +170,9 @@ def run_argv(
     if runner.get("init", {}).get("enabled"):
         argv.append(runner["init"]["run_flag"])
     argv += [runner["network"]["run_flag"], runner["network"]["mode"]]
-    argv += [runner["runs_as"]["run_flag"], user or f"{os.getuid()}:{os.getgid()}"]
+    owner = user or engine.host_user()
+    if owner is not None:
+        argv += [runner["runs_as"]["run_flag"], owner]
     for mount in runner["mounts"]:
         if mount.get("kind") != "bind":
             continue

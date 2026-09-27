@@ -262,7 +262,7 @@ def test_the_one_printed_compose_command_reads_both_recorded_tags(tmp_path):
     record.record_runner(execution, tmp_path, tmp_path, ask=Asked())
     record.record_editor(execution, tmp_path, tmp_path, ask=Asked(0, EDITOR_TAG))
     document = (tmp_path / onboard.READER_DOC).read_text(encoding="utf-8")
-    [line] = [one for one in document.splitlines() if one.startswith("docker compose ")]
+    [line] = [one for one in document.splitlines() if one.endswith(" up -d --wait")]
     argv = shlex.split(line.removesuffix(" up -d --wait")) + ["config", "--images"]
     environment = {
         name: value

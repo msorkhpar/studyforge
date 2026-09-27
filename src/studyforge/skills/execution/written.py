@@ -107,7 +107,7 @@ def stamp(root: Path, paths: Iterable[str]) -> str:
     target.parent.mkdir(parents=True, exist_ok=True)
     text = json.dumps(document, indent=2) + "\n"
     if not target.is_file() or target.read_text(encoding="utf-8") != text:
-        target.write_text(text, encoding="utf-8")
+        target.write_text(text, encoding="utf-8", newline="\n")
     return RECORD
 
 

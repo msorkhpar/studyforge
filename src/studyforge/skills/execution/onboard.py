@@ -236,7 +236,7 @@ def generate(
         checked=_checked(narration_text),
         binds=tuple((_from_compose(directory), inside) for directory, inside in extra),
         runner=(runnerservice.SERVICE, runner.service),
-        published=(site.services, site.networks, site.gate),
+        published=(site.services, site.networks, site.gate, site.editor_labels),
     )
     document = reader.document(
         manifest,
