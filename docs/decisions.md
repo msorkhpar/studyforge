@@ -853,6 +853,14 @@ What it reads, and the choices in it:
 
 **Serves.** `R8`
 
+### The workspace's panes are resized by dragging, and closed
+
+**Decision.** By register ruling (2026-09-26), a code practice's workspace carries two dividers and two closers (`render/assets/practice-panes.js`, `practice-panes.css`). The divider between the description and the editor is dragged with a mouse, touch or pen, or moved with Left and Right, Home and End; **Hide description** closes the description so the editor takes the whole width, and a slim edge opens it again. The divider above the report is dragged, or moved with Up and Down, to give the editor more height, and the report collapses to a bar at the bottom that still shows the last verdict; a new Run or Submit opens it again. Both dividers are `role="separator"` with their values, are clamped so each side keeps a usable size, and while one is dragged no frame takes the pointer. Each choice is kept per reader in the display record of `study-progress.js`, and the page still resizes and closes with no storage. At phone width the description's divider and closer are hidden and the workspace stacks as before; a quiz has neither. Every control ships `hidden`, so with no script nothing changes, and over `file://` the report's bar stays hidden because nothing runs there.
+
+**Why.** A reader working a practice needs the room to go to the code: closing the description and the report together is the focus mode, with no separate maximise.
+
+**Serves.** `R8`
+
 ### The page never shows a control it cannot honour
 
 **Decision.** `src/studyforge/render/page/practice.py`, where the markup is emitted, renders only the controls a practice can serve. A quiz has no file, command or grader, so it renders through `render.page.quiz` with no Run and no Submit, not with disabled ones. Run is emitted for other practices, and Submit is emitted only where the record names a test command. No script hides controls after the fact.

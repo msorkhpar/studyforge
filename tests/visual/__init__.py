@@ -146,6 +146,15 @@ ACCEPTANCE = {
     #: answers the practice-editor route, so there is a frame to not move.
     "lists a lesson's practices as titled cards and opens each in one full-screen "
     "workspace, at desktop and phone width, with one editor at most": "test_practice_workspace",
+    #: ⭐ Two rows of their own, by register ruling (2026-09-26): a divider
+    #: dragged, over an editor frame, is real input across a frame boundary
+    #: that no text can read, and a choice that survives a reload is a claim
+    #: about the reader's browser store. ⚠️ One row per side, so each module
+    #: stays one module: the description's side, then the report's.
+    "resizes a code practice's description by a divider dragged or keyed, and "
+    "closes and reopens it, kept per reader": "test_practice_panes",
+    "resizes a code practice's report by a divider and collapses it to a bar "
+    "that keeps the last verdict, kept per reader": "test_practice_report",
     #: ⭐ A row of its own because its ORIGIN is the subject: the two panel
     #: clauses need a server, and this one is only a reading if there is none.
     #: ⛔ *A quiz page shows questions, grades them, and shows no run
