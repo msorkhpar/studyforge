@@ -38,8 +38,9 @@ SKILL = "execution"
 SPAN = re.compile(r"`([A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*)(\(.*\))?`")
 
 #: A call inside an example block: a dotted name not preceded by a name, a dot
-#: or a closing bracket, so a method on an expression is not read as a name.
-CALL = re.compile(r"(?<![\w.)\]])([A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*)\(")
+#: or a closing bracket, so a method on an expression is not read as a name, and
+#: not after `def `, which DEFINES the name the example goes on to hand in.
+CALL = re.compile(r"(?<![\w.)\]])(?<!def )([A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*)\(")
 
 #: One `from … import …` line of an example block.
 IMPORT = re.compile(r"^from ([\w.]+) import (.+)$")
@@ -163,3 +164,9 @@ def test_an_import_of_a_name_the_package_does_not_export_is_unresolved():
 
 def test_a_contract_key_path_or_a_file_is_not_read_as_python():
     assert unresolved("`runner.image.tag_from`, `manifest.runtimes`, `corpus.json`") == []
+
+
+def test_a_function_the_example_defines_is_not_read_as_a_call_and_a_call_still_is():
+    text = "    def ask(argv, cwd):\n        return for_corpus(argv)\n"
+
+    assert unresolved(text) == ["for_corpus(…) in an example"]

@@ -444,6 +444,90 @@ container — never holds the socket.
 
 ---
 
+## 7. A course's `main` stands alone — the learner tree and the split
+
+⭐ A published course's `main` holds what a learner needs and nothing else: the
+course's material (its modules, `practice/`, the built pages), the narration
+restore scripts, and one Docker setup that builds and serves the site, the
+runner and the editor with no studyforge, no toolchain checkout and no
+narration service. Everything that records how the course was built moves to
+the branch `studyforge/build` — **moved, never deleted**.
+
+The step writes that tree; the split is a procedure run on it. ⛔ As in step
+5a, the skill starts no process: the caller hands in a `run` that takes `(argv, cwd)`, which
+runs one argv and answers `(exit code, stdout)`.
+
+    from pathlib import Path
+    from subprocess import DEVNULL, run
+
+    from studyforge.skills.execution.standalone import classify, release, table, tracked
+
+    def ask(argv, cwd):
+        done = run(argv, cwd=cwd, stdin=DEVNULL, capture_output=True, text=True, timeout=300)
+        return done.returncode, done.stdout
+
+    course = Path("<course>")
+    print(table(classify(course, tracked(course, ask))))   # the table alone
+    released = release(course, Path("<empty dir>"), toolchain=Path("<checkout>"), run=ask)
+
+- ⭐ `standalone.table` over `standalone.classify` prints the KEEP/MOVE table
+  and writes nothing. KEEP is what
+  serving or studying reads (`corpus.json`, `archive/`, `practice/`, the
+  footprint's pages, every entry the prime mirrors, the licence, the built
+  `.studyforge/<container>/` pages, `assets/`, the narration record and
+  restore scripts, and `runservice.pl`, `prime/`, `code/`, `allowed/`).
+  Everything else MOVEs, with its reason; an entry nothing recognises MOVEs and
+  says so.
+- ⭐ The vendored serving runtime is the import closure of the server's entry
+  points (`served`), proved by importing and serving the fixture from that tree
+  alone. ⛔ It holds no module in `FORBIDDEN` (no skill, no synthesis, no
+  release client), and every edge it does not follow is declared in `DEFERRED`
+  with its reason.
+- ⛔ The toolchain checkout must compute the primed tags the course recorded
+  (`runner.env`, `editor.env`), or it is refused: check out the toolchain commit
+  the course was built with. Its builds arrive as data from the command its
+  `consuming.json` names under `builds`; no Dockerfile is read (R18).
+- ⭐ The tree holds `compose.yaml` (builds every image locally:
+  `docker compose up -d --build`) and `compose.pull.yaml` (the same three
+  services, images only), `course.env` (every variable at its default), a
+  learner `README.md`, and `.studyforge/release.json`, the manifest whose
+  `keeps` lists every path. ⛔ Every port binds `127.0.0.1`, every service runs
+  as `1000:1000`, and every mount is a named volume: no host path, no socket.
+- ⭐ Six images: three shared bases (`studyforge-serve`, `studyforge-runner`,
+  `studyforge-editor`) and three thin course images (`<course>-site` in two
+  narrations, `without-narration` and `with-narration`, `<course>-runner`,
+  `<course>-editor`), all under `${STUDYFORGE_NAMESPACE:-studyforge-local}`.
+  ⛔ The namespace is a placeholder until the owner publishes.
+
+### The split, step by step
+
+1. Export into an empty directory with `standalone.release`.
+2. In the course repository, branch `studyforge/build` from `main`: it keeps
+   everything, so nothing is lost.
+3. On a branch from `main` that will become the learner `main`:
+   `git rm -r -q .`, copy the exported tree in, `git add -A`, commit.
+4. ⛔ Check that `git ls-files` equals the manifest's `keeps`, line for line.
+   A difference is a file the export wrote and did not list, or the reverse:
+   stop and regenerate, never hand-edit.
+5. Clone that branch alone into a new directory and prove it there:
+   `docker compose up -d --build` with its own project name and ports; the site
+   answers, a practice Submit runs in the runner, the editor opens a practice
+   with no chat, the site works with no narration, and with the clips restored
+   the `with-narration` target plays them. Then tear it down with
+   `docker compose down -v --rmi all`.
+6. ⛔ The editor built this way skips the toolchain's build-time session proofs:
+   run the toolchain's activation and confinement proofs against it before any
+   image is published.
+7. Publishing is the owner's step, never this skill's. The commands, for the
+   owner to run: `docker compose build` with `STUDYFORGE_NAMESPACE` set to the
+   registry namespace, then `docker push` for each of the six images
+   `.studyforge/release.json` lists, once per narration for the site.
+
+⛔ An export is per platform (its `platform` argument, default this machine): an image's
+build arguments name that platform's pinned downloads.
+
+---
+
 ## What lands in the corpus
 
 | path | what it is |

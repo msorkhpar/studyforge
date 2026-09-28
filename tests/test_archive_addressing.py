@@ -34,11 +34,11 @@ from pathlib import Path
 import pytest
 
 from studyforge.address import FIRST_ORDINAL, Address, unit_name
+from studyforge.archive import layout as layout_module
 from studyforge.corpus.container import CONTAINER_FILENAME
 from studyforge.corpus.manifest import MANIFEST_FILENAME
 from studyforge.corpus.placement import ARCHIVE_DIRNAME, RAW_DIRNAME, UNITS_DIRNAME
 from studyforge.skills.adapter import Layout
-from studyforge.skills.adapter import layout as layout_module
 from studyforge.unit.content import CONTENT_FILENAME
 from tests.fixture_checks import FIXTURES, VALID, archive_files, containers_in, read_json
 from tests.fixture_checks.addresses import (

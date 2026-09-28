@@ -70,7 +70,11 @@ def scalar(value: object) -> str:
         return str(value)
     text = str(value)
     if text == "" or text != text.strip() or any(one in text for one in AMBIGUOUS):
-        return '"' + text.replace("\\", "\\\\").replace('"', '\\"') + '"'
+        # ⛔ A line break inside double quotes is FOLDED into a space by a YAML
+        # reader, so a multi-line value (a build argument listing one file per
+        # line) is written escaped, and reads back byte for byte.
+        escaped = text.replace("\\", "\\\\").replace('"', '\\"')
+        return '"' + escaped.replace("\n", "\\n").replace("\t", "\\t") + '"'
     if text.lower() in RESERVED:
         return f'"{text}"'
     return text

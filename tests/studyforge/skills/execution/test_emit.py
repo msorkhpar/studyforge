@@ -8,6 +8,8 @@ its counter-example beside it.
 
 from __future__ import annotations
 
+import json
+
 import pytest
 
 from studyforge.skills.execution import emit
@@ -60,3 +62,12 @@ def test_a_list_of_mappings_nests_under_its_dash():
 
 def test_a_bare_scalar_document_is_one_line():
     assert emit.emit("word") == "word\n"
+
+
+def test_a_line_break_and_a_tab_are_escaped_so_a_multi_line_value_reads_back_whole():
+    # ⛔ Raw, a YAML reader folds the break into a space: a build argument listing
+    # one file per line would arrive as one line.
+    assert emit.scalar("one\ntwo") == '"one\\ntwo"'
+    assert emit.scalar("a\tb") == '"a\\tb"'
+    assert "\n" not in emit.scalar("one\ntwo\nthree")
+    assert json.loads(emit.scalar('x\n"y"\\z')) == 'x\n"y"\\z'
