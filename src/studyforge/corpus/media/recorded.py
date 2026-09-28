@@ -1,7 +1,7 @@
 """The clips the narration record locates, as the footprint weighs them.
 
 **What it does.** Reads `.studyforge/narration.json` once, through
-`narrate.synth`'s own reader, and answers one question for `footprint`: *at
+`narrate.recorded`'s own reader, and answers one question for `footprint`: *at
 which paths under the corpus root does the record locate a clip* — every
 entry's current clip and every superseded one — and, by name, which recorded
 clips it cannot locate.
@@ -9,7 +9,7 @@ clips it cannot locate.
 **How you use it.** `located, unlocated = recorded_clips(base)`, where `base` is
 the corpus root `footprint` has already checked is a directory.
 
-**Depends on.** `narrate.synth` for the record's file, its reader and
+**Depends on.** `narrate.recorded` for the record's file, its reader and
 `located`, this package's `errors`, and the standard library. ⛔ It opens the
 record and nothing else, and it never opens a clip.
 
@@ -23,7 +23,7 @@ corpus could read UNDER a limit its bytes had crossed. ⭐ The record locates
 every clip it wrote, so the footprint asks it.
 
 ⛔ **The record locates; this module never re-derives placement.** A path here
-is `synth.located(root, where, filename)` and nothing else, and a recorded
+is `recorded.located(root, where, filename)` and nothing else, and a recorded
 directory that is absolute or climbs out of the root is refused by the
 record's own reader before this module sees it (R7).
 
@@ -44,7 +44,7 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
 from studyforge.corpus.media.errors import MediaError
-from studyforge.narrate.synth import StateError, located, read_state, state_file
+from studyforge.narrate.recorded import StateError, located, read_state, state_file
 
 
 @dataclass(frozen=True, slots=True)

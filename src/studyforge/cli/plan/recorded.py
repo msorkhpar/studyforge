@@ -9,7 +9,7 @@ superseded clips the record still names on disk (`Recorded.superseded`).
 `recorded.copies(token, audio)` for each declared unit and
 `recorded.superseded` for the lines no build copies.
 
-**Depends on.** `narrate.synth` for the record, its reader and `located`,
+**Depends on.** `narrate.recorded` for the record, its reader and `located`,
 `narrate.speakable.naming` for the clip name's parser, and `cli.plan.report`
 for the records a plan is made of. ⛔ It opens the record and nothing else.
 
@@ -57,9 +57,9 @@ from pathlib import Path, PurePosixPath
 from types import MappingProxyType
 
 from studyforge.cli.plan.report import Refusal, SupersededClip
+from studyforge.narrate.recorded import StateError, located, read_state, state_file
 from studyforge.narrate.speakable import SpeakableError
 from studyforge.narrate.speakable.naming import SEGMENT, parse_clip_name
-from studyforge.narrate.synth import StateError, located, read_state, state_file
 
 #: What a refusal says about a recorded filename that carries a directory.
 NOT_ONE_FILE = "records a clip filename that is not one file name"
@@ -153,7 +153,7 @@ def _superseded(
 def _located(root: Path, where: str | None, filename: str) -> PurePosixPath | None:
     """Return where the record locates a clip, relative to `root`, or None if it cannot say.
 
-    ⛔ `synth.located` is asked, so a recorded directory that is absolute or
+    ⛔ `recorded.located` is asked, so a recorded directory that is absolute or
     climbs out of the root locates nothing here either (R7).
     """
     path = located(root, where, filename)

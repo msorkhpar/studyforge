@@ -20,14 +20,15 @@ already says so, and a build probes once for a whole corpus rather than once
 per unit. Handing the answer in is what lets an unchanged re-run make **zero**
 requests, which is the half of the acceptance a report cannot be trusted for.
 
-**Depends on.** `archive.scrub`, `version`, `narrate.answers`,
-`narrate.speakable` and `corpus.placement`. ⭐ The last one is the difference
+**Depends on.** `narrate.recorded` for the record and where a clip goes,
+`archive.scrub`, `version`, `narrate.answers`, `narrate.speakable` and
+`corpus.placement`. ⭐ The last one is the difference
 from `narrate/client.py`, which is asserted **not** to import it: the client
 must not know where a study site keeps its audio, and this package is the caller
 that asks the policy on its behalf (R4).
 
 ⛔ **Not on `narrate.client` and not on `narrate.wire`**. A
-build reads this package, and a build never synthesises: the pass takes any
+build reads the record, and a build never synthesises: the pass takes any
 `answers.Narrator`, and a fresh interpreter importing `studyforge.generate` or
 `cli/plan` is asserted to load no wire.
 
@@ -85,6 +86,11 @@ reverse, and both import `location`, which imports neither. The
 contract must be readable by something that is not the pass — a
 report, a coverage tracker, a person — without dragging a client in.
 
+⭐ **So `record` and `location` live in `narrate.recorded`, outside this
+package**, and this package re-exports them unchanged. ⛔ A build, a plan and
+the study server read the record; none of them synthesises, and a learner's copy
+of a course carries the server with no synthesis in it (`studyforge.release`).
+
 ## ⛔ ONE UNIT'S FAILURE DOES NOT COST ANOTHER ITS CLIP
 
 Stale units go out in batches under a character budget, because the service caps
@@ -94,22 +100,8 @@ service that goes away half-way through a corpus leaves every clip it did produc
 placed *and recorded*, and the next run asks only for the remainder.
 """
 
-from studyforge.narrate.synth.incremental import (
-    CLIP_ABSENT,
-    CONDITIONS_MOVED,
-    DEFAULT_BATCH_CHARS,
-    NO_RECORD,
-    WORDS_MOVED,
-    Plan,
-    Synthesis,
-    audio_dir,
-    batches,
-    plan,
-    synthesise,
-    wanted_name,
-)
-from studyforge.narrate.synth.location import Superseded, located, root_of, where_of
-from studyforge.narrate.synth.record import (
+from studyforge.narrate.recorded.location import Superseded, audio_dir, located, root_of, where_of
+from studyforge.narrate.recorded.record import (
     CLIP_KEYS,
     KNOWN_NARRATION_API,
     NARRATION_API,
@@ -128,6 +120,19 @@ from studyforge.narrate.synth.record import (
     state_file,
     the_one_file,
     write_state,
+)
+from studyforge.narrate.synth.incremental import (
+    CLIP_ABSENT,
+    CONDITIONS_MOVED,
+    DEFAULT_BATCH_CHARS,
+    NO_RECORD,
+    WORDS_MOVED,
+    Plan,
+    Synthesis,
+    batches,
+    plan,
+    synthesise,
+    wanted_name,
 )
 
 #: ⛔ The package's whole public surface.

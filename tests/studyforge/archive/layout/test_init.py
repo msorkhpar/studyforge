@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/skills/adapter/layout.py` (R12)."""
+"""Mirror of `src/studyforge/archive/layout/__init__.py` (R12)."""
 
 from __future__ import annotations
 
@@ -9,16 +9,7 @@ import pytest
 from studyforge.address import Address, unit_name
 from studyforge.archive.document import KINDS, build
 from studyforge.archive.document import render as render_document
-from studyforge.corpus.container import CONTAINER_FILENAME, Container, Unit
-from studyforge.corpus.container import render as render_map
-from studyforge.corpus.manifest import MANIFEST_FILENAME
-from studyforge.corpus.placement import (
-    ARCHIVE_DIRNAME,
-    RAW_DIRNAME,
-    UNITS_DIRNAME,
-    profile_for,
-)
-from studyforge.skills.adapter import (
+from studyforge.archive.layout import (
     ARCHIVE_DIR,
     RAW_DIR,
     TREE_ROOT,
@@ -27,6 +18,15 @@ from studyforge.skills.adapter import (
     LayoutError,
     archive_tree,
     document_name,
+)
+from studyforge.corpus.container import CONTAINER_FILENAME, Container, Unit
+from studyforge.corpus.container import render as render_map
+from studyforge.corpus.manifest import MANIFEST_FILENAME
+from studyforge.corpus.placement import (
+    ARCHIVE_DIRNAME,
+    RAW_DIRNAME,
+    UNITS_DIRNAME,
+    profile_for,
 )
 from studyforge.unit.content import CONTENT_FILENAME
 from studyforge.validate.corpus import read as walk
@@ -125,7 +125,7 @@ def test_the_overlays_filename_is_the_contracts_and_is_not_a_second_literal_here
     hand it to — what it has is one caller, `content`, and a name imported from
     the module that mints it beside `content_api`.
     """
-    from studyforge.skills.adapter import layout as module
+    from studyforge.archive import layout as module
 
     body = Path(module.__file__).read_text(encoding="utf-8")
 

@@ -81,7 +81,8 @@ from studyforge.describe import describe
 #: ⭐ **Every `*_api` key the framework writes is here**, the skills' records
 #: among them (the exercise bundle, its quiz document, the coverage report and
 #: its plan, the source ledger, the onboarding and execution records and the
-#: framework pin), and `tests/studyforge/test_version.py` fails on one that is
+#: framework pin, and a standalone course's release manifest), and
+#: `tests/studyforge/test_version.py` fails on one that is
 #: written and not registered. A key registered here that nothing reads back
 #: costs nothing; a reader of one compares through `check`.
 #:
@@ -112,6 +113,7 @@ CONTRACT_FIELDS = (
     "installed_api",
     "pin_api",
     "written_api",
+    "release_api",
 )
 
 

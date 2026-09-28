@@ -35,7 +35,7 @@ over the record `studyforge narrate` wrote; a corpus with no record renders
 module hands `build_unit` a unit's archive documents and nothing else.
 
 ⭐ **Where an overlay sits is declared:
-`skills.adapter.Layout.content(address, unit)` is the address**, so a build
+`archive.layout.Layout.content(address, unit)` is the address**, so a build
 has somewhere to look. ⛔ **Applying one is unowned** — reading the file, refusing its version,
 composing it over the
 archive's blocks and deciding what a conflict means are none of them decided,

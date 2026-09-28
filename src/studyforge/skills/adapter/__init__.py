@@ -54,8 +54,7 @@ say what it ingests.
 
 from __future__ import annotations
 
-from studyforge.skills.adapter.curriculum import CurriculumDisagrees, Filed, counted, filed
-from studyforge.skills.adapter.layout import (
+from studyforge.archive.layout import (
     ARCHIVE_DIR,
     RAW_DIR,
     TREE_ROOT,
@@ -65,6 +64,7 @@ from studyforge.skills.adapter.layout import (
     archive_tree,
     document_name,
 )
+from studyforge.skills.adapter.curriculum import CurriculumDisagrees, Filed, counted, filed
 from studyforge.skills.adapter.parts import PARTS, Part
 from studyforge.skills.adapter.plan import FILLED_IN, PACKAGE, Plan, PlanError, plan_for
 from studyforge.skills.adapter.scaffold import (

@@ -44,8 +44,8 @@ import keyword
 from dataclasses import dataclass
 
 from studyforge.archive.document import KINDS
+from studyforge.archive.layout import ARCHIVE_DIR
 from studyforge.corpus.manifest import Manifest
-from studyforge.skills.adapter.layout import ARCHIVE_DIR
 
 #: The directory an adapter occupies in its own repository. ⭐ A **framework**
 #: decision rather than a corpus fact, and deliberately fixed: a reviewer who

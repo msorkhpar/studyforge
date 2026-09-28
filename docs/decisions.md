@@ -191,7 +191,7 @@ What it reads, and the choices in it:
 
 ### A value a second package needs has one exported home
 
-**Decision.** A constant another package needs is exported by its owner and imported, never retyped. The archive directory names come from `studyforge.corpus.placement` (`ARCHIVE_DIRNAME`, `RAW_DIRNAME`, `UNITS_DIRNAME`) and the adapter `Layout` in `skills.adapter.layout` only re-exports them. The run namespace is `studyforge.serve.routes.run.NAMESPACE`, which `serve.instance` and `skills.buildserve.states` import. `tests/studyforge/corpus/placement/test_names.py` fails on a second literal of each directory name in `src`.
+**Decision.** A constant another package needs is exported by its owner and imported, never retyped. The archive directory names come from `studyforge.corpus.placement` (`ARCHIVE_DIRNAME`, `RAW_DIRNAME`, `UNITS_DIRNAME`) and the adapter `Layout` in `archive.layout` only re-exports them. The run namespace is `studyforge.serve.routes.run.NAMESPACE`, which `serve.instance` and `skills.buildserve.states` import. `tests/studyforge/corpus/placement/test_names.py` fails on a second literal of each directory name in `src`.
 
 **Why.** Two spellings of one value can disagree with nothing failing.
 
@@ -637,7 +637,7 @@ What it reads, and the choices in it:
 
 ### The adapter layout is the one address of a unit's authored overlay
 
-**Decision.** `studyforge.skills.adapter.layout.Layout.content(address, unit)` is the only place the per-unit overlay path is computed. It joins placement's units directory with `studyforge.unit.content.CONTENT_FILENAME` and mints nothing itself. Declaring where an overlay sits does not apply one: v1 still builds each unit from its archive documents alone.
+**Decision.** `studyforge.archive.layout.Layout.content(address, unit)` is the only place the per-unit overlay path is computed. It joins placement's units directory with `studyforge.unit.content.CONTENT_FILENAME` and mints nothing itself. Declaring where an overlay sits does not apply one: v1 still builds each unit from its archive documents alone.
 
 **Why.** With no stated location, every build that wanted an overlay would invent its own.
 
@@ -1315,7 +1315,7 @@ What it reads, and the choices in it:
 
 ### The narration record names the conditions clips were made under
 
-**Decision.** `.studyforge/narration.json` records the conditions of synthesis (`narrate.synth.record.Conditions`): the voice, the format, the service's promise, the chunk size and the deployment's engine model as reported by the service's health answer, and a change to any of them makes clips stale. A clip's own engine fields are provenance and are not compared.
+**Decision.** `.studyforge/narration.json` records the conditions of synthesis (`narrate.recorded.record.Conditions`): the voice, the format, the service's promise, the chunk size and the deployment's engine model as reported by the service's health answer, and a change to any of them makes clips stale. A clip's own engine fields are provenance and are not compared.
 
 **Why.** A content-addressed filename captures the words but not the deployment settings that produced the audio.
 

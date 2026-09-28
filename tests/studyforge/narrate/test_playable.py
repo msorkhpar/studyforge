@@ -30,11 +30,7 @@ from studyforge.narrate.playable import (
     playable_of,
     playable_of_units,
 )
-from studyforge.narrate.speakable import speakable_of
-from studyforge.narrate.speakable.naming import digest_of, parse_clip_name
-from studyforge.narrate.speakable.records import SpeechUnit
-from studyforge.narrate.synth.incremental import wanted_name
-from studyforge.narrate.synth.record import (
+from studyforge.narrate.recorded.record import (
     Clip,
     Conditions,
     State,
@@ -42,6 +38,10 @@ from studyforge.narrate.synth.record import (
     state_file,
     write_state,
 )
+from studyforge.narrate.speakable import speakable_of
+from studyforge.narrate.speakable.naming import digest_of, parse_clip_name
+from studyforge.narrate.speakable.records import SpeechUnit
+from studyforge.narrate.synth.incremental import wanted_name
 from studyforge.render.page import AUDIO_ATTRIBUTE, Narration
 from tests.studyforge.render.page.pages import sample_placement
 

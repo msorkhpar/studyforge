@@ -9,7 +9,7 @@ other: a kind a unit has no files of gets no directory.
 `references(document)` when only *what a page will reach for* is wanted.
 
 **Depends on.** `generate.declarations` for the corpus, `generate.writing` for
-R3, `skills.adapter.Layout` for where the archive keeps a unit's own files,
+R3, `archive.layout.Layout` for where the archive keeps a unit's own files,
 `archive.blocks` for the one recursion over the vocabulary, `corpus.placement`
 for where the copy goes, `sourcepath` for what a reference may be, and
 `unit.builder` for the document a page is rendered from. ⛔ It names no
@@ -74,6 +74,7 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
 from studyforge.archive.blocks import BLOCK_FIELDS, walk
+from studyforge.archive.layout import Layout
 from studyforge.corpus.placement import (
     ATTACHMENTS_DIRNAME,
     IMAGES_DIRNAME,
@@ -90,7 +91,6 @@ from studyforge.generate.declarations import (
     unit_location,
 )
 from studyforge.generate.writing import Written, copy, mint, stand
-from studyforge.skills.adapter import Layout
 from studyforge.sourcepath import SOURCE_PATH_DESCRIBED, source_path_fault
 from studyforge.unit.builder import build_unit
 

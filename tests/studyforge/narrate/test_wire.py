@@ -56,7 +56,8 @@ def test_importing_the_build_or_the_plan_loads_no_wire_in_a_fresh_interpreter(im
     loaded = loaded_by(importer)
     # ⭐ Inhabitation first: the importer does reach narration's read side, so
     # the absence below is a property of the seam and not of a moved import.
-    assert "studyforge.narrate.synth" in loaded, f"{importer} no longer reaches narrate.synth"
+    # ⭐ The read side is `narrate.recorded`, which carries no synthesis pass.
+    assert "studyforge.narrate.recorded" in loaded, f"{importer} no longer reaches the record"
     assert [name for name in (WIRE, CLIENT) if name in loaded] == []
 
 

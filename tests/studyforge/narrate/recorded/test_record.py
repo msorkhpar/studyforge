@@ -14,10 +14,9 @@ import pytest
 from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.corpus.placement.profile import GENERATED_ROOT
 from studyforge.narrate.answers import Health, NarrationError
-from studyforge.narrate.speakable.naming import digest_of
-from studyforge.narrate.synth import record as record_module
-from studyforge.narrate.synth.location import Superseded
-from studyforge.narrate.synth.record import (
+from studyforge.narrate.recorded import record as record_module
+from studyforge.narrate.recorded.location import Superseded
+from studyforge.narrate.recorded.record import (
     NARRATION_API,
     NARRATION_STATE_FILENAME,
     Clip,
@@ -31,6 +30,7 @@ from studyforge.narrate.synth.record import (
     the_one_file,
     write_state,
 )
+from studyforge.narrate.speakable.naming import digest_of
 
 VOICE = "am_liam"
 FMT = "mp3"

@@ -4,14 +4,15 @@ r"""Where a recorded clip is: a directory relative to the corpus root, read back
 own path, `where_of(into, root)` spells an audio directory the way the record
 carries it, `checked_where(value)` refuses a recorded one that is absolute or
 climbs out of the root, and `located(root, where, filename)` is the path a
-recorded clip has. `Superseded` is one clip an earlier wording wrote.
+recorded clip has. `audio_dir(root, locations)` is where one unit's clips go:
+its placement answer, rooted. `Superseded` is one clip an earlier wording wrote.
 
 **How you use it.** The pass records `where_of(into, root_of(state))` beside
 every filename it writes; a prune asks `located(root, clip.where, clip.filename)`
 and never re-derives placement.
 
-**Depends on.** `corpus.placement` for the generated root, and the standard
-library. ⛔ Never `record` or `incremental`: both import this, one way.
+**Depends on.** `corpus.placement` for the generated root and a unit's media
+directory, and the standard library. ⛔ Never `record` or `incremental`: both import this, one way.
 
 ## ⛔ Why the record carries a directory
 
@@ -33,7 +34,7 @@ import os
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
-from studyforge.corpus.placement import GENERATED_ROOT
+from studyforge.corpus.placement import AUDIO_DIRNAME, GENERATED_ROOT, UnitLocations
 
 
 @dataclass(frozen=True, slots=True)
@@ -98,3 +99,19 @@ def located(root: Path | str, where: object, filename: str) -> Path | None:
     if checked is None:
         return None
     return Path(root) / checked / filename
+
+
+def audio_dir(root: Path | str, locations: UnitLocations) -> Path:
+    """Return where one unit's clips go: its placement answer, rooted — ⛔ never composed here.
+
+    ⛔ **`locations` is the ONE derivation**, the unit's
+    `generate.declarations.unit_location`, which takes what `unit_stem` takes,
+    the label included. `narrate`, the build's read and the page hold that one
+    answer, so no stem is spelled here and no argument of it can be dropped here.
+
+    ⭐ The *"through the placement policy"* half of synthesis: a caller that
+    composed the media directory itself would be the second layout authority R4
+    removes, and that mistake is invisible under one of the two profiles, whose
+    media directory happens to sit where a hand-composed path would put it.
+    """
+    return Path(root) / Path(str(locations.media_dir(AUDIO_DIRNAME)))

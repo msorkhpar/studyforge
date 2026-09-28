@@ -55,8 +55,8 @@ from studyforge.archive.scrub import assert_clean
 from studyforge.corpus.placement import GENERATED_ROOT
 from studyforge.describe import describe
 from studyforge.narrate.answers import Health, NarrationError
+from studyforge.narrate.recorded.location import Superseded, checked_where, order
 from studyforge.narrate.speakable.naming import digest_of
-from studyforge.narrate.synth.location import Superseded, checked_where, order
 from studyforge.version import check
 
 ENCODING = "utf-8"

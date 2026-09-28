@@ -1,10 +1,10 @@
-"""Mirror of `src/studyforge/narrate/synth/location.py` (R12) — where a clip is."""
+"""Mirror of `src/studyforge/narrate/recorded/location.py` (R12) — where a clip is."""
 
 from __future__ import annotations
 
 import pytest
 
-from studyforge.narrate.synth.location import (
+from studyforge.narrate.recorded.location import (
     Superseded,
     checked_where,
     located,
@@ -12,7 +12,7 @@ from studyforge.narrate.synth.location import (
     root_of,
     where_of,
 )
-from studyforge.narrate.synth.record import state_file
+from studyforge.narrate.recorded.record import state_file
 
 
 def test_the_root_is_recovered_from_the_records_own_path(tmp_path):
