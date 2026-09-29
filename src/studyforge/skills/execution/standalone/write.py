@@ -5,7 +5,9 @@ tree its learner `main` holds: every tracked file `split` keeps, the vendored
 serving runtime (`closure`), the toolchain's build context at the course's
 pinned inputs (`vendor`), the build files studyforge owns (`images`), the two
 compose files (`compose`), the learner's README and settings (`learner`), and
-`.studyforge/release.json`, the manifest of every path the tree keeps.
+`.studyforge/release.json`, the manifest of every path the tree keeps. ⭐ The tree also
+carries its own Pages automation (`pages`): the workflow that deploys the read-only
+preview on every push to `main`, and the copy of the builder it runs.
 
 **How you use it.**
 
@@ -55,6 +57,7 @@ from studyforge.skills.execution.standalone import (
     facts,
     images,
     learner,
+    pages,
     preview,
     split,
     tour,
@@ -127,6 +130,8 @@ def release(
         raise ReleaseRefused("the course declares no runtime, so it has nothing to run standalone")
     files = split.tracked(root, run)
     verdicts = split.classify(root, files)
+    if not any(one.path == split.HOSTING for one in verdicts):
+        verdicts = (*verdicts, split.HOSTED)
     kept = split.kept(verdicts, files)
     prime = root / split.PRIME
     vendor.pinned(root, toolchain, manifest.runtimes, prime, platform=platform, run=run)
@@ -141,6 +146,11 @@ def release(
         "editor",
     )
     out.mkdir(parents=True, exist_ok=True)
+    owned = [one for one in kept if one in pages.OWNED or one.startswith(pages.BUILDER_DIR + "/")]
+    if owned:
+        raise ReleaseRefused(
+            f"the course tracks {owned}, which the export writes itself; move or rename them"
+        )
     for one in kept:
         _copy(root / one, out / one)
     written: list[str] = []
@@ -195,6 +205,13 @@ def release(
     for where, text in texts.items():
         _text(out / where, text)
         written.append(where)
+    for where, data in pages.builder().items():
+        target = out / where
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(data)
+        written.append(where)
+    _text(out / pages.WORKFLOW, pages.workflow())
+    written.append(pages.WORKFLOW)
     if _ignore_env(out / ".gitignore"):
         written.append(".gitignore")
     document = _manifest(

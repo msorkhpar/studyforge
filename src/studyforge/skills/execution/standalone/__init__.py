@@ -34,8 +34,8 @@ builds them.
 | `facts` | the counts a README states, read from the course's own records |
 | `tour` | the README's sections on what the course is, what it gives, and its two ways to be used |
 | `learner` | the learner's `README.md` and `course.env` |
-| `preview` | the read-only static tree for GitHub Pages, made from the finished learner tree |
-| `previewkit` | the preview's words, script and stylesheet, and its edits of one page |
+| `preview` | the read-only static tree for GitHub Pages: words, script, page edits; one file |
+| `pages` | the workflow that deploys the preview on every push to `main`, and its builder |
 | `write` | the whole of it, and `.studyforge/release.json` |
 
 ## ⭐ Shared bases, and thin images per course

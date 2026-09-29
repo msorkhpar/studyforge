@@ -24,7 +24,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from studyforge.exercise.bundle.layout import BUNDLES_DIRNAME
-from studyforge.skills.execution.standalone import tour
+from studyforge.skills.execution.standalone import pages, tour
 from studyforge.skills.execution.standalone.compose import (
     EDITOR_PORT_VARIABLE,
     PROJECT_VARIABLE,
@@ -223,6 +223,15 @@ def readme(course: Course) -> str:
         "```",
         "",
         "(`docker compose down` stops a course started with the build file.)",
+        "",
+        "## The online preview",
+        "",
+        "The read-only preview is built automatically from `main` on every push, by the",
+        f"workflow in [`{pages.WORKFLOW}`]({pages.WORKFLOW}), so it is never out of date and",
+        "no other branch holds it. To switch it on for your copy of this repository, open",
+        'Settings, then Pages, and choose "GitHub Actions" as the source; the next push to',
+        "`main` publishes it (the workflow can also be run by hand from the Actions tab).",
+        "The website link at the top of this repository opens it.",
         "",
         "## Licence",
         "",

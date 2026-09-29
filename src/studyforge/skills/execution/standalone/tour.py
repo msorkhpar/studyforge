@@ -24,10 +24,10 @@ from collections.abc import Mapping
 
 from studyforge.render.markup import anchor
 from studyforge.skills.execution.standalone.facts import Facts
+from studyforge.skills.execution.standalone.preview import RUN_ANCHOR
 
 #: The README section every note in the preview points to, and its heading.
 RUN_HEADING = "Run it locally with Docker"
-RUN_ANCHOR = "run-it-locally-with-docker"
 NARRATION_ANCHOR = "narration-optional"
 
 #: The screenshots the export accepts, in the order the README shows them: the role, then its

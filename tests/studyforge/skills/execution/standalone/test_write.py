@@ -16,9 +16,18 @@ from pathlib import Path
 
 import pytest
 
-from studyforge.skills.execution.standalone import closure, compose, images, learner, split, write
+from studyforge.skills.execution.standalone import (
+    closure,
+    compose,
+    images,
+    learner,
+    pages,
+    split,
+    write,
+)
 from tests.studyforge.execute.runnable import fixture_copy
 from tests.studyforge.skills.execution.standalone.test_compose import plan
+from tests.studyforge.skills.execution.standalone.test_pages import problems
 from tests.studyforge.skills.execution.standalone.test_vendor import (
     TAGS,
     answering,
@@ -326,3 +335,53 @@ def test_the_release_writes_the_preview_beside_it_when_asked(tmp_path):
         "README.md" not in made.previewed.files and not (tmp_path / "site" / "README.md").exists()
     )
     assert not (out / "site").exists()
+
+
+def test_the_tree_carries_the_pages_workflow_and_its_builder_and_the_manifest_lists_them(released):
+    out, made = released
+    manifest = json.loads((out / write.MANIFEST).read_text(encoding="utf-8"))
+    assert (out / pages.WORKFLOW).read_text(encoding="utf-8") == pages.workflow()
+    assert problems((out / pages.WORKFLOW).read_text(encoding="utf-8")) == []
+    for where, data in pages.builder().items():
+        assert (out / where).read_bytes() == data, where
+    assert {pages.WORKFLOW, *pages.builder()} <= set(manifest["keeps"])
+    kept = {v["path"]: v for v in manifest["verdicts"]}[".github"]
+    assert kept["verdict"] == split.KEEP and "hosting infrastructure" in kept["why"]
+
+
+def test_a_workflow_the_manifest_forgot_would_be_seen(released):
+    out, _ = released
+    listed = json.loads((out / write.MANIFEST).read_text(encoding="utf-8"))["keeps"]
+    assert [one for one in listed if one != pages.WORKFLOW] != on_disk(out)
+
+
+def test_the_export_names_no_owner_in_anything_it_wrote_under_github(released):
+    out, _ = released
+    for one in (out / ".github").rglob("*"):
+        if one.is_file():
+            assert not re.search(r"/home/|[\w.+-]+@[\w-]+\.[a-z]{2,}", one.read_text("utf-8")), one
+
+
+def test_the_workflow_changes_no_image_tag_and_no_compose_file(released):
+    out, made = released
+    assert ".github" not in images.DOCKERIGNORE
+    text = (out / "compose.yaml").read_text(encoding="utf-8") + (
+        out / "compose.pull.yaml"
+    ).read_text(encoding="utf-8")
+    assert ".github" not in text and "pages.yml" not in text
+
+
+def test_a_course_that_tracks_the_workflow_the_export_writes_is_refused(tmp_path):
+    root = checkout(tmp_path)
+    (root / ".github" / "workflows").mkdir(parents=True)
+    (root / pages.WORKFLOW).write_text("name: mine\n", encoding="utf-8")
+    subprocess.run([*GIT, "add", "-A"], cwd=root, check=True)
+    subprocess.run([*GIT, "commit", "-q", "-m", "workflow"], cwd=root, check=True)
+    with pytest.raises(write.ReleaseRefused, match="writes itself"):
+        write.release(
+            root,
+            tmp_path / "learner",
+            toolchain=toolchain(tmp_path / "tc"),
+            platform="linux/amd64",
+            run=answered(),
+        )

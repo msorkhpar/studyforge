@@ -142,6 +142,19 @@ class Verdict:
     why: str
 
 
+#: ⭐ `.github` is the learner repository's hosting infrastructure, not build material: its
+#: workflows and helpers run on GitHub for the learner's copy (the Pages workflow that
+#: deploys the read-only preview and the builder it runs), so it is kept, and the export
+#: writes it into the tree even when the course tracks none.
+HOSTING = ".github"
+HOSTED = Verdict(
+    HOSTING,
+    KEEP,
+    "learner-facing hosting infrastructure: the workflow that deploys the read-only preview "
+    "to GitHub Pages and the builder it runs, not material about building the course",
+)
+
+
 def tracked(root: Path, run: Run) -> tuple[str, ...]:
     """Every file git tracks in the checkout at `root`, as a forward-slash path.
 
@@ -225,6 +238,8 @@ def _top(
         return Verdict(entry, KEEP, "the course's licence")
     if entry == ".gitignore":
         return Verdict(entry, KEEP, "the course's own ignore rules")
+    if entry == HOSTING:
+        return HOSTED
     return Verdict(entry, MOVE, KNOWN_MOVES.get(entry, UNKNOWN))
 
 
