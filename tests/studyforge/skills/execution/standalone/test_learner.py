@@ -252,7 +252,7 @@ def test_the_licence_is_linked_only_when_the_tree_holds_it():
 def test_the_readme_says_how_the_online_preview_is_kept_and_switched_on():
     text = learner.readme(COURSE)
     assert "built automatically from `main` on every push" in text
-    assert '"GitHub Actions" as the source' in text and "Settings, then Pages" in text
+    assert '"GitHub Actions" as the source' in text and "open Settings, then Pages" in text
     assert f"(`{pages.WORKFLOW}`)" not in text and f"({pages.WORKFLOW})" in text
     assert "website link at the top of this repository" in text
     assert "gh-pages" not in text and "https://" not in text and "github.io" not in text
