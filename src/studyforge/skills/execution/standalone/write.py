@@ -49,7 +49,17 @@ from studyforge.skills.execution.contract import (
     read,
     require,
 )
-from studyforge.skills.execution.standalone import closure, compose, images, learner, split, vendor
+from studyforge.skills.execution.standalone import (
+    closure,
+    compose,
+    facts,
+    images,
+    learner,
+    preview,
+    split,
+    tour,
+    vendor,
+)
 from studyforge.skills.onboarding import library
 
 #: The manifest's path in the learner tree, and its shape's version.
@@ -81,6 +91,7 @@ class Released:
     written: tuple[str, ...]
     names: images.Names
     manifest: dict
+    previewed: preview.Previewed | None = None
 
 
 def host_platform() -> str:
@@ -96,9 +107,16 @@ def release(
     toolchain: Path,
     platform: str | None = None,
     namespace: str = images.NAMESPACE_DEFAULT,
+    screenshots: Path | None = None,
+    preview_to: Path | None = None,
     run: split.Run,
 ) -> Released:
-    """Write the learner tree of the course at `root` into `out`, or refuse by name."""
+    """Write the learner tree of the course at `root` into `out`, or refuse by name.
+
+    `screenshots` names a directory of the README's pictures (`tour.ROLES`), copied
+    into the tree; `preview_to` names a new directory that also receives the
+    read-only preview of the finished tree (`preview`).
+    """
     root, out, toolchain = Path(root), Path(out), Path(toolchain)
     if out.exists() and any(out.iterdir()):
         raise ReleaseRefused("the target directory is not empty; name a new or empty one")
@@ -149,6 +167,7 @@ def release(
         editor_port=ports[1],
     )
     built, pulled = compose.render(plan)
+    shots = _screenshots(screenshots, out, written)
     narrated = bool(manifest.narration) and (root / images.CLIPS).is_file()
     course = learner.Course(
         manifest.title,
@@ -158,6 +177,10 @@ def release(
         namespace,
         narrated,
         exercises=any(one.startswith(f"{BUNDLES_DIRNAME}/") for one in kept),
+        facts=facts.read(out),
+        shots=shots,
+        runtimes=tuple(manifest.runtimes),
+        licence="LICENSE" in kept,
     )
     texts = {
         f"{compose.NO_PRIME}/README": "An empty build context: an unprimed image warms nothing.\n",
@@ -188,7 +211,43 @@ def release(
     )
     _text(out / MANIFEST, json.dumps(document, indent=2) + "\n")
     written.append(MANIFEST)
-    return Released(tuple(verdicts), tuple(kept), tuple(sorted(set(written))), names, document)
+    previewed = preview.preview(out, Path(preview_to)) if preview_to else None
+    return Released(
+        tuple(verdicts), tuple(kept), tuple(sorted(set(written))), names, document, previewed
+    )
+
+
+#: The README's pictures: what a file may be, and how much of the repository they may take.
+SHOT_SUFFIXES = (".png", ".webp")
+SHOT_MAX_BYTES = 160 * 1024
+SHOTS_MAX_BYTES = 700 * 1024
+
+
+def _screenshots(source: Path | None, out: Path, written: list[str]) -> tuple[tuple[str, str], ...]:
+    """Copy the README's pictures into the tree; return `(role, path)` for each, or refuse."""
+    if source is None:
+        return ()
+    roles = [role for role, _ in tour.ROLES]
+    found: list[tuple[str, Path]] = []
+    for one in sorted(Path(source).iterdir()):
+        if one.stem not in roles or one.suffix not in SHOT_SUFFIXES:
+            raise ReleaseRefused(f"{one.name} is not a picture the README shows: {roles}")
+        if one.stat().st_size > SHOT_MAX_BYTES:
+            raise ReleaseRefused(f"{one.name} is over {SHOT_MAX_BYTES // 1024} KB")
+        found.append((one.stem, one))
+    if sum(one.stat().st_size for _, one in found) > SHOTS_MAX_BYTES:
+        raise ReleaseRefused(f"the pictures together are over {SHOTS_MAX_BYTES // 1024} KB")
+    if len({role for role, _ in found}) != len(found):
+        raise ReleaseRefused("a role has two pictures; keep one")
+    placed = []
+    for role in roles:
+        for name, one in found:
+            if name == role:
+                where = f"{compose.IMAGES}/readme/{one.name}"
+                _copy(one, out / where)
+                written.append(where)
+                placed.append((role, where))
+    return tuple(placed)
 
 
 def _write_runtime(out: Path, commit: str, version: str, written: list[str]) -> str:
