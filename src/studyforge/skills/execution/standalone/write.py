@@ -37,6 +37,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from studyforge.execute import instance
+from studyforge.exercise.bundle.layout import BUNDLES_DIRNAME
 from studyforge.generate import read_corpus
 from studyforge.skills.execution.binds import code_bind, source_root, workspaces_bind
 from studyforge.skills.execution.contract import (
@@ -150,7 +151,13 @@ def release(
     built, pulled = compose.render(plan)
     narrated = bool(manifest.narration) and (root / images.CLIPS).is_file()
     course = learner.Course(
-        manifest.title, manifest.source, ports[0], ports[1], namespace, narrated
+        manifest.title,
+        manifest.source,
+        ports[0],
+        ports[1],
+        namespace,
+        narrated,
+        exercises=any(one.startswith(f"{BUNDLES_DIRNAME}/") for one in kept),
     )
     texts = {
         f"{compose.NO_PRIME}/README": "An empty build context: an unprimed image warms nothing.\n",

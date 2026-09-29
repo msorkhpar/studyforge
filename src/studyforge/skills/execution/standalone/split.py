@@ -18,13 +18,28 @@ procedure in `SKILL.md` carries out, on `main` only.
 
 ## ⛔ The question, and the default
 
-⭐ **Does a learner need it to study or run the course?** Kept: the course's
-declaration, the built site, the archive the server reads, the practices, the
-course's own code and lessons, its licence, the narration record and restore
-scripts, and what the course's images are built from. ⛔ **Everything else
-moves, and a path nothing here recognises moves too**, with a sentence saying
-so, because a path kept by mistake ships in every learner's clone and a path
-moved by mistake is one checkout of `studyforge/build` away.
+⭐ **Is it used to work with the course, or is it about building it?** Kept:
+the course's declaration, the built site, the archive the server reads, the
+practices AND the authored exercises they come from (the engine and its
+exercises belong together), the course's own code and lessons, its own scripts,
+progress tracker and toolchain configuration, its licence, the narration record
+and restore scripts, and what the course's images are built from. ⛔ **What moves
+is what is about building the course with studyforge**: ingestion, the build's
+documentation, the generated conversion tests, an assistant's guidance files and
+the build's own records. **A path nothing here recognises moves too**, with a
+sentence saying so, because a path moved by mistake is one checkout of
+`studyforge/build` away; what a learner or the engine could use is named here,
+so it is never left to that default.
+
+## ⭐ The authored exercises are KEPT, and why
+
+⚠️ The bundle root (`exercises/`) holds every statement, starter, test, reference
+solution and plant. It was moved once because the study server never reads it;
+that reading was too narrow. The exercises are what the course's practices are
+graded against, and the course's engine and its exercises are one thing: a
+learner who studies the course has the exercises beside it. ⛔ Keeping the tree
+is a `main` decision only: the site, runner and editor images leave it out of
+their build contexts (`images.DOCKERIGNORE`), so it never swells an image.
 
 ## ⚠️ The archive is KEPT, and why
 
@@ -80,12 +95,22 @@ EXECUTION_KEPT = {
     "allowed": "where the server writes the runner's allowlist; only its ignore file",
 }
 
+#: ⭐ Top-level entries used to work with the course, kept by name (or by stem, lower-cased):
+#: the course's own scripts, its progress trackers, and the configuration that selects its
+#: toolchain.
+WORKING_KEPT = {
+    "scripts": "the course's own scripts, used to work with the project",
+    "progress": "the course's own progress tracker",
+    ".sdkman": "the course's own toolchain configuration",
+    ".tool-versions": "the course's own toolchain configuration",
+    ".java-version": "the course's own toolchain configuration",
+    ".python-version": "the course's own toolchain configuration",
+    ".nvmrc": "the course's own toolchain configuration",
+    ".mvn": "the course's own build tool configuration",
+}
+
 #: Why paths the builder recognises move, by name.
 KNOWN_MOVES = {
-    BUNDLES_DIRNAME: (
-        "authored exercise bundles: reference solutions, plants and gate records; the server "
-        "never reads them, and a learner who could would read every answer"
-    ),
     "ingest": "the adapter that produced the archive: ingestion",
     "tests": "the checks onboarding generated to hold the build: how the course was built",
     "docs": "documents about the build: hand-offs and the onboarding report",
@@ -93,10 +118,8 @@ KNOWN_MOVES = {
     ".claude": "an AI assistant's command files for maintaining the repository",
     "AGENTS.md": "guidance for an AI assistant maintaining the repository",
     "EXECUTION.md": "the execution report onboarding wrote: how the course was built",
-    "PROGRESS.md": "the author's progress tracker",
     "README.md": "the author's overview and the curriculum record ingestion read; the "
     "learner README replaces it, and the built site carries the contents",
-    "scripts": "the author's maintenance scripts",
     "pin.json": "the framework pin: which studyforge built the course",
     "installed.json": "onboarding's record of what it installed",
     "skills": "the skill stubs the build ran",
@@ -178,6 +201,18 @@ def _top(
         )
     if entry == PRACTICE_DIRNAME:
         return Verdict(entry, KEEP, "the practice workspaces a learner edits and submits")
+    if entry == BUNDLES_DIRNAME:
+        return Verdict(
+            entry,
+            KEEP,
+            "the authored exercises the practices are graded against: statements, starters, "
+            "tests, reference solutions and plants; the course's engine and its exercises "
+            "belong together",
+        )
+    stem = PurePosixPath(entry).stem.lower()
+    working = WORKING_KEPT.get(entry) or (WORKING_KEPT[stem] if stem == "progress" else None)
+    if working:
+        return Verdict(entry, KEEP, working)
     if entry in built:
         return Verdict(entry, KEEP, "the built site")
     if entry in code:

@@ -23,6 +23,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from studyforge.exercise.bundle.layout import BUNDLES_DIRNAME
 from studyforge.skills.execution.standalone.compose import (
     EDITOR_PORT_VARIABLE,
     PROJECT_VARIABLE,
@@ -55,6 +56,7 @@ class Course:
     editor_port: int
     namespace: str
     narrated: bool
+    exercises: bool = False
 
 
 def settings(course: Course) -> str:
@@ -156,6 +158,16 @@ def readme(course: Course) -> str:
             "  in this repository before it places anything, and deletes the downloads",
             "  afterwards. Set `NARRATION_LOCAL_DIR` to a directory holding the release's",
             "  volumes to read them from disk instead of downloading them.",
+            "",
+        ]
+    if course.exercises:
+        parts += [
+            "## The exercises",
+            "",
+            f"`{BUNDLES_DIRNAME}/` holds the course's authored exercises: each one's statement,",
+            "starter, tests and reference solution. `practice/` holds your working copy of",
+            "each: the files you edit and submit live there, and "
+            f"`{BUNDLES_DIRNAME}/` is only read.",
             "",
         ]
     parts += [
