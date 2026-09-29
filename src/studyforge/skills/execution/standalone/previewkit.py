@@ -33,8 +33,8 @@ from __future__ import annotations
 import re
 from html import escape
 
-#: The README section every note points to, as GitHub spells its anchor.
-RUN_ANCHOR = "run-it-locally-with-docker"
+from studyforge.render.markup import anchor
+from studyforge.skills.execution.standalone.tour import RUN_ANCHOR
 
 #: The attribute that marks a link the script points at the README's section.
 RUN_LINK = "data-preview-run"
@@ -105,6 +105,8 @@ PREVIEW_JS = """\
   'use strict';
 
   var LABEL = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
+  var HASH = String.fromCharCode(35);
+  var ANCHOR = '@ANCHOR@';
   var RUN = 'a[data-preview-run]';
   var SOURCE = 'a[data-code-path]';
 
@@ -125,7 +127,7 @@ PREVIEW_JS = """\
   var base = repository(window.location.hostname, window.location.pathname);
   [].slice.call(document.querySelectorAll(RUN)).forEach(function (link) {
     if (!base) { plain(link); return; }
-    link.href = base + '/blob/main/README.md#run-it-locally-with-docker';
+    link.href = base + '/blob/main/README.md' + HASH + ANCHOR;
   });
   [].slice.call(document.querySelectorAll(SOURCE)).forEach(function (link) {
     var path = link.getAttribute('data-code-path') || '';
@@ -133,7 +135,7 @@ PREVIEW_JS = """\
     link.href = base + '/blob/main/' + path.split('/').map(encodeURIComponent).join('/');
   });
 }());
-"""
+""".replace("@ANCHOR@", RUN_ANCHOR)
 
 _PLAYER = re.compile(r'<footer id="player"[^>]*>.*?</footer>\s*', re.DOTALL)
 _NARRATOR = re.compile(r'<audio id="narrator"[^>]*></audio>\s*')
@@ -147,7 +149,7 @@ _SUMMARY = re.compile(r"<summary>.*?</summary>", re.DOTALL)
 _LIST = re.compile(r'<ul class="items">.*?</ul>', re.DOTALL)
 _SOURCE_TAG = re.compile(r"<a\b[^>]*\bdata-code-path=[^>]*>")
 _HREF = re.compile(r' href="[^"]*"')
-_BODY = re.compile(r'<body[^>]*>(\s*<a href="#content">[^<]*</a>)?')
+_BODY = re.compile(r'<body[^>]*>(\s*<a href="' + re.escape(anchor("content")) + r'">[^<]*</a>)?')
 _HEAD_END = "</head>"
 _BODY_END = "</body>"
 _HEADER_END = "</header>"

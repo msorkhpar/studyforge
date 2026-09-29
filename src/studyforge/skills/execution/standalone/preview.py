@@ -42,7 +42,7 @@ import sys
 from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from urllib.parse import quote, unquote, urlsplit
+from urllib.parse import quote, unquote, urlsplit, urlunsplit
 
 from studyforge.skills.execution.standalone import previewkit
 
@@ -101,11 +101,7 @@ def _reference(page: str, url: str, sub: dict[str, str]) -> str:
     split = urlsplit(url)
     here = posixpath.dirname(sub[page]) or "."
     new = quote(posixpath.relpath(sub[target], here), safe="/")
-    return (
-        new
-        + (f"?{split.query}" if split.query else "")
-        + (f"#{split.fragment}" if split.fragment else "")
-    )
+    return urlunsplit(("", "", new, split.query, split.fragment))
 
 
 def preview(tree: Path, out: Path) -> Previewed:

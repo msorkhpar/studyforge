@@ -18,6 +18,7 @@ from __future__ import annotations
 import contextlib
 import functools
 import http.server
+import json
 import shutil
 import threading
 import time
@@ -26,7 +27,7 @@ from pathlib import Path
 
 import pytest
 
-from studyforge.skills.execution.standalone import preview
+from studyforge.skills.execution.standalone import preview, previewkit, tour
 from tests.studyforge.serve.routes.quizzing import page_of, quiz_corpus
 from tests.studyforge.skills.execution.standalone.test_preview import (
     PLAYER,
@@ -248,6 +249,35 @@ def test_the_repository_link_is_built_from_the_address_and_from_no_other_source(
             for host, path, _ in ADDRESSES
         ]
     assert built == [link for _, _, link in ADDRESSES]
+
+
+def test_on_a_project_page_the_notes_link_the_readme_section_and_the_source_viewer(
+    open_page: OpenPage, trees, tmp_path: Path
+) -> None:
+    _tree, out, unit = trees
+    # ⭐ A loopback server cannot make a page's own `location` a github.io one, so the page is
+    # opened with an EMPTY preview script and the real one is run over it with the address a
+    # project page has.
+    inert = tmp_path / "inert"
+    shutil.copytree(out, inert)
+    (inert / "course" / "preview.js").write_text("", encoding="utf-8")
+    script = json.dumps(previewkit.PREVIEW_JS)
+    with static(inert) as (origin, _asked):
+        open_page.open(f"{origin}/course/{unit.split('.studyforge/')[-1]}")
+        links = open_page.evaluate(
+            f"""(() => {{
+              const at = {{location: {{hostname: 'example-owner.github.io',
+                                      pathname: '/example-course/index.html'}}}};
+              new Function('window', {script})(at);
+              const href = (selector) => [...document.querySelectorAll(selector)]
+                .map((a) => a.getAttribute('href'));
+              return {{run: href('a[data-preview-note] , [data-preview-note] a, [data-preview-banner] a'),
+                       source: href('a[data-code-path]')}};
+            }})()"""
+        )
+    base = "https://github.com/example-owner/example-course/blob/main/"
+    assert links["run"] and set(links["run"]) == {f"{base}README.md#{tour.RUN_ANCHOR}"}, links
+    assert links["source"] == [f"{base}archive/x/Source.java"], links
 
 
 def test_the_same_page_unstripped_logs_the_missing_clip(

@@ -10,7 +10,7 @@ import re
 
 import pytest
 
-from studyforge.skills.execution.standalone import previewkit
+from studyforge.skills.execution.standalone import previewkit, tour
 
 PAGE = (
     "<!doctype html><html><head><title>T</title></head><body>"
@@ -76,7 +76,7 @@ def test_the_script_holds_no_owner_repository_or_host_and_builds_from_location()
     js = previewkit.PREVIEW_JS
     assert "window.location.hostname" in js and "window.location.pathname" in js
     assert not re.search(r"github\.(com|io)/[A-Za-z0-9]", js)
-    assert previewkit.RUN_ANCHOR in js
+    assert tour.RUN_ANCHOR in js and "@ANCHOR@" not in js
     for note in (previewkit.PRACTICE_NOTE, previewkit.EXAMPLE_NOTE, previewkit.NARRATION_NOTE):
         assert "locally with Docker" in note
         assert previewkit.RUN_LINK in note

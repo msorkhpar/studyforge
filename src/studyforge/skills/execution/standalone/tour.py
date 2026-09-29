@@ -22,11 +22,13 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
+from studyforge.render.markup import anchor
 from studyforge.skills.execution.standalone.facts import Facts
 
 #: The README section every note in the preview points to, and its heading.
 RUN_HEADING = "Run it locally with Docker"
 RUN_ANCHOR = "run-it-locally-with-docker"
+NARRATION_ANCHOR = "narration-optional"
 
 #: The screenshots the export accepts, in the order the README shows them: the role, then its
 #: alternative text. ⭐ The file for a role is `<role>.png` or `<role>.webp`.
@@ -140,7 +142,8 @@ def features(facts: Facts, shots: Mapping[str, str], *, narrated: bool) -> list[
         lines += [
             "**Optional narration.** Lessons can be read aloud, the passage being read "
             "highlighted, with play and pause, previous and next passage, and speed. "
-            "Practices and code are not narrated. See [Narration](#narration-optional).",
+            "Practices and code are not narrated. "
+            f"See [Narration]({anchor(NARRATION_ANCHOR)}).",
             *_shot(shots, "narration"),
             "",
         ]
@@ -153,7 +156,7 @@ def ways(facts: Facts, *, narrated: bool) -> list[str]:
         (
             "Set-up",
             "None: open the website link at the top of this repository",
-            f"Docker, and one command: [{RUN_HEADING}](#{RUN_ANCHOR})",
+            f"Docker, and one command: [{RUN_HEADING}]({anchor(RUN_ANCHOR)})",
         ),
         ("Lessons, the index and its filter", "Yes", "Yes"),
         ("Reading marks and progress", "Yes, kept in your browser", "Yes, kept in your browser"),
