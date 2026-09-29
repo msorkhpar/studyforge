@@ -13,7 +13,7 @@ import threading
 
 import pytest
 
-from studyforge.execute import Editor
+from studyforge.execute import Editor, Published
 from studyforge.generate import read_corpus, write_site
 from studyforge.progress import store_dir
 from studyforge.serve.discovery import DiscoveryRefused, ServedCorpus, discover
@@ -315,6 +315,53 @@ def test_a_page_served_after_the_reading_expires_still_frames_the_editor(tmp_pat
     assert policy_sent(after)["frame-ancestors"] == "'none'"
 
 
+def a_published_instance(tmp_path, origin=UP.origin):
+    """The published form over the fixture workspace, its editor CONFIGURED and never discovered."""
+    declared = Published(
+        origin=origin, binds=(("depth1", "/w"),), health="http://editor/", service=None
+    )
+    return instance_of(discover(a_workspace(tmp_path)), port=0, published=declared)
+
+
+def test_a_cold_published_instance_frames_its_configured_editor_from_the_first_response(tmp_path):
+    # ⭐ **The cold start:** no editor discovered, nothing asked, and the very
+    # first unit page and index name the editor the compose configured. ⛔ Not a
+    # wildcard, and not a probe: the origin is exactly the one configured.
+    server = a_published_instance(tmp_path)
+    live = server.namespaces[run.NAMESPACE].live
+    assert live.origins() == (UP.origin,)
+    with instance_serving(server):
+        for name in ("127.0.0.1", "localhost", "[::1]"):
+            page = fetch(server, "/depth1/index.html", host=f"{name}:8770")[1]
+            index = fetch(server, "/index.html", host=f"{name}:8770")[1]
+            asset = fetch(server, "/depth1/.studyforge/assets/page.css", host=name)[1]
+            assert_framed(page, index, asset)
+
+
+def assert_framed(*responses):
+    for headers in responses:
+        policy = policy_sent(headers)
+        assert policy["frame-src"] == UP.origin
+        assert policy["frame-ancestors"] == "'none'"
+        assert headers["x-frame-options"] == "DENY"
+
+
+def test_a_published_instance_that_configures_no_editor_frames_nothing(tmp_path):
+    declared = Published(origin=None, binds=(), health=None, service=None)
+    server = instance_of(discover(a_workspace(tmp_path)), port=0, published=declared)
+    with instance_serving(server):
+        headers = fetch(server, "/depth1/index.html", host="127.0.0.1")[1]
+    assert policy_sent(headers)["frame-src"] == "'none'"
+
+
+def test_a_published_page_reached_by_a_host_outside_the_allow_list_is_given_no_frame(tmp_path):
+    # ⛔ The configured origin is admitted by the same host gate as a discovered one.
+    server = a_published_instance(tmp_path)
+    with instance_serving(server):
+        crossed = fetch(server, "/depth1/index.html", host="example.invalid")[1]
+    assert policy_sent(crossed)["frame-src"] == "'none'"
+
+
 def test_the_policy_and_the_index_are_read_off_the_one_runs_and_one_probe(tmp_path):
     # ⭐ One `Runs` answers both, so a page load does not fork `docker` twice.
     discovered = discover(a_workspace(tmp_path))
@@ -332,38 +379,26 @@ def test_a_site_form_seam_that_registers_no_run_namespace_frames_nothing(tmp_pat
     assert frames_for({}) is None
 
 
-def test_a_page_reached_by_another_host_is_not_given_the_editor_and_is_told_why(tmp_path):
-    # ⛔ **A trap that is silent without this.** An
-    # editor authenticates with a `SameSite=Lax` cookie; a PORT is not part of a
-    # site but a HOSTNAME is, so a page at `localhost` framing one at `127.0.0.1`
-    # is cross-site, the cookie is withheld, and the frame shows a login form that
-    # never succeeds with nothing in the browser to explain it. ⭐ So the editor is
-    # withheld from that page and the server SAYS so.
-    lines = []
-    server = instance_of(discover(a_workspace(tmp_path)), port=0, log=lines.append)
+def test_a_page_reached_as_localhost_frames_the_editor_as_one_reached_as_127_0_0_1_does(tmp_path):
+    # ⭐ Register ruling: the editor has no password, so there is no session cookie
+    # for the two names to be cross-site about. Read over a real socket.
+    server = instance_of(discover(a_workspace(tmp_path)), port=0)
     server.namespaces[run.NAMESPACE].live.editor = StubEditors(UP)
     with instance_serving(server):
         fetch(server, f"/api/v1/{run.NAMESPACE}/")  # the one reader that may ask
-        matched = fetch(server, "/depth1/index.html")[1]
-        crossed = fetch(server, "/depth1/index.html", host="localhost")[1]
-        again = fetch(server, "/depth1/index.html", host="localhost")[1]
-    assert policy_sent(matched)["frame-src"] == UP.origin
-    assert policy_sent(crossed)["frame-src"] == "'none'"
-    assert policy_sent(again)["frame-src"] == "'none'"
-    withheld = [line for line in lines if "withheld" in line]
-    assert len(withheld) == 1, withheld
-    assert UP.origin in withheld[0] and "localhost" in withheld[0]
+        by_ip = fetch(server, "/depth1/index.html", host="127.0.0.1")[1]
+        by_name = fetch(server, "/depth1/index.html", host="localhost:8770")[1]
+        by_six = fetch(server, "/depth1/index.html", host="[::1]:8770")[1]
+    for headers in (by_ip, by_name, by_six):
+        assert policy_sent(headers)["frame-src"] == UP.origin
+        assert policy_sent(headers)["frame-ancestors"] == "'none'"
 
 
-def test_the_site_itself_is_still_served_to_a_host_the_editor_is_withheld_from(tmp_path):
-    # ⭐ **The design call, and its reason.** Narrowing the `Host` allow-list while
-    # an editor is up would 403 a reader's whole site because a CONTAINER came up,
-    # which is a refusal that moves under them. ⛔ Only the frame is withheld, and
-    # the log names the host to use.
+def test_a_page_of_a_host_outside_the_allow_list_is_refused_whole(tmp_path):
     server = instance_of(discover(a_workspace(tmp_path)), port=0)
     server.namespaces[run.NAMESPACE].live.editor = StubEditors(UP)
     with instance_serving(server):
         fetch(server, f"/api/v1/{run.NAMESPACE}/")
-        page = fetch(server, "/depth1/index.html", host="localhost")
-        api = fetch(server, "/api/v1/state/", host="localhost")
-    assert page[0] == 200 and api[0] == 200
+        status, headers, _ = fetch(server, "/depth1/index.html", host="example.invalid")
+    assert status == 403
+    assert policy_sent(headers)["frame-src"] == "'none'"

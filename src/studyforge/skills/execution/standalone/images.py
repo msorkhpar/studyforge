@@ -10,7 +10,7 @@ two narration targets, the course's runner, and the build context's ignore file.
 **How you use it.**
 
     names = names_for(slug=..., course=..., serve=..., builds=asked.builds)
-    names.site                    # "<course>-site:<version>-${COURSE_NARRATION:-without-narration}"
+    names.site                    # "<course>-site:<commit>-<inputs>-<narration>"
     qualified(names.site)         # the same under "${STUDYFORGE_NAMESPACE:-studyforge-local}/"
     serve_dockerfile(commit=..., version=...), site_dockerfile(slug), runner_dockerfile(slug)
 
@@ -36,6 +36,7 @@ the player until it loads.
 
 from __future__ import annotations
 
+import hashlib
 from collections.abc import Mapping
 from dataclasses import dataclass
 
@@ -50,6 +51,10 @@ NAMESPACE_VARIABLE = "STUDYFORGE_NAMESPACE"
 
 #: ⛔ A placeholder, never an account: what a local build tags its images under.
 NAMESPACE_DEFAULT = "studyforge-local"
+
+#: The size of the site inputs' digest, in bytes: twelve hex digits, made short by its
+#: own size rather than cut from a longer one.
+INPUTS_BYTES = 6
 
 #: The variable a learner sets to choose the site's narration.
 NARRATION_VARIABLE = "COURSE_NARRATION"
@@ -103,14 +108,31 @@ def names_for(
     inputs name the same image for every course that pulls it.
     """
     narration = f"${{{NARRATION_VARIABLE}:-{NARRATIONS[0]}}}"
+    inputs = site_inputs(slug, serve)
     return Names(
         serve=f"studyforge-serve:{serve}",
         runner_base=f"studyforge-runner:{_tag_of(builds['runner'])}",
         editor_base=f"studyforge-editor:{_tag_of(builds['editor'])}",
-        site=f"{slug}-site:{course}-{narration}",
+        site=f"{slug}-site:{course}-{inputs}-{narration}",
         runner=f"{slug}-runner:{course}",
         editor=f"{slug}-editor:{course}",
     )
+
+
+def site_inputs(slug: str, serve: str) -> str:
+    """Return the short digest of what a course's site image is built from, beyond its files.
+
+    ⭐ **The site's tag moves when the site's content moves.** The serving base's
+    tag already carries the whole digest of the vendored library, and the site's
+    own build file and ignore file are the other inputs; a library or build-file
+    change therefore names a NEW site image rather than re-pushing an old name
+    that anyone who already pulled it would keep. ⛔ The course's own files are
+    the course commit's, already in the tag.
+    """
+    digest = hashlib.blake2b(digest_size=INPUTS_BYTES)
+    for part in (serve, site_dockerfile(slug), DOCKERIGNORE):
+        digest.update(part.encode("utf-8") + b"\0")
+    return digest.hexdigest()
 
 
 def serve_dockerfile(*, commit: str, version: str) -> str:

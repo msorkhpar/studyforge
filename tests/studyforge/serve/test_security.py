@@ -185,36 +185,33 @@ def test_being_framed_is_refused_however_wide_frame_src_gets():
     assert dict(security_headers()) == dict(SECURITY_HEADERS)
 
 
-# --- the HOST must match, not merely the machine -------------------
+# --- every accepted loopback name frames the editor ----------------
 
 
-@pytest.mark.parametrize("host", ["127.0.0.1", "127.0.0.1:8770", None])
-def test_an_editor_on_the_host_the_reader_reached_is_framable(host):
-    assert framable([EDITOR], host) == ([EDITOR], [])
-
-
-@pytest.mark.parametrize("host", ["localhost", "localhost:8770", "[::1]:8770"])
-def test_an_editor_on_another_host_is_withheld_rather_than_silently_admitted(host):
-    # ⛔ Same machine, different SITE: a `SameSite=Lax` session cookie would be
-    # withheld and the frame would show a login form that never succeeds.
-    assert framable([EDITOR], host) == ([], [EDITOR])
-
-
-def test_an_editor_is_said_once_per_host_and_the_line_names_both():
-    said, lines = set(), []
-    for _ in range(3):
-        security = response_headers([EDITOR], "localhost:8770", lines.append, said)
-    assert directives(dict(security)["Content-Security-Policy"])["frame-src"] == "'none'"
-    assert len(lines) == 1
-    assert EDITOR in lines[0] and "localhost" in lines[0] and "127.0.0.1" in lines[0]
-
-
-def test_a_matching_host_gets_the_editor_and_nothing_is_said():
-    lines: list[str] = []
-    sent = dict(response_headers([EDITOR], "127.0.0.1:8770", lines.append, set()))
+@pytest.mark.parametrize(
+    "host",
+    ["127.0.0.1", "127.0.0.1:8770", "localhost", "localhost:8770", "[::1]:8770", "[::1]", None],
+)
+def test_a_page_reached_at_any_loopback_name_frames_the_editor(host):
+    # ⭐ Register ruling: the editor has no password, so no session cookie makes a
+    # `localhost` reader's frame cross-site; every accepted loopback name frames it.
+    assert framable([EDITOR], host) == [EDITOR]
+    sent = dict(response_headers([EDITOR], host))
     assert directives(sent["Content-Security-Policy"])["frame-src"] == EDITOR
-    assert lines == []
+    assert directives(sent["Content-Security-Policy"])["frame-ancestors"] == "'none'"
     assert sent["X-Frame-Options"] == "DENY"
+
+
+@pytest.mark.parametrize("host", ["example.invalid", "evil.example:8770", "10.0.0.5:8770"])
+def test_a_host_that_is_not_a_loopback_name_is_given_no_frame(host):
+    assert framable([EDITOR], host) == []
+    sent = dict(response_headers([EDITOR], host))
+    assert directives(sent["Content-Security-Policy"])["frame-src"] == "'none'"
+
+
+@pytest.mark.parametrize("origin", ["*", "http://127.0.0.1:*", "http://evil.example:8443"])
+def test_only_a_loopback_origin_is_ever_named_whatever_host_asks(origin):
+    assert framable([origin], "localhost:8770") == []
 
 
 def test_the_composed_policy_carries_exactly_one_frame_src_and_one_frame_ancestors():

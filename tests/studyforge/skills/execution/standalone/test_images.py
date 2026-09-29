@@ -34,7 +34,9 @@ def test_the_shared_bases_keep_the_toolchains_tag_so_every_course_names_them_ali
 
 def test_the_course_images_carry_the_course_and_the_site_its_variant():
     made = names()
-    assert made.site == "a-course-site:c0ffee-${COURSE_NARRATION:-without-narration}"
+    inputs = images.site_inputs("a-course", "0.1.0-abc")
+    assert made.site == f"a-course-site:c0ffee-{inputs}-${{COURSE_NARRATION:-without-narration}}"
+    assert re.fullmatch(r"[0-9a-f]{12}", inputs)
     assert made.runner == "a-course-runner:c0ffee"
     assert made.editor == "a-course-editor:c0ffee"
 
@@ -199,3 +201,21 @@ def test_the_voiced_site_finds_the_clip_directories_of_either_placement_and_no_o
         "src/study/audio/u2/b.mp3",
         "src/study/audio/u2/c.mp3",
     ]
+
+
+def test_the_site_tag_moves_when_the_vendored_library_does_and_only_then():
+    # ⭐ A re-pushed site image under an unchanged tag would leave everyone who
+    # pulled it on the stale one; the serving base's tag carries the library's digest.
+    before = images.names_for(slug="a-course", course="c0ffee", serve="0.1.0-aaa", builds=BUILDS)
+    after = images.names_for(slug="a-course", course="c0ffee", serve="0.1.0-bbb", builds=BUILDS)
+    again = images.names_for(slug="a-course", course="c0ffee", serve="0.1.0-aaa", builds=BUILDS)
+    assert before.site != after.site
+    assert before.site == again.site
+    # ⭐ The runner and the editor keep their tags: their inputs did not change.
+    assert (before.runner, before.editor) == (after.runner, after.editor)
+
+
+def test_the_site_tag_moves_when_the_sites_own_build_file_does(monkeypatch):
+    before = images.site_inputs("a-course", "0.1.0-abc")
+    monkeypatch.setattr(images, "DOCKERIGNORE", images.DOCKERIGNORE + "extra\n")
+    assert images.site_inputs("a-course", "0.1.0-abc") != before

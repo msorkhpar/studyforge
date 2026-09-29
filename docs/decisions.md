@@ -1087,11 +1087,19 @@ What it reads, and the choices in it:
 
 **Serves.** `R8`
 
-### The frame policy is composed per response from every editor the instance has discovered
+### The frame policy is composed per response from the editors the instance is configured with or has discovered
 
-**Decision.** `frame-src` is composed for each response and `Host` by `serve.security.content_policy` from `serve.routes.runs.Runs.origins`, which returns every editor origin the instance has discovered, read without forking a probe. That record lasts for the life of the process and does not expire; with no editor discovered the directive is `'none'`. `serve.security.frame_origin` admits only loopback `http` or `https` origins and never a wildcard. Being framed is refused separately and permanently by `frame-ancestors 'none'` and `X-Frame-Options: DENY`.
+**Decision.** `frame-src` is composed for each response by `serve.security.content_policy` from `serve.routes.runs.Runs.origins`, which returns every editor origin the instance was configured with or has discovered, read without forking a probe. A published site is configured with its editor's origin (`STUDYFORGE_EDITOR_ORIGIN`, seeded into `Runs` by `serve.instance.namespaces_of`), so it frames that one origin from its first response; the development form has nothing configured and keeps discovery, because asking would fork a process per request. The record lasts for the life of the process and does not expire; with no editor configured or discovered the directive is `'none'`. A page reached at any accepted loopback name (`127.0.0.1`, `localhost`, `[::1]`) frames the editor, because the editor carries no password and so no session cookie; `serve.security.framable` gives a host outside those names no frame. `serve.security.frame_origin` admits only loopback `http` or `https` origins and never a wildcard, and no origin is composed from a request. Being framed is refused separately and permanently by `frame-ancestors 'none'` and `X-Frame-Options: DENY`.
 
-**Why.** A policy tied to a short-lived probe cache would block the editor again seconds after it was found, while a stale entry grants nothing beyond a frame that fails to load. Framing is two-sided: what a page may embed and what may embed the page are separate directives with opposite answers.
+**Why.** A policy tied to a short-lived probe cache would block the editor again seconds after it was found, and a policy that waits for discovery blocks a learner's first practice page after `docker compose up`. A stale entry grants nothing beyond a frame that fails to load. The earlier rule that withheld the editor from a page reached at another loopback name protected a session cookie that no longer exists, and only broke the editor for readers who typed `localhost`. Framing is two-sided: what a page may embed and what may embed the page are separate directives with opposite answers.
+
+**Serves.** `R8`
+
+### A course's site image is tagged with the digest of its inputs
+
+**Decision.** The site image's tag is `<course commit>-<inputs>-<narration>`, where `<inputs>` is the first twelve hex digits of a digest over the serving base's tag (which carries the whole digest of the vendored library), the site's build file and its ignore file (`standalone.images.site_inputs`). The runner and the editor keep `<course commit>`, since none of those inputs reaches them.
+
+**Why.** A site image rebuilt from a changed library and pushed under an unchanged tag leaves everyone who already pulled the old one on it. Moving the tag with the library makes the fixed image a new name.
 
 **Serves.** `R8`
 
