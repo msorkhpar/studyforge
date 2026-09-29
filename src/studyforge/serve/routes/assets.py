@@ -167,6 +167,15 @@ CONTENT_TYPES = {
 }
 DEFAULT_CONTENT_TYPE = "application/octet-stream"
 
+#: ⭐ **A source file's suffixes: the code a lesson links to, served VERBATIM.** Only
+#: those typed as plain text above, so `.js` stays a script and `.md` and `.txt` stay
+#: gated prose. ⛔ **Never refused for what its text says** (a sample address in a text
+#: block, a file past `GATE_MAX_BYTES`): it is the course's own code. Still asked of
+#: `withheld`, so a file carrying a served quiz's key is `404`; never a page.
+SOURCE_SUFFIXES_SERVED = frozenset(
+    one for kind in SOURCE_SUFFIXES.values() for one in kind if CONTENT_TYPES[one] == TEXT_TYPE
+)
+
 Private = Callable[[Path], bool]
 
 #: Whether a file's bytes carry what a site never serves.
@@ -325,6 +334,7 @@ def serve(
     except OSError:
         return _not_found()
     ctype = content_type_for(target)
+    source = target.suffix.lower() in SOURCE_SUFFIXES_SERVED
     body = None
     if ctype.startswith(GATED_TYPES) or ctype == DEFAULT_CONTENT_TYPE:
         try:
@@ -338,6 +348,8 @@ def serve(
     validators = (("ETag", etag), ("Cache-Control", ASSET_CACHE))
     if not_modified(request.headers.get("If-None-Match"), etag):
         return Response(304, validators)
+    if source:
+        return _source(target, body, stat.st_size, ctype, validators)
     if ctype.startswith(GATED_TYPES):
         return _text(body, ctype, validators, added)
     ranges = request.headers.get("Range") if request.headers.get("If-Range") is None else None
@@ -352,6 +364,14 @@ def serve(
     first, last = span
     ranged = (*headers, ("Content-Range", f"bytes {first}-{last}/{stat.st_size}"))
     return Response(206, ranged, file=target, span=span)
+
+
+def _source(target: Path, body: bytes | None, size: int, ctype: str, validators: tuple) -> Response:
+    """Answer a source file whole and verbatim; one too large to read is streamed."""
+    headers = (("Content-Type", ctype), *validators, ("Accept-Ranges", "none"))
+    if body is not None:
+        return Response(200, headers, body)
+    return Response(200, headers, file=target, span=(0, size - 1) if size else None)
 
 
 def _text(body: bytes | None, ctype: str, validators: tuple, client: str | None) -> Response:
