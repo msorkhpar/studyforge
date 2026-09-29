@@ -1466,3 +1466,11 @@ What it reads, and the choices in it:
 **Why.** Docker Desktop reports bind sources, host networking and user ids differently from a Linux engine, and a course whose commands or probes assumed Linux ran on one kind of host only.
 
 **Serves.** `R15`, `R16`
+
+### A sibling corpus keeps its clips out of git with one ignore file in each study directory
+
+**Decision.** A corpus that places its pages beside its source files (`sibling`) can declare `media.commit` `never` and deliver its clips as a release. Its media has no single generated directory, so the placement answers with `Profile.media_ignore_files`: one file, `.gitignore`, inside each `study/` directory that holds clips, whose only rule is `audio/`. `studyforge plan` prints each file with its lines and no longer refuses the policy for this placement (`cli.plan.derive`). The rules are written by `studyforge narrate <root> --pack` (`narrate.release.ignores`), from the directories the narration record locates, so no path is composed a second time; the root ignore file is never edited. A pack refuses, before it writes a byte, a manifest whose `content` classifies such a file nowhere, and names what to declare in `content.not_material`. The site image leaves the clips of either placement out of the silent target and copies them into the voiced one (`skills.execution.standalone.images`).
+
+**Why.** Committing clips as they were made put a hundred megabytes into every clone and kept them in history for good. A placement whose only way to hold them out of git was the repository's root ignore file, which the framework never edits, could not leave that state.
+
+**Serves.** `R3`, `R19`

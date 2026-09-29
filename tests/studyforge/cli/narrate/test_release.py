@@ -29,6 +29,7 @@ from studyforge.narrate.release import (
     read_sums,
 )
 from tests.studyforge.cli.narrate.plant import released_corpus
+from tests.studyforge.narrate.release.test_ignores import declared
 from tests.support import git, init_repository, run
 
 REPO = "example-owner/example-course"
@@ -80,6 +81,41 @@ def test_pack_writes_the_volumes_and_the_scripts_and_says_what_to_type_next(
     assert not (corpus / ".studyforge" / "assets" / "narration-clips.js").exists()
     assert "publish studyforge narrate depth1 --publish release --tag narration-2.0.0" in said
     assert str(tmp_path) not in said
+
+
+@pytest.fixture
+def sibling_corpus(tmp_path, monkeypatch):
+    """A narrated sibling fixture that keeps clips out of git, its pack files declared."""
+    root = declared(released_corpus(tmp_path, "depth2"))
+    init_repository(root)
+    monkeypatch.chdir(tmp_path)
+    return root
+
+
+def test_pack_writes_the_ignore_files_a_sibling_corpus_needs_and_says_so(
+    sibling_corpus, tmp_path, no_client
+):
+    code, said = invoke("depth2", "--pack", "release")
+
+    assert code == 0, said
+    written = [line.split()[1] for line in said.splitlines() if line.startswith("wrote   ")]
+    ignores = [one for one in written if one.endswith("study/.gitignore")]
+    assert ignores and all((sibling_corpus / one).is_file() for one in ignores)
+    status = run([git(), "status", "--porcelain", "-uall"], cwd=sibling_corpus).stdout
+    assert ".mp3" not in status, "a clip the pack left out of git still reads as new"
+
+
+def test_a_sibling_pack_whose_ignore_files_the_manifest_leaves_unclassified_writes_nothing(
+    tmp_path, monkeypatch, no_client
+):
+    root = released_corpus(tmp_path, "depth2")
+    init_repository(root)
+    monkeypatch.chdir(tmp_path)
+
+    code, said = invoke("depth2", "--pack", "release")
+
+    assert code == 1 and said.startswith("refused ") and "content.not_material" in said
+    assert not (tmp_path / "release").exists() and not (root / RESTORE_SH).exists()
 
 
 def test_publish_prints_every_asset_and_the_command_and_runs_nothing(

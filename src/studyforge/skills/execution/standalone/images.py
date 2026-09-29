@@ -39,6 +39,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass
 
+from studyforge.corpus.placement import AUDIO_DIRNAME, GENERATED_ROOT, STUDY_DIRNAME
 from studyforge.exercise.bundle.layout import BUNDLES_DIRNAME
 from studyforge.progress import store_dir
 from studyforge.skills.execution.siteimage import BASE
@@ -130,6 +131,19 @@ def serve_dockerfile(*, commit: str, version: str) -> str:
     )
 
 
+#: ⭐ Where a corpus's clips sit, under either placement: a `tree` corpus's inside its
+#: generated root, a `sibling` corpus's in `<source directory>/study/audio/`. ⛔ Asked of
+#: the placement's own names, so the silent target leaves out both and the voiced one
+#: copies both.
+CLIP_EXCLUDES = (
+    f"--exclude='./{GENERATED_ROOT}/*/{AUDIO_DIRNAME}' "
+    f"--exclude='*/{STUDY_DIRNAME}/{AUDIO_DIRNAME}'"
+)
+CLIP_FINDER = (
+    f"find . \\( -path './{GENERATED_ROOT}/*' -o -path '*/{STUDY_DIRNAME}/*' \\) "
+    f"-type d -name {AUDIO_DIRNAME} -prune"
+)
+
 #: ⭐ What a site with no clips does to its pages: the attribute that names a clip is
 #: removed from every page, so no page asks for a clip that no image holds. ⛔ The
 #: same attribute `render.page.code` already strips from a page it embeds; run in the
@@ -151,7 +165,7 @@ def site_dockerfile(slug: str) -> str:
     """
     extract = [
         "    set -eu; mkdir -p " + CORPUS + "; \\",
-        "    tar -C /context --exclude=./.git --exclude='./.studyforge/*/audio' -cf - . \\",
+        f"    tar -C /context --exclude=./.git {CLIP_EXCLUDES} -cf - . \\",
         f"      | tar -C {CORPUS} -xf -; \\",
         f"    mkdir -p {CORPUS}/{PROGRESS}; \\",
     ]
@@ -179,7 +193,7 @@ def site_dockerfile(slug: str) -> str:
             "RUN --mount=type=bind,source=.,target=/context \\",
             *extract,
             "    cd /context; \\",
-            "    find .studyforge -type d -name audio -prune | while IFS= read -r dir; do \\",
+            f"    {CLIP_FINDER} | while IFS= read -r dir; do \\",
             f'      mkdir -p "{CORPUS}/$dir"; cp -R "$dir/." "{CORPUS}/$dir/"; \\',
             "    done; \\",
             f"    chown -R {RUNS_AS} {CORPUS}; \\",

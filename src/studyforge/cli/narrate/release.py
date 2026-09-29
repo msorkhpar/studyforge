@@ -33,9 +33,11 @@ from studyforge.narrate.release import (
     SUMS,
     PackRefused,
     PublishRefused,
+    media_ignores,
     pack,
     plan_publish,
     valid_tag,
+    write_media_ignores,
     write_release_record,
     write_scripts,
 )
@@ -62,6 +64,7 @@ def pack_command(root: str, out: str, tag: str) -> tuple[list[str], int]:
     if not valid_tag(tag):
         return [f"refused {BAD_TAG}"], INVALID
     try:
+        ignores = media_ignores(root)
         packed = pack(root, out)
     except PackRefused as refused:
         return [f"refused {refused}"], INVALID
@@ -69,6 +72,7 @@ def pack_command(root: str, out: str, tag: str) -> tuple[list[str], int]:
     written = (
         *write_scripts(root, tag),
         *write_release_record(root, sums, packed.clip_sums),
+        *write_media_ignores(root, ignores),
     )
     lines = [
         f"packed  {packed.clips} clip(s), {packed.clip_bytes} byte(s), "

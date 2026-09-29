@@ -143,3 +143,59 @@ def test_the_voiced_site_is_not_built_on_the_silent_one():
     text = images.site_dockerfile("a-course")
     assert f"FROM {images.NARRATIONS[0]}" not in text
     assert text.count("FROM ${SERVE_BASE} AS ") == 2
+
+
+def _tree(root):
+    """A build context holding clips under both placements, and a course's own `audio/` folders."""
+    files = [
+        ".studyforge/01-basics/audio/u1/a.mp3",  # a `tree` corpus's clip
+        ".studyforge/01-basics/unit.html",
+        "src/study/audio/u2/b.mp3",  # a `sibling` corpus's clip
+        "src/study/audio/u2/c.mp3",
+        "src/study/u2.unit.html",
+        "src/audio/theme.mp3",  # the course's own material: never a clip
+        "lessons/audio/README.md",
+    ]
+    for one in files:
+        (root / one).parent.mkdir(parents=True, exist_ok=True)
+        (root / one).write_bytes(b"x")
+    return files
+
+
+def _kept(root):
+    return sorted(p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file())
+
+
+def test_the_silent_site_leaves_the_clips_of_either_placement_out_and_keeps_the_rest(tmp_path):
+    """⛔ The `tree` rule alone shipped a sibling corpus's clips in the site with no narration."""
+    text = images.site_dockerfile("a-course")
+    silent = text.split(f"AS {images.NARRATIONS[1]}", 1)[0]
+    assert images.CLIP_EXCLUDES in silent
+    context, out = tmp_path / "context", tmp_path / "out"
+    _tree(context)
+    out.mkdir()
+    sh = f"tar -C {context} --exclude=./.git {images.CLIP_EXCLUDES} -cf - . | tar -C {out} -xf -"
+    subprocess.run(["sh", "-c", sh], check=True)
+    assert _kept(out) == [
+        ".studyforge/01-basics/unit.html",
+        "lessons/audio/README.md",
+        "src/audio/theme.mp3",
+        "src/study/u2.unit.html",
+    ]
+
+
+def test_the_voiced_site_finds_the_clip_directories_of_either_placement_and_no_other(tmp_path):
+    voiced = images.site_dockerfile("a-course").split(f"AS {images.NARRATIONS[1]}", 1)[1]
+    assert images.CLIP_FINDER in voiced
+    context, out = tmp_path / "context", tmp_path / "out"
+    _tree(context)
+    loop = (
+        f'{images.CLIP_FINDER} | while IFS= read -r dir; do mkdir -p "{out}/$dir"; '
+        f'cp -R "$dir/." "{out}/$dir/"; done'
+    )
+    subprocess.run(["sh", "-c", f"cd {context}; {loop}"], check=True)
+    assert _kept(out) == [
+        ".studyforge/01-basics/audio/u1/a.mp3",
+        "src/study/audio/u2/b.mp3",
+        "src/study/audio/u2/c.mp3",
+    ]

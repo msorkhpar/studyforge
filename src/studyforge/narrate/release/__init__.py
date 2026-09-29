@@ -3,8 +3,9 @@ r"""A corpus's narration as release volumes: packed by its owner, restored by a 
 **What it does.** Carries narration out of git for a corpus that does not
 commit its clips. `volumes` packs the clips the narration record locates into
 split, stored zip volumes with a `SHA256SUMS`; `scripts` renders the two
-restore scripts (`sh` and PowerShell) a packed corpus carries; `publish` checks
-a pack and prints the one `gh release create` command its owner runs.
+restore scripts (`sh` and PowerShell) a packed corpus carries; `ignores` names the
+ignore files a placement with no single home needs, so restored clips are not dirt;
+`publish` checks a pack and prints the one `gh release create` command its owner runs.
 
 **How you use it.**
 
@@ -35,6 +36,7 @@ directory has its own copies, and is built again after a restore.
 
 from __future__ import annotations
 
+from studyforge.narrate.release.ignores import media_ignores, write_media_ignores
 from studyforge.narrate.release.publish import Publish, PublishRefused, plan_publish
 from studyforge.narrate.release.scripts import (
     CLIP_SUMS,
@@ -76,12 +78,14 @@ __all__ = [
     "Publish",
     "PublishRefused",
     "clips_of",
+    "media_ignores",
     "pack",
     "plan_publish",
     "read_sums",
     "require_released_policy",
     "restore_scripts",
     "valid_tag",
+    "write_media_ignores",
     "write_release_record",
     "write_scripts",
 ]

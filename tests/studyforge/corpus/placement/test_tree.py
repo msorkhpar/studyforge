@@ -107,3 +107,9 @@ def test_the_only_media_glob_is_the_clips_directory():
 
     assert UNCOMMITTED_DIRNAMES == ("audio",)
     assert TREE.media_ignore_lines() == ("**/audio/",)
+
+
+def test_a_tree_corpus_needs_no_directory_ignore_files():
+    # ⭐ Its one ignore file, inside the generated root, holds the clips' rule.
+    unit = TREE.unit(Address.of("basics", "16-streams-api"), 1, "Streams")
+    assert TREE.media_ignore_files([unit.audio]) == ()
