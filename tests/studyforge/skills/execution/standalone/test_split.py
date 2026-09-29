@@ -24,6 +24,9 @@ AROUND = (
     ".claude/commands/new-module.md",
     ".gitignore",
     "exercises/kata/unit-01/practice-1/reference/main.py",
+    "PROGRESS.md",
+    "scripts/check-modules.sh",
+    ".sdkman/config",
     "ingest/read.py",
     "tests/test_framework_pin.py",
     "docs/studyforge/ONBOARDING.md",
@@ -66,6 +69,10 @@ def verdict(course, path: str) -> str:
         "corpus.json",
         "archive",
         "practice",
+        "exercises",
+        "scripts",
+        "PROGRESS.md",
+        ".sdkman",
         "index.html",
         "kata",
         "module-a",
@@ -88,7 +95,6 @@ def test_what_a_learner_needs_to_study_or_run_the_course_is_kept(course, path):
 @pytest.mark.parametrize(
     "path",
     [
-        "exercises",
         "ingest",
         "tests",
         "docs",
@@ -111,8 +117,68 @@ def test_a_path_nothing_recognises_moves_and_says_so(course):
     assert course[2]["somewhere-else"].why == split.UNKNOWN
 
 
-def test_the_bundles_move_because_they_hold_every_answer(course):
-    assert "answer" in course[2]["exercises"].why
+#: What the ruling says of the table: the authored exercises stay, and only the build's own
+#: material leaves. Each reading returns what breaks it, so a plant can be shown caught.
+KEPT_PATHS = ("exercises", "practice", "scripts", "PROGRESS.md", ".sdkman")
+MOVED_PATHS = (
+    "ingest",
+    "docs",
+    "tests",
+    "CLAUDE.md",
+    ".claude",
+    ".studyforge/pin.json",
+    ".studyforge/installed.json",
+    ".studyforge/skills",
+    ".studyforge/execution/written.json",
+    ".studyforge/execution/compose.yaml",
+)
+
+
+def broken(table: dict[str, split.Verdict]) -> list[str]:
+    """Every path the ruling puts on the other side of the split from where the table does."""
+    return [
+        *(f"{p} should keep" for p in KEPT_PATHS if p in table and table[p].verdict != split.KEEP),
+        *(f"{p} should move" for p in MOVED_PATHS if p in table and table[p].verdict != split.MOVE),
+    ]
+
+
+def test_the_authored_exercises_stay_and_only_the_builds_own_material_moves(course):
+    assert broken(course[2]) == []
+    assert "exercises" in course[2]
+
+
+def test_the_exercises_are_kept_because_the_engine_and_its_exercises_belong_together(course):
+    assert "belong together" in course[2]["exercises"].why
+
+
+def test_an_exercise_tree_that_moved_again_is_caught(course):
+    planted = {**course[2], "exercises": split.Verdict("exercises", split.MOVE, "planted")}
+    assert broken(planted) == ["exercises should keep"]
+
+
+def test_an_ingest_or_docs_tree_kept_by_mistake_is_caught(course):
+    planted = {
+        **course[2],
+        "ingest": split.Verdict("ingest", split.KEEP, "planted"),
+        "docs": split.Verdict("docs", split.KEEP, "planted"),
+    }
+    assert broken(planted) == ["ingest should move", "docs should move"]
+
+
+def test_a_build_record_kept_by_mistake_is_caught(course):
+    planted = {
+        **course[2],
+        ".studyforge/execution/written.json": split.Verdict("x", split.KEEP, "planted"),
+    }
+    assert broken(planted) == [".studyforge/execution/written.json should move"]
+
+
+def test_the_build_records_of_the_execution_directory_move(course):
+    root, files, _ = course
+    listed = (*files, ".studyforge/execution/written.json", ".studyforge/execution/toolchain.json")
+    judged = {one.path: one.verdict for one in split.classify(root, listed)}
+    assert judged[".studyforge/execution/written.json"] == split.MOVE
+    assert judged[".studyforge/execution/toolchain.json"] == split.MOVE
 
 
 def test_a_top_level_entry_the_prime_does_not_mirror_is_not_kept_as_code(course):
@@ -133,9 +199,9 @@ def test_kept_is_every_file_beneath_a_keep_and_nothing_beneath_a_move(course):
     kept = split.kept(verdicts.values(), files)
     assert "module-a/src/Main.java" in kept
     assert ".studyforge/execution/runservice.pl" in kept
-    assert not [
-        one for one in kept if one.startswith(("exercises/", "ingest/", ".studyforge/skills/"))
-    ]
+    assert "exercises/kata/unit-01/practice-1/reference/main.py" in kept
+    assert "scripts/check-modules.sh" in kept and "PROGRESS.md" in kept
+    assert not [one for one in kept if one.startswith(("ingest/", "docs/", ".studyforge/skills/"))]
     assert ".studyforge/execution/compose.yaml" not in kept
 
 

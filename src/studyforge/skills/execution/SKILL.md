@@ -446,12 +446,16 @@ container — never holds the socket.
 
 ## 7. A course's `main` stands alone — the learner tree and the split
 
-⭐ A published course's `main` holds what a learner needs and nothing else: the
-course's material (its modules, `practice/`, the built pages), the narration
-restore scripts, and one Docker setup that builds and serves the site, the
-runner and the editor with no studyforge, no toolchain checkout and no
-narration service. Everything that records how the course was built moves to
-the branch `studyforge/build` — **moved, never deleted**.
+⭐ A published course's `main` holds everything used to work with the course:
+its material (its modules, `practice/`, the authored `exercises/`, its own
+scripts, progress tracker and toolchain configuration, the built pages), the
+narration restore scripts, and one Docker setup that builds and serves the
+site, the runner and the editor with no studyforge, no toolchain checkout and
+no narration service. Only what is about BUILDING the course moves to the
+branch `studyforge/build`: ingestion, the build's documentation, the generated
+conversion tests, assistant guidance files and the build's own records —
+**moved, never deleted**. ⛔ The images do not carry what `main` keeps for the
+engine's sake: `exercises/` and `scripts/` are in `.dockerignore`.
 
 The step writes that tree; the split is a procedure run on it. ⛔ As in step
 5a, the skill starts no process: the caller hands in a `run` that takes `(argv, cwd)`, which
@@ -472,7 +476,9 @@ runs one argv and answers `(exit code, stdout)`.
 
 - ⭐ `standalone.table` over `standalone.classify` prints the KEEP/MOVE table
   and writes nothing. KEEP is what
-  serving or studying reads (`corpus.json`, `archive/`, `practice/`, the
+  serving, studying or working with the course uses (`corpus.json`, `archive/`,
+  `practice/`, `exercises/`, `scripts/`, a progress tracker, a toolchain
+  configuration such as `.sdkman`, the
   footprint's pages, every entry the prime mirrors, the licence, the built
   `.studyforge/<container>/` pages, `assets/`, the narration record and
   restore scripts, and `runservice.pl`, `prime/`, `code/`, `allowed/`).

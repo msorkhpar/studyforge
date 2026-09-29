@@ -69,3 +69,10 @@ def test_the_settings_name_every_variable_the_compose_files_read_at_its_default(
         f"{images.NAMESPACE_VARIABLE}={images.NAMESPACE_DEFAULT}",
     ):
         assert line in text.splitlines(), line
+
+
+def test_the_readme_names_the_exercises_and_how_they_relate_to_the_practices():
+    with_them = learner.readme(learner.Course("A Course", "a-course", 1, 2, "ns", False, True))
+    assert "`exercises/`" in with_them and "`practice/`" in with_them
+    assert build_words(with_them) == []
+    assert "exercises/" not in learner.readme(COURSE)

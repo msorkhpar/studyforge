@@ -38,6 +38,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass
 
+from studyforge.exercise.bundle.layout import BUNDLES_DIRNAME
 from studyforge.progress import store_dir
 from studyforge.skills.execution.siteimage import BASE
 from studyforge.skills.execution.siteservice import CORPUS, SCRIPT_INSIDE
@@ -187,7 +188,10 @@ def runner_dockerfile(slug: str) -> str:
 
 
 #: ⭐ What the site's build context leaves out: the build files, the learner's own
-#: state, and what a build or a run writes. Clips stay IN, for the voiced target.
+#: state, and what a build or a run writes. ⛔ Also the authored exercises and the course's
+#: scripts: kept on `main`, but nothing an image reads (the server serves `practice/` and the
+#: archive; the runner is handed the learner's files), so they never swell an image.
+#: Clips stay IN, for the voiced target.
 DOCKERIGNORE = "\n".join(
     [
         "# Written by studyforge's execution skill (standalone). Regenerate it; never edit it.",
@@ -197,6 +201,8 @@ DOCKERIGNORE = "\n".join(
         "compose.pull.yaml",
         "course.env",
         "README.md",
+        BUNDLES_DIRNAME,
+        "scripts",
         ".studyforge/images",
         ".studyforge/narration-release/download",
         ".studyforge/site.json",

@@ -85,3 +85,13 @@ def test_the_site_context_leaves_out_the_build_files_and_the_learners_state_and_
         assert gone in ignored, gone
     assert not any("audio" in one for one in ignored)
     assert "!.studyforge/execution/code/.gitignore" in ignored
+
+
+def test_the_authored_exercises_and_scripts_never_enter_an_images_build_context():
+    ignored = images.DOCKERIGNORE.splitlines()
+    assert "exercises" in ignored and "scripts" in ignored
+
+
+def test_a_context_that_let_the_exercises_in_would_be_caught():
+    planted = [one for one in images.DOCKERIGNORE.splitlines() if one != "exercises"]
+    assert "exercises" not in planted
