@@ -46,13 +46,13 @@ from studyforge.skills.execution.contract import optional, require
 from studyforge.skills.execution.emit import emit
 from studyforge.skills.execution.siteservice import CORPUS, NETWORK, answered, health_url
 from studyforge.skills.execution.standalone.images import (
+    NAMESPACE_DEFAULT,
+    NAMESPACE_VARIABLE,
     NARRATION_VARIABLE,
     NARRATIONS,
     PROGRESS,
     RUNS_AS,
     WORK,
-    NAMESPACE_DEFAULT,
-    NAMESPACE_VARIABLE,
     Names,
     qualified,
 )

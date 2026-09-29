@@ -136,8 +136,7 @@ def serve_dockerfile(*, commit: str, version: str) -> str:
 #: one layer that extracts the tree, as root, so nothing is written twice.
 #: `sed -i` keeps each file's owner, and the `chown` after it is what names it.
 STRIP_CLIPS = (
-    f"find {CORPUS} -type f -name '*.html' "
-    "-exec sed -i -E 's/ data-audio=\"[^\"]*\"//g' {} +"
+    f"find {CORPUS} -type f -name '*.html' -exec sed -i -E 's/ data-audio=\"[^\"]*\"//g' {{}} +"
 )
 
 

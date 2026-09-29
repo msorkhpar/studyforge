@@ -368,7 +368,7 @@ def test_a_source_file_holding_a_sample_bearer_header_is_served_verbatim(site):
 
 
 def test_a_source_file_of_html_looking_text_is_still_plain_text(site):
-    (site / "C.java").write_text('<!DOCTYPE html><html><script>alert(1)</script>', encoding="utf-8")
+    (site / "C.java").write_text("<!DOCTYPE html><html><script>alert(1)</script>", encoding="utf-8")
     response = get(site, "/C.java")
     assert response.header("Content-Type") == assets_module.TEXT_TYPE
 
