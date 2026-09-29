@@ -188,6 +188,11 @@ ACCEPTANCE = {
     "hides every narration control on a page whose clips are absent, with a console "
     "free of errors and warnings over file:// and served, and plays them once "
     "restored with no rebuild": "test_narration_clips",
+    #: ⭐ The build-without-clips clause: a site built to hold no clip names none, so its
+    #: pages ask for nothing and log nothing.
+    "asks for no clip and logs nothing on a page of a site built without narration": (
+        "test_narration_stripped"
+    ),
     #: ⭐ The scale clause, a row of its own because its CORPUS is the subject: a
     #: strip of sixty groups and a rail title longer than the rail are shapes no
     #: committed fixture has, and the operator is read as a picture, which no row

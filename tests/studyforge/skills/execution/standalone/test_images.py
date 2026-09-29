@@ -111,7 +111,7 @@ def stripped(tmp_path, command):
 
 
 def test_a_site_with_no_clips_carries_no_reference_to_one(tmp_path):
-    # ⭐ W516: a page naming a clip that no image holds asks for it, and the browser
+    # ⭐ A page naming a clip that no image holds asks for it, and the browser
     # logs a 404 on every page. The build removes the reference where it removes the clips.
     assert shutil.which("sed"), "the strip step is sed; this test runs where the build does"
     silent = images.site_dockerfile("a-course").split(f"AS {images.NARRATIONS[1]}", 1)[0]

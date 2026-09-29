@@ -1,4 +1,4 @@
-"""A site built with no narration names no clip, so its pages ask for nothing (W516).
+"""A site built with no narration names no clip, so its pages ask for nothing.
 
 ⭐ **Register requirement (2026-09-28): a learner's site is served and navigated with
 no error.** A page whose clips are absent asks its first clip and the browser logs one

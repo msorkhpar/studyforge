@@ -341,7 +341,7 @@ JAVA_TEXT_BLOCK = f'class A {{ String h = """\n<p>{SAMPLE_ADDRESS}</p>\n"""; }}\
 
 
 def test_a_source_file_whose_text_holds_an_address_is_served_verbatim(site):
-    # ⛔ W516: a text block holding an address answered `500` "asset failed the gate".
+    # ⛔ A text block holding an address answered `500` "asset failed the gate".
     (site / "A.java").write_text(JAVA_TEXT_BLOCK, encoding="utf-8")
     response = get(site, "/A.java")
     assert response.status == 200
