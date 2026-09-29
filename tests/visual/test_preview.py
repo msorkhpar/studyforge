@@ -271,8 +271,8 @@ def test_on_a_project_page_the_notes_link_the_readme_section_and_the_source_view
               new Function('window', {script})(at);
               const href = (selector) => [...document.querySelectorAll(selector)]
                 .map((a) => a.getAttribute('href'));
-              return {{run: href('a[data-preview-note] , [data-preview-note] a, [data-preview-banner] a'),
-                       source: href('a[data-code-path]')}};
+              const notes = '[data-preview-note] a, [data-preview-banner] a';
+              return {{run: href(notes), source: href('a[data-code-path]')}};
             }})()"""
         )
     base = "https://github.com/example-owner/example-course/blob/main/"
