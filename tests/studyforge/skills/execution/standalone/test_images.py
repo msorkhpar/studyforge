@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import re
+import shutil
+import subprocess
 
 from studyforge.skills.execution.siteimage import BASE
 from studyforge.skills.execution.standalone import images
@@ -95,3 +97,49 @@ def test_the_authored_exercises_and_scripts_never_enter_an_images_build_context(
 def test_a_context_that_let_the_exercises_in_would_be_caught():
     planted = [one for one in images.DOCKERIGNORE.splitlines() if one != "exercises"]
     assert "exercises" not in planted
+
+
+PAGE = '<p data-audio="audio/a-0123abcd.mp3">One</p><li data-audio="">Two</li><p>Three</p>'
+
+
+def stripped(tmp_path, command):
+    """Run the site's strip step over a copy of one page, as the image build would."""
+    (tmp_path / "unit.html").write_text(PAGE, encoding="utf-8")
+    sh = command.replace(images.CORPUS, str(tmp_path))
+    subprocess.run(["sh", "-c", sh], check=True)
+    return (tmp_path / "unit.html").read_text(encoding="utf-8")
+
+
+def test_a_site_with_no_clips_carries_no_reference_to_one(tmp_path):
+    # ⭐ A page naming a clip that no image holds asks for it, and the browser
+    # logs a 404 on every page. The build removes the reference where it removes the clips.
+    assert shutil.which("sed"), "the strip step is sed; this test runs where the build does"
+    silent = images.site_dockerfile("a-course").split(f"AS {images.NARRATIONS[1]}", 1)[0]
+    assert images.STRIP_CLIPS in silent
+    assert stripped(tmp_path, images.STRIP_CLIPS) == "<p>One</p><li>Two</li><p>Three</p>"
+
+
+def test_the_voiced_site_keeps_the_references_its_pages_probe():
+    voiced = images.site_dockerfile("a-course").split(f"AS {images.NARRATIONS[1]}", 1)[1]
+    assert "data-audio" not in voiced
+
+
+def test_a_silent_site_that_kept_the_references_would_be_seen():
+    planted = images.site_dockerfile("a-course").replace(images.STRIP_CLIPS, "true")
+    silent = planted.split(f"AS {images.NARRATIONS[1]}", 1)[0]
+    assert "sed -i" not in silent
+
+
+def test_the_voiced_sites_clips_and_their_owner_are_one_layer():
+    """⛔ A copy and a later `chown` in another `RUN` stores every clip twice."""
+    voiced = images.site_dockerfile("a-course").split(f"AS {images.NARRATIONS[1]}", 1)[1]
+    runs = [one for one in voiced.split("\nRUN ")[1:]]
+    assert len(runs) == 1
+    assert "cp -R" in runs[0] and f"chown -R {images.RUNS_AS} /corpus" in runs[0]
+    assert "COPY" not in voiced
+
+
+def test_the_voiced_site_is_not_built_on_the_silent_one():
+    text = images.site_dockerfile("a-course")
+    assert f"FROM {images.NARRATIONS[0]}" not in text
+    assert text.count("FROM ${SERVE_BASE} AS ") == 2

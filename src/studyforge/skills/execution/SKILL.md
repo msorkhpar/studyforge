@@ -503,6 +503,8 @@ runs one argv and answers `(exit code, stdout)`.
   `studyforge-editor`) and three thin course images (`<course>-site` in two
   narrations, `without-narration` and `with-narration`, `<course>-runner`,
   `<course>-editor`), all under `${STUDYFORGE_NAMESPACE:-studyforge-local}`.
+  ⭐ The `without-narration` site's pages carry no `data-audio`, so a page asks
+  for no clip and the console stays clear.
   ⛔ The namespace is a placeholder until the owner publishes.
 
 ### The split, step by step

@@ -332,3 +332,85 @@ def test_a_script_stays_a_script_though_node_writes_it():
     from pathlib import Path
 
     assert assets_module.content_type_for(Path("page.js")).startswith("text/javascript")
+
+
+#: A sample address on a real-looking domain, built at run time: the gate refuses this
+#: shape in prose, and a text block in a lesson's Java file carries exactly one.
+SAMPLE_ADDRESS = "admin" + "@" + "company.com"
+JAVA_TEXT_BLOCK = f'class A {{ String h = """\n<p>{SAMPLE_ADDRESS}</p>\n"""; }}\n'
+
+
+def test_a_source_file_whose_text_holds_an_address_is_served_verbatim(site):
+    # ⛔ A text block holding an address answered `500` "asset failed the gate".
+    (site / "A.java").write_text(JAVA_TEXT_BLOCK, encoding="utf-8")
+    response = get(site, "/A.java")
+    assert response.status == 200
+    assert response.header("Content-Type") == assets_module.TEXT_TYPE
+    assert response.body == JAVA_TEXT_BLOCK.encode("utf-8")
+
+
+@pytest.mark.parametrize(
+    "line",
+    [f"PATH = '{LEAK}'", "HOST = '" + "box" + ".local'"],
+)
+def test_a_source_file_naming_a_machine_is_still_refused(site, line):
+    # ⛔ Only sample data is exempt: a home path and a hostname are the build machine's
+    # own, and never leave in a link to a code file.
+    (site / "b.py").write_text(line + "\n", encoding="utf-8")
+    response = get(site, "/b.py")
+    assert response.status == 500 and LEAK.encode() not in response.body
+
+
+def test_a_source_file_holding_a_sample_bearer_header_is_served_verbatim(site):
+    text = 'headers.put("Authorization", "Bearer ' + 'token12345");\n'
+    (site / "T.java").write_text(text, encoding="utf-8")
+    assert (get(site, "/T.java").status, get(site, "/T.java").body) == (200, text.encode())
+
+
+def test_a_source_file_of_html_looking_text_is_still_plain_text(site):
+    (site / "C.java").write_text('<!DOCTYPE html><html><script>alert(1)</script>', encoding="utf-8")
+    response = get(site, "/C.java")
+    assert response.header("Content-Type") == assets_module.TEXT_TYPE
+
+
+def test_a_source_file_over_the_gate_limit_is_streamed_whole_never_refused(site, monkeypatch):
+    monkeypatch.setattr(assets_module, "GATE_MAX_BYTES", 16)
+    (site / "Big.java").write_text("// " + "x" * 200 + "\n", encoding="utf-8")
+    response = get(site, "/Big.java")
+    assert response.status == 200
+    assert response.file == (site / "Big.java").resolve()
+    assert response.span == (0, (site / "Big.java").stat().st_size - 1)
+
+
+def test_a_source_file_of_no_valid_encoding_is_served_never_refused(site):
+    raw = b"// caf\xe9 \xff\xfe\n"
+    (site / "Latin.java").write_bytes(raw)
+    response = get(site, "/Latin.java")
+    assert (response.status, response.body) == (200, raw)
+
+
+def test_prose_holding_the_same_address_is_still_refused(site):
+    # ⛔ The exemption is for source suffixes only: prose and data keep the gate.
+    for name in ("notes.md", "notes.txt", "data.json"):
+        (site / name).write_text(JAVA_TEXT_BLOCK, encoding="utf-8")
+        assert get(site, f"/{name}").status == 500, name
+
+
+def test_a_source_file_carrying_a_served_quizs_key_is_still_404(site):
+    (site / "Q.java").write_text(QUIZ_FILE, encoding="utf-8")
+    request = Request("GET", "/Q.java", {})
+    assert serve(site, request, "/Q.java", withheld=served_quiz).status == 404
+
+
+def test_a_source_file_is_served_with_nosniff_over_a_socket(site):
+    from studyforge.generate.declarations import read_corpus
+    from studyforge.serve.routes.content import CorpusContent
+    from tests.studyforge.serve.serving import fetch, running
+
+    (site / "A.java").write_text(JAVA_TEXT_BLOCK, encoding="utf-8")
+    with running(site, CorpusContent(read_corpus(FIXTURES / "depth1"))) as server:
+        status, headers, body = fetch(server, "/A.java")
+    assert status == 200 and body == JAVA_TEXT_BLOCK.encode("utf-8")
+    assert headers["content-type"] == assets_module.TEXT_TYPE
+    assert headers["x-content-type-options"] == "nosniff"
+    assert "content-security-policy" in headers

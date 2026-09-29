@@ -26,11 +26,12 @@ images nobody can pull, and a publisher who pushes sets one variable.
 
 ## ⭐ Two narrations of one site, as two targets of one build
 
-`without-narration` is the course with no clip in it; `with-narration` adds
-every restored clip on top and refuses to build unless each one matches the
+`without-narration` is the course with no clip in it and no page naming one, so no
+page asks for a clip and the console stays clear; `with-narration` is the course
+with every restored clip, and refuses to build unless each one matches the
 checksum the course committed. ⭐ A learner picks one with `COURSE_NARRATION`,
-and both run the same server: a page asks its first clip itself and hides the
-player when there is none.
+and both run the same server; a voiced page asks its first clip itself and hides
+the player until it loads.
 """
 
 from __future__ import annotations
@@ -129,41 +130,66 @@ def serve_dockerfile(*, commit: str, version: str) -> str:
     )
 
 
+#: ⭐ What a site with no clips does to its pages: the attribute that names a clip is
+#: removed from every page, so no page asks for a clip that no image holds. ⛔ The
+#: same attribute `render.page.code` already strips from a page it embeds; run in the
+#: one layer that extracts the tree, as root, so nothing is written twice.
+#: `sed -i` keeps each file's owner, and the `chown` after it is what names it.
+STRIP_CLIPS = (
+    f"find {CORPUS} -type f -name '*.html' "
+    "-exec sed -i -E 's/ data-audio=\"[^\"]*\"//g' {} +"
+)
+
+
 def site_dockerfile(slug: str) -> str:
-    """Return the course's site: its material on the serving base, with and without its clips."""
+    """Return the course's site: its material on the serving base, with and without its clips.
+
+    ⭐ **Two stages from the same base, neither built on the other.** The site
+    with no clips also has no reference to one, so its pages ask for nothing and the
+    console stays clear. ⛔ **Each stage is one layer of the course**: the voiced one
+    writes the tree, its clips and their owner in a single `RUN`, so no clip is ever
+    stored twice.
+    """
+    extract = [
+        "    set -eu; mkdir -p " + CORPUS + "; \\",
+        "    tar -C /context --exclude=./.git --exclude='./.studyforge/*/audio' -cf - . \\",
+        f"      | tar -C {CORPUS} -xf -; \\",
+        f"    mkdir -p {CORPUS}/{PROGRESS}; \\",
+    ]
     return "\n".join(
         [
             MARK,
             "# The course's study site: every file of the course on the shared server.",
-            "# Two targets: without-narration, and with-narration, which adds every clip",
-            "# and refuses to build unless each matches the checksum the course committed.",
+            "# Two targets: without-narration, whose pages name no clip, and with-narration,",
+            "# which adds every clip and refuses to build unless each matches the checksum",
+            "# the course committed.",
             "ARG SERVE_BASE",
             "",
             f"FROM ${{SERVE_BASE}} AS {NARRATIONS[0]}",
             "USER root",
             "RUN --mount=type=bind,source=.,target=/context \\",
-            f"    set -eu; mkdir -p {CORPUS}; \\",
-            "    tar -C /context --exclude=./.git --exclude='./.studyforge/*/audio' -cf - . \\",
-            f"      | tar -C {CORPUS} -xf -; \\",
-            f"    mkdir -p {CORPUS}/{PROGRESS}; \\",
+            *extract,
+            f"    {STRIP_CLIPS}; \\",
             f"    chown -R {RUNS_AS} {CORPUS}",
             f"USER {RUNS_AS}",
             f"WORKDIR {CORPUS}",
             f'LABEL org.studyforge.course="{slug}" org.studyforge.narration="without"',
             "",
-            f"FROM {NARRATIONS[0]} AS {NARRATIONS[1]}",
+            f"FROM ${{SERVE_BASE}} AS {NARRATIONS[1]}",
             "USER root",
             "RUN --mount=type=bind,source=.,target=/context \\",
-            "    set -eu; cd /context; \\",
+            *extract,
+            "    cd /context; \\",
             "    find .studyforge -type d -name audio -prune | while IFS= read -r dir; do \\",
             f'      mkdir -p "{CORPUS}/$dir"; cp -R "$dir/." "{CORPUS}/$dir/"; \\',
-            f'      chown -R {RUNS_AS} "{CORPUS}/$dir"; \\',
             "    done; \\",
+            f"    chown -R {RUNS_AS} {CORPUS}; \\",
             f"    cd {CORPUS}; sha256sum -c --quiet {CLIPS} \\",
             "      || { echo 'narration clips missing or wrong: restore them first' >&2; \\",
             "           exit 1; }",
             f"USER {RUNS_AS}",
-            'LABEL org.studyforge.narration="with"',
+            f"WORKDIR {CORPUS}",
+            f'LABEL org.studyforge.course="{slug}" org.studyforge.narration="with"',
             "",
         ]
     )
