@@ -507,6 +507,25 @@ runs one argv and answers `(exit code, stdout)`.
   for no clip and the console stays clear.
   ⛔ The namespace is a placeholder until the owner publishes.
 
+- ⭐ **The README explains the course before it explains the command**
+  (`standalone.learner` over `facts` and `tour`): the counts, each feature with
+  its picture, the two ways to use the course in one table, the requirements, and
+  `Run it locally with Docker`. Pictures come from a directory handed to
+  `release(screenshots=...)`, named by `tour.ROLES` (`index`, `lesson`,
+  `practice`, `quiz`, `example`, `narration`, `.png` or `.webp`), taken by the
+  visual harness against a running instance at 1280x800, each at most 160 KB and
+  700 KB in all. They are written to `.studyforge/images/readme/`, a path
+  `.dockerignore` already excludes, so ⛔ no image tag moves.
+- ⭐ **A read-only preview for GitHub Pages** is `release(preview_to=<new dir>)`,
+  or `python -m studyforge.skills.execution.standalone.preview TREE OUT` over a
+  finished learner tree: static pages with the hidden directory written as
+  `course/`, no narration, and a note (with a banner on every page) where Run,
+  Submit, the editor and an example's editor were; quizzes, reading marks and the
+  index filter work. ⛔ It names no owner and no repository: its script builds the
+  README and source links from `location` on a `<owner>.github.io/<repo>/` page.
+  Commit it on an orphan branch `gh-pages`, never on `main`; pushing and enabling
+  Pages are the owner's steps.
+
 ### The split, step by step
 
 1. Export into an empty directory with `standalone.release`.

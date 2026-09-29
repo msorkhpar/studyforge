@@ -31,7 +31,11 @@ builds them.
 | `vendor` | the toolchain's builds as its own data, and its context as bytes |
 | `images` | the six images' names, and the build files studyforge owns |
 | `compose` | `compose.yaml` and `compose.pull.yaml`, and the rules they keep |
+| `facts` | the counts a README states, read from the course's own records |
+| `tour` | the README's sections on what the course is, what it gives, and its two ways to be used |
 | `learner` | the learner's `README.md` and `course.env` |
+| `preview` | the read-only static tree for GitHub Pages, made from the finished learner tree |
+| `previewkit` | the preview's words, script and stylesheet, and its edits of one page |
 | `write` | the whole of it, and `.studyforge/release.json` |
 
 ## ⭐ Shared bases, and thin images per course
@@ -52,6 +56,7 @@ from studyforge.skills.execution.standalone.closure import (
     stale,
     vendored,
 )
+from studyforge.skills.execution.standalone.preview import Previewed, PreviewRefused
 from studyforge.skills.execution.standalone.split import (
     KEEP,
     MOVE,
@@ -78,6 +83,8 @@ __all__ = [
     "MANIFEST",
     "MOVE",
     "ROOTS",
+    "PreviewRefused",
+    "Previewed",
     "ReleaseRefused",
     "Released",
     "Run",

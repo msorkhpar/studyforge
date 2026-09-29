@@ -24,11 +24,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from studyforge.exercise.bundle.layout import BUNDLES_DIRNAME
+from studyforge.skills.execution.standalone import tour
 from studyforge.skills.execution.standalone.compose import (
     EDITOR_PORT_VARIABLE,
     PROJECT_VARIABLE,
     SITE_PORT_VARIABLE,
 )
+from studyforge.skills.execution.standalone.facts import Facts
 from studyforge.skills.execution.standalone.images import (
     NAMESPACE_VARIABLE,
     NARRATION_VARIABLE,
@@ -60,6 +62,10 @@ class Course:
     namespace: str
     narrated: bool
     exercises: bool = False
+    facts: Facts = Facts()
+    shots: tuple[tuple[str, str], ...] = ()
+    runtimes: tuple[str, ...] = ()
+    licence: bool = False
 
 
 def settings(course: Course) -> str:
@@ -87,6 +93,26 @@ def settings(course: Course) -> str:
     return "\n".join(lines)
 
 
+def _link(name: str, exists: bool) -> str:
+    """`name` as a relative link when the tree holds it, else as plain code."""
+    return f"[`{name}`]({name})" if exists else f"`{name}`"
+
+
+def _requirements(course: Course) -> list[str]:
+    runtime = (
+        tour.join_and([one.capitalize() for one in course.runtimes]) if course.runtimes else ""
+    )
+    carried = f" What the practices need ({runtime}) is inside the runner." if runtime else ""
+    return [
+        "## What you need",
+        "",
+        "Docker: Docker Desktop on Windows or macOS, or Docker Engine with the compose",
+        "plugin on Linux. Nothing else: no Java, no Python, no other download." + carried,
+        "A current browser. Your machine needs room for the images, which download once.",
+        "",
+    ]
+
+
 def readme(course: Course) -> str:
     """Return the learner's README, whole."""
     site = f"http://127.0.0.1:{course.site_port}/"
@@ -94,16 +120,11 @@ def readme(course: Course) -> str:
     parts = [
         f"# {course.title}",
         "",
-        "This repository is the whole course, ready to study on your own machine: its",
-        "lessons as a study site, its practices with a runner that grades them, and an",
-        "editor to write your answers in. Everything runs in Docker, on this machine only.",
-        "",
-        "## What you need",
-        "",
-        "Docker: Docker Desktop on Windows or macOS, or Docker Engine with the compose",
-        "plugin on Linux. Nothing else: no Java, no Python, no other download.",
-        "",
-        "## Start it",
+        *tour.sections(
+            course.facts, dict(course.shots), title=course.title, narrated=course.narrated
+        ),
+        *_requirements(course),
+        f"## {tour.RUN_HEADING}",
         "",
         "1. Install Docker, and start it.",
         "2. Clone this repository and open a terminal in its directory.",
@@ -149,16 +170,11 @@ def readme(course: Course) -> str:
         "Both listen on this machine only. To use other ports, copy `course.env` to",
         f"`.env` and change `{SITE_PORT_VARIABLE}` and `{EDITOR_PORT_VARIABLE}`.",
         "",
-        "## Study and practise",
-        "",
-        "Open a lesson from the site's contents and read it. A lesson with practices",
-        "lists them after the text: open one, and the editor shows its file beside the",
-        "task. **Run** runs your code; **Submit** runs the practice's tests in the",
-        "runner, which has no network, and marks the practice passed when they pass.",
+        "## Where your work is kept",
         "",
         "Your answers, your progress and the editor's settings live in Docker volumes,",
         "so they survive a restart. `down` stops the course and keeps them; `down -v`",
-        "deletes them too.",
+        f"deletes them too. Every setting is explained in {_link(SETTINGS, True)}.",
         "",
     ]
     if course.narrated:
@@ -166,7 +182,9 @@ def readme(course: Course) -> str:
             "## Narration (optional)",
             "",
             "The site is complete without narration: a lesson with no recording shows no",
-            "player. To hear the lessons read aloud, set",
+            "player. The recordings are not stored in this repository, because of their",
+            "size: they are assets of this repository's release, and the pulled voiced",
+            "site already has them. To hear the lessons read aloud, set",
             f"`{NARRATION_VARIABLE}={NARRATIONS[1]}` in `.env` (copy it from `course.env`), then:",
             "",
             "- **Pulled images**: `docker compose -f compose.pull.yaml up -d` pulls the voiced"
@@ -180,6 +198,7 @@ def readme(course: Course) -> str:
             "```",
             "",
             f"  On Windows, run `pwsh {RESTORE_PS1}` instead of the first line.",
+            f"  The scripts are {_link(RESTORE_SH, True)} and {_link(RESTORE_PS1, True)}.",
             "  The script checks every download and every recording against the checksums",
             "  in this repository before it places anything, and deletes the downloads",
             "  afterwards. Set `NARRATION_LOCAL_DIR` to a directory holding the release's",
@@ -207,7 +226,7 @@ def readme(course: Course) -> str:
         "",
         "## Licence",
         "",
-        "The course's licence is in `LICENSE`.",
+        f"The course's licence is in {_link('LICENSE', course.licence)}.",
         "",
         "## How this course was built",
         "",

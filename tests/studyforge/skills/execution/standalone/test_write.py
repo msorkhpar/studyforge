@@ -18,6 +18,7 @@ import pytest
 
 from studyforge.skills.execution.standalone import closure, compose, images, learner, split, write
 from tests.studyforge.execute.runnable import fixture_copy
+from tests.studyforge.skills.execution.standalone.test_compose import plan
 from tests.studyforge.skills.execution.standalone.test_vendor import (
     TAGS,
     answering,
@@ -187,3 +188,141 @@ def test_the_exported_pull_file_has_no_default_account_and_course_env_leaves_it_
     assert f"${{{images.NAMESPACE_VARIABLE}:-{images.NAMESPACE_DEFAULT}}}/" in built
     settings = (out / "course.env").read_text(encoding="utf-8").splitlines()
     assert f"{images.NAMESPACE_VARIABLE}=" in settings
+
+
+def rendered_pair() -> tuple[str, str]:
+    """Both compose files, as the synthetic plan renders them."""
+    return compose.render(plan())
+
+
+def pictures(where: Path, *names: str, size: int = 2048) -> Path:
+    """A directory of README pictures, each `size` bytes of nothing in particular."""
+    where.mkdir(parents=True, exist_ok=True)
+    for name in names:
+        (where / name).write_bytes(b"\0" * size)
+    return where
+
+
+def release_with(
+    tmp_path: Path, shots: Path, preview_to: Path | None = None
+) -> tuple[Path, write.Released]:
+    out = tmp_path / "learner"
+    made = write.release(
+        checkout(tmp_path),
+        out,
+        toolchain=toolchain(tmp_path / "tc"),
+        platform="linux/amd64",
+        screenshots=shots,
+        preview_to=preview_to,
+        run=answered(),
+    )
+    return out, made
+
+
+@pytest.fixture(scope="module")
+def pictured(tmp_path_factory) -> tuple[Path, write.Released]:
+    where = tmp_path_factory.mktemp("pictured")
+    return release_with(where, pictures(where / "shots", "index.webp", "lesson.png", "quiz.webp"))
+
+
+def relative_links(text: str) -> list[str]:
+    """Every relative link and image target of a Markdown text, without its anchor."""
+    found = re.findall(r"\]\(([^)\s]+)\)", text)
+    return [one.split("#")[0] for one in found if not re.match(r"[a-z]+:|#", one)]
+
+
+def test_every_relative_link_and_image_of_the_readme_reaches_a_file_of_the_tree(pictured):
+    out, _ = pictured
+    text = (out / "README.md").read_text(encoding="utf-8")
+    links = relative_links(text)
+    assert len(links) >= 3, "born vacuous: the README links almost nothing"
+    assert [one for one in links if not (out / one).exists()] == []
+
+
+def test_a_readme_link_to_a_file_the_tree_does_not_hold_would_be_caught(pictured):
+    out, _ = pictured
+    planted = (out / "README.md").read_text(encoding="utf-8") + "\n[gone](docs/gone.md)\n"
+    assert [one for one in relative_links(planted) if not (out / one).exists()] == ["docs/gone.md"]
+
+
+def test_the_pictures_are_copied_beside_the_build_files_listed_and_shown_in_the_readme(pictured):
+    out, made = pictured
+    shown = sorted(
+        re.findall(r"!\[[^\]]+\]\(([^)]+)\)", (out / "README.md").read_text(encoding="utf-8"))
+    )
+    # ⭐ A picture stands beside its feature: the fixture has no quiz, so the quiz picture
+    # is kept in the tree and the README shows the two the course can use.
+    assert shown == [f"{compose.IMAGES}/readme/index.webp", f"{compose.IMAGES}/readme/lesson.png"]
+    assert (out / compose.IMAGES / "readme" / "quiz.webp").is_file()
+    listed = json.loads((out / write.MANIFEST).read_text(encoding="utf-8"))["keeps"]
+    assert set(shown) <= set(listed) and listed == on_disk(out)
+    assert set(shown) <= set(write.kept_paths(made))
+
+
+def test_no_image_build_context_and_no_site_layer_carries_the_pictures():
+    ignored = images.DOCKERIGNORE.splitlines()
+    assert compose.IMAGES in ignored, "the site and runner contexts are the tree, minus the images"
+    built, pulled = rendered_pair()
+    assert f"{compose.IMAGES}/readme" not in built + pulled
+
+
+def test_the_readme_states_the_counts_of_the_tree_it_sits_in(pictured):
+    from studyforge.skills.execution.standalone.facts import read
+
+    out, _ = pictured
+    text = (out / "README.md").read_text(encoding="utf-8")
+    counted = read(out)
+    assert counted.units and f"{counted.units} unit" in text
+    assert counted.practices is None or f"{counted.practices} practice" in text
+
+
+@pytest.mark.parametrize(
+    ("names", "size", "match"),
+    [
+        (("cover.png",), 10, "not a picture the README shows"),
+        (("index.gif",), 10, "not a picture the README shows"),
+        (("index.png", "index.webp"), 10, "two pictures"),
+        (("index.png",), write.SHOT_MAX_BYTES + 1, "over"),
+        (
+            ("index.png", "lesson.png", "quiz.png", "practice.png", "example.png"),
+            150 * 1024,
+            "together",
+        ),
+    ],
+)
+def test_a_picture_the_readme_does_not_show_or_that_is_too_big_is_refused(
+    tmp_path, names, size, match
+):
+    shots = pictures(tmp_path / "shots", *names, size=size)
+    with pytest.raises(write.ReleaseRefused, match=match):
+        release_with(tmp_path, shots)
+
+
+def test_a_tree_released_with_no_pictures_carries_none_and_links_none(released):
+    out, _ = released
+    assert not (out / compose.IMAGES / "readme").exists()
+    assert "![" not in (out / "README.md").read_text(encoding="utf-8")
+
+
+def test_the_release_writes_the_preview_beside_it_when_asked(tmp_path):
+    root = checkout(tmp_path)
+    (root / "index.html").write_text(
+        '<!doctype html><html><head></head><body><a href="#c">c</a></body></html>', encoding="utf-8"
+    )
+    subprocess.run([*GIT, "add", "-A"], cwd=root, check=True)
+    subprocess.run([*GIT, "commit", "-q", "-m", "index"], cwd=root, check=True)
+    out = tmp_path / "learner"
+    made = write.release(
+        root,
+        out,
+        toolchain=toolchain(tmp_path / "tc"),
+        platform="linux/amd64",
+        preview_to=tmp_path / "site",
+        run=answered(),
+    )
+    assert made.previewed is not None and (tmp_path / "site" / "index.html").is_file()
+    assert not (tmp_path / "site" / ".studyforge").exists()
+    assert (
+        "README.md" not in made.previewed.files and not (tmp_path / "site" / "README.md").exists()
+    )
+    assert not (out / "site").exists()

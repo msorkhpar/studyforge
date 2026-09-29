@@ -1482,3 +1482,11 @@ What it reads, and the choices in it:
 **Why.** Committing clips as they were made put a hundred megabytes into every clone and kept them in history for good. A placement whose only way to hold them out of git was the repository's root ignore file, which the framework never edits, could not leave that state.
 
 **Serves.** `R3`, `R19`
+
+### A learner README explains the course, and a read-only preview is a post-processed copy of its pages
+
+**Decision.** `standalone.learner.readme` writes what the course is before it says how to start it: the counts read from the course's own records (`standalone.facts`: modules, units, practices, quizzes, topic areas, code examples), each feature the course has with its picture, a table of the read-only preview against the full local course, the requirements, and a section named `Run it locally with Docker`. A number that cannot be read is `None` and its sentence is left out. The pictures are handed to `release(screenshots=...)`, accepted only under the names of `standalone.tour.ROLES`, at most 160 KB each and 700 KB together, and written under `.studyforge/images/readme/`, which `.dockerignore` already excludes from the site and runner contexts, so the site image tag does not move. `standalone.preview.preview` writes a second tree from the finished learner tree: the pages the index reaches, with the hidden directory written as `course/` and every reference recomputed, no narration, and a note where the practice panel and a code example's editor were. The banner, the notes and a small script are added by `standalone.previewkit`; the shipped `page.js`, `page.css` and every library file are copied unchanged. The repository links (README section, source files) are built by the script at run time from `location`, and only on a `<owner>.github.io/<repo>/` project page.
+
+**Why.** A visitor to a course's repository saw only how to start it, and a course could be tried only by running Docker. A preview needs no server, and a page whose server-only parts are removed cannot ask for one. Writing no owner or repository name keeps the pages identical for every repository that publishes them.
+
+**Serves.** `R3`, `R8`, `R18`
