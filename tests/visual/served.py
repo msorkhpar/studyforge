@@ -71,6 +71,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from studyforge.serve.app import ServingServer, make_server
+from studyforge.serve.discovery import Discovered
 from studyforge.serve.response import NO_STORE, TEXT_TYPE, Request, Response, error, json_response
 from studyforge.serve.routes.run import (
     CLIENT,
@@ -81,6 +82,7 @@ from studyforge.serve.routes.run import (
     SCRIPT_TYPE,
     STOP,
 )
+from studyforge.serve.routes.runs import Runs
 from tests.visual import site
 
 #: What the scripted run writes before it waits. ⚠️ More than one line, because
@@ -249,16 +251,18 @@ class Served:
         host, port = self.server.server_address[0], self.server.server_address[1]
         return f"http://{host}:{port}"
 
-    def url(self, case: str) -> str:
+    def url(self, case: str, name: str | None = None) -> str:
         """The `http://` URL of one built page — the same bytes `site.url` names.
 
         ⛔ Refuses a page from another corpus's subtree rather than composing a
-        URL that resolves to nothing: this server is rooted at one of them.
+        URL that resolves to nothing: this server is rooted at one of them. ⭐ `name`
+        reaches the same server by another loopback name (`localhost`).
         """
         where = site.corpus_of(case)
         if where != self.corpus:
             raise LookupError(f"{case} is in {where}, and this origin serves {self.corpus}")
-        return f"{self.origin}/{self.built.path(case).relative_to(self.root).as_posix()}"
+        origin = self.origin if name is None else f"http://{name}:{self.server.server_address[1]}"
+        return f"{origin}/{self.built.path(case).relative_to(self.root).as_posix()}"
 
 
 def _corpora(root: Path) -> tuple[str, ...]:
@@ -276,6 +280,7 @@ def serving(
     *,
     windows: bool = False,
     editor: str | None = None,
+    configured: bool = False,
 ) -> Iterator[Served]:
     """Serve one corpus's subtree of `built` on a free loopback port, then stop.
 
@@ -314,6 +319,9 @@ def serving(
     #: read by the framework at RESPONSE time — which is the only order
     #: available, because the port is the kernel's answer to `port=0`.
     admitted: list[str] = []
+    frames = lambda: tuple(admitted)  # noqa: E731 - read at response time, after the bind
+    if configured and editor:
+        frames = Runs(Discovered(built.root / corpus, (), ()), {}, declared=(editor,)).origins
     server = make_server(
         built.root / corpus,
         _NoContent(),
@@ -322,7 +330,7 @@ def serving(
         writers=(NAMESPACE,),
         client=CLIENT_PATH,
         log=log.append,
-        frames=lambda: tuple(admitted),
+        frames=frames,
     )
     held = Served(server=server, built=built, corpus=corpus, runs=runs, log=log)
     if windows or editor:
@@ -330,7 +338,8 @@ def serving(
         # `serve.security` is what decides whether this document may embed
         # anything at all, and a harness that bypassed it would be reading a
         # policy no instance sends.
-        admitted.append(editor or held.origin)
+        if not configured:
+            admitted.append(editor or held.origin)
         main, test = (f"{editor}/main", f"{editor}/test") if editor else WINDOW_URLS
         runs.windows = {"main": {"url": main}, "test": {"url": test}}
         where = {"origin": editor or held.origin, "folder": "/work"}
