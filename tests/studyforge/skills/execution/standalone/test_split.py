@@ -23,6 +23,7 @@ AROUND = (
     "CLAUDE.md",
     ".claude/commands/new-module.md",
     ".gitignore",
+    ".github/workflows/ci.yml",
     "exercises/kata/unit-01/practice-1/reference/main.py",
     "PROGRESS.md",
     "scripts/check-modules.sh",
@@ -78,6 +79,7 @@ def verdict(course, path: str) -> str:
         "module-a",
         "LICENSE",
         ".gitignore",
+        ".github",
         ".studyforge/assets",
         ".studyforge/narration.json",
         ".studyforge/narration-release",
@@ -232,3 +234,10 @@ def test_the_table_prints_one_verdict_a_line(course):
     assert len(rows) == len(course[2])
     assert "KEEP  corpus.json  " in "\n".join(rows)
     assert any(row.startswith("MOVE  ") for row in rows)
+
+
+def test_the_github_directory_is_kept_as_hosting_infrastructure_and_says_why(course):
+    found = course[2][".github"]
+    assert found.verdict == split.KEEP and found is split.HOSTED
+    assert "hosting infrastructure" in found.why and "GitHub Pages" in found.why
+    assert ".github/workflows/ci.yml" in split.kept(course[2].values(), course[1])

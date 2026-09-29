@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/skills/execution/standalone/preview.py` and `previewkit.py` (R12).
+"""Mirror of `src/studyforge/skills/execution/standalone/preview.py` and `preview.py` (R12).
 
 ⭐ Two trees are written here in the shapes a learner tree really has (pages under the hidden
 directory, and pages beside their source under `src/study`), with every server-only part a
@@ -15,7 +15,7 @@ from urllib.parse import unquote, urlsplit
 
 import pytest
 
-from studyforge.skills.execution.standalone import preview, previewkit
+from studyforge.skills.execution.standalone import preview
 
 #: The narration player exactly as a built page carries it, and its audio element.
 PLAYER = (
@@ -202,10 +202,12 @@ def dangling(root: Path) -> list[str]:
 
 
 @pytest.mark.parametrize("build", [hidden_tree, sibling_tree])
-def test_no_path_starts_with_a_dot_but_the_one_file_that_turns_jekyll_off(tmp_path, build):
+def test_no_path_of_the_preview_starts_with_a_dot_so_the_pages_action_packs_all_of_it(
+    tmp_path, build
+):
     out = made(tmp_path, build)
     dots = [one for one in files(out) if any(part.startswith(".") for part in one.split("/"))]
-    assert dots == [preview.NOJEKYLL]
+    assert dots == []
     assert (out / "course/assets/page.js").is_file() and not (out / ".studyforge").exists()
 
 
@@ -297,7 +299,7 @@ def test_no_page_and_no_script_names_an_account_or_a_repository(tmp_path):
         text = (out / one).read_text(encoding="utf-8")
         assert not re.search(r"github\.com/[A-Za-z0-9]", text), one
         assert not re.search(r"github\.io/[A-Za-z0-9]", text), one
-    assert "location" in previewkit.PREVIEW_JS or "window.location" in previewkit.PREVIEW_JS
+    assert "location" in preview.PREVIEW_JS or "window.location" in preview.PREVIEW_JS
 
 
 def test_the_preview_is_the_same_bytes_every_time(tmp_path):
@@ -368,10 +370,8 @@ def test_a_dot_directory_other_than_the_hidden_one_is_refused(tmp_path):
 
 
 def test_a_practice_panel_that_holds_a_section_is_refused_rather_than_cut(tmp_path):
-    with pytest.raises(previewkit.PageRefused, match="section"):
-        previewkit.remove_server_parts(
-            '<section data-practice="k"><section>inner</section></section>'
-        )
+    with pytest.raises(preview.PageRefused, match="section"):
+        preview.remove_server_parts('<section data-practice="k"><section>inner</section></section>')
 
 
 def test_the_command_writes_the_preview_and_says_what_it_holds(tmp_path, capsys):
@@ -381,3 +381,75 @@ def test_the_command_writes_the_preview_and_says_what_it_holds(tmp_path, capsys)
     assert preview.main([str(tree), str(tmp_path / "out")]) == 1
     assert "refused" in capsys.readouterr().out
     assert preview.main([]) == 2
+
+
+# The page edits, read off the text each returns for a page shaped like a built one.
+
+PAGE = (
+    "<!doctype html><html><head><title>T</title></head><body>"
+    '<a href="#content">Skip to the content</a><header><h1 data-audio="a.mp3">T</h1></header>'
+    '<main id="content"><p data-audio="b.mp3">Text</p></main>'
+    '<footer id="player" hidden><button id="play">Play narration</button></footer>'
+    '<audio id="narrator" preload="none"></audio>'
+    '<script src="page.js" defer></script></body></html>'
+)
+
+
+def test_every_reference_to_narration_is_removed_and_one_note_stands_in_its_place():
+    text, narrated = preview.remove_server_parts(PAGE)
+    assert narrated is True
+    for gone in ("data-audio", 'id="player"', 'id="narrator"', "Play narration"):
+        assert gone not in text
+    assert text.count('data-preview-note="narration"') == 1
+    assert text.index("</header>") < text.index("data-preview-note")
+
+
+def test_a_page_with_no_narration_is_not_given_the_note():
+    text, narrated = preview.remove_server_parts("<html><body><p>x</p></body></html>")
+    assert narrated is False and "data-preview-note" not in text
+
+
+def test_a_code_example_without_its_summary_or_files_is_refused():
+    with pytest.raises(preview.PageRefused, match="summary"):
+        preview.remove_server_parts("<details data-code-example><p>x</p></details>")
+
+
+def test_a_source_link_loses_its_href_and_keeps_its_path_for_the_script():
+    example = (
+        "<details data-code-example><summary>A</summary>"
+        '<ul class="items"><li><a href="../../A.java" rel="noopener" data-code-path="a/A.java">A'
+        "</a></li></ul></details>"
+    )
+    text, _ = preview.remove_server_parts(example)
+    assert 'data-code-path="a/A.java"' in text and 'A.java"' in text
+    assert "href=" not in text
+
+
+def test_the_banner_the_style_and_the_script_are_added_once_and_in_their_places():
+    done = preview.finish(PAGE, assets="../course")
+    assert done.count("data-preview-banner") == 1
+    assert done.index("Skip to the content") < done.index("data-preview-banner")
+    assert done.index("data-preview-banner") < done.index("<header>")
+    assert '<link rel="stylesheet" href="../course/preview.css">' in done
+    assert done.index("preview.js") > done.index("page.js")
+    assert 'rel="icon" href="data:,"' in done
+
+
+def test_a_page_that_already_has_an_icon_keeps_it_and_gains_none():
+    page = PAGE.replace("<title>", '<link rel="icon" href="x.ico"><title>')
+    assert preview.finish(page, assets=".").count('rel="icon"') == 1
+
+
+def test_a_page_without_a_head_or_a_body_is_refused():
+    with pytest.raises(preview.PageRefused, match="head and a body"):
+        preview.finish("<p>x</p>", assets=".")
+
+
+def test_the_script_holds_no_owner_repository_or_host_and_builds_from_location():
+    js = preview.PREVIEW_JS
+    assert "window.location.hostname" in js and "window.location.pathname" in js
+    assert not re.search(r"github\.(com|io)/[A-Za-z0-9]", js)
+    assert preview.RUN_ANCHOR in js and "@ANCHOR@" not in js
+    for note in (preview.PRACTICE_NOTE, preview.EXAMPLE_NOTE, preview.NARRATION_NOTE):
+        assert "locally with Docker" in note
+        assert preview.RUN_LINK in note

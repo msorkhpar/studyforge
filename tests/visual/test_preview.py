@@ -27,7 +27,7 @@ from pathlib import Path
 
 import pytest
 
-from studyforge.skills.execution.standalone import preview, previewkit, tour
+from studyforge.skills.execution.standalone import preview, tour
 from tests.studyforge.serve.routes.quizzing import page_of, quiz_corpus
 from tests.studyforge.skills.execution.standalone.test_preview import (
     PLAYER,
@@ -261,7 +261,7 @@ def test_on_a_project_page_the_notes_link_the_readme_section_and_the_source_view
     inert = tmp_path / "inert"
     shutil.copytree(out, inert)
     (inert / "course" / "preview.js").write_text("", encoding="utf-8")
-    script = json.dumps(previewkit.PREVIEW_JS)
+    script = json.dumps(preview.PREVIEW_JS)
     with static(inert) as (origin, _asked):
         open_page.open(f"{origin}/course/{unit.split('.studyforge/')[-1]}")
         links = open_page.evaluate(

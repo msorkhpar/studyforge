@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 
-from studyforge.skills.execution.standalone import compose, images, learner, tour
+from studyforge.skills.execution.standalone import compose, images, learner, pages, tour
 from studyforge.skills.execution.standalone.facts import Facts
 
 COURSE = learner.Course(
@@ -247,3 +247,13 @@ def test_the_licence_is_linked_only_when_the_tree_holds_it():
     assert "[`LICENSE`](LICENSE)" in rich(BIG)
     unlicensed = learner.readme(learner.Course("A", "a", 1, 2, "ns", False))
     assert "[`LICENSE`]" not in unlicensed and "`LICENSE`" in unlicensed
+
+
+def test_the_readme_says_how_the_online_preview_is_kept_and_switched_on():
+    text = learner.readme(COURSE)
+    assert headings(text).count("The online preview") == 1
+    assert "built automatically from `main` on every push" in text
+    assert '"GitHub Actions" as the source' in text and "open Settings, then Pages" in text
+    assert f"(`{pages.WORKFLOW}`)" not in text and f"({pages.WORKFLOW})" in text
+    assert "website link at the top of this repository" in text
+    assert "gh-pages" not in text and "https://" not in text and "github.io" not in text

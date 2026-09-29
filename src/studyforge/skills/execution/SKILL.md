@@ -523,8 +523,16 @@ runs one argv and answers `(exit code, stdout)`.
   Submit, the editor and an example's editor were; quizzes, reading marks and the
   index filter work. ⛔ It names no owner and no repository: its script builds the
   README and source links from `location` on a `<owner>.github.io/<repo>/` page.
-  Commit it on an orphan branch `gh-pages`, never on `main`; pushing and enabling
-  Pages are the owner's steps.
+- ⭐ **The preview deploys itself.** The export also writes
+  `.github/workflows/pages.yml` and `.github/preview/preview.py`
+  (`standalone.pages`), both in the manifest's `keeps`. On every push to `main` the
+  workflow runs `python3 .github/preview/preview.py . _site` on a GitHub-hosted runner
+  and deploys `_site` with GitHub's own Pages actions, each pinned by full commit SHA.
+  ⛔ The builder is the framework's `preview`, byte for byte (one
+  source, proved), a single file that uses only the standard library. ⛔ No `gh-pages` branch exists:
+  the owner switches Pages on once (Settings, Pages, Source: "GitHub Actions"), and the
+  first run happens on GitHub after the push. To revert: delete the workflow file, or
+  switch the Pages source back to a branch.
 
 ### The split, step by step
 
