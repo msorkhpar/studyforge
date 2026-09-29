@@ -82,6 +82,7 @@ served form, and the mark is part of the opaque tag rather than a second header.
 
 from __future__ import annotations
 
+import re
 from collections.abc import Callable
 from pathlib import Path
 from urllib.parse import unquote
@@ -167,14 +168,13 @@ CONTENT_TYPES = {
 }
 DEFAULT_CONTENT_TYPE = "application/octet-stream"
 
-#: ⭐ **A source file's suffixes: the code a lesson links to, served VERBATIM.** Only
-#: those typed as plain text above, so `.js` stays a script and `.md` and `.txt` stay
-#: gated prose. ⛔ **Never refused for what its text says** (a sample address in a text
-#: block, a file past `GATE_MAX_BYTES`): it is the course's own code. Still asked of
-#: `withheld`, so a file carrying a served quiz's key is `404`; never a page.
+#: ⭐ **A source file: the code a lesson links to, served VERBATIM** (plain-text suffixes only; `.js`
+#: stays a script). ⛔ Never refused for a sample address or token, or its size; a home path or
+#: hostname still is, and `withheld` is still asked.
 SOURCE_SUFFIXES_SERVED = frozenset(
     one for kind in SOURCE_SUFFIXES.values() for one in kind if CONTENT_TYPES[one] == TEXT_TYPE
 )
+SAMPLES = re.compile(r"\b[\w.%+\-]+@[\w.\-]+\.[A-Za-z]{2,}\b|\bBearer\s+[\w.\-]{8,}")
 
 Private = Callable[[Path], bool]
 
@@ -334,7 +334,6 @@ def serve(
     except OSError:
         return _not_found()
     ctype = content_type_for(target)
-    source = target.suffix.lower() in SOURCE_SUFFIXES_SERVED
     body = None
     if ctype.startswith(GATED_TYPES) or ctype == DEFAULT_CONTENT_TYPE:
         try:
@@ -348,7 +347,7 @@ def serve(
     validators = (("ETag", etag), ("Cache-Control", ASSET_CACHE))
     if not_modified(request.headers.get("If-None-Match"), etag):
         return Response(304, validators)
-    if source:
+    if target.suffix.lower() in SOURCE_SUFFIXES_SERVED:
         return _source(target, body, stat.st_size, ctype, validators)
     if ctype.startswith(GATED_TYPES):
         return _text(body, ctype, validators, added)
@@ -367,8 +366,12 @@ def serve(
 
 
 def _source(target: Path, body: bytes | None, size: int, ctype: str, validators: tuple) -> Response:
-    """Answer a source file whole and verbatim; one too large to read is streamed."""
+    """Answer a source file whole; one too large to read is streamed unread."""
     headers = (("Content-Type", ctype), *validators, ("Accept-Ranges", "none"))
+    try:
+        assert_clean(SAMPLES.sub("", (body or b"").decode("utf-8", errors="replace")), "asset")
+    except PersonalDataLeak:
+        return Response(500, (("Content-Type", TEXT_TYPE),), b"asset failed the gate\n")
     if body is not None:
         return Response(200, headers, body)
     return Response(200, headers, file=target, span=(0, size - 1) if size else None)

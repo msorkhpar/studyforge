@@ -349,10 +349,22 @@ def test_a_source_file_whose_text_holds_an_address_is_served_verbatim(site):
     assert response.body == JAVA_TEXT_BLOCK.encode("utf-8")
 
 
-def test_a_source_file_holding_a_home_path_is_served_verbatim(site):
-    (site / "b.py").write_text(f"PATH = '{LEAK}'\n", encoding="utf-8")
+@pytest.mark.parametrize(
+    "line",
+    [f"PATH = '{LEAK}'", "HOST = '" + "box" + ".local'"],
+)
+def test_a_source_file_naming_a_machine_is_still_refused(site, line):
+    # ⛔ Only sample data is exempt: a home path and a hostname are the build machine's
+    # own, and never leave in a link to a code file.
+    (site / "b.py").write_text(line + "\n", encoding="utf-8")
     response = get(site, "/b.py")
-    assert (response.status, response.body) == (200, f"PATH = '{LEAK}'\n".encode())
+    assert response.status == 500 and LEAK.encode() not in response.body
+
+
+def test_a_source_file_holding_a_sample_bearer_header_is_served_verbatim(site):
+    text = 'headers.put("Authorization", "Bearer ' + 'token12345");\n'
+    (site / "T.java").write_text(text, encoding="utf-8")
+    assert (get(site, "/T.java").status, get(site, "/T.java").body) == (200, text.encode())
 
 
 def test_a_source_file_of_html_looking_text_is_still_plain_text(site):
