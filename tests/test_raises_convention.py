@@ -65,8 +65,9 @@ REACH = {
     # ⚠️ The floor moves with each new site (`reonboard.recorded_draft`,
     # `narrate.enabled.declared`, `narrate.release.volumes.require_released_policy`):
     # one below the count, the deleted-outright plant finds that many left and
-    # DOES NOT RAISE.
-    "studyforge.corpus.manifest": 10,
+    # DOES NOT RAISE. (`narrate.release.ignores.media_ignores` made it eleven, and the
+    # floor sat at ten until the deleted-outright plant went red on it.)
+    "studyforge.corpus.manifest": 11,
     # ⚠️ It counts `validate.narration`'s and `validate.links`'s sites, and `cli/serve.py`
     # and `cli/check.py`, which import `read_corpus` from `generate.declarations`, the
     # module that defines it.
