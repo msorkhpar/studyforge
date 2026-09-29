@@ -51,6 +51,8 @@ from studyforge.skills.execution.standalone.images import (
     PROGRESS,
     RUNS_AS,
     WORK,
+    NAMESPACE_DEFAULT,
+    NAMESPACE_VARIABLE,
     Names,
     qualified,
 )
@@ -65,6 +67,12 @@ PRIME = ".studyforge/execution/prime"
 PROJECT_VARIABLE = "COURSE_PROJECT"
 SITE_PORT_VARIABLE = "COURSE_SITE_PORT"
 EDITOR_PORT_VARIABLE = "COURSE_EDITOR_PORT"
+
+#: ⛔ What the pull file says when no account is set: it names the variable and what it holds.
+NAMESPACE_REQUIRED = (
+    f"{NAMESPACE_VARIABLE} is not set. It is the Docker Hub account the course images are "
+    "published under: set it in .env (copy course.env) to the account you were given"
+)
 
 #: The server's own state, which only it reads and writes.
 ALLOWED = ".studyforge/execution/allowed"
@@ -133,6 +141,11 @@ def render(plan: Plan) -> tuple[str, str]:
             "volumes": {name: {} for name in _volumes(services)},
         }
         text = emit(document)
+        if services is run:  # ⛔ the pull file has no default account: an unset one stops here
+            text = text.replace(
+                f"${{{NAMESPACE_VARIABLE}:-{NAMESPACE_DEFAULT}}}",
+                f"${{{NAMESPACE_VARIABLE}:?{NAMESPACE_REQUIRED}}}",
+            )
         problems = findings(text, services)
         if problems:
             raise rulings_refused(problems)

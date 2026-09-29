@@ -146,7 +146,11 @@ def test_a_rendered_file_that_would_break_a_rule_is_refused():
 
 @pytest.mark.skipif(shutil.which("docker") is None, reason="no docker CLI on this host")
 def test_compose_itself_reads_both_files(tmp_path, rendered):
-    env = {**os.environ, "CODE_SERVER_PASSWORD": "synthetic"}
+    env = {
+        **os.environ,
+        "CODE_SERVER_PASSWORD": "synthetic",
+        images.NAMESPACE_VARIABLE: "example-account",
+    }
     for name, text in zip(("compose.yaml", "compose.pull.yaml"), rendered, strict=True):
         (tmp_path / name).write_text(text, encoding="utf-8")
         (tmp_path / ".studyforge" / "images" / "toolchain" / "no-prime").mkdir(
@@ -164,3 +168,56 @@ def test_compose_itself_reads_both_files(tmp_path, rendered):
         if checked.returncode != 0 and "Cannot connect" in checked.stderr:
             pytest.skip("docker is installed and no engine answers")
         assert checked.returncode == 0, checked.stderr
+
+
+def defaults_the_account(text: str) -> bool:
+    """Whether a compose text falls back to an account when the variable is unset."""
+    return f"${{{images.NAMESPACE_VARIABLE}:-" in text
+
+
+def test_the_pull_file_has_no_default_account_and_the_build_file_keeps_the_local_one(rendered):
+    built, pulled = rendered
+    assert not defaults_the_account(pulled)
+    assert defaults_the_account(built)
+    assert f"${{{images.NAMESPACE_VARIABLE}:?" in pulled
+    assert f"${{{images.NAMESPACE_VARIABLE}:-{images.NAMESPACE_DEFAULT}}}/" in built
+    assert pulled.count(compose.NAMESPACE_REQUIRED) == 3
+
+
+def test_the_pull_file_s_message_names_the_variable_and_the_account_it_holds():
+    message = compose.NAMESPACE_REQUIRED
+    assert message.startswith(images.NAMESPACE_VARIABLE)
+    assert "Docker Hub account" in message and "published under" in message
+    assert "}" not in message and '"' not in message
+
+
+def test_a_pull_file_that_kept_a_default_would_be_caught(rendered):
+    _, pulled = rendered
+    planted = pulled.replace(
+        f"${{{images.NAMESPACE_VARIABLE}:?{compose.NAMESPACE_REQUIRED}}}",
+        f"${{{images.NAMESPACE_VARIABLE}:-{images.NAMESPACE_DEFAULT}}}",
+    )
+    assert defaults_the_account(planted)
+
+
+@pytest.mark.skipif(shutil.which("docker") is None, reason="no docker CLI on this host")
+@pytest.mark.parametrize("env_file", [None, f"{images.NAMESPACE_VARIABLE}=\n"])
+def test_compose_refuses_the_pull_file_with_the_message_until_the_account_is_set(
+    tmp_path, rendered, env_file
+):
+    (tmp_path / "compose.pull.yaml").write_text(rendered[1], encoding="utf-8")
+    if env_file is not None:
+        (tmp_path / ".env").write_text(env_file, encoding="utf-8")
+    env = {k: v for k, v in os.environ.items() if k != images.NAMESPACE_VARIABLE}
+    env["CODE_SERVER_PASSWORD"] = "synthetic"
+    refused = subprocess.run(
+        ["docker", "compose", "-f", "compose.pull.yaml", "config", "-q"],
+        cwd=tmp_path,
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert refused.returncode != 0
+    assert images.NAMESPACE_VARIABLE in refused.stderr
+    assert "Docker Hub account" in refused.stderr

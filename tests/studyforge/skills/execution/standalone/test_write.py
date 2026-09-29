@@ -9,12 +9,14 @@ so a written file it forgot, or a listed file nobody wrote, turns it red.
 from __future__ import annotations
 
 import json
+import re
+import shutil
 import subprocess
 from pathlib import Path
 
 import pytest
 
-from studyforge.skills.execution.standalone import closure, compose, split, write
+from studyforge.skills.execution.standalone import closure, compose, images, learner, split, write
 from tests.studyforge.execute.runnable import fixture_copy
 from tests.studyforge.skills.execution.standalone.test_vendor import (
     TAGS,
@@ -136,3 +138,52 @@ def test_a_course_that_declares_no_runtime_is_refused(tmp_path):
             platform="linux/amd64",
             run=answered(),
         )
+
+
+#: ⛔ Every account an exported file may name: the variable, its placeholder, the local default.
+ALLOWED_ACCOUNTS = {images.NAMESPACE_DEFAULT, learner.NAMESPACE_PLACEHOLDER, ""}
+ACCOUNT_USES = re.compile(rf"{images.NAMESPACE_VARIABLE}(?::-|=)([^}}\s]*)")
+REGISTRY_HOST = re.compile(r"(?i)\b(?:docker\.io|index\.docker\.io|hub\.docker\.com)\b")
+
+
+def account_literals(out: Path) -> list[str]:
+    """Every account an exported file names other than the allowed ones, or a registry host."""
+    found = []
+    for path in sorted(out.rglob("*")):
+        if not path.is_file() or ".git" in path.parts:
+            continue
+        text = path.read_bytes().decode("utf-8", errors="ignore")
+        name = path.relative_to(out).as_posix()
+        found += [
+            f"{name}: {m.group(1)}"
+            for m in ACCOUNT_USES.finditer(text)
+            if m.group(1) not in ALLOWED_ACCOUNTS
+        ]
+        found += [f"{name}: {m.group(0)}" for m in REGISTRY_HOST.finditer(text)]
+    return found
+
+
+def test_no_exported_file_names_a_docker_hub_account(released):
+    out, _ = released
+    assert account_literals(out) == []
+
+
+def test_an_exported_file_that_named_an_account_would_be_caught(released, tmp_path):
+    out, _ = released
+    copy = tmp_path / "copy"
+    shutil.copytree(out, copy)
+    with (copy / "compose.pull.yaml").open("a", encoding="utf-8") as one:
+        one.write(f"# ${{{images.NAMESPACE_VARIABLE}:-some-account}}\n")
+    (copy / "course.env").write_text(f"{images.NAMESPACE_VARIABLE}=some-account\n")
+    assert len(account_literals(copy)) == 2
+
+
+def test_the_exported_pull_file_has_no_default_account_and_course_env_leaves_it_empty(released):
+    out, _ = released
+    pulled = (out / "compose.pull.yaml").read_text(encoding="utf-8")
+    assert f"${{{images.NAMESPACE_VARIABLE}:-" not in pulled
+    assert f"${{{images.NAMESPACE_VARIABLE}:?" in pulled
+    built = (out / "compose.yaml").read_text(encoding="utf-8")
+    assert f"${{{images.NAMESPACE_VARIABLE}:-{images.NAMESPACE_DEFAULT}}}/" in built
+    settings = (out / "course.env").read_text(encoding="utf-8").splitlines()
+    assert f"{images.NAMESPACE_VARIABLE}=" in settings
