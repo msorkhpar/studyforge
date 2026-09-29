@@ -388,3 +388,14 @@ def test_every_file_a_container_or_a_shell_reads_is_checked_out_with_lf():
     for path in LF_ONLY:
         assert said[(path, "eol")] == "lf", f"{path} is checked out with the host's line ends"
         assert said[(path, "text")] in ("auto", "set"), f"{path} is not normalised as text"
+
+
+def test_the_documented_full_suite_collects_the_top_level_test_files():
+    """⛔ The bare `python3 -m pytest` that `docker/dev/check` runs is the WHOLE suite.
+
+    ⚠️ A gate spelled as a list of subdirectories silently leaves out the
+    `tests/test_*.py` group, and one of its tests sat red unseen. ⭐ The one root
+    below is what the bare command collects, so narrowing it fails here.
+    """
+    assert pyproject()["tool"]["pytest"]["ini_options"]["testpaths"] == ["tests"]
+    assert sorted((repository_root() / "tests").glob("test_*.py")), "no top-level test files"
