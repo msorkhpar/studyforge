@@ -30,6 +30,7 @@ from studyforge.corpus.placement import (
     AUDIO_DIRNAME,
     GENERATED_ROOT,
     SITE_CACHE_FILENAME,
+    STUDY_DIRNAME,
     UNIT_MEDIA_DIRNAMES,
 )
 from studyforge.validate.report import INVALID, OK
@@ -77,6 +78,10 @@ def _homed(plan, repository):
         home = repository / plan.ignore_home
         home.parent.mkdir(parents=True, exist_ok=True)
         home.write_text("\n".join(plan.ignore) + "\n", encoding="utf-8")
+    for where, lines in plan.ignore_files:
+        home = repository / where
+        home.parent.mkdir(parents=True, exist_ok=True)
+        home.write_text("\n".join(lines) + "\n", encoding="utf-8")
     return repository
 
 
@@ -128,38 +133,54 @@ def test_committed_media_is_not_ignored_and_the_only_rules_are_the_frameworks(na
 
 
 @pytest.mark.parametrize("name", VALID)
-def test_media_that_is_not_committed_is_ignored_from_its_home_or_refused(name, tmp_path):
+def test_media_that_is_not_committed_is_ignored_by_the_planned_file_or_files(name, tmp_path):
     plan = _with_media(name, "never", tmp_path)
     clips = _clips(plan)
     assert clips
-    if plan.ignore_home is None:
-        # ⛔ No SINGLE generated directory encloses this profile's media, and
-        # the root ignore file is R3's: refused, never printed homeless.
-        assert plan.ignore == ()
-        refused = [refusal for refusal in plan.refusals if "never edited" in refusal.why]
-        assert refused, plan.refusals
-        assert plan.exit_code == INVALID
-        return
-    assert plan.exit_code == OK
+    # ⭐ Planned, never refused: a profile with one home names it, and a profile with none
+    # names one file in each generated directory that holds clips.
+    assert plan.exit_code == OK, plan.refusals
+    assert (plan.ignore_home is None) != (plan.ignore_files == ())
     repository = _homed(plan, init_repository(tmp_path / f"{name}-repo"))
     assert [c for c in clips if not is_ignored(c, cwd=repository)] == []
 
 
-def test_both_outcomes_are_reached_across_the_fixtures(tmp_path):
+def test_both_shapes_are_reached_across_the_fixtures(tmp_path):
     # ⛔ And `plan` reaches them without naming either profile: it asks.
-    homeless = {_with_media(name, "never", tmp_path / name).ignore_home is None for name in VALID}
-    assert homeless == {True, False}
-
-
-def test_no_plan_names_anything_but_a_file_inside_the_generated_root(tmp_path):
-    homes = {
-        _with_media(name, commit, tmp_path / name).ignore_home
-        for name in VALID
-        for commit in COMMIT_MODES
+    shapes = {
+        (plan.ignore_home is None, plan.ignore_files != ())
+        for plan in (_with_media(name, "never", tmp_path / name) for name in VALID)
     }
+    assert shapes == {(False, False), (True, True)}
+
+
+def test_a_plan_names_the_ignore_file_in_each_study_directory_that_holds_clips(tmp_path):
+    plan = _with_media("depth2", "never", tmp_path)
+    homes = [where for where, _ in plan.ignore_files]
+    assert homes
+    assert all(PurePosixPath(h).parts[-2:] == (STUDY_DIRNAME, ".gitignore") for h in homes)
+    assert homes == sorted(set(homes))
+    # ⭐ Each names a directory whose audio the plan claims, and no directory it does not.
+    claimed = {
+        PurePosixPath(p).parts[: PurePosixPath(p).parts.index(AUDIO_DIRNAME)]
+        for p in plan.paths
+        if AUDIO_DIRNAME in PurePosixPath(p).parts
+    }
+    assert {PurePosixPath(h).parts[:-1] for h in homes} == claimed
+    assert all(line == "audio/" for _, lines in plan.ignore_files for line in lines)
+
+
+def test_no_plan_names_anything_but_a_file_inside_a_directory_the_framework_generates(tmp_path):
+    plans = [
+        _with_media(name, commit, tmp_path / name) for name in VALID for commit in COMMIT_MODES
+    ]
+    homes = {plan.ignore_home for plan in plans}
     assert None in homes and len(homes) > 1
     outside = [h for h in homes if h is not None and PurePosixPath(h).parts[0] != GENERATED_ROOT]
     assert outside == []
+    others = {where for plan in plans for where, _ in plan.ignore_files}
+    assert others and not [w for w in others if PurePosixPath(w).parts[-2] != STUDY_DIRNAME]
+    assert ".gitignore" not in others, "the root ignore file is never a home (R3)"
 
 
 def test_every_ignore_line_names_the_file_that_holds_it(tmp_path):
@@ -167,7 +188,14 @@ def test_every_ignore_line_names_the_file_that_holds_it(tmp_path):
     plans = [_with_media(name, "never", tmp_path / name) for name in VALID]
     lines = [line for plan in plans for line in plan.lines() if line.startswith("ignore ")]
     assert lines
-    assert [line for line in lines if not line.endswith(f"  in {GENERATED_ROOT}/.gitignore")] == []
+    assert [line for line in lines if not line.endswith("/.gitignore")] == []
+    assert [line for line in lines if "  in " not in line] == []
+
+
+def test_the_summary_counts_every_ignore_line_whichever_file_holds_it(tmp_path):
+    plan = _with_media("depth2", "never", tmp_path)
+    counted = sum(len(lines) for _, lines in plan.ignore_files)
+    assert counted and f"{counted} ignore line(s)" in plan.summary()
 
 
 # --------------------------------------------------------------------------

@@ -17,6 +17,7 @@ from studyforge.corpus.placement import (
 )
 from studyforge.corpus.placement.names import UNCOMMITTED_DIRNAMES, contained_stem
 from studyforge.corpus.placement.sibling import SiblingProfile
+from tests.support import init_repository, is_ignored
 
 SIBLING = profile_for("sibling")
 ADDRESS = Address.of("basics", "16-streams-api")
@@ -292,3 +293,55 @@ def test_a_plant_that_writes_beside_the_material_is_caught_by_name():
 def test_a_unit_with_no_address_is_refused_rather_than_named_without_one():
     with pytest.raises(PlacementError):
         SIBLING.unit(None, 1, TITLE, origin=ORIGIN)
+
+
+# --------------------------------------------------------------------------
+# ⛔ Media kept out of git has a file per `study/` directory, never the root's
+# --------------------------------------------------------------------------
+
+
+def _written(files, repository):
+    """Write each ignore file where it says, inside `repository`, and return the repository."""
+    for one in files:
+        home = repository / one.home
+        home.parent.mkdir(parents=True, exist_ok=True)
+        home.write_text(one.text(), encoding="utf-8")
+    return repository
+
+
+def test_each_study_directory_that_holds_clips_gets_one_ignore_file_of_its_own(tmp_path):
+    here = SIBLING.unit(ADDRESS, 1, TITLE, origin=ORIGIN)
+    again = SIBLING.unit(ADDRESS, 2, "Collectors", origin=ORIGIN)
+    there = SIBLING.unit(Address.of("basics", "17"), 1, TITLE, origin="17-other/README_1.md")
+    files = SIBLING.media_ignore_files([here.audio, again.audio, there.audio])
+    assert [one.home.as_posix() for one in files] == [
+        f"16-streams-api/{STUDY_DIRNAME}/.gitignore",
+        f"17-other/{STUDY_DIRNAME}/.gitignore",
+    ]
+    assert {one.lines for one in files} == {("audio/",)}
+    assert all(one.home.parts[0] != ".gitignore" and len(one.home.parts) >= 2 for one in files)
+
+
+def test_the_rules_cover_the_clips_and_nothing_a_clone_reads_or_the_corpus_owns(tmp_path):
+    """⛔ Asked of git. A rule one directory too high would ignore the owner's own `audio/`."""
+    unit = SIBLING.unit(ADDRESS, 1, TITLE, origin=ORIGIN)
+    repository = _written(SIBLING.media_ignore_files([unit.audio]), init_repository(tmp_path / "r"))
+    source = PurePosixPath(ORIGIN).parent
+    assert is_ignored((unit.audio / "c.mp3").as_posix(), cwd=repository)
+    for kept in (
+        unit.page,
+        unit.images / "figure.png",
+        unit.practice / "Exercise.java",
+        source / "audio" / "theme.mp3",
+        source / STUDY_DIRNAME / ".gitignore",
+    ):
+        assert not is_ignored(kept.as_posix(), cwd=repository), kept
+
+
+def test_an_audio_directory_outside_a_study_directory_is_refused_not_guessed_at():
+    with pytest.raises(PlacementError, match="lies in"):
+        SIBLING.media_ignore_files([PurePosixPath("16-streams-api/audio/basics")])
+
+
+def test_a_corpus_with_no_clips_needs_no_file():
+    assert SIBLING.media_ignore_files([]) == ()
