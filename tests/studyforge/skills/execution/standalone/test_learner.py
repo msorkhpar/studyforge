@@ -257,4 +257,3 @@ def test_the_readme_says_how_the_online_preview_is_kept_and_switched_on():
     assert f"(`{pages.WORKFLOW}`)" not in text and f"({pages.WORKFLOW})" in text
     assert "website link at the top of this repository" in text
     assert "gh-pages" not in text and "https://" not in text and "github.io" not in text
-
