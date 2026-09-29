@@ -41,6 +41,9 @@ BUILD_BRANCH = "studyforge/build"
 #: The file a learner copies to `.env` to change a setting.
 SETTINGS = "course.env"
 
+#: ⛔ What the settings file shows as an example account: never a real one.
+NAMESPACE_PLACEHOLDER = "your-dockerhub-account"
+
 #: The narration restore scripts, as the course carries them.
 RESTORE_SH = ".studyforge/narration-release/restore.sh"
 RESTORE_PS1 = ".studyforge/narration-release/restore.ps1"
@@ -73,8 +76,12 @@ def settings(course: Course) -> str:
         f"{NARRATION_VARIABLE}={NARRATIONS[0]}",
         "# The compose project: another name runs a second copy beside the first.",
         f"{PROJECT_VARIABLE}={course.project}",
-        "# Where the images come from: the namespace they are published under.",
-        f"{NAMESPACE_VARIABLE}={course.namespace}",
+        "# The Docker Hub account the published images are pulled from. The person who",
+        "# gave you this course tells you its name: set it here, for example",
+        f"# {NAMESPACE_VARIABLE}={NAMESPACE_PLACEHOLDER}",
+        "# compose.pull.yaml stops with a message until it is set. Building the images",
+        f"# yourself needs no account: leave it empty and they are tagged {course.namespace}.",
+        f"{NAMESPACE_VARIABLE}=",
         "",
     ]
     return "\n".join(lines)
@@ -98,20 +105,39 @@ def readme(course: Course) -> str:
         "",
         "## Start it",
         "",
-        "From this directory, either pull the published images:",
+        "1. Install Docker, and start it.",
+        "2. Clone this repository and open a terminal in its directory.",
+        f"3. Copy `{SETTINGS}` to `.env`, and set `{NAMESPACE_VARIABLE}` in it to the Docker Hub",
+        "   account you were given: the images are published under that account.",
         "",
-        "```",
-        "docker compose -f compose.pull.yaml up -d",
-        "```",
+        "   ```",
+        f"   cp {SETTINGS} .env",
+        "   ```",
         "",
-        "or build every image from this checkout (the first build takes a while, and",
-        "downloads only pinned base images and the course's pinned dependencies):",
+        "   On Windows, use `copy course.env .env`.",
+        "4. Start the course from the published images:",
+        "",
+        "   ```",
+        "   docker compose -f compose.pull.yaml up -d",
+        "   ```",
+        "",
+        "   The first start downloads the images, which takes a while.",
+        f"   Until `{NAMESPACE_VARIABLE}` is set, compose stops and says so.",
+        f"5. Open {site} in your browser.",
+        "",
+        "The images are built for amd64 (Intel and AMD). On an Apple Silicon Mac they run",
+        "under emulation, which is slower.",
+        "",
+        "To build every image from this checkout instead, which needs no account (the",
+        "first build takes a while, and downloads only pinned base images and the",
+        "course's pinned dependencies):",
         "",
         "```",
         "docker compose up -d --build",
         "```",
         "",
-        f"Then open {site} in your browser.",
+        "To see what is running: `docker compose -f compose.pull.yaml ps`. Use the same",
+        "`-f compose.pull.yaml` with every compose command for the pulled course.",
         "",
         "## The ports",
         "",
@@ -131,8 +157,8 @@ def readme(course: Course) -> str:
         "runner, which has no network, and marks the practice passed when they pass.",
         "",
         "Your answers, your progress and the editor's settings live in Docker volumes,",
-        "so they survive a restart. `docker compose down` stops the course and keeps",
-        "them; `docker compose down -v` deletes them too.",
+        "so they survive a restart. `down` stops the course and keeps them; `down -v`",
+        "deletes them too.",
         "",
     ]
     if course.narrated:
@@ -144,7 +170,7 @@ def readme(course: Course) -> str:
             f"`{NARRATION_VARIABLE}={NARRATIONS[1]}` in `.env` (copy it from `course.env`), then:",
             "",
             "- **Pulled images**: `docker compose -f compose.pull.yaml up -d` pulls the voiced"
-            " site.",
+            " site. Leave the setting as it is for the site without narration.",
             "- **Building it yourself**: download the recordings from the course's release",
             "  first, then build:",
             "",
@@ -174,8 +200,10 @@ def readme(course: Course) -> str:
         "## Stop it",
         "",
         "```",
-        "docker compose down",
+        "docker compose -f compose.pull.yaml down",
         "```",
+        "",
+        "(`docker compose down` stops a course started with the build file.)",
         "",
         "## Licence",
         "",

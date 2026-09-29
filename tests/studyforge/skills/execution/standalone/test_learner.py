@@ -66,7 +66,7 @@ def test_the_settings_name_every_variable_the_compose_files_read_at_its_default(
         f"{compose.EDITOR_PORT_VARIABLE}=18444",
         f"{images.NARRATION_VARIABLE}={images.NARRATIONS[0]}",
         f"{compose.PROJECT_VARIABLE}=a-course",
-        f"{images.NAMESPACE_VARIABLE}={images.NAMESPACE_DEFAULT}",
+        f"{images.NAMESPACE_VARIABLE}=",
     ):
         assert line in text.splitlines(), line
 
@@ -76,3 +76,35 @@ def test_the_readme_names_the_exercises_and_how_they_relate_to_the_practices():
     assert "`exercises/`" in with_them and "`practice/`" in with_them
     assert build_words(with_them) == []
     assert "exercises/" not in learner.readme(COURSE)
+
+
+def names_variable_in_the_copy_step(text: str) -> bool:
+    """Whether the step that copies `course.env` also names the account variable."""
+    lines = text.splitlines()
+    step = next(i for i, line in enumerate(lines) if line.startswith("3. Copy `course.env`"))
+    return images.NAMESPACE_VARIABLE in " ".join(lines[step : step + 2])
+
+
+def test_the_readme_steps_a_friend_through_the_pull_and_names_the_account_variable():
+    text = learner.readme(COURSE)
+    assert names_variable_in_the_copy_step(text)
+    assert "cp course.env .env" in text
+    assert "docker compose -f compose.pull.yaml up -d" in text
+    assert "amd64" in text and "Apple Silicon" in text and "emulation" in text
+    assert "docker compose -f compose.pull.yaml ps" in text
+    assert "docker compose -f compose.pull.yaml down" in text
+    assert text.index("cp course.env .env") < text.index("compose.pull.yaml up -d")
+
+
+def test_a_readme_that_did_not_name_the_account_variable_would_be_caught():
+    planted = learner.readme(COURSE).replace(
+        f"set `{images.NAMESPACE_VARIABLE}` in it", "set the account in it"
+    )
+    assert not names_variable_in_the_copy_step(planted)
+
+
+def test_the_settings_leave_the_account_empty_and_show_only_a_placeholder():
+    text = learner.settings(COURSE)
+    assert f"{images.NAMESPACE_VARIABLE}=" in text.splitlines()
+    assert f"# {images.NAMESPACE_VARIABLE}={learner.NAMESPACE_PLACEHOLDER}" in text.splitlines()
+    assert learner.NAMESPACE_PLACEHOLDER == "your-dockerhub-account"
