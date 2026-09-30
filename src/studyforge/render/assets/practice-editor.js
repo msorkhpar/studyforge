@@ -269,8 +269,7 @@
      two frames.** The file a reader may type in and the file that judges it are
      two different acts of reading; a tab picks which one the frame shows.
 
-     ⛔ **One frame, because a page holds one editor at most** (register
-     ruling): a second workbench is a second language server, so the Tests tab
+     ⛔ **One frame, because a page holds one editor at most**: a second workbench is a second language server, so the Tests tab
      points the same frame at the other window's URL rather than building one.
 
      ⛔ **Each window's URL is the SERVER's answer and is never built here**: the
@@ -331,8 +330,7 @@
     show(part(panel, 'no-editor'), false);
   }
 
-  /* ⭐ **Nothing is asked until the reader opens this practice** (register
-     ruling: no editor loads until a practice is opened), and the frame goes
+  /* ⭐ **Nothing is asked until the reader opens this practice** (no editor loads until a practice is opened), and the frame goes
      when it is closed or another is opened — so the page holds one at most.
      ⛔ Frames are added only for an editor that is already up over this
      corpus's own files and that actually holds this practice's file — the

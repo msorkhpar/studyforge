@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/render/page/practices.py` (R12).
 
-⭐ The register ruling, read in the markup a page ships: a lesson's practices are
+⭐ The workspace design, read in the markup a page ships: a lesson's practices are
 one **Practice (n)** list of titled cards, each saying what it practises and
 carrying a slot for its status, and one workspace follows them. ⛔ Every
 clause is read both ways — present where it is owed, absent where it is not.
@@ -131,7 +131,7 @@ def test_the_workspace_ships_hidden_with_its_title_and_three_acts():
     assert " hidden>" in shell.splitlines()[0]
     acts = re.findall(r'data-workspace-act="(\w+)"', shell)
     # ⭐ The description's toggle before the title, and its edge after the bar
-    # (register ruling 2026-09-26): both ship hidden, with the divider.
+    # both ship hidden, with the divider.
     assert acts == ["statement", "previous", "next", "close", "reopen"]
     assert 'data-workspace-part="title"' in shell
     # ⛔ Not an editor: the workspace ships no frame. One is added only when a

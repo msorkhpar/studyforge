@@ -294,14 +294,13 @@ still need nothing to run them.
 
 ## `narration` — whether the site speaks
 
-**What is spoken is a lesson's prose**, by register ruling: headings,
+**What is spoken is a lesson's prose**: headings,
 paragraphs, list items, table rows and a disclosure's summary. A practice, a
 code example and a quiz are shown and never spoken, and no caption stands in
-for a code example. A lesson's code-example panel is a code example, by register
-ruling: a list whose every item is one link to a code file and a short label
+for a code example. A lesson's code-example panel is a code example: a list whose every item is one link to a code file and a short label
 (`Source: …`, `Test: …`) says nothing, and a heading whose blocks hold such a
 list and nothing spoken (the *Code Examples* heading) says nothing either. A corpus
-narrated before those rulings keeps every prose clip;
+narrated before this limit keeps every prose clip;
 `studyforge narrate <root> --prune` retires the clips no page plays any more.
 
 **Narration is optional.** Some readers want the material without a voice, and

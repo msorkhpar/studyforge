@@ -42,7 +42,7 @@ or a reason. ⚠️ **The mechanical halves are the ones below, and they are all
 there is**: a basis that resolves, one ending per aspect, and no aspect
 stated twice.
 
-## ⛔ REGISTER RULING, SAME DAY — IMPORTANT IDEAS, NOT EVERY FACT
+## ⛔ IMPORTANT IDEAS, NOT EVERY FACT
 
 Coverage is not exhaustive grading. It is measured by the ideas that matter in
 the text, and a quiz stays short (one or two questions).

@@ -29,7 +29,7 @@ def stage():
     temporary directory: Docker Desktop shares none, and Windows has none. ⭐ The
     image must declare the fixture's runtime, or container mode skips naming it.
     """
-    with engine.shared("sf44") as where:
+    with engine.shared("chk") as where:
         root = fixture_copy(where)
         reason = container.skip_reason(needs=container.RUNNABLE_RUNTIME)
         name = None if reason else container.start(root)

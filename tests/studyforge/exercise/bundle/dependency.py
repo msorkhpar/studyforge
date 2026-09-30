@@ -42,10 +42,10 @@ SET_SLOT = "<the declared set>"
 DIRECTORY_SLOT = "<directory>"
 
 #: The library's coordinates. ⚠️ `example` names: nothing here is anybody's.
-GROUP, ARTIFACT, VERSION = "org.example.w436", "tiny", "1.0"
+GROUP, ARTIFACT, VERSION = "org.example.depfx", "tiny", "1.0"
 COORDINATES = f"{GROUP}:{ARTIFACT}"
 
-LIBRARY_SOURCE = """package org.example.w436.tiny;
+LIBRARY_SOURCE = """package org.example.depfx.tiny;
 
 public final class Greeting {
     private Greeting() {}
@@ -80,7 +80,7 @@ LIBRARY = f"""    <dependency>
 
 FIXTURE_REPOSITORY = """  <repositories>
     <repository>
-      <id>w436-fixture</id>
+      <id>depfx-fixture</id>
       <url>file://${project.basedir}/repo</url>
     </repository>
   </repositories>
@@ -166,8 +166,8 @@ def write_prime(directory: Path, jar: bytes | None) -> Path:
     refuses it, so each one's source uses what its build declares.
     """
     maven = directory / "maven"
-    expression = 'org.example.w436.tiny.Greeting.of("prime")' if jar else '"Hello, prime"'
-    _put(maven / "pom.xml", pom("w436-prime", library=jar is not None, repository=jar is not None))
+    expression = 'org.example.depfx.tiny.Greeting.of("prime")' if jar else '"Hello, prime"'
+    _put(maven / "pom.xml", pom("depfx-prime", library=jar is not None, repository=jar is not None))
     _put(maven / "src/main/java/prime/Prime.java", PRIME_SOURCE.format(expression=expression))
     _put(maven / "src/test/java/prime/PrimeTest.java", PRIME_TEST)
     if jar is not None:
@@ -195,7 +195,7 @@ def _publish(repository: Path, jar: bytes) -> None:
 
 REFERENCE = """package fixture;
 
-import org.example.w436.tiny.Greeting;
+import org.example.depfx.tiny.Greeting;
 
 public final class Greeter {
     public static String greet(String who) {
@@ -217,7 +217,7 @@ TESTS = """package fixture;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.example.w436.tiny.Greeting;
+import org.example.depfx.tiny.Greeting;
 import org.junit.jupiter.api.Test;
 
 class GreeterTest {
@@ -289,7 +289,7 @@ def write_bundle(root: Path, *, build: bool = True) -> Bundle:
     _put(where / "tests" / TEST_FILE, TESTS)
     _put(where / "plants" / "edge-1" / MAIN_FILE, PLANT)
     if build:
-        _put(where / "build" / BUILD_FILE, pom("w436-exercise", library=True))
+        _put(where / "build" / BUILD_FILE, pom("depfx-exercise", library=True))
     return bundle
 
 

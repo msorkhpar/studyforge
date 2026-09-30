@@ -174,15 +174,13 @@ def test_the_real_sibling_is_found_through_the_variable_and_never_by_path(monkey
 
 
 def test_every_placeholder_is_filled_and_none_survives_into_the_argv():
-    argv = container.run_argv(
-        a_declaration(), name="sf20-1", source_root="/sources", tag="an-image"
-    )
+    argv = container.run_argv(a_declaration(), name="run-1", source_root="/sources", tag="an-image")
     assert argv[:9] == [
         "docker",
         "run",
         "-d",
         "--name",
-        "sf20-1",
+        "run-1",
         "--init",
         "--network",
         "none",
@@ -242,9 +240,9 @@ def test_an_undetached_or_uninitialised_declaration_renders_without_those_flags(
 
 def test_the_exec_template_is_filled_from_the_declaration():
     argv = container.exec_argv(
-        a_declaration(), name="sf20-1", directory="unit-3", command=["mvn", "-q", "test"]
+        a_declaration(), name="run-1", directory="unit-3", command=["mvn", "-q", "test"]
     )
-    assert argv == ["docker", "exec", "-w", "/work/unit-3", "sf20-1", "mvn", "-q", "test"]
+    assert argv == ["docker", "exec", "-w", "/work/unit-3", "run-1", "mvn", "-q", "test"]
     assert "<command...>" not in argv
 
 
@@ -267,7 +265,7 @@ def test_the_real_sibling_declares_a_shape_this_can_render():
         pytest.skip(reason)
     assert container.contract_reading().committed
     runner = container.declaration()
-    argv = container.run_argv(runner, name="sf20-probe", source_root="/sources", tag="an-image")
+    argv = container.run_argv(runner, name="run-probe", source_root="/sources", tag="an-image")
     assert argv[:2] == ["docker", "run"]
     assert "--network" in argv and argv[argv.index("--network") + 1] == "none"
     assert f"/sources:{container.workspace_path(runner)}" in argv

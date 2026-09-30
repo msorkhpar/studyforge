@@ -272,9 +272,9 @@ def differ(root: Path, differing: str, mark: str) -> str:
     version = tomllib.loads(text)["project"]["version"]
     assert text.count(f'version = "{version}"') == 1, "the version line is not unique"
     path.write_text(
-        text.replace(f'version = "{version}"', f'version = "{version}+w225{mark}"'), "utf-8"
+        text.replace(f'version = "{version}"', f'version = "{version}+devimg{mark}"'), "utf-8"
     )
-    return f"{version}+w225{mark}"
+    return f"{version}+devimg{mark}"
 
 
 def checkout(root: Path, repository: str, differing: str, mark: str) -> str:
@@ -299,7 +299,7 @@ def last_line(output: str) -> str:
 @pytest.mark.parametrize("differing", sorted(PROBES))
 def test_two_checkouts_with_different_inputs_each_run_their_own_image(tmp_path, differing):
     docker = require_docker_run(builds_fresh=True)
-    repository = f"studyforge-test/w225-{uuid.uuid4().hex[:12]}"
+    repository = f"studyforge-test/devimg-{uuid.uuid4().hex[:12]}"
     try:
         first, second = tmp_path / "first", tmp_path / "second"
         expected = [

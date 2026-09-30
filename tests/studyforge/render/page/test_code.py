@@ -115,7 +115,7 @@ def test_a_list_of_code_links_is_one_entry_per_pair_named_for_its_source():
 
 
 def test_every_item_keeps_its_element_and_its_words_and_the_panel_carries_no_audio():
-    # ⛔ Register ruling: a code example is never narrated. The items are carried
+    # ⛔ A code example is never narrated. The items are carried
     # whole but for their audio, even where a record still names a clip for them.
     lines = [item("Test: ", TEST, "a1"), item("Source: ", SOURCE, "")]
     page = drawn(listed(*lines).replace("<li>", '<li data-audio="">'))
@@ -178,7 +178,7 @@ def test_a_corpus_with_no_pairing_draws_no_examples():
 
 
 def test_the_label_the_page_draws_is_the_label_narration_silences():
-    # ⛔ One line, two readers (register ruling: a panel is never narrated): a
+    # ⛔ One line, two readers (a panel is never narrated): a
     # longer label in the script would silence a list the page leaves plain,
     # and a shorter one would speak a panel.
     assert code.MAX_LABEL == panel.MAX_LABEL

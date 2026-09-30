@@ -1,7 +1,7 @@
 /* The practice workspace's panes: the description resized and closed, and the
    report resized and collapsed.
 
-   ⭐ **Register ruling (2026-09-26).** In a code practice's workspace:
+   ⭐ In a code practice's workspace:
    - the divider between the description and the editor is dragged — mouse,
      touch or pen — to widen or narrow the description, and moved from the
      keyboard with Left and Right (Home and End to the limits);

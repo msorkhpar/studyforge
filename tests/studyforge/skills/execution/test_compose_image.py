@@ -40,7 +40,7 @@ from tests.studyforge.skills.execution.test_prime_image import argv, corpus
 from tests.support import tool_on_path
 
 #: A source no other reading on this host names, so its container name is its own.
-SOURCE = "w445-compose-reading"
+SOURCE = "compose-compose-reading"
 
 
 @pytest.fixture

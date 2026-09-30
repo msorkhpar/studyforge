@@ -1,6 +1,6 @@
 """Mirror of `tests/harness/engine.py`: a directory the engine must see is never the host's `/tmp`.
 
-⭐ The register's direction is that every docker step runs on any engine,
+⭐ Every docker step runs on any engine,
 Windows included; Docker Desktop shares no host `/tmp` and Windows has none.
 """
 

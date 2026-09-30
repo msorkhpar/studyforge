@@ -70,7 +70,7 @@ def key_block(said: str) -> dict:
 
 
 def test_the_quiz_carries_its_own_key_in_one_data_block_and_no_option_carries_it():
-    # ⭐ The register ruling: the key lives in the page it grades, in a script
+    # ⭐ The key lives in the page it grades, in a script
     # local to it. ⛔ Only in that block: an option carries its id and words,
     # and neither its correctness nor its sentence — or a stylesheet or a screen
     # reader could say it before the reader chose.
@@ -107,7 +107,7 @@ def test_a_sentence_can_never_close_the_key_block():
 
 
 def test_the_key_of_one_quiz_is_in_its_own_page_and_no_other_file_the_build_wrote(tmp_path):
-    # ⛔ The register's ruling: the key lives ONLY in the page it grades —
+    # ⛔ The key lives ONLY in the page it grades —
     # never in a shared asset, never in another page. Read on the BUILT prose
     # fixture, every file the build wrote. ⭐ Positive control in the same test:
     # every sentence IS in the quiz's own page, so an absence elsewhere is a
@@ -235,7 +235,7 @@ def behaviour() -> str:
 
 
 def test_the_quiz_is_graded_in_the_page_from_its_own_key_with_no_request():
-    # ⭐ The register ruling: nothing about a quiz is a server function. ⛔ So the
+    # ⭐ Nothing about a quiz is a server function. ⛔ So the
     # script asks no client and no origin, and makes no request of any kind.
     body = behaviour()
     assert "JSON.parse(block.textContent)" in body

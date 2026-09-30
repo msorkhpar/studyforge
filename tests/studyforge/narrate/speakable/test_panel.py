@@ -1,6 +1,6 @@
 """Mirror of `src/studyforge/narrate/speakable/panel.py` (R12), and the ruling's acceptance.
 
-⛔ Register ruling (2026-09-26): a lesson's code-example panel is a code example,
+⛔ A lesson's code-example panel is a code example,
 and a code example is never narrated. The list the page draws as the panel
 yields no speech unit, the page carries no audio inside it, the prose around it
 keeps its ids and digests, and the heading over it falls silent with it.
@@ -80,7 +80,7 @@ def test_a_list_that_is_not_all_code_examples_is_still_spoken_item_by_item(items
 
 
 # --------------------------------------------------------------------------
-# ⛔ Register ruling: a lesson's code-example panel is never narrated
+# ⛔ A lesson's code-example panel is never narrated
 # --------------------------------------------------------------------------
 
 

@@ -303,7 +303,7 @@ def fence_positions(document: dict) -> list[tuple[str, tuple[int, ...], None]]:
 
 
 def test_no_fence_in_any_document_yields_a_speech_unit_or_a_caption():
-    # ⛔ The register ruling: narration is lesson prose only, so a code example is
+    # ⛔ Narration is lesson prose only, so a code example is
     # never spoken, and no caption stands in for it.
     fences = [(name, one) for name, document in CASES for one in fence_positions(document)]
     assert fences, "no fixture document holds a fence; the reading is vacuous"
@@ -436,7 +436,7 @@ def practice_keys(document: dict) -> list[str]:
 
 
 def test_a_practice_section_yields_no_speech_unit_and_the_lesson_beside_it_still_speaks():
-    # ⛔ The register ruling: a practice — its statement, its lesson heading, its
+    # ⛔ A practice — its statement, its lesson heading, its
     # examples, everything its panel carries — is never narrated.
     document = depth2_unit_01()
     practices = practice_keys(document)
@@ -475,7 +475,7 @@ def test_the_rendered_practice_carries_no_audio_even_where_a_record_holds_its_cl
 #: ⛔ What the pre-ruling script minted for `depth2_unit_01` — lesson prose, one
 #: captioned fence (`java.b3`), seven practice units and the shared section's
 #: heading — read off the minter at
-#: the commit before the register ruling. It is the BEFORE of the record.
+#: the commit before narration was limited to prose. It is the BEFORE of the record.
 BEFORE_THE_RULING = (
     "basics--01-getting-started--unit-01.java.b1-922d0d65",
     "basics--01-getting-started--unit-01.java.b2-ea4a45f5",

@@ -26,7 +26,7 @@ somebody deciding what it sounds like.
 
 ## ⛔ A fence is never spoken — not its body, and not a caption for it
 
-⭐ **Register ruling (2026-09-26): narration covers a lesson's prose only.** A code
+⭐ **Narration covers a lesson's prose only.** A code
 example is shown and never narrated, so `SPEECH_OF` calls `code` `silent`, exactly
 as it calls an image silent, and a code part inside a list item adds nothing to
 that item's clip. ⛔ No sentence stands in for the fence either: a caption
@@ -41,7 +41,7 @@ as prose blocks rather than as fences, decided once at extraction (R1).
 
 ## ⛔ A list of code examples is never spoken, and neither is the heading over it
 
-⭐ **Register ruling (2026-09-26): a lesson's code-example panel is a code
+⭐ **A lesson's code-example panel is a code
 example, and a code example is never narrated.** A list whose every item is one
 link to a code file and a short label (`Source: …`, `Test: …`) is the list the
 page draws as that panel (`render.page.code`), so it yields no unit — no item

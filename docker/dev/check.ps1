@@ -4,7 +4,7 @@
 #     docker/dev/check.ps1 python3 -m tests.floor     the quality floor alone
 #     docker/dev/check.ps1 python3 -m pytest -k ruff  anything else
 #
-# ⭐ The twin of `check`, for a contributor on Windows (a register direction: the
+# ⭐ The twin of `check`, for a contributor on Windows (the
 # framework is worked on from Windows too, on Docker Desktop). It runs the same
 # image, named by the same identity, with the same bound, and needs Docker and
 # PowerShell, which Windows ships, and nothing else. ⛔ Every rule is argued once,

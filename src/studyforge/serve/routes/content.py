@@ -31,13 +31,12 @@ guarantee a `304` makes.
 
 ## ⛔ A quiz's key and sentences are WITHHELD
 
-⭐ **A quiz's key lives only in the page it grades** (register ruling,
-2026-09-25), so a unit document is answered with every quiz option cut down to
-its id and its words (`serve.withheld.redacted`). ⛔ `ContentSource.unit` is NOT
-redacted — the build renders the page's key from it — and the redaction is this
-route's, on the way out. ⭐ `CorpusContent.withheld` names every sentence and
-question id its quizzes carry, both as served and as the archive wrote them,
-which is what the static mount refuses a file other than a page for.
+⭐ **A quiz's key lives only in the page it grades** so a unit document is answered with
+every quiz option cut down to its id and its words (`serve.withheld.redacted`). ⛔
+`ContentSource.unit` is NOT redacted — the build renders the page's key from it — and
+the redaction is this route's, on the way out. ⭐ `CorpusContent.withheld` names every
+sentence and question id its quizzes carry, both as served and as the archive wrote
+them, which is what the static mount refuses a file other than a page for.
 
 ## ⛔ Every document is gated on the way out
 

@@ -50,7 +50,7 @@ def tmp_path():
     A container in this module binds the test's directory, and Docker Desktop shares
     no host `/tmp` while Windows has none.
     """
-    with engine.shared("w436") as where:
+    with engine.shared("depfx") as where:
         yield where
 
 
@@ -79,9 +79,9 @@ def images(tmp_path_factory):
     if reason is not None:
         pytest.skip(reason)
     runner = container.declaration()
-    base = tmp_path_factory.mktemp("w436-images")
+    base = tmp_path_factory.mktemp("depfx-images")
     bare = dependency.image_for(runner, sibling())
-    with engine.shared("w436-library") as library:
+    with engine.shared("depfx-library") as library:
         jar = dependency.build_library(library, bare)
     with_library = dependency.write_prime(base / "prime-with", jar)
     without_library = dependency.write_prime(base / "prime-without", None)
@@ -107,7 +107,7 @@ def corpus(root: Path, *, solved: bool = True):
 def graded(root: Path, image: str, exercise):
     """Start the reader's container over `root` from the declaration, Submit, and fold."""
     runner = container.declaration()
-    name = f"w436-{uuid.uuid4().hex[:10]}"
+    name = f"depfx-{uuid.uuid4().hex[:10]}"
     argv = container.run_argv(runner, name=name, source_root=root, tag=image)
     started = subprocess.run(argv, stdin=subprocess.DEVNULL, capture_output=True, text=True)
     assert started.returncode == 0, f"the declared run line did not start: {started.stderr}"

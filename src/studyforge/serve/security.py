@@ -170,7 +170,7 @@ def framable(frames: Collection[str], host: str | None = None) -> list[str]:
 
     ⭐ **Any accepted loopback name frames the editor** (`127.0.0.1`, `localhost`,
     `[::1]`), because the editor has no session cookie for the frame to be
-    cross-site about (register ruling: the editor carries no password, and its
+    cross-site about (the editor carries no password, and its
     loopback bind is its whole access control). ⛔ **What is admitted is never
     composed from the request**: the origins are the operator's or the instance's
     own, each still a loopback `http`/`https` origin (`frame_origin`), and a `host`

@@ -1,8 +1,8 @@
 """Mirror of `src/studyforge/render/assets/practice-panes.js` and its stylesheet (R12).
 
-⭐ **Register ruling (2026-09-26)**: the description beside the editor is
+⭐ **The description beside the editor is
 resized by a divider and closed; the report under the editor is resized by a
-divider and collapsed to a bar. ⚠️ No JavaScript runs in this suite, so what a
+divider and collapsed to a bar.** ⚠️ No JavaScript runs in this suite, so what a
 TEXT can hold is held here — the markup every control ships as, and the rules
 the script and the stylesheet keep — and the behaviour is the visual harness's
 (`tests/visual/test_practice_panes.py`).

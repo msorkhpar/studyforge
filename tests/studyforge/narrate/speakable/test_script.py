@@ -79,7 +79,7 @@ def test_prose_is_read_as_written_and_numbered_from_one():
 
 @pytest.mark.parametrize("lang", ["java", "gherkin", "", None, "sh -c 'x'"])
 def test_a_fence_yields_no_speech_unit_whatever_its_language(lang):
-    # ⛔ The register ruling: narration is lesson prose only. A fence says
+    # ⛔ Narration is lesson prose only. A fence says
     # nothing, and no caption stands in for it.
     body = "Given a reading\nWhen it is written down\nThen the book agrees\n"
     assert said([{"type": "code", "lang": lang, "text": body}]) == []
@@ -386,7 +386,7 @@ NESTED = {
 
 @pytest.mark.parametrize("container", sorted(NESTED))
 def test_a_fence_nested_in_a_container_yields_no_speech_unit(container):
-    # ⛔ The register ruling: code is never spoken, whatever holds it.
+    # ⛔ Code is never spoken, whatever holds it.
     units, _held = units_of(UNIT, "shared", [NESTED[container]])
     assert [unit.block_path for unit in units if unit.kind == "code"] == []
     assert (0, 1) not in [unit.block_path for unit in units]

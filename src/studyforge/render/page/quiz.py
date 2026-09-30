@@ -16,7 +16,7 @@ own `Question` and `Option`, never a second reading of the shape — plus
 `render.templates` and `render.markup`. ⛔ **Not on `serve`**: nothing about a
 quiz is a server function.
 
-## ⭐ THE KEY LIVES IN THE PAGE IT GRADES (register ruling, 2026-09-25)
+## ⭐ THE KEY LIVES IN THE PAGE IT GRADES
 
 ⭐ A quiz's answers stay in the page's own markup, read by a script local to
 that page, and grading is never a server function. This reverses

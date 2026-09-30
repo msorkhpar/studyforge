@@ -9,7 +9,7 @@ from tests.studyforge.skills.delivery import plans
 
 
 def test_ranking_without_declaring_the_outside_is_refused():
-    # ⛔ SK08-F. A plan whose risk sits in another repository reads as a small
+    # ⛔ A plan whose risk sits in another repository reads as a small
     # plan, and a report that could only see its own tasks would say so.
     with pytest.raises(RiskRefused, match="undeclared outside"):
         concentration(plans.backlog().tasks)

@@ -293,7 +293,7 @@ def test_a_restore_without_unzip_extracts_with_python(tmp_path):
 def test_a_volume_carrying_the_manifest_and_an_escape_is_refused_and_the_corpus_is_untouched(
     tmp_path,
 ):
-    # ⛔ The register's reading: a volume the corpus's committed digests accept,
+    # ⛔ A volume the corpus's committed digests accept,
     # whose members are `corpus.json` and `../x`, must not rewrite anything.
     corpus = prepared(tmp_path)
     forge_release(corpus, {"corpus.json": b"{}", "../ESCAPED.txt": b"out"}, committed=True)

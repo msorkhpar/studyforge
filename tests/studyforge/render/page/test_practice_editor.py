@@ -100,7 +100,7 @@ def test_each_window_is_shown_from_its_own_url_and_neither_is_the_other_s():
 
 
 def test_one_practice_holds_one_frame_and_a_tab_changes_what_it_shows():
-    # ⛔ The register ruling: **one editor at most**. A second workbench is a
+    # ⛔ **One editor at most**. A second workbench is a
     # second language server, so the Tests tab does not build a second frame
     # beside the reader's file: it points the ONE frame at the test's window.
     #
@@ -122,7 +122,7 @@ def test_the_sentence_stands_until_a_frame_replaces_it():
 
 
 def test_nothing_is_asked_until_a_practice_is_opened_and_its_frame_goes_when_it_closes():
-    # ⭐ The register ruling: **no editor loads until a practice is opened**. The
+    # ⭐ **No editor loads until a practice is opened**. The
     # one place the server is asked for a practice's windows is `open`, and the
     # one caller of `open` is the workspace's `studyforge:practice-opened`.
     body = behaviour()

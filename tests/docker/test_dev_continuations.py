@@ -266,7 +266,7 @@ def test_every_reader_of_the_dev_files_is_classified():
     found = set(sites())
     declared = set(CLASSIFIED)
     assert found == declared, (
-        f"the register of docker/dev/ readers is stale.\n"
+        f"the list of docker/dev/ readers is stale.\n"
         f"  classified but gone:  {sorted(declared - found)}\n"
         f"  present but unclassified: {sorted(found - declared)}\n"
         f"Add the site to CLASSIFIED with its verdict — `collapsed` if it reads "

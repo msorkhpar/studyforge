@@ -1,6 +1,6 @@
 """A lesson that ends in a code-examples list, for the ruling that silences the panel.
 
-⭐ Register ruling (2026-09-26): a lesson's code-example panel is a code example,
+⭐ A lesson's code-example panel is a code example,
 and a code example is never narrated. This is the fixture every clause of it is
 read against: prose, a *Code Examples* heading over a list of one source and its
 test, then a later heading and more prose, so the surviving prose has neighbours

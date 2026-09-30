@@ -14,12 +14,12 @@ from studyforge.execute import RunRefused, instance_problems, refuse_instance
 from studyforge.execute.instance import COMPOSE_FILE, INSTANCE_FILE
 
 CLEAN = {
-    "STUDYFORGE_PROJECT": "w505-demo",
+    "STUDYFORGE_PROJECT": "sample-demo",
     "STUDYFORGE_EDITOR_PORT": "18505",
-    "STUDYFORGE_EDITOR_NAME": "w505-editor",
-    "STUDYFORGE_RUNNER_NAME": "w505-runner",
+    "STUDYFORGE_EDITOR_NAME": "sample-editor",
+    "STUDYFORGE_RUNNER_NAME": "sample-runner",
     "STUDYFORGE_SITE_PORT": "18504",
-    "STUDYFORGE_SITE_NAME": "w505-site",
+    "STUDYFORGE_SITE_NAME": "sample-site",
 }
 
 #: The published ports of a compose file the skill renders, with the address in its slot.

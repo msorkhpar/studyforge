@@ -42,7 +42,7 @@ differ only in their unit's `origin.section` mint different names.**
 
 ## ⛔ Narration speaks a lesson's prose, and never a practice
 
-⭐ **Register ruling (2026-09-26): narration covers a lesson's prose only.** A
+⭐ **Narration covers a lesson's prose only.** A
 section whose kind is `practice` yields no speech unit at all: not its
 statement, not its lesson heading, not its examples, and nothing its panel
 carries. ⚠️ A practice is worked at, not listened to, and before the ruling

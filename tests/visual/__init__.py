@@ -146,7 +146,7 @@ ACCEPTANCE = {
     #: answers the practice-editor route, so there is a frame to not move.
     "lists a lesson's practices as titled cards and opens each in one full-screen "
     "workspace, at desktop and phone width, with one editor at most": "test_practice_workspace",
-    #: ⭐ Two rows of their own, by register ruling (2026-09-26): a divider
+    #: ⭐ Two rows of their own: a divider
     #: dragged, over an editor frame, is real input across a frame boundary
     #: that no text can read, and a choice that survives a reload is a claim
     #: about the reader's browser store. ⚠️ One row per side, so each module

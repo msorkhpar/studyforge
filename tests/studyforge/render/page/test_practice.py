@@ -307,7 +307,7 @@ def test_every_control_is_a_real_button_and_the_output_is_reachable_by_keyboard(
     # ⛔ **Counted over every `<button>` the panel emits**, so a control that is
     # neither an act nor a tab is held to the rule too.
     # ⭐ The report's bar is the one other: it collapses and opens the report
-    # (register ruling 2026-09-26), and it is a button like the rest.
+    # and it is a button like the rest.
     bars = re.findall(r"<(\w+)[^>]*data-practice-part=\"report-bar\"", markup)
     assert bars == ["button"]
     buttons = re.findall(r"<button\b[^>]*>", markup)

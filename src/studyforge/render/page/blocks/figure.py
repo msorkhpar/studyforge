@@ -87,8 +87,8 @@ def render(
 
     ⛔ **No figure is narrated** — `SPEECH_OF` calls a code listing, an image and a
     video `silent`, shown and never spoken, so none of them carries an audio
-    attribute. ⭐ The code listing joined the other two under the register ruling
-    that narration covers a lesson's prose only.
+    attribute. ⭐ The code listing joined the other two because narration
+    covers a lesson's prose only.
     """
     del position, children, section, path, narration
     return _RENDERERS[block["type"]](block, placement)

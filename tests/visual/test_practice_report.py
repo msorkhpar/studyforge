@@ -1,6 +1,6 @@
 """The practice workspace's report, resized and collapsed, in a browser.
 
-⭐ **Register ruling (2026-09-26).** The divider above the report is dragged —
+⭐ The divider above the report is dragged —
 mouse or touch, over the editor frame too — and moved with Up and Down, to give
 the code more height; the report collapses to a bar at the bottom that still
 shows the last verdict, a new Submit opens it again, and both choices survive a

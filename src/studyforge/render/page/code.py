@@ -45,7 +45,7 @@ in, the entries follow the order their first item has, and each is a
 one pair that the list separates are drawn together, which moves the later one
 up.
 
-⛔ **A panel is never narrated** (register ruling, 2026-09-26: a code example is
+⛔ **A panel is never narrated** (a code example is
 never narrated). `narrate.speakable` gives such a list no speech unit, so its
 items have no clip to name; and the panel drops any audio attribute an item
 carries all the same, so no record, however old, puts one inside

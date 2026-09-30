@@ -29,8 +29,8 @@ treats the workbench's.
 
 ⚠️ **Each report is a separate `fetch`, and this server answers each on its own
 thread**, so under load the reports of four keystrokes can land in any order.
-⛔ With the last arrival winning, `typed` could settle on `'w44'` after `'w449'`
-had been typed, and a check waiting for `'w449'` would time out on a frame that
+⛔ With the last arrival winning, `typed` could settle on `'abc'` after `'abcd'`
+had been typed, and a check waiting for `'abcd'` would time out on a frame that
 had done everything right. ⭐ So the page
 numbers every report and `typed` is the value of the HIGHEST number seen,
 which is the value the textarea holds last whatever order the reports took.

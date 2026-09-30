@@ -37,7 +37,7 @@ not behind a flag, not "only locally". ⚠️ A socket beside an IDE with a shel
 hands a reader's unreviewed code the host's daemon.
 
 ⭐ **And every bind in the rendered file is written relative to the file**
-(`bind_findings`). The register's direction is that the compose file runs on
+(`bind_findings`). The compose file runs on
 any engine, Docker Desktop and Windows included: Docker Desktop shares no host
 `/tmp`, Windows has no `/tmp` and no POSIX root, and an absolute path written
 at build time is one machine's layout. ⛔ So a bind source that is absolute —

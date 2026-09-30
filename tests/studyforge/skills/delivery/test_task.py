@@ -22,7 +22,7 @@ def test_a_task_with_no_acceptance_is_refused():
 
 
 def test_a_task_may_own_nothing_when_it_states_the_evidence_it_produces():
-    # ⭐ SK08-D: the expected shape as the generators improve, not a degenerate
+    # ⭐ The expected shape as the generators improve, not a degenerate
     # one. A template that assumes the integrator WRITES things describes a
     # framework whose skills do not work yet.
     task = plans.reading_task(owns=(), evidence="a re-run that changes no byte")
@@ -82,7 +82,7 @@ def test_a_commanded_clause_renders_its_command():
     assert clause.instrument == "`python3 -m pytest tests`"
 
 
-# --- SK08-A's other half: a dependency may reach out of the corpus ---------
+# --- a dependency may reach out of the corpus ---------
 
 
 def test_a_tasks_dependencies_split_into_framework_and_corpus():

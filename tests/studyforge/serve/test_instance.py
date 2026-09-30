@@ -380,7 +380,7 @@ def test_a_site_form_seam_that_registers_no_run_namespace_frames_nothing(tmp_pat
 
 
 def test_a_page_reached_as_localhost_frames_the_editor_as_one_reached_as_127_0_0_1_does(tmp_path):
-    # ⭐ Register ruling: the editor has no password, so there is no session cookie
+    # ⭐ The editor has no password, so there is no session cookie
     # for the two names to be cross-site about. Read over a real socket.
     server = instance_of(discover(a_workspace(tmp_path)), port=0)
     server.namespaces[run.NAMESPACE].live.editor = StubEditors(UP)

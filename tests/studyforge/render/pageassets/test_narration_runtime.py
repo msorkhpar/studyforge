@@ -519,7 +519,7 @@ def test_space_plays_and_the_arrows_move(tmp_path):
 def test_a_page_whose_first_clip_does_not_load_asks_no_other_and_stays_hidden_and_inert(
     tmp_path, answer
 ):
-    # ⛔ The register direction: the page asks its first clip once and, when it
+    # ⛔ The page asks its first clip once and, when it
     # does not load, asks nothing more — the transport stays hidden, a passage
     # does not answer a click, and no key starts a clip or is taken from the page.
     for action, extra in (("play", {}), ("clickSecond", {}), ("keys", {"keys": [" "]})):

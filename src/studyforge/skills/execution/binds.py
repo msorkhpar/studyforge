@@ -27,13 +27,12 @@ question — what the editor may see.
 
 ## ⛔ NO QUIZ BUNDLE IS BOUND INTO THE EDITOR
 
-⛔ **A quiz's key lives only in the page it grades** (register ruling,
-2026-09-25), and the editor is another process, on another origin, in which a
-reader can open any file it binds. ⭐ So every directory the editor binds is
-checked against the two that hold a key — the bundles (`BUNDLES_DIRNAME`,
-whose `tests/quiz.json` is the key) and the archive (`ARCHIVE_DIRNAME`, whose
-`practice-M.json` carries it) — and a bind that IS one, HOLDS one or sits
-INSIDE one is refused rather than rendered. ⭐ It reads the paths, not the
+⛔ **A quiz's key lives only in the page it grades**, and the editor is another process,
+on another origin, in which a reader can open any file it binds. ⭐ So every directory
+the editor binds is checked against the two that hold a key — the bundles
+(`BUNDLES_DIRNAME`, whose `tests/quiz.json` is the key) and the archive
+(`ARCHIVE_DIRNAME`, whose `practice-M.json` carries it) — and a bind that IS one, HOLDS
+one or sits INSIDE one is refused rather than rendered. ⭐ It reads the paths, not the
 disk, so it holds for a bundle authored after the file was generated.
 
 ⚠️ **What it does not cover** is a key copied by hand into the sources or a

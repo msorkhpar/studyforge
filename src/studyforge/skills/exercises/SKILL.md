@@ -149,7 +149,7 @@ test-file pattern.
   never bind it.** Copy it into the container (`docker cp` into a container
   you created, or a tar stream on `docker run -i`'s stdin) and read the output
   back the same way. Docker Desktop shares no host `/tmp` and Windows has none,
-  and the runner must work on both (a register direction).
+  and the runner must work on both.
 
 #### ⛔ Write a draft the gates can prove
 

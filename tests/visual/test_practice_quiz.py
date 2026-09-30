@@ -1,6 +1,6 @@
 """A quiz shows its questions, the PAGE grades them, and nothing is asked of any origin.
 
-⭐ **The register ruling (2026-09-25): a quiz's answers remain in its own page, in
+⭐ **A quiz's answers remain in its own page, in
 a script local to that page, and nothing about a quiz is a server function.**
 It reverses the ruling that kept the key on the local study server. ⭐ So every
 reading here is taken in TWO places and must come out the SAME:

@@ -6,7 +6,7 @@ is the `-v` source spelling of a directory, and refuses one under the host's
 temporary directory by name.
 
 **Why it exists.** ⛔ **No container depends on a host temporary directory.**
-The register's direction is that every docker step runs on any engine, Windows
+Every docker step runs on any engine, Windows
 included: Docker Desktop shares no host `/tmp` and refuses such a bind ("mounts
 denied"), and Windows has no `/tmp` at all. ⚠️ pytest's `tmp_path` lives under
 the host temporary directory, so a docker-backed test that bound it ran on one

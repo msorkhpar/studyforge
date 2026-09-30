@@ -362,7 +362,7 @@ class OpenPage:
     def open_practice(self, index: int = 0) -> None:
         """Open the page's practice card number `index` in its workspace, and wait for it.
 
-        ⭐ **A practice is worked in the page's workspace** (register ruling):
+        ⭐ **A practice is worked in the page's workspace**:
         its statement and panel are hidden under the *Practice (n)* list until
         a card opens them, so a reading of the panel opens one first. ⚠️ The
         card's link is followed with `click()` — opening is not what these

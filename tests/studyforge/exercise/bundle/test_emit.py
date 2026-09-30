@@ -58,7 +58,7 @@ def test_the_statement_and_the_starting_code_come_out_of_the_bundle(tmp_path):
 
 
 def test_the_reference_solution_ships_withheld_but_present(tmp_path):
-    # ⭐ The register ruling: always available, never revealed automatically, and
+    # ⭐ Always available, never revealed automatically, and
     # never gated on a pass. The archive's own *present but withheld* state.
     document = an_emission(tmp_path).document
     disclosures = [b for b in document["blocks"] if b["type"] == "disclosure"]

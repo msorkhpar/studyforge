@@ -44,16 +44,15 @@ so a prober never learns which guess was interesting.
 
 ## ⛔ A file carrying a quiz's key or sentence is REFUSED — unless it is a page
 
-⭐ **A quiz's key lives only in the page it grades** (the register ruling of
-2026-09-25), so a page is served whole. ⛔ **Every other file carrying one is
-refused**: a corpus built into its own root puts the archive's `practice-M.json`
-and the bundle's `tests/quiz.json` under the served root, so `withheld` is asked
-of every other text — and every file of an unknown type, where an editor's
-backup lands — before anything is answered, a `304` included: `404`.
-⭐ **The default withholds nothing**: what a file may not carry is decided by the
-quizzes an instance SERVES, and `serve.app` hands both mounts that predicate.
-⚠️ Media is not read, and an unknown-type file over `GATE_MAX_BYTES` is served
-unread: a compressed archive holding a bundle cannot be read here at all.
+⭐ **A quiz's key lives only in the page it grades**, so a page is served whole. ⛔
+**Every other file carrying one is refused**: a corpus built into its own root puts the
+archive's `practice-M.json` and the bundle's `tests/quiz.json` under the served root, so
+`withheld` is asked of every other text — and every file of an unknown type, where an
+editor's backup lands — before anything is answered, a `304` included: `404`. ⭐ **The
+default withholds nothing**: what a file may not carry is decided by the quizzes an
+instance SERVES, and `serve.app` hands both mounts that predicate. ⚠️ Media is not read,
+and an unknown-type file over `GATE_MAX_BYTES` is served unread: a compressed archive
+holding a bundle cannot be read here at all.
 
 ## ⛔ The run client reaches a page ONE way, and this is it
 

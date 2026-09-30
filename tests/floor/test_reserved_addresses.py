@@ -37,7 +37,7 @@ _RESERVED = (
 _NOT_RESERVED = (
     "workstation",
     "notexample" + ".co",
-    "gmail" + ".com",
+    "mailprovider" + ".net",
 )
 
 #: ⚠️ A domain somebody really owns, carrying a reserved name that is NOT where it ENDS.

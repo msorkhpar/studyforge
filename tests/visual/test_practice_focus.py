@@ -245,11 +245,11 @@ def test_a_readers_click_into_the_frame_focuses_it_and_what_they_type_arrives(
             session=open_page.session,
         )
     assert _at_rest(open_page)["active"] == "IFRAME", "a reader's click into the editor was refused"
-    for letter in "w449":
+    for letter in "abcd":
         for kind in ("keyDown", "keyUp"):
             message = {"type": kind, "key": letter}
             if kind == "keyDown":
                 message["text"] = letter
             call("Input.dispatchKeyEvent", message, session=open_page.session)
-    editor.wait_for(lambda s: s.typed == "w449")
+    editor.wait_for(lambda s: s.typed == "abcd")
     assert _at_rest(open_page)["active"] == "IFRAME", "focus the reader gave was taken back"

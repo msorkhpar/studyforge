@@ -343,7 +343,7 @@ checking; it is never a prerequisite for reading.
 in place at read time.
 
 ⭐ **The list of versioned fields lives in `studyforge.version.CONTRACT_FIELDS`**,
-and the register under R21 says which file each one versions. A contract that
+and the table under R21 says which file each one versions. A contract that
 gains a version key is added to the constant in the same change, or the guard
 cannot see it. ⛔ **A contract is versioned because somebody reads it, not because
 the framework wrote it** — the authored overlay is one the framework only ever
@@ -618,7 +618,7 @@ voice change leaves every filename byte-identical while every clip is stale —
 which is why the narration record is a located, versioned file rather than an
 inference from names.
 
-**The register of located contracts:**
+**The table of located contracts:**
 
 | Contract | File | Versioned by | Written by |
 |---|---|---|---|
@@ -1071,7 +1071,7 @@ every page still addressed a clip as plain `audio/<clip>.mp3` — which is the o
 reason that change was a script rather than a re-render of every page.
 
 ⭐ **A page learns whether its clips arrived by asking its first clip, once.**
-Register direction (2026-09-25): what works is found out in the UI. A file that
+What works is found out in the UI. A file that
 said whether the clips were here went stale whenever anything but its writer
 moved them: a site packed for release said the clips were a download on the
 author's own disk, with every clip there. ⛔ So nothing written beside the
@@ -1635,8 +1635,7 @@ test can observe; the ideas no test can observe (a compile-time rule, how an
 expression parses) are checked by one short quiz on the same unit, after its code
 practices. ⛔ A unit is not limited to one kind of exercise.
 
-⭐ **A quiz is graded in its own page, and nothing about it is a server function**
-(register ruling, 2026-09-25, reversing the key kept on the local study server).
+⭐ **A quiz is graded in its own page, and nothing about it is a server function.**
 
 - ⭐ **The page carries its own key**: which option of each question is right and
   every option's sentence, in a data script local to that quiz's section. ⛔ **Only
@@ -1966,19 +1965,18 @@ These are proven surfaces, generalised in their addressing and otherwise kept.
   `narration` key (§4).
 - **Video** — vendored Plyr with its icon sprite substituted rather than fetched;
   nothing may reach the network.
-- **A lesson's practices are one list, worked one at a time in a workspace**
-  (register ruling). The page lists them as one **Practice (n)** section of
+- **A lesson's practices are one list, worked one at a time in a workspace.** The page lists them as one **Practice (n)** section of
   titled cards, each saying what it practises (the record's `concepts`, §7)
   and, served, its status from the reader's own progress record — never the
   page's. Opening a card gives one full-screen workspace per page: the
   statement on the left, always visible and scrolled on its own, the editor
   with Run and Submit and their output on the right, Previous and Next between
   the lesson's practices, and Close, which returns the reader to where they
-  were; at phone width the two stack. By register ruling (2026-09-26) the
+  were; at phone width the two stack. The
   reader drags the divider between the two sides, closes the statement so the
   editor takes the width, and resizes or collapses the output under the
-  editor, each choice kept in their browser. A quiz is a card too, answered through
-  the server as before, and a worked solution stays behind its closed
+  editor, each choice kept in their browser. A quiz is a card too, answered in its own
+  page, and a worked solution stays behind its closed
   disclosure. ⛔ **No editor loads until a practice is opened, and one at
   most**, and nothing on the page is moved to build the workspace: an editor
   frame that is moved reloads. With no script every practice stays readable
@@ -2026,13 +2024,11 @@ These are proven surfaces, generalised in their addressing and otherwise kept.
   label and title, so no page moves. A listing shows a unit whose label is an
   outline number by its place in its container instead. A clip is named by a
   digest of its words, so a heading that loses its number is a new clip.
-- **A lesson's own code opens in the editor, beside its test** (register
-  ruling of 2026-09-25). A link to a corpus file whose suffix a declared runtime
+- **A lesson's own code opens in the editor, beside its test.** A link to a corpus file whose suffix a declared runtime
   writes is marked with the file's corpus-relative path. ⭐ **A list of such
-  links is the page's code examples, and each example opens in place** (register
-  ruling of 2026-09-25): one collapsed entry per example — a source and
+  links is the page's code examples, and each example opens in place**: one collapsed entry per example — a source and
   its paired test — named for its source, each item kept whole inside its
-  entry. The panel is a code example and is never narrated (register ruling):
+  entry. The panel is a code example and is never narrated:
   its lines carry no clip. As built, an entry says
   why each file opens as plain text: the course's editor is not running here,
   and how to start it. ⭐ **Served, with the corpus's editor up**, expanding an
