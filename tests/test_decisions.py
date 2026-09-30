@@ -256,8 +256,11 @@ NOT_CODE = {
     (
         DECISIONS,
         "docker/editor/Dockerfile",
-    ): "the code-server-toolchain repository's file, so named",
-    (DECISIONS, "tests/test_editor_agent_host.py"): "the code-server-toolchain repository's test",
+    ): "the studyforge-code-server-toolchain repository's file, so named",
+    (
+        DECISIONS,
+        "tests/test_editor_agent_host.py",
+    ): "the studyforge-code-server-toolchain repository's test",
     (CATALOGUE, "$$…$$"): "material syntax an integrator meets, not code",
     (CATALOGUE, "[CLR]*"): "an example of a glob the manifest refuses",
     (CATALOGUE, "CONTRIBUTING.md"): "a file of an example corpus",

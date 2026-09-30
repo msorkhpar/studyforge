@@ -149,7 +149,8 @@ def test_a_cleared_superseded_clip_is_named_in_the_prune_report():
 
 def test_the_absent_service_hint_names_the_clone_the_command_and_both_ways_to_point():
     for phrase in (
-        "clone the narrate-service repository",
+        "clone the studyforge-narrate-service repository",
+        "https://github.com/<owner>/studyforge-narrate-service.git",
         "docker compose up -d --build",
         "--service",
         "STUDYFORGE_NARRATE_SERVICE",

@@ -37,7 +37,9 @@ from studyforge.validate.report import INVALID, OK
 NO_SERVICE = (
     "no narration service answered, so nothing was requested and nothing was written; "
     "the corpus still builds and reads without narration. "
-    "Clone the narrate-service repository and run docker compose up -d --build in it, "
+    "Clone the studyforge-narrate-service repository "
+    "(https://github.com/<owner>/studyforge-narrate-service.git) "
+    "and run docker compose up -d --build in it, "
     "or point --service (or the STUDYFORGE_NARRATE_SERVICE variable) at a running one, "
     "then run again"
 )

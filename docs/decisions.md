@@ -1153,7 +1153,7 @@ What it reads, and the choices in it:
 
 ### The editor image carries no AI assistant
 
-**Decision.** The editor image carries neither the bundled chat extension nor the Copilot CLI, and no editor session starts an agent host. This rule is kept in the `code-server-toolchain` repository, in its editor image (`docker/editor/Dockerfile`) and its tests (`tests/test_editor_agent_host.py`), and the image build fails if the Copilot CLI returns.
+**Decision.** The editor image carries neither the bundled chat extension nor the Copilot CLI, and no editor session starts an agent host. This rule is kept in the `studyforge-code-server-toolchain` repository, in its editor image (`docker/editor/Dockerfile`) and its tests (`tests/test_editor_agent_host.py`), and the image build fails if the Copilot CLI returns.
 
 **Why.** An agent host on a container that can reach the internet can send a reader's code off the machine, and studying offline needs no such program.
 

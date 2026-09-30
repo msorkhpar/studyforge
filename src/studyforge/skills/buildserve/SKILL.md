@@ -43,7 +43,7 @@ that component is silent no matter how it is built.**
 
 | the question | the answer |
 |---|---|
-| what provides narration | the `narrate-service` component, a separate repository you clone and run yourself, as its README says; the `studyforge narrate` refusal prints the command |
+| what provides narration | the `narrate-service` component, a separate repository, `studyforge-narrate-service` (`https://github.com/<owner>/studyforge-narrate-service.git`), that you clone and run yourself, as its README says; the `studyforge narrate` refusal prints the command |
 | where it answers | `http://127.0.0.1:8870` by default — ⛔ loopback, never an interface anyone else can reach. `studyforge narrate --service <URL>` or the `STUDYFORGE_NARRATE_SERVICE` variable points at a service running elsewhere (the flag wins) |
 | how it is started | by you, from a clone of its repository, following its `README.md`; or you point at one already running. ⛔ Never by this skill |
 | what a caller may rely on | its `provides` promise, which this framework's narration client was built against: **`3`** |
