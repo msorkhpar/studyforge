@@ -29,6 +29,8 @@ def owners(root: Path) -> dict[str, list[str]]:
     """Each tracked file that gives one of these repositories a real-looking owner."""
     found: dict[str, list[str]] = {}
     for name in tracked(root):
+        if name == "README.md":
+            continue  # the root README may name its owner
         try:
             text = (root / name).read_text(encoding="utf-8")
         except OSError, UnicodeDecodeError:
@@ -48,7 +50,7 @@ def test_no_tracked_file_gives_a_repository_a_real_owner():
 def test_a_planted_real_looking_owner_is_read_in_every_form(tmp_path):
     host = "github" + ".com"
     planted = {
-        "README.md": f"git clone https://{host}/someone/studyforge.git\n",
+        "NOTICE.md": f"git clone https://{host}/someone/studyforge.git\n",
         "docs/a.md": f"see https://{host}/someone/studyforge-narrate-service\n",
         "src/pkg/mod.py": f'URL = "git@{host}:someone/studyforge-code-server-toolchain.git"\n',
     }
@@ -62,4 +64,10 @@ def test_the_placeholder_and_other_projects_are_not_flagged(tmp_path):
         "README.md": f"git clone https://{host}/<owner>/studyforge.git\n",
         "docs/a.md": f"a font from https://{host}/silnrsi/font-charis\n",
     }
+    assert owners(scratch_repository(tmp_path, planted)) == {}
+
+
+def test_the_root_readme_may_name_its_owner(tmp_path):
+    host = "github" + ".com"
+    planted = {"README.md": f"git clone https://{host}/someone/studyforge.git\n"}
     assert owners(scratch_repository(tmp_path, planted)) == {}

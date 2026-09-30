@@ -32,7 +32,7 @@ to a package index: build a wheel from a checkout and install that. From the
 directory where you want to work:
 
 ```sh
-git clone https://github.com/<owner>/studyforge.git
+git clone https://github.com/msorkhpar/studyforge.git
 python3 -m venv .venv
 . .venv/bin/activate
 python3 -m pip wheel ./studyforge --no-deps -w wheels
@@ -44,7 +44,7 @@ In PowerShell on Windows, where the virtual environment keeps its scripts under
 `Scripts` and a command does not expand `*`, the same install is:
 
 ```powershell
-git clone https://github.com/<owner>/studyforge.git
+git clone https://github.com/msorkhpar/studyforge.git
 py -3 -m venv .venv
 .venv\Scripts\Activate.ps1
 python -m pip wheel ./studyforge --no-deps -w wheels
@@ -259,7 +259,7 @@ engine, is pinned by digest, never by a moving name.
   Docker socket.
 - **Narration** comes from the `narrate-service` component, a separate
   repository, `studyforge-narrate-service`. Clone it
-  (`git clone https://github.com/<owner>/studyforge-narrate-service.git`) and
+  (`git clone https://github.com/msorkhpar/studyforge-narrate-service.git`) and
   run `docker compose up -d --build` in the clone (its README has the details); it answers on `127.0.0.1:8870`, which is where
   `studyforge narrate` looks by default. Its first start pulls its engine image,
   pinned by digest. After that, nothing leaves your machine. A service running
@@ -271,7 +271,7 @@ engine, is pinned by digest, never by a moving name.
   against: on a mismatch `narrate` says so, exits `2` and requests nothing.
 - **Runnable practices** use the `code-server-toolchain` component, also a
   separate repository, `studyforge-code-server-toolchain`
-  (`git clone https://github.com/<owner>/studyforge-code-server-toolchain.git`), which builds two images: the runner that grades
+  (`git clone https://github.com/msorkhpar/studyforge-code-server-toolchain.git`), which builds two images: the runner that grades
   submissions and the browser editor. Each is tagged from its build inputs, and
   its build script prints that tag without building. The `execution` skill asks
   for the tag, records it in your corpus, and writes the one `docker compose`
