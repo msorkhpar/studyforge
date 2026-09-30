@@ -37,7 +37,8 @@ builds them.
 | `learner` | the learner's `README.md` and `course.env` |
 | `preview` | the read-only static tree for GitHub Pages: words, script, page edits; one file |
 | `pages` | the workflow that deploys the preview on every push to `main`, and its builder |
-| `write` | the whole of it, and `.studyforge/release.json` |
+| `record` | `.studyforge/release.json`, and the toolchain paths a thin tree keeps |
+| `write` | the whole of it |
 
 ## ⭐ Shared bases, and thin images per course
 

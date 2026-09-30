@@ -62,15 +62,15 @@ from studyforge.skills.execution.standalone import (
     learner,
     pages,
     preview,
+    record,
     split,
     tour,
     vendor,
 )
+from studyforge.skills.execution.standalone.record import MANIFEST
 from studyforge.skills.onboarding import library
 
 #: The manifest's path in the learner tree, and its shape's version.
-MANIFEST = ".studyforge/release.json"
-RELEASE_API = 1
 
 #: The machines a toolchain pins, by what `platform.machine()` says.
 MACHINES = {
@@ -124,12 +124,11 @@ def release(
     into the tree; `preview_to` names a new directory that also receives the
     read-only preview of the finished tree (`preview`).
 
-    ⭐ **Thin export**: with `bases` (read from a lock by `bases.read`) the tree carries
-    no serving library, no copy of the serve recipe and none of the toolchain's runner
-    and editor recipes: the site starts from the published serving base and the runner and
-    editor from the published toolchain bases, each by tag and digest, and the tree keeps
-    only the course's own layers (its material, its warmed dependencies, its run service).
-    Without it the tree is self-contained, byte for byte as it always was.
+    ⭐ **Thin export**: with `bases` (from `bases.read`) the tree carries no serving library,
+    no serve recipe and no runner or editor base recipe: the site starts from the published
+    serving base and the runner and editor from the published toolchain bases, each by tag and
+    digest, and the tree keeps only the course's own layers. Without it the tree is
+    self-contained, byte for byte as it always was.
     """
     root, out, toolchain = Path(root), Path(out), Path(toolchain)
     if out.exists() and any(out.iterdir()):
@@ -160,10 +159,7 @@ def release(
         locked.check(
             bases,
             version=library.version(),
-            toolchain={
-                kind: str(asked.builds[kind]["tag"]).split(":", 1)[1]
-                for kind in ("runner", "editor")
-            },
+            toolchain=record.unprimed_tags(asked),
             serve_tag=locked.computed_serve_tag(library.PACKAGE.parent),
         )
     out.mkdir(parents=True, exist_ok=True)
@@ -181,7 +177,7 @@ def release(
     written += [
         f"{compose.TOOLCHAIN}/{one}"
         for one in vendor.copy(
-            toolchain, out / compose.TOOLCHAIN, _thin_inputs(asked) if bases else asked.inputs
+            toolchain, out / compose.TOOLCHAIN, record.thin_inputs(asked) if bases else asked.inputs
         )
     ]
     course_commit = _commit(root, run)
@@ -248,7 +244,7 @@ def release(
     written.append(pages.WORKFLOW)
     if _ignore_env(out / ".gitignore"):
         written.append(".gitignore")
-    document = _manifest(
+    document = record.manifest(
         manifest.source,
         course_commit,
         library_commit,
@@ -350,66 +346,6 @@ def _ports(root: Path, editor) -> tuple[int, int]:
         int(recorded.get(instance.SITE_PORT, instance.DEFAULT_SITE_PORT)),
         int(recorded.get(instance.EDITOR_PORT, editor_default)),
     )
-
-
-def _manifest(
-    slug,
-    course_commit,
-    library_commit,
-    version,
-    asked,
-    platform,
-    names,
-    verdicts,
-    kept,
-    written,
-    bases=None,
-) -> dict:
-    """`.studyforge/release.json`: every path the tree keeps, and where each came from.
-
-    ⭐ A thin export adds `bases`, the locked reference of each published base; a
-    self-contained one has no such key.
-    """
-    document = {
-        "release_api": RELEASE_API,
-        "course": slug,
-        "exported_from": course_commit,
-        "library": {"version": version, "commit": library_commit},
-        "toolchain": {
-            "commit": asked.commit,
-            "tags": {k: v["tag"] for k, v in asked.builds.items()},
-        },
-        "platform": platform,
-        "images": {key: images.qualified(value) for key, value in vars_of(names).items()},
-        "deferred_edges": [f"{a} -> {b}" for a, b in closure.DEFERRED],
-        "verdicts": [{"path": v.path, "verdict": v.verdict, "why": v.why} for v in verdicts],
-        "keeps": sorted({*kept, *written, MANIFEST}),
-    }
-    if bases is not None:
-        document["bases"] = {
-            kind: {"image": one.image, "tag": one.tag, "digest": one.digest}
-            for kind in locked.KINDS
-            for one in (getattr(bases, kind),)
-        }
-    return document
-
-
-def _thin_inputs(asked) -> tuple[str, ...]:
-    """Return the toolchain paths a thin tree keeps: what the course layers read."""
-    return tuple(
-        sorted(
-            {
-                str(one)
-                for image in ("runner-prime", "editor-prime")
-                for one in asked.builds[image]["inputs"]
-            }
-        )
-    )
-
-
-def vars_of(names: images.Names) -> dict[str, str]:
-    """Every image name, by its field."""
-    return {field: getattr(names, field) for field in names.__slots__}
 
 
 def _namespaced(text: str, namespace: str) -> str:
