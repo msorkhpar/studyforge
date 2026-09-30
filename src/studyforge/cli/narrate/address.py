@@ -41,15 +41,16 @@ SCHEMES = ("http", "https")
 def resolve(flag: str | None, environ: Mapping[str, str]) -> str:
     """Return the service address: the flag, else the variable, else the default."""
     if flag is not None and flag.strip():
-        return checked(flag, "--service")
+        return checked(flag, from_flag=True)
     named = environ.get(ENVIRONMENT_VARIABLE, "")
     if named.strip():
-        return checked(named, ENVIRONMENT_VARIABLE)
+        return checked(named, from_flag=False)
     return DEFAULT_SERVICE
 
 
-def checked(address: str, source: str) -> str:
-    """Return `address` without a trailing slash, or raise `ValueError` naming `source`."""
+def checked(address: str, *, from_flag: bool) -> str:
+    """Return `address` without a trailing slash, or raise `ValueError` naming its source."""
+    source = "--service" if from_flag else ENVIRONMENT_VARIABLE
     text = address.strip()
     try:
         parts = urlsplit(text)
