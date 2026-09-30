@@ -510,8 +510,9 @@ runs one argv and answers `(exit code, stdout)`.
   ⛔ The namespace is a placeholder until the owner publishes.
 
 - ⭐ **A thin export** is `release(..., bases=read_bases(Path("<lock>")))`: a JSON
-  lock naming the published serve, runner and editor bases, each by bare `image`,
-  `tag` and `digest` (`bases_api` `1`; `standalone.bases` documents the shape, and a
+  lock naming the published serve, runner and editor bases, each by bare `image`
+  (`studyforge-serve`, `studyforge-code-toolchain-runner`, `studyforge-code-toolchain-editor`;
+  the toolchain's earlier bare `runner` and `editor` are refused), `tag` and `digest` (`bases_api` `1`; `standalone.bases` documents the shape, and a
   digest of sixty-four zeros is the example's placeholder, refused for a real export).
   The tree then holds no serving library, no serve recipe and no runner or editor base
   recipe: the site recipe starts `FROM ${STUDYFORGE_NAMESPACE:?...}/<image>:<tag>@<digest>`,

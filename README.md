@@ -277,7 +277,9 @@ engine, is pinned by digest, never by a moving name.
   for the tag, records it in your corpus, and writes the one `docker compose`
   command that starts both, and the study server with them. With them up, a lesson's link to one of your code
   files opens in the editor beside its test, from a copy of your code, and the
-  test runs there; your own files are never written.
+  test runs there; your own files are never written. When the two images are published,
+  a registry names them `studyforge-code-toolchain-runner` and `studyforge-code-toolchain-editor`,
+  beside the study server's `studyforge-serve`; a thin export's lock names them so.
 - **The framework's own build environment** is `docker/dev/check` in this
   checkout, and `docker/dev/check.ps1` in PowerShell on Windows. Each builds an
   image tagged from the content of its inputs and runs the framework's test

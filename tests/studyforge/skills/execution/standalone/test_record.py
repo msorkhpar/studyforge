@@ -54,7 +54,7 @@ def test_a_thin_manifest_adds_the_locked_bases_and_nothing_else():
     thin, whole = document(locked), document()
     assert set(thin) - set(whole) == {"bases"}
     assert thin["bases"]["runner"] == {
-        "image": "runner",
+        "image": "studyforge-code-toolchain-runner",
         "tag": "a",
         "digest": "sha256:" + "1" * 64,
     }
