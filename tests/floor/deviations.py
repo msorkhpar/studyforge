@@ -121,6 +121,7 @@ DECLARED: dict[str, Declaration] = {
                 "NarrateClient",
                 "NarrationError",
                 "Narrator",
+                "PROMISE",
                 "Playable",
                 "over_http",
                 "playable_of",

@@ -21,7 +21,8 @@ purpose**: a record written under the service's default cannot say what its
 clips were made under. ⭐ So the person running the command names it, exactly
 as `studyforge build` makes them name `--out`. `--format` defaults to `mp3`,
 the one format the service's contract offers; `--service` defaults to the
-loopback address that component publishes.
+`STUDYFORGE_NARRATE_SERVICE` variable, and that to the loopback address the
+component publishes (`cli.narrate.address` holds the rules).
 
 ## ⛔ `--prune` is its own request, and EXCLUSIVE with `--voice`
 
@@ -48,8 +49,10 @@ and exit `2`. ⚠️ `PersonalDataLeak` is deliberately NOT caught.
 from __future__ import annotations
 
 import argparse
+import os
 from pathlib import Path
 
+from studyforge.cli.narrate.address import DEFAULT_SERVICE, ENVIRONMENT_VARIABLE, resolve
 from studyforge.cli.narrate.prune import prune_corpus
 from studyforge.cli.narrate.release import pack_command, publish_command
 from studyforge.cli.narrate.report import exit_code, lines, prune_exit_code, prune_lines
@@ -61,9 +64,6 @@ from studyforge.validate.cli import UNUSABLE
 
 #: The one format `narrate-service`'s `consuming.json` offers (`api.formats`).
 DEFAULT_FORMAT = "mp3"
-
-#: Where `narrate-service` publishes itself: loopback only, never all interfaces.
-DEFAULT_SERVICE = "http://127.0.0.1:8870"
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -124,9 +124,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--service",
-        default=DEFAULT_SERVICE,
+        default=None,
         metavar="URL",
-        help=f"where the narration service answers (default {DEFAULT_SERVICE})",
+        help=(
+            "where the narration service answers: an http or https URL with no credentials. "
+            f"Else the {ENVIRONMENT_VARIABLE} variable, else {DEFAULT_SERVICE}"
+        ),
     )
     return parser
 
@@ -160,7 +163,10 @@ def main(argv: list[str] | None = None, out=None) -> int:
             from studyforge.narrate.wire import over_http
 
             client = NarrateClient(
-                arguments.service, voice=arguments.voice, fmt=arguments.fmt, transport=over_http
+                resolve(arguments.service, os.environ),
+                voice=arguments.voice,
+                fmt=arguments.fmt,
+                transport=over_http,
             )
             narrated = narrate_corpus(root, client, voice=arguments.voice, fmt=arguments.fmt)
             report, code = lines(narrated, arguments.root), exit_code(narrated)

@@ -43,9 +43,9 @@ that component is silent no matter how it is built.**
 
 | the question | the answer |
 |---|---|
-| what provides narration | the `narrate-service` component, installed or built beside this one |
-| where it answers | `http://127.0.0.1:8870` — ⛔ loopback, never an interface anyone else can reach |
-| how it is started | from **its own** checkout, by you, following its `README.md`. ⛔ Never by this skill |
+| what provides narration | the `narrate-service` component, a separate repository you clone and run: `docker compose up -d --build` in it |
+| where it answers | `http://127.0.0.1:8870` by default — ⛔ loopback, never an interface anyone else can reach. `studyforge narrate --service <URL>` or the `STUDYFORGE_NARRATE_SERVICE` variable points at a service running elsewhere (the flag wins) |
+| how it is started | by you, from a clone of its repository, following its `README.md`; or you point at one already running. ⛔ Never by this skill |
 | what a caller may rely on | its `provides` promise, which this framework's narration client was built against: **`3`** |
 | where the rest of its contract is | that component's own `consuming.json` and `docs/api.md` — ⛔ no route, header or field of its API is repeated here |
 | which voices exist | the catalogue in that component's `consuming.json`, and the route its `docs/api.md` names |

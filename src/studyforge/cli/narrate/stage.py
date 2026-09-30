@@ -57,7 +57,7 @@ from pathlib import Path
 
 from studyforge.cli.narrate.disclosure import Walk, dead_entries, superseded_clips
 from studyforge.generate.declarations import Corpus, UnitSource, read_corpus, unit_location
-from studyforge.narrate.answers import Health, NarrationError, Narrator
+from studyforge.narrate.answers import PROMISE, Health, NarrationError, Narrator
 from studyforge.narrate.speakable import SpeechUnit, speakable_of
 from studyforge.narrate.synth import (
     Conditions,
@@ -150,18 +150,33 @@ def survey(root: Path | str) -> tuple[tuple[UnitWork, ...], Walk]:
     return work, walk
 
 
+class ContractMismatch(ValueError):
+    """The service promises a different contract version than this client was built against."""
+
+
+def _mismatch(found: int | None, wanted: int) -> str:
+    said = "no contract version" if found is None else f"contract version {found!r}"
+    return (
+        f"the narration service promises {said}; this studyforge was built against "
+        f"version {wanted}. Nothing was requested. Run a narrate-service of version "
+        f"{wanted}, or use a studyforge that matches the one running."
+    )
+
+
 def narrate_corpus(
     root: Path | str,
     client: Narrator,
     *,
     voice: str,
     fmt: str,
+    promise: int = PROMISE,
 ) -> Narrated:
     """Narrate every declared unit of the corpus at `root`, probing the service once.
 
     ⛔ Raises `BuildError` for a corpus it cannot read and `StateError` for a
     record it cannot read, both before any request. `PersonalDataLeak` travels
-    through untouched.
+    through untouched. ⛔ A reachable service that promises another `provides` than
+    `promise`, or none, raises `ContractMismatch` before any clip is asked for.
     """
     work, walk = survey(root)
     record = state_file(root)
@@ -181,6 +196,8 @@ def narrate_corpus(
     health = client.probe()
     if not health.reachable:
         return Narrated(health=health, **disclosed())
+    if health.provides != promise:
+        raise ContractMismatch(_mismatch(health.provides, promise))
     conditions = Conditions.of(health, voice=voice, fmt=fmt)
     done: list[tuple[str, Synthesis]] = []
     for unit in work:
