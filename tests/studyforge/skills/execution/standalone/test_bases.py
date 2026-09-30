@@ -19,6 +19,8 @@ from studyforge.skills.execution.standalone import bases
 from studyforge.skills.onboarding import library
 
 ZEROS = bases.PLACEHOLDER
+ONES = "sha256:" + "1" * 64
+TWOS = "sha256:" + "2" * 64
 RUNNER_TAG = "a"
 EDITOR_TAG = "b"
 
@@ -33,8 +35,8 @@ def lock(**changes) -> dict:
     document = {
         "bases_api": 1,
         "serve": {"image": "studyforge-serve", "tag": serve_tag(), "digest": ZEROS},
-        "runner": {"image": "runner", "tag": RUNNER_TAG, "digest": "sha256:" + "1" * 64},
-        "editor": {"image": "editor", "tag": EDITOR_TAG, "digest": "sha256:" + "2" * 64},
+        "runner": {"image": bases.PUBLISHED["runner"], "tag": RUNNER_TAG, "digest": ONES},
+        "editor": {"image": bases.PUBLISHED["editor"], "tag": EDITOR_TAG, "digest": TWOS},
     }
     document.update(changes)
     return document
@@ -52,9 +54,29 @@ def with_field(kind: str, **fields) -> dict:
 
 def test_a_lock_names_each_base_by_image_tag_and_digest():
     locked = parsed(lock())
-    assert locked.runner.reference == f"runner:{RUNNER_TAG}@sha256:{'1' * 64}"
+    runner = f"studyforge-code-toolchain-runner:{RUNNER_TAG}@sha256:{'1' * 64}"
+    assert locked.runner.reference == runner
     assert locked.serve.reference == f"studyforge-serve:{serve_tag()}@{ZEROS}"
     assert bases.key(locked.editor) == "2" * bases.KEY_DIGITS
+
+
+def test_the_published_names_are_the_prefixed_ones_and_the_serve_name_stays():
+    assert bases.PUBLISHED == {
+        "serve": "studyforge-serve",
+        "runner": "studyforge-code-toolchain-runner",
+        "editor": "studyforge-code-toolchain-editor",
+    }
+    locked = parsed(lock())
+    names = (locked.serve.image, locked.runner.image, locked.editor.image)
+    assert names == tuple(bases.PUBLISHED.values())
+
+
+@pytest.mark.parametrize("kind", ["runner", "editor"])
+def test_the_retired_bare_name_is_refused_and_the_new_one_is_named(kind):
+    with pytest.raises(bases.BasesRefused) as refused:
+        parsed(with_field(kind, image=kind))
+    assert f"studyforge-code-toolchain-{kind}" in str(refused.value)
+    assert "no longer publishes" in str(refused.value)
 
 
 def test_the_placeholder_is_admitted_for_an_example_and_refused_for_an_export():

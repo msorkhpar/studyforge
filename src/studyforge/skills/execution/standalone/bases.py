@@ -19,8 +19,10 @@ The lock is one JSON object: `bases_api` (`1`), then `serve`, `runner` and
     {
       "bases_api": 1,
       "serve":  {"image": "studyforge-serve", "tag": "0.1.0-<64 hex>", "digest": "sha256:<64 hex>"},
-      "runner": {"image": "runner", "tag": "java-maven-amd64-<12 hex>", "digest": "sha256:<64>"},
-      "editor": {"image": "editor", "tag": "java-maven-amd64-<12 hex>", "digest": "sha256:<64>"}
+      "runner": {"image": "studyforge-code-toolchain-runner", "tag": "java-maven-amd64-<12 hex>",
+                 "digest": "sha256:<64>"},
+      "editor": {"image": "studyforge-code-toolchain-editor", "tag": "java-maven-amd64-<12 hex>",
+                 "digest": "sha256:<64>"}
     }
 
 **Depends on.** `studyforge.version` for the version test. It starts no process
@@ -32,6 +34,15 @@ An `image` is a bare name: a `/`, a `:` or an `@` in it is refused, so the lock 
 the same for every publisher and the account is read from `STUDYFORGE_NAMESPACE`
 when an image is built or pulled. ⛔ A digest of sixty-four zeros is the documented
 placeholder of an example, and a lock read for a real export refuses it.
+
+## ⭐ The published names
+
+A registry sees the serving base as `studyforge-serve`, the runner as
+`studyforge-code-toolchain-runner` and the editor as
+`studyforge-code-toolchain-editor`. The toolchain's earlier published names, the bare
+`runner` and `editor`, are refused by name: a lock that still carries one would pull an
+image that is no longer published there. (Local build names are a different thing and
+are not read here.)
 
 ## ⭐ The tag says what the digest holds
 
@@ -66,6 +77,16 @@ FIELDS = ("image", "tag", "digest")
 
 #: A bare image name: no registry, no account, no tag, no digest.
 IMAGE = re.compile(r"^[a-z0-9]+(?:[._-][a-z0-9]+)*$")
+
+#: The names a registry sees for the three bases; the serving base keeps `studyforge-serve`.
+PUBLISHED = {
+    "serve": "studyforge-serve",
+    "runner": "studyforge-code-toolchain-runner",
+    "editor": "studyforge-code-toolchain-editor",
+}
+
+#: The toolchain's earlier published names, which a lock no longer accepts.
+RETIRED = {"runner": "runner", "editor": "editor"}
 
 #: What an image tag may look like.
 TAG = re.compile(r"^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$")
@@ -158,6 +179,11 @@ def _base(kind: str, entry: object, placeholder: bool) -> Base:
         raise BasesRefused(
             f"the {kind} image is not a bare name: no account, registry, tag or digest "
             "belongs in it"
+        )
+    if RETIRED.get(kind) == image:
+        raise BasesRefused(
+            f"the {kind} image {image!r} is a name the toolchain no longer publishes: "
+            f"lock {PUBLISHED[kind]!r}"
         )
     if not TAG.match(tag):
         raise BasesRefused(f"the {kind} tag is not an image tag")
