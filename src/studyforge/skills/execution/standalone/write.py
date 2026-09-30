@@ -160,6 +160,8 @@ def release(
             bases,
             version=library.version(),
             toolchain=record.unprimed_tags(asked),
+            declared=manifest.runtimes,
+            tags_for=vendor.asker(toolchain, platform=platform, run=run),
             serve_tag=locked.computed_serve_tag(library.PACKAGE.parent),
         )
     out.mkdir(parents=True, exist_ok=True)

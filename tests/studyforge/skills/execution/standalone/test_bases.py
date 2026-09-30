@@ -171,3 +171,86 @@ def test_a_locked_base_is_immutable():
     with pytest.raises(AttributeError):
         locked.serve.digest = "x"  # type: ignore[misc]
     assert copy.deepcopy(locked) == locked
+
+
+# A runner or editor base built on a runtime set the course may only be part of.
+
+PINNED = ("java", "maven", "node", "python")
+SUFFIX = {"runner": "amd64-f8f1db0be48a", "editor": "amd64-14e3f747ce03"}
+
+
+def tags_for(runtimes) -> dict[str, str]:
+    """A toolchain stand-in: four pinned runtimes, written in its order, all others refused."""
+    unknown = [one for one in runtimes if one not in PINNED]
+    if unknown:
+        raise ValueError("not pinned")
+    ordered = "-".join(one for one in PINNED if one in runtimes)
+    return {kind: f"{ordered}-{suffix}" for kind, suffix in SUFFIX.items()}
+
+
+def polyglot(runner: str | None = None, editor: str | None = None) -> bases.Bases:
+    every = tags_for(PINNED)
+    return parsed(
+        lock(
+            runner={**lock()["runner"], "tag": runner or every["runner"]},
+            editor={**lock()["editor"], "tag": editor or every["editor"]},
+        )
+    )
+
+
+def superset_check(locked: bases.Bases, declared=("java", "maven")) -> None:
+    exact = tags_for(declared)
+    check(locked, toolchain=exact, declared=declared, tags_for=tags_for)
+
+
+def test_a_base_locked_at_exactly_the_declared_set_is_accepted():
+    exact = tags_for(("java", "maven"))
+    locked = polyglot(exact["runner"], exact["editor"])
+    superset_check(locked)
+
+
+def test_a_base_built_on_a_superset_of_the_declared_set_is_accepted():
+    superset_check(polyglot())
+    superset_check(polyglot(), declared=("python",))
+
+
+def test_a_base_built_on_a_set_that_lacks_a_declared_runtime_is_refused_by_name():
+    exact = tags_for(("java", "maven"))
+    with pytest.raises(bases.BasesRefused, match=r"lacks .*\['node'\]"):
+        superset_check(polyglot(exact["runner"], exact["editor"]), declared=("java", "node"))
+    with pytest.raises(bases.BasesRefused, match=r"lacks .*\['node', 'python'\]"):
+        superset_check(polyglot(exact["runner"], exact["editor"]), declared=("node", "python"))
+
+
+def test_a_runtime_the_toolchain_does_not_know_is_refused_and_named():
+    locked = polyglot("java-cobol-amd64-f8f1db0be48a")
+    with pytest.raises(bases.BasesRefused, match=r"does not know: \['cobol'\]"):
+        superset_check(locked)
+
+
+@pytest.mark.parametrize(
+    ("tag", "message"),
+    [
+        ("java-java-maven-amd64-f8f1db0be48a", "repeats"),
+        ("maven-java-amd64-f8f1db0be48a", "computes"),
+        ("amd64-f8f1db0be48a", "does not name a runtime set"),
+        ("_amd64-f8f1db0be48a", "does not name a runtime set"),
+        ("java--maven-amd64-f8f1db0be48a", "does not name a runtime set"),
+        ("java-maven-arm64-f8f1db0be48a", "computes"),
+    ],
+)
+def test_a_malformed_repeated_or_reordered_runtime_segment_is_refused(tag, message):
+    with pytest.raises(bases.BasesRefused, match=message):
+        superset_check(polyglot(runner=tag))
+
+
+def test_a_superset_tag_with_another_suffix_is_refused():
+    with pytest.raises(bases.BasesRefused, match="computes java-maven-node-python-amd64-f8f1"):
+        superset_check(polyglot(runner="java-maven-node-python-amd64-000000000000"))
+    with pytest.raises(bases.BasesRefused, match="editor base is locked"):
+        superset_check(polyglot(editor="java-maven-node-python-amd64-f8f1db0be48a"))
+
+
+def test_without_a_toolchain_to_ask_only_the_exact_tag_is_accepted():
+    with pytest.raises(bases.BasesRefused, match="runner base is locked at tag"):
+        check(polyglot(), toolchain=tags_for(("java", "maven")))
