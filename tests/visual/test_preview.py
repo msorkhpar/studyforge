@@ -1,6 +1,6 @@
 """The read-only preview, opened in a real browser from a static server, never the study server.
 
-⭐ **Register direction (2026-09-29): a course's `main` explains itself and a static, read-only
+⭐ **A course's `main` explains itself and a static, read-only
 preview of its lessons can be published.** So the preview a real build produces is served by
 Python's own `http.server` (no study server, no run client, no API) and every page is opened:
 the console holds nothing, no request fails, none asks an `/api/` path or a clip, the banner and

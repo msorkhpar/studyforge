@@ -351,7 +351,7 @@ def test_a_dead_entry_whose_superseded_clip_is_held_is_kept_with_it(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ The register ruling (narration is lesson prose only) retires through the prune
+# ⛔ Narration being lesson prose only retires the older clips through the prune
 # --------------------------------------------------------------------------
 
 #: The caption every fence was spoken as before the ruling, as a record still holds it.
@@ -415,7 +415,7 @@ def test_a_prune_retires_the_practice_and_caption_clips_and_keeps_every_prose_cl
 
 
 # --------------------------------------------------------------------------
-# ⛔ The register ruling (a code-example panel is never narrated) retires through the prune
+# ⛔ A code-example panel never being narrated retires the older clips through the prune
 # --------------------------------------------------------------------------
 
 

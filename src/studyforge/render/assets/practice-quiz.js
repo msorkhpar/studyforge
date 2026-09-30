@@ -1,6 +1,6 @@
 /* The quiz: what a reader chose, whether it was right, and why — graded in the page.
 
-   ⭐ **The register ruling (2026-09-25): a quiz's answers live in the page, in a
+   ⭐ **A quiz's answers live in the page, in a
    script local to that page, and nothing about a quiz is a server function.**
    This reverses the ruling that kept the key on the local study server. ⭐ So
    each quiz section carries its OWN key, as a JSON data block

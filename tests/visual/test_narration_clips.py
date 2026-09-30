@@ -1,6 +1,6 @@
 """A narrated page asks its first clip once, and shows narration only when it loads.
 
-⭐ **Register direction (2026-09-25): what works is found out in the UI.** A page
+⭐ **What works is found out in the UI.** A page
 learns whether its clips are here by loading its FIRST clip's metadata, once
 (`narration-probe.js`). When it loads, the transport shows and plays. When it
 fails, the page asks for no other clip and shows no narration control, and the

@@ -53,7 +53,7 @@ python -m pip install pytest==9.1.1 iniconfig==2.3.0 packaging==26.3 pluggy==1.6
 ```
 
 ⭐ Every command in this document runs on Windows as on Linux and macOS (a
-register direction: a course publishes and runs from Windows, on Docker
+course publishes and runs from Windows, on Docker
 Desktop). Where a POSIX shell and PowerShell spell one differently, both forms
 are shown; elsewhere, `python3` is `python` in PowerShell.
 
@@ -213,11 +213,11 @@ separate download, shows no narration control and keeps the browser's console
 clean. Once the clips are restored, the next page load plays them with no
 rebuild.
 
-**Narration speaks a lesson's prose only**, by register ruling: a practice, a
+**Narration speaks a lesson's prose only**: a practice, a
 code example and a quiz are shown and never spoken. A corpus narrated before
-that ruling keeps every prose clip as it is, and `studyforge narrate <root>
+this limit keeps every prose clip as it is, and `studyforge narrate <root>
 --prune` retires the practice and code clips no page plays any more. A lesson's
-*Code Examples* panel is a code example too, by a later register ruling: its
+*Code Examples* panel is a code example too: its
 source and test lines are never spoken, and neither is the heading over the
 panel when nothing spoken sits beside it.
 

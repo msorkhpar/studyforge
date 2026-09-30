@@ -130,7 +130,7 @@ breaks any of spec §8.1's four compose rules, and §8.3's socket rule besides:
 | ⛔ §8.3 — no Docker socket | emits none, anywhere, under any key | a contract that declares one |
 | ⭐ any engine, Windows included | writes every bind relative to the compose file, and every other store as a named volume or a `tmpfs` | an absolute, drive-letter, home or backslash bind source (`rulings.bind_findings`) |
 
-⭐ **The file runs on Docker Desktop and on Windows** (a register direction).
+⭐ **The file runs on Docker Desktop and on Windows**.
 Docker Desktop shares no host `/tmp` and Windows has none, so nothing is ever
 mounted from a temporary directory, and a relative bind is the one form Compose
 resolves on every host. ⭐ Every `docker` the framework runs is the plain CLI

@@ -54,7 +54,7 @@ def contract():
 
 def corpus(root: Path) -> Path:
     """A corpus whose own build is at its root, and one emitted exercise beneath it."""
-    put(root / "pom.xml", dependency.pom("w440-corpus", library=False))
+    put(root / "pom.xml", dependency.pom("prime-corpus", library=False))
     source = dependency.PRIME_SOURCE.format(expression='"Hello, prime"')
     put(root / "src/main/java/prime/Prime.java", source)
     put(root / "src/test/java/prime/PrimeTest.java", dependency.PRIME_TEST)

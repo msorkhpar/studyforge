@@ -230,7 +230,7 @@
 
   /* ⭐ **A quiz passed, by its practice key** — the same machinery as the
      marks, over its own key. ⛔ A quiz is graded in its page and the server
-     records nothing about it (register ruling), so its pass is the reader's
+     records nothing about it, so its pass is the reader's
      own record, kept where the read marks are; it is never a RUN's pass. */
   function passes() {
     var held = record(QUIZZES_KEY);

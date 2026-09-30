@@ -237,7 +237,7 @@ def start(source_root: Path) -> str:
     runner = declaration()
     if runner is None:
         raise RuntimeError(declaration_reason())
-    name = f"sf20-{uuid.uuid4().hex[:10]}"
+    name = f"run-{uuid.uuid4().hex[:10]}"
     argv = run_argv(runner, name=name, source_root=source_root, tag=image())
     started = subprocess.run(argv, stdin=subprocess.DEVNULL, capture_output=True, text=True)
     if started.returncode != 0:

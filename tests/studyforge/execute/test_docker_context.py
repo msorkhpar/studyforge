@@ -1,6 +1,6 @@
 """Every `docker` the serving path runs carries the caller's `DOCKER_CONTEXT` and names no context.
 
-⭐ The register's direction is that every docker step runs on any engine: the
+⭐ Every docker step runs on any engine: the
 engine is the caller's choice, made with `DOCKER_CONTEXT` (or the current
 context), and the framework never overrides, drops or switches it. ⭐ Measured
 against a FAKE `docker` first on `PATH` that records its argv and the context

@@ -4,7 +4,7 @@
 `test_practice_report.py` the report's; both read one page, built here, and
 drive it with the browser's own input pipeline.
 
-⭐ **Register ruling (2026-09-26), read where only a browser can read it.** In a
+⭐ **Read where only a browser can read it.** In a
 code practice's workspace the reader drags the divider between the description
 and the editor — mouse, touch or pen — and moves it with the keyboard; closes
 the description and opens it again; drags the divider above the report, and

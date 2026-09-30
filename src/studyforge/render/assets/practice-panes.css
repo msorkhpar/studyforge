@@ -1,7 +1,7 @@
 /* The practice workspace's panes: the description beside the editor resized by
    a divider and closed, and the report under the editor resized and collapsed.
 
-   ⭐ **Register ruling (2026-09-26).** In a code practice's workspace the reader
+   ⭐ In a code practice's workspace the reader
    drags the divider between the description and the editor to widen or narrow
    the description, and closes it so the editor takes the whole width; drags the
    divider above the report to give the code more height, and collapses the

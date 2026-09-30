@@ -8,41 +8,24 @@ venv/
 build/
 dist/
 
-# Generated study artifacts (per-corpus; also ignored inside their own dirs).
-# NOT audio: generated media is committed by default, and whether a corpus
-# commits its own is that corpus's `media` policy, not a rule this repository
-# gets to make on its behalf.
+# Generated study artifacts (not audio: whether a corpus commits its media is
+# that corpus's own `media` policy).
 *.unit.html
 *.section.html
 site.json
 
-# Generated audio and discovery caches produced by THIS repository's own runs.
-# ⚠️ Scope, because the rule above and this one look contradictory and are not:
-# a *corpus* commits its media by default under its own `media` policy, and
-# that policy is written in the corpus's ignore file, not here. `studyforge`'s own tree never legitimately holds a clip or a scan
-# cache — anything matching below came out of a local build or a test run.
+# Output of this repository's own runs: generated audio and discovery caches.
 *.audio/
 .studyforge/
 .discovery-cache/
 
-# ⛔ ...except the golden fixtures, which are the expected output the suite
-# compares against. Without this, a fixture corpus's `site.json` and its
-# `*.unit.html` goldens are silently untracked and the suite passes locally and
-# fails everywhere else.
+# The golden fixtures are the expected output the suite compares against, so
+# they stay tracked.
 !tests/fixtures/**
 
-# ⛔ A contributor's scratch directory: logs, tables and backups a run of the
-# checks produces live here, inside the checkout that produced them.
-#
-# ⚠️ Ignoring it matters to two instruments, and both read the disk:
-#
-#  1. ⛔ **ruff, through `tests/test_repository.py`**: `ruff check .` and
-#     `ruff format --check .` walk the disk from the repository root, so one
-#     scratch `.py` would turn the checkout's lint red.
-#  2. ⛔ **the quality floor**: `tests.floor.config.text_files` reads
-#     everything git has NOT been told to ignore, on purpose, because a file
-#     just written and not yet added is exactly what the personal-data gate must
-#     catch. Unignored, every scratch file would be read as a finding.
+# A contributor's scratch directory for logs, tables and backups. It is ignored
+# so that a stray `.py` there does not fail ruff, and so that the personal-data
+# floor, which reads every file git has not been told to ignore, does not read it.
 .scratch/
 
 # Editors / OS

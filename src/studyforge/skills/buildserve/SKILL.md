@@ -52,12 +52,12 @@ that component is silent no matter how it is built.**
 
 ### ⭐ What is spoken: a lesson's prose, and nothing else
 
-⛔ **By register ruling, narration covers a lesson's prose only.** A practice,
+⛔ **Narration covers a lesson's prose only.** A practice,
 a code example and a quiz are shown and never spoken, and no caption stands in
-for a code example. ⛔ **A lesson's code-example panel is a code example**, by
-register ruling: its source and test lines are never spoken, and the heading
+for a code example. ⛔ **A lesson's code-example panel is a code example**: its
+source and test lines are never spoken, and the heading
 over the panel (*Code Examples*) is silent too when nothing spoken sits beside
-it. ⭐ A corpus narrated before those rulings keeps every prose
+it. ⭐ A corpus narrated before this limit keeps every prose
 clip, because a speech id is the section key and the block's position; one
 run of `narrate` with `--prune` retires the practice, code and panel clips no
 page plays any more.

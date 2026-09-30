@@ -45,7 +45,7 @@ def test_the_printed_site_build_builds_the_tag_site_env_names_with_no_shell():
         pytest.skip("no docker CLI in this environment (the pinned dev image carries none)")
     if docker("image", "inspect", siteimage.BASE).returncode != 0:
         pytest.skip("the site image's pinned base is not on this engine; pull it by its digest")
-    tag = f"studyforge-site:w511-reading-{uuid.uuid4().hex[:12]}"
+    tag = f"studyforge-site:reading-{uuid.uuid4().hex[:12]}"
     with engine.shared("site-build") as root:
         made, _ = generated(root)
         onboard.write(made, root)

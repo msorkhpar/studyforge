@@ -181,7 +181,7 @@ def test_a_binary_file_is_skipped_rather_than_crashing(tmp_path):
 
 def test_the_allow_list_is_a_pattern_not_a_list_of_people():
     assert ALLOWED_ADDRESS.search("@example.invalid")
-    assert not ALLOWED_ADDRESS.search("@gmail.com")
+    assert not ALLOWED_ADDRESS.search("@mailprovider.net")
 
 
 def test_the_allow_list_is_DERIVED_from_the_shared_vocabulary_and_never_typed():

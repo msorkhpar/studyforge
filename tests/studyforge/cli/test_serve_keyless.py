@@ -1,6 +1,6 @@
 """The serving process hands out a quiz's key only in the page that grades it, in every form.
 
-⭐ **The register ruling (2026-09-25): a quiz's answers live in a script local to its
+⭐ **A quiz's answers live in a script local to its
 own page, and nothing about a quiz is a server function.** So the one response that
 carries a key is that quiz's own page, and there is no quiz route at all.
 

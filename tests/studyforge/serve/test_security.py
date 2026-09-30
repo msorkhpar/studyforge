@@ -193,7 +193,7 @@ def test_being_framed_is_refused_however_wide_frame_src_gets():
     ["127.0.0.1", "127.0.0.1:8770", "localhost", "localhost:8770", "[::1]:8770", "[::1]", None],
 )
 def test_a_page_reached_at_any_loopback_name_frames_the_editor(host):
-    # ⭐ Register ruling: the editor has no password, so no session cookie makes a
+    # ⭐ The editor has no password, so no session cookie makes a
     # `localhost` reader's frame cross-site; every accepted loopback name frames it.
     assert framable([EDITOR], host) == [EDITOR]
     sent = dict(response_headers([EDITOR], host))

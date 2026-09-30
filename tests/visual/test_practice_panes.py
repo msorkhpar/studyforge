@@ -1,6 +1,6 @@
 """The practice workspace's description, resized and closed, in a browser.
 
-⭐ **Register ruling (2026-09-26).** In a code practice's workspace the reader
+⭐ In a code practice's workspace the reader
 drags the divider between the description and the editor — mouse, touch or pen
 — and moves it with the keyboard; closes the description and opens it again;
 and finds both choices again after a reload. ⛔ Real input throughout, for

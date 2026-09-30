@@ -15,7 +15,7 @@ corpus is read: the table is the framework's constant.
 
 ## ⛔ A code-example panel is a code example, and it is never narrated
 
-⭐ **Register ruling (2026-09-26).** The panel's lines name files, a source and
+⭐ The panel's lines name files, a source and
 its test; spoken, they are a list of filenames read over something the reader
 has to open anyway. ⭐ **The rule is the page's, read from the document**:
 `render.page.code` draws a list as the panel when each item is one code link

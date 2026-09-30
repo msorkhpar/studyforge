@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import os
 import re
+
+import pytest
 
 from studyforge.skills.execution.standalone import compose, images, learner, pages, tour
 from studyforge.skills.execution.standalone.facts import Facts
@@ -213,7 +216,31 @@ def test_the_readme_points_to_the_preview_without_a_url_and_names_no_account():
     assert "website link at the top of this repository" in text
     assert "github.io" not in text and "github.com" not in text
     assert "https://" not in text
-    assert "sorkhpar" not in text.lower()
+
+
+#: The environment variable that names the accounts a README must never carry, as a
+#: comma-separated list. The values are never written in source.
+PRIVATE_NAMES = "STUDYFORGE_PRIVATE_NAMES"
+
+
+def names_in(text: str, names: list[str]) -> list[str]:
+    """Which of `names` the text carries, in any case."""
+    lowered = text.lower()
+    return [name for name in names if name and name.lower() in lowered]
+
+
+def test_the_readme_names_no_account_the_environment_lists():
+    names = [one.strip() for one in os.environ.get(PRIVATE_NAMES, "").split(",")]
+    if not any(names):
+        pytest.skip(f"{PRIVATE_NAMES} is unset, so there is no private name to look for")
+    assert names_in(rich(BIG, SHOTS), names) == []
+
+
+def test_a_planted_account_name_is_found_in_the_readme_and_a_clean_one_is_not():
+    placeholder = ["janedoe"]
+    clean = rich(BIG, SHOTS)
+    assert names_in(clean, placeholder) == []
+    assert names_in(clean + "\nMaintained by JaneDoe.\n", placeholder) == placeholder
 
 
 def test_the_readme_keeps_the_windows_commands_beside_the_unix_ones():
