@@ -47,10 +47,21 @@ are not read here.)
 ## ⭐ The tag says what the digest holds
 
 The runner's and the editor's tag must be the tag the pinned toolchain computes for
-the course's declared set, and the study server's must begin with this framework's
+the runtime set the tag names, and the study server's must begin with this framework's
 version and, in a checkout that carries `docker/serve/build.py`, be the tag that
 script computes. A digest cannot be compared with a tag, but a lock whose tag is the
 wrong one names an image built from other inputs.
+
+⭐ **A base built on a superset of the course's declared runtimes is accepted.** The
+published bases carry several runtimes (for instance `java-maven-node-python`), and a
+course that declares `["java", "maven"]` runs on them. The runtime set is the part of the
+tag between its first segment and the architecture (`java-maven-node-python` in
+`java-maven-node-python-amd64-<12 hex>`). It is read, the pinned toolchain is asked for
+the tag of exactly that set, and the lock is accepted when the two tags are equal and the
+set holds every declared runtime. A set that is empty, repeats a runtime, names one the
+toolchain does not pin, is not the order the toolchain writes, carries another
+architecture or suffix than the toolchain computes, or lacks a declared runtime is
+refused, each by its own message. The serving base is not part of this.
 """
 
 from __future__ import annotations
@@ -59,7 +70,7 @@ import hashlib
 import json
 import re
 import tomllib
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -202,20 +213,31 @@ def check(
     version: str,
     toolchain: Mapping[str, str],
     serve_tag: str | None = None,
+    declared: Sequence[str] = (),
+    tags_for: Callable[[Sequence[str]], Mapping[str, str]] | None = None,
 ) -> None:
     """Refuse a lock whose tags are not the ones this framework and the toolchain compute.
 
     `toolchain` maps `runner` and `editor` to the tag the pinned toolchain computes for
     the course's unprimed image (the part after the colon). `serve_tag` is the tag
     `docker/serve/build.py` computes, or `None` where this framework is not a checkout.
+
+    ⭐ A tag equal to `toolchain`'s is accepted as it is. Given `declared` (the course's
+    runtimes) and `tags_for` (asks the pinned toolchain for the `runner` and `editor` tags of
+    a runtime set, and raises `ValueError` where it will not compute one), a tag that names a
+    larger runtime set is accepted too when the toolchain computes exactly that tag for the
+    set and the set holds every declared runtime.
     """
     for kind in ("runner", "editor"):
         want, got = toolchain[kind], getattr(bases, kind).tag
-        if want != got:
+        if want == got:
+            continue
+        if tags_for is None or not declared:
             raise BasesRefused(
                 f"the {kind} base is locked at tag {got}, and the pinned toolchain computes "
                 f"{want} for this course's declared set: lock the image built from it"
             )
+        _superset(kind, got, declared, tags_for)
     served = bases.serve.tag
     if serve_tag is not None and served != serve_tag:
         raise BasesRefused(
@@ -226,6 +248,49 @@ def check(
         raise BasesRefused(
             f"the serve base is locked at tag {served}, which is not this framework's "
             f"version {version}"
+        )
+
+
+def _superset(
+    kind: str,
+    got: str,
+    declared: Sequence[str],
+    tags_for: Callable[[Sequence[str]], Mapping[str, str]],
+) -> None:
+    """Accept `got` if it is the toolchain's own tag for a runtime set holding `declared`."""
+    parts = got.split("-")
+    members = parts[:-2] if len(parts) >= 3 else []
+    if not members or not all(members):
+        raise BasesRefused(
+            f"the {kind} base is locked at tag {got}, which does not name a runtime set "
+            "before its architecture and suffix"
+        )
+    repeated = sorted({one for one in members if members.count(one) > 1})
+    if repeated:
+        raise BasesRefused(f"the {kind} base's tag {got} repeats the runtime(s) {repeated}")
+    try:
+        computed = tags_for(members)[kind]
+    except ValueError as refused:
+        unknown = []
+        for one in members:
+            try:
+                tags_for((one,))
+            except ValueError:
+                unknown.append(one)
+        raise BasesRefused(
+            f"the {kind} base's tag {got} names a runtime set the pinned toolchain does not "
+            f"compute (runtime(s) it does not know: {unknown or 'none singly'})"
+        ) from refused
+    if computed != got:
+        raise BasesRefused(
+            f"the {kind} base is locked at tag {got}, and the pinned toolchain computes "
+            f"{computed} for the runtime set that tag names: lock the image built from it"
+        )
+    missing = [one for one in declared if one not in members]
+    if missing:
+        raise BasesRefused(
+            f"the {kind} base is built on {members}, which lacks the course's declared "
+            f"runtime(s) {missing}: lock an image built on a set that holds them"
         )
 
 

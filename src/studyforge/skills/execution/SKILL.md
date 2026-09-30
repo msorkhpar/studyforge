@@ -519,7 +519,11 @@ runs one argv and answers `(exit code, stdout)`.
   the runner and editor layers warm the course's dependencies on the published base, and
   the course images' tags carry the bases' digests. ⛔ The account comes only from
   `STUDYFORGE_NAMESPACE`, with no default in either compose file. The lock's runner and
-  editor tags must be the ones the pinned toolchain computes, and its serve tag the one
+  editor tags must be the ones the pinned toolchain computes for the course's declared
+  set, or for a larger runtime set the tag names (a base built on java, maven, node and
+  python serves a course that declares java and maven; a set that lacks a declared
+  runtime, repeats one, names one the toolchain does not pin or carries another suffix
+  is refused), and its serve tag the one
   `docker/serve/build.py` computes, or the export is refused before a file is written.
   Without `bases` the tree is self-contained, as above.
 - ⭐ **The README explains the course before it explains the command**

@@ -104,6 +104,30 @@ def ask(
     return Toolchain(commit=_commit(checkout, run), builds=builds, inputs=tuple(inputs))
 
 
+def unprimed_tags(
+    checkout: Path, runtimes: Sequence[str], *, platform: str, run: Run
+) -> dict[str, str]:
+    """Return the tag, after its repository, the toolchain computes for `runtimes`' unprimed pair.
+
+    Refuses (`VendorRefused`) where the toolchain will not compute a build for the set, for
+    instance because it names a runtime the toolchain does not pin.
+    """
+    command = _printed_by(Path(checkout))
+    return {
+        image: str(
+            _asked(Path(checkout), command, image, runtimes, None, platform, run, only_tag=True)[
+                "tag"
+            ]
+        ).split(":", 1)[1]
+        for image in ("runner", "editor")
+    }
+
+
+def asker(checkout: Path, *, platform: str, run: Run):
+    """Return a function asking `checkout` for the unprimed tags of a runtime set."""
+    return lambda runtimes: unprimed_tags(checkout, runtimes, platform=platform, run=run)
+
+
 def pinned(
     root: Path,
     checkout: Path,
@@ -171,8 +195,10 @@ def _asked(
     prime: Path | None,
     platform: str,
     run: Run,
+    *,
+    only_tag: bool = False,
 ) -> Mapping[str, object]:
-    """One build, as the toolchain printed it."""
+    """One build, as the toolchain printed it; `only_tag` gates the tag alone, as it is all read."""
     argv = [
         image if one == IMAGE_SLOT else ",".join(runtimes) if one == SET_SLOT else one
         for one in command
@@ -196,7 +222,9 @@ def _asked(
     if not isinstance(decoded, dict):
         raise VendorRefused(f"the toolchain printed no document for the {image} build")
     document = {key: decoded[key] for key in KEPT if key in decoded}
-    assert_clean(document, f"the toolchain's {image} build")
+    assert_clean(
+        {"tag": document.get("tag")} if only_tag else document, f"the toolchain's {image} build"
+    )
     if document.get("builds_api") != BUILDS_API or document.get("image") != image:
         raise VendorRefused(
             f"the toolchain answered the {image} build in a shape this skill has not read"

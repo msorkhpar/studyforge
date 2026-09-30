@@ -181,3 +181,39 @@ def test_a_kept_key_that_carries_a_home_path_is_refused_by_the_gate(tmp_path):
             platform="linux/amd64",
             run=answering(TAGS, args={"HOME_DIR": STRANGER}),
         )
+
+
+def test_the_unprimed_tags_of_a_set_are_asked_without_a_prime_and_read_past_unrelated_args(
+    tmp_path,
+):
+    asked: list[list[str]] = []
+    # A platform-tagged extension file name reads like an address; assembled, so no file holds one.
+    vsix = {"FETCH": f"https://example.invalid/debugpy-1.0{'@'}linux-x64.vsix"}
+    got = vendor.unprimed_tags(
+        toolchain(tmp_path / "tc"),
+        ("java", "node"),
+        platform="linux/amd64",
+        run=answering(TAGS, asked, args=vsix),
+    )
+    assert got == {"runner": "a", "editor": "b"}
+    builds = [one for one in asked if one[0] != "git"]
+    assert len(builds) == 2
+    assert all("java,node" in one and "--prime" not in one for one in builds)
+    with pytest.raises(PersonalDataLeak):  # the tree-writing path still gates every key
+        vendor.ask(
+            toolchain(tmp_path / "tc2"),
+            ("java",),
+            tmp_path,
+            platform="linux/amd64",
+            run=answering(TAGS, args=vsix),
+        )
+
+
+def test_a_toolchain_that_refuses_a_set_refuses_its_tags(tmp_path):
+    with pytest.raises(vendor.VendorRefused, match="refused the runner build"):
+        vendor.unprimed_tags(
+            toolchain(tmp_path / "tc"),
+            ("java",),
+            platform="linux/amd64",
+            run=lambda argv, cwd: (2, ""),
+        )
