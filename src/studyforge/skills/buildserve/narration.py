@@ -74,9 +74,11 @@ CONTRACT = ("consuming.json", "docs/api.md")
 #: What provides narration. ⭐ The sentence an operator reads first.
 AVAILABLE = f"narration is provided by the {COMPONENT} component, which answers on {ADDRESS}"
 
-#: How to have it. ⛔ No command: §8.3 keeps container starting out of this skill.
+#: How to have it. ⭐ A sentence the operator runs themselves: §8.3 keeps container
+#: starting out of this skill, which only names the command.
 HOW = (
-    f"start {COMPONENT} from its own checkout beside this one, as its README says, "
+    f"clone the {COMPONENT} repository and run docker compose up -d --build in it, "
+    "or point --service (or the STUDYFORGE_NARRATE_SERVICE variable) at a running one, "
     "then run again with --voice <voice>"
 )
 

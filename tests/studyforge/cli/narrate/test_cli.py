@@ -12,6 +12,7 @@ import socket
 
 import pytest
 
+from studyforge.cli.narrate.address import ENVIRONMENT_VARIABLE
 from studyforge.cli.narrate.cli import DEFAULT_FORMAT, DEFAULT_SERVICE, build_parser, main
 from studyforge.cli.narrate.report import NO_SERVICE
 from studyforge.narrate import wire
@@ -51,7 +52,7 @@ def test_the_parser_takes_a_root_and_a_voice():
     assert parser.prog == "studyforge narrate"
     arguments = parser.parse_args(["corpus", "--voice", VOICE])
     assert (arguments.root, arguments.voice) == ("corpus", VOICE)
-    assert (arguments.fmt, arguments.service) == (DEFAULT_FORMAT, DEFAULT_SERVICE)
+    assert (arguments.fmt, arguments.service) == (DEFAULT_FORMAT, None)
 
 
 def test_the_voice_is_required_and_has_no_default():
@@ -176,3 +177,42 @@ def test_a_prune_over_an_unreadable_record_exits_two_and_touches_nothing(tmp_pat
 
     assert code == UNUSABLE
     assert files(root) == before
+
+
+def test_the_verb_calls_the_flag_address_then_the_variable_address(tmp_path, monkeypatch):
+    seen = []
+
+    def transport(sent):
+        seen.append(sent.url)
+        raise wire.ServiceUnavailable("down")
+
+    monkeypatch.setattr(wire, "over_http", transport)
+    root = a_corpus(tmp_path, "depth1")
+    monkeypatch.setenv(ENVIRONMENT_VARIABLE, "http://from-env.example.invalid:1")
+    invoke(str(root), "--voice", VOICE)
+    invoke(str(root), "--voice", VOICE, "--service", "http://from-flag.example.invalid:2/")
+    monkeypatch.delenv(ENVIRONMENT_VARIABLE)
+    invoke(str(root), "--voice", VOICE)
+    assert [url.rsplit("/healthz", 1)[0] for url in seen] == [
+        "http://from-env.example.invalid:1",
+        "http://from-flag.example.invalid:2",
+        DEFAULT_SERVICE,
+    ]
+
+
+def test_a_bad_address_exits_unusable_before_any_request(tmp_path, monkeypatch):
+    def transport(sent):
+        raise AssertionError("a request was sent")
+
+    monkeypatch.setattr(wire, "over_http", transport)
+    root = a_corpus(tmp_path, "depth1")
+    code, text = invoke(str(root), "--voice", VOICE, "--service", "http://u:p@h.example.invalid")
+    assert code == UNUSABLE and "credentials" in text and "Traceback" not in text
+    monkeypatch.setenv(ENVIRONMENT_VARIABLE, "gopher://h.example.invalid")
+    code, text = invoke(str(root), "--voice", VOICE)
+    assert code == UNUSABLE and ENVIRONMENT_VARIABLE in text
+
+
+def test_the_help_names_the_flag_and_the_variable():
+    text = build_parser().format_help()
+    assert "--service" in text and ENVIRONMENT_VARIABLE in text

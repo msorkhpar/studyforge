@@ -145,3 +145,13 @@ def test_a_cleared_superseded_clip_is_named_in_the_prune_report():
     assert "forget u.s.b1  superseded u.s.b1-aaaaaaaa.mp3" in prune_lines(
         Pruned(cleared=cleared), "c"
     )
+
+
+def test_the_absent_service_hint_names_the_clone_the_command_and_both_ways_to_point():
+    for phrase in (
+        "clone the narrate-service repository",
+        "docker compose up -d --build",
+        "--service",
+        "STUDYFORGE_NARRATE_SERVICE",
+    ):
+        assert phrase in NO_SERVICE.replace("Clone the", "clone the")

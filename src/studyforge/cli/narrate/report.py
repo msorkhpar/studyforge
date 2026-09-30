@@ -36,7 +36,10 @@ from studyforge.validate.report import INVALID, OK
 #: corpus still builds and reads, silently, and nothing was requested or written.
 NO_SERVICE = (
     "no narration service answered, so nothing was requested and nothing was written; "
-    "the corpus still builds and reads without narration. Start the service and run again"
+    "the corpus still builds and reads without narration. "
+    "Clone the narrate-service repository and run docker compose up -d --build in it, "
+    "or point --service (or the STUDYFORGE_NARRATE_SERVICE variable) at a running one, "
+    "then run again"
 )
 
 #: What a unit a job stopped early on says.

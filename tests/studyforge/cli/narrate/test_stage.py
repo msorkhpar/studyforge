@@ -22,7 +22,7 @@ from pathlib import Path
 import pytest
 
 from studyforge.cli.narrate.prune import prune_corpus
-from studyforge.cli.narrate.stage import narrate_corpus
+from studyforge.cli.narrate.stage import ContractMismatch, narrate_corpus
 from studyforge.generate import BuildError, write_site
 from studyforge.generate.declarations import read_corpus, unit_location
 from studyforge.narrate.client import NarrateClient
@@ -124,7 +124,8 @@ def test_a_provides_bump_asks_for_every_clip_again(tmp_path):
     root = a_corpus(tmp_path, "depth1")
     run(root, FakeService(provides=3))
     bumped = FakeService(provides=4)
-    run(root, bumped)
+    client = NarrateClient(BASE, voice=VOICE, fmt=FMT, transport=bumped)
+    narrate_corpus(root, client, voice=VOICE, fmt=FMT, promise=4)
     assert sorted(bumped.submitted) == speech_ids(root)
 
 
@@ -352,3 +353,38 @@ def test_clips_left_in_a_units_old_directory_are_superseded_and_only_a_prune_del
     assert not any(path.exists() for path in stranded)
     assert all((new / path.name).is_file() for path in stranded)
     assert not any(clip.superseded for clip in read_state(state_file(root)).clips.values())
+
+
+# --------------------------------------------------------------------------
+# the service's contract version
+# --------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("provides", [2, 4, None])
+def test_a_service_that_promises_another_version_is_refused_before_any_request(tmp_path, provides):
+    root = a_corpus(tmp_path, "depth1")
+    service = FakeService(provides=provides)
+    with pytest.raises(ContractMismatch) as caught:
+        run(root, service)
+    assert service.submitted == [] and service.requests == [HEALTH]
+    assert "version 3" in str(caught.value) and "/home/" not in str(caught.value)
+
+
+def test_the_matching_version_narrates(tmp_path):
+    root = a_corpus(tmp_path, "depth1")
+    service = FakeService(provides=3)
+    run(root, service)
+    assert sorted(service.submitted) == speech_ids(root)
+
+
+def test_the_mismatch_is_a_sentence_and_exit_two_at_the_verb(tmp_path, monkeypatch):
+    import io
+
+    from studyforge.cli.narrate.cli import main
+    from studyforge.narrate import wire
+    from studyforge.validate.cli import UNUSABLE
+
+    monkeypatch.setattr(wire, "over_http", FakeService(provides=9))
+    out = io.StringIO()
+    code = main([str(a_corpus(tmp_path, "depth1")), "--voice", VOICE], out=out)
+    assert code == UNUSABLE and "promises contract version 9" in out.getvalue()
