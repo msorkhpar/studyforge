@@ -36,7 +36,9 @@ so would be the theatre R5 forbids.
    does that for a corpus that declares runtimes), and `studyforge validate` is
    clean. That is the other skill's job
    (`studyforge.skills.onboarding`), and this one refuses to run before it.
-2. `code-server-toolchain`, **cloned from its own repository**, at the
+2. `code-server-toolchain`, **cloned from its own repository**,
+   `studyforge-code-server-toolchain`
+   (`https://github.com/<owner>/studyforge-code-server-toolchain.git`), at the
    version you use. ⛔ Never vendored into the corpus.
 3. Docker on the host, for step 4 onwards. Steps 1–3 touch no daemon.
 

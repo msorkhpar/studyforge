@@ -1735,7 +1735,7 @@ regression.
 
 ### 8.1 The code-server toolchain — its own repository
 
-The toolchain is a **standalone repository**, `code-server-toolchain`, that
+The toolchain is a **standalone repository**, `studyforge-code-server-toolchain` (component `code-server-toolchain`), that
 publishes two images and describes both in its `consuming.json` (R18):
 
 - **the runner** — the runtimes a corpus declares (§4's `runtimes`) and nothing
@@ -1813,7 +1813,7 @@ can edit a file in their own editor and run `studyforge check` from a terminal
 
 ### 8.2 The narration service — its own repository
 
-Narration gets the same treatment as the toolchain: `narrate-service` is a
+Narration gets the same treatment as the toolchain: `narrate-service` (repository `studyforge-narrate-service`) is a
 standalone repository exposing a **synthesis API over HTTP**, containerised, with
 the engine behind an adapter, published on `127.0.0.1` only.
 
