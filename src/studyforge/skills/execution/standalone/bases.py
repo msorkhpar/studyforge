@@ -44,14 +44,15 @@ wrong one names an image built from other inputs.
 
 from __future__ import annotations
 
-import importlib.util
+import hashlib
 import json
 import re
-import sys
+import tomllib
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
+from studyforge.skills.execution.standalone import closure
 from studyforge.version import is_supported
 
 #: The lock's shape's version.
@@ -78,7 +79,7 @@ PLACEHOLDER = "sha256:" + "0" * 64
 #: How many hex digits of a digest a course image's tag carries.
 KEY_DIGITS = 12
 
-#: Where the serving base's own build script sits in a checkout.
+#: Where the serving base's own build script sits in a checkout, beside its build file.
 SERVE_BUILD = Path("docker") / "serve" / "build.py"
 
 
@@ -122,10 +123,10 @@ def read(path: Path, *, placeholder: bool = False) -> Bases:
         raise BasesRefused(
             f"the bases lock cannot be read: {missing.strerror or 'unreadable'}"
         ) from missing
-    return parse(text, placeholder=placeholder)
+    return from_text(text, placeholder=placeholder)
 
 
-def parse(text: str, *, placeholder: bool = False) -> Bases:
+def from_text(text: str, *, placeholder: bool = False) -> Bases:
     """Return the bases a lock's text names, or refuse the first thing wrong with it."""
     try:
         document = json.loads(text)
@@ -206,19 +207,19 @@ def computed_serve_tag(source: Path) -> str | None:
     """Return the tag `docker/serve/build.py` computes for the checkout holding `source`, or None.
 
     `source` is the directory the `studyforge` package sits in; the checkout is its parent.
-    A package that is installed, not checked out, holds no such script, and the answer is None.
+    ⛔ The digest is that script's own: the version, the build file and every vendored file by
+    path and content, and a test holds the two answers equal. A package that is installed, not
+    checked out, holds no build file, and the answer is None.
     """
     root = Path(source).resolve().parent
-    script = root / SERVE_BUILD
-    if not script.is_file():
+    dockerfile = root / SERVE_BUILD.parent / "Dockerfile"
+    pyproject = root / "pyproject.toml"
+    if not dockerfile.is_file() or not pyproject.is_file():
         return None
-    spec = importlib.util.spec_from_file_location("serve_build", script)
-    if spec is None or spec.loader is None:  # pragma: no cover - a file with a .py name loads
-        return None
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    try:
-        spec.loader.exec_module(module)
-    finally:
-        sys.modules.pop(spec.name, None)
-    return module.planned(root).tag.split(":", 1)[1]
+    version = tomllib.loads(pyproject.read_text(encoding="utf-8"))["project"]["version"]
+    digest = hashlib.sha256()
+    for part in (version, dockerfile.read_text(encoding="utf-8")):
+        digest.update(part.encode("utf-8") + b"\0")
+    for one in closure.vendored(Path(source)):
+        digest.update(one.encode("utf-8") + b"\0" + (Path(source) / one).read_bytes() + b"\0")
+    return f"{version}-{digest.hexdigest()}"

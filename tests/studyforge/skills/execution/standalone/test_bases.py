@@ -41,7 +41,7 @@ def lock(**changes) -> dict:
 
 
 def parsed(document: dict, **kwargs) -> bases.Bases:
-    return bases.parse(json.dumps(document), placeholder=True, **kwargs)
+    return bases.from_text(json.dumps(document), placeholder=True, **kwargs)
 
 
 def with_field(kind: str, **fields) -> dict:
@@ -60,8 +60,8 @@ def test_a_lock_names_each_base_by_image_tag_and_digest():
 def test_the_placeholder_is_admitted_for_an_example_and_refused_for_an_export():
     text = json.dumps(lock())
     with pytest.raises(bases.BasesRefused, match="placeholder"):
-        bases.parse(text)
-    assert bases.parse(text, placeholder=True).serve.digest == ZEROS
+        bases.from_text(text)
+    assert bases.from_text(text, placeholder=True).serve.digest == ZEROS
 
 
 @pytest.mark.parametrize(
@@ -86,7 +86,7 @@ def test_the_placeholder_is_admitted_for_an_example_and_refused_for_an_export():
 )
 def test_a_lock_that_could_not_be_pulled_or_names_an_account_is_refused(document, message):
     with pytest.raises(bases.BasesRefused, match=message):
-        bases.parse(document, placeholder=True)
+        bases.from_text(document, placeholder=True)
 
 
 def test_a_lock_that_cannot_be_read_is_refused_by_name(tmp_path):
