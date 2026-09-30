@@ -284,3 +284,14 @@ def test_the_readme_says_how_the_online_preview_is_kept_and_switched_on():
     assert f"(`{pages.WORKFLOW}`)" not in text and f"({pages.WORKFLOW})" in text
     assert "website link at the top of this repository" in text
     assert "gh-pages" not in text and "https://" not in text and "github.io" not in text
+
+
+def test_a_thin_readme_and_settings_say_the_account_is_needed_to_build_too():
+    from dataclasses import replace
+
+    thin = replace(COURSE, thin=True)
+    readme, env = learner.readme(thin), learner.settings(thin)
+    assert "needs no account" not in readme and "needs it too" in env
+    assert f"`{images.NAMESPACE_VARIABLE}` first: the shared base images" in readme
+    whole_readme, whole_env = learner.readme(COURSE), learner.settings(COURSE)
+    assert "needs no account" in whole_readme and "needs it too" not in whole_env

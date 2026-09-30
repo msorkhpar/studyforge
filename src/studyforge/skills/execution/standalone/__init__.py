@@ -29,6 +29,7 @@ builds them.
 | `closure` | the part of the library serving imports, and what it never carries |
 | `split` | KEEP or MOVE for every tracked entry of the course |
 | `vendor` | the toolchain's builds as its own data, and its context as bytes |
+| `bases` | the lock naming the published bases a thin export starts from, by tag and digest |
 | `images` | the six images' names, and the build files studyforge owns |
 | `compose` | `compose.yaml` and `compose.pull.yaml`, and the rules they keep |
 | `facts` | the counts a README states, read from the course's own records |
@@ -45,8 +46,15 @@ runtime, and the toolchain's unprimed runner and editor. **Three per course**
 on top of them: the site (the course's material, with or without its clips),
 and the runner and editor warmed with the course's own dependencies. A learner
 who pulls two courses downloads the bases once.
+
+⭐ **Thin export.** `release(..., bases=read_bases(lock))` writes a tree with no
+serving library, no copy of the serve recipe and no runner or editor recipe: each
+course image starts `FROM` a published base by tag and digest and adds only the
+course's own layer. Without `bases` the tree is self-contained.
 """
 
+from studyforge.skills.execution.standalone.bases import Bases, BasesRefused
+from studyforge.skills.execution.standalone.bases import read as read_bases
 from studyforge.skills.execution.standalone.closure import (
     DEFERRED,
     FORBIDDEN,
@@ -77,6 +85,8 @@ from studyforge.skills.execution.standalone.write import (
 
 #: ⛔ The package's whole public surface.
 __all__ = [
+    "Bases",
+    "BasesRefused",
     "DEFERRED",
     "FORBIDDEN",
     "KEEP",
@@ -93,6 +103,7 @@ __all__ = [
     "classify",
     "forbidden",
     "kept",
+    "read_bases",
     "release",
     "served",
     "stale",

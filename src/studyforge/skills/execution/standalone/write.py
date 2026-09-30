@@ -52,6 +52,9 @@ from studyforge.skills.execution.contract import (
     require,
 )
 from studyforge.skills.execution.standalone import (
+    bases as locked,
+)
+from studyforge.skills.execution.standalone import (
     closure,
     compose,
     facts,
@@ -112,6 +115,7 @@ def release(
     namespace: str = images.NAMESPACE_DEFAULT,
     screenshots: Path | None = None,
     preview_to: Path | None = None,
+    bases: locked.Bases | None = None,
     run: split.Run,
 ) -> Released:
     """Write the learner tree of the course at `root` into `out`, or refuse by name.
@@ -119,6 +123,13 @@ def release(
     `screenshots` names a directory of the README's pictures (`tour.ROLES`), copied
     into the tree; `preview_to` names a new directory that also receives the
     read-only preview of the finished tree (`preview`).
+
+    ⭐ **Thin export**: with `bases` (read from a lock by `bases.read`) the tree carries
+    no serving library, no copy of the serve recipe and none of the toolchain's runner
+    and editor recipes: the site starts from the published serving base and the runner and
+    editor from the published toolchain bases, each by tag and digest, and the tree keeps
+    only the course's own layers (its material, its warmed dependencies, its run service).
+    Without it the tree is self-contained, byte for byte as it always was.
     """
     root, out, toolchain = Path(root), Path(out), Path(toolchain)
     if out.exists() and any(out.iterdir()):
@@ -145,6 +156,16 @@ def release(
         ),
         "editor",
     )
+    if bases is not None:
+        locked.check(
+            bases,
+            version=library.version(),
+            toolchain={
+                kind: str(asked.builds[kind]["tag"]).split(":", 1)[1]
+                for kind in ("runner", "editor")
+            },
+            serve_tag=locked.computed_serve_tag(library.PACKAGE.parent),
+        )
     out.mkdir(parents=True, exist_ok=True)
     owned = [one for one in kept if one in pages.OWNED or one.startswith(pages.BUILDER_DIR + "/")]
     if owned:
@@ -156,14 +177,20 @@ def release(
     written: list[str] = []
     library_commit = _library_commit(run)
     version = library.version()
-    serve = _write_runtime(out, library_commit, version, written)
+    serve = bases.serve.tag if bases else _write_runtime(out, library_commit, version, written)
     written += [
         f"{compose.TOOLCHAIN}/{one}"
-        for one in vendor.copy(toolchain, out / compose.TOOLCHAIN, asked.inputs)
+        for one in vendor.copy(
+            toolchain, out / compose.TOOLCHAIN, _thin_inputs(asked) if bases else asked.inputs
+        )
     ]
     course_commit = _commit(root, run)
     names = images.names_for(
-        slug=manifest.source, course=course_commit[:12], serve=serve, builds=asked.builds
+        slug=manifest.source,
+        course=course_commit[:12],
+        serve=serve,
+        builds=asked.builds,
+        bases=bases,
     )
     ports = _ports(root, editor)
     plan = compose.Plan(
@@ -175,6 +202,7 @@ def release(
         binds=_binds(manifest, editor),
         site_port=ports[0],
         editor_port=ports[1],
+        bases=bases,
     )
     built, pulled = compose.render(plan)
     shots = _screenshots(screenshots, out, written)
@@ -191,10 +219,12 @@ def release(
         shots=shots,
         runtimes=tuple(manifest.runtimes),
         licence="LICENSE" in kept,
+        thin=bases is not None,
     )
     texts = {
-        f"{compose.NO_PRIME}/README": "An empty build context: an unprimed image warms nothing.\n",
-        f"{compose.IMAGES}/site/Dockerfile": images.site_dockerfile(manifest.source),
+        f"{compose.IMAGES}/site/Dockerfile": images.site_dockerfile(
+            manifest.source, bases.serve if bases else None
+        ),
         f"{compose.IMAGES}/runner/Dockerfile": images.runner_dockerfile(manifest.source),
         ".dockerignore": images.DOCKERIGNORE,
         "compose.yaml": _namespaced(built, namespace),
@@ -202,6 +232,10 @@ def release(
         learner.SETTINGS: learner.settings(course),
         "README.md": learner.readme(course),
     }
+    if bases is None:
+        texts[f"{compose.NO_PRIME}/README"] = (
+            "An empty build context: an unprimed image warms nothing.\n"
+        )
     for where, text in texts.items():
         _text(out / where, text)
         written.append(where)
@@ -225,6 +259,7 @@ def release(
         verdicts,
         kept,
         written,
+        bases,
     )
     _text(out / MANIFEST, json.dumps(document, indent=2) + "\n")
     written.append(MANIFEST)
@@ -318,10 +353,24 @@ def _ports(root: Path, editor) -> tuple[int, int]:
 
 
 def _manifest(
-    slug, course_commit, library_commit, version, asked, platform, names, verdicts, kept, written
+    slug,
+    course_commit,
+    library_commit,
+    version,
+    asked,
+    platform,
+    names,
+    verdicts,
+    kept,
+    written,
+    bases=None,
 ) -> dict:
-    """`.studyforge/release.json`: every path the tree keeps, and where each came from."""
-    return {
+    """`.studyforge/release.json`: every path the tree keeps, and where each came from.
+
+    ⭐ A thin export adds `bases`, the locked reference of each published base; a
+    self-contained one has no such key.
+    """
+    document = {
         "release_api": RELEASE_API,
         "course": slug,
         "exported_from": course_commit,
@@ -336,6 +385,26 @@ def _manifest(
         "verdicts": [{"path": v.path, "verdict": v.verdict, "why": v.why} for v in verdicts],
         "keeps": sorted({*kept, *written, MANIFEST}),
     }
+    if bases is not None:
+        document["bases"] = {
+            kind: {"image": one.image, "tag": one.tag, "digest": one.digest}
+            for kind in locked.KINDS
+            for one in (getattr(bases, kind),)
+        }
+    return document
+
+
+def _thin_inputs(asked) -> tuple[str, ...]:
+    """Return the toolchain paths a thin tree keeps: what the course layers read."""
+    return tuple(
+        sorted(
+            {
+                str(one)
+                for image in ("runner-prime", "editor-prime")
+                for one in asked.builds[image]["inputs"]
+            }
+        )
+    )
 
 
 def vars_of(names: images.Names) -> dict[str, str]:

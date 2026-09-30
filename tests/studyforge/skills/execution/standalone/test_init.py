@@ -15,3 +15,7 @@ def test_the_surface_offers_the_step_and_its_readings():
         standalone.__all__
     )
     assert standalone.MANIFEST == ".studyforge/release.json"
+
+
+def test_the_surface_offers_the_thin_export_s_lock():
+    assert {"Bases", "BasesRefused", "read_bases"} <= set(standalone.__all__)

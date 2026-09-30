@@ -7,7 +7,8 @@ import shutil
 import subprocess
 
 from studyforge.skills.execution.siteimage import BASE
-from studyforge.skills.execution.standalone import images
+from studyforge.skills.execution.standalone import bases, images
+from tests.studyforge.skills.execution.standalone.test_bases import lock, parsed
 
 BUILDS = {
     "runner": {"tag": "example/runner:java-maven-amd64-0123456789ab"},
@@ -219,3 +220,89 @@ def test_the_site_tag_moves_when_the_sites_own_build_file_does(monkeypatch):
     before = images.site_inputs("a-course", "0.1.0-abc")
     monkeypatch.setattr(images, "DOCKERIGNORE", images.DOCKERIGNORE + "extra\n")
     assert images.site_inputs("a-course", "0.1.0-abc") != before
+
+
+def test_the_self_contained_names_and_recipes_are_pinned():
+    """⛔ Thin mode adds a path; it changes nothing the self-contained export writes."""
+    import hashlib
+
+    def digest(text: str) -> str:
+        return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+    assert names() == images.names_for(
+        slug="a-course", course="c0ffee", serve="0.1.0-abc", builds=BUILDS, bases=None
+    )
+    assert names().site == (
+        "a-course-site:c0ffee-5afc2ae3d2fa-${COURSE_NARRATION:-without-narration}"
+    )
+    assert digest(images.site_dockerfile("a-course")) == (
+        "b78156c3d6c16774eb40df138111eab553a39e396439f2efa51c8c4b56654669"
+    )
+    assert digest(images.runner_dockerfile("a-course")) == (
+        "0ba7f1abd0a563e7f6f1bf81a9020196d3567fff3e5cd9832293993486d132ec"
+    )
+    assert digest(images.serve_dockerfile(commit="c", version="0.1.0")) == (
+        "dba9e85da904b2b11abc81e1df19a4670e816222898568d95f3b030fc22ae348"
+    )
+
+
+def thin(**changes) -> images.Names:
+    return images.names_for(
+        slug="a-course", course="c0ffee", serve="", builds=BUILDS, bases=parsed(lock(**changes))
+    )
+
+
+def test_a_thin_export_names_each_base_by_tag_and_digest():
+    made = thin()
+    locked = parsed(lock())
+    assert made.serve == locked.serve.reference
+    assert made.runner_base == locked.runner.reference
+    assert made.editor_base == locked.editor.reference
+    assert "@sha256:" in made.serve and "@sha256:" in made.runner_base
+
+
+def test_a_base_that_changes_names_a_new_course_image_and_only_its_own():
+    before = thin()
+    new_runner = dict(lock()["runner"], digest="sha256:" + "3" * 64)
+    new_editor = dict(lock()["editor"], digest="sha256:" + "4" * 64)
+    new_serve = dict(lock()["serve"], digest="sha256:" + "5" * 64)
+    after_runner, after_editor, after_serve = (
+        thin(runner=new_runner),
+        thin(editor=new_editor),
+        thin(serve=new_serve),
+    )
+    assert after_runner.runner != before.runner and after_runner.editor == before.editor
+    assert after_editor.editor != before.editor and after_editor.runner == before.runner
+    assert after_serve.site != before.site
+    assert (after_serve.runner, after_serve.editor) == (before.runner, before.editor)
+    assert before.runner == f"a-course-runner:c0ffee-{'1' * bases.KEY_DIGITS}"
+    assert before.editor == f"a-course-editor:c0ffee-{'2' * bases.KEY_DIGITS}"
+
+
+def test_a_thin_site_recipe_starts_from_the_published_base_by_tag_and_digest():
+    base = parsed(lock()).serve
+    text = images.site_dockerfile("a-course", base)
+    account = f"${{{images.NAMESPACE_VARIABLE}:?{images.NAMESPACE_UNSET}}}"
+    froms = [line for line in text.splitlines() if line.startswith("FROM ")]
+    assert froms == [f"FROM {account}/{base.reference} AS {n}" for n in images.NARRATIONS]
+    assert f"ARG {images.NAMESPACE_VARIABLE}\n" in text
+    assert "SERVE_BASE" not in text and images.NAMESPACE_DEFAULT not in text
+    assert " " not in account and images.NAMESPACE_VARIABLE in account
+
+
+def test_a_thin_site_recipe_names_no_account_and_its_stages_are_the_self_contained_ones():
+    base = parsed(lock()).serve
+    thin_text = images.site_dockerfile("a-course", base)
+    whole = images.site_dockerfile("a-course")
+    body = lambda text: text.split("AS without-narration", 1)[1].split("FROM", 1)[0]  # noqa: E731
+    assert body(thin_text) == body(whole)
+    assert not re.search(r"(?i)docker\.io|hub\.docker", thin_text)
+
+
+def test_the_site_tag_moves_with_the_serve_digest_and_with_the_thin_recipe():
+    base = parsed(lock()).serve
+    other = parsed(lock(serve=dict(lock()["serve"], digest="sha256:" + "5" * 64))).serve
+    assert images.site_inputs("a", base.reference, base) != images.site_inputs(
+        "a", other.reference, other
+    )
+    assert images.site_inputs("a", base.reference, base) != images.site_inputs("a", base.reference)
