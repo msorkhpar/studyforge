@@ -1103,6 +1103,14 @@ What it reads, and the choices in it:
 
 **Serves.** `R8`
 
+### The study server is a base image with its own recipe and publish step
+
+**Decision.** `docker/serve/Dockerfile` builds `studyforge-serve`: the Python base the dev image runs on, pinned by digest; the part of the library that serves a course (`standalone.closure.vendored`) and nothing else, with no course, no clip and no narration; the same `ENV` and `ENTRYPOINT` (`python3 -m studyforge.cli`) the course site images use; and `USER 1000:1000`, with no `RUN` or `ADD`, so a build and a run need no network. `docker/serve/build.py` stages the library beside the build file and names the image `studyforge-serve:<version>-<digest>`, where `<version>` is the framework's and `<digest>` is the sha256 over the version, the build file and every staged file by path and content; a tag is never written by hand. `docker/serve/publish.py` builds, runs `docker tag` to `<namespace>/studyforge-serve:<that tag>` and, only with `--push`, `docker push`. The namespace is read from `STUDYFORGE_NAMESPACE` alone: with it unset, empty or not a registry namespace the script refuses before it plans anything, it has no flag and no default, and it never logs in. `--dry-run` prints the exact commands and runs none of them. A course's site build starts `FROM` this image by digest (`docker push` prints it), because a tag names what its inputs were and a digest names one image for good.
+
+**Why.** Each course otherwise carries its own copy of the same serve recipe and library, so every course rebuilds and stores what one published image holds once. Naming the image by its inputs and pinning consumers by digest means a changed library is a new image that no earlier pull can hide, and keeping the account out of the repository leaves the publisher's registry namespace their own to set.
+
+**Serves.** `R8`
+
 ### The editor enforces read-only and the page never claims it
 
 **Decision.** `execute.workbench.settings` makes every file read-only through `files.readonlyInclude` and excludes only the practice's own file through `files.readonlyExclude`; the test stays read-only. The workbench's side surfaces are closed by the settings in `execute.workbench.CLOSED` and by the lockdown extension in the editor image. The page carries no guard of its own and says nothing about read-only.
