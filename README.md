@@ -258,10 +258,16 @@ engine, is pinned by digest, never by a moving name.
   as an ordinary process. Either way the serving process is never given the
   Docker socket.
 - **Narration** comes from the `narrate-service` component, a separate
-  repository. You build and start it from its own checkout, following its own
-  README; it answers on `127.0.0.1:8870`, which is where `studyforge narrate`
-  looks. Its first start pulls its engine image, pinned by digest. After that,
-  nothing leaves your machine.
+  repository. Clone it and run `docker compose up -d --build` in the clone
+  (its README has the details); it answers on `127.0.0.1:8870`, which is where
+  `studyforge narrate` looks by default. Its first start pulls its engine image,
+  pinned by digest. After that, nothing leaves your machine. A service running
+  elsewhere is reached with `studyforge narrate <root> --voice <voice> --service
+  http://host:port`, or by exporting `STUDYFORGE_NARRATE_SERVICE` once; the flag
+  wins over the variable and the variable over the default. An address is an
+  `http` or `https` URL with no credentials, no query and no fragment. The
+  service's contract version must equal the one this framework was built
+  against: on a mismatch `narrate` says so, exits `2` and requests nothing.
 - **Runnable practices** use the `code-server-toolchain` component, also a
   separate repository, which builds two images: the runner that grades
   submissions and the browser editor. Each is tagged from its build inputs, and
@@ -274,7 +280,12 @@ engine, is pinned by digest, never by a moving name.
   checkout, and `docker/dev/check.ps1` in PowerShell on Windows. Each builds an
   image tagged from the content of its inputs and runs the framework's test
   suite inside it. You need it only to change the
-  framework, not to use it.
+  framework, not to use it. On Docker Desktop the checkout must sit in a
+  folder Docker is allowed to share (your home directory, not `/tmp`), or the
+  first `docker run` fails with a file-sharing error. On a host with a Python
+  of the right version, the same suite runs without Docker:
+  `PYTHONPATH=src python3 -m pytest -q tests/test_*.py tests/studyforge tests/floor tests/harness`
+  from the checkout, in the environment the install section made.
 
 ## The design behind it
 

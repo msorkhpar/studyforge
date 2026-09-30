@@ -52,6 +52,13 @@ class NarrationError(Exception):
     """
 
 
+#: ⛔ The `provides` promise this client was built against: the component's
+#: `consuming.json` declares one whole number, its API asks every caller to
+#: record the one it built against, and a service that promises another is
+#: refused rather than guessed at.
+PROMISE = 3
+
+
 @dataclass(frozen=True, slots=True)
 class Health:
     """Whether the service is there, and what it says about itself.

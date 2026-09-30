@@ -105,6 +105,9 @@ def test_the_sentences_name_the_component_the_address_and_the_remedy_composes_th
     assert narration.COMPONENT in narration.AVAILABLE
     assert narration.ADDRESS in narration.AVAILABLE
     assert narration.COMPONENT in narration.HOW and "--voice" in narration.HOW
+    assert "docker compose up -d --build" in narration.HOW and "--service" in narration.HOW
+    assert "STUDYFORGE_NARRATE_SERVICE" in narration.HOW
+    assert "beside this one" not in narration.REMEDY
     assert "loopback" in narration.FETCHED
     for sentence in (narration.AVAILABLE, narration.HOW, narration.FETCHED):
         assert sentence in narration.REMEDY
@@ -115,4 +118,10 @@ def test_no_sentence_carries_a_path_or_promises_a_container_command():
     # the sentences carry a pointer rather than a command a reader would paste.
     for sentence in (narration.AVAILABLE, narration.HOW, narration.FETCHED, narration.REMEDY):
         assert "/home/" not in sentence and not sentence.startswith("/")
-        assert "docker" not in sentence.lower()
+        assert "docker run" not in sentence.lower()
+
+
+def test_the_recorded_promise_is_the_one_the_client_refuses_a_mismatch_of():
+    from studyforge.narrate.answers import PROMISE
+
+    assert narration.PROMISE == PROMISE
