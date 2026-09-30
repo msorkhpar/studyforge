@@ -507,6 +507,18 @@ runs one argv and answers `(exit code, stdout)`.
   for no clip and the console stays clear.
   ⛔ The namespace is a placeholder until the owner publishes.
 
+- ⭐ **A thin export** is `release(..., bases=read_bases(Path("<lock>")))`: a JSON
+  lock naming the published serve, runner and editor bases, each by bare `image`,
+  `tag` and `digest` (`bases_api` `1`; `standalone.bases` documents the shape, and a
+  digest of sixty-four zeros is the example's placeholder, refused for a real export).
+  The tree then holds no serving library, no serve recipe and no runner or editor base
+  recipe: the site recipe starts `FROM ${STUDYFORGE_NAMESPACE:?...}/<image>:<tag>@<digest>`,
+  the runner and editor layers warm the course's dependencies on the published base, and
+  the course images' tags carry the bases' digests. ⛔ The account comes only from
+  `STUDYFORGE_NAMESPACE`, with no default in either compose file. The lock's runner and
+  editor tags must be the ones the pinned toolchain computes, and its serve tag the one
+  `docker/serve/build.py` computes, or the export is refused before a file is written.
+  Without `bases` the tree is self-contained, as above.
 - ⭐ **The README explains the course before it explains the command**
   (`standalone.learner` over `facts` and `tour`): the counts, each feature with
   its picture, the two ways to use the course in one table, the requirements, and

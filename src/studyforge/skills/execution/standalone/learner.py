@@ -66,6 +66,8 @@ class Course:
     shots: tuple[tuple[str, str], ...] = ()
     runtimes: tuple[str, ...] = ()
     licence: bool = False
+    #: ⭐ Thin: the images start from published bases, so a build needs the account too.
+    thin: bool = False
 
 
 def settings(course: Course) -> str:
@@ -85,8 +87,19 @@ def settings(course: Course) -> str:
         "# The Docker Hub account the published images are pulled from. The person who",
         "# gave you this course tells you its name: set it here, for example",
         f"# {NAMESPACE_VARIABLE}={NAMESPACE_PLACEHOLDER}",
-        "# compose.pull.yaml stops with a message until it is set. Building the images",
-        f"# yourself needs no account: leave it empty and they are tagged {course.namespace}.",
+        *(
+            [
+                "# compose.pull.yaml stops with a message until it is set. The course's images",
+                "# start from shared base images published under the same account, so building",
+                "# them yourself needs it too: compose.yaml stops until it is set.",
+            ]
+            if course.thin
+            else [
+                "# compose.pull.yaml stops with a message until it is set. Building the images",
+                "# yourself needs no account: leave it empty and they are tagged "
+                f"{course.namespace}.",
+            ]
+        ),
         f"{NAMESPACE_VARIABLE}=",
         "",
     ]
@@ -149,9 +162,20 @@ def readme(course: Course) -> str:
         "The images are built for amd64 (Intel and AMD). On an Apple Silicon Mac they run",
         "under emulation, which is slower.",
         "",
-        "To build every image from this checkout instead, which needs no account (the",
-        "first build takes a while, and downloads only pinned base images and the",
-        "course's pinned dependencies):",
+        *(
+            [
+                "To build the course's own images from this checkout instead, set",
+                f"`{NAMESPACE_VARIABLE}` first: the shared base images are pulled from that",
+                "account. The first build takes a while, and downloads only those bases and",
+                "the course's pinned dependencies:",
+            ]
+            if course.thin
+            else [
+                "To build every image from this checkout instead, which needs no account (the",
+                "first build takes a while, and downloads only pinned base images and the",
+                "course's pinned dependencies):",
+            ]
+        ),
         "",
         "```",
         "docker compose up -d --build",

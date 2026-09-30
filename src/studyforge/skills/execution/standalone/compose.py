@@ -45,6 +45,7 @@ from studyforge.skills.execution.composefile import interpolated, service, volum
 from studyforge.skills.execution.contract import optional, require
 from studyforge.skills.execution.emit import emit
 from studyforge.skills.execution.siteservice import CORPUS, NETWORK, answered, health_url
+from studyforge.skills.execution.standalone.bases import Bases
 from studyforge.skills.execution.standalone.images import (
     NAMESPACE_DEFAULT,
     NAMESPACE_VARIABLE,
@@ -99,6 +100,8 @@ class Plan:
     binds: tuple[tuple[str, str], ...]
     site_port: int
     editor_port: int
+    #: ⭐ Thin: the published bases, by tag and digest. With none, every base is built here.
+    bases: Bases | None = None
 
 
 def volume_of(directory: str) -> str:
@@ -113,7 +116,33 @@ def volume_of(directory: str) -> str:
 def render(plan: Plan) -> tuple[str, str]:
     """Return `compose.yaml` and `compose.pull.yaml`, each refused if it breaks a rule."""
     run = _running(plan)
-    built = {
+    built = _thin(plan, run) if plan.bases else _whole(plan, run)
+    texts = []
+    for services in (built, run):
+        document = {
+            "name": interpolated(PROJECT_VARIABLE, plan.slug),
+            "services": services,
+            "networks": {NETWORK: {"internal": True}},
+            "volumes": {name: {} for name in _volumes(services)},
+        }
+        text = emit(document)
+        # ⛔ the pull file has no default account: an unset one stops here. ⛔ Nor has a thin
+        # build file, which pulls its bases from that account.
+        if services is run or plan.bases:
+            text = text.replace(
+                f"${{{NAMESPACE_VARIABLE}:-{NAMESPACE_DEFAULT}}}",
+                f"${{{NAMESPACE_VARIABLE}:?{NAMESPACE_REQUIRED}}}",
+            )
+        problems = findings(text, services)
+        if problems:
+            raise rulings_refused(problems)
+        texts.append(text)
+    return texts[0], texts[1]
+
+
+def _whole(plan: Plan, run: Mapping[str, dict[str, object]]) -> dict[str, dict[str, object]]:
+    """Return the build file's services when every base is built from this tree."""
+    return {
         "serve-base": _base(plan.names.serve, {"context": f"{IMAGES}/serve"}),
         "runner-base": _base(
             plan.names.runner_base, _toolchain(plan.builds["runner"], NO_PRIME, ())
@@ -132,25 +161,31 @@ def render(plan: Plan) -> tuple[str, str]:
             **run["editor"],
         },
     }
-    texts = []
-    for services in (built, run):
-        document = {
-            "name": interpolated(PROJECT_VARIABLE, plan.slug),
-            "services": services,
-            "networks": {NETWORK: {"internal": True}},
-            "volumes": {name: {} for name in _volumes(services)},
-        }
-        text = emit(document)
-        if services is run:  # ⛔ the pull file has no default account: an unset one stops here
-            text = text.replace(
-                f"${{{NAMESPACE_VARIABLE}:-{NAMESPACE_DEFAULT}}}",
-                f"${{{NAMESPACE_VARIABLE}:?{NAMESPACE_REQUIRED}}}",
-            )
-        problems = findings(text, services)
-        if problems:
-            raise rulings_refused(problems)
-        texts.append(text)
-    return texts[0], texts[1]
+
+
+def _thin(plan: Plan, run: Mapping[str, dict[str, object]]) -> dict[str, dict[str, object]]:
+    """Return the build file's services when the bases are published: no base is built.
+
+    ⭐ The course's runner and editor warm their dependencies on the published base the
+    lock names, by tag and digest, through the toolchain's course layer; the site's own
+    recipe starts from the published serving base and takes the account as a build argument.
+    """
+    pinned = {
+        "runner": qualified(plan.names.runner_base),
+        "editor": qualified(plan.names.editor_base),
+    }
+    return {
+        "runner-prime": {
+            "build": _toolchain(plan.builds["runner-prime"], PRIME, (), pinned),
+            "scale": 0,
+        },
+        "site": {"build": _site(thin=True), **run["site"]},
+        "runner": {"build": _runner(), **run["runner"]},
+        "editor": {
+            "build": _toolchain(plan.builds["editor-prime"], PRIME, (), pinned),
+            **run["editor"],
+        },
+    }
 
 
 def findings(text: str, services: Mapping[str, object]) -> list[str]:
@@ -251,12 +286,24 @@ def _base(image: str, build: Mapping[str, object]) -> dict[str, object]:
     return {"image": qualified(image), "build": dict(build), "scale": 0}
 
 
-def _toolchain(build: Mapping[str, object], prime: str, bases: Sequence[str]) -> dict[str, object]:
-    """Return a toolchain build, as its own data says, its bases read through named contexts."""
+def _toolchain(
+    build: Mapping[str, object],
+    prime: str,
+    bases: Sequence[str],
+    pinned: Mapping[str, str] | None = None,
+) -> dict[str, object]:
+    """Return a toolchain build, as its own data says, its bases read through named contexts.
+
+    ⭐ With `pinned` (a thin file) a base the build starts from is the published reference
+    named there, passed as the build argument: it is pulled, so no context carries it.
+    """
     here = dict(build["built_here"])  # type: ignore[arg-type]
     args = {key: _literal(str(value)) for key, value in build["args"].items()}
     contexts = {"consumer-prime": prime}
     for arg, which in here.items():
+        if pinned is not None:
+            args[arg] = pinned[which]
+            continue
         base = f"{which}-base"
         if base not in bases:  # pragma: no cover - the four builds name only these
             raise ValueError(
@@ -273,8 +320,18 @@ def _toolchain(build: Mapping[str, object], prime: str, bases: Sequence[str]) ->
     }
 
 
-def _site() -> dict[str, object]:
-    """Return the course's site: the course root as context, on the serving base."""
+def _site(*, thin: bool = False) -> dict[str, object]:
+    """Return the course's site: the course root as context, on the serving base.
+
+    ⭐ A thin site's recipe names its base itself; the build is handed only the account.
+    """
+    if thin:
+        return {
+            "context": ".",
+            "dockerfile": f"{IMAGES}/site/Dockerfile",
+            "target": interpolated(NARRATION_VARIABLE, NARRATIONS[0]),
+            "args": {NAMESPACE_VARIABLE: f"${{{NAMESPACE_VARIABLE}:-{NAMESPACE_DEFAULT}}}"},
+        }
     return {
         "context": ".",
         "dockerfile": f"{IMAGES}/site/Dockerfile",

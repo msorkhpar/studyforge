@@ -17,6 +17,7 @@ from pathlib import Path
 import pytest
 
 from studyforge.skills.execution.standalone import (
+    bases,
     closure,
     compose,
     images,
@@ -26,6 +27,7 @@ from studyforge.skills.execution.standalone import (
     write,
 )
 from tests.studyforge.execute.runnable import fixture_copy
+from tests.studyforge.skills.execution.standalone.test_bases import lock, parsed
 from tests.studyforge.skills.execution.standalone.test_compose import plan
 from tests.studyforge.skills.execution.standalone.test_pages import problems
 from tests.studyforge.skills.execution.standalone.test_vendor import (
@@ -385,3 +387,160 @@ def test_a_course_that_tracks_the_workflow_the_export_writes_is_refused(tmp_path
             platform="linux/amd64",
             run=answered(),
         )
+
+
+# ---------------------------------------------------------------- thin export
+
+#: What each build reads of the toolchain: the course's layers read only the prime.
+INPUTS = {
+    "runner": ["docker/minimal", ".dockerignore"],
+    "editor": ["docker/minimal", ".dockerignore"],
+    "runner-prime": ["docker/prime", "prime", ".dockerignore"],
+    "editor-prime": ["docker/prime", "prime", ".dockerignore"],
+}
+
+
+def thin_toolchain(where: Path) -> Path:
+    """The synthetic toolchain, holding the course layer's recipe and warmers beside the rest."""
+    root = toolchain(where)
+    (root / "docker" / "prime").mkdir(parents=True)
+    (root / "docker" / "prime" / "Dockerfile").write_text("FROM x\n", encoding="utf-8")
+    (root / "prime").mkdir()
+    (root / "prime" / "warm-maven.sh").write_text("#\n", encoding="utf-8")
+    return root
+
+
+def thin_answered():
+    """`git` for real; the toolchain's builds answered with each build's own inputs."""
+    fake = answering(TAGS)
+
+    def run(argv, cwd):
+        if argv[0] == "git":
+            return git(argv, cwd)
+        code, printed = fake(argv, cwd)
+        document = json.loads(printed)
+        document["inputs"] = INPUTS[document["image"]]
+        return code, json.dumps(document)
+
+    return run
+
+
+def export(
+    tmp_path: Path, locked: bases.Bases | None, name: str = "learner"
+) -> tuple[Path, write.Released]:
+    out = tmp_path / name
+    made = write.release(
+        checkout(tmp_path / f"{name}-course"),
+        out,
+        toolchain=thin_toolchain(tmp_path / f"{name}-tc"),
+        platform="linux/amd64",
+        bases=locked,
+        run=thin_answered(),
+    )
+    return out, made
+
+
+@pytest.fixture(scope="module")
+def exported(tmp_path_factory) -> dict[str, tuple[Path, write.Released]]:
+    where = tmp_path_factory.mktemp("thin")
+    return {
+        "thin": export(where, parsed(lock()), "thin"),
+        "whole": export(where, None, "whole"),
+    }
+
+
+def test_a_thin_tree_holds_no_serving_library_no_serve_recipe_and_no_base_recipe(exported):
+    out, _ = exported["thin"]
+    assert not (out / compose.IMAGES / "serve").exists()
+    assert not (out / compose.TOOLCHAIN / "docker" / "minimal").exists()
+    assert not (out / compose.NO_PRIME).exists()
+    assert not [
+        p
+        for p in on_disk(out)
+        if "studyforge/cli/" in p or p.endswith("/library/studyforge/COMMIT")
+    ]
+    assert not any(one.startswith(f"{compose.IMAGES}/serve") for one in on_disk(out))
+
+
+def test_a_thin_tree_keeps_the_course_s_own_layers(exported):
+    out, _ = exported["thin"]
+    for one in (
+        f"{compose.IMAGES}/site/Dockerfile",
+        f"{compose.IMAGES}/runner/Dockerfile",
+        f"{compose.TOOLCHAIN}/docker/prime/Dockerfile",
+        f"{compose.TOOLCHAIN}/prime/warm-maven.sh",
+        f"{compose.TOOLCHAIN}/.dockerignore",
+        "compose.yaml",
+        "compose.pull.yaml",
+        "course.env",
+        "README.md",
+        ".dockerignore",
+    ):
+        assert (out / one).is_file(), one
+
+
+def test_a_thin_manifest_lists_exactly_the_files_the_tree_holds_and_the_locked_bases(exported):
+    out, made = exported["thin"]
+    document = json.loads((out / write.MANIFEST).read_text(encoding="utf-8"))
+    assert document["keeps"] == on_disk(out)
+    assert write.kept_paths(made) == document["keeps"]
+    assert document["bases"] == json.loads(json.dumps({k: lock()[k] for k in bases.KINDS}))
+    assert document["images"]["serve"].endswith(parsed(lock()).serve.reference)
+
+
+def test_a_self_contained_manifest_has_no_bases_key(exported):
+    out, _ = exported["whole"]
+    assert "bases" not in json.loads((out / write.MANIFEST).read_text(encoding="utf-8"))
+
+
+def test_thin_and_self_contained_exports_agree_on_the_course_s_own_files(exported):
+    (thin_out, thin_made), (whole_out, whole_made) = exported["thin"], exported["whole"]
+    assert thin_made.verdicts == whole_made.verdicts
+    assert thin_made.kept == whole_made.kept
+    for one in thin_made.kept:
+        assert (thin_out / one).read_bytes() == (whole_out / one).read_bytes(), one
+    assert set(on_disk(thin_out)) < set(on_disk(whole_out))
+
+
+def test_the_self_contained_export_still_carries_the_library_and_every_recipe(exported):
+    out, _ = exported["whole"]
+    assert (out / compose.IMAGES / "serve" / "Dockerfile").is_file()
+    assert (out / compose.IMAGES / "serve" / "library" / closure.PACKAGE / closure.STAMP).is_file()
+    assert (out / compose.TOOLCHAIN / "docker" / "minimal" / "Dockerfile").is_file()
+    assert (out / compose.NO_PRIME / "README").is_file()
+    built = (out / "compose.yaml").read_text(encoding="utf-8")
+    assert all(f"\n  {one}:\n" in built for one in ("serve-base", "runner-base", "editor-base"))
+    assert "ARG SERVE_BASE" in (out / compose.IMAGES / "site" / "Dockerfile").read_text("utf-8")
+
+
+def test_a_thin_tree_names_no_account_and_no_registry_host(exported):
+    out, _ = exported["thin"]
+    assert account_literals(out) == []
+    recipe = (out / compose.IMAGES / "site" / "Dockerfile").read_text(encoding="utf-8")
+    assert f"${{{images.NAMESPACE_VARIABLE}:?" in recipe
+    assert images.NAMESPACE_DEFAULT not in recipe
+
+
+def test_a_thin_readme_and_settings_say_a_build_needs_the_account_too(exported):
+    out, _ = exported["thin"]
+    settings = (out / "course.env").read_text(encoding="utf-8")
+    assert "needs it too" in settings
+    assert "needs no account" not in (out / "README.md").read_text(encoding="utf-8")
+    whole_out, _ = exported["whole"]
+    assert "needs no account" in (whole_out / "README.md").read_text(encoding="utf-8")
+
+
+def test_a_thin_export_names_the_course_s_images_with_the_bases_digests(exported):
+    _, made = exported["thin"]
+    assert made.names.runner.endswith("-" + "1" * bases.KEY_DIGITS)
+    assert made.names.editor.endswith("-" + "2" * bases.KEY_DIGITS)
+    assert made.names.serve == parsed(lock()).serve.reference
+
+
+def test_a_lock_whose_tags_the_toolchain_does_not_compute_is_refused_before_a_file_is_written(
+    tmp_path,
+):
+    stale = parsed(lock(runner=dict(lock()["runner"], tag="stale")))
+    with pytest.raises(bases.BasesRefused, match="runner base is locked at tag stale"):
+        export(tmp_path, stale)
+    assert not (tmp_path / "learner").exists()

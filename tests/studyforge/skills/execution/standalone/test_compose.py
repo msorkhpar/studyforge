@@ -18,6 +18,7 @@ import pytest
 from studyforge.skills.execution.emit import emit
 from studyforge.skills.execution.standalone import compose, images
 from tests.studyforge.skills.execution import contracts
+from tests.studyforge.skills.execution.standalone.test_bases import lock, parsed
 
 #: The four builds, as the toolchain prints them: only the keys the renderer reads.
 BUILDS = {
@@ -221,3 +222,110 @@ def test_compose_refuses_the_pull_file_with_the_message_until_the_account_is_set
     assert refused.returncode != 0
     assert images.NAMESPACE_VARIABLE in refused.stderr
     assert "Docker Hub account" in refused.stderr
+
+
+def thin_plan(**changes) -> compose.Plan:
+    locked = parsed(lock())
+    names = images.names_for(
+        slug="a-course", course="c0ffee", serve="", builds=BUILDS, bases=locked
+    )
+    return plan(names=names, bases=locked, **changes)
+
+
+@pytest.fixture(scope="module")
+def thin() -> tuple[str, str]:
+    return compose.render(thin_plan())
+
+
+def test_the_self_contained_files_are_pinned(rendered):
+    """⛔ Thin mode changes nothing the self-contained files say."""
+    import hashlib
+
+    built, pulled = rendered
+    assert hashlib.sha256(built.encode("utf-8")).hexdigest() == (
+        "968abf26b43325a69af28ebe1bbf916da9002dc1f1a5fc406b5b4f607702f437"
+    )
+    assert hashlib.sha256(pulled.encode("utf-8")).hexdigest() == (
+        "7b5994d56f28e03a0d09bc6cafebdacb7bfaee955813b9e6363cab38b047f3b2"
+    )
+
+
+def test_a_thin_build_file_builds_no_base_and_reads_none_through_a_context(thin):
+    built, _ = thin
+    for base in ("serve-base", "runner-base", "editor-base"):
+        assert f"\n  {base}:\n" not in built
+    assert "service:serve-base" not in built and "service:runner-base" not in built
+    assert "service:editor-base" not in built
+    assert "\n  runner-prime:\n" in built  # the course's warmed layer is still built here
+    assert built.count("scale: 0") == 1
+
+
+def test_a_thin_courses_layers_start_from_the_published_runner_and_editor_by_digest(thin):
+    built, _ = thin
+    locked = parsed(lock())
+    for base in (locked.runner, locked.editor):
+        assert f"/{base.reference}" in built
+    assert built.count(f"@sha256:{'1' * 64}") == 1  # the runner's layer
+    assert built.count(f"@sha256:{'2' * 64}") == 1  # the editor's layer
+    assert "BASE_IMAGE" in built and "consumer-prime" in built
+
+
+def test_a_thin_site_is_handed_the_account_and_no_base(thin):
+    built, _ = thin
+    assert "SERVE_BASE" not in built
+    assert f"        {images.NAMESPACE_VARIABLE}: " in built
+    assert "studyforge-serve" not in built  # the recipe names it, this file does not
+
+
+def test_no_thin_file_defaults_the_account(thin):
+    built, pulled = thin
+    for text in (built, pulled):
+        assert not defaults_the_account(text)
+        assert f"${{{images.NAMESPACE_VARIABLE}:?{compose.NAMESPACE_REQUIRED}}}" in text
+        assert images.NAMESPACE_DEFAULT not in text
+
+
+def test_a_thin_pull_file_is_the_self_contained_pull_file_with_the_thin_names(thin, rendered):
+    _, pulled = thin
+    _, whole_pulled = rendered
+    strip = lambda text: [  # noqa: E731
+        line for line in text.splitlines() if "image:" not in line
+    ]
+    assert strip(pulled) == strip(whole_pulled)
+    assert "a-course-runner:c0ffee-" + "1" * 12 in pulled
+
+
+def test_a_thin_file_keeps_every_rule_the_self_contained_files_keep(thin):
+    for text in thin:
+        assert "docker.sock" not in text and "0.0.0.0:" not in text.replace(
+            "--bind-addr=0.0.0.0:8080", ""
+        )
+        assert 'user: "1000:1000"' in text
+
+
+@pytest.mark.skipif(shutil.which("docker") is None, reason="no docker CLI on this host")
+def test_compose_itself_reads_both_thin_files_and_refuses_them_until_the_account_is_set(
+    tmp_path, thin
+):
+    for name, text in zip(("compose.yaml", "compose.pull.yaml"), thin, strict=True):
+        (tmp_path / name).write_text(text, encoding="utf-8")
+    (tmp_path / ".studyforge" / "execution" / "prime").mkdir(parents=True, exist_ok=True)
+    for account, ok in (("example-account", True), (None, False)):
+        env = {k: v for k, v in os.environ.items() if k != images.NAMESPACE_VARIABLE}
+        env["CODE_SERVER_PASSWORD"] = "synthetic"
+        if account:
+            env[images.NAMESPACE_VARIABLE] = account
+        for name in ("compose.yaml", "compose.pull.yaml"):
+            done = subprocess.run(
+                ["docker", "compose", "-f", name, "config", "-q"],
+                cwd=tmp_path,
+                env=env,
+                capture_output=True,
+                text=True,
+                timeout=60,
+            )
+            if done.returncode != 0 and "Cannot connect" in done.stderr:
+                pytest.skip("docker is installed and no engine answers")
+            assert (done.returncode == 0) is ok, done.stderr
+            if not ok:
+                assert images.NAMESPACE_VARIABLE in done.stderr

@@ -45,12 +45,17 @@ from studyforge.exercise.bundle.layout import BUNDLES_DIRNAME
 from studyforge.progress import store_dir
 from studyforge.skills.execution.siteimage import BASE
 from studyforge.skills.execution.siteservice import CORPUS, SCRIPT_INSIDE
+from studyforge.skills.execution.standalone import bases as locked
 
 #: The variable a publisher sets to the registry namespace the images go to.
 NAMESPACE_VARIABLE = "STUDYFORGE_NAMESPACE"
 
 #: ⛔ A placeholder, never an account: what a local build tags its images under.
 NAMESPACE_DEFAULT = "studyforge-local"
+
+#: ⛔ What a recipe says when the account is unset: a word with no space, because the
+#: builder reads a `FROM` line's arguments by their spaces. It names the variable.
+NAMESPACE_UNSET = f"{NAMESPACE_VARIABLE}-is-not-set"
 
 #: The size of the site inputs' digest, in bytes: twelve hex digits, made short by its
 #: own size rather than cut from a longer one.
@@ -100,14 +105,33 @@ def qualified(name: str) -> str:
 
 
 def names_for(
-    *, slug: str, course: str, serve: str, builds: Mapping[str, Mapping[str, object]]
+    *,
+    slug: str,
+    course: str,
+    serve: str,
+    builds: Mapping[str, Mapping[str, object]],
+    bases: locked.Bases | None = None,
 ) -> Names:
     """Name every image: `course` versions the course's three, `serve` the serving base.
 
     ⭐ A shared base keeps the toolchain's own tag after the colon, so the same
     inputs name the same image for every course that pulls it.
+
+    ⭐ **With `bases` (a thin export) each base is the locked reference, tag and digest,
+    and each course image's tag carries the digest of the base it starts from**: a
+    base that changes names a new course image, as a changed input does for the site.
     """
     narration = f"${{{NARRATION_VARIABLE}:-{NARRATIONS[0]}}}"
+    if bases is not None:
+        inputs = site_inputs(slug, bases.serve.reference, bases.serve)
+        return Names(
+            serve=bases.serve.reference,
+            runner_base=bases.runner.reference,
+            editor_base=bases.editor.reference,
+            site=f"{slug}-site:{course}-{inputs}-{narration}",
+            runner=f"{slug}-runner:{course}-{locked.key(bases.runner)}",
+            editor=f"{slug}-editor:{course}-{locked.key(bases.editor)}",
+        )
     inputs = site_inputs(slug, serve)
     return Names(
         serve=f"studyforge-serve:{serve}",
@@ -119,7 +143,7 @@ def names_for(
     )
 
 
-def site_inputs(slug: str, serve: str) -> str:
+def site_inputs(slug: str, serve: str, base: locked.Base | None = None) -> str:
     """Return the short digest of what a course's site image is built from, beyond its files.
 
     ⭐ **The site's tag moves when the site's content moves.** The serving base's
@@ -127,10 +151,11 @@ def site_inputs(slug: str, serve: str) -> str:
     own build file and ignore file are the other inputs; a library or build-file
     change therefore names a NEW site image rather than re-pushing an old name
     that anyone who already pulled it would keep. ⛔ The course's own files are
-    the course commit's, already in the tag.
+    the course commit's, already in the tag. A thin site's `serve` is the locked
+    reference, whose digest is the base's own, and `base` puts its build file in.
     """
     digest = hashlib.blake2b(digest_size=INPUTS_BYTES)
-    for part in (serve, site_dockerfile(slug), DOCKERIGNORE):
+    for part in (serve, site_dockerfile(slug, base), DOCKERIGNORE):
         digest.update(part.encode("utf-8") + b"\0")
     return digest.hexdigest()
 
@@ -176,8 +201,13 @@ STRIP_CLIPS = (
 )
 
 
-def site_dockerfile(slug: str) -> str:
+def site_dockerfile(slug: str, base: locked.Base | None = None) -> str:
     """Return the course's site: its material on the serving base, with and without its clips.
+
+    ⭐ **Thin**: with `base` the recipe starts `FROM` the published serving base by tag
+    and digest, under the account `STUDYFORGE_NAMESPACE` names when the image is built:
+    ⛔ no account is written here, and an unset one stops the build before anything
+    is pulled. Without it the recipe starts from the serving base this tree builds.
 
     ⭐ **Two stages from the same base, neither built on the other.** The site
     with no clips also has no reference to one, so its pages ask for nothing and the
@@ -191,6 +221,11 @@ def site_dockerfile(slug: str) -> str:
         f"      | tar -C {CORPUS} -xf -; \\",
         f"    mkdir -p {CORPUS}/{PROGRESS}; \\",
     ]
+    head = ["ARG SERVE_BASE"]
+    first = second = "${SERVE_BASE}"
+    if base is not None:
+        head = [f"ARG {NAMESPACE_VARIABLE}"]
+        first = second = f"${{{NAMESPACE_VARIABLE}:?{NAMESPACE_UNSET}}}/{base.reference}"
     return "\n".join(
         [
             MARK,
@@ -198,9 +233,9 @@ def site_dockerfile(slug: str) -> str:
             "# Two targets: without-narration, whose pages name no clip, and with-narration,",
             "# which adds every clip and refuses to build unless each matches the checksum",
             "# the course committed.",
-            "ARG SERVE_BASE",
+            *head,
             "",
-            f"FROM ${{SERVE_BASE}} AS {NARRATIONS[0]}",
+            f"FROM {first} AS {NARRATIONS[0]}",
             "USER root",
             "RUN --mount=type=bind,source=.,target=/context \\",
             *extract,
@@ -210,7 +245,7 @@ def site_dockerfile(slug: str) -> str:
             f"WORKDIR {CORPUS}",
             f'LABEL org.studyforge.course="{slug}" org.studyforge.narration="without"',
             "",
-            f"FROM ${{SERVE_BASE}} AS {NARRATIONS[1]}",
+            f"FROM {second} AS {NARRATIONS[1]}",
             "USER root",
             "RUN --mount=type=bind,source=.,target=/context \\",
             *extract,
