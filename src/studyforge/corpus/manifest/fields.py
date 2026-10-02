@@ -150,3 +150,19 @@ def onboarding_doc_of(value: object, where: str) -> str | None:
     if not clean:
         raise ManifestError(f"{rule}; the value is not reproduced, since it may be a path")
     return value
+
+
+#: The placement profiles that may be declared. ⚠️ **`placement.profile` owns the profiles;
+#: this is only the set a manifest may name**, and the two must not drift.
+#: This constant is where a third profile is registered, beside its
+#: definition in `corpus.placement`.
+PLACEMENT_PROFILES = ("tree", "sibling")
+
+
+def placement_of(value: object, where: str) -> str:
+    """One of the declared placement profiles (spec §5)."""
+    if value not in PLACEMENT_PROFILES:
+        raise ManifestError(
+            f"{where} 'placement' must be one of {list(PLACEMENT_PROFILES)}, got {describe(value)}"
+        )
+    return value
