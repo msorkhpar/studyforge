@@ -49,8 +49,9 @@ from __future__ import annotations
 from collections.abc import Callable, Iterator
 from pathlib import Path, PurePosixPath
 
+from studyforge.corpus.manifest import link_suffixes
 from studyforge.corpus.placement import relative_href
-from studyforge.execute import is_a_test, pairing, source_suffixes
+from studyforge.execute import is_a_test, pairing
 from studyforge.generate.containers import page_paths
 from studyforge.generate.declarations import Corpus, read_corpus, unit_location
 from studyforge.generate.narration import clips_on_disk, narrated, narration_for
@@ -94,7 +95,7 @@ def unit_bodies(corpus: Corpus) -> Iterator[tuple[PurePosixPath, bytes]]:
     absent = corpus.absent
     above = page_paths(corpus)
     # ⭐ The code a lesson may link: what the declared runtimes write (`page.code`).
-    code = source_suffixes(corpus.manifest.runtimes)
+    code = link_suffixes(corpus.manifest.runtimes)
     # ⭐ Which source a linked test stands beside: the corpus's code walked once.
     pairs = _pairs(corpus) if code else None
     for source in corpus.units:

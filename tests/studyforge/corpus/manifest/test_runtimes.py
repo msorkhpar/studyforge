@@ -246,3 +246,15 @@ def test_every_declarable_runtime_is_pinned_by_the_runner_image():
             f"pins above"
         )
     assert unpinned(RUNTIMES, json.loads(reading.text)) == []
+
+
+def test_a_kts_script_opens_as_code_but_is_no_source_suffix():
+    from studyforge.corpus.manifest.runtimes import LINK_SUFFIXES, SOURCE_SUFFIXES, link_suffixes
+    from studyforge.corpus.manifest import source_suffixes
+
+    assert LINK_SUFFIXES == {"kotlin": (".kts",)}
+    assert SOURCE_SUFFIXES["kotlin"] == (".kt",)
+    assert link_suffixes(("java", "kotlin")) == (".java", ".kt", ".kts")
+    assert source_suffixes(("java", "kotlin")) == (".java", ".kt")
+    assert link_suffixes(("java",)) == source_suffixes(("java",)) == (".java",)
+    assert link_suffixes(()) == ()
