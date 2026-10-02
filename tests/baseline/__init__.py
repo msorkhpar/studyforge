@@ -150,8 +150,8 @@ def normalised(root: Path, whole: bool) -> dict[str, str]:
     site = re.compile(rf"(-site:{commit[:12]}-)[0-9a-f]{{12}}(-)")
 
     def clean(text: str) -> str:
-        text = text.replace(commit, "<commit>").replace(commit[:12], "<commit12>")
-        return site.sub(r"\1<site-inputs>\2", serve.sub("<serve-tag>", text))
+        text = site.sub(r"\1<site-inputs>\2", serve.sub("<serve-tag>", text))
+        return text.replace(commit, "<commit>").replace(commit[:12], "<commit12>")
 
     found = {}
     for path in sorted(root.rglob("*")):
