@@ -74,6 +74,7 @@ from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
+from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.skills.execution.standalone import closure
 from studyforge.version import is_supported
 
@@ -166,6 +167,11 @@ def from_text(text: str, *, placeholder: bool = False) -> Bases:
         raise BasesRefused("the bases lock is not JSON") from garbled
     if not isinstance(document, dict):
         raise BasesRefused("the bases lock is not a JSON object")
+    try:
+        assert_clean(document, "the bases lock")
+    except PersonalDataLeak as leak:
+        # R7: the leak's message names the shape and the place, never the text.
+        raise BasesRefused(str(leak)) from None
     if not is_supported(document.get("bases_api"), {BASES_API}):
         raise BasesRefused(f"the bases lock must declare bases_api {BASES_API}")
     unknown = sorted(set(document) - {"bases_api", *KINDS})

@@ -199,4 +199,15 @@ ACCEPTANCE = {
     #: above takes of code.
     "fits the progress strip of a course of sixty groups and a rail title with no "
     "break inside the column, and draws code's operators without ligatures": "test_scale",
+    #: ⭐ A row of its own because its ORIGIN is the subject: the preview is a static
+    #: page set read from Python's own `http.server`, with no study server behind it.
+    #: ⛔ *No request fails, none asks an `/api/` path or a clip, a quiz grades inside
+    #: the page* is a claim about the console and the network of that origin alone.
+    "opens every page of the read-only preview from a static server with a console free "
+    "of errors, no request to the study server, and no Run or Submit to press": "test_preview",
+    #: ⭐ A row of its own because its CSP is the subject: a published site that names an
+    #: editor in its configuration must let the first page frame it, which only a real
+    #: browser logs a violation for, and only over an origin that answers as the editor.
+    "frames a cold published site's configured editor from the first response, with "
+    "no Content-Security-Policy violation": "test_cold_published_frame",
 }
