@@ -1,0 +1,114 @@
+/* A two-language example: one block, a tab per language.
+
+   ⛔ WRITTEN ONLY FOR A CORPUS THAT DECLARES MODES. It is composed into
+   `modes.css` (`render/example_tabs.py`), so the shared stylesheet keeps its bytes
+   for every other corpus. The rules after this look are generated per corpus: one
+   set per mode, keyed on `html[data-mode]`.
+
+   ⭐ Scripts off, every panel is present under its language label, in the default
+   mode's order; the tab bar ships `hidden`. With scripts on, `data-tabs-on` is set
+   on the block: the bar shows, the labels go, and one panel is open.
+
+   ⭐ Tokens only, so both schemes and both themes read it. ⛔ No ligature: the code
+   is drawn by `reading.css`, which turns them off, and nothing here sets the mono
+   face. */
+
+div[data-example] {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0 0 1.6rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+}
+
+/* The mode's rules set `order` on the tabs and panels (0, 1, ...): the flag and the bar
+   come before them whatever the mode lists. */
+div[data-example] > [data-example-flag] { order: -2; }
+div[data-example] > [data-example-tabs] { order: -1; }
+
+div[data-example] [data-example-label] {
+  margin: 0;
+  max-width: none;
+  padding: .3rem .75rem;
+  font-family: var(--font-ui);
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--fg-soft);
+  border-bottom: 1px solid var(--rule);
+}
+
+div[data-example] [role="tabpanel"] {
+  min-width: 0;
+  padding: .75rem .75rem 0;
+}
+
+div[data-example] [role="tabpanel"] figure.code { margin-top: 0; }
+
+div[data-example] [role="tabpanel"]:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
+div[data-example][data-tabs-on] [data-example-label] { display: none; }
+
+div[data-example] [data-example-tabs] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  padding: 2px 2px 0;
+  border-bottom: 1px solid var(--rule);
+  background: var(--surface-2);
+}
+
+div[data-example] [data-example-tabs][hidden] { display: none; }
+
+div[data-example] [role="tab"] {
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+  padding: .25rem .9rem;
+  border: 0;
+  border-radius: var(--radius-tight) var(--radius-tight) 0 0;
+  background: none;
+  color: var(--muted);
+  font-family: var(--font-ui);
+  font-size: .85rem;
+  cursor: pointer;
+}
+
+div[data-example] [role="tab"]:hover { color: var(--fg); background: var(--surface); }
+
+div[data-example] [role="tab"][aria-selected="true"] {
+  color: var(--fg);
+  background: var(--surface);
+  box-shadow: inset 0 -2px 0 var(--accent);
+  font-weight: 700;
+}
+
+div[data-example] [role="tab"]:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
+div[data-example] [role="tabpanel"][hidden] { display: none; }
+
+/* A block whose point is a message the compiler gave: flagged in words, and by a
+   border that is not the plain one (heavier for an error, dashed for a warning), so
+   the difference is not carried by colour alone. */
+div[data-example][data-output] { border-width: 3px; border-color: var(--sign); }
+div[data-example][data-output="warning"] { border-style: dashed; border-width: 2px; }
+
+div[data-example] [data-example-flag] {
+  margin: 0;
+  max-width: none;
+  padding: .3rem .75rem;
+  background: var(--sign);
+  color: var(--sign-ink);
+  font-family: var(--font-ui);
+  font-size: .82rem;
+  font-weight: 700;
+}
+
+/* --- what each mode shows: generated per corpus, below --------------------- */

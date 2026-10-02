@@ -30,7 +30,8 @@ neither block nor rendered media (C4).
 `document` is the format: `build` assembles and gates, `render` writes the
 exact bytes, `parse` and `load` read one back. `markdown` is the strict reader
 (§6), `scrub` is the gate (R7), `samples` names the sample data the gate
-admits, `language` says what a document's optional `lang` is, and `errors` holds the one exception
+admits, `language` says what a document's optional `lang` is, `example` what an example
+block's tabs and output may be, and `errors` holds the one exception
 both halves of the format raise.
 
 ⭐ **`blocks` is the single block-type list, and it is a contract rather than

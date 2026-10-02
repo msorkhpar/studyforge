@@ -94,13 +94,13 @@ from collections.abc import Container
 
 from studyforge.archive.blocks import BLOCK_TYPES, CONTAINER_TYPES
 from studyforge.describe import describe
-from studyforge.render.page.blocks import figure, prose, verbatim
+from studyforge.render.page.blocks import example, figure, prose, verbatim
 from studyforge.render.page.errors import PageError
 from studyforge.render.page.narration import SILENT, Narration
 
 #: The modules that answer for block types, in a stated order. ⛔ A tuple, so
 #: the mapping below does not depend on iteration order (R10).
-MODULES = (prose, figure, verbatim)
+MODULES = (prose, figure, verbatim, example)
 
 #: What separates two rendered blocks. ⭐ A newline, so a generated page can be
 #: read and diffed by a person — a page emitted on one line is one no reviewer
@@ -216,7 +216,7 @@ def render_one(
             path=here,
             narration=narration,
         )
-        if block_type in CONTAINER_TYPES
+        if block_type in CONTAINER_TYPES and block_type not in example.RENDERS
         else ""
     )
     return renderer(

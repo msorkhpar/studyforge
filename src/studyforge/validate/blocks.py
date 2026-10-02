@@ -33,6 +33,13 @@ from studyforge.validate.corpus import RULE_DOCUMENT, Walk
 from studyforge.validate.report import Finding
 
 LIST = "list"
+EXAMPLE = "example"
+
+#: An example's tab, its flags and what it holds. ⛔ Spelled here as `archive.example` spells
+#: them, and a test pins the two equal: the archive's names stay inside the archive.
+EXAMPLE_TAB_KEYS = ("lang", "span")
+EXAMPLE_OUTPUTS = ("compiler", "warning")
+EXAMPLE_BLOCKS = ("code",)
 
 
 def block_problems(blocks: object, where: str = "blocks") -> Iterator[tuple[str, str]]:
@@ -61,6 +68,50 @@ def _block(block: object, at: str) -> Iterator[tuple[str, str]]:
         yield from _list(block, at)
     elif kind in CONTAINER_TYPES:
         yield from block_problems(block.get("blocks"), f"{at}.blocks")
+        if kind == EXAMPLE:
+            yield from _example(block, at)
+
+
+def _example(block: dict, at: str) -> Iterator[tuple[str, str]]:
+    """An example's id, its tabs (distinct languages whose spans cover its blocks) and output."""
+    if not isinstance(block.get("id"), str) or not block["id"]:
+        yield f"{at}.id", f"is {describe(block.get('id'))}; an example is named by an id"
+    if "output" in block and block["output"] not in EXAMPLE_OUTPUTS:
+        said = describe(block["output"])
+        yield f"{at}.output", f"is {said}; output is one of {list(EXAMPLE_OUTPUTS)}"
+    blocks = block.get("blocks")
+    held = blocks if isinstance(blocks, list) else []
+    for number, part in enumerate(held):
+        if isinstance(part, dict) and part.get("type") not in EXAMPLE_BLOCKS:
+            yield (
+                f"{at}.blocks[{number}]",
+                f"is {describe(part.get('type'))}; an example holds "
+                f"blocks of {list(EXAMPLE_BLOCKS)}",
+            )
+    tabs = block.get("tabs")
+    if not isinstance(tabs, list) or not tabs:
+        yield f"{at}.tabs", f"is {describe(tabs)}; tabs is a non-empty array"
+        return
+    seen: list[object] = []
+    covered = 0
+    for number, tab in enumerate(tabs):
+        here = f"{at}.tabs[{number}]"
+        if not isinstance(tab, dict) or tuple(tab) != EXAMPLE_TAB_KEYS:
+            yield here, f"is {describe(tab)}; a tab is an object with {list(EXAMPLE_TAB_KEYS)}"
+            continue
+        if not isinstance(tab["lang"], str) or not tab["lang"]:
+            yield f"{here}.lang", f"is {describe(tab['lang'])}; a tab names a language by its id"
+        elif tab["lang"] in seen:
+            yield f"{here}.lang", "repeats a language; the tabs of an example name distinct ones"
+        else:
+            seen.append(tab["lang"])
+        span = tab["span"]
+        if not isinstance(span, int) or isinstance(span, bool) or span < 1:
+            yield f"{here}.span", f"is {describe(span)}; span is a positive integer"
+        else:
+            covered += span
+    if covered != len(held):
+        yield f"{at}.tabs", "do not cover the example's blocks exactly once, in order"
 
 
 def _list(block: dict, at: str) -> Iterator[tuple[str, str]]:

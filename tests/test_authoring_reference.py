@@ -158,7 +158,7 @@ def test_the_reason_floor_the_reference_quotes_is_the_one_the_code_enforces():
 
 def test_the_block_vocabulary_is_the_shipped_vocabulary_both_ways():
     named = vocabulary_under(
-        document("archive.md"), "`blocks` — the vocabulary is closed at eleven types"
+        document("archive.md"), "`blocks` — the vocabulary is closed at twelve types"
     )
     assert named - set(BLOCK_TYPES) == set(), "archive.md names a block type that does not exist"
     assert set(BLOCK_TYPES) - named == set(), (

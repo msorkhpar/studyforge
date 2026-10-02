@@ -211,9 +211,9 @@ original in order to place one.
 
 ---
 
-## `blocks` — the vocabulary is closed at eleven types
+## `blocks` — the vocabulary is closed at twelve types
 
-**A unit's body is a sequence of typed blocks. There are eleven types and that
+**A unit's body is a sequence of typed blocks. There are twelve types and that
 list is a contract, not a convenience.**
 
 | Type | Carries |
@@ -229,9 +229,24 @@ list is a contract, not a convenience.**
 | `quote` | `blocks` — it holds other blocks |
 | `html` | `text` — raw markup the reader wants preserved |
 | `disclosure` | `summary`, `open`, `blocks` — it holds other blocks |
+| `example` | `id`, `tabs`, `blocks`, and `output` when written — it holds other blocks |
 
-**`quote` and `disclosure` hold other blocks**, so anything that walks a
-document recurses on that property rather than naming those two by hand.
+**`quote`, `disclosure` and `example` hold other blocks**, so anything that walks a
+document recurses on that property rather than naming those three by hand.
+
+**An example is one run of code fences with a tab per language.** Its `blocks` are
+`code` blocks only, flat, and its `tabs` cut them into consecutive spans, one per
+language: `{"lang": "<id>", "span": <how many blocks>}`. A tab's first block is the
+program and the blocks after it are what it printed. The languages are distinct and
+declared in `corpus.json`, the spans cover every block exactly once, and `output` is
+`compiler` or `warning` where the point of the block is a message the compiler gave
+(the page then says the code is refused or warned about, on purpose). An example is
+counted under `examples` only in a document that holds one, so every other document
+keeps its `counts` and its digest. `archive.markdown.blocks_of(regions(text),
+fence_labels)` writes the block from an `<!-- example: ... -->` region: a fence whose
+label belongs to a language opens its tab and any other fence is that tab's output.
+`validate` reads the shape (rule `document`) and a tab naming an undeclared language
+(rule `language-undeclared`).
 
 **A list item is a string, or an array of its parts in reading order**: runs of
 text, nested `list` blocks, and `code` blocks. Keep a step's snippet inside its
@@ -250,7 +265,7 @@ records the number it starts at as `start`.
 **`html` exists because real material contains raw markup**, and a reader that
 raised on anything it did not recognise would stop an ingest dead.
 
-**A construct that fits none of the eleven is a finding about the vocabulary,
+**A construct that fits none of the twelve is a finding about the vocabulary,
 not a block to throw away.** Report what you cannot read; never drop it. A
 dropped block is absent from the digest *and* from the counts, so nothing
 downstream can notice it went missing.

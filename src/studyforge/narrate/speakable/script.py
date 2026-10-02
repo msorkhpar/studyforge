@@ -145,6 +145,7 @@ SPEECH_OF = {
     "quote": "recurse",
     "html": "silent",
     "disclosure": "summary",
+    "example": "recurse",
 }
 
 
