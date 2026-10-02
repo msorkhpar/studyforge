@@ -461,6 +461,55 @@ GRADLE_COMPILE_ERROR = (
 )
 
 
+#: ⚠️ NOT captures: a failing and a passing Gradle run written in the shape Gradle prints
+#: with `testLogging { exceptionFormat = TestExceptionFormat.FULL }` in `tasks.test`: the
+#: exception type and its whole message under each FAILED test, stack intact.
+GRADLE_FULL_FAILURE = (
+    "> Task :compileKotlin UP-TO-DATE",
+    "> Task :test FAILED",
+    "",
+    "BasketTest > totalsABasket() FAILED",
+    "    org.opentest4j.AssertionFailedError: basket total ==> expected: <10> but was: <3>",
+    "        at app//org.junit.jupiter.api.AssertionFailureBuilder.build(Builder.java:151)",
+    "        at app//org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)",
+    "        at app//BasketTest.totalsABasket(BasketTest.kt:12)",
+    "",
+    "BasketTest > explainsItself() FAILED",
+    "    java.lang.IllegalStateException: the discount was applied twice",
+    "    see https://docs.gradle.org/current/userguide/x.html for why",
+    "    Consider enabling the second discount only once",
+    "        at app//Basket.total(Basket.kt:9)",
+    "        at app//BasketTest.explainsItself(BasketTest.kt:20)",
+    "",
+    "2 tests completed, 2 failed",
+    "",
+    "FAILURE: Build failed with an exception.",
+    "",
+    "* What went wrong:",
+    "Execution failed for task ':test'.",
+    (
+        "> There were failing tests. See the report at: "
+        "file:///path/to/project/build/reports/tests/test/index.html"
+    ),
+    "",
+    "* Try:",
+    "> Run with --scan to get full insights from a Build Scan (powered by Develocity).",
+    "",
+    "BUILD FAILED in 2s",
+    "3 actionable tasks: 1 executed, 2 up-to-date",
+)
+
+GRADLE_FULL_PASS = (
+    "> Task :compileKotlin UP-TO-DATE",
+    "> Task :test",
+    "",
+    "BasketTest > totalsABasket() PASSED",
+    "",
+    "BUILD SUCCESSFUL in 1s",
+    "3 actionable tasks: 1 executed, 2 up-to-date",
+)
+
+
 #: Every transcript, by name, for the properties that hold of all of them.
 ALL = {
     "MAVEN_PASS": MAVEN_PASS,
@@ -471,6 +520,8 @@ ALL = {
     "GRADLE_FAILURE": GRADLE_FAILURE,
     "GRADLE_PASS": GRADLE_PASS,
     "GRADLE_COMPILE_ERROR": GRADLE_COMPILE_ERROR,
+    "GRADLE_FULL_FAILURE": GRADLE_FULL_FAILURE,
+    "GRADLE_FULL_PASS": GRADLE_FULL_PASS,
     "MAVEN_QUIET_TEST_FAILURE": MAVEN_QUIET_TEST_FAILURE,
     "MAVEN_QUIET_COMPILE_ERROR": MAVEN_QUIET_COMPILE_ERROR,
 }

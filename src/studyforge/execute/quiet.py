@@ -192,6 +192,11 @@ GRADLE = Toolchain(
         r"^\d+ tests? completed",
         r"(AssertionError|AssertionFailedError|Exception|Error):",
         r"^\s+(expected:|actual:)",
+        # `exceptionFormat = FULL` prints a failed test's exception four spaces in:
+        # the type, then the assertion message, which may run to several lines and
+        # may say anything (a link, a sentence). Such a line is the reason the test
+        # failed, so no noise rule can drop it. Gradle's own notes start at column 0.
+        r"^ {4}\S",
     ),
     noise=(
         r"^\* (What went wrong|Try|Get more help|Where):",
