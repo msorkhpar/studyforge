@@ -33,7 +33,7 @@ file's own — the package — is the partner, and a tie there is no partner too
 
 ## ⭐ Across languages only when the same suffix pairs nothing
 
-⭐ Where a module holds Java and Kotlin together (`SHARED_MODULE_LANGUAGES`, both
+⭐ Where a module holds Java and Kotlin together (`SHARED_MODULE_RUNTIMES`, both
 declared), a test that no source of its own suffix pairs falls back to a source of the
 other language, by the same name and then the same text; a source likewise falls back to
 a test of the other. ⛔ **Same-suffix pairing is read first and wins**; a corpus declaring
