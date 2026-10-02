@@ -30,6 +30,7 @@ from pathlib import Path
 
 from studyforge.archive.document import KINDS
 from studyforge.archive.layout import DOCUMENT_SUFFIX
+from studyforge.archive.scrub import assert_clean
 from studyforge.corpus.container import CONTAINER_FILENAME
 from studyforge.corpus.placement.names import ARCHIVE_DIRNAME
 
@@ -67,7 +68,11 @@ def _json(path: Path) -> dict:
         document = json.loads(path.read_text(encoding="utf-8"))
     except OSError, ValueError:
         return {}
-    return document if isinstance(document, dict) else {}
+    if not isinstance(document, dict):
+        return {}
+    # R7: a record's titles reach the README, so a record carrying personal data is refused here.
+    assert_clean(document, path.name)
+    return document
 
 
 def _count(count: int) -> int | None:
