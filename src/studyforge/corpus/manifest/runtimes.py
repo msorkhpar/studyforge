@@ -129,6 +129,11 @@ def source_suffixes(runtimes: tuple[str, ...] | list[str]) -> tuple[str, ...]:
     return tuple(sorted({one for name in runtimes for one in SOURCE_SUFFIXES.get(name, ())}))
 
 
+def all_link_suffixes() -> tuple[str, ...]:
+    """Return every suffix any runtime writes or links as code, sorted, once each."""
+    return link_suffixes(tuple(sorted({*SOURCE_SUFFIXES, *LINK_SUFFIXES})))
+
+
 def link_suffixes(runtimes: tuple[str, ...] | list[str]) -> tuple[str, ...]:
     """Return every suffix a link opens as code for the declared `runtimes`, sorted, once each.
 

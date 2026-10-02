@@ -62,7 +62,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
-from studyforge.corpus.manifest.runtimes import link_suffixes
+from studyforge.corpus.manifest import link_suffixes
 from studyforge.execute.codetree import CodeRefused, code_files, in_copy
 from studyforge.execute.conventions import (
     BUILD_FILES,

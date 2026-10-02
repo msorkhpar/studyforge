@@ -106,6 +106,8 @@ from studyforge.corpus.manifest.runtimes import (
     REQUIRES_JAVA,
     RUNTIMES,
     SOURCE_SUFFIXES,
+    all_link_suffixes,
+    link_suffixes,
     parse_runtimes,
     source_suffixes,
 )
@@ -155,7 +157,9 @@ __all__ = [
     "NotMaterial",
     "PermittedEdit",
     "Reversal",
+    "all_link_suffixes",
     "from_document",
+    "link_suffixes",
     "load",
     "parse",
     "parse_content",

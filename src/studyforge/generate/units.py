@@ -49,7 +49,7 @@ from __future__ import annotations
 from collections.abc import Callable, Iterator
 from pathlib import Path, PurePosixPath
 
-from studyforge.corpus.manifest.runtimes import link_suffixes
+from studyforge.corpus.manifest import link_suffixes
 from studyforge.corpus.placement import relative_href
 from studyforge.execute import is_a_test, pairing
 from studyforge.generate.containers import page_paths

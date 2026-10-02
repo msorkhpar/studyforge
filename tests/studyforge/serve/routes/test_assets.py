@@ -317,7 +317,9 @@ def test_only_the_root_icon_is_answered_with_no_content(site):
     assert get(site, "/units/favicon.ico").status == 404
 
 
-@pytest.mark.parametrize("name", ["Types.java", "Main.kt", "build.gradle.kts", "greet.py", "run.sh", "query.sql"])
+@pytest.mark.parametrize(
+    "name", ["Types.java", "Main.kt", "build.gradle.kts", "greet.py", "run.sh", "query.sql"]
+)
 def test_a_code_file_is_served_as_text_the_browser_shows_never_a_download(name):
     # ⭐ A lesson's link to its code falls back to this plain view, so
     # it must be a view: text, gated like every text, never opaque bytes.

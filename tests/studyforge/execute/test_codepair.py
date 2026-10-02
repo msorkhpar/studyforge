@@ -166,11 +166,12 @@ def test_code_too_large_to_copy_pairs_nothing(tmp_path, monkeypatch):
 def test_a_kts_script_opens_in_the_editor_but_is_no_code_file_for_pairing(tmp_path):
     from studyforge.execute.codepair import opens_as_code
 
-    root = corpus(tmp_path, {"app/build.gradle.kts": "plugins {}\n", "app/Main.kt": "fun main() {}\n"})
+    extra = {"app/build.gradle.kts": "plugins {}\n", "app/Main.kt": "fun main() {}\n"}
+    root = corpus(tmp_path, extra)
     runtimes = ("java", "kotlin")
     found = pair(root, "app/build.gradle.kts", runtimes)
     assert (found.source, found.test) == ("app/build.gradle.kts", None)
     assert pair(root, "app/build.gradle.kts", JAVA) is None
     assert opens_as_code("a/B.kts", runtimes) and not opens_as_code("a/B.kts", JAVA)
-    assert not is_code("a/B.kts", runtimes), "a script is still no source for a test to stand beside"
+    assert not is_code("a/B.kts", runtimes), "still no source for a test to stand beside"
     assert pair(root, "app/Main.kt", runtimes).test is None
