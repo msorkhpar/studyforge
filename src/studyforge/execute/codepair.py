@@ -31,6 +31,15 @@ something the author did not; the file then opens alone. ⭐ Where several
 files share one name, the one whose directory shares the longest tail with the
 file's own — the package — is the partner, and a tie there is no partner too.
 
+## ⭐ Across languages only when the same suffix pairs nothing
+
+⭐ Where a module holds Java and Kotlin together (`SHARED_MODULE_LANGUAGES`, both
+declared), a test that no source of its own suffix pairs falls back to a source of the
+other language, by the same name and then the same text; a source likewise falls back to
+a test of the other. ⛔ **Same-suffix pairing is read first and wins**; a corpus declaring
+one such language, or none, has no fallback and pairs exactly as before. The test command
+is unchanged: it names the module and the test's stem, never its source.
+
 ## ⭐ The build module is the scope
 
 ⭐ **A partner is looked for inside the file's own build module** — the
@@ -67,6 +76,7 @@ from studyforge.execute.codetree import CodeRefused, code_files, in_copy
 from studyforge.execute.conventions import (
     BUILD_FILES,
     is_a_test,
+    other_language_suffixes,
     source_suffixes,
     tested_stem,
 )
@@ -147,18 +157,34 @@ def pair_in(
         return None
     module = module_of(files, path, runtimes)
     suffix = PurePosixPath(path).suffix
+    other = other_language_suffixes(suffix, runtimes)
     inside = [one for one in files if one.endswith(suffix) and _under(one, module)]
     if is_a_test(path):
         sources = [one for one in inside if not is_a_test(one)]
         partner = _by_name(path, sources, tested_stem(_stem(path)))
         if partner is None:
             partner = _by_text(files[path], sources)
+        if partner is None and other:
+            # ⭐ Only where no same-suffix source paired: a source of another language.
+            sources = [one for one in files if one.endswith(other) and _under(one, module)]
+            sources = [one for one in sources if not is_a_test(one)]
+            partner = _by_name(path, sources, tested_stem(_stem(path)))
+            if partner is None:
+                partner = _by_text(files[path], sources)
         return Pair(opened=path, source=partner, test=path, module=module)
     tests = [one for one in inside if is_a_test(one)]
     named = [one for one in tests if tested_stem(_stem(one)) == _stem(path)]
     partner = _by_name(path, named, None)
     if partner is None:
         partner = _naming(path, {one: files[one] for one in tests})
+    if partner is None and other:
+        # ⭐ Only where no same-suffix test paired: a test of another language.
+        tests = [one for one in files if one.endswith(other) and _under(one, module)]
+        tests = [one for one in tests if is_a_test(one)]
+        named = [one for one in tests if tested_stem(_stem(one)) == _stem(path)]
+        partner = _by_name(path, named, None)
+        if partner is None:
+            partner = _naming(path, {one: files[one] for one in tests})
     return Pair(opened=path, source=path, test=partner, module=module)
 
 

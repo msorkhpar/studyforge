@@ -175,3 +175,84 @@ def test_a_kts_script_opens_in_the_editor_but_is_no_code_file_for_pairing(tmp_pa
     assert opens_as_code("a/B.kts", runtimes) and not opens_as_code("a/B.kts", JAVA)
     assert not is_code("a/B.kts", runtimes), "still no source for a test to stand beside"
     assert pair(root, "app/Main.kt", runtimes).test is None
+
+
+MIXED = ("gradle", "java", "kotlin")
+KT = "interop/src/main/kotlin/p"
+JV = "interop/src/main/java/p"
+JT = "interop/src/test/java/p"
+KTT = "interop/src/test/kotlin/p"
+
+
+def mixed(root: Path, extra: dict[str, str] | None = None) -> Path:
+    """A Gradle module holding a Kotlin class with a Java test, and a pair in each language."""
+    files = {
+        "interop/build.gradle.kts": "// build\n",
+        f"{KT}/Greeter.kt": "class Greeter\n",
+        f"{JT}/GreeterTest.java": "class GreeterTest { Greeter g; }\n",
+        f"{KT}/Both.kt": "class Both\n",
+        f"{JV}/Both.java": "class Both {}\n",
+        f"{KTT}/BothTest.kt": "class BothTest { Both b }\n",
+        f"{JT}/BothTest.java": "class BothTest { Both b; }\n",
+        f"{JV}/OnlyJava.java": "class OnlyJava {}\n",
+        f"{KTT}/OnlyJavaTest.kt": "class OnlyJavaTest { OnlyJava o }\n",
+        f"{JV}/Lonely.java": "class Lonely {}\n",
+        "other/build.gradle.kts": "// build\n",
+        "other/src/test/java/p/GreeterTest.java": "class GreeterTest { Greeter g; }\n",
+        **(extra or {}),
+    }
+    for where, text in files.items():
+        (root / where).parent.mkdir(parents=True, exist_ok=True)
+        (root / where).write_text(text, encoding="utf-8")
+    return root
+
+
+def test_a_java_test_pairs_a_kotlin_source_in_its_module_and_back(tmp_path):
+    root = mixed(tmp_path)
+    found = pair(root, f"{JT}/GreeterTest.java", MIXED)
+    assert (found.source, found.test, found.module) == (
+        f"{KT}/Greeter.kt",
+        f"{JT}/GreeterTest.java",
+        "interop",
+    )
+    back = pair(root, f"{KT}/Greeter.kt", MIXED)
+    assert (back.source, back.test) == (found.source, found.test)
+
+
+def test_a_source_of_the_other_language_in_another_module_is_no_partner(tmp_path):
+    found = pair(mixed(tmp_path), "other/src/test/java/p/GreeterTest.java", MIXED)
+    assert found.source is None
+
+
+def test_the_same_suffix_pairs_first_where_it_exists(tmp_path):
+    root = mixed(tmp_path)
+    java = pair(root, f"{JT}/BothTest.java", MIXED)
+    kotlin = pair(root, f"{KTT}/BothTest.kt", MIXED)
+    assert java.source == f"{JV}/Both.java"
+    assert kotlin.source == f"{KT}/Both.kt"
+    assert pair(root, f"{JV}/Both.java", MIXED).test == f"{JT}/BothTest.java"
+    assert pair(root, f"{KT}/Both.kt", MIXED).test == f"{KTT}/BothTest.kt"
+
+
+def test_a_source_falls_back_to_the_other_language_test_and_a_lonely_one_stays_alone(tmp_path):
+    root = mixed(tmp_path)
+    assert pair(root, f"{JV}/OnlyJava.java", MIXED).test == f"{KTT}/OnlyJavaTest.kt"
+    assert pair(root, f"{JV}/Lonely.java", MIXED).test is None
+
+
+def test_a_one_language_declaration_never_crosses_suffixes(tmp_path):
+    root = mixed(tmp_path)
+    assert pair(root, f"{JT}/GreeterTest.java", ("gradle", "java")).source is None
+    assert pair(root, f"{KT}/Greeter.kt", ("gradle", "kotlin")).test is None
+
+
+def test_a_cross_language_tie_is_no_partner(tmp_path):
+    root = mixed(
+        tmp_path,
+        {
+            f"{KT}/Alpha.kt": "class Alpha\n",
+            f"{KT}/Beta.kt": "class Beta\n",
+            f"{JT}/MixTest.java": "class MixTest { Alpha a; Beta b; }\n",
+        },
+    )
+    assert pair(root, f"{JT}/MixTest.java", MIXED).source is None
