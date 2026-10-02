@@ -88,6 +88,7 @@ from urllib.parse import unquote
 
 from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.corpus.manifest import SOURCE_SUFFIXES
+from studyforge.corpus.manifest.runtimes import LINK_SUFFIXES
 from studyforge.corpus.manifest.document import MANIFEST_FILENAME
 from studyforge.corpus.placement.profile import GENERATED_ROOT
 from studyforge.progress import store_dir
@@ -142,7 +143,10 @@ GATED_TYPES = ("text/", "application/json", "image/svg+xml")
 #: a plain view the browser shows rather than a download (a code example's fallback);
 #: every entry spelled below wins over that, so `.js` stays a script.
 CONTENT_TYPES = {
-    **dict.fromkeys(sorted({one for kind in SOURCE_SUFFIXES.values() for one in kind}), TEXT_TYPE),
+    **dict.fromkeys(
+        sorted({one for kind in (*SOURCE_SUFFIXES.values(), *LINK_SUFFIXES.values()) for one in kind}),
+        TEXT_TYPE,
+    ),
     ".html": "text/html; charset=utf-8",
     ".css": "text/css; charset=utf-8",
     ".js": "text/javascript; charset=utf-8",
@@ -171,7 +175,10 @@ DEFAULT_CONTENT_TYPE = "application/octet-stream"
 #: `.js` stays a script). ⛔ Never refused for a sample address or token, or its size; a home path
 #: or hostname still is, and `withheld` is still asked.
 SOURCE_SUFFIXES_SERVED = frozenset(
-    one for kind in SOURCE_SUFFIXES.values() for one in kind if CONTENT_TYPES[one] == TEXT_TYPE
+    one
+    for kind in (*SOURCE_SUFFIXES.values(), *LINK_SUFFIXES.values())
+    for one in kind
+    if CONTENT_TYPES[one] == TEXT_TYPE
 )
 SAMPLES = re.compile(r"\b[\w.%+\-]+@[\w.\-]+\.[A-Za-z]{2,}\b|\bBearer\s+[\w.\-]{8,}")
 

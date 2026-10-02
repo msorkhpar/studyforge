@@ -73,6 +73,15 @@ SOURCE_SUFFIXES: dict[str, tuple[str, ...]] = {
     "sqlite": (".sql",),
 }
 
+#: ⭐ The suffixes a lesson's link to a file opens as code, BEYOND `SOURCE_SUFFIXES`,
+#: by runtime name. ⛔ A separate list on purpose: a script such as a `.kts` build
+#: script is no source that a test stands beside, so adding it to `SOURCE_SUFFIXES`
+#: would change what the framework pairs and recognises as a test; this list changes
+#: only which links open in the editor and which files are served as text.
+LINK_SUFFIXES: dict[str, tuple[str, ...]] = {
+    "kotlin": (".kts",),
+}
+
 #: The build tools and the language that run on a JVM: each is refused without
 #: `java` beside it in the same list.
 REQUIRES_JAVA = ("gradle", "kotlin", "maven")
@@ -118,3 +127,19 @@ def parse_runtimes(value: object, *, exercises: bool, present: bool = True) -> t
 def source_suffixes(runtimes: tuple[str, ...] | list[str]) -> tuple[str, ...]:
     """Return every source suffix the declared `runtimes` write, sorted, once each."""
     return tuple(sorted({one for name in runtimes for one in SOURCE_SUFFIXES.get(name, ())}))
+
+
+def link_suffixes(runtimes: tuple[str, ...] | list[str]) -> tuple[str, ...]:
+    """Return every suffix a link opens as code for the declared `runtimes`, sorted, once each.
+
+    ⭐ `source_suffixes(runtimes)` and `LINK_SUFFIXES`' own: a superset that pairs nothing new.
+    """
+    return tuple(
+        sorted(
+            {
+                one
+                for name in runtimes
+                for one in (*SOURCE_SUFFIXES.get(name, ()), *LINK_SUFFIXES.get(name, ()))
+            }
+        )
+    )

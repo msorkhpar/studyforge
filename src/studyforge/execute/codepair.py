@@ -62,6 +62,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
+from studyforge.corpus.manifest.runtimes import link_suffixes
 from studyforge.execute.codetree import CodeRefused, code_files, in_copy
 from studyforge.execute.conventions import (
     BUILD_FILES,
@@ -102,6 +103,16 @@ def is_code(path: str, runtimes: tuple[str, ...] | list[str]) -> bool:
     return bool(suffixes) and path.endswith(suffixes)
 
 
+def opens_as_code(path: str, runtimes: tuple[str, ...] | list[str]) -> bool:
+    """Whether a link to a corpus-relative path opens in the editor: code, or a linked script.
+
+    ⭐ `is_code`'s answer plus `LINK_SUFFIXES` (a `.kts` build script). ⛔ `is_code` itself
+    is unchanged, so what counts as a test and what a test command runs stay as they were.
+    """
+    suffixes = link_suffixes(runtimes)
+    return bool(suffixes) and path.endswith(suffixes)
+
+
 def pair(root: Path, path: str, runtimes: tuple[str, ...] | list[str]) -> Pair | None:
     """Return `path`'s pair, or `None` when it is not a code file the copy holds."""
     return pair_in(code_files(Path(root)), path, runtimes)
@@ -132,7 +143,7 @@ def pair_in(
     files: dict[str, Path], path: str, runtimes: tuple[str, ...] | list[str]
 ) -> Pair | None:
     """Return `path`'s pair among `files` (`codetree.code_files`'s answer), or `None`."""
-    if path not in files or not is_code(path, runtimes):
+    if path not in files or not opens_as_code(path, runtimes):
         return None
     module = module_of(files, path, runtimes)
     suffix = PurePosixPath(path).suffix
