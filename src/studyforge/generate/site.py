@@ -165,7 +165,8 @@ def assets(corpus: Corpus, into: Path | str) -> Written:
     written: list[PurePosixPath] = []
     refused: list[PurePosixPath] = []
     replaced: list[PurePosixPath] = []
-    for filename, body in sorted({**written_files(), **modes.files(modes.offer(corpus.manifest.reading))}.items()):
+    shared = {**written_files(), **modes.files(modes.offer(corpus.manifest.reading))}
+    for filename, body in sorted(shared.items()):
         place(
             out,
             directory / filename,

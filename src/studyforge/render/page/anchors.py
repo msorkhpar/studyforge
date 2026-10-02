@@ -367,16 +367,14 @@ def outline(document: dict) -> str:
 
 
 def _languages(document: dict) -> dict[str, str]:
-    """`href -> ' data-lang="id"'` for each outline line that belongs to a tagged section.
+    """`href -> ' data-lang="id"'` for each outline line of a tagged section, else empty.
 
-    ⭐ Empty for a document with no tagged section, so an untagged page's outline
-    keeps its bytes. A line carries its section's language so a reading mode that
-    hides the section hides the line that points at it.
+    ⭐ An untagged page's outline keeps its bytes; a reading mode that hides a
+    section hides the line that points at it.
     """
     tags: dict[str, str] = {}
     for section in document.get("sections") or ():
-        lang = section.get("lang") if isinstance(section, dict) else None
-        key = section.get("key") if isinstance(section, dict) else None
+        lang, key = section.get("lang"), section.get("key")
         if not isinstance(lang, str) or not lang or not isinstance(key, str):
             continue
         attribute = f' data-lang="{escape_attribute(lang)}"'

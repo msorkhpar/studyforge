@@ -170,7 +170,7 @@ def test_a_choice_shows_its_language_and_survives_a_reload_and_a_page_of_another
     fresh.evaluate(f"document.querySelector('{QUESTION} [data-mode-choice=\"only-bb\"]').click()")
     assert fresh.evaluate(ASKING)["shown"] is False
     assert fresh.evaluate(VISIBLE) == ["prose", "prose-3"]
-    assert fresh.evaluate(OUTLINE) == ["common", "bb"], "the outline hides the other language's line"
+    assert fresh.evaluate(OUTLINE) == ["common", "bb"], "the other language's line stays"
     for where in (UNIT, CONTAINER, INDEX, UNIT):
         reopen(fresh, origin, where)
         assert fresh.evaluate(ASKING)["shown"] is False, f"{where} asked again"
@@ -240,7 +240,8 @@ def test_a_page_whose_storage_is_refused_reads_the_default_and_asks_nothing(
         "Page.addScriptToEvaluateOnNewDocument", {"source": REFUSED}, session=open_page.session
     )
     reopen(open_page, origin)
-    assert open_page.evaluate("(() => { try { localStorage; return 'open'; } catch (e) { return 'refused'; } })()") == "refused"
+    probe = "(() => { try { localStorage; return 'open'; } catch (e) { return 'refused'; } })()"
+    assert open_page.evaluate(probe) == "refused"
     assert open_page.evaluate(ASKING)["shown"] is False
     assert open_page.evaluate(VISIBLE) == ["prose", "prose-2"]
     assert open_page.evaluate(SWITCHED)["shown"] is True

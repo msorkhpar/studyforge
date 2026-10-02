@@ -1,4 +1,4 @@
-"""A corpus that declares modes writes the modes client; one that declares none writes nothing of it."""
+"""A corpus that declares modes writes the modes client; one that declares none writes none."""
 
 from __future__ import annotations
 

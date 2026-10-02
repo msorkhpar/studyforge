@@ -71,7 +71,8 @@ def test_the_stylesheet_has_one_rule_per_mode_and_the_script_is_the_asset():
     assert set(written) == {"modes.css", "modes.js"}
     css = written["modes.css"]
     for mode in READING.choices:
-        assert f'html[data-mode="{mode.id}"] section[data-lang]:not([data-lang="{mode.prose}"])' in css
+        hidden = f'section[data-lang]:not([data-lang="{mode.prose}"])'
+        assert f'html[data-mode="{mode.id}"] {hidden}' in css
     assert "ligature" in css
     assert "localStorage" not in written["modes.js"]
     assert "window.studyforge.progress" in written["modes.js"]

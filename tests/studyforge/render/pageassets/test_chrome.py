@@ -183,9 +183,9 @@ SKELETON_SLOTS = {
         "region 7, the read control. ⭐ A slot shows up here as soon as the "
         "skeleton carries it, without waiting for a golden to emit it"
     ),
-    "rootattributes": "an attribute on `<html>` a corpus declaring modes carries; nothing is painted",
-    "modehead": "a corpus declaring modes' own stylesheet, script and boot, in `<head>`; nothing is painted",
-    "modeswitch": "a corpus declaring modes' switch and first-visit question, inside the masthead",
+    "rootattributes": "the mode attribute on `<html>` of a modes corpus; nothing is painted",
+    "modehead": "a modes corpus' stylesheet, script and boot, in `<head>`; nothing is painted",
+    "modeswitch": "a modes corpus' switch and first-visit question, inside the masthead",
     "player": "the narration transport's — the DEFERRED row above",
     "nav": "region 3",
     "rail": (
