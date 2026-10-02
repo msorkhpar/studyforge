@@ -56,7 +56,9 @@ def test_the_page_holds_every_section_and_tags_only_the_tagged_ones(tmp_path):
     body = unit_page(build(tmp_path, "tagged", documents, READING))
     sections = [(m.group(1), m.group(3)) for m in SECTION.finditer(body)]
     assert sections == [("prose", None), ("prose-2", "aa"), ("prose-3", "bb")]
-    assert body.count("data-lang=") == 2
+    # ⭐ Two sections, and the outline lines that point at them.
+    assert body.count("<section id=\"s-prose-") == 2
+    assert len(re.findall(r"<section [^>]*data-lang=", body)) == 2
 
 
 def test_a_tagged_practice_is_a_section_of_the_page_too(tmp_path):
@@ -65,9 +67,20 @@ def test_a_tagged_practice_is_a_section_of_the_page_too(tmp_path):
     assert ("practice-prose", "aa") in [(m.group(1), m.group(3)) for m in SECTION.finditer(body)]
 
 
-def test_an_untagged_document_builds_to_the_same_bytes_whether_or_not_modes_are_declared(tmp_path):
+def test_an_untagged_document_builds_to_the_same_bytes_whether_or_not_languages_are_declared(
+    tmp_path,
+):
     documents = [document(ordinal=1), document(ordinal=2)]
     plain = build(tmp_path, "plain", documents, {})
+    declared = build(
+        tmp_path, "declared", documents, {"corpus_api": 8, "languages": READING["languages"]}
+    )
+    assert pages(plain) == pages(declared)
+    assert b"data-lang" not in b"".join(pages(declared).values())
+
+
+def test_declaring_modes_adds_the_modes_client_and_still_tags_nothing_untagged(tmp_path):
+    documents = [document(ordinal=1), document(ordinal=2)]
     modes = build(tmp_path, "modes", documents, READING)
-    assert pages(plain) == pages(modes)
     assert b"data-lang" not in b"".join(pages(modes).values())
+    assert b"data-mode=" in b"".join(pages(modes).values())

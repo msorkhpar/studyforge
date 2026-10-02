@@ -40,6 +40,7 @@ from studyforge.corpus.placement import ContainerLocations, PlacementError, rela
 from studyforge.generate.declarations import BuildError, Corpus, declared_location
 from studyforge.generate.navigation import rail
 from studyforge.generate.writing import Written, place
+from studyforge.render import modes
 from studyforge.render.container import Document, Item, PageError
 from studyforge.render.container import Placement as ContainerPlacement
 from studyforge.render.container import render as render_container
@@ -56,7 +57,12 @@ def container_pages(corpus: Corpus, into: Path | str) -> Written:
     above = page_paths(corpus)
     for _, container in corpus.maps:
         at = _location(corpus, container)
-        placement = ContainerPlacement(corpus=corpus.manifest.source, container=at, shared=shared)
+        placement = ContainerPlacement(
+            corpus=corpus.manifest.source,
+            container=at,
+            shared=shared,
+            offer=modes.offer(corpus.manifest.reading),
+        )
         place(
             out,
             at.page,

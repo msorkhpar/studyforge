@@ -55,6 +55,7 @@ from studyforge.corpus.placement import (
     CorpusLocations,
     relative_href,
 )
+from studyforge.render import modes
 from studyforge.render.pageassets import SCRIPT_NAME, STYLESHEET_NAME
 
 
@@ -65,6 +66,7 @@ class Placement:
     corpus: str
     container: ContainerLocations
     shared: CorpusLocations
+    offer: modes.Offer | None = None
 
     def stylesheet(self) -> str:
         """How this page addresses the shared stylesheet."""
@@ -73,6 +75,10 @@ class Placement:
     def script(self) -> str:
         """How this page addresses the shared script."""
         return self._shared_asset(SCRIPT_NAME)
+
+    def mode_slots(self) -> dict[str, str]:
+        """The reading-modes slots of the skeleton: all `''` for a corpus declaring no modes."""
+        return modes.slots(self.offer, self._shared_asset)
 
     def _shared_asset(self, name: str) -> str:
         """One file from the corpus's shared asset directory, relative to this page."""

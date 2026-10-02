@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en"${rootattributes}>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,7 +8,7 @@
 <script>try{var t=sessionStorage.getItem("studyforge.boot.theme.v1");if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t);}}catch(e){}</script>
 <title>${title}</title>
 <link rel="stylesheet" href="${stylesheet}">
-${identity}</head>
+${identity}${modehead}</head>
 <body>
 <a href="#content">Skip to the content</a>
 <header>
@@ -17,7 +17,7 @@ ${identity}</head>
 <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
 <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
 </div>
-${breadcrumb}<h1${headingattributes}>${heading}</h1>
+${modeswitch}${breadcrumb}<h1${headingattributes}>${heading}</h1>
 ${meta}</header>
 ${rail}${outline}<main id="content">
 ${body}

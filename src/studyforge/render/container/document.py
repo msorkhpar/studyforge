@@ -134,6 +134,7 @@ def compose(
             body=body,
             nav=_region(between_units(links)),
             rail=_region(rail_region(rail)),
+            **placement.mode_slots(),
             **dict.fromkeys(EMPTY_SLOTS, ""),
         )
         + TRAILING_NEWLINE

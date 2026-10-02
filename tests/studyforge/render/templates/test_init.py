@@ -28,6 +28,8 @@ ONE_LINE = (
     "link-index.html",
     "link-next.html",
     "link-previous.html",
+    "mode-button.html",
+    "mode-option.html",
     "outline.html",
     "practice-case.html",
     "practice-state.html",
@@ -53,6 +55,8 @@ ONE_LINE = (
 #: template cannot be added without somebody deciding which kind it is.
 MULTI_LINE = (
     "attachments.html",
+    "mode-head.html",
+    "mode-switch.html",
     "code-example.html",
     "code-examples.html",
     "page.html",

@@ -18,7 +18,18 @@ from tests.studyforge.render.index.indexes import case, cases
 
 #: The slots this page fills with something. ⛔ Stated here so the sum below is
 #: an assertion about the skeleton rather than a restatement of the module.
-FILLED_SLOTS = ("body", "heading", "outline", "rail", "script", "stylesheet", "title")
+FILLED_SLOTS = (
+    "body",
+    "heading",
+    "modehead",
+    "modeswitch",
+    "outline",
+    "rail",
+    "rootattributes",
+    "script",
+    "stylesheet",
+    "title",
+)
 
 
 def test_the_skeleton_is_the_unit_pages_own_and_no_template_was_added():

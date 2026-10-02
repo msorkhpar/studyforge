@@ -57,6 +57,7 @@ from studyforge.generate.declarations import Corpus, read_corpus, unit_location
 from studyforge.generate.narration import clips_on_disk, narrated, narration_for
 from studyforge.generate.navigation import bar, index_href, rail, trail
 from studyforge.generate.writing import Written, place
+from studyforge.render import modes
 from studyforge.render.page import Placement, render
 from studyforge.unit.builder import build_unit
 
@@ -111,6 +112,7 @@ def unit_bodies(corpus: Corpus) -> Iterator[tuple[PurePosixPath, bytes]]:
             shared=shared,
             code=code if source.mentions.beside else (),
             pairing=pairs if source.mentions.beside else None,
+            offer=modes.offer(corpus.manifest.reading),
         )
         body = render(
             document,

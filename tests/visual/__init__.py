@@ -210,4 +210,11 @@ ACCEPTANCE = {
     #: browser logs a violation for, and only over an origin that answers as the editor.
     "frames a cold published site's configured editor from the first response, with "
     "no Content-Security-Policy violation": "test_cold_published_frame",
+    #: ⭐ A row of its own because its CORPUS is the subject: a corpus declaring languages
+    #: and modes, which no committed fixture does. *The first visit asks, the choice
+    #: survives a reload and a page of another kind, a mode shows its sections, scripts
+    #: off read the default* is a claim about one origin's storage and the pages above it.
+    "asks a first visit for a reading mode, remembers the choice across a reload and "
+    "another page, shows the sections of the mode, and reads the default mode with "
+    "scripts off or storage refused": "test_modes",
 }
