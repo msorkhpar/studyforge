@@ -27,10 +27,13 @@ root and scrubbed (`output`), so it rewrites nothing.
 A corpus declares its `runtimes` (`corpus.manifest.runtimes`). ⭐
 **`TOOLCHAINS` maps a runtime name to its rules, and the rules are data.** A
 Gradle corpus and a Maven corpus each get their own, and adding a third is one
-entry. ⛔ **Nothing here looks at the command or the output to work out which
+entry. ⛔ **Nothing here looks at the output to work out which
 tool is running.** `select` returns a toolchain only when exactly ONE
-declared runtime has rules. None, or two (a corpus declaring both `gradle`
-and `maven`), means `None`, and `None` passes every line through UNFILTERED.
+declared runtime has rules. None means `None`, and `None` passes every line
+through UNFILTERED. ⭐ A corpus declaring both `gradle` and `maven` has the rules
+chosen per run from the FIRST WORD of the run's command (`select(runtimes, argv)`),
+which is the command the corpus wrote, not the output; no first word that names a
+tool with rules, no filter.
 Guessing wrong would drop somebody's output. Not guessing costs some noise.
 
 ## ⛔ Filtering never removes a failure
@@ -70,7 +73,7 @@ line come first.
 from __future__ import annotations
 
 import re
-from collections.abc import Iterable, Iterator
+from collections.abc import Iterable, Iterator, Sequence
 from dataclasses import dataclass
 
 from studyforge.execute.handle import exit_line
@@ -105,6 +108,10 @@ class Toolchain:
     always_noise: tuple[str, ...]
     signal: tuple[str, ...]
     noise: tuple[str, ...]
+    #: The first words of a command that runs this tool (`gradle`, `gradlew`), the
+    #: way `select` tells two declared tools apart for ONE run. Empty: never chosen
+    #: by command.
+    commands: tuple[str, ...] = ()
 
 
 #: ⭐ Maven 3.9, measured against real `mvn -B test` output (see the tests).
@@ -113,6 +120,7 @@ class Toolchain:
 #: UNPREFIXED, which is why no rule here touches an unprefixed line.
 MAVEN = Toolchain(
     name="maven",
+    commands=("mvn", "mvnw"),
     always_noise=(
         # The help footer after a failure. It explains how to rerun Maven, never
         # why the build failed.
@@ -166,6 +174,7 @@ MAVEN = Toolchain(
 #: is the only label a test's output has.
 GRADLE = Toolchain(
     name="gradle",
+    commands=("gradle", "gradlew"),
     always_noise=(
         # `> Task :test FAILED` ends in FAILED and would otherwise be kept as a
         # verdict, when the verdict is the test line further down.
@@ -207,15 +216,28 @@ GRADLE = Toolchain(
 TOOLCHAINS: dict[str, Toolchain] = {toolchain.name: toolchain for toolchain in (GRADLE, MAVEN)}
 
 
-def select(runtimes: Iterable[str]) -> Toolchain | None:
-    """Return the ONE declared runtime's rules, or `None`, which filters nothing.
+def select(runtimes: Iterable[str], argv: Sequence[str] | None = None) -> Toolchain | None:
+    """Return the rules for the run, or `None`, which filters nothing.
 
-    ⛔ `None` when no declared runtime has rules, and also when more than one
-    does. With two build tools declared, the run could be either, and this
-    module does not guess which.
+    ⭐ **One declared runtime with rules** (`gradle` or `maven`): its rules, whatever
+    `argv` is, exactly as before. **None**: `None`.
+
+    ⭐ **Two or more declared with rules** (a corpus declaring `gradle` and `maven`):
+    the rules are chosen PER RUN from `argv`'s first word, by the `commands` each
+    toolchain lists (`gradle` or `./gradlew`, `mvn` or `./mvnw`; a directory before
+    the name and a `.cmd`/`.bat` after it are ignored). ⛔ A run whose first word names
+    none of them, a run given no `argv`, and a word two toolchains claim all give
+    `None`: nothing is guessed from the output, and an unknown command is left whole.
     """
-    found = {name for name in runtimes if name in TOOLCHAINS}
-    return TOOLCHAINS[found.pop()] if len(found) == 1 else None
+    found = [TOOLCHAINS[name] for name in dict.fromkeys(runtimes) if name in TOOLCHAINS]
+    if len(found) == 1:
+        return found[0]
+    if len(found) < 2 or not argv:
+        return None
+    word = re.split(r"[\\/]", argv[0])[-1]
+    word = re.sub(r"\.(cmd|bat)$", "", word, flags=re.IGNORECASE)
+    matching = [toolchain for toolchain in found if word in toolchain.commands]
+    return matching[0] if len(matching) == 1 else None
 
 
 class Quiet:

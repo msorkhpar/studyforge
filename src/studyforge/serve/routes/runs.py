@@ -58,7 +58,8 @@ configured origin seeds the record, so a learner's first page load frames the ed
 ## ⛔ Output is filtered, then gated on the wire
 
 Every line `execute` yields is already relative to the source root and scrubbed. ⭐
-`execute.quiet` drops what the corpus's one declared build tool says about itself
+`execute.quiet` drops what the run's build tool says about itself (the corpus's one
+declared tool, or with two declared, the one the command's first word names)
 (Maven's rerun advice names switches the page cannot pass), never an error, a frame
 or the exit line. A kept line is scrubbed again as it leaves the process (R7;
 `scrub` is idempotent), ⛔ after `withheld.OutputGate` replaced any quiz-key line.
@@ -335,7 +336,7 @@ class Stream:
         self._outcome = outcome
         self._lines = live.handle.lines()
         self._gate = OutputGate(marks_of(runs.sources.get(outcome.corpus.source)))
-        self._quiet = Quiet(select(outcome.corpus.corpus.manifest.runtimes))
+        self._quiet = Quiet(select(outcome.corpus.corpus.manifest.runtimes, outcome.argv))
         self._chunks = self._generate()
         self._recorded = False
         self._finished = False

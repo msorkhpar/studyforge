@@ -33,7 +33,9 @@ from studyforge.execute.quiet import (
 )
 from tests.studyforge.execute.transcripts import (
     ALL,
+    GRADLE_COMPILE_ERROR,
     GRADLE_FAILURE,
+    GRADLE_PASS,
     JAVAC_ERROR,
     JVM_TRACE,
     MAVEN_OFFLINE,
@@ -487,3 +489,68 @@ def test_a_line_matching_both_signal_and_noise_is_kept(toolchain, line):
 def test_without_the_signal_rule_the_same_line_would_be_dropped(toolchain, line):
     """The other way: it is `signal`, checked before `noise`, that keeps it."""
     assert shown([line, exit_line(1)], dataclasses.replace(toolchain, signal=())) == [exit_line(1)]
+
+
+# --- two declared build tools: the rules are chosen per run, from the command ----------------
+
+TWO_TOOLS = ("gradle", "java", "kotlin", "maven")
+GRADLE_RUNS = [GRADLE_PASS, GRADLE_FAILURE, GRADLE_COMPILE_ERROR]
+MAVEN_RUNS = [MAVEN_PASS, MAVEN_QUIET_TEST_FAILURE, MAVEN_QUIET_COMPILE_ERROR]
+
+
+GRADLE_WORDS = ["gradle", "./gradlew", "/work/gradlew", "gradlew.bat", ".\\gradlew.bat"]
+
+
+@pytest.mark.parametrize("word", GRADLE_WORDS)
+def test_two_declared_tools_pick_gradle_from_the_first_word(word):
+    assert select(TWO_TOOLS, [word, "test"]) is GRADLE
+
+
+@pytest.mark.parametrize("word", ["mvn", "./mvnw", "/work/mvnw", "mvnw.cmd"])
+def test_two_declared_tools_pick_maven_from_the_first_word(word):
+    assert select(TWO_TOOLS, [word, "-B", "test"]) is MAVEN
+
+
+@pytest.mark.parametrize(
+    "argv",
+    [None, [], ["python3", "run.py"], ["sh", "-c", "gradle test"], ["gradlew-not", "x"], [""]],
+    ids=["no-argv", "empty", "other-tool", "shell-wrapper", "lookalike", "blank"],
+)
+def test_two_declared_tools_and_an_unknown_command_select_nothing(argv):
+    assert select(TWO_TOOLS, argv) is None
+
+
+@pytest.mark.parametrize("transcript", GRADLE_RUNS, ids=["pass", "failure", "compile-error"])
+def test_a_gradle_run_in_a_two_tool_corpus_keeps_what_a_gradle_only_corpus_keeps(transcript):
+    argv = ["./gradlew", "test"]
+    two = shown(run(transcript, 1), select(TWO_TOOLS, argv))
+    one = shown(run(transcript, 1), select(("gradle", "java", "kotlin")))
+    assert two == one
+    assert len(two) < len(run(transcript, 1))
+    assert exit_line(1) in two
+
+
+@pytest.mark.parametrize("transcript", MAVEN_RUNS, ids=["pass", "test-failure", "compile-error"])
+def test_a_maven_run_in_a_two_tool_corpus_keeps_what_a_maven_only_corpus_keeps(transcript):
+    argv = ["mvn", "-B", "test"]
+    two = shown(run(transcript), select(TWO_TOOLS, argv))
+    one = shown(run(transcript), select(("java", "maven")))
+    assert two == one
+    assert len(two) < len(run(transcript))
+
+
+def test_a_two_tool_corpus_keeps_the_exact_gradle_counts():
+    kept = [len(shown(run(t, 1), select(TWO_TOOLS, ["gradle", "test"]))) for t in GRADLE_RUNS]
+    assert kept == [5, 21, 7]
+
+
+def test_a_two_tool_run_with_an_unknown_command_is_left_whole():
+    lines = run(GRADLE_FAILURE, 1)
+    assert shown(lines, select(TWO_TOOLS, ["python3", "x.py"])) == lines
+
+
+@pytest.mark.parametrize("argv", [None, ["mvn", "test"], ["gradle", "test"], ["python3"]])
+def test_one_declared_tool_ignores_the_command(argv):
+    assert select(("java", "maven"), argv) is MAVEN
+    assert select(("gradle", "kotlin"), argv) is GRADLE
+    assert select(("python",), argv) is None

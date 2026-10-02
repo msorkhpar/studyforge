@@ -53,7 +53,7 @@ view, which is never broken.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from urllib.parse import unquote
 
 from studyforge.execute import (
@@ -99,6 +99,8 @@ class Unrecorded:
     """
 
     corpus: ServedCorpus
+    #: The command the run executes: the output filter is chosen from its first word.
+    argv: list[str] = field(default_factory=list)
 
     def record(self, verdict: int | str) -> tuple[str, ...]:
         """Say nothing more; the exit line is the verdict."""
@@ -131,7 +133,7 @@ def route(runs: Runs, corpus: ServedCorpus, act: str, tail: str) -> Response:
     if live is None:
         return error(409, BUSY)
     headers = (("Content-Type", TEXT_TYPE), ("Cache-Control", NO_STORE))
-    return Response(200, headers, stream=Stream(runs, live, Unrecorded(corpus)))
+    return Response(200, headers, stream=Stream(runs, live, Unrecorded(corpus, argv)))
 
 
 def windows(runs: Runs, corpus: ServedCorpus, found: Pair) -> Response:
