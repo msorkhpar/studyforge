@@ -35,7 +35,8 @@ Array.from(document.querySelectorAll('<scope> li[<key>]')).map(li => {
   const label = li.querySelector('[data-entry-label]');
   return {
     id: li.getAttribute('<key>'), lang: li.getAttribute('data-entry-lang'),
-    readable: li.getAttribute('data-readable'),
+    readable: li.getAttribute('data-readable'), shown: li.offsetHeight > 0,
+    linkShown: link ? link.offsetHeight > 0 : null,
     href: link ? link.getAttribute('href') : null,
     disabled: link ? link.getAttribute('aria-disabled') : null,
     tabindex: link ? link.tabIndex : null,
@@ -133,7 +134,9 @@ def test_a_row_with_nothing_for_the_mode_is_greyed_and_labelled_in_the_index_and
         assert common["lang"] is None and common["label"] is None
         assert common["grey"] == aa["grey"] == both["grey"]
         assert bb["lang"] == "bb" and bb["label"] == [True, "Bb"]
-        assert bb["grey"] != common["grey"], "greyed, not hidden"
+        assert bb["grey"] != common["grey"], "greyed"
+        assert bb["shown"] and bb["linkShown"], "and not hidden"
+        assert rows["other/unit-01"]["shown"], "a module's rows stay too"
         assert aa["label"][0] is False and both["label"][0] is False
         assert rows["other/unit-01"]["label"] == [True, "Bb"]
     module = open_page.evaluate("""(() => {
