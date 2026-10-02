@@ -84,3 +84,17 @@ def test_the_shared_bundle_never_carries_any_of_it():
     shared = "".join(pageassets.written_files().values())
     for word in ("data-mode", "mode-question", "studyforge.boot.mode"):
         assert word not in shared
+
+
+def test_an_untagged_entry_renders_the_link_it_always_did():
+    assert modes.link(None, "a/b.html", "Body") == '<a href="a/b.html">Body</a>'
+    assert modes.attributes(None) == "" and modes.label(None) == "" and modes.openable(None)
+
+
+def test_a_closed_entry_is_an_anchor_with_no_href_out_of_the_tab_order():
+    tag = modes.Tag(("bb",), "Bb", (("only-bb", "Bb"),), locked=True)
+    closed = modes.link(tag, "a/b.html", "Body")
+    assert closed == '<a aria-disabled="true" tabindex="-1" data-href="a/b.html">Body</a>'
+    assert not modes.openable(tag)
+    assert modes.attributes(tag) == ' data-entry-lang="bb"'
+    assert modes.label(tag) == "<span data-entry-label>Bb</span>"

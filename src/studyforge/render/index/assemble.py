@@ -56,6 +56,7 @@ from __future__ import annotations
 from studyforge.contents import Contents, Entry, Group, LocalStatus, UnitStatus, join
 from studyforge.render.index.entries import Document, Item, Section
 from studyforge.render.index.placement import Placement
+from studyforge.render.modes import Tag
 from studyforge.render.page import PageError
 
 
@@ -87,6 +88,7 @@ def _section(
         level=group.level,
         key=group.key,
         title=group.title,
+        tag=_tag(placement, group.key),
         sections=tuple(
             _section(child, known, placement, (*at, position))
             for position, child in enumerate(group.groups, start=1)
@@ -121,4 +123,10 @@ def _item(
         numbering=entry.numbering,
         title=entry.title,
         href=placement.unit(entry.page) if state.present else None,
+        tag=_tag(placement, entry.key),
     )
+
+
+def _tag(placement: Placement, key: str) -> Tag | None:
+    """What a corpus with modes says of an entry that belongs to some languages only."""
+    return None if placement.offer is None else placement.offer.tags.get(key)

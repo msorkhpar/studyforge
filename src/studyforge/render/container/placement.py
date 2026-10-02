@@ -67,6 +67,8 @@ class Placement:
     container: ContainerLocations
     shared: CorpusLocations
     offer: modes.Offer | None = None
+    #: ⭐ The page's own tag, when its module belongs to some languages only: it adds the note.
+    entry: modes.Tag | None = None
 
     def stylesheet(self) -> str:
         """How this page addresses the shared stylesheet."""
@@ -78,7 +80,7 @@ class Placement:
 
     def mode_slots(self) -> dict[str, str]:
         """The reading-modes slots of the skeleton: all `''` for a corpus declaring no modes."""
-        return modes.slots(self.offer, self._shared_asset)
+        return modes.slots(self.offer, self._shared_asset, self.entry)
 
     def _shared_asset(self, name: str) -> str:
         """One file from the corpus's shared asset directory, relative to this page."""

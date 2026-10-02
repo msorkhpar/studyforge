@@ -57,7 +57,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from dataclasses import dataclass
 
-from studyforge.render import templates
+from studyforge.render import modes, templates
 from studyforge.render.markup import anchor, escape, escape_attribute, inline, safe_href
 from studyforge.render.pageassets import SURFACE_HOOKS
 
@@ -94,6 +94,10 @@ LINK_SLOTS = (
     ("next", "link-next.html"),
 )
 
+#: The same two slots as a chain of neighbours, and the `rel` the one shown carries.
+CHAIN_SLOTS = {"previous": "link-previous-chain.html", "next": "link-next-chain.html"}
+RELS = {"previous": "prev", "next": "next"}
+
 #: The attribute the trail's level word is reached by, and the value saying it is
 #: one. ⛔ Taken from the published surface, never typed: the surface made these the
 #: one spelling after two renderers had each invented their own.
@@ -126,6 +130,8 @@ class Link:
     href: str | None
     label: str
     key: str = ""
+    #: ⭐ Set only on a neighbour of a corpus with modes that has nothing common to every mode.
+    tag: modes.Tag | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -140,6 +146,12 @@ class Links:
     previous: Link | None = None
     next: Link | None = None
     index: Link | None = None
+    #: ⭐ Only where an entry outside the chosen mode is closed (`outside_mode: locked`): the
+    #: neighbours in each direction, nearest first, up to the first one every mode reads. The
+    #: bar then holds all of them and shows the first that the chosen mode can open, so a
+    #: change of mode needs no second page. Empty is today's bar, with `previous` and `next`.
+    before: tuple[Link, ...] = ()
+    after: tuple[Link, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -216,13 +228,43 @@ def between_units(links: Links | None) -> str:
     if links is None:
         return ""
     parts = [
-        rendered
-        for field, row in LINK_SLOTS
-        if (rendered := _link(getattr(links, field), row, links.index))
+        rendered for field, row in LINK_SLOTS if (rendered := _slot(links, field, row))
     ]
     if not parts:
         return ""
     return templates.fill(BETWEEN_UNITS_TEMPLATE, links="".join(parts))
+
+
+def _slot(links: Links, field: str, row: str) -> str:
+    """Return one slot of the bar: its link, or the whole chain of them when it has one."""
+    chain = {"previous": links.before, "next": links.after}.get(field, ())
+    if chain:
+        return _chain(chain, field, links.index)
+    return _link(getattr(links, field), row, links.index)
+
+
+def _chain(chain: tuple[Link, ...], field: str, index: Link | None) -> str:
+    """Return a slot's neighbours; the first the default mode can open is shown, the rest hidden.
+
+    ⭐ Each carries the languages it belongs to (`data-pager-lang`), which is what the client
+    reads to show another one when the mode changes. Only the shown one has `rel`.
+    """
+    rows = []
+    shown = False
+    for link in chain:
+        target = _destination(link, index)
+        if target is None:
+            continue
+        opens = not shown and modes.openable(link.tag)
+        shown = shown or opens
+        rows.append(
+            templates.fill(
+                CHAIN_SLOTS[field],
+                attributes=modes.pager_attributes(link.tag, target, RELS[field], opens),
+                label=escape(link.label),
+            )
+        )
+    return "".join(rows)
 
 
 def _link(link: Link | None, row: str, index: Link | None) -> str:

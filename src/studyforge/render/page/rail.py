@@ -89,7 +89,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from dataclasses import dataclass
 
-from studyforge.render import templates
+from studyforge.render import modes, templates
 from studyforge.render.markup import escape, escape_attribute, inline, safe_href
 from studyforge.render.pageassets import SURFACE_HOOKS
 
@@ -157,6 +157,8 @@ class RailUnit:
     href: str | None = None
     current: bool = False
     key: str = ""
+    #: ⭐ Set only for a unit of a corpus with modes that has nothing common to every mode.
+    tag: modes.Tag | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -188,6 +190,8 @@ class RailContainer:
     units: tuple[RailUnit, ...] = ()
     #: ⭐ The groups this container sits in, outermost first; `()` at depth 1.
     within: tuple[RailGroup, ...] = ()
+    #: ⭐ The same, for a module whose every unit belongs to some languages only.
+    tag: modes.Tag | None = None
 
 
 def render(containers: Sequence[RailContainer] | None) -> str:
@@ -248,13 +252,13 @@ def _group(group: RailGroup, containers: tuple[RailContainer, ...], depth: int, 
 
 def _container(container: RailContainer, said: str) -> str:
     """Return one container as a disclosure holding the units under it."""
-    summary = _body(_level(container), container.title)
+    summary = _body(_level(container), container.title) + modes.label(container.tag)
     units = "".join(_unit(unit, said) for unit in container.units)
     return (
-        f"<li{CURRENT_CONTAINER if container.current else ''} "
-        f"{_readable(container.href, container.current)}>"
+        f"<li{CURRENT_CONTAINER if container.current else ''}{modes.attributes(container.tag)} "
+        f"{_readable(container.href, container.current, container.tag)}>"
         f"<details{OPEN if container.current else ''}>"
-        f"<summary>{_link(summary, container.href, container.current)}</summary>"
+        f"<summary>{_link(summary, container.href, container.current, container.tag)}</summary>"
         f"<ol>{units}</ol></details></li>"
     )
 
@@ -265,15 +269,16 @@ def _unit(unit: RailUnit, said: str) -> str:
     ⭐ A keyed row ends with `said`, the hidden words a read row speaks; a row
     with no key can never be marked, so it carries none.
     """
-    body = _body(_numbering(unit), unit.title) + (said if unit.key else "")
+    body = _body(_numbering(unit), unit.title) + modes.label(unit.tag)
+    body += said if unit.key else ""
     return (
-        f"<li{CURRENT_UNIT if unit.current else ''}{_key(unit.key)} "
-        f"{_readable(unit.href, unit.current)}>"
-        f"{_link(body, unit.href, unit.current)}</li>"
+        f"<li{CURRENT_UNIT if unit.current else ''}{_key(unit.key)}{modes.attributes(unit.tag)} "
+        f"{_readable(unit.href, unit.current, unit.tag)}>"
+        f"{_link(body, unit.href, unit.current, unit.tag)}</li>"
     )
 
 
-def _link(body: str, href: str | None, current: bool) -> str:
+def _link(body: str, href: str | None, current: bool, tag: modes.Tag | None = None) -> str:
     """Return `body` wrapped in an anchor, or `body` alone when there is nowhere to go.
 
     ⛔ The row survives a refused or absent href and the **anchor** is what drops
@@ -285,7 +290,7 @@ def _link(body: str, href: str | None, current: bool) -> str:
     target = None if current or href is None else safe_href(href)
     if target is None:
         return body
-    return f'<a href="{escape_attribute(target)}">{body}</a>'
+    return modes.link(tag, target, body)
 
 
 def _key(key: str) -> str:
@@ -295,7 +300,7 @@ def _key(key: str) -> str:
     return f' {UNIT_ATTRIBUTE}="{escape_attribute(key)}"'
 
 
-def _readable(href: str | None, current: bool) -> str:
+def _readable(href: str | None, current: bool, tag: modes.Tag | None = None) -> str:
     """Return the attribute saying whether this row can be opened from here.
 
     ⭐ **It reports what the row EMITTED, not what it was handed.** A declared
@@ -305,7 +310,9 @@ def _readable(href: str | None, current: bool) -> str:
     and marking it *"listed, not openable"* would be a false sentence rendered
     in italics.
     """
-    openable = current or (href is not None and safe_href(href) is not None)
+    openable = current or (
+        href is not None and safe_href(href) is not None and modes.openable(tag)
+    )
     return f'{READABLE_ATTRIBUTE}="{"true" if openable else "false"}"'
 
 

@@ -48,6 +48,7 @@ from dataclasses import dataclass
 
 from studyforge.address import Address
 from studyforge.describe import describe
+from studyforge.render.modes import Tag
 from studyforge.render.page import PageError
 
 
@@ -64,6 +65,8 @@ class Item:
     numbering: str
     title: str
     href: str | None = None
+    #: ⭐ Set only for a unit of a corpus with modes that has nothing common to every mode.
+    tag: Tag | None = None
 
     def __post_init__(self) -> None:
         """Refuse an item that would render as a blank line in the list.

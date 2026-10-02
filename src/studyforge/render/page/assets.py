@@ -106,6 +106,8 @@ class Placement:
     code: tuple[str, ...] = ()
     pairing: Callable[[str], tuple[str | None, str | None]] | None = None
     offer: modes.Offer | None = None
+    #: ⭐ The page's own tag, when its unit belongs to some languages only: it adds the note.
+    entry: modes.Tag | None = None
 
     def stylesheet(self) -> str:
         """How this page addresses the shared stylesheet."""
@@ -117,7 +119,7 @@ class Placement:
 
     def mode_slots(self) -> dict[str, str]:
         """The reading-modes slots of the skeleton: all `''` for a corpus declaring no modes."""
-        return modes.slots(self.offer, self._shared_asset)
+        return modes.slots(self.offer, self._shared_asset, self.entry)
 
     def media(self, kind: str, source: object) -> str:
         """How this page addresses one of its own media files.
