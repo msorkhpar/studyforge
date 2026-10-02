@@ -312,3 +312,18 @@ def test_a_lesson_section_s_heading_of_that_word_is_never_withheld():
     # ⛔ Only a practice's layout is read: a lesson may have a section called Lesson.
     markup = render(exercise([]) | {"kind": "lang", "key": "java"})
     assert ">Lesson<" in markup
+
+
+def test_a_tagged_section_carries_its_language_on_the_wrapper_and_an_untagged_one_does_not():
+    plain = render(headed())
+    tagged = render(headed(lang="aa"))
+    assert " data-lang=" not in plain
+    assert 'data-label="Your first class" data-lang="aa">' in tagged
+    # ⭐ The tag is the only difference: the untagged page is the bytes it was.
+    assert tagged.replace(' data-lang="aa"', "") == plain
+
+
+def test_the_language_is_escaped_as_an_attribute_and_an_empty_one_is_no_tag():
+    assert 'data-lang="a&quot;b"' in render(headed(lang='a"b'))
+    assert " data-lang=" not in render(headed(lang=""))
+    assert " data-lang=" not in render(headed(lang=None))

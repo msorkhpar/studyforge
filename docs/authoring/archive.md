@@ -141,11 +141,11 @@ raw_api  source  address  variant  unit  kind  ordinal  ingested
 title  blocks  video  assets  attachments  counts  content_sha256
 ```
 
-**Four more, written only when they have something to say, always after the
+**Five more, written only when they have something to say, always after the
 digest:**
 
 ```
-assets_sha256  starting_code  media_skipped  exercise
+assets_sha256  starting_code  media_skipped  exercise  lang
 ```
 
 **A document carrying any other key is refused.** A key nothing reads is how a
@@ -157,6 +157,23 @@ excluded from `content_sha256`, so it cannot make unchanged content look
 edited. Two runs of a correct adapter differ in `ingested` and in nothing else,
 and that is the sentence to use when you claim reproducibility: *identical
 bytes apart from `ingested`*.
+
+**`lang` tags a document with one language.** It is an id of lowercase letters,
+digits, `-` and `_`, and it names a language `corpus.json` declares under
+`languages`; `validate` refuses one it does not declare, by rule
+`language-undeclared`. A lesson, a practice and a quiz are all documents, so
+one key tags all three. **A document without it is common to every reading**
+and re-renders to the same bytes as before the key existed. A unit that holds
+a Kotlin lesson and a Java lesson is two lesson documents, each tagged, and the
+page holds both: a tagged section carries `data-lang="<id>"` and an untagged
+one carries nothing.
+
+**An adapter that reads Markdown can mark the regions.** `studyforge.archive.markdown.regions(text)`
+cuts a page at `<!-- lang: <id> -->` … `<!-- /lang -->` sections and
+`<!-- example: <id> tabs: <id>,<id> [output: <word>] -->` … `<!-- /example -->`
+blocks (a marker inside a code fence is code). Text outside every marker is
+common. The adapter parses each region with `parse` and writes the tagged ones
+as documents of their own.
 
 ---
 

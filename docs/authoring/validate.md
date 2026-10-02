@@ -139,6 +139,9 @@ before it, `check_untouched` after — which reports in the same shape.
 | `empty-unit` | a unit carries no blocks at all |
 | `unit-missing` | a declared unit is absent |
 | `practice-count` | declared `practices` and present practice documents disagree |
+| `language-undeclared` | a document's `lang` is not a language `corpus.json` declares under `languages` (or the corpus declares none) |
+| `unit-prose` | in a corpus that declares `modes`, a unit holds no lesson document, tagged or common |
+| `mode-empty` | a declared mode lists no unit: no lesson is common or in its `prose` language, and no practice is common or in a language it offers |
 | `duplicate-path` | two artifacts would be written to one path |
 | `unplaceable` | the placement profile cannot produce a legal path |
 | `origin-not-a-file` | a declared `origin` names something that is not a file |

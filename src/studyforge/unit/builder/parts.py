@@ -57,6 +57,10 @@ from studyforge.unit.outline import without_outline_number
 #: A served section's keys, in the order they are written (R10).
 SECTION_KEYS = ("key", "kind", "heading", "blocks", "video", "workspace", "attachments")
 
+#: The key a section carries only when its document names a language, after the rest.
+#: ⭐ Absent means common to every reading, so an untagged section is the bytes it was.
+LANG_KEY = "lang"
+
 
 def section(*, key: str, kind: str, heading: str, blocks: list, document: dict) -> dict:
     """One served section: somebody's heading and blocks, and the archive's two fields.
@@ -74,7 +78,7 @@ def section(*, key: str, kind: str, heading: str, blocks: list, document: dict) 
     heading block once the references are served, so the page and its narration
     still read the same words.
     """
-    return {
+    served = {
         "key": key,
         "kind": kind,
         "heading": without_outline_number(heading),
@@ -83,6 +87,9 @@ def section(*, key: str, kind: str, heading: str, blocks: list, document: dict) 
         "workspace": workspace_of(document, key),
         "attachments": attachments_of(document),
     }
+    if document.get(LANG_KEY) is not None:
+        served[LANG_KEY] = document[LANG_KEY]
+    return served
 
 
 def video_of(document: dict) -> dict | None:
