@@ -217,4 +217,15 @@ ACCEPTANCE = {
     "asks a first visit for a reading mode, remembers the choice across a reload and "
     "another page, shows the sections of the mode, and reads the default mode with "
     "scripts off or storage refused": "test_modes",
+    #: ⭐ A row of its own because its CORPUS is the subject: a corpus of two languages and
+    #: four modes whose page holds an example with a tab per language and a block that is a
+    #: compiler message, shapes no committed fixture has. *The mode opens the first tab and
+    #: lists the tabs, a one-language mode hides an example with nothing in it, a compiler
+    #: message is flagged, code draws no ligature, a phone's width holds and the keys are the
+    #: tabs pattern's* are claims about the computed page.
+    "opens an example on the first tab of the reading mode, lists only the mode's tabs, hides "
+    "an example with nothing in the mode's language, flags a compiler message and a warning, "
+    "draws no ligature, holds 360 px and answers the arrow keys of the tabs pattern": (
+        "test_example_tabs"
+    ),
 }

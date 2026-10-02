@@ -65,7 +65,7 @@ def test_exactly_one_block_type_is_emitted_without_escaping():
     assert blocks.RAW_TYPES == frozenset({"html"})
     assert set(verbatim.RENDERS) == blocks.RAW_TYPES
     assert blocks.RAW_TYPES < set(BLOCK_TYPES)
-    assert len(BLOCK_TYPES) - len(blocks.RAW_TYPES) == 10
+    assert len(BLOCK_TYPES) - len(blocks.RAW_TYPES) == 11
 
 
 @pytest.mark.parametrize("block_type", sorted(set(BLOCK_TYPES) - {"html"}))

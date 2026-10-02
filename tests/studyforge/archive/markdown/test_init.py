@@ -65,6 +65,8 @@ def test_the_public_surface_is_what_consumers_import():
         "CONTAINER_TYPES",
         "MarkdownError",
         "Region",
+        "blocks_of",
+        "example_block",
         "parse",
         "regions",
         "undeclared",

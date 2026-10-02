@@ -29,8 +29,9 @@ a crawl, in the preview before an answer and where storage is refused, the page
 is the `default_mode` view with no script involved. ⚠️ The switch and the
 question ship `hidden`; the script shows them.
 
-⛔ **A mode shows the sections of its `prose` language and the common ones.**
-Which code tabs it opens, and the practices it lists, are other parts' work.
+⛔ **A mode shows the sections of its `prose` language and the common ones.** The tabs
+of an example are `example_tabs`'s, composed into the two files; the practices a mode
+lists are another part's work.
 """
 
 from __future__ import annotations
@@ -40,7 +41,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from studyforge.render import templates
+from studyforge.render import example_tabs, templates
 from studyforge.render.markup import escape, escape_attribute
 from studyforge.render.pageassets.source import text
 
@@ -55,7 +56,7 @@ SCRIPT_NAME = "modes.js"
 SLOTS = ("rootattributes", "modehead", "modeswitch")
 
 #: The two files, as `pageassets` finds them on disk.
-PARTS = (STYLESHEET_NAME, SCRIPT_NAME)
+PARTS = (STYLESHEET_NAME, SCRIPT_NAME, *example_tabs.PARTS)
 
 #: The attribute the root element carries and the stylesheet keys on.
 MODE_ATTRIBUTE = "data-mode"
@@ -71,6 +72,8 @@ class Choice:
     label: str
     summary: str
     prose: str
+    #: ⭐ The languages the mode opens a tab for, first tab first.
+    tabs: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -82,6 +85,8 @@ class Offer:
 
     choices: tuple[Choice, ...]
     default: str
+    #: ⭐ `(id, label)` of each declared language, for the label over a tab.
+    languages: tuple[tuple[str, str], ...] = ()
 
 
 def offer(reading: Reading | None) -> Offer | None:
@@ -90,9 +95,11 @@ def offer(reading: Reading | None) -> Offer | None:
         return None
     return Offer(
         choices=tuple(
-            Choice(mode.id, mode.label, mode.summary, mode.prose) for mode in reading.modes
+            Choice(mode.id, mode.label, mode.summary, mode.prose, tuple(mode.tabs))
+            for mode in reading.modes
         ),
         default=reading.default_mode,
+        languages=tuple((language.id, language.label) for language in reading.languages),
     )
 
 
@@ -123,8 +130,12 @@ def files(made: Offer | None) -> dict[str, str]:
         return {}
     rules = NEWLINE.join(_rule(choice) for choice in made.choices)
     return {
-        STYLESHEET_NAME: text(STYLESHEET_NAME) + NEWLINE + rules + NEWLINE,
-        SCRIPT_NAME: text(SCRIPT_NAME),
+        STYLESHEET_NAME: text(STYLESHEET_NAME)
+        + NEWLINE
+        + rules
+        + NEWLINE
+        + example_tabs.style(made.choices),
+        SCRIPT_NAME: text(SCRIPT_NAME) + NEWLINE + example_tabs.script(made.choices),
     }
 
 

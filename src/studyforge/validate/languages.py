@@ -35,6 +35,7 @@ from __future__ import annotations
 from collections import defaultdict
 from collections.abc import Iterator
 
+from studyforge.archive.blocks import walk as walk_blocks
 from studyforge.validate.corpus import Unit, Walk
 from studyforge.validate.report import Finding
 
@@ -44,7 +45,7 @@ RULE_MODE_EMPTY = "mode-empty"
 
 
 def check_languages_are_declared(walk: Walk) -> Iterator[Finding]:
-    """Every `lang` a document carries is a language the manifest declares."""
+    """Every `lang` a document carries, and every language an example's tab names, is declared."""
     assert walk.manifest is not None
     reading = walk.manifest.reading
     declared = {language.id for language in reading.languages} if reading else set()
@@ -57,6 +58,26 @@ def check_languages_are_declared(walk: Walk) -> Iterator[Finding]:
                 f"is tagged with the language {lang!r}, which corpus.json does not declare"
                 f" under 'languages'; a tag names a declared language",
             )
+    yield from _example_tabs(walk, declared)
+
+
+def _example_tabs(walk: Walk, declared: set[str]) -> Iterator[Finding]:
+    """Every language an example's tab names is a language the manifest declares."""
+    for unit in walk.units:
+        blocks = unit.document.get("blocks")
+        for block in walk_blocks(blocks if isinstance(blocks, list) else []):
+            if not isinstance(block, dict) or block.get("type") != "example":
+                continue
+            tabs = block.get("tabs")
+            for tab in tabs if isinstance(tabs, list) else ():
+                lang = tab.get("lang") if isinstance(tab, dict) else None
+                if isinstance(lang, str) and lang not in declared:
+                    yield Finding(
+                        RULE_LANGUAGE,
+                        unit.where,
+                        f"has an example with a tab in the language {lang!r}, which corpus.json"
+                        f" does not declare under 'languages'; a tab names a declared language",
+                    )
 
 
 def check_units_have_prose(walk: Walk) -> Iterator[Finding]:
@@ -110,4 +131,8 @@ def _listed(mode: object, documents: list[Unit]) -> bool:
     return False
 
 
-CHECKS = (check_languages_are_declared, check_units_have_prose, check_modes_list_a_unit)
+CHECKS = (
+    check_languages_are_declared,
+    check_units_have_prose,
+    check_modes_list_a_unit,
+)

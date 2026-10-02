@@ -52,7 +52,8 @@ def test_every_type_the_reader_emits_is_in_the_vocabulary():
     )
     emitted = {block["type"] for block in parse(text)}
     assert emitted <= set(BLOCK_TYPES)
-    assert emitted == set(BLOCK_TYPES), sorted(set(BLOCK_TYPES) - emitted)
+    # ⭐ `example` is written by `blocks_of` from an example region, never by `parse`.
+    assert emitted == set(BLOCK_TYPES) - {"example"}, sorted(set(BLOCK_TYPES) - emitted)
 
 
 def test_the_container_types_are_the_ones_that_hold_blocks():
@@ -63,9 +64,9 @@ def test_the_container_types_are_the_ones_that_hold_blocks():
         assert ("blocks" in block) == (block["type"] in CONTAINER_TYPES)
 
 
-def test_the_vocabulary_is_eleven_types():
-    assert len(BLOCK_TYPES) == 11
-    assert len(set(BLOCK_TYPES)) == 11
+def test_the_vocabulary_is_twelve_types():
+    assert len(BLOCK_TYPES) == 12
+    assert len(set(BLOCK_TYPES)) == 12
     assert set(CONTAINER_TYPES) <= set(BLOCK_TYPES)
 
 

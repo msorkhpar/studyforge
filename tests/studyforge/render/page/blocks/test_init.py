@@ -30,6 +30,12 @@ SAMPLES = {
         "open": False,
         "blocks": [{"type": "para", "text": "D"}],
     },
+    "example": {
+        "type": "example",
+        "id": "e",
+        "tabs": [{"lang": "java", "span": 1}],
+        "blocks": [{"type": "para", "text": "E"}],
+    },
 }
 
 
