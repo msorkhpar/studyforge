@@ -217,6 +217,11 @@ ACCEPTANCE = {
     "asks a first visit for a reading mode, remembers the choice across a reload and "
     "another page, shows the sections of the mode, and reads the default mode with "
     "scripts off or storage refused": "test_modes",
+    #: ⭐ A row of its own for the same reason: a corpus with a unit of each language only
+    #: is the subject, built under both settings of `outside_mode`.
+    "greys an entry with nothing for the chosen mode in the index and the rail, closes it "
+    "under locked, passes over it in the bar, counts the mode's pages only and notes a "
+    "page outside the mode": "test_entries",
     #: ⭐ A row of its own because its CORPUS is the subject: a corpus of two languages and
     #: four modes whose page holds an example with a tab per language and a block that is a
     #: compiler message, shapes no committed fixture has. *The mode opens the first tab and

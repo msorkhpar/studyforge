@@ -407,6 +407,24 @@ element carries `data-mode` with that value and the stylesheet keys on it. A pag
 from a file asks on every load. A corpus that declares no `modes` gets none of this: no
 switch, no question, no script, no style and no file.
 
+**An entry with nothing for the mode.** A unit whose sections are all tagged, and a
+module whose units all are, is never hidden: in a mode that does not read its languages
+its row in the index, the rail and the module's list stays, greyed, with a label naming
+its languages (`data-entry-lang` on the row; a unit with any untagged section is read in
+every mode and carries nothing). Under `outside_mode: open` it is greyed and still a
+link; opening it shows every section in its own language under a one-line note naming
+the modes that read it normally, and the previous and next links walk through it. Under
+`locked` its row is an anchor with no `href`, `aria-disabled`, out of the tab order (the
+address stays in `data-href` and comes back when a mode that reads it is chosen); the
+previous and next links pass over it (the bar holds the neighbours up to the first one
+every mode reads, and shows the first the chosen mode opens); and a direct link to it
+shows only a note naming the modes that read it with a control for each. In both
+settings the counts (`of N read` on a group, the progress line and strip, the Up next
+slip, a module's unit count) cover the pages the mode reads. A link to a section the mode
+hides shows that section while the link is the target. With scripts off the page is the
+`default_mode` view in every respect, including which rows are closed and what the bar
+shows.
+
 ## `curriculum` — where your reading order is recorded
 
 **Most material records its own order and grouping in one document**: a README,

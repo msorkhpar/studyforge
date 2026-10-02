@@ -71,7 +71,7 @@ third state the two part company with nothing to notice.
 from __future__ import annotations
 
 from studyforge.address import Address
-from studyforge.render import templates
+from studyforge.render import modes, templates
 from studyforge.render.container.entries import Item
 from studyforge.render.markup import escape, escape_attribute, inline, safe_href
 from studyforge.render.page import PageError
@@ -123,8 +123,8 @@ def render(address: Address, items: tuple[Item, ...]) -> str:
 
 def _row(address: Address, position: int, item: Item) -> str:
     """Return one unit's row: linked when it has a page, plain when it has not."""
-    body = f"{_numbering(item)}{inline(item.title)}{_read_state()}"
-    where = f'id="{escape_attribute(address.unit_key(position))}"'
+    body = f"{_numbering(item)}{inline(item.title)}{modes.label(item.tag)}{_read_state()}"
+    where = f'id="{escape_attribute(address.unit_key(position))}"{modes.attributes(item.tag)}'
     if item.href is None:
         return f'<li {where} {READABLE_ATTRIBUTE}="false">{body}</li>'
     target = safe_href(item.href)
@@ -140,10 +140,8 @@ def _row(address: Address, position: int, item: Item) -> str:
             f"is refused rather than dropped, because on this page the links are the "
             f"content and a dropped one is a row nobody can open"
         )
-    return (
-        f'<li {where} {READABLE_ATTRIBUTE}="true">'
-        f'<a href="{escape_attribute(target)}">{body}</a></li>'
-    )
+    state = "true" if modes.openable(item.tag) else "false"
+    return f'<li {where} {READABLE_ATTRIBUTE}="{state}">{modes.link(item.tag, target, body)}</li>'
 
 
 def _numbering(item: Item) -> str:

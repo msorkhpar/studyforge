@@ -68,6 +68,7 @@ from studyforge.contents import status
 from studyforge.generate.clips import files_unreached, for_output, unit_clips
 from studyforge.generate.containers import container_pages, page_paths
 from studyforge.generate.declarations import Corpus, read_corpus
+from studyforge.generate.entrylanguages import offer_of
 from studyforge.generate.media import unit_media
 from studyforge.generate.narration import voiced
 from studyforge.generate.navigation import rail
@@ -126,7 +127,8 @@ def retired(corpus: Corpus, into: Path | str) -> Written:
 
 def root_index(corpus: Corpus, into: Path | str) -> Written:
     """Write the single page a reader opens by double-clicking it."""
-    where = IndexPlacement(shared=corpus.shared, offer=modes.offer(corpus.manifest.reading))
+    offer = offer_of(corpus)
+    where = IndexPlacement(shared=corpus.shared, offer=offer)
     local = status(corpus.contents, corpus.present)
     written: list[PurePosixPath] = []
     refused: list[PurePosixPath] = []
@@ -143,6 +145,7 @@ def root_index(corpus: Corpus, into: Path | str) -> Written:
                 where.shared.root_index,
                 page_paths(corpus),
                 absent=corpus.absent,
+                tags=offer.tags if offer is not None else None,
             ),
         ),
         written,

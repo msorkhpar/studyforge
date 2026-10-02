@@ -118,4 +118,60 @@ body > header > div[role="dialog"][data-section="mode-question"] button span {
   color: var(--fg-soft);
 }
 
+/* --- an entry that belongs to the other language only ---------------------- *
+   A row of the index, the rail or a module's list, and a page, that has nothing for the
+   chosen mode. The generated rules below grey the row and show its label; these are the
+   parts that do not depend on the mode. A closed entry is an anchor with no `href`, so it is
+   not a link, and it takes no pointer either. */
+
+[data-entry-label] {
+  display: none;
+  margin-left: .5rem;
+  padding: 0 .4rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-tight);
+  font-family: var(--font-ui);
+  font-size: .72rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.5;
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+a[aria-disabled="true"] {
+  cursor: not-allowed;
+  pointer-events: none;
+  text-decoration: none;
+}
+
+body > header aside[data-section="mode-outside"] {
+  display: none;
+  margin: 0 0 .75rem;
+  padding: .6rem .8rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--fg-soft);
+  font-family: var(--font-ui);
+  font-size: .9rem;
+}
+
+body > header aside[data-section="mode-outside"] p { margin: 0 0 .5rem; }
+body > header aside[data-section="mode-outside"] p:last-child { margin: 0; }
+
+body > header aside[data-section="mode-outside"] button {
+  margin: 0 .4rem .3rem 0;
+  padding: .3rem .7rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface-2);
+  color: var(--fg);
+  font-family: var(--font-ui);
+  font-size: .85rem;
+  cursor: pointer;
+}
+
+body > header aside[data-section="mode-outside"] button:hover { background: var(--accent-soft); }
+
 /* --- what each mode shows: generated per corpus, below --------------------- */

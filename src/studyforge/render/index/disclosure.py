@@ -85,7 +85,7 @@ third state.
 
 from __future__ import annotations
 
-from studyforge.render import templates
+from studyforge.render import modes, templates
 from studyforge.render.index import policy
 from studyforge.render.index.entries import Document, Item, Section
 from studyforge.render.markup import escape, escape_attribute, inline, safe_href
@@ -146,8 +146,10 @@ def _section(section: Section, at: tuple[int, ...], opened: int) -> str:
     )
     state = " open" if len(at) <= opened else ""
     return (
-        f'<li><details id="{escape_attribute(section.key)}"{state}>'
-        f"<summary>{_level(section)}{inline(section.title)}{_tally(section)}</summary>"
+        f"<li{modes.attributes(section.tag)}>"
+        f'<details id="{escape_attribute(section.key)}"{state}>'
+        f"<summary>{_level(section)}{inline(section.title)}{modes.label(section.tag)}"
+        f"{_tally(section)}</summary>"
         f"<ol>{children}</ol></details></li>"
     )
 
@@ -177,8 +179,8 @@ def _tally(section: Section) -> str:
 
 def _item(item: Item, at: tuple[int, ...]) -> str:
     """Return one unit's row: linked when it reads, plainly listed when it does not."""
-    body = f"{_numbering(item)}{inline(item.title)}{_read_state()}"
-    where = f'id="{escape_attribute(item.key)}"'
+    body = f"{_numbering(item)}{inline(item.title)}{modes.label(item.tag)}{_read_state()}"
+    where = f'id="{escape_attribute(item.key)}"{modes.attributes(item.tag)}'
     if item.href is None:
         return f'<li {where} {READABLE_ATTRIBUTE}="false">{body}</li>'
     target = safe_href(item.href)
@@ -195,10 +197,8 @@ def _item(item: Item, at: tuple[int, ...]) -> str:
             f"because this page is nothing but these links and a dropped one is a unit "
             f"nobody can open"
         )
-    return (
-        f'<li {where} {READABLE_ATTRIBUTE}="true">'
-        f'<a href="{escape_attribute(target)}">{body}</a></li>'
-    )
+    state = "true" if modes.openable(item.tag) else "false"
+    return f'<li {where} {READABLE_ATTRIBUTE}="{state}">{modes.link(item.tag, target, body)}</li>'
 
 
 def _level(section: Section) -> str:
