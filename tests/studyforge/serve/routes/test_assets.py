@@ -317,7 +317,9 @@ def test_only_the_root_icon_is_answered_with_no_content(site):
     assert get(site, "/units/favicon.ico").status == 404
 
 
-@pytest.mark.parametrize("name", ["Types.java", "Main.kt", "greet.py", "run.sh", "query.sql"])
+@pytest.mark.parametrize(
+    "name", ["Types.java", "Main.kt", "build.gradle.kts", "greet.py", "run.sh", "query.sql"]
+)
 def test_a_code_file_is_served_as_text_the_browser_shows_never_a_download(name):
     # ⭐ A lesson's link to its code falls back to this plain view, so
     # it must be a view: text, gated like every text, never opaque bytes.
@@ -347,6 +349,15 @@ def test_a_source_file_whose_text_holds_an_address_is_served_verbatim(site):
     assert response.status == 200
     assert response.header("Content-Type") == assets_module.TEXT_TYPE
     assert response.body == JAVA_TEXT_BLOCK.encode("utf-8")
+
+
+def test_a_kts_script_whose_text_holds_an_address_is_served_verbatim(site):
+    text = f'val contact = "{SAMPLE_ADDRESS}"\n'
+    (site / "build.gradle.kts").write_text(text, encoding="utf-8")
+    response = get(site, "/build.gradle.kts")
+    assert response.status == 200
+    assert response.header("Content-Type") == assets_module.TEXT_TYPE
+    assert response.body == text.encode("utf-8")
 
 
 @pytest.mark.parametrize(

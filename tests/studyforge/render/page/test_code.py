@@ -182,3 +182,18 @@ def test_the_label_the_page_draws_is_the_label_narration_silences():
     # longer label in the script would silence a list the page leaves plain,
     # and a shorter one would speak a panel.
     assert code.MAX_LABEL == panel.MAX_LABEL
+
+
+KOTLIN = replace(sample_placement(), code=(".kt", ".kts"))
+
+
+def test_a_link_to_a_kts_build_script_is_marked_as_code():
+    body, found = code.mark(link(f"{UP}app/build.gradle.kts", "build.gradle.kts"), KOTLIN)
+    assert found == ("app/build.gradle.kts",)
+    assert f'href="{UP}app/build.gradle.kts"' in body, "the plain view's href is kept"
+    assert 'data-code-path="app/build.gradle.kts"' in body
+
+
+def test_a_kts_link_is_plain_where_the_runtimes_write_no_kts():
+    body = link(f"{UP}app/build.gradle.kts", "build.gradle.kts")
+    assert code.mark(body, JAVA) == (body, ())
