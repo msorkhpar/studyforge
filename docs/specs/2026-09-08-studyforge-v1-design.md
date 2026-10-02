@@ -772,6 +772,10 @@ example is not where you learn what a manifest *may* carry. This list is.
 | `runtimes` | *optional* | Names, never versions, from a closed vocabulary. ⛔ **Absent means none: no runner, complete at the reading floor** (§7, C5) |
 | `narration` | *optional* | Whether a build and a serve voice the corpus. ⭐ **Absent means voiced whenever clips are recorded**; ⛔ **`false` is the reading floor exactly, complete and never short** (C5) |
 | `onboarding_doc` | *optional* | Where onboarding writes its reader document: a corpus-relative `.md` path, or `false` for none. ⭐ **Absent means `ONBOARDING.md` at the root** |
+| `languages` | *optional* | `{id, label, fence_labels}` entries: the language ids a section may be tagged with. Absent means no tagging. Gated at `corpus_api` 8; no bump |
+| `modes` | *optional* | `{id, label, summary, prose, tabs, practices, practice_choice?}` entries, each naming declared languages. ⛔ Requires `languages`; absent means no question |
+| `default_mode` | *optional* | A declared mode id; absent means the first declared mode. Requires `modes` |
+| `outside_mode` | *optional* | `open` (default) or `locked`. Requires `modes` |
 | `placement` | **required** | `tree` or `sibling` (§5) |
 | `content` | **required** | `include` is plain globs; every `exclude` and every `not_material` entry carries its `why` |
 | `media` | *optional* | Defaulted (§5). ⛔ **A corpus with no media declares nothing** |

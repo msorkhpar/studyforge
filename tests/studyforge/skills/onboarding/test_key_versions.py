@@ -17,6 +17,15 @@ from studyforge.skills.onboarding import artifacts, hand_edited, onboard, reonbo
 from studyforge.skills.onboarding.manifest import promote, render
 from tests.studyforge.skills.onboarding import corpora
 
+READING_MODE = {
+    "id": "only",
+    "label": "Only",
+    "summary": "One language",
+    "prose": "alpha",
+    "tabs": ["alpha"],
+    "practices": ["alpha"],
+}
+
 #: One draft per key a version added after `1`, each carrying only that key.
 DRAFTS = {
     ("media", "max_files"): {**corpora.DRAFT, "media": {"max_files": 4000}},
@@ -24,6 +33,27 @@ DRAFTS = {
     (None, "narration"): {**corpora.DRAFT, "narration": False},
     (None, "onboarding_doc"): {**corpora.DRAFT, "onboarding_doc": "docs/reader.md"},
     (None, "curriculum"): {**corpora.DRAFT, "curriculum": {"record": "README.md"}},
+    (None, "languages"): {
+        **corpora.DRAFT,
+        "languages": [{"id": "alpha", "label": "Alpha", "fence_labels": ["alpha"]}],
+    },
+    (None, "modes"): {
+        **corpora.DRAFT,
+        "languages": [{"id": "alpha", "label": "Alpha"}],
+        "modes": [READING_MODE],
+    },
+    (None, "default_mode"): {
+        **corpora.DRAFT,
+        "languages": [{"id": "alpha", "label": "Alpha"}],
+        "modes": [READING_MODE],
+        "default_mode": "only",
+    },
+    (None, "outside_mode"): {
+        **corpora.DRAFT,
+        "languages": [{"id": "alpha", "label": "Alpha"}],
+        "modes": [READING_MODE],
+        "outside_mode": "locked",
+    },
     ("curriculum", "linked"): {
         **corpora.DRAFT,
         "levels": ["section", "module"],

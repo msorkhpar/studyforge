@@ -188,10 +188,20 @@ def manifests() -> dict[str, Any]:
     documents["required-keys-at-version-1"] = json.dumps(REQUIRED_AT_ONE)
     documents["every-key-at-version-7"] = json.dumps(EVERY_KEY_AT_SEVEN)
     documents["every-key-at-version-8"] = json.dumps(EVERY_KEY)
-    return {
-        name: json.loads(json.dumps(dataclasses.asdict(parse(text)), default=list))
-        for name, text in documents.items()
-    }
+    return {name: _declarations(parse(text)) for name, text in documents.items()}
+
+
+def _declarations(manifest: Any) -> dict[str, Any]:
+    """The parsed value as the recordings hold it.
+
+    A declaration a later optional key added and a manifest never made (its value is the
+    absent one, `None`) is left out: the recordings were written before that key existed,
+    and an absent key is today. A manifest that does declare it records it in full.
+    """
+    value = json.loads(json.dumps(dataclasses.asdict(manifest), default=list))
+    if value.get("reading") is None:
+        value.pop("reading", None)
+    return value
 
 
 def recorded(name: str) -> Any:
