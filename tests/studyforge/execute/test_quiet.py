@@ -35,6 +35,8 @@ from tests.studyforge.execute.transcripts import (
     ALL,
     GRADLE_COMPILE_ERROR,
     GRADLE_FAILURE,
+    GRADLE_FULL_FAILURE,
+    GRADLE_FULL_PASS,
     GRADLE_PASS,
     JAVAC_ERROR,
     JVM_TRACE,
@@ -554,3 +556,30 @@ def test_one_declared_tool_ignores_the_command(argv):
     assert select(("java", "maven"), argv) is MAVEN
     assert select(("gradle", "kotlin"), argv) is GRADLE
     assert select(("python",), argv) is None
+
+
+def test_a_full_format_gradle_failure_keeps_every_assertion_message_and_frame():
+    lines = run(GRADLE_FULL_FAILURE, 1)
+    kept = shown(lines, GRADLE)
+    messages = [line for line in lines if line.startswith("    ") and line.strip()]
+    frames = [line for line in lines if line.lstrip().startswith("at ")]
+    assert [line for line in kept if line in messages] == messages
+    assert [line for line in kept if line in frames] == frames
+    assert "    see https://docs.gradle.org/current/userguide/x.html for why" in kept
+    assert "    Consider enabling the second discount only once" in kept
+    assert exit_line(1) in kept
+
+
+def test_a_full_format_gradle_failure_still_drops_the_build_noise():
+    kept = shown(run(GRADLE_FULL_FAILURE, 1), GRADLE)
+    assert "> Task :test FAILED" not in kept
+    assert "BUILD FAILED in 2s" not in kept
+    assert "* What went wrong:" not in kept
+    assert not any(line.startswith("> Run with --") for line in kept)
+    assert len(kept) == 20
+
+
+def test_a_full_format_gradle_pass_is_filtered_as_before():
+    kept = shown(run(GRADLE_FULL_PASS, 1), GRADLE)
+    assert kept == ["", "BasketTest > totalsABasket() PASSED", "", exit_line(1)]
+    assert "BUILD SUCCESSFUL in 1s" not in kept

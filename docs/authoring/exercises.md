@@ -183,6 +183,8 @@ came from — `bundled`, `generated` or `user` — and `trust` is either
 the other four are the grader**, and the grader is written whole or not at all
 (`trust` alone may be left out, and is then defaulted from `provenance`).
 
+A Gradle practice sets `testLogging { exceptionFormat = TestExceptionFormat.FULL }` in its `tasks.test`, so a failed test shows its assertion message and the run filter keeps it.
+
 ### The last six: what an authored exercise says
 
 **`kind` is `code` or `quiz`**, and `code` is what a record with no `kind`
