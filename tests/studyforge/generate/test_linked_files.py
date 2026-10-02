@@ -131,10 +131,12 @@ def _read_text(body: str) -> list[str]:
     return [ref for ref in found.refs if not ref.startswith(("#", "http"))]
 
 
-def _declares_java(root: Path) -> None:
+def _declares_java(root: Path, runtimes: tuple[str, ...] = ("java",)) -> None:
     manifest = root / "corpus.json"
     document = json.loads(manifest.read_text(encoding="utf-8"))
-    document.update(corpus_api=max(document["corpus_api"], 4), exercises=True, runtimes=["java"])
+    document.update(
+        corpus_api=max(document["corpus_api"], 4), exercises=True, runtimes=list(runtimes)
+    )
     manifest.write_text(json.dumps(document), encoding="utf-8")
 
 
@@ -224,3 +226,22 @@ def test_a_page_is_handed_the_code_suffixes_only_where_it_sits_beside_the_files(
     list(units.unit_bodies(corpus))
     assert {placement.code for placement in handed} == ({(".java",)} if beside else {()})
     assert {placement.pairing is not None for placement in handed} == {beside}
+
+
+KTS = {"build.gradle.kts": "plugins { kotlin(\"jvm\") }\n"}
+
+
+@pytest.mark.parametrize(
+    ("runtimes", "marked"), [(("java", "kotlin"), True), (("java",), False)]
+)
+def test_a_link_to_a_kts_build_script_opens_as_code_only_where_kotlin_is_declared(
+    tmp_path, runtimes, marked
+):
+    files = {"src/code/build.gradle.kts": KTS["build.gradle.kts"]}
+    root = linked(tmp_path, "tree", "See [the build](code/build.gradle.kts).", files=files)
+    _declares_java(root, runtimes)
+    write_site(root, root, narration=False)
+    body = sorted(root.rglob("*.unit.html"))[0].read_text(encoding="utf-8")
+    assert ("data-code-path=\"src/code/build.gradle.kts\"" in body) is marked
+    assert "build.gradle.kts" in body
+    assert unresolved(root) == []
