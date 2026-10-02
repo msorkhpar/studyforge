@@ -373,8 +373,8 @@ The required 15 are, in the order they reach disk: `raw_api`, `source`,
 `video`, `assets`, `attachments`, `counts`, `content_sha256`.
 
 ⛔ **The order is the format** (R10): the document is serialised with
-`sort_keys=False`, so two runs are comparable byte for byte. The optional four
-— `assets_sha256`, `starting_code`, `media_skipped`, `exercise` — are
+`sort_keys=False`, so two runs are comparable byte for byte. The optional five
+— `assets_sha256`, `starting_code`, `media_skipped`, `exercise`, `lang` — are
 **appended, never inserted**, so every document written before one existed
 still renders the bytes it always did.
 

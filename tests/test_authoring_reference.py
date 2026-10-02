@@ -191,7 +191,7 @@ def test_the_reference_counts_the_keys_it_lists():
 
 def _word(number: int) -> str:
     """Spell a small count the way the reference spells it."""
-    return {4: "Four", 11: "eleven", 15: "Fifteen"}[number]
+    return {4: "Four", 5: "Five", 11: "eleven", 15: "Fifteen"}[number]
 
 
 def test_every_container_map_key_has_a_row_and_no_row_invents_one():
@@ -260,6 +260,7 @@ def _spelled(number: int) -> str:
         22: "twenty-two",
         23: "twenty-three",
         24: "twenty-four",
+        27: "twenty-seven",
         29: "twenty-nine",
         30: "thirty",
         31: "thirty-one",
@@ -274,6 +275,7 @@ def _spelled(number: int) -> str:
         47: "forty-seven",
         48: "forty-eight",
         49: "forty-nine",
+        52: "fifty-two",
     }[number]
 
 

@@ -60,7 +60,7 @@ from studyforge.unit.builder.document import (
     render,
 )
 from studyforge.unit.builder.material import KIND_ORDER, Material, NoMaterial, read
-from studyforge.unit.builder.parts import SECTION_KEYS
+from studyforge.unit.builder.parts import LANG_KEY, SECTION_KEYS
 from studyforge.unit.content import Overlay
 from studyforge.unit.headings import Heading, headings
 from studyforge.unit.mentions import Mentions
@@ -70,6 +70,7 @@ __all__ = [
     "BUILT_FROM_KEYS",
     "KIND_ORDER",
     "KNOWN_API",
+    "LANG_KEY",
     "PRACTICES_KEYS",
     "SECTION_KEYS",
     "UNIT_KEYS",

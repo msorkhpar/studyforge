@@ -73,3 +73,31 @@ def test_the_authored_module_contains_no_ordering_code_at_all():
     source = inspect.getsource(authored)
     for forbidden in ("sorted(", ".sort(", "reverse=", "key=lambda"):
         assert forbidden not in source, f"authored.py reaches for {forbidden!r}"
+
+
+def test_a_unit_of_two_tagged_lessons_and_a_tagged_practice_keeps_every_section_in_order():
+    from studyforge.unit.builder.derived import sections
+    from studyforge.unit.builder.material import of
+
+    material = of(
+        [
+            support.lesson(2, lang="bb"),
+            support.lesson(1, lang="aa"),
+            support.practice(1, lang="aa"),
+        ],
+        "unit-01",
+    )
+    built = sections(material)
+    assert [(s["key"], s.get("lang")) for s in built] == [
+        ("prose", "aa"),
+        ("prose-2", "bb"),
+        ("practice-prose", "aa"),
+    ]
+
+
+def test_a_unit_with_no_tag_builds_sections_with_no_lang():
+    from studyforge.unit.builder.derived import sections
+    from studyforge.unit.builder.material import of
+
+    built = sections(of([support.lesson(1), support.practice(1)], "unit-01"))
+    assert all("lang" not in s for s in built)

@@ -169,12 +169,23 @@ def render(
         key=escape_attribute(key),
         kind=escape_attribute(section.get("kind") or ""),
         label=escape_attribute(section.get("heading") or ""),
+        lang=_lang(section.get("lang")),
         heading=_heading(section, contents),
         body=body,
     )
     deck = _deck(section.get("video"), placement)
     files = _attachments(section.get("attachments"), placement)
     return blocks.JOIN.join(part for part in (deck, wrapper, files) if part)
+
+
+def _lang(lang: object) -> str:
+    """Return the section's `data-lang` attribute, or `''` for a section with no language.
+
+    ⛔ **Only a tagged section carries it** (a corpus that declares no language
+    builds the bytes it always did), and the id is the corpus's own, written as
+    given: nothing here branches on one (R1).
+    """
+    return f' data-lang="{escape_attribute(lang)}"' if isinstance(lang, str) and lang else ""
 
 
 def _attachments(attachments: object, placement: Placement) -> str:

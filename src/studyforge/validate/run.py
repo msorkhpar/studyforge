@@ -8,7 +8,8 @@ invalid corpus — an invalid corpus is a *result*, and a caller that had to
 catch an exception to learn the verdict could not report ten problems at once.
 
 **Depends on.** `validate.corpus`, `validate.structure`, `validate.paths`,
-`validate.source`, `validate.exercises`, `validate.derived`, `validate.ledger`,
+`validate.source`, `validate.exercises`, `validate.derived`, `validate.languages`,
+`validate.ledger`,
 `validate.links`, `validate.narration`, `validate.report`, and `narrate.enabled`
 for whether the last is run.
 
@@ -27,6 +28,7 @@ from studyforge.narrate import narration_on
 from studyforge.validate import (
     derived,
     exercises,
+    languages,
     ledger,
     links,
     narration,
@@ -50,6 +52,7 @@ CHECKS = (
     *ledger.CHECKS,
     *links.CHECKS,
     *narration.CHECKS,
+    *languages.CHECKS,
 )
 
 
