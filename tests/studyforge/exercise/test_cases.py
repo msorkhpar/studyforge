@@ -378,7 +378,9 @@ def test_an_id_is_read_as_the_report_spells_it(spelling):
     assert cases_of([{**CASES[0], "id": spelling}], WHERE)[0].id == spelling
 
 
-@pytest.mark.parametrize("spelling", ["", "   ", "a test", "a\ttest", None, 7, "Test#x\n"])
+@pytest.mark.parametrize(
+    "spelling", ["", "   ", "a  test", " a test", "a\ttest", None, 7, "Test#x\n"]
+)
 def test_an_id_no_report_could_spell_is_refused(spelling):
     # ⚠️ The trailing newline is in the population deliberately: `$` matches
     # before one, so an id ending in a newline is exactly the shape a pattern
@@ -389,7 +391,7 @@ def test_an_id_no_report_could_spell_is_refused(spelling):
 def test_a_refused_id_is_not_reproduced():
     # ⛔ R7: an id is corpus data, and a refusal that echoed it would put the
     # one shape being refused into a build log.
-    assert "janedoe" not in refuse(cases_of, [case(id="a test by janedoe")], WHERE)
+    assert "janedoe" not in refuse(cases_of, [case(id="a  test by janedoe")], WHERE)
 
 
 # --------------------------------------------------------------------------

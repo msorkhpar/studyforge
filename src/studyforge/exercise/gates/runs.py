@@ -53,6 +53,7 @@ from typing import Protocol
 from studyforge.describe import describe
 from studyforge.exercise.cases import Case
 from studyforge.exercise.errors import ExerciseError
+from studyforge.exercise.gates.digests import PLANT
 from studyforge.exercise.record import Exercise
 from studyforge.exercise.report import breakdown_of
 
@@ -63,9 +64,9 @@ REFERENCE = "reference"
 #: What the reader starts from. ⭐ `G2` runs it once.
 STARTER = "starter"
 
-#: The prefix of a planted solution's role: `plant:<case id>`. ⭐ `G3` runs one
-#: per edge case, which is what makes the gate as fine as the claim it backs.
-PLANT = "plant"
+#: ⭐ `PLANT`, the prefix of a planted solution's role (`plant:<case id>`), is
+#: `digests`' spelling, which decides the role's shape. `G3` runs one per edge
+#: case, which is what makes the gate as fine as the claim it backs.
 
 #: ⛔ The two runs `G1` takes, numbered, because *the same outcome each time* is
 #: a claim about two readings and a caller must be able to tell them apart.
