@@ -84,6 +84,11 @@ VALID = ("depth1", "depth2", "shared-origin", "runnable")
 #: (`tests/fixtures/README.md`) is stated over every OTHER valid corpus.
 RUNNABLE = "runnable"
 
+#: ⛔ The eleven types every document counts. A later type is counted only where a document
+#: holds one, and a committed fixture holding it would move every golden, so no fixture is
+#: required to carry it: its own modules test it.
+COUNTED_TYPES = tuple(COUNT_KEYS.values())
+
 #: ⛔ **Imported, never restated.** The archive document's key order, its
 #: optional keys, the eleven block types with their fields, the count keys and
 #: the container types are `studyforge.archive`'s — one definition, and a test
@@ -107,8 +112,8 @@ RUNNABLE = "runnable"
 #: is not its own. ⚠️ `code` is not optional among the three: the
 #: fenced-markup check below is parametrized over `VALID`.
 REQUIRED_TYPES = {
-    "depth1": tuple(t for t in BLOCK_FIELDS if t != "video"),
-    "depth2": tuple(BLOCK_FIELDS),
+    "depth1": tuple(t for t in COUNTED_TYPES if t != "video"),
+    "depth2": COUNTED_TYPES,
     "shared-origin": ("heading", "para", "code"),
     "runnable": ("heading", "para", "code"),
 }

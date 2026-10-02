@@ -71,10 +71,16 @@ class BlockType:
     #: Keys written only when they say something, AFTER `fields`.
     #: ⭐ A block without one is byte-identical to the same block before it existed.
     optional: tuple[str, ...] = ()
+    #: ⭐ A count written only for a document that holds one. The eleven original
+    #: keys are always written, zero included; a key added later is not, so
+    #: every document written before it existed keeps its `counts` and its digest.
+    counted_when_present: bool = False
 
 
-#: The vocabulary, in the order `counts` is written (R10). ⛔ Eleven rows, and
-#: a twelfth is a `raw_api` change.
+#: The vocabulary, in the order `counts` is written (R10). ⛔ Eleven rows
+#: counted always, and `example`, the twelfth, counted only where a document holds one: it
+#: is optional content, `raw_api` is not raised (as `lang` did not), and a document with
+#: none is byte-identical to what it was. An older build refuses an example by name.
 BLOCKS = (
     BlockType("heading", "headings", ("type", "level", "text")),
     BlockType("para", "paras", ("type", "text")),
@@ -92,6 +98,15 @@ BLOCKS = (
         ("type", "summary", "open", "blocks"),
         holds_blocks=True,
     ),
+    # ⭐ An example: one run of blocks cut into a tab per language (see `EXAMPLE_TABS`).
+    BlockType(
+        "example",
+        "examples",
+        ("type", "id", "tabs", "blocks"),
+        holds_blocks=True,
+        optional=("output",),
+        counted_when_present=True,
+    ),
 )
 
 #: The names, in vocabulary order.
@@ -105,8 +120,14 @@ BLOCK_TYPES = tuple(block.name for block in BLOCKS)
 #: renderer's decision, not this document's (R13).
 CONTAINER_TYPES = tuple(block.name for block in BLOCKS if block.holds_blocks)
 
-#: `count key -> block type`, in the order `counts` is serialised.
-COUNT_KEYS = {block.count_key: block.name for block in BLOCKS}
+#: `count key -> block type`, in the order `counts` is serialised: the keys every
+#: document carries. ⭐ A block type counted only when present is `LATE_COUNT_KEYS`.
+COUNT_KEYS = {block.count_key: block.name for block in BLOCKS if not block.counted_when_present}
+
+#: `count key -> block type` for the types a document counts only when it holds one,
+#: written after `COUNT_KEYS` in this order.
+LATE_COUNT_KEYS = {block.count_key: block.name for block in BLOCKS if block.counted_when_present}
+
 
 #: `block type -> its keys, in order`.
 BLOCK_FIELDS = {block.name: block.fields for block in BLOCKS}
@@ -195,10 +216,14 @@ def counts_of(blocks: list, where: str = "blocks") -> dict[str, int]:
     it (R7) — the same sentence `validate.blocks` yields for the same shape.
     """
     types = _types_of(blocks, where)
-    return {
+    counts = {
         key: sum(1 for kind in types if kind == block_type)
         for key, block_type in COUNT_KEYS.items()
     }
+    for key, block_type in LATE_COUNT_KEYS.items():
+        if (held := sum(1 for kind in types if kind == block_type)) > 0:
+            counts[key] = held
+    return counts
 
 
 def _objects(blocks: list, where: str) -> Iterator[dict]:

@@ -74,6 +74,7 @@ _CLASS_OF = {
     "quote": None,
     "html": None,
     "disclosure": "disclosure",
+    "example": None,
 }
 
 #: `archive block type -> the class its element carries`, for the types that

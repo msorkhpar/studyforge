@@ -27,6 +27,7 @@ from studyforge.archive.blocks import (
     CONTAINER_TYPES,
     COUNT_KEYS,
     ITEM_BLOCKS,
+    LATE_COUNT_KEYS,
     LESSON_HEADING,
     STARTING_CODE_HEADING,
     STATEMENT_HEADING,
@@ -58,6 +59,9 @@ EXPECTED = (
     "disclosure",
 )
 
+#: What joined after those, counted only where a document holds one (`LATE_COUNT_KEYS`).
+LATER = ("example",)
+
 EXPECTED_COUNT_KEYS = (
     "headings",
     "paras",
@@ -78,15 +82,16 @@ EXPECTED_COUNT_KEYS = (
 # --------------------------------------------------------------------------
 
 
-def test_the_vocabulary_is_eleven_types_in_counts_order():
-    assert BLOCK_TYPES == EXPECTED
-    assert len(set(BLOCK_TYPES)) == 11
+def test_the_vocabulary_is_eleven_types_in_counts_order_then_the_ones_counted_when_present():
+    assert BLOCK_TYPES == EXPECTED + LATER
+    assert len(set(BLOCK_TYPES)) == 12
 
 
 def test_every_derived_view_comes_from_the_same_rows():
     # ⭐ Asserted rather than described: four views are four readings of one
     # list, so they cannot fall out of step.
-    assert tuple(COUNT_KEYS.values()) == BLOCK_TYPES
+    assert tuple(COUNT_KEYS.values()) == EXPECTED
+    assert tuple(LATE_COUNT_KEYS.values()) == LATER
     assert tuple(BLOCK_FIELDS) == BLOCK_TYPES
     assert tuple(BY_NAME) == BLOCK_TYPES
     assert CONTAINER_TYPES == tuple(b.name for b in BLOCKS if b.holds_blocks)
@@ -96,11 +101,11 @@ def test_the_count_keys_are_the_ones_that_reach_disk():
     assert tuple(COUNT_KEYS) == EXPECTED_COUNT_KEYS
 
 
-def test_the_containers_are_quote_and_disclosure():
+def test_the_containers_are_quote_disclosure_and_example():
     # ⚠️ `disclosure` is present-but-withheld — a third state between shown
     # and absent. The archive records the semantics; that the markup is
     # `<details><summary>` is the renderer's decision (R13).
-    assert CONTAINER_TYPES == ("quote", "disclosure")
+    assert CONTAINER_TYPES == ("quote", "disclosure", "example")
     assert all(BY_NAME[name].fields[-1] == "blocks" for name in CONTAINER_TYPES)
 
 
@@ -300,9 +305,10 @@ def test_every_block_type_in_the_fixtures_is_in_the_vocabulary():
         read += 1
     assert read == coverage(asserting={"vocabulary"}).swept
     assert seen <= set(BLOCK_TYPES)
-    # ⚠️ And the fixtures exercise all of them, so the vocabulary is not
-    # eleven types of which four are theoretical.
-    assert seen == set(BLOCK_TYPES), sorted(set(BLOCK_TYPES) - seen)
+    # ⚠️ And the fixtures exercise all of the eleven every document counts, so the vocabulary
+    # is not eleven types of which four are theoretical. ⛔ No committed fixture holds an
+    # example: one would move every golden, and the block is tested by its own modules.
+    assert seen == set(EXPECTED), sorted(set(EXPECTED) - seen)
 
 
 def test_every_block_carries_exactly_the_fields_its_row_names():
@@ -440,10 +446,13 @@ def test_a_nested_list_is_not_a_block_in_reading_order():
     assert list(walk([block])) == [block]
 
 
-def test_start_is_the_one_optional_key_and_only_a_list_carries_it():
+def test_start_and_output_are_the_optional_keys_a_list_and_an_example_carry():
     # ⛔ An optional key sits after a block's fields, so the fields keep
     # their order and a block without it is unchanged.
-    assert BLOCK_OPTIONAL == {name: (("start",) if name == "list" else ()) for name in BLOCK_TYPES}
+    assert BLOCK_OPTIONAL == {
+        name: ("start",) if name == "list" else ("output",) if name == "example" else ()
+        for name in BLOCK_TYPES
+    }
 
 
 @pytest.mark.parametrize(
@@ -529,3 +538,17 @@ def test_a_non_object_block_inside_a_container_is_not_this_functions_business():
     quote = {"type": "quote", "blocks": ["not an object"]}
 
     assert counts_of([quote])["quotes"] == 1
+
+
+def test_an_example_is_counted_only_where_a_document_holds_one():
+    plain = counts_of([{"type": "para", "text": "one"}])
+    assert "examples" not in plain
+    assert tuple(plain) == EXPECTED_COUNT_KEYS, "the eleven keys a document always carries"
+    held = counts_of([{"type": "example", "id": "e", "tabs": [], "blocks": []}] * 2)
+    assert tuple(held) == (*EXPECTED_COUNT_KEYS, "examples") and held["examples"] == 2
+
+
+def test_an_example_holds_its_blocks_so_walk_reaches_them():
+    code = {"type": "code", "lang": "aa", "text": "x"}
+    example = {"type": "example", "id": "e", "tabs": [{"lang": "aa", "span": 1}], "blocks": [code]}
+    assert code in list(walk([example]))

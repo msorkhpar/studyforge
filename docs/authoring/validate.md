@@ -85,7 +85,7 @@ checker check* is this table and nothing else.
 | 22 | `check_ledger_accounts` | where `exercises/ledger.json` is committed, does it still account for every page the corpus carries — every fence on it and every declared grader, each by an exercise or a written reason? |
 | 23 | `check_links_resolve` | does every relative link on a unit's page lead to a file of the corpus, a unit's page or a heading of that page, from where the page sits? |
 | 24 | `check_narration_current` | where `.studyforge/narration.json` is committed and narration is on, was every clip a page plays made from the words its paragraph says now? |
-| 25 | `check_languages_are_declared` | is every `lang` a document carries a language `corpus.json` declares under `languages`? |
+| 25 | `check_languages_are_declared` | is every `lang` a document carries, and every language an `example` block's tab names, a language `corpus.json` declares under `languages`? |
 | 26 | `check_units_have_prose` | where `corpus.json` declares `modes`, does every unit hold a lesson, tagged or common? |
 | 27 | `check_modes_list_a_unit` | does every declared mode list at least one unit? |
 
@@ -144,7 +144,7 @@ before it, `check_untouched` after — which reports in the same shape.
 | `empty-unit` | a unit carries no blocks at all |
 | `unit-missing` | a declared unit is absent |
 | `practice-count` | declared `practices` and present practice documents disagree |
-| `language-undeclared` | a document's `lang` is not a language `corpus.json` declares under `languages` (or the corpus declares none) |
+| `language-undeclared` | a document's `lang`, or the language of an example's tab, is not a language `corpus.json` declares under `languages` (or the corpus declares none) |
 | `unit-prose` | in a corpus that declares `modes`, a unit holds no lesson document, tagged or common |
 | `mode-empty` | a declared mode lists no unit: no lesson is common or in its `prose` language, and no practice is common or in a language it offers |
 | `duplicate-path` | two artifacts would be written to one path |
