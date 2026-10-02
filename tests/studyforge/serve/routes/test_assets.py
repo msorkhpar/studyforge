@@ -349,6 +349,15 @@ def test_a_source_file_whose_text_holds_an_address_is_served_verbatim(site):
     assert response.body == JAVA_TEXT_BLOCK.encode("utf-8")
 
 
+def test_a_kts_script_whose_text_holds_an_address_is_served_verbatim(site):
+    text = f'val contact = "{SAMPLE_ADDRESS}"\n'
+    (site / "build.gradle.kts").write_text(text, encoding="utf-8")
+    response = get(site, "/build.gradle.kts")
+    assert response.status == 200
+    assert response.header("Content-Type") == assets_module.TEXT_TYPE
+    assert response.body == text.encode("utf-8")
+
+
 @pytest.mark.parametrize(
     "line",
     [f"PATH = '{LEAK}'", "HOST = '" + "box" + ".local'"],
