@@ -73,6 +73,7 @@ from studyforge.generate.narration import voiced
 from studyforge.generate.navigation import rail
 from studyforge.generate.units import unit_pages
 from studyforge.generate.writing import Written, place
+from studyforge.render import modes
 from studyforge.render.index import Placement as IndexPlacement
 from studyforge.render.index import from_contents
 from studyforge.render.index import render as render_index
@@ -125,7 +126,7 @@ def retired(corpus: Corpus, into: Path | str) -> Written:
 
 def root_index(corpus: Corpus, into: Path | str) -> Written:
     """Write the single page a reader opens by double-clicking it."""
-    where = IndexPlacement(shared=corpus.shared)
+    where = IndexPlacement(shared=corpus.shared, offer=modes.offer(corpus.manifest.reading))
     local = status(corpus.contents, corpus.present)
     written: list[PurePosixPath] = []
     refused: list[PurePosixPath] = []
@@ -164,7 +165,7 @@ def assets(corpus: Corpus, into: Path | str) -> Written:
     written: list[PurePosixPath] = []
     refused: list[PurePosixPath] = []
     replaced: list[PurePosixPath] = []
-    for filename, body in sorted(written_files().items()):
+    for filename, body in sorted({**written_files(), **modes.files(modes.offer(corpus.manifest.reading))}.items()):
         place(
             out,
             directory / filename,

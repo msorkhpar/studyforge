@@ -172,6 +172,7 @@ def compose(
             # to play it.
             player=_region(player(attributes + body, narration)),
             nav=_region(navigation.between_units(links)),
+            **placement.mode_slots(),
         )
         + TRAILING_NEWLINE
     )

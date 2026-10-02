@@ -395,6 +395,18 @@ repeated id, a shared fence label, a `default_mode` that is no mode or an `outsi
 that is neither value. The keys need `corpus_api` 8, which this build already writes;
 validation never asks a unit to have anything in a language.
 
+**What a reader sees.** A corpus that declares `modes` writes `modes.css` and `modes.js`
+beside `page.css` and `page.js`, and every page carries a switch listing the declared
+modes. On a first visit a card asks which one to read, listing each mode's label and
+summary; the choice is kept in the browser the way the theme is, through guarded reads
+and writes, so a page where the browser refuses storage still renders and simply asks
+nothing. A mode shows the sections tagged with its `prose` language and the untagged
+ones; the page's outline drops the lines that point at hidden sections. With scripts
+off, in a crawl, and before an answer, a page shows the `default_mode` view: the root
+element carries `data-mode` with that value and the stylesheet keys on it. A page opened
+from a file asks on every load. A corpus that declares no `modes` gets none of this: no
+switch, no question, no script, no style and no file.
+
 ## `curriculum` — where your reading order is recorded
 
 **Most material records its own order and grouping in one document**: a README,
