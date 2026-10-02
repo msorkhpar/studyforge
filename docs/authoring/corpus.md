@@ -68,6 +68,10 @@ below.
 | `runtimes` | *optional* | Which runtimes your material's commands need, by name. Absent means none, and a corpus with none needs no runner |
 | `narration` | *optional* | Whether the site speaks. `false` is a site with no voice: no player, no clip served, nothing called missing. Absent means narrated whenever clips are recorded |
 | `onboarding_doc` | *optional* | Where onboarding writes the document a reader opens first, as a path inside the corpus ending `.md`, or `false` for none. Absent means `ONBOARDING.md` at the root |
+| `languages` | *optional* | The languages a section may be tagged with: a list of `{id, label, fence_labels}`. Absent means no tagging and today's behaviour |
+| `modes` | *optional* | The reading modes a reader chooses between: a list of `{id, label, summary, prose, tabs, practices}` and an optional boolean `practice_choice`. Needs `languages`; absent means no question |
+| `default_mode` | *optional* | The id of the mode shown without scripts. Needs `modes`; absent means the first declared mode |
+| `outside_mode` | *optional* | What an entry does in a mode that does not show its language: `open` or `locked`. Needs `modes`; absent means `open` |
 | `placement` | **required** | `tree` or `sibling` |
 | `content` | **required** | Which of your files are read in, which are deliberately not, and which are not prose at all |
 | `media` | *optional* | Whether generated narration is committed, and the limits past which the build stops. A corpus with no media declares nothing |
@@ -377,6 +381,19 @@ the refusal names it: move your edited copy out of the generated paths, or
 restore it, and regenerate.
 
 ---
+
+## `languages` and `modes` — reading modes
+
+All four keys are optional, and a corpus that declares none is read exactly as before.
+`languages` lists `{id, label, fence_labels}`; a fence label belongs to one language.
+`modes` lists `{id, label, summary, prose, tabs, practices}` with an optional boolean
+`practice_choice`: `prose` is one declared language id, `tabs` and `practices` are lists
+of declared language ids, each named once. `modes` needs `languages`; `default_mode` (a
+declared mode id, the first mode when absent) and `outside_mode` (`open`, the default,
+or `locked`) need `modes`. A manifest is refused by name for an undeclared language, a
+repeated id, a shared fence label, a `default_mode` that is no mode or an `outside_mode`
+that is neither value. The keys need `corpus_api` 8, which this build already writes;
+validation never asks a unit to have anything in a language.
 
 ## `curriculum` — where your reading order is recorded
 

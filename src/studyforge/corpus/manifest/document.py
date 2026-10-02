@@ -61,17 +61,20 @@ from studyforge.corpus.manifest.edits import PermittedEdit, parse_edits
 from studyforge.corpus.manifest.errors import ManifestError
 from studyforge.corpus.manifest.fields import (
     ONBOARDING_DOC,
+    PLACEMENT_PROFILES,
     exercises_of,
     levels_of,
     narration_of,
     onboarding_doc_of,
+    placement_of,
     slug_of,
     title_of,
     variants_of,
 )
 from studyforge.corpus.manifest.media import MediaPolicy, parse_media
+from studyforge.corpus.manifest.reading import Reading, parse_reading
 from studyforge.corpus.manifest.runtimes import NO_RUNTIMES, parse_runtimes
-from studyforge.describe import describe, describe_keys
+from studyforge.describe import describe_keys
 from studyforge.version import check as check_version
 
 #: The manifest's filename. One spelling, because "what makes a directory a
@@ -127,13 +130,13 @@ KEY_VERSIONS: dict[tuple[str | None, str], int] = {
     (None, "onboarding_doc"): 6,
     (None, "curriculum"): 7,
     ("curriculum", "linked"): 8,
+    # ⭐ The reading-modes keys are optional and add no bump: they are gated at the version
+    # this build already writes, so an older declaration cannot carry them.
+    (None, "languages"): 8,
+    (None, "modes"): 8,
+    (None, "default_mode"): 8,
+    (None, "outside_mode"): 8,
 }
-
-#: The placement profiles that may be declared. ⚠️ **`placement.profile` owns the profiles;
-#: this is only the set a manifest may name**, and the two must not drift.
-#: This constant is where a third profile is registered, beside its
-#: definition in `corpus.placement`.
-PLACEMENT_PROFILES = ("tree", "sibling")
 
 #: Every key a manifest may carry, in the order §4 writes them.
 MANIFEST_KEYS = (
@@ -147,6 +150,10 @@ MANIFEST_KEYS = (
     "runtimes",
     "narration",
     "onboarding_doc",
+    "languages",
+    "modes",
+    "default_mode",
+    "outside_mode",
     "placement",
     "content",
     "media",
@@ -193,6 +200,9 @@ class Manifest:
     #: ⭐ **Absent is `None`**: the adapter reads its record itself,
     #: as every corpus did before the key.
     curriculum: Curriculum | None = None
+    #: The declared languages and reading modes. ⭐ **Absent is `None`**: no
+    #: tagging, no question, today's behaviour.
+    reading: Reading | None = None
     corpus_api: int = CORPUS_API
 
     @property
@@ -281,7 +291,7 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
         levels=levels,
         variants=variants_of(document["variants"], where),
         exercises=exercises,
-        placement=_placement_of(document["placement"], where),
+        placement=placement_of(document["placement"], where),
         content=content,
         media=parse_media(document.get("media")),
         permitted_edits=parse_edits(document.get("permitted_edits"), content),
@@ -295,6 +305,7 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
             if "curriculum" in document
             else None
         ),
+        reading=parse_reading(document, where),
         corpus_api=corpus_api,
     )
 
@@ -387,12 +398,3 @@ def versions_needed(document: dict) -> list[tuple[str, int]]:
     ):
         needed.append(("content.not_material */<name>", EACH_DIRECTORY_API))
     return needed
-
-
-def _placement_of(value: object, where: str) -> str:
-    """One of the declared placement profiles (spec §5)."""
-    if value not in PLACEMENT_PROFILES:
-        raise ManifestError(
-            f"{where} 'placement' must be one of {list(PLACEMENT_PROFILES)}, got {describe(value)}"
-        )
-    return value
