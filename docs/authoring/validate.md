@@ -54,7 +54,7 @@ pretend to be.
 
 ---
 
-## The twenty-four checks
+## The twenty-seven checks
 
 **One list, in the order a report reads best.** The answer to *what does the
 checker check* is this table and nothing else.
@@ -85,17 +85,22 @@ checker check* is this table and nothing else.
 | 22 | `check_ledger_accounts` | where `exercises/ledger.json` is committed, does it still account for every page the corpus carries — every fence on it and every declared grader, each by an exercise or a written reason? |
 | 23 | `check_links_resolve` | does every relative link on a unit's page lead to a file of the corpus, a unit's page or a heading of that page, from where the page sits? |
 | 24 | `check_narration_current` | where `.studyforge/narration.json` is committed and narration is on, was every clip a page plays made from the words its paragraph says now? |
+| 25 | `check_languages_are_declared` | is every `lang` a document carries a language `corpus.json` declares under `languages`? |
+| 26 | `check_units_have_prose` | where `corpus.json` declares `modes`, does every unit hold a lesson, tagged or common? |
+| 27 | `check_modes_list_a_unit` | does every declared mode list at least one unit? |
 
 **Checks 1–9 are about the archive alone**, 10 and 11 about placement, 12 and
 13 about the archive root's own files — what sits there unaccounted for, and
 what the archive accounts for and does not hold — 14 to 16 about your
 source repository, 17–20 and 22 about the authored exercises a corpus commits,
 21 about the graders that claim to be your material's own, 23 about the links
-its pages carry, and 24 about its narration.
+its pages carry, 24 about its narration, and 25–27 about the languages its documents are tagged with.
 **Checks 14 and 16 are the ones that cannot be
 made by recounting the parser's own output** — a completeness check that
 recounted what the parser produced would agree with itself by construction and
 catch nothing.
+
+**Checks 26 and 27 fire only on a corpus that declares `modes`.**
 
 **Checks 17–20 fire only on a `generated` grader, check 21 only on an
 `authoritative` one, and check 22 only on a committed ledger. Check 24 fires only
@@ -112,7 +117,7 @@ file in both.
 
 ---
 
-## The forty-nine rule ids
+## The fifty-two rule ids
 
 **Every finding carries one**, so a script can filter a report by rule rather
 than by matching on message text. ⚠️ **Six are not emitted by `studyforge

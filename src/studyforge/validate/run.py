@@ -49,10 +49,10 @@ CHECKS = (
     *source.CHECKS,
     *exercises.CHECKS,
     *derived.CHECKS,
-    *languages.CHECKS,
     *ledger.CHECKS,
     *links.CHECKS,
     *narration.CHECKS,
+    *languages.CHECKS,
 )
 
 

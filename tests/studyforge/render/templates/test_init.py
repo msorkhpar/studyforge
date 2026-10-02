@@ -112,7 +112,7 @@ def test_no_template_ends_in_a_newline_once_loaded(name):
 def test_an_unfilled_placeholder_raises_and_never_reaches_the_page():
     # ⛔ The rendering acceptance clause, at the mechanism that keeps it.
     with pytest.raises(templates.TemplateError) as raised:
-        templates.fill("section.html", id="a", key="b", kind="c", label="d")
+        templates.fill("section.html", id="a", key="b", kind="c", label="d", lang="")
     assert "body" in str(raised.value)
     assert "heading" in str(raised.value)
 
@@ -121,7 +121,7 @@ def test_the_same_call_with_every_placeholder_filled_succeeds():
     # ⭐ The negative control run negatively: the failure above is the missing
     # value and not the call.
     markup = templates.fill(
-        "section.html", id="a", key="b", kind="c", label="d", heading="", body="x"
+        "section.html", id="a", key="b", kind="c", label="d", lang="", heading="", body="x"
     )
     assert markup.startswith('<section id="a"')
 
@@ -136,6 +136,7 @@ def test_a_value_with_no_placeholder_raises():
             key="b",
             kind="c",
             label="d",
+            lang="",
             heading="",
             body="x",
             pills="gone",
