@@ -1,0 +1,348 @@
+{
+ "recorded": {
+  "depth1": {
+   "content": {
+    "exclude": [
+     {
+      "path": "depth-one/ALL.md",
+      "why": "whole-series aggregate: an ordered concatenation of 01, 02 and 03, identical to them joined. Ingesting it would read every unit twice."
+     }
+    ],
+    "include": [
+     "depth-one/*.md"
+    ],
+    "not_material": []
+   },
+   "corpus_api": 1,
+   "curriculum": null,
+   "exercises": false,
+   "levels": [
+    "course"
+   ],
+   "media": {
+    "commit": "auto",
+    "max_file_bytes": 104857600,
+    "max_files": null,
+    "max_total_bytes": 5000000000
+   },
+   "narration": true,
+   "onboarding_doc": "ONBOARDING.md",
+   "permitted_edits": [],
+   "placement": "tree",
+   "runtimes": [],
+   "source": "depth1-demo",
+   "title": "Depth One Demo",
+   "variants": [
+    "prose"
+   ]
+  },
+  "depth2": {
+   "content": {
+    "exclude": [],
+    "include": [
+     "*/*/README*.md"
+    ],
+    "not_material": []
+   },
+   "corpus_api": 1,
+   "curriculum": null,
+   "exercises": true,
+   "levels": [
+    "section",
+    "module"
+   ],
+   "media": {
+    "commit": "auto",
+    "max_file_bytes": 104857600,
+    "max_files": null,
+    "max_total_bytes": 5000000000
+   },
+   "narration": true,
+   "onboarding_doc": "ONBOARDING.md",
+   "permitted_edits": [
+    {
+     "anchor": "<modules>",
+     "content": "  <module>practice</module>",
+     "kind": "insert-line",
+     "path": "pom.xml",
+     "why": "Maven compiles only what sits on a source root, so the generated practice module has to be listed."
+    }
+   ],
+   "placement": "sibling",
+   "runtimes": [],
+   "source": "depth2-demo",
+   "title": "Depth Two Demo",
+   "variants": [
+    "java"
+   ]
+  },
+  "every-key-at-version-7": {
+   "content": {
+    "exclude": [
+     {
+      "path": "src/README.md",
+      "why": "the container introduction, never read as a unit"
+     }
+    ],
+    "include": [
+     "src/*.md"
+    ],
+    "not_material": [
+     {
+      "glob": "generated/**",
+      "why": "files generated beside the source"
+     }
+    ]
+   },
+   "corpus_api": 7,
+   "curriculum": {
+    "containers": [
+     {
+      "address": {
+       "segments": [
+        "basics"
+       ]
+      },
+      "label": "The Basics",
+      "prefix": "basics-"
+     },
+     {
+      "address": {
+       "segments": [
+        "appendix"
+       ]
+      },
+      "label": "Appendix",
+      "prefix": null
+     }
+    ],
+    "linked": null,
+    "record": "SUMMARY.md"
+   },
+   "exercises": true,
+   "levels": [
+    "group"
+   ],
+   "media": {
+    "commit": "never",
+    "max_file_bytes": 100,
+    "max_files": 5,
+    "max_total_bytes": 1000
+   },
+   "narration": false,
+   "onboarding_doc": "docs/START.md",
+   "permitted_edits": [
+    {
+     "anchor": "<modules>",
+     "content": "  <module>x</module>",
+     "kind": "insert-line",
+     "path": "pom.xml",
+     "why": "the practice module has to be listed to compile"
+    }
+   ],
+   "placement": "tree",
+   "runtimes": [
+    "java",
+    "maven",
+    "python"
+   ],
+   "source": "example-corpus",
+   "title": "Example Corpus",
+   "variants": [
+    "java"
+   ]
+  },
+  "every-key-at-version-8": {
+   "content": {
+    "exclude": [
+     {
+      "path": "src/README.md",
+      "why": "the container introduction, never read as a unit"
+     }
+    ],
+    "include": [
+     "src/*.md"
+    ],
+    "not_material": [
+     {
+      "glob": "*/name",
+      "why": "files generated beside the source, never prose"
+     }
+    ]
+   },
+   "corpus_api": 8,
+   "curriculum": {
+    "containers": [
+     {
+      "address": {
+       "segments": [
+        "basics"
+       ]
+      },
+      "label": "The Basics",
+      "prefix": null
+     },
+     {
+      "address": {
+       "segments": [
+        "appendix"
+       ]
+      },
+      "label": "Appendix",
+      "prefix": null
+     }
+    ],
+    "linked": "module",
+    "record": "SUMMARY.md"
+   },
+   "exercises": true,
+   "levels": [
+    "section",
+    "module"
+   ],
+   "media": {
+    "commit": "never",
+    "max_file_bytes": 100,
+    "max_files": 5,
+    "max_total_bytes": 1000
+   },
+   "narration": false,
+   "onboarding_doc": "docs/START.md",
+   "permitted_edits": [
+    {
+     "anchor": "<modules>",
+     "content": "  <module>x</module>",
+     "kind": "insert-line",
+     "path": "pom.xml",
+     "why": "the practice module has to be listed to compile"
+    }
+   ],
+   "placement": "tree",
+   "runtimes": [
+    "java",
+    "maven",
+    "python"
+   ],
+   "source": "example-corpus",
+   "title": "Example Corpus",
+   "variants": [
+    "java"
+   ]
+  },
+  "required-keys-at-version-1": {
+   "content": {
+    "exclude": [],
+    "include": [
+     "*/*/README*.md"
+    ],
+    "not_material": []
+   },
+   "corpus_api": 1,
+   "curriculum": null,
+   "exercises": true,
+   "levels": [
+    "section",
+    "module"
+   ],
+   "media": {
+    "commit": "auto",
+    "max_file_bytes": 104857600,
+    "max_files": null,
+    "max_total_bytes": 5000000000
+   },
+   "narration": true,
+   "onboarding_doc": "ONBOARDING.md",
+   "permitted_edits": [],
+   "placement": "tree",
+   "runtimes": [],
+   "source": "example-corpus",
+   "title": "Example Corpus",
+   "variants": [
+    "java"
+   ]
+  },
+  "runnable": {
+   "content": {
+    "exclude": [
+     {
+      "path": "kata/README.md",
+      "why": "the container's own introduction: its origin places the container page, and no unit reads it"
+     }
+    ],
+    "include": [
+     "kata/*.md"
+    ],
+    "not_material": [
+     {
+      "glob": "practice/**",
+      "why": "the files a reader edits and the tests that grade them, named by each exercise record and never read as prose"
+     },
+     {
+      "glob": "pytest.ini",
+      "why": "the test runner's configuration for the practice workspace, never read as prose"
+     }
+    ]
+   },
+   "corpus_api": 4,
+   "curriculum": null,
+   "exercises": true,
+   "levels": [
+    "course"
+   ],
+   "media": {
+    "commit": "auto",
+    "max_file_bytes": 104857600,
+    "max_files": null,
+    "max_total_bytes": 5000000000
+   },
+   "narration": true,
+   "onboarding_doc": "ONBOARDING.md",
+   "permitted_edits": [],
+   "placement": "sibling",
+   "runtimes": [
+    "python"
+   ],
+   "source": "runnable-demo",
+   "title": "Runnable Demo",
+   "variants": [
+    "python"
+   ]
+  },
+  "shared-origin": {
+   "content": {
+    "exclude": [
+     {
+      "path": "field-notes/README.md",
+      "why": "the container's own introduction: its origin places the container page, and no unit reads it"
+     }
+    ],
+    "include": [
+     "field-notes/*.md"
+    ],
+    "not_material": []
+   },
+   "corpus_api": 1,
+   "curriculum": null,
+   "exercises": false,
+   "levels": [
+    "guide"
+   ],
+   "media": {
+    "commit": "auto",
+    "max_file_bytes": 104857600,
+    "max_files": null,
+    "max_total_bytes": 5000000000
+   },
+   "narration": true,
+   "onboarding_doc": "ONBOARDING.md",
+   "permitted_edits": [],
+   "placement": "sibling",
+   "runtimes": [],
+   "source": "shared-origin-demo",
+   "title": "Shared Origin Demo",
+   "variants": [
+    "prose"
+   ]
+  }
+ }
+}
