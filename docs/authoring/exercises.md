@@ -996,6 +996,136 @@ objects.
 
 ---
 
+## Kotlin practices
+
+A Kotlin practice is graded by the same five gates as a Java one, because they
+read only the JUnit report and the case map. What changes is the build, the
+spelling of a case, and the mistakes a test can fail to see. Everything above
+this heading is the Java guidance and applies unchanged; this section adds to
+it and replaces none of it. Behaviour named here was measured on the pinned
+Kotlin and JDK of the corpus's toolchain, and a corpus states those versions
+beside any claim it repeats.
+
+### Test names
+
+- **Name a test in camelCase, and give it no `@DisplayName`.** Kotlin allows a
+  backticked sentence as a method name, but a case id carries no whitespace.
+  ⚠️ Gradle writes a display name into the report where Maven writes the method
+  name, so the same class would have two ids on the two tools.
+- **A graded practice has no parameterised test.** Its report name (`[1] 1, 2, 3`
+  on Gradle, `adds(int, int, int)[1]` on Maven) is not a case id either. Write
+  one named test per case, or loop over the cases inside one test and name
+  the failing case in the assertion message.
+
+### The build file
+
+- **The argv ends in `cleanTest test`**, for example
+  `./gradlew --offline -q cleanTest test`. ⚠️ Gradle skips an unchanged `test`
+  task as up to date and writes no new report, so a second Submit on the same
+  code reads a report older than the run and is refused. `cleanTest` forces the
+  report each time.
+- **`tasks.test` uses the JUnit platform and prints the full exception**:
+  `useJUnitPlatform()` and `testLogging { exceptionFormat = TestExceptionFormat.FULL }`.
+  Without the second, a failed run shows no assertion message.
+- **Dependencies come from the prime, never from the network.** The prime holds
+  one Gradle project per distinct dependency set a practice uses. ⚠️ A practice
+  that names a subset of a bigger project's dependencies can resolve different
+  transitive versions, and fail offline while naming only warmed libraries. Add a
+  project to the prime for each new set, and regenerate the checksum file
+  (`gradle/verification-metadata.xml`, written with
+  `--write-verification-metadata sha256`) in the same change.
+- **A framework module needs two build-file lines the language practices do
+  not.** A Spring module has either a `main` function or its `bootJar` task
+  disabled, since the practice is a library with tests, not an application.
+  Spring Data needs `kotlin("reflect")` on the classpath.
+- **A mocking library on a recent JDK needs
+  `jvmArgs("-XX:+EnableDynamicAgentLoading")`** in the `test` task, or every run
+  prints the dynamic-agent warning into the output the reader sees.
+
+### Silent passes particular to Kotlin
+
+Each pair below is a test that looks complete and a wrong solution it lets
+through. The adversary reads this list with the Java one.
+
+**Equality and identity.** `==` calls `equals` and `===` compares identity, so a
+test written with `assertEquals` cannot tell a copy from the original. A data
+class `copy` is shallow, and an equal-looking result that shares a mutable part
+passes.
+
+```kotlin
+// weak: equal values, one shared list
+val cart = Cart(items = mutableListOf("pen"))
+assertEquals(cart, cart.withNote("gift"))
+
+// stronger: change one side, then read the other
+val copy = cart.withNote("gift")
+(copy.items as MutableList).add("ink")
+assertEquals(listOf("pen"), cart.items)
+```
+
+Build the values at run time (`String(charArrayOf('a', 'b'))`, `buildString`),
+because a literal is one interned instance, and assert `assertNotSame` where
+the statement asks for a new object.
+
+**Default arguments.** A test that always passes every argument never reads the
+default, and a test that always omits them never reads the argument.
+
+```kotlin
+// weak: the default is never read
+assertEquals("Hi, Ada!", greet("Ada", "Hi"))
+
+// stronger: both calls
+assertEquals("Hi, Ada!", greet("Ada", "Hi"))
+assertEquals("Hello, Ada!", greet("Ada"))
+```
+
+A plant that changes the default to another word survives the weak test.
+
+**Nullability at the platform boundary.** A value from a Java API has a
+platform type that the compiler does not check, and a Kotlin assertion that
+skips a `null` passes on it. A solution that returns `null` where a value was
+asked passes the weak form below.
+
+```kotlin
+// weak: silent when the result is null
+find("missing")?.let { assertEquals("none", it.name) }
+
+// stronger: say what must be there, or that nothing must be
+assertNotNull(find("known")).also { assertEquals("Ada", it.name) }
+assertNull(find("missing"))
+```
+
+Likewise `isNullOrEmpty()` accepts both `null` and `""`, so a solution that
+returns the wrong one of the two passes. Test the one the statement names.
+
+**Time and coroutines under virtual time.** `runTest` skips every `delay`, so a
+solution that waits too little, too much or not at all passes a test that only
+checks the result. Assert the virtual clock.
+
+```kotlin
+// weak: passes for any delay, or none
+@Test fun retriesThreeTimes() = runTest { assertEquals("ok", fetchWithRetry(flaky)) }
+
+// stronger: the wait is part of the contract
+@Test fun waitsBetweenRetries() = runTest {
+    fetchWithRetry(flaky)
+    assertEquals(3_000, currentTime)
+}
+```
+
+A solution that hardcodes `Dispatchers.IO` ignores the dispatcher the test
+injects, and also passes the weak form. Take the dispatcher as a parameter and
+let the test supply a test dispatcher, so the ordering is read.
+
+**Threads.** The Java rules above apply unchanged: coordinate with latches, never
+with `sleep`, and prove each plant fails 10 times out of 10. Kotlin adds two
+places a plant hides: a property that needs `@Volatile` or `@Synchronized` reads
+correctly in a one-thread test, and `lazy` is thread-safe by default, so a
+plant that switches it to `LazyThreadSafetyMode.NONE` passes unless two threads
+race for the first read.
+
+---
+
 ## Running the pass
 
 **There is no command for this.** The pass is a Python function,

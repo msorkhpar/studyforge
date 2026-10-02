@@ -202,6 +202,15 @@ you write: the pinned runner image carries it, primed from the corpus's own
 build (`skills.execution`, step 4a), so a build naming something the prime did
 not warm fails `G1` and does not ship.
 
+⭐ **A Kotlin practice follows the same draft rules, plus the Kotlin section of
+`docs/authoring/exercises.md`.** Name each test in camelCase and give none a
+`@DisplayName`, end the command in `cleanTest test`, set
+`testLogging { exceptionFormat = TestExceptionFormat.FULL }` in `tasks.test`,
+and ask the corpus's prime for a project that holds your dependency set. The
+adversary reads *Silent passes particular to Kotlin* (equality and identity,
+default arguments, platform nullability, virtual time, threads) as well as the
+Java list.
+
 ### 3. Run the pass
 
 ⭐ **Before the pass, take the two readings it cannot take for you:**
