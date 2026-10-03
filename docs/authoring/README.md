@@ -102,6 +102,8 @@ compared by `tests/test_authoring_geography.py`. On [Exercises](exercises.md), t
 authoring procedure is read by `tests/test_authoring_exercises.py`, the steps
 before you author are run by `tests/test_authoring_before_you_author.py`, and
 the file-only exercise record is read by `tests/test_fixture_exercise_rule.py`.
+The language, profile, mock-exam and live-example lines on the same page are read against the
+code by `tests/test_authoring_languages.py`.
 Every link on these pages is resolved by `tests/test_readme.py`. A claim of
 that kind that stops being true fails a test rather than misleading you.
 

@@ -38,16 +38,13 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
-from studyforge.execute import instance
 from studyforge.exercise.bundle.layout import BUNDLES_DIRNAME
 from studyforge.generate import read_corpus
-from studyforge.skills.execution.binds import code_bind, source_root, workspaces_bind
 from studyforge.skills.execution.contract import (
     CONSUMING,
     EDITOR_API,
     EDITOR_COMPONENT,
     EDITOR_PROMISE,
-    blocks,
     read,
     require,
 )
@@ -60,7 +57,9 @@ from studyforge.skills.execution.standalone import (
     facts,
     images,
     learner,
+    live,
     pages,
+    places,
     preview,
     record,
     split,
@@ -190,17 +189,18 @@ def release(
         builds=asked.builds,
         bases=bases,
     )
-    ports = _ports(root, editor)
+    ports = places.ports(root, editor)
     plan = compose.Plan(
         slug=manifest.source,
         names=names,
         builds=asked.builds,
         editor=editor,
         runtimes=tuple(manifest.runtimes),
-        binds=_binds(manifest, editor),
+        binds=places.binds(manifest, editor),
         site_port=ports[0],
         editor_port=ports[1],
         bases=bases,
+        live=(manifest.live.host, manifest.live.key_variable) if manifest.live else None,
     )
     built, pulled = compose.render(plan)
     shots = _screenshots(screenshots, out, written)
@@ -218,12 +218,17 @@ def release(
         runtimes=tuple(manifest.runtimes),
         licence="LICENSE" in kept,
         thin=bases is not None,
+        live=plan.live,
     )
     texts = {
         f"{compose.IMAGES}/site/Dockerfile": images.site_dockerfile(
             manifest.source, bases.serve if bases else None
         ),
-        f"{compose.IMAGES}/runner/Dockerfile": images.runner_dockerfile(manifest.source),
+        f"{compose.IMAGES}/runner/Dockerfile": images.runner_dockerfile(
+            manifest.source,
+            live=manifest.live is not None,
+            live_dirs=live.directories(manifest),
+        ),
         ".dockerignore": images.DOCKERIGNORE,
         "compose.yaml": _namespaced(built, namespace),
         "compose.pull.yaml": _namespaced(pulled, namespace),
@@ -321,33 +326,6 @@ def _write_runtime(out: Path, commit: str, version: str, written: list[str]) -> 
     _text(base / "Dockerfile", dockerfile)
     written += [stamp, f"{compose.IMAGES}/serve/Dockerfile"]
     return f"{version}-{digest.hexdigest()}"
-
-
-def _binds(manifest, editor) -> tuple[tuple[str, str], ...]:
-    """Return what the editor opens, sources first: the execution skill's own answer."""
-    sources = source_root(manifest)
-    inside = next(
-        str(entry["container_path"])
-        for entry in blocks(editor, "mounts")
-        if entry.get("per_project") is True
-    )
-    extra = [one for one in (workspaces_bind(editor, sources), code_bind(editor, sources)) if one]
-    return ((sources, inside), *extra)
-
-
-def _ports(root: Path, editor) -> tuple[int, int]:
-    """Return the site's and the editor's ports: the course's recorded ones, else the defaults."""
-    try:
-        recorded = instance.read(root)
-    except OSError, ValueError:
-        recorded = {}
-    editor_default = next(
-        int(one["host"]) for one in blocks(editor, "ports") if one.get("per_project")
-    )
-    return (
-        int(recorded.get(instance.SITE_PORT, instance.DEFAULT_SITE_PORT)),
-        int(recorded.get(instance.EDITOR_PORT, editor_default)),
-    )
 
 
 def _namespaced(text: str, namespace: str) -> str:
