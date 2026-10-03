@@ -67,6 +67,7 @@ below.
 | `exercises` | **required** | Whether this corpus is on the execution track at all. `false` is an answer |
 | `runtimes` | *optional* | Which runtimes your material's commands need, by name. Absent means none, and a corpus with none needs no runner |
 | `profile` | *optional* | The toolchain image profile your runner and editor are built on, beyond the base of your `runtimes`: a name, such as the toolchain lists it. Needs `runtimes`; absent means the bases alone |
+| `live` | *optional* | Which examples and practices may be run live against a reader's own API key: one host, the name of the variable the key is given under, and what runs. Needs `runtimes`; absent means no live run |
 | `narration` | *optional* | Whether the site speaks. `false` is a site with no voice: no player, no clip served, nothing called missing. Absent means narrated whenever clips are recorded |
 | `onboarding_doc` | *optional* | Where onboarding writes the document a reader opens first, as a path inside the corpus ending `.md`, or `false` for none. Absent means `ONBOARDING.md` at the root |
 | `languages` | *optional* | The languages a section may be tagged with: a list of `{id, label, fence_labels}`. Absent means no tagging and today's behaviour |
@@ -394,6 +395,22 @@ the runtimes the profile layers on, which the toolchain checks when the course i
 framework names no profile; the name is yours. A course that names a profile is exported thin
 only, with a bases lock that carries a `profile` entry (see the execution skill, *A course's main
 stands alone*); a corpus with no `profile` is exported exactly as before.
+
+## `live` — runs against a reader's own key
+
+Optional, and a corpus without it is built and served exactly as before. A corpus that teaches a
+service whose real API a reader may call with their own key can name the examples and practices that
+may run that way: `{"host": "api.example.test", "key_variable": "EXAMPLE_API_KEY", "examples":
+[{"path": "examples/a/run.py", "command": ["python3", "examples/a/run.py"]}], "practices":
+["<practice key>"]}`. `host` is the one bare lower-case hostname a live run may reach; the framework
+names none. `key_variable` is the NAME of the environment variable the reader's key is given to a live
+run under, never a value. An example is a code file a page links and the argv that runs it (the same
+safe form a practice's command has); a practice runs its own `run_command`. The key needs `runtimes`.
+
+The reader types the key in the served site; it is kept in the browser (the tab only, unless they opt
+in to keeping it on the device) and sent only in the body of a live-run request. A live run happens
+only in a course served from its own compose with the `live` profile; a read-only preview and a
+corpus served any other way show no key field and no control. Live runs are never graded.
 
 ## `languages` and `modes` — reading modes
 

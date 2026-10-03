@@ -42,6 +42,7 @@ finding; it is never a hand-edit to generated output.
 | `edits` | `permitted_edits`, the three targets R3 never permits, and the undo |
 | `media` | the commit mode and its limits; an absent key is a **stated** default |
 | `runtimes` | the closed vocabulary of runtimes, spelled once, and its refusals |
+| `live` | the live-run block: one API host, a key variable's name, and what may run live |
 | `curriculum` | where the curriculum is recorded, its groups' addresses, the prefix check |
 | `fields` | the plain field rules `document` applies, one function per key |
 | `errors` | `ManifestError`, the only exception it raises, and R7's one phrase about a path |

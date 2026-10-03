@@ -20,7 +20,9 @@ would ever discover it.
 
 ⛔ **`Request` carries no body and no query string, and that is structural**: a
 route cannot read what a client sent beyond its method, path and headers, so no
-client value has a field to arrive through (spec §8.3, rule 3).
+client value has a field to arrive through (spec §8.3, rule 3). ⭐ The one exception is a
+different type: `BodyRequest` is handed only to a path registered for a body (the live run's,
+where the reader's key can arrive no other way), and its body is never in its text.
 
 **Depends on.** `json`, `dataclasses` and `pathlib`.
 
@@ -33,7 +35,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Iterator, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 #: Every JSON answer says which API version it speaks.
@@ -58,6 +60,17 @@ class Request:
     method: str
     path: str
     headers: Mapping[str, str]
+
+
+@dataclass(frozen=True, slots=True)
+class BodyRequest(Request):
+    """A `Request` for the one kind of path that is registered to receive a body.
+
+    ⛔ `body` is out of `repr` and out of comparison, so a log line or an error that prints a
+    request cannot carry it, and `Request` itself still has no field for a client's bytes.
+    """
+
+    body: bytes = field(default=b"", repr=False, compare=False)
 
 
 @dataclass(frozen=True, slots=True)

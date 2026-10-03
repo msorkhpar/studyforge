@@ -1523,3 +1523,11 @@ What it reads, and the choices in it:
 
 **Serves.** `R1`, `R18`, `R19`
 
+### A reader's own key: the manifest block, the body that carries it and the page that asks for it
+
+**Decision.** A manifest may carry an optional top-level `live` (`studyforge.corpus.manifest.live.parse_live`, gated at `corpus_api` 8 with no bump, refused without `runtimes`): one bare host, the NAME of a key variable, live-capable examples (`{path, command}`) and practices (keys). A served instance whose compose declares a live runner (`STUDYFORGE_LIVE_SERVICE`) and which serves a corpus that declares `live` registers one more namespace, `live` (`studyforge.serve.routes.live`): an index, a client script and one one `POST`. The request's body is the only body any route receives (`serve.app`'s `bodies`, at most 8 KiB, on that one path); it is JSON, carries a fake-able key and three selectors, and is read in exactly one function (`studyforge.serve.routes.live.asked_for`). A live request must carry the header the header X-Studyforge-Live, a JSON content type, an `Origin` equal to this server's own host and port, and `Sec-Fetch-Site` of same-origin where a browser sends one. The command is never received: an example's argv is the manifest's and a practice's is its record's `run_command`. The key's shape (8 to 256 letters, digits, `-`, `_`) is checked first; a refusal is a constant that quotes nothing. The page's key field and controls are drawn by one script (the live client script) that the serving process adds after the run client's and only for such an instance; a built page, a preview and every other corpus carry no tag, no field, no style and no route name for it, and the bytes of every page and validator are what they were.
+
+**Why.** The path crosses a trust boundary that no earlier route crosses, and a leaked key cannot be recalled, so the key has one way in (a body to the page's own origin), one place it is read, no field in a request's text, and a second net on the output beside the live runner's. Drawing the feature at serve time keeps a read-only preview free of it by construction rather than by a flag.
+
+**Serves.** `R1`, `R7`, `R8`
+
