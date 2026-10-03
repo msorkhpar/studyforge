@@ -132,3 +132,37 @@ def test_regions_are_immutable_values():
     assert isinstance(regions("x")[0], Region)
     with pytest.raises(AttributeError):
         regions("x")[0].text = "y"
+
+
+def test_a_section_may_name_several_languages_and_is_each_of_them():
+    found = regions("<!-- lang: aa,bb -->\nBoth.\n<!-- /lang -->")
+    assert [(r.kind, r.lang, r.languages) for r in found] == [("lang", "aa bb", ("aa", "bb"))]
+    assert undeclared(found, {"aa"}) == ["bb"]
+
+
+def test_a_unit_marker_may_use_any_language_the_section_names():
+    page = "<!-- lang: aa,bb -->\n<!-- bb-unit: 2 -->\nx\n<!-- /lang -->"
+    assert regions(page)[0].unit_ref == "2"
+
+
+@pytest.mark.parametrize(
+    "marker", ["<!-- lang: aa,aa -->", "<!-- lang: aa, bb -->", "<!-- lang: aa,Bb -->"]
+)
+def test_a_section_that_repeats_a_language_or_spells_the_list_oddly_is_refused(marker):
+    with pytest.raises(MarkdownError):
+        regions(f"{marker}\nx\n<!-- /lang -->")
+
+
+def test_an_example_has_at_most_as_many_tabs_as_the_archive_allows():
+    import importlib
+
+    from studyforge.archive import example
+
+    module = importlib.import_module("studyforge.archive.markdown.regions")
+
+    assert module.MAX_TABS == example.EXAMPLE_MAX_TABS
+    ids = [f"l{n}" for n in range(example.EXAMPLE_MAX_TABS + 1)]
+    ok = ",".join(ids[:-1])
+    assert regions(f"<!-- example: e tabs: {ok} -->\nx\n<!-- /example -->")[0].tabs
+    with pytest.raises(MarkdownError, match="at most 8 tabs"):
+        regions(f"<!-- example: e tabs: {','.join(ids)} -->\nx\n<!-- /example -->")

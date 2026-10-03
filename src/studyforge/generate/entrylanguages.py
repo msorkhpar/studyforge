@@ -12,7 +12,9 @@ A corpus that declares no modes gets `{}` and `None`, and no unit is read for it
 **Depends on.** `unit.builder` for the document and `render.modes` for the offer.
 ⛔ It names no language (R1): the ids are the corpus's data.
 
-⭐ A module's languages are the union of its units'. A module with one unit that is common, or
+⭐ A section may name several languages (`a b`); the unit then belongs to each of them, and
+`offer_of` tells the offer that some section does, which changes how the stylesheet matches
+a tag. ⭐ A module's languages are the union of its units'. A module with one unit that is common, or
 one that has no material yet, is not listed: an entry that may hold something every mode reads
 is never greyed. ⚠️ A unit with no material is not a unit of any language, so it neither tags
 nor untags the module that holds it.
@@ -28,10 +30,16 @@ from studyforge.unit.builder import build_unit
 
 def entry_languages(corpus: Corpus) -> dict[str, tuple[str, ...]]:
     """`unit or group key -> language ids` for each entry that belongs to some languages only."""
+    return _read(corpus)[0]
+
+
+def _read(corpus: Corpus) -> tuple[dict[str, tuple[str, ...]], bool]:
+    """The entries that belong to some languages only, and whether any section names several."""
     reading = corpus.manifest.reading
     if reading is None or not reading.modes:
-        return {}
+        return {}, False
     declared = [language.id for language in reading.languages]
+    several = False
     units: dict[str, tuple[str, ...] | None] = {}
     for source in corpus.units:
         document = build_unit(
@@ -39,14 +47,16 @@ def entry_languages(corpus: Corpus) -> dict[str, tuple[str, ...]]:
             declared_practices=source.declared_practices,
             mentions=source.mentions,
         )
-        found = {section.get("lang") or "" for section in document["sections"]}
+        tags = [section.get("lang") or "" for section in document["sections"]]
+        several = several or any(" " in tag for tag in tags)
+        found = {one for tag in tags for one in tag.split(" ")}
         units[source.key] = (
             None if not found or "" in found else tuple(x for x in declared if x in found)
         )
     entries = {key: found for key, found in units.items() if found}
     for group in corpus.contents.groups:
         _group(group, units, entries, declared)
-    return entries
+    return entries, several
 
 
 def offer_of(corpus: Corpus) -> modes.Offer | None:
@@ -54,7 +64,8 @@ def offer_of(corpus: Corpus) -> modes.Offer | None:
     reading = corpus.manifest.reading
     if reading is None or not reading.modes:
         return None
-    return modes.offer(reading, entry_languages(corpus))
+    entries, several = _read(corpus)
+    return modes.offer(reading, entries, several=several)
 
 
 def _group(

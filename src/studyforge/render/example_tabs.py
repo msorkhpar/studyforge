@@ -43,9 +43,13 @@ class Mode(Protocol):
     tabs: tuple[str, ...]
 
 
-def style(choices: Iterable[Mode]) -> str:
-    """The look, then one set of rules per mode."""
-    return text(STYLE_PART) + NEWLINE.join(_rules(choice) for choice in choices) + NEWLINE
+def style(choices: Iterable[Mode], *, grey: bool = False) -> str:
+    """The look, then one set of rules per mode.
+
+    ⭐ With `grey`, an example is never hidden whole: a mode that lists no language it carries
+    still shows its disabled tab and the sentence naming the languages that do.
+    """
+    return text(STYLE_PART) + NEWLINE.join(_rules(choice, grey) for choice in choices) + NEWLINE
 
 
 def script(choices: Iterable[Mode]) -> str:
@@ -54,14 +58,12 @@ def script(choices: Iterable[Mode]) -> str:
     return text(SCRIPT_PART).replace(MARKER, json.dumps(order, sort_keys=True))
 
 
-def _rules(choice: Mode) -> str:
+def _rules(choice: Mode, grey: bool = False) -> str:
     root = f'html[data-mode={json.dumps(choice.id)}] div[data-example]'
     kept = "".join(f":not([data-lang={json.dumps(lang)}])" for lang in choice.tabs)
     listed = "".join(f":not([data-langs~={json.dumps(lang)}])" for lang in choice.tabs)
-    rules = [
-        f"{root}{listed} {{ display: none; }}",
-        f"{root} [data-lang]{kept} {{ display: none; }}",
-    ]
+    rules = [] if grey else [f"{root}{listed} {{ display: none; }}"]
+    rules.append(f"{root} [data-lang]{kept} {{ display: none; }}")
     for position, lang in enumerate(choice.tabs):
         both = f"[data-lang={json.dumps(lang)}]"
         rules.append(f"{root} {both} {{ order: {position}; }}")

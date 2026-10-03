@@ -1,0 +1,45 @@
+/* A language a block or a practice lacks: shown greyed, with the languages that carry it.
+
+   ⛔ WRITTEN ONLY FOR A CORPUS THAT DECLARES `absent_language: grey`. It is composed into
+   `modes.css` after the tabs' own rules (`render/absent_language.py`), so a corpus that
+   leaves the key out keeps its bytes.
+
+   ⭐ The sentences ship in the markup, hidden here and shown by the mode's own rules (one set
+   per mode, generated below) only where the mode lists a language the block or the practice
+   lacks. Scripts off, in a crawl and in the preview that is the default mode's view, so the
+   reader still learns what carries the topic. Tokens only, so both schemes and both themes
+   read it; the grey is the muted ink, and the words carry the meaning as well. */
+
+div[data-example] [data-example-missing] {
+  display: none;
+  order: -1;
+  margin: 0;
+  max-width: none;
+  padding: .3rem .75rem;
+  font-family: var(--font-ui);
+  font-size: .82rem;
+  color: var(--muted);
+  border-bottom: 1px solid var(--rule);
+}
+
+div[data-example] [role="tab"][aria-disabled="true"] {
+  color: var(--muted);
+  font-style: italic;
+  cursor: default;
+}
+
+div[data-example] [role="tab"][aria-disabled="true"]:hover {
+  color: var(--muted);
+  background: none;
+}
+
+li[data-practice-card] [data-practice-carriers] {
+  display: none;
+  margin: .2rem 0 0;
+  max-width: none;
+  font-family: var(--font-ui);
+  font-size: .82rem;
+  color: var(--muted);
+}
+
+/* --- what each mode greys: generated per corpus, below --------------------- */

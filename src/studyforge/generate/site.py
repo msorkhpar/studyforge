@@ -170,7 +170,7 @@ def assets(corpus: Corpus, into: Path | str) -> Written:
     written: list[PurePosixPath] = []
     refused: list[PurePosixPath] = []
     replaced: list[PurePosixPath] = []
-    shared = {**written_files(), **modes.files(modes.offer(corpus.manifest.reading))}
+    shared = {**written_files(), **modes.files(offer_of(corpus))}
     if has_mock_exam(corpus):
         # ⭐ Written only for a corpus that has a mock exam: any other builds the files it did.
         shared.update(mock_files())

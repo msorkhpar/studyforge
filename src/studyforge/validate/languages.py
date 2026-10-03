@@ -51,13 +51,14 @@ def check_languages_are_declared(walk: Walk) -> Iterator[Finding]:
     declared = {language.id for language in reading.languages} if reading else set()
     for unit in walk.units:
         lang = unit.document.get("lang")
-        if lang is not None and lang not in declared:
-            yield Finding(
-                RULE_LANGUAGE,
-                unit.where,
-                f"is tagged with the language {lang!r}, which corpus.json does not declare"
-                f" under 'languages'; a tag names a declared language",
-            )
+        for one in lang.split(" ") if isinstance(lang, str) else ([] if lang is None else [lang]):
+            if one not in declared:
+                yield Finding(
+                    RULE_LANGUAGE,
+                    unit.where,
+                    f"is tagged with the language {one!r}, which corpus.json does not declare"
+                    f" under 'languages'; a tag names a declared language",
+                )
     yield from _example_tabs(walk, declared)
 
 
@@ -126,7 +127,7 @@ def _listed(mode: object, documents: list[Unit]) -> bool:
         lang = unit.document.get("lang")
         lesson = unit.document.get("kind") == "lesson"
         shown = (mode.prose,) if lesson else mode.practices  # type: ignore[attr-defined]
-        if lang is None or lang in shown:
+        if lang is None or any(one in shown for one in str(lang).split(" ")):
             return True
     return False
 

@@ -433,7 +433,7 @@ def test_lang_is_appended_after_every_other_key_and_only_when_given():
     assert render({k: v for k, v in tagged.items() if k != "lang"}) == render(build(**BASE))
 
 
-@pytest.mark.parametrize("bad", ["", "Aa", "a b", 3, True, ["aa"]])
+@pytest.mark.parametrize("bad", ["", "Aa", "a  b", "a a", 3, True, ["aa"]])
 def test_a_lang_that_is_not_an_id_is_refused_on_the_way_in_and_the_way_out(bad):
     with pytest.raises(ArchiveError, match="invalid 'lang'"):
         build(**BASE, lang=bad)

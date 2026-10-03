@@ -41,7 +41,7 @@ from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
-from studyforge.render import example_tabs, templates
+from studyforge.render import absent_language, example_tabs, templates
 from studyforge.render.markup import escape, escape_attribute
 from studyforge.render.pageassets.source import text
 
@@ -56,10 +56,17 @@ SCRIPT_NAME = "modes.js"
 SLOTS = ("rootattributes", "modehead", "modeswitch")
 
 #: The two files, as `pageassets` finds them on disk.
-PARTS = (STYLESHEET_NAME, SCRIPT_NAME, *example_tabs.PARTS)
+PARTS = (STYLESHEET_NAME, SCRIPT_NAME, *example_tabs.PARTS, *absent_language.PARTS)
 
 #: The attribute the root element carries and the stylesheet keys on.
 MODE_ATTRIBUTE = "data-mode"
+
+#: What `absent_language` says when a block or a practice shows the languages it lacks.
+GREY = "grey"
+
+#: What a practice card carries to say which languages it is written in, and the sentence under
+#: it that names them (shown by the stylesheet only in a mode that does not list them).
+PRACTICE_ATTRIBUTE = "data-practice-lang"
 
 #: What `outside_mode` says when a page outside the chosen mode is closed. ⭐ The root carries
 #: it only then: absent is `open`, which is today's page.
@@ -84,6 +91,8 @@ class Choice:
     prose: str
     #: ⭐ The languages the mode opens a tab for, first tab first.
     tabs: tuple[str, ...] = ()
+    #: ⭐ The languages whose practices the mode lists; a practice outside them is greyed.
+    practices: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -117,6 +126,12 @@ class Offer:
     tags: Mapping[str, Tag] = field(default_factory=dict)
     #: ⭐ `(id, label)` of each declared language, for the label over a tab.
     languages: tuple[tuple[str, str], ...] = ()
+    #: ⭐ Whether some section names several languages. Only then does a rule match a tag as a
+    #: list of words, so a corpus whose sections each name one language keeps its bytes.
+    several: bool = False
+    #: ⭐ Whether a block or a practice shows a language it lacks, greyed, with the languages that
+    #: carry it (`absent_language: grey`). Off, they show nothing for it, as they always did.
+    grey: bool = False
 
     @property
     def locks(self) -> bool:
@@ -125,7 +140,10 @@ class Offer:
 
 
 def offer(
-    reading: Reading | None, entries: Mapping[str, tuple[str, ...]] | None = None
+    reading: Reading | None,
+    entries: Mapping[str, tuple[str, ...]] | None = None,
+    *,
+    several: bool = False,
 ) -> Offer | None:
     """The offer a corpus makes, or `None` when it declares no modes (today's page).
 
@@ -148,14 +166,60 @@ def offer(
     }
     return Offer(
         choices=tuple(
-            Choice(mode.id, mode.label, mode.summary, mode.prose, tuple(mode.tabs))
+            Choice(
+                mode.id,
+                mode.label,
+                mode.summary,
+                mode.prose,
+                tuple(mode.tabs),
+                tuple(mode.practices),
+            )
             for mode in reading.modes
         ),
         default=reading.default_mode,
         outside=reading.outside_mode,
         tags=tags,
         languages=tuple((language.id, language.label) for language in reading.languages),
+        several=several,
+        grey=reading.absent_language == GREY,
     )
+
+
+def carriers(made: Offer | None, tag: str) -> str:
+    """The declared names of the languages a tag lists, in declared order, joined by commas.
+
+    ⭐ Generated from the corpus's own data: nothing here knows how many languages there are.
+    """
+    named = set(tag.split(" "))
+    labels = (label for ident, label in (made.languages if made else ()) if ident in named)
+    return ", ".join(escape(label) for label in labels)
+
+
+def card_attributes(made: Offer | None, lang: object) -> str:
+    """What a practice card carries when the corpus greys what a mode lacks; else `''`."""
+    if made is None or not made.grey or not isinstance(lang, str) or not lang:
+        return ""
+    return f' {PRACTICE_ATTRIBUTE}="{escape_attribute(lang)}"'
+
+
+def card_note(made: Offer | None, lang: object) -> str:
+    """The sentence of a tagged practice card naming the languages that carry it, or `''`."""
+    if made is None or not made.grey or not isinstance(lang, str) or not lang:
+        return ""
+    return templates.fill("practice-carriers.html", carriers=carriers(made, lang)) + NEWLINE
+
+
+def tag_panel(made: Offer | None, lang: object, panel: str) -> str:
+    """A practice's panel with the languages it is written in, so a mode that hides its statement
+    hides it too; `panel` unchanged unless the corpus greys what a mode lacks.
+
+    ⭐ The attribute goes last in the opening tag, so the preview's reading of a panel (a tag that
+    opens `<section data-practice=`) still finds it.
+    """
+    if not panel or made is None or not made.grey or not isinstance(lang, str) or not lang:
+        return panel
+    end = panel.index(">")
+    return f'{panel[:end]} data-lang="{escape_attribute(lang)}"{panel[end:]}'
 
 
 def attributes(tag: Tag | None) -> str:
@@ -234,15 +298,19 @@ def files(made: Offer | None) -> dict[str, str]:
     """`filename -> content` for what a corpus with modes writes beside the bundle; else `{}`."""
     if made is None:
         return {}
-    rules = NEWLINE.join(_rule(choice, made.locks) for choice in made.choices)
-    return {
-        STYLESHEET_NAME: text(STYLESHEET_NAME)
+    rules = NEWLINE.join(_rule(choice, made.locks, made.several) for choice in made.choices)
+    stylesheet = (
+        text(STYLESHEET_NAME)
         + NEWLINE
         + rules
         + NEWLINE
-        + example_tabs.style(made.choices),
-        SCRIPT_NAME: text(SCRIPT_NAME) + NEWLINE + example_tabs.script(made.choices),
-    }
+        + example_tabs.style(made.choices, grey=made.grey)
+    )
+    script = text(SCRIPT_NAME) + NEWLINE + example_tabs.script(made.choices)
+    if made.grey:
+        stylesheet += absent_language.style(made.choices)
+        script += NEWLINE + absent_language.script()
+    return {STYLESHEET_NAME: stylesheet, SCRIPT_NAME: script}
 
 
 def _switch(made: Offer) -> str:
@@ -288,7 +356,7 @@ def _note(made: Offer, entry: Tag | None) -> str:
     return templates.fill("mode-outside-locked.html", readers=readers, buttons=buttons) + NEWLINE
 
 
-def _rule(choice: Choice, locks: bool) -> str:
+def _rule(choice: Choice, locks: bool, several: bool = False) -> str:
     """The rules for one mode: what it hides, and how an entry outside it looks.
 
     ⭐ A section tagged with another language is not displayed, and an outline line with it.
@@ -299,14 +367,17 @@ def _rule(choice: Choice, locks: bool) -> str:
     """
     lang = json.dumps(choice.prose)
     root = f'html[{MODE_ATTRIBUTE}="{choice.id}"]'
+    #: ⭐ `=` while each section names one language, `~=` once one may name several.
+    match = "~=" if several else "="
+    tagged = f"[data-lang{match}{lang}]"
     outside = f"[{ENTRY_ATTRIBUTE}]:not([{ENTRY_ATTRIBUTE}~={lang}])"
     rules = [
-        f"{root} section[data-lang]:not([data-lang={lang}]),\n"
-        f'{root} nav[aria-label="Outline"] li[data-lang]:not([data-lang={lang}]) '
+        f"{root} section[data-lang]:not({tagged}),\n"
+        f'{root} nav[aria-label="Outline"] li[data-lang]:not({tagged}) '
         "{ display: none; }",
-        f"{root} section[data-lang][data-linked]:not([data-lang={lang}]) {{ display: block; }}",
-        f"{root}{outside} section[data-lang]:not([data-lang={lang}]) {{ display: block; }}",
-        f'{root}{outside} nav[aria-label="Outline"] li[data-lang]:not([data-lang={lang}]) '
+        f"{root} section[data-lang][data-linked]:not({tagged}) {{ display: block; }}",
+        f"{root}{outside} section[data-lang]:not({tagged}) {{ display: block; }}",
+        f'{root}{outside} nav[aria-label="Outline"] li[data-lang]:not({tagged}) '
         "{ display: list-item; }",
         f"{root} li{outside}, {root} li{outside} a {{ color: var(--muted); }}",
         f"{root} li{outside} [{LABEL_ATTRIBUTE}] {{ display: inline-block; }}",

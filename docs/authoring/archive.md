@@ -158,9 +158,10 @@ edited. Two runs of a correct adapter differ in `ingested` and in nothing else,
 and that is the sentence to use when you claim reproducibility: *identical
 bytes apart from `ingested`*.
 
-**`lang` tags a document with one language.** It is an id of lowercase letters,
+**`lang` tags a document with one language, or with several.** It is an id of lowercase letters,
 digits, `-` and `_`, and it names a language `corpus.json` declares under
-`languages`; `validate` refuses one it does not declare, by rule
+`languages`; a document that belongs to several writes their ids, each once, joined by single
+spaces (`a b`); `validate` refuses one it does not declare, by rule
 `language-undeclared`. A lesson, a practice and a quiz are all documents, so
 one key tags all three. **A document without it is common to every reading**
 and re-renders to the same bytes as before the key existed. A unit that holds
@@ -169,9 +170,10 @@ page holds both: a tagged section carries `data-lang="<id>"` and an untagged
 one carries nothing.
 
 **An adapter that reads Markdown can mark the regions.** `studyforge.archive.markdown.regions(text)`
-cuts a page at `<!-- lang: <id> -->` … `<!-- /lang -->` sections and
-`<!-- example: <id> tabs: <id>,<id> [output: <word>] -->` … `<!-- /example -->`
-blocks (a marker inside a code fence is code). Text outside every marker is
+cuts a page at `<!-- lang: <id> -->` (or `<!-- lang: <id>,<id> -->` for a section of several
+languages) … `<!-- /lang -->` sections and
+`<!-- example: <id> tabs: <id>,<id>[,<id>...] [output: <word>] -->` … `<!-- /example -->`
+blocks of one to eight tabs (a marker inside a code fence is code). Text outside every marker is
 common. The adapter parses each region with `parse` and writes the tagged ones
 as documents of their own.
 

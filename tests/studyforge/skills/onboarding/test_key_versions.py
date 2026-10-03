@@ -60,6 +60,12 @@ DRAFTS = {
         "runtimes": ["java"],
         "profile": "example-profile",
     },
+    (None, "absent_language"): {
+        **corpora.DRAFT,
+        "languages": [{"id": "alpha", "label": "Alpha"}],
+        "modes": [READING_MODE],
+        "absent_language": "grey",
+    },
     ("curriculum", "linked"): {
         **corpora.DRAFT,
         "levels": ["section", "module"],

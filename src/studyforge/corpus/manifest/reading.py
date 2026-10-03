@@ -1,11 +1,12 @@
-"""Reading modes — the `languages`, `modes`, `default_mode` and `outside_mode` keys.
+"""Reading modes — the `languages`, `modes`, `default_mode`, `outside_mode` and
+`absent_language` keys.
 
-**What it does.** Validates the four optional top-level keys with which a corpus
+**What it does.** Validates the five optional top-level keys with which a corpus
 declares the languages its sections may be tagged with and the modes a reader
 may choose between, and returns one immutable `Reading`.
 
 **How you use it.** `parse_reading(document, where)`; a document with none of
-the four keys yields `None`, so no caller asks "did they declare one?" and a
+the five keys yields `None`, so no caller asks "did they declare one?" and a
 corpus that declares nothing is exactly what it was before the keys existed.
 
 **Depends on.** `errors` and `describe`.
@@ -19,18 +20,19 @@ data, and no line here branches on one.
 
 No key is required, and none gives another a default it did not have: a corpus
 with `languages` alone is valid (its sections may be tagged, nothing offers a
-choice), and a corpus with none of the four keys has no `Reading`.
+choice), and a corpus with none of the five keys has no `Reading`.
 
 ## ⛔ What is refused, each by name
 
-- `modes`, `default_mode` or `outside_mode` without the keys they rest on
-  (`modes` needs `languages`; the other two need `modes`);
+- `modes`, `default_mode`, `outside_mode` or `absent_language` without the keys they rest on
+  (`modes` needs `languages`; the others need `modes`);
 - a duplicate language id or mode id;
 - a fence label claimed by two languages (or twice by one);
 - a mode whose `prose`, `tabs` or `practices` names a language not declared;
 - a tab or a practice language listed twice in one mode;
 - a `default_mode` that is not a declared mode;
 - an `outside_mode` that is not `open` or `locked`;
+- an `absent_language` that is not `hide` or `grey`;
 - a `practice_choice` that is not a boolean;
 - an unknown key inside a language or a mode, and an empty `languages` or `modes`.
 
@@ -55,8 +57,13 @@ from studyforge.describe import describe
 OUTSIDE_MODES = ("open", "locked")
 DEFAULT_OUTSIDE_MODE = "open"
 
+#: What `absent_language` may say, and what absent means: a language a block or a practice
+#: lacks is hidden (`hide`, today's page) or shown greyed with the languages that carry it.
+ABSENT_CHOICES = ("hide", "grey")
+DEFAULT_ABSENT_LANGUAGE = "hide"
+
 #: The top-level keys this module owns.
-READING_KEYS = ("languages", "modes", "default_mode", "outside_mode")
+READING_KEYS = ("languages", "modes", "default_mode", "outside_mode", "absent_language")
 
 #: An id: lowercase, starts with a letter or digit, then letters, digits, `-`, `_`.
 ID = re.compile(r"[a-z0-9][a-z0-9_-]*")
@@ -99,17 +106,18 @@ class Reading:
     #: ⭐ The first declared mode when `default_mode` is absent; `None` only with no modes.
     default_mode: str | None = None
     outside_mode: str = DEFAULT_OUTSIDE_MODE
+    absent_language: str = DEFAULT_ABSENT_LANGUAGE
 
 
 def parse_reading(document: dict, where: str) -> Reading | None:
-    """Return the declared `Reading`, or `None` when none of the four keys is present."""
+    """Return the declared `Reading`, or `None` when none of the five keys is present."""
     if not any(key in document for key in READING_KEYS):
         return None
     if "modes" in document and "languages" not in document:
         raise ManifestError(
             f"{where} declares 'modes' without 'languages'; a mode names declared languages"
         )
-    for key in ("default_mode", "outside_mode"):
+    for key in ("default_mode", "outside_mode", "absent_language"):
         if key in document and "modes" not in document:
             raise ManifestError(f"{where} declares '{key}' without 'modes'; it describes a mode")
     languages = _languages(document["languages"], where)
@@ -121,6 +129,9 @@ def parse_reading(document: dict, where: str) -> Reading | None:
         modes=modes,
         default_mode=default,
         outside_mode=_outside_mode(document.get("outside_mode", DEFAULT_OUTSIDE_MODE), where),
+        absent_language=_absent_language(
+            document.get("absent_language", DEFAULT_ABSENT_LANGUAGE), where
+        ),
     )
 
 
@@ -281,5 +292,14 @@ def _outside_mode(value: object, where: str) -> str:
     if not isinstance(value, str) or value not in OUTSIDE_MODES:
         raise ManifestError(
             f"{where} 'outside_mode' must be one of {list(OUTSIDE_MODES)}, got {describe(value)}"
+        )
+    return value
+
+
+def _absent_language(value: object, where: str) -> str:
+    if not isinstance(value, str) or value not in ABSENT_CHOICES:
+        raise ManifestError(
+            f"{where} 'absent_language' must be one of {list(ABSENT_CHOICES)}, "
+            f"got {describe(value)}"
         )
     return value

@@ -10,8 +10,8 @@ blocks of each one. A text with no marker is one common region, so an adapter
 that never writes a marker gets what it always got. `undeclared(found,
 declared)` names the languages a page uses that a corpus does not declare.
 
-    <!-- lang: a -->            a section of language `a`; closed by
-    ...                        <!-- /lang -->
+    <!-- lang: a -->            a section of language `a` (or `a,b`: of each of them);
+    ...                        closed by <!-- /lang -->
     <!-- a-unit: 1.1.1 -->     first line of that section only, optional: the
                                unit of another source the section stands for,
                                or `none`
@@ -58,6 +58,8 @@ EXAMPLE_CLOSE = re.compile(r"^<!--\s*/example\s*-->$")
 UNIT_MARK = re.compile(r"^<!--\s*(\S+?)-unit:\s*(\S+)\s*-->$")
 IS_ID = re.compile(rf"^{ID}$")
 EXAMPLE_FIELDS = ("tabs", "output")
+#: ⚠️ Spelled as `archive.example.EXAMPLE_MAX_TABS` spells it; a test pins the two equal.
+MAX_TABS = 8
 
 COMMON, LANG, EXAMPLE = "common", "lang", "example"
 
@@ -81,7 +83,9 @@ class Region:
     @property
     def languages(self) -> tuple[str, ...]:
         """The languages this region is written in: its own, its tabs, or none."""
-        return self.tabs if self.kind == EXAMPLE else ((self.lang,) if self.lang else ())
+        if self.kind == EXAMPLE:
+            return self.tabs
+        return tuple(self.lang.split(" ")) if self.lang else ()
 
 
 def regions(text: str) -> tuple[Region, ...]:
@@ -141,7 +145,10 @@ def _flush(found: list[Region], kind: str, body: list[str], line: int, **fields:
 def _opening(marker: str, number: int) -> dict:
     """Read an opening marker into the fields its region will carry."""
     if (match := LANG_OPEN.match(marker)) is not None:
-        return {"kind": LANG, "line": number, "lang": _id(match.group(1), number, "a language")}
+        named = [_id(one, number, "a language") for one in match.group(1).split(",")]
+        if len(set(named)) != len(named):
+            raise MarkdownError(f"line {number}: a section names each of its languages once")
+        return {"kind": LANG, "line": number, "lang": " ".join(named)}
     header = EXAMPLE_OPEN.match(marker).group(1)  # type: ignore[union-attr]
     words = header.split()
     if not words or ":" in words[0]:
@@ -150,6 +157,8 @@ def _opening(marker: str, number: int) -> dict:
     tabs = tuple(_id(tab, number, "a tab") for tab in fields["tabs"].split(","))
     if len(set(tabs)) != len(tabs):
         raise MarkdownError(f"line {number}: the tabs of one example must name distinct languages")
+    if len(tabs) > MAX_TABS:
+        raise MarkdownError(f"line {number}: an example has at most {MAX_TABS} tabs")
     output = fields.get("output")
     return {
         "kind": EXAMPLE,
@@ -212,7 +221,7 @@ def _unit_mark(body: list[str], lang: str, number: int) -> tuple[list[str], str 
         match = UNIT_MARK.match(line.strip())
         if match is None:
             break
-        if match.group(1) != lang:
+        if match.group(1) not in lang.split(" "):
             raise MarkdownError(
                 f"line {number}: a unit marker is written with its section's language"
             )

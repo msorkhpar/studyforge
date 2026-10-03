@@ -239,4 +239,31 @@ ACCEPTANCE = {
     "draws no ligature, holds 360 px and answers the arrow keys of the tabs pattern": (
         "test_example_tabs"
     ),
+    #: ⭐ A row of its own because its CORPUS is the subject: four declared languages, whose page
+    #: holds an example with a tab for each, a shape no committed fixture has. *Four tabs open on
+    #: the first, a mode reorders them, a one-language mode shows one and no bar, the bar wraps at
+    #: a phone's width and the keys walk and wrap* are claims about the computed page.
+    "lists a tab for each of four languages, opens the first or the one the mode orders first, "
+    "shows one tab and no bar for a one-language mode, wraps the bar inside the block at 360 px "
+    "and answers the keys of the tabs pattern over four tabs": "test_language_tabs",
+    #: ⭐ A row of its own for the same reason: four languages and one mode for each.
+    #: *The question lists exactly the four and fits a phone, a choice is remembered across
+    #: pages, the switch moves between the four, scripts off read the default* are claims about
+    #: one origin's storage.
+    "asks a first visit which of four languages to read, lists exactly the declared modes at "
+    "360 px, remembers the choice across pages, moves between the four in place, and reads the "
+    "default mode with scripts off or storage refused": "test_reading_languages",
+    #: ⭐ A row of its own because its CORPUS is the subject: a corpus that greys what a
+    #: language lacks, whose blocks are in some languages only and whose practices are tagged.
+    "greys the tab of a language an example block lacks and names the languages that carry it, "
+    "keeps the keys on a disabled tab without selecting it, greys an entry in two of four "
+    "languages, and greys a practice outside the mode that does not open and is stepped over": (
+        "test_absent_language"
+    ),
+    #: ⭐ A row of its own because its ORIGIN is the subject: the preview of that corpus read from
+    #: a static server and from a file.
+    "opens the read-only preview of a corpus of four languages from a static server and from a "
+    "file in the default mode, with every panel replaced and the banner unchanged": (
+        "test_language_preview"
+    ),
 }
