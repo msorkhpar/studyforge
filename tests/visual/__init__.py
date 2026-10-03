@@ -246,4 +246,11 @@ ACCEPTANCE = {
     "lists a tab for each of four languages, opens the first or the one the mode orders first, "
     "shows one tab and no bar for a one-language mode, wraps the bar inside the block at 360 px "
     "and answers the keys of the tabs pattern over four tabs": "test_language_tabs",
+    #: ⭐ A row of its own for the same reason: four languages and one mode for each.
+    #: *The question lists exactly the four and fits a phone, a choice is remembered across
+    #: pages, the switch moves between the four, scripts off read the default* are claims about
+    #: one origin's storage.
+    "asks a first visit which of four languages to read, lists exactly the declared modes at "
+    "360 px, remembers the choice across pages, moves between the four in place, and reads the "
+    "default mode with scripts off or storage refused": "test_reading_languages",
 }

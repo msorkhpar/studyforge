@@ -434,6 +434,17 @@ that tab and no bar. At phone width the bar wraps inside the block, every tab is
 and the keys are those of the WAI-ARIA tabs pattern (Left and Right wrap, Home, End, one tab in the
 tab order). With scripts off every panel is present under its language's label.
 
+**A section for several languages.** A section, a lesson or a practice may be tagged with several
+declared languages (`lang` names them, joined by single spaces; the Markdown marker writes
+`<!-- lang: a,b -->`). It reads in the mode of each of them and in no other, its unit belongs to
+each of them, and the note a page outside a mode shows names every mode that reads it. A corpus
+whose sections each name one language builds the style rules it always did; the rules match a tag
+as a list of words only once some section names several.
+
+**Any number of languages and modes.** The framework counts neither: a corpus of one, two, three
+or four languages is read the same way, the first-visit question and the switch list exactly the
+declared modes, and nothing in the framework names a language.
+
 ## `curriculum` — where your reading order is recorded
 
 **Most material records its own order and grouping in one document**: a README,

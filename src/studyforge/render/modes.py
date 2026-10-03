@@ -117,6 +117,9 @@ class Offer:
     tags: Mapping[str, Tag] = field(default_factory=dict)
     #: ⭐ `(id, label)` of each declared language, for the label over a tab.
     languages: tuple[tuple[str, str], ...] = ()
+    #: ⭐ Whether some section names several languages. Only then does a rule match a tag as a
+    #: list of words, so a corpus whose sections each name one language keeps its bytes.
+    several: bool = False
 
     @property
     def locks(self) -> bool:
@@ -125,7 +128,10 @@ class Offer:
 
 
 def offer(
-    reading: Reading | None, entries: Mapping[str, tuple[str, ...]] | None = None
+    reading: Reading | None,
+    entries: Mapping[str, tuple[str, ...]] | None = None,
+    *,
+    several: bool = False,
 ) -> Offer | None:
     """The offer a corpus makes, or `None` when it declares no modes (today's page).
 
@@ -155,6 +161,7 @@ def offer(
         outside=reading.outside_mode,
         tags=tags,
         languages=tuple((language.id, language.label) for language in reading.languages),
+        several=several,
     )
 
 
@@ -234,7 +241,7 @@ def files(made: Offer | None) -> dict[str, str]:
     """`filename -> content` for what a corpus with modes writes beside the bundle; else `{}`."""
     if made is None:
         return {}
-    rules = NEWLINE.join(_rule(choice, made.locks) for choice in made.choices)
+    rules = NEWLINE.join(_rule(choice, made.locks, made.several) for choice in made.choices)
     return {
         STYLESHEET_NAME: text(STYLESHEET_NAME)
         + NEWLINE
@@ -288,7 +295,7 @@ def _note(made: Offer, entry: Tag | None) -> str:
     return templates.fill("mode-outside-locked.html", readers=readers, buttons=buttons) + NEWLINE
 
 
-def _rule(choice: Choice, locks: bool) -> str:
+def _rule(choice: Choice, locks: bool, several: bool = False) -> str:
     """The rules for one mode: what it hides, and how an entry outside it looks.
 
     ⭐ A section tagged with another language is not displayed, and an outline line with it.
@@ -299,14 +306,17 @@ def _rule(choice: Choice, locks: bool) -> str:
     """
     lang = json.dumps(choice.prose)
     root = f'html[{MODE_ATTRIBUTE}="{choice.id}"]'
+    #: ⭐ `=` while each section names one language, `~=` once one may name several.
+    match = "~=" if several else "="
+    tagged = f"[data-lang{match}{lang}]"
     outside = f"[{ENTRY_ATTRIBUTE}]:not([{ENTRY_ATTRIBUTE}~={lang}])"
     rules = [
-        f"{root} section[data-lang]:not([data-lang={lang}]),\n"
-        f'{root} nav[aria-label="Outline"] li[data-lang]:not([data-lang={lang}]) '
+        f"{root} section[data-lang]:not({tagged}),\n"
+        f'{root} nav[aria-label="Outline"] li[data-lang]:not({tagged}) '
         "{ display: none; }",
-        f"{root} section[data-lang][data-linked]:not([data-lang={lang}]) {{ display: block; }}",
-        f"{root}{outside} section[data-lang]:not([data-lang={lang}]) {{ display: block; }}",
-        f'{root}{outside} nav[aria-label="Outline"] li[data-lang]:not([data-lang={lang}]) '
+        f"{root} section[data-lang][data-linked]:not({tagged}) {{ display: block; }}",
+        f"{root}{outside} section[data-lang]:not({tagged}) {{ display: block; }}",
+        f'{root}{outside} nav[aria-label="Outline"] li[data-lang]:not({tagged}) '
         "{ display: list-item; }",
         f"{root} li{outside}, {root} li{outside} a {{ color: var(--muted); }}",
         f"{root} li{outside} [{LABEL_ATTRIBUTE}] {{ display: inline-block; }}",

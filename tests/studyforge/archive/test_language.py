@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 
 from studyforge.archive.errors import ArchiveError
-from studyforge.archive.language import LANG_ID, require_lang
+from studyforge.archive.language import LANG_ID, languages_of, require_lang
 
 
 @pytest.mark.parametrize("good", ["a", "kotlin", "x-1", "a_b", "9z"])
@@ -30,3 +30,16 @@ def test_the_pattern_is_the_one_a_manifest_spells_its_ids_with():
     from studyforge.corpus.manifest.reading import ID
 
     assert LANG_ID.pattern == ID.pattern
+
+
+@pytest.mark.parametrize("several", ["a b", "aa bb cc dd", "x-1 a_b 9z"])
+def test_several_ids_joined_by_single_spaces_are_returned_as_given(several):
+    assert require_lang(several, "lesson-1") == several
+    assert languages_of(several) == tuple(several.split(" "))
+
+
+@pytest.mark.parametrize("bad", ["a  b", "a b ", "a,b", "a a", "a B", "a\tb", " "])
+def test_a_list_that_repeats_an_id_or_is_spaced_oddly_is_refused(bad):
+    with pytest.raises(ArchiveError) as refused:
+        require_lang(bad, "lesson-1")
+    assert "lesson-1 has an invalid 'lang'" in str(refused.value)
