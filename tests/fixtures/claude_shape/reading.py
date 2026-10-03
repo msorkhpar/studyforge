@@ -31,6 +31,7 @@ UNITS = {
     2: ".studyforge/level-1/01-messages/units/unit-02/unit-02-an-agent-loop.unit.html",
     3: ".studyforge/level-1/01-messages/units/unit-03/unit-03-practise-the-conversation.unit.html",
     4: ".studyforge/level-1/02-exam-readiness/units/unit-01/unit-01-level-1-mock-exam.unit.html",
+    5: ".studyforge/level-1/02-exam-readiness/units/unit-02/unit-02-level-1-exam-pool.unit.html",
 }
 PHONE = (360, 740)
 LANGS = ("python", "typescript", "java", "kotlin")

@@ -7,7 +7,7 @@ import re
 import pytest
 
 from studyforge.render import modes
-from studyforge.render.page import MOCK_PARTS
+from studyforge.render.page import MOCK_FORM_PARTS, MOCK_PARTS
 from studyforge.render.pageassets import (
     SCRIPT_NAME,
     SCRIPT_PARTS,
@@ -41,7 +41,7 @@ def test_every_part_on_disk_is_in_exactly_one_bundle_or_is_the_sprite():
     # ⭐ The two files a corpus declaring modes writes beside the bundle are parts on
     # disk too, composed by `render.modes` and never into the shared bundle, and so are the two a
     # corpus with a mock exam writes (`render.page.mock`).
-    used = list(STYLE_PARTS) + list(SCRIPT_PARTS) + [SPRITE_PART, *modes.PARTS, *MOCK_PARTS]
+    used = list(STYLE_PARTS) + list(SCRIPT_PARTS) + [SPRITE_PART, *modes.PARTS, *MOCK_PARTS, *MOCK_FORM_PARTS]
     assert sorted(used) == sorted(names()), "the directory and the bundles disagree"
     assert len(used) == len(set(used)), "a part is composed into more than one bundle"
 

@@ -13,14 +13,14 @@ from pathlib import Path
 
 from studyforge.archive.document import render
 from studyforge.generate import write_site
-from tests.studyforge.exercise.quiz import mock_exam
+from tests.studyforge.exercise.quiz import mock_exam, mock_form
 from tests.studyforge.exercise.quiz.depth1 import PAGE, fixture_root, practice_document, section
 from tests.studyforge.serve.routes.quizzing import PRACTICE_DOCUMENT
 
 ORIGIN = {"path": PAGE, "section": section()}
 
 
-def mock_corpus(where: Path, *, mock: bool = True, **changes) -> Path:
+def mock_corpus(where: Path, *, mock: bool = True, form: bool = False, **changes) -> Path:
     """Copy `depth1`, add the practice, declare exercises, build it; return the corpus root.
 
     `mock=False` writes the same six questions as a plain quiz (no domain, no `mock` key), which is
@@ -28,10 +28,11 @@ def mock_corpus(where: Path, *, mock: bool = True, **changes) -> Path:
     """
     root = where / "depth1"
     shutil.copytree(fixture_root(), root)
-    questions = mock_exam.questions(ORIGIN)
+    questions = mock_form.questions(ORIGIN) if form else mock_exam.questions(ORIGIN)
+    declared = mock_form.mock() if form else mock_exam.mock()
     if not mock:
         questions = [{k: v for k, v in one.items() if k != "domain"} for one in questions]
-    parts = {"questions": questions, **({"mock": mock_exam.mock()} if mock else {}), **changes}
+    parts = {"questions": questions, **({"mock": declared} if mock else {}), **changes}
     document = practice_document(**parts)
     (root / PRACTICE_DOCUMENT).write_text(render(document), encoding="utf-8")
     manifest = root / "corpus.json"
@@ -49,3 +50,8 @@ def built_files(root: Path) -> dict[str, bytes]:
         for path in sorted((root / ".studyforge").rglob("*"))
         if path.is_file()
     } | {"index.html": (root / "index.html").read_bytes()}
+
+
+def form_corpus(where: Path, **changes) -> Path:
+    """The same corpus with the exam-form mock (the course shape's twelve-question pool) in it."""
+    return mock_corpus(where, form=True, **changes)
