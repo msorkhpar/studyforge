@@ -53,6 +53,7 @@ from studyforge.exercise import ExerciseError
 from studyforge.exercise import of as exercise_of
 from studyforge.exercise.bundle import BUNDLE_DIRNAMES, RUN_OUTPUT_DIRNAME, Places, unpermitted
 from studyforge.exercise.gates import drifted, record_of
+from studyforge.exercise.gates.quiz import P1
 from studyforge.validate.corpus import Unit, Walk
 from studyforge.validate.report import Finding
 
@@ -122,6 +123,17 @@ def check_gate_records(walk: Walk) -> Iterator[Finding]:
                 "ships a gate record in which not every gate held. A shortfall is "
                 "reported rather than engineered away: re-author the exercise, "
                 "never loosen the gate.",
+            )
+        elif record is not None and _is_mock(unit) and all(v.id != P1 for v in record.verdicts):
+            # ⛔ A record names a family by carrying one of its verdicts, so a mock exam's
+            # record with the mock gate deleted would read as a plain quiz's, complete. The
+            # exercise is what says it is a mock exam, and it is owed `P1`.
+            yield Finding(
+                RULE_GATE_SHORTFALL,
+                where,
+                f"declares a mock exam and ships a gate record with no verdict for {P1}. "
+                f"A mock exam clears the mock gate as well as the quiz's five, so the "
+                f"record is incomplete rather than clear.",
             )
 
 
@@ -201,6 +213,15 @@ def check_practice_ordinals(walk: Walk) -> Iterator[Finding]:
                 f"{list(range(1, len(found) + 1))}. A gap is a missing exercise, and "
                 f"renumbering the rest would move every reader's recorded progress.",
             )
+
+
+def _is_mock(unit: Unit) -> bool:
+    """Does this unit's exercise declare a mock exam?"""
+    try:
+        exercise = exercise_of(unit.document, unit.where)
+    except ExerciseError:  # pragma: no cover - `validate.corpus` refuses it first
+        return False
+    return exercise is not None and exercise.mock is not None
 
 
 def _authored(unit: Unit) -> tuple[Places, str] | None:

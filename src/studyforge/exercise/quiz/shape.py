@@ -61,6 +61,7 @@ from __future__ import annotations
 
 from studyforge.describe import describe_keys
 from studyforge.exercise.errors import ExerciseError
+from studyforge.exercise.quiz.mock import MOCK, Mock, mock_of
 from studyforge.exercise.quiz.questions import Question, questions_of
 from studyforge.unit.errors import ContentError
 from studyforge.unit.trust import check_test_record
@@ -102,6 +103,34 @@ def questions_in(record: dict, where: str) -> tuple[Question, ...] | None:
     return questions_of(record[QUESTIONS], where) if QUESTIONS in record else None
 
 
+def mock_in(record: dict, where: str) -> Mock | None:
+    """Return the mock exam a quiz record declares, or `None` for the quiz it always was.
+
+    ⭐ Takes the record, as `questions_in` does, so `mock` is read where it is handed
+    to its one reader. ⛔ A question's `domain` on a quiz that declares no `mock` is
+    refused: a domain nothing scores under is a key nothing reads.
+    """
+    mock = mock_of(record[MOCK], where) if MOCK in record else None
+    asked = questions_in(record, where) or ()
+    if mock is None and any(question.domain is not None for question in asked):
+        raise ExerciseError(
+            f"{where}: a question names a 'domain' on a quiz that declares no {MOCK!r}. A "
+            f"domain is what a mock exam scores a question under, so one here is a key "
+            f"nothing reads while the corpus validates green."
+        )
+    return mock
+
+
+def require_no_mock(record: dict, where: str) -> None:
+    """⛔ Refuse `mock` on a record that is not a quiz, naming the key."""
+    if MOCK in record:
+        raise ExerciseError(
+            f"{where}: 'exercise' names {[MOCK]} on a record that is not a quiz. A mock "
+            f"exam is a quiz that is scored per domain, so one on a record that names a "
+            f"file is a score nothing ever reads."
+        )
+
+
 def require_no_questions(record: dict, where: str) -> None:
     """⛔ Refuse questions on a record that is not a quiz, naming the key."""
     if QUESTIONS in record:
@@ -115,7 +144,7 @@ def require_no_questions(record: dict, where: str) -> None:
 
 def _require_only_quiz_keys(record: dict, where: str) -> None:
     """⛔ Refuse a workspace key on a quiz: there is no file and nothing to run."""
-    unknown = [key for key in record if key not in QUIZ_KEYS]
+    unknown = [key for key in record if key not in (*QUIZ_KEYS, MOCK)]
     if unknown:
         raise ExerciseError(
             f"{where}: a quiz carries {list(QUIZ_KEYS)} and this one also carries "

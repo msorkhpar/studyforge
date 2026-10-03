@@ -40,6 +40,7 @@ PERMITTED_IMPORTS = {
     "studyforge.exercise.cases",
     "studyforge.exercise.errors",
     "studyforge.exercise.quiz.grading",
+    "studyforge.exercise.quiz.mock",
     "studyforge.exercise.quiz.questions",
     "studyforge.exercise.quiz.shape",
     "studyforge.unit.errors",

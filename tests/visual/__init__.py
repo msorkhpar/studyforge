@@ -163,6 +163,12 @@ ACCEPTANCE = {
     #: `file://` — a check that needed an origin would prove the opposite of it.
     "shows a quiz's questions over file://, grades them with no server and no "
     "request, and offers nothing to run": "test_practice_quiz",
+    #: ⭐ A row of its own: *a mock exam counts what is answered, names what is not, scores
+    #: per domain against its pass mark, keeps the answers for a returning reader and fits a
+    #: phone* is a claim about a quiz page that is a whole exam rather than a few questions, and
+    #: it is read over `file://` and a served origin alike, with no request from scoring.
+    "scores a mock exam per domain in the page, keeps the answers of a reader who leaves, "
+    "and fits a phone": "test_mock_exam",
     #: ⭐ A row of its own for the reason the one above is: its origin is the
     #: opposite one. ⛔ *A Submit shows the breakdown, naming each failed edge
     #: case* is a claim about a page that has just finished a run, and the

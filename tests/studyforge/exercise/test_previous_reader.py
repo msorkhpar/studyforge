@@ -84,6 +84,7 @@ AFTER = {
             "origin": "docs/01-getting-started.md",
         }
     ],
+    "mock": {"pass_mark": 70, "domains": [{"id": "d-1", "title": "A greeter"}]},
     "concepts": ["A greeter returns a greeting."],
 }
 

@@ -132,6 +132,8 @@ from studyforge.render.page.assets import AUDIO_ATTRIBUTE, Placement
 from studyforge.render.page.document import compose
 from studyforge.render.page.errors import PageError
 from studyforge.render.page.narration import SILENT, Narration
+from studyforge.render.page.mock import PARTS as MOCK_PARTS
+from studyforge.render.page.mock import files as mock_files
 from studyforge.render.page.navigation import Crumb, Link, Links, between_units, breadcrumb
 from studyforge.render.page.rail import RailContainer, RailGroup, RailUnit
 from studyforge.render.page.rail import render as rail
@@ -145,6 +147,7 @@ ENCODING = "utf-8"
 __all__ = [
     "AUDIO_ATTRIBUTE",
     "ENCODING",
+    "MOCK_PARTS",
     "SILENT",
     "Crumb",
     "Link",
@@ -158,6 +161,7 @@ __all__ = [
     "between_units",
     "breadcrumb",
     "compose",
+    "mock_files",
     "rail",
     "render",
 ]

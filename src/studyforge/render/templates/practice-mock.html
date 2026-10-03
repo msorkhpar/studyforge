@@ -1,0 +1,17 @@
+<section data-practice-quiz="${key}" data-practice-mock="${passmark}" data-corpus="${corpus}" aria-label="Mock exam" tabindex="-1">
+<div data-practice-part="head"><h2>Mock exam</h2>
+<p data-mock-part="progress" role="status" aria-live="polite" data-mock-count="{answered} of {asked} answered"><progress data-mock-part="meter" max="${asked}" value="0"></progress> <span data-mock-part="count">0 of ${asked} answered</span></p></div>
+${grader}<ol data-practice-part="questions">
+${questions}</ol>
+<script type="application/json" data-mock-part="key">${answers}</script>
+<script type="application/json" data-mock-part="plan">${plan}</script>
+<link rel="stylesheet" href="${stylesheet}">
+<script src="${script}" defer></script>
+<p data-practice-part="offline">Scoring this exam needs this page's script, and it is not running here. Read the questions and choose your answers; nothing here can score them.</p>
+<p data-mock-part="controls" hidden><button type="button" data-mock-part="submit">Submit exam</button> <button type="button" data-mock-part="again" hidden>Start again</button></p>
+<p data-mock-part="missing" role="alert" data-mock-words="Answer every question before you submit. Not answered yet: {list}." hidden></p>
+<div data-mock-part="result" role="region" aria-label="Result" hidden>
+<p data-mock-part="overall" data-mock-reached="You scored {right} of {asked} ({percent}%). The pass mark is {pass}%, and you reached it." data-mock-short="You scored {right} of {asked} ({percent}%). The pass mark is {pass}%, and you did not reach it."></p>
+<table data-mock-part="domains" data-mock-domain-words="{right} of {asked} ({percent}%)"><thead><tr><th scope="col">Domain</th><th scope="col">Score</th></tr></thead><tbody></tbody></table>
+</div>
+</section>

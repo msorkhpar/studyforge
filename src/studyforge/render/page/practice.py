@@ -117,7 +117,7 @@ from studyforge.progress import RAISES as PROGRESS_RAISES
 from studyforge.progress import practice_key
 from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute
-from studyforge.render.page import mark, quiz
+from studyforge.render.page import mark, mock, quiz
 from studyforge.render.page.assets import Placement
 from studyforge.render.page.errors import PageError
 
@@ -192,6 +192,16 @@ def render(section: dict, document: dict, placement: Placement) -> str:
         # shapes share this one surface and this one renders its questions with
         # no frame and no dead control — which is the same rule a reading-only
         # unit gets two lines above, applied to the other shape.
+        if exercise.mock is not None:
+            # ⭐ A quiz that declares a mock exam is scored per domain (`page.mock`); every
+            # other quiz is rendered below exactly as it always was.
+            return mock.render(
+                exercise,
+                key=key,
+                corpus=placement.corpus,
+                grader=_region(grader(exercise)),
+                assets=placement.asset,
+            )
         return quiz.render(
             exercise, key=key, corpus=placement.corpus, grader=_region(grader(exercise))
         )

@@ -13,7 +13,13 @@ def test_the_package_states_its_contract():
 
 def test_the_public_surface_is_declared_and_complete():
     assert set(quiz.__all__) == {
+        "DOMAIN_KEY",
+        "DOMAIN_KEYS",
+        "HIGHEST_PASS_MARK",
         "KEYED_OPTIONS",
+        "LOWEST_PASS_MARK",
+        "MOCK",
+        "MOCK_KEYS",
         "MINIMUM_OPTIONS",
         "NO_ANSWERS",
         "OPTION_KEYS",
@@ -26,17 +32,26 @@ def test_the_public_surface_is_declared_and_complete():
         "QUIZ_REQUIRED_KEYS",
         "QUIZ_TRUST",
         "Answered",
+        "Domain",
+        "Mock",
         "Option",
         "Question",
+        "Score",
         "Verdict",
         "completes",
         "grade",
+        "mock_document",
+        "mock_in",
+        "mock_of",
         "normalised",
+        "passed",
         "questions_document",
         "questions_in",
         "questions_of",
+        "require_no_mock",
         "require_no_questions",
         "require_quiz_shape",
+        "scores",
     }
     for name in quiz.__all__:
         assert hasattr(quiz, name), name

@@ -79,8 +79,13 @@ from studyforge.exercise.cases import Origin, origin_document, origin_in
 from studyforge.exercise.errors import ExerciseError
 
 #: One question, in the order its keys are written (R10). ⛔ All four required
-#: and nothing else.
+#: and nothing else, except the one optional key below.
 QUESTION_KEYS = ("id", "stem", "options", "origin")
+
+#: ⭐ The one optional key of a question: the domain a mock exam scores it under. It is
+#: written only where a question carries one, so every question written before it
+#: round-trips to the same bytes, and it is last so it never moves another key (R10).
+DOMAIN_KEY = "domain"
 
 #: One option, in the order its keys are written (R10). ⛔ All four required
 #: and nothing else: the key is a fact about the option, and so is the sentence
@@ -138,6 +143,10 @@ class Question:
     stem: str
     options: tuple[Option, ...]
     origin: Origin
+    #: ⭐ The mock-exam domain this question is scored under, or `None` (every quiz that is
+    #: not a mock exam). A token like an id; whether it names a declared domain is the
+    #: mock family's gate and not this reader's.
+    domain: str | None = None
 
     @property
     def key(self) -> Option:
@@ -203,15 +212,20 @@ def questions_document(questions: tuple[Question, ...]) -> list[dict]:
     material and this module does not pretend otherwise — see the contract
     above, and `grading`, which needs nothing but what this writes.
     """
-    return [
-        {
-            "id": question.id,
-            "stem": question.stem,
-            "options": [_option_document(option) for option in question.options],
-            "origin": origin_document(question.origin),
-        }
-        for question in questions
-    ]
+    return [_question_document(question) for question in questions]
+
+
+def _question_document(question: Question) -> dict:
+    """Return one question as the decoded object; `domain` only where it carries one."""
+    written = {
+        "id": question.id,
+        "stem": question.stem,
+        "options": [_option_document(option) for option in question.options],
+        "origin": origin_document(question.origin),
+    }
+    if question.domain is not None:
+        written[DOMAIN_KEY] = question.domain
+    return written
 
 
 def _option_document(option: Option) -> dict:
@@ -231,19 +245,21 @@ def _question(value: object, where: str) -> Question:
             f"{where}: a question is an object, {list(QUESTION_KEYS)}. "
             f"This one is {describe(value)}."
         )
-    if set(value) != set(QUESTION_KEYS):
-        unknown = [key for key in value if key not in QUESTION_KEYS]
-        missing = [key for key in QUESTION_KEYS if key not in value]
+    unknown = [key for key in value if key not in (*QUESTION_KEYS, DOMAIN_KEY)]
+    missing = [key for key in QUESTION_KEYS if key not in value]
+    if unknown or missing:
         raise ExerciseError(
             f"{where}: a question is {list(QUESTION_KEYS)}, all of them required "
-            f"and nothing else. This one is missing {missing} and carries "
-            f"{describe_keys(unknown)} the question does not define."
+            f"and nothing else but an optional {DOMAIN_KEY!r}. This one is missing "
+            f"{missing} and carries {describe_keys(unknown)} the question does not define."
         )
+    domain = _id(value[DOMAIN_KEY], "a question's domain", where) if DOMAIN_KEY in value else None
     return Question(
         id=_id(value["id"], "a question's", where),
         stem=_text(value["stem"], "a question's 'stem' is what it asks", where),
         options=_options(value["options"], where),
         origin=_origin(value, where),
+        domain=domain,
     )
 
 

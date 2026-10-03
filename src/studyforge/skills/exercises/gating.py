@@ -91,7 +91,7 @@ from studyforge.exercise.gates import (
     record_of,
     taken_over,
 )
-from studyforge.exercise.gates.quiz import check_quiz, cited_role
+from studyforge.exercise.gates.quiz import check_mock, check_quiz, cited_role
 from studyforge.exercise.quiz import QUIZ_PROVENANCE, QUIZ_TRUST
 from studyforge.skills.exercises.drafts import (
     AUTHORED_PROVENANCE,
@@ -212,13 +212,26 @@ def gate_quiz(draft: QuizDraft, brief: Brief, ledger: Ledger, judge: Judge, *, w
     """Answer `Q1`–`Q5` over one quiz draft, its judgements taken by the independent pass."""
     places = brief.places
     exercise = Exercise(
-        None, None, None, None, QUIZ_PROVENANCE, QUIZ_TRUST, kind=QUIZ, questions=draft.questions
+        None,
+        None,
+        None,
+        None,
+        QUIZ_PROVENANCE,
+        QUIZ_TRUST,
+        kind=QUIZ,
+        questions=draft.questions,
+        mock=draft.mock,
     )
     judgements = judge(brief, draft.questions)
     origins = _cited(
         tuple((cited_role(question.id), question.origin) for question in draft.questions), ledger
     )
     verdicts = check_quiz(exercise, judgements, origins, digests(ledger), where)
+    if draft.mock is not None:
+        # ⭐ A mock exam answers the mock family's gate as well, and only a mock exam does.
+        # ⛔ A record writes its verdicts in the order the families declare them (family by
+        # name, then gate), which puts `mock` before `quiz`.
+        verdicts = (check_mock(exercise, where), *verdicts)
     document = {
         "quiz_api": QUIZ_API,
         "address": list(places.address.segments),

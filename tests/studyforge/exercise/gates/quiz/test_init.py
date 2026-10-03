@@ -30,7 +30,9 @@ def test_the_public_surface_is_declared_and_complete():
     assert set(quiz.__all__) == {
         "JUDGED",
         "JUDGED_FIELDS",
+        "P1",
         "MECHANICAL",
+        "MOCK",
         "PICKED_NONE",
         "QUESTION_ROLE",
         "QUIZ",
@@ -43,6 +45,7 @@ def test_the_public_surface_is_declared_and_complete():
         "Q5",
         "WHOLE_QUESTION",
         "Judgement",
+        "check_mock",
         "check_quiz",
         "cited_for",
         "cited_role",
