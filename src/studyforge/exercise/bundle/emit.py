@@ -260,8 +260,23 @@ def _arguments(bundle: Bundle, command: tuple[str, ...], field: str, where: str)
     """
     for argument in command:
         if "/" in argument:
-            require_inside(argument, bundle.places.workspace, f"{where}: '{field}'")
+            require_inside(_path_of(argument), bundle.places.workspace, f"{where}: '{field}'")
     return command
+
+
+def _path_of(argument: str) -> str:
+    """The path an argument names: the argument, or the value of a `--flag=<path>`.
+
+    ⭐ `--junitxml=<workspace>/target/report.xml` is how pytest is told where its report
+    lands, and the whole token is not a path (it begins with `-`), so it was refused
+    whatever it named. The part after the first `=` of an option is read as the path
+    instead, and it must be inside the workspace like any other. ⛔ Everything that was
+    refused is still refused unless it is such an option naming a path inside the
+    workspace; a value that is not inside it, or not a safe path, is refused as before.
+    """
+    if argument.startswith("-") and "=" in argument:
+        return argument.partition("=")[2]
+    return argument
 
 
 def _blocks(

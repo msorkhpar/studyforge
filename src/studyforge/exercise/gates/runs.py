@@ -86,6 +86,11 @@ class Run:
     exit_code: int
     passed_ids: frozenset[str] | None = None
     refusal: str | None = None
+    #: ⭐ Optional, and read only when `assertions_only` is set: the cases that failed with
+    #: something other than an assertion, and whether the caller asked that every failure
+    #: of a starter and a plant be one.
+    unasserted: frozenset[str] = frozenset()
+    assertions_only: bool = False
 
     @property
     def reported(self) -> bool:
@@ -124,6 +129,7 @@ def folded(
     where: str,
     *,
     started: float,
+    assertions_only: bool = False,
 ) -> Run:
     """Fold the report a run left behind into the evidence a gate reads.
 
@@ -143,6 +149,8 @@ def folded(
         attempt=attempt,
         exit_code=exit_code,
         passed_ids=breakdown.passed_ids,
+        unasserted=breakdown.unasserted,
+        assertions_only=assertions_only,
     )
 
 

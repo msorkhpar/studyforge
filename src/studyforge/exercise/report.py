@@ -106,6 +106,7 @@ from xml.etree import ElementTree
 from studyforge.exercise.cases import EDGE, JUNIT, Case
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.record import Exercise
+from studyforge.exercise.spelling import asserted, spells
 
 #: What a report directory's members are named. ⚠️ Surefire writes a DIRECTORY
 #: of `TEST-*.xml` and pytest writes ONE file; the record declares either, and
@@ -130,6 +131,7 @@ PASSING_CHILDREN = ("system-out", "system-err", "properties")
 CLOCK_SLACK = 2.0
 
 
+
 @dataclass(frozen=True, slots=True)
 class Breakdown:
     """What a run reported, folded through the cases the record declared.
@@ -142,6 +144,10 @@ class Breakdown:
 
     cases: tuple[Case, ...]
     passed_ids: frozenset[str]
+    #: ⭐ Optional and defaulted: the ids that did NOT pass and whose report does not say
+    #: an assertion failed them (see `ASSERTION_TYPE`). Nothing shown to a reader reads it;
+    #: a gate suite that asks for assertion-only failures does.
+    unasserted: frozenset[str] = frozenset()
 
     def passed(self, case: Case) -> bool:
         """Did this case pass? ⛔ A case the report did not name did not pass."""
@@ -204,7 +210,8 @@ def breakdown_of(exercise: Exercise, root: Path, where: str, *, started: float) 
     if not files:
         return None
     _require_fresh(files, report.path, where, started=started)
-    return Breakdown(cases=cases, passed_ids=_fold(files, cases, report.path, where))
+    passed, unasserted = _fold(files, cases, report.path, where)
+    return Breakdown(cases=cases, passed_ids=passed, unasserted=unasserted)
 
 
 def _files(target: Path) -> tuple[Path, ...]:
@@ -237,18 +244,24 @@ def _require_fresh(files: tuple[Path, ...], declared: str, where: str, *, starte
 
 def _fold(
     files: tuple[Path, ...], cases: tuple[Case, ...], declared: str, where: str
-) -> frozenset[str]:
-    """Return the ids the report says passed, refusing a test the cases do not name."""
+) -> tuple[frozenset[str], frozenset[str]]:
+    """Return the ids the report says passed, and the failed ones no assertion failed.
+
+    Refuses a test the cases do not name.
+    """
     ids = tuple(case.id for case in cases)
     reported: set[str] = set()
     failed: set[str] = set()
+    unasserted: set[str] = set()
     for path in files:
         for element in _parse(path, declared, where).iter("testcase"):
             case_id = _identify(element, ids, declared, path, where)
             reported.add(case_id)
             if not _passed(element):
                 failed.add(case_id)
-    return frozenset(reported - failed)
+                if not asserted(element, PASSING_CHILDREN):
+                    unasserted.add(case_id)
+    return frozenset(reported - failed), frozenset(unasserted)
 
 
 def _parse(path: Path, declared: str, where: str) -> ElementTree.Element:
@@ -284,7 +297,7 @@ def _identify(
             f"with no 'name'. A result that names no test cannot be folded through "
             f"any case map."
         )
-    named = [case_id for case_id in ids if _spells(element, case_id)]
+    named = [case_id for case_id in ids if spells(element, case_id)]
     if not named:
         raise ExerciseError(
             f"{where}: the report at '{_named(declared, path)}' names a test the "
@@ -301,48 +314,6 @@ def _identify(
             f"value that may be personal."
         )
     return named[0]
-
-
-def _spells(element: ElementTree.Element, case_id: str) -> bool:
-    """Return whether this testcase is the one the corpus wrote `case_id` down for.
-
-    ⭐ Three spellings, because two test runners spell an id differently and the
-    record carries what its own runner writes: a pytest node id
-    (`file::Class::name`), a JUnit one (the class, a number sign, the method),
-    and the bare name a runner that reports neither a file nor a class leaves.
-    ⛔ Every comparison is byte for byte and nothing is repaired — a report's
-    own spelling is what the corpus author is told to write down.
-
-    ⚠️ **The declared id is taken APART rather than a spelling composed from the
-    report**, and that is not only style: `render.markup` owns the one composer
-    of a number sign in this tree, asserted over `src/` by a sweep that
-    cannot tell a URL fragment from a method separator. ⭐ Reading the declared
-    value is the honest direction anyway — the case map is the authority, and
-    nothing here invents a string to test it against.
-    """
-    name = element.get("name", "")
-    classname = element.get("classname", "")
-    file = element.get("file", "")
-    if case_id == name:
-        return True
-    owner, separator, method = case_id.rpartition("#")
-    if separator and owner == classname and method == name:
-        return True
-    return bool(file) and case_id == _node_id(file, classname, name)
-
-
-def _node_id(file: str, classname: str, name: str) -> str:
-    """`file::Class::name`, rebuilt from a testcase the way pytest spelled it.
-
-    ⚠️ pytest's JUnit `classname` is the module's dotted path with any class
-    appended, so the class is what is left once the module is taken off the
-    front. ⭐ The rebuild matches pytest's own node ids, checked against
-    this repository's own reports; it is spelled here because
-    `src/` imports no test or developer code.
-    """
-    module = file.removesuffix(".py").replace("/", ".")
-    inner = classname[len(module) + 1 :].split(".") if classname.startswith(f"{module}.") else []
-    return "::".join([file, *[part for part in inner if part], name])
 
 
 def _passed(element: ElementTree.Element) -> bool:

@@ -155,6 +155,9 @@ class CodeDraft:
     tests: str
     plants: Mapping[str, str]
     build: Mapping[str, str] = field(default_factory=dict)
+    #: ⭐ Optional: `True` asks the gates to refuse a starter or a plant whose tests failed
+    #: with an error that is not an assertion. `False` is every draft's behaviour until now.
+    assertions_only: bool = False
 
 
 @dataclass(frozen=True, slots=True)
