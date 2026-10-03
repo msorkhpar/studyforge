@@ -38,6 +38,7 @@ EXAMPLE = "example"
 #: An example's tab, its flags and what it holds. ⛔ Spelled here as `archive.example` spells
 #: them, and a test pins the two equal: the archive's names stay inside the archive.
 EXAMPLE_TAB_KEYS = ("lang", "span")
+EXAMPLE_MAX_TABS = 8
 EXAMPLE_OUTPUTS = ("compiler", "warning")
 EXAMPLE_BLOCKS = ("code",)
 
@@ -92,6 +93,8 @@ def _example(block: dict, at: str) -> Iterator[tuple[str, str]]:
     if not isinstance(tabs, list) or not tabs:
         yield f"{at}.tabs", f"is {describe(tabs)}; tabs is a non-empty array"
         return
+    if len(tabs) > EXAMPLE_MAX_TABS:
+        yield f"{at}.tabs", f"has {len(tabs)} tabs; an example has at most {EXAMPLE_MAX_TABS}"
     seen: list[object] = []
     covered = 0
     for number, tab in enumerate(tabs):

@@ -170,8 +170,8 @@ one carries nothing.
 
 **An adapter that reads Markdown can mark the regions.** `studyforge.archive.markdown.regions(text)`
 cuts a page at `<!-- lang: <id> -->` … `<!-- /lang -->` sections and
-`<!-- example: <id> tabs: <id>,<id> [output: <word>] -->` … `<!-- /example -->`
-blocks (a marker inside a code fence is code). Text outside every marker is
+`<!-- example: <id> tabs: <id>,<id>[,<id>...] [output: <word>] -->` … `<!-- /example -->`
+blocks of one to eight tabs (a marker inside a code fence is code). Text outside every marker is
 common. The adapter parses each region with `parse` and writes the tagged ones
 as documents of their own.
 

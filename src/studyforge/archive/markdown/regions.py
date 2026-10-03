@@ -58,6 +58,8 @@ EXAMPLE_CLOSE = re.compile(r"^<!--\s*/example\s*-->$")
 UNIT_MARK = re.compile(r"^<!--\s*(\S+?)-unit:\s*(\S+)\s*-->$")
 IS_ID = re.compile(rf"^{ID}$")
 EXAMPLE_FIELDS = ("tabs", "output")
+#: ⚠️ Spelled as `archive.example.EXAMPLE_MAX_TABS` spells it; a test pins the two equal.
+MAX_TABS = 8
 
 COMMON, LANG, EXAMPLE = "common", "lang", "example"
 
@@ -150,6 +152,8 @@ def _opening(marker: str, number: int) -> dict:
     tabs = tuple(_id(tab, number, "a tab") for tab in fields["tabs"].split(","))
     if len(set(tabs)) != len(tabs):
         raise MarkdownError(f"line {number}: the tabs of one example must name distinct languages")
+    if len(tabs) > MAX_TABS:
+        raise MarkdownError(f"line {number}: an example has at most {MAX_TABS} tabs")
     output = fields.get("output")
     return {
         "kind": EXAMPLE,

@@ -11,6 +11,7 @@ def test_the_words_validate_spells_are_the_archives():
     # ⛔ The archive's names do not cross the package edge, so `validate` spells them
     # again and this is what keeps the two the same.
     assert validated.EXAMPLE_TAB_KEYS == example.EXAMPLE_TAB_KEYS
+    assert validated.EXAMPLE_MAX_TABS == example.EXAMPLE_MAX_TABS
     assert validated.EXAMPLE_OUTPUTS == example.EXAMPLE_OUTPUTS
     assert validated.EXAMPLE_BLOCKS == example.EXAMPLE_BLOCKS
 

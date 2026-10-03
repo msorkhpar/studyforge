@@ -132,3 +132,18 @@ def test_regions_are_immutable_values():
     assert isinstance(regions("x")[0], Region)
     with pytest.raises(AttributeError):
         regions("x")[0].text = "y"
+
+
+def test_an_example_has_at_most_as_many_tabs_as_the_archive_allows():
+    import importlib
+
+    from studyforge.archive import example
+
+    module = importlib.import_module("studyforge.archive.markdown.regions")
+
+    assert module.MAX_TABS == example.EXAMPLE_MAX_TABS
+    ids = [f"l{n}" for n in range(example.EXAMPLE_MAX_TABS + 1)]
+    ok = ",".join(ids[:-1])
+    assert regions(f"<!-- example: e tabs: {ok} -->\nx\n<!-- /example -->")[0].tabs
+    with pytest.raises(MarkdownError, match="at most 8 tabs"):
+        regions(f"<!-- example: e tabs: {','.join(ids)} -->\nx\n<!-- /example -->")

@@ -425,6 +425,15 @@ hides shows that section while the link is the target. With scripts off the page
 `default_mode` view in every respect, including which rows are closed and what the bar
 shows.
 
+**An example with a tab for each language.** An `example` block holds from one to eight
+tabs, each naming a declared language once; validation refuses a ninth, a repeated language and
+an undeclared one, and the Markdown marker `<!-- example: <id> tabs: a,b,c,d -->` refuses the
+same. A mode's `tabs` list says which of the block's tabs the mode shows and in what order: the
+first it lists opens, a click changes that block only, and a mode that lists one language shows
+that tab and no bar. At phone width the bar wraps inside the block, every tab is at least 44 px,
+and the keys are those of the WAI-ARIA tabs pattern (Left and Right wrap, Home, End, one tab in the
+tab order). With scripts off every panel is present under its language's label.
+
 ## `curriculum` — where your reading order is recorded
 
 **Most material records its own order and grouping in one document**: a README,

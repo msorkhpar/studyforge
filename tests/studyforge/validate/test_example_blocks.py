@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import pytest
+
 from studyforge.validate import validate
 from studyforge.validate.blocks import block_problems
+from tests.studyforge.validate import corpora
 from tests.studyforge.validate.test_languages import READING, corpus, document, rules
 
 
@@ -73,3 +76,43 @@ def test_the_tabs_of_a_declared_pair_are_valid(tmp_path):
     root = corpus(tmp_path, [{**document(), "blocks": [example()]}])
     assert [f for f in validate(root).findings if f.rule == "language-undeclared"] == []
     assert READING["languages"][0]["id"] == "aa"
+
+
+def many(count):
+    langs = [f"l{n}" for n in range(count)]
+    return example(
+        tabs=[{"lang": x, "span": 1} for x in langs],
+        blocks=[{"type": "code", "lang": x, "text": x} for x in langs],
+    )
+
+
+@pytest.mark.parametrize("count", [1, 2, 3, 4, 8])
+def test_an_example_of_one_to_eight_tabs_has_no_problem(count):
+    assert problems(many(count)) == []
+
+
+def test_an_example_of_more_than_eight_tabs_is_refused():
+    found = problems(many(9))
+    assert found == [("blocks[0].tabs", "has 9 tabs; an example has at most 8")]
+
+
+def test_four_tabs_in_four_declared_languages_are_valid_and_an_undeclared_fourth_is_named(
+    tmp_path,
+):
+    from tests.studyforge.generate import four_corpus as four
+
+    good = four.example("quad", four.LANGS)
+    bad = four.example("quad", (*four.LANGS[:3], "zz"))
+    for name, block, expected in (("good", good, []), ("bad", bad, ["language-undeclared"])):
+        units = [corpora.unit_entry(1, origin="src/one.md")]
+        root = corpora.write(
+            tmp_path / name,
+            manifest={**corpora.MANIFEST, **four.declared()},
+            containers={"demo": corpora.container(units)},
+            documents={
+                "demo/raw/prose/unit-01/lesson-1.json": {**document(), "blocks": [block]}
+            },
+        )
+        assert [f.rule for f in validate(root).findings if f.rule == "language-undeclared"] == (
+            expected
+        )

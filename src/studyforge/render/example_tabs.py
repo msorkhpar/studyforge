@@ -1,4 +1,4 @@
-"""The tabs of a two-language example: their look, their keys, and what each mode shows of them.
+"""The tabs of an example: their look, their keys, and what each mode shows of them.
 
 **What it does.** Composes the part of `modes.css` and `modes.js` that belongs to the
 `example` block: the static look and script, then one set of rules per mode (which

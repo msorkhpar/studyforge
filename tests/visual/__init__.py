@@ -239,4 +239,11 @@ ACCEPTANCE = {
     "draws no ligature, holds 360 px and answers the arrow keys of the tabs pattern": (
         "test_example_tabs"
     ),
+    #: ⭐ A row of its own because its CORPUS is the subject: four declared languages, whose page
+    #: holds an example with a tab for each, a shape no committed fixture has. *Four tabs open on
+    #: the first, a mode reorders them, a one-language mode shows one and no bar, the bar wraps at
+    #: a phone's width and the keys walk and wrap* are claims about the computed page.
+    "lists a tab for each of four languages, opens the first or the one the mode orders first, "
+    "shows one tab and no bar for a one-language mode, wraps the bar inside the block at 360 px "
+    "and answers the keys of the tabs pattern over four tabs": "test_language_tabs",
 }
