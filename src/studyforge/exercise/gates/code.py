@@ -91,18 +91,18 @@ def check(
     """Answer all five gates over this evidence — ⛔ always five, in order, never fewer."""
     cases = declared_cases(exercise, where)
     return (
-        _g1(cases, evidence),
+        _g1(cases, evidence, _declared_report(exercise)),
         _g2(cases, evidence),
         _g3(exercise, evidence, where),
-        _g4(cases, evidence),
+        _g4(cases, evidence, _declared_report(exercise)),
         _g5(exercise, origins, ledger),
     )
 
 
-def _g1(cases: tuple[Case, ...], evidence: Evidence) -> Verdict:
+def _g1(cases: tuple[Case, ...], evidence: Evidence, report: str = "") -> Verdict:
     """Every test passes on the reference, on two runs, with the same outcome each time."""
     first, second = evidence.of(REFERENCE, FIRST), evidence.of(REFERENCE, SECOND)
-    missing = _unread(G1, (first, second))
+    missing = _unread(G1, (first, second), report)
     if missing is not None:
         return missing
     if first.passed_ids != second.passed_ids or first.exit_code != second.exit_code:
@@ -141,6 +141,8 @@ def _g2(cases: tuple[Case, ...], evidence: Evidence) -> Verdict:
             G2,
             "the starter run failed before any test reported, so no test passed on it",
         )
+    if starter.assertions_only and starter.unasserted:
+        return _refused(G2, _not_an_assertion(len(starter.unasserted), "starter"))
     passed = [case for case in cases if starter.passed(case)]
     if passed:
         return _refused(
@@ -164,6 +166,13 @@ def _g3(exercise: Exercise, evidence: Evidence, where: str) -> Verdict:
     plants = tuple(evidence.of(plant_role(case), FIRST) for case in declared)
     if any(run is not None and run.refusal is not None for run in plants):
         return _refused(G3, _UNFOLDABLE)
+    stray = [
+        case
+        for case, run in zip(declared, plants, strict=True)
+        if run is not None and run.assertions_only and run.unasserted
+    ]
+    if stray:
+        return _refused(G3, _not_an_assertion(len(stray), "plant"))
     unproven = [case for case in declared if _g3_fails(exercise, evidence, case)]
     if unproven:
         return _refused(
@@ -185,7 +194,7 @@ def _g3_fails(exercise: Exercise, evidence: Evidence, case: Case) -> bool:
     return any(not run.passed(other) for other in ask)
 
 
-def _g4(cases: tuple[Case, ...], evidence: Evidence) -> Verdict:
+def _g4(cases: tuple[Case, ...], evidence: Evidence, report: str = "") -> Verdict:
     """Every test the report names maps to one case, and every case is backed by a test."""
     reference = evidence.of(REFERENCE, FIRST)
     if reference is None:
@@ -195,8 +204,8 @@ def _g4(cases: tuple[Case, ...], evidence: Evidence) -> Verdict:
     if not reference.reported:
         return _refused(
             G4,
-            "the reference run wrote no report, so nothing says the Submit breakdown "
-            "covers what actually ran",
+            "the reference run wrote no report" + _at(report) + ", so nothing says the "
+            "Submit breakdown covers what actually ran",
         )
     unbacked = [case for case in cases if not reference.passed(case)]
     if unbacked:
@@ -248,15 +257,40 @@ def _g5(exercise: Exercise, origins: tuple[Cited, ...], ledger: Mapping[str, str
     return _held(G5, f"the cited passage of '{origin.path}' still matches the ledger")
 
 
-def _unread(gate: str, runs: tuple[Run | None, ...]) -> Verdict | None:
+def _unread(gate: str, runs: tuple[Run | None, ...], report: str = "") -> Verdict | None:
     """Answer for a gate whose runs are missing or unfoldable, or `None` if they are not."""
     if any(run is None for run in runs):
         return _refused(gate, "the runs this gate reads were not taken")
     if any(run.refusal is not None for run in runs):
         return _refused(gate, _UNFOLDABLE)
     if any(not run.reported for run in runs):
-        return _refused(gate, "a run this gate reads left no report, so nothing was read")
+        return _refused(
+            gate, "a run this gate reads left no report" + _at(report) + ", so nothing was read"
+        )
     return None
+
+
+def _declared_report(exercise: Exercise) -> str:
+    """The workspace path the record says its report lands at, or nothing."""
+    return exercise.report.path if exercise.report is not None else ""
+
+
+def _at(report: str) -> str:
+    """` at '<path>'` for a refusal naming where the report was looked for.
+
+    ⭐ The path is a workspace path (`safety.require_path` refused an absolute one), so
+    naming it can carry no home directory (R7).
+    """
+    return f" at '{report}'" if report else ""
+
+
+def _not_an_assertion(count: int, role: str) -> str:
+    """The sentence for a run asked to fail only on assertions that failed otherwise."""
+    return (
+        f"{count} of this exercise's tests failed on the {role} with an error that is not an "
+        f"assertion (an exception the code raised, such as an unimplemented starter), so the "
+        f"failure says nothing about the task and the draft asked for assertion failures only"
+    )
 
 
 def _sentences(cases: list[Case]) -> str:

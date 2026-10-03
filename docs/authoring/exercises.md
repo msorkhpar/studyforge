@@ -186,6 +186,8 @@ the other four are the grader**, and the grader is written whole or not at all
 
 A Gradle practice sets `testLogging { exceptionFormat = TestExceptionFormat.FULL }` in its `tasks.test`, so a failed test shows its assertion message and the run filter keeps it.
 
+**A Python practice** is graded by pytest through the same JUnit report. Its `test_command` is an argv list, for example `["python3", "-m", "pytest", "-q", "-p", "no:cacheprovider", "--junitxml=<workspace>/target/report.xml", "<workspace>/test_x.py"]`, and its `report` is `{"format": "junit", "path": "target/report.xml"}`. An option may carry a path (`--junitxml=<path>`); the path must be inside the exercise's workspace like any other. A case id is the test's name as pytest reports it: a bare function name, a parametrised test with the id pytest spells (`test_collapses[inner spaces]`, at most one space in a row), or the node id `tests/test_x.py::test_name`, which is read from the report's dotted class name. The starter returns a wrong value so that every test fails on an assertion; a starter that raises `NotImplementedError` fails on an error, which says nothing about the task. A code draft that sets `assertions_only` has `G2` and `G3` refuse a starter or a plant whose tests failed with anything but an assertion. The run page drops pytest's own banner, progress and rootdir lines for a run whose command is `pytest` or `python -m pytest` when the corpus declares `python` beside another tool with rules, and keeps every failure line, frame and the tally.
+
 ### The last seven: what an authored exercise says
 
 **`kind` is `code` or `quiz`**, and `code` is what a record with no `kind`
@@ -634,6 +636,7 @@ with a question on each. The aspects are in `ASPECTS` in
 | `tests` | the tests, one or more per case |
 | `plants` | for each edge case's id, a solution that solves the main ask and ignores exactly that edge |
 | `build` | only when the tests import a library: each build file's path, relative to the workspace, mapped to its text, such as a `pom.xml` naming the library. Leave it out otherwise |
+| `assertions_only` | optional, `False` by default: `True` has `G2` and `G3` refuse a starter or a plant whose tests failed with an error that is not an assertion, such as a starter that raises `NotImplementedError` |
 
 ⛔ **Every path in a command is inside the exercise's own workspace.** The
 brief gives you that directory as `brief.places.workspace`. An argument

@@ -112,6 +112,11 @@ class Toolchain:
     #: way `select` tells two declared tools apart for ONE run. Empty: never chosen
     #: by command.
     commands: tuple[str, ...] = ()
+    #: ⭐ `True`: this tool's rules apply only to a run whose command NAMES it
+    #: (`pytest`, `python -m pytest`), and never because it is the one declared
+    #: runtime. A runtime that had no rules before (`python`) keeps passing every
+    #: line through for a corpus that declares nothing else with rules.
+    only_by_command: bool = False
 
 
 #: ⭐ Maven 3.9, measured against real `mvn -B test` output (see the tests).
@@ -216,9 +221,48 @@ GRADLE = Toolchain(
     ),
 )
 
+#: ⭐ pytest. Measured against real `python -m pytest` output (see the tests).
+#: Only the lines pytest prints ABOUT ITSELF are listed; a failure's `E` lines, its
+#: frames, the `FAILED` summary and the tally are signal, and a test's own output
+#: matches no rule and is kept. ⛔ Selected by the run's command and never by
+#: being the declared runtime (`only_by_command`), so a corpus that declares
+#: `python` and no other tool with rules is unchanged.
+PYTEST = Toolchain(
+    name="python",
+    commands=("pytest", "py.test"),
+    only_by_command=True,
+    always_noise=(),
+    signal=(
+        r"^(FAILED|ERROR) ",
+        r"^E +",
+        r"\b(AssertionError|ImportError|ModuleNotFoundError|SyntaxError)\b",
+        r"^=+ .*\b(passed|failed|error|errors)\b.* =+$",
+        r"^\d+ (passed|failed|error|errors)\b",
+        r"^_{3,} .+ _{3,}$",
+        r"^\S+:\d+: \w+",
+    ),
+    noise=(
+        r"^=+ test session starts =+$",
+        r"^platform \S+ -- Python ",
+        r"^rootdir: ",
+        r"^configfile: ",
+        r"^plugins?: ",
+        r"^cachedir: ",
+        r"^collected \d+ items?\b",
+        r"^-+ generated xml file: ",
+        r"^-- generated xml file: ",
+        r"^-- Docs: https?://docs\.pytest\.org",
+        # The progress line (`path.py FFF.  [100%]`, or `FFF.  [100%]` under `-q`): the
+        # summary below it says the same, with the names.
+        r"^(?:\S+\.py )?[.FEsxX]+ +\[ *\d+%\]$",
+    ),
+)
+
 #: ⭐ THE declaration: a runtime name, as a corpus spells it in `runtimes`, to its
 #: rules. ⛔ A name that is not here has no filter, and its output passes through.
-TOOLCHAINS: dict[str, Toolchain] = {toolchain.name: toolchain for toolchain in (GRADLE, MAVEN)}
+TOOLCHAINS: dict[str, Toolchain] = {
+    toolchain.name: toolchain for toolchain in (GRADLE, MAVEN, PYTEST)
+}
 
 
 def select(runtimes: Iterable[str], argv: Sequence[str] | None = None) -> Toolchain | None:
@@ -233,16 +277,43 @@ def select(runtimes: Iterable[str], argv: Sequence[str] | None = None) -> Toolch
     the name and a `.cmd`/`.bat` after it are ignored). ⛔ A run whose first word names
     none of them, a run given no `argv`, and a word two toolchains claim all give
     `None`: nothing is guessed from the output, and an unknown command is left whole.
+
+    ⭐ **A toolchain flagged `only_by_command`** (pytest, declared as `python`) takes no
+    part in either rule above: it is counted nowhere, so a corpus declaring `python`
+    beside Gradle selects exactly what it selected before. It is chosen only when the
+    run's command names it (`pytest`, `python -m pytest`) and its runtime is declared,
+    and only when the corpus also declares a tool with rules, which is the corpus whose
+    runs the filter must tell apart.
     """
-    found = [TOOLCHAINS[name] for name in dict.fromkeys(runtimes) if name in TOOLCHAINS]
+    declared = list(dict.fromkeys(runtimes))
+    found = [TOOLCHAINS[name] for name in declared if name in TOOLCHAINS]
+    if argv:
+        for toolchain in found:
+            if toolchain.only_by_command and _names(toolchain, argv):
+                return toolchain if len(found) > 1 else None
+    found = [toolchain for toolchain in found if not toolchain.only_by_command]
     if len(found) == 1:
         return found[0]
     if len(found) < 2 or not argv:
         return None
-    word = re.split(r"[\\/]", argv[0])[-1]
-    word = re.sub(r"\.(cmd|bat)$", "", word, flags=re.IGNORECASE)
+    word = _word(argv[0])
     matching = [toolchain for toolchain in found if word in toolchain.commands]
     return matching[0] if len(matching) == 1 else None
+
+
+def _word(first: str) -> str:
+    """A command's first word, without its directory or a `.cmd`/`.bat` suffix."""
+    word = re.split(r"[\\/]", first)[-1]
+    return re.sub(r"\.(cmd|bat)$", "", word, flags=re.IGNORECASE)
+
+
+def _names(toolchain: Toolchain, argv: Sequence[str]) -> bool:
+    """Does this command run `toolchain`: its own word, or `python -m <word>`?"""
+    word = _word(argv[0])
+    if word in toolchain.commands:
+        return True
+    module = len(argv) > 2 and argv[1] == "-m" and argv[2] in toolchain.commands
+    return module and re.fullmatch(r"(python|py)[0-9.]*", word) is not None
 
 
 class Quiet:

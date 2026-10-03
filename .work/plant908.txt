@@ -1,0 +1,8 @@
+[heavy-slot] waiting for the slot (studyforge-quality-suite)
+[heavy-slot] start studyforge-quality-suite: host 15904 MiB available, VM disk 21 GiB free
+............................................                             [100%]tree state: unchanged by this run (4 path(s) already differed from HEAD before it started, and still do)
+
+
+unreachable population: 0 skipped test(s) — this run reached every test it collected
+44 passed in 9.33s
+[heavy-slot] done studyforge-quality-suite rc=0, peak extra host memory 47 MiB

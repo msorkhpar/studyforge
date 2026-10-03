@@ -287,7 +287,14 @@ class _Runs:
             ran = self.runner(root, tuple(self.exercise.test_command or ()))
             self.last = _relative(ran.output, root)
             return folded(
-                self.exercise, root, role, number, ran.exit_code, self.where, started=started
+                self.exercise,
+                root,
+                role,
+                number,
+                ran.exit_code,
+                self.where,
+                started=started,
+                assertions_only=self.draft.assertions_only,
             )
 
 
