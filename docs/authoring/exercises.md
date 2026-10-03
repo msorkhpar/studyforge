@@ -359,6 +359,27 @@ declared, and every declared domain has a question. A gate record for a mock exa
 names the `mock` family beside `quiz` and is complete only with `P1`. Draft one with
 `QuizDraft(title=…, questions=…, mock=Mock(…))`.
 
+**Authoring one.** The exam covers a level, so it is authored from the pages of the whole level,
+and each question's `origin` names the page and passage it is built from.
+
+- **Domains.** Declare each domain once with an `id` token and a `title`, as the source's own exam
+  guide names them, and tag **every** question with exactly one. `P1` refuses a question with no
+  domain, a domain nobody declared and a declared domain with no question, naming the question by
+  its stem, so a domain is never a label left over from a plan. Spread the questions over the
+  domains the way the guide weights them, and say so in the page; the framework counts none of it.
+- **One judgement set per question, taken by a reader who did not write it.** `Q1` (the page
+  holds the answer), `Q2` (the wording alone gives nothing away) and `Q3` (a passage rules out each
+  wrong option) are taken for every question and recorded for every question, whatever the number
+  of questions. `judge(brief, questions)` returns one `Q1` and one `Q2` per question and one `Q3`
+  per wrong option, each over `question_digest(question)`, for all of the exam at once. A question
+  reworded after a refusal needs fresh judgements: the earlier ones are over the old wording.
+- **Scenario questions.** A question the page's own quiz already asks is not repeated: the mock
+  is the level's check, so a reader meets a new situation that needs two or three pages together.
+  The score is only as good as the least careful question, and `Q4` and `Q5` refuse the mechanical
+  faults one question at a time.
+- **The pass mark is the corpus's number** (`mock.pass_mark`); the page states only whether the
+  score reached it. Do not write the mark into a question.
+
 ### A file with no test
 
 **When your material ships a file the reader runs but nothing that checks it**,
@@ -390,6 +411,27 @@ grader may never be `authoritative`**, and declaring it so is a refusal, not a
 warning. A grader written by a machine has not been reviewed by anybody, and a
 site that told the reader they had passed on the strength of one would be
 manufacturing a result.
+
+---
+
+## Languages and profiles
+
+**One line per language a practice and an example run in.** `runtimes` names the tools a runner
+carries, never a version; a practice's `test_command` is argv, its `report` is the JUnit report,
+and the same five gates read every language.
+
+| Language | Graded by | Declare in `runtimes` |
+|---|---|---|
+| Java | JUnit through Maven (`pom.xml`) or Gradle, the JUnit XML report | `java` and `maven` or `gradle` |
+| Kotlin | JUnit or `kotlin.test` through Gradle or Maven, the JUnit XML report | `java`, `kotlin` and `gradle` or `maven` |
+| Python | `pytest` through `--junitxml`, the JUnit XML report | `python` |
+| TypeScript | `node --test` on Node's type stripping, a build file writing the JUnit report, an optional `tsc --noEmit` | `node` |
+
+**Profiles.** A toolchain may carry an image profile that holds what not every course needs, and a
+corpus names it in `profile`. `claude-sdks` holds the Python wheels, npm packages and JVM jars of the
+Claude SDKs, offline, for practices and examples in all four languages above, and a Python language
+server in the editor; a course that names it declares `python`, `node`, `java`, `gradle` and `kotlin`
+and is exported thin. A corpus that names no profile is built on the plain bases.
 
 ---
 
@@ -1051,6 +1093,61 @@ objects.
   Where a plant's change could reach a later case, fix the order with
   `@TestMethodOrder`. `G1` runs the reference twice, the same way both times,
   so it cannot find this for you.
+
+### Python and TypeScript silent passes
+
+Both languages have their own ways for a test to pass whatever the code does. `G2` (every test
+fails on the starter) refuses a test that passes on a starter returning its input, which is the
+first reading; the cases below also pass a wrong plant, or a wrong solution nobody planted, so
+look for each before the pass.
+
+**Python (pytest)**
+
+- **A test that asserts nothing.** A function that calls the code and ends passes whatever the
+  code returns. So does an `assert` inside a loop over an empty sequence, inside an `except`
+  branch no run reaches, or in a helper the test never calls.
+- **Truthiness.** `assert normalise(x)` passes for any non-empty result, and `assert result is not
+  None` for any result at all. Compare the exact value, and for a collection its exact contents.
+- **A tuple asserted.** `assert (got == want, "message")` is a non-empty tuple and is always true.
+  Write the message after a comma, not inside parentheses.
+- **Identity against equality.** `==` on two lists compares contents, so a solution that returns
+  its own input list passes a test that only compares; `is` on small integers, short strings
+  and tuples of them compares one cached object with itself and passes for the wrong reason.
+  Build the values at run time, assert `is not` where a copy is the point, and assert `==`
+  where equality is.
+- **A mutable default argument.** `def add(item, bucket=[])` keeps one list for every call, so
+  a test that calls it once passes. Call it twice, and assert the second result.
+- **`pytest.raises(Exception)`** accepts any error, including the `NotImplementedError` of an
+  unwritten starter. Name the exact exception and check its message where the message matters.
+
+**TypeScript (`node --test` on type stripping)**
+
+- **A missing `await`.** `assert.rejects(...)` and `assert.doesNotReject(...)` return a promise;
+  left unawaited, the test body ends first. Node 24 then reports the late failure against the
+  test **file**, not the test, so the test itself shows as passed and the file as failed, which
+  the case ids cannot map. `await` it, or `return` it, and make an async test `async`.
+- **A promise chain with no `return`.** `fn().then((v) => assert.equal(...))` settles after the
+  test ended, with the same effect. Prefer `await`.
+- **Truthiness.** `assert.ok(value)` and `assert(value)` pass for any non-empty value. Use
+  `assert.equal` or `assert.deepEqual` with the expected value.
+- **Loose equality.** `node:assert` (not `node:assert/strict`) compares with `==`, so `"1"`
+  equals `1` and a starter returning a string passes. Import `node:assert/strict`, whose `equal`
+  is `===` and whose `deepEqual` is strict.
+- **An `any` that hides a type error.** Type stripping reads no type, so a test run never sees a
+  wrong signature, and an `any` or a cast makes the optional `tsc --noEmit --strict` pass on
+  one. Declare real types in the starter and the reference, and run the type check
+  (`typecheck_command`) where the signature is part of the ask.
+- **`enum`, parameter properties and `namespace` under type stripping.** Node refuses them with
+  `ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX`: a file that does not load. A draft that sets
+  `assertions_only` has `G2` and `G3` refuse such a starter or plant as *not an assertion*, and
+  `G1` refuses such a reference; `--erasableSyntaxOnly` in the type check names it earlier.
+- **A skipped or nested test.** A `test.skip`, a `todo` and a `test(...)` inside another test do
+  not run as a case of their own. A case that was never run is not a pass.
+- **A stub that returns without asserting.** A test whose body calls the code and ends passes.
+  Every test ends in an assertion on the value the ask names.
+
+⭐ **Prove the plant of each language's own trap before the pass:** a wrong solution that is
+the mistake, never the deletion of the code, and the test that must fail on it.
 
 ### Threads
 

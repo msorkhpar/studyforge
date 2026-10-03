@@ -412,6 +412,24 @@ in to keeping it on the device) and sent only in the body of a live-run request.
 only in a course served from its own compose with the `live` profile; a read-only preview and a
 corpus served any other way show no key field and no control. Live runs are never graded.
 
+**What a live-capable example may and may not contain.** A live example is ordinary code with one
+extra property: it can be started with a key. So that no key can ever rest in the course:
+
+- ⛔ **No key, anywhere in the corpus.** Not in the source, the command, a fixture, a recorded
+  exchange, a log, a comment or a test. The example reads the variable the manifest names, by that
+  name, from its environment; it reads no file for it, and the framework reads none either.
+- ⛔ **No captured secret.** A recorded exchange shown on a page carries no key, header, request
+  id, organisation id or token, and is labelled as captured, with the model and the date.
+- ⛔ **The key is never printed or kept.** The program does not print its environment, its client
+  configuration or a request's headers, and it writes the key to no file; an error it prints names
+  what failed and never the value it was given.
+- **One host.** It reaches only the host the manifest names; a second host is refused by the
+  proxy and is a defect of the example.
+- **A command is argv**, written in the safe form the manifest checks, never a shell string.
+- **Grading is separate.** The example's offline test, the one a Run or a Submit uses, runs
+  against the course's scripted stand-in with no key and no network; the live command is another
+  argv beside it. A live-capable practice is graded exactly as before; the live run is never graded.
+
 ## `languages` and `modes` — reading modes
 
 All four keys are optional, and a corpus that declares none is read exactly as before.
