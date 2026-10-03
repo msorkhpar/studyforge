@@ -218,6 +218,46 @@ you write: the pinned runner image carries it, primed from the corpus's own
 build (`skills.execution`, step 4a), so a build naming something the prime did
 not warm fails `G1` and does not ship.
 
+#### ⛔ Write it once
+
+⭐ **A plant is a few lines away from the reference, so write it as the few
+lines.** Give `CodeDraft.plants` a `PlantSpec` for each edge: an ordered list
+of `Replacement(file, old, new)`, each `old` occurring exactly once in the
+text it is applied to. The gate materialises the full plant from the reference
+into its own staging directory, and the bundle stores the spec alone, so
+fixing the reference reaches every plant at the next gate run instead of
+leaving ten copies to drift. A plant that comes out identical to the
+reference, or a replacement whose text is gone or ambiguous, is refused by
+position, never silently skipped. A full-text plant is still accepted, for the
+plant whose change is most of its file.
+
+- ⛔ **Never hand-copy a file to vary it.** A plant, a second starter, a
+  variant of a test: derive it from the file it varies, by a replacement or by
+  one function, so the original is the only place it is edited.
+- ⭐ **One shared generator or tool per course, never a copy per batch.** A
+  script that builds a course's practices, runs its checks or writes its
+  examples lives in one place and takes the batch as its argument. A second
+  copy for the next batch is a second place to fix, and the two stop agreeing.
+- ⭐ **Share test helpers where the runner allows.** A fixture, a runner
+  shim or a report reader several practices need belongs in one module the
+  tests import. ⛔ **Each learner workspace still stays self-contained and
+  readable**: a file a learner opens does not inherit from, import from or
+  point to a file they must go and find to understand it, and what the
+  workspace needs must be there when it is copied out alone.
+- ⚠️ **Keep the duplication that is the material**, and only that:
+  a learner's own file (the starter and the tests they edit stay whole, with
+  nothing to chase); a page's visible example (what the page shows is what a
+  reader sees, shown whole, and it is not reduced to a reference to
+  somewhere else); and a language's idiomatic version (the Java and the
+  Kotlin of one idea are two solutions, each as that language would write it,
+  and not one generated from the other). Remove a copy only when nothing a
+  learner reads is harmed by its going.
+
+`studyforge.exercise.bundle.convert` turns a course's existing full plants into
+specs once: it proves each by materialising it again and reading the bytes
+back, and leaves any plant it cannot prove. See *A plant as replacements* in
+`docs/authoring/exercises.md`.
+
 ### 3. Run the pass
 
 ⭐ **Before the pass, take the two readings it cannot take for you:**

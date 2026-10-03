@@ -57,7 +57,7 @@ from typing import Protocol
 
 from studyforge.address import Address
 from studyforge.exercise import CODE, EXERCISE_KINDS, QUIZ, Case, Origin
-from studyforge.exercise.bundle import Places
+from studyforge.exercise.bundle import PlantSpec, Places
 from studyforge.exercise.gates import Verdict
 from studyforge.exercise.gates.quiz import Judgement
 from studyforge.exercise.quiz import Mock, Question
@@ -134,7 +134,9 @@ class CodeDraft:
 
     ⭐ Every path but a command's arguments is **workspace-relative**;
     `plants` maps each edge case's id to the solution that solves
-    the ask and ignores exactly that edge (`G3`). ⭐ `build` maps each build
+    the ask and ignores exactly that edge (`G3`): its full text, or a `PlantSpec`
+    of exact replacements against `reference`, which the gate materialises and the
+    bundle stores as the spec alone. ⭐ `build` maps each build
     file's workspace-relative path to its text: empty for an exercise
     whose tests need nothing but the language. ⛔ `report` is inside
     `exercise.bundle.RUN_OUTPUT_DIRNAME`, or the bundle is refused.
@@ -153,7 +155,7 @@ class CodeDraft:
     starter: str
     reference: str
     tests: str
-    plants: Mapping[str, str]
+    plants: Mapping[str, str | PlantSpec]
     build: Mapping[str, str] = field(default_factory=dict)
     #: ⭐ Optional: `True` asks the gates to refuse a starter or a plant whose tests failed
     #: with an error that is not an assertion. `False` is every draft's behaviour until now.

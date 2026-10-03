@@ -20,6 +20,7 @@ from __future__ import annotations
 from dataclasses import replace
 
 from studyforge.exercise import EDGE, MAIN, Case, Origin
+from studyforge.exercise.bundle import PlantSpec, Replacement
 from studyforge.skills.exercises import Brief, CodeDraft
 
 MAIN_CASE = Case("one space between words", MAIN, "words are separated by one space")
@@ -68,6 +69,26 @@ PLANTS = {
         '  return text.split(/ +/).filter((word) => word !== "").join(" ").trim();\n'
         "}\n"
     ),
+}
+
+#: ⭐ The same three plants, as replacements against `REFERENCE`.
+SPEC_PLANTS = {
+    BLANK.id: PlantSpec((Replacement(
+        "normalise.ts",
+        '  if (text.trim() === "") {\n    throw new RangeError("there is nothing to normalise");\n'
+        "  }\n",
+        "",
+    ),)),
+    INNER.id: PlantSpec((Replacement(
+        "normalise.ts",
+        '  return text.split(/\\s+/).filter((word) => word !== "").join(" ");\n',
+        '  return text.trim().replace(/[\\t\\n]/g, " ");\n',
+    ),)),
+    TABS.id: PlantSpec((Replacement(
+        "normalise.ts",
+        '  return text.split(/\\s+/).filter((word) => word !== "").join(" ");\n',
+        '  return text.split(/ +/).filter((word) => word !== "").join(" ").trim();\n',
+    ),)),
 }
 
 TESTS = """import { test } from "node:test";

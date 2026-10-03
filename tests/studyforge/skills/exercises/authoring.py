@@ -27,6 +27,7 @@ from pathlib import Path
 
 from studyforge.address import Address
 from studyforge.exercise import CODE, EDGE, MAIN, QUIZ, Case, Origin
+from studyforge.exercise.bundle import PlantSpec, Replacement
 from studyforge.exercise.gates.quiz import (
     PICKED_NONE,
     Q1,
@@ -347,6 +348,18 @@ def basket(brief: Brief) -> CodeDraft:
         ),
         plants={NEGATIVE.id: "def total(prices):\n    return sum(prices)\n"},
     )
+
+
+def basket_with_a_spec_plant(brief: Brief) -> CodeDraft:
+    """The basket, its one plant written as a replacement against the reference."""
+    made = basket(brief)
+    spec = PlantSpec((Replacement(
+        made.main_file,
+        '    if any(price < 0 for price in prices):\n'
+        '        raise ValueError("a price is never negative")\n',
+        "",
+    ),))
+    return replace(made, plants={NEGATIVE.id: spec})
 
 
 def _option(id, text, correct, says):

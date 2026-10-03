@@ -74,6 +74,7 @@ gate answers → what one page ships → what the corpus commits.
 
 from __future__ import annotations
 
+from studyforge.exercise.bundle import PlantSpec, Replacement
 from studyforge.skills.exercises.accounting import (
     ACCOUNTED_KEYS,
     LEDGER_API,
@@ -237,6 +238,8 @@ __all__ = [
     "AuthoringError",
     "Brief",
     "CodeDraft",
+    "PlantSpec",
+    "Replacement",
     "Covered",
     "Delta",
     "Entry",

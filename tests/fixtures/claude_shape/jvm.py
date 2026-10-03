@@ -8,7 +8,10 @@ profile's warmed cache already holds, so nothing is fetched at a graded run.
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 from studyforge.exercise import EDGE, MAIN, Case, Origin
+from studyforge.exercise.bundle import PlantSpec, Replacement
 from studyforge.skills.exercises import Brief, CodeDraft
 from tests.fixtures.claude_shape.practices import ASK, BLANK, COPY, PAGE, ROLLBACK, STATEMENT
 
@@ -337,3 +340,39 @@ def kotlin(brief: Brief) -> CodeDraft:
         "rollback": KOTLIN_NO_ROLLBACK, "blank": KOTLIN_NO_BLANK_CHECK, "live": KOTLIN_LIVE_HISTORY,
         "build": {"build.gradle.kts": KOTLIN_BUILD, "settings.gradle.kts": SETTINGS},
     }, "classes")
+
+
+# ----------------------------------------------------- the same plants, as replacements
+
+JAVA_MAIN = "src/main/java/conversation/Conversation.java"
+KOTLIN_MAIN = "src/main/kotlin/conversation/Conversation.kt"
+
+#: ⭐ Each plant of the two drafts above, written as replacements against its reference.
+#: `test_plants_as_replacements` proves each materialises to the full text the drafts carry.
+JAVA_SPEC_PLANTS = (
+    PlantSpec((Replacement(JAVA_MAIN, "            turns.remove(turns.size() - 1);\n", ""),)),
+    PlantSpec((Replacement(
+        JAVA_MAIN,
+        '        if (text.isBlank()) {\n            throw new IllegalArgumentException('
+        '"a turn needs text");\n        }\n',
+        "",
+    ),)),
+    PlantSpec((Replacement(
+        JAVA_MAIN, "return List.copyOf(turns);\n    }\n}",
+        "return java.util.Collections.unmodifiableList(turns);\n    }\n}",
+    ),)),
+)
+KOTLIN_SPEC_PLANTS = (
+    PlantSpec((Replacement(KOTLIN_MAIN, "            turns.removeAt(turns.lastIndex)\n", ""),)),
+    PlantSpec((Replacement(
+        KOTLIN_MAIN, '        require(text.isNotBlank()) { "a turn needs text" }\n', ""),)),
+    PlantSpec((Replacement(
+        KOTLIN_MAIN, "fun history(): List<Turn> = turns.toList()", "fun history(): List<Turn> = turns",
+    ),)),
+)
+
+
+def with_spec_plants(made: CodeDraft, specs: tuple[PlantSpec, ...]) -> CodeDraft:
+    """The draft with its three edge plants written as replacements, in the cases' order."""
+    edges = [case for case in made.cases if case.kind == EDGE]
+    return replace(made, plants=dict(zip((case.id for case in edges), specs, strict=True)))
