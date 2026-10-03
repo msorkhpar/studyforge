@@ -366,7 +366,7 @@ def test_a_request_never_prints_its_body():
     assert not hasattr(Request("POST", live.RUN_PATH, {}), "body")
 
 
-def test_the_route_log_of_a_run_holds_no_key(root):
+def test_the_route_log_of_a_run_holds_no_key(root, capfd):
     secret = fake_key()
     lines: list[str] = []
     runs, discovered = runs_over(root, editor=StubEditors())
@@ -390,3 +390,5 @@ def test_the_route_log_of_a_run_holds_no_key(root):
         server.server_close()
         thread.join(timeout=5)
     assert lines and not any(secret in line for line in lines)
+    seen = capfd.readouterr()  # nothing the route wrote to the process's own streams
+    assert secret not in seen.out and secret not in seen.err
