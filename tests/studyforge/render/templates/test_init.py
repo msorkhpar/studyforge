@@ -50,6 +50,7 @@ ONE_LINE = (
     "practice-grader-generated.html",
     "practice-grader-none.html",
     "practice-grader-quiz.html",
+    "practice-grader-mock.html",
     "practice-grader-shipped.html",
     "practice-grader-user.html",
     "practice-option.html",

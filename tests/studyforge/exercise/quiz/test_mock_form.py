@@ -286,3 +286,17 @@ def test_quotas_without_weights_follow_the_pools_shares():
 def test_mock_of_reads_a_bare_mock_as_before():
     bare = mock_of({"pass_mark": 70, "domains": [{"id": "a", "title": "A"}]}, WHERE)
     assert bare.minutes is None and bare.scenarios == () and bare.opts_in is False
+
+
+def test_one_key_and_one_wrong_option_of_two_chosen_scores_nothing_and_both_keys_score():
+    exercise = from_document(pool(), WHERE)
+    asked = exercise.questions
+    base = mock_form.keyed(mock_form.questions(ORIGIN))
+    full = scores(asked, exercise.mock, base)[0].right
+    for chosen, right in ((["a", "c"], False), (["b", "d"], False), (["a", "b"], True)):
+        got = scores(asked, exercise.mock, {**base, "p9": chosen})[0].right
+        assert got == (full if right else full - 1), chosen
+    applied = lambda a: next(  # noqa: E731
+        s for s in scores_by_difficulty(asked, exercise.mock, a) if s.domain == "applied"
+    )
+    assert applied({**base, "p9": ["a", "c"]}).right == applied(base).right - 1

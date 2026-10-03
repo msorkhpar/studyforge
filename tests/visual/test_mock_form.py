@@ -28,7 +28,7 @@ from pathlib import Path
 
 import pytest
 
-from studyforge.exercise.quiz import mock_of, questions_of, scores
+from studyforge.exercise.quiz import mock_of, questions_of, scores, scores_by_difficulty
 from tests.studyforge.exercise.quiz import mock_form
 from tests.studyforge.exercise.quiz.mock_corpus import ORIGIN, form_corpus
 from tests.studyforge.serve.routes.quizzing import page_of, served_instance
@@ -478,17 +478,47 @@ def test_every_option_is_explained_with_the_key_marked_and_the_choice_shown(wher
 
 
 @pytest.mark.parametrize("where", PLACES)
-def test_a_multiple_response_question_is_scored_all_or_nothing(where, request):
+@pytest.mark.parametrize(
+    "chosen,right",
+    [(["a"], False), (["a", "c"], False), (["b", "d"], False), (["c", "d"], False),
+     (["a", "b"], True), (["b", "a"], True)],
+)
+def test_a_multiple_response_question_is_scored_all_or_nothing(where, chosen, right, request):
     page = request.getfixturevalue(where)
     sit_with_question(page, "p9")
     drawn = read_state(page)["drawn"]
-    answers = {**KEYED, "p9": ["a"]}
+    answers = {**KEYED, "p9": chosen}
     read = finish(page, answers)
-    assert read["verdicts"]["p9"] == "wrong"
+    assert read["verdicts"]["p9"] == ("correct" if right else "wrong")
     rows = next(r for r in read["reviews"] if r["id"] == "p9")["rows"]
-    assert [r["chosen"] for r in rows].count("true") == 1
-    whole, _ = reference(drawn, answers)
-    assert f"You scored {whole.right} of {whole.asked} " in read["overall"]
+    assert [r["chosen"] for r in rows].count("true") == len(chosen)
+    whole, per_domain = reference(drawn, answers)
+    assert whole.right == whole.asked - (0 if right else 1)
+    assert f"You scored {whole.right} of {whole.asked} ({whole.percent}%)" in read["overall"]
+    assert [tuple(r) for r in read["domains"]] == [
+        (d.title, f"{s.right} of {s.asked} ({s.percent}%)")
+        for d, s in zip(MOCK.domains, per_domain, strict=True)
+    ]
+    subset = tuple(q for q in QUESTIONS if q.id in drawn)
+    by_difficulty = scores_by_difficulty(subset, MOCK, answers)
+    assert [tuple(r) for r in read["difficulties"]] == [
+        (d.title, f"{s.right} of {s.asked} ({s.percent}%)")
+        for d, s in zip(MOCK.difficulties, by_difficulty, strict=True)
+    ]
+    applied = next(s for s in by_difficulty if s.domain == "applied")
+    assert applied.right == applied.asked - (0 if right else 1)
+
+
+@pytest.mark.parametrize("where", PLACES)
+def test_the_results_label_the_key_and_the_readers_choice_in_sentence_case(where, request):
+    page = request.getfixturevalue(where)
+    sit_with_question(page, "p9")
+    read = finish(page, {**KEYED, "p9": ["a", "c"]})
+    rows = next(r for r in read["reviews"] if r["id"] == "p9")["rows"]
+    heads = [r["text"].split(":")[0] if ":" in r["text"] else "" for r in rows]
+    assert "Correct answer, your choice" in heads
+    assert "Correct answer" in heads and "Your choice" in heads
+    assert not any("Your choice" in h and "," in h for h in heads)
 
 
 @pytest.mark.parametrize("where", PLACES)

@@ -101,3 +101,10 @@ def test_the_page_links_the_scripts_in_the_order_they_run():
     names = ("mock-form-core.js", "mock-form-panels.js", 'mock-form.js"')
     order = [said.index(name) for name in names]
     assert order == sorted(order)
+
+
+def test_a_mock_exam_says_it_was_written_from_the_pages_of_the_whole_level():
+    for workspace in (POOL, PLAIN):
+        said = markup(workspace)
+        assert "Written for this site from the pages of the whole level." in said
+        assert "Written for this site from this page." not in said

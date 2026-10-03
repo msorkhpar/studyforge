@@ -13,6 +13,8 @@
   var QUESTION = 'data-practice-question';
   var VERDICT = 'data-practice-verdict';
 
+  function sentenceCase(text) { return text.charAt(0).toUpperCase() + text.slice(1); }
+
   function bind(c) {
     var exam = c.exam;
     var plan = c.plan;
@@ -171,9 +173,9 @@
         var li = make('li', { 'data-form-key': isKey ? 'true' : 'false', 'data-form-chosen': chosen.indexOf(optionId) >= 0 ? 'true' : 'false' });
         var marks = [];
         if (isKey) { marks.push(words.key); }
-        if (chosen.indexOf(optionId) >= 0) { marks.push(words.yours); }
+        if (chosen.indexOf(optionId) >= 0) { marks.push(words.yours.toLowerCase()); }
         var label = option.querySelector('label');
-        li.appendChild(make('strong', {}, (marks.length ? marks.join(', ') + ': ' : '') + label.textContent.trim() + ' '));
+        li.appendChild(make('strong', {}, (marks.length ? sentenceCase(marks.join(', ')) + ': ' : '') + label.textContent.trim() + ' '));
         var says = make('span', {});
         says.innerHTML = entry.says[optionId] || '';
         li.appendChild(says);
