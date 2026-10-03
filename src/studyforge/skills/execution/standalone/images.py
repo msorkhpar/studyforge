@@ -46,6 +46,7 @@ from studyforge.progress import store_dir
 from studyforge.skills.execution.siteimage import BASE
 from studyforge.skills.execution.siteservice import CORPUS, SCRIPT_INSIDE
 from studyforge.skills.execution.standalone import bases as locked
+from studyforge.skills.execution.standalone import profile
 
 #: The variable a publisher sets to the registry namespace the images go to.
 NAMESPACE_VARIABLE = "STUDYFORGE_NAMESPACE"
@@ -124,13 +125,16 @@ def names_for(
     narration = f"${{{NARRATION_VARIABLE}:-{NARRATIONS[0]}}}"
     if bases is not None:
         inputs = site_inputs(slug, bases.serve.reference, bases.serve)
+        # ⭐ A course's layer starts from the profile's image where the lock names one, and
+        # from the plain base where it does not, so the layer's name follows the base it is on.
+        runner, editor = profile.built_on(bases)
         return Names(
             serve=bases.serve.reference,
-            runner_base=bases.runner.reference,
-            editor_base=bases.editor.reference,
+            runner_base=runner.reference,
+            editor_base=editor.reference,
             site=f"{slug}-site:{course}-{inputs}-{narration}",
-            runner=f"{slug}-runner:{course}-{locked.key(bases.runner)}",
-            editor=f"{slug}-editor:{course}-{locked.key(bases.editor)}",
+            runner=f"{slug}-runner:{course}-{locked.key(runner)}",
+            editor=f"{slug}-editor:{course}-{locked.key(editor)}",
         )
     inputs = site_inputs(slug, serve)
     return Names(

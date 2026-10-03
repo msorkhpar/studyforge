@@ -1,0 +1,41 @@
+{
+  "raw_api": 1,
+  "source": "runnable-demo",
+  "address": [
+    "kata"
+  ],
+  "variant": "python",
+  "unit": 1,
+  "kind": "lesson",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "Greeting",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "Greeting"
+    },
+    {
+      "type": "para",
+      "text": "A function that greets someone by name, and the test that says whether it does."
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 1,
+    "paras": 1,
+    "code": 0,
+    "tables": 0,
+    "lists": 0,
+    "images": 0,
+    "videos": 0,
+    "rules": 0,
+    "quotes": 0,
+    "html": 0,
+    "disclosures": 0
+  },
+  "content_sha256": "3500ea93eb57a3e2d5ba118200c59fc4a81f1bb3823f75be7f0da63288c8b6de"
+}

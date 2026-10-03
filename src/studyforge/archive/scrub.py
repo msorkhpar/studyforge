@@ -192,7 +192,11 @@ SHAPES: tuple[tuple[str, re.Pattern[str], str], ...] = (
     ),
     (
         "email address",
-        re.compile(r"\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b"),
+        # ⭐ A package file's own name is not an address: the toolchain pins an editor
+        # extension whose archive is `<name>@linux-x64.vsix`; none of these is a top-level domain.
+        re.compile(
+            r"\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.(?!(?:vsix|whl|jar|tgz)\b)[A-Za-z]{2,}\b"
+        ),
         EMAIL_PLACEHOLDER,
     ),
     (

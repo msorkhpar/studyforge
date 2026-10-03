@@ -54,6 +54,12 @@ DRAFTS = {
         "modes": [READING_MODE],
         "outside_mode": "locked",
     },
+    (None, "profile"): {
+        **corpora.DRAFT,
+        "exercises": True,
+        "runtimes": ["java"],
+        "profile": "example-profile",
+    },
     ("curriculum", "linked"): {
         **corpora.DRAFT,
         "levels": ["section", "module"],

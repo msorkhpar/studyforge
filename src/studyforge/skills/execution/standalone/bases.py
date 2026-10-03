@@ -75,7 +75,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from studyforge.archive.scrub import PersonalDataLeak, assert_clean
-from studyforge.skills.execution.standalone import closure
+from studyforge.skills.execution.standalone import closure, profile
 from studyforge.version import is_supported
 
 #: The lock's shape's version.
@@ -134,13 +134,17 @@ class Base:
         return f"{self.image}:{self.tag}@{self.digest}"
 
 
+Profile = profile.Profile
+
+
 @dataclass(frozen=True, slots=True)
 class Bases:
-    """The three bases a thin export builds from."""
+    """The three bases a thin export builds from, and the profile images it may also name."""
 
     serve: Base
     runner: Base
     editor: Base
+    profile: Profile | None = None
 
 
 def key(base: Base) -> str:
@@ -174,14 +178,30 @@ def from_text(text: str, *, placeholder: bool = False) -> Bases:
         raise BasesRefused(str(leak)) from None
     if not is_supported(document.get("bases_api"), {BASES_API}):
         raise BasesRefused(f"the bases lock must declare bases_api {BASES_API}")
-    unknown = sorted(set(document) - {"bases_api", *KINDS})
+    unknown = sorted(set(document) - {"bases_api", *KINDS, profile.KEY})
     if unknown:
         raise BasesRefused(f"the bases lock holds keys it does not read: {unknown}")
-    return Bases(**{kind: _base(kind, document.get(kind), placeholder) for kind in KINDS})
+    return Bases(
+        **{kind: _base(kind, document.get(kind), placeholder) for kind in KINDS},
+        profile=(
+            profile.read(
+                document[profile.KEY],
+                PUBLISHED,
+                lambda kind, entry, name: _base(kind, entry, placeholder, name),
+            )
+            if profile.KEY in document
+            else None
+        ),
+    )
 
 
-def _base(kind: str, entry: object, placeholder: bool) -> Base:
-    """One base of the lock, every field checked."""
+def profile_image(kind: str, name: str) -> str:
+    """The name a registry sees for profile `name`'s `kind` image."""
+    return profile.image(PUBLISHED, kind, name)
+
+
+def _base(kind: str, entry: object, placeholder: bool, published: str | None = None) -> Base:
+    """One base of the lock, every field checked; a profile's must carry its own image name."""
     if not isinstance(entry, Mapping):
         raise BasesRefused(f"the bases lock names no {kind} base")
     extra = sorted(set(entry) - set(FIELDS))
@@ -197,7 +217,9 @@ def _base(kind: str, entry: object, placeholder: bool) -> Base:
             f"the {kind} image is not a bare name: no account, registry, tag or digest "
             "belongs in it"
         )
-    if RETIRED.get(kind) == image:
+    if published is not None and image != published:
+        raise BasesRefused(f"the profile {kind} image must be {published!r}, as it is published")
+    if published is None and RETIRED.get(kind) == image:
         raise BasesRefused(
             f"the {kind} image {image!r} is a name the toolchain no longer publishes: "
             f"lock {PUBLISHED[kind]!r}"
@@ -221,6 +243,8 @@ def check(
     serve_tag: str | None = None,
     declared: Sequence[str] = (),
     tags_for: Callable[[Sequence[str]], Mapping[str, str]] | None = None,
+    profile_declared: str | None = None,
+    profile_tags: Mapping[str, str] | None = None,
 ) -> None:
     """Refuse a lock whose tags are not the ones this framework and the toolchain compute.
 
@@ -234,6 +258,7 @@ def check(
     larger runtime set is accepted too when the toolchain computes exactly that tag for the
     set and the set holds every declared runtime.
     """
+    profile.check(bases.profile, profile_declared, profile_tags)
     for kind in ("runner", "editor"):
         want, got = toolchain[kind], getattr(bases, kind).tag
         if want == got:

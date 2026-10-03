@@ -770,6 +770,7 @@ example is not where you learn what a manifest *may* carry. This list is.
 | `curriculum` | *optional* | Where the curriculum is recorded (`record`), the address each of its groups is filed at (`containers`), and per group an optional filename `prefix` that is a declared cross-check and never files a unit |
 | `exercises` | **required** | §7's gate onto the execution track |
 | `runtimes` | *optional* | Names, never versions, from a closed vocabulary. ⛔ **Absent means none: no runner, complete at the reading floor** (§7, C5) |
+| `profile` | *optional* | The name of a toolchain image profile the corpus's runner and editor are built on, beyond the base of its `runtimes`. ⛔ Requires `runtimes`; gated at `corpus_api` 8; no bump. ⭐ **Absent means the bases alone**, and the framework names no profile: the name is the corpus's own declaration |
 | `narration` | *optional* | Whether a build and a serve voice the corpus. ⭐ **Absent means voiced whenever clips are recorded**; ⛔ **`false` is the reading floor exactly, complete and never short** (C5) |
 | `onboarding_doc` | *optional* | Where onboarding writes its reader document: a corpus-relative `.md` path, or `false` for none. ⭐ **Absent means `ONBOARDING.md` at the root** |
 | `languages` | *optional* | `{id, label, fence_labels}` entries: the language ids a section may be tagged with. Absent means no tagging. Gated at `corpus_api` 8; no bump |

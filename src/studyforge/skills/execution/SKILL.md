@@ -526,6 +526,16 @@ runs one argv and answers `(exit code, stdout)`.
   is refused), and its serve tag the one
   `docker/serve/build.py` computes, or the export is refused before a file is written.
   Without `bases` the tree is self-contained, as above.
+- ⭐ **A course may name an image profile** (`profile` in `corpus.json`): a toolchain image
+  layered on the base of its declared runtimes. The lock then carries an optional `profile`
+  entry, `{"name": ..., "runner": {...}, "editor": {...}}` (each image optional, but the
+  runner is needed), each image named `<published base name>-<profile>` with its `tag` and
+  `digest`. The toolchain is asked for the profile's tags over the declared set, and a profile
+  it does not have, a runtime set the profile does not layer on, a name the course did not
+  declare or a tag it does not compute is refused before a file is written. The course's
+  runner and editor layers start `FROM` the profile's images, and their tags carry the
+  profile's digests. ⛔ A course that names a profile is exported thin only. A corpus with no
+  `profile` and a lock with no `profile` entry write the bytes they always did.
 - ⭐ **The README explains the course before it explains the command**
   (`standalone.learner` over `facts` and `tour`): the counts, each feature with
   its picture, the two ways to use the course in one table, the requirements, and
