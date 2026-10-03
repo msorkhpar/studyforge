@@ -39,7 +39,8 @@ def run(exercise: Exercise):
 def scenario_edit(**changes) -> Exercise:
     exercise = pool()
     first, *rest = exercise.mock.scenarios
-    mock = dataclasses.replace(exercise.mock, scenarios=(dataclasses.replace(first, **changes), *rest))
+    edited = (dataclasses.replace(first, **changes), *rest)
+    mock = dataclasses.replace(exercise.mock, scenarios=edited)
     return dataclasses.replace(exercise, mock=mock)
 
 
@@ -60,12 +61,16 @@ def test_a_question_under_an_undeclared_scenario_is_named_by_its_stem():
 
 def test_a_declared_scenario_with_no_question_is_named_by_its_title():
     exercise = pool()
-    extra = Scenario("unused", "A card nobody asks about", "One sentence here. Two sentences there.")
+    extra = Scenario(
+        "unused", "A card nobody asks about", "One sentence here. Two sentences there."
+    )
     plant = dataclasses.replace(
-        exercise, mock=dataclasses.replace(exercise.mock, scenarios=(*exercise.mock.scenarios, extra))
+        exercise,
+        mock=dataclasses.replace(exercise.mock, scenarios=(*exercise.mock.scenarios, extra)),
     )
     _, mock = run(plant)
-    assert not mock.held and "A card nobody asks about" in mock.says and "has no question" in mock.says
+    assert not mock.held and "has no question" in mock.says
+    assert "A card nobody asks about" in mock.says
 
 
 def test_a_scenario_context_is_two_to_four_sentences():

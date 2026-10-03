@@ -143,6 +143,7 @@ def test_an_exam_form_record_edited_to_a_scenario_nobody_declared_is_refused(tmp
     path = root / "archive" / "demo" / "raw" / "prose" / "unit-01" / "practice-1.json"
     text = path.read_text(encoding="utf-8")
     assert text.count('"scenario": "support-bot"') == 2
-    path.write_text(text.replace('"scenario": "support-bot"', '"scenario": "nowhere"'), encoding="utf-8")
+    edited = text.replace('"scenario": "support-bot"', '"scenario": "nowhere"')
+    path.write_text(edited, encoding="utf-8")
     report = validate(root)
     assert report.findings and "not declared" in "\n".join(f.message for f in report.findings)

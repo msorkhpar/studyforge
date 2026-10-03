@@ -14,6 +14,7 @@ def test_the_package_states_its_contract():
 def test_the_public_surface_is_declared_and_complete():
     assert set(quiz.__all__) == {
         "DIFFICULTY_KEY",
+        "SCENARIO_SENTENCES",
         "DOMAIN_KEY",
         "MINIMUM_SELECT",
         "MOCK_QUESTION_KEYS",

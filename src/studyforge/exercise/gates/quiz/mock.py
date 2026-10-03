@@ -41,7 +41,7 @@ from studyforge.exercise.gates.families import Family, register
 from studyforge.exercise.gates.quiz.checks import require_quiz
 from studyforge.exercise.gates.quiz.family import QUIZ
 from studyforge.exercise.gates.record import Verdict
-from studyforge.exercise.quiz.mock import SCENARIO_SENTENCES
+from studyforge.exercise.quiz import SCENARIO_SENTENCES
 from studyforge.exercise.record import Exercise
 
 #: The one gate a mock exam clears beyond a quiz's five.

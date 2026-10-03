@@ -48,54 +48,68 @@ STATE = """
   if (!exam) return null;
   const part = (name) => exam.querySelector('[data-form-part="' + name + '"]');
   const shown = (el) => !!el && !el.hidden && el.checkVisibility();
-  const items = Array.from(exam.querySelectorAll('[data-practice-question]'));
+  const text = (el) => (el ? el.textContent.trim() : null);
+  const id = (el) => el.getAttribute('data-practice-question');
+  const all = (root, selector) => Array.from(root.querySelectorAll(selector));
+  const rows = (table) => all(table, 'tbody tr').map(
+    (r) => [text(r.querySelector('th')), text(r.querySelector('td'))]);
+  const items = all(exam, '[data-practice-question]');
   const visible = items.filter(shown);
   const first = visible[0];
-  const card = first && first.querySelector('[data-form-part="scenario"]');
+  const within = (name) => (first ? first.querySelector('[data-form-part="' + name + '"]') : null);
+  const card = within('scenario');
+  const optionIds = (item) => all(item, '[data-practice-option]').map(
+    (o) => o.getAttribute('data-practice-option'));
+  const inputs = first ? all(first, 'input') : [];
+  const shownText = (name) => (shown(part(name)) ? text(part(name)) : '');
   return {
     pool: items.length,
-    drawn: items.filter((i) => !i.hasAttribute('data-form-out')).map((i) => i.getAttribute('data-practice-question')),
-    visible: visible.map((i) => i.getAttribute('data-practice-question')),
+    drawn: items.filter((i) => !i.hasAttribute('data-form-out')).map(id),
+    visible: visible.map(id),
     numbers: visible.map((i) => i.querySelector('legend').getAttribute('data-n')),
     start: shown(part('start')),
-    sittings: Array.from(exam.querySelectorAll('[data-form-part="start"] label')).map((l) => l.textContent.trim()),
+    sittings: all(exam, '[data-form-part="start"] label').map(text),
     bar: shown(part('bar')),
-    timer: shown(part('timer')) ? part('timer').textContent.trim() : null,
-    count: part('count').textContent.trim(),
+    timer: shown(part('timer')) ? text(part('timer')) : null,
+    count: text(part('count')),
     navigator: shown(part('navigator')),
-    nav: Array.from(exam.querySelectorAll('[data-form-part="number"]')).filter(shown).map((b) => ({
+    nav: all(exam, '[data-form-part="number"]').filter(shown).map((b) => ({
       n: b.textContent, state: b.getAttribute('data-form-state'),
-      flagged: b.getAttribute('data-flagged') === 'true', current: b.getAttribute('aria-current') === 'true',
+      flagged: b.getAttribute('data-flagged') === 'true',
+      current: b.getAttribute('aria-current') === 'true',
       label: b.getAttribute('aria-label')})),
     pager: shown(part('pager')),
     previous: part('previous').disabled, next: part('next').disabled,
-    card: card && shown(card) ? card.textContent.trim() : null,
-    difficulty: first && first.querySelector('[data-form-part="difficulty"]')
-      ? first.querySelector('[data-form-part="difficulty"]').textContent.trim() : null,
-    choose: first && first.querySelector('[data-form-part="choose"]')
-      ? first.querySelector('[data-form-part="choose"]').textContent.trim() : null,
-    kinds: first ? Array.from(first.querySelectorAll('input')).map((i) => i.type) : [],
-    boxesDisabled: first ? Object.fromEntries(Array.from(first.querySelectorAll('input')).map((i) => [i.value, i.disabled])) : {},
-    options: Object.fromEntries(items.map((i) => [i.getAttribute('data-practice-question'), Array.from(i.querySelectorAll('[data-practice-option]')).map((o) => o.getAttribute('data-practice-option'))])),
-    flagText: first && first.querySelector('[data-form-part="flag"]') ? first.querySelector('[data-form-part="flag"]').textContent.trim() : null,
-    flagPressed: first && first.querySelector('[data-form-part="flag"]') ? first.querySelector('[data-form-part="flag"]').getAttribute('aria-pressed') : null,
+    card: card && shown(card) ? text(card) : null,
+    difficulty: text(within('difficulty')),
+    choose: text(within('choose')),
+    kinds: inputs.map((i) => i.type),
+    boxesDisabled: Object.fromEntries(inputs.map((i) => [i.value, i.disabled])),
+    options: Object.fromEntries(items.map((i) => [id(i), optionIds(i)])),
+    flagText: text(within('flag')),
+    flagPressed: within('flag') ? within('flag').getAttribute('aria-pressed') : null,
     controls: shown(part('controls')), submit: shown(part('submit')), again: shown(part('again')),
-    missing: shown(part('missing')) ? part('missing').textContent.trim() : '',
+    missing: shownText('missing'),
     result: shown(part('result')),
-    overall: shown(part('result')) ? part('overall').textContent.trim() : '',
-    scaled: shown(part('scaled')) ? part('scaled').textContent.trim() : '',
+    overall: shownText('overall'),
+    scaled: shownText('scaled'),
     scaledAttr: exam.getAttribute('data-mock-scaled'),
-    domains: Array.from(part('domains').querySelectorAll('tbody tr')).map((r) => [r.querySelector('th').textContent.trim(), r.querySelector('td').textContent.trim()]),
-    difficulties: shown(part('difficulties')) ? Array.from(part('difficulties').querySelectorAll('tbody tr')).map((r) => [r.querySelector('th').textContent.trim(), r.querySelector('td').textContent.trim()]) : [],
-    verdicts: Object.fromEntries(items.map((i) => [i.getAttribute('data-practice-question'), i.getAttribute('data-practice-verdict')])),
-    reviews: visible.map((i) => ({id: i.getAttribute('data-practice-question'),
-      verdict: i.querySelector('[data-form-part="verdict"]') ? i.querySelector('[data-form-part="verdict"]').textContent : null,
-      rows: Array.from(i.querySelectorAll('[data-form-part="explanations"] li')).map((l) => ({
-        key: l.getAttribute('data-form-key'), chosen: l.getAttribute('data-form-chosen'), text: l.textContent.trim()}))})),
+    domains: rows(part('domains')),
+    difficulties: shown(part('difficulties')) ? rows(part('difficulties')) : [],
+    verdicts: Object.fromEntries(
+      items.map((i) => [id(i), i.getAttribute('data-practice-verdict')])),
+    reviews: visible.map((i) => ({id: id(i),
+      verdict: text(i.querySelector('[data-form-part="verdict"]')),
+      rows: all(i, '[data-form-part="explanations"] li').map((l) => ({
+        key: l.getAttribute('data-form-key'), chosen: l.getAttribute('data-form-chosen'),
+        text: text(l)}))})),
     reviewNone: shown(part('review-none')),
     passedAttribute: exam.getAttribute('data-mock-passed'),
     kept: localStorage.getItem('studyforge.mockform.v1') || '',
-    focus: (() => { const a = document.activeElement; return a ? (a.getAttribute('data-form-part') || a.tagName.toLowerCase()) : null; })(),
+    focus: (() => {
+      const a = document.activeElement;
+      return a ? (a.getAttribute('data-form-part') || a.tagName.toLowerCase()) : null;
+    })(),
     overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth
   };
 })()
@@ -226,7 +240,7 @@ def test_the_full_sitting_draws_ten_by_weight_and_keeps_scenarios_whole(where, r
     drawn = read["drawn"]
     assert len(drawn) == 10 and len(set(drawn)) == 10
     domains = [next(q.domain for q in QUESTIONS if q.id == one) for one in drawn]
-    assert (domains.count("AS1"), domains.count("AS2")) == (6, 4) or abs(domains.count("AS1") - 6) <= 1
+    assert abs(domains.count("AS1") - 6) <= 1, "the draw is by the 60/40 weights"
     for scenario in {q.scenario for q in QUESTIONS if q.scenario}:
         mine = [q.id for q in QUESTIONS if q.scenario == scenario]
         held = [one in drawn for one in mine]
@@ -290,18 +304,22 @@ def test_the_navigator_says_answered_open_and_flagged_and_filters(where, request
     page = request.getfixturevalue(where)
     drawn = begin(page)["drawn"]
     first = next(q for q in QUESTIONS if q.id == drawn[0])
-    pick(page, drawn[0], KEYED[drawn[0]][0] if isinstance(KEYED[drawn[0]], list) else KEYED[drawn[0]])
+    keyed = KEYED[drawn[0]]
+    pick(page, drawn[0], keyed[0] if isinstance(keyed, list) else keyed)
     click(page, FLAG)
     read = read_state(page)
     assert read["flagPressed"] == "true" and read["flagText"] == "Flagged for review"
     assert read["nav"][0]["flagged"] and read["nav"][0]["state"] in ("answered",)
     assert "flagged" in read["nav"][0]["label"] and "Question 1" in read["nav"][0]["label"]
     assert read["nav"][1]["state"] == "open" and "not answered" in read["nav"][1]["label"]
-    page.evaluate("const b = document.querySelector('[data-form-part=\"filter-flagged\"]'); b.click()")
+    click(page, part("filter-flagged"))
     assert [n["n"] for n in read_state(page)["nav"]] == ["1"]
-    page.evaluate("document.querySelector('[data-form-part=\"filter-flagged\"]').click()")
+    click(page, part("filter-flagged"))
     select = "document.querySelector('[data-form-part=\"filter-domain\"]')"
-    page.evaluate(f"{select}.value = '{first.domain}'; {select}.dispatchEvent(new Event('change', {{bubbles: true}}))")
+    page.evaluate(
+        f"{select}.value = '{first.domain}';"
+        f" {select}.dispatchEvent(new Event('change', {{bubbles: true}}))"
+    )
     shown = [n["n"] for n in read_state(page)["nav"]]
     expected = [str(i + 1) for i, one in enumerate(drawn)
                 if next(q.domain for q in QUESTIONS if q.id == one) == first.domain]
@@ -433,9 +451,11 @@ def test_a_perfect_sitting_scores_every_domain_difficulty_and_the_scale(where, r
         (d.title, f"{s.right} of {s.asked} ({s.percent}%)")
         for d, s in zip(MOCK.domains, per_domain, strict=True)
     ]
-    assert len(read["difficulties"]) == 3 and all("100%" in r[1] or "0 of 0" in r[1] for r in read["difficulties"])
+    assert len(read["difficulties"]) == 3
+    assert all("100%" in r[1] or "0 of 0" in r[1] for r in read["difficulties"])
     assert read["scaled"].startswith("Scaled score: 1000 on a scale of 100 to 1000")
-    assert "linear illustration" in read["scaled"] and "not the exam's own scaling" in read["scaled"]
+    assert "linear illustration" in read["scaled"]
+    assert "not the exam's own scaling" in read["scaled"]
     assert read["passedAttribute"] == "true" and read["again"] and not read["submit"]
 
 

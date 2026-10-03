@@ -71,6 +71,13 @@ reader's panel is the renderer's.
 
 from __future__ import annotations
 
+from studyforge.exercise.quiz.exam import (
+    SCENARIO_SENTENCES,
+    Difficulty,
+    Scale,
+    Scenario,
+    Sitting,
+)
 from studyforge.exercise.quiz.grading import (
     NO_ANSWERS,
     Answered,
@@ -84,13 +91,9 @@ from studyforge.exercise.quiz.mock import (
     LOWEST_PASS_MARK,
     MOCK,
     MOCK_KEYS,
-    Difficulty,
     Domain,
     Mock,
-    Scale,
-    Scenario,
     Score,
-    Sitting,
     mock_document,
     mock_of,
     passed,
@@ -137,6 +140,7 @@ from studyforge.exercise.quiz.shape import (
 #: contract, and this is what it says.
 __all__ = [
     "DIFFICULTY_KEY",
+    "SCENARIO_SENTENCES",
     "DOMAIN_KEY",
     "MINIMUM_SELECT",
     "MOCK_QUESTION_KEYS",

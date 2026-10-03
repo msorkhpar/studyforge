@@ -7,7 +7,7 @@ block and the words, and the empty places the page's script fills: the start pan
 the pager, the result and the review.
 
 **How you use it.** `page.mock.render` calls `render(...)` for an opted-in mock and renders every
-other mock as it always did. `wanted_for(exercise)` says which. `files()` is the two files an
+other mock as it always did. `wanted_for(exercise)` says which. `files()` is the four files an
 opted-in corpus writes beside the bundle.
 
 **Depends on.** `exercise.quiz`, `render.page.quiz` (the key block's safe writer),
@@ -16,7 +16,7 @@ opted-in corpus writes beside the bundle.
 ## Absent means today, byte for byte
 
 A mock with none of the opt-in keys is rendered by `page.mock` with its own templates and script,
-unchanged. This part's two files are written only for a corpus holding an opted-in mock.
+unchanged. This part's four files are written only for a corpus holding an opted-in mock.
 
 ## Everything is graded in the page
 
@@ -40,7 +40,10 @@ from studyforge.render.pageassets.source import text
 
 STYLESHEET_NAME = "mock-form.css"
 SCRIPT_NAME = "mock-form.js"
-PARTS = (STYLESHEET_NAME, SCRIPT_NAME)
+#: The scripts, in the order the page runs them: the shared parts, the panels, then the exam.
+CORE_NAME = "mock-form-core.js"
+PANELS_NAME = "mock-form-panels.js"
+PARTS = (STYLESHEET_NAME, CORE_NAME, PANELS_NAME, SCRIPT_NAME)
 
 FORM_TEMPLATE = "practice-mockform.html"
 QUESTION_TEMPLATE = "practice-mockform-question.html"
@@ -74,9 +77,12 @@ WORDS = {
     "timeUp": "Time is up. The exam was submitted.",
     "minutesLeft": "{n} minutes remaining.",
     "oneMinuteLeft": "One minute remaining.",
-    "reached": "You scored {right} of {asked} ({percent}%). The pass mark is {pass}%, and you reached it.",
-    "short": "You scored {right} of {asked} ({percent}%). The pass mark is {pass}%, and you did not reach it.",
-    "scaled": "Scaled score: {score} on a scale of {min} to {max}, where the scale's pass is {line}. This is a linear illustration of your score and not the exam's own scaling.",
+    "reached": "You scored {right} of {asked} ({percent}%). The pass mark is {pass}%, "
+    "and you reached it.",
+    "short": "You scored {right} of {asked} ({percent}%). The pass mark is {pass}%, "
+    "and you did not reach it.",
+    "scaled": "Scaled score: {score} on a scale of {min} to {max}, where the scale's pass is "
+    "{line}. This is a linear illustration of your score and not the exam's own scaling.",
     "scoreWords": "{right} of {asked} ({percent}%)",
     "right": "Right.",
     "wrong": "Not this one.",
@@ -129,13 +135,15 @@ def render(
         plan=_safe(_plan(exercise)),
         words=_safe(WORDS),
         stylesheet=escape_attribute(assets(STYLESHEET_NAME)),
+        core=escape_attribute(assets(CORE_NAME)),
+        panels=escape_attribute(assets(PANELS_NAME)),
         script=escape_attribute(assets(SCRIPT_NAME)),
     )
 
 
 def files() -> dict[str, str]:
     """`filename -> content` of what a corpus with an opted-in mock writes beside the bundle."""
-    return {STYLESHEET_NAME: text(STYLESHEET_NAME), SCRIPT_NAME: text(SCRIPT_NAME)}
+    return {name: text(name) for name in PARTS}
 
 
 def _question(asked: Question, key: str, scenarios: dict, difficulties: dict) -> str:
