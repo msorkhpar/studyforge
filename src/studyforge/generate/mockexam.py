@@ -1,0 +1,59 @@
+"""Whether a corpus has a mock exam, so that the files its page needs are written and no others.
+
+**What it does.** Answers one question about a corpus: does any unit carry a practice whose
+record declares `mock`. The site build writes `mock-exam.css` and `mock-exam.js` beside the
+shared bundle only when it does.
+
+**How you use it.** `wanted(corpus)`; `site.assets` asks it.
+
+**Depends on.** `json` and the corpus's declarations (`generate.declarations`). It reads each
+unit's practice documents once and parses nothing but their JSON.
+
+## ⛔ Absent means today, byte for byte
+
+⭐ A corpus with no mock exam writes exactly the files it always wrote: this answers `False`,
+`site.assets` adds nothing, and no page links a file that is not there. ⚠️ **The question is
+asked of the source documents and not of the rendered pages**, so it does not depend on the
+order a build renders its units in and costs one read of each practice document.
+
+⛔ An unreadable practice document answers nothing here: the page pass refuses it by name when
+it renders that unit, and an asset question must not be the one to raise it. ⚠️ **Personal data is
+not that case**: every document decoded here goes through the one gate (R7) and a leak raises, as it
+does when the page pass reads the same document.
+"""
+
+from __future__ import annotations
+
+import json
+
+from studyforge.archive.scrub import assert_clean
+from studyforge.generate.declarations import Corpus
+
+#: Where a unit's practice documents sit, relative to the unit's archive directory.
+PRACTICE_GLOB = "practice-*.json"
+
+#: The exercise record's key that makes a quiz a mock exam. ⭐ A string here and not an import of
+#: `exercise.quiz.MOCK`: this module reads a document's key and decides nothing about its value.
+MOCK_KEY = "mock"
+
+#: What a refusal names in place of a path (R7): a practice document, never where it sits.
+MOCK_WHERE = "a unit's practice document"
+
+
+def wanted(corpus: Corpus) -> bool:
+    """Does any unit of this corpus carry a mock exam?"""
+    return any(_has_mock(source.directory) for source in corpus.units)
+
+
+def _has_mock(directory) -> bool:
+    """Does any practice document in this unit's directory declare `mock`?"""
+    for path in sorted(directory.glob(PRACTICE_GLOB)):
+        try:
+            document = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        assert_clean(document, MOCK_WHERE)
+        record = document.get("exercise") if isinstance(document, dict) else None
+        if isinstance(record, dict) and MOCK_KEY in record:
+            return True
+    return False

@@ -152,6 +152,9 @@ class Exercise:
     report: Report | None = None
     origin: Origin | None = None
     questions: tuple[quiz.Question, ...] | None = None
+    #: ⭐ A quiz that is a mock exam: its pass mark and the domains it is scored under
+    #: (`exercise.quiz.mock`). `None` is every quiz that is not one.
+    mock: quiz.Mock | None = None
     #: ⭐ What it practises, in the plan's order (`exercise.concepts`).
     concepts: tuple[str, ...] | None = None
 
@@ -227,6 +230,7 @@ def from_document(value: object, where: str) -> Exercise:
         provenance, trust = quiz.require_quiz_shape(value, where)
         return Exercise(None, None, None, None, provenance, trust, **_authored(value, QUIZ, where))
     quiz.require_no_questions(value, where)
+    quiz.require_no_mock(value, where)
     require_present(value, where)
     authored = _authored(value, kind, where)
     main_path = require_path(value.get("main_path"), "main_path", where)
@@ -274,6 +278,7 @@ def to_document(exercise: Exercise) -> dict:
         "report": report_document(exercise.report) if exercise.report else None,
         "origin": origin_document(exercise.origin) if exercise.origin else None,
         quiz.QUESTIONS: quiz.questions_document(exercise.questions or ()),
+        quiz.MOCK: quiz.mock_document(exercise.mock) if exercise.mock else None,
         CONCEPTS: list(exercise.concepts or ()),
     }
     return {key: values[key] for key in _written_keys(exercise)}
@@ -284,7 +289,9 @@ def _written_keys(exercise: Exercise) -> tuple[str, ...]:
     concepts = {CONCEPTS} if exercise.concepts is not None else set()
     if exercise.is_quiz:
         carried = set(quiz.QUIZ_KEYS) - (set() if exercise.origin else {"origin"})
-        carried = (carried - {CONCEPTS}) | concepts
+        carried = (carried - {CONCEPTS, quiz.MOCK}) | concepts
+        if exercise.mock is not None:
+            carried.add(quiz.MOCK)
         return tuple(key for key in EXERCISE_KEYS if key in carried)
     carried = set(concepts)
     if exercise.kind != DEFAULT_KIND:
@@ -308,6 +315,7 @@ def _authored(value: dict, kind: str, where: str) -> dict:
         "report": report_of(value["report"], where) if "report" in value else None,
         "origin": origin_in(value, where),
         quiz.QUESTIONS: quiz.questions_in(value, where),
+        quiz.MOCK: quiz.mock_in(value, where) if kind == QUIZ else None,
         CONCEPTS: concepts_in(value, where),
     }
 

@@ -43,6 +43,7 @@ EXERCISE_KEYS = (
     "report",
     "origin",
     quiz.QUESTIONS,
+    quiz.MOCK,
     CONCEPTS,
 )
 
@@ -62,7 +63,7 @@ DEFAULTED_KEYS = ("trust",)
 #: only where the record carries them**, which is what keeps every document
 #: written before them byte-identical through a round trip (R10).
 #: `BREAKDOWN_KEYS` is `cases`'s and `QUESTIONS` is `quiz`'s, with their reasons.
-AUTHORED_KEYS = ("kind", *BREAKDOWN_KEYS, "origin", quiz.QUESTIONS, CONCEPTS)
+AUTHORED_KEYS = ("kind", *BREAKDOWN_KEYS, "origin", quiz.QUESTIONS, quiz.MOCK, CONCEPTS)
 
 
 def require_known_keys(value: dict, where: str) -> None:

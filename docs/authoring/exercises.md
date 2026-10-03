@@ -137,14 +137,14 @@ the adapter writes it — because the adapter is the only thing that knows what
 your build command is or where a grader came from.
 
 **Every key the record defines is below, in the order it is written.** Most
-records carry the first six and nothing else; the last six arrive with an
+records carry the first six and nothing else; the last seven arrive with an
 exercise somebody authored for this site.
 
 **This fence is the key list and not a record to copy.** Two of the keys in it
 are never written together with the rest: `"kind": "code"` is what a record
 with no `kind` already means, so the build leaves it out again, and `questions`
-belongs to a **quiz**, which carries none of the workspace keys above it and
-is shown here empty only so the list is complete. A quiz is written whole
+and `mock` belong to a **quiz**, which carries none of the workspace keys above
+it and is shown here empty only so the list is complete. A quiz is written whole
 further down.
 
 ```json
@@ -165,6 +165,7 @@ further down.
     "report": {"format": "junit", "path": "practice/basics-01/target/surefire-reports"},
     "origin": {"path": "docs/01-getting-started.md", "section": "Greeting a caller"},
     "questions": [],
+    "mock": {"pass_mark": 70, "domains": [{"id": "d-1", "title": "Greeting a caller"}]},
     "concepts": ["A greeting is built from the name it is given."]
   }
 }
@@ -185,7 +186,7 @@ the other four are the grader**, and the grader is written whole or not at all
 
 A Gradle practice sets `testLogging { exceptionFormat = TestExceptionFormat.FULL }` in its `tasks.test`, so a failed test shows its assertion message and the run filter keeps it.
 
-### The last six: what an authored exercise says
+### The last seven: what an authored exercise says
 
 **`kind` is `code` or `quiz`**, and `code` is what a record with no `kind`
 means. **Write it only where it is not `code`**: the framework writes that
@@ -209,6 +210,10 @@ a grader**, so it is the one of these an *ungraded* record may carry.
 
 **`questions` is a quiz's, and only a quiz's.** Writing it on any other record
 is a refusal; see *A practice for material that is not code* below.
+
+**`mock` is a quiz's too, and says the quiz is a mock exam**: a page of many
+questions covering a level, scored per domain. Writing it on any other record
+is a refusal; see *A mock exam* below.
 
 **`concepts` is what the exercise practises**: a list of sentences, one per
 idea, shown on the exercise's card in the page's *Practice (n)* list before a
@@ -284,6 +289,51 @@ run: there is nothing to Run and nothing to Submit.
 honesty gates are judgements taken once when it was authored and cannot be
 re-run by whoever holds the corpus, so no quiz may claim to be your material's
 own grader — `bundled` and `authoritative` are refused on one.
+
+### A mock exam
+
+**A mock exam is a quiz that covers a whole level and is scored per domain.** It is
+the same record with `kind` `quiz`, so every rule above holds for it: one keyed
+option per question, a sentence per option, a passage per question, `generated` and
+`advisory`, and grading in the page with no network, no container and no model. A
+quiz with no `mock` key is a quiz as it always was. Two things are added:
+
+```json
+{
+  "kind": "quiz",
+  "mock": {
+    "pass_mark": 70,
+    "domains": [
+      {"id": "AS1", "title": "Prompting and task execution"},
+      {"id": "AS2", "title": "Output evaluation and validation"}
+    ]
+  },
+  "questions": [
+    {"id": "x1", "domain": "AS1", "stem": "…", "options": ["…"], "origin": "…"}
+  ]
+}
+```
+
+**`mock`** is a `pass_mark`, a whole percent from 1 to 100 of the questions, and the
+`domains` the exam reports a score under, each an `id` token and a `title`. **A
+question's `domain`** is one of those ids. A `domain` on a quiz with no `mock` is
+refused.
+
+**The page** shows how many questions are answered and keeps the answers in the
+reader's own browser, so a reader who closes the tab resumes where they were. A
+submit with a question open names each one by its number and grades nothing. When
+every question is answered, the page grades it, shows each question's verdict and
+the sentence of the option the reader chose, a score per domain, and the whole exam's
+score against the pass mark, rounded down so that two of three is 66 and never a 67.
+The answers lock until the reader starts again. The page works at phone width.
+
+**The gates.** `Q1` to `Q5` run over every question unchanged: `Q4` and `Q5` are
+mechanical and name the question that fails, and `Q1` to `Q3` are judgements taken
+for each question and recorded for each. One gate is added for what a mock needs:
+`P1` holds when every question names a domain, every domain a question names is
+declared, and every declared domain has a question. A gate record for a mock exam
+names the `mock` family beside `quiz` and is complete only with `P1`. Draft one with
+`QuizDraft(title=…, questions=…, mock=Mock(…))`.
 
 ### A file with no test
 

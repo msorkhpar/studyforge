@@ -60,7 +60,7 @@ from studyforge.exercise import CODE, EXERCISE_KINDS, QUIZ, Case, Origin
 from studyforge.exercise.bundle import Places
 from studyforge.exercise.gates import Verdict
 from studyforge.exercise.gates.quiz import Judgement
-from studyforge.exercise.quiz import Question
+from studyforge.exercise.quiz import Mock, Question
 from studyforge.skills.exercises.aspects import Aspect
 from studyforge.skills.exercises.ledger import EXAMPLE, TESTS, Entry, Ledger
 from studyforge.skills.exercises.scan import scan
@@ -163,6 +163,9 @@ class QuizDraft:
 
     title: str
     questions: tuple[Question, ...]
+    #: ⭐ Optional: a quiz that is a mock exam (`exercise.quiz.mock`). `None` is every quiz
+    #: drafted until now, gated by `Q1`–`Q5` alone.
+    mock: Mock | None = None
 
 
 @dataclass(frozen=True, slots=True)
