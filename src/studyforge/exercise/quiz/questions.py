@@ -87,6 +87,20 @@ QUESTION_KEYS = ("id", "stem", "options", "origin")
 #: round-trips to the same bytes, and it is last so it never moves another key (R10).
 DOMAIN_KEY = "domain"
 
+#: ⭐ The three further optional keys a question of a mock exam may carry, written after
+#: `domain` and only where present, so a question that carries none writes the bytes it always
+#: wrote: the scenario it is asked under (`scenario`, an id of the mock's `scenarios`), how many
+#: options the reader must choose when it keys more than one (`select`), and whether the page may
+#: shuffle its options (`shuffle`, only ever `false`: the default is the page's to decide).
+SCENARIO_KEY = "scenario"
+SELECT_KEY = "select"
+SHUFFLE_KEY = "shuffle"
+DIFFICULTY_KEY = "difficulty"
+MOCK_QUESTION_KEYS = (DOMAIN_KEY, SCENARIO_KEY, SELECT_KEY, SHUFFLE_KEY, DIFFICULTY_KEY)
+
+#: ⭐ A multiple-response question keys at least this many options, and states the number.
+MINIMUM_SELECT = 2
+
 #: One option, in the order its keys are written (R10). ⛔ All four required
 #: and nothing else: the key is a fact about the option, and so is the sentence
 #: the reader is shown for choosing it.
@@ -147,11 +161,33 @@ class Question:
     #: not a mock exam). A token like an id; whether it names a declared domain is the
     #: mock family's gate and not this reader's.
     domain: str | None = None
+    #: ⭐ The scenario of the mock exam this question is asked under, or `None`.
+    scenario: str | None = None
+    #: ⭐ How many options a multiple-response question asks the reader to choose, or `None` for
+    #: a question with one key. `questions_of` guarantees that many options are keyed.
+    select: int | None = None
+    #: ⭐ `False` where the question opts out of having its options shuffled; `None` otherwise.
+    shuffle: bool | None = None
+    #: ⭐ The difficulty of the mock's `difficulties` this question is labelled with, or `None`.
+    difficulty: str | None = None
 
     @property
     def key(self) -> Option:
-        """The one option that is correct. ⭐ Guaranteed to exist by `questions_of`."""
+        """The first option that is correct; the one, for a question with one key.
+
+        ⭐ Guaranteed to exist by `questions_of`.
+        """
         return next(option for option in self.options if option.correct)
+
+    @property
+    def keys(self) -> tuple[Option, ...]:
+        """Every option that is correct: one, or `select` of them for a multiple-response one."""
+        return tuple(option for option in self.options if option.correct)
+
+    @property
+    def needed(self) -> int:
+        """How many options the reader must choose: `select`, or one."""
+        return self.select or KEYED_OPTIONS
 
     def option(self, id: object) -> Option | None:
         """Return the option with this id, or `None` for anything not offered.
@@ -225,6 +261,14 @@ def _question_document(question: Question) -> dict:
     }
     if question.domain is not None:
         written[DOMAIN_KEY] = question.domain
+    if question.scenario is not None:
+        written[SCENARIO_KEY] = question.scenario
+    if question.select is not None:
+        written[SELECT_KEY] = question.select
+    if question.shuffle is not None:
+        written[SHUFFLE_KEY] = question.shuffle
+    if question.difficulty is not None:
+        written[DIFFICULTY_KEY] = question.difficulty
     return written
 
 
@@ -245,26 +289,60 @@ def _question(value: object, where: str) -> Question:
             f"{where}: a question is an object, {list(QUESTION_KEYS)}. "
             f"This one is {describe(value)}."
         )
-    unknown = [key for key in value if key not in (*QUESTION_KEYS, DOMAIN_KEY)]
+    unknown = [key for key in value if key not in (*QUESTION_KEYS, *MOCK_QUESTION_KEYS)]
     missing = [key for key in QUESTION_KEYS if key not in value]
     if unknown or missing:
         raise ExerciseError(
             f"{where}: a question is {list(QUESTION_KEYS)}, all of them required "
-            f"and nothing else but an optional {DOMAIN_KEY!r}. This one is missing "
+            f"and nothing else but the optional {list(MOCK_QUESTION_KEYS)}. This one is missing "
             f"{missing} and carries {describe_keys(unknown)} the question does not define."
         )
     domain = _id(value[DOMAIN_KEY], "a question's domain", where) if DOMAIN_KEY in value else None
+    scenario = (
+        _id(value[SCENARIO_KEY], "a question's scenario", where) if SCENARIO_KEY in value else None
+    )
+    select = _select(value[SELECT_KEY], where) if SELECT_KEY in value else None
     return Question(
         id=_id(value["id"], "a question's", where),
         stem=_text(value["stem"], "a question's 'stem' is what it asks", where),
-        options=_options(value["options"], where),
+        options=_options(value["options"], where, select),
         origin=_origin(value, where),
         domain=domain,
+        scenario=scenario,
+        select=select,
+        shuffle=_shuffle(value[SHUFFLE_KEY], where) if SHUFFLE_KEY in value else None,
+        difficulty=(
+            _id(value[DIFFICULTY_KEY], "a question's difficulty", where)
+            if DIFFICULTY_KEY in value
+            else None
+        ),
     )
 
 
-def _options(value: object, where: str) -> tuple[Option, ...]:
-    """Read one question's options: ordered, distinct, and exactly one of them keyed."""
+def _select(value: object, where: str) -> int:
+    """Refuse a `select` that is not a whole number of at least two (a bool is not a number)."""
+    if not isinstance(value, int) or isinstance(value, bool) or value < MINIMUM_SELECT:
+        raise ExerciseError(
+            f"{where}: a question's 'select' is how many options a reader chooses and it is "
+            f"a whole number of at least {MINIMUM_SELECT}; a question with one key leaves it "
+            f"out. The value is {describe(value)}."
+        )
+    return value
+
+
+def _shuffle(value: object, where: str) -> bool:
+    """Refuse anything but `false`: shuffling is the default and is not a key to restate."""
+    if value is not False:
+        raise ExerciseError(
+            f"{where}: a question's 'shuffle' is only ever false, to keep its options in the "
+            f"order they were written; a question that may be shuffled leaves it out. The "
+            f"value is {describe(value)}."
+        )
+    return False
+
+
+def _options(value: object, where: str, select: int | None = None) -> tuple[Option, ...]:
+    """Read one question's options: ordered, distinct, and `select` of them keyed, or one."""
     if isinstance(value, str) or not isinstance(value, (list, tuple)):
         raise ExerciseError(
             f"{where}: a question's 'options' is an array of option objects, each "
@@ -295,7 +373,7 @@ def _options(value: object, where: str) -> tuple[Option, ...]:
         "words is marked wrong. The text is not reproduced here, since a refusal never quotes a "
         "value that may be personal.",
     )
-    _require_the_key(options, where)
+    _require_the_key(options, where, select)
     return options
 
 
@@ -333,9 +411,21 @@ def _correct(value: object, where: str) -> bool:
     return value
 
 
-def _require_the_key(options: tuple[Option, ...], where: str) -> None:
-    """⛔ Refuse a question with no key, and one with two (Acceptance, gate Q4)."""
+def _require_the_key(options: tuple[Option, ...], where: str, select: int | None = None) -> None:
+    """⛔ Refuse a question with no key, and one with two (Acceptance, gate Q4).
+
+    ⭐ A multiple-response question states how many it keys (`select`), and that many must be
+    keyed, with at least one option left to rule out.
+    """
     keyed = sum(1 for option in options if option.correct)
+    if select is not None:
+        if keyed != select or select >= len(options):
+            raise ExerciseError(
+                f"{where}: a question that asks the reader to choose {select} keys {keyed} of "
+                f"its {len(options)} options correct. It keys exactly {select}, and leaves at "
+                f"least one option to rule out."
+            )
+        return
     if keyed == KEYED_OPTIONS:
         return
     raise ExerciseError(

@@ -359,6 +359,115 @@ declared, and every declared domain has a question. A gate record for a mock exa
 names the `mock` family beside `quiz` and is complete only with `P1`. Draft one with
 `QuizDraft(title=…, questions=…, mock=Mock(…))`.
 
+#### The exam form
+
+**A mock exam may sit like a real certification sitting.** Everything below is opt-in on the
+`mock` record and on its questions: a mock that uses none of it is the page described above, in
+bytes. Any one key switches that mock to the exam form, and a question with `select` does too.
+
+```json
+{
+  "mock": {
+    "pass_mark": 70,
+    "domains": [
+      {"id": "AS1", "title": "Prompting and task execution", "weight": 60},
+      {"id": "AS2", "title": "Output evaluation and validation", "weight": 40}
+    ],
+    "minutes": 90,
+    "layout": "exam",
+    "scenarios": [
+      {"id": "support-bot", "title": "A support bot that forgets",
+       "context": "Two to four sentences that set the situation. A second sentence."}
+    ],
+    "difficulties": [
+      {"id": "foundational", "title": "Foundational"},
+      {"id": "scenario-hard", "title": "Scenario, hard"}
+    ],
+    "sittings": [
+      {"id": "full", "title": "Full sitting", "questions": 60, "minutes": 90},
+      {"id": "short", "title": "Short sitting", "questions": 20},
+      {"id": "scenarios", "title": "Scenario sitting", "scenarios": 3}
+    ],
+    "scale": {"min": 100, "max": 1000, "pass": 720}
+  },
+  "questions": [
+    {"id": "p1", "domain": "AS1", "scenario": "support-bot", "difficulty": "scenario-hard",
+     "stem": "…", "options": ["…"], "origin": "…"},
+    {"id": "p2", "domain": "AS2", "select": 2, "shuffle": false,
+     "stem": "Which two …", "options": ["…"], "origin": "…"}
+  ]
+}
+```
+
+**The `mock` keys**, each optional beyond `pass_mark` and `domains`:
+
+- **`minutes`**, a whole number from 1 to 1440: the time of the exam. The page shows the time
+  remaining, keeps it across a reload (the start time is stored in the reader's browser with the
+  answers), and submits by itself at zero. A reader who opens the page after the time ran out finds
+  it submitted. No `minutes`, no clock.
+- **`layout`**, only `"exam"`: one question to a view, with a navigator of question numbers (each
+  says answered, not answered and flagged, in words as well as in look), previous and next,
+  and filters by domain and by flagged. Left out, every question is on the page, as before.
+- **`scenarios`**, a list of `id` (a token), `title` and `context`: a situation several questions
+  are asked about. A question names one in its own `scenario`, and the page shows the card with the
+  question (once for each run of questions that share it, in the all-on-one-page layout).
+- **`difficulties`**, a list of `id` and `title`: the labels a question may carry in `difficulty`.
+  The label is shown with the question in the exam layout and the results report a score for each.
+- **`sittings`**, a list of `id`, `title` and at most one of `questions` (a whole number to draw)
+  or `scenarios` (a whole number of scenarios to draw, with all their questions), and an optional
+  `minutes`. A sitting with neither asks every question. The questions of the record are a **pool**
+  and may be many more than one sitting asks. A sitting that draws `questions` draws them by domain
+  weight, keeping each scenario's questions together; a sitting that draws `scenarios` draws that
+  many whole ones. Without its own `minutes` a sitting takes the mock's `minutes` in proportion to
+  the questions it draws against the largest sitting that names a number of questions (or the pool,
+  for a sitting that asks everything). A mock with no `sittings` asks every question in the order
+  written, with no shuffling.
+- **`scale`**, `min`, `max` and `pass`, whole numbers with `pass` between: a score the results
+  show as a linear illustration, `min + (max - min) * right / asked` rounded, beside the scale's
+  pass, with the note that it is a linear illustration and not the exam's own scaling. The
+  verdict stays the percent pass mark.
+- A domain may carry **`weight`**, a whole percent; give it to every domain or to none, summing to
+  100. Drawing questions follows the weights, else each domain's share of the pool.
+
+**The question keys**, written after `domain` and only where present: `scenario` (an id of the
+mock's `scenarios`), `difficulty` (an id of `difficulties`), `select` and `shuffle`. All four are
+refused on a quiz with no `mock`.
+
+- **`select: n`** makes a **multiple-response question**: a whole number of at least 2, the number
+  of options the reader must choose. Exactly `n` options are keyed `correct`, and at least one is
+  left to rule out. The page says "Choose n.", stops the reader at `n` boxes, and scores the
+  question all or nothing: right only when exactly the keyed options are chosen. A question with
+  no `select` keys exactly one option, as always.
+- **`shuffle: false`** keeps one question's options in the order written. The default, in a mock
+  with `sittings`, is that the page shuffles them.
+
+**Sittings, seeds and what is remembered.** The reader chooses a sitting and begins it. The page
+draws the set with a random seed, shuffles the order of the questions (a scenario's questions stay
+together, in the order written) and the options, and stores the seed and the drawn set with the
+answers, the flags and the start time, so a reload shows the same exam with the clock still running.
+**Start again** draws a new set that prefers questions the reader has not yet met in earlier
+sittings (the ids met are kept in the same place; once the whole pool has been met the preference
+starts over). Everything is kept in the reader's own browser; a browser that refuses storage still
+runs the exam and forgets on reload.
+
+**The results**, after the reader submits (a submit with questions open names them and asks once
+more, and a question left open is wrong): the score against the pass mark, the optional scaled
+score, a score per domain and per difficulty over the questions the sitting asked, and every
+question's verdict with **every option's sentence**, the keyed options marked and the reader's choice
+marked. A filter reviews all, only the missed, or only the flagged questions. The page works at phone
+width and by keyboard alone, and makes no request.
+
+**The checks.** The record refuses what is wrong in one value (a `minutes` that is not a whole
+number, a `scale` whose pass lies outside it, a `select` that is not a whole number of at least 2, a
+question keying a different number than its `select`, two sittings with one id) and, because the page
+cannot draw otherwise, a question under a scenario nobody declared, a declared scenario with no
+question, a difficulty used and not declared, a sitting that draws more than the pool holds, and a
+pool too thin in one domain for the largest sitting by the domain weights. `Q4` holds a
+multiple-response question to the count it states and says so in its own words; `Q3` owes one
+judgement for every option that is not keyed; `Q1` and `Q2` are taken per question as before.
+`P1` also holds when every scenario named is declared and asked about, every scenario's context is
+two to four sentences, and every difficulty is declared and carried by a question.
+
 **Authoring one.** The exam covers a level, so it is authored from the pages of the whole level,
 and each question's `origin` names the page and passage it is built from.
 

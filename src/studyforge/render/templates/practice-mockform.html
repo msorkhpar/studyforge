@@ -1,0 +1,26 @@
+<section data-practice-quiz="${key}" data-practice-mock="${passmark}" data-mock-form="${layout}" data-corpus="${corpus}" aria-label="Mock exam" tabindex="-1">
+<div data-practice-part="head"><h2>Mock exam</h2></div>
+${grader}<div data-form-part="start" hidden></div>
+<div data-form-part="bar" hidden><p data-form-part="timer-line" hidden>Time remaining <span data-form-part="timer" role="timer" aria-label="Time remaining"></span></p>
+<p data-form-part="progress"><progress data-form-part="meter" max="${asked}" value="0"></progress> <span data-form-part="count"></span></p></div>
+<div data-form-part="navigator" role="navigation" aria-label="Question navigator" hidden></div>
+<div data-form-part="result" role="region" aria-label="Result" hidden>
+<p data-form-part="overall"></p>
+<p data-form-part="scaled" hidden></p>
+<table data-form-part="domains"><thead><tr><th scope="col">Domain</th><th scope="col">Score</th></tr></thead><tbody></tbody></table>
+<table data-form-part="difficulties" hidden><thead><tr><th scope="col">Difficulty</th><th scope="col">Score</th></tr></thead><tbody></tbody></table>
+<div data-form-part="review-filter" role="group" aria-label="Review"></div>
+</div>
+<p data-form-part="announce" role="status" aria-live="polite" data-form-quiet></p>
+<ol data-practice-part="questions">
+${questions}</ol>
+<p data-form-part="pager" hidden><button type="button" data-form-part="previous">Previous</button> <button type="button" data-form-part="next">Next</button></p>
+<script type="application/json" data-form-part="key">${answers}</script>
+<script type="application/json" data-form-part="plan">${plan}</script>
+<script type="application/json" data-form-part="words">${words}</script>
+<link rel="stylesheet" href="${stylesheet}">
+<script src="${script}" defer></script>
+<p data-practice-part="offline">Scoring this exam needs this page's script, and it is not running here. Read the questions and choose your answers; nothing here can score them.</p>
+<p data-form-part="controls" hidden><button type="button" data-form-part="submit">Submit exam</button> <button type="button" data-form-part="again" hidden>Start again</button></p>
+<p data-form-part="missing" role="alert" hidden></p>
+</section>

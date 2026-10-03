@@ -34,11 +34,14 @@ question is named by its stem, never by its id, as `Q4` names one.
 
 from __future__ import annotations
 
+import re
+
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.gates.families import Family, register
 from studyforge.exercise.gates.quiz.checks import require_quiz
 from studyforge.exercise.gates.quiz.family import QUIZ
 from studyforge.exercise.gates.record import Verdict
+from studyforge.exercise.quiz.mock import SCENARIO_SENTENCES
 from studyforge.exercise.record import Exercise
 
 #: The one gate a mock exam clears beyond a quiz's five.
@@ -68,6 +71,8 @@ def check_mock(exercise: Exercise, where: str) -> Verdict:
                 f"{named} names a domain this exam does not declare, so its score "
                 f"is reported under nothing"
             )
+    findings += _scenario_findings(mock, questions)
+    findings += _difficulty_findings(mock, questions)
     used = {question.domain for question in questions}
     for domain in mock.domains:
         if domain.id not in used:
@@ -89,3 +94,51 @@ def check_mock(exercise: Exercise, where: str) -> Verdict:
         says=f"each of the {len(questions)} questions names one of the "
         f"{len(declared)} declared domains, and every domain has a question",
     )
+
+
+def _sentences(text: str) -> int:
+    """How many sentences a text holds: its stops (full stop, question or exclamation mark)."""
+    return len(re.findall(r"[.!?](?=\s|$)", text.strip()))
+
+
+def _scenario_findings(mock, questions) -> list[str]:
+    """What is wrong with the scenarios: an undeclared one, an unused one, a context too long."""
+    declared = {one.id for one in mock.scenarios}
+    findings: list[str] = []
+    for question in questions:
+        if question.scenario is not None and question.scenario not in declared:
+            findings.append(
+                f"the question {question.stem!r} names a scenario this exam does not declare, "
+                f"so the page has no card to show with it"
+            )
+    asked = {question.scenario for question in questions}
+    low, high = SCENARIO_SENTENCES
+    for scenario in mock.scenarios:
+        if scenario.id not in asked:
+            findings.append(
+                f"the scenario {scenario.title!r} has no question, so a card would be shown "
+                f"with nothing to answer"
+            )
+        count = _sentences(scenario.context)
+        if not low <= count <= high:
+            findings.append(
+                f"the scenario {scenario.title!r} sets its context in {count} sentence(s) and a "
+                f"scenario card is {low} to {high}"
+            )
+    return findings
+
+
+def _difficulty_findings(mock, questions) -> list[str]:
+    """What is wrong with the difficulty labels: one nobody declared, one nobody carries."""
+    declared = {one.id for one in mock.difficulties}
+    findings = [
+        f"the question {question.stem!r} names a difficulty this exam does not declare"
+        for question in questions
+        if question.difficulty is not None and question.difficulty not in declared
+    ]
+    findings += [
+        f"the difficulty {one.title!r} labels no question, so its score would be 0 of 0"
+        for one in mock.difficulties
+        if all(question.difficulty != one.id for question in questions)
+    ]
+    return findings

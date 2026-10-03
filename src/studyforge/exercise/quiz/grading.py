@@ -87,6 +87,9 @@ class Answered:
     question: Question
     chosen: Option | None
     correct: bool
+    #: ⭐ Every option chosen: the one, for a question with one key; each chosen of a
+    #: multiple-response question, in the order the question offers them.
+    picked: tuple[Option, ...] = ()
 
     @property
     def answered(self) -> bool:
@@ -103,6 +106,8 @@ class Answered:
         about a choice nobody made; the page says *unanswered*, which is a
         different statement and not this module's to word.
         """
+        if len(self.picked) > 1:
+            return " ".join(option.says for option in self.picked)
         return "" if self.chosen is None else self.chosen.says
 
 
@@ -152,5 +157,26 @@ def completes(questions: tuple[Question, ...], answers: object) -> bool:
 
 def _row(question: Question, answer: object) -> Answered:
     """Read one question against one answer, whatever the answer turns out to be."""
+    if question.select is not None:
+        return _multiple(question, answer)
     chosen = question.option(answer)
     return Answered(question=question, chosen=chosen, correct=chosen is not None and chosen.correct)
+
+
+def _multiple(question: Question, answer: object) -> Answered:
+    """⭐ A multiple-response question is right only when exactly its keyed options are chosen.
+
+    All or nothing: one key missing, or one wrong option added, is wrong, and a repeated or
+    unknown id is not a recognised answer (so not a right one).
+    """
+    if isinstance(answer, str) or not isinstance(answer, (list, tuple)):
+        return Answered(question=question, chosen=None, correct=False)
+    ids = list(answer)
+    found = [question.option(one) for one in ids]
+    if len(set(map(str, ids))) != len(ids) or any(one is None for one in found):
+        return Answered(question=question, chosen=None, correct=False)
+    picked = tuple(option for option in question.options if option in found)
+    correct = bool(picked) and set(picked) == set(question.keys)
+    return Answered(
+        question=question, chosen=picked[0] if picked else None, correct=correct, picked=picked
+    )

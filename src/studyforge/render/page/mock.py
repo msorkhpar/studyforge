@@ -45,7 +45,7 @@ from studyforge.exercise import Exercise
 from studyforge.exercise.quiz import Question
 from studyforge.render import templates
 from studyforge.render.markup import escape_attribute, inline
-from studyforge.render.page import quiz
+from studyforge.render.page import mockform, quiz
 from studyforge.render.pageassets.source import text
 
 #: What the two files are written as, beside `page.css` and `page.js`.
@@ -73,6 +73,9 @@ def render(
     questions = exercise.questions
     if mock is None or not questions:
         return ""
+    if mockform.wanted_for(exercise):
+        # ⭐ A mock that opts into the exam form (`page.mockform`); every other is below, as of old.
+        return mockform.render(exercise, key=key, corpus=corpus, grader=grader, assets=assets)
     return templates.fill(
         MOCK_TEMPLATE,
         key=escape_attribute(key),

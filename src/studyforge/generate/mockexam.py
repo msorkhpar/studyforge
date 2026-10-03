@@ -45,7 +45,32 @@ def wanted(corpus: Corpus) -> bool:
     return any(_has_mock(source.directory) for source in corpus.units)
 
 
-def _has_mock(directory) -> bool:
+#: What a mock's key may carry beyond the two it always had, and a question's keys that only the
+#: exam form reads. ⭐ Read off the document and decided nowhere else: `page.mockform` is the rule.
+FORM_MOCK_KEYS = ("minutes", "layout", "scenarios", "difficulties", "sittings", "scale")
+FORM_QUESTION_KEYS = ("select",)
+
+
+def form_wanted(corpus: Corpus) -> bool:
+    """Does any unit carry a mock exam that opts into the exam form (`render.page.mockform`)?"""
+    return any(_has_mock(source.directory, form=True) for source in corpus.units)
+
+
+def _opts_in(record: dict) -> bool:
+    mock = record.get(MOCK_KEY)
+    if not isinstance(mock, dict):
+        return False
+    if any(key in mock for key in FORM_MOCK_KEYS):
+        return True
+    if any(isinstance(d, dict) and "weight" in d for d in mock.get("domains") or ()):
+        return True
+    return any(
+        isinstance(q, dict) and any(key in q for key in FORM_QUESTION_KEYS)
+        for q in record.get("questions") or ()
+    )
+
+
+def _has_mock(directory, form: bool = False) -> bool:
     """Does any practice document in this unit's directory declare `mock`?"""
     for path in sorted(directory.glob(PRACTICE_GLOB)):
         try:
@@ -54,6 +79,6 @@ def _has_mock(directory) -> bool:
             continue
         assert_clean(document, MOCK_WHERE)
         record = document.get("exercise") if isinstance(document, dict) else None
-        if isinstance(record, dict) and MOCK_KEY in record:
+        if isinstance(record, dict) and MOCK_KEY in record and (not form or _opts_in(record)):
             return True
     return False

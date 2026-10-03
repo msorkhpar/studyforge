@@ -100,6 +100,14 @@ def key_total_and_single(questions: tuple[Question, ...]) -> Verdict:
             says=f"{len(findings)} of this quiz's {len(questions)} questions do not key "
             f"exactly one distinct option with a sentence of its own: " + "; ".join(findings),
         )
+    if any(question.select is not None for question in questions):
+        return verdict(
+            Q4,
+            held=True,
+            says=f"each of the {len(questions)} questions keys exactly the number of its "
+            f"distinct options it asks the reader to choose and every option carries the "
+            f"sentence its reader is shown",
+        )
     return verdict(
         Q4,
         held=True,
@@ -188,7 +196,14 @@ def _q4_findings(question: Question) -> list[str]:
             f"choose wrongly has not been asked anything"
         )
     keyed = sum(1 for option in question.options if option.correct is True)
-    if keyed != KEYED_OPTIONS:
+    if question.select is not None:
+        if keyed != question.select or question.select >= len(question.options):
+            findings.append(
+                f"{named} asks the reader to choose {question.select} and keys {keyed} of its "
+                f"{len(question.options)} options correct, so the count it states is not the "
+                f"count it keys, or no option is left to rule out"
+            )
+    elif keyed != KEYED_OPTIONS:
         findings.append(
             f"{named} keys {keyed} of its options correct and exactly {KEYED_OPTIONS} "
             f"is keyed, so the reader is never told which answer the page taught"
