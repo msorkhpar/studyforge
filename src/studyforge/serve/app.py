@@ -34,12 +34,13 @@ and the Docker socket is never reachable from here (spec §8.3).
   and imports nothing from `routes.run` to learn one: `serve.instance` registers
   the namespace and passes the path, and importing the run route here would put
   `execute` — and a process library — into every import of `serve.app`.
+- **`live=`** — where the live client is served: a second tag after the run client's.
 - **`frames=`** — what this instance may EMBED, asked per response,
   because the editor's origin is a per-project host port. ⛔ Never widens
   `frame-ancestors`.
+- **`bodies=`** — paths whose `POST` body reaches the route (`BodyRequest`); others' is dropped.
 - `GET` and `HEAD` are answered everywhere; `POST` only under a writer; every other
-  method, and a `POST` anywhere else, is `405` after the gate. ⛔ A `POST`'s body
-  is read and DISCARDED, never handed on: a `Request` has no field for it.
+  method, and a `POST` anywhere else, is `405` after the gate.
 
 ⛔ **An exception inside a route answers `500` with a fixed body** and logs only
 its type: an exception's text is where an absolute path reaches a browser (R7).
@@ -57,11 +58,13 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from studyforge.archive.scrub import scrub
+from studyforge.serve.bodies import read
 from studyforge.serve.response import (
     API_PREFIX,
     API_ROOT,
     API_VERSION,
     BODILESS,
+    BodyRequest,
     Request,
     Response,
     error,
@@ -89,9 +92,10 @@ CHUNK = 64 * 1024
 #: Seconds between two looks at a streaming client's socket for a hang-up.
 HANGUP_POLL = 0.25
 
-#: The largest `POST` body drained before answering. ⚠️ Drained so the answer is
-#: not lost to a reset, and discarded: no route is ever handed it.
+#: The largest other `POST` body drained before answering and dropped (no route is handed it),
+#: and the largest a route registered in `bodies` is handed: a key and a few names.
 MAX_DISCARDED = 64 * 1024
+MAX_BODY = 8 * 1024
 
 #: The namespaces this module owns, which nothing registered later may replace.
 OWN_NAMESPACES = ("content", "assets")
@@ -120,6 +124,8 @@ class ServingServer(ThreadingHTTPServer):
         client: str | None = None,
         frames: Frames | None = None,
         published: bool = False,
+        bodies: Collection[str] = (),
+        live: str | None = None,
     ) -> None:
         """Validate everything, then bind; a refused argument never leaves a socket open."""
         require_loopback(address[0], published=published)
@@ -138,13 +144,14 @@ class ServingServer(ThreadingHTTPServer):
         self.frames = frames
         self.allowed_hosts = ALLOWED_HOSTS
         withheld = refused_by(source)
-        self.static = partial(assets.serve, root, private=private, client=client, withheld=withheld)
+        tags = {"client": client, "live": live, "withheld": withheld}
+        self.static = partial(assets.serve, root, private=private, **tags)
         self.namespaces: dict[str, Route] = {
             "content": partial(content.route, source),
-            "assets": partial(assets.route, root, private, client=client, withheld=withheld),
+            "assets": partial(assets.route, root, private, **tags),
             **extra,
         }
-        self.writers = frozenset(writers)
+        self.writers, self.bodies = frozenset(writers), frozenset(bodies)
         self._log = log
         super().__init__(address, _Handler)
 
@@ -208,6 +215,8 @@ def make_server(
     client: str | None = None,
     frames: Frames | None = None,
     published: bool = False,
+    bodies: Collection[str] = (),
+    live: str | None = None,
 ) -> ServingServer:
     """Build a bound, not-yet-serving server on `127.0.0.1` (`published`: its container's)."""
     return ServingServer(
@@ -221,6 +230,8 @@ def make_server(
         client=client,
         frames=frames,
         published=published,
+        bodies=bodies,
+        live=live,
     )
 
 
@@ -253,32 +264,25 @@ class _Handler(BaseHTTPRequestHandler):
         if refused is not None or self.server.writer(path) is None:
             self._unsupported()
             return
-        if not self._discard_body():
-            self._write(error(413, "a request body is never read here"), close=True)
+        taken = path in self.server.bodies
+        body = read(self.headers, self.rfile, MAX_BODY if taken else MAX_DISCARDED)
+        if body is None:
+            self._write(error(413, "this request body is not accepted"), close=True)
             return
-        self._dispatch()
+        self._dispatch(body if taken else None)
 
-    def _dispatch(self) -> None:
+    def _dispatch(self, body: bytes | None = None) -> None:
         """Hand the request to its route; an exception is a fixed `500`."""
-        request = Request(self.command, urlsplit(self.path).path, self.headers)
+        path = urlsplit(self.path).path
+        request = Request(self.command, path, self.headers)
+        if body is not None:
+            request = BodyRequest(self.command, path, self.headers, body)
         try:
             response = self.server.respond(request)
         except Exception as exc:
             self.server.log(f"route failed: {type(exc).__name__}")
             response = error(500, "internal error")
         self._write(response)
-
-    def _discard_body(self) -> bool:
-        """Read and drop a `POST` body of at most `MAX_DISCARDED` bytes; `False` if larger."""
-        try:
-            length = int(self.headers.get("Content-Length") or 0)
-        except ValueError:
-            return False
-        if length < 0 or length > MAX_DISCARDED:
-            return False
-        if length:
-            self.rfile.read(length)
-        return True
 
     def _unsupported(self) -> None:
         """Answer any other method `405`, after the same gate."""

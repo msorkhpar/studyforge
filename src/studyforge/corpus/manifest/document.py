@@ -76,6 +76,7 @@ from studyforge.corpus.manifest.fields import (
     title_of,
     variants_of,
 )
+from studyforge.corpus.manifest.live import Live, parse_live
 from studyforge.corpus.manifest.media import MediaPolicy, parse_media
 from studyforge.corpus.manifest.profile import parse_profile
 from studyforge.corpus.manifest.reading import Reading, parse_reading
@@ -143,6 +144,7 @@ KEY_VERSIONS: dict[tuple[str | None, str], int] = {
     (None, "default_mode"): 8,
     (None, "outside_mode"): 8,
     (None, "profile"): 8,
+    (None, "live"): 8,
     (None, "absent_language"): 8,
 }
 
@@ -157,6 +159,7 @@ MANIFEST_KEYS = (
     "exercises",
     "runtimes",
     "profile",
+    "live",
     "narration",
     "onboarding_doc",
     "languages",
@@ -215,6 +218,8 @@ class Manifest:
     reading: Reading | None = None
     #: The toolchain image profile the runner and editor are built on; absent is `None`.
     profile: str | None = None
+    #: The live runs the corpus offers against a reader's own key; absent is `None`.
+    live: Live | None = None
     corpus_api: int = CORPUS_API
 
     @property
@@ -319,6 +324,7 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
         ),
         reading=parse_reading(document, where),
         profile=parse_profile(document, where),
+        live=parse_live(document, where),
         corpus_api=corpus_api,
     )
 

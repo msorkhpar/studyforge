@@ -93,6 +93,16 @@ from studyforge.corpus.placement.profile import GENERATED_ROOT
 from studyforge.progress import store_dir
 from studyforge.serve.caching import UNSATISFIABLE, WHOLE, not_modified, parse_range, weak_etag
 from studyforge.serve.response import TEXT_TYPE, Request, Response
+from studyforge.serve.routes.pagetag import (  # noqa: F401 - names callers import from here
+    CLIENT_ETAG_MARK,
+    CLIENT_PATH_FORBIDDEN,
+    CLIENT_TAG,
+    HEAD_CLOSE,
+    LIVE_ETAG_MARK,
+    client_etag,
+    client_tag,
+    with_client,
+)
 
 #: Assets revalidate every time; a `304` costs one `stat`, and one read of a text
 #: or unknown-type file, which `withheld` is asked of first.
@@ -108,24 +118,6 @@ MAX_PATH = 1024
 
 #: The file a directory request resolves to.
 INDEX_FILENAME = "index.html"
-
-#: The one tag a served page gains, and where it goes. ⛔ Before the FIRST
-#: `</head>`, and exactly once: a deferred script in the head runs before the
-#: deferred page script at the end of the body, so the panel finds
-#: `window.studyforge.run` already published when it looks.
-CLIENT_TAG = '<script src="{path}" defer></script>'
-HEAD_CLOSE = b"</head>"
-
-#: What marks the validator of a page the client was added to. ⚠️ Inside the
-#: opaque tag, so `If-None-Match`'s weak comparison still matches it against
-#: itself and never against the plain file's.
-CLIENT_ETAG_MARK = "+client"
-
-#: What a client path may be: one rooted URL path, and nothing that could close
-#: the attribute it is written into. ⛔ Checked rather than escaped, because the
-#: only caller passes `serve.routes.run.CLIENT_PATH` — a value that needed
-#: escaping here would be a value this route should not have been given.
-CLIENT_PATH_FORBIDDEN = "\"'<>& \t\r\n"
 
 #: The one dot-prefixed name served: first, or where a corpus manifest sits beside it.
 EXPOSED_DOT_DIRECTORY = GENERATED_ROOT
@@ -207,38 +199,6 @@ def nothing_withheld(body: bytes) -> bool:
     return False
 
 
-def client_tag(client: str) -> bytes:
-    """Return the one script tag a served page gains, or raise on an unusable path."""
-    if not client.startswith("/") or any(char in client for char in CLIENT_PATH_FORBIDDEN):
-        raise ValueError(
-            "the run client is served at one rooted URL path carrying no attribute "
-            "delimiter; the value is not reproduced here, since a refusal never quotes a value "
-            "that may be personal"
-        )
-    return CLIENT_TAG.format(path=client).encode("utf-8")
-
-
-def with_client(body: bytes, client: str | None) -> bytes:
-    """Return `body` with exactly one client tag before its first `</head>`.
-
-    ⛔ **Exactly one, and only where there is a head to close.** A page already
-    carrying the tag is left alone, and a text with no `</head>` — anything a
-    corpus happens to ship as `.html` that is not a built page — is served
-    unchanged rather than having a script pushed into the middle of it.
-    """
-    if not client:
-        return body
-    tag = client_tag(client)
-    if tag in body or HEAD_CLOSE not in body:
-        return body
-    return body.replace(HEAD_CLOSE, tag + HEAD_CLOSE, 1)
-
-
-def client_etag(etag: str) -> str:
-    """Return the validator for the served form of a page, told apart from the file's."""
-    return f'{etag[:-1]}{CLIENT_ETAG_MARK}"' if etag.endswith('"') else etag + CLIENT_ETAG_MARK
-
-
 def resolve(root: Path, url_path: str) -> Path | None:
     """Return the regular file under `root` that `url_path` names, or `None`."""
     try:
@@ -304,9 +264,10 @@ def route(
     *,
     client: str | None = None,
     withheld: Withheld = nothing_withheld,
+    live: str | None = None,
 ) -> Response:
     """Answer one request under `/api/v1/assets/`; `rest` is the path after it."""
-    return serve(root, request, "/" + rest, private, client, withheld)
+    return serve(root, request, "/" + rest, private, client, withheld, live)
 
 
 def serve(
@@ -316,6 +277,7 @@ def serve(
     private: Private = nothing_private,
     client: str | None = None,
     withheld: Withheld = nothing_withheld,
+    live: str | None = None,
 ) -> Response:
     """Answer one file: `200`, `206`, `304`, `404` or `416`.
 
@@ -342,14 +304,14 @@ def serve(
         if body is not None and ctype != PAGE_TYPE and withheld(body):
             return _not_found()
     added = client if client and ctype == CONTENT_TYPES[".html"] else None
-    etag = client_etag(weak_etag(stat)) if added else weak_etag(stat)
+    etag = client_etag(weak_etag(stat), bool(live)) if added else weak_etag(stat)
     validators = (("ETag", etag), ("Cache-Control", ASSET_CACHE))
     if not_modified(request.headers.get("If-None-Match"), etag):
         return Response(304, validators)
     if target.suffix.lower() in SOURCE_SUFFIXES_SERVED:
         return _source(target, body, stat.st_size, ctype, validators)
     if ctype.startswith(GATED_TYPES):
-        return _text(body, ctype, validators, added)
+        return _text(body, ctype, validators, added, live)
     ranges = request.headers.get("Range") if request.headers.get("If-Range") is None else None
     span = parse_range(ranges, stat.st_size)
     if span == UNSATISFIABLE:
@@ -376,7 +338,9 @@ def _source(target: Path, body: bytes | None, size: int, ctype: str, validators:
     return Response(200, headers, file=target, span=(0, size - 1) if size else None)
 
 
-def _text(body: bytes | None, ctype: str, validators: tuple, client: str | None) -> Response:
+def _text(
+    body: bytes | None, ctype: str, validators: tuple, client: str | None, live: str | None = None
+) -> Response:
     """Take a text file's bytes whole, add the client where one is named, gate it, answer it.
 
     ⛔ **The gate runs over what LEAVES this process**, so the insertion happens
@@ -385,7 +349,7 @@ def _text(body: bytes | None, ctype: str, validators: tuple, client: str | None)
     """
     if body is None:
         return Response(500, (("Content-Type", TEXT_TYPE),), b"text too large to gate\n")
-    body = with_client(body, client)
+    body = with_client(body, client, live)
     try:
         assert_clean(body.decode("utf-8", errors="replace"), "asset")
     except PersonalDataLeak:

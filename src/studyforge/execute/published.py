@@ -54,6 +54,7 @@ from urllib.parse import urlsplit
 
 from studyforge.execute.editor import EDITOR_TTL, Editor
 from studyforge.execute.errors import RunRefused
+from studyforge.execute.live import LIVE_PORT
 from studyforge.execute.remote import SERVICE_PORT, Service
 
 #: Where the browser reaches the editor: `http://127.0.0.1:<port>`.
@@ -68,6 +69,11 @@ RUN_SERVICE = "STUDYFORGE_RUN_SERVICE"
 #: The four, in the order the compose file writes them.
 VARIABLES = (EDITOR_ORIGIN, EDITOR_BINDS, EDITOR_HEALTH, RUN_SERVICE)
 
+#: Where the live runner's service answers on the internal network, `<host>` or `<host>:<port>`.
+#: ⭐ Written into the site's environment only for a corpus that declares live runs, and never
+#: part of `VARIABLES`: a published compose of any other corpus names none of it.
+LIVE_SERVICE = "STUDYFORGE_LIVE_SERVICE"
+
 #: The run service's allowlist, relative to the corpus root. ⭐ The runner reads it
 #: at `/work/` + this; it is ignored but for its own ignore file.
 ALLOWED_DIR = ".studyforge/execution/allowed"
@@ -75,6 +81,16 @@ ALLOWED_FILE = f"{ALLOWED_DIR}/runs"
 
 #: The ignore file that keeps the allowlist out of the repository.
 ALLOWED_IGNORE = "*\n!/.gitignore\n"
+
+#: The live runner's script and the egress proxy's, in this package. ⭐ The proxy's is stored
+#: with a `.txt` suffix and mounted as `egress.py`, so it is no module of this tree.
+LIVE_SCRIPT = "assets/liverun.pl"
+EGRESS_SCRIPT = "assets/egress.py.txt"
+
+#: The live runner's own allowlist, beside the graded one: the argv the corpus's live-capable
+#: records name, and nothing else. ⛔ A different file for a different service, so the graded
+#: runner's list never holds a live argv and the live runner's never holds a graded one.
+LIVE_ALLOWED_FILE = f"{ALLOWED_DIR}/live"
 
 #: The run service's script in this package, which the runner runs under `perl`.
 SCRIPT = "assets/runservice.pl"
@@ -94,6 +110,8 @@ class Published:
     binds: tuple[tuple[str, str], ...]
     health: str | None
     service: Service | None
+    #: Where the live runner answers, for a corpus that declares live runs; else `None`.
+    live: Service | None = None
 
     def editor_probe(self) -> DeclaredEditorProbe | None:
         """Return the editor as declared, or `None` when nothing declares one."""
@@ -117,6 +135,7 @@ def from_environment(environ: Mapping[str, str]) -> Published | None:
         binds=_binds(environ.get(EDITOR_BINDS, "")),
         health=environ.get(EDITOR_HEALTH) or None,
         service=_service(environ.get(RUN_SERVICE, "")),
+        live=_service(environ.get(LIVE_SERVICE, ""), LIVE_PORT, LIVE_SERVICE),
     )
 
 
@@ -162,6 +181,16 @@ def run_service_script() -> str:
     return (Path(__file__).parent / SCRIPT).read_text(encoding="utf-8")
 
 
+def live_runner_script() -> str:
+    """Return the live runner's script, as the execution skill writes it beside the compose."""
+    return (Path(__file__).parent / LIVE_SCRIPT).read_text(encoding="utf-8")
+
+
+def egress_proxy_script() -> str:
+    """Return the egress proxy's script, as the execution skill writes it beside the compose."""
+    return (Path(__file__).parent / EGRESS_SCRIPT).read_text(encoding="utf-8")
+
+
 def allowed_bytes(entries: Iterable[tuple[str, Sequence[str]]]) -> bytes:
     """Return the allowlist's bytes: each `(cwd, argv)`, fields `NUL`-ended, then one `NUL`.
 
@@ -176,12 +205,17 @@ def allowed_bytes(entries: Iterable[tuple[str, Sequence[str]]]) -> bytes:
     return b"".join(sorted(framed))
 
 
-def write_allowed(root: Path, entries: Iterable[tuple[str, Sequence[str]]]) -> Path:
-    """Write the run service's allowlist under `root`, whole; return its path."""
+def write_allowed(
+    root: Path, entries: Iterable[tuple[str, Sequence[str]]], name: str = "runs"
+) -> Path:
+    """Write the run service's allowlist under `root`, whole; return its path.
+
+    ⭐ `name` is `live` for the live runner's own list, which holds the live-capable argv only.
+    """
     directory = Path(root) / ALLOWED_DIR
     directory.mkdir(parents=True, exist_ok=True)
-    target = directory / "runs"
-    staged = directory / ".runs.next"
+    target = directory / name
+    staged = directory / f".{name}.next"
     staged.write_bytes(allowed_bytes(entries))
     staged.replace(target)
     return target
@@ -222,14 +256,14 @@ def _binds(text: str) -> tuple[tuple[str, str], ...]:
     return tuple(found)
 
 
-def _service(text: str) -> Service | None:
+def _service(text: str, default: int = SERVICE_PORT, name: str = RUN_SERVICE) -> Service | None:
     """Parse `<host>` or `<host>:<port>`; empty is no service."""
     if not text.strip():
         return None
     host, colon, port = text.strip().partition(":")
     if not host or (colon and not port.isdecimal()):
-        raise RunRefused(f"{RUN_SERVICE} is '<host>' or '<host>:<port>'")
-    return Service(host, int(port) if colon else SERVICE_PORT)
+        raise RunRefused(f"{name} is '<host>' or '<host>:<port>'")
+    return Service(host, int(port) if colon else default)
 
 
 def _healthy(url: str) -> bool:

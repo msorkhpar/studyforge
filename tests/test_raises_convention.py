@@ -78,8 +78,9 @@ REACH = {
     # ⚠️ The practice panel parses the same key, so the floor counts both
     # sites: a floor one short lets the deleted-outright plant find a site left,
     # read it as not short, and NOT RAISE. (A quiz is graded in its page, so no
-    # quiz route parses one.)
-    "studyforge.progress": 2,
+    # quiz route parses one.) ⚠️ The live route parses a declared practice's key the
+    # same way, to read the command its record names: the third site.
+    "studyforge.progress": 3,
     "studyforge.serve": 1,
 }
 
