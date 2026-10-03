@@ -102,6 +102,9 @@ def check(
 def _g1(cases: tuple[Case, ...], evidence: Evidence, report: str = "") -> Verdict:
     """Every test passes on the reference, on two runs, with the same outcome each time."""
     first, second = evidence.of(REFERENCE, FIRST), evidence.of(REFERENCE, SECOND)
+    typed = _typecheck_refusal(G1, (first, second), "reference")
+    if typed is not None:
+        return typed
     missing = _unread(G1, (first, second), report)
     if missing is not None:
         return missing
@@ -128,6 +131,9 @@ def _g2(cases: tuple[Case, ...], evidence: Evidence) -> Verdict:
     starter = evidence.of(STARTER, FIRST)
     if starter is None:
         return _refused(G2, "the starter was not run, so nothing says the work is undone")
+    typed = _typecheck_refusal(G2, (starter,), "starter")
+    if typed is not None:
+        return typed
     if starter.refusal is not None:
         return _refused(G2, _UNFOLDABLE)
     if not starter.reported:
@@ -164,6 +170,9 @@ def _g3(exercise: Exercise, evidence: Evidence, where: str) -> Verdict:
             "report as 'edge cases n/m' and nothing for this gate to prove",
         )
     plants = tuple(evidence.of(plant_role(case), FIRST) for case in declared)
+    typed = _typecheck_refusal(G3, plants, "plant")
+    if typed is not None:
+        return typed
     if any(run is not None and run.refusal is not None for run in plants):
         return _refused(G3, _UNFOLDABLE)
     stray = [
@@ -268,6 +277,27 @@ def _unread(gate: str, runs: tuple[Run | None, ...], report: str = "") -> Verdic
             gate, "a run this gate reads left no report" + _at(report) + ", so nothing was read"
         )
     return None
+
+
+def _typecheck_refusal(gate: str, runs: tuple[Run | None, ...], role: str) -> Verdict | None:
+    """Name a failed type check as its OWN finding, or `None` when every run type-checked.
+
+    ⭐ Only a draft that declared a type check can have one fail, so a draft without one reads
+    exactly as before. ⛔ It is a named failure and never a test case: no case id is spelled
+    from it and no breakdown counts it. Exit code 127 is the shell's `not found`, said so
+    because it means the image does not carry the checker.
+    """
+    failed = [run for run in runs if run is not None and run.typecheck_failed is not None]
+    if not failed:
+        return None
+    code = failed[0].typecheck_failed
+    absent = " (the checker is not on this image)" if code == 127 else ""
+    return _refused(
+        gate,
+        f"the type check the draft declares failed on the {role} (exit code {code}{absent}), "
+        f"so the {role} is refused before its tests are read; the type check is a failure of "
+        f"its own and not a test case",
+    )
 
 
 def _declared_report(exercise: Exercise) -> str:

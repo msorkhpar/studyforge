@@ -188,6 +188,26 @@ A Gradle practice sets `testLogging { exceptionFormat = TestExceptionFormat.FULL
 
 **A Python practice** is graded by pytest through the same JUnit report. Its `test_command` is an argv list, for example `["python3", "-m", "pytest", "-q", "-p", "no:cacheprovider", "--junitxml=<workspace>/target/report.xml", "<workspace>/test_x.py"]`, and its `report` is `{"format": "junit", "path": "target/report.xml"}`. An option may carry a path (`--junitxml=<path>`); the path must be inside the exercise's workspace like any other. A case id is the test's name as pytest reports it: a bare function name, a parametrised test with the id pytest spells (`test_collapses[inner spaces]`, at most one space in a row), or the node id `tests/test_x.py::test_name`, which is read from the report's dotted class name. The starter returns a wrong value so that every test fails on an assertion; a starter that raises `NotImplementedError` fails on an error, which says nothing about the task. A code draft that sets `assertions_only` has `G2` and `G3` refuse a starter or a plant whose tests failed with anything but an assertion. The run page drops pytest's own banner, progress and rootdir lines for a run whose command is `pytest` or `python -m pytest` when the corpus declares `python` beside another tool with rules, and keeps every failure line, frame and the tally.
 
+**A TypeScript practice** is graded by `node --test` through the same JUnit report, on Node's built-in type stripping alone: no compiler and no install. Its files are `.ts`, its `test_command` is an argv list, and its case ids are the test names exactly as the `junit` reporter spells them (`test("blank text is refused", ...)` is `blank text is refused`). The solution is the main file and the tests import it as `./name.ts`, with the extension. ⛔ Type stripping erases types and nothing else: an `enum`, a parameter property (`constructor(private x: number)`), a `namespace` with code and a decorator are refused by Node with `ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX`, and `import type` is needed for a type-only import. Such a file fails with Node's own message, which the run page keeps; a draft that sets `assertions_only` has `G2` and `G3` refuse a starter or a plant that fails to load, and `G1` and `G4` refuse a reference that does. A failure counts as an assertion when the report's `cause` is an `AssertionError` (`assert.equal`, `assert.throws`, `assert.rejects`); a `TypeError`, an `Error` thrown by an unimplemented starter and a skipped test do not.
+
+⚠️ **Node opens the report's destination before anything runs and does not create its directory**, and a reporter named without a leading `./` is read as a package name. A practice therefore ships one build file, for example `junit-file.mjs`, that writes the built-in reporter's XML next to itself:
+
+```js
+import { mkdirSync, writeFileSync } from "node:fs";
+import { junit } from "node:test/reporters";
+
+export default async function* (source) {
+  let xml = "";
+  for await (const chunk of junit(source)) xml += chunk;
+  mkdirSync(new URL("./target/", import.meta.url), { recursive: true });
+  writeFileSync(new URL("./target/report.xml", import.meta.url), xml);
+}
+```
+
+and a `test_command` of `["node", "--test", "--test-reporter=spec", "--test-reporter-destination=stdout", "--test-reporter=./<workspace>/junit-file.mjs", "--test-reporter-destination=stdout", "<workspace>/name.test.ts"]`, with `report` `{"format": "junit", "path": "target/report.xml"}`. The `spec` reporter prints a failing run's `AssertionError` for the reader. An option's path may begin with one `./`; it is checked as any other path and must be inside the workspace. A command that sends the built-in `junit` reporter straight to `<workspace>/target/report.xml` leaves no report when the directory is absent, and `G1` and `G4` say so naming the path. The run page drops Node's `suites`, `cancelled`, `skipped`, `todo` and duration tally lines for a run whose command is `node --test` when the corpus declares `node` beside another tool with rules, and keeps every other line, frame and the pass and fail tally.
+
+**An optional type check.** A code draft may set `typecheck_command`, an argv such as `["tsc", "--noEmit", "--strict", "--erasableSyntaxOnly", "<workspace>/name.ts"]`, run in each staged solution's workspace before its tests. A non-zero exit is a failure of its own and not a test case: `G1` names it for the reference, `G2` for the starter and `G3` for a plant, and exit code 127 says the checker is not on the image (only an image that carries `typescript` has `tsc`). `--erasableSyntaxOnly` makes `tsc` refuse the constructs Node refuses, at type-check time. A draft without the field runs no check, so a reference that does not type-check passes as it always did. The check is read at authoring time; a reader's Submit runs the tests only.
+
 ### The last seven: what an authored exercise says
 
 **`kind` is `code` or `quiz`**, and `code` is what a record with no `kind`
@@ -637,6 +657,7 @@ with a question on each. The aspects are in `ASPECTS` in
 | `plants` | for each edge case's id, a solution that solves the main ask and ignores exactly that edge |
 | `build` | only when the tests import a library: each build file's path, relative to the workspace, mapped to its text, such as a `pom.xml` naming the library. Leave it out otherwise |
 | `assertions_only` | optional, `False` by default: `True` has `G2` and `G3` refuse a starter or a plant whose tests failed with an error that is not an assertion, such as a starter that raises `NotImplementedError` |
+| `typecheck_command` | optional, empty by default: an argv (such as `tsc --noEmit ...`) run in each staged solution's workspace before its tests; a non-zero exit is a named failure of `G1`, `G2` or `G3`, never a test case. Nothing is run when it is empty |
 
 ⛔ **Every path in a command is inside the exercise's own workspace.** The
 brief gives you that directory as `brief.places.workspace`. An argument

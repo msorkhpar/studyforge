@@ -112,6 +112,7 @@ from studyforge.exercise.bundle.emit import (
     SHIPPED_ROLES,
     Emission,
     emit,
+    require_argument_paths,
     emit_page,
     write,
 )
@@ -172,6 +173,7 @@ __all__ = [
     "bundle_of",
     "edges_of",
     "emit",
+    "require_argument_paths",
     "is_run_output",
     "emit_page",
     "ordinals",

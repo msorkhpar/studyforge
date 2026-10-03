@@ -76,6 +76,7 @@ from studyforge.exercise.bundle import (
     bundle_of,
     emit,
     plant_dirname,
+    require_argument_paths,
 )
 from studyforge.exercise.gates import (
     ORIGIN_ROLE,
@@ -172,6 +173,8 @@ def gate_code(
             f"this one's plants do not match its edge cases. G3 is read per edge, "
             f"so a missing plant is a gate nobody could read."
         )
+    # ⛔ The type check is a command like the others: a path it names is inside the workspace.
+    require_argument_paths(draft.typecheck_command, places.workspace, f"{where}: 'typecheck'")
     main = draft.main_file
     held = {
         BUNDLE_FILENAME: json_bytes(_bundle_document(draft, places)),
@@ -283,9 +286,16 @@ class _Runs:
                     },
                 },
             )
+            failed = None
+            if self.draft.typecheck_command:
+                checked = self.runner(root, self.draft.typecheck_command)
+                if checked.exit_code != 0:
+                    failed = checked.exit_code
+                    self.last = _relative(checked.output, root)
             started = time.time()
             ran = self.runner(root, tuple(self.exercise.test_command or ()))
-            self.last = _relative(ran.output, root)
+            if failed is None:
+                self.last = _relative(ran.output, root)
             return folded(
                 self.exercise,
                 root,
@@ -295,6 +305,7 @@ class _Runs:
                 self.where,
                 started=started,
                 assertions_only=self.draft.assertions_only,
+                typecheck_failed=failed,
             )
 
 
