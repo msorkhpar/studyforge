@@ -43,6 +43,7 @@ from studyforge.skills.execution.contract import (
     EDITOR_API,
     EDITOR_COMPONENT,
     EDITOR_PROMISE,
+    optional,
     read,
     require,
 )
@@ -129,20 +130,44 @@ def asker(checkout: Path, *, platform: str, run: Run):
     return lambda runtimes: unprimed_tags(checkout, runtimes, platform=platform, run=run)
 
 
-#: ⚠️ **Provisional: how the toolchain is asked for a profile's tag.** The toolchain's contract
-#: declares no command for it, so this is the one command its profile recipe documents, with its
-#: three slots; the day the contract declares one it replaces this, and the constant goes.
-PROFILE_TAG_BY = (
-    "python3",
-    "docker/profile_packages/package_build.py",
-    "--profile",
-    "<profile>",
-    "--image",
-    "<runner|editor>",
-    "--runtimes",
-    "<the declared set>",
-    "--print-tag",
-)
+#: ⛔ The shape of the `profile_tag` block this module has read.
+PROFILE_TAG_API = 1
+
+#: The slots `profile_tag.printed_by` carries beside `SET_SLOT`.
+PROFILE_SLOT = "<profile>"
+PROFILE_IMAGE_SLOT = "<runner|editor>"
+PLATFORM_SLOT = "<platform>"
+
+
+def _profile_tag_by(checkout: Path) -> list[str]:
+    """Return the command the contract names for a profile's tag, or refuse the toolchain.
+
+    ⭐ Read from `consuming.json`'s `profile_tag` block and never written in here: a toolchain
+    that carries no such block is refused by name, as a finding against that toolchain.
+    """
+    try:
+        text = (checkout / CONSUMING).read_text(encoding="utf-8")
+    except OSError as missing:
+        raise VendorRefused("the toolchain checkout carries no consuming.json") from missing
+    contract = read(text, component=EDITOR_COMPONENT, api=EDITOR_API, promise=EDITOR_PROMISE)
+    block = optional(contract, "profile_tag")
+    if not isinstance(block, Mapping):
+        raise VendorRefused(
+            "the toolchain's consuming.json declares no profile_tag, so it does not say how a "
+            "profile's tag is asked for: use a toolchain release that declares it"
+        )
+    if block.get("profile_tag_api") != PROFILE_TAG_API:
+        raise VendorRefused(
+            "the toolchain declares its profile tag in a shape this skill has not read"
+        )
+    command = block.get("printed_by")
+    if not isinstance(command, list) or not all(isinstance(one, str) for one in command):
+        raise VendorRefused("the toolchain's profile_tag.printed_by is not a command")
+    for slot in (PROFILE_SLOT, PROFILE_IMAGE_SLOT, SET_SLOT, PLATFORM_SLOT):
+        if slot not in command:
+            raise VendorRefused(f"the toolchain's profile_tag.printed_by names no {slot} slot")
+    return command
+
 
 #: What a tag, after its repository, may be made of.
 _TAG_AFTER_COLON = re.compile(r"^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$")
@@ -157,20 +182,16 @@ def profile_tags(
     does not have, or one that layers on runtimes the course does not declare, is refused by the
     toolchain's own answer and surfaces here as `VendorRefused`. Nothing is built.
     """
+    command = _profile_tag_by(Path(checkout))
+    slots = {
+        PROFILE_SLOT: profile,
+        SET_SLOT: ",".join(runtimes),
+        PLATFORM_SLOT: platform,
+        "python3": sys.executable,
+    }
     found: dict[str, str] = {}
     for image in ("runner", "editor"):
-        argv = [
-            profile
-            if one == "<profile>"
-            else image
-            if one == "<runner|editor>"
-            else ",".join(runtimes)
-            if one == SET_SLOT
-            else sys.executable
-            if one == "python3"
-            else one
-            for one in PROFILE_TAG_BY
-        ] + ["--platform", platform]
+        argv = [{**slots, PROFILE_IMAGE_SLOT: image}.get(one, one) for one in command]
         code, printed = run(argv, Path(checkout))
         if code != 0:
             raise VendorRefused(
