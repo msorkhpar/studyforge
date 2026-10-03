@@ -88,3 +88,25 @@ def test_a_failure_that_says_an_assertion_failed_is_one(attributes):
 )
 def test_anything_else_is_not_an_assertion(element):
     assert not asserted(element, PASSING_CHILDREN)
+
+
+@pytest.mark.parametrize(
+    ("declared", "classname"),
+    [
+        ("tests/a/test_x.py::test_f", "tests.b.test_x"),
+        ("tests/a/test_x.py::test_f", "other.test_x"),
+        ("tests/a/test_x.py::TestC::test_f", "tests.b.test_x.TestC"),
+        ("tests/a/test_x.py::TestC::test_f", "tests.a.test_x.TestD"),
+        ("tests/a/test_x.py::test_f", "b.tests.a.test_x"),
+        ("test_x.py::test_f", "tests.test_x"),
+    ],
+)
+def test_a_node_id_from_another_module_or_package_is_refused(declared, classname):
+    assert not spells(case(classname=classname, name="test_f"), declared)
+
+
+def test_the_same_node_id_from_the_same_module_is_read():
+    assert spells(case(classname="tests.a.test_x", name="test_f"), "tests/a/test_x.py::test_f")
+    assert spells(
+        case(classname="tests.a.test_x.TestC", name="test_f"), "tests/a/test_x.py::TestC::test_f"
+    )
