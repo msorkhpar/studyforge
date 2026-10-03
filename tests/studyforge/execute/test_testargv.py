@@ -66,7 +66,7 @@ def test_every_language_of_the_four_pairs_and_names_one_command_in_the_copy(tmp_
 
 
 def test_a_typescript_example_has_its_own_pair_and_a_run(tmp_path):
-    # ⛔ The register's plant: `.ts` dropped from the pairing's suffixes leaves no Run.
+    # ⛔ A plant: `.ts` dropped from the pairing's suffixes leaves no Run.
     root = examples(tmp_path)
     found = pair(root, "ts/bpe.test.ts", FOUR)
     assert (found.source, found.test) == ("ts/bpe.ts", "ts/bpe.test.ts")
