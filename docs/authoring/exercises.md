@@ -698,7 +698,7 @@ with a question on each. The aspects are in `ASPECTS` in
 | `starter` | what the reader starts from. Every test must fail on it |
 | `reference` | the worked solution. Every test must pass on it, and the reader can open it |
 | `tests` | the tests, one or more per case |
-| `plants` | for each edge case's id, a solution that solves the main ask and ignores exactly that edge |
+| `plants` | for each edge case's id, a solution that solves the main ask and ignores exactly that edge: its full text, or a `PlantSpec` of replacements against the reference (see *A plant as replacements*) |
 | `build` | only when the tests import a library: each build file's path, relative to the workspace, mapped to its text, such as a `pom.xml` naming the library. Leave it out otherwise |
 | `assertions_only` | optional, `False` by default: `True` has `G2` and `G3` refuse a starter or a plant whose tests failed with an error that is not an assertion, such as a starter that raises `NotImplementedError` |
 | `typecheck_command` | optional, empty by default: an argv (such as `tsc --noEmit ...`) run in each staged solution's workspace before its tests; a non-zero exit is a named failure of `G1`, `G2` or `G3`, never a test case. Nothing is run when it is empty |
@@ -756,6 +756,94 @@ def basket(brief):
         plants={NEGATIVE.id: "def total(prices):\n    return sum(prices)\n"},
     )
 ```
+
+### A plant as replacements
+
+A plant usually differs from the reference by a line or a few. Instead of the
+whole text, a plant may be written as an ordered list of exact replacements
+against the reference:
+
+```python
+from studyforge.skills.exercises import PlantSpec, Replacement
+
+plants={
+    NEGATIVE.id: PlantSpec((
+        Replacement(
+            "total.py",
+            '    if any(price < 0 for price in prices):\n'
+            '        raise ValueError("a price is never negative")\n',
+            "",
+        ),
+    )),
+}
+```
+
+Both forms are accepted in one draft, edge by edge. A text is the plant as it
+is; a `PlantSpec` is the reference with its replacements applied.
+
+- Each replacement is `file`, `old` and `new`. `file` is the exercise's
+  `main_file`, since a plant is that one file. `old` must occur exactly once
+  in the text the replacement is applied to, counting an occurrence that
+  overlaps another.
+- Replacements apply in order, each to the text the one before it left.
+- The gate materialises the full plant from the reference into its own staging
+  directory, runs it like any plant, and discards it. Nothing writes the full
+  text into a source tree.
+- A draft is refused, before any run, when a replacement's `old` is absent or
+  occurs more than once, when it is empty or equals `new`, when `file` is not
+  the main file, when the list is empty, or when the result is identical to
+  the reference. The refusal names the plant by its edge position and the
+  replacement by its position, and quotes none of the text.
+- Gates `G1` to `G5` read a spec plant exactly as they read the equivalent
+  full plant: same runs, same verdicts, same sentences.
+
+**What the bundle holds.** A full plant is the file
+`plants/edge-N/<main file>`. A spec plant is the file
+`plants/edge-N/<main file>.plant.json`:
+
+```json
+{
+  "plant_version": 1,
+  "replacements": [
+    {"file": "total.py", "old": "...", "new": "..."}
+  ]
+}
+```
+
+An edge has one of the two files, never both and never neither; `emit` refuses
+a bundle that files both or neither. The gate record digests whichever file the
+bundle holds under the same `plant:<case id>` role, so `validate` re-digests a
+spec plant as it does a full one. Fixing the reference changes the plants at
+the next gate run, and a replacement the fix leaves with nothing to find is
+refused instead of skipped, so the author sees which plants the fix touched.
+
+**What a learner receives.** Plants stay in `exercises/`, as before. The
+learner's workspace is made of the starter and the tests, and the site, runner
+and editor images leave `exercises/` out of their build contexts, so a spec
+plant, like a full one, is in no image. The standalone export keeps the
+`exercises/` tree on `main` and writes the same files for both forms.
+
+**Converting a course once.** `studyforge.exercise.bundle.convert` reads every
+bundle under `exercises/`, derives for each full plant the smallest list of
+replacements, widened with the lines around each change until the text is
+unique, and materialises it again:
+
+```python
+from studyforge.exercise.bundle.convert import convert_plants
+
+report = convert_plants(root)               # reads and proves, writes nothing
+report = convert_plants(root, write=True)   # then writes what was proven
+report.converted, report.left               # bundles changed; each plant left, with why
+```
+
+Without `write=True` nothing is written. With it, a plant is
+replaced only when its spec materialises to the same bytes and is smaller than
+the file, and the plant's input in `gates.json` is re-digested; the verdicts are
+left as they were, because every gate ran over the same text. A plant is left,
+with its reason in `report.left`, when the spec would not be smaller, when it equals the
+reference, when the record does not hold the plant's current digest, or when the
+record does not re-encode to its own bytes. A bundle is written whole or
+restored.
 
 ---
 

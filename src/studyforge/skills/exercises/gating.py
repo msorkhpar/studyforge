@@ -75,7 +75,11 @@ from studyforge.exercise.bundle import (
     Places,
     bundle_of,
     emit,
+    materialised,
     plant_dirname,
+    roles_of,
+    spec_bytes,
+    spec_file,
     require_argument_paths,
 )
 from studyforge.exercise.gates import (
@@ -176,6 +180,7 @@ def gate_code(
     # ⛔ The type check is a command like the others: a path it names is inside the workspace.
     require_argument_paths(draft.typecheck_command, places.workspace, f"{where}: 'typecheck'")
     main = draft.main_file
+    full, specs = materialised(draft.plants, draft.reference, main, positions, where)
     held = {
         BUNDLE_FILENAME: json_bytes(_bundle_document(draft, places)),
         STATEMENT_FILENAME: draft.statement.encode("utf-8"),
@@ -186,10 +191,15 @@ def gate_code(
         **{
             f"plants/{plant_dirname(positions[case])}/{main}": text.encode("utf-8")
             for case, text in draft.plants.items()
+            if case not in specs
+        },
+        **{
+            f"plants/{plant_dirname(positions[case])}/{spec_file(main)}": spec_bytes(spec)
+            for case, spec in specs.items()
         },
     }
     solutions = {"reference": draft.reference, "starter": draft.starter}
-    solutions |= {plant_role(case): draft.plants[case.id] for case in _edges(bundle.cases)}
+    solutions |= {plant_role(case): full[case.id] for case in _edges(bundle.cases)}
     with tempfile.TemporaryDirectory(prefix="studyforge-stage-") as staged:
         stage = Path(staged)
         _lay_down(stage, {places.in_bundle(path): data for path, data in held.items()})
@@ -199,7 +209,9 @@ def gate_code(
         evidence = Evidence.taken(exercise, runs.attempt, where)
         origins = _cited(((ORIGIN_ROLE, bundle.origin),), ledger)
         record = GateRecord(
-            inputs=taken_over(stage / places.bundle, _roles(bundle, positions), where),
+            inputs=taken_over(
+                stage / places.bundle, roles_of(bundle, positions, set(specs)), where
+            ),
             origins=origins,
             verdicts=check(exercise, evidence, origins, digests(ledger), where),
         )
@@ -340,22 +352,6 @@ def _bundle_document(draft: CodeDraft, places: Places) -> dict:
 def _edges(cases):
     """Return the edge cases, in the order the draft declares them."""
     return tuple(case for case in cases if not case.ask)
-
-
-def _roles(bundle, positions: dict[str, int]) -> tuple[tuple[str, str], ...]:
-    """Every input a code gate record digests, in the bundle's order, bundle-relative."""
-    main = bundle.main_file
-    return (
-        ("statement", STATEMENT_FILENAME),
-        ("starter", f"starter/{main}"),
-        ("reference", f"reference/{main}"),
-        ("tests", f"tests/{bundle.test_file}"),
-        *(
-            (plant_role(case), f"plants/{plant_dirname(positions[case.id])}/{main}")
-            for case in _edges(bundle.cases)
-        ),
-        *((f"{BUILD}:{path}", bundle.places.build_path(path)) for path in bundle.build),
-    )
 
 
 def _cited(named: tuple[tuple[str, Origin], ...], ledger: Ledger) -> tuple[Cited, ...]:

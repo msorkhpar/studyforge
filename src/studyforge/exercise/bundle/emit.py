@@ -76,6 +76,7 @@ from studyforge.archive.document import build
 from studyforge.archive.markdown import MarkdownError
 from studyforge.archive.markdown import parse as parse_markdown
 from studyforge.exercise.bundle.document import Bundle
+from studyforge.exercise.bundle.plants import require_plants
 from studyforge.exercise.bundle.layout import (
     BUILD,
     STATEMENT,
@@ -139,7 +140,7 @@ def emit(
     starter = _text_at(base, bundle.places.in_bundle(_role_file(bundle, STARTER)), where)
     reference = _text_at(base, bundle.places.in_bundle(_role_file(bundle, REFERENCE)), where)
     tests = _text_at(base, bundle.places.in_bundle(_role_file(bundle, TESTS)), where)
-    _require_plants(base, bundle, where)
+    require_plants(base, bundle, where)
     built = tuple(
         (path, _bytes_at(base, bundle.places.in_bundle(bundle.places.build_path(path)), where))
         for path in bundle.build
@@ -334,25 +335,6 @@ def _role_file(bundle: Bundle, role: str) -> str:
     """Return the bundle-relative path one role's copy of a workspace file sits at."""
     name = bundle.test_file if role == TESTS else bundle.main_file
     return bundle.places.role_path(role, name)
-
-
-def _require_plants(base: Path, bundle: Bundle, where: str) -> None:
-    """Every edge case has the planted solution `G3` was run over.
-
-    ⛔ **Refused rather than shipped short.** A gate is as fine as the claim it
-    backs (one gate per case, as per method), so an edge case whose plant is absent
-    is an edge case nothing was ever proved against.
-    """
-    for position, _case in enumerate(edges_of(bundle.cases), start=1):
-        path = bundle.places.in_bundle(bundle.places.plant_path(position, bundle.main_file))
-        if not (base / path).is_file():
-            raise ExerciseError(
-                f"{where}: the solution planted to fail edge case {position} is not "
-                f"at '{path}'. Every edge case ships with the plant 'G3' was run "
-                f"over, and an edge case with none is one nothing was ever proved "
-                f"against. ⚠️ The gate record names it by its case id, which is why "
-                f"its directory is numbered instead."
-            )
 
 
 def _require_one_page(bundles: tuple[Bundle, ...], where: str) -> None:

@@ -383,6 +383,17 @@ runs every gate — the personal-data gate among them — and computes the diges
 and the counts. A hand-built dict skips all of it and validates until it does
 not.
 
+### ⛔ One adapter, one tool of each kind, per course
+
+⭐ **A course has one adapter and one copy of each tool it writes**: one `read.py`, one
+emitter, one check, one generator for the files that follow a pattern. ⛔ A batch of the
+corpus is that tool's argument, never a reason to copy it: a copy per batch is a second place
+to fix, and the copies stop agreeing. ⭐ Tests that need the same helper import it from one
+module. ⛔ **Never hand-copy a generated file to vary it**; a variation is manifest data or a
+change to the generator (R19). ⚠️ **Keep a duplicate only where removing it would hurt the
+material**: a learner's own workspace file, a page's visible example, or a language's own
+idiomatic version of an idea stay whole.
+
 ### A4 — what a scaffold is, and the one file that is yours
 
 ⛔ **The whole file set, and how many there are, is the scaffold's own listing
