@@ -199,7 +199,7 @@ def render(section: dict, document: dict, placement: Placement) -> str:
                 exercise,
                 key=key,
                 corpus=placement.corpus,
-                grader=_region(grader(exercise)),
+                grader=_region(templates.fill("practice-grader-mock.html")),
                 assets=placement.asset,
             )
         return quiz.render(

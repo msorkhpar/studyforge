@@ -8,7 +8,7 @@ Python and TypeScript only, the practice page, and the page of the mock exam.
 
 from __future__ import annotations
 
-from tests.fixtures.claude_shape import examples, exam, practices
+from tests.fixtures.claude_shape import examples, exam, exam_form, practices
 
 LEVEL = "level-1"
 MESSAGES = (LEVEL, "01-messages")
@@ -50,6 +50,7 @@ CONVERSATION = f"course/{MESSAGES[0]}/{MESSAGES[1]}/01-conversation.md"
 AGENT = f"course/{MESSAGES[0]}/{MESSAGES[1]}/02-agent-loop.md"
 PRACTISE = practices.PAGE
 EXAM = exam.PAGE
+EXAM_POOL = exam_form.PAGE
 
 C = examples.ROOT
 
@@ -123,6 +124,17 @@ def exam_blocks() -> list[dict]:
     return blocks
 
 
+def pool_blocks() -> list[dict]:
+    blocks = [
+        heading(1, "Level 1 exam pool"),
+        para("Twelve questions over the whole level, drawn into sittings. Each passage below is "
+             "what its question was written from."),
+    ]
+    for title, passage in exam_form.PASSAGES:
+        blocks += [heading(2, title), para(passage)]
+    return blocks
+
+
 def markdown(blocks: list[dict]) -> str:
     """The source page for `blocks`, as the Markdown a person would write them."""
     parts: list[str] = []
@@ -149,6 +161,7 @@ UNITS = (
     (MESSAGES, 2, "An agent loop", AGENT, [("python typescript", agent_blocks)]),
     (MESSAGES, 3, "Practise the conversation", PRACTISE, [(None, practise_blocks)]),
     (READINESS, 1, "Level 1 mock exam", EXAM, [(None, exam_blocks)]),
+    (READINESS, 2, "Level 1 exam pool", EXAM_POOL, [(None, pool_blocks)]),
 )
 
 

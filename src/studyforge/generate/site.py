@@ -70,6 +70,7 @@ from studyforge.generate.containers import container_pages, page_paths
 from studyforge.generate.declarations import Corpus, read_corpus
 from studyforge.generate.entrylanguages import offer_of
 from studyforge.generate.media import unit_media
+from studyforge.generate.mockexam import form_wanted as has_mock_form
 from studyforge.generate.mockexam import wanted as has_mock_exam
 from studyforge.generate.narration import voiced
 from studyforge.generate.navigation import rail
@@ -79,7 +80,7 @@ from studyforge.render import modes
 from studyforge.render.index import Placement as IndexPlacement
 from studyforge.render.index import from_contents
 from studyforge.render.index import render as render_index
-from studyforge.render.page import mock_files
+from studyforge.render.page import mock_files, mock_form_files
 from studyforge.render.pageassets import written_files
 
 
@@ -174,6 +175,9 @@ def assets(corpus: Corpus, into: Path | str) -> Written:
     if has_mock_exam(corpus):
         # ⭐ Written only for a corpus that has a mock exam: any other builds the files it did.
         shared.update(mock_files())
+    if has_mock_form(corpus):
+        # ⭐ And the exam form's four only for a corpus whose mock opts into it.
+        shared.update(mock_form_files())
     for filename, body in sorted(shared.items()):
         place(
             out,

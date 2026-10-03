@@ -33,7 +33,7 @@ from studyforge.skills.exercises import (
     QuizDraft,
     author_corpus,
 )
-from tests.fixtures.claude_shape import examples, exam, lessons, practices
+from tests.fixtures.claude_shape import examples, exam, exam_form, lessons, practices
 from tests.studyforge.skills.exercises.authoring import Judging
 
 SOURCE = "claude-shape"
@@ -144,6 +144,12 @@ def pages() -> tuple[Page, ...]:
             unit=1, kind=QUIZ, tier=CORE,
             aspects=(Aspect("level-1", "the level's ideas, as scenarios", headings, "mock-exam"),),
         ),
+        Page(
+            path=lessons.EXAM_POOL, address=Address(list(lessons.READINESS)), variant="prose",
+            unit=2, kind=QUIZ, tier=CORE,
+            aspects=(Aspect("level-1-pool", "the level's ideas, drawn into sittings", headings,
+                            "mock-exam-form"),),
+        ),
     )
 
 
@@ -153,6 +159,10 @@ class Author:
     def draft(self, brief):
         if brief.name == "mock-exam":
             return QuizDraft(title="Level 1 mock exam", questions=exam.questions(), mock=exam.mock())
+        if brief.name == "mock-exam-form":
+            return QuizDraft(
+                title="Level 1 exam pool", questions=exam_form.questions(), mock=exam_form.mock()
+            )
         return practices.makers()[brief.name](brief)
 
     def excuse(self, entry) -> str:

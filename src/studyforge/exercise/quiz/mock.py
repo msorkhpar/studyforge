@@ -41,19 +41,38 @@ from dataclasses import dataclass
 
 from studyforge.describe import describe, describe_keys
 from studyforge.exercise.errors import ExerciseError
-from studyforge.exercise.quiz.grading import grade
-from studyforge.exercise.quiz.questions import (
-    QUIZ_ID,
-    QUIZ_ID_PERMITTED,
-    Question,
+from studyforge.exercise.quiz.exam import (
+    Difficulty,
+    Scale,
+    Scenario,
+    Sitting,
+    difficulties_of,
+    layout_of,
+    minutes_of,
+    scale_of,
+    scenarios_of,
+    sitting_document,
+    sittings_of,
 )
+from studyforge.exercise.quiz.grading import grade
+from studyforge.exercise.quiz.options import QUIZ_ID, QUIZ_ID_PERMITTED
+from studyforge.exercise.quiz.questions import Question
 
 #: The key a quiz record carries to say it is a mock exam.
 MOCK = "mock"
 
-#: The mock's own keys, and a domain's, in the order they are written (R10).
-MOCK_KEYS = ("pass_mark", "domains")
+#: The mock's own keys, and a domain's, in the order they are written (R10). ⭐ The first two
+#: are required. The rest are optional and written only where present, so a mock written before
+#: they existed round-trips to the same bytes: `minutes` (a timer), `layout` (`"exam"` for one
+#: question to a view with a navigator), `scenarios`, `sittings` and `scale`.
+MOCK_KEYS = (
+    "pass_mark", "domains", "minutes", "layout", "scenarios", "difficulties", "sittings", "scale",
+)
+REQUIRED_MOCK_KEYS = ("pass_mark", "domains")
 DOMAIN_KEYS = ("id", "title")
+#: ⭐ A domain may also state its `weight`, a whole percent of an exam; when every domain does, a
+#: sitting that draws questions draws them by these weights and the weights sum to 100.
+OPTIONAL_DOMAIN_KEYS = ("weight",)
 
 #: The lowest and highest pass mark, as a whole percent of the questions.
 LOWEST_PASS_MARK, HIGHEST_PASS_MARK = 1, 100
@@ -65,6 +84,7 @@ class Domain:
 
     id: str
     title: str
+    weight: int | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -77,6 +97,20 @@ class Mock:
 
     pass_mark: int
     domains: tuple[Domain, ...]
+    minutes: int | None = None
+    layout: str | None = None
+    scenarios: tuple[Scenario, ...] = ()
+    sittings: tuple[Sitting, ...] = ()
+    scale: Scale | None = None
+    difficulties: tuple[Difficulty, ...] = ()
+
+    @property
+    def opts_in(self) -> bool:
+        """Does this mock use anything the page of old does not do (a timer, a layout, ...)?"""
+        extras = (self.minutes, self.layout, self.scenarios, self.sittings, self.scale)
+        return any(one is not None and one != () for one in extras) or bool(
+            self.difficulties or any(one.weight is not None for one in self.domains)
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -95,23 +129,156 @@ class Score:
 
 def mock_of(value: object, where: str) -> Mock:
     """Read the `mock` key of a quiz record, refusing every way it can be wrong."""
-    if not isinstance(value, dict) or set(value) != set(MOCK_KEYS):
+    if (
+        not isinstance(value, dict)
+        or not set(REQUIRED_MOCK_KEYS) <= set(value)
+        or not set(value) <= set(MOCK_KEYS)
+    ):
         raise ExerciseError(
-            f"{where}: 'mock' is {list(MOCK_KEYS)}, both required and nothing else. The "
-            f"value is {describe(value)}."
+            f"{where}: 'mock' is {list(REQUIRED_MOCK_KEYS)}, both required, and may also carry "
+            f"{list(MOCK_KEYS[2:])}, nothing else. The value is {describe(value)}."
         )
     return Mock(
         pass_mark=_pass_mark(value["pass_mark"], where),
         domains=_domains(value["domains"], where),
+        minutes=(
+            minutes_of(value["minutes"], where) if "minutes" in value else None
+        ),
+        layout=layout_of(value["layout"], where) if "layout" in value else None,
+        scenarios=scenarios_of(value["scenarios"], where) if "scenarios" in value else (),
+        sittings=sittings_of(value["sittings"], where) if "sittings" in value else (),
+        scale=scale_of(value["scale"], where) if "scale" in value else None,
+        difficulties=(
+            difficulties_of(value["difficulties"], where) if "difficulties" in value else ()
+        ),
     )
 
 
 def mock_document(mock: Mock) -> dict:
-    """Return the key as the decoded object, in `MOCK_KEYS` order (R10)."""
-    return {
+    """Return the key as the decoded object, in `MOCK_KEYS` order (R10); optional keys if set."""
+    written: dict = {
         "pass_mark": mock.pass_mark,
-        "domains": [{"id": domain.id, "title": domain.title} for domain in mock.domains],
+        "domains": [_domain_document(domain) for domain in mock.domains],
     }
+    if mock.minutes is not None:
+        written["minutes"] = mock.minutes
+    if mock.layout is not None:
+        written["layout"] = mock.layout
+    if mock.scenarios:
+        written["scenarios"] = [
+            {"id": o.id, "title": o.title, "context": o.context} for o in mock.scenarios
+        ]
+    if mock.difficulties:
+        written["difficulties"] = [{"id": d.id, "title": d.title} for d in mock.difficulties]
+    if mock.sittings:
+        written["sittings"] = [sitting_document(one) for one in mock.sittings]
+    if mock.scale is not None:
+        written["scale"] = {
+            "min": mock.scale.min, "max": mock.scale.max, "pass": mock.scale.pass_,
+        }
+    return written
+
+
+def _domain_document(domain: Domain) -> dict:
+    written: dict = {"id": domain.id, "title": domain.title}
+    if domain.weight is not None:
+        written["weight"] = domain.weight
+    return written
+
+
+def quotas(mock: Mock, drawn: int, pool: tuple[Question, ...]) -> dict[str, int]:
+    """How many of `drawn` questions each domain gets: by its weight, else by its share of the pool.
+
+    ⭐ Largest remainder, ties to the earlier domain, so the numbers add up to `drawn`. The page
+    draws by the same rule; this is the reference a test and the record's check read.
+    """
+    weights = {
+        domain.id: (domain.weight if domain.weight is not None else
+                    sum(1 for one in pool if one.domain == domain.id))
+        for domain in mock.domains
+    }
+    total = sum(weights.values()) or 1
+    base = {key: (drawn * weight) // total for key, weight in weights.items()}
+    order = sorted(
+        weights, key=lambda key: (-((drawn * weights[key]) % total), list(weights).index(key))
+    )
+    for key in order[: drawn - sum(base.values())]:
+        base[key] += 1
+    return base
+
+
+def require_against_questions(mock: Mock, questions: tuple[Question, ...], where: str) -> None:
+    """⛔ Refuse what the page could not draw: a question under a scenario nobody declared, a
+    declared scenario with no question, and a sitting that asks for more than the exam holds.
+
+    ⭐ The record is read whole here (`shape.mock_in`), so these are refused when a corpus
+    validates and not only when an author's draft is gated; `P1` states the same facts again.
+    """
+    declared = {one.id for one in mock.scenarios}
+    named = {one.scenario for one in questions if one.scenario is not None}
+    if named - declared:
+        raise ExerciseError(
+            f"{where}: {len(named - declared)} scenario id a question names is not declared in "
+            f"the mock's 'scenarios', so the page has no card to show with that question. The "
+            f"ids are not reproduced here, since a refusal never quotes a value that may be "
+            f"personal."
+        )
+    if declared - named:
+        raise ExerciseError(
+            f"{where}: {len(declared - named)} declared scenario has no question, so a card "
+            f"would be shown with nothing to answer. Every scenario is asked about."
+        )
+    declared_difficulties = {one.id for one in mock.difficulties}
+    used = {one.difficulty for one in questions if one.difficulty is not None}
+    if used - declared_difficulties:
+        raise ExerciseError(
+            f"{where}: {len(used - declared_difficulties)} difficulty id a question names is not "
+            f"declared in the mock's 'difficulties'. The ids are not reproduced here, since a "
+            f"refusal never quotes a value that may be personal."
+        )
+    if mock.difficulties and declared_difficulties - used:
+        raise ExerciseError(
+            f"{where}: {len(declared_difficulties - used)} declared difficulty labels no "
+            f"question, so a score reported for it would be 0 of 0."
+        )
+    for sitting in mock.sittings:
+        if sitting.questions is not None:
+            for domain, wanted in quotas(mock, sitting.questions, questions).items():
+                held = sum(1 for one in questions if one.domain == domain)
+                if wanted > held:
+                    raise ExerciseError(
+                        f"{where}: a sitting draws {sitting.questions} questions by domain "
+                        f"weight, which asks {wanted} of one domain, and the pool holds {held} "
+                        f"of it. The pool must hold enough of every domain for the largest "
+                        f"sitting."
+                    )
+        if sitting.questions is not None and sitting.questions > len(questions):
+            raise ExerciseError(
+                f"{where}: a sitting draws {sitting.questions} questions and the exam asks "
+                f"{len(questions)}."
+            )
+        if sitting.scenarios is not None and sitting.scenarios > len(declared):
+            raise ExerciseError(
+                f"{where}: a sitting draws {sitting.scenarios} scenarios and the exam declares "
+                f"{len(declared)}."
+            )
+
+
+def require_no_exam_keys_on_questions(questions: tuple[Question, ...], where: str) -> None:
+    """⛔ Refuse a mock-only question key on a quiz that declares no `mock`."""
+    for question in questions:
+        if (
+            question.scenario is not None
+            or question.select is not None
+            or question.shuffle is not None
+            or question.difficulty is not None
+        ):
+            raise ExerciseError(
+                f"{where}: a question names a 'scenario', 'select', 'shuffle' or 'difficulty' "
+                f"on a quiz that "
+                f"declares no {MOCK!r}. Those are what a mock exam's page reads, so on a plain "
+                f"quiz they are keys nothing reads while the corpus validates green."
+            )
 
 
 def scores(
@@ -135,6 +302,24 @@ def scores(
         for domain in mock.domains
     )
     return whole, per_domain
+
+
+def scores_by_difficulty(
+    questions: tuple[Question, ...], mock: Mock, answers: object
+) -> tuple[Score, ...]:
+    """One score per declared difficulty, in the order declared; empty where none is declared."""
+    rows = grade(questions, answers).answered
+    return tuple(
+        Score(
+            difficulty.id,
+            sum(1 for row in rows if row.question.difficulty == difficulty.id),
+            sum(
+                1 for row in rows
+                if row.question.difficulty == difficulty.id and row.correct
+            ),
+        )
+        for difficulty in mock.difficulties
+    )
 
 
 def passed(whole: Score, mock: Mock) -> bool:
@@ -165,6 +350,11 @@ def _domains(value: object, where: str) -> tuple[Domain, ...]:
             f"{describe(value)}."
         )
     domains = tuple(_domain(entry, where) for entry in value)
+    weighed = [one.weight for one in domains if one.weight is not None]
+    if weighed and (len(weighed) != len(domains) or sum(weighed) != 100):
+        raise ExerciseError(
+            f"{where}: domain weights are stated for every domain or none, and they sum to 100."
+        )
     repeated = len(domains) - len({domain.id for domain in domains})
     if repeated:
         raise ExerciseError(
@@ -178,11 +368,13 @@ def _domains(value: object, where: str) -> tuple[Domain, ...]:
 
 def _domain(value: object, where: str) -> Domain:
     """Read one domain, refusing a key it does not define — a typo is one."""
-    if not isinstance(value, dict) or set(value) != set(DOMAIN_KEYS):
+    allowed = (*DOMAIN_KEYS, *OPTIONAL_DOMAIN_KEYS)
+    if not isinstance(value, dict) or not set(DOMAIN_KEYS) <= set(value) <= set(allowed):
         carried = value if isinstance(value, dict) else {}
-        unknown = [key for key in carried if key not in DOMAIN_KEYS]
+        unknown = [key for key in carried if key not in allowed]
         raise ExerciseError(
-            f"{where}: a domain is {list(DOMAIN_KEYS)}, both required and nothing else"
+            f"{where}: a domain is {list(DOMAIN_KEYS)}, both required, and may also carry "
+            f"{list(OPTIONAL_DOMAIN_KEYS)}, nothing else"
             + (f"; this one carries {describe_keys(unknown)}" if unknown else "")
             + f". The value is {describe(value)}."
         )
@@ -197,4 +389,12 @@ def _domain(value: object, where: str) -> Domain:
             f"{where}: a domain's 'title' is the words a score is reported under, and it "
             f"must be text. The value is {describe(title)}."
         )
-    return Domain(identifier, title)
+    weight = value.get("weight")
+    if "weight" in value and (
+        not isinstance(weight, int) or isinstance(weight, bool) or not 1 <= weight <= 100
+    ):
+        raise ExerciseError(
+            f"{where}: a domain's 'weight' is a whole percent from 1 to 100. The value is "
+            f"{describe(weight)}."
+        )
+    return Domain(identifier, title, weight)

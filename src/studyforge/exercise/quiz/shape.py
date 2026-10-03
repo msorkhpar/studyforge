@@ -61,7 +61,13 @@ from __future__ import annotations
 
 from studyforge.describe import describe_keys
 from studyforge.exercise.errors import ExerciseError
-from studyforge.exercise.quiz.mock import MOCK, Mock, mock_of
+from studyforge.exercise.quiz.mock import (
+    MOCK,
+    Mock,
+    mock_of,
+    require_against_questions,
+    require_no_exam_keys_on_questions,
+)
 from studyforge.exercise.quiz.questions import Question, questions_of
 from studyforge.unit.errors import ContentError
 from studyforge.unit.trust import check_test_record
@@ -112,6 +118,10 @@ def mock_in(record: dict, where: str) -> Mock | None:
     """
     mock = mock_of(record[MOCK], where) if MOCK in record else None
     asked = questions_in(record, where) or ()
+    if mock is None:
+        require_no_exam_keys_on_questions(asked, where)
+    else:
+        require_against_questions(mock, asked, where)
     if mock is None and any(question.domain is not None for question in asked):
         raise ExerciseError(
             f"{where}: a question names a 'domain' on a quiz that declares no {MOCK!r}. A "

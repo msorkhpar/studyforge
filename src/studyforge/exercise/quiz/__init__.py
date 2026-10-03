@@ -71,6 +71,13 @@ reader's panel is the renderer's.
 
 from __future__ import annotations
 
+from studyforge.exercise.quiz.exam import (
+    SCENARIO_SENTENCES,
+    Difficulty,
+    Scale,
+    Scenario,
+    Sitting,
+)
 from studyforge.exercise.quiz.grading import (
     NO_ANSWERS,
     Answered,
@@ -90,11 +97,19 @@ from studyforge.exercise.quiz.mock import (
     mock_document,
     mock_of,
     passed,
+    quotas,
     scores,
+    scores_by_difficulty,
 )
 from studyforge.exercise.quiz.questions import (
+    DIFFICULTY_KEY,
     DOMAIN_KEY,
     KEYED_OPTIONS,
+    MINIMUM_SELECT,
+    MOCK_QUESTION_KEYS,
+    SCENARIO_KEY,
+    SELECT_KEY,
+    SHUFFLE_KEY,
     MINIMUM_OPTIONS,
     OPTION_KEYS,
     QUESTION_KEYS,
@@ -124,7 +139,20 @@ from studyforge.exercise.quiz.shape import (
 #: failed — R17 makes the package's `__init__.py` its
 #: contract, and this is what it says.
 __all__ = [
+    "DIFFICULTY_KEY",
+    "SCENARIO_SENTENCES",
     "DOMAIN_KEY",
+    "MINIMUM_SELECT",
+    "MOCK_QUESTION_KEYS",
+    "SCENARIO_KEY",
+    "SELECT_KEY",
+    "SHUFFLE_KEY",
+    "Difficulty",
+    "Scale",
+    "Scenario",
+    "Sitting",
+    "quotas",
+    "scores_by_difficulty",
     "DOMAIN_KEYS",
     "HIGHEST_PASS_MARK",
     "KEYED_OPTIONS",

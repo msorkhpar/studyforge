@@ -169,6 +169,13 @@ ACCEPTANCE = {
     #: it is read over `file://` and a served origin alike, with no request from scoring.
     "scores a mock exam per domain in the page, keeps the answers of a reader who leaves, "
     "and fits a phone": "test_mock_exam",
+    #: ⭐ A row of its own: *a mock exam that sits like a certification exam* (a timer that
+    #: survives a reload and submits at zero, an exam layout with a navigator and flags, scenario
+    #: cards, multiple response scored all or nothing, sittings drawn from a pool by a stored seed,
+    #: and a results page that explains every option) is a claim about a running page, read over
+    #: `file://` and a served origin alike, with no request from anything it does.
+    "sits a mock exam with a timer, a navigator, flags, scenario cards, multiple response and "
+    "sittings drawn from a pool, and explains every option in its results": "test_mock_form",
     #: ⭐ A row of its own for the reason the one above is: its origin is the
     #: opposite one. ⛔ *A Submit shows the breakdown, naming each failed edge
     #: case* is a claim about a page that has just finished a run, and the

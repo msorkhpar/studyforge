@@ -133,6 +133,8 @@ from studyforge.render.page.document import compose
 from studyforge.render.page.errors import PageError
 from studyforge.render.page.narration import SILENT, Narration
 from studyforge.render.page.mock import PARTS as MOCK_PARTS
+from studyforge.render.page.mockform import PARTS as MOCK_FORM_PARTS
+from studyforge.render.page.mockform import files as mock_form_files
 from studyforge.render.page.mock import files as mock_files
 from studyforge.render.page.navigation import Crumb, Link, Links, between_units, breadcrumb
 from studyforge.render.page.rail import RailContainer, RailGroup, RailUnit
@@ -147,6 +149,7 @@ ENCODING = "utf-8"
 __all__ = [
     "AUDIO_ATTRIBUTE",
     "ENCODING",
+    "MOCK_FORM_PARTS",
     "MOCK_PARTS",
     "SILENT",
     "Crumb",
@@ -162,6 +165,7 @@ __all__ = [
     "breadcrumb",
     "compose",
     "mock_files",
+    "mock_form_files",
     "rail",
     "render",
 ]

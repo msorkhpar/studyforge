@@ -28,7 +28,7 @@ from studyforge.skills.exercises import (
 )
 from studyforge.validate import validate
 from studyforge.validate.exercises import RULE_GATE_SHORTFALL
-from tests.studyforge.exercise.quiz import mock_exam
+from tests.studyforge.exercise.quiz import mock_exam, mock_form
 from tests.studyforge.skills.exercises.authoring import Judging
 from tests.studyforge.validate import corpora
 from tests.studyforge.validate.test_exercises import MANIFEST
@@ -37,7 +37,7 @@ WHERE = "demo"
 ORIGIN = {"path": "src/one.md", "section": "Two"}
 
 
-def a_mock_corpus(root, *, plain=False):
+def a_mock_corpus(root, *, plain=False, form=False):
     """One corpus whose unit 1 carries a gated quiz, a mock exam unless `plain`."""
     corpora.write(
         root,
@@ -57,13 +57,13 @@ def a_mock_corpus(root, *, plain=False):
         tier=CORE,
     )
     brief = Brief(page, source_case(page, ledger), 1, places, 1, ())
-    raw = mock_exam.questions(ORIGIN)
+    raw = mock_form.questions(ORIGIN) if form else mock_exam.questions(ORIGIN)
     if plain:
         raw = [{k: v for k, v in one.items() if k != "domain"} for one in raw]
     draft = QuizDraft(
         title="A mock exam",
         questions=questions_of(raw, WHERE),
-        mock=None if plain else mock_of(mock_exam.mock(), WHERE),
+        mock=None if plain else mock_of((mock_form if form else mock_exam).mock(), WHERE),
     )
     gated = gate_quiz(draft, brief, ledger, Judging(), where=WHERE)
     assert gated.clears, [verdict.says for verdict in gated.refused]
@@ -130,3 +130,20 @@ def test_a_mock_exam_whose_mock_gate_did_not_hold_is_refused(tmp_path):
     path.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
     assert [g["held"] for g in json.loads(path.read_text())["gates"]].count(False) == 1
     assert RULE_GATE_SHORTFALL in validate(root).rules
+
+
+def test_a_gated_exam_form_mock_validates_clean_with_the_same_six_gates(tmp_path):
+    root, places = a_mock_corpus(tmp_path / "c", form=True)
+    assert gate_ids(root, places) == ["P1", "Q1", "Q2", "Q3", "Q4", "Q5"]
+    assert validate(root).findings == ()
+
+
+def test_an_exam_form_record_edited_to_a_scenario_nobody_declared_is_refused(tmp_path):
+    root, _ = a_mock_corpus(tmp_path / "c", form=True)
+    path = root / "archive" / "demo" / "raw" / "prose" / "unit-01" / "practice-1.json"
+    text = path.read_text(encoding="utf-8")
+    assert text.count('"scenario": "support-bot"') == 2
+    edited = text.replace('"scenario": "support-bot"', '"scenario": "nowhere"')
+    path.write_text(edited, encoding="utf-8")
+    report = validate(root)
+    assert report.findings and "not declared" in "\n".join(f.message for f in report.findings)
