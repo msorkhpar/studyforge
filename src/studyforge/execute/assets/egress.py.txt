@@ -1,0 +1,122 @@
+"""The egress proxy: a CONNECT-only allow-list for one host and one port, public addresses only.
+
+Written by studyforge's execution skill and mounted read-only into the egress service, a compose
+service in the `live` profile only. It is the live runner's one way out: the live runner joins an
+INTERNAL network with no route but this proxy, and only this proxy also joins the network that has
+one. It tunnels bytes and nothing else: the TLS session runs end to end between the live process
+and the API host, so there is no interception, no certificate to inject and no header to log.
+
+It permits exactly `EGRESS_ALLOW_HOST:EGRESS_ALLOW_PORT` (port 443 unless told otherwise) in a
+`CONNECT` line, and refuses every other verb, host or port. It resolves the name itself and connects
+to the resolved ADDRESS, refusing any that is not public (loopback, private, link-local, metadata),
+which closes SSRF and DNS rebinding through the proxy. Concurrent tunnels and idle time are capped.
+It writes no log: there is nothing a request carries that a log may keep.
+
+Standard library only, so the study server's own image runs it.
+"""
+
+import asyncio
+import ipaddress
+import os
+import re
+import socket
+
+HOST = os.environ.get("EGRESS_ALLOW_HOST", "").lower()
+PORT = int(os.environ.get("EGRESS_ALLOW_PORT", "443"))
+LISTEN = int(os.environ.get("EGRESS_LISTEN_PORT", "3128"))
+TUNNELS = int(os.environ.get("EGRESS_MAX_TUNNELS", "8"))
+IDLE = float(os.environ.get("EGRESS_IDLE_SECONDS", "60"))
+LIFETIME = float(os.environ.get("EGRESS_MAX_SECONDS", "900"))
+HEAD = 8192
+LABEL = r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?"
+BARE_HOST = re.compile(rf"^{LABEL}(?:\.{LABEL})+$")
+
+
+def public(address: str) -> bool:
+    """Whether `address` is one the proxy may connect to: a global unicast address."""
+    try:
+        return ipaddress.ip_address(address.split("%", 1)[0]).is_global
+    except ValueError:
+        return False
+
+
+async def pipe(reader, writer):
+    """Copy bytes one way until either end closes or stays idle."""
+    try:
+        while True:
+            data = await asyncio.wait_for(reader.read(65536), IDLE)
+            if not data:
+                break
+            writer.write(data)
+            await writer.drain()
+    except Exception:
+        pass
+    finally:
+        try:
+            writer.close()
+        except Exception:
+            pass
+
+
+async def deny(writer, code, why):
+    """Answer one refusal and hang up."""
+    writer.write(f"HTTP/1.1 {code} {why}\r\nConnection: close\r\n\r\n".encode())
+    try:
+        await writer.drain()
+    finally:
+        writer.close()
+
+
+async def handle(reader, writer, limit):
+    """Answer one client: a permitted CONNECT becomes a tunnel; anything else is refused."""
+    try:
+        head = await asyncio.wait_for(reader.readuntil(b"\r\n\r\n"), 10)
+        if len(head) > HEAD:
+            return await deny(writer, 431, "request too large")
+        line = head.split(b"\r\n", 1)[0].decode("ascii", "replace").split()
+        if len(line) != 3 or line[0] != "CONNECT":
+            return await deny(writer, 405, "CONNECT only")
+        host, _, port = line[1].rpartition(":")
+        if host.lower() != HOST or not port.isdigit() or int(port) != PORT:
+            return await deny(writer, 403, "host not allowed")
+        infos = await asyncio.get_running_loop().getaddrinfo(
+            HOST, PORT, type=socket.SOCK_STREAM
+        )
+        addresses = [info[4][0] for info in infos if public(info[4][0])]
+        if not addresses:
+            return await deny(writer, 403, "address not public")
+        async with limit:
+            upstream, out = await asyncio.wait_for(asyncio.open_connection(addresses[0], PORT), 10)
+            writer.write(b"HTTP/1.1 200 Connection established\r\n\r\n")
+            await writer.drain()
+            await asyncio.wait_for(
+                asyncio.gather(pipe(reader, out), pipe(upstream, writer)), LIFETIME
+            )
+    except Exception:
+        try:
+            await deny(writer, 502, "bad gateway")
+        except Exception:
+            pass
+
+
+async def serve():
+    """Listen on every interface of the container; only the internal network reaches it."""
+    limit = asyncio.Semaphore(TUNNELS)
+
+    async def one(reader, writer):
+        await handle(reader, writer, limit)
+
+    server = await asyncio.start_server(one, "0.0.0.0", LISTEN)
+    async with server:
+        await server.serve_forever()
+
+
+def run():
+    """Refuse to start without one bare host to allow, then serve."""
+    if not BARE_HOST.match(HOST):
+        raise SystemExit("EGRESS_ALLOW_HOST must be one bare lower-case hostname")
+    asyncio.run(serve())
+
+
+if __name__ == "__main__":
+    run()

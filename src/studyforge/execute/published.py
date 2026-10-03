@@ -82,6 +82,11 @@ ALLOWED_FILE = f"{ALLOWED_DIR}/runs"
 #: The ignore file that keeps the allowlist out of the repository.
 ALLOWED_IGNORE = "*\n!/.gitignore\n"
 
+#: The live runner's script and the egress proxy's, in this package. ⭐ The proxy's is stored
+#: with a `.txt` suffix and mounted as `egress.py`, so it is no module of this tree.
+LIVE_SCRIPT = "assets/liverun.pl"
+EGRESS_SCRIPT = "assets/egress.py.txt"
+
 #: The live runner's own allowlist, beside the graded one: the argv the corpus's live-capable
 #: records name, and nothing else. ⛔ A different file for a different service, so the graded
 #: runner's list never holds a live argv and the live runner's never holds a graded one.
@@ -174,6 +179,16 @@ class DeclaredEditorProbe:
 def run_service_script() -> str:
     """Return the run service's script, as the execution skill writes it beside the compose file."""
     return (Path(__file__).parent / SCRIPT).read_text(encoding="utf-8")
+
+
+def live_runner_script() -> str:
+    """Return the live runner's script, as the execution skill writes it beside the compose."""
+    return (Path(__file__).parent / LIVE_SCRIPT).read_text(encoding="utf-8")
+
+
+def egress_proxy_script() -> str:
+    """Return the egress proxy's script, as the execution skill writes it beside the compose."""
+    return (Path(__file__).parent / EGRESS_SCRIPT).read_text(encoding="utf-8")
 
 
 def allowed_bytes(entries: Iterable[tuple[str, Sequence[str]]]) -> bytes:

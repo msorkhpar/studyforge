@@ -118,6 +118,22 @@ UNSTAGED = (
     "# editor and the runner alone; the execution skill's site step records one.\n"
 )
 
+#: The live runner and its egress proxy: services of the `live` profile, only for a corpus that
+#: declares live runs. ⭐ `LIVE_NET` is internal (the live runner has no route but the proxy) and
+#: only the proxy also joins `LIVE_OUT`, which has one.
+LIVE = "live"
+EGRESS = "egress"
+LIVE_NET = "live-net"
+LIVE_OUT = "live-out"
+LIVE_SCRIPT_FILE = "liverun.pl"
+EGRESS_SCRIPT_FILE = "egress.py"
+LIVE_SCRIPT_INSIDE = "/opt/studyforge/liverun.pl"
+EGRESS_SCRIPT_INSIDE = "/opt/studyforge/egress.py"
+
+#: What a live run may use: the proxy's address inside `LIVE_NET`, and the limits of one run.
+PROXY = f"http://{EGRESS}:3128"
+LIVE_LIMITS = {"mem_limit": "1g", "pids_limit": 256, "cpus": 1.0}
+
 #: The path a quoted URL or path in the editor's health check fetches.
 HEALTH_PATH = re.compile(r"['\"](?:https?://[^/'\"\s]+)?(/[^'\"\s]*)['\"]")
 
@@ -164,8 +180,13 @@ def plan(
     sources: str,
     extra: Sequence[tuple[str, str]],
     runner: tuple[str, Mapping[str, object]],
+    live: tuple[str, str] | None = None,
 ) -> Site:
     """Return the site service and the runner it reaches, for corpus `source`.
+
+    ⭐ `live` is `(API host, key variable name)` of a corpus that declares live runs. ⛔ `None`,
+    the default and every other corpus, returns exactly the services and networks it always did: no
+    live runner, no proxy, no network, no variable and no profile.
 
     ⭐ The editor's binds — its per-project mount of `sources` and the `extra`
     `(corpus-relative directory, folder inside)` pairs — are what the site hands a
@@ -211,9 +232,20 @@ def plan(
         "network_mode": "none",
         "restart": require(block, "restart"),
     }
+    services = [(PREFLIGHT, check), (SERVICE, site), (runner[0], reached)]
+    networks: dict[str, Mapping[str, object]] = {NETWORK: {"internal": True}}
+    if live is not None:
+        host, variable = live
+        environment = dict(site["environment"])  # type: ignore[call-overload]
+        site["environment"] = {**environment, published.LIVE_SERVICE: LIVE}
+        services += [
+            (LIVE, live_runner(runner[1], variable, owner, block)),
+            (EGRESS, egress_proxy(site, host, owner, block)),
+        ]
+        networks |= {LIVE_NET: {"internal": True}, LIVE_OUT: {}}
     return Site(
-        services=((PREFLIGHT, check), (SERVICE, site), (runner[0], reached)),
-        networks={NETWORK: {"internal": True}},
+        services=tuple(services),
+        networks=networks,
         gate={
             PREFLIGHT: {
                 "condition": "service_completed_successfully",
@@ -222,6 +254,66 @@ def plan(
         },
         editor_labels={labels.BINDS: labels.binds_text(binds)},
     )
+
+
+def hardened() -> dict[str, object]:
+    """Return what both live services carry: a read-only root, no capabilities, no privileges."""
+    return {
+        "read_only": True,
+        "cap_drop": ["ALL"],
+        "security_opt": ["no-new-privileges:true"],
+        "ulimits": {"core": 0},
+    }
+
+
+def live_runner(
+    runner: Mapping[str, object], variable: str, owner: str, block: Mapping[str, object]
+) -> dict[str, object]:
+    """Return the live runner: the runner's image, hardened, with no way out but the proxy.
+
+    ⛔ It is NOT the graded runner: a service of its own, on `runs` (the site reaches it) and
+    `LIVE_NET` (the proxy), with its own script, the corpus mounted READ-ONLY, a size-capped scratch
+    tmpfs, limits, and an environment holding the proxy and the key variable's NAME, never a value.
+    """
+    mounts = [
+        f"{one}" if str(one).endswith(":ro") else f"{one}:ro"
+        for one in runner.get("volumes", [])  # type: ignore[attr-defined]
+    ]
+    return {
+        "image": runner["image"],
+        owner: runner[owner],
+        "profiles": [LIVE],
+        "command": ["perl", LIVE_SCRIPT_INSIDE],
+        "volumes": [*mounts, f"./{LIVE_SCRIPT_FILE}:{LIVE_SCRIPT_INSIDE}:ro"],
+        "environment": {
+            "HTTPS_PROXY": PROXY,
+            "https_proxy": PROXY,
+            "HOME": "/scratch",
+            "STUDYFORGE_LIVE_KEY_NAME": variable,
+        },
+        "tmpfs": ["/scratch:size=256m,mode=1777", "/tmp:size=64m,mode=1777"],
+        **hardened(),
+        **LIVE_LIMITS,
+        "networks": [NETWORK, LIVE_NET],
+        "restart": require(block, "restart"),
+    }
+
+
+def egress_proxy(
+    site: Mapping[str, object], host: str, owner: str, block: Mapping[str, object]
+) -> dict[str, object]:
+    """Return the egress proxy: the site's own image, allowing exactly one host on port 443."""
+    return {
+        "image": site["image"],
+        owner: site[owner],
+        "profiles": [LIVE],
+        "command": ["python3", EGRESS_SCRIPT_INSIDE],
+        "volumes": [f"./{EGRESS_SCRIPT_FILE}:{EGRESS_SCRIPT_INSIDE}:ro"],
+        "environment": {"EGRESS_ALLOW_HOST": host},
+        **hardened(),
+        "networks": [LIVE_NET, LIVE_OUT],
+        "restart": require(block, "restart"),
+    }
 
 
 def built() -> dict[str, str]:
@@ -234,11 +326,21 @@ def built() -> dict[str, str]:
     return {"context": f"./{BUILD_CONTEXT}", "dockerfile": BUILD_FILE}
 
 
-def files(directory: str, allowed_ignore: str) -> tuple[tuple[str, str], ...]:
-    """Return what the published form needs beside the compose file under `directory`."""
-    return (
+def files(directory: str, allowed_ignore: str, live: bool = False) -> tuple[tuple[str, str], ...]:
+    """Return what the published form needs beside the compose file under `directory`.
+
+    ⭐ `live` adds the live runner's script and the proxy's; `False` returns the two it always did.
+    """
+    found = (
         (f"{directory}/{SCRIPT_FILE}", published.run_service_script()),
         (f"{published.ALLOWED_DIR}/.gitignore", allowed_ignore),
+    )
+    if not live:
+        return found
+    return (
+        *found,
+        (f"{directory}/{LIVE_SCRIPT_FILE}", published.live_runner_script()),
+        (f"{directory}/{EGRESS_SCRIPT_FILE}", published.egress_proxy_script()),
     )
 
 

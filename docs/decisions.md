@@ -1531,3 +1531,11 @@ What it reads, and the choices in it:
 
 **Serves.** `R1`, `R7`, `R8`
 
+
+### A live run's service half: one opt-in live runner, one egress proxy, one process per run
+
+**Decision.** A served instance for a corpus that declares live runs gets two more services in a compose profile named live, off by default: a live runner that holds no key and forks one process per run, and an egress proxy that is the only member of the routed network. Both are written by `studyforge.skills.execution.siteservice` from the manifest's host and key-variable name, and the two scripts (`liverun.pl`, `egress.py`) are written beside the compose file only for such a corpus. The live runner reads the key from the live frame, checks its shape, the working directory and the allowed-commands entry, takes a lock so one run goes at a time, and sets the key in the environment of the one child process it forks, in the one statement that does so; no argument, file, log line or environment of the runner itself holds it. Its output passes a net that replaces the key and its URL-encoded and base64 forms, including forms split across chunks. The proxy refuses to start unless it is given one bare host, tunnels only to that host on port 443, and refuses private, loopback and link-local addresses. The live runner is on the internal run network and an internal live network with the proxy; the graded runner is unchanged and on the run network alone, so it never has the proxy, the variable's name or the live verb. A corpus that does not declare live renders a compose file and scripts byte-identical to the earlier output. The pass is started with the site profile and the live profile together.
+
+**Why.** A reader's key is spent only on a run the reader started, and a leaked key cannot be recalled, so each place the key could rest is closed by construction: no disk, no log, no container configuration, no command line, no second runner. Keeping the proxy as the one route out makes a hostile program's only reachable address the one host the corpus named.
+
+**Serves.** `R1`, `R7`, `R8`

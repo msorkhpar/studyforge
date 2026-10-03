@@ -634,3 +634,11 @@ in somebody's repository.
   component that moves one moves this skill's output with it.
 - ⛔ **It does not write into the corpus's own files.** Everything is additive
   (R3), and the check onboarding generated keeps asserting it.
+
+## Live runs (opt-in)
+
+A corpus whose manifest declares `live` gets a live runner and an egress proxy in the compose
+file's `live` profile. They are off by default; start them with `--profile site --profile live`.
+The key is typed into the page by the reader and never recorded: it is not in the compose file,
+the environment file, a log or an image, and the graded runner never sees it. A corpus with no
+`live` block gets the files it always did.
