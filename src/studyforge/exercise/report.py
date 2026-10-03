@@ -106,7 +106,7 @@ from xml.etree import ElementTree
 from studyforge.exercise.cases import EDGE, JUNIT, Case
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.record import Exercise
-from studyforge.exercise.spelling import asserted, spells
+from studyforge.exercise.spelling import asserted, file_level_failure, spells
 
 #: What a report directory's members are named. ⚠️ Surefire writes a DIRECTORY
 #: of `TEST-*.xml` and pytest writes ONE file; the record declares either, and
@@ -255,6 +255,11 @@ def _fold(
     unasserted: set[str] = set()
     for path in files:
         for element in _parse(path, declared, where).iter("testcase"):
+            if file_level_failure(element) and not any(spells(element, i) for i in ids):
+                # ⭐ A test file that failed to load names no test: nothing it holds ran, so no
+                # case passed and none failed on an assertion. It is a finding, not a refusal.
+                unasserted.update(ids)
+                continue
             case_id = _identify(element, ids, declared, path, where)
             reported.add(case_id)
             if not _passed(element):

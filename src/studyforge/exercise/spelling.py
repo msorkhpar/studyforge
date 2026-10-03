@@ -38,6 +38,14 @@ ASSERTION_MESSAGE = re.compile(
 )
 
 
+#: ⭐ `node --test`'s JUnit reporter writes every failure as `type="testCodeFailure"`, whatever
+#: raised it, and puts the raised error in the element's text as `cause: <Class> ...`. An
+#: assertion is `cause: AssertionError [ERR_ASSERTION]`. ⛔ Anchored to the start of a line, so
+#: a message that merely mentions the word does not count.
+NODE_FAILURE_TYPE = "testCodeFailure"
+NODE_ASSERTION_CAUSE = re.compile(r"^\s*cause: AssertionError\b", re.MULTILINE)
+
+
 def spells(element: ElementTree.Element, case_id: str) -> bool:
     """Return whether this testcase is the one the corpus wrote `case_id` down for.
 
@@ -112,8 +120,35 @@ def asserted(element: ElementTree.Element, passing: Collection[str]) -> bool:
     failures = [child for child in element if child.tag == "failure"]
     if not failures or len(failures) != sum(1 for child in element if child.tag not in passing):
         return False
-    return all(
+    return all(_asserts(failure) for failure in failures)
+
+
+def _asserts(failure: ElementTree.Element) -> bool:
+    """Does this one `failure` element say an assertion raised it?
+
+    ⭐ A `node --test` failure (`testCodeFailure`) is told by its text alone, since its
+    `message` is the assertion's own words, or any error's.
+    """
+    if failure.get("type", "") == NODE_FAILURE_TYPE:
+        return NODE_ASSERTION_CAUSE.search(failure.text or "") is not None
+    return (
         ASSERTION_TYPE.search(failure.get("type", "")) is not None
         or ASSERTION_MESSAGE.match(failure.get("message", "")) is not None
-        for failure in failures
     )
+
+
+def file_level_failure(element: ElementTree.Element) -> bool:
+    """Is this testcase a whole test FILE that failed before any test ran?
+
+    ⭐ `node --test` reports a file it could not load (an unsupported construct, a syntax error,
+    an import that failed) as ONE testcase named for the file, `testCodeFailure`, with the text
+    `test failed`, and no test of the practice appears. ⛔ Read narrowly: the name must be the
+    base name of the `file` attribute (or the path the run was given, which ends it) and the
+    testcase must carry a failure, so a test that
+    merely shares a file's name is not this.
+    """
+    file = element.get("file", "").replace("\\", "/")
+    name = element.get("name", "")
+    failed = any(child.tag == "failure" for child in element)
+    named = name == file.rpartition("/")[2] or file.endswith(f"/{name}")
+    return bool(file) and failed and named and name.endswith((".ts", ".mts", ".js", ".mjs"))

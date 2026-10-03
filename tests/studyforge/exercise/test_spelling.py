@@ -13,7 +13,7 @@ from xml.etree import ElementTree
 import pytest
 
 from studyforge.exercise.report import PASSING_CHILDREN
-from studyforge.exercise.spelling import asserted, spells
+from studyforge.exercise.spelling import asserted, file_level_failure, spells
 
 
 def case(**attributes) -> ElementTree.Element:
@@ -110,3 +110,85 @@ def test_the_same_node_id_from_the_same_module_is_read():
     assert spells(
         case(classname="tests.a.test_x.TestC", name="test_f"), "tests/a/test_x.py::TestC::test_f"
     )
+
+
+# --- `node --test`: every failure is `testCodeFailure`, told apart by the cause in its text ----
+
+
+def node_failure(cause: str, message: str = "m") -> ElementTree.Element:
+    element = case(name="t", classname="test")
+    child = ElementTree.SubElement(
+        element, "failure", {"type": "testCodeFailure", "message": message}
+    )
+    child.text = (
+        f"[Error [ERR_TEST_FAILURE]: {message}] {{\n  code: 'ERR_TEST_FAILURE',\n"
+        f"  failureType: 'testCodeFailure',\n  cause: {cause}\n      at x\n}}"
+    )
+    return element
+
+
+@pytest.mark.parametrize(
+    "cause",
+    ["AssertionError [ERR_ASSERTION]: words", "AssertionError [ERR_ASSERTION]: Missing expected"],
+)
+def test_a_node_failure_caused_by_an_assertion_is_one(cause):
+    assert asserted(node_failure(cause), PASSING_CHILDREN)
+
+
+@pytest.mark.parametrize(
+    ("cause", "message"),
+    [
+        ("TypeError: x is null", "x is null"),
+        ("Error: NotImplementedError: write", "NotImplementedError: write"),
+        ("Error: boom", "AssertionError: pretend"),
+        ("Error: AssertionError: pretend", "AssertionError: pretend"),
+    ],
+    ids=["type-error", "not-implemented", "message-says-assertion", "cause-says-assertion"],
+)
+def test_a_node_failure_caused_by_anything_else_is_not_an_assertion(cause, message):
+    assert not asserted(node_failure(cause, message), PASSING_CHILDREN)
+
+
+def test_a_node_failure_never_reads_as_an_assertion_from_its_message_alone():
+    element = node_failure("Error: boom", "AssertionError: pretend")
+    assert not asserted(element, PASSING_CHILDREN)
+
+
+def test_the_pytest_and_surefire_readings_are_unchanged():
+    assert asserted(failing(message="assert 1 == 2"), PASSING_CHILDREN)
+    assert asserted(failing(type="org.opentest4j.AssertionFailedError"), PASSING_CHILDREN)
+    assert not asserted(failing(message="NotImplementedError: x"), PASSING_CHILDREN)
+
+
+def file_case(name: str, file: str, failed: bool = True) -> ElementTree.Element:
+    element = case(name=name, classname="test", file=file)
+    if failed:
+        ElementTree.SubElement(element, "failure", {"type": "testCodeFailure", "message": "f"})
+    return element
+
+
+@pytest.mark.parametrize(
+    "element",
+    [
+        file_case("normalise.test.ts", "/w/practice/normalise.test.ts"),
+        file_case("practice/normalise.test.ts", "/w/practice/normalise.test.ts"),
+        file_case("a.test.mjs", "C:\\w\\a.test.mjs"),
+    ],
+)
+def test_a_test_file_that_failed_to_load_is_told(element):
+    assert file_level_failure(element)
+
+
+@pytest.mark.parametrize(
+    "element",
+    [
+        file_case("normalise.test.ts", "/w/normalise.test.ts", failed=False),
+        file_case("plain", "/w/normalise.test.ts"),
+        file_case("other.test.ts", "/w/normalise.test.ts"),
+        file_case("test.ts", "/w/normalise.test.ts"),
+        case(name="normalise.test.ts", classname="test"),
+    ],
+    ids=["passed", "a-test", "another-file", "tail-not-at-a-boundary", "no-file"],
+)
+def test_nothing_else_is_a_file_that_failed_to_load(element):
+    assert not file_level_failure(element)

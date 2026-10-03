@@ -52,6 +52,7 @@ def test_the_public_surface_is_declared_and_complete():
         "ordinals",
         "plant_dirname",
         "plant_positions",
+        "require_argument_paths",
         "require_inside",
         "require_no_gap",
         "unpermitted",

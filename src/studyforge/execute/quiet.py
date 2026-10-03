@@ -258,10 +258,35 @@ PYTEST = Toolchain(
     ),
 )
 
+#: ⭐ `node --test`. Measured against real `node --test` output on the pinned Node (see the
+#: tests). Only the lines the runner prints about itself are listed: the tally lines of the
+#: default reporter that say nothing a case did not (`suites`, `cancelled`, `todo`, the
+#: duration). A load failure (`ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX`, which is what an `enum`
+#: or a parameter property gets from type stripping), an assertion, a mark and the pass/fail
+#: tally are signal. ⛔ Selected by the run's command (`node --test`) and never by being the
+#: declared runtime (`only_by_command`), so `node` as a plain interpreter is unfiltered.
+NODE_TEST = Toolchain(
+    name="node",
+    commands=("node",),
+    only_by_command=True,
+    always_noise=(),
+    signal=(
+        r"^[✖✔] ",
+        r"^ℹ (tests|pass|fail) \d+",
+        r"\b(ERR_[A-Z_]+|AssertionError|SyntaxError|TypeError|ReferenceError)\b",
+        r"^\s+(expected|actual):",
+        r"^\^+$",
+    ),
+    noise=(
+        r"^ℹ (suites|cancelled|skipped|todo|duration_ms) \d",
+        r"^Node\.js v\d",
+    ),
+)
+
 #: ⭐ THE declaration: a runtime name, as a corpus spells it in `runtimes`, to its
 #: rules. ⛔ A name that is not here has no filter, and its output passes through.
 TOOLCHAINS: dict[str, Toolchain] = {
-    toolchain.name: toolchain for toolchain in (GRADLE, MAVEN, PYTEST)
+    toolchain.name: toolchain for toolchain in (GRADLE, MAVEN, PYTEST, NODE_TEST)
 }
 
 
@@ -282,15 +307,16 @@ def select(runtimes: Iterable[str], argv: Sequence[str] | None = None) -> Toolch
     part in either rule above: it is counted nowhere, so a corpus declaring `python`
     beside Gradle selects exactly what it selected before. It is chosen only when the
     run's command names it (`pytest`, `python -m pytest`) and its runtime is declared,
-    and only when the corpus also declares a tool with rules, which is the corpus whose
-    runs the filter must tell apart.
+    and only when the corpus also declares a tool with rules that is not itself chosen by
+    command, which is the corpus whose runs the filter must tell apart. ⭐ `node --test` is
+    the second such toolchain (declared as `node`), chosen when the argv carries `--test`.
     """
     declared = list(dict.fromkeys(runtimes))
     found = [TOOLCHAINS[name] for name in declared if name in TOOLCHAINS]
     if argv:
         for toolchain in found:
             if toolchain.only_by_command and _names(toolchain, argv):
-                return toolchain if len(found) > 1 else None
+                return toolchain if any(not t.only_by_command for t in found) else None
     found = [toolchain for toolchain in found if not toolchain.only_by_command]
     if len(found) == 1:
         return found[0]
@@ -310,6 +336,8 @@ def _word(first: str) -> str:
 def _names(toolchain: Toolchain, argv: Sequence[str]) -> bool:
     """Does this command run `toolchain`: its own word, or `python -m <word>`?"""
     word = _word(argv[0])
+    if toolchain is NODE_TEST:
+        return word == "node" and "--test" in argv[1:]
     if word in toolchain.commands:
         return True
     module = len(argv) > 2 and argv[1] == "-m" and argv[2] in toolchain.commands

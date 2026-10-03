@@ -91,6 +91,10 @@ class Run:
     #: of a starter and a plant be one.
     unasserted: frozenset[str] = frozenset()
     assertions_only: bool = False
+    #: ⭐ Optional: the exit code of a type check (`tsc --noEmit`) that was run before the tests
+    #: and failed, or `None` when none was declared or it passed. ⛔ Never a test case: a gate
+    #: names it as its own finding.
+    typecheck_failed: int | None = None
 
     @property
     def reported(self) -> bool:
@@ -130,6 +134,7 @@ def folded(
     *,
     started: float,
     assertions_only: bool = False,
+    typecheck_failed: int | None = None,
 ) -> Run:
     """Fold the report a run left behind into the evidence a gate reads.
 
@@ -141,9 +146,14 @@ def folded(
     try:
         breakdown = breakdown_of(exercise, root, where, started=started)
     except ExerciseError as error:
-        return Run(role=role, attempt=attempt, exit_code=exit_code, refusal=str(error))
+        return Run(
+            role=role, attempt=attempt, exit_code=exit_code, refusal=str(error),
+            typecheck_failed=typecheck_failed,
+        )
     if breakdown is None:
-        return Run(role=role, attempt=attempt, exit_code=exit_code)
+        return Run(
+            role=role, attempt=attempt, exit_code=exit_code, typecheck_failed=typecheck_failed
+        )
     return Run(
         role=role,
         attempt=attempt,
@@ -151,6 +161,7 @@ def folded(
         passed_ids=breakdown.passed_ids,
         unasserted=breakdown.unasserted,
         assertions_only=assertions_only,
+        typecheck_failed=typecheck_failed,
     )
 
 

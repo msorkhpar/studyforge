@@ -264,6 +264,16 @@ def _arguments(bundle: Bundle, command: tuple[str, ...], field: str, where: str)
     return command
 
 
+def require_argument_paths(command: tuple[str, ...], workspace: str, where: str) -> None:
+    """Refuse a path in `command` that is not inside `workspace`, as `_arguments` does.
+
+    ⭐ For a command this module does not emit (a draft's authoring-time type check).
+    """
+    for argument in command:
+        if "/" in argument:
+            require_inside(_path_of(argument), workspace, where)
+
+
 def _path_of(argument: str) -> str:
     """The path an argument names: the argument, or the value of a `--flag=<path>`.
 
@@ -275,7 +285,11 @@ def _path_of(argument: str) -> str:
     workspace; a value that is not inside it, or not a safe path, is refused as before.
     """
     if argument.startswith("-") and "=" in argument:
-        return argument.partition("=")[2]
+        value = argument.partition("=")[2]
+        # ⭐ `--test-reporter=./<workspace>/reporter.mjs`: Node reads a reporter without a
+        # leading `./` as a package name, so the option's path may spell it. ⛔ Only an
+        # option's value, one `./`, and then it is checked as any other path.
+        return value.removeprefix("./")
     return argument
 
 

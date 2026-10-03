@@ -158,6 +158,11 @@ class CodeDraft:
     #: ⭐ Optional: `True` asks the gates to refuse a starter or a plant whose tests failed
     #: with an error that is not an assertion. `False` is every draft's behaviour until now.
     assertions_only: bool = False
+    #: ⭐ Optional: an argv run in each solution's staged workspace BEFORE its tests, such as
+    #: `("tsc", "--noEmit", ...)`. A non-zero exit is a named failure of the gate that reads
+    #: that solution, never a test case. Empty is every draft's behaviour until now: nothing is
+    #: run. Authoring-time only: it is not written into the shipped record.
+    typecheck_command: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
