@@ -199,8 +199,9 @@ def _declarations(manifest: Any) -> dict[str, Any]:
     and an absent key is today. A manifest that does declare it records it in full.
     """
     value = json.loads(json.dumps(dataclasses.asdict(manifest), default=list))
-    if value.get("reading") is None:
-        value.pop("reading", None)
+    for later in ("reading", "profile"):
+        if value.get(later) is None:
+            value.pop(later, None)
     return value
 
 

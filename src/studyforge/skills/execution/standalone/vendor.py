@@ -30,6 +30,7 @@ give a learner images the builder never ran.
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import sys
 from collections.abc import Mapping, Sequence
@@ -126,6 +127,88 @@ def unprimed_tags(
 def asker(checkout: Path, *, platform: str, run: Run):
     """Return a function asking `checkout` for the unprimed tags of a runtime set."""
     return lambda runtimes: unprimed_tags(checkout, runtimes, platform=platform, run=run)
+
+
+#: ⚠️ **Provisional: how the toolchain is asked for a profile's tag.** The toolchain's contract
+#: declares no command for it, so this is the one command its profile recipe documents, with its
+#: three slots; the day the contract declares one it replaces this, and the constant goes.
+PROFILE_TAG_BY = (
+    "python3",
+    "docker/profile_packages/package_build.py",
+    "--profile",
+    "<profile>",
+    "--image",
+    "<runner|editor>",
+    "--runtimes",
+    "<the declared set>",
+    "--print-tag",
+)
+
+#: What a tag, after its repository, may be made of.
+_TAG_AFTER_COLON = re.compile(r"^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$")
+
+
+def profile_tags(
+    checkout: Path, profile: str, runtimes: Sequence[str], *, platform: str, run: Run
+) -> dict[str, str]:
+    """Return the tag, after its repository, the toolchain computes for `profile`'s two images.
+
+    ⭐ The profile is the course's own declaration, and the toolchain is asked, so a profile it
+    does not have, or one that layers on runtimes the course does not declare, is refused by the
+    toolchain's own answer and surfaces here as `VendorRefused`. Nothing is built.
+    """
+    found: dict[str, str] = {}
+    for image in ("runner", "editor"):
+        argv = [
+            profile
+            if one == "<profile>"
+            else image
+            if one == "<runner|editor>"
+            else ",".join(runtimes)
+            if one == SET_SLOT
+            else sys.executable
+            if one == "python3"
+            else one
+            for one in PROFILE_TAG_BY
+        ] + ["--platform", platform]
+        code, printed = run(argv, Path(checkout))
+        if code != 0:
+            raise VendorRefused(
+                f"the toolchain refused profile {scrub(profile)} for the course's runtimes "
+                f"(exit {code}): run its profile command in the checkout to read why"
+            )
+        repository, _, tag = printed.strip().rpartition(":")
+        if not repository or not _TAG_AFTER_COLON.match(tag):
+            raise VendorRefused(
+                f"the toolchain printed no tag for the {image} of profile {scrub(profile)}"
+            )
+        assert_clean({"tag": tag}, f"the toolchain's {image} tag for the profile")
+        found[image] = tag
+    return found
+
+
+def profile_check(
+    manifest, bases, checkout: Path, *, platform: str, run: Run
+) -> dict[str, object]:
+    """The arguments `bases.check` takes for the course's image profile: none, if it has none.
+
+    ⛔ A course that declares a profile is exported thin only: a profile's images are published
+    bases, and a self-contained tree builds every base from the toolchain's own recipe, which holds
+    no profile. ⭐ The toolchain is asked once, for the declared profile, and only if there is one.
+    """
+    if manifest.profile and bases is None:
+        raise VendorRefused(
+            "the course declares an image profile, whose images are published bases: "
+            "export it thin, with a lock that names them"
+        )
+    if not manifest.profile:
+        return {}
+    return {
+        "profile_declared": manifest.profile,
+        "profile_tags": profile_tags(
+            checkout, manifest.profile, manifest.runtimes, platform=platform, run=run
+        ),
+    }
 
 
 def pinned(

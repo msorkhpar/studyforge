@@ -199,13 +199,22 @@ def test_the_unprimed_tags_of_a_set_are_asked_without_a_prime_and_read_past_unre
     builds = [one for one in asked if one[0] != "git"]
     assert len(builds) == 2
     assert all("java,node" in one and "--prime" not in one for one in builds)
-    with pytest.raises(PersonalDataLeak):  # the tree-writing path still gates every key
+    # the tree-writing path reads the same file name past, and still gates every key
+    vendor.ask(
+        toolchain(tmp_path / "tc3"),
+        ("java",),
+        tmp_path,
+        platform="linux/amd64",
+        run=answering(TAGS, args=vsix),
+    )
+    address = {"FETCH": "contact " + "someone" + "@" + "registrable" + ".net"}
+    with pytest.raises(PersonalDataLeak):
         vendor.ask(
             toolchain(tmp_path / "tc2"),
             ("java",),
             tmp_path,
             platform="linux/amd64",
-            run=answering(TAGS, args=vsix),
+            run=answering(TAGS, args=address),
         )
 
 

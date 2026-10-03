@@ -70,8 +70,6 @@ from studyforge.skills.execution.standalone import (
 from studyforge.skills.execution.standalone.record import MANIFEST
 from studyforge.skills.onboarding import library
 
-#: The manifest's path in the learner tree, and its shape's version.
-
 #: The machines a toolchain pins, by what `platform.machine()` says.
 MACHINES = {
     "x86_64": "linux/amd64",
@@ -124,11 +122,11 @@ def release(
     into the tree; `preview_to` names a new directory that also receives the
     read-only preview of the finished tree (`preview`).
 
-    ⭐ **Thin export**: with `bases` (from `bases.read`) the tree carries no serving library,
-    no serve recipe and no runner or editor base recipe: the site starts from the published
-    serving base and the runner and editor from the published toolchain bases, each by tag and
-    digest, and the tree keeps only the course's own layers. Without it the tree is
-    self-contained, byte for byte as it always was.
+    ⭐ **Thin export**: with `bases` (from `bases.read`) the tree carries no serving library, no
+    serve recipe and no runner or editor base recipe: the site starts from the published serving
+    base and the runner and editor from the published toolchain bases, or the course's image
+    profile's, each by tag and digest, and the tree keeps only the course's own layers. Without
+    it the tree is self-contained, byte for byte as it always was.
     """
     root, out, toolchain = Path(root), Path(out), Path(toolchain)
     if out.exists() and any(out.iterdir()):
@@ -155,6 +153,7 @@ def release(
         ),
         "editor",
     )
+    profiled = vendor.profile_check(manifest, bases, toolchain, platform=platform, run=run)
     if bases is not None:
         locked.check(
             bases,
@@ -163,6 +162,7 @@ def release(
             declared=manifest.runtimes,
             tags_for=vendor.asker(toolchain, platform=platform, run=run),
             serve_tag=locked.computed_serve_tag(library.PACKAGE.parent),
+            **profiled,
         )
     out.mkdir(parents=True, exist_ok=True)
     owned = [one for one in kept if one in pages.OWNED or one.startswith(pages.BUILDER_DIR + "/")]

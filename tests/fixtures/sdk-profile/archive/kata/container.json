@@ -1,0 +1,27 @@
+{
+  "container_api": 1,
+  "address": [
+    "kata"
+  ],
+  "titles": [
+    "Kata"
+  ],
+  "variant": "python",
+  "ingested": "2026-01-05",
+  "origin": "kata/README.md",
+  "note": "Two lessons and nothing to run: the corpus exists to declare runtimes and an image profile.",
+  "units": [
+    {
+      "n": 1,
+      "title": "Greeting",
+      "practices": 0,
+      "origin": "kata/01-greeting.md"
+    },
+    {
+      "n": 2,
+      "title": "Totals",
+      "practices": 0,
+      "origin": "kata/02-totals.md"
+    }
+  ]
+}

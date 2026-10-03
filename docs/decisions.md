@@ -1514,3 +1514,12 @@ What it reads, and the choices in it:
 **Why.** A preview committed to a `gh-pages` branch by hand drifts from `main` the moment `main` moves. Building it from `main`'s own tree on every push cannot drift and needs no second branch; a vendored stdlib-only builder needs no framework on the runner, and one source keeps the two from disagreeing.
 
 **Serves.** `R3`, `R8`, `R18`
+
+### A corpus names an image profile, and the export builds its layers on it
+
+**Decision.** A manifest may carry an optional top-level `profile`, a hyphenated name (`studyforge.corpus.manifest.profile.parse_profile`, gated at `corpus_api` 8 with no bump, and refused without `runtimes`). The thin export's bases lock may carry an optional `profile` entry (`standalone.profile.Profile`): its `name` and a `runner` and an `editor`, each a bare image named `<published base name>-<profile>` with tag and digest, the runner required. `write.release` asks the pinned toolchain for the profile's tags over the declared set (`standalone.vendor.profile_tags`) and refuses by name a profile the toolchain does not have, a runtime set it does not layer on, a lock whose profile is not the course's, or a tag it does not compute. The course's runner and editor layers start from the profile's images where the lock names them (`standalone.profile.built_on`), and their tags carry those digests; the release record lists the profile beside the bases. A course that names a profile is exported thin only. A manifest without the key and a lock without the entry produce the bytes they always did, and no module under `src/` names a profile.
+
+**Why.** A course whose practices need pinned wheels, packages or jars offline cannot run them on the shared bases, and a profile image holds them without moving any base's tag. The name is the course's declaration (R1), so the framework serves any profile the toolchain carries, and the tag is asked of the toolchain rather than written here (R18). A profile's images are published bases, so a self-contained export, which builds every base from the tree, has nothing to build them from.
+
+**Serves.** `R1`, `R18`, `R19`
+

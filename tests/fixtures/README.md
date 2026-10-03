@@ -357,3 +357,12 @@ and a golden sitting in that root is a file the plan would have to explain.
 the page assets' outputs are designed but not pinned here, and a golden for output
 nobody has designed is a fixture that will be wrong and will be trusted. A
 golden lands with the design of the output it pins.
+
+## `sdk-profile/` — a corpus that names an image profile
+
+A copy of `runnable/` whose manifest declares the runtimes `python`, `node`, `java`, `gradle` and
+`kotlin` and names a toolchain image profile in `profile`. The profile's name is data the
+corpus declares: no framework module names one, and the tests that export this corpus
+(`tests/studyforge/skills/execution/standalone/test_profile_export.py`, and `_real.py` against a
+real toolchain checkout) read the name from this manifest.
+

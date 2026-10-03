@@ -66,6 +66,7 @@ below.
 | `curriculum` | *optional* | Which document records your reading order and grouping, the address each of its groups is filed at, optionally the filename prefix each group's files carry, as a check, and whether the record opens each container of your last level with a linked entry. Absent means your adapter reads its record itself |
 | `exercises` | **required** | Whether this corpus is on the execution track at all. `false` is an answer |
 | `runtimes` | *optional* | Which runtimes your material's commands need, by name. Absent means none, and a corpus with none needs no runner |
+| `profile` | *optional* | The toolchain image profile your runner and editor are built on, beyond the base of your `runtimes`: a name, such as the toolchain lists it. Needs `runtimes`; absent means the bases alone |
 | `narration` | *optional* | Whether the site speaks. `false` is a site with no voice: no player, no clip served, nothing called missing. Absent means narrated whenever clips are recorded |
 | `onboarding_doc` | *optional* | Where onboarding writes the document a reader opens first, as a path inside the corpus ending `.md`, or `false` for none. Absent means `ONBOARDING.md` at the root |
 | `languages` | *optional* | The languages a section may be tagged with: a list of `{id, label, fence_labels}`. Absent means no tagging and today's behaviour |
@@ -381,6 +382,17 @@ the refusal names it: move your edited copy out of the generated paths, or
 restore it, and regenerate.
 
 ---
+
+## `profile` — an image profile as the base of your layers
+
+Optional. A toolchain may carry profiles: images layered on the base of a declared set that hold
+what not every corpus needs, such as pinned Python wheels, npm packages or JVM jars for offline
+practices. Name one in `profile` and the export builds the runner's and the editor's course
+layers on that profile's images instead of the plain bases. The key needs `runtimes` and at least
+the runtimes the profile layers on, which the toolchain checks when the course is exported. The
+framework names no profile; the name is yours. A course that names a profile is exported thin
+only, with a bases lock that carries a `profile` entry (see the execution skill, *A course's main
+stands alone*); a corpus with no `profile` is exported exactly as before.
 
 ## `languages` and `modes` — reading modes
 
