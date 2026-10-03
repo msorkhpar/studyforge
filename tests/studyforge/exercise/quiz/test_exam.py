@@ -54,9 +54,9 @@ def test_the_scale_is_linear_rounded_and_refuses_a_pass_outside_it():
 
 
 def test_minutes_and_layout_have_their_own_ranges():
-    assert exam.minutes_of(90, "a mock exam's", WHERE) == 90
+    assert exam.minutes_of(90, WHERE) == 90
     for bad in (0, 1441, True, 1.5):
-        assert "minutes" in refused(exam.minutes_of, bad, "a mock exam's")
+        assert "minutes" in refused(exam.minutes_of, bad)
     assert exam.layout_of("exam", WHERE) == "exam"
     assert "layout" in refused(exam.layout_of, "page")
 

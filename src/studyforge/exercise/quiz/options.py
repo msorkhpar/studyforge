@@ -95,23 +95,8 @@ def options_of(value: object, where: str, select: int | None = None) -> tuple[Op
             f"refute."
         )
     options = tuple(_option(entry, where) for entry in value)
-    require_distinct(
-        [option.id for option in options],
-        where,
-        "a question names {count} option id more than once. A reader's answer "
-        "names the option by its id, so a repeated id is an answer that means "
-        "two things. The ids are not reproduced here, since a refusal never quotes a value that "
-        "may be personal.",
-    )
-    require_distinct(
-        [normalised(option.text) for option in options],
-        where,
-        "a question offers {count} option that is identical to another after "
-        "normalisation. Two options that say the same thing are one answer "
-        "offered twice, and a reader who picks the wrong copy of the right "
-        "words is marked wrong. The text is not reproduced here, since a refusal never quotes a "
-        "value that may be personal.",
-    )
+    require_distinct([option.id for option in options], where, "option id")
+    require_distinct([normalised(option.text) for option in options], where, "option text")
     _require_the_key(options, where, select)
     return options
 
@@ -175,27 +160,64 @@ def _require_the_key(options: tuple[Option, ...], where: str, select: int | None
     )
 
 
-def require_distinct(values: list[str], where: str, sentence: str) -> None:
-    """⛔ Refuse a repeat, saying how many, never which (R7)."""
+#: What a repeat is refused with, by what repeated. ⛔ Fixed sentences and not a caller's: a refusal
+#: never says more than it is written to say (R7).
+REPEATS = {
+    "question id": "'questions' names {count} id more than once. A reader's answer is "
+    "filed under the question's id, so a repeated id is one answer standing for two questions. "
+    "The ids are not reproduced here, since a refusal never quotes a value that may be personal.",
+    "option id": "a question names {count} option id more than once. A reader's answer "
+    "names the option by its id, so a repeated id is an answer that means two things. The ids "
+    "are not reproduced here, since a refusal never quotes a value that may be personal.",
+    "option text": "a question offers {count} option that is identical to another after "
+    "normalisation. Two options that say the same thing are one answer offered twice, and a "
+    "reader who picks the wrong copy of the right words is marked wrong. The text is not "
+    "reproduced here, since a refusal never quotes a value that may be personal.",
+}
+
+
+def require_distinct(values: list[str], where: str, what: str) -> None:
+    """⛔ Refuse a repeat, saying how many, never which (R7). `what` is a key of `REPEATS`."""
     repeated = len(values) - len(set(values))
     if repeated:
-        raise ExerciseError(f"{where}: {sentence.format(count=repeated)}")
+        raise ExerciseError(f"{where}: {REPEATS[what].format(count=repeated)}")
+
+
+#: The owners of an id a refusal may name. ⛔ Anything else is named as "a value's": a refusal never
+#: reproduces a caller's words (R7).
+OWNERS = (
+    "a question's",
+    "an option's",
+    "a question's domain",
+    "a question's scenario",
+    "a question's difficulty",
+)
 
 
 def read_id(value: object, whose: str, where: str) -> str:
     """Refuse an id a reader's stored state could not be filed under."""
     if not isinstance(value, str) or not QUIZ_ID.match(value):
+        owner = whose if whose in OWNERS else "a value's"
         raise ExerciseError(
-            f"{where}: {whose} 'id' must be {QUIZ_ID_PERMITTED}. The value is not "
+            f"{where}: {owner} 'id' must be {QUIZ_ID_PERMITTED}. The value is not "
             f"reproduced here, since a refusal never quotes a value that may be personal."
         )
     return value
 
 
+#: The texts a refusal may describe, for the same reason.
+TEXTS = (
+    "an option's 'text' is what the reader chooses",
+    "an option's 'says' is why it is right or wrong",
+    "a question's 'stem' is what it asks",
+)
+
+
 def read_text(value: object, whose: str, where: str) -> str:
     """Refuse a blank where a reader is shown a sentence."""
     if not isinstance(value, str) or not value.strip():
+        owner = whose if whose in TEXTS else "a text is words a reader reads"
         raise ExerciseError(
-            f"{where}: {whose}, and it must be text. The value is {describe(value)}."
+            f"{where}: {owner}, and it must be text. The value is {describe(value)}."
         )
     return value

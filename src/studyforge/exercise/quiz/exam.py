@@ -96,15 +96,15 @@ def sitting_document(sitting: Sitting) -> dict:
 
 
 
-def minutes_of(value: object, whose: str, where: str) -> int:
+def minutes_of(value: object, where: str, sitting: bool = False) -> int:
     if (
         not isinstance(value, int)
         or isinstance(value, bool)
         or not 1 <= value <= LONGEST_SITTING
     ):
         raise ExerciseError(
-            f"{where}: {whose} 'minutes' is a whole number from 1 to {LONGEST_SITTING}. The "
-            f"value is {describe(value)}."
+            f"{where}: {'a sitting' if sitting else 'a mock exam'}'s 'minutes' is a whole "
+            f"number from 1 to {LONGEST_SITTING}. The value is {describe(value)}."
         )
     return value
 
@@ -204,7 +204,7 @@ def sittings_of(value: object, where: str) -> tuple[Sitting, ...]:
             _words(entry["title"], "a sitting's 'title' names it", where),
             _count(entry["questions"], "questions", where) if "questions" in entry else None,
             _count(entry["scenarios"], "scenarios", where) if "scenarios" in entry else None,
-            minutes_of(entry["minutes"], "a sitting's", where) if "minutes" in entry else None,
+            minutes_of(entry["minutes"], where, sitting=True) if "minutes" in entry else None,
         ))
     _distinct([one.id for one in found], "sitting", where)
     return tuple(found)

@@ -142,7 +142,7 @@ def mock_of(value: object, where: str) -> Mock:
         pass_mark=_pass_mark(value["pass_mark"], where),
         domains=_domains(value["domains"], where),
         minutes=(
-            minutes_of(value["minutes"], "a mock exam's", where) if "minutes" in value else None
+            minutes_of(value["minutes"], where) if "minutes" in value else None
         ),
         layout=layout_of(value["layout"], where) if "layout" in value else None,
         scenarios=scenarios_of(value["scenarios"], where) if "scenarios" in value else (),

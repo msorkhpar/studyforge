@@ -181,14 +181,7 @@ def questions_of(value: object, where: str) -> tuple[Question, ...]:
             f"is one every reader completes by opening it."
         )
     questions = tuple(_question(entry, where) for entry in value)
-    require_distinct(
-        [question.id for question in questions],
-        where,
-        "'questions' names {count} id more than once. A reader's answer is "
-        "filed under the question's id, so a repeated id is one answer "
-        "standing for two questions. The ids are not reproduced here, since a refusal never "
-        "quotes a value that may be personal.",
-    )
+    require_distinct([question.id for question in questions], where, "question id")
     return questions
 
 

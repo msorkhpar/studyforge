@@ -61,4 +61,4 @@ def test_ids_are_plain_tokens_and_texts_are_not_blank():
     with pytest.raises(ExerciseError):
         read_text("  ", "a text", WHERE)
     with pytest.raises(ExerciseError):
-        require_distinct(["a", "a"], WHERE, "{count} repeated")
+        require_distinct(["a", "a"], WHERE, "question id")
