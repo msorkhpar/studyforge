@@ -28,10 +28,21 @@ PRINTED_BY = [
 ]
 
 
+PROFILE_TAG = {
+    "profile_tag_api": vendor.PROFILE_TAG_API,
+    "printed_by": [
+        "python3", "docker/profile_packages/package_build.py", "--profile", "<profile>",
+        "--image", "<runner|editor>", "--runtimes", vendor.SET_SLOT, "--print-tag",
+        "--platform", "<platform>",
+    ],
+}
+
+
 def toolchain(where: Path, **builds) -> Path:
     """A checkout whose contract declares `builds`, with one input root on disk."""
     document = contracts.editor_contract()
     document["builds"] = {"builds_api": vendor.BUILDS_API, "printed_by": PRINTED_BY, **builds}
+    document["profile_tag"] = PROFILE_TAG
     where.mkdir(parents=True)
     (where / "consuming.json").write_text(json.dumps(document), encoding="utf-8")
     (where / "docker" / "minimal").mkdir(parents=True)
