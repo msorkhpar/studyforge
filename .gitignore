@@ -22,6 +22,7 @@ site.json
 # The golden fixtures are the expected output the suite compares against, so
 # they stay tracked.
 !tests/fixtures/**
+tests/fixtures/**/__pycache__/
 
 # A contributor's scratch directory for logs, tables and backups. It is ignored
 # so that a stray `.py` there does not fail ruff, and so that the personal-data

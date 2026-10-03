@@ -37,14 +37,19 @@ the player until it loads.
 from __future__ import annotations
 
 import hashlib
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
 from studyforge.corpus.placement import AUDIO_DIRNAME, GENERATED_ROOT, STUDY_DIRNAME
 from studyforge.exercise.bundle.layout import BUNDLES_DIRNAME
 from studyforge.progress import store_dir
 from studyforge.skills.execution.siteimage import BASE
-from studyforge.skills.execution.siteservice import CORPUS, SCRIPT_INSIDE
+from studyforge.skills.execution.siteservice import (
+    CORPUS,
+    LIVE_SCRIPT_FILE,
+    LIVE_SCRIPT_INSIDE,
+    SCRIPT_INSIDE,
+)
 from studyforge.skills.execution.standalone import bases as locked
 from studyforge.skills.execution.standalone import profile
 
@@ -83,6 +88,7 @@ CLIPS = ".studyforge/narration-release/clips.sha256"
 
 #: ⭐ The course's run service, baked into its runner.
 RUNSERVICE = ".studyforge/execution/runservice.pl"
+LIVE_RUNSERVICE = f".studyforge/execution/{LIVE_SCRIPT_FILE}"
 
 #: The mark every build file studyforge writes here carries.
 MARK = "# Written by studyforge's execution skill (standalone). Regenerate it; never edit it."
@@ -269,8 +275,14 @@ def site_dockerfile(slug: str, base: locked.Base | None = None) -> str:
     )
 
 
-def runner_dockerfile(slug: str) -> str:
-    """Return the course's runner: its primed layer, and the run service the site talks to."""
+def runner_dockerfile(slug: str, live: bool = False, live_dirs: Sequence[str] = ()) -> str:
+    """Return the course's runner: its primed layer, and the run service the site talks to.
+
+    ⭐ `live` (a course that declares live runs) also bakes in the live runner's script, which
+    the compose file's `live` profile starts from this same image. `live_dirs` are the course's
+    directories its live examples run from (the live runner starts in `/work`, where the
+    builder's compose binds the whole course), copied in beside it. `False` is the file it was.
+    """
     return "\n".join(
         [
             MARK,
@@ -279,6 +291,8 @@ def runner_dockerfile(slug: str) -> str:
             "ARG RUNNER_PRIMED",
             "FROM ${RUNNER_PRIMED}",
             f"COPY {RUNSERVICE} {SCRIPT_INSIDE}",
+            *([f"COPY {LIVE_RUNSERVICE} {LIVE_SCRIPT_INSIDE}"] if live else []),
+            *([f"COPY {one} {WORK}/{one}" for one in live_dirs] if live else []),
             f"WORKDIR {WORK}",
             f'CMD ["perl", "{SCRIPT_INSIDE}"]',
             f'LABEL org.studyforge.course="{slug}"',

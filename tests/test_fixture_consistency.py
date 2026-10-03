@@ -110,6 +110,8 @@ def test_only_the_personal_data_fixture_carries_personal_data():
     for path in sorted(FIXTURES.rglob("*")):
         if not path.is_file() or sanctioned in path.parents:
             continue
+        if "__pycache__" in path.parts:  # byte-code the interpreter wrote, not fixture material
+            continue
         found = shape_in(path.read_text(encoding="utf-8"))
         if found is not None:
             offenders.append(f"{path.relative_to(FIXTURES)}: {found}")

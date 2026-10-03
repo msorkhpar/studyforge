@@ -22,6 +22,22 @@ repository and ships with it: the authoring reference under
 
 ---
 
+## What it grades and runs
+
+One line per language a practice or an example runs in; the same five gates read every one.
+
+- **Java:** JUnit through Maven or Gradle, graded by its JUnit XML report.
+- **Kotlin:** JUnit or `kotlin.test` through Gradle or Maven, graded by its JUnit XML report.
+- **Python:** `pytest`, graded by its JUnit XML report, offline.
+- **TypeScript:** `node --test` on Node's type stripping, graded by a JUnit XML report, with an
+  optional `tsc --noEmit` step.
+
+A corpus names the toolchain's image profile it needs in `profile`; `claude-sdks` carries the Claude
+SDKs for Python, TypeScript, Java and Kotlin offline. A corpus that names none runs on the plain
+bases. See [Exercises](docs/authoring/exercises.md#languages-and-profiles).
+
+---
+
 ## Install
 
 You need **Python 3.14 or later** and **git**. Docker is needed only for

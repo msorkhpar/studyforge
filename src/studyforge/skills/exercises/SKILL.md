@@ -188,6 +188,22 @@ test-file pattern.
 - ⭐ **Some wrong solutions pass tests that look complete.** Before you draft a
   practice about equality, copying, immutability, time, text, numbers or
   threads, read *What the gates cannot see* in `docs/authoring/exercises.md`.
+- ⭐ **A Python or TypeScript practice has silent passes of its own**, listed in *Python and
+  TypeScript silent passes* on that page: a test that asserts nothing, truthiness
+  (`assert x`, `assert.ok(x)`), a tuple asserted, `is` against `==`, a mutable default
+  argument, a missing `await` on `assert.rejects` (Node reports it against the file), loose
+  `==` from `node:assert`, an `any` that hides a type error from `tsc`, an `enum` or a
+  parameter property that type stripping refuses, and a stub that returns without asserting.
+  Set `assertions_only` on such a draft, so `G2` and `G3` refuse a starter or plant that fails
+  on anything but an assertion, and write the adversary's wrong solutions from that list.
+- ⭐ **A mock exam is a quiz with a `mock` key.** Tag every question with exactly one declared
+  domain (`P1` holds when every domain has a question and every question a declared domain),
+  and take `Q1` to `Q3` for each question from a reader who did not write it; a reworded
+  question needs fresh readings. See *A mock exam* on that page.
+- ⛔ **A live-capable example holds no key and no captured secret.** It reads the variable the
+  manifest names from its environment, prints neither the environment nor a header, writes the
+  key nowhere and reaches the one declared host; its graded test needs no key and no network.
+  See *`live`* in `docs/authoring/corpus.md`.
 
 ⭐ **Commands are spelled from the corpus root**, and every path argument is
 inside the exercise's own workspace (`brief.places.workspace`), or `emit`

@@ -93,6 +93,8 @@ EXECUTION_KEPT = {
     "prime": "the course's build files the runner and editor images are warmed from",
     "code": "where the server copies the course's code for the editor; only its ignore file",
     "allowed": "where the server writes the runner's allowlist; only its ignore file",
+    "liverun.pl": "the live runner's script, baked into the course's runner image",
+    "egress.py": "the live runs' egress proxy, started from the course's site image",
 }
 
 #: ⭐ Top-level entries used to work with the course, kept by name (or by stem, lower-cased):
@@ -304,6 +306,20 @@ def _code(files: Sequence[str]) -> frozenset[str]:
         parts = PurePosixPath(one).parts
         if parts[: len(prime)] == prime and len(parts) > len(prime) + 1:
             found.add(parts[len(prime) + 1])
+    # ⭐ A build that does not sit at the course root is re-rooted in the prime, so its
+    # entries are not the course's top-level names. ⭐ The top-level entry that holds the
+    # same file below a directory of its own is the course's code too.
+    inside = {
+        "/".join(PurePosixPath(one).parts[len(prime) + 1 :])
+        for one in files
+        if PurePosixPath(one).parts[: len(prime)] == prime
+    }
+    for one in files:
+        parts = PurePosixPath(one).parts
+        if len(parts) < 3 or parts[0] == GENERATED_ROOT or parts[0] in KNOWN_MOVES:
+            continue
+        if any("/".join(parts[index:]) in inside for index in range(1, len(parts) - 1)):
+            found.add(parts[0])
     return frozenset(found)
 
 
