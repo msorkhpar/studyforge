@@ -72,7 +72,7 @@ from collections.abc import Sequence
 from studyforge.address import Address, AddressError
 from studyforge.corpus.placement import PlacementError
 from studyforge.corpus.placement import identity as identity_block
-from studyforge.render import templates
+from studyforge.render import modes, templates
 from studyforge.render.markup import escape, escape_attribute, inline
 from studyforge.render.page import anchors, navigation
 from studyforge.render.page import code as code_region
@@ -200,6 +200,7 @@ def _part(
     """
     rendered = section_module.render(section, placement, narration, heads_page=heads_page)
     panel = practice_region.render(section, document, placement)
+    panel = modes.tag_panel(placement.offer, section.get("lang"), panel)
     return f"{rendered}{JOIN}{panel}" if panel else rendered
 
 

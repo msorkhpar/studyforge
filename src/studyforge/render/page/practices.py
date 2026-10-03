@@ -48,7 +48,7 @@ the workspace shows (`page.anchors`).
 from __future__ import annotations
 
 from studyforge.exercise import Exercise, ExerciseError, from_document
-from studyforge.render import templates
+from studyforge.render import modes, templates
 from studyforge.render.markup import escape, escape_attribute, inline
 from studyforge.render.page import anchors
 from studyforge.render.page import practice as practice_module
@@ -116,6 +116,8 @@ def card(section: dict, document: dict, placement: Placement, unit: object) -> s
         title=inline(anchors.practice_title(section, unit)),
         concepts=_region(concepts(exercise)),
         state=_region(templates.fill(STATE_TEMPLATE) if graded else ""),
+        lang=modes.card_attributes(placement.offer, section.get("lang")),
+        carriers=modes.card_note(placement.offer, section.get("lang")),
     )
 
 

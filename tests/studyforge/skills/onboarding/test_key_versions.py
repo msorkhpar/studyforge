@@ -54,6 +54,12 @@ DRAFTS = {
         "modes": [READING_MODE],
         "outside_mode": "locked",
     },
+    (None, "absent_language"): {
+        **corpora.DRAFT,
+        "languages": [{"id": "alpha", "label": "Alpha"}],
+        "modes": [READING_MODE],
+        "absent_language": "grey",
+    },
     ("curriculum", "linked"): {
         **corpora.DRAFT,
         "levels": ["section", "module"],

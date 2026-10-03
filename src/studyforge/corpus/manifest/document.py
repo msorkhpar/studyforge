@@ -12,6 +12,11 @@ test needs to say can be said without a filesystem.
 (R1) — `tests/studyforge/corpus/manifest/test_document.py` asserts that of the
 whole of `src/`, not just of this module.
 
+Size exception: this module is the manifest's one closed declaration of its keys. The key
+map, the key order and the required keys are read against one another by the key-version gate and
+by onboarding's promote step, and a split would put a key in one file and its version in another,
+so that adding a key could update the one and forget the other.
+
 ## The three questions that are three answers
 
 ⚠️ **`variants` is a filing and presentation key and nothing more.** It says
@@ -136,6 +141,7 @@ KEY_VERSIONS: dict[tuple[str | None, str], int] = {
     (None, "modes"): 8,
     (None, "default_mode"): 8,
     (None, "outside_mode"): 8,
+    (None, "absent_language"): 8,
 }
 
 #: Every key a manifest may carry, in the order §4 writes them.
@@ -154,6 +160,7 @@ MANIFEST_KEYS = (
     "modes",
     "default_mode",
     "outside_mode",
+    "absent_language",
     "placement",
     "content",
     "media",

@@ -72,6 +72,7 @@ below.
 | `modes` | *optional* | The reading modes a reader chooses between: a list of `{id, label, summary, prose, tabs, practices}` and an optional boolean `practice_choice`. Needs `languages`; absent means no question |
 | `default_mode` | *optional* | The id of the mode shown without scripts. Needs `modes`; absent means the first declared mode |
 | `outside_mode` | *optional* | What an entry does in a mode that does not show its language: `open` or `locked`. Needs `modes`; absent means `open` |
+| `absent_language` | *optional* | What an example block and a practice show for a language they lack: `hide` or `grey`. Needs `modes`; absent means `hide` |
 | `placement` | **required** | `tree` or `sibling` |
 | `content` | **required** | Which of your files are read in, which are deliberately not, and which are not prose at all |
 | `media` | *optional* | Whether generated narration is committed, and the limits past which the build stops. A corpus with no media declares nothing |
@@ -444,6 +445,27 @@ as a list of words only once some section names several.
 **Any number of languages and modes.** The framework counts neither: a corpus of one, two, three
 or four languages is read the same way, the first-visit question and the switch list exactly the
 declared modes, and nothing in the framework names a language.
+
+**A language a block or a practice lacks.** `absent_language` (`hide`, the default, or `grey`;
+needs `modes`) decides what an example block and a practice card show for a declared language they
+are not written in. Under `hide` they show nothing for it, as they always did. Under `grey`:
+
+- an example block has, for each declared language it has no tab for, a **disabled tab**
+  (`aria-disabled`, no panel, still focusable so its reason can be read; a click selects nothing and
+  the arrow keys, Home and End still reach it without selecting it), and one sentence,
+  `Available in: <languages>.`, naming the languages that do carry it, built from the corpus's own
+  `languages`. A mode that lists none of the block's languages still shows the block, with the
+  disabled tab and the sentence, never hides it; the first enabled tab the mode lists opens;
+- a practice card carries the languages its section is tagged with and a sentence naming them; in a
+  mode whose `practices` list holds none of them the card is greyed, its link is `aria-disabled`
+  and does not open, and Previous and Next in the practice workspace pass over it; a practice a
+  mode lists reads in its own language whatever that mode's `prose`, and its panel is tagged so
+  a mode that hides its statement hides it too;
+- a read-only preview keeps all of it: the panel's note replaces the panel, the banner is
+  unchanged, and the page reads the default mode until a question is answered (a page opened from a
+  file asks on every load).
+
+A corpus that leaves the key out, or says `hide`, builds to the bytes it always did.
 
 ## `curriculum` — where your reading order is recorded
 
