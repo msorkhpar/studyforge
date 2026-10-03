@@ -86,8 +86,12 @@ def test_the_page_is_told_the_file_a_run_names_only_where_a_command_is_known(roo
     live, discovered = runs_over(root, editor=StubEditors(EDITOR))
     with serving(live, discovered) as server:
         _, _, body = post(server, at(code.CODE, LESSON))
-    # ⛔ This corpus declares python, and no command is known for it: no Run.
-    assert json.loads(body)["runs"] is None and json.loads(body)["opened"] == "main"
+    # ⭐ This corpus declares python, and pytest runs a python test: the Run names the test.
+    assert json.loads(body)["runs"] == TEST and json.loads(body)["opened"] == "main"
+    # ⛔ A source no test names has nothing to run: no Run.
+    with serving(live, discovered) as server:
+        _, _, body = post(server, at(code.CODE, ALONE))
+    assert json.loads(body)["runs"] is None
 
 
 def test_a_source_no_test_names_opens_alone_and_stays_editable_in_the_copy(root):
@@ -146,10 +150,10 @@ def test_a_missing_copy_is_refused_and_nothing_is_made(root):
     assert not (root / CODE_COPY).exists()
 
 
-def test_a_test_with_no_known_command_runs_nothing(root):
+def test_a_file_that_names_no_test_runs_nothing(root):
     live, discovered = runs_over(root, editor=StubEditors(EDITOR))
     with serving(live, discovered) as server:
-        status, _, body = post(server, at(code.CODE_TEST, TEST))
+        status, _, body = post(server, at(code.CODE_TEST, ALONE))
     assert status == 409 and code.NO_TEST in body and live.live is None
 
 
@@ -169,3 +173,41 @@ def test_a_test_runs_in_the_copy_is_streamed_and_is_recorded_nowhere(root, monke
     assert authors(root) == before
     assert discovered.corpora[0].progress().read()["practices"] == {}
     assert live.live is None
+
+
+EXAMPLE_FILES = {
+    "ex/py/bpe.py": "def encode(text):\n    return text\n",
+    "ex/py/test_bpe.py": "from bpe import encode\n",
+    "ex/ts/bpe.ts": "export const encode = (text: string) => text;\n",
+    "ex/ts/bpe.test.ts": "import { encode } from './bpe.ts';\n",
+    "ex/jv/settings.gradle": "rootProject.name = 'jv'\n",
+    "ex/jv/build.gradle": "plugins { id 'java' }\n",
+    "ex/jv/src/main/java/d/Greeter.java": "package d;\npublic class Greeter {}\n",
+    "ex/jv/src/test/java/d/GreeterTest.java": "package d;\nclass GreeterTest { Greeter g; }\n",
+    "ex/kt/settings.gradle.kts": 'rootProject.name = "kt"\n',
+    "ex/kt/build.gradle.kts": "// build\n",
+    "ex/kt/src/main/kotlin/d/Counter.kt": "package d\nclass Counter\n",
+    "ex/kt/src/test/kotlin/d/CounterTest.kt": (
+        "package d\nclass CounterTest { val c: Counter? = null }\n"
+    ),
+}
+
+
+def test_an_example_in_each_of_four_languages_is_told_the_test_a_run_names(root):
+    from tests.studyforge.serve.routes.test_runs import declare_runtimes
+
+    for where, text in EXAMPLE_FILES.items():
+        (root / where).parent.mkdir(parents=True, exist_ok=True)
+        (root / where).write_text(text, encoding="utf-8")
+    declare_runtimes(root, ["gradle", "java", "kotlin", "node", "python"])
+    live, discovered = runs_over(root, editor=StubEditors(EDITOR))
+    named = {
+        "ex/py/bpe.py": "ex/py/test_bpe.py",
+        "ex/ts/bpe.ts": "ex/ts/bpe.test.ts",
+        "ex/jv/src/main/java/d/Greeter.java": "ex/jv/src/test/java/d/GreeterTest.java",
+        "ex/kt/src/main/kotlin/d/Counter.kt": "ex/kt/src/test/kotlin/d/CounterTest.kt",
+    }
+    with serving(live, discovered) as server:
+        for source, test in named.items():
+            status, _, body = post(server, at(code.CODE, source))
+            assert status == 200 and json.loads(body)["runs"] == test, source

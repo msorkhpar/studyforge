@@ -61,6 +61,12 @@ reader sees *Tests run: 8, Failures: 0* rather than an exit line alone.
 ⛔ **A corpus whose build tool has no command here gets none**, and the page
 then offers no Run rather than one that cannot work: a command is never guessed
 for a tool nobody measured.
+
+## ⭐ One command per kind of test, by `testargv`
+
+⭐ `test_command` asks `execute.testargv` for the command, chosen by the test's suffix and the
+build file its module holds: pytest for a `.py` test, `node --test` for a `.ts` or `.js` one,
+and for a JVM test the module's own tool, Maven's (a `pom.xml`, first, unchanged) or Gradle's.
 """
 
 from __future__ import annotations
@@ -72,7 +78,7 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
 from studyforge.corpus.manifest import link_suffixes
-from studyforge.execute.codetree import CodeRefused, code_files, in_copy
+from studyforge.execute.codetree import CodeRefused, code_files
 from studyforge.execute.conventions import (
     BUILD_FILES,
     is_a_test,
@@ -80,10 +86,7 @@ from studyforge.execute.conventions import (
     source_suffixes,
     tested_stem,
 )
-
-#: The build tools a test command is known for, and each one's build file.
-MAVEN = "maven"
-POM = "pom.xml"
+from studyforge.execute.testargv import argv_for
 
 #: A word a test's text may name a source by.
 WORD = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
@@ -203,35 +206,29 @@ def test_command(
     root: Path, found: Pair, runtimes: tuple[str, ...] | list[str]
 ) -> list[str] | None:
     """Return the argv that runs `found`'s test in the copy, or `None` when none is known."""
-    if found.test is None or MAVEN not in runtimes:
+    if found.test is None:
         return None
-    return _test_argv(code_files(Path(root)), found)
+    return _test_argv(code_files(Path(root)), found, runtimes)
 
 
-def _test_argv(files: dict[str, Path], found: Pair) -> list[str] | None:
-    """Return the Maven argv that runs `found`'s test among `files`, or `None`."""
-    if _pom(found.module) not in files:
+def _test_argv(
+    files: dict[str, Path], found: Pair, runtimes: tuple[str, ...] | list[str]
+) -> list[str] | None:
+    """Return the argv that runs `found`'s test among `files`, or `None`."""
+    if found.test is None:
         return None
-    reactor = found.module
-    while reactor and _pom(_parent(reactor)) in files:
-        reactor = _parent(reactor)
-    argv = ["mvn", "-B", "-o", "-f", in_copy(_pom(reactor))]
-    if found.module != reactor:
-        cut = len(reactor) + 1 if reactor else 0
-        argv += ["-pl", found.module[cut:], "-am"]
-    return [*argv, "test", f"-Dtest={_stem(found.test)}", "-Dsurefire.failIfNoSpecifiedTests=false"]
+    return argv_for(files, found.test, found.module, runtimes)
 
 
 def test_commands(root: Path, runtimes: tuple[str, ...] | list[str]) -> list[list[str]]:
     """Return the argv that runs each test file the copy holds, every one a command may run.
 
     ⭐ **The run service's allowlist reads this** (`serve.published`): a test's
-    command names its build module and its own stem and never its source, so
-    each test is asked for on its own and no text is read. ⚠️ Code too large to
-    copy runs no test, exactly as the served example then opens nothing.
+    command names its build module and its own file and never its source, so
+    each test is asked for on its own and no text is read but a JVM test's own
+    package line. ⚠️ Code too large to copy runs no test, exactly as the served
+    example then opens nothing.
     """
-    if MAVEN not in runtimes:
-        return []
     try:
         files = code_files(Path(root))
     except CodeRefused:
@@ -241,7 +238,7 @@ def test_commands(root: Path, runtimes: tuple[str, ...] | list[str]) -> list[lis
         if is_code(path, runtimes) and is_a_test(path):
             module = module_of(files, path, runtimes)
             opened = Pair(opened=path, source=None, test=path, module=module)
-            argv = _test_argv(files, opened)  # ⭐ one walk for every test, not one each
+            argv = _test_argv(files, opened, runtimes)  # ⭐ one walk for every test, not one each
             if argv is not None:
                 found.append(argv)
     return found
@@ -308,11 +305,3 @@ def _stem(path: str) -> str:
 
 def _under(path: str, module: str) -> bool:
     return not module or path.startswith(f"{module}/")
-
-
-def _parent(directory: str) -> str:
-    return directory.rpartition("/")[0]
-
-
-def _pom(directory: str) -> str:
-    return f"{directory}/{POM}" if directory else POM

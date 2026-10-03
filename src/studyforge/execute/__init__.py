@@ -41,6 +41,7 @@ web-facing process ends up holding the socket that spec §8.3 forbids it.
 | `conventions` | what a build tool and a language call their build files, sources and tests |
 | `codetree` | the copy of a corpus's code its editor opens and its runner tests |
 | `codepair` | a code file's source and test, and the command that runs that test in the copy |
+| `testargv` | the command that runs one test file in the copy: pytest, `node`, Maven, Gradle |
 | `output` | `LineGate`: every line relative to the source root, then scrubbed |
 | `quiet` | the output filter: the declared build tool's own lines go, a failure never |
 | `commands` | what the runner will start, checked before any process exists |
