@@ -11,7 +11,7 @@ a file or an environment variable), and the API is a stand-in that never repeats
 
 ⚠️ Opt-in, and a heavy job (run through the slot, one at a time):
 
-- `STUDYFORGE_LIVE_IMAGE`: a runner image carrying `perl` and `python3` (the `claude-sdks` profile's);
+- `STUDYFORGE_LIVE_IMAGE`: a runner image carrying `perl` and `python3` (a profile's runner);
 - `STUDYFORGE_LIVE_STAGE`: an empty directory the engine can bind, never under the host's temporary
   directory. Everything made carries the label `org.studyforge.proof=live-compose` and only that
   project is removed.
@@ -45,7 +45,9 @@ SRC = Path(__file__).resolve().parents[4] / "src"
 PROOF = Path(__file__).resolve().parents[2] / "execute" / "live_proof"
 NAME = "EXAMPLE_API_KEY"
 
-pytestmark = pytest.mark.skipif(not (IMAGE and STAGE), reason="set STUDYFORGE_LIVE_IMAGE and STUDYFORGE_LIVE_STAGE")
+pytestmark = pytest.mark.skipif(
+    not (IMAGE and STAGE), reason="set STUDYFORGE_LIVE_IMAGE and STUDYFORGE_LIVE_STAGE"
+)
 
 PROGRAMS = {
     "api_call.py": """
@@ -155,7 +157,8 @@ class World:
             live={"host": "allowed.test", "key_variable": NAME,
                   "examples": [{"path": "sources/app/pom.xml", "command": entries[0][1]}]},
         )
-        made = onboard.generate(parse(json.dumps(document)), editor_text=editor_text(), root=self.root)
+        manifest = parse(json.dumps(document))
+        made = onboard.generate(manifest, editor_text=editor_text(), root=self.root)
         onboard.write(made, self.root)
         for name, text in PROGRAMS.items():
             (self.root / name).write_text(text, encoding="utf-8")
@@ -179,7 +182,9 @@ class World:
                 "egress": {
                     "command": ["python3", "/opt/studyforge/swapped.py"],
                     "volumes": ["./proof/swapped.py:/opt/studyforge/swapped.py:ro"],
-                    "environment": {"EGRESS_ALLOW_HOST": "allowed.test", "PYTHONDONTWRITEBYTECODE": "1"},
+                    "environment": {
+                        "EGRESS_ALLOW_HOST": "allowed.test", "PYTHONDONTWRITEBYTECODE": "1",
+                    },
                     **labels,
                 },
                 "live": {"environment": {"STUDYFORGE_LIVE_TIMEOUT": "6"}, **labels},
@@ -196,7 +201,8 @@ class World:
         self.environment = {
             "STUDYFORGE_PROJECT": self.project, "STUDYFORGE_RUNNER_IMAGE": IMAGE,
             "STUDYFORGE_SITE_IMAGE": SITE_IMAGE, "EDITOR_IMAGE": "unused",
-            "CODE_SERVER_PASSWORD": "unused", "HOST_UID": uid.split(":")[0], "HOST_GID": uid.split(":")[1],
+            "CODE_SERVER_PASSWORD": "unused", "HOST_UID": uid.split(":")[0],
+            "HOST_GID": uid.split(":")[1],
         }
         self.run_compose("--profile", "live", "up", "-d", "--wait", "live", "egress", "runner",
                          "allowed-api", "denied-api")
@@ -223,19 +229,24 @@ class World:
         return docker(
             "run", "--rm", "-i", "--network", f"{self.project}_runs", "--label", LABEL,
             "--read-only", "--cap-drop", "ALL", "-v", f"{engine.bindable(SRC)}:/src:ro",
-            "-v", f"{engine.bindable(self.compose / 'proof')}:/p:ro", "-e", "PYTHONDONTWRITEBYTECODE=1",
+            "-v", f"{engine.bindable(self.compose / 'proof')}:/p:ro",
+            "-e", "PYTHONDONTWRITEBYTECODE=1",
             SITE_IMAGE, "python", "/p/client.py", mode, program, stdin=(key or self.key) + "\n",
         )
 
     def holders(self, service: str) -> dict[str, list[str]]:
         """Which processes inside `service` hold the key in their environment or command line."""
         script = (
-            "import glob, os, sys\nkey = sys.stdin.read().strip().encode()\nout = {'environ': [], 'cmdline': []}\n"
+            "import glob, os, sys\nkey = sys.stdin.read().strip().encode()\n"
+            "out = {'environ': [], 'cmdline': []}\n"
             "for what in out:\n    for path in glob.glob('/proc/[0-9]*/' + what):\n        try:\n"
-            "            if key in open(path, 'rb').read():\n                out[what].append(path.split('/')[2])\n"
+            "            if key in open(path, 'rb').read():\n"
+            "                out[what].append(path.split('/')[2])\n"
             "        except OSError:\n            pass\nprint(out)\n"
         )
-        done = docker("exec", "-i", self.container(service), "python3", "-c", script, stdin=self.key + "\n")
+        done = docker(
+            "exec", "-i", self.container(service), "python3", "-c", script, stdin=self.key + "\n"
+        )
         return eval(done.strip().splitlines()[-1], {})  # noqa: S307 - our own dict literal
 
     def logs(self, service: str) -> str:
@@ -256,11 +267,13 @@ def world(tmp_path_factory):
     yield made
     made.down()
     shutil.rmtree(stage, ignore_errors=True)
-    assert docker("ps", "-aq", "--filter", f"label=com.docker.compose.project={made.project}").strip() == ""
+    left = docker("ps", "-aq", "--filter", f"label=com.docker.compose.project={made.project}")
+    assert left.strip() == ""
 
 
 def processes(world: World, service: str) -> str:
-    return docker("exec", world.container(service), "sh", "-c", "for p in /proc/[0-9]*; do tr '\\0' ' ' < $p/cmdline; echo; done")
+    loop = "for p in /proc/[0-9]*; do tr '\\0' ' ' < $p/cmdline; echo; done"
+    return docker("exec", world.container(service), "sh", "-c", loop)
 
 
 def test_the_live_runner_and_the_graded_runner_side_by_side(world):
@@ -278,26 +291,31 @@ def test_the_live_runner_and_the_graded_runner_side_by_side(world):
     work = [m for m in live["Mounts"] if m["Destination"] == "/work"]
     assert work and work[0]["RW"] is False
     env = live["Config"]["Env"]
-    assert f"STUDYFORGE_LIVE_KEY_NAME={NAME}" in env and not any(e.startswith(f"{NAME}=") for e in env)
+    assert f"STUDYFORGE_LIVE_KEY_NAME={NAME}" in env
+    assert not any(e.startswith(f"{NAME}=") for e in env)
     assert any(e.startswith("HTTPS_PROXY=http://egress:3128") for e in env)
-    # the graded runner: only the internal network, no key variable, no proxy, nothing of the live path
+    # the graded runner: only the internal network, no key variable, no proxy, no live path
     assert sorted(graded["NetworkSettings"]["Networks"]) == [f"{world.project}_runs"]
     graded_env = " ".join(graded["Config"]["Env"])
     for word in (NAME, "PROXY", "proxy", "STUDYFORGE_LIVE"):
         assert word not in graded_env and word not in json.dumps(graded["HostConfig"])
-    assert graded["HostConfig"]["NetworkMode"] != "host" and not graded["HostConfig"]["PortBindings"]
+    assert graded["HostConfig"]["NetworkMode"] != "host"
+    assert not graded["HostConfig"]["PortBindings"]
     # the proxy: both networks, nothing published, the one allowed host
     egress = world.inspect("egress")
     assert sorted(egress["NetworkSettings"]["Networks"]) == sorted(
         f"{world.project}_{name}" for name in ("live-net", "live-out")
     )
-    assert not egress["HostConfig"]["PortBindings"] and egress["HostConfig"]["ReadonlyRootfs"] is True
-    nets = json.loads(docker("network", "inspect", f"{world.project}_live-net", f"{world.project}_runs"))
+    assert not egress["HostConfig"]["PortBindings"]
+    assert egress["HostConfig"]["ReadonlyRootfs"] is True
+    both = (f"{world.project}_live-net", f"{world.project}_runs")
+    nets = json.loads(docker("network", "inspect", *both))
     assert all(n["Internal"] is True for n in nets)
-    assert json.loads(docker("network", "inspect", f"{world.project}_live-out"))[0]["Internal"] is False
+    outer = json.loads(docker("network", "inspect", f"{world.project}_live-out"))
+    assert outer[0]["Internal"] is False
 
 
-def test_a_live_run_reaches_the_stand_in_api_through_the_proxy_and_the_api_never_echoes_the_key(world):
+def test_a_live_run_reaches_the_stand_in_api_and_the_api_never_echoes_the_key(world):
     out = world.client("run", "api_call.py")
     assert "connect: HTTP/1.1 200 Connection established" in out
     assert "status: HTTP/1.0 401" in out and "invalid x-api-key" in out
@@ -344,7 +362,8 @@ def test_after_the_runs_the_key_is_in_no_log_no_file_no_inspection_and_no_diff(w
     world.client("run", "echo_key.py")
     for service in ("live", "egress", "runner", "allowed-api", "denied-api"):
         assert not leakscan.in_bytes(world.logs(service).encode(), world.key), service
-        assert not leakscan.in_bytes(docker("inspect", world.container(service)).encode(), world.key)
+        inspected = docker("inspect", world.container(service))
+        assert not leakscan.in_bytes(inspected.encode(), world.key)
     assert leakscan.in_tree(world.root, world.key) == []
     assert not any(leakscan.in_bytes(text.encode(), world.key) for text in world.files.values())
     # the engine's own mount points are the only entries in the container's diff

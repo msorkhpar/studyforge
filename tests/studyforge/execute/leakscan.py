@@ -2,8 +2,9 @@
 
 ⭐ **Its own spelling of the forms**, deliberately not `execute.live.redactions`: a scan that shared
 the redaction's blind spot would find nothing exactly where the redaction missed. The forms are the
-key raw, URL-encoded, hex, and its base64 at each of the three alignments it can sit in a longer text
-(trimmed to the characters a neighbour cannot change), in the standard and the URL-safe alphabet.
+key raw, URL-encoded, hex, and its base64 at each of the three alignments it can sit in a
+longer text (trimmed to the characters a neighbour cannot change), in the standard and the
+URL-safe alphabet.
 
 Helpers: `forms(key)`, `in_bytes(blob, key)`, `in_tree(root, key)` for every file under a directory
 (name and content), `in_processes(key)` for every readable process's command line and environment.

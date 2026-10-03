@@ -2,8 +2,8 @@
 
 Mirrors the live half of `src/studyforge/skills/execution/siteservice.py` (R12). ⭐ Read off the
 rendered file as `docker compose` reads it. ⛔ A corpus that declares no live run renders the
-bytes it always did: the proof against the tree before this change is the recorded command in the
-handoff; here the same claim is read as properties (no service, network, variable, profile or
+bytes it always did: the proof against the earlier tree is a render of both and a comparison of
+their hashes; here the same claim is read as properties (no service, network, variable, profile or
 script) and as a plant that must turn it red.
 """
 
@@ -83,7 +83,7 @@ def test_the_proxy_joins_the_internal_network_and_the_routed_one_and_allows_one_
     assert "EGRESS_ALLOW_HOST: api.example.test" in egress and "read_only: true" in egress
     nets = text.split("\nnetworks:\n")[1]
     assert re.search(r"live-net:\n\s+internal: true", nets)
-    assert re.search(r"live-out: \{\}", nets) or "live-out:" in nets and nets.count("internal: true") == 2
+    assert "live-out:" in nets and nets.count("internal: true") == 2
 
 
 def test_nothing_but_the_live_runner_and_the_proxy_joins_the_new_networks(tmp_path):

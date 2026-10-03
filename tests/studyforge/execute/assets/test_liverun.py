@@ -54,7 +54,9 @@ PROGRAMS = {
         "print()\n"
     ),
     "sleep.py": "import time\nprint('started', flush=True)\ntime.sleep(60)\n",
-    "spam.py": "import sys\nwhile True:\n    sys.stdout.write('x' * 500 + '\\n'); sys.stdout.flush()\n",
+    "spam.py": (
+        "import sys\nwhile True:\n    sys.stdout.write('x' * 500 + '\\n'); sys.stdout.flush()\n"
+    ),
     "writes.py": (
         "import os, pathlib\nkey = os.environ['EXAMPLE_API_KEY']\n"
         "for target in ('probe.txt', '.studyforge/execution/probe.txt'):\n"
@@ -195,7 +197,7 @@ def test_every_encoding_the_program_prints_of_the_whole_key_is_gone(live):
     secret = fake()
     out = texts(live.run("echo_key.py", secret))
     lines = dict(line.split(" ", 1) for line in out.splitlines() if " " in line)
-    assert lines["raw"] == "[redacted]" and lines["url"] == "[redacted]" and lines["b64"] == "[redacted]"
+    assert [lines[name] for name in ("raw", "url", "b64")] == ["[redacted]"] * 3
     assert secret not in out and "Bearer " + secret not in out
     # ⭐ Judged by the scan helper's own spelling of the forms, not the runner's: a key inside a
     # longer base64 text (`basic`) is found and replaced too.
@@ -230,19 +232,22 @@ def test_a_crash_prints_a_trace_that_carries_no_key(live):
 
 @pytest.mark.parametrize("kind", ["run", "ping2", "exec", ""])
 def test_a_verb_other_than_live_stop_and_ping_is_refused(live, kind):
-    answer = exchange(live.service, "STUDYFORGE_RUN=" + "0" * 32, ".", PYTHON, "check_env.py", kind=kind)
+    token = "STUDYFORGE_RUN=" + "0" * 32
+    answer = exchange(live.service, token, ".", PYTHON, "check_env.py", kind=kind)
     assert b"X126" in answer and b"live requests only" in answer
 
 
 def test_the_graded_verb_is_never_accepted_and_ping_answers(live):
     assert exchange(live.service, kind="ping").startswith(b"pong")
-    answer = exchange(live.service, "STUDYFORGE_RUN=" + "1" * 32, ".", PYTHON, "check_env.py", kind="run")
+    token = "STUDYFORGE_RUN=" + "1" * 32
+    answer = exchange(live.service, token, ".", PYTHON, "check_env.py", kind="run")
     assert b"X126" in answer
 
 
 @pytest.mark.parametrize(
     "key",
-    ["", "short", "x" * 300, "has space" + "a" * 9, "nl\n" + "a" * 9, "q'uote" + "a" * 9, "$(x)" + "a" * 9],
+    ["", "short", "x" * 300, "has space" + "a" * 9, "nl\n" + "a" * 9, "q'uote" + "a" * 9,
+     "$(x)" + "a" * 9],
 )
 def test_a_key_of_the_wrong_shape_is_refused_and_never_echoed_by_the_service(live, key):
     token = "STUDYFORGE_RUN=" + "2" * 32
@@ -250,7 +255,9 @@ def test_a_key_of_the_wrong_shape_is_refused_and_never_echoed_by_the_service(liv
     if "\x00" in key:
         pytest.skip("a NUL cannot be framed")
     answer = exchange(live.service, *fields)
-    assert b"X126" in answer and b"does not accept" not in answer or b"form a live run accepts" in answer
+    assert (b"X126" in answer and b"does not accept" not in answer) or (
+        b"form a live run accepts" in answer
+    )
     assert key == "" or key.encode() not in answer
 
 
@@ -264,7 +271,8 @@ def test_an_argv_the_corpus_did_not_declare_live_is_refused(live):
 
 @pytest.mark.parametrize("cwd", ["/etc", "..", "a/../..", "a//b", "./x"])
 def test_a_directory_that_climbs_or_is_not_clean_is_refused(live, cwd):
-    answer = exchange(live.service, "STUDYFORGE_RUN=" + "4" * 32, cwd, fake(), PYTHON, "check_env.py")
+    token = "STUDYFORGE_RUN=" + "4" * 32
+    answer = exchange(live.service, token, cwd, fake(), PYTHON, "check_env.py")
     assert b"X126" in answer
 
 

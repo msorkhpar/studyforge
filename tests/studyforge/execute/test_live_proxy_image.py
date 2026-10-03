@@ -56,6 +56,11 @@ def remove(names: list[str], networks: list[str]) -> None:
         docker("network", "rm", network, check=False)
 
 
+def ip_of(network: str) -> str:
+    """A `docker inspect` template for a container's address on `network`."""
+    return "{{(index .NetworkSettings.Networks \"" + network + "\").IPAddress}}"
+
+
 def run(tag: str) -> dict[str, str]:
     """Bring the proof up under names carrying `tag`, read each proxy's client output, remove it."""
     stage = Path(STAGE) / uuid.uuid4().hex
@@ -81,10 +86,10 @@ def run(tag: str) -> dict[str, str]:
             docker("run", "-d", "--name", name, "--network", outer,
                    "-e", "EGRESS_ALLOW_HOST=allowed.test", *safe, IMAGE, "python", script)
             docker("network", "connect", internal, name)
-        address = docker("inspect", "-f", f'{{{{(index .NetworkSettings.Networks "{outer}").IPAddress}}}}', names[0])
+        address = docker("inspect", "-f", ip_of(outer), names[0])
         seen = {}
         for variant, name in (("swapped", names[2]), ("shipped", names[3])):
-            proxy = docker("inspect", "-f", f'{{{{(index .NetworkSettings.Networks "{internal}").IPAddress}}}}', name)
+            proxy = docker("inspect", "-f", ip_of(internal), name)
             seen[variant] = docker(
                 "run", "--rm", "--name", names[4], "--network", internal, "--label", LABEL,
                 "--cap-drop", "ALL", *safe[2:], IMAGE, "python", "/p/client.py", proxy, address,
@@ -106,7 +111,9 @@ def test_the_allowed_host_is_reached_through_the_proxy_and_no_other_destination_
     seen = run(tag)
     for variant in ("swapped", "shipped"):
         out = seen[variant]
-        for label in ("direct allowed.test:443", "direct stand-in ip:443", "direct 1.1.1.1:443 (internet)"):
+        for label in (
+            "direct allowed.test:443", "direct stand-in ip:443", "direct 1.1.1.1:443 (internet)"
+        ):
             assert "CONNECTED" not in line(out, label), (variant, label, out)
         assert "403" in line(out, "via proxy denied.test:443"), out
         assert "403" in line(out, "via proxy allowed.test:80"), out
