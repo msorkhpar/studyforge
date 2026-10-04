@@ -54,7 +54,7 @@ from studyforge.unit.builder.document import (
     PRACTICES_KEYS,
     UNIT_KEYS,
 )
-from studyforge.unit.builder.parts import LANG_KEY, SECTION_KEYS
+from studyforge.unit.builder.parts import EDITION_KEY, LANG_KEY, SECTION_KEYS
 from studyforge.unit.errors import ContentError, describe
 from studyforge.version import check as check_version
 
@@ -133,10 +133,17 @@ def _require_sections(document: dict, where: str) -> None:
                 f"{where}: section {index} must be an object, got {describe(section)}"
             )
         tagged = LANG_KEY in section
-        expected = (*SECTION_KEYS, LANG_KEY) if tagged else SECTION_KEYS
+        edited = EDITION_KEY in section
+        wanted = [LANG_KEY] * tagged + [EDITION_KEY] * edited
+        expected = (*SECTION_KEYS, *wanted)
         _require_keys(tuple(section), expected, where, f"section {index}")
         if tagged and not (isinstance(section[LANG_KEY], str) and section[LANG_KEY]):
             raise ContentError(f"{where}: section {index} has a 'lang' that is not an id")
+        named = section.get(EDITION_KEY)
+        if edited and not (tagged and isinstance(named, str) and named):
+            raise ContentError(
+                f"{where}: section {index} has an 'edition' that is not an id, or no 'lang'"
+            )
 
 
 def _require_built_from(document: dict, where: str) -> None:

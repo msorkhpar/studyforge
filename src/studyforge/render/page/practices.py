@@ -50,7 +50,7 @@ from __future__ import annotations
 from studyforge.exercise import Exercise, ExerciseError, from_document
 from studyforge.render import modes, templates
 from studyforge.render.markup import escape, escape_attribute, inline
-from studyforge.render.page import anchors
+from studyforge.render.page import anchors, editions
 from studyforge.render.page import practice as practice_module
 from studyforge.render.page.assets import Placement
 from studyforge.render.page.errors import PageError
@@ -63,6 +63,13 @@ REGION_TEMPLATE = "practices.html"
 CARD_TEMPLATE = "practice-card.html"
 CONCEPTS_TEMPLATE = "practice-concepts.html"
 STATE_TEMPLATE = "practice-state.html"
+
+#: What a card of several language editions adds: the sentence naming them, each edition in it,
+#: and the status that summarises them (`page.editions`).
+EDITIONS_TEMPLATE = "practice-editions.html"
+EDITION_TEMPLATE = "practice-edition.html"
+STATE_EDITIONS_TEMPLATE = "practice-state-editions.html"
+EDITIONS_ATTRIBUTE = " data-practice-editions"
 
 #: The one workspace every card opens in.
 WORKSPACE_TEMPLATE = "practice-workspace.html"
@@ -87,11 +94,11 @@ def of(document: dict) -> list[dict]:
 
 def region(document: dict, placement: Placement) -> str:
     """Return the **Practice (n)** section, or `''` for a unit that sets no practice."""
-    found = of(document)
+    found = editions.entries(document)
     if not found:
         return ""
     unit = document.get("title")
-    cards = "".join(card(section, document, placement, unit) + JOIN for section in found)
+    cards = "".join(card(entry.first, document, placement, unit) + JOIN for entry in found)
     return templates.fill(
         REGION_TEMPLATE,
         id=escape_attribute(anchors.PRACTICES_ANCHOR),
@@ -101,7 +108,14 @@ def region(document: dict, placement: Placement) -> str:
 
 
 def card(section: dict, document: dict, placement: Placement, unit: object) -> str:
-    """Return one practice's card: its title, what it practises, and its status slot."""
+    """Return one practice's card: its title, what it practises, and its status slot.
+
+    ⭐ A practice with language editions is ONE card: its title carries no language, it lists the
+    editions it is available in, and its status summarises theirs (`page.editions`).
+    """
+    many = editions.edited_with(document, section)
+    if many is not None:
+        return _edited_card(many, document, placement, unit)
     exercise = _exercise(section)
     deck = exercise is not None and exercise.is_deck
     quiz = deck or (exercise is not None and exercise.is_quiz)
@@ -121,6 +135,48 @@ def card(section: dict, document: dict, placement: Placement, unit: object) -> s
         state=_region(templates.fill(STATE_TEMPLATE) if graded else ""),
         lang=modes.card_attributes(placement.offer, section.get("lang")),
         carriers=modes.card_note(placement.offer, section.get("lang")),
+    )
+
+
+def _edited_card(
+    entry: editions.Entry, document: dict, placement: Placement, unit: object
+) -> str:
+    """The one card of a practice written in several languages."""
+    section = entry.first
+    exercise = _exercise(section)
+    graded = [
+        one
+        for one in (_exercise(each) for each in entry.sections)
+        if one is not None and one.test_command is not None
+    ]
+    offer = placement.offer
+    items = ", ".join(
+        templates.fill(
+            EDITION_TEMPLATE,
+            lang=escape_attribute(str(each.get("lang"))),
+            section=escape_attribute(anchors.section_anchor(each.get("key"))),
+            key=escape_attribute(practice_module.key_of(document, each)),
+            label=escape(editions.label(offer, str(each.get("lang")))),
+        )
+        for each in entry.sections
+    )
+    return templates.fill(
+        CARD_TEMPLATE,
+        id=escape_attribute(anchors.card_anchor(section.get("key"))),
+        section=escape_attribute(anchors.section_anchor(section.get("key"))),
+        key=escape_attribute(practice_module.key_of(document, section)),
+        corpus=escape_attribute(placement.corpus),
+        kind=CODE_KIND,
+        anchor=escape_attribute(anchors.section_anchor(section.get("key"))),
+        title=inline(editions.title(anchors.practice_title(section, unit), entry)),
+        concepts=_region(concepts(exercise)),
+        state=_region(
+            templates.fill(STATE_EDITIONS_TEMPLATE, total=str(len(entry.sections)))
+            if graded
+            else ""
+        ),
+        lang=EDITIONS_ATTRIBUTE,
+        carriers=_region(templates.fill(EDITIONS_TEMPLATE, items=items)),
     )
 
 
@@ -148,7 +204,7 @@ def joined(parts: list[str], sections: list, document: dict, placement: Placemen
         for index, section in enumerate(sections)
         if isinstance(section, dict) and section.get("kind") == PRACTICE
     )
-    return JOIN.join([*parts[:first], listed, *parts[first:], workspace(document)])
+    return JOIN.join([*parts[:first], listed, *parts[first:], workspace(document, placement)])
 
 
 def embedded(section: dict, document: dict, placement: Placement) -> str:
@@ -157,9 +213,17 @@ def embedded(section: dict, document: dict, placement: Placement) -> str:
     return modes.tag_panel(placement.offer, section.get("lang"), panel)
 
 
-def workspace(document: dict) -> str:
-    """Return the one workspace every card opens in, or `''` for a unit with no practice."""
-    return templates.fill(WORKSPACE_TEMPLATE) if of(document) else ""
+def workspace(document: dict, placement: Placement | None = None) -> str:
+    """Return the one workspace every card opens in, or `''` for a unit with no practice.
+
+    ⭐ A page whose practices have language editions says, on the workspace, which language each
+    reading mode opens one in (`page.editions`); every other page's workspace is as it was.
+    """
+    if not of(document):
+        return ""
+    offer = placement.offer if placement is not None else None
+    said = editions.workspace_attribute(offer, document)
+    return templates.fill(WORKSPACE_TEMPLATE, editions=said)
 
 
 def _exercise(section: dict) -> Exercise | None:

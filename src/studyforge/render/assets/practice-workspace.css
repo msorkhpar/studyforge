@@ -88,6 +88,22 @@ section[data-practices] li[data-practice-state="passed"] p[data-practices-part="
   color: var(--done);
 }
 
+/* ⭐ A practice written in several languages is ONE card: the sentence naming its editions, each
+   marked once it is passed, and a status that says how many are. ⛔ A mark is a word first
+   (*passed*), never colour alone. */
+section[data-practices] p[data-practices-part="editions"] {
+  margin: .35rem 0 0;
+  max-width: none;
+  font-size: .82rem;
+  color: var(--muted);
+}
+
+section[data-practices] [data-edition-mark] { color: var(--done); font-weight: 700; }
+
+section[data-practices] li[data-practice-state="partial"] p[data-practices-part="state"] {
+  color: var(--fg-soft);
+}
+
 /* --- the workspace -------------------------------------------------------- */
 
 /* ⛔ The page under the workspace does not scroll while it is up: the reader
@@ -264,3 +280,20 @@ html[data-workspace-quiz] [data-workspace-away] { display: none; }
   }
 }
 
+
+/* ⭐ The language switch at the top of an edition's panel: the practice's editions, the open one
+   told apart by ink and weight as well as by its ground. `hidden` is honoured over `display`. */
+section[data-practice] p[data-practice-part="editions"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin: 0 0 .6rem;
+}
+
+section[data-practice] p[data-practice-part="editions"][hidden] { display: none; }
+
+section[data-practice] button[data-edition-switch][aria-pressed="true"] {
+  color: var(--practice);
+  background: var(--practice-soft);
+  border-color: var(--practice);
+}

@@ -88,9 +88,9 @@ def test_opening_one_closes_the_other_first_and_says_so_to_the_editor():
     # ⛔ One editor at most: the practice left is told it is closed BEFORE the
     # next is told it is opened, so its frame goes before another is asked for.
     body = behaviour()
-    opening = body[body.index("function open(index)") : body.index("function close()")]
+    opening = body[body.index("function open(index, lang)") : body.index("function close()")]
     assert opening.index("leave();") < opening.index("say(OPENED, one);")
-    leaving = body[body.index("function leave()") : body.index("function open(index)")]
+    leaving = body[body.index("function leave()") : body.index("function open(index, lang)")]
     assert "say(CLOSED, one);" in leaving
     assert "var OPENED = 'studyforge:practice-opened';" in body
     assert "var CLOSED = 'studyforge:practice-closed';" in body
@@ -165,19 +165,19 @@ def test_an_open_practice_is_named_in_the_address_and_opens_again_from_it():
     assert "var state = Object.assign({}, history.state || {});" in body
     assert "state[WAS] = hash ? was : null;" in body
     assert "pushState" not in body
-    opening = body[body.index("function open(index)") : body.index("function close()")]
+    opening = body[body.index("function open(index, lang)") : body.index("function close()")]
     assert "address('#' + one.section.id);" in opening
     closing = body[
         body.index("function close()") : body.index("practices.forEach(function (one, index)")
     ]
     assert "address('');" in closing
-    reopening = body[body.index("if (location.hash !== '#' + one.section.id) { return; }") :]
+    reopening = body[body.index("if (!named) { return; }") :]
     # ⭐ Close then returns the reader to the card: `was` is set AFTER `open`,
     # which would otherwise keep the fragment's own scroll.
-    assert reopening.index("open(index);") < reopening.index("was = ")
+    assert reopening.index("open(index, named.lang);") < reopening.index("was = ")
     # ⭐ And where the reader was, kept on the entry, wins over the card.
     assert reopening.index("var kept = history.state && history.state[WAS];") < reopening.index(
-        "open(index);"
+        "open(index, named.lang);"
     )
     assert "was = typeof kept === 'number'" in reopening
 
@@ -190,9 +190,9 @@ def test_the_page_under_the_workspace_is_inert_while_it_is_up_and_only_then():
     stilling = body[body.index("function still(one)") : body.index("function wake()")]
     assert "var kept = [shell, one.section, one.panel].filter(Boolean);" in stilling
     assert "child.inert = true;" in stilling and "stilled.push(child);" in stilling
-    leaving = body[body.index("function leave()") : body.index("function open(index)")]
+    leaving = body[body.index("function leave()") : body.index("function open(index, lang)")]
     assert "wake();" in leaving
-    opening = body[body.index("function open(index)") : body.index("function close()")]
+    opening = body[body.index("function open(index, lang)") : body.index("function close()")]
     assert "still(one);" in opening
     assert (
         'role="dialog" aria-modal="true"' in templates.template("practice-workspace.html").template
@@ -215,15 +215,14 @@ def test_a_quiz_cards_status_is_read_from_the_readers_store_and_a_code_cards_fro
 
 def test_a_quiz_opens_in_one_column_and_a_code_practice_keeps_the_split():
     body = behaviour()
-    opening = body[body.index("function open(index)") : body.index("function close()")]
+    opening = body[body.index("function open(index, lang)") : body.index("function close()")]
     assert "column(one);" in opening
     columning = body[body.index("function column(one)") : body.index("function each(")]
     assert "if (!one || !isQuiz(one)) {" in columning
     assert "root.setAttribute(QUIZ_OPEN, '');" in columning
     assert "getBoundingClientRect" not in columning, "a quiz is no longer sized by script"
-    assert (
-        "column(null);" in body[body.index("function leave()") : body.index("function open(index)")]
-    )
+    leaving = body[body.index("function leave()") : body.index("function open(index, lang)")]
+    assert "column(null);" in leaving
     style = re.sub(r"/\*.*?\*/", "", STYLE.read_text(encoding="utf-8"), flags=re.DOTALL)
     # ⭐ The quiz's intro and questions are left in the page's flow: not fixed, no scroll box.
     opening = "html[data-workspace-quiz] section[data-kind][data-workspace-open],"

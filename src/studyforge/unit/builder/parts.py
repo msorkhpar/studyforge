@@ -61,6 +61,10 @@ SECTION_KEYS = ("key", "kind", "heading", "blocks", "video", "workspace", "attac
 #: ⭐ Absent means common to every reading, so an untagged section is the bytes it was.
 LANG_KEY = "lang"
 
+#: The key a practice section carries only when its document is one language edition of a practice,
+#: after `lang`. ⭐ Absent means the practice is its own, so an unedited section is the bytes it was.
+EDITION_KEY = "edition"
+
 
 def section(*, key: str, kind: str, heading: str, blocks: list, document: dict) -> dict:
     """One served section: somebody's heading and blocks, and the archive's two fields.
@@ -89,6 +93,8 @@ def section(*, key: str, kind: str, heading: str, blocks: list, document: dict) 
     }
     if document.get(LANG_KEY) is not None:
         served[LANG_KEY] = document[LANG_KEY]
+    if document.get(EDITION_KEY) is not None:
+        served[EDITION_KEY] = document[EDITION_KEY]
     return served
 
 

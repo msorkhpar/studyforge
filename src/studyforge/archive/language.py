@@ -62,3 +62,34 @@ def require_lang(value: object, where: str) -> str:
             f"joined by single spaces"
         )
     return value
+
+
+def require_edition(document: dict, where: str) -> None:
+    """Refuse a document whose optional `edition` is not an id, or has no one `lang` to be one in.
+
+    ⭐ `edition` is the id of the practice this document is one language edition of: the practice
+    documents of one unit that share it are ONE practice, and each says in its `lang` which
+    edition it is. ⛔ An edition with no single language is not an edition of anything, so it is
+    refused here, naming the key and never the value (R7). Absent is every document until now.
+    """
+    if "edition" not in document:
+        return
+    value = document["edition"]
+    if not isinstance(value, str) or LANG_ID.fullmatch(value) is None:
+        raise ArchiveError(
+            f"{where} has an invalid 'edition', got {describe(value)}; it is an id of "
+            f"lowercase letters, digits, '-' and '_'"
+        )
+    lang = document.get("lang")
+    if not isinstance(lang, str) or " " in lang:
+        raise ArchiveError(
+            f"{where} names an 'edition' and not exactly one 'lang': an edition is one "
+            f"language of a practice, so it says which"
+        )
+
+
+def require_tags(document: dict, where: str) -> None:
+    """Check the optional tags a document may carry: `lang`, then `edition`, each when present."""
+    if "lang" in document:
+        require_lang(document["lang"], where)
+    require_edition(document, where)

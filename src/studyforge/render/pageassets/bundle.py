@@ -173,6 +173,9 @@ STYLE_PARTS = (
 #: left to the alphabet. ⚠️ Before `read-mark.js` because that part's
 #: LAST-ness is the property being kept.
 #:
+#: ⭐ `practice-editions.js` is before `practice-workspace.js`, which asks it (through
+#: `window.studyforge.editions`) what a card of a practice written in several languages holds.
+#:
 #: ⭐ `practice-panes.js` follows `practice-workspace.js`: it shows the
 #: workspace's dividers and the report's bar, and paints once at start for a
 #: practice the address opened before it ran. It reads the store's display
@@ -204,6 +207,7 @@ SCRIPT_PARTS = (
     "practice-files.js",
     "practice-editor.js",
     "practice-quiz.js",
+    "practice-editions.js",
     "practice-workspace.js",
     "practice-panes.js",
     "code-links.js",
