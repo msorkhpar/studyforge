@@ -1557,3 +1557,27 @@ What it reads, and the choices in it:
 **Why.** A reader's key is spent only on a run the reader started, and a leaked key cannot be recalled, so each place the key could rest is closed by construction: no disk, no log, no container configuration, no command line, no second runner. Keeping the proxy as the one route out makes a hostile program's only reachable address the one host the corpus named.
 
 **Serves.** `R1`, `R7`, `R8`
+
+### Highlighting covers TypeScript, YAML, shell, Markdown and TOML
+
+**Decision.** The vendored Prism 1.30.0 bundle carries five more components after the ones it had (`bash`, `markdown`, `toml`, `typescript`, `yaml`), in the order its header records, and the header's `Languages:` line declares their names, aliases included (`ts`, `sh`, `shell`, `md`, `yml`). JavaScript and JSON were already carried. Every token class the new grammars emit has a colour in `code-highlight.css` and a measured entry in the combination table, and the grammar test runs one sample per grammar under the pinned runtime. `HEADER_CHARS` is 1100 so the longer declaration stays inside the header window.
+
+**Why.** A fence tagged `typescript` fell back to the plain-text label while Python, Java and Kotlin were coloured, so a course teaching TypeScript looked unfinished. The set stays the bundle's declaration, proved both ways by the test, and the framework still holds no corpus's list.
+
+**Serves.** `R1`, `R8`
+
+### A lesson's quiz section is replaced by the interactive quiz, drawn in its place
+
+**Decision.** Where a lesson section lists the questions of the unit's plain quiz practice (every stem verbatim, from a heading to the next heading of the same or a higher level), `render.page.quizonce` draws the practice's quiz in the first block after the heading and empties the rest of the range, so the static questions and the folded key are not drawn. The practice section leaves the document the page is drawn from, so it has no card, no outline entry and no workspace of its own, and the quiz is drawn without its own heading under the lesson's. Block positions do not move. A page with no match is byte-identical to what it was. A mock exam is matched the same way, so its folded key is not drawn either. This extends the earlier rule that showed a repeated quiz once, which left a sentence pointing at the practice.
+
+**Why.** A reader saw the questions twice, once as numbered text with a folded answer key and once as the interactive quiz, and the static copy gave the key away. The interactive quiz is the one that checks and remembers, so it stands where the reader met the questions, and each explanation appears after answering.
+
+**Serves.** `R8`, `R10`
+
+### A plain quiz is one question at a time on the exam form's parts, and a quiz opens as a page that scrolls as one
+
+**Decision.** A quiz with no `mock` and no `review` is drawn by `render.page.mockform` in a quiz kind (`data-form-kind="quiz"`), with its own sentences and a pass mark of 100, over the same scripts the exam form uses (`mock-form-core.js`, `mock-form-panels.js`, `mock-form.js`) and the same stylesheet; nothing of the form is written a second time. Each answer is explained as it is given, with the chosen option's sentence and never the key; the end is a summary of verdicts with a jump to each question, then the full review. The answers are kept in the reader's browser, and a quiz is recorded as passed as soon as every question is right. The optional record key `layout` (`steps` or `page`, `exercise.quiz.layout`) opts a quiz out to the all-on-one-page layout, which is unchanged. The build writes the form's files for a corpus that has a stepped quiz. In the practice workspace, a quiz is no longer a fixed box with its own scrollbar: its intro and questions stay in the page's flow at the page's reading width, everything else is taken out of the flow while it is up, the bar stays fixed on top, and the window's scrollbar is the only one. A deck and a review bank open the same way.
+
+**Why.** The all-on-one-page quiz with a single Check control asked for seven answers at once, and the owner wants the stepper the practices and the exam form already have. Reusing the exam form's code keeps one implementation of the navigator, the store and the review. Explaining as it is given keeps the earlier rule that a wrong answer never names the key, so a reader can try again. The inner scroll box drew a narrow column in the middle of a wide screen, and a page that scrolls as one is the reading width the rest of the course uses.
+
+**Serves.** `R8`, `R10`

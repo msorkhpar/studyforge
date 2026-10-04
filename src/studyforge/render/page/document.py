@@ -140,7 +140,10 @@ def compose(
     synthesised renders exactly as a corpus that will never have any (R6), and
     the transport is absent in both cases rather than present and dead.
     """
-    document = quizonce.once(document)
+    original = document
+    document = quizonce.once(
+        document, lambda one: _embedded(one, original, placement)
+    )
     title = _title(document)
     sections = _sections(document)
     heads = anchors.title_heading(document) is not None
@@ -204,6 +207,12 @@ def _part(
     panel = practice_region.render(section, document, placement)
     panel = modes.tag_panel(placement.offer, section.get("lang"), panel)
     return f"{rendered}{JOIN}{panel}" if panel else rendered
+
+
+def _embedded(section: dict, document: dict, placement: Placement) -> str:
+    """Return one quiz practice's panel, drawn inside the lesson section that repeated it."""
+    panel = practice_region.render(section, document, placement, embedded=True)
+    return modes.tag_panel(placement.offer, section.get("lang"), panel)
 
 
 def identity(document: dict, placement: Placement) -> str:

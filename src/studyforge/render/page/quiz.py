@@ -69,13 +69,19 @@ QUIZ_TEMPLATE = "practice-quiz.html"
 QUESTION_TEMPLATE = "practice-question.html"
 OPTION_TEMPLATE = "practice-option.html"
 
+#: The quiz's own heading. ⭐ Left out where the quiz stands under a lesson's heading already
+#: (`page.quizonce`), so a section is never headed twice.
+HEAD = '<div data-practice-part="head"><h2>Answer these</h2></div>\n'
+
 #: What separates two rendered rows. ⚠️ The same shape `page.practice._region`
 #: uses: a row is exactly its markup plus one newline, never a conditional
 #: newline somewhere else (R10).
 JOIN = "\n"
 
 
-def render(exercise: Exercise, *, key: str, corpus: str, grader: str) -> str:
+def render(
+    exercise: Exercise, *, key: str, corpus: str, grader: str, embedded: bool = False
+) -> str:
     """Return one quiz's section, or `''` for an exercise that is not one.
 
     ⛔ **`''` is the honest answer for a code exercise**, the same way
@@ -89,6 +95,7 @@ def render(exercise: Exercise, *, key: str, corpus: str, grader: str) -> str:
         QUIZ_TEMPLATE,
         key=escape_attribute(key),
         corpus=escape_attribute(corpus),
+        head="" if embedded else HEAD,
         grader=grader,
         questions=questions(exercise.questions, key),
         answers=answers(exercise.questions),

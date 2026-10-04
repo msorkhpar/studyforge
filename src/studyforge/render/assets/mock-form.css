@@ -153,3 +153,25 @@ section[data-mock-form] input:disabled + * { cursor: default; }
   section[data-mock-form] p[data-form-part="pager"] button,
   section[data-mock-form] p[data-form-part="controls"] button { flex-basis: 100%; }
 }
+
+/* ⭐ A plain quiz drawn one question at a time wears the exam form: it has no flag, no clock and
+   no domains, each answer is explained where it is given, and the end is a list of verdicts, each a
+   way back to its question. No colour and no measure of its own. */
+section[data-mock-form][data-form-kind="quiz"] [data-form-part="flag-line"] { display: none; }
+
+section[data-mock-form][data-form-kind="quiz"]:not([data-mock-passed]) [data-form-part="review"] p[data-form-part="verdict"] {
+  margin: .35rem 0 0;
+  padding: .35rem .6rem;
+  background: var(--surface);
+  border-left: 3px solid var(--rule-strong);
+  border-radius: var(--radius-tight);
+  font-weight: 400;
+}
+section[data-mock-form][data-form-kind="quiz"] li[data-practice-verdict="correct"] > [data-form-part="review"] p[data-form-part="verdict"] { border-left-color: var(--done); }
+section[data-mock-form][data-form-kind="quiz"] li[data-practice-verdict="wrong"] > [data-form-part="review"] p[data-form-part="verdict"] { border-left-color: var(--accent); }
+
+section[data-mock-form] ol[data-form-part="summary"] { margin: 0 0 .6rem; padding: 0; list-style: none; }
+section[data-mock-form] ol[data-form-part="summary"] li { margin: 0 0 .25rem; }
+section[data-mock-form] ol[data-form-part="summary"] button { width: 100%; text-align: left; }
+section[data-mock-form] ol[data-form-part="summary"] li[data-form-verdict="right"] button { border-left: 4px solid var(--done); }
+section[data-mock-form] ol[data-form-part="summary"] li[data-form-verdict="wrong"] button { border-left: 4px solid var(--accent); }

@@ -40,6 +40,9 @@
     var name = exam.getAttribute('data-practice-quiz');
     var passMark = Number(exam.getAttribute('data-practice-mock'));
     var examLayout = exam.getAttribute('data-mock-form') === 'exam';
+    /* A plain quiz drawn one question at a time wears the same form: no clock, no sittings, no
+       domains; each answer is explained as it is given and the end is a summary. */
+    var quizFlavor = exam.getAttribute('data-form-kind') === 'quiz';
     var list = exam.querySelector('[data-practice-part="questions"]');
     var items = [].slice.call(list.querySelectorAll('[' + QUESTION + ']'));
     var byId = {};
@@ -81,7 +84,7 @@
     var c = {
       exam: exam, plan: plan, words: words, key: key, passMark: passMark, name: name, list: list,
       items: items, byId: byId, metas: metas, metaById: metaById, sittings: sittings, view: view,
-      examLayout: examLayout, state: function () { return state; }, clear: function () { state = null; },
+      examLayout: examLayout, quiz: quizFlavor, state: function () { return state; }, clear: function () { state = null; },
       stopTimer: stopTimer, lock: lock, refresh: refresh, go: go, isRight: isRight, begin: begin
     };
     var P = wirePanels(c);
@@ -209,7 +212,7 @@
           flag.textContent = state.flags[id] ? words.flagged : words.flag;
           flag.disabled = state.submitted;
         }
-        if (line) { line.hidden = state.submitted; }
+        if (line) { line.hidden = state.submitted || quizFlavor; }
       });
       items.forEach(function (item) {
         if (item.getAttribute('data-form-out')) { item.hidden = true; }
@@ -217,7 +220,9 @@
       var answered = Object.keys(state.answers).length;
       var meter = part(exam, 'meter');
       if (meter) { meter.max = state.order.length; meter.value = answered; }
-      part(exam, 'count').textContent = fill(words.count, { answered: answered, asked: state.order.length });
+      part(exam, 'count').textContent = quizFlavor && !state.submitted
+        ? fill(words.positionCount, { n: state.current + 1, total: state.order.length, answered: answered })
+        : fill(words.count, { answered: answered, asked: state.order.length });
       P.drawNavigator();
       if (examLayout && !state.submitted) {
         pager.hidden = false;
@@ -272,6 +277,15 @@
       });
     }
 
+    /* A quiz is complete the moment every question is right, as the all-on-one-page quiz is, so
+       the card over it reads passed without the reader having to finish. */
+    function settleQuiz() {
+      var progress = window.studyforge && window.studyforge.progress;
+      var every = state.order.length > 0 && state.order.every(function (id) { return isRight(id, state.answers[id]); });
+      if (every && progress) { progress.passQuiz(name); }
+      exam.dispatchEvent(new CustomEvent(SETTLED, { bubbles: true }));
+    }
+
     function settle(reached) {
       var progress = window.studyforge && window.studyforge.progress;
       if (reached && progress) { progress.passQuiz(name); }
@@ -308,8 +322,9 @@
         var box = item.querySelector('[data-form-part="review"]');
         if (box) { box.hidden = true; box.textContent = ''; }
         var line = item.querySelector('[data-form-part="flag-line"]');
-        if (line) { line.hidden = false; }
+        if (line) { line.hidden = quizFlavor; }
       });
+      if (quizFlavor) { P.explainAll(); }
       result.hidden = true;
       exam.removeAttribute('data-mock-passed');
       refresh();
@@ -327,6 +342,7 @@
       confirming = false;
       missing.hidden = true;
       save();
+      if (quizFlavor) { P.explain(item.getAttribute(QUESTION)); settleQuiz(); }
       refresh();
     });
     exam.addEventListener('click', function (event) {

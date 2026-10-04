@@ -93,11 +93,16 @@ def sentences() -> list[str]:
     return [option["says"] for one in QUESTIONS for option in one["options"]]
 
 
-def quiz_corpus(where: Path) -> Path:
-    """Copy `depth1` under `where`, add the quiz, declare exercises, build it; return its root."""
+def quiz_corpus(where: Path, layout: str | None = "page") -> Path:
+    """Copy `depth1` under `where`, add the quiz, declare exercises, build it; return its root.
+
+    ⭐ The quiz is the all-on-one-page layout unless `layout` says otherwise: the readings built
+    on this corpus are about that layout, and `layout=None` is the default, one question at a time.
+    """
     root = where / "depth1"
     shutil.copytree(fixture_root(), root)
-    document = practice_document(questions=QUESTIONS)
+    extra = {"layout": layout} if layout else {}
+    document = practice_document(questions=QUESTIONS, **extra)
     (root / PRACTICE_DOCUMENT).write_text(render(document), encoding="utf-8")
     manifest = root / "corpus.json"
     declared = json.loads(manifest.read_text(encoding="utf-8"))

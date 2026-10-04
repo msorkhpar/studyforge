@@ -42,6 +42,7 @@ PERMITTED_IMPORTS = {
     "studyforge.exercise.quiz.exam",
     "studyforge.exercise.quiz.examkeys",
     "studyforge.exercise.quiz.grading",
+    "studyforge.exercise.quiz.layout",
     "studyforge.exercise.quiz.mock",
     "studyforge.exercise.quiz.review",
     "studyforge.exercise.quiz.options",

@@ -29,8 +29,7 @@ RAW_COLOUR_EXEMPTIONS = {"video-player.css": {"#000", "#fff"}}
 #: exemption cannot quietly widen into "any token nobody defined". ⚠️ `--units`
 #: and `--segments` are written by the renderer into the strip's own markup: a
 #: count the build knows, never a colour, a measure or a font. ⚠️
-#: `--workspace-intro` is a quiz intro's measured height, set by
-#: `practice-workspace.js` while the workspace is up; `--workspace-left` and
+#: `--workspace-left` and
 #: `--workspace-report` are the reader's pane sizes, set by `practice-panes.js`.
 SET_BY_SCRIPT = (
     "--plyr",
@@ -38,7 +37,6 @@ SET_BY_SCRIPT = (
     "--read",
     "--units",
     "--segments",
-    "--workspace-intro",
     "--workspace-left",
     "--workspace-report",
 )

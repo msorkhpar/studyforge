@@ -150,7 +150,8 @@ def test_the_workspace_layer_stands_over_every_other_raised_layer():
     shell = shell[: shell.index("}")]
     assert "position: fixed;" in shell and "inset: 0;" in shell
     assert int(re.search(r"z-index: (\d+);", shell).group(1)) > 2
-    assert "html[data-workspace-open] { overflow: hidden; }" in style
+    # ⭐ A code practice freezes the page under it; a quiz is a page that scrolls as one.
+    assert "html[data-workspace-open]:not([data-workspace-quiz]) { overflow: hidden; }" in style
     # ⭐ At phone width the statement stacks over the editor.
     assert "@media (max-width: 40rem)" in style
 
@@ -219,11 +220,14 @@ def test_a_quiz_opens_in_one_column_and_a_code_practice_keeps_the_split():
     columning = body[body.index("function column(one)") : body.index("function each(")]
     assert "if (!one || !isQuiz(one)) {" in columning
     assert "root.setAttribute(QUIZ_OPEN, '');" in columning
-    assert columning.index("root.setAttribute(QUIZ_OPEN, '');") < columning.index(
-        "getBoundingClientRect"
-    )
+    assert "getBoundingClientRect" not in columning, "a quiz is no longer sized by script"
     assert (
         "column(null);" in body[body.index("function leave()") : body.index("function open(index)")]
     )
     style = re.sub(r"/\*.*?\*/", "", STYLE.read_text(encoding="utf-8"), flags=re.DOTALL)
-    assert "top: calc(3.25rem + var(--workspace-intro, 0px));" in style
+    # ⭐ The quiz's intro and questions are left in the page's flow: not fixed, no scroll box.
+    quizzing = style[style.index("html[data-workspace-quiz] section[data-kind][data-workspace-open],") :]
+    assert "position: static;" in quizzing[: quizzing.index("}")]
+    assert "overflow: visible;" in quizzing[: quizzing.index("}")]
+    assert "html[data-workspace-quiz] [data-workspace-away] { display: none; }" in style
+    assert "html[data-workspace-open]:not([data-workspace-quiz]) { overflow: hidden; }" in style

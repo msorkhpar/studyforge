@@ -99,6 +99,51 @@ WORDS = {
 }
 
 
+#: What differs when the exam form draws a plain quiz, one question at a time (`kind="quiz"`): the
+#: words the page says and the key's words. ⭐ Every other word is the exam form's own, shared.
+QUIZ_WORDS = {
+    "reached": "You answered all {asked} questions correctly.",
+    "short": "You answered {right} of {asked} questions correctly.",
+    "summary": "Your answers",
+    "summaryItem": "Question {n}: {verdict}",
+    "summaryJump": "Go to question {n}",
+    "confirm": "Not answered yet: {list}. Choose Finish quiz again to finish anyway.",
+    "positionCount": "Question {n} of {total}. {answered} answered.",
+}
+
+#: The sentences the template carries, for the exam and for the quiz.
+EXAM_TEXT = {
+    "label": "Mock exam",
+    "heading": "Mock exam",
+    "offline": "Scoring this exam needs this page's script, and it is not running here. Read the "
+    "questions and choose your answers; nothing here can score them.",
+    "submit": "Submit exam",
+    "again": "Start again",
+}
+QUIZ_TEXT = {
+    "label": "Questions",
+    "heading": "Answer these",
+    "offline": "Checking answers needs this page's script, and it is not running here. Read the "
+    "questions and choose your answers; nothing here can check them.",
+    "submit": "Finish quiz",
+    "again": "Try again",
+}
+
+#: A plain quiz is complete only when every question is right: the pass mark is the whole of it.
+QUIZ_PASS_MARK = 100
+
+
+def wanted_for_quiz(exercise: Exercise) -> bool:
+    """Is this a plain quiz drawn one question at a time? ⭐ The default for every plain quiz."""
+    return (
+        exercise.is_quiz
+        and exercise.mock is None
+        and exercise.review is None
+        and exercise.layout != "page"
+        and bool(exercise.questions)
+    )
+
+
 def wanted_for(exercise: Exercise) -> bool:
     """Does this mock exam use the exam form? ⭐ Only when it opts in; else it is the page of old."""
     mock = exercise.mock
@@ -114,17 +159,29 @@ def render(
     corpus: str,
     grader: str,
     assets: Callable[[str], str],
+    embedded: bool = False,
 ) -> str:
-    """Return one opted-in mock exam's section."""
+    """Return one opted-in mock exam's section, or a plain quiz's, one question at a time.
+
+    `embedded` leaves out the section's own heading, for a quiz that stands under a lesson's.
+    """
     mock = exercise.mock
     questions = exercise.questions
-    scenarios = {one.id: one for one in mock.scenarios}
-    difficulties = {one.id: one.title for one in mock.difficulties}
+    quizzing = mock is None
+    scenarios = {one.id: one for one in mock.scenarios} if mock else {}
+    difficulties = {one.id: one.title for one in mock.difficulties} if mock else {}
+    text = QUIZ_TEXT if quizzing else EXAM_TEXT
     return templates.fill(
         FORM_TEMPLATE,
         key=escape_attribute(key),
-        passmark=str(mock.pass_mark),
-        layout=escape_attribute(mock.layout or "page"),
+        passmark=str(QUIZ_PASS_MARK if quizzing else mock.pass_mark),
+        layout="exam" if quizzing else escape_attribute(mock.layout or "page"),
+        kind=' data-form-kind="quiz"' if quizzing else "",
+        label=text["label"],
+        head="" if embedded else f'<div data-practice-part="head"><h2>{text["heading"]}</h2></div>\n',
+        offline=text["offline"],
+        submit=text["submit"],
+        again=text["again"],
         corpus=escape_attribute(corpus),
         asked=str(len(questions)),
         grader=grader,
@@ -133,7 +190,7 @@ def render(
         ),
         answers=_key_block(questions),
         plan=_safe(_plan(exercise)),
-        words=_safe(WORDS),
+        words=_safe({**WORDS, **QUIZ_WORDS} if quizzing else WORDS),
         stylesheet=escape_attribute(assets(STYLESHEET_NAME)),
         core=escape_attribute(assets(CORE_NAME)),
         panels=escape_attribute(assets(PANELS_NAME)),
@@ -215,6 +272,9 @@ def _key_block(questions: tuple[Question, ...]) -> str:
 
 def _plan(exercise: Exercise) -> dict:
     mock = exercise.mock
+    if mock is None:
+        # ⭐ A plain quiz: one pool, no domains, no clock, no sittings; complete only when all right.
+        return {"pass_mark": QUIZ_PASS_MARK, "domains": [], "layout": "exam"}
     plan: dict = {
         "pass_mark": mock.pass_mark,
         "domains": [

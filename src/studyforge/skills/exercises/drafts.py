@@ -193,6 +193,9 @@ class QuizDraft:
     #: ⭐ Optional: a quiz that is a spaced-review bank (`exercise.quiz.review`), gated by `Q1`–`Q5`
     #: and `S1`. `None` is every quiz drafted until now. ⛔ Never together with `mock`.
     review: Review | None = None
+    #: ⭐ Optional: `"page"` opts the quiz out of one-question-at-a-time (`exercise.quiz.layout`).
+    #: `None` is every quiz drafted until now.
+    layout: str | None = None
 
 
 @dataclass(frozen=True, slots=True)

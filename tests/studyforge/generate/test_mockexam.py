@@ -19,7 +19,7 @@ ADDED = [".studyforge/assets/mock-exam.css", ".studyforge/assets/mock-exam.js"]
 
 
 def test_a_corpus_with_a_plain_quiz_and_one_with_none_want_no_mock_files(tmp_path):
-    plain = mock_corpus(tmp_path / "plain", mock=False)
+    plain = mock_corpus(tmp_path / "plain", mock=False, layout="page")
     assert wanted(read_corpus(plain)) is False
     assert wanted(read_corpus(fixture_root())) is False
 
@@ -30,7 +30,7 @@ def test_a_corpus_with_a_mock_exam_wants_them(tmp_path):
 
 
 def test_a_mock_exam_adds_exactly_two_files_and_leaves_the_shared_bundle_as_it_was(tmp_path):
-    plain = built_files(mock_corpus(tmp_path / "plain", mock=False))
+    plain = built_files(mock_corpus(tmp_path / "plain", mock=False, layout="page"))
     mocked = built_files(mock_corpus(tmp_path / "mock"))
     assert sorted(set(mocked) - set(plain)) == ADDED
     assert sorted(set(plain) - set(mocked)) == []
@@ -53,7 +53,7 @@ def test_only_the_page_with_the_exam_links_the_files(tmp_path):
 
 def test_a_plain_quiz_builds_to_the_same_bytes_as_before_it_knew_about_mock_exams(tmp_path):
     # ⭐ The page of a quiz with no `mock` carries no word of the mock part.
-    plain = built_files(mock_corpus(tmp_path / "plain", mock=False))
+    plain = built_files(mock_corpus(tmp_path / "plain", mock=False, layout="page"))
     joined = b"".join(plain.values())
     for word in (b"mock-exam", b"data-practice-mock", b"data-mock-"):
         assert word not in joined

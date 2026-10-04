@@ -117,7 +117,7 @@ from studyforge.progress import RAISES as PROGRESS_RAISES
 from studyforge.progress import practice_key
 from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute
-from studyforge.render.page import deck, mark, mock, quiz, review, scope
+from studyforge.render.page import deck, mark, mock, mockform, quiz, review, scope
 from studyforge.render.page.assets import Placement
 from studyforge.render.page.errors import PageError
 
@@ -171,7 +171,9 @@ CASE_TEMPLATE = "practice-case.html"
 JOIN = "\n"
 
 
-def render(section: dict, document: dict, placement: Placement) -> str:
+def render(
+    section: dict, document: dict, placement: Placement, *, embedded: bool = False
+) -> str:
     """Return one practice section's panel, or `''` where the unit sets no work.
 
     ⛔ Empty is the ordinary answer and it is the whole product decision: §7's
@@ -222,9 +224,25 @@ def render(section: dict, document: dict, placement: Placement) -> str:
                 corpus=placement.corpus,
                 grader=_region(templates.fill("practice-grader-mock.html")),
                 assets=placement.asset,
+                embedded=embedded,
+            )
+        if mockform.wanted_for_quiz(exercise):
+            # ⭐ A plain quiz is drawn one question at a time by the exam form's own parts, unless
+            # its record opts out with `layout: page` (`exercise.quiz.layout`).
+            return mockform.render(
+                exercise,
+                key=key,
+                corpus=placement.corpus,
+                grader=_region(grader(exercise)),
+                assets=placement.asset,
+                embedded=embedded,
             )
         return quiz.render(
-            exercise, key=key, corpus=placement.corpus, grader=_region(grader(exercise))
+            exercise,
+            key=key,
+            corpus=placement.corpus,
+            grader=_region(grader(exercise)),
+            embedded=embedded,
         )
     return templates.fill(
         PANEL_TEMPLATE,

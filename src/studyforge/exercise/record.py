@@ -173,6 +173,9 @@ class Exercise:
     review: quiz.Review | None = None
     #: ⭐ The cards of a deck of flashcards (`exercise.deck`); `None` for every other record.
     cards: tuple[Card, ...] | None = None
+    #: ⭐ How a plain quiz is drawn (`exercise.quiz.layout`): `None` is the default, one question at
+    #: a time; `"page"` is the opt-out that draws every question on one page.
+    layout: str | None = None
 
     @property
     def graded(self) -> bool:
@@ -258,6 +261,7 @@ def from_document(value: object, where: str) -> Exercise:
     quiz.require_no_questions(value, where)
     quiz.require_no_mock(value, where)
     quiz.require_no_review(value, where)
+    quiz.require_no_layout(value, where)
     require_no_cards(value, where)
     require_present(value, where)
     authored = _authored(value, kind, where)
@@ -311,6 +315,7 @@ def to_document(exercise: Exercise) -> dict:
         CONCEPTS: list(exercise.concepts or ()),
         "review": quiz.review_document(exercise.review) if exercise.review else None,
         "cards": cards_document(exercise.cards or ()),
+        quiz.LAYOUT: exercise.layout,
     }
     return {key: values[key] for key in _written_keys(exercise)}
 
@@ -327,6 +332,8 @@ def _written_keys(exercise: Exercise) -> tuple[str, ...]:
     if exercise.is_quiz:
         carried = set(quiz.QUIZ_KEYS) - (set() if exercise.origin else {"origin"})
         carried = (carried - {CONCEPTS, quiz.MOCK}) | concepts
+        if exercise.layout is not None:
+            carried.add(quiz.LAYOUT)
         if exercise.mock is not None:
             carried.add(quiz.MOCK)
         if exercise.review is not None:
@@ -359,6 +366,7 @@ def _authored(value: dict, kind: str, where: str) -> dict:
         "files": _files(value, where) if kind == DEFAULT_KIND else None,
         "review": quiz.review_in(value, where) if kind == QUIZ else None,
         "cards": cards_in(value, where) if kind == FLASHCARDS else None,
+        quiz.LAYOUT: quiz.layout_in(value, where) if kind == QUIZ else None,
     }
 
 

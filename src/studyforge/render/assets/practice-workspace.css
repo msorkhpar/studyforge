@@ -92,7 +92,7 @@ section[data-practices] li[data-practice-state="passed"] p[data-practices-part="
 
 /* ⛔ The page under the workspace does not scroll while it is up: the reader
    scrolls the statement and the panel, each inside itself. */
-html[data-workspace-open] { overflow: hidden; }
+html[data-workspace-open]:not([data-workspace-quiz]) { overflow: hidden; }
 
 /* ⭐ The shell is the ground and the bar. ⛔ Above BOTH of the page's other
    raised layers — the skip link at 2 and the narration transport at 1 — or the
@@ -179,6 +179,17 @@ section:is([data-practice], [data-practice-quiz])[data-workspace-open] {
   flex-direction: column;
 }
 
+/* ⛔ **A language-tagged practice stays a flex column when it opens.** The reading modes' generated
+   rules show a tagged section the reader is linked to with `display: block`
+   (`html[data-mode] section[data-lang][data-linked]:not(...)`), which outweighs the rule above and
+   turned the open panel into a block: the editor kept its natural height, about eight lines, with
+   the rest of the pane empty, and no divider could change it. Repeating the attribute raises this
+   rule over those without naming a mode or a language. A quiz is excluded: it is a page in flow. */
+html[data-workspace-open]:not([data-workspace-quiz])
+  section:is([data-practice], [data-practice-quiz])[data-workspace-open][data-workspace-open][data-workspace-open] {
+  display: flex;
+}
+
 /* ⭐ The editor slot takes the room: the note, the controls, the status and the
    output keep the size they had, and what a reader needs more of is the CODE.
    ⚠️ `min-height` holds a usable editor when the output grows. */
@@ -198,32 +209,41 @@ section[data-practice][data-workspace-open] div[data-practice-part="editor"] ifr
   min-height: 16rem;
 }
 
-/* ⭐ **A QUIZ OPENS IN ONE COLUMN.** It has no editor to set beside its intro,
-   so a split would leave the left pane holding a heading and one line. The
-   intro sits at the top, at its own height (`--workspace-intro`, measured by
-   `practice-workspace.js`), and the questions, the check and its explanations
-   fill the rest below it, one reading measure wide. ⚠️ These selectors
-   outweigh the phone's stacked halves below, so a quiz keeps its one column
-   at every width. */
+/* ⭐ **A QUIZ OPENS AS A PAGE THAT SCROLLS AS ONE.** It has no editor to set beside its intro, and a
+   fixed box of its own with its own scrollbar, drawn in a narrow column in the middle of a wide
+   screen, is a page inside a page. So a quiz's intro and questions are LEFT IN THE PAGE'S FLOW, at
+   the page's own reading width: `practice-workspace.js` marks everything else on the page
+   `data-workspace-away` while the quiz is up, the bar stays fixed over the top, and the one
+   scrollbar is the window's, at the edge of the screen. ⛔ Nothing is moved: the sections are
+   simply no longer fixed. ⚠️ These selectors outweigh the editor layout above and the phone's
+   stacked halves below, so a quiz keeps its one column at every width. */
 html[data-workspace-quiz] section[data-kind][data-workspace-open],
 html[data-workspace-quiz] section[data-practice-quiz][data-workspace-open] {
-  left: max(0px, calc((100% - 52rem) / 2));
-  right: max(0px, calc((100% - 52rem) / 2));
+  position: static;
+  display: block;
+  box-sizing: border-box;
   width: auto;
-  border-right: 0;
-}
-
-html[data-workspace-quiz] section[data-kind][data-workspace-open] {
-  bottom: auto;
-  max-height: 40%;
-  padding-bottom: .5rem;
-}
-
-html[data-workspace-quiz] section[data-practice-quiz][data-workspace-open] {
-  top: calc(3.25rem + var(--workspace-intro, 0px));
-  margin: 0;
+  max-width: 52rem;
+  max-height: none;
+  margin: 0 auto;
+  padding: 1rem 1.25rem;
+  overflow: visible;
+  border: 0;
   background: var(--bg);
 }
+
+html[data-workspace-quiz] section[data-kind][data-workspace-open] { padding-bottom: .5rem; }
+
+html[data-workspace-quiz] div[data-workspace] {
+  bottom: auto;
+  height: 3.25rem;
+}
+
+html[data-workspace-quiz] body { padding-top: 3.25rem; }
+html[data-workspace-quiz] [data-workspace-away] { display: none; }
+
+/* The exam form's progress line sticks under the workspace's bar, not beneath it. */
+html[data-workspace-quiz] section[data-mock-form] [data-form-part="bar"] { top: 3.25rem; }
 
 /* ⭐ At phone width the workspace STACKS: the statement over the editor, each
    scrolled inside itself. */

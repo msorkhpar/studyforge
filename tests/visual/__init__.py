@@ -274,7 +274,15 @@ ACCEPTANCE = {
     "shows an example's Run only where a runner is up, streams its output beside the code and "
     "leaves it hidden over file://": "test_example_run",
     #: ⭐ A row of its own because its CORPUS is the subject: a lesson that copies its own quiz.
-    "shows a quiz the lesson repeats once, with a sentence where the copy was": "test_quiz_once",
+    "shows a quiz the lesson repeats once, as the interactive quiz where the copy was": "test_quiz_once",
+    #: ⭐ A row of its own because a plain quiz's SHAPE is the subject: one question at a time.
+    "draws a plain quiz one question at a time, explains each answer and ends in a summary": (
+        "test_quiz_steps"
+    ),
+    #: ⭐ A row of its own: a practice tagged for a language keeps its editor filling the pane.
+    "opens a language-tagged practice with its editor filling the pane and the handles working": (
+        "test_practice_tagged"
+    ),
     #: ⭐ A row of its own because its ORIGIN is the subject: the preview of that corpus read from
     #: a static server and from a file.
     "opens the read-only preview of a corpus of four languages from a static server and from a "

@@ -67,15 +67,21 @@ def render(
     corpus: str,
     grader: str,
     assets: Callable[[str], str],
+    embedded: bool = False,
 ) -> str:
-    """Return one mock exam's section; `assets` turns a shared file's name into this page's link."""
+    """Return one mock exam's section; `assets` turns a shared file's name into this page's link.
+
+    `embedded` leaves out the heading of an exam-form section that stands under a lesson's own.
+    """
     mock = exercise.mock
     questions = exercise.questions
     if mock is None or not questions:
         return ""
     if mockform.wanted_for(exercise):
         # ⭐ A mock that opts into the exam form (`page.mockform`); every other is below, as of old.
-        return mockform.render(exercise, key=key, corpus=corpus, grader=grader, assets=assets)
+        return mockform.render(
+            exercise, key=key, corpus=corpus, grader=grader, assets=assets, embedded=embedded
+        )
     return templates.fill(
         MOCK_TEMPLATE,
         key=escape_attribute(key),

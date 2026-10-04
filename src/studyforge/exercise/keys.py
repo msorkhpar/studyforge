@@ -48,6 +48,7 @@ EXERCISE_KEYS = (
     "files",
     "review",
     "cards",
+    quiz.LAYOUT,
 )
 
 #: ⭐ `files` is the further files a reader edits beside `main_path`, written only where the
@@ -80,6 +81,7 @@ AUTHORED_KEYS = (
     "files",
     "review",
     "cards",
+    quiz.LAYOUT,
 )
 
 
