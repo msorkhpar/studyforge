@@ -259,9 +259,7 @@ html[data-workspace-quiz] body { padding-top: 3.25rem; }
 html[data-workspace-quiz] [data-workspace-away] { display: none; }
 
 /* ⭐ At phone width the workspace STACKS: the statement over the editor, each
-   scrolled inside itself. ⭐ The editor is what a phone reader works in, so the practice's side
-   takes most of the height (26% for the statement) and its two notes are set small and close:
-   the editor is then at least 70% of the pane on open. */
+   scrolled inside itself. */
 @media (max-width: 40rem) {
   div[data-workspace] div[data-workspace-part="bar"] { padding: 0 .6rem; gap: .4rem; }
   div[data-workspace] button { padding: .3rem .55rem; font-size: .85rem; }
@@ -269,28 +267,16 @@ html[data-workspace-quiz] [data-workspace-away] { display: none; }
   section[data-kind][data-workspace-open] {
     width: auto;
     right: 0;
-    bottom: 74%;
+    bottom: 55%;
     padding: .75rem 1rem 1rem;
     border-right: 0;
     border-bottom: 1px solid var(--rule);
   }
 
-  section[data-practice][data-workspace-open] > p:is([data-practice-part="grader"], [data-practice-part="file"]) {
-    margin: .1rem 0;
-    font-size: .8rem;
-    line-height: 1.3;
-  }
-
-  section[data-practice][data-workspace-open] button[data-practice-part="report-bar"] {
-    margin-top: .2rem;
-    padding-top: .2rem;
-    padding-bottom: .2rem;
-  }
-
   section:is([data-practice], [data-practice-quiz])[data-workspace-open] {
-    top: 26%;
+    top: 45%;
     left: 0;
-    padding: .5rem 1rem .6rem;
+    padding: .75rem 1rem 1rem;
   }
 }
 

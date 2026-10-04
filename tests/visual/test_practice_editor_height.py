@@ -1,6 +1,6 @@
 """A practice's editor fills its pane on open, and the report is a strip until a run reports.
 
-⭐ The workspace is opened at a wide desktop size and at a phone width, before any Run or Submit:
+⭐ The workspace is opened at a wide desktop size, before any Run or Submit:
 the editor is at least 70% of the pane's height and the report shows only its strip. After a
 Submit the report body appears and the split is shared, the editor keeping its floor. The split
 the reader drags is kept for that practice only: another practice opens at the default, and the
@@ -18,7 +18,7 @@ from tests.visual import panes, served, site
 from tests.visual.page import OpenPage
 from tests.visual.panes import capture, drag, middle, read_panes, until, url
 
-SIZES = {"desktop": (1515, 1060), "phone": panes.PHONE}
+SIZES = {"desktop": (1515, 1060)}
 LEAST = 0.70
 
 
