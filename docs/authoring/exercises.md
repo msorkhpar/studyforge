@@ -498,6 +498,11 @@ and each question's `origin` names the page and passage it is built from.
 kept entirely in the reader's own browser (no network, no account).** A corpus that uses neither is
 the corpus it was, byte for byte.
 
+**The line naming where the items came from follows what they cite.** A deck or bank whose items
+cite one page, or none, says it was written from this page. One whose items cite more than one
+page says it was written from several pages of the level. There is no flag to set: cite the pages
+the items were written from, and the sentence follows.
+
 **A review bank is a quiz with a `review` key.** Every item is a quiz question under every quiz rule:
 one keyed option, a sentence per option, a passage per question, `generated` and `advisory`.
 `review` adds the schedule:

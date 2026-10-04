@@ -1282,6 +1282,7 @@ What it reads, and the choices in it:
 - A one-line HTML comment ends its HTML block before a code fence opener, so the fence is read as a fence.
 - A sample path may name a small fixed list of placeholder accounts (`user`, `dev`, `me`). `example` and `coder` stay refused: real corpora and the invalid-corpus fixtures use them as names that must be caught.
 - A quiz shown on its own page and again at the foot of a lesson is drawn once, in the place the reader meets it first, with a pointer where the second would be (`quizonce`).
+- The sentence on a deck or a review bank naming where its items came from follows the pages the items cite: one page or none, "this page"; several, "several pages of this level". No new key: the record's own citations are the signal.
 - A practice's editor can be opened in a tab of its own from a link beside its tabs, built by the page script from the server's answer and never composed from a path.
 
 **Why.** Each came from a real course build that could not express something its subject needed, and each fix lives in the framework so the next build inherits it. The opt-in shape keeps the byte output of every existing corpus fixed.

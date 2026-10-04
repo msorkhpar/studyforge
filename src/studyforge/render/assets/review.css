@@ -5,6 +5,20 @@
    `practice-quiz.css`; this adds what only a schedule has. ⛔ No colour and no measure of its own:
    every value is a palette token. ⚠️ Phone first: the controls wrap. */
 
+/* ⭐ The bank's list is the quiz's list under the bank's own part name, so it numbers the same way:
+   one counter in each stem's legend and no marker of the browser's beside the options. */
+section[data-review] ol[data-review-part="questions"] {
+  margin: 0 0 .75rem;
+  padding: 0;
+  list-style: none;
+  counter-reset: question;
+}
+
+section[data-review] li[data-practice-question] {
+  margin: 0 0 1rem;
+  counter-increment: question;
+}
+
 section[data-review] p[data-review-part="summary"] {
   margin: 0 0 .75rem;
   color: var(--fg-soft);

@@ -139,6 +139,7 @@ from studyforge.render.page.mock import PARTS as MOCK_PARTS
 from studyforge.render.page.mockform import PARTS as MOCK_FORM_PARTS
 from studyforge.render.page.mockform import files as mock_form_files
 from studyforge.render.page.mock import files as mock_files
+from studyforge.render.page.quizonce import POINTER
 from studyforge.render.page.review import PARTS as REVIEW_PARTS
 from studyforge.render.page.review import files as review_files
 from studyforge.render.page.navigation import Crumb, Link, Links, between_units, breadcrumb
@@ -158,6 +159,7 @@ __all__ = [
     "REVIEW_PARTS",
     "MOCK_FORM_PARTS",
     "MOCK_PARTS",
+    "POINTER",
     "SILENT",
     "Crumb",
     "Link",

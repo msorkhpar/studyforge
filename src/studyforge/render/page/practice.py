@@ -117,7 +117,7 @@ from studyforge.progress import RAISES as PROGRESS_RAISES
 from studyforge.progress import practice_key
 from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute
-from studyforge.render.page import deck, mark, mock, quiz, review
+from studyforge.render.page import deck, mark, mock, quiz, review, scope
 from studyforge.render.page.assets import Placement
 from studyforge.render.page.errors import PageError
 
@@ -128,7 +128,6 @@ PRACTICE = "practice"
 #: The panel itself: the editor slot, the controls, the status line and the
 #: output region — a whole element with attributes, so a file (R13).
 PANEL_TEMPLATE = "practice-panel.html"
-DECK_GRADER_TEMPLATE = "practice-grader-deck.html"
 FILE_TEMPLATE = "practice-file.html"
 FILES_TEMPLATE = "practice-files.html"
 
@@ -194,7 +193,7 @@ def render(section: dict, document: dict, placement: Placement) -> str:
             exercise,
             key=key,
             corpus=placement.corpus,
-            grader=_region(templates.fill(DECK_GRADER_TEMPLATE)),
+            grader=_region(templates.fill(scope.deck_template(exercise))),
             assets=placement.asset,
         )
     if exercise.is_quiz:
@@ -211,7 +210,7 @@ def render(section: dict, document: dict, placement: Placement) -> str:
                 exercise,
                 key=key,
                 corpus=placement.corpus,
-                grader=_region(grader(exercise)),
+                grader=_region(templates.fill(scope.review_template(exercise))),
                 assets=placement.asset,
             )
         if exercise.mock is not None:
