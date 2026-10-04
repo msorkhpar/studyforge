@@ -121,7 +121,14 @@ from studyforge.exercise.quiz.questions import (
     questions_document,
     questions_of,
 )
-from studyforge.exercise.quiz.layout import LAYOUT, LAYOUTS, PAGE, STEPS, layout_in, require_no_layout
+from studyforge.exercise.quiz.layout import (
+    LAYOUT,
+    LAYOUTS,
+    PAGE,
+    STEPS,
+    layout_in,
+    require_no_layout,
+)
 from studyforge.exercise.quiz.options import read_id, read_text, require_distinct
 from studyforge.exercise.quiz.review import (
     MOST_DAYS,

@@ -226,7 +226,8 @@ def test_a_quiz_opens_in_one_column_and_a_code_practice_keeps_the_split():
     )
     style = re.sub(r"/\*.*?\*/", "", STYLE.read_text(encoding="utf-8"), flags=re.DOTALL)
     # ⭐ The quiz's intro and questions are left in the page's flow: not fixed, no scroll box.
-    quizzing = style[style.index("html[data-workspace-quiz] section[data-kind][data-workspace-open],") :]
+    opening = "html[data-workspace-quiz] section[data-kind][data-workspace-open],"
+    quizzing = style[style.index(opening) :]
     assert "position: static;" in quizzing[: quizzing.index("}")]
     assert "overflow: visible;" in quizzing[: quizzing.index("}")]
     assert "html[data-workspace-quiz] [data-workspace-away] { display: none; }" in style

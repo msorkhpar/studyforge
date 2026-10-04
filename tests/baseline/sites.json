@@ -1,8 +1,8 @@
 {
  "recorded": {
   "depth1": {
-   ".studyforge/assets/page.css": "41c5e08fadc91f523b0020d639dce316e905203be02b6acabb02a23e27ba3455",
-   ".studyforge/assets/page.js": "5f063785ac8727182e516d58a3eff0cc27512547d646b3903ba259db6ccc1bfc",
+   ".studyforge/assets/page.css": "2e25bf5b00fb5fd7a01ce01a66a02abd268de5de7bd4bcbbb05cacf66d509521",
+   ".studyforge/assets/page.js": "1162dadd489271e3573b18abb0b7a52f9c4dcb1e9c1b76eecc37eab0f94152cd",
    ".studyforge/depth-one/depth-one-demo.section.html": "3ba777fe4e99f9aedbc3d24aceeb8b8df5716068314953652b9ab858bfeaec24",
    ".studyforge/depth-one/units/unit-01/unit-01-what-a-triple-is.unit.html": "94c39f10c3c7e39b1c4142025bf7bbaee0de70eaa47c66c0e35b991b5feeabb6",
    ".studyforge/depth-one/units/unit-02/attachments/small-graph.ttl": "1b913eb93ff61fe705a3da8063b8d34150207994551abe8d7868e832d39a7544",
@@ -12,8 +12,8 @@
    "index.html": "c537eb13b556f468f947cbc5f137501c4d4fca82a822e663735ed5e083a8b592"
   },
   "depth2": {
-   ".studyforge/assets/page.css": "41c5e08fadc91f523b0020d639dce316e905203be02b6acabb02a23e27ba3455",
-   ".studyforge/assets/page.js": "5f063785ac8727182e516d58a3eff0cc27512547d646b3903ba259db6ccc1bfc",
+   ".studyforge/assets/page.css": "2e25bf5b00fb5fd7a01ce01a66a02abd268de5de7bd4bcbbb05cacf66d509521",
+   ".studyforge/assets/page.js": "1162dadd489271e3573b18abb0b7a52f9c4dcb1e9c1b76eecc37eab0f94152cd",
    "advanced/02-going-further/study/advanced.02-going-further.unit-01-composition-over-inheritance.unit.html": "65e398f6aa61b328029d106d43c251e7658f165c4278809d2dee7e46052959df",
    "advanced/02-going-further/study/advanced.02-going-further.unit-02-where-to-go-next.unit.html": "5a5c648292e3bc9f12bc7637c4cb2b6970a15918161fee8fa300c83cfd49a26d",
    "advanced/02-going-further/study/going-further.section.html": "11a962cebd65d4263696f725245acb4d764ccbbc3da862117366550dcc5068cf",
@@ -26,8 +26,8 @@
    "index.html": "03e1d11341819d112b62dd23e13c68569cb07f529c447f625610aaa9b6d80f91"
   },
   "runnable": {
-   ".studyforge/assets/page.css": "41c5e08fadc91f523b0020d639dce316e905203be02b6acabb02a23e27ba3455",
-   ".studyforge/assets/page.js": "5f063785ac8727182e516d58a3eff0cc27512547d646b3903ba259db6ccc1bfc",
+   ".studyforge/assets/page.css": "2e25bf5b00fb5fd7a01ce01a66a02abd268de5de7bd4bcbbb05cacf66d509521",
+   ".studyforge/assets/page.js": "1162dadd489271e3573b18abb0b7a52f9c4dcb1e9c1b76eecc37eab0f94152cd",
    "index.html": "ecc0f8fb859c59152d984fb9a14846a4586142fc2b2c6accdf1add7371dbf44f",
    "kata/study/kata.section.html": "0f4e653c7dda72c3be350f9805b4eff44a149dd2c12ec9726e26985905c52dd2",
    "kata/study/kata.unit-01-greeting.unit.html": "b95f1ee423d3c50d4180eaaf94576e70fdb9da0904d40555b7edcb4094a0bba1",
@@ -37,10 +37,10 @@
    "kata/study/kata.unit-05-reading-on.unit.html": "7b4bb48315cc88dde1b0d47b4d939fa78d366888fed3191fe1f7f9f1dafab72a"
   },
   "shared-origin": {
-   ".studyforge/assets/page.css": "41c5e08fadc91f523b0020d639dce316e905203be02b6acabb02a23e27ba3455",
-   ".studyforge/assets/page.js": "5f063785ac8727182e516d58a3eff0cc27512547d646b3903ba259db6ccc1bfc",
+   ".studyforge/assets/page.css": "2e25bf5b00fb5fd7a01ce01a66a02abd268de5de7bd4bcbbb05cacf66d509521",
+   ".studyforge/assets/page.js": "1162dadd489271e3573b18abb0b7a52f9c4dcb1e9c1b76eecc37eab0f94152cd",
    "field-notes/study/field-notes.section.html": "99aa4d563cde6c87bffb6aa090eca0367dac2beace1a3116d00ebd1cc68402cb",
-   "field-notes/study/field-notes.unit-01-taking-a-reading.unit.html": "8b60583a91c64eec83416c304e4a697c2da333e67cdf2331c064d1adbc69dd1c",
+   "field-notes/study/field-notes.unit-01-taking-a-reading.unit.html": "44f9151590931321040234a835193e43f58d6c91ff7ed5157021527a1da39171",
    "field-notes/study/field-notes.unit-02-writing-it-down.unit.html": "103fd1e9b459251416bf03ad94ab9e060ed789ce6da856490c73e094cdd64a71",
    "index.html": "f405f37bc1438855261252aa7a2c4a265dadf611df7ed971d5568ebd32ed5436"
   }

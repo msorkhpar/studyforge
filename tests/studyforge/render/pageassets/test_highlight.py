@@ -67,7 +67,7 @@ MEASURED_COMBINATIONS = {
     "code-language": "type",
     "code-snippet code keyword": "keyword",
     "comment": "comment",
-    "constant": "number",
+    "constant": "type",
     "content": "container",
     "decorator annotation punctuation": "type",
     "doctype": "punct",

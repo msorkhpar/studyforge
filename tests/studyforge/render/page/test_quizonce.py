@@ -7,7 +7,7 @@ from studyforge.render.page import quizonce, render
 from tests.studyforge.render.page.pages import sample_placement
 from tests.studyforge.render.page.test_practice import QUIZ, document, section
 
-PANEL = lambda one: "<quiz/>"  # noqa: E731 - a stand-in for the page's own quiz markup
+PANEL = lambda one, whole: "<quiz/>"  # noqa: E731 - a stand-in for the page's own quiz markup
 
 STEMS = [one["stem"] for one in QUIZ["questions"]]
 

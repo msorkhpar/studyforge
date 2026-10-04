@@ -16,14 +16,13 @@ a function that renders one practice section's quiz markup, and renders what it 
 
 ## ⭐ Decided by the text, never by a name
 
-A range of a lesson's blocks is the quiz when it starts at a heading, runs to the next heading of the
-same or a higher level, and contains EVERY stem of one quiz practice of the unit verbatim. A heading
-called `Quiz` that holds different questions is left alone, so is a unit with no quiz practice, and
-so is a section no practice matches: such a page is the page it was, byte for byte. A mock exam is a
-quiz for this purpose: its page lists the questions and folds the key away just the same, and the
-key must not be readable before the sitting. A review bank and a deck are other shapes and are never
-what a lesson repeats. One practice stands in
-at most one place.
+A range of a lesson's blocks is the quiz when it starts at a heading, runs to the next heading of
+the same or a higher level, and contains EVERY stem of one quiz practice of the unit verbatim. A
+heading called `Quiz` that holds different questions is left alone, so is a unit with no quiz
+practice, and so is a section no practice matches: such a page is the page it was, byte for byte.
+A mock exam is a quiz for this purpose: its page lists the questions and folds the key away just
+the same, and the key must not be readable before the sitting. A review bank and a deck are other
+shapes and are never what a lesson repeats. One practice stands in at most one place.
 
 ## ⛔ Block positions do not move
 
@@ -40,7 +39,7 @@ from collections.abc import Callable
 from studyforge.exercise import from_document
 from studyforge.exercise.errors import ExerciseError
 
-def once(document: dict, panel: Callable[[dict], str]) -> dict:
+def once(document: dict, panel: Callable[[dict, dict], str]) -> dict:
     """Return `document`, with a lesson's repeat of a quiz practice replaced by that quiz."""
     sections = document.get("sections")
     if not isinstance(sections, list):
@@ -56,7 +55,7 @@ def once(document: dict, panel: Callable[[dict], str]) -> dict:
         if not isinstance(section, dict) or section.get("kind") == "practice" or not blocks:
             drawn.append(section)
             continue
-        replaced = _replace(blocks, quizzes, taken, sections, panel)
+        replaced = _replace(blocks, quizzes, taken, sections, lambda one: panel(one, document))
         if replaced is blocks:
             drawn.append(section)
         else:

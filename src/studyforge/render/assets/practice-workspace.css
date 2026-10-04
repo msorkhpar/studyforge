@@ -181,7 +181,7 @@ section:is([data-practice], [data-practice-quiz])[data-workspace-open] {
 
 /* ⛔ **A language-tagged practice stays a flex column when it opens.** The reading modes' generated
    rules show a tagged section the reader is linked to with `display: block`
-   (`html[data-mode] section[data-lang][data-linked]:not(...)`), which outweighs the rule above and
+   (a section carrying `data-lang` and `data-linked` under a reading mode), which outweighs the rule above and
    turned the open panel into a block: the editor kept its natural height, about eight lines, with
    the rest of the pane empty, and no divider could change it. Repeating the attribute raises this
    rule over those without naming a mode or a language. A quiz is excluded: it is a page in flow. */
@@ -241,9 +241,6 @@ html[data-workspace-quiz] div[data-workspace] {
 
 html[data-workspace-quiz] body { padding-top: 3.25rem; }
 html[data-workspace-quiz] [data-workspace-away] { display: none; }
-
-/* The exam form's progress line sticks under the workspace's bar, not beneath it. */
-html[data-workspace-quiz] section[data-mock-form] [data-form-part="bar"] { top: 3.25rem; }
 
 /* ⭐ At phone width the workspace STACKS: the statement over the editor, each
    scrolled inside itself. */

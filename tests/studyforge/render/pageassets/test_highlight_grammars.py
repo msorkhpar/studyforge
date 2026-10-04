@@ -71,7 +71,10 @@ SAMPLES = {
         'for f in *.txt; do echo "$f" | grep -c "x"; done\n'
         "if [ -f out ]; then export A=1; fi"
     ),
-    "markdown": "# Title\n\nSome **bold** and `code` text.\n\n- item\n- [link](http://x.invalid)\n\n```py\nx = 1\n```",
+    "markdown": (
+        "# Title\n\nSome **bold** and `code` text.\n\n- item\n- [link](http://x.invalid)\n\n"
+        "```py\nx = 1\n```"
+    ),
     "toml": '# conf\n[server]\nhost = "x"\nport = 8583\nok = true\n[[items]]\nid = 1',
     "json": '{"name": "iso", "fields": [1, -2.5e3, true, null], "ok": false}',
     "properties": "# the listener\nhost.port = 8583\nlog.level: debug",

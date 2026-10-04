@@ -89,13 +89,13 @@ figure.code .token.name,
 figure.code .token.property,
 figure.code .token.key,
 figure.code .token.code-language,
+figure.code .token.constant,
 figure.code .token.variable { color: var(--tok-type); }
 
 figure.code .token.function,
 figure.code .token.function-variable { color: var(--tok-function); }
 
-figure.code .token.number,
-figure.code .token.constant { color: var(--tok-number); }
+figure.code .token.number { color: var(--tok-number); }
 
 figure.code .token.string,
 figure.code .token.string-literal,

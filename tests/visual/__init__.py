@@ -274,7 +274,7 @@ ACCEPTANCE = {
     "shows an example's Run only where a runner is up, streams its output beside the code and "
     "leaves it hidden over file://": "test_example_run",
     #: ⭐ A row of its own because its CORPUS is the subject: a lesson that copies its own quiz.
-    "shows a quiz the lesson repeats once, as the interactive quiz where the copy was": "test_quiz_once",
+    "shows a quiz the lesson repeats once, as the interactive quiz in place": "test_quiz_once",
     #: ⭐ A row of its own because a plain quiz's SHAPE is the subject: one question at a time.
     "draws a plain quiz one question at a time, explains each answer and ends in a summary": (
         "test_quiz_steps"

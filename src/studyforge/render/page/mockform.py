@@ -129,6 +129,9 @@ QUIZ_TEXT = {
     "again": "Try again",
 }
 
+#: The section's own heading, left out where a lesson's heading is above it.
+HEAD = '<div data-practice-part="head"><h2>{}</h2></div>\n'
+
 #: A plain quiz is complete only when every question is right: the pass mark is the whole of it.
 QUIZ_PASS_MARK = 100
 
@@ -178,7 +181,7 @@ def render(
         layout="exam" if quizzing else escape_attribute(mock.layout or "page"),
         kind=' data-form-kind="quiz"' if quizzing else "",
         label=text["label"],
-        head="" if embedded else f'<div data-practice-part="head"><h2>{text["heading"]}</h2></div>\n',
+        head="" if embedded else HEAD.format(text["heading"]),
         offline=text["offline"],
         submit=text["submit"],
         again=text["again"],

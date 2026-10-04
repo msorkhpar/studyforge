@@ -94,7 +94,6 @@ from dataclasses import dataclass
 
 from studyforge.exercise import quiz
 from studyforge.exercise.cases import (
-    BREAKDOWN_KEYS,
     DEFAULT_KIND,
     FLASHCARDS,
     QUIZ,
@@ -111,7 +110,6 @@ from studyforge.exercise.cases import (
 )
 from studyforge.exercise.concepts import CONCEPTS, concepts_in
 from studyforge.exercise.deck import (
-    DECK_KEYS,
     Card,
     cards_document,
     cards_in,
@@ -120,11 +118,10 @@ from studyforge.exercise.deck import (
 )
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.keys import (
-    AUTHORED_KEYS,
     EXERCISE_KEYS,
-    REQUIRED_KEYS,
     require_known_keys,
     require_present,
+    written_keys,
 )
 from studyforge.exercise.safety import require_command, require_path
 from studyforge.exercise.states import EXERCISE_KEY, GRADER_KEY
@@ -317,37 +314,7 @@ def to_document(exercise: Exercise) -> dict:
         "cards": cards_document(exercise.cards or ()),
         quiz.LAYOUT: exercise.layout,
     }
-    return {key: values[key] for key in _written_keys(exercise)}
-
-
-def _written_keys(exercise: Exercise) -> tuple[str, ...]:
-    """Which keys this record writes — chosen by its shape, never by which values are `None`."""
-    concepts = {CONCEPTS} if exercise.concepts is not None else set()
-    if exercise.files is not None and not exercise.is_quiz and not exercise.is_deck:
-        concepts.add("files")
-    if exercise.is_deck:
-        carried = set(DECK_KEYS) - (set() if exercise.origin else {"origin"})
-        carried = (carried - {CONCEPTS}) | concepts
-        return tuple(key for key in EXERCISE_KEYS if key in carried)
-    if exercise.is_quiz:
-        carried = set(quiz.QUIZ_KEYS) - (set() if exercise.origin else {"origin"})
-        carried = (carried - {CONCEPTS, quiz.MOCK}) | concepts
-        if exercise.layout is not None:
-            carried.add(quiz.LAYOUT)
-        if exercise.mock is not None:
-            carried.add(quiz.MOCK)
-        if exercise.review is not None:
-            carried.add(quiz.REVIEW)
-        return tuple(key for key in EXERCISE_KEYS if key in carried)
-    carried = set(concepts)
-    if exercise.kind != DEFAULT_KIND:
-        carried.add("kind")
-    if exercise.breaks_down:
-        carried.update(BREAKDOWN_KEYS)
-    if exercise.origin is not None:
-        carried.add("origin")
-    shape = set(EXERCISE_KEYS if exercise.graded else REQUIRED_KEYS) - set(AUTHORED_KEYS)
-    return tuple(key for key in EXERCISE_KEYS if key in shape or key in carried)
+    return {key: values[key] for key in written_keys(exercise)}
 
 
 def _authored(value: dict, kind: str, where: str) -> dict:

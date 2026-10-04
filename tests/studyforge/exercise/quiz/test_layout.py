@@ -1,4 +1,4 @@
-"""Mirror of `src/studyforge/exercise/quiz/layout.py` (R12): how a plain quiz is laid out, both ways."""
+"""Mirror of `src/studyforge/exercise/quiz/layout.py` (R12): a plain quiz's layout, both ways."""
 
 from __future__ import annotations
 
@@ -50,6 +50,7 @@ def test_a_layout_on_a_record_that_is_not_a_quiz_is_refused_by_name():
     code = {"main_path": "a.py", "run_command": ["python3", "a.py"], "layout": "page"}
     with pytest.raises(ExerciseError, match="layout"):
         from_document(code, WHERE)
-    deck = {"kind": "flashcards", "cards": [{"id": "c1", "front": "f", "back": "b"}], "layout": "page"}
+    cards = [{"id": "c1", "front": "f", "back": "b"}]
+    deck = {"kind": "flashcards", "cards": cards, "layout": "page"}
     with pytest.raises(ExerciseError, match="layout"):
         from_document(deck, WHERE)

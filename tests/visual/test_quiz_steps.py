@@ -69,6 +69,10 @@ def pick(page: OpenPage, question: str, option: str) -> None:
     click(page, f'{QUIZ} [data-practice-question="{question}"] input[value="{option}"]')
 
 
+def review(question: str) -> str:
+    return f'{QUIZ} [data-practice-question="{question}"] [data-form-part="review"]'
+
+
 def text(page: OpenPage, selector: str) -> str:
     return str(page.evaluate(f"document.querySelector({selector!r}).textContent.trim()"))
 
@@ -103,11 +107,11 @@ def test_an_answer_is_explained_where_it_is_given_and_never_names_the_key(
     fresh(open_page, stepped_url)
     first = QUESTIONS[0]
     pick(open_page, first.id, WRONG[first.id])
-    said = text(open_page, f'{QUIZ} [data-practice-question="{first.id}"] [data-form-part="review"]')
+    said = text(open_page, review(first.id))
     assert said.startswith("Not this one.")
     assert "Correct answer" not in said
     pick(open_page, first.id, KEYED[first.id])
-    assert text(open_page, f'{QUIZ} [data-practice-question="{first.id}"] [data-form-part="review"]').startswith("Right.")
+    assert text(open_page, review(first.id)).startswith("Right.")
 
 
 def test_the_answers_and_the_place_survive_a_reload(open_page: OpenPage, stepped_url: str) -> None:
@@ -117,7 +121,8 @@ def test_the_answers_and_the_place_survive_a_reload(open_page: OpenPage, stepped
     open_page.open(stepped_url)
     assert shown(open_page) == [QUESTIONS[1].id]
     checked = open_page.evaluate(
-        f"document.querySelector('{QUIZ} [data-practice-question=\"{QUESTIONS[0].id}\"] input:checked').value"
+        f"document.querySelector('{QUIZ} [data-practice-question=\"{QUESTIONS[0].id}\"] "
+        "input:checked').value"
     )
     assert checked == KEYED[QUESTIONS[0].id]
 
@@ -130,12 +135,17 @@ def test_finish_gives_a_verdict_per_question_and_each_verdict_jumps_back(
         pick(open_page, one.id, KEYED[one.id] if index % 2 == 0 else WRONG[one.id])
     click(open_page, part("submit"))
     verdicts = open_page.evaluate(
-        f"Array.from(document.querySelectorAll('{part('summary')} li')).map((x) => x.getAttribute('data-form-verdict'))"
+        f"Array.from(document.querySelectorAll('{part('summary')} li'))"
+        ".map((x) => x.getAttribute('data-form-verdict'))"
     )
     assert verdicts == ["right" if i % 2 == 0 else "wrong" for i in range(len(QUESTIONS))]
-    assert text(open_page, part("overall")).startswith(f"You answered {(len(QUESTIONS) + 1) // 2} of")
+    right = (len(QUESTIONS) + 1) // 2
+    assert text(open_page, part("overall")).startswith(f"You answered {right} of")
     click(open_page, f'{part("summary")} li:nth-child(5) button')
-    focused = open_page.evaluate("document.activeElement.closest('li[data-practice-question]').getAttribute('data-practice-question')")
+    focused = open_page.evaluate(
+        "document.activeElement.closest('li[data-practice-question]')"
+        ".getAttribute('data-practice-question')"
+    )
     assert focused == QUESTIONS[4].id
     open_page.capture(capture_dir / "quiz-summary.png", whole=False)
 
@@ -158,7 +168,8 @@ def test_nothing_scrolls_sideways_and_the_quiz_has_no_scroll_box_of_its_own(
     inner = open_page.evaluate(
         f"Array.from(document.querySelectorAll('{QUIZ}, {QUIZ} *')).filter((x) => {{"
         " const s = getComputedStyle(x);"
-        " return (s.overflowY === 'auto' || s.overflowY === 'scroll') && x.scrollHeight > x.clientHeight;"
+        " return (s.overflowY === 'auto' || s.overflowY === 'scroll')"
+        " && x.scrollHeight > x.clientHeight;"
         "}).length"
     )
     assert inner == 0
@@ -169,7 +180,8 @@ def test_the_page_layout_opt_out_draws_every_question_with_one_check(
 ) -> None:
     open_page.open(paged_url)
     count = open_page.evaluate(
-        "Array.from(document.querySelectorAll('section[data-practice-quiz] li[data-practice-question]'))"
+        "Array.from(document.querySelectorAll("
+        "'section[data-practice-quiz] li[data-practice-question]'))"
         ".filter((x) => !x.hidden).length"
     )
     assert count == len(QUESTIONS)

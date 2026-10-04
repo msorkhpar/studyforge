@@ -142,7 +142,8 @@ def test_the_four_keys_round_trip_through_the_record():
     written = tuple(
         key
         for key in EXERCISE_KEYS
-        if key not in ("kind", "questions", "mock", "concepts", "files", "review", "cards", "layout")
+        if key
+        not in ("kind", "questions", "mock", "concepts", "files", "review", "cards", "layout")
     )
     assert tuple(again) == written, "the authored keys are not in the record's order"
     assert from_document(again, WHERE) == exercise

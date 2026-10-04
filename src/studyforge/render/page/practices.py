@@ -151,6 +151,12 @@ def joined(parts: list[str], sections: list, document: dict, placement: Placemen
     return JOIN.join([*parts[:first], listed, *parts[first:], workspace(document)])
 
 
+def embedded(section: dict, document: dict, placement: Placement) -> str:
+    """Return one quiz practice's panel, drawn inside the lesson section that repeated it."""
+    panel = practice_module.render(section, document, placement, embedded=True)
+    return modes.tag_panel(placement.offer, section.get("lang"), panel)
+
+
 def workspace(document: dict) -> str:
     """Return the one workspace every card opens in, or `''` for a unit with no practice."""
     return templates.fill(WORKSPACE_TEMPLATE) if of(document) else ""

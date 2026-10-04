@@ -169,7 +169,8 @@ further down.
     "concepts": ["A greeting is built from the name it is given."],
     "files": [],
     "review": null,
-    "cards": []
+    "cards": [],
+    "layout": null
   }
 }
 ```

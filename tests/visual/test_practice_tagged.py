@@ -63,7 +63,8 @@ def test_the_editor_fills_the_pane_instead_of_keeping_eight_lines(
     reading = opened(open_page, origin)
     panel, editor = reading["panel"], reading["editor"]
     assert open_page.evaluate(
-        "getComputedStyle(document.querySelector('section[data-practice][data-workspace-open]')).display"
+        "getComputedStyle(document.querySelector("
+        "'section[data-practice][data-workspace-open]')).display"
     ) == "flex"
     assert editor["height"] >= (panel["height"] - 160) * 0.7, (editor, panel)
     capture(open_page, capture_dir, "practice-tagged-fills.png")

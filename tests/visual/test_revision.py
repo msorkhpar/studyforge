@@ -224,7 +224,8 @@ COVER = """
   };
   return {
     covers: (b.left <= 0 && b.top <= 0 && b.right >= w && b.bottom >= h) ||
-      (document.documentElement.hasAttribute('data-workspace-quiz') && b.left <= 0 && b.top <= 0 && b.right >= w),
+      (document.documentElement.hasAttribute('data-workspace-quiz') &&
+        b.left <= 0 && b.top <= 0 && b.right >= w),
     hits: [at(8, h - 2), at(w / 2, h - 2), at(w - 8, h - 2), at(w / 2, h - 40)],
     markers: Array.from(document.querySelectorAll('ol[data-review-part="questions"]'))
       .map((ol) => getComputedStyle(ol).listStyleType),

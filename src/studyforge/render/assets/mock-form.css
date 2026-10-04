@@ -175,3 +175,6 @@ section[data-mock-form] ol[data-form-part="summary"] li { margin: 0 0 .25rem; }
 section[data-mock-form] ol[data-form-part="summary"] button { width: 100%; text-align: left; }
 section[data-mock-form] ol[data-form-part="summary"] li[data-form-verdict="right"] button { border-left: 4px solid var(--done); }
 section[data-mock-form] ol[data-form-part="summary"] li[data-form-verdict="wrong"] button { border-left: 4px solid var(--accent); }
+
+/* The progress line sticks under the practice workspace's bar when a quiz is opened there. */
+html[data-workspace-quiz] section[data-mock-form] [data-form-part="bar"] { top: 3.25rem; }

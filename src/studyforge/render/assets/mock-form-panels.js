@@ -13,6 +13,8 @@
   var QUESTION = 'data-practice-question';
   var VERDICT = 'data-practice-verdict';
 
+  var SETTLED = 'studyforge:practice-settled';
+
   function sentenceCase(text) { return text.charAt(0).toUpperCase() + text.slice(1); }
 
   function bind(c) {
@@ -188,7 +190,26 @@
       item.setAttribute(VERDICT, right ? 'correct' : 'wrong');
     }
 
+    /* A quiz is complete the moment every question is right, as the all-on-one-page quiz is, so
+       the card over it reads passed without the reader having to finish. */
+    function answered(id) {
+      explain(id);
+      var progress = window.studyforge && window.studyforge.progress;
+      var every = S().order.every(function (one) { return c.isRight(one, S().answers[one]); });
+      if (every && progress) { progress.passQuiz(c.name); }
+      exam.dispatchEvent(new CustomEvent(SETTLED, { bubbles: true }));
+    }
+
+    /* The progress line: the place and what is answered, or just what is answered. */
+    function countText(done) {
+      var total = S().order.length;
+      return c.quiz && !S().submitted
+        ? fill(words.positionCount, { n: S().current + 1, total: total, answered: done })
+        : fill(words.count, { answered: done, asked: total });
+    }
+
     function explainAll() {
+      if (!c.quiz) { return; }
       S().order.forEach(function (id) { explain(id); });
     }
 
@@ -338,7 +359,7 @@
     return {
       matches: matches, walkable: walkable, buildNavigator: buildNavigator,
       drawNavigator: drawNavigator, showStart: showStart, show: show, explain: explain,
-      explainAll: explainAll
+      explainAll: explainAll, answered: answered, countText: countText
     };
   }
 

@@ -1560,7 +1560,7 @@ What it reads, and the choices in it:
 
 ### Highlighting covers TypeScript, YAML, shell, Markdown and TOML
 
-**Decision.** The vendored Prism 1.30.0 bundle carries five more components after the ones it had (`bash`, `markdown`, `toml`, `typescript`, `yaml`), in the order its header records, and the header's `Languages:` line declares their names, aliases included (`ts`, `sh`, `shell`, `md`, `yml`). JavaScript and JSON were already carried. Every token class the new grammars emit has a colour in `code-highlight.css` and a measured entry in the combination table, and the grammar test runs one sample per grammar under the pinned runtime. `HEADER_CHARS` is 1100 so the longer declaration stays inside the header window.
+**Decision.** The vendored Prism 1.30.0 bundle carries five more components after the ones it had (`bash`, `markdown`, `toml`, `typescript`, `yaml`), in the order its header records, and the header's `Languages:` line declares their names, aliases included (ts, sh, shell, md and yml). JavaScript and JSON were already carried. Every token class the new grammars emit has a colour in `code-highlight.css` and a measured entry in the combination table, and the grammar test runs one sample per grammar under the pinned runtime. `HEADER_CHARS` is 1100 so the longer declaration stays inside the header window.
 
 **Why.** A fence tagged `typescript` fell back to the plain-text label while Python, Java and Kotlin were coloured, so a course teaching TypeScript looked unfinished. The set stays the bundle's declaration, proved both ways by the test, and the framework still holds no corpus's list.
 
