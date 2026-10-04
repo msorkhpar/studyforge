@@ -116,6 +116,8 @@ from studyforge.skills.exercises.drafts import (
     AuthoringError,
     Brief,
     CodeDraft,
+    DeckDraft,
+    EditedFile,
     Judge,
     Page,
     QuizDraft,
@@ -126,6 +128,7 @@ from studyforge.skills.exercises.drafts import (
     source_case,
     words_of,
 )
+from studyforge.skills.exercises.deckgating import gate_deck
 from studyforge.skills.exercises.gating import (
     OUTPUT_LINES,
     Gated,
@@ -134,6 +137,13 @@ from studyforge.skills.exercises.gating import (
     gate_code,
     gate_quiz,
     json_bytes,
+)
+from studyforge.skills.exercises.deckdoc import (
+    DECK_API,
+    DECK_DOCUMENT,
+    Deck,
+    DeckRefused,
+    deck_of,
 )
 from studyforge.skills.exercises.ledger import (
     ENTRY_KEYS,
@@ -238,6 +248,12 @@ __all__ = [
     "AuthoringError",
     "Brief",
     "CodeDraft",
+    "DECK_API",
+    "DECK_DOCUMENT",
+    "Deck",
+    "DeckDraft",
+    "DeckRefused",
+    "EditedFile",
     "PlantSpec",
     "Replacement",
     "Covered",
@@ -270,7 +286,9 @@ __all__ = [
     "carried_practices",
     "commit",
     "digests",
+    "deck_of",
     "gate_code",
+    "gate_deck",
     "gate_quiz",
     "json_bytes",
     "key_of",

@@ -1,0 +1,11 @@
+<section data-practice-quiz="${key}" data-deck="${total}" data-corpus="${corpus}" aria-label="Flashcards" tabindex="-1">
+<div data-practice-part="head"><h2>Cards</h2>
+<p data-deck-part="progress" role="status" aria-live="polite" data-deck-count="{known} of {total} known"><span data-deck-part="count">0 of ${total} known</span></p></div>
+${grader}<ol data-deck-part="cards">
+${cards}</ol>
+<p data-deck-part="offline">Turning cards and marking them needs this page's script, and it is not running here. Every card shows its front and its back below; read them in order.</p>
+<p data-deck-part="controls" hidden><button type="button" data-deck-act="filter" aria-pressed="false" data-deck-all="Show every card" data-deck-open="Show only cards not yet known">Show only cards not yet known</button><button type="button" data-deck-act="reset">Start again</button></p>
+<p data-deck-part="status" role="status" aria-live="polite" data-deck-complete="Every card is marked known." data-deck-empty="No card is left to see again."></p>
+<link rel="stylesheet" href="${stylesheet}">
+<script src="${script}" defer></script>
+</section>

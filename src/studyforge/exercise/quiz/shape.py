@@ -69,6 +69,7 @@ from studyforge.exercise.quiz.mock import (
     require_no_exam_keys_on_questions,
 )
 from studyforge.exercise.quiz.questions import Question, questions_of
+from studyforge.exercise.quiz.review import REVIEW, Review, review_of
 from studyforge.unit.errors import ContentError
 from studyforge.unit.trust import check_test_record
 
@@ -131,6 +132,33 @@ def mock_in(record: dict, where: str) -> Mock | None:
     return mock
 
 
+def review_in(record: dict, where: str) -> Review | None:
+    """Return the review schedule a quiz record declares, or `None` for the quiz it always was.
+
+    ⭐ Takes the record, as `questions_in` does. ⛔ A bank is never a mock exam, so the two keys are
+    refused together: a score per domain and a schedule are two readings of one list of questions,
+    and a page draws one.
+    """
+    if REVIEW not in record:
+        return None
+    if MOCK in record:
+        raise ExerciseError(
+            f"{where}: a quiz names both {MOCK!r} and {REVIEW!r}. A mock exam is scored once and "
+            f"a review bank is revisited on a schedule, and a page draws one of the two."
+        )
+    return review_of(record[REVIEW], where)
+
+
+def require_no_review(record: dict, where: str) -> None:
+    """⛔ Refuse `review` on a record that is not a quiz, naming the key."""
+    if REVIEW in record:
+        raise ExerciseError(
+            f"{where}: 'exercise' names {[REVIEW]} on a record that is not a quiz. A review bank "
+            f"is a quiz whose questions are revisited on a schedule, so one on a record that "
+            f"names a file is a schedule nothing ever reads."
+        )
+
+
 def require_no_mock(record: dict, where: str) -> None:
     """⛔ Refuse `mock` on a record that is not a quiz, naming the key."""
     if MOCK in record:
@@ -154,7 +182,7 @@ def require_no_questions(record: dict, where: str) -> None:
 
 def _require_only_quiz_keys(record: dict, where: str) -> None:
     """⛔ Refuse a workspace key on a quiz: there is no file and nothing to run."""
-    unknown = [key for key in record if key not in (*QUIZ_KEYS, MOCK)]
+    unknown = [key for key in record if key not in (*QUIZ_KEYS, MOCK, REVIEW)]
     if unknown:
         raise ExerciseError(
             f"{where}: a quiz carries {list(QUIZ_KEYS)} and this one also carries "

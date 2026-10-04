@@ -60,7 +60,8 @@ from studyforge.exercise import CODE, EXERCISE_KINDS, QUIZ, Case, Origin
 from studyforge.exercise.bundle import PlantSpec, Places
 from studyforge.exercise.gates import Verdict
 from studyforge.exercise.gates.quiz import Judgement
-from studyforge.exercise.quiz import Mock, Question
+from studyforge.exercise.deck import Card
+from studyforge.exercise.quiz import Mock, Question, Review
 from studyforge.skills.exercises.aspects import Aspect
 from studyforge.skills.exercises.ledger import EXAMPLE, TESTS, Entry, Ledger
 from studyforge.skills.exercises.scan import scan
@@ -129,6 +130,14 @@ class Page:
 
 
 @dataclass(frozen=True, slots=True)
+class EditedFile:
+    """One further file the reader edits: what the workspace starts with, and the solved text."""
+
+    starter: str
+    reference: str
+
+
+@dataclass(frozen=True, slots=True)
 class CodeDraft:
     """One code exercise as an author wrote it, before any gate has read it.
 
@@ -165,6 +174,11 @@ class CodeDraft:
     #: that solution, never a test case. Empty is every draft's behaviour until now: nothing is
     #: run. Authoring-time only: it is not written into the shipped record.
     typecheck_command: tuple[str, ...] = ()
+    #: ⭐ Optional: the further files the reader edits beside `main_file`, by workspace-relative
+    #: path, each with its starter and its reference (a configuration practice: a settings
+    #: file, a memory file, a script). A plant that changes one is a `PlantSpec` whose
+    #: replacement names it. Empty is every draft's behaviour until now: one file.
+    files: Mapping[str, EditedFile] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)
@@ -176,6 +190,21 @@ class QuizDraft:
     #: ⭐ Optional: a quiz that is a mock exam (`exercise.quiz.mock`). `None` is every quiz
     #: drafted until now, gated by `Q1`–`Q5` alone.
     mock: Mock | None = None
+    #: ⭐ Optional: a quiz that is a spaced-review bank (`exercise.quiz.review`), gated by `Q1`–`Q5`
+    #: and `S1`. `None` is every quiz drafted until now. ⛔ Never together with `mock`.
+    review: Review | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class DeckDraft:
+    """One deck of flashcards as an author wrote it: a title and its cards.
+
+    ⭐ Gated by `C1` and `C2` (`exercise.gates.cards`); every card cites the passage it was
+    written from.
+    """
+
+    title: str
+    cards: tuple[Card, ...]
 
 
 @dataclass(frozen=True, slots=True)

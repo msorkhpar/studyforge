@@ -107,6 +107,7 @@ CONTRACT_FIELDS = (
     "gates_api",
     "bundle_api",
     "quiz_api",
+    "deck_api",
     "coverage_api",
     "plan_api",
     "ledger_api",

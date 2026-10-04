@@ -140,7 +140,9 @@ def test_the_four_keys_round_trip_through_the_record():
     # carries. The rest are in the record's own order, appended after
     # the six an untested unit's record carries.
     written = tuple(
-        key for key in EXERCISE_KEYS if key not in ("kind", "questions", "mock", "concepts")
+        key
+        for key in EXERCISE_KEYS
+        if key not in ("kind", "questions", "mock", "concepts", "files", "review", "cards")
     )
     assert tuple(again) == written, "the authored keys are not in the record's order"
     assert from_document(again, WHERE) == exercise
@@ -187,7 +189,10 @@ def test_the_authored_keys_are_appended_never_inserted():
     assert EXERCISE_KEYS[-len(AUTHORED_KEYS) :] == AUTHORED_KEYS
     # ⭐ The quiz shape's own key sits after the four rather
     # than inserting one among them, and what an exercise practises after it.
-    assert AUTHORED_KEYS == ("kind", *BREAKDOWN_KEYS, "origin", "questions", "mock", "concepts")
+    assert AUTHORED_KEYS == (
+        "kind", *BREAKDOWN_KEYS, "origin", "questions", "mock", "concepts", "files",
+        "review", "cards",
+    )
 
 
 # --------------------------------------------------------------------------

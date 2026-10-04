@@ -248,7 +248,12 @@ keeps its `counts` and its digest. `archive.markdown.blocks_of(regions(text),
 fence_labels)` writes the block from an `<!-- example: ... -->` region: a fence whose
 label belongs to a language opens its tab and any other fence is that tab's output.
 `validate` reads the shape (rule `document`) and a tab naming an undeclared language
-(rule `language-undeclared`).
+(rule `language-undeclared`). **A tab may also carry `code`**, the corpus-relative path of the
+file its code is (`{"lang": "python", "span": 2, "code": "examples/x/python/x.py"}`), which an
+adapter sets from the example projects it knows. A served page then offers Run beside that
+tab's code when the corpus pairs the file with a test and its runner is up; a tab without
+`code` is drawn as it always was, and a `code` that is no file of the corpus is the finding
+`example-code-missing`.
 
 **A list item is a string, or an array of its parts in reading order**: runs of
 text, nested `list` blocks, and `code` blocks. Keep a step's snippet inside its

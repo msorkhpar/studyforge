@@ -154,6 +154,9 @@ STYLE_PARTS = (
 #: LAST-ness is the property being kept, and after `narration.js` so the parts
 #: that draw a region of their own read together.
 #:
+#: ⭐ `practice-files.js` is before `practice-editor.js`, which calls what it publishes when a
+#: practice opens (the further files' tabs and the link to the editor in a tab of its own).
+#:
 #: ⭐ `practice-editor.js` and `practice-quiz.js` follow `practice.js`
 #: for the same reason `practice-quiz.css` follows `practice.css`: they are that
 #: part split at named seams for R11 — the panel and the run, the two editor
@@ -198,6 +201,7 @@ SCRIPT_PARTS = (
     "narration-probe.js",
     "narration.js",
     "practice.js",
+    "practice-files.js",
     "practice-editor.js",
     "practice-quiz.js",
     "practice-workspace.js",

@@ -169,6 +169,9 @@ REPEATS = {
     "option id": "a question names {count} option id more than once. A reader's answer "
     "names the option by its id, so a repeated id is an answer that means two things. The ids "
     "are not reproduced here, since a refusal never quotes a value that may be personal.",
+    "card id": "'cards' names {count} id more than once. A reader's mark is filed under the "
+    "card's id, so a repeated id is one mark standing for two cards. The ids are not reproduced "
+    "here, since a refusal never quotes a value that may be personal.",
     "option text": "a question offers {count} option that is identical to another after "
     "normalisation. Two options that say the same thing are one answer offered twice, and a "
     "reader who picks the wrong copy of the right words is marked wrong. The text is not "
@@ -186,6 +189,7 @@ def require_distinct(values: list[str], where: str, what: str) -> None:
 #: The owners of an id a refusal may name. ⛔ Anything else is named as "a value's": a refusal never
 #: reproduces a caller's words (R7).
 OWNERS = (
+    "a card's",
     "a question's",
     "an option's",
     "a question's domain",
@@ -207,6 +211,8 @@ def read_id(value: object, whose: str, where: str) -> str:
 
 #: The texts a refusal may describe, for the same reason.
 TEXTS = (
+    "a card's 'front' is what it asks",
+    "a card's 'back' is what it turns over to",
     "an option's 'text' is what the reader chooses",
     "an option's 'says' is why it is right or wrong",
     "a question's 'stem' is what it asks",

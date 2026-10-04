@@ -70,7 +70,9 @@ from studyforge.generate.containers import container_pages, page_paths
 from studyforge.generate.declarations import Corpus, read_corpus
 from studyforge.generate.entrylanguages import offer_of
 from studyforge.generate.media import unit_media
+from studyforge.generate.exampleruns import wanted as has_example_run
 from studyforge.generate.mockexam import form_wanted as has_mock_form
+from studyforge.generate.revision import has_decks, has_reviews
 from studyforge.generate.mockexam import wanted as has_mock_exam
 from studyforge.generate.narration import voiced
 from studyforge.generate.navigation import rail
@@ -80,7 +82,13 @@ from studyforge.render import modes
 from studyforge.render.index import Placement as IndexPlacement
 from studyforge.render.index import from_contents
 from studyforge.render.index import render as render_index
-from studyforge.render.page import mock_files, mock_form_files
+from studyforge.render.page import (
+    deck_files,
+    example_run_files,
+    mock_files,
+    mock_form_files,
+    review_files,
+)
 from studyforge.render.pageassets import written_files
 
 
@@ -178,6 +186,15 @@ def assets(corpus: Corpus, into: Path | str) -> Written:
     if has_mock_form(corpus):
         # ⭐ And the exam form's four only for a corpus whose mock opts into it.
         shared.update(mock_form_files())
+    if has_decks(corpus):
+        # ⭐ A deck of flashcards writes its two; a corpus with none builds the files it did.
+        shared.update(deck_files())
+    if has_reviews(corpus):
+        # ⭐ And a spaced-review bank its two.
+        shared.update(review_files())
+    if has_example_run(corpus):
+        # ⭐ And the Run strip's two only for a corpus whose examples name their code.
+        shared.update(example_run_files())
     for filename, body in sorted(shared.items()):
         place(
             out,

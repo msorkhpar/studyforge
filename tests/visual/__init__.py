@@ -273,4 +273,8 @@ ACCEPTANCE = {
     "file in the default mode, with every panel replaced and the banner unchanged": (
         "test_language_preview"
     ),
+    #: ⭐ A row of its own because its CORPUS is the subject: a corpus that opts in to a deck of
+    #: flashcards and a spaced-review bank, whose state is kept in the reader's own browser.
+    "turns a deck's cards and keeps what is known across reloads, and shows what a review bank "
+    "has due by its stated rule, over file:// with no request": "test_revision",
 }

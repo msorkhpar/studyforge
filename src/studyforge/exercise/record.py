@@ -96,6 +96,7 @@ from studyforge.exercise import quiz
 from studyforge.exercise.cases import (
     BREAKDOWN_KEYS,
     DEFAULT_KIND,
+    FLASHCARDS,
     QUIZ,
     Case,
     Origin,
@@ -109,6 +110,14 @@ from studyforge.exercise.cases import (
     report_of,
 )
 from studyforge.exercise.concepts import CONCEPTS, concepts_in
+from studyforge.exercise.deck import (
+    DECK_KEYS,
+    Card,
+    cards_document,
+    cards_in,
+    require_deck_shape,
+    require_no_cards,
+)
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.keys import (
     AUTHORED_KEYS,
@@ -157,6 +166,13 @@ class Exercise:
     mock: quiz.Mock | None = None
     #: ⭐ What it practises, in the plan's order (`exercise.concepts`).
     concepts: tuple[str, ...] | None = None
+    #: ⭐ The further files the reader edits beside `main_path`; `None` is a practice of one file.
+    files: tuple[str, ...] | None = None
+    #: ⭐ A quiz that is a spaced-review bank: the schedule its questions are revisited on
+    #: (`exercise.quiz.review`). `None` is every quiz that is not one.
+    review: quiz.Review | None = None
+    #: ⭐ The cards of a deck of flashcards (`exercise.deck`); `None` for every other record.
+    cards: tuple[Card, ...] | None = None
 
     @property
     def graded(self) -> bool:
@@ -177,6 +193,11 @@ class Exercise:
     def is_quiz(self) -> bool:
         """Is this graded by its own key rather than by running anything? ⭐ Spec §7 §7."""
         return self.kind == QUIZ
+
+    @property
+    def is_deck(self) -> bool:
+        """Is this a deck of flashcards, turned over rather than run or graded?"""
+        return self.kind == FLASHCARDS
 
     @property
     def authoritative(self) -> bool:
@@ -229,8 +250,15 @@ def from_document(value: object, where: str) -> Exercise:
         # included; this branch of the reader chooses the shape and nothing else.
         provenance, trust = quiz.require_quiz_shape(value, where)
         return Exercise(None, None, None, None, provenance, trust, **_authored(value, QUIZ, where))
+    if kind == FLASHCARDS:
+        provenance, trust = require_deck_shape(value, where)
+        return Exercise(
+            None, None, None, None, provenance, trust, **_authored(value, FLASHCARDS, where)
+        )
     quiz.require_no_questions(value, where)
     quiz.require_no_mock(value, where)
+    quiz.require_no_review(value, where)
+    require_no_cards(value, where)
     require_present(value, where)
     authored = _authored(value, kind, where)
     main_path = require_path(value.get("main_path"), "main_path", where)
@@ -268,6 +296,7 @@ def to_document(exercise: Exercise) -> dict:
     """
     values = {
         "main_path": exercise.main_path,
+        "files": list(exercise.files or ()),
         "test_path": exercise.test_path,
         "run_command": list(exercise.run_command or ()),
         "test_command": list(exercise.test_command or ()),
@@ -280,6 +309,8 @@ def to_document(exercise: Exercise) -> dict:
         quiz.QUESTIONS: quiz.questions_document(exercise.questions or ()),
         quiz.MOCK: quiz.mock_document(exercise.mock) if exercise.mock else None,
         CONCEPTS: list(exercise.concepts or ()),
+        "review": quiz.review_document(exercise.review) if exercise.review else None,
+        "cards": cards_document(exercise.cards or ()),
     }
     return {key: values[key] for key in _written_keys(exercise)}
 
@@ -287,11 +318,19 @@ def to_document(exercise: Exercise) -> dict:
 def _written_keys(exercise: Exercise) -> tuple[str, ...]:
     """Which keys this record writes — chosen by its shape, never by which values are `None`."""
     concepts = {CONCEPTS} if exercise.concepts is not None else set()
+    if exercise.files is not None and not exercise.is_quiz and not exercise.is_deck:
+        concepts.add("files")
+    if exercise.is_deck:
+        carried = set(DECK_KEYS) - (set() if exercise.origin else {"origin"})
+        carried = (carried - {CONCEPTS}) | concepts
+        return tuple(key for key in EXERCISE_KEYS if key in carried)
     if exercise.is_quiz:
         carried = set(quiz.QUIZ_KEYS) - (set() if exercise.origin else {"origin"})
         carried = (carried - {CONCEPTS, quiz.MOCK}) | concepts
         if exercise.mock is not None:
             carried.add(quiz.MOCK)
+        if exercise.review is not None:
+            carried.add(quiz.REVIEW)
         return tuple(key for key in EXERCISE_KEYS if key in carried)
     carried = set(concepts)
     if exercise.kind != DEFAULT_KIND:
@@ -317,7 +356,30 @@ def _authored(value: dict, kind: str, where: str) -> dict:
         quiz.QUESTIONS: quiz.questions_in(value, where),
         quiz.MOCK: quiz.mock_in(value, where) if kind == QUIZ else None,
         CONCEPTS: concepts_in(value, where),
+        "files": _files(value, where) if kind == DEFAULT_KIND else None,
+        "review": quiz.review_in(value, where) if kind == QUIZ else None,
+        "cards": cards_in(value, where) if kind == FLASHCARDS else None,
     }
+
+
+def _files(value: dict, where: str) -> tuple[str, ...] | None:
+    """Read `files`: absent is none; present is a non-empty list of distinct workspace paths."""
+    if "files" not in value:
+        return None
+    listed = value["files"]
+    if not isinstance(listed, list) or not listed:
+        raise ExerciseError(
+            f"{where}: 'files' lists the further files the reader edits, as a non-empty array "
+            f"of paths. A practice of one file leaves the key out."
+        )
+    paths = tuple(require_path(one, "a file the reader edits", where) for one in listed)
+    taken = {value.get("main_path"), value.get("test_path")}
+    if len(set(paths)) != len(paths) or any(path in taken for path in paths):
+        raise ExerciseError(
+            f"{where}: 'files' names a file twice, or one that is already the main file or "
+            f"the test file."
+        )
+    return paths
 
 
 def _trust(value: dict, where: str) -> tuple[str, str]:

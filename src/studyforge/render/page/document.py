@@ -74,7 +74,7 @@ from studyforge.corpus.placement import PlacementError
 from studyforge.corpus.placement import identity as identity_block
 from studyforge.render import modes, templates
 from studyforge.render.markup import escape, escape_attribute, inline
-from studyforge.render.page import anchors, navigation
+from studyforge.render.page import anchors, examplerun, navigation, quizonce
 from studyforge.render.page import code as code_region
 from studyforge.render.page import mark as mark_region
 from studyforge.render.page import practice as practice_region
@@ -140,16 +140,18 @@ def compose(
     synthesised renders exactly as a corpus that will never have any (R6), and
     the transport is absent in both cases rather than present and dead.
     """
+    document = quizonce.once(document)
     title = _title(document)
     sections = _sections(document)
     heads = anchors.title_heading(document) is not None
     attributes = heading_attributes(document, narration)
     parts = [
-        _part(section, placement, narration, document, heads_page=heads and index == 0)
+        _part(section, placement, narration, document, heads_page=index == 0 and heads)
         for index, section in enumerate(sections)
     ]
     joined = practices_region.joined(parts, sections, document, placement)
     body = code_region.examples(*code_region.mark(joined, placement), placement)
+    body += examplerun.links(body, placement)
     return (
         templates.fill(
             SKELETON,
@@ -368,8 +370,7 @@ def _region(markup: str) -> str:
     ⭐ The conditional newline lives here and nowhere else. Spread across the
     slots it is one chance per slot to emit a page that differs from its golden
     file by one blank line, which is the least interesting diff a reviewer can be
-    handed. ⛔ A count here would be a second statement of `page.html`'s slot
-    list, wrong the next time the skeleton grows — which it has.
+    handed. ⛔ A count here would be a second statement of `page.html`'s slot list.
     """
     return f"{markup}{JOIN}" if markup else ""
 
@@ -385,10 +386,9 @@ def _title(document: dict) -> str:
 def _sections(document: dict) -> list:
     """Return the sections to render, in the order the document records them.
 
-    ⛔ **The document's order is used, never re-derived.** `unit.builder` splits
-    derived ordering from authored ordering into two modules precisely so that
-    nothing downstream re-computes it; a renderer that sorted would be the
-    second orderer that module exists to prevent.
+    ⛔ **The document's order is used, never re-derived.** `unit.builder` owns
+    ordering, so nothing downstream re-computes it; a renderer that sorted would be
+    the second orderer that module exists to prevent.
     """
     sections = document.get("sections")
     if not isinstance(sections, list) or not sections:
