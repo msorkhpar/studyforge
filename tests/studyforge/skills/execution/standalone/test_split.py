@@ -241,3 +241,53 @@ def test_the_github_directory_is_kept_as_hosting_infrastructure_and_says_why(cou
     assert found.verdict == split.KEEP and found is split.HOSTED
     assert "hosting infrastructure" in found.why and "GitHub Pages" in found.why
     assert ".github/workflows/ci.yml" in split.kept(course[2].values(), course[1])
+
+
+def _with_example(tmp_path_factory, support):
+    """The fixture, built in place, with a lesson whose example tab names `code`."""
+    import json
+
+    root = fixture_copy(tmp_path_factory.mktemp("example-run"))
+    lesson = root / "archive/kata/raw/python/unit-03/lesson-1.json"
+    document = json.loads(lesson.read_text(encoding="utf-8"))
+    block = {
+        "type": "example",
+        "id": "demo",
+        "tabs": [{"lang": "python", "span": 1, "code": "samples/demo/test_demo.py"}],
+        "blocks": [{"type": "code", "lang": "python", "text": "print(1)"}],
+    }
+    if support:
+        block["support"] = support
+    document["blocks"].append(block)
+    lesson.write_text(json.dumps(document), encoding="utf-8")
+    (root / "samples/demo").mkdir(parents=True)
+    (root / "samples/demo/test_demo.py").write_text("import shared\n", encoding="utf-8")
+    (root / "shared").mkdir()
+    (root / "shared/__init__.py").write_text("", encoding="utf-8")
+    write_site(root, root)
+    files = tuple(
+        sorted({*(p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file()), *AROUND})
+    )
+    return root, files, {one.path: one for one in split.classify(root, files)}
+
+
+def test_a_release_keeps_the_files_an_example_tab_names_and_the_support_it_declares(
+    tmp_path_factory,
+):
+    root, files, table = _with_example(tmp_path_factory, ["shared"])
+    assert table["samples"].verdict == split.KEEP, table["samples"].why
+    assert table["shared"].verdict == split.KEEP, table["shared"].why
+    carried = split.kept(table.values(), files)
+    assert "samples/demo/test_demo.py" in carried and "shared/__init__.py" in carried
+
+
+def test_without_a_declaration_the_example_support_folder_moves_as_it_always_did(
+    tmp_path_factory,
+):
+    root, files, table = _with_example(tmp_path_factory, None)
+    assert table["samples"].verdict == split.KEEP
+    assert table["shared"].verdict == split.MOVE and table["shared"].why == split.UNKNOWN
+
+
+def test_a_corpus_without_example_code_is_split_as_before(course):
+    assert verdict(course, "somewhere-else") == split.MOVE

@@ -290,7 +290,7 @@
       }
     );
     var built = null;
-    var pop = files.link(bar);
+    var pop = files.link(bar, slot);
 
     function select(name) {
       buttons.forEach(function (button) {

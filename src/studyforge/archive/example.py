@@ -13,6 +13,9 @@ equal: an archive's names are not shared across the package edge).
 ⭐ **An example's tabs.** An `example` block holds its blocks flat in `blocks`, and its
 `tabs` cut that run into consecutive spans, one per language:
 `{"lang": "<id>", "span": <how many blocks>}`, and optionally `"code": "<corpus-relative file>"`.
+⭐ An example block may also carry `"support": ["<corpus-relative file or folder>", ...]`: the
+files its code imports to run (a shared harness folder), which a release keeps beside the code
+named by the tabs. Written only where an adapter sets it.
 Every walker that recurses on `blocks`
 reaches an example's code with no change. A block has from one to `EXAMPLE_MAX_TABS`
 tabs. `output` names why the block exists beside a

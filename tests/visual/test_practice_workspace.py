@@ -414,3 +414,40 @@ def test_a_practice_of_several_files_has_a_tab_for_each_and_each_tab_its_own_win
     )
     assert open_page.evaluate(where) == ["about:blank#notes", "about:blank#notes"]
     assert _state(open_page)["frames"] == 1, "a file tab built a second editor"
+
+
+FILES = [
+    {"path": "practice/config/settings.json", "url": "about:blank#settings"},
+    {"path": "practice/config/NOTES.md", "url": "about:blank#notes"},
+]
+
+
+@pytest.mark.parametrize("width", ["desktop", "phone"])
+@pytest.mark.parametrize(
+    "windows",
+    [
+        {"main": {"url": "about:blank#a"}, "files": FILES},
+        {"main": {"url": "about:blank#a"}, "test": {"url": "about:blank#t"}, "files": FILES},
+        {"main": {"url": "about:blank#a"}},
+    ],
+    ids=["files-no-test", "files-and-test", "one-file"],
+)
+def test_the_editor_link_shows_whenever_the_workspace_shows_the_editor(
+    open_page: OpenPage, origin: served.Served, windows: dict, width: str
+) -> None:
+    # ⭐ A configuration practice has several files and may have no test window, so the tablist
+    # may be hidden; the link to the editor in its own tab is shown all the same, in view.
+    origin.runs.windows = windows
+    open_page.resize(*WIDTHS[width])
+    open_page.open(_url(origin))
+    _open_card(open_page, "practice-java")
+    _until(open_page, lambda r: r["frames"] == 1, "built its one editor frame")
+    seen = open_page.evaluate(
+        "(() => { const a = document.querySelector('a[data-practice-popout]');"
+        " if (!a) return null; const b = a.getBoundingClientRect();"
+        " const f = document.querySelector('iframe').getBoundingClientRect();"
+        " return {shown: a.checkVisibility(), inside: b.width > 0 && b.height > 0 &&"
+        " b.bottom <= innerHeight && b.right <= innerWidth && b.top >= 0,"
+        " above: b.bottom <= f.top + 1}; })()"
+    )
+    assert seen == {"shown": True, "inside": True, "above": True}
