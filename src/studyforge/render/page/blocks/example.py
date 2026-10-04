@@ -39,6 +39,7 @@ from __future__ import annotations
 
 from studyforge.render import modes, templates
 from studyforge.render.markup import escape, escape_attribute
+from studyforge.render.page import examplerun
 
 #: The block types this module answers for.
 RENDERS = ("example",)
@@ -84,6 +85,8 @@ def render(
             render_one(fence, index, placement=placement, section=section, path=path)
             for index, fence in enumerate(fences[low:high], low)
         )
+        # ⭐ A tab that names its code file and has a test beside it gets a Run strip.
+        drawn += examplerun.strip(tab, placement)
         panel = f"{stem}-panel-{escape_attribute(lang)}"
         button = f"{stem}-tab-{escape_attribute(lang)}"
         label = escape(labels.get(lang, lang))

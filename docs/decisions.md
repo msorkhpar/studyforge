@@ -133,7 +133,7 @@ What it reads, and the choices in it:
 
 ### The personal-data gate admits sample data on reserved domains and one placeholder home path
 
-**Decision.** `studyforge.archive.samples` names the sample data the archive gate in `studyforge.archive.scrub` lets through: an email address whose domain is one of `RESERVED_DOMAINS` (RFC 2606) or sits under one, or sits under one of `RESERVED_TLDS` (RFC 6761), and the home path `SAMPLE_HOME`, whose account segment is exactly `user`. `admitted` decides from the matched text alone. Every other match is refused as before, including an address on any registrable domain, every other account segment, the macOS and tilde spellings, local hostnames and tokens. The reserved names are the same tuples as the hygiene check's `tests.floor.reserved_addresses`, and `tests/test_shape_vocabulary.py` asserts them equal. `scrub` still rewrites every address and home path in text the framework writes.
+**Decision.** `studyforge.archive.samples` names the sample data the archive gate in `studyforge.archive.scrub` lets through: an email address whose domain is one of `RESERVED_DOMAINS` (RFC 2606) or sits under one, or sits under one of `RESERVED_TLDS` (RFC 6761), and the home paths `SAMPLE_HOMES`, whose account segment is exactly one of `SAMPLE_ACCOUNTS` (`user`, `dev`, `me`), a fixed list of obvious placeholders that is never extended from a manifest. `example` and `coder` are not on it: the first is the account the invalid-corpus fixture uses to be refused, and the second is the editor image's own runtime account, which the toolchain contract's masking test must keep refusing. `admitted` decides from the matched text alone. Every other match is refused as before, including an address on any registrable domain, every other account segment, the macOS and tilde spellings, local hostnames and tokens. The reserved names are the same tuples as the hygiene check's `tests.floor.reserved_addresses`, and `tests/test_shape_vocabulary.py` asserts them equal. `scrub` still rewrites every address and home path in text the framework writes.
 
 **Why.** Teaching material writes addresses and home directories in its examples, and the safe way to write one is on a domain or under an account that reaches nobody. Refusing those refused the safe form and blocked a whole corpus, while an address on a real domain or a real account name must still stop the write.
 
@@ -1270,6 +1270,24 @@ What it reads, and the choices in it:
 **Why.** Configuration follows the port the publisher set, and a publisher sets ports in a text file. A generated-file finding for doing so punished the intended use, while a value that cannot work was only discovered as a failed bind. The check belongs where the value is used, and it names the key.
 
 **Serves.** `R6`, `R7`, `R10`
+
+### Site gaps: multi-file practices, example runs, revision aids, page navigation, one quiz, sample accounts
+
+**Decision.** Seven additive changes, each opt-in or invisible to a corpus that does not use it, so every earlier corpus builds, gates and renders as it did.
+
+- A code exercise may carry `files`, the files the reader edits beside `main_path`; gates, plants (a replacement names its file), the run route, the editor tabs and the thin export all take the list, and an exercise without it is unchanged.
+- An example tab may carry `code`, the corpus file it is; a served page gives such a tab a Run beside Copy (`example-run.js`), written only for a corpus with one. A tab with `code` naming no file is refused (`example-code-missing`).
+- A corpus may opt in to two revision aids: a flashcard deck (`DeckDraft`, gated by `C1` and `C2`) and a spaced-review bank (a quiz with `review`, gated by `Q1` to `Q5` and `S1`). Both are drawn by their own script and style, written only when the corpus has one, and both work over `file://` with no network.
+- The serve gate lets a top-level `GET` navigation to a page through when the browser says it is a navigation (`Sec-Fetch-Mode: navigate`, `Sec-Fetch-Dest: document`); the API and every state-changing verb keep the cross-site refusal.
+- A one-line HTML comment ends its HTML block before a code fence opener, so the fence is read as a fence.
+- A sample path may name a small fixed list of placeholder accounts (`user`, `dev`, `me`). `example` and `coder` stay refused: real corpora and the invalid-corpus fixtures use them as names that must be caught.
+- A quiz shown on its own page and again at the foot of a lesson is drawn once, in the place the reader meets it first, with a pointer where the second would be (`quizonce`).
+- The sentence on a deck or a review bank naming where its items came from follows the pages the items cite: one page or none, "this page"; several, "several pages of this level". No new key: the record's own citations are the signal.
+- A practice's editor can be opened in a tab of its own from a link beside its tabs, built by the page script from the server's answer and never composed from a path.
+
+**Why.** Each came from a real course build that could not express something its subject needed, and each fix lives in the framework so the next build inherits it. The opt-in shape keeps the byte output of every existing corpus fixed.
+
+**Serves.** `R1`, `R7`, `R8`, `R10`
 
 ## Narration
 

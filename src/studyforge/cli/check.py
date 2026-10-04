@@ -285,14 +285,18 @@ def _practices(corpus: Corpus) -> Iterator[Practice]:
 
 
 def _names(practice: Practice, root: Path, given: str) -> bool:
-    """Whether the path the reader gave is this practice's `main_path`.
+    """Whether the path the reader gave is a file this practice has the reader edit.
 
     ⭐ Compared as a path relative to the source root, normalised first and then
     with links resolved, so `./x`, `a/../x` and an absolute spelling all select
     the same file. ⛔ The comparison is the argument's only use.
     """
-    main = PurePosixPath(practice.exercise.main_path)
-    return any(relative == main for relative in _relative_spellings(root, given))
+    # ⭐ Any file the reader edits selects the practice: the main file and each further one.
+    edited = {
+        PurePosixPath(path)
+        for path in (practice.exercise.main_path, *(practice.exercise.files or ()))
+    }
+    return any(relative in edited for relative in _relative_spellings(root, given))
 
 
 def _relative_spellings(root: Path, given: str) -> Iterator[PurePosixPath]:

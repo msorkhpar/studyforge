@@ -45,8 +45,15 @@ EXERCISE_KEYS = (
     quiz.QUESTIONS,
     quiz.MOCK,
     CONCEPTS,
+    "files",
+    "review",
+    "cards",
 )
 
+#: ⭐ `files` is the further files a reader edits beside `main_path`, written only where the
+#: practice has some (a configuration practice: a settings file, a memory file, a script).
+#: ⛔ A record without it is the record it always was, byte for byte.
+#:
 #: The keys every record carries: the reader's file, and how it runs. ⭐ Also
 #: the whole of an ungraded record, in `EXERCISE_KEYS` order.
 REQUIRED_KEYS = ("main_path", "run_command")
@@ -63,7 +70,17 @@ DEFAULTED_KEYS = ("trust",)
 #: only where the record carries them**, which is what keeps every document
 #: written before them byte-identical through a round trip (R10).
 #: `BREAKDOWN_KEYS` is `cases`'s and `QUESTIONS` is `quiz`'s, with their reasons.
-AUTHORED_KEYS = ("kind", *BREAKDOWN_KEYS, "origin", quiz.QUESTIONS, quiz.MOCK, CONCEPTS)
+AUTHORED_KEYS = (
+    "kind",
+    *BREAKDOWN_KEYS,
+    "origin",
+    quiz.QUESTIONS,
+    quiz.MOCK,
+    CONCEPTS,
+    "files",
+    "review",
+    "cards",
+)
 
 
 def require_known_keys(value: dict, where: str) -> None:

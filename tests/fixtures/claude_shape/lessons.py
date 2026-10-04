@@ -32,10 +32,19 @@ def listing(*items: str) -> dict:
     return {"type": "list", "ordered": False, "items": list(items)}
 
 
-def example(ident: str, tabs: dict[str, str]) -> dict:
-    """An example block: one code fence for each language it has, in the order given."""
+def example(ident: str, tabs: dict[str, str], files: dict[str, str] | None = None) -> dict:
+    """An example block: one code fence for each language it has, in the order given.
+
+    ⭐ `files` maps a language to the corpus file its tab's code is; such a tab carries `code`, so a
+    served page gives it a Run beside Copy.
+    """
+    files = files or {}
     return {
-        "type": "example", "id": ident, "tabs": [{"lang": lang, "span": 1} for lang in tabs],
+        "type": "example", "id": ident,
+        "tabs": [
+            {"lang": lang, "span": 1, **({"code": files[lang]} if lang in files else {})}
+            for lang in tabs
+        ],
         "blocks": [code(lang, text) for lang, text in tabs.items()],
     }
 
@@ -76,7 +85,7 @@ def conversation_blocks() -> list[dict]:
         heading(2, "The history is the client's job"),
         para("One class holds the turns, sends a copy of them with every new turn and keeps the "
              "reply. The same class is written below in each language."),
-        example("conversation", {lang: files[where[lang]] for lang in LANGUAGES}),
+        example("conversation", {lang: files[where[lang]] for lang in LANGUAGES}, where),
         heading(2, "Run it"),
         para("Each file opens beside its test, and the test runs offline against a function "
              "that stands in for the service."),

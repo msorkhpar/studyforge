@@ -245,8 +245,12 @@ class OpenPage:
             if event.get("method") == "Network.requestWillBeSent"
         ]
 
-    def capture(self, destination: Path) -> Path:
-        """Write a full-page PNG to `destination` and return it.
+    def capture(self, destination: Path, *, whole: bool = True) -> Path:
+        """Write a full-page PNG to `destination` and return it; `whole=False` is the viewport.
+
+        ⭐ A page under a fixed overlay (a practice's workspace) is pictured with `whole=False`: the
+        whole-page form renders the document beyond the viewport too, which the overlay covers on a
+        screen.
 
         ⛔ `destination` is chosen by the caller and is never inside the
         repository: a capture is an artefact of one run on one machine, and the
@@ -254,7 +258,7 @@ class OpenPage:
         """
         shot = self.browser.call(
             "Page.captureScreenshot",
-            {"format": "png", "captureBeyondViewport": True},
+            {"format": "png", "captureBeyondViewport": whole},
             session=self.session,
         )
         destination.parent.mkdir(parents=True, exist_ok=True)

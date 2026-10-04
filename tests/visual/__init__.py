@@ -267,10 +267,22 @@ ACCEPTANCE = {
     "languages, and greys a practice outside the mode that does not open and is stepped over": (
         "test_absent_language"
     ),
+    #: ⭐ A row of its own because its CORPUS is the subject: an example whose tabs name the file
+    #: each is, with a test beside it. *The strip shows only where a runner is up, a press
+    #: streams the run into the block and says how it ended, and over a file it stays hidden* are
+    #: claims about one served origin and the same page opened as a file.
+    "shows an example's Run only where a runner is up, streams its output beside the code and "
+    "leaves it hidden over file://": "test_example_run",
+    #: ⭐ A row of its own because its CORPUS is the subject: a lesson that copies its own quiz.
+    "shows a quiz the lesson repeats once, with a sentence where the copy was": "test_quiz_once",
     #: ⭐ A row of its own because its ORIGIN is the subject: the preview of that corpus read from
     #: a static server and from a file.
     "opens the read-only preview of a corpus of four languages from a static server and from a "
     "file in the default mode, with every panel replaced and the banner unchanged": (
         "test_language_preview"
     ),
+    #: ⭐ A row of its own because its CORPUS is the subject: a corpus that opts in to a deck of
+    #: flashcards and a spaced-review bank, whose state is kept in the reader's own browser.
+    "turns a deck's cards and keeps what is known across reloads, and shows what a review bank "
+    "has due by its stated rule, over file:// with no request": "test_revision",
 }

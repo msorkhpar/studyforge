@@ -85,11 +85,10 @@ from studyforge.execute import (
     Runner,
     declares_runner,
     exit_line,
-    open_url,
     practice_folder,
+    prepared,
     recorded,
     select,
-    write_settings,
 )
 from studyforge.progress import CASES_KEY
 from studyforge.progress import RAISES as PROGRESS_RAISES
@@ -211,7 +210,12 @@ class Runs:
         return where
 
     def practice_editor(
-        self, corpus: ServedCorpus, main: str, test: str | None, named: tuple[str, ...] = ()
+        self,
+        corpus: ServedCorpus,
+        main: str,
+        test: str | None,
+        named: tuple[str, ...] = (),
+        files: tuple[str, ...] = (),
     ) -> dict | None:
         """Prepare one practice's workspace and say where its two windows are, or `None`.
 
@@ -224,24 +228,17 @@ class Runs:
         ⛔ **Each practice opens its OWN folder, and its settings are its own**:
         one shared folder was one lock naming one file, so opening a
         practice locked every other and two at once refused one. `named` is the
-        files the practice's commands name. Raises `WorkbenchRefused`.
+        files the practice's commands name. ⭐ `files` is the further files the reader edits:
+        they weigh in the folder, are editable beside `main`, and are answered as windows of
+        their own. Raises `WorkbenchRefused`.
         """
         asked = self._probe(corpus).editor()
         if asked is None:
             return None
-        where = practice_folder(self._remember(asked), main, test, root=corpus.root, named=named)
-        inside_main = None if where is None else where.inside(main)
-        if where is None or inside_main is None:
-            return None
-        inside_test = where.inside(test) if test else None
-        write_settings(corpus.root / where.base, inside_main, inside_test)
-        return {
-            "origin": where.origin,
-            "main": {"path": inside_main, "url": open_url(where, main)},
-            "test": None
-            if inside_test is None or test is None
-            else {"path": inside_test, "url": open_url(where, test)},
-        }
+        where = practice_folder(
+            self._remember(asked), main, test, root=corpus.root, named=(*named, *files)
+        )
+        return None if where is None else prepared(where, corpus.root, main, test, files)
 
     def _probe(self, corpus: ServedCorpus) -> EditorProbe:
         """Return the one probe held for `corpus`, made on first ask."""

@@ -103,8 +103,12 @@ CODE = "code"
 #: what lands here is the token, so a record can carry it and round-trip.
 QUIZ = "quiz"
 
+#: ⭐ A deck of flashcards: cards the reader turns over, with no run and no grade. The shape is
+#: `exercise.deck`'s; what lands here is the token, so a record can carry it and round-trip.
+FLASHCARDS = "flashcards"
+
 #: ⛔ Closed. A kind this build does not define is refused rather than carried.
-EXERCISE_KINDS = (CODE, QUIZ)
+EXERCISE_KINDS = (CODE, QUIZ, FLASHCARDS)
 
 #: What a record that writes no `kind` is.
 DEFAULT_KIND = CODE

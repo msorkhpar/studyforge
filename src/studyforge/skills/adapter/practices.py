@@ -62,9 +62,12 @@ from studyforge.archive.scrub import assert_clean
 from studyforge.exercise.bundle import BUNDLE_FILENAME, BUNDLES_DIRNAME, Places, bundle_of, emit
 from studyforge.exercise.gates import drifted, record_of
 from studyforge.skills.exercises import (
+    DECK_DOCUMENT,
     QUIZ_DOCUMENT,
+    DeckRefused,
     AuthoringError,
     QuizRefused,
+    deck_of,
     practised,
     quiz_of,
 )
@@ -172,6 +175,11 @@ def authored(root: Path | str) -> Authored:
         if path.relative_to(base).as_posix() == f"{where}/{QUIZ_DOCUMENT}":
             one = _quiz(base, path, where)
             found.setdefault(one.page, []).append(one)
+    for path in sorted(tree.rglob(Path(DECK_DOCUMENT).name)) if tree.is_dir() else ():
+        where = path.parent.parent.relative_to(base).as_posix()
+        if path.relative_to(base).as_posix() == f"{where}/{DECK_DOCUMENT}":
+            one = _deck(base, path, where)
+            found.setdefault(one.page, []).append(one)
     return Authored({page: tuple(sorted(one, key=_ordinal)) for page, one in found.items()})
 
 
@@ -221,6 +229,37 @@ def _quiz(base: Path, path: Path, where: str) -> Practice:
     }
     build(source=PLACEHOLDER_SOURCE, ingested=PLACEHOLDER_DATE, **fields)
     return Practice(quiz.places, fields)
+
+
+#: ⭐ What a deck's practice shows above its cards: this framework's own words, as a quiz's are.
+DECK_BLOCKS = (
+    {"type": "heading", "level": 2, "text": "Revise"},
+    {
+        "type": "para",
+        "text": "Turn each card over, then mark it known or to see again.",
+    },
+)
+
+
+def _deck(base: Path, path: Path, where: str) -> Practice:
+    """Read one deck's own document, and build its practice document's fields once."""
+    try:
+        deck = deck_of(json.loads(path.read_text(encoding="utf-8")), where)
+    except DeckRefused as refused:
+        raise PracticeRefused(str(refused)) from None
+    _require_cleared(base, deck.places, where)
+    fields = {
+        "address": deck.places.address,
+        "variant": deck.places.variant,
+        "unit": deck.places.unit,
+        "kind": "practice",
+        "ordinal": deck.places.ordinal,
+        "title": deck.title,
+        "blocks": [dict(block) for block in DECK_BLOCKS],
+        "exercise": _with_concepts(base, deck.places, dict(deck.record)),
+    }
+    build(source=PLACEHOLDER_SOURCE, ingested=PLACEHOLDER_DATE, **fields)
+    return Practice(deck.places, fields)
 
 
 def _with_concepts(base: Path, places: Places, record: dict) -> dict:

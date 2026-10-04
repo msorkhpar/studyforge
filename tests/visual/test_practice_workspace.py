@@ -361,3 +361,51 @@ def test_with_no_editor_a_practice_says_why_and_asks_nothing_that_fails(
     assert frames == 0
     assert asked == [], f"the page asked an editor the index does not name: {asked}"
     assert failed == [], f"the console is not clean: {failed}"
+
+
+def test_a_link_beside_the_tabs_opens_the_shown_window_in_a_tab_of_its_own(
+    open_page: OpenPage, origin: served.Served, capture_dir: Path
+) -> None:
+    open_page.resize(*WIDTHS["desktop"])
+    open_page.open(_url(origin))
+    _open_card(open_page, "practice-java")
+    _until(open_page, lambda r: r["frames"] == 1, "built its one editor frame")
+    link = (
+        "(() => { const a = document.querySelector('a[data-practice-popout]');"
+        " return a && {href: a.getAttribute('href'), target: a.target, rel: a.rel,"
+        " frame: document.querySelector('iframe').getAttribute('src'),"
+        " shown: a.checkVisibility()}; })()"
+    )
+    first = dict(open_page.evaluate(link))  # type: ignore[call-overload]
+    assert first["shown"] and first["target"] == "_blank" and "noopener" in first["rel"]
+    assert first["href"] == first["frame"], "the link does not open the window the frame shows"
+    open_page.capture(capture_dir / "editor-popout-link.png", whole=False)
+    open_page.evaluate("document.querySelector('[data-practice-tab=\"test\"]').click()")
+    second = dict(open_page.evaluate(link))  # type: ignore[call-overload]
+    assert second["href"] == second["frame"] and second["href"] != first["href"]
+
+
+def test_a_practice_of_several_files_has_a_tab_for_each_and_each_tab_its_own_window(
+    open_page: OpenPage, origin: served.Served, capture_dir: Path
+) -> None:
+    origin.runs.windows["files"] = [
+        {"path": "practice/config/settings.json", "url": "about:blank#settings"},
+        {"path": "practice/config/NOTES.md", "url": "about:blank#notes"},
+    ]
+    open_page.resize(*WIDTHS["desktop"])
+    open_page.open(_url(origin))
+    _open_card(open_page, "practice-java")
+    _until(open_page, lambda r: r["frames"] == 1, "built its one editor frame")
+    tabs = (
+        "Array.from(document.querySelectorAll('[data-practice-tab]'))"
+        ".filter((t) => t.checkVisibility()).map((t) => t.textContent.trim())"
+    )
+    assert open_page.evaluate(tabs) == ["Your code", "settings.json", "NOTES.md", "Tests"]
+    open_page.capture(capture_dir / "multi-file-tabs.png", whole=False)
+    open_page.evaluate("document.querySelectorAll('[data-practice-tab]')[2].click()")
+    where = (
+        "[document.querySelector('iframe').getAttribute('src'),"
+        " document.querySelector('a[data-practice-popout]').getAttribute('href')]"
+    )
+    assert open_page.evaluate(where) == ["about:blank#notes", "about:blank#notes"]
+    assert _state(open_page)["frames"] == 1, "a file tab built a second editor"

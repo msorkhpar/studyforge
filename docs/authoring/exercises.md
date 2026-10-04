@@ -166,7 +166,10 @@ further down.
     "origin": {"path": "docs/01-getting-started.md", "section": "Greeting a caller"},
     "questions": [],
     "mock": {"pass_mark": 70, "domains": [{"id": "d-1", "title": "Greeting a caller"}]},
-    "concepts": ["A greeting is built from the name it is given."]
+    "concepts": ["A greeting is built from the name it is given."],
+    "files": [],
+    "review": null,
+    "cards": []
   }
 }
 ```
@@ -489,6 +492,58 @@ and each question's `origin` names the page and passage it is built from.
 - **The pass mark is the corpus's number** (`mock.pass_mark`); the page states only whether the
   score reached it. Do not write the mark into a question.
 
+### Revision aids: a review bank and a deck of flashcards
+
+**Two opt-in shapes for revising a level, both opened in the practice workspace like a quiz, both
+kept entirely in the reader's own browser (no network, no account).** A corpus that uses neither is
+the corpus it was, byte for byte.
+
+**The line naming where the items came from follows what they cite.** A deck or bank whose items
+cite one page, or none, says it was written from this page. One whose items cite more than one
+page says it was written from several pages of the level. There is no flag to set: cite the pages
+the items were written from, and the sentence follows.
+
+**A review bank is a quiz with a `review` key.** Every item is a quiz question under every quiz rule:
+one keyed option, a sentence per option, a passage per question, `generated` and `advisory`.
+`review` adds the schedule:
+
+```json
+{"kind": "quiz", "review": {"intervals_days": [1, 3, 7, 14, 30]}, "questions": ["…"]}
+```
+
+`intervals_days` is 1 to 12 strictly growing whole days, 1 to 730. The page shows the items that
+are due and grades them from the key it carries. An item never seen, or last answered wrong, is due;
+an item answered right `n` times in a row is due again once `intervals_days[min(n, last)-1]` local
+days have passed since it was last got right (`exercise.quiz.review.due` is the rule, and a browser
+test reads the page against it). A wrong answer resets the streak, so the item is due again at once.
+The streak and the day are kept in the reader's browser under `studyforge.review.v1`, behind a guard
+that tolerates a refused store. A bank is never a mock exam: the two keys are refused together.
+Draft it with `QuizDraft(title=…, questions=…, review=Review((1, 3, 7)))`.
+
+**A deck is a `flashcards` exercise.** It carries `cards` in place of a workspace or questions:
+
+```json
+{"kind": "flashcards", "cards": [
+  {"id": "fc-001", "front": "What does a language model do at each step?",
+   "back": "It scores every token for how likely it is next …",
+   "origin": {"path": "course/01/page.md", "section": "How it generates"}}
+]}
+```
+
+A card is `id` (a plain token), `front`, `back` and `origin`, the passage it was written from. The
+page shows each front, turns a card on a button, and marks it known or to see again; the marks live
+in the reader's browser under `studyforge.deck.v1`. With no script every card shows both sides. A
+deck completes nothing and has no run, and it is `generated` and `advisory` like a quiz. Draft it with
+`DeckDraft(title=…, cards=(Card(id, front, back, Origin(path, section)), …))`.
+
+**The gates.** A bank answers `Q1` to `Q5` over its items and `S1` (the schedule fits the bank: at
+least as many questions as steps). A deck answers two mechanical gates: `C1` (a front and a different
+back no longer than 800 characters, and no two fronts that ask the same thing) and `C2` (every card
+cites a passage whose digest the ledger still holds). `gate_deck(draft, brief, ledger, where=…)`
+needs no runner and no judge, writes `tests/deck.json` and `gates.json`, and `deck_of` reads the
+document back; the adapter reads it as it reads a quiz. Nothing is re-run by `validate`: it re-reads
+the record and re-digests the bundle.
+
 ### A file with no test
 
 **When your material ships a file the reader runs but nothing that checks it**,
@@ -809,6 +864,7 @@ with a question on each. The aspects are in `ASPECTS` in
 | `tests` | the tests, one or more per case |
 | `plants` | for each edge case's id, a solution that solves the main ask and ignores exactly that edge: its full text, or a `PlantSpec` of replacements against the reference (see *A plant as replacements*) |
 | `build` | only when the tests import a library: each build file's path, relative to the workspace, mapped to its text, such as a `pom.xml` naming the library. Leave it out otherwise |
+| `files` | optional, empty by default: the further files the reader edits beside `main_file`, each workspace-relative path mapped to `EditedFile(starter, reference)`; see *A practice of several files* |
 | `assertions_only` | optional, `False` by default: `True` has `G2` and `G3` refuse a starter or a plant whose tests failed with an error that is not an assertion, such as a starter that raises `NotImplementedError` |
 | `typecheck_command` | optional, empty by default: an argv (such as `tsc --noEmit ...`) run in each staged solution's workspace before its tests; a non-zero exit is a named failure of `G1`, `G2` or `G3`, never a test case. Nothing is run when it is empty |
 
@@ -865,6 +921,48 @@ def basket(brief):
         plants={NEGATIVE.id: "def total(prices):\n    return sum(prices)\n"},
     )
 ```
+
+### A practice of several files
+
+A configuration practice has the reader edit a settings file, a memory file and a hook script,
+and the tests judge what the files say. `CodeDraft.main_file` is the first of them and
+`CodeDraft.files` names the rest:
+
+```python
+from studyforge.skills.exercises import CodeDraft, EditedFile
+
+draft = CodeDraft(
+    title="Project setup",
+    lang="json",
+    main_file="settings.json",
+    test_file="test_setup.py",
+    run_command=("python3", f"{ws}/check.py"),
+    test_command=("python3", "-m", "pytest", f"{ws}/test_setup.py"),
+    cases=cases,
+    report="target/report.xml",
+    origin=origin,
+    statement=statement,
+    starter=STARTER_SETTINGS,
+    reference=REFERENCE_SETTINGS,
+    tests=tests,
+    plants=plants,
+    files={"docs/memory.md": EditedFile(STARTER_NOTES, REFERENCE_NOTES)},
+)
+```
+
+- **The bundle** holds `starter/<path>` and `reference/<path>` for each further file, and
+  `bundle.json` lists them under `files`. The gate record digests each as `starter:<path>`
+  and `reference:<path>`, so a changed starter drifts the record like any other input.
+- **A plant** that changes a further file is a `PlantSpec` whose replacement names that file
+  (`Replacement("docs/memory.md", old, new)`); a file no replacement names stays as the
+  reference has it. A full-text plant is the main file's text alone. A replacement naming a
+  file the reader does not edit is refused, so no plant reaches the tests.
+- **The exercise record** gains `files`, the corpus-relative paths in the order declared,
+  written only for a practice that has some. The workspace is written with every edited file
+  in its starter state, the page names every file the reader edits, and the editor opens the
+  practice's own folder with one tab for each file; the files are editable and everything
+  else is read-only. `studyforge check` accepts any of the files.
+- **Nothing changes for a practice of one file**: no key, no input, no block.
 
 ### A plant as replacements
 
@@ -1231,6 +1329,9 @@ digest of every file the gates read and each gate's verdict.
 `studyforge validate` refuses a `generated` exercise with no record, a record
 in which any gate failed, and a bundle whose files no longer match their
 recorded digests.
+
+| `S1` | (a review bank only) the bank holds at least as many questions as its schedule has steps | every step of the schedule has something to show |
+| `C1`, `C2` | (a deck, instead of the five) the cards are sound and each cites a passage the ledger still holds | a card is a front and a different back, built from the page |
 
 ⚠️ **What `validate` does not do is re-run the gates.** It re-reads the record
 and re-digests the bundle's files. A quiz record whose key breaks `Q4`'s rules

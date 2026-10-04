@@ -117,7 +117,7 @@ reasoned plans zero, and a page teaching nothing checkable names no aspect
 and says why in `nothing_checkable`. ⚠️ `tier` says how hard each exercise is,
 never how many.
 
-⛔ **The two populations are the corpus's to declare** (R1). What is
+⛔ **The two populations are the corpus's to declare** (S1). What is
 material comes from the manifest's `content` policy, and what is a grader
 comes from the corpus's own declaration. The framework never guesses a
 test-file pattern.
@@ -153,10 +153,13 @@ test-file pattern.
 
 #### ⛔ Write a draft the gates can prove
 
-- **A practice has exactly one main file.** `CodeDraft.main_file` is the one
-  file the starter, the reference and every plant replace. A hierarchy is
-  nested in it as static member types of one class, and a sealed type's
-  implicit `permits` come only from that file.
+- **A practice has one main file, and may have more files to edit.**
+  `CodeDraft.main_file` is the file the starter, the reference and a full-text
+  plant replace. A hierarchy is nested in it as static member types of one
+  class, and a sealed type's implicit `permits` come only from that file. A
+  configuration practice (a settings file, a memory file, a hook script) names
+  the others in `CodeDraft.files`; see *A practice of several files* in
+  `docs/authoring/exercises.md`, which is where that is written once.
 
   ```java
   public class Shapes {
@@ -200,6 +203,10 @@ test-file pattern.
   domain (`P1` holds when every domain has a question and every question a declared domain),
   and take `Q1` to `Q3` for each question from a reader who did not write it; a reworded
   question needs fresh readings. See *A mock exam* on that page.
+- ⭐ **Revision aids are two more shapes, not new gates for old ones.** A review bank is a quiz
+  with a `review` schedule (`QuizDraft(review=Review(...))`: `Q1` to `Q5` over every item, and `S1`);
+  a deck is `DeckDraft` (`gate_deck`: `C1` and `C2`, mechanical, no judge). Each card cites its
+  passage. See *Revision aids* in `docs/authoring/exercises.md`, where it is written once.
 - ⛔ **A live-capable example holds no key and no captured secret.** It reads the variable the
   manifest names from its environment, prints neither the environment nor a header, writes the
   key nowhere and reaches the one declared host; its graded test needs no key and no network.

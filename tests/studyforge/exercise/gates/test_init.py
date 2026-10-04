@@ -17,6 +17,8 @@ def test_the_package_states_its_contract():
 def test_the_public_surface_is_declared_and_complete():
     assert set(gates.__all__) == {
         "ALGORITHMS",
+        "check_cards",
+        "cited_card_role",
         "Attempt",
         "CITED_KEYS",
         "CODE",
@@ -40,6 +42,9 @@ def test_the_public_surface_is_declared_and_complete():
         "Input",
         "ORIGIN_ROLE",
         "PLANT",
+        "C1",
+        "C2",
+        "CARDS",
         "QUIZ",
         "RECORD_KEYS",
         "REFERENCE",

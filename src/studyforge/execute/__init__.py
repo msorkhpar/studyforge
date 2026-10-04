@@ -129,6 +129,7 @@ from studyforge.execute.workbench import (
     WorkbenchRefused,
     open_url,
     practice_folder,
+    prepared,
     settings,
     write_settings,
 )
@@ -196,6 +197,7 @@ __all__ = [
     "is_a_test",
     "is_code",
     "open_url",
+    "prepared",
     "pair",
     "pairing",
     "practice_folder",

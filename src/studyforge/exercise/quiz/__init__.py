@@ -121,6 +121,17 @@ from studyforge.exercise.quiz.questions import (
     questions_document,
     questions_of,
 )
+from studyforge.exercise.quiz.options import read_id, read_text, require_distinct
+from studyforge.exercise.quiz.review import (
+    MOST_DAYS,
+    MOST_STEPS,
+    REVIEW,
+    REVIEW_KEYS,
+    Review,
+    due,
+    review_document,
+    review_of,
+)
 from studyforge.exercise.quiz.shape import (
     QUESTIONS,
     QUIZ_KEYS,
@@ -130,6 +141,8 @@ from studyforge.exercise.quiz.shape import (
     mock_in,
     questions_in,
     require_no_mock,
+    require_no_review,
+    review_in,
     require_no_questions,
     require_quiz_shape,
 )
@@ -139,6 +152,19 @@ from studyforge.exercise.quiz.shape import (
 #: failed — R17 makes the package's `__init__.py` its
 #: contract, and this is what it says.
 __all__ = [
+    "read_id",
+    "read_text",
+    "require_distinct",
+    "MOST_DAYS",
+    "MOST_STEPS",
+    "REVIEW",
+    "REVIEW_KEYS",
+    "Review",
+    "due",
+    "require_no_review",
+    "review_document",
+    "review_in",
+    "review_of",
     "DIFFICULTY_KEY",
     "SCENARIO_SENTENCES",
     "DOMAIN_KEY",

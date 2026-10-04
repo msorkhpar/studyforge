@@ -312,9 +312,11 @@ def editor(runs: Runs, corpus: ServedCorpus, workspace: dict) -> Response:
         for argument in workspace[key]
         if isinstance(argument, str)
     )
+    files = workspace.get("files")
+    more = tuple(one for one in files if isinstance(one, str)) if isinstance(files, list) else ()
     try:
         where = runs.practice_editor(
-            corpus, main, test if isinstance(test, str) and test else None, named
+            corpus, main, test if isinstance(test, str) and test else None, named, more
         )
     except WorkbenchRefused:
         # ⛔ The refusal's own sentence names a file inside somebody else's

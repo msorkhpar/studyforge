@@ -166,9 +166,9 @@ class ServingServer(ThreadingHTTPServer):
             return SECURITY_HEADERS
         return response_headers(self.frames(), host)
 
-    def gate(self, peer: str, headers: Mapping[str, str]) -> str | None:
-        """Return `security.refusal`'s answer for one request to this server."""
-        return refusal(peer, headers, self.allowed_hosts, self.peers)
+    def gate(self, peer: str, headers: Mapping[str, str], page: str | None = None) -> str | None:
+        """Return `security.refusal`'s answer; `page` is a `GET`'s path."""
+        return refusal(peer, headers, self.allowed_hosts, self.peers, path=page)
 
     def log(self, message: str) -> None:
         """Hand one scrubbed line to the caller's log, or drop it when there is none."""
@@ -249,7 +249,7 @@ class _Handler(BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:
         """Answer a `GET` (and, through it, a `HEAD`)."""
-        refused = self.server.gate(self.client_address[0], self.headers)
+        refused = self.server.gate(self.client_address[0], self.headers, urlsplit(self.path).path)
         if refused is not None:
             self._write(error(403, refused), close=True)
             return

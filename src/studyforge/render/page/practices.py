@@ -103,8 +103,11 @@ def region(document: dict, placement: Placement) -> str:
 def card(section: dict, document: dict, placement: Placement, unit: object) -> str:
     """Return one practice's card: its title, what it practises, and its status slot."""
     exercise = _exercise(section)
-    quiz = exercise is not None and exercise.is_quiz
-    graded = quiz or (exercise is not None and exercise.test_command is not None)
+    deck = exercise is not None and exercise.is_deck
+    quiz = deck or (exercise is not None and exercise.is_quiz)
+    # ⭐ A deck and a review bank are never passed, so their card has no status to show.
+    revising = deck or (exercise is not None and exercise.review is not None)
+    graded = (quiz and not revising) or (exercise is not None and exercise.test_command is not None)
     return templates.fill(
         CARD_TEMPLATE,
         id=escape_attribute(anchors.card_anchor(section.get("key"))),

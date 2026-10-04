@@ -18,7 +18,9 @@ from studyforge.archive import samples
 from studyforge.archive.samples import (
     RESERVED_DOMAINS,
     RESERVED_TLDS,
+    SAMPLE_ACCOUNTS,
     SAMPLE_HOME,
+    sample_home,
     admitted,
     is_reserved,
 )
@@ -75,9 +77,24 @@ def test_the_placeholder_home_path_passes_the_gate():
         assert shape_in(text) is None, text
 
 
+@pytest.mark.parametrize("account", ["user", "dev", "me"])
+def test_every_placeholder_account_passes_the_gate(account):
+    assert tuple(SAMPLE_ACCOUNTS) == ("user", "dev", "me")
+    for text in (sample_home(account) + "/listing.txt", "cd " + sample_home(account)):
+        assert shape_in(text) is None, text
+
+
 @pytest.mark.parametrize(
     "path",
     [
+        HOME + "example/x",
+        HOME + "coder/x",
+        HOME + "devs/x",
+        HOME + "Dev/x",
+        HOME + "meh/x",
+        HOME + "dev.ops/x",
+        "/" + "Users/dev/x",
+        "~" + "dev/x",
         HOME + "username/documents",
         HOME + "users/x",
         HOME + "user.name/x",
