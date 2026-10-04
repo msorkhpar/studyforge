@@ -210,13 +210,50 @@ def seed(page: OpenPage, url: str, items: dict) -> None:
     page.open_practice()
 
 
+COVER = """
+(() => {
+  const shell = document.querySelector('div[data-workspace]');
+  const b = shell.getBoundingClientRect();
+  const w = window.innerWidth, h = window.innerHeight;
+  const at = (x, y) => {
+    const hit = document.elementFromPoint(x, y);
+    return !!(hit && hit.closest('div[data-workspace], section[data-workspace-open]'));
+  };
+  return {
+    covers: b.left <= 0 && b.top <= 0 && b.right >= w && b.bottom >= h,
+    hits: [at(8, h - 2), at(w / 2, h - 2), at(w - 8, h - 2), at(w / 2, h - 40)],
+    markers: Array.from(document.querySelectorAll('ol[data-review-part="questions"]'))
+      .map((ol) => getComputedStyle(ol).listStyleType),
+    legends: Array.from(document.querySelectorAll('section[data-review] legend'))
+      .map((l) => getComputedStyle(l, '::before').content),
+  };
+})()
+"""
+
+
+def test_the_overlay_covers_the_viewport_and_nothing_under_it_is_reachable_at_its_foot(
+    deck, open_page, deck_url, bank_url
+):
+    for url in (deck_url, bank_url):
+        fresh(open_page, url)
+        reading = open_page.evaluate(COVER)
+        assert reading["covers"], reading
+        assert all(reading["hits"]), f"the page under the overlay is hit at its foot: {reading}"
+
+
+def test_a_review_bank_shows_each_question_number_once(bank, open_page):
+    reading = open_page.evaluate(COVER)
+    assert reading["markers"] == ["none"], "the list also draws its own marker"
+    assert reading["legends"] and all("counter(" in c for c in reading["legends"])
+
+
 def test_a_deck_and_a_bank_are_kept_as_pictures(
     deck, bank, open_page, capture_dir, deck_url, bank_url
 ):
     fresh(open_page, deck_url)
-    open_page.capture(capture_dir / "deck.png")
+    open_page.capture(capture_dir / "deck.png", whole=False)
     fresh(open_page, bank_url)
-    open_page.capture(capture_dir / "review-bank.png")
+    open_page.capture(capture_dir / "review-bank.png", whole=False)
     open_page.evaluate("localStorage.clear()")
 
 
