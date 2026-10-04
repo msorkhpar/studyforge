@@ -31,6 +31,13 @@ sentence saying so, because a path moved by mistake is one checkout of
 `studyforge/build` away; what a learner or the engine could use is named here,
 so it is never left to that default.
 
+## ⭐ What an example's Run needs is KEPT, and why
+
+⚠️ An example tab may name `code`, and an example block may declare `support` (a folder its code
+imports, such as a shared harness). The top-level entry holding any such path is kept, whole,
+because the served page's Run copies the learner tree and finds nothing of an entry that moved.
+The entries are read from the archive's lesson documents (`generate.exampleruns.needed`).
+
 ## ⭐ The authored exercises are KEPT, and why
 
 ⚠️ The bundle root (`exercises/`) holds every statement, starter, test, reference
@@ -61,6 +68,7 @@ from studyforge.corpus.manifest.content.policy import Classification
 from studyforge.corpus.placement import ARCHIVE_DIRNAME, GENERATED_ROOT, PRACTICE_DIRNAME
 from studyforge.exercise.bundle.layout import BUNDLES_DIRNAME
 from studyforge.generate import read_corpus
+from studyforge.generate.exampleruns import needed as example_files
 
 KEEP = "keep"
 MOVE = "move"
@@ -177,12 +185,13 @@ def classify(root: Path, files: Sequence[str]) -> tuple[Verdict, ...]:
     built = _built(corpus.footprint.files, corpus.footprint.directories)
     code = _code(files)
     lessons = _lessons(corpus.manifest, files)
+    examples = frozenset(PurePosixPath(one).parts[0] for one in example_files(corpus))
     verdicts: list[Verdict] = []
     for entry in _entries(files, ()):
         if entry == GENERATED_ROOT:
             verdicts.extend(_generated(files, built))
         else:
-            verdicts.append(_top(entry, built, code, lessons))
+            verdicts.append(_top(entry, built, code, lessons, examples))
     return tuple(verdicts)
 
 
@@ -200,7 +209,11 @@ def table(verdicts: Iterable[Verdict]) -> str:
 
 
 def _top(
-    entry: str, built: frozenset[str], code: frozenset[str], lessons: frozenset[str]
+    entry: str,
+    built: frozenset[str],
+    code: frozenset[str],
+    lessons: frozenset[str],
+    examples: frozenset[str] = frozenset(),
 ) -> Verdict:
     """Return the verdict for one top-level entry of the course."""
     if entry == MANIFEST_FILENAME:
@@ -236,6 +249,13 @@ def _top(
         )
     if entry in lessons:
         return Verdict(entry, KEEP, "the course's own lessons")
+    if entry in examples:
+        return Verdict(
+            entry,
+            KEEP,
+            "holds a file an example's Run strip names as its code, or a folder the example "
+            "declares as support: the served page's Run needs it beside the lesson",
+        )
     if PurePosixPath(entry).stem.lower() in LICENCES:
         return Verdict(entry, KEEP, "the course's licence")
     if entry == ".gitignore":

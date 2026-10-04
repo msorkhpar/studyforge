@@ -104,7 +104,7 @@ BLOCKS = (
         "examples",
         ("type", "id", "tabs", "blocks"),
         holds_blocks=True,
-        optional=("output",),
+        optional=("output", "support"),
         counted_when_present=True,
     ),
 )

@@ -147,6 +147,8 @@ before it, `check_untouched` after — which reports in the same shape.
 | `practice-count` | declared `practices` and present practice documents disagree |
 | `language-undeclared` | a document's `lang`, or the language of an example's tab, is not a language `corpus.json` declares under `languages` (or the corpus declares none) |
 | `example-code-missing` | an example's tab names a `code` file the corpus does not hold as a regular file; asked only of a tab that names one |
+| `example-code-unreleased` | an example's tab names a `code` file the release would not carry to the runner: a hidden, build-output or framework path |
+| `example-support-missing` | an example's `support` names a path that is no file or folder of the corpus, or one the release would not carry to the runner |
 | `unit-prose` | in a corpus that declares `modes`, a unit holds no lesson document, tagged or common |
 | `mode-empty` | a declared mode lists no unit: no lesson is common or in its `prose` language, and no practice is common or in a language it offers |
 | `duplicate-path` | two artifacts would be written to one path |

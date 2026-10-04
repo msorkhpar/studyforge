@@ -27,6 +27,11 @@ validates exactly as it did.
   tagged or common, so the page would hold no prose.
 - `example-code-missing`: an example's tab names a `code` file that is not a regular file of
   the corpus. Asked only of a tab that names one.
+- `example-code-unreleased`: an example's tab names a `code` file the release would not carry
+  to a runner (a hidden or build-output path, or one under the framework's own folders), so its
+  Run would find nothing.
+- `example-support-missing`: an example's `support` names a path that is not a file or folder of
+  the corpus, or one the release would not carry.
 - `mode-empty`: a declared mode lists no unit. A unit is listed in a mode when
   one of its lessons is common or in the mode's `prose` language, or one of its
   practices is common or in a language the mode's `practices` names.
@@ -47,6 +52,8 @@ RULE_LANGUAGE = "language-undeclared"
 RULE_UNIT_PROSE = "unit-prose"
 RULE_MODE_EMPTY = "mode-empty"
 RULE_EXAMPLE_CODE = "example-code-missing"
+RULE_EXAMPLE_RELEASE = "example-code-unreleased"
+RULE_EXAMPLE_SUPPORT = "example-support-missing"
 
 
 def check_languages_are_declared(walk: Walk) -> Iterator[Finding]:
@@ -112,6 +119,45 @@ def check_example_code_exists(walk: Walk) -> Iterator[Finding]:
                     )
 
 
+def check_example_files_are_released(walk: Walk) -> Iterator[Finding]:
+    """Every `code` file and every `support` path of an example reaches the released runner.
+
+    ⭐ Asked only of an example that names one. ⛔ A finding names the unit, never the path (R7).
+    """
+    from studyforge.execute import mirrored
+
+    root = Path(walk.root).resolve()
+    for unit in walk.units:
+        blocks = unit.document.get("blocks")
+        for block in walk_blocks(blocks if isinstance(blocks, list) else []):
+            if not isinstance(block, dict) or block.get("type") != "example":
+                continue
+            for tab in block.get("tabs") or ():
+                code = tab.get("code") if isinstance(tab, dict) else None
+                if isinstance(code, str) and not source_path_fault(code) and not mirrored(code):
+                    yield Finding(
+                        RULE_EXAMPLE_RELEASE,
+                        unit.where,
+                        f"has an example whose {tab.get('lang')!r} tab names a code file the"
+                        f" release does not carry to the runner (a hidden, build-output or"
+                        f" framework path); a tab's code is a file the runner can reach",
+                    )
+            support = block.get("support")
+            for one in support if isinstance(support, list) else ():
+                if not isinstance(one, str) or source_path_fault(one):
+                    continue
+                found = (root / one).resolve()
+                inside = found.is_relative_to(root) and (found.is_file() or found.is_dir())
+                if not inside or not mirrored(one.rstrip("/") + ("" if found.is_file() else "/x")):
+                    yield Finding(
+                        RULE_EXAMPLE_SUPPORT,
+                        unit.where,
+                        "has an example whose support names a path the corpus does not hold,"
+                        " or one the release does not carry to the runner; support is a file"
+                        " or folder of the corpus",
+                    )
+
+
 def check_units_have_prose(walk: Walk) -> Iterator[Finding]:
     """A unit of a corpus that declares modes holds at least one lesson, tagged or common."""
     if _modes(walk) == ():
@@ -166,6 +212,7 @@ def _listed(mode: object, documents: list[Unit]) -> bool:
 CHECKS = (
     check_languages_are_declared,
     check_example_code_exists,
+    check_example_files_are_released,
     check_units_have_prose,
     check_modes_list_a_unit,
 )
