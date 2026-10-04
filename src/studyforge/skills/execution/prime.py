@@ -278,6 +278,9 @@ def _project(
     project keeps its build files beside each module. ⛔ Two builds at the same
     shallowest depth are two projects, and the component warms one per tool,
     so that is refused by name rather than one picked.
+
+    ⭐ **A build the component can warm wins** (`_warmable`): it refuses a Gradle prime with
+    no checksum file, so one that has it is preferred to a shallower one that does not.
     """
     names = [where for where, _ in held]
     wanted = [where for where in names if _is_build_file(where, tool)]
@@ -288,8 +291,9 @@ def _project(
         )
         return None
     roots = {_directory_of(where, tool) for where in wanted}
-    depth = min(_depth(one) for one in roots)
-    shallowest = sorted(one for one in roots if _depth(one) == depth)
+    candidates = _warmable(tool, roots, set(names))
+    depth = min(_depth(one) for one in candidates)
+    shallowest = sorted(one for one in candidates if _depth(one) == depth)
     if len(shallowest) > 1:
         missing.append(
             f"{tool} is declared and this corpus carries {len(shallowest)} separate builds "
@@ -307,6 +311,16 @@ def _project(
         build_files=tuple(sorted(where for where in wanted if _under(where, base))),
         specimens=_specimens(tool, base, declared, inside, modules, text, missing),
     )
+
+
+GRADLE_CHECKSUMS = "gradle/verification-metadata.xml"  # the component warms no build without it
+
+
+def _warmable(tool: str, roots: set[str], names: set[str]) -> set[str]:
+    """Every build directory; for Gradle, those with checksums if the shallowest has none."""
+    pinned = {one for one in roots if f"{one}/{GRADLE_CHECKSUMS}".lstrip("/") in names}
+    plain = tool != "gradle" or not pinned or min(map(_depth, pinned)) == min(map(_depth, roots))
+    return roots if plain else pinned
 
 
 def _is_build_file(where: str, tool: str) -> bool:
