@@ -263,6 +263,17 @@ tab's code when the corpus pairs the file with a test and its runner is up; a ta
 `code` is drawn as it always was, and a `code` that is no file of the corpus is the finding
 `example-code-missing`.
 
+**An example block may declare `support`**: `"support": ["harness"]`, a non-empty array of
+corpus-relative files or folders its code imports to run (a shared harness folder beside the
+example projects). The key follows `output` when both are present. A release of the course
+(the standalone split) keeps the top-level entry holding every tab's `code` and every `support`
+path in the learner tree, whole, and the runner copies that tree, so a served Run finds the
+example and what it imports. A corpus that declares no `support` and no `code` is unchanged;
+a `code` without `support` keeps only the entry that holds the code. `validate` refuses a
+`support` that is not a safe path (rule `document`) or that names no file or folder of the
+corpus or one a Run cannot reach (`example-support-missing`), and a `code` under a hidden,
+build-output or framework folder (`example-code-unreleased`).
+
 **A list item is a string, or an array of its parts in reading order**: runs of
 text, nested `list` blocks, and `code` blocks. Keep a step's snippet inside its
 step, and the sentence after the snippet after it in the same item:

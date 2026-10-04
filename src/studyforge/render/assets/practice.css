@@ -219,3 +219,11 @@ section[data-practice] li[data-practice-case][data-practice-verdict="passed"] sp
 section[data-practice] li[data-practice-case][data-practice-verdict="failed"] span {
   color: var(--accent);
 }
+
+/* ⭐ The link that opens the editor in a tab of its own is a line of its own above the frame, so
+   it is seen whether or not the tablist above it is shown. */
+section[data-practice] a[data-practice-popout] {
+  display: block;
+  margin: 0 0 .5rem;
+  font-size: .9rem;
+}

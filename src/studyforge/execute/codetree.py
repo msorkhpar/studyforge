@@ -80,7 +80,7 @@ from __future__ import annotations
 
 import os
 import shutil
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from studyforge.corpus.manifest import MANIFEST_FILENAME
 from studyforge.corpus.placement.names import ARCHIVE_DIRNAME, PRACTICE_DIRNAME
@@ -121,6 +121,18 @@ class CodeRefused(Exception):
 def in_copy(path: str) -> str:
     """Return where a corpus-relative path sits in the copy, relative to the root."""
     return f"{CODE_COPY}/{path}"
+
+
+def mirrored(path: str) -> bool:
+    """Whether the copy would mirror the corpus-relative `path`: the files a Run can reach.
+
+    ⭐ The same rule `code_files` walks by, asked of one path: no dot-file, no dot-directory,
+    no build output, no manifest, and nothing under a framework directory at the top.
+    """
+    parts = PurePosixPath(path).parts
+    if not parts or parts[-1].startswith(".") or parts[-1] == MANIFEST_FILENAME:
+        return False
+    return all(_walked(name, top=index == 0) for index, name in enumerate(parts[:-1]))
 
 
 def code_files(root: Path) -> dict[str, Path]:

@@ -85,7 +85,7 @@ from studyforge.execute.browser import (
     find_browser,
 )
 from studyforge.execute.codepair import Pair, is_code, pair, pairing, test_command, test_commands
-from studyforge.execute.codetree import CODE_COPY, IGNORE_TEXT, CodeRefused, in_copy, sync
+from studyforge.execute.codetree import CODE_COPY, IGNORE_TEXT, CodeRefused, in_copy, mirrored, sync
 from studyforge.execute.commands import (
     CONTAINER_PREFIX,
     EDITOR_CONTAINER_TEMPLATE,
@@ -196,6 +196,7 @@ __all__ = [
     "instance_problems",
     "is_a_test",
     "is_code",
+    "mirrored",
     "open_url",
     "prepared",
     "pair",

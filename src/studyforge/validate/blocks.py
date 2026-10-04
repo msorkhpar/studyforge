@@ -82,6 +82,18 @@ def _example(block: dict, at: str) -> Iterator[tuple[str, str]]:
     if "output" in block and block["output"] not in EXAMPLE_OUTPUTS:
         said = describe(block["output"])
         yield f"{at}.output", f"is {said}; output is one of {list(EXAMPLE_OUTPUTS)}"
+    if "support" in block:
+        support = block["support"]
+        if not isinstance(support, list) or not support:
+            yield f"{at}.support", f"is {describe(support)}; support is a non-empty array of paths"
+        else:
+            for number, one in enumerate(support):
+                fault = source_path_fault(one) if isinstance(one, str) else "not text"
+                if fault:
+                    yield (
+                        f"{at}.support[{number}]",
+                        f"is {fault}; support is a corpus-relative file or folder",
+                    )
     blocks = block.get("blocks")
     held = blocks if isinstance(blocks, list) else []
     for number, part in enumerate(held):

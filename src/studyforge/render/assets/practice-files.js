@@ -48,14 +48,19 @@
     });
   }
 
-  /* The link, after the tablist; its `href` is set by the caller as a window is shown. */
-  function link(bar) {
+  /* The link, after the tablist (or before the frame's slot where there is none); its `href` is
+     set by the caller as a window is shown. ⭐ It is never inside the tablist, which stays hidden
+     where one window is no choice, and it is never hidden itself: it shows whenever the
+     workspace shows the editor. */
+  function link(bar, slot) {
     var pop = document.createElement('a');
     pop.setAttribute(POP, '');
     pop.target = '_blank';
     pop.rel = 'noopener noreferrer';
     pop.textContent = 'Open in the editor in its own tab';
+    pop.hidden = false;
     if (bar) { bar.parentNode.insertBefore(pop, bar.nextSibling); }
+    else if (slot && slot.parentNode) { slot.parentNode.insertBefore(pop, slot); }
     return pop;
   }
 

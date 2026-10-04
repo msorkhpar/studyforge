@@ -211,3 +211,61 @@ def test_an_example_in_each_of_four_languages_is_told_the_test_a_run_names(root)
         for source, test in named.items():
             status, _, body = post(server, at(code.CODE, source))
             assert status == 200 and json.loads(body)["runs"] == test, source
+
+
+def test_a_served_run_of_an_example_passes_in_a_release_that_carries_its_support(
+    tmp_path, monkeypatch
+):
+    # ⭐ The release's learner tree is built by the split, copied to a fresh folder, and an
+    # example's test that imports a shared support folder is run from it, by the route a Run
+    # strip posts to. Without the support folder in the tree the same run fails to import it.
+    import json
+    import shutil
+
+    from studyforge.generate import write_site
+    from studyforge.skills.execution.standalone import split
+    from tests.studyforge.execute.runnable import fixture_copy
+
+    source = fixture_copy(tmp_path / "author")
+    lesson = source / "archive/kata/raw/python/unit-03/lesson-1.json"
+    document = json.loads(lesson.read_text(encoding="utf-8"))
+    document["blocks"].append(
+        {
+            "type": "example",
+            "id": "demo",
+            "tabs": [{"lang": "python", "span": 1, "code": "samples/demo/test_demo.py"}],
+            "blocks": [{"type": "code", "lang": "python", "text": "print(1)"}],
+            "support": ["shared"],
+        }
+    )
+    lesson.write_text(json.dumps(document), encoding="utf-8")
+    (source / "samples/demo").mkdir(parents=True)
+    (source / "samples/demo/test_demo.py").write_text(
+        "import sys, pathlib\n"
+        "sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2]))\n"
+        "import shared\nprint('shared says', shared.VALUE)\n",
+        encoding="utf-8",
+    )
+    (source / "shared").mkdir()
+    (source / "shared/__init__.py").write_text("VALUE = 7\n", encoding="utf-8")
+    write_site(source, source)
+    files = tuple(
+        sorted(p.relative_to(source).as_posix() for p in source.rglob("*") if p.is_file())
+    )
+    kept = split.kept(split.classify(source, files), files)
+    release = tmp_path / "release" / source.name
+    for one in kept:
+        (release / one).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source / one, release / one)
+    (release / CODE_COPY).mkdir(parents=True, exist_ok=True)
+    (release / CODE_COPY / ".gitignore").write_text(IGNORE_TEXT, encoding="utf-8")
+    monkeypatch.setattr(
+        code,
+        "test_command",
+        lambda where, found, runtimes: ["python3", f"{CODE_COPY}/samples/demo/test_demo.py"],
+    )
+    live, discovered = runs_over(release)
+    with serving(live, discovered) as server:
+        status, _, body = post(server, at(code.CODE_TEST, "samples/demo/test_demo.py"))
+    assert status == 200, body
+    assert "shared says 7" in body and body.splitlines()[-1] == "--- exit 0 ---"
