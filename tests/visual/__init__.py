@@ -283,6 +283,11 @@ ACCEPTANCE = {
     "opens a language-tagged practice with its editor filling the pane and the handles working": (
         "test_practice_tagged"
     ),
+    #: ⭐ A row of its own: the editor fills the pane on open, at desktop and phone width.
+    "opens a practice with its editor at least 70% of the pane, the report only a strip until a "
+    "run reports, and keeps the split the reader chose for that practice": (
+        "test_practice_editor_height"
+    ),
     #: ⭐ A row of its own because its CORPUS is the subject: a practice written in four languages.
     "shows a practice written in four languages as one card, opens its panel in the reading "
     "mode's language, switches the statement, panel and Submit target to another edition, and "

@@ -177,6 +177,14 @@ section[data-practice][data-workspace-open] div[data-practice-part="report-body"
 
 section[data-practice][data-workspace-open] pre[data-practice-part="output"] { max-height: none; }
 
+/* ⭐ **Until a Run or Submit reports, the report is only its strip**: its body (the status, the
+   cases and the output) and the divider above it show once the panel is marked reported
+   (`practice-panes.js`), so the editor fills the pane on open. */
+section[data-practice][data-workspace-open]:not([data-practice-reported])
+  :is(div[data-practice-part="report-body"], div[data-practice-part="report-divider"]) {
+  display: none;
+}
+
 /* ⭐ The editor gives way to a taller report down to a floor, and takes back
    every pixel the report gives up: the point of both dividers is the code.
    ⚠️ `practice-panes.js` reads this `min-height` as the clamp's floor, so the
