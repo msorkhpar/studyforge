@@ -533,10 +533,13 @@ quiz, and a corpus whose quizzes all say `page` writes none of them. Draft one w
 
 **A lesson that lists its quiz shows the quiz once, in place.** A lesson sometimes ends with a
 section (a heading, numbered questions, a folded *Answer key*) that lists the same questions as its
-quiz practice. The match is by the text: a range of blocks from a heading to the next heading of the
-same or a higher level that contains every stem of one plain quiz practice verbatim. The page then
-draws the interactive quiz **where that section was**, under its heading, and does not draw the
-static questions or the folded key; each question's explanation appears after answering. The
+quiz practice. The match is by the text: one unbroken run of question blocks that holds every stem
+of one plain quiz practice verbatim, with only option lists, code samples or images between the
+questions. The page then draws the interactive quiz **where those questions were**, under their
+heading, and does not draw the static questions or the folded key right after them; each question's
+explanation appears after answering. Everything else stays: the heading, the lesson's prose before
+and after, a mock page's intro and domain table. Stems scattered through prose are not a quiz, and
+nothing is removed; the practice is then drawn after the lesson. The
 practice is not listed again in *Practice (n)* or opened in a workspace. A section that holds
 different questions and a unit with no quiz practice are untouched, and a page with no match is the
 page it was. **A mock exam counts as a quiz here**: a mock page that lists its questions and folds
