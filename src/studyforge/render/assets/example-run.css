@@ -22,3 +22,40 @@ pre[data-example-part="output"] {
   overflow: auto;
   white-space: pre-wrap;
 }
+
+/* ⭐ The strip wears the page's own control and code looks: palette tokens only, no value of its own. */
+p[data-example-run] button {
+  font: inherit;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: .95rem;
+  padding: .3rem .85rem;
+  color: var(--fg);
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-control);
+  cursor: pointer;
+}
+
+p[data-example-run] button:hover:not([disabled]) { background: var(--surface-2); }
+
+p[data-example-run] button[disabled] {
+  color: var(--muted);
+  cursor: default;
+  opacity: .65;
+}
+
+p[data-example-run] [data-example-part="status"] {
+  font-family: var(--font-ui);
+  font-size: .9rem;
+}
+
+pre[data-example-part="output"] {
+  padding: .6rem .8rem;
+  font-family: var(--font-mono);
+  font-size: .85rem;
+  line-height: 1.5;
+  color: var(--code-fg);
+  background: var(--code-bg);
+  border-radius: var(--radius-control);
+}
