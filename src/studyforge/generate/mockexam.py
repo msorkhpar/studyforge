@@ -52,8 +52,39 @@ FORM_QUESTION_KEYS = ("select",)
 
 
 def form_wanted(corpus: Corpus) -> bool:
-    """Does any unit carry a mock exam that opts into the exam form (`render.page.mockform`)?"""
-    return any(_has_mock(source.directory, form=True) for source in corpus.units)
+    """Does any unit need the exam form's files (`render.page.mockform`)?
+
+    ⭐ Two readers use them: a mock exam that opts into the form, and a plain quiz, which is drawn
+    one question at a time unless its record says `layout: page`.
+    """
+    return any(
+        _has_mock(source.directory, form=True) or _has_stepped_quiz(source.directory)
+        for source in corpus.units
+    )
+
+
+#: The record keys that make a quiz something other than a plain one, and the layout that opts out.
+OTHER_QUIZ_KEYS = (MOCK_KEY, "review")
+PAGE_LAYOUT = "page"
+
+
+def _has_stepped_quiz(directory) -> bool:
+    """Does any practice document here declare a plain quiz that is not opted out of the stepper?"""
+    for path in sorted(directory.glob(PRACTICE_GLOB)):
+        try:
+            document = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        assert_clean(document, MOCK_WHERE)
+        record = document.get("exercise") if isinstance(document, dict) else None
+        if (
+            isinstance(record, dict)
+            and record.get("kind") == "quiz"
+            and not any(key in record for key in OTHER_QUIZ_KEYS)
+            and record.get("layout") != PAGE_LAYOUT
+        ):
+            return True
+    return False
 
 
 def _opts_in(record: dict) -> bool:

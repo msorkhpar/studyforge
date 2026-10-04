@@ -140,7 +140,7 @@ def compose(
     synthesised renders exactly as a corpus that will never have any (R6), and
     the transport is absent in both cases rather than present and dead.
     """
-    document = quizonce.once(document)
+    document = quizonce.once(document, lambda s, d: practices_region.embedded(s, d, placement))
     title = _title(document)
     sections = _sections(document)
     heads = anchors.title_heading(document) is not None

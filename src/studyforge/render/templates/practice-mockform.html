@@ -1,6 +1,5 @@
-<section data-practice-quiz="${key}" data-practice-mock="${passmark}" data-mock-form="${layout}" data-corpus="${corpus}" aria-label="Mock exam" tabindex="-1">
-<div data-practice-part="head"><h2>Mock exam</h2></div>
-${grader}<div data-form-part="start" hidden></div>
+<section data-practice-quiz="${key}" data-practice-mock="${passmark}" data-mock-form="${layout}"${kind} data-corpus="${corpus}" aria-label="${label}" tabindex="-1">
+${head}${grader}<div data-form-part="start" hidden></div>
 <div data-form-part="bar" hidden><p data-form-part="timer-line" hidden>Time remaining <span data-form-part="timer" role="timer" aria-label="Time remaining"></span></p>
 <p data-form-part="progress"><progress data-form-part="meter" max="${asked}" value="0"></progress> <span data-form-part="count"></span></p></div>
 <div data-form-part="navigator" role="navigation" aria-label="Question navigator" hidden></div>
@@ -22,7 +21,7 @@ ${questions}</ol>
 <script src="${core}" defer></script>
 <script src="${panels}" defer></script>
 <script src="${script}" defer></script>
-<p data-practice-part="offline">Scoring this exam needs this page's script, and it is not running here. Read the questions and choose your answers; nothing here can score them.</p>
-<p data-form-part="controls" hidden><button type="button" data-form-part="submit">Submit exam</button> <button type="button" data-form-part="again" hidden>Start again</button></p>
+<p data-practice-part="offline">${offline}</p>
+<p data-form-part="controls" hidden><button type="button" data-form-part="submit">${submit}</button> <button type="button" data-form-part="again" hidden>${again}</button></p>
 <p data-form-part="missing" role="alert" hidden></p>
 </section>

@@ -169,7 +169,8 @@ further down.
     "concepts": ["A greeting is built from the name it is given."],
     "files": [],
     "review": null,
-    "cards": []
+    "cards": [],
+    "layout": null
   }
 }
 ```
@@ -237,6 +238,9 @@ a grader**, so it is the one of these an *ungraded* record may carry.
 
 **`questions` is a quiz's, and only a quiz's.** Writing it on any other record
 is a refusal; see *A practice for material that is not code* below.
+
+**`layout` is a plain quiz's: `page` opts it out of one question at a time** (see *A plain quiz is
+drawn one question at a time*).
 
 **`mock` is a quiz's too, and says the quiz is a mock exam**: a page of many
 questions covering a level, scored per domain. Writing it on any other record
@@ -502,6 +506,44 @@ the corpus it was, byte for byte.
 cite one page, or none, says it was written from this page. One whose items cite more than one
 page says it was written from several pages of the level. There is no flag to set: cite the pages
 the items were written from, and the sentence follows.
+
+**A plain quiz is drawn one question at a time.** A quiz with no `mock` and no `review` is shown by
+the exam form's own parts, in a kind of its own: one question per view, **Previous** and **Next**, a
+progress line (*Question 2 of 7. 3 answered.*), a navigator of numbered buttons that say answered or
+open, and a **Finish quiz** button. Each answer is explained **as it is given**: the verdict and the
+sentence for the option chosen, never the key, so a reader told why a choice fails can try again. The
+answers live in the reader's own browser (`studyforge.mockform.v1`, behind a guard that tolerates a
+refused store), so a reload comes back on the same question with the same answers. **Finish quiz**
+asks once about questions left open, then shows a summary: *Question n: Right.* or *Not this one.*
+for every question, each a button that jumps to that question, and below it every question with the
+key marked and every option's sentence (a review filter narrows it to the missed ones). The quiz is
+complete, and its card reads *Passed*, as soon as every question is right, as before. There is no
+pass mark, clock, flag or domain table. It is the default; a quiz that wants every question on one
+page with one **Check answers** control writes the opt-out:
+
+```json
+{"kind": "quiz", "layout": "page", "questions": ["…"]}
+```
+
+`layout` is `steps` (what leaving it out gives) or `page`. It belongs to a plain quiz only: it is
+refused on a record that is not a quiz and beside `mock` or `review`, which draw themselves. The
+build writes the exam form's four files beside the shared bundle for a corpus that has a stepped
+quiz, and a corpus whose quizzes all say `page` writes none of them. Draft one with
+`QuizDraft(title=…, questions=…, layout="page")`.
+
+**A lesson that lists its quiz shows the quiz once, in place.** A lesson sometimes ends with a
+section (a heading, numbered questions, a folded *Answer key*) that lists the same questions as its
+quiz practice. The match is by the text: a range of blocks from a heading to the next heading of the
+same or a higher level that contains every stem of one plain quiz practice verbatim. The page then
+draws the interactive quiz **where that section was**, under its heading, and does not draw the
+static questions or the folded key; each question's explanation appears after answering. The
+practice is not listed again in *Practice (n)* or opened in a workspace. A section that holds
+different questions and a unit with no quiz practice are untouched, and a page with no match is the
+page it was. **A mock exam counts as a quiz here**: a mock page that lists its questions and folds
+an answer key away is replaced the same way, so the key is not in the page as readable text and each
+explanation appears after submit. The key the page grades from stays in its own data block. A
+review bank and a deck are never what a lesson repeats. A quiz that no lesson section lists is
+opened from its card in the workspace, where it reads as a page that scrolls as one.
 
 **A review bank is a quiz with a `review` key.** Every item is a quiz question under every quiz rule:
 one keyed option, a sentence per option, a passage per question, `generated` and `advisory`.

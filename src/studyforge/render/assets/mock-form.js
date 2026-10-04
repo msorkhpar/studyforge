@@ -1,10 +1,9 @@
 /* The mock exam's exam form: a timer, a navigator, flags, scenarios, multiple response, sittings.
 
    Graded here, in the page, from the key block the page carries: no request, no container, no
-   model, the same over `file://` and served. Written beside `page.js` and only for a corpus whose
-   mock exam opts in (`render.page.mockform`); the exam without those keys is `mock-exam.js`.
-   `mock-form-core.js` holds the shared parts and the draw, `mock-form-panels.js` the navigator,
-   the start panel and the results; this file binds them to one exam and runs it.
+   model, the same over `file://` and served. Written beside `page.js` for a corpus with a mock
+   exam that opts in or a plain quiz (`render.page.mockform`); `mock-form-core.js` holds the shared
+   parts and the draw, `mock-form-panels.js` the navigator, start panel and results.
 
    The rule. A question with one key is right when the chosen option is the key; one that asks the
    reader to choose n is right only when exactly its n keyed options are chosen. A percent is
@@ -40,6 +39,7 @@
     var name = exam.getAttribute('data-practice-quiz');
     var passMark = Number(exam.getAttribute('data-practice-mock'));
     var examLayout = exam.getAttribute('data-mock-form') === 'exam';
+    var quizFlavor = exam.getAttribute('data-form-kind') === 'quiz';
     var list = exam.querySelector('[data-practice-part="questions"]');
     var items = [].slice.call(list.querySelectorAll('[' + QUESTION + ']'));
     var byId = {};
@@ -81,7 +81,7 @@
     var c = {
       exam: exam, plan: plan, words: words, key: key, passMark: passMark, name: name, list: list,
       items: items, byId: byId, metas: metas, metaById: metaById, sittings: sittings, view: view,
-      examLayout: examLayout, state: function () { return state; }, clear: function () { state = null; },
+      examLayout: examLayout, quiz: quizFlavor, state: function () { return state; }, clear: function () { state = null; },
       stopTimer: stopTimer, lock: lock, refresh: refresh, go: go, isRight: isRight, begin: begin
     };
     var P = wirePanels(c);
@@ -209,7 +209,7 @@
           flag.textContent = state.flags[id] ? words.flagged : words.flag;
           flag.disabled = state.submitted;
         }
-        if (line) { line.hidden = state.submitted; }
+        if (line) { line.hidden = state.submitted || quizFlavor; }
       });
       items.forEach(function (item) {
         if (item.getAttribute('data-form-out')) { item.hidden = true; }
@@ -217,7 +217,7 @@
       var answered = Object.keys(state.answers).length;
       var meter = part(exam, 'meter');
       if (meter) { meter.max = state.order.length; meter.value = answered; }
-      part(exam, 'count').textContent = fill(words.count, { answered: answered, asked: state.order.length });
+      part(exam, 'count').textContent = P.countText(answered);
       P.drawNavigator();
       if (examLayout && !state.submitted) {
         pager.hidden = false;
@@ -308,8 +308,9 @@
         var box = item.querySelector('[data-form-part="review"]');
         if (box) { box.hidden = true; box.textContent = ''; }
         var line = item.querySelector('[data-form-part="flag-line"]');
-        if (line) { line.hidden = false; }
+        if (line) { line.hidden = quizFlavor; }
       });
+      P.explainAll();
       result.hidden = true;
       exam.removeAttribute('data-mock-passed');
       refresh();
@@ -324,9 +325,8 @@
       if (!item) { return; }
       limit(item);
       state.answers = answersNow();
-      confirming = false;
-      missing.hidden = true;
-      save();
+      confirming = false; missing.hidden = true;
+      save(); if (quizFlavor) { P.answered(item.getAttribute(QUESTION)); }
       refresh();
     });
     exam.addEventListener('click', function (event) {

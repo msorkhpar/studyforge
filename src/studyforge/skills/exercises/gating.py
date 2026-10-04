@@ -247,6 +247,7 @@ def gate_quiz(draft: QuizDraft, brief: Brief, ledger: Ledger, judge: Judge, *, w
         questions=draft.questions,
         mock=draft.mock,
         review=draft.review,
+        layout=draft.layout,
     )
     judgements = judge(brief, draft.questions)
     origins = cited(

@@ -57,6 +57,25 @@ SAMPLES = {
         "</config>"
     ),
     "xml": '<!DOCTYPE cfg SYSTEM "cfg.dtd">\n<cfg>\n  <![CDATA[raw <b>]]>\n</cfg>',
+    "typescript": (
+        "interface User { id: number; name?: string }\n"
+        "enum Role { Admin, Guest }\n"
+        "export class Repo<T extends User> implements Store {\n"
+        "  private items: Map<number, T> = new Map(); // cache\n"
+        "  async get(id: number): Promise<T | undefined> { return this.items.get(id) as T; }\n}"
+    ),
+    "yaml": "# config\nname: iso\nitems:\n  - id: 1\n    ok: true\n  - id: 2\nnote: 'text'",
+    "bash": (
+        "#!/usr/bin/env bash\n"
+        "# build\n"
+        'for f in *.txt; do echo "$f" | grep -c "x"; done\n'
+        "if [ -f out ]; then export A=1; fi"
+    ),
+    "markdown": (
+        "# Title\n\nSome **bold** and `code` text.\n\n- item\n- [link](http://x.invalid)\n\n"
+        "```py\nx = 1\n```"
+    ),
+    "toml": '# conf\n[server]\nhost = "x"\nport = 8583\nok = true\n[[items]]\nid = 1',
     "json": '{"name": "iso", "fields": [1, -2.5e3, true, null], "ok": false}',
     "properties": "# the listener\nhost.port = 8583\nlog.level: debug",
     "gherkin": (

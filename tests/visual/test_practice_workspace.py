@@ -168,10 +168,15 @@ def _laid_out(reading: dict, shape: str, *, quiz: bool = False) -> None:
     statement, panel, bar = reading["statementBox"], reading["panelBox"], reading["bar"]
     width, height = reading["viewport"]["w"], reading["viewport"]["h"]
     assert statement and panel and bar, f"the workspace shows no statement or no panel: {reading}"
-    assert abs(statement["top"] - bar["bottom"]) <= 1, (
-        f"the statement is not under the bar: {reading}"
-    )
-    assert panel["bottom"] <= height + 1 and statement["bottom"] <= height + 1
+    if quiz:
+        # ⭐ A quiz is a page that scrolls as one, so it starts under the bar and may run past
+        # the window's foot.
+        assert statement["top"] >= bar["bottom"] - 1, f"the statement is under the bar: {reading}"
+    else:
+        assert abs(statement["top"] - bar["bottom"]) <= 1, (
+            f"the statement is not under the bar: {reading}"
+        )
+        assert panel["bottom"] <= height + 1 and statement["bottom"] <= height + 1
     if quiz:
         assert statement["bottom"] <= panel["top"] + 1, f"not one column: {reading}"
         assert abs(statement["left"] - panel["left"]) <= 1, f"not one column: {reading}"

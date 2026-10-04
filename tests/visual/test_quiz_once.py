@@ -1,8 +1,8 @@
-"""A quiz the lesson repeats is on the page once: the lesson says where, the practice holds it.
+"""A quiz the lesson repeats is on the page once: the interactive quiz stands where the copy was.
 
 ⭐ The corpus is `depth1` with a quiz practice, and its lesson ends with a section listing the same
 six questions, as a lesson that copies its own quiz does. Read over `file://` on a page a real build
-wrote: every stem is in the text once, and the lesson's section is the one pointer sentence.
+wrote: every stem is in the text once, and the lesson's section holds the interactive quiz.
 """
 
 from __future__ import annotations
@@ -15,7 +15,6 @@ import pytest
 
 from studyforge.archive.document import render
 from studyforge.generate import write_site
-from studyforge.render.page import POINTER
 from tests.studyforge.exercise.quiz import mock_exam
 from tests.studyforge.exercise.quiz.depth1 import (
     ADDRESS,
@@ -63,7 +62,7 @@ def page_url(tmp_path_factory: pytest.TempPathFactory) -> tuple[str, list[str]]:
     return "file://" + str(page_of(root)), stems
 
 
-def test_every_repeated_stem_is_in_the_page_once_and_the_lesson_says_where(
+def test_every_repeated_stem_is_in_the_page_once_and_the_quiz_stands_in_place(
     open_page: OpenPage, page_url: tuple[str, list[str]], capture_dir: Path
 ) -> None:
     url, stems = page_url
@@ -72,10 +71,15 @@ def test_every_repeated_stem_is_in_the_page_once_and_the_lesson_says_where(
     text = str(open_page.evaluate(TEXT))
     for stem in stems:
         assert text.count(stem) == 1, f"{stem!r} is on the page {text.count(stem)} times"
-    assert POINTER in text and "Answer key" not in text
+    assert "Answer key" not in text
+    inside = open_page.evaluate(
+        "document.querySelectorAll('section[data-kind=\"lesson\"] section[data-practice-quiz],"
+        " section[data-practice-quiz]').length"
+    )
+    assert inside == 1, "the quiz is not drawn exactly once"
+    assert open_page.evaluate("document.querySelectorAll('[data-practice-card]').length") == 0
     open_page.evaluate(
-        "(() => { const h = Array.from(document.querySelectorAll('h2'))"
-        ".find((x) => x.textContent.trim() === 'Check yourself');"
+        "(() => { const h = document.querySelector('section[data-practice-quiz]');"
         " h.scrollIntoView({block: 'start'}); return true; })()"
     )
     open_page.capture(capture_dir / "quiz-shown-once.png", whole=False)

@@ -104,7 +104,7 @@ def test_a_title_or_a_stem_is_escaped_where_it_could_close_the_data_block():
 
 
 def test_a_plain_quiz_renders_no_mock_part_and_the_same_section_it_always_did():
-    said = markup(QUIZ)
+    said = markup({**QUIZ, "layout": "page"})
     assert "data-practice-mock" not in said and "data-mock-" not in said
     assert 'data-practice-part="check"' in said and 'data-practice-part="key"' in said
 

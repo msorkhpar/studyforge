@@ -13,6 +13,8 @@
   var QUESTION = 'data-practice-question';
   var VERDICT = 'data-practice-verdict';
 
+  var SETTLED = 'studyforge:practice-settled';
+
   function sentenceCase(text) { return text.charAt(0).toUpperCase() + text.slice(1); }
 
   function bind(c) {
@@ -58,6 +60,16 @@
 
     function buildNavigator() {
       navigator.textContent = '';
+      if (c.quiz) {
+        var only = make('div', { 'data-form-part': 'numbers' });
+        S().order.forEach(function (id, index) {
+          var one = make('button', { type: 'button', 'data-form-part': 'number', 'data-index': String(index) }, String(index + 1));
+          one.addEventListener('click', function () { c.go(index); });
+          only.appendChild(one);
+        });
+        navigator.appendChild(only);
+        return;
+      }
       var filters = make('div', { 'data-form-part': 'filters' });
       var label = make('label', {}, words.domainFilter + ' ');
       var select = make('select', { 'data-form-part': 'filter-domain' });
@@ -156,6 +168,78 @@
       table.querySelector('tbody').appendChild(tr);
     }
 
+    /* A plain quiz explains an answer as it is given: the verdict and the sentence for the option
+       CHOSEN, never the key, so a reader told why a choice fails can try again. */
+    function explain(id) {
+      var item = byId[id];
+      var box = item.querySelector('[data-form-part="review"]');
+      var entry = key[id];
+      var answer = S().answers[id];
+      var chosen = Array.isArray(answer) ? answer : (answer === undefined ? [] : [answer]);
+      box.textContent = '';
+      if (!chosen.length || !entry || !Object.prototype.hasOwnProperty.call(entry.says, chosen[0])) {
+        box.hidden = true;
+        item.removeAttribute(VERDICT);
+        return;
+      }
+      var right = c.isRight(id, answer);
+      var line = make('p', { 'data-form-part': 'verdict' }, (right ? words.right : words.wrong) + ' ');
+      line.insertAdjacentHTML('beforeend', entry.says[chosen[0]]);
+      box.appendChild(line);
+      box.hidden = false;
+      item.setAttribute(VERDICT, right ? 'correct' : 'wrong');
+    }
+
+    /* A quiz is complete the moment every question is right, as the all-on-one-page quiz is, so
+       the card over it reads passed without the reader having to finish. */
+    function answered(id) {
+      explain(id);
+      var progress = window.studyforge && window.studyforge.progress;
+      var every = S().order.every(function (one) { return c.isRight(one, S().answers[one]); });
+      if (every && progress) { progress.passQuiz(c.name); }
+      exam.dispatchEvent(new CustomEvent(SETTLED, { bubbles: true }));
+    }
+
+    /* The progress line: the place and what is answered, or just what is answered. */
+    function countText(done) {
+      var total = S().order.length;
+      return c.quiz && !S().submitted
+        ? fill(words.positionCount, { n: S().current + 1, total: total, answered: done })
+        : fill(words.count, { answered: done, asked: total });
+    }
+
+    function explainAll() {
+      if (!c.quiz) { return; }
+      S().order.forEach(function (id) { explain(id); });
+    }
+
+    /* The end of a quiz: every question's verdict, each a way back to that question. */
+    function summarise() {
+      var list = part(exam, 'summary');
+      if (!list) {
+        list = make('ol', { 'data-form-part': 'summary', 'aria-label': words.summary });
+        result.insertBefore(list, part(exam, 'review-filter'));
+      }
+      list.textContent = '';
+      list.hidden = false;
+      S().order.forEach(function (id, index) {
+        var answer = S().answers[id];
+        var verdict = answer === undefined ? words.unanswered : c.isRight(id, answer) ? words.right : words.wrong;
+        var li = make('li', { 'data-form-verdict': answer === undefined ? 'open' : c.isRight(id, answer) ? 'right' : 'wrong' });
+        var jump = make('button', { type: 'button', 'aria-label': fill(words.summaryJump, { n: index + 1 }) },
+          fill(words.summaryItem, { n: index + 1, verdict: verdict }));
+        jump.addEventListener('click', function () {
+          var item = byId[id];
+          item.hidden = false;
+          if (item.scrollIntoView) { item.scrollIntoView(); }
+          var legend = item.querySelector('legend');
+          if (legend) { legend.focus({ preventScroll: true }); }
+        });
+        li.appendChild(jump);
+        list.appendChild(li);
+      });
+    }
+
     function review(id, right) {
       var item = byId[id];
       var box = item.querySelector('[data-form-part="review"]');
@@ -218,6 +302,8 @@
         exam.setAttribute('data-mock-scaled', String(score));
       } else { scaledLine.hidden = true; }
       var domains = part(exam, 'domains');
+      domains.hidden = !!c.quiz;
+      if (c.quiz) { summarise(); }
       domains.querySelector('tbody').textContent = '';
       (plan.domains || []).forEach(function (domain) {
         var s = byDomain[domain.id] || { right: 0, asked: 0 };
@@ -250,7 +336,9 @@
     function buildReviewFilter() {
       var box = part(exam, 'review-filter');
       box.textContent = '';
-      [['all', words.reviewAll], ['missed', words.reviewMissed], ['flagged', words.reviewFlagged]].forEach(function (pair) {
+      [['all', words.reviewAll], ['missed', words.reviewMissed], ['flagged', words.reviewFlagged]].filter(function (pair) {
+        return !(c.quiz && pair[0] === 'flagged');
+      }).forEach(function (pair) {
         var button = make('button', { type: 'button', 'data-review': pair[0], 'aria-pressed': view.review === pair[0] ? 'true' : 'false' }, pair[1]);
         button.addEventListener('click', function () {
           view.review = pair[0];
@@ -270,7 +358,8 @@
 
     return {
       matches: matches, walkable: walkable, buildNavigator: buildNavigator,
-      drawNavigator: drawNavigator, showStart: showStart, show: show
+      drawNavigator: drawNavigator, showStart: showStart, show: show, explain: explain,
+      explainAll: explainAll, answered: answered, countText: countText
     };
   }
 

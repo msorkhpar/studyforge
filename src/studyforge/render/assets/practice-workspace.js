@@ -62,13 +62,14 @@
      while the workspace is up. ⛔ Also read by `practice-editor.js`. */
   var OPEN = 'data-workspace-open';
 
-  /* ⭐ A quiz opens in ONE column: its intro above its questions, its check
-     and explanations below — there is no editor to set beside it. The mark on
-     the document chooses the column geometry, and `INTRO` carries the intro's
-     height so the questions start under it (`practice-workspace.css`). */
+  /* ⭐ A quiz opens as ONE PAGE that scrolls as one: its intro above its
+     questions, in the page's own flow, with no editor to set beside it and no
+     scroll box of its own. The mark on the document chooses that geometry, and
+     everything else on the page is marked `AWAY` while the quiz is up
+     (`practice-workspace.css`). */
   var KIND = 'data-practice-kind';
   var QUIZ_OPEN = 'data-workspace-quiz';
-  var INTRO = '--workspace-intro';
+  var AWAY = 'data-workspace-away';
 
   function isQuiz(one) { return one.card.getAttribute(KIND) === 'quiz'; }
 
@@ -76,11 +77,9 @@
     var root = document.documentElement;
     if (!one || !isQuiz(one)) {
       root.removeAttribute(QUIZ_OPEN);
-      root.style.removeProperty(INTRO);
       return;
     }
     root.setAttribute(QUIZ_OPEN, '');
-    root.style.setProperty(INTRO, Math.ceil(one.section.getBoundingClientRect().height) + 'px');
   }
   var LIVE = 'data-practices-live';
 
@@ -162,13 +161,15 @@
       [].slice.call(at.children).forEach(function (child) {
         if (child.inert || kept.some(function (part) { return child.contains(part); })) { return; }
         child.inert = true;
+        /* A quiz is read as a page, so what is not part of it is taken out of the flow. */
+        if (document.documentElement.hasAttribute(QUIZ_OPEN)) { child.setAttribute(AWAY, ''); }
         stilled.push(child);
       });
     }
   }
 
   function wake() {
-    stilled.forEach(function (child) { child.inert = false; });
+    stilled.forEach(function (child) { child.inert = false; child.removeAttribute(AWAY); });
     stilled = [];
   }
 
@@ -200,6 +201,7 @@
     column(one);
     still(one);
     one.section.scrollTop = 0;
+    if (isQuiz(one)) { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); }
     part('title').focus({ preventScroll: true });
     address('#' + one.section.id);
     /* ⛔ One editor on the page at most: an expanded code example is closed —

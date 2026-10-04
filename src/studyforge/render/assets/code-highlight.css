@@ -48,7 +48,15 @@ figure.code .token.feature,
 figure.code .token.scenario,
 figure.code .token.important,
 figure.code .token.table-head,
-figure.code .token.table-body { color: inherit; }
+figure.code .token.table-body,
+figure.code .token.code-block,
+figure.code .token.bold,
+figure.code .token.content,
+figure.code .token.title { color: inherit; }
+
+/* ⚠️ Markdown's `bold` and `content` wrap the words a reader should see as
+   prose, `code-block` wraps a fenced block whose own grammar colours it, and
+   `title` wraps a heading line: all four are containers of that kind. */
 
 /* ⛔ A prolog, a doctype and a CDATA marker are STRUCTURAL NOISE, and they
    are filed here rather than under comment on purpose: Prism's own themes
@@ -62,7 +70,9 @@ figure.code .token.regex-delimiter,
 figure.code .token.regex-flags,
 figure.code .token.prolog,
 figure.code .token.doctype,
-figure.code .token.cdata { color: var(--tok-punct); }
+figure.code .token.cdata,
+figure.code .token.shebang,
+figure.code .token.list { color: var(--tok-punct); }
 
 /* ⭐ The names a document DECLARES read as types: an element name, an
    attribute name, a JSON property, a properties key, a Gherkin placeholder
@@ -78,6 +88,8 @@ figure.code .token.doctype-tag,
 figure.code .token.name,
 figure.code .token.property,
 figure.code .token.key,
+figure.code .token.code-language,
+figure.code .token.constant,
 figure.code .token.variable { color: var(--tok-type); }
 
 figure.code .token.function,
@@ -97,7 +109,9 @@ figure.code .token.regex,
 figure.code .token.regex-source,
 figure.code .token.attr-value,
 figure.code .token.value,
-figure.code .token.entity { color: var(--tok-string); }
+figure.code .token.entity,
+figure.code .token.url,
+figure.code .token.code { color: var(--tok-string); }
 
 /* ⭐ A Gherkin step keyword -- Given, When, Then -- is Prism's `atrule`, and
    it is a keyword in every sense the reader cares about. */

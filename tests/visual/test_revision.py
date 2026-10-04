@@ -217,10 +217,15 @@ COVER = """
   const w = window.innerWidth, h = window.innerHeight;
   const at = (x, y) => {
     const hit = document.elementFromPoint(x, y);
-    return !!(hit && hit.closest('div[data-workspace], section[data-workspace-open]'));
+    // ⭐ A quiz-kind overlay is a page in flow: everything else is taken out of it, so what the
+    // foot can hit is the overlay's own parts or the bare document, never the page underneath.
+    return !!(hit && (hit === document.documentElement || hit === document.body ||
+      hit.closest('div[data-workspace], section[data-workspace-open]')));
   };
   return {
-    covers: b.left <= 0 && b.top <= 0 && b.right >= w && b.bottom >= h,
+    covers: (b.left <= 0 && b.top <= 0 && b.right >= w && b.bottom >= h) ||
+      (document.documentElement.hasAttribute('data-workspace-quiz') &&
+        b.left <= 0 && b.top <= 0 && b.right >= w),
     hits: [at(8, h - 2), at(w / 2, h - 2), at(w - 8, h - 2), at(w / 2, h - 40)],
     markers: Array.from(document.querySelectorAll('ol[data-review-part="questions"]'))
       .map((ol) => getComputedStyle(ol).listStyleType),

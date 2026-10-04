@@ -61,6 +61,7 @@ from __future__ import annotations
 
 from studyforge.describe import describe_keys
 from studyforge.exercise.errors import ExerciseError
+from studyforge.exercise.quiz.layout import LAYOUT
 from studyforge.exercise.quiz.mock import (
     MOCK,
     Mock,
@@ -182,7 +183,7 @@ def require_no_questions(record: dict, where: str) -> None:
 
 def _require_only_quiz_keys(record: dict, where: str) -> None:
     """⛔ Refuse a workspace key on a quiz: there is no file and nothing to run."""
-    unknown = [key for key in record if key not in (*QUIZ_KEYS, MOCK, REVIEW)]
+    unknown = [key for key in record if key not in (*QUIZ_KEYS, MOCK, REVIEW, LAYOUT)]
     if unknown:
         raise ExerciseError(
             f"{where}: a quiz carries {list(QUIZ_KEYS)} and this one also carries "

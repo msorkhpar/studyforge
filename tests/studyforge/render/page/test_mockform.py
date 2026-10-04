@@ -108,3 +108,65 @@ def test_a_mock_exam_says_it_was_written_from_the_pages_of_the_whole_level():
         said = markup(workspace)
         assert "Written for this site from the pages of the whole level." in said
         assert "Written for this site from this page." not in said
+
+
+# --------------------------------------------------------------------------
+# ⭐ a plain quiz is drawn one question at a time, on the same parts
+# --------------------------------------------------------------------------
+
+QUIZ = {
+    "kind": "quiz",
+    "questions": [{k: v for k, v in one.items() if k != "domain"} for one in PLAIN["questions"]],
+}
+
+
+def test_a_plain_quiz_wants_the_form_unless_it_opts_out_or_is_a_mock_or_a_bank():
+    assert mockform.wanted_for_quiz(from_document(QUIZ, "x")) is True
+    assert mockform.wanted_for_quiz(from_document({**QUIZ, "layout": "steps"}, "x")) is True
+    assert mockform.wanted_for_quiz(from_document({**QUIZ, "layout": "page"}, "x")) is False
+    assert mockform.wanted_for_quiz(from_document(PLAIN, "x")) is False
+    bank = {**QUIZ, "review": {"intervals_days": [1, 3]}}
+    assert mockform.wanted_for_quiz(from_document(bank, "x")) is False
+
+
+def test_the_quiz_kind_says_its_own_words_and_not_the_exams():
+    said = markup(QUIZ)
+    assert 'data-form-kind="quiz"' in said and 'data-mock-form="exam"' in said
+    assert 'aria-label="Questions"' in said and "<h2>Answer these</h2>" in said
+    assert "Finish quiz" in said and "Try again" in said
+    assert "Mock exam" not in said and "Submit exam" not in said and "Start again" not in said
+    assert block(said, "plan") == {"pass_mark": 100, "domains": [], "layout": "exam"}
+    words = block(said, "words")
+    assert words["reached"].startswith("You answered all")
+    assert "summaryJump" in words and "positionCount" in words
+
+
+def test_the_key_block_carries_every_keyed_option_and_every_sentence_and_no_option_the_key():
+    said = markup(QUIZ)
+    key = block(said, "key")
+    assert set(key) == {one["id"] for one in QUIZ["questions"]}
+    for one in QUIZ["questions"]:
+        assert key[one["id"]]["keys"] == [o["id"] for o in one["options"] if o["correct"]]
+    assert 'data-practice-correct' not in said
+
+
+def test_a_mock_exam_keeps_its_own_words_and_heading_byte_for_byte():
+    said = markup(POOL)
+    assert 'aria-label="Mock exam"' in said and "<h2>Mock exam</h2>" in said
+    assert "Submit exam" in said and "data-form-kind" not in said
+
+
+def test_an_embedded_quiz_leaves_out_its_own_heading():
+    from studyforge.render.page import practice
+    from tests.studyforge.render.page.pages import sample_placement
+    from tests.studyforge.render.page.test_practice import document
+
+    given = section(workspace=QUIZ)
+    drawn = practice.render(given, document(), sample_placement(), embedded=True)
+    assert 'data-form-kind="quiz"' in drawn and 'data-practice-part="head"' not in drawn
+    whole = practice.render(given, document(), sample_placement())
+    assert 'data-practice-part="head"' in whole
+    paged = practice.render(
+        section(workspace={**QUIZ, "layout": "page"}), document(), sample_placement(), embedded=True
+    )
+    assert 'data-practice-part="check"' in paged and 'data-practice-part="head"' not in paged
