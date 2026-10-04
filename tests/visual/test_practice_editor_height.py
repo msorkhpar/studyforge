@@ -67,6 +67,28 @@ def test_the_editor_fills_the_pane_and_the_report_is_only_its_strip_on_open(
 
 
 @pytest.mark.parametrize("size", SIZES)
+def test_the_editor_frame_fills_its_box_on_open(
+    open_page: OpenPage, origin: served.Served, capture_dir: Path, size: str
+) -> None:
+    """The iframe is what the reader types in, so it is measured, not only the box around it."""
+    reading = opened(open_page, origin, SIZES[size])
+    panel, editor, frame = reading["panel"], reading["editor"], reading["frame"]
+    share = frame["height"] / panel["height"]
+    assert share >= LEAST, f"the editor frame is {share:.0%} of the pane: {frame}, {panel}"
+    # The page carries what a real authored practice does above the frame: both notes, the
+    # tab row and the link, and the link stays visible.
+    shown = open_page.evaluate(
+        "['grader', 'file'].every((n) => !!document.querySelector("
+        "'section[data-practice][data-workspace-open] p[data-practice-part=\"' + n + '\"]'))"
+        " && !!document.querySelector('section[data-practice][data-workspace-open] "
+        "a[data-practice-popout]')?.checkVisibility()"
+    )
+    assert shown, "the notes and the editor link are on the page, the link visible"
+    gap = editor["bottom"] - frame["bottom"]
+    assert 0 <= gap <= 1, f"the frame leaves {gap}px below it in its box: {frame}, {editor}"
+
+
+@pytest.mark.parametrize("size", SIZES)
 def test_a_submit_shows_the_report_and_the_split_is_shared(
     open_page: OpenPage, origin: served.Served, capture_dir: Path, size: str
 ) -> None:
