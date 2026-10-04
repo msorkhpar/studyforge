@@ -8,7 +8,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from studyforge.execute import CODE_COPY, pair
+from studyforge.execute import CODE_COPY, ROOT_DIR, pair
+from studyforge.execute import test_runs as runs_of
+from studyforge.execute import test_workdir as workdir_of
 from studyforge.execute import test_command as command_for
 from studyforge.execute import test_commands as allowlist
 from studyforge.exercise import require_command
@@ -48,8 +50,9 @@ def argv_of(root: Path, path: str, runtimes=FOUR) -> list[str] | None:
 
 def test_every_language_of_the_four_pairs_and_names_one_command_in_the_copy(tmp_path):
     root = examples(tmp_path)
+    # ⭐ A Python test names its file from the copy's root, which is where it starts.
     assert argv_of(root, "py/bpe.py") == [
-        "python3", "-m", "pytest", "-q", "-p", "no:cacheprovider", f"{CODE_COPY}/py/test_bpe.py"
+        "python3", "-m", "pytest", "-q", "-p", "no:cacheprovider", "py/test_bpe.py"
     ]
     assert argv_of(root, "ts/bpe.ts") == ["node", "--test", f"{CODE_COPY}/ts/bpe.test.ts"]
     gradle = ["gradle", "--offline", "-q", "-p"]
@@ -125,3 +128,25 @@ def test_the_allowlist_holds_the_command_of_each_test_of_the_four(tmp_path):
     held = allowlist(root, FOUR)
     assert sorted(held[i][0] for i in range(len(held))) == ["gradle", "gradle", "node", "python3"]
     assert all(require_command(argv, "test_command", "a code test") for argv in held)
+
+
+def test_a_python_test_starts_in_the_copys_root_and_every_other_in_the_runners(tmp_path):
+    # ⚠️ Measured: started in the runner's root, an example importing a folder at the corpus
+    # root (`from harness import ...`) failed with "No module named 'harness'". From the
+    # copy's root, `python3 -m` puts that root first on the import path.
+    root = examples(tmp_path)
+    assert workdir_of(pair(root, "py/bpe.py", FOUR)) == CODE_COPY
+    for where in ("ts/bpe.ts", "jv/src/main/java/demo/Greeter.java", "kt/src/test/kotlin/demo/"
+                  "CounterTest.kt"):
+        assert workdir_of(pair(root, where, FOUR)) == ROOT_DIR
+
+
+def test_the_allowlist_pairs_each_command_with_the_directory_it_starts_in(tmp_path):
+    root = examples(tmp_path)
+    runs = runs_of(root, FOUR)
+    assert [argv for _, argv in runs] == allowlist(root, FOUR)
+    by_tool = {argv[0]: workdir for workdir, argv in runs}
+    assert by_tool == {"python3": CODE_COPY, "node": ROOT_DIR, "gradle": ROOT_DIR}
+    # ⭐ The Python test's path is corpus-relative: relative to the copy's root it starts in.
+    [python] = [argv for workdir, argv in runs if argv[0] == "python3"]
+    assert (root / python[-1]).is_file()

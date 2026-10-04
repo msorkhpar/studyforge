@@ -275,13 +275,32 @@ def site_dockerfile(slug: str, base: locked.Base | None = None) -> str:
     )
 
 
-def runner_dockerfile(slug: str, live: bool = False, live_dirs: Sequence[str] = ()) -> str:
+#: A course's own npm packages: the manifest and lockfile at its root, installed in its runner.
+PACKAGE_FILES = ("package.json", "package-lock.json")
+
+#: How they are installed: from the image's npm cache, with no network and no install script.
+#: ⚠️ `--logs-max=0`: the profile's cache is read-only, and npm writes its logs there otherwise.
+PACKAGE_INSTALL = (
+    "npm ci --offline --ignore-scripts --no-audit --no-fund --no-update-notifier --logs-max=0"
+)
+
+
+def runner_dockerfile(
+    slug: str, live: bool = False, live_dirs: Sequence[str] = (), packages: bool = False
+) -> str:
     """Return the course's runner: its primed layer, and the run service the site talks to.
 
     ⭐ `live` (a course that declares live runs) also bakes in the live runner's script, which
     the compose file's `live` profile starts from this same image. `live_dirs` are the course's
     directories its live examples run from (the live runner starts in `/work`, where the
     builder's compose binds the whole course), copied in beside it. `False` is the file it was.
+
+    ⭐ `packages` (a course that declares `node` and keeps `PACKAGE_FILES` at its root) installs
+    those packages at BUILD time into `/work/node_modules`, offline, from the npm cache the
+    image already carries (a profile's `npm-packages`): every file the runner runs under
+    `/work` — an example in the copy of the course's code included — finds them by Node's own
+    upward lookup, so nothing is fetched or installed when a reader presses Run. A package
+    the cache lacks fails the build, never a Run. `False` is the file it was.
     """
     return "\n".join(
         [
@@ -293,6 +312,16 @@ def runner_dockerfile(slug: str, live: bool = False, live_dirs: Sequence[str] = 
             f"COPY {RUNSERVICE} {SCRIPT_INSIDE}",
             *([f"COPY {LIVE_RUNSERVICE} {LIVE_SCRIPT_INSIDE}"] if live else []),
             *([f"COPY {one} {WORK}/{one}" for one in live_dirs] if live else []),
+            *(
+                [
+                    "# The course's npm packages, installed once, offline, from the npm cache:",
+                    "# a program under /work finds them by Node's upward lookup.",
+                    f"COPY {' '.join(PACKAGE_FILES)} {WORK}/",
+                    f"RUN cd {WORK} && {PACKAGE_INSTALL}",
+                ]
+                if packages
+                else []
+            ),
             f"WORKDIR {WORK}",
             f'CMD ["perl", "{SCRIPT_INSIDE}"]',
             f'LABEL org.studyforge.course="{slug}"',

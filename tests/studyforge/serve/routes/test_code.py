@@ -15,7 +15,7 @@ from urllib.parse import parse_qs, urlsplit
 
 import pytest
 
-from studyforge.execute import CODE_COPY, IGNORE_TEXT, Editor
+from studyforge.execute import CODE_COPY, IGNORE_TEXT, Editor, Runner
 from studyforge.execute.workbench import READONLY_EXCLUDE, SETTINGS_DIR, SETTINGS_FILE
 from studyforge.serve.routes import code
 from tests.studyforge.serve.routes.running import (
@@ -159,10 +159,8 @@ def test_a_file_that_names_no_test_runs_nothing(root):
 
 def test_a_test_runs_in_the_copy_is_streamed_and_is_recorded_nowhere(root, monkeypatch):
     # ⭐ The command is the tool's; here a host `python3` stands in for it, run
-    # against the COPY's test, which is exactly where `test_command` points.
-    monkeypatch.setattr(
-        code, "test_command", lambda where, found, runtimes: ["python3", f"{CODE_COPY}/{TEST}"]
-    )
+    # against the COPY's test from the copy's root, which is where a Python test starts.
+    monkeypatch.setattr(code, "test_command", lambda where, found, runtimes: ["python3", TEST])
     before = authors(root)
     live, discovered = runs_over(root, editor=StubEditors(EDITOR))
     with serving(live, discovered) as server:
@@ -218,7 +216,13 @@ def test_a_served_run_of_an_example_passes_in_a_release_that_carries_its_support
 ):
     # ⭐ The release's learner tree is built by the split, copied to a fresh folder, and an
     # example's test that imports a shared support folder is run from it, by the route a Run
-    # strip posts to. Without the support folder in the tree the same run fails to import it.
+    # strip posts to, with the framework's own command. Without the support folder in the tree
+    # the same run fails to import it.
+    # ⚠️ Measured: the test imports `shared` with no path set up by hand; started outside the
+    # copy's root the run failed with "No module named", so this also proves the import root.
+    # ⭐ The runner's root is shaped as the served runner's `/work`: it holds the copy at its
+    # usual place and nothing of the course's own tree, so `shared` is reachable only from the
+    # copy's root, as in a served Run.
     import json
     import shutil
 
@@ -241,9 +245,7 @@ def test_a_served_run_of_an_example_passes_in_a_release_that_carries_its_support
     lesson.write_text(json.dumps(document), encoding="utf-8")
     (source / "samples/demo").mkdir(parents=True)
     (source / "samples/demo/test_demo.py").write_text(
-        "import sys, pathlib\n"
-        "sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2]))\n"
-        "import shared\nprint('shared says', shared.VALUE)\n",
+        "import shared\n\n\ndef test_shared():\n    assert shared.VALUE == 7\n",
         encoding="utf-8",
     )
     (source / "shared").mkdir()
@@ -259,13 +261,11 @@ def test_a_served_run_of_an_example_passes_in_a_release_that_carries_its_support
         shutil.copy2(source / one, release / one)
     (release / CODE_COPY).mkdir(parents=True, exist_ok=True)
     (release / CODE_COPY / ".gitignore").write_text(IGNORE_TEXT, encoding="utf-8")
-    monkeypatch.setattr(
-        code,
-        "test_command",
-        lambda where, found, runtimes: ["python3", f"{CODE_COPY}/samples/demo/test_demo.py"],
-    )
-    live, discovered = runs_over(release)
+    work = tmp_path / "work"
+    (work / CODE_COPY).parent.mkdir(parents=True)
+    (work / CODE_COPY).symlink_to(release / CODE_COPY, target_is_directory=True)
+    live, discovered = runs_over(release, runner=lambda corpus: Runner(work, None, grace=0.5))
     with serving(live, discovered) as server:
         status, _, body = post(server, at(code.CODE_TEST, "samples/demo/test_demo.py"))
     assert status == 200, body
-    assert "shared says 7" in body and body.splitlines()[-1] == "--- exit 0 ---"
+    assert "1 passed" in body and body.splitlines()[-1] == "--- exit 0 ---", body
