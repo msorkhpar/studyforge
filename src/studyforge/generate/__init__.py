@@ -87,6 +87,7 @@ from studyforge.generate.declarations import (
     sources,
     unit_location,
 )
+from studyforge.generate.exampleruns import needed as example_files
 from studyforge.generate.footprint import Footprint, footprint_for
 from studyforge.generate.media import Reference, references, unit_media, write_media
 from studyforge.generate.narration import Renarrated, heard, write_narration
@@ -121,6 +122,7 @@ __all__ = [
     "declared_location",
     "declared_practices",
     "deepest",
+    "example_files",
     "footprint_for",
     "for_output",
     "heard",

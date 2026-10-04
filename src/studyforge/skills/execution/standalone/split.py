@@ -67,8 +67,7 @@ from studyforge.corpus.manifest import MANIFEST_FILENAME
 from studyforge.corpus.manifest.content.policy import Classification
 from studyforge.corpus.placement import ARCHIVE_DIRNAME, GENERATED_ROOT, PRACTICE_DIRNAME
 from studyforge.exercise.bundle.layout import BUNDLES_DIRNAME
-from studyforge.generate import read_corpus
-from studyforge.generate.exampleruns import needed as example_files
+from studyforge.generate import example_files, read_corpus
 
 KEEP = "keep"
 MOVE = "move"

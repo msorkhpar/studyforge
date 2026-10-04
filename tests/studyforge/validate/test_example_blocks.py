@@ -156,8 +156,8 @@ def released(tmp_path, tab_code, support=None):
     (root / "examples" / "x" / "a.py").write_text("x = 1\n", encoding="utf-8")
     (root / "harness").mkdir()
     (root / "harness" / "h.py").write_text("y = 2\n", encoding="utf-8")
-    (root / "hidden" / ".cache").mkdir(parents=True)
-    (root / "hidden" / ".cache" / "a.py").write_text("z\n", encoding="utf-8")
+    (root / "stash" / ".cache").mkdir(parents=True)
+    (root / "stash" / ".cache" / "a.py").write_text("z\n", encoding="utf-8")
     return root
 
 
@@ -166,15 +166,15 @@ def findings(root, rule):
 
 
 def test_a_code_file_the_release_would_not_carry_is_refused(tmp_path):
-    root = released(tmp_path / "hidden", "hidden/.cache/a.py")
+    root = released(tmp_path / "hid", "stash/.cache/a.py")
     refused = findings(root, "example-code-unreleased")
-    assert len(refused) == 1 and "hidden" not in refused[0].message
+    assert len(refused) == 1 and "cache" not in refused[0].message
     assert findings(released(tmp_path / "ok", "examples/x/a.py"), "example-code-unreleased") == []
 
 
 def test_a_support_path_must_be_a_released_file_or_folder_of_the_corpus(tmp_path):
     ok = released(tmp_path / "ok", "examples/x/a.py", ["harness"])
     assert findings(ok, "example-support-missing") == []
-    for bad in (["nowhere"], ["hidden/.cache"], ["archive"]):
+    for bad in (["nowhere"], ["stash/.cache"], ["archive"]):
         root = released(tmp_path / bad[0].replace("/", "_"), "examples/x/a.py", bad)
         assert len(findings(root, "example-support-missing")) == 1, bad
