@@ -144,3 +144,107 @@ def test_a_mock_exam_page_carries_no_key_text_outside_the_data_block_before_inte
     # ⭐ The key the page grades from stays in its own data block, never as visible markup.
     blocks = re.findall(r'<script type="application/json"[^>]*>(.*?)</script>', page, flags=re.S)
     assert any(json.loads(b) for b in blocks if b.startswith("{") and "keys" in b or "key" in b)
+
+
+# --------------------------------------------------------------------------
+# ⛔ only the quiz's own blocks are replaced: the lesson around it is never lost
+# --------------------------------------------------------------------------
+
+PROSE = [
+    "First paragraph of the lesson.",
+    "Second paragraph of the lesson.",
+    "Third paragraph of the lesson.",
+]
+
+TWO = {
+    **QUIZ,
+    "questions": [
+        *QUIZ["questions"],
+        {**QUIZ["questions"][0], "id": "q-2", "stem": "Where does a field live?"},
+    ],
+}
+TWO_STEMS = [one["stem"] for one in TWO["questions"]]
+
+
+def one_section_lesson(stems=TWO_STEMS):
+    """A whole lesson as ONE section: a title, paragraphs, a quiz heading, the questions, a key."""
+    blocks = [
+        {"type": "heading", "level": 1, "text": "The lesson"},
+        *({"type": "para", "text": text} for text in PROSE[:2]),
+        {"type": "heading", "level": 2, "text": "Details"},
+        {"type": "para", "text": PROSE[2]},
+        {"type": "heading", "level": 2, "text": "Quiz"},
+        {
+            "type": "list", "ordered": True,
+            "items": [[stem, {"type": "list", "ordered": False, "items": ["a", "b"]}]
+                      for stem in stems],
+        },
+        {"type": "disclosure", "summary": "Answer key", "open": False,
+         "blocks": [{"type": "para", "text": "KEYTEXT"}]},
+    ]
+    return {"key": "prose", "kind": "lesson", "heading": "Lesson", "blocks": blocks,
+            "video": None, "workspace": None, "attachments": []}
+
+
+def test_a_one_section_lesson_keeps_every_paragraph_and_only_the_quiz_is_replaced():
+    given = one_section_lesson()
+    blocks = quizonce.once(document(sections=[given, section(workspace=TWO)]), PANEL)[
+        "sections"][0]["blocks"]
+    assert blocks[:6] == given["blocks"][:6], "lesson text before the quiz was lost"
+    assert blocks[6] == {"type": "html", "text": "<quiz/>"}
+    assert blocks[7] == {"type": "html", "text": ""}
+    page = render(document(sections=[given, section(workspace=TWO)]),
+                  sample_placement()).decode("utf-8")
+    for text in PROSE:
+        assert text in page, "a lesson paragraph is missing from the page"
+    assert "data-practice-quiz=" in page and "KEYTEXT" not in page
+    assert page.index(PROSE[2]) < page.index("data-practice-quiz=")
+
+
+def test_a_one_section_lesson_keeps_prose_that_follows_the_quiz():
+    given = one_section_lesson()
+    given["blocks"].append({"type": "para", "text": "A closing paragraph."})
+    blocks = quizonce.once(document(sections=[given, section(workspace=TWO)]), PANEL)[
+        "sections"][0]["blocks"]
+    assert blocks[-1] == {"type": "para", "text": "A closing paragraph."}
+    assert blocks[6] == {"type": "html", "text": "<quiz/>"}
+
+
+def test_scattered_stems_are_not_one_quiz_and_the_section_keeps_all_its_text():
+    blocks = [
+        {"type": "heading", "level": 1, "text": "The lesson"},
+        {"type": "para", "text": f"We ask: {TWO_STEMS[0]}"},
+        {"type": "para", "text": PROSE[0]},
+        {"type": "para", "text": f"And then: {TWO_STEMS[1]}"},
+        {"type": "para", "text": PROSE[1]},
+    ]
+    lesson_section = {"key": "prose", "kind": "lesson", "heading": "Lesson", "blocks": blocks,
+                      "video": None, "workspace": None, "attachments": []}
+    given = document(sections=[lesson_section, section(workspace=TWO)])
+    assert quizonce.once(given, PANEL) is given
+    page = render(given, sample_placement()).decode("utf-8")
+    for text in PROSE[:2]:
+        assert text in page
+    assert "data-practice-quiz=" in page, "the quiz is not drawn after the lesson"
+
+
+def test_a_mock_page_keeps_its_intro_and_domain_table_and_replaces_only_the_questions():
+    questions = mock_exam.questions(ORIGIN)
+    record = {"kind": "quiz", "questions": questions, "mock": mock_exam.mock()}
+    page_section = mock_lesson(questions)
+    table = {"type": "table", "headers": ["Domain", "Weight"],
+             "rows": [["DOMAINROW one", "50%"], ["DOMAINROW two", "50%"]]}
+    page_section["blocks"] = [
+        {"type": "heading", "level": 1, "text": "Mock exam one"},
+        {"type": "para", "text": "INTRO The exam takes ninety minutes."},
+        table,
+        *page_section["blocks"],
+    ]
+    given = document(sections=[page_section, section(workspace=record)])
+    blocks = quizonce.once(given, PANEL)["sections"][0]["blocks"]
+    assert blocks[:4] == page_section["blocks"][:4]
+    assert blocks[4] == {"type": "html", "text": "<quiz/>"}
+    assert blocks[5] == {"type": "html", "text": ""}
+    page = render(given, sample_placement()).decode("utf-8")
+    assert "INTRO The exam takes ninety minutes." in page and "DOMAINROW one" in page
+    assert "KEYTEXT" not in page and "data-practice-quiz=" in page
