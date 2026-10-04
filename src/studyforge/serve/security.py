@@ -241,11 +241,30 @@ def origin_allowed(header: str | None, allowed: frozenset[str] = ALLOWED_HOSTS) 
     return host_allowed(parts.netloc, allowed)
 
 
+def is_navigation(headers: Mapping[str, str]) -> bool:
+    """Say whether a request is a browser's top-level navigation to a document.
+
+    ⭐ A link followed from another site or app sends `Sec-Fetch-Mode: navigate` and
+    `Sec-Fetch-Dest: document`; a script's `fetch` or a frame, image or script load
+    sends other values, so none of those is mistaken for one.
+    """
+    mode = (headers.get("Sec-Fetch-Mode") or "").strip().lower()
+    dest = (headers.get("Sec-Fetch-Dest") or "").strip().lower()
+    return mode == "navigate" and dest == "document"
+
+
+def is_page(path: str | None, api: str = "/api") -> bool:
+    """Say whether `path` is a static page's: given, and not under the API's root."""
+    return path is not None and path.rstrip("/") != api and not path.startswith(api + "/")
+
+
 def refusal(
     peer: str,
     headers: Mapping[str, str],
     allowed: frozenset[str] = ALLOWED_HOSTS,
     peers: frozenset[str] | None = LOOPBACK_PEERS,
+    navigation: bool = False,
+    path: str | None = None,
 ) -> str | None:
     """Return `None` for a local same-site request, else the refusal's message.
 
@@ -253,13 +272,21 @@ def refusal(
     container the server's peer is the compose network's gateway, and the
     loopback bind it stands for is the compose file's `127.0.0.1:` port. ⛔ The
     `Host`, `Sec-Fetch-Site` and `Origin` checks are unchanged either way.
+
+    ⭐ `navigation=True` is the caller's statement that this is a `GET` or `HEAD` of a
+    static page and not of the API: a top-level navigation (`is_navigation`) from
+    another site is then let through, so a lesson can be linked from elsewhere. ⛔ The
+    API, every request that changes state and every non-navigation fetch keep the
+    cross-site refusal. ⭐ `path` is the same statement made by the request's path: a
+    `GET`'s path that is not under the API's root is a page's.
     """
+    navigation = navigation or is_page(path)
     if peers is not None and peer not in peers:
         return REFUSED_PEER
     if not host_allowed(headers.get("Host"), allowed):
         return REFUSED_HOST
     site = (headers.get("Sec-Fetch-Site") or "").strip().lower()
-    if site and site not in SAME_SITE:
+    if site and site not in SAME_SITE and not (navigation and is_navigation(headers)):
         return REFUSED_SITE
     if not origin_allowed(headers.get("Origin"), allowed):
         return REFUSED_ORIGIN
