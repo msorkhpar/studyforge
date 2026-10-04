@@ -1,7 +1,7 @@
 {
  "recorded": {
   "depth1": {
-   ".studyforge/assets/page.css": "66fc3d44c0f4e6c5f12eb0b09dfd490db198dfa3cb2c8d543f6edf8b85270549",
+   ".studyforge/assets/page.css": "775d639413f1e7bfb97f3a8916cd5005f045d9a0ba0b0ec4d21b3be66fd67ef4",
    ".studyforge/assets/page.js": "7be0c3ea6e50bbdb244ad748e0d20b67ef8145f9a2c8703a8435873352da6910",
    ".studyforge/depth-one/depth-one-demo.section.html": "3ba777fe4e99f9aedbc3d24aceeb8b8df5716068314953652b9ab858bfeaec24",
    ".studyforge/depth-one/units/unit-01/unit-01-what-a-triple-is.unit.html": "94c39f10c3c7e39b1c4142025bf7bbaee0de70eaa47c66c0e35b991b5feeabb6",
@@ -12,7 +12,7 @@
    "index.html": "c537eb13b556f468f947cbc5f137501c4d4fca82a822e663735ed5e083a8b592"
   },
   "depth2": {
-   ".studyforge/assets/page.css": "66fc3d44c0f4e6c5f12eb0b09dfd490db198dfa3cb2c8d543f6edf8b85270549",
+   ".studyforge/assets/page.css": "775d639413f1e7bfb97f3a8916cd5005f045d9a0ba0b0ec4d21b3be66fd67ef4",
    ".studyforge/assets/page.js": "7be0c3ea6e50bbdb244ad748e0d20b67ef8145f9a2c8703a8435873352da6910",
    "advanced/02-going-further/study/advanced.02-going-further.unit-01-composition-over-inheritance.unit.html": "65e398f6aa61b328029d106d43c251e7658f165c4278809d2dee7e46052959df",
    "advanced/02-going-further/study/advanced.02-going-further.unit-02-where-to-go-next.unit.html": "5a5c648292e3bc9f12bc7637c4cb2b6970a15918161fee8fa300c83cfd49a26d",
@@ -26,7 +26,7 @@
    "index.html": "03e1d11341819d112b62dd23e13c68569cb07f529c447f625610aaa9b6d80f91"
   },
   "runnable": {
-   ".studyforge/assets/page.css": "66fc3d44c0f4e6c5f12eb0b09dfd490db198dfa3cb2c8d543f6edf8b85270549",
+   ".studyforge/assets/page.css": "775d639413f1e7bfb97f3a8916cd5005f045d9a0ba0b0ec4d21b3be66fd67ef4",
    ".studyforge/assets/page.js": "7be0c3ea6e50bbdb244ad748e0d20b67ef8145f9a2c8703a8435873352da6910",
    "index.html": "ecc0f8fb859c59152d984fb9a14846a4586142fc2b2c6accdf1add7371dbf44f",
    "kata/study/kata.section.html": "0f4e653c7dda72c3be350f9805b4eff44a149dd2c12ec9726e26985905c52dd2",
@@ -37,7 +37,7 @@
    "kata/study/kata.unit-05-reading-on.unit.html": "7b4bb48315cc88dde1b0d47b4d939fa78d366888fed3191fe1f7f9f1dafab72a"
   },
   "shared-origin": {
-   ".studyforge/assets/page.css": "66fc3d44c0f4e6c5f12eb0b09dfd490db198dfa3cb2c8d543f6edf8b85270549",
+   ".studyforge/assets/page.css": "775d639413f1e7bfb97f3a8916cd5005f045d9a0ba0b0ec4d21b3be66fd67ef4",
    ".studyforge/assets/page.js": "7be0c3ea6e50bbdb244ad748e0d20b67ef8145f9a2c8703a8435873352da6910",
    "field-notes/study/field-notes.section.html": "99aa4d563cde6c87bffb6aa090eca0367dac2beace1a3116d00ebd1cc68402cb",
    "field-notes/study/field-notes.unit-01-taking-a-reading.unit.html": "44f9151590931321040234a835193e43f58d6c91ff7ed5157021527a1da39171",

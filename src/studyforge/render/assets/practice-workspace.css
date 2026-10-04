@@ -218,11 +218,78 @@ section[data-practice][data-workspace-open] div[data-practice-part="editor"] {
 section[data-practice][data-workspace-open] div[data-practice-frame] {
   flex: 1 1 auto;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 section[data-practice][data-workspace-open] div[data-practice-part="editor"] iframe {
+  flex: 1 1 auto;
   height: 100%;
   min-height: 16rem;
+}
+
+/* ⭐ **The editor is the surface the reader types in, so its frame fills its box.** The box
+   was drawn for the sentence that says the editor is not running: a dashed border, padding and
+   a gap below, which together held the frame about a tenth of the pane away from the edges of the
+   box that was already most of it. ⚠️ Once the workspace is open and a frame is showing, the box
+   is only a column for the tabs and the frame: no border, no padding, no margin, and the frame
+   takes everything the tabs leave, down to the 16rem a usable editor needs: in a short window
+   it runs past the pane's foot and the pane scrolls, as it did before. */
+html[data-workspace-open] section[data-practice][data-workspace-open]
+  div[data-practice-part="editor"] {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: none;
+}
+
+html[data-workspace-open] section[data-practice][data-workspace-open]
+  div[data-practice-part="editor"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(16rem, 1fr);
+  align-items: center;
+  column-gap: .75rem;
+}
+
+/* ⭐ **One row above the frame, not two**: the tabs on the left and the link that opens the
+   editor in a tab of its own on the right, so the link stays visible without a line to itself.
+   ⚠️ The link keeps its column when the tablist is hidden, so it never sits over the frame. */
+html[data-workspace-open] section[data-practice][data-workspace-open]
+  div[data-practice-part="editor"] div[data-practice-part="tabs"] {
+  grid-column: 1;
+  grid-row: 1;
+  margin: 0 0 .25rem;
+}
+
+html[data-workspace-open] section[data-practice][data-workspace-open]
+  div[data-practice-part="editor"] a[data-practice-popout] {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0 0 .25rem;
+  white-space: nowrap;
+}
+
+html[data-workspace-open] section[data-practice][data-workspace-open]
+  div[data-practice-part="editor"] > p {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+
+html[data-workspace-open] section[data-practice][data-workspace-open]
+  div[data-practice-part="editor"] div[data-practice-frame] {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  align-self: stretch;
+}
+
+/* ⭐ The two notes above the editor take a line each at a small size and little room, so the
+   frame under them keeps the height. */
+html[data-workspace-open] section[data-practice][data-workspace-open] p[data-practice-part="grader"],
+html[data-workspace-open] section[data-practice][data-workspace-open] p[data-practice-part="file"] {
+  margin: 0 0 .25rem;
+  font-size: .85rem;
+  line-height: 1.35;
 }
 
 /* ⭐ **A QUIZ OPENS AS A PAGE THAT SCROLLS AS ONE.** It has no editor to set beside its intro, and a

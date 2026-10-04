@@ -157,14 +157,24 @@ _OUTSIDE_THE_SITE = "/"
 #: does in the expression.
 SEGMENT_KINDS = ("text", "code", "link", "strong", "em")
 
-#: The four markers, in precedence order. ⚠️ Code first: a backtick span may
-#: contain any of the others and none of them may be read inside it.
+#: A code span inside a strong or emphasis body. Tried before any single
+#: character, so a `*` inside a span (`src/**`) never closes the emphasis
+#: around it, the way CommonMark reads it.
+_CODE_ATOM = r"`[^`\n]+`"
+
+#: The markers, in precedence order. Code first: a backtick span may contain
+#: any of the others and none of them may be read inside it. A strong body may
+#: hold code, links and emphasis, and an emphasis body may hold code, links and
+#: strong text; `inline` renders those bodies again.
 _INLINE = re.compile(
-    r"`([^`]+)`"  # 1    `code`
-    r"|\[([^\]\n]+)\]\(([^)\s]*)\)"  # 2,3  [label](href)
-    r"|\*\*([^\s*](?:[^*\n]*[^\s*])?)\*\*"  # 4    **strong**
-    r"|\*([^\s*](?:[^*\n]*[^\s*])?)\*"  # 5    *em*
-    r"|(?<!\w)_([^\s_](?:[^_\n]*[^\s_])?)_(?!\w)"  # 6    _em_
+    r"\\([`*_\[\]\\])"  # 1    \` an escaped marker character, shown literally
+    r"|`([^`]+)`"  # 2    `code`
+    r"|\[([^\]\n]+)\]\(([^)\s]*)\)"  # 3,4  [label](href)
+    # 5  **strong**
+    r"|\*\*(?=[^\s*])((?:" + _CODE_ATOM + r"|\*[^\s*][^*\n]*\*|[^*\n])*?)(?<![\s*])\*\*"
+    # 6  *em*
+    r"|\*(?=[^\s*])((?:" + _CODE_ATOM + r"|\*\*[^\s*][^*\n]*\*\*|[^*\n])*?)(?<![\s*])\*"
+    r"|(?<!\w)_([^\s_](?:[^_\n]*[^\s_])?)_(?!\w)"  # 7    _em_
 )
 
 
@@ -213,8 +223,10 @@ def segments(value: object) -> tuple[tuple[str, str, str], ...]:
 
     `kind` is one of `SEGMENT_KINDS`; `href` is empty for everything but a link,
     and `body` is the marker's *content* with the marker characters already
-    removed. ⛔ Markers are never nested and never re-escaped — the archive
-    stores them verbatim and this is their only reader.
+    removed. ⛔ The split is one level deep and never re-escaped — the archive
+    stores markers verbatim and this is their only reader. A strong, emphasis
+    or link body that holds another marker keeps it in `body`; `inline`
+    renders it again, and speech takes the body as it is.
     """
     text = value if isinstance(value, str) else ""
     out: list[tuple[str, str, str]] = []
@@ -222,8 +234,10 @@ def segments(value: object) -> tuple[tuple[str, str, str], ...]:
     for match in _INLINE.finditer(text):
         if match.start() > position:
             out.append(("text", text[position : match.start()], ""))
-        code, label, href, strong, em_star, em_score = match.groups()
-        if code is not None:
+        escaped, code, label, href, strong, em_star, em_score = match.groups()
+        if escaped is not None:
+            out.append(("text", escaped, ""))
+        elif code is not None:
             out.append(("code", code, ""))
         elif label is not None:
             out.append(("link", label, href or ""))
@@ -249,9 +263,9 @@ def inline(value: object) -> str:
         if kind == "code":
             out.append(f"<code>{escape(body)}</code>")
         elif kind == "strong":
-            out.append(f"<strong>{escape(body)}</strong>")
+            out.append(f"<strong>{inline(body)}</strong>")
         elif kind == "em":
-            out.append(f"<em>{escape(body)}</em>")
+            out.append(f"<em>{inline(body)}</em>")
         elif kind == "link":
             out.append(_anchor(body, href))
         else:
@@ -263,5 +277,5 @@ def _anchor(body: str, href: str) -> str:
     """One inline link, or its words alone when the scheme was refused."""
     target = safe_href(href)
     if target is None:
-        return escape(body)
-    return f'<a href="{escape_attribute(target)}" rel="noopener noreferrer">{escape(body)}</a>'
+        return inline(body)
+    return f'<a href="{escape_attribute(target)}" rel="noopener noreferrer">{inline(body)}</a>'
