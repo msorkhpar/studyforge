@@ -231,3 +231,15 @@ def test_a_summary_outside_a_disclosure_is_raw_html_not_prose():
     # ⚠️ A divergence from the extraction source, which makes it a paragraph.
     # It is markup; `html` is where genuinely unstructured markup survives.
     assert blocks("<summary>orphaned</summary>\n")[0]["type"] == "html"
+
+
+def test_a_comment_line_directly_above_a_fence_does_not_swallow_the_fence():
+    text = "a\n\n<!-- marker -->\n```text\nfirst\n\nsecond\n```\n<!-- /marker -->\n\nb\n"
+    blocks = parse(text)
+    assert [b["type"] for b in blocks] == ["para", "html", "code", "html", "para"]
+    assert blocks[2]["text"] == "first\n\nsecond"
+
+
+def test_a_comment_followed_by_prose_is_still_one_html_run():
+    blocks = parse("<!-- note -->\nstill the same run\n\nafter\n")
+    assert blocks[0] == {"type": "html", "text": "<!-- note -->\nstill the same run"}

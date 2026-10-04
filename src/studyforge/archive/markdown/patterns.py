@@ -29,6 +29,11 @@ HEADING = re.compile(r"^(#{1,6}) (.*)$")
 #: `listing` handles that.
 FENCE_OPEN = re.compile(r"^( {0,3})(`{3,})\s*(.*)$")
 
+#: ⭐ A complete HTML comment on one line, which an author puts directly above a
+#: code fence as a marker. `leaf.read_html` ends its run there, so the fence
+#: that follows is read as code.
+COMMENT_LINE = re.compile(r"^ {0,3}<!--.*-->\s*$")
+
 #: A fence indented past what `FENCE_OPEN` accepts — only meaningful as the
 #: continuation of a list item, which is the one place four or more spaces
 #: does not mean "indented code block".

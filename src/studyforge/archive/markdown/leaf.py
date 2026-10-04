@@ -151,8 +151,17 @@ def read_html(lines: list[str], start: int):
     ⚠️ This is the LAST tag rule. `<img>`, a media embed, `<details>` and
     `<summary>` all reach their own readers first, and a fence reaches the code
     reader before any of them.
+
+    ⭐ **A one-line comment directly above a code fence is a block of its own.** The
+    run would otherwise take the fence's opening line into the html block, and a
+    blank line inside the code then split it, so the closing fence read as an
+    opening one and the whole document was refused as "never closed". The comment
+    stays an `html` block and the fence is read as code.
     """
     index = start
+    if patterns.COMMENT_LINE.match(lines[start]) and start + 1 < len(lines):
+        if patterns.FENCE_OPEN.match(lines[start + 1]):
+            return {"type": "html", "text": lines[start]}, start + 1
     while index < len(lines) and lines[index].strip():
         index += 1
     return {"type": "html", "text": "\n".join(lines[start:index])}, index

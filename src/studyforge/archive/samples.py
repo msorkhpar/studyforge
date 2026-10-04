@@ -2,7 +2,7 @@
 
 **What it does.** Names the two forms of sample data a source's free text may
 carry past `archive.scrub`'s gate (R7): an email address whose domain is
-reserved, and the placeholder home path. Everything else the gate recognises is
+reserved, and the placeholder home paths. Everything else the gate recognises is
 still refused.
 
 **How you use it.** `admitted(shape, found)` with the gate's shape name and the
@@ -26,9 +26,11 @@ to write one is the way documentation is told to:
   (`RESERVED_TLDS`: `.example`, `.invalid`, `.test`, `.localhost`). Such an
   address can be delivered nowhere, by the standard rather than by anybody's
   configuration.
-- ⭐ **The placeholder home path** (`SAMPLE_HOME`): a slash, `home`, a slash and
-  an account segment that is exactly `user`, with anything or nothing below it.
-  It is how documentation writes a home directory that is nobody's.
+- ⭐ **A placeholder home path** (`sample_home(account)` for each of
+  `SAMPLE_ACCOUNTS`): a slash, `home`, a slash and an account segment that is exactly
+  one of a small fixed list of obvious placeholders (`user`, `dev`,
+  `me`), with anything or nothing below it. It is how documentation
+  writes a home directory that is nobody's.
 
 ⛔ **Nothing else moves.** An address on a registrable domain is refused however
 much it looks like a sample: `test.com` and `example.co` are real domains, and so
@@ -40,7 +42,10 @@ every local hostname and every token. There is no manifest switch.
 and the labels under a reserved name, may be any word. Telling an account name
 there from any other word would need the gate to hold the account name, which
 is the datum R7 forbids it to hold. The account name is caught where it has a
-structural anchor, the segment after `/home`, and there only `user` passes.
+structural anchor, the segment after `/home`, and there only the fixed
+placeholders pass. ⛔ The list is a fixed constant, never extended from a manifest
+or the environment: a name that is on it identifies nobody, and a name that is not
+on it is refused.
 
 ⚠️ **The vocabulary is shared, the code is not.** The repository hygiene check
 holds the same two tuples in `tests.floor.reserved_addresses`, and the floor
@@ -57,9 +62,22 @@ RESERVED_TLDS = ("invalid", "test", "example", "localhost")
 #: address without naming anybody's.
 RESERVED_DOMAINS = ("example.com", "example.net", "example.org")
 
-#: ⭐ The one home path a source's free text may carry. Assembled from two
-#: pieces so that this file holds no home-path shape of its own.
-SAMPLE_HOME = "/" + "home/user"
+#: ⭐ The account segments that are obvious placeholders and name nobody. ⛔ Exactly
+#: these, compared whole and case-sensitively: `username`, `User` and `user.name`
+#: are refused.
+SAMPLE_ACCOUNTS = ("user", "dev", "me")
+
+
+def sample_home(account: str) -> str:
+    """Return the home path of `account`, assembled so this file holds no home-path shape."""
+    return "/" + "home/" + account
+
+
+#: ⭐ The home path a source's free text most often carries (account `user`).
+SAMPLE_HOME = sample_home("user")
+
+#: Every home path the gate admits.
+SAMPLE_HOMES = frozenset(sample_home(account) for account in SAMPLE_ACCOUNTS)
 
 #: The gate's names for the two shapes that have an admission.
 HOME_SHAPE = "home path"
@@ -82,12 +100,12 @@ def admitted(shape: str, found: str) -> bool:
     """Report whether the gate's match `found`, of shape `shape`, is sample data.
 
     ⛔ Decided by the matched text alone. A home-path match passes only when it
-    is `SAMPLE_HOME` exactly, so a longer account segment such as `username` is
+    one of `SAMPLE_HOMES` exactly, so a longer account segment such as `username` is
     still refused; an address passes only when its domain is reserved. No other
     shape has an admission.
     """
     if shape == HOME_SHAPE:
-        return found == SAMPLE_HOME
+        return found in SAMPLE_HOMES
     if shape == EMAIL_SHAPE:
         return is_reserved(found.rpartition("@")[2])
     return False
