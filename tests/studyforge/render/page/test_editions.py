@@ -97,7 +97,7 @@ def test_every_edition_panel_and_statement_is_on_the_page_with_the_switch_at_the
 
 
 def test_the_outline_lists_the_practice_once_by_its_language_free_title():
-    found = anchors.entries(document(sections=four()), offer())
+    found = anchors.entries(editions.collapsed(document(sections=four())))
     assert found == (
         (1, "Practice (1)", "#practices"),
         (2, "Keep a conversation", "#card-practice-conversation-python"),
