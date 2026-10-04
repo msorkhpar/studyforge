@@ -35,3 +35,12 @@ def test_no_example_or_page_names_a_real_host_or_a_real_key():
     text = "".join(examples.files().values())
     assert course.HOST.endswith(".invalid")
     assert "sk-" not in text and "anthropic.com" not in text
+
+
+def test_the_conversation_example_names_the_file_each_tab_runs():
+    from tests.fixtures.claude_shape import lessons
+
+    block = next(b for b in lessons.conversation_blocks() if b["type"] == "example")
+    assert [tab["lang"] for tab in block["tabs"]] == list(lessons.LANGUAGES)
+    assert all(tab["code"].startswith(examples.ROOT) for tab in block["tabs"])
+    assert "code" not in lessons.agent_blocks()[3]["tabs"][0]

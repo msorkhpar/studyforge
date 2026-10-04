@@ -29,6 +29,7 @@ from studyforge.archive.blocks import (
     ITEM_BLOCKS,
 )
 from studyforge.describe import describe
+from studyforge.sourcepath import source_path_fault
 from studyforge.validate.corpus import RULE_DOCUMENT, Walk
 from studyforge.validate.report import Finding
 
@@ -38,6 +39,7 @@ EXAMPLE = "example"
 #: An example's tab, its flags and what it holds. ⛔ Spelled here as `archive.example` spells
 #: them, and a test pins the two equal: the archive's names stay inside the archive.
 EXAMPLE_TAB_KEYS = ("lang", "span")
+EXAMPLE_TAB_OPTIONAL = ("code",)
 EXAMPLE_MAX_TABS = 8
 EXAMPLE_OUTPUTS = ("compiler", "warning")
 EXAMPLE_BLOCKS = ("code",)
@@ -99,9 +101,20 @@ def _example(block: dict, at: str) -> Iterator[tuple[str, str]]:
     covered = 0
     for number, tab in enumerate(tabs):
         here = f"{at}.tabs[{number}]"
-        if not isinstance(tab, dict) or tuple(tab) != EXAMPLE_TAB_KEYS:
-            yield here, f"is {describe(tab)}; a tab is an object with {list(EXAMPLE_TAB_KEYS)}"
+        if not isinstance(tab, dict) or tuple(tab) not in (
+            EXAMPLE_TAB_KEYS,
+            (*EXAMPLE_TAB_KEYS, *EXAMPLE_TAB_OPTIONAL),
+        ):
+            yield (
+                here,
+                f"is {describe(tab)}; a tab is an object with {list(EXAMPLE_TAB_KEYS)}"
+                f" and optionally {list(EXAMPLE_TAB_OPTIONAL)}",
+            )
             continue
+        if "code" in tab:
+            fault = source_path_fault(tab["code"]) if isinstance(tab["code"], str) else "not text"
+            if fault:
+                yield f"{here}.code", f"is {fault}; code is the corpus-relative path of a file"
         if not isinstance(tab["lang"], str) or not tab["lang"]:
             yield f"{here}.lang", f"is {describe(tab['lang'])}; a tab names a language by its id"
         elif tab["lang"] in seen:

@@ -25,6 +25,8 @@ validates exactly as it did.
   are, so it is named.
 - `unit-prose`: a unit of a corpus that declares modes has no lesson document,
   tagged or common, so the page would hold no prose.
+- `example-code-missing`: an example's tab names a `code` file that is not a regular file of
+  the corpus. Asked only of a tab that names one.
 - `mode-empty`: a declared mode lists no unit. A unit is listed in a mode when
   one of its lessons is common or in the mode's `prose` language, or one of its
   practices is common or in a language the mode's `practices` names.
@@ -34,14 +36,17 @@ from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Iterator
+from pathlib import Path
 
 from studyforge.archive.blocks import walk as walk_blocks
+from studyforge.sourcepath import source_path_fault
 from studyforge.validate.corpus import Unit, Walk
 from studyforge.validate.report import Finding
 
 RULE_LANGUAGE = "language-undeclared"
 RULE_UNIT_PROSE = "unit-prose"
 RULE_MODE_EMPTY = "mode-empty"
+RULE_EXAMPLE_CODE = "example-code-missing"
 
 
 def check_languages_are_declared(walk: Walk) -> Iterator[Finding]:
@@ -78,6 +83,32 @@ def _example_tabs(walk: Walk, declared: set[str]) -> Iterator[Finding]:
                         unit.where,
                         f"has an example with a tab in the language {lang!r}, which corpus.json"
                         f" does not declare under 'languages'; a tab names a declared language",
+                    )
+
+
+def check_example_code_exists(walk: Walk) -> Iterator[Finding]:
+    """Every file an example's tab names as its `code` is a regular file of the corpus.
+
+    ⭐ Asked only of a tab that names one, so a corpus whose examples name none is not asked.
+    ⛔ The finding names the unit and the tab's language and never the path (R7).
+    """
+    root = Path(walk.root).resolve()
+    for unit in walk.units:
+        blocks = unit.document.get("blocks")
+        for block in walk_blocks(blocks if isinstance(blocks, list) else []):
+            if not isinstance(block, dict) or block.get("type") != "example":
+                continue
+            for tab in block.get("tabs") or ():
+                code = tab.get("code") if isinstance(tab, dict) else None
+                if not isinstance(code, str) or source_path_fault(code):
+                    continue
+                found = (root / code).resolve()
+                if not (found.is_file() and found.is_relative_to(root)):
+                    yield Finding(
+                        RULE_EXAMPLE_CODE,
+                        unit.where,
+                        f"has an example whose {tab.get('lang')!r} tab names a code file the"
+                        f" corpus does not hold; a tab's code is a file of the corpus",
                     )
 
 
@@ -134,6 +165,7 @@ def _listed(mode: object, documents: list[Unit]) -> bool:
 
 CHECKS = (
     check_languages_are_declared,
+    check_example_code_exists,
     check_units_have_prose,
     check_modes_list_a_unit,
 )

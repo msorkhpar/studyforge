@@ -12,7 +12,8 @@ equal: an archive's names are not shared across the package edge).
 
 ⭐ **An example's tabs.** An `example` block holds its blocks flat in `blocks`, and its
 `tabs` cut that run into consecutive spans, one per language:
-`{"lang": "<id>", "span": <how many blocks>}`. Every walker that recurses on `blocks`
+`{"lang": "<id>", "span": <how many blocks>}`, and optionally `"code": "<corpus-relative file>"`.
+Every walker that recurses on `blocks`
 reaches an example's code with no change. A block has from one to `EXAMPLE_MAX_TABS`
 tabs. `output` names why the block exists beside a
 program: one of `EXAMPLE_OUTPUTS`.
@@ -21,6 +22,10 @@ program: one of `EXAMPLE_OUTPUTS`.
 from __future__ import annotations
 
 EXAMPLE_TAB_KEYS = ("lang", "span")
+#: ⭐ A tab may also name `code`: the corpus-relative path of the file its code is, so a served
+#: page can offer Run for the test beside it. Written only where an adapter sets it, so a tab
+#: without one is the tab it always was.
+EXAMPLE_TAB_OPTIONAL = ("code",)
 #: How many tabs one example may have: a tab bar of more is a menu, not a choice between versions.
 EXAMPLE_MAX_TABS = 8
 EXAMPLE_OUTPUTS = ("compiler", "warning")

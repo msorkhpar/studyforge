@@ -116,3 +116,25 @@ def test_four_tabs_in_four_declared_languages_are_valid_and_an_undeclared_fourth
         assert [f.rule for f in validate(root).findings if f.rule == "language-undeclared"] == (
             expected
         )
+
+
+def test_a_tab_may_name_the_code_file_it_shows_and_nothing_else_is_added_to_it():
+    tabs = [{"lang": "aa", "span": 2, "code": "examples/x/a.py"}, {"lang": "bb", "span": 1}]
+    assert problems(example(tabs=tabs)) == []
+    unsafe = [{"lang": "aa", "span": 2, "code": "../x.py"}, {"lang": "bb", "span": 1}]
+    assert [at for at, _ in problems(example(tabs=unsafe))] == ["blocks[0].tabs[0].code"]
+    extra = [{"lang": "aa", "span": 2, "run": "x"}, {"lang": "bb", "span": 1}]
+    assert problems(example(tabs=extra))[0][0] == "blocks[0].tabs[0]"
+
+
+def test_a_code_file_the_corpus_does_not_hold_is_named_and_one_it_holds_is_not(tmp_path):
+    tabs = [{"lang": "aa", "span": 2, "code": "examples/x/a.py"}, {"lang": "bb", "span": 1}]
+    block = example(tabs=tabs)
+    root = corpus(tmp_path / "missing", [{**document(), "blocks": [block]}])
+    missing = [f for f in validate(root).findings if f.rule == "example-code-missing"]
+    assert len(missing) == 1 and "'aa'" in missing[0].message
+    assert "examples" not in missing[0].message
+    held = corpus(tmp_path / "held", [{**document(), "blocks": [block]}])
+    (held / "examples" / "x").mkdir(parents=True)
+    (held / "examples" / "x" / "a.py").write_text("x = 1\n", encoding="utf-8")
+    assert [f for f in validate(held).findings if f.rule == "example-code-missing"] == []
