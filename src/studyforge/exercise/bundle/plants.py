@@ -34,6 +34,14 @@ source tree. ⚠️ So fixing the reference reaches every plant at the next gate
 and a replacement whose text the fix removed is refused rather than silently
 skipped.
 
+## ⭐ A PLANT MAY CHANGE ANY FILE THE READER EDITS
+
+⭐ An exercise whose reader edits several files (`Bundle.files`) is planted by a **spec** whose
+replacements each name the file they change: the main file or any of the others. A file no
+replacement names stays as the reference has it. ⛔ A **full** plant is still the text of the
+main file alone, so it cannot plant a change in another file. ⛔ A replacement naming a file the
+reader does not edit is refused, so no plant reaches the tests or a build file.
+
 ## ⛔ A REPLACEMENT IS EXACT, OR IT IS REFUSED
 
 ⭐ Replacements apply in order, each to the text the one before it left. ⛔ The text
@@ -168,11 +176,30 @@ def occurrences(text: str, find: str) -> int:
     return count
 
 
+def replaced(text: str, one: Replacement, n: int, where: str) -> str:
+    """Apply one replacement to `text`, refusing it unless it finds exactly one place."""
+    if not one.old:
+        raise ExerciseError(f"{where}: replacement {n} has no text to find.")
+    if one.old == one.new:
+        raise ExerciseError(f"{where}: replacement {n} puts back the text it found.")
+    found = occurrences(text, one.old)
+    if found != 1:
+        what = "the text it finds is not there" if found == 0 else "the text it finds is there"
+        more = "" if found == 0 else f" {found} times, and it must be there exactly once"
+        raise ExerciseError(
+            f"{where}: replacement {n} cannot apply: {what}{more} at that point in "
+            f"the file. Each replacement finds exactly one place."
+        )
+    return text.replace(one.old, one.new, 1)
+
+
 def materialise(reference: str, spec: PlantSpec, main_file: str, where: str) -> str:
     """Apply a spec to the reference and return the plant's full text.
 
     ⛔ `where` names the plant. Every refusal names the replacement by its position and
     never quotes the text it was given. ⛔ The result is returned, never written.
+    ⭐ This is the plant of an exercise with one edited file; `materialise_files` is the
+    plant of one with several.
     """
     text = reference
     for n, one in enumerate(spec.replacements, start=1):
@@ -181,19 +208,7 @@ def materialise(reference: str, spec: PlantSpec, main_file: str, where: str) -> 
                 f"{where}: replacement {n} names a file other than the exercise's main "
                 f"file, and a plant is that one file."
             )
-        if not one.old:
-            raise ExerciseError(f"{where}: replacement {n} has no text to find.")
-        if one.old == one.new:
-            raise ExerciseError(f"{where}: replacement {n} puts back the text it found.")
-        found = occurrences(text, one.old)
-        if found != 1:
-            what = "the text it finds is not there" if found == 0 else "the text it finds is there"
-            more = "" if found == 0 else f" {found} times, and it must be there exactly once"
-            raise ExerciseError(
-                f"{where}: replacement {n} cannot apply: {what}{more} at that point in "
-                f"the file. Each replacement finds exactly one place."
-            )
-        text = text.replace(one.old, one.new, 1)
+        text = replaced(text, one, n, where)
     if text == reference:
         raise ExerciseError(
             f"{where}: this plant comes out identical to the reference, so it is the "
@@ -256,13 +271,20 @@ def roles_of(
 ) -> tuple[tuple[str, str], ...]:
     """Every input a code gate record digests, in the bundle's order, bundle-relative.
 
-    ⭐ A spec plant's input is its spec file, the file the bundle holds.
+    ⭐ A spec plant's input is its spec file, the file the bundle holds. ⭐ Each further file
+    the reader edits adds two inputs, `starter:<path>` and `reference:<path>`, after the main
+    file's own pair; an exercise of one file has none, so its record is what it was.
     """
     main = bundle.main_file
     return (
         ("statement", STATEMENT_FILENAME),
         ("starter", f"starter/{main}"),
         ("reference", f"reference/{main}"),
+        *(
+            (f"{role}:{path}", f"{role}/{path}")
+            for path in bundle.files
+            for role in ("starter", "reference")
+        ),
         ("tests", f"tests/{bundle.test_file}"),
         *(
             (

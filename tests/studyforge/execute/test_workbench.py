@@ -319,3 +319,21 @@ def test_a_file_that_opens_with_nothing_editable_excludes_nothing_back_out():
     assert written[READONLY_INCLUDE] == {EVERYTHING: True}
     assert written[READONLY_EXCLUDE] == {}
     assert settings("p/A.java", None)[READONLY_EXCLUDE] == {"p/A.java": True}
+
+
+def test_every_further_file_the_reader_edits_is_excluded_back_out_of_read_only(tmp_path):
+    held = settings(INSIDE_MAIN, INSIDE_TEST, more=["docs/memory.md", "hooks/guard.sh"])
+    assert held[READONLY_EXCLUDE] == {
+        INSIDE_MAIN: True,
+        "docs/memory.md": True,
+        "hooks/guard.sh": True,
+    }
+    assert held[READONLY_EXCLUDE] != settings(INSIDE_MAIN, INSIDE_TEST)[READONLY_EXCLUDE]
+    # ⭐ Nothing further is the settings it always was; a read-only practice excludes nothing.
+    assert settings(INSIDE_MAIN, INSIDE_TEST) == settings(INSIDE_MAIN, INSIDE_TEST, more=[])
+    assert settings(INSIDE_MAIN, INSIDE_TEST, editable=False, more=["a"])[READONLY_EXCLUDE] == {}
+    written = write_settings(tmp_path, INSIDE_MAIN, INSIDE_TEST, more=["docs/memory.md"])
+    assert json.loads(written.read_text(encoding="utf-8"))[READONLY_EXCLUDE] == {
+        INSIDE_MAIN: True,
+        "docs/memory.md": True,
+    }

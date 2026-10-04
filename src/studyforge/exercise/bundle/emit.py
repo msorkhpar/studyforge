@@ -76,6 +76,7 @@ from studyforge.archive.document import build
 from studyforge.archive.markdown import MarkdownError
 from studyforge.archive.markdown import parse as parse_markdown
 from studyforge.exercise.bundle.document import Bundle
+from studyforge.exercise.bundle.files import shown
 from studyforge.exercise.bundle.plants import require_plants
 from studyforge.exercise.bundle.layout import (
     BUILD,
@@ -141,6 +142,15 @@ def emit(
     reference = _text_at(base, bundle.places.in_bundle(_role_file(bundle, REFERENCE)), where)
     tests = _text_at(base, bundle.places.in_bundle(_role_file(bundle, TESTS)), where)
     require_plants(base, bundle, where)
+    place = bundle.places
+    more = tuple(
+        (
+            path,
+            _text_at(base, place.in_bundle(place.role_path(STARTER, path)), where),
+            _text_at(base, place.in_bundle(place.role_path(REFERENCE, path)), where),
+        )
+        for path in bundle.files
+    )
     built = tuple(
         (path, _bytes_at(base, bundle.places.in_bundle(bundle.places.build_path(path)), where))
         for path in bundle.build
@@ -154,12 +164,13 @@ def emit(
         ordinal=bundle.ordinal,
         ingested=ingested,
         title=bundle.title,
-        blocks=_blocks(bundle, statement, reference, starter, lesson, lesson_title, where),
+        blocks=_blocks(bundle, statement, reference, starter, lesson, lesson_title, where, more),
         starting_code=starter,
         exercise=_record(bundle, where),
     )
     files = (
         (bundle.places.in_workspace(bundle.main_file), starter.encode("utf-8")),
+        *((bundle.places.in_workspace(path), text.encode("utf-8")) for path, text, _ in more),
         (bundle.places.in_workspace(bundle.test_file), tests.encode("utf-8")),
         *((bundle.places.in_workspace(path), data) for path, data in built),
     )
@@ -231,8 +242,10 @@ def _record(bundle: Bundle, where: str) -> dict:
     and not by a second spelling of it here.
     """
     places = bundle.places
-    record = {
-        "main_path": places.in_workspace(bundle.main_file),
+    record = {"main_path": places.in_workspace(bundle.main_file)}
+    if bundle.files:
+        record["files"] = [places.in_workspace(path) for path in bundle.files]
+    record |= {
         "test_path": places.in_workspace(bundle.test_file),
         "run_command": list(_arguments(bundle, bundle.run_command, "run_command", where)),
         "test_command": list(_arguments(bundle, bundle.test_command, "test_command", where)),
@@ -302,9 +315,16 @@ def _blocks(
     lesson: tuple[dict, ...],
     lesson_title: str | None,
     where: str,
+    more: tuple[tuple[str, str, str], ...] = (),
 ) -> list[dict]:
-    """Return the practice's blocks, laid out the way `archive.blocks` reads one."""
+    """Return the practice's blocks, laid out the way `archive.blocks` reads one.
+
+    ⭐ `more` is the further files the reader edits, as `(path, starter, reference)`: each is
+    shown after the main file's own, under a line naming it, in the reference and in the
+    starting code. An exercise of one file passes none and gets the blocks it always did.
+    """
     heading = LESSON_HEADING if lesson_title is None else f"{LESSON_HEADING}: {lesson_title}"
+    reference_blocks, starting_blocks = shown(bundle.lang, reference, starter, more)
     return [
         {"type": "heading", "level": 2, "text": STATEMENT_HEADING},
         *_statement_blocks(bundle, statement, where),
@@ -314,10 +334,10 @@ def _blocks(
             "type": "disclosure",
             "summary": REFERENCE_SUMMARY,
             "open": False,
-            "blocks": [{"type": "code", "lang": bundle.lang, "text": reference}],
+            "blocks": reference_blocks,
         },
         {"type": "heading", "level": 2, "text": STARTING_CODE_HEADING},
-        {"type": "code", "lang": bundle.lang, "text": starter},
+        *starting_blocks,
     ]
 
 

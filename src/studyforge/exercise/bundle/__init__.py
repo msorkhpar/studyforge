@@ -124,6 +124,11 @@ from studyforge.exercise.bundle.emit import (
     emit_page,
     write,
 )
+from studyforge.exercise.bundle.plantfiles import (
+    materialise_files,
+    materialised_files,
+    read_plant_files,
+)
 from studyforge.exercise.bundle.plants import (
     PLANT_VERSION,
     PlantSpec,
@@ -203,7 +208,10 @@ __all__ = [
     "emit_page",
     "materialise",
     "materialised",
+    "materialised_files",
+    "materialise_files",
     "read_plant",
+    "read_plant_files",
     "require_plants",
     "roles_of",
     "spec_bytes",

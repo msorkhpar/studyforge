@@ -432,3 +432,25 @@ def test_a_run_that_prints_a_bundle_hands_the_reader_no_key(root):
     assert '"correct"' not in body and WITHHELD_LINE in body
     assert all(option["says"] not in body for one in QUESTIONS for option in one["options"])
     assert body.endswith(exit_line(0) + "\n")
+
+
+def test_a_practice_of_several_files_answers_a_window_for_each_further_file(root):
+    # ⭐ The further files the reader edits sit in the practice's own folder, are editable
+    # beside the main file, and each is answered as a window of its own with its own URL.
+    (root / "practice" / "passes" / "notes.md").write_text("# notes\n", encoding="utf-8")
+    live, discovered = runs_over(root, editor=StubEditors(UP))
+    answer = live.practice_editor(
+        discovered.corpora[0],
+        "practice/passes/greet.py",
+        None,
+        files=("practice/passes/notes.md", "practice/passes/absent.md"),
+    )
+    assert answer is not None
+    assert [one["path"] for one in answer["files"]] == ["notes.md"]
+    assert answer["files"][0]["url"] != answer["main"]["url"]
+    held = json.loads(
+        (root / "practice" / "passes" / ".vscode" / "settings.json").read_text(encoding="utf-8")
+    )
+    assert held["files.readonlyExclude"] == {"greet.py": True, "notes.md": True}
+    plain = live.practice_editor(discovered.corpora[0], "practice/passes/greet.py", None)
+    assert "files" not in plain

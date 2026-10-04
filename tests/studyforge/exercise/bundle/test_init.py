@@ -22,6 +22,9 @@ def test_the_package_states_its_contract():
 def test_the_public_surface_is_declared_and_complete():
     assert set(bundle.__all__) == {
         "BUILD",
+        "materialise_files",
+        "materialised_files",
+        "read_plant_files",
         "BUNDLES_DIRNAME",
         "BUNDLE_API",
         "BUNDLE_DIRNAMES",
@@ -108,7 +111,7 @@ def test_nothing_here_knows_any_source(tmp_path):
 def test_the_package_depends_only_on_studyforge_and_the_standard_library():
     allowed = {
         "studyforge", "dataclasses", "pathlib", "json", "re", "__future__", "difflib",
-        "collections",
+        "collections", "typing",
     }
     for path in package_modules():
         tree = ast.parse(path.read_text(encoding="utf-8"))

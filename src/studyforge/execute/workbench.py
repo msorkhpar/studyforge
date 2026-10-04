@@ -148,6 +148,7 @@ from collections.abc import Iterable
 from pathlib import Path
 from urllib.parse import quote
 
+from studyforge.execute.closed import CLOSED
 from studyforge.execute.editor import Editor
 from studyforge.execute.editor_theme import EditorColoursUnread, editor_colours
 
@@ -207,43 +208,6 @@ READONLY_INCLUDE = "files.readonlyInclude"
 READONLY_EXCLUDE = "files.readonlyExclude"
 EVERYTHING = "**/*"
 
-#: The workbench, closed. ⛔ Every surface that is a way to end up somewhere the
-#: lesson did not send the reader. ⚠️ These are settings and not commands: the
-#: extension closes what is already open, and these stop it opening again.
-#:
-#: ⚠️ `workbench.secondarySideBar.defaultVisibility` is a belt only, and it is
-#: NOT the fix. The secondary side bar is the chat pane, and it is the ONE of
-#: the two surfaces a reader saw that a setting can reach at all — the PRIMARY
-#: side bar's visibility is workbench UI STATE and no setting names it, which
-#: is why the lockdown extension exists. ⛔ So a window whose extension never
-#: activates still shows the Explorer, and this key hides one of the two
-#: symptoms rather than the cause. The cause is the editor image's
-#: `--disable-workspace-trust` and the extension's own
-#: `capabilities.untrustedWorkspaces` (`code-server-toolchain`), and neither
-#: lives here.
-CLOSED: dict[str, object] = {
-    "workbench.secondarySideBar.defaultVisibility": "hidden",
-    "workbench.activityBar.location": "hidden",
-    "workbench.statusBar.visible": False,
-    "workbench.editor.showTabs": "none",
-    "workbench.editor.editorActionsLocation": "hidden",
-    "workbench.layoutControl.enabled": False,
-    # ⛔ The command centre is the "sources" box and the back/forward arrows in
-    # the title bar, and no other key names it. ⚠️ It is a SECOND route to Go
-    # to File, open even when the palette is confined.
-    "window.commandCenter": False,
-    "workbench.startupEditor": "none",
-    "window.menuBarVisibility": "hidden",
-    "breadcrumbs.enabled": False,
-    "editor.minimap.enabled": False,
-    # ⭐ A practice file ends where its last line ends. The default scrolls a
-    # whole viewport of empty space past the closing brace, which reads as "the
-    # file continues" in a panel the reader cannot resize.
-    "editor.scrollBeyondLastLine": False,
-    "explorer.openEditors.visible": 0,
-    "workbench.tips.enabled": False,
-}
-
 #: ⛔ `off`, and the reason is in this module's docstring: restore state is per
 #: WORKSPACE, so hot exit makes each window reopen what the other last had.
 HOT_EXIT = "off"
@@ -298,6 +262,28 @@ def open_url(editor: Editor, path: str) -> str | None:
     )
 
 
+def prepared(
+    editor: Editor, root: Path, main: str, test: str | None, files: Iterable[str] = ()
+) -> dict | None:
+    """Write one practice's settings into its folder and return where its windows are, or `None`.
+
+    ⭐ `files` are the further files the reader edits, a window each; ⛔ one the editor or the
+    corpus lacks is left out, as a window on it would show an empty, dirty buffer.
+    """
+    inside_main = editor.inside(main)
+    if inside_main is None:
+        return None
+    inside_test = editor.inside(test) if test else None
+    found = [(path, editor.inside(path)) for path in files]
+    held = [(p, i) for p, i in found if i is not None and (root / p).is_file()]
+    write_settings(root / editor.base, inside_main, inside_test, more=[i for _, i in held])
+    answer = {"origin": editor.origin, "main": {"path": inside_main, "url": open_url(editor, main)}}
+    answer["test"] = {"path": inside_test, "url": open_url(editor, test)} if inside_test else None
+    if held:
+        answer["files"] = [{"path": i, "url": open_url(editor, p)} for p, i in held]
+    return answer
+
+
 def authority(editor: Editor) -> str:
     """Return the host and port a `vscode-remote` URL is addressed to.
 
@@ -309,10 +295,16 @@ def authority(editor: Editor) -> str:
     return rest.rstrip("/")
 
 
-def settings(main: str, test: str | None, *, editable: bool = True) -> dict[str, object]:
+def settings(
+    main: str, test: str | None, *, editable: bool = True, more: Iterable[str] = ()
+) -> dict[str, object]:
     """Return the workspace settings for one practice, as the decoded object.
 
     ⭐ `editable=False` excludes nothing back out: every file is read-only.
+
+    ⭐ `more` is the further files the reader edits (a practice of several files): each is
+    excluded back out of the read-only set beside `main`. ⛔ Empty leaves the settings exactly
+    as they were.
 
     `main` and `test` are relative to the OPENED FOLDER — what
     `Editor.inside` answers — because that is what the workbench resolves a
@@ -323,7 +315,7 @@ def settings(main: str, test: str | None, *, editable: bool = True) -> dict[str,
         MAIN_KEY: main,
         TEST_KEY: test or "",
         READONLY_INCLUDE: {EVERYTHING: True},
-        READONLY_EXCLUDE: {main: True} if editable else {},
+        READONLY_EXCLUDE: {path: True for path in (main, *more)} if editable else {},
         "files.hotExit": HOT_EXIT,
         "files.autoSave": AUTO_SAVE,
         **CLOSED,
@@ -331,7 +323,14 @@ def settings(main: str, test: str | None, *, editable: bool = True) -> dict[str,
     }
 
 
-def write_settings(folder: Path, main: str, test: str | None, *, editable: bool = True) -> Path:
+def write_settings(
+    folder: Path,
+    main: str,
+    test: str | None,
+    *,
+    editable: bool = True,
+    more: Iterable[str] = (),
+) -> Path:
     """Write one practice's workspace settings into `folder`, and return the file.
 
     `folder` is the HOST side of the editor's bind mount. Raises
@@ -342,7 +341,9 @@ def write_settings(folder: Path, main: str, test: str | None, *, editable: bool 
     _require_ours(target)
     temporary = None
     try:
-        body = json.dumps(settings(main, test, editable=editable), indent=2, sort_keys=True) + "\n"
+        body = json.dumps(
+            settings(main, test, editable=editable, more=more), indent=2, sort_keys=True
+        ) + "\n"
         (target.parent / STAGING_DIR).mkdir(parents=True, exist_ok=True)
         _ensure_ignored(target.parent / IGNORE_FILE)
         # ⛔ This write's OWN name: a shared one is moved away by one
